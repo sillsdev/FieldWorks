@@ -1,10 +1,6 @@
-// Copyright (c) 2009-2013 SIL International
+// Copyright (c) 2009-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ValidCharactersDlgTests.cs
-// Responsibility: TE Team
-// ---------------------------------------------------------------------------------------------
 
 using System;
 using System.Collections.Generic;
@@ -15,7 +11,6 @@ using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Resources;
-using SIL.FieldWorks.Test.TestUtils;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.FwCoreDlgs
@@ -26,7 +21,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
-	public class ValidCharactersDlgTests : BaseTest
+	public class ValidCharactersDlgTests
 	{
 		private DummyValidCharactersDlg m_dlg;
 

@@ -1,9 +1,6 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: M3ToXAmpleTransformerTests.cs
-// Responsibility: Andy Black
 //
 // <remarks>
 // Implements the M3ToXAmpleTransformerTests unit tests.
@@ -11,13 +8,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text;
 using System.Xml.XPath;
 using System.Xml.Xsl;
 using NUnit.Framework;
-using SIL.FieldWorks.Test.TestUtils;
 using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
 
@@ -26,7 +21,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 	/// <summary>
 	/// Summary description for M3ToXAmpleTransformerTests.
 	/// </summary>
-	public class M3ToXAmpleTransformerTests : BaseTest
+	public class M3ToXAmpleTransformerTests
 	{
 		string m_sM3FXTDump;
 		string m_sM3FXTCircumfixDump;
@@ -60,10 +55,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		protected string m_sGramTransform;
 
 		[TestFixtureSetUp]
-		public override void FixtureSetup()
+		public void FixtureSetup()
 		{
-			base.FixtureSetup();
-
 			m_sTestPath = Path.Combine(FwDirectoryFinder.SourceDirectory, "LexText", "ParserCore", "ParserCoreTests", "M3ToXAmpleTransformerTestsDataFiles");
 			m_sTransformPath = Path.Combine(FwDirectoryFinder.FlexFolder, "Transforms");
 

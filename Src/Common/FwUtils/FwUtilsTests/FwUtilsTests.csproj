@@ -98,6 +98,15 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\CoreImplTests.dll</HintPath>
     </Reference>
+    <Reference Include="SIL.TestUtilities, Version=3.1.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Downloads\SIL.TestUtilities.dll</HintPath>
+    </Reference>
+    <Reference Include="SilUtilsTests, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Output\Debug\SilUtilsTests.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
     <Reference Include="ViewsInterfaces">
       <Name>ViewsInterfaces</Name>
       <HintPath>..\..\..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
@@ -130,9 +139,6 @@
       <HintPath>..\..\..\..\Output\Debug\SilUtils.dll</HintPath>
     </Reference>
     <Reference Include="System.Xml" />
-    <Reference Include="TestUtils">
-      <HintPath>..\..\..\..\Output\Debug\TestUtils.dll</HintPath>
-    </Reference>
     <Reference Include="System.Drawing" />
     <Reference Include="SIL.Core">
       <HintPath>..\..\..\..\Downloads\SIL.Core.dll</HintPath>
@@ -142,9 +148,17 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Attributes\HandleApplicationThreadExceptionAttribute.cs" />
+    <Compile Include="Attributes\SuppressErrorBeepsAttribute.cs" />
     <Compile Include="DebugProcsTests.cs" />
     <Compile Include="IVwCacheDaTests.cs" />
     <Compile Include="LayoutKeyUtilsTests.cs" />
+    <Compile Include="TempSFFileMaker.cs" />
+    <Compile Include="TempSFFileMakerTests.cs" />
+    <Compile Include="TestBaseForTestsThatCreateTempFilesBasedOnResources.cs" />
+    <Compile Include="TestFwStylesheet.cs" />
+    <Compile Include="TestFwStylesheetTests.cs" />
+    <Compile Include="XmlHelper.cs" />
     <None Include="App.config" />
     <Compile Include="CaseFunctionsTest.cs" />
     <Compile Include="FwDirectoryFinderTests.cs" />
@@ -152,9 +166,7 @@
     <Compile Include="FwLinkArgsTests.cs" />
     <Compile Include="FwRegistryHelperTests.cs" />
     <Compile Include="MeasurementUtilsTest.cs" />
-    <Compile Include="MoreStringUtilsTests.cs" />
     <Compile Include="ParagraphCorrelationTests.cs" />
-    <Compile Include="ShowHelpTests.cs" />
     <Compile Include="ClipboardStub.cs" />
     <Compile Include="ImagePictureTest.cs" />
     <Compile Include="MessageBoxStub.cs" />

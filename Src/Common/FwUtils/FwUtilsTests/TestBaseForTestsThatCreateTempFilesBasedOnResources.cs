@@ -8,14 +8,14 @@ using System.IO;
 using NUnit.Framework;
 using SIL.CoreImpl;
 
-namespace SIL.FieldWorks.Test.TestUtils
+namespace SIL.FieldWorks.Common.FwUtils
 {
 	/// <summary>
 	/// This test base is used with tests that require text files that are stored in a resource. It saves the text files to the temporary
 	/// directory and then cleans them up when the text fixture is finished.
 	/// </summary>
 	[TestFixture]
-	public class TestBaseForTestsThatCreateTempFilesBasedOnResources : BaseTest
+	public class TestBaseForTestsThatCreateTempFilesBasedOnResources
 	{
 		private static List<string> s_foldersToDelete = new List<string>();
 

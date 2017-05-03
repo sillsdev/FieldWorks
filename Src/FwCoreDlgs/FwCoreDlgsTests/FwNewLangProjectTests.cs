@@ -1,12 +1,6 @@
-﻿// Copyright (c) 2003-2013 SIL International
+﻿// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: TestFwNewLangProject.cs
-// Responsibility:
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Diagnostics;
@@ -15,7 +9,6 @@ using System.Linq;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Test.TestUtils;
 using SIL.FieldWorks.FDO.FDOTests;
 
 namespace SIL.FieldWorks.FwCoreDlgs
@@ -83,7 +76,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
 	[Platform(Exclude = "Linux", Reason = "Tests time out")]
-	public class FwNewLangProjectTests : BaseTest
+	public class FwNewLangProjectTests
 	{
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

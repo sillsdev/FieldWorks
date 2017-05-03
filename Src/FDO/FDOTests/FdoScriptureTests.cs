@@ -14,7 +14,6 @@ using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.Test.TestUtils;
 using SIL.Utils;
 using SILUBS.SharedScrUtils;
 
@@ -1232,7 +1231,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		protected ICmPicture InsertTestPicture(IStTxtPara para, int ichPos)
 		{
 			ICmPicture pict;
-			using (DummyFileMaker filemaker = new DummyFileMaker("junk.jpg", true))
+			using (var filemaker = new DummyFileMaker("junk.jpg", true))
 			{
 				pict = Cache.ServiceLocator.GetInstance<ICmPictureFactory>().Create(filemaker.Filename,
 					TsStringUtils.MakeString("Test picture caption", Cache.DefaultVernWs),

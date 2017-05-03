@@ -149,6 +149,15 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			}
 		}
 
+		internal ComboBox DefaultFontComboBox
+		{
+			get
+			{
+				CheckDisposed();
+				return m_defaultFontComboBox;
+			}
+		}
+
 		#endregion
 
 		#region Component Designer generated code

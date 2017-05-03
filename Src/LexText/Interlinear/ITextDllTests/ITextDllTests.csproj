@@ -210,10 +210,6 @@
       <Name>System.XML</Name>
     </Reference>
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="TestUtils, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\TestUtils.dll</HintPath>
-    </Reference>
     <Reference Include="Widgets, Version=4.3.0.28778, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\Widgets.dll</HintPath>
@@ -244,9 +240,6 @@
   <ItemGroup>
     <Compile Include="..\..\..\AssemblyInfoForTests.cs">
       <Link>AssemblyInfoForTests.cs</Link>
-    </Compile>
-    <Compile Include="..\..\..\FDO\FDOTests\FwSetupFixtureClass.cs">
-      <Link>FwSetupFixtureClass.cs</Link>
     </Compile>
     <Compile Include="AddWordsToLexiconTests.cs">
     </Compile>

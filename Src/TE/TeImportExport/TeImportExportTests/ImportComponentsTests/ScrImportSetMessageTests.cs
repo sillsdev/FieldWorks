@@ -1,14 +1,7 @@
-// Copyright (c) 2002-2013 SIL International
+// Copyright (c) 2002-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ImportWizardTests.cs
-// Responsibility: TE Team
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
-// --------------------------------------------------------------------------------------------
+
 using System.Windows.Forms;
 using NUnit.Framework;
 
@@ -42,18 +35,9 @@ namespace SIL.FieldWorks.TE.ImportComponentsTests
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
-	public class ScrImportSetMessageTest: SIL.FieldWorks.Test.TestUtils.BaseTest
+	public class ScrImportSetMessageTest
 	{
 		private DummyScrImportSetMessage m_dummyMsgBox;
-
-		/// -----------------------------------------------------------------------------------
-		/// <summary>
-		/// Initializes a new instance of the <see cref="ScrImportSetMessage"/> class.
-		/// </summary>
-		/// -----------------------------------------------------------------------------------
-		public ScrImportSetMessageTest()
-		{
-		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

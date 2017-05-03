@@ -136,6 +136,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\DistFiles\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
+    <Reference Include="SIL.TestUtilities, Version=3.1.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Downloads\SIL.TestUtilities.dll</HintPath>
+    </Reference>
     <Reference Include="SilUtils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\SilUtils.dll</HintPath>
@@ -155,11 +159,6 @@
       <Name>System</Name>
     </Reference>
     <Reference Include="System.Windows.Forms" />
-    <Reference Include="TestUtils">
-      <Name>TestUtils</Name>
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\TestUtils.dll</HintPath>
-    </Reference>
     <Reference Include="System.Drawing" />
     <Reference Include="FwUtilsTests">
       <HintPath>..\..\..\..\Output\Debug\FwUtilsTests.dll</HintPath>
@@ -167,7 +166,7 @@
     <Reference Include="FwKernelInterfaces">
       <HintPath>..\..\..\..\Output\Debug\FwKernelInterfaces.dll</HintPath>
     </Reference>
-    <Reference Include="ViewsInterfaces, Version=9.0.0.30006, Culture=neutral, processorArchitecture=x86">
+    <Reference Include="ViewsInterfaces, Version=9.0.0.23581, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
     </Reference>
@@ -176,9 +175,6 @@
     <None Include="App.config" />
     <Compile Include="..\..\..\AssemblyInfoForTests.cs">
       <Link>AssemblyInfoForTests.cs</Link>
-    </Compile>
-    <Compile Include="..\..\..\FDO\FDOTests\FwSetupFixtureClass.cs">
-      <Link>FwSetupFixtureClass.cs</Link>
     </Compile>
     <Compile Include="FwFontTabTests.cs" />
     <Compile Include="StyleInfoTests.cs" />

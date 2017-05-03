@@ -1,18 +1,11 @@
-// Copyright (c) 2007-2013 SIL International
+// Copyright (c) 2007-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: BulletInfoTests.cs
-// Responsibility: TE Team
-//
-// <remarks>
-// </remarks>
 
 using System.Drawing;
 using System.Text;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
-using SIL.FieldWorks.Test.TestUtils;
 using SIL.FieldWorks.FDO.DomainServices;
 
 namespace SIL.FieldWorks.FDO.FDOTests
@@ -24,7 +17,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
-	public class BulletInfoTests: BaseTest
+	public class BulletInfoTests
 	{
 		private StyleInfoTable m_infoTable;
 

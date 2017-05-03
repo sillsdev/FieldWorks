@@ -1941,7 +1941,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		protected virtual void IssueBeep()
 		{
-			MiscUtils.ErrorBeep();
+			FwUtils.ErrorBeep();
 		}
 
 		/// ------------------------------------------------------------------------------------

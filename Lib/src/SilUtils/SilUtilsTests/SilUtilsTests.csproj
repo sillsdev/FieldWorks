@@ -76,6 +76,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DummyFileMaker.cs" />
     <Compile Include="RomanNumeralsTests.cs" />
     <Compile Include="TestSmallDictionary.cs" />
     <None Include="App.config" />

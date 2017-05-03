@@ -1,15 +1,12 @@
-// Copyright (c) 2010-2015 SIL International
+// Copyright (c) 2010-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: FieldWorks.cs
-// Responsibility: FW team
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
@@ -26,8 +23,6 @@ using System.Windows.Forms;
 using Gecko;
 using Microsoft.Win32;
 using SIL.CoreImpl;
-using SIL.CoreImpl.Properties;
-using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.Framework;
@@ -36,7 +31,6 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.DomainServices.BackupRestore;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
 using SIL.FieldWorks.FDO.Infrastructure;
@@ -47,7 +41,6 @@ using SIL.FieldWorks.LexicalProvider;
 using SIL.FieldWorks.PaObjects;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks;
-using SIL.IO;
 using SIL.Reporting;
 using SIL.Utils;
 using SIL.Windows.Forms.HtmlBrowser;
@@ -57,11 +50,10 @@ using XCore;
 using ConfigurationException = SIL.Utils.ConfigurationException;
 using FileUtils = SIL.Utils.FileUtils;
 
-
 #if __MonoCS__
 using SIL.Keyboarding;
 #else
-using NetSparkle;
+
 #endif
 
 namespace SIL.FieldWorks
@@ -317,9 +309,6 @@ namespace SIL.FieldWorks
 				// from HKCU/Software/SIL/FieldWorks/7.0 -> FieldWorks/9 or
 				// from HKCU/Software/SIL/FieldWorks/8 -> FieldWorks/9
 				FwRegistryHelper.UpgradeUserSettingsIfNeeded();
-
-				// initialize the TE styles path so that ScrMappingList can load default styles
-				ScrMappingList.TeStylesPath = FwDirectoryFinder.TeStylesPath;
 
 				if (appArgs.ShowHelp)
 				{

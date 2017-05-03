@@ -1,12 +1,6 @@
-// Copyright (c) 2010-2013 SIL International
+// Copyright (c) 2010-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: DataMigration7000016Tests.cs
-// Responsibility: mcconnel
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Collections.Generic;
@@ -14,7 +8,6 @@ using System.Xml.Linq;
 using System.Xml.XPath;
 
 using NUnit.Framework;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
 
 namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
@@ -56,7 +49,8 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 
 			var mockMdc = SetupMdc();
 
-			IDomainObjectDTORepository repoDTO = new DomainObjectDtoRepository(7000015, dtos, mockMdc, null, FwDirectoryFinder.FdoDirectories);
+			IDomainObjectDTORepository repoDTO = new DomainObjectDtoRepository(7000015, dtos, mockMdc, null,
+				TestDirectoryFinder.FdoDirectories);
 
 			// SUT: Do the migration.
 			m_dataMigrationManager.PerformMigration(repoDTO, 7000016, new DummyProgressDlg());
@@ -111,12 +105,12 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 		public void CheckOnNoPossibilitiesInListAtStart()
 		{
 			var dtos = new HashSet<DomainObjectDTO>
-						{
-							new DomainObjectDTO("D9D55B12-EA5E-11DE-95EF-0013722F8DEC".ToLowerInvariant(), "CmPossibilityList",
-												@"<rt class='CmPossibilityList' guid='D9D55B12-EA5E-11DE-95EF-0013722F8DEC' ownerguid='D739CBEA-EA5E-11DE-85BE-0013722F8DEC'></rt>")
-						};
+			{
+				new DomainObjectDTO("D9D55B12-EA5E-11DE-95EF-0013722F8DEC".ToLowerInvariant(), "CmPossibilityList",
+					@"<rt class='CmPossibilityList' guid='D9D55B12-EA5E-11DE-95EF-0013722F8DEC' ownerguid='D739CBEA-EA5E-11DE-85BE-0013722F8DEC'></rt>")
+			};
 			var mockMdc = SetupMdc();
-			IDomainObjectDTORepository repoDto = new DomainObjectDtoRepository(7000015, dtos, mockMdc, null, FwDirectoryFinder.FdoDirectories);
+			IDomainObjectDTORepository repoDto = new DomainObjectDtoRepository(7000015, dtos, mockMdc, null, TestDirectoryFinder.FdoDirectories);
 			// SUT: Do the migration.
 			m_dataMigrationManager.PerformMigration(repoDto, 7000016, new DummyProgressDlg());
 			// Verification Phase

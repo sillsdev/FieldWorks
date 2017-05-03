@@ -4,8 +4,7 @@
 
 using System;
 using System.ComponentModel;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.FwUtils;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO.FDOTests
 {
@@ -14,15 +13,18 @@ namespace SIL.FieldWorks.FDO.FDOTests
 	/// </summary>
 	public class DummyFdoUI : IFdoUI
 	{
-		private readonly ThreadHelper m_threadHelper = SingletonsContainer.Get<ThreadHelper>();
+		/// <summary>
+		/// Initializes a new instance of the <see cref="DummyFdoUI"/> class.
+		/// </summary>
+		public DummyFdoUI()
+		{
+			SynchronizeInvoke = new SingleThreadedSynchronizeInvoke();
+		}
 
 		/// <summary>
 		/// Gets the object that is used to invoke methods on the main UI thread.
 		/// </summary>
-		public ISynchronizeInvoke SynchronizeInvoke
-		{
-			get { return m_threadHelper; }
-		}
+		public ISynchronizeInvoke SynchronizeInvoke { get; }
 
 		/// <summary>
 		/// Gets the error message.

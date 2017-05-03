@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -1010,12 +1010,12 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 			nodes.AddRange(transduceList);
 
 			// First merge tests case where old value is empty.
-			XmlUtils.SetAttribute(transduceList[0], "transduce", "LexEntry.Bibliography");
-			XmlUtils.SetAttribute(transduceList[1], "transduce", "LexSense.SemanticsNote");
-			XmlUtils.SetAttribute(transduceList[2], "transduce", "LexSense.ScientificName");
-			XmlUtils.SetAttribute(transduceList[3], "transduce", "LexExampleSentence.Example");
-			XmlUtils.SetAttribute(transduceList[4], "transduce", "LexExampleSentence.Reference");
-			XmlUtils.SetAttribute(transduceList[5], "transduce", "CmTranslation.Translation");
+			SetAttribute(transduceList[0], "transduce", "LexEntry.Bibliography");
+			SetAttribute(transduceList[1], "transduce", "LexSense.SemanticsNote");
+			SetAttribute(transduceList[2], "transduce", "LexSense.ScientificName");
+			SetAttribute(transduceList[3], "transduce", "LexExampleSentence.Example");
+			SetAttribute(transduceList[4], "transduce", "LexExampleSentence.Reference");
+			SetAttribute(transduceList[5], "transduce", "CmTranslation.Translation");
 			ITsString[] data = { MakeVernString("kick"),
 				MakeAnalysisString("strike with foot"), MakeAnalysisString("see Encycopledia under football"), MakeVernString("used for a forceful motion"),
 				MakeAnalysisString("kickS"), MakeVernString("kick the ball"), MakeAnalysisString("my head"), MakeAnalysisString("strike the ball with your foot")};
@@ -1049,9 +1049,9 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 			foreach (var item in labels)
 			{
 				var node = doc.CreateElement("column");
-				XmlUtils.SetAttribute(node, "label", item);
+				SetAttribute(node, "label", item);
 				if (!editable)
-					XmlUtils.SetAttribute(node, "editable", "false");
+					SetAttribute(node, "editable", "false");
 				result.Add(node);
 			}
 			return result;
@@ -1061,11 +1061,32 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 		{
 			var doc = new XmlDocument();
 			var node = doc.CreateElement("column");
-			XmlUtils.SetAttribute(node, "label", label);
-			XmlUtils.SetAttribute(node, "transduce", transduce);
-			XmlUtils.SetAttribute(node, "list", list);
-			XmlUtils.SetAttribute(node, "editable", "true");
+			SetAttribute(node, "label", label);
+			SetAttribute(node, "transduce", transduce);
+			SetAttribute(node, "list", list);
+			SetAttribute(node, "editable", "true");
 			return node;
+		}
+
+		/// <summary>
+		/// Change the value of the specified attribute, appending it if not already present.
+		/// </summary>
+		private static void SetAttribute(XmlNode parent, string attrName, string attrVal)
+		{
+			XmlAttribute xa = parent.Attributes?[attrName];
+			if (xa != null)
+			{
+				xa.Value = attrVal;
+			}
+			else
+			{
+				xa = parent.OwnerDocument?.CreateAttribute(attrName);
+				if (xa != null)
+				{
+					xa.Value = attrVal;
+					parent.Attributes?.Append(xa);
+				}
+			}
 		}
 
 		private ITsString MakeVernString(string arg)

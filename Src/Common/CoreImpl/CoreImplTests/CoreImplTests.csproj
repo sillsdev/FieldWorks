@@ -61,6 +61,14 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\CoreImpl.dll</HintPath>
     </Reference>
+    <Reference Include="icu.net, Version=2.0.1.0, Culture=neutral, PublicKeyToken=416fdd914afa6b66, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Downloads\icu.net.dll</HintPath>
+    </Reference>
+    <Reference Include="NMock, Version=1.0.5906.32211, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Bin\nmock\NMock.dll</HintPath>
+    </Reference>
     <Reference Include="nunit.framework, Version=2.4.7.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
@@ -99,6 +107,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AssertEx.cs" />
     <Compile Include="Attributes\CleanupSingletonsAttribute.cs" />
     <Compile Include="BCVRefTests.cs" />
     <Compile Include="DirectoryFinderTests.cs" />
@@ -109,10 +118,10 @@
       <DependentUpon>TestResources.resx</DependentUpon>
     </Compile>
     <Compile Include="RecentItemsCacheTests.cs" />
+    <Compile Include="Attributes\InitIcuForTestsAttribute.cs" />
     <Compile Include="Scripture\MultilingScrBooksTests.cs" />
     <Compile Include="Scripture\ScrReferenceTests.cs" />
     <Compile Include="Scripture\VersificationTests.cs" />
-    <Compile Include="Attributes\SetIcuEnvForTestsAttribute.cs" />
     <Compile Include="Attributes\RedirectHKCU.cs" />
     <Compile Include="SingletonsContainerTests.cs" />
     <Compile Include="StringTableTests.cs" />
@@ -123,8 +132,12 @@
     <Compile Include="TsSerializerTestsBase.cs" />
     <Compile Include="TsStrBldrTests.cs" />
     <Compile Include="TsStrFactoryTests.cs" />
+    <Compile Include="TsStringHelper.cs" />
+    <Compile Include="TsStringHelperTests.cs" />
     <Compile Include="TsStringNormalizationTests.cs" />
     <Compile Include="TsStringTests.cs" />
+    <Compile Include="TsTextPropsHelper.cs" />
+    <Compile Include="TsTextPropsHelperTests.cs" />
     <Compile Include="TsTextPropsTests.cs" />
     <Compile Include="WritingSystemManagerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

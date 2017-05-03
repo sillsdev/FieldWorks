@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2010-2016 SIL International
+﻿// Copyright (c) 2010-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,8 +6,6 @@ using System;
 using System.IO;
 using System.Text;
 using NUnit.Framework;
-
-using SIL.FieldWorks.Test.TestUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.FDO.Application.ApplicationServices;
@@ -24,7 +22,7 @@ namespace SIL.FieldWorks.XWorks
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
-	public class ExportDialogTests : BaseTest
+	public class ExportDialogTests
 	{
 		#region SemanticDomainXml
 		/// <summary>

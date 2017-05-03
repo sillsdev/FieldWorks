@@ -1,16 +1,12 @@
-// Copyright (c) 2010-2013 SIL International
+// Copyright (c) 2010-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ProjectIdTests.cs
-// Responsibility: FW team
+
 using System.IO;
-using System.Text;
 using NUnit.Framework;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Test.TestUtils;
 using SIL.Utils;
 
 namespace SIL.FieldWorks
@@ -21,7 +17,7 @@ namespace SIL.FieldWorks
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
-	public class ProjectIDTests : BaseTest
+	public class ProjectIDTests
 	{
 		#region Member variables
 		private FDOBackendProviderType m_defaultBepType;

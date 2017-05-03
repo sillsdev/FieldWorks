@@ -1,19 +1,13 @@
-﻿// Copyright (c) 2009-2013 SIL International
+﻿// Copyright (c) 2009-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: XmlListTests.cs
-// Responsibility: mcconnel
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Threading;
 using NUnit.Framework;
 using SIL.FieldWorks.FDO.Application.ApplicationServices;
-using SIL.FieldWorks.Test.TestUtils;
-using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.FDO.FDOTests
 {
@@ -23,7 +17,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
-	public class XmlListTests : BaseTest
+	public class XmlListTests
 	{
 		private FdoCache m_cache;
 		#region s_ksPartsOfSpeechXml
@@ -591,9 +585,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[SetUp]
 		public void CreateMockCache()
 		{
-			m_cache = FdoCache.CreateCacheWithNewBlankLangProj(
-				new TestProjectId(FDOBackendProviderType.kMemoryOnly, null), "en", "es", "en", new DummyFdoUI(),
-				FwDirectoryFinder.FdoDirectories, new FdoSettings());
+			m_cache = FdoCache.CreateCacheWithNewBlankLangProj(new TestProjectId(FDOBackendProviderType.kMemoryOnly, null), "en", "es",
+				"en", new DummyFdoUI(), TestDirectoryFinder.FdoDirectories, new FdoSettings());
 			// Verify that we can process integers from lists regardless of mangled culture info LT-18245
 			var culture = Thread.CurrentThread.CurrentCulture;
 			// Make a writable clone

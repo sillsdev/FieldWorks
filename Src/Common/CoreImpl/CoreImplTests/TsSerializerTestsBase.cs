@@ -27,7 +27,6 @@ namespace SIL.CoreImpl
 		[TestFixtureSetUp]
 		public void FixtureSetup()
 		{
-			Icu.InitIcuDataDir();
 			WritingSystemManager = new WritingSystemManager();
 
 			CoreWritingSystemDefinition enWs;

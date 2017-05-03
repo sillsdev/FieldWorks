@@ -1,19 +1,14 @@
-// Copyright (c) 2009-2013 SIL International
+// Copyright (c) 2009-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: FdoTestHelper.cs
-// Responsibility: FW Team
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.CoreImpl;
 using SIL.Utils;
-using System.Diagnostics.CodeAnalysis;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.FDO.FDOTests
@@ -411,14 +406,6 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			string sObjData = props.GetStrPropValue((int)FwTextPropType.ktptObjData);
 			Assert.AreEqual(Convert.ToChar((int)FwObjDataTypes.kodtExternalPathName), sObjData[0]);
 			Assert.AreEqual(sUrl, sObjData.Substring(1));
-		}
-
-		/// <summary>
-		/// Setup static FDO properties
-		/// </summary>
-		public static void SetupStaticFdoProperties()
-		{
-			ScrMappingList.TeStylesPath = FwDirectoryFinder.TeStylesPath;
 		}
 	}
 }

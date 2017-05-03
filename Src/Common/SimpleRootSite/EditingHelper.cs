@@ -3417,7 +3417,7 @@ namespace SIL.FieldWorks.Common.RootSites
 					// Avoid possible crashes if we know we can't paste.  (See LT-11150 and LT-11219.)
 					if (vwsel == null || !vwsel.IsValid || tss == null)
 					{
-						MiscUtils.ErrorBeep();
+						FwUtils.FwUtils.ErrorBeep();
 						return false;
 					}
 					// ENHANCE (FWR-1732):
@@ -3433,7 +3433,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			{
 				if (e is COMException && (uint)((COMException)e).ErrorCode == 0x80004005) // E_FAIL
 				{
-					MiscUtils.ErrorBeep();
+					FwUtils.FwUtils.ErrorBeep();
 					return false;
 				}
 				Logger.WriteError(e); // TE-6908/LT-6781

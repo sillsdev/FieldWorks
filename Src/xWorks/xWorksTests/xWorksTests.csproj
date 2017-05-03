@@ -210,10 +210,6 @@
       <HintPath>..\..\..\Output\Debug\SimpleRootSite.dll</HintPath>
     </Reference>
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="TestUtils, Version=6.9.5.0, Culture=neutral, PublicKeyToken=null">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\TestUtils.dll</HintPath>
-    </Reference>
     <Reference Include="Widgets, Version=6.9.5.0, Culture=neutral, PublicKeyToken=null">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\Widgets.dll</HintPath>
@@ -243,9 +239,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\FDO\FDOTests\FwSetupFixtureClass.cs">
-      <Link>FwSetupFixtureClass.cs</Link>
-    </Compile>
     <Compile Include="AddCustomFieldDialogTests.cs" />
     <Compile Include="AllReversalEntriesRecordListTests.cs" />
     <Compile Include="ArchivingTests.cs" />
@@ -281,6 +274,7 @@
     <Compile Include="InterestingTextsTests.cs" />
     <Compile Include="ItemClickedTests.cs" />
     <Compile Include="MacroListenerTests.cs" />
+    <Compile Include="ReveralIndexServicesTests.cs" />
     <Compile Include="UploadToWebonaryControllerTests.cs" />
     <Compile Include="UploadToWebonaryModelTests.cs" />
     <Compile Include="UnicodeCharacterEditingHelperTests.cs" />

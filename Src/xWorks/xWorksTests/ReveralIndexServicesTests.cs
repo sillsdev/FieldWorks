@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2016 SIL International
+﻿// Copyright (c) 2016-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -9,20 +9,20 @@ using System.Xml.XPath;
 using NUnit.Framework;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.TestUtilities;
 using SIL.Utils;
-using RIS = SIL.FieldWorks.FDO.DomainServices.ReversalIndexServices;
+using RIS = SIL.FieldWorks.XWorks.ReversalIndexServices;
 
 // ReSharper disable InconsistentNaming (Justification: Test names have underscores)
-namespace SIL.FieldWorks.FDO.FDOTests
+namespace SIL.FieldWorks.XWorks
 {
 	/// <summary/>
 	[TestFixture]
 	public class ReversalIndexServicesTests : MemoryOnlyBackendProviderTestBase
 	{
-		private WritingSystemManager WSMgr { get { return Cache.ServiceLocator.WritingSystemManager; } }
+		private WritingSystemManager WSMgr => Cache.ServiceLocator.WritingSystemManager;
 
 		/// <summary>
 		/// Verifies that CreateOrRemoveReversalIndexConfigurationFiles
@@ -37,7 +37,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			const string nonExtantWs = "es";
 			var analWss = new[] { "en", "fr", "de" };
 			NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(Cache.ActionHandlerAccessor,
-				() =>Cache.LangProject.AnalysisWss = string.Join(" ", analWss));
+				() => Cache.LangProject.AnalysisWss = string.Join(" ", analWss));
 			using (var tfProject = new TemporaryFolder("ProjForDontDeleteRealReversals"))
 			{
 				var projectsDir = Path.GetDirectoryName(tfProject.Path);
@@ -63,14 +63,15 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				normalFile.Save(normalFilename);
 
 
-				ReversalIndexServices.CreateOrRemoveReversalIndexConfigurationFiles(WSMgr, Cache, FwDirectoryFinder.DefaultConfigurations,
+				RIS.CreateOrRemoveReversalIndexConfigurationFiles(WSMgr, Cache, FwDirectoryFinder.DefaultConfigurations,
 					projectsDir, projectName);
 
 				Assert.That(File.Exists(crazyFilename), crazyFilename + " should not have been deleted");
 				Assert.AreEqual(analWss[0], GetWsFromFile(crazyFilename), "WS in custom-named file should not have been changed");
 				Assert.That(!File.Exists(nonExtantWsFilename));
 				Assert.That(File.Exists(wrongWsFilename));
-				Assert.AreEqual(analWss[1], GetWsFromFile(wrongWsFilename), "WS in wrong ws-named file should have been changed (we think)");
+				Assert.AreEqual(analWss[1], GetWsFromFile(wrongWsFilename),
+					"WS in wrong ws-named file should have been changed (we think)");
 				Assert.That(File.Exists(allReversalsFilename));
 				Assert.AreEqual(string.Empty, GetWsFromFile(allReversalsFilename), "All reversals should not have a writing system");
 				foreach (var ws in analWss)
@@ -102,7 +103,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 		private static string GetWsFromFile(string filename)
 		{
-			return XDocument.Load(filename).XPathSelectElement(RIS.DictConfigElement).Attribute(RIS.WsAttribute).Value;
+			return XDocument.Load(filename).XPathSelectElement(RIS.DictConfigElement).Attribute(RIS.WsAttribute)?.Value;
 		}
 
 		private static XDocument GetLastModifiedAttributeFromFile(string filename, out XAttribute modifiedAtt)

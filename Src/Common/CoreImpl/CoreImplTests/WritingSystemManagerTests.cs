@@ -45,15 +45,6 @@ namespace SIL.CoreImpl
 			}
 		}
 
-		/// <summary>
-		/// If a test overrides this, it should call this base implementation.
-		/// </summary>
-		[TestFixtureSetUp]
-		public virtual void FixtureSetup()
-		{
-			Icu.InitIcuDataDir();
-		}
-
 		private static string PrepareTempStore(string name)
 		{
 			string path = Path.Combine(Path.GetTempPath(), name);

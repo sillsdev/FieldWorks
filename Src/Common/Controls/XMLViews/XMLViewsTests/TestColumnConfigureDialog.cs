@@ -11,14 +11,13 @@ using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
-using SIL.FieldWorks.Test.TestUtils;
 using XCore;
 
 namespace XMLViewsTests
 {
 	/// <summary></summary>
 	[TestFixture]
-	public class TestColumnConfigureDialog : BaseTest
+	public class TestColumnConfigureDialog
 	{
 		private Mediator m_mediator;
 		private PropertyTable m_propertyTable;

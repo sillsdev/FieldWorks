@@ -1,13 +1,9 @@
-// Copyright (c) 2008-2013 SIL International
+// Copyright (c) 2008-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ScrReferencePositionComparerTests.cs
-// Responsibility: TE Team
 
 using System;
 using NUnit.Framework;
-using SIL.FieldWorks.Test.TestUtils;
 using SIL.CoreImpl.Scripture;
 
 namespace SIL.FieldWorks.Common.ScriptureUtils
@@ -18,7 +14,7 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
-	public class ScrReferencePositionComparerTests : BaseTest
+	public class ScrReferencePositionComparerTests
 	{
 		private ScrReferencePositionComparer m_comparer;
 		private DummyScrProjMetaDataProvider m_mdProvider = new DummyScrProjMetaDataProvider();
@@ -28,9 +24,9 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 		/// Setup the test fixture.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public override void FixtureSetup()
+		[TestFixtureSetUp]
+		public void FixtureSetup()
 		{
-			base.FixtureSetup();
 			m_comparer = new ScrReferencePositionComparer(m_mdProvider, true);
 			ScrReferenceTests.InitializeScrReferenceForTests();
 		}

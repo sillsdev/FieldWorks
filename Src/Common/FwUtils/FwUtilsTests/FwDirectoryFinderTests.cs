@@ -5,7 +5,6 @@
 using System;
 using System.IO;
 using NUnit.Framework;
-using SIL.FieldWorks.Test.TestUtils;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.FwUtils
@@ -17,7 +16,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 	/// </summary>
 	///-----------------------------------------------------------------------------------------
 	[TestFixture]
-	public class FwDirectoryFinderTests : BaseTest
+	public class FwDirectoryFinderTests
 	{
 		/// <summary>
 		/// Resets the registry helper

@@ -313,7 +313,7 @@ namespace XCore
 		{
 			if (!Monitor.TryEnter(m_properties))
 			{
-				MiscUtils.ErrorBeep();
+				FwUtils.ErrorBeep();
 				TraceVerboseLine(">>>>>>>*****  colision: <A>  ********<<<<<<<<<<<");
 				Monitor.Enter(m_properties);
 			}
@@ -394,7 +394,7 @@ namespace XCore
 		{
 			if (!Monitor.TryEnter(m_properties))
 			{
-				MiscUtils.ErrorBeep();
+				FwUtils.ErrorBeep();
 				TraceVerboseLine(">>>>>>>*****  colision: <A>  ********<<<<<<<<<<<");
 				Monitor.Enter(m_properties);
 			}

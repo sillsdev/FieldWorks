@@ -3,8 +3,10 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Runtime.InteropServices;
 using System.Security;
 using NUnit.Framework;
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.Utils.Attributes
 {
@@ -18,37 +20,67 @@ namespace SIL.Utils.Attributes
 	[SuppressUnmanagedCodeSecurity]
 	public class CreateComObjectsFromManifestAttribute : TestActionAttribute
 	{
-#if !__MonoCS__
 		private ActivationContextHelper m_activationContext;
 		private IDisposable m_currentActivation;
-#endif
+		private DebugProcs m_debugProcs;
 
 		/// <summary/>
-		public override ActionTargets Targets
-		{
-			get { return ActionTargets.Suite; }
-		}
+		public override ActionTargets Targets => ActionTargets.Suite;
 
 		/// <summary/>
 		public override void BeforeTest(TestDetails testDetails)
 		{
 			base.BeforeTest(testDetails);
 
-#if !__MonoCS__
 			m_activationContext = new ActivationContextHelper("FieldWorks.Tests.manifest");
 			m_currentActivation = m_activationContext.Activate();
+			m_debugProcs = new DebugProcs();
+
+#if __MonoCS__
+			try
+			{
+				using (var process = System.Diagnostics.Process.GetCurrentProcess())
+				{
+					// try to change PTRACE option so that unmanaged call stacks show more useful
+					// information. Since Ubuntu 10.10 a normal user is no longer allowed to use
+					// PTRACE. This prevents call stacks and assertions from working properly.
+					// However, we can set a flag on the currently running process to allow
+					// it. See also the similar code in Generic/ModuleEntry.cpp
+					prctl(PR_SET_PTRACER, (IntPtr)process.Id, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
+				}
+			}
+			catch (Exception e)
+			{
+				// just ignore any errors we get
+			}
 #endif
 		}
 
 		/// <summary/>
 		public override void AfterTest(TestDetails testDetails)
 		{
-#if !__MonoCS__
+			m_debugProcs.Dispose();
+			CoFreeUnusedLibraries();
+
 			m_currentActivation.Dispose();
 			m_activationContext.Dispose();
-#endif
 
 			base.AfterTest(testDetails);
 		}
+
+		/// <summary>
+		/// Unloads any DLLs that are no longer in use and that, when loaded, were specified to
+		/// be freed automatically
+		/// </summary>
+		[DllImport("ole32.dll")]
+		private static extern void CoFreeUnusedLibraries();
+
+#if __MonoCS__
+		[DllImport ("libc")] // Linux
+		private static extern int prctl(int option, IntPtr arg2, IntPtr arg3, IntPtr arg4,
+			IntPtr arg5);
+
+		private const int PR_SET_PTRACER = 0x59616d61;
+#endif
 	}
 }

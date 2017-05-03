@@ -13,9 +13,9 @@ using SIL.TestUtilities;
 [assembly: AssemblyTitle("CoreImplTests")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Jaars, Inc.")]
-[assembly: AssemblyProduct("CoreImplTests")]
-[assembly: AssemblyCopyright("Copyright © Jaars, Inc. 2009")]
+[assembly: AssemblyCompany("SIL")]
+[assembly: AssemblyProduct("SIL FieldWorks")]
+[assembly: AssemblyCopyright("Copyright (c) 2017 SIL International")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -26,8 +26,6 @@ using SIL.TestUtilities;
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("f03c7dc3-a760-4d22-831d-9e6c9785cc31")]
-
-[assembly: OfflineSldr]
 
 // Version information for an assembly consists of the following four values:
 //
@@ -44,4 +42,5 @@ using SIL.TestUtilities;
 
 // Cleanup all singletons after running tests
 [assembly: CleanupSingletons]
-[assembly: SetIcuEnvForTests]
+[assembly: InitIcuForTests]
+[assembly: OfflineSldr]

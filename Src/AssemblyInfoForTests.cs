@@ -6,6 +6,7 @@ using NUnit.Framework;
 using SIL.CoreImpl.Attributes;
 using SIL.Utils.Attributes;
 using SIL.FieldWorks.Common.FwUtils.Attributes;
+using SIL.TestUtilities;
 
 // This file is for test fixtures for UI related projects, i.e. projects that do
 // reference System.Windows.Forms et al.
@@ -25,8 +26,8 @@ using SIL.FieldWorks.Common.FwUtils.Attributes;
 // Override company and product names
 [assembly: SetCompanyAndProductForTests]
 
-// Set ICU_DATA env variable
-[assembly: SetIcuEnvForTests]
+// Initialize ICU
+[assembly: InitIcuForTests]
 
 // Redirect HKCU if environment variable BUILDAGENT_SUBKEY is set
 [assembly: RedirectHKCU]
@@ -36,3 +37,12 @@ using SIL.FieldWorks.Common.FwUtils.Attributes;
 
 // Initialize a do-nothing keyboard controller
 [assembly: InitializeNoOpKeyboardController]
+
+// Turns the SLDR API into offline mode
+[assembly: OfflineSldr]
+
+// Suppresses error beeps
+[assembly: SuppressErrorBeeps]
+
+// Handles any unhandled exceptions thrown on Windows Forms threads
+[assembly: HandleApplicationThreadException]

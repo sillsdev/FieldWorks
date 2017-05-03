@@ -13,11 +13,8 @@
 using System;
 using System.IO;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.Test.TestUtils;
 using SIL.CoreImpl;
-using System.Diagnostics.CodeAnalysis;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.FDO.FDOTests
@@ -34,7 +31,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 	/// and add relevant test data to its nearly empty LanguageProperty.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public abstract class FdoTestBase : BaseTest
+	[TestFixture]
+	public abstract class FdoTestBase
 	{
 		private FdoCache m_cache;
 		/// <summary></summary>
@@ -82,10 +80,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[TestFixtureSetUp]
-		public override void FixtureSetup()
+		public virtual void FixtureSetup()
 		{
-			base.FixtureSetup();
-
 			SetupEverythingButBase();
 		}
 
@@ -96,10 +92,6 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			if (m_cache != null)
 				DisposeEverythingButBase();
-			// We need FieldWorks here to get the correct registry key HKLM\Software\SIL\FieldWorks.
-			// The default without this would be HKLM\Software\SIL\SIL FieldWorks, which breaks some tests.
-			RegistryHelper.ProductName = "FieldWorks";
-			FdoTestHelper.SetupStaticFdoProperties();
 			m_cache = CreateCache();
 			m_actionHandler = m_cache.ServiceLocator.GetInstance<IActionHandler>();
 		}
@@ -110,11 +102,9 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[TestFixtureTearDown]
-		public override void FixtureTeardown()
+		public virtual void FixtureTeardown()
 		{
 			DisposeEverythingButBase();
-
-			base.FixtureTeardown();
 		}
 
 		/// <summary>
@@ -122,8 +112,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// </summary>
 		protected void DisposeEverythingButBase()
 		{
-			if (m_cache != null)
-				m_cache.Dispose();
+			m_cache?.Dispose();
 			m_cache = null;
 			m_actionHandler = null;
 		}
@@ -137,7 +126,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[SetUp]
 		public virtual void TestSetup()
 		{
-			ClipboardUtils.Manager.SetClipboardAdapter(new ClipboardStub());
+			// ClipboardUtils.Manager.SetClipboardAdapter(new ClipboardStub());
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -171,8 +160,18 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// <returns>a working FdoCache</returns>
 		protected FdoCache BootstrapSystem(IProjectIdentifier projectId, BackendBulkLoadDomain loadType, FdoSettings settings)
 		{
-			var retval = m_internalRestart ? FdoCache.CreateCacheFromExistingData(projectId, "en", new DummyFdoUI(), FwDirectoryFinder.FdoDirectories, settings, new DummyProgressDlg()) :
-				FdoCache.CreateCacheWithNewBlankLangProj(projectId, "en", "fr", "en", new DummyFdoUI(), FwDirectoryFinder.FdoDirectories, settings);
+			FdoCache retval;
+			if (m_internalRestart)
+			{
+				retval = FdoCache.CreateCacheFromExistingData(projectId, "en", new DummyFdoUI(), TestDirectoryFinder.FdoDirectories,
+					settings, new DummyProgressDlg());
+			}
+			else
+			{
+				retval = FdoCache.CreateCacheWithNewBlankLangProj(projectId, "en", "fr", "en", new DummyFdoUI(),
+					TestDirectoryFinder.FdoDirectories, settings);
+			}
+
 			var dataSetup = retval.ServiceLocator.GetInstance<IDataSetup>();
 			dataSetup.LoadDomain(loadType);
 			return retval;

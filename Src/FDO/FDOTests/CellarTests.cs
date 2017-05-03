@@ -1,12 +1,6 @@
-// Copyright (c) 2004-2013 SIL International
+// Copyright (c) 2004-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: CellarTests.cs
-// Responsibility: TE Team
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Linq;
@@ -16,7 +10,6 @@ using SIL.FieldWorks.FDO.DomainImpl;
 using System.Xml;
 using System.IO;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices;
 
 namespace SIL.FieldWorks.FDO.FDOTests.CellarTests
@@ -489,7 +482,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.CellarTests
 
 			// Set up the xml fs description
 			XmlDocument doc = new XmlDocument();
-			string sFileDir = Path.Combine(FwDirectoryFinder.SourceDirectory, @"FDO/FDOTests/TestData");
+			string sFileDir = Path.Combine(TestDirectoryFinder.SourceDirectory, "FDO", "FDOTests", "TestData");
 			string sFile = Path.Combine(sFileDir, "FeatureSystem2.xml");
 
 			doc.Load(sFile);

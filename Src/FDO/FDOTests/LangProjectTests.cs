@@ -1,16 +1,12 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: LangProjectTests.cs
-// Responsibility: TE Team
 
 using System;
 using System.IO;
 using System.Collections.Generic;
 using NUnit.Framework;
 using SIL.Utils;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 
@@ -172,14 +168,14 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public void LinkedFilesRootDirTests()
 		{
 			//test when LinkedFiles is in the project's root folder
-			var projectFolder = Path.Combine(FwDirectoryFinder.ProjectsDirectory, "TestProjectName");
+			var projectFolder = Path.Combine(TestDirectoryFinder.ProjectsDirectory, "TestProjectName");
 			var linkedFilesFullPath = Path.Combine(projectFolder, "LinkedFiles");
 			Cache.LanguageProject.LinkedFilesRootDir = linkedFilesFullPath;
 			var outputLinkedFilesFullPath = Cache.LanguageProject.LinkedFilesRootDir;
 			Assert.True(linkedFilesFullPath.Equals(outputLinkedFilesFullPath));
 
 			//test when linked files is in FW Projects folder
-			linkedFilesFullPath = Path.Combine(FwDirectoryFinder.ProjectsDirectory, "LinkedFiles");
+			linkedFilesFullPath = Path.Combine(TestDirectoryFinder.ProjectsDirectory, "LinkedFiles");
 			Cache.LanguageProject.LinkedFilesRootDir = linkedFilesFullPath;
 			outputLinkedFilesFullPath = Cache.LanguageProject.LinkedFilesRootDir;
 			Assert.True(linkedFilesFullPath.Equals(outputLinkedFilesFullPath));

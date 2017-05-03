@@ -406,6 +406,15 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		}
 		#endregion
 
+		internal ComboBox FontNamesComboBox
+		{
+			get
+			{
+				CheckDisposed();
+				return m_cboFontNames;
+			}
+		}
+
 		#region private methods
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -415,7 +424,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		/// magic font names and real font names; otherwise only the magic font names will be in
 		/// the list.</param>
 		/// ------------------------------------------------------------------------------------
-		private void FillFontNames(bool fIncludeRealFontNames)
+		internal void FillFontNames(bool fIncludeRealFontNames)
 		{
 			if (m_fFontListIncludesRealNames == fIncludeRealFontNames &&
 				m_cboFontNames.Items.Count > 0)

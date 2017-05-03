@@ -1,19 +1,11 @@
-﻿// Copyright (c) 2010-2013 SIL International
+﻿// Copyright (c) 2010-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: FwListBoxTests.cs
-// Responsibility:
-//
-// <remarks>
-// </remarks>
-// ---------------------------------------------------------------------------------------------
 
 using NUnit.Framework;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
-using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.FieldWorks.Test.TestUtils;
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.Common.Widgets
 {
@@ -23,7 +15,7 @@ namespace SIL.FieldWorks.Common.Widgets
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
-	public class FwListBoxTests : BaseTest
+	public class FwListBoxTests
 	{
 		#region Data Members
 		TestFwStylesheet m_stylesheet;
@@ -31,9 +23,9 @@ namespace SIL.FieldWorks.Common.Widgets
 		int m_hvoEnglishWs;
 		#endregion
 
-		public override void FixtureSetup()
+		[TestFixtureSetUp]
+		public void FixtureSetup()
 		{
-			base.FixtureSetup();
 			m_wsManager = new WritingSystemManager();
 
 			// setup English ws.

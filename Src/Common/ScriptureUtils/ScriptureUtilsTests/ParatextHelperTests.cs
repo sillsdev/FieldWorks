@@ -1,10 +1,9 @@
-// Copyright (c) 2011-2016 SIL International
+// Copyright (c) 2011-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using NUnit.Framework;
 using Paratext;
@@ -13,7 +12,6 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.Test.ProjectUnpacker;
-using SIL.FieldWorks.Test.TestUtils;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.ScriptureUtils
@@ -238,19 +236,15 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
 	[Platform(Exclude="Linux", Reason = "fails on Linux on build machine in fixture setup")]
-	public class ParatextHelperUnitTests : BaseTest
+	public class ParatextHelperUnitTests
 	{
 		private MockParatextHelper m_ptHelper;
 
 		#region Setup/Teardown
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public override void FixtureTeardown()
+		/// <summary />
+		[TestFixtureTearDown]
+		public void FixtureTeardown()
 		{
-			base.FixtureTeardown();
 			ParatextHelper.Manager.Reset();
 		}
 

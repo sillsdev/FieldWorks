@@ -9,7 +9,6 @@ using System.Xml.XPath;
 using NUnit.Framework;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
 using SIL.Utils;
-using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 {
@@ -29,9 +28,9 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 		///<summary>
 		/// Set up the data for the test.
 		///</summary>
-		public override void FixtureSetup()
+		[TestFixtureSetUp]
+		public void FixtureSetup()
 		{
-			base.FixtureSetup();
 			m_mapGuidToName.Add(LexEntryTypeTags.kguidLexTypCompound.ToString(), "Compound");
 			m_mapGuidToName.Add(LexEntryTypeTags.kguidLexTypContraction.ToString(), "Contraction");
 			m_mapGuidToName.Add(LexEntryTypeTags.kguidLexTypDerivation.ToString(), "Derivative");
@@ -154,7 +153,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 
 			// Create the DTO repository.
 			IDomainObjectDTORepository repoDto = new DomainObjectDtoRepository(7000041, dtos, mockMDC,
-				FileUtils.ChangePathToPlatform("C:\\WW\\DistFiles\\Projects\\TokPisin"), FwDirectoryFinder.FdoDirectories);
+				FileUtils.ChangePathToPlatform("C:\\WW\\DistFiles\\Projects\\TokPisin"), TestDirectoryFinder.FdoDirectories);
 
 			// Do Migration
 			m_dataMigrationManager.PerformMigration(repoDto, 7000042, new DummyProgressDlg());

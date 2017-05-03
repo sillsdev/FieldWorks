@@ -1,17 +1,13 @@
-// Copyright (c) 2006-2013 SIL International
+// Copyright (c) 2006-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ScrMappingListTests.cs
-// Responsibility: TE Team
 
 using System;
-
+using System.IO;
 using NUnit.Framework;
 using Rhino.Mocks;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.ScriptureUtils;
-using SIL.FieldWorks.Test.TestUtils;
 using SIL.Utils;
 using SIL.FieldWorks.FDO.DomainServices;
 
@@ -23,8 +19,11 @@ namespace SIL.FieldWorks.FDO.FDOTests
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
-	public class ScrMappingListTests : BaseTest
+	public class ScrMappingListTests
 	{
+		private string TestTeStylesPath => Path.Combine(TestDirectoryFinder.SourceDirectory, "FDO", "FDOTests", "TestData",
+			"TeStyles.xml");
+
 		#region Save/load mappings tests
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -34,7 +33,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void SetMappings_Main()
 		{
-			ScrMappingList list = new ScrMappingList(MappingSet.Main, null);
+			ScrMappingList list = new ScrMappingList(MappingSet.Main, null, null);
 			list.Add(new ImportMappingInfo(@"\a", null, false, MappingTargetType.TEStyle, MarkerDomain.Default, ScrStyleNames.NormalParagraph, null));
 			list.Add(new ImportMappingInfo(@"\a", null, false, MappingTargetType.TEStyle, MarkerDomain.BackTrans, ScrStyleNames.NormalParagraph, "es"));
 			list.Add(new ImportMappingInfo(@"\b", null, false, MappingTargetType.TEStyle, MarkerDomain.Default, ScrStyleNames.NormalParagraph, null));
@@ -87,7 +86,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void SetMappings_Notes()
 		{
-			ScrMappingList list = new ScrMappingList(MappingSet.Notes, null);
+			ScrMappingList list = new ScrMappingList(MappingSet.Notes, null, null);
 			list.Add(new ImportMappingInfo(@"\a", null, false, MappingTargetType.TEStyle, MarkerDomain.Note, ScrStyleNames.Remark, null));
 			list.Add(new ImportMappingInfo(@"\b", null, false, MappingTargetType.TEStyle, MarkerDomain.Default, ScrStyleNames.Remark, null));
 			try
@@ -116,7 +115,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void Delete()
 		{
-			ScrMappingList list = new ScrMappingList(MappingSet.Main, null);
+			ScrMappingList list = new ScrMappingList(MappingSet.Main, null, null);
 			list.Add(new ImportMappingInfo(@"\aa", null, false, MappingTargetType.TEStyle, MarkerDomain.Default, ScrStyleNames.Remark, null));
 			list.Add(new ImportMappingInfo(@"\bb", null, false, MappingTargetType.TEStyle, MarkerDomain.Default, ScrStyleNames.Remark, null));
 			list.Add(new ImportMappingInfo(@"\cc", null, false, MappingTargetType.TEStyle, MarkerDomain.BackTrans, ScrStyleNames.Remark, null));
@@ -139,7 +138,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void HasChanged()
 		{
-			ScrMappingList list = new ScrMappingList(MappingSet.Main, null);
+			ScrMappingList list = new ScrMappingList(MappingSet.Main, null, null);
 			list.Add(new ImportMappingInfo(@"\aa", null, false, MappingTargetType.TEStyle, MarkerDomain.Default, ScrStyleNames.Remark, null));
 			list.Add(new ImportMappingInfo(@"\bb", null, false, MappingTargetType.TEStyle, MarkerDomain.Default, ScrStyleNames.Remark, null));
 			list.Add(new ImportMappingInfo(@"\cc", null, false, MappingTargetType.TEStyle, MarkerDomain.BackTrans, ScrStyleNames.Remark, null));
@@ -166,7 +165,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[ExpectedException(typeof(ArgumentOutOfRangeException))]
 		public void Index_OutOfRange()
 		{
-			ScrMappingList list = new ScrMappingList(MappingSet.Notes, null);
+			ScrMappingList list = new ScrMappingList(MappingSet.Notes, null, null);
 			list.Add(new ImportMappingInfo(@"\a", null, false, MappingTargetType.TEStyle, MarkerDomain.Note, ScrStyleNames.Remark, null));
 
 			// Access the second element which should throw an exception
@@ -181,7 +180,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void LookupByKey()
 		{
-			ScrMappingList list = new ScrMappingList(MappingSet.Notes, null);
+			ScrMappingList list = new ScrMappingList(MappingSet.Notes, null, null);
 			list.Add(new ImportMappingInfo(@"\aa", null, false, MappingTargetType.TEStyle, MarkerDomain.Note, ScrStyleNames.Remark, null));
 			list.Add(new ImportMappingInfo(@"\bb", null, false, MappingTargetType.TEStyle, MarkerDomain.Note, ScrStyleNames.Remark, null));
 			list.Add(new ImportMappingInfo(@"\cc", null, false, MappingTargetType.TEStyle, MarkerDomain.Note, ScrStyleNames.Remark, null));
@@ -199,7 +198,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void LookupByKey_NonExistent()
 		{
-			ScrMappingList list = new ScrMappingList(MappingSet.Notes, null);
+			ScrMappingList list = new ScrMappingList(MappingSet.Notes, null, null);
 			Assert.IsNull(list["moogy"]);
 		}
 
@@ -211,7 +210,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void Enumerator()
 		{
-			ScrMappingList list = new ScrMappingList(MappingSet.Notes, null);
+			ScrMappingList list = new ScrMappingList(MappingSet.Notes, null, null);
 			list.Add(new ImportMappingInfo(@"\aa", null, false, MappingTargetType.TEStyle, MarkerDomain.Note, ScrStyleNames.Remark, null));
 			list.Add(new ImportMappingInfo(@"\bb", null, false, MappingTargetType.TEStyle, MarkerDomain.Note, ScrStyleNames.Remark, null));
 			list.Add(new ImportMappingInfo(@"\cc", null, false, MappingTargetType.TEStyle, MarkerDomain.Note, ScrStyleNames.Remark, null));
@@ -235,7 +234,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			IVwStylesheet stylesheet = MockRepository.GenerateMock<IVwStylesheet>();
 
-			ScrMappingList list = new ScrMappingList(MappingSet.Main, stylesheet);
+			ScrMappingList list = new ScrMappingList(MappingSet.Main, stylesheet, TestTeStylesPath);
 			list.AddDefaultMappingIfNeeded(@"\cap", ImportDomain.Main, true);
 			list.AddDefaultMappingIfNeeded(@"\cat", ImportDomain.Main, true);
 			list.AddDefaultMappingIfNeeded(@"\gmb", ImportDomain.Main, true);
@@ -288,7 +287,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			stylesheet.Stub(x => x.GetType("Emphasis")).Return((int)StyleType.kstCharacter);
 			stylesheet.Stub(x => x.GetType(ScrStyleNames.Remark)).Return((int)StyleType.kstParagraph);
 
-			ScrMappingList list = new ScrMappingList(MappingSet.Main, stylesheet);
+			ScrMappingList list = new ScrMappingList(MappingSet.Main, stylesheet, TestTeStylesPath);
 			list.AddDefaultMappingIfNeeded(@"\bt", ImportDomain.Main, true);
 			list.AddDefaultMappingIfNeeded(@"\btc", ImportDomain.Main, true);
 			list.AddDefaultMappingIfNeeded(@"\btf", ImportDomain.Main, true);
@@ -364,7 +363,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			stylesheet.Stub(x => x.GetContext("Emphasis")).Return((int)ContextValues.General);
 			stylesheet.Stub(x => x.GetType("Emphasis")).Return((int)StyleType.kstCharacter);
 
-			ScrMappingList list = new ScrMappingList(MappingSet.Main, stylesheet);
+			ScrMappingList list = new ScrMappingList(MappingSet.Main, stylesheet, TestTeStylesPath);
 			list.Add(new ImportMappingInfo(@"\p", null, "Emphasis"));
 			list.AddDefaultMappingIfNeeded(@"\btp", ImportDomain.Main, true);
 			Assert.AreEqual(2, list.Count);
@@ -390,7 +389,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			IVwStylesheet stylesheet = MockRepository.GenerateStrictMock<IVwStylesheet>();
 
-			ScrMappingList list = new ScrMappingList(MappingSet.Main, stylesheet);
+			ScrMappingList list = new ScrMappingList(MappingSet.Main, stylesheet, TestTeStylesPath);
 			list.Add(new ImportMappingInfo(@"\h", null, false, MappingTargetType.TitleShort,
 				MarkerDomain.Default, null, null));
 			list.AddDefaultMappingIfNeeded(@"\bth", ImportDomain.Main, true);
@@ -425,7 +424,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[ExpectedException(typeof(ArgumentNullException))]
 		public void AddNullMappingInfo()
 		{
-			ScrMappingList list = new ScrMappingList(MappingSet.Main, null);
+			ScrMappingList list = new ScrMappingList(MappingSet.Main, null, null);
 			list.Add(null);
 		}
 
@@ -439,7 +438,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[ExpectedException(typeof(ArgumentException))]
 		public void AddInfoWithNullMarker()
 		{
-			ScrMappingList list = new ScrMappingList(MappingSet.Main, null);
+			ScrMappingList list = new ScrMappingList(MappingSet.Main, null, null);
 			list.Add(new ImportMappingInfo(null, null, null));
 		}
 
@@ -453,7 +452,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[ExpectedException(typeof(ArgumentException))]
 		public void AddBlankMarker()
 		{
-			ScrMappingList list = new ScrMappingList(MappingSet.Main, null);
+			ScrMappingList list = new ScrMappingList(MappingSet.Main, null, null);
 			list.Add(new ImportMappingInfo(string.Empty, string.Empty, string.Empty));
 		}
 		#endregion

@@ -12,6 +12,7 @@ using System.Windows.Forms;
 using SIL.CoreImpl;
 using SIL.Utils;
 using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.WritingSystems;
 
 namespace SIL.FieldWorks.FwCoreDlgControls
@@ -931,7 +932,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			{
 				// Stop the character from being entered into the control since it is not valid.
 				e.Handled = true;
-				MiscUtils.ErrorBeep();
+				FwUtils.ErrorBeep();
 			}
 		}
 

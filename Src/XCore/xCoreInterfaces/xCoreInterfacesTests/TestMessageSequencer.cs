@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -8,7 +8,6 @@ using System.Windows.Forms;
 using System.Xml;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Test.TestUtils;
 
 namespace XCore
 {
@@ -16,7 +15,7 @@ namespace XCore
 	/// TestMessageSequencer.
 	/// </summary>
 	[TestFixture]
-	public class TestMessageSequencer: BaseTest
+	public class TestMessageSequencer
 	{
 		private class DummyForm : Form
 		{
@@ -235,7 +234,8 @@ namespace XCore
 		}
 	}
 
-	public class TestMessagePriority : BaseTest
+	[TestFixture]
+	public class TestMessagePriority
 	{
 		/// <summary>
 		/// Checks to make sure the priority of colleagues is being handled properly in the mediator.

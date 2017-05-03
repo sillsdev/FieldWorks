@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using SIL.CoreImpl.Attributes;
+using SIL.TestUtilities;
 
 // This file is for test fixtures for UI independent projects, i.e. projects that don't
 // reference System.Windows.Forms et al.
@@ -13,5 +14,8 @@ using SIL.CoreImpl.Attributes;
 // Redirect HKCU if environment variable BUILDAGENT_SUBKEY is set
 [assembly: RedirectHKCU]
 
-// Set ICU_DATA env variable
-[assembly: SetIcuEnvForTests]
+// Initialize ICU
+[assembly: InitIcuForTests]
+
+// Turns the SLDR API into offline mode
+[assembly: OfflineSldr]

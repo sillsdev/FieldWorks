@@ -94,7 +94,6 @@
     <Compile Include="CharEnumeratorForByteArray.cs" />
     <Compile Include="DisposableObjectsSet.cs" />
     <Compile Include="SimpleLogger.cs" />
-    <Compile Include="SingleThreadedSynchronizeInvoke.cs" />
     <Compile Include="HiMetric.cs" />
     <Compile Include="DriveUtil.cs" />
     <Compile Include="IStorage.cs" />

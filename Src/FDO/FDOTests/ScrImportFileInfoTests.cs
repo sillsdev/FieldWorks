@@ -1,16 +1,12 @@
-// Copyright (c) 2004-2015 SIL International
+// Copyright (c) 2004-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ScrImportFileInfoTests.cs
-// Responsibility: TE Team
 
 using System;
 using System.IO;
 using System.Text;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.ScriptureUtils;
-using SIL.FieldWorks.Test.TestUtils;
 using SILUBS.SharedScrUtils;
 using SIL.CoreImpl.Scripture;
 using SIL.FieldWorks.FDO.DomainServices;
@@ -24,7 +20,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
-	public class ScrImportFileInfoTests : BaseTest
+	public class ScrImportFileInfoTests
 	{
 		#region class DummyScrImportFileInfo
 		/// ------------------------------------------------------------------------------------
@@ -122,7 +118,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[SetUp]
 		public void Init()
 		{
-			m_mappingList = new ScrMappingList(MappingSet.Main, null);
+			m_mappingList = new ScrMappingList(MappingSet.Main, null, null);
 			m_factory = new ScrImportFileInfoFactory();
 			m_fileOs = new MockFileOS();
 			FileUtils.Manager.SetFileAdapter(m_fileOs);
@@ -141,9 +137,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[TestFixtureSetUp]
-		public override void FixtureSetup()
+		public void FixtureSetup()
 		{
-			base.FixtureSetup();
 			BCVRefTests.InitializeVersificationTable();
 		}
 		#endregion

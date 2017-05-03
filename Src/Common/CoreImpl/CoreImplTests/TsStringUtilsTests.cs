@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using System.Text; // for ILgWritingSystemFactory
+using System.Text;
 using System.Xml;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
@@ -34,7 +34,6 @@ namespace SIL.CoreImpl
 		[TestFixtureSetUp]
 		public void TestFixtureSetup()
 		{
-			Icu.InitIcuDataDir();
 			m_wsf = new WritingSystemManager();
 		}
 
@@ -1582,6 +1581,41 @@ namespace SIL.CoreImpl
 			Assert.AreEqual(0, validChars.Count);
 			Assert.AreEqual(1, invalidChars.Count);
 			Assert.AreEqual("\u0301", invalidChars[0]);
+		}
+
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests that ParseCharString method works when when passed a string of space-
+		/// delimited letters that contains an illegal digraph
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void ParseCharString_BogusDigraph()
+		{
+			List<string> invalidChars;
+			List<string> validChars = TsStringUtils.ParseCharString("ch a b c", " ", out invalidChars);
+			Assert.AreEqual(3, validChars.Count);
+			Assert.AreEqual("a", validChars[0]);
+			Assert.AreEqual("b", validChars[1]);
+			Assert.AreEqual("c", validChars[2]);
+			Assert.AreEqual(1, invalidChars.Count);
+			Assert.AreEqual("ch", invalidChars[0]);
+		}
+
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests that ParseCharString method works when passed a string of space-
+		/// delimited letters that contains an illegal digraph in the mode where we ignore
+		/// bogus characters (i.e. when we don't pass an empty list of invalid characters).
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void ParseCharString_IgnoreDigraph()
+		{
+			List<string> validChars = TsStringUtils.ParseCharString("ch a c", " ");
+			Assert.AreEqual(2, validChars.Count);
+			Assert.AreEqual("a", validChars[0]);
+			Assert.AreEqual("c", validChars[1]);
 		}
 		#endregion
 

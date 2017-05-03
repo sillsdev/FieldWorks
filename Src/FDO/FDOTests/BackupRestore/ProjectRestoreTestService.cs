@@ -1,10 +1,9 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices.BackupRestore;
 
 namespace SIL.FieldWorks.FDO.FDOTests.BackupRestore
@@ -20,7 +19,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.BackupRestore
 		/// </summary>
 		/// <param name="settings"></param>
 		public ProjectRestoreTestService(RestoreProjectSettings settings)
-			: base(settings, new DummyFdoUI(), FwDirectoryFinder.ConverterConsoleExe, FwDirectoryFinder.DbExe)
+			: base(settings, new DummyFdoUI(), "ConverterConsole.exe", "db.exe")
 		{
 			PutFilesInProject = false;
 			SimulateOKResult = true;

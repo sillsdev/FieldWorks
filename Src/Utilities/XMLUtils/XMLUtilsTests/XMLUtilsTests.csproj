@@ -109,14 +109,14 @@
       <Name>nunit.framework</Name>
       <HintPath>..\..\..\..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
     </Reference>
+    <Reference Include="SIL.TestUtilities, Version=3.1.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Downloads\SIL.TestUtilities.dll</HintPath>
+    </Reference>
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
     <Reference Include="System.Core" />
-    <Reference Include="TestUtils, Version=6.1.0.43066, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\TestUtils.dll</HintPath>
-    </Reference>
     <Reference Include="XMLUtils">
       <Name>XMLUtils</Name>
       <HintPath>..\..\..\..\Output\Debug\XMLUtils.dll</HintPath>
@@ -133,9 +133,6 @@
       <Link>AssemblyInfoForTests.cs</Link>
     </Compile>
     <Compile Include="DynamicLoaderTests.cs" />
-    <Compile Include="ErrorReporterTests.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="XmlUtilsTest.cs">
       <SubType>Code</SubType>
     </Compile>

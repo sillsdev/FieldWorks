@@ -1,11 +1,10 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Linq;
 using System.Xml.Linq;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
 using System.IO;
 using System.Collections.Generic;
@@ -48,7 +47,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 			mockMDC.AddClass(9, "CmFolder", "CmObject", new List<string>());
 			mockMDC.AddClass(10, "CmFile", "CmObject", new List<string>());
 			IDomainObjectDTORepository repoDto = new DomainObjectDtoRepository(7000033, dtos, mockMDC,
-				Path.GetTempPath(), FwDirectoryFinder.FdoDirectories);
+				Path.GetTempPath(), TestDirectoryFinder.FdoDirectories);
 
 			// Do the migration.
 			m_dataMigrationManager.PerformMigration(repoDto, 7000034, new DummyProgressDlg());

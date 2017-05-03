@@ -8,5 +8,5 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("FieldWorks Core Dialogs")]
 
 [assembly: ComVisible(false)]
-[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("FwCoreDlgsTests")]
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("FwCoreDlgControlsTests")]
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo("FwCoreDlgs")]

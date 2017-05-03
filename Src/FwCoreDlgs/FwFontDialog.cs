@@ -52,7 +52,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// Fills the font list.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		protected void FillFontList()
+		protected internal void FillFontList()
 		{
 			m_lbFontNames.Items.Clear();
 			m_lbFontNames.Items.Add(ResourceHelper.GetResourceString("kstidDefaultFont"));
@@ -65,6 +65,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			foreach (var name in fontNames)
 				m_lbFontNames.Items.Add(name);
 		}
+
+		internal ListBox FontNamesListBox => m_lbFontNames;
 
 		#region IFontDialog Members
 		/// ------------------------------------------------------------------------------------
@@ -259,7 +261,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <param name="sender">The sender.</param>
 		/// <param name="e">The <see cref="T:System.EventArgs"/> instance containing the event data.</param>
 		/// ------------------------------------------------------------------------------------
-		protected void OnSelectedFontSizesIndexChanged(object sender, EventArgs e)
+		protected internal void OnSelectedFontSizesIndexChanged(object sender, EventArgs e)
 		{
 			m_fInSelectedIndexChangedHandler = true;
 			try
@@ -298,7 +300,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary>
 		/// Returns true if applied, or false if size is not valid or is not changed.
 		/// </summary>
-		protected bool ApplyNewFontSizeIfValid(string size)
+		protected internal bool ApplyNewFontSizeIfValid(string size)
 		{
 			bool isNewAndValidSize = UpdateFontSizeIfValid(size);
 			if (isNewAndValidSize)
@@ -321,7 +323,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// If text size is already set or is not a valid font size, does not update and
 		/// returns false.
 		/// </summary>
-		protected bool UpdateFontSizeIfValid(string size)
+		protected internal bool UpdateFontSizeIfValid(string size)
 		{
 			int newSize;
 			Int32.TryParse(size, out newSize);
@@ -379,10 +381,21 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		#endregion
 
 		/// <summary/>
-		protected int FontSize
+		protected internal int FontSize
 		{
 			get; set;
 		}
+
+		internal bool InSelectedIndexChangedHandler
+		{
+			get { return m_fInSelectedIndexChangedHandler; }
+			set { m_fInSelectedIndexChangedHandler = value; }
+		}
+
+		internal TextBox FontSizeTextBox => m_tbFontSize;
+
+		internal ListBox FontSizesListBox => m_lbFontSizes;
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Updates the preview.

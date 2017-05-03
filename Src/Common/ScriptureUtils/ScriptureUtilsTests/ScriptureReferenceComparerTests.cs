@@ -1,15 +1,9 @@
-// Copyright (c) 2007-2013 SIL International
+// Copyright (c) 2007-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ScriptureReferenceComparerTests.cs
-// Responsibility: TE Team
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using NUnit.Framework;
-using SIL.FieldWorks.Test.TestUtils;
 using SILUBS.SharedScrUtils;
 using SIL.CoreImpl.Scripture;
 
@@ -52,7 +46,7 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
-	public class ScriptureReferenceComparerTests : BaseTest
+	public class ScriptureReferenceComparerTests
 	{
 		private ScriptureReferenceComparer m_comparer;
 
@@ -61,9 +55,9 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 		/// Setup the test fixture.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public override void FixtureSetup()
+		[TestFixtureSetUp]
+		public void FixtureSetup()
 		{
-			base.FixtureSetup();
 			m_comparer = new ScriptureReferenceComparer(new DummyScrProjMetaDataProvider(), true);
 			ScrReferenceTests.InitializeScrReferenceForTests();
 		}

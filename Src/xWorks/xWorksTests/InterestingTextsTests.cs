@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
-using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SILUBS.SharedScrUtils;
@@ -20,7 +19,7 @@ namespace SIL.FieldWorks.XWorks
 	/// Tests the InterestingTextsList class.
 	/// </summary>
 	[TestFixture]
-	public class InterestingTextsTests: Test.TestUtils.BaseTest
+	public class InterestingTextsTests
 	{
 		MockStTextRepository m_mockStTextRepo;
 		private Mediator m_mediator;

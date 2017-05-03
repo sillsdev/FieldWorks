@@ -1,12 +1,6 @@
-// Copyright (c) 2009-2013 SIL International
+// Copyright (c) 2009-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: XmlHelper.cs
-// Responsibility: TE team
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Collections.Generic;
@@ -14,7 +8,7 @@ using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 
-namespace SIL.FieldWorks.Test.TestUtils
+namespace SIL.FieldWorks.Common.FwUtils
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
@@ -299,11 +293,11 @@ namespace SIL.FieldWorks.Test.TestUtils
 					sb.AppendLine();
 					sb.Append("    Expected attributes: ");
 					foreach (var attr in expected)
-						sb.AppendFormat(" {0}", attr.Name);
+						sb.AppendFormat((string) " {0}", (object) attr.Name);
 					sb.AppendLine();
 					sb.Append("    Actual attributes: ");
 					foreach (var attr in actual)
-						sb.AppendFormat(" {0}", attr.Name);
+						sb.AppendFormat((string) " {0}", (object) attr.Name);
 					sb.AppendLine();
 				}
 				return false;

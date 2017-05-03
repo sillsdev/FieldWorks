@@ -1,9 +1,6 @@
-// Copyright (c) 2010-2013 SIL International
+// Copyright (c) 2010-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: UnicodeCharEditorTests.cs
-// Responsibility: mcconnel
 //
 // <remarks>
 // Since these tests modify the ICU data files, run the ICU data compilers, and then use ICU
@@ -19,7 +16,6 @@ using NUnit.Framework;
 using ICSharpCode.SharpZipLib.Zip;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.UnicodeCharEditor
 {

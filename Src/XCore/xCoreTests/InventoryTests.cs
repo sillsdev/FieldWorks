@@ -6,8 +6,8 @@ using System.IO;
 using System.Xml;
 using System.Collections.Generic;
 using NUnit.Framework;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
-using SIL.FieldWorks.Test.TestUtils;
 
 namespace XCore
 {

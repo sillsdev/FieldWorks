@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,7 +6,7 @@ using System;
 using NUnit.Framework;
 
 using SIL.CoreImpl;
-using SIL.FieldWorks.Test.TestUtils;
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.Common.Widgets
 {
@@ -16,7 +16,7 @@ namespace SIL.FieldWorks.Common.Widgets
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
-	class FwTextBoxTests : BaseTest
+	class FwTextBoxTests
 	{
 		#region Data Members
 		TestFwStylesheet m_stylesheet;
@@ -24,9 +24,9 @@ namespace SIL.FieldWorks.Common.Widgets
 		int m_hvoEnglishWs;
 		#endregion
 
-		public override void FixtureSetup()
+		[TestFixtureSetUp]
+		public void FixtureSetup()
 		{
-			base.FixtureSetup();
 			m_wsManager = new WritingSystemManager();
 
 			// setup English ws.

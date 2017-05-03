@@ -1,10 +1,8 @@
-// Copyright (c) 2013 SIL International
+// Copyright (c) 2013-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// Original author: MarkS 2013-02-20 WelcomeToFieldWorksDlgTests.cs
+
 using System.Windows.Forms;
-using SIL.FieldWorks.Test.TestUtils;
 using SIL.FieldWorks.XWorks.LexText;
 using SIL.Utils;
 using NUnit.Framework;
@@ -14,7 +12,7 @@ namespace SIL.FieldWorks
 {
 	/// <summary/>
 	[TestFixture]
-	public class WelcomeToFieldWorksDlgTests : BaseTest
+	public class WelcomeToFieldWorksDlgTests
 	{
 		/// <summary/>
 		[Test]

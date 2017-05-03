@@ -1,15 +1,13 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: TeImportTest.cs
-// Responsibility: TE Team
-// --------------------------------------------------------------------------------------------
+
 using System.Collections.Generic;
 using NUnit.Framework;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.FDO.FDOTests;
@@ -612,7 +610,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 
 			NonUndoableUnitOfWorkHelper.Do(m_actionHandler, () =>
 			{
-				m_settings = m_scr.FindOrCreateDefaultImportSettings(TypeOfImport.Unknown);
+				m_settings = m_scr.FindOrCreateDefaultImportSettings(TypeOfImport.Unknown, m_styleSheet, FwDirectoryFinder.TeStylesPath);
 				DummyTeImporter.MakeSFImportTestSettings(m_settings);
 			});
 		}

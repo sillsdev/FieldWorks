@@ -1,18 +1,15 @@
-// Copyright (c) 2014-2015 SIL International
+// Copyright (c) 2014-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.Test.TestUtils;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
@@ -23,7 +20,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
-	public sealed class BEPPortTests: BaseTest
+	public sealed class BEPPortTests
 	{
 		/// <summary>Random number generator to prevent filename conflicts</summary>
 		private readonly Random m_random;
@@ -150,9 +147,10 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 
 			// Set up data source, but only do it once.
 			var sourceGuids = new List<Guid>();
-			using (var sourceCache = FdoCache.CreateCacheWithNewBlankLangProj(
-				new TestProjectId(sourceBackendStartupParameters.ProjectId.Type,
-								sourceBackendStartupParameters.ProjectId.Path), "en", "fr", "en", new DummyFdoUI(), FwDirectoryFinder.FdoDirectories, new FdoSettings()))
+			var sourceProjectId = new TestProjectId(sourceBackendStartupParameters.ProjectId.Type,
+				sourceBackendStartupParameters.ProjectId.Path);
+			using (var sourceCache = FdoCache.CreateCacheWithNewBlankLangProj(sourceProjectId, "en", "fr", "en", new DummyFdoUI(),
+				TestDirectoryFinder.FdoDirectories, new FdoSettings()))
 			{
 				// BEP is a singleton, so we shouldn't call Dispose on it. This will be done
 				// by service locator.
@@ -164,9 +162,10 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 				DeleteDatabase(targetBackendStartupParameters);
 
 				// Migrate source data to new BEP.
-				using (var targetCache = FdoCache.CreateCacheCopy(
-					new TestProjectId(targetBackendStartupParameters.ProjectId.Type,
-									targetBackendStartupParameters.ProjectId.Path), "en", new DummyFdoUI(), FwDirectoryFinder.FdoDirectories, new FdoSettings(), sourceCache))
+				var targetProjectId = new TestProjectId(targetBackendStartupParameters.ProjectId.Type,
+					targetBackendStartupParameters.ProjectId.Path);
+				using (var targetCache = FdoCache.CreateCacheCopy(targetProjectId, "en", new DummyFdoUI(),
+					TestDirectoryFinder.FdoDirectories, new FdoSettings(), sourceCache))
 				{
 					// BEP is a singleton, so we shouldn't call Dispose on it. This will be done
 					// by service locator.
@@ -215,10 +214,10 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 			DeleteDatabase(targetBackendStartupParameters);
 
 			// Set up data source
-			var projId = new TestProjectId(sourceBackendStartupParameters.ProjectId.Type,
-													sourceBackendStartupParameters.ProjectId.Path);
-			using (FdoCache sourceCache = FdoCache.CreateCacheWithNewBlankLangProj(
-				projId, "en", "fr", "en", new DummyFdoUI(), FwDirectoryFinder.FdoDirectories, new FdoSettings()))
+			var sourceProjectId = new TestProjectId(sourceBackendStartupParameters.ProjectId.Type,
+				sourceBackendStartupParameters.ProjectId.Path);
+			using (FdoCache sourceCache = FdoCache.CreateCacheWithNewBlankLangProj(sourceProjectId, "en", "fr", "en", new DummyFdoUI(),
+				TestDirectoryFinder.FdoDirectories, new FdoSettings()))
 			{
 				// BEP is a singleton, so we shouldn't call Dispose on it. This will be done
 				// by service locator.
@@ -230,14 +229,15 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 
 			// Migrate source data to new BEP.
 			IThreadedProgress progressDlg = new DummyProgressDlg();
-			using (var targetCache = FdoCache.CreateCacheWithNoLangProj(
-				new TestProjectId(targetBackendStartupParameters.ProjectId.Type, null), "en", new DummyFdoUI(), FwDirectoryFinder.FdoDirectories, new FdoSettings()))
+			var targetProjectId = new TestProjectId(targetBackendStartupParameters.ProjectId.Type, null);
+			using (var targetCache = FdoCache.CreateCacheWithNoLangProj(targetProjectId, "en", new DummyFdoUI(),
+				TestDirectoryFinder.FdoDirectories, new FdoSettings()))
 			{
 				// BEP is a singleton, so we shouldn't call Dispose on it. This will be done
 				// by service locator.
 				var targetDataSetup = GetMainBEPInterface(targetCache);
 				targetDataSetup.InitializeFromSource(new TestProjectId(targetBackendStartupParameters.ProjectId.Type,
-																		targetBackendStartupParameters.ProjectId.Path), sourceBackendStartupParameters, "en", progressDlg);
+					targetBackendStartupParameters.ProjectId.Path), sourceBackendStartupParameters, "en", progressDlg);
 				targetDataSetup.LoadDomain(BackendBulkLoadDomain.All);
 				CompareResults(sourceGuids, targetCache);
 			}

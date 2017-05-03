@@ -1,6 +1,7 @@
-// Copyright (c) 2013 SIL International
+// Copyright (c) 2013-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 #if __MonoCS__
 using System;
 using System.Collections.Generic;
@@ -12,7 +13,6 @@ using Rhino.Mocks;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.FieldWorks.Test.TestUtils;
 using SIL.Keyboarding;
 using SIL.Windows.Forms.Keyboarding;
 using SIL.Windows.Forms.Keyboarding.Linux;
@@ -27,7 +27,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
 	[Platform(Include = "Linux", Reason="IbusRootSiteEventHandlerTests is Linux only")]
-	public class IbusRootSiteEventHandlerTests: BaseTest
+	public class IbusRootSiteEventHandlerTests
 	{
 		// some lparam values representing keypress that we use for testing.
 		private static readonly Dictionary<char, int> lparams = new Dictionary<char, int>();

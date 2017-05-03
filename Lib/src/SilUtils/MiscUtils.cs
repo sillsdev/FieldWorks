@@ -27,11 +27,6 @@ namespace SIL.Utils
 		/// </summary>
 		public const int kdzmpInch = 72000;
 
-		/// <summary>
-		/// Unit tests can set this to true to suppress error beeps
-		/// </summary>
-		public static bool SuppressBeep { get; set; }
-
 		private static readonly Regex kXmlCharEntity = new Regex(@"&#x([0-9a-f]{1,4});", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
 		/// <summary>
@@ -416,13 +411,6 @@ namespace SIL.Utils
 		public static int LoWord(IntPtr wParam)
 		{
 			return wParam.ToInt32() & 0x0000FFFF;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		public static void ErrorBeep()
-		{
-			if (!SuppressBeep)
-				System.Media.SystemSounds.Beep.Play();
 		}
 
 		/// ------------------------------------------------------------------------------------

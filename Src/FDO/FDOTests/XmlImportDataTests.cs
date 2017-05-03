@@ -1,27 +1,18 @@
-// Copyright (c) 2009-2013 SIL International
+// Copyright (c) 2009-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: XmlImportDataTests.cs
-// Responsibility: mcconnel
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Text;
 using NUnit.Framework;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.Application.ApplicationServices;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.Test.TestUtils;
 
 namespace SIL.FieldWorks.FDO.FDOTests
 {
@@ -31,7 +22,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
-	public class XmlImportDataTests : BaseTest
+	public class XmlImportDataTests
 	{
 		private FdoCache m_cache;
 		private DateTime m_now;
@@ -45,9 +36,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public void CreateTestCache()
 		{
 			m_now = DateTime.Now;
-			m_cache = FdoCache.CreateCacheWithNewBlankLangProj(
-				new TestProjectId(FDOBackendProviderType.kMemoryOnly, "MemoryOnly.mem"), "en", "fr", "en", new DummyFdoUI(),
-				FwDirectoryFinder.FdoDirectories, new FdoSettings());
+			m_cache = FdoCache.CreateCacheWithNewBlankLangProj(new TestProjectId(FDOBackendProviderType.kMemoryOnly, "MemoryOnly.mem"),
+				"en", "fr", "en", new DummyFdoUI(), TestDirectoryFinder.FdoDirectories, new FdoSettings());
 			IDataSetup dataSetup = m_cache.ServiceLocator.GetInstance<IDataSetup>();
 			dataSetup.LoadDomain(BackendBulkLoadDomain.All);
 			if (m_cache.LangProject != null)
@@ -493,7 +483,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public void ImportData3()
 		{
 			XmlImportData xid = new XmlImportData(m_cache, true);
-			string sFwSrcDir = FwDirectoryFinder.SourceDirectory;
+			string sFwSrcDir = TestDirectoryFinder.SourceDirectory;
 			using (var rdr = new StringReader(
 				"<FwDatabase>" + Environment.NewLine +
 				"<LangProject>" + Environment.NewLine +
@@ -1018,7 +1008,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 		private void CheckFirstEntry(ILexEntry le, int wsEn, int wsAme)
 		{
-			string sFwSrcDir = FwDirectoryFinder.SourceDirectory;
+			string sFwSrcDir = TestDirectoryFinder.SourceDirectory;
 			Assert.AreEqual(1, le.LexemeFormOA.Form.StringCount);
 			Assert.AreEqual("an", le.LexemeFormOA.Form.get_String(wsAme).Text);
 			Assert.AreEqual("root", le.LexemeFormOA.MorphTypeRA.Name.get_String(wsEn).Text);

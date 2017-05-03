@@ -195,10 +195,9 @@ namespace SIL.FieldWorks.TE
 			IScrImportSet importSettings = null;
 			NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
 			{
-				importSettings =
-					scr.FindOrCreateDefaultImportSettings(TypeOfImport.Unknown);
+				importSettings = scr.FindOrCreateDefaultImportSettings(TypeOfImport.Unknown, m_styleSheet,
+					FwDirectoryFinder.TeStylesPath);
 			});
-			importSettings.StyleSheet = m_styleSheet;
 
 			importSettings.OverlappingFileResolver = new ConfirmOverlappingFileReplaceDialog(m_helpTopicProvider);
 			if (!importSettings.BasicSettingsExist)

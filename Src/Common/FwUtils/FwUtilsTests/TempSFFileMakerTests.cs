@@ -1,9 +1,6 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: TempSFFileMakerTests.cs
-// Responsibility: TE Team
 
 using System;
 using System.IO;
@@ -11,7 +8,7 @@ using System.Text;
 using NUnit.Framework;
 using SIL.Utils;
 
-namespace SIL.FieldWorks.Test.TestUtils
+namespace SIL.FieldWorks.Common.FwUtils
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
@@ -19,7 +16,7 @@ namespace SIL.FieldWorks.Test.TestUtils
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
-	public class TempSFFileMakerTests : BaseTest
+	public class TempSFFileMakerTests
 	{
 		private const int s_cr = 13;
 		private const int s_lf = 10;
@@ -40,7 +37,8 @@ namespace SIL.FieldWorks.Test.TestUtils
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Test the <see cref="TempSFFileMaker.CreateFile"/> method with only the \id line
+		/// Test the <see cref="TempSFFileMaker.CreateFile(string,string[])"/> method with only
+		/// the \id line
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
@@ -68,7 +66,8 @@ namespace SIL.FieldWorks.Test.TestUtils
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Test the <see cref="TempSFFileMaker.CreateFile"/> method with the \id line and 2 additional lines
+		/// Test the <see cref="TempSFFileMaker.CreateFile(string,string[])"/> method with the
+		/// \id line and 2 additional lines
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
@@ -112,7 +111,8 @@ namespace SIL.FieldWorks.Test.TestUtils
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Test the <see cref="TempSFFileMaker.CreateFile"/> method with the \id line and 2 additional lines
+		/// Test the <see cref="TempSFFileMaker.CreateFile(string,string[])"/> method with the
+		/// \id line and 2 additional lines
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
@@ -149,7 +149,8 @@ namespace SIL.FieldWorks.Test.TestUtils
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Test the <see cref="TempSFFileMaker.CreateFile"/> method with the \id line and 2 additional lines
+		/// Test the <see cref="TempSFFileMaker.CreateFile(string,string[])"/> method with the
+		/// \id line and 2 additional lines
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]

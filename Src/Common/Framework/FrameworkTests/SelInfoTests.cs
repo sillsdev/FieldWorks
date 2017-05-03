@@ -1,22 +1,13 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: SelInfoTests.cs
-// Responsibility: Eberhard Beilharz
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
 
 using System;
-using System.Diagnostics;
 
 using NUnit.Framework;
 
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.Test.TestUtils;
 
 namespace SIL.FieldWorks.Common.Framework.SelInfo
 {
@@ -26,7 +17,7 @@ namespace SIL.FieldWorks.Common.Framework.SelInfo
 	/// </summary>
 	/// ------------------------------------------------------------------------------------
 	[TestFixture]
-	public class SelInfo_Compare : BaseTest
+	public class SelInfo_Compare
 	{
 		private SelectionHelper.SelInfo s1;
 		private SelectionHelper.SelInfo s2;
@@ -45,14 +36,10 @@ namespace SIL.FieldWorks.Common.Framework.SelInfo
 			s2.rgvsli = new SelLevInfo[2];
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public override void FixtureTeardown()
+		/// <summary />
+		[TestFixtureTearDown]
+		public void FixtureTeardown()
 		{
-			base.FixtureTeardown();
 			s1 = null;
 			s2 = null;
 		}

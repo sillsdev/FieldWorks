@@ -104,10 +104,6 @@
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BasicUtilsTests, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\BasicUtilsTests.dll</HintPath>
-    </Reference>
     <Reference Include="CoreImplTests, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\CoreImplTests.dll</HintPath>
@@ -127,15 +123,6 @@
     <Reference Include="FDO">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\FDO.dll</HintPath>
-    </Reference>
-    <Reference Include="FwUtils">
-      <Name>FwUtils</Name>
-      <HintPath>..\..\..\Output\Debug\FwUtils.dll</HintPath>
-      <SpecificVersion>False</SpecificVersion>
-    </Reference>
-    <Reference Include="FwUtilsTests, Version=6.0.0.14896, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\FwUtilsTests.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -186,14 +173,6 @@
       <Name>System.XML</Name>
     </Reference>
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="TestUtils, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\TestUtils.dll</HintPath>
-    </Reference>
-    <Reference Include="XMLUtils, Version=5.5.0.20976, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\XMLUtils.dll</HintPath>
-    </Reference>
     <Reference Include="SIL.TestUtilities">
       <HintPath>..\..\..\Downloads\SIL.TestUtilities.dll</HintPath>
     </Reference>
@@ -202,12 +181,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\AssemblyInfoForTests.cs">
-      <Link>AssemblyInfoForTests.cs</Link>
-    </Compile>
     <Compile Include="AnalysisAdjusterTests.cs" />
     <Compile Include="AnalysisGuessServicesTests.cs" />
     <Compile Include="AnalysisOccurrenceTests.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="AtomicPropertyTests.cs" />
     <Compile Include="BackupRestore\ProjectRestoreTestService.cs" />
     <Compile Include="BaseStyleInfoTests.cs" />
@@ -260,7 +237,6 @@
     <Compile Include="DataMigrationTests\WritingSystemIdMigratorTests.cs" />
     <Compile Include="DataSortingServiceTests.cs" />
     <Compile Include="DataStoreInitializationServicesTests.cs" />
-    <Compile Include="DomainObjectServicesTests.cs" />
     <Compile Include="DummyFdoUI.cs" />
     <Compile Include="DummyProgressDlg.cs" />
     <Compile Include="DuplicateAnalysisFixerTests.cs" />
@@ -268,7 +244,6 @@
     <Compile Include="FdoBackendProviderTests.cs" />
     <Compile Include="FdoFactoryAdditionsTests.cs" />
     <Compile Include="FeatureSystemTests.cs" />
-    <Compile Include="FwSetupFixtureClass.cs" />
     <Compile Include="GoldEticTests.cs" />
     <Compile Include="HomographConfigurationTests.cs" />
     <Compile Include="Ling_WfiTests.cs" />
@@ -345,6 +320,7 @@
     <Compile Include="StTxtParaTests.cs" />
     <Compile Include="StyleInfoTableTests.cs" />
     <Compile Include="TestBigSorting.cs" />
+    <Compile Include="TestDirectoryFinder.cs" />
     <Compile Include="TestProjectId.cs" />
     <Compile Include="UowHelperTests.cs" />
     <Compile Include="ValidationTests.cs" />
@@ -412,6 +388,7 @@
     <Content Include="TestData\DataMigration7000069_UnspecComplexAndVariantType.xml" />
     <Content Include="TestData\DataMigration7000070.xml" />
     <Content Include="TestData\DataMigration7000071.xml" />
+    <Content Include="TestData\TeStyles.xml" />
     <None Include="BackupRestore\BackupTestProject\BackupTestProject.fwdata" />
     <None Include="BackupRestore\BackupTestProject\BackupTestProject.fwdata.bak" />
     <None Include="BackupRestore\BackupTestProject\SupportingFiles\GrkPolyComp.kmp" />

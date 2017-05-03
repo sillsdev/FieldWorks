@@ -1,15 +1,11 @@
-// Copyright (c) 2006-2013 SIL International
+// Copyright (c) 2006-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ScrSfFileListTests.cs
-// Responsibility: TE Team
 
 using System.Collections.Generic;
 using NUnit.Framework;
 using SIL.FieldWorks.FDO.DomainServices;
 using Rhino.Mocks;
-using SIL.FieldWorks.Test.TestUtils;
 using SILUBS.SharedScrUtils;
 using SIL.CoreImpl.Scripture;
 
@@ -21,11 +17,11 @@ namespace SIL.FieldWorks.FDO.FDOTests
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
-	public class ScrSfFileListTests: BaseTest
+	public class ScrSfFileListTests
 	{
 		#region data members
 		private IOverlappingFileResolver m_resolver;
-		private ScrMappingList m_mappingList = new ScrMappingList(MappingSet.Main, null);
+		private ScrMappingList m_mappingList = new ScrMappingList(MappingSet.Main, null, null);
 		private ScrSfFileList m_fileList;
 		private List<IScrImportFileInfo> m_expectedRemovedFiles;
 		private int m_callCountForVerifyFileRemoved;

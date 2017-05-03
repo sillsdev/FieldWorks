@@ -125,16 +125,11 @@ namespace SIL.FieldWorks.XWorks
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (disposing)
 			{
-				if (m_Clerk != null)
-					m_Clerk.Dispose();
-				if (m_application != null)
-					m_application.Dispose();
-				if (m_window != null)
-					m_window.Dispose();
-				if (m_mediator != null)
-					m_mediator.Dispose();
-				if(m_propertyTable != null)
-					m_propertyTable.Dispose();
+				m_Clerk?.Dispose();
+				m_application?.Dispose();
+				m_window?.Dispose();
+				m_mediator?.Dispose();
+				m_propertyTable?.Dispose();
 			}
 		}
 
@@ -146,6 +141,12 @@ namespace SIL.FieldWorks.XWorks
 		public void Dispose()
 		{
 			Dispose(true);
+			// This object will be cleaned up by the Dispose method.
+			// Therefore, you should call GC.SupressFinalize to
+			// take this object off the finalization queue
+			// and prevent finalization code for this object
+			// from executing a second time.
+			GC.SuppressFinalize(this);
 		}
 		#endregion disposal
 

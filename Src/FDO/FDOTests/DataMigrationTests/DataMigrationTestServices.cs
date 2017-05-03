@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -8,7 +8,6 @@ using System.Linq;
 using System.Xml.Linq;
 using NUnit.Framework;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
-using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 {
@@ -35,7 +34,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 		/// ------------------------------------------------------------------------------------
 		internal static HashSet<DomainObjectDTO> ParseProjectFile(string filename)
 		{
-			var testDataPath = Path.Combine(FwDirectoryFinder.SourceDirectory, "FDO/FDOTests/TestData");
+			var testDataPath = Path.Combine(TestDirectoryFinder.SourceDirectory, "FDO", "FDOTests", "TestData");
 			var lpElement = XElement.Load(Path.Combine(testDataPath, filename));
 			return new HashSet<DomainObjectDTO>(
 				from elem in lpElement.Elements("rt")

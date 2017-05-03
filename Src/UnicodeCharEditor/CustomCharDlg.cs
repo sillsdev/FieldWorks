@@ -844,7 +844,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 			// Remove the character right before the selection if it is wrong
 			if( selectionStart > 0 && !IsValid(textBox.Text[selectionStart - 1], unicodePropertyType))
 			{
-				MiscUtils.ErrorBeep();
+				FwUtils.ErrorBeep();
 				RemoveSingleChar(textBox, selectionStart - 1);
 				// Set the cursor back where it was
 				textBox.SelectionStart = selectionStart - 1;
@@ -900,7 +900,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 					// the '-' must appear at the beginning of the field (if at all)
 					if( selectionStart != 1 )
 					{
-						MiscUtils.ErrorBeep();
+						FwUtils.ErrorBeep();
 						RemoveSingleChar(textBox, selectionStart - 1);
 						// Set the cursor back where it was
 						textBox.SelectionStart = selectionStart - 1;
@@ -916,7 +916,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 					// (Having both '/' and '.' is not allowed)
 					if(nonNumericCharacterCount > 1)
 					{
-						MiscUtils.ErrorBeep();
+						FwUtils.ErrorBeep();
 						RemoveSingleChar(textBox, selectionStart - 1);
 						// Set the cursor back where it was
 						textBox.SelectionStart = selectionStart - 1;

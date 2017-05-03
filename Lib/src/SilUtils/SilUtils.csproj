@@ -91,6 +91,7 @@
     <Compile Include="Set.cs" />
     <Compile Include="SilUtilsExtensions.cs" />
     <Compile Include="SimpleBag.cs" />
+    <Compile Include="SingleThreadedSynchronizeInvoke.cs" />
     <Compile Include="SmallDictionary.cs" />
     <Compile Include="StringUtils.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

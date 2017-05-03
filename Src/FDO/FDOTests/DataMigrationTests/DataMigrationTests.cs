@@ -1,14 +1,10 @@
-﻿// Copyright (c) 2009-2013 SIL International
+﻿// Copyright (c) 2009-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: DataMigrationTests.cs
-// Responsibility: FW Team
 
 using System.IO;
 using NUnit.Framework;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
-using SIL.FieldWorks.Test.TestUtils;
 
 namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 {
@@ -20,7 +16,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 	/// partial class of DataMigrationTests.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public class DataMigrationTestsBase : BaseTest
+	public class DataMigrationTestsBase
 	{
 		internal IDataMigrationManager m_dataMigrationManager;
 		private string m_temporaryPathname;

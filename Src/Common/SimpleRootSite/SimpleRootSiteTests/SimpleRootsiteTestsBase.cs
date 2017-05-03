@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -11,7 +11,6 @@ using NUnit.Framework;
 using SIL.CoreImpl;
 using SIL.FieldWorks.CacheLight;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
-using SIL.FieldWorks.Test.TestUtils;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
@@ -153,7 +152,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 	/// Rootsite tests.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public class SimpleRootsiteTestsBase<T> : BaseTest
+	public class SimpleRootsiteTestsBase<T>
 		where T: IRealDataCache, new()
 	{
 		/// <summary>Defines the possible languages</summary>
@@ -209,10 +208,8 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[TestFixtureSetUp]
-		public override void FixtureSetup()
+		public virtual void FixtureSetup()
 		{
-			base.FixtureSetup();
-
 			SetupTestModel(Properties.Resources.TextCacheModel_xml);
 
 			m_cache = new T();
@@ -262,7 +259,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[TestFixtureTearDown]
-		public override void FixtureTeardown()
+		public virtual void FixtureTeardown()
 		{
 			FileUtils.Manager.Reset();
 
@@ -270,8 +267,6 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			// fails if we don't shut the factory down.
 			m_cache.Dispose();
 			m_cache = default(T);
-
-			base.FixtureTeardown();
 		}
 
 		/// -----------------------------------------------------------------------------------

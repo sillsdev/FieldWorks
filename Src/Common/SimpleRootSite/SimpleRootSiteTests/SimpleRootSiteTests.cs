@@ -1,12 +1,15 @@
-﻿using NUnit.Framework;
+﻿// Copyright (c) 2003-2017 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
+using NUnit.Framework;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Test.TestUtils;
 using SIL.Keyboarding;
 
 namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 {
 	[TestFixture]
-	public class SimpleRootSiteTests : BaseTest
+	public class SimpleRootSiteTests
 	{
 		[Test]
 		public void GetWSForInputMethod_GetsMatchingWSByInputMethod()

@@ -5,13 +5,12 @@
 using System.Collections.Generic;
 using NUnit.Framework;
 using SIL.FieldWorks.FDO.DomainImpl;
-using SIL.FieldWorks.Test.TestUtils;
 
 namespace SIL.FieldWorks.FDO.FDOTests
 {
 	/// <summary/>
 	[TestFixture]
-	class HomographConfigurationTests : BaseTest
+	class HomographConfigurationTests
 	{
 		/// <summary>
 		/// Test the restore of the HomographConfiguration from a settings string

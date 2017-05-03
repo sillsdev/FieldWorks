@@ -98,10 +98,6 @@
       <Name>FDOTests</Name>
       <HintPath>..\..\..\..\Output\Debug\FDOTests.dll</HintPath>
     </Reference>
-    <Reference Include="TestUtils">
-      <Name>TestUtils</Name>
-      <HintPath>..\..\..\..\Output\Debug\TestUtils.dll</HintPath>
-    </Reference>
     <Reference Include="FixFwDataDll">
       <Name>FixFwDataDll</Name>
       <HintPath>..\..\..\..\Output\Debug\FixFwDataDll.dll</HintPath>

@@ -1,22 +1,18 @@
-// Copyright (c) 2004-2013 SIL International
+// Copyright (c) 2004-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: TestFwStylesheetTests.cs
-// Responsibility: TE Team
 //
 // <remarks>
 // Tests for the TestFwStylesheet class
 // </remarks>
 
-using System;
 using System.Collections.Generic;
 using NUnit.Framework;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 
-namespace SIL.FieldWorks.Test.TestUtils
+namespace SIL.FieldWorks.Common.FwUtils
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
@@ -24,7 +20,7 @@ namespace SIL.FieldWorks.Test.TestUtils
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
-	public class TestFwStylesheetTests: SIL.FieldWorks.Test.TestUtils.BaseTest
+	public class TestFwStylesheetTests
 	{
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

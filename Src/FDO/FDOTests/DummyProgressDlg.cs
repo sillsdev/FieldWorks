@@ -4,20 +4,22 @@
 
 using System;
 using System.ComponentModel;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO.FDOTests
 {
-	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// Simple implementation for testing
 	/// </summary>
-	/// ----------------------------------------------------------------------------------------
 	public class DummyProgressDlg : IThreadedProgress
 	{
-		private readonly ThreadHelper m_threadHelper = SingletonsContainer.Get<ThreadHelper>();
+		/// <summary>
+		/// Initializes a new instance of the <see cref="DummyProgressDlg"/> class.
+		/// </summary>
+		public DummyProgressDlg()
+		{
+			SynchronizeInvoke = new SingleThreadedSynchronizeInvoke();
+		}
 
 		#region IProgress and IThreadedProgress Members
 		/// <summary></summary>
@@ -89,10 +91,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// Gets an object to be used for ensuring that required tasks are invoked on the main
 		/// UI thread.
 		/// </summary>
-		public ISynchronizeInvoke SynchronizeInvoke
-		{
-			get { return m_threadHelper; }
-		}
+		public ISynchronizeInvoke SynchronizeInvoke { get; }
 
 		/// <summary>
 		/// Gets or sets a value indicating whether the task has been canceled.

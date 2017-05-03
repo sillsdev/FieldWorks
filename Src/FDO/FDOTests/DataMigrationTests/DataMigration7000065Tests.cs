@@ -1,15 +1,11 @@
-// Copyright (c) 2012-2013 SIL International
+// Copyright (c) 2012-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: DataMigration7000065Tests.cs
-// Responsibility: gordonm
 
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
 
 namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
@@ -38,7 +34,8 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 			mockMdc.AddClass(7, "PartOfSpeech", "CmPossibility", new List<string>());
 
 			var dtos = DataMigrationTestServices.ParseProjectFile("DataMigration7000065.xml");
-			IDomainObjectDTORepository dtoRepos = new DomainObjectDtoRepository(7000064, dtos, mockMdc, null, FwDirectoryFinder.FdoDirectories);
+			IDomainObjectDTORepository dtoRepos = new DomainObjectDtoRepository(7000064, dtos, mockMdc, null,
+				TestDirectoryFinder.FdoDirectories);
 
 			m_dataMigrationManager.PerformMigration(dtoRepos, 7000065, new DummyProgressDlg());
 

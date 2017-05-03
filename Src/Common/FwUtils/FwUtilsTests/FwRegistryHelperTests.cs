@@ -1,15 +1,10 @@
-﻿// Copyright (c) 2003-2013 SIL International
+﻿// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: FwRegistryHelperTests.cs
-// Responsibility:
-// ---------------------------------------------------------------------------------------------
+
 using System.Linq;
 using Microsoft.Win32;
 using NUnit.Framework;
-using SIL.FieldWorks.Test.TestUtils;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
@@ -17,7 +12,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 	/// Test the FwRegistryHelper class.
 	/// </summary>
 	[TestFixture]
-	public class FwRegistryHelperTests : BaseTest
+	public class FwRegistryHelperTests
 	{
 		private DummyFwRegistryHelper m_helper;
 

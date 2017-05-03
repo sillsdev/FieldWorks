@@ -1,19 +1,16 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: FdoCacheTests.cs
-// Responsibility: FW Team
+
 using System;
 using System.Collections.Generic;
 using System.IO;
 using NUnit.Framework;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.Test.TestUtils;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO.CoreTests.FdoCacheTests
 {
@@ -25,26 +22,26 @@ namespace SIL.FieldWorks.FDO.CoreTests.FdoCacheTests
 	[TestFixture]
 	public class FdoCacheTests : MemoryOnlyBackendProviderTestBase
 	{
-		private string m_oldProjectDirectory;
 		private IFdoUI m_ui;
+		private string m_projectsDirectory;
+		private IFdoDirectories m_fdoDirectories;
 
 		/// <summary>Setup for db4o client server tests.</summary>
 		public override void FixtureSetup()
 		{
 			base.FixtureSetup();
 
-			m_oldProjectDirectory = FwDirectoryFinder.ProjectsDirectory;
-			FwDirectoryFinder.ProjectsDirectory = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
-			Directory.CreateDirectory(FwDirectoryFinder.ProjectsDirectory);
+			m_projectsDirectory = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+			Directory.CreateDirectory(m_projectsDirectory);
 
 			m_ui = new DummyFdoUI();
+			m_fdoDirectories = new FdoDirectories(m_projectsDirectory);
 		}
 
 		/// <summary></summary>
 		public override void FixtureTeardown()
 		{
-			Directory.Delete(FwDirectoryFinder.ProjectsDirectory, true);
-			FwDirectoryFinder.ProjectsDirectory = m_oldProjectDirectory;
+			Directory.Delete(m_projectsDirectory, true);
 			base.FixtureTeardown();
 		}
 
@@ -57,19 +54,19 @@ namespace SIL.FieldWorks.FDO.CoreTests.FdoCacheTests
 		[ExpectedException(typeof(ArgumentException))]
 		public void CreateNewLangProject_DbFilesExist()
 		{
-			var preExistingDirs = new List<string>(Directory.GetDirectories(FwDirectoryFinder.ProjectsDirectory));
+			var preExistingDirs = new List<string>(Directory.GetDirectories(m_projectsDirectory));
 			try
 			{
 				// Setup: Create "pre-existing" DB filenames
-				using (new DummyFileMaker(Path.Combine(FwDirectoryFinder.ProjectsDirectory, "Gumby", FdoFileHelper.GetXmlDataFileName("Gumby"))))
+				using (new DummyFileMaker(Path.Combine(m_projectsDirectory, "Gumby", FdoFileHelper.GetXmlDataFileName("Gumby"))))
 				{
-					using (var threadHelper = new ThreadHelper())
-						FdoCache.CreateNewLangProj(new DummyProgressDlg(), "Gumby", FwDirectoryFinder.FdoDirectories, threadHelper,  null, null, null, null, null, null, true);
+					FdoCache.CreateNewLangProj(new DummyProgressDlg(), "Gumby", m_fdoDirectories,
+						new SingleThreadedSynchronizeInvoke(), null, null, null, null, null, null, true);
 				}
 			}
 			finally
 			{
-				RemoveTestDirs(preExistingDirs, Directory.GetDirectories(FwDirectoryFinder.ProjectsDirectory));
+				RemoveTestDirs(preExistingDirs, Directory.GetDirectories(m_projectsDirectory));
 			}
 		}
 
@@ -83,20 +80,19 @@ namespace SIL.FieldWorks.FDO.CoreTests.FdoCacheTests
 		public void CreateNewLangProject_NameWithSingleQuote()
 		{
 			const string dbName = "!!t'st";
-			string dbDir = Path.Combine(FwDirectoryFinder.ProjectsDirectory, dbName);
+			string dbDir = Path.Combine(m_projectsDirectory, dbName);
 			SureRemoveDb(dbName);
 
-			var expectedDirs = new List<string>(Directory.GetDirectories(FwDirectoryFinder.ProjectsDirectory)) { dbDir };
-			var writingSystemsCommonDir = Path.Combine(FwDirectoryFinder.ProjectsDirectory, FdoFileHelper.ksWritingSystemsDir);
+			var expectedDirs = new List<string>(Directory.GetDirectories(m_projectsDirectory)) { dbDir };
+			var writingSystemsCommonDir = Path.Combine(m_projectsDirectory, FdoFileHelper.ksWritingSystemsDir);
 
 			List<string> currentDirs = null;
 			try
 			{
-				string dbFileName;
-				using (var threadHelper = new ThreadHelper())
-					dbFileName = FdoCache.CreateNewLangProj(new DummyProgressDlg(), dbName, FwDirectoryFinder.FdoDirectories, threadHelper, null, null, null, null, null, null, true);
+				string dbFileName = FdoCache.CreateNewLangProj(new DummyProgressDlg(), dbName, m_fdoDirectories,
+					new SingleThreadedSynchronizeInvoke(), null, null, null, null, null, null, true);
 
-				currentDirs = new List<string>(Directory.GetDirectories(FwDirectoryFinder.ProjectsDirectory));
+				currentDirs = new List<string>(Directory.GetDirectories(m_projectsDirectory));
 				if (currentDirs.Contains(writingSystemsCommonDir) && !expectedDirs.Contains(writingSystemsCommonDir))
 					expectedDirs.Add(writingSystemsCommonDir);
 				CollectionAssert.AreEquivalent(expectedDirs, currentDirs);
@@ -118,17 +114,17 @@ namespace SIL.FieldWorks.FDO.CoreTests.FdoCacheTests
 		{
 			const string dbName = "AnthropologicalTest";
 			SureRemoveDb(dbName);
-			var preExistingDirs = new List<string>(Directory.GetDirectories(FwDirectoryFinder.ProjectsDirectory));
+			var preExistingDirs = new List<string>(Directory.GetDirectories(TestDirectoryFinder.ProjectsDirectory));
 
 			try
 			{
 				// create project
-				string dbFileName;
-				using (var threadHelper = new ThreadHelper())
-					dbFileName = FdoCache.CreateNewLangProj(new DummyProgressDlg(), dbName, FwDirectoryFinder.FdoDirectories, threadHelper, null, null, null, null, null, null, true);
+				string dbFileName = FdoCache.CreateNewLangProj(new DummyProgressDlg(), dbName, m_fdoDirectories,
+					new SingleThreadedSynchronizeInvoke(), null, null, null, null, null, null, true);
 
 				var projectId = new TestProjectId(FDOBackendProviderType.kXMLWithMemoryOnlyWsMgr, dbFileName);
-				using (var cache = FdoCache.CreateCacheFromExistingData(projectId, "en", m_ui, FwDirectoryFinder.FdoDirectories, new FdoSettings(), new DummyProgressDlg()))
+				using (var cache = FdoCache.CreateCacheFromExistingData(projectId, "en", m_ui, m_fdoDirectories, new FdoSettings(),
+					new DummyProgressDlg()))
 				{
 					Assert.AreEqual(Strings.ksAnthropologyCategories, cache.LangProject.AnthroListOA.Name.UiString,
 						"Anthropology Categories list was not properly initialized.");
@@ -142,7 +138,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.FdoCacheTests
 			}
 			finally
 			{
-				RemoveTestDirs(preExistingDirs, Directory.GetDirectories(FwDirectoryFinder.ProjectsDirectory));
+				RemoveTestDirs(preExistingDirs, Directory.GetDirectories(m_projectsDirectory));
 			}
 		}
 
@@ -151,10 +147,10 @@ namespace SIL.FieldWorks.FDO.CoreTests.FdoCacheTests
 		/// Removes a FW DB directory, and ensures the location is promptly available for reuse
 		/// </summary>
 		/// <param name="dbName">name of the FW DB to remove</param>
-		private static void SureRemoveDb(string dbName)
+		private void SureRemoveDb(string dbName)
 		{
-			string dbDir = Path.Combine(FwDirectoryFinder.ProjectsDirectory, dbName);
-			var tmpDbDir = Path.Combine(FwDirectoryFinder.ProjectsDirectory, "..", dbName);
+			string dbDir = Path.Combine(m_projectsDirectory, dbName);
+			var tmpDbDir = Path.Combine(m_projectsDirectory, "..", dbName);
 			if (Directory.Exists(dbDir))
 			{
 				// it might seem strange to move the directory first before deleting it.
@@ -196,9 +192,8 @@ namespace SIL.FieldWorks.FDO.CoreTests.FdoCacheTests
 		[Test]
 		public void ChangingLangProjDefaultVernWs_ChangesCacheDefaultVernWs()
 		{
-			using (
-				var cache = FdoCache.CreateCacheWithNewBlankLangProj(new TestProjectId(FDOBackendProviderType.kMemoryOnly, null),
-																	 "en", "fr", "en", m_ui, FwDirectoryFinder.FdoDirectories, new FdoSettings()))
+			using (var cache = FdoCache.CreateCacheWithNewBlankLangProj(new TestProjectId(FDOBackendProviderType.kMemoryOnly, null),
+				"en", "fr", "en", m_ui, m_fdoDirectories, new FdoSettings()))
 			{
 				var wsFr = cache.DefaultVernWs;
 				Assert.That(cache.LangProject.DefaultVernacularWritingSystem.Handle, Is.EqualTo(wsFr));
@@ -206,7 +201,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.FdoCacheTests
 				UndoableUnitOfWorkHelper.Do("undoit", "redoit", cache.ActionHandlerAccessor,
 					() =>
 					{
-						WritingSystemServices.FindOrCreateWritingSystem(cache, FwDirectoryFinder.TemplateDirectory, "de", false, true, out wsObjGerman);
+						WritingSystemServices.FindOrCreateWritingSystem(cache, TestDirectoryFinder.TemplateDirectory, "de", false, true, out wsObjGerman);
 						Assert.That(cache.DefaultVernWs, Is.EqualTo(wsFr));
 						cache.LangProject.DefaultVernacularWritingSystem = wsObjGerman;
 						Assert.That(cache.DefaultVernWs, Is.EqualTo(wsObjGerman.Handle));
@@ -229,9 +224,8 @@ namespace SIL.FieldWorks.FDO.CoreTests.FdoCacheTests
 		[Test]
 		public void ChangingLangProjDefaultAnalysisWs_ChangesCacheDefaultAnalWs()
 		{
-			using (
-				var cache = FdoCache.CreateCacheWithNewBlankLangProj(new TestProjectId(FDOBackendProviderType.kMemoryOnly, null),
-																	 "en", "fr", "en", m_ui, FwDirectoryFinder.FdoDirectories, new FdoSettings()))
+			using (var cache = FdoCache.CreateCacheWithNewBlankLangProj(new TestProjectId(FDOBackendProviderType.kMemoryOnly, null),
+				"en", "fr", "en", m_ui, m_fdoDirectories, new FdoSettings()))
 			{
 				var wsEn = cache.DefaultAnalWs;
 				Assert.That(cache.LangProject.DefaultAnalysisWritingSystem.Handle, Is.EqualTo(wsEn));
@@ -239,7 +233,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.FdoCacheTests
 				UndoableUnitOfWorkHelper.Do("undoit", "redoit", cache.ActionHandlerAccessor,
 					() =>
 					{
-						WritingSystemServices.FindOrCreateWritingSystem(cache, FwDirectoryFinder.TemplateDirectory, "de", true, false, out wsObjGerman);
+						WritingSystemServices.FindOrCreateWritingSystem(cache, TestDirectoryFinder.TemplateDirectory, "de", true, false, out wsObjGerman);
 						Assert.That(cache.DefaultAnalWs, Is.EqualTo(wsEn));
 						cache.LangProject.DefaultAnalysisWritingSystem = wsObjGerman;
 						Assert.That(cache.DefaultAnalWs, Is.EqualTo(wsObjGerman.Handle));
@@ -263,9 +257,8 @@ namespace SIL.FieldWorks.FDO.CoreTests.FdoCacheTests
 		[Test]
 		public void ChangingLangProjDefaultPronunciationWs_ChangesCacheDefaultPronunciationWs()
 		{
-			using (
-				var cache = FdoCache.CreateCacheWithNewBlankLangProj(new TestProjectId(FDOBackendProviderType.kMemoryOnly, null),
-																	 "en", "fr", "en", m_ui, FwDirectoryFinder.FdoDirectories, new FdoSettings()))
+			using (var cache = FdoCache.CreateCacheWithNewBlankLangProj(new TestProjectId(FDOBackendProviderType.kMemoryOnly, null),
+				"en", "fr", "en", m_ui, m_fdoDirectories, new FdoSettings()))
 			{
 				var wsFr = cache.DefaultPronunciationWs;
 				Assert.That(cache.LangProject.DefaultPronunciationWritingSystem.Handle, Is.EqualTo(wsFr));
@@ -274,7 +267,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.FdoCacheTests
 				UndoableUnitOfWorkHelper.Do("undoit", "redoit", cache.ActionHandlerAccessor,
 					() =>
 					{
-						WritingSystemServices.FindOrCreateWritingSystem(cache, FwDirectoryFinder.TemplateDirectory, "de", false, true, out wsObjGerman);
+						WritingSystemServices.FindOrCreateWritingSystem(cache, TestDirectoryFinder.TemplateDirectory, "de", false, true, out wsObjGerman);
 						Assert.That(cache.DefaultPronunciationWs, Is.EqualTo(wsFr));
 						cache.LangProject.DefaultVernacularWritingSystem = wsObjGerman;
 						cache.LangProject.CurrentPronunciationWritingSystems.Clear();
@@ -289,7 +282,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.FdoCacheTests
 						//Assert.That(cache.DefaultPronunciationWs, Is.EqualTo(wsObjGermanIpa.Handle));
 
 						// Unless we clear the list it does not regenerate.
-						WritingSystemServices.FindOrCreateWritingSystem(cache, FwDirectoryFinder.TemplateDirectory, "es", false, true, out wsObjSpanish);
+						WritingSystemServices.FindOrCreateWritingSystem(cache, TestDirectoryFinder.TemplateDirectory, "es", false, true, out wsObjSpanish);
 						// Once we've found a real pronunciation WS, changing the default vernacular should not change it.
 						Assert.That(cache.DefaultPronunciationWs, Is.EqualTo(wsObjGerman.Handle));
 					});
@@ -305,6 +298,20 @@ namespace SIL.FieldWorks.FDO.CoreTests.FdoCacheTests
 				Assert.That(cache.DefaultPronunciationWs, Is.EqualTo(wsObjSpanish.Handle));
 			}
 		}
+
+		private class FdoDirectories : IFdoDirectories
+		{
+			public FdoDirectories(string projectsDirectory)
+			{
+				ProjectsDirectory = projectsDirectory;
+			}
+
+			public string ProjectsDirectory { get; }
+
+			public string DefaultProjectsDirectory => ProjectsDirectory;
+
+			public string TemplateDirectory => TestDirectoryFinder.TemplateDirectory;
+		}
 	}
 
 	/// ----------------------------------------------------------------------------------------
@@ -313,7 +320,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.FdoCacheTests
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
-	public class FdoCacheDisposedTests: BaseTest
+	public class FdoCacheDisposedTests
 	{
 		private readonly IFdoUI m_ui = new DummyFdoUI();
 
@@ -326,7 +333,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.FdoCacheTests
 		{
 			// This can't be in the minimalist class, because it disposes the cache.
 			var cache = FdoCache.CreateCacheWithNewBlankLangProj(new TestProjectId(FDOBackendProviderType.kMemoryOnly, null),
-																	"en", "fr", "en", m_ui, FwDirectoryFinder.FdoDirectories, new FdoSettings());
+				"en", "fr", "en", m_ui, TestDirectoryFinder.FdoDirectories, new FdoSettings());
 			// Init backend data provider
 			var dataSetup = cache.ServiceLocator.GetInstance<IDataSetup>();
 			dataSetup.LoadDomain(BackendBulkLoadDomain.All);
@@ -342,7 +349,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.FdoCacheTests
 		{
 			// This can't be in the minimalist class, because it disposes the cache.
 			var cache = FdoCache.CreateCacheWithNewBlankLangProj(new TestProjectId(FDOBackendProviderType.kMemoryOnly, null),
-																	"en", "fr", "en", m_ui, FwDirectoryFinder.FdoDirectories, new FdoSettings());
+				"en", "fr", "en", m_ui, TestDirectoryFinder.FdoDirectories, new FdoSettings());
 			// Init backend data provider
 			var dataSetup = cache.ServiceLocator.GetInstance<IDataSetup>();
 			dataSetup.LoadDomain(BackendBulkLoadDomain.All);
@@ -358,7 +365,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.FdoCacheTests
 		public void CacheDisposedForFDOObject()
 		{
 			var cache = FdoCache.CreateCacheWithNewBlankLangProj(new TestProjectId(FDOBackendProviderType.kMemoryOnly, null),
-																	"en", "fr", "en", m_ui, FwDirectoryFinder.FdoDirectories, new FdoSettings());
+				"en", "fr", "en", m_ui, TestDirectoryFinder.FdoDirectories, new FdoSettings());
 			// Init backend data provider
 			var dataSetup = cache.ServiceLocator.GetInstance<IDataSetup>();
 			dataSetup.LoadDomain(BackendBulkLoadDomain.All);
@@ -374,7 +381,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.FdoCacheTests
 		public void FDOObjectDeleted()
 		{
 			using (var cache = FdoCache.CreateCacheWithNewBlankLangProj(new TestProjectId(FDOBackendProviderType.kMemoryOnly, null),
-				"en", "fr", "en", m_ui, FwDirectoryFinder.FdoDirectories, new FdoSettings()))
+				"en", "fr", "en", m_ui, TestDirectoryFinder.FdoDirectories, new FdoSettings()))
 			{
 				// Init backend data provider
 				var dataSetup = cache.ServiceLocator.GetInstance<IDataSetup>();

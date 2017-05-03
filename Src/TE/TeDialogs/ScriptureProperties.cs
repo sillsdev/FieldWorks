@@ -734,7 +734,7 @@ namespace SIL.FieldWorks.TE
 					text = textBox.Tag as string;
 					if (text != null)
 					{
-						MiscUtils.ErrorBeep();
+						FwUtils.ErrorBeep();
 						textBox.Text = text;
 						textBox.SelectAll();
 					}

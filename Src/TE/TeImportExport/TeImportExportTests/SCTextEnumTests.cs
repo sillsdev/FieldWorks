@@ -1,9 +1,6 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: SCTextEnumTests.cs
-// Responsibility: TE Team
 
 using System;
 using System.IO;
@@ -22,9 +19,9 @@ using SIL.FieldWorks.FDO.FDOTests;
 using SIL.Utils;
 using ECInterfaces;
 using SilEncConverters40;
+using SIL.FieldWorks.Common.FwUtils;
 using SILUBS.SharedScrUtils;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.Test.TestUtils;
 
 namespace SIL.FieldWorks.TE
 {
@@ -296,6 +293,7 @@ namespace SIL.FieldWorks.TE
 			m_settings = Cache.ServiceLocator.GetInstance<IScrImportSetFactory>().Create();
 			Cache.LangProject.TranslatedScriptureOA.ImportSettingsOC.Add(m_settings);
 			m_settings.ImportTypeEnum = TypeOfImport.Other;
+			m_settings.Initialize(null, null);
 			m_converters = null;
 			m_fileOs = new MockFileOS();
 			FileUtils.Manager.SetFileAdapter(m_fileOs);

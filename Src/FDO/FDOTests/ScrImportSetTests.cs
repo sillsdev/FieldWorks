@@ -1,14 +1,10 @@
-// Copyright (c) 2006-2013 SIL International
+// Copyright (c) 2006-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ScrImportSetTests.cs
-// Responsibility: TE Team
 
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using NUnit.Framework;
 using Rhino.Mocks;
 using SIL.FieldWorks.Common.ScriptureUtils;
@@ -135,6 +131,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 			m_importSettings = Cache.ServiceLocator.GetInstance<IScrImportSetFactory>().Create();
 			m_scr.ImportSettingsOC.Add(m_importSettings);
+			m_importSettings.Initialize(null, null);
 			m_translatorNoteDefn = Cache.ServiceLocator.GetInstance<ICmAnnotationDefnRepository>().TranslatorAnnotationDefn;
 			m_consultantNoteDefn = Cache.ServiceLocator.GetInstance<ICmAnnotationDefnRepository>().ConsultantAnnotationDefn;
 

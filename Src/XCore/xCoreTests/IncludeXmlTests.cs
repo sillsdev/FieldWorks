@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using SIL.Utils;
 using System.Diagnostics;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Test.TestUtils;
 
 namespace XCore
 {
@@ -16,7 +15,7 @@ namespace XCore
 	/// Summary description for IncludeXmlTests.
 	/// </summary>
 	[TestFixture]
-	public class IncludeXmlTests : BaseTest
+	public class IncludeXmlTests
 	{
 		protected XmlIncluder m_includer;
 

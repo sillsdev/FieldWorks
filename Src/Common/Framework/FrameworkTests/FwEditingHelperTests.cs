@@ -9,7 +9,6 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using NUnit.Framework;
-using SIL.FieldWorks.Test.TestUtils;
 using SIL.FieldWorks.FDO.FDOTests;
 using Rhino.Mocks;
 using SIL.FieldWorks.Common.RootSites;

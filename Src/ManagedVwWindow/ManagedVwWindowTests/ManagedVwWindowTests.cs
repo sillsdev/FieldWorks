@@ -6,13 +6,12 @@ using System;
 using System.Windows.Forms;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.FieldWorks.Test.TestUtils;
 using SIL.FieldWorks.Views;
 
 namespace SIL.FieldWorks.Language
 {
 	[TestFixture]
-	public class ManagedVwWindowTests : BaseTest
+	public class ManagedVwWindowTests
 	{
 		[Test]
 		public void SimpleWindowTest()

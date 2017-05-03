@@ -558,7 +558,7 @@ namespace SIL.FieldWorks.TE
 				Icu.IsNumeric(e.KeyChar))))
 			{
 				e.Handled = true;
-				MiscUtils.ErrorBeep();
+				FwUtils.ErrorBeep();
 			}
 		}
 

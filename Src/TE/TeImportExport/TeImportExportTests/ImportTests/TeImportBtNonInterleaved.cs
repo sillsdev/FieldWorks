@@ -19,8 +19,6 @@ using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.Utils;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Test.TestUtils;
-
 using SILUBS.SharedScrUtils;
 
 namespace SIL.FieldWorks.TE.ImportTests

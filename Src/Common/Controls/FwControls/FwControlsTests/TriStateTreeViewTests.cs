@@ -1,8 +1,7 @@
-// Copyright (c) 2004-2013 SIL International
+// Copyright (c) 2004-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using NUnit.Framework;
 using SIL.Utils;
@@ -39,7 +38,7 @@ namespace SIL.FieldWorks.Common.Controls
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
-	public class TriStateTreeViewTests: SIL.FieldWorks.Test.TestUtils.BaseTest
+	public class TriStateTreeViewTests
 	{
 		private TriStateTreeView m_treeView;
 		private TreeNode m_aNode;

@@ -1,19 +1,12 @@
-// Copyright (c) 2010-2013 SIL International
+// Copyright (c) 2010-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: DataMigration7000020Tests.cs
-// Responsibility: mcconnel
-//
-// <remarks>
-// </remarks>
 
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
 using NUnit.Framework;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
 using SIL.FieldWorks.FDO.Infrastructure;
 
@@ -38,7 +31,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 			IFwMetaDataCacheManaged mockMdc = SetupMdc();
 
 			IDomainObjectDTORepository repoDto = new DomainObjectDtoRepository(7000019, dtos, mockMdc,
-				Path.GetTempPath(), FwDirectoryFinder.FdoDirectories);
+				Path.GetTempPath(), TestDirectoryFinder.FdoDirectories);
 
 			// Initial check that data was read properly.
 			var cObjects = repoDto.AllInstances().Count();

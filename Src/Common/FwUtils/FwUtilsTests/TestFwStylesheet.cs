@@ -15,7 +15,7 @@ using System.Diagnostics;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 
-namespace SIL.FieldWorks.Test.TestUtils
+namespace SIL.FieldWorks.Common.FwUtils
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>

@@ -585,7 +585,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 		/// ------------------------------------------------------------------------------------
 		protected virtual void IssueBeep()
 		{
-			MiscUtils.ErrorBeep();
+			FwUtils.ErrorBeep();
 		}
 
 		#endregion

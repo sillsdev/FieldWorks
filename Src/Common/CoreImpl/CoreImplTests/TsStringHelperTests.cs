@@ -1,19 +1,12 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: TsStringHelperTests.cs
-// Responsibility: TE Team
-//
-// <remarks>
-// </remarks>
 
 using System;
 using NUnit.Framework;
-using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 
-namespace SIL.FieldWorks.Test.TestUtils
+namespace SIL.CoreImpl
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
@@ -21,7 +14,7 @@ namespace SIL.FieldWorks.Test.TestUtils
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
-	public class TsStringHelperTests : BaseTest
+	public class TsStringHelperTests
 	{
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

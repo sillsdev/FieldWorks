@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2016 SIL International
+// Copyright (c) 2004-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -8,7 +8,7 @@ using System.Diagnostics;
 using NUnit.Framework;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
-using SIL.FieldWorks.Test.TestUtils;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.Widgets
@@ -20,7 +20,7 @@ namespace SIL.FieldWorks.Common.Widgets
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
-	public class FontHeightAdjusterTests: BaseTest
+	public class FontHeightAdjusterTests
 	{
 
 		#region Data Members
@@ -35,10 +35,9 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// Set up some dummy styles for testing purposes
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public override void FixtureSetup()
+		[TestFixtureSetUp]
+		public void FixtureSetup()
 		{
-			base.FixtureSetup();
-
 			m_stylesheet = new TestFwStylesheet();
 			m_wsManager = new WritingSystemManager();
 

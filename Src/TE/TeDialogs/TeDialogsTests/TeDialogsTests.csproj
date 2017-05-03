@@ -124,6 +124,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\SharedScrUtils.dll</HintPath>
     </Reference>
+    <Reference Include="SIL.TestUtilities, Version=3.1.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Downloads\SIL.TestUtilities.dll</HintPath>
+    </Reference>
     <Reference Include="SilUtils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\SilUtils.dll</HintPath>
@@ -170,10 +174,6 @@
     <Reference Include="TeDialogs">
       <Name>TeDialogs</Name>
       <HintPath>..\..\..\..\Output\Debug\TeDialogs.dll</HintPath>
-    </Reference>
-    <Reference Include="TestUtils">
-      <Name>TestUtils</Name>
-      <HintPath>..\..\..\..\Output\Debug\TestUtils.dll</HintPath>
     </Reference>
     <Reference Include="xCoreInterfaces">
       <Name>xCoreInterfaces</Name>

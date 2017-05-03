@@ -1,20 +1,11 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: TsTextPropsHelperTests.cs
-// Responsibility: TE Team
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
 
-using System;
 using NUnit.Framework;
-using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 
-namespace SIL.FieldWorks.Test.TestUtils
+namespace SIL.CoreImpl
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
@@ -22,17 +13,8 @@ namespace SIL.FieldWorks.Test.TestUtils
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
-	public class TsTextPropsHelperTests : BaseTest
+	public class TsTextPropsHelperTests
 	{
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Initializes a new instance of the <see cref="TsTextPropsHelperTests"/> class.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public TsTextPropsHelperTests()
-		{
-		}
-
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Test for equality when props are equal.

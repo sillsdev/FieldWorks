@@ -5,7 +5,6 @@
 
 using NUnit.Framework;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Test.TestUtils;
 
 namespace SIL.FieldWorks.Filters
 {
@@ -15,7 +14,7 @@ namespace SIL.FieldWorks.Filters
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
-	public class RangeIntMatcherTests : BaseTest
+	public class RangeIntMatcherTests
 	{
 		public const int WsDummy = 987654321;
 

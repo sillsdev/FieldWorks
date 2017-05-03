@@ -1,19 +1,13 @@
-﻿// Copyright (c) 2010-2013 SIL International
+﻿// Copyright (c) 2010-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: XmlTranslatedListsTests.cs
-// Responsibility: mcconnel
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using NUnit.Framework;
 using SIL.FieldWorks.FDO.Application.ApplicationServices;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.Test.TestUtils;
-using SIL.FieldWorks.Common.FwUtils;
 // ReSharper disable InconsistentNaming
 
 namespace SIL.FieldWorks.FDO.FDOTests
@@ -24,7 +18,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
-	public class XmlTranslatedListsTests : BaseTest
+	public class XmlTranslatedListsTests
 	{
 		private FdoCache m_cache;
 		private int m_wsEn;
@@ -635,9 +629,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[SetUp]
 		public void CreateMockCache()
 		{
-			m_cache = FdoCache.CreateCacheWithNewBlankLangProj(
-				new TestProjectId(FDOBackendProviderType.kMemoryOnly, null), "en", "es", "en", new DummyFdoUI(),
-				FwDirectoryFinder.FdoDirectories, new FdoSettings());
+			m_cache = FdoCache.CreateCacheWithNewBlankLangProj(new TestProjectId(FDOBackendProviderType.kMemoryOnly, null), "en", "es",
+				"en", new DummyFdoUI(), TestDirectoryFinder.FdoDirectories, new FdoSettings());
 
 			var xl = new XmlList();
 			using (var reader = new StringReader(XmlListTests.s_ksPartsOfSpeechXml))

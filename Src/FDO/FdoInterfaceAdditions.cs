@@ -4320,6 +4320,11 @@ namespace SIL.FieldWorks.FDO
 			set;
 		}
 
+		/// <summary>
+		/// Initializes the import set. This must be called before use.
+		/// </summary>
+		void Initialize(IVwStylesheet stylesheet, string teStylesPath);
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Get a MappingSet that is appropriate for the ImportDomain
@@ -4475,17 +4480,6 @@ namespace SIL.FieldWorks.FDO
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		BCVRef EndRef
-		{
-			get;
-			set;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets/sets stylesheet for settings.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		IVwStylesheet StyleSheet
 		{
 			get;
 			set;
@@ -5204,8 +5198,10 @@ namespace SIL.FieldWorks.FDO
 		/// one (which is probably the only one), or creates new settings if none exist.
 		/// </summary>
 		/// <param name="importType">type of import type to find.</param>
+		/// <param name="stylesheet">The stylesheet.</param>
+		/// <param name="teStylesPath">The TE styles path.</param>
 		/// ------------------------------------------------------------------------------------
-		IScrImportSet FindOrCreateDefaultImportSettings(TypeOfImport importType);
+		IScrImportSet FindOrCreateDefaultImportSettings(TypeOfImport importType, IVwStylesheet stylesheet, string teStylesPath);
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

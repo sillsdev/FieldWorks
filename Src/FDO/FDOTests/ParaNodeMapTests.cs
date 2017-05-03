@@ -17,7 +17,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
-	public class ParaNodeMapTests: SIL.FieldWorks.Test.TestUtils.BaseTest
+	public class ParaNodeMapTests
 	{
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

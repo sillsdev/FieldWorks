@@ -9,7 +9,6 @@
 // </remarks>
 
 using NUnit.Framework;
-using SIL.FieldWorks.Test.TestUtils;
 using SIL.Utils;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwKernelInterfaces;

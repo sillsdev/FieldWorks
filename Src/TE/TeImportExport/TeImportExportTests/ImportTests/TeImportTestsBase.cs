@@ -1,24 +1,15 @@
-// Copyright (c) 2007-2013 SIL International
+// Copyright (c) 2007-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: TeImportTestsBase.cs
-// Responsibility: TE Team
-//
-// <remarks>
-// </remarks>
 
 using System.Collections.Generic;
 using System.Diagnostics;
-
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
-using SIL.FieldWorks.Resources;
 using SIL.Utils;
 using SIL.FieldWorks.Common.ScriptureUtils;
-using SIL.FieldWorks.Test.TestUtils;
 using SILUBS.SharedScrUtils;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
@@ -247,7 +238,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 			DummyTeImporter.s_consultantNoteDefn = Cache.ServiceLocator.GetInstance<ICmAnnotationDefnRepository>().ConsultantAnnotationDefn;
 
 			m_titus = new BCVRef(56001001);
-			m_settings = m_scr.FindOrCreateDefaultImportSettings(TypeOfImport.Other);
+			m_settings = m_scr.FindOrCreateDefaultImportSettings(TypeOfImport.Other, m_styleSheet, FwDirectoryFinder.TeStylesPath);
 			m_settings.StartRef = m_titus;
 			m_settings.EndRef = m_titus;
 			m_settings.ImportTranslation = true;

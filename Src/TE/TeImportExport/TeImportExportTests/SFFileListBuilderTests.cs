@@ -1,14 +1,6 @@
-// Copyright (c) 2002-2013 SIL International
+// Copyright (c) 2002-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: SFFileListBuilderTest.cs
-// Responsibility: TE Team
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
-// --------------------------------------------------------------------------------------------
 
 using System.Collections;
 using System.Collections.Generic;
@@ -17,7 +9,7 @@ using System.Windows.Forms;
 using NUnit.Framework;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Test.TestUtils;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.FDO.DomainServices;
@@ -321,7 +313,7 @@ namespace SIL.FieldWorks.TE
 				Cache.ServiceLocator.WritingSystems.AnalysisWritingSystems.Add(wsGerman);
 				Cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems.Add(wsGerman);
 			});
-			m_mappingList = new ScrMappingList(MappingSet.Main, null);
+			m_mappingList = new ScrMappingList(MappingSet.Main, null, FwDirectoryFinder.TeStylesPath);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -331,7 +323,7 @@ namespace SIL.FieldWorks.TE
 		/// ------------------------------------------------------------------------------------
 		protected override void CreateTestData()
 		{
-			m_settings = m_scr.FindOrCreateDefaultImportSettings(TypeOfImport.Other);
+			m_settings = m_scr.FindOrCreateDefaultImportSettings(TypeOfImport.Other, null, FwDirectoryFinder.TeStylesPath);
 			m_builder = new DummySFFileListBuilder();
 			m_builder.ImportSettings = m_settings;
 			DummyScrImportFileInfo.s_alwaysPretendFileDoesNotExist = false;

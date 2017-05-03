@@ -518,43 +518,6 @@ namespace SIL.Utils
 			return sOutput;
 		}
 
-		/// <summary>
-		/// build an xpath to the given node in its document.
-		/// </summary>
-		/// <param name="node"></param>
-		/// <returns></returns>
-		public static string GetXPathInDocument(XmlNode node)
-		{
-			if (node == null || node.NodeType != XmlNodeType.Element)
-				return "";
-			//XmlNode parent = node.ParentNode;
-			// start with the name of the node, and tentatively guess it to be the root element.
-			string xpath = String.Format("/{0}", node.LocalName);
-			// append the index of the node amongst any preceding siblings.
-			int index = GetIndexAmongSiblings(node);
-			if (index != -1)
-			{
-				index = index + 1; // add one for an xpath index.
-				xpath += String.Format("[{0}]", index);
-			}
-			return String.Concat(GetXPathInDocument(node.ParentNode), xpath);
-		}
-
-		/// <summary>
-		///
-		/// </summary>
-		/// <param name="node"></param>
-		/// <returns>Zero-based Index of Node in ParentNode.ChildNodes. -1, if node has no parent.</returns>
-		public static int GetIndexAmongSiblings(XmlNode node)
-		{
-			XmlNode parent = node.ParentNode;
-			if (parent != null)
-			{
-				return node.SelectNodes("./preceding-sibling::" + node.LocalName).Count;
-			}
-			return -1;
-		}
-
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Find the index of the node in nodes that 'matches' the target node.
@@ -574,26 +537,6 @@ namespace SIL.Utils
 				index++;
 			}
 			return -1;
-		}
-
-		/// <summary>
-		/// return the deep clone of the given node, in a clone of its document context.
-		/// </summary>
-		/// <param name="node"></param>
-		/// <returns></returns>
-		public static XmlNode CloneNodeWithDocument(XmlNode node)
-		{
-			if (node == null)
-				return null;
-			// get the xpath of the node in its document
-			if (node.NodeType != XmlNodeType.Document)
-			{
-				string xpath = GetXPathInDocument(node);
-				XmlNode clonedOwner = node.OwnerDocument.CloneNode(true);
-				return clonedOwner.SelectSingleNode(xpath);
-			}
-
-			return node.CloneNode(true);
 		}
 
 		#region Serialize/Deserialize

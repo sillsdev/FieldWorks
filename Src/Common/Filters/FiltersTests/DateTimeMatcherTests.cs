@@ -1,14 +1,10 @@
-// Copyright (c) 2010-2013 SIL International
+// Copyright (c) 2010-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: DateTimeMatcherTests.cs
-// Responsibility: mcconnel
 
 using System;
 using NUnit.Framework;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Test.TestUtils;
 
 namespace SIL.FieldWorks.Filters
 {
@@ -19,7 +15,7 @@ namespace SIL.FieldWorks.Filters
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
 	[SetCulture("en-US")]
-	public class DateTimeMatcherTests : BaseTest
+	public class DateTimeMatcherTests
 	{
 		public const int WsDummy = 987654321;
 
@@ -348,7 +344,7 @@ namespace SIL.FieldWorks.Filters
 	[TestFixture]
 	[SetCulture("de-DE")]
 	[Ignore("This test demonstrates FWR-2942")]
-	public class DateTimeMatcherTests_German : BaseTest
+	public class DateTimeMatcherTests_German
 	{
 		///--------------------------------------------------------------------------------------
 		/// <summary>

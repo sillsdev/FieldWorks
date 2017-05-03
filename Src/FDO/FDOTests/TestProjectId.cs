@@ -1,11 +1,6 @@
-// Copyright (c) 2010-2013 SIL International
+// Copyright (c) 2010-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: TestProjectId.cs
-// Responsibility: FW Team
-// ---------------------------------------------------------------------------------------------
-using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.FDO.FDOTests
 {
@@ -16,8 +11,6 @@ namespace SIL.FieldWorks.FDO.FDOTests
 	/// ----------------------------------------------------------------------------------------
 	public class TestProjectId : IProjectIdentifier
 	{
-		private readonly FDOBackendProviderType m_type;
-
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="TestProjectId"/> class.
@@ -25,7 +18,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// ------------------------------------------------------------------------------------
 		public TestProjectId(FDOBackendProviderType type, string name)
 		{
-			m_type = type;
+			Type = type;
 			Path = name;
 		}
 
@@ -36,10 +29,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// for local projects and [Name]-[ServerName] for remote projects).
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public string UiName
-		{
-			get { return Name; }
-		}
+		public string UiName => Name;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -55,20 +45,14 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// be used as a path; use the <see cref="Path"/> property instead.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public string Handle
-		{
-			get { return Name; }
-		}
+		public string Handle => Name;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets a token that uniquely identifies the project that can be used for a named pipe.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public string PipeHandle
-		{
-			get { return FwUtils.GeneratePipeHandle(Handle); }
-		}
+		public string PipeHandle => $"FieldWorks:{Handle}";
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -76,10 +60,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// Typically this will be the same as <see cref="Path"/> for remote projects)
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public string Name
-		{
-			get { return System.IO.Path.GetFileNameWithoutExtension(Path); }
-		}
+		public string Name => System.IO.Path.GetFileNameWithoutExtension(Path);
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -87,10 +68,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// remote projects).
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public string ProjectFolder
-		{
-			get { return System.IO.Path.GetDirectoryName(Path); }
-		}
+		public string ProjectFolder => System.IO.Path.GetDirectoryName(Path);
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -98,40 +76,28 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// shared. This includes writing systems, etc. and possibly linked files.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public string SharedProjectFolder
-		{
-			get { return ProjectFolder; }
-		}
+		public string SharedProjectFolder => ProjectFolder;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the name of the server (can be <c>null</c> for a local project).
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public string ServerName
-		{
-			get { return null; }
-		}
+		public string ServerName => null;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the type of back-end used for storing the project.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public FDOBackendProviderType Type
-		{
-			get { return m_type; }
-		}
+		public FDOBackendProviderType Type { get; }
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets a value indicating whether this project is on the local host.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public bool IsLocal
-		{
-			get { return true; }
-		}
+		public bool IsLocal => true;
 		#endregion
 	}
 }

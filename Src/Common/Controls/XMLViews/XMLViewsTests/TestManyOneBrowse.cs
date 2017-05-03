@@ -1,10 +1,9 @@
-// Copyright (c) 2010-2013 SIL International
+// Copyright (c) 2010-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-using System;
+
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Xml;
@@ -29,7 +28,7 @@ namespace XMLViewsTests
 	/// to the root object of each row.
 	/// </summary>
 	[TestFixture]
-	public class TestManyOneBrowse : SIL.FieldWorks.Test.TestUtils.BaseTest
+	public class TestManyOneBrowse
 	{
 		private IFwMetaDataCache m_mdc;
 		private ISilDataAccess m_sda;

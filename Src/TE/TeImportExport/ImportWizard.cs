@@ -256,11 +256,10 @@ namespace SIL.FieldWorks.TE
 			m_cache = scr.Cache;
 
 			// Attempt to get the default import settings.
-			m_settings = m_scr.FindOrCreateDefaultImportSettings(TypeOfImport.Unknown);
+			m_settings = m_scr.FindOrCreateDefaultImportSettings(TypeOfImport.Unknown, m_StyleSheet, FwDirectoryFinder.TeStylesPath);
 			if (m_settings.ImportTypeEnum == TypeOfImport.Unknown)
 				m_settings.ImportTypeEnum = TypeOfImport.Paratext6;
-
-			InitializeScrImportSettings();
+			m_settings.OverlappingFileResolver = m_resolver;
 
 			// Initialize controls based on settings provided
 			switch (m_settings.ImportTypeEnum)
@@ -293,18 +292,6 @@ namespace SIL.FieldWorks.TE
 				m_annotationViewHelper.AddStyles(m_StyleSheet,
 					MappingDetailsCtrl.AllPseudoStyles);
 			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Initializes the Scripture import settings object. This should be called whenever
-		/// m_settings is reassigned to a new instance of the ScrImportSet class.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		private void InitializeScrImportSettings()
-		{
-			m_settings.StyleSheet = m_StyleSheet;
-			m_settings.OverlappingFileResolver = m_resolver;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -2166,9 +2153,9 @@ namespace SIL.FieldWorks.TE
 		{
 			NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(m_cache.ActionHandlerAccessor, () =>
 			{
-				m_settings = m_scr.FindOrCreateDefaultImportSettings(importType);
+				m_settings = m_scr.FindOrCreateDefaultImportSettings(importType, m_StyleSheet, FwDirectoryFinder.TeStylesPath);
 			});
-			InitializeScrImportSettings();
+			m_settings.OverlappingFileResolver = m_resolver;
 		}
 		#endregion
 

@@ -1,25 +1,17 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: XWindowTests.cs
-// Authorship History: John Hatton
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
-// --------------------------------------------------------------------------------------------
+
 using System;
 using System.Windows.Forms;
 using System.Reflection;
 using System.IO;
-using SIL.FieldWorks.Test.TestUtils;
 using SIL.Utils;
 using NUnit.Framework;
 
 namespace XCore
 {
-	public abstract class XWindowTestsBase : BaseTest
+	public abstract class XWindowTestsBase
 	{
 		//protected XCoreApp m_testXCoreApp;
 		protected XWindow m_window;
@@ -43,10 +35,8 @@ namespace XCore
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[TestFixtureSetUp]
-		public override void FixtureSetup()
+		public void FixtureSetup()
 		{
-			base.FixtureSetup();
-
 			// load a persisted version of the property table.
 			m_settingsPath = Path.Combine(TempPath, "settingsBackup");
 			if (!Directory.Exists(m_settingsPath))
@@ -66,7 +56,7 @@ namespace XCore
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[TestFixtureTearDown]
-		public override void FixtureTeardown()
+		public void FixtureTeardown()
 		{
 			//m_window.Close();
 			m_window.PropTable.RemoveLocalAndGlobalSettings();
@@ -77,8 +67,6 @@ namespace XCore
 				Directory.Delete(m_settingsPath);
 			}
 			catch { }
-
-			base.FixtureTeardown();
 		}
 
 		/// -----------------------------------------------------------------------------------

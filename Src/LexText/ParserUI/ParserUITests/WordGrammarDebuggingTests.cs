@@ -1,11 +1,7 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: WordGrammarDebuggingTests.cs
-// Responsibility:
 
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Text;
@@ -16,7 +12,6 @@ using System.Xml.Xsl;
 using NUnit.Framework;
 
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Test.TestUtils;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.LexText.Controls
@@ -27,7 +22,7 @@ namespace SIL.FieldWorks.LexText.Controls
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
-	public class WordGrammarDebuggingTests : BaseTest
+	public class WordGrammarDebuggingTests
 	{
 		private XPathDocument m_doc;
 
@@ -85,9 +80,8 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[TestFixtureSetUp]
-		public override void FixtureSetup()
+		public void FixtureSetup()
 		{
-			base.FixtureSetup();
 			m_sTestPath = Path.Combine(FwDirectoryFinder.SourceDirectory,
 				"LexText/ParserUI/ParserUITests/WordGrammarDebuggingInputsAndResults");
 
@@ -110,7 +104,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[TestFixtureTearDown]
-		public override void FixtureTeardown()
+		public void FixtureTeardown()
 		{
 			if (File.Exists(m_sResultTransform))
 				File.Delete(m_sResultTransform);
@@ -124,7 +118,6 @@ namespace SIL.FieldWorks.LexText.Controls
 				File.Delete(Path.Combine(m_sTempPath, "UnifyTwoFeatureStructures.xsl"));
 			if (File.Exists(Path.Combine(m_sTempPath, "TestUnificationViaXSLT-Linux.xsl")))
 				File.Delete(Path.Combine(m_sTempPath, "TestUnificationViaXSLT-Linux.xsl"));
-			base.FixtureTeardown();
 		}
 
 		#region Helper methods for setup
