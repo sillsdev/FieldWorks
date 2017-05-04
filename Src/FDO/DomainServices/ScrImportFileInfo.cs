@@ -1,9 +1,6 @@
-// Copyright (c) 2006-2013 SIL International
+// Copyright (c) 2006-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ScrImportFileInfo.cs
-// Responsibility: TE Team
 
 using System;
 using System.Diagnostics;
@@ -11,9 +8,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using SIL.CoreImpl.Scripture;
-using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.Utils;
-using SILUBS.SharedScrUtils;
 
 namespace SIL.FieldWorks.FDO.DomainServices
 {

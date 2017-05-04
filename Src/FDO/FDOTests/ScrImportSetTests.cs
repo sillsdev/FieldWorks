@@ -7,10 +7,8 @@ using System.Collections;
 using System.Collections.Generic;
 using NUnit.Framework;
 using Rhino.Mocks;
-using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Utils;
-using SILUBS.SharedScrUtils;
 using SIL.CoreImpl.Scripture;
 
 namespace SIL.FieldWorks.FDO.FDOTests

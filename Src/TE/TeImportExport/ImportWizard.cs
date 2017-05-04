@@ -15,6 +15,7 @@ using System.Windows.Forms;
 using Microsoft.Win32;
 using Paratext;
 using SIL.CoreImpl;
+using SIL.CoreImpl.Scripture;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Drawing;
 using SIL.FieldWorks.Common.FwUtils;

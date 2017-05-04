@@ -11,6 +11,7 @@ using System.Threading;
 using System.Linq;
 using NUnit.Framework;
 using SIL.CoreImpl;
+using SIL.CoreImpl.Scripture;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.Common.Framework;

@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using NUnit.Framework;
 using Paratext;
 using Rhino.Mocks;
+using SIL.CoreImpl.Scripture;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.FDO;

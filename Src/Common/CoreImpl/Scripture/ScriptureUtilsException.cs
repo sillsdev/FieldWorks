@@ -11,10 +11,8 @@
 using System;
 using System.Reflection;
 using System.Resources;
-using SILUBS.SharedScrUtils;
-using SIL.CoreImpl.Scripture;
 
-namespace SIL.FieldWorks.Common.ScriptureUtils
+namespace SIL.CoreImpl.Scripture
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
@@ -658,7 +656,7 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 			if (s_stringResources == null)
 			{
 				s_stringResources = new ResourceManager(
-					"SIL.FieldWorks.Common.ScriptureUtils.ScrUtilsStrings",
+					"SIL.CoreImpl.Scripture.ScrUtilsStrings",
 					Assembly.GetExecutingAssembly());
 			}
 

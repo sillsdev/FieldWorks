@@ -17,6 +17,7 @@ using SIL.FieldWorks.FDO.FDOTests;
 using System.Windows.Forms;
 using SIL.Utils;
 using System.Collections;
+using SIL.CoreImpl.Scripture;
 using SIL.FieldWorks.Common.ScriptureUtils;
 
 namespace SIL.FieldWorks.TE

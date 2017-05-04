@@ -6,8 +6,8 @@ using System;
 using System.IO;
 using NUnit.Framework;
 using Rhino.Mocks;
+using SIL.CoreImpl.Scripture;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
-using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.Utils;
 using SIL.FieldWorks.FDO.DomainServices;
 

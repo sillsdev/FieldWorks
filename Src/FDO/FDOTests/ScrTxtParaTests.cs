@@ -4,10 +4,8 @@
 
 using System;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.Utils;
 using SIL.FieldWorks.FDO.DomainServices;
-using SILUBS.SharedScrUtils;
 using SIL.CoreImpl.Scripture;
 using System.Collections.Generic;
 using SIL.CoreImpl;

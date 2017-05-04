@@ -10,6 +10,7 @@ using NUnit.Framework;
 using Rhino.Mocks;
 using SIL.FieldWorks.FDO;
 using System.Diagnostics;
+using SIL.CoreImpl.Scripture;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.Common.ScriptureUtils;
 

@@ -142,13 +142,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ParatextLoadException.cs" />
-    <Compile Include="ScriptureUtilsException.cs" />
-    <Compile Include="ScrStyleNames.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="ScrUtilsStrings.resx">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

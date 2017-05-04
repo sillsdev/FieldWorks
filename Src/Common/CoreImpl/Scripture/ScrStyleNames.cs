@@ -5,10 +5,9 @@
 // File: ScrStyleNames.cs
 // Responsibility: TE Team
 
-using System.Collections.Generic;
 using System.Collections.Specialized;
 
-namespace SIL.FieldWorks.Common.ScriptureUtils
+namespace SIL.CoreImpl.Scripture
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>

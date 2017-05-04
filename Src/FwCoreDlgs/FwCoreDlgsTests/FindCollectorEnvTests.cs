@@ -5,6 +5,7 @@
 using System.Runtime.InteropServices; // needed for Marshal
 using NUnit.Framework;
 using SIL.CoreImpl;
+using SIL.CoreImpl.Scripture;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ScriptureUtils;

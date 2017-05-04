@@ -9,6 +9,7 @@
 
 using NUnit.Framework;
 using System.Linq;
+using SIL.CoreImpl.Scripture;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.ScriptureUtils;

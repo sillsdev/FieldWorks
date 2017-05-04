@@ -127,12 +127,6 @@
     <Reference Include="Microsoft.Practices.ServiceLocation">
       <HintPath>..\..\DistFiles\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
-    <Reference Include="ScrUtilsInterfaces">
-      <HintPath>..\..\Output\Debug\ScrUtilsInterfaces.dll</HintPath>
-    </Reference>
-    <Reference Include="SharedScrUtils">
-      <HintPath>..\..\Output\Debug\SharedScrUtils.dll</HintPath>
-    </Reference>
     <Reference Include="StructureMap">
       <HintPath>..\..\DistFiles\StructureMap.dll</HintPath>
     </Reference>

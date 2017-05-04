@@ -12,6 +12,7 @@ using System.Drawing;
 using System.Windows.Forms;
  // needed for Marshal
 using System.Windows.Forms.VisualStyles;
+using SIL.CoreImpl.Scripture;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;

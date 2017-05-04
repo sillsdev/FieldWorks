@@ -123,7 +123,9 @@
     <Compile Include="Scripture\IScrProjMetaDataProvider.cs" />
     <Compile Include="Scripture\IVerseReference.cs" />
     <Compile Include="Scripture\MultilingScrBooks.cs" />
+    <Compile Include="Scripture\ScriptureUtilsException.cs" />
     <Compile Include="Scripture\ScrReference.cs" />
+    <Compile Include="Scripture\ScrStyleNames.cs" />
     <Compile Include="Scripture\ScrVers.cs" />
     <Compile Include="Scripture\Versification.cs" />
     <Compile Include="SilTime.cs" />
@@ -200,6 +202,9 @@
     <EmbeddedResource Include="ColorStrings.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>ColorStrings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Scripture\ScrUtilsStrings.resx">
+      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

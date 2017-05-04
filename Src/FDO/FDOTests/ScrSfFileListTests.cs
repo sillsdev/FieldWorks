@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using NUnit.Framework;
 using SIL.FieldWorks.FDO.DomainServices;
 using Rhino.Mocks;
-using SILUBS.SharedScrUtils;
 using SIL.CoreImpl.Scripture;
 
 namespace SIL.FieldWorks.FDO.FDOTests
