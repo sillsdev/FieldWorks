@@ -1,14 +1,14 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Diagnostics;
+using SIL.Utils;
 
 // Copyright Copyright © 2002 CyberbrineDreams; for permission to use this fragment contact webmaster@cyberbrinedreams.com
 // Very slightly adapted (comments only changed) from http://www.cyberbrinedreams.com/version2/projects/code/stable_sort/
 
-namespace SIL.Utils
+namespace SIL.FieldWorks.Common.FwUtils
 {
 	/// <summary>
 	/// MergeSort - a stable sort for .Net

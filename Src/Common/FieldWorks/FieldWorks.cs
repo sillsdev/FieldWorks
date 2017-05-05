@@ -719,7 +719,7 @@ namespace SIL.FieldWorks
 				try
 				{
 					string thisProcessName = Assembly.GetExecutingAssembly().GetName().Name;
-					string thisSid = BasicUtils.GetUserForProcess(thisProcess);
+					string thisSid = FwUtils.GetUserForProcess(thisProcess);
 					List<Process> processes = Process.GetProcessesByName(thisProcessName).ToList();
 					if (MiscUtils.IsUnix)
 					{
@@ -728,7 +728,7 @@ namespace SIL.FieldWorks
 					}
 					foreach (Process procCurr in processes)
 					{
-						if (procCurr.Id != thisProcess.Id && thisSid == BasicUtils.GetUserForProcess(procCurr))
+						if (procCurr.Id != thisProcess.Id && thisSid == FwUtils.GetUserForProcess(procCurr))
 							existingProcesses.Add(procCurr);
 					}
 				}
@@ -1008,7 +1008,7 @@ namespace SIL.FieldWorks
 		/// ------------------------------------------------------------------------------------
 		private static void HandleTopLevelError(object sender, ThreadExceptionEventArgs eventArgs)
 		{
-			if (BasicUtils.IsUnsupportedCultureException(eventArgs.Exception)) // LT-8248
+			if (FwUtils.IsUnsupportedCultureException(eventArgs.Exception)) // LT-8248
 			{
 				Logger.WriteEvent("Unsupported culture: " + eventArgs.Exception.Message);
 				return;

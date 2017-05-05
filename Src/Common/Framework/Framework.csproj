@@ -105,10 +105,6 @@
     <Reference Include="Accessibility">
       <Name>Accessibility</Name>
     </Reference>
-    <Reference Include="BasicUtils, Version=4.1.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\BasicUtils.dll</HintPath>
-    </Reference>
     <Reference Include="ViewsInterfaces, Version=5.5.0.18125, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>

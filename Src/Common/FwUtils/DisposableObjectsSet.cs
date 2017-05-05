@@ -5,7 +5,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace SIL.Utils
+namespace SIL.FieldWorks.Common.FwUtils
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>

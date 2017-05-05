@@ -1,4 +1,4 @@
-// Copyright (c) 2011-2013 SIL International
+// Copyright (c) 2011-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,8 +6,9 @@ using System;
 using System.Diagnostics;
 using NUnit.Framework;
 
-namespace SIL.Utils
+namespace SIL.FieldWorks.Common.FwUtils
 {
+	/// <summary />
 	[TestFixture]
 	public class DisposableObjectsSetTests
 	{
@@ -63,6 +64,7 @@ namespace SIL.Utils
 		}
 		#endregion
 
+		/// <summary />
 		[Test]
 		public void TwoDifferentObjectsWithSameNameGetBothDisposed()
 		{
@@ -84,6 +86,7 @@ namespace SIL.Utils
 			}
 		}
 
+		/// <summary />
 		[Test]
 		public void TwoDifferentObjectsWithDifferentNameGetBothDisposed()
 		{
@@ -105,6 +108,7 @@ namespace SIL.Utils
 			}
 		}
 
+		/// <summary />
 		[Test]
 		public void SameReferenceIsAddedOnlyOnce()
 		{
@@ -124,6 +128,7 @@ namespace SIL.Utils
 			}
 		}
 
+		/// <summary />
 		[Test]
 		public void SameReferenceWithDifferentNameIsAddedOnlyOnce()
 		{

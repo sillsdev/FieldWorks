@@ -1,10 +1,7 @@
 #define PROFILING
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: Benchmark.cs
-// Responsibility: BobA
 //
 // <remarks>
 // Handy benchmarking util
@@ -14,7 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace SIL.Utils
+namespace SIL.FieldWorks.Common.FwUtils
 {
 #if DEBUG
 	/// ----------------------------------------------------------------------------------------

@@ -94,10 +94,6 @@
     <Reference Include="Accessibility">
       <Name>Accessibility</Name>
     </Reference>
-    <Reference Include="BasicUtils, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\BasicUtils.dll</HintPath>
-    </Reference>
     <Reference Include="FDO, Version=8.0.6.21122, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\FDO.dll</HintPath>
@@ -212,9 +208,7 @@
     <Compile Include="xCoreStrings.Designer.cs">
       <DependentUpon>xCoreStrings.resx</DependentUpon>
     </Compile>
-    <Compile Include="xCoreUserControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Include="xCoreUserControl.cs" />
     <Compile Include="XMessageBoxExManager.cs" />
     <Compile Include="xWindow.cs">
       <SubType>Form</SubType>

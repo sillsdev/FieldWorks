@@ -1,9 +1,6 @@
-// Copyright (c) 2002-2013 SIL International
+// Copyright (c) 2002-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: DriveUtil.cs
-// Responsibility: DavidO
 //
 // <remarks>
 // The DriveInfo class contains a number of static classes
@@ -30,11 +27,10 @@
 // </remarks>
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Management;
 
-namespace SIL.Utils
+namespace SIL.FieldWorks.Common.FwUtils
 {
 	/// <summary>
 	/// Summary description for DriveInfo.

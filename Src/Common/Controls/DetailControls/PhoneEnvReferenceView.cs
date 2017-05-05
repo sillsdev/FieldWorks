@@ -67,7 +67,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <summary>
 		/// This allows the view to communicate size changes to the embedding slice.
 		/// </summary>
-		public event SIL.Utils.FwViewSizeChangedEventHandler ViewSizeChanged;
+		public event FwViewSizeChangedEventHandler ViewSizeChanged;
 		private int m_heightView = 0;
 
 		#endregion // Constants and data members

@@ -60,10 +60,6 @@
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BasicUtilsTests, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\BasicUtilsTests.dll</HintPath>
-    </Reference>
     <Reference Include="CoreImpl, Version=7.3.3.26471, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
     </Reference>

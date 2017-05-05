@@ -96,10 +96,6 @@
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BasicUtilsTests, Version=6.1.0.19616, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\BasicUtilsTests.dll</HintPath>
-    </Reference>
     <Reference Include="CacheLight, Version=1.0.3639.21412, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\CacheLight.dll</HintPath>

@@ -1,22 +1,15 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: AtomicReferenceSlice.cs
-// Responsibility:
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
+
 using System;
 using System.Diagnostics;
 using System.Windows.Forms;
 using System.Xml;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
-using XCore;
-using SIL.FieldWorks.Common.ViewsInterfaces;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {

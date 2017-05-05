@@ -85,10 +85,6 @@
   <ItemGroup>
     <Reference Include="Accessibility">
     </Reference>
-    <Reference Include="BasicUtils, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\BasicUtils.dll</HintPath>
-    </Reference>
     <Reference Include="Ethnologue, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\Ethnologue.dll</HintPath>

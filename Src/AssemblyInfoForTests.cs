@@ -4,7 +4,6 @@
 
 using NUnit.Framework;
 using SIL.CoreImpl.Attributes;
-using SIL.Utils.Attributes;
 using SIL.FieldWorks.Common.FwUtils.Attributes;
 using SIL.TestUtilities;
 

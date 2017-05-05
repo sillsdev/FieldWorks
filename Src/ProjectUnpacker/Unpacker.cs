@@ -1,22 +1,15 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: Unpacker.cs
-// Responsibility: DavidO
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Resources;
-using System.Diagnostics;
 using System.IO;
 using Microsoft.Win32;
 using ICSharpCode.SharpZipLib.Zip;
 using SIL.Utils;
 using NUnit.Framework;
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.Test.ProjectUnpacker
 {

@@ -1,13 +1,10 @@
-// Copyright (c) 2004-2013 SIL International
+// Copyright (c) 2004-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ViewSizeEvents.cs
-// Responsibility:
 
 using System;
 
-namespace SIL.Utils
+namespace SIL.FieldWorks.Common.FwUtils
 {
 	/// <summary>
 	/// Type declaration for FwViewSizeChangedEventHandler, which is used to handle changes in

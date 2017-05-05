@@ -139,9 +139,6 @@
     <Reference Include="System.Xml">
       <Name>System.XML</Name>
     </Reference>
-    <Reference Include="BasicUtils">
-      <HintPath>..\..\..\..\Output\Debug\BasicUtils.dll</HintPath>
-    </Reference>
     <Reference Include="CoreImpl">
       <HintPath>..\..\..\..\Output\Debug\CoreImpl.dll</HintPath>
     </Reference>

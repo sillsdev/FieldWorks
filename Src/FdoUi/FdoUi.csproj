@@ -159,10 +159,6 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
-    <Reference Include="BasicUtils, Version=6.1.1.29480, Culture=neutral, PublicKeyToken=null">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\BasicUtils.dll</HintPath>
-    </Reference>
     <Reference Include="CoreImpl, Version=6.1.1.30291, Culture=neutral, PublicKeyToken=null">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\CoreImpl.dll</HintPath>

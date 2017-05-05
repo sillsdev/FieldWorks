@@ -114,9 +114,6 @@
       <Name>XMLUtils</Name>
       <HintPath>..\..\..\Output\Debug\XMLUtils.dll</HintPath>
     </Reference>
-    <Reference Include="BasicUtils">
-      <HintPath>..\..\..\Output\Debug\BasicUtils.dll</HintPath>
-    </Reference>
     <Reference Include="CoreImpl">
       <HintPath>..\..\..\Output\Debug\CoreImpl.dll</HintPath>
     </Reference>

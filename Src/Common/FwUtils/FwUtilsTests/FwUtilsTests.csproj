@@ -123,12 +123,6 @@
     <Reference Include="SIL.Windows.Forms.Keyboarding">
       <HintPath>..\..\..\..\Downloads\SIL.Windows.Forms.Keyboarding.dll</HintPath>
     </Reference>
-    <Reference Include="BasicUtils">
-      <HintPath>..\..\..\..\Output\Debug\BasicUtils.dll</HintPath>
-    </Reference>
-    <Reference Include="BasicUtilsTests">
-      <HintPath>..\..\..\..\Output\Debug\BasicUtilsTests.dll</HintPath>
-    </Reference>
     <Reference Include="CoreImpl">
       <HintPath>..\..\..\..\Output\Debug\CoreImpl.dll</HintPath>
     </Reference>
@@ -148,12 +142,17 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AlphaOutlineTests.cs" />
+    <Compile Include="Attributes\CreateComObjectsFromManifestAttribute.cs" />
     <Compile Include="Attributes\HandleApplicationThreadExceptionAttribute.cs" />
     <Compile Include="Attributes\SuppressErrorBeepsAttribute.cs" />
+    <Compile Include="CharEnumeratorForByteArrayTests.cs" />
     <Compile Include="DebugProcsTests.cs" />
     <Compile Include="InterfacesTests.cs" />
+    <Compile Include="DisposableObjectsSetTests.cs" />
     <Compile Include="IVwCacheDaTests.cs" />
     <Compile Include="LayoutKeyUtilsTests.cs" />
+    <Compile Include="SimpleLoggerTests.cs" />
     <Compile Include="TempSFFileMaker.cs" />
     <Compile Include="TempSFFileMakerTests.cs" />
     <Compile Include="TestBaseForTestsThatCreateTempFilesBasedOnResources.cs" />

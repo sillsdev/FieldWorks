@@ -1057,7 +1057,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 								Wordform.AnalysesOC.Add(newAnalysis);
 								newAnalysis.ApprovalStatusIcon = 1; // Make it human approved.
 								int vernWS = TsStringUtils.GetWsAtOffset(tssWord, 0);
-								foreach (string morph in fullForm.Split(SIL.Utils.Unicode.SpaceChars))
+								foreach (string morph in fullForm.Split(Common.FwUtils.Unicode.SpaceChars))
 								{
 									if (!string.IsNullOrEmpty(morph))
 									{

@@ -94,14 +94,11 @@
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BasicUtils, Version=6.9.0.14190, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\BasicUtils.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\DistFiles\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
+    <Reference Include="System.Management" />
     <Reference Include="ViewsInterfaces, Version=4.1.0.9, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
@@ -157,14 +154,22 @@
     <Compile Include="..\..\CommonAssemblyInfo.cs">
       <Link>CommonAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="ActivationContextHelper.cs" />
+    <Compile Include="AlphaOutline.cs" />
     <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="Benchmark.cs" />
     <Compile Include="CachePair.cs" />
     <Compile Include="CharacterCategorizer.cs" />
+    <Compile Include="CharEnumeratorForByteArray.cs" />
     <Compile Include="ConsoleProgress.cs" />
     <Compile Include="DebugProcs.cs" />
+    <Compile Include="DirectoryUtils.cs" />
+    <Compile Include="DisposableObjectsSet.cs" />
+    <Compile Include="DriveUtil.cs" />
     <Compile Include="FLExBridgeHelper.cs" />
     <Compile Include="GeneratedFwUtils.cs" />
     <Compile Include="IChecksDataSource.cs" />
+    <Compile Include="HiMetric.cs" />
     <Compile Include="IFocusablePanePortion.cs" />
     <Compile Include="FwDirectoryFinder.cs" />
     <Compile Include="FwLinkArgs.cs" />
@@ -182,8 +187,10 @@
     <Compile Include="ITextToken.cs" />
     <Compile Include="LayoutKeyUtils.cs" />
     <Compile Include="MatchedPairs.cs" />
+    <Compile Include="LinuxPackageUtils.cs" />
     <Compile Include="MeasurementUtils.cs" />
     <Compile Include="Folders.cs" />
+    <Compile Include="MergeSort.cs" />
     <Compile Include="ParagraphCorrelation.cs" />
     <Compile Include="PictureHolder.cs" />
     <Compile Include="ProgressMessageArgs.cs" />
@@ -207,6 +214,9 @@
     <Compile Include="StandardCheckIds.cs" />
     <Compile Include="StyleMarkupInfo.cs" />
     <Compile Include="TextFileDataSource.cs" />
+    <Compile Include="SimpleLogger.cs" />
+    <Compile Include="Unicode.cs" />
+    <Compile Include="ViewSizeEvents.cs" />
     <Compile Include="TextTokenSubstring.cs" />
     <Compile Include="Win32Wrappers.cs" />
     <Compile Include="RegistryHelper.cs" />

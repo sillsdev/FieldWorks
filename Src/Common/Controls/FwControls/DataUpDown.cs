@@ -10,7 +10,7 @@
 
 using System;
 using System.Windows.Forms;
-
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.Controls

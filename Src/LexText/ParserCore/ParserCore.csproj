@@ -124,10 +124,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\ApplicationTransforms.dll</HintPath>
     </Reference>
-    <Reference Include="BasicUtils, Version=7.2.0.24545, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\BasicUtils.dll</HintPath>
-    </Reference>
     <Reference Include="CoreImpl, Version=6.1.1.22192, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\CoreImpl.dll</HintPath>

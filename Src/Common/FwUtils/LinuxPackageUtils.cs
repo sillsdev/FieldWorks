@@ -5,8 +5,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using SIL.Utils;
 
-namespace SIL.Utils
+namespace SIL.FieldWorks.Common.FwUtils
 {
 	/// <summary>
 	/// Allows querying for installed linux packages.

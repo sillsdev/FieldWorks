@@ -96,10 +96,6 @@
   <ItemGroup>
     <Reference Include="Accessibility">
     </Reference>
-    <Reference Include="BasicUtils">
-      <Name>BasicUtils</Name>
-      <HintPath>..\..\..\..\Output\Debug\BasicUtils.dll</HintPath>
-    </Reference>
     <Reference Include="ViewsInterfaces">
       <Name>ViewsInterfaces</Name>
       <HintPath>..\..\..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
@@ -199,9 +195,7 @@
     <Compile Include="FwLabel.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="FwMultilingualPropView.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="FwMultilingualPropView.cs" />
     <Compile Include="FontHeightAdjuster.cs">
       <SubType>Code</SubType>
     </Compile>

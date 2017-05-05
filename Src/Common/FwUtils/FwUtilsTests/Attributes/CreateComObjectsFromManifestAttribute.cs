@@ -6,9 +6,8 @@ using System;
 using System.Runtime.InteropServices;
 using System.Security;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.FwUtils;
 
-namespace SIL.Utils.Attributes
+namespace SIL.FieldWorks.Common.FwUtils.Attributes
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
