@@ -1,23 +1,14 @@
-// Copyright (c) 2007-2013 SIL International
+// Copyright (c) 2007-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: TeImportUi.cs
-// Responsibility: TE Team
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using SIL.CoreImpl.Scripture;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.ScriptureUtils;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.TE
 {
@@ -30,7 +21,7 @@ namespace SIL.FieldWorks.TE
 	/// from TeImport (which runs in the background), but every UI element it creates needs
 	/// to run on the main thread.</remarks>
 	/// ----------------------------------------------------------------------------------------
-	public class TeImportUi: IFWDisposable
+	public class TeImportUi : IDisposable
 	{
 		#region Data members
 		/// <summary></summary>

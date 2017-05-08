@@ -92,10 +92,6 @@
       <Name>ViewsInterfaces</Name>
       <HintPath>..\..\..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
     </Reference>
-    <Reference Include="Controls.Design">
-      <Name>Controls.Design</Name>
-      <HintPath>..\..\..\..\Output\Debug\Controls.Design.dll</HintPath>
-    </Reference>
     <Reference Include="FDO">
       <HintPath>..\..\..\..\Output\Debug\FDO.dll</HintPath>
     </Reference>
@@ -127,9 +123,6 @@
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
-    <Reference Include="System.Data">
-      <Name>System.Data</Name>
-    </Reference>
     <Reference Include="System.Drawing">
       <Name>System.Drawing</Name>
     </Reference>
@@ -148,18 +141,11 @@
     <Reference Include="SilUtils">
       <HintPath>..\..\..\..\Output\Debug\SilUtils.dll</HintPath>
     </Reference>
-    <Reference Include="ScrUtilsInterfaces">
-      <HintPath>..\..\..\..\Output\Debug\ScrUtilsInterfaces.dll</HintPath>
-    </Reference>
     <Reference Include="xCore">
       <HintPath>..\..\..\..\Output\Debug\xCore.dll</HintPath>
     </Reference>
     <Reference Include="xCoreInterfaces">
       <HintPath>..\..\..\..\Output\Debug\xCoreInterfaces.dll</HintPath>
-    </Reference>
-    <Reference Include="XMLUtils">
-      <Name>XMLUtils</Name>
-      <HintPath>..\..\..\..\Output\Debug\XMLUtils.dll</HintPath>
     </Reference>
     <Reference Include="gtk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" Condition="'$(OS)'=='Unix'" />
     <Reference Include="glib-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" Condition="'$(OS)'=='Unix'" />

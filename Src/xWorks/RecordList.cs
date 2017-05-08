@@ -1,9 +1,7 @@
-// Copyright (c) 2004-2015 SIL International
+// Copyright (c) 2004-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: RecordList.cs
-// History: John Hatton, created
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -14,7 +12,6 @@ using System.Reflection;
 using System.Windows.Forms;
 using System.Xml;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
@@ -26,6 +23,7 @@ using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.Filters;
+using SIL.ObjectModel;
 using SIL.Reporting;
 using SIL.Utils;
 using XCore;
@@ -951,7 +949,7 @@ namespace SIL.FieldWorks.XWorks
 	/// </summary>
 	/// <remarks>RecordList is not XCore aware but is aware of RecordSorter and RecordFilter.
 	/// </remarks>
-	public class RecordList : FwDisposableBase, IVwNotifyChange, ISortItemProvider
+	public class RecordList : DisposableBase, IVwNotifyChange, ISortItemProvider
 	{
 		#region Events
 
@@ -1282,11 +1280,7 @@ namespace SIL.FieldWorks.XWorks
 			get
 			{
 				CheckDisposed();
-				// we only have a reference to the filter which means that it might have been
-				// disposed. In that case treat it as if we wouldn't have a filter.
-				var disposable = m_filter as IFWDisposable;
-				if (disposable != null && disposable.IsDisposed)
-					m_filter = null;
+
 				return m_filter;
 			}
 			set
@@ -1628,7 +1622,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 		#endregion Properties
 
-		#region FwDisposableBase
+		#region DisposableBase
 
 		protected override void DisposeManagedResources()
 		{
@@ -1663,7 +1657,7 @@ namespace SIL.FieldWorks.XWorks
 			m_owningObject = null;
 		}
 
-		#endregion FwDisposableBase
+		#endregion DisposableBase
 
 		#region IVwNotifyChange implementation
 

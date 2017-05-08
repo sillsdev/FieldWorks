@@ -1,12 +1,6 @@
-// Copyright (c) 2007-2013 SIL International
+// Copyright (c) 2007-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: CollapsingSplitContainer.cs
-// Responsibility: Randy
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Drawing;
@@ -31,7 +25,7 @@ namespace XCore
 	/// will have to do that.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public partial class CollapsingSplitContainer : SplitContainer, IFWDisposable, IPostLayoutInit
+	public partial class CollapsingSplitContainer : SplitContainer, IPostLayoutInit
 	{
 		public const int kCollapsedSize = 16;
 		public const int kCollapseZone = 35;
@@ -295,7 +289,7 @@ namespace XCore
 
 		#endregion Properties
 
-		#region IFwDisposable implementation
+		#region Disposable implementation
 
 		/// <summary>
 		/// Check to see if the object has been disposed.
@@ -308,7 +302,7 @@ namespace XCore
 				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
 		}
 
-		#endregion IFwDisposable implementation
+		#endregion Disposable implementation
 
 		#region Private general methods
 
@@ -653,7 +647,7 @@ namespace XCore
 			{
 				using (Graphics gr = CreateGraphics())
 				{
-					return Math.Max((int)((float)collapse * gr.DpiX) / SIL.Utils.MiscUtils.kdzmpInch,
+					return Math.Max((int)((float)collapse * gr.DpiX) / MiscUtils.kdzmpInch,
 						kCollapseZone);
 				}
 			}

@@ -1,22 +1,18 @@
-// Copyright (c) 2005-2013 SIL International
+// Copyright (c) 2005-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ImportWordSetListener.cs
-// Responsibility: Randy Regnier
-// Last reviewed:
 //
 // <remarks>
 // Implementation of:
 //		ImportWordSetListener - XCore listener that fires up an ImportWordSetDlg, if needed.
 // </remarks>
+
 using System;
 using System.Windows.Forms;
 using System.Xml;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.Utils;
 using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
@@ -25,7 +21,7 @@ namespace SIL.FieldWorks.LexText.Controls
 	/// Summary description for ImportWordSetListener.
 	/// </summary>
 	[XCore.MediatorDispose]
-	public class ImportWordSetListener : IxCoreColleague, IFWDisposable
+	public class ImportWordSetListener : IxCoreColleague, IDisposable
 	{
 		#region Data members
 
@@ -36,10 +32,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		private PropertyTable m_propertyTable;
 
 		#endregion Data members
-
-		public ImportWordSetListener()
-		{
-		}
 
 		#region IDisposable & Co. implementation
 		// Region last reviewed: never
@@ -229,7 +221,7 @@ namespace SIL.FieldWorks.LexText.Controls
 	/// Summary description for ImportWordSetListener.
 	/// </summary>
 	[XCore.MediatorDispose]
-	public class ParserParametersListener : IxCoreColleague, IFWDisposable
+	public class ParserParametersListener : IxCoreColleague, IDisposable
 	{
 		#region Data members
 

@@ -1,14 +1,11 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
-using System.Diagnostics;
-
 using SIL.Utils;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
 
@@ -17,7 +14,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 	/// <summary>
 	/// Summary description for SummaryCommandControl.
 	/// </summary>
-	public class SummaryCommandControl : UserControl, IFWDisposable
+	public class SummaryCommandControl : UserControl
 	{
 		/// <summary>
 		/// This menu contains the items that are displayed when the context menu icon is clicked,

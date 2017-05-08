@@ -1,20 +1,12 @@
-// Copyright (c) 2010-2013 SIL International
+// Copyright (c) 2010-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: CustomCharDlg.cs
-// Responsibility: mcconnel
-//
-// <remarks>
-// This is a mutation of the old PUACharacterDlg.cs
-// </remarks>
 
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Controls;
@@ -28,7 +20,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 	/// <summary>
 	/// Dialog for editing the properties of a Unicode character.
 	/// </summary>
-	public class CustomCharDlg : Form, IFWDisposable
+	public class CustomCharDlg : Form
 	{
 		# region member variables
 

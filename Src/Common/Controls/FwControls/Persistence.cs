@@ -1,15 +1,6 @@
-// Copyright (c) 2002-2013 SIL International
+// Copyright (c) 2002-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: Persistence.cs
-// Responsibility: RonM
-// Last reviewed:
-//
-// <remarks>
-// Implementation of Persistence
-// </remarks>
-//
 
 using System;
 using System.ComponentModel;
@@ -20,9 +11,7 @@ using System.Reflection;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Windows.Forms;
 using Microsoft.Win32;
-
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.Utils;
 using SIL.Windows.Forms;
 
 namespace SIL.FieldWorks.Common.Controls
@@ -89,7 +78,7 @@ namespace SIL.FieldWorks.Common.Controls
 	/// ----------------------------------------------------------------------------------------
 	[ToolboxBitmap(typeof(Persistence), "resources.Persistence.bmp")]
 	[Designer("SIL.FieldWorks.Common.Controls.Design.PersistenceDesigner")]
-	public class Persistence : Component, ISupportInitialize, IFWDisposable
+	public class Persistence : Component, ISupportInitialize
 	{
 		#region Variables and declarations
 		/// <summary></summary>

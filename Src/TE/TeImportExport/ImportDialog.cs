@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -13,7 +13,6 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Reporting;
-using SIL.Utils;
 using SILUBS.SharedScrControls;
 using SIL.CoreImpl.Scripture;
 
@@ -24,7 +23,7 @@ namespace SIL.FieldWorks.TE
 	/// ImportDialog - gather information for a data import
 	/// </summary>
 	///-------------------------------------------------------------------------------
-	public class ImportDialog : Form, IFWDisposable
+	public class ImportDialog : Form
 	{
 		#region Member data
 		// Make these static so their values will be retained

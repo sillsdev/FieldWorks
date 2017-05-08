@@ -1,10 +1,6 @@
-// Copyright (c) 2002-2013 SIL International
+// Copyright (c) 2002-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: Scheduler.cs
-// Responsibility: John Hatton
-// Last reviewed:
 //
 // <remarks>
 //	this class implements a worker thread.
@@ -14,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using SIL.Utils;
 using SIL.FieldWorks.FDO;
+using SIL.ObjectModel;
 using XCore;
 
 namespace SIL.FieldWorks.WordWorks.Parser
@@ -49,7 +46,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 	/// <summary>
 	///
 	/// </summary>
-	public sealed class ParserScheduler : FwDisposableBase
+	public sealed class ParserScheduler : DisposableBase
 	{
 		abstract class ParserWork
 		{

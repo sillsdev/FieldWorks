@@ -1,18 +1,10 @@
-// Copyright (c) 2002-2013 SIL International
+// Copyright (c) 2002-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: Paratext5LocationUnknown.cs
-// Responsibility: DavidO
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Drawing;
 using System.Windows.Forms;
-using SIL.Utils;
 using SIL.FieldWorks.Common.Drawing;
 
 namespace SIL.FieldWorks.TE
@@ -23,7 +15,7 @@ namespace SIL.FieldWorks.TE
 	/// of Paratext 5 cannot be located on a user's computer.
 	/// </summary>
 	/// ---------------------------------------------------------------------------------------
-	public class Paratext5LocationUnknown : Form, IFWDisposable
+	public class Paratext5LocationUnknown : Form
 	{
 		/// <summary>
 		/// This is similar to a DialogResult, however, this is a taylored result for a

@@ -1,10 +1,6 @@
-// Copyright (c) 2003-2015 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: RecordClerk.cs
-// Authorship History: John Hatton
-// Last reviewed:
 //
 // <remarks>
 //	This class, essentially, adapts a RecordList to the xCore/xWorks environment.
@@ -31,7 +27,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
@@ -50,6 +45,7 @@ using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.FdoUi.Dialogs;
 using SIL.FieldWorks.Filters;
+using SIL.ObjectModel;
 using SIL.Reporting;
 using SIL.Utils;
 using XCore;
@@ -60,7 +56,7 @@ namespace SIL.FieldWorks.XWorks
 	/// <summary>
 	/// Takes care of a list of records, standing between it and the UI.
 	/// </summary>
-	public class RecordClerk : IFWDisposable, IxCoreColleague, IRecordListUpdater, IAnalysisOccurrenceFromHvo, IVwNotifyChange, IBulkPropChanged
+	public class RecordClerk : IDisposable, IxCoreColleague, IRecordListUpdater, IAnalysisOccurrenceFromHvo, IVwNotifyChange, IBulkPropChanged
 	{
 		static protected RecordClerk s_lastClerkToLoadTreeBar;
 		internal static int DefaultPriority = (int)ColleaguePriority.Medium;
@@ -534,9 +530,6 @@ namespace SIL.FieldWorks.XWorks
 			SortName = m_propertyTable.GetStringProperty(SortNamePropertyTableId, null, PropertyTable.SettingsGroup.LocalSettings);
 
 			string persistSorter = m_propertyTable.GetStringProperty(SorterPropertyTableId, null, PropertyTable.SettingsGroup.LocalSettings);
-			var fwdisposable = m_list.Sorter as IFWDisposable;
-			if (fwdisposable != null && fwdisposable.IsDisposed)
-				m_list.Sorter = null;
 			if (m_list.Sorter != null)
 			{
 				// if the persisted object string of the existing sorter matches the one in the property table
@@ -2987,7 +2980,7 @@ namespace SIL.FieldWorks.XWorks
 		/// By default, it will suspend full Reloads initiated by PropChanged until we finish.
 		/// During dispose, we'll ReloadList if we tried to reload the list via PropChanged.
 		/// </summary>
-		public class ListUpdateHelper : FwDisposableBase
+		public class ListUpdateHelper : DisposableBase
 		{
 			public class ListUpdateHelperOptions
 			{
@@ -3161,7 +3154,7 @@ namespace SIL.FieldWorks.XWorks
 				m_fTriggerPendingReloadOnDispose = false;
 				m_fOriginalLoadRequestedWhileSuppressed = false;
 			}
-			#region FwDisposableBase Members
+			#region DisposableBase Members
 
 			protected override void DisposeManagedResources()
 			{
@@ -3199,7 +3192,7 @@ namespace SIL.FieldWorks.XWorks
 				m_waitCursor = null;
 			}
 
-			#endregion FwDisposableBase
+			#endregion DisposableBase
 		}
 
 		private ListUpdateHelper m_bulkEditUpdateHelper;

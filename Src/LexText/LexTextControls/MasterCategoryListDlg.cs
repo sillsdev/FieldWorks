@@ -1,11 +1,10 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
@@ -24,7 +23,7 @@ namespace SIL.FieldWorks.LexText.Controls
 	/// <summary>
 	/// Summary description for MasterCategoryListDlg.
 	/// </summary>
-	public class MasterCategoryListDlg : Form, IFWDisposable
+	public class MasterCategoryListDlg : Form
 	{
 		private ICmPossibilityList m_posList;
 		private bool m_launchedFromInsertMenu = false;

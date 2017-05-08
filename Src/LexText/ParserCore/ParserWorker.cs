@@ -1,9 +1,6 @@
-// Copyright (c) 2003-2014 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ParserWorker.cs
-// Responsibility:
 //
 // <remarks>
 //  The name here, "worker" would lead one to think that this is the
@@ -30,9 +27,9 @@ no exception: Create an infl affix slot with no affixes in it and then use this 
 
 using System;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
-using SIL.Utils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.ObjectModel;
 using XCore;
 
 namespace SIL.FieldWorks.WordWorks.Parser
@@ -40,7 +37,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 	/// <summary>
 	/// Summary description for ParserWorker.
 	/// </summary>
-	public class ParserWorker : FwDisposableBase
+	public class ParserWorker : DisposableBase
 	{
 		private readonly FdoCache m_cache;
 		private readonly Action<TaskReport> m_taskUpdateHandler;

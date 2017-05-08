@@ -5,7 +5,6 @@
 using System;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -14,7 +13,7 @@ namespace SIL.FieldWorks.Common.Controls
 	/// It allows three options to be chosen between for dealing with non-empty target fields
 	/// in bulk copy and transduce. Additionally a separator can be chosen for the append option.
 	/// </summary>
-	public class NonEmptyTargetControl : UserControl, IFWDisposable
+	public class NonEmptyTargetControl : UserControl
 	{
 		private System.Windows.Forms.GroupBox NonBlankTargetGroup;
 		private System.Windows.Forms.RadioButton appendRadio;

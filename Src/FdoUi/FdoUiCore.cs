@@ -1,11 +1,10 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -33,7 +32,7 @@ namespace SIL.FieldWorks.FdoUi
 	/// Allows a guicontrol to dynamically initializing with a configuration node with respect
 	/// to the given sourceObject.
 	/// </summary>
-	public interface IFwGuiControl : IFWDisposable
+	public interface IFwGuiControl : IDisposable
 	{
 		void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationNode, ICmObject sourceObject);
 		void Launch();
@@ -57,7 +56,7 @@ namespace SIL.FieldWorks.FdoUi
 		kfragPosAbbrAnalysis, // display a PartOfSpeech using its analyis Ws abbreviation.
 	}
 
-	public class CmObjectUi : IxCoreColleague, IFWDisposable
+	public class CmObjectUi : IxCoreColleague, IDisposable
 	{
 		#region Data members
 

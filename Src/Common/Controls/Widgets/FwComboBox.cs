@@ -1,11 +1,10 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
@@ -107,7 +106,7 @@ namespace SIL.FieldWorks.Common.Widgets
 	/// ComboBox. Classes that extend this class provide an implementation of the drop down
 	/// box.
 	/// </summary>
-	public abstract class FwComboBoxBase : UserControl, IFWDisposable, IVwNotifyChange, IWritingSystemAndStylesheet
+	public abstract class FwComboBoxBase : UserControl, IVwNotifyChange, IWritingSystemAndStylesheet
 	{
 		#region Events
 		/// <summary>
@@ -2358,7 +2357,7 @@ namespace SIL.FieldWorks.Common.Widgets
 	/// ------------------------------------------------------------------------------------
 	/// <summary>Message filter for detecting events that may hide the compbo </summary>
 	/// ------------------------------------------------------------------------------------
-	internal class FwComboMessageFilter : IMessageFilter, IFWDisposable
+	internal class FwComboMessageFilter : IMessageFilter, IDisposable
 	{
 		private ComboListBox m_comboListbox;
 		private bool m_fGotMouseDown; // true after a mouse down occurs anywhere at all.

@@ -1,11 +1,10 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -27,7 +26,7 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 	/// <summary>
 	/// Summary description for MergeObjectDlg.
 	/// </summary>
-	public class MergeObjectDlg : Form, IFWDisposable
+	public class MergeObjectDlg : Form
 	{
 		private SIL.FieldWorks.Common.Widgets.FwTextBox m_fwTextBoxBottomMsg;
 		private FdoCache m_cache;

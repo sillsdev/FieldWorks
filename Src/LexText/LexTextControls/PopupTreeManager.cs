@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -9,7 +9,6 @@ using System.Diagnostics;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.Utils;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.RootSites;
@@ -21,7 +20,7 @@ namespace SIL.FieldWorks.LexText.Controls
 	/// Handles a TreeCombo control (Widgets assembly). Subclass must at least implement
 	/// MakeMenuItems.
 	/// </summary>
-	public abstract class PopupTreeManager : IFWDisposable
+	public abstract class PopupTreeManager : IDisposable
 	{
 		private const int kEmpty = 0;
 		private const int kLine = -1;

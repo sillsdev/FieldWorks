@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -20,11 +20,12 @@ using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.WordWorks.Parser;
 using SIL.Machine.Morphology;
+using SIL.ObjectModel;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.ParatextLexiconPlugin
 {
-	internal class FdoLexicon : FwDisposableBase, Lexicon, WordAnalyses, IVwNotifyChange
+	internal class FdoLexicon : DisposableBase, Lexicon, WordAnalyses, IVwNotifyChange
 	{
 		private IParser m_parser;
 		private readonly FdoCache m_cache;

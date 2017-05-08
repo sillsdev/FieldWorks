@@ -1,9 +1,6 @@
-// Copyright (c) 2004-2013 SIL International
+// Copyright (c) 2004-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ScriptureProperties.cs
-// Responsibility: TE Team
 
 using System;
 using System.Collections.Generic;
@@ -15,14 +12,11 @@ using System.Text;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
-using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.CoreImpl.Scripture;
-using XCore;
 
 namespace SIL.FieldWorks.TE
 {
@@ -31,7 +25,7 @@ namespace SIL.FieldWorks.TE
 	/// Summary description for ScriptureProperties.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public class ScriptureProperties : Form, IFWDisposable
+	public class ScriptureProperties : Form
 	{
 		#region Member variables
 		/// <summary>Index of the tab for user properties account</summary>

@@ -1,9 +1,6 @@
-// Copyright (c) 2002-2013 SIL International
+// Copyright (c) 2002-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: RootSite.cs
-// Responsibility: TE Team
 //
 // <remarks>
 // Implementation of RootSite (formerly AfVwRootSite and AfVwScrollWndBase).
@@ -16,25 +13,21 @@
 // refactored to enable a distinction between a SimpleRootSite that does not know what cache
 // is being used for the view, and RootSite which has an FdoCache member variable.
 // </remarks>
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
-#if !__MonoCS__
-#endif
 using System.Windows.Forms;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.Utils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
-using SIL.WritingSystems;
 using XCore;
 
 // How to debug COM reference counts:
@@ -1185,7 +1178,7 @@ namespace SIL.FieldWorks.Common.RootSites
 	/// </summary>
 	/// ------------------------------------------------------------------------------------
 	public class RootSiteGroup : Control, IRootSite, IxCoreColleague, IHeightEstimator,
-		IFWDisposable, IRootSiteGroup
+		IRootSiteGroup
 	{
 		#region Member variables
 		// m_slaves holds RootSite objects.

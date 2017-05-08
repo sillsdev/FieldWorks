@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -9,7 +9,6 @@ using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.FwCoreDlgControls
 {
@@ -18,7 +17,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 	/// Font Features button
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public class FontFeaturesButton : Button, IFWDisposable
+	public class FontFeaturesButton : Button
 	{
 		#region Member variables and constants
 		/// <summary></summary>

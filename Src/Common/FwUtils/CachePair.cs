@@ -1,4 +1,4 @@
-// Copyright (c) 2002-2016 SIL International
+// Copyright (c) 2002-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -9,7 +9,6 @@ using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.FDO;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
@@ -19,7 +18,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 	/// secondary view. As well as storing both cache objects, it stores two maps which maintain a
 	/// bidirectional link between HVOs in one and those in the other.
 	/// </summary>
-	public class CachePair : IFWDisposable
+	public class CachePair : IDisposable
 	{
 		private FdoCache m_fdoCache;
 		private ISilDataAccess m_sda;

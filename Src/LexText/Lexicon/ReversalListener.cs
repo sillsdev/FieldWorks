@@ -1,6 +1,7 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -8,8 +9,6 @@ using System.IO;
 using System.Linq;
 using System.Xml;
 using System.Windows.Forms;
-using System.Xml.Linq;
-using System.Xml.XPath;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
@@ -32,7 +31,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 	/// 2.
 	/// </summary>
 	[MediatorDispose]
-	public class ReversalListener : IxCoreColleague, IFWDisposable
+	public class ReversalListener : IxCoreColleague, IDisposable
 	{
 		/// <summary>
 		/// Mediator that passes off messages.

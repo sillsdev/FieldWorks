@@ -1,10 +1,9 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Diagnostics;
 using System.Reflection;
@@ -35,7 +34,7 @@ namespace SIL.FieldWorks.Common.Controls
 	/// <summary>
 	/// Summary description for BulkEditBar.
 	/// </summary>
-	public class BulkEditBar : UserControl, IFWDisposable
+	public class BulkEditBar : UserControl
 	{
 
 		private Label m_operationLabel;
@@ -4575,7 +4574,7 @@ namespace SIL.FieldWorks.Common.Controls
 	/// handle a list choice bulk edit operation. (The name reflects an original intent
 	/// that it should handle any kind of bulk edit for its column.)
 	/// </summary>
-	public class BulkEditItem : IFWDisposable
+	public class BulkEditItem : IDisposable
 	{
 		IBulkEditSpecControl m_beCcontrol;
 
@@ -6640,7 +6639,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 	}
 
-	class SemanticDomainChooserBEditControl : ComplexListChooserBEditControl, IFWDisposable
+	class SemanticDomainChooserBEditControl : ComplexListChooserBEditControl, IDisposable
 	{
 		private Button m_suggestButton;
 		private bool m_doingSuggest; // as opposed to 'regular' Preview
@@ -6759,8 +6758,6 @@ namespace SIL.FieldWorks.Common.Controls
 			m_bar.LaunchPreview();
 		}
 
-		#region IFWDisposable Implementation
-
 		/// <summary>
 		/// Check to see if the object has been disposed.
 		/// All public Properties and Methods should call this
@@ -6805,8 +6802,6 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			Dispose(false);
 		}
-
-		#endregion
 	}
 
 	class VariantEntryTypesChooserBEditControl : ComplexListChooserBEditControl

@@ -1,24 +1,18 @@
-// Copyright (c) 2010-2013 SIL International
+// Copyright (c) 2010-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: fdoCache.cs
-// Responsibility: Randy Regnier
 
 using System;
-using System.Runtime.InteropServices;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.IOC;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
-	/// Implementation of the IFWDisposable interface pattern for FdoCache.
+	/// Implementation of the IDisposable interface pattern for FdoCache.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public sealed partial class FdoCache : IFWDisposable
+	public sealed partial class FdoCache : IDisposable
 	{
 		/// <summary>
 		/// True, if the object has been disposed.

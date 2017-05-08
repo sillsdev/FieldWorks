@@ -1,18 +1,11 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: UndoRedoDropDown.cs
-// Responsibility: TE Team
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Drawing;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.Controls;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.Framework
 {
@@ -21,7 +14,7 @@ namespace SIL.FieldWorks.Common.Framework
 	/// Drop down list box that shows the undoable/redoable actions
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public class UndoRedoDropDown : UserControl, IFWDisposable
+	public class UndoRedoDropDown : UserControl
 	{
 		#region Data members
 		private System.Windows.Forms.Label m_NumberOfUndoes;

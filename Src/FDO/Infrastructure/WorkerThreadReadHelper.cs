@@ -1,16 +1,15 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO.Infrastructure
 {
 	/// <summary>
 	/// This is a convenience class for beginning and ending read tasks on worker threads.
 	/// </summary>
-	public class WorkerThreadReadHelper : IFWDisposable
+	public class WorkerThreadReadHelper : IDisposable
 	{
 		private readonly IWorkerThreadReadHandler m_readHandler;
 
@@ -97,8 +96,6 @@ namespace SIL.FieldWorks.FDO.Infrastructure
 
 		#endregion
 
-		#region Implementation of IFWDisposable
-
 		/// <summary>
 		/// Add the public property for knowing if the object has been disposed of yet
 		/// </summary>
@@ -120,7 +117,5 @@ namespace SIL.FieldWorks.FDO.Infrastructure
 			if (IsDisposed)
 				throw new ObjectDisposedException("'WorkerThreadReadHelper' in use after being disposed.");
 		}
-
-		#endregion
 	}
 }

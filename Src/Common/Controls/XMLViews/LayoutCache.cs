@@ -1,15 +1,13 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Xml;
 using System.Diagnostics;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
-using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
 using SIL.FieldWorks.FDO;
@@ -18,6 +16,7 @@ using SIL.FieldWorks.Filters;
 using XCore;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
+using SIL.ObjectModel;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -282,7 +281,7 @@ namespace SIL.FieldWorks.Common.Controls
 	/// <summary>
 	/// Helper for handling switching between related (ListItemClass) lists.
 	/// </summary>
-	public class PartOwnershipTree : FwDisposableBase
+	public class PartOwnershipTree : DisposableBase
 	{
 		FdoCache m_cache = null;
 		XmlNode m_classOwnershipTree = null;
@@ -335,7 +334,7 @@ namespace SIL.FieldWorks.Common.Controls
 			get { return m_cache; }
 		}
 
-		#region FwDisposableBase overrides
+		#region DisposableBase overrides
 		/// <summary>
 		///
 		/// </summary>
@@ -345,7 +344,7 @@ namespace SIL.FieldWorks.Common.Controls
 			m_classOwnershipTree = null;
 			m_parentToChildrenSpecs = null;
 		}
-		#endregion FwDisposableBase overrides
+		#endregion DisposableBase overrides
 
 
 		/// <summary>

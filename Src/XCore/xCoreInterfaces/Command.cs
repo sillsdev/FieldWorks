@@ -1,17 +1,12 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: Commands.cs
-// Authorship History: John Hatton
 
 using System;
 using System.Collections;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using System.Xml;
-
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.Reporting;
 using SIL.Utils;
@@ -21,7 +16,7 @@ namespace XCore
 	/// <summary>
 	/// Summary description for Commands.
 	/// </summary>
-	public class CommandSet : Hashtable, IFWDisposable
+	public class CommandSet : Hashtable, IDisposable
 	{
 		protected Mediator m_mediator;
 		/// -----------------------------------------------------------------------------------
@@ -210,7 +205,7 @@ namespace XCore
 		string RedoText { get; }
 	}
 
-	public class Command : IFWDisposable, ICommandUndoRedoText
+	public class Command : IDisposable, ICommandUndoRedoText
 	{
 		#region Fields
 		protected Mediator m_mediator;

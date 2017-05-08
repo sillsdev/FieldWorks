@@ -8,7 +8,7 @@ using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Security;
-using SIL.Utils;
+using SIL.ObjectModel;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
@@ -16,7 +16,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 	/// Used to create an activation context
 	/// </summary>
 	[SuppressUnmanagedCodeSecurity]
-	public class ActivationContextHelper : FwDisposableBase
+	public class ActivationContextHelper : DisposableBase
 	{
 #if !__MonoCS__
 		#region Unmanaged structs and methods
@@ -105,7 +105,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			return new Activation(cookie);
 		}
 
-		private class Activation : FwDisposableBase
+		private class Activation : DisposableBase
 		{
 			private IntPtr m_cookie;
 

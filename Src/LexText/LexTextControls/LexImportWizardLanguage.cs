@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -13,9 +13,7 @@ using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FwCoreDlgs;
 using SilEncConverters40;	// for the encoding converters
-using SIL.Utils;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 
 
@@ -24,7 +22,7 @@ namespace SIL.FieldWorks.LexText.Controls
 	/// <summary>
 	/// Summary description for LexImportWizardLanguage.
 	/// </summary>
-	public class LexImportWizardLanguage : Form, IFWDisposable
+	public class LexImportWizardLanguage : Form
 	{
 		private Label lblComment;
 		private Label lblLangDesc;

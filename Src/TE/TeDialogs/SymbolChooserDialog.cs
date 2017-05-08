@@ -1,14 +1,10 @@
-// Copyright (c) 2004-2013 SIL International
+// Copyright (c) 2004-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: SymbolChooser.cs
-// Responsibility: TE Team
 
 using System;
 using System.Drawing;
 using System.Windows.Forms;
-using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.TE
@@ -16,7 +12,7 @@ namespace SIL.FieldWorks.TE
 	/// <summary>
 	/// Summary description for SymbolChooser.
 	/// </summary>
-	public class SymbolChooserDlg : Form, IFWDisposable
+	public class SymbolChooserDlg : Form
 	{
 		private IHelpTopicProvider m_helpTopicProvider;
 		private Panel panel1;

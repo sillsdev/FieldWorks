@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -20,7 +20,7 @@ using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.LexText.Controls;
-using SIL.Utils;
+using SIL.ObjectModel;
 using XCore;
 using Color=System.Drawing.Color;
 
@@ -31,7 +31,7 @@ namespace SIL.FieldWorks.IText
 	/// An interface common to classes that 'handle' combo boxes that appear when something in
 	/// IText is clicked.
 	/// </summary>
-	internal interface IComboHandler : IFWDisposable
+	internal interface IComboHandler : IDisposable
 	{
 		/// <summary>
 		/// Initialize the combo contents.
@@ -76,7 +76,7 @@ namespace SIL.FieldWorks.IText
 		/// handles the events.  For most of the primary events, the default here is to do
 		/// nothing.
 		/// </summary>
-		public class InterlinComboHandler : FwDisposableBase, IComboHandler
+		public class InterlinComboHandler : DisposableBase, IComboHandler
 		{
 			// Main array of information retrieved from sel that made combo.
 			protected SelLevInfo[] m_rgvsli;
@@ -132,7 +132,7 @@ namespace SIL.FieldWorks.IText
 				m_hvoMorph = m_sandbox.Caches.DataAccess.get_VecItem(kSbWord, ktagSbWordMorphs, imorph);
 			}
 
-			#region FwDisposableBase for IDisposable
+			#region DisposableBase for IDisposable
 
 			protected override void DisposeManagedResources()
 			{
@@ -161,7 +161,7 @@ namespace SIL.FieldWorks.IText
 				m_comboList = null;
 			}
 
-			#endregion FwDisposableBase for IDisposable
+			#endregion DisposableBase for IDisposable
 
 			/// <summary>
 			/// encapsulates the common behavior of items in an InterlinComboHandler combo list.

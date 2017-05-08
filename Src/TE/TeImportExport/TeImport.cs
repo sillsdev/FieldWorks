@@ -1,4 +1,4 @@
-// Copyright (c) 2002-2015 SIL International
+// Copyright (c) 2002-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -15,7 +15,6 @@ using SIL.CoreImpl.Scripture;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Reporting;
@@ -133,7 +132,7 @@ namespace SIL.FieldWorks.TE
 	/// <remarks>Note: this class runs on a background thread. It can't call any UI methods
 	/// directly!</remarks>
 	/// ----------------------------------------------------------------------------------------
-	public abstract class TeImporter : IFWDisposable
+	public abstract class TeImporter : IDisposable
 	{
 		#region class ToolboxPictureInfo
 		/// ----------------------------------------------------------------------------------------

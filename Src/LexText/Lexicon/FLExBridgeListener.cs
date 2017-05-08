@@ -1,10 +1,9 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -33,7 +32,7 @@ using XCore;
 namespace SIL.FieldWorks.XWorks.LexEd
 {
 	[MediatorDispose]
-	sealed class FLExBridgeListener : IxCoreColleague, IFWDisposable
+	sealed class FLExBridgeListener : IxCoreColleague, IDisposable
 	{
 		private Mediator _mediator;
 		private PropertyTable _propertyTable;
@@ -1571,9 +1570,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 			IsDisposed = true;
 		}
-		#endregion
-
-		#region Implementation of IFWDisposable
 
 		/// <summary>
 		/// This method throws an ObjectDisposedException if IsDisposed returns
@@ -1594,10 +1590,5 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		public bool IsDisposed { get; set; }
 
 		#endregion
-
-		private static void logger(string guid, string date, string description)
-		{
-			Console.WriteLine("Error reported, but not dealt with {0} {1} {2}", guid, date, description);
-		}
 	}
 }

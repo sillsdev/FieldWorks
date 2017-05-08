@@ -1,12 +1,6 @@
-// Copyright (c) 2010-2013 SIL International
+// Copyright (c) 2010-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: AddWritingSystemButton.cs
-// Responsibility: mcconnel
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Collections.Generic;
@@ -22,7 +16,6 @@ using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FwCoreDlgs;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -31,7 +24,7 @@ namespace SIL.FieldWorks.LexText.Controls
 	///
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public partial class AddWritingSystemButton : Button, IFWDisposable
+	public partial class AddWritingSystemButton : Button
 	{
 		FdoCache m_cache;
 		private HashSet<string> m_existingWsIds;
@@ -61,7 +54,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			InitializeComponent();
 		}
 
-		#region IFWDisposable Members
 		/// <summary>
 		/// Check to see if the object has been disposed.
 		/// All public Properties and Methods should call this
@@ -72,7 +64,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (IsDisposed)
 				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
 		}
-		#endregion
 
 		/// <summary>
 		/// Initialize for adding new writing systems during import.

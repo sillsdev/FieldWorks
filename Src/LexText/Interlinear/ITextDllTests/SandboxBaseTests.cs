@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -12,7 +12,7 @@ using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
-using SIL.Utils;
+using SIL.ObjectModel;
 using XCore;
 
 namespace SIL.FieldWorks.IText
@@ -741,7 +741,7 @@ namespace SIL.FieldWorks.IText
 			return SandboxBase.InterlinComboHandler.MakeCombo(null, tagIcon, sandbox, morphIndex) as SandboxBase.InterlinComboHandler;
 		}
 
-		public class MockComboHandler : FwDisposableBase, IComboHandler
+		public class MockComboHandler : DisposableBase, IComboHandler
 		{
 			public void SetupCombo() { }
 

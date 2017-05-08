@@ -1,17 +1,9 @@
-// Copyright (c) 2004-2013 SIL International
+// Copyright (c) 2004-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ErrorReport.cs
-// Responsibility:
-//
-// <remarks>
-// </remarks>
-// ---------------------------------------------------------------------------------------------
 
 using System;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
@@ -33,7 +25,7 @@ namespace SIL.Utils
 	/// Summary description for ErrorReporter.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public class ErrorReporter : Form, IFWDisposable
+	public class ErrorReporter : Form
 	{
 		#region Member variables
 

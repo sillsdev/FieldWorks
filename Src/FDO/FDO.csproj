@@ -432,7 +432,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="FdoCacheIFwDisposableInterfaceImpl.cs" />
+    <Compile Include="FdoCacheIDisposableInterfaceImpl.cs" />
     <Compile Include="fdoCache.cs" />
     <Compile Include="FdoEnumerations.cs" />
     <None Include="FDOGenerate\IDomainDataByFlidAccessorMethods.vm.cs" />

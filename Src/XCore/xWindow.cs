@@ -23,7 +23,7 @@ namespace XCore
 	/// <summary>
 	/// XWindow is a window which is configured with XML file.
 	/// </summary>
-	public class XWindow : Form, IFWDisposable, IxCoreColleague, IxWindow
+	public class XWindow : Form, IxCoreColleague, IxWindow
 	{
 		#region Data members
 		/// <summary>

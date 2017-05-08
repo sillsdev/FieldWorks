@@ -40,7 +40,7 @@ namespace SIL.FieldWorks.XWorks
 	/// <remarks>
 	/// IxCoreColleague is included in the IxCoreContentControl definition.
 	/// </remarks>
-	public class GeneratedHtmlViewer : UserControl, IxCoreContentControl, IFWDisposable
+	public class GeneratedHtmlViewer : UserControl, IxCoreContentControl
 	{
 		#region Data Members
 		/// <summary>

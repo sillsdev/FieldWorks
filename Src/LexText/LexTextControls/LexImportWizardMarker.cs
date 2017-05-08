@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,7 +6,6 @@ using System;
 using System.Collections;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
@@ -21,14 +20,13 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.Utils;
 using XCore;
 using TreeView = System.Windows.Forms.TreeView;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
 	/// <summary></summary>
-	public class LexImportWizardMarker : Form, IFWDisposable
+	public class LexImportWizardMarker : Form
 	{
 		private Label lblMarker;
 		private Label m_lblMarker;

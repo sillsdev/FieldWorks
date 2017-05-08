@@ -1,23 +1,16 @@
-// Copyright (c) 2009-2013 SIL International
+// Copyright (c) 2009-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: SandboxBase.cs
-// Responsibility: pyle
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using NUnit.Framework;
-using SIL.Utils;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.ObjectModel;
 
 namespace SIL.FieldWorks.FDO.FDOTests
 {
@@ -77,7 +70,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		// REVIEW (TomB): There is no reason to derive from FwDisposableBase because neither
 		// Dispose method is being overriden. Either override one of those methods or get rid
 		// of all the using statements where objects of this class are instantiated.
-		internal class SetupMatchingMorphs : FwDisposableBase
+		internal class SetupMatchingMorphs : DisposableBase
 		{
 			internal SetupMatchingMorphs()
 			{

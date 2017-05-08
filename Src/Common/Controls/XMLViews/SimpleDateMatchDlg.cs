@@ -5,7 +5,6 @@
 using System;
 using System.Windows.Forms;
 using SIL.FieldWorks.Filters;
-using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.Common.Controls
@@ -16,7 +15,7 @@ namespace SIL.FieldWorks.Common.Controls
 	///
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public partial class SimpleDateMatchDlg : Form, IFWDisposable
+	public partial class SimpleDateMatchDlg : Form
 	{
 		private const string s_helpTopic = "khtpFilterRestrict";
 		private IHelpTopicProvider m_helpTopicProvider;

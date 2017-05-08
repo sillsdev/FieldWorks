@@ -1,26 +1,12 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: StatusBarProgressPanel.cs
-// Responsibility:
-// Last reviewed:
-//
-// <remarks>
-//	I (JH) worked on it 10-20 minutes at a time in between watching kids at home, as a side project, so
-//	it's a bit choppy. I hesitate to check it in, but if I don't it will get lost and I think we will want it
-//	when we start running LexText on something less than developer machines.
-// </remarks>
 
 using System;
-using System.Collections;
 using System.ComponentModel;
 using System.Drawing;
-using System.Data;
-using System.Threading;
 using System.Windows.Forms;
 using System.Diagnostics;
-
 using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.Controls
@@ -28,7 +14,7 @@ namespace SIL.FieldWorks.Common.Controls
 	/// <summary>
 	/// Status Bar Panel that Displays Progress
 	/// </summary>
-	public class StatusBarProgressPanel : StatusBarPanel, IFWDisposable, IProgressDisplayer
+	public class StatusBarProgressPanel : StatusBarPanel, IProgressDisplayer
 	{
 		//static public StatusBarProgressPanel s_StatusBarProgressPanel;
 		#region Member Variables

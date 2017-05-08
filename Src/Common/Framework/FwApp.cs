@@ -1,14 +1,11 @@
-// Copyright (c) 2002-2013 SIL International
+// Copyright (c) 2002-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: FwApp.cs
-// Responsibility: TE Team
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO;
 using System.Security;
@@ -28,11 +25,6 @@ using SIL.FieldWorks.Resources;
 using SIL.Reporting;
 using SIL.Utils;
 using SIL.Windows.Forms;
-
-
-#if DEBUG
-using SIL.CoreImpl; // Needed for DebugProcs in CoreImpl.
-#endif
 using XCore;
 
 namespace SIL.FieldWorks.Common.Framework
@@ -85,7 +77,7 @@ namespace SIL.FieldWorks.Common.Framework
 	/// </summary>
 	/// <remarks>Hungarian: rch</remarks>
 	/// ----------------------------------------------------------------------------------------
-	public interface IRecordChangeHandler : IFWDisposable
+	public interface IRecordChangeHandler : IDisposable
 	{
 		/// <summary>Initialize the object with the record and the list to which it belongs.</summary>
 		void Setup(object record, IRecordListUpdater rlu, FdoCache cache);
@@ -149,7 +141,7 @@ namespace SIL.FieldWorks.Common.Framework
 	/// Base application for .net FieldWorks apps (i.e., replacement for AfApp)
 	/// </remarks>
 	/// ---------------------------------------------------------------------------------------
-	public abstract class FwApp : IApp, ISettings, IFWDisposable, IHelpTopicProvider,
+	public abstract class FwApp : IApp, ISettings, IDisposable, IHelpTopicProvider,
 		IMessageFilter, IFeedbackInfoProvider, IProjectSpecificSettingsKeyProvider
 	{
 		#region SuppressedCacheInfo class

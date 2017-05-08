@@ -1,13 +1,8 @@
 //#define TESTMS
 
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
-using System.Reflection;
-
 using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
 
@@ -45,7 +40,7 @@ namespace XCore
 	///	OnPaint yourself, just don't make the changes to OnPaint. In some cases, we've observed
 	///	infinite loops from calling Invalidate and aborting OnPaint. This has not been fully tested.
 	/// </summary>
-	public sealed class MessageSequencer : IFWDisposable
+	public sealed class MessageSequencer : IDisposable
 	{
 #if TESTMS
 		private int m_obj;

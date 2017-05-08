@@ -1,10 +1,10 @@
-// Copyright (c) 2002-2013 SIL International
+// Copyright (c) 2002-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Globalization;
 using System.Runtime.InteropServices;
@@ -19,7 +19,6 @@ using SIL.Keyboarding;
 using SIL.PlatformUtilities;
 using SIL.Reporting;
 using SIL.Utils;
-using SIL.Windows.Forms.Keyboarding;
 
 namespace SIL.FieldWorks.Common.RootSites
 {
@@ -207,7 +206,7 @@ namespace SIL.FieldWorks.Common.RootSites
 	/// root box that has focus.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public class EditingHelper : IFWDisposable, ISelectionChangeNotifier
+	public class EditingHelper : IDisposable, ISelectionChangeNotifier
 	{
 		#region Events
 		/// <summary>

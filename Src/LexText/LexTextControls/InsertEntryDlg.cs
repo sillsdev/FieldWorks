@@ -1,20 +1,11 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: BasicEntryInfoDlg.cs
-// Responsibility: Randy Regnier
-// Last reviewed:
-//
-// <remarks>
-// Implementation of:
-//		InsertEntryDlg - Dialog for adding basic information of new entries.
-// </remarks>
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -32,7 +23,6 @@ using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.LexText.Controls.MGA;
 using SIL.FieldWorks.Resources;
-using SIL.Utils;
 using SIL.Windows.Forms;
 using XCore;
 
@@ -41,7 +31,7 @@ namespace SIL.FieldWorks.LexText.Controls
 	/// <summary>
 	/// Summary description for InsertEntryDlg.
 	/// </summary>
-	public class InsertEntryDlg : Form, IFWDisposable
+	public class InsertEntryDlg : Form
 	{
 		public enum MorphTypeFilterType
 		{

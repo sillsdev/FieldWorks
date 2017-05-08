@@ -4,14 +4,13 @@
 
 using System;
 using System.Windows.Forms;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
 {
 	/// <summary>
 	/// Summary description for MEImages.
 	/// </summary>
-	public class MEImages : UserControl, IFWDisposable
+	public class MEImages : UserControl
 	{
 		public System.Windows.Forms.ImageList buttonImages;
 		private System.ComponentModel.IContainer components;

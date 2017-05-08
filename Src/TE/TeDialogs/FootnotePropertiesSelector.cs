@@ -1,33 +1,26 @@
-// Copyright (c) 2005-2013 SIL International
+// Copyright (c) 2005-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: FootnotePropertiesSelector.cs
-// Responsibility: TE Team
 
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
- // needed for Marshal
 using System.Windows.Forms.VisualStyles;
 using SIL.CoreImpl.Scripture;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
-using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.TE
 {
 	/// <summary>
 	/// Summary description for FootnotePropertiesSelector.
 	/// </summary>
-	public class FootnotePropertiesSelector : UserControl, IFWDisposable
+	public class FootnotePropertiesSelector : UserControl
 	{
 		#region Member Variables
 		private const int kMaxMarkerLength = 3;

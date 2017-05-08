@@ -1,10 +1,9 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Xml;
@@ -18,7 +17,7 @@ using XCore;
 
 namespace SIL.FieldWorks.IText
 {
-	public partial class StatisticsView : UserControl, IxCoreContentControl, IFWDisposable
+	public partial class StatisticsView : UserControl, IxCoreContentControl
 	{
 		private bool _shouldNotCall;
 
@@ -265,8 +264,6 @@ namespace SIL.FieldWorks.IText
 
 		#endregion
 
-		#region Implementation of IFWDisposable
-
 		/// <summary>
 		/// This method throws an ObjectDisposedException if IsDisposed returns
 		/// true.  This is the case where a method or property in an object is being
@@ -280,8 +277,6 @@ namespace SIL.FieldWorks.IText
 			if (IsDisposed)
 				throw new ObjectDisposedException("StatisticsView has been disposed.");
 		}
-
-		#endregion
 
 		/// <summary>
 		/// FDO cache.

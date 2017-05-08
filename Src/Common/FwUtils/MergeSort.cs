@@ -3,7 +3,6 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using SIL.Utils;
 
 // Copyright Copyright © 2002 CyberbrineDreams; for permission to use this fragment contact webmaster@cyberbrinedreams.com
 // Very slightly adapted (comments only changed) from http://www.cyberbrinedreams.com/version2/projects/code/stable_sort/
@@ -19,7 +18,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 	/// This implementations supports Arrays and ArrayLists. Because of .Net limitations
 	/// primitive arrays (example: int [] array = new int[10000];) cannot be sorted by this code.
 	/// </summary>
-	public class MergeSort : IFWDisposable
+	public class MergeSort : IDisposable
 	{
 		#region Data members
 		/// <summary>

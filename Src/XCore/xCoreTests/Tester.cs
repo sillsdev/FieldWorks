@@ -1,21 +1,18 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: Tester.cs
-// Authorship History: John Hatton
+
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Xml;
-using SIL.Utils;
 
 namespace XCore
 {
 	/// <summary>
 	/// the Tester class does various things in support of the unit tests.
 	/// </summary>
-	public class Tester : UserControl, IFWDisposable, IxCoreContentControl
+	public class Tester : UserControl, IxCoreContentControl
 	{
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Label label2;

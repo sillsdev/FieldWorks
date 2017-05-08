@@ -1,13 +1,7 @@
-// Copyright (c) 2005-2013 SIL International
+// Copyright (c) 2005-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: SummaryDialogForm.cs
-// Responsibility:
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -19,7 +13,6 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
-using SIL.Utils;
 using XCore;
 
 namespace SIL.FieldWorks.FdoUi.Dialogs
@@ -41,7 +34,7 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 	/// should pop up to find a different entry to display with a new SummaryDialogForm.
 	/// </remarks>
 	/// ----------------------------------------------------------------------------------------
-	internal class SummaryDialogForm : Form, IFWDisposable
+	internal class SummaryDialogForm : Form
 	{
 		#region Member variables
 		private List<int> m_rghvo;

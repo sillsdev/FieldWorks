@@ -1,19 +1,16 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Windows.Forms;
-using System.Diagnostics;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.Utils;
 using SIL.FieldWorks.FwCoreDlgs;
-using XCore;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -22,7 +19,7 @@ namespace SIL.FieldWorks.Common.Controls
 	/// should match the whole, start, end, or anywhere in the target. It knows how to
 	/// make a matcher consistent with what the user entered.
 	/// </summary>
-	public class SimpleMatchDlg : Form, IFWDisposable
+	public class SimpleMatchDlg : Form
 	{
 		private RadioButton m_anywhereButton;
 		private RadioButton m_atStartButton;

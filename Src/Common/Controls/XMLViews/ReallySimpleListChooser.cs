@@ -1,15 +1,8 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ReallySimpleListChooser.cs
-// Responsibility:
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
+
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Collections;
 using System.Collections.Generic;
@@ -35,7 +28,7 @@ using XCore;
 namespace SIL.FieldWorks.Common.Controls
 {
 	/// <summary></summary>
-	public class ReallySimpleListChooser : Form, IFWDisposable
+	public class ReallySimpleListChooser : Form
 	{
 		/// <summary></summary>
 		protected ObjectLabel m_chosenLabel;

@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -21,7 +21,7 @@ namespace SIL.FieldWorks.Common.Controls
 	/// <summary>
 	/// Summary description for ColumnConfigureDialg.
 	/// </summary>
-	public class ColumnConfigureDialog : Form, IFWDisposable
+	public class ColumnConfigureDialog : Form
 	{
 		private const string s_helpTopic = "khtpConfigureColumns";
 		private Label label1;

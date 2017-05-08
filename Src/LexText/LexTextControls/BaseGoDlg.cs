@@ -1,9 +1,7 @@
-// Copyright (c) 2003-2014 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: BaseGoDlg.cs
-// Responsibility: Randy Regnier
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -17,14 +15,13 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Resources;
-using SIL.Utils;
 using SIL.Windows.Forms;
 using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
 	/// <summary/>
-	public class BaseGoDlg : Form, IFWDisposable
+	public class BaseGoDlg : Form
 	{
 		#region	Data members
 

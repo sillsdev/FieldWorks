@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -7,7 +7,6 @@ using System.Diagnostics;
 using System.Linq;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
-using SIL.Utils;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using System.Collections.Generic;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
@@ -22,7 +21,7 @@ namespace SIL.FieldWorks.IText
 	/// used by MultiStringSlice, and probably by other classes that are nothing to do with
 	/// IText. I'm thinking it might belong in the same DLL as LangProject.
 	/// </summary>
-	public class WsListManager : IFWDisposable
+	public class WsListManager : IDisposable
 	{
 		ILangProject m_lp;
 		ITsString m_tssColon;

@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,9 +6,7 @@ using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
-
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.Widgets
 {
@@ -20,7 +18,7 @@ namespace SIL.FieldWorks.Common.Widgets
 	/// text in items, or to support Graphite rendering. For this reason the TreeView is not
 	/// made public, and only a limited subset of its capabilities is currently exposed.
 	/// </summary>
-	public class PopupTree : Form, IFWDisposable, IDropDownBox
+	public class PopupTree : Form, IDropDownBox
 	{
 		/// <summary></summary>
 		public event TreeViewEventHandler AfterSelect;
@@ -781,7 +779,7 @@ namespace SIL.FieldWorks.Common.Widgets
 	/// We need to subclass TreeView in order to override IsInputChar(), otherwise
 	/// TreeView will not try to handle TAB keys (cf. LT-2190).
 	/// </summary>
-	internal class FwTreeView : TreeView, IFWDisposable
+	internal class FwTreeView : TreeView
 	{
 
 		/// <summary>
@@ -843,7 +841,7 @@ namespace SIL.FieldWorks.Common.Widgets
 	/// <summary>Message filter for detecting events that may turn off
 	/// the insert verse numbers mode</summary>
 	/// ------------------------------------------------------------------------------------
-	internal class FwPopupMessageFilter : IMessageFilter, IFWDisposable
+	internal class FwPopupMessageFilter : IMessageFilter, IDisposable
 	{
 		private PopupTree m_popupTree;
 

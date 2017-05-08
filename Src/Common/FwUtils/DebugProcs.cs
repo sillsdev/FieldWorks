@@ -9,7 +9,6 @@ using System.Runtime.InteropServices;
 using System.Text;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
@@ -18,7 +17,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 	/// Debugging helper methods. Accesses the unmanaged C++ DebugProcs.dll
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public class DebugProcs : IFWDisposable
+	public class DebugProcs : IDisposable
 #if DEBUG
 		, IDebugReportSink
 	{

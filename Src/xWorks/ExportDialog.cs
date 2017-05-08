@@ -1,10 +1,10 @@
-// Copyright (c) 2005-2016 SIL International
+// Copyright (c) 2005-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -16,7 +16,6 @@ using System.Xml.Xsl;
 using Microsoft.Win32;
 using SIL.CoreImpl;
 using SIL.Reporting;
-using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
@@ -47,7 +46,7 @@ namespace SIL.FieldWorks.XWorks
 	/// You will typically also need to override the actual Export process, unless it is
 	/// a standard FXT export.
 	/// </summary>
-	public class ExportDialog : Form, IFWDisposable
+	public class ExportDialog : Form
 	{
 		protected FdoCache m_cache;
 		protected Mediator m_mediator;

@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2013 SIL International
+// Copyright (c) 2006-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -8,7 +8,6 @@ using System.Runtime.InteropServices;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
@@ -20,7 +19,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	/// <remarks>The current implementation doesn't work for different styles, tags, and WSs
 	/// that are applied by the VC.</remarks>
 	/// ----------------------------------------------------------------------------------------
-	public class FindCollectorEnv : CollectorEnv, IFWDisposable
+	public class FindCollectorEnv : CollectorEnv, IDisposable
 	{
 		#region Data members
 		/// <summary>Found match location</summary>
@@ -519,10 +518,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			IsDisposed = true;
 		}
-
-		#endregion
-
-		#region Implementation of IFWDisposable
 
 		/// <summary>
 		/// Add the public property for knowing if the object has been disposed of yet

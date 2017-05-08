@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -14,7 +14,6 @@ using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.Widgets
 {
@@ -70,7 +69,7 @@ namespace SIL.FieldWorks.Common.Widgets
 	/// the writing systems of any TsStrings it is asked to display. It will improve performance
 	/// to do this even if you are not using TsString data.
 	/// </summary>
-	public class FwListBox : Panel, IFWDisposable, IVwNotifyChange, IFwListBox
+	public class FwListBox : Panel, IVwNotifyChange, IFwListBox
 	{
 		/// <summary></summary>
 		public event EventHandler SelectedIndexChanged;
@@ -773,7 +772,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// on the control.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public class ObjectCollection : IList, IFWDisposable
+		public class ObjectCollection : IList, IDisposable
 		{
 			private ArrayList m_list;
 			private IFwListBox m_owner;

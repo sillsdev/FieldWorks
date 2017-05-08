@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -7,7 +7,6 @@ using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
@@ -33,7 +32,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	/// to find out whether the user wants to move or copy into LangProject.LinkedFilesRootDir or to leave the file where it is.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public partial class MoveOrCopyFilesDlg : Form, IFWDisposable
+	public partial class MoveOrCopyFilesDlg : Form
 	{
 		#region Member variables
 		private FileLocationChoice m_choice;
@@ -201,7 +200,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			get { CheckDisposed(); return m_choice; }
 		}
 
-		#region IFWDisposable Members
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Check whether this dialog has already been disposed.  If so, throw a fit.
@@ -212,7 +210,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			if (IsDisposed)
 				throw new ObjectDisposedException(string.Format("'{0}' in use after being disposed.", GetType().Name));
 		}
-		#endregion
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

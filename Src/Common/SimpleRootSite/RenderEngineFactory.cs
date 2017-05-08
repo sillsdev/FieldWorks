@@ -1,9 +1,14 @@
-﻿using System;
+﻿// Copyright (c) 2017 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.ObjectModel;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.RootSites
@@ -11,7 +16,7 @@ namespace SIL.FieldWorks.Common.RootSites
 	/// <summary>
 	/// This class is used by root boxes to get render engines.
 	/// </summary>
-	public class RenderEngineFactory : FwDisposableBase, IRenderEngineFactory
+	public class RenderEngineFactory : DisposableBase, IRenderEngineFactory
 	{
 		private readonly Dictionary<ILgWritingSystem, Dictionary<Tuple<string, bool, bool>, GraphiteEngine>> m_graphiteEngines;
 		private readonly Dictionary<ILgWritingSystemFactory, IRenderEngine> m_nonGraphiteEngines;

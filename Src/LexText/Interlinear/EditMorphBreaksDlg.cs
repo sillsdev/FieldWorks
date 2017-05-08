@@ -8,7 +8,6 @@ using System.Diagnostics;
 using System.Windows.Forms;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
-using SIL.Utils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FwCoreDlgs;
@@ -21,7 +20,7 @@ namespace SIL.FieldWorks.IText
 	/// bigger edit box, and it displays some helpful (?) information to assist in marking the
 	/// morpheme types.
 	/// </summary>
-	public class EditMorphBreaksDlg : Form, IFWDisposable
+	public class EditMorphBreaksDlg : Form
 	{
 		private Button m_btnOk;
 		private Button m_btnCancel;

@@ -1,8 +1,11 @@
-﻿// This really needs to be refactored with MasterCategoryListDlg.cs
+﻿// Copyright (c) 2017 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
+// This really needs to be refactored with MasterCategoryListDlg.cs
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -15,7 +18,6 @@ using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.Utils;
 using SIL.Windows.Forms;
 using XCore;
 
@@ -28,7 +30,7 @@ namespace SIL.FieldWorks.LexText.Controls
 	/// A user may choose the "<n/a>" option to remove a feature/value pair from an existing feature structure.
 	/// If returns a feature structure with the selected feature/value pairs.
 	/// </summary>
-	public class PhonologicalFeatureChooserDlg : Form, IFWDisposable
+	public class PhonologicalFeatureChooserDlg : Form
 	{
 		private Mediator m_mediator;
 		private XCore.PropertyTable m_propertyTable;

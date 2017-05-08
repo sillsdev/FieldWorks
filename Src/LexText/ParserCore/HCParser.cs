@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014-2014 SIL International
+﻿// Copyright (c) 2014-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -15,11 +15,11 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.HermitCrab;
 using SIL.Machine.Annotations;
-using SIL.Utils;
+using SIL.ObjectModel;
 
 namespace SIL.FieldWorks.WordWorks.Parser
 {
-	public class HCParser : FwDisposableBase, IParser
+	public class HCParser : DisposableBase, IParser
 	{
 		private readonly FdoCache m_cache;
 		private Morpher m_morpher;

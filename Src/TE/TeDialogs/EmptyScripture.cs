@@ -1,23 +1,16 @@
-// Copyright (c) 2004-2013 SIL International
+// Copyright (c) 2004-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: EmptyScripture.cs
-// Responsibility:
-//
-// <remarks>
-// </remarks>
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Xml;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.UIAdapters;
 using SIL.FieldWorks.FDO;
-using SIL.Utils;
 using XCore;
 
 namespace SIL.FieldWorks.TE
@@ -29,7 +22,7 @@ namespace SIL.FieldWorks.TE
 	/// in it yet.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public class EmptyScripture : Form, IFWDisposable, IxCoreColleague
+	public class EmptyScripture : Form, IxCoreColleague
 	{
 		#region Option enumeration
 		/// ------------------------------------------------------------------------------------

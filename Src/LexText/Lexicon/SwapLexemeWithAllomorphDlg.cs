@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -11,7 +11,6 @@ using SIL.FieldWorks.FDO;
 using XCore;
 using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
-using System.Diagnostics.CodeAnalysis;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 
@@ -20,7 +19,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 	/// <summary>
 	/// Summary description for SwapLexemeWithAllomorphDlg.
 	/// </summary>
-	public class SwapLexemeWithAllomorphDlg : Form, IFWDisposable
+	public class SwapLexemeWithAllomorphDlg : Form
 	{
 		private FwTextBox m_fwTextBoxBottomMsg;
 		private FdoCache m_cache;

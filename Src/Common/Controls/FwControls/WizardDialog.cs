@@ -1,21 +1,12 @@
-// Copyright (c) 2002-2013 SIL International
+// Copyright (c) 2002-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: WizardDialog.cs
-// Responsibility: DavidO
-// Last reviewed:
-//
-// Implementation of WizardDialog class from which .Net FieldWorks wizards should be
-// derived.
 
 using System;
 using System.Resources;
 using System.Drawing;
 using System.ComponentModel;
 using System.Windows.Forms;
-
-using SIL.Utils;
 using SIL.FieldWorks.Common.Drawing;
 
 
@@ -34,7 +25,7 @@ namespace SIL.FieldWorks.Common.Controls
 	/// <summary>
 	/// Summary description for WizardDialog.
 	/// </summary>
-	public class WizardDialog : Form, IFWDisposable, IWizardPaintPanSteps
+	public class WizardDialog : Form, IWizardPaintPanSteps
 	{
 		#region Data Members
 		/// <summary>Space between the steps panel and the steps tab control.</summary>

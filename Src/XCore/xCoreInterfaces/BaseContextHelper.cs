@@ -31,7 +31,7 @@ namespace XCore
 	/// adapts DotNetBar to provide context help
 	/// /summary>
 	[XCore.MediatorDispose]
-	public abstract class BaseContextHelper : IContextHelper, IxCoreColleague, IFWDisposable
+	public abstract class BaseContextHelper : IContextHelper, IxCoreColleague, IDisposable
 	{
 		protected PropertyTable m_propertyTable;
 		protected Mediator m_mediator;

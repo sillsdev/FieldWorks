@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -15,6 +15,7 @@ using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
+using SIL.ObjectModel;
 using SIL.Utils;
 using SIL.WritingSystems;
 
@@ -32,7 +33,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 	/// functions. Do not use yield statements, instead add all objects to a collection and return the collection.
 	/// </summary>
 	[LexiconPlugin(ID = "FieldWorks", DisplayName = "FieldWorks Language Explorer")]
-	public class FwLexiconPlugin : FwDisposableBase, LexiconPlugin
+	public class FwLexiconPlugin : DisposableBase, LexiconPlugin
 	{
 		private const int CacheSize = 5;
 		private readonly FdoLexiconCollection m_lexiconCache;

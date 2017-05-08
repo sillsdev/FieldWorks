@@ -18,7 +18,7 @@ namespace SIL.FieldWorks.LexText.Controls.MGA
 	/// <summary>
 	/// Summary description for GlossListTreeView.
 	/// </summary>
-	public class GlossListTreeView : TreeView, IFWDisposable
+	public class GlossListTreeView : TreeView
 	{
 		public enum ImageKind
 		{

@@ -1,20 +1,10 @@
-// Copyright (c) 2002-2013 SIL International
+// Copyright (c) 2002-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: FwDrawing.cs
-// Responsibility: DavidO
-// Last reviewed:
-//
-// Implementation of FwDrawing
-//
-// --------------------------------------------------------------------------------------------
 
 using System;
 using System.Drawing;
 using System.ComponentModel;
-
-using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.Drawing
 {
@@ -60,7 +50,7 @@ namespace SIL.FieldWorks.Common.Drawing
 	///
 	/// </summary>
 	[ToolboxBitmap(typeof(SIL.FieldWorks.Common.Controls.FwButton), "resources.BorderDrawing.bmp")]
-	public class BorderDrawing : Component, IFWDisposable
+	public class BorderDrawing : Component
 	{
 		//*******************************************************************************************
 		//*******************************************************************************************
@@ -534,7 +524,7 @@ namespace SIL.FieldWorks.Common.Drawing
 	/// crashing, but it needs a refactor.  To much else going on to do it now. Dec 06 - DanH.
 	/// </summary>
 	[ToolboxBitmap(typeof(SIL.FieldWorks.Common.Controls.FwButton), "resources.BorderDrawing.bmp")]
-	public class LineDrawing : Component, IFWDisposable
+	public class LineDrawing : Component
 	{
 		//*******************************************************************************************
 		//*******************************************************************************************

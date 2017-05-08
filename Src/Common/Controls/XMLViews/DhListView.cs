@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -7,8 +7,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
-
-using SIL.Utils;
 using System.Linq;
 using System.Runtime.InteropServices;
 
@@ -19,7 +17,7 @@ namespace SIL.FieldWorks.Common.Controls
 	/// when resizing the columns.
 	/// This class holds the headers that show above columns of data that BrowseViewer knows about.
 	/// </summary>
-	public class DhListView : ListView, IFWDisposable
+	public class DhListView : ListView
 	{
 		private BrowseViewer m_bv;
 		private ImageList m_imgList;

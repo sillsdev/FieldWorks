@@ -4,14 +4,13 @@
 
 using System;
 using System.Windows.Forms;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {
 	/// <summary>
 	/// Summary description for LexEntryImages.
 	/// </summary>
-	public class LexEntryImages : UserControl, IFWDisposable
+	public class LexEntryImages : UserControl
 	{
 		public System.Windows.Forms.ImageList buttonImages;
 		private System.ComponentModel.IContainer components;

@@ -1,21 +1,15 @@
-// Copyright (c) 2004-2013 SIL International
+// Copyright (c) 2004-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: TriStateTreeView.cs
-// Responsibility: Eberhard Beilharz/Tim Steenwyk
 
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
-
-using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -29,7 +23,7 @@ namespace SIL.FieldWorks.Common.Controls
 	/// can have a separate image list for states.
 	/// </remarks>
 	/// ----------------------------------------------------------------------------------------
-	public class TriStateTreeView : TreeView, IFWDisposable
+	public class TriStateTreeView : TreeView
 	{
 		private System.Windows.Forms.ImageList m_TriStateImages;
 		private System.ComponentModel.IContainer components;

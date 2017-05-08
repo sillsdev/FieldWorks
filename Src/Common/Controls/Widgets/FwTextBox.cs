@@ -1,10 +1,7 @@
-// Copyright (c) 2007-2013 SIL International
+// Copyright (c) 2007-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: FwTextBox.cs
-// Responsibility:
-//
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -19,7 +16,6 @@ using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Reporting;
-using SIL.Utils;
 using XCore;
 
 namespace SIL.FieldWorks.Common.Widgets
@@ -44,7 +40,7 @@ namespace SIL.FieldWorks.Common.Widgets
 	///	to do this even if you are not using TsString data.
 	/// </summary>
 	/// -----------------------------------------------------------------------------------------
-	public class FwTextBox : UserControl, IFWDisposable, IVwNotifyChange, ISupportInitialize
+	public class FwTextBox : UserControl, IVwNotifyChange, ISupportInitialize
 	{
 		#region Data Members
 

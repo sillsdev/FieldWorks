@@ -1,15 +1,11 @@
-// Copyright (c) 2007-2013 SIL International
+// Copyright (c) 2007-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: FwMultilingualPropView.cs
-// Responsibility: TE Team
 
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -17,7 +13,6 @@ using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Resources;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.Widgets
 {
@@ -223,7 +218,7 @@ namespace SIL.FieldWorks.Common.Widgets
 	/// in multiple writing systems.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public class FwMultilingualPropView : DataGridView, IFWDisposable
+	public class FwMultilingualPropView : DataGridView
 	{
 		#region Struct ColumnInfo
 		/// ------------------------------------------------------------------------------------
@@ -297,7 +292,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		}
 		#endregion
 
-		#region IFWDisposable implementation
+		#region IDisposable implementation
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Check to see if the object has been disposed.

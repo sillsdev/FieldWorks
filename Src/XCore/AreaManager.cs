@@ -1,10 +1,6 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: AreaManager.cs
-// Responsibility:
-// Last retooled:
 //
 // <remarks>
 // This is a "Listener" which watches the 'areaChoice' property.
@@ -22,7 +18,6 @@
 // </example>
 using System;
 using System.Xml;
-using SIL.Utils;
 
 namespace XCore
 {
@@ -35,7 +30,7 @@ namespace XCore
 	/// as the dlg gets created from scratch for each call.
 	/// </summary>
 	[MediatorDispose]
-	public abstract class DlgListenerBase : IxCoreColleague, IFWDisposable
+	public abstract class DlgListenerBase : IxCoreColleague, IDisposable
 	{
 		#region Data members
 

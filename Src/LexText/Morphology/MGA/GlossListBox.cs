@@ -1,21 +1,16 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: GLossListBox.cs
-// Responsibility: Andy Black
 
 using System;
 using System.Windows.Forms;
-
-using SIL.Utils;
 
 namespace SIL.FieldWorks.LexText.Controls.MGA
 {
 	/// <summary>
 	/// Summary description for GlossListBox.
 	/// </summary>
-	public class GlossListBox : ListBox, IFWDisposable
+	public class GlossListBox : ListBox
 	{
 		private MGADialog m_MGAForm;
 

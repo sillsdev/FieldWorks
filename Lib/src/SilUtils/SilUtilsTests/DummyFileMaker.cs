@@ -17,7 +17,7 @@ namespace SIL.Utils
 	/// Summary description for DummyFileMaker.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public class DummyFileMaker : IFWDisposable
+	public class DummyFileMaker : IDisposable
 	{
 		private string m_fileName;
 

@@ -4,14 +4,13 @@
 
 using System;
 using System.Windows.Forms;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {
 	/// <summary>
 	/// Summary description for ImageHolder.
 	/// </summary>
-	public class ImageHolder : UserControl, IFWDisposable
+	public class ImageHolder : UserControl
 	{
 		public ImageList buttonImages;
 		private System.ComponentModel.IContainer components;

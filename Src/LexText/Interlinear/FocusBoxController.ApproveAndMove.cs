@@ -1,24 +1,17 @@
-// Copyright (c) 2009-2013 SIL International
+// Copyright (c) 2009-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: FocusBoxController.ApproveAndMove.cs
-// Responsibility: pyle
-//
-// <remarks>
-// </remarks>
 
 using System.Collections.Generic;
 using System.Linq;
-using SIL.Utils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using System.Diagnostics;
-using SIL.FieldWorks.Common.ViewsInterfaces;
 using XCore;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.ObjectModel;
 
 namespace SIL.FieldWorks.IText
 {
@@ -253,7 +246,7 @@ namespace SIL.FieldWorks.IText
 			}
 		}
 
-		internal class UndoRedoApproveAndMoveHelper : FwDisposableBase
+		internal class UndoRedoApproveAndMoveHelper : DisposableBase
 		{
 			internal UndoRedoApproveAndMoveHelper(FocusBoxController focusBox,
 				AnalysisOccurrence occBeforeApproveAndMove, AnalysisOccurrence occAfterApproveAndMove)

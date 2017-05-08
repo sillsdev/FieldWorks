@@ -2,12 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.Utils;
 
 namespace Utils.MessageBoxExLib
 {
@@ -15,7 +13,7 @@ namespace Utils.MessageBoxExLib
 	/// An advanced MessageBox that supports customizations like Font, Icon,
 	/// Buttons and Saved Responses
 	/// </summary>
-	internal class MessageBoxExForm : Form, IFWDisposable
+	internal class MessageBoxExForm : Form
 	{
 		#region Constants
 		private const int LEFT_PADDING = 12;

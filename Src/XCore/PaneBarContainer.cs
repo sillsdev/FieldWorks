@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -8,7 +8,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Xml;
 using System.Reflection;
-using SIL.Utils; // For IFWDisposable
+using SIL.Utils;
 
 namespace XCore
 {
@@ -28,7 +28,7 @@ namespace XCore
 	/// Most of the mehtods in these interfaces wil be pass-thourh methods to m_mainControl,
 	/// but we will try to get some use out of them, as well.
 	/// </remarks>
-	public partial class PaneBarContainer : BasicPaneBarContainer, IxCoreContentControl, IFWDisposable, IPostLayoutInit
+	public partial class PaneBarContainer : BasicPaneBarContainer, IxCoreContentControl, IPostLayoutInit
 	{
 		#region Data Members
 
@@ -103,7 +103,7 @@ namespace XCore
 
 		#endregion Properties
 
-		#region IFWDisposable implementation, in part
+		#region Disposable implementation, in part
 
 		/// <summary>
 		/// Check to see if the object has been disposed.
@@ -116,7 +116,7 @@ namespace XCore
 				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
 		}
 
-		#endregion IFWDisposable implementation, in part
+		#endregion Disposable implementation, in part
 
 		#region IxCoreColleague implementation
 		/// <summary></summary>

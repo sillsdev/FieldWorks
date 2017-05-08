@@ -1,10 +1,6 @@
-// Copyright (c) 2002-2013 SIL International
+// Copyright (c) 2002-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ParserListener.cs
-// Responsibility: John Hatton
-// Last reviewed:
 //
 // <remarks>
 // This is an XCore "Listener" which facilitates interaction with the Parser.
@@ -16,7 +12,7 @@
 //		</listeners>
 //	</code>
 // </example>
-// --------------------------------------------------------------------------------------------
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -40,7 +36,7 @@ namespace SIL.FieldWorks.LexText.Controls
 	/// out of the form code. It is scheduled for refactoring
 	/// </summary>
 	[MediatorDispose]
-	public class ParserListener : IxCoreColleague, IFWDisposable, IVwNotifyChange
+	public class ParserListener : IxCoreColleague, IDisposable, IVwNotifyChange
 	{
 		private Mediator m_mediator;
 		private PropertyTable m_propertyTable;

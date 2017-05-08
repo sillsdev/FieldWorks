@@ -4,14 +4,13 @@
 
 using System;
 using System.Windows.Forms;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.XWorks.LexText
 {
 	/// <summary>
 	/// Summary description for ImageHolder.
 	/// </summary>
-	public class ImageHolder : UserControl, IFWDisposable
+	public class ImageHolder : UserControl
 	{
 		public System.Windows.Forms.ImageList largeImages;
 		public System.Windows.Forms.ImageList smallImages;

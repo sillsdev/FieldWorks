@@ -1,18 +1,16 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using ECInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Resources;
-using SIL.Utils;
 using SilEncConverters40;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 
@@ -24,7 +22,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	/// </summary>
 	/// <remarks>Public so we can test it</remarks>
 	/// ------------------------------------------------------------------------------------
-	public class CnvtrPropertiesCtrl : UserControl, IFWDisposable
+	public class CnvtrPropertiesCtrl : UserControl
 	{
 		// Note: several of these controls are public in order to facilitate testing.
 		// Few of them are actually required by other classes

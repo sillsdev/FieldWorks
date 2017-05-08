@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,18 +6,16 @@ using System;
 using System.Windows.Forms;
 using System.Xml;
 using SIL.FieldWorks.FDO;
-using SIL.Utils;
 using SIL.FieldWorks.XWorks;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using XCore;
-using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.IText
 {
 	/// <summary>
 	/// Summary description for InfoPane.
 	/// </summary>
-	public class InfoPane : UserControl, IFWDisposable, IInterlinearTabControl
+	public class InfoPane : UserControl, IInterlinearTabControl
 	{
 		/// <summary>
 		/// Required designer variable.

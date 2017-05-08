@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -7,11 +7,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using System.Xml;
 using SIL.CoreImpl;
@@ -43,7 +41,7 @@ namespace SIL.FieldWorks.Common.Controls
 	/// evaluate filter for all items. This might be a method on RecordFilter.
 	/// </remarks>
 	/// ----------------------------------------------------------------------------------------
-	public class FilterSortItem : IFWDisposable
+	public class FilterSortItem : IDisposable
 	{
 		private XmlNode m_viewSpec;
 		private IStringFinder m_finder;
@@ -362,7 +360,7 @@ namespace SIL.FieldWorks.Common.Controls
 	/// <summary>
 	/// A FilterBar contains a sequence of combos or grey areas, one for each column of a browse view.
 	/// </summary>
-	public class FilterBar : UserControl, IFWDisposable
+	public class FilterBar : UserControl
 	{
 		BrowseViewer m_bv;
 		List<XmlNode> m_columns;
@@ -1360,7 +1358,7 @@ namespace SIL.FieldWorks.Common.Controls
 	/// Subclasses may launch a dialog and create the matcher appropriately first.
 	/// </summary>
 	/// ------------------------------------------------------------------------------------
-	public class FilterComboItem : ITssValue, IFWDisposable
+	public class FilterComboItem : ITssValue, IDisposable
 	{
 		/// <summary></summary>
 		protected IMatcher m_matcher;

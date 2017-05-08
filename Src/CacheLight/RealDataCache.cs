@@ -1,11 +1,10 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices; // needed for Marshal
-using SIL.Utils;
 using System.Diagnostics;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
@@ -17,7 +16,7 @@ namespace SIL.FieldWorks.CacheLight
 	/// Interface for RealDataCache that combines the different interfaces that RealDataCache
 	/// implements. This more easily allows to use a substitute implementation in unit tests.
 	/// </summary>
-	public interface IRealDataCache : ISilDataAccess, IVwCacheDa, IStructuredTextDataAccess, IFWDisposable
+	public interface IRealDataCache : ISilDataAccess, IVwCacheDa, IStructuredTextDataAccess, IDisposable
 	{
 		/// <summary>
 		/// Gets or sets the paragraph contents field id.

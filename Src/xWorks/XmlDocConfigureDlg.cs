@@ -1,22 +1,18 @@
-// Copyright (c) 2007-2015 SIL International
+// Copyright (c) 2007-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: XmlDocConfigureDlg.cs
-// Responsibility:
-// Last reviewed:
 //
 // <remarks>
 // Uncomment the #define if you want to see the "Restore Defaults" and "Set/Clear All" buttons.
 // (This affects only DEBUG builds.)
 // </remarks>
+
 #define DEBUG_TEST
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -25,7 +21,6 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Xml;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
@@ -53,7 +48,7 @@ namespace SIL.FieldWorks.XWorks
 	/// hideConfig="true" attributes added to a couple of part refs just to make the node tree look
 	/// nicer to the users.
 	/// </summary>
-	public partial class XmlDocConfigureDlg : Form, IFWDisposable, ILayoutConverter
+	public partial class XmlDocConfigureDlg : Form, ILayoutConverter
 	{
 		XmlNode m_configurationParameters;
 		string m_defaultRootLayoutName;
@@ -2899,15 +2894,11 @@ namespace SIL.FieldWorks.XWorks
 
 		#endregion // Misc internal functions
 
-		#region IFWDisposable Members
-
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
 				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
 		}
-
-		#endregion // IFWDisposable Members
 
 		#region LayoutTreeNode class
 

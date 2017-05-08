@@ -1,10 +1,9 @@
-// Copyright (c) 2016 SIL International
+// Copyright (c) 2016-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Windows.Forms;
-using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.FwCoreDlgControls
@@ -12,7 +11,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 	/// <summary>
 	/// The UpDownMeasureControl is a spinner control that handles measurements (in, cm, pt, etc)
 	/// </summary>
-	public class UpDownMeasureControl : UpDownBase, IFWDisposable
+	public class UpDownMeasureControl : UpDownBase
 	{
 		#region Member Data
 		/// <summary>

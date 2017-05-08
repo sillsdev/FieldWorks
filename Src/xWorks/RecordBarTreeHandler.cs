@@ -1,15 +1,12 @@
-// Copyright (c) 2003-2015 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: TreeBarHandler.cs
-// Authorship History: John Hatton
-// Last reviewed:
 //
 // <remarks>
 //	This class is responsible for populating the XCore tree bar with the records
 //	that are given to it by the RecordClerk.
 // </remarks>
+
 using System;
 using SIL.FieldWorks.FdoUi;
 using XCore;
@@ -33,7 +30,7 @@ namespace SIL.FieldWorks.XWorks
 	/// <summary>
 	/// Responsible for populating the XCore tree bar with the records.
 	/// </summary>
-	public abstract class RecordBarHandler : IFWDisposable
+	public abstract class RecordBarHandler : IDisposable
 	{
 		protected Mediator m_mediator;
 		protected PropertyTable m_propertyTable;

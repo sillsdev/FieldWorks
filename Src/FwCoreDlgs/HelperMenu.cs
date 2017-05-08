@@ -1,20 +1,18 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Windows.Forms;
-
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
 	/// <summary>
 	/// Context menu to help build text expressions. Subclassed to provide regex and morpheme break building help
 	/// </summary>
-	public abstract class HelperMenu : ContextMenu, IFWDisposable
+	public abstract class HelperMenu : ContextMenu
 	{
 		/// <summary>
 		/// The textbox to insert text into

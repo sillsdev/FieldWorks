@@ -20,7 +20,7 @@ namespace  SIL.FieldWorks.LexText.Controls.MGA
 	/// <summary>
 	/// Base class for MGAHtmlHelpDialog. Can be used standalone to show dialog without html help.
 	/// </summary>
-	public class MGADialog : Form, IFWDisposable
+	public class MGADialog : Form
 	{
 		#region Member variables
 		private int m_panelBottomHeight = 0;

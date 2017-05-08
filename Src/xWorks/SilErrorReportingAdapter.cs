@@ -1,11 +1,8 @@
-﻿// Copyright (c) 2013 SIL International
+﻿// Copyright (c) 2013-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: PalasoErrorReportingAdapter.cs
-// Responsibility: FLEx Team
+
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using Microsoft.Win32;
 using SIL.FieldWorks.Common.RootSites;
@@ -22,7 +19,7 @@ namespace SIL.FieldWorks.XWorks
 	/// create a Palaso dialog, create an instance of this class, passing it the dialog.
 	/// </summary>
 	/// ------------------------------------------------------------------------------------
-	class SilErrorReportingAdapter : IErrorReporter, IFWDisposable
+	class SilErrorReportingAdapter : IErrorReporter, IDisposable
 	{
 		private Form m_parentForm;
 		private RegistryKey m_registryKey;

@@ -1,17 +1,10 @@
-// Copyright (c) 2005-2013 SIL International
+// Copyright (c) 2005-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: MorphologyListener.cs
-// Responsibility: Randy Regnier
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using System.Xml;
 using SIL.CoreImpl;
@@ -26,7 +19,6 @@ using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.IText;
 using SIL.Utils;
-using SIL.WritingSystems;
 using XCore;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
@@ -37,7 +29,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 	/// to tools in the Words area.
 	/// </summary>
 	[XCore.MediatorDispose]
-	public class MorphologyListener : IxCoreColleague, IVwNotifyChange, IFWDisposable
+	public class MorphologyListener : IxCoreColleague, IVwNotifyChange, IDisposable
 	{
 		#region Data members
 

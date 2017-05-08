@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2016 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -7,7 +7,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Globalization;
 using System.Linq;
@@ -15,7 +14,6 @@ using System.Text;
 using System.Windows.Forms;
 using System.Xml;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
@@ -51,7 +49,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 	/// System.Windows.Forms.Panel
 	/// System.Windows.Forms.ContainerControl
 	/// System.Windows.Forms.UserControl
-	public class DataTree : UserControl, IFWDisposable, IVwNotifyChange, IxCoreColleague, IRefreshableRoot
+	public class DataTree : UserControl, IVwNotifyChange, IxCoreColleague, IRefreshableRoot
 	{
 		/// <summary>
 		/// Occurs when the current slice changes
@@ -2278,7 +2276,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 						ResetRecordListUpdater();
 						// m_rlu may still be null, but that appears to be just fine.
 						m_rch.Setup(obj, m_rlu, m_cache);
-						Debug.Assert(m_rch != null && !m_rch.IsDisposed);
 						return NodeTestResult.kntrNothing;
 				}
 			}

@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -10,7 +10,6 @@ using System.Collections.Generic;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO;
-using SIL.Utils;
 using SIL.FieldWorks.FDO.DomainServices;
 using XCore;
 using SIL.FieldWorks.Common.Widgets;
@@ -21,7 +20,7 @@ namespace SIL.FieldWorks.LexText.Controls
 	/// This control handles all of the various text labels and other widgets
 	/// used to set up an MSA of any of the classes.
 	/// </summary>
-	public class MSAGroupBox : UserControl, IFWDisposable
+	public class MSAGroupBox : UserControl
 	{
 		#region Data members
 

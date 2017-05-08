@@ -1,16 +1,12 @@
-// Copyright (c) 2004-2016 SIL International
+// Copyright (c) 2004-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: CharacterGrid.cs
-// Responsibility: TE Team
 
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
@@ -26,7 +22,7 @@ namespace SIL.FieldWorks.Common.Controls
 	///
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public class CharacterGrid : DataGridView, IFWDisposable
+	public class CharacterGrid : DataGridView
 	{
 #if !__MonoCS__
 		[DllImport("gdi32.dll", CharSet=CharSet.Auto)]

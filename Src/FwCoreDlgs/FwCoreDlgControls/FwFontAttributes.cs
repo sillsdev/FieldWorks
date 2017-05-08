@@ -1,12 +1,6 @@
-// Copyright (c) 2006-2013 SIL International
+// Copyright (c) 2006-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: FwFontAttributes.cs
-// Responsibility: TE Team
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Diagnostics;
@@ -15,7 +9,6 @@ using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
-using SIL.Utils;
 using SIL.FieldWorks.FDO.DomainServices;
 
 namespace SIL.FieldWorks.FwCoreDlgControls
@@ -26,7 +19,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 	/// is used in the Font tab of the Styles dialog as well as in the stand-alone Font dialog.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public partial class FwFontAttributes : UserControl, IFWDisposable
+	public partial class FwFontAttributes : UserControl
 	{
 		#region Data Members
 		/// <summary>Occurs when the value of one of the controls has changed.</summary>

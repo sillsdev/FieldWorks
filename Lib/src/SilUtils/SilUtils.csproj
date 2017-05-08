@@ -82,7 +82,6 @@
     <Compile Include="ContinuableErrorException.cs" />
     <Compile Include="FileUtils.cs" />
     <Compile Include="IFileOS.cs" />
-    <Compile Include="IFWDisposable.cs" />
     <Compile Include="IProgress.cs" />
     <Compile Include="IThreadedProgress.cs" />
     <Compile Include="MiscUtils.cs" />

@@ -1,20 +1,16 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: PropertyTable.cs
-// Authorship History: John Hatton
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Security;
 using System.Windows.Forms;
 using System.Xml.Serialization;
 using System.IO;
 using System.Threading;		// for Monitor (dlh)
 using System.Text;
-using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
 
 namespace XCore
@@ -23,7 +19,7 @@ namespace XCore
 	/// Summary description for PropertyTable.
 	/// </summary>
 	[Serializable]
-	public sealed class PropertyTable : IFWDisposable
+	public sealed class PropertyTable : IDisposable
 	{
 		/// <summary>
 		/// Specify where to set/get a property in the property table.

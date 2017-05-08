@@ -1,10 +1,6 @@
-// Copyright (c) 2002-2013 SIL International
+// Copyright (c) 2002-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ArrayPtr.cs
-// Responsibility: Eberhard Beilharz
-// Last reviewed:
 //
 // <remarks>
 // Implements helper methods for marshaling of COM objects: ArrayPtr, a wrapper for a pointer
@@ -19,7 +15,6 @@
 using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.FwKernelInterfaces
 {
@@ -30,7 +25,7 @@ namespace SIL.FieldWorks.Common.FwKernelInterfaces
 	/// </summary>
 	/// <remarks>Use this class for passing unmanaged arrays to and from a COM object.</remarks>
 	/// ----------------------------------------------------------------------------------------
-	public class ArrayPtr : IFWDisposable
+	public class ArrayPtr : IDisposable
 	{
 		private IntPtr m_ptr;
 		private int m_Size;
@@ -91,7 +86,7 @@ namespace SIL.FieldWorks.Common.FwKernelInterfaces
 		/// <summary>
 		/// True, if the object has been disposed.
 		/// </summary>
-		private bool m_isDisposed = false;
+		private bool m_isDisposed;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

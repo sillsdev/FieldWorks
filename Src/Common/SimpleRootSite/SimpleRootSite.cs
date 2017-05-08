@@ -1,9 +1,6 @@
-// Copyright (c) 2004-2013 SIL International
+// Copyright (c) 2004-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: SimpleRootSite.cs
-// Responsibility: FW Team
 
 using System;
 using System.Collections.Generic;
@@ -39,7 +36,7 @@ namespace SIL.FieldWorks.Common.RootSites
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	public class SimpleRootSite : UserControl, IVwRootSite, IRootSite, IxCoreColleague,
-		IEditingCallbacks, IReceiveSequentialMessages, IMessageFilter, IFWDisposable
+		IEditingCallbacks, IReceiveSequentialMessages, IMessageFilter
 	{
 		#region Events
 		/// <summary>
@@ -6256,7 +6253,7 @@ namespace SIL.FieldWorks.Common.RootSites
 	/// } // this resumes drawing the parent object
 	/// </example>
 	/// ------------------------------------------------------------------------------------
-	public class SuspendDrawing : IFWDisposable
+	public class SuspendDrawing : IDisposable
 	{
 		private IRootSite m_parent;
 

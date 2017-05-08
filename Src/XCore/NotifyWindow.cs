@@ -12,14 +12,12 @@ using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
 
-using SIL.Utils;
-
 namespace XCore
 {
 	/// <summary>
 	/// Display An MSN-Messenger-Style NotifyWindow.
 	/// </summary>
-	public class NotifyWindow : Form, IFWDisposable
+	public class NotifyWindow : Form
 	{
 		#region Public Variables
 		/// <summary>

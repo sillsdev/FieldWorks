@@ -1,18 +1,14 @@
-// Copyright (c) 2006-2013 SIL International
+// Copyright (c) 2006-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: FwChooserDlg.cs
-// Responsibility: TE Team
+
 using System;
 using Microsoft.Win32;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Controls;
-using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
 
@@ -23,7 +19,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	/// Summary description for FwChooserDlg.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public class FwChooserDlg : Form, IFWDisposable, ISettings, ICmPossibilitySupplier
+	public class FwChooserDlg : Form, ISettings, ICmPossibilitySupplier
 	{
 		#region Data members
 		/// <summary>The possibility list used to populate the tree</summary>

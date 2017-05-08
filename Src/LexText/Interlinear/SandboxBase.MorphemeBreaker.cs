@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -15,6 +15,7 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.ObjectModel;
 
 namespace SIL.FieldWorks.IText
 {
@@ -691,7 +692,7 @@ namespace SIL.FieldWorks.IText
 	/// Again, this is basically done by figuring the combined morphemes, deleting the space,
 	/// then figuring the resulting morphemes (and restoring the selection).
 	/// </summary>
-	internal class SandboxEditMonitor : FwDisposableBase, IVwNotifyChange
+	internal class SandboxEditMonitor : DisposableBase, IVwNotifyChange
 	{
 		SandboxBase m_sandbox; // The sandbox we're working from.
 		string m_morphString; // The representation of the current morphemes as a simple string.
@@ -1086,7 +1087,7 @@ namespace SIL.FieldWorks.IText
 			get { return m_monitorPropChanges; }
 		}
 
-		#region FwDisposableBase
+		#region DisposableBase
 
 		protected override void DisposeManagedResources()
 		{
@@ -1108,7 +1109,7 @@ namespace SIL.FieldWorks.IText
 
 	#endregion SandboxEditMonitor class
 
-	internal class SandboxEditMonitorHelper : FwDisposableBase
+	internal class SandboxEditMonitorHelper : DisposableBase
 	{
 		internal SandboxEditMonitorHelper(SandboxEditMonitor editMonitor, bool fSuspendMonitor)
 		{

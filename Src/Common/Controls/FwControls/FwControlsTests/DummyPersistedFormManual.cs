@@ -1,29 +1,18 @@
-// Copyright (c) 2002-2013 SIL International
+// Copyright (c) 2002-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: DummyPersistedFormManual.cs
-// Responsibility: TomB
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using Microsoft.Win32;
-
-using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.Controls
 {
 	/// <summary>
 	/// Summary description for DummyPersistedFormManual.
 	/// </summary>
-	public class DummyPersistedFormManual : Form, IFWDisposable, ISettings
+	public class DummyPersistedFormManual : Form, ISettings
 	{
 		private SIL.FieldWorks.Common.Controls.Persistence m_persistence;
 		private System.ComponentModel.IContainer components;

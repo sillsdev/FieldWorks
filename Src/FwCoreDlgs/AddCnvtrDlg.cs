@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -21,7 +21,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	/// <summary>
 	/// The dialog for adding/configuring encoding converters
 	/// </summary>
-	public class AddCnvtrDlg : Form, IFWDisposable
+	public class AddCnvtrDlg : Form
 	{
 		#region Constants
 		/// <summary>Index of the tab for encoding converters properties</summary>

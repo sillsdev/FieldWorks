@@ -1,19 +1,10 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: xCoreUserControl.cs
-// Authorship History: Dan Hinton
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Xml;
-using System.Diagnostics;
 using System.Windows.Forms;
-
 using SIL.Utils;
 
 namespace XCore
@@ -55,7 +46,7 @@ namespace XCore
 	/// name of the derived class.
 	///
 	/// </summary>
-	public class XCoreUserControl : UserControl, IFWDisposable, IXCoreUserControl
+	public class XCoreUserControl : UserControl, IXCoreUserControl
 	{
 		/// <summary>
 		/// Check to see if the object has been disposed.

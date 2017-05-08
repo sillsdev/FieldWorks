@@ -1,23 +1,11 @@
-// Copyright (c) 2004-2013 SIL International
+// Copyright (c) 2004-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: WizardStepPanel.cs
-// Responsibility: DavidO
-//
-// <remarks>
-// </remarks>
 
 using System;
-using System.Collections;
 using System.ComponentModel;
 using System.Drawing;
-using System.Data;
 using System.Windows.Forms;
-using System.Diagnostics;
-
-using SIL.FieldWorks.Common.Drawing;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -26,7 +14,7 @@ namespace SIL.FieldWorks.Common.Controls
 	/// Summary description for WizardStepPanel.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public class WizardStepPanel : UserControl, IFWDisposable, IWizardPaintPanSteps
+	public class WizardStepPanel : UserControl, IWizardPaintPanSteps
 	{
 		private const int kdxpStepListSpacing = 8;
 		private const int kdypStepListSpacing = 10;

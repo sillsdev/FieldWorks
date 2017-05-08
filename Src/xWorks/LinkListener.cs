@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -13,7 +13,6 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FdoUi;
-using SIL.Utils;
 using XCore;
 
 namespace SIL.FieldWorks.XWorks
@@ -34,7 +33,7 @@ namespace SIL.FieldWorks.XWorks
 	/// See the class comment on FwLinkArgs for details on how all the parts of hyperlinking work.
 	/// </summary>
 	[XCore.MediatorDispose]
-	public class LinkListener : IxCoreColleague, IFWDisposable
+	public class LinkListener : IxCoreColleague, IDisposable
 	{
 		const int kmaxDepth = 50;		// Limit the stacks to 50 elements (LT-729).
 		protected Mediator m_mediator;

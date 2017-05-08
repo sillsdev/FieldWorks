@@ -1,16 +1,14 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using SIL.CoreImpl;
-using SIL.Utils;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.WritingSystems;
@@ -20,7 +18,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 	/// <summary>
 	/// Summary description for RegionVariantControl.
 	/// </summary>
-	public class RegionVariantControl : UserControl, IFWDisposable
+	public class RegionVariantControl : UserControl
 	{
 		private Label m_variantNameLabel;
 		// Note: this currently has a max length set to 30. This is to ensure that any

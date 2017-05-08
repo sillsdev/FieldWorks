@@ -1,20 +1,14 @@
-// Copyright (c) 2009-2013 SIL International
+// Copyright (c) 2009-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: AnalysisGuessServicesTests.cs
-// Responsibility: pyle
-//
-// <remarks>
-// </remarks>
 
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 using SIL.FieldWorks.FDO.DomainImpl;
-using SIL.Utils;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.CoreImpl;
+using SIL.ObjectModel;
 
 namespace SIL.FieldWorks.FDO.FDOTests
 {
@@ -29,7 +23,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		// REVIEW (TomB): There is no reason to derive from FwDisposableBase because neither
 		// Dispose method is being overriden. Either override one of those methods or get rid
 		// of all the using statements where objects of this class are instantiated.
-		internal class AnalysisGuessBaseSetup : FwDisposableBase
+		internal class AnalysisGuessBaseSetup : DisposableBase
 		{
 			internal IText Text { get; set; }
 			internal IStText StText { get; set; }

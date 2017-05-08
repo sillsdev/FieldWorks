@@ -1,13 +1,10 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: XmlVc.cs
-// Responsibility: WordWorks
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
@@ -24,6 +21,7 @@ using SIL.FieldWorks.FDO.Application.ApplicationServices;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.Resources;
+using SIL.ObjectModel;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.Controls
@@ -5696,7 +5694,7 @@ namespace SIL.FieldWorks.Common.Controls
 	/// <summary>
 	/// Compares CmObjects using their SortKey property.
 	/// </summary>
-	class CmObjectComparer : FwDisposableBase, IComparer<int>
+	class CmObjectComparer : DisposableBase, IComparer<int>
 	{
 		private IntPtr m_col = IntPtr.Zero;
 		private readonly FdoCache m_cache;

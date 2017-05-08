@@ -1,14 +1,10 @@
-// Copyright (c) 2009-2016 SIL International
+// Copyright (c) 2009-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: FDOBackendProvider.cs
-// Responsibility: John Thomson, Steve Miller
-// Last reviewed: never
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -71,7 +67,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		}
 
 
-		#region IFWDisposable implementation
+		#region IDisposable implementation
 
 		/// <summary>
 		/// True, if the object has been disposed.
@@ -171,7 +167,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			m_isDisposed = true;
 		}
 
-		#endregion // IFWDisposable implementation
+		#endregion // IDisposable implementation
 
 		/// <summary>
 		/// Cache is about to be disposed. We need to stop any running loadDomain thread.

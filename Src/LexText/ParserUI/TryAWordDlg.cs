@@ -29,7 +29,7 @@ namespace SIL.FieldWorks.LexText.Controls
 	/// <summary>
 	/// Summary description for TryAWordDlg.
 	/// </summary>
-	public class TryAWordDlg : Form, IFWDisposable, IMediatorProvider, IPropertyTableProvider
+	public class TryAWordDlg : Form, IMediatorProvider, IPropertyTableProvider
 	{
 		private const string PersistProviderID = "TryAWord";
 		private const string HelpTopicID = "khtpTryAWord";

@@ -1,4 +1,4 @@
-// Copyright (c) 2002-2013 SIL International
+// Copyright (c) 2002-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -8,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -27,7 +26,6 @@ using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FwCoreDlgControls;
 using SIL.FieldWorks.Resources;
 using SIL.Reporting;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.TE
 {
@@ -38,7 +36,7 @@ namespace SIL.FieldWorks.TE
 	/// converting a Standard Format project for access by ScriptureObjects.
 	/// </summary>
 	/// -----------------------------------------------------------------------------------
-	public class ImportWizard : Form, IFWDisposable
+	public class ImportWizard : Form
 	{
 		#region ImportWizard Enums
 		/// -----------------------------------------------------------------------------------

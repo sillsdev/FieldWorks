@@ -1,12 +1,12 @@
-// Copyright (c) 2003-2015 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
@@ -28,7 +28,6 @@ using SIL.FieldWorks.FwCoreDlgControls;
 using SIL.FieldWorks.Resources;
 using SIL.Windows.Forms.WritingSystems;
 using SIL.WritingSystems;
-using SIL.Utils;
 using XCore;
 using MatchedPair = SIL.WritingSystems.MatchedPair;
 
@@ -37,7 +36,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	/// <summary>
 	/// The writing system properties dialog.
 	/// </summary>
-	public class WritingSystemPropertiesDialog : Form, IFWDisposable
+	public class WritingSystemPropertiesDialog : Form
 	{
 		private enum CollationRulesType
 		{

@@ -14,6 +14,7 @@ using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.ObjectModel;
 using SIL.Reporting;
 using SIL.Utils;
 
@@ -1654,7 +1655,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 	/// update, to prevent recursion/re-entrancy.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	internal class BackTranslationAndFreeTranslationUpdateHelper : FwDisposableBase
+	internal class BackTranslationAndFreeTranslationUpdateHelper : DisposableBase
 	{
 		[ThreadStatic]
 		private static IStTxtPara s_para;

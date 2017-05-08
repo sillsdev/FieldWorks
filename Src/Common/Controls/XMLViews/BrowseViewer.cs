@@ -1,12 +1,12 @@
-// Copyright (c) 2003-2015 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
@@ -678,8 +678,7 @@ namespace SIL.FieldWorks.Common.Controls
 			get
 			{
 				CheckDisposed();
-				if (m_sorter is IFWDisposable && ((IFWDisposable)m_sorter).IsDisposed)
-					m_sorter = null;
+
 				return m_sorter;
 			}
 			set
@@ -3806,7 +3805,7 @@ namespace SIL.FieldWorks.Common.Controls
 	/// <summary>
 	/// This class manages the parts of the BrowseViewer that scroll horizontally in sync.
 	/// </summary>
-	public class BrowseViewScroller : UserControl, IFWDisposable
+	public class BrowseViewScroller : UserControl
 	{
 		BrowseViewer m_bv;
 
@@ -3892,7 +3891,7 @@ namespace SIL.FieldWorks.Common.Controls
 	/// It is intended to be used in a using() construct, so that its Dispose() forces a RootBox.Reconstruct()
 	/// at the end of the using block and then makes sure the scroll position is valid.
 	/// </summary>
-	internal class ReconstructPreservingBVScrollPosition : IFWDisposable
+	internal class ReconstructPreservingBVScrollPosition : IDisposable
 	{
 		BrowseViewer m_bv;
 		int m_irow;
