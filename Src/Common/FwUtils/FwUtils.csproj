@@ -202,6 +202,7 @@
     <Compile Include="ShowHelp.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="XmlSerializationHelper.cs" />
     <EmbeddedResource Include="FwUtilsStrings.resx">
       <SubType>Designer</SubType>
       <Generator>ResXFileCodeGenerator</Generator>
