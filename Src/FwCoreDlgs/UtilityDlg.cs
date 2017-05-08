@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Xml;
@@ -402,7 +403,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				//m_lSteps.Text = String.Empty;
 				//int totalSteps = m_clbUtilities.CheckedItems.Count;
 				//int currentStep = 0;
-				Set<IUtility> checkedItems = new Set<IUtility>();
+				var checkedItems = new HashSet<IUtility>();
 				foreach (IUtility util in m_clbUtilities.CheckedItems)
 				{
 					//m_lSteps.SuspendLayout();

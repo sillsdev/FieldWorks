@@ -390,10 +390,10 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="flidForCurrentList"></param>
 		/// <param name="commonAncestors"></param>
 		/// <returns></returns>
-		public Set<int> FindCorrespondingItemsInCurrentList(int flidForItemsBeforeListChange, Set<int> itemsBeforeListChange, int flidForCurrentList, out Set<int> commonAncestors)
+		public ISet<int> FindCorrespondingItemsInCurrentList(int flidForItemsBeforeListChange, ISet<int> itemsBeforeListChange, int flidForCurrentList, out ISet<int> commonAncestors)
 		{
-			Set<int> relatives = new Set<int>();
-			commonAncestors = new Set<int>();
+			var relatives = new HashSet<int>();
+			commonAncestors = new HashSet<int>();
 			int newListItemsClass = GhostParentHelper.GetBulkEditDestinationClass(Cache, flidForCurrentList);
 			int prevListItemsClass = GhostParentHelper.GetBulkEditDestinationClass(Cache, flidForItemsBeforeListChange);
 			RelationshipOfRelatives relationshipOfTarget = FindTreeRelationship(prevListItemsClass, newListItemsClass);
@@ -466,10 +466,10 @@ namespace SIL.FieldWorks.Common.Controls
 							if (!commonAncestors.Contains(hvoCommonAncestor))
 							{
 								GhostParentHelper gph = GetGhostParentHelper(flidForCurrentList);
-								Set<int> descendents = GetDescendents(hvoCommonAncestor, flidForCurrentList);
+								ISet<int> descendents = GetDescendents(hvoCommonAncestor, flidForCurrentList);
 								if (descendents.Count > 0)
 								{
-									relatives.AddRange(descendents);
+									relatives.UnionWith(descendents);
 								}
 								else if (gph != null && gph.IsGhostOwnerClass(hvoCommonAncestor))
 								{
@@ -489,16 +489,16 @@ namespace SIL.FieldWorks.Common.Controls
 			return GhostParentHelper.CreateIfPossible(Cache.ServiceLocator, flidToTry);
 		}
 
-		private Set<int> GetDescendents(int hvoCommonAncestor, int relativesFlid)
+		private ISet<int> GetDescendents(int hvoCommonAncestor, int relativesFlid)
 		{
 			string listPropertyName = Cache.MetaDataCacheAccessor.GetFieldName(relativesFlid);
 			string parentObjName = Cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoCommonAncestor).ClassName;
 			string xpathToPart = "./part[@id='" + parentObjName + "-Jt-" + listPropertyName + "']";
 			XmlNode pathSpec = m_parentToChildrenSpecs.SelectSingleNode(xpathToPart);
 			Debug.Assert(pathSpec != null,
-				String.Format("You are experiencing a rare and difficult-to-reproduce error (LT- 11443 and linked issues). If you can add any information to the issue or fix it please do. If JohnT is available please call him over. Expected to find part ({0}) in ParentClassPathsToChildren", xpathToPart));
+				string.Format("You are experiencing a rare and difficult-to-reproduce error (LT- 11443 and linked issues). If you can add any information to the issue or fix it please do. If JohnT is available please call him over. Expected to find part ({0}) in ParentClassPathsToChildren", xpathToPart));
 			if (pathSpec == null)
-				return new Set<int>(); // This just means we don't find a related object. Better than crashing, but not what we intend.
+				return new HashSet<int>(); // This just means we don't find a related object. Better than crashing, but not what we intend.
 			// get the part spec that gives us the path from obsolete current (parent) list item object
 			// to the new one.
 			var vc = new XmlBrowseViewBaseVc(m_cache, null);
@@ -509,7 +509,7 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				return collector.HvosCollectedInCell;
 			}
-			return new Set<int>();
+			return new HashSet<int>();
 		}
 
 		private RelationshipOfRelatives FindTreeRelationship(int prevListItemsClass, int newListItemsClass)

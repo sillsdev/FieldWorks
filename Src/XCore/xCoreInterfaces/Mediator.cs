@@ -194,7 +194,7 @@ namespace XCore
 
 		#region Data members
 		// testing to have list of IxCoreColleagues that are disposed now
-		private Set<string> m_disposedColleagues = new Set<string>();
+		private HashSet<string> m_disposedColleagues = new HashSet<string>();
 		public void AddDisposedColleague(string hashKey)
 		{
 			CheckDisposed();
@@ -237,9 +237,9 @@ namespace XCore
 
 
 		/// <summary>keeps a list of classes (colleagues) and the methods that it doesn't contain</summary>
-		private Dictionary<string, Set<string>> m_MethodsNOTonColleagues;	// key=colleague.ToString(), value=Set of methods of methods
+		private Dictionary<string, HashSet<string>> m_MethodsNOTonColleagues;	// key=colleague.ToString(), value=Set of methods of methods
 		/// <summary>Set of method names that are implemented by any colleague</summary>
-		private Set<string> m_MethodsOnAnyColleague;
+		private HashSet<string> m_MethodsOnAnyColleague;
 
 		private readonly IdleQueue m_idleQueue = new IdleQueue();
 		#endregion
@@ -252,7 +252,7 @@ namespace XCore
 		/// -----------------------------------------------------------------------------------
 		public Mediator()
 		{
-			m_MethodsOnAnyColleague = new Set<string>();
+			m_MethodsOnAnyColleague = new HashSet<string>();
 //			m_allowCommandsToExecute = false;
 
 			// NOTE: to set the trace level, create a config file like the following and set
@@ -378,7 +378,7 @@ namespace XCore
 				// Use a copy of the m_colleagues Set,
 				// since the Dispose methods on the colleague should remove itself from m_colleagues,
 				// which will cause an exception to be throw (list changed while spinning through it.
-				Set<IxCoreColleague> copyOfColleagues = new Set<IxCoreColleague>();
+				var copyOfColleagues = new HashSet<IxCoreColleague>();
 				foreach (var key in m_colleagues.Keys)
 				{
 					copyOfColleagues.Add(key.Item2);

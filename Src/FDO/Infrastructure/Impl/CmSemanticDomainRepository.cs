@@ -1,10 +1,9 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
 using SIL.FieldWorks.FDO.DomainServices.SemanticDomainSearch;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 {
@@ -106,7 +105,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			SemDomSearchCache semDomCache, ILexSense sense)
 		{
 			var strategy = new SenseSearchStrategy(Cache, sense);
-			var results = new Set<ICmSemanticDomain>();
+			var results = new HashSet<ICmSemanticDomain>();
 			foreach (var keyValuePair in strategy.GetSearchKeysFromSense())
 			{
 				foreach (var wordFromSense in keyValuePair.Value)
@@ -114,7 +113,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 					var cachedDomains = semDomCache.GetDomainsForCachedString(keyValuePair.Key, wordFromSense);
 					if (cachedDomains == null)
 						continue;
-					results.AddRange(cachedDomains);
+					results.UnionWith(cachedDomains);
 				}
 			}
 			return results;

@@ -1,13 +1,6 @@
-// Copyright (c) 2006-2013 SIL International
+// Copyright (c) 2006-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: CollectorEnv.cs
-// Responsibility:
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Collections.Generic;
@@ -17,7 +10,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
-using System.Xml;
 using System.Xml.Xsl;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
@@ -2753,7 +2745,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			m_fNonEmpty = true;
 		}
 
-		private readonly Set<int> m_notedStringPropertyDependencies = new Set<int>();
+		private readonly HashSet<int> m_notedStringPropertyDependencies = new HashSet<int>();
 		/// <summary>
 		///
 		/// </summary>

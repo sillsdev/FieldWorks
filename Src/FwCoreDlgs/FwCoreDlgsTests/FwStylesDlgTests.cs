@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Reflection;
 using NUnit.Framework;
 
-using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FwCoreDlgControls;
 using SIL.FieldWorks.FDO.DomainServices;
@@ -72,7 +71,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			/// </summary>
 			/// <value>The deleted style names.</value>
 			/// --------------------------------------------------------------------------------
-			public Set<string> DeletedStyleNames
+			public ISet<string> DeletedStyleNames
 			{
 				get { return m_deletedStyleNames; }
 			}
@@ -100,7 +99,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			using (DummyFwStylesDlg dlg = new DummyFwStylesDlg())
 			{
-				Set<string> deletedStyles = dlg.DeletedStyleNames;
+				ISet<string> deletedStyles = dlg.DeletedStyleNames;
 				Dictionary<string, string> renamedStyles = dlg.RenamedStyleNames;
 
 				// Add a bunch of things to the deleted list

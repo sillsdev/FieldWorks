@@ -8,7 +8,6 @@ using SIL.FieldWorks.FDO.CoreTests;
 using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.Utils;
 using System.Xml;
 using System.Collections.Generic;
 using System;
@@ -266,7 +265,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 			// Attempt to merge it and verify that it survives.
 
 			ILexEntry le1 = MakeLexEntry("xyzTest1", "xyzDefn1.1", semDom1);
-			Set<int> newItems = new Set<int>();
+			var newItems = new HashSet<int>();
 			ILexSense sense1 = le1.SensesOS[0];
 			newItems.Add(sense1.Hvo);
 
@@ -280,7 +279,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 			// Verify that old LE1 survives and now has two senses; new sense has xyzDefn1.2.
 			// Verify that LE2 is deleted and LE3 survives.
 			ILexEntry le2 = MakeLexEntry("xyzTest1", "xyzDefn1.2", semDom2);
-			Set<int> newItems2 = new Set<int>();
+			var newItems2 = new HashSet<int>();
 			ILexSense sense2 = le2.SensesOS[0];
 			newItems2.Add(sense2.Hvo);
 
@@ -306,7 +305,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 			// It also gains exactly one new sense;
 			// And LE4 and LE5 are both deleted.
 			ILexEntry le4 = MakeLexEntry("xyzTest1", "xyzDefn1.2", semDom3);
-			Set<int> newItems3 = new Set<int>();
+			var newItems3 = new HashSet<int>();
 			ILexSense sense4 = le4.SensesOS[0];
 			newItems3.Add(sense4.Hvo);
 
@@ -337,7 +336,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 			// Try adding four senses, three for the same CF, but which doesn't pre-exist.
 			// Also, the three are exact duplicates.
 			ILexEntry le6 = MakeLexEntry("xyzTest6", "xyzDefn6.1", semDom4);
-			Set<int> newItems4 = new Set<int>();
+			var newItems4 = new HashSet<int>();
 			ILexSense sense6 = le6.SensesOS[0];
 			newItems4.Add(sense6.Hvo);
 
@@ -379,7 +378,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 			// Attempt to merge it and verify that it survives.
 
 			ILexEntry red = MakeLexEntry("red", "", "rot", "", semDom1);
-			Set<int> newItems = new Set<int>();
+			var newItems = new HashSet<int>();
 			ILexSense sense1 = red.SensesOS[0];
 			newItems.Add(sense1.Hvo);
 			bool fSenseDeleted = RunMergeSense(red);
@@ -715,8 +714,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 		private bool RunMergeSense(ILexEntry entry)
 		{
 			var sense = entry.SensesOS[0];
-			var newItems = new Set<int>();
-			newItems.Add(sense.Hvo);
+			var newItems = new HashSet<int> {sense.Hvo};
 			var fSenseDeleted = sense.RDEMergeSense(sense.SemanticDomainsRC.ToArray()[0].Hvo, newItems);
 			return fSenseDeleted;
 		}

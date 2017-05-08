@@ -1,12 +1,6 @@
-// Copyright (c) 2008-2013 SIL International
+// Copyright (c) 2008-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ImportedBooksTests.cs
-// Responsibility: TE Team
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Collections.Generic;
@@ -18,7 +12,6 @@ using System.Windows.Forms;
 using SIL.Utils;
 using System.Collections;
 using SIL.CoreImpl.Scripture;
-using SIL.FieldWorks.Common.ScriptureUtils;
 
 namespace SIL.FieldWorks.TE
 {
@@ -58,7 +51,7 @@ namespace SIL.FieldWorks.TE
 			/// --------------------------------------------------------------------------------
 			public DummyImportedBooks(FdoCache cache, IScrDraft booksImported, IScrDraft backupVersion)
 				: base(cache, null, booksImported, backupVersion,
-					  new Set<int>(booksImported.BooksOS.Select(b => b.CanonicalNum)), null, null)
+					  new HashSet<int>(booksImported.BooksOS.Select(b => b.CanonicalNum)), null, null)
 			{
 			}
 

@@ -1,10 +1,6 @@
-// Copyright (c) 2002-2013 SIL International
+// Copyright (c) 2002-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: OverridesLing.cs
-// Responsibility: Randy Regnier
-// Last reviewed:
 //
 // <remarks>
 // This file holds the overrides of the generated classes for the Ling module.
@@ -1044,20 +1040,20 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			{
 				case MoDerivAffMsaTags.kflidFromInflectionClass:
 					if (FromPartOfSpeechRA != null)
-						return FromPartOfSpeechRA.AllInflectionClasses.Cast<ICmObject>();
+						return FromPartOfSpeechRA.AllInflectionClasses;
 					break;
 				case MoDerivAffMsaTags.kflidToInflectionClass:
 					if (ToPartOfSpeechRA != null)
-						return ToPartOfSpeechRA.AllInflectionClasses.Cast<ICmObject>();
+						return ToPartOfSpeechRA.AllInflectionClasses;
 					break;
 				case MoDerivAffMsaTags.kflidFromStemName:
 					if (FromPartOfSpeechRA != null)
-						return FromPartOfSpeechRA.AllStemNames.Cast<ICmObject>();
+						return FromPartOfSpeechRA.AllStemNames;
 					break;
 				default:
 					return base.ReferenceTargetCandidates(flid);
 			}
-			return new Set<ICmObject>(0);
+			return Enumerable.Empty<ICmObject>();
 		}
 
 		/// <summary>
@@ -1483,14 +1479,13 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			{
 				case MoStemMsaTags.kflidInflectionClass:
 					if (PartOfSpeechRA != null)
-						return PartOfSpeechRA.AllInflectionClasses.Cast<ICmObject>();
-					break;
+						return PartOfSpeechRA.AllInflectionClasses;
+					return Enumerable.Empty<ICmObject>();
 				case MoStemMsaTags.kflidFromPartsOfSpeech:
-					return Cache.LangProject.PartsOfSpeechOA.PossibilitiesOS.Cast<ICmObject>();
+					return Cache.LangProject.PartsOfSpeechOA.PossibilitiesOS;
 				default:
 					return base.ReferenceTargetCandidates(flid);
 			}
-			return new Set<ICmObject>(0);
 		}
 
 		/// <summary>
@@ -2114,12 +2109,11 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			{
 				case MoInflAffMsaTags.kflidSlots:
 					if (PartOfSpeechRA != null)
-						return DomainObjectServices.GetSlots(Cache, Owner as ILexEntry, PartOfSpeechRA).Cast<ICmObject>();
-					break;
+						return DomainObjectServices.GetSlots(Cache, Owner as ILexEntry, PartOfSpeechRA);
+					return Enumerable.Empty<ICmObject>();
 				default:
 					return base.ReferenceTargetCandidates(flid);
 			}
-			return new Set<ICmObject>(0);
 		}
 
 		/// <summary>

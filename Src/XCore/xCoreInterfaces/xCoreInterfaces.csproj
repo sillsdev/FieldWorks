@@ -154,9 +154,6 @@
     <Compile Include="Command.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="IContextHelper.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="IPaneBar.cs">
       <SubType>Code</SubType>
     </Compile>

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Xml;
-using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.Xml;
 using XCore;
@@ -60,10 +59,13 @@ namespace SIL.FieldWorks.Common.Controls
 		/// But we only want to do that ONCE, not for every duplicate of the preceding match node.
 		/// </summary>
 		private Dictionary<string, bool> m_oldPartsFound;
-		private Set<XmlNode> m_insertedMissing; // missing nodes we already inserted.
-		Set<string> m_safeAttrs = new Set<string>(
-			new [] { "before", "after", "sep", "ws", "style", "showLabels", "number", "numstyle", "numsingle", "visibility",
-				"singlegraminfofirst", "showasindentedpara", "reltypeseq", "dup", "entrytypeseq", "flowType" });
+		private HashSet<XmlNode> m_insertedMissing; // missing nodes we already inserted.
+
+		private readonly HashSet<string> m_safeAttrs = new HashSet<string>
+		{
+			"before", "after", "sep", "ws", "style", "showLabels", "number", "numstyle", "numsingle", "visibility",
+			"singlegraminfofirst", "showasindentedpara", "reltypeseq", "dup", "entrytypeseq", "flowType"
+		};
 
 		private const string NameAttr = "name";
 		private const string LabelAttr = "label";
@@ -83,7 +85,7 @@ namespace SIL.FieldWorks.Common.Controls
 			m_newMaster = newMaster;
 			m_oldConfigured = oldConfigured;
 			m_dest = dest;
-			m_insertedMissing = new Set<XmlNode>();
+			m_insertedMissing = new HashSet<XmlNode>();
 			m_output = m_dest.CreateElement(newMaster.Name);
 			m_layoutParamAttrSuffix = oldLayoutSuffix;
 			CopyAttributes(m_newMaster, m_output);

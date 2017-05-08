@@ -154,7 +154,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 		// This set is used in figuring which items to enable when deleting (specifically senses, at present).
 		// Contins the Ids of things in ItemsToChange(false).
-		Set<int> m_items;
+		ISet<int> m_items;
 
 		// These variables are used in computing whether a ClickCopy target should actually
 		// be changed.  (This feature is used by Wordform Bulk Edit.)
@@ -1255,7 +1255,7 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-		List<ListClassTargetFieldItem> ListItemsClassesInfo(Set<int> classes)
+		List<ListClassTargetFieldItem> ListItemsClassesInfo(HashSet<int> classes)
 		{
 			List<ListClassTargetFieldItem> targetClasses = new List<ListClassTargetFieldItem>();
 			foreach (int classId in classes)
@@ -1920,21 +1920,11 @@ namespace SIL.FieldWorks.Common.Controls
 			return (from obj in objects select obj.Hvo).ToList(); // probably counted at least twice and enumerated, so collection is likely more efficient.
 		}
 
-		internal Set<int> ItemsToChangeSet(bool fOnlyIfSelected)
+		internal ISet<int> ItemsToChangeSet(bool fOnlyIfSelected)
 		{
 			CheckDisposed();
 
-			Set<int> itemsToChange = new Set<int>();
-			if (fOnlyIfSelected)
-			{
-				itemsToChange.AddRange(m_bv.CheckedItems);
-			}
-			else
-			{
-				itemsToChange.AddRange(m_bv.AllItems);
-			}
-
-			return itemsToChange;
+			return new HashSet<int>(fOnlyIfSelected ? m_bv.CheckedItems : m_bv.AllItems);
 		}
 
 		/// <summary>
@@ -2099,7 +2089,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		private void DeleteSelectedObjects(ProgressState state)
 		{
-			Set<int> idsToDelete = new Set<int>();
+			var idsToDelete = new HashSet<int>();
 			UpdateCurrentGhostParentHelper(); // needed for code below.
 			foreach (int hvo in ItemsToChange(true))
 			{
@@ -2172,7 +2162,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// asking the user whether to proceed. The type of message depends somewhat on the situation.
 		/// </summary>
 		/// <returns>true, if okay to continue with delete</returns>
-		private bool CheckMultiDeleteConditionsAndReport(Set<int> idsToDelete, out bool fUndo)
+		private bool CheckMultiDeleteConditionsAndReport(HashSet<int> idsToDelete, out bool fUndo)
 		{
 			int cOrphans = 0;
 			if (m_expectedListItemsClassId == LexEntryTags.kClassId ||
@@ -2281,7 +2271,7 @@ namespace SIL.FieldWorks.Common.Controls
 			AddStringFieldItemsToCombo(m_deleteWhatCombo, null, false);
 			// Add support for deleting "rows" only for the classes
 			// that have associated columns installed (LT-9128).
-			Set<int> targetClassesNeeded = new Set<int>();
+			var targetClassesNeeded = new HashSet<int>();
 			// Always allow deleting the primary row (e.g. Entries)
 			targetClassesNeeded.Add(m_bulkEditListItemsClasses[0]);
 			// Go through each of the column-deletable string fields, and add rows to delete.
@@ -6814,7 +6804,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 	class ComplexEntryTypesChooserBEditControl : ComplexListChooserBEditControl
 	{
-		Set<int> m_complexEntryRefs = null;
+		HashSet<int> m_complexEntryRefs = null;
 
 		internal ComplexEntryTypesChooserBEditControl(FdoCache cache, Mediator mediator, PropertyTable propertyTable, XmlNode colSpec)
 			: base(cache, mediator, propertyTable, colSpec)
@@ -6830,11 +6820,11 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			if (m_complexEntryRefs == null)
 			{
-				m_complexEntryRefs = new Set<int>();
+				m_complexEntryRefs = new HashSet<int>();
 				Dictionary<int, List<int>> dict = new Dictionary<int,List<int>>();
 				// go through each list and add the values to our set.
 				foreach (List<int> refs in dict.Values)
-					m_complexEntryRefs.AddRange(refs);
+					m_complexEntryRefs.UnionWith(refs);
 			}
 			return !m_complexEntryRefs.Contains(hvoItem);
 		}
@@ -6973,7 +6963,7 @@ namespace SIL.FieldWorks.Common.Controls
 						{
 							// Report progress 50 times or every 100 items, whichever is more
 							// (but no more than once per item!)
-							Set<int> idsToDel = new Set<int>();
+							var idsToDel = new HashSet<int>();
 							var newForms = new Dictionary<IMoForm, ILexEntry>();
 							int interval = Math.Min(80, Math.Max(itemsToChange.Count()/50, 1));
 							int i = 0;
@@ -7068,7 +7058,7 @@ namespace SIL.FieldWorks.Common.Controls
 		// Swap values of various attributes between an existing form that is a LexemeForm and
 		// a newly created one. Includes adding the new one to the alternate forms of the entry, and
 		// the id of the old one to a map of things to delete.
-		private void SwapFormValues(ILexEntry entry, IMoForm origForm, IMoForm newForm, int typeHvo, Set<int> idsToDel)
+		private void SwapFormValues(ILexEntry entry, IMoForm origForm, IMoForm newForm, int typeHvo, HashSet<int> idsToDel)
 		{
 			entry.AlternateFormsOS.Add(newForm);
 			origForm.SwapReferences(newForm);

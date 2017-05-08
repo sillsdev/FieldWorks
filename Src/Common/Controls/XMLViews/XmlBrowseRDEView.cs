@@ -1,11 +1,11 @@
-// Copyright (c) 2005-2015 SIL International
+// Copyright (c) 2005-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Xml;
@@ -824,7 +824,7 @@ namespace SIL.FieldWorks.Common.Controls
 				{
 					RDEVc.EditableObjectsRemoveInvalidObjects();
 
-					Set<int> idsClone = RDEVc.EditableObjectsClone();
+					ISet<int> idsClone = RDEVc.EditableObjectsClone();
 					fInDoMerges = true;
 					Type targetType = ReflectionHelper.GetType(RDEVc.EditRowAssembly, RDEVc.EditRowClass);
 					System.Reflection.MethodInfo mi = targetType.GetMethod(RDEVc.EditRowMergeMethod);

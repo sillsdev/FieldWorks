@@ -968,10 +968,10 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			// FWR-2969 If merging senses, m_incomingRefs will sometimes get changed
 			// by ReplaceAReference.
-			var refs = new Set<IReferenceSource>(((CmObject)objOld).m_incomingRefs);
+			var refs = new HashSet<IReferenceSource>(((CmObject)objOld).m_incomingRefs);
 			// References in sequences need to be handled differently.
-			var sequenceRefs = refs.Where(x => x.Source is LexEntryRef || x.Source is LexReference);
-			var otherRefs = refs.Difference(sequenceRefs);
+			var sequenceRefs = refs.Where(x => x.Source is LexEntryRef || x.Source is LexReference).ToArray();
+			var otherRefs = refs.Except(sequenceRefs);
 			foreach (var source in otherRefs)
 			{
 				source.ReplaceAReference(objOld, this);
@@ -3987,7 +3987,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// <param name="hvoDomain"></param>
 		/// <param name="newHvos">Set of new senses (including hvoSense).</param>
 		/// <returns>true if the sense has been deleted</returns>
-		public bool RDEMergeSense(int hvoDomain, Set<int> newHvos)
+		public bool RDEMergeSense(int hvoDomain, ISet<int> newHvos)
 		{
 			bool result = false;
 			// The goal is to find a lex entry with the same lexeme form.form as our LexEntry.
@@ -4052,7 +4052,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// <param name="hvoDomain"></param>
 		/// <param name="fGotExactMatch"></param>
 		/// <returns></returns>
-		private ILexEntry FindBestLexEntryAmongstHomographs(FdoCache cache, string homographForm, Set<int> newHvos,
+		private ILexEntry FindBestLexEntryAmongstHomographs(FdoCache cache, string homographForm, ISet<int> newHvos,
 			int hvoDomain, out bool fGotExactMatch)
 		{
 			var entryRepo = cache.ServiceLocator.GetInstance<ILexEntryRepository>();
@@ -4116,7 +4116,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 
 		// Updates the entry that we will use if we don't find a perfect match.
 		// Returns true if this one should be ignored altogether (don't call FindMatchingSense).
-		private static bool PickPreferredMergeEntry(Set<int> newHvos, bool fGotExactMatch, ILexEntry ourEntry, ILexEntry leCurrent,
+		private static bool PickPreferredMergeEntry(ISet<int> newHvos, bool fGotExactMatch, ILexEntry ourEntry, ILexEntry leCurrent,
 			ref bool fSavedIsOld, ref ILexEntry leSaved)
 		{
 			bool fCurrentIsNew;
@@ -6033,10 +6033,10 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			// FWR-2969 If merging senses, m_incomingRefs will sometimes get changed
 			// by ReplaceAReference.
-			var refs = new Set<IReferenceSource>(((CmObject) objOld).m_incomingRefs);
+			var refs = new HashSet<IReferenceSource>(((CmObject) objOld).m_incomingRefs);
 			// References in sequences need to be handled differently.
-			var sequenceRefs = refs.Where(x => x.Source is LexEntryRef || x.Source is LexReference);
-			var otherRefs = refs.Difference(sequenceRefs);
+			var sequenceRefs = refs.Where(x => x.Source is LexEntryRef || x.Source is LexReference).ToArray();
+			var otherRefs = refs.Except(sequenceRefs);
 			foreach (var source in otherRefs)
 			{
 				source.ReplaceAReference(objOld, this);
@@ -6941,7 +6941,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				tisb.Append(String.Format(Strings.ksDeleteNaturalClass, " "));
 				tisb.AppendTsString(ShortNameTSS);
 
-				Set<int> rules = new Set<int>();
+				var rules = new HashSet<int>();
 				foreach (var cmo in ReferringObjects)
 				{
 					var ctxt = cmo as IPhSimpleContextNC;
@@ -7053,7 +7053,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				tisb.Append(String.Format(Strings.ksDeleteNaturalClass, " "));
 				tisb.AppendTsString(ShortNameTSS);
 
-				Set<int> rules = new Set<int>();
+				var rules = new HashSet<int>();
 				foreach (var cmo in ReferringObjects)
 				{
 					IPhSimpleContextNC ctxt = cmo as IPhSimpleContextNC;
@@ -7077,7 +7077,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					else
 						tisb.Append(String.Format(Strings.ksUsedOnceInRules, cnt));
 				}
-				Set<int> aprrules = new Set<int>();
+				var aprrules = new HashSet<int>();
 				foreach (var cmo in ReferringObjects)
 				{
 					var ctxt = cmo as IPhSimpleContextNC;

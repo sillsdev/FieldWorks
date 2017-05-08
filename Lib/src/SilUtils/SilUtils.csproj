@@ -87,7 +87,6 @@
     <Compile Include="MiscUtils.cs" />
     <Compile Include="PriorityQueue.cs" />
     <Compile Include="RomanNumerals.cs" />
-    <Compile Include="Set.cs" />
     <Compile Include="SilUtilsExtensions.cs" />
     <Compile Include="SimpleBag.cs" />
     <Compile Include="SingleThreadedSynchronizeInvoke.cs" />

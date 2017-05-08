@@ -6,8 +6,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -15,7 +13,6 @@ using System.Text;
 using System.Threading;
 using System.Xml;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.Common.Framework;
@@ -628,15 +625,15 @@ namespace SIL.FieldWorks.XWorks
 		internal static void GenerateLetterHeaderIfNeeded(ICmObject entry, ref string lastHeader, XmlWriter xhtmlWriter, GeneratorSettings settings)
 		{
 			// If performance is an issue these dummy's can be stored between calls
-			var dummyOne = new Dictionary<string, Set<string>>();
+			var dummyOne = new Dictionary<string, ISet<string>>();
 			var dummyTwo = new Dictionary<string, Dictionary<string, string>>();
-			var dummyThree = new Dictionary<string, Set<string>>();
+			var dummyThree = new Dictionary<string, ISet<string>>();
 			var cache = settings.Cache;
 			var wsString = cache.WritingSystemFactory.GetStrFromWs(cache.DefaultVernWs);
 			if (entry is IReversalIndexEntry)
 				wsString = ((IReversalIndexEntry)entry).SortKeyWs;
-			var firstLetter = ConfiguredExport.GetLeadChar(GetHeadwordForLetterHead(entry), wsString,
-																		  dummyOne, dummyTwo, dummyThree, cache);
+			var firstLetter = ConfiguredExport.GetLeadChar(GetHeadwordForLetterHead(entry), wsString, dummyOne, dummyTwo, dummyThree,
+				cache);
 			if (firstLetter != lastHeader && !string.IsNullOrEmpty(firstLetter))
 			{
 				var headerTextBuilder = new StringBuilder();
@@ -2541,7 +2538,7 @@ namespace SIL.FieldWorks.XWorks
 		private static bool IsListItemSelectedForExportInternal(DictionaryNodeListOptions.ListIds listId,
 			object listItem, IEnumerable<Guid> selectedListOptions)
 		{
-			var entryTypeGuids = new Set<Guid>();
+			var entryTypeGuids = new HashSet<Guid>();
 			var entryRef = listItem as ILexEntryRef;
 			var entry = listItem as ILexEntry;
 			var entryType = listItem as ILexEntryType;
@@ -2574,23 +2571,23 @@ namespace SIL.FieldWorks.XWorks
 			return entryTypeGuids.Intersect(selectedListOptions).Any();
 		}
 
-		private static void GetVariantTypeGuidsForEntryRef(ILexEntryRef entryRef, Set<Guid> entryTypeGuids)
+		private static void GetVariantTypeGuidsForEntryRef(ILexEntryRef entryRef, HashSet<Guid> entryTypeGuids)
 		{
 			if (entryRef.VariantEntryTypesRS.Any())
-				entryTypeGuids.AddRange(entryRef.VariantEntryTypesRS.Select(guid => guid.Guid));
+				entryTypeGuids.UnionWith(entryRef.VariantEntryTypesRS.Select(guid => guid.Guid));
 			else
 				entryTypeGuids.Add(XmlViewsUtils.GetGuidForUnspecifiedVariantType());
 		}
 
-		private static void GetComplexFormTypeGuidsForEntryRef(ILexEntryRef entryRef, Set<Guid> entryTypeGuids)
+		private static void GetComplexFormTypeGuidsForEntryRef(ILexEntryRef entryRef, HashSet<Guid> entryTypeGuids)
 		{
 			if (entryRef.ComplexEntryTypesRS.Any())
-				entryTypeGuids.AddRange(entryRef.ComplexEntryTypesRS.Select(guid => guid.Guid));
+				entryTypeGuids.UnionWith(entryRef.ComplexEntryTypesRS.Select(guid => guid.Guid));
 			else
 				entryTypeGuids.Add(XmlViewsUtils.GetGuidForUnspecifiedComplexFormType());
 		}
 
-		private static void GetExtendedNoteGuidsForEntryRef(ILexExtendedNote entryRef, Set<Guid> entryTypeGuids)
+		private static void GetExtendedNoteGuidsForEntryRef(ILexExtendedNote entryRef, HashSet<Guid> entryTypeGuids)
 		{
 			if (entryRef.ExtendedNoteTypeRA != null)
 				entryTypeGuids.Add(entryRef.ExtendedNoteTypeRA.Guid);

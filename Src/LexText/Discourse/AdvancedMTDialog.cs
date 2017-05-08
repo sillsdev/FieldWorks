@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -7,12 +7,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using System.Diagnostics;
-using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.Utils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
-using XCore;
 
 namespace SIL.FieldWorks.Discourse
 {
@@ -377,11 +374,10 @@ namespace SIL.FieldWorks.Discourse
 		/// </summary>
 		internal void SetAffectedWordGroups(AnalysisOccurrence[] selectedWords)
 		{
-			var selWords = new Set<AnalysisOccurrence>();
-			selWords.AddRange(selectedWords);
+			var selWords = new HashSet<AnalysisOccurrence>(selectedWords);
 			var affectedWordGrps = (from wordGroup in SentElem.AffectedWordGroups
 									let wordGrpPoints = wordGroup.GetOccurrences()
-									where selWords.Intersection(wordGrpPoints).Count > 0
+									where selWords.Intersect(wordGrpPoints).Any()
 									select wordGroup).ToList();
 			SentElem.AffectedWordGroups = affectedWordGrps;
 		}

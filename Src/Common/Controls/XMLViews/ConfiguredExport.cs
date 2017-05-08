@@ -1,14 +1,7 @@
-// Copyright (c) 2006-2013 SIL International
+// Copyright (c) 2006-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ConfiguredExport.cs
-// Responsibility:
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
-// --------------------------------------------------------------------------------------------
+
 using System;
 using System.Globalization;
 using System.IO;
@@ -60,7 +53,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>
 		/// Map from a writing system to its set of digraphs (or multigraphs) used in sorting.
 		/// </summary>
-		Dictionary<string, Set<string>> m_mapWsDigraphs = new Dictionary<string, Set<string>>();
+		Dictionary<string, ISet<string>> m_mapWsDigraphs = new Dictionary<string, ISet<string>>();
 		/// <summary>
 		/// Map from a writing system to its map of equivalent graphs/multigraphs used in sorting.
 		/// </summary>
@@ -68,7 +61,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>
 		/// Map of characters to ignore for writing systems
 		/// </summary>
-		Dictionary<string, Set<string>> m_mapWsIgnorables = new Dictionary<string, Set<string>>();
+		Dictionary<string, ISet<string>> m_mapWsIgnorables = new Dictionary<string, ISet<string>>();
 
 		private string m_sWsVern = null;
 		private string m_sWsRevIdx = null;
@@ -595,9 +588,9 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="cache"></param>
 		/// <returns>The character sEntryNFD is being sorted under in the dictionary.</returns>
 		public static string GetLeadChar(string sEntryNFD, string sWs,
-													Dictionary<string, Set<string>> wsDigraphMap,
+													Dictionary<string, ISet<string>> wsDigraphMap,
 													Dictionary<string, Dictionary<string, string>> wsCharEquivalentMap,
-													Dictionary<string, Set<string>> wsIgnorableCharMap,
+													Dictionary<string, ISet<string>> wsIgnorableCharMap,
 													FdoCache cache)
 		{
 			if (string.IsNullOrEmpty(sEntryNFD))
@@ -605,8 +598,8 @@ namespace SIL.FieldWorks.Common.Controls
 			string sEntryPre = Icu.ToLower(sEntryNFD, sWs);
 			Dictionary<string, string> mapChars;
 			// List of characters to ignore in creating letter heads.
-			Set<string> chIgnoreList;
-			Set<string> sortChars = GetDigraphs(sWs, wsDigraphMap, wsCharEquivalentMap, wsIgnorableCharMap, cache, out mapChars, out chIgnoreList);
+			ISet<string> chIgnoreList;
+			ISet<string> sortChars = GetDigraphs(sWs, wsDigraphMap, wsCharEquivalentMap, wsIgnorableCharMap, cache, out mapChars, out chIgnoreList);
 			string sEntry = String.Empty;
 			if (chIgnoreList != null) // this list was built in GetDigraphs()
 			{
@@ -702,8 +695,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="mapChars">Set of character equivalences</param>
 		/// <param name="chIgnoreSet">Set of characters to ignore</param>
 		/// <returns></returns>
-		internal Set<string> GetDigraphs(string sWs, out Dictionary<string, string> mapChars,
-													out Set<string> chIgnoreSet)
+		internal ISet<string> GetDigraphs(string sWs, out Dictionary<string, string> mapChars, out ISet<string> chIgnoreSet)
 		{
 			return GetDigraphs(sWs, m_mapWsDigraphs, m_mapWsMapChars, m_mapWsIgnorables, m_cache, out mapChars,
 									 out chIgnoreSet);
@@ -721,18 +713,18 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="mapChars">Set of character equivalences</param>
 		/// <param name="chIgnoreSet">Set of characters to ignore</param>
 		/// <returns></returns>
-		internal static Set<string> GetDigraphs(string sWs,
-															 Dictionary<string, Set<string>> wsDigraphMap,
-															 Dictionary<string, Dictionary<string, string>> wsCharEquivalentMap,
-															 Dictionary<string, Set<string>> wsIgnorableCharMap,
-															 FdoCache cache,
-															 out Dictionary<string, string> mapChars,
-															 out Set<string> chIgnoreSet)
+		internal static ISet<string> GetDigraphs(string sWs,
+			Dictionary<string, ISet<string>> wsDigraphMap,
+			Dictionary<string, Dictionary<string, string>> wsCharEquivalentMap,
+			Dictionary<string, ISet<string>> wsIgnorableCharMap,
+			FdoCache cache,
+			out Dictionary<string, string> mapChars,
+			out ISet<string> chIgnoreSet)
 		{
 			// Collect the digraph and character equivalence maps and the ignorable character set
 			// the first time through. There after, these maps and lists are just retrieved.
-			chIgnoreSet = new Set<string>(); // if ignorable chars get through they can become letter heads! LT-11172
-			Set<string> digraphs;
+			chIgnoreSet = new HashSet<string>(); // if ignorable chars get through they can become letter heads! LT-11172
+			ISet<string> digraphs;
 			// Are the maps and ignorables already setup for the taking?
 			if (wsDigraphMap.TryGetValue(sWs, out digraphs))
 			{   // knows about ws, so already knows character equivalence classes
@@ -740,7 +732,7 @@ namespace SIL.FieldWorks.Common.Controls
 				chIgnoreSet = wsIgnorableCharMap[sWs];
 				return digraphs;
 			}
-			digraphs = new Set<string>();
+			digraphs = new HashSet<string>();
 			mapChars = new Dictionary<string, string>();
 			CoreWritingSystemDefinition ws = cache.ServiceLocator.WritingSystemManager.Get(sWs);
 
@@ -828,7 +820,7 @@ namespace SIL.FieldWorks.Common.Controls
 			return digraphs;
 		}
 
-		private static string ProcessAdvancedSyntacticalElements(Set<string> chIgnoreSet, string rule)
+		private static string ProcessAdvancedSyntacticalElements(ISet<string> chIgnoreSet, string rule)
 		{
 			const string ignorableEndMarker = "ignorable] = ";
 			const string beforeBegin = "[before ";
@@ -892,7 +884,7 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-		private static void BuildDigraphSet(string part, string ws, Dictionary<string, Set<string>> wsDigraphsMap)
+		private static void BuildDigraphSet(string part, string ws, Dictionary<string, ISet<string>> wsDigraphsMap)
 		{
 			foreach (var character in part.Split('='))
 			{
@@ -905,7 +897,7 @@ namespace SIL.FieldWorks.Common.Controls
 					sGraph = Icu.ToLower(sGraph, ws);
 					if (!wsDigraphsMap.ContainsKey(ws))
 					{
-						wsDigraphsMap.Add(ws, new Set<String> { sGraph });
+						wsDigraphsMap.Add(ws, new HashSet<string> { sGraph });
 					}
 					else
 					{

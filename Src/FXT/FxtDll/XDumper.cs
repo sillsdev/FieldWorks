@@ -1,9 +1,6 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: XDumper.cs
-// Responsibility:
 
 using System;
 using System.IO;
@@ -2197,32 +2194,19 @@ namespace SIL.FieldWorks.Common.FXT
 		protected int[] LoadVirtualField(ICmObject currentObject, string field)
 		{
 			object obj = GetProperty(currentObject, field);
-			if (obj is int[])
-			{
-				return obj as int[];
-			}
-			else if (obj is System.Collections.ArrayList)
-			{
-				throw new InvalidOperationException("No array lists are to be used. in fact, as of this writing, FDO uses none at all.");
-			}
-			else if (obj is List<int>)
-			{
-				return (obj as List<int>).ToArray();
-			}
-			else if (obj is Set<int>)
-			{
-				return (obj as Set<int>).ToArray();
-			}
-			else if (obj is int)
+
+			var enumerable = obj as IEnumerable<int>;
+			if (enumerable != null)
+				return enumerable.ToArray();
+
+			if (obj is int)
 			{
 				int[] hvos = new int[1];
-				hvos[0] = (int)obj;
+				hvos[0] = (int) obj;
 				return hvos;
 			}
-			else
-			{
-				return new int[0];
-			}
+
+			return new int[0];
 		}
 
 		/// <summary>

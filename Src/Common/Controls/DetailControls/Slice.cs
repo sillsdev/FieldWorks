@@ -2121,7 +2121,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					}
 				}
 			}
-			var slices = new Set<Slice>(ContainingDataTree.Slices);
+			var slices = new HashSet<Slice>(ContainingDataTree.Slices);
 
 			// Save DataTree for the finally block.  Note premature return below due to IsDisposed.  See LT-9005.
 			DataTree dtContainer = ContainingDataTree;

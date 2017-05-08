@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -7,7 +7,6 @@ using System.Diagnostics;
 using System.Xml;
 
 using SIL.FieldWorks.FDO;
-using SIL.Utils;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using System.Collections.Generic;
@@ -29,7 +28,7 @@ namespace SIL.FieldWorks.Discourse
 		private readonly XmlWriter m_writer;
 		private readonly FdoCache m_cache;
 		private readonly IVwViewConstructor m_vc;
-		private readonly Set<int> m_usedWritingSystems = new Set<int>();
+		private readonly HashSet<int> m_usedWritingSystems = new HashSet<int>();
 		private int m_wsGloss;
 		private readonly List<string> m_glossesInCellCollector = new List<string>();
 		private readonly List<int> m_frags = new List<int>();

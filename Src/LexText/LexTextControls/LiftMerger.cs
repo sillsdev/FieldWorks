@@ -1,15 +1,11 @@
-// Copyright (c) 2008-2013 SIL International
+// Copyright (c) 2008-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: LiftMerger.cs
-// Responsibility: SteveMc (original version by John Hatton as extension)
 
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -120,10 +116,10 @@ namespace SIL.FieldWorks.LexText.Controls
 			new Dictionary<object, Dictionary<MuElement, List<IReversalIndexEntry>>>();
 
 		/// <summary>Set of guids for elements/senses that were found in the LIFT file.</summary>
-		readonly Set<Guid> m_setUnchangedEntry = new Set<Guid>();
+		private readonly HashSet<Guid> m_setUnchangedEntry = new HashSet<Guid>();
 
-		readonly Set<Guid> m_setChangedEntry = new Set<Guid>();
-		readonly Set<int> m_deletedObjects = new Set<int>();
+		private readonly HashSet<Guid> m_setChangedEntry = new HashSet<Guid>();
+		private readonly HashSet<int> m_deletedObjects = new HashSet<int>();
 
 		public enum MergeStyle
 		{
@@ -1684,7 +1680,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				IFsClosedFeature featClosed = feat as IFsClosedFeature;
 				if (featClosed != null)
 				{
-					Set<string> setIds = new Set<string>();
+					var setIds = new HashSet<string>();
 					for (int i = 0; i < featClosed.Abbreviation.StringCount; ++i)
 					{
 						int ws;
@@ -2031,7 +2027,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			MergeEntryEtymologies(le, entry);
 			ProcessEntryRelations(le, entry);
 			Dictionary<CmLiftSense, ILexSense> map = new Dictionary<CmLiftSense, ILexSense>();
-			Set<int> setUsed = new Set<int>();
+			var setUsed = new HashSet<int>();
 			foreach (CmLiftSense sense in entry.Senses)
 			{
 				ILexSense ls = FindExistingSense(le.SensesOS, sense);
@@ -3990,7 +3986,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			ProcessSenseTraits(ls, sense);
 
 			Dictionary<CmLiftSense, ILexSense> map = new Dictionary<CmLiftSense, ILexSense>();
-			Set<int> setUsed = new Set<int>();
+			var setUsed = new HashSet<int>();
 			foreach (CmLiftSense sub in sense.Subsenses)
 			{
 				ILexSense lsSub = FindExistingSense(ls.SensesOS, sub);
@@ -4050,7 +4046,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		private void MergeSenseExamples(ILexSense ls, CmLiftSense sense)
 		{
 			Dictionary<CmLiftExample, ILexExampleSentence> map = new Dictionary<CmLiftExample, ILexExampleSentence>();
-			Set<int> setUsed = new Set<int>();
+			var setUsed = new HashSet<int>();
 			foreach (CmLiftExample expl in sense.Examples)
 			{
 				ILexExampleSentence les = FindingMatchingExampleSentence(ls, expl);
@@ -4283,7 +4279,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		private void MergeExampleTranslations(ILexExampleSentence les, CmLiftExample expl)
 		{
 			Dictionary<LiftTranslation, ICmTranslation> map = new Dictionary<LiftTranslation, ICmTranslation>();
-			Set<int> setUsed = new Set<int>();
+			var setUsed = new HashSet<int>();
 			AddNewWsToAnalysis();
 			foreach (LiftTranslation tran in expl.Translations)
 			{
@@ -5783,7 +5779,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		private void MergeSenseIllustrations(ILexSense ls, CmLiftSense sense)
 		{
 			Dictionary<LiftUrlRef, ICmPicture> map = new Dictionary<LiftUrlRef, ICmPicture>();
-			Set<int> setUsed = new Set<int>();
+			var setUsed = new HashSet<int>();
 			AddNewWsToBothVernAnal();
 			foreach (LiftUrlRef uref in sense.Illustrations)
 			{

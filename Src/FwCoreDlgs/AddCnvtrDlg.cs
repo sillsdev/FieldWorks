@@ -65,7 +65,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private bool m_suppressAutosave;
 		private string m_toSelect;
 		private string m_sConverterToAdd;
-		private Set<string> m_WSInUse;
+		private ISet<string> m_WSInUse;
 		/// <summary>For testing</summary>
 		public string m_msg;
 
@@ -88,7 +88,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <param name="app">The app.</param>
 		/// <param name="wsInUse">The ws in use.</param>
 		/// ------------------------------------------------------------------------------------
-		public AddCnvtrDlg(IHelpTopicProvider helpTopicProvider, IApp app, Set<string> wsInUse)
+		public AddCnvtrDlg(IHelpTopicProvider helpTopicProvider, IApp app, ISet<string> wsInUse)
 			: this(helpTopicProvider, app, null, wsInUse)
 		{
 		}
@@ -103,7 +103,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <param name="wsInUse">The ws in use.</param>
 		/// ------------------------------------------------------------------------------------
 		public AddCnvtrDlg(IHelpTopicProvider helpTopicProvider, IApp app,
-			EncConverters encConverters, Set<string> wsInUse)
+			EncConverters encConverters, ISet<string> wsInUse)
 			: this(helpTopicProvider, app, encConverters, wsInUse, false)
 		{
 		}
@@ -119,7 +119,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <param name="onlyUnicodeCnvtrs">if set to <c>true</c> [only unicode CNVTRS].</param>
 		/// ------------------------------------------------------------------------------------
 		public AddCnvtrDlg(IHelpTopicProvider helpTopicProvider, IApp app,
-			EncConverters encConverters, Set<string> wsInUse, bool onlyUnicodeCnvtrs)
+			EncConverters encConverters, ISet<string> wsInUse, bool onlyUnicodeCnvtrs)
 			: this(helpTopicProvider, app, encConverters, null, wsInUse, onlyUnicodeCnvtrs)
 		{
 		}
@@ -136,7 +136,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <param name="onlyUnicodeCnvtrs">If true, show and create only Unicode converters (both to and to/from).</param>
 		/// ------------------------------------------------------------------------------------
 		public AddCnvtrDlg(IHelpTopicProvider helpTopicProvider, IApp app,
-			EncConverters encConverters, string selectConv, Set<string> wsInUse,
+			EncConverters encConverters, string selectConv, ISet<string> wsInUse,
 			bool onlyUnicodeCnvtrs)
 		{
 			// Set members
@@ -1106,7 +1106,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		/// <param name="wsInUse">The writing systems that are in use.</param>
 		/// ------------------------------------------------------------------------------------
-		public void InitWSInUse(Set<string> wsInUse)
+		public void InitWSInUse(ISet<string> wsInUse)
 		{
 			CheckDisposed();
 

@@ -1,8 +1,9 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
@@ -15,7 +16,6 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.Resources;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.IText
 {
@@ -457,10 +457,10 @@ namespace SIL.FieldWorks.IText
 
 			private int GetBestAlt(int hvo, int tag, int wsPreferred, int wsDefault, int[] wsList)
 			{
-				Set<int> wsSet = new Set<int>();
+				var wsSet = new HashSet<int>();
 				if (wsPreferred != 0)
 					wsSet.Add(wsPreferred);
-				wsSet.AddRange(wsList);
+				wsSet.UnionWith(wsList);
 				// We're not dealing with a real cache, so can't call something like this:
 				//ws = LangProject.InterpretWsLabel(m_caches.MainCache,
 				//	LangProject.GetMagicWsNameFromId(ws),

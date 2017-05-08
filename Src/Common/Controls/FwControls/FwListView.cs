@@ -11,9 +11,9 @@
 // </remarks>
 
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -32,7 +32,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// mouse moves over them, compensating for an extra DrawItem event sent by the wrapped
 		/// Win32 control.
 		/// </summary>
-		private Set<ListViewItem> m_invalidatedItemList = new Set<ListViewItem>();
+		private HashSet<ListViewItem> m_invalidatedItemList = new HashSet<ListViewItem>();
 
 		///--------------------------------------------------------------------------------
 		/// <summary>

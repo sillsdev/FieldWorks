@@ -6,7 +6,6 @@ using System;
 using System.IO;
 using System.Collections.Generic;
 using NUnit.Framework;
-using SIL.Utils;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 
@@ -37,11 +36,11 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 			ILgWritingSystemFactory factWs = Cache.ServiceLocator.GetInstance<ILgWritingSystemFactory>();
 			Assert.LessOrEqual(list.Count, factWs.NumberOfWs, "factory list is at least as large as AllWritingSystems");
-			Set<int> set = new Set<int>();
+			var set = new HashSet<int>();
 			using (ArrayPtr rgwsT = MarshalEx.ArrayToNative<int>(factWs.NumberOfWs))
 			{
 				factWs.GetWritingSystems(rgwsT, factWs.NumberOfWs);
-				set.AddRange(MarshalEx.NativeToArray<int>(rgwsT, factWs.NumberOfWs));
+				set.UnionWith(MarshalEx.NativeToArray<int>(rgwsT, factWs.NumberOfWs));
 			}
 			int wsEn = factWs.GetWsFromStr("en");
 			Assert.AreNotEqual(0, wsEn, "factory should contain English WS");
@@ -78,11 +77,11 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			string sVern = factWs.GetStrFromWs(Cache.DefaultVernWs);
 			Assert.IsTrue(Cache.LangProject.CurVernWss.Contains(sVern));
 			Assert.IsTrue(Cache.LangProject.VernWss.Contains(sVern));
-			Set<string> setVern = new Set<string>();
-			setVern.AddRange(Cache.LangProject.VernWss.Split(rgchSplit));
+			var setVern = new HashSet<string>();
+			setVern.UnionWith(Cache.LangProject.VernWss.Split(rgchSplit));
 			Assert.Less(0, setVern.Count, "should be at least one Vernacular WS");
-			Set<string> setCurVern = new Set<string>();
-			setCurVern.AddRange(Cache.LangProject.CurVernWss.Split(rgchSplit));
+			var setCurVern = new HashSet<string>();
+			setCurVern.UnionWith(Cache.LangProject.CurVernWss.Split(rgchSplit));
 			Assert.Less(0, setCurVern.Count, "should be at least one Current Vernacular WS");
 			Assert.LessOrEqual(setCurVern.Count, setVern.Count, "at least as many Current Vernacular as Vernacular");
 			foreach (string x in setCurVern)
@@ -100,11 +99,11 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			string sAnal = factWs.GetStrFromWs(Cache.DefaultAnalWs);
 			Assert.IsTrue(Cache.LangProject.CurAnalysisWss.Contains(sAnal));
 			Assert.IsTrue(Cache.LangProject.AnalysisWss.Contains(sAnal));
-			Set<string> setAnal = new Set<string>();
-			setAnal.AddRange(Cache.LangProject.AnalysisWss.Split(rgchSplit));
+			var setAnal = new HashSet<string>();
+			setAnal.UnionWith(Cache.LangProject.AnalysisWss.Split(rgchSplit));
 			Assert.Less(0, setAnal.Count, "should be at least one Analysis WS");
-			Set<string> setCurAnal = new Set<string>();
-			setCurAnal.AddRange(Cache.LangProject.CurAnalysisWss.Split(rgchSplit));
+			var setCurAnal = new HashSet<string>();
+			setCurAnal.UnionWith(Cache.LangProject.CurAnalysisWss.Split(rgchSplit));
 			Assert.Less(0, setCurAnal.Count, "should be at least one Current Analysis WS");
 			Assert.LessOrEqual(setCurAnal.Count, setAnal.Count, "at least as many Current Analysis as Analysis");
 			foreach (string x in setCurAnal)

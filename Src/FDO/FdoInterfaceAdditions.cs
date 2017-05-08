@@ -1072,7 +1072,7 @@ namespace SIL.FieldWorks.FDO
 		/// </summary>
 		/// <param name="hvoDomain"></param>
 		/// <param name="newHvos">Set of new senses (including hvoSense).</param>
-		bool RDEMergeSense(int hvoDomain, Set<int> newHvos);
+		bool RDEMergeSense(int hvoDomain, ISet<int> newHvos);
 
 		/// <summary>
 		/// This is a backreference (virtual) property.  It returns the list of object ids for
@@ -1671,7 +1671,7 @@ namespace SIL.FieldWorks.FDO
 		/// <summary>
 		/// Get all possibilities, recursively, that are ultimately owned by the list.
 		/// </summary>
-		Set<ICmPossibility> ReallyReallyAllPossibilities
+		ISet<ICmPossibility> ReallyReallyAllPossibilities
 		{
 			get;
 		}
@@ -1762,13 +1762,13 @@ namespace SIL.FieldWorks.FDO
 		/// For Performance (used in conjunction with PreLoadList).
 		/// </summary>
 		/// <returns>Set of subpossibilities</returns>
-		Set<int> SubPossibilities();
+		ISet<int> SubPossibilities();
 
 
 		/// <summary>
 		///
 		/// </summary>
-		Set<ICmPossibility> ReallyReallyAllPossibilities
+		ISet<ICmPossibility> ReallyReallyAllPossibilities
 		{
 			get;
 		}

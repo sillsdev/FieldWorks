@@ -1832,7 +1832,7 @@ namespace SIL.FieldWorks
 		/// ------------------------------------------------------------------------------------
 		internal static void DeleteProject(Form dialogOwner, IHelpTopicProvider helpTopicProvider)
 		{
-			Set<string> projectsInUse = new Set<string>(ProjectsInUseLocally());
+			var projectsInUse = new HashSet<string>(ProjectsInUseLocally());
 			using (FwDeleteProjectDlg dlg = new FwDeleteProjectDlg(projectsInUse))
 			{
 				dlg.SetDialogProperties(helpTopicProvider);

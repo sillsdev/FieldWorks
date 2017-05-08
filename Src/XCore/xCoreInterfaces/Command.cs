@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;
 using System.Xml;
@@ -218,7 +219,7 @@ namespace XCore
 		protected string m_valueString;
 		protected string m_messageString;
 		private bool m_oneAtATime;	// true if only one instance of a given command can run at a time
-		private static Set<string> m_OneAtATimeSet = new Set<string>();	// set of current commands that are 'oneatatime'
+		private static HashSet<string> m_OneAtATimeSet = new HashSet<string>();	// set of current commands that are 'oneatatime'
 		// add the ability to trace (dynamically) flow of commands through the system
 		private TraceSwitch m_traceCMDSwitch = new TraceSwitch("Command.Trace", "Flow of each command", "Off");
 
@@ -684,7 +685,7 @@ namespace XCore
 		/// Get a value of a mandatory attribute of a <parameters> element
 		/// </summary>
 		/// <param name="attributeName">the name of the attribute</param>
-		/// <exception cref="ConfigurationException">in the parameter is not found</exception>
+		/// <exception cref="System.Configuration.ConfigurationException">in the parameter is not found</exception>
 		/// <returns></returns>
 		///<remarks> this version assumes the element containing attribute is named "parameters"</remarks>
 		public string GetParameter(string attributeName)

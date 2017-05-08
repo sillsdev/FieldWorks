@@ -487,7 +487,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				window.TreeBarControl.IsFlatList = false;
 				var tree = (TreeView)window.TreeStyleRecordList;
-				var expandedItems = new Set<int>();
+				var expandedItems = new HashSet<int>();
 				if (m_tree != null && !m_expand)
 					GetExpandedItems(m_tree.Nodes, expandedItems);
 				m_tree = tree;
@@ -546,7 +546,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		/// <param name="treeNodeCollection"></param>
 		/// <param name="expandedItems"></param>
-		private void GetExpandedItems(TreeNodeCollection treeNodeCollection, Set<int> expandedItems)
+		private void GetExpandedItems(TreeNodeCollection treeNodeCollection, HashSet<int> expandedItems)
 		{
 			foreach (TreeNode node in treeNodeCollection)
 			{
@@ -565,7 +565,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		/// <param name="treeNodeCollection"></param>
 		/// <param name="expandedItems"></param>
-		private void ExpandItems(TreeNodeCollection treeNodeCollection, Set<int> expandedItems)
+		private void ExpandItems(TreeNodeCollection treeNodeCollection, HashSet<int> expandedItems)
 		{
 			foreach (TreeNode node in treeNodeCollection)
 			{

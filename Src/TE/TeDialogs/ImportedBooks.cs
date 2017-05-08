@@ -1,10 +1,6 @@
-// Copyright (c) 2007-2013 SIL International
+// Copyright (c) 2007-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: MergeImportedDifferences.cs
-// Responsibility: TE Team
-// ---------------------------------------------------------------------------------------------
 
 using System;
 using System.Collections;
@@ -52,7 +48,7 @@ namespace SIL.FieldWorks.TE
 		/// <summary></summary>
 		protected readonly IScripture m_scr;
 
-		private readonly Set<int> m_booksBackedUp = new Set<int>();
+		private readonly HashSet<int> m_booksBackedUp = new HashSet<int>();
 		#endregion
 
 		#region ImportedBookStatus enum

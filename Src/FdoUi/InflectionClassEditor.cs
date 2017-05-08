@@ -316,7 +316,7 @@ namespace SIL.FieldWorks.FdoUi
 
 			var pos = GetPOS();
 			// A Set of eligible parts of speech to use in filtering.
-			Set<int> possiblePOS = GetPossiblePartsOfSpeech();
+			HashSet<int> possiblePOS = GetPossiblePartsOfSpeech();
 			// Make a Dictionary from HVO of entry to list of modified senses.
 			var sensesByEntryAndPos = new Dictionary<Tuple<ILexEntry, IPartOfSpeech>, List<ILexSense>>();
 			int i = 0;
@@ -423,7 +423,7 @@ namespace SIL.FieldWorks.FdoUi
 		/// <param name="sda"></param>
 		/// <param name="hvoPos"></param>
 		/// <param name="possiblePOS"></param>
-		void AddChildPos(ISilDataAccess sda, int hvoPos, Set<int> possiblePOS)
+		void AddChildPos(ISilDataAccess sda, int hvoPos, HashSet<int> possiblePOS)
 		{
 			possiblePOS.Add(hvoPos);
 			int chvo = sda.get_VecSize(hvoPos, CmPossibilityTags.kflidSubPossibilities);
@@ -436,15 +436,13 @@ namespace SIL.FieldWorks.FdoUi
 		/// Fake doing the change by setting the specified property to the appropriate value
 		/// for each item in the list. Disable items that can't be set.
 		/// </summary>
-		/// <param name="itemsToChange"></param>
-		/// <param name="ktagFakeFlid"></param>
 		public void FakeDoit(IEnumerable<int> itemsToChange, int tagFakeFlid, int tagEnable, ProgressState state)
 		{
 			CheckDisposed();
 
 			ITsString tss = TsStringUtils.MakeString(m_selectedLabel, m_cache.DefaultAnalWs);
 			// Build a Set of parts of speech that can take this class.
-			Set<int> possiblePOS = GetPossiblePartsOfSpeech();
+			HashSet<int> possiblePOS = GetPossiblePartsOfSpeech();
 
 			int i = 0;
 			// Report progress 50 times or every 100 items, whichever is more (but no more than once per item!)
@@ -504,7 +502,7 @@ namespace SIL.FieldWorks.FdoUi
 			}
 		}
 
-		private bool IsItemEligible(ISilDataAccess sda, int hvo, Set<int> possiblePOS)
+		private bool IsItemEligible(ISilDataAccess sda, int hvo, HashSet<int> possiblePOS)
 		{
 			bool fEnable = false;
 			var ls = m_cache.ServiceLocator.GetInstance<ILexSenseRepository>().GetObject(hvo);
@@ -534,10 +532,10 @@ namespace SIL.FieldWorks.FdoUi
 			return null;
 		}
 
-		private Set<int> GetPossiblePartsOfSpeech()
+		private HashSet<int> GetPossiblePartsOfSpeech()
 		{
 			ISilDataAccess sda = m_cache.DomainDataByFlid;
-			Set<int> possiblePOS = new Set<int>();
+			var possiblePOS = new HashSet<int>();
 			if (m_selectedHvo != 0)
 			{
 				var rootPos = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(m_selectedHvo);

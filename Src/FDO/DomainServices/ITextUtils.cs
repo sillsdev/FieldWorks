@@ -163,14 +163,10 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// </summary>
 		/// <param name="cache"></param>
 		/// <returns></returns>
-		public static Set<int> WordformsFromLastParseSession(FdoCache cache)
+		public static ISet<int> WordformsFromLastParseSession(FdoCache cache)
 		{
-			Set<int> parsedWordforms = null;
 			using (ParagraphParser pp = new ParagraphParser(cache))
-			{
-				parsedWordforms = new Set<int>(pp.WordformIdOccurrencesTable);
-			}
-			return parsedWordforms;
+				return new HashSet<int>(pp.WordformIdOccurrencesTable);
 		}
 
 		/// <summary>

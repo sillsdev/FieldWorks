@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -2500,7 +2499,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			// The key is the relationType string(eg. Synonym), The value is a list of groups of references.
 			//		in detail, the value holds a pair(tuple) containing a set of the ids(hvos) involved in the group
 			//		and a set of all the PendingRelation objects which have those ids.
-			var relationMap = new Dictionary<string, List<Tuple<Set<int>, Set<PendingRelation>>>>();
+			var relationMap = new Dictionary<string, List<Tuple<HashSet<int>, HashSet<PendingRelation>>>>();
 			if (m_mapFeatStrucTypeMissingFeatureAbbrs.Count > 0)
 				ProcessMissingFeatStrucTypeFeatures();
 			if (m_rgPendingRelation.Count > 0)
@@ -2645,7 +2644,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
-		private void ProcessRelation(List<ILexReference> originalLexRefs, List<PendingRelation> rgRelation, Dictionary<string, List<Tuple<Set<int>, Set<PendingRelation>>>> uniqueRelations)
+		private void ProcessRelation(List<ILexReference> originalLexRefs, List<PendingRelation> rgRelation,
+			Dictionary<string, List<Tuple<HashSet<int>, HashSet<PendingRelation>>>> uniqueRelations)
 		{
 			if (rgRelation == null || rgRelation.Count == 0 || rgRelation[0] == null)
 				return;
@@ -3081,7 +3081,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		}
 
 		private void StoreLexReference(ICollection<ILexReference> refsAsYetUnmatched, List<PendingRelation> rgRelation,
-									   Dictionary<string, List<Tuple<Set<int>, Set<PendingRelation>>>> uniqueRelations)
+			Dictionary<string, List<Tuple<HashSet<int>, HashSet<PendingRelation>>>> uniqueRelations)
 		{
 			// Store any relations with unrecognized targets in residue, removing them from the
 			// list.
@@ -3301,8 +3301,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="rgRelation"></param>
 		/// <param name="uniqueRelations">see comment on </param>
 		private static void CollapseCollectionRelationPairs(IEnumerable<PendingRelation> rgRelation,
-																			 IDictionary<string, List<Tuple<Set<int>, Set<PendingRelation>>>>
-																				 uniqueRelations)
+			IDictionary<string, List<Tuple<HashSet<int>, HashSet<PendingRelation>>>> uniqueRelations)
 		{
 			//for every pending relation in this list
 			foreach(var rel in rgRelation)
@@ -3310,7 +3309,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				Debug.Assert(rel.Target != null);
 				if(rel.Target == null)
 					continue;
-				List<Tuple<Set<int>, Set<PendingRelation>>> relationsForType;
+				List<Tuple<HashSet<int>, HashSet<PendingRelation>>> relationsForType;
 				uniqueRelations.TryGetValue(rel.RelationType, out relationsForType);
 				if(relationsForType != null)
 				{
@@ -3344,28 +3343,26 @@ namespace SIL.FieldWorks.LexText.Controls
 					//if this is a brand new relation for this type, build it
 					if(!foundGroup)
 					{
-						relationsForType.Add(new Tuple<Set<int>, Set<PendingRelation>>(new Set<int> { rel.ObjectHvo, rel.TargetHvo },
-													new Set<PendingRelation> { rel }));
+						relationsForType.Add(new Tuple<HashSet<int>, HashSet<PendingRelation>>(
+							new HashSet<int> {rel.ObjectHvo, rel.TargetHvo}, new HashSet<PendingRelation> {rel}));
 					}
 				}
 				else //First relation that we are processing, create the dictionary with this relation as our initial data.
 				{
-					var relData = new List<Tuple<Set<int>, Set<PendingRelation>>>
-						{
-							new Tuple<Set<int>, Set<PendingRelation>>(new Set<int> {rel.TargetHvo, rel.ObjectHvo},
-																					new Set<PendingRelation> {rel})
-						};
+					var relData = new List<Tuple<HashSet<int>, HashSet<PendingRelation>>>
+					{
+						new Tuple<HashSet<int>, HashSet<PendingRelation>>(new HashSet<int> {rel.TargetHvo, rel.ObjectHvo},
+							new HashSet<PendingRelation> {rel})
+					};
 					uniqueRelations[rel.RelationType] = relData;
 				}
 			}
 		}
 
 		private void StorePendingCollectionRelations(ICollection<ILexReference> originalLexRefs, IProgress progress,
-																	Dictionary<string, List<Tuple<Set<int>, Set<PendingRelation>>>>
-																		relationMap)
+			Dictionary<string, List<Tuple<HashSet<int>, HashSet<PendingRelation>>>> relationMap)
 		{
-			progress.Message = String.Format(LexTextControls.ksSettingCollectionRelationLinks,
-														m_rgPendingCollectionRelations.Count);
+			progress.Message = string.Format(LexTextControls.ksSettingCollectionRelationLinks, m_rgPendingCollectionRelations.Count);
 			progress.Minimum = 0;
 			progress.Maximum = relationMap.Count;
 			progress.Position = 0;
@@ -3377,7 +3374,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					var incomingRelationIDs = collection.Item1;
 					var incomingRelations = collection.Item2;
 					ILexRefType lrt = FindLexRefType(sType, false);
-					if(IsAnExistingCollectionAnExactMatch(originalLexRefs, lrt, incomingRelationIDs))
+					if (IsAnExistingCollectionAnExactMatch(originalLexRefs, lrt, incomingRelationIDs))
 					{
 						continue;
 					}
@@ -3410,7 +3407,8 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="lrt">The LexRefType to inspect for duplicate collections</param>
 		/// <param name="checkTargets">The set of ids to look for</param>
 		/// <returns></returns>
-		private static bool IsAnExistingCollectionAnExactMatch(ICollection<ILexReference> originalLexRefs, ILexRefType lrt, Set<int> checkTargets)
+		private static bool IsAnExistingCollectionAnExactMatch(ICollection<ILexReference> originalLexRefs, ILexRefType lrt,
+			HashSet<int> checkTargets)
 		{
 			foreach (var lr in lrt.MembersOC)
 			{
@@ -3814,7 +3812,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// This pretends to replace CmObject.DeleteObjects() in the old system.
 		/// </summary>
 		/// <param name="deletedObjects"></param>
-		private void DeleteObjects(Set<int> deletedObjects)
+		private void DeleteObjects(HashSet<int> deletedObjects)
 		{
 			foreach (int hvo in deletedObjects)
 			{
@@ -3838,7 +3836,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// </summary>
 		private void DeleteOrphans()
 		{
-			Set<int> orphans = new Set<int>();
+			var orphans = new HashSet<int>();
 			// Look for LexReference objects that have lost all their targets.
 			ILexReferenceRepository repoLR = m_cache.ServiceLocator.GetInstance<ILexReferenceRepository>();
 			foreach (ILexReference lr in repoLR.AllInstances())

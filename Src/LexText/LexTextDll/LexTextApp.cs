@@ -1,9 +1,7 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: LexTextApp.cs
-// Responsibility: RandyR
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -22,7 +20,6 @@ using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.LexText.Controls.DataNotebook;
-using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.XWorks.LexText
 {
@@ -519,7 +516,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 		public bool OnRefresh(object sender)
 		{
 			CheckDisposed();
-			Set<string> setDatabases = new Set<string>();
+			var setDatabases = new HashSet<string>();
 			foreach (FwXWindow wnd in m_rgMainWindows)
 			{
 				string sDatabase = wnd.Cache.ProjectId.Name;

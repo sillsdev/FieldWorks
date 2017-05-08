@@ -360,7 +360,7 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-		Set<int> m_lastLoadRecent = new Set<int>();
+		HashSet<int> m_lastLoadRecent = new HashSet<int>();
 
 
 		/// ------------------------------------------------------------------------------------
@@ -3015,7 +3015,7 @@ namespace SIL.FieldWorks.Common.Controls
 				{
 					// If we have filtering set to show only certain types of minor entries,
 					// apply the filter before we try adding the object to the view.  (LT-10953)
-					var validTypes = new Set<Guid>();
+					var validTypes = new HashSet<Guid>();
 					var entryType = XmlUtils.GetOptionalAttributeValue(caller, "entrytype");
 					Debug.Assert(entryType == "minor");
 					var rgsGuidsPlus = guidsFilter.Split(',');

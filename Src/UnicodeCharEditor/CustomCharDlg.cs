@@ -782,9 +782,9 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		/// <param name="decompostion">The hexadecimal values separated by spaces.</param>
 		/// <param name="parsedDecomposition">The decomposition as it is represented in actual unicode codepoints.</param>
 		/// <returns>A set of m_errorMessageHandler.ErrorMessages or <c>null</c> if it parses correctly.</returns>
-		private static Set<ErrorMessageHandler.ErrorMessage> ParseDecomposition(string decompostion, out string parsedDecomposition)
+		private static HashSet<ErrorMessageHandler.ErrorMessage> ParseDecomposition(string decompostion, out string parsedDecomposition)
 		{
-			var errorMessages = new Set<ErrorMessageHandler.ErrorMessage>();
+			var errorMessages = new HashSet<ErrorMessageHandler.ErrorMessage>();
 			string[] codepoints = decompostion.Split(new[]{' '});
 			parsedDecomposition = "";
 			foreach(string codepoint in codepoints)
@@ -1009,7 +1009,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 			if(m_puaChar.NumericType == UcdProperty.GetInstance(Icu.UNumericType.U_NT_NONE) ||
 				m_puaChar.NumericType == UcdProperty.GetInstance(Icu.UNumericType.U_NT_NUMERIC))
 					digit = false;
-				Set<ErrorMessageHandler.ErrorMessage> errorMessages = ValidNumeric(m_txtNumericValue.Text, digit);
+				HashSet<ErrorMessageHandler.ErrorMessage> errorMessages = ValidNumeric(m_txtNumericValue.Text, digit);
 			if( errorMessages.Count != 0)
 				m_errorMessageHandler.AddMessage(m_txtNumericValue, errorMessages);
 		}
@@ -1046,9 +1046,9 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		/// <param name="numeric"></param>
 		/// <param name="isDigit">If the character is a digit or decimal digit.</param>
 		/// <returns></returns>
-		private static Set<ErrorMessageHandler.ErrorMessage> ValidNumeric(string numeric, bool isDigit)
+		private static HashSet<ErrorMessageHandler.ErrorMessage> ValidNumeric(string numeric, bool isDigit)
 		{
-			var errorMessages = new Set<ErrorMessageHandler.ErrorMessage>();
+			var errorMessages = new HashSet<ErrorMessageHandler.ErrorMessage>();
 			if(isDigit)
 			{
 				// Don't allow any non-numerics in digit numeric values.
@@ -1217,7 +1217,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 			//Parse the display string so that the user can see what codepoints they have entered.
 			// Display an error star if any errors are encountered in the process.
 			string parsedDecomposition;
-			Set<ErrorMessageHandler.ErrorMessage> errorMessages = ParseDecomposition(m_txtDecomposition.Text,
+			HashSet<ErrorMessageHandler.ErrorMessage> errorMessages = ParseDecomposition(m_txtDecomposition.Text,
 				out parsedDecomposition);
 			if (errorMessages.Count == 0)
 			{
@@ -1244,7 +1244,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 			m_puaChar.Decomposition = m_txtDecomposition.Text;
 			// Display text discribing any errors in the decomposition string syntax.
 			string parsedDecomposition;
-			Set<ErrorMessageHandler.ErrorMessage> errorMessages = ParseDecomposition(m_txtDecomposition.Text,
+			HashSet<ErrorMessageHandler.ErrorMessage> errorMessages = ParseDecomposition(m_txtDecomposition.Text,
 				out parsedDecomposition);
 			m_errorMessageHandler.AddMessage(m_txtDecomposition, errorMessages);
 

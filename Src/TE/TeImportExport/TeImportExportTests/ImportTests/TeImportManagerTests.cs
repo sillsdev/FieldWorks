@@ -3,13 +3,13 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
+using System.Linq;
 using NUnit.Framework;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
-using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.CoreImpl.Scripture;
 using SIL.FieldWorks.FDO.DomainServices;
@@ -365,7 +365,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 	{
 		#region Member data
 		private readonly IScripture m_scr;
-		private Set<int> m_originalDrafts;
+		private HashSet<int> m_originalDrafts;
 		internal int m_cDisplayImportedBooksDlgCalled;
 		private bool m_fSimulateAcceptAllBooks;
 		//private bool m_fSimulateDeleteAllBooks = false;
@@ -395,7 +395,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 		/// ------------------------------------------------------------------------------------
 		internal void ResetOriginalDrafts()
 		{
-			m_originalDrafts = new Set<int>(m_scr.ArchivedDraftsOC.ToHvoArray());
+			m_originalDrafts = new HashSet<int>(m_scr.ArchivedDraftsOC.ToHvoArray());
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -436,13 +436,14 @@ namespace SIL.FieldWorks.TE.ImportTests
 		/// import).
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		internal Set<int> NewSavedVersions
+		internal ISet<int> NewSavedVersions
 		{
 			get
 			{
 				// This is a kludgy way to get the new saved version since CallImportWithUndoTask
 				// does not save it.
-				return new Set<int>(m_scr.ArchivedDraftsOC.ToHvoArray()).Difference(m_originalDrafts);
+
+				return new HashSet<int>(m_scr.ArchivedDraftsOC.ToHvoArray().Except(m_originalDrafts));
 			}
 		}
 

@@ -1,15 +1,8 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: Inventory.cs
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text;
 using System.Xml;
@@ -91,7 +84,7 @@ namespace XCore
 		/// <summary>
 		/// Set of template paths.
 		/// </summary>
-		protected Set<string> m_inventoryPaths;
+		protected HashSet<string> m_inventoryPaths;
 		// The pattern used to find files to load into the inventory in a directory.
 		// PersistOverrideElement assumes that it can strip off one character to get a useful
 		// suffix for a file name (e.g., '*.fwlayout' is a typical pattern).
@@ -204,7 +197,7 @@ namespace XCore
 		public Inventory(string filePattern, string xpath,
 			Dictionary<string, string[]> keyAttrs, string appName, String projectPath)
 		{
-			m_inventoryPaths = new Set<string>();
+			m_inventoryPaths = new HashSet<string>();
 			m_filePattern = filePattern;
 			m_keyAttrs = keyAttrs;
 			m_xpathElementsWanted = xpath;
@@ -687,7 +680,7 @@ namespace XCore
 		{
 			bool reorder = XmlUtils.GetOptionalBooleanAttributeValue(alteration, "reorder", false);
 			XmlNodeList orderBy;
-			Set<XmlNode> remainingOthers;
+			HashSet<XmlNode> remainingOthers;
 			XmlNodeList others;
 			if (reorder)
 			{
@@ -699,7 +692,7 @@ namespace XCore
 				orderBy = baseNode.ChildNodes;
 				others = alteration.ChildNodes;
 			}
-			remainingOthers = new Set<XmlNode>(others.Count);
+			remainingOthers = new HashSet<XmlNode>();
 			foreach(XmlNode node in others)
 				remainingOthers.Add(node);
 			foreach(XmlNode item in orderBy)
@@ -732,10 +725,7 @@ namespace XCore
 		/// If there is a node in remainingOthers which 'matches' item (in name and
 		/// specified keys), remove and return it; otherwise return null.
 		/// </summary>
-		/// <param name="remainingOthers"></param>
-		/// <param name="item"></param>
-		/// <returns></returns>
-		XmlNode MatchAndRemove(Set<XmlNode> remainingOthers, XmlNode target)
+		XmlNode MatchAndRemove(HashSet<XmlNode> remainingOthers, XmlNode target)
 		{
 			string elementName = target.Name;
 			string[] keyAttrs = null;
@@ -1574,9 +1564,9 @@ namespace XCore
 			}
 		}
 
-		public Set<string> ExistingDuplicateKeys()
+		public ISet<string> ExistingDuplicateKeys()
 		{
-			var set = new Set<string>();
+			var set = new HashSet<string>();
 			foreach (var dupKey in
 				from key in m_getElementTable.Keys select key.ElementName into elemName
 				let idx = elemName.IndexOf('%') where idx >= 0

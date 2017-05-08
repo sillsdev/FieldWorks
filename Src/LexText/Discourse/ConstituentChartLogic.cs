@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -16,7 +16,6 @@ using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FwCoreDlgControls;
 using SIL.FieldWorks.IText;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.Discourse
 {
@@ -55,7 +54,7 @@ namespace SIL.FieldWorks.Discourse
 		#endregion
 
 		private ICmPossibility[] m_allMyColumns;
-		private Set<int> m_indexGroupEnds; // indices of ends of column Groups (for LT-8104; setting apart Nucleus)
+		private ISet<int> m_indexGroupEnds; // indices of ends of column Groups (for LT-8104; setting apart Nucleus)
 		private int[] m_currHighlightCells; // Keeps track of highlighted cells when dealing with ChartOrphan insertion.
 
 		/// <summary>
@@ -230,7 +229,7 @@ namespace SIL.FieldWorks.Discourse
 		/// <summary>
 		/// Returns an array of all the columns for the template of the chart that are the ends of column groups.
 		/// </summary>
-		public Set<int> GroupEndIndices
+		public ISet<int> GroupEndIndices
 		{
 			get
 			{
@@ -333,11 +332,11 @@ namespace SIL.FieldWorks.Discourse
 			}
 
 			// Get a set of all AnalysisOccurrence objects currently in the chart.
-			var chartedTargets = new Set<AnalysisOccurrence>();
+			var chartedTargets = new HashSet<AnalysisOccurrence>();
 			foreach (var cellPart in m_chart.RowsOS.SelectMany(
 				row => row.CellsOS.OfType<IConstChartWordGroup>()))
 			{
-				chartedTargets.AddRange((cellPart).GetOccurrences());
+				chartedTargets.UnionWith(cellPart.GetOccurrences());
 			}
 
 			// Figure out which words are NOT charted
@@ -920,7 +919,7 @@ namespace SIL.FieldWorks.Discourse
 		public List<ICmPossibility> AllColumns(ICmPossibility template)
 		{
 			var result = new List<ICmPossibility>();
-			var groups = new Set<int>();
+			var groups = new HashSet<int>();
 			if (template == null || template.SubPossibilitiesOS.Count == 0)
 				return result; // template itself can't be a column even if no children.
 			CollectColumns(result, template, groups, 0);
@@ -936,7 +935,7 @@ namespace SIL.FieldWorks.Discourse
 		/// <param name="template"></param>
 		/// <param name="groups"></param>
 		/// <param name="depth"></param>
-		private void CollectColumns(List<ICmPossibility> result, ICmPossibility template, Set<int> groups, int depth)
+		private void CollectColumns(List<ICmPossibility> result, ICmPossibility template, HashSet<int> groups, int depth)
 		{
 			if (template.SubPossibilitiesOS.Count == 0)
 			{
@@ -1551,13 +1550,13 @@ namespace SIL.FieldWorks.Discourse
 			var myAbnormalRows = m_chart.RowsOS.Where(row => row.ClauseType != ClauseTypes.Normal).ToList();
 			if (myAbnormalRows.Count == 0)
 				return;
-			var clsMrkrTargets = new Set<IConstChartRow>();
+			var clsMrkrTargets = new HashSet<IConstChartRow>();
 			var myClsMrkrs = m_clauseMkrRepo.AllInstances().Where(mrkr =>
 				mrkr.Owner != null &&
 				mrkr.Owner.Owner != null &&
 				mrkr.Owner.Owner.Hvo == m_chart.Hvo);
 			foreach (var clsMrkr in myClsMrkrs)
-				clsMrkrTargets.AddRange(clsMrkr.DependentClausesRS);
+				clsMrkrTargets.UnionWith(clsMrkr.DependentClausesRS);
 			foreach (var row in myAbnormalRows.Where(row => !clsMrkrTargets.Contains(row)))
 				ResetDepClauseProps(row);
 		}

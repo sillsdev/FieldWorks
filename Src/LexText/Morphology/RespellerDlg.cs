@@ -1,9 +1,7 @@
-// Copyright (c) 2009-2013 SIL International
+// Copyright (c) 2009-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: RespellerDlg.cs
-// Responsibility: FW Team
+
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -19,7 +17,6 @@ using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Controls;
-using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Drawing;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
@@ -604,8 +601,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		/// <returns></returns>
 		private bool AllWillChange(out bool someWillChange)
 		{
-			var checkedItems = new Set<int>(m_sourceSentences.CheckedItems);
-			var changeCount = checkedItems.Intersection(m_enabledItems).Count;
+			var checkedItems = new HashSet<int>(m_sourceSentences.CheckedItems);
+			int changeCount = checkedItems.Intersect(m_enabledItems).Count();
 			someWillChange = changeCount > 0;
 			return changeCount == m_enabledItems.Count && !m_fOtherOccurrencesExist;
 		}
@@ -870,7 +867,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		// The spelling change
 		private readonly string m_oldSpelling;
 		private readonly string m_newSpelling;
-		readonly Set<int> m_changes = new Set<int>(); // CBAs that represent occurrences we will change.
+		private readonly HashSet<int> m_changes = new HashSet<int>(); // CBAs that represent occurrences we will change.
 		/// <summary>
 		/// Key is hvo of StTxtPara, value is list (eventually sorted by BeginOffset) of
 		/// CBAs that refer to it AND ARE BEING CHANGED.
@@ -1524,10 +1521,10 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 		private void SetNewOccurrencesOfWordforms(ProgressDialogWorkingOn progress)
 		{
-			Set<int> changes = new Set<int>();
+			var changes = new HashSet<int>();
 			foreach (ParaChangeInfo info in m_changedParas.Values)
 			{
-				changes.AddRange(info.Changes);
+				changes.UnionWith(info.Changes);
 			}
 			if (AllChanged)
 			{

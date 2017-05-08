@@ -63,7 +63,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private FdoCache m_cache;
 		private FwStyleSheet m_styleSheet;
 		/// <summary></summary>
-		protected Set<string> m_deletedStyleNames = new Set<string>();
+		protected HashSet<string> m_deletedStyleNames = new HashSet<string>();
 		/// <summary></summary>
 		protected Dictionary<string, string> m_renamedStyles = new Dictionary<string, string>();
 		private StyleInfo m_normalStyleInfo;

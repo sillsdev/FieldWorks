@@ -1,14 +1,10 @@
-// Copyright (c) 2009-2013 SIL International
+// Copyright (c) 2009-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: XmlImportData.cs
-// Responsibility: mcconnel
 
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -2765,7 +2761,7 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 			if (le.HomographNumber > 0)
 				sHomograph = le.HomographNumber.ToString();
 			leDuplicate = null;
-			var duplicates = new Set<ILexEntry>();	// set of possible duplicates
+			var duplicates = new HashSet<ILexEntry>();	// set of possible duplicates
 			ILexEntry leDup;
 			if (le.CitationForm != null)
 			{

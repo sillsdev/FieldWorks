@@ -1,12 +1,6 @@
-// Copyright (c) 2009-2016 SIL International
+// Copyright (c) 2009-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: InterlinTaggingView.cs
-// Responsibility: MartinG
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Collections.Generic;
@@ -18,7 +12,6 @@ using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.Utils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FDO.DomainServices;
@@ -544,7 +537,7 @@ namespace SIL.FieldWorks.IText
 			// Just get it from SelectedWordforms.
 			// Delete ones that point at selected ones already
 			// (before we add the new one or it gets deleted too!)
-			var objsToDelete = FindAllTagsReferencingOccurrenceList(SelectedWordforms);
+			ISet<ITextTag> objsToDelete = FindAllTagsReferencingOccurrenceList(SelectedWordforms);
 
 			// Create and add the new one
 			var ttag = m_tagFact.Create();
@@ -573,10 +566,10 @@ namespace SIL.FieldWorks.IText
 			ttag.BeginAnalysisIndex = point1.Index;
 		}
 
-		private static Set<ITextTag> FindAllTagsReferencingOccurrenceList(List<AnalysisOccurrence> occurrences)
+		private static ISet<ITextTag> FindAllTagsReferencingOccurrenceList(List<AnalysisOccurrence> occurrences)
 		{
 			if (occurrences == null || occurrences.Count == 0)
-				return new Set<ITextTag>();
+				return new HashSet<ITextTag>();
 
 			// We're unlikely to have more than a few hundred words in a sentence.
 			return GetTaggingReferencingTheseWords(occurrences);
@@ -606,7 +599,7 @@ namespace SIL.FieldWorks.IText
 		/// Deletes the text tag annotations that a new addition overlaps (temporary).
 		/// </summary>
 		/// <param name="tagsToDelete">The text tags to delete.</param>
-		protected void DeleteTextTags(Set<ITextTag> tagsToDelete)
+		protected void DeleteTextTags(ISet<ITextTag> tagsToDelete)
 		{
 			if (tagsToDelete.Count == 0)
 				return;
@@ -623,9 +616,9 @@ namespace SIL.FieldWorks.IText
 		/// </summary>
 		/// <param name="occurrences"></param>
 		/// <returns>A set of tags.</returns>
-		internal static Set<ITextTag> GetTaggingReferencingTheseWords(List<AnalysisOccurrence> occurrences)
+		internal static ISet<ITextTag> GetTaggingReferencingTheseWords(List<AnalysisOccurrence> occurrences)
 		{
-			var results = new Set<ITextTag>();
+			var results = new HashSet<ITextTag>();
 			if (occurrences.Count == 0 || !occurrences[0].IsValid)
 				return results;
 			var text = occurrences[0].Segment.Paragraph.Owner as IStText;
@@ -635,26 +628,23 @@ namespace SIL.FieldWorks.IText
 			if (tags.Count == 0)
 				return results;
 
-			// Quick cast to Set<>
-			var occurenceSet = new Set<AnalysisOccurrence>();
-			occurenceSet.AddRange(occurrences);
+			var occurenceSet = new HashSet<AnalysisOccurrence>(occurrences);;
 
 			// Collect all segments referenced by these words
-			var segsUsed = new Set<ISegment>();
-			segsUsed.AddRange(from occurrence in occurenceSet
-								select occurrence.Segment);
+			var segsUsed = new HashSet<ISegment>(occurenceSet.Select(o => o.Segment));
 
 			// Collect all tags referencing those segments
-			var tagsRefSegs = new Set<ITextTag>();
 			// Enhance: This won't work for multi-segment tags where a tag can reference 3+ segments.
 			// but see note on foreach below.
-			tagsRefSegs.AddRange(from ttag in tags
-									 where segsUsed.Contains(ttag.BeginSegmentRA) || segsUsed.Contains(ttag.EndSegmentRA)
-									 select ttag);
+			var tagsRefSegs = new HashSet<ITextTag>(from ttag in tags
+				where segsUsed.Contains(ttag.BeginSegmentRA) || segsUsed.Contains(ttag.EndSegmentRA)
+				select ttag);
 
 			foreach (var ttag in tagsRefSegs) // A slower, but more complete form can replace tagsRefSegs with tags here.
-				if (occurenceSet.Intersection(ttag.GetOccurrences()).Count > 0)
+			{
+				if (occurenceSet.Intersect(ttag.GetOccurrences()).Any())
 					results.Add(ttag);
+			}
 
 			return results;
 		}
@@ -757,16 +747,17 @@ namespace SIL.FieldWorks.IText
 
 			// Find all the tags for this Segment's AnalysisOccurrences and cache them
 			var textTagList = InterlinTaggingChild.GetTaggingReferencingTheseWords(segWords);
-			var occurrencesTagged = new Set<AnalysisOccurrence>();
+			var occurrencesTagged = new HashSet<AnalysisOccurrence>();
 			foreach (var tag in textTagList)
 			{
-				occurrencesTagged.AddRange(tag.GetOccurrences());
+				occurrencesTagged.UnionWith(tag.GetOccurrences());
 				CacheTagString(tag);
 			}
 
 			// now go through the list of occurrences that didn't have tags cached, and make sure they have empty strings cached
-			var occurrencesWithoutTags = occurrencesTagged.SymmetricDifference(segWords);
-			if (occurrencesWithoutTags != null) CacheNullTagString(occurrencesWithoutTags);
+			var occurrencesWithoutTags = new HashSet<AnalysisOccurrence>(occurrencesTagged);
+			occurrencesWithoutTags.SymmetricExceptWith(segWords);
+			CacheNullTagString(occurrencesWithoutTags);
 		}
 
 		/// <summary>

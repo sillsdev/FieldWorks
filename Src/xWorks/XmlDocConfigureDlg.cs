@@ -375,7 +375,7 @@ namespace SIL.FieldWorks.XWorks
 				m_rgRelationTypes.Sort(ComparePossibilitiesByName);
 			}
 			// Add any new types to our ordered list (or fill in an empty list).
-			var setSortedGuids = new Set<GuidAndSubClass>();
+			var setSortedGuids = new HashSet<GuidAndSubClass>();
 			foreach (var lri in ltn.RelTypeList)
 				setSortedGuids.Add(new GuidAndSubClass(lri.ItemGuid, lri.SubClass));
 			foreach (var poss in m_rgRelationTypes)
@@ -476,7 +476,7 @@ namespace SIL.FieldWorks.XWorks
 		public void BuildEntryTypeList(LayoutTreeNode ltn, string parentLayoutName)
 		{
 			// Add any new types to our ordered list (or fill in an empty list).
-			var setGuidsFromXml = new Set<Guid>(ltn.EntryTypeList.Select(info => info.ItemGuid));
+			var setGuidsFromXml = new HashSet<Guid>(ltn.EntryTypeList.Select(info => info.ItemGuid));
 			Dictionary<Guid, ICmPossibility> mapGuidType;
 			int index;
 			switch (ltn.EntryType)

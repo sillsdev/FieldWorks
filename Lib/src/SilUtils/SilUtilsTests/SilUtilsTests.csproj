@@ -84,7 +84,6 @@
     <Compile Include="FileUtilsTest.cs" />
     <Compile Include="MiscUtilsTest.cs" />
     <Compile Include="MockFileOs.cs" />
-    <Compile Include="SetTests.cs" />
     <Compile Include="StringUtilsTests.cs" />
     <Compile Include="SurrogateTests.cs" />
   </ItemGroup>

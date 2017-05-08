@@ -1,11 +1,10 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO.DomainServices
 {
@@ -17,7 +16,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		private List<SegGroup> m_segGroups;
 		private IList<ISegment> m_segments; // The corresponding actual segments.
 		private IList<TsStringSegment> m_BtSegs; // How the BT would break into segments if we did that.
-		private readonly Set<int> m_labelSegIndexes = new Set<int>(); // indexes into m_segments that are (verse/chapter) labels.
+		private readonly HashSet<int> m_labelSegIndexes = new HashSet<int>(); // indexes into m_segments that are (verse/chapter) labels.
 		private readonly IStTxtPara m_para;
 		private readonly IScripture m_scr;
 		private readonly int m_wsBt;

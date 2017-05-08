@@ -339,7 +339,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			}
 		}
 
-		protected void InsertSliceRange(int insertPosition, Set<Slice> slices)
+		protected void InsertSliceRange(int insertPosition, ISet<Slice> slices)
 		{
 			var indexableSlices = new List<Slice>(slices.ToArray());
 			for (int i = indexableSlices.Count - 1; i >= 0; --i)
@@ -2084,7 +2084,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <param name="insertAfter">The insert after.</param>
 		private void EnsureCustomFields(ICmObject obj, XmlNode template, XmlNode insertAfter)
 		{
-			var interestingClasses = new Set<int>();
+			var interestingClasses = new HashSet<int>();
 			int clsid = obj.ClassID;
 			while (clsid != 0)
 			{
@@ -2558,7 +2558,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			return contents;
 		}
 
-		private readonly Set<string> m_setInvalidFields = new Set<string>();
+		private readonly HashSet<string> m_setInvalidFields = new HashSet<string>();
 		/// <summary>
 		/// This seems a bit clumsy, but the metadata cache now throws an exception if the class
 		/// id/field name pair isn't valid for GetFieldId2().  Limiting this to only one throw

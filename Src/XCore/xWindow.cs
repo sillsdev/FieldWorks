@@ -87,7 +87,7 @@ namespace XCore
 		protected bool m_persistWindowSize = true;
 		protected Mediator m_mediator;
 		protected PropertyTable m_propertyTable;
-		protected Set<IUIAdapter> m_adapters = new Set<IUIAdapter>();
+		protected HashSet<IUIAdapter> m_adapters = new HashSet<IUIAdapter>();
 		protected ChoiceGroupCollection m_menusChoiceGroupCollection;
 		protected ChoiceGroupCollection m_sidebarChoiceGroupCollection;
 		protected ChoiceGroupCollection m_toolbarsChoiceGroupCollection;

@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -14,7 +14,6 @@ using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.Application;
 using System.ComponentModel;
@@ -334,7 +333,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				List<int> currentEntries = new List<int>();
 				int countIndices = m_sdaRev.get_VecSize(m_sense.Hvo, kFlidIndices);
 				int hvoReal = 0;
-				Set<int> writingSystemsModified = new Set<int>();
+				var writingSystemsModified = new HashSet<int>();
 				for (int i = 0; i < countIndices; ++i)
 				{
 					int hvoIndex = m_sdaRev.get_VecItem(m_sense.Hvo, kFlidIndices, i);

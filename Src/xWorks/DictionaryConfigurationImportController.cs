@@ -95,7 +95,10 @@ namespace SIL.FieldWorks.XWorks
 		/// The following style names are known to have unsupported features. We will avoid wiping out default styles of these types when
 		/// importing a view.
 		/// </summary>
-		public static readonly Set<string> UnsupportedStyles = new Set<string> { "Bulleted List", "Numbered List", "Homograph-Number" };
+		public static readonly HashSet<string> UnsupportedStyles = new HashSet<string>
+		{
+			"Bulleted List", "Numbered List", "Homograph-Number"
+		};
 
 		/// <summary/>
 		public DictionaryConfigurationImportController(FdoCache cache, string projectConfigDir,

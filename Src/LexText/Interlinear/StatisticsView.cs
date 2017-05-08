@@ -109,7 +109,7 @@ namespace SIL.FieldWorks.IText
 			int uniqueWords = 0;
 
 			Dictionary<int, int> languageCount = new Dictionary<int, int>();
-			Dictionary<int, Set<String>> languageTypeCount = new Dictionary<int, Set<String>>();
+			Dictionary<int, HashSet<string>> languageTypeCount = new Dictionary<int, HashSet<string>>();
 			//for each interesting text
 			foreach (var text in textList.InterestingTexts)
 			{
@@ -142,7 +142,7 @@ namespace SIL.FieldWorks.IText
 									languageCount.Add(ws, 1);
 								}
 								//increase the count of unique words(types) for this language
-								Set<String> pair;
+								HashSet<string> pair;
 								if (languageTypeCount.TryGetValue(ws, out pair))
 								{
 									//add the string for this writing system in all lower case to the set, unique count is case insensitive
@@ -151,7 +151,7 @@ namespace SIL.FieldWorks.IText
 								else
 								{
 									//add the string for this writing system in all lower case to the set, unique count is case insensitive
-									languageTypeCount.Add(ws, new Set<String> { word.Wordform.Form.get_String(ws).Text.ToLower() });
+									languageTypeCount.Add(ws, new HashSet<string> {word.Wordform.Form.get_String(ws).Text.ToLower()});
 								}
 							}
 						}
@@ -165,7 +165,7 @@ namespace SIL.FieldWorks.IText
 
 			++row;
 			//add one row for the unique words in each language.
-			foreach (KeyValuePair<int, Set<String>> keyValuePair in languageTypeCount)
+			foreach (KeyValuePair<int, HashSet<string>> keyValuePair in languageTypeCount)
 			{
 				var ws = Cache.WritingSystemFactory.get_EngineOrNull(keyValuePair.Key);
 

@@ -1,12 +1,6 @@
-// Copyright (c) 2009-2016 SIL International
+// Copyright (c) 2009-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: TaggingTests.cs
-// Responsibility: MartinG
-//
-// <remarks>
-// </remarks>
 
 using System.Collections.Generic;
 using System.Windows.Forms;
@@ -16,7 +10,6 @@ using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.Utils;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.WritingSystems;
 
@@ -594,7 +587,7 @@ namespace SIL.FieldWorks.IText
 		[Test]
 		public void DeleteTagAnnot_SetOfTwo()
 		{
-			var tagsToDelete = new Set<ITextTag>();
+			var tagsToDelete = new HashSet<ITextTag>();
 
 			// Setup the SelectedWordforms property for first tag
 			var tempList = new List<AnalysisOccurrence> {m_occurrences[0], m_occurrences[1]};

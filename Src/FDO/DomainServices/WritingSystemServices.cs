@@ -850,7 +850,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 						retWs = defaultVernWs;
 						return null;
 					}
-					var triedWsList = new Set<int>();
+					var triedWsList = new HashSet<int>();
 					// try the current vernacular writing systems
 					if (TryFirstWsInList(sda, hvo, flid, cache.LanguageProject.CurrentVernacularWritingSystems.Handles(),
 						ref triedWsList, out retWs, out retTss))
@@ -1112,7 +1112,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		}
 
 		private static bool TryFirstWsInList(ISilDataAccess sda, int hvo, int flid,
-			IEnumerable<int> wssToTry, ref Set<int> wssTried, out int retWs, out ITsString retTss)
+			IEnumerable<int> wssToTry, ref HashSet<int> wssTried, out int retWs, out ITsString retTss)
 		{
 			retTss = null;
 			retWs = 0;

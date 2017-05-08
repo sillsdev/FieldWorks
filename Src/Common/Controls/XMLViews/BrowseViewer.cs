@@ -1131,7 +1131,7 @@ namespace SIL.FieldWorks.Common.Controls
 			if (!m_fIsInitialized)
 				return;
 			m_lastChangedSelectionListItemsClass = (int) m_xbv.Vc.ListItemsClass;
-			SaveSelectionItems(new Set<int>(selectionItemsToSave));
+			SaveSelectionItems(new HashSet<int>(selectionItemsToSave));
 		}
 
 		/// <summary>
@@ -1349,7 +1349,7 @@ namespace SIL.FieldWorks.Common.Controls
 		private void SaveAllSelectionItems()
 		{
 			// save the latest selection state.
-			SaveSelectionItems(new Set<int>(AllItems));
+			SaveSelectionItems(new HashSet<int>(AllItems));
 		}
 
 		/// <summary>
@@ -1357,7 +1357,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// <param name="itemsToSaveSelectionState">items that need to be saved,
 		/// especially those that the user has changed in selection status</param>
-		private void SaveSelectionItems(Set<int> itemsToSaveSelectionState)
+		private void SaveSelectionItems(HashSet<int> itemsToSaveSelectionState)
 		{
 			if (m_xbv.Vc.HasSelectColumn && BulkEditBar != null && m_sortItemProvider is IMultiListSortItemProvider)
 			{
@@ -1428,7 +1428,7 @@ namespace SIL.FieldWorks.Common.Controls
 		private void RemoveInvalidOldSelectedItems(ref IDictionary<int, object> items, bool fExpectToBeSelected)
 		{
 			var objRepo = Cache.ServiceLocator.ObjectRepository;
-			Set<int> invalidSelectedItems = new Set<int>();
+			var invalidSelectedItems = new HashSet<int>();
 			foreach (KeyValuePair<int, object> item in items)
 			{
 				// LTB-1650 - test if item still exists:

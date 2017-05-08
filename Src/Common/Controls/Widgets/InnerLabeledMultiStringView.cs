@@ -1,4 +1,4 @@
-// Copyright (c) 2010-2015 SIL International
+// Copyright (c) 2010-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -14,7 +14,6 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.Widgets
 {
@@ -613,7 +612,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			vwenv.MakeColumns(1, vlColMain);
 
 			vwenv.OpenTableBody();
-			var visibleWss = new Set<ILgWritingSystem>();
+			var visibleWss = new HashSet<ILgWritingSystem>();
 			// if we passed in a view and have WritingSystemsToDisplay
 			// then we'll load that list in order to filter our larger m_rgws list.
 			AddViewWritingSystems(visibleWss);
@@ -685,7 +684,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// <summary>
 		/// Subclass with LabeledMultiStringView tests for empty alternatives and returns true to skip them.
 		/// </summary>
-		internal virtual bool SkipEmptyWritingSystem(Set<ILgWritingSystem> visibleWss, int i, int hvo)
+		internal virtual bool SkipEmptyWritingSystem(ISet<ILgWritingSystem> visibleWss, int i, int hvo)
 		{
 			return false;
 		}
@@ -693,7 +692,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// <summary>
 		/// Subclass with LabelledMultiStringView gets extra WSS to display from it.
 		/// </summary>
-		internal virtual void AddViewWritingSystems(Set<ILgWritingSystem> visibleWss)
+		internal virtual void AddViewWritingSystems(ISet<ILgWritingSystem> visibleWss)
 		{
 		}
 
@@ -727,13 +726,13 @@ namespace SIL.FieldWorks.Common.Widgets
 			m_view.TriggerDisplay(vwenv);
 		}
 
-		internal override void AddViewWritingSystems(Set<ILgWritingSystem> visibleWss)
+		internal override void AddViewWritingSystems(ISet<ILgWritingSystem> visibleWss)
 		{
 			if (m_view.WritingSystemsToDisplay != null)
-				visibleWss.AddRange(m_view.WritingSystemsToDisplay);
+				visibleWss.UnionWith(m_view.WritingSystemsToDisplay);
 		}
 
-		internal override bool SkipEmptyWritingSystem(Set<ILgWritingSystem> visibleWss, int i, int hvo)
+		internal override bool SkipEmptyWritingSystem(ISet<ILgWritingSystem> visibleWss, int i, int hvo)
 		{
 			// if we have defined writing systems to display, we want to
 			// show those, plus other options that have data.

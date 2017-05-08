@@ -1,17 +1,15 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Reporting;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO.DomainImpl
 {
@@ -103,7 +101,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// <summary>
 		/// TextTags and ConstChartWordGroups referencing the current paragraph before the edit.
 		/// </summary>
-		private Set<IAnalysisReference> m_oldParaRefs;
+		private HashSet<IAnalysisReference> m_oldParaRefs;
 		private int m_cRemovedAnalyses; // The number of Analyses removed from the current paragraph.
 		private int m_cAddedAnalyses; // The number of Analyses added to the current paragraph.
 		/// <summary>
@@ -300,12 +298,12 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			if (!ChangeCanAffectSegments())
 				return;
 
-			m_oldParaRefs = new Set<IAnalysisReference>();
+			m_oldParaRefs = new HashSet<IAnalysisReference>();
 			// Enhance: Someday we may need to deal with refs that cross paragraph boundaries?!
 			// This adds TextTags that only reference this paragraph
-			m_oldParaRefs.AddRange(m_para.GetTags());
+			m_oldParaRefs.UnionWith(m_para.GetTags());
 			// This adds ConstChartWordGroups that only reference this paragraph
-			m_oldParaRefs.AddRange(m_para.GetChartCellRefs());
+			m_oldParaRefs.UnionWith(m_para.GetChartCellRefs());
 
 			//At this point m_para.Contents.Text contains the modified text but the Segments[i].BeginOffset's
 			//line up with the positions corresponding to the text before the edit.
@@ -1026,7 +1024,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// </summary>
 		/// <param name="annObjectsToCheck"></param>
 		/// <returns></returns>
-		private Set<IAnalysisReference> TrimModifiedAnnotationSet(Set<IAnalysisReference> annObjectsToCheck)
+		private HashSet<IAnalysisReference> TrimModifiedAnnotationSet(HashSet<IAnalysisReference> annObjectsToCheck)
 		{
 			if (annObjectsToCheck == null)
 				return null; // none to remove.
@@ -1432,11 +1430,11 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			DetermineWhatToMove(ichSource, cchInsert, source);
 			var refsMoved = MoveAnalysisAndReferencesFromOldPara(cchInsert, source, fParaIsNew);
 			InitializeAdjustmentForMove();
-			m_oldParaRefs = new Set<IAnalysisReference>();
-			m_oldParaRefs.AddRange(m_para.GetTags());
-			m_oldParaRefs.AddRange(m_para.GetChartCellRefs());
+			m_oldParaRefs = new HashSet<IAnalysisReference>();
+			m_oldParaRefs.UnionWith(m_para.GetTags());
+			m_oldParaRefs.UnionWith(m_para.GetChartCellRefs());
 			if (refsMoved != null)
-				m_oldParaRefs.AddRange(refsMoved);
+				m_oldParaRefs.UnionWith(refsMoved);
 			DoTheAdjustment();
 		}
 

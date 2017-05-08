@@ -2340,11 +2340,11 @@ namespace SIL.FieldWorks.FDO.DomainServices
 	public class SectionAdjustmentSuppressionHelper: IDisposable
 	{
 		private static SectionAdjustmentSuppressionHelper s_helper;
-		private Set<ScrSection> m_sections;
+		private HashSet<ScrSection> m_sections;
 
 		private SectionAdjustmentSuppressionHelper()
 		{
-			m_sections = new Set<ScrSection>();
+			m_sections = new HashSet<ScrSection>();
 			s_helper = this;
 		}
 

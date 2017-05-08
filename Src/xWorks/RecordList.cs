@@ -731,11 +731,9 @@ namespace SIL.FieldWorks.XWorks
 				return -1;
 			}
 			// we've changed list items class, so find the corresponding new object.
-			Set<int> commonAncestors;
-			Set<int> relatives = m_pot.FindCorrespondingItemsInCurrentList(m_prevFlid,
-				new Set<int>(new int[] {hvoCurrentBeforeGetObjectSet}),
-				m_flid,
-				out commonAncestors);
+			ISet<int> commonAncestors;
+			ISet<int> relatives = m_pot.FindCorrespondingItemsInCurrentList(m_prevFlid, new HashSet<int> {hvoCurrentBeforeGetObjectSet},
+				m_flid, out commonAncestors);
 			int newHvoRoot = relatives.Count > 0 ? relatives.ToArray()[0] : 0;
 			int hvoCommonAncestor = commonAncestors.Count > 0 ? commonAncestors.ToArray()[0] : 0;
 			if (newHvoRoot == 0 && hvoCommonAncestor != 0)
@@ -806,12 +804,10 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// See documentation for IMultiListSortItemProvider
 		/// </summary>
-		/// <param name="itemAndListSourceTokenPairs"></param>
-		/// <returns></returns>
 		public void ConvertItemsToRelativesThatApplyToCurrentList(ref IDictionary<int, object> oldItems)
 		{
-			Set<int> oldItemsToRemove = new Set<int>();
-			Set<int> itemsToAdd = new Set<int>();
+			var oldItemsToRemove = new HashSet<int>();
+			var itemsToAdd = new HashSet<int>();
 			// Create a PartOwnershipTree in a mode that can return more than one descendent relatives.
 			using (PartOwnershipTree pot = PartOwnershipTree.Create(Cache, this, false))
 			{
@@ -819,12 +815,12 @@ namespace SIL.FieldWorks.XWorks
 				{
 					IDictionary<int, object> dictOneOldItem = new Dictionary<int, object>();
 					dictOneOldItem.Add(oldItem);
-					Set<int> relatives = FindCorrespondingItemsInCurrentList(dictOneOldItem, pot);
+					HashSet<int> relatives = FindCorrespondingItemsInCurrentList(dictOneOldItem, pot);
 
 					// remove the old item if we found relatives we could convert over to.
 					if (relatives.Count > 0)
 					{
-						itemsToAdd.AddRange(relatives);
+						itemsToAdd.UnionWith(relatives);
 						oldItemsToRemove.Add(oldItem.Key);
 					}
 				}
@@ -842,25 +838,25 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		private Set<int> FindCorrespondingItemsInCurrentList(IDictionary<int, object> itemAndListSourceTokenPairs, PartOwnershipTree pot)
+		private HashSet<int> FindCorrespondingItemsInCurrentList(IDictionary<int, object> itemAndListSourceTokenPairs,
+			PartOwnershipTree pot)
 		{
 			// create a reverse index of classes to a list of items
-			IDictionary<int, Set<int>> sourceFlidsToItems = MapSourceFlidsToItems(itemAndListSourceTokenPairs);
+			IDictionary<int, HashSet<int>> sourceFlidsToItems = MapSourceFlidsToItems(itemAndListSourceTokenPairs);
 
-			Set<int> relativesInCurrentList = new Set<int>();
-				foreach (KeyValuePair<int, Set<int>> sourceFlidToItems in sourceFlidsToItems)
-				{
-					Set<int> commonAncestors;
-					relativesInCurrentList.AddRange(pot.FindCorrespondingItemsInCurrentList(sourceFlidToItems.Key,
-																			 sourceFlidToItems.Value, m_flid,
-																			 out commonAncestors));
-				}
+			var relativesInCurrentList = new HashSet<int>();
+			foreach (KeyValuePair<int, HashSet<int>> sourceFlidToItems in sourceFlidsToItems)
+			{
+				ISet<int> commonAncestors;
+				relativesInCurrentList.UnionWith(pot.FindCorrespondingItemsInCurrentList(sourceFlidToItems.Key, sourceFlidToItems.Value,
+					m_flid, out commonAncestors));
+			}
 			return relativesInCurrentList;
 		}
 
-		private IDictionary<int, Set<int>> MapSourceFlidsToItems(IDictionary<int, object> itemAndListSourceTokenPairs)
+		private IDictionary<int, HashSet<int>> MapSourceFlidsToItems(IDictionary<int, object> itemAndListSourceTokenPairs)
 		{
-			IDictionary<int, Set<int>> sourceFlidsToItems = new Dictionary<int, Set<int>>();
+			var sourceFlidsToItems = new Dictionary<int, HashSet<int>>();
 			foreach (KeyValuePair<int, object> itemAndSourceTag in itemAndListSourceTokenPairs)
 			{
 				if ((int)itemAndSourceTag.Value == m_flid)
@@ -870,10 +866,10 @@ namespace SIL.FieldWorks.XWorks
 					// a previous list, not the current one)
 					continue;
 				}
-				Set<int> itemsInSourceFlid;
+				HashSet<int> itemsInSourceFlid;
 				if (!sourceFlidsToItems.TryGetValue((int)itemAndSourceTag.Value, out itemsInSourceFlid))
 				{
-					itemsInSourceFlid = new Set<int>();
+					itemsInSourceFlid = new HashSet<int>();
 					sourceFlidsToItems.Add((int)itemAndSourceTag.Value, itemsInSourceFlid);
 				}
 				itemsInSourceFlid.Add(itemAndSourceTag.Key);
@@ -2265,9 +2261,9 @@ namespace SIL.FieldWorks.XWorks
 				int cOrigSortObjects = m_sortedObjects.Count;
 				// Note: We start with a Set, since it can't have duplicates.
 				// First remove the given hvos from our sort items.
-				Set<int> unwantedIndices = new Set<int>(IndicesOfSortItems(hvosToRemove));
+				var unwantedIndices = new HashSet<int>(IndicesOfSortItems(hvosToRemove));
 				// then remove any remaining items that point to invalid objects.
-				unwantedIndices.AddRange(IndicesOfInvalidSortItems());
+				unwantedIndices.UnionWith(IndicesOfInvalidSortItems());
 				// Put the now unique indices into a list,
 				// so we can make sure they are processed in reverse order.
 				List<int> sortedIndices = new List<int>(unwantedIndices.ToArray());
@@ -3321,7 +3317,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			var target = m_cache.ServiceLocator.ObjectRepository.GetObject(hvoTarget);
-			var owners = new Set<int>();
+			var owners = new HashSet<int>();
 			for(var owner = target.Owner; owner != null; owner = owner.Owner)
 				owners.Add(owner.Hvo);
 

@@ -4,7 +4,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -20,7 +19,6 @@ using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.XWorks.DictionaryDetailsView;
-using SIL.Utils;
 using XCore;
 
 namespace SIL.FieldWorks.XWorks
@@ -849,21 +847,21 @@ namespace SIL.FieldWorks.XWorks
 		#region ModelSynchronization
 		public static void MergeTypesIntoDictionaryModel(DictionaryConfigurationModel model, FdoCache cache)
 		{
-			var complexTypes = new Set<Guid>();
+			var complexTypes = new HashSet<Guid>();
 			foreach (var pos in cache.LangProject.LexDbOA.ComplexEntryTypesOA.ReallyReallyAllPossibilities)
 				complexTypes.Add(pos.Guid);
 			complexTypes.Add(XmlViewsUtils.GetGuidForUnspecifiedComplexFormType());
-			var variantTypes = new Set<Guid>();
+			var variantTypes = new HashSet<Guid>();
 			foreach (var pos in cache.LangProject.LexDbOA.VariantEntryTypesOA.ReallyReallyAllPossibilities)
 				variantTypes.Add(pos.Guid);
 			variantTypes.Add(XmlViewsUtils.GetGuidForUnspecifiedVariantType());
-			var referenceTypes = new Set<Guid>();
+			var referenceTypes = new HashSet<Guid>();
 			if (cache.LangProject.LexDbOA.ReferencesOA != null)
 			{
 				foreach (var pos in cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS)
 					referenceTypes.Add(pos.Guid);
 			}
-			var noteTypes = new Set<Guid>(cache.LangProject.LexDbOA.ExtendedNoteTypesOA.ReallyReallyAllPossibilities.Select(pos => pos.Guid))
+			var noteTypes = new HashSet<Guid>(cache.LangProject.LexDbOA.ExtendedNoteTypesOA.ReallyReallyAllPossibilities.Select(pos => pos.Guid))
 			{
 				XmlViewsUtils.GetGuidForUnspecifiedExtendedNoteType()
 			};
@@ -874,7 +872,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		private static void FixTypeListOnNode(ConfigurableDictionaryNode node,
-			Set<Guid> complexTypes, Set<Guid> variantTypes, Set<Guid> referenceTypes, Set<Guid> noteTypes,
+			HashSet<Guid> complexTypes, HashSet<Guid> variantTypes, HashSet<Guid> referenceTypes, HashSet<Guid> noteTypes,
 			bool isHybrid, FdoCache cache)
 		{
 			var listOptions = node.DictionaryNodeOptions as DictionaryNodeListOptions;
@@ -898,7 +896,7 @@ namespace SIL.FieldWorks.XWorks
 						FixOptionsAccordingToCurrentTypes(listOptions.Options, referenceTypes, node, false, cache);
 						break;
 					case DictionaryNodeListOptions.ListIds.Minor:
-						var complexAndVariant = complexTypes.Union(variantTypes);
+						Guid[] complexAndVariant = complexTypes.Union(variantTypes).ToArray();
 						FixOptionsAccordingToCurrentTypes(listOptions.Options, complexAndVariant, node, false, cache);
 						break;
 					case DictionaryNodeListOptions.ListIds.Note:
@@ -930,11 +928,11 @@ namespace SIL.FieldWorks.XWorks
 			return siblings != null && siblings.Any(sib => sib.FieldDescription == node.FieldDescription);
 		}
 
-		private static void FixOptionsAccordingToCurrentTypes(List<DictionaryNodeListOptions.DictionaryNodeOption> options, ICollection<Guid> possibilities,
-			ConfigurableDictionaryNode node, bool filterInflectionalVariantTypes, FdoCache cache)
+		private static void FixOptionsAccordingToCurrentTypes(List<DictionaryNodeListOptions.DictionaryNodeOption> options,
+			ICollection<Guid> possibilities, ConfigurableDictionaryNode node, bool filterInflectionalVariantTypes, FdoCache cache)
 		{
 			var isDuplicate = node.IsDuplicate;
-			var currentGuids = new Set<Guid>();
+			var currentGuids = new HashSet<Guid>();
 			foreach (var opt in options)
 			{
 				Guid guid;

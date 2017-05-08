@@ -1,14 +1,7 @@
-// Copyright (c) 2005-2013 SIL International
+// Copyright (c) 2005-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: XmlRDEBrowseViewVc.cs
-// Responsibility: Randy Regnier
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
-// --------------------------------------------------------------------------------------------
+
 using System.Xml;
 using System.Drawing;
 using System.Diagnostics;
@@ -46,7 +39,7 @@ namespace SIL.FieldWorks.Common.Controls
 		string m_sEditRowClass = null;
 		// A Set of Hvos. If an HVO is in the set,
 		// it is the HVO of a 'new' row that is allowed to be edited.
-		Set<int> m_editableHvos = new Set<int>();
+		private readonly HashSet<int> m_editableHvos = new HashSet<int>();
 
 		#endregion Data members
 
@@ -193,10 +186,10 @@ namespace SIL.FieldWorks.Common.Controls
 		/// Return a Set of HVOs that are editable...
 		/// typically new objects added this session.
 		/// </summary>
-		public Set<int> EditableObjectsClone()
+		public ISet<int> EditableObjectsClone()
 		{
 
-			return new Set<int>(m_editableHvos);
+			return new HashSet<int>(m_editableHvos);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -270,7 +263,7 @@ namespace SIL.FieldWorks.Common.Controls
 				return;		// no processing needed on empty list
 
 			bool done = false;
-			Set<int> validSenses = new Set<int>();
+			var validSenses = new HashSet<int>();
 			lock (this)
 			{
 				while (!done)

@@ -1628,7 +1628,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// May be derived from cache or set separately.
 		/// </summary>
 		protected ISilDataAccess m_sda;
-		Set<int> m_targets;
+		HashSet<int> m_targets;
 		int[] m_originalTargets;
 
 		/// ------------------------------------------------------------------------------------
@@ -1658,7 +1658,7 @@ namespace SIL.FieldWorks.Common.Controls
 			set
 			{
 				m_originalTargets = value;
-				m_targets = new Set<int>(value);
+				m_targets = new HashSet<int>(value);
 			}
 		}
 		internal ListMatchOptions Mode
@@ -1678,7 +1678,7 @@ namespace SIL.FieldWorks.Common.Controls
 			int[] values = GetItems(item);
 			if (m_mode == ListMatchOptions.All || m_mode == ListMatchOptions.Exact)
 			{
-				Set<int> matches = new Set<int>(m_targets.Count);
+				var matches = new HashSet<int>();
 				foreach (int hvo in values)
 				{
 					if (m_targets.Contains(hvo))

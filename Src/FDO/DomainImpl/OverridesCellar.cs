@@ -563,7 +563,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 
 
 		/// ------------------------------------------------------------------------------------
-	/// <summary>
+		/// <summary>
 		/// Get a set of hvos that are suitable for targets to a reference property.
 		/// Note that in this case we override this as WELL as ReferenceTargetOwner, in order
 		/// to filter the list to human agents.
@@ -576,13 +576,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			switch (flid)
 			{
 				case CmAnnotationTags.kflidSource:
-					Set<ICmObject> set = new Set<ICmObject>();
-					foreach (ICmAgent agent in m_cache.LangProject.AnalyzingAgentsOC)
-					{
-						if (agent.Human)
-							set.Add(agent);
-					}
-					return set;
+					return m_cache.LangProject.AnalyzingAgentsOC.Where(a => a.Human);
 				default:
 					return base.ReferenceTargetCandidates(flid);
 			}
@@ -865,15 +859,15 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// <summary>
 		/// Get all possibilities, recursively, that are ultimately owned by the list.
 		/// </summary>
-		public Set<ICmPossibility> ReallyReallyAllPossibilities
+		public ISet<ICmPossibility> ReallyReallyAllPossibilities
 		{
 			get
 			{
-				Set<ICmPossibility> set = new Set<ICmPossibility>();
+				var set = new HashSet<ICmPossibility>();
 				foreach (var pss in PossibilitiesOS)
 				{
 					set.Add(pss);
-					set.AddRange(pss.ReallyReallyAllPossibilities);
+					set.UnionWith(pss.ReallyReallyAllPossibilities);
 				}
 				return set;
 			}
@@ -1443,7 +1437,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// For Performance (used in conjunction with PreLoadList).
 		/// </summary>
 		/// <returns>Set of subpossibilities</returns>
-		public Set<int> SubPossibilities()
+		public ISet<int> SubPossibilities()
 		{
 			throw new NotImplementedException();
 		}
@@ -1484,15 +1478,15 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// <summary>
 		/// Get all possibilities, recursively, that are ultimately owned by the possibility.
 		/// </summary>
-		public Set<ICmPossibility> ReallyReallyAllPossibilities
+		public ISet<ICmPossibility> ReallyReallyAllPossibilities
 		{
 			get
 			{
-				var set = new Set<ICmPossibility>();
+				var set = new HashSet<ICmPossibility>();
 				foreach (var pss in SubPossibilitiesOS)
 				{
 					set.Add(pss);
-					set.AddRange(pss.ReallyReallyAllPossibilities);
+					set.UnionWith(pss.ReallyReallyAllPossibilities);
 				}
 				return set;
 			}
@@ -2130,9 +2124,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			switch (flid)
 			{
 				case FsComplexFeatureTags.kflidType:
-					Set<ICmObject> set = new Set<ICmObject>();
-					set.AddRange(m_cache.LangProject.MsFeatureSystemOA.TypesOC);
-					return set;
+					return m_cache.LangProject.MsFeatureSystemOA.TypesOC;
 				default:
 					return base.ReferenceTargetCandidates(flid);
 			}
@@ -2360,26 +2352,20 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// <returns>A set of hvos.</returns>
 		public override IEnumerable<ICmObject> ReferenceTargetCandidates(int flid)
 		{
-			Set<ICmObject> set = null;
 			switch (flid)
 			{
 				case FsFeatureSpecificationTags.kflidFeature:
 					// Find all exception features for the "owning" PartOfSpeech and all of its owning POSes
-					set = GetFeatureList();
-					break;
+					return GetFeatureList();
 				case FsClosedValueTags.kflidValue:
-					set = new Set<ICmObject>();
-					if (FeatureRA != null)
-					{
-						IFsClosedFeature feat = FeatureRA as IFsClosedFeature;
-						if (feat != null)
-							set.AddRange(feat.ValuesOC);
-					}
-					break;
+					var set = new HashSet<ICmObject>();
+					IFsClosedFeature feat = FeatureRA as IFsClosedFeature;
+					if (feat != null)
+						set.UnionWith(feat.ValuesOC);
+					return set;
 				default:
 					return base.ReferenceTargetCandidates(flid);
 			}
-			return set;
 		}
 
 		/// <summary>
@@ -3008,9 +2994,9 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// Find all exception features for the "owning" PartOfSpeech and all of its owning POSes
 		/// </summary>
 		/// <returns>list of these features</returns>
-		protected Set<ICmObject> GetFeatureList()
+		protected ISet<ICmObject> GetFeatureList()
 		{
-			Set<ICmObject> set = new Set<ICmObject>();
+			var set = new HashSet<ICmObject>();
 			IFsFeatStruc fs = Owner as IFsFeatStruc;
 			if (fs != null)
 			{
@@ -3053,14 +3039,14 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 							case MoDerivAffMsaTags.kflidToMsFeatures: // fall through
 							case MoInflAffMsaTags.kflidInflFeats: // fall through
 							case MoStemMsaTags.kflidMsFeatures:
-								set.AddRange(pos.InflectableFeatsRC);
+								set.UnionWith(pos.InflectableFeatsRC);
 								break;
 							case MoCompoundRuleTags.kflidToProdRestrict: // fall through
 							case MoDerivAffMsaTags.kflidFromProdRestrict: // fall through
 							case MoDerivAffMsaTags.kflidToProdRestrict: // fall through
 							case MoInflAffMsaTags.kflidFromProdRestrict: // fall through
 							case MoStemMsaTags.kflidProdRestrict:
-								set.AddRange(pos.BearableFeaturesRC);
+								set.UnionWith(pos.BearableFeaturesRC);
 								break;
 						}
 						pos = Owner as IPartOfSpeech;
@@ -3146,9 +3132,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			switch (flid)
 			{
 				case FsFeatureSpecificationTags.kflidFeature:
-					Set<ICmObject> set = new Set<ICmObject>();
-					set.AddRange(m_cache.LangProject.MsFeatureSystemOA.FeaturesOC);
-					return set;
+					return m_cache.LangProject.MsFeatureSystemOA.FeaturesOC;
 				default:
 					return base.ReferenceTargetCandidates(flid);
 			}
@@ -3231,12 +3215,12 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					// Find all exception features for the "owning" PartOfSpeech and all of its owning POSes
 					return GetFeatureList();
 				case FsNegatedValueTags.kflidValue:
-					Set<ICmObject> set = new Set<ICmObject>();
+					var set = new HashSet<ICmObject>();
 					if (FeatureRA != null)
 					{
 						IFsClosedFeature feat = FeatureRA as IFsClosedFeature;
 						if (feat != null)
-							set.AddRange(feat.ValuesOC);
+							set.UnionWith(feat.ValuesOC);
 					}
 					return set;
 				default:
@@ -4103,14 +4087,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			switch (flid)
 			{
 				case FsFeatStrucTags.kflidType:
-					Set<ICmObject> set = new Set<ICmObject>();
-#if NotNow
-					// for now when only have exception features...
-					FsFeatStrucType fsType = m_cache.LangProject.GetExceptionFeatureType();
-					set.Add(fsType);
-#endif
-					set.AddRange(m_cache.LangProject.MsFeatureSystemOA.TypesOC);
-					return set;
+					return m_cache.LangProject.MsFeatureSystemOA.TypesOC;
 				default:
 					return base.ReferenceTargetCandidates(flid);
 			}

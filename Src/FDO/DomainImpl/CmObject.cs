@@ -1,11 +1,6 @@
-// Copyright (c) 2002-2013 SIL International
+// Copyright (c) 2002-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: CmObject.cs
-// Responsibility: Randy Regnier
-// Last reviewed: never
-//
 //
 // <remarks>
 // Implementation of:
@@ -17,7 +12,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -1166,7 +1160,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			cmObject.EnsureCompleteIncomingRefs();
 			// FWR-2969 If merging senses, m_incomingRefs will sometimes get changed
 			// by ReplaceAReference.
-			var refs = new Set<IReferenceSource>(cmObject.m_incomingRefs);
+			var refs = new HashSet<IReferenceSource>(cmObject.m_incomingRefs);
 			foreach (var source in refs)
 			{
 				source.ReplaceAReference(objOld, objNew);

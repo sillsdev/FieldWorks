@@ -1,15 +1,8 @@
-// Copyright (c) 2005-2013 SIL International
+// Copyright (c) 2005-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: XmlBrowseViewBaseVc.cs
-// Responsibility: Randy Regnier
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
+
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Collections.Generic;
@@ -1759,7 +1752,7 @@ namespace SIL.FieldWorks.Common.Controls
 #pragma warning disable 414
 			FdoCache m_cache;
 #pragma warning restore 414
-			Set<int> m_hvosInCell = new Set<int>();
+			private readonly HashSet<int> m_hvosInCell = new HashSet<int>();
 
 			/// <summary>
 			///
@@ -1789,7 +1782,7 @@ namespace SIL.FieldWorks.Common.Controls
 			/// <summary>
 			/// Return the list of hvos used to build the display in DisplayCell.
 			/// </summary>
-			public Set<int> HvosCollectedInCell
+			public ISet<int> HvosCollectedInCell
 			{
 				get
 				{

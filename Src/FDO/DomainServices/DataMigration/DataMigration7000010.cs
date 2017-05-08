@@ -271,7 +271,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 
 			if (goners.Count > 0)
 			{
-				var neededGoners = new Set<string>();
+				var neededGoners = new HashSet<string>();
 				DeleteUnneededGoners(dtoRepos, goners, neededGoners);
 				goners.Clear();
 			}

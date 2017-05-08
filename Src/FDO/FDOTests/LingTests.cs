@@ -13,7 +13,6 @@ using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.FDOTests.CellarTests;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 {
@@ -1094,8 +1093,8 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 			entry.CitationForm.set_String(Cache.DefaultVernWs, sULForm);
 			IMoAffixAllomorph allomorph = Cache.ServiceLocator.GetInstance<IMoAffixAllomorphFactory>().Create();
 			entry.LexemeFormOA = allomorph;
-			Set<ICmPossibility> morphTypes = Cache.LangProject.LexDbOA.MorphTypesOA.ReallyReallyAllPossibilities;
-			foreach (IMoMorphType mmt in morphTypes)
+			ISet<ICmPossibility> morphTypes = Cache.LangProject.LexDbOA.MorphTypesOA.ReallyReallyAllPossibilities;
+			foreach (IMoMorphType mmt in morphTypes.Cast<IMoMorphType>())
 			{
 				allomorph.MorphTypeRA = mmt;
 				if (mmt.Guid == MoMorphTypeTags.kguidMorphBoundRoot)

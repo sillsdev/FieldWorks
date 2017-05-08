@@ -1,6 +1,7 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -18,9 +19,7 @@ using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.Filters;
-using SIL.Utils;
 using XCore;
-using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -1769,11 +1768,11 @@ namespace SIL.FieldWorks.XWorks
 			using (FilterBehavior.Create(this))
 				m_bulkEditBar.SetTargetField("Glosses");
 
-			var allSensesForEntry = new Set<int>(
+			var allSensesForEntry = new HashSet<int>(
 				FdoVectorUtils.ConvertCmObjectsToHvos(entryWithMultipleDescendents.AllSenses));
-			var checkedItems = new Set<int>(m_bv.CheckedItems);
+			var checkedItems = new HashSet<int>(m_bv.CheckedItems);
 			Assert.AreEqual(allSensesForEntry.Count, checkedItems.Count, "Checked items mismatched.");
-			Assert.IsTrue(checkedItems.Equals(allSensesForEntry), "Checked items mismatched.");
+			Assert.IsTrue(checkedItems.SetEquals(allSensesForEntry), "Checked items mismatched.");
 		}
 
 		[Test]
@@ -1793,11 +1792,11 @@ namespace SIL.FieldWorks.XWorks
 			using (FilterBehavior.Create(this))
 				m_bulkEditBar.SetTargetField("Glosses");
 
-			var allSensesForEntry = new Set<int>(FdoVectorUtils.ConvertCmObjectsToHvos(
+			var allSensesForEntry = new HashSet<int>(FdoVectorUtils.ConvertCmObjectsToHvos(
 				entryWithMultipleDescendents.AllSenses));
-			var uncheckedItems = new Set<int>(m_bv.UncheckedItems());
+			var uncheckedItems = new HashSet<int>(m_bv.UncheckedItems());
 			Assert.AreEqual(allSensesForEntry.Count, uncheckedItems.Count, "Unchecked items mismatched.");
-			Assert.IsTrue(uncheckedItems.Equals(allSensesForEntry), "Unchecked items mismatched.");
+			Assert.IsTrue(uncheckedItems.SetEquals(allSensesForEntry), "Unchecked items mismatched.");
 		}
 
 		/// <summary>
@@ -1826,11 +1825,11 @@ namespace SIL.FieldWorks.XWorks
 			using (FilterBehavior.Create(this))
 				m_bulkEditBar.SetTargetField("Lexeme Form");
 
-			var selectedEntries = new Set<int>(new int[] { entryWithMultipleDescendents.Hvo });
-			selectedEntries.AddRange(FdoVectorUtils.ConvertCmObjectsToHvos(entriesWithoutSenses));
-			var checkedItems = new Set<int>(m_bv.CheckedItems);
+			var selectedEntries = new HashSet<int> {entryWithMultipleDescendents.Hvo};
+			selectedEntries.UnionWith(FdoVectorUtils.ConvertCmObjectsToHvos(entriesWithoutSenses));
+			var checkedItems = new HashSet<int>(m_bv.CheckedItems);
 			Assert.AreEqual(selectedEntries.Count, checkedItems.Count, "Checked items mismatched.");
-			Assert.IsTrue(checkedItems.Equals(selectedEntries), "Checked items mismatched.");
+			Assert.IsTrue(checkedItems.SetEquals(selectedEntries), "Checked items mismatched.");
 		}
 
 		/// <summary>
@@ -1854,10 +1853,10 @@ namespace SIL.FieldWorks.XWorks
 			using (FilterBehavior.Create(this))
 				m_bulkEditBar.SetTargetField("Lexeme Form");
 
-			var unselectedEntries = new Set<int>(new int[] { entryWithMultipleDescendents.Hvo });
-			var uncheckedItems = new Set<int>(m_bv.UncheckedItems());
+			var unselectedEntries = new HashSet<int> {entryWithMultipleDescendents.Hvo};
+			var uncheckedItems = new HashSet<int>(m_bv.UncheckedItems());
 			Assert.AreEqual(unselectedEntries.Count, uncheckedItems.Count, "Unchecked items mismatched.");
-			Assert.IsTrue(uncheckedItems.Equals(unselectedEntries), "Unchecked items mismatched.");
+			Assert.IsTrue(uncheckedItems.SetEquals(unselectedEntries), "Unchecked items mismatched.");
 		}
 
 		/// <summary>
@@ -1888,9 +1887,9 @@ namespace SIL.FieldWorks.XWorks
 			using (FilterBehavior.Create(this))
 				m_bulkEditBar.SetTargetField("Glosses");
 			// validate that only the siblings are selected.
-			var hvoSenseSiblings = new Set<int>(FdoVectorUtils.ConvertCmObjectsToHvos(parentEntry.AllSenses));
+			var hvoSenseSiblings = new HashSet<int>(FdoVectorUtils.ConvertCmObjectsToHvos(parentEntry.AllSenses));
 			Assert.AreEqual(hvoSenseSiblings.Count, m_bv.CheckedItems.Count);
-			Assert.IsTrue(hvoSenseSiblings.Equals(new Set<int>(m_bv.CheckedItems)));
+			Assert.IsTrue(hvoSenseSiblings.SetEquals(new HashSet<int>(m_bv.CheckedItems)));
 		}
 
 		[Test]
@@ -1914,10 +1913,10 @@ namespace SIL.FieldWorks.XWorks
 			using (FilterBehavior.Create(this))
 				m_bulkEditBar.SetTargetField("Glosses");
 			// validate that only the siblings are unselected.
-			var hvoSenseSiblings = new Set<int>(FdoVectorUtils.ConvertCmObjectsToHvos<ILexSense>(parentEntry.AllSenses));
-			var uncheckedItems = new Set<int>(m_bv.UncheckedItems());
+			var hvoSenseSiblings = new HashSet<int>(FdoVectorUtils.ConvertCmObjectsToHvos(parentEntry.AllSenses));
+			var uncheckedItems = new HashSet<int>(m_bv.UncheckedItems());
 			Assert.AreEqual(hvoSenseSiblings.Count, uncheckedItems.Count);
-			Assert.IsTrue(hvoSenseSiblings.Equals(uncheckedItems));
+			Assert.IsTrue(hvoSenseSiblings.SetEquals(uncheckedItems));
 		}
 
 		/// <summary>
@@ -1943,9 +1942,8 @@ namespace SIL.FieldWorks.XWorks
 			using (FilterBehavior.Create(this))
 				m_bulkEditBar.SetTargetField("Allomorphs");
 			// validate that everything (except variant allomorph?) is still not selected.
-			var checkedItems = new Set<int>(m_bv.CheckedItems);
-			var selectedEntries = new Set<int>();
-			selectedEntries.AddRange(FdoVectorUtils.ConvertCmObjectsToHvos(entriesWithoutSenses));
+			var checkedItems = new HashSet<int>(m_bv.CheckedItems);
+			var selectedEntries = new HashSet<int>(FdoVectorUtils.ConvertCmObjectsToHvos(entriesWithoutSenses));
 			Assert.AreEqual(selectedEntries.Count, checkedItems.Count);
 		}
 
@@ -1979,16 +1977,16 @@ namespace SIL.FieldWorks.XWorks
 			// go through each of the translation items, and find the LexEntry owner.
 			var translationsToEntries = GetParentOfClassMap(uncheckedTranslationItems,
 				LexEntryTags.kClassId);
-			var expectedUnselectedEntries = new Set<int>(translationsToEntries.Values);
+			var expectedUnselectedEntries = new HashSet<int>(translationsToEntries.Values);
 
 			// Now switch to Entries and expect the new parent items to be selected.
 			using (FilterBehavior.Create(this))
 				m_bulkEditBar.SetTargetField("Lexeme Form");
 
-			var entriesSelected = new Set<int>(m_bv.CheckedItems);
-			var entriesUnselected = new Set<int>(m_bv.UncheckedItems());
+			var entriesSelected = new HashSet<int>(m_bv.CheckedItems);
+			var entriesUnselected = new HashSet<int>(m_bv.UncheckedItems());
 			Assert.AreEqual(expectedUnselectedEntries.Count, entriesUnselected.Count, "Unselected items mismatched.");
-			Assert.IsTrue(expectedUnselectedEntries.Equals(entriesUnselected), "Unselected items mismatched.");
+			Assert.IsTrue(expectedUnselectedEntries.SetEquals(entriesUnselected), "Unselected items mismatched.");
 			Assert.Greater(entriesSelected.Count, 0);
 		}
 

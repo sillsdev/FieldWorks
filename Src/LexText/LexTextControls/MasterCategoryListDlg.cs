@@ -160,13 +160,13 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			Debug.Assert(posList != null);
 			m_cache = posList.Cache;
-			var posSet = new Set<IPartOfSpeech>();
+			var posSet = new HashSet<IPartOfSpeech>();
 			foreach (IPartOfSpeech pos in posList.ReallyReallyAllPossibilities)
 				posSet.Add(pos);
 			LoadMasterCategories(posSet);
 		}
 
-		private void LoadMasterCategories(Set<IPartOfSpeech> posSet)
+		private void LoadMasterCategories(HashSet<IPartOfSpeech> posSet)
 		{
 			XmlDocument doc = new XmlDocument();
 			doc.Load(Path.Combine(FwDirectoryFinder.TemplateDirectory, "GOLDEtic.xml"));
@@ -195,13 +195,13 @@ namespace SIL.FieldWorks.LexText.Controls
 			} while ((node = node.NextNode) != null);
 		}
 
-		private void AddNodes(Set<IPartOfSpeech> posSet, XmlNodeList nodeList, TreeNodeCollection treeNodes, FdoCache cache)
+		private void AddNodes(HashSet<IPartOfSpeech> posSet, XmlNodeList nodeList, TreeNodeCollection treeNodes, FdoCache cache)
 		{
 			foreach (XmlNode node in nodeList)
 				AddNode(posSet, node, treeNodes, cache);
 		}
 
-		private void AddNode(Set<IPartOfSpeech> posSet, XmlNode node, TreeNodeCollection treeNodes, FdoCache cache)
+		private void AddNode(HashSet<IPartOfSpeech> posSet, XmlNode node, TreeNodeCollection treeNodes, FdoCache cache)
 		{
 			if (node.Attributes["id"].InnerText == "PartOfSpeechValue")
 			{
@@ -551,7 +551,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			private IPartOfSpeech m_pos;
 			private XmlNode m_node; // need to remember the node so can put info for *all* writing systems into databas
 
-			public static MasterCategory Create(Set<IPartOfSpeech> posSet, XmlNode node, FdoCache cache)
+			public static MasterCategory Create(ISet<IPartOfSpeech> posSet, XmlNode node, FdoCache cache)
 			{
 				/*
 				<item type="category" id="Adjective" guid="30d07580-5052-4d91-bc24-469b8b2d7df9">

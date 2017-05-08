@@ -1,20 +1,17 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Xml;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.IText
 {
@@ -44,7 +41,7 @@ namespace SIL.FieldWorks.IText
 		int m_flidStTextTitle;
 		int m_flidStTextSource;
 		InterlinVc m_vc = null;
-		Set<int> m_usedWritingSystems = new Set<int>();
+		private readonly HashSet<int> m_usedWritingSystems = new HashSet<int>();
 		/// <summary>saves the morphtype so that glosses can be marked as pro/enclitics.  See LT-8288.</summary>
 		Guid m_guidMorphType = Guid.Empty;
 		IMoMorphType m_mmtEnclitic;

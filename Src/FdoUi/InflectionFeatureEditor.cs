@@ -320,9 +320,9 @@ namespace SIL.FieldWorks.FdoUi
 
 			var pos = GetPOS();
 			// Make a Set of eligible parts of speech to use in filtering.
-			Set<int> possiblePOS = GetPossiblePartsOfSpeech();
+			HashSet<int> possiblePOS = GetPossiblePartsOfSpeech();
 			// Make a Dictionary from HVO of entry to list of modified senses.
-			var sensesByEntry = new Dictionary<int, Set<ILexSense>>();
+			var sensesByEntry = new Dictionary<int, HashSet<ILexSense>>();
 			int i = 0;
 			// Report progress 50 times or every 100 items, whichever is more (but no more than once per item!)
 			int interval = Math.Min(100, Math.Max(itemsToChange.Count() / 50, 1));
@@ -340,7 +340,7 @@ namespace SIL.FieldWorks.FdoUi
 				var msa = ls.MorphoSyntaxAnalysisRA;
 				int hvoEntry = ls.EntryID;
 				if (!sensesByEntry.ContainsKey(hvoEntry))
-					sensesByEntry[hvoEntry] = new Set<ILexSense>();
+					sensesByEntry[hvoEntry] = new HashSet<ILexSense>();
 				sensesByEntry[hvoEntry].Add(ls);
 			}
 			//REVIEW: Should these really be the same Undo/Redo strings as for InflectionClassEditor.cs?
@@ -375,8 +375,8 @@ namespace SIL.FieldWorks.FdoUi
 				{
 					// See if we can reuse an existing MoStemMsa by changing it.
 					// This is possible if it is used only by senses in the list, or not used at all.
-					var otherSenses = new Set<ILexSense>();
-					var senses = new Set<ILexSense>(entry.AllSenses.ToArray());
+					var otherSenses = new HashSet<ILexSense>();
+					var senses = new HashSet<ILexSense>(entry.AllSenses.ToArray());
 					if (senses.Count != sensesToChange.Count)
 					{
 						foreach (var ls in senses)
@@ -474,7 +474,7 @@ namespace SIL.FieldWorks.FdoUi
 		/// <param name="sda"></param>
 		/// <param name="hvoPos"></param>
 		/// <param name="possiblePOS"></param>
-		void AddChildPos(ISilDataAccess sda, int hvoPos, Set<int> possiblePOS)
+		void AddChildPos(ISilDataAccess sda, int hvoPos, HashSet<int> possiblePOS)
 		{
 			possiblePOS.Add(hvoPos);
 			int chvo = sda.get_VecSize(hvoPos, CmPossibilityTags.kflidSubPossibilities);
@@ -497,7 +497,7 @@ namespace SIL.FieldWorks.FdoUi
 
 			ITsString tss = TsStringUtils.MakeString(m_selectedLabel, m_cache.DefaultAnalWs);
 			// Build a Set of parts of speech that can take this class.
-			Set<int> possiblePOS = GetPossiblePartsOfSpeech();
+			HashSet<int> possiblePOS = GetPossiblePartsOfSpeech();
 			int i = 0;
 			// Report progress 50 times or every 100 items, whichever is more (but no more than once per item!)
 			int interval = Math.Min(100, Math.Max(itemsToChange.Count() / 50, 1));
@@ -534,7 +534,7 @@ namespace SIL.FieldWorks.FdoUi
 			}
 		}
 
-		private bool IsItemEligible(ISilDataAccess sda, int hvo, Set<int> possiblePOS)
+		private bool IsItemEligible(ISilDataAccess sda, int hvo, HashSet<int> possiblePOS)
 		{
 			bool fEnable = false;
 			int hvoMsa = sda.get_ObjectProp(hvo, LexSenseTags.kflidMorphoSyntaxAnalysis);
@@ -568,10 +568,10 @@ namespace SIL.FieldWorks.FdoUi
 			return null;
 		}
 
-		private Set<int> GetPossiblePartsOfSpeech()
+		private HashSet<int> GetPossiblePartsOfSpeech()
 		{
 			ISilDataAccess sda = m_cache.DomainDataByFlid;
-			Set<int> possiblePOS = new Set<int>();
+			var possiblePOS = new HashSet<int>();
 			if (m_selectedHvo != 0)
 			{
 				var obj = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(m_selectedHvo).Owner;
