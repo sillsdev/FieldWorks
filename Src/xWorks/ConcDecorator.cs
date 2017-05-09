@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -8,7 +8,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Xml;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO;
@@ -31,7 +30,7 @@ namespace SIL.FieldWorks.XWorks
 	/// keyword), the object (typically StTxtPara) and segment they belong to, and several other derived properties which can
 	/// be displayed in optional columns of the concordance views.
 	/// </summary>
-	public class ConcDecorator : DomainDataByFlidDecoratorBase, IAnalysisOccurrenceFromHvo, ISetMediator, IRefreshCache
+	public class ConcDecorator : DomainDataByFlidDecoratorBase, IAnalysisOccurrenceFromHvo, ISetMediator
 	{
 		/// <summary>
 		/// Maps from wf hvo to array of dummy HVOs generated to represent occurrences.

@@ -1,4 +1,4 @@
-// Copyright (c) 2013-2014 SIL International
+// Copyright (c) 2013-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 using SIL.Utils;
+using SIL.WritingSystems;
 
 namespace SIL.FieldWorks.FDO
 {
@@ -238,5 +239,45 @@ namespace SIL.FieldWorks.FDO
 				strBldr.Replace(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
 			return strBldr.ToString();
 		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets the path for storing common application data that might be shared between
+		/// multiple applications and multiple users on the same machine.
+		///
+		/// On Windows this returns Environment.SpecialFolder.CommonApplicationData
+		/// (C:\ProgramData),on Linux /var/lib/fieldworks.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public static string CommonApplicationData
+		{
+			get
+			{
+				if (MiscUtils.IsUnix)
+				{
+					// allow to override the /var/lib/fieldworks path by setting the
+					// environment variable FW_CommonAppData. Is this is needed on our CI
+					// build machines.
+					return Environment.GetEnvironmentVariable("FW_CommonAppData") ?? "/var/lib/fieldworks";
+				}
+
+				return Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
+			}
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets the global writing system store directory. The directory is guaranteed to exist.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public static string GlobalWritingSystemStoreDirectory
+			=> GlobalWritingSystemRepository.CurrentVersionPath(GlobalWritingSystemRepository.DefaultBasePath);
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets the old global writing system store directory.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public static string OldGlobalWritingSystemStoreDirectory => Path.Combine(CommonApplicationData, "SIL", "WritingSystemStore");
 	}
 }

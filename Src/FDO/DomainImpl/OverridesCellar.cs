@@ -929,25 +929,6 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			}
 		}
 
-		/// <summary>
-		/// The type of items contained in this list.
-		/// </summary>
-		/// <returns></returns>
-		public string ItemsTypeName()
-		{
-			string listName;
-			if (Owner != null)
-				listName = Cache.DomainDataByFlid.MetaDataCache.GetFieldName(OwningFlid);
-			else
-				listName = Name.BestAnalysisVernacularAlternative.Text;
-			var itemsTypeName = StringTable.Table.GetString(listName, "PossibilityListItemTypeNames");
-			return itemsTypeName != "*" + listName + "*"
-					? itemsTypeName
-					: (PossibilitiesOS.Count > 0
-						? StringTable.Table.GetString(PossibilitiesOS[0].GetType().Name, "ClassNames")
-						: itemsTypeName);
-		}
-
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Look up a possibility in a list having a known GUID value
@@ -1175,17 +1156,6 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 	/// </summary>
 	internal partial class CmCustomItem
 	{
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// The name for the type of CmCustomItem.
-		/// </summary>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
-		public override string ItemTypeName()
-		{
-			return StringTable.Table.GetString(GetType().Name, "ClassNames");
-		}
-
 		/// <summary>
 		/// Gets an ITsString that represents the shortname of this object.
 		/// </summary>
@@ -1309,25 +1279,6 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			// 'else' means there is no ownership issues to using normal merging/moving.
 
 			return newOwner;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// The name for the type of CmPossibility. Subclasses may override.
-		/// </summary>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
-		public virtual string ItemTypeName()
-		{
-			var owningList = OwningList;
-			if (owningList.OwningFlid == 0)
-				return StringTable.Table.GetString(GetType().Name, "ClassNames");
-			var owningFieldName =
-				Cache.DomainDataByFlid.MetaDataCache.GetFieldName(owningList.OwningFlid);
-			var itemsTypeName = owningList.ItemsTypeName();
-			return itemsTypeName != "*" + owningFieldName + "*"
-					? itemsTypeName
-					: StringTable.Table.GetString(GetType().Name, "ClassNames");
 		}
 
 		/// <summary>

@@ -2468,7 +2468,9 @@ namespace SIL.FieldWorks
 
 				try
 				{
-					var backupSettings = new BackupProjectSettings(cache, restoreSettings.Settings, FwDirectoryFinder.DefaultBackupDirectory);
+					var versionInfoProvider = new VersionInfoProvider(Assembly.GetExecutingAssembly(), false);
+					var backupSettings = new BackupProjectSettings(cache, restoreSettings.Settings,
+						FwDirectoryFinder.DefaultBackupDirectory, versionInfoProvider.MajorVersion);
 					backupSettings.DestinationFolder = FwDirectoryFinder.DefaultBackupDirectory;
 
 					var backupService = new ProjectBackupService(cache, backupSettings);
@@ -2647,7 +2649,7 @@ namespace SIL.FieldWorks
 				if (oldDir == null)
 				{
 					// e.g. "C:\\ProgramData\\SIL\\FieldWorks"
-					oldDir = DirectoryFinder.CommonAppDataFolder("FieldWorks");
+					oldDir = FwDirectoryFinder.CommonAppDataFolder("FieldWorks");
 				}
 				oldDir = oldDir.TrimEnd(new [] {Path.PathSeparator});
 				var newDir = app.Cache.LangProject.LinkedFilesRootDir;
@@ -2941,6 +2943,10 @@ namespace SIL.FieldWorks
 				MessageBox.Show(ResourceHelper.GetResourceString("kstidDataMigrationProhibitedText"),
 					ResourceHelper.GetResourceString("kstidDataMigrationProhibitedCaption"), MessageBoxButtons.OK, MessageBoxIcon.Error);
 			}
+			catch (FdoInitializationException fie)
+			{
+				throw new StartupException(fie.Message, fie);
+			}
 			finally
 			{
 				CloseSplashScreen();
@@ -2974,10 +2980,12 @@ namespace SIL.FieldWorks
 					if (!app.InitCacheForApp(progressDlg))
 						throw new StartupException(Properties.Resources.kstidCacheInitFailure);
 				}
+				catch (StartupException)
+				{
+					throw;
+				}
 				catch (Exception e)
 				{
-					if (e is StartupException)
-						throw;
 					throw new StartupException(Properties.Resources.kstidCacheInitFailure, e, true);
 				}
 				undoHelper.RollBack = false;

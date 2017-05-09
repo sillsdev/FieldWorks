@@ -8,9 +8,9 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Xml;
-using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
@@ -492,20 +492,8 @@ namespace SIL.FieldWorks.XWorks
 			string className = StringTable.Table.GetString("No Record", "Misc");
 			if (Clerk.CurrentObject != null)
 			{
-				string typeName = Clerk.CurrentObject.GetType().Name;
-				if (Clerk.CurrentObject is ICmPossibility)
-				{
-					var possibility = Clerk.CurrentObject as ICmPossibility;
-					className = possibility.ItemTypeName();
-				}
-				else
-				{
-					className = StringTable.Table.GetString(typeName, "ClassNames");
-				}
-				if (className == "*" + typeName + "*")
-				{
-					className = typeName;
-				}
+				using (var uiObj = CmObjectUi.MakeUi(Clerk.CurrentObject))
+					className = uiObj.DisplayNameOfClass;
 			}
 			else
 			{
@@ -524,7 +512,7 @@ namespace SIL.FieldWorks.XWorks
 			// First-chance exception at 0x4ed9b280 in Flex.exe: 0xC0000005: Access violation writing location 0x00f90004.
 			// The following code doesn't cause the exception, but neither one actually sets the Text to className,
 			// so something needs to be changed somewhere. It doesn't enter "override string Text" in PaneBar.cs
-			(m_informationBar as IPaneBar).Text = className;
+			((IPaneBar) m_informationBar).Text = className;
 		}
 
 		#endregion Other methods

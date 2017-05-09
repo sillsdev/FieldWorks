@@ -1,9 +1,6 @@
-// Copyright (c) 2010-2013 SIL International
+// Copyright (c) 2010-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: XMLBackendProvider.cs
-// Responsibility: FW Team
 
 using System;
 using System.Collections.Generic;
@@ -13,7 +10,6 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
-using SIL.CoreImpl;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
 using SIL.IO.FileLock;
 using SIL.Lexicon;
@@ -370,14 +366,14 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			}
 			// No backup, or the user didn't want to try. Show Unable to Open Project dialog box.
 			UnlockProject();
-			throw new StartupException(message);
+			throw new FdoInitializationException(message);
 		}
 
 		internal virtual void LockProject()
 		{
 			m_fileLock = SimpleFileLock.CreateFromFilePath(ProjectId.Path + ".lock");
 			if (!m_fileLock.TryAcquireLock())
-				throw new FdoFileLockedException(String.Format(Properties.Resources.kstidLockFileLocked, ProjectId.Name), true);
+				throw new FdoFileLockedException(string.Format(Properties.Resources.kstidLockFileLocked, ProjectId.Name));
 			m_lastWriteTime = File.GetLastWriteTimeUtc(ProjectId.Path);
 		}
 

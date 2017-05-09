@@ -138,7 +138,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			listBox.Enabled = true;
 
 			// Load projects.
-			foreach (var projectPathname in Directory.GetDirectories(FwDirectoryFinder.ProjectsDirectory))
+			foreach (var projectPathname in Directory.GetDirectories(ParatextLexiconPluginDirectoryFinder.ProjectsDirectory))
 			{
 				var projectDirName = new DirectoryInfo(projectPathname).Name;
 				var dataPathname = Path.Combine(projectPathname, projectDirName + FdoFileHelper.ksFwDataXmlFileExtension);

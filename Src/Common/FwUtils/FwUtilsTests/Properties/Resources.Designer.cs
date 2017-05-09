@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace SIL.CoreImpl.Properties {
+namespace SIL.FieldWorks.Common.FwUtils.Properties {
     using System;
     
     
@@ -22,14 +22,14 @@ namespace SIL.CoreImpl.Properties {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class TestResources {
+    internal class Resources {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal TestResources() {
+        internal Resources() {
         }
         
         /// <summary>
@@ -39,7 +39,7 @@ namespace SIL.CoreImpl.Properties {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("SIL.CoreImpl.Properties.TestResources", typeof(TestResources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("SIL.FieldWorks.Common.FwUtils.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -61,32 +61,36 @@ namespace SIL.CoreImpl.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+        ///&lt;strings inheritPath=&quot;..&quot;&gt;
+        ///  &lt;string id=&quot;orange&quot; txt=&quot;orng&quot;/&gt;
+        ///&lt;/strings&gt;
+        ///.
         /// </summary>
-        internal static byte[] eng {
+        internal static string food__fruit__citrus__strings_DASH_en_xml {
             get {
-                object obj = ResourceManager.GetObject("eng", resourceCulture);
-                return ((byte[])(obj));
+                return ResourceManager.GetString("food__fruit__citrus__strings_DASH_en_xml", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+        ///&lt;strings&gt;
+        ///	&lt;string id=&quot;passion fruit&quot; txt=&quot;pssnfrt&quot;/&gt;
+        ///	&lt;string id=&quot;papaya&quot; txt=&quot;ppy&quot;/&gt;
+        ///	&lt;!-- this one demonstrates that omiting the txt attribute just means that we should return the id value --&gt;
+        ///	&lt;string id=&quot;Banana&quot;/&gt;
+        ///	&lt;group id=&quot;InPng&quot;&gt;
+        ///		&lt;group id=&quot;InMyYard&quot;&gt;
+        ///			&lt;string id=&quot;MyPapaya&quot; txt=&quot;ppy&quot;/&gt;
+        ///			&lt;string id=&quot;MyPineapple&quot; txt=&quot;pnppl&quot;/&gt;
+        ///		&lt;/group&gt;
+        ///	&lt;/group&gt;
+        ///&lt;/strings&gt;.
         /// </summary>
-        internal static byte[] lxx {
+        internal static string food__fruit__strings_DASH_en_xml {
             get {
-                object obj = ResourceManager.GetObject("lxx", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        internal static byte[] org {
-            get {
-                object obj = ResourceManager.GetObject("org", resourceCulture);
-                return ((byte[])(obj));
+                return ResourceManager.GetString("food__fruit__strings_DASH_en_xml", resourceCulture);
             }
         }
     }

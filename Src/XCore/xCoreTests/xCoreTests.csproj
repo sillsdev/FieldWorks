@@ -104,9 +104,6 @@
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Accessibility">
-      <Name>Accessibility</Name>
-    </Reference>
     <Reference Include="CoreImplTests, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\CoreImplTests.dll</HintPath>
@@ -119,13 +116,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\SilUtils.dll</HintPath>
     </Reference>
-    <Reference Include="ViewsInterfaces, Version=6.1.1.24363, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="SilUtilsTests, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
-    </Reference>
-    <Reference Include="ViewsInterfacesTests, Version=6.1.1.14450, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\ViewsInterfacesTests.dll</HintPath>
+      <HintPath>..\..\..\Output\Debug\SilUtilsTests.dll</HintPath>
     </Reference>
     <Reference Include="FwUtils, Version=6.1.0.43058, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -137,9 +130,6 @@
     </Reference>
     <Reference Include="System">
       <Name>System</Name>
-    </Reference>
-    <Reference Include="System.Data">
-      <Name>System.Data</Name>
     </Reference>
     <Reference Include="System.Drawing">
       <Name>System.Drawing</Name>
@@ -163,10 +153,6 @@
     <Reference Include="XMLUtils, Version=6.1.0.43054, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\XMLUtils.dll</HintPath>
-    </Reference>
-    <Reference Include="XMLUtilsTests, Version=6.1.0.26841, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\XMLUtilsTests.dll</HintPath>
     </Reference>
     <Reference Include="FwUtilsTests">
       <HintPath>..\..\..\Output\Debug\FwUtilsTests.dll</HintPath>

@@ -357,6 +357,9 @@ namespace SIL.FieldWorks.FdoUi
 					case WfiGlossTags.kClassId:
 						result = new WfiGlossUi();
 						break;
+					case CmCustomItemTags.kClassId:
+						result = new CmCustomItemUi();
+						break;
 					default:
 						realClsid = mdc.GetBaseClsId(realClsid);
 						// This isn't needed because CmObject.kClassId IS 0.
@@ -910,7 +913,7 @@ namespace SIL.FieldWorks.FdoUi
 			{
 				display.Visible = display.Enabled = false;
 			}
-			display.Text = String.Format(display.Text, DisplayNameOfClass);
+			display.Text = string.Format(display.Text, DisplayNameOfClass);
 			return true;
 		}
 
@@ -920,9 +923,6 @@ namespace SIL.FieldWorks.FdoUi
 			{
 				CheckDisposed();
 
-				var poss = Object as ICmPossibility;
-				if (poss != null)
-					return poss.ItemTypeName();
 				string typeName = Object.GetType().Name;
 				string className = StringTable.Table.GetString(typeName, "ClassNames");
 				if (className == "*" + typeName + "*")
@@ -1559,13 +1559,39 @@ namespace SIL.FieldWorks.FdoUi
 			ICmPossibilityList pssl, ref UIItemDisplayProperties display)
 		{
 			string listName = pssl.Owner != null ? cache.DomainDataByFlid.MetaDataCache.GetFieldName(pssl.OwningFlid) : pssl.Name.BestAnalysisVernacularAlternative.Text;
-			string itemTypeName = pssl.ItemsTypeName();
+			string itemTypeName = GetPossibilityDisplayName(pssl);
 			if (itemTypeName != "*" + listName + "*")
 			{
-				string formattedText = String.Format(display.Text, itemTypeName);
+				string formattedText = string.Format(display.Text, itemTypeName);
 				display.Text = formattedText;
 			}
 			return display.Text;
+		}
+
+		public static string GetPossibilityDisplayName(ICmPossibilityList list)
+		{
+			string listName = list.Owner != null ? list.Cache.DomainDataByFlid.MetaDataCache.GetFieldName(list.OwningFlid)
+				: list.Name.BestAnalysisVernacularAlternative.Text;
+			string itemsTypeName = StringTable.Table.GetString(listName, "PossibilityListItemTypeNames");
+			if (itemsTypeName != "*" + listName + "*")
+				return itemsTypeName;
+			return list.PossibilitiesOS.Count > 0 ? StringTable.Table.GetString(list.PossibilitiesOS[0].GetType().Name, "ClassNames")
+				: itemsTypeName;
+		}
+
+		public override string DisplayNameOfClass
+		{
+			get
+			{
+				var poss = (ICmPossibility)Object;
+				ICmPossibilityList owningList = poss.OwningList;
+				if (owningList.OwningFlid == 0)
+					return StringTable.Table.GetString(poss.GetType().Name, "ClassNames");
+				string owningFieldName = m_cache.DomainDataByFlid.MetaDataCache.GetFieldName(owningList.OwningFlid);
+				string itemsTypeName = GetPossibilityDisplayName(owningList);
+				return itemsTypeName != "*" + owningFieldName + "*" ? itemsTypeName
+					: StringTable.Table.GetString(poss.GetType().Name, "ClassNames");
+			}
 		}
 
 		/// <summary>
@@ -1724,7 +1750,7 @@ namespace SIL.FieldWorks.FdoUi
 				msg = string.Format(poss.SubPossibilitiesOS.Count == 0 ? FdoUiStrings.ksCantDeleteMarkupTagInUse
 					: FdoUiStrings.ksCantDeleteMarkupTypeInUse, textName);
 				return false;
-	}
+			}
 
 			msg = null;
 			return true;
@@ -2408,7 +2434,7 @@ namespace SIL.FieldWorks.FdoUi
 		/// <param name="referenceFlid"></param>
 		/// <param name="targetHvo"></param>
 		/// <returns></returns>
-		static public ReferenceBaseUi MakeUi(FdoCache cache, ICmObject rootObj,
+		public static ReferenceBaseUi MakeUi(FdoCache cache, ICmObject rootObj,
 			int referenceFlid, int targetHvo)
 		{
 			var iType = (CellarPropertyType)cache.DomainDataByFlid.MetaDataCache.GetFieldType(referenceFlid);
@@ -2691,5 +2717,10 @@ namespace SIL.FieldWorks.FdoUi
 			ws = tss.get_PropertiesAt(0).GetIntPropValues((int)FwTextPropType.ktptWs, out nVar);
 			return new DummyCmObject(m_hvo, tss.Text, ws);
 		}
+	}
+
+	public class CmCustomItemUi : CmPossibilityUi
+	{
+		public override string DisplayNameOfClass => StringTable.Table.GetString(Object.GetType().Name, "ClassNames");
 	}
 }

@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace SIL.CoreImpl
+namespace SIL.Utils
 {
 	/// <summary>
 	/// A RecentItemsCache maintains a dictionary of recently-computed values, avoiding the computation
@@ -86,7 +86,7 @@ namespace SIL.CoreImpl
 			}
 			// Get the count of the least frequently requested survivor (but at least by 1;
 			// it's possible for survivor counts to be reduced to zero).
-			int reduceCountsBy = Math.Max(sortedPairs[numberToRemove - 1].Value, 1);
+			int reduceCountsBy = Math.Max((int) sortedPairs[numberToRemove - 1].Value, 1);
 			foreach (var kvp in sortedPairs.Skip(numberToRemove))
 				m_frequencies[kvp.Key] = kvp.Value - reduceCountsBy;
 		}

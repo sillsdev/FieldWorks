@@ -17,6 +17,7 @@ using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FDO.Application;
 using SIL.Keyboarding;
 using SIL.Utils;
 using SIL.Windows.Forms.Keyboarding;
@@ -1883,11 +1884,11 @@ namespace SIL.FieldWorks.Common.RootSites
 		public virtual bool RefreshDisplay()
 		{
 			CheckDisposed();
-			if (m_rootb == null || m_rootb.Site == null)
+			if (m_rootb?.Site == null)
 				return false;
 
-			if (m_rootb.DataAccess is IRefreshable)
-				((IRefreshable)m_rootb.DataAccess).Refresh();
+			var decorator = m_rootb.DataAccess as DomainDataByFlidDecoratorBase;
+			decorator?.Refresh();
 
 			// If we aren't visible or don't belong to a form, then set a flag to do a refresh
 			// the next time we go visible.
@@ -1909,8 +1910,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 			finally
 			{
-				if (restorer != null)
-					restorer.Dispose();
+				restorer?.Dispose();
 			}
 			//Enhance: If all refreshable descendants are handled this should return true
 			return false;

@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -12,7 +12,6 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
-using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.Reporting;
 using SIL.WritingSystems;
@@ -147,7 +146,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 						string localPath = Path.Combine(localStoreFolder, ldmlFileName);
 						if (File.Exists(localPath))
 							continue; // already have one.
-						string globalPath = Path.Combine(DirectoryFinder.OldGlobalWritingSystemStoreDirectory, ldmlFileName);
+						string globalPath = Path.Combine(FdoFileHelper.OldGlobalWritingSystemStoreDirectory, ldmlFileName);
 						if (File.Exists(globalPath))
 							continue; // already have one.
 						// Need to make one.

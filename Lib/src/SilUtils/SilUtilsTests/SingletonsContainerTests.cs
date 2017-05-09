@@ -5,7 +5,7 @@
 using System;
 using NUnit.Framework;
 
-namespace SIL.CoreImpl
+namespace SIL.Utils
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>

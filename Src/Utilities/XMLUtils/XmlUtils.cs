@@ -16,7 +16,7 @@ using System.Xml;
 using System.Globalization;
 using System.Xml.Serialization;
 using System.Xml.Xsl;
-using SIL.CoreImpl;
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.Utils
 {

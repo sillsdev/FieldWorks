@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2016 SIL International
+﻿// Copyright (c) 2016-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -33,14 +33,14 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 				// first migrate any existing global writing systems in the new global writing system directory
 				if (globalMigrator.NeedsMigration())
 					globalMigrator.Migrate();
-				string migratedFilePath = Path.Combine(DirectoryFinder.OldGlobalWritingSystemStoreDirectory, ".migrated");
-				if (Directory.Exists(DirectoryFinder.OldGlobalWritingSystemStoreDirectory) && !File.Exists(migratedFilePath))
+				string migratedFilePath = Path.Combine(FdoFileHelper.OldGlobalWritingSystemStoreDirectory, ".migrated");
+				if (Directory.Exists(FdoFileHelper.OldGlobalWritingSystemStoreDirectory) && !File.Exists(migratedFilePath))
 				{
 					// copy over all FW global writing systems from the old directory to the new directory and migrate
 					string globalRepoPath = Path.Combine(GlobalWritingSystemRepository.DefaultBasePath, "3");
 					if (!Directory.Exists(globalRepoPath))
 						GlobalWritingSystemRepository.CreateGlobalWritingSystemRepositoryDirectory(globalRepoPath);
-					CopyDirectoryContents(DirectoryFinder.OldGlobalWritingSystemStoreDirectory, globalRepoPath);
+					CopyDirectoryContents(FdoFileHelper.OldGlobalWritingSystemStoreDirectory, globalRepoPath);
 					globalMigrator.Migrate();
 					// add ".migrated" file to indicate that this folder has been migrated already
 					File.WriteAllText(migratedFilePath, string.Format("The writing systems in this directory have been migrated to {0}.", globalRepoPath));

@@ -4,8 +4,8 @@
 
 using System;
 using System.IO;
-using NUnit.Framework;
 using System.Reflection;
+using NUnit.Framework;
 
 namespace SIL.CoreImpl.Scripture
 {

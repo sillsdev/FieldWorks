@@ -1683,12 +1683,6 @@ namespace SIL.FieldWorks.FDO
 		/// <returns></returns>
 		string GetWsString();
 
-		/// <summary>
-		///
-		/// </summary>
-		/// <returns></returns>
-		string ItemsTypeName();
-
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Using the possibility name and writing system, find a possibility, or create a new
@@ -1742,12 +1736,6 @@ namespace SIL.FieldWorks.FDO
 		/// 2. null, if no move was needed.
 		/// </returns>
 		ICmObject MoveIfNeeded(ICmPossibility possSrc);
-
-		/// <summary>
-		///
-		/// </summary>
-		/// <returns></returns>
-		string ItemTypeName();
 
 		/// <summary>
 		/// Abbreviation and Name with hyphen between.

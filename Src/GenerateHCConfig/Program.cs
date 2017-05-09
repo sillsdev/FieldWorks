@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
@@ -27,7 +26,7 @@ namespace GenerateHCConfig
 				return 1;
 			}
 
-			RegistryHelper.CompanyName = DirectoryFinder.CompanyName;
+			RegistryHelper.CompanyName = "SIL";
 			Icu.InitIcuDataDir();
 			var synchronizeInvoke = new SingleThreadedSynchronizeInvoke();
 			var spanFactory = new ShapeSpanFactory();

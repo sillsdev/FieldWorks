@@ -70,6 +70,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Downloads\SIL.TestUtilities.dll</HintPath>
     </Reference>
+    <Reference Include="SilUtilsTests, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Output\Debug\SilUtilsTests.dll</HintPath>
+    </Reference>
     <Reference Include="ViewsInterfaces, Version=5.1.0.19833, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\ViewsInterfaces.dll</HintPath>

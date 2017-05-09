@@ -6,6 +6,7 @@ using NUnit.Framework;
 using SIL.CoreImpl.Attributes;
 using SIL.FieldWorks.Common.FwUtils.Attributes;
 using SIL.TestUtilities;
+using SIL.Utils.Attributes;
 
 // This file is for test fixtures for UI related projects, i.e. projects that do
 // reference System.Windows.Forms et al.

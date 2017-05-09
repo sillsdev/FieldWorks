@@ -4,6 +4,7 @@
 
 using SIL.CoreImpl.Attributes;
 using SIL.TestUtilities;
+using SIL.Utils.Attributes;
 
 // This file is for test fixtures for UI independent projects, i.e. projects that don't
 // reference System.Windows.Forms et al.

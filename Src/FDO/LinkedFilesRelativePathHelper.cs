@@ -1,10 +1,9 @@
-// Copyright (c) 2013-2014 SIL International
+// Copyright (c) 2013-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.IO;
-using SIL.CoreImpl;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO
@@ -34,12 +33,11 @@ namespace SIL.FieldWorks.FDO
 		/// <param name="relativePath"></param>
 		/// <param name="projectLinkedFilesPath"></param>
 		/// <returns></returns>
-		public static String GetFullFilePathFromRelativeLFPath(string relativePath, string projectLinkedFilesPath)
+		public static string GetFullFilePathFromRelativeLFPath(string relativePath, string projectLinkedFilesPath)
 		{
-			String fullfilePath = null;
-			fullfilePath = GetFullPathForRelativePath(relativePath, ksLFrelPath, projectLinkedFilesPath);
+			string fullfilePath = GetFullPathForRelativePath(relativePath, ksLFrelPath, projectLinkedFilesPath);
 
-			if (String.IsNullOrEmpty(fullfilePath))
+			if (string.IsNullOrEmpty(fullfilePath))
 				return null;
 			return FixPathSlashesIfNeeded(fullfilePath);
 		}
@@ -158,26 +156,25 @@ namespace SIL.FieldWorks.FDO
 		/// <param name="relativePath"></param>
 		/// <param name="projectPath"></param>
 		/// <returns></returns>
-		public static String GetLinkedFilesFullPathFromRelativePath(string projectsPath, string relativePath, String projectPath)
+		public static string GetLinkedFilesFullPathFromRelativePath(string projectsPath, string relativePath, string projectPath)
 		{
-			String fullPath = null;
-			fullPath = GetFullPathForRelativePath(relativePath, ksProjectRelPath, projectPath);
+			string fullPath = GetFullPathForRelativePath(relativePath, ksProjectRelPath, projectPath);
 
-			if (String.IsNullOrEmpty(fullPath))
-				fullPath = GetFullPathForRelativePath(relativePath, ksProjectsRelPath,
-													projectsPath);
-			if (String.IsNullOrEmpty(fullPath))
-				fullPath = GetFullPathForRelativePath(relativePath, ksCommonAppDataRelPath,
-													DirectoryFinder.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
-			if (String.IsNullOrEmpty(fullPath))
+			if (string.IsNullOrEmpty(fullPath))
+				fullPath = GetFullPathForRelativePath(relativePath, ksProjectsRelPath, projectsPath);
+			if (string.IsNullOrEmpty(fullPath))
+				fullPath = GetFullPathForRelativePath(relativePath, ksCommonAppDataRelPath, FdoFileHelper.CommonApplicationData);
+			if (string.IsNullOrEmpty(fullPath))
+			{
 				fullPath = GetFullPathForRelativePath(relativePath, ksMyDocsRelPath,
-													DirectoryFinder.GetFolderPath(Environment.SpecialFolder.MyDocuments));
-			if (String.IsNullOrEmpty(fullPath))
+					Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments));
+			}
+			if (string.IsNullOrEmpty(fullPath))
 				return FixPathSlashesIfNeeded(relativePath);
 			return FixPathSlashesIfNeeded(fullPath);
 		}
 
-		private static String GetFullPathForRelativePath(String relativePath, String relativePart, String fullPathReplacement)
+		private static string GetFullPathForRelativePath(string relativePath, string relativePart, string fullPathReplacement)
 		{
 			if (relativePath.StartsWith(relativePart))
 			{
@@ -238,19 +235,18 @@ namespace SIL.FieldWorks.FDO
 			// of projects under the Projects folder. That would be a good reason to put it in
 			// the projects folder common to all projects.
 			relativePath = GetRelativePathIfExists(ksProjectsRelPath, linkedFilesPathLowercaseRoot, projectsPath);
-			if (!String.IsNullOrEmpty(relativePath))
+			if (!string.IsNullOrEmpty(relativePath))
 				return FixPathSlashesIfNeeded(relativePath);
 
 			// Case where the user has the LinkedFiles folder in a shared folder.
-			relativePath = GetRelativePathIfExists(ksCommonAppDataRelPath,
-													linkedFilesPathLowercaseRoot, DirectoryFinder.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
+			relativePath = GetRelativePathIfExists(ksCommonAppDataRelPath, linkedFilesPathLowercaseRoot,
+				FdoFileHelper.CommonApplicationData);
 			if (!string.IsNullOrEmpty(relativePath))
 				return FixPathSlashesIfNeeded(relativePath);
 
 			// Case where the user has the LinkedFiles folder in their MyDocuments folder
-			relativePath = GetRelativePathIfExists(ksMyDocsRelPath,
-													linkedFilesPathLowercaseRoot,
-													DirectoryFinder.GetFolderPath(Environment.SpecialFolder.MyDocuments));
+			relativePath = GetRelativePathIfExists(ksMyDocsRelPath, linkedFilesPathLowercaseRoot,
+				Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments));
 			if (!string.IsNullOrEmpty(relativePath))
 				return FixPathSlashesIfNeeded(relativePath);
 
@@ -277,8 +273,8 @@ namespace SIL.FieldWorks.FDO
 			try
 			{
 				var rootOfPath = Path.GetPathRoot(path);
-				return rootOfPath.ToLowerInvariant() +
-						path.Substring(rootOfPath.Length, path.Length - rootOfPath.Length);
+				return rootOfPath.ToLowerInvariant()
+					+ path.Substring(rootOfPath.Length, path.Length - rootOfPath.Length);
 			}
 			catch (ArgumentException e)
 			{

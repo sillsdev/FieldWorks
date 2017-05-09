@@ -11,7 +11,7 @@ using System.Text;
 using System.Xml;
 using NUnit.Framework;
 
-namespace SIL.CoreImpl
+namespace SIL.FieldWorks.Common.FwUtils
 {
 	/// <summary>
 	/// Summary description for StringTableTests.
@@ -22,13 +22,15 @@ namespace SIL.CoreImpl
 		private string m_tempFolder;
 		private StringTable m_table;
 
+		/// <summary />
 		[TestFixtureSetUp]
 		public void FixtureInit()
 		{
-			m_tempFolder = CreateTestResourceFiles(typeof(Properties.TestResources), "food");
+			m_tempFolder = CreateTestResourceFiles(typeof(Properties.Resources), "food");
 			m_table = new StringTable(Path.Combine(m_tempFolder, "fruit/citrus"));
 		}
 
+		/// <summary />
 		[TestFixtureTearDown]
 		public void FixtureCleanup()
 		{
@@ -41,11 +43,14 @@ namespace SIL.CoreImpl
 			}
 		}
 
+		/// <summary />
 		[Test]
 		public void InBaseFile()
 		{
 			Assert.AreEqual("orng", m_table.GetString("orange"));
 		}
+
+		/// <summary />
 		[Test]
 		public void InParentFile()
 		{
@@ -53,6 +58,7 @@ namespace SIL.CoreImpl
 			Assert.AreEqual("ppy", m_table.GetString("papaya"));
 		}
 
+		/// <summary />
 		[Test]
 		public void OmitTxtAttribute()
 		{
@@ -62,13 +68,14 @@ namespace SIL.CoreImpl
 			Assert.AreEqual("Banana", m_table.GetString("Banana"));
 		}
 
-
+		/// <summary />
 		[Test]
 		public void WithPath()
 		{
 			Assert.AreEqual(m_table.GetString("MyPineapple", "InPng/InMyYard"), "pnppl");
 		}
 
+		/// <summary />
 		[Test]
 		public void WithXPathFragment()
 		{
@@ -79,6 +86,7 @@ namespace SIL.CoreImpl
 			Assert.AreEqual(m_table.GetStringWithXPath("MyPineapple", "/group/"), "pnppl");
 		}
 
+		/// <summary />
 		[Test]
 		public void WithRootXPathFragment()
 		{
@@ -86,7 +94,7 @@ namespace SIL.CoreImpl
 			Assert.AreEqual(m_table.GetString("MyPineapple", "InPng/InMyYard"), "pnppl");
 		}
 
-
+		/// <summary />
 		[Test]
 		public void StringListXmlNode()
 		{
@@ -98,6 +106,7 @@ namespace SIL.CoreImpl
 			Assert.AreEqual(strings[1], "pnppl");
 		}
 
+		/// <summary />
 		public static string CreateTestResourceFiles(Type resourcesType, string folderName)
 		{
 			string folderPath = Path.Combine(Path.GetTempPath(), folderName);

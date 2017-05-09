@@ -84,6 +84,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\SilUtils.dll</HintPath>
     </Reference>
+    <Reference Include="SilUtilsTests, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Output\Debug\SilUtilsTests.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Windows.Forms" />

@@ -10,7 +10,7 @@ using System.Xml;
 using SIL.Utils;
 using SIL.Xml;
 
-namespace SIL.CoreImpl
+namespace SIL.FieldWorks.Common.FwUtils
 {
 	/// <summary>
 	/// Get strings according to the current culture from one or more XML files

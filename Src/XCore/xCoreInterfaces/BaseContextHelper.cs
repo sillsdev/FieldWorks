@@ -8,7 +8,7 @@ using System.IO;
 using System.Xml;
 using SIL.Utils;
 using System.Windows.Forms;
-using SIL.CoreImpl;
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace XCore
 {

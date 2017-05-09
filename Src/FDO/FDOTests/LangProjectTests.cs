@@ -180,19 +180,19 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			Assert.True(linkedFilesFullPath.Equals(outputLinkedFilesFullPath));
 
 			//test when linked files is in the CommonApplicationData shared folder
-			linkedFilesFullPath = Path.Combine(DirectoryFinder.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "LinkedFiles");
+			linkedFilesFullPath = Path.Combine(FdoFileHelper.CommonApplicationData, "LinkedFiles");
 			Cache.LanguageProject.LinkedFilesRootDir = linkedFilesFullPath;
 			outputLinkedFilesFullPath = Cache.LanguageProject.LinkedFilesRootDir;
 			Assert.True(linkedFilesFullPath.Equals(outputLinkedFilesFullPath));
 
 			//test when the linked files is in the User's MyDocuments folder
-			linkedFilesFullPath = Path.Combine(DirectoryFinder.GetFolderPath(Environment.SpecialFolder.MyDocuments), "LinkedFiles");
+			linkedFilesFullPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "LinkedFiles");
 			Cache.LanguageProject.LinkedFilesRootDir = linkedFilesFullPath;
 			outputLinkedFilesFullPath = Cache.LanguageProject.LinkedFilesRootDir;
 			Assert.True(linkedFilesFullPath.Equals(outputLinkedFilesFullPath));
 
 			//test when the linked files is in some other location and therefore is just stored as an absolute full path.
-			linkedFilesFullPath = Path.Combine(DirectoryFinder.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "LinkedFiles");
+			linkedFilesFullPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "LinkedFiles");
 			Cache.LanguageProject.LinkedFilesRootDir = linkedFilesFullPath;
 			outputLinkedFilesFullPath = Cache.LanguageProject.LinkedFilesRootDir;
 			Assert.True(linkedFilesFullPath.Equals(outputLinkedFilesFullPath));

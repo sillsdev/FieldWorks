@@ -66,10 +66,6 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CoreImpl, Version=8.0.6.17377, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\CoreImpl.dll</HintPath>
-    </Reference>
     <Reference Include="FDO, Version=6.9.4.25660, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\FDO.dll</HintPath>
@@ -77,10 +73,6 @@
     <Reference Include="FwControls, Version=7.0.1.27489, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\Output\Debug\FwControls.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
-    </Reference>
-    <Reference Include="FwResources, Version=6.9.4.25640, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\FwResources.dll</HintPath>
     </Reference>
     <Reference Include="FwUtils, Version=6.9.4.25643, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -101,10 +93,7 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
-    <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\CommonAssemblyInfo.cs">

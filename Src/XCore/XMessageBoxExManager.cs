@@ -324,7 +324,7 @@ namespace XCore
 
 		private string SettingsPath()
 		{
-			string path = DirectoryFinder.UserAppDataFolder(m_appName);
+			string path = FwDirectoryFinder.UserAppDataFolder(m_appName);
 			Directory.CreateDirectory(path);
 			path = Path.Combine(path, "DialogResponses.xml");
 			return path;

@@ -1,15 +1,12 @@
-// Copyright (c) 2010-2013 SIL International
+// Copyright (c) 2010-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: VersionInfoProvider.cs
-// Responsibility: FW Team
 
 using System;
 using System.Linq;
 using System.Reflection;
 
-namespace SIL.CoreImpl
+namespace SIL.FieldWorks.Common.FwUtils
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
@@ -197,9 +194,9 @@ namespace SIL.CoreImpl
 					}
 				}
 #if DEBUG
-				return string.Format(CoreImplStrings.kstidAppVersionFmt, appVersion, productDate, "(Debug version)");
+				return string.Format(FwUtilsStrings.kstidAppVersionFmt, appVersion, productDate, "(Debug version)");
 #else
-				return string.Format(CoreImplStrings.kstidAppVersionFmt, appVersion, productDate, "");
+				return string.Format(FwUtilsStrings.kstidAppVersionFmt, appVersion, productDate, "");
 #endif
 			}
 		}
@@ -219,7 +216,7 @@ namespace SIL.CoreImpl
 				string version = (attributes != null && attributes.Length > 0) ?
 					((AssemblyInformationalVersionAttribute)attributes[0]).InformationalVersion :
 					InternalProductVersion;
-				return string.Format(CoreImplStrings.kstidMajorVersionFmt, version);
+				return string.Format(FwUtilsStrings.kstidMajorVersionFmt, version);
 			}
 		}
 
@@ -257,21 +254,9 @@ namespace SIL.CoreImpl
 		/// <summary>
 		/// Gets a description of the software license
 		/// </summary>
-		public string LicenseString
-		{
-			get
-			{
-				return CoreImplStrings.kstidLicense;
-			}
-		}
+		public string LicenseString => FwUtilsStrings.kstidLicense;
 
 		/// <summary/>
-		public string LicenseURL
-		{
-			get
-			{
-				return CoreImplStrings.kstidLicenseURL;
-			}
-		}
+		public string LicenseURL => FwUtilsStrings.kstidLicenseURL;
 	}
 }

@@ -66,6 +66,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Downloads\SIL.TestUtilities.dll</HintPath>
     </Reference>
+    <Reference Include="SilUtilsTests, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Debug\SilUtilsTests.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="FwUtils, Version=6.9.3.0, Culture=neutral, PublicKeyToken=null">

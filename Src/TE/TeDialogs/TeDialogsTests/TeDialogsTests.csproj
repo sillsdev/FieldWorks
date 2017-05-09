@@ -124,6 +124,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\SilUtils.dll</HintPath>
     </Reference>
+    <Reference Include="SilUtilsTests, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Output\Debug\SilUtilsTests.dll</HintPath>
+    </Reference>
     <Reference Include="SimpleRootSite, Version=7.3.0.26021, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\SimpleRootSite.dll</HintPath>
@@ -152,10 +156,6 @@
     <Reference Include="RootSite">
       <Name>RootSite</Name>
       <HintPath>..\..\..\..\Output\Debug\RootSite.dll</HintPath>
-    </Reference>
-    <Reference Include="ScrUtilsInterfaces">
-      <Name>ScrUtilsInterfaces</Name>
-      <HintPath>..\..\..\..\Output\Debug\ScrUtilsInterfaces.dll</HintPath>
     </Reference>
     <Reference Include="System">
       <Name>System</Name>

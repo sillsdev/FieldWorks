@@ -46,7 +46,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		/// </summary>
 		public FwLexiconPlugin()
 		{
-			RegistryHelper.CompanyName = DirectoryFinder.CompanyName;
+			RegistryHelper.CompanyName = "SIL";
 			RegistryHelper.ProductName = "FieldWorks";
 
 			// setup necessary environment variables on Linux
@@ -223,7 +223,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 				{
 					return LexicalProjectValidationResult.AccessDenied;
 				}
-				catch (StartupException)
+				catch (FdoInitializationException)
 				{
 					return LexicalProjectValidationResult.UnknownError;
 				}

@@ -1,10 +1,6 @@
-// Copyright (c) 2008-2013 SIL International
+// Copyright (c) 2008-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: DomainDataByFlidDecoratorBase.cs
-// Responsibility: Randy Regnier
-// Last reviewed: never
 
 using System;
 using System.Collections.Generic;
@@ -13,7 +9,6 @@ using System.Diagnostics;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO.Application
 {
@@ -25,7 +20,7 @@ namespace SIL.FieldWorks.FDO.Application
 	/// the DomainDataByFlid (ISilDataAccess) for regular data access.
 	/// </summary>
 	[ComVisible(true)]
-	public abstract class DomainDataByFlidDecoratorBase : SilDataAccessManagedBase, IVwNotifyChange, IRefreshable, ISuspendRefresh
+	public abstract class DomainDataByFlidDecoratorBase : SilDataAccessManagedBase, IVwNotifyChange
 	{
 		private readonly ISilDataAccessManaged m_domainDataByFlid;
 
@@ -45,7 +40,7 @@ namespace SIL.FieldWorks.FDO.Application
 		/// </remarks>
 		protected DomainDataByFlidDecoratorBase(ISilDataAccessManaged domainDataByFlid)
 		{
-			if (domainDataByFlid == null) throw new ArgumentNullException("domainDataByFlid");
+			if (domainDataByFlid == null) throw new ArgumentNullException(nameof(domainDataByFlid));
 
 			m_domainDataByFlid = domainDataByFlid;
 		}
@@ -53,10 +48,7 @@ namespace SIL.FieldWorks.FDO.Application
 		/// <summary>
 		/// Get the SDA which this one decorates.
 		/// </summary>
-		public ISilDataAccessManaged BaseSda
-		{
-			get { return m_domainDataByFlid; }
-		}
+		public ISilDataAccessManaged BaseSda => m_domainDataByFlid;
 
 		#region ISilDataAccess implementation
 
@@ -1105,8 +1097,7 @@ namespace SIL.FieldWorks.FDO.Application
 		public virtual void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
 		{
 			var noteChange = m_domainDataByFlid as IVwNotifyChange;
-			if (noteChange != null)
-				noteChange.PropChanged(hvo, tag, ivMin, cvIns, cvDel);
+			noteChange?.PropChanged(hvo, tag, ivMin, cvIns, cvDel);
 		}
 
 		/// <summary>
@@ -1114,8 +1105,8 @@ namespace SIL.FieldWorks.FDO.Application
 		/// </summary>
 		public virtual void Refresh()
 		{
-			if (BaseSda is IRefreshable)
-				((IRefreshable)BaseSda).Refresh();
+			var decorator = m_domainDataByFlid as DomainDataByFlidDecoratorBase;
+			decorator?.Refresh();
 		}
 
 		/// <summary>
@@ -1123,8 +1114,8 @@ namespace SIL.FieldWorks.FDO.Application
 		/// </summary>
 		public virtual void SuspendRefresh()
 		{
-			if (BaseSda is ISuspendRefresh)
-				((ISuspendRefresh)BaseSda).SuspendRefresh();
+			var decorator = m_domainDataByFlid as DomainDataByFlidDecoratorBase;
+			decorator?.SuspendRefresh();
 		}
 
 		/// <summary>
@@ -1132,8 +1123,8 @@ namespace SIL.FieldWorks.FDO.Application
 		/// </summary>
 		public virtual void ResumeRefresh()
 		{
-			if (BaseSda is ISuspendRefresh)
-				((ISuspendRefresh)BaseSda).ResumeRefresh();
+			var decorator = m_domainDataByFlid as DomainDataByFlidDecoratorBase;
+			decorator?.ResumeRefresh();
 		}
 	}
 

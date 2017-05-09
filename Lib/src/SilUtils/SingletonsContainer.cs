@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 
-namespace SIL.CoreImpl
+namespace SIL.Utils
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
@@ -66,7 +66,7 @@ namespace SIL.CoreImpl
 
 			/// --------------------------------------------------------------------------------
 			/// <summary>Adds a singleton with the specified key.</summary>
-			/// <exception cref="ArgumentException">A singleton with the same name already
+			/// <exception cref="System.ArgumentException">A singleton with the same name already
 			/// exists in the container.</exception>
 			/// --------------------------------------------------------------------------------
 			public void Add(string key, IDisposable singleton)
@@ -222,7 +222,7 @@ namespace SIL.CoreImpl
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>Adds a singleton with the specified key.</summary>
-		/// <exception cref="ArgumentException">A singleton with the same name already exists in
+		/// <exception cref="System.ArgumentException">A singleton with the same name already exists in
 		/// the container.</exception>
 		/// ------------------------------------------------------------------------------------
 		public static void Add(string key, IDisposable singleton)

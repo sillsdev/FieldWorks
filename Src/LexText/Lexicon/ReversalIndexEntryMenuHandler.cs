@@ -12,7 +12,7 @@ using XCore;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.LexText.Controls;
-using SIL.CoreImpl;
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {

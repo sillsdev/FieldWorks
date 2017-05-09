@@ -198,6 +198,9 @@
     <Compile Include="ShowHelp.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="StartupException.cs" />
+    <Compile Include="StringTable.cs" />
+    <Compile Include="VersionInfoProvider.cs" />
     <Compile Include="XmlSerializationHelper.cs" />
     <EmbeddedResource Include="FwUtilsStrings.resx">
       <SubType>Designer</SubType>

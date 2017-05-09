@@ -107,10 +107,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Output\Debug\CoreImplTests.dll</HintPath>
     </Reference>
-    <Reference Include="SilUtils, Version=9.0.0.25850, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Output\Debug\SilUtils.dll</HintPath>
-    </Reference>
     <Reference Include="CoreImpl, Version=6.1.0.20700, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Output\Debug\CoreImpl.dll</HintPath>
@@ -154,6 +150,10 @@
     <Reference Include="SIL.WritingSystems, Version=2.6.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Downloads\SIL.WritingSystems.dll</HintPath>
+    </Reference>
+    <Reference Include="SilUtilsTests, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Output\Debug\SilUtilsTests.dll</HintPath>
     </Reference>
     <Reference Include="SimpleRootSite, Version=6.9.6.18915, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

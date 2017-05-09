@@ -1,14 +1,10 @@
-﻿// Copyright (c) 2010-2013 SIL International
+﻿// Copyright (c) 2010-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: BackupProjectSettings.cs
-// Responsibility: FW team
+
 using System;
 using System.IO;
-using SIL.CoreImpl;
 using SIL.FieldWorks.FDO.Infrastructure.Impl;
-using System.Reflection;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
@@ -20,7 +16,6 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 	public class BackupProjectSettings : BackupSettings
 	{
 		#region Constructors
-
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Constructor
@@ -28,11 +23,11 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 		/// <param name="cache">The cache.</param>
 		/// <param name="backupInfo">The backup info.</param>
 		/// <param name="destFolder">The destination folder.</param>
+		/// <param name="fwVersion">The FieldWorks version.</param>
 		/// ------------------------------------------------------------------------------------
-		public BackupProjectSettings(FdoCache cache, IBackupInfo backupInfo, string destFolder) :
-			this(Path.GetDirectoryName(cache.ProjectId.ProjectFolder), cache.ProjectId.Name,
-			cache.LanguageProject.LinkedFilesRootDir,
-			cache.ProjectId.Type, destFolder)
+		public BackupProjectSettings(FdoCache cache, IBackupInfo backupInfo, string destFolder, string fwVersion)
+			: this(Path.GetDirectoryName(cache.ProjectId.ProjectFolder), cache.ProjectId.Name, cache.LanguageProject.LinkedFilesRootDir,
+				  cache.ProjectId.Type, destFolder, fwVersion)
 		{
 			if (backupInfo != null)
 			{
@@ -55,15 +50,17 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 		/// <param name="linkedFilesPath">The linked files path.</param>
 		/// <param name="originalProjType">Type of the project before converting for backup.</param>
 		/// <param name="destFolder">The destination folder.</param>
+		/// <param name="fwVersion">The FieldWorks version.</param>
 		/// ------------------------------------------------------------------------------------
-		protected BackupProjectSettings(string projectsRootFolder, string projectName,
-			string linkedFilesPath, FDOBackendProviderType originalProjType, string destFolder) :
-			base(projectsRootFolder, linkedFilesPath)
+		protected BackupProjectSettings(string projectsRootFolder, string projectName, string linkedFilesPath,
+			FDOBackendProviderType originalProjType, string destFolder, string fwVersion)
+			: base(projectsRootFolder, linkedFilesPath)
 		{
 			ProjectName = projectName;
 			DbVersion = FDOBackendProvider.ModelVersion;
-			FwVersion = new VersionInfoProvider(Assembly.GetExecutingAssembly(), false).MajorVersion;
-			DatabaseFolder = (originalProjType == FDOBackendProviderType.kXML || originalProjType == FDOBackendProviderType.kSharedXML) ? ProjectPath : Path.GetTempPath();
+			FwVersion = fwVersion;
+			DatabaseFolder = (originalProjType == FDOBackendProviderType.kXML || originalProjType == FDOBackendProviderType.kSharedXML)
+				? ProjectPath : Path.GetTempPath();
 			DestinationFolder = destFolder;
 			BackupTime = DateTime.Now;
 		}

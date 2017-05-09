@@ -9,7 +9,6 @@ using System.Text;
 using System.Xml.Linq;
 
 using NUnit.Framework;
-using SIL.CoreImpl;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
 using SIL.FieldWorks.FDO.Infrastructure;
 
@@ -42,7 +41,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 		{
 			string storePath = Path.Combine(Path.GetTempPath(), FdoFileHelper.ksWritingSystemsDir);
 			PrepareStore(storePath);
-			string globalStorePath = DirectoryFinder.OldGlobalWritingSystemStoreDirectory;
+			string globalStorePath = FdoFileHelper.OldGlobalWritingSystemStoreDirectory;
 			PrepareStore(globalStorePath);
 
 			var dtos = DataMigrationTestServices.ParseProjectFile("DataMigration7000019Tests.xml");

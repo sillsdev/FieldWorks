@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,7 +6,6 @@ using System;
 using System.IO;
 using System.Reflection;
 using Microsoft.Win32;
-using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
 
@@ -21,6 +20,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		private const string RootCodeDir = "RootCodeDir";
 		private const string Projects = "Projects";
 		private const string Templates = "Templates";
+		private const string SilDir = "SIL";
 		private const string FieldWorksDir = "FieldWorks";
 
 		public static string ProjectsDirectory
@@ -45,12 +45,12 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 
 		public static string DataDirectory
 		{
-			get { return GetDirectory(RootDataDir, DirectoryFinder.CommonAppDataFolder(FieldWorksDir)); }
+			get { return GetDirectory(RootDataDir, Path.Combine(FdoFileHelper.CommonApplicationData, SilDir, FieldWorksDir)); }
 		}
 
 		public static string DataDirectoryLocalMachine
 		{
-			get { return GetDirectoryLocalMachine(RootDataDir, DirectoryFinder.CommonAppDataFolder(FieldWorksDir)); }
+			get { return GetDirectoryLocalMachine(RootDataDir, Path.Combine(FdoFileHelper.CommonApplicationData, SilDir, FieldWorksDir)); }
 		}
 
 		public static string CodeDirectory

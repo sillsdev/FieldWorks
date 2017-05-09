@@ -76,8 +76,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Attributes\CleanupSingletonsAttribute.cs" />
     <Compile Include="DummyFileMaker.cs" />
+    <Compile Include="RecentItemsCacheTests.cs" />
     <Compile Include="RomanNumeralsTests.cs" />
+    <Compile Include="SingletonsContainerTests.cs" />
     <Compile Include="TestSmallDictionary.cs" />
     <None Include="App.config" />
     <Compile Include="BagTests.cs" />

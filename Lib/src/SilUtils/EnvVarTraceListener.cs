@@ -6,7 +6,7 @@ using System;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 
-namespace SIL.CoreImpl
+namespace SIL.Utils
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>

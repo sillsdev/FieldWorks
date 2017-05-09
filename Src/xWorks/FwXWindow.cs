@@ -1657,7 +1657,7 @@ namespace SIL.FieldWorks.XWorks
 		public bool RefreshDisplay()
 		{
 			Cache.ServiceLocator.GetInstance<IUndoStackManager>().Refresh();
-			var cacheCollector = new HashSet<IRefreshCache>();
+			var cacheCollector = new HashSet<DomainDataByFlidDecoratorBase>();
 			var clerkCollector = new HashSet<RecordClerk>();
 			CollectCachesToRefresh(this, cacheCollector, clerkCollector);
 			foreach (var cache in cacheCollector)
@@ -1669,11 +1669,8 @@ namespace SIL.FieldWorks.XWorks
 				// In many cases ReconstructViews, which calls RefreshViews, will also try to Refresh the same caches.
 				// Not only is this a waste, but it may wipe out data that ReloadIfNeeded has carefully re-created.
 				// So suspend refresh for the caches we have already refreshed.
-				foreach (var cache in cacheCollector)
-				{
-					if (cache is ISuspendRefresh)
-						((ISuspendRefresh)cache).SuspendRefresh();
-				}
+				foreach (DomainDataByFlidDecoratorBase cache in cacheCollector)
+					cache.SuspendRefresh();
 				// Don't be lured into simplifying this to ReconstructViews(this). That has the loop,
 				// but also calls this method again, making a stack overflow.
 				foreach (Control c in Controls)
@@ -1681,11 +1678,8 @@ namespace SIL.FieldWorks.XWorks
 			}
 			finally
 			{
-				foreach (var cache in cacheCollector)
-				{
-					if (cache is ISuspendRefresh)
-						((ISuspendRefresh)cache).ResumeRefresh();
-				}
+				foreach (DomainDataByFlidDecoratorBase cache in cacheCollector)
+					cache.ResumeRefresh();
 			}
 			return true;
 		}
@@ -1695,24 +1689,29 @@ namespace SIL.FieldWorks.XWorks
 		/// We currently handle controls that are rootsites, and check their own SDAs as well
 		/// as any base SDAs that those SDAs wrap.
 		/// </summary>
-		private void CollectCachesToRefresh(Control c, HashSet<IRefreshCache> cacheCollector, HashSet<RecordClerk> clerkCollector)
+		private void CollectCachesToRefresh(Control c, HashSet<DomainDataByFlidDecoratorBase> cacheCollector,
+			HashSet<RecordClerk> clerkCollector)
 		{
 			var rootSite = c as IVwRootSite;
-			if (rootSite != null && rootSite.RootBox != null)
+			if (rootSite?.RootBox != null)
 			{
-				var sda = rootSite.RootBox.DataAccess;
+				ISilDataAccess sda = rootSite.RootBox.DataAccess;
 				while (sda != null)
 				{
-					if (sda is IRefreshCache)
-						cacheCollector.Add((IRefreshCache)sda);
-					if (sda is DomainDataByFlidDecoratorBase)
-						sda = ((DomainDataByFlidDecoratorBase)sda).BaseSda;
+					var cache = sda as DomainDataByFlidDecoratorBase;
+					if (cache != null)
+					{
+						cacheCollector.Add(cache);
+						sda = cache.BaseSda;
+					}
 					else
+					{
 						break;
+					}
 				}
 			}
 			var clerkView = c as XWorksViewBase;
-			if (clerkView != null && clerkView.ExistingClerk != null)
+			if (clerkView?.ExistingClerk != null)
 				clerkCollector.Add(clerkView.ExistingClerk);
 
 			foreach (Control child in c.Controls)
@@ -1776,7 +1775,7 @@ namespace SIL.FieldWorks.XWorks
 			bool canRedo = (ah.RedoableSequenceCount > 0);
 			display.Enabled = canRedo;
 			string sRedo = canRedo ? ah.GetRedoText() : xWorksStrings.Redo;
-			display.Text = (sRedo == null || sRedo == "") ? xWorksStrings.Redo : sRedo;
+			display.Text = string.IsNullOrEmpty(sRedo) ? xWorksStrings.Redo : sRedo;
 			return true;
 		}
 
@@ -2515,14 +2514,5 @@ namespace SIL.FieldWorks.XWorks
 		{
 			get { return ((int)ColleaguePriority.Medium) - 1; }
 		}
-	}
-
-	/// <summary>
-	/// This interface marks a cache that can do something meaningful in the way of Refresh
-	/// (that is, it doesn't just contain raw data).
-	/// </summary>
-	internal interface IRefreshCache : IRefreshable
-	{
-		new void Refresh();
 	}
 }

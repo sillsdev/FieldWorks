@@ -1,16 +1,16 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using System.Xml;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;

@@ -152,7 +152,13 @@
     <Compile Include="DisposableObjectsSetTests.cs" />
     <Compile Include="IVwCacheDaTests.cs" />
     <Compile Include="LayoutKeyUtilsTests.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="SimpleLoggerTests.cs" />
+    <Compile Include="StringTableTests.cs" />
     <Compile Include="TempSFFileMaker.cs" />
     <Compile Include="TempSFFileMakerTests.cs" />
     <Compile Include="TestBaseForTestsThatCreateTempFilesBasedOnResources.cs" />
@@ -181,6 +187,14 @@
       <Link>AssemblyInfoForTests.cs</Link>
     </Compile>
     <Compile Include="ManagedPictureFactoryTests.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="food\fruit\citrus\strings-en.xml" />
+    <EmbeddedResource Include="food\fruit\strings-en.xml" />
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

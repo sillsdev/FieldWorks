@@ -103,10 +103,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Downloads\SIL.TestUtilities.dll</HintPath>
     </Reference>
-    <Reference Include="SilUtils, Version=9.0.0.30004, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Output\Debug\SilUtils.dll</HintPath>
-    </Reference>
     <Reference Include="FDO">
       <Name>FDO</Name>
       <HintPath>..\..\..\..\..\Output\Debug\FDO.dll</HintPath>
@@ -122,6 +118,10 @@
     <Reference Include="nunit.framework">
       <Name>nunit.framework</Name>
       <HintPath>..\..\..\..\..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="SilUtilsTests, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Output\Debug\SilUtilsTests.dll</HintPath>
     </Reference>
     <Reference Include="System">
       <Name>System</Name>

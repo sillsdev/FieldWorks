@@ -1433,25 +1433,15 @@ namespace SIL.FieldWorks.XWorks
 			var realHolder = (ToolTipHolder)holder;
 			if (m_list.IsCurrentObjectValid() && realHolder.ToolTip.Contains("{0}"))
 			{
-				realHolder.ToolTip = String.Format(realHolder.ToolTip, GetTypeNameForUi(m_list.CurrentObject));
+				realHolder.ToolTip = string.Format(realHolder.ToolTip, GetTypeNameForUi(m_list.CurrentObject));
 			}
 			return true;
 		}
 
 		private string GetTypeNameForUi(ICmObject obj)
 		{
-			if (obj is ICmPossibility)
-				return (obj as ICmPossibility).ItemTypeName();
-			IFsFeatureSystem featsys = obj.OwnerOfClass(FsFeatureSystemTags.kClassId) as IFsFeatureSystem;
-			if (featsys != null)
-			{
-				if (featsys.OwningFlid == LangProjectTags.kflidPhFeatureSystem)
-				{
-					string sClass = StringTable.Table.GetString(obj.ClassName, "ClassNames");
-					return StringTable.Table.GetString(sClass + "-Phonological", "AlternativeTypeNames");
-				}
-			}
-			return StringTable.Table.GetString(obj.ClassName, "ClassNames");
+			using (var uiObj = CmObjectUi.MakeUi(obj))
+				return uiObj.DisplayNameOfClass;
 		}
 
 		private bool ShouldNotHandleDeletionMessage

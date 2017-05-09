@@ -1,10 +1,7 @@
-// Copyright (c) 2009-2013 SIL International
+// Copyright (c) 2009-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ServiceLocatorFactory.cs
-// Responsibility: Randy Regnier
-// Last reviewed: never
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -19,7 +16,6 @@ using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FDO.Infrastructure.Impl;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
-using SIL.Utils;
 using StructureMap;
 using StructureMap.Configuration.DSL;
 using StructureMap.Pipeline;
@@ -31,7 +27,7 @@ namespace SIL.FieldWorks.FDO.IOC
 	/// Factory for hard-wired FDO Common Service Locator.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	internal sealed partial class FdoServiceLocatorFactory : IServiceLocatorBootstrapper
+	internal sealed partial class FdoServiceLocatorFactory
 	{
 		private readonly FDOBackendProviderType m_backendProviderType;
 		private readonly IFdoUI m_ui;
@@ -52,8 +48,6 @@ namespace SIL.FieldWorks.FDO.IOC
 			m_dirs = dirs;
 			m_settings = settings;
 		}
-
-		#region Implementation of IServiceLocatorBootstrapper
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -262,8 +256,6 @@ namespace SIL.FieldWorks.FDO.IOC
 
 			return new StructureMapServiceLocator(container);
 		}
-
-		#endregion
 	}
 
 	/// <summary>

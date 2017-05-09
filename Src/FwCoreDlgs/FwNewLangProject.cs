@@ -703,7 +703,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					m_fIgnoreClose = true;
 					DialogResult = DialogResult.Cancel;
 				}
-				else if (e is StartupException)
+				else if (e is FdoInitializationException)
 				{
 					MessageBox.Show(string.Format(FwCoreDlgs.kstidErrorNewDb, e.Message),
 						FwUtils.ksSuiteName);

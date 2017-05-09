@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;  //for ImageList
 using System.Xml;
-using SIL.CoreImpl;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.SilSidePane;
 
 namespace XCore

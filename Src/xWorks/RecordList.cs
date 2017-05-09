@@ -17,6 +17,7 @@ using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
+using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.DomainImpl;
@@ -262,7 +263,7 @@ namespace SIL.FieldWorks.XWorks
 			string owningFieldName = pssl.Name.BestAnalysisAlternative.Text;
 			if (pssl.OwningFlid != 0)
 				owningFieldName = VirtualListPublisher.MetaDataCache.GetFieldName(pssl.OwningFlid);
-			string itemTypeName = pssl.ItemsTypeName();
+			string itemTypeName = CmPossibilityUi.GetPossibilityDisplayName(pssl);
 			if (itemTypeName != "*" + owningFieldName + "*")
 				display.Text = "_" + itemTypeName;	// prepend a keyboard accelarator marker
 			string toolTipInsert = display.Text.Replace("_", string.Empty);	// strip any menu keyboard accelerator marker;
