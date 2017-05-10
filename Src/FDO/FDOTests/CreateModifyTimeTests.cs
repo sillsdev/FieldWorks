@@ -7,7 +7,7 @@
 
 using System;
 using NUnit.Framework;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Text;
 using SIL.FieldWorks.FDO.Infrastructure;
 
 namespace SIL.FieldWorks.FDO.FDOTests

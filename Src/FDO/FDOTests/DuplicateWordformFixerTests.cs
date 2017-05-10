@@ -4,7 +4,7 @@
 
 using System.Diagnostics.CodeAnalysis;
 using NUnit.Framework;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Text;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Utils;

@@ -12,8 +12,9 @@ using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Cellar;
 using SIL.CoreImpl.Scripture;
+using SIL.CoreImpl.Text;
 
 namespace SIL.FieldWorks.FDO.Application.Impl
 {

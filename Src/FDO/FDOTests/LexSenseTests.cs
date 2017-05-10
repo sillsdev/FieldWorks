@@ -11,7 +11,7 @@ using SIL.FieldWorks.FDO.Infrastructure;
 using System.Xml;
 using System.Collections.Generic;
 using System;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Text;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.FDO.FDOTests.LingTests

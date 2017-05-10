@@ -8,7 +8,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
-using SIL.CoreImpl;
+using SIL.CoreImpl.WritingSystems;
 using SIL.Keyboarding;
 using SIL.Lexicon;
 using SIL.WritingSystems;

@@ -11,7 +11,7 @@ using NUnit.Framework;
 using SIL.IO;
 using SIL.Linq;
 using SIL.TestUtilities;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Cellar;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;

@@ -9,7 +9,8 @@ using NUnit.Framework;
 using SIL.FieldWorks.CacheLight;
 using SIL.Utils;
 using System.Text;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Cellar;
+using SIL.CoreImpl.Text;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 

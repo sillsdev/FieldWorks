@@ -13,7 +13,7 @@ using System.Text;
 using System.Windows.Forms;
 using L10NSharp;
 using Microsoft.Win32;
-using SIL.CoreImpl;
+using SIL.CoreImpl.WritingSystems;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;

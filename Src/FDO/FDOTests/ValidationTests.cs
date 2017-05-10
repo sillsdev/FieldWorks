@@ -13,7 +13,7 @@ using System.Linq;
 using NUnit.Framework;
 using SIL.FieldWorks.FDO.DomainServices;
 using System.Collections.Generic;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Text;
 using SIL.FieldWorks.FDO.Infrastructure;
 
 namespace SIL.FieldWorks.FDO.FDOTests

@@ -11,7 +11,7 @@ using System.Windows.Forms;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Utils;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Text;
 
 namespace SIL.FieldWorks.LexText.Controls.MGA
 {

@@ -4,7 +4,7 @@
 
 using System;
 using System.Collections.Generic;
-using SIL.CoreImpl;
+using SIL.CoreImpl.WritingSystems;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.XWorks

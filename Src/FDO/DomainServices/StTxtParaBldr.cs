@@ -11,7 +11,7 @@
 
 using System;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Text;
 
 namespace SIL.FieldWorks.FDO.DomainServices
 {

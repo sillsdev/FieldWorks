@@ -24,9 +24,10 @@ using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.Common.FwUtils;
 using XCore;
 using SIL.FieldWorks.FDO.Application;
-using SIL.CoreImpl;
 using SIL.FieldWorks.Common.RootSites;
 using SilEncConverters40;
+using SIL.CoreImpl.Cellar;
+using SIL.CoreImpl.Text;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.Common.Controls

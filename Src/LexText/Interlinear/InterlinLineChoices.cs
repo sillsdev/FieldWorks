@@ -5,7 +5,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FdoUi;
@@ -14,6 +13,9 @@ using SIL.Utils;
 using System.Drawing;
 using System.Diagnostics;
 using System.Text;
+using SIL.CoreImpl.Cellar;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 

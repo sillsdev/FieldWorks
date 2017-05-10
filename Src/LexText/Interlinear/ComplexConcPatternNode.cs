@@ -5,8 +5,8 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using SIL.CoreImpl;
 using SIL.Collections;
+using SIL.CoreImpl.Text;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.Machine.Annotations;

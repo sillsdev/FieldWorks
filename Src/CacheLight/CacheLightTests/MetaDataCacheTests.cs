@@ -6,10 +6,10 @@ using System;
 using System.Xml;
 using System.IO;
 using NUnit.Framework;
-using SIL.CoreImpl;
 using SIL.FieldWorks.CacheLight;
 using SIL.Utils;
 using System.Text;
+using SIL.CoreImpl.Cellar;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.CacheLightTests

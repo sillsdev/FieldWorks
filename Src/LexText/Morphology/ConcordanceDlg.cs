@@ -20,7 +20,7 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FdoUi;
 using XCore;
 using SIL.FieldWorks.Common.Controls;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Text;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor

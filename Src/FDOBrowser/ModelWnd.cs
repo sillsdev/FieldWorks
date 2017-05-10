@@ -7,12 +7,12 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 using WeifenLuo.WinFormsUI.Docking;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
 using System.Diagnostics.CodeAnalysis;
+using SIL.CoreImpl.Cellar;
 
 namespace FDOBrowser
 {

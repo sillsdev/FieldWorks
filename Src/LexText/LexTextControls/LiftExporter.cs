@@ -13,7 +13,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Xml;
-using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.DomainServices;
@@ -22,6 +21,9 @@ using SIL.Utils;
 using System.Text;
 using SIL.FieldWorks.FDO.Application.ApplicationServices;
 using System.Windows.Forms;
+using SIL.CoreImpl.Cellar;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 

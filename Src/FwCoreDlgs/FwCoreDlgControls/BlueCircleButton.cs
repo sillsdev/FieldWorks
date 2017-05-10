@@ -6,7 +6,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using SIL.FieldWorks.Resources;
 
-namespace SIL.CoreImpl
+namespace SIL.FieldWorks.FwCoreDlgControls
 {
 	/// <summary>
 	/// This control simply draws the blue circle that FieldWorks often uses as an indication that a popup menu is available.

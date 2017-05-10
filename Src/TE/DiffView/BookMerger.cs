@@ -15,8 +15,8 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
 using System.Diagnostics;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.CoreImpl;
 using SIL.CoreImpl.Scripture;
+using SIL.CoreImpl.Text;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.TE

@@ -8,10 +8,11 @@ using System.Collections.Generic;
 using System.Text;
 using System.Diagnostics;
 using System.Linq;
-using SIL.CoreImpl;
 using SIL.CoreImpl.Scripture;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using ECInterfaces;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO.DomainServices

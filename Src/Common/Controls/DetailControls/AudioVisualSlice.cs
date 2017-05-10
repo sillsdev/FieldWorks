@@ -14,7 +14,7 @@ using System;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.IO;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Text;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;

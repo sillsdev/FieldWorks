@@ -22,7 +22,7 @@ using System.Xml;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
 using SIL.Utils;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Cellar;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.Common.FXT

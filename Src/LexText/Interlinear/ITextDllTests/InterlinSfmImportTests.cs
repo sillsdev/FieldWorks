@@ -10,9 +10,9 @@ using System.Xml.Linq;
 using System.Xml.XPath;
 using NUnit.Framework;
 using Sfm2Xml;
-using SIL.CoreImpl;
 using SIL.FieldWorks.LexText.Controls;
 using SilEncConverters40;
+using SIL.CoreImpl.WritingSystems;
 
 namespace SIL.FieldWorks.IText
 {

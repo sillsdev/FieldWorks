@@ -14,8 +14,9 @@ using SIL.FieldWorks.FDO.Application;
 using SIL.Xml;
 using XCore;
 using SIL.FieldWorks.Filters;
-using SIL.CoreImpl;
 using System.Collections;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.Common.Controls

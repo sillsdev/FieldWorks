@@ -3,7 +3,8 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using NUnit.Framework;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 
@@ -45,7 +46,7 @@ namespace SIL.FieldWorks.Common.Widgets
 
 				using (var collection = new FwListBox.ObjectCollection(listBox))
 				{
-					ITsString testString = TsStringHelper.MakeTss("test", m_hvoEnglishWs);
+					ITsString testString = TsStringUtils.MakeString("test", m_hvoEnglishWs);
 
 					// The Test
 					collection.Add(testString);
@@ -63,7 +64,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			{
 				using (var collection = new FwListBox.ObjectCollection(listBox))
 				{
-					ITsString testString = TsStringHelper.MakeTss("test", m_hvoEnglishWs);
+					ITsString testString = TsStringUtils.MakeString("test", m_hvoEnglishWs);
 					collection.Add(testString);
 
 					// The Test
@@ -81,7 +82,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			{
 				using (var collection = new FwListBox.ObjectCollection(listBox))
 				{
-					ITsString testString = TsStringHelper.MakeTss("test", m_hvoEnglishWs);
+					ITsString testString = TsStringUtils.MakeString("test", m_hvoEnglishWs);
 					collection.Add(testString);
 
 					// The Test
@@ -100,8 +101,8 @@ namespace SIL.FieldWorks.Common.Widgets
 			{
 				using (var collection = new FwListBox.ObjectCollection(listBox))
 				{
-					ITsString testString1 = TsStringHelper.MakeTss("test1", m_hvoEnglishWs);
-					ITsString testString2 = TsStringHelper.MakeTss("test2", m_hvoEnglishWs);
+					ITsString testString1 = TsStringUtils.MakeString("test1", m_hvoEnglishWs);
+					ITsString testString2 = TsStringUtils.MakeString("test2", m_hvoEnglishWs);
 					collection.Add(testString1);
 
 					// The Test
@@ -177,7 +178,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			{
 					using (var innerFwListBox = new InnerFwListBox(listBox))
 					{
-						ITsString testString1 = TsStringHelper.MakeTss("test1", m_hvoEnglishWs);
+						ITsString testString1 = TsStringUtils.MakeString("test1", m_hvoEnglishWs);
 						listBox.Items.Add(testString1);
 						innerFwListBox.MakeRoot();
 						listBox.HighlightedIndex = 0;

@@ -8,8 +8,9 @@ using System.Xml;
 using System.Xml.Linq;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.CoreImpl;
 using System.Collections.Generic;
+using SIL.CoreImpl.Cellar;
+using SIL.CoreImpl.Text;
 
 namespace SIL.FieldWorks.FDO.DomainImpl
 {

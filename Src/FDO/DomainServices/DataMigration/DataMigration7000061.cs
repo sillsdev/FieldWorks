@@ -7,7 +7,7 @@
 
 using System.Linq;
 using System.Xml.Linq;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Cellar;
 
 namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 {

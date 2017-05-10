@@ -10,7 +10,7 @@ using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.Filters;
 using NUnit.Framework;
 using System.Xml;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Text;
 
 namespace XMLViewsTests
 {

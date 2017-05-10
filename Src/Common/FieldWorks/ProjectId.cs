@@ -6,7 +6,6 @@
 // Responsibility: FW team
 using System;
 using System.Diagnostics;
-using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
 using System.Runtime.Serialization;

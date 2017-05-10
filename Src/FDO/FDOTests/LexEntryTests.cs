@@ -11,11 +11,12 @@
 using System;
 using System.Linq;
 using NUnit.Framework;
-using SIL.CoreImpl;
 using SIL.FieldWorks.FDO.CoreTests;
 using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.FieldWorks.FDO.Infrastructure;
 using System.Collections.Generic;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.FDO.FDOTests

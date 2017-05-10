@@ -8,8 +8,8 @@
 using System;
 using System.IO;
 using System.Xml;
-using SIL.CoreImpl;
 using SIL.CoreImpl.Scripture;
+using SIL.CoreImpl.Text;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwKernelInterfaces;

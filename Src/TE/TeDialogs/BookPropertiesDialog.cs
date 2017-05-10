@@ -5,7 +5,7 @@
 using System;
 using System.Windows.Forms;
 using System.Linq;
-using SIL.CoreImpl;
+using SIL.CoreImpl.WritingSystems;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Widgets;

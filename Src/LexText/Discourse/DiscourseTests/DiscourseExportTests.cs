@@ -8,7 +8,7 @@ using NUnit.Framework;
 using SIL.FieldWorks.FDO;
 using System.IO;
 using System.Xml;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Text;
 
 namespace SIL.FieldWorks.Discourse
 {

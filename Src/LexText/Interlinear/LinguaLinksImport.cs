@@ -25,7 +25,7 @@ using SIL.Utils;
 using SilEncConverters40;
 using SIL.FieldWorks.FDO.Application.ApplicationServices;
 using System.Xml.Serialization;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Text;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 

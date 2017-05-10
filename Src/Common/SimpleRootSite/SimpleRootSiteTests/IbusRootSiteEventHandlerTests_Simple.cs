@@ -1,16 +1,14 @@
-// Copyright (c) 2013 SIL International
+// Copyright (c) 2013-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 #if __MonoCS__
-using System;
 using System.Drawing;
 using IBusDotNet;
 using NUnit.Framework;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Text;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
-using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils.Attributes;
-using SIL.Windows.Forms.Keyboarding;
 
 namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 {

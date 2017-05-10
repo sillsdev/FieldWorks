@@ -8,7 +8,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
 using System.Xml.Serialization;
-using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 using Utils.MessageBoxExLib;
 

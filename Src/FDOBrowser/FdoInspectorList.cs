@@ -6,12 +6,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
-using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
 using System.Reflection;
 using SIL.FieldWorks.FDO.Infrastructure;
 using System.Collections;
+using SIL.CoreImpl.Cellar;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.ObjectBrowser;
 

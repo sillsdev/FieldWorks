@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.Utils;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Text;
 
 namespace SIL.FieldWorks.FDO.DomainImpl
 {

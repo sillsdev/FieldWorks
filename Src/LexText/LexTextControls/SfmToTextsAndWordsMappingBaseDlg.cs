@@ -7,12 +7,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Resources;
 using System.Windows.Forms;
-using SIL.CoreImpl;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.LexText.Controls.DataNotebook;
 using SilEncConverters40;
+using SIL.CoreImpl.WritingSystems;
 using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.LexText.Controls

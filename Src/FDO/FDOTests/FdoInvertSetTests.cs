@@ -4,7 +4,7 @@
 
 using System.Linq;
 using NUnit.Framework;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Text;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.FDO.FDOTests

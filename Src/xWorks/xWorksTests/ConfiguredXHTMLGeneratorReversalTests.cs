@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 using NUnit.Framework;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Text;
 using SIL.TestUtilities;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwKernelInterfaces;

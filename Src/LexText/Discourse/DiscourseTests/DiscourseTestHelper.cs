@@ -9,7 +9,7 @@ using NUnit.Framework;
 
 using SIL.FieldWorks.FDO;
 using System.Xml;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Text;
 using SIL.Utils;
 using SIL.FieldWorks.FDO.DomainServices;
 

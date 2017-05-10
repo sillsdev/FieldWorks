@@ -11,8 +11,8 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 
 using NUnit.Framework;
-using SIL.CoreImpl;
 using SIL.CoreImpl.Scripture;
+using SIL.CoreImpl.Text;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;

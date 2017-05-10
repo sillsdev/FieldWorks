@@ -8,7 +8,7 @@ using System.Globalization;
 using System.IO;
 using System.Xml;
 using NUnit.Framework;
-using SIL.CoreImpl;
+using SIL.CoreImpl.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.WritingSystems;

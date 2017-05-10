@@ -11,7 +11,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Xml;
 using System.Linq;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Text;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.Common.Controls;

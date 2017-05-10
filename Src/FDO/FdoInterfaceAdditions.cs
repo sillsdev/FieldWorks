@@ -11,7 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Xml;
 using System.Collections;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Cellar;
 using SIL.CoreImpl.Scripture;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.DomainImpl;

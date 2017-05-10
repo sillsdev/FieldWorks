@@ -7,7 +7,7 @@ using System.Linq;
 using NUnit.Framework;
 using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Text;
 using SIL.ObjectModel;
 
 namespace SIL.FieldWorks.FDO.FDOTests

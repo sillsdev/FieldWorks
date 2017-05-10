@@ -3,7 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Text;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 
@@ -152,7 +152,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 				case 6: // StTxtPara, display details of our outer object
 					int hvoOuter, tag, ihvo;
 					vwenv.GetOuterObject(vwenv.EmbeddingLevel - 1, out hvoOuter, out tag, out ihvo);
-					ITsString tss = TsStringHelper.MakeTss("Hvo = " + hvoOuter + "; Tag = " + tag + "; Ihvo = " + ihvo,
+					ITsString tss = TsStringUtils.MakeString("Hvo = " + hvoOuter + "; Tag = " + tag + "; Ihvo = " + ihvo,
 						m_wsDefault);
 					vwenv.AddString(tss);
 					break;

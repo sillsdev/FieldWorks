@@ -8,7 +8,8 @@ using System.Diagnostics.CodeAnalysis;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.Utils;
 using SIL.FieldWorks.FDO;
-using SIL.CoreImpl;
+using SIL.CoreImpl.SpellChecking;
+using SIL.CoreImpl.Text;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.Filters

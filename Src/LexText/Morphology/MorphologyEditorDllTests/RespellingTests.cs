@@ -12,7 +12,7 @@ using System.Reflection;
 
 using NUnit.Framework;
 using Rhino.Mocks;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Text;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.DomainServices;

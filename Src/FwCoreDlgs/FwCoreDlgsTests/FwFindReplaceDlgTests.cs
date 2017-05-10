@@ -1,16 +1,14 @@
-// Copyright (c) 2003-2015 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: TestFwFindReplaceDlg.cs
-// Responsibility: TE Team
 
 using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using NUnit.Framework;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ViewsInterfaces;
@@ -1201,7 +1199,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_dlg.SetDialogValues(Cache, m_vwPattern, m_vwRootsite, false, false,
 				null, null, null);
 
-			m_dlg.FindText = TsStringHelper.MakeTss("Blah", Cache.WritingSystemFactory.GetWsFromStr("fr"));
+			m_dlg.FindText = TsStringUtils.MakeString("Blah", Cache.WritingSystemFactory.GetWsFromStr("fr"));
 
 			m_dlg.PrevPatternText = null;
 			m_dlg.SimulateFindButtonClick();
@@ -1222,7 +1220,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_dlg.SetDialogValues(Cache, m_vwPattern, m_vwRootsite, false, false,
 				null, null, null);
 
-			m_dlg.FindText = TsStringHelper.MakeTss("Blah", Cache.WritingSystemFactory.GetWsFromStr("fr"));
+			m_dlg.FindText = TsStringUtils.MakeString("Blah", Cache.WritingSystemFactory.GetWsFromStr("fr"));
 
 			m_dlg.PrevPatternText = null;
 			m_dlg.SimulateFindPrevButtonClick();
@@ -1242,7 +1240,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				null, null, null);
 			m_dlg.UseRegExCheckboxChecked = true;
 
-			m_dlg.FindText = TsStringHelper.MakeTss("?", Cache.WritingSystemFactory.GetWsFromStr("fr"));
+			m_dlg.FindText = TsStringUtils.MakeString("?", Cache.WritingSystemFactory.GetWsFromStr("fr"));
 
 			m_dlg.PrevPatternText = null;
 			m_dlg.SimulateFindButtonClick();
@@ -1262,7 +1260,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				null, null, null);
 			m_dlg.UseRegExCheckboxChecked = true;
 
-			m_dlg.FindText = TsStringHelper.MakeTss("(blah, )?", Cache.WritingSystemFactory.GetWsFromStr("fr"));
+			m_dlg.FindText = TsStringUtils.MakeString("(blah, )?", Cache.WritingSystemFactory.GetWsFromStr("fr"));
 
 			m_dlg.PrevPatternText = null;
 			m_dlg.SimulateFindButtonClick();
@@ -1282,7 +1280,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_dlg.SetDialogValues(Cache, m_vwPattern, m_vwRootsite, false, false,
 				null, null, null);
 
-			m_dlg.FindText = TsStringHelper.MakeTss("Text that ain't there",
+			m_dlg.FindText = TsStringUtils.MakeString("Text that ain't there",
 				Cache.WritingSystemFactory.GetWsFromStr("fr"));
 
 			m_dlg.PrevPatternText = null;
@@ -1307,7 +1305,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_dlg.SetDialogValues(Cache, m_vwPattern, m_vwRootsite, false, false,
 				null, null, null);
 
-			m_dlg.FindText = TsStringHelper.MakeTss("Text that ain't there",
+			m_dlg.FindText = TsStringUtils.MakeString("Text that ain't there",
 				Cache.WritingSystemFactory.GetWsFromStr("fr"));
 
 			m_dlg.PrevPatternText = null;
@@ -1344,7 +1342,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_dlg.SetDialogValues(Cache, m_vwPattern, m_vwRootsite, false, false,
 				null, null, null);
 
-			m_dlg.FindText = TsStringHelper.MakeTss("Blah!", Cache.WritingSystemFactory.GetWsFromStr("fr"));
+			m_dlg.FindText = TsStringUtils.MakeString("Blah!", Cache.WritingSystemFactory.GetWsFromStr("fr"));
 
 			m_dlg.PrevPatternText = null;
 			m_dlg.SimulateFindButtonClick();
@@ -1378,7 +1376,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_dlg.SetDialogValues(Cache, m_vwPattern, m_vwRootsite, false, false,
 				null, null, null);
 
-			m_dlg.FindText = TsStringHelper.MakeTss("Blah!", Cache.WritingSystemFactory.GetWsFromStr("fr"));
+			m_dlg.FindText = TsStringUtils.MakeString("Blah!", Cache.WritingSystemFactory.GetWsFromStr("fr"));
 
 			m_dlg.PrevPatternText = null;
 			m_dlg.SimulateFindPrevButtonClick();
@@ -1397,7 +1395,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_dlg.SetDialogValues(Cache, m_vwPattern, m_vwRootsite, false, false,
 				null, null, null);
 
-			m_dlg.FindText = TsStringHelper.MakeTss("blah!", Cache.WritingSystemFactory.GetWsFromStr("fr"));
+			m_dlg.FindText = TsStringUtils.MakeString("blah!", Cache.WritingSystemFactory.GetWsFromStr("fr"));
 
 			m_dlg.PrevPatternText = null;
 			m_dlg.SimulateFindButtonClick();
@@ -1428,7 +1426,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_dlg.SetDialogValues(Cache, m_vwPattern, m_vwRootsite, false, false,
 				null, null, null);
 
-			m_dlg.FindText = TsStringHelper.MakeTss("Waldo", Cache.WritingSystemFactory.GetWsFromStr("fr"));
+			m_dlg.FindText = TsStringUtils.MakeString("Waldo", Cache.WritingSystemFactory.GetWsFromStr("fr"));
 
 			m_dlg.PrevPatternText = null;
 			m_dlg.SimulateFindButtonClick();
@@ -1468,7 +1466,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_dlg.SetDialogValues(Cache, m_vwPattern, m_vwRootsite, false, false,
 				null, null, null);
 
-			m_dlg.FindText = TsStringHelper.MakeTss("Blah, ", Cache.WritingSystemFactory.GetWsFromStr("fr"));
+			m_dlg.FindText = TsStringUtils.MakeString("Blah, ", Cache.WritingSystemFactory.GetWsFromStr("fr"));
 			m_dlg.PrevPatternText = null;
 			m_dlg.SimulateFindButtonClick();
 			Assert.IsTrue(m_dlg.FindEnvironment.FoundMatch);
@@ -1503,7 +1501,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_dlg.SetDialogValues(Cache, m_vwPattern, m_vwRootsite, false, false,
 				null, null, null);
 
-			m_dlg.FindText = TsStringHelper.MakeTss("blah!", Cache.WritingSystemFactory.GetWsFromStr("fr"));
+			m_dlg.FindText = TsStringUtils.MakeString("blah!", Cache.WritingSystemFactory.GetWsFromStr("fr"));
 
 			m_dlg.PrevPatternText = null;
 			m_dlg.SimulateFindButtonClick();
@@ -1527,7 +1525,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			m_dlg.SetDialogValues(Cache, m_vwPattern, m_vwRootsite, false, false,
 				null, null, null);
-			m_dlg.FindText = TsStringHelper.MakeTss("blah", Cache.WritingSystemFactory.GetWsFromStr("fr"));
+			m_dlg.FindText = TsStringUtils.MakeString("blah", Cache.WritingSystemFactory.GetWsFromStr("fr"));
 			m_dlg.PrevPatternText = null;
 
 			m_dlg.SimulateFindButtonClick();
@@ -1548,7 +1546,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			m_dlg.SetDialogValues(Cache, m_vwPattern, m_vwRootsite, false, false,
 				null, null, null);
-			ITsString strFind = TsStringHelper.MakeTss("blah", Cache.WritingSystemFactory.GetWsFromStr("fr"));
+			ITsString strFind = TsStringUtils.MakeString("blah", Cache.WritingSystemFactory.GetWsFromStr("fr"));
 			ITsStrBldr strBldr = strFind.GetBldr();
 			TsStringUtils.InsertOrcIntoPara(Guid.NewGuid(), FwObjDataTypes.kodtOwnNameGuidHot,
 				strBldr, 2, 2, Cache.WritingSystemFactory.GetWsFromStr("fr"));
@@ -1595,9 +1593,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			m_dlg.SetDialogValues(Cache, m_vwPattern, m_vwRootsite, false, false,
 				null, null, null);
-			m_dlg.FindText = TsStringHelper.MakeTss("blah!", Cache.WritingSystemFactory.GetWsFromStr("fr"));
+			m_dlg.FindText = TsStringUtils.MakeString("blah!", Cache.WritingSystemFactory.GetWsFromStr("fr"));
 			Debug.WriteLine(m_dlg.FindText.Text);
-			m_dlg.ReplaceText = TsStringHelper.MakeTss("text", Cache.WritingSystemFactory.GetWsFromStr("fr"));
+			m_dlg.ReplaceText = TsStringUtils.MakeString("text", Cache.WritingSystemFactory.GetWsFromStr("fr"));
 			Debug.WriteLine(m_dlg.ReplaceText.Text);
 			m_dlg.PrevPatternText = null;
 
@@ -1627,8 +1625,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_dlg.SetDialogValues(Cache, m_vwPattern, m_vwRootsite, true, false,
 				null, null, null);
 
-			m_dlg.FindText = TsStringHelper.MakeTss("Blah", Cache.WritingSystemFactory.GetWsFromStr("fr"));
-			m_dlg.ReplaceText = TsStringHelper.MakeTss("Monkey feet", Cache.WritingSystemFactory.GetWsFromStr("fr"));
+			m_dlg.FindText = TsStringUtils.MakeString("Blah", Cache.WritingSystemFactory.GetWsFromStr("fr"));
+			m_dlg.ReplaceText = TsStringUtils.MakeString("Monkey feet", Cache.WritingSystemFactory.GetWsFromStr("fr"));
 
 			m_dlg.PrevPatternText = null;
 			m_dlg.SimulateReplaceButtonClick();
@@ -1650,8 +1648,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_dlg.SetDialogValues(Cache, m_vwPattern, m_vwRootsite, false, false,
 				null, null, null);
 
-			m_dlg.FindText = TsStringHelper.MakeTss("Blah", Cache.WritingSystemFactory.GetWsFromStr("fr"));
-			m_dlg.ReplaceText = TsStringHelper.MakeTss("Monkey feet", Cache.WritingSystemFactory.GetWsFromStr("fr"));
+			m_dlg.FindText = TsStringUtils.MakeString("Blah", Cache.WritingSystemFactory.GetWsFromStr("fr"));
+			m_dlg.ReplaceText = TsStringUtils.MakeString("Monkey feet", Cache.WritingSystemFactory.GetWsFromStr("fr"));
 
 			m_dlg.PrevPatternText = null;
 			m_dlg.SimulateReplaceButtonClick();
@@ -1673,7 +1671,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_dlg.SetDialogValues(Cache, m_vwPattern, m_vwRootsite, false, false,
 				null, null, null);
 
-			m_dlg.FindText = TsStringHelper.MakeTss("Blah", ipaWs);
+			m_dlg.FindText = TsStringUtils.MakeString("Blah", ipaWs);
 			// Change the replace string in the dialog to have 2 styled runs.
 			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, "Run 2", StyleUtils.CharStyleTextProps("CStyle1", ipaWs));
@@ -1719,9 +1717,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			// Set up the find/replace text with two different character styles.
 			m_dlg.PrevPatternText = null;
-			m_dlg.FindText = TsStringHelper.MakeTss(string.Empty, m_wsIpa.Handle);
+			m_dlg.FindText = TsStringUtils.MakeString(string.Empty, m_wsIpa.Handle);
 			m_dlg.ApplyStyle(m_dlg.FindTextControl, "CStyle3");
-			m_dlg.ReplaceText = TsStringHelper.MakeTss(string.Empty, m_wsIpa.Handle);
+			m_dlg.ReplaceText = TsStringUtils.MakeString(string.Empty, m_wsIpa.Handle);
 			m_dlg.ApplyStyle(m_dlg.ReplaceTextControl, "CStyle2");
 
 			m_dlg.SimulateReplaceAllButtonClick(); // SUT
@@ -1764,7 +1762,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_dlg.SetDialogValues(Cache, m_vwPattern, m_vwRootsite, false, false,
 				null, null, null);
 
-			m_dlg.FindText = TsStringHelper.MakeTss("Blah", ipaWs);
+			m_dlg.FindText = TsStringUtils.MakeString("Blah", ipaWs);
 			// Change the replace string in the dialog to have 2 runs with different writing systems.
 			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, "Run 2", StyleUtils.CharStyleTextProps("CStyle1", deWs));
@@ -1812,14 +1810,14 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			Assert.IsTrue(m_dlg.MatchWsCheckboxChecked);
 			m_dlg.ApplyWS(m_dlg.FindTextControl, Cache.WritingSystemFactory.GetWsFromStr("de"));
 
-			m_dlg.FindText = TsStringHelper.MakeTss(string.Empty, Cache.WritingSystemFactory.GetWsFromStr("de"));
+			m_dlg.FindText = TsStringUtils.MakeString(string.Empty, Cache.WritingSystemFactory.GetWsFromStr("de"));
 			// This behavior is what is specified in TE-1658. However, there are some usability
 			// issues with this. See comment on TE-1658 for details.
 			Assert.IsFalse(m_dlg.ReplaceTextControl.Enabled,
 				"Replace Text box should be disabled when searching for a WS without text specified");
 
 			// Simulate setting the writing system for the replace string
-			m_dlg.ReplaceText = TsStringHelper.MakeTss(string.Empty, Cache.WritingSystemFactory.GetWsFromStr("en-fonipa-x-etic"));
+			m_dlg.ReplaceText = TsStringUtils.MakeString(string.Empty, Cache.WritingSystemFactory.GetWsFromStr("en-fonipa-x-etic"));
 
 			m_dlg.MatchWsCheckboxChecked = true;
 			m_dlg.PrevPatternText = null;
@@ -1849,13 +1847,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_dlg.SetDialogValues(Cache, m_vwPattern, m_vwRootsite, true, false,
 				null, null, null);
 
-			m_dlg.FindText = TsStringHelper.MakeTss("Blah", Cache.WritingSystemFactory.GetWsFromStr("fr"));
-			m_dlg.ReplaceText = TsStringHelper.MakeTss("Monkey feet", Cache.WritingSystemFactory.GetWsFromStr("fr"));
+			m_dlg.FindText = TsStringUtils.MakeString("Blah", Cache.WritingSystemFactory.GetWsFromStr("fr"));
+			m_dlg.ReplaceText = TsStringUtils.MakeString("Monkey feet", Cache.WritingSystemFactory.GetWsFromStr("fr"));
 
 			m_dlg.PrevPatternText = null;
 			m_dlg.SimulateReplaceAllButtonClick();
 			m_dlg.VerifySelection(0, 0, 0, 0, 0);
-			ITsString expectedTss = TsStringHelper.MakeTss("Monkey feet, Monkey feet, Monkey feet!",
+			ITsString expectedTss = TsStringUtils.MakeString("Monkey feet, Monkey feet, Monkey feet!",
 				Cache.WritingSystemFactory.GetWsFromStr("en-fonipa-x-etic"));
 			AssertEx.AreTsStringsEqual(expectedTss, m_text[0].Contents);
 
@@ -1877,13 +1875,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_dlg.SetDialogValues(Cache, m_vwPattern, m_vwRootsite, true, false,
 				null, null, null);
 
-			m_dlg.FindText = TsStringHelper.MakeTss("Blepharophimosis", Cache.WritingSystemFactory.GetWsFromStr("fr"));
-			m_dlg.ReplaceText = TsStringHelper.MakeTss("Monkey feet", Cache.WritingSystemFactory.GetWsFromStr("fr"));
+			m_dlg.FindText = TsStringUtils.MakeString("Blepharophimosis", Cache.WritingSystemFactory.GetWsFromStr("fr"));
+			m_dlg.ReplaceText = TsStringUtils.MakeString("Monkey feet", Cache.WritingSystemFactory.GetWsFromStr("fr"));
 
 			m_dlg.PrevPatternText = null;
 			m_dlg.SimulateReplaceAllButtonClick();
 			m_dlg.VerifySelection(0, 0, 0, 0, 0);
-			ITsString expectedTss = TsStringHelper.MakeTss(m_kTitleText, Cache.WritingSystemFactory.GetWsFromStr("en-fonipa-x-etic"));
+			ITsString expectedTss = TsStringUtils.MakeString(m_kTitleText, Cache.WritingSystemFactory.GetWsFromStr("en-fonipa-x-etic"));
 			AssertEx.AreTsStringsEqual(expectedTss, m_text[0].Contents);
 
 			// TE-4839: Button always says Close after we're finished.
@@ -2021,8 +2019,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			bldr.Replace(4, 14, "Q", null);
 			ITsString expectedTss = bldr.GetString();
 
-			m_dlg.FindText = TsStringHelper.MakeTss("h, blah, b", Cache.WritingSystemFactory.GetWsFromStr("fr"));
-			m_dlg.ReplaceText = TsStringHelper.MakeTss("Q", Cache.WritingSystemFactory.GetWsFromStr("fr"));
+			m_dlg.FindText = TsStringUtils.MakeString("h, blah, b", Cache.WritingSystemFactory.GetWsFromStr("fr"));
+			m_dlg.ReplaceText = TsStringUtils.MakeString("Q", Cache.WritingSystemFactory.GetWsFromStr("fr"));
 
 			m_dlg.PrevPatternText = null;
 			m_dlg.SimulateReplaceAllButtonClick();
@@ -2110,7 +2108,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			m_dlg.PrevPatternText = null;
 			m_dlg.ApplyStyle(m_dlg.FindTextControl, "CStyle3");
-			m_dlg.ReplaceTextControl.Tss = TsStringHelper.MakeTss(string.Empty, Cache.WritingSystemFactory.GetWsFromStr("fr"));
+			m_dlg.ReplaceTextControl.Tss = TsStringUtils.MakeString(string.Empty, Cache.WritingSystemFactory.GetWsFromStr("fr"));
 			m_dlg.ApplyStyle(m_dlg.ReplaceTextControl, "CStyle2");
 			m_dlg.SimulateReplaceButtonClick();
 			Assert.IsTrue(m_dlg.FindEnvironment.FoundMatch);
@@ -2152,7 +2150,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			m_dlg.PrevPatternText = null;
 			m_dlg.ApplyStyle(m_dlg.FindTextControl, "CStyle3");
-			m_dlg.ReplaceTextControl.Tss = TsStringHelper.MakeTss(string.Empty, Cache.WritingSystemFactory.GetWsFromStr("fr"));
+			m_dlg.ReplaceTextControl.Tss = TsStringUtils.MakeString(string.Empty, Cache.WritingSystemFactory.GetWsFromStr("fr"));
 			m_dlg.ApplyStyle(m_dlg.ReplaceTextControl, "CStyle2");
 			m_dlg.SimulateReplaceButtonClick();
 			Assert.IsTrue(m_dlg.FindEnvironment.FoundMatch);
@@ -2196,7 +2194,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			m_dlg.PrevPatternText = null;
 			m_dlg.ApplyStyle(m_dlg.FindTextControl, "CStyle3");
-			m_dlg.ReplaceTextControl.Tss = TsStringHelper.MakeTss(string.Empty, Cache.WritingSystemFactory.GetWsFromStr("fr"));
+			m_dlg.ReplaceTextControl.Tss = TsStringUtils.MakeString(string.Empty, Cache.WritingSystemFactory.GetWsFromStr("fr"));
 			m_dlg.ApplyStyle(m_dlg.ReplaceTextControl, "CStyle2");
 			m_dlg.SimulateReplaceButtonClick();
 			Assert.IsTrue(m_dlg.FindEnvironment.FoundMatch);
@@ -2238,8 +2236,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			ITsString expectedTss = bldr.GetString();
 
 			m_dlg.PrevPatternText = null;
-			m_dlg.FindText = TsStringHelper.MakeTss("blah,", m_wsFr.Handle);
-			m_dlg.ReplaceText = TsStringHelper.MakeTss("blah", m_wsFr.Handle);
+			m_dlg.FindText = TsStringUtils.MakeString("blah,", m_wsFr.Handle);
+			m_dlg.ReplaceText = TsStringUtils.MakeString("blah", m_wsFr.Handle);
 			m_dlg.SimulateReplaceButtonClick();
 			Assert.IsTrue(m_dlg.FindEnvironment.FoundMatch);
 			m_dlg.VerifySelection(0, 0, 0, 0, 6);
@@ -2274,8 +2272,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			ITsString expectedTss = bldr.GetString();
 
 			m_dlg.PrevPatternText = null;
-			m_dlg.FindText = TsStringHelper.MakeTss("blah,", m_wsFr.Handle);
-			m_dlg.ReplaceTextControl.Tss = TsStringHelper.MakeTss("blah", m_wsFr.Handle);
+			m_dlg.FindText = TsStringUtils.MakeString("blah,", m_wsFr.Handle);
+			m_dlg.ReplaceTextControl.Tss = TsStringUtils.MakeString("blah", m_wsFr.Handle);
 			m_dlg.ApplyStyle(m_dlg.ReplaceTextControl, "CStyle2");
 			m_dlg.SimulateReplaceButtonClick();
 			Assert.IsTrue(m_dlg.FindEnvironment.FoundMatch);
@@ -2306,7 +2304,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				null, null, null);
 			Assert.IsTrue(m_dlg.MatchWsCheckboxChecked);
 
-			m_dlg.FindText = TsStringHelper.MakeTss(",", Cache.WritingSystemFactory.GetWsFromStr("fr"));
+			m_dlg.FindText = TsStringUtils.MakeString(",", Cache.WritingSystemFactory.GetWsFromStr("fr"));
 			m_dlg.ApplyWS(m_dlg.FindTextControl, Cache.WritingSystemFactory.GetWsFromStr("de"));
 
 			m_dlg.PrevPatternText = null;
@@ -2364,7 +2362,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			// First, search for a base character with no diacritic. Characters in the text
 			// that do have diacritics should not be found.
-			m_dlg.FindText = TsStringHelper.MakeTss("a", Cache.WritingSystemFactory.GetWsFromStr("fr"));
+			m_dlg.FindText = TsStringUtils.MakeString("a", Cache.WritingSystemFactory.GetWsFromStr("fr"));
 
 			m_dlg.PrevPatternText = null;
 			m_dlg.SimulateFindButtonClick();
@@ -2376,7 +2374,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			// Next, search for a character with a diacritic. Only characters in the text
 			// that have the diacritic should be found.
-			m_dlg.FindText = TsStringHelper.MakeTss("a\u0301", Cache.WritingSystemFactory.GetWsFromStr("fr"));
+			m_dlg.FindText = TsStringUtils.MakeString("a\u0301", Cache.WritingSystemFactory.GetWsFromStr("fr"));
 
 			m_dlg.SimulateFindButtonClick();
 			Assert.IsTrue(m_dlg.FindEnvironment.FoundMatch);
@@ -2412,7 +2410,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				null, null, null);
 			Assert.IsTrue(m_dlg.MatchWholeWordCheckboxChecked);
 
-			m_dlg.FindText = TsStringHelper.MakeTss("blah", Cache.WritingSystemFactory.GetWsFromStr("fr"));
+			m_dlg.FindText = TsStringUtils.MakeString("blah", Cache.WritingSystemFactory.GetWsFromStr("fr"));
 
 			m_dlg.PrevPatternText = null;
 			m_dlg.SimulateFindButtonClick();
@@ -2436,7 +2434,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				null, null, null);
 			Assert.IsTrue(m_dlg.MatchCaseCheckboxChecked);
 
-			m_dlg.FindText = TsStringHelper.MakeTss("Blah", Cache.WritingSystemFactory.GetWsFromStr("fr"));
+			m_dlg.FindText = TsStringUtils.MakeString("Blah", Cache.WritingSystemFactory.GetWsFromStr("fr"));
 
 			m_dlg.PrevPatternText = null;
 			m_dlg.SimulateFindButtonClick();
@@ -2490,7 +2488,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_dlg.SetDialogValues(Cache, m_vwPattern, m_vwRootsite, false, false,
 				null, null, null);
 
-			m_dlg.FindText = TsStringHelper.MakeTss("Blah", Cache.WritingSystemFactory.GetWsFromStr("fr"));
+			m_dlg.FindText = TsStringUtils.MakeString("Blah", Cache.WritingSystemFactory.GetWsFromStr("fr"));
 
 			m_dlg.PrevPatternText = null;
 			m_dlg.SimulateFindButtonClick();
@@ -2514,7 +2512,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_dlg.SetDialogValues(Cache, m_vwPattern, m_vwRootsite, false, false,
 				null, null, null);
 
-			m_dlg.FindText = TsStringHelper.MakeTss("Blah, blah, blah!", Cache.WritingSystemFactory.GetWsFromStr("fr"));
+			m_dlg.FindText = TsStringUtils.MakeString("Blah, blah, blah!", Cache.WritingSystemFactory.GetWsFromStr("fr"));
 
 			m_dlg.PrevPatternText = null;
 			m_dlg.SimulateFindButtonClick();
@@ -2645,7 +2643,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_dlg.SetDialogValues(Cache, m_vwPattern, m_vwRootsite, false, false,
 				null, null, null);
 
-			m_dlg.FindText = TsStringHelper.MakeTss("Blah, blah, blah!", Cache.WritingSystemFactory.GetWsFromStr("fr"));
+			m_dlg.FindText = TsStringUtils.MakeString("Blah, blah, blah!", Cache.WritingSystemFactory.GetWsFromStr("fr"));
 
 			m_dlg.PrevPatternText = null;
 			m_dlg.SimulateFindButtonClick();

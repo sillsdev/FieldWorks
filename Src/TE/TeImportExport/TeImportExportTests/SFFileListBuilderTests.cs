@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
 using NUnit.Framework;
-using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
@@ -15,6 +14,7 @@ using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.CoreImpl.Scripture;
+using SIL.CoreImpl.WritingSystems;
 
 namespace SIL.FieldWorks.TE
 {

@@ -6,7 +6,8 @@ using System;
 using System.Collections.Generic; // Needed for generic Di
 using System.Diagnostics;
 using System.Xml;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Cellar;
+using SIL.CoreImpl.Text;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.CacheLight

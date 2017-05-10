@@ -13,7 +13,6 @@ using System.Text;
 using System.Windows.Forms;
 
 using Microsoft.Win32;
-using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
@@ -22,6 +21,7 @@ using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.TE;
 using SIL.CoreImpl.Scripture;
+using SIL.CoreImpl.WritingSystems;
 
 namespace SIL.FieldWorks.Common.Controls
 {

@@ -13,7 +13,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
-using SIL.CoreImpl;
+using SIL.CoreImpl.SpellChecking;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
 using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.Utils;
 

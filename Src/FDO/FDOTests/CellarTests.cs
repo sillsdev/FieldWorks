@@ -5,10 +5,10 @@
 using System;
 using System.Linq;
 using NUnit.Framework;
-using SIL.CoreImpl;
 using SIL.FieldWorks.FDO.DomainImpl;
 using System.Xml;
 using System.IO;
+using SIL.CoreImpl.Text;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.DomainServices;
 

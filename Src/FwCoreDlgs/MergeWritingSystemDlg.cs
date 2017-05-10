@@ -7,11 +7,11 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Linq;
-using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FwCoreDlgs.BackupRestore;
 using System.Diagnostics.CodeAnalysis;
+using SIL.CoreImpl.WritingSystems;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {

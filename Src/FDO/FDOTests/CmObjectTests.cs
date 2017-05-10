@@ -4,7 +4,7 @@
 
 using System.Collections.Generic;
 using NUnit.Framework;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Text;
 using SIL.FieldWorks.FDO.Infrastructure;
 using Is = NUnit.Framework.Is;
 

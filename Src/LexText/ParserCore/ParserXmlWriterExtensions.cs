@@ -9,7 +9,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Xml;
-using SIL.CoreImpl;
+using SIL.CoreImpl.WritingSystems;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;

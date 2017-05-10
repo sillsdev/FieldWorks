@@ -5,7 +5,7 @@
 using System.Text;
 using System.Xml;
 using System.Windows.Forms;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Text;
 
 namespace SIL.FieldWorks.LexText.Controls.MGA
 {

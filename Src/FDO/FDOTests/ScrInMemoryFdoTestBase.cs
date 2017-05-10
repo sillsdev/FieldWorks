@@ -10,7 +10,8 @@ using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.CoreImpl.Scripture;
 using System.Text;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.FDO.FDOTests
@@ -984,7 +985,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 						IScrFootnote footnote = Cache.ServiceLocator.GetInstance<IScrFootnoteFactory>().Create();
 						book.FootnotesOS.Add(footnote);
 						TsStringUtils.InsertOrcIntoPara(footnote.Guid, FwObjDataTypes.kodtOwnNameGuidHot, strBldr, strBldr.Length, strBldr.Length, ws);
-						footnote.FootnoteMarker = TsStringHelper.MakeTss("a", ws); // auto-generate
+						footnote.FootnoteMarker = TsStringUtils.MakeString("a", ws); // auto-generate
 						if (fieldData.IndexOf(@"\f") != -1)
 							Debug.Assert(false, @"Format string must not nest \f within another \f..\^");
 						IScrTxtPara para = AppendParagraph(footnote, fieldData, ws); //recursively calls CreateText to process any char styles

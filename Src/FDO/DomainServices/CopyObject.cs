@@ -12,7 +12,7 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.Diagnostics;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Cellar;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 // For ISilDataAccess
 using SIL.FieldWorks.FDO.Application; // For ISilDataAccessManaged

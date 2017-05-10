@@ -11,7 +11,7 @@ using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Schema;
 using NUnit.Framework;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Text;
 using SIL.IO;
 using SIL.TestUtilities;
 using SIL.FieldWorks.Common.FwKernelInterfaces;

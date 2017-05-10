@@ -11,7 +11,7 @@ using SIL.FieldWorks.FDO;
 using XCore;
 using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Text;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.XWorks.LexEd

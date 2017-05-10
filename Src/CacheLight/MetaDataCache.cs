@@ -11,10 +11,10 @@ using System.Collections.Generic; // Needed for Dictionary.
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices; // needed for Marshal
 using System.Xml;
-using SIL.CoreImpl;
 using SIL.Utils;
 using System.Text;
 using System.IO;
+using SIL.CoreImpl.Cellar;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.CacheLight

@@ -4,7 +4,7 @@
 
 using NUnit.Framework;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Text;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.FDO.FDOTests

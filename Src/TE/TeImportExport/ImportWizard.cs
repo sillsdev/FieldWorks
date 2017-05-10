@@ -1,8 +1,6 @@
 // Copyright (c) 2002-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ImportWizard.cs
 
 using System;
 using System.Collections.Generic;
@@ -13,8 +11,8 @@ using System.Linq;
 using System.Windows.Forms;
 using Microsoft.Win32;
 using Paratext;
-using SIL.CoreImpl;
 using SIL.CoreImpl.Scripture;
+using SIL.CoreImpl.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Drawing;
 using SIL.FieldWorks.Common.FwUtils;
@@ -2089,7 +2087,7 @@ namespace SIL.FieldWorks.TE
 			rect.X += textWidth;
 			rect.Width -= textWidth;
 			Color backColor = e.Item.Selected ? SystemColors.Highlight : lv.BackColor;
-			TextRenderer.DrawText(e.Graphics, "...", lv.Font, rect, ColorUtil.LightInverse(backColor),
+			TextRenderer.DrawText(e.Graphics, "...", lv.Font, rect, LightInverse(backColor),
 				TextFormatFlags.LeftAndRightPadding | TextFormatFlags.SingleLine | TextFormatFlags.VerticalCenter);
 
 			textWidth = (int)Math.Round(e.Graphics.MeasureString("...", lv.Font).Width);
@@ -2097,6 +2095,20 @@ namespace SIL.FieldWorks.TE
 			rect.Width -= textWidth;
 			TextRenderer.DrawText(e.Graphics, mapping.EndMarker, lv.Font, rect, foreColor,
 				TextFormatFlags.LeftAndRightPadding | TextFormatFlags.SingleLine | TextFormatFlags.VerticalCenter);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Compute a color which is the inverse of the given color, but just a little lighter.
+		/// </summary>
+		/// <param name="baseColor">Color whose light inverse is to be computed.</param>
+		/// <returns>A color which ia a little lighter than the inverse of the given color
+		/// </returns>
+		/// ------------------------------------------------------------------------------------
+		private static Color LightInverse(Color baseColor)
+		{
+			return Color.FromArgb((int)((int)(baseColor.R * 0.7) ^ 0xFF),
+				(int)((int)(baseColor.G * 0.7) ^ 0xFF), (int)((int)(baseColor.B * 0.7) ^ 0xFF));
 		}
 
 		/// ------------------------------------------------------------------------------------

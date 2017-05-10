@@ -100,16 +100,16 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="..\..\CommonAssemblyInfo.cs">
-      <Link>CommonAssemblyInfo.cs</Link>
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="CoreLdmlInFolderWritingSystemFactory.cs" />
-    <Compile Include="CoreSldrWritingSystemFactory.cs" />
-    <Compile Include="CoreWritingSystemFactory.cs" />
-    <Compile Include="CaseFunctions.cs" />
-    <Compile Include="ISpellEngine.cs" />
-    <Compile Include="MemoryWritingSystemRepository.cs" />
+    <Compile Include="WritingSystems\CoreLdmlInFolderWritingSystemFactory.cs" />
+    <Compile Include="WritingSystems\CoreSldrWritingSystemFactory.cs" />
+    <Compile Include="WritingSystems\CoreWritingSystemFactory.cs" />
+    <Compile Include="Text\CaseFunctions.cs" />
+    <Compile Include="SpellChecking\ISpellEngine.cs" />
+    <Compile Include="WritingSystems\MemoryWritingSystemRepository.cs" />
     <Compile Include="Phonology\PhonEnv.lexer.cs" />
     <Compile Include="Phonology\phonenv.parser.cs" />
     <Compile Include="Phonology\PhonEnvRecognizer.cs" />
@@ -123,36 +123,36 @@
     <Compile Include="Scripture\ScrStyleNames.cs" />
     <Compile Include="Scripture\ScrVers.cs" />
     <Compile Include="Scripture\Versification.cs" />
-    <Compile Include="SilTime.cs" />
-    <Compile Include="SpellEngine.cs" />
-    <Compile Include="SpellingHelper.cs" />
-    <Compile Include="StringSearcher.cs" />
-    <Compile Include="TsIncStrBldr.cs" />
-    <Compile Include="TsIntPropValue.cs" />
-    <Compile Include="TsPropsBase.cs" />
-    <Compile Include="TsPropsBldr.cs" />
-    <Compile Include="TsPropsFactory.cs" />
-    <Compile Include="TsRun.cs" />
-    <Compile Include="TsStrBase.cs" />
-    <Compile Include="TsStrBldr.cs" />
-    <Compile Include="TsStrFactory.cs" />
-    <Compile Include="TsString.cs" />
-    <Compile Include="TsTextProps.cs" />
-    <Compile Include="ValidCharacters.cs" />
-    <Compile Include="GenDate.cs" />
-    <Compile Include="CoreImplExtensions.cs" />
+    <Compile Include="Cellar\SilTime.cs" />
+    <Compile Include="SpellChecking\SpellEngine.cs" />
+    <Compile Include="SpellChecking\SpellingHelper.cs" />
+    <Compile Include="Text\StringSearcher.cs" />
+    <Compile Include="Text\TsIncStrBldr.cs" />
+    <Compile Include="Text\TsIntPropValue.cs" />
+    <Compile Include="Text\TsPropsBase.cs" />
+    <Compile Include="Text\TsPropsBldr.cs" />
+    <Compile Include="Text\TsPropsFactory.cs" />
+    <Compile Include="Text\TsRun.cs" />
+    <Compile Include="Text\TsStrBase.cs" />
+    <Compile Include="Text\TsStrBldr.cs" />
+    <Compile Include="Text\TsStrFactory.cs" />
+    <Compile Include="Text\TsString.cs" />
+    <Compile Include="Text\TsTextProps.cs" />
+    <Compile Include="WritingSystems\ValidCharacters.cs" />
+    <Compile Include="Cellar\GenDate.cs" />
+    <Compile Include="Text\TextExtensions.cs" />
     <Compile Include="CoreImplStrings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>CoreImplStrings.resx</DependentUpon>
     </Compile>
-    <Compile Include="CmObjectFields.cs" />
-    <Compile Include="CellarPropertyType.cs" />
-    <Compile Include="CellarPropertyTypeFilter.cs" />
-    <Compile Include="CoreWritingSystemDefinition.cs" />
-    <Compile Include="WritingSystemManager.cs" />
-    <Compile Include="CoreGlobalWritingSystemRepository.cs" />
-    <Compile Include="CoreLdmlInFolderWritingSystemRepository.cs" />
+    <Compile Include="Cellar\CmObjectFields.cs" />
+    <Compile Include="Cellar\CellarPropertyType.cs" />
+    <Compile Include="Cellar\CellarPropertyTypeFilter.cs" />
+    <Compile Include="WritingSystems\CoreWritingSystemDefinition.cs" />
+    <Compile Include="WritingSystems\WritingSystemManager.cs" />
+    <Compile Include="WritingSystems\CoreGlobalWritingSystemRepository.cs" />
+    <Compile Include="WritingSystems\CoreLdmlInFolderWritingSystemRepository.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -164,21 +164,21 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Compile Include="PUACharacter.cs" />
-    <Compile Include="PuaCharacterFactory.cs" />
-    <Compile Include="StyleUtils.cs" />
-    <Compile Include="TsPropsSerializer.cs" />
-    <Compile Include="TsRunPart.cs" />
-    <Compile Include="TsStringComparer.cs" />
-    <Compile Include="TsStringSerializer.cs" />
-    <Compile Include="TsStringUtils.cs" />
-    <Compile Include="WritingSystemUtils.cs" />
-    <Compile Include="ColorStrings.Designer.cs">
+    <Compile Include="Text\PUACharacter.cs" />
+    <Compile Include="Text\PuaCharacterFactory.cs" />
+    <Compile Include="Text\StyleUtils.cs" />
+    <Compile Include="Text\TsPropsSerializer.cs" />
+    <Compile Include="Text\TsRunPart.cs" />
+    <Compile Include="Text\TsStringComparer.cs" />
+    <Compile Include="Text\TsStringSerializer.cs" />
+    <Compile Include="Text\TsStringUtils.cs" />
+    <Compile Include="WritingSystems\WritingSystemUtils.cs" />
+    <Compile Include="Text\ColorStrings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>ColorStrings.resx</DependentUpon>
     </Compile>
-    <Compile Include="ColorUtil.cs" />
+    <Compile Include="Text\ColorUtil.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="CoreImplStrings.resx">
@@ -190,7 +190,7 @@
       <SubType>Designer</SubType>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="ColorStrings.resx">
+    <EmbeddedResource Include="Text\ColorStrings.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>ColorStrings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
@@ -230,6 +230,7 @@
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <DistFiles>../../../DistFiles</DistFiles>

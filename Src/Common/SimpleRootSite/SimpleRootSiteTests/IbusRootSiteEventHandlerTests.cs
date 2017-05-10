@@ -5,12 +5,12 @@
 #if __MonoCS__
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using IBusDotNet;
 using NUnit.Framework;
 using Rhino.Mocks;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.Keyboarding;
@@ -485,7 +485,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 		public void GetSelectionString(out ITsString _ptss, string bstrSep)
 		{
-			_ptss = TsStringHelper.MakeTss(SelectionText,
+			_ptss = TsStringUtils.MakeString(SelectionText,
 				m_rootBox.m_dummySimpleRootSite.WritingSystemFactory.UserWs);
 		}
 
@@ -1278,7 +1278,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			}
 
 			var ws = m_dummySimpleRootSite.WritingSystemFactory.UserWs;
-			m_dummySelection.ReplaceWithTsString(TsStringHelper.MakeTss(input, ws));
+			m_dummySelection.ReplaceWithTsString(TsStringUtils.MakeString(input, ws));
 		}
 
 		public void DeleteRangeIfComplex(IVwGraphics _vg, out bool _fWasComplex)

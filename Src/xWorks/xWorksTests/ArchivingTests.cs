@@ -4,7 +4,7 @@
 
 using System.Text;
 using NUnit.Framework;
-using SIL.CoreImpl;
+using SIL.CoreImpl.WritingSystems;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.XWorks.Archiving;
 using SIL.Keyboarding;

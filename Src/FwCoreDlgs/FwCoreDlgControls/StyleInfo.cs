@@ -10,7 +10,7 @@ using System.Diagnostics;
 using System.Collections.Generic;
 using System.Text;
 using System.Drawing;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Text;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;

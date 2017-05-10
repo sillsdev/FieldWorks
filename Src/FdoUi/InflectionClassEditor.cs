@@ -14,8 +14,8 @@ using SIL.FieldWorks.LexText.Controls;
 using XCore;
 using SIL.Utils;
 using System.Xml;
-using SIL.CoreImpl;
 using System.Linq;
+using SIL.CoreImpl.Text;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.FdoUi

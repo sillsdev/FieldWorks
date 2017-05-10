@@ -11,8 +11,8 @@ using System.Linq;
 using NUnit.Framework;
 using SIL.FieldWorks.FDO.FDOTests;
 using Rhino.Mocks;
-using SIL.CoreImpl;
 using SIL.CoreImpl.Scripture;
+using SIL.CoreImpl.Text;
 using SIL.FieldWorks.FDO.Infrastructure;
 
 namespace SIL.FieldWorks.FDO.CoreTests.VectorTests

@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using NUnit.Framework;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Text;
 
 namespace SIL.FieldWorks.FDO.FDOTests
 {

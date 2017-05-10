@@ -5,7 +5,7 @@
 // File: ScrMarkerMapping.cs
 // Responsibility: TE Team
 
-using SIL.CoreImpl;
+using SIL.CoreImpl.Text;
 using SIL.FieldWorks.FDO.DomainServices;
 
 namespace SIL.FieldWorks.FDO.DomainImpl

@@ -3,7 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using NUnit.Framework;
-using SIL.CoreImpl;
+using SIL.CoreImpl.WritingSystems;
 using SIL.Keyboarding;
 
 namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests

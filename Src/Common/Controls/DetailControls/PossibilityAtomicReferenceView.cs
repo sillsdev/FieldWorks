@@ -11,7 +11,8 @@
 // </remarks>
 
 using System;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Cellar;
+using SIL.CoreImpl.Text;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO;

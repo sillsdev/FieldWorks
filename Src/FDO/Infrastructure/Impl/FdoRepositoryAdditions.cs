@@ -17,8 +17,10 @@ using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.Utils;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Cellar;
 using SIL.CoreImpl.Phonology;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
 
 namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 {

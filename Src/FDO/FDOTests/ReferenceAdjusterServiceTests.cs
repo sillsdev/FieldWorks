@@ -9,7 +9,7 @@
 // </remarks>
 // ---------------------------------------------------------------------------------------------
 using NUnit.Framework;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Text;
 using SIL.FieldWorks.FDO.DomainServices;
 
 namespace SIL.FieldWorks.FDO.FDOTests

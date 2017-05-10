@@ -11,7 +11,8 @@
 using System;
 using System.Windows.Forms;
 using NUnit.Framework;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Cellar;
+using SIL.CoreImpl.Text;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;

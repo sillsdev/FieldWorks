@@ -10,8 +10,10 @@ using System.Diagnostics;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.Utils;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Cellar;
 using SIL.CoreImpl.Scripture;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
 
 namespace SIL.FieldWorks.FDO.DomainServices
 {

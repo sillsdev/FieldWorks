@@ -12,7 +12,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Runtime.InteropServices; // Needed for Marshal
 using System.Reflection; // To load meta data cache file data.
-using SIL.CoreImpl;
+using SIL.CoreImpl.Cellar;
 using SIL.Extensions;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 

@@ -5,7 +5,6 @@
 using System.Collections.Generic;
 using System.IO;
 using NUnit.Framework;
-using SIL.CoreImpl;
 using SIL.IO;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;

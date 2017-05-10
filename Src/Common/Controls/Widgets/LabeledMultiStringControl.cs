@@ -9,7 +9,8 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;		// controls and etc...
 using System.Windows.Forms.VisualStyles;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.ViewsInterfaces;

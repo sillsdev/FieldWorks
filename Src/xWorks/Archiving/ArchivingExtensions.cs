@@ -4,7 +4,7 @@
 
 using System;
 using System.Text;
-using SIL.CoreImpl;
+using SIL.CoreImpl.WritingSystems;
 
 namespace SIL.FieldWorks.XWorks.Archiving
 {

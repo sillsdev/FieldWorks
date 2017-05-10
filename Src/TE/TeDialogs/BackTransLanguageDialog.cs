@@ -4,7 +4,7 @@
 
 using System;
 using System.Windows.Forms;
-using SIL.CoreImpl;
+using SIL.CoreImpl.WritingSystems;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.FwUtils;
 

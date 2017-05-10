@@ -4,7 +4,7 @@
 
 using System.Collections.Generic;
 using NUnit.Framework;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Text;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.CoreTests;
 using SIL.FieldWorks.FDO.FDOTests;

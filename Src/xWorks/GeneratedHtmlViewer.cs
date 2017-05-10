@@ -15,7 +15,6 @@ using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Xsl;
 using Microsoft.Win32;
-using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwKernelInterfaces;

@@ -19,7 +19,8 @@ using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Resources; // for check-box icons.
 using SIL.FieldWorks.Common.RootSites;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Cellar;
+using SIL.CoreImpl.WritingSystems;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using XCore;
 

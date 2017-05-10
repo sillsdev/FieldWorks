@@ -14,7 +14,8 @@ using System.Linq;
 using System.Text;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.Utils;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
 
 namespace SIL.FieldWorks.FDO.DomainServices
 {

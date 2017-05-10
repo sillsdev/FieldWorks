@@ -13,7 +13,7 @@ using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.IO;
 #endif
-using SIL.CoreImpl;
+using SIL.CoreImpl.WritingSystems;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {

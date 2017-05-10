@@ -4,7 +4,7 @@
 
 using Microsoft.Practices.ServiceLocation;
 using NUnit.Framework;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Text;
 using SIL.FieldWorks.FDO.DomainImpl;
 
 namespace SIL.FieldWorks.FDO.FDOTests

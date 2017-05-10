@@ -8,7 +8,6 @@ using System.Drawing;
 using System.Linq;
 using System.Text.RegularExpressions;
 using ExCSS;
-using SIL.CoreImpl;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwKernelInterfaces;

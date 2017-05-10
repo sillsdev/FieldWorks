@@ -7,7 +7,7 @@
 
 using System.Diagnostics.CodeAnalysis;
 using NUnit.Framework;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Cellar;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FDO.Infrastructure.Impl;
 

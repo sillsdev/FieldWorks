@@ -9,7 +9,6 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Windows.Forms;
-using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
 

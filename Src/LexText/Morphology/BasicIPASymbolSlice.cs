@@ -7,7 +7,7 @@ using System.IO;
 using System.Xml.Linq;
 using System.Xml.XPath;
 
-using SIL.CoreImpl;
+using SIL.CoreImpl.WritingSystems;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.Common.FwKernelInterfaces;

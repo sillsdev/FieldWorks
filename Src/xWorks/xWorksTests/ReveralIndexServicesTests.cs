@@ -7,7 +7,7 @@ using System.IO;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using NUnit.Framework;
-using SIL.CoreImpl;
+using SIL.CoreImpl.WritingSystems;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.FDO.Infrastructure;

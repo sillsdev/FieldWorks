@@ -13,7 +13,7 @@ using System.Xml;
 using System.Xml.Xsl;
 using Gecko;
 using Sfm2Xml;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Text;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;

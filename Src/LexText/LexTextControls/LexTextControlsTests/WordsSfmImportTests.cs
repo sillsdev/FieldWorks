@@ -9,9 +9,9 @@ using System.Text;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using NUnit.Framework;
-using SIL.CoreImpl;
 using SIL.FieldWorks.LexText.Controls;
 using Sfm2Xml;
+using SIL.CoreImpl.WritingSystems;
 
 namespace LexTextControlsTests
 {

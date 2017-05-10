@@ -4,7 +4,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using SIL.CoreImpl;
+using SIL.CoreImpl.WritingSystems;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.PaToFdoInterfaces;
 using SIL.FieldWorks.FDO;

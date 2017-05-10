@@ -5,7 +5,7 @@
 using System;
 using System.Collections.Generic;
 using NUnit.Framework;
-using SIL.CoreImpl;
+using SIL.CoreImpl.WritingSystems;
 using SIL.Utils;
 using SIL.WritingSystems;
 

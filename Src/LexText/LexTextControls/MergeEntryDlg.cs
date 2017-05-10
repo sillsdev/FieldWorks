@@ -14,7 +14,8 @@ using SIL.FieldWorks.FDO;
 using SIL.Utils;
 using XCore;
 using System.Diagnostics.CodeAnalysis;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 

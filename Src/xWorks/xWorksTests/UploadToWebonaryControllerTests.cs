@@ -12,7 +12,7 @@ using System.Text.RegularExpressions;
 using System.Xml;
 using Ionic.Zip;
 using NUnit.Framework;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Text;
 using SIL.IO;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;

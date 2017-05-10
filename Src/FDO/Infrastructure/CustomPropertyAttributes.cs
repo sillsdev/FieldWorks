@@ -11,7 +11,7 @@
 // </remarks>
 
 using System;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Cellar;
 
 namespace SIL.FieldWorks.FDO.Infrastructure
 {

@@ -18,7 +18,9 @@ using SIL.FieldWorks.FDO.IOC;
 using SIL.Utils;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Cellar;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
 using SIL.FieldWorks.FDO.Infrastructure.Impl;
 using SIL.Lexicon;
 

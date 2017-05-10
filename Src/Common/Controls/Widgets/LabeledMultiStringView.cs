@@ -11,11 +11,12 @@ using System.IO;
 using System.Windows.Forms;		// controls and etc...
 using System.Xml;
 using SIL.Media;
-using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.FDO.Infrastructure;
 using System.Text;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
 using XCore;
 
 namespace SIL.FieldWorks.Common.Widgets

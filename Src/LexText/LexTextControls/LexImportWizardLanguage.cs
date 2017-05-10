@@ -8,11 +8,12 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Forms;
 
-using SIL.CoreImpl;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FwCoreDlgs;
-using SilEncConverters40;	// for the encoding converters
+using SilEncConverters40;
+using SIL.CoreImpl.WritingSystems;
+// for the encoding converters
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 

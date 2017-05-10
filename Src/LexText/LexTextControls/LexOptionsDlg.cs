@@ -17,7 +17,7 @@ using System.Globalization;
 using System.Windows.Forms;
 using System.IO;
 using System.Xml;
-using SIL.CoreImpl;
+using SIL.CoreImpl.WritingSystems;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.Reporting;

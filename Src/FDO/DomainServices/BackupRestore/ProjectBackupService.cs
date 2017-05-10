@@ -8,7 +8,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using ICSharpCode.SharpZipLib.Zip;
-using SIL.CoreImpl;
+using SIL.CoreImpl.SpellChecking;
+using SIL.CoreImpl.WritingSystems;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
 

@@ -12,7 +12,7 @@ using System.Linq;
 using System.Reflection;
 using System.Resources;
 using System.Windows.Forms;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Cellar;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.Common.FwKernelInterfaces;

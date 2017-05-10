@@ -19,7 +19,7 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Filters;
 using SIL.Utils;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Text;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FwCoreDlgControls;

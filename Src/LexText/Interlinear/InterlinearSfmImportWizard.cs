@@ -11,7 +11,7 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Serialization;
 using Sfm2Xml;
-using SIL.CoreImpl;
+using SIL.CoreImpl.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;

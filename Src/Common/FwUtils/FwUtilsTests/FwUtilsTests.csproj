@@ -166,7 +166,6 @@
     <Compile Include="TestFwStylesheetTests.cs" />
     <Compile Include="XmlHelper.cs" />
     <None Include="App.config" />
-    <Compile Include="CaseFunctionsTest.cs" />
     <Compile Include="FwDirectoryFinderTests.cs" />
     <Compile Include="DummyFwRegistryHelper.cs" />
     <Compile Include="FwLinkArgsTests.cs" />

@@ -10,7 +10,7 @@
 // </remarks>
 
 using System;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Text;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.FDO;
@@ -168,7 +168,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				case 6: // StTxtPara, display details of our outer object
 					int hvoOuter, tag, ihvo;
 					vwenv.GetOuterObject(vwenv.EmbeddingLevel - 1, out hvoOuter, out tag, out ihvo);
-					ITsString tss = TsStringHelper.MakeTss("Hvo = " + hvoOuter + "; Tag = " + tag + "; Ihvo = " + ihvo,
+					ITsString tss = TsStringUtils.MakeString("Hvo = " + hvoOuter + "; Tag = " + tag + "; Ihvo = " + ihvo,
 						m_wsDefault);
 					vwenv.AddString(tss);
 					break;

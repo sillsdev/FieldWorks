@@ -12,7 +12,7 @@ using System;
 using System.Diagnostics;
 using System.Collections.Generic;
 using SIL.FieldWorks.FDO.Application;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Cellar;
 
 namespace SIL.FieldWorks.FDO.DomainImpl
 {

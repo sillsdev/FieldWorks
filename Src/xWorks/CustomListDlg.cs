@@ -13,7 +13,8 @@ using SIL.FieldWorks.FDO.Infrastructure;
 using XCore;
 using SIL.FieldWorks.FDO;
 using System.Collections.Generic;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.XWorks

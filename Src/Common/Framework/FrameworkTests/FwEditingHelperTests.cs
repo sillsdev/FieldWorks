@@ -13,7 +13,7 @@ using SIL.FieldWorks.FDO.FDOTests;
 using Rhino.Mocks;
 using SIL.FieldWorks.Common.RootSites;
 using System.Windows.Forms;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Text;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.Utils;

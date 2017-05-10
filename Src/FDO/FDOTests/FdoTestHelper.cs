@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Text;
 using SIL.Utils;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 

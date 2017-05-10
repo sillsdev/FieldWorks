@@ -9,7 +9,7 @@ using System.Runtime.Serialization;
 using System.Windows.Forms;
 using System.Xml;
 
-using SIL.CoreImpl;
+using SIL.CoreImpl.Cellar;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.Resources;

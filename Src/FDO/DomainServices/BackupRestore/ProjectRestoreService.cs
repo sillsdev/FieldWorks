@@ -12,7 +12,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text;
 using ICSharpCode.SharpZipLib.Zip;
-using SIL.CoreImpl;
+using SIL.CoreImpl.SpellChecking;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
 using SIL.Lexicon;
 using SIL.Reporting;

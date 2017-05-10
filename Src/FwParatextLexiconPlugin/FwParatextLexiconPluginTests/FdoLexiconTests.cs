@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 using Paratext.LexicalContracts;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Text;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;

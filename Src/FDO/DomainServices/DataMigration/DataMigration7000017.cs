@@ -12,6 +12,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using SIL.CoreImpl.Cellar;
 
 namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 {
@@ -220,7 +221,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 			string fieldName = "Weather";
 			while (repoDTO.IsFieldNameUsed("RnGenericRec", fieldName))
 				fieldName = fieldName + "A";
-			repoDTO.CreateCustomField("RnGenericRec", fieldName, SIL.CoreImpl.CellarPropertyType.ReferenceCollection,
+			repoDTO.CreateCustomField("RnGenericRec", fieldName, CellarPropertyType.ReferenceCollection,
 				CmPossibilityTags.kClassId, "originally a standard part of Data Notebook records",
 				WritingSystemServices.kwsAnals, new Guid(sWeatherListGuid));
 

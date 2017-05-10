@@ -17,7 +17,8 @@ using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.Utils;
 
@@ -355,7 +356,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			// add a translation to the footnote
 			ICmTranslation translation = para.GetOrCreateBT();
 			int analWs = Cache.DefaultAnalWs;
-			translation.Translation.set_String(analWs, TsStringHelper.MakeTss("abcde", analWs));
+			translation.Translation.set_String(analWs, TsStringUtils.MakeString("abcde", analWs));
 
 			FwStyleSheet styleSheet = new FwStyleSheet();
 			styleSheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles);

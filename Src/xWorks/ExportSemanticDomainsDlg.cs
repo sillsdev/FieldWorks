@@ -4,6 +4,7 @@
 
 using System;
 using System.Windows.Forms;
+using SIL.CoreImpl.WritingSystems;
 using SIL.FieldWorks.FDO;
 
 namespace SIL.FieldWorks.XWorks
@@ -40,7 +41,7 @@ namespace SIL.FieldWorks.XWorks
 			m_writingSystemsListBox.SelectedIndex = 0;
 		}
 
-		private object CreateItemForWs(CoreImpl.CoreWritingSystemDefinition xws)
+		private object CreateItemForWs(CoreWritingSystemDefinition xws)
 		{
 			return new Item {Label = xws.DisplayLabel, Ws = xws.Handle};
 		}

@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Text;
 
 namespace SIL.FieldWorks.Common.Controls
 {
