@@ -1,12 +1,12 @@
 ﻿using System;
 using System.IO;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.WordWorks.Parser;
 using SIL.HermitCrab;
 using SIL.Machine.Annotations;
 using SIL.Utils;
+using SIL.WritingSystems;
 
 namespace GenerateHCConfig
 {
@@ -26,8 +26,8 @@ namespace GenerateHCConfig
 				return 1;
 			}
 
-			RegistryHelper.CompanyName = "SIL";
 			Icu.InitIcuDataDir();
+			Sldr.Initialize();
 			var synchronizeInvoke = new SingleThreadedSynchronizeInvoke();
 			var spanFactory = new ShapeSpanFactory();
 

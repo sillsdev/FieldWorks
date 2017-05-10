@@ -24,6 +24,7 @@ using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FwCoreDlgControls;
 using SIL.FieldWorks.Resources;
 using SIL.Reporting;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.TE
 {

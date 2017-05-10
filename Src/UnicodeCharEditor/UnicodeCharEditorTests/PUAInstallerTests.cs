@@ -43,9 +43,6 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		[TestFixtureSetUp]
 		public void Setup()
 		{
-			RegistryHelper.CompanyName = "SIL";
-			RegistryHelper.ProductName = "FieldWorks";
-
 			Assert.IsTrue(InitializeIcuData());
 			m_sCustomCharsFile = Path.Combine(Icu.DefaultDirectory, "CustomChars.xml");
 			m_sCustomCharsBackup = Path.Combine(Icu.DefaultDirectory, "TestBackupForCustomChars.xml");

@@ -21,14 +21,13 @@ namespace SIL.FieldWorks.Common.FwUtils.Attributes
 	/// </remarks>
 	/// ----------------------------------------------------------------------------------------
 	[AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Class)]
-	public class SetCompanyAndProductForTestsAttribute: TestActionAttribute
+	public class InitializeFwRegistryHelperAttribute: TestActionAttribute
 	{
 		/// <summary/>
 		public override void BeforeTest(TestDetails testDetails)
 		{
 			base.BeforeTest(testDetails);
-			RegistryHelper.CompanyName = "SIL";
-			RegistryHelper.ProductName = "FieldWorks";
+			FwRegistryHelper.Initialize();
 		}
 	}
 }

@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace SIL.FieldWorks.Common.FwUtils
+namespace SIL.Utils
 {
 	/// <summary></summary>
 	public static class DirectoryUtils

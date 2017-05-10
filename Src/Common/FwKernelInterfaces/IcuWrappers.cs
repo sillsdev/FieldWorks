@@ -80,8 +80,8 @@ namespace SIL.FieldWorks.Common.FwKernelInterfaces
 				var dir = Environment.GetEnvironmentVariable("ICU_DATA");
 				if (string.IsNullOrEmpty(dir))
 				{
-					dir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
-						string.Format("SIL/Icu{0}", Version));
+					dir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "SIL",
+						$"Icu{Version}");
 				}
 				return dir;
 			}

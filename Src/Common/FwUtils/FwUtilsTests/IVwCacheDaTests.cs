@@ -1,12 +1,8 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: IVwCacheDaTests.cs
-// Responsibility: Eberhard Beilharz
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using NUnit.Framework;
 using SIL.CoreImpl.Cellar;
@@ -42,7 +38,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[SetUp]
 		public void TestSetup()
 		{
-			RegistryHelper.CompanyName = "SIL";
 			var cda = VwCacheDaClass.Create();
 			cda.TsStrFactory = TsStringUtils.TsStrFactory;
 			m_ISilDataAccess = cda;

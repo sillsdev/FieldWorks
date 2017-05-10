@@ -80,6 +80,7 @@
     </Compile>
     <Compile Include="ConsumerThread.cs" />
     <Compile Include="ContinuableErrorException.cs" />
+    <Compile Include="DirectoryUtils.cs" />
     <Compile Include="EnvVarTraceListener.cs" />
     <Compile Include="FileUtils.cs" />
     <Compile Include="IFileOS.cs" />
@@ -88,6 +89,7 @@
     <Compile Include="MiscUtils.cs" />
     <Compile Include="PriorityQueue.cs" />
     <Compile Include="RecentItemsCache.cs" />
+    <Compile Include="RegistryHelper.cs" />
     <Compile Include="RomanNumerals.cs" />
     <Compile Include="SilUtilsExtensions.cs" />
     <Compile Include="SimpleBag.cs" />

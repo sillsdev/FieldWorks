@@ -23,8 +23,8 @@ using SIL.Utils.Attributes;
 // Cleanup all singletons after running tests
 [assembly: CleanupSingletons]
 
-// Override company and product names
-[assembly: SetCompanyAndProductForTests]
+// Initialize registry helper
+[assembly: InitializeFwRegistryHelper]
 
 // Initialize ICU
 [assembly: InitIcuForTests]

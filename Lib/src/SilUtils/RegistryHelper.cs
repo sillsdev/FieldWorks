@@ -1,20 +1,16 @@
-﻿// ---------------------------------------------------------------------------------------------
-// Copyright (c) 2010-2015 SIL International
+﻿// Copyright (c) 2010-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: RegistryHelper.cs
-// Responsibility: TE Team
-// ---------------------------------------------------------------------------------------------
+
 using System;
 using System.Diagnostics;
 using System.Globalization;
+using System.Linq;
 using System.Security;
 using System.Text;
 using Microsoft.Win32;
-using System.Windows.Forms;
 
-namespace SIL.FieldWorks.Common.FwUtils
+namespace SIL.Utils
 {
 	#region RegistryHelper class
 	/// ----------------------------------------------------------------------------------------
@@ -24,48 +20,19 @@ namespace SIL.FieldWorks.Common.FwUtils
 	/// ----------------------------------------------------------------------------------------
 	public static class RegistryHelper
 	{
-		private static string s_companyName = Application.CompanyName;
-		private static string s_productName = Application.ProductName;
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Sets the name of the company used for registry settings.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public static string CompanyName { get; set; }
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Sets the name of the company used for registry settings (replaces
-		/// Application.CompanyName)
-		/// NOTE: THIS SHOULD ONLY BE SET IN TESTS AS THE DEFAULT Application.CompanyName IN
-		/// TESTS WILL BE "nunit.org"!!!
+		/// Sets the name of the product used for registry settings.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public static string CompanyName
-		{
-			set { s_companyName = value; }
-			private get
-			{
-				if (s_companyName.IndexOf("nunit", StringComparison.InvariantCultureIgnoreCase) >= 0)
-					throw new ArgumentException("CompanyName can not be NUnit.org or some variant of NUnit!" +
-						" Make sure the test is overriding this property in RegistryHelper");
-				return s_companyName;
-			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Sets the name of the product used for registry settings (replaces
-		/// Application.ProductName)
-		/// NOTE: THIS SHOULD ONLY BE SET IN TESTS AS THE DEFAULT Application.ProductName IN
-		/// TESTS WILL BE "NUnit"!!!
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public static string ProductName
-		{
-			set { s_productName = value; }
-			private get
-			{
-				if (s_productName.IndexOf("nunit", StringComparison.InvariantCultureIgnoreCase) >= 0)
-					throw new ArgumentException("ProductName can not be some variant of NUnit!" +
-						" Make sure the test is overriding this property in RegistryHelper");
-				return s_productName;
-			}
-		}
+		public static string ProductName { get; set; }
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -134,15 +101,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public static bool KeyExists(RegistryKey key, string subKey)
 		{
 			if (key == null)
-				throw new ArgumentNullException("key");
+				throw new ArgumentNullException(nameof(key));
 
-			foreach (string s in key.GetSubKeyNames())
-			{
-				if (String.Compare(s, subKey, true) == 0)
-					return true;
-			}
-
-			return false;
+			return key.GetSubKeyNames().Any(s => s.Equals(subKey, StringComparison.OrdinalIgnoreCase));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -159,7 +120,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public static bool RegEntryValueExists(RegistryKey key, string subKey, string regEntry, out object value)
 		{
 			if (key == null)
-				throw new ArgumentNullException("key");
+				throw new ArgumentNullException(nameof(key));
 
 			value = null;
 
@@ -273,7 +234,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		private T m_value;
 		private readonly string m_keyName;
 		private readonly RegistryKey m_subKey;
-		private bool m_fDisposeSubKey;
+		private readonly bool m_fDisposeSubKey;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -335,14 +296,14 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary/>
 		protected virtual void Dispose(bool fDisposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (fDisposing && !IsDisposed)
 			{
 				// dispose managed and unmanaged objects
-				var disposableSubKey = m_subKey as IDisposable;
-				if (m_fDisposeSubKey && disposableSubKey != null)
+				if (m_fDisposeSubKey)
 				{
-					disposableSubKey.Dispose();
+					var disposableSubKey = m_subKey as IDisposable;
+					disposableSubKey?.Dispose();
 				}
 			}
 			IsDisposed = true;
@@ -381,8 +342,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			set
 			{
 				m_value = value;
-				if (m_subKey != null)
-					m_subKey.SetValue(m_keyName, GetPersistableForm(m_value));
+				m_subKey?.SetValue(m_keyName, GetPersistableForm(m_value));
 			}
 		}
 	}

@@ -11,6 +11,7 @@ using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
+using SIL.Utils;
 using SIL.WritingSystems.Migration;
 
 namespace SIL.FieldWorks.MigrateSqlDbs.MigrateProjects
@@ -53,7 +54,7 @@ namespace SIL.FieldWorks.MigrateSqlDbs.MigrateProjects
 				else if (rgArgs[i] == "-chars")
 					s_fMigrateChars = true;
 			}
-			RegistryHelper.ProductName = "FieldWorks";	// needed to access proper registry values
+			FwRegistryHelper.Initialize(); // needed to access proper registry values
 
 			if (s_fMigrateChars && s_fDebug)
 				MessageBox.Show("Warning: MigrateSqlDbs called with no-longer valid argument, '-chars'. Run 'UnicodeCharEditor -i' instead.");

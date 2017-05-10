@@ -1,17 +1,10 @@
-// Copyright (c) 2010-2013 SIL International
+// Copyright (c) 2010-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: FwRegistryHelper.cs
-// Responsibility: FW Team
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Security;
@@ -191,7 +184,16 @@ namespace SIL.FieldWorks.Common.FwUtils
 					return false;
 				}
 			}
-			}
+		}
+
+		/// <summary>
+		/// Sets the company and product key names.
+		/// </summary>
+		public static void Initialize()
+		{
+			RegistryHelper.CompanyName = "SIL";
+			RegistryHelper.ProductName = "FieldWorks";
+		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

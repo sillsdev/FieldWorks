@@ -5,6 +5,7 @@
 using System.Linq;
 using Microsoft.Win32;
 using NUnit.Framework;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {

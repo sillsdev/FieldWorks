@@ -159,7 +159,6 @@
     <Compile Include="CharEnumeratorForByteArray.cs" />
     <Compile Include="ConsoleProgress.cs" />
     <Compile Include="DebugProcs.cs" />
-    <Compile Include="DirectoryUtils.cs" />
     <Compile Include="DisposableObjectsSet.cs" />
     <Compile Include="DriveUtil.cs" />
     <Compile Include="FLExBridgeHelper.cs" />
@@ -219,7 +218,6 @@
     <Compile Include="ViewSizeEvents.cs" />
     <Compile Include="TextTokenSubstring.cs" />
     <Compile Include="Win32Wrappers.cs" />
-    <Compile Include="RegistryHelper.cs" />
     <Compile Include="UserActivityMonitor.cs" />
     <Compile Include="MessageBoxUtils.cs" />
     <Compile Include="AccessibleNameCreator.cs" />

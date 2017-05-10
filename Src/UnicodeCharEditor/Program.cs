@@ -34,8 +34,8 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		[STAThread]
 		static void Main(string[] args)
 		{
-			RegistryHelper.ProductName = "FieldWorks";
 			// needed to access proper registry values
+			FwRegistryHelper.Initialize();
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
 			bool fBadArg = false;

@@ -1,10 +1,6 @@
-﻿// Copyright (c) 2009-2013 SIL International
+﻿// Copyright (c) 2009-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: FlexDePluginTest.cs
-// Responsibility: Greg Trihus
-// Last reviewed:
 //
 // <remarks>
 //		Unit tests for FlexDePlugin
@@ -12,16 +8,11 @@
 
 using System;
 using System.IO;
-using System.Windows.Forms;
-using Microsoft.Win32;
 using NUnit.Framework;
 using NMock;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.PublishingSolution;
-using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.Utils;
-using XCore;
 
 namespace FlexDePluginTests
 {
@@ -46,9 +37,6 @@ namespace FlexDePluginTests
 		[TestFixtureSetUp]
 		public void TestFixtureSetup()
 		{
-			// This needs to be set for ReSharper
-			RegistryHelper.CompanyName = "SIL";
-			RegistryHelper.ProductName = "FieldWorks";
 			var path = String.Format("LexText{0}FlexPathwayPlugin{0}FlexPathwayPluginTests{0}Input", Path.DirectorySeparatorChar);
 			_TestPath = Path.Combine(FwDirectoryFinder.SourceDirectory, path);
 		}
