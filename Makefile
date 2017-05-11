@@ -715,7 +715,9 @@ InstallCerts:
 
 # As of 2017-03-27, localize is more likely to crash running on mono 3 than to actually have a real localization problem. So try it a few times so that a random crash doesn't fail a packaging job that has been running for over an hour.
 Fw-build-package: InstallCerts
+	. environ && \
 	cd $(BUILD_ROOT)/Build \
+		&& xbuild /t:refreshTargets \
 		&& xbuild '/t:remakefw;zipLocalizedLists' /property:config=release /property:packaging=yes \
 		&& ./multitry xbuild '/t:localize' /property:config=release /property:packaging=yes
 
