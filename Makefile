@@ -707,31 +707,6 @@ uninstall-between-DistFiles:
 	rm DistFiles/TeResources.dll
 
 # // TODO-Linux: delete all C# makefiles and replace with xbuild/msbuild calls
-BasicUtils-Nant-Build:
-	(cd $(BUILD_ROOT)/Build && xbuild /t:BasicUtils)
-
-Te-Nant-Build:
-	(cd $(BUILD_ROOT)/Build && xbuild /t:allTe)
-
-Te-Nant-Run:
-	(cd $(BUILD_ROOT)/Build && xbuild /t:allTe /property:action=test)
-
-Flex-Nant-Build:
-	(cd $(BUILD_ROOT)/Build && xbuild /t:LexTextExe)
-
-Flex-Nant-Run:
-	(cd $(BUILD_ROOT)/Build && xbuild /t:LexTextExe /property:action=test)
-
-TE: linktoOutputDebug tlbs-copy teckit externaltargets Te-Nant-Build install install-strings ComponentsMap-nodep Te-Nant-Run
-
-Flex: linktoOutputDebug tlbs-copy externaltargets Flex-Nant-Build install-strings ComponentsMap-nodep Flex-Nant-Run
-
-Fw:
-	(cd $(BUILD_ROOT)/Build && xbuild /t:remakefw /property:action=test)
-
-Fw-build:
-	(cd $(BUILD_ROOT)/Build && xbuild /t:remakefw)
-
 InstallCerts:
 	cd $$(mktemp -d) \
 		&& wget -q -O certdata.txt "http://mxr.mozilla.org/seamonkey/source/security/nss/lib/ckfw/builtins/certdata.txt?raw=1" \
@@ -748,9 +723,6 @@ Fw-build-package-fdo: InstallCerts
 	cd $(BUILD_ROOT)/Build \
 		&& xbuild /t:refreshTargets \
 		&& xbuild '/t:build4package-fdo' /property:config=release /property:packaging=yes
-
-TE-run: ComponentsMap-nodep
-	(. ./environ && cd $(OUT_DIR) && mono --debug TE.exe -db "$${TE_DATABASE}")
 
 # Begin localization section
 
