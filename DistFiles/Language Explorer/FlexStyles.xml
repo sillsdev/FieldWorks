@@ -90,7 +90,7 @@
 		</tag>
 		<!-- These are only defined here, and this is the current main purpose of having this file -->
 		<tag id="Dictionary-LetterHeading" guid="DD807CAE-4B18-4354-934D-99632B663F9E" userlevel="1" context="internal" type="paragraph">
-			<usage wsId="en">Letter headings in the dictionary.</usage>
+			<usage wsId="en">Letter headings in the dictionary and reversal indexes.</usage>
 			<help category="Flex_Dictionary_Styles"/>
 			<font bold="true" size="14 pt"/>
 			<paragraph basedOn="Dictionary-Normal" next="Dictionary-Normal" alignment="center" spaceBefore="12 pt" spaceAfter="3 pt"/>
