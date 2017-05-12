@@ -11,7 +11,6 @@ using SIL.CoreImpl.Scripture;
 using SIL.CoreImpl.Text;
 using SIL.CoreImpl.WritingSystems;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
-using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FDO.FDOTests;

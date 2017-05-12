@@ -74,7 +74,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\..\..\Src\Common\CoreImpl\CoreImplTests\Attributes\RedirectHKCU.cs">
+    <Compile Include="..\..\..\..\Src\Common\FwUtils\FwUtilsTests\Attributes\RedirectHKCU.cs">
       <Link>RedirectHKCU.cs</Link>
     </Compile>
     <Compile Include="EthnologueTests.cs" />

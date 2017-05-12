@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="14.0">
+	<PropertyGroup>
+		<MsbuildCommand Condition="'$(OS)'=='Windows_NT'">msbuild</MsbuildCommand>
+		<MsbuildCommand Condition="'$(OS)'=='Unix'">xbuild</MsbuildCommand>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<GeneratedFiles Include="Generated*.cs"/>
+		<GeneratedFiles Include="DomainImpl/FDOGenerated.cs"/>
+		<GeneratedFiles Include="DomainImpl/Generated*.cs"/>
+		<GeneratedFiles Include="Infrastructure/Impl/Generated*.cs"/>
+		<GeneratedFiles Include="IOC/Generated*.cs"/>
+		<GeneratedFiles Include="FDOGenerate/Generated*.cs"/>
+	</ItemGroup>
+
+	<Target Name="AfterClean">
+		<Delete Files="@(GeneratedFiles)" ContinueOnError="true" />
+	</Target>
+
+	<Target Name="GenerateModel" Inputs="MasterFieldWorksModel.xml" Outputs="@(GeneratedFiles)">
+		<!-- Call the FdoGenerate task from FdoBuildTasks in a separate msbuild process, so it doesn't lock the FdoBuildTasks.dll in VS. -->
+		<Exec Command="$(MsbuildCommand) GenerateModel.proj /p:Configuration=$(Configuration)" />
+	</Target>
+
+	<Target Name="CheckWinForms">
+		<Error Text="Please do NOT make FDO reference Windows.Forms. It is not supposed to contain UI code!"
+			Condition="'%(Reference.Identity)' == 'System.Windows.Forms'" />
+	</Target>
+
+	<Target Name="BeforeCompile" DependsOnTargets="CheckWinForms;GenerateModel">
+	</Target>
+</Project>

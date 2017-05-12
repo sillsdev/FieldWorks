@@ -1,25 +1,15 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: MsaInflectionFeatureListDlgTests.cs
-// Responsibility:
 
-using System;
 using System.Windows.Forms;
-using System.Diagnostics;
 using System.IO;
 using System.Xml;
-using System.Xml.Xsl;
-
 using NUnit.Framework;
 
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainImpl;
-using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.FDOTests;
-using XCore;
-using System.Diagnostics.CodeAnalysis;
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -40,14 +30,12 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private ILangProject CreateFeatureSystem(out IFsFeatStruc featStruct)
 		{
-			featStruct = null;
 			ILangProject lp = Cache.LanguageProject;
 
 			// Set up the xml fs description
 			XmlDocument doc = new XmlDocument();
-			string sFileDir = Path.Combine(SIL.FieldWorks.Common.FwUtils.FwDirectoryFinder.SourceDirectory,
-				Path.Combine(@"FDO", Path.Combine(@"FDOTests", @"TestData")));
-			string sFile = Path.Combine(sFileDir, "FeatureSystem2.xml");
+			string sFile = Path.Combine(FwDirectoryFinder.SourceDirectory, "LexText", "LexTextControls", "LexTextControlsTests",
+				"FeatureSystem2.xml");
 
 			doc.Load(sFile);
 			XmlNode itemNeut = doc.SelectSingleNode("//item[@id='vNeut']");
@@ -102,12 +90,10 @@ namespace SIL.FieldWorks.LexText.Controls
 			IFsFeatStruc featStruct;
 			ILangProject lp = CreateFeatureSystem(out featStruct);
 
-
+			string dir = Path.Combine(FwDirectoryFinder.SourceDirectory, "LexText", "LexTextControls", "LexTextControlsTests");
 			// Set up the xml fs description
 			XmlDocument doc = new XmlDocument();
-			string sFileDir = Path.Combine(SIL.FieldWorks.Common.FwUtils.FwDirectoryFinder.SourceDirectory,
-										   Path.Combine(@"FDO", Path.Combine(@"FDOTests", @"TestData")));
-			string sFile = Path.Combine(sFileDir, "FeatureSystem2.xml");
+			string sFile = Path.Combine(dir, "FeatureSystem2.xml");
 			doc.Load(sFile);
 			XmlNode itemNeut = doc.SelectSingleNode("//item[@id='vNeut']");
 			// Add some complex features
@@ -120,7 +106,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			XmlNode item1st = doc.SelectSingleNode("//item[@id='v1']");
 			msfs.AddFeatureFromXml(item1st);
 			// now get a simple, top-level closed feature
-			sFile = Path.Combine(sFileDir, "FeatureSystem3.xml");
+			sFile = Path.Combine(dir, "FeatureSystem3.xml");
 			doc.Load(sFile);
 			XmlNode itemImpfv = doc.SelectSingleNode("//item[@id='vImpfv']");
 			msfs.AddFeatureFromXml(itemImpfv);

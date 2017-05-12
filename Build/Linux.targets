@@ -121,7 +121,7 @@
 	-->
 	<ItemGroup>
 		<IdhFiles Include="$(fwrt)/Src/CommonCOMDlgs/CmnFwDlgs.idh"/>
-		<IdhFiles Include="$(fwrt)/Src/Generic/common.idh"/>
+		<IdhFiles Include="$(fwrt)/Src/Kernel/common.idh"/>
 		<IdhFiles Include="$(fwrt)/Src/Kernel/FwKernel.idh"/>
 		<IdhFiles Include="$(fwrt)/Src/Kernel/FwKernelTlb.idl"/>
 		<IdhFiles Include="$(fwrt)/Src/Kernel/TextServ.idh"/>
@@ -136,7 +136,7 @@
 		<ContinueIfOutOfDate Condition="!$(buildtlb)">false</ContinueIfOutOfDate>
 		<ContinueIfOutOfDate Condition="$(buildtlb) Or '$(OS)'!='Unix'">true</ContinueIfOutOfDate>
 	</PropertyGroup>
-	<Target Name="ensureTLBsUpToDate">
+	<Target Name="ensureTLBsUpToDate" DependsOnTargets="BuildFdo">
 		<MakeDir Directories="$(dir-fwoutput)"/><!-- just in case... -->
 		<CatenateFiles SourceFiles="@(IdhFiles)" TargetFile="$(dir-fwoutput)/idhfiles" UseUnixNewlines="true"/>
 		<Md5Checksum SourceFile="$(dir-fwoutput)/idhfiles"/>

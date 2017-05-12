@@ -2,7 +2,8 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using SIL.CoreImpl.Attributes;
+using SIL.FieldWorks.Common.FwKernelInterfaces.Attributes;
+using SIL.FieldWorks.Common.FwUtils.Attributes;
 using SIL.TestUtilities;
 using SIL.Utils.Attributes;
 
@@ -16,7 +17,7 @@ using SIL.Utils.Attributes;
 [assembly: RedirectHKCU]
 
 // Initialize ICU
-[assembly: InitIcuForTests]
+[assembly: InitializeIcu]
 
 // Turns the SLDR API into offline mode
 [assembly: OfflineSldr]

@@ -3,10 +3,12 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
+using System.IO;
 using System.Windows.Forms;
 using System.Xml;
 using NUnit.Framework;
 using SIL.CoreImpl.WritingSystems;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.FDO.Infrastructure;
@@ -99,8 +101,9 @@ namespace SIL.FieldWorks.IText
 			Cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems.Insert(0, m_wsXkal);
 			m_textsDefn = new XmlDocument();
 			m_tagRepo = Cache.ServiceLocator.GetInstance<ITextTagRepository>();
-			ConfigurationFilePath("Language Explorer/Configuration/Words/AreaConfiguration.xml");
-			m_text1 = LoadTestText("FDO/FDOTests/TestData/ParagraphParserTestTexts.xml", 1, m_textsDefn);
+			string textDefinitionsPath = Path.Combine(FwDirectoryFinder.SourceDirectory, "LexText", "Interlinear", "ITextDllTests",
+				"ParagraphParserTestTexts.xml");
+			m_text1 = LoadTestText(textDefinitionsPath, 1, m_textsDefn);
 			m_para1 = m_text1.ContentsOA.ParagraphsOS[0] as IStTxtPara;
 			ParseTestText();
 

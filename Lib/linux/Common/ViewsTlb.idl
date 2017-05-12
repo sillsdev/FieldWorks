@@ -17,7 +17,7 @@ import "oaidl.idl";
 import "ocidl.idl";
 import "objidl.idl";
 
-#line 1 "C:\\develop\\fwrepo\\fw\\Src\\Generic\\common.idh"
+#line 1 "C:\\develop\\fwrepo\\fw\\src\\Kernel\\common.idh"
 
 
 

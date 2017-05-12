@@ -39,7 +39,9 @@ namespace SIL.FieldWorks.IText
 
 		protected virtual FDO.IText SetupDataForText1()
 		{
-			return LoadTestText("LexText/Interlinear/ITextDllTests/InterlinearExporterTests.xml", 1, m_textsDefn);
+			string path = Path.Combine(FwDirectoryFinder.SourceDirectory, "LexText", "Interlinear", "ITextDllTests",
+				"InterlinearExporterTests.xml");
+			return LoadTestText(path, 1, m_textsDefn);
 		}
 
 		[TearDown]

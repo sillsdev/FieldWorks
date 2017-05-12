@@ -1,4 +1,5 @@
 #line 1 "C:\\develop\\fwrepo\\fw\\src\\Kernel\\FwKernelTlb.idl"
+#line 1 "idl/FwKernelTlb.idl"
 
 
 
@@ -14,7 +15,7 @@ import "oaidl.idl";
 import "ocidl.idl";
 import "objidl.idl";
 
-#line 1 "C:\\develop\\fwrepo\\fw\\src\\Generic\\common.idh"
+#line 1 "c:\\develop\\fwrepo\\fw\\lib\\src\\fdo\\src\\fwkernelinterfaces\\idl\\common.idh"
 
 
 
@@ -117,11 +118,11 @@ cpp_quote("// This is for code that uses a 64-bit integer for SilTime.")
 cpp_quote("typedef __int64 SilTime;")
 cpp_quote("#endif")
 cpp_quote("")
-#line 17 "C:\\develop\\fwrepo\\fw\\src\\Kernel\\FwKernelTlb.idl"
+#line 17 "idl/FwKernelTlb.idl"
 
 cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("F1EF76E0-BE04-11d3-8D9A-005004DEFEC4") cpp_quote(",") cpp_quote("FwKernelLib") cpp_quote(");") [ uuid(F1EF76E0-BE04-11d3-8D9A-005004DEFEC4), version(1.0), helpstring("FieldWorks Kernel") ] library FwKernelLib
 {
-	#line 1 "c:\\develop\\fwrepo\\fw\\src\\kernel\\FwKernel.idh"
+	#line 1 "c:\\develop\\fwrepo\\fw\\lib\\src\\fdo\\src\\fwkernelinterfaces\\idl\\FwKernel.idh"
 
 
 
@@ -554,7 +555,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("CF0F1C0B-0E44-4C1E-9912-2048
 {
 	interface IActionHandler;
 };
-#line 434 "c:\\develop\\fwrepo\\fw\\src\\kernel\\FwKernel.idh"
+#line 434 "c:\\develop\\fwrepo\\fw\\lib\\src\\fdo\\src\\fwkernelinterfaces\\idl\\FwKernel.idh"
 
 
 
@@ -1705,7 +1706,7 @@ cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IDebugReport") cpp_
 	HRESULT ClearSink();
 };
 
-#line 1585 "c:\\develop\\fwrepo\\fw\\src\\kernel\\FwKernel.idh"
+#line 1585 "c:\\develop\\fwrepo\\fw\\lib\\src\\fdo\\src\\fwkernelinterfaces\\idl\\FwKernel.idh"
 
 
 
@@ -1726,10 +1727,10 @@ cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IComDisposable") cp
 
 
 
-#line 1606 "c:\\develop\\fwrepo\\fw\\src\\kernel\\FwKernel.idh"
+#line 1606 "c:\\develop\\fwrepo\\fw\\lib\\src\\fdo\\src\\fwkernelinterfaces\\idl\\FwKernel.idh"
 
-#line 21 "C:\\develop\\fwrepo\\fw\\src\\Kernel\\FwKernelTlb.idl"
-	#line 1 "c:\\develop\\fwrepo\\fw\\src\\kernel\\TextServ.idh"
+#line 21 "idl/FwKernelTlb.idl"
+	#line 1 "c:\\develop\\fwrepo\\fw\\lib\\src\\fdo\\src\\fwkernelinterfaces\\idl\\TextServ.idh"
 
 
 
@@ -3190,11 +3191,11 @@ cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IVwStylesheet") cpp
 
 
 
-#line 1462 "c:\\develop\\fwrepo\\fw\\src\\kernel\\TextServ.idh"
+#line 1462 "c:\\develop\\fwrepo\\fw\\lib\\src\\fdo\\src\\fwkernelinterfaces\\idl\\TextServ.idh"
 };
 
-#line 22 "C:\\develop\\fwrepo\\fw\\src\\Kernel\\FwKernelTlb.idl"
-	#line 1 "c:\\develop\\fwrepo\\fw\\src\\kernel\\Language.idh"
+#line 22 "idl/FwKernelTlb.idl"
+	#line 1 "c:\\develop\\fwrepo\\fw\\lib\\src\\fdo\\src\\fwkernelinterfaces\\idl\\Language.idh"
 
 
 
@@ -3446,5 +3447,6 @@ cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IVwStylesheet") cpp
 		[propput] HRESULT UserWs(
 			[in] int ws);
 	};
-#line 23 "C:\\develop\\fwrepo\\fw\\src\\Kernel\\FwKernelTlb.idl"
+#line 23 "idl/FwKernelTlb.idl"
 };
+

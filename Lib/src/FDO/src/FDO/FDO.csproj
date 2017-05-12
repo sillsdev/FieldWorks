@@ -1,0 +1,540 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="14.0">
+  <PropertyGroup>
+    <ProjectType>Local</ProjectType>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{E5E9DDC7-2855-4D92-AD46-960AC4C46457}</ProjectGuid>
+    <SccProjectName>
+    </SccProjectName>
+    <SccLocalPath>
+    </SccLocalPath>
+    <SccProvider>
+    </SccProvider>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <AssemblyKeyContainerName>
+    </AssemblyKeyContainerName>
+    <AssemblyName>FDO</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <DefaultClientScript>JScript</DefaultClientScript>
+    <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
+    <DefaultTargetSchema>IE50</DefaultTargetSchema>
+    <DelaySign>false</DelaySign>
+    <OutputType>Library</OutputType>
+    <RootNamespace>SIL.FieldWorks.FDO</RootNamespace>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <SccAuxPath>
+    </SccAuxPath>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>..\..\artifacts\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <BaseAddress>285212672</BaseAddress>
+    <FileAlignment>4096</FileAlignment>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>..\..\artifacts\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <BaseAddress>285212672</BaseAddress>
+    <Optimize>true</Optimize>
+    <FileAlignment>4096</FileAlignment>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="ICSharpCode.SharpZipLib, Version=0.86.0.518, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\CommonServiceLocator.1.0\lib\NET35\Microsoft.Practices.ServiceLocation.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="protobuf-net, Version=2.0.0.668, Culture=neutral, PublicKeyToken=257b51d87d2e4d67, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\protobuf-net.2.0.0.668\lib\net40\protobuf-net.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="SIL.Core, Version=2.6.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Downloads\SIL.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.Lexicon, Version=3.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Downloads\SIL.Lexicon.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.WritingSystems, Version=2.6.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Downloads\SIL.WritingSystems.dll</HintPath>
+    </Reference>
+    <Reference Include="StructureMap, Version=2.6.1.0, Culture=neutral, PublicKeyToken=e60ad81abae3c223, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\StructureMap.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.ServiceProcess" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System" />
+    <Reference Include="System.Drawing">
+      <Name>System.Drawing</Name>
+    </Reference>
+    <Reference Include="System.Xml">
+      <Name>System.XML</Name>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="Application\ApplicationServices\AppStrings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>AppStrings.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Application\ApplicationServices\IntBoolPropertyConverter.cs" />
+    <Compile Include="Application\ApplicationServices\SingleLexReference.cs" />
+    <Compile Include="Application\ApplicationServices\XmlImportData.cs" />
+    <Compile Include="Application\ApplicationServices\XmlList.cs" />
+    <Compile Include="Application\ApplicationServices\XmlTranslatedLists.cs" />
+    <Compile Include="Application\DomainDataByFlidServices.cs" />
+    <Compile Include="Application\IActionHandlerExtensions.cs" />
+    <Compile Include="Application\ReferenceTracker.cs" />
+    <Compile Include="CacheKey.cs" />
+    <Compile Include="DomainServices\DataMigration\DataMigration7000069.cs" />
+    <Compile Include="DomainServices\DataMigration\DataMigration7000070.cs" />
+    <Compile Include="DomainServices\DataMigration\DataMigration7000071.cs" />
+    <Compile Include="DomainServices\DataMigration\WritingSystemIdMigrator.cs" />
+    <Compile Include="DomainServices\SharedBackendServices.cs" />
+    <Compile Include="FdoDataMigrationForbiddenException.cs" />
+    <Compile Include="FdoFileLockedException.cs" />
+    <Compile Include="FdoInitializationException.cs" />
+    <Compile Include="FdoSettings.cs" />
+    <Compile Include="Infrastructure\Impl\CommitLogMetadata.cs" />
+    <Compile Include="Infrastructure\Impl\CommitLogRecord.cs" />
+    <Compile Include="Infrastructure\Impl\SharedXMLBackendProvider.cs" />
+    <Compile Include="LinkedFilesRelativePathHelper.cs" />
+    <Compile Include="DomainImpl\AnalysisAdjuster.cs" />
+    <Compile Include="DomainImpl\CmCell.cs" />
+    <Compile Include="DomainImpl\CmFilter.cs" />
+    <Compile Include="DomainImpl\CmPicture.cs" />
+    <Compile Include="DomainImpl\CmTranslation.cs" />
+    <Compile Include="DomainImpl\HomographConfiguration.cs" />
+    <Compile Include="DomainImpl\OverridesLing_Disc.cs" />
+    <Compile Include="DomainImpl\FdoScripture.cs" />
+    <Compile Include="DomainImpl\OverridesNotebk.cs" />
+    <Compile Include="DomainImpl\ReadWriteServices.cs" />
+    <Compile Include="DomainImpl\StFootnote.cs" />
+    <Compile Include="DomainImpl\Virtuals.cs" />
+    <Compile Include="DomainServices\AnalysisGuessServices.cs" />
+    <Compile Include="DomainServices\AnalysisOccurrence.cs" />
+    <Compile Include="DomainServices\BackupRestore\BackupProjectSettings.cs" />
+    <Compile Include="DomainServices\BackupRestore\BackupSettings.cs" />
+    <Compile Include="DomainServices\BackupRestore\BackupFileSettings.cs" />
+    <Compile Include="DomainServices\BackupRestore\IBackupInfo.cs" />
+    <Compile Include="DomainServices\BackupRestore\ProjectBackupService.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DomainServices\BackupRestore\ProjectRestoreService.cs" />
+    <Compile Include="DomainServices\BackupRestore\BackupFileRepository.cs" />
+    <Compile Include="DomainServices\BackupRestore\RestoreProjectSettings.cs" />
+    <Compile Include="DomainServices\BaseStyleInfo.cs" />
+    <Compile Include="DomainServices\BootstrapNewLanguageProject.cs" />
+    <Compile Include="DomainServices\CircularRefBreakerService.cs" />
+    <Compile Include="DomainImpl\ScrBook.cs" />
+    <Compile Include="DomainImpl\ScrBookRef.cs" />
+    <Compile Include="DomainImpl\ScrFootnote.cs" />
+    <Compile Include="DomainImpl\ScrImportSet.cs" />
+    <Compile Include="DomainImpl\ScrMarkerMapping.cs" />
+    <Compile Include="DomainImpl\ScrScriptureNote.cs" />
+    <Compile Include="DomainImpl\ScrSection.cs" />
+    <Compile Include="DomainImpl\ScrTxtPara.cs" />
+    <Compile Include="DomainImpl\StText.cs" />
+    <Compile Include="DomainImpl\StTxtPara.cs" />
+    <Compile Include="DomainServices\BtConverter.cs" />
+    <Compile Include="DomainServices\BulletInfo.cs" />
+    <Compile Include="DomainServices\ConstraintFailure.cs" />
+    <Compile Include="DomainServices\CopyObject.cs" />
+    <Compile Include="DomainServices\DataMigration\DataMigration7000058.cs" />
+    <Compile Include="DomainServices\DataMigration\DataMigration7000047.cs" />
+    <Compile Include="DomainServices\DataMigration\DataMigration7000036.cs" />
+    <Compile Include="DomainServices\DataMigration\DataMigration7000035.cs" />
+    <Compile Include="DomainServices\DataMigration\DataMigration7000030.cs" />
+    <Compile Include="DomainServices\DataMigration\DataMigration7000025.cs" />
+    <Compile Include="DomainServices\DataMigration\DataMigration7000020.cs" />
+    <Compile Include="DomainServices\DataMigration\DataMigration7000022.cs" />
+    <Compile Include="DomainServices\DataMigration\DataMigration7000023.cs" />
+    <Compile Include="DomainServices\DataMigration\DataMigration7000024.cs" />
+    <Compile Include="DomainServices\DataMigration\DataMigration7000026.cs" />
+    <Compile Include="DomainServices\DataMigration\DataMigration7000027.cs" />
+    <Compile Include="DomainServices\DataMigration\DataMigration7000028.cs" />
+    <Compile Include="DomainServices\DataMigration\DataMigration7000029.cs" />
+    <Compile Include="DomainServices\DataMigration\DataMigration7000031.cs" />
+    <Compile Include="DomainServices\DataMigration\DataMigration7000032.cs" />
+    <Compile Include="DomainServices\DataMigration\DataMigration7000033.cs" />
+    <Compile Include="DomainServices\DataMigration\DataMigration7000034.cs" />
+    <Compile Include="DomainServices\DataMigration\DataMigration7000037.cs" />
+    <Compile Include="DomainServices\DataMigration\DataMigration7000040.cs" />
+    <Compile Include="DomainServices\DataMigration\DataMigration7000041.cs" />
+    <Compile Include="DomainServices\DataMigration\DataMigration7000042.cs" />
+    <Compile Include="DomainServices\DataMigration\DataMigration7000044.cs" />
+    <Compile Include="DomainServices\DataMigration\DataMigration7000051.cs" />
+    <Compile Include="DomainServices\DataMigration\DataMigration7000052.cs" />
+    <Compile Include="DomainServices\DataMigration\DataMigration7000056.cs" />
+    <Compile Include="DomainServices\DataMigration\DataMigration7000057.cs" />
+    <Compile Include="DomainServices\DataMigration\DataMigration7000059.cs" />
+    <Compile Include="DomainServices\DataMigration\DataMigration7000060.cs" />
+    <Compile Include="DomainServices\DataMigration\DataMigration7000061.cs" />
+    <Compile Include="DomainServices\DataMigration\DataMigration7000062.cs" />
+    <Compile Include="DomainServices\DataMigration\DataMigration7000063.cs" />
+    <Compile Include="DomainServices\DataMigration\DataMigration7000065.cs" />
+    <Compile Include="DomainServices\DataMigration\DataMigration7000066.cs" />
+    <Compile Include="DomainServices\DataMigration\DataMigration7000067.cs" />
+    <Compile Include="DomainServices\DataMigration\FdoDataMigrationManager.cs" />
+    <Compile Include="DomainServices\DataMigration\ImportFrom6_0.cs" />
+    <Compile Include="DomainServices\FootnoteLocationInfo.cs" />
+    <Compile Include="DomainServices\M3ModelExportServices.cs" />
+    <Compile Include="DomainServices\DataMigration\DataMigration7000010.cs" />
+    <Compile Include="DomainServices\DataMigration\DataMigration7000008.cs" />
+    <Compile Include="DomainServices\DataMigration\DataMigration7000001.cs" />
+    <Compile Include="DomainServices\DataMigration\DataMigration7000002.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DomainServices\DataMigration\DataMigration7000003.cs" />
+    <Compile Include="DomainServices\DataMigration\DataMigration7000005.cs" />
+    <Compile Include="DomainServices\DataMigration\DataMigration7000006.cs" />
+    <Compile Include="DomainServices\DataMigration\DataMigration7000007.cs" />
+    <Compile Include="DomainServices\DataMigration\DataMigration7000009.cs" />
+    <Compile Include="DomainServices\DataMigration\DataMigration7000011.cs" />
+    <Compile Include="DomainServices\DataMigration\DataMigration7000012.cs" />
+    <Compile Include="DomainServices\DataMigration\DataMigration7000013.cs" />
+    <Compile Include="DomainServices\DataMigration\DataMigration7000014.cs" />
+    <Compile Include="DomainServices\DataMigration\DataMigration7000015.cs" />
+    <Compile Include="DomainServices\DataMigration\DataMigration7000016.cs" />
+    <Compile Include="DomainServices\DataMigration\DataMigration7000017.cs" />
+    <Compile Include="DomainServices\DataMigration\DataMigration7000018.cs" />
+    <Compile Include="DomainServices\DataMigration\DataMigration7000019.cs" />
+    <Compile Include="DomainServices\DataMigration\DataMigrationServices.cs" />
+    <Compile Include="DomainServices\DataMigration\DomainObjectDTO.cs" />
+    <Compile Include="DomainServices\DataMigration\DoNothingDataMigration.cs" />
+    <Compile Include="DomainServices\DataMigration\IDomainObjectDTORepository.cs" />
+    <Compile Include="DomainServices\DataStoreInitializationServices.cs" />
+    <Compile Include="DomainServices\DomainObjectServices.cs" />
+    <Compile Include="DomainServices\DataMigration\IDataMigration.cs" />
+    <Compile Include="DomainServices\DataMigration\IDataMigrationManager.cs" />
+    <Compile Include="DomainServices\FontInfo.cs" />
+    <Compile Include="DomainServices\FwStyleSheet.cs" />
+    <Compile Include="DomainServices\GetServicesFromFWClass.cs" />
+    <Compile Include="DomainServices\ImportFileSource.cs" />
+    <Compile Include="DomainServices\ImportMappingInfo.cs" />
+    <Compile Include="DomainServices\IScrImportFileInfo.cs" />
+    <Compile Include="DomainServices\MorphServices.cs" />
+    <Compile Include="DomainServices\ParaNodeMap.cs" />
+    <Compile Include="DomainServices\ProjectLockingService.cs" />
+    <Compile Include="DomainServices\ReferenceAdjusterService.cs" />
+    <Compile Include="DomainServices\ReferenceTargetServices.cs" />
+    <Compile Include="DomainServices\ScrFdoResources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ScrFdoResources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="DomainServices\ScrImportFileInfo.cs" />
+    <Compile Include="DomainServices\ScrMappingList.cs" />
+    <Compile Include="DomainServices\ScrSfFileList.cs" />
+    <Compile Include="DomainServices\ScrVerse.cs" />
+    <Compile Include="DomainServices\SemanticDomainSearch\SemDomSearchCache.cs" />
+    <Compile Include="DomainServices\SemanticDomainSearch\SenseSearchStrategy.cs" />
+    <Compile Include="DomainServices\SemanticDomainSearch\PartialNameMatchPrioritySearchStrategy.cs" />
+    <Compile Include="DomainServices\SemanticDomainSearch\SemDomSearchEngine.cs" />
+    <Compile Include="DomainServices\SemanticDomainSearch\SemDomSearchStrategy.cs" />
+    <Compile Include="DomainServices\StringServices.cs" />
+    <Compile Include="DomainServices\StTxtParaBldr.cs" />
+    <Compile Include="DomainServices\StyleInfoTable.cs" />
+    <Compile Include="DomainServices\StyleServices.cs" />
+    <Compile Include="DomainServices\VirtualOrderingServices.cs" />
+    <Compile Include="DomainServices\WfiWordformServices.cs" />
+    <Compile Include="DomainServices\WritingSystemServices.cs" />
+    <Compile Include="ExtraPropChangedAction.cs" />
+    <Compile Include="FdoFactoryInterfaceAdditions.cs" />
+    <None Include="BuildInclude.targets">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="FDOGenerate\FDOBackendProvider.vm.cs" />
+    <None Include="FDOGenerate\datamembers_atomic.vm.cs" />
+    <None Include="FDOGenerate\datamembers_rel.vm.cs" />
+    <None Include="FDOGenerate\SDAGenDatePropertyMethods.vm.cs" />
+    <None Include="FDOGenerate\RemoveAReferenceCore.vm.cs" />
+    <None Include="FDOGenerate\ClearIncomingRefsOnOutgoingRefs.vm.cs" />
+    <None Include="FDOGenerate\RestoreIncomingRefsOnOutgoingRefs.vm.cs" />
+    <None Include="FDOGenerate\AllReferencedObjects.vm.cs" />
+    <Compile Include="FdoRepositoryInterfaceAdditions.cs" />
+    <Compile Include="DomainImpl\GeneratedFactoryImplementations.cs" />
+    <Compile Include="DomainImpl\FdoFactoryAdditions.cs" />
+    <Compile Include="DomainImpl\CmObject.cs" />
+    <Compile Include="DomainImpl\FDOGenerated.cs" />
+    <Compile Include="DomainImpl\OverridesCellar.cs" />
+    <Compile Include="DomainImpl\OverridesLangProj.cs" />
+    <Compile Include="DomainImpl\OverridesLing_Lex.cs" />
+    <Compile Include="DomainImpl\OverridesLing_MoClasses.cs" />
+    <Compile Include="DomainImpl\OverridesLing_Wfi.cs" />
+    <Compile Include="FdoStructs.cs" />
+    <Compile Include="FdoFileHelper.cs" />
+    <Compile Include="IFdoDirectories.cs" />
+    <Compile Include="IFdoUI.cs" />
+    <Compile Include="IProjectIdentifier.cs" />
+    <Compile Include="FdoNewerVersionException.cs" />
+    <Compile Include="ProjectInfo.cs" />
+    <Compile Include="SilentFdoUI.cs" />
+    <Compile Include="Infrastructure\FdoXmlServices.cs" />
+    <Compile Include="Infrastructure\GenericUndoAction.cs" />
+    <Compile Include="Infrastructure\Impl\ChangeReconciler.cs" />
+    <Compile Include="Infrastructure\Impl\CmObjectId.cs" />
+    <Compile Include="Infrastructure\Impl\CommitData.cs" />
+    <Compile Include="Infrastructure\Impl\DataSortingService.cs" />
+    <Compile Include="Infrastructure\Impl\FdoInvertSet.cs" />
+    <Compile Include="Infrastructure\Impl\FdoRepositoryBase.cs" />
+    <Compile Include="Infrastructure\Impl\GeneratedFDOBackendProvider.cs" />
+    <Compile Include="Infrastructure\Impl\CmSemanticDomainRepository.cs" />
+    <Compile Include="Infrastructure\Impl\ObjectSurrogateEquater.cs" />
+    <Compile Include="Infrastructure\Impl\PargraphCounterRepository.cs" />
+    <Compile Include="Infrastructure\Impl\SimpleProjectId.cs" />
+    <Compile Include="Infrastructure\Impl\UndoUpdateDictionaryAction.cs" />
+    <Compile Include="Infrastructure\IWorkerThreadReadHandler.cs" />
+    <Compile Include="Infrastructure\UnitOfWorkHelper.cs" />
+    <Compile Include="Infrastructure\WorkerThreadReadHelper.cs" />
+    <Compile Include="IOC\GeneratedServiceLocatorBootstrapper.cs" />
+    <Compile Include="IOC\FdoServiceLocatorFactory.cs" />
+    <None Include="FDOGenerate\InitializeFromBEPMethods.vm.cs" />
+    <None Include="FDOGenerate\propertyAccessors.vm.cs" />
+    <None Include="FDOGenerate\Constructors.vm.cs" />
+    <None Include="FDOGenerate\OtherMethods.vm.cs" />
+    <None Include="FDOGenerate\SDAObjectPropertyMethods.vm.cs" />
+    <None Include="FDOGenerate\SDAVectorPropertyMethods.vm.cs" />
+    <None Include="FDOGenerate\SDAIntegerPropertyMethods.vm.cs" />
+    <None Include="FDOGenerate\SDABooleanPropertyMethods.vm.cs" />
+    <None Include="FDOGenerate\SDAGuidPropertyMethods.vm.cs" />
+    <None Include="FDOGenerate\SDADateTimePropertyMethods.vm.cs" />
+    <None Include="FDOGenerate\SDABinaryPropertyMethods.vm.cs" />
+    <None Include="FDOGenerate\SDAStringPropertyMethods.vm.cs" />
+    <None Include="FDOGenerate\RemoveOwneeMethod.vm.cs" />
+    <None Include="FDOGenerate\classInterface.vm.cs" />
+    <None Include="FDOGenerate\Interfaces.vm.cs" />
+    <None Include="FDOGenerate\propertyInterface.vm.cs" />
+    <None Include="FDOGenerate\factoryInterface.vm.cs" />
+    <None Include="FDOGenerate\factory.vm.cs" />
+    <None Include="FDOGenerate\FactoryInterfaces.vm.cs" />
+    <None Include="FDOGenerate\FdoServiceLocatorBootstrapper.vm.cs" />
+    <None Include="FDOGenerate\RepositoryInterfaces.vm.cs" />
+    <None Include="FDOGenerate\repositoryInterface.vm.cs" />
+    <None Include="FDOGenerate\Repository.vm.cs" />
+    <None Include="FDOGenerate\FactoryImplementations.vm.cs" />
+    <None Include="FDOGenerate\RepositoryImplementations.vm.cs" />
+    <None Include="FDOGenerate\FdoConstants.vm.cs" />
+    <Compile Include="FdoConstantAdditions.cs" />
+    <Compile Include="FdoInterfaceAdditions.cs" />
+    <Compile Include="FdoInterfaceDeclarations.cs" />
+    <Compile Include="GeneratedFactoryInterfaces.cs" />
+    <Compile Include="GeneratedFdoConstants.cs" />
+    <Compile Include="GeneratedFdoInterfaces.cs" />
+    <Compile Include="FieldDescription.cs" />
+    <Compile Include="Application\Impl\DomainDataByFlid.cs" />
+    <Compile Include="Application\DomainDataByFlidDecoratorBase.cs" />
+    <Compile Include="Application\ISilDataAccessManaged.cs" />
+    <Compile Include="GeneratedRepositoryInterfaces.cs" />
+    <Compile Include="Infrastructure\AddObjectEventArgs.cs" />
+    <Compile Include="Infrastructure\ICmObjectSurrogate.cs" />
+    <Compile Include="Infrastructure\IUnitOfWorkService.cs" />
+    <Compile Include="Infrastructure\RemoveObjectEventArgs.cs" />
+    <Compile Include="Infrastructure\BackendStartupParameter.cs" />
+    <Compile Include="Infrastructure\MetaDataCacheDecoratorBase.cs" />
+    <Compile Include="Infrastructure\IFwMetaDataCacheManaged.cs" />
+    <Compile Include="Infrastructure\Impl\CmObjectIdentityMap.cs" />
+    <Compile Include="Infrastructure\Impl\CmObjectSurrogate.cs" />
+    <Compile Include="Infrastructure\CustomPropertyAttributes.cs" />
+    <Compile Include="Infrastructure\Impl\UndoStack.cs" />
+    <Compile Include="Infrastructure\Impl\UnitOfWorkService.cs" />
+    <Compile Include="Infrastructure\Impl\FdoChangesUnitOfWork.cs" />
+    <Compile Include="Infrastructure\Impl\FdoStateChangingClasses.cs" />
+    <Compile Include="Infrastructure\PersistenceEnums.cs" />
+    <Compile Include="Infrastructure\IPersistenceStrategyInterfaces.cs" />
+    <Compile Include="Infrastructure\Impl\FDOBackendProvider.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Infrastructure\UndoActionBase.cs" />
+    <Compile Include="Infrastructure\NonUndoableUnitOfWorkHelper.cs" />
+    <Compile Include="Infrastructure\UndoableUnitOfWorkHelper.cs" />
+    <Compile Include="Infrastructure\Impl\FdoIFwMetaDataCache.cs" />
+    <Compile Include="Infrastructure\Impl\MemoryOnlyBackendProvider.cs" />
+    <Compile Include="Infrastructure\Impl\XMLBackendProvider.cs" />
+    <Compile Include="Infrastructure\Impl\FdoRepositoryAdditions.cs" />
+    <Compile Include="Infrastructure\Impl\GeneratedRepositoryImplementations.cs" />
+    <Compile Include="IFdoServiceLocator.cs" />
+    <Compile Include="DomainServices\ITextUtils.cs" />
+    <Compile Include="IStylesheet.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="FdoCacheIDisposableInterfaceImpl.cs" />
+    <Compile Include="fdoCache.cs" />
+    <Compile Include="FdoEnumerations.cs" />
+    <None Include="FDOGenerate\IDomainDataByFlidAccessorMethods.vm.cs" />
+    <None Include="FDOGenerate\class.vm.cs" />
+    <None Include="FDOGenerate\main.vm.cs" />
+    <None Include="FDOGenerate\module.vm.cs" />
+    <None Include="FDOGenerate\propaccessors_atomic.vm.cs" />
+    <None Include="FDOGenerate\propaccessors_rel.vm.cs" />
+    <None Include="FDOGenerate\propaccessors_simple.vm.cs" />
+    <None Include="FDOGenerate\datamembers_simple.vm.cs" />
+    <None Include="FDOGenerate\datamembers.vm.cs" />
+    <None Include="FDOGenerate\DeleteMethod.vm.cs" />
+    <Compile Include="FdoExceptions.cs" />
+    <Compile Include="DomainImpl\fdoStrings.cs" />
+    <Compile Include="DomainImpl\fdoVectors.cs" />
+    <Compile Include="Strings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Strings.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Features.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="Application\ApplicationServices\AppStrings.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>AppStrings.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DomainServices\ScrFdoResources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>ScrFdoResources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Strings.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Strings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <None Include="FDOGenerate\HandGenerated.xml">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="GenerateModel.proj" />
+    <None Include="packages.config" />
+    <None Include="Styles.dtd">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Templates\NewLangProj.fwdata">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="FDOGenerate\IntPropTypeOverrides.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="FDOGenerate\DomainModel.xsd">
+      <SubType>
+      </SubType>
+    </None>
+    <None Include="FDOGenerate\DomainModel.xsx">
+      <DependentUpon>DomainModel.xsd</DependentUpon>
+    </None>
+    <None Include="FDOGenerate\NonModelPropertiesAndClasses.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="MasterFieldWorksModel.xml">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="MasterFieldWorksModel.xsd">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Templates\GOLDEtic.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\POS.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\SemDom.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <None Include="CmTypes.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CoreImpl\CoreImpl.csproj">
+      <Project>{4c7d6b65-a331-4ed7-9b53-3301e714f8e7}</Project>
+      <Name>CoreImpl</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FwKernelInterfaces\FwKernelInterfaces.csproj">
+      <Project>{cdbb30a5-eefc-4fe1-b2bf-3a760d190b89}</Project>
+      <Name>FwKernelInterfaces</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SilUtils\SilUtils.csproj">
+      <Project>{4e4ce84f-bb35-416a-8e4f-b8c096da32b7}</Project>
+      <Name>SilUtils</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="BuildInclude.targets" />
+</Project>

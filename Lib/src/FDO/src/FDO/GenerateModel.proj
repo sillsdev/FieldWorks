@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="14.0" DefaultTargets="GenerateModel">
+	<UsingTask TaskName="FdoGenerate" AssemblyFile="..\..\artifacts\$(Configuration)\FdoBuildTasks.dll" />
+
+	<Target Name="GenerateModel">
+		<FdoGenerate XmlFile="MasterFieldWorksModel.xml" OutputDir="." OutputFile="DomainImpl/FDOGenerated.cs" TemplateFile="FDOGenerate/main.vm.cs" />
+	</Target>
+</Project>
