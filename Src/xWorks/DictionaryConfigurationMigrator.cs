@@ -55,19 +55,25 @@ namespace SIL.FieldWorks.XWorks
 		{
 			using (m_logger = new SimpleLogger())
 			{
-				var versionProvider = new VersionInfoProvider(Assembly.GetExecutingAssembly(), true);
-				// Further migration changes (especially Label changes) may need changes in multiple migrators:
-				foreach (var migrator in m_migrators)
+				try
 				{
-					migrator.MigrateIfNeeded(m_logger, m_mediator, versionProvider.ApplicationVersion);
+					var versionProvider = new VersionInfoProvider(Assembly.GetExecutingAssembly(), true);
+					// Further migration changes (especially Label changes) may need changes in multiple migrators:
+					foreach (var migrator in m_migrators)
+					{
+						migrator.MigrateIfNeeded(m_logger, m_mediator, versionProvider.ApplicationVersion);
+					}
+					CreateProjectCustomCssIfNeeded(m_mediator);
 				}
-				CreateProjectCustomCssIfNeeded(m_mediator);
-				if (m_logger.HasContent)
+				finally
 				{
-					var configurationDir = DictionaryConfigurationListener.GetProjectConfigurationDirectory(m_mediator,
-						DictionaryConfigurationListener.DictionaryConfigurationDirectoryName);
-					Directory.CreateDirectory(configurationDir);
-					File.AppendAllText(Path.Combine(configurationDir, "ConfigMigrationLog.txt"), m_logger.Content);
+					if (m_logger.HasContent)
+					{
+						var configurationDir = DictionaryConfigurationListener.GetProjectConfigurationDirectory(m_mediator,
+							DictionaryConfigurationListener.DictionaryConfigurationDirectoryName);
+						Directory.CreateDirectory(configurationDir);
+						File.AppendAllText(Path.Combine(configurationDir, "ConfigMigrationLog.txt"), m_logger.Content);
+					}
 				}
 			}
 			m_logger = null;
