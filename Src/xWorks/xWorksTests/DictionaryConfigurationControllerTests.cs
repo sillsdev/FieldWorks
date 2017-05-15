@@ -1247,17 +1247,22 @@ namespace SIL.FieldWorks.XWorks
 			using (new CustomFieldForTest(Cache, "CustomCollection", Cache.MetaDataCacheAccessor.GetClassId("LexExampleSentence"), 0,
 														  CellarPropertyType.ReferenceCollection, Guid.Empty))
 			{
-				var model = new DictionaryConfigurationModel();
 				var examplesNode = new ConfigurableDictionaryNode
 				{
 					Label = "Example Sentences",
 					FieldDescription = "ExamplesOS"
 				};
+				var subsensesNode = new ConfigurableDictionaryNode
+				{
+					Label = "Subsenses",
+					FieldDescription = "SensesOS",
+					ReferenceItem = "SharedSenses"
+				};
 				var senseNode = new ConfigurableDictionaryNode
 				{
 					Label = "Senses",
 					FieldDescription = "SensesOS",
-					Children = new List<ConfigurableDictionaryNode> { examplesNode }
+					Children = new List<ConfigurableDictionaryNode> { examplesNode, subsensesNode }
 				};
 				var entryNode = new ConfigurableDictionaryNode
 				{
@@ -1265,12 +1270,24 @@ namespace SIL.FieldWorks.XWorks
 					FieldDescription = "LexEntry",
 					Children = new List<ConfigurableDictionaryNode> { senseNode }
 				};
-				model.Parts = new List<ConfigurableDictionaryNode> { entryNode };
+				var sharedExamplesNode = examplesNode.DeepCloneUnderSameParent();
+				var subsensesSharedItem = new ConfigurableDictionaryNode
+				{
+					Label = "SharedSenses",
+					FieldDescription = "SensesOS",
+					Children = new List<ConfigurableDictionaryNode> { sharedExamplesNode }
+				};
+				var model = new DictionaryConfigurationModel
+				{
+					Parts = new List<ConfigurableDictionaryNode> { entryNode },
+					SharedItems = new List<ConfigurableDictionaryNode> { subsensesSharedItem }
+				};
 				CssGeneratorTests.PopulateFieldsForTesting(model);
 
 				//SUT
 				DictionaryConfigurationController.MergeCustomFieldsIntoDictionaryModel(model, Cache);
 				Assert.AreEqual(1, examplesNode.Children.Count, "Custom field should have been added to ExampleSentence");
+				Assert.AreEqual(1, sharedExamplesNode.Children.Count, "Custom field should have been added to shared ExampleSentence");
 			}
 		}
 
