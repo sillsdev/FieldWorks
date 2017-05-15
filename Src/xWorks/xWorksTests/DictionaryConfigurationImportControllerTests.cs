@@ -314,12 +314,12 @@ namespace SIL.FieldWorks.XWorks
 				bulletStyle.NextRA = nominalStyle;
 			});
 
-			Assert.AreEqual(5, Cache.LangProject.StylesOC.Count, "Setup problem. Wrong number of styles present.");
+			Assert.AreEqual(5, Cache.LangProject.StylesOC.Count, "Setup problem. Unexpected number of styles before doing any import activity.");
 			_controller.PrepareImport(_zipFile);
-			Assert.AreEqual(5, Cache.LangProject.StylesOC.Count, "Setup problem. Wrong number of styles present after PrepareImport.");
+			Assert.AreEqual(5, Cache.LangProject.StylesOC.Count, "Setup problem. Should not have changed number of styles from just preparing to import.");
 			// SUT
 			_controller.DoImport();
-			Assert.AreEqual(8, Cache.LangProject.StylesOC.Count, "The 3 styles that are unhandled, and 2 styles that are handled, should be present in addition to the 4 styles in the zip file, one of which is already present in this unit test's setup, so 8 total.");
+			Assert.AreEqual(8, Cache.LangProject.StylesOC.Count, "This unit test starts with 5 styles. 3 are 'unsupported' and kept. 2 are removed. We import 5 styles: 3 are completely new; 2 are replacements for the 2 that were removed. Resulting in 8 styles after import.");
 			var importedTestStyle = Cache.LangProject.StylesOC.FirstOrDefault(style => style.Name == "TestStyle");
 			Assert.NotNull(importedTestStyle, "test style was not imported.");
 			var importedParaStyle = Cache.LangProject.StylesOC.FirstOrDefault(style => style.Name == "Nominal");
