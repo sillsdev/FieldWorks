@@ -233,6 +233,7 @@
 		<GeneratedFiles Include="$(fwrt)/Src/Common/ViewsInterfaces/Views.cs"/>
 		<GeneratedFiles Include="$(fwrt)/Src/FDO/DomainImpl/GeneratedFactoryImplementations.cs"/>
 		<GeneratedFiles Include="$(fwrt)/Src/FDO/DomainImpl/FDOGenerated.cs"/>
+		<GeneratedFiles Include="$(fwrt)/Lib/debug/unit++.lib"/>
 	</ItemGroup>
 
 	<Target Name="CleanAll" DependsOnTargets="cleanWindows;cleanLinux">
