@@ -36,12 +36,10 @@
 
 	<Target Name="GenerateIcuData" Inputs="@(IcuDataInputs)" Outputs="@(IcuDataOutputs)">
 		<MakeDir Directories="$(OutDir)IcuData/icudt$(IcuVersion)l" />
-		<PropertyGroup Condition="'$(OS)'=='Windows_NT'">
-			<gennorm2>$(OutDir)gennorm2.exe</gennorm2>
+		<PropertyGroup>
+			<gennorm2 Condition="'$(OS)'=='Windows_NT'">$(OutDir)gennorm2.exe</gennorm2>
+			<gennorm2 Condition="'$(OS)'=='Unix'">/usr/lib/fieldworks/icu-bin/gennorm2</gennorm2>
 		</PropertyGroup>
-		<CreateItem Include="../../../icu/install*/sbin/gennorm2" Condition="'$(OS)'=='Unix'">
-			<Output TaskParameter="Include" PropertyName="gennorm2" />
-		</CreateItem>
 		<Exec Command='"$(gennorm2)" -o "$(OutDir)IcuData/icudt$(IcuVersion)l/nfc_fw.nrm" "IcuData/nfc.txt" "IcuData/nfcHebrew.txt" "IcuData/nfcOverrides.txt"' />
 		<Exec Command='"$(gennorm2)" -o "$(OutDir)IcuData/icudt$(IcuVersion)l/nfkc_fw.nrm" "IcuData/nfc.txt" "IcuData/nfcHebrew.txt" "IcuData/nfkc.txt" "IcuData/nfcOverrides.txt" "IcuData/nfkcOverrides.txt"' />
 	  <Copy SourceFiles="IcuData/UnicodeDataOverrides.txt" DestinationFolder="$(OutDir)IcuData" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />

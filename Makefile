@@ -224,7 +224,6 @@ manpage-clean:
 install-tree-fdo:
 	# Create directories
 	install -d $(DESTDIR)/usr/lib/fieldworks
-	install -d $(DESTDIR)/usr/lib/fieldworks/icu-bin
 	install -d $(DESTDIR)/usr/lib/fieldworks/Firefox
 	install -d $(DESTDIR)/usr/share/fieldworks
 	install -d $(DESTDIR)/var/lib/fieldworks
@@ -232,10 +231,7 @@ install-tree-fdo:
 	install -m 644 $(OUT_DIR)/*.{dll*,so} $(DESTDIR)/usr/lib/fieldworks
 	install -m 644 $(OUT_DIR)/Firefox/*.* $(DESTDIR)/usr/lib/fieldworks/Firefox
 	install -m 644 $(OUT_DIR)/{*.compmap,components.map} $(DESTDIR)/usr/lib/fieldworks
-	install -m 644 Lib/src/icu/install$(ARCH)/lib/lib* $(DESTDIR)/usr/lib/fieldworks
 	# Install executables and scripts
-	install Lib/src/icu/install$(ARCH)/bin/* $(DESTDIR)/usr/lib/fieldworks/icu-bin
-	install Lib/src/icu/source/bin/* $(DESTDIR)/usr/lib/fieldworks/icu-bin
 	install Lib/linux/setup-user $(DESTDIR)/usr/share/fieldworks/
 	# Install content and plug-ins
 	# For reasons I don't understand we need strings-en.txt otherwise the tests fail when run from xbuild
