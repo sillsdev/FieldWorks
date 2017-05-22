@@ -9703,7 +9703,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				{
 					return entry.HeadWordRef;
 				}
-				return ((LexSense)Item).OwningEntry.HeadWordRef;
+				return ((LexSense)Item).MLOwnerOutlineName;
 			}
 		}
 

@@ -199,9 +199,6 @@
     <Reference Include="FwKernelInterfaces">
       <HintPath>..\..\Output\Debug\FwKernelInterfaces.dll</HintPath>
     </Reference>
-    <Reference Include="icu.net">
-      <HintPath>..\..\..\Downloads\icu.net.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\CommonAssemblyInfo.cs">

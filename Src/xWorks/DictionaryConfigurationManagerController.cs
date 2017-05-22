@@ -533,7 +533,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var disallowedCharacters = MiscUtils.GetInvalidProjectNameChars(MiscUtils.FilenameFilterStrength.kFilterBackup) + " $%";
 			string outputPath;
-			using (var saveDialog = new SaveFileDialogAdapter())
+			using (var saveDialog = new DialogAdapters.SaveFileDialogAdapter())
 			{
 				saveDialog.Title = xWorksStrings.kstidChooseExportFile;
 				saveDialog.FileName = StringUtils.FilterForFileName(SelectedConfiguration + "_FLEx-Dictionary-Configuration_" + DateTime.Now.ToString("yyyy-MM-dd"), disallowedCharacters);

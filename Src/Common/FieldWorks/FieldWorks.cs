@@ -23,6 +23,7 @@ using System.Windows.Forms;
 using Gecko;
 using Microsoft.Win32;
 using SIL.CoreImpl.WritingSystems;
+using SIL.IO;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.Framework;
@@ -49,6 +50,9 @@ using SIL.WritingSystems;
 using XCore;
 using ConfigurationException = SIL.Utils.ConfigurationException;
 using FileUtils = SIL.Utils.FileUtils;
+#if !__MonoCS__
+using NetSparkle;
+#endif
 
 #if __MonoCS__
 using SIL.Keyboarding;
@@ -172,9 +176,6 @@ namespace SIL.FieldWorks
 		{
 			Thread.CurrentThread.Name = "Main thread";
 			Logger.Init(FwUtils.ksSuiteName);
-
-			Icu.Wrapper.ConfineIcuVersions(54);
-
 			FdoCache.NewerWritingSystemFound += ComplainToUserAboutNewWs;
 			// Note to developers: Uncomment this line to be able to attach the debugger to a process for a project
 			// other than the initial one that gets started up in VS:
@@ -244,7 +245,7 @@ namespace SIL.FieldWorks
 				SetIcuDataDirEnvironmentVariable();
 
 				// initialize ICU
-				SIL.FieldWorks.Common.FwKernelInterfaces.Icu.InitIcuDataDir();
+				Icu.InitIcuDataDir();
 
 				// initialize the SLDR
 				Sldr.Initialize();

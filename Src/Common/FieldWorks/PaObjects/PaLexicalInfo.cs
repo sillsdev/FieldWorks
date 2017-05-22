@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.PaToFdoInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FwCoreDlgs;
@@ -67,7 +68,7 @@ namespace SIL.FieldWorks.PaObjects
 		public bool ShowOpenProject(Form owner, ref Rectangle dialogBounds,
 			ref int dialogSplitterPos, out string name, out string server)
 		{
-			Common.FwKernelInterfaces.Icu.InitIcuDataDir();
+			Icu.InitIcuDataDir();
 			FwRegistryHelper.Initialize(); // inorder to find correct Registry keys
 
 			using (var dlg = new ChooseLangProjectDialog(dialogBounds, dialogSplitterPos))
