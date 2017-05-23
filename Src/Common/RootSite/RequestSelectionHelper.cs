@@ -9,7 +9,7 @@ using System.Diagnostics;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.FDO.Application;
 using System.Runtime.InteropServices;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.CoreImpl.KernelInterfaces;
 
 namespace SIL.FieldWorks.Common.RootSites
 {

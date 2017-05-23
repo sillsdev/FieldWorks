@@ -28,7 +28,7 @@ using SIL.FieldWorks.Common.RootSites;
 using SilEncConverters40;
 using SIL.CoreImpl.Cellar;
 using SIL.CoreImpl.Text;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.CoreImpl.KernelInterfaces;
 
 namespace SIL.FieldWorks.Common.Controls
 {

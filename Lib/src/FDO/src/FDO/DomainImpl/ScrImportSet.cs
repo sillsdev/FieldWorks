@@ -6,9 +6,9 @@ using System;
 using System.Collections;
 using System.Collections.Specialized;
 using System.Diagnostics;
+using SIL.CoreImpl.KernelInterfaces;
 using SIL.CoreImpl.Scripture;
 using SIL.CoreImpl.Text;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FDO.DomainServices;
 

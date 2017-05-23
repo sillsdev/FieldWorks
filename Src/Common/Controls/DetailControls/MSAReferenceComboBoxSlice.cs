@@ -15,7 +15,7 @@ using System.Windows.Forms;
 using SIL.CoreImpl.WritingSystems;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.CoreImpl.KernelInterfaces;
 using SIL.Utils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;

@@ -12,7 +12,7 @@ using SIL.CoreImpl.Scripture;
 using SIL.CoreImpl.Text;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Framework;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.CoreImpl.KernelInterfaces;
 using SIL.FieldWorks.FwCoreDlgControls;
 using StyleInfo = SIL.FieldWorks.FwCoreDlgControls.StyleInfo;
 using SIL.FieldWorks.FwCoreDlgs;

@@ -103,13 +103,9 @@
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CoreImplTests, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
+    <Reference Include="CoreImplTests, Version=9.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Output\Debug\CoreImplTests.dll</HintPath>
-    </Reference>
-    <Reference Include="FwKernelInterfacesTests, Version=9.0.0.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Output\Debug\FwKernelInterfacesTests.dll</HintPath>
     </Reference>
     <Reference Include="RootSite, Version=9.0.0.30108, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
@@ -175,9 +171,6 @@
     </Reference>
     <Reference Include="FDOTests">
       <HintPath>..\..\..\..\..\Output\Debug\FDOTests.dll</HintPath>
-    </Reference>
-    <Reference Include="FwKernelInterfaces">
-      <HintPath>..\..\..\..\Output\Debug\FwKernelInterfaces.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

@@ -3,10 +3,10 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using NUnit.Framework;
 using System.Runtime.InteropServices;
+using NUnit.Framework;
 
-namespace SIL.FieldWorks.Common.FwKernelInterfaces
+namespace SIL.Utils
 {
 	/// <summary>
 	/// Tests class ArrayPtr

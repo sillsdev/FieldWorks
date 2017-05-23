@@ -14,7 +14,7 @@ using System.Windows.Forms;
 using System.Diagnostics;
 using NUnit.Framework;
 using SIL.CoreImpl.Text;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.CoreImpl.KernelInterfaces;
 using SIL.Utils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;

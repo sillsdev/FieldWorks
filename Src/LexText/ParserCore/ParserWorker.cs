@@ -26,7 +26,8 @@ no exception: Create an infl affix slot with no affixes in it and then use this 
 */
 
 using System;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.CoreImpl.KernelInterfaces;
+using SIL.CoreImpl.Text;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.ObjectModel;

@@ -14,7 +14,7 @@ using Rhino.Mocks;
 using SIL.FieldWorks.Common.RootSites;
 using System.Windows.Forms;
 using SIL.CoreImpl.Text;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.CoreImpl.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.Utils;
 using SIL.FieldWorks.FDO;

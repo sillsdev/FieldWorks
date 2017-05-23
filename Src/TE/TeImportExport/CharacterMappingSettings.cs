@@ -9,7 +9,7 @@ using System.Windows.Forms;
 using System.Diagnostics;
 
 using SIL.FieldWorks.Common.Drawing;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.CoreImpl.KernelInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;

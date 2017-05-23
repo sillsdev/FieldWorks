@@ -11,12 +11,13 @@ using System.Text;
 
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.CoreImpl.KernelInterfaces;
 using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.CoreImpl.Scripture;
+using SIL.CoreImpl.Text;
 
 namespace SIL.FieldWorks.TE
 {

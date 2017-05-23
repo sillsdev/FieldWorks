@@ -22,7 +22,7 @@ using XCore;
 using SIL.FieldWorks.Common.FwUtils;
 using System.Diagnostics.CodeAnalysis;
 using SIL.CoreImpl.Cellar;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.CoreImpl.KernelInterfaces;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {

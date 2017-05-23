@@ -22,7 +22,7 @@ using SIL.FieldWorks.FDO;
 using SIL.Utils;
 using SilEncConverters40;
 using SIL.CoreImpl.Text;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.CoreImpl.KernelInterfaces;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {

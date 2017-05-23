@@ -19,9 +19,9 @@ using System.Text;
 using System.Xml; // MemoryStream.
 using System.Xml.Linq;
 using SIL.CoreImpl.Cellar;
+using SIL.CoreImpl.KernelInterfaces;
 using SIL.CoreImpl.Text;
 using SIL.CoreImpl.WritingSystems;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;

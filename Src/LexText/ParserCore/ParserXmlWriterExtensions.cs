@@ -10,7 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 using SIL.CoreImpl.WritingSystems;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.CoreImpl.KernelInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 

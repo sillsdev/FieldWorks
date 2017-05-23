@@ -24,7 +24,7 @@ using System.Runtime.InteropServices;
 using SIL.CoreImpl.Cellar;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.CoreImpl.KernelInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FdoUi;
 

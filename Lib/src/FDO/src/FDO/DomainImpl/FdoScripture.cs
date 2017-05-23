@@ -8,10 +8,10 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using SIL.CoreImpl.KernelInterfaces;
 using SIL.CoreImpl.Scripture;
 using SIL.CoreImpl.Text;
 using SIL.CoreImpl.WritingSystems;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.DomainServices;
 
 namespace SIL.FieldWorks.FDO.DomainImpl

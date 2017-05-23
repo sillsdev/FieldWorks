@@ -6,7 +6,7 @@
 // Responsibility: TE Team
 // ---------------------------------------------------------------------------------------------
 
-namespace SIL.FieldWorks.Common.FwKernelInterfaces
+namespace SIL.CoreImpl.Text
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>

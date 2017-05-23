@@ -4,10 +4,10 @@
 
 using System;
 using NUnit.Framework;
+using SIL.CoreImpl.KernelInterfaces;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.CoreImpl.Scripture;
 using SIL.CoreImpl.Text;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.FDO.FDOTests
 {

@@ -5,9 +5,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 
-namespace SIL.FieldWorks.Common.FwKernelInterfaces
+namespace SIL.CoreImpl.Text
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
@@ -17,12 +16,6 @@ namespace SIL.FieldWorks.Common.FwKernelInterfaces
 	public class UcdProperty
 	{
 		#region member variables
-		/// <summary>
-		/// The resource manager used to access language dependant strings.
-		/// </summary>
-		private static System.Resources.ResourceManager m_res =
-			new System.Resources.ResourceManager("SIL.FieldWorks.Common.FwKernelInterfaces.UcdCharacterResources",
-			System.Reflection.Assembly.GetExecutingAssembly());
 
 		private UcdCategories m_ucdCategory;
 		private string m_description;
@@ -82,32 +75,32 @@ namespace SIL.FieldWorks.Common.FwKernelInterfaces
 			switch (ucdProperty)
 			{
 				case UcdCategories.generalCategory:
-					this.m_description = m_res.GetString("kstidGenCat" + ucdRepresentation);
+					this.m_description = UcdCharacterResources.ResourceManager.GetString("kstidGenCat" + ucdRepresentation);
 					break;
 				case UcdCategories.canonicalCombiningClass:
-					this.m_description = m_res.GetString("kstidCanComb" + ucdRepresentation);
+					this.m_description = UcdCharacterResources.ResourceManager.GetString("kstidCanComb" + ucdRepresentation);
 					break;
 				case UcdCategories.bidiClass:
-					this.m_description = m_res.GetString("kstidBidiClass" + ucdRepresentation);
+					this.m_description = UcdCharacterResources.ResourceManager.GetString("kstidBidiClass" + ucdRepresentation);
 					break;
 				case UcdCategories.compatabilityDecompositionType:
 					// Cut off the '<' and '>'
 					if (ucdRepresentation[0] == '<' && ucdRepresentation[ucdRepresentation.Length - 1] == '>')
 					{
 						string clipTagChars = ucdRepresentation.Substring(1, ucdRepresentation.Length - 2);
-						this.m_description = m_res.GetString("kstidDecompCompat" + clipTagChars);
+						this.m_description = UcdCharacterResources.ResourceManager.GetString("kstidDecompCompat" + clipTagChars);
 					}
 					else
 					{
 						// This "ucdRepresentation" should not be written to UnicodeData
 						this.m_displayInUnicodeData = false;
-						this.m_description = m_res.GetString("kstidDecompCompat" + ucdRepresentation);
+						this.m_description = UcdCharacterResources.ResourceManager.GetString("kstidDecompCompat" + ucdRepresentation);
 					}
 					break;
 				case UcdCategories.numericType:
 					// This "ucdRepresentation" should not be written to UnicodeData
 					this.m_displayInUnicodeData = false;
-					this.m_description = m_res.GetString("kstidNumType" + ucdRepresentation);
+					this.m_description = UcdCharacterResources.ResourceManager.GetString("kstidNumType" + ucdRepresentation);
 					break;
 			}
 			this.m_ucdRepresentation = ucdRepresentation;

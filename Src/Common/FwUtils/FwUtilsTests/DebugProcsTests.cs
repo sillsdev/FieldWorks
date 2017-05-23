@@ -6,7 +6,7 @@ using System;
 using System.IO;
 using System.Text;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.CoreImpl.KernelInterfaces;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {

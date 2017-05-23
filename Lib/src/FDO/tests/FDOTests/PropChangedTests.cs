@@ -15,8 +15,8 @@ using NUnit.Framework;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.CoreImpl.Cellar;
+using SIL.CoreImpl.KernelInterfaces;
 using SIL.CoreImpl.Text;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.FDO.CoreTests
 {

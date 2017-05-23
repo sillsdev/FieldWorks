@@ -194,9 +194,6 @@
       <HintPath>..\..\Output\Debug\Reporting.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
-    <Reference Include="FwKernelInterfaces">
-      <HintPath>..\..\Output\Debug\FwKernelInterfaces.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\CommonAssemblyInfo.cs">

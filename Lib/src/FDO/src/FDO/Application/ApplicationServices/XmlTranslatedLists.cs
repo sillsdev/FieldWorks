@@ -12,10 +12,10 @@ using System.IO;
 using System.Text;
 using System.Xml;
 using ICSharpCode.SharpZipLib.Zip;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.Infrastructure;
 using System.Globalization;
 using SIL.CoreImpl.Cellar;
+using SIL.CoreImpl.KernelInterfaces;
 using SIL.CoreImpl.Text;
 using SIL.Utils;
 

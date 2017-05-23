@@ -4,17 +4,17 @@
 //
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.IO;
-using System.Collections.Generic;
-using System.Globalization;
 using System.Text;
-using SIL.Utils;
 using SIL.Reporting;
+using SIL.Utils;
 
-namespace SIL.FieldWorks.Common.FwKernelInterfaces
+namespace SIL.CoreImpl.Text
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
@@ -237,8 +237,7 @@ namespace SIL.FieldWorks.Common.FwKernelInterfaces
 				// This provides a bit of extra info, especially if it fails on a no-gui build machine.
 				Debug.Fail("SilIcuInit returned false. It was trying to load from " + overrideDataPath + ". The file " +
 					(File.Exists(overrideDataPath) ? "exists." : "does not exist."));
-				ErrorReport.ReportNonFatalMessageWithStackTrace(
-					FwKernelInterfaces.Properties.Resources.ksIcuInitFailed, overrideDataPath);
+				ErrorReport.ReportNonFatalMessageWithStackTrace(Properties.Resources.ksIcuInitFailed, overrideDataPath);
 			}
 		}
 

@@ -7,7 +7,7 @@
 
 using System;
 
-namespace SIL.FieldWorks.Common.FwKernelInterfaces
+namespace SIL.CoreImpl.Text
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>

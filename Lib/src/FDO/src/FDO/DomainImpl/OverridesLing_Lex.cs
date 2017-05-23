@@ -17,7 +17,6 @@ using System.Collections.Specialized;
 using System.Text.RegularExpressions;
 using System.Xml; // XMLWriter
 
-using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.Infrastructure.Impl;
 using SIL.Utils;
@@ -27,6 +26,7 @@ using SIL.CoreImpl.Cellar;
 using SIL.CoreImpl.Phonology;
 using SIL.CoreImpl.Text;
 using SIL.CoreImpl.WritingSystems;
+using SIL.CoreImpl.KernelInterfaces;
 
 namespace SIL.FieldWorks.FDO.DomainImpl
 {

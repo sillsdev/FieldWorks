@@ -107,6 +107,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Output\Debug\CoreImpl.dll</HintPath>
     </Reference>
+    <Reference Include="CoreImplTests, Version=9.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Output\Debug\CoreImplTests.dll</HintPath>
+    </Reference>
     <Reference Include="DetailControls">
       <Name>DetailControls</Name>
       <HintPath>..\..\..\..\..\Output\Debug\DetailControls.dll</HintPath>
@@ -118,10 +122,6 @@
     <Reference Include="FDOTests, Version=6.1.0.16016, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Output\Debug\FDOTests.dll</HintPath>
-    </Reference>
-    <Reference Include="FwKernelInterfacesTests, Version=9.0.0.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Output\Debug\FwKernelInterfacesTests.dll</HintPath>
     </Reference>
     <Reference Include="FwUtils, Version=6.1.0.25834, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -177,9 +177,6 @@
     </Reference>
     <Reference Include="xWorksTests">
       <HintPath>..\..\..\..\..\Output\Debug\xWorksTests.dll</HintPath>
-    </Reference>
-    <Reference Include="FwKernelInterfaces">
-      <HintPath>..\..\..\..\Output\Debug\FwKernelInterfaces.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

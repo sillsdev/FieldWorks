@@ -4,9 +4,8 @@
 
 using Microsoft.Practices.ServiceLocation;
 using System;
-
+using SIL.CoreImpl.KernelInterfaces;
 using SIL.CoreImpl.WritingSystems;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.Infrastructure;
 
 namespace SIL.FieldWorks.FDO

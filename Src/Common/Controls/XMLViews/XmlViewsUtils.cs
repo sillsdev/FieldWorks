@@ -15,7 +15,7 @@ using SIL.Utils;
 using SIL.FieldWorks.Filters;
 using SIL.CoreImpl.Cellar;
 using SIL.CoreImpl.WritingSystems;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.CoreImpl.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 

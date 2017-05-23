@@ -5,7 +5,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.CoreImpl.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 

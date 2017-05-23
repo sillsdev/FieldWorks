@@ -7,7 +7,7 @@ using System.Xml;
 using System.Windows.Forms;
 using System.Drawing;
 using System.Diagnostics;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.CoreImpl.KernelInterfaces;
 using XCore;
 using SIL.Utils;
 using SIL.FieldWorks.FDO;

@@ -13,11 +13,11 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.CoreImpl.Cellar;
+using SIL.CoreImpl.KernelInterfaces;
 using SIL.CoreImpl.Text;
 using SIL.CoreImpl.WritingSystems;
 

@@ -14,7 +14,7 @@ using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.Utils;
 using System.Runtime.InteropServices;
 using System.Diagnostics.CodeAnalysis;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.CoreImpl.KernelInterfaces;
 
 namespace SIL.FieldWorks.Common.RootSites
 {

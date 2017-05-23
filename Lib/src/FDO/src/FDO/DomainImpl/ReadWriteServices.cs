@@ -6,10 +6,10 @@ using System;
 using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.Infrastructure;
 using System.Collections.Generic;
 using SIL.CoreImpl.Cellar;
+using SIL.CoreImpl.KernelInterfaces;
 using SIL.CoreImpl.Text;
 
 namespace SIL.FieldWorks.FDO.DomainImpl

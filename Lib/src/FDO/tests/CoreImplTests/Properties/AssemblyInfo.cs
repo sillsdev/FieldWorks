@@ -3,7 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Reflection;
-using SIL.FieldWorks.Common.FwKernelInterfaces.Attributes;
+using SIL.CoreImpl.Attributes;
 using SIL.TestUtilities;
 using SIL.Utils.Attributes;
 

@@ -1,45 +1,48 @@
-// Copyright (c) 2009-2016 SIL International
+// Copyright (c) 2009-2013 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
+//
 
-namespace SIL.FieldWorks.Common.FwKernelInterfaces
+namespace SIL.CoreImpl.Text
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
-	/// Allows for IBidiCharacter to be mocked out for tests
+	/// Allows for IPuaCharacter to be mocked out for tests
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public interface IBidiCharacterFactory
+	public interface IPuaCharacterFactory
 	{
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Creates a Bidi Character object
+		/// Creates a PUA Character object
 		/// </summary>
 		/// <param name="charDef">The character definition</param>
 		/// ------------------------------------------------------------------------------------
-		IUcdCharacter Create(CharDef charDef);
+		IPuaCharacter Create(CharDef charDef);
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Constructs a BidiCharacter as it appears in the UCD file.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		IUcdCharacter Create(string line);
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Constructs a new BidiCharacter, copying all the values from <c>puaChar</c>
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		IUcdCharacter Create(IPuaCharacter puaChar);
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Constructs a new BidiCharacter
+		/// Makes an empty PUACharacter with just a codepoint.
 		/// </summary>
 		/// <param name="codepoint">A string representing the hexadecimal codepoint</param>
-		/// <param name="data">The data, as it appears in the file.</param>
 		/// ------------------------------------------------------------------------------------
-		IUcdCharacter Create(string codepoint, string data);
+		IPuaCharacter Create(string codepoint);
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Makes an empty PUACharacter with just a codepoint.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		IPuaCharacter Create(int codepoint);
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Makes a PUACharcter.
+		/// </summary>
+		/// <param name="codepoint">A string representing the hexadecimal codepoint</param>
+		/// <param name="data">The data, as it appears in the unicodedata.txt file.
+		///		<see cref="IPuaCharacter.Data"/> </param>
+		/// ------------------------------------------------------------------------------------
+		IPuaCharacter Create(string codepoint, string data);
 	}
 }

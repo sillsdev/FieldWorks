@@ -9,7 +9,7 @@ using System;
 using System.Text;
 using System.Xml.Schema;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.CoreImpl.KernelInterfaces;
 using SIL.Utils;
 
 namespace SIL.CoreImpl.Text

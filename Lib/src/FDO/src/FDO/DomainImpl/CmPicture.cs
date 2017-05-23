@@ -16,11 +16,11 @@
 using System;
 using System.IO;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.DomainServices;
 using System.Diagnostics;
 using System.Linq;
 using SIL.CoreImpl.Cellar;
+using SIL.CoreImpl.KernelInterfaces;
 using SIL.CoreImpl.Text;
 using SIL.FieldWorks.FDO.Infrastructure.Impl;
 using SIL.Utils;

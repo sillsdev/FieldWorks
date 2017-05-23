@@ -5,8 +5,8 @@
 using System;
 using System.Text;
 using NUnit.Framework;
+using SIL.CoreImpl.KernelInterfaces;
 using SIL.CoreImpl.WritingSystems;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.CoreImpl.Text
 {

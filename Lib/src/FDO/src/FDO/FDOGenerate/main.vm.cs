@@ -15,10 +15,9 @@ using System.Text;
 using System.Xml; // XMLWriter
 using System.Xml.Linq;
 using System.Linq;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.CoreImpl.Cellar;
+using SIL.CoreImpl.KernelInterfaces;
 using SIL.CoreImpl.Text;
-using SIL.Utils;
 using SIL.FieldWorks.FDO.Infrastructure;
 
 namespace SIL.FieldWorks.FDO.DomainImpl

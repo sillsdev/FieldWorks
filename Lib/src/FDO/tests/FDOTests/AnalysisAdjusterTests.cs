@@ -8,11 +8,11 @@ using System.Diagnostics;
 using System.Linq;
 using System.Xml;
 using NUnit.Framework;
+using SIL.CoreImpl.KernelInterfaces;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.CoreImpl.Scripture;
 using SIL.CoreImpl.Text;
 using SIL.CoreImpl.WritingSystems;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.DomainImpl;
 
 namespace SIL.FieldWorks.FDO.FDOTests

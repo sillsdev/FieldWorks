@@ -18,7 +18,7 @@ using SIL.CoreImpl.Text;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.Common.Framework;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.CoreImpl.KernelInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.FDO.DomainServices;

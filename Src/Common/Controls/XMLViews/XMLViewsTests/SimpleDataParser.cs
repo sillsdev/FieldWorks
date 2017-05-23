@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Xml;
 using SIL.CoreImpl.Cellar;
 using SIL.CoreImpl.Text;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.CoreImpl.KernelInterfaces;
 using SIL.Utils;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 

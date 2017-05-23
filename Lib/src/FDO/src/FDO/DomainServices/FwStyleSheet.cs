@@ -20,8 +20,8 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using SIL.CoreImpl.KernelInterfaces;
 using SIL.CoreImpl.Text;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.Application;
 
 namespace SIL.FieldWorks.FDO.DomainServices

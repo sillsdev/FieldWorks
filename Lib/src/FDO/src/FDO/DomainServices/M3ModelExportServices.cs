@@ -7,8 +7,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
 using Microsoft.Practices.ServiceLocation;
+using SIL.CoreImpl.KernelInterfaces;
+using SIL.CoreImpl.Text;
 using SIL.CoreImpl.WritingSystems;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.FDO.DomainServices
 {

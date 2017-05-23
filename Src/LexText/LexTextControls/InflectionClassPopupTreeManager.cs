@@ -4,7 +4,7 @@
 
 using System.Collections.Generic;
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.CoreImpl.KernelInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Widgets;
 using XCore;

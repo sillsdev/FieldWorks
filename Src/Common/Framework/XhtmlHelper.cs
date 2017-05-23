@@ -4,20 +4,18 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
-
-using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.Utils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.CoreImpl.WritingSystems;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.CoreImpl.KernelInterfaces;
+using SIL.CoreImpl.Text;
 
 namespace SIL.FieldWorks.Common.Framework
 {
@@ -659,7 +657,7 @@ namespace SIL.FieldWorks.Common.Framework
 				if (ch32 != '_'  && ch32 != '-' && !Icu.IsAlphabetic(ch32) && !Icu.IsNumeric(ch32) && !Icu.IsDiacritic(ch32))
 				{
 					string sCharName;
-					Icu.UErrorCode error = Icu.UErrorCode.U_ZERO_ERROR;
+					Icu.UErrorCode error;
 					Icu.u_CharName(ch32, Icu.UCharNameChoice.U_UNICODE_CHAR_NAME, out sCharName, out error);
 					sCharName = sCharName.Replace('-', '_');
 					sCharName = sCharName.Replace(' ', '_');

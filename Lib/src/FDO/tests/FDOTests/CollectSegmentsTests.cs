@@ -5,12 +5,12 @@
 using System;
 using System.Collections.Generic;
 using NUnit.Framework;
+using SIL.CoreImpl.KernelInterfaces;
 using SIL.Utils;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.CoreImpl.Scripture;
 using SIL.CoreImpl.Text;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.FDO.FDOTests
 {

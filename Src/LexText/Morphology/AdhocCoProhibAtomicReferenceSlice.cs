@@ -8,7 +8,7 @@ using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using System.Diagnostics.CodeAnalysis;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.CoreImpl.KernelInterfaces;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
 {

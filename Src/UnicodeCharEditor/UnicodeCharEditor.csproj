@@ -100,9 +100,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\XMLUtils.dll</HintPath>
     </Reference>
-    <Reference Include="FwKernelInterfaces">
-      <HintPath>..\..\Output\Debug\FwKernelInterfaces.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\CommonAssemblyInfo.cs">

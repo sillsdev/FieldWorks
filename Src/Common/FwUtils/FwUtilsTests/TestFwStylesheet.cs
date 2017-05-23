@@ -13,7 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using SIL.CoreImpl.Text;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.CoreImpl.KernelInterfaces;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {

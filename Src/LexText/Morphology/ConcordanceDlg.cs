@@ -21,7 +21,7 @@ using SIL.FieldWorks.FdoUi;
 using XCore;
 using SIL.FieldWorks.Common.Controls;
 using SIL.CoreImpl.Text;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.CoreImpl.KernelInterfaces;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
 {

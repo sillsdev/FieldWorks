@@ -82,6 +82,7 @@
     <Compile Include="..\..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="Attributes\InitializeIcuAttribute.cs" />
     <Compile Include="Text\AssertEx.cs" />
     <Compile Include="Scripture\BCVRefTests.cs" />
     <Compile Include="Phonology\PhonEnvRecognizerTests.cs" />
@@ -94,6 +95,7 @@
     <Compile Include="Scripture\ScrReferenceTests.cs" />
     <Compile Include="Scripture\VersificationTests.cs" />
     <Compile Include="Text\CaseFunctionsTest.cs" />
+    <Compile Include="Text\IcuTests.cs" />
     <Compile Include="Text\TsIncStrBldrTests.cs" />
     <Compile Include="Text\TsPropsBldrTests.cs" />
     <Compile Include="Text\TsPropsFactoryTests.cs" />
@@ -152,17 +154,9 @@
       <Project>{4c7d6b65-a331-4ed7-9b53-3301e714f8e7}</Project>
       <Name>CoreImpl</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\src\FwKernelInterfaces\FwKernelInterfaces.csproj">
-      <Project>{cdbb30a5-eefc-4fe1-b2bf-3a760d190b89}</Project>
-      <Name>FwKernelInterfaces</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\src\SilUtils\SilUtils.csproj">
       <Project>{4e4ce84f-bb35-416a-8e4f-b8c096da32b7}</Project>
       <Name>SilUtils</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\FwKernelInterfacesTests\FwKernelInterfacesTests.csproj">
-      <Project>{a64fe61e-2ce1-480a-992a-9e2ffe861c76}</Project>
-      <Name>FwKernelInterfacesTests</Name>
     </ProjectReference>
     <ProjectReference Include="..\SilUtilsTests\SilUtilsTests.csproj">
       <Project>{f023f83b-ec39-48d4-a98c-f65e43609b20}</Project>
@@ -172,9 +166,7 @@
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Attributes\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
 	   Other similar extension points exist, see Microsoft.Common.targets.

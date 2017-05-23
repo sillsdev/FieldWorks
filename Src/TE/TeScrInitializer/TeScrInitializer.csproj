@@ -173,9 +173,6 @@
       <Name>xCoreInterfaces</Name>
       <HintPath>..\..\..\Output\Debug\xCoreInterfaces.dll</HintPath>
     </Reference>
-    <Reference Include="FwKernelInterfaces">
-      <HintPath>..\..\..\Output\Debug\FwKernelInterfaces.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\CommonAssemblyInfo.cs">

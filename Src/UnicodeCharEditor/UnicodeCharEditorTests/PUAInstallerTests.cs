@@ -14,7 +14,7 @@ using System.IO;
 using System.Text.RegularExpressions;
 using NUnit.Framework;
 using ICSharpCode.SharpZipLib.Zip;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.CoreImpl.Text;
 using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.UnicodeCharEditor

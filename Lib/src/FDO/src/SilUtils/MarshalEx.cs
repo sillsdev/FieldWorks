@@ -10,7 +10,7 @@ using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 
-namespace SIL.FieldWorks.Common.FwKernelInterfaces
+namespace SIL.Utils
 {
 	/// <summary>
 	/// Helper methods for marshalling of COM objects

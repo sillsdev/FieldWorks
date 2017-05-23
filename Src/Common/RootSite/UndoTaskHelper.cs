@@ -6,7 +6,7 @@
 // Responsibility: FW Team
 // --------------------------------------------------------------------------------------------
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.CoreImpl.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.FDO.Infrastructure;

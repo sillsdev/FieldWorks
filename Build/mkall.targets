@@ -597,13 +597,6 @@
 		<FdoOutputBaseFiles Include="$(FdoArtifacts)/FDOTests.pdb" Condition="'$(OS)'=='Windows_NT'" />
 		<FdoOutputBaseFiles Include="$(FdoArtifacts)/FDOTests.dll.mdb" Condition="'$(OS)'=='Unix'" />
 		<FdoOutputBaseFiles Include="$(FdoArtifacts)/FdoBuildTasks.dll" />
-		<FdoOutputBaseFiles Include="$(FdoArtifacts)/FwKernelInterfaces.dll" />
-		<FdoOutputBaseFiles Include="$(FdoArtifacts)/FwKernelInterfaces.pdb" Condition="'$(OS)'=='Windows_NT'" />
-		<FdoOutputBaseFiles Include="$(FdoArtifacts)/FwKernelInterfaces.dll.mdb" Condition="'$(OS)'=='Unix'" />
-		<FdoOutputBaseFiles Include="$(FdoArtifacts)/FwKernelInterfacesTests.dll" />
-		<FdoOutputBaseFiles Include="$(FdoArtifacts)/FwKernelInterfacesTests.dll.config" />
-		<FdoOutputBaseFiles Include="$(FdoArtifacts)/FwKernelInterfacesTests.pdb" Condition="'$(OS)'=='Windows_NT'" />
-		<FdoOutputBaseFiles Include="$(FdoArtifacts)/FwKernelInterfacesTests.dll.mdb" Condition="'$(OS)'=='Unix'" />
 		<FdoOutputBaseFiles Include="$(FdoArtifacts)/ICSharpCode.SharpZipLib.dll" />
 		<FdoOutputBaseFiles Include="$(FdoArtifacts)/IDLImporter.dll" />
 		<FdoOutputBaseFiles Include="$(FdoArtifacts)/IDLImporter.xml" />
@@ -622,15 +615,15 @@
 		<FdoOutputBaseFiles Include="$(FdoArtifacts)/Tools.pdb" Condition="'$(OS)'=='Windows_NT'" />
 		<FdoOutputBaseFiles Include="$(FdoArtifacts)/Tools.dll.mdb" Condition="'$(OS)'=='Unix'" />
 
-		<FdoOutputCommonFiles Include="$(FdoArtifacts)/idl/FwKernelTlb.iip" />
+		<FdoOutputCommonFiles Include="$(FdoArtifacts)/KernelInterfaces/FwKernelTlb.iip" />
 		<FdoOutputCommonFiles Include="$(FdoArtifacts)/MasterFieldWorksModel.xml" />
 		<FdoOutputCommonFiles Include="$(FdoArtifacts)/MasterFieldWorksModel.xsd" />
 
-		<FdoFwKernelFiles Include="$(FdoArtifacts)/idl/common.idh" />
-		<FdoFwKernelFiles Include="$(FdoArtifacts)/idl/FwKernel.idh" />
-		<FdoFwKernelFiles Include="$(FdoArtifacts)/idl/Language.idh" />
-		<FdoFwKernelFiles Include="$(FdoArtifacts)/idl/TextServ.idh" />
-		<FdoFwKernelFiles Include="$(FdoArtifacts)/idl/FwKernelTlb.idl" />
+		<FdoFwKernelFiles Include="$(FdoArtifacts)/KernelInterfaces/common.idh" />
+		<FdoFwKernelFiles Include="$(FdoArtifacts)/KernelInterfaces/FwKernel.idh" />
+		<FdoFwKernelFiles Include="$(FdoArtifacts)/KernelInterfaces/Language.idh" />
+		<FdoFwKernelFiles Include="$(FdoArtifacts)/KernelInterfaces/TextServ.idh" />
+		<FdoFwKernelFiles Include="$(FdoArtifacts)/KernelInterfaces/FwKernelTlb.idl" />
 
 		<FdoDistFiles Include="$(FdoArtifacts)/Styles.dtd" />
 
@@ -654,16 +647,6 @@
 			ToolPath="$(fwrt)/Bin/NUnit/bin"
 			WorkingDirectory="$(FdoArtifacts)"
 			OutputXmlFile="$(dir-outputBase)/SilUtilsTests.dll-nunit-output.xml"
-			Force32Bit="$(useNUnit-x86)"
-			FudgeFactor="$(timeoutFudgeFactor)"
-			Timeout="70000">
-			<Output TaskParameter="FailedSuites" ItemName="FailedSuites"/>
-		</NUnit>
-		<NUnit Condition="'$(action)'=='test'"
-			Assemblies="$(FdoArtifacts)/FwKernelInterfacesTests.dll"
-			ToolPath="$(fwrt)/Bin/NUnit/bin"
-			WorkingDirectory="$(FdoArtifacts)"
-			OutputXmlFile="$(dir-outputBase)/FwKernelInterfacesTests.dll-nunit-output.xml"
 			Force32Bit="$(useNUnit-x86)"
 			FudgeFactor="$(timeoutFudgeFactor)"
 			Timeout="70000">

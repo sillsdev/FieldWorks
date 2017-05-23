@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="14.0">
 	<PropertyGroup>
-		<OutDir>../../artifacts/$(Configuration)/</OutDir>
-		<IntermediateOutputPath>obj/$(Configuration)/</IntermediateOutputPath>
+		<OutputDir>../../artifacts/$(Configuration)/</OutputDir>
+		<IntermediateOutputDir>obj/x86/$(Configuration)/</IntermediateOutputDir>
 		<MsbuildCommand Condition="'$(OS)'=='Windows_NT'">msbuild</MsbuildCommand>
 		<MsbuildCommand Condition="'$(OS)'=='Unix'">xbuild</MsbuildCommand>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<KernelInputs Include="idl/FwKernelTlb.idl"/>
-		<KernelInputs Include="idl/FwKernel.idh"/>
-		<KernelInputs Include="idl/TextServ.idh"/>
-		<KernelInputs Include="idl/Language.idh"/>
+		<KernelInputs Include="KernelInterfaces/FwKernelTlb.idl"/>
+		<KernelInputs Include="KernelInterfaces/FwKernel.idh"/>
+		<KernelInputs Include="KernelInterfaces/TextServ.idh"/>
+		<KernelInputs Include="KernelInterfaces/Language.idh"/>
 
-		<KernelOutputs Include="FwKernel.cs" />
-		<KernelOutputs Include="$(OutDir)idl/FwKernelTlb.iip" />
+		<KernelOutputs Include="KernelInterfaces/Kernel.cs" />
+		<KernelOutputs Include="$(OutDir)KernelInterfaces/FwKernelTlb.iip" />
 	</ItemGroup>
 
-	<Target Name="GenerateFwKernelCs" Inputs="@(KernelInputs)" Outputs="@(KernelOutputs)">
+	<Target Name="GenerateKernelCs" Inputs="@(KernelInputs)" Outputs="@(KernelOutputs)">
 		<!-- Call the IdlImp task from FdoBuildTasks in a separate msbuild process, so it doesn't lock the FdoBuildTasks.dll in VS. -->
-		<Exec Command="$(MsbuildCommand) GenerateFwKernelCs.proj /p:Configuration=$(Configuration) /p:OutDir=$(OutDir) /p:IntermediateOutputPath=$(IntermediateOutputPath)" />
+		<Exec Command="$(MsbuildCommand) GenerateKernelCs.proj /p:Configuration=$(Configuration) /p:OutputDir=$(OutputDir) /p:IntermediateOutputDir=$(IntermediateOutputDir)" />
 	</Target>
 
 	<PropertyGroup>
@@ -44,6 +44,7 @@
 		</CreateItem>
 		<Exec Command='"$(gennorm2)" -o "$(OutDir)IcuData/icudt$(IcuVersion)l/nfc_fw.nrm" "IcuData/nfc.txt" "IcuData/nfcHebrew.txt" "IcuData/nfcOverrides.txt"' />
 		<Exec Command='"$(gennorm2)" -o "$(OutDir)IcuData/icudt$(IcuVersion)l/nfkc_fw.nrm" "IcuData/nfc.txt" "IcuData/nfcHebrew.txt" "IcuData/nfkc.txt" "IcuData/nfcOverrides.txt" "IcuData/nfkcOverrides.txt"' />
+	  <Copy SourceFiles="IcuData/UnicodeDataOverrides.txt" DestinationFolder="$(OutDir)IcuData" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
 	</Target>
 
 	<Target Name="AfterClean">
@@ -56,6 +57,6 @@
 	<Target Name="AfterBuild" DependsOnTargets="GenerateIcuData">
 	</Target>
 
-	<Target Name="BeforeCompile" DependsOnTargets="GenerateFwKernelCs">
+	<Target Name="BeforeCompile" DependsOnTargets="GenerateKernelCs">
 	</Target>
 </Project>

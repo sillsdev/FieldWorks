@@ -3,7 +3,8 @@
 	<UsingTask TaskName="IdlImp" AssemblyFile="$(OutDir)\FdoBuildTasks.dll"/>
 
 	<ItemGroup>
-		<UsingNamespaces Include="SIL.FieldWorks.Common.FwKernelInterfaces" />
+		<UsingNamespaces Include="SIL.CoreImpl.KernelInterfaces" />
+		<UsingNamespaces Include="SIL.Utils" />
 	</ItemGroup>
 	<ItemGroup>
 		<ViewsSources Include="$(OutDir)/../Common/ViewsTlb.idl"/>

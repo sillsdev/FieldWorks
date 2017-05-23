@@ -9,7 +9,7 @@
 // </remarks>
 // ---------------------------------------------------------------------------------------------
 using NUnit.Framework;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.CoreImpl.KernelInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.Common.ViewsInterfaces;

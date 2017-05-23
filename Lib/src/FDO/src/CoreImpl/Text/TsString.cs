@@ -8,8 +8,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
+using SIL.CoreImpl.KernelInterfaces;
 using SIL.Extensions;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.Utils;
 
 namespace SIL.CoreImpl.Text
 {

@@ -27,7 +27,7 @@ using SIL.IO;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.Framework;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.CoreImpl.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ScriptureUtils;
@@ -146,7 +146,7 @@ namespace SIL.FieldWorks
 			// We read the registry value and set an environment variable ICU_DATA here so that
 			// FwKernelInterfaces.dll is independent of WinForms.
 			string icuDirValueName = string.Format("Icu{0}DataDir",
-				SIL.FieldWorks.Common.FwKernelInterfaces.Icu.Version);
+				CoreImpl.Text.Icu.Version);
 			using(var userKey = RegistryHelper.CompanyKey)
 			using(var machineKey = RegistryHelper.CompanyKeyLocalMachine)
 			{
@@ -245,7 +245,7 @@ namespace SIL.FieldWorks
 				SetIcuDataDirEnvironmentVariable();
 
 				// initialize ICU
-				Icu.InitIcuDataDir();
+				CoreImpl.Text.Icu.InitIcuDataDir();
 
 				// initialize the SLDR
 				Sldr.Initialize();

@@ -7,8 +7,8 @@
 
 using System;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
 using System.Collections.Generic;
+using SIL.CoreImpl.KernelInterfaces;
 using SIL.CoreImpl.WritingSystems;
 
 namespace SIL.FieldWorks.FDO.DomainImpl

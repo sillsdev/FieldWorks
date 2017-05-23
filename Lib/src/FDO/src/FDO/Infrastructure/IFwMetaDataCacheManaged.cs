@@ -4,8 +4,8 @@
 
 using System;
 using System.Collections.Generic;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.CoreImpl.Cellar;
+using SIL.CoreImpl.KernelInterfaces;
 
 namespace SIL.FieldWorks.FDO.Infrastructure
 {

@@ -12,7 +12,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.CoreImpl.Text;
 using SIL.Reporting;
 using SIL.WritingSystems;
 using SIL.WritingSystems.Migration;

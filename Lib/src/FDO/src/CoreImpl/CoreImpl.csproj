@@ -12,33 +12,6 @@
     <AssemblyName>CoreImpl</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <SccProjectName>
-    </SccProjectName>
-    <SccLocalPath>
-    </SccLocalPath>
-    <SccAuxPath>
-    </SccAuxPath>
-    <SccProvider>
-    </SccProvider>
-    <FileUpgradeFlags>
-    </FileUpgradeFlags>
-    <OldToolsVersion>3.5</OldToolsVersion>
-    <UpgradeBackupLocation />
-    <PublishUrl>publish\</PublishUrl>
-    <Install>true</Install>
-    <InstallFrom>Disk</InstallFrom>
-    <UpdateEnabled>false</UpdateEnabled>
-    <UpdateMode>Foreground</UpdateMode>
-    <UpdateInterval>7</UpdateInterval>
-    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
-    <UpdatePeriodically>false</UpdatePeriodically>
-    <UpdateRequired>false</UpdateRequired>
-    <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
-    <UseApplicationTrust>false</UseApplicationTrust>
-    <BootstrapperEnabled>true</BootstrapperEnabled>
     <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
@@ -60,6 +33,7 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="SIL.Core">
       <HintPath>..\..\..\..\..\Downloads\SIL.Core.dll</HintPath>
     </Reference>
@@ -79,7 +53,23 @@
     <Compile Include="..\..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="KernelInterfaces\Kernel.cs" />
+    <Compile Include="Text\IcuIdAndName.cs" />
+    <Compile Include="Text\IcuResourceBundle.cs" />
+    <Compile Include="Text\Icu.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Text\CharDef.cs" />
+    <Compile Include="Text\IBidiCharacterFactory.cs" />
+    <Compile Include="Text\INormalizationCharacterFactory.cs" />
+    <Compile Include="Text\IPuaCharacter.cs" />
+    <Compile Include="Text\IPuaCharacterFactory.cs" />
+    <Compile Include="Text\IUcdCharacter.cs" />
+    <Compile Include="Text\UcdCharacterResources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>UcdCharacterResources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Text\UcdProperty.cs" />
     <Compile Include="WritingSystems\CoreLdmlInFolderWritingSystemFactory.cs" />
     <Compile Include="WritingSystems\CoreSldrWritingSystemFactory.cs" />
     <Compile Include="WritingSystems\CoreWritingSystemFactory.cs" />
@@ -164,6 +154,11 @@
     <EmbeddedResource Include="Scripture\ScrUtilsStrings.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Text\UcdCharacterResources.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>UcdCharacterResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -184,6 +179,22 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="BuildInclude.targets">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="GenerateKernelCs.proj" />
+    <None Include="KernelInterfaces\common.idh">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="KernelInterfaces\FwKernel.idh">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="KernelInterfaces\Language.idh">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="KernelInterfaces\TextServ.idh">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Phonology\PhonEnv.lexer" />
     <None Include="Phonology\phonenv.parser" />
     <None Include="Phonology\PhonEnvError.dtd" />
@@ -194,13 +205,40 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="..\..\..\..\..\Downloads\gennorm2.exe" Condition="'$(OS)'=='Windows_NT'">
+      <Link>gennorm2.exe</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\..\..\..\Downloads\icudt54.dll" Condition="'$(OS)'=='Windows_NT'">
+      <Link>icudt54.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\..\..\..\Downloads\icuin54.dll" Condition="'$(OS)'=='Windows_NT'">
+      <Link>icuin54.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\..\..\..\Downloads\icutu54.dll" Condition="'$(OS)'=='Windows_NT'">
+      <Link>icutu54.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\..\..\..\Downloads\icuuc54.dll" Condition="'$(OS)'=='Windows_NT'">
+      <Link>icuuc54.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="IcuData\nfc.txt" />
+    <Content Include="IcuData\nfcHebrew.txt" />
+    <Content Include="IcuData\nfcOverrides.txt" />
+    <Content Include="IcuData\nfkc.txt" />
+    <Content Include="IcuData\nfkcOverrides.txt" />
+    <Content Include="IcuData\UnicodeDataOverrides.txt" />
+    <Content Include="KernelInterfaces\FwKernelTlb.idl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\CSTools\Tools\Tools.csproj">
       <Project>{1ec55d3b-5f12-41ea-ab6f-75a8949f888a}</Project>
       <Name>Tools</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\FwKernelInterfaces\FwKernelInterfaces.csproj">
-      <Project>{cdbb30a5-eefc-4fe1-b2bf-3a760d190b89}</Project>
-      <Name>FwKernelInterfaces</Name>
     </ProjectReference>
     <ProjectReference Include="..\SilUtils\SilUtils.csproj">
       <Project>{4e4ce84f-bb35-416a-8e4f-b8c096da32b7}</Project>
@@ -214,11 +252,5 @@
     </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
-	   Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+  <Import Project="BuildInclude.targets" />
 </Project>

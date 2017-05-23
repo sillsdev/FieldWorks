@@ -12,7 +12,7 @@ using SIL.FieldWorks.FdoUi;
 using SIL.Utils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.CoreImpl.Text;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.CoreImpl.KernelInterfaces;
 
 
 namespace SIL.FieldWorks.IText

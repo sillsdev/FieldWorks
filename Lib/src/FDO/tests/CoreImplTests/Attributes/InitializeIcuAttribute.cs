@@ -7,8 +7,9 @@ using System.IO;
 using System.Reflection;
 using Microsoft.Win32;
 using NUnit.Framework;
+using SIL.CoreImpl.Text;
 
-namespace SIL.FieldWorks.Common.FwKernelInterfaces.Attributes
+namespace SIL.CoreImpl.Attributes
 {
 	[AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Class)]
 	public class InitializeIcuAttribute : TestActionAttribute

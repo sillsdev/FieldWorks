@@ -7,7 +7,6 @@
 
 using System;
 using System.Collections;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.Utils;
 
 namespace SIL.CoreImpl.Text

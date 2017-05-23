@@ -11,7 +11,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Xml.Linq;
 using SIL.CoreImpl.Cellar;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.CoreImpl.KernelInterfaces;
 using SIL.FieldWorks.FDO.Application;
 
 namespace SIL.FieldWorks.FDO.Infrastructure.Impl

@@ -11,7 +11,7 @@ using SIL.Utils;
 using System.Text;
 using SIL.CoreImpl.Cellar;
 using SIL.CoreImpl.Text;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.CoreImpl.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 
 namespace SIL.FieldWorks.CacheLightTests

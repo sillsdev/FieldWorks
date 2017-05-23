@@ -16,8 +16,8 @@ using SIL.Utils;
 using System.Reflection;
 using Rhino.Mocks;
 using SIL.CoreImpl.Cellar;
+using SIL.CoreImpl.KernelInterfaces;
 using SIL.CoreImpl.Text;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.FDO.CoreTests
 {

@@ -9,9 +9,9 @@ using NUnit.Framework;
 using SIL.Utils;
 using SIL.FieldWorks.FDO.DomainServices;
 using System.Text;
+using SIL.CoreImpl.KernelInterfaces;
 using SIL.CoreImpl.Text;
 using SIL.CoreImpl.WritingSystems;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.FDO.FDOTests
 {

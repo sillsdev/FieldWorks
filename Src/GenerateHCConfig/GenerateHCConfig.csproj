@@ -48,10 +48,6 @@
     <Reference Include="FDO">
       <HintPath>..\..\Output\Debug\FDO.dll</HintPath>
     </Reference>
-    <Reference Include="FwKernelInterfaces, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\FwKernelInterfaces.dll</HintPath>
-    </Reference>
     <Reference Include="ParserCore">
       <HintPath>..\..\Output\Debug\ParserCore.dll</HintPath>
     </Reference>

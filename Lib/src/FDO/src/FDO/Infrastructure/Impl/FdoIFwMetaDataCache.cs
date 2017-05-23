@@ -7,14 +7,13 @@
 // Last reviewed: never
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Collections.Generic;
 using System.Runtime.InteropServices; // Needed for Marshal
 using System.Reflection; // To load meta data cache file data.
 using SIL.CoreImpl.Cellar;
-using SIL.Extensions;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.CoreImpl.KernelInterfaces;
+using SIL.Utils;
 
 //using SIL.Utils;
 

@@ -526,10 +526,6 @@
       <Project>{4c7d6b65-a331-4ed7-9b53-3301e714f8e7}</Project>
       <Name>CoreImpl</Name>
     </ProjectReference>
-    <ProjectReference Include="..\FwKernelInterfaces\FwKernelInterfaces.csproj">
-      <Project>{cdbb30a5-eefc-4fe1-b2bf-3a760d190b89}</Project>
-      <Name>FwKernelInterfaces</Name>
-    </ProjectReference>
     <ProjectReference Include="..\SilUtils\SilUtils.csproj">
       <Project>{4e4ce84f-bb35-416a-8e4f-b8c096da32b7}</Project>
       <Name>SilUtils</Name>

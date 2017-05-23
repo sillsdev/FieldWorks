@@ -23,7 +23,7 @@ using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Common.FwUtils;
 using System.Drawing.Printing;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.CoreImpl.KernelInterfaces;
 using SIL.FieldWorks.FwCoreDlgControls;
 
 namespace SIL.FieldWorks.XWorks

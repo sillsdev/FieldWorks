@@ -6,7 +6,8 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.CoreImpl.KernelInterfaces;
+using SIL.Utils;
 
 namespace SIL.CoreImpl.Text
 {

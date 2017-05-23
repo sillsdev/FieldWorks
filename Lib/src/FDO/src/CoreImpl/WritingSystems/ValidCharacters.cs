@@ -13,7 +13,6 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 using SIL.CoreImpl.Text;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.WritingSystems;
 
 namespace SIL.CoreImpl.WritingSystems

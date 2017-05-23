@@ -6,7 +6,7 @@ using System;
 using System.Text;
 using NUnit.Framework;
 
-namespace SIL.FieldWorks.Common.FwKernelInterfaces
+namespace SIL.CoreImpl.Text
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
@@ -14,7 +14,7 @@ namespace SIL.FieldWorks.Common.FwKernelInterfaces
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
-	public class IcuWrappersTests
+	public class IcuTests
 	{
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

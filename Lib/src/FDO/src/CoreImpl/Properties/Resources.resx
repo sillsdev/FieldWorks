@@ -144,6 +144,9 @@
   <data name="ksGenDateBefore" xml:space="preserve">
     <value>Before</value>
   </data>
+  <data name="ksIcuInitFailed" xml:space="preserve">
+    <value>SIL initialization of ICU using the file "{0}" failed. SIL PUA characters will not behave properly. Please report this problem to the developers.</value>
+  </data>
   <data name="ksMissingCloseBracketInEnv" xml:space="preserve">
     <value>There is a missing closing square bracket ']' somewhere around here: '{0}'.</value>
   </data>

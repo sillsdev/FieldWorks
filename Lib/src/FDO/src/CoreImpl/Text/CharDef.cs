@@ -8,7 +8,7 @@
 using System.Runtime.InteropServices;
 using System.Xml.Serialization;
 
-namespace SIL.FieldWorks.Common.FwKernelInterfaces
+namespace SIL.CoreImpl.Text
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>

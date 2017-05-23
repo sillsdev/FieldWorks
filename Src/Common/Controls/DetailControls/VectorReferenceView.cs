@@ -27,7 +27,7 @@ using SIL.Utils;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
 using SIL.CoreImpl.Cellar;
 using SIL.CoreImpl.Text;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.CoreImpl.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using XCore;
 

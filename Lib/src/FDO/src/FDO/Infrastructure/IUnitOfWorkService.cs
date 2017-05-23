@@ -5,7 +5,7 @@
 using System;
 using System.Collections.Generic;
 using SIL.CoreImpl.Cellar;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.CoreImpl.KernelInterfaces;
 using SIL.FieldWorks.FDO.Infrastructure.Impl;
 
 namespace SIL.FieldWorks.FDO.Infrastructure

@@ -14,7 +14,7 @@ using SIL.CoreImpl.Scripture;
 using SIL.CoreImpl.Text;
 using SIL.CoreImpl.WritingSystems;
 using SIL.FieldWorks.Common.Framework;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.CoreImpl.KernelInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
 

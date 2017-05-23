@@ -76,9 +76,6 @@
     <Reference Include="CoreImpl">
       <HintPath>..\..\Output\Debug\CoreImpl.dll</HintPath>
     </Reference>
-    <Reference Include="FwKernelInterfaces">
-      <HintPath>..\..\Output\Debug\FwKernelInterfaces.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

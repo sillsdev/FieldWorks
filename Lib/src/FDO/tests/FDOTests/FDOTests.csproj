@@ -466,10 +466,6 @@
       <Project>{e5e9ddc7-2855-4d92-ad46-960ac4c46457}</Project>
       <Name>FDO</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\src\FwKernelInterfaces\FwKernelInterfaces.csproj">
-      <Project>{cdbb30a5-eefc-4fe1-b2bf-3a760d190b89}</Project>
-      <Name>FwKernelInterfaces</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\src\SilUtils\SilUtils.csproj">
       <Project>{4e4ce84f-bb35-416a-8e4f-b8c096da32b7}</Project>
       <Name>SilUtils</Name>
@@ -477,10 +473,6 @@
     <ProjectReference Include="..\CoreImplTests\CoreImplTests.csproj">
       <Project>{6524d5af-ad53-498c-b95f-244542a2428c}</Project>
       <Name>CoreImplTests</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\FwKernelInterfacesTests\FwKernelInterfacesTests.csproj">
-      <Project>{a64fe61e-2ce1-480a-992a-9e2ffe861c76}</Project>
-      <Name>FwKernelInterfacesTests</Name>
     </ProjectReference>
     <ProjectReference Include="..\SilUtilsTests\SilUtilsTests.csproj">
       <Project>{f023f83b-ec39-48d4-a98c-f65e43609b20}</Project>

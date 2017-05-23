@@ -12,7 +12,7 @@ using System.Text;
 using System.Threading;
 using System.Xml.Xsl;
 using SIL.CoreImpl.Text;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.CoreImpl.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.FDO.Application;
 using SIL.Utils;

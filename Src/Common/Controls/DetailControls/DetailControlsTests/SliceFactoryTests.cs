@@ -15,7 +15,7 @@ using SIL.TestUtilities;
 using System.Collections.Generic;
 using SIL.CoreImpl.Cellar;
 using SIL.CoreImpl.WritingSystems;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.CoreImpl.KernelInterfaces;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.XWorks;
 

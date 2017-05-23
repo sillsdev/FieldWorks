@@ -19,7 +19,7 @@ using SIL.CoreImpl.Text;
 using SIL.CoreImpl.WritingSystems;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.CoreImpl.KernelInterfaces;
 
 namespace SIL.FieldWorks.Common.Widgets
 {

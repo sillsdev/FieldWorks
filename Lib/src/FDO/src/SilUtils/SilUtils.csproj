@@ -75,6 +75,7 @@
     <Compile Include="..\..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="ArrayPtr.cs" />
     <Compile Include="ConsumerThread.cs" />
     <Compile Include="ContinuableErrorException.cs" />
     <Compile Include="DirectoryUtils.cs" />
@@ -83,6 +84,7 @@
     <Compile Include="IFileOS.cs" />
     <Compile Include="IProgress.cs" />
     <Compile Include="IThreadedProgress.cs" />
+    <Compile Include="MarshalEx.cs" />
     <Compile Include="MiscUtils.cs" />
     <Compile Include="PriorityQueue.cs" />
     <Compile Include="RecentItemsCache.cs" />

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.IO;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.CoreImpl.Text;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.WordWorks.Parser;
 using SIL.HermitCrab;

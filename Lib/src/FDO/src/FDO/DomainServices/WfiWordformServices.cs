@@ -12,7 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.CoreImpl.KernelInterfaces;
 using SIL.CoreImpl.SpellChecking;
 using SIL.CoreImpl.Text;
 using SIL.CoreImpl.WritingSystems;

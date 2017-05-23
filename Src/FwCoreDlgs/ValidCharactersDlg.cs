@@ -9,7 +9,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Globalization;
@@ -25,7 +24,6 @@ using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Resources;
 using SIL.Keyboarding;
 using SIL.Utils;
@@ -1045,7 +1043,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 				if (txt == txtManualCharEntry)
 				{
-					chr = Common.FwKernelInterfaces.Icu.Normalize(txtManualCharEntry.Text, Common.FwKernelInterfaces.Icu.UNormalizationMode.UNORM_NFD);
+					chr = CoreImpl.Text.Icu.Normalize(txtManualCharEntry.Text, CoreImpl.Text.Icu.UNormalizationMode.UNORM_NFD);
 					fClearText = true;
 				}
 				else
@@ -1055,7 +1053,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					if (int.TryParse(txt.Text, NumberStyles.HexNumber, null, out codepoint))
 					{
 						chr = ((char) codepoint).ToString(CultureInfo.InvariantCulture);
-						if (Common.FwKernelInterfaces.Icu.IsMark(chr[0]))
+						if (CoreImpl.Text.Icu.IsMark(chr[0]))
 						{
 							ShowMessageBox(FwCoreDlgs.kstidLoneDiacriticNotValid);
 							return;
@@ -1113,7 +1111,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					try
 					{
 						if (!string.IsNullOrEmpty(chr))
-						chr = Common.FwKernelInterfaces.Icu.Normalize(chr, Common.FwKernelInterfaces.Icu.UNormalizationMode.UNORM_NFD);
+						chr = CoreImpl.Text.Icu.Normalize(chr, CoreImpl.Text.Icu.UNormalizationMode.UNORM_NFD);
 					}
 					catch
 					{
@@ -1233,14 +1231,14 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			if (txtManualCharEntry.Text.Length > 0)
 			{
-				string origCharsKd = Common.FwKernelInterfaces.Icu.Normalize(txtManualCharEntry.Text, Common.FwKernelInterfaces.Icu.UNormalizationMode.UNORM_NFD);
+				string origCharsKd = CoreImpl.Text.Icu.Normalize(txtManualCharEntry.Text, CoreImpl.Text.Icu.UNormalizationMode.UNORM_NFD);
 				int savSelStart = txtManualCharEntry.SelectionStart;
 				string newChars = TsStringUtils.ValidateCharacterSequence(origCharsKd);
 
 				if (newChars.Length == 0)
 				{
 					string s = origCharsKd.Trim();
-					if (s.Length > 0 && Common.FwKernelInterfaces.Icu.IsMark(s[0]))
+					if (s.Length > 0 && CoreImpl.Text.Icu.IsMark(s[0]))
 						ShowMessageBox(FwCoreDlgs.kstidLoneDiacriticNotValid);
 					else
 						IssueBeep();
@@ -1289,10 +1287,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		private void VerifyCharInRange(FwTextBox textbox, Label lbl)
 		{
-			string txt = textbox.Text.Length >= 1 ? Common.FwKernelInterfaces.Icu.Normalize(textbox.Text, Common.FwKernelInterfaces.Icu.UNormalizationMode.UNORM_NFD) : String.Empty;
+			string txt = textbox.Text.Length >= 1 ? CoreImpl.Text.Icu.Normalize(textbox.Text, CoreImpl.Text.Icu.UNormalizationMode.UNORM_NFD) : String.Empty;
 			int chrCode = (txt.Length >= 1 ? txt[0] : 0);
 
-			if (txt.Length > 1 || (chrCode > 0 && Common.FwKernelInterfaces.Icu.IsMark(chrCode)))
+			if (txt.Length > 1 || (chrCode > 0 && CoreImpl.Text.Icu.IsMark(chrCode)))
 			{
 				IssueBeep();
 				lbl.ForeColor = Color.Red;
@@ -1321,10 +1319,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				return;
 
 			var chars = new List<string>();
-			foreach (string c in UnicodeSet.ToCharacters(Common.FwKernelInterfaces.Icu.GetExemplarCharacters(icuLocale)))
+			foreach (string c in UnicodeSet.ToCharacters(CoreImpl.Text.Icu.GetExemplarCharacters(icuLocale)))
 			{
 				chars.Add(c.Normalize(NormalizationForm.FormD));
-				chars.Add(Common.FwKernelInterfaces.Icu.ToUpper(c, icuLocale).Normalize(NormalizationForm.FormD));
+				chars.Add(CoreImpl.Text.Icu.ToUpper(c, icuLocale).Normalize(NormalizationForm.FormD));
 			}
 			m_validCharsGridMngr.AddCharacters(chars);
 		}
@@ -1559,7 +1557,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				{
 					case kiCharCol:
 						string chr = m_inventoryRows[i].Character;
-						if (!Common.FwKernelInterfaces.Icu.IsSpace(chr[0]) && !Common.FwKernelInterfaces.Icu.IsControl(chr[0]))
+						if (!CoreImpl.Text.Icu.IsSpace(chr[0]) && !CoreImpl.Text.Icu.IsControl(chr[0]))
 						{
 							e.Value = chr;
 							gridCharInventory[e.ColumnIndex, e.RowIndex].Tag = null;
@@ -1768,7 +1766,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					string chr;
 					if (!normalizedChars.TryGetValue(txtTokSub.Text, out chr))
 					{
-						chr = Common.FwKernelInterfaces.Icu.Normalize(txtTokSub.Text, Common.FwKernelInterfaces.Icu.UNormalizationMode.UNORM_NFD);
+						chr = CoreImpl.Text.Icu.Normalize(txtTokSub.Text, CoreImpl.Text.Icu.UNormalizationMode.UNORM_NFD);
 						if (chr == "\n" || chr == "\r" || !TsStringUtils.IsCharacterDefined(chr)
 							|| !TsStringUtils.IsValidChar(chr))
 						{

@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using SIL.CoreImpl.Cellar;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO.Infrastructure
 {

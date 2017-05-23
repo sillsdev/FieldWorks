@@ -6,8 +6,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using SIL.CoreImpl.KernelInterfaces;
 using SIL.Extensions;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.CoreImpl.Text
 {

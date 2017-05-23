@@ -8,7 +8,7 @@ using System.Windows.Forms;
 using NUnit.Framework;
 using SIL.CoreImpl.Text;
 using SIL.CoreImpl.WritingSystems;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.CoreImpl.KernelInterfaces;
 using SIL.FieldWorks.FDO;
 
 namespace SIL.FieldWorks.Common.Widgets

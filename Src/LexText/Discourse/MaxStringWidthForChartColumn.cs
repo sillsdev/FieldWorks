@@ -9,7 +9,7 @@
 // </remarks>
 
 using System;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.CoreImpl.KernelInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 
 namespace SIL.FieldWorks.Discourse

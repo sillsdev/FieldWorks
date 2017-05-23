@@ -17,7 +17,7 @@ using SIL.Utils;
 using XCore;
 using System.Linq;
 using SIL.CoreImpl.Text;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.CoreImpl.KernelInterfaces;
 
 namespace SIL.FieldWorks.FdoUi
 {

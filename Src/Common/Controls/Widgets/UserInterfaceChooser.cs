@@ -21,7 +21,7 @@ using System.Windows.Forms;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.CoreImpl.Text;
 
 namespace SIL.FieldWorks.Common.Widgets
 {

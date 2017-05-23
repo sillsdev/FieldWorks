@@ -12,7 +12,7 @@ using System.Collections.Generic;
 using System.Xml.Serialization;
 using SIL.FieldWorks.FDO;
 using System.Diagnostics;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.CoreImpl.KernelInterfaces;
 using SIL.FieldWorks.FDO.DomainServices;
 
 namespace SIL.FieldWorks.TE

@@ -6,8 +6,9 @@ using System;
 using System.Collections.Generic;
 using SIL.CoreImpl.Cellar;
 using SIL.FieldWorks.CacheLight;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.CoreImpl.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 {

@@ -9,7 +9,7 @@
 // </remarks>
 
 using System.Drawing;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.CoreImpl.KernelInterfaces;
 
 namespace SIL.FieldWorks.FDO.DomainServices
 {

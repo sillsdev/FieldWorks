@@ -8,7 +8,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Xml;
 using System.Linq;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.CoreImpl.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;

@@ -225,9 +225,6 @@
       <HintPath>..\..\..\Output\Debug\xWorks.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="FwKernelInterfaces">
-      <HintPath>..\..\..\Output\Debug\FwKernelInterfaces.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\CommonAssemblyInfo.cs">

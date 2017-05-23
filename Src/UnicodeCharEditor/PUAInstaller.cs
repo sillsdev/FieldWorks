@@ -20,7 +20,7 @@ using System.Windows.Forms;
 using System.Xml.Linq;
 using SIL.Utils;
 using SIL.CoreImpl.Text;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.CoreImpl.KernelInterfaces;
 
 namespace SIL.FieldWorks.UnicodeCharEditor
 {

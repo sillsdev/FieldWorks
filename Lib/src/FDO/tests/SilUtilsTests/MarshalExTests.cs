@@ -4,7 +4,7 @@
 
 using NUnit.Framework;
 
-namespace SIL.FieldWorks.Common.FwKernelInterfaces
+namespace SIL.Utils
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>

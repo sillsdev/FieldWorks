@@ -7,7 +7,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Xml;
 using Gecko;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.CoreImpl.KernelInterfaces;
 using SIL.FieldWorks.FDO;
 using XCore;
 using SIL.Utils;

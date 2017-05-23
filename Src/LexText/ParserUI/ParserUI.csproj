@@ -213,9 +213,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\SilUtils.dll</HintPath>
     </Reference>
-    <Reference Include="FwKernelInterfaces">
-      <HintPath>..\..\..\Output\Debug\FwKernelInterfaces.dll</HintPath>
-    </Reference>
     <Reference Include="ViewsInterfaces">
       <HintPath>..\..\..\Output\Debug\ViewslInterfaces.dll</HintPath>
     </Reference>

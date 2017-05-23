@@ -5,7 +5,7 @@
 using System.Drawing;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.CoreImpl.KernelInterfaces;
 
 namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 {

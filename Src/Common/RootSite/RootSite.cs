@@ -26,7 +26,7 @@ using SIL.CoreImpl.Cellar;
 using SIL.CoreImpl.SpellChecking;
 using SIL.CoreImpl.Text;
 using SIL.CoreImpl.WritingSystems;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.CoreImpl.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FDO;

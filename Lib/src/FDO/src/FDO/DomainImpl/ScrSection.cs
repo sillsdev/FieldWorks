@@ -4,8 +4,8 @@
 
 using System;
 using System.Diagnostics;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
 using System.Collections.Generic;
+using SIL.CoreImpl.KernelInterfaces;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.CoreImpl.Scripture;
 using SIL.CoreImpl.Text;

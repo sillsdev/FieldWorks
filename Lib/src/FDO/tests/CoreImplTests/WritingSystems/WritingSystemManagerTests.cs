@@ -7,8 +7,9 @@ using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.CoreImpl.KernelInterfaces;
 using SIL.Lexicon;
+using SIL.Utils;
 using SIL.WritingSystems;
 
 namespace SIL.CoreImpl.WritingSystems

@@ -11,7 +11,7 @@ using System.Threading;
 using System.Windows.Forms;
 using Microsoft.Win32;
 using Paratext.LexicalContracts;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.CoreImpl.Text;
 using SIL.FieldWorks.FDO;
 using SIL.ObjectModel;
 using SIL.Utils;

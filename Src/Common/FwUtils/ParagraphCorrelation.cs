@@ -12,7 +12,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.CoreImpl.Text;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.FwUtils

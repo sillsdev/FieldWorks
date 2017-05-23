@@ -20,7 +20,7 @@ using SIL.Utils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Common.Framework;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.CoreImpl.KernelInterfaces;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.WritingSystems;
 using XCore;
@@ -799,7 +799,7 @@ namespace SIL.FieldWorks.Common.Controls
 						}
 
 						// "&N<ng<<<Ng<ny<<<Ny" => "&N<ng=Ng<ny=Ny"
-						// "&N<ñ<<<Ñ" => "&N<ñ=Ñ"
+						// "&N<ï¿½<<<ï¿½" => "&N<ï¿½=ï¿½"
 						// There are other issues we are not handling proplerly such as the next line
 						// &N<\u006e\u0067
 						var primaryParts = rule.Split('<');

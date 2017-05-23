@@ -6,7 +6,7 @@
 // Responsibility: FW Team
 
 using System.Runtime.InteropServices;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.CoreImpl.KernelInterfaces;
 
 namespace SIL.FieldWorks.FDO.Infrastructure
 {

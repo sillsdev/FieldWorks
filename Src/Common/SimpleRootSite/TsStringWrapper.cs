@@ -12,7 +12,7 @@ using System;
 using System.Runtime.Serialization;
 using System.Windows.Forms;
 using SIL.CoreImpl.Text;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.CoreImpl.KernelInterfaces;
 
 namespace SIL.FieldWorks.Common.RootSites
 {

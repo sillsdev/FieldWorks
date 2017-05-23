@@ -21,7 +21,7 @@ using SIL.FieldWorks.Resources; // for check-box icons.
 using SIL.FieldWorks.Common.RootSites;
 using SIL.CoreImpl.Cellar;
 using SIL.CoreImpl.WritingSystems;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.CoreImpl.KernelInterfaces;
 using XCore;
 
 namespace SIL.FieldWorks.Common.Controls

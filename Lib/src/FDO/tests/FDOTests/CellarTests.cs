@@ -8,8 +8,8 @@ using NUnit.Framework;
 using SIL.FieldWorks.FDO.DomainImpl;
 using System.Xml;
 using System.IO;
+using SIL.CoreImpl.KernelInterfaces;
 using SIL.CoreImpl.Text;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.DomainServices;
 
 namespace SIL.FieldWorks.FDO.FDOTests.CellarTests

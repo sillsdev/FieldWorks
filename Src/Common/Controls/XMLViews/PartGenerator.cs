@@ -14,7 +14,7 @@ using SIL.Utils;
 using SIL.FieldWorks.FDO;
 using XCore;
 using SIL.CoreImpl.Cellar;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.CoreImpl.KernelInterfaces;
 
 namespace SIL.FieldWorks.Common.Controls
 {

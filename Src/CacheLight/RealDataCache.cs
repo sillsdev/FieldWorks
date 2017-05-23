@@ -7,8 +7,9 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices; // needed for Marshal
 using System.Diagnostics;
 using SIL.CoreImpl.Cellar;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.CoreImpl.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.CacheLight
 {

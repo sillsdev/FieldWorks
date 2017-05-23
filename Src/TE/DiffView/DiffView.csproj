@@ -153,9 +153,6 @@
       <Name>TeResources</Name>
       <HintPath>..\..\..\Output\Debug\TeResources.dll</HintPath>
     </Reference>
-    <Reference Include="FwKernelInterfaces">
-      <HintPath>..\..\..\Output\Debug\FwKernelInterfaces.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\CommonAssemblyInfo.cs">
@@ -205,9 +202,6 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

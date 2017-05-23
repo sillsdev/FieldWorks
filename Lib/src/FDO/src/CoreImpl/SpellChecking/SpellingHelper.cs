@@ -9,7 +9,8 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.CoreImpl.KernelInterfaces;
+using SIL.CoreImpl.Text;
 using SIL.Utils;
 
 namespace SIL.CoreImpl.SpellChecking

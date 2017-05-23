@@ -12,11 +12,9 @@ using System.Linq;
 using System.Windows.Forms;
 using SIL.CoreImpl.WritingSystems;
 using SIL.FieldWorks.Common.Controls.FileDialog;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Resources;
 using SIL.Utils;
 using SIL.Windows.Forms;
@@ -635,7 +633,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				{
 					if (m_fileData[i].IndexOfAny(controlChars) >= 0)
 						throw new Exception(FWCoreDlgsErrors.ksInvalidControlCharacterFound);
-					m_fileData[i] = Common.FwKernelInterfaces.Icu.Normalize(m_fileData[i], Common.FwKernelInterfaces.Icu.UNormalizationMode.UNORM_NFD);
+					m_fileData[i] = CoreImpl.Text.Icu.Normalize(m_fileData[i], CoreImpl.Text.Icu.UNormalizationMode.UNORM_NFD);
 				}
 			}
 		}

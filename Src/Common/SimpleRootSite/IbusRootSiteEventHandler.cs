@@ -9,7 +9,7 @@ using System.Drawing;
 using IBusDotNet;
 using SIL.CoreImpl.Text;
 using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.CoreImpl.KernelInterfaces;
 using SIL.FieldWorks.Common.RootSites.Properties;
 using SIL.Utils;
 using SIL.Windows.Forms.Keyboarding.Linux;

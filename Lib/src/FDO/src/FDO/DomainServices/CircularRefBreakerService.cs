@@ -10,8 +10,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using SIL.CoreImpl.KernelInterfaces;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.FDO.DomainServices
 {

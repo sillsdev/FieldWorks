@@ -4,7 +4,7 @@
 
 using System;
 using System.Collections;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.CoreImpl.KernelInterfaces;
 
 namespace SIL.FieldWorks.Filters
 {

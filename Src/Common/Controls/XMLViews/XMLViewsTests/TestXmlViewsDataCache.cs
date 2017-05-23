@@ -9,7 +9,7 @@ using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.CoreTests;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.CoreImpl.KernelInterfaces;
 
 namespace XMLViewsTests
 {

@@ -124,10 +124,6 @@
       <Name>XMLUtils</Name>
       <HintPath>..\..\Output\Debug\XMLUtils.dll</HintPath>
     </Reference>
-    <Reference Include="FwKernelInterfaces">
-      <Name>FwKernelInterfaces</Name>
-      <HintPath>..\..\Output\Debug\FwKernelInterfaces.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\CommonAssemblyInfo.cs">

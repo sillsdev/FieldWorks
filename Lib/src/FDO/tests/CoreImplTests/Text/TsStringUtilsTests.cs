@@ -9,8 +9,8 @@ using System.IO;
 using System.Text;
 using System.Xml;
 using NUnit.Framework;
+using SIL.CoreImpl.KernelInterfaces;
 using SIL.CoreImpl.WritingSystems;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.Utils;
 
 namespace SIL.CoreImpl.Text

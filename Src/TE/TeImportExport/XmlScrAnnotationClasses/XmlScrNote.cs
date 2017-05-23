@@ -19,7 +19,7 @@ using System.Diagnostics;
 using SIL.Utils;
 using SIL.FieldWorks.FDO.DomainServices;
 using System.Diagnostics.CodeAnalysis;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.CoreImpl.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.TE

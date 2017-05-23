@@ -4,9 +4,10 @@ using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
 using System.Xml;
+using SIL.CoreImpl.KernelInterfaces;
 using SIL.CoreImpl.Text;
 using SIL.Extensions;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.Utils;
 using SIL.WritingSystems;
 
 namespace SIL.CoreImpl.WritingSystems

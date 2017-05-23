@@ -37,10 +37,6 @@
     <NoWarn>67</NoWarn>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="FwKernelInterfaces, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\FwKernelInterfaces.dll</HintPath>
-    </Reference>
     <Reference Include="FwUtils">
       <HintPath>..\..\Output\Debug\FwUtils.dll</HintPath>
     </Reference>

@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using SIL.ObjectModel;
 
-namespace SIL.FieldWorks.Common.FwKernelInterfaces
+namespace SIL.CoreImpl.Text
 {
 	/// <summary>
 	/// Represents an instance of an ICU ResourceBundle object.

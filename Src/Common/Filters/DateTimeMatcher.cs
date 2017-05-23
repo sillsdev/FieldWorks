@@ -5,7 +5,7 @@
 using System;
 using System.Globalization;
 using SIL.CoreImpl.Cellar;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.CoreImpl.KernelInterfaces;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.Filters

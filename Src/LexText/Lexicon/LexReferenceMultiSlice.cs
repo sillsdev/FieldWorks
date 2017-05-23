@@ -19,7 +19,7 @@ using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.FdoUi.Dialogs;
 using SIL.Utils;
 using SIL.FieldWorks.Common.Framework.DetailControls;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.CoreImpl.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.LexText.Controls;

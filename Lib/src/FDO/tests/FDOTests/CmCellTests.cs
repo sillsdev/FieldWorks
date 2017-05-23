@@ -9,9 +9,9 @@
 // </remarks>
 
 using NUnit.Framework;
+using SIL.CoreImpl.KernelInterfaces;
 using SIL.Utils;
 using SIL.CoreImpl.Text;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.FDO.FDOTests
 {

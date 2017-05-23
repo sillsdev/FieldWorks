@@ -15,7 +15,7 @@ using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.CoreImpl.Cellar;
 using SIL.CoreImpl.Text;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.CoreImpl.KernelInterfaces;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {

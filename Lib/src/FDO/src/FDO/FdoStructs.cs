@@ -9,8 +9,8 @@
 // </remarks>
 
 using System;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
 using System.Diagnostics;
+using SIL.CoreImpl.KernelInterfaces;
 
 namespace SIL.FieldWorks.FDO
 {

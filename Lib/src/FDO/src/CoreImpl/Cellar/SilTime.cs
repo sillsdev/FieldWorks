@@ -9,7 +9,7 @@
 // </remarks>
 
 using System;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.CoreImpl.KernelInterfaces;
 
 namespace SIL.CoreImpl.Cellar
 {

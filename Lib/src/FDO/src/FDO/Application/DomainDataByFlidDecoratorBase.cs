@@ -7,8 +7,9 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
 using SIL.CoreImpl.Cellar;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.CoreImpl.KernelInterfaces;
 using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO.Application
 {

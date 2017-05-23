@@ -142,6 +142,15 @@ namespace SIL.CoreImpl.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to SIL initialization of ICU using the file &quot;{0}&quot; failed. SIL PUA characters will not behave properly. Please report this problem to the developers..
+        /// </summary>
+        internal static string ksIcuInitFailed {
+            get {
+                return ResourceManager.GetString("ksIcuInitFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to There is a missing closing square bracket &apos;]&apos; somewhere around here: &apos;{0}&apos;..
         /// </summary>
         internal static string ksMissingCloseBracketInEnv {

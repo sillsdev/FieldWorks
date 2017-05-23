@@ -11,7 +11,7 @@ using SIL.FieldWorks.CacheLight;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using System.Linq;
 using SIL.CoreImpl.Text;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.CoreImpl.KernelInterfaces;
 
 namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 {

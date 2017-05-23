@@ -4,8 +4,8 @@
 
 using System.Linq;
 using NUnit.Framework;
+using SIL.CoreImpl.KernelInterfaces;
 using SIL.CoreImpl.WritingSystems;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.CoreImpl.Text
 {

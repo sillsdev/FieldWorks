@@ -15,7 +15,7 @@ using System.Collections.Generic;
 using SIL.FieldWorks.FDO.Infrastructure;
 using System;
 using SIL.CoreImpl.Text;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.CoreImpl.KernelInterfaces;
 using XCore;
 using SIL.Utils;
 

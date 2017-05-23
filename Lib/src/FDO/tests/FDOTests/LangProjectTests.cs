@@ -6,8 +6,9 @@ using System;
 using System.IO;
 using System.Collections.Generic;
 using NUnit.Framework;
+using SIL.CoreImpl.KernelInterfaces;
 using SIL.CoreImpl.WritingSystems;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO.FDOTests
 {

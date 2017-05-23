@@ -79,6 +79,8 @@
     <Compile Include="..\..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="ArrayPtrTests.cs" />
+    <Compile Include="MarshalExTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Attributes\CleanupSingletonsAttribute.cs" />
     <Compile Include="DummyFileMaker.cs" />

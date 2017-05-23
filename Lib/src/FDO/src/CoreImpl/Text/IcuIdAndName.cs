@@ -2,7 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-namespace SIL.FieldWorks.Common.FwKernelInterfaces
+namespace SIL.CoreImpl.Text
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
@@ -15,11 +15,11 @@ namespace SIL.FieldWorks.Common.FwKernelInterfaces
 		/// <summary>
 		/// Id (canonical name) of the converter, transliterator, etc.
 		/// </summary>
-		public string Id { get; private set; }
+		public string Id { get; }
 		/// <summary>
 		/// Name (non-canonical) of the converter, transliterator, etc.
 		/// </summary>
-		public string Name { get; private set; }
+		public string Name { get; }
 
 		/// <summary>
 		/// Constructor

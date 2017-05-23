@@ -724,11 +724,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		private static string GetDictionaryName(String languageId)
 		{
-			Common.FwKernelInterfaces.Icu.UErrorCode err;
+			CoreImpl.Text.Icu.UErrorCode err;
 			string country;
-			Common.FwKernelInterfaces.Icu.GetDisplayCountry(languageId, "en", out country, out err);
+			CoreImpl.Text.Icu.GetDisplayCountry(languageId, "en", out country, out err);
 			string languageName;
-			Common.FwKernelInterfaces.Icu.GetDisplayLanguage(languageId, "en", out languageName, out err);
+			CoreImpl.Text.Icu.GetDisplayLanguage(languageId, "en", out languageName, out err);
 			var languageAndCountry = new StringBuilder(languageName);
 			if (!string.IsNullOrEmpty(country))
 				languageAndCountry.AppendFormat(" ({0})", country);
@@ -1970,7 +1970,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			if (baseLocale == null)
 				baseLocale = "";
 
-			string sortRules = Common.FwKernelInterfaces.Icu.GetCollationRules(baseLocale);
+			string sortRules = CoreImpl.Text.Icu.GetCollationRules(baseLocale);
 			m_sortRulesTextBox.Tss = TsStringUtils.MakeString(sortRules == null ? "" : sortRules.Replace("&", Environment.NewLine + "&").Trim(),
 				CurrentWritingSystem.Handle);
 

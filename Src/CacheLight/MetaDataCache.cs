@@ -15,7 +15,7 @@ using SIL.Utils;
 using System.Text;
 using System.IO;
 using SIL.CoreImpl.Cellar;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.CoreImpl.KernelInterfaces;
 
 namespace SIL.FieldWorks.CacheLight
 {

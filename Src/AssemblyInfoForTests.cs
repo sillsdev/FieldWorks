@@ -3,7 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using NUnit.Framework;
-using SIL.FieldWorks.Common.FwKernelInterfaces.Attributes;
+using SIL.CoreImpl.Attributes;
 using SIL.FieldWorks.Common.FwUtils.Attributes;
 using SIL.TestUtilities;
 using SIL.Utils.Attributes;

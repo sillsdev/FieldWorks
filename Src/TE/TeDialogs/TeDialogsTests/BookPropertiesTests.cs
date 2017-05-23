@@ -7,7 +7,7 @@
 using NUnit.Framework;
 using System.Linq;
 using SIL.CoreImpl.Scripture;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.CoreImpl.KernelInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.FDO.DomainServices;
