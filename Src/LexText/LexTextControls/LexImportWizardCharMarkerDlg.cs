@@ -6,11 +6,11 @@ using System;
 using System.Drawing;
 using System.Collections;
 using System.Windows.Forms;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.FwCoreDlgs;
 
 namespace SIL.FieldWorks.LexText.Controls
@@ -42,7 +42,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		private Hashtable m_uiLangs;
 		private Button btnOK;
 		private Button btnCancel;
-		private FdoCache m_cache;
+		private LcmCache m_cache;
 		private IHelpTopicProvider m_helpTopicProvider;
 		private IApp m_app;
 		private IVwStylesheet m_stylesheet;
@@ -132,7 +132,7 @@ namespace SIL.FieldWorks.LexText.Controls
 //			m_existingElementNames = names;
 		}
 
-		public void Init(Sfm2Xml.ClsInFieldMarker ifm, Hashtable uiLangsHT, FdoCache cache)
+		public void Init(Sfm2Xml.ClsInFieldMarker ifm, Hashtable uiLangsHT, LcmCache cache)
 		{
 			CheckDisposed();
 
@@ -548,7 +548,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					MessageBoxButtons.OK, MessageBoxIcon.Information);
 				return;
 			}
-			FwStylesDlg.RunStylesDialogForCombo(cbStyle, InitializeStylesComboBox, "", m_stylesheet as FwStyleSheet,
+			FwStylesDlg.RunStylesDialogForCombo(cbStyle, InitializeStylesComboBox, "", m_stylesheet as LcmStyleSheet,
 				0, 0, m_cache, this, propertyTable.GetValue<IApp>("App"), m_helpTopicProvider, null);
 		}
 

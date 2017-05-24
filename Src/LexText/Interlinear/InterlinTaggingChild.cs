@@ -8,16 +8,16 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.WritingSystems;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
+using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.FwCoreDlgControls;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 using XCore;
 
 namespace SIL.FieldWorks.IText
@@ -66,9 +66,9 @@ namespace SIL.FieldWorks.IText
 
 		protected override void MakeVc()
 		{
-			m_vc = new InterlinTaggingVc(m_fdoCache);
-			m_tagFact = m_fdoCache.ServiceLocator.GetInstance<ITextTagFactory>();
-			m_segRepo = m_fdoCache.ServiceLocator.GetInstance<ISegmentRepository>();
+			m_vc = new InterlinTaggingVc(m_cache);
+			m_tagFact = m_cache.ServiceLocator.GetInstance<ITextTagFactory>();
+			m_segRepo = m_cache.ServiceLocator.GetInstance<ISegmentRepository>();
 		}
 
 		/// <summary>
@@ -697,7 +697,7 @@ namespace SIL.FieldWorks.IText
 		/// Initializes a new instance of the <see cref="InterlinTaggingVc"/> class.
 		/// </summary>
 		/// <param name="cache">The cache.</param>
-		public InterlinTaggingVc(FdoCache cache)
+		public InterlinTaggingVc(LcmCache cache)
 			: base(cache)
 		{
 			m_cache = cache;

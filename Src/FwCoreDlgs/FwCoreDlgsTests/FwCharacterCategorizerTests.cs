@@ -4,10 +4,9 @@
 
 using System.Collections.Generic;
 using NUnit.Framework;
-using SIL.CoreImpl.WritingSystems;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.FDOTests;
+using SIL.LCModel;
 using SIL.WritingSystems;
 
 namespace SIL.FieldWorks.FwCoreDlgs

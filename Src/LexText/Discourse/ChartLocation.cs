@@ -8,7 +8,7 @@
 // <remarks>
 // </remarks>
 // ---------------------------------------------------------------------------------------------
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 
 namespace SIL.FieldWorks.Discourse
 {

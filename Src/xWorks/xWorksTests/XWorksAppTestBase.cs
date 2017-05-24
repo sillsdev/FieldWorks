@@ -8,14 +8,13 @@ using System.IO;
 using System.Xml;
 using System.Linq;
 using NUnit.Framework;
-using SIL.CoreImpl.Text;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Framework;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.Utils;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Utils;
 using XCore;
-using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.XWorks
@@ -43,7 +42,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 		}
 
-		public void Init(FdoCache cache)
+		public void Init(LcmCache cache)
 		{
 			InitMediatorValues(cache);
 		}
@@ -228,7 +227,7 @@ namespace SIL.FieldWorks.XWorks
 		/// Gets the cache.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public FdoCache Cache { get; set; }
+		public LcmCache Cache { get; set; }
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

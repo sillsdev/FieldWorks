@@ -1,9 +1,6 @@
-// Copyright (c) 2009-2013 SIL International
+// Copyright (c) 2009-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: FwBaseVc.cs
-// Responsibility: FW Team
 //
 // <remarks>
 // A base view constructor for displaying FieldWorks data
@@ -11,19 +8,18 @@
 
 using System;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text;
-using SIL.CoreImpl.Cellar;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.Utils;
+using SIL.LCModel;
+using SIL.LCModel.Application;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.Common.RootSites
 {
@@ -36,7 +32,7 @@ namespace SIL.FieldWorks.Common.RootSites
 	public abstract class FwBaseVc : VwBaseVc
 	{
 		/// <summary>The view construtor's cache.</summary>
-		protected FdoCache m_cache;
+		protected LcmCache m_cache;
 		/// <summary>The hvo of the language project.</summary>
 		protected int m_hvoLangProject;
 		private static StringBuilder s_footnoteIconString;
@@ -77,7 +73,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// Gets or sets the FDO cache for the view constructor.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public virtual FdoCache Cache
+		public virtual LcmCache Cache
 		{
 			get
 			{

@@ -8,13 +8,12 @@ using System.Linq;
 using System.Windows.Forms;
 
 using NUnit.Framework;
-using SIL.CoreImpl.WritingSystems;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.FwUtils.Attributes;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.FDOTests;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using SIL.WritingSystems;
 
 
@@ -30,7 +29,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// Initializes a new instance of the <see cref="DummyWritingSystemPropertiesDialog"/> class.
 		/// </summary>
 		/// <param name="cache">The cache.</param>
-		public DummyWritingSystemPropertiesDialog(FdoCache cache)
+		public DummyWritingSystemPropertiesDialog(LcmCache cache)
 			: base(cache, cache.ServiceLocator.WritingSystemManager, cache.ServiceLocator.WritingSystems, null, null)
 		{
 		}

@@ -12,7 +12,9 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Collections;
 using System.Diagnostics;
-using SIL.Utils; // for ImageCollection
+using SIL.Utils;
+
+// for ImageCollection
 
 namespace XCore
 {

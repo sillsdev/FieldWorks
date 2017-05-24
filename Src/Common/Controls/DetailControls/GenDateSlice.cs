@@ -2,7 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
@@ -12,7 +12,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 	/// </summary>
 	public class GenDateSlice : FieldSlice
 	{
-		public GenDateSlice(FdoCache cache, ICmObject obj, int flid)
+		public GenDateSlice(LcmCache cache, ICmObject obj, int flid)
 			: base(new GenDateLauncher(), cache, obj, flid)
 		{
 		}

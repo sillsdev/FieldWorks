@@ -12,7 +12,7 @@ using SIL.FieldWorks.SharpViews.Builders;
 using SIL.FieldWorks.SharpViews.Hookups;
 using SIL.FieldWorks.SharpViews.Paragraphs;
 using SIL.FieldWorks.SharpViews.Selections;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 using System.Collections.Generic;
 
 namespace SIL.FieldWorks.SharpViews.SharpViewsTests

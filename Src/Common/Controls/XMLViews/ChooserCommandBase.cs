@@ -13,7 +13,7 @@ using System;
 using System.Collections;
 using System.Windows.Forms;
 
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using XCore;
 
 namespace SIL.FieldWorks.Common.Controls
@@ -28,7 +28,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary></summary>
 		protected string m_sLabel;
 		/// <summary></summary>
-		protected FdoCache m_cache;
+		protected LcmCache m_cache;
 		/// <summary></summary>
 		protected Mediator m_mediator;
 		/// <summary></summary>
@@ -48,7 +48,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="mediator">The mediator.</param>
 		/// <param name="propertyTable"></param>
 		/// ------------------------------------------------------------------------------------
-		protected ChooserCommand(FdoCache cache, bool fCloseBeforeExecuting, string sLabel,
+		protected ChooserCommand(LcmCache cache, bool fCloseBeforeExecuting, string sLabel,
 			Mediator mediator, PropertyTable propertyTable)
 		{
 			m_cache = cache;
@@ -62,7 +62,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>
 		/// Indicates whether or not the chooser dialog should close before executing the link command
 		/// </summary>
-		public FdoCache Cache
+		public LcmCache Cache
 		{
 			get
 			{

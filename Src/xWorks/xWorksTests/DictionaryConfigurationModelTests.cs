@@ -11,15 +11,14 @@ using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Schema;
 using NUnit.Framework;
-using SIL.CoreImpl.Text;
+using SIL.LCModel.Core.Text;
 using SIL.IO;
 using SIL.TestUtilities;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.FDOTests;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 
 // ReSharper disable InconsistentNaming
 

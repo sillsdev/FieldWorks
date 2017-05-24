@@ -9,11 +9,11 @@ using System.Windows.Forms;
 using System.Diagnostics;
 
 using SIL.FieldWorks.Common.Drawing;
-using SIL.CoreImpl.KernelInterfaces;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel.DomainServices;
 
 namespace SIL.FieldWorks.TE
 {
@@ -32,10 +32,10 @@ namespace SIL.FieldWorks.TE
 		#endregion
 
 		#region Member varibles
-		private FdoCache m_cache;
+		private LcmCache m_cache;
 		private IHelpTopicProvider m_helpTopicProvider;
 		private IApp m_app;
-		private FwStyleSheet m_styleSheet;
+		private LcmStyleSheet m_styleSheet;
 		/// <summary>Mapping being modified or added</summary>
 		protected ImportMappingInfo m_mapping;
 		private ResourceManager m_resources;
@@ -78,8 +78,8 @@ namespace SIL.FieldWorks.TE
 		/// <param name="helpTopicProvider">The help topic provider.</param>
 		/// <param name="app">The application</param>
 		/// ------------------------------------------------------------------------------------
-		public CharacterMappingSettings(ImportMappingInfo mapping, FwStyleSheet styleSheet,
-			FdoCache cache, bool fIsAnnotation, IHelpTopicProvider helpTopicProvider, IApp app) :
+		public CharacterMappingSettings(ImportMappingInfo mapping, LcmStyleSheet styleSheet,
+			LcmCache cache, bool fIsAnnotation, IHelpTopicProvider helpTopicProvider, IApp app) :
 			this()
 		{
 			m_resources = new ResourceManager("SIL.FieldWorks.TE.ScrImportComponents",

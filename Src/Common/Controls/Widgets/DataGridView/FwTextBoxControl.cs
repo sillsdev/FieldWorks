@@ -12,8 +12,8 @@ using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
 
 namespace SIL.FieldWorks.Common.Widgets
 {

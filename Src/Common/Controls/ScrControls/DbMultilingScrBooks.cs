@@ -6,10 +6,11 @@
 
 using System;
 using System.Collections.Generic;
-using SIL.CoreImpl.Scripture;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel;
+using SIL.LCModel.Core.Scripture;
 
-namespace SIL.FieldWorks.FDO.DomainServices
+namespace SIL.FieldWorks.Common.Controls
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>

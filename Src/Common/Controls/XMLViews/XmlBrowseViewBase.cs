@@ -9,13 +9,13 @@ using System.Xml;
 using System.Diagnostics;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO.Application;
-using SIL.Utils;
+using SIL.LCModel.Application;
 using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using XCore;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -1062,7 +1062,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="bv">The bv. Also used to set SortItemProvider</param>
 		/// ------------------------------------------------------------------------------------
 		public virtual void Init(XmlNode nodeSpec, int hvoRoot, int fakeFlid,
-			FdoCache cache, Mediator mediator, BrowseViewer bv)
+			LcmCache cache, Mediator mediator, BrowseViewer bv)
 		{
 			CheckDisposed();
 
@@ -1075,7 +1075,7 @@ namespace SIL.FieldWorks.Common.Controls
 				m_nodeSpec = nodeSpec;
 			m_bv = bv;
 			m_mediator = mediator;
-			m_fdoCache = cache;
+			m_cache = cache;
 			m_sda = m_bv.SpecialCache;
 			// This is usually done in MakeRoot, but we need it to exist right from the start
 			// because right after we make this window we use info from the VC to help make
@@ -1891,15 +1891,15 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			CheckDisposed();
 
-			if (m_fdoCache == null || DesignMode)
+			if (m_cache == null || DesignMode)
 				return;
 
 			base.MakeRoot();
 
 			// Only change it if it is null or different.
 			// Otherwise, it does an uneeded disposal/creation of the layout cache.
-			if (m_xbvvc.Cache == null || m_xbvvc.Cache != m_fdoCache)
-				m_xbvvc.Cache = m_fdoCache;
+			if (m_xbvvc.Cache == null || m_xbvvc.Cache != m_cache)
+				m_xbvvc.Cache = m_cache;
 			SetSelectedRowHighlighting();
 			this.ReadOnlyView = this.ReadOnlySelect;
 

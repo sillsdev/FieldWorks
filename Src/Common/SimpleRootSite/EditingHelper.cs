@@ -10,17 +10,17 @@ using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
-using SIL.CoreImpl.Cellar;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.WritingSystems;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites.Properties;
 using SIL.Keyboarding;
 using SIL.PlatformUtilities;
 using SIL.Reporting;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.Common.RootSites
 {

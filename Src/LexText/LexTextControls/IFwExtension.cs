@@ -2,7 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
@@ -18,6 +18,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="cache"></param>
 		/// <param name="mediator"></param>
 		/// <param name="propertyTable"></param>
-		void Init(FdoCache cache, Mediator mediator, XCore.PropertyTable propertyTable);
+		void Init(LcmCache cache, Mediator mediator, XCore.PropertyTable propertyTable);
 	}
 }

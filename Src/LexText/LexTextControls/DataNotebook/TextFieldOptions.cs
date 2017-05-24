@@ -11,11 +11,11 @@
 using System;
 using System.Windows.Forms;
 
-using SIL.CoreImpl.WritingSystems;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 
 namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 {
@@ -26,7 +26,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 	/// ----------------------------------------------------------------------------------------
 	public partial class TextFieldOptions : UserControl
 	{
-		FdoCache m_cache;
+		LcmCache m_cache;
 		IVwStylesheet m_stylesheet;
 		string m_sValidShortLim;
 		bool m_fHandlingTextChanged;
@@ -50,7 +50,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 			MessageBox.Show(this, "This is not yet implemented.", "Please be patient");
 		}
 
-		internal void Initialize(FdoCache cache, IHelpTopicProvider helpTopicProvider, IApp app, IVwStylesheet stylesheet,
+		internal void Initialize(LcmCache cache, IHelpTopicProvider helpTopicProvider, IApp app, IVwStylesheet stylesheet,
 			NotebookImportWiz.RnSfMarker rsfm)
 		{
 			m_cache = cache;

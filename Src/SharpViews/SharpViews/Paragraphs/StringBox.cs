@@ -6,7 +6,7 @@ using System;
 using System.Diagnostics;
 using System.Drawing;
 using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 using SIL.FieldWorks.SharpViews.Selections;
 
 namespace SIL.FieldWorks.SharpViews.Paragraphs

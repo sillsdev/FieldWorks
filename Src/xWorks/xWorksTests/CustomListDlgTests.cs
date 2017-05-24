@@ -11,12 +11,11 @@ using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.FDOTests;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.WritingSystems;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -381,7 +380,7 @@ namespace SIL.FieldWorks.XWorks
 			return GetUiWritingSystemAndEnglish();
 		}
 
-		internal void SetTestCache(FdoCache cache)
+		internal void SetTestCache(LcmCache cache)
 		{
 			Cache = cache;
 		}

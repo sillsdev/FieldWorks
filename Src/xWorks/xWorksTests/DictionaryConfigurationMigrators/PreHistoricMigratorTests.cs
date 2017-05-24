@@ -11,15 +11,14 @@ using NUnit.Framework;
 using SIL.IO;
 using SIL.Linq;
 using SIL.TestUtilities;
-using SIL.CoreImpl.Cellar;
+using SIL.LCModel.Core.Cellar;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.FDOTests;
-using SIL.Utils;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Utils;
 using XCore;
 
 namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
@@ -33,7 +32,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		private FwXApp m_application;
 		private string m_configFilePath;
 		private MockFwXWindow m_window;
-		private FwStyleSheet m_styleSheet;
+		private LcmStyleSheet m_styleSheet;
 
 		// Set up Custom Fields at the Fixture level, since disposing one in one test disposes them all in all tests
 		private const string CustomFieldChangedLabel = "Custom Label";
@@ -2333,7 +2332,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		[Test]
 		public void ConfigsNeedMigratingFromPre83_ReturnsFalseIfNewReversalConfigsExist()
 		{
-			var newRevIdxConfigLoc = Path.Combine(FdoFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path)),
+			var newRevIdxConfigLoc = Path.Combine(LcmFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path)),
 				DictionaryConfigurationListener.ReversalIndexConfigurationDirectoryName);
 			Directory.CreateDirectory(newRevIdxConfigLoc);
 			File.AppendAllText(Path.Combine(newRevIdxConfigLoc, "SomeConfig" + DictionaryConfigurationModel.FileExtension), "Foo");
@@ -2345,7 +2344,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		[Test]
 		public void ConfigsNeedMigratingFromPre83_ReturnsFalseIfNewDictionaryConfigsExist()
 		{
-			var newDictConfigLoc = Path.Combine(FdoFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path)),
+			var newDictConfigLoc = Path.Combine(LcmFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path)),
 				DictionaryConfigurationListener.DictionaryConfigurationDirectoryName);
 			Directory.CreateDirectory(newDictConfigLoc);
 			File.AppendAllText(Path.Combine(newDictConfigLoc, "SomeConfig" + DictionaryConfigurationModel.FileExtension), "Foo");
@@ -2357,7 +2356,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		[Test]
 		public void ConfigsNeedMigratingFromPre83_ReturnsFalseIfNoNewConfigsAndNoOldConfigs()
 		{
-			var newDictConfigLoc = Path.Combine(FdoFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path)),
+			var newDictConfigLoc = Path.Combine(LcmFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path)),
 				DictionaryConfigurationListener.DictionaryConfigurationDirectoryName);
 			Directory.CreateDirectory(newDictConfigLoc);
 			Directory.EnumerateFiles(newDictConfigLoc).ForEach(File.Delete);
@@ -2369,7 +2368,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		[Test]
 		public void ConfigsNeedMigratingFromPre83_ReturnsTrueIfNoNewConfigsAndOneOldConfig()
 		{
-			var configSettingsDir = FdoFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path));
+			var configSettingsDir = LcmFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path));
 			var newDictConfigLoc = Path.Combine(configSettingsDir, "Dictionary");
 			Directory.CreateDirectory(newDictConfigLoc);
 			Directory.EnumerateFiles(newDictConfigLoc).ForEach(File.Delete);

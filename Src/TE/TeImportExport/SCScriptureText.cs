@@ -5,14 +5,15 @@
 // File: SCScriptureText.cs
 // Responsibility: TE Team
 
-using System.IO;
 using System.Diagnostics;
-using SIL.FieldWorks.Common.ScriptureUtils;
-using SIL.CoreImpl.Scripture;
-using SilEncConverters40;
+using System.IO;
 using ECInterfaces;
+using SilEncConverters40;
+using SIL.FieldWorks.Common.ScriptureUtils;
+using SIL.LCModel;
+using SIL.LCModel.Core.Scripture;
 
-namespace SIL.FieldWorks.FDO.DomainServices
+namespace SIL.FieldWorks.TE
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>

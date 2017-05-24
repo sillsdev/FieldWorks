@@ -7,10 +7,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Paratext.LexicalContracts;
-using SIL.CoreImpl.WritingSystems;
-using SIL.CoreImpl.KernelInterfaces;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 
 namespace SIL.FieldWorks.ParatextLexiconPlugin
 {

@@ -9,9 +9,9 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 
-using SIL.CoreImpl.WritingSystems;
-using SIL.CoreImpl.KernelInterfaces;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
 using SIL.FieldWorks.Resources;
 
 namespace SIL.FieldWorks.Common.Widgets
@@ -54,7 +54,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		void AddColumn(string name, int widthPct);
 
 		/// <summary> </summary>
-		FdoCache Cache { get; set; }
+		LcmCache Cache { get; set; }
 
 		/// <summary> </summary>
 		int RootObject { get; set; }
@@ -73,7 +73,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// <summary>a list of writing systems for which to display information</summary>
 		private List<int> m_writingSystemsToDisplay = new List<int>();
 		/// <summary>database cache</summary>
-		private FdoCache m_cache;
+		private LcmCache m_cache;
 		/// <summary></summary>
 		private IVwStylesheet m_stylesheet;
 		#endregion
@@ -89,7 +89,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// ------------------------------------------------------------------------------------
 		[BrowsableAttribute(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public FdoCache Cache {
+		public LcmCache Cache {
 			get { return m_cache; }
 			set { m_cache = value; }
 		}
@@ -356,7 +356,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		}
 
 		/// <summary> </summary>
-		public FdoCache Cache {
+		public LcmCache Cache {
 			get { return PropertyDataSource.Cache; }
 			set {PropertyDataSource.Cache = value; }
 		}

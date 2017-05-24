@@ -6,10 +6,10 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using NUnit.Framework;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.WritingSystems;
-using SIL.CoreImpl.KernelInterfaces;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
 
 namespace SIL.FieldWorks.Common.Widgets
 {
@@ -73,7 +73,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			}
 
 			/// <summary>Not used</summary>
-			FdoCache IFwMultilingualPropViewDataSource.Cache { get; set;}
+			LcmCache IFwMultilingualPropViewDataSource.Cache { get; set;}
 
 			/// <summary>Not used</summary>
 			int IFwMultilingualPropViewDataSource.RootObject { get; set;}

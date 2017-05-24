@@ -6,13 +6,13 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel;
+using SIL.LCModel.Application;
+using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.IText;
 
 namespace SIL.FieldWorks.Discourse
@@ -47,7 +47,7 @@ namespace SIL.FieldWorks.Discourse
 		/// </summary>
 		/// <param name="cache"></param>
 		/// <param name="hvoRoot"></param>
-		public InterlinRibbon(FdoCache cache, int hvoRoot)
+		public InterlinRibbon(LcmCache cache, int hvoRoot)
 		{
 			Cache = cache;
 			m_iEndSelLim = -1;
@@ -90,7 +90,7 @@ namespace SIL.FieldWorks.Discourse
 
 		protected internal int HvoRoot { get; private set; }
 
-		protected internal FdoCache Cache { get; protected set; }
+		protected internal LcmCache Cache { get; protected set; }
 
 		/// <summary>
 		/// Setter handles PropChanged
@@ -384,7 +384,7 @@ namespace SIL.FieldWorks.Discourse
 			DisplayAnalysisAndCloseInnerPile(vwenv, frag, false);
 		}
 
-		protected override void GetSegmentLevelTags(FdoCache cache)
+		protected override void GetSegmentLevelTags(LcmCache cache)
 		{
 			// do nothing (we don't need tags above bundle level).
 		}
@@ -396,7 +396,7 @@ namespace SIL.FieldWorks.Discourse
 	public class DialogInterlinRibbon : InterlinRibbon
 	{
 		// In this subclass, we set the root later.
-		public DialogInterlinRibbon(FdoCache cache) : base(cache, 0)
+		public DialogInterlinRibbon(LcmCache cache) : base(cache, 0)
 		{
 			m_occurenceListId = -2012; // use a different flid for this subclass
 		}

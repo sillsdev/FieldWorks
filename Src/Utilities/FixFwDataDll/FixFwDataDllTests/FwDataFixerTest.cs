@@ -8,8 +8,8 @@ using System.IO;
 using System.Xml;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.FixData;
+using SIL.LCModel;
 using SIL.TestUtilities;
 
 namespace FixFwDataDllTests

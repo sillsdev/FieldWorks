@@ -5,7 +5,7 @@
 using System.Diagnostics;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
@@ -91,7 +91,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="mediator">Mediator used to restore saved siz and location info.</param>
 		/// <param name="propertyTable"></param>
 		/// <param name="startingEntry">Entry that cannot be used as a match in this dlg.</param>
-		public void SetDlgInfo(FdoCache cache, Mediator mediator, XCore.PropertyTable propertyTable, ILexEntry startingEntry)
+		public void SetDlgInfo(LcmCache cache, Mediator mediator, XCore.PropertyTable propertyTable, ILexEntry startingEntry)
 		{
 			CheckDisposed();
 
@@ -106,7 +106,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// Common and needed code for the setup of the dlg
 		/// </summary>
 		/// <param name="cache"></param>
-		private void SetComboWritingSystemFactory(FdoCache cache)
+		private void SetComboWritingSystemFactory(LcmCache cache)
 		{
 			m_fwcbFunctions.WritingSystemFactory = cache.WritingSystemFactory;
 			m_fwcbFunctions.WritingSystemCode = cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle;
@@ -119,7 +119,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="wp"></param>
 		/// <param name="mediator"></param>
 		/// <param name="propertyTable"></param>
-		public override void SetDlgInfo(FdoCache cache, WindowParams wp, Mediator mediator, XCore.PropertyTable propertyTable)
+		public override void SetDlgInfo(LcmCache cache, WindowParams wp, Mediator mediator, XCore.PropertyTable propertyTable)
 		{
 			base.SetDlgInfo(cache, wp, mediator, propertyTable);
 			// This is needed to make the replacement MatchingEntriesBrowser visible:

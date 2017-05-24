@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using SIL.CoreImpl;
+using SIL.LCModel.Core;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 
 namespace SIL.FieldWorks.SharpViews

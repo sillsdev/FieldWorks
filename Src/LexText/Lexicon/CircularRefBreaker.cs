@@ -3,11 +3,11 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 using SIL.FieldWorks.FwCoreDlgs;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using System;
 using System.Text;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel.Infrastructure;
+using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.Reporting;
 
@@ -83,7 +83,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		public void Process()
 		{
 			Debug.Assert(m_dlg != null);
-			var cache = m_dlg.PropTable.GetValue<FdoCache>("cache");
+			var cache = m_dlg.PropTable.GetValue<LcmCache>("cache");
 
 			Process(cache);
 			// Show the message returned from running the circular reference breaker service.
@@ -92,7 +92,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		}
 #endregion
 
-		public void Process(FdoCache cache)
+		public void Process(LcmCache cache)
 		{
 			// Run service that does the work of fixing the circular references.
 			CircularRefBreakerService.ReferenceBreaker(cache, out m_count, out m_circular, out m_report);

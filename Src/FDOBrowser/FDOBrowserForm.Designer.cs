@@ -3,7 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.IO;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 
 namespace FDOBrowser
 {

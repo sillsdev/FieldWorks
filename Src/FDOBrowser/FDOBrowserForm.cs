@@ -6,20 +6,19 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Resources;
 using System.Windows.Forms;
-using SIL.CoreImpl.Cellar;
+using SIL.LCModel.Core.Cellar;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework.DetailControls;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Application;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.Resources;
 using SIL.ObjectBrowser;
@@ -44,7 +43,7 @@ namespace FDOBrowser
 		/// Specifies whether the class was selected on the dialog (true) or not (false).
 		/// </summary>
 		public static bool m_dlgChanged;
-		private FdoCache m_cache;
+		private LcmCache m_cache;
 		private ILangProject m_lp;
 		private ICmObjectRepository m_repoCmObject;
 		private string m_fmtSelectPropsMenuText;
@@ -357,7 +356,7 @@ namespace FDOBrowser
 			try
 			{
 				var bepType = GetBEPTypeFromFileExtension(fileName);
-				var isMemoryBEP = bepType == FDOBackendProviderType.kMemoryOnly;
+				var isMemoryBEP = bepType == BackendProviderType.kMemoryOnly;
 
 				var stopwatch = new Stopwatch();
 				stopwatch.Start();
@@ -365,17 +364,21 @@ namespace FDOBrowser
 				// Init backend data provider
 				// TODO: Get the correct ICU local for the user writing system
 
-				var ui = new FwFdoUI(this, this);
+				var ui = new FwLcmUI(this, this);
 				if (isMemoryBEP)
-					m_cache = FdoCache.CreateCacheWithNewBlankLangProj(new BrowserProjectId(bepType, null), "en", "en", "en", ui, FwDirectoryFinder.FdoDirectories, new FdoSettings());
+				{
+					m_cache = LcmCache.CreateCacheWithNewBlankLangProj(new BrowserProjectId(bepType, null), "en", "en", "en", ui,
+						FwDirectoryFinder.LcmDirectories, new LcmSettings());
+				}
 				else
 				{
 					using (var progressDlg = new ProgressDialogWithTask(this))
 					{
-						m_cache = FdoCache.CreateCacheFromExistingData(new BrowserProjectId(bepType, fileName), "en", ui, FwDirectoryFinder.FdoDirectories, new FdoSettings(), progressDlg);
+						m_cache = LcmCache.CreateCacheFromExistingData(new BrowserProjectId(bepType, fileName), "en", ui,
+							FwDirectoryFinder.LcmDirectories, new LcmSettings(), progressDlg);
 					}
 				}
-			   // var v = m_cache.
+				// var v = m_cache.
 				//var map = v.m_identityMap;
 				CFields = GetCustomFields(m_cache);
 				m_lp = m_cache.LanguageProject;
@@ -488,14 +491,14 @@ namespace FDOBrowser
 		/// Gets the BEP type from the specified file path.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private static FDOBackendProviderType GetBEPTypeFromFileExtension(string pathname)
+		private static BackendProviderType GetBEPTypeFromFileExtension(string pathname)
 		{
 			switch (Path.GetExtension(pathname).ToLower())
 			{
 				default:
-					return FDOBackendProviderType.kMemoryOnly;
-				case FdoFileHelper.ksFwDataXmlFileExtension:
-					return FDOBackendProviderType.kXML;
+					return BackendProviderType.kMemoryOnly;
+				case LcmFileHelper.ksFwDataXmlFileExtension:
+					return BackendProviderType.kXML;
 
 			}
 		}
@@ -619,7 +622,7 @@ namespace FDOBrowser
 		/// </summary>
 		/// <param name="m_cache">The FDO Cache</param>
 		/// ------------------------------------------------------------------------------------
-		private List<CustomFields> GetCustomFields(FdoCache m_cache)
+		private List<CustomFields> GetCustomFields(LcmCache m_cache)
 		{
 			string type = "";
 			List<CustomFields> list = new List<CustomFields>();            // m_CustomFields

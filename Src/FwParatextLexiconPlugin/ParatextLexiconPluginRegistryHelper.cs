@@ -8,7 +8,7 @@ using System.IO;
 using System.Reflection;
 using Microsoft.Win32;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.ParatextLexiconPlugin
 {

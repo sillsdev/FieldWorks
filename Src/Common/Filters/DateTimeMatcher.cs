@@ -4,8 +4,8 @@
 
 using System;
 using System.Globalization;
-using SIL.CoreImpl.Cellar;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.Filters

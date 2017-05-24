@@ -8,8 +8,8 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.Controls;
-using SIL.CoreImpl.KernelInterfaces;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.DomainServices;
 
 namespace SIL.FieldWorks.FwCoreDlgControls
 {

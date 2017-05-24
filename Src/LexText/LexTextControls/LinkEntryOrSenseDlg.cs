@@ -7,9 +7,9 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Diagnostics;
-using SIL.CoreImpl.WritingSystems;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
@@ -147,7 +147,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="mediator">Mediator used to restore saved siz and location info.</param>
 		/// <param name="propertyTable"></param>
 		/// <param name="startingEntry">Entry that cannot be used as a match in this dlg.</param>
-		public void SetDlgInfo(FdoCache cache, Mediator mediator, XCore.PropertyTable propertyTable, ILexEntry startingEntry)
+		public void SetDlgInfo(LcmCache cache, Mediator mediator, XCore.PropertyTable propertyTable, ILexEntry startingEntry)
 		{
 			CheckDisposed();
 
@@ -164,7 +164,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="wp"></param>
 		/// <param name="mediator"></param>
 		/// <param name="propertyTable"></param>
-		public override void SetDlgInfo(FdoCache cache, WindowParams wp, Mediator mediator, XCore.PropertyTable propertyTable)
+		public override void SetDlgInfo(LcmCache cache, WindowParams wp, Mediator mediator, XCore.PropertyTable propertyTable)
 		{
 			CheckDisposed();
 

@@ -12,15 +12,15 @@
 
 using System;
 using System.Windows.Forms;
-using SIL.CoreImpl.WritingSystems;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
-using SIL.CoreImpl.KernelInterfaces;
-using SIL.Utils;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Utils;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.LexText.Controls;
 using XCore;
 
@@ -47,7 +47,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <param name="flid">The field identifier for the attribute we are displaying.</param>
 		/// <param name="persistenceProvider">The persistence provider.</param>
 		/// ------------------------------------------------------------------------------------
-		public MSAReferenceComboBoxSlice(FdoCache cache, ICmObject obj, int flid,
+		public MSAReferenceComboBoxSlice(LcmCache cache, ICmObject obj, int flid,
 			IPersistenceProvider persistenceProvider)
 			: base(new UserControl(), cache, obj, flid)
 		{

@@ -11,9 +11,8 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Xml;
 using NUnit.Framework;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.FDOTests;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.XWorks.LexText;
 using XCore;
 

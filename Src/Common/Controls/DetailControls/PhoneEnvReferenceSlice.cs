@@ -10,9 +10,9 @@
 // </remarks>
 using System;
 using System.Diagnostics;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.Utils;
@@ -27,7 +27,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 	{
 		private int m_dxLastWidth; // width last time OnSizeChanged was called.
 
-		public PhoneEnvReferenceSlice(FdoCache cache, ICmObject obj, int flid)
+		public PhoneEnvReferenceSlice(LcmCache cache, ICmObject obj, int flid)
 			: base(new PhoneEnvReferenceLauncher(), cache, obj, flid)
 		{
 			Debug.Assert(obj is IMoAffixAllomorph || obj is IMoStemAllomorph);

@@ -5,7 +5,7 @@
 using System;
 using System.Diagnostics;
 using SIL.FieldWorks.Common.Framework;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {
@@ -128,7 +128,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		}
 
 		/// <summary></summary>
-		public void Setup(object record, IRecordListUpdater rlu, FdoCache cache)
+		public void Setup(object record, IRecordListUpdater rlu, LcmCache cache)
 		{
 			CheckDisposed();
 

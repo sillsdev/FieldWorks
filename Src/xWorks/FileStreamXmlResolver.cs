@@ -7,7 +7,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Net;
 using System.Xml;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.XWorks
 {

@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using SILUBS.SharedScrUtils;
-using SIL.CoreImpl.Scripture;
+using SIL.LCModel.Core.Scripture;
 
 namespace SILUBS.SharedScrControls
 {

@@ -11,7 +11,7 @@ using System.Linq;
 using System.Threading;
 using System.Text;
 using System.Windows.Forms;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.Reporting;
 

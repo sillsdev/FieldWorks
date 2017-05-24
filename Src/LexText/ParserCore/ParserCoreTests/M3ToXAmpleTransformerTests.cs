@@ -13,8 +13,9 @@ using System.Text;
 using System.Xml.XPath;
 using System.Xml.Xsl;
 using NUnit.Framework;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.WordWorks.Parser
 {

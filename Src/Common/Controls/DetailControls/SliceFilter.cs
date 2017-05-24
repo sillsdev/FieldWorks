@@ -3,12 +3,10 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Diagnostics;
-using System.IO;
 using System.Xml;
-using SIL.FieldWorks.FDO;
-using SIL.Utils;
+using SIL.LCModel;
 using System.Collections.Generic;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {

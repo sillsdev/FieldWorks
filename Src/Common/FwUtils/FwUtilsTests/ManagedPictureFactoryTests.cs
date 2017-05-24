@@ -6,7 +6,7 @@ using System.Drawing;
 using NUnit.Framework;
 using System.IO;
 using System.Drawing.Imaging;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {

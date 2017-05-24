@@ -7,8 +7,8 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
-using SIL.FieldWorks.FDO.DomainServices.BackupRestore;
-using SIL.Utils;
+using SIL.LCModel.DomainServices.BackupRestore;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 {

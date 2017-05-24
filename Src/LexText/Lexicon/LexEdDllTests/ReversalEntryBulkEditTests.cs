@@ -3,8 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using NUnit.Framework;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.FDOTests;
+using SIL.LCModel;
 using SIL.FieldWorks.XWorks.LexEd;
 using XCore;
 
@@ -46,7 +45,7 @@ namespace LexEdDllTests
 
 		class TestReversalRecordList : AllReversalEntriesRecordList
 		{
-			public TestReversalRecordList(FdoCache cache, Mediator mediator, PropertyTable propertyTable)
+			public TestReversalRecordList(LcmCache cache, Mediator mediator, PropertyTable propertyTable)
 			{
 				Init(cache, mediator, propertyTable, null);
 			}

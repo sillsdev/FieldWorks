@@ -5,10 +5,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Application;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.XWorks;
 using XCore;

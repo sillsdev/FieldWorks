@@ -4,10 +4,10 @@
 
 using System;
 using System.Linq;
-using SIL.CoreImpl.Cellar;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel;
+using SIL.LCModel.Application;
+using SIL.LCModel.Infrastructure;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -20,7 +20,7 @@ namespace SIL.FieldWorks.Common.Controls
 	/// </summary>
 	public class GhostParentHelper
 	{
-		internal IFdoServiceLocator m_services; // think of it as protected, but limited to this assembly.
+		internal ILcmServiceLocator m_services; // think of it as protected, but limited to this assembly.
 
 		// The class of objects that are considered parents (they don't have the basic property we
 		// try to set).
@@ -36,7 +36,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="services"></param>
 		/// <param name="classDotMethod"></param>
 		/// <returns></returns>
-		public static GhostParentHelper Create(IFdoServiceLocator services, string classDotMethod)
+		public static GhostParentHelper Create(ILcmServiceLocator services, string classDotMethod)
 		{
 			var result = CreateIfPossible(services, classDotMethod);
 			if (result == null)
@@ -49,7 +49,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="services"></param>
 		/// <param name="classDotMethod"></param>
 		/// <returns></returns>
-		public static GhostParentHelper CreateIfPossible(IFdoServiceLocator services, string classDotMethod)
+		public static GhostParentHelper CreateIfPossible(ILcmServiceLocator services, string classDotMethod)
 		{
 			switch (classDotMethod)
 			{
@@ -85,7 +85,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="cache"></param>
 		/// <param name="listFlid"></param>
 		/// <returns></returns>
-		public static int GetBulkEditDestinationClass(FdoCache cache, int listFlid)
+		public static int GetBulkEditDestinationClass(LcmCache cache, int listFlid)
 		{
 			int destClass = cache.GetDestinationClass(listFlid);
 			if (destClass == 0)
@@ -122,13 +122,13 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>
 		/// Return a ghost parent helper based on a flid, or null if this flid does not need one.
 		/// </summary>
-		public static GhostParentHelper CreateIfPossible(IFdoServiceLocator services, int flid)
+		public static GhostParentHelper CreateIfPossible(ILcmServiceLocator services, int flid)
 		{
 			var mdc = services.MetaDataCache;
 			return CreateIfPossible(services, mdc.GetOwnClsName(flid) + "." + mdc.GetFieldName(flid));
 		}
 
-		internal GhostParentHelper(IFdoServiceLocator services, int parentClsid, int flidOwning)
+		internal GhostParentHelper(ILcmServiceLocator services, int parentClsid, int flidOwning)
 		{
 			m_services = services;
 			m_parentClsid = parentClsid;
@@ -261,7 +261,7 @@ namespace SIL.FieldWorks.Common.Controls
 	/// </summary>
 	internal class GphAllPossibleAllomorphs : GhostParentHelper
 	{
-		internal GphAllPossibleAllomorphs(IFdoServiceLocator services, int parentClsid, int flidOwning)
+		internal GphAllPossibleAllomorphs(ILcmServiceLocator services, int parentClsid, int flidOwning)
 			: base(services, parentClsid, flidOwning)
 		{
 		}
@@ -282,7 +282,7 @@ namespace SIL.FieldWorks.Common.Controls
 	/// </summary>
 	internal class GphComplexEntries : GhostParentHelper
 	{
-		internal GphComplexEntries(IFdoServiceLocator services)
+		internal GphComplexEntries(ILcmServiceLocator services)
 			: base(services, LexEntryTags.kClassId, LexEntryTags.kflidEntryRefs)
 		{
 		}
@@ -326,7 +326,7 @@ namespace SIL.FieldWorks.Common.Controls
 	/// </summary>
 	internal class GphVariants : GhostParentHelper
 	{
-		internal GphVariants(IFdoServiceLocator services)
+		internal GphVariants(ILcmServiceLocator services)
 			: base(services, LexEntryTags.kClassId, LexEntryTags.kflidEntryRefs)
 		{
 		}

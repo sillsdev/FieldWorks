@@ -12,9 +12,9 @@ using System.Diagnostics;
 #endif
 
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.Reporting;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 #if !DEBUG
 using SIL.FieldWorks.Resources;
 #endif
@@ -54,17 +54,17 @@ namespace SIL.FieldWorks.Common.Framework
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets the FdoCache
+		/// Gets the LcmCache
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		protected abstract FdoCache Cache { get; }
+		protected abstract LcmCache Cache { get; }
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the resource list in which the CmResources are owned.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		protected abstract IFdoOwningCollection<ICmResource> ResourceList { get; }
+		protected abstract ILcmOwningCollection<ICmResource> ResourceList { get; }
 
 		#endregion
 

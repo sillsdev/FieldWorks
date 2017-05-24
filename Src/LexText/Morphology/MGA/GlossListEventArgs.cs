@@ -11,7 +11,7 @@
 
 using System;
 using System.Xml;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 
 namespace SIL.FieldWorks.LexText.Controls.MGA
 {
@@ -29,7 +29,7 @@ namespace SIL.FieldWorks.LexText.Controls.MGA
 		{
 			m_glossListBoxItem = glbi;
 		}
-		public GlossListEventArgs(FdoCache cache, XmlNode node, string sAfterSeparator, string sComplexNameSeparator, bool fComplexNameFirst)
+		public GlossListEventArgs(LcmCache cache, XmlNode node, string sAfterSeparator, string sComplexNameSeparator, bool fComplexNameFirst)
 		{
 			m_glossListBoxItem = new GlossListBoxItem(cache, node, sAfterSeparator, sComplexNameSeparator, fComplexNameFirst);
 		}

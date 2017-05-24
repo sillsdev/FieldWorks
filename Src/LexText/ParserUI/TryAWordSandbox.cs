@@ -2,10 +2,10 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using SIL.CoreImpl.KernelInterfaces;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.IText;
 using XCore;
 
@@ -31,7 +31,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="choices"></param>
 		/// <param name="analysis"></param>
 		/// <param name="mediator"></param>
-		public TryAWordSandbox(FdoCache cache, Mediator mediator, PropertyTable propertyTable, IVwStylesheet ss, InterlinLineChoices choices,
+		public TryAWordSandbox(LcmCache cache, Mediator mediator, PropertyTable propertyTable, IVwStylesheet ss, InterlinLineChoices choices,
 			IAnalysis analysis)
 			: base(cache, mediator, propertyTable, ss, choices)
 		{

@@ -12,17 +12,16 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Windows.Forms;
 using System.IO;
 using System.Xml;
-using SIL.CoreImpl.WritingSystems;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.Reporting;
+using SIL.LCModel.Utils;
+using SIL.LCModel;
 using SIL.Utils;
-using SIL.FieldWorks.FDO;
 using XCore;
 #if !__MonoCS__
 using NetSparkle;
@@ -34,7 +33,7 @@ namespace SIL.FieldWorks.LexText.Controls
 	{
 		private Mediator m_mediator;
 		private XCore.PropertyTable m_propertyTable;
-		private FdoCache m_cache = null;
+		private LcmCache m_cache = null;
 		private string m_sUserWs = null;
 		private string m_sNewUserWs = null;
 		private bool m_pluginsUpdated = false;
@@ -63,13 +62,13 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			base.OnLoad(e);
 			m_autoOpenCheckBox.Checked = AutoOpenLastProject;
-			m_okToPingCheckBox.Checked = CoreImpl.Properties.Settings.Default.Reporting.OkToPingBasicUsageData;
+			m_okToPingCheckBox.Checked = LCModel.Core.Properties.Settings.Default.Reporting.OkToPingBasicUsageData;
 		}
 
 		private void m_btnOK_Click(object sender, EventArgs e)
 		{
-			CoreImpl.Properties.Settings.Default.Reporting.OkToPingBasicUsageData = m_okToPingCheckBox.Checked;
-			CoreImpl.Properties.Settings.Default.Save();
+			LCModel.Core.Properties.Settings.Default.Reporting.OkToPingBasicUsageData = m_okToPingCheckBox.Checked;
+			LCModel.Core.Properties.Settings.Default.Save();
 			m_sNewUserWs = m_userInterfaceChooser.NewUserWs;
 			if (m_sUserWs != m_sNewUserWs)
 			{
@@ -176,8 +175,8 @@ namespace SIL.FieldWorks.LexText.Controls
 					// Leave any dlls in place since they may be shared, or in use for the moment.
 				}
 			}
-			CoreImpl.Properties.Settings.Default.UpdateGlobalWSStore = !updateGlobalWS.Checked;
-			CoreImpl.Properties.Settings.Default.Save();
+			LCModel.Core.Properties.Settings.Default.UpdateGlobalWSStore = !updateGlobalWS.Checked;
+			LCModel.Core.Properties.Settings.Default.Save();
 			AutoOpenLastProject = m_autoOpenCheckBox.Checked;
 			DialogResult = DialogResult.OK;
 		}
@@ -212,9 +211,9 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		#region IFwExtension Members
 
-		void IFwExtension.Init(FdoCache cache, Mediator mediator, XCore.PropertyTable propertyTable)
+		void IFwExtension.Init(LcmCache cache, Mediator mediator, XCore.PropertyTable propertyTable)
 		{
-			updateGlobalWS.Checked = !CoreImpl.Properties.Settings.Default.UpdateGlobalWSStore;
+			updateGlobalWS.Checked = !LCModel.Core.Properties.Settings.Default.UpdateGlobalWSStore;
 			m_mediator = mediator;
 			m_propertyTable = propertyTable;
 			m_cache = cache;

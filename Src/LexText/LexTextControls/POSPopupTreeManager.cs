@@ -3,9 +3,9 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Windows.Forms;
-using SIL.CoreImpl.Text;
+using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.Widgets;
 using XCore;
 
@@ -47,7 +47,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public POSPopupTreeManager(TreeCombo treeCombo, FdoCache cache, ICmPossibilityList list, int ws, bool useAbbr, Mediator mediator, XCore.PropertyTable propertyTable, Form parent)
+		public POSPopupTreeManager(TreeCombo treeCombo, LcmCache cache, ICmPossibilityList list, int ws, bool useAbbr, Mediator mediator, XCore.PropertyTable propertyTable, Form parent)
 			:base (treeCombo, cache, mediator, propertyTable, list, ws, useAbbr, parent)
 		{
 		}
@@ -55,7 +55,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public POSPopupTreeManager(PopupTree popupTree, FdoCache cache, ICmPossibilityList list, int ws, bool useAbbr, Mediator mediator, XCore.PropertyTable propertyTable, Form parent)
+		public POSPopupTreeManager(PopupTree popupTree, LcmCache cache, ICmPossibilityList list, int ws, bool useAbbr, Mediator mediator, XCore.PropertyTable propertyTable, Form parent)
 			: base(popupTree, cache, mediator, propertyTable, list, ws, useAbbr, parent)
 		{
 		}

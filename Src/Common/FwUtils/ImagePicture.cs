@@ -6,9 +6,9 @@ using System;
 using System.Drawing;
 using System.IO;
 using System.Runtime.InteropServices;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {

@@ -6,8 +6,8 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows.Forms;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.FwCoreDlgs;
 using XCore;
 
@@ -58,14 +58,14 @@ namespace SIL.FieldWorks.IText
 		public void Process()
 		{
 			Debug.Assert(m_dlg != null);
-			var cache = m_dlg.PropTable.GetValue<FdoCache>("cache");
+			var cache = m_dlg.PropTable.GetValue<LcmCache>("cache");
 			UndoableUnitOfWorkHelper.Do(ITextStrings.ksUndoMergeWordforms, ITextStrings.ksRedoMergeWordforms,
 				cache.ActionHandlerAccessor,
 				() => ClearFlags(cache, m_dlg.ProgressBar));
 
 		}
 
-		void ClearFlags(FdoCache cache, ProgressBar progressBar)
+		void ClearFlags(LcmCache cache, ProgressBar progressBar)
 		{
 			var paras = cache.ServiceLocator.GetInstance<IStTxtParaRepository>().AllInstances().ToArray();
 			progressBar.Minimum = 0;

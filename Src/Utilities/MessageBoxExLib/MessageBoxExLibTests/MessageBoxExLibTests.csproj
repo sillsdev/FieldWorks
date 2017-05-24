@@ -100,9 +100,9 @@
     <Reference Include="FormsTester">
       <HintPath>..\..\..\..\Bin\nunitforms\FormsTester.dll</HintPath>
     </Reference>
-    <Reference Include="CoreImplTests, Version=9.0.0.0, Culture=neutral, processorArchitecture=x86">
+    <Reference Include="SIL.LCModel.Core.Tests, Version=9.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\CoreImplTests.dll</HintPath>
+      <HintPath>..\..\..\..\Output\Debug\SIL.LCModel.Core.Tests.dll</HintPath>
     </Reference>
     <Reference Include="MessageBoxExLib, Version=1.0.3834.23055, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -116,9 +116,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Downloads\SIL.TestUtilities.dll</HintPath>
     </Reference>
-    <Reference Include="SilUtilsTests, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="SIL.LCModel.Utils.Tests, Version=9.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\SilUtilsTests.dll</HintPath>
+      <HintPath>..\..\..\..\Output\Debug\SIL.LCModel.Utils.Tests.dll</HintPath>
     </Reference>
     <Reference Include="System">
       <Name>System</Name>

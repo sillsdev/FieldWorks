@@ -110,12 +110,12 @@
     <Reference Include="ViewsInterfaces">
       <HintPath>..\..\..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
     </Reference>
-    <Reference Include="CoreImpl">
+    <Reference Include="SIL.LCModel.Core">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\CoreImpl.dll</HintPath>
+      <HintPath>..\..\..\..\Output\Debug\SIL.LCModel.Core.dll</HintPath>
     </Reference>
-    <Reference Include="FDO">
-      <HintPath>..\..\..\..\Output\Debug\FDO.dll</HintPath>
+    <Reference Include="SIL.LCModel">
+      <HintPath>..\..\..\..\Output\Debug\SIL.LCModel.dll</HintPath>
     </Reference>
     <Reference Include="FdoUi">
       <HintPath>..\..\..\..\Output\Debug\FdoUi.dll</HintPath>
@@ -146,9 +146,9 @@
     <Reference Include="RootSite">
       <HintPath>..\..\..\..\Output\Debug\RootSite.dll</HintPath>
     </Reference>
-    <Reference Include="SilUtils">
+    <Reference Include="SIL.LCModel.Utils">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\SilUtils.dll</HintPath>
+      <HintPath>..\..\..\..\Output\Debug\SIL.LCModel.Utils.dll</HintPath>
     </Reference>
     <Reference Include="SimpleRootSite">
       <HintPath>..\..\..\..\Output\Debug\SimpleRootSite.dll</HintPath>

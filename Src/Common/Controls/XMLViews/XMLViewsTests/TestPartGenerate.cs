@@ -2,19 +2,15 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Xml;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.FDOTests;
-using SIL.Utils;
+using SIL.LCModel.DomainServices;
 using NUnit.Framework;
-using SIL.CoreImpl.Cellar;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Infrastructure;
+using SIL.LCModel;
+using SIL.Utils;
 
 namespace XMLViewsTests
 {

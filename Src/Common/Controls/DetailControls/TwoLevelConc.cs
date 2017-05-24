@@ -3,8 +3,8 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
-using SIL.CoreImpl.KernelInterfaces;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 
@@ -357,12 +357,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			{
 				CheckDisposed();
 
-				if (m_fdoCache == null || DesignMode)
+				if (m_cache == null || DesignMode)
 					return;
 
 				base.MakeRoot();
 
-				m_rootb.DataAccess = m_fdoCache.DomainDataByFlid;
+				m_rootb.DataAccess = m_cache.DomainDataByFlid;
 
 				m_cvc = new ConcVc(m_cp, m_gni, m_index);
 
@@ -412,7 +412,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		#endregion
 
-		public TwoLevelConc(FdoCache cache, IConcPolicy cp, IGetNodeInfo gni)
+		public TwoLevelConc(LcmCache cache, IConcPolicy cp, IGetNodeInfo gni)
 		{
 			m_cp = cp;
 			m_gni = gni;

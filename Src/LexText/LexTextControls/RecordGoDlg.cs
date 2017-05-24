@@ -6,12 +6,12 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using System.Xml;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.WritingSystems;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
@@ -29,17 +29,17 @@ namespace SIL.FieldWorks.LexText.Controls
 			get { return "RecordGo"; }
 		}
 
-		public override void SetDlgInfo(FdoCache cache, WindowParams wp, Mediator mediator, XCore.PropertyTable propertyTable)
+		public override void SetDlgInfo(LcmCache cache, WindowParams wp, Mediator mediator, XCore.PropertyTable propertyTable)
 		{
 			SetDlgInfo(cache, wp, mediator, propertyTable, cache.DefaultAnalWs);
 		}
 
-		public override void SetDlgInfo(FdoCache cache, WindowParams wp, Mediator mediator, XCore.PropertyTable propertyTable, string form)
+		public override void SetDlgInfo(LcmCache cache, WindowParams wp, Mediator mediator, XCore.PropertyTable propertyTable, string form)
 		{
 			SetDlgInfo(cache, wp, mediator, propertyTable, form, cache.DefaultAnalWs);
 		}
 
-		protected override void InitializeMatchingObjects(FdoCache cache)
+		protected override void InitializeMatchingObjects(LcmCache cache)
 		{
 			var xnWindow = m_propertyTable.GetValue<XmlNode>("WindowConfiguration");
 			XmlNode configNode = xnWindow.SelectSingleNode("controls/parameters/guicontrol[@id=\"matchingRecords\"]/parameters");

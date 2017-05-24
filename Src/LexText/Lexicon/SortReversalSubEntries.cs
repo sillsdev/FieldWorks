@@ -6,10 +6,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.Language;
 
@@ -43,7 +43,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		public void Process()
 		{
-			var cache = Dialog.PropTable.GetValue<FdoCache>("cache");
+			var cache = Dialog.PropTable.GetValue<LcmCache>("cache");
 			NonUndoableUnitOfWorkHelper.DoSomehow(cache.ActionHandlerAccessor, () =>
 			{
 				SortReversalSubEntriesInPlace(cache);
@@ -51,7 +51,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			});
 		}
 
-		internal static void SortReversalSubEntriesInPlace(FdoCache cache)
+		internal static void SortReversalSubEntriesInPlace(LcmCache cache)
 		{
 			var allReversalIndexes = cache.ServiceLocator.GetInstance<IReversalIndexRepository>().AllInstances();
 			foreach(var reversalIndex in allReversalIndexes)
@@ -74,7 +74,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			private readonly int m_ws;
 			private readonly ManagedLgIcuCollator m_collator;
 
-			public ReversalSubEntryIcuComparer(FdoCache cache, string ws)
+			public ReversalSubEntryIcuComparer(LcmCache cache, string ws)
 			{
 				m_collator = new ManagedLgIcuCollator();
 				m_ws = cache.WritingSystemFactory.GetWsFromStr(ws);

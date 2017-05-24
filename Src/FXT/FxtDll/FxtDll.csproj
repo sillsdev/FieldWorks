@@ -83,9 +83,9 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="FDO">
-      <Name>FDO</Name>
-      <HintPath>..\..\..\Output\Debug\FDO.dll</HintPath>
+    <Reference Include="SIL.LCModel">
+      <Name>SIL.LCModel</Name>
+      <HintPath>..\..\..\Output\Debug\SIL.LCModel.dll</HintPath>
     </Reference>
     <Reference Include="SIL.Core, Version=2.6.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
@@ -95,7 +95,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Downloads\SIL.WritingSystems.dll</HintPath>
     </Reference>
-    <Reference Include="SilUtils, Version=7.2.5.17244, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="SIL.LCModel.Utils, Version=9.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="System">
@@ -114,8 +114,8 @@
       <Name>XMLUtils</Name>
       <HintPath>..\..\..\Output\Debug\XMLUtils.dll</HintPath>
     </Reference>
-    <Reference Include="CoreImpl">
-      <HintPath>..\..\..\Output\Debug\CoreImpl.dll</HintPath>
+    <Reference Include="SIL.LCModel.Core">
+      <HintPath>..\..\..\Output\Debug\SIL.LCModel.Core.dll</HintPath>
     </Reference>
     <Reference Include="FwUtils">
       <HintPath>..\..\..\Output\Debug\FwUtils.dll</HintPath>

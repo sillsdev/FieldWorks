@@ -14,16 +14,16 @@ using System.Text;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ScriptureUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using SIL.Reporting;
-using SIL.Utils;
-using SIL.CoreImpl.Scripture;
+using SIL.LCModel.Utils;
+using SIL.LCModel.Core.Scripture;
 
 namespace SIL.FieldWorks.TE
 {
@@ -36,9 +36,9 @@ namespace SIL.FieldWorks.TE
 	public class TeImportManager
 	{
 		#region Member data
-		private readonly FdoCache m_cache;
+		private readonly LcmCache m_cache;
 		private readonly Form m_mainWnd;
-		private readonly FwStyleSheet m_styleSheet;
+		private readonly LcmStyleSheet m_styleSheet;
 		private readonly IHelpTopicProvider m_helpTopicProvider;
 		private readonly IApp m_app;
 		private readonly bool m_fParatextStreamlinedImport;
@@ -61,7 +61,7 @@ namespace SIL.FieldWorks.TE
 		/// <param name="fParatextStreamlinedImport">if set to <c>true</c> do a Paratext
 		/// streamlined import (minimal UI).</param>
 		/// ------------------------------------------------------------------------------------
-		internal TeImportManager(Form mainWnd, FwStyleSheet styleSheet, FwApp app,
+		internal TeImportManager(Form mainWnd, LcmStyleSheet styleSheet, FwApp app,
 			bool fParatextStreamlinedImport)
 			: this(app.Cache, styleSheet, app, fParatextStreamlinedImport)
 		{
@@ -79,7 +79,7 @@ namespace SIL.FieldWorks.TE
 		/// streamlined import (minimal UI).</param>
 		/// <remarks>This version is for testing only</remarks>
 		/// ------------------------------------------------------------------------------------
-		protected TeImportManager(FdoCache cache, FwStyleSheet styleSheet, IApp app,
+		protected TeImportManager(LcmCache cache, LcmStyleSheet styleSheet, IApp app,
 			bool fParatextStreamlinedImport)
 		{
 			m_cache = cache;
@@ -101,7 +101,7 @@ namespace SIL.FieldWorks.TE
 		/// <param name="app">The app.</param>
 		/// <returns><c>true</c> if something got imported; <c>false</c> otherwise</returns>
 		/// ------------------------------------------------------------------------------------
-		public static bool ImportParatext(Form mainWnd, FwStyleSheet stylesheet, FwApp app)
+		public static bool ImportParatext(Form mainWnd, LcmStyleSheet stylesheet, FwApp app)
 		{
 			TeImportManager mgr = new TeImportManager(mainWnd, stylesheet, app, true);
 			return mgr.ImportSf();
@@ -311,7 +311,7 @@ namespace SIL.FieldWorks.TE
 		/// Gets the cache.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		protected FdoCache Cache
+		protected LcmCache Cache
 		{
 			get { return m_cache; }
 		}
@@ -321,7 +321,7 @@ namespace SIL.FieldWorks.TE
 		/// Gets the style sheet.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		protected FwStyleSheet StyleSheet
+		protected LcmStyleSheet StyleSheet
 		{
 			get { return m_styleSheet; }
 		}

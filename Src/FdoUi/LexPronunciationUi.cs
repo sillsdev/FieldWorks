@@ -8,8 +8,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 using XCore;
 
 namespace SIL.FieldWorks.FdoUi
@@ -44,7 +44,7 @@ namespace SIL.FieldWorks.FdoUi
 		public static LexPronunciationUi CreateNewUiObject(PropertyTable propertyTable, int classId, int hvoOwner, int flid, int insertionPosition)
 		{
 			LexPronunciationUi result = null;
-			FdoCache cache = propertyTable.GetValue<FdoCache>("cache");
+			LcmCache cache = propertyTable.GetValue<LcmCache>("cache");
 			UndoableUnitOfWorkHelper.Do(FdoUiStrings.ksUndoInsert, FdoUiStrings.ksRedoInsert, cache.ActionHandlerAccessor,
 				() =>
 			{

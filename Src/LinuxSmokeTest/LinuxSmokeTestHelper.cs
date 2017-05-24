@@ -12,7 +12,7 @@ using System.Threading;
 using System.Windows.Forms;
 using SIL.FieldWorks;
 using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 
 namespace LinuxSmokeTest
 {

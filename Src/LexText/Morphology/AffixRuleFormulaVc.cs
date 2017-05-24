@@ -1,11 +1,11 @@
 using System;
 using System.Drawing;
 using System.Linq;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.FieldWorks.FDO;
-using SIL.Utils;
+using SIL.LCModel;
+using SIL.LCModel.Utils;
 using XCore;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
@@ -36,7 +36,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		private readonly ITsString m_doubleArrow;
 		private readonly ITsString m_space;
 
-		public AffixRuleFormulaVc(FdoCache cache, PropertyTable propertyTable)
+		public AffixRuleFormulaVc(LcmCache cache, PropertyTable propertyTable)
 			: base(cache, propertyTable)
 		{
 			ITsPropsBldr tpb = TsStringUtils.MakePropsBldr();

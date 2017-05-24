@@ -3,14 +3,13 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using NUnit.Framework;
-using SIL.CoreImpl.Cellar;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.WritingSystems;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.FDOTests;
+using SIL.LCModel;
 
 namespace SIL.FieldWorks.Common.Widgets
 {

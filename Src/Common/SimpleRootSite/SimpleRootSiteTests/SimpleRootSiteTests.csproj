@@ -104,9 +104,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\CacheLightTests.dll</HintPath>
     </Reference>
-    <Reference Include="CoreImplTests, Version=9.0.0.0, Culture=neutral, processorArchitecture=x86">
+    <Reference Include="SIL.LCModel.Core.Tests, Version=9.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\CoreImplTests.dll</HintPath>
+      <HintPath>..\..\..\..\Output\Debug\SIL.LCModel.Core.Tests.dll</HintPath>
     </Reference>
     <Reference Include="SIL.TestUtilities, Version=3.1.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -116,9 +116,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Downloads\SIL.Windows.Forms.Keyboarding.dll</HintPath>
     </Reference>
-    <Reference Include="SilUtilsTests, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="SIL.LCModel.Utils.Tests, Version=9.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\SilUtilsTests.dll</HintPath>
+      <HintPath>..\..\..\..\Output\Debug\SIL.LCModel.Utils.Tests.dll</HintPath>
     </Reference>
     <Reference Include="ViewsInterfaces">
       <Name>ViewsInterfaces</Name>
@@ -137,13 +137,13 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Downloads\SIL.WritingSystems.dll</HintPath>
     </Reference>
-    <Reference Include="SilUtils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="SIL.LCModel.Utils, Version=9.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\SilUtils.dll</HintPath>
+      <HintPath>..\..\..\..\Output\Debug\SIL.LCModel.Utils.dll</HintPath>
     </Reference>
-    <Reference Include="CoreImpl, Version=6.1.0.1532, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="SIL.LCModel.Core, Version=9.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\CoreImpl.dll</HintPath>
+      <HintPath>..\..\..\..\Output\Debug\SIL.LCModel.Core.dll</HintPath>
     </Reference>
     <Reference Include="SimpleRootSite, Version=6.1.1.17073, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

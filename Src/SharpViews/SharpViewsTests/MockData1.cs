@@ -5,10 +5,10 @@
 using System;
 using System.Collections.Generic;
 using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainImpl;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.DomainImpl;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.SharpViews.Hookups;
 using SIL.FieldWorks.SharpViews.Utilities;
 using SIL.FieldWorks.SharpViews.Builders;

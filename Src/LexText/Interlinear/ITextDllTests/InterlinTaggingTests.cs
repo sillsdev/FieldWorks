@@ -7,12 +7,11 @@ using System.IO;
 using System.Windows.Forms;
 using System.Xml;
 using NUnit.Framework;
-using SIL.CoreImpl.WritingSystems;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.FDOTests;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
+using SIL.LCModel.DomainServices;
 using SIL.WritingSystems;
 
 namespace SIL.FieldWorks.IText
@@ -25,7 +24,7 @@ namespace SIL.FieldWorks.IText
 	[TestFixture]
 	public class InterlinTaggingTests : InterlinearTestBase
 	{
-		private FDO.IText m_text1;
+		private LCModel.IText m_text1;
 		private XmlDocument m_textsDefn;
 		private CoreWritingSystemDefinition m_wsXkal;
 		private ICmPossibilityList m_textMarkupTags;

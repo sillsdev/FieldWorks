@@ -7,8 +7,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.FieldWorks.FDO;
-using SIL.Utils;
+using SIL.LCModel;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.SharpViews
 {

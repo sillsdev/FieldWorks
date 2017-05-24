@@ -5,10 +5,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using NUnit.Framework;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.WritingSystems;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.FDOTests;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel;
 
 namespace SIL.FieldWorks.Filters
 {

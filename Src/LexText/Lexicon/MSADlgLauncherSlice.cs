@@ -3,20 +3,11 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Collections;
-using System.ComponentModel;
-using System.Drawing;
-using System.Windows.Forms;
-using System.Xml;
-using System.Diagnostics;
-
-using XCore;
-using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.Utils;
 using SIL.FieldWorks.Common.Framework.DetailControls;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.Widgets;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {
@@ -77,7 +68,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 			MSADlgLauncher ctrl = (MSADlgLauncher)Control;
 			this.Size = new System.Drawing.Size(208, 32);
-			ctrl.Initialize(m_propertyTable.GetValue<FdoCache>("cache"),
+			ctrl.Initialize(m_propertyTable.GetValue<LcmCache>("cache"),
 				Object,
 				1, // Maybe need a real flid?
 				"InterlinearName",

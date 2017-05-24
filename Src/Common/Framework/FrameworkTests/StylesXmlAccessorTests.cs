@@ -4,11 +4,10 @@
 
 using System;
 using NUnit.Framework;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.FDOTests;
+using SIL.LCModel;
 
 // ReSharper disable InconsistentNaming
 
@@ -221,7 +220,7 @@ namespace SIL.FieldWorks.Common.Framework
 	/// </summary>
 	class TestAccessorForFindOrCreateStyle : StylesXmlAccessor
 	{
-		public TestAccessorForFindOrCreateStyle(FdoCache cache) : base(cache)
+		public TestAccessorForFindOrCreateStyle(LcmCache cache) : base(cache)
 		{
 			m_databaseStyles = cache.LangProject.StylesOC;
 			// see class comment. This would not be normal behavior for a StylesXmlAccessor subclass constructor.
@@ -238,17 +237,17 @@ namespace SIL.FieldWorks.Common.Framework
 			get { throw new NotImplementedException(); }
 		}
 
-		protected override FdoCache Cache
+		protected override LcmCache Cache
 		{
 			get { return m_cache; }
 		}
 
-		protected override IFdoOwningCollection<ICmResource> ResourceList
+		protected override ILcmOwningCollection<ICmResource> ResourceList
 		{
 			get { throw new NotImplementedException(); }
 		}
 
-		protected override IFdoOwningCollection<IStStyle> StyleCollection
+		protected override ILcmOwningCollection<IStStyle> StyleCollection
 		{
 			get { throw new NotImplementedException(); }
 		}

@@ -10,8 +10,8 @@
 
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Framework;
-using SIL.CoreImpl.KernelInterfaces;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
 
 namespace SIL.FieldWorks.TE
 {

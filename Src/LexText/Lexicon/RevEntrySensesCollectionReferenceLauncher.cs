@@ -5,11 +5,11 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework.DetailControls;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel.Infrastructure;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {
@@ -70,7 +70,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			CheckDisposed();
 
 			ILexSense selectedSense = obj as ILexSense;
-			IFdoReferenceCollection<IReversalIndexEntry> col = selectedSense.ReversalEntriesRC;
+			ILcmReferenceCollection<IReversalIndexEntry> col = selectedSense.ReversalEntriesRC;
 			if (!col.Contains(m_obj as IReversalIndexEntry))
 			{
 				int h1 = m_vectorRefView.RootBox.Height;

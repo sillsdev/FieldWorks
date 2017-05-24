@@ -4,8 +4,8 @@
 
 using System.Diagnostics;
 using System.Linq;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.FwCoreDlgs;
 using System.Windows.Forms;
@@ -77,7 +77,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		public void Process()
 		{
 			Debug.Assert(m_dlg != null);
-			var cache = m_dlg.PropTable.GetValue<FdoCache>("cache");
+			var cache = m_dlg.PropTable.GetValue<LcmCache>("cache");
 			var homographWsId = cache.LanguageProject.HomographWs;
 			var homographWs = cache.ServiceLocator.WritingSystems.AllWritingSystems.Where(ws => ws.Id == homographWsId);
 			var homographWsLabel = homographWs.First().DisplayLabel;

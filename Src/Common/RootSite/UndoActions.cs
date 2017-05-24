@@ -10,8 +10,8 @@ using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 
 using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 using SIL.Reporting;
 
 namespace SIL.FieldWorks.Common.RootSites

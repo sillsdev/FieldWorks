@@ -4,7 +4,7 @@
 
 using System;
 using System.Windows.Forms;
-using SIL.CoreImpl.Text;
+using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.WritingSystems;
 

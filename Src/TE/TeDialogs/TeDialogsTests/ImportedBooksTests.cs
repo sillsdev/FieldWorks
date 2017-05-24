@@ -6,12 +6,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.FDOTests;
+using SIL.LCModel;
 using System.Windows.Forms;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 using System.Collections;
-using SIL.CoreImpl.Scripture;
+using SIL.LCModel.Core.Scripture;
 
 namespace SIL.FieldWorks.TE
 {
@@ -21,7 +20,7 @@ namespace SIL.FieldWorks.TE
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
-	public class ImportedBooksTests : ScrInMemoryFdoTestBase
+	public class ImportedBooksTests : ScrInMemoryLcmTestBase
 	{
 		#region DummyImportedBooks class
 		/// ------------------------------------------------------------------------------------
@@ -49,7 +48,7 @@ namespace SIL.FieldWorks.TE
 			/// <param name="booksImported">The books imported.</param>
 			/// <param name="backupVersion">The backup version.</param>
 			/// --------------------------------------------------------------------------------
-			public DummyImportedBooks(FdoCache cache, IScrDraft booksImported, IScrDraft backupVersion)
+			public DummyImportedBooks(LcmCache cache, IScrDraft booksImported, IScrDraft backupVersion)
 				: base(cache, null, booksImported, backupVersion,
 					  new HashSet<int>(booksImported.BooksOS.Select(b => b.CanonicalNum)), null, null)
 			{

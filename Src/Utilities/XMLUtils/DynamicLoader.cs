@@ -3,14 +3,13 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Xml;
+using SIL.LCModel.Utils;
 
 namespace SIL.Utils
 {

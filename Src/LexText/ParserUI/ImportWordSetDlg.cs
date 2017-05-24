@@ -14,7 +14,7 @@ using System.Windows.Forms;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.Resources;
 using XCore;
 
@@ -35,7 +35,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		///
 		/// </summary>
 		protected IHelpTopicProvider m_helpTopicProvider;
-		protected FdoCache m_cache;
+		protected LcmCache m_cache;
 		protected string[] m_paths;
 
 		private System.Windows.Forms.Label label1;
@@ -71,7 +71,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			//InitializeComponent();
 			m_mediator = mediator;
-			m_cache = propertyTable.GetValue<FdoCache>("cache");
+			m_cache = propertyTable.GetValue<LcmCache>("cache");
 
 			m_helpTopicProvider = propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
 			helpProvider = new HelpProvider();

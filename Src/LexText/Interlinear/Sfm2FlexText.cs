@@ -5,9 +5,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using SIL.CoreImpl.Text;
+using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.LexText.Controls;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel.DomainServices;
 
 namespace SIL.FieldWorks.IText
 {

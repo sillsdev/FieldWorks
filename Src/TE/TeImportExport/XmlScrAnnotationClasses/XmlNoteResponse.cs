@@ -10,10 +10,10 @@
 
 using System.Collections.Generic;
 using System.Xml.Serialization;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using System.Diagnostics;
-using SIL.CoreImpl.KernelInterfaces;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.DomainServices;
 
 namespace SIL.FieldWorks.TE
 {
@@ -75,7 +75,7 @@ namespace SIL.FieldWorks.TE
 		/// Writes this response to the the specified annotation
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public void WriteToCache(IScrScriptureNote ann, FwStyleSheet styleSheet)
+		public void WriteToCache(IScrScriptureNote ann, LcmStyleSheet styleSheet)
 		{
 			ParagraphCollection parasResponse = new ParagraphCollection(Paragraphs, styleSheet);
 
@@ -111,7 +111,7 @@ namespace SIL.FieldWorks.TE
 		/// found</returns>
 		/// ------------------------------------------------------------------------------------
 		private static int FindMatchingResponse(ParagraphCollection paragraphs,
-			IFdoOwningSequence<IStJournalText> texts, out ParagraphCollection.ParaMatchType type)
+			ILcmOwningSequence<IStJournalText> texts, out ParagraphCollection.ParaMatchType type)
 		{
 			for (int i = 0; i < texts.Count; ++i)
 			{

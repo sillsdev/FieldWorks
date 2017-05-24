@@ -9,10 +9,10 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO.DomainServices.BackupRestore;
+using SIL.LCModel.DomainServices.BackupRestore;
 using System.Collections.Generic;
 using System.IO;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 {

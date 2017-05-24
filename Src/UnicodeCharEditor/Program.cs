@@ -14,7 +14,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
-using SIL.CoreImpl.Text;
+using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.UnicodeCharEditor

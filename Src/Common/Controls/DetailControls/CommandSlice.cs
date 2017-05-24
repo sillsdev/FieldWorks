@@ -18,7 +18,7 @@ using System.Diagnostics;
 using System.Reflection;
 using System.IO;
 
-using SIL.Utils;
+using SIL.LCModel.Utils;
 using XCore;
 using System.Diagnostics.CodeAnalysis;
 

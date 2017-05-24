@@ -7,17 +7,17 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;
 using System.Xml;
-using SIL.CoreImpl.SpellChecking;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.WritingSystems;
+using SIL.LCModel.Core.SpellChecking;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Framework;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.IText;
 using SIL.Utils;
@@ -179,7 +179,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			m_mediator = mediator;
 			m_propertyTable = propertyTable;
 			m_mediator.AddColleague(this);
-			Cache = m_propertyTable.GetValue<FdoCache>("cache");
+			Cache = m_propertyTable.GetValue<LcmCache>("cache");
 			m_wordformRepos = Cache.ServiceLocator.GetInstance<IWfiWordformRepository>();
 			Cache.DomainDataByFlid.AddNotification(this);
 			if (IsVernacularSpellingEnabled())
@@ -299,7 +299,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			return true; // handled
 		}
 
-		private FdoCache Cache { get; set; }
+		private LcmCache Cache { get; set; }
 
 		/// <summary>
 		/// Enable vernacular spelling.
@@ -309,7 +309,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			// Enable all vernacular spelling dictionaries by changing those that are set to <None>
 			// to point to the appropriate Locale ID. Do this BEFORE updating the spelling dictionaries,
 			// otherwise, the update won't see that there is any dictionary set to update.
-			FdoCache cache = Cache;
+			LcmCache cache = Cache;
 			foreach (CoreWritingSystemDefinition wsObj in cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems)
 			{
 				// This allows it to try to find a dictionary, but doesn't force one to exist.
@@ -349,7 +349,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		/// If successful return its guid, otherwise, return Guid.Empty.
 		/// </summary>
 		/// <returns></returns>
-		internal static Guid ActiveWordform(FdoCache cache, PropertyTable propertyTable)
+		internal static Guid ActiveWordform(LcmCache cache, PropertyTable propertyTable)
 		{
 			IApp app = propertyTable.GetValue<IApp>("App");
 			if (app == null)

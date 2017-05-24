@@ -17,16 +17,16 @@ using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.FwCoreDlgs.BackupRestore;
 using SIL.FieldWorks.Resources;
 using SilEncConverters40;
-using SIL.CoreImpl.Cellar;
-using SIL.CoreImpl.WritingSystems;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
@@ -34,7 +34,7 @@ namespace SIL.FieldWorks.LexText.Controls
 	public class LexImportWizard : WizardDialog, IFwExtension
 	{
 		private bool m_FeasabilityReportGenerated = false;	// has to run before import
-		private FdoCache m_cache;
+		private LcmCache m_cache;
 		private Mediator m_mediator;
 		private PropertyTable m_propertyTable;
 		private IApp m_app;
@@ -171,7 +171,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		#region Constructor and init routines
 		/// <summary>
-		/// Create the Wizard and require an FdoCache object.
+		/// Create the Wizard and require an LcmCache object.
 		/// </summary>
 		/// <param name="cache"></param>
 		public LexImportWizard()
@@ -216,7 +216,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="cache"></param>
 		/// <param name="mediator"></param>
 		/// <param name="propertyTable"></param>
-		void IFwExtension.Init(FdoCache cache, XCore.Mediator mediator, XCore.PropertyTable propertyTable)
+		void IFwExtension.Init(LcmCache cache, XCore.Mediator mediator, XCore.PropertyTable propertyTable)
 		{
 			CheckDisposed();
 
@@ -1752,10 +1752,10 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		internal class FlexConverter : Sfm2Xml.Converter
 		{
-			private FdoCache m_cache;
+			private LcmCache m_cache;
 			private int m_wsEn;
 
-			public FlexConverter(FdoCache cache)
+			public FlexConverter(LcmCache cache)
 				: base()
 			{
 				m_cache = cache;

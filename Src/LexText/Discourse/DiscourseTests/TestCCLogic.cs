@@ -4,8 +4,8 @@
 
 using System.Collections.Generic;
 using NUnit.Framework;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 
 namespace SIL.FieldWorks.Discourse
 {
@@ -22,7 +22,7 @@ namespace SIL.FieldWorks.Discourse
 		internal bool m_fRecordBasicEdits; // set true for logging most low-level operations.
 		private bool m_isRtL; // set true to test RTL context menus, etc.
 
-		internal TestCCLogic(FdoCache cache, IDsConstChart chart, IStText stText)
+		internal TestCCLogic(LcmCache cache, IDsConstChart chart, IStText stText)
 			: base(cache, chart, stText.Hvo)
 		{
 		}
@@ -30,7 +30,7 @@ namespace SIL.FieldWorks.Discourse
 		/// Make one and set the other stuff later.
 		/// </summary>
 		/// <param name="cache"></param>
-		internal TestCCLogic(FdoCache cache) : base(cache)
+		internal TestCCLogic(LcmCache cache) : base(cache)
 		{
 			m_isRtL = false;
 		}

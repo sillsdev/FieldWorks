@@ -5,7 +5,7 @@
 #if __MonoCS__
 
 using System.Runtime.InteropServices;
-using SIL.CoreImpl.WritingSystems;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.Keyboarding;
 using SIL.Windows.Forms.Keyboarding;

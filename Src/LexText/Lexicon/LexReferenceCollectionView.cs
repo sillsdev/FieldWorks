@@ -5,11 +5,11 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Framework.DetailControls;
-using SIL.CoreImpl.KernelInterfaces;
-using SIL.FieldWorks.FDO.Application;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Application;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {
@@ -28,7 +28,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		protected override VectorReferenceVc CreateVectorReferenceVc()
 		{
-			LexReferenceCollectionVc vc = new LexReferenceCollectionVc(m_fdoCache, m_rootFlid, m_displayNameProperty, m_displayWs);
+			LexReferenceCollectionVc vc = new LexReferenceCollectionVc(m_cache, m_rootFlid, m_displayNameProperty, m_displayWs);
 			if (m_displayParent != null)
 				vc.DisplayParent = m_displayParent;
 			return vc;
@@ -84,7 +84,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 #if WANTPORTMULTI
 			for (int i = 0; i < hvos.Length; ++i)
 			{
-				ICmObject cmo = ICmObject.CreateFromDBObject(m_fdoCache, hvos[i]);
+				ICmObject cmo = ICmObject.CreateFromDBObject(m_cache, hvos[i]);
 				(cmo as ICmObject).UpdateTimestampForVirtualChange();
 			}
 #endif
@@ -112,7 +112,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// <summary>
 		/// Constructor for the Vector Reference View Constructor Class.
 		/// </summary>
-		public LexReferenceCollectionVc(FdoCache cache, int flid, string displayNameProperty, string displayWs)
+		public LexReferenceCollectionVc(LcmCache cache, int flid, string displayNameProperty, string displayWs)
 			: base (cache, flid, displayNameProperty, displayWs)
 		{
 		}

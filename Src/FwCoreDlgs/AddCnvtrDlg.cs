@@ -11,7 +11,7 @@ using System.IO;
 using System.Text;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Resources;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 using SIL.FieldWorks.Common.FwUtils;
 using ECInterfaces;
 using SilEncConverters40;

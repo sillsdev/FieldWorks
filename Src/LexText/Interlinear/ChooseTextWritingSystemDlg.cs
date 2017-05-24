@@ -5,8 +5,8 @@
 using System;
 using System.Windows.Forms;
 
-using SIL.CoreImpl.WritingSystems;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.FwUtils;
 using XCore;
 
@@ -35,7 +35,7 @@ namespace SIL.FieldWorks.IText
 		/// <param name="helpTopicProvider">The help topic provider.</param>
 		/// <param name="wsCurrent">The ws current.</param>
 		/// ------------------------------------------------------------------------------------
-		public void Initialize(FdoCache cache, IHelpTopicProvider helpTopicProvider, int wsCurrent)
+		public void Initialize(LcmCache cache, IHelpTopicProvider helpTopicProvider, int wsCurrent)
 		{
 			m_helpTopicProvider = helpTopicProvider;
 			m_ws = wsCurrent;

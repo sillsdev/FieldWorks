@@ -12,11 +12,10 @@ using System.Windows.Forms;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.FDOTests;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.Resources;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.Common.Framework
 {
@@ -37,7 +36,7 @@ namespace SIL.FieldWorks.Common.Framework
 		}
 
 		/// <summary/>
-		public FdoCache Cache { get; set; }
+		public LcmCache Cache { get; set; }
 
 		/// <summary/>
 		public FwCoreDlgControls.StyleComboListHelper ParaStyleListHelper {
@@ -82,14 +81,14 @@ namespace SIL.FieldWorks.Common.Framework
 		}
 
 		/// <summary/>
-		public FwStyleSheet StyleSheet {
+		public LcmStyleSheet StyleSheet {
 			get {
 				throw new NotImplementedException();
 			}
 		}
 
 		/// <summary/>
-		public FwStyleSheet ActiveStyleSheet {
+		public LcmStyleSheet ActiveStyleSheet {
 			get {
 				throw new NotImplementedException();
 			}

@@ -5,7 +5,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -16,18 +15,19 @@ using System.Xml;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.FwCoreDlgs.BackupRestore;
 using SIL.FieldWorks.Resources;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 using SilEncConverters40;
-using SIL.CoreImpl.Cellar;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.WritingSystems;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.Utils;
 using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls.DataNotebook
@@ -49,7 +49,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 		const int kstepCharacterMapping = 6;
 		const int kstepFinal = 7;
 
-		private FdoCache m_cache;
+		private LcmCache m_cache;
 		private IFwMetaDataCacheManaged m_mdc;
 		private IVwStylesheet m_stylesheet;
 		private Mediator m_mediator;
@@ -731,7 +731,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 		/// <summary>
 		/// Initialize the data values for this dialog.
 		/// </summary>
-		public void Init(FdoCache cache, Mediator mediator, XCore.PropertyTable propertyTable)
+		public void Init(LcmCache cache, Mediator mediator, XCore.PropertyTable propertyTable)
 		{
 			m_cache = cache;
 			m_mediator = mediator;
@@ -761,7 +761,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 			m_stylesheet = AnthroStyleSheetFromPropertyTable(m_propertyTable);
 			if (m_stylesheet == null)
 			{
-				FwStyleSheet styles = new FwStyleSheet();
+				LcmStyleSheet styles = new LcmStyleSheet();
 				styles.Init(m_cache, m_cache.LangProject.Hvo, LangProjectTags.kflidStyles);
 				m_stylesheet = styles;
 			}
@@ -859,9 +859,9 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 				pi = mainWindow.GetType().GetProperty("AnthroStyleSheet");
 			if (pi != null)
 			{
-				return pi.GetValue(mainWindow, null) as FwStyleSheet;
+				return pi.GetValue(mainWindow, null) as LcmStyleSheet;
 			}
-			return propertyTable.GetValue<FwStyleSheet>("AnthroStyleSheet");
+			return propertyTable.GetValue<LcmStyleSheet>("AnthroStyleSheet");
 		}
 
 		private void FillLanguageMappingView()
@@ -4616,7 +4616,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 			}
 		}
 
-		private static void FillPossibilityMap(RnSfMarker rsf, IFdoOwningSequence<ICmPossibility> seq,
+		private static void FillPossibilityMap(RnSfMarker rsf, ILcmOwningSequence<ICmPossibility> seq,
 			Dictionary<string, ICmPossibility> map)
 		{
 			if (seq == null || seq.Count == 0)
@@ -4639,7 +4639,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 
 		private ICmPossibility CreateNewPossibility(List<string> rgsHier,
 			CmPossibilityCreator factory,
-			IFdoOwningSequence<ICmPossibility> possList,
+			ILcmOwningSequence<ICmPossibility> possList,
 			Dictionary<string, ICmPossibility> map,
 			List<ICmPossibility> rgNew)
 		{
@@ -4685,14 +4685,14 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 			return item;
 		}
 
-		public static bool InitializeWritingSystemCombo(string sWs, FdoCache cache, ComboBox cbWritingSystem)
+		public static bool InitializeWritingSystemCombo(string sWs, LcmCache cache, ComboBox cbWritingSystem)
 		{
 			return InitializeWritingSystemCombo(sWs, cache, cbWritingSystem,
 				cache.ServiceLocator.WritingSystems.AllWritingSystems.ToArray());
 		}
 
 
-		public static bool InitializeWritingSystemCombo(string sWs, FdoCache cache, ComboBox cbWritingSystem, CoreWritingSystemDefinition[] writingSystems)
+		public static bool InitializeWritingSystemCombo(string sWs, LcmCache cache, ComboBox cbWritingSystem, CoreWritingSystemDefinition[] writingSystems)
 		{
 			if (String.IsNullOrEmpty(sWs))
 				sWs = cache.WritingSystemFactory.GetStrFromWs(cache.DefaultAnalWs);

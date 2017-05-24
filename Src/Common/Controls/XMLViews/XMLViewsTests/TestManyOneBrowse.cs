@@ -10,12 +10,12 @@ using System.Xml;
 
 using NUnit.Framework;
 
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.WritingSystems;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.CacheLight;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Controls;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Filters;
 using SIL.Utils;

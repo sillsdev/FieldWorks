@@ -7,10 +7,10 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
 using System.Linq;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.LexText.Controls;
 using XCore;
 
@@ -44,7 +44,7 @@ namespace SIL.FieldWorks.IText
 
 		private IDictionary<IFsFeatDefn, object> m_curInflFeatures;
 
-		public ComplexConcPatternVc(FdoCache cache, PropertyTable propertyTable)
+		public ComplexConcPatternVc(LcmCache cache, PropertyTable propertyTable)
 			: base(cache, propertyTable)
 		{
 			int userWs = m_cache.DefaultUserWs;

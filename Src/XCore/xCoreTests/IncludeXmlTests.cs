@@ -5,9 +5,9 @@
 using NUnit.Framework;
 using System.Xml;
 using System.Collections.Generic;
-using SIL.Utils;
 using System.Diagnostics;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.Utils;
 
 namespace XCore
 {

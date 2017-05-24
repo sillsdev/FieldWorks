@@ -9,16 +9,15 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using NUnit.Framework;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.WritingSystems;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.CacheLight;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Controls;
-using SIL.CoreImpl.KernelInterfaces;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.FDOTests;
-using SIL.Utils;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
+using SIL.LCModel.Application;
+using SIL.LCModel.Utils;
 using XCore;
 
 namespace XMLViewsTests
@@ -230,8 +229,8 @@ namespace XMLViewsTests
 
 	class MockDecorator : DomainDataByFlidDecoratorBase
 	{
-		private FdoCache m_cache;
-		public MockDecorator(FdoCache cache) : base(cache.DomainDataByFlid as ISilDataAccessManaged)
+		private LcmCache m_cache;
+		public MockDecorator(LcmCache cache) : base(cache.DomainDataByFlid as ISilDataAccessManaged)
 		{
 			m_cache = cache;
 		}

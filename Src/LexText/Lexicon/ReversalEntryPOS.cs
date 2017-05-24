@@ -10,8 +10,8 @@ using System.Xml;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 using XCore;
 
 namespace SIL.FieldWorks.XWorks.LexEd
@@ -66,7 +66,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		public bool OnMoveReversalPOS(object cmd)
 		{
-			FdoCache cache = Cache;
+			LcmCache cache = Cache;
 			var labels = new List<ObjectLabel>();
 			foreach (IPartOfSpeech pos in MergeOrMoveCandidates)
 			{
@@ -145,7 +145,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		public bool OnMergeReversalPOS(object cmd)
 		{
-			FdoCache cache = Cache;
+			LcmCache cache = Cache;
 			var labels = new List<ObjectLabel>();
 			foreach (IPartOfSpeech pos in MergeOrMoveCandidates)
 				labels.Add(ObjectLabel.CreateObjectLabelOnly(cache, pos, "ShortNameTSS", "best analysis"));
@@ -194,7 +194,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			Debug.Assert(slice != null, "No slice was current");
 			if (slice != null)
 			{
-				FdoCache cache = m_dataEntryForm.Cache;
+				LcmCache cache = m_dataEntryForm.Cache;
 				var sliceObj = slice.Object as ICmPossibility;
 				var newOwner = sliceObj.Owner.Owner;
 				switch (newOwner.ClassID)
@@ -274,7 +274,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 	{
 
 
-		public override void Init(FdoCache cache, Mediator mediator, PropertyTable propertyTable, XmlNode recordListNode)
+		public override void Init(LcmCache cache, Mediator mediator, PropertyTable propertyTable, XmlNode recordListNode)
 		{
 			CheckDisposed();
 

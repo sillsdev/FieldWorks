@@ -1,10 +1,10 @@
 using System;
 using System.Drawing;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.FieldWorks.FDO;
-using SIL.Utils;
+using SIL.LCModel;
+using SIL.LCModel.Utils;
 using XCore;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
@@ -31,7 +31,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 		private IPhMetathesisRule m_rule;
 
-		public MetaRuleFormulaVc(FdoCache cache, PropertyTable propertyTable)
+		public MetaRuleFormulaVc(LcmCache cache, PropertyTable propertyTable)
 			: base(cache, propertyTable)
 		{
 			ITsPropsBldr tpb = TsStringUtils.MakePropsBldr();

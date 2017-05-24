@@ -14,7 +14,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Xml;
 using System.Collections.Generic;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using XCore;
@@ -277,19 +277,19 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			CheckDisposed();
 
-			if (m_fdoCache == null || DesignMode)
+			if (m_cache == null || DesignMode)
 				return;
 
 			base.MakeRoot();
 
 			if (m_sda == null)
-				m_sda = m_fdoCache.DomainDataByFlid;
+				m_sda = m_cache.DomainDataByFlid;
 
 			Debug.Assert(m_layoutName != null, "No layout name.");
 			IApp app = m_propertyTable == null ? null : m_propertyTable.GetValue<IApp>("App");
 			m_xmlVc = new XmlVc(m_layoutName, m_fEditable, this, app, m_sda)
 			{
-				Cache = m_fdoCache,
+				Cache = m_cache,
 				DataAccess = m_sda
 			};
 			// let it use the decorator if any.

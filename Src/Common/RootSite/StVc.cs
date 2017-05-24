@@ -10,12 +10,12 @@
 // </remarks>
 // --------------------------------------------------------------------------------------------
 using System.Drawing;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.WritingSystems;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
 
 namespace SIL.FieldWorks.Common.RootSites
 {
@@ -273,7 +273,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// Gets or sets the FDO cache for the view constructor.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public override FdoCache Cache
+		public override LcmCache Cache
 		{
 #if __MonoCS__ // TODO-Linux: Work around Mono compiler bug.
 			get

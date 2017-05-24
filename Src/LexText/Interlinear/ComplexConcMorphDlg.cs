@@ -8,13 +8,13 @@ using System.Linq;
 using System.Windows.Forms;
 using Aga.Controls.Tree;
 using Aga.Controls.Tree.NodeControls;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.WritingSystems;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using XCore;
 
 namespace SIL.FieldWorks.IText
@@ -52,7 +52,7 @@ namespace SIL.FieldWorks.IText
 
 		private System.ComponentModel.IContainer components;
 
-		private FdoCache m_cache;
+		private LcmCache m_cache;
 		private IHelpTopicProvider m_helpTopicProvider;
 		private ComplexConcMorphNode m_node;
 		private PossibilityComboController m_catPopupTreeManager;
@@ -64,7 +64,7 @@ namespace SIL.FieldWorks.IText
 			AccessibleName = GetType().Name;
 		}
 
-		public void SetDlgInfo(FdoCache cache, Mediator mediator, PropertyTable propertyTable, ComplexConcMorphNode node)
+		public void SetDlgInfo(LcmCache cache, Mediator mediator, PropertyTable propertyTable, ComplexConcMorphNode node)
 		{
 			m_cache = cache;
 			m_node = node;

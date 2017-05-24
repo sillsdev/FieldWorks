@@ -8,8 +8,7 @@ using System.IO;
 using System.Linq;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.FDOTests;
+using SIL.LCModel;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
@@ -91,7 +90,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			using (var dlg = new DummyFwNewLangProject())
 			{
-				FdoCache cache = null;
+				LcmCache cache = null;
 				if (DbExists(dbName))
 					DestroyDb(dbName, true);
 
@@ -104,9 +103,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 					// despite of the name is DummyProgressDlg no real dialog (doesn't derive from Control), so
 					// we don't need a 'using'
-					cache = FdoCache.CreateCacheFromExistingData(
-						new TestProjectId(FDOBackendProviderType.kXMLWithMemoryOnlyWsMgr, DbFilename(dbName)), "en", new DummyFdoUI(), FwDirectoryFinder.FdoDirectories,
-						new FdoSettings(), new DummyProgressDlg());
+					cache = LcmCache.CreateCacheFromExistingData(
+						new TestProjectId(BackendProviderType.kXMLWithMemoryOnlyWsMgr, DbFilename(dbName)), "en", new DummyLcmUI(),
+						FwDirectoryFinder.LcmDirectories, new LcmSettings(), new DummyProgressDlg());
 					CheckInitialSetOfPartsOfSpeech(cache);
 
 					Assert.AreEqual(1, cache.ServiceLocator.WritingSystems.AnalysisWritingSystems.Count);
@@ -127,7 +126,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				}
 			}
 		}
-		private void CheckInitialSetOfPartsOfSpeech(FdoCache cache)
+		private void CheckInitialSetOfPartsOfSpeech(LcmCache cache)
 		{
 			ILangProject lp = cache.LanguageProject;
 			int iCount = 0;
@@ -173,7 +172,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		private static string DbFilename(string dbName)
 		{
-			return Path.Combine(DbDirectory(dbName), FdoFileHelper.GetXmlDataFileName(dbName));
+			return Path.Combine(DbDirectory(dbName), LcmFileHelper.GetXmlDataFileName(dbName));
 		}
 
 		/// ------------------------------------------------------------------------------------

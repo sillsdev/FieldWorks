@@ -7,7 +7,7 @@ using System.Linq;
 using System.Xml.Linq;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 
 namespace SIL.FieldWorks.WordWorks.Parser
 {

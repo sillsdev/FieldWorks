@@ -86,7 +86,7 @@ namespace SIL.FieldWorks.Common.Controls
 					parts &= ~DataGridViewPaintParts.Focus;
 
 					// Grr. PaintParts is readonly. So I have to brute force it.
-					SIL.Utils.ReflectionHelper.SetField(e, "paintParts", parts);
+					LCModel.Utils.ReflectionHelper.SetField(e, "paintParts", parts);
 					doPaint = true;
 				}
 			}

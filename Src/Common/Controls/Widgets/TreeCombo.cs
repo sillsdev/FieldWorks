@@ -14,9 +14,9 @@ using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO; // for Win32 message defns.
 using System.Windows.Forms;
-using SIL.CoreImpl.KernelInterfaces;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.Utils;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.Common.Widgets
 {
@@ -209,8 +209,8 @@ namespace SIL.FieldWorks.Common.Widgets
 							}
 						}
 					}
-					if (nFontSize == -1 && value is FwStyleSheet)
-						nFontSize = ((FwStyleSheet)value).NormalFontSize;
+					if (nFontSize == -1 && value is LcmStyleSheet)
+						nFontSize = ((LcmStyleSheet)value).NormalFontSize;
 
 					int nFontSizeTree = (int)(Tree.Font.SizeInPoints * 1000);
 					if (nFontSize > nFontSizeTree)

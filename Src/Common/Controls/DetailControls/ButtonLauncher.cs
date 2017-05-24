@@ -7,7 +7,7 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.Xml;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
 using XCore;
 
@@ -23,7 +23,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		#region Data Members
 
-		protected FdoCache m_cache;
+		protected LcmCache m_cache;
 		protected ICmObject m_obj;
 		protected int m_flid;
 		protected string m_fieldName;
@@ -134,7 +134,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <param name="propertyTable"></param>
 		/// <param name="displayNameProperty"></param>
 		/// <param name="displayWs"></param>
-		public virtual void Initialize(FdoCache cache, ICmObject obj, int flid, string fieldName,
+		public virtual void Initialize(LcmCache cache, ICmObject obj, int flid, string fieldName,
 			IPersistenceProvider persistProvider, Mediator mediator, PropertyTable propertyTable, string displayNameProperty, string displayWs)
 		{
 			Debug.Assert(cache != null);

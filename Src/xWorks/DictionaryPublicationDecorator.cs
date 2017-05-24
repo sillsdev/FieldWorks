@@ -5,17 +5,16 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using SIL.CoreImpl.Cellar;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.FdoUi;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.DomainImpl;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Application;
+using SIL.LCModel.DomainImpl;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using XCore;
 
 namespace SIL.FieldWorks.XWorks
@@ -34,7 +33,7 @@ namespace SIL.FieldWorks.XWorks
 		readonly HashSet<int> m_excludedItems = new HashSet<int>();
 		readonly HashSet<int> m_excludeAsMainEntry = new HashSet<int>();
 
-		private FdoCache Cache { get; set; }
+		private LcmCache Cache { get; set; }
 
 		private int m_LexDbEntriesFlid; // similar to m_mainFlid in the XmlVc it decorates
 
@@ -68,7 +67,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Make one. By default we filter to the main dictionary.
 		/// </summary>
-		public DictionaryPublicationDecorator(FdoCache cache, ISilDataAccessManaged domainDataByFlid, int mainFlid)
+		public DictionaryPublicationDecorator(LcmCache cache, ISilDataAccessManaged domainDataByFlid, int mainFlid)
 			: this(cache, domainDataByFlid, mainFlid, cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS[0])
 		{}
 
@@ -76,7 +75,7 @@ namespace SIL.FieldWorks.XWorks
 		/// Create one. The SDA passed MAY be the DomainDataByFlid of the cache, but it is usually another
 		/// decorator.
 		/// </summary>
-		public DictionaryPublicationDecorator(FdoCache cache, ISilDataAccessManaged domainDataByFlid, int mainFlid, ICmPossibility publication)
+		public DictionaryPublicationDecorator(LcmCache cache, ISilDataAccessManaged domainDataByFlid, int mainFlid, ICmPossibility publication)
 			: base(domainDataByFlid)
 		{
 			Cache = cache;

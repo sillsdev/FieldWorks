@@ -4,8 +4,8 @@
 
 using System.Xml;
 using SIL.FieldWorks.Common.Framework.DetailControls;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 using XCore;
 
 namespace SIL.FieldWorks.XWorks.LexEd
@@ -20,7 +20,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		private IPersistenceProvider m_persistProvider = null;
 #pragma warning restore 0414
 
-		public ReversalIndexEntryFormSlice(FdoCache cache, string editor, int flid, XmlNode node,
+		public ReversalIndexEntryFormSlice(LcmCache cache, string editor, int flid, XmlNode node,
 			ICmObject obj, IPersistenceProvider persistenceProvider, int ws)
 			: base(obj, flid, WritingSystemServices.kwsAllReversalIndex, 0, false, true, true)
 		{

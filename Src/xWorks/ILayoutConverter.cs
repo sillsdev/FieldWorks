@@ -5,7 +5,7 @@
 using System.Collections.Generic;
 using System.Xml;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -25,7 +25,7 @@ namespace SIL.FieldWorks.XWorks
 		IEnumerable<XmlNode> GetLayoutTypes();
 
 		/// <summary/>
-		FdoCache Cache { get; }
+		LcmCache Cache { get; }
 
 		/// <summary/>
 		StringTable StringTable { get; }

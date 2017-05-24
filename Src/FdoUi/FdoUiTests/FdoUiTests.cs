@@ -7,10 +7,9 @@
 // ---------------------------------------------------------------------------------------------
 
 using NUnit.Framework;
-using SIL.CoreImpl.Text;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.FDOTests;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 
 namespace SIL.FieldWorks.FdoUi
 {

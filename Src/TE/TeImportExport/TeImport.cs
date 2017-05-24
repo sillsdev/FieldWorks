@@ -10,16 +10,16 @@ using System.IO;
 using System.Text;
 using System.Threading;
 
-using SIL.CoreImpl.Scripture;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.WritingSystems;
+using SIL.LCModel.Core.Scripture;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 using SIL.Reporting;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.TE
 {
@@ -205,9 +205,9 @@ namespace SIL.FieldWorks.TE
 
 		#region Member Variables
 		/// <summary>The cache</summary>
-		protected FdoCache m_cache;
+		protected LcmCache m_cache;
 		/// <summary>Stylesheet used for importing</summary>
-		protected FwStyleSheet m_styleSheet;
+		protected LcmStyleSheet m_styleSheet;
 
 		/// <summary>The data model Scripture object</summary>
 		protected IScripture m_scr;
@@ -487,7 +487,7 @@ namespace SIL.FieldWorks.TE
 		/// ------------------------------------------------------------------------------------
 		protected void SetBookAnnotations()
 		{
-			IFdoOwningSequence<IScrScriptureNote> curBookNotes =
+			ILcmOwningSequence<IScrScriptureNote> curBookNotes =
 				m_scr.BookAnnotationsOS[m_nBookNumber - 1].NotesOS;
 			m_existingAnnotations =
 				new Dictionary<ScrNoteKey, IScrScriptureNote>(curBookNotes.Count);
@@ -928,8 +928,8 @@ namespace SIL.FieldWorks.TE
 		/// the book filter).</param>
 		/// <returns>The reference of the first thing that was imported</returns>
 		/// ------------------------------------------------------------------------------------
-		public static ScrReference Import(IScrImportSet settings, FdoCache cache,
-			FwStyleSheet styleSheet, UndoImportManager undoManager)
+		public static ScrReference Import(IScrImportSet settings, LcmCache cache,
+			LcmStyleSheet styleSheet, UndoImportManager undoManager)
 		{
 			return Import(settings, cache, styleSheet, undoManager, null);
 		}
@@ -950,8 +950,8 @@ namespace SIL.FieldWorks.TE
 		/// The Scripture reference of the first thing that was imported
 		/// </returns>
 		/// ------------------------------------------------------------------------------------
-		public static ScrReference Import(IScrImportSet settings, FdoCache cache,
-			FwStyleSheet styleSheet, UndoImportManager undoManager, TeImportUi importCallbacks,
+		public static ScrReference Import(IScrImportSet settings, LcmCache cache,
+			LcmStyleSheet styleSheet, UndoImportManager undoManager, TeImportUi importCallbacks,
 			bool streamLinedImport = false)
 		{
 			using (TeSfmImporter importer = new TeSfmImporter(settings, cache, styleSheet, undoManager,
@@ -977,8 +977,8 @@ namespace SIL.FieldWorks.TE
 		/// <param name="importCallbacks">UI callbacks</param>
 		/// <param name="streamLinedImport">flag indicating if import is done through FLEx.</param>
 		/// ------------------------------------------------------------------------------------
-		protected TeSfmImporter(IScrImportSet settings, FdoCache cache,
-			FwStyleSheet styleSheet, UndoImportManager undoManager, TeImportUi importCallbacks,
+		protected TeSfmImporter(IScrImportSet settings, LcmCache cache,
+			LcmStyleSheet styleSheet, UndoImportManager undoManager, TeImportUi importCallbacks,
 			bool streamLinedImport = false)
 		{
 			Debug.Assert(cache != null);

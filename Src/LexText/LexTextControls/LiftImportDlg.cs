@@ -19,7 +19,7 @@ using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.FwCoreDlgs.BackupRestore;
 using SIL.FieldWorks.Resources;
 using SIL.Lift;
@@ -27,6 +27,7 @@ using SIL.Lift.Migration;
 using SIL.Lift.Parsing;
 using SIL.Lift.Validation;
 using SIL.Reporting;
+using SIL.LCModel.Utils;
 using SIL.Utils;
 using XCore;
 
@@ -34,7 +35,7 @@ namespace SIL.FieldWorks.LexText.Controls
 {
 	public partial class LiftImportDlg : Form, IFwExtension
 	{
-		private FdoCache m_cache;
+		private LcmCache m_cache;
 		private Mediator m_mediator;
 		private XCore.PropertyTable m_propertyTable;
 		private IThreadedProgress m_progressDlg;
@@ -58,7 +59,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="cache"></param>
 		/// <param name="mediator"></param>
 		/// <param name="propertyTable"></param>
-		void IFwExtension.Init(FdoCache cache, Mediator mediator, XCore.PropertyTable propertyTable)
+		void IFwExtension.Init(LcmCache cache, Mediator mediator, XCore.PropertyTable propertyTable)
 		{
 			m_cache = cache;
 			m_mediator = mediator;

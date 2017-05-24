@@ -7,25 +7,25 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using Paratext;
-using SIL.CoreImpl.Scripture;
-using SIL.CoreImpl.Text;
+using SIL.LCModel.Core.Scripture;
+using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ScriptureUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.XWorks;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 using XCore;
 
 namespace SIL.FieldWorks.IText
 {
 	public class InterlinearTextsRecordClerk : RecordClerk, IBookImporter
 	{
-		private FwStyleSheet m_stylesheet;
+		private LcmStyleSheet m_stylesheet;
 
 		// The following is used in the process of selecting the ws for a new text.  See LT-6692.
 		private int m_wsPrevText;
@@ -75,7 +75,7 @@ namespace SIL.FieldWorks.IText
 		{
 			if (CurrentObject is IWfiWordform)
 				return true;
-			return CurrentObject.Owner is FDO.IText;
+			return CurrentObject.Owner is LCModel.IText;
 		}
 
 		public override void ReloadIfNeeded()
@@ -264,7 +264,7 @@ namespace SIL.FieldWorks.IText
 			// (when selected from the text list: ie a genre w/o a text was sellected)
 			string property = GetCorrespondingPropertyName("DelayedGenreAssignment");
 			var genreList = m_propertyTable.GetValue<List<TreeNode>>(property, null);
-			var ownerText = newText.Owner as FDO.IText;
+			var ownerText = newText.Owner as LCModel.IText;
 			if (genreList != null && genreList.Count > 0 && ownerText != null)
 			{
 				foreach (var node in genreList)
@@ -289,14 +289,14 @@ namespace SIL.FieldWorks.IText
 
 		internal abstract class CreateAndInsertStText : RecordList.ICreateAndInsert<IStText>
 		{
-			internal CreateAndInsertStText(FdoCache cache, InterlinearTextsRecordClerk clerk)
+			internal CreateAndInsertStText(LcmCache cache, InterlinearTextsRecordClerk clerk)
 			{
 				Cache = cache;
 				Clerk = clerk;
 			}
 
 			protected InterlinearTextsRecordClerk Clerk;
-			protected FdoCache Cache;
+			protected LcmCache Cache;
 			protected IStText NewStText;
 
 			#region ICreateAndInsert<IStText> Members
@@ -322,7 +322,7 @@ namespace SIL.FieldWorks.IText
 
 		internal class UndoableCreateAndInsertStText : CreateAndInsertStText
 		{
-			internal UndoableCreateAndInsertStText(FdoCache cache, Command command, InterlinearTextsRecordClerk clerk)
+			internal UndoableCreateAndInsertStText(LcmCache cache, Command command, InterlinearTextsRecordClerk clerk)
 				: base(cache, clerk)
 			{
 				CommandArgs = command;
@@ -342,7 +342,7 @@ namespace SIL.FieldWorks.IText
 
 		internal class NonUndoableCreateAndInsertStText : CreateAndInsertStText
 		{
-			internal NonUndoableCreateAndInsertStText(FdoCache cache, InterlinearTextsRecordClerk clerk)
+			internal NonUndoableCreateAndInsertStText(LcmCache cache, InterlinearTextsRecordClerk clerk)
 				: base(cache, clerk)
 			{
 			}
@@ -483,13 +483,13 @@ namespace SIL.FieldWorks.IText
 		/// Gets the Scripture stylesheet.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private FwStyleSheet ScriptureStylesheet
+		private LcmStyleSheet ScriptureStylesheet
 		{
 			get
 			{
 				if (m_stylesheet == null)
 				{
-					m_stylesheet = new FwStyleSheet();
+					m_stylesheet = new LcmStyleSheet();
 					m_stylesheet.Init(Cache, Cache.LangProject.TranslatedScriptureOA.Hvo, ScriptureTags.kflidStyles);
 				}
 				return m_stylesheet;

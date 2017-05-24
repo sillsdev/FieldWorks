@@ -17,11 +17,11 @@ using System.Xml.Xsl;
 using Microsoft.Win32;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.Resources;
 using SIL.Utils;
 using XCore;
@@ -185,11 +185,11 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// FDO cache.
 		/// </summary>
-		protected FdoCache Cache
+		protected LcmCache Cache
 		{
 			get
 			{
-				return m_propertyTable.GetValue<FdoCache>("cache");
+				return m_propertyTable.GetValue<LcmCache>("cache");
 			}
 		}
 

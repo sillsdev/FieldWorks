@@ -8,10 +8,10 @@ using System.Drawing;
 using System.Text;
 using System.Xml;
 using System.Windows.Forms;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Core.Text;
 using SIL.Utils;
-using SIL.CoreImpl.Text;
 
 namespace SIL.FieldWorks.LexText.Controls.MGA
 {
@@ -41,7 +41,7 @@ namespace SIL.FieldWorks.LexText.Controls.MGA
 		protected string m_sTermNodeXPath = "term[@ws='en']";
 		protected string m_sAbbrevNodeXPath = "abbrev[@ws='en']";
 		protected TreeNode m_lastSelectedTreeNode = null;
-		protected FdoCache m_cache;
+		protected LcmCache m_cache;
 
 		/// <summary>
 		/// Check to see if the object has been disposed.
@@ -91,7 +91,7 @@ namespace SIL.FieldWorks.LexText.Controls.MGA
 		/// <summary>
 		/// Sets FDO cache
 		/// </summary>
-		public FdoCache Cache
+		public LcmCache Cache
 		{
 			set { m_cache = value;}
 		}

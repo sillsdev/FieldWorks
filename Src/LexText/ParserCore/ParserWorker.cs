@@ -26,10 +26,10 @@ no exception: Create an infl affix slot with no affixes in it and then use this 
 */
 
 using System;
-using SIL.CoreImpl.KernelInterfaces;
-using SIL.CoreImpl.Text;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 using SIL.ObjectModel;
 using XCore;
 
@@ -40,7 +40,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 	/// </summary>
 	public class ParserWorker : DisposableBase
 	{
-		private readonly FdoCache m_cache;
+		private readonly LcmCache m_cache;
 		private readonly Action<TaskReport> m_taskUpdateHandler;
 		private readonly ParseFiler m_parseFiler;
 		private int m_numberOfWordForms;
@@ -51,7 +51,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		/// Initializes a new instance of the <see cref="ParserWorker"/> class.
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
-		public ParserWorker(FdoCache cache, Action<TaskReport> taskUpdateHandler, IdleQueue idleQueue, string dataDir)
+		public ParserWorker(LcmCache cache, Action<TaskReport> taskUpdateHandler, IdleQueue idleQueue, string dataDir)
 		{
 			m_cache = cache;
 			m_taskUpdateHandler = taskUpdateHandler;

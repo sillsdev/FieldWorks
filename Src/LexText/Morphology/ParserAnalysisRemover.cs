@@ -5,8 +5,8 @@
 using System.Diagnostics;
 using System.Linq;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.FwCoreDlgs;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
@@ -91,7 +91,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		public void Process()
 		{
 			Debug.Assert(m_dlg != null);
-			var cache = m_dlg.PropTable.GetValue<FdoCache>("cache");
+			var cache = m_dlg.PropTable.GetValue<LcmCache>("cache");
 			IWfiAnalysis[] analyses = cache.ServiceLocator.GetInstance<IWfiAnalysisRepository>().AllInstances().ToArray();
 			if (analyses.Length == 0)
 				return;

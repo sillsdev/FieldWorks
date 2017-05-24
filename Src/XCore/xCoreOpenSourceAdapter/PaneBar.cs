@@ -4,6 +4,7 @@
 
 using System.Drawing;
 using System.Windows.Forms;
+using SIL.LCModel.Utils;
 
 namespace XCore
 {
@@ -27,8 +28,8 @@ namespace XCore
 			InitializeComponent();
 
 			// TODO: Add any initialization after the InitializeComponent call
-			if (SIL.Utils.MiscUtils.IsUnix)
-				label1.Font = new Font(SIL.Utils.MiscUtils.StandardSansSerif, 14.25F,
+			if (MiscUtils.IsUnix)
+				label1.Font = new Font(MiscUtils.StandardSansSerif, 14.25F,
 					FontStyle.Bold, GraphicsUnit.Point, 0);
 		}
 

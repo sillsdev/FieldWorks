@@ -6,12 +6,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.KernelInterfaces;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 using SIL.ObjectModel;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 using XCore;
 
 namespace SIL.FieldWorks.Common.Controls
@@ -57,7 +57,7 @@ namespace SIL.FieldWorks.Common.Controls
 			return searchEngine;
 		}
 
-		private readonly FdoCache m_cache;
+		private readonly LcmCache m_cache;
 		private readonly StringSearcher<int> m_searcher;
 
 		private IList<ICmObject> m_searchableObjs;
@@ -74,7 +74,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>
 		/// Initializes a new instance of the <see cref="SearchEngine"/> class.
 		/// </summary>
-		protected SearchEngine(FdoCache cache, SearchType type)
+		protected SearchEngine(LcmCache cache, SearchType type)
 		{
 			m_cache = cache;
 			m_searcher = new StringSearcher<int>(type, m_cache.ServiceLocator.WritingSystemManager);
@@ -122,7 +122,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>
 		/// Gets the cache.
 		/// </summary>
-		protected FdoCache Cache
+		protected LcmCache Cache
 		{
 			get { return m_cache; }
 		}

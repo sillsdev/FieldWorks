@@ -4,11 +4,11 @@
 
 using System;
 using System.Collections.Generic;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.LexText.Controls;
 using XCore;
 
@@ -50,7 +50,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		protected ITsString m_infinity;
 		protected ITsString m_x;
 
-		protected RuleFormulaVcBase(FdoCache cache, PropertyTable propertyTable)
+		protected RuleFormulaVcBase(LcmCache cache, PropertyTable propertyTable)
 			: base(cache, propertyTable)
 		{
 			int userWs = m_cache.DefaultUserWs;
@@ -651,7 +651,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 		int GetVariablesWidth(IPhSimpleContextNC ctxt, IVwEnv vwenv, bool polarity)
 		{
-			IFdoReferenceSequence<IPhFeatureConstraint> vars = polarity ? ctxt.PlusConstrRS : ctxt.MinusConstrRS;
+			ILcmReferenceSequence<IPhFeatureConstraint> vars = polarity ? ctxt.PlusConstrRS : ctxt.MinusConstrRS;
 			int maxLen = 0;
 			foreach (IPhFeatureConstraint var in vars)
 			{

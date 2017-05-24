@@ -8,16 +8,16 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Forms;
 
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 using System.Diagnostics;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.CoreImpl.Scripture;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Core.Scripture;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
 
 namespace SIL.FieldWorks.TE
 {
@@ -88,7 +88,7 @@ namespace SIL.FieldWorks.TE
 	public class BookMerger: IDisposable
 	{
 		#region member variables
-		private FdoCache m_cache;
+		private LcmCache m_cache;
 		private IScripture m_scr;
 		private IVwStylesheet m_stylesheet;
 		private IThreadedProgress m_progressDlg;
@@ -202,7 +202,7 @@ namespace SIL.FieldWorks.TE
 		/// <param name="bookRev">The book revision that is to be merged (with the current book
 		/// having the same canonical number).</param>
 		/// ------------------------------------------------------------------------------------
-		public BookMerger(FdoCache cache, IVwStylesheet stylesheet, IScrBook bookRev)
+		public BookMerger(LcmCache cache, IVwStylesheet stylesheet, IScrBook bookRev)
 		{
 			m_cache = cache;
 			m_stylesheet = stylesheet;
@@ -293,7 +293,7 @@ namespace SIL.FieldWorks.TE
 		/// Gets the cache associated with the BookMerger.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public FdoCache Cache
+		public LcmCache Cache
 		{
 			get { return m_cache; }
 		}
@@ -606,7 +606,7 @@ namespace SIL.FieldWorks.TE
 		private void ProcessMissingAddedSections(Cluster cluster)
 		{
 			// determine the owning sequences that cluster refers to
-			IFdoOwningSequence<IScrSection> owningSeqDest;
+			ILcmOwningSequence<IScrSection> owningSeqDest;
 			if (cluster.clusterType == ClusterType.AddedToCurrent)
 				owningSeqDest = m_bookRev.SectionsOS;
 			else

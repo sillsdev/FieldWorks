@@ -14,12 +14,12 @@ using SIL.FieldWorks.Common.Framework;
 using L10NSharp;
 using System.Collections.Generic;
 using System;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.Resources;
 using SIL.Reporting;
 using SIL.Windows.Forms.PortableSettingsProvider;
 using XCore;
-using SIL.CoreImpl.WritingSystems;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.Keyboarding;
 using SIL.PlatformUtilities;
 
@@ -60,7 +60,7 @@ namespace SIL.FieldWorks.XWorks.Archiving
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
 		public bool ArchiveNow(Form owner, Font dialogFont, Icon localizationDialogIcon,
-			IEnumerable<string> filesToArchive, PropertyTable propertyTable, FwApp thisapp, FdoCache cache)
+			IEnumerable<string> filesToArchive, PropertyTable propertyTable, FwApp thisapp, LcmCache cache)
 		{
 			var viProvider = new VersionInfoProvider(Assembly.LoadFile(thisapp.ProductExecutableFile), false);
 			WritingSystemManager wsMgr = cache.ServiceLocator.WritingSystemManager;
@@ -133,7 +133,7 @@ namespace SIL.FieldWorks.XWorks.Archiving
 		{
 			// TODO: Extend to supply "relationship" also (source, presentation or supporting)
 
-			if (Path.GetExtension(file) == FdoFileHelper.ksFwBackupFileExtension)
+			if (Path.GetExtension(file) == LcmFileHelper.ksFwBackupFileExtension)
 				return "FieldWorks backup";
 			if (Path.GetExtension(file) == FwFileExtensions.ksLexiconInterchangeFormat)
 				return "Lexical Interchange Format Standard file";
@@ -153,7 +153,7 @@ namespace SIL.FieldWorks.XWorks.Archiving
 		/// <returns>A list of JSON encoded pairs that describe the information in the RAMP
 		/// package.</returns>
 		/// ------------------------------------------------------------------------------------
-		private void AddMetsPairs(RampArchivingDlgViewModel model, string fieldWorksVersion, FdoCache cache)
+		private void AddMetsPairs(RampArchivingDlgViewModel model, string fieldWorksVersion, LcmCache cache)
 		{
 			WritingSystemManager wsManager = cache.ServiceLocator.WritingSystemManager;
 			var wsDefaultVern = wsManager.Get(cache.DefaultVernWs);
@@ -285,7 +285,7 @@ namespace SIL.FieldWorks.XWorks.Archiving
 			return advModel => advModel.AddFileGroup(string.Empty, filesToArchive, ResourceHelper.GetResourceString("kstidAddingFwProject"));
 		}
 
-		private void GetCreateDateRange(FdoCache cache)
+		private void GetCreateDateRange(LcmCache cache)
 		{
 			foreach (var obj in cache.LangProject.ResearchNotebookOA.AllRecords)
 				CompareDateCreated(obj.DateCreated);

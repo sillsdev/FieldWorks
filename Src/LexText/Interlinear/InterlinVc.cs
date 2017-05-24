@@ -8,15 +8,15 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
-using SIL.CoreImpl.Cellar;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.WritingSystems;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FdoUi;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 
 namespace SIL.FieldWorks.IText
 {
@@ -164,7 +164,7 @@ namespace SIL.FieldWorks.IText
 		/// using some writing system.</remarks>
 		/// <param name="cache">The cache.</param>
 		/// ------------------------------------------------------------------------------------
-		public InterlinVc(FdoCache cache) : base(cache.DefaultAnalWs)
+		public InterlinVc(LcmCache cache) : base(cache.DefaultAnalWs)
 		{
 			Cache = cache;
 			m_wsManager = m_cache.ServiceLocator.WritingSystemManager;
@@ -220,7 +220,7 @@ namespace SIL.FieldWorks.IText
 		/// and then need not set up the virtual property handlers. See ConstChartVc.
 		/// </summary>
 		/// <param name="cache"></param>
-		protected virtual void GetSegmentLevelTags(FdoCache cache)
+		protected virtual void GetSegmentLevelTags(LcmCache cache)
 		{
 		}
 
@@ -1378,7 +1378,7 @@ namespace SIL.FieldWorks.IText
 			return GetRealWs(m_cache, hvo, spec, m_wsVernForDisplay);
 		}
 
-		static private int GetRealWs(FdoCache cache, int hvo, InterlinLineSpec spec, int wsPreferred)
+		static private int GetRealWs(LcmCache cache, int hvo, InterlinLineSpec spec, int wsPreferred)
 		{
 			int ws = 0;
 			switch (spec.WritingSystem)
@@ -1540,7 +1540,7 @@ namespace SIL.FieldWorks.IText
 
 		internal static bool TryGetLexGlossWithInflTypeTss(ILexEntry possibleVariant, ILexSense sense, InterlinLineSpec spec, InterlinLineChoices lineChoices, int vernWsContext, ILexEntryInflType inflType, out ITsString result)
 		{
-			FdoCache cache = possibleVariant.Cache;
+			LcmCache cache = possibleVariant.Cache;
 			using (var vcLexGlossFrag = new InterlinVc(cache))
 			{
 				vcLexGlossFrag.LineChoices = lineChoices;
@@ -1679,7 +1679,7 @@ namespace SIL.FieldWorks.IText
 		/// <summary>
 		/// Add the pile of labels used to identify the lines in interlinear text.
 		/// </summary>
-		public void AddLabelPile(IVwEnv vwenv, FdoCache cache, bool fWantMultipleSenseGloss, bool fShowMorphemes)
+		public void AddLabelPile(IVwEnv vwenv, LcmCache cache, bool fWantMultipleSenseGloss, bool fShowMorphemes)
 		{
 			CheckDisposed();
 
@@ -1763,7 +1763,7 @@ namespace SIL.FieldWorks.IText
 			readonly AnalysisOccurrence m_analysisOccurrence;
 			readonly int m_hvoWordBundleAnalysis;
 			readonly InterlinVc m_this;
-			readonly FdoCache m_cache;
+			readonly LcmCache m_cache;
 			readonly InterlinLineChoices m_choices;
 			private bool m_fshowMultipleAnalyses;
 
@@ -2352,13 +2352,13 @@ namespace SIL.FieldWorks.IText
 		/// in which case, just return it.
 		/// </summary>
 		/// <returns></returns>
-		internal static int GetAnnDefnId(FdoCache cache, string guid, ref int cachedVal)
+		internal static int GetAnnDefnId(LcmCache cache, string guid, ref int cachedVal)
 		{
 			//  and cn.Flid = 7001
 			return GetAnnDefnId(cache, new Guid(guid), ref cachedVal);
 		}
 
-		internal static int GetAnnDefnId(FdoCache cache, Guid guid, ref int cachedVal)
+		internal static int GetAnnDefnId(LcmCache cache, Guid guid, ref int cachedVal)
 		{
 			if (cachedVal == 0)
 			{
@@ -2368,7 +2368,7 @@ namespace SIL.FieldWorks.IText
 
 		}
 
-		internal static ICmAnnotationDefn GetAnnDefnId(FdoCache cache, Guid guid)
+		internal static ICmAnnotationDefn GetAnnDefnId(LcmCache cache, Guid guid)
 		{
 			return cache.ServiceLocator.GetInstance<ICmAnnotationDefnRepository>().GetObject(guid);
 		}

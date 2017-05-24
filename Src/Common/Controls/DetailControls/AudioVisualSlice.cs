@@ -14,12 +14,13 @@ using System;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.IO;
-using SIL.CoreImpl.Text;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.RootSites;
+using SIL.LCModel.Utils;
 using SIL.Utils;
 using XCore;
 
@@ -132,7 +133,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 			AudioVisualLauncher ctrl = Control as AudioVisualLauncher;
 			ctrl.Initialize(
-				m_propertyTable.GetValue<FdoCache>("cache"),
+				m_propertyTable.GetValue<LcmCache>("cache"),
 				Media.MediaFileRA,
 				CmFileTags.kflidInternalPath,
 				"InternalPath",
@@ -310,7 +311,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <param name="propertyTable"></param>
 		/// <param name="displayNameProperty"></param>
 		///  <param name="displayWs"></param>
-		public override void Initialize(FdoCache cache, ICmObject obj, int flid,
+		public override void Initialize(LcmCache cache, ICmObject obj, int flid,
 			string fieldName, IPersistenceProvider persistProvider, Mediator mediator, PropertyTable propertyTable,
 			string displayNameProperty, string displayWs)
 		{
@@ -439,7 +440,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		public void Init(ICmFile obj, int flid)
 		{
 			CheckDisposed();
-			m_fdoCache = m_propertyTable.GetValue<FdoCache>("cache");
+			m_cache = m_propertyTable.GetValue<LcmCache>("cache");
 			m_file = obj;
 			m_flid = flid;
 			if (m_rootb == null)
@@ -460,13 +461,13 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			CheckDisposed();
 
-			if (m_fdoCache == null || DesignMode)
+			if (m_cache == null || DesignMode)
 				return;
 
 			base.MakeRoot();
 
-			m_rootb.DataAccess = m_fdoCache.DomainDataByFlid;
-			m_vc = new AudioVisualVc(m_fdoCache, m_flid, "InternalPath");
+			m_rootb.DataAccess = m_cache.DomainDataByFlid;
+			m_vc = new AudioVisualVc(m_cache, m_flid, "InternalPath");
 			if (m_file != null)
 			{
 				m_rootb.SetRootObject(m_file.Hvo, m_vc, kfragPathname,
@@ -488,7 +489,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		protected int m_flid;
 		protected string m_displayNameProperty;
 
-		public AudioVisualVc(FdoCache cache, int flid, string displayNameProperty)
+		public AudioVisualVc(LcmCache cache, int flid, string displayNameProperty)
 		{
 			Debug.Assert(cache != null);
 			Cache = cache;

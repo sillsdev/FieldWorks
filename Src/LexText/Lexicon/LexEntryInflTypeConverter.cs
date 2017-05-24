@@ -9,8 +9,8 @@ using System.Windows.Forms;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.FwCoreDlgs;
 using XCore;
 using ProgressBarWrapper = SIL.FieldWorks.FdoUi.ProgressBarWrapper;
@@ -23,7 +23,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 	public abstract class LexEntryTypeConverters : IUtility
 	{
 		protected UtilityDlg m_dlg;
-		protected FdoCache m_cache;
+		protected LcmCache m_cache;
 		protected int m_flid;
 		protected ICmObject m_obj;
 		protected const string s_helpTopic = "khtpToolsConvertVariants";
@@ -191,7 +191,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// </summary>
 		public override void Process()
 		{
-			m_cache = m_dlg.PropTable.GetValue<FdoCache>("cache");
+			m_cache = m_dlg.PropTable.GetValue<LcmCache>("cache");
 			UndoableUnitOfWorkHelper.Do(LexEdStrings.ksUndoConvertIrregularlyInflectedFormVariants, LexEdStrings.ksRedoConvertIrregularlyInflectedFormVariants,
 										m_cache.ActionHandlerAccessor,
 										() => ShowDialogAndConvert(LexEntryInflTypeTags.kClassId));
@@ -243,7 +243,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// </summary>
 		public override void Process()
 		{
-			m_cache = m_dlg.PropTable.GetValue<FdoCache>("cache");
+			m_cache = m_dlg.PropTable.GetValue<LcmCache>("cache");
 			UndoableUnitOfWorkHelper.Do(LexEdStrings.ksUndoConvertVariants, LexEdStrings.ksRedoConvertVariants,
 										m_cache.ActionHandlerAccessor,
 										() => ShowDialogAndConvert(LexEntryTypeTags.kClassId));

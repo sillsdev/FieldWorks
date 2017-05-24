@@ -6,7 +6,7 @@ using System;
 using System.Collections;
 using System.IO;
 using System.Text;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 
 namespace SIL.FieldWorks.Filters
 {
@@ -157,16 +157,16 @@ namespace SIL.FieldWorks.Filters
 		/// <param name="cache">The cache.</param>
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
-		public ICmObject KeyObjectUsing(FdoCache cache)
+		public ICmObject KeyObjectUsing(LcmCache cache)
 		{
 			return cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(KeyObject);
 		}
 
 		/// <summary>
 		/// Note that this may be null if it has not been initialized or the object has been deleted. This class cannot generate
-		/// it from PathObjects(0) because it lacks an FdoCache.
+		/// it from PathObjects(0) because it lacks an LcmCache.
 		/// </summary>
-		public ICmObject RootObjectUsing(FdoCache cache)
+		public ICmObject RootObjectUsing(LcmCache cache)
 		{
 			var hvo = RootObjectHvo;
 			if (hvo == 0)
@@ -396,7 +396,7 @@ namespace SIL.FieldWorks.Filters
 			return result;
 		}
 
-		public ICmObject RootObjectUsing(FdoCache cache)
+		public ICmObject RootObjectUsing(LcmCache cache)
 		{
 			if (m_pathObjects == null)
 				return RealKeyObject();
@@ -424,7 +424,7 @@ namespace SIL.FieldWorks.Filters
 			}
 		}
 
-		public ICmObject KeyObjectUsing(FdoCache cache)
+		public ICmObject KeyObjectUsing(LcmCache cache)
 		{
 			return RealKeyObject();
 		}

@@ -15,13 +15,14 @@ using System.Drawing.Printing;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
-using SIL.Utils;
-using SIL.FieldWorks.FDO.Application;
+using SIL.LCModel;
+using SIL.LCModel.Utils;
+using SIL.LCModel.Application;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.Utils;
 using XCore;
 
 namespace SIL.FieldWorks.Common.Controls
@@ -189,7 +190,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// Initializes a new instance of the <see cref="XmlSeqView"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public XmlSeqView(FdoCache cache, int hvoRoot, int flid, XmlNode xnSpec, ISilDataAccessManaged sda, IApp app, ICmPossibility publication)
+		public XmlSeqView(LcmCache cache, int hvoRoot, int flid, XmlNode xnSpec, ISilDataAccessManaged sda, IApp app, ICmPossibility publication)
 			: base(null)
 		{
 			m_app = app;
@@ -308,7 +309,7 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			CheckDisposed();
 
-			if (m_fdoCache == null || DesignMode)
+			if (m_cache == null || DesignMode)
 				return;
 
 			base.MakeRoot();
@@ -332,7 +333,7 @@ namespace SIL.FieldWorks.Common.Controls
 			ReadOnlyView = !fEditable;
 			if (!fEditable)
 				m_rootb.MaxParasToScan = 0;
-			m_xmlVc.Cache = m_fdoCache;
+			m_xmlVc.Cache = m_cache;
 			m_xmlVc.MainSeqFlid = m_mainFlid;
 
 			m_rootb.DataAccess = sda;
@@ -560,8 +561,8 @@ namespace SIL.FieldWorks.Common.Controls
 
 	class XmlSeqSelectionRestorer: SelectionRestorer
 	{
-		private FdoCache Cache { get; set; }
-		public XmlSeqSelectionRestorer(SimpleRootSite rootSite, FdoCache cache) : base(rootSite)
+		private LcmCache Cache { get; set; }
+		public XmlSeqSelectionRestorer(SimpleRootSite rootSite, LcmCache cache) : base(rootSite)
 		{
 			Cache = cache;
 		}

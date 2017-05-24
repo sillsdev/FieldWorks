@@ -11,7 +11,7 @@ using System.Xml.XPath;
 using NUnit.Framework;
 using SIL.FieldWorks.LexText.Controls;
 using Sfm2Xml;
-using SIL.CoreImpl.WritingSystems;
+using SIL.LCModel.Core.WritingSystems;
 
 namespace LexTextControlsTests
 {

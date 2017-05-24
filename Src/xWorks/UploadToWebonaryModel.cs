@@ -95,12 +95,12 @@ namespace SIL.FieldWorks.XWorks
 
 		private void LoadFromSettings()
 		{
-			if(!string.IsNullOrEmpty(CoreImpl.Properties.Settings.Default.WebonaryPass))
+			if(!string.IsNullOrEmpty(LCModel.Core.Properties.Settings.Default.WebonaryPass))
 			{
 				RememberPassword = true;
-				Password = DecryptPassword(CoreImpl.Properties.Settings.Default.WebonaryPass);
+				Password = DecryptPassword(LCModel.Core.Properties.Settings.Default.WebonaryPass);
 			}
-			UserName = CoreImpl.Properties.Settings.Default.WebonaryUser;
+			UserName = LCModel.Core.Properties.Settings.Default.WebonaryUser;
 			if(PropertyTable != null)
 			{
 				SiteName = PropertyTable.GetStringProperty(WebonarySite, null);
@@ -112,8 +112,8 @@ namespace SIL.FieldWorks.XWorks
 
 		internal void SaveToSettings()
 		{
-			CoreImpl.Properties.Settings.Default.WebonaryPass = RememberPassword ? EncryptPassword(Password) : null;
-			CoreImpl.Properties.Settings.Default.WebonaryUser = UserName;
+			LCModel.Core.Properties.Settings.Default.WebonaryPass = RememberPassword ? EncryptPassword(Password) : null;
+			LCModel.Core.Properties.Settings.Default.WebonaryUser = UserName;
 
 			PropertyTable.SetProperty(WebonarySite, SiteName, false);
 			PropertyTable.SetPropertyPersistence(WebonarySite, true);
@@ -131,7 +131,7 @@ namespace SIL.FieldWorks.XWorks
 				PropertyTable.SetPropertyPersistence(WebonaryPublication, true);
 			}
 			PropertyTable.SaveGlobalSettings();
-			CoreImpl.Properties.Settings.Default.Save();
+			LCModel.Core.Properties.Settings.Default.Save();
 		}
 
 		/// <summary>

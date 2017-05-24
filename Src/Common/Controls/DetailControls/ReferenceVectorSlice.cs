@@ -11,13 +11,13 @@
 //	for sequences. Also, adding the same element multiple times is not allowed for collections,
 //	but it is for sequences.
 // </remarks>
+
 using System;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel;
 using SIL.Utils;
-using SIL.FieldWorks.FDO;
 using XCore;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
@@ -49,7 +49,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <param name="cache">The cache.</param>
 		/// <param name="obj">The obj.</param>
 		/// <param name="flid">The flid.</param>
-		protected ReferenceVectorSlice(Control control, FdoCache cache, ICmObject obj, int flid)
+		protected ReferenceVectorSlice(Control control, LcmCache cache, ICmObject obj, int flid)
 			: base(control, cache, obj, flid)
 		{
 		}
@@ -60,7 +60,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <param name="cache">The cache.</param>
 		/// <param name="obj">The obj.</param>
 		/// <param name="flid">The flid.</param>
-		public ReferenceVectorSlice(FdoCache cache, ICmObject obj, int flid)
+		public ReferenceVectorSlice(LcmCache cache, ICmObject obj, int flid)
 			: this(new VectorReferenceLauncher(), cache, obj, flid)
 		{
 		}
@@ -307,7 +307,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 	}
 	public class ReferenceVectorDisabledSlice : ReferenceVectorSlice
 	{
-		public ReferenceVectorDisabledSlice(FdoCache cache, ICmObject obj, int flid)
+		public ReferenceVectorDisabledSlice(LcmCache cache, ICmObject obj, int flid)
 			: base(cache, obj, flid)
 		{
 		}

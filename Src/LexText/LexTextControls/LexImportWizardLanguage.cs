@@ -9,10 +9,10 @@ using System.ComponentModel;
 using System.Windows.Forms;
 
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.FwCoreDlgs;
 using SilEncConverters40;
-using SIL.CoreImpl.WritingSystems;
+using SIL.LCModel.Core.WritingSystems;
 // for the encoding converters
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
@@ -38,7 +38,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		private GroupBox groupBox1;
 		private IContainer components;
 
-		private FdoCache m_cache;
+		private LcmCache m_cache;
 		private IHelpTopicProvider m_helpTopicProvider;
 		private IApp m_app;
 		// class to contain 'ws' information to be put in combo boxes
@@ -131,7 +131,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="helpTopicProvider">The help topic provider.</param>
 		/// <param name="app">The app.</param>
 		/// ------------------------------------------------------------------------------------
-		public LexImportWizardLanguage(FdoCache cache, Hashtable existingLangDesc,
+		public LexImportWizardLanguage(LcmCache cache, Hashtable existingLangDesc,
 			IHelpTopicProvider helpTopicProvider, IApp app) : this()
 		{
 			m_existingLangDescriptors = existingLangDesc; //
@@ -149,7 +149,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="helpTopicProvider">The help topic provider.</param>
 		/// <param name="app">The app.</param>
 		/// ------------------------------------------------------------------------------------
-		public LexImportWizardLanguage(FdoCache cache, IHelpTopicProvider helpTopicProvider,
+		public LexImportWizardLanguage(LcmCache cache, IHelpTopicProvider helpTopicProvider,
 			IApp app) : this(cache, new Hashtable(), helpTopicProvider, app)
 		{
 			m_LinguaLinksImport = true;

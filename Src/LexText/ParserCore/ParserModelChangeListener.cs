@@ -3,8 +3,8 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using SIL.CoreImpl.KernelInterfaces;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
 using SIL.ObjectModel;
 
 namespace SIL.FieldWorks.WordWorks.Parser
@@ -15,7 +15,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 	/// <remarks>Is public for testing purposes</remarks>
 	public class ParserModelChangeListener : DisposableBase, IVwNotifyChange
 	{
-		private readonly FdoCache m_cache;
+		private readonly LcmCache m_cache;
 		private readonly object m_syncRoot = new object();
 		private bool m_changed;
 
@@ -24,7 +24,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		/// Initializes a new instance of the <see cref="ParserModelChangeListener"/> class.
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
-		public ParserModelChangeListener(FdoCache cache)
+		public ParserModelChangeListener(LcmCache cache)
 		{
 			if (cache == null) throw new ArgumentNullException("cache");
 

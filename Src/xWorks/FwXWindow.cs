@@ -13,19 +13,19 @@ using System.Text;
 using System.Windows.Forms;
 using L10NSharp;
 using Microsoft.Win32;
-using SIL.CoreImpl.WritingSystems;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.Framework;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.UIAdapters;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Application;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.FwCoreDlgControls;
 using StyleInfo = SIL.FieldWorks.FwCoreDlgControls.StyleInfo;
 using SIL.FieldWorks.FwCoreDlgs;
@@ -33,6 +33,7 @@ using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks.Archiving;
 using SIL.IO;
 using SIL.Reporting;
+using SIL.LCModel.Utils;
 using SIL.Utils;
 using XCore;
 
@@ -86,7 +87,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// The stylesheet used for all views in this window.
 		/// </summary>
-		protected FwStyleSheet m_StyleSheet;
+		protected LcmStyleSheet m_StyleSheet;
 
 		protected FwApp m_app; // protected so the test mock can get to it.
 		#endregion
@@ -105,7 +106,7 @@ namespace SIL.FieldWorks.XWorks
 			// what the string and List variables below attempt to handle.  See LT-6444.
 			FwXWindow activeWnd = ActiveForm as FwXWindow;
 
-			FdoCache activeCache = null;
+			LcmCache activeCache = null;
 			if (activeWnd != null)
 				activeCache = activeWnd.Cache;
 
@@ -211,7 +212,7 @@ namespace SIL.FieldWorks.XWorks
 						if (rootb != null)
 						{
 							IVwStylesheet vss = rootb.Stylesheet;
-							FwStyleSheet fss = vss as FwStyleSheet;
+							LcmStyleSheet fss = vss as LcmStyleSheet;
 							if (fss != null)
 							{
 								int hvo = fss.RootObjectHvo;
@@ -396,7 +397,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		protected override void DiscardProperties()
 		{
-			var tempDirectory = Path.Combine(Cache.ProjectId.ProjectFolder, FdoFileHelper.ksSortSequenceTempDir);
+			var tempDirectory = Path.Combine(Cache.ProjectId.ProjectFolder, LcmFileHelper.ksSortSequenceTempDir);
 			DirectoryUtilities.DeleteDirectoryRobust(tempDirectory);
 		}
 
@@ -452,7 +453,7 @@ namespace SIL.FieldWorks.XWorks
 				}
 			}
 
-			// NOTE: base.Dispose() may need the FdoCache which RemoveWindow() wants to delete.
+			// NOTE: base.Dispose() may need the LcmCache which RemoveWindow() wants to delete.
 			base.Dispose(disposing);
 
 			m_viewHelper = null;
@@ -511,7 +512,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="wndCopyFrom"></param>
 		/// <param name="cache"></param>
 		/// ------------------------------------------------------------------------------------
-		private void Init(Stream iconStream, Form wndCopyFrom, FdoCache cache)
+		private void Init(Stream iconStream, Form wndCopyFrom, LcmCache cache)
 		{
 			m_fWindowIsCopy = (wndCopyFrom != null);
 			InitMediatorValues(cache);
@@ -520,14 +521,14 @@ namespace SIL.FieldWorks.XWorks
 				Icon = new System.Drawing.Icon(iconStream);
 		}
 
-		protected void InitMediatorValues(FdoCache cache)
+		protected void InitMediatorValues(LcmCache cache)
 		{
 			m_propertyTable.LocalSettingsId = "local";
 			m_propertyTable.SetProperty("cache", cache, true);
 			m_propertyTable.SetPropertyPersistence("cache", false);
 			m_propertyTable.SetProperty("DocumentName", GetProjectName(cache), true);
 			m_propertyTable.SetPropertyPersistence("DocumentName", false);
-			var path = FdoFileHelper.GetConfigSettingsDir(cache.ProjectId.ProjectFolder);
+			var path = LcmFileHelper.GetConfigSettingsDir(cache.ProjectId.ProjectFolder);
 			Directory.CreateDirectory(path);
 			m_propertyTable.UserSettingDirectory = path;
 			Mediator.PathVariables["{DISTFILES}"] = FwDirectoryFinder.CodeDirectory;
@@ -538,7 +539,7 @@ namespace SIL.FieldWorks.XWorks
 		/// Gets the string that will go in the caption of the main window.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public string GetMainWindowCaption(FdoCache cache)
+		public string GetMainWindowCaption(LcmCache cache)
 		{
 			string sCaption = m_delegate.GetMainWindowCaption(cache);
 			return sCaption ?? Text;
@@ -552,7 +553,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		/// <param name="cache">The FDO cache</param>
 		/// ------------------------------------------------------------------------------------
-		public string GetProjectName(FdoCache cache)
+		public string GetProjectName(LcmCache cache)
 		{
 			return m_delegate.GetProjectName(cache);
 		}
@@ -1181,7 +1182,7 @@ namespace SIL.FieldWorks.XWorks
 
 		internal static void ShowUploadToWebonaryDialog(Mediator mediator, PropertyTable propertyTable)
 		{
-			var cache = propertyTable.GetValue<FdoCache>("cache");
+			var cache = propertyTable.GetValue<LcmCache>("cache");
 
 			var publications = cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Select(p => p.Name.BestAnalysisAlternative.Text).ToList();
 
@@ -1245,7 +1246,7 @@ namespace SIL.FieldWorks.XWorks
 			if (!SharedBackendServicesHelper.WarnOnOpeningSingleUserDialog(Cache))
 				return;
 
-			FdoCache cache = Cache;
+			LcmCache cache = Cache;
 			bool fDbRenamed = false;
 			string sProject = cache.ProjectId.Name;
 			string sLinkedFilesRootDir = cache.LangProject.LinkedFilesRootDir;
@@ -1963,7 +1964,7 @@ namespace SIL.FieldWorks.XWorks
 				dlg.AllowCancel = true;
 				dlg.Maximum = 200;
 				dlg.Message = filename;
-				dlg.RunTask(true, FdoCache.ImportTranslatedLists, filename, Cache);
+				dlg.RunTask(true, LcmCache.ImportTranslatedLists, filename, Cache);
 			}
 		}
 
@@ -2128,13 +2129,13 @@ namespace SIL.FieldWorks.XWorks
 		/// Gets or sets the data objects cache.
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
-		public FdoCache Cache
+		public LcmCache Cache
 		{
 			get
 			{
 				CheckDisposed();
 
-				return m_propertyTable.GetValue<FdoCache>("cache", null);
+				return m_propertyTable.GetValue<LcmCache>("cache", null);
 			}
 		}
 
@@ -2270,10 +2271,10 @@ namespace SIL.FieldWorks.XWorks
 		/// ------------------------------------------------------------------------------------
 		private void ResyncRootboxStyles()
 		{
-			FwStyleSheet fssPrev = null;	// this is used to minimize reloads via Init().
+			LcmStyleSheet fssPrev = null;	// this is used to minimize reloads via Init().
 			foreach (IVwRootBox rootb in FindAllRootBoxes(this))
 			{
-				FwStyleSheet fss = rootb.Stylesheet as FwStyleSheet;
+				LcmStyleSheet fss = rootb.Stylesheet as LcmStyleSheet;
 				if (fss != null && fss.Cache != null)
 				{
 					Debug.Assert(fss.Cache == Cache);
@@ -2414,14 +2415,14 @@ namespace SIL.FieldWorks.XWorks
 		/// Gets the stylesheet being used by the active view, if possible, otherwise,
 		/// the window's own stylesheet.
 		/// </summary>
-		public FwStyleSheet ActiveStyleSheet
+		public LcmStyleSheet ActiveStyleSheet
 		{
 			get
 			{
 				var view = ActiveView as SimpleRootSite;
-				if (view == null || (view.StyleSheet as FwStyleSheet) == null)
+				if (view == null || (view.StyleSheet as LcmStyleSheet) == null)
 					return StyleSheet;
-				return (FwStyleSheet)view.StyleSheet;
+				return (LcmStyleSheet)view.StyleSheet;
 			}
 		}
 
@@ -2431,13 +2432,13 @@ namespace SIL.FieldWorks.XWorks
 		/// LexDb stylesheet. (not yet implemented)
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public virtual FwStyleSheet StyleSheet
+		public virtual LcmStyleSheet StyleSheet
 		{
 			get
 			{
 				CheckDisposed();
 
-				FdoCache cache = Cache;
+				LcmCache cache = Cache;
 				if (m_StyleSheet == null && cache != null)
 					ResyncStylesheet();
 				return m_StyleSheet;
@@ -2457,7 +2458,7 @@ namespace SIL.FieldWorks.XWorks
 		private void ResyncStylesheet()
 		{
 			if (m_StyleSheet == null)
-				m_StyleSheet = new FwStyleSheet();
+				m_StyleSheet = new LcmStyleSheet();
 			m_StyleSheet.Init(Cache, Cache.LanguageProject.Hvo, LangProjectTags.kflidStyles);
 			if (m_rebarAdapter is IUIAdapterForceRegenerate)
 				((IUIAdapterForceRegenerate)m_rebarAdapter).ForceFullRegenerate();

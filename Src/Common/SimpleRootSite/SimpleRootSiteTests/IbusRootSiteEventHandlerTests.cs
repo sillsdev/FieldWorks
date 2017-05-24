@@ -9,14 +9,14 @@ using System.Windows.Forms;
 using IBusDotNet;
 using NUnit.Framework;
 using Rhino.Mocks;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.WritingSystems;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.Keyboarding;
 using SIL.Windows.Forms.Keyboarding;
 using SIL.Windows.Forms.Keyboarding.Linux;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 using X11.XKlavier;
 
 namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests

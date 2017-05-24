@@ -9,7 +9,7 @@ using Rhino.Mocks;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using NUnit.Framework;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils.Attributes;
 

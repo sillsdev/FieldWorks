@@ -9,8 +9,8 @@ using System.Windows.Forms;
 using System.IO;
 using System.Text;
 using System.Xml;
-using SIL.FieldWorks.FDO;
-using SIL.Utils;
+using SIL.LCModel;
+using SIL.LCModel.Utils;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Controls;
 
@@ -23,7 +23,7 @@ namespace  SIL.FieldWorks.LexText.Controls.MGA
 	{
 		#region Member variables
 		private int m_panelBottomHeight = 0;
-		private readonly FdoCache m_cache;
+		private readonly LcmCache m_cache;
 		private readonly IHelpTopicProvider m_helpTopicProvider;
 		private Button buttonInsert;
 		private Button buttonRemove;
@@ -92,7 +92,7 @@ namespace  SIL.FieldWorks.LexText.Controls.MGA
 		/// <param name="helpTopicProvider"></param>
 		/// <param name="sMorphemeForm">The s morpheme form.</param>
 		/// ------------------------------------------------------------------------------------
-		public MGADialog(FdoCache cache, IHelpTopicProvider helpTopicProvider, string sMorphemeForm)
+		public MGADialog(LcmCache cache, IHelpTopicProvider helpTopicProvider, string sMorphemeForm)
 		{
 			m_cache = cache;
 			m_helpTopicProvider = helpTopicProvider;

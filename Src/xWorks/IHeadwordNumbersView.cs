@@ -4,8 +4,8 @@
 
 using System;
 using System.Collections.Generic;
-using SIL.CoreImpl.WritingSystems;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
 
 namespace SIL.FieldWorks.XWorks
 {

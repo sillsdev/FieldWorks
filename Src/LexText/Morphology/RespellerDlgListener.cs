@@ -7,18 +7,18 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Xml;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.WritingSystems;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.Filters;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 using XCore;
-using SIL.FieldWorks.FDO.Application;
+using SIL.LCModel.Application;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
 {
@@ -86,7 +86,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			{
 				// Check for a valid vernacular writing system.  (See LT-8892.)
 				var ws = TsStringUtils.GetWsAtOffset(tssWord, 0);
-				var cache = m_propertyTable.GetValue<FdoCache>("cache");
+				var cache = m_propertyTable.GetValue<LcmCache>("cache");
 				CoreWritingSystemDefinition wsObj = cache.ServiceLocator.WritingSystemManager.Get(ws);
 				if (cache.ServiceLocator.WritingSystems.VernacularWritingSystems.Contains(wsObj))
 					return tssWord;
@@ -169,7 +169,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			if (tss == null || string.IsNullOrEmpty(tss.Text))
 				return;
 
-			var cache = m_propertyTable.GetValue<FdoCache>("cache");
+			var cache = m_propertyTable.GetValue<LcmCache>("cache");
 			var wordform = WordformApplicationServices.GetWordformForForm(cache, tss);
 			using (var luh = new RecordClerk.ListUpdateHelper(m_propertyTable.GetValue<RecordClerk>("ActiveClerk")))
 			{
@@ -234,10 +234,10 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 	public class OccurrenceComparer : IComparer
 	{
-		private readonly FdoCache m_cache;
+		private readonly LcmCache m_cache;
 		private ISilDataAccessManaged m_sda;
 
-		public OccurrenceComparer(FdoCache cache, ISilDataAccessManaged sda)
+		public OccurrenceComparer(LcmCache cache, ISilDataAccessManaged sda)
 		{
 			m_cache = cache;
 			m_sda = sda;
@@ -321,8 +321,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 	public class OccurrenceSorter : RecordSorter
 	{
-		private FdoCache m_cache;
-		public override FdoCache Cache
+		private LcmCache m_cache;
+		public override LcmCache Cache
 		{
 			set
 			{
@@ -366,7 +366,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 	public class RespellerRecordList : RecordList
 	{
-		public override void Init(FdoCache cache, Mediator mediator, PropertyTable propertyTable, XmlNode recordListNode)
+		public override void Init(LcmCache cache, Mediator mediator, PropertyTable propertyTable, XmlNode recordListNode)
 		{
 			CheckDisposed();
 
@@ -423,7 +423,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		/// Find an extant wordform,
 		/// or create one (with nonundoable UOW), if one does not exist.
 		/// </summary>
-		public static IWfiWordform GetWordformForForm(FdoCache cache, ITsString form)
+		public static IWfiWordform GetWordformForForm(LcmCache cache, ITsString form)
 		{
 			var servLoc = cache.ServiceLocator;
 			var wordformRepos = servLoc.GetInstance<IWfiWordformRepository>();

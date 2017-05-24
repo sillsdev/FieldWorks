@@ -6,16 +6,16 @@ using System;
 using System.Diagnostics;
 using System.Windows.Forms;
 using System.Xml;
-using SIL.CoreImpl.Cellar;
-using SIL.CoreImpl.Text;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Application;
+using SIL.LCModel.Infrastructure;
 using SIL.Utils;
 using XCore;
 
@@ -42,7 +42,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <param name="flid">the empty object flid, which this slice is displaying.</param>
 		/// <param name="nodeObjProp">the 'obj' or 'seq' element that requested the ghost</param>
 		/// <param name="cache">The cache.</param>
-		public GhostStringSlice(ICmObject obj, int flid, XmlNode nodeObjProp, FdoCache cache)
+		public GhostStringSlice(ICmObject obj, int flid, XmlNode nodeObjProp, LcmCache cache)
 			: base(new GhostStringSliceView(obj.Hvo, flid, nodeObjProp, cache), obj, flid)
 		{
 			AccessibleName = "GhostStringSlice";
@@ -84,7 +84,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			GhostDaDecorator m_sda;
 			int m_wsToCreate; // default analysis or vernacular ws.
 
-			public GhostStringSliceView(int hvo, int flid, XmlNode nodeObjProp, FdoCache cache)
+			public GhostStringSliceView(int hvo, int flid, XmlNode nodeObjProp, LcmCache cache)
 			{
 				Cache = cache;
 				m_hvoObj = hvo;
@@ -195,12 +195,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			{
 				CheckDisposed();
 
-				if (m_fdoCache == null || DesignMode)
+				if (m_cache == null || DesignMode)
 					return;
 
 				base.MakeRoot();
 
-				m_sda = new GhostDaDecorator(m_fdoCache.DomainDataByFlid as ISilDataAccessManaged, TsStringUtils.EmptyString(m_wsToCreate), m_clidDst);
+				m_sda = new GhostDaDecorator(m_cache.DomainDataByFlid as ISilDataAccessManaged, TsStringUtils.EmptyString(m_wsToCreate), m_clidDst);
 
 				m_rootb.DataAccess = m_sda;
 
@@ -221,7 +221,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			{
 				try
 				{
-					var obj = m_fdoCache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(m_hvoObj);
+					var obj = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(m_hvoObj);
 					if (obj.IsValidObject)
 						base.OnKeyPress(e);
 					else
@@ -253,7 +253,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			{
 				// Figure whether owning atomic or owning collection or owning sequence. Throw if none.
 				// Unless we're making an unowned IText for a Notebook Record.
-				ISilDataAccess sdaReal = m_fdoCache.DomainDataByFlid;
+				ISilDataAccess sdaReal = m_cache.DomainDataByFlid;
 				IFwMetaDataCache mdc = sdaReal.MetaDataCache;
 				CellarPropertyType typeOwning =
 					(CellarPropertyType)(mdc.GetFieldType(m_flidEmptyProp) & (int)CellarPropertyTypeFilter.VirtualMask);
@@ -281,7 +281,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				string sRedo = String.Format(DetailControlsStrings.ksRedoCreate0, sClass);
 				int hvoNewObj = 0;
 				int hvoStringObj = 0;
-				UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(sUndo, sRedo, m_fdoCache.ServiceLocator.GetInstance<IActionHandler>(), () =>
+				UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(sUndo, sRedo, m_cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
 				{
 					// Special case: if we just created a Text in RnGenericRecord, and we want to show the contents
 					// of an StTxtPara, make the intermediate objects
@@ -320,7 +320,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					string ghostInitMethod = XmlUtils.GetOptionalAttributeValue(m_nodeObjProp, "ghostInitMethod");
 					if (ghostInitMethod != null)
 					{
-						var obj = m_fdoCache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoNewObj);
+						var obj = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoNewObj);
 						Type objType = obj.GetType();
 						System.Reflection.MethodInfo mi = objType.GetMethod(ghostInitMethod);
 						mi.Invoke(obj, null);
@@ -506,7 +506,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <summary>
 		/// The ghost slice displays just one virtual string; this decorator handles the fake flid.
 		/// </summary>
-		class GhostMdc : FdoMetaDataCacheDecoratorBase
+		class GhostMdc : LcmMetaDataCacheDecoratorBase
 		{
 			public GhostMdc(IFwMetaDataCacheManaged mdc)
 				: base(mdc)

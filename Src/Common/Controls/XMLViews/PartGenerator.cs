@@ -4,17 +4,16 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Xml;
-using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.Utils;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
+using SIL.LCModel.Utils;
+using SIL.LCModel;
 using XCore;
-using SIL.CoreImpl.Cellar;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -27,7 +26,7 @@ namespace SIL.FieldWorks.Common.Controls
 	public class PartGenerator
 	{
 		XmlVc m_vc;
-		readonly FdoCache m_cache;
+		readonly LcmCache m_cache;
 		/// <summary>
 		/// The metadata cache
 		/// </summary>
@@ -56,7 +55,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="input"></param>
 		/// <param name="vc">for parts/layouts</param>
 		/// <param name="rootClassId">class of root object from which column layouts can be computed</param>
-		public PartGenerator(FdoCache cache, XmlNode input, XmlVc vc, int rootClassId)
+		public PartGenerator(LcmCache cache, XmlNode input, XmlVc vc, int rootClassId)
 		{
 			m_cache = cache;
 			m_mdc = cache.MetaDataCacheAccessor;
@@ -90,7 +89,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// <param name="cache"></param>
 		/// <param name="input"></param>
-		public PartGenerator(FdoCache cache, XmlNode input)
+		public PartGenerator(LcmCache cache, XmlNode input)
 			: this(cache, input, null, 0)
 		{
 		}
@@ -471,7 +470,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="rootClassId">the class of the rootObject used to generate the part</param>
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
-		static internal List<XmlNode> GetGeneratedChildren(XmlNode root, FdoCache cache, XmlVc vc, int rootClassId)
+		static internal List<XmlNode> GetGeneratedChildren(XmlNode root, LcmCache cache, XmlVc vc, int rootClassId)
 		{
 			return GetGeneratedChildren(root, cache, null, vc, rootClassId);
 		}
@@ -486,7 +485,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="cache">The FDO cache.</param>
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
-		static public List<XmlNode> GetGeneratedChildren(XmlNode root, FdoCache cache)
+		static public List<XmlNode> GetGeneratedChildren(XmlNode root, LcmCache cache)
 		{
 			return GetGeneratedChildren(root, cache, null, 0);
 		}
@@ -502,7 +501,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// generated children which match another node in root in all key attributes are omitted.</param>
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
-		static public List<XmlNode> GetGeneratedChildren(XmlNode root, FdoCache cache, string[] keyAttrNames)
+		static public List<XmlNode> GetGeneratedChildren(XmlNode root, LcmCache cache, string[] keyAttrNames)
 		{
 			return GetGeneratedChildren(root, cache, keyAttrNames, null, 0);
 		}
@@ -517,7 +516,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="vc">for parts/layouts</param>
 		/// <param name="rootClassId">class of the root object used to compute parts/layouts</param>
 		/// <returns></returns>
-		static private List<XmlNode> GetGeneratedChildren(XmlNode root, FdoCache cache, string[] keyAttrNames,
+		static private List<XmlNode> GetGeneratedChildren(XmlNode root, LcmCache cache, string[] keyAttrNames,
 			XmlVc vc, int rootClassId)
 		{
 			List<XmlNode> result = new List<XmlNode>();
@@ -593,7 +592,7 @@ namespace SIL.FieldWorks.Common.Controls
 	/// </summary>
 	internal class ChildPartGenerator : PartGenerator
 	{
-		internal ChildPartGenerator(FdoCache cache, XmlNode input, XmlVc vc, int rootClassId)
+		internal ChildPartGenerator(LcmCache cache, XmlNode input, XmlVc vc, int rootClassId)
 			: base(cache, input, vc, rootClassId)
 		{
 		}
@@ -637,11 +636,11 @@ namespace SIL.FieldWorks.Common.Controls
 	///  </remarks>
 	internal class ObjectValuePartGenerator : PartGenerator
 	{
-		private IFdoOwningCollection<IFsFeatDefn> m_collectionToGeneratePartsFrom;
+		private ILcmOwningCollection<IFsFeatDefn> m_collectionToGeneratePartsFrom;
 		private IOrderedEnumerable<IFsFeatDefn> m_sortedCollection;
 		private string m_objectPath;
 
-		public ObjectValuePartGenerator(FdoCache cache, XmlNode input, XmlVc vc, int rootClassId)
+		public ObjectValuePartGenerator(LcmCache cache, XmlNode input, XmlVc vc, int rootClassId)
 			: base(cache, input, vc, rootClassId)
 		{
 			m_objectPath = XmlUtils.GetAttributeValue(input, "objectPath");

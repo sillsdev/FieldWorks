@@ -7,10 +7,10 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Xml;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.WritingSystems;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 using XCore;
 
 namespace SIL.FieldWorks.XWorks
@@ -143,7 +143,7 @@ namespace SIL.FieldWorks.XWorks
 			m_mediator = mediator;
 			m_propertyTable = propertyTable;
 			m_mediator.AddColleague(this);
-			FdoCache cache = m_propertyTable.GetValue<FdoCache>("cache");
+			LcmCache cache = m_propertyTable.GetValue<LcmCache>("cache");
 			//don't know just what good having this default is, but it's at least safer
 			m_propertyTable.SetProperty("WritingSystemHvo",
 				cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle.ToString(),
@@ -232,7 +232,7 @@ namespace SIL.FieldWorks.XWorks
 			CheckDisposed();
 
 			display.List.Clear();
-			FdoCache cache = m_propertyTable.GetValue<FdoCache>("cache");
+			LcmCache cache = m_propertyTable.GetValue<LcmCache>("cache");
 			string wsSet = parameter as string;
 			WritingSystemSet setToUse = m_currentSet;
 			if (wsSet != null)

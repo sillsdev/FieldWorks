@@ -6,9 +6,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.Utils;
 
 namespace XCore
 {

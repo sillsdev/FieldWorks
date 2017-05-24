@@ -12,9 +12,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml.Serialization;
-using SIL.CoreImpl.KernelInterfaces;
-using SIL.FieldWorks.FDO;
-using SIL.Utils;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.TE
 {
@@ -194,7 +194,7 @@ namespace SIL.FieldWorks.TE
 					CategoryPath, ws, false);
 			}
 
-			IFdoReferenceSequence<ICmPossibility> categoryList = ann.CategoriesRS;
+			ILcmReferenceSequence<ICmPossibility> categoryList = ann.CategoriesRS;
 			if (!categoryList.Contains(category))
 				categoryList.Add(category);
 		}

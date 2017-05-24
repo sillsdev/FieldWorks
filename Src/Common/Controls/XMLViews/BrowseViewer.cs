@@ -11,17 +11,18 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml;
-using SIL.CoreImpl.WritingSystems;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel;
+using SIL.LCModel.Application;
+using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.Resources;
 using SIL.Reporting;
+using SIL.LCModel.Utils;
 using SIL.Utils;
 using XCore;
 
@@ -186,7 +187,7 @@ namespace SIL.FieldWorks.Common.Controls
 		}
 
 		private readonly DisposableObjectsSet<RecordSorter> m_SortersToDispose = new DisposableObjectsSet<RecordSorter>();
-		private FdoCache m_cache;
+		private LcmCache m_cache;
 		private XmlNode m_nodeSpec;
 		/// <summary/>
 		protected DhListView m_lvHeader;
@@ -455,7 +456,7 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-		internal FdoCache Cache
+		internal LcmCache Cache
 		{
 			get
 			{
@@ -858,7 +859,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public BrowseViewer(XmlNode nodeSpec, int hvoRoot, int fakeFlid,
-			FdoCache cache, Mediator mediator, PropertyTable propertyTable, ISortItemProvider sortItemProvider, ISilDataAccessManaged sda)
+			LcmCache cache, Mediator mediator, PropertyTable propertyTable, ISortItemProvider sortItemProvider, ISilDataAccessManaged sda)
 		{
 			ContructorSurrogate(nodeSpec, hvoRoot, fakeFlid, cache, mediator, propertyTable, sortItemProvider, sda);
 		}
@@ -875,7 +876,7 @@ namespace SIL.FieldWorks.Common.Controls
 			= new Dictionary<Tuple<XmlNode, int>, Tuple<Dictionary<int, int>, bool>>();
 
 		internal void ContructorSurrogate(XmlNode nodeSpec, int hvoRoot, int fakeFlid,
-			FdoCache cache, Mediator mediator, PropertyTable propertyTable, ISortItemProvider sortItemProvider, ISilDataAccessManaged sda)
+			LcmCache cache, Mediator mediator, PropertyTable propertyTable, ISortItemProvider sortItemProvider, ISilDataAccessManaged sda)
 		{
 			CheckDisposed();
 
@@ -1143,7 +1144,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="propertyTable"></param>
 		/// <param name="cache"></param>
 		/// <returns></returns>
-		protected virtual BulkEditBar CreateBulkEditBar(BrowseViewer bv, XmlNode spec, Mediator mediator, PropertyTable propertyTable, FdoCache cache)
+		protected virtual BulkEditBar CreateBulkEditBar(BrowseViewer bv, XmlNode spec, Mediator mediator, PropertyTable propertyTable, LcmCache cache)
 		{
 			return new BulkEditBar(bv, spec, mediator, propertyTable, cache);
 		}
@@ -1900,7 +1901,7 @@ namespace SIL.FieldWorks.Common.Controls
 				(Vc as OneColumnXmlBrowseViewVc).SetupOneColumnSpec(bv, icolLvHeaderToAdd);
 			}
 
-			private OneColumnXmlBrowseView(XmlNode nodeSpec, int hvoRoot, int mainTag, FdoCache cache, Mediator mediator, PropertyTable propertyTable,
+			private OneColumnXmlBrowseView(XmlNode nodeSpec, int hvoRoot, int mainTag, LcmCache cache, Mediator mediator, PropertyTable propertyTable,
 				IVwStylesheet styleSheet, BrowseViewer bv)
 			{
 				base.Init(mediator, propertyTable, nodeSpec);
@@ -1921,7 +1922,7 @@ namespace SIL.FieldWorks.Common.Controls
 				ReadOnlyView = ReadOnlySelect;
 				Vc.Cache = Cache;
 				m_rootb.SetRootObject(m_hvoRoot, Vc, (int)XmlBrowseViewVc.kfragRoot, m_styleSheet);
-				m_rootb.DataAccess = m_fdoCache.MainCacheAccessor;
+				m_rootb.DataAccess = m_cache.MainCacheAccessor;
 				m_dxdLayoutWidth = kForceLayout; // Don't try to draw until we get OnSize and do layout.
 			}
 
@@ -4080,7 +4081,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public BrowseActiveViewer(XmlNode nodeSpec, int hvoRoot, int fakeFlid,
-								  FdoCache cache, Mediator mediator, PropertyTable propertyTable, ISortItemProvider sortItemProvider,
+								  LcmCache cache, Mediator mediator, PropertyTable propertyTable, ISortItemProvider sortItemProvider,
 								  ISilDataAccessManaged sda)
 			: base(nodeSpec, hvoRoot, fakeFlid, cache, mediator, propertyTable, sortItemProvider, sda)
 		{
@@ -4171,13 +4172,13 @@ namespace SIL.FieldWorks.Common.Controls
 			ICmObject obj = Cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoItem);
 			switch (obj.ClassID)
 			{
-				case FDO.PhRegularRuleTags.kClassId: // fall through
-				case FDO.PhMetathesisRuleTags.kClassId:
-					fDisabled = SpecialCache.get_BooleanProp(hvoItem, FDO.PhSegmentRuleTags.kflidDisabled);
+				case PhRegularRuleTags.kClassId: // fall through
+				case PhMetathesisRuleTags.kClassId:
+					fDisabled = SpecialCache.get_BooleanProp(hvoItem, PhSegmentRuleTags.kflidDisabled);
 					break;
-				case FDO.MoEndoCompoundTags.kClassId: // fall through
-				case FDO.MoExoCompoundTags.kClassId:
-					fDisabled = SpecialCache.get_BooleanProp(hvoItem, FDO.MoCompoundRuleTags.kflidDisabled);
+				case MoEndoCompoundTags.kClassId: // fall through
+				case MoExoCompoundTags.kClassId:
+					fDisabled = SpecialCache.get_BooleanProp(hvoItem, MoCompoundRuleTags.kflidDisabled);
 					break;
 			}
 			return (fDisabled ? 0 : 1);
@@ -4246,7 +4247,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="cvDel"></param>
 		public void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
 		{
-			if (tag == FDO.PhSegmentRuleTags.kflidDisabled || tag == FDO.MoCompoundRuleTags.kflidDisabled)
+			if (tag == PhSegmentRuleTags.kflidDisabled || tag == MoCompoundRuleTags.kflidDisabled)
 			{
 				int currentValue = GetCheckState(hvo);
 				SetItemCheckedState(hvo, currentValue, false);

@@ -10,10 +10,10 @@ using System.Linq;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO.DomainServices.BackupRestore;
+using SIL.LCModel.DomainServices.BackupRestore;
 using SIL.FieldWorks.Resources;
 using SIL.Reporting;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 {

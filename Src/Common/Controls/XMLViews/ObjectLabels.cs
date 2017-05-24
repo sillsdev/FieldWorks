@@ -12,10 +12,10 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.KernelInterfaces;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -37,7 +37,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>
 		///
 		/// </summary>
-		protected FdoCache m_cache;
+		protected LcmCache m_cache;
 
 		/// <summary>
 		/// controls which property of the object will be used for the name to display.
@@ -62,7 +62,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="displayNameProperty">The display name property.</param>
 		/// <param name="displayWs">The display ws.</param>
 		/// <returns></returns>
-		public static ObjectLabel CreateObjectLabelOnly(FdoCache cache, ICmObject obj, string displayNameProperty, string displayWs)
+		public static ObjectLabel CreateObjectLabelOnly(LcmCache cache, ICmObject obj, string displayNameProperty, string displayWs)
 		{
 			return obj == null ? new NullObjectLabel(cache) : new ObjectLabel(cache, obj, displayNameProperty, displayWs);
 		}
@@ -71,7 +71,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// a  factory method for creating the correct type of object label, depending on the
 		/// class of the object
 		/// </summary>
-		public static ObjectLabel CreateObjectLabel(FdoCache cache, ICmObject obj, string displayNameProperty, string displayWs)
+		public static ObjectLabel CreateObjectLabel(LcmCache cache, ICmObject obj, string displayNameProperty, string displayWs)
 		{
 			if (obj == null)
 				return new NullObjectLabel(cache);
@@ -92,7 +92,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="obj">The obj.</param>
 		/// <param name="displayNameProperty">The display name property.</param>
 		/// <returns></returns>
-		public static ObjectLabel CreateObjectLabel(FdoCache cache, ICmObject obj, string displayNameProperty)
+		public static ObjectLabel CreateObjectLabel(LcmCache cache, ICmObject obj, string displayNameProperty)
 		{
 			return CreateObjectLabel(cache, obj, displayNameProperty, null);
 		}
@@ -108,7 +108,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <returns>
 		/// A list of ObjectLabel structs.
 		/// </returns>
-		public static IEnumerable<ObjectLabel> CreateObjectLabels(FdoCache cache, IEnumerable<ICmObject> objs,
+		public static IEnumerable<ObjectLabel> CreateObjectLabels(LcmCache cache, IEnumerable<ICmObject> objs,
 			string displayNameProperty, string displayWs, bool fIncludeNone)
 		{
 			foreach(var obj in objs)
@@ -129,7 +129,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="displayNameProperty">The display name property.</param>
 		/// <param name="displayWs">The display ws.</param>
 		/// <returns>A list of ObjectLabel structs.</returns>
-		public static IEnumerable<ObjectLabel> CreateObjectLabels(FdoCache cache, IEnumerable<ICmObject> objs,
+		public static IEnumerable<ObjectLabel> CreateObjectLabels(LcmCache cache, IEnumerable<ICmObject> objs,
 			string displayNameProperty, string displayWs)
 		{
 			return CreateObjectLabels(cache, objs, displayNameProperty, displayWs, false);
@@ -145,7 +145,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <returns>
 		/// A list of ObjectLabel structs.
 		/// </returns>
-		public static IEnumerable<ObjectLabel> CreateObjectLabels(FdoCache cache, IEnumerable<ICmObject> objs,
+		public static IEnumerable<ObjectLabel> CreateObjectLabels(LcmCache cache, IEnumerable<ICmObject> objs,
 			string displayNameProperty)
 		{
 			return CreateObjectLabels(cache, objs, displayNameProperty, "best analorvern");
@@ -160,7 +160,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <returns>
 		/// A list of ObjectLabel structs.
 		/// </returns>
-		public static IEnumerable<ObjectLabel> CreateObjectLabels(FdoCache cache, IEnumerable<ICmObject> objs)
+		public static IEnumerable<ObjectLabel> CreateObjectLabels(LcmCache cache, IEnumerable<ICmObject> objs)
 		{
 			return CreateObjectLabels(cache, objs, null, null);
 		}
@@ -171,7 +171,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="cache">The cache.</param>
 		/// <param name="obj">The obj.</param>
 		/// <param name="displayNameProperty">the property to use to get the label.</param>
-		protected ObjectLabel(FdoCache cache, ICmObject obj, string displayNameProperty)
+		protected ObjectLabel(LcmCache cache, ICmObject obj, string displayNameProperty)
 			: this(cache, obj, displayNameProperty, "analysis")
 		{
 		}
@@ -183,7 +183,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="obj">The obj.</param>
 		/// <param name="displayNameProperty">the property to use to get the label.</param>
 		/// <param name="sDisplayWs">the ws to use to get the label.</param>
-		protected ObjectLabel(FdoCache cache, ICmObject obj, string displayNameProperty, string sDisplayWs)
+		protected ObjectLabel(LcmCache cache, ICmObject obj, string displayNameProperty, string sDisplayWs)
 		{
 			m_cache = cache;
 			m_displayNameProperty = displayNameProperty;
@@ -213,7 +213,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// Gets the cache.
 		/// </summary>
 		/// <value>The cache.</value>
-		public FdoCache Cache
+		public LcmCache Cache
 		{
 			get
 			{
@@ -384,7 +384,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public NullObjectLabel(FdoCache cache)
+		public NullObjectLabel(LcmCache cache)
 			: base(cache, null, null)
 		{
 		}
@@ -434,7 +434,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="pos">The possibility.</param>
 		/// <param name="displayNameProperty">property name to display</param>
 		/// <param name="displayWs">writing system to display</param>
-		public CmPossibilityLabel(FdoCache cache, ICmPossibility pos, string displayNameProperty,
+		public CmPossibilityLabel(LcmCache cache, ICmPossibility pos, string displayNameProperty,
 			string displayWs)
 			: base(cache, pos, displayNameProperty, displayWs)
 		{
@@ -445,7 +445,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="cache">FDO Cache object.</param>
 		/// <param name="pos">The possibility.</param>
 		/// <param name="displayNameProperty">property name to display</param>
-		public CmPossibilityLabel(FdoCache cache, ICmPossibility pos, string displayNameProperty)
+		public CmPossibilityLabel(LcmCache cache, ICmPossibility pos, string displayNameProperty)
 			: base(cache, pos, displayNameProperty)
 		{
 		}
@@ -610,7 +610,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="inflClass">The inflection class.</param>
 		/// <param name="displayNameProperty">property name to display</param>
 		/// <param name="displayWs">writing system to display</param>
-		public MoInflClassLabel(FdoCache cache, IMoInflClass inflClass, string displayNameProperty,
+		public MoInflClassLabel(LcmCache cache, IMoInflClass inflClass, string displayNameProperty,
 			string displayWs)
 			: base(cache, inflClass, displayNameProperty, displayWs)
 		{
@@ -621,7 +621,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="cache">FDO Cache object.</param>
 		/// <param name="inflClass">The inflection class.</param>
 		/// <param name="displayNameProperty">property name to display</param>
-		public MoInflClassLabel(FdoCache cache, IMoInflClass inflClass, string displayNameProperty)
+		public MoInflClassLabel(LcmCache cache, IMoInflClass inflClass, string displayNameProperty)
 			: base(cache, inflClass, displayNameProperty)
 		{
 		}

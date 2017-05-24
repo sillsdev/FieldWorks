@@ -3,10 +3,9 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using NUnit.Framework;
-using SIL.CoreImpl.Text;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.FDOTests;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel;
+using SIL.LCModel.Application;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {

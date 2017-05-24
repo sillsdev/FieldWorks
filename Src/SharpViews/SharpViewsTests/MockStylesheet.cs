@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 
 namespace SIL.FieldWorks.SharpViews.SharpViewsTests
 {

@@ -9,8 +9,8 @@ using System.Linq;
 using System.Text;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.FieldWorks.FDO;
-using SIL.Utils;
+using SIL.LCModel;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.SharpViews.SharpViewsTests
 {

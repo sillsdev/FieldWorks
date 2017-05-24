@@ -6,7 +6,7 @@ using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows.Forms;
-using SIL.CoreImpl.Scripture;
+using SIL.LCModel.Core.Scripture;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 

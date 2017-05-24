@@ -39,9 +39,9 @@
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\Output\Debug\BasicUtils.dll</HintPath>
 	</Reference>
-	<Reference Include="FDO, Version=5.5.0.25584, Culture=neutral, processorArchitecture=MSIL">
+	<Reference Include="SIL.LCModel, Version=9.0.0.0, Culture=neutral, processorArchitecture=x86">
 	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\Output\Debug\FDO.dll</HintPath>
+	  <HintPath>..\..\Output\Debug\SIL.LCModel.dll</HintPath>
 	</Reference>
 	<Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>

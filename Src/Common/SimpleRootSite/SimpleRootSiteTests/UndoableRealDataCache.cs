@@ -4,11 +4,11 @@
 
 using System;
 using System.Collections.Generic;
-using SIL.CoreImpl.Cellar;
+using SIL.LCModel.Core.Cellar;
 using SIL.FieldWorks.CacheLight;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 {

@@ -141,11 +141,10 @@ DistFiles/Templates/SemDom.xml
 Src/Kernel/FwKernelTlb.idl
 Src/Kernel/*.idh
 
-Lib/src/FDO/artifacts
-Lib/src/FDO/src/CoreImpl/KernelInterfaces/Kernel.cs
-Lib/src/FDO/src/FDO/Infrastructure/Impl/Generated*.cs
-Lib/src/FDO/src/FDO/Generated*.cs
-Lib/src/FDO/src/FDO/DomainImpl/FDOGenerated.cs
-Lib/src/FDO/src/FDO/DomainImpl/Generated*.cs
-Lib/src/FDO/src/FDO/IOC/Generated*.cs
-!Lib/src/FDO/FDO.sln
+Lib/src/liblcm/artifacts
+Lib/src/liblcm/src/SIL.LCModel.Core/KernelInterfaces/Kernel.cs
+Lib/src/liblcm/src/SIL.LCModel/Infrastructure/Impl/Generated*.cs
+Lib/src/liblcm/src/SIL.LCModel/Generated*.cs
+Lib/src/liblcm/src/SIL.LCModel/DomainImpl/Generated*.cs
+Lib/src/liblcm/src/SIL.LCModel/IOC/Generated*.cs
+!Lib/src/liblcm/LCM.sln

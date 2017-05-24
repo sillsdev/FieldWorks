@@ -15,11 +15,11 @@ using System.Windows.Forms;
 using System.Drawing;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.WritingSystems;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Core.KernelInterfaces;
 
 namespace SIL.FieldWorks.Common.Widgets
 {
@@ -31,7 +31,7 @@ namespace SIL.FieldWorks.Common.Widgets
 	public class FwTextBoxColumn : DataGridViewColumn
 	{
 		/// <summary></summary>
-		protected FdoCache m_cache;
+		protected LcmCache m_cache;
 		/// <summary></summary>
 		protected FwTextBoxControl m_textBoxControl;
 		/// <summary></summary>
@@ -39,7 +39,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// <summary></summary>
 		protected Dictionary<string, Font> m_fontCache = new Dictionary<string,Font>();
 		/// <summary></summary>
-		private FwStyleSheet m_styleSheet;
+		private LcmStyleSheet m_styleSheet;
 		private bool m_DisposeCellTemplate;
 
 		private float m_szOfFontAt100Pcnt = 10f;
@@ -63,7 +63,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// </summary>
 		/// <param name="cache">The cache.</param>
 		/// ------------------------------------------------------------------------------------
-		public FwTextBoxColumn(FdoCache cache) : base(new FwTextBoxCell())
+		public FwTextBoxColumn(LcmCache cache) : base(new FwTextBoxCell())
 		{
 			m_DisposeCellTemplate = true;
 			m_cache = cache;
@@ -74,7 +74,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// Initializes a new instance of the <see cref="FwTextBoxColumn"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public FwTextBoxColumn(FdoCache cache, bool rowsAreMultiLing) : this(cache)
+		public FwTextBoxColumn(LcmCache cache, bool rowsAreMultiLing) : this(cache)
 		{
 			m_rowsAreMultiLing = rowsAreMultiLing;
 		}
@@ -170,7 +170,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// ------------------------------------------------------------------------------------
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public FdoCache Cache
+		public LcmCache Cache
 		{
 			get { return m_cache; }
 			set
@@ -212,7 +212,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			get { return m_styleSheet; }
 			set
 			{
-				m_styleSheet = value as FwStyleSheet;
+				m_styleSheet = value as LcmStyleSheet;
 				if (m_textBoxControl != null)
 					m_textBoxControl.StyleSheet = m_styleSheet;
 			}

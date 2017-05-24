@@ -7,7 +7,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -16,20 +15,20 @@ using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using NUnit.Framework;
-using SIL.CoreImpl.Cellar;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.WritingSystems;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.FDOTests;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Application;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.Lift.Migration;
 using SIL.Lift.Parsing;
 using SIL.TestUtilities;
+using SIL.LCModel.Utils;
 using SIL.Utils;
 using SIL.WritingSystems;
 
@@ -62,7 +61,7 @@ namespace LexTextControlsTests
 					Create();
 			const string mockProjectName = "xxyyzProjectFolderForLIFTImport";
 			MockProjectFolder = Path.Combine(Path.GetTempPath(), mockProjectName);
-			MockLinkedFilesFolder = Path.Combine(MockProjectFolder, FdoFileHelper.ksLinkedFilesDir);
+			MockLinkedFilesFolder = Path.Combine(MockProjectFolder, LcmFileHelper.ksLinkedFilesDir);
 			if (Directory.Exists(MockLinkedFilesFolder))
 				Directory.Delete(MockLinkedFilesFolder, true);
 			Directory.CreateDirectory(MockLinkedFilesFolder);
@@ -343,18 +342,18 @@ namespace LexTextControlsTests
 			}
 
 			Assert.That(sense0.PicturesOS.Count, Is.EqualTo(2));
-			Assert.That(sense0.PicturesOS[0].PictureFileRA.InternalPath, Is.EqualTo(Path.Combine(FdoFileHelper.ksPicturesDir, "Desert.jpg")));
-			Assert.That(sense0.PicturesOS[1].PictureFileRA.InternalPath, Is.EqualTo(Path.Combine(FdoFileHelper.ksPicturesDir, myPicRelativePath)));
-			VerifyLinkedFileExists(FdoFileHelper.ksPicturesDir, "Desert.jpg");
-			VerifyLinkedFileExists(FdoFileHelper.ksPicturesDir, myPicRelativePath);
+			Assert.That(sense0.PicturesOS[0].PictureFileRA.InternalPath, Is.EqualTo(Path.Combine(LcmFileHelper.ksPicturesDir, "Desert.jpg")));
+			Assert.That(sense0.PicturesOS[1].PictureFileRA.InternalPath, Is.EqualTo(Path.Combine(LcmFileHelper.ksPicturesDir, myPicRelativePath)));
+			VerifyLinkedFileExists(LcmFileHelper.ksPicturesDir, "Desert.jpg");
+			VerifyLinkedFileExists(LcmFileHelper.ksPicturesDir, myPicRelativePath);
 
 			Assert.That(entry.PronunciationsOS.Count, Is.EqualTo(1));
 			Assert.That(entry.PronunciationsOS[0].MediaFilesOS[0].MediaFileRA.InternalPath,
-				Is.EqualTo(Path.Combine(FdoFileHelper.ksMediaDir, "Sleep Away.mp3")));
-			VerifyLinkedFileExists(FdoFileHelper.ksMediaDir, "Sleep Away.mp3");
-			VerifyLinkedFileExists(FdoFileHelper.ksMediaDir, "hombre634407358826681759.wav");
-			VerifyLinkedFileExists(FdoFileHelper.ksMediaDir, "male adult634407358826681760.wav");
-			VerifyLinkedFileExists(FdoFileHelper.ksOtherLinkedFilesDir, "SomeFile.txt");
+				Is.EqualTo(Path.Combine(LcmFileHelper.ksMediaDir, "Sleep Away.mp3")));
+			VerifyLinkedFileExists(LcmFileHelper.ksMediaDir, "Sleep Away.mp3");
+			VerifyLinkedFileExists(LcmFileHelper.ksMediaDir, "hombre634407358826681759.wav");
+			VerifyLinkedFileExists(LcmFileHelper.ksMediaDir, "male adult634407358826681760.wav");
+			VerifyLinkedFileExists(LcmFileHelper.ksOtherLinkedFilesDir, "SomeFile.txt");
 
 			Assert.IsTrue(repoEntry.TryGetObject(new Guid("766aaee2-34b6-4e28-a883-5c2186125a2f"), out entry));
 			Assert.AreEqual(1, entry.SensesOS.Count);
@@ -2412,7 +2411,7 @@ namespace LexTextControlsTests
 			VerifyCustomField(entry, customData, m_customFieldEntryIds["CustomFld CustomList2"]);
 		}
 
-		public static String GetPossibilityBestAlternative(int possibilityHvo, FdoCache cache)
+		public static String GetPossibilityBestAlternative(int possibilityHvo, LcmCache cache)
 		{
 			ITsMultiString tsm =
 				cache.DomainDataByFlid.get_MultiStringProp(possibilityHvo, CmPossibilityTags.kflidName);

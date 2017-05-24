@@ -5,10 +5,9 @@
 using System.Collections.Generic;
 using NUnit.Framework;
 using Rhino.Mocks;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using System.Diagnostics;
-using SIL.CoreImpl.Scripture;
-using SIL.FieldWorks.FDO.FDOTests;
+using SIL.LCModel.Core.Scripture;
 
 namespace SIL.FieldWorks.TE
 {
@@ -18,7 +17,7 @@ namespace SIL.FieldWorks.TE
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
-	public class DataLossDiffTests : ScrInMemoryFdoTestBase
+	public class DataLossDiffTests : ScrInMemoryLcmTestBase
 	{
 		#region Member variables
 		private IScrBook m_genesis = null;

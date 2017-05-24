@@ -3,11 +3,10 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using NUnit.Framework;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.FDOTests;
-using SIL.Utils;
+using SIL.LCModel;
+using SIL.LCModel.Utils;
 using System.Windows.Forms;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 
 namespace SIL.FieldWorks.FwCoreDlgControls
 {

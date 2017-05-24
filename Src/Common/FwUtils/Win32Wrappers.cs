@@ -13,7 +13,7 @@ using System.Text;
 using System.Windows.Forms.VisualStyles;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 
 #if __MonoCS__

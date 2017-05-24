@@ -11,17 +11,17 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Serialization;
 using Sfm2Xml;
-using SIL.CoreImpl.WritingSystems;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 using XCore;
 
 namespace SIL.FieldWorks.IText
@@ -29,7 +29,7 @@ namespace SIL.FieldWorks.IText
 	public partial class InterlinearSfmImportWizard : WizardDialog, IFwExtension
 	{
 //		private const string kSfmImportSettingsRegistryKeyName = "SFM import settings";
-		protected FdoCache m_cache;
+		protected LcmCache m_cache;
 		private Mediator m_mediator;
 		private PropertyTable m_propertyTable;
 		private IHelpTopicProvider m_helpTopicProvider;
@@ -54,7 +54,7 @@ namespace SIL.FieldWorks.IText
 			Text = String.Format(Text, ITextStrings.ksInterlinearTexts);
 		}
 
-		public void Init(FdoCache cache, Mediator mediator, PropertyTable propertyTable)
+		public void Init(LcmCache cache, Mediator mediator, PropertyTable propertyTable)
 		{
 			m_cache = cache;
 			m_mediator = mediator;
@@ -595,7 +595,7 @@ namespace SIL.FieldWorks.IText
 					clerk.JumpToRecord(m_firstNewText.ContentsOA.Hvo);
 			}
 		}
-		FDO.IText m_firstNewText;
+		LCModel.IText m_firstNewText;
 		private List<InterlinearMapping> m_oldMappings;
 
 		/// <summary>

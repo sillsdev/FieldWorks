@@ -101,9 +101,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Downloads\SIL.Core.dll</HintPath>
     </Reference>
-    <Reference Include="SilUtils, Version=9.0.0.25850, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="SIL.LCModel.Utils, Version=9.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\SilUtils.dll</HintPath>
+      <HintPath>..\..\..\Output\Debug\SIL.LCModel.Utils.dll</HintPath>
     </Reference>
     <Reference Include="System.Core" />
     <Reference Include="System">

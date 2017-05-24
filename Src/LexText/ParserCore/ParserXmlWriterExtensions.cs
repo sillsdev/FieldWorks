@@ -9,10 +9,10 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Xml;
-using SIL.CoreImpl.WritingSystems;
-using SIL.CoreImpl.KernelInterfaces;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 
 namespace SIL.FieldWorks.WordWorks.Parser
 {
@@ -24,7 +24,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			return Tuple.Create(int.Parse(msaHvoParts[0]), msaHvoParts.Length == 2 ? int.Parse(msaHvoParts[1]) : 0);
 		}
 
-		public static void WriteMsaElement(this XmlWriter writer, FdoCache cache, string formID, string msaID, string type, string wordType)
+		public static void WriteMsaElement(this XmlWriter writer, LcmCache cache, string formID, string msaID, string type, string wordType)
 		{
 			// Irregulary inflected forms can have a combination MSA hvo: the LexEntry hvo, a period, and an index to the LexEntryRef
 			Tuple<int, int> msaTuple = ProcessMsaHvo(msaID);
@@ -118,7 +118,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			writer.WriteEndElement(); //stemMsa
 		}
 
-		private static void WriteInflectionClasses(XmlWriter writer, FdoCache fdoCache, int allomorphHvo)
+		private static void WriteInflectionClasses(XmlWriter writer, LcmCache fdoCache, int allomorphHvo)
 		{
 			if (allomorphHvo <= 0)
 				return;
@@ -241,7 +241,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			writer.WriteEndElement(); //sFsName
 		}
 
-		private static void WriteProductivityRestrictionNodes(XmlWriter writer, IFdoReferenceCollection<ICmPossibility> prodRests, string sElementName)
+		private static void WriteProductivityRestrictionNodes(XmlWriter writer, ILcmReferenceCollection<ICmPossibility> prodRests, string sElementName)
 		{
 			if (prodRests == null || prodRests.Count < 1)
 				return;
@@ -254,7 +254,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			}
 		}
 
-		private static void WriteFromPosNodes(XmlWriter writer, IFdoReferenceCollection<IPartOfSpeech> fromPoSes, string sElementName)
+		private static void WriteFromPosNodes(XmlWriter writer, ILcmReferenceCollection<IPartOfSpeech> fromPoSes, string sElementName)
 		{
 			if (fromPoSes == null || fromPoSes.Count < 1)
 				return;
@@ -302,7 +302,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			writer.WriteAttributeString("slotOptional", sSlotOptional);
 		}
 
-		public static void WriteMorphInfoElements(this XmlWriter writer, FdoCache cache, string formID, string msaID, string wordType, string props)
+		public static void WriteMorphInfoElements(this XmlWriter writer, LcmCache cache, string formID, string msaID, string wordType, string props)
 		{
 			ICmObject obj = cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(int.Parse(formID, CultureInfo.InvariantCulture));
 			var form = obj as IMoForm;
@@ -427,7 +427,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			}
 		}
 
-		private static void WriteStemNameAffixElement(XmlWriter writer, FdoCache cache, string props)
+		private static void WriteStemNameAffixElement(XmlWriter writer, LcmCache cache, string props)
 		{
 			if (string.IsNullOrEmpty(props))
 				return;
@@ -489,7 +489,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			}
 		}
 
-		private static void WriteNotAffixAlloFeatsElement(XmlWriter writer, FdoCache cache, string propsText)
+		private static void WriteNotAffixAlloFeatsElement(XmlWriter writer, LcmCache cache, string propsText)
 		{
 			if (propsText != null)
 			{
@@ -528,7 +528,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			}
 		}
 
-		private static void WriteFeatureStructureFromHvoString(XmlWriter writer, FdoCache cache, string sFsHvo)
+		private static void WriteFeatureStructureFromHvoString(XmlWriter writer, LcmCache cache, string sFsHvo)
 		{
 			int fsHvo = int.Parse(sFsHvo, CultureInfo.InvariantCulture);
 			var fsFeatStruc = (IFsFeatStruc) cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(fsHvo);
@@ -548,7 +548,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				writer.WriteAttributeString(sCat, "0");
 		}
 
-		public static void WriteInflClassesElement(this XmlWriter writer, FdoCache cache, string formID)
+		public static void WriteInflClassesElement(this XmlWriter writer, LcmCache cache, string formID)
 		{
 			int hvo = int.Parse(formID, CultureInfo.InvariantCulture);
 			ICmObject obj = cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo);

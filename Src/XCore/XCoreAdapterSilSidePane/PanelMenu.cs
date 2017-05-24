@@ -6,7 +6,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using System.Drawing;
-using SIL.Utils; // for ImageCollection
+using SIL.LCModel.Utils; // for ImageCollection
 
 
 namespace XCore

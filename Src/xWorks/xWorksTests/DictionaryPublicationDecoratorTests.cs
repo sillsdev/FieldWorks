@@ -5,14 +5,14 @@
 using System.IO;
 using System.Linq;
 using NUnit.Framework;
-using SIL.CoreImpl.Text;
+using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.Controls;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.Utils;
+using SIL.LCModel;
+using SIL.LCModel.Application;
+using SIL.LCModel.Infrastructure;
+using SIL.LCModel.Utils;
 using XCore;
 
 // ReSharper disable InconsistentNaming

@@ -6,8 +6,8 @@
 // Responsibility: AndyBlack
 using System.Xml;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
+using SIL.LCModel;
+using SIL.LCModel.Application;
 using XCore;
 using System.Diagnostics.CodeAnalysis;
 
@@ -51,7 +51,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		}
 
 	#endregion
-		protected override BrowseViewer CreateBrowseViewer(XmlNode nodeSpec, int hvoRoot, int fakeFlid, FdoCache cache,
+		protected override BrowseViewer CreateBrowseViewer(XmlNode nodeSpec, int hvoRoot, int fakeFlid, LcmCache cache,
 			Mediator mediator, PropertyTable propertyTable,
 			ISortItemProvider sortItemProvider, ISilDataAccessManaged sda)
 		{

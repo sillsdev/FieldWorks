@@ -136,7 +136,7 @@
 		<ContinueIfOutOfDate Condition="!$(buildtlb)">false</ContinueIfOutOfDate>
 		<ContinueIfOutOfDate Condition="$(buildtlb) Or '$(OS)'!='Unix'">true</ContinueIfOutOfDate>
 	</PropertyGroup>
-	<Target Name="ensureTLBsUpToDate" DependsOnTargets="BuildFdo">
+	<Target Name="ensureTLBsUpToDate" DependsOnTargets="BuildLcm">
 		<MakeDir Directories="$(dir-fwoutput)"/><!-- just in case... -->
 		<CatenateFiles SourceFiles="@(IdhFiles)" TargetFile="$(dir-fwoutput)/idhfiles" UseUnixNewlines="true"/>
 		<Md5Checksum SourceFile="$(dir-fwoutput)/idhfiles"/>

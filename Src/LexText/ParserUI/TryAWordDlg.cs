@@ -17,10 +17,10 @@ using System.Windows.Forms;
 using System.Xml.Linq;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO;
-using SIL.Utils;
+using SIL.LCModel;
 using XCore;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -34,7 +34,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		private const string HelpTopicID = "khtpTryAWord";
 
 		#region Data members
-		private FdoCache m_cache;
+		private LcmCache m_cache;
 		private ParserListener m_parserListener;
 		private PersistenceProvider m_persistProvider;
 		private readonly HelpProvider m_helpProvider;
@@ -89,7 +89,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			Mediator = mediator;
 			PropTable = propertyTable;
 			m_persistProvider = new PersistenceProvider(Mediator, propertyTable, PersistProviderID);
-			m_cache = PropTable.GetValue<FdoCache>("cache");
+			m_cache = PropTable.GetValue<LcmCache>("cache");
 			m_parserListener = parserListener;
 
 			Text = m_cache.ProjectId.UiName + " - " + Text;

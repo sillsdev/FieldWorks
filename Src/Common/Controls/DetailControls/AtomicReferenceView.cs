@@ -14,13 +14,13 @@ using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.Xml;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
-using SIL.Utils;
+using SIL.LCModel;
+using SIL.LCModel.Utils;
 using XCore;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
@@ -76,7 +76,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			m_displayNameProperty = null;
 		}
 
-		public void Initialize(ICmObject rootObj, int rootFlid, string rootFieldName, FdoCache cache, string displayNameProperty,
+		public void Initialize(ICmObject rootObj, int rootFlid, string rootFieldName, LcmCache cache, string displayNameProperty,
 			Mediator mediator, string displayWs)
 		{
 			CheckDisposed();
@@ -159,7 +159,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			CheckDisposed();
 			base.MakeRoot();
 
-			if (m_fdoCache == null || DesignMode)
+			if (m_cache == null || DesignMode)
 				return;
 
 			SetReferenceVc();
@@ -169,13 +169,13 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		protected virtual ISilDataAccess GetDataAccess()
 		{
-			return m_fdoCache.DomainDataByFlid;
+			return m_cache.DomainDataByFlid;
 		}
 
 		public virtual void SetReferenceVc()
 		{
 			CheckDisposed();
-			m_atomicReferenceVc = new AtomicReferenceVc(m_fdoCache, m_rootFlid, m_displayNameProperty);
+			m_atomicReferenceVc = new AtomicReferenceVc(m_cache, m_rootFlid, m_displayNameProperty);
 		}
 
 		#endregion // RootSite required methods
@@ -296,7 +296,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		protected string m_displayNameProperty;
 		private string m_textStyle;
 
-		public AtomicReferenceVc(FdoCache cache, int flid, string displayNameProperty)
+		public AtomicReferenceVc(LcmCache cache, int flid, string displayNameProperty)
 		{
 			Debug.Assert(cache != null);
 			Cache = cache;

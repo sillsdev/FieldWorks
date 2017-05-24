@@ -4,13 +4,11 @@
 
 using System.Xml;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
-using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.LCModel;
+using SIL.LCModel.Core.SpellChecking;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.Utils;
-using SIL.FieldWorks.FDO;
-using SIL.CoreImpl.SpellChecking;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.KernelInterfaces;
 
 namespace SIL.FieldWorks.Filters
 {
@@ -84,7 +82,7 @@ namespace SIL.FieldWorks.Filters
 		/// I think this usually gets called after InitXml. In either order, we should wind up with
 		/// a dictionary.
 		/// </summary>
-		public override FdoCache Cache
+		public override LcmCache Cache
 		{
 			set
 			{

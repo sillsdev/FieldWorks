@@ -12,7 +12,7 @@ using System.Windows.Forms;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.Resources;
 
 namespace SIL.FieldWorks.FwCoreDlgs
@@ -320,7 +320,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			foreach (var projectPathname in Directory.GetDirectories(FwDirectoryFinder.ProjectsDirectory))
 			{
 				var projectDirName = new DirectoryInfo(projectPathname).Name;
-				var dataPathname = Path.Combine(projectPathname, projectDirName + FdoFileHelper.ksFwDataXmlFileExtension);
+				var dataPathname = Path.Combine(projectPathname, projectDirName + LcmFileHelper.ksFwDataXmlFileExtension);
 				if (!File.Exists(dataPathname))
 					continue;
 				AddProject(dataPathname);

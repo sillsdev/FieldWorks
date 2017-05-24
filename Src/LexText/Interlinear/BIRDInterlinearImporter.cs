@@ -8,15 +8,15 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.WritingSystems;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.IText.FlexInterlinModel;
-using SIL.FieldWorks.FDO.Application.ApplicationServices;
-using SIL.Utils;
+using SIL.LCModel.Application.ApplicationServices;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.IText
 {
@@ -52,7 +52,7 @@ namespace SIL.FieldWorks.IText
 		internal class TextCreationParams
 		{
 			internal Interlineartext InterlinText;
-			internal FdoCache Cache;
+			internal LcmCache Cache;
 			internal IThreadedProgress Progress;
 			internal ImportInterlinearOptions ImportOptions;
 			internal int Version;
@@ -66,11 +66,11 @@ namespace SIL.FieldWorks.IText
 		/// <param name="textParams">This contains the interlinear text.</param>
 		/// <returns>The imported text may be in a writing system that is not part of this project. Return false if the user
 		/// rejects the text which tells the caller of this method to abort the import.</returns>
-		private static bool PopulateTextFromBIRDDoc(ref FDO.IText newText, TextCreationParams textParams)
+		private static bool PopulateTextFromBIRDDoc(ref LCModel.IText newText, TextCreationParams textParams)
 		{
 			s_importOptions = textParams.ImportOptions;
 			Interlineartext interlinText = textParams.InterlinText;
-			FdoCache cache = textParams.Cache;
+			LcmCache cache = textParams.Cache;
 			IThreadedProgress progress = textParams.Progress;
 			if (s_importOptions.CheckAndAddLanguages == null)
 				s_importOptions.CheckAndAddLanguages = CheckAndAddLanguagesInternal;
@@ -162,7 +162,7 @@ namespace SIL.FieldWorks.IText
 		/// <param name="fdoCache"></param>
 		/// <param name="phrase"></param>
 		/// <returns></returns>
-		private static bool PhraseHasExactlyOneTxtItemNotAKnownWordform(FdoCache fdoCache, Phrase phrase)
+		private static bool PhraseHasExactlyOneTxtItemNotAKnownWordform(LcmCache fdoCache, Phrase phrase)
 		{
 			if (phrase.WordsContent.Words.Length != 1 || phrase.WordsContent.Words[0].Items.Length != 1
 				|| phrase.WordsContent.Words[0].Items[0].type != "txt")
@@ -185,11 +185,11 @@ namespace SIL.FieldWorks.IText
 		/// <param name="textParams"></param>
 		/// <returns>The imported text may be in a writing system that is not part of this project. Return false if the user
 		/// rejects the text  which tells the caller of this method to abort the import.</returns>
-		private static bool MergeTextWithBIRDDoc(ref FDO.IText newText, TextCreationParams textParams)
+		private static bool MergeTextWithBIRDDoc(ref LCModel.IText newText, TextCreationParams textParams)
 		{
 			s_importOptions = textParams.ImportOptions;
 			Interlineartext interlinText = textParams.InterlinText;
-			FdoCache cache = textParams.Cache;
+			LcmCache cache = textParams.Cache;
 			IThreadedProgress progress = textParams.Progress;
 			if (s_importOptions.CheckAndAddLanguages == null)
 				s_importOptions.CheckAndAddLanguages = CheckAndAddLanguagesInternal;
@@ -353,7 +353,7 @@ namespace SIL.FieldWorks.IText
 		/// <param name="newSegment"></param>
 		/// <param name="textInFile">This reference boolean indicates if there was a text item in the phrase</param>
 		/// <param name="phraseText">This reference string will be filled with the contents of the "txt" item in the phrase if it is there</param>
-		private static void AddSegmentItemData(FdoCache cache, ILgWritingSystemFactory wsFactory, Phrase phrase, ISegment newSegment, ref bool textInFile, ref ITsString phraseText)
+		private static void AddSegmentItemData(LcmCache cache, ILgWritingSystemFactory wsFactory, Phrase phrase, ISegment newSegment, ref bool textInFile, ref ITsString phraseText)
 		{
 			if (phrase.Items != null)
 			{
@@ -385,7 +385,7 @@ namespace SIL.FieldWorks.IText
 			}
 		}
 
-		private static void AddELANInfoToSegment(FdoCache cache, Phrase phrase, ISegment newSegment)
+		private static void AddELANInfoToSegment(LcmCache cache, Phrase phrase, ISegment newSegment)
 		{
 			if (!String.IsNullOrEmpty(phrase.mediaFile))
 			{
@@ -399,7 +399,7 @@ namespace SIL.FieldWorks.IText
 			}
 		}
 
-		private static ICmPerson FindOrCreateSpeaker(string speaker, FdoCache cache)
+		private static ICmPerson FindOrCreateSpeaker(string speaker, LcmCache cache)
 		{
 			if(cache.LanguageProject.PeopleOA != null)
 			{
@@ -462,7 +462,7 @@ namespace SIL.FieldWorks.IText
 		/// <param name="wsFactory"></param>
 		/// <param name="progress"></param>
 		/// <returns>return false to abort import</returns>
-		private static bool CheckAndAddLanguagesInternal(FdoCache cache, Interlineartext interlinText, ILgWritingSystemFactory wsFactory, IThreadedProgress progress)
+		private static bool CheckAndAddLanguagesInternal(LcmCache cache, Interlineartext interlinText, ILgWritingSystemFactory wsFactory, IThreadedProgress progress)
 		{
 			DialogResult result;
 			if (interlinText.languages != null && interlinText.languages.language != null)
@@ -614,7 +614,7 @@ namespace SIL.FieldWorks.IText
 			}
 		}
 
-		private static ILgWritingSystem SafelyGetWritingSystem(FdoCache cache, ILgWritingSystemFactory wsFactory,
+		private static ILgWritingSystem SafelyGetWritingSystem(LcmCache cache, ILgWritingSystemFactory wsFactory,
 			Language lang, out bool fIsVernacular)
 		{
 			fIsVernacular = lang.vernacularSpecified && lang.vernacular;
@@ -647,7 +647,7 @@ namespace SIL.FieldWorks.IText
 			}
 		}
 
-		private static IAnalysis CreateWordAnalysisStack(FdoCache cache, Word word)
+		private static IAnalysis CreateWordAnalysisStack(LcmCache cache, Word word)
 		{
 			if (word.Items == null || word.Items.Length <= 0) return null;
 			IAnalysis analysis = null;
@@ -735,7 +735,7 @@ namespace SIL.FieldWorks.IText
 		/// <param name="analysis">the new analysis Gloss. If multiple glosses, returns the last one created.</param>
 		private static void UpgradeToWordGloss(Word word, ref IAnalysis analysis)
 		{
-			FdoCache cache = analysis.Cache;
+			LcmCache cache = analysis.Cache;
 			var wsFact = cache.WritingSystemFactory;
 			if (s_importOptions.AnalysesLevel == ImportAnalysesLevel.WordGloss)
 			{
@@ -816,8 +816,8 @@ namespace SIL.FieldWorks.IText
 		/// <param name="wsFactory"></param>
 		/// <param name="newText">The target text</param>
 		/// <param name="merging">True if we are merging into an existing text; False if we are creating everything new</param>
-		private static void SetTextMetaAndMergeMedia(FdoCache cache, Interlineartext interlinText, ILgWritingSystemFactory wsFactory,
-			FDO.IText newText, bool merging)
+		private static void SetTextMetaAndMergeMedia(LcmCache cache, Interlineartext interlinText, ILgWritingSystemFactory wsFactory,
+			LCModel.IText newText, bool merging)
 		{
 			if (interlinText.Items != null) // apparently it is null if there are no items.
 			{

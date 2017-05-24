@@ -1,5 +1,5 @@
 ﻿using System;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 
 namespace SIL.FieldWorks.WordWorks.Parser
 {

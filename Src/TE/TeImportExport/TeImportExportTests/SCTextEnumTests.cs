@@ -11,16 +11,15 @@ using System.Collections.Generic;
 
 using NUnit.Framework;
 using Rhino.Mocks;
-using SIL.CoreImpl.Scripture;
+using SIL.LCModel.Core.Scripture;
 using SIL.FieldWorks.Common.ScriptureUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.FDOTests;
-using SIL.Utils;
+using SIL.LCModel;
+using SIL.LCModel.Utils;
 using ECInterfaces;
 using SilEncConverters40;
-using SIL.CoreImpl.WritingSystems;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel.DomainServices;
 
 namespace SIL.FieldWorks.TE
 {
@@ -261,7 +260,7 @@ namespace SIL.FieldWorks.TE
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
-	public class SCTextEnumTests : ScrInMemoryFdoTestBase
+	public class SCTextEnumTests : ScrInMemoryLcmTestBase
 	{
 		#region data members
 		private IScrImportSet m_settings;

@@ -5,7 +5,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 
 namespace SIL.FieldWorks.Common.Controls

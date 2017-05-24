@@ -9,11 +9,10 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using NUnit.Framework;
-using SIL.CoreImpl.Text;
+using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.FDOTests;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.Controls;
 
 namespace SIL.FieldWorks.XWorks
@@ -137,10 +136,10 @@ namespace SIL.FieldWorks.XWorks
 
 	class TestRootSite : SimpleRootSite
 	{
-		private FdoCache m_cache;
+		private LcmCache m_cache;
 		private int m_hvoRoot;
 
-		public TestRootSite(FdoCache cache, int root)
+		public TestRootSite(LcmCache cache, int root)
 		{
 			m_cache = cache;
 			m_hvoRoot = root;
@@ -164,9 +163,9 @@ namespace SIL.FieldWorks.XWorks
 
 	class TestVc: VwBaseVc
 	{
-		private FdoCache m_cache;
+		private LcmCache m_cache;
 
-		public TestVc(FdoCache cache)
+		public TestVc(LcmCache cache)
 		{
 			m_cache = cache;
 		}

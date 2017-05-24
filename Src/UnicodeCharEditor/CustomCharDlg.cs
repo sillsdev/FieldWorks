@@ -8,12 +8,12 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
-using SIL.CoreImpl.Text;
+using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FwCoreDlgs;
-using SIL.Utils;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Utils;
+using SIL.LCModel.Core.KernelInterfaces;
 
 namespace SIL.FieldWorks.UnicodeCharEditor
 {

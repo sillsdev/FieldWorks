@@ -60,33 +60,33 @@
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CoreImplTests, Version=9.0.0.0, Culture=neutral, processorArchitecture=x86">
+    <Reference Include="SIL.LCModel.Core.Tests, Version=9.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\CoreImplTests.dll</HintPath>
+      <HintPath>..\..\..\..\Output\Debug\SIL.LCModel.Core.Tests.dll</HintPath>
     </Reference>
     <Reference Include="SIL.TestUtilities, Version=3.1.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Downloads\SIL.TestUtilities.dll</HintPath>
     </Reference>
-    <Reference Include="SilUtils, Version=9.0.0.23922, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="SIL.LCModel.Utils, Version=9.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\SilUtils.dll</HintPath>
+      <HintPath>..\..\..\..\Output\Debug\SIL.LCModel.Utils.dll</HintPath>
     </Reference>
-    <Reference Include="SilUtilsTests, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="SIL.LCModel.Utils.Tests, Version=9.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\SilUtilsTests.dll</HintPath>
+      <HintPath>..\..\..\..\Output\Debug\SIL.LCModel.Utils.Tests.dll</HintPath>
     </Reference>
-    <Reference Include="CoreImpl, Version=8.0.6.31180, Culture=neutral, processorArchitecture=x86">
+    <Reference Include="SIL.LCModel.Core, Version=9.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\CoreImpl.dll</HintPath>
+      <HintPath>..\..\..\..\Output\Debug\SIL.LCModel.Core.dll</HintPath>
     </Reference>
-    <Reference Include="FDO, Version=6.1.1.20134, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="SIL.LCModel, Version=9.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\FDO.dll</HintPath>
+      <HintPath>..\..\..\..\Output\Debug\SIL.LCModel.dll</HintPath>
     </Reference>
-    <Reference Include="FDOTests, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
+    <Reference Include="SIL.LCModel.Tests, Version=9.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\FDOTests.dll</HintPath>
+      <HintPath>..\..\..\..\Output\Debug\SIL.LCModel.Tests.dll</HintPath>
     </Reference>
     <Reference Include="FieldWorks, Version=6.1.1.19073, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

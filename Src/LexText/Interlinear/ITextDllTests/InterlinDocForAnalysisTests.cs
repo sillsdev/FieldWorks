@@ -10,16 +10,15 @@ using NUnit.Framework;
 using Rhino.Mocks;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.FDOTests;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.Utils;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
+using SIL.LCModel.Utils;
 using SIL.WritingSystems;
 using XCore;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.WritingSystems;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
 
 namespace SIL.FieldWorks.IText
 {
@@ -29,7 +28,7 @@ namespace SIL.FieldWorks.IText
 	[TestFixture]
 	public class FocusBoxControllerTests : MemoryOnlyBackendProviderTestBase
 	{
-		FDO.IText m_text0;
+		LCModel.IText m_text0;
 		private IStText m_stText0;
 		private IStTxtPara m_para0_0;
 		//private TestableInterlinDocForAnalyis m_interlinDoc;

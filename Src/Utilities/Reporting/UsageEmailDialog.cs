@@ -8,6 +8,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Diagnostics;
 using Microsoft.Win32;
+using SIL.LCModel.Utils;
 
 namespace SIL.Utils
 {

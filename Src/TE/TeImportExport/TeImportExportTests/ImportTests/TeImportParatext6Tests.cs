@@ -10,13 +10,13 @@ using System.IO;
 
 using NUnit.Framework;
 
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.ScriptureUtils;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.CoreImpl.Scripture;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.KernelInterfaces;
-using SIL.Utils;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Core.Scripture;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.TE.ImportTests
 {
@@ -1167,7 +1167,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 			Assert.AreEqual(2, genesis.SectionsOS.Count); // minor sanity check
 
 			// make sure there are no notes before we start importing them
-			IFdoOwningSequence<IScrScriptureNote> notes = m_scr.BookAnnotationsOS[0].NotesOS;
+			ILcmOwningSequence<IScrScriptureNote> notes = m_scr.BookAnnotationsOS[0].NotesOS;
 			Assert.AreEqual(0, notes.Count);
 
 			// Now test ability to import a non-interleaved Annotation stream
@@ -1324,7 +1324,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 			Assert.IsNull(m_importer.UndoInfo.ImportedVersion);
 
 			// look at the annotation and see if it is associated to the correct Scripture reference
-			IFdoOwningSequence<IScrScriptureNote> notes = m_scr.BookAnnotationsOS[0].NotesOS;
+			ILcmOwningSequence<IScrScriptureNote> notes = m_scr.BookAnnotationsOS[0].NotesOS;
 			Assert.AreEqual(2, notes.Count);
 
 			IScrScriptureNote annotation = notes[0];
@@ -1397,7 +1397,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 			Assert.IsNull(m_importer.UndoInfo.ImportedVersion);
 
 			// look at the annotation and see if it is associated to the correct Scripture reference
-			IFdoOwningSequence<IScrScriptureNote> notes = m_scr.BookAnnotationsOS[0].NotesOS;
+			ILcmOwningSequence<IScrScriptureNote> notes = m_scr.BookAnnotationsOS[0].NotesOS;
 			Assert.AreEqual(1, notes.Count);
 
 			IScrScriptureNote annotation = notes[0];
@@ -2969,7 +2969,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 			AssertEx.RunIsCorrect(tssTrans, 4, "Then came the end", null, m_wsAnal);
 
 			Assert.AreEqual(1, m_scr.BookAnnotationsOS[0].NotesOS.Count);
-			IFdoOwningSequence<IStPara> discParas =
+			ILcmOwningSequence<IStPara> discParas =
 				m_scr.BookAnnotationsOS[0].NotesOS[0].DiscussionOA.ParagraphsOS;
 			Assert.AreEqual(1, discParas.Count);
 			Assert.AreEqual("This is my discussion of the first verse.", ((IStTxtPara)discParas[0]).Contents.Text);

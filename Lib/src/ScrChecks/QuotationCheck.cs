@@ -5,10 +5,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Text;
 using System.Text.RegularExpressions;
-using SILUBS.ScriptureChecks;
-using SIL.CoreImpl.Scripture;
 using System.Diagnostics;
 using SIL.FieldWorks.Common.FwUtils;
 
@@ -34,6 +31,7 @@ namespace SILUBS.ScriptureChecks
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="QuotationCheck"/> class.
+		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public QuotationCheck(IChecksDataSource checksDataSource)
 		{
@@ -255,7 +253,7 @@ namespace SILUBS.ScriptureChecks
 		/// <summary>
 		/// Initializes a new instance of the <see cref="QuotationRelatedTokensProcessor"/> class.
 		/// </summary>
-		/// <param name="source">The checks data source.</param>
+		/// <param name="dataSource">The checks data source.</param>
 		/// <param name="charCategorizer">The character categorizer.</param>
 		/// <param name="qmCategorizer">The quotation mark categorizer.</param>
 		/// <param name="desiredKey">The desired key (can be string.Empty).</param>
@@ -627,7 +625,7 @@ namespace SILUBS.ScriptureChecks
 		/// Given the information of the currently open quotation marks, process the next encountered
 		/// quotation mark, updating the information and generating errors where appropriate.
 		/// </summary>
-		/// <param name="qmTok">The quotation mark token being processed</param>
+		/// <param name="qmtok">The quotation mark token being processed</param>
 		/// <param name="openQuotes">The currently open quotes</param>
 		/// ------------------------------------------------------------------------------------
 		private void CheckQuote(QuotationMarkToken qmtok, OpenQuotes openQuotes)

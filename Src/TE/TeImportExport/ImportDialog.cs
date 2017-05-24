@@ -6,15 +6,15 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Forms;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using SIL.Reporting;
 using SILUBS.SharedScrControls;
-using SIL.CoreImpl.Scripture;
+using SIL.LCModel.Core.Scripture;
 
 namespace SIL.FieldWorks.TE
 {
@@ -34,7 +34,7 @@ namespace SIL.FieldWorks.TE
 		/// <summary></summary>
 		protected IScripture m_scr;
 		/// <summary></summary>
-		protected FwStyleSheet m_StyleSheet;
+		protected LcmStyleSheet m_StyleSheet;
 		/// <summary></summary>
 		protected IScrImportSet m_importSettings;
 		/// <summary></summary>
@@ -75,7 +75,7 @@ namespace SIL.FieldWorks.TE
 		/// Use this constructor at run time.
 		/// </summary>
 		///-------------------------------------------------------------------------------
-		public ImportDialog(FwStyleSheet styleSheet, FdoCache cache, IScrImportSet settings,
+		public ImportDialog(LcmStyleSheet styleSheet, LcmCache cache, IScrImportSet settings,
 			IHelpTopicProvider helpTopicProvider, IApp app) : this()
 		{
 			m_StyleSheet = styleSheet;

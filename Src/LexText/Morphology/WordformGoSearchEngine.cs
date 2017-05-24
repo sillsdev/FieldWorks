@@ -5,12 +5,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using SIL.CoreImpl.Text;
+using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Controls;
-using SIL.CoreImpl.KernelInterfaces;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainImpl;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
+using SIL.LCModel.DomainImpl;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
 {
@@ -21,7 +21,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 	{
 		private readonly Virtuals m_virtuals;
 
-		public WordformGoSearchEngine(FdoCache cache)
+		public WordformGoSearchEngine(LcmCache cache)
 			: base(cache, SearchType.Prefix)
 		{
 			m_virtuals = Cache.ServiceLocator.GetInstance<Virtuals>();

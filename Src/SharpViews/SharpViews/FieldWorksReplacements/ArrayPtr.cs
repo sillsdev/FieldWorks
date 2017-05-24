@@ -20,7 +20,7 @@ using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 
-using SIL.Utils;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.Common.ViewsInterfaces
 {

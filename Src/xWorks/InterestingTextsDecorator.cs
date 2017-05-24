@@ -6,12 +6,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
-using SIL.CoreImpl.Cellar;
-using SIL.CoreImpl.KernelInterfaces;
-using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
+using SIL.LCModel.Application;
+using SIL.LCModel.Infrastructure;
 using XCore;
 
 namespace SIL.FieldWorks.XWorks
@@ -23,13 +22,13 @@ namespace SIL.FieldWorks.XWorks
 	public class InterestingTextsDecorator : DomainDataByFlidDecoratorBase, ISetMediator, ISetRootHvo
 	{
 		private InterestingTextList m_interestingTexts;
-		private IFdoServiceLocator m_services;
+		private ILcmServiceLocator m_services;
 		private int m_notifieeCount;
 		// The object our property belongs to. We consider any object for which we are asked our special
 		// property to be the root object.
 		private int m_rootHvo;
 		public InterestingTextsDecorator(ISilDataAccessManaged domainDataByFlid, XmlNode configurationNode,
-			IFdoServiceLocator services)
+			ILcmServiceLocator services)
 			: base(domainDataByFlid)
 		{
 			SetOverrideMdc(new InterestingTextsMdc(base.MetaDataCache as IFwMetaDataCacheManaged));
@@ -67,7 +66,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		static string InterestingTextKey = "InterestingTexts";
-		static public InterestingTextList GetInterestingTextList(Mediator mediator, PropertyTable propertyTable, IFdoServiceLocator services)
+		static public InterestingTextList GetInterestingTextList(Mediator mediator, PropertyTable propertyTable, ILcmServiceLocator services)
 		{
 			var interestingTextList = propertyTable.GetValue<InterestingTextList>(InterestingTextKey, null);
 			if (interestingTextList == null)
@@ -160,7 +159,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 	}
 
-	public class InterestingTextsMdc : FdoMetaDataCacheDecoratorBase
+	public class InterestingTextsMdc : LcmMetaDataCacheDecoratorBase
 	{
 		public InterestingTextsMdc(IFwMetaDataCacheManaged metaDataCache)
 			: base(metaDataCache)

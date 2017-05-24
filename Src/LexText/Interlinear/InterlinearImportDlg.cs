@@ -9,10 +9,10 @@ using System.Windows.Forms;
 
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.Resources;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 using XCore;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 
@@ -20,7 +20,7 @@ namespace SIL.FieldWorks.IText
 {
 	public partial class InterlinearImportDlg : Form, IFwExtension
 	{
-		private FdoCache m_cache;
+		private LcmCache m_cache;
 		private Mediator m_mediator;
 
 		private readonly StringBuilder m_messages = new StringBuilder();
@@ -116,7 +116,7 @@ namespace SIL.FieldWorks.IText
 
 		#region IFwExtension Members
 
-		public void Init(FdoCache cache, Mediator mediator, PropertyTable propertyTable)
+		public void Init(LcmCache cache, Mediator mediator, PropertyTable propertyTable)
 		{
 			m_cache = cache;
 			m_mediator = mediator;

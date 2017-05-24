@@ -6,8 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Xml;
 using NUnit.Framework;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.FDOTests;
+using SIL.LCModel;
 using SIL.FieldWorks.LexText.Controls;
 
 namespace LexTextControlsTests

@@ -4,8 +4,8 @@
 
 using System;
 using System.Windows.Forms;
-using SIL.CoreImpl.KernelInterfaces;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
 using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.Common.ViewsInterfaces;
@@ -46,7 +46,7 @@ namespace SIL.FieldWorks.Common.Controls
 		private IHelpTopicProvider m_helpTopicProvider;
 
 		private IVwPattern m_ivwpattern;
-		private FdoCache m_cache;
+		private LcmCache m_cache;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -59,7 +59,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="cache"></param>
 		/// ------------------------------------------------------------------------------------
 		public SimpleMatchDlg(ILgWritingSystemFactory wsf, IHelpTopicProvider helpTopicProvider,
-			int ws, IVwStylesheet ss, FdoCache cache)
+			int ws, IVwStylesheet ss, LcmCache cache)
 		{
 			//
 			// Required for Windows Form Designer support

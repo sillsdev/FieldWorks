@@ -8,17 +8,17 @@
 using System;
 using System.IO;
 using System.Xml;
-using SIL.CoreImpl.Scripture;
-using SIL.CoreImpl.Text;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel.Core.Scripture;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.Framework;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.FwCoreDlgControls;
 using StyleInfo = SIL.FieldWorks.FwCoreDlgControls.StyleInfo;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.TE
 {
@@ -81,17 +81,17 @@ namespace SIL.FieldWorks.TE
 		/// Gets the resource list in which the CmResources are owned.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		protected override IFdoOwningCollection<ICmResource> ResourceList
+		protected override ILcmOwningCollection<ICmResource> ResourceList
 		{
 			get { return m_scr.ResourcesOC; }
 		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets the FdoCache
+		/// Gets the LcmCache
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		protected override FdoCache Cache
+		protected override LcmCache Cache
 		{
 			get { return m_scr.Cache; }
 		}
@@ -102,7 +102,7 @@ namespace SIL.FieldWorks.TE
 		/// </summary>
 		/// <value></value>
 		/// ------------------------------------------------------------------------------------
-		protected override IFdoOwningCollection<IStStyle> StyleCollection
+		protected override ILcmOwningCollection<IStStyle> StyleCollection
 		{
 			get { return m_scr.StylesOC; }
 		}
@@ -222,7 +222,7 @@ namespace SIL.FieldWorks.TE
 		/// <param name="helpTopicProvider">A Help topic provider that can serve up a help topic
 		/// that only exists in TE Help.</param>
 		/// -------------------------------------------------------------------------------------
-		public static void EnsureCurrentStylesheet(FdoCache cache, IThreadedProgress progressDlg,
+		public static void EnsureCurrentStylesheet(LcmCache cache, IThreadedProgress progressDlg,
 			IHelpTopicProvider helpTopicProvider)
 		{
 			TeStylesXmlAccessor acc = new TeStylesXmlAccessor(cache.LangProject.TranslatedScriptureOA);

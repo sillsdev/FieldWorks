@@ -2,10 +2,10 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Framework.DetailControls;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {
@@ -24,7 +24,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		{
 			CheckDisposed();
 
-			m_atomicReferenceVc = new LexReferencePairVc(m_fdoCache, m_rootFlid, m_displayNameProperty);
+			m_atomicReferenceVc = new LexReferencePairVc(m_cache, m_rootFlid, m_displayNameProperty);
 			if (m_displayParent != null)
 				(m_atomicReferenceVc as LexReferencePairVc).DisplayParent = m_displayParent;
 		}
@@ -49,7 +49,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 	{
 		protected ICmObject m_displayParent = null;
 
-		public LexReferencePairVc(FdoCache cache, int flid, string displayNameProperty)
+		public LexReferencePairVc(LcmCache cache, int flid, string displayNameProperty)
 			: base (cache, flid, displayNameProperty)
 		{
 		}

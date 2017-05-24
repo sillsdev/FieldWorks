@@ -7,11 +7,11 @@ using System.Xml;
 using System.Windows.Forms;
 using System.Drawing;
 using System.Diagnostics;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using XCore;
-using SIL.Utils;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.Widgets;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
 {
@@ -248,7 +248,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			return true;//we handled this, no need to ask anyone else.
 		}
 
-		protected FdoCache Cache
+		protected LcmCache Cache
 		{
 			get
 			{

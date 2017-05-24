@@ -6,7 +6,7 @@ using System;
 using System.Windows.Forms;
 using System.Reflection;
 using System.IO;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 using NUnit.Framework;
 
 namespace XCore

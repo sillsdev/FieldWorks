@@ -2,8 +2,8 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainImpl;
+using SIL.LCModel;
+using SIL.LCModel.DomainImpl;
 using XCore;
 
 namespace SIL.FieldWorks.XWorks
@@ -20,7 +20,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Save any appropriate settings to the property table
 		/// </summary>
-		public static void SaveSettings(IFdoServiceLocator services, PropertyTable propertyTable)
+		public static void SaveSettings(ILcmServiceLocator services, PropertyTable propertyTable)
 		{
 			var hc = services.GetInstance<HomographConfiguration>();
 			propertyTable.SetProperty(khomographconfiguration, hc.PersistData, true);
@@ -29,7 +29,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Restore any appropriate settings which have values in the property table
 		/// </summary>
-		public static void RestoreSettings(IFdoServiceLocator services, PropertyTable propertyTable)
+		public static void RestoreSettings(ILcmServiceLocator services, PropertyTable propertyTable)
 		{
 			var hcSettings = propertyTable.GetStringProperty(khomographconfiguration, null);
 			if (hcSettings != null)

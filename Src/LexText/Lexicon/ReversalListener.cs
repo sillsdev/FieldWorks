@@ -9,17 +9,18 @@ using System.IO;
 using System.Linq;
 using System.Xml;
 using System.Windows.Forms;
-using SIL.CoreImpl.WritingSystems;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.FdoUi.Dialogs;
 using SIL.FieldWorks.Filters;
 using XCore;
 using SIL.FieldWorks.FdoUi;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Utils;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.XWorks.LexEd
@@ -154,7 +155,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			m_configurationParameters = configurationParameters;
 			m_mediator.AddColleague(this);
 
-			var cache = m_propertyTable.GetValue<FdoCache>("cache");
+			var cache = m_propertyTable.GetValue<LcmCache>("cache");
 			var wsMgr = cache.ServiceLocator.WritingSystemManager;
 			cache.DomainDataByFlid.BeginNonUndoableTask();
 			var usedWses = new List<CoreWritingSystemDefinition>();
@@ -252,7 +253,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			using (var dlg = new ReversalEntryGoDlg())
 			{
 				dlg.ReversalIndex = Entry.ReversalIndex;
-				var cache = m_propertyTable.GetValue<FdoCache>("cache");
+				var cache = m_propertyTable.GetValue<LcmCache>("cache");
 				dlg.SetDlgInfo(cache, null, m_mediator, m_propertyTable);
 				if (dlg.ShowDialog() == DialogResult.OK)
 				{
@@ -330,7 +331,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 			var configObjectName = XmlUtils.GetOptionalAttributeValue(m_configurationParameters, "configureObjectName", null);
 			configObjectName = "ReversalIndex";
-			var cache = m_propertyTable.GetValue<FdoCache>("cache");
+			var cache = m_propertyTable.GetValue<LcmCache>("cache");
 			var reversalIndexConfigurations = SIL.FieldWorks.XWorks.DictionaryConfigurationUtils.GatherBuiltInAndUserConfigurations(cache, configObjectName);
 
 			// Add menu items that display the configuration name and send PropChanges with
@@ -474,7 +475,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// The stored sorter files keep messing us up here, so we need to do a bit of post-deserialization processing.
 		/// </summary>
 		/// <returns>true if we restored something different from what was already there.</returns>
-		protected override bool TryRestoreSorter(XmlNode clerkConfiguration, FdoCache cache)
+		protected override bool TryRestoreSorter(XmlNode clerkConfiguration, LcmCache cache)
 		{
 			var fakevc = new XmlBrowseViewBaseVc { SuppressPictures = true, Cache = Cache }; // SuppressPictures to make sure that we don't leak anything as this will not be disposed.
 			if (base.TryRestoreSorter(clerkConfiguration, cache) && Sorter is GenRecordSorter)
@@ -672,7 +673,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			m_mediator.SendMessage("MasterRefresh", null);
 		}
 
-		internal static IReversalIndex ReversalIndexAfterDeletion(FdoCache cache, out int cobjNew)
+		internal static IReversalIndex ReversalIndexAfterDeletion(LcmCache cache, out int cobjNew)
 		{
 			IReversalIndex newIdx;
 			cobjNew = cache.LanguageProject.LexDbOA.ReversalIndexesOC.Count;

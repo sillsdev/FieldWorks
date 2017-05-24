@@ -11,16 +11,16 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.WritingSystems;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.Resources;
 using SIL.Lexicon;
 
@@ -47,7 +47,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary>Index of the tab for user properties account</summary>
 		protected const int kExternalLinksTab = 2;
 
-		private FdoCache m_cache;
+		private LcmCache m_cache;
 		private readonly ILangProject m_langProj;
 		private IHelpTopicProvider m_helpTopicProvider;
 		private readonly IApp m_app;
@@ -154,14 +154,14 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Creates and initializes a new instance of the FwProjProperties class. Accepts an
-		/// FdoCache that encapsulates a DB connection.
+		/// LcmCache that encapsulates a DB connection.
 		/// </summary>
 		/// <param name="cache">Accessor for data cache and DB connection</param>
 		/// <param name="app">The application (can be <c>null</c>)</param>
 		/// <param name="helpTopicProvider">IHelpTopicProvider object used to get help
 		/// information</param>
 		/// ------------------------------------------------------------------------------------
-		public FwProjPropertiesDlg(FdoCache cache, IApp app, IHelpTopicProvider helpTopicProvider): this()
+		public FwProjPropertiesDlg(LcmCache cache, IApp app, IHelpTopicProvider helpTopicProvider): this()
 		{
 			if (cache == null)
 				throw new ArgumentNullException("cache", "Null Cache passed to FwProjProperties");
@@ -181,7 +181,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_fLinkedFilesChanged = false;
 			txtExtLnkEdit.Text = m_langProj.LinkedFilesRootDir;
 
-			m_defaultLinkedFilesFolder = FdoFileHelper.GetDefaultLinkedFilesDir(m_cache.ServiceLocator.DataSetup.ProjectId.ProjectFolder);
+			m_defaultLinkedFilesFolder = LcmFileHelper.GetDefaultLinkedFilesDir(m_cache.ServiceLocator.DataSetup.ProjectId.ProjectFolder);
 		}
 
 		/// ------------------------------------------------------------------------------------

@@ -7,12 +7,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using System.Windows.Forms;
-using ICSharpCode.SharpZipLib.Zip;
 using SIL.FieldWorks.Common.FwUtils;
 using XCore;
-using SIL.Utils;
 using SIL.FieldWorks.XWorks;
 using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.Discourse
 {

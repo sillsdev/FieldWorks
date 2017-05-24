@@ -10,20 +10,21 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Xml;
-using SIL.CoreImpl.Cellar;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.WritingSystems;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.Application.ApplicationServices;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Application;
+using SIL.LCModel.Application.ApplicationServices;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.Resources;
 using SIL.ObjectModel;
+using SIL.LCModel.Utils;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.Controls
@@ -901,7 +902,7 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-		internal static void DisplayWsLabel(CoreWritingSystemDefinition qws, IVwEnv vwenv, FdoCache cache)
+		internal static void DisplayWsLabel(CoreWritingSystemDefinition qws, IVwEnv vwenv, LcmCache cache)
 		{
 			if (qws == null)
 				return;
@@ -923,7 +924,7 @@ namespace SIL.FieldWorks.Common.Controls
 			vwenv.AddString(tisb.GetString());
 		}
 
-		internal static void DisplayMultiSep(XmlNode frag, IVwEnv vwenv, FdoCache cache)
+		internal static void DisplayMultiSep(XmlNode frag, IVwEnv vwenv, LcmCache cache)
 		{
 			string sWs = XmlUtils.GetOptionalAttributeValue(frag, "ws");
 			if (sWs != null && sWs == "current")
@@ -1461,7 +1462,7 @@ namespace SIL.FieldWorks.Common.Controls
 							break;
 						}
 					case "objectOfRowUsingViewConstructor": // display the current object using an external VC.
-						//notice this assumes that it wants a FdoCache as an argument
+						//notice this assumes that it wants a LcmCache as an argument
 						IVwViewConstructor vc =
 							(IVwViewConstructor)SIL.Utils.DynamicLoader.CreateObject(frag,
 							new Object[] { m_cache });
@@ -2324,7 +2325,7 @@ namespace SIL.FieldWorks.Common.Controls
 		}
 
 		/// <summary>
-		/// This combines some of the logic of GetFlid(hvo, frag) and FdoCache.GetFlid(hvo, class, field).
+		/// This combines some of the logic of GetFlid(hvo, frag) and LcmCache.GetFlid(hvo, class, field).
 		/// Where possible it determines a flid that should be preloaded, adds it to info, and
 		/// returns it.
 		/// </summary>
@@ -3199,7 +3200,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="sda">The sda.</param>
 		/// <param name="caller">The caller.</param>
 		/// <returns></returns>
-		public static bool ConditionPasses(XmlNode frag, int hvo, FdoCache cache, ISilDataAccess sda, XmlNode caller)
+		public static bool ConditionPasses(XmlNode frag, int hvo, LcmCache cache, ISilDataAccess sda, XmlNode caller)
 		{
 			return ConditionPasses(null, frag, hvo, cache, sda, caller);
 		}
@@ -3212,7 +3213,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="cache">The cache.</param>
 		/// <param name="sda">The sda.</param>
 		/// <returns></returns>
-		public static bool ConditionPasses(XmlNode frag, int hvo, FdoCache cache, ISilDataAccess sda)
+		public static bool ConditionPasses(XmlNode frag, int hvo, LcmCache cache, ISilDataAccess sda)
 		{
 			return ConditionPasses(null, frag, hvo, cache, sda, null);
 		}
@@ -3224,7 +3225,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="hvo">The hvo.</param>
 		/// <param name="cache">The cache.</param>
 		/// <returns></returns>
-		public static bool ConditionPasses(XmlNode frag, int hvo, FdoCache cache)
+		public static bool ConditionPasses(XmlNode frag, int hvo, LcmCache cache)
 		{
 			return ConditionPasses(null, frag, hvo, cache, cache.DomainDataByFlid, null);
 		}
@@ -3276,7 +3277,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="sda">The sda.</param>
 		/// <param name="caller">the 'part ref' node that invoked the current part. May be null if XML does not use it.</param>
 		/// <returns></returns>
-		public static bool ConditionPasses(IVwEnv vwenv, XmlNode frag, int hvo, FdoCache cache, ISilDataAccess sda, XmlNode caller)
+		public static bool ConditionPasses(IVwEnv vwenv, XmlNode frag, int hvo, LcmCache cache, ISilDataAccess sda, XmlNode caller)
 		{
 			GetActualTarget(frag, ref hvo, sda);	// modify the hvo if needed
 
@@ -3299,7 +3300,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="frag"></param>
 		/// <param name="cache"></param>
 		/// <returns></returns>
-		private static bool BidiConditionPasses(XmlNode frag, FdoCache cache)
+		private static bool BidiConditionPasses(XmlNode frag, LcmCache cache)
 		{
 			string sBidi = XmlUtils.GetOptionalAttributeValue(frag, "bidi");
 			if (sBidi != null)
@@ -3325,7 +3326,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="sda">The sda.</param>
 		/// <param name="caller">The caller.</param>
 		/// <returns></returns>
-		static private bool ValueEqualityConditionsPass(IVwEnv vwenv, XmlNode frag, int hvo, FdoCache cache,
+		static private bool ValueEqualityConditionsPass(IVwEnv vwenv, XmlNode frag, int hvo, LcmCache cache,
 			ISilDataAccess sda, XmlNode caller)
 		{
 			if (!StringEqualsConditionPasses(vwenv, frag, hvo, sda))
@@ -3608,7 +3609,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="caller">The caller.</param>
 		/// <returns></returns>
 		static private bool StringAltEqualsConditionPasses(IVwEnv vwenv, XmlNode frag, int hvo,
-			FdoCache cache, ISilDataAccess sda, XmlNode caller)
+			LcmCache cache, ISilDataAccess sda, XmlNode caller)
 		{
 			string stringAltValue = XmlUtils.GetOptionalAttributeValue(frag, "stringaltequals");
 			if (stringAltValue != null)
@@ -3935,7 +3936,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// <value>The cache.</value>
 		/// ------------------------------------------------------------------------------------
-		public override FdoCache Cache
+		public override LcmCache Cache
 		{
 			set
 			{
@@ -3954,7 +3955,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// Test-only way to set cache without setting SDA and layouts.
 		/// Test code should set them some other way!
 		/// </summary>
-		internal void SetCache(FdoCache cache)
+		internal void SetCache(LcmCache cache)
 		{
 			base.Cache = cache;
 		}
@@ -5699,9 +5700,9 @@ namespace SIL.FieldWorks.Common.Controls
 	class CmObjectComparer : DisposableBase, IComparer<int>
 	{
 		private IntPtr m_col = IntPtr.Zero;
-		private readonly FdoCache m_cache;
+		private readonly LcmCache m_cache;
 
-		public CmObjectComparer(FdoCache cache)
+		public CmObjectComparer(LcmCache cache)
 		{
 			m_cache = cache;
 		}

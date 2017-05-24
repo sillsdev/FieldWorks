@@ -12,15 +12,14 @@ using System.Reflection;
 
 using NUnit.Framework;
 using Rhino.Mocks;
-using SIL.CoreImpl.Text;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.FDOTests;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel;
+using SIL.LCModel.Application;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.Common.Controls;
-using SIL.CoreImpl.KernelInterfaces;
-using SIL.Utils;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Utils;
 using XCore;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
@@ -360,7 +359,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					IScrBook book = Cache.ServiceLocator.GetInstance<IScrBookFactory>().Create(1, out stText);
 					paraT = Cache.ServiceLocator.GetInstance<IScrTxtParaFactory>().CreateWithStyle(stText, "Monkey");
 					paraT.Contents = TsStringUtils.MakeString(sParaText, Cache.DefaultVernWs);
-					object owner = ReflectionHelper.CreateObject("FDO.dll", "SIL.FieldWorks.FDO.Infrastructure.Impl.CmObjectId", BindingFlags.NonPublic,
+					object owner = ReflectionHelper.CreateObject("SIL.LCModel.dll", "SIL.LCModel.Infrastructure.Impl.CmObjectId", BindingFlags.NonPublic,
 						new object[] { book.Guid });
 					ReflectionHelper.SetField(stText, "m_owner", owner);
 				}
@@ -376,7 +375,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				}
 				foreach (ISegment seg in paraT.SegmentsOS)
 				{
-					FdoTestHelper.CreateAnalyses(seg, paraT.Contents, seg.BeginOffset, seg.EndOffset, fCreateGlosses);
+					LcmTestHelper.CreateAnalyses(seg, paraT.Contents, seg.BeginOffset, seg.EndOffset, fCreateGlosses);
 					paraFrags.AddRange(GetParaFragmentsInSegmentForWord(seg, sWordToReplace));
 				}
 			});
@@ -442,7 +441,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					IScrBook book = Cache.ServiceLocator.GetInstance<IScrBookFactory>().Create(1, out stText);
 					paraT = Cache.ServiceLocator.GetInstance<IScrTxtParaFactory>().CreateWithStyle(stText, "Monkey");
 					paraT.Contents = TsStringUtils.MakeString(sParaText, Cache.DefaultVernWs);
-					object owner = ReflectionHelper.CreateObject("FDO.dll", "SIL.FieldWorks.FDO.Infrastructure.Impl.CmObjectId", BindingFlags.NonPublic,
+					object owner = ReflectionHelper.CreateObject("SIL.LCModel.dll", "SIL.LCModel.Infrastructure.Impl.CmObjectId", BindingFlags.NonPublic,
 						new object[] { book.Guid });
 					ReflectionHelper.SetField(stText, "m_owner", owner);
 				}
@@ -458,7 +457,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				}
 				foreach (ISegment seg in paraT.SegmentsOS)
 				{
-					FdoTestHelper.CreateAnalyses(seg, paraT.Contents, seg.BeginOffset, seg.EndOffset, true);
+					LcmTestHelper.CreateAnalyses(seg, paraT.Contents, seg.BeginOffset, seg.EndOffset, true);
 					var thisSegParaFrags = GetParaFragmentsInSegmentForWord(seg, sWordToReplace);
 					SetMultimorphemicAnalyses(thisSegParaFrags, morphsToCreate);
 					paraFrags.AddRange(thisSegParaFrags);
@@ -846,11 +845,11 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			action.AddOccurrence(m_para2Occurrences[2]);
 			action.DoIt();
 			VerifyDoneStateApplyTwo();
-			Assert.IsTrue(m_fdoCache.CanUndo, "undo should be possible after respelling");
+			Assert.IsTrue(m_cache.CanUndo, "undo should be possible after respelling");
 			UndoResult ures;
-			m_fdoCache.Undo(out ures);
+			m_cache.Undo(out ures);
 			VerifyStartingState();
-			m_fdoCache.Redo(out ures);
+			m_cache.Redo(out ures);
 			VerifyDoneStateApplyTwo();
 		}
 
@@ -928,8 +927,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 		private void VerifyTwfic(int cba, int begin, int end, string message)
 		{
-			Assert.AreEqual(begin, m_fdoCache.GetIntProperty(cba, kflidBeginOffset), message + " beginOffset");
-			Assert.AreEqual(end, m_fdoCache.GetIntProperty(cba, kflidEndOffset), message + " endOffset");
+			Assert.AreEqual(begin, m_cache.GetIntProperty(cba, kflidBeginOffset), message + " beginOffset");
+			Assert.AreEqual(end, m_cache.GetIntProperty(cba, kflidEndOffset), message + " endOffset");
 		}
 
 		/// <summary>
@@ -950,11 +949,11 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			action.CopyAnalyses = true;
 			action.DoIt();
 			VerifyDoneStateApplyTwoAndCopyAnalyses();
-			Assert.IsTrue(m_fdoCache.CanUndo, "undo should be possible after respelling");
+			Assert.IsTrue(m_cache.CanUndo, "undo should be possible after respelling");
 			UndoResult ures;
-			m_fdoCache.Undo(out ures);
+			m_cache.Undo(out ures);
 			VerifyStartingState();
-			m_fdoCache.Redo(out ures);
+			m_cache.Redo(out ures);
 			VerifyDoneStateApplyTwoAndCopyAnalyses();
 		}
 
@@ -1025,7 +1024,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			m_wgChopper = new WfiGloss();
 			m_wfaAxe.MeaningsOC.Add(m_wgChopper);
 			m_wgChopper.Form.AnalysisDefaultWritingSystem = "chopper";
-			m_wfaAxe.SetAgentOpinion(m_fdoCache.LangProject.DefaultUserAgent, Opinions.approves);
+			m_wfaAxe.SetAgentOpinion(m_cache.LangProject.DefaultUserAgent, Opinions.approves);
 
 			ILexEntry entryCut = LexEntry.CreateEntry(Cache,
 					MoMorphType.FindMorphType(Cache, new MoMorphTypeCollection(Cache), ref formLexEntry, out clsidForm), tssLexEntryForm,
@@ -1039,7 +1038,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			m_wgCut = new WfiGloss();
 			m_wfaCut.MeaningsOC.Add(m_wgCut);
 			m_wgCut.Form.AnalysisDefaultWritingSystem = "cut";
-			m_wfaCut.SetAgentOpinion(m_fdoCache.LangProject.DefaultUserAgent, Opinions.approves);
+			m_wfaCut.SetAgentOpinion(m_cache.LangProject.DefaultUserAgent, Opinions.approves);
 
 			m_cAnalyses += 2;
 		}
@@ -1070,7 +1069,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			WfiGloss gloss = new WfiGloss();
 			result.MeaningsOC.Add(gloss);
 			gloss.Form.AnalysisDefaultWritingSystem = gloss1 + "." + gloss2;
-			result.SetAgentOpinion(m_fdoCache.LangProject.DefaultUserAgent, Opinions.approves);
+			result.SetAgentOpinion(m_cache.LangProject.DefaultUserAgent, Opinions.approves);
 
 			m_cAnalyses++;
 
@@ -1112,11 +1111,11 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			action.PreserveCase = true;
 			action.DoIt();
 			VerifyDoneStateApplyAllAndUpdateLexicon();
-			Assert.IsTrue(m_fdoCache.CanUndo, "undo should be possible after respelling");
+			Assert.IsTrue(m_cache.CanUndo, "undo should be possible after respelling");
 			UndoResult ures;
-			m_fdoCache.Undo(out ures);
+			m_cache.Undo(out ures);
 			VerifyStartingState();
-			m_fdoCache.Redo(out ures);
+			m_cache.Redo(out ures);
 			VerifyDoneStateApplyAllAndUpdateLexicon();
 		}
 
@@ -1176,11 +1175,11 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			action.KeepAnalyses = true;
 			action.DoIt();
 			VerifyDoneStateApplyAllAndKeepAnalyses();
-			Assert.IsTrue(m_fdoCache.CanUndo, "undo should be possible after respelling");
+			Assert.IsTrue(m_cache.CanUndo, "undo should be possible after respelling");
 			UndoResult ures;
-			m_fdoCache.Undo(out ures);
+			m_cache.Undo(out ures);
 			VerifyStartingState();
-			m_fdoCache.Redo(out ures);
+			m_cache.Redo(out ures);
 			VerifyDoneStateApplyAllAndKeepAnalyses();
 		}
 

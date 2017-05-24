@@ -9,11 +9,11 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
-using SIL.Utils; // for Win32 message defns.
+using SIL.LCModel.Utils; // for Win32 message defns.
 using XCore;
 
 namespace SIL.FieldWorks.Common.Widgets

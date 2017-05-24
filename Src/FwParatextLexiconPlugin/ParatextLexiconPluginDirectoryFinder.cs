@@ -6,15 +6,13 @@ using System;
 using System.IO;
 using System.Reflection;
 using Microsoft.Win32;
-using SIL.FieldWorks.FDO;
-using SIL.Utils;
+using SIL.LCModel;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.ParatextLexiconPlugin
 {
 	internal static class ParatextLexiconPluginDirectoryFinder
 	{
-		private static readonly IFdoDirectories s_fdoDirs = new ParatextLexiconPluginFdoDirectories();
-
 		private const string ProjectsDir = "ProjectsDir";
 		private const string RootDataDir = "RootDataDir";
 		private const string RootCodeDir = "RootCodeDir";
@@ -38,19 +36,16 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			get { return Path.Combine(CodeDirectory, Templates); }
 		}
 
-		public static IFdoDirectories FdoDirectories
-		{
-			get { return s_fdoDirs; }
-		}
+		public static ILcmDirectories LcmDirectories { get; } = new ParatextLexiconPluginLcmDirectories();
 
 		public static string DataDirectory
 		{
-			get { return GetDirectory(RootDataDir, Path.Combine(FdoFileHelper.CommonApplicationData, SilDir, FieldWorksDir)); }
+			get { return GetDirectory(RootDataDir, Path.Combine(LcmFileHelper.CommonApplicationData, SilDir, FieldWorksDir)); }
 		}
 
 		public static string DataDirectoryLocalMachine
 		{
-			get { return GetDirectoryLocalMachine(RootDataDir, Path.Combine(FdoFileHelper.CommonApplicationData, SilDir, FieldWorksDir)); }
+			get { return GetDirectoryLocalMachine(RootDataDir, Path.Combine(LcmFileHelper.CommonApplicationData, SilDir, FieldWorksDir)); }
 		}
 
 		public static string CodeDirectory
@@ -102,19 +97,14 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			}
 		}
 
-		private class ParatextLexiconPluginFdoDirectories : IFdoDirectories
+		private class ParatextLexiconPluginLcmDirectories : ILcmDirectories
 		{
-			string IFdoDirectories.ProjectsDirectory
+			string ILcmDirectories.ProjectsDirectory
 			{
 				get { return ProjectsDirectory; }
 			}
 
-			string IFdoDirectories.DefaultProjectsDirectory
-			{
-				get { return ProjectsDirectoryLocalMachine; }
-			}
-
-			string IFdoDirectories.TemplateDirectory
+			string ILcmDirectories.TemplateDirectory
 			{
 				get { return TemplateDirectory; }
 			}

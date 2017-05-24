@@ -13,12 +13,12 @@ using System.Collections.Generic;
 
 using NUnit.Framework;
 
-using SIL.CoreImpl.Scripture;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.KernelInterfaces;
-using SIL.Utils;
+using SIL.LCModel.Core.Scripture;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Utils;
 using SIL.FieldWorks.Common.ScriptureUtils;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 namespace SIL.FieldWorks.TE.ImportTests
 {
 	/// ----------------------------------------------------------------------------------------

@@ -1,21 +1,18 @@
-// Copyright (c) 2006-2013 SIL International
+// Copyright (c) 2006-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: MetaDataCache.cs
-// Responsibility: Randy Regnier
 
 using System;
 using System.Collections.Specialized; // Needed for StringCollection.
 using System.Collections.Generic; // Needed for Dictionary.
-using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices; // needed for Marshal
 using System.Xml;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 using System.Text;
 using System.IO;
-using SIL.CoreImpl.Cellar;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.CacheLight
 {

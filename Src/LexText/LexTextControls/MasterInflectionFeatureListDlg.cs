@@ -10,13 +10,13 @@
 
 using System;
 using System.Windows.Forms;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.LexText.Controls.MGA;
 using System.Diagnostics.CodeAnalysis;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.WritingSystems;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
 
 namespace SIL.FieldWorks.LexText.Controls
 {

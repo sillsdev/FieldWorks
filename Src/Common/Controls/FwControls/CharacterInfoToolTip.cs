@@ -6,9 +6,9 @@ using System;
 using System.Drawing;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 using System.Drawing.Drawing2D;
-using SIL.CoreImpl.Text;
+using SIL.LCModel.Core.Text;
 
 namespace SIL.FieldWorks.Common.Controls
 {

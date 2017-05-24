@@ -13,7 +13,7 @@ using System.ServiceModel;
 using System.Threading;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.Reporting;
 using Timer = System.Threading.Timer;
 
@@ -64,7 +64,7 @@ namespace SIL.FieldWorks.LexicalProvider
 		/// Creates a LexicalServiceProvider listener for the specified project.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		internal static void StartLexicalServiceProvider(ProjectId projectId, FdoCache cache)
+		internal static void StartLexicalServiceProvider(ProjectId projectId, LcmCache cache)
 		{
 			if (projectId == null)
 				throw new InvalidOperationException("Project identity must be known before creating the lexical provider listener");

@@ -8,16 +8,16 @@ using System.Linq;
 using System.Xml;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.LexText.Controls;
-using SIL.Utils;
 using SIL.FieldWorks.FdoUi;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel.DomainServices;
+using SIL.Utils;
 using XCore;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
@@ -239,7 +239,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			}
 		}
 
-		public override void Initialize(FdoCache cache, ICmObject obj, int flid, string fieldName, IPersistenceProvider persistProvider,
+		public override void Initialize(LcmCache cache, ICmObject obj, int flid, string fieldName, IPersistenceProvider persistProvider,
 			Mediator mediator, PropertyTable propertyTable, string displayNameProperty, string displayWs)
 		{
 			CheckDisposed();
@@ -707,7 +707,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			return obj;
 		}
 
-		protected int InsertContextInto(IPhSimpleContext ctxt, SelectionHelper sel, IFdoOwningSequence<IPhSimpleContext> seq)
+		protected int InsertContextInto(IPhSimpleContext ctxt, SelectionHelper sel, ILcmOwningSequence<IPhSimpleContext> seq)
 		{
 			ICmObject[] ctxts = seq.Cast<ICmObject>().ToArray();
 			int index = GetInsertionIndex(ctxts, sel);
@@ -784,7 +784,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				ReconstructView(cellId, cellIndex, cellIndex == -1);
 		}
 
-		protected bool RemoveContextsFrom(bool forward, SelectionHelper sel, IFdoOwningSequence<IPhSimpleContext> seq,
+		protected bool RemoveContextsFrom(bool forward, SelectionHelper sel, ILcmOwningSequence<IPhSimpleContext> seq,
 			bool preRemovalSideEffects, out int index)
 		{
 			index = -1;
@@ -824,7 +824,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			return reconstruct;
 		}
 
-		private void ProcessIndicesSimpleContext(IFdoOwningSequence<IPhSimpleContext> seq, ICmObject[] ctxts, bool preRemovalSideEffects,
+		private void ProcessIndicesSimpleContext(ILcmOwningSequence<IPhSimpleContext> seq, ICmObject[] ctxts, bool preRemovalSideEffects,
 			int idx)
 		{
 			if (ctxts == null || idx > ctxts.Length - 1 || idx < 0)

@@ -7,17 +7,17 @@ using System.Diagnostics;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.KernelInterfaces;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.FwCoreDlgControls;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.Utils;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel.Utils;
+using SIL.LCModel.DomainServices;
 using StyleInfo = SIL.FieldWorks.FwCoreDlgControls.StyleInfo;
 
 namespace SIL.FieldWorks.FwCoreDlgs
@@ -60,8 +60,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		#region Data Members
 		private StyleListBoxHelper m_styleListHelper;
 		private StyleInfoTable m_styleTable;
-		private FdoCache m_cache;
-		private FwStyleSheet m_styleSheet;
+		private LcmCache m_cache;
+		private LcmStyleSheet m_styleSheet;
 		/// <summary></summary>
 		protected HashSet<string> m_deletedStyleNames = new HashSet<string>();
 		/// <summary></summary>
@@ -123,7 +123,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <param name="app">The application.</param>
 		/// <param name="helpTopicProvider">The help topic provider.</param>
 		/// ------------------------------------------------------------------------------------
-		public FwStylesDlg(IVwRootSite rootSite, FdoCache cache, FwStyleSheet styleSheet,
+		public FwStylesDlg(IVwRootSite rootSite, LcmCache cache, LcmStyleSheet styleSheet,
 			bool defaultRightToLeft, bool showBiDiLabels, string normalStyleName,
 			int customUserLevel, MsrSysType userMeasurementType, string paraStyleName,
 			string charStyleName, int hvoRootObject, IApp app, IHelpTopicProvider helpTopicProvider)
@@ -208,7 +208,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <param name="helpTopicProvider"></param>
 		/// <param name="setPropsToFactorySettings">Method to be called if user requests to reset a style to factory settings.</param>
 		public static void RunStylesDialogForCombo(ComboBox combo, Action fixCombo, string defaultStyle,
-			FwStyleSheet stylesheet, int nMaxStyleLevel, int hvoAppRoot, FdoCache cache,
+			LcmStyleSheet stylesheet, int nMaxStyleLevel, int hvoAppRoot, LcmCache cache,
 			IWin32Window owner, IApp app, IHelpTopicProvider helpTopicProvider,
 			Action<StyleInfo> setPropsToFactorySettings)
 		{
@@ -297,7 +297,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		/// <param name="sheet">The style sheet.</param>
 		/// ------------------------------------------------------------------------------------
-		private void FillStyleTable(FwStyleSheet sheet)
+		private void FillStyleTable(LcmStyleSheet sheet)
 		{
 			for (int i = 0; i < sheet.CStyles; i++)
 			{

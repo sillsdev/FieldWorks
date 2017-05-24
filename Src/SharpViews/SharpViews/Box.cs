@@ -10,7 +10,7 @@ using System.Text;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.SharpViews.Paragraphs;
 using SIL.FieldWorks.SharpViews.Selections;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.SharpViews
 {

@@ -5,10 +5,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using SIL.CoreImpl.Text;
+using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.Controls;
-using SIL.CoreImpl.KernelInterfaces;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {
@@ -20,7 +20,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		private readonly IReversalIndex m_reversalIndex;
 		private readonly IReversalIndexEntryRepository m_revEntryRepository;
 
-		public ReversalEntryGoSearchEngine(FdoCache cache, IReversalIndex reversalIndex)
+		public ReversalEntryGoSearchEngine(LcmCache cache, IReversalIndex reversalIndex)
 			: base(cache, SearchType.Prefix)
 		{
 			m_reversalIndex = reversalIndex;

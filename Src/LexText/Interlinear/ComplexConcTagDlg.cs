@@ -6,7 +6,7 @@ using System;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using XCore;
 
 namespace SIL.FieldWorks.IText
@@ -21,7 +21,7 @@ namespace SIL.FieldWorks.IText
 		private HelpProvider m_helpProvider;
 		private TreeCombo m_tagComboBox;
 
-		private FdoCache m_cache;
+		private LcmCache m_cache;
 		private IHelpTopicProvider m_helpTopicProvider;
 		private ComplexConcTagNode m_node;
 		private PossibilityComboController m_posPopupTreeManager;
@@ -39,7 +39,7 @@ namespace SIL.FieldWorks.IText
 			base.Dispose(disposing);
 		}
 
-		public void SetDlgInfo(FdoCache cache, Mediator mediator, PropertyTable propertyTable, ComplexConcTagNode node)
+		public void SetDlgInfo(LcmCache cache, Mediator mediator, PropertyTable propertyTable, ComplexConcTagNode node)
 		{
 			m_cache = cache;
 			m_node = node;

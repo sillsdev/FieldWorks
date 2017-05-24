@@ -8,17 +8,17 @@ using System.Diagnostics;
 using System.Collections.Generic;
 using System.Text;
 
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Framework.DetailControls;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO.Application;
+using SIL.LCModel.Application;
 using System.ComponentModel;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.WritingSystems;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {
@@ -102,7 +102,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			CheckDisposed();
 			ReversalIndexEntrySliceView ctrl = new ReversalIndexEntrySliceView(Object.Hvo)
 			{
-				Cache = m_propertyTable.GetValue<FdoCache>("cache")
+				Cache = m_propertyTable.GetValue<LcmCache>("cache")
 			};
 			Control = ctrl;
 			//m_menuHandler = InflAffixTemplateMenuHandler.Create(ctrl, ConfigurationNode["deParams"]);
@@ -272,7 +272,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				// If the entry is a subentry, we have to find the main entry owned directly by
 				// the reversal index.  Otherwise, the jump would go to the first entry in the
 				// index.
-				FdoCache cache = Cache;
+				LcmCache cache = Cache;
 				// If it's a new reversal that hasn't been converted to reality yet, convert it!
 				// (See FWR-809.)
 				if (!cache.ServiceLocator.IsValidObjectId(hvo))
@@ -324,7 +324,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				// at least, not while we have any changes that really need to be saved, since we
 				// should have lost focus and saved before doing anything that would cause a regenerate.
 				// But let's not crash.
-				var extensions = m_fdoCache.ActionHandlerAccessor as IActionHandlerExtensions;
+				var extensions = m_cache.ActionHandlerAccessor as IActionHandlerExtensions;
 				if ((extensions != null && !extensions.CanStartUow) ||
 					!m_sense.IsValidObject) //users might quickly realize a mistake and delete the sense before we have converted our dummy.
 				{
@@ -338,8 +338,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				for (int i = 0; i < countIndices; ++i)
 				{
 					int hvoIndex = m_sdaRev.get_VecItem(m_sense.Hvo, kFlidIndices, i);
-					IReversalIndex revIndex = m_fdoCache.ServiceLocator.GetInstance<IReversalIndexRepository>().GetObject(hvoIndex);
-					writingSystemsModified.Add(m_fdoCache.ServiceLocator.WritingSystemManager.GetWsFromStr(revIndex.WritingSystem));
+					IReversalIndex revIndex = m_cache.ServiceLocator.GetInstance<IReversalIndexRepository>().GetObject(hvoIndex);
+					writingSystemsModified.Add(m_cache.ServiceLocator.WritingSystemManager.GetWsFromStr(revIndex.WritingSystem));
 					int countRealEntries = m_sdaRev.get_VecSize(hvoIndex, kFlidEntries) - 1; // Skip the dummy entry at the end.
 					// Go through it from the far end, since we may be deleting empty items.
 					for (int j = countRealEntries - 1; j >= 0; --j)
@@ -355,12 +355,12 @@ namespace SIL.FieldWorks.XWorks.LexEd
 						// If it does not exist, we have to create it, and add it to the currentEntries array.
 						List<string> rgsFromDummy = new List<string>();
 						if (GetReversalFormsAndCheckExisting(currentEntries, hvoIndex,
-							m_fdoCache.ServiceLocator.WritingSystemManager.GetWsFromStr(revIndex.WritingSystem), j, hvoEntry, rgsFromDummy))
+							m_cache.ServiceLocator.WritingSystemManager.GetWsFromStr(revIndex.WritingSystem), j, hvoEntry, rgsFromDummy))
 						{
 							continue;
 						}
 						// At this point, we need to find or create one or more entries.
-						int hvo = FindOrCreateReversalEntry(revIndex, rgsFromDummy, m_fdoCache);
+						int hvo = FindOrCreateReversalEntry(revIndex, rgsFromDummy, m_cache);
 						currentEntries.Add(hvo);
 						if (hvoEntry == hvoDummy)
 							hvoReal = hvo;
@@ -368,9 +368,9 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				}
 				// Reset the sense's ref. property to all the ids in the currentEntries array.
 				int[] ids = currentEntries.ToArray();
-				if (!m_fdoCache.ServiceLocator.GetInstance<ICmObjectRepository>().IsValidObjectId(m_sense.Hvo))
+				if (!m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().IsValidObjectId(m_sense.Hvo))
 					return 0; // our object has been deleted while we weren't looking!
-				int countEntries = m_fdoCache.DomainDataByFlid.get_VecSize(m_sense.Hvo, LexSenseTags.kflidReversalEntries);
+				int countEntries = m_cache.DomainDataByFlid.get_VecSize(m_sense.Hvo, LexSenseTags.kflidReversalEntries);
 				// Check the current state and don't save (or create an Undo stack item) if
 				// nothing has changed.
 				bool fChanged = true;
@@ -379,7 +379,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 					fChanged = false;
 					for (int i = 0; i < countEntries; ++i)
 					{
-						int id = m_fdoCache.DomainDataByFlid.get_VecItem(m_sense.Hvo, LexSenseTags.kflidReversalEntries, i);
+						int id = m_cache.DomainDataByFlid.get_VecItem(m_sense.Hvo, LexSenseTags.kflidReversalEntries, i);
 						if (id != ids[i])
 						{
 							fChanged = true;
@@ -389,10 +389,10 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				}
 				if (fChanged)
 				{
-					m_fdoCache.DomainDataByFlid.BeginUndoTask(LexEdStrings.ksUndoSetRevEntries,
+					m_cache.DomainDataByFlid.BeginUndoTask(LexEdStrings.ksUndoSetRevEntries,
 						LexEdStrings.ksRedoSetRevEntries);
 					m_sdaRev.Replace(m_sense.Hvo, LexSenseTags.kflidReversalEntries, 0, countEntries, ids, ids.Length);
-					m_fdoCache.DomainDataByFlid.EndUndoTask();
+					m_cache.DomainDataByFlid.EndUndoTask();
 				}
 				return hvoReal;
 			}
@@ -424,7 +424,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				if (hvoEntry > 0)
 				{
 					IReversalIndexEntry rie =
-						m_fdoCache.ServiceLocator.GetInstance<IReversalIndexEntryRepository>().GetObject(hvoEntry);
+						m_cache.ServiceLocator.GetInstance<IReversalIndexEntryRepository>().GetObject(hvoEntry);
 					if (rgsFromDummy[rgsFromDummy.Count - 1] == rie.ReversalForm.get_String(wsIndex).Text)
 					{
 						// Check that all parents exist as specified.  If so, then the user didn't change
@@ -458,7 +458,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			/// it.  In either case, return its hvo.
 			/// </summary>
 			public static int FindOrCreateReversalEntry(IReversalIndex revIndex, List<string> rgsForms,
-				FdoCache cache)
+				LcmCache cache)
 			{
 				List<List<IReversalIndexEntry>> rgrieMatching = new List<List<IReversalIndexEntry>>(rgsForms.Count);
 				// This could be SLOOOOOOOOOOW!  But I don't see a better way of doing it...
@@ -589,22 +589,22 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			{
 				CheckDisposed();
 
-				if (m_fdoCache == null || DesignMode)
+				if (m_cache == null || DesignMode)
 					return;
 
 				// A crude way of making sure the property we want is loaded into the cache.
-				m_sense = (ILexSense) m_fdoCache.ServiceLocator.GetObject(m_hvoObj);
+				m_sense = (ILexSense) m_cache.ServiceLocator.GetObject(m_hvoObj);
 
 				base.MakeRoot();
 
 				if (m_sdaRev == null)
-					m_sdaRev = new ReversalEntryDataAccess(m_fdoCache.DomainDataByFlid as ISilDataAccessManaged) {TsStrFactory = TsStringUtils.TsStrFactory};
+					m_sdaRev = new ReversalEntryDataAccess(m_cache.DomainDataByFlid as ISilDataAccessManaged) {TsStrFactory = TsStringUtils.TsStrFactory};
 
 				LoadDummyCache(false);
 
 				// And maybe this too, at least by default?
 				m_rootb.DataAccess = m_sdaRev;
-				m_vc = new ReversalIndexEntryVc(m_usedIndices, m_fdoCache);
+				m_vc = new ReversalIndexEntryVc(m_usedIndices, m_cache);
 
 				// arg4 could be used to supply a stylesheet.
 				m_rootb.SetRootObject(m_hvoObj,
@@ -630,10 +630,10 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				foreach (IReversalIndexEntry ide in m_sense.ReversalEntriesRC)
 					entries.Add(ide);
 
-				foreach (CoreWritingSystemDefinition ws in m_fdoCache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems)
+				foreach (CoreWritingSystemDefinition ws in m_cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems)
 				{
 					IReversalIndex idx = null;
-					foreach (IReversalIndex idxInner in m_fdoCache.LanguageProject.LexDbOA.ReversalIndexesOC)
+					foreach (IReversalIndex idxInner in m_cache.LanguageProject.LexDbOA.ReversalIndexesOC)
 					{
 						if (idxInner.WritingSystem == ws.Id)
 						{
@@ -649,7 +649,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 					m_sdaRev.CacheUnicodeProp(idx.Hvo, ReversalIndexTags.kflidWritingSystem, idx.WritingSystem, idx.WritingSystem.Length);
 					// Cache the WS abbreviation in the dummy cache.
 					m_sdaRev.CacheStringProp(ws.Handle, ReversalEntryDataAccess.kflidWsAbbr,
-						TsStringUtils.MakeString(ws.Abbreviation, m_fdoCache.DefaultUserWs));
+						TsStringUtils.MakeString(ws.Abbreviation, m_cache.DefaultUserWs));
 
 					// Cache entries used by the sense for idx.
 					// Cache the vector of IDs for referenced reversal entries.
@@ -662,7 +662,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 					List<int> entryIds = new List<int>();
 					foreach (IReversalIndexEntry rie in idx.EntriesForSense(entries))
 						entryIds.Add(rie.Hvo);
-					int wsHandle = m_fdoCache.ServiceLocator.WritingSystemManager.GetWsFromStr(idx.WritingSystem);
+					int wsHandle = m_cache.ServiceLocator.WritingSystemManager.GetWsFromStr(idx.WritingSystem);
 					// Cache a dummy string for each WS.
 					ITsString tssEmpty = TsStringUtils.EmptyString(wsHandle);
 					m_sdaRev.CacheStringAlt(m_dummyId, ReversalIndexEntryTags.kflidReversalForm,
@@ -855,7 +855,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			private List<IReversalIndex> m_usedIndices;
 			ITsTextProps m_ttpLabel; // Props to use for ws name labels.
 
-			public ReversalIndexEntryVc(List<IReversalIndex> usedIndices, FdoCache cache)
+			public ReversalIndexEntryVc(List<IReversalIndex> usedIndices, LcmCache cache)
 			{
 				Cache = cache;
 				m_usedIndices = usedIndices;

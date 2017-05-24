@@ -7,16 +7,16 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using System.Diagnostics;
-using SIL.CoreImpl.KernelInterfaces;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.Utils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.Filters;
 using XCore;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.ObjectModel;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -283,7 +283,7 @@ namespace SIL.FieldWorks.Common.Controls
 	/// </summary>
 	public class PartOwnershipTree : DisposableBase
 	{
-		FdoCache m_cache = null;
+		LcmCache m_cache = null;
 		XmlNode m_classOwnershipTree = null;
 		XmlNode m_parentToChildrenSpecs = null;
 
@@ -294,7 +294,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="sortItemProvider"></param>
 		/// <param name="fReturnFirstDecendentOnly"></param>
 		/// <returns></returns>
-		static public PartOwnershipTree Create(FdoCache cache, IMultiListSortItemProvider sortItemProvider, bool fReturnFirstDecendentOnly)
+		static public PartOwnershipTree Create(LcmCache cache, IMultiListSortItemProvider sortItemProvider, bool fReturnFirstDecendentOnly)
 		{
 			return new PartOwnershipTree(cache, sortItemProvider, fReturnFirstDecendentOnly);
 		}
@@ -305,7 +305,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="cache"></param>
 		/// <param name="sortItemProvider"></param>
 		/// <param name="fReturnFirstDecendentOnly"></param>
-		private PartOwnershipTree(FdoCache cache, IMultiListSortItemProvider sortItemProvider, bool fReturnFirstDecendentOnly)
+		private PartOwnershipTree(LcmCache cache, IMultiListSortItemProvider sortItemProvider, bool fReturnFirstDecendentOnly)
 		{
 			XmlNode partOwnershipTreeSpec = sortItemProvider.PartOwnershipTreeSpec;
 			m_cache = cache;
@@ -329,7 +329,7 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-		private FdoCache Cache
+		private LcmCache Cache
 		{
 			get { return m_cache; }
 		}

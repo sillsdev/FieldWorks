@@ -9,9 +9,9 @@ using System.Linq;
 using System.Net;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.DomainServices.BackupRestore;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.DomainServices.BackupRestore;
 
 namespace SIL.FieldWorks.ParatextLexiconPlugin
 {
@@ -20,8 +20,8 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		private LanguageProjectInfo m_selectedItem;
 		private string m_restoreFileFullPath;
 		private RestoreProjectSettings m_restoreSettings;
-		private readonly ParatextLexiconPluginFdoUI m_ui;
-		private readonly KeyedCollection<string, FdoCache> m_fdoCacheCache;
+		private readonly ParatextLexiconPluginLcmUI m_ui;
+		private readonly KeyedCollection<string, LcmCache> m_cacheCache;
 
 		public string SelectedProject
 		{
@@ -40,7 +40,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			else
 			{
 				m_selectedItem = (LanguageProjectInfo) listBox.SelectedItem;
-				if (!m_fdoCacheCache.Contains(m_selectedItem.ToString()) && ProjectLockingService.IsProjectLocked(m_selectedItem.FullName))
+				if (!m_cacheCache.Contains(m_selectedItem.ToString()) && ProjectLockingService.IsProjectLocked(m_selectedItem.FullName))
 				{
 					MessageBox.Show(this, Strings.ksProjectOpen, Strings.ksErrorCaption, MessageBoxButtons.OK, MessageBoxIcon.Error);
 					return;
@@ -116,12 +116,12 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		}
 		#endregion
 
-		public ChooseFdoProjectForm(ParatextLexiconPluginFdoUI ui, KeyedCollection<string, FdoCache> fdoCacheCache)
+		public ChooseFdoProjectForm(ParatextLexiconPluginLcmUI ui, KeyedCollection<string, LcmCache> fdoCacheCache)
 		{
 			// This call is required by the Windows Form Designer.
 			InitializeComponent();
 			m_ui = ui;
-			m_fdoCacheCache = fdoCacheCache;
+			m_cacheCache = fdoCacheCache;
 			PopulateLanguageProjectsList(Dns.GetHostName());
 		}
 
@@ -141,7 +141,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			foreach (var projectPathname in Directory.GetDirectories(ParatextLexiconPluginDirectoryFinder.ProjectsDirectory))
 			{
 				var projectDirName = new DirectoryInfo(projectPathname).Name;
-				var dataPathname = Path.Combine(projectPathname, projectDirName + FdoFileHelper.ksFwDataXmlFileExtension);
+				var dataPathname = Path.Combine(projectPathname, projectDirName + LcmFileHelper.ksFwDataXmlFileExtension);
 				if (!File.Exists(dataPathname))
 					continue;
 				AddProject(dataPathname);

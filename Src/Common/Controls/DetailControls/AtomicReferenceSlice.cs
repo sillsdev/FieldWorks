@@ -6,9 +6,9 @@ using System;
 using System.Diagnostics;
 using System.Windows.Forms;
 using System.Xml;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
@@ -42,7 +42,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <param name="cache">The cache.</param>
 		/// <param name="obj">The obj.</param>
 		/// <param name="flid">The flid.</param>
-		protected AtomicReferenceSlice(Control control, FdoCache cache, ICmObject obj, int flid)
+		protected AtomicReferenceSlice(Control control, LcmCache cache, ICmObject obj, int flid)
 			: base(control, cache, obj, flid)
 		{
 			m_sda = m_cache.MainCacheAccessor;
@@ -54,7 +54,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// Initializes a new instance of the <see cref="AtomicReferenceSlice"/> class.
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
-		public AtomicReferenceSlice(FdoCache cache, ICmObject obj, int flid)
+		public AtomicReferenceSlice(LcmCache cache, ICmObject obj, int flid)
 			: this(new AtomicReferenceLauncher(), cache, obj, flid)
 		{
 		}
@@ -261,7 +261,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 	}
 	public class AtomicReferenceDisabledSlice: AtomicReferenceSlice
 	{
-		public AtomicReferenceDisabledSlice(FdoCache cache, ICmObject obj, int flid)
+		public AtomicReferenceDisabledSlice(LcmCache cache, ICmObject obj, int flid)
 			:base(cache, obj, flid)
 		{
 		}

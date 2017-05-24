@@ -6,11 +6,11 @@ using System.Xml;
 using System.Drawing;
 using System.Diagnostics;
 using System.Collections.Generic;
-using SIL.CoreImpl.KernelInterfaces;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.Utils;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.Controls
 {

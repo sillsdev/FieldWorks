@@ -6,10 +6,10 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices; // needed for Marshal
 using System.Diagnostics;
-using SIL.CoreImpl.Cellar;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.CacheLight
 {

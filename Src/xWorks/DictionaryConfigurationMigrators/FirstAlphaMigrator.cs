@@ -7,8 +7,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.Utils;
+using SIL.LCModel;
+using SIL.LCModel.Utils;
 using XCore;
 using DCM = SIL.FieldWorks.XWorks.DictionaryConfigurationMigrator;
 
@@ -27,18 +27,18 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		{
 		}
 
-		public FirstAlphaMigrator(FdoCache cache, SimpleLogger logger)
+		public FirstAlphaMigrator(LcmCache cache, SimpleLogger logger)
 		{
 			Cache = cache;
 			m_logger = logger;
 		}
 
-		private FdoCache Cache { get; set; }
+		private LcmCache Cache { get; set; }
 
 		public void MigrateIfNeeded(SimpleLogger logger, PropertyTable propertyTable, string appVersion)
 		{
 			m_logger = logger;
-			Cache = propertyTable.GetValue<FdoCache>("cache");
+			Cache = propertyTable.GetValue<LcmCache>("cache");
 			var foundOne = string.Format("{0}: Configuration was found in need of migration. - {1}",
 				appVersion, DateTime.Now.ToString("yyyy MMM d h:mm:ss"));
 			foreach (var config in DCM.GetConfigsNeedingMigration(Cache, VersionAlpha3))

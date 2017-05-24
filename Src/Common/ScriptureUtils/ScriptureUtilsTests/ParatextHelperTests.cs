@@ -8,11 +8,10 @@ using System.Linq;
 using NUnit.Framework;
 using Paratext;
 using Paratext.LexicalClient;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.FDOTests;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.Test.ProjectUnpacker;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.Common.ScriptureUtils
 {
@@ -296,7 +295,7 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 			m_ptHelper.AddProject("SOUP", "Monkey Soup");
 			m_ptHelper.AddProject("GRK", "Levington");
 			m_ptHelper.AddProject("Mony", "Money");
-			ScrText found = ParatextHelper.GetAssociatedProject(new TestProjectId(FDOBackendProviderType.kXML, "Monkey Soup"));
+			ScrText found = ParatextHelper.GetAssociatedProject(new TestProjectId(BackendProviderType.kXML, "Monkey Soup"));
 			Assert.AreEqual("SOUP", found.Name);
 		}
 
@@ -384,7 +383,7 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
 	[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
-	public class ParatextHelperTests : ScrInMemoryFdoTestBase
+	public class ParatextHelperTests : ScrInMemoryLcmTestBase
 	{
 		#region Tests
 		/// ------------------------------------------------------------------------------------
@@ -411,7 +410,7 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 		{
 			Unpacker.UnPackParatextTestProjects();
 
-			var stylesheet = new FwStyleSheet();
+			var stylesheet = new LcmStyleSheet();
 			stylesheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles);
 			IScrImportSet importSettings = Cache.ServiceLocator.GetInstance<IScrImportSetFactory>().Create();
 			importSettings.ParatextScrProj = "KAM";
@@ -441,7 +440,7 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 		[Ignore("Has not been run for a while and no longer works; possibly obsolete")]
 		public void LoadParatextMappings_MarkMappingsInUse()
 		{
-			var stylesheet = new FwStyleSheet();
+			var stylesheet = new LcmStyleSheet();
 			stylesheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles);
 			IScrImportSet importSettings = Cache.ServiceLocator.GetInstance<IScrImportSetFactory>().Create();
 			importSettings.ParatextScrProj = "TEV";
@@ -476,7 +475,7 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 		[Category("LongRunning")]
 		public void LoadParatextMappings_MissingEncodingFile()
 		{
-			var stylesheet = new FwStyleSheet();
+			var stylesheet = new LcmStyleSheet();
 			stylesheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles);
 			IScrImportSet importSettings = Cache.ServiceLocator.GetInstance<IScrImportSetFactory>().Create();
 			importSettings.ParatextScrProj = "NEC";
@@ -497,7 +496,7 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 		[Ignore("Causes build to hang since Paratext code displays a 'missing style file' message box")]
 		public void LoadParatextMappings_MissingStyleFile()
 		{
-			FwStyleSheet stylesheet = new FwStyleSheet();
+			LcmStyleSheet stylesheet = new LcmStyleSheet();
 			stylesheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles);
 			IScrImportSet importSettings = Cache.ServiceLocator.GetInstance<IScrImportSetFactory>().Create();
 			importSettings.ParatextScrProj = "NSF";

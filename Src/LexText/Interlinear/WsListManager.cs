@@ -5,13 +5,13 @@
 using System;
 using System.Diagnostics;
 using System.Linq;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using System.Collections.Generic;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.WritingSystems;
-using SIL.CoreImpl.KernelInterfaces;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.DomainServices;
 
 namespace SIL.FieldWorks.IText
 {
@@ -40,10 +40,10 @@ namespace SIL.FieldWorks.IText
 		}
 
 		/// <summary>
-		/// Create one starting from an FdoCache.
+		/// Create one starting from an LcmCache.
 		/// </summary>
 		/// <param name="cache"></param>
-		public WsListManager(FdoCache cache): this(cache.LangProject)
+		public WsListManager(LcmCache cache): this(cache.LangProject)
 		{
 		}
 
@@ -235,7 +235,7 @@ namespace SIL.FieldWorks.IText
 			}
 		}
 
-		public static ITsString WsLabel(FdoCache cache, int ws)
+		public static ITsString WsLabel(LcmCache cache, int ws)
 		{
 			CoreWritingSystemDefinition wsObj = cache.ServiceLocator.WritingSystemManager.Get(ws);
 			ITsString abbr = TsStringUtils.MakeString(wsObj.Abbreviation, cache.DefaultUserWs, "Language Code");

@@ -1,23 +1,16 @@
-// Copyright (c) 2005-2013 SIL International
+// Copyright (c) 2005-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: MasterPhonFeatDlgListener.cs
-// Responsibility: Andy Black
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
+
 using System;
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
-using SIL.Utils;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO.Infrastructure;
-using XCore;
+using SIL.LCModel.Infrastructure;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
 {
@@ -88,7 +81,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 			using (MasterPhonologicalFeatureListDlg dlg = new MasterPhonologicalFeatureListDlg(className))
 			{
-				FdoCache cache = m_propertyTable.GetValue<FdoCache>("cache");
+				LcmCache cache = m_propertyTable.GetValue<LcmCache>("cache");
 				Debug.Assert(cache != null);
 				string sXmlFile = Path.Combine(FwDirectoryFinder.CodeDirectory, String.Format("Language Explorer{0}MGA{0}GlossLists{0}PhonFeatsEticGlossList.xml", Path.DirectorySeparatorChar));
 				if (cache.LanguageProject.PhFeatureSystemOA == null)

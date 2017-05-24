@@ -6,19 +6,19 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.Text;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.Common.Widgets;
 using XCore;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.CoreImpl.Cellar;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
 
 namespace SIL.FieldWorks.IText
 {
@@ -991,7 +991,7 @@ namespace SIL.FieldWorks.IText
 			AcceptsTab = true;
 		}
 
-		public SandboxBase(FdoCache cache, Mediator mediator, PropertyTable propertyTable, IVwStylesheet ss, InterlinLineChoices choices)
+		public SandboxBase(LcmCache cache, Mediator mediator, PropertyTable propertyTable, IVwStylesheet ss, InterlinLineChoices choices)
 			: this()
 		{
 			// Override things from InitializeComponent()
@@ -1016,7 +1016,7 @@ namespace SIL.FieldWorks.IText
 #endif
 			}
 
-		public SandboxBase(FdoCache cache, Mediator mediator, PropertyTable propertyTable, IVwStylesheet ss, InterlinLineChoices choices, int hvoAnalysis)
+		public SandboxBase(LcmCache cache, Mediator mediator, PropertyTable propertyTable, IVwStylesheet ss, InterlinLineChoices choices, int hvoAnalysis)
 			: this(cache, mediator, propertyTable, ss, choices)
 		{
 			// finish setup with the WordBundleAnalysis
@@ -1461,7 +1461,7 @@ namespace SIL.FieldWorks.IText
 			return humanCount + machineCount > 1;
 		}
 
-		private static bool IsAnalysisHumanApproved(FdoCache cache, IWfiAnalysis analysis)
+		private static bool IsAnalysisHumanApproved(LcmCache cache, IWfiAnalysis analysis)
 		{
 			if (analysis == null)
 				return false; // non-existent analysis can't be approved.
@@ -2101,7 +2101,7 @@ namespace SIL.FieldWorks.IText
 		/// If this is being called to establish a default monomorphemic guess, skip over
 		/// any bound root or bound stem entries that hvoEntry may be a variant of.
 		/// </summary>
-		public ILexEntryRef GetVariantRef(FdoCache cache, int hvoEntry, bool fMonoMorphemic)
+		public ILexEntryRef GetVariantRef(LcmCache cache, int hvoEntry, bool fMonoMorphemic)
 		{
 			ISilDataAccess sda = cache.MainCacheAccessor;
 			int cRef = sda.get_VecSize(hvoEntry, LexEntryTags.kflidEntryRefs);
@@ -2153,7 +2153,7 @@ namespace SIL.FieldWorks.IText
 		/// root or a bound stem.  We don't want to use those as guesses for monomorphemic
 		/// words.  See LT-10323.
 		/// </summary>
-		private static bool IsEntryBound(FdoCache cache, int hvoComponent, int clid)
+		private static bool IsEntryBound(LcmCache cache, int hvoComponent, int clid)
 		{
 			int hvoTargetEntry;
 			if (clid == LexSenseTags.kClassId)
@@ -4523,7 +4523,7 @@ namespace SIL.FieldWorks.IText
 				int hvo = GetHvoForJumpToToolClass(className);
 				if (hvo != 0)
 				{
-					FdoCache cache = m_caches.MainCache;
+					LcmCache cache = m_caches.MainCache;
 					ICmObject co = cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo);
 					var fwLink = new FwLinkArgs(tool, co.Guid);
 					List<Property> additionalProps = fwLink.PropertyTableEntries;

@@ -4,19 +4,18 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework.DetailControls;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Application;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.Utils;
@@ -70,7 +69,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			base.Dispose( disposing );
 		}
 
-		public override void Initialize(FdoCache cache, ICmObject obj, int flid, string fieldName, IPersistenceProvider persistProvider, Mediator mediator, PropertyTable propertyTable, string displayNameProperty, string displayWs)
+		public override void Initialize(LcmCache cache, ICmObject obj, int flid, string fieldName, IPersistenceProvider persistProvider, Mediator mediator, PropertyTable propertyTable, string displayNameProperty, string displayWs)
 		{
 			base.Initialize(cache, obj, flid, fieldName, persistProvider, mediator, propertyTable, displayNameProperty, displayWs);
 			m_sda = m_cache.MainCacheAccessor;
@@ -345,7 +344,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		private readonly ILexEntryRef m_lexEntryRef;
 		private readonly Form m_parentWindow;
 
-		public AddPrimaryLexemeChooserCommand(FdoCache cache, bool fCloseBeforeExecuting,
+		public AddPrimaryLexemeChooserCommand(LcmCache cache, bool fCloseBeforeExecuting,
 			string sLabel, Mediator mediator, PropertyTable propertyTable, ICmObject lexEntryRef, /* Why ICmObject? */
 			Form parentWindow)
 			: base(cache, fCloseBeforeExecuting, sLabel, mediator, propertyTable)
@@ -411,7 +410,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		private readonly ILexSense m_lexSense;
 		private readonly Form m_parentWindow;
 
-		public AddComplexFormChooserCommand(FdoCache cache, bool fCloseBeforeExecuting,
+		public AddComplexFormChooserCommand(LcmCache cache, bool fCloseBeforeExecuting,
 			string sLabel, Mediator mediator, PropertyTable propertyTable, ICmObject lexEntry, /* Why ICmObject? */
 			Form parentWindow)
 			: base(cache, fCloseBeforeExecuting, sLabel, mediator, propertyTable)
@@ -516,9 +515,9 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				var info = rginfo[clev - 1];
 				ICmObject cmo;
 				if (info.tag == m_rootFlid &&
-					m_fdoCache.ServiceLocator.ObjectRepository.TryGetObject(info.hvo, out cmo))
+					m_cache.ServiceLocator.ObjectRepository.TryGetObject(info.hvo, out cmo))
 				{
-					var sda = m_fdoCache.DomainDataByFlid as ISilDataAccessManaged;
+					var sda = m_cache.DomainDataByFlid as ISilDataAccessManaged;
 					Debug.Assert(sda != null);
 					var rghvos = sda.VecProp(m_rootObj.Hvo, m_rootFlid);
 					var ihvo = -1;
@@ -535,7 +534,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 						var startHeight = m_rootb.Height;
 						if (Cache.MetaDataCacheAccessor.get_IsVirtual(m_rootFlid))
 						{
-							var obj = m_fdoCache.ServiceLocator.GetObject(rghvos[ihvo]);
+							var obj = m_cache.ServiceLocator.GetObject(rghvos[ihvo]);
 							ILexEntryRef ler = null;
 							if (obj is ILexEntry)
 							{
@@ -563,7 +562,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 							{
 								return VwDelProbResponse.kdprAbort; // we don't know how to delete it.
 							}
-							var fieldName = m_fdoCache.MetaDataCacheAccessor.GetFieldName(m_rootFlid);
+							var fieldName = m_cache.MetaDataCacheAccessor.GetFieldName(m_rootFlid);
 							if (fieldName == "Subentries")
 							{
 								ler.PrimaryLexemesRS.Remove(m_rootObj);

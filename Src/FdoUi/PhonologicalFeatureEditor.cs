@@ -7,17 +7,17 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Xml;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel.Application;
+using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.XWorks.MorphologyEditor;
-using SIL.Utils;
 using XCore;
 using System.Linq;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.FdoUi
 {
@@ -34,7 +34,7 @@ namespace SIL.FieldWorks.FdoUi
 	{
 		private Mediator m_mediator;
 		private TreeCombo m_tree;
-		private FdoCache m_cache;
+		private LcmCache m_cache;
 		protected XMLViewsDataCache m_sda;
 		private PhonologicalFeaturePopupTreeManager m_PhonologicalFeatureTreeManager;
 		private int m_selectedHvo = 0;
@@ -206,7 +206,7 @@ namespace SIL.FieldWorks.FdoUi
 		/// <summary>
 		/// Get or set the cache. Must be set before the tree values need to load.
 		/// </summary>
-		public FdoCache Cache
+		public LcmCache Cache
 		{
 			get
 			{
@@ -668,7 +668,7 @@ namespace SIL.FieldWorks.FdoUi
 		/// <param name="propertyTable"></param>
 		/// <param name="cache">The cache.</param>
 		/// ------------------------------------------------------------------------------------
-		public BulkEditBarPhonologicalFeatures(BrowseViewer bv, XmlNode spec, Mediator mediator, PropertyTable propertyTable, FdoCache cache) :
+		public BulkEditBarPhonologicalFeatures(BrowseViewer bv, XmlNode spec, Mediator mediator, PropertyTable propertyTable, LcmCache cache) :
 			base(bv, spec, mediator, propertyTable, cache)
 		{
 			m_operationsTabControl.Controls.Remove(BulkCopyTab);
@@ -794,7 +794,7 @@ namespace SIL.FieldWorks.FdoUi
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public BrowseViewerPhonologicalFeatures(XmlNode nodeSpec, int hvoRoot, int fakeFlid,
-			FdoCache cache, Mediator mediator, PropertyTable propertyTable, ISortItemProvider sortItemProvider, ISilDataAccessManaged sda)
+			LcmCache cache, Mediator mediator, PropertyTable propertyTable, ISortItemProvider sortItemProvider, ISilDataAccessManaged sda)
 			: base(nodeSpec, hvoRoot, fakeFlid, cache, mediator, propertyTable, sortItemProvider, sda)
 		{ }
 
@@ -808,7 +808,7 @@ namespace SIL.FieldWorks.FdoUi
 		/// <param name="propertyTable"></param>
 		/// <param name="cache"></param>
 		///  <returns></returns>
-		protected override BulkEditBar CreateBulkEditBar(BrowseViewer bv, XmlNode spec, Mediator mediator, PropertyTable propertyTable, FdoCache cache)
+		protected override BulkEditBar CreateBulkEditBar(BrowseViewer bv, XmlNode spec, Mediator mediator, PropertyTable propertyTable, LcmCache cache)
 		{
 			return new BulkEditBarPhonologicalFeatures(bv, spec, mediator, propertyTable, cache);
 		}

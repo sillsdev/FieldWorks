@@ -103,25 +103,25 @@
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CoreImpl, Version=6.1.0.20700, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="SIL.LCModel.Core, Version=9.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Output\Debug\CoreImpl.dll</HintPath>
+      <HintPath>..\..\..\..\..\Output\Debug\SIL.LCModel.Core.dll</HintPath>
     </Reference>
-    <Reference Include="CoreImplTests, Version=9.0.0.0, Culture=neutral, processorArchitecture=x86">
+    <Reference Include="SIL.LCModel.Core.Tests, Version=9.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Output\Debug\CoreImplTests.dll</HintPath>
+      <HintPath>..\..\..\..\..\Output\Debug\SIL.LCModel.Core.Tests.dll</HintPath>
     </Reference>
     <Reference Include="DetailControls">
       <Name>DetailControls</Name>
       <HintPath>..\..\..\..\..\Output\Debug\DetailControls.dll</HintPath>
     </Reference>
-    <Reference Include="FDO">
-      <Name>FDO</Name>
-      <HintPath>..\..\..\..\..\Output\Debug\FDO.dll</HintPath>
+    <Reference Include="SIL.LCModel">
+      <Name>SIL.LCModel</Name>
+      <HintPath>..\..\..\..\..\Output\Debug\SIL.LCModel.dll</HintPath>
     </Reference>
-    <Reference Include="FDOTests, Version=6.1.0.16016, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="SIL.LCModel.Tests, Version=9.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Output\Debug\FDOTests.dll</HintPath>
+      <HintPath>..\..\..\..\..\Output\Debug\SIL.LCModel.Tests.dll</HintPath>
     </Reference>
     <Reference Include="FwUtils, Version=6.1.0.25834, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -143,9 +143,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Output\Debug\SIL.TestUtilities.dll</HintPath>
     </Reference>
-    <Reference Include="SilUtilsTests, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="SIL.LCModel.Utils.Tests, Version=9.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Output\Debug\SilUtilsTests.dll</HintPath>
+      <HintPath>..\..\..\..\..\Output\Debug\SIL.LCModel.Utils.Tests.dll</HintPath>
     </Reference>
     <Reference Include="SimpleRootSite, Version=6.9.6.18915, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

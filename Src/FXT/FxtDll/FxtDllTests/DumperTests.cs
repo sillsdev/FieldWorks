@@ -10,9 +10,8 @@ using System.Text.RegularExpressions;
 using System.Xml;
 
 using NUnit.Framework;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.FDOTests;
-using SIL.Utils;
+using SIL.LCModel;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.Common.FXT
 {

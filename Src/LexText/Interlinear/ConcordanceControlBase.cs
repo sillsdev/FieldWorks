@@ -8,9 +8,9 @@ using System.Windows.Forms;
 using System.Xml;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel;
+using SIL.LCModel.Application;
+using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.XWorks;
 using SIL.Utils;
 using XCore;
@@ -22,7 +22,7 @@ namespace SIL.FieldWorks.IText
 		protected Mediator m_mediator;
 		protected PropertyTable m_propertyTable;
 		protected XmlNode m_configurationParameters;
-		protected FdoCache m_cache;
+		protected LcmCache m_cache;
 		protected OccurrencesOfSelectedUnit m_clerk;
 		protected IHelpTopicProvider m_helpTopicProvider;
 
@@ -50,7 +50,7 @@ namespace SIL.FieldWorks.IText
 			m_propertyTable = propertyTable;
 			m_helpTopicProvider = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
 			m_configurationParameters = configurationParameters;
-			m_cache = m_propertyTable.GetValue<FdoCache>("cache");
+			m_cache = m_propertyTable.GetValue<LcmCache>("cache");
 			string name = RecordClerk.GetCorrespondingPropertyName(XmlUtils.GetAttributeValue(configurationParameters, "clerk"));
 			m_clerk = m_propertyTable.GetValue<OccurrencesOfSelectedUnit>(name) ?? (OccurrencesOfSelectedUnit)RecordClerkFactory.CreateClerk(m_mediator, m_propertyTable, m_configurationParameters, true);
 			m_clerk.ConcordanceControl = this;

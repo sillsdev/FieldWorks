@@ -6,14 +6,14 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.FwCoreDlgs;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 using XCore;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.WritingSystems;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -62,7 +62,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="mediator">The mediator.</param>
 		/// <param name="propertyTable"></param>
 		/// <param name="tssVariantLexemeForm">The variant lexeme form.</param>
-		public void SetDlgInfo(FdoCache cache, Mediator mediator, XCore.PropertyTable propertyTable, ITsString tssVariantLexemeForm)
+		public void SetDlgInfo(LcmCache cache, Mediator mediator, XCore.PropertyTable propertyTable, ITsString tssVariantLexemeForm)
 		{
 			m_tssVariantLexemeForm = tssVariantLexemeForm;
 			base.SetDlgInfo(cache, mediator, propertyTable, null);
@@ -78,7 +78,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="mediator"></param>
 		/// <param name="propertyTable"></param>
 		/// <param name="componentLexeme">the entry we wish to find or create a variant for.</param>
-		protected void SetDlgInfoForComponentLexeme(FdoCache cache, Mediator mediator, XCore.PropertyTable propertyTable, IVariantComponentLexeme componentLexeme)
+		protected void SetDlgInfoForComponentLexeme(LcmCache cache, Mediator mediator, XCore.PropertyTable propertyTable, IVariantComponentLexeme componentLexeme)
 		{
 			m_fBackRefToVariant = true;
 			ILexEntry startingEntry;
@@ -109,7 +109,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		}
 
 
-		protected override void SetDlgInfo(FdoCache cache, WindowParams wp, Mediator mediator, XCore.PropertyTable propertyTable, int ws)
+		protected override void SetDlgInfo(LcmCache cache, WindowParams wp, Mediator mediator, XCore.PropertyTable propertyTable, int ws)
 		{
 			WritingSystemAndStylesheetHelper.SetupWritingSystemAndStylesheetInfo(propertyTable, tcVariantTypes,
 				cache, cache.DefaultUserWs);
@@ -510,7 +510,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="mediator"></param>
 		/// <param name="propertyTable"></param>
 		/// <param name="componentLexeme">the entry we wish to find or create a variant for.</param>
-		public void SetDlgInfo(FdoCache cache, Mediator mediator, XCore.PropertyTable propertyTable, IVariantComponentLexeme componentLexeme)
+		public void SetDlgInfo(LcmCache cache, Mediator mediator, XCore.PropertyTable propertyTable, IVariantComponentLexeme componentLexeme)
 		{
 			SetDlgInfoForComponentLexeme(cache, mediator, propertyTable, componentLexeme);
 		}

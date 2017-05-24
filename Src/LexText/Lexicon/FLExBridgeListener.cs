@@ -17,16 +17,15 @@ using SIL.Lift.Parsing;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.FDO.Infrastructure.Impl;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks.LexText;
 using SIL.IO;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 using XCore;
 
 namespace SIL.FieldWorks.XWorks.LexEd
@@ -39,7 +38,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		private Form _parentForm;
 		private string _liftPathname;
 		private IProgress _progressDlg;
-		private FdoCache Cache { get; set; }
+		private LcmCache Cache { get; set; }
 
 		/// <summary>
 		/// On static initialization the OldLiftBridgeProjects is populated from the mapping file if it is present.
@@ -82,7 +81,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 			_mediator = mediator;
 			_propertyTable = propertyTable;
-			Cache = _propertyTable.GetValue<FdoCache>("cache");
+			Cache = _propertyTable.GetValue<LcmCache>("cache");
 			_propertyTable.SetProperty("FLExBridgeListener", this, true);
 			_propertyTable.SetPropertyPersistence("FLExBridgeListener", false);
 			_parentForm = _propertyTable.GetValue<Form>("window");
@@ -235,7 +234,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			StopParser();
 			bool dummy;
 			var success = FLExBridgeHelper.LaunchFieldworksBridge(Cache.ProjectId.ProjectFolder, null, FLExBridgeHelper.ObtainLift, null,
-				FDOBackendProvider.ModelVersion, "0.13", null,
+				LcmCache.ModelVersion, "0.13", null,
 				null, out dummy, out _liftPathname);
 
 			if (!success || string.IsNullOrEmpty(_liftPathname))
@@ -291,7 +290,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 						var sLinkedFilesRootDir = app.Cache.LangProject.LinkedFilesRootDir;
 						NonUndoableUnitOfWorkHelper.Do(app.Cache.ActionHandlerAccessor, () =>
 						{
-							app.Cache.LangProject.LinkedFilesRootDir = FdoFileHelper.GetDefaultLinkedFilesDir(
+							app.Cache.LangProject.LinkedFilesRootDir = LcmFileHelper.GetDefaultLinkedFilesDir(
 								app.Cache.ProjectId.ProjectFolder);
 						});
 						app.UpdateExternalLinks(sLinkedFilesRootDir);
@@ -318,12 +317,12 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			var projectFolder = Cache.ProjectId.ProjectFolder;
 			var savedState = PrepareToDetectMainConflicts(projectFolder);
 			string dummy;
-			var fullProjectFileName = Path.Combine(projectFolder, Cache.ProjectId.Name + FdoFileHelper.ksFwDataXmlFileExtension);
+			var fullProjectFileName = Path.Combine(projectFolder, Cache.ProjectId.Name + LcmFileHelper.ksFwDataXmlFileExtension);
 			bool dataChanged;
 			using (CopyDictionaryConfigFileToTemp(projectFolder))
 			{
 				var success = FLExBridgeHelper.LaunchFieldworksBridge(fullProjectFileName, SendReceiveUser, FLExBridgeHelper.SendReceive,
-					null, FDOBackendProvider.ModelVersion, "0.13",
+					null, LcmCache.ModelVersion, "0.13",
 					Cache.LangProject.DefaultVernacularWritingSystem.Id, null,
 					out dataChanged, out dummy);
 				if (!success)
@@ -354,7 +353,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		private bool LinkedFilesLocationIsDefault()
 		{
-			var defaultLinkedFilesFolder = FdoFileHelper.GetDefaultLinkedFilesDir(Cache.ServiceLocator.DataSetup.ProjectId.ProjectFolder);
+			var defaultLinkedFilesFolder = LcmFileHelper.GetDefaultLinkedFilesDir(Cache.ServiceLocator.DataSetup.ProjectId.ProjectFolder);
 			return defaultLinkedFilesFolder.Equals(Cache.LanguageProject.LinkedFilesRootDir);
 		}
 
@@ -513,7 +512,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		private string GetFullProjectFileName()
 		{
-			return Path.Combine(Cache.ProjectId.ProjectFolder, Cache.ProjectId.Name + FdoFileHelper.ksFwDataXmlFileExtension);
+			return Path.Combine(Cache.ProjectId.ProjectFolder, Cache.ProjectId.Name + LcmFileHelper.ksFwDataXmlFileExtension);
 		}
 
 		private void SaveAllDataToDisk()
@@ -564,7 +563,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				GetFullProjectFileName(),
 				SendReceiveUser,
 				FLExBridgeHelper.CheckForUpdates,
-				null, FDOBackendProvider.ModelVersion, "0.13", null, null,
+				null, LcmCache.ModelVersion, "0.13", null, null,
 				out dummy1, out dummy2);
 
 			return true;
@@ -597,7 +596,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				GetFullProjectFileName(),
 				SendReceiveUser,
 				FLExBridgeHelper.AboutFLExBridge,
-				null, FDOBackendProvider.ModelVersion, "0.13", null, null,
+				null, LcmCache.ModelVersion, "0.13", null, null,
 				out dummy1, out dummy2);
 
 			return true;
@@ -635,10 +634,10 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			bool dummy1;
 			string dummy2;
 			FLExBridgeHelper.FLExJumpUrlChanged += JumpToFlexObject;
-			var success = FLExBridgeHelper.LaunchFieldworksBridge(Path.Combine(Cache.ProjectId.ProjectFolder, Cache.ProjectId.Name + FdoFileHelper.ksFwDataXmlFileExtension),
+			var success = FLExBridgeHelper.LaunchFieldworksBridge(Path.Combine(Cache.ProjectId.ProjectFolder, Cache.ProjectId.Name + LcmFileHelper.ksFwDataXmlFileExtension),
 								   SendReceiveUser,
 								   FLExBridgeHelper.ConflictViewer,
-								   null, FDOBackendProvider.ModelVersion, "0.13", null, BroadcastMasterRefresh,
+								   null, LcmCache.ModelVersion, "0.13", null, BroadcastMasterRefresh,
 								   out dummy1, out dummy2);
 			if (!success)
 			{
@@ -683,7 +682,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				GetFullProjectFileName(),
 				SendReceiveUser,
 				FLExBridgeHelper.LiftConflictViewer,
-				null, FDOBackendProvider.ModelVersion, "0.13", null, BroadcastMasterRefresh,
+				null, LcmCache.ModelVersion, "0.13", null, BroadcastMasterRefresh,
 				out dummy1, out dummy2);
 			if (!success)
 			{
@@ -781,7 +780,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				GetFullProjectFileName(),
 				SendReceiveUser,
 				FLExBridgeHelper.MoveLift,
-				Cache.LanguageProject.Guid.ToString().ToLowerInvariant(), FDOBackendProvider.ModelVersion, "0.13", null, null,
+				Cache.LanguageProject.Guid.ToString().ToLowerInvariant(), LcmCache.ModelVersion, "0.13", null, null,
 				out dummyDataChanged, out _liftPathname); // _liftPathname will be null, if no repo was moved.
 			if (!success)
 			{
@@ -894,7 +893,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				fullProjectFileName,
 				SendReceiveUser,
 				FLExBridgeHelper.SendReceiveLift, // May create a new lift repo in the process of doing the S/R. Or, it may just use the extant lift repo.
-				null, FDOBackendProvider.ModelVersion, "0.13", Cache.LangProject.DefaultVernacularWritingSystem.Id, null,
+				null, LcmCache.ModelVersion, "0.13", Cache.LangProject.DefaultVernacularWritingSystem.Id, null,
 				out dataChanged, out dummy);
 			if (!success)
 			{
@@ -917,7 +916,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		internal static string GetLiftRepositoryFolderFromFwProjectFolder(string projectFolder)
 		{
-			var otherDir = Path.Combine(projectFolder, FdoFileHelper.OtherRepositories);
+			var otherDir = Path.Combine(projectFolder, LcmFileHelper.OtherRepositories);
 			if (Directory.Exists(otherDir))
 			{
 				var extantOtherFolders = Directory.GetDirectories(otherDir);
@@ -927,7 +926,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			}
 
 			var flexProjName = Path.GetFileName(projectFolder);
-			return Path.Combine(projectFolder, FdoFileHelper.OtherRepositories, flexProjName + '_' + FLExBridgeHelper.LIFT);
+			return Path.Combine(projectFolder, LcmFileHelper.OtherRepositories, flexProjName + '_' + FLExBridgeHelper.LIFT);
 		}
 
 		void OnDumperSetProgressMessage(object sender, ProgressMessageArgs e)
@@ -981,7 +980,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// <param name="liftPath"></param>
 		/// <param name="parentForm"></param>
 		/// <returns></returns>
-		public static bool ImportObtainedLexicon(FdoCache cache, string liftPath, Form parentForm)
+		public static bool ImportObtainedLexicon(LcmCache cache, string liftPath, Form parentForm)
 		{
 			using (var importer = new FLExBridgeListener())
 			{
@@ -1337,7 +1336,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			// Have FLEx Bridge do its 'undo'
 			// flexbridge -p <project folder name> #-u username -v undo_export_lift)
 			FLExBridgeHelper.LaunchFieldworksBridge(Cache.ProjectId.ProjectFolder, SendReceiveUser,
-				FLExBridgeHelper.UndoExportLift, null, FDOBackendProvider.ModelVersion, "0.13", null, null,
+				FLExBridgeHelper.UndoExportLift, null, LcmCache.ModelVersion, "0.13", null, null,
 				out dataChanged, out dummy);
 		}
 
@@ -1360,7 +1359,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// When 'true', then skip any Flex notes, and only consider the Lift notes.
 		/// </param>
 		/// <returns>'true' if there are any Chorus Notes files at the given level. Otherwise, it returns 'false'.</returns>
-		private static bool NotesFileIsPresent(FdoCache cache, bool checkForLiftNotes)
+		private static bool NotesFileIsPresent(LcmCache cache, bool checkForLiftNotes)
 		{
 			// Default to look for notes in the main FW repo.
 			var folderToSearchIn = cache.ProjectId.ProjectFolder;
@@ -1412,7 +1411,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		private static bool CheckForExistingFileName(string projectFolder, string revisedFileName)
 		{
-			if (File.Exists(Path.Combine(projectFolder, revisedFileName + FdoFileHelper.ksFwDataXmlFileExtension)))
+			if (File.Exists(Path.Combine(projectFolder, revisedFileName + LcmFileHelper.ksFwDataXmlFileExtension)))
 			{
 				MessageBox.Show(
 					LexEdStrings.ksExistingProjectName, LexEdStrings.ksWarning, MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -1458,7 +1457,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			foreach (var file in Directory.GetFiles(path, "*.ChorusNotes", SearchOption.AllDirectories))
 			{
 				// TODO: Test to see if one conflict tool can do both FLEx and LIFT conflicts.
-				if (file.Contains(FdoFileHelper.OtherRepositories))
+				if (file.Contains(LcmFileHelper.OtherRepositories))
 					continue; // Skip them, since they are part of some other repository.
 
 				long oldLength;
@@ -1480,7 +1479,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			var result = new Dictionary<string, long>();
 			foreach (var file in Directory.GetFiles(projectFolder, "*.ChorusNotes", SearchOption.AllDirectories))
 			{
-				if (file.Contains(FdoFileHelper.OtherRepositories))
+				if (file.Contains(LcmFileHelper.OtherRepositories))
 					continue; // Skip them, since they are part of some other repository.
 
 				result[file] = new FileInfo(file).Length;

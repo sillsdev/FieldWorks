@@ -8,14 +8,14 @@ using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Xml;
-using SIL.CoreImpl.Cellar;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel;
+using SIL.LCModel.Application;
+using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.Filters;
 using SIL.Utils;
 
@@ -26,13 +26,13 @@ namespace SIL.FieldWorks.Common.Controls
 	/// on looking up a layout for a particular HVO.
 	/// </summary>
 	public class LayoutFinder : IStringFinder, IPersistAsXml,
-		IStoresFdoCache, IStoresDataAccess
+		IStoresLcmCache, IStoresDataAccess
 	{
 		#region Data members
 		internal ISilDataAccess m_sda;
 		internal string m_layoutName;
 		internal IFwMetaDataCache m_mdc;
-		internal FdoCache m_cache;
+		internal LcmCache m_cache;
 		internal LayoutCache m_layouts;
 		internal XmlNode m_colSpec;
 		/// <summary/>
@@ -51,7 +51,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="colSpec">The col spec.</param>
 		/// <param name="app">The application.</param>
 		/// ------------------------------------------------------------------------------------
-		public LayoutFinder(FdoCache cache, string layoutName, XmlNode colSpec,
+		public LayoutFinder(LcmCache cache, string layoutName, XmlNode colSpec,
 			IApp app): this()
 		{
 			m_layoutName = layoutName;
@@ -71,13 +71,13 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>
 		/// Make a finder appropriate to the given column specification
 		/// </summary>
-		/// <param name="cache">FdoCache</param>
+		/// <param name="cache">LcmCache</param>
 		/// <param name="colSpec">column specification</param>
 		/// <param name="vc">The vc.</param>
 		/// <param name="app">The application.</param>
 		/// <returns>finder for colSpec</returns>
 		/// ------------------------------------------------------------------------------------
-		static public IStringFinder CreateFinder(FdoCache cache, XmlNode colSpec,
+		static public IStringFinder CreateFinder(LcmCache cache, XmlNode colSpec,
 			XmlBrowseViewBaseVc vc, IApp app)
 		{
 			string layoutName = XmlUtils.GetOptionalAttributeValue(colSpec, "layout");
@@ -429,12 +429,12 @@ namespace SIL.FieldWorks.Common.Controls
 
 		#endregion
 
-		#region IStoresFdoCache Members
+		#region IStoresLcmCache Members
 
 		/// <summary>
 		/// This is used to set the cache when one is recreated from XML.
 		/// </summary>
-		public FdoCache Cache
+		public LcmCache Cache
 		{
 			set
 			{
@@ -480,7 +480,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="colSpec">The col spec.</param>
 		/// <param name="app">The application</param>
 		/// ------------------------------------------------------------------------------------
-		public SortMethodFinder(FdoCache cache, string methodName, string layoutName,
+		public SortMethodFinder(LcmCache cache, string methodName, string layoutName,
 			XmlNode colSpec, IApp app)
 			: base(cache, layoutName, colSpec, app)
 		{
@@ -801,7 +801,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="colSpec">The col spec.</param>
 		/// <param name="app">The application</param>
 		/// ------------------------------------------------------------------------------------
-		public IntCompareFinder(FdoCache cache, string layoutName, XmlNode colSpec, IApp app)
+		public IntCompareFinder(LcmCache cache, string layoutName, XmlNode colSpec, IApp app)
 			: base(cache, layoutName, colSpec, app)
 		{
 		}

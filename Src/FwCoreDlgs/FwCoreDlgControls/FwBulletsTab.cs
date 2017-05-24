@@ -6,10 +6,10 @@ using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
-using SIL.CoreImpl.Text;
+using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.Controls;
-using SIL.CoreImpl.KernelInterfaces;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.DomainServices;
 
 namespace SIL.FieldWorks.FwCoreDlgControls
 {
@@ -43,7 +43,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		private bool m_DefaultTextDirectionRtoL = false;
 		private BulletInfo m_currentStyleBulletInfo;
 		private StyleInfo m_StyleInfo;
-		private FwStyleSheet m_styleSheet;
+		private LcmStyleSheet m_styleSheet;
 		/// <summary>Font info used when bullets is checked</summary>
 		private FontInfo m_BulletsFontInfo;
 		/// <summary>Font info used when numbered is checked</summary>
@@ -116,7 +116,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		/// Sets the style sheet
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public FwStyleSheet StyleSheet
+		public LcmStyleSheet StyleSheet
 		{
 			set { m_styleSheet = value; }
 		}

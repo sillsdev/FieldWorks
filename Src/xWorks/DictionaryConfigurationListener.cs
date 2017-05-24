@@ -11,8 +11,8 @@ using System.Xml;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainImpl;
+using SIL.LCModel;
+using SIL.LCModel.DomainImpl;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.XWorks.LexText;
 using XCore;
@@ -141,8 +141,8 @@ namespace SIL.FieldWorks.XWorks
 		/// <remarks>Useful for querying about an area of FLEx that the user is not in.</remarks>
 		internal static string GetProjectConfigurationDirectory(PropertyTable propertyTable, string area)
 		{
-			var cache = propertyTable.GetValue<FdoCache>("cache");
-			return area == null ? null : Path.Combine(FdoFileHelper.GetConfigSettingsDir(cache.ProjectId.ProjectFolder), area);
+			var cache = propertyTable.GetValue<LcmCache>("cache");
+			return area == null ? null : Path.Combine(LcmFileHelper.GetConfigSettingsDir(cache.ProjectId.ProjectFolder), area);
 		}
 
 		/// <summary>
@@ -233,7 +233,7 @@ namespace SIL.FieldWorks.XWorks
 			return GetCurrentConfiguration(propertyTable, true, innerConfigDir);
 		}
 
-		private static void SetConfigureHomographParameters(string currentConfig, FdoCache cache)
+		private static void SetConfigureHomographParameters(string currentConfig, LcmCache cache)
 		{
 			var model = new DictionaryConfigurationModel(currentConfig, cache);
 			DictionaryConfigurationController.SetConfigureHomographParameters(model, cache);
@@ -270,7 +270,7 @@ namespace SIL.FieldWorks.XWorks
 			var isDictionary = innerConfigDir == DictionaryConfigurationDirectoryName;
 			var pubLayoutPropName = isDictionary ? "DictionaryPublicationLayout" : "ReversalIndexPublicationLayout";
 			var currentConfig = propertyTable.GetStringProperty(pubLayoutPropName, string.Empty);
-			var cache = propertyTable.GetValue<FdoCache>("cache");
+			var cache = propertyTable.GetValue<LcmCache>("cache");
 			if (!string.IsNullOrEmpty(currentConfig) && File.Exists(currentConfig))
 			{
 				SetConfigureHomographParameters(currentConfig, cache);
@@ -325,7 +325,7 @@ namespace SIL.FieldWorks.XWorks
 			return currentConfig;
 		}
 
-		private static bool TryMatchingReversalConfigByWritingSystem(string projectConfigDir, FdoCache cache, out string currentConfig)
+		private static bool TryMatchingReversalConfigByWritingSystem(string projectConfigDir, LcmCache cache, out string currentConfig)
 		{
 			var displayName = cache.LangProject.DefaultAnalysisWritingSystem.DisplayLabel;
 			var fileList = Directory.EnumerateFiles(projectConfigDir);
@@ -351,7 +351,7 @@ namespace SIL.FieldWorks.XWorks
 				return false;
 
 			var currentConfig = GetCurrentConfiguration(m_propertyTable, true, null);
-			var cache = m_propertyTable.GetValue<FdoCache>("cache");
+			var cache = m_propertyTable.GetValue<LcmCache>("cache");
 			var configuration = new DictionaryConfigurationModel(currentConfig, cache);
 			DictionaryConfigurationController.UpdateWritingSystemInModel(configuration, cache);
 			configuration.Save();

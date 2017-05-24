@@ -7,11 +7,11 @@ using System.Text;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using System.Xml.Xsl;
-using SIL.CoreImpl.WritingSystems;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.Utils;
 using XCore;
 
@@ -33,7 +33,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		public string Transform(PropertyTable propertyTable, XDocument doc, string baseName, XsltArgumentList args)
 		{
-			var cache = propertyTable.GetValue<FdoCache>("cache");
+			var cache = propertyTable.GetValue<LcmCache>("cache");
 			SetWritingSystemBasedArguments(cache, propertyTable, args);
 			args.AddParam("prmIconPath", "", IconPath);
 			string filePath = Path.Combine(Path.GetTempPath(), cache.ProjectId.Name + baseName + ".htm");
@@ -42,7 +42,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			return filePath;
 		}
 
-		private void SetWritingSystemBasedArguments(FdoCache cache, PropertyTable propertyTable, XsltArgumentList argumentList)
+		private void SetWritingSystemBasedArguments(LcmCache cache, PropertyTable propertyTable, XsltArgumentList argumentList)
 		{
 			ILgWritingSystemFactory wsf = cache.WritingSystemFactory;
 			IWritingSystemContainer wsContainer = cache.ServiceLocator.WritingSystems;

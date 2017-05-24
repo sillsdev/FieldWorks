@@ -4,8 +4,8 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using SIL.CoreImpl.KernelInterfaces;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
 using SIL.PaToFdoInterfaces;
 
 namespace SIL.FieldWorks.PaObjects
@@ -14,7 +14,7 @@ namespace SIL.FieldWorks.PaObjects
 	public class PaMultiString : IPaMultiString
 	{
 		/// ------------------------------------------------------------------------------------
-		public static PaMultiString Create(ITsMultiString msa, IFdoServiceLocator svcloc)
+		public static PaMultiString Create(ITsMultiString msa, ILcmServiceLocator svcloc)
 		{
 			return (msa == null || msa.StringCount == 0 ? null : new PaMultiString(msa, svcloc));
 		}
@@ -23,7 +23,7 @@ namespace SIL.FieldWorks.PaObjects
 		/// Append to the PaMultiString the contents of the tsMultiString.
 		/// For each writing system the contents will end up in a comma seperated list
 		/// </summary>
-		public static void Append(PaMultiString paMultiString, ITsMultiString tsMultiString, IFdoServiceLocator svcloc)
+		public static void Append(PaMultiString paMultiString, ITsMultiString tsMultiString, ILcmServiceLocator svcloc)
 		{
 			for (int i = 0; i < tsMultiString.StringCount; ++i)
 			{
@@ -48,7 +48,7 @@ namespace SIL.FieldWorks.PaObjects
 		}
 
 		/// ------------------------------------------------------------------------------------
-		private PaMultiString(ITsMultiString msa, IFdoServiceLocator svcloc)
+		private PaMultiString(ITsMultiString msa, ILcmServiceLocator svcloc)
 		{
 			Texts = new List<string>(msa.StringCount);
 			WsIds = new List<string>(msa.StringCount);

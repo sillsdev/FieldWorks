@@ -14,26 +14,27 @@ using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Xsl;
 using Microsoft.Win32;
-using SIL.CoreImpl.Text;
+using SIL.LCModel.Core.Text;
 using SIL.Reporting;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.FwUtils.Pathway;
 using SIL.FieldWorks.Common.FXT;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainImpl;
+using SIL.LCModel;
+using SIL.LCModel.DomainImpl;
 using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.Resources;
 using SIL.Lift;
 using SIL.Lift.Validation;
+using SIL.LCModel.Utils;
 using SIL.Utils;
 using SIL.Windows.Forms;
 using XCore;
-using ReflectionHelper = SIL.Utils.ReflectionHelper;
+using ReflectionHelper = SIL.LCModel.Utils.ReflectionHelper;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -48,7 +49,7 @@ namespace SIL.FieldWorks.XWorks
 	/// </summary>
 	public class ExportDialog : Form
 	{
-		protected FdoCache m_cache;
+		protected LcmCache m_cache;
 		protected Mediator m_mediator;
 		protected XCore.PropertyTable m_propertyTable;
 		private Label label1;
@@ -140,7 +141,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			m_mediator = mediator;
 			m_propertyTable = propertyTable;
-			m_cache = m_propertyTable.GetValue<FdoCache>("cache");
+			m_cache = m_propertyTable.GetValue<LcmCache>("cache");
 
 			//
 			// Required for Windows Form Designer support
@@ -1360,7 +1361,7 @@ namespace SIL.FieldWorks.XWorks
 		/// for testing
 		/// </summary>
 		/// <param name="cache"></param>
-		internal void SetCache(FdoCache cache)
+		internal void SetCache(LcmCache cache)
 		{
 			m_cache = cache;
 		}
@@ -1438,7 +1439,7 @@ namespace SIL.FieldWorks.XWorks
 		/// ------------------------------------------------------------------------------------
 		public class TranslatedListsExporter
 		{
-			FdoCache m_cache;
+			LcmCache m_cache;
 			List<ICmPossibilityList> m_lists;
 			Dictionary<int, string> m_mapWsCode = new Dictionary<int,string>();
 			IProgress m_progress;
@@ -1685,7 +1686,7 @@ namespace SIL.FieldWorks.XWorks
 			string cssDialog = Path.Combine(PathwayUtils.PathwayInstallDirectory, "CssDialog.dll");
 			var sf = ReflectionHelper.CreateObject(cssDialog, "SIL.PublishingSolution.Contents", null);
 			Debug.Assert(sf != null);
-			FdoCache cache = m_propertyTable.GetValue<FdoCache>("cache");
+			LcmCache cache = m_propertyTable.GetValue<LcmCache>("cache");
 			ReflectionHelper.SetProperty(sf, "DatabaseName", cache.ProjectId.Name);
 			bool fContentsExists = SelectOption("ReversalIndexXHTML");
 			if (fContentsExists)

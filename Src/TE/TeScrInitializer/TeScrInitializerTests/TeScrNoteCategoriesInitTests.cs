@@ -12,10 +12,8 @@ using System.Xml;
 
 using NUnit.Framework;
 
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO.FDOTests;
-using SIL.Utils;
+using SIL.LCModel;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.TE
 {
@@ -49,7 +47,7 @@ namespace SIL.FieldWorks.TE
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
-	public class TeScrNoteCategoriesInitTests : ScrInMemoryFdoTestBase
+	public class TeScrNoteCategoriesInitTests : ScrInMemoryLcmTestBase
 	{
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

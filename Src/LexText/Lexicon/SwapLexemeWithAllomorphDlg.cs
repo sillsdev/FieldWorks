@@ -7,12 +7,12 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Diagnostics;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using XCore;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {
@@ -22,7 +22,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 	public class SwapLexemeWithAllomorphDlg : Form
 	{
 		private FwTextBox m_fwTextBoxBottomMsg;
-		private FdoCache m_cache;
+		private LcmCache m_cache;
 		private ILexEntry m_entry;
 		private IMoForm m_allomorph;
 		private PropertyTable m_propertyTable;
@@ -92,7 +92,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// <summary>
 		/// Set up the dlg in preparation to showing it.
 		/// </summary>
-		public void SetDlgInfo(FdoCache cache, PropertyTable propertyTable, ILexEntry entry)
+		public void SetDlgInfo(LcmCache cache, PropertyTable propertyTable, ILexEntry entry)
 		{
 			CheckDisposed();
 

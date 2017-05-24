@@ -12,7 +12,6 @@
 // --------------------------------------------------------------------------------------------
 using System;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
@@ -20,10 +19,11 @@ using System.Xml;
 using Microsoft.Win32;
 using SIL.FieldWorks.Common.FwUtils.Pathway;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks;
+using SIL.LCModel.Utils;
 using SIL.Utils;
 using XCore;
 
@@ -140,7 +140,7 @@ namespace SIL.PublishingSolution
 			string cssDialog = Path.Combine(PathwayUtils.PathwayInstallDirectory, "CssDialog.dll");
 			var sf = ReflectionHelper.CreateObject(cssDialog, "SIL.PublishingSolution.Contents", null);
 			Debug.Assert(sf != null);
-			FdoCache cache = exportDialog.PropTable.GetValue<FdoCache>("cache");
+			LcmCache cache = exportDialog.PropTable.GetValue<LcmCache>("cache");
 			ReflectionHelper.SetProperty(sf, "DatabaseName", cache.ProjectId.Name);
 			bool fContentsExists = ContentsExists("lexicon", "reversalToolEditComplete", "ReversalIndexXHTML");
 			ReflectionHelper.SetProperty(sf, "ExportReversal", fContentsExists);

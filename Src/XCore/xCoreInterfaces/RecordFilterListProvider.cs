@@ -4,7 +4,6 @@
 
 using System.Collections;
 using System.Xml;
-using System.Diagnostics.CodeAnalysis;
 using SIL.Utils;
 
 namespace XCore

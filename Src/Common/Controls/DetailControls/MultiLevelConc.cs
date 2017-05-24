@@ -5,9 +5,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
+using SIL.LCModel;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
@@ -318,12 +319,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			{
 				CheckDisposed();
 
-				if (m_fdoCache == null || DesignMode)
+				if (m_cache == null || DesignMode)
 					return;
 
 				base.MakeRoot();
 
-				m_rootb.DataAccess = m_fdoCache.DomainDataByFlid;
+				m_rootb.DataAccess = m_cache.DomainDataByFlid;
 
 				m_vc = m_info.Vc;
 				if (m_vc == null)
@@ -419,7 +420,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		#region member variables
 		IList m_items; // of IConcSliceInfo
 		#endregion
-		public MultiLevelConc(FDO.FdoCache cache, IList items)
+		public MultiLevelConc(LcmCache cache, IList items)
 		{
 			m_items = items;
 			InitializeBasic(cache, false);

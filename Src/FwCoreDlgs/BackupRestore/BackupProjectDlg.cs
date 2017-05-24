@@ -10,10 +10,10 @@ using System.Windows.Forms;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices.BackupRestore;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices.BackupRestore;
 using SIL.Reporting;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 {
@@ -25,7 +25,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 	public partial class BackupProjectDlg : Form, IBackupProjectView
 	{
 		#region Member variables
-		private readonly FdoCache m_cache;
+		private readonly LcmCache m_cache;
 		private readonly BackupProjectPresenter m_presenter;
 		private readonly IHelpTopicProvider m_helpTopicProvider;
 		#endregion
@@ -48,7 +48,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 		/// <param name="cache">The cache.</param>
 		/// <param name="helpTopicProvider">The help topic provider.</param>
 		/// ------------------------------------------------------------------------------------
-		public BackupProjectDlg(FdoCache cache,
+		public BackupProjectDlg(LcmCache cache,
 			IHelpTopicProvider helpTopicProvider) : this()
 		{
 			m_cache = cache;

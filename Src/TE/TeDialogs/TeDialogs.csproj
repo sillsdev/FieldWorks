@@ -94,17 +94,17 @@
       <Name>ViewsInterfaces</Name>
       <HintPath>..\..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
     </Reference>
-    <Reference Include="CoreImpl, Version=6.1.1.26049, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="SIL.LCModel.Core, Version=9.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\CoreImpl.dll</HintPath>
+      <HintPath>..\..\..\Output\Debug\SIL.LCModel.Core.dll</HintPath>
     </Reference>
     <Reference Include="DiffView">
       <Name>DiffView</Name>
       <HintPath>..\..\..\Output\Debug\DiffView.dll</HintPath>
     </Reference>
-    <Reference Include="FDO">
-      <Name>FDO</Name>
-      <HintPath>..\..\..\Output\Debug\FDO.dll</HintPath>
+    <Reference Include="SIL.LCModel">
+      <Name>SIL.LCModel</Name>
+      <HintPath>..\..\..\Output\Debug\SIL.LCModel.dll</HintPath>
     </Reference>
     <Reference Include="Framework">
       <Name>Framework</Name>
@@ -142,9 +142,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Downloads\SIL.WritingSystems.dll</HintPath>
     </Reference>
-    <Reference Include="SilUtils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="SIL.LCModel.Utils, Version=9.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\SilUtils.dll</HintPath>
+      <HintPath>..\..\..\Output\Debug\SIL.LCModel.Utils.dll</HintPath>
     </Reference>
     <Reference Include="SimpleRootSite">
       <Name>SimpleRootSite</Name>

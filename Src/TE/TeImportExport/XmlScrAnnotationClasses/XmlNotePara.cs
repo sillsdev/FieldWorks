@@ -8,13 +8,13 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Xml.Serialization;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.Common.ScriptureUtils;
-using SIL.CoreImpl.Scripture;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.WritingSystems;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.Scripture;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
 
 namespace SIL.FieldWorks.TE
 {
@@ -142,7 +142,7 @@ namespace SIL.FieldWorks.TE
 		/// default vernacular is used.
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
-		public StTxtParaBldr BuildParagraph(FdoCache cache, FwStyleSheet styleSheet)
+		public StTxtParaBldr BuildParagraph(LcmCache cache, LcmStyleSheet styleSheet)
 		{
 			return BuildParagraph(styleSheet, cache.DefaultVernWs);
 		}
@@ -154,7 +154,7 @@ namespace SIL.FieldWorks.TE
 		/// specified default writing system is used.
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
-		public StTxtParaBldr BuildParagraph(FwStyleSheet styleSheet, int wsDefault)
+		public StTxtParaBldr BuildParagraph(LcmStyleSheet styleSheet, int wsDefault)
 		{
 			StTxtParaBldr bldr;
 			int wsPara = (string.IsNullOrEmpty(IcuLocale) ?

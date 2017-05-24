@@ -11,10 +11,10 @@ using System.Threading;
 using System.Windows.Forms;
 using Microsoft.Win32;
 using Paratext.LexicalContracts;
-using SIL.CoreImpl.Text;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel;
 using SIL.ObjectModel;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 using SIL.WritingSystems;
 
 namespace SIL.FieldWorks.ParatextLexiconPlugin
@@ -35,9 +35,9 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 	{
 		private const int CacheSize = 5;
 		private readonly FdoLexiconCollection m_lexiconCache;
-		private readonly FdoCacheCollection m_fdoCacheCache;
+		private readonly LcmCacheCollection m_cacheCache;
 		private readonly object m_syncRoot;
-		private readonly ParatextLexiconPluginFdoUI m_ui;
+		private readonly ParatextLexiconPluginLcmUI m_ui;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="FwLexiconPlugin"/> class.
@@ -78,8 +78,8 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 
 			m_syncRoot = new object();
 			m_lexiconCache = new FdoLexiconCollection();
-			m_fdoCacheCache = new FdoCacheCollection();
-			m_ui = new ParatextLexiconPluginFdoUI();
+			m_cacheCache = new LcmCacheCollection();
+			m_ui = new ParatextLexiconPluginLcmUI();
 		}
 
 		/// <summary>
@@ -92,8 +92,8 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		{
 			lock (m_syncRoot)
 			{
-				FdoCache fdoCache;
-				return TryGetFdoCache(projectId, langId, out fdoCache);
+				LcmCache fdoCache;
+				return TryGetLcmCache(projectId, langId, out fdoCache);
 			}
 		}
 
@@ -104,7 +104,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		/// <returns></returns>
 		public bool ChooseLexicalProject(out string projectId)
 		{
-			using (var dialog = new ChooseFdoProjectForm(m_ui, m_fdoCacheCache))
+			using (var dialog = new ChooseFdoProjectForm(m_ui, m_cacheCache))
 			{
 				if (dialog.ShowDialog() == DialogResult.OK)
 				{
@@ -154,18 +154,18 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 						m_lexiconCache.Insert(0, lexicon);
 						return lexicon;
 					}
-					DisposeFdoCacheIfUnused(lexicon.Cache);
+					DisposeLcmCacheIfUnused(lexicon.Cache);
 				}
 
-				FdoCache fdoCache;
-				if (TryGetFdoCache(projectId, langId, out fdoCache) != LexicalProjectValidationResult.Success)
+				LcmCache fdoCache;
+				if (TryGetLcmCache(projectId, langId, out fdoCache) != LexicalProjectValidationResult.Success)
 					throw new ArgumentException("The specified project is invalid.");
 
 				if (m_lexiconCache.Count == CacheSize)
 				{
 					FdoLexicon lexicon = m_lexiconCache[CacheSize - 1];
 					m_lexiconCache.RemoveAt(CacheSize - 1);
-					DisposeFdoCacheIfUnused(lexicon.Cache);
+					DisposeLcmCacheIfUnused(lexicon.Cache);
 				}
 
 				var newLexicon = new FdoLexicon(scrTextName, projectId, fdoCache, fdoCache.ServiceLocator.WritingSystemManager.GetWsFromStr(langId));
@@ -174,25 +174,25 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			}
 		}
 
-		private LexicalProjectValidationResult TryGetFdoCache(string projectId, string langId, out FdoCache fdoCache)
+		private LexicalProjectValidationResult TryGetLcmCache(string projectId, string langId, out LcmCache fdoCache)
 		{
 			fdoCache = null;
 			if (string.IsNullOrEmpty(langId))
 				return LexicalProjectValidationResult.InvalidLanguage;
 
-			if (m_fdoCacheCache.Contains(projectId))
+			if (m_cacheCache.Contains(projectId))
 			{
-				fdoCache = m_fdoCacheCache[projectId];
+				fdoCache = m_cacheCache[projectId];
 			}
 			else
 			{
-				var path = Path.Combine(ParatextLexiconPluginDirectoryFinder.ProjectsDirectory, projectId, projectId + FdoFileHelper.ksFwDataXmlFileExtension);
+				var path = Path.Combine(ParatextLexiconPluginDirectoryFinder.ProjectsDirectory, projectId, projectId + LcmFileHelper.ksFwDataXmlFileExtension);
 				if (!File.Exists(path))
 				{
 					return LexicalProjectValidationResult.ProjectDoesNotExist;
 				}
 
-				var settings = new FdoSettings {DisableDataMigration = true};
+				var settings = new LcmSettings {DisableDataMigration = true};
 				using (RegistryKey fwKey = ParatextLexiconPluginRegistryHelper.FieldWorksRegistryKeyLocalMachine)
 				{
 					if (fwKey != null)
@@ -205,33 +205,38 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 
 				try
 				{
-					var progress = new ParatextLexiconPluginThreadedProgress(m_ui.SynchronizeInvoke) { IsIndeterminate = true, Title = string.Format("Opening {0}", projectId) };
-					fdoCache = FdoCache.CreateCacheFromExistingData(new ParatextLexiconPluginProjectID(FDOBackendProviderType.kSharedXML, path), Thread.CurrentThread.CurrentUICulture.Name, m_ui,
-						ParatextLexiconPluginDirectoryFinder.FdoDirectories, settings, progress);
+					var progress = new ParatextLexiconPluginThreadedProgress(m_ui.SynchronizeInvoke)
+					{
+						IsIndeterminate = true,
+						Title = $"Opening {projectId}"
+					};
+					var lcmProjectId = new ParatextLexiconPluginProjectId(BackendProviderType.kSharedXML, path);
+					fdoCache = LcmCache.CreateCacheFromExistingData(lcmProjectId, Thread.CurrentThread.CurrentUICulture.Name, m_ui,
+						ParatextLexiconPluginDirectoryFinder.LcmDirectories, settings, progress);
 				}
-				catch (FdoDataMigrationForbiddenException)
+				catch (LcmDataMigrationForbiddenException)
 				{
 					return LexicalProjectValidationResult.IncompatibleVersion;
 				}
-				catch (FdoNewerVersionException)
+				catch (LcmNewerVersionException)
 				{
 					return LexicalProjectValidationResult.IncompatibleVersion;
 				}
-				catch (FdoFileLockedException)
+				catch (LcmFileLockedException)
 				{
 					return LexicalProjectValidationResult.AccessDenied;
 				}
-				catch (FdoInitializationException)
+				catch (LcmInitializationException)
 				{
 					return LexicalProjectValidationResult.UnknownError;
 				}
 
-				m_fdoCacheCache.Add(fdoCache);
+				m_cacheCache.Add(fdoCache);
 			}
 
 			if (fdoCache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems.All(ws => ws.Id != langId))
 			{
-				DisposeFdoCacheIfUnused(fdoCache);
+				DisposeLcmCacheIfUnused(fdoCache);
 				fdoCache = null;
 				return LexicalProjectValidationResult.InvalidLanguage;
 			}
@@ -239,11 +244,11 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			return LexicalProjectValidationResult.Success;
 		}
 
-		private void DisposeFdoCacheIfUnused(FdoCache fdoCache)
+		private void DisposeLcmCacheIfUnused(LcmCache fdoCache)
 		{
 			if (m_lexiconCache.All(lexicon => lexicon.Cache != fdoCache))
 			{
-				m_fdoCacheCache.Remove(fdoCache.ProjectId.Name);
+				m_cacheCache.Remove(fdoCache.ProjectId.Name);
 				fdoCache.ServiceLocator.GetInstance<IUndoStackManager>().Save();
 				fdoCache.Dispose();
 			}
@@ -259,12 +264,12 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 				foreach (FdoLexicon lexicon in m_lexiconCache)
 					lexicon.Dispose();
 				m_lexiconCache.Clear();
-				foreach (FdoCache fdoCache in m_fdoCacheCache)
+				foreach (LcmCache fdoCache in m_cacheCache)
 				{
 					fdoCache.ServiceLocator.GetInstance<IUndoStackManager>().Save();
 					fdoCache.Dispose();
 				}
-				m_fdoCacheCache.Clear();
+				m_cacheCache.Clear();
 			}
 
 			Sldr.Cleanup();
@@ -278,9 +283,9 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			}
 		}
 
-		private class FdoCacheCollection : KeyedCollection<string, FdoCache>
+		private class LcmCacheCollection : KeyedCollection<string, LcmCache>
 		{
-			protected override string GetKeyForItem(FdoCache item)
+			protected override string GetKeyForItem(LcmCache item)
 			{
 				return item.ProjectId.Name;
 			}

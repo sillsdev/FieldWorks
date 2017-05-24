@@ -8,8 +8,8 @@ using System.Linq;
 using System.Text;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Controls;
-using SIL.CoreImpl.KernelInterfaces;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
 using SIL.FieldWorks.XWorks;
 using XCore;
 
@@ -24,7 +24,7 @@ namespace SIL.FieldWorks.IText
 	{
 		private Mediator m_mediator;
 
-		public TextsFilterItem(ITsString tssName, FdoCache cache, Mediator mediator) : base(tssName)
+		public TextsFilterItem(ITsString tssName, LcmCache cache, Mediator mediator) : base(tssName)
 		{
 			m_mediator = mediator;
 		}

@@ -21,11 +21,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using SIL.CoreImpl.Cellar;
+using SIL.LCModel.Core.Cellar;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
-using SIL.CoreImpl.KernelInterfaces;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
 using SIL.FieldWorks.FdoUi;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
@@ -225,7 +225,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			protected int m_hvoDeleteTarget;
 
 			protected SliceTreeNode m_sliceTreeNode;
-			protected FdoCache m_cache;
+			protected LcmCache m_cache;
 			protected IFwMetaDataCache m_mdc; // allows us to interpret class and field names and trace superclasses.
 
 			/// -----------------------------------------------------------------------------------
@@ -233,7 +233,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			/// Initializes a new instance of the <see cref="ContextMenuHelper"/> class.
 			/// </summary>
 			/// -----------------------------------------------------------------------------------
-			public ContextMenuHelper(FdoCache cache)
+			public ContextMenuHelper(LcmCache cache)
 			{
 				m_cache = cache;
 				m_mdc = m_cache.DomainDataByFlid.MetaDataCache;

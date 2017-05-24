@@ -3,9 +3,9 @@ using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 using System.Xml.XPath;
-using SIL.CoreImpl.WritingSystems;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -29,7 +29,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="defaultConfigDir">Default Configuration directory</param>
 		/// <param name="projectsDir">Projects directory</param>
 		/// <param name="originalProjectName">Project Name</param>
-		public static void CreateOrRemoveReversalIndexConfigurationFiles(WritingSystemManager wsMgr, FdoCache cache, string defaultConfigDir,
+		public static void CreateOrRemoveReversalIndexConfigurationFiles(WritingSystemManager wsMgr, LcmCache cache, string defaultConfigDir,
 			string projectsDir, string originalProjectName)
 		{
 			var defaultWsFilePath = Path.Combine(defaultConfigDir, RevIndexDir,
@@ -132,7 +132,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="wsObj">Writing system Object</param>
 		/// <param name="cache">The FDO cache</param>
 		/// <returns>returns Guid</returns>
-		public static Guid GetOrCreateWsGuid(CoreWritingSystemDefinition wsObj, FdoCache cache)
+		public static Guid GetOrCreateWsGuid(CoreWritingSystemDefinition wsObj, LcmCache cache)
 		{
 			var riRepo = cache.ServiceLocator.GetInstance<IReversalIndexRepository>();
 			var mHvoRevIdx = riRepo.FindOrCreateIndexForWs(wsObj.Handle).Hvo;

@@ -9,7 +9,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using Gecko;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.XWorks.DictionaryDetailsView;
 using SIL.Windows.Forms;
 using PropertyTable = XCore.PropertyTable;
@@ -171,7 +171,7 @@ namespace SIL.FieldWorks.XWorks
 		private List<GeckoElement> _highlightedElements;
 		private const string HighlightStyle = "background-color:Yellow ";	// LightYellow isn't really bold enough marking to my eyes for this feature.
 
-		public void HighlightContent(ConfigurableDictionaryNode configNode, FdoCache cache)
+		public void HighlightContent(ConfigurableDictionaryNode configNode, LcmCache cache)
 		{
 			if (m_preview.IsDisposed)
 				return;
@@ -203,7 +203,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		private static List<GeckoElement> FindConfiguredItem(ConfigurableDictionaryNode selectedConfigNode, GeckoWebBrowser browser, FdoCache cache)
+		private static List<GeckoElement> FindConfiguredItem(ConfigurableDictionaryNode selectedConfigNode, GeckoWebBrowser browser, LcmCache cache)
 		{
 			var elements = new List<GeckoElement>();
 			var body = browser.Document.Body;
@@ -242,7 +242,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		private static IEnumerable<GeckoElement> FindMatchingSpans(ConfigurableDictionaryNode selectedNode, GeckoElement parent,
-			ConfigurableDictionaryNode topLevelNode, FdoCache cache)
+			ConfigurableDictionaryNode topLevelNode, LcmCache cache)
 		{
 			var elements = new List<GeckoElement>();
 			var desiredClass = CssGenerator.GetClassAttributeForConfig(selectedNode);

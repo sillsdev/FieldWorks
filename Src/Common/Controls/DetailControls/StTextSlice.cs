@@ -7,14 +7,14 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.LexText.Controls;
 using XCore;
@@ -275,10 +275,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			CheckDisposed();
 			Mediator = mediator;
-			Cache = m_propertyTable.GetValue<FdoCache>("cache");
+			Cache = m_propertyTable.GetValue<LcmCache>("cache");
 			StyleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
 			m_text = text;
-			m_vc = new StVc("Normal", ws) {Cache = m_fdoCache, Editable = true};
+			m_vc = new StVc("Normal", ws) {Cache = m_cache, Editable = true};
 			DoSpellCheck = true;
 			if (m_rootb == null)
 			{
@@ -337,12 +337,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			CheckDisposed();
 
-			if (m_fdoCache == null || DesignMode)
+			if (m_cache == null || DesignMode)
 				return;
 
 			base.MakeRoot();
 
-			m_rootb.DataAccess = m_fdoCache.DomainDataByFlid;
+			m_rootb.DataAccess = m_cache.DomainDataByFlid;
 			if (m_text != null)
 				m_rootb.SetRootObject(m_text.Hvo, m_vc, (int)StTextFrags.kfrText, m_styleSheet);
 

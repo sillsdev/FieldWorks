@@ -8,17 +8,17 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.WritingSystems;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 using XCore;
 
 namespace SIL.FieldWorks.IText
@@ -67,7 +67,7 @@ namespace SIL.FieldWorks.IText
 		/// </summary>
 		private System.ComponentModel.Container components = null;
 
-		protected FdoCache m_cache;
+		protected LcmCache m_cache;
 		private System.Windows.Forms.LinkLabel linkLabel2;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.TextBox m_LinguaLinksXmlFileName;
@@ -184,7 +184,7 @@ namespace SIL.FieldWorks.IText
 		/// <param name="cache"></param>
 		/// <param name="mediator"></param>
 		/// <param name="propertyTable"></param>
-		public void Init(FdoCache cache, XCore.Mediator mediator, PropertyTable propertyTable)
+		public void Init(LcmCache cache, XCore.Mediator mediator, PropertyTable propertyTable)
 		{
 			CheckDisposed();
 

@@ -13,15 +13,15 @@ using System.Xml.XPath;
 using Ionic.Zip;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.XWorks.LexText;
 using SIL.Lift.Migration;
 using SIL.Lift.Parsing;
 using SIL.Linq;
 using SIL.Reporting;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 using File = System.IO.File;
 
 
@@ -32,7 +32,7 @@ namespace SIL.FieldWorks.XWorks
 	/// </summary>
 	public class DictionaryConfigurationImportController
 	{
-		private FdoCache _cache;
+		private LcmCache _cache;
 		private string _projectConfigDir;
 		/// <summary>
 		/// Registered configurations that we know about.
@@ -101,7 +101,7 @@ namespace SIL.FieldWorks.XWorks
 		};
 
 		/// <summary/>
-		public DictionaryConfigurationImportController(FdoCache cache, string projectConfigDir,
+		public DictionaryConfigurationImportController(LcmCache cache, string projectConfigDir,
 			List<DictionaryConfigurationModel> configurations)
 		{
 			_cache = cache;
@@ -254,7 +254,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Add publication type if it's not in the project's list of publications.
 		/// </summary>
-		private static void AddPublicationTypeIfNotPresent(string name, FdoCache cache)
+		private static void AddPublicationTypeIfNotPresent(string name, LcmCache cache)
 		{
 			if (cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS
 				.Select(pub => pub.Name.get_String(cache.DefaultAnalWs).Text).Contains(name))
@@ -262,7 +262,7 @@ namespace SIL.FieldWorks.XWorks
 			AddPublicationType(name, cache);
 		}
 
-		public static ICmPossibility AddPublicationType(string name, FdoCache cache)
+		public static ICmPossibility AddPublicationType(string name, LcmCache cache)
 		{
 			Debug.Assert(cache.LangProject.LexDbOA.PublicationTypesOA != null);
 

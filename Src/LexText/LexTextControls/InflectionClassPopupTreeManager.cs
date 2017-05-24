@@ -4,8 +4,8 @@
 
 using System.Collections.Generic;
 using System.Windows.Forms;
-using SIL.CoreImpl.KernelInterfaces;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.Widgets;
 using XCore;
 
@@ -31,7 +31,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public InflectionClassPopupTreeManager(TreeCombo treeCombo, FdoCache cache, Mediator mediator, XCore.PropertyTable propertyTable, bool useAbbr, Form parent, int wsDisplay)
+		public InflectionClassPopupTreeManager(TreeCombo treeCombo, LcmCache cache, Mediator mediator, XCore.PropertyTable propertyTable, bool useAbbr, Form parent, int wsDisplay)
 			: base(treeCombo, cache, mediator, propertyTable, cache.LanguageProject.PartsOfSpeechOA, wsDisplay, useAbbr, parent)
 		{
 		}
@@ -48,7 +48,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="flidName">multistring prop to get name of item from</param>
 		/// <param name="wsName">multistring writing system to get name of item from</param>
 		/// <param name="collector">Add for each item an HvoTreeNode with the name and id of the item.</param>
-		internal static void GatherPartsOfSpeech(FdoCache cache,
+		internal static void GatherPartsOfSpeech(LcmCache cache,
 			int rootHvo, int rootFlid, int subFlid, int itemFlid, int flidName, int wsName, List<HvoTreeNode> collector)
 		{
 			ISilDataAccess sda = cache.MainCacheAccessor;

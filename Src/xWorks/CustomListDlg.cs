@@ -8,14 +8,14 @@ using System.Linq;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using XCore;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using System.Collections.Generic;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.WritingSystems;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -30,7 +30,7 @@ namespace SIL.FieldWorks.XWorks
 		private HelpProvider m_helpProvider;
 		protected readonly Mediator m_mediator;
 		protected readonly PropertyTable m_propertyTable;
-		private FdoCache m_cache;
+		private LcmCache m_cache;
 		protected bool m_finSetup;
 		protected LabeledMultiStringControl m_lmscListName;
 		protected LabeledMultiStringControl m_lmscDescription;
@@ -320,14 +320,14 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// FDO cache. Use setter ONLY in tests
 		/// </summary>
-		protected FdoCache Cache
+		protected LcmCache Cache
 		{
 			get
 			{
 				if (m_mediator == null && m_cache == null)
 					return null;
 				if (m_cache == null)
-					m_cache = m_propertyTable.GetValue<FdoCache>("cache");
+					m_cache = m_propertyTable.GetValue<LcmCache>("cache");
 				return m_cache;
 			}
 			set

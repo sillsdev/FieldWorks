@@ -3,7 +3,6 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Xml.Xsl;
 using System.IO;
@@ -11,12 +10,13 @@ using System.Xml;
 using System.Windows.Forms;
 using ICSharpCode.SharpZipLib.Zip;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 using XCore;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 using SIL.FieldWorks.XWorks;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.IText
 {
@@ -28,7 +28,7 @@ namespace SIL.FieldWorks.IText
 		private List<XmlNode> m_ddNodes = new List<XmlNode>(8); // Saves XML nodes used to configure items.
 		ICmObject m_objRoot;
 		InterlinVc m_vc;
-		FDO.IText m_text;
+		LCModel.IText m_text;
 		List<ICmObject> m_objs = new List<ICmObject>();
 		private event EventHandler OnLaunchFilterScrScriptureSectionsDialog;
 		private IBookImporter m_bookImporter;

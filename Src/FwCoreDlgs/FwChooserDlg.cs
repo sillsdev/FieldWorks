@@ -7,7 +7,7 @@ using Microsoft.Win32;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
@@ -25,7 +25,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary>The possibility list used to populate the tree</summary>
 		protected ICmPossibilityList m_list;
 		/// <summary></summary>
-		protected FdoCache m_cache;
+		protected LcmCache m_cache;
 		/// <summary></summary>
 		protected IProjectSpecificSettingsKeyProvider m_projSettingsKey;
 
@@ -264,7 +264,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// this list get deleted and the new ones added.</param>
 		/// <returns>True if the sequence was changed, false otherwise</returns>
 		/// ------------------------------------------------------------------------------------
-		public bool GetPossibilities(IFdoReferenceSequence<ICmPossibility> listToUpdate)
+		public bool GetPossibilities(ILcmReferenceSequence<ICmPossibility> listToUpdate)
 		{
 			CheckDisposed();
 

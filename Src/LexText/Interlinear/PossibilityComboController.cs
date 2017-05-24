@@ -4,7 +4,7 @@
 
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.LexText.Controls;
 using XCore;
 
@@ -15,7 +15,7 @@ namespace SIL.FieldWorks.IText
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public PossibilityComboController(TreeCombo treeCombo, FdoCache cache, ICmPossibilityList list, int ws, bool useAbbr, Mediator mediator, PropertyTable propertyTable, Form parent) :
+		public PossibilityComboController(TreeCombo treeCombo, LcmCache cache, ICmPossibilityList list, int ws, bool useAbbr, Mediator mediator, PropertyTable propertyTable, Form parent) :
 			base(treeCombo, cache, list, ws, useAbbr, mediator, propertyTable, parent)
 		{
 			Sorted = true;

@@ -5,10 +5,9 @@
 using System.Collections.Generic;
 using System.IO;
 using NUnit.Framework;
-using SIL.CoreImpl.Text;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application.ApplicationServices;
-using SIL.FieldWorks.FDO.FDOTests;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel;
+using SIL.LCModel.Application.ApplicationServices;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.XWorks.LexEd;
 
@@ -16,16 +15,16 @@ namespace LexEdDllTests
 {
 	class GoldEticGuidFixerTests
 	{
-		protected FdoCache Cache { get; set; }
+		protected LcmCache Cache { get; set; }
 
 		[SetUp]
 		public void TestSetup()
 		{
-			Cache = FdoCache.CreateCacheWithNewBlankLangProj(new TestProjectId(FDOBackendProviderType.kMemoryOnly, null),
-																			 "en", "fr", "en", new DummyFdoUI(), FwDirectoryFinder.FdoDirectories, new FdoSettings());
+			Cache = LcmCache.CreateCacheWithNewBlankLangProj(new TestProjectId(BackendProviderType.kMemoryOnly, null),
+				"en", "fr", "en", new DummyLcmUI(), FwDirectoryFinder.LcmDirectories, new LcmSettings());
 			var loader = new XmlList();
 			loader.ImportList(Cache.LangProject, "PartsOfSpeech", Path.Combine(FwDirectoryFinder.TemplateDirectory, "POS.xml"),
-									new DummyProgressDlg());
+				new DummyProgressDlg());
 			// This allows tests to do any kind of data changes without worrying about starting a UOW.
 			Cache.ActionHandlerAccessor.BeginUndoTask("Undo doing stuff", "Redo doing stuff");
 		}

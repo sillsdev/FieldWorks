@@ -6,13 +6,13 @@ using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.WritingSystems;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 using SIL.Windows.Forms;
 using XCore;
 
@@ -25,7 +25,7 @@ namespace SIL.FieldWorks.LexText.Controls
 	{
 		#region Data Members
 
-		private FdoCache m_cache;
+		private LcmCache m_cache;
 		private Mediator m_mediator;
 		private XCore.PropertyTable m_propertyTable;
 
@@ -88,7 +88,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="persistProvider"></param>
 		/// <param name="sandboxMsa"></param>
 		/// <param name="hvoOriginalMsa"></param>
-		public void SetDlgInfo(FdoCache cache, IPersistenceProvider persistProvider,
+		public void SetDlgInfo(LcmCache cache, IPersistenceProvider persistProvider,
 			Mediator mediator, XCore.PropertyTable propertyTable, ILexEntry entry, SandboxGenericMSA sandboxMsa, int hvoOriginalMsa,
 			bool useForEdit, string titleForEdit)
 		{
@@ -287,7 +287,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			// m_msaGroupBox
 			//
 			resources.ApplyResources(this.m_msaGroupBox, "m_msaGroupBox");
-			this.m_msaGroupBox.MSAType = SIL.FieldWorks.FDO.MsaType.kNotSet;
+			this.m_msaGroupBox.MSAType = MsaType.kNotSet;
 			this.m_msaGroupBox.Name = "m_msaGroupBox";
 			this.m_msaGroupBox.Slot = null;
 			//

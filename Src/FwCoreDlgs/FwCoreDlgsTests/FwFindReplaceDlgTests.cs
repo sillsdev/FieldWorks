@@ -7,16 +7,15 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using NUnit.Framework;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.WritingSystems;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.FDOTests;
-using SIL.Utils;
+using SIL.LCModel;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
@@ -468,7 +467,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	/// Summary description for FwFindReplaceDlgBaseTests.
 	/// </summary>
 	/// -----------------------------------------------------------------------------------------
-	public class FwFindReplaceDlgBaseTests : ScrInMemoryFdoTestBase
+	public class FwFindReplaceDlgBaseTests : ScrInMemoryLcmTestBase
 	{
 		#region Data members
 		/// <summary></summary>
@@ -2540,7 +2539,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	/// </summary>
 	/// -----------------------------------------------------------------------------------------
 	[TestFixture]
-	public class FwFindReplaceDlgWithObjectsRepeatedInDisplayTests : ScrInMemoryFdoTestBase
+	public class FwFindReplaceDlgWithObjectsRepeatedInDisplayTests : ScrInMemoryLcmTestBase
 	{
 		#region Data members
 		private const string m_kTitleText = "Blah, blah, blah!";

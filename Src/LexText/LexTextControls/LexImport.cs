@@ -13,9 +13,9 @@ using System.Xml.Xsl;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application.ApplicationServices;
-using SIL.Utils;
+using SIL.LCModel;
+using SIL.LCModel.Application.ApplicationServices;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -30,7 +30,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		private string m_sPhase3XSLT;
 		private string m_sPhase4XSLT;
 		private string m_sBuildPhase2XSLT;
-		private FdoCache m_cache;
+		private LcmCache m_cache;
 		private string m_sTempDir;
 		private string m_sPhase4Output;
 		private bool m_fDisplayImportReport;
@@ -53,7 +53,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="tempDir">The temp dir.</param>
 		/// <param name="transformDir">The transform dir.</param>
 		/// ------------------------------------------------------------------------------------
-		public LexImport(FdoCache cache, string tempDir, string transformDir)
+		public LexImport(LcmCache cache, string tempDir, string transformDir)
 		{
 			m_cache = cache;
 			m_sTempDir = tempDir;

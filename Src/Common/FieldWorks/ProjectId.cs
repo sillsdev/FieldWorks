@@ -6,8 +6,8 @@
 // Responsibility: FW team
 using System;
 using System.Diagnostics;
-using SIL.FieldWorks.FDO;
-using SIL.Utils;
+using SIL.LCModel;
+using SIL.LCModel.Utils;
 using System.Runtime.Serialization;
 using SIL.FieldWorks.Common.FwUtils;
 using SysPath = System.IO.Path;
@@ -30,7 +30,7 @@ namespace SIL.FieldWorks
 
 		#region Member variables
 		private string m_path;
-		private FDOBackendProviderType m_type;
+		private BackendProviderType m_type;
 		#endregion
 
 		#region Constructors
@@ -67,7 +67,7 @@ namespace SIL.FieldWorks
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		protected ProjectId(SerializationInfo info, StreamingContext context) :
-			this((FDOBackendProviderType)info.GetValue(kTypeSerializeName, typeof(FDOBackendProviderType)),
+			this((BackendProviderType)info.GetValue(kTypeSerializeName, typeof(BackendProviderType)),
 			info.GetString(kNameSerializeName))
 		{
 		}
@@ -80,9 +80,9 @@ namespace SIL.FieldWorks
 		/// <param name="name">The project name (for local projects, this can be a filename).
 		/// </param>
 		/// ------------------------------------------------------------------------------------
-		public ProjectId(FDOBackendProviderType type, string name)
+		public ProjectId(BackendProviderType type, string name)
 		{
-			Debug.Assert(type != FDOBackendProviderType.kMemoryOnly);
+			Debug.Assert(type != BackendProviderType.kMemoryOnly);
 			m_type = type;
 			m_path = CleanUpNameForType(type, name);
 		}
@@ -96,7 +96,7 @@ namespace SIL.FieldWorks
 		/// Type of BEP.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public FDOBackendProviderType Type
+		public BackendProviderType Type
 		{
 			get { return m_type; }
 			set { m_type = value; }
@@ -133,7 +133,7 @@ namespace SIL.FieldWorks
 			get
 			{
 				return (FwDirectoryFinder.IsSubFolderOfProjectsDirectory(ProjectFolder) &&
-					SysPath.GetExtension(m_path) == FdoFileHelper.ksFwDataXmlFileExtension) ?
+					SysPath.GetExtension(m_path) == LcmFileHelper.ksFwDataXmlFileExtension) ?
 					Name : m_path;
 			}
 		}
@@ -195,11 +195,11 @@ namespace SIL.FieldWorks
 			{
 				switch (Type)
 				{
-					case FDOBackendProviderType.kXML:
-					case FDOBackendProviderType.kSharedXML:
-						return (SysPath.GetExtension(Path) != FdoFileHelper.ksFwDataXmlFileExtension) ?
+					case BackendProviderType.kXML:
+					case BackendProviderType.kSharedXML:
+						return (SysPath.GetExtension(Path) != LcmFileHelper.ksFwDataXmlFileExtension) ?
 							SysPath.GetFileName(Path) : Name;
-					case FDOBackendProviderType.kInvalid:
+					case BackendProviderType.kInvalid:
 						return string.Empty;
 					default:
 						Debug.Fail("Need to handle getting the project name for this BEP");
@@ -263,12 +263,12 @@ namespace SIL.FieldWorks
 
 			switch (Type)
 			{
-				case FDOBackendProviderType.kXML:
-				case FDOBackendProviderType.kSharedXML:
+				case BackendProviderType.kXML:
+				case BackendProviderType.kSharedXML:
 					if (!FileUtils.SimilarFileExists(Path))
 						return new StartupException(string.Format(Properties.Resources.kstidFileNotFound, Path));
 					break;
-				case FDOBackendProviderType.kInvalid:
+				case BackendProviderType.kInvalid:
 					return new StartupException(Properties.Resources.kstidInvalidFwProjType);
 				default:
 					return new NotImplementedException("Unknown type of project.");
@@ -352,7 +352,7 @@ namespace SIL.FieldWorks
 		/// <param name="name">The name of the project.</param>
 		/// <returns>The cleaned up name with the appropriate extension</returns>
 		/// ------------------------------------------------------------------------------------
-		private static string CleanUpNameForType(FDOBackendProviderType type, string name)
+		private static string CleanUpNameForType(BackendProviderType type, string name)
 		{
 			if (string.IsNullOrEmpty(name))
 				return null;
@@ -361,8 +361,8 @@ namespace SIL.FieldWorks
 
 			switch (type)
 			{
-				case FDOBackendProviderType.kXML:
-					ext = FdoFileHelper.ksFwDataXmlFileExtension;
+				case BackendProviderType.kXML:
+					ext = LcmFileHelper.ksFwDataXmlFileExtension;
 					break;
 				default:
 					return name;
@@ -388,14 +388,14 @@ namespace SIL.FieldWorks
 		/// <param name="type">The type string.</param>
 		/// <param name="pathname">The pathname.</param>
 		/// ------------------------------------------------------------------------------------
-		private static FDOBackendProviderType GetType(string type, string pathname)
+		private static BackendProviderType GetType(string type, string pathname)
 		{
 			if (!string.IsNullOrEmpty(type))
 			{
 				switch (type.ToLowerInvariant())
 				{
-					case "xml": return FDOBackendProviderType.kXML;
-					default: return FDOBackendProviderType.kInvalid;
+					case "xml": return BackendProviderType.kXML;
+					default: return BackendProviderType.kInvalid;
 				}
 			}
 
@@ -405,11 +405,11 @@ namespace SIL.FieldWorks
 				ext = ext.ToLowerInvariant();
 				switch (ext)  // Includes period.
 				{
-					case FdoFileHelper.ksFwDataXmlFileExtension:
-						return FDOBackendProviderType.kXML;
+					case LcmFileHelper.ksFwDataXmlFileExtension:
+						return BackendProviderType.kXML;
 				}
 			}
-			return FDOBackendProviderType.kXML;
+			return BackendProviderType.kXML;
 		}
 		#endregion
 	}

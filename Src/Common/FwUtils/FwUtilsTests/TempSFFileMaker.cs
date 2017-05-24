@@ -8,7 +8,7 @@
 
 using System;
 using System.Text;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {

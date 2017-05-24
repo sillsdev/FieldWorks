@@ -15,9 +15,9 @@ using System.Diagnostics;
 using System.Xml;
 using SIL.FieldWorks.Common.FwUtils;
 using XCore;
-using SIL.Utils;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.Framework;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -257,13 +257,13 @@ namespace SIL.FieldWorks.XWorks
 			return GetSortFilePersistPathname(Cache, Clerk.Id);
 		}
 
-		internal static string GetSortFilePersistPathname(FdoCache cache, string clerkId)
+		internal static string GetSortFilePersistPathname(LcmCache cache, string clerkId)
 		{
 			var filename = clerkId + "_SortSeq";
 			//(This extension is also known to ProjectRestoreService.RestoreFrom7_0AndNewerBackup.)
 			// Also to FwXWindow.DiscardProperties().
 			var filenameWithExt = Path.ChangeExtension(filename, "fwss");
-			var tempDirectory = Path.Combine(cache.ProjectId.ProjectFolder, FdoFileHelper.ksSortSequenceTempDir);
+			var tempDirectory = Path.Combine(cache.ProjectId.ProjectFolder, LcmFileHelper.ksSortSequenceTempDir);
 			if (!Directory.Exists(tempDirectory))
 				Directory.CreateDirectory(tempDirectory);
 			return Path.Combine(tempDirectory, filenameWithExt);

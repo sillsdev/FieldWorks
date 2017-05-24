@@ -11,10 +11,10 @@ using System.Xml.Linq;
 using System.Collections.Generic;
 using System.Xml;
 using System.IO;
-using SIL.CoreImpl.Cellar;
+using SIL.LCModel.Core.Cellar;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.Utils;
+using SIL.LCModel;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.FixData
 {
@@ -210,7 +210,7 @@ namespace SIL.FieldWorks.FixData
 				currentErrorCount = newErrorCount;
 				infile = outfile;
 			}
-			var bakfile = Path.ChangeExtension(m_filename, FdoFileHelper.ksFwDataFallbackFileExtension);
+			var bakfile = Path.ChangeExtension(m_filename, LcmFileHelper.ksFwDataFallbackFileExtension);
 			if (File.Exists(bakfile))
 				File.Delete(bakfile);
 			File.Move(m_filename, bakfile);

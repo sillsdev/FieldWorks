@@ -10,19 +10,19 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.WritingSystems;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.FwCoreDlgControls;
 using StyleInfo = SIL.FieldWorks.FwCoreDlgControls.StyleInfo;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.Resources;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.Common.Framework
 {
@@ -49,7 +49,7 @@ namespace SIL.FieldWorks.Common.Framework
 		/// </summary>
 		/// <param name="cache">The FDO cache</param>
 		/// ------------------------------------------------------------------------------------
-		string GetMainWindowCaption(FdoCache cache);
+		string GetMainWindowCaption(LcmCache cache);
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -59,7 +59,7 @@ namespace SIL.FieldWorks.Common.Framework
 		/// </summary>
 		/// <param name="cache">The FDO cache</param>
 		/// ------------------------------------------------------------------------------------
-		string GetProjectName(FdoCache cache);
+		string GetProjectName(LcmCache cache);
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -67,14 +67,14 @@ namespace SIL.FieldWorks.Common.Framework
 		/// (Sigh...the only shared function so far, and it ISN'T really delegated...)
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		FwStyleSheet StyleSheet { get; }
+		LcmStyleSheet StyleSheet { get; }
 
 		/// <summary>
 		/// Specifically the stylesheet that should currently be used to apply or edit styles.
 		/// Usually the same as Stylesheet, but sometimes (e.g., Baseline tab in IText) depends
 		/// on the content of the active view.
 		/// </summary>
-		FwStyleSheet ActiveStyleSheet { get; }
+		LcmStyleSheet ActiveStyleSheet { get; }
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -132,9 +132,9 @@ namespace SIL.FieldWorks.Common.Framework
 	public interface IMainWindowDelegateCallbacks : IWin32Window
 	{
 		/// <summary>
-		/// Get the FdoCache used in the window
+		/// Get the LcmCache used in the window
 		/// </summary>
-		FdoCache Cache { get; }
+		LcmCache Cache { get; }
 		/// <summary>
 		/// Get the helper for paragraph styles. May be null.
 		/// </summary>
@@ -162,11 +162,11 @@ namespace SIL.FieldWorks.Common.Framework
 		/// <summary>
 		/// Get the stylesheet used in the window.
 		/// </summary>
-		FwStyleSheet StyleSheet { get; }
+		LcmStyleSheet StyleSheet { get; }
 		/// <summary>
 		/// Get the stylesheet used in the active view, or the default Stylesheet if none.
 		/// </summary>
-		FwStyleSheet ActiveStyleSheet { get; }
+		LcmStyleSheet ActiveStyleSheet { get; }
 		/// <summary>
 		/// Get the flid of the owning property of the stylesheet (e.g., Scripture.ScriptureTags.kflidStyles)
 		/// </summary>
@@ -251,7 +251,7 @@ namespace SIL.FieldWorks.Common.Framework
 		/// Gets the cache.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private FdoCache Cache
+		private LcmCache Cache
 		{
 			get { return m_callbacks.Cache; }
 		}
@@ -355,7 +355,7 @@ namespace SIL.FieldWorks.Common.Framework
 		/// The style sheet used to display stuff.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public FwStyleSheet StyleSheet
+		public LcmStyleSheet StyleSheet
 		{
 			get
 			{
@@ -368,7 +368,7 @@ namespace SIL.FieldWorks.Common.Framework
 		/// The style sheet of the active view, if any.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public FwStyleSheet ActiveStyleSheet
+		public LcmStyleSheet ActiveStyleSheet
 		{
 			get
 			{
@@ -382,7 +382,7 @@ namespace SIL.FieldWorks.Common.Framework
 		/// </summary>
 		/// <param name="cache">The FDO cache</param>
 		/// ------------------------------------------------------------------------------------
-		public string GetMainWindowCaption(FdoCache cache)
+		public string GetMainWindowCaption(LcmCache cache)
 		{
 			if (cache != null && m_app != null)
 			{
@@ -400,7 +400,7 @@ namespace SIL.FieldWorks.Common.Framework
 		/// </summary>
 		/// <param name="cache">The FDO cache</param>
 		/// ------------------------------------------------------------------------------------
-		public string GetProjectName(FdoCache cache)
+		public string GetProjectName(LcmCache cache)
 		{
 			return cache.ProjectId.UiName;
 		}

@@ -13,7 +13,7 @@ using System;
 using System.Windows.Forms;
 using System.Xml;
 
-using SIL.Utils;
+using SIL.LCModel.Utils;
 
 namespace XCore
 {

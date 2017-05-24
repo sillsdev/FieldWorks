@@ -5,14 +5,13 @@
 using System;
 using System.Collections.Generic;
 using NUnit.Framework;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.FDOTests;
-using SIL.FieldWorks.FDO;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.WritingSystems;
-using SIL.CoreImpl.KernelInterfaces;
-using SIL.Utils;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Utils;
+using SIL.LCModel.Infrastructure;
 
 namespace SIL.FieldWorks.TE.ImportTests
 {
@@ -22,7 +21,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
-	public class ScrNoteImportManagerTests : ScrInMemoryFdoTestBase
+	public class ScrNoteImportManagerTests : ScrInMemoryLcmTestBase
 	{
 		#region Member variables
 		private int m_wsSpanish;
@@ -75,7 +74,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 		/// <param name="ws">The writing system for setting the category names.</param>
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
-		internal static ICmPossibilityList CreateCategories(FdoCache cache, int ws)
+		internal static ICmPossibilityList CreateCategories(LcmCache cache, int ws)
 		{
 			ICmPossibilityList list = cache.LangProject.TranslatedScriptureOA.NoteCategoriesOA;
 			list.PossibilitiesOS.Clear();

@@ -5,7 +5,7 @@
 using System.Diagnostics;
 using System.Windows.Forms;
 
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 
 namespace SIL.FieldWorks.FdoUi
 {

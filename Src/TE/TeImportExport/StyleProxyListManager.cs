@@ -9,10 +9,10 @@
 // </remarks>
 
 using System.Collections.Generic;
-using SIL.CoreImpl.Scripture;
-using SIL.CoreImpl.KernelInterfaces;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel.Core.Scripture;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.Common.ScriptureUtils;
 
 namespace SIL.FieldWorks.TE
@@ -25,7 +25,7 @@ namespace SIL.FieldWorks.TE
 	public static class StyleProxyListManager
 	{
 		private static Dictionary<string, ImportStyleProxy> s_styleProxies;
-		private static FwStyleSheet s_styleSheet;
+		private static LcmStyleSheet s_styleSheet;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -33,7 +33,7 @@ namespace SIL.FieldWorks.TE
 		/// </summary>
 		/// <param name="styleSheet">The style sheet.</param>
 		/// ------------------------------------------------------------------------------------
-		public static void Initialize(FwStyleSheet styleSheet)
+		public static void Initialize(LcmStyleSheet styleSheet)
 		{
 			if (s_styleProxies == null)
 				s_styleProxies = new Dictionary<string, ImportStyleProxy>();

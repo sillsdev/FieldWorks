@@ -7,8 +7,7 @@
 
 using NUnit.Framework;
 
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.FDOTests;
+using SIL.LCModel;
 
 namespace SIL.FieldWorks.TE
 {
@@ -18,7 +17,7 @@ namespace SIL.FieldWorks.TE
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
-	public class BookRevListTests : ScrInMemoryFdoTestBase
+	public class BookRevListTests : ScrInMemoryLcmTestBase
 	{
 		// member variables for testing
 		private IScrBook m_genesisRevision;

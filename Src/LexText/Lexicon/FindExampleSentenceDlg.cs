@@ -7,22 +7,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
-using SIL.CoreImpl.Text;
+using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.Controls;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.FdoUi;
-using SIL.Utils;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using XCore;
 using SIL.FieldWorks.Common.Widgets;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {
 	public partial class FindExampleSentenceDlg : Form, IFwGuiControl
 	{
-		FdoCache m_cache;
+		LcmCache m_cache;
 		Mediator m_mediator;
 		private PropertyTable m_propertyTable;
 		XmlNode m_configurationNode;

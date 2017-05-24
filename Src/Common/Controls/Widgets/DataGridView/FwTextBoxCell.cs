@@ -5,7 +5,7 @@
 using System;
 using System.ComponentModel;
 using System.Windows.Forms;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 #if __MonoCS__
 using System.Drawing;
 using System.Diagnostics.CodeAnalysis;

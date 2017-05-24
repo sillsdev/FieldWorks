@@ -10,20 +10,21 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
-using SIL.CoreImpl.Cellar;
-using SIL.CoreImpl.Text;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.FdoUi.Dialogs;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.Reporting;
+using SIL.LCModel.Utils;
 using SIL.Utils;
 using XCore;
 
@@ -66,7 +67,7 @@ namespace SIL.FieldWorks.FdoUi
 		private Command m_command;
 		protected ICmObject m_obj;
 		protected int m_hvo;
-		protected FdoCache m_cache;
+		protected LcmCache m_cache;
 		// Map from uint to uint, specifically, from clsid to clsid.
 		// The key is any clsid that we have so far been asked to make a UI object for.
 		// The value is the corresponding clsid that actually occurs in the switch.
@@ -289,12 +290,12 @@ namespace SIL.FieldWorks.FdoUi
 		/// <param name="cache"></param>
 		/// <param name="hvo"></param>
 		/// <returns></returns>
-		public static CmObjectUi MakeUi(FdoCache cache, int hvo)
+		public static CmObjectUi MakeUi(LcmCache cache, int hvo)
 		{
 			return MakeUi(cache, hvo, cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo).ClassID);
 		}
 
-		private static CmObjectUi MakeUi(FdoCache cache, int hvo, int clsid)
+		private static CmObjectUi MakeUi(LcmCache cache, int hvo, int clsid)
 		{
 			IFwMetaDataCache mdc = cache.DomainDataByFlid.MetaDataCache;
 			// If we've encountered an object with this Clsid before, and this clsid isn't in
@@ -395,7 +396,7 @@ namespace SIL.FieldWorks.FdoUi
 		/// <returns></returns>
 		public static CmObjectUi CreateNewUiObject(Mediator mediator, PropertyTable propertyTable, int classId, int hvoOwner, int flid, int insertionPosition)
 		{
-			var cache = propertyTable.GetValue<FdoCache>("cache");
+			var cache = propertyTable.GetValue<LcmCache>("cache");
 			switch (classId)
 			{
 				default:
@@ -413,7 +414,7 @@ namespace SIL.FieldWorks.FdoUi
 			}
 		}
 
-		internal static CmObjectUi DefaultCreateNewUiObject(int classId, int hvoOwner, int flid, int insertionPosition, FdoCache cache)
+		internal static CmObjectUi DefaultCreateNewUiObject(int classId, int hvoOwner, int flid, int insertionPosition, LcmCache cache)
 		{
 			CmObjectUi newUiObj = null;
 			UndoableUnitOfWorkHelper.Do(FdoUiStrings.ksUndoInsert, FdoUiStrings.ksRedoInsert, cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
@@ -1238,12 +1239,12 @@ namespace SIL.FieldWorks.FdoUi
 		/// otherwise it just checks that the object exists in the database (or is a valid virtual object)</param>
 		/// <returns></returns>
 		static public List<int> ParseSinglePropertySequenceValueIntoHvos(string singlePropertySequenceValue,
-			FdoCache cacheForCheckingValidity, int expectedClassId)
+			LcmCache cacheForCheckingValidity, int expectedClassId)
 		{
 			var hvos = new List<int>();
 			if (String.IsNullOrEmpty(singlePropertySequenceValue))
 				return hvos;
-			FdoCache cache = cacheForCheckingValidity;
+			LcmCache cache = cacheForCheckingValidity;
 			foreach (string sHvo in ChoiceGroup.DecodeSinglePropertySequenceValue(singlePropertySequenceValue))
 			{
 				int hvo;
@@ -1272,7 +1273,7 @@ namespace SIL.FieldWorks.FdoUi
 
 		public class CmObjectVc : FwBaseVc
 		{
-			public CmObjectVc(FdoCache cache)
+			public CmObjectVc(LcmCache cache)
 			{
 				Cache = cache;
 			}
@@ -1302,7 +1303,7 @@ namespace SIL.FieldWorks.FdoUi
 		/// </summary>
 		public class CmAnalObjectVc : FwBaseVc
 		{
-			public CmAnalObjectVc(FdoCache cache)
+			public CmAnalObjectVc(LcmCache cache)
 				: base(cache.DefaultAnalWs)
 			{
 				Cache = cache;
@@ -1345,7 +1346,7 @@ namespace SIL.FieldWorks.FdoUi
 		{
 			protected int m_flidName;
 
-			public CmNamedObjVc(FdoCache cache, int flidName)
+			public CmNamedObjVc(LcmCache cache, int flidName)
 				: base(cache)
 			{
 				m_flidName = flidName;
@@ -1364,7 +1365,7 @@ namespace SIL.FieldWorks.FdoUi
 		{
 			protected int m_flidAbbr;
 
-			public CmNameAbbrObjVc(FdoCache cache, int flidName, int flidAbbr)
+			public CmNameAbbrObjVc(LcmCache cache, int flidName, int flidAbbr)
 				: base(cache, flidName)
 			{
 				m_flidAbbr = flidAbbr;
@@ -1392,7 +1393,7 @@ namespace SIL.FieldWorks.FdoUi
 		{
 			protected int m_flidRef; // flid that refers to the CmPossibility
 
-			public CmPossRefVc(FdoCache cache, int flidRef)
+			public CmPossRefVc(LcmCache cache, int flidRef)
 				: base(cache)
 			{
 				m_flidRef = flidRef;
@@ -1450,7 +1451,7 @@ namespace SIL.FieldWorks.FdoUi
 	/// </summary>
 	public class CmVernObjectVc : FwBaseVc
 	{
-		public CmVernObjectVc(FdoCache cache)
+		public CmVernObjectVc(LcmCache cache)
 		{
 			Cache = cache;
 		}
@@ -1556,7 +1557,7 @@ namespace SIL.FieldWorks.FdoUi
 			return true;
 		}
 
-		public static string FormatDisplayTextWithListName(FdoCache cache,
+		public static string FormatDisplayTextWithListName(LcmCache cache,
 			ICmPossibilityList pssl, ref UIItemDisplayProperties display)
 		{
 			string listName = pssl.Owner != null ? cache.DomainDataByFlid.MetaDataCache.GetFieldName(pssl.OwningFlid) : pssl.Name.BestAnalysisVernacularAlternative.Text;
@@ -1602,7 +1603,7 @@ namespace SIL.FieldWorks.FdoUi
 		/// <param name="cache"></param>
 		/// <param name="hvoItem"></param>
 		/// <returns></returns>
-		static bool CheckAndReportProblemAddingSubitem(FdoCache cache, int hvoItem)
+		static bool CheckAndReportProblemAddingSubitem(LcmCache cache, int hvoItem)
 		{
 			var possItem = cache.ServiceLocator.GetInstance<ICmPossibilityRepository>().GetObject(hvoItem);
 			if (possItem != null)
@@ -1627,7 +1628,7 @@ namespace SIL.FieldWorks.FdoUi
 			return false; // not detecting problems with moving other kinds of things.
 		}
 
-		private static bool CheckAndReportBadTagListAdd(FdoCache cache, int hvoItem, int hvoRootItem, int hvoPossList)
+		private static bool CheckAndReportBadTagListAdd(LcmCache cache, int hvoItem, int hvoRootItem, int hvoPossList)
 		{
 			if (cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoPossList).OwningFlid != LangProjectTags.kflidTextMarkupTags)
 				return false; // some other list we don't care about.
@@ -1642,7 +1643,7 @@ namespace SIL.FieldWorks.FdoUi
 			return false;
 		}
 
-		private static bool CheckAndReportBadDiscourseTemplateAdd(FdoCache cache, int hvoItem, int hvoRootItem, int hvoList)
+		private static bool CheckAndReportBadDiscourseTemplateAdd(LcmCache cache, int hvoItem, int hvoRootItem, int hvoList)
 		{
 			if (cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoList).OwningFlid != DsDiscourseDataTags.kflidConstChartTempl)
 				return false; // some other list we don't care about.
@@ -1674,7 +1675,7 @@ namespace SIL.FieldWorks.FdoUi
 		public static CmObjectUi CreateNewUiObject(PropertyTable propertyTable, int classId, int hvoOwner,
 			int flid, int insertionPosition)
 		{
-			var cache = propertyTable.GetValue<FdoCache>("cache");
+			var cache = propertyTable.GetValue<LcmCache>("cache");
 			if (CheckAndReportProblemAddingSubitem(cache, hvoOwner))
 				return null;
 			return DefaultCreateNewUiObject(classId, hvoOwner, flid, insertionPosition, cache);
@@ -1831,7 +1832,7 @@ namespace SIL.FieldWorks.FdoUi
 		/// </summary>
 		public class MsaVc : CmAnalObjectVc
 		{
-			public MsaVc(FdoCache cache)
+			public MsaVc(LcmCache cache)
 				: base(cache)
 			{
 			}
@@ -2091,7 +2092,7 @@ namespace SIL.FieldWorks.FdoUi
 		public static LexSenseUi CreateNewUiObject(PropertyTable propertyTable, int classId, int hvoOwner, int flid, int insertionPosition)
 		{
 			LexSenseUi result = null;
-			var cache = propertyTable.GetValue<FdoCache>("cache");
+			var cache = propertyTable.GetValue<LcmCache>("cache");
 			UndoableUnitOfWorkHelper.Do(FdoUiStrings.ksUndoInsertSense, FdoUiStrings.ksRedoInsertSense,
 				cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
 				{
@@ -2149,7 +2150,7 @@ namespace SIL.FieldWorks.FdoUi
 		/// <param name="cache"></param>
 		/// <param name="ls">LexSense whose MSA we will use/change</param>
 		/// <returns></returns>
-		private static int GetSafeHvoMsa(FdoCache cache, ILexSense ls)
+		private static int GetSafeHvoMsa(LcmCache cache, ILexSense ls)
 		{
 			if (ls.MorphoSyntaxAnalysisRA != null)
 				return ls.MorphoSyntaxAnalysisRA.Hvo; //situation normal, return
@@ -2200,7 +2201,7 @@ namespace SIL.FieldWorks.FdoUi
 	/// </summary>
 	public class ReferenceCollectionUi : VectorReferenceUi
 	{
-		public ReferenceCollectionUi(FdoCache cache, ICmObject rootObj, int referenceFlid, int targetHvo) :
+		public ReferenceCollectionUi(LcmCache cache, ICmObject rootObj, int referenceFlid, int targetHvo) :
 			base(cache, rootObj, referenceFlid, targetHvo)
 		{
 			Debug.Assert(m_iType == CellarPropertyType.ReferenceCollection);
@@ -2226,15 +2227,15 @@ namespace SIL.FieldWorks.FdoUi
 
 	/// <summary>
 	/// Our own minimal implementation of a reference sequence, since we can't just get what
-	/// we want from FDO's internal secret implementation of IFdoReferenceSequence.
+	/// we want from FDO's internal secret implementation of ILcmReferenceSequence.
 	/// </summary>
 	internal class FdoRefSeq
 	{
-		readonly FdoCache m_cache;
+		readonly LcmCache m_cache;
 		readonly int m_hvo;
 		readonly int m_flid;
 
-		internal FdoRefSeq(FdoCache cache, int hvo, int flid)
+		internal FdoRefSeq(LcmCache cache, int hvo, int flid)
 		{
 			m_cache = cache;
 			m_hvo = hvo;
@@ -2281,7 +2282,7 @@ namespace SIL.FieldWorks.FdoUi
 	{
 		readonly FdoRefSeq m_fdoRS;
 
-		public ReferenceSequenceUi(FdoCache cache, ICmObject rootObj, int referenceFlid, int targetHvo)
+		public ReferenceSequenceUi(LcmCache cache, ICmObject rootObj, int referenceFlid, int targetHvo)
 			: base(cache, rootObj, referenceFlid, targetHvo)
 		{
 			Debug.Assert(m_iType == CellarPropertyType.ReferenceSequence);
@@ -2395,7 +2396,7 @@ namespace SIL.FieldWorks.FdoUi
 		protected int m_iCurrent = -1;
 		protected CellarPropertyType m_iType;
 
-		public VectorReferenceUi(FdoCache cache, ICmObject rootObj, int referenceFlid, int targetHvo)
+		public VectorReferenceUi(LcmCache cache, ICmObject rootObj, int referenceFlid, int targetHvo)
 			: base(cache, rootObj, referenceFlid, targetHvo)
 		{
 			m_iType = (CellarPropertyType)cache.DomainDataByFlid.MetaDataCache.GetFieldType(m_flid);
@@ -2412,7 +2413,7 @@ namespace SIL.FieldWorks.FdoUi
 		protected int m_flid;
 		protected int m_hvoTarget;
 		protected CmObjectUi m_targetUi;
-		public ReferenceBaseUi(FdoCache cache, ICmObject rootObj, int referenceFlid, int targetHvo)
+		public ReferenceBaseUi(LcmCache cache, ICmObject rootObj, int referenceFlid, int targetHvo)
 		{
 			// determine whether this is an atomic or vector relationship.
 			Debug.Assert(cache.IsReferenceProperty(referenceFlid));
@@ -2435,7 +2436,7 @@ namespace SIL.FieldWorks.FdoUi
 		/// <param name="referenceFlid"></param>
 		/// <param name="targetHvo"></param>
 		/// <returns></returns>
-		public static ReferenceBaseUi MakeUi(FdoCache cache, ICmObject rootObj,
+		public static ReferenceBaseUi MakeUi(LcmCache cache, ICmObject rootObj,
 			int referenceFlid, int targetHvo)
 		{
 			var iType = (CellarPropertyType)cache.DomainDataByFlid.MetaDataCache.GetFieldType(referenceFlid);

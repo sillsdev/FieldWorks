@@ -9,14 +9,14 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Serialization;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.FdoUi.Dialogs;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 using SIL.Linq;
 using SIL.WritingSystems;
 using XCore;
 using Ionic.Zip;
-using SIL.CoreImpl.WritingSystems;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.LexText.Controls;
@@ -34,7 +34,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private readonly PropertyTable _propertyTable;
 		private readonly Mediator _mediator;
-		private readonly FdoCache _cache;
+		private readonly LcmCache _cache;
 
 		internal readonly string _projectConfigDir;
 		private readonly string _defaultConfigDir;
@@ -112,7 +112,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// For unit tests.
 		/// </summary>
-		internal DictionaryConfigurationManagerController(FdoCache cache,
+		internal DictionaryConfigurationManagerController(LcmCache cache,
 			List<DictionaryConfigurationModel> configurations, List<string> publications, string projectConfigDir, string defaultConfigDir)
 		{
 			_cache = cache;
@@ -124,7 +124,7 @@ namespace SIL.FieldWorks.XWorks
 
 		public DictionaryConfigurationManagerController(DictionaryConfigurationManagerDlg view, PropertyTable propertyTable,
 			List<DictionaryConfigurationModel> configurations, List<string> publications, string projectConfigDir, string defaultConfigDir, DictionaryConfigurationModel currentConfig) :
-			this(propertyTable.GetValue<FdoCache>("cache"), configurations, publications, projectConfigDir, defaultConfigDir)
+			this(propertyTable.GetValue<LcmCache>("cache"), configurations, publications, projectConfigDir, defaultConfigDir)
 		{
 			_view = view;
 			_propertyTable = propertyTable;
@@ -557,7 +557,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Create a zip file containing a dictionary configuration for the user to share, into destinationZipPath. LT-17397.
 		/// </summary>
-		internal static void ExportConfiguration(DictionaryConfigurationModel configurationToExport, string destinationZipPath, FdoCache cache)
+		internal static void ExportConfiguration(DictionaryConfigurationModel configurationToExport, string destinationZipPath, LcmCache cache)
 		{
 			if (configurationToExport == null)
 				throw new ArgumentNullException("configurationToExport");
@@ -581,7 +581,7 @@ namespace SIL.FieldWorks.XWorks
 		/// Prepare custom fields to be included in dictionary configuration export. LT-17397.
 		/// Returns paths to files to be included in a zipped export.
 		/// </summary>
-		internal static IEnumerable<string> PrepareCustomFieldsExport(FdoCache cache)
+		internal static IEnumerable<string> PrepareCustomFieldsExport(LcmCache cache)
 		{
 			var exporter = new LiftExporter(cache);
 			var liftFile = Path.Combine(Path.GetTempPath(), "DictExportCustomLift", "CustomFields.lift");
@@ -604,7 +604,7 @@ namespace SIL.FieldWorks.XWorks
 		/// Prepare stylesheet to be included in dictionary configuration export. LT-17397.
 		/// Returns paths to files to be included in a zipped export.
 		/// </summary>
-		internal static string PrepareStylesheetExport(FdoCache cache)
+		internal static string PrepareStylesheetExport(LcmCache cache)
 		{
 			var projectStyles = new FlexStylesXmlAccessor(cache.LangProject.LexDbOA, true);
 			var serializer = new XmlSerializer(typeof(FlexStylesXmlAccessor));
@@ -654,7 +654,7 @@ namespace SIL.FieldWorks.XWorks
 			return IsConfigurationACustomizedOriginal(configuration, _defaultConfigDir, _cache);
 		}
 
-		public static bool IsConfigurationACustomizedOriginal(DictionaryConfigurationModel config, string defaultConfigDir, FdoCache cache)
+		public static bool IsConfigurationACustomizedOriginal(DictionaryConfigurationModel config, string defaultConfigDir, LcmCache cache)
 		{
 			return IsConfigurationACustomizedShippedDefault(config, defaultConfigDir) || IsConfigurationAnOriginalReversal(config, cache);
 		}
@@ -677,7 +677,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Whether a configuration represents a Reversal.
 		/// </summary>
-		public static bool IsConfigurationAnOriginalReversal(DictionaryConfigurationModel configuration, FdoCache cache)
+		public static bool IsConfigurationAnOriginalReversal(DictionaryConfigurationModel configuration, LcmCache cache)
 		{
 			if (configuration.FilePath == null)
 				return false;

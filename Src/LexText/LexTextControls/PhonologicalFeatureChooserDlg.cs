@@ -10,15 +10,15 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
-using SIL.CoreImpl.Cellar;
-using SIL.CoreImpl.Text;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.Controls;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Application;
+using SIL.LCModel.Infrastructure;
 using SIL.Windows.Forms;
 using XCore;
 
@@ -35,7 +35,7 @@ namespace SIL.FieldWorks.LexText.Controls
 	{
 		private Mediator m_mediator;
 		private XCore.PropertyTable m_propertyTable;
-		private FdoCache m_cache;
+		private LcmCache m_cache;
 		private IPhRegularRule m_rule;
 		private IPhSimpleContextNC m_ctxt;
 		private PhonologicalFeaturePublisher m_sda;
@@ -156,7 +156,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
-		private IPhFeatureConstraint RemoveFeatureConstraint(IFdoReferenceSequence<IPhFeatureConstraint> featConstrs, IFsFeatDefn feat)
+		private IPhFeatureConstraint RemoveFeatureConstraint(ILcmReferenceSequence<IPhFeatureConstraint> featConstrs, IFsFeatDefn feat)
 		{
 			var constrToRemove = GetFeatureConstraint(featConstrs, feat);
 			if (constrToRemove != null)
@@ -219,7 +219,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="propertyTable"></param>
 		/// <param name="rule"></param>
 		/// <param name="ctxt"></param>
-		public void SetDlgInfo(FdoCache cache, Mediator mediator, XCore.PropertyTable propertyTable, IPhRegularRule rule, IPhSimpleContextNC ctxt)
+		public void SetDlgInfo(LcmCache cache, Mediator mediator, XCore.PropertyTable propertyTable, IPhRegularRule rule, IPhSimpleContextNC ctxt)
 		{
 			CheckDisposed();
 
@@ -227,7 +227,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			SetDlgInfo(cache, mediator, propertyTable, ctxt.FeatureStructureRA.Hvo, PhNCFeaturesTags.kflidFeatures, fs, rule, ctxt);
 		}
 
-		public void SetDlgInfo(FdoCache cache, Mediator mediator, XCore.PropertyTable propertyTable, IPhRegularRule rule)
+		public void SetDlgInfo(LcmCache cache, Mediator mediator, XCore.PropertyTable propertyTable, IPhRegularRule rule)
 		{
 			CheckDisposed();
 
@@ -240,7 +240,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="cache"></param>
 		/// <param name="mediator"></param>
 		/// <param name="fs"></param>
-		public void SetDlgInfo(FdoCache cache, Mediator mediator, XCore.PropertyTable propertyTable, IFsFeatStruc fs)
+		public void SetDlgInfo(LcmCache cache, Mediator mediator, XCore.PropertyTable propertyTable, IFsFeatStruc fs)
 		{
 			SetDlgInfo(cache, mediator, propertyTable, fs.Owner.Hvo, fs.OwningFlid, fs, null, null);
 		}
@@ -253,21 +253,21 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="propertyTable"></param>
 		/// <param name="cobj"></param>
 		/// <param name="owningFlid"></param>
-		public void SetDlgInfo(FdoCache cache, Mediator mediator, XCore.PropertyTable propertyTable, ICmObject cobj, int owningFlid)
+		public void SetDlgInfo(LcmCache cache, Mediator mediator, XCore.PropertyTable propertyTable, ICmObject cobj, int owningFlid)
 		{
 			CheckDisposed();
 
 			SetDlgInfo(cache, mediator, propertyTable, cobj.Hvo, owningFlid, null, null, null);
 		}
 
-		public void SetDlgInfo(FdoCache cache, Mediator mediator, XCore.PropertyTable propertyTable)
+		public void SetDlgInfo(LcmCache cache, Mediator mediator, XCore.PropertyTable propertyTable)
 		{
 			CheckDisposed();
 
 			SetDlgInfo(cache, mediator, propertyTable, 0, 0, null, null, null);
 		}
 
-		private void SetDlgInfo(FdoCache cache, Mediator mediator, XCore.PropertyTable propertyTable, int hvoOwner, int owningFlid, IFsFeatStruc fs, IPhRegularRule rule, IPhSimpleContextNC ctxt)
+		private void SetDlgInfo(LcmCache cache, Mediator mediator, XCore.PropertyTable propertyTable, int hvoOwner, int owningFlid, IFsFeatStruc fs, IPhRegularRule rule, IPhSimpleContextNC ctxt)
 		{
 			m_fs = fs;
 			m_owningFlid = owningFlid;
@@ -863,9 +863,9 @@ namespace SIL.FieldWorks.LexText.Controls
 			Dictionary<int, string> m_unicodeProps;
 			Dictionary<int, int> m_objProps;
 
-			private FdoCache m_cache;
+			private LcmCache m_cache;
 
-			public PhonologicalFeaturePublisher(ISilDataAccessManaged domainDataByFlid, FdoCache cache)
+			public PhonologicalFeaturePublisher(ISilDataAccessManaged domainDataByFlid, LcmCache cache)
 				: base(domainDataByFlid, ListFlid)
 			{
 				m_cache = cache;
@@ -941,7 +941,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					base.SetUnicode(hvo, tag, _rgch, cch);
 			}
 
-			class PhonologicalFeatureMdc : FdoMetaDataCacheDecoratorBase
+			class PhonologicalFeatureMdc : LcmMetaDataCacheDecoratorBase
 			{
 				public PhonologicalFeatureMdc(IFwMetaDataCacheManaged mdc)
 					: base(mdc)

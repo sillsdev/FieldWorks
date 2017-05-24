@@ -12,7 +12,7 @@ using System.Windows.Forms;
 #if USE_DOTNETBAR
 using DevComponents.DotNetBar;
 #endif
-using SIL.Utils;
+using SIL.LCModel.Utils;
 
 namespace XCore
 {

@@ -17,16 +17,16 @@ using System.Windows.Forms;
 using System.Xml;
 using System.Xml.XPath;
 using System.Xml.Xsl;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using ECInterfaces;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.IText.FlexInterlinModel;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 using SilEncConverters40;
-using SIL.FieldWorks.FDO.Application.ApplicationServices;
+using SIL.LCModel.Application.ApplicationServices;
 using System.Xml.Serialization;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
 
 
 namespace SIL.FieldWorks.IText
@@ -48,7 +48,7 @@ namespace SIL.FieldWorks.IText
 		private string m_nextInput;
 		private string m_sTempDir;
 		private string m_sRootDir;
-		private FdoCache m_cache;
+		private LcmCache m_cache;
 		private string m_LinguaLinksXmlFileName;
 
 		public delegate void ErrorHandler(object sender, string message, string caption);
@@ -62,7 +62,7 @@ namespace SIL.FieldWorks.IText
 		/// <param name="tempDir">The temp directory.</param>
 		/// <param name="rootDir">The root directory.</param>
 		/// ------------------------------------------------------------------------------------
-		public LinguaLinksImport(FdoCache cache, string tempDir, string rootDir)
+		public LinguaLinksImport(LcmCache cache, string tempDir, string rootDir)
 		{
 			m_cache = cache;
 			m_sTempDir = tempDir;
@@ -236,14 +236,14 @@ namespace SIL.FieldWorks.IText
 			/// </summary>
 			public Stream BirdData;
 			public int AllottedProgress;
-			public Func<FdoCache, Interlineartext, ILgWritingSystemFactory, IThreadedProgress, bool> CheckAndAddLanguages;
+			public Func<LcmCache, Interlineartext, ILgWritingSystemFactory, IThreadedProgress, bool> CheckAndAddLanguages;
 			public ImportAnalysesLevel AnalysesLevel;
 		}
 
 		/// <summary>
 		/// The first text created by ImportInterlinear.
 		/// </summary>
-		public FDO.IText FirstNewText { get; set; }
+		public LCModel.IText FirstNewText { get; set; }
 		/// <summary>
 		/// Import a file which looks like a FieldWorks interlinear XML export.
 		/// </summary>
@@ -256,14 +256,14 @@ namespace SIL.FieldWorks.IText
 			Debug.Assert(parameters.Length == 1);
 			using (var stream = new FileStream((string) parameters[0], FileMode.Open, FileAccess.Read))
 			{
-				FDO.IText firstNewText = null;
+				LCModel.IText firstNewText = null;
 				retValue = ImportInterlinear(dlg, stream, 100, ref firstNewText);
 				FirstNewText = firstNewText;
 			}
 			return retValue;
 		}
 
-		public bool ImportInterlinear(IThreadedProgress progress, Stream birdData, int allottedProgress, ref FDO.IText firstNewText)
+		public bool ImportInterlinear(IThreadedProgress progress, Stream birdData, int allottedProgress, ref LCModel.IText firstNewText)
 		{
 			return ImportInterlinear(new ImportInterlinearOptions { Progress = progress, BirdData = birdData, AllottedProgress = allottedProgress },
 				ref firstNewText);
@@ -277,7 +277,7 @@ namespace SIL.FieldWorks.IText
 		/// <param name="options"></param>
 		/// <param name="firstNewText"></param>
 		/// <returns>return false to abort merge</returns>
-		public bool ImportInterlinear(ImportInterlinearOptions options, ref FDO.IText firstNewText)
+		public bool ImportInterlinear(ImportInterlinearOptions options, ref LCModel.IText firstNewText)
 		{
 			IThreadedProgress progress = options.Progress;
 			Stream birdData = options.BirdData;
@@ -307,12 +307,12 @@ namespace SIL.FieldWorks.IText
 					{
 						step++;
 						ILangProject langProject = m_cache.LangProject;
-						FDO.IText newText = null;
+						LCModel.IText newText = null;
 						if (!String.IsNullOrEmpty(interlineartext.guid))
 						{
 							ICmObject repoObj;
 							m_cache.ServiceLocator.ObjectRepository.TryGetObject(new Guid(interlineartext.guid), out repoObj);
-							newText = repoObj as FDO.IText;
+							newText = repoObj as LCModel.IText;
 							if (newText != null && ShowPossibleMergeDialog(progress) == DialogResult.Yes)
 							{
 								continueMerge = MergeTextWithBIRDDoc(ref newText,
@@ -375,7 +375,7 @@ namespace SIL.FieldWorks.IText
 		/// <param name="progress"></param>
 		/// <param name="version"></param>
 		/// <returns>true if operation completed, false if the import operation should be aborted</returns>
-		private bool PopulateTextIfPossible(ImportInterlinearOptions options, ref FDO.IText newText, Interlineartext interlineartext,
+		private bool PopulateTextIfPossible(ImportInterlinearOptions options, ref LCModel.IText newText, Interlineartext interlineartext,
 												IThreadedProgress progress, int version)
 		{
 			if (!PopulateTextFromBIRDDoc(ref newText,

@@ -7,11 +7,11 @@ using System;
 using System.Diagnostics;
 using System.Drawing;
 using IBusDotNet;
-using SIL.CoreImpl.Text;
+using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.RootSites.Properties;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 using SIL.Windows.Forms.Keyboarding.Linux;
 
 namespace SIL.FieldWorks.Common.RootSites

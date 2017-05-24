@@ -118,8 +118,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Downloads\ExCSS.dll</HintPath>
     </Reference>
-    <Reference Include="FDO, Version=6.1.1.30361, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\Output\Debug\FDO.dll</HintPath>
+    <Reference Include="SIL.LCModel, Version=9.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\..\Output\Debug\SIL.LCModel.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="FdoUi, Version=6.1.1.19955, Culture=neutral, processorArchitecture=MSIL">
@@ -224,9 +224,9 @@
       <HintPath>..\..\Output\Debug\xCore.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
-    <Reference Include="CoreImpl, Version=6.1.1.30291, Culture=neutral, PublicKeyToken=null">
+    <Reference Include="SIL.LCModel.Core, Version=9.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\CoreImpl.dll</HintPath>
+      <HintPath>..\..\Output\Debug\SIL.LCModel.Core.dll</HintPath>
     </Reference>
     <Reference Include="Widgets, Version=6.1.1.30419, Culture=neutral, PublicKeyToken=null">
       <SpecificVersion>False</SpecificVersion>
@@ -240,9 +240,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\FwCoreDlgControls.dll</HintPath>
     </Reference>
-    <Reference Include="SilUtils, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+    <Reference Include="SIL.LCModel.Utils, Version=9.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\SilUtils.dll</HintPath>
+      <HintPath>..\..\Output\Debug\SIL.LCModel.Utils.dll</HintPath>
     </Reference>
     <Reference Include="xCoreInterfaces, Version=6.1.1.20913, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\..\Output\Debug\xCoreInterfaces.dll</HintPath>

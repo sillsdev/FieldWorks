@@ -11,9 +11,9 @@ using System.Xml;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FdoUi;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using SIL.Utils;
 using XCore;
 
@@ -160,11 +160,11 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// FDO cache.
 		/// </summary>
-		protected FdoCache Cache
+		protected LcmCache Cache
 		{
 			get
 			{
-				return m_propertyTable.GetValue<FdoCache>("cache");
+				return m_propertyTable.GetValue<LcmCache>("cache");
 			}
 		}
 

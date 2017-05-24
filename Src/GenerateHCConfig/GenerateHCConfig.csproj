@@ -42,11 +42,11 @@
     <NoWin32Manifest>true</NoWin32Manifest>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CoreImpl">
-      <HintPath>..\..\Output\Debug\CoreImpl.dll</HintPath>
+    <Reference Include="SIL.LCModel.Core">
+      <HintPath>..\..\Output\Debug\SIL.LCModel.Core.dll</HintPath>
     </Reference>
-    <Reference Include="FDO">
-      <HintPath>..\..\Output\Debug\FDO.dll</HintPath>
+    <Reference Include="SIL.LCModel">
+      <HintPath>..\..\Output\Debug\SIL.LCModel.dll</HintPath>
     </Reference>
     <Reference Include="ParserCore">
       <HintPath>..\..\Output\Debug\ParserCore.dll</HintPath>
@@ -64,8 +64,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Downloads\SIL.WritingSystems.dll</HintPath>
     </Reference>
-    <Reference Include="SilUtils">
-      <HintPath>..\..\Output\Debug\SilUtils.dll</HintPath>
+    <Reference Include="SIL.LCModel.Utils">
+      <HintPath>..\..\Output\Debug\SIL.LCModel.Utils.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />

@@ -12,18 +12,18 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.WritingSystems;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Controls;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.LexText.Controls;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.XWorks;
@@ -353,7 +353,7 @@ namespace SIL.FieldWorks.IText
 			/// <summary>
 			/// Constructor.
 			/// </summary>
-			public POSComboController(TreeCombo treeCombo, FdoCache cache, ICmPossibilityList list, int ws, bool useAbbr, Mediator mediator, PropertyTable propertyTable, Form parent) :
+			public POSComboController(TreeCombo treeCombo, LcmCache cache, ICmPossibilityList list, int ws, bool useAbbr, Mediator mediator, PropertyTable propertyTable, Form parent) :
 				base(treeCombo, cache, list, ws, useAbbr, mediator, propertyTable, parent)
 			{
 				Sorted = true;
@@ -1718,7 +1718,7 @@ namespace SIL.FieldWorks.IText
 	{
 		internal ConcordanceControlBase OwningControl { get; set; }
 
-		public override void Init(FdoCache cache, Mediator mediator, PropertyTable propertyTable, XmlNode recordListNode)
+		public override void Init(LcmCache cache, Mediator mediator, PropertyTable propertyTable, XmlNode recordListNode)
 		{
 			base.Init(cache, mediator, propertyTable, recordListNode);
 			m_owningObject = cache.LangProject;

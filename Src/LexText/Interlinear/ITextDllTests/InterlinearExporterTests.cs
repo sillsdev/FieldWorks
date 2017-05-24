@@ -9,13 +9,12 @@ using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Xsl;
 using NUnit.Framework;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.WritingSystems;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.FDOTests;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 using SIL.TestUtilities;
 
 namespace SIL.FieldWorks.IText
@@ -25,7 +24,7 @@ namespace SIL.FieldWorks.IText
 	[TestFixture]
 	public class InterlinearExporterTestsBase : InterlinearTestBase
 	{
-		protected FDO.IText m_text1;
+		protected LCModel.IText m_text1;
 		protected InterlinLineChoices m_choices;
 		private XmlDocument m_textsDefn;
 
@@ -37,7 +36,7 @@ namespace SIL.FieldWorks.IText
 			m_textsDefn = new XmlDocument();
 		}
 
-		protected virtual FDO.IText SetupDataForText1()
+		protected virtual LCModel.IText SetupDataForText1()
 		{
 			string path = Path.Combine(FwDirectoryFinder.SourceDirectory, "LexText", "Interlinear", "ITextDllTests",
 				"InterlinearExporterTests.xml");
@@ -963,7 +962,7 @@ namespace SIL.FieldWorks.IText
 		{
 			private string recGuid;
 
-			protected override FDO.IText SetupDataForText1()
+			protected override LCModel.IText SetupDataForText1()
 			{
 				Cache.LanguageProject.PeopleOA = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
 
@@ -972,7 +971,7 @@ namespace SIL.FieldWorks.IText
 				Cache.LanguageProject.PeopleOA.PossibilitiesOS.Add(newPerson);
 				newPerson.Name.set_String(Cache.DefaultVernWs, "Hiro Protaganist");
 
-				FDO.IText text = Cache.ServiceLocator.GetInstance<ITextFactory>().Create();
+				LCModel.IText text = Cache.ServiceLocator.GetInstance<ITextFactory>().Create();
 				//Cache.LangProject.TextsOC.Add(text);
 				text.ContentsOA = Cache.ServiceLocator.GetInstance<IStTextFactory>().Create();
 				text.MediaFilesOA = Cache.ServiceLocator.GetInstance<ICmMediaContainerFactory>().Create();

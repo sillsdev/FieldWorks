@@ -6,8 +6,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;
 using System.Linq;
-using SIL.CoreImpl.Text;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.LexText.Controls;
 using XCore;
@@ -29,7 +29,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public PhonologicalFeaturePopupTreeManager(TreeCombo treeCombo, FdoCache cache, bool useAbbr, Mediator mediator, PropertyTable propertyTable, Form parent, int wsDisplay, IFsClosedFeature closedFeature)
+		public PhonologicalFeaturePopupTreeManager(TreeCombo treeCombo, LcmCache cache, bool useAbbr, Mediator mediator, PropertyTable propertyTable, Form parent, int wsDisplay, IFsClosedFeature closedFeature)
 			: base(treeCombo, cache, mediator, propertyTable, cache.LanguageProject.PartsOfSpeechOA, wsDisplay, useAbbr, parent)
 		{
 			m_closedFeature = closedFeature;

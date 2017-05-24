@@ -21,7 +21,7 @@ using System.Windows.Forms;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using SIL.CoreImpl.Text;
+using SIL.LCModel.Core.Text;
 
 namespace SIL.FieldWorks.Common.Widgets
 {

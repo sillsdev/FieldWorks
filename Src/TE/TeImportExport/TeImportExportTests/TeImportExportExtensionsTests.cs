@@ -7,10 +7,9 @@ using System.IO;
 using System.Text;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.ScriptureUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.FDOTests;
-using SIL.Utils;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.TE
 {
@@ -18,7 +17,7 @@ namespace SIL.FieldWorks.TE
 	/// TeImportExportExtensions test fixture
 	/// </summary>
 	[TestFixture]
-	public class TeImportExportExtensionsTests : ScrInMemoryFdoTestBase
+	public class TeImportExportExtensionsTests : ScrInMemoryLcmTestBase
 	{
 		#region ImportProjectIsAccessible tests
 

@@ -7,8 +7,8 @@
 using System;
 using System.Diagnostics;
 using System.Windows.Forms;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 using XCore;
 using SIL.Utils;
 
@@ -57,7 +57,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			using (InsertEntryDlg dlg = new InsertEntryDlg())
 			{
-				FdoCache cache = m_propertyTable.GetValue<FdoCache>("cache");
+				LcmCache cache = m_propertyTable.GetValue<LcmCache>("cache");
 				Debug.Assert(cache != null);
 				dlg.SetDlgInfo(cache, m_mediator, m_propertyTable, m_persistProvider);
 				if (dlg.ShowDialog(Form.ActiveForm) == DialogResult.OK)
@@ -114,7 +114,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			Debug.Assert(obj != null);
 			if (obj == null)
 				return false;		// should never happen, but nothing we can do if it does!
-			FdoCache cache = m_propertyTable.GetValue<FdoCache>("cache");
+			LcmCache cache = m_propertyTable.GetValue<LcmCache>("cache");
 			Debug.Assert(cache != null);
 			Debug.Assert(cache == obj.Cache);
 			ILexEntry currentEntry = obj as ILexEntry;
@@ -219,7 +219,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			using (var dlg = new EntryGoDlg())
 			{
-				var cache = m_propertyTable.GetValue<FdoCache>("cache");
+				var cache = m_propertyTable.GetValue<LcmCache>("cache");
 				Debug.Assert(cache != null);
 				dlg.SetDlgInfo(cache, null, m_mediator, m_propertyTable);
 				dlg.SetHelpTopic("khtpFindLexicalEntry");

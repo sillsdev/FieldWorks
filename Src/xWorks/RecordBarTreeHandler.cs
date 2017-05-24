@@ -15,14 +15,14 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Xml;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Filters;
-using SIL.Utils;
-using SIL.CoreImpl.Text;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FwCoreDlgControls;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -34,7 +34,7 @@ namespace SIL.FieldWorks.XWorks
 	{
 		protected Mediator m_mediator;
 		protected PropertyTable m_propertyTable;
-		protected FdoCache m_cache; // initialized with mediator.
+		protected LcmCache m_cache; // initialized with mediator.
 		protected bool m_expand;
 		protected bool m_hierarchical;
 		protected bool m_includeAbbr;
@@ -158,7 +158,7 @@ namespace SIL.FieldWorks.XWorks
 
 			m_mediator = mediator;
 			m_propertyTable = propertyTable;
-			m_cache = m_propertyTable.GetValue<FdoCache>("cache");
+			m_cache = m_propertyTable.GetValue<LcmCache>("cache");
 
 			if (node != null)
 			{
@@ -730,7 +730,7 @@ namespace SIL.FieldWorks.XWorks
 			var hvoMove = (int)sourceItem.Tag;
 			var hvoDest = 0;
 			int flidDest;
-			var cache = m_propertyTable.GetValue<FdoCache>("cache");
+			var cache = m_propertyTable.GetValue<LcmCache>("cache");
 			var move = cache.ServiceLocator.GetObject(hvoMove);
 			var moveLabel = sourceItem.Text;
 			TreeNodeCollection newSiblings;
@@ -777,7 +777,7 @@ namespace SIL.FieldWorks.XWorks
 					cache.ActionHandlerAccessor, () =>
 						cache.DomainDataByFlid.MoveOwnSeq(hvoOldOwner, flidSrc, srcIndex, srcIndex,
 														 hvoDest, flidDest, ihvoDest));
-				// Note: use MoveOwningSequence off FdoCache,
+				// Note: use MoveOwningSequence off LcmCache,
 				// so we get propchanges that can be picked up by SyncWatcher (CLE-76)
 				// (Hopefully the propchanges won't cause too much intermediant flicker,
 				// before ListUpdateHelper calls ReloadList())

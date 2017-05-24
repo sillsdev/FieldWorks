@@ -9,7 +9,7 @@ using NUnit.Framework;
 
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FwCoreDlgControls;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel.DomainServices;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
@@ -30,7 +30,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			/// </summary>
 			/// --------------------------------------------------------------------------------
 			public DummyFwStylesDlg()
-				: base(null, null, new FwStyleSheet(), false, false, "TestDefault", 0,
+				: base(null, null, new LcmStyleSheet(), false, false, "TestDefault", 0,
 				MsrSysType.Cm, string.Empty, string.Empty, 0, null, null)
 			{
 				m_generalTab.RenamedStyles = m_renamedStyles;

@@ -6,14 +6,14 @@ using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
+using SIL.LCModel.DomainServices;
 using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
@@ -50,7 +50,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public MSAPopupTreeManager(TreeCombo treeCombo, FdoCache cache, ICmPossibilityList list,
+		public MSAPopupTreeManager(TreeCombo treeCombo, LcmCache cache, ICmPossibilityList list,
 			int ws, bool useAbbr, Mediator mediator, XCore.PropertyTable propertyTable, Form parent)
 			: base(treeCombo, cache, mediator, propertyTable, list, ws, useAbbr, parent)
 		{
@@ -60,7 +60,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public MSAPopupTreeManager(PopupTree popupTree, FdoCache cache, ICmPossibilityList list,
+		public MSAPopupTreeManager(PopupTree popupTree, LcmCache cache, ICmPossibilityList list,
 			int ws, bool useAbbr, Mediator mediator, XCore.PropertyTable propertyTable, Form parent)
 			: base(popupTree, cache, mediator, propertyTable, list, ws, useAbbr, parent)
 		{
@@ -454,7 +454,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		public ICmPossibilityList CategoryList { get; private set; }
 		public string FieldName { get; private set; }
-		public FdoCache Cache { get; private set; }
+		public LcmCache Cache { get; private set; }
 
 		void LaunchChooseFromMasterCategoryListOnIdle(object sender, EventArgs e)
 		{

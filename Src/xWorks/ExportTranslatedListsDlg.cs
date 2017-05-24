@@ -8,10 +8,10 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;
-using SIL.CoreImpl.WritingSystems;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using XCore;
 
 namespace SIL.FieldWorks.XWorks
@@ -25,7 +25,7 @@ namespace SIL.FieldWorks.XWorks
 	public partial class ExportTranslatedListsDlg : Form
 	{
 		private PropertyTable m_propertyTable;
-		FdoCache m_cache;
+		LcmCache m_cache;
 		string m_titleFrag;
 		string m_defaultExt;
 		string m_filter;
@@ -57,7 +57,7 @@ namespace SIL.FieldWorks.XWorks
 		/// Initialize the dialog with all needed information.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public void Initialize(PropertyTable propertyTable, FdoCache cache, string titleFrag,
+		public void Initialize(PropertyTable propertyTable, LcmCache cache, string titleFrag,
 			string defaultExt, string filter)
 		{
 			m_propertyTable = propertyTable;

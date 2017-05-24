@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.LexText.Controls;
 using XCore;
 
@@ -69,7 +69,7 @@ namespace SIL.FieldWorks.FdoUi
 				return Guid.Empty;
 			}
 
-			var cache = propertyTable.GetValue<FdoCache>("cache");
+			var cache = propertyTable.GetValue<LcmCache>("cache");
 			if (!cache.ServiceLocator.ObjectRepository.IsValidObjectId(guid))
 			{
 				propertyTable.RemoveProperty(key);

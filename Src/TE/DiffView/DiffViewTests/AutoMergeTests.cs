@@ -6,11 +6,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 
 using NUnit.Framework;
-using SIL.CoreImpl.Scripture;
-using SIL.CoreImpl.Text;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.FDOTests;
-using SIL.Utils;
+using SIL.LCModel.Core.Scripture;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.TE
 {
@@ -47,7 +46,7 @@ namespace SIL.FieldWorks.TE
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
-	public class AutoMergeTests : ScrInMemoryFdoTestBase
+	public class AutoMergeTests : ScrInMemoryLcmTestBase
 	{
 		#region Member variables
 		private IScrBook m_genesis;

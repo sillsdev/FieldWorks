@@ -7,7 +7,7 @@
 
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 
 namespace SIL.FieldWorks.TE
 {
@@ -25,7 +25,7 @@ namespace SIL.FieldWorks.TE
 		/// <param name="bookList">A list of books to check as an array</param>
 		/// <param name="helpTopicProvider">The help topic provider.</param>
 		/// ------------------------------------------------------------------------------------
-		public FilterBookDialog(FdoCache cache, IScrBook[] bookList, IHelpTopicProvider helpTopicProvider)
+		public FilterBookDialog(LcmCache cache, IScrBook[] bookList, IHelpTopicProvider helpTopicProvider)
 			: base(cache, bookList, helpTopicProvider)
 		{
 			m_helpTopicId = "khtpBookFilter";

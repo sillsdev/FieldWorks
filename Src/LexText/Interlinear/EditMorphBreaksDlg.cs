@@ -6,8 +6,8 @@ using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows.Forms;
-using SIL.CoreImpl.KernelInterfaces;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FwCoreDlgs;
 
@@ -86,7 +86,7 @@ namespace SIL.FieldWorks.IText
 		/// This sets the original wordform and morph-broken word into the dialog.
 		/// </summary>
 		public void Initialize(ITsString tssWord, string sMorphs, ILgWritingSystemFactory wsf,
-			FdoCache cache, IVwStylesheet stylesheet)
+			LcmCache cache, IVwStylesheet stylesheet)
 		{
 			CheckDisposed();
 

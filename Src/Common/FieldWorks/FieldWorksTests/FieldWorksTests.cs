@@ -4,8 +4,8 @@
 
 using System;
 using NUnit.Framework;
-using SIL.FieldWorks.FDO;
-using SIL.Utils;
+using SIL.LCModel;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks
 {
@@ -29,11 +29,11 @@ namespace SIL.FieldWorks
 			ReflectionHelper.SetField(typeof(FieldWorks), "s_fSingleProcessMode", false);
 			ReflectionHelper.SetField(typeof(FieldWorks), "s_fWaitingForUserOrOtherFw", false);
 			ReflectionHelper.SetField(typeof(FieldWorks), "s_projectId",
-				new ProjectId(FDOBackendProviderType.kXML, "monkey"));
+				new ProjectId(BackendProviderType.kXML, "monkey"));
 
 			Assert.AreEqual(ProjectMatch.ItsMyProject, ReflectionHelper.GetResult(
 				typeof(FieldWorks), "GetProjectMatchStatus",
-				new ProjectId(FDOBackendProviderType.kXML, "monkey")));
+				new ProjectId(BackendProviderType.kXML, "monkey")));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -47,11 +47,11 @@ namespace SIL.FieldWorks
 			ReflectionHelper.SetField(typeof(FieldWorks), "s_fSingleProcessMode", false);
 			ReflectionHelper.SetField(typeof(FieldWorks), "s_fWaitingForUserOrOtherFw", false);
 			ReflectionHelper.SetField(typeof(FieldWorks), "s_projectId",
-				new ProjectId(FDOBackendProviderType.kXML, "primate"));
+				new ProjectId(BackendProviderType.kXML, "primate"));
 
 			Assert.AreEqual(ProjectMatch.ItsNotMyProject, ReflectionHelper.GetResult(
 				typeof(FieldWorks), "GetProjectMatchStatus",
-				new ProjectId(FDOBackendProviderType.kXML, "monkey")));
+				new ProjectId(BackendProviderType.kXML, "monkey")));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -69,7 +69,7 @@ namespace SIL.FieldWorks
 
 			Assert.AreEqual(ProjectMatch.DontKnowYet, ReflectionHelper.GetResult(
 				typeof(FieldWorks), "GetProjectMatchStatus",
-				new ProjectId(FDOBackendProviderType.kXML, "monkey")));
+				new ProjectId(BackendProviderType.kXML, "monkey")));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -84,11 +84,11 @@ namespace SIL.FieldWorks
 			ReflectionHelper.SetField(typeof(FieldWorks), "s_fSingleProcessMode", false);
 			ReflectionHelper.SetField(typeof(FieldWorks), "s_fWaitingForUserOrOtherFw", true);
 			ReflectionHelper.SetField(typeof(FieldWorks), "s_projectId",
-				new ProjectId(FDOBackendProviderType.kXML, "monkey"));
+				new ProjectId(BackendProviderType.kXML, "monkey"));
 
 			Assert.AreEqual(ProjectMatch.WaitingForUserOrOtherFw, ReflectionHelper.GetResult(
 				typeof(FieldWorks), "GetProjectMatchStatus",
-				new ProjectId(FDOBackendProviderType.kXML, "monkey")));
+				new ProjectId(BackendProviderType.kXML, "monkey")));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -102,11 +102,11 @@ namespace SIL.FieldWorks
 			ReflectionHelper.SetField(typeof(FieldWorks), "s_fSingleProcessMode", true);
 			ReflectionHelper.SetField(typeof(FieldWorks), "s_fWaitingForUserOrOtherFw", true);
 			ReflectionHelper.SetField(typeof(FieldWorks), "s_projectId",
-				new ProjectId(FDOBackendProviderType.kXML, "monkey"));
+				new ProjectId(BackendProviderType.kXML, "monkey"));
 
 			Assert.AreEqual(ProjectMatch.SingleProcessMode, ReflectionHelper.GetResult(
 				typeof(FieldWorks), "GetProjectMatchStatus",
-				new ProjectId(FDOBackendProviderType.kXML, "monkey")));
+				new ProjectId(BackendProviderType.kXML, "monkey")));
 		}
 
 		#endregion
@@ -171,7 +171,7 @@ namespace SIL.FieldWorks
 
 		/// <summary>
 		/// Unit test helper to set up environment in which to test EnsureValidLinkedFilesFolderCore.
-		/// testToExecute takes (string defaultFolder, FdoCache cache).
+		/// testToExecute takes (string defaultFolder, LcmCache cache).
 		/// </summary>
 		public void EnsureValidLinkedFilesFolderCore_TestHelper(Action<string> testToExecute)
 		{

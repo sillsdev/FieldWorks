@@ -11,16 +11,17 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml;
-using SIL.CoreImpl.Cellar;
+using SIL.LCModel.Core.Cellar;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.LexText.Controls;
+using SIL.LCModel.Utils;
 using SIL.Utils;
 using XCore;
 
@@ -91,7 +92,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		protected ICmObject m_obj; // The object that will be the context if our children are expanded, or for figuring
 		// what things can be inserted here.
 		protected object[] m_key; // Key indicates path of nodes and objects used to construct this.
-		protected FdoCache m_cache;
+		protected LcmCache m_cache;
 		// Indicates the 'weight' of object that starts at the top of this slice.
 		// By default a slice is just considered to be a field (of the same object as the one before).
 		protected ObjectWeight m_weight = ObjectWeight.field;
@@ -243,7 +244,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		}
 
 		/// <summary></summary>
-		public FdoCache Cache
+		public LcmCache Cache
 		{
 			get
 			{
@@ -1756,7 +1757,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			if (m_key == null)
 				return false;
 
-			FdoCache cache = ContainingDataTree.Cache;
+			LcmCache cache = ContainingDataTree.Cache;
 			var mdc = cache.DomainDataByFlid.MetaDataCache as IFwMetaDataCacheManaged;
 			ICmObjectRepository repo = cache.ServiceLocator.GetInstance<ICmObjectRepository>();
 			for (int inode = m_key.Length; --inode >= 0; )
@@ -1836,7 +1837,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 						// HVO of the particular item we're editing.
 						var hvoItem = (int)(m_key[inode + 1]);
 						string attrName = node.Attributes["field"].Value;
-						FdoCache cache = ContainingDataTree.Cache;
+						LcmCache cache = ContainingDataTree.Cache;
 						flid = cache.DomainDataByFlid.MetaDataCache.GetFieldId2(
 							cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoItem).Owner.ClassID,
 							attrName,
@@ -2007,7 +2008,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			return false;
 		}
 
-		static internal int InsertObjectIntoVirtualBackref(FdoCache cache, Mediator mediator, PropertyTable propertyTable,
+		static internal int InsertObjectIntoVirtualBackref(LcmCache cache, Mediator mediator, PropertyTable propertyTable,
 			int hvoSlice, int clidNewObj, int flid)
 		{
 			var metadata = cache.ServiceLocator.GetInstance<IFwMetaDataCacheManaged>();

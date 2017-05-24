@@ -10,8 +10,8 @@
 
 using System;
 using System.Collections.Generic;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 
 namespace SIL.FieldWorks.TE
 {

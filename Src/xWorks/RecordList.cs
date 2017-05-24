@@ -11,21 +11,22 @@ using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 using System.Xml;
-using SIL.CoreImpl.Cellar;
+using SIL.LCModel.Core.Cellar;
 using SIL.FieldWorks.Common.Controls;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FdoUi;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.DomainImpl;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Application;
+using SIL.LCModel.DomainImpl;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.Filters;
 using SIL.ObjectModel;
 using SIL.Reporting;
+using SIL.LCModel.Utils;
 using SIL.Utils;
 using XCore;
 using ConfigurationException = SIL.Utils.ConfigurationException;
@@ -114,7 +115,7 @@ namespace SIL.FieldWorks.XWorks
 		/// Exception: If owner is "unowned", then property should be a GUID of a list that
 		/// we'll get from the ICmPossibilityListRepository.
 		/// </summary>
-		public override void Init(FdoCache cache, Mediator mediator, PropertyTable propertyTable, XmlNode recordListNode)
+		public override void Init(LcmCache cache, Mediator mediator, PropertyTable propertyTable, XmlNode recordListNode)
 		{
 			CheckDisposed();
 
@@ -131,7 +132,7 @@ namespace SIL.FieldWorks.XWorks
 			m_flid  = CmPossibilityListTags.kflidPossibilities;
 		}
 
-		public static ICmObject GetListFromOwnerAndProperty(FdoCache cache, string owner, string property)
+		public static ICmObject GetListFromOwnerAndProperty(LcmCache cache, string owner, string property)
 		{
 			ICmObject obj = null;
 
@@ -573,7 +574,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="mediator"></param>
 		/// <param name="propertyTable"></param>
 		/// <param name="recordListNode"></param>
-		public override void Init(FdoCache cache, Mediator mediator, PropertyTable propertyTable, XmlNode recordListNode)
+		public override void Init(LcmCache cache, Mediator mediator, PropertyTable propertyTable, XmlNode recordListNode)
 		{
 			CheckDisposed();
 			// suspend loading the property until given a class by RecordBrowseView via
@@ -889,7 +890,7 @@ namespace SIL.FieldWorks.XWorks
 		private XmlNode m_configNode;
 		private IEnumerable<int> m_objs = null;
 
-		public override void Init(FdoCache cache, Mediator mediator, PropertyTable propertyTable, XmlNode recordListNode)
+		public override void Init(LcmCache cache, Mediator mediator, PropertyTable propertyTable, XmlNode recordListNode)
 		{
 			m_fEnableSendPropChanged = false;
 			m_configNode = recordListNode;
@@ -963,7 +964,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private const int RecordListFlid = 89999956;
 
-		protected FdoCache m_cache;
+		protected LcmCache m_cache;
 		/// <summary>
 		/// Use this to do the Add/RemoveNotifications, since it can be used in the unmanged section of Dispose.
 		/// (If m_sda is COM, that is.)
@@ -1071,7 +1072,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="recordListNode"></param>
 		/// <param name="mediator"></param>
 		/// <returns></returns>
-		static public RecordList Create(FdoCache cache, Mediator mediator, PropertyTable propertyTable, XmlNode recordListNode)
+		static public RecordList Create(LcmCache cache, Mediator mediator, PropertyTable propertyTable, XmlNode recordListNode)
 		{
 			RecordList list = null;
 
@@ -1098,7 +1099,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="analysisWs">pass in 'true' for the DefaultAnalysisWritingSystem
 		/// pass in 'false' for the DefaultVernacularWritingSystem</param>
 		/// <returns>return Font size from stylesheet</returns>
-		static protected int GetFontHeightFromStylesheet(FdoCache cache, PropertyTable propertyTable, bool analysisWs)
+		static protected int GetFontHeightFromStylesheet(LcmCache cache, PropertyTable propertyTable, bool analysisWs)
 		{
 			int fontHeight;
 			IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(propertyTable);
@@ -1120,7 +1121,7 @@ namespace SIL.FieldWorks.XWorks
 			return fontHeight;
 		}
 
-		public virtual void Init(FdoCache cache, Mediator mediator, PropertyTable propertyTable, XmlNode recordListNode)
+		public virtual void Init(LcmCache cache, Mediator mediator, PropertyTable propertyTable, XmlNode recordListNode)
 		{
 			CheckDisposed();
 
@@ -1148,7 +1149,7 @@ namespace SIL.FieldWorks.XWorks
 			m_oldLength = 0;
 		}
 
-		protected void BaseInit(FdoCache cache, Mediator mediator, PropertyTable propertyTable, XmlNode recordListNode)
+		protected void BaseInit(LcmCache cache, Mediator mediator, PropertyTable propertyTable, XmlNode recordListNode)
 		{
 			Debug.Assert(mediator != null);
 
@@ -1592,7 +1593,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		public FdoCache Cache
+		public LcmCache Cache
 		{
 			get
 			{
@@ -2707,13 +2708,13 @@ namespace SIL.FieldWorks.XWorks
 				{
 					newSortedObjects = GetFilteredSortedList();
 				}
-				catch (FDOInvalidFieldException)
+				catch (LcmInvalidFieldException)
 				{
 					newSortedObjects = HandleInvalidFilterSortField();
 				}
 				catch(ConfigurationException ce)
 				{
-					if (ce.InnerException is FDOInvalidFieldException)
+					if (ce.InnerException is LcmInvalidFieldException)
 						newSortedObjects = HandleInvalidFilterSortField();
 					else
 						throw;
@@ -3272,7 +3273,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		/// <param name="hvo"></param>
 		/// <returns>-1 if the object is not in the list</returns>
-		public int IndexOfChildOf(int hvoTarget, FdoCache cache)
+		public int IndexOfChildOf(int hvoTarget, LcmCache cache)
 		{
 			CheckDisposed();
 
@@ -3305,7 +3306,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		/// <param name="hvo"></param>
 		/// <returns>-1 if the object is not in the list</returns>
-		public int IndexOfParentOf(int hvoTarget, FdoCache cache)
+		public int IndexOfParentOf(int hvoTarget, LcmCache cache)
 		{
 			CheckDisposed();
 
@@ -3356,7 +3357,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="typeSize"></param>
 		/// <returns>The real flid of the vector in the database.</returns>
 		internal int GetFlidOfVectorFromName(string name, string owner, bool analysisWs,
-			FdoCache cache, Mediator mediator, PropertyTable propertyTable, out ICmObject owningObject, out string fontName,
+			LcmCache cache, Mediator mediator, PropertyTable propertyTable, out ICmObject owningObject, out string fontName,
 			out int typeSize)
 		{
 			// Many of these are vernacular, but if not,
@@ -3366,7 +3367,7 @@ namespace SIL.FieldWorks.XWorks
 			return GetFlidOfVectorFromName(name, owner, cache, mediator, propertyTable, out owningObject, ref fontName, ref typeSize);
 		}
 
-		internal int GetFlidOfVectorFromName(string propertyName, string owner, FdoCache cache, Mediator mediator, PropertyTable propertyTable, out ICmObject owningObject)
+		internal int GetFlidOfVectorFromName(string propertyName, string owner, LcmCache cache, Mediator mediator, PropertyTable propertyTable, out ICmObject owningObject)
 		{
 			string fontName = "";
 			int typeSize = 0;
@@ -3385,7 +3386,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="fontName"></param>
 		/// <param name="typeSize"></param>
 		/// <returns></returns>
-		internal int GetFlidOfVectorFromName(string name, string owner, FdoCache cache, Mediator mediator, PropertyTable propertyTable, out ICmObject owningObject, ref string fontName, ref int typeSize)
+		internal int GetFlidOfVectorFromName(string name, string owner, LcmCache cache, Mediator mediator, PropertyTable propertyTable, out ICmObject owningObject, ref string fontName, ref int typeSize)
 		{
 			var defAnalWsFontName = cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.DefaultFontName;
 			owningObject = null;
@@ -3598,7 +3599,7 @@ namespace SIL.FieldWorks.XWorks
 			return realFlid;
 		}
 
-		internal static void GetDefaultFontNameAndSize(bool analysisWs, FdoCache cache, PropertyTable propertyTable, out string fontName, out int typeSize)
+		internal static void GetDefaultFontNameAndSize(bool analysisWs, LcmCache cache, PropertyTable propertyTable, out string fontName, out int typeSize)
 		{
 			IWritingSystemContainer wsContainer = cache.ServiceLocator.WritingSystems;
 			fontName = analysisWs
@@ -3670,7 +3671,7 @@ namespace SIL.FieldWorks.XWorks
 				if (!IsCurrentObjectValid() || !thingToDelete.IsValidObject)
 					return;
 				m_deletingObject = true;
-				FdoCache cache = m_cache;
+				LcmCache cache = m_cache;
 				var currentObject = CurrentObject;
 				// This looks plausible; but for example IndexOf may reload the list, if a reload is pending;
 				// and the current object may no longer match the current filter, so it may be gone.
@@ -3815,6 +3816,6 @@ namespace SIL.FieldWorks.XWorks
 	/// </summary>
 	public interface ISetCache
 	{
-		void SetCache(FdoCache cache);
+		void SetCache(LcmCache cache);
 	}
 }

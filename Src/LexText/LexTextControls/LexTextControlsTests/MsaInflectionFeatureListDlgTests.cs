@@ -7,8 +7,7 @@ using System.IO;
 using System.Xml;
 using NUnit.Framework;
 
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.FDOTests;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.LexText.Controls
@@ -131,7 +130,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private void TestFeatureStructureContent(IFsFeatStruc featStruct)
 		{
-			IFdoOwningCollection<IFsFeatureSpecification> specCol = featStruct.FeatureSpecsOC;
+			ILcmOwningCollection<IFsFeatureSpecification> specCol = featStruct.FeatureSpecsOC;
 			Assert.AreEqual(1, specCol.Count, "Count of top level feature specs");
 			foreach (IFsFeatureSpecification spec in specCol)
 			{
@@ -139,7 +138,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				Assert.IsNotNull(complex, "complex feature value is null and should not be");
 				Assert.AreEqual("subject agreement", complex.FeatureRA.Name.AnalysisDefaultWritingSystem.Text, "Expected complex feature name");
 				IFsFeatStruc fsNested = complex.ValueOA as IFsFeatStruc;
-				IFdoOwningCollection<IFsFeatureSpecification> fsNestedCol = fsNested.FeatureSpecsOC;
+				ILcmOwningCollection<IFsFeatureSpecification> fsNestedCol = fsNested.FeatureSpecsOC;
 				Assert.AreEqual(2, fsNestedCol.Count, "Nested fs has one feature");
 				foreach (IFsFeatureSpecification specNested in fsNestedCol)
 				{

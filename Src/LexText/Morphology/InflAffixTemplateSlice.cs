@@ -10,7 +10,7 @@
 // </remarks>
 // --------------------------------------------------------------------------------------------
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using XCore;
 
@@ -125,7 +125,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					xa.Value = xa.Value.Substring(0, xa.Value.Length - 3);
 				// both vern and anal are LTR (unmarked case)
 			}
-			var ctrl = new InflAffixTemplateControl(m_propertyTable.GetValue<FdoCache>("cache"),
+			var ctrl = new InflAffixTemplateControl(m_propertyTable.GetValue<LcmCache>("cache"),
 				Object.Hvo, ConfigurationNode);
 			Control = ctrl;
 			m_menuHandler = InflAffixTemplateMenuHandler.Create(ctrl, ConfigurationNode);

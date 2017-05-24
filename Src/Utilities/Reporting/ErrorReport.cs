@@ -11,8 +11,8 @@ using System.Drawing;  // GDI+ stuff
 using Microsoft.Win32;
 using SIL.Email;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel.Utils;
 using SIL.Reporting;
-
 
 #if __MonoCS__
 using System.Runtime.InteropServices;

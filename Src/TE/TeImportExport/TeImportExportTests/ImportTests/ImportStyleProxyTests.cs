@@ -9,20 +9,12 @@
 // <remarks>
 // </remarks>
 
-using System;
-using System.Diagnostics;
-
 using NUnit.Framework;
-using SIL.CoreImpl.Scripture;
-using SIL.CoreImpl.Text;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.FDOTests;
-using SIL.FieldWorks.Common.Framework;
-using SIL.CoreImpl.KernelInterfaces;
-using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.Resources;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.Common.ScriptureUtils;
+using SIL.LCModel.Core.Scripture;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.DomainServices;
 
 namespace SIL.FieldWorks.TE.ImportTests
 {
@@ -32,10 +24,10 @@ namespace SIL.FieldWorks.TE.ImportTests
 	/// </summary>
 	/// ---------------------------------------------------------------------------------------
 	[TestFixture]
-	public class ImportStyleProxyTests : ScrInMemoryFdoTestBase
+	public class ImportStyleProxyTests : ScrInMemoryLcmTestBase
 	{
 		#region Member variables
-		private FwStyleSheet m_styleSheet;
+		private LcmStyleSheet m_styleSheet;
 		#endregion
 
 		#region Setup/Teardown
@@ -49,7 +41,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 		{
 			base.TestSetup();
 
-			m_styleSheet = new FwStyleSheet();
+			m_styleSheet = new LcmStyleSheet();
 			// Force load of styles
 			IScripture scr = Cache.LangProject.TranslatedScriptureOA;
 			Assert.IsTrue(scr.StylesOC.Count > 0);

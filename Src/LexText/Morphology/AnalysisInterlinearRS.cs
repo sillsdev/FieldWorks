@@ -9,17 +9,15 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Xml;
 
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel;
+using SIL.LCModel.Application;
+using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.Utils;
 using SIL.FieldWorks.IText;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
 {
@@ -59,7 +57,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		/// <param name="cache"></param>
 		/// <param name="analysis"></param>
 		/// <param name="configurationNode"></param>
-		public AnalysisInterlinearRs(FdoCache cache, IWfiAnalysis analysis,
+		public AnalysisInterlinearRs(LcmCache cache, IWfiAnalysis analysis,
 			XmlNode configurationNode) : base(cache)
 		{
 			if (analysis == null)
@@ -127,19 +125,19 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		{
 			CheckDisposed();
 
-			if (m_fdoCache == null || DesignMode || m_wfiAnalysis == null)
+			if (m_cache == null || DesignMode || m_wfiAnalysis == null)
 				return;
 
 			base.MakeRoot();
 
-			m_vc = new InterlinVc(m_fdoCache);
+			m_vc = new InterlinVc(m_cache);
 			// Theory has it that the slices that have 'true' in this attribute will allow the sandbox to be used.
 			// We'll see how the theory goes, when I get to the point of wanting to see the sandbox.
 			var isEditable = IsEditable;
 			m_vc.ShowMorphBundles = true;
 			m_vc.ShowDefaultSense = true;
-			if ((m_wfiAnalysis.GetAgentOpinion(m_fdoCache.LanguageProject.DefaultParserAgent) == Opinions.approves)
-				&& (m_wfiAnalysis.GetAgentOpinion(m_fdoCache.LanguageProject.DefaultUserAgent) != Opinions.approves))
+			if ((m_wfiAnalysis.GetAgentOpinion(m_cache.LanguageProject.DefaultParserAgent) == Opinions.approves)
+				&& (m_wfiAnalysis.GetAgentOpinion(m_cache.LanguageProject.DefaultUserAgent) != Opinions.approves))
 			{
 				m_vc.UsingGuess = true;
 			}
@@ -147,17 +145,17 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			// JohnT: kwsVernInParagraph is rather weird here, where we don't have a paragraph, but it allows the
 			// VC to deduce the WS of the wordform, not from the paragraph, but from the best vern WS of the wordform itself.
 			if (isEditable)
-				m_vc.LineChoices = new EditableInterlinLineChoices(m_fdoCache.LanguageProject, WritingSystemServices.kwsVernInParagraph,
-					m_fdoCache.DefaultAnalWs);
+				m_vc.LineChoices = new EditableInterlinLineChoices(m_cache.LanguageProject, WritingSystemServices.kwsVernInParagraph,
+					m_cache.DefaultAnalWs);
 			else
-				m_vc.LineChoices = new InterlinLineChoices(m_fdoCache.LanguageProject, WritingSystemServices.kwsVernInParagraph,
-					m_fdoCache.DefaultAnalWs);
+				m_vc.LineChoices = new InterlinLineChoices(m_cache.LanguageProject, WritingSystemServices.kwsVernInParagraph,
+					m_cache.DefaultAnalWs);
 			m_vc.LineChoices.Add(InterlinLineChoices.kflidMorphemes); // 1
 			m_vc.LineChoices.Add(InterlinLineChoices.kflidLexEntries); //2
 			m_vc.LineChoices.Add(InterlinLineChoices.kflidLexGloss); //3
 			m_vc.LineChoices.Add(InterlinLineChoices.kflidLexPos); //4
 
-			m_rootb.DataAccess = m_fdoCache.MainCacheAccessor;
+			m_rootb.DataAccess = m_cache.MainCacheAccessor;
 			FixWs(); // AFTER setting DA!
 
 			const int selectorId = InterlinVc.kfragSingleInterlinearAnalysisWithLabelsLeftAlign;
@@ -166,7 +164,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			if (!IsEditable)
 				return;
 
-			m_oneAnalSandbox = new OneAnalysisSandbox(m_fdoCache,
+			m_oneAnalSandbox = new OneAnalysisSandbox(m_cache,
 													  Mediator,
 													  m_propertyTable,
 													  StyleSheet,
@@ -227,7 +225,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 		private bool CanSaveAnalysis()
 		{
-			var extensions = m_fdoCache.ActionHandlerAccessor as IActionHandlerExtensions;
+			var extensions = m_cache.ActionHandlerAccessor as IActionHandlerExtensions;
 			// JohnT: it's possible the Sandbox is still visible when we Undo the creation of an
 			// analysis. At that point it should have no references to MSAs, since anything done to
 			// the new analysis has already been undone. But unless we check, the Undo crashes, because
@@ -239,7 +237,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			// that we already did.
 			if (extensions == null)
 			{
-				if (m_fdoCache.ActionHandlerAccessor.IsUndoOrRedoInProgress) // we can at least check this
+				if (m_cache.ActionHandlerAccessor.IsUndoOrRedoInProgress) // we can at least check this
 					return false;
 			}
 			else if (!extensions.CanStartUow) // this is the usual and more reliable check.
@@ -295,10 +293,10 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				if (msa != null && msa.CanDelete)
 				{
 					// TODO: Add UOW? Probably use one for all that are to be deleted (collect them into one list).
-					m_fdoCache.MainCacheAccessor.DeleteObj(msa.Hvo);
+					m_cache.MainCacheAccessor.DeleteObj(msa.Hvo);
 				}
 			}
-			//m_fdoCache.LangProject.DefaultUserAgent.SetEvaluation(anal, 1);
+			//m_cache.LangProject.DefaultUserAgent.SetEvaluation(anal, 1);
 			Debug.Assert(m_wfiAnalysis.ApprovalStatusIcon == 1, "Analysis must be approved, since it started that way.");
 		}
 
@@ -378,7 +376,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				//rgvsli[1].ihvo = 0; // first morpheme bundle
 				//rgvsli[1].tag = (int)WfiAnalysis.WfiAnalysisTags.kflidMorphBundles;
 				rgvsli[0].ihvo = 0;
-				rgvsli[0].tag = m_fdoCache.MetaDataCacheAccessor.GetFieldId2(CmObjectTags.kClassId, "Self", false);
+				rgvsli[0].tag = m_cache.MetaDataCacheAccessor.GetFieldId2(CmObjectTags.kClassId, "Self", false);
 				var sel = RootBox.MakeTextSelInObj(0, rgvsli.Length, rgvsli, 0, null, true, false,false, false, false);
 				if (sel == null)
 				{

@@ -13,8 +13,8 @@ using System.Windows.Forms;
 using System.Xml;
 
 using SIL.FieldWorks.Common.RootSites;
+using SIL.LCModel;
 using SIL.Utils;
-using SIL.FieldWorks.FDO;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
@@ -40,7 +40,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <param name="cache">The cache.</param>
 		/// <param name="obj">The obj.</param>
 		/// <param name="flid">The flid.</param>
-		protected ReferenceSlice(Control control, FdoCache cache, ICmObject obj, int flid)
+		protected ReferenceSlice(Control control, LcmCache cache, ICmObject obj, int flid)
 			: base(control, cache, obj, flid)
 		{
 		}

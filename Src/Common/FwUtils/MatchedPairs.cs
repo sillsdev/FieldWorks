@@ -5,7 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Xml.Serialization;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {

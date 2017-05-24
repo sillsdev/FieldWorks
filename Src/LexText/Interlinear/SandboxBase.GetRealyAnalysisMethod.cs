@@ -7,11 +7,11 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows.Forms;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 
 namespace SIL.FieldWorks.IText
 {
@@ -117,7 +117,7 @@ namespace SIL.FieldWorks.IText
 			/// <returns>HVO of analysis (WfiWordform, WfiAnalyis, or WfiGloss)</returns>
 			private IAnalysis FinishItOff()
 			{
-				FdoCache fdoCache = m_caches.MainCache;
+				LcmCache fdoCache = m_caches.MainCache;
 				var wfRepository = fdoCache.ServiceLocator.GetInstance<IWfiWordformRepository>();
 				if (m_wf == null)
 				{

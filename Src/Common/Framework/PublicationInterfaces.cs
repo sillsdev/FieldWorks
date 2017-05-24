@@ -8,7 +8,7 @@
 using System;
 using System.Windows.Forms;
 using System.Text;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.RootSites;
 
 namespace SIL.FieldWorks.Common.Framework

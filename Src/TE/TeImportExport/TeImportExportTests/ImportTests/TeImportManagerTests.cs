@@ -5,15 +5,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.Controls;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.Utils;
-using SIL.FieldWorks.FDO.FDOTests;
-using SIL.CoreImpl.Scripture;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel.Utils;
+using SIL.LCModel.Core.Scripture;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 
 namespace SIL.FieldWorks.TE.ImportTests
 {
@@ -221,8 +220,8 @@ namespace SIL.FieldWorks.TE.ImportTests
 		/// and maintaining the saved version (archive) of original books being overwritten).</param>
 		/// <param name="importCallbacks">UI callbacks</param>
 		/// ------------------------------------------------------------------------------------
-		public MockTeImporter(IScrImportSet settings, FdoCache cache,
-			FwStyleSheet styleSheet, UndoImportManager undoManager, TeImportUi importCallbacks)
+		public MockTeImporter(IScrImportSet settings, LcmCache cache,
+			LcmStyleSheet styleSheet, UndoImportManager undoManager, TeImportUi importCallbacks)
 			: base(settings, cache, styleSheet, undoManager, importCallbacks)
 		{
 		}
@@ -241,8 +240,8 @@ namespace SIL.FieldWorks.TE.ImportTests
 		/// <param name="segmentList">The segment list.</param>
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
-		public static ScrReference Import(IScrImportSet settings, FdoCache cache,
-			FwStyleSheet styleSheet, UndoImportManager undoManager,
+		public static ScrReference Import(IScrImportSet settings, LcmCache cache,
+			LcmStyleSheet styleSheet, UndoImportManager undoManager,
 			TeImportUi importCallbacks, List<SegmentInfo> segmentList)
 		{
 			using (MockTeImporter importer = new MockTeImporter(settings, cache, styleSheet, undoManager,
@@ -325,7 +324,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 		/// <param name="booksImported">The books that have been imported.</param>
 		/// <param name="backupVersion">where to store stuff overwritten or merged.</param>
 		/// ------------------------------------------------------------------------------------
-		public DummyImportedBooks(FdoCache cache, IScrDraft booksImported,
+		public DummyImportedBooks(LcmCache cache, IScrDraft booksImported,
 			IScrDraft backupVersion) : base(cache, booksImported, backupVersion, null, null)
 		{
 		}
@@ -379,7 +378,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 		/// <param name="cache">The cache.</param>
 		/// <param name="styleSheet">The style sheet.</param>
 		/// ------------------------------------------------------------------------------------
-		public DummyTeImportManager(FdoCache cache, FwStyleSheet styleSheet) :
+		public DummyTeImportManager(LcmCache cache, LcmStyleSheet styleSheet) :
 			base(cache, styleSheet, null, false)
 		{
 			m_scr = cache.LangProject.TranslatedScriptureOA;
@@ -530,7 +529,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 		/// <param name="cache">The cache.</param>
 		/// <param name="styleSheet">The style sheet.</param>
 		/// ------------------------------------------------------------------------------------
-		public DummyTeImportManagerWithMockImporter(FdoCache cache, FwStyleSheet styleSheet) :
+		public DummyTeImportManagerWithMockImporter(LcmCache cache, LcmStyleSheet styleSheet) :
 			base(cache, styleSheet)
 		{
 		}
@@ -581,12 +580,12 @@ namespace SIL.FieldWorks.TE.ImportTests
 	/// </summary>
 	/// ---------------------------------------------------------------------------------------
 	[TestFixture]
-	public class TeImportManagerTests : ScrInMemoryFdoTestBase
+	public class TeImportManagerTests : ScrInMemoryLcmTestBase
 	{
 		#region Member variables
 		private DummyTeImportManagerWithMockImporter m_importMgr;
 		private BCVRef m_titus;
-		private FwStyleSheet m_styleSheet;
+		private LcmStyleSheet m_styleSheet;
 		private IScrImportSet m_settings;
 		#endregion
 
@@ -600,7 +599,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 		{
 			base.FixtureSetup();
 
-			m_styleSheet = new FwStyleSheet();
+			m_styleSheet = new LcmStyleSheet();
 			m_styleSheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles);
 
 			// By default, use auto-generated footnote markers for import tests.
@@ -679,7 +678,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 			m_settings.ImportAnnotations = true;
 			Assert.IsNull(m_scr.FindBook(1), "This test is invalid if Genesis exists in test DB.");
 			// Make sure there are no notes for Genesis
-			IFdoOwningSequence<IScrScriptureNote> notes = m_scr.BookAnnotationsOS[0].NotesOS;
+			ILcmOwningSequence<IScrScriptureNote> notes = m_scr.BookAnnotationsOS[0].NotesOS;
 			int cNotesOrig  = notes.Count;
 			int cBooksOrig = m_scr.ScriptureBooksOS.Count;
 

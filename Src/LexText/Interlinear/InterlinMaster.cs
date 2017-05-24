@@ -8,18 +8,18 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.KernelInterfaces;
-using SIL.Utils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.XWorks;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
 using XCore;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.IText
 {
@@ -851,7 +851,7 @@ namespace SIL.FieldWorks.IText
 					var rootObj = Clerk.CurrentObject;
 					if (rootObj.ClassID == TextTags.kClassId)
 					{
-						var text = rootObj as FDO.IText;
+						var text = rootObj as LCModel.IText;
 						return text.Name.AnalysisDefaultWritingSystem.Text;
 					}
 				}
@@ -1297,7 +1297,7 @@ namespace SIL.FieldWorks.IText
 				Guid guid = Guid.Empty;
 				if (Clerk.CurrentObject != null)
 					guid = Clerk.CurrentObject.Guid;
-				FdoCache cache = Cache;
+				LcmCache cache = Cache;
 				// Not sure what will happen with guid == Guid.Empty on the link...
 				FwLinkArgs link = new FwLinkArgs(toolName, guid, InterlinearTab.ToString());
 				link.PropertyTableEntries.Add(new Property("InterlinearTab",

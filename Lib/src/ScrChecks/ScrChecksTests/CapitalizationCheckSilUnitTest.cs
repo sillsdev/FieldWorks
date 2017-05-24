@@ -4,7 +4,7 @@
 
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 
 namespace SILUBS.ScriptureChecks
 {

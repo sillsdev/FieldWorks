@@ -8,14 +8,14 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Globalization;
 using System.Xml;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.FdoUi;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 using XCore;
 
 namespace SIL.FieldWorks.IText
@@ -31,7 +31,7 @@ namespace SIL.FieldWorks.IText
 		/// <summary>
 		/// currently only valid after SelectOccurrence has a valid occurrence.
 		/// </summary>
-		internal FdoCache Cache { get; set; }
+		internal LcmCache Cache { get; set; }
 
 		public FocusBoxController()
 		{

@@ -9,14 +9,13 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using NUnit.Framework;
-using SIL.CoreImpl.Cellar;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.FDOTests;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.Utils;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
+using SIL.LCModel.Utils;
 // ReSharper disable InconsistentNaming
 
 namespace SIL.FieldWorks.XWorks
@@ -673,7 +672,7 @@ namespace SIL.FieldWorks.XWorks
 		private void VerifyCustomFieldAbsent(string customFieldLabel, int classWithCustomField)
 		{
 			var mdc = Cache.MetaDataCacheAccessor as IFwMetaDataCacheManaged;
-			Assert.Throws<FDOInvalidFieldException>(() => mdc.GetFieldId2(classWithCustomField, customFieldLabel, false));
+			Assert.Throws<LcmInvalidFieldException>(() => mdc.GetFieldId2(classWithCustomField, customFieldLabel, false));
 		}
 	}
 }

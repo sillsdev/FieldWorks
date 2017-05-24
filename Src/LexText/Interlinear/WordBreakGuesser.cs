@@ -6,11 +6,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.WritingSystems;
-using SIL.CoreImpl.KernelInterfaces;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 
 namespace SIL.FieldWorks.IText
 {
@@ -25,8 +25,8 @@ namespace SIL.FieldWorks.IText
 		private int m_minChars = int.MaxValue; // length of shortest word
 		ISilDataAccess m_sda;
 		int m_vernWs = 0;
-		FdoCache m_cache;
-		public WordBreakGuesser(FdoCache cache, int hvoParaStart)
+		LcmCache m_cache;
+		public WordBreakGuesser(LcmCache cache, int hvoParaStart)
 		{
 			m_cache = cache;
 			m_sda = cache.MainCacheAccessor;

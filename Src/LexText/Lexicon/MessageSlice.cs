@@ -10,7 +10,7 @@ using System.Xml;
 using Chorus;
 using Chorus.UI.Notes.Bar;
 using SIL.FieldWorks.Common.Framework.DetailControls;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.Progress;
 
 namespace SIL.FieldWorks.XWorks.LexEd
@@ -69,7 +69,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		// since it has no unpredictable content; we just create it any time this slice wants it, if it does
 		// not already exist. The content does not matter; it is just a hint of the file purpose in case
 		// someone finds it in a browser.
-		private static string GetDataFilePath(FdoCache cache)
+		private static string GetDataFilePath(LcmCache cache)
 		{
 			var dataFilePath = Path.Combine(cache.ProjectId.ProjectFolder, FLExBridgeListener.FakeLexiconFileName);
 			if (!File.Exists(dataFilePath))
@@ -92,7 +92,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// </summary>
 		/// <param name="cache"></param>
 		/// <returns></returns>
-		private static IEnumerable<string> GetAdditionalLexiconFilePaths(FdoCache cache)
+		private static IEnumerable<string> GetAdditionalLexiconFilePaths(LcmCache cache)
 		{
 			var results = new List<string>();
 			var lexiconFolder = Path.Combine(cache.ProjectId.ProjectFolder, "Linguistics", "Lexicon");

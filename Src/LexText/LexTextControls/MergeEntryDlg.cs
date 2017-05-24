@@ -10,14 +10,14 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO;
-using SIL.Utils;
+using SIL.LCModel;
+using SIL.LCModel.Utils;
 using XCore;
 using System.Diagnostics.CodeAnalysis;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.WritingSystems;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -86,7 +86,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="mediator">Mediator used to restore saved siz and location info.</param>
 		/// <param name="propertyTable"></param>
 		/// <param name="startingEntry">Entry that cannot be used as a match in this dlg.</param>
-		public void SetDlgInfo(FdoCache cache, Mediator mediator, PropertyTable propertyTable, ILexEntry startingEntry)
+		public void SetDlgInfo(LcmCache cache, Mediator mediator, PropertyTable propertyTable, ILexEntry startingEntry)
 		{
 			CheckDisposed();
 
@@ -188,7 +188,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_fwTextBoxBottomMsg.Tss = tsb.GetString();
 		}
 
-		protected override void InitializeMatchingObjects(FdoCache cache)
+		protected override void InitializeMatchingObjects(LcmCache cache)
 		{
 			var xnWindow = m_propertyTable.GetValue<XmlNode>("WindowConfiguration");
 			XmlNode configNode = xnWindow.SelectSingleNode("controls/parameters/guicontrol[@id=\"matchingEntries\"]/parameters");
@@ -212,7 +212,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			public int CurrentEntryHvo { private get; set; }
 
-			public MergeEntrySearchEngine(FdoCache cache) : base(cache)
+			public MergeEntrySearchEngine(LcmCache cache) : base(cache)
 			{
 			}
 

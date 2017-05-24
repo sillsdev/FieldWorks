@@ -9,8 +9,8 @@ using System.Windows.Forms;
 using System.Xml;
 using System.Diagnostics;
 using System.IO;
-using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.Utils;
 using XCore;
 
 namespace SIL.FieldWorks.FwCoreDlgs

@@ -8,8 +8,7 @@ using System.Xml;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.FDOTests;
+using SIL.LCModel;
 using XCore;
 
 namespace XMLViewsTests
@@ -20,7 +19,7 @@ namespace XMLViewsTests
 	{
 		private Mediator m_mediator;
 		private PropertyTable m_propertyTable;
-		private FdoCache m_cache;
+		private LcmCache m_cache;
 
 		[SetUp]
 		public void SetUp()
@@ -28,8 +27,8 @@ namespace XMLViewsTests
 			m_mediator = new Mediator();
 			m_propertyTable = new PropertyTable(m_mediator);
 			var st = StringTable.Table; // Make sure it is loaded.
-			m_cache = FdoCache.CreateCacheWithNewBlankLangProj(
-				new TestProjectId(FDOBackendProviderType.kMemoryOnly, null), "en", "en", "en", new DummyFdoUI(), FwDirectoryFinder.FdoDirectories, new FdoSettings());
+			m_cache = LcmCache.CreateCacheWithNewBlankLangProj(
+				new TestProjectId(BackendProviderType.kMemoryOnly, null), "en", "en", "en", new DummyLcmUI(), FwDirectoryFinder.LcmDirectories, new LcmSettings());
 			m_propertyTable.SetProperty("cache", m_cache, true);
 		}
 

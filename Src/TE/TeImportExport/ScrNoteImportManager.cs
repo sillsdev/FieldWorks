@@ -11,11 +11,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.WritingSystems;
 using System.Diagnostics;
 using System.Globalization;
-using SIL.CoreImpl.WritingSystems;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.TE

@@ -11,7 +11,7 @@ using NUnit.Framework;
 using SIL.FieldWorks.SharpViews.Builders;
 using SIL.FieldWorks.SharpViews.Paragraphs;
 using SIL.FieldWorks.Test.TestUtils;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.SharpViews.SharpViewsTests
 {

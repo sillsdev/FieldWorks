@@ -7,8 +7,8 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 
-using SIL.FieldWorks.FDO;
-using SIL.CoreImpl.Scripture;
+using SIL.LCModel;
+using SIL.LCModel.Core.Scripture;
 using SILUBS.SharedScrControls;
 
 namespace SIL.FieldWorks.Common.Controls

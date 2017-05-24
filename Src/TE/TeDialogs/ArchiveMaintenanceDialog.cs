@@ -9,10 +9,10 @@ using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.Utils;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel.Utils;
+using SIL.LCModel;
 using System.Diagnostics;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 
 namespace SIL.FieldWorks.TE
 {
@@ -38,7 +38,7 @@ namespace SIL.FieldWorks.TE
 		private System.ComponentModel.Container components = null;
 
 		/// <summary></summary>
-		protected readonly FdoCache m_cache;
+		protected readonly LcmCache m_cache;
 		private readonly IHelpTopicProvider m_helpTopicProvider;
 		private readonly FwApp m_app;
 		private readonly IVwStylesheet m_styleSheet;
@@ -61,7 +61,7 @@ namespace SIL.FieldWorks.TE
 		/// <param name="helpTopicProvider">The help topic provider.</param>
 		/// <param name="app">The app.</param>
 		/// ------------------------------------------------------------------------------------
-		public SavedVersionsDialog(FdoCache cache, IVwStylesheet styleSheet,
+		public SavedVersionsDialog(LcmCache cache, IVwStylesheet styleSheet,
 			float zoomFactorDraft, float zoomFactorFootnote, IHelpTopicProvider helpTopicProvider,
 			FwApp app)
 		{

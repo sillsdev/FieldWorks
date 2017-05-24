@@ -2,11 +2,11 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Framework.DetailControls;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {
@@ -25,7 +25,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		protected override VectorReferenceVc CreateVectorReferenceVc()
 		{
-			LexReferenceSequenceVc vc = new LexReferenceSequenceVc(m_fdoCache, m_rootFlid, m_displayNameProperty, m_displayWs);
+			LexReferenceSequenceVc vc = new LexReferenceSequenceVc(m_cache, m_rootFlid, m_displayNameProperty, m_displayWs);
 			if (m_displayParent != null)
 				vc.DisplayParent = m_displayParent;
 			return vc;
@@ -94,7 +94,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 #if WANTPORTMULTI
 			for (int i = 0; i < hvos.Length; ++i)
 			{
-				ICmObject cmo = m_fdoCache.GetObject(hvos[i]);
+				ICmObject cmo = m_cache.GetObject(hvos[i]);
 				(cmo as ICmObject).UpdateTimestampForVirtualChange();
 			}
 #endif
@@ -121,7 +121,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// <summary>
 		/// Constructor for the Vector Reference View Constructor Class.
 		/// </summary>
-		public LexReferenceSequenceVc(FdoCache cache, int flid, string displayNameProperty, string displayWs)
+		public LexReferenceSequenceVc(LcmCache cache, int flid, string displayNameProperty, string displayWs)
 			: base (cache, flid, displayNameProperty, displayWs)
 		{
 		}

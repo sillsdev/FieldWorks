@@ -7,9 +7,8 @@
 
 using System.Collections.Generic;
 using NUnit.Framework;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.FDOTests;
-using SIL.CoreImpl.Scripture;
+using SIL.LCModel;
+using SIL.LCModel.Core.Scripture;
 
 namespace SIL.FieldWorks.TE
 {
@@ -19,7 +18,7 @@ namespace SIL.FieldWorks.TE
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
-	public class DifferenceTests : ScrInMemoryFdoTestBase
+	public class DifferenceTests : ScrInMemoryLcmTestBase
 	{
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

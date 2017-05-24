@@ -10,9 +10,9 @@ using System;
 using System.IO;
 using System.Xml;
 using NUnit.Framework;
-using SIL.FieldWorks.FDO.FDOTests;
-using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.LexText.Controls.MGA
 {

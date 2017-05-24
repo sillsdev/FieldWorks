@@ -2,7 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 
 namespace SIL.FieldWorks.Filters
 {
@@ -16,10 +16,10 @@ namespace SIL.FieldWorks.Filters
 	/// </summary>
 	public interface IManyOnePathSortItem
 	{
-		ICmObject RootObjectUsing(FdoCache cache);
+		ICmObject RootObjectUsing(LcmCache cache);
 		int RootObjectHvo { get; }
 		int KeyObject { get; }
-		ICmObject KeyObjectUsing(FdoCache cache);
+		ICmObject KeyObjectUsing(LcmCache cache);
 		int PathLength { get; }
 		int PathObject(int index);
 		int PathFlid(int index);

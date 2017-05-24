@@ -5,7 +5,7 @@ using System.Text;
 using System.Windows.Forms;
 using NUnit.Framework;
 using SIL.FieldWorks.XWorks.DictionaryDetailsView;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.XWorks
 {

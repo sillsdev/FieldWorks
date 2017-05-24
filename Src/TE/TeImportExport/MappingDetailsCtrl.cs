@@ -6,13 +6,13 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.WritingSystems;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.FwCoreDlgControls;
 
 namespace SIL.FieldWorks.TE
@@ -34,14 +34,14 @@ namespace SIL.FieldWorks.TE
 
 		#region Data members
 		private ImportMappingInfo m_mapping;
-		private FdoCache m_cache;
+		private LcmCache m_cache;
 		private IScripture m_scr;
 		private bool m_fParatextMapping;
 		private bool m_isAnnotationMapping;
 		private bool m_fBackTransDomainLocked;
 
 		/// <summary></summary>
-		protected FwStyleSheet m_StyleSheet;
+		protected LcmStyleSheet m_StyleSheet;
 		/// <summary></summary>
 		public StyleListBoxHelper m_styleListHelper;
 
@@ -170,7 +170,7 @@ namespace SIL.FieldWorks.TE
 		/// for testing purposes.</remarks>
 		/// ------------------------------------------------------------------------------------
 		public virtual void Initialize(bool fParatextMapping, ImportMappingInfo mapping,
-			FwStyleSheet styleSheet, FdoCache cache, bool isAnnotationMapping,
+			LcmStyleSheet styleSheet, LcmCache cache, bool isAnnotationMapping,
 			bool fBackTransDomainLocked)
 		{
 			CheckDisposed();
@@ -182,7 +182,7 @@ namespace SIL.FieldWorks.TE
 			m_StyleSheet = styleSheet;
 			m_isAnnotationMapping = isAnnotationMapping;
 			m_fBackTransDomainLocked = fBackTransDomainLocked;
-			m_styleListHelper.StyleSheet = styleSheet as FwStyleSheet;
+			m_styleListHelper.StyleSheet = styleSheet as LcmStyleSheet;
 
 			//			// if there are items in the styles list and there is not one selected then
 			//			// set the first item to be the selected item.
@@ -582,7 +582,7 @@ namespace SIL.FieldWorks.TE
 
 					// Build the list of styles for the control
 					string styleName = m_styleListHelper.SelectedStyleName;
-					m_styleListHelper.AddStyles(m_StyleSheet as FwStyleSheet, pseudoStyles);
+					m_styleListHelper.AddStyles(m_StyleSheet as LcmStyleSheet, pseudoStyles);
 					m_styleListHelper.SelectedStyleName = styleName;
 
 					if (ValidStateChanged != null)

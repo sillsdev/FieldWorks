@@ -13,9 +13,9 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Runtime.InteropServices;
 
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.WritingSystems;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 
@@ -37,7 +37,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		protected const int kfragRoot = 8002; // likewise.
 		protected const int khvoRoot = 7003; // likewise.
 
-		// Neither of these caches are used by FdoCache.
+		// Neither of these caches are used by LcmCache.
 		// They are only used here.
 		protected IVwCacheDa m_CacheDa; // Main cache object
 		protected ISilDataAccess m_DataAccess; // Another interface on m_CacheDa.

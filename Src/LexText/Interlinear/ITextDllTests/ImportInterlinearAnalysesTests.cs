@@ -3,18 +3,16 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Text;
 using NUnit.Framework;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.WritingSystems;
-using SIL.CoreImpl.KernelInterfaces;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.FDOTests;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 
 namespace SIL.FieldWorks.IText
 {
@@ -63,7 +61,7 @@ namespace SIL.FieldWorks.IText
 				"</words></phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
 
 			var li = new BIRDFormatImportTests.LLIMergeExtension(Cache, null, null);
-			FDO.IText importedText = null;
+			LCModel.IText importedText = null;
 			var options = CreateImportInterlinearOptions(xml);
 			li.ImportInterlinear(options, ref importedText);
 			using (var firstEntry = Cache.LanguageProject.Texts.GetEnumerator())
@@ -127,7 +125,7 @@ namespace SIL.FieldWorks.IText
 				"</words></phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
 
 			var li = new BIRDFormatImportTests.LLIMergeExtension(Cache, null, null);
-			FDO.IText importedText = null;
+			LCModel.IText importedText = null;
 			var options = CreateImportInterlinearOptions(xml);
 			li.ImportInterlinear(options, ref importedText);
 			using (var firstEntry = Cache.LanguageProject.Texts.GetEnumerator())
@@ -176,7 +174,7 @@ namespace SIL.FieldWorks.IText
 				"</words></phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
 
 			var li = new BIRDFormatImportTests.LLIMergeExtension(Cache, null, null);
-			FDO.IText importedText = null;
+			LCModel.IText importedText = null;
 			var options = CreateImportInterlinearOptions(xml);
 			li.ImportInterlinear(options, ref importedText);
 			using (var firstEntry = Cache.LanguageProject.Texts.GetEnumerator())
@@ -220,7 +218,7 @@ namespace SIL.FieldWorks.IText
 				"</words></phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
 
 			var li = new BIRDFormatImportTests.LLIMergeExtension(Cache, null, null);
-			FDO.IText importedText = null;
+			LCModel.IText importedText = null;
 			var options = CreateImportInterlinearOptions(xml);
 			li.ImportInterlinear(options, ref importedText);
 			using (var firstEntry = Cache.LanguageProject.Texts.GetEnumerator())
@@ -249,7 +247,7 @@ namespace SIL.FieldWorks.IText
 			var sl = Cache.ServiceLocator;
 			var wsf = Cache.WritingSystemFactory;
 
-			FDO.IText text;
+			LCModel.IText text;
 
 			IWfiWordform word = null;
 			ITsString paraContents = null;
@@ -282,7 +280,7 @@ namespace SIL.FieldWorks.IText
 
 			var li = new BIRDFormatImportTests.LLIMergeExtension(Cache, null, null);
 			var options = CreateImportInterlinearOptions(xml);
-			FDO.IText importedText = null;
+			LCModel.IText importedText = null;
 			li.ImportInterlinear(options, ref importedText);
 			using (var firstEntry = Cache.LanguageProject.Texts.GetEnumerator())
 			{
@@ -332,7 +330,7 @@ namespace SIL.FieldWorks.IText
 			var sl = Cache.ServiceLocator;
 			var wsf = Cache.WritingSystemFactory;
 
-			FDO.IText text;
+			LCModel.IText text;
 
 			IWfiWordform word = null;
 			ITsString paraContents = null;
@@ -365,7 +363,7 @@ namespace SIL.FieldWorks.IText
 
 			var li = new BIRDFormatImportTests.LLIMergeExtension(Cache, null, null);
 			var options = CreateImportInterlinearOptions(xml);
-			FDO.IText importedText = null;
+			LCModel.IText importedText = null;
 			li.ImportInterlinear(options, ref importedText);
 			using (var firstEntry = Cache.LanguageProject.Texts.GetEnumerator())
 			{
@@ -416,7 +414,7 @@ namespace SIL.FieldWorks.IText
 			var sl = Cache.ServiceLocator;
 			var wsf = Cache.WritingSystemFactory;
 
-			FDO.IText text;
+			LCModel.IText text;
 
 			IWfiWordform word = null;
 			ITsString paraContents = null;
@@ -453,7 +451,7 @@ namespace SIL.FieldWorks.IText
 
 			var li = new BIRDFormatImportTests.LLIMergeExtension(Cache, null, null);
 			var options = CreateImportInterlinearOptions(xml);
-			FDO.IText importedText = null;
+			LCModel.IText importedText = null;
 			li.ImportInterlinear(options, ref importedText);
 			using (var firstEntry = Cache.LanguageProject.Texts.GetEnumerator())
 			{
@@ -495,7 +493,7 @@ namespace SIL.FieldWorks.IText
 			var sl = Cache.ServiceLocator;
 			var wsf = Cache.WritingSystemFactory;
 
-			FDO.IText text;
+			LCModel.IText text;
 
 			IWfiWordform word = null;
 			ITsString paraContents = null;
@@ -532,7 +530,7 @@ namespace SIL.FieldWorks.IText
 
 			var li = new BIRDFormatImportTests.LLIMergeExtension(Cache, null, null);
 			var options = CreateImportInterlinearOptions(xml);
-			FDO.IText importedText = null;
+			LCModel.IText importedText = null;
 			li.ImportInterlinear(options, ref importedText);
 			using (var firstEntry = Cache.LanguageProject.Texts.GetEnumerator())
 			{
@@ -575,7 +573,7 @@ namespace SIL.FieldWorks.IText
 			var sl = Cache.ServiceLocator;
 			var wsf = Cache.WritingSystemFactory;
 
-			FDO.IText text;
+			LCModel.IText text;
 
 			IWfiWordform word = null;
 			ITsString paraContents = null;
@@ -612,7 +610,7 @@ namespace SIL.FieldWorks.IText
 
 			var li = new BIRDFormatImportTests.LLIMergeExtension(Cache, null, null);
 			var options = CreateImportInterlinearOptions(xml);
-			FDO.IText importedText = null;
+			LCModel.IText importedText = null;
 			li.ImportInterlinear(options, ref importedText);
 			using (var firstEntry = Cache.LanguageProject.Texts.GetEnumerator())
 			{
@@ -669,7 +667,7 @@ namespace SIL.FieldWorks.IText
 
 			var li = new BIRDFormatImportTests.LLIMergeExtension(Cache, null, null);
 			var options = CreateImportInterlinearOptions(xml);
-			FDO.IText importedText = null;
+			LCModel.IText importedText = null;
 			li.ImportInterlinear(options, ref importedText);
 			var stText = importedText.ContentsOA;
 			var para = (IStTxtPara)stText.ParagraphsOS[0];
@@ -700,7 +698,7 @@ namespace SIL.FieldWorks.IText
 			});
 			var li = new BIRDFormatImportTests.LLIMergeExtension(Cache, null, null);
 			var options = CreateImportInterlinearOptions(xml);
-			FDO.IText importedText = null;
+			LCModel.IText importedText = null;
 			li.ImportInterlinear(options, ref importedText);
 			var stText = importedText.ContentsOA;
 			var para = (IStTxtPara)stText.ParagraphsOS[0];
@@ -721,7 +719,7 @@ namespace SIL.FieldWorks.IText
 
 			var li = new BIRDFormatImportTests.LLIMergeExtension(Cache, null, null);
 			var options = CreateImportInterlinearOptions(xml);
-			FDO.IText importedText = null;
+			LCModel.IText importedText = null;
 			li.ImportInterlinear(options, ref importedText);
 			var stText = importedText.ContentsOA;
 			var para = (IStTxtPara)stText.ParagraphsOS[0];

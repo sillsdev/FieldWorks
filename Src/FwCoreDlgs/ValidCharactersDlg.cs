@@ -15,17 +15,18 @@ using System.Globalization;
 using System.Text;
 using System.Windows.Forms;
 using Icu;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.WritingSystems;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.Resources;
 using SIL.Keyboarding;
+using SIL.LCModel.Utils;
 using SIL.Utils;
 using SIL.Windows.Forms;
 
@@ -703,7 +704,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <param name="wsName">The name of the writing system for which this dialog is setting
 		/// the valid characters. Can not be <c>null</c> or <c>String.Empty</c>.</param>
 		/// ------------------------------------------------------------------------------------
-		public ValidCharactersDlg(FdoCache cache, IWritingSystemContainer wsContainer,
+		public ValidCharactersDlg(LcmCache cache, IWritingSystemContainer wsContainer,
 			IHelpTopicProvider helpTopicProvider, IApp app, CoreWritingSystemDefinition ws, string wsName) : this()
 		{
 			m_ws = ws;
@@ -818,7 +819,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// Display the valid characters dialog box. Return true if OK was chosen.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public static bool RunDialog(FdoCache cache, IApp app, IWin32Window owner, IHelpTopicProvider helpTopicProvider)
+		public static bool RunDialog(LcmCache cache, IApp app, IWin32Window owner, IHelpTopicProvider helpTopicProvider)
 		{
 			CoreWritingSystemDefinition ws = cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
 
@@ -1043,7 +1044,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 				if (txt == txtManualCharEntry)
 				{
-					chr = CoreImpl.Text.Icu.Normalize(txtManualCharEntry.Text, CoreImpl.Text.Icu.UNormalizationMode.UNORM_NFD);
+					chr = LCModel.Core.Text.Icu.Normalize(txtManualCharEntry.Text, LCModel.Core.Text.Icu.UNormalizationMode.UNORM_NFD);
 					fClearText = true;
 				}
 				else
@@ -1053,7 +1054,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					if (int.TryParse(txt.Text, NumberStyles.HexNumber, null, out codepoint))
 					{
 						chr = ((char) codepoint).ToString(CultureInfo.InvariantCulture);
-						if (CoreImpl.Text.Icu.IsMark(chr[0]))
+						if (LCModel.Core.Text.Icu.IsMark(chr[0]))
 						{
 							ShowMessageBox(FwCoreDlgs.kstidLoneDiacriticNotValid);
 							return;
@@ -1111,7 +1112,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					try
 					{
 						if (!string.IsNullOrEmpty(chr))
-						chr = CoreImpl.Text.Icu.Normalize(chr, CoreImpl.Text.Icu.UNormalizationMode.UNORM_NFD);
+						chr = LCModel.Core.Text.Icu.Normalize(chr, LCModel.Core.Text.Icu.UNormalizationMode.UNORM_NFD);
 					}
 					catch
 					{
@@ -1231,14 +1232,14 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			if (txtManualCharEntry.Text.Length > 0)
 			{
-				string origCharsKd = CoreImpl.Text.Icu.Normalize(txtManualCharEntry.Text, CoreImpl.Text.Icu.UNormalizationMode.UNORM_NFD);
+				string origCharsKd = LCModel.Core.Text.Icu.Normalize(txtManualCharEntry.Text, LCModel.Core.Text.Icu.UNormalizationMode.UNORM_NFD);
 				int savSelStart = txtManualCharEntry.SelectionStart;
 				string newChars = TsStringUtils.ValidateCharacterSequence(origCharsKd);
 
 				if (newChars.Length == 0)
 				{
 					string s = origCharsKd.Trim();
-					if (s.Length > 0 && CoreImpl.Text.Icu.IsMark(s[0]))
+					if (s.Length > 0 && LCModel.Core.Text.Icu.IsMark(s[0]))
 						ShowMessageBox(FwCoreDlgs.kstidLoneDiacriticNotValid);
 					else
 						IssueBeep();
@@ -1287,10 +1288,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		private void VerifyCharInRange(FwTextBox textbox, Label lbl)
 		{
-			string txt = textbox.Text.Length >= 1 ? CoreImpl.Text.Icu.Normalize(textbox.Text, CoreImpl.Text.Icu.UNormalizationMode.UNORM_NFD) : String.Empty;
+			string txt = textbox.Text.Length >= 1
+				? LCModel.Core.Text.Icu.Normalize(textbox.Text, LCModel.Core.Text.Icu.UNormalizationMode.UNORM_NFD)
+				: string.Empty;
 			int chrCode = (txt.Length >= 1 ? txt[0] : 0);
 
-			if (txt.Length > 1 || (chrCode > 0 && CoreImpl.Text.Icu.IsMark(chrCode)))
+			if (txt.Length > 1 || (chrCode > 0 && LCModel.Core.Text.Icu.IsMark(chrCode)))
 			{
 				IssueBeep();
 				lbl.ForeColor = Color.Red;
@@ -1319,10 +1322,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				return;
 
 			var chars = new List<string>();
-			foreach (string c in UnicodeSet.ToCharacters(CoreImpl.Text.Icu.GetExemplarCharacters(icuLocale)))
+			foreach (string c in UnicodeSet.ToCharacters(LCModel.Core.Text.Icu.GetExemplarCharacters(icuLocale)))
 			{
 				chars.Add(c.Normalize(NormalizationForm.FormD));
-				chars.Add(CoreImpl.Text.Icu.ToUpper(c, icuLocale).Normalize(NormalizationForm.FormD));
+				chars.Add(LCModel.Core.Text.Icu.ToUpper(c, icuLocale).Normalize(NormalizationForm.FormD));
 			}
 			m_validCharsGridMngr.AddCharacters(chars);
 		}
@@ -1557,7 +1560,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				{
 					case kiCharCol:
 						string chr = m_inventoryRows[i].Character;
-						if (!CoreImpl.Text.Icu.IsSpace(chr[0]) && !CoreImpl.Text.Icu.IsControl(chr[0]))
+						if (!LCModel.Core.Text.Icu.IsSpace(chr[0]) && !LCModel.Core.Text.Icu.IsControl(chr[0]))
 						{
 							e.Value = chr;
 							gridCharInventory[e.ColumnIndex, e.RowIndex].Tag = null;
@@ -1766,7 +1769,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					string chr;
 					if (!normalizedChars.TryGetValue(txtTokSub.Text, out chr))
 					{
-						chr = CoreImpl.Text.Icu.Normalize(txtTokSub.Text, CoreImpl.Text.Icu.UNormalizationMode.UNORM_NFD);
+						chr = LCModel.Core.Text.Icu.Normalize(txtTokSub.Text, LCModel.Core.Text.Icu.UNormalizationMode.UNORM_NFD);
 						if (chr == "\n" || chr == "\r" || !TsStringUtils.IsCharacterDefined(chr)
 							|| !TsStringUtils.IsValidChar(chr))
 						{

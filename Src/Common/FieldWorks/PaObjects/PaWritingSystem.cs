@@ -4,10 +4,10 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using SIL.CoreImpl.WritingSystems;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.PaToFdoInterfaces;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 
 namespace SIL.FieldWorks.PaObjects
 {
@@ -20,7 +20,7 @@ namespace SIL.FieldWorks.PaObjects
 		/// collection of PaWritingSystem objects.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		internal static string GetWritingSystemsAsXml(IFdoServiceLocator svcloc)
+		internal static string GetWritingSystemsAsXml(ILcmServiceLocator svcloc)
 		{
 			var wsList = new List<PaWritingSystem>();
 
@@ -43,7 +43,7 @@ namespace SIL.FieldWorks.PaObjects
 		}
 
 		/// ------------------------------------------------------------------------------------
-		private PaWritingSystem(CoreWritingSystemDefinition lgws, IFdoServiceLocator svcloc, bool isVern,
+		private PaWritingSystem(CoreWritingSystemDefinition lgws, ILcmServiceLocator svcloc, bool isVern,
 			bool isAnal)
 		{
 			Id = lgws.Id;

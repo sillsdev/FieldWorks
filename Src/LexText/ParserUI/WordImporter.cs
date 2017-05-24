@@ -4,11 +4,11 @@
 
 using System.IO;
 using System.Collections.Generic;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.WritingSystems;
-using SIL.CoreImpl.KernelInterfaces;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -17,10 +17,10 @@ namespace SIL.FieldWorks.LexText.Controls
 	/// </summary>
 	public class WordImporter
 	{
-		private readonly FdoCache m_cache;
+		private readonly LcmCache m_cache;
 		private readonly CoreWritingSystemDefinition m_ws;
 
-		public WordImporter(FdoCache cache)
+		public WordImporter(LcmCache cache)
 		{
 			m_cache = cache;
 			m_ws = cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;

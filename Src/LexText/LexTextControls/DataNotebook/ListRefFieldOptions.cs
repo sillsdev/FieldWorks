@@ -12,12 +12,12 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;
-using SIL.CoreImpl.Cellar;
-using SIL.CoreImpl.WritingSystems;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 
 namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 {
@@ -28,7 +28,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 	/// ----------------------------------------------------------------------------------------
 	public partial class ListRefFieldOptions : UserControl
 	{
-		FdoCache m_cache;
+		LcmCache m_cache;
 		IHelpTopicProvider m_helpTopicProvider;
 
 		/// <summary>
@@ -114,7 +114,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 		}
 
 
-		internal void Initialize(FdoCache cache, IHelpTopicProvider helpTopicProvider, IApp app, NotebookImportWiz.RnSfMarker rsfm,
+		internal void Initialize(LcmCache cache, IHelpTopicProvider helpTopicProvider, IApp app, NotebookImportWiz.RnSfMarker rsfm,
 			CellarPropertyType cpt)
 		{
 			m_cache = cache;

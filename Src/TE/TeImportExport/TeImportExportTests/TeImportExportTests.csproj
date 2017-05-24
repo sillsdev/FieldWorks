@@ -67,9 +67,9 @@
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CoreImpl, Version=6.1.0.28024, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="SIL.LCModel.Core, Version=9.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\CoreImpl.dll</HintPath>
+      <HintPath>..\..\..\..\Output\Debug\SIL.LCModel.Core.dll</HintPath>
     </Reference>
     <Reference Include="DiffView, Version=9.0.0.31519, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
@@ -83,13 +83,13 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>/usr/lib/fieldworks/ECInterfaces.dll</HintPath>
     </Reference>
-    <Reference Include="FDO, Version=5.5.0.19441, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="SIL.LCModel, Version=9.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\FDO.dll</HintPath>
+      <HintPath>..\..\..\..\Output\Debug\SIL.LCModel.dll</HintPath>
     </Reference>
-    <Reference Include="FDOTests, Version=5.5.0.19443, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="SIL.LCModel.Tests, Version=9.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\FDOTests.dll</HintPath>
+      <HintPath>..\..\..\..\Output\Debug\SIL.LCModel.Tests.dll</HintPath>
     </Reference>
     <Reference Include="Framework, Version=5.5.0.21859, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -103,9 +103,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\FwCoreDlgControls.dll</HintPath>
     </Reference>
-    <Reference Include="CoreImplTests, Version=9.0.0.0, Culture=neutral, processorArchitecture=x86">
+    <Reference Include="SIL.LCModel.Core.Tests, Version=9.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\CoreImplTests.dll</HintPath>
+      <HintPath>..\..\..\..\Output\Debug\SIL.LCModel.Core.Tests.dll</HintPath>
     </Reference>
     <Reference Include="FwResources, Version=6.1.0.16191, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -179,13 +179,13 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>/usr/lib/fieldworks/SilEncConverters40.dll</HintPath>
     </Reference>
-    <Reference Include="SilUtils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="SIL.LCModel.Utils, Version=9.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\SilUtils.dll</HintPath>
+      <HintPath>..\..\..\..\Output\Debug\SIL.LCModel.Utils.dll</HintPath>
     </Reference>
-    <Reference Include="SilUtilsTests, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="SIL.LCModel.Utils.Tests, Version=9.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\SilUtilsTests.dll</HintPath>
+      <HintPath>..\..\..\..\Output\Debug\SIL.LCModel.Utils.Tests.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />

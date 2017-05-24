@@ -12,16 +12,17 @@ using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 using System.Xml;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.WritingSystems;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.Filters;
+using SIL.LCModel.Utils;
 using SIL.Utils;
 using XCore;
 
@@ -367,7 +368,7 @@ namespace SIL.FieldWorks.Common.Controls
 		List<XmlNode> m_columns;
 		FilterSortItems m_items;
 		IFwMetaDataCache m_mdc; // m_cache.MetaDataCacheAccessor
-		FdoCache m_cache; // Use minimally, may want to factor out for non-db use.
+		LcmCache m_cache; // Use minimally, may want to factor out for non-db use.
 		ISilDataAccess m_sda; // m_cache.MainCacheAccessor
 		ILgWritingSystemFactory m_wsf;
 		int m_userWs;
@@ -1624,7 +1625,7 @@ namespace SIL.FieldWorks.Common.Controls
 		private bool m_fIsUserVisible = false;
 		ListMatchOptions m_mode;
 		/// <summary></summary>
-		protected FdoCache m_cache;
+		protected LcmCache m_cache;
 		/// <summary>
 		/// May be derived from cache or set separately.
 		/// </summary>
@@ -1640,7 +1641,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="mode">The mode.</param>
 		/// <param name="targets">The targets.</param>
 		/// ------------------------------------------------------------------------------------
-		public ListChoiceFilter(FdoCache cache, ListMatchOptions mode, int[] targets)
+		public ListChoiceFilter(LcmCache cache, ListMatchOptions mode, int[] targets)
 		{
 			m_cache = cache;
 			m_mode = mode;
@@ -1724,7 +1725,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// <value></value>
 		/// ------------------------------------------------------------------------------------
-		public override FdoCache Cache
+		public override LcmCache Cache
 		{
 			set
 			{
@@ -1876,7 +1877,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="mode"></param>
 		/// <param name="colSpec"></param>
 		/// <param name="targets"></param>
-		public ColumnSpecFilter(FdoCache cache, ListMatchOptions mode, int[] targets, XmlNode colSpec)
+		public ColumnSpecFilter(LcmCache cache, ListMatchOptions mode, int[] targets, XmlNode colSpec)
 			: base(cache, mode, targets)
 		{
 			m_colSpec = colSpec;
@@ -1978,7 +1979,7 @@ namespace SIL.FieldWorks.Common.Controls
 	internal abstract class FlidChoiceFilter : ListChoiceFilter
 	{
 		int m_flid;
-		public FlidChoiceFilter(FdoCache cache, ListMatchOptions mode, int flid, int[] targets)
+		public FlidChoiceFilter(LcmCache cache, ListMatchOptions mode, int flid, int[] targets)
 			: base(cache, mode, targets)
 		{
 			m_flid = flid;
@@ -2049,7 +2050,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// tree items to the ones that can actually be selected.
 		/// </summary>
 		int m_leafFlid;
-		FdoCache m_cache;
+		LcmCache m_cache;
 		XCore.Mediator m_mediator;
 		private PropertyTable m_propertyTable;
 		FwComboBox m_combo;
@@ -2093,7 +2094,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="fAtomic">if set to <c>true</c> [f atomic].</param>
 		/// <param name="filterType">Type of the filter.</param>
 		/// ------------------------------------------------------------------------------------
-		public ListChoiceComboItem(ITsString tssName, FilterSortItem fsi, FdoCache cache,
+		public ListChoiceComboItem(ITsString tssName, FilterSortItem fsi, LcmCache cache,
 			Mediator mediator, PropertyTable propertyTable, FwComboBox combo, bool fAtomic, Type filterType)
 			: base(tssName, null, fsi)
 		{
@@ -2196,13 +2197,13 @@ namespace SIL.FieldWorks.Common.Controls
 				if (m_filterType.IsSubclassOf(typeof(ColumnSpecFilter)))
 				{
 					ConstructorInfo ci = m_filterType.GetConstructor(
-						new Type[] { typeof(FdoCache), typeof(ListMatchOptions), typeof(int[]), typeof(XmlNode)});
+						new Type[] { typeof(LcmCache), typeof(ListMatchOptions), typeof(int[]), typeof(XmlNode)});
 					filter = (ListChoiceFilter)ci.Invoke(new object[] { m_cache, matchMode, chosenHvos, m_fsi.Spec});
 				}
 				else
 				{
 					ConstructorInfo ci = m_filterType.GetConstructor(
-						new Type[] { typeof(FdoCache), typeof(ListMatchOptions), typeof(int[]) });
+						new Type[] { typeof(LcmCache), typeof(ListMatchOptions), typeof(int[]) });
 					filter = (ListChoiceFilter)ci.Invoke(new object[] { m_cache, matchMode, chosenHvos });
 				}
 			}

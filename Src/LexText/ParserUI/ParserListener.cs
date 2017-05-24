@@ -19,11 +19,11 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.WordWorks.Parser;
 using SIL.FieldWorks.XWorks;
 using SIL.Utils;
@@ -40,7 +40,7 @@ namespace SIL.FieldWorks.LexText.Controls
 	{
 		private Mediator m_mediator;
 		private PropertyTable m_propertyTable;
-		private FdoCache m_cache; //a pointer to the one owned by from the form
+		private LcmCache m_cache; //a pointer to the one owned by from the form
 		/// <summary>
 		/// Use this to do the Add/RemoveNotifications, since it can be used in the unmanged section of Dispose.
 		/// (If m_sda is COM, that is.)
@@ -63,7 +63,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			m_mediator = mediator;
 			m_propertyTable = propertyTable;
-			m_cache = m_propertyTable.GetValue<FdoCache>("cache");
+			m_cache = m_propertyTable.GetValue<LcmCache>("cache");
 			mediator.AddColleague(this);
 
 			m_sda = m_cache.MainCacheAccessor;

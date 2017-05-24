@@ -6,8 +6,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
-using SIL.FieldWorks.FDO;
-using SIL.Utils;
+using SIL.LCModel;
+using SIL.LCModel.Utils;
 using XCore;
 
 namespace SIL.FieldWorks.XWorks
@@ -16,7 +16,7 @@ namespace SIL.FieldWorks.XWorks
 	{
 		private readonly PropertyTable m_propertyTable;
 		private readonly Mediator m_mediator;
-		private readonly FdoCache m_cache;
+		private readonly LcmCache m_cache;
 
 		private const string DictionaryType = "Dictionary";
 		private const string ReversalType = "Reversal Index";
@@ -25,7 +25,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			m_propertyTable = propertyTable;
 			m_mediator = mediator;
-			m_cache = propertyTable.GetValue<FdoCache>("cache");
+			m_cache = propertyTable.GetValue<LcmCache>("cache");
 		}
 
 		public int CountDictionaryEntries(DictionaryConfigurationModel config)
@@ -40,7 +40,7 @@ namespace SIL.FieldWorks.XWorks
 		/// Determines how many times the entry with the given HVO is generated for the given config (usually 0 or 1,
 		/// but can be more if the entry matches more than one Minor Entry node)
 		/// </summary>
-		internal static bool IsGenerated(FdoCache cache, DictionaryConfigurationModel config, int hvo)
+		internal static bool IsGenerated(LcmCache cache, DictionaryConfigurationModel config, int hvo)
 		{
 			var entry = (ILexEntry)cache.ServiceLocator.GetObject(hvo);
 			if (ConfiguredXHTMLGenerator.IsMainEntry(entry, config))
@@ -220,7 +220,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			#endregion disposal
 
-			public static ReversalIndexActivator ActivateReversalIndex(string reversalWs, PropertyTable propertyTable, FdoCache cache)
+			public static ReversalIndexActivator ActivateReversalIndex(string reversalWs, PropertyTable propertyTable, LcmCache cache)
 			{
 				if (reversalWs == null)
 					return null;

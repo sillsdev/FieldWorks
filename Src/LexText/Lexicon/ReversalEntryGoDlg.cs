@@ -6,12 +6,12 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Xml;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.WritingSystems;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.LexText.Controls;
 using XCore;
 
@@ -62,7 +62,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			get { return "ReversalEntryGo"; }
 		}
 
-		protected override void InitializeMatchingObjects(FdoCache cache)
+		protected override void InitializeMatchingObjects(LcmCache cache)
 		{
 			var xnWindow = m_propertyTable.GetValue<XmlNode>("WindowConfiguration");
 			XmlNode configNode = xnWindow.SelectSingleNode("controls/parameters/guicontrol[@id=\"matchingReversalEntries\"]/parameters");
@@ -88,7 +88,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		{
 			public ICollection<int> FilteredEntryHvos { private get; set; }
 
-			public ReversalEntrySearchEngine(FdoCache cache, IReversalIndex revIndex) : base(cache, revIndex) {}
+			public ReversalEntrySearchEngine(LcmCache cache, IReversalIndex revIndex) : base(cache, revIndex) {}
 
 			protected override IEnumerable<int> FilterResults(IEnumerable<int> results)
 			{
@@ -101,12 +101,12 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			m_cbWritingSystems.Items.Add(m_cache.ServiceLocator.WritingSystemManager.Get(m_reveralIndex.WritingSystem));
 		}
 
-		public override void SetDlgInfo(FdoCache cache, WindowParams wp, Mediator mediator, PropertyTable propertyTable)
+		public override void SetDlgInfo(LcmCache cache, WindowParams wp, Mediator mediator, PropertyTable propertyTable)
 		{
 			SetDlgInfo(cache, wp, mediator, propertyTable, cache.ServiceLocator.WritingSystemManager.GetWsFromStr(m_reveralIndex.WritingSystem));
 		}
 
-		public override void SetDlgInfo(FdoCache cache, WindowParams wp, Mediator mediator, PropertyTable propertyTable, string form)
+		public override void SetDlgInfo(LcmCache cache, WindowParams wp, Mediator mediator, PropertyTable propertyTable, string form)
 		{
 			SetDlgInfo(cache, wp, mediator, propertyTable, form, cache.ServiceLocator.WritingSystemManager.GetWsFromStr(m_reveralIndex.WritingSystem));
 		}

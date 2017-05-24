@@ -7,24 +7,24 @@ using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using System.Xml;
-using SIL.CoreImpl.Text;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.DomainServices;
 using SIL.Utils;
-using SIL.FieldWorks.FDO.DomainServices;
 
 namespace SIL.FieldWorks.Discourse
 {
 	public class DiscourseTestHelper
 	{
 		internal Dictionary<IStTxtPara, AnalysisOccurrence[]> m_allOccurrences;
-		internal FDO.IText m_text;
+		internal LCModel.IText m_text;
 		internal IStText m_stText;
 		private IStTxtPara m_firstPara;
 
 		#region Factories/Repositories
 
-		private readonly IFdoServiceLocator m_servLoc;
+		private readonly ILcmServiceLocator m_servLoc;
 		private readonly IWfiAnalysisFactory m_wAnalysisFact;
 		private readonly IWfiGlossFactory m_wGlossFact;
 		private readonly IConstChartRowFactory m_rowFact;
@@ -37,13 +37,13 @@ namespace SIL.FieldWorks.Discourse
 
 		#endregion
 
-		private FdoCache m_cache;
+		private LcmCache m_cache;
 		private TestCCLogic m_logic;
 		private ICmPossibility m_template;
 		List<ICmPossibility> m_allColumns;
 		private IDsConstChart m_chart;
 
-		public DiscourseTestHelper(FdoCache cache)
+		public DiscourseTestHelper(LcmCache cache)
 		{
 			m_cache = cache;
 
@@ -70,7 +70,7 @@ namespace SIL.FieldWorks.Discourse
 
 		}
 
-		internal FdoCache Cache
+		internal LcmCache Cache
 		{
 			get { return m_cache; }
 		}

@@ -6,12 +6,12 @@ using System;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Diagnostics;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.WritingSystems;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 using XCore;
 using SIL.FieldWorks.Common.Widgets;
 
@@ -29,7 +29,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private bool m_skipCheck = false;
 		private IHelpTopicProvider m_helpTopicProvider;
-		private FdoCache m_cache;
+		private LcmCache m_cache;
 		private ILexEntry m_le;
 		private int m_newSenseID = 0;
 
@@ -343,7 +343,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			// m_msaGroupBox
 			//
 			resources.ApplyResources(this.m_msaGroupBox, "m_msaGroupBox");
-			this.m_msaGroupBox.MSAType = SIL.FieldWorks.FDO.MsaType.kNotSet;
+			this.m_msaGroupBox.MSAType = MsaType.kNotSet;
 			this.m_msaGroupBox.Name = "m_msaGroupBox";
 			this.m_msaGroupBox.Slot = null;
 			//

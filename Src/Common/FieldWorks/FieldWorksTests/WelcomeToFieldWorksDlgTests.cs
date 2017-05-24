@@ -4,7 +4,7 @@
 
 using System.Windows.Forms;
 using SIL.FieldWorks.XWorks.LexText;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 

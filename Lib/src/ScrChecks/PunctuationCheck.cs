@@ -4,8 +4,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using SIL.CoreImpl.Scripture;
 using System.Diagnostics;
 using SIL.FieldWorks.Common.FwUtils;
 

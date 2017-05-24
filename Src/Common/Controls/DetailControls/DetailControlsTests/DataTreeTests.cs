@@ -7,12 +7,11 @@ using System.IO;
 using System.Windows.Forms;
 using System.Xml;
 using NUnit.Framework;
-using SIL.CoreImpl.Text;
+using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.FDOTests;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.Utils;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
+using SIL.LCModel.Utils;
 using XCore;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls

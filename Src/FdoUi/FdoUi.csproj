@@ -107,8 +107,8 @@
       <HintPath>..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
-    <Reference Include="FDO, Version=6.1.1.30361, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\Output\Debug\FDO.dll</HintPath>
+    <Reference Include="SIL.LCModel, Version=9.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\..\Output\Debug\SIL.LCModel.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="Framework, Version=6.1.1.30458, Culture=neutral, PublicKeyToken=null">
@@ -147,7 +147,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Downloads\SIL.WritingSystems.dll</HintPath>
     </Reference>
-    <Reference Include="SilUtils, Version=7.0.1.28719, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="SIL.LCModel.Utils, Version=9.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="SimpleRootSite, Version=6.1.1.30383, Culture=neutral, PublicKeyToken=null">
@@ -159,9 +159,9 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
-    <Reference Include="CoreImpl, Version=6.1.1.30291, Culture=neutral, PublicKeyToken=null">
+    <Reference Include="SIL.LCModel.Core, Version=9.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\CoreImpl.dll</HintPath>
+      <HintPath>..\..\Output\Debug\SIL.LCModel.Core.dll</HintPath>
     </Reference>
     <Reference Include="Filters, Version=1.0.3685.30427, Culture=neutral, PublicKeyToken=null">
       <SpecificVersion>False</SpecificVersion>
@@ -218,12 +218,6 @@
     <Compile Include="Dialogs\ConflictingSaveDlg.Designer.cs">
       <DependentUpon>ConflictingSaveDlg.cs</DependentUpon>
     </Compile>
-    <Compile Include="Dialogs\ConnectionLostDlg.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Dialogs\ConnectionLostDlg.Designer.cs">
-      <DependentUpon>ConnectionLostDlg.cs</DependentUpon>
-    </Compile>
     <Compile Include="Dialogs\FilesToRestoreAreOlder.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -256,7 +250,7 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
     </Compile>
-    <Compile Include="FwFdoUI.cs" />
+    <Compile Include="FwLcmUI.cs" />
     <Compile Include="FsFeatDefnUi.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -299,10 +293,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Dialogs\ConflictingSaveDlg.resx">
       <DependentUpon>ConflictingSaveDlg.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Dialogs\ConnectionLostDlg.resx">
-      <DependentUpon>ConnectionLostDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Dialogs\FilesToRestoreAreOlder.resx">

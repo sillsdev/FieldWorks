@@ -10,12 +10,13 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
+using SIL.LCModel.Utils;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
 using SIL.Utils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.CoreImpl.WritingSystems;
-using SIL.CoreImpl.KernelInterfaces;
-using SIL.CoreImpl.Text;
 
 namespace SIL.FieldWorks.Common.Framework
 {
@@ -56,7 +57,7 @@ namespace SIL.FieldWorks.Common.Framework
 		public Dictionary<string, Tuple<string, string>> NumberStyles = new Dictionary<string, Tuple<string, string>>();
 
 		private TextWriter m_writer;
-		private FdoCache m_cache;
+		private LcmCache m_cache;
 		private bool m_fRTL = false;
 		private int m_cColumns = 2;		// default for dictionary output.
 
@@ -65,7 +66,7 @@ namespace SIL.FieldWorks.Common.Framework
 		/// </summary>
 		/// <param name="w"></param>
 		/// <param name="cache"></param>
-		public XhtmlHelper(TextWriter w, FdoCache cache)
+		public XhtmlHelper(TextWriter w, LcmCache cache)
 		{
 			m_writer = w;
 			m_cache = cache;

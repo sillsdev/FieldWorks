@@ -12,9 +12,8 @@ using System.Windows.Forms;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.Utils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.FDOTests;
+using SIL.LCModel.Utils;
+using SIL.LCModel;
 
 namespace SIL.FieldWorks.Common.Framework
 {
@@ -165,7 +164,7 @@ namespace SIL.FieldWorks.Common.Framework
 			m_mainWnd.ExpectAndReturn("Synchronize", true, new IsAnything());
 			m_app.MainWindows.Add((IFwMainWnd)m_mainWnd.MockInstance);
 
-			FdoCache differentCache = FdoCache.CreateCache(FDOBackendProviderType.kMemoryOnly, BackendBulkLoadDomain.All, null);
+			LcmCache differentCache = LcmCache.CreateCache(FDOBackendProviderType.kMemoryOnly, BackendBulkLoadDomain.All, null);
 			try
 			{
 				DynamicMock otherMainWnd = new DynamicMock(typeof(IFwMainWnd));

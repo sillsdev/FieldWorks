@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Xml;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 using SIL.Xml;
 
 namespace SIL.FieldWorks.Common.FwUtils

@@ -8,7 +8,7 @@
 using System;
 using System.Windows.Forms;
 using System.Diagnostics;
-using SIL.FieldWorks.FDO.DomainServices.BackupRestore;
+using SIL.LCModel.DomainServices.BackupRestore;
 using System.Drawing;
 
 namespace SIL.FieldWorks.FwCoreDlgs

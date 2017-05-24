@@ -6,11 +6,11 @@ using System;
 using System.ComponentModel;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.Drawing;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Controls;
-using SIL.CoreImpl.KernelInterfaces;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.DomainServices;
 
 namespace SIL.FieldWorks.TE
 {
@@ -71,7 +71,7 @@ namespace SIL.FieldWorks.TE
 		/// for testing purposes.</remarks>
 		/// ------------------------------------------------------------------------------------
 		public virtual void Initialize(bool fParatextMapping, ImportMappingInfo mapping,
-			FwStyleSheet styleSheet, FdoCache cache, IHelpTopicProvider helpTopicProvider,
+			LcmStyleSheet styleSheet, LcmCache cache, IHelpTopicProvider helpTopicProvider,
 			bool isAnnotationMapping, bool fBackTransDomainLocked)
 		{
 			CheckDisposed();

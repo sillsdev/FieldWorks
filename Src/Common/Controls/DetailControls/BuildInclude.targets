@@ -10,7 +10,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<ModelFile Include="$(OutDir)/../Common/MasterFieldWorksModel.xml"/>
+		<ModelFile Include="$(OutDir)/../Common/MasterLCModel.xml"/>
 	</ItemGroup>
 	<ItemGroup>
 		<GeneratedParts Include="$(PartsDir)/GeneratedParts.xml"/>

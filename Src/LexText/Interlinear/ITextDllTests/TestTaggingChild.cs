@@ -5,8 +5,8 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 
 namespace SIL.FieldWorks.IText
 {
@@ -15,7 +15,7 @@ namespace SIL.FieldWorks.IText
 	/// </summary>
 	class TestTaggingChild: InterlinTaggingChild
 	{
-		public TestTaggingChild(FdoCache cache)
+		public TestTaggingChild(LcmCache cache)
 		{
 			Cache = cache;
 			m_tagFact = cache.ServiceLocator.GetInstance<ITextTagFactory>();

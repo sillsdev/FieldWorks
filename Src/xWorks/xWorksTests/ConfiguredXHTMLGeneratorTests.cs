@@ -12,21 +12,20 @@ using System.Text.RegularExpressions;
 using System.Xml;
 using NUnit.Framework;
 using SIL.Linq;
-using SIL.CoreImpl.Cellar;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.WritingSystems;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.DomainImpl;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.FDOTests;
+using SIL.LCModel;
+using SIL.LCModel.Application;
+using SIL.LCModel.DomainImpl;
+using SIL.LCModel.DomainServices;
 using SIL.TestUtilities;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 using XCore;
 
 namespace SIL.FieldWorks.XWorks
@@ -161,8 +160,8 @@ namespace SIL.FieldWorks.XWorks
 		[TearDown]
 		public void ResetModelAssembly()
 		{
-			// Specific tests override this, reset to Fdo.dll needed by most tests in the file
-			ConfiguredXHTMLGenerator.AssemblyFile = "FDO";
+			// Specific tests override this, reset to SIL.LCModel.dll needed by most tests in the file
+			ConfiguredXHTMLGenerator.AssemblyFile = "SIL.LCModel";
 		}
 
 		const string xpathThruSense = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense']";
@@ -422,7 +421,7 @@ namespace SIL.FieldWorks.XWorks
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(mediaFileAnchor2, 1);
 		}
 
-		private static void CreateTestMediaFile(FdoCache cache, string name, ICmFolder localMediaFolder, ILexPronunciation pronunciation)
+		private static void CreateTestMediaFile(LcmCache cache, string name, ICmFolder localMediaFolder, ILexPronunciation pronunciation)
 		{
 			var mainMediaFile = cache.ServiceLocator.GetInstance<ICmMediaFactory>().Create();
 			pronunciation.MediaFilesOS.Add(mainMediaFile);
@@ -1198,7 +1197,7 @@ namespace SIL.FieldWorks.XWorks
 
 			ILangProject lp = Cache.LangProject;
 
-			IFdoOwningSequence<ICmPossibility> posSeq = lp.PartsOfSpeechOA.PossibilitiesOS;
+			ILcmOwningSequence<ICmPossibility> posSeq = lp.PartsOfSpeechOA.PossibilitiesOS;
 			IPartOfSpeech pos = Cache.ServiceLocator.GetInstance<IPartOfSpeechFactory>().Create();
 			posSeq.Add(pos);
 
@@ -6764,18 +6763,18 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var assembly = Assembly.Load(ConfiguredXHTMLGenerator.AssemblyFile);
 			Assert.True(ConfiguredXHTMLGenerator.IsCollectionType(typeof(IEnumerable<>)));
-			Assert.True(ConfiguredXHTMLGenerator.IsCollectionType(typeof(IFdoOwningSequence<>)));
-			Assert.True(ConfiguredXHTMLGenerator.IsCollectionType(typeof(IFdoReferenceCollection<>)));
+			Assert.True(ConfiguredXHTMLGenerator.IsCollectionType(typeof(ILcmOwningSequence<>)));
+			Assert.True(ConfiguredXHTMLGenerator.IsCollectionType(typeof(ILcmReferenceCollection<>)));
 			var twoParamImplOfIFdoVector =
-				assembly.GetType("SIL.FieldWorks.FDO.DomainImpl.ScrTxtPara").GetNestedType("OwningSequenceWrapper`2", BindingFlags.NonPublic);
+				assembly.GetType("SIL.LCModel.DomainImpl.ScrTxtPara").GetNestedType("OwningSequenceWrapper`2", BindingFlags.NonPublic);
 			Assert.True(ConfiguredXHTMLGenerator.IsCollectionType(twoParamImplOfIFdoVector));
-			Assert.True(ConfiguredXHTMLGenerator.IsCollectionType(typeof(IFdoVector)), "Custom fields containing list items may no longer work.");
+			Assert.True(ConfiguredXHTMLGenerator.IsCollectionType(typeof(ILcmVector)), "Custom fields containing list items may no longer work.");
 
 			// Strings and MultiStrings, while enumerable, are not collections as we define them for the purpose of publishing data as XHTML
 			Assert.False(ConfiguredXHTMLGenerator.IsCollectionType(typeof(string)));
 			Assert.False(ConfiguredXHTMLGenerator.IsCollectionType(typeof(ITsString)));
 			Assert.False(ConfiguredXHTMLGenerator.IsCollectionType(typeof(IMultiStringAccessor)));
-			Assert.False(ConfiguredXHTMLGenerator.IsCollectionType(assembly.GetType("SIL.FieldWorks.FDO.DomainImpl.VirtualStringAccessor")));
+			Assert.False(ConfiguredXHTMLGenerator.IsCollectionType(assembly.GetType("SIL.LCModel.DomainImpl.VirtualStringAccessor")));
 		}
 
 		[Test]

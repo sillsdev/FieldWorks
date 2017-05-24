@@ -7,7 +7,7 @@ using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.LexText.Controls.MGA;
 using SIL.Windows.Forms;
 using XCore;
@@ -19,11 +19,11 @@ namespace SIL.FieldWorks.LexText.Controls
 	/// </summary>
 	public class MasterListDlg : Form
 	{
-		protected IFdoOwningCollection<IFsFeatDefn> m_featureList;
+		protected ILcmOwningCollection<IFsFeatDefn> m_featureList;
 		protected bool m_launchedFromInsertMenu = false;
 		protected Mediator m_mediator;
 		protected XCore.PropertyTable m_propertyTable;
-		protected FdoCache m_cache;
+		protected LcmCache m_cache;
 		protected IHelpTopicProvider m_helpTopicProvider;
 		protected IFsFeatDefn m_selFeatDefn;
 		protected IFsFeatureSystem m_featureSystem;

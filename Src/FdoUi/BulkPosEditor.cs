@@ -7,17 +7,17 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Collections.Generic;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.LexText.Controls;
 using XCore;
 using SIL.FieldWorks.Filters;
-using SIL.Utils;
 using System.Xml;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.FdoUi
 {
@@ -37,7 +37,7 @@ namespace SIL.FieldWorks.FdoUi
 
 		protected Mediator m_mediator;
 		protected TreeCombo m_tree;
-		protected FdoCache m_cache;
+		protected LcmCache m_cache;
 		protected XMLViewsDataCache m_sda;
 		protected POSPopupTreeManager m_pOSPopupTreeManager;
 		protected int m_selectedHvo = 0;
@@ -222,7 +222,7 @@ namespace SIL.FieldWorks.FdoUi
 		/// <summary>
 		/// Get or set the cache. Must be set before the tree values need to load.
 		/// </summary>
-		public FdoCache Cache
+		public LcmCache Cache
 		{
 			get
 			{
@@ -639,7 +639,7 @@ namespace SIL.FieldWorks.FdoUi
 		/// Default constructor for persistence.
 		/// </summary>
 		public PosFilter() { }
-		public PosFilter(FdoCache cache, ListMatchOptions mode, int[] targets, XmlNode colSpec)
+		public PosFilter(LcmCache cache, ListMatchOptions mode, int[] targets, XmlNode colSpec)
 			: base(cache, mode, targets, colSpec)
 		{
 		}
@@ -662,7 +662,7 @@ namespace SIL.FieldWorks.FdoUi
 		/// <summary>
 		/// Return the HVO of the list from which choices can be made.
 		/// </summary>
-		static public int List(FdoCache cache)
+		static public int List(LcmCache cache)
 		{
 			return cache.LanguageProject.PartsOfSpeechOA.Hvo;
 		}
@@ -685,7 +685,7 @@ namespace SIL.FieldWorks.FdoUi
 		/// Default constructor for persistence.
 		/// </summary>
 		public EntryPosFilter() { }
-		public EntryPosFilter(FdoCache cache, ListMatchOptions mode, int[] targets)
+		public EntryPosFilter(LcmCache cache, ListMatchOptions mode, int[] targets)
 			: base(cache, mode, targets)
 		{
 		}
@@ -783,7 +783,7 @@ namespace SIL.FieldWorks.FdoUi
 		/// <summary>
 		/// Return the HVO of the list from which choices can be made.
 		/// </summary>
-		static public int List(FdoCache cache)
+		static public int List(LcmCache cache)
 		{
 			return cache.LanguageProject.PartsOfSpeechOA.Hvo;
 		}

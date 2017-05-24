@@ -3,10 +3,10 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Diagnostics;
-using SIL.CoreImpl.WritingSystems;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using XCore;
 using SIL.FieldWorks.IText;
@@ -32,7 +32,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		/// <param name="ss">The stylesheet.</param>
 		/// <param name="choices">The choices.</param>
 		/// <param name="hvoAnalysis">The hvo analysis.</param>
-		public OneAnalysisSandbox(FdoCache cache, Mediator mediator, PropertyTable propertyTable, IVwStylesheet ss, InterlinLineChoices choices, int hvoAnalysis)
+		public OneAnalysisSandbox(LcmCache cache, Mediator mediator, PropertyTable propertyTable, IVwStylesheet ss, InterlinLineChoices choices, int hvoAnalysis)
 			: base(cache, mediator, propertyTable, ss, choices, hvoAnalysis)
 		{
 			SizeToContent = true;

@@ -10,13 +10,13 @@ using System.Linq;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
-using SIL.CoreImpl.Text;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.Framework;
-using SIL.CoreImpl.KernelInterfaces;
-using SIL.Utils;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Utils;
 using SIL.FieldWorks.FwCoreDlgControls;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel.DomainServices;
 
 namespace SIL.FieldWorks.XWorks.LexText
 {
@@ -76,7 +76,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 		/// Gets the resource list in which the CmResources are owned.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		protected override IFdoOwningCollection<ICmResource> ResourceList
+		protected override ILcmOwningCollection<ICmResource> ResourceList
 		{
 			get { return m_lexicon.ResourcesOC; }
 		}
@@ -86,17 +86,17 @@ namespace SIL.FieldWorks.XWorks.LexText
 		/// Required implementation of abstract method gives style collection.
 		/// </summary>
 		/// -------------------------------------------------------------------------------------
-		protected override IFdoOwningCollection<IStStyle> StyleCollection
+		protected override ILcmOwningCollection<IStStyle> StyleCollection
 		{
 			get { return m_cache.LangProject.StylesOC; }
 		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets the FdoCache
+		/// Gets the LcmCache
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		protected override FdoCache Cache
+		protected override LcmCache Cache
 		{
 			get { return m_lexicon.Cache; }
 		}

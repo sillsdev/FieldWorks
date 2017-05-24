@@ -11,12 +11,11 @@
 using System;
 using System.Windows.Forms;
 using NUnit.Framework;
-using SIL.CoreImpl.Cellar;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.KernelInterfaces;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.FDOTests;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -60,7 +59,7 @@ namespace SIL.FieldWorks.XWorks
 			m_testList.Description.set_String(m_userWs, listDesc);
 
 			// Set various properties of CmPossibilityList
-			m_testList.DisplayOption = (int)SIL.FieldWorks.FDO.PossNameType.kpntNameAndAbbrev;
+			m_testList.DisplayOption = (int) PossNameType.kpntNameAndAbbrev;
 			m_testList.PreventDuplicates = true;
 			m_testList.IsSorted = true;
 			m_testList.WsSelector = WritingSystemServices.kwsAnals;
@@ -487,7 +486,7 @@ namespace SIL.FieldWorks.XWorks
 	{
 		internal string PossNameInDlg { get; set; }
 
-		public DeleteListHelper(FdoCache cache) : base(cache)
+		public DeleteListHelper(LcmCache cache) : base(cache)
 		{
 			PossNameInDlg = "";
 		}

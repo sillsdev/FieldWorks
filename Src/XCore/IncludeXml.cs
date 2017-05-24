@@ -1,10 +1,6 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: IncludeXml.cs
-// History: John Hatton
-// Last reviewed:
 //
 // <remarks>
 //		Someday, the WWW3C XML inclusion standard will become available.  If that
@@ -18,13 +14,13 @@
 using System;
 using System.Xml;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
 
-using SIL.Utils;
+using SIL.LCModel.Utils;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.Utils;
 
 namespace XCore
 {

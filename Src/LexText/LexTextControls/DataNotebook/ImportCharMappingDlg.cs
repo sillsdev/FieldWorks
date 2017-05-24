@@ -12,12 +12,12 @@ using System;
 using System.Windows.Forms;
 using System.Linq;
 
-using SIL.CoreImpl.WritingSystems;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.FwCoreDlgs;
 
 namespace SIL.FieldWorks.LexText.Controls.DataNotebook
@@ -29,7 +29,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 	/// ----------------------------------------------------------------------------------------
 	public partial class ImportCharMappingDlg : Form
 	{
-		FdoCache m_cache;
+		LcmCache m_cache;
 		private IHelpTopicProvider m_helpTopicProvider;
 		private IApp m_app;
 		IVwStylesheet m_stylesheet;
@@ -43,7 +43,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 			AccessibleName = GetType().Name;
 		}
 
-		public void Initialize(FdoCache cache, IHelpTopicProvider helpTopicProvider,
+		public void Initialize(LcmCache cache, IHelpTopicProvider helpTopicProvider,
 			IApp app, IVwStylesheet stylesheet, NotebookImportWiz.CharMapping charMapping)
 		{
 			m_cache = cache;
@@ -120,7 +120,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 		private void m_btnStyles_Click(object sender, EventArgs e)
 		{
 			bool fRTL = m_cache.WritingSystemFactory.get_EngineOrNull(m_cache.DefaultUserWs).RightToLeftScript;
-			using (var dlg = new FwStylesDlg(null, m_cache, m_stylesheet as FwStyleSheet,
+			using (var dlg = new FwStylesDlg(null, m_cache, m_stylesheet as LcmStyleSheet,
 				fRTL,
 				m_cache.ServiceLocator.WritingSystems.AllWritingSystems.Any(ws => ws.RightToLeftScript),
 				m_stylesheet.GetDefaultBasedOnStyleName(),
@@ -139,7 +139,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 					(dlg.ChangeType & StyleChangeType.RenOrDel) > 0))
 				{
 					m_app.Synchronize(SyncMsg.ksyncStyle);
-					FwStyleSheet stylesheet = new FwStyleSheet();
+					LcmStyleSheet stylesheet = new LcmStyleSheet();
 					stylesheet.Init(m_cache, m_cache.LangProject.Hvo, LangProjectTags.kflidStyles);
 					m_stylesheet = stylesheet;
 				}

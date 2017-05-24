@@ -7,14 +7,14 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.Drawing;
-using SIL.CoreImpl.WritingSystems;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.Utils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel.Infrastructure;
+using SIL.LCModel.Utils;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.XWorks;
 using SIL.FieldWorks.IText;
 using XCore;
@@ -32,16 +32,16 @@ namespace SIL.FieldWorks.LexText.Controls
 		private bool m_fRootMade;
 		private int m_labelWidth;
 
-		public TryAWordRootSite(FdoCache cache, Mediator mediator, PropertyTable propertyTable)
+		public TryAWordRootSite(LcmCache cache, Mediator mediator, PropertyTable propertyTable)
 		{
-			m_fdoCache = cache;
+			m_cache = cache;
 			m_mediator = mediator;
 			m_propertyTable = propertyTable;
 			VisibleChanged += OnVisibleChanged;
 			var window = m_propertyTable.GetValue<FwXWindow>("window");
 			if (window != null)
 				m_styleSheet = window.StyleSheet;
-			CoreWritingSystemDefinition wsObj = m_fdoCache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
+			CoreWritingSystemDefinition wsObj = m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
 			RightToLeft = wsObj.RightToLeftScript ? RightToLeft.Yes : RightToLeft.No;
 			AutoScroll = true;
 		}
@@ -100,26 +100,26 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			CheckDisposed();
 
-			if (m_fdoCache == null || DesignMode)
+			if (m_cache == null || DesignMode)
 				return;
 
 			base.MakeRoot();
 
-			m_vc = new InterlinVc(m_fdoCache);
+			m_vc = new InterlinVc(m_cache);
 			// Theory has it that the slices that have 'true' in this attribute will allow the sandbox to be used.
 			// We'll see how the theory goes, when I get to the point of wanting to see the sandbox.
 			m_vc.ShowMorphBundles = true;
 			m_vc.ShowDefaultSense = true;
 
-			m_vc.LineChoices = new EditableInterlinLineChoices(m_fdoCache.LanguageProject, WritingSystemServices.kwsFirstVern,
-				m_fdoCache.DefaultAnalWs);
+			m_vc.LineChoices = new EditableInterlinLineChoices(m_cache.LanguageProject, WritingSystemServices.kwsFirstVern,
+				m_cache.DefaultAnalWs);
 			m_vc.LineChoices.Add(InterlinLineChoices.kflidWord); // 1
 			m_vc.LineChoices.Add(InterlinLineChoices.kflidMorphemes); // 2
 			m_vc.LineChoices.Add(InterlinLineChoices.kflidLexEntries); //3
 			m_vc.LineChoices.Add(InterlinLineChoices.kflidLexGloss); //4
 			m_vc.LineChoices.Add(InterlinLineChoices.kflidLexPos); //5
 
-			m_rootb.DataAccess = m_fdoCache.MainCacheAccessor;
+			m_rootb.DataAccess = m_cache.MainCacheAccessor;
 			FixWs(); // AFTER setting DA!
 
 			if (m_wordform != null)
@@ -215,7 +215,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				//rgvsli[1].ihvo = 0; // first morpheme bundle
 				//rgvsli[1].tag = (int)WfiAnalysis.WfiAnalysisTags.kflidMorphBundles;
 				rgvsli[0].ihvo = 0;
-				rgvsli[0].tag = m_fdoCache.MetaDataCacheAccessor.GetFieldId2(CmObjectTags.kClassId, "Self", false);
+				rgvsli[0].tag = m_cache.MetaDataCacheAccessor.GetFieldId2(CmObjectTags.kClassId, "Self", false);
 				IVwSelection sel = RootBox.MakeTextSelInObj(0, rgvsli.Length, rgvsli, 0, null, true, false, false, false, false);
 				if (sel == null)
 				{
@@ -253,21 +253,21 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (!Visible)
 				return;
 			//Debug.WriteLine("TryAWordRootSite:WordForm - creating sandbox for " + m_sWordForm.Text);
-			NonUndoableUnitOfWorkHelper.Do(m_fdoCache.ActionHandlerAccessor, () =>
+			NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
 			{
-				m_wordform = WfiWordformServices.FindOrCreateWordform(m_fdoCache, m_sWordForm);
+				m_wordform = WfiWordformServices.FindOrCreateWordform(m_cache, m_sWordForm);
 			});
-			//if (m_fdoCache.IsDummyObject(hvo))
+			//if (m_cache.IsDummyObject(hvo))
 			//	m_wordform = new WfiWordform();
 
-			IAnalysis analysis = m_vc.GetGuessForWordform(m_wordform, m_fdoCache.DefaultVernWs);
+			IAnalysis analysis = m_vc.GetGuessForWordform(m_wordform, m_cache.DefaultVernWs);
 			if (analysis is NullWAG)
 				analysis = m_wordform;
 
 			m_rootb.SetRootObject(analysis.Hvo, m_vc, m_kfragSingleInterlinearAnalysisWithLabels, m_styleSheet);
 
 			//Debug.Assert(m_tryAWordSandbox == null);
-			m_tryAWordSandbox = new TryAWordSandbox(m_fdoCache,
+			m_tryAWordSandbox = new TryAWordSandbox(m_cache,
 													Mediator,
 													m_propertyTable,
 													StyleSheet,

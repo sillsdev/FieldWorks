@@ -14,16 +14,16 @@ using System.Windows.Forms;
 using Microsoft.Win32;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Controls;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.Resources;
 using SIL.Reporting;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 using SIL.Windows.Forms;
 using XCore;
 
@@ -80,7 +80,7 @@ namespace SIL.FieldWorks.Common.Framework
 	public interface IRecordChangeHandler : IDisposable
 	{
 		/// <summary>Initialize the object with the record and the list to which it belongs.</summary>
-		void Setup(object record, IRecordListUpdater rlu, FdoCache cache);
+		void Setup(object record, IRecordListUpdater rlu, LcmCache cache);
 		/// <summary>Fix the record for any changes, possibly refreshing the list to which it belongs.</summary>
 		void Fixup(bool fRefreshList);
 
@@ -825,7 +825,7 @@ namespace SIL.FieldWorks.Common.Framework
 		{
 			get
 			{
-				return Path.Combine(FwDirectoryFinder.FdoDirectories.ProjectsDirectory, "Sena 3", "Sena 3" + FdoFileHelper.ksFwDataXmlFileExtension);
+				return Path.Combine(FwDirectoryFinder.ProjectsDirectory, "Sena 3", "Sena 3" + LcmFileHelper.ksFwDataXmlFileExtension);
 			}
 		}
 
@@ -856,7 +856,7 @@ namespace SIL.FieldWorks.Common.Framework
 		/// Gets the cache.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public FdoCache Cache
+		public LcmCache Cache
 		{
 			get { return (m_fwManager != null) ? m_fwManager.Cache : null; }
 		}

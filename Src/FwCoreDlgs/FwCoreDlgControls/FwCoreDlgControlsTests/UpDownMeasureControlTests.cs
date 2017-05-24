@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using System.Text;
 using NUnit.Framework;
 using SIL.FieldWorks.FwCoreDlgControls;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.FwCoreDlgControlsTests

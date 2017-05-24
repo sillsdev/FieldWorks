@@ -10,7 +10,7 @@ using System.Diagnostics;
 
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.FdoUi;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
@@ -31,7 +31,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			TypeAheadSupportVc m_tasvc;
 
-			public AtomicRefTypeAheadVc(int flid, FdoCache cache)
+			public AtomicRefTypeAheadVc(int flid, LcmCache cache)
 			{
 				m_tasvc = new TypeAheadSupportVc(flid, cache);
 			}
@@ -145,13 +145,13 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			{
 				CheckDisposed();
 
-				if (m_fdoCache == null || DesignMode)
+				if (m_cache == null || DesignMode)
 					return;
 
 				base.MakeRoot();
 
-				m_vc = new AtomicRefTypeAheadVc(m_flid, m_fdoCache);
-				m_rootb.DataAccess = m_fdoCache.DomainDataByFlid;
+				m_vc = new AtomicRefTypeAheadVc(m_flid, m_cache);
+				m_rootb.DataAccess = m_cache.DomainDataByFlid;
 
 				// arg3 is a meaningless initial fragment, since this VC only displays one thing.
 				m_rootb.SetRootObject(m_hvoObj, m_vc, 1, m_styleSheet);

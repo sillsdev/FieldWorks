@@ -4,13 +4,12 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using System.Xml;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 using XCore;
 using SIL.Utils;
 
@@ -185,7 +184,7 @@ namespace SIL.FieldWorks.XWorks
 			// for safety require selection to be in a single property.
 			if (hvoA != hvoE || flid != flidE || ws != wsE)
 				return false;
-			var cache = m_propertyTable.GetValue<FdoCache>("cache");
+			var cache = m_propertyTable.GetValue<LcmCache>("cache");
 			obj = cache.ServiceLocator.ObjectRepository.GetObject(hvoA);
 			start = Math.Min(ichA, ichE);
 			length = Math.Max(ichA, ichE) - start;

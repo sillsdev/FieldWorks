@@ -1,20 +1,12 @@
 // Copyright (c) 2005-2013 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: MasterCatDlgListener.cs
-// Responsibility: Randy Regnier
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
-// --------------------------------------------------------------------------------------------
+
 using System.Diagnostics;
 using System.Windows.Forms;
-using SIL.Utils;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.LexText.Controls;
-using XCore;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
 {
@@ -83,7 +75,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 			using (var dlg = new MasterCategoryListDlg())
 			{
-				FdoCache cache = m_propertyTable.GetValue<FdoCache>("cache");
+				LcmCache cache = m_propertyTable.GetValue<LcmCache>("cache");
 				Debug.Assert(cache != null);
 				var owningObj = m_propertyTable.GetValue<ICmObject>("ActiveClerkOwningObject");
 				dlg.SetDlginfo((owningObj is ICmPossibilityList) ? owningObj as ICmPossibilityList : cache.LangProject.PartsOfSpeechOA, m_mediator, m_propertyTable, true, null);

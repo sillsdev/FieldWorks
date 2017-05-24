@@ -16,12 +16,12 @@ using Microsoft.Win32;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.TE;
-using SIL.CoreImpl.Scripture;
-using SIL.CoreImpl.WritingSystems;
+using SIL.LCModel.Core.Scripture;
+using SIL.LCModel.Core.WritingSystems;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -42,7 +42,7 @@ namespace SIL.FieldWorks.Common.Controls
 		public event FilesChangedHandler FilesChanged;
 
 		#region Data members
-		private FdoCache m_cache;
+		private LcmCache m_cache;
 		private IHelpTopicProvider m_helpTopicProvider;
 		private IApp m_app;
 		private ScrImportFileEventHandler m_fileRemovedHandler;
@@ -793,7 +793,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// ------------------------------------------------------------------------------------
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		private FdoCache Cache
+		private LcmCache Cache
 		{
 			set
 			{

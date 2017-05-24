@@ -9,22 +9,22 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
 using System.Diagnostics;
-using SIL.CoreImpl.Cellar;
-using SIL.CoreImpl.SpellChecking;
-using SIL.CoreImpl.Text;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.SpellChecking;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.IText;
 using XCore;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Drawing;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Resources;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel.Application;
+using SIL.LCModel.Infrastructure;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
 {
@@ -33,7 +33,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		private Mediator m_mediator;
 		private PropertyTable m_propertyTable;
 		private bool m_fDisposeMediator;
-		private FdoCache m_cache;
+		private LcmCache m_cache;
 		private XMLViewsDataCache m_specialSda;
 		private IWfiWordform m_srcwfiWordform;
 		private int m_vernWs;
@@ -162,7 +162,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				m_cbCopyAnalyses.Click += m_cbCopyAnalyses_Click;
 				m_cbMaintainCase.Checked = m_propertyTable.GetBoolProperty("MaintainCaseOnChangeSpelling", true);
 				m_cbMaintainCase.Click += m_cbMaintainCase_Click;
-				m_cache = m_propertyTable.GetValue<FdoCache>("cache");
+				m_cache = m_propertyTable.GetValue<LcmCache>("cache");
 
 				// We need to use the 'best vern' ws,
 				// since that is what is showing in the Words-Analyses detail edit control.
@@ -876,7 +876,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		/// </summary>
 		readonly Dictionary<int, ParaChangeInfo> m_changedParas = new Dictionary<int, ParaChangeInfo>();
 		readonly XMLViewsDataCache m_specialSda;
-		readonly FdoCache m_cache;
+		readonly LcmCache m_cache;
 		IEnumerable<int> m_occurrences; // items requiring preview.
 		bool m_fPreserveCase;
 		bool m_fUpdateLexicalEntries;
@@ -926,7 +926,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		/// <summary>
 		/// Used in tests only at present, assumes default vernacular WS.
 		/// </summary>
-		internal RespellUndoAction(XMLViewsDataCache sda, FdoCache cache, string oldSpelling, string newSpelling)
+		internal RespellUndoAction(XMLViewsDataCache sda, LcmCache cache, string oldSpelling, string newSpelling)
 			:this(sda, cache, cache.DefaultVernWs, oldSpelling, newSpelling)
 		{
 		}
@@ -1024,7 +1024,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		/// <summary>
 		/// Normal constructor
 		/// </summary>
-		internal RespellUndoAction(XMLViewsDataCache sda, FdoCache cache, int vernWs,
+		internal RespellUndoAction(XMLViewsDataCache sda, LcmCache cache, int vernWs,
 			string oldSpelling, string newSpelling)
 		{
 			m_specialSda = sda;
@@ -1920,7 +1920,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		Dictionary<int, RespellInfo> m_mapRespell = new Dictionary<int, RespellInfo>();
 
 		public RespellingSda(ISilDataAccessManaged domainDataByFlid, XmlNode configurationNode,
-			IFdoServiceLocator services)
+			ILcmServiceLocator services)
 			: base(domainDataByFlid, configurationNode, services)
 		{
 			SetOverrideMdc(new RespellingMdc(MetaDataCache as IFwMetaDataCacheManaged));
@@ -2137,9 +2137,9 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			}
 		}
 
-		FdoCache Cache { set; get; }
+		LcmCache Cache { set; get; }
 
-		public void SetCache(FdoCache cache)
+		public void SetCache(LcmCache cache)
 		{
 			Cache = cache;
 		}

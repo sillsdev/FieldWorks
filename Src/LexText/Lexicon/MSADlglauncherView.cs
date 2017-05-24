@@ -3,8 +3,8 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Diagnostics;
-using SIL.CoreImpl.KernelInterfaces;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FdoUi;
@@ -24,11 +24,11 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			InitializeComponent();
 		}
 
-		public void Init(FdoCache cache, IMoMorphSynAnalysis msa)
+		public void Init(LcmCache cache, IMoMorphSynAnalysis msa)
 		{
 			Debug.Assert(msa != null);
 			m_msa = msa;
-			m_fdoCache = cache;
+			m_cache = cache;
 			if (m_rootb == null)
 			{
 				MakeRoot();
@@ -39,7 +39,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 					(int)VcFrags.kfragFullMSAInterlinearname, m_rootb.Stylesheet);
 				m_rootb.Reconstruct();
 			}
-			m_fdoCache.DomainDataByFlid.AddNotification(this);
+			m_cache.DomainDataByFlid.AddNotification(this);
 		}
 
 		private IVwViewConstructor Vc
@@ -47,7 +47,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			get
 			{
 				if (m_vc == null)
-					m_vc = new MoMorphSynAnalysisUi.MsaVc(m_fdoCache);
+					m_vc = new MoMorphSynAnalysisUi.MsaVc(m_cache);
 				return m_vc;
 			}
 		}
@@ -67,8 +67,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				{
 					components.Dispose();
 				}
-				if (m_fdoCache != null)
-					m_fdoCache.DomainDataByFlid.RemoveNotification(this);
+				if (m_cache != null)
+					m_cache.DomainDataByFlid.RemoveNotification(this);
 			}
 			m_vc = null;
 			m_msa = null;
@@ -80,12 +80,12 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		public override void MakeRoot()
 		{
-			if (m_fdoCache == null || DesignMode)
+			if (m_cache == null || DesignMode)
 				return;
 
 			base.MakeRoot();
 
-			m_rootb.DataAccess = m_fdoCache.DomainDataByFlid;
+			m_rootb.DataAccess = m_cache.DomainDataByFlid;
 			m_rootb.SetRootObject(m_msa.Hvo, Vc,
 				(int)VcFrags.kfragFullMSAInterlinearname, m_rootb.Stylesheet);
 		}

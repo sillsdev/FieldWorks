@@ -82,9 +82,9 @@
 	  <Name>ViewsInterfaces</Name>
 	  <HintPath>..\..\..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
 	</Reference>
-	<Reference Include="FDO">
-	  <Name>FDO</Name>
-	  <HintPath>..\..\..\..\Output\Debug\FDO.dll</HintPath>
+	<Reference Include="SIL.LCModel">
+	  <Name>SIL.LCModel</Name>
+	  <HintPath>..\..\..\..\Output\Debug\SIL.LCModel.dll</HintPath>
 	</Reference>
 	<Reference Include="nunit.framework">
 	  <Name>nunit.framework</Name>

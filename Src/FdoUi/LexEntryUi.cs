@@ -12,13 +12,13 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.FdoUi.Dialogs;
 using SIL.FieldWorks.LexText.Controls;
 using XCore;
@@ -82,7 +82,7 @@ namespace SIL.FieldWorks.FdoUi
 		/// <param name="ichLim"></param>
 		/// <returns>LexEntry or null.</returns>
 		/// ------------------------------------------------------------------------------------
-		public static LexEntryUi FindEntryForWordform(FdoCache cache, int hvoSrc, int tagSrc,
+		public static LexEntryUi FindEntryForWordform(LcmCache cache, int hvoSrc, int tagSrc,
 			int ichMin, int ichLim)
 		{
 			ITsString tssContext = cache.DomainDataByFlid.get_StringProp(hvoSrc, tagSrc);
@@ -99,7 +99,7 @@ namespace SIL.FieldWorks.FdoUi
 		/// <param name="tssWf"></param>
 		/// <param name="wfa"></param>
 		/// <returns></returns>
-		public static List<ILexEntry> FindEntriesForWordformUI(FdoCache cache, ITsString tssWf, IWfiAnalysis wfa)
+		public static List<ILexEntry> FindEntriesForWordformUI(LcmCache cache, ITsString tssWf, IWfiAnalysis wfa)
 		{
 			bool duplicates = false;
 			List<ILexEntry> retval = cache.ServiceLocator.GetInstance<ILexEntryRepository>().FindEntriesForWordform(cache, tssWf, wfa, ref duplicates);
@@ -121,7 +121,7 @@ namespace SIL.FieldWorks.FdoUi
 		/// <param name="tssWf"></param>
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
-		public static LexEntryUi FindEntryForWordform(FdoCache cache, ITsString tssWf)
+		public static LexEntryUi FindEntryForWordform(LcmCache cache, ITsString tssWf)
 		{
 			ILexEntry matchingEntry = cache.ServiceLocator.GetInstance<ILexEntryRepository>().FindEntryForWordform(cache, tssWf);
 			return matchingEntry == null ? null : new LexEntryUi(matchingEntry);
@@ -143,7 +143,7 @@ namespace SIL.FieldWorks.FdoUi
 		/// <param name="helpProvider"></param>
 		/// <param name="helpFileKey">string key to get the help file name</param>
 		/// ------------------------------------------------------------------------------------
-		public static void DisplayOrCreateEntry(FdoCache cache, int hvoSrc, int tagSrc, int wsSrc,
+		public static void DisplayOrCreateEntry(LcmCache cache, int hvoSrc, int tagSrc, int wsSrc,
 			int ichMin, int ichLim, IWin32Window owner, Mediator mediator, PropertyTable propertyTable,
 			IHelpTopicProvider helpProvider, string helpFileKey)
 		{
@@ -194,7 +194,7 @@ namespace SIL.FieldWorks.FdoUi
 			DisplayEntries(cache, owner, mediator, propertyTable, helpProvider, helpFileKey, tssWf, wfa);
 		}
 
-		internal static void DisplayEntry(FdoCache cache, IWin32Window owner, Mediator mediator, PropertyTable propertyTable,
+		internal static void DisplayEntry(LcmCache cache, IWin32Window owner, Mediator mediator, PropertyTable propertyTable,
 			IHelpTopicProvider helpProvider, string helpFileKey, ITsString tssWfIn)
 		{
 			ITsString tssWf = tssWfIn;
@@ -244,13 +244,13 @@ namespace SIL.FieldWorks.FdoUi
 		}
 
 		// Currently only called from WCF (11/21/2013 - AP)
-		public static void DisplayEntry(FdoCache cache, Mediator mediatorIn, PropertyTable propertyTable,
+		public static void DisplayEntry(LcmCache cache, Mediator mediatorIn, PropertyTable propertyTable,
 			IHelpTopicProvider helpProvider, string helpFileKey, ITsString tssWfIn, IWfiAnalysis wfa)
 		{
 			DisplayEntries(cache, null, mediatorIn, propertyTable, helpProvider, helpFileKey, tssWfIn, wfa);
 		}
 
-		internal static void DisplayEntries(FdoCache cache, IWin32Window owner, Mediator mediator, PropertyTable propertyTable,
+		internal static void DisplayEntries(LcmCache cache, IWin32Window owner, Mediator mediator, PropertyTable propertyTable,
 			IHelpTopicProvider helpProvider, string helpFileKey, ITsString tssWfIn, IWfiAnalysis wfa)
 		{
 			ITsString tssWf = tssWfIn;
@@ -268,7 +268,7 @@ namespace SIL.FieldWorks.FdoUi
 			DisplayEntriesRecursive(cache, owner, mediator, propertyTable, styleSheet, helpProvider, helpFileKey, entries, tssWf);
 			}
 
-		private static void DisplayEntriesRecursive(FdoCache cache, IWin32Window owner,
+		private static void DisplayEntriesRecursive(LcmCache cache, IWin32Window owner,
 			Mediator mediator, PropertyTable propertyTable, IVwStylesheet stylesheet,
 			IHelpTopicProvider helpProvider, string helpFileKey,
 			List<ILexEntry> entries, ITsString tssWf)
@@ -351,17 +351,17 @@ namespace SIL.FieldWorks.FdoUi
 			return pi.GetValue(mainWindow, null) as IVwStylesheet;
 		}
 
-		private static IVwStylesheet GetStyleSheet(FdoCache cache, PropertyTable propertyTable)
+		private static IVwStylesheet GetStyleSheet(LcmCache cache, PropertyTable propertyTable)
 		{
 			IVwStylesheet vss = StyleSheetFromPropertyTable(propertyTable);
 			if (vss != null)
 				return vss;
 			// Get a style sheet for the Language Explorer, and store it in the
 			// (new) mediator.
-			FwStyleSheet styleSheet = new FwStyleSheet();
+			LcmStyleSheet styleSheet = new LcmStyleSheet();
 			styleSheet.Init(cache, cache.LanguageProject.Hvo, LangProjectTags.kflidStyles);
-			propertyTable.SetProperty("FwStyleSheet", styleSheet, true);
-			propertyTable.SetPropertyPersistence("FwStyleSheet", false);
+			propertyTable.SetProperty("LcmStyleSheet", styleSheet, true);
+			propertyTable.SetPropertyPersistence("LcmStyleSheet", false);
 			return styleSheet;
 		}
 
@@ -381,7 +381,7 @@ namespace SIL.FieldWorks.FdoUi
 		}
 
 		// Currently only called from WCF (11/21/2013 - AP)
-		public static void DisplayRelatedEntries(FdoCache cache, Mediator mediatorIn, PropertyTable propertyTable,
+		public static void DisplayRelatedEntries(LcmCache cache, Mediator mediatorIn, PropertyTable propertyTable,
 			IHelpTopicProvider helpProvider, string helpFileKey, ITsString tss)
 		{
 			DisplayRelatedEntries(cache, null, mediatorIn, propertyTable, helpProvider, helpFileKey, tss, true);
@@ -402,7 +402,7 @@ namespace SIL.FieldWorks.FdoUi
 		/// <param name="hideInsertButton"></param>
 		/// ------------------------------------------------------------
 		// Currently only called from WCF (11/21/2013 - AP)
-		public static void DisplayRelatedEntries(FdoCache cache, IWin32Window owner,
+		public static void DisplayRelatedEntries(LcmCache cache, IWin32Window owner,
 			Mediator mediator, PropertyTable propertyTable, IHelpTopicProvider helpProvider, string helpFileKey, ITsString tssWf,
 			bool hideInsertButton)
 		{
@@ -446,7 +446,7 @@ namespace SIL.FieldWorks.FdoUi
 		/// <param name="helpProvider"></param>
 		/// <param name="helpFileKey"></param>
 		/// ------------------------------------------------------------------------------------
-		public static void DisplayRelatedEntries(FdoCache cache, IVwSelection sel, IWin32Window owner,
+		public static void DisplayRelatedEntries(LcmCache cache, IVwSelection sel, IWin32Window owner,
 			Mediator mediator, PropertyTable propertyTable, IHelpTopicProvider helpProvider, string helpFileKey)
 		{
 			if (sel == null)
@@ -511,7 +511,7 @@ namespace SIL.FieldWorks.FdoUi
 		/// <param name="owner">The owner.</param>
 		/// <returns>The HVO of the selected or created entry</returns>
 		/// ------------------------------------------------------------------------------------
-		internal static ILexEntry ShowFindEntryDialog(FdoCache cache, Mediator mediator, PropertyTable propertyTable,
+		internal static ILexEntry ShowFindEntryDialog(LcmCache cache, Mediator mediator, PropertyTable propertyTable,
 			ITsString tssForm, IWin32Window owner)
 		{
 				using (EntryGoDlg entryGoDlg = new EntryGoDlg())
@@ -608,7 +608,7 @@ namespace SIL.FieldWorks.FdoUi
 		/// </summary>
 		/// <param name="cache"></param>
 		/// ------------------------------------------------------------------------------------
-		public LexEntryVc(FdoCache cache)
+		public LexEntryVc(LcmCache cache)
 			: base(cache)
 		{
 			m_ws = cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle;
@@ -792,7 +792,7 @@ namespace SIL.FieldWorks.FdoUi
 		/// <param name="wsVern"></param>
 		/// <param name="ler"></param>
 		/// <returns></returns>
-		static public ITsString GetLexEntryTss(FdoCache cache, int hvoEntryToDisplay, int wsVern, ILexEntryRef ler)
+		static public ITsString GetLexEntryTss(LcmCache cache, int hvoEntryToDisplay, int wsVern, ILexEntryRef ler)
 		{
 			LexEntryVc vcEntry = new LexEntryVc(cache);
 			vcEntry.WritingSystemCode = wsVern;
@@ -812,7 +812,7 @@ namespace SIL.FieldWorks.FdoUi
 		/// <returns></returns>
 		static public ITsString GetLexEntryTss(IWfiMorphBundle morphBundle, int wsVern)
 		{
-			FdoCache cache = morphBundle.Cache;
+			LcmCache cache = morphBundle.Cache;
 			LexEntryVc vcEntry = new LexEntryVc(cache);
 			vcEntry.WritingSystemCode = wsVern;
 			TsStringCollectorEnv collector = new TsStringCollectorEnv(null, cache.MainCacheAccessor, morphBundle.Hvo);

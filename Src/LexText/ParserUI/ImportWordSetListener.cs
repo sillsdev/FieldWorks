@@ -11,8 +11,8 @@ using System;
 using System.Windows.Forms;
 using System.Xml;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
@@ -380,7 +380,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			CheckDisposed();
 
-			var cache = m_propertyTable.GetValue<FdoCache>("cache");
+			var cache = m_propertyTable.GetValue<LcmCache>("cache");
 			if (cache == null)
 				throw new ArgumentException("no cache!");
 

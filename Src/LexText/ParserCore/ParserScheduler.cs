@@ -8,8 +8,8 @@
 
 using System;
 using System.Collections.Generic;
-using SIL.Utils;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel.Utils;
+using SIL.LCModel;
 using SIL.ObjectModel;
 using XCore;
 
@@ -137,7 +137,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		/// Initializes a new instance of the <see cref="ParserScheduler"/> class.
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
-		public ParserScheduler(FdoCache cache, IdleQueue idleQueue, string dataDir)
+		public ParserScheduler(LcmCache cache, IdleQueue idleQueue, string dataDir)
 		{
 			m_parserWorker = new ParserWorker(cache, HandleTaskUpdate, idleQueue, dataDir);
 			m_parserWorker.ParseFiler.WordformUpdated += ParseFiler_WordformUpdated;

@@ -10,9 +10,10 @@ using System.Diagnostics;
 using System.IO;
 using System.Collections.Generic;
 using System.Linq;
-using SIL.FieldWorks.FDO;
-using SIL.Utils;
+using SIL.LCModel;
+using SIL.LCModel.Utils;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.Utils;
 
 namespace XCore
 {
@@ -501,7 +502,7 @@ namespace XCore
 
 		private string UserOverrideConfigurationSettingsPath
 		{
-			get { return FdoFileHelper.GetConfigSettingsDir(m_projectPath); }
+			get { return LcmFileHelper.GetConfigSettingsDir(m_projectPath); }
 		}
 
 		/// <summary>

@@ -7,7 +7,7 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Resources;
 using System.Windows.Forms;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.Drawing;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
@@ -93,7 +93,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		protected const int kDataAccessTab = 2;
 
 		/// <summary></summary>
-		protected FdoCache m_Cache;
+		protected LcmCache m_Cache;
 		private bool m_cacheMadeLocally = false;
 		private Feature[] m_Features;
 		private int m_userLevel;
@@ -134,12 +134,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Creates and initializes a new instance of the FwUserProperties class. Accepts an
-		/// FdoCache that encapsulates a DB connection.
+		/// LcmCache that encapsulates a DB connection.
 		/// </summary>
 		/// <param name="cache">Accessor for data cache and DB connection</param>
 		/// <param name="features">A list of application features available to the user</param>
 		/// ------------------------------------------------------------------------------------
-		public FwUserProperties(FdoCache cache, Feature[] features): this()
+		public FwUserProperties(LcmCache cache, Feature[] features): this()
 		{
 			if (cache == null)
 				throw new Exception("Null Cache passed toFwUserProperties");

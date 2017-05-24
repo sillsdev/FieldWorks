@@ -6,11 +6,10 @@
 
 using NUnit.Framework;
 using System.Linq;
-using SIL.CoreImpl.Scripture;
-using SIL.CoreImpl.KernelInterfaces;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.FDOTests;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel.Core.Scripture;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 
 namespace SIL.FieldWorks.TE
 {
@@ -53,12 +52,12 @@ namespace SIL.FieldWorks.TE
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
 	[Ignore]
-	public class BookPropertiesTests : ScrInMemoryFdoTestBase
+	public class BookPropertiesTests : ScrInMemoryLcmTestBase
 	{
 		#region Member variables
 		/// <summary></summary>
 		private IScrBook m_phm;
-		private FwStyleSheet m_stylesheet;
+		private LcmStyleSheet m_stylesheet;
 		private IScrBookRef m_phmBkRef;
 		#endregion
 
@@ -91,7 +90,7 @@ namespace SIL.FieldWorks.TE
 			IScrSection section = AddSectionToMockedBook(m_phm);
 			AddSectionHeadParaToSection(section, "Section Heading", ScrStyleNames.SectionHead);
 
-			m_stylesheet = new FwStyleSheet();
+			m_stylesheet = new LcmStyleSheet();
 			m_stylesheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles);
 		}
 		#endregion

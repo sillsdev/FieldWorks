@@ -4,11 +4,11 @@
 
 using System;
 using System.Xml;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.Utils;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Framework.DetailControls;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {
@@ -93,7 +93,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				m_flid = FsFeatStrucTags.kflidFeatureSpecs;
 			}
 
-			ctrl.Initialize(m_propertyTable.GetValue<FdoCache>("cache"),
+			ctrl.Initialize(m_propertyTable.GetValue<LcmCache>("cache"),
 				m_fs,
 				m_flid,
 				"Name",

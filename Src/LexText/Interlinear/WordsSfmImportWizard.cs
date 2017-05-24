@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.LexText.Controls;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.IText
 {

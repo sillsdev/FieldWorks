@@ -34,8 +34,8 @@
     <Reference Include="ViewsInterfaces">
       <HintPath>..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
     </Reference>
-    <Reference Include="FDO">
-      <HintPath>..\..\Output\Debug\FDO.dll</HintPath>
+    <Reference Include="SIL.LCModel">
+      <HintPath>..\..\Output\Debug\SIL.LCModel.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation">
       <HintPath>..\..\DistFiles\Microsoft.Practices.ServiceLocation.dll</HintPath>

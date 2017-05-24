@@ -1,28 +1,20 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: SliceFactory.cs
-// Responsibility: WordWorks
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
+
 using System;
 using System.Xml;
 using System.IO;
-using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.FdoUi;
-using SIL.Utils;
 using SIL.FieldWorks.Common.Controls;
 using XCore;
 using SIL.FieldWorks.Common.FwUtils;
-using System.Diagnostics.CodeAnalysis;
-using SIL.CoreImpl.Cellar;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
@@ -34,12 +26,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// If not found, answer 0.
 		/// If found, answer the ID of the appropriate writing system, or throw exception if not valid.
 		/// </summary>
-		private static int GetWs(FdoCache cache, PropertyTable propertyTable, XmlNode node)
+		private static int GetWs(LcmCache cache, PropertyTable propertyTable, XmlNode node)
 		{
 			return GetWs(cache, propertyTable, node, "ws");
 		}
 
-		private static int GetWs(FdoCache cache, PropertyTable propertyTable, XmlNode node, string sAttr)
+		private static int GetWs(LcmCache cache, PropertyTable propertyTable, XmlNode node, string sAttr)
 		{
 			string wsSpec = XmlUtils.GetOptionalAttributeValue(node, sAttr);
 			if (wsSpec != null)
@@ -84,7 +76,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		}
 
 		/// <summary></summary>
-		public static Slice Create(FdoCache cache, string editor, int flid, XmlNode node, ICmObject obj,
+		public static Slice Create(LcmCache cache, string editor, int flid, XmlNode node, ICmObject obj,
 			IPersistenceProvider persistenceProvider, Mediator mediator, PropertyTable propertyTable, XmlNode caller, ObjSeqHashMap reuseMap)
 		{
 			Slice slice;
@@ -391,11 +383,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		/// <summary>
 		/// This is invoked when a generated part ref (<part ref="Custom" param="fieldName"/>)
-		/// invokes the standard slice (<slice editor="autoCustom".../>). It comes up with the
+		/// invokes the standard slice (<slice editor="autoCustom" />). It comes up with the
 		/// appropriate default slice for the custom field indicated in the param attribute of
 		/// the caller.
 		/// </summary>
-		static Slice MakeAutoCustomSlice(FdoCache cache, ICmObject obj, XmlNode caller, XmlNode configurationNode)
+		static Slice MakeAutoCustomSlice(LcmCache cache, ICmObject obj, XmlNode caller, XmlNode configurationNode)
 		{
 			IFwMetaDataCache mdc = cache.DomainDataByFlid.MetaDataCache;
 			int flid = GetCustomFieldFlid(caller, mdc, obj);
@@ -468,7 +460,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// in DetailControls.VectorReferenceVc.Display().
 		/// Addresses LT-15705.
 		/// </summary>
-		internal static void SetConfigurationDisplayPropertyIfNeeded(XmlNode configurationNode, ICmObject cmObject, int cmObjectCustomFieldFlid, ISilDataAccess mainCacheAccessor, IFdoServiceLocator fdoServiceLocator, IFwMetaDataCache metadataCache)
+		internal static void SetConfigurationDisplayPropertyIfNeeded(XmlNode configurationNode, ICmObject cmObject,
+			int cmObjectCustomFieldFlid, ISilDataAccess mainCacheAccessor, ILcmServiceLocator fdoServiceLocator,
+			IFwMetaDataCache metadataCache)
 		{
 			var fieldType = metadataCache.GetFieldType(cmObjectCustomFieldFlid);
 
@@ -488,13 +482,13 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			string propertyNameToGetAndShow = null;
 			switch ((PossNameType)displayOption)
 			{
-				case SIL.FieldWorks.FDO.PossNameType.kpntName:
+				case PossNameType.kpntName:
 					propertyNameToGetAndShow = "ShortNameTSS";
 					break;
-				case SIL.FieldWorks.FDO.PossNameType.kpntNameAndAbbrev:
+				case PossNameType.kpntNameAndAbbrev:
 					propertyNameToGetAndShow = "AbbrAndNameTSS";
 					break;
-				case SIL.FieldWorks.FDO.PossNameType.kpntAbbreviation:
+				case PossNameType.kpntAbbreviation:
 					propertyNameToGetAndShow = "AbbrevHierarchyString";
 					break;
 				default:
@@ -535,7 +529,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <summary>
 		/// For a set of elements in cmObject that are referred to by setFlid, return the first element, or null.
 		/// </summary>
-		private static ICmPossibility FetchFirstElementFromSet(ICmObject cmObject, int setFlid, ISilDataAccess mainCacheAccessor, IFdoServiceLocator fdoServiceLocator)
+		private static ICmPossibility FetchFirstElementFromSet(ICmObject cmObject, int setFlid, ISilDataAccess mainCacheAccessor,
+			ILcmServiceLocator fdoServiceLocator)
 		{
 			var elementCount = mainCacheAccessor.get_VecSize(cmObject.Hvo, setFlid);
 			if (elementCount == 0)

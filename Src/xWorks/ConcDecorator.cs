@@ -7,14 +7,14 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Xml;
-using SIL.CoreImpl.Cellar;
-using SIL.CoreImpl.Text;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.Controls;
-using SIL.CoreImpl.KernelInterfaces;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
+using SIL.LCModel.Application;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using XCore;
 
 namespace SIL.FieldWorks.XWorks
@@ -38,7 +38,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		private Dictionary<int, int[]> m_values = new Dictionary<int, int[]>();
 		Dictionary<int, IParaFragment> m_occurrences = new Dictionary<int, IParaFragment>();
-		private IFdoServiceLocator m_services;
+		private ILcmServiceLocator m_services;
 		// This variable supports kflidConcOccurrences, the root list for the Concordance view (as opposed to the various word list views).
 		// The value is determined by the concordance control and inserted into this class.
 		private int[] m_concValues = new int[0];
@@ -47,7 +47,7 @@ namespace SIL.FieldWorks.XWorks
 		private bool m_fRefreshSuspended;
 
 		public ConcDecorator(ISilDataAccessManaged domainDataByFlid, XmlNode configurationNode,
-			IFdoServiceLocator services)
+			ILcmServiceLocator services)
 			: base(domainDataByFlid)
 		{
 			m_services = services;
@@ -579,7 +579,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 	}
 
-	public class ConcMdc : FdoMetaDataCacheDecoratorBase
+	public class ConcMdc : LcmMetaDataCacheDecoratorBase
 	{
 		public ConcMdc(IFwMetaDataCacheManaged metaDataCache)
 			: base(metaDataCache)

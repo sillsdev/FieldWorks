@@ -4,7 +4,7 @@
 
 using System.Collections.Generic;
 using System.Xml.Serialization;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.PaToFdoInterfaces;
 
 namespace SIL.FieldWorks.PaObjects

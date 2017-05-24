@@ -10,13 +10,13 @@ using System.IO;
 using System.Diagnostics;
 using System.Xml;
 
-using SIL.CoreImpl.Scripture;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.WritingSystems;
+using SIL.LCModel.Core.Scripture;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.Framework;
-using SIL.CoreImpl.KernelInterfaces;
-using SIL.FieldWorks.FDO;
-using SIL.Utils;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.TE
 {
@@ -33,7 +33,7 @@ namespace SIL.FieldWorks.TE
 		#endregion
 
 		#region Member variables
-		private readonly FdoCache m_cache;
+		private readonly LcmCache m_cache;
 		#endregion
 
 		#region Constructors
@@ -42,7 +42,7 @@ namespace SIL.FieldWorks.TE
 		/// Initializes a new instance of the <see cref="TeScrBookRefsInit"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		protected TeScrBookRefsInit(FdoCache cache)
+		protected TeScrBookRefsInit(LcmCache cache)
 		{
 			m_cache = cache;
 		}
@@ -71,7 +71,7 @@ namespace SIL.FieldWorks.TE
 		/// <param name="cache">The cache</param>
 		/// <param name="existingProgressDlg">The existing progress dialog, if any.</param>
 		/// ------------------------------------------------------------------------------------
-		public static void EnsureFactoryScrBookRefs(FdoCache cache, IThreadedProgress existingProgressDlg)
+		public static void EnsureFactoryScrBookRefs(LcmCache cache, IThreadedProgress existingProgressDlg)
 		{
 			TeScrBookRefsInit scrRefInit = new TeScrBookRefsInit(cache);
 			scrRefInit.EnsureCurrentResource(existingProgressDlg);
@@ -84,7 +84,7 @@ namespace SIL.FieldWorks.TE
 		/// <param name="progressDlg">Progress dialog so the user can cancel</param>
 		/// <param name="cache">The cache</param>
 		/// -------------------------------------------------------------------------------------
-		internal static void SetNamesAndAbbreviations(IProgress progressDlg, FdoCache cache)
+		internal static void SetNamesAndAbbreviations(IProgress progressDlg, LcmCache cache)
 		{
 			TeScrBookRefsInit scrRefInit = new TeScrBookRefsInit(cache);
 			scrRefInit.SetNamesAndAbbreviations(progressDlg, scrRefInit.LoadDoc());
@@ -218,17 +218,17 @@ namespace SIL.FieldWorks.TE
 		/// Gets the resource list in which the CmResources are owned.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		protected override IFdoOwningCollection<ICmResource> ResourceList
+		protected override ILcmOwningCollection<ICmResource> ResourceList
 		{
 			get { return m_cache.LangProject.TranslatedScriptureOA.ResourcesOC; }
 		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets the FdoCache
+		/// Gets the LcmCache
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		protected override FdoCache Cache
+		protected override LcmCache Cache
 		{
 			get { return m_cache; }
 		}

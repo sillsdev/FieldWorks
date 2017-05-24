@@ -7,8 +7,7 @@ using System.Collections;
 using System.Windows.Forms;
 using System.Xml;
 using NUnit.Framework;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.FDOTests;
+using SIL.LCModel;
 using XCore;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
@@ -81,7 +80,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		}
 
 		/// <summary>Helper</summary>
-		private static Slice GenerateSlice(FdoCache cache, DataTree datatree)
+		private static Slice GenerateSlice(LcmCache cache, DataTree datatree)
 		{
 			var slice = new Slice();
 			var parts = DataTreeTests.GenerateParts();

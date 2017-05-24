@@ -6,7 +6,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Xml.Linq;
 using System.Xml.Xsl;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
@@ -27,7 +27,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		public string CreateResultPage(PropertyTable propertyTable, XDocument result, bool isTrace)
 		{
 			var args = new XsltArgumentList();
-			args.AddParam("prmHCTraceLoadErrorFile", "", Path.Combine(Path.GetTempPath(), propertyTable.GetValue<FdoCache>("cache").ProjectId.Name + "HCLoadErrors.xml"));
+			args.AddParam("prmHCTraceLoadErrorFile", "", Path.Combine(Path.GetTempPath(), propertyTable.GetValue<LcmCache>("cache").ProjectId.Name + "HCLoadErrors.xml"));
 			args.AddParam("prmShowTrace", "", isTrace.ToString().ToLowerInvariant());
 			return TraceTransform.Transform(propertyTable, result, isTrace ? "HCTrace" : "HCParse", args);
 		}

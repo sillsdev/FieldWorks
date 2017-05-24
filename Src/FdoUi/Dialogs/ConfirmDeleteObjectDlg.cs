@@ -5,11 +5,11 @@
 using System;
 using System.Diagnostics;
 using System.Windows.Forms;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using XCore;
 
 namespace SIL.FieldWorks.FdoUi.Dialogs
@@ -26,7 +26,7 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 		private Button m_cancelButton;
 		private readonly FwTextBox m_descriptionBox3;
 		private readonly FwTextBox m_descriptionBox4;
-		protected FdoCache m_cache;
+		protected LcmCache m_cache;
 		private Panel panel1;
 		private Panel panel2;
 		private Button buttonHelp;
@@ -129,7 +129,7 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 			base.Dispose( disposing );
 		}
 
-		public void SetDlgInfo(CmObjectUi obj, FdoCache cache, Mediator mediator, PropertyTable propertyTable)
+		public void SetDlgInfo(CmObjectUi obj, LcmCache cache, Mediator mediator, PropertyTable propertyTable)
 		{
 			CheckDisposed();
 
@@ -140,7 +140,7 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 		}
 
 
-		public void SetDlgInfo(CmObjectUi obj, FdoCache cache, Mediator mediator, PropertyTable propertyTable, ITsString tssNote)
+		public void SetDlgInfo(CmObjectUi obj, LcmCache cache, Mediator mediator, PropertyTable propertyTable, ITsString tssNote)
 		{
 
 			CheckDisposed();

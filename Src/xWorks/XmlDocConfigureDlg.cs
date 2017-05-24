@@ -20,17 +20,18 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Xml;
-using SIL.CoreImpl.Cellar;
-using SIL.CoreImpl.WritingSystems;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.FwCoreDlgControls;
 using SIL.FieldWorks.FwCoreDlgs;
+using SIL.LCModel.Infrastructure;
 using SIL.Utils;
 using SIL.Windows.Forms;
 using XCore;
@@ -54,9 +55,9 @@ namespace SIL.FieldWorks.XWorks
 		XmlNode m_configurationParameters;
 		string m_defaultRootLayoutName;
 		const string sdefaultStemBasedLayout = "publishStem";
-		FdoCache m_cache;
+		LcmCache m_cache;
 		IFwMetaDataCache m_mdc;
-		FwStyleSheet m_styleSheet;
+		LcmStyleSheet m_styleSheet;
 		IMainWindowDelegateCallbacks m_callbacks;
 		Mediator m_mediator;
 		private XCore.PropertyTable m_propertyTable;
@@ -236,8 +237,8 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Initialize the dialog after creating it.
 		/// </summary>
-		public void SetConfigDlgInfo(XmlNode configurationParameters, FdoCache cache,
-			FwStyleSheet styleSheet, IMainWindowDelegateCallbacks mainWindowDelegateCallbacks,
+		public void SetConfigDlgInfo(XmlNode configurationParameters, LcmCache cache,
+			LcmStyleSheet styleSheet, IMainWindowDelegateCallbacks mainWindowDelegateCallbacks,
 			Mediator mediator, XCore.PropertyTable propertyTable, string sLayoutPropertyName)
 		{
 			CheckDisposed();
@@ -992,7 +993,7 @@ namespace SIL.FieldWorks.XWorks
 				// Failure should be fairly unusual, but, for example, part MoForm-Jt-FormEnvPub attempts to display
 				// the property PhoneEnv inside an if that checks that the MoForm is one of the subclasses that has
 				// the PhoneEnv property. MoForm itself does not.
-				var mdc = (FDO.Infrastructure.IFwMetaDataCacheManaged)m_cache.DomainDataByFlid.MetaDataCache;
+				var mdc = (IFwMetaDataCacheManaged)m_cache.DomainDataByFlid.MetaDataCache;
 				if (!mdc.FieldExists(className, sField, true))
 					return;
 				var flid = m_cache.DomainDataByFlid.MetaDataCache.GetFieldId(className, sField, true);
@@ -4546,7 +4547,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private void DeleteUnwantedConfigurations(IEnumerable<string> viewsToDelete)
 		{
-			var configDir = FdoFileHelper.GetConfigSettingsDir(m_cache.ProjectId.ProjectFolder);
+			var configDir = LcmFileHelper.GetConfigSettingsDir(m_cache.ProjectId.ProjectFolder);
 			// Load in existing combobox LayoutTypeComboItems
 			var layoutMap = LoadLayoutMapFromComboBox();
 
@@ -4597,7 +4598,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private void RenameConfigurations(IEnumerable<Tuple<string, string>> viewsToRename)
 		{
-			var configDir = FdoFileHelper.GetConfigSettingsDir(m_cache.ProjectId.ProjectFolder);
+			var configDir = LcmFileHelper.GetConfigSettingsDir(m_cache.ProjectId.ProjectFolder);
 			// Load in existing combobox LayoutTypeComboItems
 			var layoutMap = LoadLayoutMapFromComboBox();
 
@@ -4692,7 +4693,7 @@ namespace SIL.FieldWorks.XWorks
 			return m_layouts.GetLayoutTypes();
 		}
 
-		public FdoCache Cache { get { return m_cache; } }
+		public LcmCache Cache { get { return m_cache; } }
 
 		public StringTable StringTable { get { return StringTable.Table; } }
 

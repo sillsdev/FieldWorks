@@ -4,27 +4,26 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Xml;
-using SIL.FieldWorks.FDO.Application;
+using SIL.LCModel.Application;
 using SIL.FieldWorks.FwCoreDlgs;
 using XCore;
-using SIL.Utils;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.Common.FwUtils;
 using System.Drawing.Printing;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.FwCoreDlgControls;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -666,7 +665,7 @@ namespace SIL.FieldWorks.XWorks
 		/// Return an item of the specified class that is indicated by a click at the specified position,
 		/// but only if it is part of a different object also of that class.
 		/// </summary>
-		internal static ICmObject SubitemClicked(Point where, int clsid, SimpleRootSite view, FdoCache cache, ISortItemProvider sortItemProvider,
+		internal static ICmObject SubitemClicked(Point where, int clsid, SimpleRootSite view, LcmCache cache, ISortItemProvider sortItemProvider,
 			IPreferedTargetAdjuster adjuster)
 		{
 			var sel = view.GetSelectionAtPoint(where, false);
@@ -1127,12 +1126,12 @@ namespace SIL.FieldWorks.XWorks
 
 		protected override void SetupStylesheet()
 		{
-			FwStyleSheet ss = StyleSheet;
+			LcmStyleSheet ss = StyleSheet;
 			if (ss != null)
 				m_mainView.StyleSheet = ss;
 		}
 
-		private FwStyleSheet StyleSheet
+		private LcmStyleSheet StyleSheet
 		{
 			get
 			{

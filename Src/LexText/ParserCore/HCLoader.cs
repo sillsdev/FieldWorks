@@ -11,9 +11,9 @@ using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using SIL.Collections;
-using SIL.CoreImpl.Phonology;
-using SIL.CoreImpl.WritingSystems;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel.Core.Phonology;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel;
 using SIL.HermitCrab;
 using SIL.HermitCrab.MorphologicalRules;
 using SIL.HermitCrab.PhonologicalRules;
@@ -25,7 +25,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 {
 	public class HCLoader
 	{
-		public static Language Load(SpanFactory<ShapeNode> spanFactory, FdoCache cache, IHCLoadErrorLogger logger)
+		public static Language Load(SpanFactory<ShapeNode> spanFactory, LcmCache cache, IHCLoadErrorLogger logger)
 		{
 			var loader = new HCLoader(spanFactory, cache, logger);
 			loader.LoadLanguage();
@@ -39,7 +39,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		};
 
 		private readonly SpanFactory<ShapeNode> m_spanFactory;
-		private readonly FdoCache m_cache;
+		private readonly LcmCache m_cache;
 		private readonly Dictionary<IMoForm, List<Allomorph>> m_allomorphs;
 		private readonly Dictionary<IMoMorphSynAnalysis, List<Morpheme>> m_morphemes;
 		private readonly Dictionary<IMoStemName, StemName> m_stemNames;
@@ -66,7 +66,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		private CharacterDefinition m_null;
 		private CharacterDefinition m_morphBdry;
 
-		private HCLoader(SpanFactory<ShapeNode> spanFactory, FdoCache cache, IHCLoadErrorLogger logger)
+		private HCLoader(SpanFactory<ShapeNode> spanFactory, LcmCache cache, IHCLoadErrorLogger logger)
 		{
 			m_spanFactory = spanFactory;
 			m_cache = cache;

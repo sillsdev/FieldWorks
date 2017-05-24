@@ -89,9 +89,9 @@
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\Output\Release\ViewsInterfaces.dll</HintPath>
 	</Reference>
-	<Reference Include="FDO, Version=6.1.0.29136, Culture=neutral, processorArchitecture=MSIL">
+	<Reference Include="SIL.LCModel, Version=9.0.0.0, Culture=neutral, processorArchitecture=x86">
 	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\Output\Release\FDO.dll</HintPath>
+	  <HintPath>..\..\Output\Release\SIL.LCModel.dll</HintPath>
 	</Reference>
 	<Reference Include="Framework, Version=6.1.0.29221, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>

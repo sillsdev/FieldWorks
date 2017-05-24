@@ -2,10 +2,10 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Framework.DetailControls;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {
@@ -22,7 +22,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		{
 			CheckDisposed();
 
-			m_atomicReferenceVc = new LexReferenceTreeRootVc(m_fdoCache,
+			m_atomicReferenceVc = new LexReferenceTreeRootVc(m_cache,
 					m_rootObj.Hvo, m_rootFlid, m_displayNameProperty);
 		}
 	}
@@ -34,7 +34,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 	{
 		protected int m_hvoOwner;
 
-		public LexReferenceTreeRootVc(FdoCache cache, int hvo, int flid, string displayNameProperty)
+		public LexReferenceTreeRootVc(LcmCache cache, int hvo, int flid, string displayNameProperty)
 			: base (cache, flid, displayNameProperty)
 		{
 			m_hvoOwner = hvo;

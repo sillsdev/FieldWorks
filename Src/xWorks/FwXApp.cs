@@ -11,9 +11,9 @@ using System.Diagnostics;
 using Microsoft.Win32;
 using System.Collections.Generic;
 using System.IO;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.Framework;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 using SIL.FieldWorks.Common.FwUtils;
 using XCore;
 

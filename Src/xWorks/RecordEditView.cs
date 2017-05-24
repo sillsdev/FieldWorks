@@ -9,14 +9,14 @@ using System.Drawing.Printing;
 using System.Windows.Forms;
 using System.Xml;
 using SIL.FieldWorks.Common.Framework.DetailControls;
-using SIL.FieldWorks.FDO;
-using SIL.Utils;
+using SIL.LCModel;
 using XCore;
 using System.Collections.Generic;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.XWorks
 {

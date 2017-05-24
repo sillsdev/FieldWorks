@@ -4,10 +4,10 @@
 
 using System.Text;
 using NUnit.Framework;
-using SIL.CoreImpl.WritingSystems;
-using SIL.FieldWorks.FDO.FDOTests;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.XWorks.Archiving;
 using SIL.Keyboarding;
+using SIL.LCModel;
 
 namespace SIL.FieldWorks.XWorks
 {

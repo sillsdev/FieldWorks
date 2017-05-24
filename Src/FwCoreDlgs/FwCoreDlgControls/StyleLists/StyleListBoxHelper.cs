@@ -14,7 +14,7 @@ using System.Collections;
 using System.Drawing;
 
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel.DomainServices;
 
 namespace SIL.FieldWorks.FwCoreDlgControls
 {

@@ -151,7 +151,7 @@
   </Target>
   -->
   <ItemGroup>
-    <Reference Include="SilUtils, Version=6.9.5.21586, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="SIL.LCModel.Utils, Version=9.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="System" />
@@ -163,8 +163,8 @@
     <Reference Include="ViewsInterfaces">
       <HintPath>..\..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
     </Reference>
-    <Reference Include="CoreImpl">
-      <HintPath>..\..\..\Output\Debug\CoreImpl.dll</HintPath>
+    <Reference Include="SIL.LCModel.Core">
+      <HintPath>..\..\..\Output\Debug\SIL.LCModel.Core.dll</HintPath>
     </Reference>
     <Reference Include="RootSite">
       <HintPath>..\..\..\Output\Debug\RootSite.dll</HintPath>

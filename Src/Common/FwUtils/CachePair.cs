@@ -5,22 +5,22 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
 	/// <summary>
-	/// CachePair maintains a relationship between two caches, a regular FdoCache storing real data,
+	/// CachePair maintains a relationship between two caches, a regular LcmCache storing real data,
 	/// and an ISilDataAccess, typically a VwCacheDaClass, that stores temporary data for a
 	/// secondary view. As well as storing both cache objects, it stores two maps which maintain a
 	/// bidirectional link between HVOs in one and those in the other.
 	/// </summary>
 	public class CachePair : IDisposable
 	{
-		private FdoCache m_fdoCache;
+		private LcmCache m_cache;
 		private ISilDataAccess m_sda;
 		private Dictionary<int, int> m_FdoToSda;
 		private Dictionary<int, int> m_SdaToFdo;
@@ -121,7 +121,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			// Dispose unmanaged resources here, whether disposing is true or false.
 			Marshal.ReleaseComObject(m_sda);
 			m_sda = null;
-			m_fdoCache = null;
+			m_cache = null;
 			m_FdoToSda = null;
 			m_SdaToFdo = null;
 			m_coRepository = null;
@@ -144,24 +144,24 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary>
 		///
 		/// </summary>
-		public FdoCache MainCache
+		public LcmCache MainCache
 		{
 			get
 			{
 				CheckDisposed();
-				return m_fdoCache;
+				return m_cache;
 			}
 			set
 			{
 				CheckDisposed();
-				if (m_fdoCache == value)
+				if (m_cache == value)
 					return;
 
-				m_fdoCache = value;
+				m_cache = value;
 				// Forget any existing relationships.
 				m_FdoToSda = new Dictionary<int, int>();
 				m_SdaToFdo = new Dictionary<int, int>();
-				m_coRepository = m_fdoCache.ServiceLocator.GetInstance<ICmObjectRepository>();
+				m_coRepository = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>();
 			}
 		}
 
@@ -198,11 +198,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 			var cda = VwCacheDaClass.Create();
 			cda.TsStrFactory = TsStringUtils.TsStrFactory;
 			DataAccess = cda;
-			DataAccess.WritingSystemFactory = m_fdoCache.WritingSystemFactory;
+			DataAccess.WritingSystemFactory = m_cache.WritingSystemFactory;
 		}
 
 		/// <summary>
-		/// Map from secondary hvo (in the SilDataAccess) to real hvo (in the FdoCache).
+		/// Map from secondary hvo (in the SilDataAccess) to real hvo (in the LcmCache).
 		/// </summary>
 		/// <param name="secHvo"></param>
 		/// <returns></returns>
@@ -269,7 +269,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		}
 
 		/// <summary>
-		/// Map from real hvo (in the FdoCache) to secondary (in the SilDataAccess).
+		/// Map from real hvo (in the LcmCache) to secondary (in the SilDataAccess).
 		/// </summary>
 		/// <param name="realHvo"></param>
 		/// <returns></returns>
@@ -360,7 +360,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			CheckDisposed();
 			return FindOrCreateSec(hvoReal, clid, hvoOwner, flidOwn, name,
 				flidName,
-				m_fdoCache.DefaultAnalWs);
+				m_cache.DefaultAnalWs);
 		}
 
 		/// <summary>
@@ -378,7 +378,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			CheckDisposed();
 			return FindOrCreateSec(hvoReal, clid, hvoOwner, flidOwn, name,
 				flidName,
-				m_fdoCache.DefaultVernWs);
+				m_cache.DefaultVernWs);
 		}
 	}
 }

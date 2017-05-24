@@ -8,11 +8,11 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 using Paratext;
-using SIL.CoreImpl.Scripture;
-using SIL.CoreImpl.Text;
+using SIL.LCModel.Core.Scripture;
+using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.ScriptureUtils;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.Language;
 using SIL.FieldWorks.Resources;
 
@@ -44,7 +44,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="bookImporter">The delegate/class that knows how to import a
 		/// (Paratext) book on demand.</param>
 		/// ------------------------------------------------------------------------------------
-		private void LoadTextsAndBooks(FdoCache cache, IBookImporter bookImporter)
+		private void LoadTextsAndBooks(LcmCache cache, IBookImporter bookImporter)
 		{
 			Nodes.Clear();
 			LoadGeneralTexts(cache);
@@ -58,7 +58,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// Loads the non-Scripture texts.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public void LoadGeneralTexts(FdoCache cache)
+		public void LoadGeneralTexts(LcmCache cache)
 		{
 			TreeNode tnTexts = LoadTextsByGenreAndWithoutGenre(cache);
 			if (tnTexts != null && tnTexts.Nodes.Count > 0)
@@ -75,7 +75,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// Loads the texts for each Scripture book title, section, footnote, etc.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public void LoadScriptureTexts(FdoCache cache, IBookImporter bookImporter)
+		public void LoadScriptureTexts(LcmCache cache, IBookImporter bookImporter)
 		{
 			m_bookImporter = bookImporter;
 			m_associatedPtText = bookImporter != null ? ParatextHelper.GetAssociatedProject(cache.ProjectId) : null;
@@ -131,7 +131,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="cache">The cache.</param>
 		/// <returns>A control tree of the Texts in the project</returns>
 		/// ------------------------------------------------------------------------------------
-		public TreeNode LoadTextsByGenreAndWithoutGenre(FdoCache cache)
+		public TreeNode LoadTextsByGenreAndWithoutGenre(LcmCache cache)
 		{
 			if (cache.LanguageProject.GenreListOA == null) return null;
 			var genreList = cache.LanguageProject.GenreListOA.PossibilitiesOS;
@@ -196,7 +196,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="parent">The parent to attach the genres to. If null, nothing is done.</param>
 		/// <param name="genreList">The owning sequence of genres - its a tree.</param>
 		/// <param name="allTexts">The flat list of all texts in the project.</param>
-		private void LoadTextsFromGenres(TreeNode parent, IFdoOwningSequence<ICmPossibility> genreList, IEnumerable<IText> allTexts)
+		private void LoadTextsFromGenres(TreeNode parent, ILcmOwningSequence<ICmPossibility> genreList, IEnumerable<IText> allTexts)
 		{
 			if (parent == null) return;
 			var sortedGenreList = new List<ICmPossibility>();
@@ -390,7 +390,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="paratextBookImporter">The delegate/class that knows how to import a
 		/// Paratext book on demand.</param>
 		/// ------------------------------------------------------------------------------------
-		public void LoadScriptureAndOtherTexts(FdoCache cache, IBookImporter paratextBookImporter)
+		public void LoadScriptureAndOtherTexts(LcmCache cache, IBookImporter paratextBookImporter)
 		{
 			// first load the book ids.
 			LoadTextsAndBooks(cache, paratextBookImporter);

@@ -7,9 +7,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using SIL.Linq;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel.Infrastructure;
 using XCore;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.Common.FwUtils;
@@ -53,7 +53,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			Debug.Assert(slice != null, "No slice was current");
 			if (slice != null)
 			{
-				FdoCache cache = m_dataEntryForm.Cache;
+				LcmCache cache = m_dataEntryForm.Cache;
 				IReversalIndexEntry entry = slice.Object as IReversalIndexEntry;
 				ICmObject newOwner = entry.Owner.Owner;
 				UndoableUnitOfWorkHelper.Do(((Command)cmd).UndoText, ((Command)cmd).RedoText, newOwner,
@@ -120,7 +120,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 					dlg.FilteredReversalEntryHvos.Add(owningEntry.Hvo);
 				dlg.SetHelpTopic("khtpMoveReversalEntry");
 				var wp = new WindowParams {m_btnText = LexEdStrings.ks_MoveEntry, m_title = LexEdStrings.ksMoveRevEntry};
-				var cache = m_propertyTable.GetValue<FdoCache>("cache");
+				var cache = m_propertyTable.GetValue<LcmCache>("cache");
 				dlg.SetDlgInfo(cache, wp, m_mediator, m_propertyTable);
 				if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
 				{

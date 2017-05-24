@@ -5,7 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 
 namespace SIL.FieldWorks.TE
 {

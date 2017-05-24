@@ -5,17 +5,19 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Text;
 using System.Diagnostics;
 using System.Linq;
-using SIL.CoreImpl.Scripture;
-using SIL.FieldWorks.Common.ScriptureUtils;
+using System.Text;
 using ECInterfaces;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.WritingSystems;
-using SIL.Utils;
+using SIL.FieldWorks.Common.ScriptureUtils;
+using SIL.LCModel;
+using SIL.LCModel.Core.Scripture;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Utils;
 
-namespace SIL.FieldWorks.FDO.DomainServices
+namespace SIL.FieldWorks.TE
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
@@ -207,7 +209,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// Gets a cache from somewhere
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private FdoCache Cache
+		private LcmCache Cache
 		{
 			get { return m_settings.Cache; }
 		}

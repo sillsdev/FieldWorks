@@ -9,20 +9,20 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.WritingSystems;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Drawing;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.Resources;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 using SIL.Windows.Forms;
 using XCore;
 
@@ -76,7 +76,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary>The rootsite where the find operation will be performed</summary>
 		protected IVwRootSite m_vwRootsite;
 		/// <summary></summary>
-		protected FdoCache m_cache;
+		protected LcmCache m_cache;
 		private IApp m_app;
 		private bool m_cacheMadeLocally = false;
 		/// <summary></summary>
@@ -224,7 +224,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// shown at this time.
 		/// </returns>
 		/// ------------------------------------------------------------------------------------
-		public bool SetDialogValues(FdoCache cache, IVwPattern vwPattern, IVwRootSite rootSite,
+		public bool SetDialogValues(LcmCache cache, IVwPattern vwPattern, IVwRootSite rootSite,
 			bool fReplace, bool fOverlays, Form owner, IHelpTopicProvider helpTopicProvider, IApp app)
 		{
 			return SetDialogValues(cache, vwPattern, rootSite, fReplace, fOverlays,
@@ -256,7 +256,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <remarks>ENHANCE JohnT: it may need more arguments, for example, the name of the
 		/// kind of object we can restrict the search to, a list of fields.</remarks>
 		/// ------------------------------------------------------------------------------------
-		public bool SetDialogValues(FdoCache cache, IVwPattern vwPattern, IVwRootSite rootSite,
+		public bool SetDialogValues(LcmCache cache, IVwPattern vwPattern, IVwRootSite rootSite,
 			bool fReplace, bool fOverlays, Form owner, IHelpTopicProvider helpTopicProvider,
 			IApp app, int wsEdit)
 		{
@@ -426,7 +426,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// shown at this time.
 		/// </returns>
 		/// ------------------------------------------------------------------------------------
-		public bool SetDialogValues(FdoCache cache, IVwPattern vwPattern,
+		public bool SetDialogValues(LcmCache cache, IVwPattern vwPattern,
 			IVwStylesheet stylesheet, Form owner, IHelpTopicProvider helpTopicProvider, IApp app)
 		{
 			return SetDialogValues(cache, vwPattern, stylesheet, owner, helpTopicProvider, app,
@@ -457,7 +457,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <remarks>ENHANCE JohnT: it may need more arguments, for example, the name of the
 		/// kind of object we can restrict the search to, a list of fields.</remarks>
 		/// ------------------------------------------------------------------------------------
-		public bool SetDialogValues(FdoCache cache, IVwPattern vwPattern,
+		public bool SetDialogValues(LcmCache cache, IVwPattern vwPattern,
 			IVwStylesheet stylesheet, Form owner, IHelpTopicProvider helpTopicProvider,
 			IApp app, int wsEdit)
 		{
@@ -1877,7 +1877,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				{
 					try
 					{
-						var newSite = SIL.Utils.ReflectionHelper.GetProperty(Owner, "ActiveView") as IVwRootSite;
+						var newSite = LCModel.Utils.ReflectionHelper.GetProperty(Owner, "ActiveView") as IVwRootSite;
 						if (newSite != null)
 							m_vwRootsite = newSite;
 					}
@@ -2336,7 +2336,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 						string sStyleName = ttpReplaceRun.GetStrPropValue(
 							(int)FwTextPropType.ktptNamedStyle);
 
-						if (sStyleName == FwStyleSheet.kstrDefaultCharStyle)
+						if (sStyleName == LcmStyleSheet.kstrDefaultCharStyle)
 							propsBldr.SetStrPropValue((int)FwTextPropType.ktptNamedStyle,
 								null);
 						else
@@ -2462,7 +2462,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			mnuStyle.MenuItems.Add(mnuItem);
 
 			mnuItem = new MenuItem(StyleUtils.DefaultParaCharsStyleName, clickEvent);
-			mnuItem.Checked = (sSelectedStyle == FwStyleSheet.kstrDefaultCharStyle);
+			mnuItem.Checked = (sSelectedStyle == LcmStyleSheet.kstrDefaultCharStyle);
 			mnuStyle.MenuItems.Add(mnuItem);
 
 			int count = 0;
@@ -2513,7 +2513,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			if (sStyle.ToLowerInvariant() == FwCoreDlgs.kstidNoStyle.ToLowerInvariant())
 				sStyle = null;
 			else if (sStyle.ToLowerInvariant() == StyleUtils.DefaultParaCharsStyleName.ToLowerInvariant())
-				sStyle = FwStyleSheet.kstrDefaultCharStyle;
+				sStyle = LcmStyleSheet.kstrDefaultCharStyle;
 			fwTextBox.ApplyStyle(sStyle);
 			SetFormatLabels();
 
@@ -2602,7 +2602,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 			if (prevStyleName == null)
 				prevStyleName = string.Empty;
-			else if (prevStyleName == FwStyleSheet.kstrDefaultCharStyle)
+			else if (prevStyleName == LcmStyleSheet.kstrDefaultCharStyle)
 				prevStyleName = StyleUtils.DefaultParaCharsStyleName;
 
 			Debug.Assert(prevWs > 0, "We should always have a writing system");

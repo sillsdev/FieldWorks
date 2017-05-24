@@ -1,30 +1,23 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: InflAffixTemplateControl.cs
-// Responsibility: Andy Black
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
-using SIL.CoreImpl.Text;
+using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework.DetailControls;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 using SIL.Utils;
 using XCore;
 
@@ -54,7 +47,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 		protected event InflAffixTemplateEventHandler ShowContextMenu;
 
-		public InflAffixTemplateControl(FdoCache cache, int hvoRoot, XmlNode xnSpec)
+		public InflAffixTemplateControl(LcmCache cache, int hvoRoot, XmlNode xnSpec)
 			: base(hvoRoot, XmlUtils.GetAttributeValue(xnSpec, "layout"), true)
 		{
 			m_xnSpec = xnSpec["deParams"];
@@ -255,7 +248,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 		private void HandleMove(Command cmd, bool bLeft)
 		{
-			IFdoReferenceSequence<IMoInflAffixSlot> seq;
+			ILcmReferenceSequence<IMoInflAffixSlot> seq;
 			int index;
 			var slot = m_obj as IMoInflAffixSlot;
 			GetAffixSequenceContainingSlot(slot, out seq, out index);
@@ -299,10 +292,10 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		{
 			CheckDisposed();
 
-			IFdoReferenceSequence<IMoInflAffixSlot> seq;
+			ILcmReferenceSequence<IMoInflAffixSlot> seq;
 			int index;
 			GetAffixSequenceContainingSlot(m_obj as IMoInflAffixSlot, out seq, out index);
-			using (UndoableUnitOfWorkHelper helper = new UndoableUnitOfWorkHelper(m_fdoCache.ActionHandlerAccessor,
+			using (UndoableUnitOfWorkHelper helper = new UndoableUnitOfWorkHelper(m_cache.ActionHandlerAccessor,
 				String.Format(MEStrings.ksUndoRemovingSlot, seq[index].Name.BestAnalysisVernacularAlternative.Text),
 				String.Format(MEStrings.ksRedoRemovingSlot, seq[index].Name.BestAnalysisVernacularAlternative.Text)))
 			{
@@ -669,7 +662,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 		private void HandleInsertAroundSlot(bool fBefore, IMoInflAffixSlot chosenSlot, out int flid, out int ihvo)
 		{
-			IFdoReferenceSequence<IMoInflAffixSlot> seq;
+			ILcmReferenceSequence<IMoInflAffixSlot> seq;
 			int index;
 			flid = GetAffixSequenceContainingSlot(m_obj as IMoInflAffixSlot, out seq, out index);
 			int iOffset = (fBefore) ? 0 : 1;
@@ -707,7 +700,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			}
 		}
 
-		private int GetAffixSequenceContainingSlot(IMoInflAffixSlot slot, out IFdoReferenceSequence<IMoInflAffixSlot> seq, out int index)
+		private int GetAffixSequenceContainingSlot(IMoInflAffixSlot slot, out ILcmReferenceSequence<IMoInflAffixSlot> seq, out int index)
 		{
 			index = m_template.PrefixSlotsRS.IndexOf(slot);
 			if (index >= 0)
@@ -1231,7 +1224,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			return null;
 		}
 
-		private bool SetEnabledIfFindSlotInSequence(IFdoReferenceSequence<IMoInflAffixSlot> slots, out bool fEnabled, bool bIsLeft)
+		private bool SetEnabledIfFindSlotInSequence(ILcmReferenceSequence<IMoInflAffixSlot> slots, out bool fEnabled, bool bIsLeft)
 		{
 			var index = slots.IndexOf(m_obj as IMoInflAffixSlot);
 			if (index >= 0)

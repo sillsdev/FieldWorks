@@ -6,8 +6,8 @@
 using System.Drawing;
 using IBusDotNet;
 using NUnit.Framework;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils.Attributes;
 
 namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests

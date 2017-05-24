@@ -10,8 +10,8 @@ using System.Xml;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
@@ -196,7 +196,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			}
 			if (CheckForAffixDataLoss(affix, rgmsaOld))
 				return false;
-			FdoCache cache = m_cache;
+			LcmCache cache = m_cache;
 			var stem = m_cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
 			SwapValues(entry, affix, stem, type, rgmsaOld);	// may cause slice/button to be disposed...
 			return true;
@@ -315,7 +315,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			}
 			if (CheckForStemDataLoss(stem, rgmsaOld))
 				return false;
-			FdoCache cache = m_cache;
+			LcmCache cache = m_cache;
 			var affix = m_cache.ServiceLocator.GetInstance<IMoAffixAllomorphFactory>().Create();
 			SwapValues(entry, stem, affix, type, rgmsaOld);
 			return true;

@@ -4,7 +4,7 @@
 
 using System;
 using System.Windows.Forms;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 
 using Reflector.UserInterface;
 

@@ -7,9 +7,9 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.Reporting;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
@@ -29,7 +29,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public static string[] MoveCopyOrLeaveMediaFiles(string[] files, string sRootDirLinkedFiles, IHelpTopicProvider helpTopicProvider)
 		{
 			return MoveCopyOrLeaveFiles(files,
-				Path.Combine(sRootDirLinkedFiles, FdoFileHelper.ksMediaDir),
+				Path.Combine(sRootDirLinkedFiles, LcmFileHelper.ksMediaDir),
 				sRootDirLinkedFiles,
 				helpTopicProvider);
 		}
@@ -47,7 +47,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			IHelpTopicProvider helpTopicProvider)
 		{
 			return MoveCopyOrLeaveFiles(new[] {sFile},
-				Path.Combine(sRootDirLinkedFiles, FdoFileHelper.ksOtherLinkedFilesDir),
+				Path.Combine(sRootDirLinkedFiles, LcmFileHelper.ksOtherLinkedFilesDir),
 				sRootDirLinkedFiles,
 				helpTopicProvider).FirstOrDefault();
 		}

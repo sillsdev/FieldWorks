@@ -12,7 +12,7 @@ using NUnit.Framework;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.SharpViews.Builders;
 using SIL.FieldWorks.SharpViews.Selections;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 using SIL.FieldWorks.SharpViews.Paragraphs;
 
 namespace SIL.FieldWorks.SharpViews.SharpViewsTests

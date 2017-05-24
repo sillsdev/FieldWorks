@@ -6,9 +6,9 @@ using System;
 using System.IO;
 using System.Linq;
 using NUnit.Framework;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.WritingSystems;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel;
 using SIL.FieldWorks.LexText.Controls;
 
 namespace LexTextControlsTests

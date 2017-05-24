@@ -14,7 +14,7 @@ using System.Collections;
 using System.Windows.Forms;
 using System.Drawing;
 using System.Diagnostics;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 
 
 namespace XCore

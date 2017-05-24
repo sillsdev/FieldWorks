@@ -4,7 +4,7 @@
 
 using System.Diagnostics;
 using System.Windows.Forms;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using XCore;
 using SIL.FieldWorks.LexText.Controls;
 
@@ -46,7 +46,7 @@ namespace SIL.FieldWorks.FdoUi
 				className = "FsComplexFeature";
 			using (MasterInflectionFeatureListDlg dlg = new MasterInflectionFeatureListDlg(className))
 			{
-				FdoCache cache = propertyTable.GetValue<FdoCache>("cache");
+				LcmCache cache = propertyTable.GetValue<LcmCache>("cache");
 				dlg.SetDlginfo(cache.LanguageProject.MsFeatureSystemOA, mediator, propertyTable, true);
 				switch (dlg.ShowDialog(propertyTable.GetValue<Form>("window")))
 				{

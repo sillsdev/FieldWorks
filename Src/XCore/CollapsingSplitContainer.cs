@@ -5,7 +5,7 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 using System.Xml;
 
 namespace XCore

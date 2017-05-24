@@ -6,13 +6,13 @@
 // Responsibility: TE Team
 
 using System.Collections.Generic;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using System.Diagnostics;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.Common.ScriptureUtils;
-using SIL.CoreImpl.Scripture;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.Scripture;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
 
 namespace SIL.FieldWorks.TE
 {
@@ -53,7 +53,7 @@ namespace SIL.FieldWorks.TE
 		/// <param name="list">The list of XmlNoteParas to use to create this collection</param>
 		/// <param name="styleSheet">The style sheet</param>
 		/// ------------------------------------------------------------------------------------
-		public ParagraphCollection(List<XmlNotePara> list, FwStyleSheet styleSheet) :
+		public ParagraphCollection(List<XmlNotePara> list, LcmStyleSheet styleSheet) :
 			this(list, styleSheet, styleSheet.Cache.DefaultAnalWs)
 		{
 		}
@@ -66,7 +66,7 @@ namespace SIL.FieldWorks.TE
 		/// <param name="styleSheet">The style sheet</param>
 		/// <param name="wsDefault">The default writing system to use</param>
 		/// ------------------------------------------------------------------------------------
-		public ParagraphCollection(List<XmlNotePara> list, FwStyleSheet styleSheet, int wsDefault)
+		public ParagraphCollection(List<XmlNotePara> list, LcmStyleSheet styleSheet, int wsDefault)
 		{
 			if (list != null)
 			{

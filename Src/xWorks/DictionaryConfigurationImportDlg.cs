@@ -7,7 +7,7 @@ using System;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 using XCore;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 using System.Drawing;
 
 namespace SIL.FieldWorks.XWorks

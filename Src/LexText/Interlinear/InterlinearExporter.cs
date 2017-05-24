@@ -6,12 +6,12 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Xml;
-using SIL.CoreImpl.WritingSystems;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 
 namespace SIL.FieldWorks.IText
 {
@@ -22,7 +22,7 @@ namespace SIL.FieldWorks.IText
 	public class InterlinearExporter : CollectorEnv
 	{
 		protected XmlWriter m_writer;
-		protected FdoCache m_cache;
+		protected LcmCache m_cache;
 		bool m_fItemIsOpen = false; // true while doing some <item> element (causes various things to output data)
 		bool m_fDoingHeadword = false; // true while displaying a headword (causes some special behaviors)
 		bool m_fDoingHomographNumber = false; // true after note dependency on homograph number, to end of headword.
@@ -49,7 +49,7 @@ namespace SIL.FieldWorks.IText
 		protected WritingSystemManager m_wsManager;
 		protected ICmObjectRepository m_repoObj;
 
-		public static InterlinearExporter Create(string mode, FdoCache cache, XmlWriter writer, ICmObject objRoot,
+		public static InterlinearExporter Create(string mode, LcmCache cache, XmlWriter writer, ICmObject objRoot,
 			InterlinLineChoices lineChoices, InterlinVc vc)
 		{
 			if (mode != null && mode.ToLowerInvariant() == "elan")
@@ -62,7 +62,7 @@ namespace SIL.FieldWorks.IText
 			}
 		}
 
-		protected InterlinearExporter(FdoCache cache, XmlWriter writer, ICmObject objRoot,
+		protected InterlinearExporter(LcmCache cache, XmlWriter writer, ICmObject objRoot,
 			InterlinLineChoices lineChoices, InterlinVc vc)
 			: base(null, cache.MainCacheAccessor, objRoot.Hvo)
 		{
@@ -615,9 +615,9 @@ namespace SIL.FieldWorks.IText
 					}
 					m_writer.WriteEndElement();	// languages
 					//Media files section
-					if (text != null && text is FDO.IText && ((FDO.IText)text).MediaFilesOA != null)
+					if (text != null && text is LCModel.IText && ((LCModel.IText)text).MediaFilesOA != null)
 					{
-						FDO.IText theText = (FDO.IText) text;
+						LCModel.IText theText = (LCModel.IText) text;
 						m_writer.WriteStartElement("media-files");
 						m_writer.WriteAttributeString("offset-type", theText.MediaFilesOA.OffsetType);
 						foreach (var mediaFile in theText.MediaFilesOA.MediaURIsOC)
@@ -746,7 +746,7 @@ namespace SIL.FieldWorks.IText
 		{
 			if (txt == null)
 				return;
-			var text = txt.Owner as FDO.IText;
+			var text = txt.Owner as LCModel.IText;
 			if (text != null)
 			{
 				foreach (var writingSystemId in text.Name.AvailableWritingSystemIds)
@@ -783,7 +783,7 @@ namespace SIL.FieldWorks.IText
 	public class InterlinearExporterForElan : InterlinearExporter
 	{
 		private const int kDocVersion = 2;
-		protected internal InterlinearExporterForElan(FdoCache cache, XmlWriter writer, ICmObject objRoot,
+		protected internal InterlinearExporterForElan(LcmCache cache, XmlWriter writer, ICmObject objRoot,
 			InterlinLineChoices lineChoices, InterlinVc vc)
 			: base(cache, writer, objRoot, lineChoices, vc)
 		{

@@ -10,16 +10,17 @@ using System.Diagnostics;
 using System.ComponentModel;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainImpl;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.Utils;
+using SIL.LCModel;
+using SIL.LCModel.DomainImpl;
+using SIL.LCModel.Infrastructure;
+using SIL.LCModel.Utils;
 using XCore;
 using SIL.FieldWorks.IText;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.LexText.Controls.DataNotebook;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.XWorks.LexText
 {

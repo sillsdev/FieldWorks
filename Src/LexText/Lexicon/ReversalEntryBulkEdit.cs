@@ -6,8 +6,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Xml;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
+using SIL.LCModel;
+using SIL.LCModel.Application;
 using XCore;
 using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.Common.Controls;
@@ -19,7 +19,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 	/// </summary>
 	public class AllReversalEntriesRecordList : RecordList
 	{
-		public override void Init(FdoCache cache, Mediator mediator, PropertyTable propertyTable, XmlNode recordListNode)
+		public override void Init(LcmCache cache, Mediator mediator, PropertyTable propertyTable, XmlNode recordListNode)
 		{
 			CheckDisposed();
 

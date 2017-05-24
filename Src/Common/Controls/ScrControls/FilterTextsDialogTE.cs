@@ -5,10 +5,10 @@
 // File: FilterSectionDialog.cs
 // --------------------------------------------------------------------------------------------
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.TE;
+using SIL.LCModel.Infrastructure;
 using SIL.Utils;
-using SIL.FieldWorks.FDO.Infrastructure;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -35,7 +35,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="helpTopicProvider">The help topic provider.</param>
 		/// <param name="importer">The Paratext book importer.</param>
 		/// ------------------------------------------------------------------------------------
-		public FilterTextsDialogTE(FdoCache cache, IStText[] objList,
+		public FilterTextsDialogTE(LcmCache cache, IStText[] objList,
 			IHelpTopicProvider helpTopicProvider, IBookImporter importer)
 			: base(cache, objList, helpTopicProvider)
 		{

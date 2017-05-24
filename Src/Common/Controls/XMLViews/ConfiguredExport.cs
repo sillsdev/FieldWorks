@@ -11,17 +11,18 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Diagnostics;
-using SIL.CoreImpl.Cellar;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.WritingSystems;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.Utils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel.Utils;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.Common.Framework;
-using SIL.CoreImpl.KernelInterfaces;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Infrastructure;
+using SIL.Utils;
 using SIL.WritingSystems;
 using XCore;
 
@@ -33,8 +34,8 @@ namespace SIL.FieldWorks.Common.Controls
 	public class ConfiguredExport : CollectorEnv, ICollectPicturePathsOnly
 	{
 		private TextWriter m_writer = null;
-		private FdoCache m_cache = null;
-		private FwStyleSheet m_stylesheet;
+		private LcmCache m_cache = null;
+		private LcmStyleSheet m_stylesheet;
 		private string m_sFormat = null;
 		private StringCollection m_rgElementTags = new StringCollection();
 		private StringCollection m_rgClassNames = new StringCollection();
@@ -106,7 +107,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// element start tag to the output.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public void Initialize(FdoCache cache, PropertyTable propertyTable, TextWriter w, string sDataType,
+		public void Initialize(LcmCache cache, PropertyTable propertyTable, TextWriter w, string sDataType,
 			string sFormat, string sOutPath, string sBodyClass)
 		{
 			m_writer = w;
@@ -593,7 +594,7 @@ namespace SIL.FieldWorks.Common.Controls
 													Dictionary<string, ISet<string>> wsDigraphMap,
 													Dictionary<string, Dictionary<string, string>> wsCharEquivalentMap,
 													Dictionary<string, ISet<string>> wsIgnorableCharMap,
-													FdoCache cache)
+													LcmCache cache)
 		{
 			if (string.IsNullOrEmpty(sEntryNFD))
 				return "";
@@ -719,7 +720,7 @@ namespace SIL.FieldWorks.Common.Controls
 			Dictionary<string, ISet<string>> wsDigraphMap,
 			Dictionary<string, Dictionary<string, string>> wsCharEquivalentMap,
 			Dictionary<string, ISet<string>> wsIgnorableCharMap,
-			FdoCache cache,
+			LcmCache cache,
 			out Dictionary<string, string> mapChars,
 			out ISet<string> chIgnoreSet)
 		{

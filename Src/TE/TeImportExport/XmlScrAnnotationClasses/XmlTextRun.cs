@@ -8,10 +8,10 @@
 using System;
 using System.Xml.Serialization;
 using System.Diagnostics;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.Common.Framework;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
 
 namespace SIL.FieldWorks.TE
 {
@@ -105,7 +105,7 @@ namespace SIL.FieldWorks.TE
 		/// Adds to para BLDR.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		internal virtual void AddToParaBldr(StTxtParaBldr bldr, int ws, FwStyleSheet styleSheet)
+		internal virtual void AddToParaBldr(StTxtParaBldr bldr, int ws, LcmStyleSheet styleSheet)
 		{
 			bldr.AppendRun(m_text, StyleUtils.CharStyleTextProps(StyleName, ws));
 		}
@@ -178,7 +178,7 @@ namespace SIL.FieldWorks.TE
 		/// Adds to para BLDR.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		internal override void AddToParaBldr(StTxtParaBldr bldr, int ws, FwStyleSheet styleSheet)
+		internal override void AddToParaBldr(StTxtParaBldr bldr, int ws, LcmStyleSheet styleSheet)
 		{
 			if (string.IsNullOrEmpty(Href))
 				throw new Exception("OXESA validation found an invalid URL.");

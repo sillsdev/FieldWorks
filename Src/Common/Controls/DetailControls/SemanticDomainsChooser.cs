@@ -8,16 +8,14 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO;
-using SIL.Utils;
+using SIL.LCModel;
 using XCore;
-using System.Diagnostics.CodeAnalysis;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
@@ -40,7 +38,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		public Mediator Mediator { private get; set; }
 
-		public FdoCache Cache { private get; set; }
+		public LcmCache Cache { private get; set; }
 
 		public string DisplayWs { get; set; }
 

@@ -6,10 +6,10 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.Reporting;
-using SIL.Utils;
 using System.Xml;
+using SIL.Utils;
 using XCore;
 using ConfigurationException = SIL.Utils.ConfigurationException;
 
@@ -336,7 +336,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 			UpdateWinConfig(fcustomChanged, customLists, windowConfiguration);
 
 			// Now update 'display'
-			var cache = m_propertyTable.GetValue<FdoCache>("cache");
+			var cache = m_propertyTable.GetValue<LcmCache>("cache");
 			var possRepo = cache.ServiceLocator.GetInstance<ICmPossibilityListRepository>();
 			if (display.List.Count > 0)
 			{
@@ -400,7 +400,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 
 		#region Custom List Methods
 
-		private static void AddToolNodeToDisplay(ICmPossibilityListRepository possRepo, FdoCache cache,
+		private static void AddToolNodeToDisplay(ICmPossibilityListRepository possRepo, LcmCache cache,
 												 UIListDisplayProperties display, XmlNode node)
 		{
 			// Modified how this works, so it uses the current UI version of the PossibilityList Name,
@@ -415,7 +415,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 		}
 
 		private static string FindMatchingPossibilityListUIName(XmlNode toolNode,
-																ICmPossibilityListRepository possRepo, FdoCache cache)
+																ICmPossibilityListRepository possRepo, LcmCache cache)
 		{
 			var recordListNode = GetClerkRecordListNodeFromToolNode(toolNode);
 			if (recordListNode == null)
@@ -436,7 +436,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 			return possList == null ? null : possList.Name.UserDefaultWritingSystem.Text;
 		}
 
-		private static ICmPossibilityList GetListBySda(FdoCache cache,
+		private static ICmPossibilityList GetListBySda(LcmCache cache,
 													   string ownerAttr, string propertyAttr)
 		{
 			var mdc = cache.MetaDataCacheAccessor;
@@ -459,7 +459,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 		/// <param name="cache"></param>
 		/// <param name="ownerAttr"></param>
 		/// <returns></returns>
-		private static int GetHvoFromXMLOwnerAttribut(FdoCache cache, string ownerAttr)
+		private static int GetHvoFromXMLOwnerAttribut(LcmCache cache, string ownerAttr)
 		{
 			var hvoResult = 0;
 			switch (ownerAttr)
@@ -566,7 +566,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 		private List<ICmPossibilityList> GetListOfOwnerlessLists()
 		{
 			// Get the cache and ICmPossibilityListRepository via the mediator
-			var cache = m_propertyTable.GetValue<FdoCache>("cache");
+			var cache = m_propertyTable.GetValue<LcmCache>("cache");
 			var repo = cache.ServiceLocator.GetInstance<ICmPossibilityListRepository>();
 
 			//// Find all custom lists (lists that own CmCustomItems)

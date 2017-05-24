@@ -6,13 +6,11 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using NUnit.Framework;
-using SIL.CoreImpl.Scripture;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.KernelInterfaces;
-using SIL.FieldWorks.Common.ScriptureUtils;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.FDOTests;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel.Core.Scripture;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel;
 
 namespace SIL.FieldWorks.TE.ImportTests
 {
@@ -22,7 +20,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
-	public class TeAnnotationXmlImportTests : ScrInMemoryFdoTestBase
+	public class TeAnnotationXmlImportTests : ScrInMemoryLcmTestBase
 	{
 		#region DummyXmlScrAnnotationsList
 		/// ------------------------------------------------------------------------------------
@@ -39,7 +37,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 			/// <param name="cache">The cache.</param>
 			/// <param name="styleSheet">The style sheet.</param>
 			/// --------------------------------------------------------------------------------
-			public void CallWriteToCache(FdoCache cache, FwStyleSheet styleSheet)
+			public void CallWriteToCache(LcmCache cache, LcmStyleSheet styleSheet)
 			{
 				WriteToCache(cache, styleSheet);
 			}
@@ -47,7 +45,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 		#endregion
 
 		#region Member variables
-		private FwStyleSheet m_stylesheet;
+		private LcmStyleSheet m_stylesheet;
 		private IScrTxtPara m_paraObj;
 		#endregion
 
@@ -62,7 +60,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 		{
 			base.TestSetup();
 
-			m_stylesheet = new FwStyleSheet();
+			m_stylesheet = new LcmStyleSheet();
 			m_stylesheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles);
 
 			StyleProxyListManager.Initialize(m_stylesheet);
@@ -308,7 +306,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 			TestAnnotationField(note.ResolutionOA, "This is my resolution for the note");
 			TestAnnotationField(note.RecommendationOA, "This is my suggestion");
 
-			IFdoOwningSequence<IStJournalText> responses = note.ResponsesOS;
+			ILcmOwningSequence<IStJournalText> responses = note.ResponsesOS;
 			Assert.AreEqual(2, responses.Count);
 			TestAnnotationField(responses[0], "This is", "my", "first", "response");
 			TestAnnotationField(responses[1], "This is", "my second response");
@@ -460,7 +458,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 			Assert.IsTrue(AreDatesClose(DateTime.Now.AddDays(1), note.DateModified));
 			Assert.AreEqual(DateTime.MinValue, note.DateResolved);
 
-			IFdoOwningSequence<IStJournalText> responses = note.ResponsesOS;
+			ILcmOwningSequence<IStJournalText> responses = note.ResponsesOS;
 			Assert.AreEqual(2, responses.Count);
 			TestAnnotationField(responses[0], "This is my first response");
 			TestAnnotationField(responses[1], "This is my second response");
@@ -521,7 +519,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 			Assert.IsTrue(AreDateTimesClose(DateTime.Now, note.DateModified));
 			Assert.AreEqual(DateTime.MinValue, note.DateResolved);
 
-			IFdoOwningSequence<IStJournalText> responses = note.ResponsesOS;
+			ILcmOwningSequence<IStJournalText> responses = note.ResponsesOS;
 			Assert.AreEqual(3, responses.Count);
 			TestAnnotationField(responses[0], "This is my first response");
 			TestAnnotationField(responses[1], "This is my second response");

@@ -3,11 +3,11 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Linq;
-using SIL.CoreImpl.KernelInterfaces;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using XCore;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel.DomainServices;
 
 namespace SIL.FieldWorks.IText
 {
@@ -46,7 +46,7 @@ namespace SIL.FieldWorks.IText
 		/// <param name="mediator"></param>
 		/// <param name="selected"></param>
 		/// <param name="focusBox"></param>
-		public Sandbox(FdoCache cache, Mediator mediator, PropertyTable propertyTable, IVwStylesheet ss,
+		public Sandbox(LcmCache cache, Mediator mediator, PropertyTable propertyTable, IVwStylesheet ss,
 			InterlinLineChoices choices, AnalysisOccurrence selected, FocusBoxController focusBox)
 			: this(cache, mediator, propertyTable, ss, choices)
 		{
@@ -65,7 +65,7 @@ namespace SIL.FieldWorks.IText
 		/// <param name="propertyTable"></param>
 		/// <param name="ss"></param>
 		///  <param name="choices"></param>
-		public Sandbox(FdoCache cache, Mediator mediator, PropertyTable propertyTable, IVwStylesheet ss, InterlinLineChoices choices)
+		public Sandbox(LcmCache cache, Mediator mediator, PropertyTable propertyTable, IVwStylesheet ss, InterlinLineChoices choices)
 			: base(cache, mediator, propertyTable, ss, choices)
 		{
 		}

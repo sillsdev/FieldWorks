@@ -13,10 +13,9 @@ using System.Linq;
 
 using NUnit.Framework;
 
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.FDOTests;
-using SIL.CoreImpl.Text;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Core.Text;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
@@ -153,7 +152,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		#endregion
 
-		public void Initialize(FdoCache cache, ICmObject obj, int flid, string fieldName, string analysisWs)
+		public void Initialize(LcmCache cache, ICmObject obj, int flid, string fieldName, string analysisWs)
 		{
 			Assert.IsNotNull(obj, "Must initialize with an object and flid.");
 			Assert.Greater(flid, 0, "Must initialize with an object and flid.");

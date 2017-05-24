@@ -15,17 +15,17 @@ using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
 using SilEncConverters40;
-using SIL.CoreImpl.SpellChecking;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.WritingSystems;
+using SIL.LCModel.Core.SpellChecking;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application.ApplicationServices;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Application.ApplicationServices;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.FwCoreDlgControls;
 using SIL.FieldWorks.Resources;
 using SIL.Windows.Forms.WritingSystems;
@@ -99,7 +99,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <param name="defaultName">The default language name for the new writing system.</param>
 		/// <param name="newWritingSystems">The new writing systems.</param>
 		/// <returns></returns>
-		public static bool ShowNewDialog(Form owner, FdoCache cache, WritingSystemManager wsManager,
+		public static bool ShowNewDialog(Form owner, LcmCache cache, WritingSystemManager wsManager,
 			IWritingSystemContainer wsContainer, IHelpTopicProvider helpTopicProvider, IApp app,
 			bool displayRelatedWss, string defaultName, out IEnumerable<CoreWritingSystemDefinition> newWritingSystems)
 		{
@@ -168,7 +168,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <param name="app">The app.</param>
 		/// <param name="newWritingSystems">The new writing systems.</param>
 		/// <returns></returns>
-		public static bool ShowModifyDialog(Form owner, CoreWritingSystemDefinition selectedWS, bool addNewForLangOfSelectedWs, FdoCache cache,
+		public static bool ShowModifyDialog(Form owner, CoreWritingSystemDefinition selectedWS, bool addNewForLangOfSelectedWs, LcmCache cache,
 			IWritingSystemContainer wsContainer, IHelpTopicProvider helpTopicProvider, IApp app, out IEnumerable<CoreWritingSystemDefinition> newWritingSystems)
 		{
 			newWritingSystems = null;
@@ -208,7 +208,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private HashSet<CoreWritingSystemDefinition> m_activeWritingSystems;
 		private CoreWritingSystemDefinition m_prevSelectedWritingSystem;
 
-		private readonly FdoCache m_cache;
+		private readonly LcmCache m_cache;
 		/// <summary></summary>
 		protected readonly WritingSystemManager m_wsManager;
 		private readonly IWritingSystemContainer m_wsContainer;
@@ -360,7 +360,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <param name="wsContainer">The ws container.</param>
 		/// <param name="helpTopicProvider">The help topic provider.</param>
 		/// <param name="app">The app.</param>
-		public WritingSystemPropertiesDialog(FdoCache cache, WritingSystemManager wsManager, IWritingSystemContainer wsContainer,
+		public WritingSystemPropertiesDialog(LcmCache cache, WritingSystemManager wsManager, IWritingSystemContainer wsContainer,
 			IHelpTopicProvider helpTopicProvider, IApp app) : this()
 		{
 			m_cache = cache;
@@ -724,11 +724,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		private static string GetDictionaryName(String languageId)
 		{
-			CoreImpl.Text.Icu.UErrorCode err;
+			LCModel.Core.Text.Icu.UErrorCode err;
 			string country;
-			CoreImpl.Text.Icu.GetDisplayCountry(languageId, "en", out country, out err);
+			LCModel.Core.Text.Icu.GetDisplayCountry(languageId, "en", out country, out err);
 			string languageName;
-			CoreImpl.Text.Icu.GetDisplayLanguage(languageId, "en", out languageName, out err);
+			LCModel.Core.Text.Icu.GetDisplayLanguage(languageId, "en", out languageName, out err);
 			var languageAndCountry = new StringBuilder(languageName);
 			if (!string.IsNullOrEmpty(country))
 				languageAndCountry.AppendFormat(" ({0})", country);
@@ -1970,7 +1970,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			if (baseLocale == null)
 				baseLocale = "";
 
-			string sortRules = CoreImpl.Text.Icu.GetCollationRules(baseLocale);
+			string sortRules = LCModel.Core.Text.Icu.GetCollationRules(baseLocale);
 			m_sortRulesTextBox.Tss = TsStringUtils.MakeString(sortRules == null ? "" : sortRules.Replace("&", Environment.NewLine + "&").Trim(),
 				CurrentWritingSystem.Handle);
 

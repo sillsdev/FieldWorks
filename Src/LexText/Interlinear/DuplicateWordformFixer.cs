@@ -5,9 +5,9 @@
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.FwCoreDlgs;
 
@@ -58,7 +58,7 @@ namespace SIL.FieldWorks.IText
 		public void Process()
 		{
 			Debug.Assert(m_dlg != null);
-			var cache = m_dlg.PropTable.GetValue<FdoCache>("cache");
+			var cache = m_dlg.PropTable.GetValue<LcmCache>("cache");
 			string failures = null;
 			UndoableUnitOfWorkHelper.Do(ITextStrings.ksUndoMergeWordforms, ITextStrings.ksRedoMergeWordforms, cache.ActionHandlerAccessor,
 				() => failures = WfiWordformServices.FixDuplicates(cache, new ProgressBarWrapper(m_dlg.ProgressBar)));

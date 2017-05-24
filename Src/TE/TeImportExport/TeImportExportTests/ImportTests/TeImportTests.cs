@@ -7,19 +7,17 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 
 using NUnit.Framework;
-using SIL.CoreImpl.Scripture;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.KernelInterfaces;
-using SIL.Utils;
+using SIL.LCModel.Core.Scripture;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Utils;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ScriptureUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.FDOTests;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 #if __MonoCS__
 #pragma warning disable 419 // ambiguous reference; mono bug #639867
 #endif
@@ -47,8 +45,8 @@ namespace SIL.FieldWorks.TE.ImportTests
 		/// Constructor to use when using an in-memory cache
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public DummyTeImporter(IScrImportSet settings, FdoTestBase testBase,
-			FwStyleSheet styleSheet) :
+		public DummyTeImporter(IScrImportSet settings, LcmTestBase testBase,
+			LcmStyleSheet styleSheet) :
 			base(settings, testBase.Cache, styleSheet, new DummyUndoImportManager(testBase),
 				new TeImportNoUi())
 		{
@@ -643,7 +641,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 						sMarker, ScrStyleNames.FootnoteMarker, m_wsVern);
 				}
 			}
-			IFdoOwningSequence<IStPara> footnoteParas = footnote.ParagraphsOS;
+			ILcmOwningSequence<IStPara> footnoteParas = footnote.ParagraphsOS;
 			Assert.AreEqual(1, footnoteParas.Count);
 			IStTxtPara para = (IStTxtPara)footnoteParas[0];
 			Assert.AreEqual(StyleUtils.ParaStyleTextProps(sParaStyleName), para.StyleRules);
@@ -702,7 +700,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 		{
 			CheckDisposed();
 
-			IFdoOwningSequence<IScrFootnote> footnotes = ScrBook.FootnotesOS;
+			ILcmOwningSequence<IScrFootnote> footnotes = ScrBook.FootnotesOS;
 			Assert.IsTrue(iFootnoteIndex < footnotes.Count, "iFootnoteIndex is out of range");
 			return footnotes[iFootnoteIndex];
 		}
@@ -863,14 +861,14 @@ namespace SIL.FieldWorks.TE.ImportTests
 	/// ----------------------------------------------------------------------------------------
 	public class DummyUndoImportManager : UndoImportManager
 	{
-		private FdoTestBase m_testBase;
+		private LcmTestBase m_testBase;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="DummyUndoImportManager"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public DummyUndoImportManager(FdoTestBase testBase) :
+		public DummyUndoImportManager(LcmTestBase testBase) :
 			base(testBase.Cache)
 		{
 			m_testBase = testBase;
@@ -3230,7 +3228,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 			IStFootnote footnote = GetFootnote(iFootnoteIndex);
 			AssertEx.RunIsCorrect(footnote.FootnoteMarker, 0,
 				"g", ScrStyleNames.FootnoteMarker, m_wsVern);
-			IFdoOwningSequence<IStPara> footnoteParas = footnote.ParagraphsOS;
+			ILcmOwningSequence<IStPara> footnoteParas = footnote.ParagraphsOS;
 			Assert.AreEqual(1, footnoteParas.Count);
 			para = (IStTxtPara)footnote.ParagraphsOS[0];
 			Assert.AreEqual
@@ -5676,7 +5674,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 			VerifyFootnoteMarkerOrcRun(tss, 6);
 			VerifySimpleFootnote(0, "My footnote hurts");
 
-			IFdoOwningSequence<IScrScriptureNote> notes = m_scr.BookAnnotationsOS[1].NotesOS;
+			ILcmOwningSequence<IScrScriptureNote> notes = m_scr.BookAnnotationsOS[1].NotesOS;
 			Assert.AreEqual(2, notes.Count);
 
 			// verify the annotations

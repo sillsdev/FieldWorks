@@ -6,15 +6,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
+using SIL.LCModel;
+using SIL.LCModel.Application;
 using System.Reflection;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel.Infrastructure;
 using System.Collections;
-using SIL.CoreImpl.Cellar;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.WritingSystems;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.ObjectBrowser;
 
 namespace FDOBrowser
@@ -27,7 +27,7 @@ namespace FDOBrowser
 	/// ----------------------------------------------------------------------------------------
 	public class FdoInspectorList : GenericInspectorObjectList
 	{
-		private FdoCache m_cache;
+		private LcmCache m_cache;
 		private IFwMetaDataCacheManaged m_mdc;
 		private Dictionary<CellarPropertyType, string> m_fldSuffix;
 
@@ -47,7 +47,7 @@ namespace FDOBrowser
 		/// Initializes a new instance of the <see cref="T:FdoInspectorList"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public FdoInspectorList(FdoCache cache)
+		public FdoInspectorList(LcmCache cache)
 		{
 			m_cache = cache;
 			m_mdc = m_cache.ServiceLocator.GetInstance<IFwMetaDataCacheManaged>();
@@ -692,7 +692,7 @@ namespace FDOBrowser
 						var objects = ((ISilDataAccessManaged) m_cache.DomainDataByFlid).VecProp(to.Hvo, Flid);
 						objects.Initialize();
 						//int rcHvo = m_cache.DomainDataByFlid.get_ObjectProp(to.Hvo, Flid);
-						//IFdoReferenceCollection<ICmPossibility> RCObj = (rcHvo == 0? null: (IFdoReferenceCollection<ICmPossibility>)m_cache.ServiceLocator.GetObject(rcHvo));
+						//ILcmReferenceCollection<ICmPossibility> RCObj = (rcHvo == 0? null: (ILcmReferenceCollection<ICmPossibility>)m_cache.ServiceLocator.GetObject(rcHvo));
 						io = base.CreateInspectorObject(null, objects, obj, ParentIo, level);
 						io.HasChildren = (count > 0? true: false);
 						io.DisplayName = cf.Name+ "RC";
@@ -757,7 +757,7 @@ namespace FDOBrowser
 				{
 					flid = m_mdc.GetFieldId2(cmObj.ClassID, work, true);
 				}
-				catch (FDOInvalidFieldException)
+				catch (LcmInvalidFieldException)
 				{
 					if (ObjectBrowser.m_virtualFlag == false)
 					{
@@ -810,7 +810,7 @@ namespace FDOBrowser
 				return io;
 			}
 
-			if (obj is IFdoVector)
+			if (obj is ILcmVector)
 			{
 				MethodInfo mi = obj.GetType().GetMethod("ToArray");
 				try
@@ -1004,9 +1004,9 @@ namespace FDOBrowser
 
 					return i;
 				}
-				else if (rowObj is IFdoVector)
+				else if (rowObj is ILcmVector)
 				{
-					int index = FindObjInVector(obj, rowObj as IFdoVector);
+					int index = FindObjInVector(obj, rowObj as ILcmVector);
 					if (index >= 0)
 					{
 						if (!IsExpanded(i))
@@ -1029,7 +1029,7 @@ namespace FDOBrowser
 		/// Finds the index of the specified CmObject's guid in the specified IFdoVector.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private int FindObjInVector(ICmObject obj, IFdoVector vect)
+		private int FindObjInVector(ICmObject obj, ILcmVector vect)
 		{
 			Guid[] guids = vect.ToGuidArray();
 			for (int i = 0; i < guids.Length; i++)
@@ -1073,7 +1073,7 @@ namespace FDOBrowser
 		/// Initializes a new instance of the <see cref="T:TsStringRunInfo"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public TsStringRunInfo(int irun, ITsString tss, FdoCache cache)
+		public TsStringRunInfo(int irun, ITsString tss, LcmCache cache)
 		{
 			Text = "\"" + (tss.get_RunText(irun) ?? string.Empty) + "\"";
 			TextProps = new TextProps(irun, tss, cache);
@@ -1121,7 +1121,7 @@ namespace FDOBrowser
 		/// Initializes a new instance of the <see cref="T:TextProps"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public TextProps(int irun, ITsString tss, FdoCache cache)
+		public TextProps(int irun, ITsString tss, LcmCache cache)
 		{
 			TsRunInfo runinfo;
 			ITsTextProps ttp = tss.FetchRunInfo(irun, out runinfo);
@@ -1135,7 +1135,7 @@ namespace FDOBrowser
 		/// Initializes a new instance of the <see cref="T:TextProps"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public TextProps(ITsTextProps ttp, FdoCache cache)
+		public TextProps(ITsTextProps ttp, LcmCache cache)
 		{
 			StrPropCount = ttp.StrPropCount;
 			IntPropCount = ttp.IntPropCount;
@@ -1147,7 +1147,7 @@ namespace FDOBrowser
 		/// Sets the int and string properties.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private void SetProps(ITsTextProps ttp, FdoCache cache)
+		private void SetProps(ITsTextProps ttp, LcmCache cache)
 		{
 			// Get the string properties.
 			StrPropCount = ttp.StrPropCount;
@@ -1237,7 +1237,7 @@ namespace FDOBrowser
 		/// Initializes a new instance of the <see cref="T:TextIntPropInfo"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public TextIntPropInfo(ITsTextProps props, int iprop, FdoCache cache)
+		public TextIntPropInfo(ITsTextProps props, int iprop, LcmCache cache)
 		{
 			int nvar;
 			int tpt;

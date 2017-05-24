@@ -93,8 +93,8 @@
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
 	</Reference>
-	<Reference Include="FDO, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-	  <HintPath>..\..\..\Output\Debug\FDO.dll</HintPath>
+	<Reference Include="SIL.LCModel, Version=9.0.0.0, Culture=neutral, processorArchitecture=x86">
+	  <HintPath>..\..\..\Output\Debug\SIL.LCModel.dll</HintPath>
 	  <SpecificVersion>False</SpecificVersion>
 	</Reference>
 	<Reference Include="FDOBrowser, Version=7.3.0.19428, Culture=neutral, processorArchitecture=x86">

@@ -7,23 +7,21 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Xml;
 using NUnit.Framework;
-using SIL.CoreImpl.Cellar;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.WritingSystems;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.Application.ApplicationServices;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.FDOTests;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Application;
+using SIL.LCModel.Application.ApplicationServices;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.Lift.Validation;
 using SIL.TestUtilities;
@@ -453,7 +451,7 @@ namespace LexTextControlsTests
 			"</DomainTypes>" + Environment.NewLine +
 			"</LexDb>" + Environment.NewLine;
 
-		private FdoCache m_cache;
+		private LcmCache m_cache;
 		private readonly Dictionary<string, ICmSemanticDomain> m_mapSemanticDomains =
 			new Dictionary<string, ICmSemanticDomain>();
 		private readonly Dictionary<string, IPartOfSpeech> m_mapPartsOfSpeech =
@@ -484,9 +482,10 @@ namespace LexTextControlsTests
 			var mockProjectName = "xxyyzProjectFolderForLIFTTest";
 			MockProjectFolder = Path.Combine(Path.GetTempPath(), mockProjectName);
 			var mockProjectPath = Path.Combine(MockProjectFolder, mockProjectName + ".fwdata");
-			m_cache = FdoCache.CreateCacheWithNewBlankLangProj(
-				new TestProjectId(FDOBackendProviderType.kMemoryOnly, mockProjectPath), "en", "fr", "en", new DummyFdoUI(), FwDirectoryFinder.FdoDirectories, new FdoSettings());
-			MockLinkedFilesFolder = Path.Combine(MockProjectFolder, FdoFileHelper.ksLinkedFilesDir);
+			m_cache = LcmCache.CreateCacheWithNewBlankLangProj(
+				new TestProjectId(BackendProviderType.kMemoryOnly, mockProjectPath), "en", "fr", "en", new DummyLcmUI(),
+				FwDirectoryFinder.LcmDirectories, new LcmSettings());
+			MockLinkedFilesFolder = Path.Combine(MockProjectFolder, LcmFileHelper.ksLinkedFilesDir);
 			Directory.CreateDirectory(MockLinkedFilesFolder);
 			//m_cache.LangProject.LinkedFilesRootDir = MockLinkedFilesFolder; this is already the default.
 
@@ -617,7 +616,7 @@ namespace LexTextControlsTests
 					var tssDefn = TsStringUtils.MakeString("Definition for sense.\x2028Another para of defn", m_cache.DefaultAnalWs);
 					var bldr = tssDefn.GetBldr();
 					int len = bldr.Length;
-					var otherFileFolder = Path.Combine(MockLinkedFilesFolder, FdoFileHelper.ksOtherLinkedFilesDir);
+					var otherFileFolder = Path.Combine(MockLinkedFilesFolder, LcmFileHelper.ksOtherLinkedFilesDir);
 					var otherFilePath = Path.Combine(otherFileFolder, kotherLinkedFileName);
 					CreateDummyFile(otherFilePath);
 					var mockStyle = new MockStyle() { Name = "hyperlink" };
@@ -674,7 +673,7 @@ namespace LexTextControlsTests
 					MakePicture(picFolder, m_tempPictureFilePath);
 
 					// See if we can export audio writing system stuff.
-					var audioFolderPath = Path.Combine(MockLinkedFilesFolder, FdoFileHelper.ksMediaDir);
+					var audioFolderPath = Path.Combine(MockLinkedFilesFolder, LcmFileHelper.ksMediaDir);
 					CreateDummyFile(Path.Combine(audioFolderPath, kaudioFileName));
 					m_entryTest.SensesOS[0].Definition.set_String(m_audioWsCode, kaudioFileName);
 
@@ -697,7 +696,7 @@ namespace LexTextControlsTests
 					var pronunFile = m_cache.ServiceLocator.GetInstance<ICmFileFactory>().Create();
 					picFolder.FilesOC.Add(pronunFile); // maybe not quite appropriate, but has to be owned somewhere.
 					media.MediaFileRA = pronunFile;
-					pronunFile.InternalPath = Path.Combine(FdoFileHelper.ksMediaDir, kpronunciationFileName);
+					pronunFile.InternalPath = Path.Combine(LcmFileHelper.ksMediaDir, kpronunciationFileName);
 
 					// We should be able to export LexEntryRefs. BaseForm is a special case.
 					var entryUn = entryFact.Create("un", "not", new SandboxGenericMSA() { MsaType = MsaType.kDeriv });
@@ -1121,7 +1120,7 @@ namespace LexTextControlsTests
 				pronunciation.MediaFilesOS.Add(media);
 				m_cache.LangProject.PicturesOC.First().FilesOC.Add(pronunFile); // maybe not quite appropriate, but has to be owned somewhere.
 				media.MediaFileRA = pronunFile;
-				var internalPath = Path.Combine(FdoFileHelper.ksMediaDir, kpronunciationFileName);
+				var internalPath = Path.Combine(LcmFileHelper.ksMediaDir, kpronunciationFileName);
 				pronunFile.InternalPath = internalPath;
 				var exporter = new LiftExporter(m_cache);
 				var xdoc = new XmlDocument();
@@ -2190,7 +2189,7 @@ namespace LexTextControlsTests
 			throw new NotImplementedException();
 		}
 
-		public IFdoServiceLocator Services { get; private set; }
+		public ILcmServiceLocator Services { get; private set; }
 		public ICmObject OwnerOfClass(int clsid)
 		{
 			throw new NotImplementedException();
@@ -2244,7 +2243,7 @@ namespace LexTextControlsTests
 		}
 
 		public bool IsValidObject { get; private set; }
-		public FdoCache Cache { get; private set; }
+		public LcmCache Cache { get; private set; }
 		public void MergeObject(ICmObject objSrc)
 		{
 			throw new NotImplementedException();

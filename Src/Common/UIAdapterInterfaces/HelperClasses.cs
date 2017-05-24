@@ -17,7 +17,7 @@ using System.Drawing;
 using System.Reflection;
 using System.Diagnostics;
 using XCore;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.Common.UIAdapters
 {

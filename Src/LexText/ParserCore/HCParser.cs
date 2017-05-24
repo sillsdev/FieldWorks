@@ -10,9 +10,9 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
-using SIL.CoreImpl.Text;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 using SIL.HermitCrab;
 using SIL.Machine.Annotations;
 using SIL.ObjectModel;
@@ -21,7 +21,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 {
 	public class HCParser : DisposableBase, IParser
 	{
-		private readonly FdoCache m_cache;
+		private readonly LcmCache m_cache;
 		private Morpher m_morpher;
 		private Language m_language;
 		private readonly SpanFactory<ShapeNode> m_spanFactory;
@@ -30,7 +30,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		private ParserModelChangeListener m_changeListener;
 		private bool m_forceUpdate;
 
-		public HCParser(FdoCache cache)
+		public HCParser(LcmCache cache)
 		{
 			m_cache = cache;
 			m_spanFactory = new ShapeSpanFactory();

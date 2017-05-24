@@ -12,14 +12,15 @@ using System.Text.RegularExpressions;
 using System.Xml;
 using SIL.Lift;
 using SIL.Lift.Parsing;
-using SIL.CoreImpl.Cellar;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.WritingSystems;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel;
+using SIL.LCModel.Application;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Utils;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.LexText.Controls
@@ -30,7 +31,7 @@ namespace SIL.FieldWorks.LexText.Controls
 	/// </summary>
 	public partial class FlexLiftMerger : ILexiconMerger<LiftObject, CmLiftEntry, CmLiftSense, CmLiftExample>
 	{
-		readonly FdoCache m_cache;
+		readonly LcmCache m_cache;
 		ITsString m_tssEmpty;
 		readonly GuidConverter m_gconv = (GuidConverter)TypeDescriptor.GetConverter(typeof(Guid));
 		public const string LiftDateTimeFormat = "yyyy-MM-ddTHH:mm:ssK";	// wants UTC, but works with Local
@@ -191,7 +192,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		IFsComplexValueFactory m_factFsComplexValue;
 
 		#region Constructors and other initialization methods
-		public FlexLiftMerger(FdoCache cache, MergeStyle msImport, bool fTrustModTimes)
+		public FlexLiftMerger(LcmCache cache, MergeStyle msImport, bool fTrustModTimes)
 		{
 			m_cSensesAdded = 0;
 			m_cache = cache;
@@ -304,9 +305,9 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <summary>
 		///
 		/// </summary>
-		/// <param name="entries">This is IEnumerable to capture similarity of IFdoOwningCollection and IFdoOwningSequence.
-		/// It is IFdoOwningCollection for entries owned by ReversalIndex and
-		/// IFdoOwningSequence for entries owned by Subentries of a ReversalIndexEntry</param>
+		/// <param name="entries">This is IEnumerable to capture similarity of ILcmOwningCollection and ILcmOwningSequence.
+		/// It is ILcmOwningCollection for entries owned by ReversalIndex and
+		/// ILcmOwningSequence for entries owned by Subentries of a ReversalIndexEntry</param>
 		/// <param name="mapToRIEs"></param>
 		private void InitializeReversalMap(IEnumerable<IReversalIndexEntry> entries,
 			Dictionary<MuElement, List<IReversalIndexEntry>> mapToRIEs)
@@ -484,7 +485,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			CollectGuidsFromDeletedSenses(le.SensesOS);
 		}
 
-		private void CollectGuidsFromDeletedSenses(IFdoOwningSequence<ILexSense> senses)
+		private void CollectGuidsFromDeletedSenses(ILcmOwningSequence<ILexSense> senses)
 		{
 			foreach (var ls in senses)
 			{
@@ -2066,7 +2067,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			FinishProcessingEntry(le);
 		}
 
-		private ILexSense FindExistingSense(IFdoOwningSequence<ILexSense> rgsenses, CmLiftSense sense)
+		private ILexSense FindExistingSense(ILcmOwningSequence<ILexSense> rgsenses, CmLiftSense sense)
 		{
 			if (sense.CmObject == null)
 				return null;
@@ -3234,7 +3235,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			newForm = form;
 		}
 
-		private static void AddEnvironmentIfNeeded(List<IPhEnvironment> rgnew, IFdoReferenceCollection<IPhEnvironment> rgenv)
+		private static void AddEnvironmentIfNeeded(List<IPhEnvironment> rgnew, ILcmReferenceCollection<IPhEnvironment> rgenv)
 		{
 			if (rgenv != null && rgnew != null)
 			{
@@ -3366,7 +3367,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			// give up and store relative path Pictures/filename (even though it doesn't exist)
 			string sPath = Path.Combine(Path.GetDirectoryName(m_sLiftFile),
 				String.Format("audio{0}{1}", Path.DirectorySeparatorChar, sFile));
-			sPath = CopyFileToLinkedFiles(sFile, sPath, FdoFileHelper.ksMediaDir);
+			sPath = CopyFileToLinkedFiles(sFile, sPath, LcmFileHelper.ksMediaDir);
 			if (!File.Exists(sPath) && !String.IsNullOrEmpty(m_cache.LangProject.LinkedFilesRootDir))
 			{
 				sPath = Path.Combine(m_cache.LangProject.LinkedFilesRootDir, sFile);
@@ -3490,7 +3491,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="sFile"></param>
 		/// <param name="lmtLabel">safe-XML</param>
 		/// <returns></returns>
-		private ICmMedia FindMatchingMedia(IFdoOwningSequence<ICmMedia> rgmedia, string sFile,
+		private ICmMedia FindMatchingMedia(ILcmOwningSequence<ICmMedia> rgmedia, string sFile,
 			LiftMultiText lmtLabel)
 		{
 			ICmMedia mediaMatching = null;
@@ -4155,7 +4156,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			return false;
 		}
 
-		private ILexExampleSentence FindExampleSentence(IFdoOwningSequence<ILexExampleSentence> rgexamples, CmLiftExample expl)
+		private ILexExampleSentence FindExampleSentence(ILcmOwningSequence<ILexExampleSentence> rgexamples, CmLiftExample expl)
 		{
 			List<ILexExampleSentence> matches = new List<ILexExampleSentence>();
 			int cMatches = 0;
@@ -4232,7 +4233,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			return String.IsNullOrEmpty(sItem) && !fTypeFound;
 		}
 
-		private int TranslationsMatch(IFdoOwningCollection<ICmTranslation> oldList, List<LiftTranslation> newList)
+		private int TranslationsMatch(ILcmOwningCollection<ICmTranslation> oldList, List<LiftTranslation> newList)
 		{
 			if (oldList.Count == 0 || newList.Count == 0)
 				return 0;
@@ -4343,7 +4344,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			return false;
 		}
 
-		private ICmTranslation FindExampleTranslation(IFdoOwningCollection<ICmTranslation> rgtranslations,
+		private ICmTranslation FindExampleTranslation(ILcmOwningCollection<ICmTranslation> rgtranslations,
 			LiftTranslation tran)
 		{
 			ICmTranslation ctMatch = null;
@@ -5695,7 +5696,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 			string sPath = Path.Combine(Path.GetDirectoryName(m_sLiftFile),
 				String.Format("pictures{0}{1}", Path.DirectorySeparatorChar, ssFile));
-			sPath = CopyFileToLinkedFiles(ssFile, sPath, FdoFileHelper.ksPicturesDir);
+			sPath = CopyFileToLinkedFiles(ssFile, sPath, LcmFileHelper.ksPicturesDir);
 			if (!File.Exists(sPath) && !String.IsNullOrEmpty(m_cache.LangProject.LinkedFilesRootDir))
 			{
 				sPath = Path.Combine(m_cache.LangProject.LinkedFilesRootDir, sFile);
@@ -5832,7 +5833,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="sFile"></param>
 		/// <param name="lmtLabel">safe-XML</param>
 		/// <returns></returns>
-		private ICmPicture FindPicture(IFdoOwningSequence<ICmPicture> rgpictures, string sFile,
+		private ICmPicture FindPicture(ILcmOwningSequence<ICmPicture> rgpictures, string sFile,
 			LiftMultiText lmtLabel)
 		{
 			ICmPicture pictMatching = null;
@@ -5992,7 +5993,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <returns></returns>
 		private IReversalIndexEntry FindOrCreateMatchingReversal(LiftMultiText form,
 			Dictionary<MuElement, List<IReversalIndexEntry>> mapToRIEs,
-			IFdoOwningCollection<IReversalIndexEntry> entriesOS)
+			ILcmOwningCollection<IReversalIndexEntry> entriesOS)
 		{
 			IReversalIndexEntry rie;
 			var rgmue = FindAnyMatchingReversal(form, mapToRIEs, out rie);
@@ -6049,7 +6050,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <returns></returns>
 		private IReversalIndexEntry FindOrCreateMatchingReversal(LiftMultiText form,
 			Dictionary<MuElement, List<IReversalIndexEntry>> mapToRIEs,
-			IFdoOwningSequence<IReversalIndexEntry> entriesOS)
+			ILcmOwningSequence<IReversalIndexEntry> entriesOS)
 		{
 			IReversalIndexEntry rie;
 			var rgmue = FindAnyMatchingReversal(form, mapToRIEs, out rie);

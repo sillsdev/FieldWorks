@@ -6,18 +6,18 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.Filters;
 
 namespace SIL.FieldWorks.XWorks
 {
 	public class WordsUsedOnlyElsewhereFilter : RecordFilter
 	{
-		private FdoCache m_cache;
+		private LcmCache m_cache;
 
-		public override void Init(FdoCache cache, System.Xml.XmlNode filterNode)
+		public override void Init(LcmCache cache, System.Xml.XmlNode filterNode)
 		{
 			m_cache = cache;
 			base.Init(cache, filterNode);
@@ -26,7 +26,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Allows the cache to be reset when restoring from persistence.
 		/// </summary>
-		public override FdoCache Cache
+		public override LcmCache Cache
 		{
 			set
 			{

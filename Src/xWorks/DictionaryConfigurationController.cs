@@ -9,16 +9,16 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using SIL.CoreImpl.Cellar;
-using SIL.CoreImpl.WritingSystems;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.DomainImpl;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Application;
+using SIL.LCModel.DomainImpl;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.XWorks.DictionaryDetailsView;
 using XCore;
 
@@ -41,7 +41,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		internal PropertyTable _propertyTable;
 
-		private FdoCache Cache { get { return _propertyTable.GetValue<FdoCache>("cache"); } }
+		private LcmCache Cache { get { return _propertyTable.GetValue<LcmCache>("cache"); } }
 
 		/// <summary>
 		/// The view to display the model in
@@ -140,7 +140,7 @@ namespace SIL.FieldWorks.XWorks
 		/// Return dictionary configurations from default and project-specific paths, skipping default/shipped configurations that are
 		/// superceded by project-specific configurations. Keys are labels, values are the models.
 		/// </summary>
-		public static Dictionary<string, DictionaryConfigurationModel> GetDictionaryConfigurationLabels(FdoCache cache, string defaultPath, string projectPath)
+		public static Dictionary<string, DictionaryConfigurationModel> GetDictionaryConfigurationLabels(LcmCache cache, string defaultPath, string projectPath)
 		{
 			var configurationModels = GetDictionaryConfigurationModels(cache, defaultPath, projectPath);
 			var labelToFileDictionary = new Dictionary<string, DictionaryConfigurationModel>();
@@ -151,7 +151,7 @@ namespace SIL.FieldWorks.XWorks
 			return labelToFileDictionary;
 		}
 
-		private static List<DictionaryConfigurationModel> GetDictionaryConfigurationModels(FdoCache cache, string defaultPath, string projectPath)
+		private static List<DictionaryConfigurationModel> GetDictionaryConfigurationModels(LcmCache cache, string defaultPath, string projectPath)
 		{
 			var configurationPaths = ListDictionaryConfigurationChoices(defaultPath, projectPath);
 			var configurationModels = configurationPaths.Select(path => new DictionaryConfigurationModel(path, cache)).ToList();
@@ -336,7 +336,7 @@ namespace SIL.FieldWorks.XWorks
 		public DictionaryConfigurationController(IDictionaryConfigurationView view, PropertyTable propertyTable, Mediator mediator, ICmObject previewEntry)
 		{
 			_propertyTable = propertyTable;
-			var cache = propertyTable.GetValue<FdoCache>("cache");
+			var cache = propertyTable.GetValue<LcmCache>("cache");
 			_allEntriesPublicationDecorator = new DictionaryPublicationDecorator(cache,
 				(ISilDataAccessManaged)cache.MainCacheAccessor, cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
 
@@ -493,7 +493,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		/// <param name="model"></param>
 		/// <param name="cache"></param>
-		public static void SetConfigureHomographParameters(DictionaryConfigurationModel model, FdoCache cache)
+		public static void SetConfigureHomographParameters(DictionaryConfigurationModel model, LcmCache cache)
 		{
 			var cacheHc = cache.ServiceLocator.GetInstance<HomographConfiguration>();
 			if (model.HomographConfiguration == null)
@@ -544,7 +544,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Returns a default entry for the given configuration type or null if the cache has no items for that type.
 		/// </summary>
-		internal static ICmObject GetDefaultEntryForType(string configurationType, FdoCache cache)
+		internal static ICmObject GetDefaultEntryForType(string configurationType, LcmCache cache)
 		{
 			var serviceLocator = cache.ServiceLocator;
 			switch(configurationType)
@@ -599,7 +599,7 @@ namespace SIL.FieldWorks.XWorks
 
 		internal string GetProjectConfigLocationForPath(string filePath)
 		{
-			var projectConfigDir = FdoFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder);
+			var projectConfigDir = LcmFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder);
 			if(filePath.StartsWith(projectConfigDir))
 			{
 				return filePath;
@@ -846,7 +846,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		#region ModelSynchronization
-		public static void MergeTypesIntoDictionaryModel(DictionaryConfigurationModel model, FdoCache cache)
+		public static void MergeTypesIntoDictionaryModel(DictionaryConfigurationModel model, LcmCache cache)
 		{
 			var complexTypes = new HashSet<Guid>();
 			foreach (var pos in cache.LangProject.LexDbOA.ComplexEntryTypesOA.ReallyReallyAllPossibilities)
@@ -874,7 +874,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private static void FixTypeListOnNode(ConfigurableDictionaryNode node,
 			HashSet<Guid> complexTypes, HashSet<Guid> variantTypes, HashSet<Guid> referenceTypes, HashSet<Guid> noteTypes,
-			bool isHybrid, FdoCache cache)
+			bool isHybrid, LcmCache cache)
 		{
 			var listOptions = node.DictionaryNodeOptions as DictionaryNodeListOptions;
 			if (listOptions != null)
@@ -930,7 +930,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		private static void FixOptionsAccordingToCurrentTypes(List<DictionaryNodeListOptions.DictionaryNodeOption> options,
-			ICollection<Guid> possibilities, ConfigurableDictionaryNode node, bool filterInflectionalVariantTypes, FdoCache cache)
+			ICollection<Guid> possibilities, ConfigurableDictionaryNode node, bool filterInflectionalVariantTypes, LcmCache cache)
 		{
 			var isDuplicate = node.IsDuplicate;
 			var currentGuids = new HashSet<Guid>();
@@ -976,7 +976,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		public static void EnsureValidStylesInModel(DictionaryConfigurationModel model, FdoCache cache)
+		public static void EnsureValidStylesInModel(DictionaryConfigurationModel model, LcmCache cache)
 		{
 			var styles = cache.LangProject.StylesOC.ToDictionary(style => style.Name);
 			foreach (var part in model.PartsAndSharedItems)
@@ -999,7 +999,7 @@ namespace SIL.FieldWorks.XWorks
 			});
 		}
 
-		public static void UpdateWritingSystemInModel(DictionaryConfigurationModel model, FdoCache cache)
+		public static void UpdateWritingSystemInModel(DictionaryConfigurationModel model, LcmCache cache)
 		{
 			foreach (var part in model.PartsAndSharedItems)
 			{
@@ -1007,7 +1007,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		private static void UpdateWritingSystemInConfigNodes(ConfigurableDictionaryNode node, FdoCache cache)
+		private static void UpdateWritingSystemInConfigNodes(ConfigurableDictionaryNode node, LcmCache cache)
 		{
 			if (node.DictionaryNodeOptions is DictionaryNodeWritingSystemOptions)
 				UpdateWsOptions((DictionaryNodeWritingSystemOptions)node.DictionaryNodeOptions, cache);
@@ -1038,7 +1038,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		public static List<ListViewItem> LoadAvailableWsList(DictionaryNodeWritingSystemOptions wsOptions, FdoCache cache)
+		public static List<ListViewItem> LoadAvailableWsList(DictionaryNodeWritingSystemOptions wsOptions, LcmCache cache)
 		{
 			var wsLists = UpdateWsOptions(wsOptions, cache);
 			// REVIEW (Hasso) 2017.04: most of this method is redundant to UpdateWsOptions; however, it's too risky to remove right before a release.
@@ -1100,7 +1100,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>Check for added or removed Writing Systems. Doesn't touch Magic WS's, which never change.</summary>
-		public static List<DictionaryNodeListOptions.DictionaryNodeOption> UpdateWsOptions(DictionaryNodeWritingSystemOptions wsOptions, FdoCache cache)
+		public static List<DictionaryNodeListOptions.DictionaryNodeOption> UpdateWsOptions(DictionaryNodeWritingSystemOptions wsOptions, LcmCache cache)
 		{
 			var availableWSs = GetCurrentWritingSystems(wsOptions.WsType, cache);
 			int magicId;
@@ -1124,7 +1124,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Return the current writing systems for a given writing system type as a list of DictionaryNodeOption objects
 		/// </summary>
-		public static List<DictionaryNodeListOptions.DictionaryNodeOption> GetCurrentWritingSystems(DictionaryNodeWritingSystemOptions.WritingSystemType wsType, FdoCache cache)
+		public static List<DictionaryNodeListOptions.DictionaryNodeOption> GetCurrentWritingSystems(DictionaryNodeWritingSystemOptions.WritingSystemType wsType, LcmCache cache)
 		{
 			var wsList = new List<DictionaryNodeListOptions.DictionaryNodeOption>();
 			switch (wsType)
@@ -1215,12 +1215,12 @@ namespace SIL.FieldWorks.XWorks
 			return style.Type == StyleType.kstParagraph;
 		}
 
-		public static List<string> GetAllPublications(FdoCache cache)
+		public static List<string> GetAllPublications(LcmCache cache)
 		{
 			return cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Select(p => p.Name.BestAnalysisAlternative.Text).ToList();
 		}
 
-		public static void FilterInvalidPublicationsFromModel(DictionaryConfigurationModel model, FdoCache cache)
+		public static void FilterInvalidPublicationsFromModel(DictionaryConfigurationModel model, LcmCache cache)
 		{
 			if (model.Publications == null || !model.Publications.Any())
 				return;
@@ -1232,7 +1232,7 @@ namespace SIL.FieldWorks.XWorks
 			model.Publications = model.Publications.Where(allPossiblePublicationsInAllWs.Contains).ToList();
 		}
 
-		public static void MergeCustomFieldsIntoDictionaryModel(DictionaryConfigurationModel model, FdoCache cache)
+		public static void MergeCustomFieldsIntoDictionaryModel(DictionaryConfigurationModel model, LcmCache cache)
 		{
 			// Detect a bad configuration file and report it in an intelligable way. We generated bad configs before the migration code was cleaned up
 			// This is only expected to happen to our testers, we don't need to recover, just inform the testers.
@@ -1250,7 +1250,7 @@ namespace SIL.FieldWorks.XWorks
 		/// This helper method is used to recurse into all of the configuration nodes in a DictionaryModel and merge the custom fields
 		/// in each ConfigurableDictionaryNode with those defined in the FieldWorks model according to the metadata cache.
 		/// </summary>
-		private static void MergeCustomFieldsIntoDictionaryModel(FdoCache cache, IEnumerable<ConfigurableDictionaryNode> configurationList)
+		private static void MergeCustomFieldsIntoDictionaryModel(LcmCache cache, IEnumerable<ConfigurableDictionaryNode> configurationList)
 		{
 			if(configurationList == null)
 				return;
@@ -1270,7 +1270,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		public static string GetLookupClassForCustomFieldParent(ConfigurableDictionaryNode parent, FdoCache cache)
+		public static string GetLookupClassForCustomFieldParent(ConfigurableDictionaryNode parent, LcmCache cache)
 		{
 			Type unneeded;
 			// The class that contains the type information for the field we are inspecting
@@ -1292,7 +1292,7 @@ namespace SIL.FieldWorks.XWorks
 		/// This method will generate a mapping between the class name (and interface name)
 		/// and each custom field in the model associated with that class.
 		/// </summary>
-		public static Dictionary<string, List<int>> BuildCustomFieldMap(FdoCache cache)
+		public static Dictionary<string, List<int>> BuildCustomFieldMap(LcmCache cache)
 		{
 			var metaDataCache = (IFwMetaDataCacheManaged)cache.MetaDataCacheAccessor;
 			var classToCustomFields = new Dictionary<string, List<int>>();
@@ -1382,7 +1382,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="cache"></param>
 		/// <param name="className"></param>
 		/// <param name="customFieldMap">existing custom field map for performance, method will build one if none given</param>
-		public static List<ConfigurableDictionaryNode> GetCustomFieldsForType(FdoCache cache, string className,
+		public static List<ConfigurableDictionaryNode> GetCustomFieldsForType(LcmCache cache, string className,
 			Dictionary<string, List<int>> customFieldMap = null)
 		{
 			customFieldMap = customFieldMap ?? BuildCustomFieldMap(cache);

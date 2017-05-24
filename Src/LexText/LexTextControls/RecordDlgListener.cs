@@ -4,7 +4,7 @@
 
 using System.Diagnostics;
 using System.Windows.Forms;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.Utils;
 using XCore;
 
@@ -47,7 +47,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			using (var dlg = new InsertRecordDlg())
 			{
-				var cache = m_propertyTable.GetValue<FdoCache>("cache");
+				var cache = m_propertyTable.GetValue<LcmCache>("cache");
 				ICmObject obj = null;
 				ICmObject objSelected = m_propertyTable.GetValue<ICmObject>("ActiveClerkSelectedObject");
 				ICmObject objOwning = m_propertyTable.GetValue<ICmObject>("ActiveClerkOwningObject");
@@ -100,7 +100,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			using (var dlg = new RecordGoDlg())
 			{
-				var cache = m_propertyTable.GetValue<FdoCache>("cache");
+				var cache = m_propertyTable.GetValue<LcmCache>("cache");
 				Debug.Assert(cache != null);
 				dlg.SetDlgInfo(cache, null, m_mediator, m_propertyTable);
 				if (dlg.ShowDialog() == DialogResult.OK)

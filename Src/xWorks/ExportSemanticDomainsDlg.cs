@@ -4,14 +4,14 @@
 
 using System;
 using System.Windows.Forms;
-using SIL.CoreImpl.WritingSystems;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel;
 
 namespace SIL.FieldWorks.XWorks
 {
 	public partial class ExportSemanticDomainsDlg : Form
 	{
-		private FdoCache m_cache;
+		private LcmCache m_cache;
 		public ExportSemanticDomainsDlg()
 		{
 			InitializeComponent();
@@ -22,7 +22,7 @@ namespace SIL.FieldWorks.XWorks
 		/// Initialize the dialog with all needed information.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public void Initialize( FdoCache cache)
+		public void Initialize( LcmCache cache)
 		{
 			m_cache = cache;
 			FillInWritingSystems();

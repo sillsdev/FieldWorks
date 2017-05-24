@@ -2,10 +2,10 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Framework.DetailControls;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using System.Collections.Generic;
 
 namespace SIL.FieldWorks.XWorks.LexEd
@@ -23,7 +23,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		protected override VectorReferenceVc CreateVectorReferenceVc()
 		{
-			return new LexReferenceUnidirectionalVc(m_fdoCache, m_rootFlid, m_displayNameProperty, m_displayWs);
+			return new LexReferenceUnidirectionalVc(m_cache, m_rootFlid, m_displayNameProperty, m_displayWs);
 		}
 
 		protected override void Delete()
@@ -36,7 +36,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 #if WANTPORTMULTI
 			for (int i = 0; i < hvos.Length; ++i)
 			{
-				ICmObject cmo = ICmObject.CreateFromDBObject(m_fdoCache, hvos[i]);
+				ICmObject cmo = ICmObject.CreateFromDBObject(m_cache, hvos[i]);
 				(cmo as ICmObject).UpdateTimestampForVirtualChange();
 			}
 #endif
@@ -82,7 +82,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// <summary>
 		/// Constructor for the Vector Reference View Constructor Class.
 		/// </summary>
-		public LexReferenceUnidirectionalVc(FdoCache cache, int flid, string displayNameProperty, string displayWs)
+		public LexReferenceUnidirectionalVc(LcmCache cache, int flid, string displayNameProperty, string displayWs)
 			: base(cache, flid, displayNameProperty, displayWs)
 		{
 		}

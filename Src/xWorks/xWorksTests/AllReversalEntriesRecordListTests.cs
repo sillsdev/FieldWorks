@@ -5,8 +5,8 @@
 using System.Collections.Generic;
 using System.Xml;
 using NUnit.Framework;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.XWorks.LexEd;
 using XCore;
 

@@ -1,10 +1,8 @@
-// Copyright (c) 2010-2013 SIL International
+// Copyright (c) 2010-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: BrowserProjectId.cs
-// Responsibility: FW Team
-using SIL.FieldWorks.FDO;
+
+using SIL.LCModel;
 using SIL.FieldWorks.Common.FwUtils;
 
 namespace FDOBrowser
@@ -17,14 +15,14 @@ namespace FDOBrowser
 	/// ----------------------------------------------------------------------------------------
 	public class BrowserProjectId : IProjectIdentifier
 	{
-		private readonly FDOBackendProviderType m_type;
+		private readonly BackendProviderType m_type;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="BrowserProjectId"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public BrowserProjectId(FDOBackendProviderType type, string name)
+		public BrowserProjectId(BackendProviderType type, string name)
 		{
 			m_type = type;
 			Path = name;
@@ -120,7 +118,7 @@ namespace FDOBrowser
 		/// Gets the type of back-end used for storing the project.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public FDOBackendProviderType Type
+		public BackendProviderType Type
 		{
 			get { return m_type; }
 		}

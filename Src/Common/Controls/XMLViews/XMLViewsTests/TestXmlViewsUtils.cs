@@ -4,13 +4,12 @@
 
 using System;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.FDOTests;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.Filters;
 using NUnit.Framework;
 using System.Xml;
-using SIL.CoreImpl.Text;
+using SIL.LCModel.Core.Text;
 
 namespace XMLViewsTests
 {

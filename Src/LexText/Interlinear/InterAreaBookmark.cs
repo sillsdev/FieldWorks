@@ -3,8 +3,8 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Diagnostics;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 using XCore;
 
 namespace SIL.FieldWorks.IText
@@ -27,7 +27,7 @@ namespace SIL.FieldWorks.IText
 		{
 		}
 
-		internal InterAreaBookmark(InterlinMaster interlinMaster, FdoCache cache, PropertyTable propertyTable)	// For restoring
+		internal InterAreaBookmark(InterlinMaster interlinMaster, LcmCache cache, PropertyTable propertyTable)	// For restoring
 		{
 			// Note: resist any temptation to save mediator in a memer variable. Bookmarks are kept in a static dictionary
 			// and may well have a longer life than the mediator. There is danger of using if after it is disposed. See LT-12435.
@@ -35,7 +35,7 @@ namespace SIL.FieldWorks.IText
 			Restore(interlinMaster.IndexOfTextRecord);
 		}
 
-		internal void Init(InterlinMaster interlinMaster, FdoCache cache, PropertyTable propertyTable)
+		internal void Init(InterlinMaster interlinMaster, LcmCache cache, PropertyTable propertyTable)
 		{
 			Debug.Assert(interlinMaster != null);
 			Debug.Assert(cache != null);

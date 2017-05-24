@@ -13,7 +13,7 @@ using System;
 using System.Windows.Forms;
 using Microsoft.Win32;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 
 namespace SIL.FieldWorks.Common.RootSites
 {

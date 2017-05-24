@@ -8,13 +8,13 @@
 using System;
 using System.Collections.Generic;
 
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
-using SIL.Utils;
 using SIL.FieldWorks.Common.Controls;
 using XCore;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
@@ -60,7 +60,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			base.Dispose(disposing);
 		}
 
-		public override void Initialize(FdoCache cache, ICmObject obj, int flid,
+		public override void Initialize(LcmCache cache, ICmObject obj, int flid,
 			string fieldName, IPersistenceProvider persistProvider, Mediator mediator, PropertyTable propertyTable, string displayNameProperty, string displayWs)
 		{
 			CheckDisposed();

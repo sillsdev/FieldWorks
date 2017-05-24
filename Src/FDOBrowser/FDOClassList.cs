@@ -8,10 +8,9 @@ using System.Linq;
 using System.Reflection;
 using System.Xml.Serialization;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel.Infrastructure;
+using SIL.LCModel;
 using System.IO;
-using SIL.Utils;
 
 namespace FDOBrowser
 {
@@ -142,7 +141,8 @@ namespace FDOBrowser
 				return;
 
 			using (var threadHelper = new ThreadHelper())
-			using (FdoCache cache = FdoCache.CreateCacheWithNoLangProj(new BrowserProjectId(FDOBackendProviderType.kMemoryOnly, null), "en", new SilentFdoUI(threadHelper), FwDirectoryFinder.FdoDirectories, new FdoSettings()))
+			using (LcmCache cache = LcmCache.CreateCacheWithNoLangProj(new BrowserProjectId(BackendProviderType.kMemoryOnly, null), "en",
+				new SilentLcmUI(threadHelper), FwDirectoryFinder.LcmDirectories, new LcmSettings()))
 			{
 				IFwMetaDataCacheManaged mdc = (IFwMetaDataCacheManaged)cache.MainCacheAccessor.MetaDataCache;
 				s_allFDOClassNames = new List<string>();

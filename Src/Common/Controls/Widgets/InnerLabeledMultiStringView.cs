@@ -8,14 +8,14 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;		// controls and etc...
 using System.Xml;
-using SIL.CoreImpl.Cellar;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.WritingSystems;
-using SIL.CoreImpl.KernelInterfaces;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel.DomainServices;
 
 namespace SIL.FieldWorks.Common.Widgets
 {
@@ -219,7 +219,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			try
 			{
-				m_fdoCache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(m_hvoObj); // Throws an exception, if not valid.
+				m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(m_hvoObj); // Throws an exception, if not valid.
 				base.OnKeyPress(e);
 			}
 			catch
@@ -376,19 +376,19 @@ namespace SIL.FieldWorks.Common.Widgets
 
 			m_rootb = null;
 
-			if (m_fdoCache == null || DesignMode)
+			if (m_cache == null || DesignMode)
 				return;
 
 			m_rgws = WritingSystemOptions;
 
-			int wsUser = m_fdoCache.WritingSystemFactory.UserWs;
+			int wsUser = m_cache.WritingSystemFactory.UserWs;
 			m_vc = new InnerLabeledMultiStringViewVc(m_flid, m_rgws, wsUser, m_editable, this);
 
 			base.MakeRoot();
 
 			Debug.Assert(m_rootb != null);
 			// And maybe this too, at least by default?
-			m_rootb.DataAccess = m_fdoCache.DomainDataByFlid;
+			m_rootb.DataAccess = m_cache.DomainDataByFlid;
 
 			// arg3 is a meaningless initial fragment, since this VC only displays one thing.
 			// arg4 could be used to supply a stylesheet.
@@ -418,12 +418,12 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// if true, includes unchecked active wss.</param>
 		public List<CoreWritingSystemDefinition> GetWritingSystemOptions(bool fIncludeUncheckedActiveWss)
 		{
-			var result = WritingSystemServices.GetWritingSystemList(m_fdoCache, m_wsMagic, m_hvoObj,
+			var result = WritingSystemServices.GetWritingSystemList(m_cache, m_wsMagic, m_hvoObj,
 				m_forceIncludeEnglish, fIncludeUncheckedActiveWss);
 			if (fIncludeUncheckedActiveWss && m_wsOptional != 0)
 			{
 				result = new List<CoreWritingSystemDefinition>(result); // just in case caller does not want it modified
-				var additionalWss = WritingSystemServices.GetWritingSystemList(m_fdoCache, m_wsOptional, m_hvoObj,
+				var additionalWss = WritingSystemServices.GetWritingSystemList(m_cache, m_wsOptional, m_hvoObj,
 					m_forceIncludeEnglish, fIncludeUncheckedActiveWss);
 				foreach (var ws in additionalWss)
 					if (!result.Contains(ws))

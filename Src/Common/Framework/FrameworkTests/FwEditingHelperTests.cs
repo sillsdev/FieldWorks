@@ -7,18 +7,15 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using NUnit.Framework;
-using SIL.FieldWorks.FDO.FDOTests;
 using Rhino.Mocks;
 using SIL.FieldWorks.Common.RootSites;
 using System.Windows.Forms;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.Utils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 
 namespace SIL.FieldWorks.Common.Framework
 {
@@ -490,7 +487,7 @@ namespace SIL.FieldWorks.Common.Framework
 		{
 			ITsStrBldr strBldr = TsStringUtils.MakeStrBldr();
 
-			FwStyleSheet mockStylesheet = MockRepository.GenerateStub<FwStyleSheet>();
+			LcmStyleSheet mockStylesheet = MockRepository.GenerateStub<LcmStyleSheet>();
 			IStStyle mockHyperlinkStyle = MockRepository.GenerateStub<IStStyle>();
 			mockHyperlinkStyle.Name = StyleServices.Hyperlink;
 			mockHyperlinkStyle.Stub(x => x.InUse).Return(true);
@@ -501,7 +498,7 @@ namespace SIL.FieldWorks.Common.Framework
 			Assert.AreEqual(1, strBldr.RunCount);
 			Assert.AreEqual("Click Here", strBldr.get_RunText(0));
 			ITsTextProps props = strBldr.get_Properties(0);
-			FdoTestHelper.VerifyHyperlinkPropsAreCorrect(props, Cache.DefaultAnalWs, "www.google.com");
+			LcmTestHelper.VerifyHyperlinkPropsAreCorrect(props, Cache.DefaultAnalWs, "www.google.com");
 		}
 
 		#region Helper methods

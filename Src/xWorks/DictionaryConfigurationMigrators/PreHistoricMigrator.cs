@@ -8,16 +8,15 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Xml;
-using SIL.CoreImpl.Cellar;
-using SIL.CoreImpl.Text;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.Controls;
-using SIL.CoreImpl.KernelInterfaces;
-using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using SIL.Utils;
 using XCore;
 using DCM = SIL.FieldWorks.XWorks.DictionaryConfigurationMigrator;
@@ -64,7 +63,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		/// <summary>
 		/// Constructor for tests
 		/// </summary>
-		internal PreHistoricMigrator(FdoCache cache, Mediator mediator, PropertyTable propertyTable)
+		internal PreHistoricMigrator(LcmCache cache, Mediator mediator, PropertyTable propertyTable)
 		{
 			Cache = cache;
 			m_propertyTable = propertyTable;
@@ -84,7 +83,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		{
 			m_logger = logger;
 			m_propertyTable = propertyTable;
-			Cache = propertyTable.GetValue<FdoCache>("cache");
+			Cache = propertyTable.GetValue<LcmCache>("cache");
 			LayoutLevels = new LayoutLevels();
 			m_layoutInventory = Inventory.GetInventory("layouts", Cache.ProjectId.Name);
 			m_partInventory = Inventory.GetInventory("parts", Cache.ProjectId.Name);
@@ -93,7 +92,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			{
 				m_logger.WriteLine(string.Format("{0}: Old configurations were found in need of migration. - {1}",
 					appVersion, DateTime.Now.ToString("yyyy MMM d h:mm:ss")));
-				var projectPath = FdoFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder);
+				var projectPath = LcmFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder);
 
 				m_logger.WriteLine("Migrating dictionary configurations");
 				m_configDirSuffixBeingMigrated = DictionaryConfigurationListener.DictionaryConfigurationDirectoryName;
@@ -144,7 +143,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		internal bool ConfigsNeedMigratingFromPre83()
 		{
 			// If the project already has up-to-date configurations then we don't need to migrate
-			var configSettingsDir = FdoFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path));
+			var configSettingsDir = LcmFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path));
 			var newDictionaryConfigLoc = Path.Combine(configSettingsDir, DCL.DictionaryConfigurationDirectoryName);
 			if (DCM.ConfigFilesInDir(newDictionaryConfigLoc).Any())
 			{
@@ -191,7 +190,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				return;
 			DictionaryConfigurationModel alpha83DefaultModel;
 			const string extension = DictionaryConfigurationModel.FileExtension;
-			var projectPath = Path.Combine(FdoFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder), m_configDirSuffixBeingMigrated);
+			var projectPath = Path.Combine(LcmFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder), m_configDirSuffixBeingMigrated);
 			var alphaConfigsPath = Path.Combine(FwDirectoryFinder.FlexFolder, AlphaConfigFolder);
 
 			var newDictionaryConfigLoc = Path.Combine(FwDirectoryFinder.DefaultConfigurations, DCL.DictionaryConfigurationDirectoryName);
@@ -1047,7 +1046,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			return m_layoutInventory.GetLayoutTypes();
 		}
 
-		public FdoCache Cache { get; private set; }
+		public LcmCache Cache { get; private set; }
 		public StringTable StringTable { get { return null; } } // used solely for l10n of nodes, which is a hindrance to migration.
 		public LayoutLevels LayoutLevels { get; private set; }
 

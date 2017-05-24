@@ -15,7 +15,7 @@ using System.Windows.Forms;
 using System.Drawing;
 using System.Diagnostics;
 
-using SIL.Utils;
+using SIL.LCModel.Utils;
 using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls

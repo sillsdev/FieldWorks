@@ -4,9 +4,9 @@
 
 using System;
 using System.Text;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.KernelInterfaces;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.Resources;
 
 namespace SIL.FieldWorks.FwCoreDlgControls

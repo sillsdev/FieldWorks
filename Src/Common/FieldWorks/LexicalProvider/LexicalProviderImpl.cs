@@ -14,16 +14,16 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.ServiceModel;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.FdoUi;
 using SIL.Reporting;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 using XCore;
 
 namespace SIL.FieldWorks.LexicalProvider
@@ -39,7 +39,7 @@ namespace SIL.FieldWorks.LexicalProvider
 	public sealed class LexicalProviderImpl : ILexicalProvider
 	{
 		private const string kAnalysisPrefix = "Analysis:";
-		private readonly FdoCache m_cache;
+		private readonly LcmCache m_cache;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -47,7 +47,7 @@ namespace SIL.FieldWorks.LexicalProvider
 		/// specified cache.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public LexicalProviderImpl(FdoCache cache)
+		public LexicalProviderImpl(LcmCache cache)
 		{
 			m_cache = cache;
 		}

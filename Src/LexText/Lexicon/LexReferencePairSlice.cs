@@ -4,11 +4,10 @@
 
 using System.Diagnostics;
 
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.Framework.DetailControls;
-using SIL.Utils;
 using XCore;
-using System.Diagnostics.CodeAnalysis;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {

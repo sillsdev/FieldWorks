@@ -5,9 +5,9 @@
 using System;
 using System.Windows.Forms;
 using System.Linq;
-using SIL.CoreImpl.WritingSystems;
-using SIL.CoreImpl.KernelInterfaces;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.Common.FwUtils;
 

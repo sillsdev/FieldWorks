@@ -5,13 +5,13 @@
 using System.Drawing;
 using System.Windows.Forms;
 using System.Linq;
-using SIL.CoreImpl.WritingSystems;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.LexText.Controls;
 using XCore;
 
@@ -59,7 +59,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <param name="cache"></param>
 		/// <param name="mediator"></param>
 		/// <param name="propertyTable"></param>
-		public AtomicReferencePOSSlice(FdoCache cache, ICmObject obj, int flid, Mediator mediator, PropertyTable propertyTable)
+		public AtomicReferencePOSSlice(LcmCache cache, ICmObject obj, int flid, Mediator mediator, PropertyTable propertyTable)
 			: base(new UserControl(), cache, obj, flid)
 		{
 			IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(propertyTable);
@@ -287,7 +287,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <param name="cache"></param>
 		/// <param name="mediator"></param>
 		/// <param name="propertyTable"></param>
-		public AutomicReferencePOSDisabledSlice(FdoCache cache, ICmObject obj, int flid, Mediator mediator, PropertyTable propertyTable)
+		public AutomicReferencePOSDisabledSlice(LcmCache cache, ICmObject obj, int flid, Mediator mediator, PropertyTable propertyTable)
 			: base(cache, obj, flid, mediator, propertyTable)
 		{
 			if (m_tree != null)

@@ -8,18 +8,18 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 using System.Windows.Forms;
-using SIL.CoreImpl.Scripture;
-using SIL.CoreImpl.WritingSystems;
+using SIL.LCModel.Core.Scripture;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using SIL.Reporting;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.TE
 {
@@ -36,7 +36,7 @@ namespace SIL.FieldWorks.TE
 
 		#region Data members
 		/// <summary>The FDO Cache</summary>
-		protected readonly FdoCache m_cache;
+		protected readonly LcmCache m_cache;
 
 		private readonly IApp m_app;
 		private readonly IHelpTopicProvider m_helpTopicProvider;
@@ -78,7 +78,7 @@ namespace SIL.FieldWorks.TE
 		/// <param name="helpTopicProvider">The help topic provider.</param>
 		/// <param name="app">The app.</param>
 		/// --------------------------------------------------------------------------------
-		protected ImportedBooks(FdoCache cache, IScrDraft importVersion, IScrDraft backupVersion,
+		protected ImportedBooks(LcmCache cache, IScrDraft importVersion, IScrDraft backupVersion,
 			IHelpTopicProvider helpTopicProvider, IApp app)
 		{
 			InitializeComponent();
@@ -104,7 +104,7 @@ namespace SIL.FieldWorks.TE
 		/// <param name="helpTopicProvider">The help topic provider.</param>
 		/// <param name="app">The application.</param>
 		/// --------------------------------------------------------------------------------
-		public ImportedBooks(FdoCache cache, FwStyleSheet styleSheet,
+		public ImportedBooks(LcmCache cache, LcmStyleSheet styleSheet,
 			IScrDraft importVersion, IScrDraft backupVersion, IEnumerable<int> booksImported,
 			IHelpTopicProvider helpTopicProvider, IApp app) :
 			this(cache, importVersion, backupVersion, helpTopicProvider, app)
@@ -775,7 +775,7 @@ namespace SIL.FieldWorks.TE
 		/// <param name="cache">The cache.</param>
 		/// <param name="wsList">The list of writing systems.</param>
 		/// ------------------------------------------------------------------------------------
-		private static string GetLanguageNames(FdoCache cache, IEnumerable<int> wsList)
+		private static string GetLanguageNames(LcmCache cache, IEnumerable<int> wsList)
 		{
 			Debug.Assert(wsList != null);
 

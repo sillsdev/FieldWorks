@@ -9,14 +9,12 @@
 // <remarks>
 // </remarks>
 
-using System;
 using System.Windows.Forms;
 
 using NUnit.Framework;
 
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.FDO.FDOTests;
 
 namespace SIL.FieldWorks.TE
 {
@@ -35,7 +33,7 @@ namespace SIL.FieldWorks.TE
 		/// <param name="cache"></param>
 		/// <param name="bookList">A list of books to check as an array</param>
 		/// -----------------------------------------------------------------------------------
-		public DummyFilterBookDialog(FdoCache cache, IScrBook[] bookList): base(cache, bookList, null)
+		public DummyFilterBookDialog(LcmCache cache, IScrBook[] bookList): base(cache, bookList, null)
 		{
 		}
 
@@ -77,7 +75,7 @@ namespace SIL.FieldWorks.TE
 	/// Tests for FilterBookDialog
 	/// </summary>
 	[TestFixture]
-	public class FilterBookDialogTests : ScrInMemoryFdoTestBase
+	public class FilterBookDialogTests : ScrInMemoryLcmTestBase
 	{
 		#region Member variables
 		private IScrBook m_genesis;

@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using XCore;
 
 namespace SIL.FieldWorks.Common.Controls
@@ -42,7 +42,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="objList">A list of texts and books to check as an array of hvos</param>
 		/// <param name="helpTopicProvider">The help topic provider.</param>
 		/// ------------------------------------------------------------------------------------
-		public FilterTextsDialog(FdoCache cache, IStText[] objList,
+		public FilterTextsDialog(LcmCache cache, IStText[] objList,
 			IHelpTopicProvider helpTopicProvider) : base(cache, objList, helpTopicProvider)
 		{
 			m_helpTopicId = "khtpChooseTexts";

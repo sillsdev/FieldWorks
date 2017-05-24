@@ -4,10 +4,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using NUnit.Framework;
-using SIL.FieldWorks.FDO.FDOTests;
+using SIL.LCModel;
 
 namespace SIL.FieldWorks.IText
 {

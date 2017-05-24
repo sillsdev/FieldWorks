@@ -6,16 +6,14 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.FDOTests;
-using SIL.Utils;
-using SIL.FieldWorks.Common.ScriptureUtils;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.CoreImpl.Scripture;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.WritingSystems;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel;
+using SIL.LCModel.Utils;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
+using SIL.LCModel.Core.Scripture;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
 
 namespace SIL.FieldWorks.TE.ImportTests
 {
@@ -24,7 +22,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 	/// Base class for several import test classes
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public class TeImportTestsBase : ScrInMemoryFdoTestBase
+	public class TeImportTestsBase : ScrInMemoryLcmTestBase
 	{
 		#region Member variables
 		/// <summary></summary>
@@ -37,7 +35,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 		/// <summary></summary>
 		protected BCVRef m_titus;
 		/// <summary></summary>
-		protected FwStyleSheet m_styleSheet;
+		protected LcmStyleSheet m_styleSheet;
 		/// <summary></summary>
 		protected IScrImportSet m_settings;
 		/// <summary></summary>
@@ -230,7 +228,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 		{
 			base.TestSetup();
 
-			m_styleSheet = new FwStyleSheet();
+			m_styleSheet = new LcmStyleSheet();
 			m_styleSheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles);
 			InitWsInfo();
 
@@ -560,7 +558,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 			{
 				Assert.IsNull(footnote.FootnoteMarker.Text);
 			}
-			IFdoOwningSequence<IStPara> footnoteParas = footnote.ParagraphsOS;
+			ILcmOwningSequence<IStPara> footnoteParas = footnote.ParagraphsOS;
 			Assert.AreEqual(1, footnoteParas.Count);
 			IStTxtPara para = (IStTxtPara)footnoteParas[0];
 			Assert.AreEqual(StyleUtils.ParaStyleTextProps(sParaStyleName), para.StyleRules);

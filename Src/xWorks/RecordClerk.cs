@@ -31,23 +31,24 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Xml;
-using SIL.CoreImpl.Cellar;
-using SIL.CoreImpl.Text;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Application;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.FdoUi.Dialogs;
 using SIL.FieldWorks.Filters;
 using SIL.ObjectModel;
 using SIL.Reporting;
+using SIL.LCModel.Utils;
 using SIL.Utils;
 using XCore;
 using ConfigurationException = SIL.Utils.ConfigurationException;
@@ -341,7 +342,7 @@ namespace SIL.FieldWorks.XWorks
 			m_clerkProvidingRootObject = XmlUtils.GetOptionalAttributeValue(clerkConfiguration,"clerkProvidingOwner");
 			m_shouldHandleDeletion = XmlUtils.GetOptionalBooleanAttributeValue(clerkConfiguration, "shouldHandleDeletion", true);
 			m_fAllowDeletions = XmlUtils.GetOptionalBooleanAttributeValue(clerkConfiguration, "allowDeletions", true);
-			var cache = m_propertyTable.GetValue<FdoCache>("cache");
+			var cache = m_propertyTable.GetValue<LcmCache>("cache");
 			m_list = RecordList.Create(cache, mediator, propertyTable, clerkConfiguration.SelectSingleNode("recordList"));
 			m_list.Clerk = this;
 			m_relatedClerk = XmlUtils.GetOptionalAttributeValue(clerkConfiguration, "relatedClerk");
@@ -479,7 +480,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="cache"></param>
 		/// <returns><c>true</c> if we changed or initialized a new filter,
 		/// <c>false</c> if the one installed matches the one we had stored to persist.</returns>
-		protected virtual bool TryRestoreFilter(XmlNode clerkConfiguration, FdoCache cache)
+		protected virtual bool TryRestoreFilter(XmlNode clerkConfiguration, LcmCache cache)
 		{
 			RecordFilter filter = null;
 			string persistFilter = m_propertyTable.GetStringProperty(FilterPropertyTableId, null, PropertyTable.SettingsGroup.LocalSettings);
@@ -526,7 +527,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="cache"></param>
 		/// <returns><c>true</c> if we changed or initialized a new sorter,
 		/// <c>false</c>if the one installed matches the one we had stored to persist.</returns>
-		protected virtual bool TryRestoreSorter(XmlNode clerkConfiguration, FdoCache cache)
+		protected virtual bool TryRestoreSorter(XmlNode clerkConfiguration, LcmCache cache)
 		{
 			SortName = m_propertyTable.GetStringProperty(SortNamePropertyTableId, null, PropertyTable.SettingsGroup.LocalSettings);
 
@@ -714,9 +715,9 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// our list's FdoCache
+		/// our list's LcmCache
 		/// </summary>
-		protected FdoCache Cache
+		protected LcmCache Cache
 		{
 			get { return m_list.Cache; }
 		}
@@ -1009,7 +1010,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			int index = m_list.IndexOf(hvoTarget);
 			// Why not just use the Clerk's Cache?
-			//var cache = (FdoCache)m_mediator.PropertyTable.GetValue("cache");
+			//var cache = (LcmCache)m_mediator.PropertyTable.GetValue("cache");
 			if (index == -1)
 			{
 				// In case we can't find the argument in the list, see if it is an owner of anything
@@ -3298,12 +3299,12 @@ namespace SIL.FieldWorks.XWorks
 			m_list.Sorter = sorter;
 		}
 
-		protected override bool TryRestoreFilter(XmlNode clerkConfiguration, FdoCache cache)
+		protected override bool TryRestoreFilter(XmlNode clerkConfiguration, LcmCache cache)
 		{
 			return false;
 		}
 
-		protected override bool TryRestoreSorter(XmlNode clerkConfiguration, FdoCache cache)
+		protected override bool TryRestoreSorter(XmlNode clerkConfiguration, LcmCache cache)
 		{
 			return false;
 		}

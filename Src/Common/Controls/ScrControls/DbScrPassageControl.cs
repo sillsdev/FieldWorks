@@ -4,11 +4,11 @@
 //
 // File: DbScrPassageControl.cs
 // --------------------------------------------------------------------------------------------
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 using SIL.Reporting;
 using SILUBS.SharedScrControls;
-using SIL.CoreImpl.Scripture;
+using SIL.LCModel.Core.Scripture;
 
 namespace SIL.FieldWorks.Common.Controls
 {

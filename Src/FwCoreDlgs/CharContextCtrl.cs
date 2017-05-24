@@ -10,11 +10,11 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using SIL.CoreImpl.WritingSystems;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.Resources;
 using SIL.Utils;
 using SIL.Windows.Forms;
@@ -60,7 +60,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private string m_scrChecksDllFile;
 		private List<ContextInfo> m_currContextInfoList;
 		private Dictionary<string, List<ContextInfo>> m_contextInfoLists;
-		private FdoCache m_cache;
+		private LcmCache m_cache;
 		private IWritingSystemContainer m_wsContainer;
 		private IApp m_app;
 		private CoreWritingSystemDefinition m_ws;
@@ -104,7 +104,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <param name="contextFont">The context font.</param>
 		/// <param name="tokenGrid">The token grid.</param>
 		/// ------------------------------------------------------------------------------------
-		public void Initialize(FdoCache cache, IWritingSystemContainer wsContainer,
+		public void Initialize(LcmCache cache, IWritingSystemContainer wsContainer,
 			CoreWritingSystemDefinition ws, IApp app, Font contextFont, DataGridView tokenGrid)
 		{
 			m_cache = cache;
@@ -633,7 +633,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				{
 					if (m_fileData[i].IndexOfAny(controlChars) >= 0)
 						throw new Exception(FWCoreDlgsErrors.ksInvalidControlCharacterFound);
-					m_fileData[i] = CoreImpl.Text.Icu.Normalize(m_fileData[i], CoreImpl.Text.Icu.UNormalizationMode.UNORM_NFD);
+					m_fileData[i] = LCModel.Core.Text.Icu.Normalize(m_fileData[i], LCModel.Core.Text.Icu.UNormalizationMode.UNORM_NFD);
 				}
 			}
 		}

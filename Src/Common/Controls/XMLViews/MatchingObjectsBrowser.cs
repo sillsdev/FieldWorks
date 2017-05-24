@@ -9,15 +9,15 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
+using SIL.LCModel;
+using SIL.LCModel.Application;
 using SIL.Xml;
 using XCore;
 using SIL.FieldWorks.Filters;
 using System.Collections;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.WritingSystems;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -54,7 +54,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 		private const int ListFlid = ObjectListPublisher.MinFakeFlid + 1111;
 
-		private FdoCache m_cache;
+		private LcmCache m_cache;
 		private IVwStylesheet m_stylesheet; // used to figure font heights.
 		private Mediator m_mediator;
 		private PropertyTable m_propertyTable;
@@ -161,7 +161,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="propertyTable"></param>
 		/// <param name="configNode">The config node.</param>
 		/// <param name="searchEngine">The search engine.</param>
-		public void Initialize(FdoCache cache, IVwStylesheet stylesheet, Mediator mediator, PropertyTable propertyTable, XmlNode configNode,
+		public void Initialize(LcmCache cache, IVwStylesheet stylesheet, Mediator mediator, PropertyTable propertyTable, XmlNode configNode,
 			SearchEngine searchEngine)
 		{
 			Initialize(cache, stylesheet, mediator, propertyTable, configNode, searchEngine, null);
@@ -177,7 +177,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="configNode">The config node.</param>
 		/// <param name="searchEngine">The search engine.</param>
 		/// <param name="reversalWs">The reversal writing system.</param>
-		public void Initialize(FdoCache cache, IVwStylesheet stylesheet, Mediator mediator, PropertyTable propertyTable, XmlNode configNode,
+		public void Initialize(LcmCache cache, IVwStylesheet stylesheet, Mediator mediator, PropertyTable propertyTable, XmlNode configNode,
 			SearchEngine searchEngine, CoreWritingSystemDefinition reversalWs)
 		{
 			CheckDisposed();

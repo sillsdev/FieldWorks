@@ -4,13 +4,11 @@
 
 using System.Runtime.InteropServices; // needed for Marshal
 using NUnit.Framework;
-using SIL.CoreImpl.Scripture;
-using SIL.CoreImpl.Text;
+using SIL.LCModel.Core.Scripture;
+using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.Common.ScriptureUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.FDOTests;
+using SIL.LCModel;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
@@ -20,7 +18,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
-	public class FindCollectorEnvTests: ScrInMemoryFdoTestBase
+	public class FindCollectorEnvTests: ScrInMemoryLcmTestBase
 	{
 		#region Data members
 		private IScrSection m_section;

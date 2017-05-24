@@ -2,8 +2,8 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using SIL.CoreImpl.KernelInterfaces;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
 using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
@@ -111,7 +111,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="propertyTable"></param>
 		/// <param name="tssform">The form.</param>
 		/// <param name="hvoType">The HVO of the type.</param>
-		public void SetDlgInfo(FdoCache cache, WindowParams wp, Mediator mediator, XCore.PropertyTable propertyTable, ITsString tssform, int hvoType)
+		public void SetDlgInfo(LcmCache cache, WindowParams wp, Mediator mediator, XCore.PropertyTable propertyTable, ITsString tssform, int hvoType)
 		{
 			CheckDisposed();
 

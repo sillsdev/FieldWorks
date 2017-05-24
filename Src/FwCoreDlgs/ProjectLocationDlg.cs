@@ -12,8 +12,8 @@ using System.Security.Principal;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.Utils;
+using SIL.LCModel;
+using SIL.LCModel.Utils;
 
 #if __MonoCS__
 using Mono.Unix;
@@ -48,7 +48,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <param name="helpTopicProvider">The help topic provider.</param>
 		/// <param name="cache"></param>
 		/// ------------------------------------------------------------------------------------
-		public ProjectLocationDlg(IHelpTopicProvider helpTopicProvider, FdoCache cache = null)
+		public ProjectLocationDlg(IHelpTopicProvider helpTopicProvider, LcmCache cache = null)
 			: this()
 		{
 			if (cache == null)
@@ -88,7 +88,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				{
 					string path = m_tbProjectsFolder.Text;
 					// If it contains a settings directory, assume it's a project settings folder...possibly settings for a remote project.
-					if(Directory.Exists(Path.Combine(path, FdoFileHelper.ksConfigurationSettingsDir)))
+					if(Directory.Exists(Path.Combine(path, LcmFileHelper.ksConfigurationSettingsDir)))
 					{
 						m_btnOK.Enabled = false;
 						return;

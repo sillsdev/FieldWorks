@@ -10,8 +10,8 @@
 
 using System;
 using System.Windows.Forms;
-using SIL.CoreImpl.KernelInterfaces;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.DomainServices;
 
 namespace SIL.FieldWorks.FwCoreDlgControls
 {
@@ -36,7 +36,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		/// button even when a Graphite font is selected.</param>
 		/// ------------------------------------------------------------------------------------
 		void Initialize(FontInfo fontInfo, bool fAllowSubscript, int ws,
-			ILgWritingSystemFactory wsf, FwStyleSheet styleSheet, bool fAlwaysDisableFontFeatures);
+			ILgWritingSystemFactory wsf, LcmStyleSheet styleSheet, bool fAlwaysDisableFontFeatures);
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

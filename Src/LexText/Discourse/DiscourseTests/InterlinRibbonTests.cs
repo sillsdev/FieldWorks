@@ -10,9 +10,9 @@ using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils.Attributes;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 
 namespace SIL.FieldWorks.Discourse
 {
@@ -163,7 +163,7 @@ namespace SIL.FieldWorks.Discourse
 	/// </summary>
 	internal class TestInterlinRibbon : InterlinRibbon
 	{
-		public TestInterlinRibbon(FdoCache cache, int hvoStText)
+		public TestInterlinRibbon(LcmCache cache, int hvoStText)
 			: base(cache, hvoStText)
 		{
 		}

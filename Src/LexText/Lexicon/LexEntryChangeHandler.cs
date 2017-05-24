@@ -6,9 +6,9 @@ using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.Framework;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel.Infrastructure;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {
@@ -20,7 +20,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// <summary>entry being monitored for changes.</summary>
 		protected ILexEntry m_entry;
 		/// <remarks>needed to do UnitOfWork</remarks>
-		protected FdoCache m_cache;
+		protected LcmCache m_cache;
 
 		protected ICmObject m_obj;
 
@@ -90,7 +90,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		public bool HasRecordListUpdater { get; private set; }
 
 		/// <summary/>
-		public void Setup(object record, IRecordListUpdater rlu, FdoCache cache)
+		public void Setup(object record, IRecordListUpdater rlu, LcmCache cache)
 		{
 			CheckDisposed();
 

@@ -16,11 +16,10 @@ using System.IO;
 using System.Linq;
 using Paratext;
 using SIL.FieldWorks.Common.ScriptureUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 using SIL.Reporting;
-using SIL.CoreImpl.Scripture;
-using ScrVers = SIL.CoreImpl.Scripture.ScrVers;
+using SIL.LCModel.Core.Scripture;
 
 namespace SIL.FieldWorks.TE
 {
@@ -90,7 +89,7 @@ namespace SIL.FieldWorks.TE
 					break;
 				case TypeOfImport.Other:
 				case TypeOfImport.Paratext5:
-					ScrVers versification = m_settings.Cache.LangProject.TranslatedScriptureOA.Versification;
+					LCModel.Core.Scripture.ScrVers versification = m_settings.Cache.LangProject.TranslatedScriptureOA.Versification;
 					m_settings.CheckForOverlappingFilesInRange(
 						new ScrReference(m_settings.StartRef, versification),
 						new ScrReference(m_settings.EndRef, versification));

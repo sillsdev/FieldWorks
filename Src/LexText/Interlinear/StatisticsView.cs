@@ -9,8 +9,8 @@ using System.Windows.Forms;
 using System.Xml;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.XWorks;
 using SIL.Utils;
 using XCore;
@@ -24,7 +24,7 @@ namespace SIL.FieldWorks.IText
 		private string _areaName;
 		private Mediator _mediator;
 		private PropertyTable _propertyTable;
-		private FdoCache _cache;
+		private LcmCache _cache;
 		private InterlinearTextsRecordClerk m_clerk;
 
 		public StatisticsView()
@@ -68,7 +68,7 @@ namespace SIL.FieldWorks.IText
 			CheckDisposed();
 			_mediator = mediator; //allows the Cache property to function
 			_propertyTable = propertyTable;
-			_cache = _propertyTable.GetValue<FdoCache>("cache");
+			_cache = _propertyTable.GetValue<LcmCache>("cache");
 
 			string name = XmlUtils.GetAttributeValue(configurationParameters, "clerk");
 			var clerk = RecordClerk.FindClerk(_propertyTable, name);
@@ -281,7 +281,7 @@ namespace SIL.FieldWorks.IText
 		/// <summary>
 		/// FDO cache.
 		/// </summary>
-		protected FdoCache Cache
+		protected LcmCache Cache
 		{
 			get
 			{

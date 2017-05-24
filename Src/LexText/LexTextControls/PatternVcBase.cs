@@ -1,10 +1,10 @@
 ﻿using System.Linq;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
@@ -67,7 +67,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		protected ITsString m_questions;
 		protected ITsString m_zwSpace;
 
-		protected PatternVcBase(FdoCache cache, PropertyTable propertyTable)
+		protected PatternVcBase(LcmCache cache, PropertyTable propertyTable)
 		{
 			Cache = cache;
 			m_propertyTable = propertyTable;

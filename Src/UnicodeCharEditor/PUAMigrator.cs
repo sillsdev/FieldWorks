@@ -9,7 +9,7 @@ using System.IO;
 using System.Xml;
 using System.Xml.Linq;
 using Microsoft.Win32;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.UnicodeCharEditor
 {

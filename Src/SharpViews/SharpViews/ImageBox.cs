@@ -8,7 +8,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 using SIL.Utils.ComTypes;
 
 namespace SIL.FieldWorks.SharpViews

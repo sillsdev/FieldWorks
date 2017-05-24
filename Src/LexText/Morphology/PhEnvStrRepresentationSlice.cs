@@ -5,14 +5,14 @@
 using System;
 using System.Diagnostics;
 using System.Windows.Forms;
-using SIL.CoreImpl.Phonology;
+using SIL.LCModel.Core.Phonology;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Framework.DetailControls;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 using XCore;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
@@ -38,7 +38,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		/// <param name="obj"></param>
 		/// <param name="persistenceProvider"></param>
 		/// <param name="ws"></param>
-		public PhEnvStrRepresentationSlice(FdoCache cache, string editor, int flid,
+		public PhEnvStrRepresentationSlice(LcmCache cache, string editor, int flid,
 			System.Xml.XmlNode node, ICmObject obj,
 			IPersistenceProvider persistenceProvider, int ws)
 			: base(new StringRepSliceView(obj.Hvo), obj, StringRepSliceVc.Flid)
@@ -59,7 +59,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			CheckDisposed();
 
 			StringRepSliceView ctrl = Control as StringRepSliceView; //new StringRepSliceView(m_hvoContext);
-			ctrl.Cache = m_propertyTable.GetValue<FdoCache>("cache");
+			ctrl.Cache = m_propertyTable.GetValue<LcmCache>("cache");
 			ctrl.ResetValidator();
 
 			if (ctrl.RootBox == null)
@@ -250,8 +250,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				CheckDisposed();
 
 				m_validator = new PhonEnvRecognizer(
-					m_fdoCache.LangProject.PhonologicalDataOA.AllPhonemes().ToArray(),
-					m_fdoCache.LangProject.PhonologicalDataOA.AllNaturalClassAbbrs().ToArray());
+					m_cache.LangProject.PhonologicalDataOA.AllPhonemes().ToArray(),
+					m_cache.LangProject.PhonologicalDataOA.AllNaturalClassAbbrs().ToArray());
 			}
 
 			/// <summary>
@@ -342,17 +342,17 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			{
 				CheckDisposed();
 
-				if (m_fdoCache == null || DesignMode)
+				if (m_cache == null || DesignMode)
 					return;
 
 				// A crude way of making sure the property we want is loaded into the cache.
-				m_env = m_fdoCache.ServiceLocator.GetInstance<IPhEnvironmentRepository>().GetObject(m_hvoObj);
+				m_env = m_cache.ServiceLocator.GetInstance<IPhEnvironmentRepository>().GetObject(m_hvoObj);
 				m_vc = new StringRepSliceVc();
 
 				base.MakeRoot();
 
 				// And maybe this too, at least by default?
-				m_rootb.DataAccess = m_fdoCache.MainCacheAccessor;
+				m_rootb.DataAccess = m_cache.MainCacheAccessor;
 
 				// arg3 is a meaningless initial fragment, since this VC only displays one thing.
 				// arg4 could be used to supply a stylesheet.

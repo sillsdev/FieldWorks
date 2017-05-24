@@ -60,9 +60,9 @@
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CoreImpl, Version=6.1.0.28024, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="SIL.LCModel.Core, Version=9.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\CoreImpl.dll</HintPath>
+      <HintPath>..\..\..\Output\Debug\SIL.LCModel.Core.dll</HintPath>
     </Reference>
     <Reference Include="DiffView, Version=5.5.0.22431, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -76,8 +76,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>/usr/lib/fieldworks/ECInterfaces.dll</HintPath>
     </Reference>
-    <Reference Include="FDO, Version=5.5.0.19441, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\Output\Debug\FDO.dll</HintPath>
+    <Reference Include="SIL.LCModel, Version=9.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\..\..\Output\Debug\SIL.LCModel.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="Framework, Version=5.5.0.21859, Culture=neutral, processorArchitecture=MSIL">
@@ -139,9 +139,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>/usr/lib/fieldworks/SilEncConverters40.dll</HintPath>
     </Reference>
-    <Reference Include="SilUtils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="SIL.LCModel.Utils, Version=9.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\SilUtils.dll</HintPath>
+      <HintPath>..\..\..\Output\Debug\SIL.LCModel.Utils.dll</HintPath>
     </Reference>
     <Reference Include="SimpleRootSite, Version=5.5.0.19449, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

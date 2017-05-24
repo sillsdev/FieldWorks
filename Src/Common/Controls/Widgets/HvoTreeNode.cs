@@ -4,8 +4,8 @@
 
 using System;
 using System.Windows.Forms;
-using SIL.CoreImpl.KernelInterfaces;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
 
 namespace SIL.FieldWorks.Common.Widgets
 {

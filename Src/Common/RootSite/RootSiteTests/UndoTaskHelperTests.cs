@@ -5,9 +5,9 @@
 using System;
 
 using NUnit.Framework;
-using SIL.CoreImpl.KernelInterfaces;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 
 namespace SIL.FieldWorks.Common.RootSites
 {

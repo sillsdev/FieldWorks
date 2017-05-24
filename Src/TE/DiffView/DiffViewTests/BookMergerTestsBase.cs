@@ -9,11 +9,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 
 using NUnit.Framework;
-using SIL.CoreImpl.KernelInterfaces;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.FDOTests;
-using SIL.Utils;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.TE
 {
@@ -33,7 +32,7 @@ namespace SIL.FieldWorks.TE
 		/// Initializes a new instance of the <see cref="DummyBookMerger"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public DummyBookMerger(FdoCache cache, IVwStylesheet stylesheet, IScrBook book)
+		public DummyBookMerger(LcmCache cache, IVwStylesheet stylesheet, IScrBook book)
 			: base(cache, stylesheet, book)
 		{
 		}
@@ -269,7 +268,7 @@ namespace SIL.FieldWorks.TE
 
 	/// <summary/>
 	[TestFixture]
-	public class BookMergerTestsBase: ScrInMemoryFdoTestBase
+	public class BookMergerTestsBase: ScrInMemoryLcmTestBase
 	{
 		#region Member variables
 		/// <summary/>

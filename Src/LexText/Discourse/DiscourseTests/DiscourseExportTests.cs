@@ -5,10 +5,10 @@
 using System.Collections.Generic;
 using System.Text;
 using NUnit.Framework;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using System.IO;
 using System.Xml;
-using SIL.CoreImpl.Text;
+using SIL.LCModel.Core.Text;
 
 namespace SIL.FieldWorks.Discourse
 {

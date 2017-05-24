@@ -15,15 +15,16 @@ using System.Text;
 using System.Globalization;
 using System.Linq;
 using System.Xml.Linq;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.WritingSystems;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
+using SIL.LCModel;
+using SIL.LCModel.Application;
 using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel.Utils;
+using SIL.Utils;
 using XCore;
 
 namespace SIL.FieldWorks.Common.Controls
@@ -63,7 +64,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary></summary>
 		protected Label m_lblExplanation;
 		/// <summary></summary>
-		protected FdoCache m_cache;
+		protected LcmCache m_cache;
 
 		/// <summary>
 		/// True to prevent choosing more than one item.
@@ -210,7 +211,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="nullLabel">The null label.</param>
 		/// <param name="stylesheet">The stylesheet.</param>
 		/// ------------------------------------------------------------------------------------
-		public ReallySimpleListChooser(FdoCache cache, IHelpTopicProvider helpTopicProvider,
+		public ReallySimpleListChooser(LcmCache cache, IHelpTopicProvider helpTopicProvider,
 			IPersistenceProvider persistProvider, IEnumerable<ObjectLabel> labels,
 			ICmObject currentObj, string fieldName, string nullLabel, IVwStylesheet stylesheet)
 		{
@@ -230,7 +231,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="fieldName">the user-readable name of the field that is being edited</param>
 		/// <param name="nullLabel">The null label.</param>
 		/// ------------------------------------------------------------------------------------
-		public ReallySimpleListChooser(FdoCache cache, IHelpTopicProvider helpTopicProvider,
+		public ReallySimpleListChooser(LcmCache cache, IHelpTopicProvider helpTopicProvider,
 			IPersistenceProvider persistProvider, IEnumerable<ObjectLabel> labels,
 			ICmObject currentObj, string fieldName, string nullLabel)
 		{
@@ -248,7 +249,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="currentObj">The current object.</param>
 		/// <param name="fieldName">the user-readable name of the field that is being edited</param>
 		/// ------------------------------------------------------------------------------------
-		public ReallySimpleListChooser(FdoCache cache, IHelpTopicProvider helpTopicProvider,
+		public ReallySimpleListChooser(LcmCache cache, IHelpTopicProvider helpTopicProvider,
 			IPersistenceProvider persistProvider, IEnumerable<ObjectLabel> labels,
 			ICmObject currentObj, string fieldName)
 		{
@@ -260,7 +261,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// Initializes a new instance of the <see cref="ReallySimpleListChooser"/> class.
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
-		private void Init(FdoCache cache, IHelpTopicProvider helpTopicProvider,
+		private void Init(LcmCache cache, IHelpTopicProvider helpTopicProvider,
 			IPersistenceProvider persistProvider, string fieldName,
 			IEnumerable<ObjectLabel> labels, ICmObject currentObj, string nullLabel,
 			IVwStylesheet stylesheet)
@@ -374,7 +375,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="helpTopicProvider">The help topic provider.</param>
 		/// ------------------------------------------------------------------------------------
 		public ReallySimpleListChooser(IPersistenceProvider persistProvider,
-			IEnumerable<ObjectLabel> labels, string fieldName, FdoCache cache,
+			IEnumerable<ObjectLabel> labels, string fieldName, LcmCache cache,
 			IEnumerable<ICmObject> chosenObjs, IHelpTopicProvider helpTopicProvider) :
 			this(persistProvider, labels, fieldName, cache, chosenObjs, IsListSorted(labels), helpTopicProvider)
 		{
@@ -394,7 +395,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="helpTopicProvider">The help topic provider.</param>
 		/// ------------------------------------------------------------------------------------
 		public ReallySimpleListChooser(IPersistenceProvider persistProvider,
-			IEnumerable<ObjectLabel> labels, string fieldName, FdoCache cache,
+			IEnumerable<ObjectLabel> labels, string fieldName, LcmCache cache,
 			IEnumerable<ICmObject> chosenObjs, bool fSortLabels, IHelpTopicProvider helpTopicProvider)
 			: this(persistProvider, fieldName, cache, chosenObjs, helpTopicProvider)
 		{
@@ -427,7 +428,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="helpTopicProvider">The help topic provider.</param>
 		/// ------------------------------------------------------------------------------------
 		protected ReallySimpleListChooser(IPersistenceProvider persistProvider,
-			string fieldName, FdoCache cache, IEnumerable<ICmObject> chosenObjs,
+			string fieldName, LcmCache cache, IEnumerable<ICmObject> chosenObjs,
 			IHelpTopicProvider helpTopicProvider)
 		{
 			m_cache = cache;
@@ -1291,12 +1292,6 @@ namespace SIL.FieldWorks.Common.Controls
 				descFont = userFont;
 			}
 
-#if __MonoCS__
-			var tempfile = Path.Combine(FileUtils.GetTempFile("htm"));
-			using (var w = new StreamWriter(tempfile, false))
-			using (var tw = new XmlTextWriter(w))
-			{
-#endif
 			var htmlElem = new XElement("html",
 				new XElement("head",
 					new XElement("title", title)),
@@ -1310,17 +1305,25 @@ namespace SIL.FieldWorks.Common.Controls
 					new XElement("font",
 						new XAttribute("face", descFont),
 						new XElement("p", desc))));
-#if __MonoCS__
-			XmlDocument xmlDocument = new XmlDocument();
-			xmlDocument.LoadXml(htmlElem.ToString());
-			xmlDocument.WriteTo(tw);
+			if (MiscUtils.IsMono)
+			{
+				var tempfile = Path.Combine(FileUtils.GetTempFile("htm"));
+				using (var w = new StreamWriter(tempfile, false))
+				using (var tw = new XmlTextWriter(w))
+				{
+					XmlDocument xmlDocument = new XmlDocument();
+					xmlDocument.LoadXml(htmlElem.ToString());
+					xmlDocument.WriteTo(tw);
+				}
+				m_webBrowser.Navigate(tempfile);
+				if (FileUtils.FileExists(tempfile))
+					FileUtils.Delete(tempfile);
 			}
-			m_webBrowser.Navigate(tempfile);
-			if (FileUtils.FileExists(tempfile))
-				FileUtils.Delete(tempfile);
-			tempfile = null;
-#else
-			m_webBrowser.DocumentText = htmlElem.ToString();
+#if !__MonoCS__
+			else
+			{
+				m_webBrowser.DocumentText = htmlElem.ToString();
+			}
 #endif
 		}
 
@@ -1983,9 +1986,9 @@ namespace SIL.FieldWorks.Common.Controls
 		}
 
 		/// <summary>
-		/// Get or set the internal FdoCache value.
+		/// Get or set the internal LcmCache value.
 		/// </summary>
-		public FdoCache Cache
+		public LcmCache Cache
 		{
 			get
 			{
@@ -2563,7 +2566,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="mediator"></param>
 		/// <param name="propertyTable"></param>
 		/// <returns></returns>
-		public static bool ChooseNaturalClass(IVwRootBox rootb, FdoCache cache,
+		public static bool ChooseNaturalClass(IVwRootBox rootb, LcmCache cache,
 			IPersistenceProvider persistenceProvider, Mediator mediator, PropertyTable propertyTable)
 		{
 			IEnumerable<ObjectLabel> labels = ObjectLabel.CreateObjectLabels(cache,
@@ -2699,7 +2702,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="helpTopicProvider">The help topic provider.</param>
 		/// ------------------------------------------------------------------------------------
 		public LeafChooser(IPersistenceProvider persistProvider,
-			IEnumerable<ObjectLabel> labels, string fieldName, FdoCache cache,
+			IEnumerable<ObjectLabel> labels, string fieldName, LcmCache cache,
 			IEnumerable<ICmObject> chosenObjs, int leafFlid, IHelpTopicProvider helpTopicProvider)
 			: base (persistProvider, fieldName, cache, chosenObjs, helpTopicProvider)
 		{

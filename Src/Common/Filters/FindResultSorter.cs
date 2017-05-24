@@ -4,7 +4,7 @@
 
 using System;
 using System.Collections;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 
 namespace SIL.FieldWorks.Filters
 {

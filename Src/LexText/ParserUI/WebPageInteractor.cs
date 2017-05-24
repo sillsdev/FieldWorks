@@ -7,7 +7,7 @@ using Gecko;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FdoUi;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
@@ -16,10 +16,10 @@ namespace SIL.FieldWorks.LexText.Controls
 	{
 		private readonly HtmlControl m_htmlControl;
 		private readonly Mediator m_mediator;
-		private readonly FdoCache m_cache;
+		private readonly LcmCache m_cache;
 		private readonly FwTextBox m_tbWordForm;
 
-		public WebPageInteractor(HtmlControl htmlControl, Mediator mediator, FdoCache cache, FwTextBox tbWordForm)
+		public WebPageInteractor(HtmlControl htmlControl, Mediator mediator, LcmCache cache, FwTextBox tbWordForm)
 		{
 			m_htmlControl = htmlControl;
 			m_mediator = mediator;

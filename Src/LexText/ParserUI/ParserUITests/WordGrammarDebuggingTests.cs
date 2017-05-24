@@ -12,6 +12,7 @@ using System.Xml.Xsl;
 using NUnit.Framework;
 
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel.Utils;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.LexText.Controls

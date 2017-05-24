@@ -7,16 +7,16 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Xml;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.LexText.Controls;
-using SIL.Utils;
 using XCore;
 using System.Linq;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.FdoUi
 {
@@ -34,7 +34,7 @@ namespace SIL.FieldWorks.FdoUi
 	{
 		Mediator m_mediator;
 		TreeCombo m_tree;
-		FdoCache m_cache;
+		LcmCache m_cache;
 		protected XMLViewsDataCache m_sda;
 		InflectionFeaturePopupTreeManager m_InflectionFeatureTreeManager;
 		int m_selectedHvo = 0;
@@ -193,7 +193,7 @@ namespace SIL.FieldWorks.FdoUi
 		/// <summary>
 		/// Get or set the cache. Must be set before the tree values need to load.
 		/// </summary>
-		public FdoCache Cache
+		public LcmCache Cache
 		{
 			get
 			{

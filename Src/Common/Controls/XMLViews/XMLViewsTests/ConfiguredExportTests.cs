@@ -8,9 +8,9 @@ using System.Globalization;
 using System.IO;
 using System.Xml;
 using NUnit.Framework;
-using SIL.CoreImpl.WritingSystems;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.FDO.FDOTests;
+using SIL.LCModel;
 using SIL.WritingSystems;
 using XCore;
 

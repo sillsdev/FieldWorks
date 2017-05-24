@@ -7,13 +7,13 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
-using SIL.CoreImpl.Cellar;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.KernelInterfaces;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.FdoUi
 {
@@ -69,7 +69,7 @@ namespace SIL.FieldWorks.FdoUi
 		string m_className; // name of m_clid.
 		string m_fieldName;
 		readonly CellarPropertyType m_type; // the type (refAtomic, refSeq, or refColl) of m_tag
-		ISilDataAccess m_sda;  // m_cache.DomainDataByFlid; use separate var in interests of minimising need for FdoCache.
+		ISilDataAccess m_sda;  // m_cache.DomainDataByFlid; use separate var in interests of minimising need for LcmCache.
 		int m_taTagName = 0; // Virtual prop for type-ahead name property.
 		int m_snTagName = 0; // Virtual prop for shortname property.
 		// HVO of the object that has the type-ahead name. This is set by SelectionChanged when it decides that
@@ -86,7 +86,7 @@ namespace SIL.FieldWorks.FdoUi
 		bool m_fInSelectionChanged = false;
 		bool m_fGotFocus = false; // True if we have focus.
 
-		public TypeAheadSupportVc(int tag, FdoCache cache)
+		public TypeAheadSupportVc(int tag, LcmCache cache)
 		{
 			m_tag = tag;
 			IFwMetaDataCache mdc = cache.DomainDataByFlid.MetaDataCache;

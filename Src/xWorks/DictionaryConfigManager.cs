@@ -14,6 +14,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
+using SIL.LCModel.Utils;
 using SIL.Utils;
 using XCore;
 

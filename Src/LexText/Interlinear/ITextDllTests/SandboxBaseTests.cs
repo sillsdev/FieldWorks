@@ -7,11 +7,10 @@ using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.FDOTests;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.KernelInterfaces;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.ObjectModel;
 using XCore;
 
@@ -824,7 +823,7 @@ namespace SIL.FieldWorks.IText
 			return new AnalysisOccurrence(seg, 0);
 		}
 
-		private FDO.IText MakeText(string contents)
+		private LCModel.IText MakeText(string contents)
 		{
 			var text = Cache.ServiceLocator.GetInstance<ITextFactory>().Create();
 			//Cache.LangProject.TextsOC.Add(text);
