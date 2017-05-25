@@ -944,7 +944,7 @@ If you see this message again, exit the import wizard (saving your settings) and
     <comment>Alternative wording for Use as Current Entry link-button when called from interlinear.</comment>
   </data>
   <data name="ksCompleteCircumfix" xml:space="preserve">
-    <value>To create a circumfix, every non-blank alternative of the form must have two morphemes separated by a space or period(s).</value>
+    <value>To create a circumfix, every non-blank alternative of the Lexeme Form must have two morphemes separated by a space or period(s).</value>
   </data>
   <data name="ksInvalidLexForm" xml:space="preserve">
     <value>The lexeme form does not match the morpheme type.</value>
