@@ -4096,7 +4096,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			// and no CF that matches. It is not a homograph because of our different CF, but there is no conflict
 			// because it has no CF.
 
-			// Of course, if we don't have an LF with at least one non-blank alternative, none of this is relevant.
+			// Of course, if we don't have a Lexeme Form with at least one non-blank alternative, none of this is relevant.
 			if (!WeHaveAnInterestingLf())
 				return leSaved;
 
