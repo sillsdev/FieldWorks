@@ -6,13 +6,13 @@ using System.Configuration;
 using System.Diagnostics;
 using SIL.Settings;
 
-namespace SIL.LCModel.Core.Properties
+namespace SIL.FieldWorks.Common.FwUtils.Properties
 {
 
 	/// <summary>
 	/// Settings class to put a custom provider in.
 	/// </summary>
-	public sealed partial class Settings
+	internal sealed partial class Settings
 	{
 		/// <summary>
 		/// Initializes a new instance of the <see cref="Settings"/> class setting

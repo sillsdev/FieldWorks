@@ -41,6 +41,7 @@ using SIL.FieldWorks.LexicalProvider;
 using SIL.FieldWorks.PaObjects;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks;
+using SIL.Keyboarding;
 using SIL.Reporting;
 using SIL.LCModel.Utils;
 using SIL.Utils;
@@ -49,16 +50,6 @@ using SIL.Windows.Forms.Keyboarding;
 using SIL.WritingSystems;
 using XCore;
 using ConfigurationException = SIL.Utils.ConfigurationException;
-using FileUtils = SIL.LCModel.Utils.FileUtils;
-#if !__MonoCS__
-using NetSparkle;
-#endif
-
-#if __MonoCS__
-using SIL.Keyboarding;
-#else
-
-#endif
 
 namespace SIL.FieldWorks
 {
@@ -116,24 +107,21 @@ namespace SIL.FieldWorks
 		private static bool s_noUserInterface;
 		private static bool s_appServerMode;
 		private static string s_LinkDirChangedTo;
-		private static TcpChannel s_serviceChannel = null;
+		private static TcpChannel s_serviceChannel;
 		private static int s_servicePort;
 		// true if we have no previous reporting settings, typically the first time a version of FLEx that
 		// supports usage reporting has been run.
 		private static bool s_noPreviousReportingSettings;
 		private static ILcmUI s_ui;
+		private static FwApplicationSettings s_appSettings;
 		#endregion
 
 		#region Main Method and Initialization Methods
 #if !__MonoCS__
 		/// <summary></summary>
 		[DllImport("kernel32.dll")]
-		public extern static IntPtr LoadLibrary(string fileName);
+		public static extern IntPtr LoadLibrary(string fileName);
 #endif
-
-		[DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
-		[return: MarshalAs(UnmanagedType.Bool)]
-		static extern bool SetDllDirectory(string lpPathName);
 
 		/// <summary>
 		/// Sets the ICU_DATA environment variable.
@@ -200,11 +188,10 @@ namespace SIL.FieldWorks
 				// Invoke does nothing directly, but causes BroadcastEventWindow to be initialized
 				// on this thread to prevent race conditions on shutdown.See TE-975
 				// See http://forums.microsoft.com/MSDN/ShowPost.aspx?PostID=911603&SiteID=1
-#if !__MonoCS__
-				SystemEvents.InvokeOnEventsThread(new Action(DoNothing));
-#else
 				// TODO-Linux: uses mono feature that is not implemented. What are the implications of this? Review.
-#endif
+				if (MiscUtils.IsDotNet)
+					SystemEvents.InvokeOnEventsThread(new Action(DoNothing));
+
 				s_threadHelper = new ThreadHelper();
 
 				// ENHANCE (TimS): Another idea for ensuring that we have only one process started for
@@ -259,12 +246,10 @@ namespace SIL.FieldWorks
 
 				s_ui = new FwLcmUI(GetHelpTopicProvider(), s_threadHelper);
 
-				if (LCModel.Core.Properties.Settings.Default.CallUpgrade)
-				{
-					LCModel.Core.Properties.Settings.Default.Upgrade();
-					LCModel.Core.Properties.Settings.Default.CallUpgrade = false;
-				}
-				var reportingSettings = LCModel.Core.Properties.Settings.Default.Reporting;
+				s_appSettings = new FwApplicationSettings();
+				s_appSettings.UpgradeIfNecessary();
+
+				ReportingSettings reportingSettings = s_appSettings.Reporting;
 				if (reportingSettings == null)
 				{
 					// Note: to simulate this, currently it works to delete all subfolders of
@@ -272,11 +257,11 @@ namespace SIL.FieldWorks
 					// That guid may depend on version or something similar; it's some artifact of how the Settings persists.
 					s_noPreviousReportingSettings = true;
 					reportingSettings = new ReportingSettings();
-					LCModel.Core.Properties.Settings.Default.Reporting = reportingSettings; //to avoid a defect in Settings rely on the Save in the code below
+					s_appSettings.Reporting = reportingSettings; //to avoid a defect in Settings rely on the Save in the code below
 				}
 
 				// Allow develpers and testers to avoid cluttering our analytics by setting an environment variable (FEEDBACK = false)
-				var feedbackEnvVar = Environment.GetEnvironmentVariable("FEEDBACK");
+				string feedbackEnvVar = Environment.GetEnvironmentVariable("FEEDBACK");
 				if (feedbackEnvVar != null)
 				{
 					reportingSettings.OkToPingBasicUsageData = feedbackEnvVar.ToLower().Equals("true") || feedbackEnvVar.ToLower().Equals("yes");
@@ -302,7 +287,7 @@ namespace SIL.FieldWorks
 						);
 					// Init updates various things in the ReportingSettings, such as the number of times
 					// the application has been launched and the 'previous' version.
-					LCModel.Core.Properties.Settings.Default.Save();
+					s_appSettings.Save();
 				}
 
 				// e.g. the first time the user runs FW9, we need to copy a bunch of registry keys
@@ -354,7 +339,7 @@ namespace SIL.FieldWorks
 					LaunchRestoreFromCommandLine(appArgs);
 					if (s_flexApp == null)
 						return 0; // Restore was cancelled or failed, or another process took care of it.
-					if (!String.IsNullOrEmpty(s_LinkDirChangedTo))
+					if (!string.IsNullOrEmpty(s_LinkDirChangedTo))
 					{
 						NonUndoableUnitOfWorkHelper.Do(s_cache.ActionHandlerAccessor,
 							() => s_cache.LangProject.LinkedFilesRootDir = s_LinkDirChangedTo);
@@ -366,9 +351,8 @@ namespace SIL.FieldWorks
 				// Create a listener for this project for applications using FLEx as a LexicalProvider.
 				LexicalProviderManager.StartLexicalServiceProvider(s_projectId, s_cache);
 
-#if __MonoCS__
-				UglyHackForXkbIndicator();
-#endif
+				if (MiscUtils.IsMono)
+					UglyHackForXkbIndicator();
 
 				// Application was started successfully, so start the message loop
 				Application.Run();
@@ -401,7 +385,6 @@ namespace SIL.FieldWorks
 			return 0;
 		}
 
-#if __MonoCS__
 		/// <summary>
 		/// For some reason, setting an Xkb keyboard for the first time doesn't work well inside
 		/// FieldWorks.  The keyboard is actually set (although it may take effect only after the
@@ -428,7 +411,6 @@ namespace SIL.FieldWorks
 			if (wsObj != null && wsObj.LocalKeyboard != null)
 				wsObj.LocalKeyboard.Activate();
 		}
-#endif
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -508,8 +490,8 @@ namespace SIL.FieldWorks
 		/// ------------------------------------------------------------------------------------
 		private static void LaunchRestoreFromCommandLine(FwAppArgs appArgs)
 		{
-				RestoreProject(null, appArgs.BackupFile);
-			}
+			RestoreProject(null, appArgs.BackupFile);
+		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -833,7 +815,7 @@ namespace SIL.FieldWorks
 			using (var progressDlg = new ProgressDialogWithTask(owner))
 			{
 				LcmCache cache = LcmCache.CreateCacheFromExistingData(projectId, s_sWsUser, s_ui, FwDirectoryFinder.LcmDirectories,
-					CreateFdoSettings(), progressDlg);
+					CreateLcmSettings(), progressDlg);
 				EnsureValidLinkedFilesFolder(cache);
 				// Make sure every project has one of these. (Getting it has a side effect if it does not exist.)
 				// Crashes have been caused by trying to create it at an unsafe time (LT-15695).
@@ -1317,7 +1299,7 @@ namespace SIL.FieldWorks
 		{
 			// From the provided project, return the best possible ProjectId object.
 			return new ProjectId(latestProject);
-				}
+		}
 
 		/// <summary>
 		/// Returns true if valid command-line args created this projectId.
@@ -1681,7 +1663,6 @@ namespace SIL.FieldWorks
 								if (activeWindow != null)
 								{
 									var activeWindowInterface = (IFwMainWnd)activeWindow;
-									var activeWindowMediator = activeWindowInterface.Mediator;
 									activeWindowInterface.PropTable.SetProperty("LastBridgeUsed",
 										obtainedProjectType == ObtainedProjectType.Lift ? "LiftBridge" : "FLExBridge",
 										PropertyTable.SettingsGroup.LocalSettings,
@@ -1752,18 +1733,14 @@ namespace SIL.FieldWorks
 			{
 				dlg.ShowDialog(dialogOwner);
 				var app = helpTopicProvider as IApp;
-				if (app != null)
+				Form activeWindow = app?.ActiveMainWindow;
+				if (activeWindow != null && dlg.ObtainedProjectType != ObtainedProjectType.None)
 				{
-					var activeWindow = app.ActiveMainWindow;
-					if (activeWindow != null && dlg.ObtainedProjectType != ObtainedProjectType.None)
-					{
-						var activeWindowInterface = (IFwMainWnd)activeWindow;
-						var activeWindowMediator = activeWindowInterface.Mediator;
-						activeWindowInterface.PropTable.SetProperty("LastBridgeUsed",
-							dlg.ObtainedProjectType == ObtainedProjectType.Lift ? "LiftBridge" : "FLExBridge",
-							PropertyTable.SettingsGroup.LocalSettings,
-							true);
-					}
+					var activeWindowInterface = (IFwMainWnd) activeWindow;
+					activeWindowInterface.PropTable.SetProperty("LastBridgeUsed",
+						dlg.ObtainedProjectType == ObtainedProjectType.Lift ? "LiftBridge" : "FLExBridge",
+						PropertyTable.SettingsGroup.LocalSettings,
+						true);
 				}
 
 				if (dlg.DialogResult == DialogResult.OK)
@@ -2465,7 +2442,7 @@ namespace SIL.FieldWorks
 			{
 				LcmCache cache = existingCache ?? LcmCache.CreateCacheFromExistingData(
 					new ProjectId(restoreSettings.Settings.FullProjectPath),
-					s_sWsUser, s_ui, FwDirectoryFinder.LcmDirectories, CreateFdoSettings(), progressDlg);
+					s_sWsUser, s_ui, FwDirectoryFinder.LcmDirectories, CreateLcmSettings(), progressDlg);
 
 				try
 				{
@@ -2504,10 +2481,9 @@ namespace SIL.FieldWorks
 			return true;
 		}
 
-		private static LcmSettings CreateFdoSettings()
+		private static LcmSettings CreateLcmSettings()
 		{
 			var settings = new LcmSettings();
-
 			int sharedXmlBackendCommitLogSize = 0;
 			if (FwRegistryHelper.FieldWorksRegistryKey != null)
 				sharedXmlBackendCommitLogSize = (int) FwRegistryHelper.FieldWorksRegistryKey.GetValue("SharedXMLBackendCommitLogSize", 0);
@@ -2515,6 +2491,7 @@ namespace SIL.FieldWorks
 				sharedXmlBackendCommitLogSize = (int) FwRegistryHelper.FieldWorksRegistryKeyLocalMachine.GetValue("SharedXMLBackendCommitLogSize", 0);
 			if (sharedXmlBackendCommitLogSize > 0)
 				settings.SharedXMLBackendCommitLogSize = sharedXmlBackendCommitLogSize;
+			settings.UpdateGlobalWSStore = s_appSettings.UpdateGlobalWSStore;
 			return settings;
 		}
 
@@ -2754,13 +2731,15 @@ namespace SIL.FieldWorks
 					app.InitAndShowMainWindow(fwMainWindow, wndCopyFrom);
 				// It seems to get activated before we connect the Activate event. But it IS active by now;
 				// so just record it now as the active one.
-				s_activeMainWnd = (IFwMainWnd)fwMainWindow;
-				using(new DataUpdateMonitor(fwMainWindow, "Migrating Dictionary Configuration Settings"))
+				s_activeMainWnd = (IFwMainWnd) fwMainWindow;
+				using (new DataUpdateMonitor(fwMainWindow, "Migrating Dictionary Configuration Settings"))
 				{
 					var configMigrator = new DictionaryConfigurationMigrator(s_activeMainWnd.PropTable, s_activeMainWnd.Mediator);
 					configMigrator.MigrateOldConfigurationsIfNeeded();
 				}
 				EnsureValidReversalIndexConfigFile(app.Cache);
+				s_activeMainWnd.PropTable.SetProperty("AppSettings", s_appSettings, false);
+				s_activeMainWnd.PropTable.SetPropertyPersistence("AppSettings", false);
 			}
 			catch (StartupException ex)
 			{
@@ -2866,14 +2845,14 @@ namespace SIL.FieldWorks
 		/// ------------------------------------------------------------------------------------
 		private static FwApp GetOrCreateApplication(FwAppArgs args)
 		{
-					if (s_flexApp == null)
-					{
-						s_flexApp = (FwApp)DynamicLoader.CreateObject(FwDirectoryFinder.FlexDll,
-					FwUtils.ksFullFlexAppObjectName, s_fwManager, GetHelpTopicProvider(), args);
-						s_flexAppKey = s_flexApp.SettingsKey;
-					}
-					return s_flexApp;
-				}
+			if (s_flexApp == null)
+			{
+				s_flexApp = (FwApp)DynamicLoader.CreateObject(FwDirectoryFinder.FlexDll, FwUtils.ksFullFlexAppObjectName,
+					s_fwManager, GetHelpTopicProvider(), args);
+				s_flexAppKey = s_flexApp.SettingsKey;
+			}
+			return s_flexApp;
+		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -2907,7 +2886,7 @@ namespace SIL.FieldWorks
 			{
 				app.RegistrySettings.LoadingProcessId = process.Id;
 			}
-			if (String.IsNullOrEmpty(app.RegistrySettings.LatestProject))
+			if (string.IsNullOrEmpty(app.RegistrySettings.LatestProject))
 			{
 				// Until something gets saved, we will keep track of the first project opened.
 				app.RegistrySettings.LatestProject = projectId.Handle;
@@ -3541,19 +3520,19 @@ namespace SIL.FieldWorks
 		/// <returns></returns>
 		internal static FwApp ReopenProject(string project, FwAppArgs appArgs)
 		{
-			ExecuteWithAppsShutDown(()=>
-												{
-													try
-													{
-														HandleLinkRequest(appArgs);
-														return s_projectId;
-													}
-													catch (Exception e)
-													{
-														//This is not good.
-													}
-													return null;
-												});
+			ExecuteWithAppsShutDown(() =>
+				{
+					try
+					{
+						HandleLinkRequest(appArgs);
+						return s_projectId;
+					}
+					catch (Exception e)
+					{
+						//This is not good.
+					}
+					return null;
+				});
 			return s_flexApp;
 		}
 
@@ -3809,7 +3788,7 @@ namespace SIL.FieldWorks
 	///<summary>
 	/// Class to find out some details about the current FW installation.
 	///</summary>
-	static public class WindowsInstallerQuery
+	public static class WindowsInstallerQuery
 	{
 		private const string InstallerProductCode = "{8E80F1ED-826A-46d5-A59A-D8A203F2F0D9}";
 		private const string InstalledProductNameProperty = "InstalledProductName";

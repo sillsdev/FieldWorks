@@ -146,6 +146,7 @@
     <Compile Include="Attributes\SuppressErrorBeepsAttribute.cs" />
     <Compile Include="CharEnumeratorForByteArrayTests.cs" />
     <Compile Include="DebugProcsTests.cs" />
+    <Compile Include="FwApplicationSettingsTests.cs" />
     <Compile Include="InterfacesTests.cs" />
     <Compile Include="DisposableObjectsSetTests.cs" />
     <Compile Include="IVwCacheDaTests.cs" />
@@ -160,6 +161,7 @@
     <Compile Include="TempSFFileMaker.cs" />
     <Compile Include="TempSFFileMakerTests.cs" />
     <Compile Include="TestBaseForTestsThatCreateTempFilesBasedOnResources.cs" />
+    <Compile Include="TestFwApplicationSettings.cs" />
     <Compile Include="TestFwStylesheet.cs" />
     <Compile Include="TestFwStylesheetTests.cs" />
     <Compile Include="XmlHelper.cs" />

@@ -1,13 +1,13 @@
-// Copyright (c) 2014-2016 SIL International
+// Copyright (c) 2014-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using SIL.FieldWorks.Common.FwUtils;
 using XCore;
 
 namespace SIL.FieldWorks.XWorks
@@ -95,14 +95,16 @@ namespace SIL.FieldWorks.XWorks
 
 		private void LoadFromSettings()
 		{
-			if(!string.IsNullOrEmpty(LCModel.Core.Properties.Settings.Default.WebonaryPass))
+			if (PropertyTable != null)
 			{
-				RememberPassword = true;
-				Password = DecryptPassword(LCModel.Core.Properties.Settings.Default.WebonaryPass);
-			}
-			UserName = LCModel.Core.Properties.Settings.Default.WebonaryUser;
-			if(PropertyTable != null)
-			{
+				var appSettings = PropertyTable.GetValue<FwApplicationSettingsBase>("AppSettings");
+				if (!string.IsNullOrEmpty(appSettings.WebonaryPass))
+				{
+					RememberPassword = true;
+					Password = DecryptPassword(appSettings.WebonaryPass);
+				}
+				UserName = appSettings.WebonaryUser;
+
 				SiteName = PropertyTable.GetStringProperty(WebonarySite, null);
 				SelectedPublication = PropertyTable.GetStringProperty(WebonaryPublication, null);
 				SelectedConfiguration = PropertyTable.GetStringProperty(WebonaryConfiguration, null);
@@ -112,8 +114,9 @@ namespace SIL.FieldWorks.XWorks
 
 		internal void SaveToSettings()
 		{
-			LCModel.Core.Properties.Settings.Default.WebonaryPass = RememberPassword ? EncryptPassword(Password) : null;
-			LCModel.Core.Properties.Settings.Default.WebonaryUser = UserName;
+			var appSettings = PropertyTable.GetValue<FwApplicationSettingsBase>("AppSettings");
+			appSettings.WebonaryPass = RememberPassword ? EncryptPassword(Password) : null;
+			appSettings.WebonaryUser = UserName;
 
 			PropertyTable.SetProperty(WebonarySite, SiteName, false);
 			PropertyTable.SetPropertyPersistence(WebonarySite, true);
@@ -131,7 +134,7 @@ namespace SIL.FieldWorks.XWorks
 				PropertyTable.SetPropertyPersistence(WebonaryPublication, true);
 			}
 			PropertyTable.SaveGlobalSettings();
-			LCModel.Core.Properties.Settings.Default.Save();
+			appSettings.Save();
 		}
 
 		/// <summary>

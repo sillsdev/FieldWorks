@@ -8,12 +8,12 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace SIL.LCModel.Core.Properties {
+namespace SIL.FieldWorks.Common.FwUtils.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "14.0.0.0")]
-    public sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
+    internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
         
@@ -53,57 +53,6 @@ namespace SIL.LCModel.Core.Properties {
             }
             set {
                 this["Reporting"] = value;
-            }
-        }
-        
-        /// <summary>
-        /// Setting controling if updates are checked automatically
-        /// </summary>
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Configuration.SettingsProviderAttribute(typeof(SIL.Settings.CrossPlatformSettingsProvider))]
-        [global::System.Configuration.SettingsDescriptionAttribute("Setting controling if updates are checked automatically")]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool AutoCheckForUpdates {
-            get {
-                return ((bool)(this["AutoCheckForUpdates"]));
-            }
-            set {
-                this["AutoCheckForUpdates"] = value;
-            }
-        }
-        
-        /// <summary>
-        /// Setting controlling if Beta updates should be checked
-        /// </summary>
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Configuration.SettingsProviderAttribute(typeof(SIL.Settings.CrossPlatformSettingsProvider))]
-        [global::System.Configuration.SettingsDescriptionAttribute("Setting controlling if Beta updates should be checked")]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool CheckForBetaUpdates {
-            get {
-                return ((bool)(this["CheckForBetaUpdates"]));
-            }
-            set {
-                this["CheckForBetaUpdates"] = value;
-            }
-        }
-        
-        /// <summary>
-        /// Setting to show if this is a BTE version (used for update checks)
-        /// </summary>
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Configuration.SettingsProviderAttribute(typeof(SIL.Settings.CrossPlatformSettingsProvider))]
-        [global::System.Configuration.SettingsDescriptionAttribute("Setting to show if this is a BTE version (used for update checks)")]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool IsBTE {
-            get {
-                return ((bool)(this["IsBTE"]));
-            }
-            set {
-                this["IsBTE"] = value;
             }
         }
         

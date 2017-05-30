@@ -44,7 +44,6 @@
       <HintPath>..\..\..\..\..\Downloads\SIL.WritingSystems.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Configuration" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Xml" />
@@ -124,12 +123,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Properties\Settings.cs" />
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>Settings.settings</DependentUpon>
-    </Compile>
     <Compile Include="Text\PUACharacter.cs" />
     <Compile Include="Text\PuaCharacterFactory.cs" />
     <Compile Include="Text\StyleUtils.cs" />
@@ -185,7 +178,6 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
     <None Include="BuildInclude.targets">
       <SubType>Designer</SubType>
     </None>
@@ -205,11 +197,6 @@
     <None Include="Phonology\PhonEnv.lexer" />
     <None Include="Phonology\phonenv.parser" />
     <None Include="Phonology\PhonEnvError.dtd" />
-    <None Include="Properties\Settings.settings">
-      <Generator>PublicSettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <Content Include="..\..\..\..\..\Downloads\gennorm2.exe" Condition="'$(OS)'=='Windows_NT'">

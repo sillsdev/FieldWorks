@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Xml.Linq;
 using SIL.Keyboarding;
 using SIL.LCModel.Core.WritingSystems;
@@ -61,9 +62,10 @@ namespace SIL.LCModel.DomainServices.DataMigration
 
 			// migrate local keyboard settings from CoreImpl application settings to new lexicon user settings file
 			// skip if we're running unit tests, could interfere with the test results
-			if (!repoDto.ProjectFolder.StartsWith(Path.GetTempPath()) && !string.IsNullOrEmpty(Core.Properties.Settings.Default.LocalKeyboards))
+			string localKeyboards;
+			if (!repoDto.ProjectFolder.StartsWith(Path.GetTempPath()) && TryGetLocalKeyboardsSetting(out localKeyboards))
 			{
-				XElement keyboardsElem = XElement.Parse(Core.Properties.Settings.Default.LocalKeyboards);
+				XElement keyboardsElem = XElement.Parse(localKeyboards);
 				foreach (XElement keyboardElem in keyboardsElem.Elements("keyboard"))
 				{
 					var wsId = (string) keyboardElem.Attribute("ws");
@@ -72,7 +74,7 @@ namespace SIL.LCModel.DomainServices.DataMigration
 					{
 						var layout = (string) keyboardElem.Attribute("layout");
 						var locale = (string) keyboardElem.Attribute("locale");
-						string keyboardId = string.IsNullOrEmpty(locale) ? layout : string.Format("{0}_{1}", locale, layout);
+						string keyboardId = string.IsNullOrEmpty(locale) ? layout : $"{locale}_{layout}";
 						IKeyboardDefinition keyboard;
 						if (!Keyboard.Controller.TryGetKeyboard(keyboardId, out keyboard))
 							keyboard = Keyboard.Controller.CreateKeyboard(keyboardId, KeyboardFormat.Unknown, Enumerable.Empty<string>());
@@ -86,6 +88,37 @@ namespace SIL.LCModel.DomainServices.DataMigration
 			wsIdMigrator.Migrate();
 
 			DataMigrationServices.IncrementVersionNumber(repoDto);
+		}
+
+		/// <summary>
+		/// Tries to get the local keyboards setting from the FieldWorks config file.
+		/// </summary>
+		private static bool TryGetLocalKeyboardsSetting(out string value)
+		{
+			value = null;
+			Assembly assembly = Assembly.GetEntryAssembly();
+			var productAttributes = (AssemblyProductAttribute[]) assembly.GetCustomAttributes(typeof(AssemblyProductAttribute), true);
+			if (productAttributes.Length == 0)
+				return false;
+			// check if LCM is running in FieldWorks
+			if (productAttributes[0].Product != "SIL FieldWorks")
+				return false;
+			string version = assembly.GetName().Version.ToString();
+			string settingsPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "SIL",
+				"SIL FieldWorks", version, "user.config");
+			if (!File.Exists(settingsPath))
+				return false;
+
+			XDocument configDoc = XDocument.Load(settingsPath);
+			XElement fwUtilsElem = configDoc.Root?.Element("userSettings")?.Element("SIL.FieldWorks.Common.FwUtils.Properties.Settings");
+			if (fwUtilsElem != null)
+			{
+				XElement localKeyboardsElem = fwUtilsElem.Elements("setting")
+					.FirstOrDefault(e => (string) e.Attribute("name") == "LocalKeyboards");
+				value = (string) localKeyboardsElem;
+				return value != null;
+			}
+			return false;
 		}
 
 		private static void CopyDirectoryContents(string sourcePath, string destinationPath)

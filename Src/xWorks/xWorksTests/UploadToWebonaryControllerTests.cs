@@ -47,6 +47,8 @@ namespace SIL.FieldWorks.XWorks
 			m_window = new MockFwXWindow(m_application, configFilePath);
 			((MockFwXWindow)m_window).Init(Cache); // initializes Mediator values
 			m_propertyTable = m_window.PropTable;
+			m_propertyTable.SetProperty("AppSettings", new FwApplicationSettings(), false);
+			m_propertyTable.SetPropertyPersistence("AppSettings", false);
 			m_mediator = m_window.Mediator;
 			m_mediator.AddColleague(new StubContentControlProvider());
 			m_window.LoadUI(configFilePath);

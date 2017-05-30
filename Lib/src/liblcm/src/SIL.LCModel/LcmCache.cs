@@ -261,8 +261,7 @@ namespace SIL.LCModel
 			var dataSetup = createdCache.ServiceLocator.GetInstance<IDataSetup>();
 			dataSetup.UseMemoryWritingSystemManager = useMemoryWsManager;
 			doThe(dataSetup);
-			if (initialize != null)
-				initialize(createdCache);
+			initialize?.Invoke(createdCache);
 
 			createdCache.FullyInitializedAndReadyToRock = true;
 
@@ -295,10 +294,10 @@ namespace SIL.LCModel
 			// - The user has cleared the "Do Not Copy Writing Systems to Other Projects" box (cleared by default)
 			// - The NewerWritingSystemFound method is null
 			// - The NewerWritingSystemFound method returns true (the user wants to copy these WS's from global this time)
-			if (newerGlobalWritingSystems.Any() && (
-				Core.Properties.Settings.Default.UpdateGlobalWSStore ||
-				NewerWritingSystemFound == null ||
-				NewerWritingSystemFound(WsNamesToString(newerGlobalWritingSystems), ProjectId.UiName)))
+			if (newerGlobalWritingSystems.Any()
+				&& (m_serviceLocator.GetInstance<LcmSettings>().UpdateGlobalWSStore
+				|| NewerWritingSystemFound == null
+				|| NewerWritingSystemFound(WsNamesToString(newerGlobalWritingSystems), ProjectId.UiName)))
 			{
 				SaveOnlyLocalWritingSystems(writingSystemManager, newerGlobalWritingSystems);
 			}

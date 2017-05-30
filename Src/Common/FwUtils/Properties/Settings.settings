@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="SIL.CoreImpl.Properties" GeneratedClassName="Settings">
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="SIL.FieldWorks.Common.FwUtils.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
     <Setting Name="UpdateGlobalWSStore" Description="Setting controling the updating of the Global WS Store" Provider="SIL.Settings.CrossPlatformSettingsProvider" Type="System.Boolean" Scope="User">
@@ -7,15 +7,6 @@
     </Setting>
     <Setting Name="Reporting" Description="Setting to store Reporting options" Provider="SIL.Settings.CrossPlatformSettingsProvider" Type="SIL.Reporting.ReportingSettings" Scope="User">
       <Value Profile="(Default)" />
-    </Setting>
-    <Setting Name="AutoCheckForUpdates" Description="Setting controling if updates are checked automatically" Provider="SIL.Settings.CrossPlatformSettingsProvider" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
-    </Setting>
-    <Setting Name="CheckForBetaUpdates" Description="Setting controlling if Beta updates should be checked" Provider="SIL.Settings.CrossPlatformSettingsProvider" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
-    </Setting>
-    <Setting Name="IsBTE" Description="Setting to show if this is a BTE version (used for update checks)" Provider="SIL.Settings.CrossPlatformSettingsProvider" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="CallUpgrade" Description="Setting indicating that the Settings need to be upgraded" Provider="SIL.Settings.CrossPlatformSettingsProvider" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>

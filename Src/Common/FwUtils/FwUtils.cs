@@ -9,11 +9,9 @@ using System.Drawing;
 using System.Globalization;
 using System.Media;
 using System.Runtime.InteropServices;
-#if __MonoCS__
 using System.Collections.Generic;
-using System.IO;
-#endif
 using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
@@ -52,7 +50,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 				handle.Replace('/', ':').Replace('\\', ':');
 		}
 
-#if __MonoCS__
 		// On Linux, the default string output does not choose a font based on the characters in
 		// the string, but on the current user interface locale.  At times, we want to display,
 		// for example, Korean when the user interface locale is English.  By default, this
@@ -105,6 +102,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <returns>Name of the font, or <c>null</c> if not found.</returns>
 		public static string GetFontNameForLanguage(string lang)
 		{
+			if (MiscUtils.IsDotNet)
+				throw new NotSupportedException();
+
 			string fontName = null;
 			if (m_mapLangToFont.TryGetValue(lang, out fontName))
 				return fontName;
@@ -141,7 +141,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 			FcPatternDestroy(fullPattern);
 			return fontName;
 		}
-#endif
 
 		/// <summary>
 		/// Whenever possible use this in place of new PalasoWritingSystemManager.
@@ -352,7 +351,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 			public int Attributes;
 		}
 
-#if !__MonoCS__
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// The OpenProcessToken function opens the access token associated with a process.
@@ -437,11 +435,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 		private static extern bool ConvertSidToStringSid(
 			IntPtr sid,
 			[MarshalAs(UnmanagedType.LPTStr)] out string stringSid);
-#endif
+
 		#endregion
 
 		#region Helper methods
-#if !__MonoCS__
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the user SID for the given process token.
@@ -479,7 +477,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 				Marshal.FreeHGlobal(buffer);
 			}
 		}
-#endif
+
 		#endregion
 
 		/// ------------------------------------------------------------------------------------
@@ -493,21 +491,22 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			try
 			{
-#if !__MonoCS__
-				IntPtr procToken;
-				string sidString = null;
-				if (OpenProcessToken(process.Handle, TOKEN_QUERY, out procToken))
+				if (MiscUtils.IsDotNet)
 				{
-					IntPtr sid = GetSidForProcessToken(procToken);
-					if (sid != IntPtr.Zero)
-						ConvertSidToStringSid(sid, out sidString);
+					IntPtr procToken;
+					string sidString = null;
+					if (OpenProcessToken(process.Handle, TOKEN_QUERY, out procToken))
+					{
+						IntPtr sid = GetSidForProcessToken(procToken);
+						if (sid != IntPtr.Zero)
+							ConvertSidToStringSid(sid, out sidString);
 
-					CloseHandle(procToken);
+						CloseHandle(procToken);
+					}
+					return sidString;
 				}
-				return sidString;
-#else
+
 				return process.StartInfo.UserName;
-#endif
 			}
 			catch (Exception ex)
 			{

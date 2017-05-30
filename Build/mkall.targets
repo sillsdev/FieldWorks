@@ -597,7 +597,6 @@
 		<LcmOutputBaseFiles Include="$(LcmArtifacts)/SIL.LCModel.Utils.Tests.dll.config" />
 		<LcmOutputBaseFiles Include="$(LcmArtifacts)/SIL.LCModel.Utils.Tests.$(DebugInfo)" />
 		<LcmOutputBaseFiles Include="$(LcmArtifacts)/SIL.LCModel.Core.dll" />
-		<LcmOutputBaseFiles Include="$(LcmArtifacts)/SIL.LCModel.Core.dll.config" />
 		<LcmOutputBaseFiles Include="$(LcmArtifacts)/SIL.LCModel.Core.$(DebugInfo)" />
 		<LcmOutputBaseFiles Include="$(LcmArtifacts)/SIL.LCModel.Core.Tests.dll" />
 		<LcmOutputBaseFiles Include="$(LcmArtifacts)/SIL.LCModel.Core.Tests.dll.config" />

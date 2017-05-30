@@ -98,7 +98,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\DistFiles\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Management" />
+    <Reference Include="System.Xml.Linq" />
     <Reference Include="ViewsInterfaces, Version=4.1.0.9, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
@@ -145,11 +147,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\CommonAssemblyInfo.cs">
-      <Link>CommonAssemblyInfo.cs</Link>
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="ActivationContextHelper.cs" />
     <Compile Include="AlphaOutline.cs" />
-    <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="FwApplicationSettings.cs" />
+    <Compile Include="FwApplicationSettingsBase.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Benchmark.cs" />
     <Compile Include="CachePair.cs" />
     <Compile Include="CharacterCategorizer.cs" />
@@ -186,11 +190,17 @@
     <Compile Include="ParagraphCorrelation.cs" />
     <Compile Include="PictureHolder.cs" />
     <Compile Include="ProgressMessageArgs.cs" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
     <Compile Include="PunctuationPatterns.cs" />
     <Compile Include="QuotationMarks.cs" />
     <Compile Include="RecordErrorEventArgs.cs" />
     <Compile Include="SearchTimer.cs" />
     <Compile Include="SelectionEvents.cs" />
+    <Compile Include="Properties\Settings.cs" />
     <Compile Include="ShowHelp.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -249,9 +259,14 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="BuildInclude.targets" />
     <None Include="FwUtils.dll.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

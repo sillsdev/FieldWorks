@@ -60,8 +60,7 @@ namespace SIL.LCModel.Core.WritingSystems
 				OnChangeNotifySharedStore(ws);
 			}
 
-			if (Properties.Settings.Default.UpdateGlobalWSStore)
-				base.Save();
+			base.Save();
 		}
 	}
 }
