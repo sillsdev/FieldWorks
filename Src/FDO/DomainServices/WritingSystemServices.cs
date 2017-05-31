@@ -1393,14 +1393,15 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		{
 			IFdoServiceLocator servLocator = cache.ServiceLocator;
 
-			// Where a reversal index is linked to the origWsId, remove the entire reversal index,
-			// not just its references to the origWsId. (See LT-14482.)
-			// FIXME: Modify the reversal index to preserve the reversal index entries
-			var condemnedReversals = servLocator.GetInstance<IReversalIndexRepository>().AllInstances().Where(reversalIndex =>
+			// When writing sytem code is changed, reversal index entries are preserved. (See LT-18256)
+			var reversalsToUpdate = servLocator.GetInstance<IReversalIndexRepository>().AllInstances().Where(reversalIndex =>
 				reversalIndex.WritingSystem == origWsId).ToList();
-			foreach (var condemnedReversal in condemnedReversals)
+
+			foreach (var reversal in reversalsToUpdate)
 			{
-				((ILexDb) condemnedReversal.Owner).ReversalIndexesOC.Remove(condemnedReversal);
+				reversal.WritingSystem = newWsId;
+				string wsName = servLocator.WritingSystemManager.LocalWritingSystems.FirstOrDefault(x => x.RFC5646 == newWsId).DisplayLabel;
+				reversal.Name.SetAnalysisDefaultWritingSystem(wsName);
 			}
 
 			UpdateWritingSystemField(cache, servLocator.GetInstance<IWordformLookupListRepository>().AllInstances(),
