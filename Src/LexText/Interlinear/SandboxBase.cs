@@ -1198,7 +1198,7 @@ namespace SIL.FieldWorks.IText
 			{
 				if (fLookForDefaults)
 				{
-					if (InterlinDoc != null) // it can be null in unit tests, and we don't want to clear an existing analysis.
+					if (InterlinDoc != null) // can be null in Wordform Analyses tool and unit tests, and we don't want to clear an existing analysis.
 						GetDefaults(CurrentAnalysisTree.Wordform, out analysis, out gloss, fAdjustCase);
 					m_hvoWordGloss = gloss != null ? gloss.Hvo : 0;
 					// Make sure the wordform ID is consistent with the analysis we located.
@@ -1642,7 +1642,7 @@ namespace SIL.FieldWorks.IText
 			if (wordform == null || !wordform.IsValidObject)
 				return;
 
-			if (InterlinDoc == null) //when running some tests this is null
+			if (InterlinDoc == null) // In Wordform Analyses tool and some unit tests, InterlinDoc is null
 				return;
 			ISilDataAccess sda = InterlinDoc.RootBox.DataAccess;
 
@@ -1684,7 +1684,7 @@ namespace SIL.FieldWorks.IText
 				{
 					case WfiAnalysisTags.kClassId:
 						analysis = (IWfiAnalysis) obj;
-						gloss = null;
+						gloss = analysis.MeaningsOC.FirstOrDefault();
 						return;
 					case WfiGlossTags.kClassId:
 						gloss = (IWfiGloss) obj;
