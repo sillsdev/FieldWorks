@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
+using System.Linq;
 using NUnit.Framework;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -262,6 +263,95 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			WritingSystemServices.UpdateWritingSystemListField(Cache, Cache.LangProject, LangProjectTags.kflidAnalysisWss, "fr-NO",
 				"fr");
 			Assert.That(Cache.LangProject.AnalysisWss, Is.EqualTo("fr en"));
+		}
+
+		/// <summary>
+		/// What it says
+		/// </summary>
+		[Test]
+		public void UpdateWritingSystemListField_RemovesWsCode()
+		{
+			int m_wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
+			int m_wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
+
+			IWritingSystem enBlz;
+			WritingSystemServices.FindOrCreateWritingSystem(Cache, null, "blz", false, false, out enBlz);
+
+			var revIndex = Cache.ServiceLocator.GetInstance<IReversalIndexRepository>().FindOrCreateIndexForWs(m_wsEn);
+
+			var entry1 = CreateInterestingLexEntry(Cache);
+			CreateInterestingLexEntry(Cache, "primary", "first");
+			var msa1 = Cache.ServiceLocator.GetInstance<IMoStemMsaFactory>().Create();
+			entry1.MorphoSyntaxAnalysesOC.Add(msa1);
+			entry1.SensesOS.First().MorphoSyntaxAnalysisRA = msa1;
+
+			var entry2 = CreateInterestingLexEntry(Cache);
+			CreateInterestingLexEntry(Cache, "primary", "first");
+			var msa2 = Cache.ServiceLocator.GetInstance<IMoStemMsaFactory>().Create();
+			entry2.MorphoSyntaxAnalysesOC.Add(msa2);
+			entry2.SensesOS.First().MorphoSyntaxAnalysisRA = msa2;
+
+			var testEntry = revIndex.FindOrCreateReversalEntry("first");
+			entry1.SensesOS.First().ReversalEntriesRC.Add(testEntry);
+			entry2.SensesOS.First().ReversalEntriesRC.Add(testEntry);
+
+			testEntry.ReversalIndex.WritingSystem = "fr";
+			testEntry.ReversalForm.set_String(m_wsFr, "fr");
+			WritingSystemServices.UpdateWritingSystemFields(Cache, "fr", "blz");
+			Assert.That(testEntry.ReversalIndex.WritingSystem, Is.EqualTo("blz"));
+			Assert.That(testEntry.ReversalIndex.ShortName, Is.EqualTo("Balantak"));
+		}
+
+		/// <summary>
+		/// Creates an ILexEntry object, optionally with specified headword and gloss
+		/// </summary>
+		/// <param name="cache"></param>
+		/// <param name="headword">Optional: defaults to 'Citation'</param>
+		/// <param name="gloss">Optional: defaults to 'gloss'</param>
+		/// <returns></returns>
+		internal static ILexEntry CreateInterestingLexEntry(FdoCache cache, string headword = "Citation", string gloss = "gloss")
+		{
+			var entryFactory = cache.ServiceLocator.GetInstance<ILexEntryFactory>();
+			var entry = entryFactory.Create();
+			var wsEn = EnsureWritingSystemSetup(cache, "en", false);
+			var wsFr = EnsureWritingSystemSetup(cache, "fr", true);
+			AddHeadwordToEntry(entry, headword, wsFr, cache);
+			entry.Comment.set_String(wsEn, cache.TsStrFactory.MakeString("Comment", wsEn));
+			AddSenseToEntry(entry, gloss, wsEn, cache);
+			return entry;
+		}
+
+		private static void AddHeadwordToEntry(ILexEntry entry, string headword, int wsId, FdoCache cache)
+		{
+			// The headword field is special: it uses Citation if available, or LexemeForm if Citation isn't filled in
+			entry.CitationForm.set_String(wsId, cache.TsStrFactory.MakeString(headword, wsId));
+		}
+
+		private static int EnsureWritingSystemSetup(FdoCache cache, string wsStr, bool isVernacular)
+		{
+			var wsFact = cache.WritingSystemFactory;
+			var result = wsFact.GetWsFromStr(wsStr);
+			if (result < 1)
+			{
+				if (isVernacular)
+				{
+					cache.LangProject.AddToCurrentVernacularWritingSystems(cache.WritingSystemFactory.get_Engine(wsStr) as IWritingSystem);
+				}
+				else
+				{
+					cache.LangProject.AddToCurrentAnalysisWritingSystems(cache.WritingSystemFactory.get_Engine(wsStr) as IWritingSystem);
+				}
+			}
+			return wsFact.GetWsFromStr(wsStr);
+		}
+
+		private static void AddSenseToEntry(ILexEntry entry, string gloss, int wsId, FdoCache cache)
+		{
+			var senseFactory = cache.ServiceLocator.GetInstance<ILexSenseFactory>();
+			var sense = senseFactory.Create();
+			entry.SensesOS.Add(sense);
+			if (!string.IsNullOrEmpty(gloss))
+				sense.Gloss.set_String(wsId, cache.TsStrFactory.MakeString(gloss, wsId));
 		}
 
 		/// <summary>
