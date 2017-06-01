@@ -461,7 +461,7 @@ namespace SIL.FieldWorks.XWorks
 				var cache = mediator.PropertyTable.GetValue("cache") as FdoCache;
 				var clerk = mediator.PropertyTable.GetValue("ActiveClerk", null) as RecordClerk;
 				ICmObject current = null;
-				if (guid != Guid.Empty && cache != null)
+				if (guid != Guid.Empty && cache != null && cache.ServiceLocator.ObjectRepository.IsValidObjectId(guid))
 					current = cache.ServiceLocator.GetObject(guid);
 				else if (clerk != null)
 					current = clerk.CurrentObject;
