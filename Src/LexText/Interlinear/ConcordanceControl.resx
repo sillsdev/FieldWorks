@@ -252,7 +252,7 @@
 	<value>11</value>
   </data>
   <data name="m_btnRegExp.Location" type="System.Drawing.Point, System.Drawing">
-	<value>332, 94</value>
+	<value>342, 94</value>
   </data>
   <data name="m_btnRegExp.Size" type="System.Drawing.Size, System.Drawing">
 	<value>14, 28</value>
