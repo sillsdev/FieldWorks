@@ -6,9 +6,9 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.IO.Compression;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
-using ICSharpCode.SharpZipLib.Zip;
 
 namespace FwBuildTasks
 {
@@ -50,7 +50,6 @@ namespace FwBuildTasks
 					in that folder, and each zip file name will match its Source file
 					name, but with the extension changed to .zip.
 			*/
-
 			if (Destination.EndsWith(".zip", StringComparison.OrdinalIgnoreCase))
 				CompressFilesToOneZipFile();
 			else
@@ -63,32 +62,19 @@ namespace FwBuildTasks
 		{
 			Log.LogMessage(MessageImportance.Normal, "Zipping " + Source.Length + " files to zip file " + Destination);
 
-			using (var fsOut = File.Create(Destination)) // Overwrites previous file
+			if (File.Exists(Destination))
+				File.Delete(Destination);
+			using (ZipArchive archive = ZipFile.Open(Destination, ZipArchiveMode.Create))
 			{
-				using (var zipStream = new ZipOutputStream(fsOut))
+				foreach (ITaskItem item in Source)
 				{
-					foreach (ITaskItem item in Source)
-					{
-						string inputPath = item.ItemSpec;
-						zipStream.SetLevel(9); // Highest level of compression
+					string inputPath = item.ItemSpec;
+					var inputFileInfo = new FileInfo(inputPath);
+					// clean up name
+					string pathInArchive = !string.IsNullOrEmpty(WorkingDirectory) ? GetPath(inputFileInfo.FullName, WorkingDirectory)
+						: Path.GetFileName(inputFileInfo.FullName);
 
-						var inputFileInfo = new FileInfo(inputPath);
-
-						// clean up name
-						string pathInArchive = !string.IsNullOrEmpty(WorkingDirectory) ? GetPath(inputFileInfo.FullName, WorkingDirectory)
-							: Path.GetFileName(inputFileInfo.FullName);
-
-						var newEntry = new ZipEntry(pathInArchive) { DateTime = inputFileInfo.CreationTime };
-						zipStream.PutNextEntry(newEntry);
-
-						var buffer = new byte[4096];
-						using (FileStream streamReader = File.OpenRead(inputPath))
-							ICSharpCode.SharpZipLib.Core.StreamUtils.Copy(streamReader, zipStream, buffer);
-
-						zipStream.CloseEntry();
-					}
-					zipStream.IsStreamOwner = true;
-					zipStream.Close();
+					archive.CreateEntryFromFile(inputPath, pathInArchive);
 				}
 			}
 		}
@@ -106,30 +92,17 @@ namespace FwBuildTasks
 				string inputPath = item.ItemSpec;
 
 				// Form output zip file full path:
-				var outputPath = Path.Combine(Destination, Path.GetFileNameWithoutExtension(inputPath) + ".zip");
-
-				using (var fsOut = File.Create(outputPath)) // Overwrites previous file
+				string outputPath = Path.Combine(Destination, Path.GetFileNameWithoutExtension(inputPath) + ".zip");
+				if (File.Exists(outputPath))
+					File.Delete(outputPath);
+				using (ZipArchive archive = ZipFile.Open(outputPath, ZipArchiveMode.Create))
 				{
-					using (var zipStream = new ZipOutputStream(fsOut))
-					{
-						zipStream.SetLevel(9); // Highest level of compression
+					var inputFileInfo = new FileInfo(inputPath);
 
-						var inputFileInfo = new FileInfo(inputPath);
+					string pathInArchive = !string.IsNullOrEmpty(WorkingDirectory) ? GetPath(inputFileInfo.FullName, WorkingDirectory)
+						: Path.GetFileName(inputFileInfo.FullName);
 
-						string pathInArchive = !string.IsNullOrEmpty(WorkingDirectory) ? GetPath(inputFileInfo.FullName, WorkingDirectory)
-							: Path.GetFileName(inputFileInfo.FullName);
-
-						var newEntry = new ZipEntry(pathInArchive) { DateTime = inputFileInfo.CreationTime };
-						zipStream.PutNextEntry(newEntry);
-
-						var buffer = new byte[4096];
-						using (var streamReader = File.OpenRead(inputPath))
-							ICSharpCode.SharpZipLib.Core.StreamUtils.Copy(streamReader, zipStream, buffer);
-
-						zipStream.CloseEntry();
-						zipStream.IsStreamOwner = true;
-						zipStream.Close();
-					}
+					archive.CreateEntryFromFile(inputPath, pathInArchive);
 				}
 			}
 		}

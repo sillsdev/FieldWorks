@@ -111,6 +111,9 @@
 		files.  This task checks that they are up-to-date and fails the build early on
 		if they are outdated.  We have to use unix line endings so that we get the same
 		checksum on both Windows and Linux.
+
+		Note: The common.idh, FwKernel.idh, TextServ.idh, Language.idh, and FwKernelTlb.idl
+		files are all copied from LCM.
 	-->
 	<ItemGroup>
 		<IdhFiles Include="$(fwrt)/Src/CommonCOMDlgs/CmnFwDlgs.idh"/>
@@ -129,7 +132,7 @@
 		<ContinueIfOutOfDate Condition="!$(buildtlb)">false</ContinueIfOutOfDate>
 		<ContinueIfOutOfDate Condition="$(buildtlb) Or '$(OS)'!='Unix'">true</ContinueIfOutOfDate>
 	</PropertyGroup>
-	<Target Name="ensureTLBsUpToDate" DependsOnTargets="BuildLcm">
+	<Target Name="ensureTLBsUpToDate" DependsOnTargets="CopyDlls">
 		<MakeDir Directories="$(dir-fwoutput)"/><!-- just in case... -->
 		<CatenateFiles SourceFiles="@(IdhFiles)" TargetFile="$(dir-fwoutput)/idhfiles" UseUnixNewlines="true"/>
 		<Md5Checksum SourceFile="$(dir-fwoutput)/idhfiles"/>

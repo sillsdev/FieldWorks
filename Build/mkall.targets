@@ -1,13 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="14.0">
-	<PropertyGroup>
-		<LcmRoot>$(fwrt)/Lib/src/liblcm/</LcmRoot>
-		<LcmArtifacts>$(LcmRoot)artifacts/$(config-capital)</LcmArtifacts>
-		<LcmSolution>$(LcmRoot)LCM.sln</LcmSolution>
-	</PropertyGroup>
-
 	<!-- Make all of FieldWorks. -->
-	<Target Name="mkall" DependsOnTargets="CopyDlls;initLinux;initWindows;LinuxRegistry;BuildLcm;allCpp;allCsharp;ensureTLBsUpToDate">
+	<Target Name="mkall" DependsOnTargets="CopyDlls;initLinux;initWindows;LinuxRegistry;allCpp;allCsharp;ensureTLBsUpToDate">
 		<Message Text="Finished mkall Target."/>
 		<CreateItem Condition="'$(action)'=='test'" Include="$(dir-outputBase)/*-nunit-output.xml">
 			<Output TaskParameter="Include" ItemName="NUnitReportFiles"/>
@@ -163,10 +157,10 @@
 		<Message Text="Finished building testViews and running tests." Condition="'$(action)'=='test'"/>
 	</Target>
 
-	<UsingTask TaskName="LcmGenerate" AssemblyFile="$(LcmArtifacts)/SIL.LCModel.Build.Tasks.dll"/>
+	<UsingTask TaskName="LcmGenerate" AssemblyFile="$(DownloadsDir)/LCM/SIL.LCModel.Build.Tasks.dll"/>
 
 	<ItemGroup>
-		<CellarConstantsInputs Include="$(LcmArtifacts)/MasterLCModel.xml"/>
+		<CellarConstantsInputs Include="$(DownloadsDir)/LCM/MasterLCModel.xml"/>
 		<CellarConstantsInputs Include="$(fwrt)/Src/Kernel/CellarConstants.vm.h"/>
 		<CellarConstantsOutputs Include="$(fwrt)/Output/Common/CellarConstants.h"/>
 	</ItemGroup>
@@ -174,11 +168,11 @@
 	<Target Name="GenerateCellarConstants" DependsOnTargets="CopyCellarBaseConstants"
 			Inputs="@(CellarConstantsInputs)" Outputs="@(CellarConstantsOutputs)">
 		<MakeDir Directories="$(dir-fwoutputCommon)" Condition="'$(action)'!='clean'"/>
-		<LcmGenerate XmlFile="$(LcmArtifacts)/MasterLCModel.xml"
+		<LcmGenerate XmlFile="$(DownloadsDir)/LCM/MasterLCModel.xml"
 					 OutputDir="$(dir-fwoutputCommon)"
 					 OutputFile="CellarConstants.h"
 					 TemplateFile="$(fwrt)/Src/Kernel/CellarConstants.vm.h"
-					 WorkingDirectory="$(LcmArtifacts)"
+					 WorkingDirectory="$(DownloadsDir)/LCM/"
 					 Condition="'$(action)'!='clean'"/>
 	</Target>
 
@@ -219,7 +213,7 @@
 		<SetEnvVar Variable="ANAL_TYPE" Value="$(Original-ANAL_TYPE)" />
 	</Target>
 
-	<Target Name="remakefw-internal" DependsOnTargets="CleanAll;Initialize;setRegistryValues;CopyDlls;BuildLcm;ensureTLBsUpToDate;mkall"/>
+	<Target Name="remakefw-internal" DependsOnTargets="CleanAll;Initialize;setRegistryValues;CopyDlls;ensureTLBsUpToDate;mkall"/>
 
 	<Target Name="remakefw" DependsOnTargets="remakefw-internal">
 		<Error Condition="'@(FailedSuites)'!=''" Text="The following projects had failing tests: @(FailedSuites)" />
@@ -246,13 +240,25 @@
 		<ForceDelete Files="$(fwrt)/Build/FieldWorks.targets"/>
 	</Target>
 
-	<Target Name="CleanAll" DependsOnTargets="cleanWindows;cleanLinux;CleanLcm">
+	<Target Name="CleanAll" DependsOnTargets="cleanWindows;cleanLinux">
 		<!-- remove the Obj and Output directories -->
 		<ForceDelete Files="$(dir-fwobj);$(dir-fwoutput)"/>
 		<ForceDelete Files="$(fwrt)/Output" Condition="'$(OS)'=='Unix'"/>
 		<!-- remove other directories and files created during the build process -->
 		<ForceDelete Files="@(GeneratedFiles)"/>
-
+		<!-- remove LCM files -->
+		<ItemGroup>
+			<LcmFilesToDelete Include="$(fwrt)/Src/Kernel/*.idh" />
+			<LcmFilesToDelete Include="$(fwrt)/Src/Kernel/FwKernelTlb.idl" />
+			<LcmFilesToDelete Include="$(fwrt)/DistFiles/Styles.dtd" />
+			<LcmFilesToDelete Include="$(fwrt)/DistFiles/Templates/GOLDEtic.xml" />
+			<LcmFilesToDelete Include="$(fwrt)/DistFiles/Templates/NewLangProj.fwdata" />
+			<LcmFilesToDelete Include="$(fwrt)/DistFiles/Templates/POS.xml" />
+			<LcmFilesToDelete Include="$(fwrt)/DistFiles/Templates/SemDom.xml" />
+			<LcmFilesToDelete Include="$(dir-fwoutputCommon)/FwKernelTlb.iip" />
+		</ItemGroup>
+		<ForceDelete Files="@(LcmFilesToDelete)" />
+		<ForceDelete Files="$(fwrt)/DistFiles/Icu$(IcuVersion)" />
 		<Message Text="Finished deleting the output directories!"/>
 	</Target>
 
@@ -290,12 +296,13 @@
 		<DownloadsSilOrgOSDownloadUrl Condition="'$(OS)'=='Windows_NT'">$(DownloadsSilOrgDownloadUrl)/Windows</DownloadsSilOrgOSDownloadUrl>
 		<DownloadsSilOrgOSDownloadUrl Condition="'$(OS)'=='Unix'">$(DownloadsSilOrgDownloadUrl)/Linux</DownloadsSilOrgOSDownloadUrl>
 		<NUnitDownloadUrl>http://github.com/nunit/nunitv2/releases/download/2.6.4/NUnit-2.6.4.zip</NUnitDownloadUrl>
+		<LcmBuildType Condition="'$(OS)'=='Windows_NT'">Liblcm_LiblcmWin32masterContinuous</LcmBuildType>
+		<LcmBuildType Condition="'$(OS)'=='Unix'">Liblcm_LiblcmLinux64masterContinuous</LcmBuildType>
 		<!-- Windows/.Net and Linux/Mono use different extensions for debug information files. -->
 		<DebugInfo Condition="'$(OS)'=='Unix'">dll.mdb</DebugInfo>
 		<DebugInfo Condition="'$(OS)'=='Windows_NT'">pdb</DebugInfo>
 		<DownloadsDir>$(fwrt)/Downloads</DownloadsDir>
 	</PropertyGroup>
-
 
 	<Target Name="downloadDlls" DependsOnTargets="RestoreNuGetPackages" Condition="'$(disableDownloads)'!='true'">
 		<MakeDir Directories="$(DownloadsDir)"/>
@@ -377,6 +384,9 @@
 
 		<Message Text="Downloading NUnit." />
 		<DownloadFile Address="$(NUnitDownloadUrl)" DownloadsDir="$(DownloadsDir)"/>
+
+		<Message Text="Downloading artifacts for LCM." />
+		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(LcmBuildType)" VersionInfo="$(MasterVersionInfo)" Artifacts="LCM.zip" DownloadsDir="$(DownloadsDir)"/>
 	</Target>
 
 	<!-- item group for downloads, to allow easy copying -->
@@ -483,6 +493,60 @@
 		<Copy SourceFiles="@(NUnitFiles)" DestinationFolder="$(fwrt)/Bin/NUnit/%(RecursiveDir)"
 				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
 		<ForceDelete Files="$(DownloadsDir)/NUnit-2.6.4/" />
+		<!-- LCM dlls -->
+		<ForceDelete Files="$(DownloadsDir)/LCM/" />
+		<Unzip ZipFilename="$(DownloadsDir)/LCM.zip" ToDir="$(DownloadsDir)/LCM/" />
+		<ItemGroup>
+			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/ICSharpCode.SharpZipLib.dll" />
+			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/libhunspell.dll" Condition="'$(OS)'=='Windows_NT'" />
+			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/Microsoft.Practices.ServiceLocation.dll" />
+			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/protobuf-net.dll" />
+			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/StructureMap.dll" />
+			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/Tools.dll" />
+			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/SIL.LCModel.Utils.dll" />
+			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/SIL.LCModel.Utils.$(DebugInfo)" />
+			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/SIL.LCModel.Utils.Tests.dll" />
+			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/SIL.LCModel.Utils.Tests.dll.config" />
+			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/SIL.LCModel.Utils.Tests.$(DebugInfo)" />
+			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/SIL.LCModel.Core.dll" />
+			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/SIL.LCModel.Core.dll.config" Condition="'$(OS)'=='Unix'" />
+			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/SIL.LCModel.Core.$(DebugInfo)" />
+			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/SIL.LCModel.Core.Tests.dll" />
+			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/SIL.LCModel.Core.Tests.dll.config" />
+			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/SIL.LCModel.Core.Tests.$(DebugInfo)" />
+			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/SIL.LCModel.dll" />
+			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/SIL.LCModel.$(DebugInfo)" />
+			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/SIL.LCModel.Tests.dll" />
+			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/SIL.LCModel.Tests.dll.config" />
+			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/SIL.LCModel.Tests.$(DebugInfo)" />
+
+			<LcmOutputCommonFiles Include="$(DownloadsDir)/LCM/KernelInterfaces/FwKernelTlb.iip" />
+
+			<LcmFwKernelFiles Include="$(DownloadsDir)/LCM/KernelInterfaces/common.idh" />
+			<LcmFwKernelFiles Include="$(DownloadsDir)/LCM/KernelInterfaces/FwKernel.idh" />
+			<LcmFwKernelFiles Include="$(DownloadsDir)/LCM/KernelInterfaces/Language.idh" />
+			<LcmFwKernelFiles Include="$(DownloadsDir)/LCM/KernelInterfaces/TextServ.idh" />
+			<LcmFwKernelFiles Include="$(DownloadsDir)/LCM/KernelInterfaces/FwKernelTlb.idl" />
+
+			<LcmDistFiles Include="$(DownloadsDir)/LCM/Styles.dtd" />
+
+			<LcmTemplatesFiles Include="$(DownloadsDir)/LCM/Templates/GOLDEtic.xml" />
+			<LcmTemplatesFiles Include="$(DownloadsDir)/LCM/Templates/NewLangProj.fwdata" />
+			<LcmTemplatesFiles Include="$(DownloadsDir)/LCM/Templates/POS.xml" />
+			<LcmTemplatesFiles Include="$(DownloadsDir)/LCM/Templates/SemDom.xml" />
+
+			<LcmIcuDataFiles Include="$(DownloadsDir)/LCM/IcuData/UnicodeDataOverrides.txt" />
+
+			<LcmIcuNrmFiles Include="$(DownloadsDir)/LCM/IcuData/icudt$(IcuVersion)l/nfc_fw.nrm" />
+			<LcmIcuNrmFiles Include="$(DownloadsDir)/LCM/IcuData/icudt$(IcuVersion)l/nfkc_fw.nrm" />
+		</ItemGroup>
+		<Copy SourceFiles="@(LcmOutputBaseFiles)" DestinationFolder="$(dir-outputBase)" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
+		<Copy SourceFiles="@(LcmOutputCommonFiles)" DestinationFolder="$(dir-fwoutputCommon)" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
+		<Copy SourceFiles="@(LcmFwKernelFiles)" DestinationFolder="$(fwrt)/Src/Kernel" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
+		<Copy SourceFiles="@(LcmDistFiles)" DestinationFolder="$(fwrt)/DistFiles" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
+		<Copy SourceFiles="@(LcmTemplatesFiles)" DestinationFolder="$(fwrt)/DistFiles/Templates" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
+		<Copy SourceFiles="@(LcmIcuDataFiles)" DestinationFolder="$(fwrt)/DistFiles/Icu$(IcuVersion)" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
+		<Copy SourceFiles="@(LcmIcuNrmFiles)" DestinationFolder="$(fwrt)/DistFiles/Icu$(IcuVersion)/icudt$(IcuVersion)l" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
 		<!-- Copy the downloaded artifacts -->
 		<Copy SourceFiles="@(DownloadedFiles)" DestinationFolder="$(dir-outputBase)"
 			SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
@@ -583,119 +647,5 @@
 		<DownloadFile Address="$(SldrUrl)tr" DownloadsDir="$(fwrt)/DistFiles/Templates" LocalFilename="tr.ldml"/>
 		<DownloadFile Address="$(SldrUrl)vi" DownloadsDir="$(fwrt)/DistFiles/Templates" LocalFilename="vi.ldml"/>
 		<DownloadFile Address="$(SldrUrl)zh-CN" DownloadsDir="$(fwrt)/DistFiles/Templates" LocalFilename="zh-CN.ldml"/>
-	</Target>
-
-	<ItemGroup>
-		<LcmOutputBaseFiles Include="$(LcmArtifacts)/antlr.runtime.dll" />
-		<LcmOutputBaseFiles Include="$(LcmArtifacts)/ICSharpCode.SharpZipLib.dll" />
-		<LcmOutputBaseFiles Include="$(LcmArtifacts)/IDLImporter.dll" />
-		<LcmOutputBaseFiles Include="$(LcmArtifacts)/IDLImporter.xml" />
-		<LcmOutputBaseFiles Include="$(LcmArtifacts)/libhunspell.dll" Condition="'$(OS)'=='Windows_NT'" />
-		<LcmOutputBaseFiles Include="$(LcmArtifacts)/Microsoft.Practices.ServiceLocation.dll" />
-		<LcmOutputBaseFiles Include="$(LcmArtifacts)/protobuf-net.dll" />
-		<LcmOutputBaseFiles Include="$(LcmArtifacts)/StructureMap.dll" />
-		<LcmOutputBaseFiles Include="$(LcmArtifacts)/Tools.dll" />
-		<LcmOutputBaseFiles Include="$(LcmArtifacts)/Tools.$(DebugInfo)" />
-		<LcmOutputBaseFiles Include="$(LcmArtifacts)/SIL.LCModel.Build.Tasks.dll" />
-		<LcmOutputBaseFiles Include="$(LcmArtifacts)/SIL.LCModel.Utils.dll" />
-		<LcmOutputBaseFiles Include="$(LcmArtifacts)/SIL.LCModel.Utils.$(DebugInfo)" />
-		<LcmOutputBaseFiles Include="$(LcmArtifacts)/SIL.LCModel.Utils.Tests.dll" />
-		<LcmOutputBaseFiles Include="$(LcmArtifacts)/SIL.LCModel.Utils.Tests.dll.config" />
-		<LcmOutputBaseFiles Include="$(LcmArtifacts)/SIL.LCModel.Utils.Tests.$(DebugInfo)" />
-		<LcmOutputBaseFiles Include="$(LcmArtifacts)/SIL.LCModel.Core.dll" />
-		<LcmOutputBaseFiles Include="$(LcmArtifacts)/SIL.LCModel.Core.$(DebugInfo)" />
-		<LcmOutputBaseFiles Include="$(LcmArtifacts)/SIL.LCModel.Core.Tests.dll" />
-		<LcmOutputBaseFiles Include="$(LcmArtifacts)/SIL.LCModel.Core.Tests.dll.config" />
-		<LcmOutputBaseFiles Include="$(LcmArtifacts)/SIL.LCModel.Core.Tests.$(DebugInfo)" />
-		<LcmOutputBaseFiles Include="$(LcmArtifacts)/SIL.LCModel.dll" />
-		<LcmOutputBaseFiles Include="$(LcmArtifacts)/SIL.LCModel.$(DebugInfo)" />
-		<LcmOutputBaseFiles Include="$(LcmArtifacts)/SIL.LCModel.Tests.dll" />
-		<LcmOutputBaseFiles Include="$(LcmArtifacts)/SIL.LCModel.Tests.dll.config" />
-		<LcmOutputBaseFiles Include="$(LcmArtifacts)/SIL.LCModel.Tests.$(DebugInfo)" />
-
-		<LcmOutputCommonFiles Include="$(LcmArtifacts)/KernelInterfaces/FwKernelTlb.iip" />
-		<LcmOutputCommonFiles Include="$(LcmArtifacts)/MasterLCModel.xml" />
-		<LcmOutputCommonFiles Include="$(LcmArtifacts)/MasterLCModel.xsd" />
-
-		<LcmFwKernelFiles Include="$(LcmArtifacts)/KernelInterfaces/common.idh" />
-		<LcmFwKernelFiles Include="$(LcmArtifacts)/KernelInterfaces/FwKernel.idh" />
-		<LcmFwKernelFiles Include="$(LcmArtifacts)/KernelInterfaces/Language.idh" />
-		<LcmFwKernelFiles Include="$(LcmArtifacts)/KernelInterfaces/TextServ.idh" />
-		<LcmFwKernelFiles Include="$(LcmArtifacts)/KernelInterfaces/FwKernelTlb.idl" />
-
-		<LcmDistFiles Include="$(LcmArtifacts)/Styles.dtd" />
-
-		<LcmTemplatesFiles Include="$(LcmArtifacts)/Templates/GOLDEtic.xml" />
-		<LcmTemplatesFiles Include="$(LcmArtifacts)/Templates/NewLangProj.fwdata" />
-		<LcmTemplatesFiles Include="$(LcmArtifacts)/Templates/POS.xml" />
-		<LcmTemplatesFiles Include="$(LcmArtifacts)/Templates/SemDom.xml" />
-
-		<LcmIcuDataFiles Include="$(LcmArtifacts)/IcuData/UnicodeDataOverrides.txt" />
-
-		<LcmIcuNrmFiles Include="$(LcmArtifacts)/IcuData/icudt$(IcuVersion)l/nfc_fw.nrm" />
-		<LcmIcuNrmFiles Include="$(LcmArtifacts)/IcuData/icudt$(IcuVersion)l/nfkc_fw.nrm" />
-	</ItemGroup>
-
-	<Target Name="BuildLcm" DependsOnTargets="CopyDlls">
-		<Exec Command="$(NuGetCommand) restore -NonInteractive $(LcmSolution)" />
-		<MsBuild Projects="$(LcmSolution)" Properties="Configuration=$(config-capital);Platform=x86" Targets="Build" Condition="'$(OS)'=='Windows_NT'" />
-		<Exec Command="xbuild $(LcmSolution) /p:Configuration=$(config-capital) /p:Platform=x86 /t:Build" Condition="'$(OS)'=='Unix'" />
-		<NUnit Condition="'$(action)'=='test'"
-			Assemblies="$(LcmArtifacts)/SIL.LCModel.Utils.Tests.dll"
-			ToolPath="$(fwrt)/Bin/NUnit/bin"
-			WorkingDirectory="$(LcmArtifacts)"
-			OutputXmlFile="$(dir-outputBase)/SIL.LCModel.Utils.Tests.dll-nunit-output.xml"
-			Force32Bit="$(useNUnit-x86)"
-			FudgeFactor="$(timeoutFudgeFactor)"
-			Timeout="70000">
-			<Output TaskParameter="FailedSuites" ItemName="FailedSuites"/>
-		</NUnit>
-		<NUnit Condition="'$(action)'=='test'"
-			Assemblies="$(LcmArtifacts)/SIL.LCModel.Core.Tests.dll"
-			ToolPath="$(fwrt)/Bin/NUnit/bin"
-			WorkingDirectory="$(LcmArtifacts)"
-			OutputXmlFile="$(dir-outputBase)/SIL.LCModel.Core.Tests.dll-nunit-output.xml"
-			Force32Bit="$(useNUnit-x86)"
-			FudgeFactor="$(timeoutFudgeFactor)"
-			Timeout="90000">
-			<Output TaskParameter="FailedSuites" ItemName="FailedSuites"/>
-		</NUnit>
-		<NUnit Condition="'$(action)'=='test'"
-			Assemblies="$(LcmArtifacts)/SIL.LCModel.Tests.dll"
-			ToolPath="$(fwrt)/Bin/NUnit/bin"
-			WorkingDirectory="$(LcmArtifacts)"
-			OutputXmlFile="$(dir-outputBase)/SIL.LCModel.Tests.dll-nunit-output.xml"
-			Force32Bit="$(useNUnit-x86)"
-			FudgeFactor="$(timeoutFudgeFactor)"
-			Timeout="540000">
-			<Output TaskParameter="FailedSuites" ItemName="FailedSuites"/>
-		</NUnit>
-		<Copy SourceFiles="@(LcmOutputBaseFiles)" DestinationFolder="$(dir-outputBase)" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
-		<Copy SourceFiles="@(LcmOutputCommonFiles)" DestinationFolder="$(dir-fwoutputCommon)" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
-		<Copy SourceFiles="@(LcmFwKernelFiles)" DestinationFolder="$(fwrt)/Src/Kernel" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
-		<Copy SourceFiles="@(LcmDistFiles)" DestinationFolder="$(fwrt)/DistFiles" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
-		<Copy SourceFiles="@(LcmTemplatesFiles)" DestinationFolder="$(fwrt)/DistFiles/Templates" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
-		<Copy SourceFiles="@(LcmIcuDataFiles)" DestinationFolder="$(fwrt)/DistFiles/Icu$(IcuVersion)" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
-		<Copy SourceFiles="@(LcmIcuNrmFiles)" DestinationFolder="$(fwrt)/DistFiles/Icu$(IcuVersion)/icudt$(IcuVersion)l" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
-	</Target>
-
-	<ItemGroup>
-		<LcmFilesToDelete Include="$(fwrt)/Src/Kernel/*.idh" />
-		<LcmFilesToDelete Include="$(fwrt)/Src/Kernel/FwKernelTlb.idl" />
-		<LcmFilesToDelete Include="$(fwrt)/DistFiles/Styles.dtd" />
-		<LcmFilesToDelete Include="$(fwrt)/DistFiles/Templates/GOLDEtic.xml" />
-		<LcmFilesToDelete Include="$(fwrt)/DistFiles/Templates/NewLangProj.fwdata" />
-		<LcmFilesToDelete Include="$(fwrt)/DistFiles/Templates/POS.xml" />
-		<LcmFilesToDelete Include="$(fwrt)/DistFiles/Templates/SemDom.xml" />
-		<LcmFilesToDelete Include="$(dir-fwoutputCommon)/FwKernelTlb.iip" />
-		<LcmFilesToDelete Include="$(dir-fwoutputCommon)/MasterFieldWorksModel.xml" />
-		<LcmFilesToDelete Include="$(dir-fwoutputCommon)/MasterFieldWorksModel.xsd" />
-	</ItemGroup>
-
-	<Target Name="CleanLcm">
-		<MsBuild Projects="$(LcmSolution)" Properties="Configuration=$(config-capital);Platform=x86" Targets="Clean" Condition="'$(OS)'=='Windows_NT'" />
-		<Exec Command="xbuild $(LcmSolution) /p:Configuration=$(config-capital) /p:Platform=x86 /t:Clean" Condition="'$(OS)'=='Unix'" />
-		<ForceDelete Files="@(LcmFilesToDelete)" />
-		<ForceDelete Files="$(fwrt)/DistFiles/Icu$(IcuVersion)" />
 	</Target>
 </Project>

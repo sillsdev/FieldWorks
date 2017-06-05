@@ -102,10 +102,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <returns>Name of the font, or <c>null</c> if not found.</returns>
 		public static string GetFontNameForLanguage(string lang)
 		{
-			if (MiscUtils.IsDotNet)
-				throw new NotSupportedException();
+			if (MiscUtils.IsWindows)
+				throw new PlatformNotSupportedException();
 
-			string fontName = null;
+			string fontName;
 			if (m_mapLangToFont.TryGetValue(lang, out fontName))
 				return fontName;
 			IntPtr pattern = FcPatternCreate();

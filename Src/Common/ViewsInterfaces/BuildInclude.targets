@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="14.0">
-	<UsingTask TaskName="IdlImp" AssemblyFile="$(OutDir)\SIL.LCModel.Build.Tasks.dll"/>
+	<UsingTask TaskName="IdlImp" AssemblyFile="../../../Downloads/LCM/SIL.LCModel.Build.Tasks.dll"/>
 
 	<ItemGroup>
 		<UsingNamespaces Include="SIL.LCModel.Core.KernelInterfaces" />
@@ -20,9 +20,6 @@
 	<ItemGroup>
 		<ViewsInputs Include="@(ViewsIdhFiles)" />
 		<ViewsInputs Include="@(ViewsSources)" />
-	</ItemGroup>
-	<ItemGroup>
-		<ViewsRefs Include="$(OutDir)/../Common/FwKernelTlb.iip" />
 	</ItemGroup>
 	<Target Name="ViewsCs" Inputs="@(ViewsInputs)" Outputs="Views.cs">
 		<IdlImp Output="Views.cs"
