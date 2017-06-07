@@ -13,15 +13,12 @@ using System.Collections.Generic;
 
 using NUnit.Framework;
 
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.Scripture;
+using SIL.CoreImpl.Text;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.Utils;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Test.TestUtils;
-
-using SILUBS.SharedScrUtils;
-
 namespace SIL.FieldWorks.TE.ImportTests
 {
 	/// ----------------------------------------------------------------------------------------
@@ -246,7 +243,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 
 			ReflectionHelper.SetField(m_importer, "m_importDomain", ImportDomain.BackTrans);
 
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.ReplaceRgch(0, 0, "Exodus", 6, null);
 			Dictionary<int, ITsStrBldr> bldrs = ReflectionHelper.GetField(m_importer, "m_BTStrBldrs") as Dictionary<int, ITsStrBldr>;
 			bldrs[1] = bldr;

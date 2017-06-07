@@ -9,7 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Text;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 
@@ -54,9 +54,9 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			m_stText = stTextFactory.Create();
 			m_text.ContentsOA = m_stText;
 			m_para0 = m_stText.AddNewTextPara(null);
-			m_para0.Contents = TsStringUtils.MakeTss("Xxxhope xxxthis xxxwill xxxdo. xxxI xxxhope.", Cache.DefaultVernWs);
+			m_para0.Contents = TsStringUtils.MakeString("Xxxhope xxxthis xxxwill xxxdo. xxxI xxxhope.", Cache.DefaultVernWs);
 			m_para1 = m_stText.AddNewTextPara(null);
-			m_para1.Contents = TsStringUtils.MakeTss("Xxxcertain xxxto xxxcatch xxxa xxxfrog. xxxCertainly xxxcan. xxxOn xxxLake xxxMonroe.", Cache.DefaultVernWs);
+			m_para1.Contents = TsStringUtils.MakeString("Xxxcertain xxxto xxxcatch xxxa xxxfrog. xxxCertainly xxxcan. xxxOn xxxLake xxxMonroe.", Cache.DefaultVernWs);
 			m_para2 = null;
 
 			using (ParagraphParser pp = new ParagraphParser(Cache))
@@ -84,7 +84,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			m_stText2 = stTextFactory.Create();
 			text2.ContentsOA = m_stText2;
 			m_para2 = m_stText2.AddNewTextPara(null);
-			m_para2.Contents = TsStringUtils.MakeTss("Small one segment paragraph.", Cache.DefaultVernWs);
+			m_para2.Contents = TsStringUtils.MakeString("Small one segment paragraph.", Cache.DefaultVernWs);
 
 			using (ParagraphParser pp = new ParagraphParser(Cache))
 				foreach (IStTxtPara para in m_stText2.ParagraphsOS)
@@ -712,7 +712,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			text.ContentsOA = stText;
 			var para0 = stText.AddNewTextPara(null);
 			para0.Contents =
-				TsStringUtils.MakeTss("the book is red. the pages in the book are the color of the paper.",
+				TsStringUtils.MakeString("the book is red. the pages in the book are the color of the paper.",
 					Cache.DefaultVernWs);
 
 			using (ParagraphParser pp = new ParagraphParser(Cache))
@@ -735,10 +735,10 @@ namespace SIL.FieldWorks.FDO.FDOTests
 						Assert.AreEqual(5, para0.SegmentsOS[0].AnalysesRS.Count, "check preconditions -- includes final punctuation");
 
 						var firstBook = new AnalysisOccurrence(para0.SegmentsOS[0], 1);
-						firstBook.Analysis.Wordform.Form.AnalysisDefaultWritingSystem = Cache.TsStrFactory.MakeString(
+						firstBook.Analysis.Wordform.Form.AnalysisDefaultWritingSystem = TsStringUtils.MakeString(
 							"bookA", Cache.DefaultAnalWs);
 						var firstIs = new AnalysisOccurrence(para0.SegmentsOS[0], 2);
-						firstIs.Analysis.Wordform.Form.AnalysisDefaultWritingSystem = Cache.TsStrFactory.MakeString(
+						firstIs.Analysis.Wordform.Form.AnalysisDefaultWritingSystem = TsStringUtils.MakeString(
 							"isA", Cache.DefaultAnalWs);
 						var bookIs = firstBook.MakePhraseWithNextWord();
 						Assert.AreEqual(4, para0.SegmentsOS[0].AnalysesRS.Count);

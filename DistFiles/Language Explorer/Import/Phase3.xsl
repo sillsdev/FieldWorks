@@ -271,33 +271,58 @@ DoEtymology
 		<xsl:for-each select="Etymology">
 		  <LexEtymology>
 			<!-- Form -->
-			 <xsl:if test="etf">
-				<xsl:call-template name="JoinOnWS">
+			<xsl:if test="etf">
+			  <xsl:call-template name="JoinOnWS">
 				<xsl:with-param name="abbr" select="etf"/>	                    <!-- Abbr: element name to look for -->
 				<xsl:with-param name="eNameOut">Form</xsl:with-param>		<!-- eNameOut: element name to output -->
-				</xsl:call-template>
-			 </xsl:if>
-			<!-- Comment -->
-			 <xsl:if test="etc">
-				<xsl:call-template name="JoinOnWS">
+			  </xsl:call-template>
+			</xsl:if>
+			<!-- Etymology Note -->
+			<xsl:if test="etc">
+			  <xsl:call-template name="JoinOnWS">
 				<xsl:with-param name="abbr" select="etc"/>	                    <!-- Abbr: element name to look for -->
-				<xsl:with-param name="eNameOut">Comment</xsl:with-param>		<!-- eNameOut: element name to output -->
-				</xsl:call-template>
-			 </xsl:if>
+				<xsl:with-param name="eNameOut">Note</xsl:with-param>		<!-- eNameOut: element name to output -->
+			  </xsl:call-template>
+			</xsl:if>
 			<!-- Gloss -->
-			 <xsl:if test="etg">
-				<xsl:call-template name="JoinOnWS">
+			<xsl:if test="etg">
+			  <xsl:call-template name="JoinOnWS">
 				<xsl:with-param name="abbr" select="etg"/>	                    <!-- Abbr: element name to look for -->
 				<xsl:with-param name="eNameOut">Gloss</xsl:with-param>		<!-- eNameOut: element name to output -->
-				</xsl:call-template>
-			 </xsl:if>
-			<!-- Source -->
-			 <xsl:if test="ets">
-				<xsl:call-template name="JoinOnWS">
+			  </xsl:call-template>
+			</xsl:if>
+			<!-- LanguageNotes -->
+			<xsl:if test="ets">
+			  <xsl:call-template name="JoinOnWS">
 				<xsl:with-param name="abbr" select="ets"/>	                    <!-- Abbr: element name to look for -->
-				<xsl:with-param name="eNameOut">Source</xsl:with-param>		<!-- eNameOut: element name to output -->
-				</xsl:call-template>
-			 </xsl:if>
+				<xsl:with-param name="eNameOut">LanguageNotes</xsl:with-param>	<!-- eNameOut: element name to output -->
+			  </xsl:call-template>
+			</xsl:if>
+			<!-- PrecComment -->
+			<xsl:if test="eta">
+			  <xsl:call-template name="JoinOnWS">
+				<xsl:with-param name="abbr" select="eta"/>	                    <!-- Abbr: element name to look for -->
+				<xsl:with-param name="eNameOut">PrecComment</xsl:with-param>		<!-- eNameOut: element name to output -->
+			  </xsl:call-template>
+			</xsl:if>
+			<!-- Comment -->
+			<xsl:if test="etfc">
+			  <xsl:call-template name="JoinOnWS">
+				<xsl:with-param name="abbr" select="etfc"/>	                    <!-- Abbr: element name to look for -->
+				<xsl:with-param name="eNameOut">Comment</xsl:with-param>		<!-- eNameOut: element name to output -->
+			  </xsl:call-template>
+			</xsl:if>
+			<!-- Bibliography -->
+			<xsl:if test="etb">
+			  <xsl:call-template name="JoinOnWS">
+				<xsl:with-param name="abbr" select="etb"/>	                    <!-- Abbr: element name to look for -->
+				<xsl:with-param name="eNameOut">Bibliography</xsl:with-param>		<!-- eNameOut: element name to output -->
+			  </xsl:call-template>
+			</xsl:if>
+			<!-- Language -->
+			<xsl:for-each select="etsl">
+			  <Language><Link ws="{@ws}" name="{.}"/></Language>
+			</xsl:for-each>
 		  </LexEtymology>
 		</xsl:for-each>
 	  </Etymology>
@@ -1512,9 +1537,10 @@ Revision History
 xx-Mar-2005    dlh - adding functionality...
 xx-Apr-2005    dlh - adding functionality & generic templates.
 xx-Jun-2005    dlh - adding residue processing.
-08-Sep-2005   dlh - changing <Allomorphs> to <LexemeForm>
+08-Sep-2005    dlh - changing <Allomorphs> to <LexemeForm>
 08-Aug-2006    Bev - adding nested senses
 08-Aug-2006    Bev - fixing LT-4826 in join3
-10-Nov-2010     Mdl - split homograph numbers off of forms and cleaned up script
+10-Nov-2010    Mdl - split homograph numbers off of forms and cleaned up script
+30-Aug-2016    gjm - Change Etymology Source to LanguageNotes
 ================================================================
  -->

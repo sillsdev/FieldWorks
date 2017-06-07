@@ -1,12 +1,6 @@
-// Copyright (c) 2008-2013 SIL International
+// Copyright (c) 2008-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ImportedBooksTests.cs
-// Responsibility: TE Team
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Collections.Generic;
@@ -17,7 +11,7 @@ using SIL.FieldWorks.FDO.FDOTests;
 using System.Windows.Forms;
 using SIL.Utils;
 using System.Collections;
-using SIL.FieldWorks.Common.ScriptureUtils;
+using SIL.CoreImpl.Scripture;
 
 namespace SIL.FieldWorks.TE
 {
@@ -39,10 +33,12 @@ namespace SIL.FieldWorks.TE
 		{
 			#region Data members
 			internal OverwriteType m_typeOfOverwrite = OverwriteType.DataLoss;
-			internal List<IScrSection> m_sectionsToRemove = new List<IScrSection>();
+			private readonly List<IScrSection> m_sectionsToRemove = new List<IScrSection>();
 			internal bool m_fSimulateUserConfirmationToOverwrite = true;
 			internal string m_sOverwriteWillBlowAwayMergedBook;
-			internal bool m_fPartialOverwriteWasCalled = false;
+			internal bool m_fPartialOverwriteWasCalled;
+			private readonly List<IScrBook> m_newBooks = new List<IScrBook>();
+			private readonly List<IScrBook> m_overwrittenBooks = new List<IScrBook>();
 			#endregion
 
 			/// --------------------------------------------------------------------------------
@@ -53,12 +49,14 @@ namespace SIL.FieldWorks.TE
 			/// <param name="booksImported">The books imported.</param>
 			/// <param name="backupVersion">The backup version.</param>
 			/// --------------------------------------------------------------------------------
-			public DummyImportedBooks(FdoCache cache, IScrDraft booksImported,
-				IScrDraft backupVersion) : base(cache, null, booksImported, 1.0f, 1.0f,
-				backupVersion, cache.ServiceLocator.GetInstance<IFilteredScrBookRepository>().GetFilterInstance(987),
-				new Set<int>(booksImported.BooksOS.Select(b => b.CanonicalNum)), null, null)
+			public DummyImportedBooks(FdoCache cache, IScrDraft booksImported, IScrDraft backupVersion)
+				: base(cache, null, booksImported, backupVersion,
+					  new HashSet<int>(booksImported.BooksOS.Select(b => b.CanonicalNum)), null, null)
 			{
 			}
+
+			public IReadOnlyList<IScrBook> NewBooks => m_newBooks;
+			public IReadOnlyList<IScrBook> OverwrittenBooks => m_overwrittenBooks;
 
 			/// --------------------------------------------------------------------------------
 			/// <summary>
@@ -158,6 +156,17 @@ namespace SIL.FieldWorks.TE
 				Assert.AreEqual((BookMerger)lstImportedBooks.Items[0].Tag, bookMerger);
 				Assert.AreEqual(m_sectionsToRemove, sectionsToRemove);
 				m_fPartialOverwriteWasCalled = true;
+			}
+
+			protected override void OnBookAdded(IScrBook newBook)
+			{
+				m_newBooks.Add(newBook);
+			}
+
+			protected override void OnBookOverwritten(IScrBook oldBook, IScrBook newBook)
+			{
+				m_overwrittenBooks.Add(oldBook);
+				m_newBooks.Add(newBook);
 			}
 		}
 		#endregion
@@ -282,8 +291,8 @@ namespace SIL.FieldWorks.TE
 			{
 				importedBooks.m_typeOfOverwrite = OverwriteType.Partial;
 				importedBooks.SimulateOverwrite();
-				Assert.AreEqual(0, ((List<IScrBook>)ReflectionHelper.GetField(importedBooks, "m_newBooks")).Count);
-				Assert.AreEqual(0, ((List<IScrBook>)ReflectionHelper.GetField(importedBooks, "m_overwrittenBooks")).Count);
+				Assert.That(importedBooks.NewBooks.Count, Is.EqualTo(0));
+				Assert.That(importedBooks.OverwrittenBooks.Count, Is.EqualTo(0));
 				Assert.AreEqual(ImportedBooks.ImportedBookStatus.Overwritten, importedBooks.GetStatus(0));
 				Assert.IsTrue(importedBooks.m_fPartialOverwriteWasCalled);
 			}

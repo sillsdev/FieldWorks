@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="14.0">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
     <ProductVersion>9.0.21022</ProductVersion>
@@ -30,7 +30,7 @@
     <SccAuxPath>
     </SccAuxPath>
     <OldToolsVersion>3.5</OldToolsVersion>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -99,13 +99,9 @@
     <Reference Include="Accessibility">
       <Name>Accessibility</Name>
     </Reference>
-    <Reference Include="BasicUtils, Version=4.1.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\BasicUtils.dll</HintPath>
-    </Reference>
-    <Reference Include="COMInterfaces">
-      <Name>COMInterfaces</Name>
-      <HintPath>..\..\..\..\Output\Debug\COMInterfaces.dll</HintPath>
+    <Reference Include="ViewsInterfaces">
+      <Name>ViewsInterfaces</Name>
+      <HintPath>..\..\..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
     </Reference>
     <Reference Include="CoreImpl, Version=6.1.0.19989, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -150,12 +146,15 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\FwUtils.dll</HintPath>
     </Reference>
+    <Reference Include="Geckofx-Core">
+      <HintPath>..\..\..\..\Output\Debug\Geckofx-Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Geckofx-Winforms">
+      <HintPath>..\..\..\..\Output\Debug\Geckofx-Winforms.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\DistFiles\Microsoft.Practices.ServiceLocation.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.VisualBasic">
-      <Name>Microsoft.VisualBasic</Name>
     </Reference>
     <Reference Include="Reporting">
       <Name>Reporting</Name>
@@ -203,9 +202,6 @@
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
-    <Reference Include="System.Data">
-      <Name>System.Data</Name>
-    </Reference>
     <Reference Include="System.Drawing">
       <Name>System.Drawing</Name>
     </Reference>
@@ -226,15 +222,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\XMLUtils.dll</HintPath>
     </Reference>
-    <Reference Include="Geckofx-Core" Condition="'$(OS)'=='Unix'">
-      <Package>Geckofx-Core</Package>
-      <HintPath>..\..\..\..\Downloads\Geckofx-Core.dll</HintPath>
-      <SpecificVersion>False</SpecificVersion>
-    </Reference>
-    <Reference Include="Geckofx-Winforms" Condition="'$(OS)'=='Unix'">
-      <Package>Geckofx-WinForms</Package>
-      <HintPath>..\..\..\..\Downloads\Geckofx-Winforms.dll</HintPath>
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="FwKernelInterfaces">
+      <HintPath>..\..\..\Output\Debug\FwKernelInterfaces.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -244,9 +233,7 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="BrowseViewer.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Include="BrowseViewer.cs" />
     <Compile Include="BulkEditBar.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -258,9 +245,7 @@
     <Compile Include="DhListView.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="FilterBar.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Include="FilterBar.cs" />
     <Compile Include="FilterSdaDecorator.cs" />
     <Compile Include="FlatListView.cs">
       <SubType>UserControl</SubType>
@@ -268,6 +253,7 @@
     <Compile Include="FlatListView.Designer.cs">
       <DependentUpon>FlatListView.cs</DependentUpon>
     </Compile>
+    <Compile Include="GhostParentHelper.cs" />
     <Compile Include="LabelNode.cs" />
     <Compile Include="LayoutMerger.cs" />
     <Compile Include="MatchingObjectsBrowser.cs">
@@ -431,7 +417,4 @@
   <PropertyGroup>
     <DistFiles>../../../../DistFiles</DistFiles>
   </PropertyGroup>
-  <ItemGroup>
-    <None Include="gendarme-XMLViews.ignore" />
-  </ItemGroup>
 </Project>

@@ -10,9 +10,10 @@ using NUnit.Framework;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.Common.ScriptureUtils;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Scripture;
+using SIL.CoreImpl.Text;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.TE
 {
@@ -49,7 +50,7 @@ namespace SIL.FieldWorks.TE
 			m_genesis = AddBookToMockedScripture(1, "Genesis");
 			m_genesisRevision = AddArchiveBookToMockedScripture(1, "Genesis");
 
-			m_tssVerse = TsStringUtils.MakeTss("verse text", Cache.DefaultVernWs);
+			m_tssVerse = TsStringUtils.MakeString("verse text", Cache.DefaultVernWs);
 		}
 
 		/// ------------------------------------------------------------------------------------

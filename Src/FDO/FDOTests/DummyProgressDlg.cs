@@ -1,27 +1,25 @@
-// Copyright (c) 2011-2013 SIL International
+// Copyright (c) 2011-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: DummyProgressDlg.cs
 
 using System;
 using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO.FDOTests
 {
-	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// Simple implementation for testing
 	/// </summary>
-	/// ----------------------------------------------------------------------------------------
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification="m_threadHelper is a singleton and disposed by the SingletonsContainer")]
 	public class DummyProgressDlg : IThreadedProgress
 	{
-		private readonly ThreadHelper m_threadHelper = SingletonsContainer.Get<ThreadHelper>();
+		/// <summary>
+		/// Initializes a new instance of the <see cref="DummyProgressDlg"/> class.
+		/// </summary>
+		public DummyProgressDlg()
+		{
+			SynchronizeInvoke = new SingleThreadedSynchronizeInvoke();
+		}
 
 		#region IProgress and IThreadedProgress Members
 		/// <summary></summary>
@@ -93,10 +91,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// Gets an object to be used for ensuring that required tasks are invoked on the main
 		/// UI thread.
 		/// </summary>
-		public ISynchronizeInvoke SynchronizeInvoke
-		{
-			get { return m_threadHelper; }
-		}
+		public ISynchronizeInvoke SynchronizeInvoke { get; }
 
 		/// <summary>
 		/// Gets or sets a value indicating whether the task has been canceled.

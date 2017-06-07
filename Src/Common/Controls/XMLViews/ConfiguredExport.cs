@@ -1,14 +1,7 @@
-// Copyright (c) 2006-2013 SIL International
+// Copyright (c) 2006-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ConfiguredExport.cs
-// Responsibility:
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
-// --------------------------------------------------------------------------------------------
+
 using System;
 using System.Globalization;
 using System.IO;
@@ -19,14 +12,20 @@ using System.Text.RegularExpressions;
 using System.Diagnostics;
 using System.Xml.Linq;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.Cellar;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.Utils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Common.Framework;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.WritingSystems;
+using SIL.Xml;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -38,7 +37,6 @@ namespace SIL.FieldWorks.Common.Controls
 		private TextWriter m_writer = null;
 		private FdoCache m_cache = null;
 		private FwStyleSheet m_stylesheet;
-		private TextWriterStream m_strm = null;
 		private string m_sFormat = null;
 		private StringCollection m_rgElementTags = new StringCollection();
 		private StringCollection m_rgClassNames = new StringCollection();
@@ -59,7 +57,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>
 		/// Map from a writing system to its set of digraphs (or multigraphs) used in sorting.
 		/// </summary>
-		Dictionary<string, Set<string>> m_mapWsDigraphs = new Dictionary<string, Set<string>>();
+		Dictionary<string, ISet<string>> m_mapWsDigraphs = new Dictionary<string, ISet<string>>();
 		/// <summary>
 		/// Map from a writing system to its map of equivalent graphs/multigraphs used in sorting.
 		/// </summary>
@@ -67,7 +65,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>
 		/// Map of characters to ignore for writing systems
 		/// </summary>
-		Dictionary<string, Set<string>> m_mapWsIgnorables = new Dictionary<string, Set<string>>();
+		Dictionary<string, ISet<string>> m_mapWsIgnorables = new Dictionary<string, ISet<string>>();
 
 		private string m_sWsVern = null;
 		private string m_sWsRevIdx = null;
@@ -114,7 +112,6 @@ namespace SIL.FieldWorks.Common.Controls
 			string sFormat, string sOutPath, string sBodyClass)
 		{
 			m_writer = w;
-			m_strm = new TextWriterStream(w);
 			m_cache = cache;
 			m_stylesheet = Widgets.FontHeightAdjuster.StyleSheetFromPropertyTable(propertyTable);
 			m_mdc = cache.MetaDataCacheAccessor;
@@ -257,9 +254,7 @@ namespace SIL.FieldWorks.Common.Controls
 			CurrentContext ccOld = WriteFieldStartTag(tag);
 
 			ITsString tss = DataAccess.get_StringProp(CurrentObject(), tag);
-			int cchIndent = TabsToIndent() * 4;
-			tss.WriteAsXmlExtended(m_strm, m_cache.WritingSystemFactory, cchIndent, 0,
-				false, false);
+			WriteTsString(tss, TabsToIndent());
 
 			WriteFieldEndTag(tag, ccOld);
 		}
@@ -315,9 +310,7 @@ namespace SIL.FieldWorks.Common.Controls
 			CurrentContext ccOld = WriteFieldStartTag(tag);
 
 			ITsString tss = DataAccess.get_MultiStringAlt(CurrentObject(), tag, ws);
-			int cchIndent = TabsToIndent()*4;
-			tss.WriteAsXmlExtended(m_strm, m_cache.WritingSystemFactory, cchIndent,
-				ws, false, false);
+			WriteTsString(tss, TabsToIndent());
 			// See if the string uses any styles that require us to export some more data.
 			for (int irun = 0; irun < tss.RunCount; irun++)
 			{
@@ -362,7 +355,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="flags"></param>
 		public override void AddTimeProp(int tag, uint flags)
 		{
-			string sField = m_sda.MetaDataCache.GetFieldName((int)tag);
+			string sField = m_sda.MetaDataCache.GetFieldName(tag);
 			m_sTimeField = GetFieldXmlElementName(sField, tag/1000);
 		}
 
@@ -373,15 +366,9 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			CellarPropertyType cpt = (CellarPropertyType)m_mdc.GetFieldType(m_tagCurrent);
 			if (cpt == CellarPropertyType.GenDate)
-			{
-				int cchIndent = TabsToIndent() * 4;
-				tss.WriteAsXmlExtended(m_strm, m_cache.WritingSystemFactory, cchIndent, 0,
-					false, false);
-			}
+				WriteTsString(tss, TabsToIndent());
 			else
-			{
 				base.AddTsString(tss);
-			}
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -410,12 +397,24 @@ namespace SIL.FieldWorks.Common.Controls
 			IndentLine();
 			m_writer.WriteLine("<{0}{1}>", sElement, attrs);
 
-			int cchIndent = (TabsToIndent() + 1) * 4;
-			tss.WriteAsXmlExtended(m_strm, m_cache.WritingSystemFactory, cchIndent, 0,
-								   false, false);
+			WriteTsString(tss, TabsToIndent() + 1);
 
 			IndentLine();
 			m_writer.WriteLine("</{0}>", sElement);
+		}
+
+		private void WriteTsString(ITsString tss, int tabs)
+		{
+			string xml = TsStringSerializer.SerializeTsStringToXml(tss, m_cache.WritingSystemFactory, writeObjData: false, indent: true);
+			using (var reader = new StringReader(xml))
+			{
+				string line;
+				while ((line = reader.ReadLine()) != null)
+				{
+					m_writer.Write(new string(' ', tabs * 4));
+					m_writer.WriteLine(line);
+				}
+			}
 		}
 
 		/// <summary>
@@ -593,9 +592,9 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="cache"></param>
 		/// <returns>The character sEntryNFD is being sorted under in the dictionary.</returns>
 		public static string GetLeadChar(string sEntryNFD, string sWs,
-													Dictionary<string, Set<string>> wsDigraphMap,
+													Dictionary<string, ISet<string>> wsDigraphMap,
 													Dictionary<string, Dictionary<string, string>> wsCharEquivalentMap,
-													Dictionary<string, Set<string>> wsIgnorableCharMap,
+													Dictionary<string, ISet<string>> wsIgnorableCharMap,
 													FdoCache cache)
 		{
 			if (string.IsNullOrEmpty(sEntryNFD))
@@ -603,8 +602,8 @@ namespace SIL.FieldWorks.Common.Controls
 			string sEntryPre = Icu.ToLower(sEntryNFD, sWs);
 			Dictionary<string, string> mapChars;
 			// List of characters to ignore in creating letter heads.
-			Set<string> chIgnoreList;
-			Set<string> sortChars = GetDigraphs(sWs, wsDigraphMap, wsCharEquivalentMap, wsIgnorableCharMap, cache, out mapChars, out chIgnoreList);
+			ISet<string> chIgnoreList;
+			ISet<string> sortChars = GetDigraphs(sWs, wsDigraphMap, wsCharEquivalentMap, wsIgnorableCharMap, cache, out mapChars, out chIgnoreList);
 			string sEntry = String.Empty;
 			if (chIgnoreList != null) // this list was built in GetDigraphs()
 			{
@@ -644,7 +643,8 @@ namespace SIL.FieldWorks.Common.Controls
 				}
 				sEntryT = sEntry;
 			} while (fChanged);
-			string sFirst = sEntry.Substring(0, 1);
+			int cnt = GetFirstLetterLength(sEntry);
+			string sFirst = sEntry.Substring(0, cnt);
 			foreach (string sChar in sortChars)
 			{
 				if (sEntry.StartsWith(sChar))
@@ -681,6 +681,16 @@ namespace SIL.FieldWorks.Common.Controls
 			return sFirst;
 		}
 
+		/// <returns>
+		/// 2 if the first letter in the string is composed of a Surrogate Pair; 1 otherwise
+		/// </returns>
+		internal static int GetFirstLetterLength(string sEntry)
+		{
+			if (char.IsSurrogatePair(sEntry, 0))
+				return 2;
+			return 1;
+		}
+
 		/// <summary>
 		/// Get the set of significant digraphs (multigraphs) for the writing system. At the
 		/// moment, these are derived from ICU sorting rules associated with the writing system.
@@ -689,8 +699,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="mapChars">Set of character equivalences</param>
 		/// <param name="chIgnoreSet">Set of characters to ignore</param>
 		/// <returns></returns>
-		internal Set<string> GetDigraphs(string sWs, out Dictionary<string, string> mapChars,
-													out Set<string> chIgnoreSet)
+		internal ISet<string> GetDigraphs(string sWs, out Dictionary<string, string> mapChars, out ISet<string> chIgnoreSet)
 		{
 			return GetDigraphs(sWs, m_mapWsDigraphs, m_mapWsMapChars, m_mapWsIgnorables, m_cache, out mapChars,
 									 out chIgnoreSet);
@@ -708,18 +717,18 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="mapChars">Set of character equivalences</param>
 		/// <param name="chIgnoreSet">Set of characters to ignore</param>
 		/// <returns></returns>
-		internal static Set<string> GetDigraphs(string sWs,
-															 Dictionary<string, Set<string>> wsDigraphMap,
-															 Dictionary<string, Dictionary<string, string>> wsCharEquivalentMap,
-															 Dictionary<string, Set<string>> wsIgnorableCharMap,
-															 FdoCache cache,
-															 out Dictionary<string, string> mapChars,
-															 out Set<string> chIgnoreSet)
+		internal static ISet<string> GetDigraphs(string sWs,
+			Dictionary<string, ISet<string>> wsDigraphMap,
+			Dictionary<string, Dictionary<string, string>> wsCharEquivalentMap,
+			Dictionary<string, ISet<string>> wsIgnorableCharMap,
+			FdoCache cache,
+			out Dictionary<string, string> mapChars,
+			out ISet<string> chIgnoreSet)
 		{
 			// Collect the digraph and character equivalence maps and the ignorable character set
 			// the first time through. There after, these maps and lists are just retrieved.
-			chIgnoreSet = new Set<string>(); // if ignorable chars get through they can become letter heads! LT-11172
-			Set<string> digraphs;
+			chIgnoreSet = new HashSet<string>(); // if ignorable chars get through they can become letter heads! LT-11172
+			ISet<string> digraphs;
 			// Are the maps and ignorables already setup for the taking?
 			if (wsDigraphMap.TryGetValue(sWs, out digraphs))
 			{   // knows about ws, so already knows character equivalence classes
@@ -727,9 +736,11 @@ namespace SIL.FieldWorks.Common.Controls
 				chIgnoreSet = wsIgnorableCharMap[sWs];
 				return digraphs;
 			}
-			digraphs = new Set<string>();
+			digraphs = new HashSet<string>();
 			mapChars = new Dictionary<string, string>();
 			CoreWritingSystemDefinition ws = cache.ServiceLocator.WritingSystemManager.Get(sWs);
+
+			wsDigraphMap[sWs] = digraphs;
 
 			var simpleCollation = ws.DefaultCollation as SimpleRulesCollationDefinition;
 			if (simpleCollation != null)
@@ -750,46 +761,85 @@ namespace SIL.FieldWorks.Common.Controls
 				// is this a custom ICU collation?
 				var icuCollation = ws.DefaultCollation as IcuRulesCollationDefinition;
 				if (icuCollation != null && !string.IsNullOrEmpty(icuCollation.IcuRules))
-			{
-				// prime with empty ws in case all the rules affect only the ignore set
-				wsCharEquivalentMap[sWs] = mapChars;
-				wsDigraphMap[sWs] = digraphs;
+				{
+					// prime with empty ws in case all the rules affect only the ignore set
+					wsCharEquivalentMap[sWs] = mapChars;
 					string[] individualRules = icuCollation.IcuRules.Split(new[] { '&' }, StringSplitOptions.RemoveEmptyEntries);
 					for (int i = 0; i < individualRules.Length; ++i)
-				{
-					var rule = individualRules[i];
-					RemoveICUEscapeChars(ref rule);
-					// This is a valid rule that specifies that the digraph aa should be ignored
-					// [last tertiary ignorable] = \u02bc = aa
-					// This may never happen, but some single characters should be ignored or they will
-					// will be confused for digraphs with following characters.)))
-					if (rule.Contains("["))
 					{
-						rule = ProcessAdvancedSyntacticalElements(chIgnoreSet, rule);
-					}
-					if (String.IsNullOrEmpty(rule.Trim()))
-						continue;
-					rule = rule.Replace("<<<", "=");
-					rule = rule.Replace("<<", "=");
-					// "&N<ng<<<Ng<ny<<<Ny" => "&N<ng=Ng<ny=Ny"
-					// "&N<ñ<<<Ñ" => "&N<ñ=Ñ"
-					// There are other issues we are not handling proplerly such as the next line
-					// &N<\u006e\u0067
-					var primaryParts = rule.Split('<');
-					foreach (var part in primaryParts)
-					{
-						BuildDigraphSet(part, sWs, wsDigraphMap);
-						MapRuleCharsToPrimary(part, sWs, wsCharEquivalentMap);
+						string[] primaryParts;
+						var rule = individualRules[i];
+						RemoveICUEscapeChars(ref rule);
+						// This is a valid rule that specifies that the digraph aa should be ignored
+						// [last tertiary ignorable] = \u02bc = aa
+						// This may never happen, but some single characters should be ignored or they will
+						// will be confused for digraphs with following characters.)))
+						if (rule.Contains("["))
+						{
+							RemoveICUEscapeChars(ref rule);
+							// This is a valid rule that specifies that the digraph aa should be ignored
+							// [last tertiary ignorable] = \u02bc = aa
+							// This may never happen, but some single characters should be ignored or they will
+							// will be confused for digraphs with following characters.)))
+							if (rule.Contains("["))
+							{
+								rule = ProcessAdvancedSyntacticalElements(chIgnoreSet, rule);
+							}
+							if (String.IsNullOrEmpty(rule.Trim()))
+								continue;
+							rule = rule.Replace("<<<", "=");
+							rule = rule.Replace("<<", "=");
+
+							// If the rule contains one or more expansions ('/') remove the expansion portions
+							if (rule.Contains("/"))
+							{
+								bool isExpansion = false;
+								var newRule = new StringBuilder();
+								for (var ruleIndex = 0; ruleIndex <= rule.Length - 1; ruleIndex++)
+								{
+									if (rule.Substring(ruleIndex, 1) == "/")
+										isExpansion = true;
+									else if (rule.Substring(ruleIndex, 1) == "=" || rule.Substring(ruleIndex, 1) == "<")
+										isExpansion = false;
+
+									if (!isExpansion)
+										newRule.Append(rule.Substring(ruleIndex, 1));
+								}
+								rule = newRule.ToString();
+							}
+
+							// "&N<ng<<<Ng<ny<<<Ny" => "&N<ng=Ng<ny=Ny"
+							// "&N<ï¿½<<<ï¿½" => "&N<ï¿½=ï¿½"
+							// There are other issues we are not handling proplerly such as the next line
+							// &N<\u006e\u0067
+							primaryParts = rule.Split('<');
+							foreach (var part in primaryParts)
+							{
+								if (rule.Contains("<"))
+									BuildDigraphSet(part, sWs, wsDigraphMap);
+								MapRuleCharsToPrimary(part, sWs, wsCharEquivalentMap);
+							}
+						}
+						if (String.IsNullOrEmpty(rule.Trim()))
+							continue;
+						rule = rule.Replace("<<<", "=");
+						rule = rule.Replace("<<", "=");
+						// "&N<ng<<<Ng<ny<<<Ny" => "&N<ng=Ng<ny=Ny"
+						// "&N<ï¿½<<<ï¿½" => "&N<ï¿½=ï¿½"
+						// There are other issues we are not handling proplerly such as the next line
+						// &N<\u006e\u0067
+						primaryParts = rule.Split('<');
+						foreach (var part in primaryParts)
+						{
+							BuildDigraphSet(part, sWs, wsDigraphMap);
+							MapRuleCharsToPrimary(part, sWs, wsCharEquivalentMap);
+						}
 					}
 				}
-			}
 			}
 
 			// This at least prevents null reference and key not found exceptions.
 			// Possibly we should at least map the ASCII LC letters to UC.
-			Set<string> temp;
-			if (!wsDigraphMap.TryGetValue(sWs, out temp))
-				wsDigraphMap[sWs] = digraphs;
 			if (!wsCharEquivalentMap.TryGetValue(sWs, out mapChars))
 				wsCharEquivalentMap[sWs] = mapChars = new Dictionary<string, string>();
 
@@ -797,7 +847,7 @@ namespace SIL.FieldWorks.Common.Controls
 			return digraphs;
 		}
 
-		private static string ProcessAdvancedSyntacticalElements(Set<string> chIgnoreSet, string rule)
+		private static string ProcessAdvancedSyntacticalElements(ISet<string> chIgnoreSet, string rule)
 		{
 			const string ignorableEndMarker = "ignorable] = ";
 			const string beforeBegin = "[before ";
@@ -861,7 +911,7 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-		private static void BuildDigraphSet(string part, string ws, Dictionary<string, Set<string>> wsDigraphsMap)
+		private static void BuildDigraphSet(string part, string ws, Dictionary<string, ISet<string>> wsDigraphsMap)
 		{
 			foreach (var character in part.Split('='))
 			{
@@ -874,7 +924,7 @@ namespace SIL.FieldWorks.Common.Controls
 					sGraph = Icu.ToLower(sGraph, ws);
 					if (!wsDigraphsMap.ContainsKey(ws))
 					{
-						wsDigraphsMap.Add(ws, new Set<String> { sGraph });
+						wsDigraphsMap.Add(ws, new HashSet<string> { sGraph });
 					}
 					else
 					{
@@ -1175,7 +1225,6 @@ namespace SIL.FieldWorks.Common.Controls
 				m_writer.WriteLine("</{0}>", sDataType);
 			}
 			m_writer.Close();
-			m_strm = null;
 			m_writer = null;
 		}
 
@@ -1197,7 +1246,7 @@ namespace SIL.FieldWorks.Common.Controls
 				AddString(tss);
 				return;
 			}
-			var tag = XmlUtils.GetAttributeValue(delimitNode, "number"); // optional normally, but then this is not called
+			var tag = XmlUtils.GetOptionalAttributeValue(delimitNode, "number"); // optional normally, but then this is not called
 			int ich;
 			for (ich = 0; ich < tag.Length; ich++)
 			{
@@ -1302,7 +1351,7 @@ namespace SIL.FieldWorks.Common.Controls
 								+ Environment.NewLine + oldNode + Environment.NewLine + frag);
 						}
 					}
-					m_xhtml.MapCssClassToXmlNode(cssClass, frag);
+					m_xhtml.MapCssClassToXElement(cssClass, frag);
 				}
 				m_mapXnToCssClass.Add(frag, cssClass);
 			}

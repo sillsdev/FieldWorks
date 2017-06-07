@@ -3,7 +3,6 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
@@ -17,8 +16,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 	/// An entry in UtilityCatalogInclude (in DistFiles/Language Explorer/Configuration) causes an instance to
 	/// be created by reflection when the dialog is initialized.
 	/// </summary>
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification = "The creator/owner of this class is responsible to dispose the passed in dialog")]
 	public class DuplicateAnalysisFixer : IUtility
 	{
 		public string Label

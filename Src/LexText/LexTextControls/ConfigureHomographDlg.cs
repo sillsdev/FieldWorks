@@ -58,7 +58,6 @@ namespace SIL.FieldWorks.LexText.Controls
 				m_radioHide.Checked = false;
 				m_radioBefore.Checked = hc.HomographNumberBefore;
 				m_radioAfter.Checked = !hc.HomographNumberBefore;
-				m_chkShowSenseNumInDict.Checked = hc.ShowSenseNumberRef;
 				m_chkShowSenseNumInReversal.Checked = hc.ShowSenseNumberReversal;
 			}
 			else
@@ -66,11 +65,8 @@ namespace SIL.FieldWorks.LexText.Controls
 				m_radioHide.Checked = true;
 				m_radioBefore.Checked = false;
 				m_radioAfter.Checked = false;
-				m_chkShowSenseNumInDict.Checked = false;
 				m_chkShowSenseNumInReversal.Checked = false;
 			}
-			m_chkShowHomographNumInDict.Checked =
-				hc.ShowHomographNumber(HomographConfiguration.HeadwordVariant.DictionaryCrossRef);
 			m_chkShowHomographNumInReversal.Checked =
 				hc.ShowHomographNumber(HomographConfiguration.HeadwordVariant.ReversalCrossRef);
 			EnableControls();
@@ -84,12 +80,9 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (DialogResult == DialogResult.OK)
 			{
 				m_homographConfiguration.SetShowHomographNumber(HomographConfiguration.HeadwordVariant.Main, !m_radioHide.Checked);
-				m_homographConfiguration.SetShowHomographNumber(HomographConfiguration.HeadwordVariant.DictionaryCrossRef,
-				!m_radioHide.Checked && m_chkShowHomographNumInDict.Checked);
 				m_homographConfiguration.SetShowHomographNumber(HomographConfiguration.HeadwordVariant.ReversalCrossRef,
 				!m_radioHide.Checked && m_chkShowHomographNumInReversal.Checked);
 				m_homographConfiguration.HomographNumberBefore = m_radioBefore.Checked;
-				m_homographConfiguration.ShowSenseNumberRef = !m_radioHide.Checked && m_chkShowSenseNumInDict.Checked;
 				m_homographConfiguration.ShowSenseNumberReversal = !m_radioHide.Checked && m_chkShowSenseNumInReversal.Checked;
 			}
 			base.OnClosing(e);
@@ -109,15 +102,11 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		void EnableControls()
 		{
-			m_chkShowHomographNumInDict.Enabled = !m_radioHide.Checked;
 			m_chkShowHomographNumInReversal.Enabled = !m_radioHide.Checked;
-			m_chkShowSenseNumInDict.Enabled = !m_radioHide.Checked;
 			m_chkShowSenseNumInReversal.Enabled = !m_radioHide.Checked;
 			if (m_radioHide.Checked)
 			{
-				m_chkShowHomographNumInDict.Checked = false;
 				m_chkShowHomographNumInReversal.Checked = false;
-				m_chkShowSenseNumInDict.Checked = false;
 				m_chkShowSenseNumInReversal.Checked = false;
 			}
 		}

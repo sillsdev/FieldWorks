@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -7,19 +7,17 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Runtime.Serialization;
 using System.Windows.Forms;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using System.Linq;
+using SIL.CoreImpl.Cellar;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.Resources;
-using SIL.Utils;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
 	/// <summary></summary>
-	public class SliceTreeNode : UserControl, IFWDisposable
+	public class SliceTreeNode : UserControl
 	{
 		#region constants
 		// Constants used in drawing tree diagram.
@@ -51,8 +49,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		private System.ComponentModel.Container components = null;
 
 		/// <summary></summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "parent is a reference")]
 		public Slice Slice
 		{
 			get
@@ -223,8 +219,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <summary>
 		/// Return whether it is OK to move the objects indicated by odi to the specified destination.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "cache is a reference")]
 		public bool OkToMove(int hvoDstOwner, int flidDst, int ihvoDstStart, ObjectDragInfo odi)
 		{
 			CheckDisposed();

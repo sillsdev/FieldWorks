@@ -7,8 +7,9 @@ using System.Collections.Generic;
 using System.Drawing;
 using LanguageExplorer.Areas.TextsAndWords.Discourse;
 using NUnit.Framework;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.Text;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.FDO;
 
 namespace LanguageExplorerTests.Discourse
@@ -28,7 +29,6 @@ namespace LanguageExplorerTests.Discourse
 		[SetUp]
 		public void CreateTestDecorator()
 		{
-			//var sPopFormatting = Cache.TsStrFactory.MakeString(Convert.ToString(m_PDF), Cache.DefaultAnalWs);
 			m_spy = new VwEnvSpy();
 		}
 
@@ -65,7 +65,7 @@ namespace LanguageExplorerTests.Discourse
 		public void Test_FiveCallsLeftToRight()
 		{
 			// Setup
-			var tsStr = Cache.TsStrFactory.MakeString("random", Cache.DefaultAnalWs);
+			var tsStr = TsStringUtils.MakeString("random", Cache.DefaultAnalWs);
 			m_spy.IsRtL = false;
 			m_spy.OpenTableCell(1, 1);
 			m_spy.OpenParagraph();
@@ -91,7 +91,7 @@ namespace LanguageExplorerTests.Discourse
 		public void Test_OpenCellAddString()
 		{
 			// Setup
-			var tsStr = Cache.TsStrFactory.MakeString("random", Cache.DefaultAnalWs);
+			var tsStr = TsStringUtils.MakeString("random", Cache.DefaultAnalWs);
 			m_spy.IsRtL = true;
 			m_spy.OpenTableCell(1, 1);
 			m_spy.OpenParagraph();

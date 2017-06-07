@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using SIL.FieldWorks.FDO;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -65,7 +66,12 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Highlight the element(s) corresponding to the configuration node in the preview pane.
 		/// </summary>
-		void HighlightContent(ConfigurableDictionaryNode configNode);
+		void HighlightContent(ConfigurableDictionaryNode configNode, FdoCache cache);
+
+		/// <summary>
+		/// Close the view dialog (needed so the controller can do so after a configuration view has been imported.
+		/// </summary>
+		void Close();
 	}
 
 	public delegate void SwitchConfigurationEvent(object sender, SwitchConfigurationEventArgs args);

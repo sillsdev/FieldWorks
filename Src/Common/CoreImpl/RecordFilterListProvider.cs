@@ -3,17 +3,12 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections;
-using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.CoreImpl
 {
 	/// <summary>
 	/// Concrete implementations of this provide a list of RecordFilters to offer to the user.
 	/// </summary>
-	[SuppressMessage("Gendarme.Rules.Correctness", "DisposableFieldsShouldBeDisposedRule",
-		Justification = "variable is a reference; it is owned by parent")]
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification = "variable is a reference; it is owned by parent")]
 	public abstract class RecordFilterListProvider : IFlexComponent
 	{
 		#region Implementation of IPropertyTableProvider

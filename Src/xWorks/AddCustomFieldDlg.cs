@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -10,18 +10,19 @@ using System.Windows.Forms;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using SIL.CoreImpl;
+using SIL.CoreImpl.Cellar;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.Utils;
 using SIL.FieldWorks.FDO;
+using SIL.Xml;
 
 namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
 	/// Summary description for AddCustomFieldDlg.
 	/// </summary>
-	public class AddCustomFieldDlg : Form, IFWDisposable
+	public class AddCustomFieldDlg : Form
 	{
 		public enum LocationType
 		{
@@ -656,11 +657,11 @@ namespace SIL.FieldWorks.XWorks
 
 			foreach (FDWrapper fdw in m_customFields)
 			{
-				if (CheckForRegularFieldDuplicateName(fdw))
+				if (!fdw.Fd.MarkForDeletion && CheckForRegularFieldDuplicateName(fdw))
 				{
 					var sClassName = GetItem(m_locationComboBox, fdw.Fd.Class).Name;
 					var str1 = string.Format(xWorksStrings.ksCustomFieldMatchesNonCustomField,
-						sClassName, fieldName);
+						sClassName, fdw.Fd.Userlabel);
 					MessageBox.Show(str1, xWorksStrings.LabelAlreadyExists, MessageBoxButtons.OK);
 					m_nameTextBox.Select();  // we want focus on the new CustomFieldName.Text
 					return true;

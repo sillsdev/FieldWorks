@@ -13,8 +13,10 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Runtime.InteropServices;
 
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 
 namespace SIL.FieldWorks.FwCoreDlgControls
@@ -59,6 +61,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		public BulletsPreview()
 		{
 			m_CacheDa = VwCacheDaClass.Create();
+			m_CacheDa.TsStrFactory = TsStringUtils.TsStrFactory;
 			m_DataAccess = (ISilDataAccess)m_CacheDa;
 			m_vc = new BulletsPreviewVc();
 
@@ -247,11 +250,10 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 
 			//if (DesignMode)
 			//    return;
-			m_rootb = VwRootBoxClass.Create();
-			m_rootb.SetSite(this);
+			base.MakeRoot();
+
 			m_rootb.DataAccess = m_DataAccess;
 			m_rootb.SetRootObject(khvoRoot, m_vc, kfragRoot, null);
-			base.MakeRoot();
 		}
 
 		/// ------------------------------------------------------------------------------------

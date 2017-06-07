@@ -1,25 +1,19 @@
-// Copyright (c) 2005-2015 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// <remarks>
-// Implementation of:
-//		ImportWordSetListener - XCore listener that fires up an ImportWordSetDlg, if needed.
-// </remarks>
 
 using System;
 using System.Windows.Forms;
 using LanguageExplorer.Areas.TextsAndWords;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Framework;
-using SIL.Utils;
 
 namespace LanguageExplorer.Dumpster
 {
 	/// <summary>
 	/// Summary description for ImportWordSetListener.
 	/// </summary>
-	internal sealed class ImportWordSetListener : IFlexComponent, IFWDisposable
+	internal sealed class ImportWordSetListener : IFlexComponent, IDisposable
 	{
 		#region Implementation of IPropertyTableProvider
 

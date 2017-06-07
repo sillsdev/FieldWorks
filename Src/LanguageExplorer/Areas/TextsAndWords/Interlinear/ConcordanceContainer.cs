@@ -3,7 +3,6 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.RootSites;
@@ -16,8 +15,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 	/// </summary>
 	internal class ConcordanceContainer : MultiPane, IRefreshableRoot
 	{
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="ReCurseControls() returns a reference")]
 		public bool RefreshDisplay()
 		{
 			ConcordanceControlBase concordanceControl = ReCurseControls(this);

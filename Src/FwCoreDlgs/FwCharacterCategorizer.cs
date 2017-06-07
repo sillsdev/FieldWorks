@@ -1,0 +1,220 @@
+// Copyright (c) 2009-2013 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+//
+// File: FWCharacterCategorizer.cs
+// Responsibility: TE Team
+//
+// <remarks>
+// </remarks>
+
+using System.Collections.Generic;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
+using SIL.FieldWorks.Common.FwUtils;
+
+namespace SIL.FieldWorks.FwCoreDlgs
+{
+	/// ----------------------------------------------------------------------------------------
+	/// <summary>
+	/// FwCharacterCategorizer categorizes characters based on the ICU and user overrides of
+	/// ICU for a particular writing system.
+	/// </summary>
+	/// ----------------------------------------------------------------------------------------
+	public class FwCharacterCategorizer : CharacterCategorizer
+	{
+		#region Member variables
+		/// <summary>valid characters (used to determine word-forming characters)</summary>
+		private readonly ValidCharacters m_validChars;
+		#endregion
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Initializes a new instance of the <see cref="FwCharacterCategorizer"/> class.
+		/// </summary>
+		/// <param name="validChars">The valid characters. If null, will fall back on the
+		/// specified character property engine.</param>
+		/// ------------------------------------------------------------------------------------
+		public FwCharacterCategorizer(ValidCharacters validChars)
+		{
+			m_validChars = validChars;
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Determines whether the specified character is lower.
+		/// </summary>
+		/// <param name="ch">The given character.</param>
+		/// <returns>
+		/// 	<c>true</c> if the specified character is lower; otherwise, <c>false</c>.
+		/// </returns>
+		/// ------------------------------------------------------------------------------------
+		public override bool IsLower(char ch)
+		{
+			return Common.FwKernelInterfaces.Icu.GetCharType(ch) == Common.FwKernelInterfaces.Icu.UCharCategory.U_LOWERCASE_LETTER;
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Determines whether the specified character is upper.
+		/// </summary>
+		/// <param name="ch">The given character.</param>
+		/// <returns>
+		/// 	<c>true</c> if the specified character is upper; otherwise, <c>false</c>.
+		/// </returns>
+		/// ------------------------------------------------------------------------------------
+		public override bool IsUpper(char ch)
+		{
+			return Common.FwKernelInterfaces.Icu.GetCharType(ch) == Common.FwKernelInterfaces.Icu.UCharCategory.U_UPPERCASE_LETTER;
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Determines whether the specified cc is diacritic.
+		/// </summary>
+		/// <param name="cc">The cc.</param>
+		/// <returns>
+		/// 	<c>true</c> if the specified cc is diacritic; otherwise, <c>false</c>.
+		/// </returns>
+		/// ------------------------------------------------------------------------------------
+		public override bool IsDiacritic(char cc)
+		{
+			return Common.FwKernelInterfaces.Icu.IsDiacritic(cc);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Determines whether the specified character is punctuation.
+		/// </summary>
+		/// <param name="cc">The specified character.</param>
+		/// <returns>
+		/// 	<c>true</c> if the specified character is punctuation; otherwise, <c>false</c>.
+		/// </returns>
+		/// ------------------------------------------------------------------------------------
+		public override bool IsPunctuation(char cc)
+		{
+			return Common.FwKernelInterfaces.Icu.IsPunct(cc);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Determines whether the specified character is title.
+		/// </summary>
+		/// <param name="ch">The specified character.</param>
+		/// <returns>
+		/// 	<c>true</c> if the specified character is title; otherwise, <c>false</c>.
+		/// </returns>
+		/// ------------------------------------------------------------------------------------
+		public override bool IsTitle(char ch)
+		{
+			return Common.FwKernelInterfaces.Icu.GetCharType(ch) == Common.FwKernelInterfaces.Icu.UCharCategory.U_TITLECASE_LETTER;
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Determines whether a character is a word forming character.
+		/// </summary>
+		/// <param name="cc">The specified character.</param>
+		/// <returns>
+		/// 	<c>true</c> if the character is a word forming character; otherwise, <c>false</c>.
+		/// </returns>
+		/// ------------------------------------------------------------------------------------
+		public override bool IsWordFormingCharacter(char cc)
+		{
+			return m_validChars != null ? m_validChars.IsWordForming(cc) : TsStringUtils.IsWordForming(cc);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Determines whether a character is word medial punctuation.
+		/// </summary>
+		/// <param name="cc">The character.</param>
+		/// <returns>
+		/// 	<c>true</c> if the character is a word medial punctuation character;
+		/// 	otherwise, <c>false</c>.
+		/// </returns>
+		/// ------------------------------------------------------------------------------------
+		public override bool IsWordMedialPunctuation(char cc)
+		{
+			// Be careful to make sure that zwnj and zwj are included here for
+			// indic scripts since they should not break words.
+			return Common.FwKernelInterfaces.Icu.GetCharType(cc) == Common.FwKernelInterfaces.Icu.UCharCategory.U_CONNECTOR_PUNCTUATION;
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets words and punctuation from text.
+		/// </summary>
+		/// <param name="text">The text.</param>
+		/// <returns>a collection of words and punctuation</returns>
+		/// ------------------------------------------------------------------------------------
+		public override List<WordAndPunct> WordAndPuncts(string text)
+		{
+			List<WordAndPunct> waps = new List<WordAndPunct>();
+
+			for (int i = 0; i < text.Length; )
+			{
+				WordAndPunct wap = new WordAndPunct();
+
+				// Ignore any initial separator characters
+				while (i < text.Length && Common.FwKernelInterfaces.Icu.IsSeparator(text[i]))
+					i++;
+
+				if (i == text.Length)
+					return waps;
+
+				wap.Offset = i;
+				bool isFirstCharacterInWord = true;
+
+				char cc;
+				while (i < text.Length)
+				{
+					cc = text[i];
+
+					if (IsSingleCharacterWord(cc))
+					{
+						if (isFirstCharacterInWord)
+						{
+							// Single Character key is the first character in the key.
+							// It forms a key all by itself.
+							i = i + 1;
+						}
+						else
+						{
+							// Single Character key is NOT the first character in the key.
+							// It ends the key currently being formed.
+							// 'i' is not incremented
+						}
+						break;
+					}
+					if (Common.FwKernelInterfaces.Icu.IsNumeric(cc))
+					{
+						// allow digits in words
+					}
+					else if (!IsWordFormingCharacter(cc))
+						break;
+
+					i = i + 1;
+					isFirstCharacterInWord = false;
+				}
+
+				wap.Word = text.Substring(wap.Offset, i - wap.Offset);
+
+				int punctOffset = i;
+
+				while (i < text.Length)
+				{
+					cc = text[i];
+					if (IsWordFormingCharacter(cc) || Common.FwKernelInterfaces.Icu.IsNumeric(cc))
+						break;
+					i = i + 1;
+				}
+
+				wap.Punct = text.Substring(punctOffset, i - punctOffset);
+				waps.Add(wap);
+			}
+
+			return waps;
+		}
+	}
+}

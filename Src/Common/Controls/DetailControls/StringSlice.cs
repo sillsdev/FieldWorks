@@ -6,7 +6,11 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.Cellar;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
@@ -270,7 +274,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				var result = wsys.Abbreviation;
 				if (string.IsNullOrEmpty(result))
 					result = "??";
-				ITsStrBldr tsb = TsStrBldrClass.Create();
+				ITsStrBldr tsb = TsStringUtils.MakeStrBldr();
 				tsb.Replace(0, 0, result, WritingSystemServices.AbbreviationTextProperties);
 				tsb.SetIntPropValues(0, tsb.Length, (int)FwTextPropType.ktptWs, 0, m_wsEn);
 				return tsb.GetString();
@@ -551,7 +555,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			public override void MakeRoot()
 			{
 				CheckDisposed();
-				base.MakeRoot();
 
 				if (m_fdoCache == null || DesignMode)
 					return;
@@ -577,9 +580,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					(m_vc as StringSliceVc).ShowWsLabel = m_fShowWsLabel;
 				}
 
-				// Review JohnT: why doesn't the base class do this??
-				m_rootb = VwRootBoxClass.Create();
-				m_rootb.SetSite(this);
+				base.MakeRoot();
 
 				// And maybe this too, at least by default?
 				m_rootb.DataAccess = m_fdoCache.DomainDataByFlid;

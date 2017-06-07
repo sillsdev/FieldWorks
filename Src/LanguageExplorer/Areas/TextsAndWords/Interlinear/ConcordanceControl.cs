@@ -6,15 +6,17 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
+using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
@@ -24,7 +26,6 @@ using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.XWorks;
-using SIL.Utils;
 using WaitCursor = SIL.FieldWorks.Common.FwUtils.WaitCursor;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
@@ -497,8 +498,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// This method will fill in the DropDownList which replaces the Textbox for searching on certain lines
 		/// </summary>
 		/// <param name="line"></param>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="m_pOSPopupTreeManager gets disposed in Dispose()")]
 		private void FillSearchComboList(ConcordanceLines line)
 		{
 			if(m_pOSPopupTreeManager != null)
@@ -545,8 +544,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				return;
 			}
 			m_tbSearchText.WritingSystemCode = ws.Handle;
-			ITsStrFactory tsf = TsStrFactoryClass.Create();
-			m_tbSearchText.Tss = tsf.MakeString(m_tbSearchText.Text.Trim(), ws.Handle);
+			m_tbSearchText.Tss = TsStringUtils.MakeString(m_tbSearchText.Text.Trim(), ws.Handle);
 		}
 
 		private void m_rbtnUseRegExp_CheckedChanged(object sender, EventArgs e)
@@ -668,6 +666,24 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			switch (clid)
 			{
 				case WfiGlossTags.kClassId:
+					{
+						var targetGloss = (IWfiGloss) target;
+						analyses.Add(targetGloss);
+						foreach (IWfiGloss gloss in m_cache.ServiceLocator.GetInstance<IWfiGlossRepository>().AllInstances().Where(g => g != targetGloss))
+						{
+							foreach (int ws in targetGloss.Form.AvailableWritingSystemIds)
+							{
+								ITsString targetTss = targetGloss.Form.get_String(ws);
+								ITsString tss = gloss.Form.get_String(ws);
+								if (targetTss.Equals(tss))
+								{
+									analyses.Add(gloss);
+									break;
+								}
+							}
+						}
+						return GetOccurrencesOfAnalyses(analyses);
+					}
 				case WfiAnalysisTags.kClassId:
 					{
 						analyses.Add(m_cache.ServiceLocator.GetObject(m_hvoMatch) as IAnalysis);
@@ -815,7 +831,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				if (tss == null)
 				{
 					ws = m_cache.DefaultVernWs;
-					tss = m_cache.TsStrFactory.MakeString("", ws);
+					tss = TsStringUtils.EmptyString(ws);
 				}
 				SetDefaultVisibilityOfItems(true, String.Empty);
 				m_fObjectConcorded = false;

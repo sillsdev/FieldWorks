@@ -1,10 +1,6 @@
-// Copyright (c) 2005-2013 SIL International
+// Copyright (c) 2005-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: PredictiveProgressState.cs
-// Responsibility:
-// Last reviewed:
 //
 // <remarks>
 //	This class may not actually get used directly, although it should work. The primary use will be
@@ -14,15 +10,13 @@
 using System;
 using System.Linq;
 using System.Windows.Forms;
-using Microsoft.Win32;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.Controls
 {
 	/// <summary/>
-	public class ProgressState : IFWDisposable
+	public class ProgressState : IDisposable
 	{
 		/// <summary/>
 		protected int m_percentDone;

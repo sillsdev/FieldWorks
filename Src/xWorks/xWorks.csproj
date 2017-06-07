@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="14.0">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
     <ProductVersion>9.0.30729</ProductVersion>
@@ -33,7 +33,7 @@
     </FileUpgradeFlags>
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <SccAuxPath>
     </SccAuxPath>
     <OldToolsVersion>3.5</OldToolsVersion>
@@ -106,8 +106,8 @@
     <Reference Include="Accessibility">
       <Name>Accessibility</Name>
     </Reference>
-    <Reference Include="COMInterfaces, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\Output\Debug\COMInterfaces.dll</HintPath>
+    <Reference Include="ViewsInterfaces, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="DetailControls, Version=6.1.1.30508, Culture=neutral, PublicKeyToken=null">
@@ -151,16 +151,13 @@
       <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="Geckofx-Core">
-      <Package>Geckofx-Core</Package>
-      <HintPath>..\..\Downloads\Geckofx-Core.dll</HintPath>
+      <HintPath>..\..\Output\Debug\Geckofx-Core.dll</HintPath>
     </Reference>
     <Reference Include="Geckofx-Winforms">
-      <Package>Geckofx-WinForms</Package>
-      <HintPath>..\..\Downloads\Geckofx-Winforms.dll</HintPath>
+      <HintPath>..\..\Output\Debug\Geckofx-Winforms.dll</HintPath>
     </Reference>
-    <Reference Include="Ionic.Zip, Version=1.9.1.8, Culture=neutral, PublicKeyToken=edbe51ad942a3f5c, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\Ionic.Zip.dll</HintPath>
+    <Reference Include="DotNetZip">
+      <HintPath>..\..\Output\Debug\DotNetZip.dll</HintPath>
     </Reference>
     <Reference Include="L10NSharp, Version=1.1.4981.28556, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -210,16 +207,11 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Security" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="BasicUtils, Version=6.1.1.29480, Culture=neutral, PublicKeyToken=null">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\BasicUtils.dll</HintPath>
-    </Reference>
     <Reference Include="CoreImpl, Version=6.1.1.30291, Culture=neutral, PublicKeyToken=null">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\CoreImpl.dll</HintPath>
@@ -236,10 +228,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\FwCoreDlgControls.dll</HintPath>
     </Reference>
-    <Reference Include="SharedScrUtils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\SharedScrUtils.dll</HintPath>
-    </Reference>
     <Reference Include="SilUtils, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\SilUtils.dll</HintPath>
@@ -252,6 +240,9 @@
       <HintPath>..\..\Output\Debug\XMLViews.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
+    <Reference Include="FwKernelInterfaces">
+      <HintPath>..\..\Output\Debug\FwKernelInterfaces.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\CommonAssemblyInfo.cs">
@@ -263,6 +254,19 @@
     <Compile Include="ConcRecordClerk.cs" />
     <Compile Include="ConfigurableDictionaryNode.cs" />
     <Compile Include="ConfiguredXHTMLGenerator.cs" />
+    <Compile Include="DictionaryConfigurationImportDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DictionaryConfigurationImportDlg.Designer.cs">
+      <DependentUpon>DictionaryConfigurationImportDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="HeadWordNumbersController.cs" />
+    <Compile Include="HeadWordNumbersDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="HeadWordNumbersDlg.designer.cs">
+      <DependentUpon>HeadWordNumbersDlg.cs</DependentUpon>
+    </Compile>
     <Compile Include="CssGenerator.cs" />
     <Compile Include="DictionaryConfigurationController.cs" />
     <Compile Include="DictionaryConfigurationDlg.cs">
@@ -271,6 +275,7 @@
     <Compile Include="DictionaryConfigurationDlg.Designer.cs">
       <DependentUpon>DictionaryConfigurationDlg.cs</DependentUpon>
     </Compile>
+    <Compile Include="DictionaryConfigurationImportController.cs" />
     <Compile Include="DictionaryConfigurationListener.cs" />
     <Compile Include="DictionaryConfigurationManagerController.cs" />
     <Compile Include="DictionaryConfigurationManagerDlg.cs">
@@ -280,6 +285,10 @@
       <DependentUpon>DictionaryConfigurationManagerDlg.cs</DependentUpon>
     </Compile>
     <Compile Include="DictionaryConfigurationMigrator.cs" />
+    <Compile Include="DictionaryConfigurationMigrators\FirstAlphaMigrator.cs" />
+    <Compile Include="DictionaryConfigurationMigrators\FirstBetaMigrator.cs" />
+    <Compile Include="DictionaryConfigurationMigrators\IDictionaryConfigurationMigrator.cs" />
+    <Compile Include="DictionaryConfigurationMigrators\PreHistoricMigrator.cs" />
     <Compile Include="DictionaryConfigurationNodeRenameDlg.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -294,6 +303,18 @@
       <DependentUpon>DictionaryConfigurationTreeControl.cs</DependentUpon>
     </Compile>
     <Compile Include="DictionaryDetailsController.cs" />
+    <Compile Include="DictionaryDetailsView\GroupingOptionsView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="DictionaryDetailsView\GroupingOptionsView.Designer.cs">
+      <DependentUpon>GroupingOptionsView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DictionaryDetailsView\LabelOverPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="DictionaryDetailsView\LabelOverPanel.Designer.cs">
+      <DependentUpon>LabelOverPanel.cs</DependentUpon>
+    </Compile>
     <Compile Include="DictionaryDetailsView\ButtonOverPanel.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -307,7 +328,6 @@
       <DependentUpon>DetailsView.cs</DependentUpon>
     </Compile>
     <Compile Include="DictionaryExportService.cs" />
-    <Compile Include="EntriesOrChildClassesRecordList.cs" />
     <Compile Include="IAnalysisOccurrenceFromHvo.cs" />
     <Compile Include="ICreateAndInsert.cs" />
     <Compile Include="IDictionaryListOptionsView.cs" />
@@ -328,9 +348,11 @@
     <Compile Include="DictionaryNodeOptions.cs" />
     <Compile Include="IDictionaryDetailsView.cs" />
     <Compile Include="IDictionarySenseOptionsView.cs" />
+    <Compile Include="IDictionaryGroupingOptionsView.cs" />
+    <Compile Include="IHeadwordNumbersView.cs" />
     <Compile Include="ILayoutConverter.cs" />
-    <Compile Include="ISetCache.cs" />
     <Compile Include="ISetRootHvo.cs" />
+    <Compile Include="IWebonaryClient.cs" />
     <Compile Include="LegacyConfigurationUtils.cs" />
     <Compile Include="ConcDecorator.cs" />
     <Compile Include="CustomListDlg.cs">
@@ -390,21 +412,23 @@
     <Compile Include="ListChangedEventArgs.cs" />
     <Compile Include="ListChangedEventHandler.cs" />
     <Compile Include="MacroListener.cs" />
-    <Compile Include="MatchingItemsRecordClerk.cs" />
-    <Compile Include="MatchingItemsRecordList.cs" />
     <Compile Include="NotebookExportDialog.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="PossibilityRecordList.cs" />
-    <Compile Include="PublishToWebonaryController.cs" />
-    <Compile Include="PublishToWebonaryDlg.cs">
+    <Compile Include="RecordDocView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="RecordNavigationInfo.cs" />
+    <Compile Include="TemporaryRecordClerk.cs" />
+    <Compile Include="UploadToWebonaryController.cs" />
+    <Compile Include="UploadToWebonaryDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="PublishToWebonaryDlg.Designer.cs">
-      <DependentUpon>PublishToWebonaryDlg.cs</DependentUpon>
+    <Compile Include="UploadToWebonaryDlg.Designer.cs">
+      <DependentUpon>UploadToWebonaryDlg.cs</DependentUpon>
     </Compile>
-    <Compile Include="PublishToWebonaryModel.cs" />
-    <Compile Include="RecordNavigationInfo.cs" />
+    <Compile Include="UploadToWebonaryModel.cs" />
     <Compile Include="SemanticDomainRdeTreeBarHandler.cs" />
     <Compile Include="RecordBarListHandler.cs">
       <SubType>Code</SubType>
@@ -421,9 +445,6 @@
     <Compile Include="RecordClerkImages.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="RecordDocView.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Include="RecordEditView.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -434,11 +455,13 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="SubitemRecordClerk.cs" />
-    <Compile Include="TemporaryRecordClerk.cs" />
     <Compile Include="TextListeners.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="UnicodeCharacterEditingHelper.cs" />
+    <Compile Include="WebonaryClient.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="WordsUsedOnlyElsewhereFilter.cs" />
     <Compile Include="XhtmlDocView.cs">
       <SubType>UserControl</SubType>
@@ -469,9 +492,13 @@
     <Compile Include="XWorksViewBase.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <None Include="Resources\Reset.png" />
     <EmbeddedResource Include="AddCustomFieldDlg.resx">
       <DependentUpon>AddCustomFieldDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="HeadWordNumbersDlg.resx">
+      <DependentUpon>HeadWordNumbersDlg.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="CustomListDlg.resx">
       <DependentUpon>CustomListDlg.cs</DependentUpon>
@@ -491,12 +518,19 @@
     </EmbeddedResource>
     <EmbeddedResource Include="DictionaryConfigurationManagerDlg.resx">
       <DependentUpon>DictionaryConfigurationManagerDlg.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="DictionaryConfigurationNodeRenameDlg.resx">
       <DependentUpon>DictionaryConfigurationNodeRenameDlg.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="DictionaryConfigurationTreeControl.resx">
       <DependentUpon>DictionaryConfigurationTreeControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DictionaryDetailsView\GroupingOptionsView.resx">
+      <DependentUpon>GroupingOptionsView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DictionaryDetailsView\LabelOverPanel.resx">
+      <DependentUpon>LabelOverPanel.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="DictionaryDetailsView\ButtonOverPanel.resx">
       <DependentUpon>ButtonOverPanel.cs</DependentUpon>
@@ -525,12 +559,16 @@
       <DependentUpon>ImageHolder.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="DictionaryConfigurationImportDlg.resx">
+      <DependentUpon>DictionaryConfigurationImportDlg.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="LiftExportMessageDlg.resx">
       <DependentUpon>LiftExportMessageDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="PublishToWebonaryDlg.resx">
-      <DependentUpon>PublishToWebonaryDlg.cs</DependentUpon>
+    <EmbeddedResource Include="UploadToWebonaryDlg.resx">
+      <DependentUpon>UploadToWebonaryDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="RecordBrowseView.resx">
@@ -577,6 +615,7 @@
     <Content Include="Resources\FWLastArrow.bmp" />
     <Content Include="Resources\FWLeftArrow.bmp" />
     <Content Include="Resources\FWRightArrow.bmp" />
+    <Compile Include="DictionaryConfigurationUtils.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -614,7 +653,4 @@
   <PropertyGroup>
     <DistFiles>../../DistFiles</DistFiles>
   </PropertyGroup>
-  <ItemGroup>
-    <None Include="gendarme-xWorks.ignore" />
-  </ItemGroup>
 </Project>

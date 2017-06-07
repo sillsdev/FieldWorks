@@ -2,7 +2,6 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System.Diagnostics.CodeAnalysis;
 namespace SIL.FieldWorks.FwCoreDlgs
 {
 	partial class ValidCharactersDlg
@@ -19,8 +18,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// the contents of this method with the code editor.
 		/// </summary>
 		// TODO-Linux: VirtualMode is not supported on Mono. TabStop is not implemented.
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification="See TODO-Linux comment")]
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();

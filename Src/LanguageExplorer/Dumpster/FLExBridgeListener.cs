@@ -1,10 +1,9 @@
-﻿// Copyright (c) 2012-2015 SIL International
+﻿// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -41,9 +40,7 @@ namespace LanguageExplorer.Dumpster
 	/// <summary>
 	/// Old xcore system listener for Flex Bridge S/R.
 	/// </summary>
-	[SuppressMessage("Gendarme.Rules.Correctness", "DisposableFieldsShouldBeDisposedRule",
-		Justification = "_parentForm is a reference")]
-	internal sealed class FLExBridgeListener : IFlexComponent, IFWDisposable
+	internal sealed class FLExBridgeListener : IFlexComponent, IDisposable
 	{
 		private Form _parentForm;
 		private string _liftPathname;
@@ -56,10 +53,6 @@ namespace LanguageExplorer.Dumpster
 		/// which will remain enabled after the project is migrated to the new flexbridge location.
 		/// </summary>
 		private static readonly List<string> OldLiftBridgeProjects;
-
-		/// <summary />
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		static FLExBridgeListener()
 		{
 			OldLiftBridgeProjects = new List<string>();
@@ -323,8 +316,6 @@ namespace LanguageExplorer.Dumpster
 		/// </summary>
 		/// <param name="commandObject">Includes the XML command element of the OnFLExBridge message</param>
 		/// <returns>true if the message was handled, false if there was an error or the call was deemed inappropriate.</returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "newAppWindow is a reference")]
 		public bool OnFLExBridge(object commandObject)
 		{
 			if (!LinkedFilesLocationIsDefault())
@@ -510,8 +501,6 @@ namespace LanguageExplorer.Dumpster
 		/// </summary>
 		/// <param name="argument">Includes the XML command element of the OnLiftBridge message</param>
 		/// <returns>true if the message was handled, false if there was an error or the call was deemed inappropriate, or somebody should also try to handle the message.</returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "newAppWindow is a reference")]
 		public bool OnLiftBridge(object argument)
 		{
 			SaveAllDataToDisk();
@@ -1511,8 +1500,6 @@ namespace LanguageExplorer.Dumpster
 			return Path.Combine(Directory.GetParent(oldProjectFolder).FullName, revisedProjName);
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "FwApp is a reference I guess")]
 		private static IFwMainWnd RefreshCacheWindowAndAll(IPropertyTable propertyTable, string fullProjectFileName)
 		{
 			var flexApp = propertyTable.GetValue<IFlexApp>("app");
@@ -1661,9 +1648,6 @@ namespace LanguageExplorer.Dumpster
 
 			IsDisposed = true;
 		}
-		#endregion
-
-		#region Implementation of IFWDisposable
 
 		/// <summary>
 		/// This method throws an ObjectDisposedException if IsDisposed returns
@@ -1684,10 +1668,5 @@ namespace LanguageExplorer.Dumpster
 		public bool IsDisposed { get; set; }
 
 		#endregion
-
-		private static void logger(string guid, string date, string description)
-		{
-			Console.WriteLine("Error reported, but not dealt with {0} {1} {2}", guid, date, description);
-		}
 	}
 }

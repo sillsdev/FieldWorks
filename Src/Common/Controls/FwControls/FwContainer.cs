@@ -9,10 +9,7 @@
 // </remarks>
 
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
-using System.Text;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -132,8 +129,6 @@ namespace SIL.FieldWorks.Common.Controls
 			/// type serviceType.
 			/// </returns>
 			/// ------------------------------------------------------------------------------------
-			[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-				Justification="See TODO-Linux comment")]
 			public object GetService(Type serviceType)
 			{
 				// TODO-Linux: System.Boolean System.Type::op_Equality(System.Type,System.Type)
@@ -147,13 +142,11 @@ namespace SIL.FieldWorks.Common.Controls
 		}
 		#endregion
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:FwContainer"/> class.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public FwContainer()
+		/// <summary/>
+		protected override void Dispose(bool disposing)
 		{
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ******");
+			base.Dispose(disposing);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -200,8 +193,6 @@ namespace SIL.FieldWorks.Common.Controls
 		/// if the service cannot be resolved.
 		/// </returns>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification="See TODO-Linux comment")]
 		protected override object GetService(Type service)
 		{
 			object obj = base.GetService(service);

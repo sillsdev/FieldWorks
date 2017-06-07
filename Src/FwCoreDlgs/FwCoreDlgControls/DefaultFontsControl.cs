@@ -1,13 +1,6 @@
-// Copyright (c) 2006-2013 SIL International
+// Copyright (c) 2006-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: DefaultFontControl.cs
-// Responsibility: TE Team
-//
-// <remarks>
-// </remarks>
-// ---------------------------------------------------------------------------------------------
 
 using System;
 using System.Collections.Generic;
@@ -15,8 +8,7 @@ using System.Drawing;
 using System.Drawing.Text;
 using System.Linq;
 using System.Windows.Forms;
-using SIL.CoreImpl;
-using SIL.Utils;
+using SIL.CoreImpl.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
 using SIL.WritingSystems;
 
@@ -25,7 +17,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 	/// <summary>
 	/// Summary description for DefaultFontsControl.
 	/// </summary>
-	public class DefaultFontsControl : UserControl, IFWDisposable
+	public class DefaultFontsControl : UserControl
 	{
 		#region Member variables
 		private FwOverrideComboBox m_defaultFontComboBox;
@@ -149,6 +141,15 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			}
 		}
 
+		internal ComboBox DefaultFontComboBox
+		{
+			get
+			{
+				CheckDisposed();
+				return m_defaultFontComboBox;
+			}
+		}
+
 		#endregion
 
 		#region Component Designer generated code
@@ -240,7 +241,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 
 			// setup controls for default font
 			SetFontInCombo(m_defaultFontComboBox, m_ws.DefaultFontName);
-			m_defaultFontFeaturesButton.WritingSystemFactory = m_ws.WritingSystemManager;
+			m_defaultFontFeaturesButton.WritingSystemFactory = m_ws.WritingSystemFactory;
 			m_defaultFontFeaturesButton.FontName = m_defaultFontComboBox.Text;
 			m_defaultFontFeaturesButton.FontFeatures = m_ws.DefaultFontFeatures;
 

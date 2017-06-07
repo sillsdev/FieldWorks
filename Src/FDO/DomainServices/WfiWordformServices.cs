@@ -12,8 +12,10 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.CoreImpl;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.CoreImpl.SpellChecking;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
 using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.Utils;
 
@@ -74,21 +76,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		public static IWfiWordform FindOrCreateWordform(FdoCache cache, string form, CoreWritingSystemDefinition ws)
 		{
 			Debug.Assert(!string.IsNullOrEmpty(form));
-			return FindOrCreateWordform(cache, CreateWordformTss(form, ws.Handle));
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Returns an ITsString wordform with the given form and ws.
-		/// </summary>
-		/// <param name="form"></param>
-		/// <param name="ws"></param>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
-		private static ITsString CreateWordformTss(string form, int ws)
-		{
-			ITsStrFactory tsf = TsStrFactoryClass.Create();
-			return tsf.MakeString(form, ws);
+			return FindOrCreateWordform(cache, TsStringUtils.MakeString(form, ws.Handle));
 		}
 
 		/// ------------------------------------------------------------------------------------

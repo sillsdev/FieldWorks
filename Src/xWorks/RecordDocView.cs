@@ -10,19 +10,20 @@
 // </remarks>
 using System;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Utils;
+using SIL.Xml;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -273,8 +274,6 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="rcDstRoot"></param>
 		/// <returns></returns>
 		/// -----------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="ToolStripMenuItem gets added to m_contextMenu.Items and disposed there")]
 		protected override bool DoContextMenu(IVwSelection sel, Point pt, Rectangle rcSrcRoot, Rectangle rcDstRoot)
 		{
 			int hvo, tag, ihvo, cpropPrevious;
@@ -297,7 +296,7 @@ namespace SIL.FieldWorks.XWorks
 				nodePath = tss.get_Properties(0).GetStrPropValue((int) FwTextPropType.ktptBulNumTxtBef);
 			}
 			if (m_configObjectName == null)
-				m_configObjectName = XmlUtils.GetLocalizedAttributeValue(m_xnSpec, "configureObjectName", null);
+				m_configObjectName = StringTable.Table.LocalizeAttributeValue(XmlUtils.GetOptionalAttributeValue(m_xnSpec, "configureObjectName", null));
 			string label;
 			if (string.IsNullOrEmpty(nodePath))
 				label = String.Format(xWorksStrings.ksConfigure, m_configObjectName);
@@ -326,7 +325,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				// If this is optional and defaults to DictionaryPublicationLayout,
 				// it messes up our Dictionary when we make something else configurable (like Classified Dictionary).
-				var sProp = XmlUtils.GetAttributeValue(m_xnSpec, "layoutProperty");
+				var sProp = XmlUtils.GetOptionalAttributeValue(m_xnSpec, "layoutProperty");
 				Debug.Assert(sProp != null, "When making a view configurable you need to put a 'layoutProperty' in the XML configuration.");
 				dlg.SetConfigDlgInfo(m_xnSpec, Cache, (FwStyleSheet)StyleSheet,
 					FindForm() as IFwMainWnd, PropertyTable, Publisher, sProp);
@@ -483,7 +482,7 @@ namespace SIL.FieldWorks.XWorks
 
 		protected override void ReadParameters()
 		{
-			m_configObjectName = XmlUtils.GetLocalizedAttributeValue(m_configurationParametersElement, "configureObjectName", null);
+			m_configObjectName = StringTable.Table.LocalizeAttributeValue(XmlUtils.GetOptionalAttributeValue(m_configurationParametersElement, "configureObjectName", null));
 			base.ReadParameters();
 		}
 

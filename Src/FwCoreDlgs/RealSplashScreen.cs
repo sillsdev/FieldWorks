@@ -1,17 +1,15 @@
-// Copyright (c) 2002-2013 SIL International
+// Copyright (c) 2002-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: FwSplashScreen.cs
-// Responsibility: TE Team
+
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Reflection;
 using System.Threading;
 using System.Windows.Forms;
-using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
 using SIL.Windows.Forms;
 
@@ -23,7 +21,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	/// and runs in a separate thread.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	internal class RealSplashScreen : Form, IProgress, IFWDisposable
+	internal class RealSplashScreen : Form, IProgress
 	{
 		#region Events
 		event CancelEventHandler IProgress.Canceling

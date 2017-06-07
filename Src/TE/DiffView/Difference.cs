@@ -1,9 +1,6 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: Difference.cs
-// Responsibility: TE Team
 
 using System;
 using System.Collections;
@@ -11,9 +8,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using SIL.FieldWorks.FDO;
-using SILUBS.SharedScrUtils;
+using SIL.CoreImpl.Scripture;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.TE
 {
@@ -1275,11 +1271,24 @@ namespace SIL.FieldWorks.TE
 				ParaMovedFrom == otherDiff.ParaMovedFrom &&
 				IchMovedFrom == otherDiff.IchMovedFrom &&
 				m_diffType == otherDiff.m_diffType &&
-				ArrayUtils.AreEqual(m_SectionsCurr, otherDiff.m_SectionsCurr) &&
-				ArrayUtils.AreEqual(m_SectionsRev, otherDiff.m_SectionsRev) &&
+				SectionsEqual(m_SectionsCurr, otherDiff.m_SectionsCurr) &&
+				SectionsEqual(m_SectionsRev, otherDiff.m_SectionsRev) &&
 				CompareParaNodeMaps(ParaNodeMapCurr, otherDiff.ParaNodeMapCurr) &&
 				CompareParaNodeMaps(ParaNodeMapRev, otherDiff.ParaNodeMapRev);
 				//Array.Equals(subDiffs, otherDiff.subDiffs);
+		}
+
+		private static bool SectionsEqual(List<IScrSection> sections1, List<IScrSection> sections2)
+		{
+			// both null is equivalent
+			if (sections1 == null && sections2 == null)
+				return true;
+
+			if (sections1 != null && sections2 != null)
+				return sections1.SequenceEqual(sections2);
+
+			// one is null and the other is not
+			return false;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1332,8 +1341,8 @@ namespace SIL.FieldWorks.TE
 				ParaRev != otherDiff.ParaRev ||
 				IchMinRev != otherDiff.IchMinRev ||
 				IchLimRev != otherDiff.IchLimRev ||
-				!ArrayUtils.AreEqual(m_SectionsCurr, otherDiff.m_SectionsCurr) ||
-				!ArrayUtils.AreEqual(m_SectionsRev, otherDiff.m_SectionsRev))
+				!SectionsEqual(m_SectionsCurr, otherDiff.m_SectionsCurr) ||
+				!SectionsEqual(m_SectionsRev, otherDiff.m_SectionsRev))
 			{
 				return false;
 			}

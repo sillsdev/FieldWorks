@@ -12,13 +12,13 @@ using System.Drawing;
 using System.Globalization;
 using System.Linq;
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl;
 using SIL.FieldWorks.FwCoreDlgControls;
 using SIL.FieldWorks.Resources;
-using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Text;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
@@ -53,7 +53,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// Fills the font list.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		protected void FillFontList()
+		protected internal void FillFontList()
 		{
 			m_lbFontNames.Items.Clear();
 			m_lbFontNames.Items.Add(ResourceHelper.GetResourceString("kstidDefaultFont"));
@@ -66,6 +66,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			foreach (var name in fontNames)
 				m_lbFontNames.Items.Add(name);
 		}
+
+		internal ListBox FontNamesListBox => m_lbFontNames;
 
 		#region IFontDialog Members
 		/// ------------------------------------------------------------------------------------
@@ -260,7 +262,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <param name="sender">The sender.</param>
 		/// <param name="e">The <see cref="T:System.EventArgs"/> instance containing the event data.</param>
 		/// ------------------------------------------------------------------------------------
-		protected void OnSelectedFontSizesIndexChanged(object sender, EventArgs e)
+		protected internal void OnSelectedFontSizesIndexChanged(object sender, EventArgs e)
 		{
 			m_fInSelectedIndexChangedHandler = true;
 			try
@@ -299,7 +301,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary>
 		/// Returns true if applied, or false if size is not valid or is not changed.
 		/// </summary>
-		protected bool ApplyNewFontSizeIfValid(string size)
+		protected internal bool ApplyNewFontSizeIfValid(string size)
 		{
 			bool isNewAndValidSize = UpdateFontSizeIfValid(size);
 			if (isNewAndValidSize)
@@ -322,7 +324,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// If text size is already set or is not a valid font size, does not update and
 		/// returns false.
 		/// </summary>
-		protected bool UpdateFontSizeIfValid(string size)
+		protected internal bool UpdateFontSizeIfValid(string size)
 		{
 			int newSize;
 			Int32.TryParse(size, out newSize);
@@ -380,10 +382,21 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		#endregion
 
 		/// <summary/>
-		protected int FontSize
+		protected internal int FontSize
 		{
 			get; set;
 		}
+
+		internal bool InSelectedIndexChangedHandler
+		{
+			get { return m_fInSelectedIndexChangedHandler; }
+			set { m_fInSelectedIndexChangedHandler = value; }
+		}
+
+		internal TextBox FontSizeTextBox => m_tbFontSize;
+
+		internal ListBox FontSizesListBox => m_lbFontSizes;
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Updates the preview.
@@ -394,11 +407,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			if (FontSize <= 0)
 				return;
 
-			ITsStrBldr strBldr = TsStrBldrClass.Create();
+			ITsStrBldr strBldr = TsStringUtils.MakeStrBldr();
 			strBldr.Replace(0, 0, "______", StyleUtils.CharStyleTextProps(null, m_DefaultWs));
 
 			bool fIsInherited;
-			ITsPropsBldr propsBldr = TsPropsBldrClass.Create();
+			ITsPropsBldr propsBldr = TsStringUtils.MakePropsBldr();
 			propsBldr.SetStrPropValue((int)FwTextPropType.ktptFontFamily, m_tbFontName.Text);
 			propsBldr.SetIntPropValues((int)FwTextPropType.ktptFontSize, (int)FwTextPropVar.ktpvMilliPoint,
 				FontSize * 1000);

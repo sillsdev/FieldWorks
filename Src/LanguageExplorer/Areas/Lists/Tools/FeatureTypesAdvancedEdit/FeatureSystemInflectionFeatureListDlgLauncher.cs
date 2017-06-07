@@ -3,14 +3,12 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using LanguageExplorer.Areas.Grammar;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.LexText.Controls;
-using SIL.Utils;
 
 namespace LanguageExplorer.Areas.Lists.Tools.FeatureTypesAdvancedEdit
 {
@@ -26,8 +24,6 @@ namespace LanguageExplorer.Areas.Lists.Tools.FeatureTypesAdvancedEdit
 		/// <summary>
 		/// Handle launching of the LexEntryInflType features editor.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="FindForm() returns a reference")]
 		protected override void HandleChooser()
 		{
 			VectorReferenceLauncher vrl = null;

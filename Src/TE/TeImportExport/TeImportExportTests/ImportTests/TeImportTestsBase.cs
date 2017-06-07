@@ -1,29 +1,21 @@
-// Copyright (c) 2007-2013 SIL International
+// Copyright (c) 2007-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: TeImportTestsBase.cs
-// Responsibility: TE Team
-//
-// <remarks>
-// </remarks>
 
 using System.Collections.Generic;
 using System.Diagnostics;
-
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.FDOTests;
-using SIL.FieldWorks.Resources;
 using SIL.Utils;
 using SIL.FieldWorks.Common.ScriptureUtils;
-using SIL.FieldWorks.Test.TestUtils;
-using SILUBS.SharedScrUtils;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Scripture;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.TE.ImportTests
 {
@@ -246,7 +238,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 			DummyTeImporter.s_consultantNoteDefn = Cache.ServiceLocator.GetInstance<ICmAnnotationDefnRepository>().ConsultantAnnotationDefn;
 
 			m_titus = new BCVRef(56001001);
-			m_settings = m_scr.FindOrCreateDefaultImportSettings(TypeOfImport.Other);
+			m_settings = m_scr.FindOrCreateDefaultImportSettings(TypeOfImport.Other, m_styleSheet, FwDirectoryFinder.TeStylesPath);
 			m_settings.StartRef = m_titus;
 			m_settings.EndRef = m_titus;
 			m_settings.ImportTranslation = true;
@@ -305,7 +297,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 			m_wsAnal = Cache.DefaultAnalWs;
 
 			// init simple run text props expected by tests
-			ITsPropsBldr tsPropsBldr = TsPropsBldrClass.Create();
+			ITsPropsBldr tsPropsBldr = TsStringUtils.MakePropsBldr();
 			tsPropsBldr.SetIntPropValues((int)FwTextPropType.ktptWs, 0, m_wsVern);
 			m_ttpVernWS = tsPropsBldr.GetTextProps();
 			tsPropsBldr.SetIntPropValues((int)FwTextPropType.ktptWs, 0, m_wsAnal);

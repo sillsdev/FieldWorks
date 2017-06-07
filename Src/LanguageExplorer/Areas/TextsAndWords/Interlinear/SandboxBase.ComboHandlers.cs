@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,12 +6,15 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.FDO;
@@ -19,9 +22,9 @@ using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.LexText.Controls;
-using SIL.Utils;
+using SIL.ObjectModel;
 using Color = System.Drawing.Color;
-using Rect = SIL.FieldWorks.Common.COMInterfaces.Rect;
+using Rect = SIL.FieldWorks.Common.ViewsInterfaces.Rect;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
@@ -30,7 +33,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 	/// An interface common to classes that 'handle' combo boxes that appear when something in
 	/// IText is clicked.
 	/// </summary>
-	internal interface IComboHandler
+	internal interface IComboHandler : IDisposable
 	{
 		/// <summary>
 		/// Initialize the combo contents.
@@ -75,7 +78,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// handles the events.  For most of the primary events, the default here is to do
 		/// nothing.
 		/// </summary>
-		public class InterlinComboHandler : FwDisposableBase, IComboHandler
+		public class InterlinComboHandler : DisposableBase, IComboHandler
 		{
 			// Main array of information retrieved from sel that made combo.
 			protected SelLevInfo[] m_rgvsli;
@@ -131,7 +134,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				m_hvoMorph = m_sandbox.Caches.DataAccess.get_VecItem(kSbWord, ktagSbWordMorphs, imorph);
 			}
 
-			#region FwDisposableBase for IDisposable
+			#region DisposableBase for IDisposable
 
 			protected override void DisposeManagedResources()
 			{
@@ -160,7 +163,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				m_comboList = null;
 			}
 
-			#endregion FwDisposableBase for IDisposable
+			#endregion DisposableBase for IDisposable
 
 			/// <summary>
 			/// encapsulates the common behavior of items in an InterlinComboHandler combo list.
@@ -228,7 +231,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			protected static ITsTextProps HighlightProperty(System.Drawing.Color highlightColor)
 			{
 				int color = (int)CmObjectUi.RGB(highlightColor);
-				ITsPropsBldr bldr = TsPropsBldrClass.Create();
+				ITsPropsBldr bldr = TsStringUtils.MakePropsBldr();
 				bldr.SetIntPropValues((int)FwTextPropType.ktptForeColor,
 					(int)FwTextPropVar.ktpvDefault, color);
 				return bldr.GetTextProps();
@@ -778,8 +781,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				CheckDisposed();
 
-				return TsStrFactoryClass.Create().
-					MakeString(str, m_caches.MainCache.DefaultAnalWs);
+				return TsStringUtils.MakeString(str, m_caches.MainCache.DefaultAnalWs);
 			}
 			/// <summary>
 			/// Synchronize the word gloss and POS with the morpheme gloss and MSA info, to the extent possible.
@@ -971,8 +973,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				{
 					return true;
 				}
-				ITsString tssWord = TsStrFactoryClass.Create().MakeString(newval,
-					m_sandbox.RawWordformWs);
 				// Todo JohnT: clean out old analysis, come up with new defaults.
 				//SetAnalysisTo(DbOps.FindOrCreateWordform(m_fdoCache, tssWord));
 				// Enhance JohnT: consider removing the old WfiWordform, if there are no
@@ -1007,7 +1007,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				base.SetupCombo();
 				// Any time we pop this up, the text in the box is the text form of the current
 				// analysis, as a starting point.
-				ITsStrBldr builder = TsStrBldrClass.Create();
+				ITsStrBldr builder = TsStringUtils.MakeStrBldr();
 				int cmorphs = MorphCount;
 				Debug.Assert(cmorphs != 0); // we're supposed to be building on one of them!
 
@@ -1031,8 +1031,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					ComboList.Text = currentBreakdown;
 					// The above and every other distinct morpheme breakdown from owned
 					// WfiAnalyses are possible choices.
-					ITsString tssText = TsStrFactoryClass.Create().
-						MakeString(currentBreakdown, m_wsVern);
+					ITsString tssText = TsStringUtils.MakeString(currentBreakdown, m_wsVern);
 					ComboList.Items.Add(tssText);
 				}
 				else
@@ -1094,7 +1093,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			void AddOtherCase(string other)
 			{
 				// 0 is a reserved value for other case wordform
-				AddIfNotPresent(TsStringUtils.MakeTss(other, m_sandbox.RawWordformWs), null);
+				AddIfNotPresent(TsStringUtils.MakeString(other, m_sandbox.RawWordformWs), null);
 			}
 
 			/// <summary>
@@ -1105,9 +1104,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				if (wordform == null)
 					return; // no real wordform, can't have analyses.
-				ITsStrBldr builder = TsStrBldrClass.Create();
-				ITsString space = TsStrFactoryClass.Create().
-					MakeString(fBaseWordIsPhrase ? "  " : " ", m_wsVern);
+				ITsStrBldr builder = TsStringUtils.MakeStrBldr();
+				ITsString space = TsStringUtils.MakeString(fBaseWordIsPhrase ? "  " : " ", m_wsVern);
 				foreach (IWfiAnalysis wa in wordform.AnalysesOC)
 				{
 					Opinions o = wa.GetAgentOpinion(
@@ -1930,7 +1928,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			private void AddMorphItemsToComboList()
 			{
 				var coRepository = m_caches.MainCache.ServiceLocator.GetInstance<ICmObjectRepository>();
-				ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
+				ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 				MorphItem miPrev = new MorphItem();
 				m_morphItems.Sort();
 				foreach (MorphItem mi in m_morphItems)
@@ -1951,7 +1949,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 							m_wsAnal);
 						tisb.Append("  ");
 
-						ITsString tssSense = TsStringUtils.MakeTss(mi.m_nameSense,
+						ITsString tssSense = TsStringUtils.MakeString(mi.m_nameSense,
 							m_caches.MainCache.DefaultAnalWs);
 
 						tisb.AppendTsString(tssSense);
@@ -2036,7 +2034,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 			private void AddUnknownLexEntryToComboList()
 			{
-				ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
+				ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 				tisb.Clear();
 				tisb.SetIntPropValues(
 					(int)FwTextPropType.ktptSuperscript,
@@ -2050,7 +2048,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 			private void AddItemToComboList(string itemName, EventHandler onSelect, ITsTextProps itemProperties, bool enableItem)
 			{
-				ITsStrBldr tsb = TsStrBldrClass.Create();
+				ITsStrBldr tsb = TsStringUtils.MakeStrBldr();
 				tsb.Replace(tsb.Length, tsb.Length, itemName, itemProperties);
 				tsb.SetIntPropValues(0, tsb.Length, (int)FwTextPropType.ktptWs, 0, m_wsUser);
 				ComboList.Items.Add(new InterlinComboHandlerActionComboItem(
@@ -2866,9 +2864,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				// Make and install a secondary object to correspond to the real LexEntry.
 				// (The zero says we are not guessing any more, since the user selected this entry.)
 
-				m_sandbox.LoadSecDataForEntry(morphEntry, senseReal != null ? senseReal : realDefaultSense,
+				m_sandbox.LoadSecDataForEntry(morphEntry, senseReal ?? realDefaultSense,
 					m_hvoSbWord, m_caches.DataAccess as IVwCacheDa,
-					m_wsVern, m_hvoMorph, 0, m_caches.MainCache.MainCacheAccessor, null);
+					m_wsVern, m_hvoMorph, 0, m_caches.MainCache.MainCacheAccessor);
 				m_caches.DataAccess.PropChanged(m_rootb,
 					(int)PropChangeType.kpctNotifyAll, m_hvoMorph, ktagSbMorphEntry, 0,
 					1, WasReal());
@@ -2903,8 +2901,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 		}
 
-		[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-			Justification="m_sandbox is a reference")]
 		class UpdateMorphEntryAction: UndoActionBase
 		{
 			private SandboxBase m_sandbox;
@@ -3037,7 +3033,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					ISilDataAccess sda = m_caches.DataAccess;
 					foreach (int wsId in m_sandbox.m_choices.WritingSystemsForFlid(InterlinLineChoices.kflidWordGloss))
 					{
-						ITsString tssGloss = TsStringUtils.MakeTss("", wsId);
+						ITsString tssGloss = TsStringUtils.MakeString("", wsId);
 						sda.SetMultiStringAlt(m_hvoSbWord, ktagSbWordGloss, wsId, tssGloss);
 						sda.PropChanged(null, (int)PropChangeType.kpctNotifyAll, m_hvoSbWord, ktagSbWordGloss,
 							wsId, 0, 0);
@@ -3097,14 +3093,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				if (item == null)
 					return;
 				m_sandbox.WordGlossHvo = item.Hvo;
-				ITsStrFactory tsf = TsStrFactoryClass.Create();
 				foreach (int ws in m_sandbox.m_choices.WritingSystemsForFlid(InterlinLineChoices.kflidWordGloss))
 				{
 					ITsString tss;
 					if (item.Hvo == 0)
 					{
 						// Make an empty string in the specified ws.
-						tss = tsf.MakeString("", ws);
+						tss = TsStringUtils.EmptyString(ws);
 					}
 					else
 					{
@@ -3138,7 +3133,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 				base.SetupCombo();
 				int hvoEmptyGloss = 0;
-				ITsStrBldr tsb = TsStrBldrClass.Create();
+				ITsStrBldr tsb = TsStringUtils.MakeStrBldr();
 
 				ComboList.WritingSystemFactory =
 					m_caches.MainCache.LanguageWritingSystemFactoryAccessor;
@@ -3168,7 +3163,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					//}
 				}
 				ComboList.Items.Add(new HvoTssComboItem(hvoEmptyGloss,
-					TsStringUtils.MakeTss(ITextStrings.ksNewWordGloss2, m_caches.MainCache.DefaultUserWs)));
+					TsStringUtils.MakeString(ITextStrings.ksNewWordGloss2, m_caches.MainCache.DefaultUserWs)));
 				// Set combo selection to current selection.
 				ComboList.SelectedIndex = this.IndexOfCurrentItem;
 
@@ -3210,7 +3205,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					if (glossCount == 0 && wsids.Count > 0)
 					{
 						hvoEmptyGloss = gloss.Hvo;
-						ITsPropsBldr tpbUserWs = TsPropsBldrClass.Create();
+						ITsPropsBldr tpbUserWs = TsStringUtils.MakePropsBldr();
 						tpbUserWs.SetIntPropValues((int)FwTextPropType.ktptWs, 0, m_wsUser);
 						tsb.Replace(tsb.Length, tsb.Length, ITextStrings.ksEmpty, tpbUserWs.GetTextProps());
 					}
@@ -3396,8 +3391,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 
 			// We can't add the items until the form loads, or we get a spurious horizontal scroll bar.
-			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-				Justification = "cache is a reference")]
 			private void m_tree_Load(object sender, EventArgs e)
 			{
 				if (m_pOSPopupTreeManager == null)

@@ -1,0 +1,5 @@
+%lexer
+%namespace SIL.CoreImpl.Phonology
+[/\[\]()_#]	%TOKEN
+[ \t\n\r]	;
+[^/\[\]()_# \t\n\r]+	%Ident

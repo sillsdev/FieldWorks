@@ -142,7 +142,7 @@
     <value>0</value>
   </data>
   <data name="explanationLabel.Text" xml:space="preserve">
-    <value>Rename, copy, and delete dictionary configurations. Choose which publications are associated with which dictionary configurations.</value>
+    <value>Views can be duplicated to create custom views, reset to original defaults, associated with publications, or imported and exported.</value>
   </data>
   <data name="&gt;&gt;explanationLabel.Name" xml:space="preserve">
     <value>explanationLabel</value>
@@ -175,7 +175,7 @@
     <value>5</value>
   </data>
   <data name="helpButton.Text" xml:space="preserve">
-    <value>Help</value>
+    <value>&amp;Help</value>
   </data>
   <data name="&gt;&gt;helpButton.Name" xml:space="preserve">
     <value>helpButton</value>
@@ -205,7 +205,7 @@
     <value>4</value>
   </data>
   <data name="closeButton.Text" xml:space="preserve">
-    <value>Close</value>
+    <value>&amp;Close</value>
   </data>
   <data name="&gt;&gt;closeButton.Name" xml:space="preserve">
     <value>closeButton</value>
@@ -252,6 +252,100 @@
   <data name="configurationsTableLayoutPanel.ColumnCount" type="System.Int32, mscorlib">
     <value>2</value>
   </data>
+  <data name="importButton.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Top</value>
+  </data>
+  <data name="importButton.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29m
+        dHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAABAdEVYdENvcHlyaWdodABDb3B5cmlnaHQgqSAyMDA1
+        IGFuZCBmb2xsb3dpbmcgeWVhcnMgRGV2Q29tcG9uZW50cyBMTEMyIOTwAAAC/UlEQVQ4T42Sf0jUZxjA
+        36Q1dVDBimhsVH9EgUEsodEvbcYaURRlZiX2w6uvppPRNtaqo9eNkkbTfhKU2Vli0HS20rYyFhSUpKmV
+        tiunt7z0lLvzzl9ceun30/u9u8J+/NEDH77w8jyf53ne9ytE/HWp5f+PdtqOZmlFK3CgnelQONHOutAK
+        O1mT52XGL26vMDlmirci4aZ81AkNLoUTHqrvvyGs7iAldTpLT+rMz+nxiq2uNySJlbKtF+pV8f2OoMSq
+        ihuVtMkDNi8UV+lM+kZnWZ5OzKE+r0jtGiZZWy09z5TgfBZVqSO5m/4h1Wkf0PB7Fk+64Gk3VDzQ+dKs
+        s/qwjvkKiNQeGapWsb5O9vnhv0vZPNw1nkd7JmI1T+C6RfLdWRvfGxTaOPy3A7cPjFyR1jdMkFQv+wfB
+        fi2Hlt+m0nYkCnvuNBouHeDCXQ9/Ki7WeLhh7aGrH4xcsc03TJBslc+HoP3mUZx50XSfW0CnZTbXivYz
+        d3cN8wzMQTJOPcbIFenPpIj9eEzY0rFKtKFRDunQ0d6Ko7kG19P7uFtqcTvb8Kq76VZdewfU6AqfGt/I
+        FekDhmDFuC2fIsQmm9TV4bGrDubsqnmt6/wQcT9LvjqwODC+kSsy/HJWWqxl0f6vlWBzi1Rn1Lb4KK0O
+        7ltW6+FynYfzlTZif93Aj0++JfGP1fjV+EZuWHJu3ckbeURuj/AKkdIq1Rk7i2yI+H9eEZZYxGfZs0np
+        Xkdy5xzM1p8wFWayo3gH+XdOcaRpL+EpH10QwtQeENyz+wI3/rL72pKFmHyrWOj4hCWOSWx2L2Bv7zZO
+        +LI46PqByQXhjFo+eqMQW5wBwfEKR2D3l3vHF6xnX2MKSfZoYlrHk9A3juXuSOKaI5hePoIxGRGW4DNu
+        dQcExn5+dUnGMw2GOHorm4SKz1lpncqa20tIuhiHqSSecC0jVGyE5pGyrB9ZNoAs94d4jrw8qBjii5xS
+        ZhVMISo/HPmXrlCvkMmwH+k9YuIeMXPC7hHvKBLiBbv/bwHBSGDqAAAAAElFTkSuQmCC
+</value>
+  </data>
+  <data name="importButton.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="importButton.Location" type="System.Drawing.Point, System.Drawing">
+    <value>237, 147</value>
+  </data>
+  <data name="importButton.Size" type="System.Drawing.Size, System.Drawing">
+    <value>32, 32</value>
+  </data>
+  <data name="importButton.TabIndex" type="System.Int32, mscorlib">
+    <value>16</value>
+  </data>
+  <data name="&gt;&gt;importButton.Name" xml:space="preserve">
+    <value>importButton</value>
+  </data>
+  <data name="&gt;&gt;importButton.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;importButton.Parent" xml:space="preserve">
+    <value>configurationsTableLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;importButton.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="exportButton.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Top</value>
+  </data>
+  <data name="exportButton.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29m
+        dHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAABAdEVYdENvcHlyaWdodABDb3B5cmlnaHQgqSAyMDA1
+        IGFuZCBmb2xsb3dpbmcgeWVhcnMgRGV2Q29tcG9uZW50cyBMTEMyIOTwAAADAUlEQVQ4T5WSWUyUVxSA
+        74ONSV9cYkt8aMCoabQa14goGNxo0WqrVKTuGwOOSxPUqJRyXRpiqlJpq4lSRTFoqkbFUVFQjHviCKgg
+        Iy4j6zAyMDMCjjDM/F/vzNBkok89yZc/uTnnu/ec8wsRVyx1h1+jO1KLLqce3VELumNWRRO6XBu64y3E
+        ZzsYtqPZIVZaRoiPYt4t+awFKmyKJniqvpXdmJoDnCnTmHlII3Jvq0Mk2j6QzL8vG9qgXBU/tgYkJlX8
+        XElf2sHsgNMPNELXanybrTFpX7tDJDmDJAlGaX+vBP9s40FSDx7qe2JM/oSKU9uodkLdWyh8ojE5TeOH
+        LI20KyCSWmV3tYoFZbLdDS8uZPA09TOepffHlBZCcY4kJdfMBh/HzWQVWGh2gS9XJLcHCRaWyw4P1Bbt
+        pWbPYBr++IrazC+puLCbcw/tnFfkl9i5aWrF2QG+XLHaFSRYbJJdXmi89SdN2WN4eyKKlpxxFOXtYsLP
+        JUz0kRZgzd9V+HKF/n2QYMlz6dXA2liP5VUJtrrHGObO52T0d+SdOofV8Y62TvV0hUs935cr9J1BgmVm
+        qanDv65aiEgt8d+aGJXC7dh4hszJIGLDNaLU7b/tKeTV5WKqq2s+mMHyGqnqKa1xcdYY6Dc3aSfOrP38
+        ErOYXdkGCkptnE/eTv2SZM7OTkDEng4SrKiXqp6teWZE3HU/4WPSeaP/iap9B4n5YhZDRm9BHxqHpl+L
+        8/sfuRoyvKxI9O0VEKxs9Ase1br8EzeUqsnfqMYYNgxvfj5thgLeZGTSnrIZ79SpaAPCcI+NpLJv2Os7
+        orf6oVY1+QUHCi3+iUeqfn1kfr0eZ/QUumKm4IkMxxMxFu/AMLTP++EZPpS2RQncE71VK4nNfoFbrcet
+        duxbk6eb8o3pVI0Mx/pNLA0zZuCNjsYzfhwt06Zj/DQkJ9CCzi6loQNp6ERedHfThbzkUXhJzbOzbtNt
+        9k/U0zVzFnVDR/HroKW/B4r/R9wUfWRlv1DHXX/f/4UQ/wKaXV9RzLGHkwAAAABJRU5ErkJggg==
+</value>
+  </data>
+  <data name="exportButton.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="exportButton.Location" type="System.Drawing.Point, System.Drawing">
+    <value>237, 185</value>
+  </data>
+  <data name="exportButton.Size" type="System.Drawing.Size, System.Drawing">
+    <value>32, 32</value>
+  </data>
+  <data name="exportButton.TabIndex" type="System.Int32, mscorlib">
+    <value>17</value>
+  </data>
+  <data name="&gt;&gt;exportButton.Name" xml:space="preserve">
+    <value>exportButton</value>
+  </data>
+  <data name="&gt;&gt;exportButton.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;exportButton.Parent" xml:space="preserve">
+    <value>configurationsTableLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;exportButton.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
   <data name="configurationsListView.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
   </data>
@@ -274,7 +368,7 @@
     <value>configurationsTableLayoutPanel</value>
   </data>
   <data name="&gt;&gt;configurationsListView.ZOrder" xml:space="preserve">
-    <value>0</value>
+    <value>2</value>
   </data>
   <data name="removeButton.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Top</value>
@@ -318,7 +412,7 @@
     <value>configurationsTableLayoutPanel</value>
   </data>
   <data name="&gt;&gt;removeButton.ZOrder" xml:space="preserve">
-    <value>1</value>
+    <value>3</value>
   </data>
   <data name="copyButton.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Top</value>
@@ -363,7 +457,7 @@
     <value>configurationsTableLayoutPanel</value>
   </data>
   <data name="&gt;&gt;copyButton.ZOrder" xml:space="preserve">
-    <value>2</value>
+    <value>4</value>
   </data>
   <data name="configurationsExplanationLabel.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -384,7 +478,7 @@
     <value>14</value>
   </data>
   <data name="configurationsExplanationLabel.Text" xml:space="preserve">
-    <value>Choose a configuration to modify.</value>
+    <value>Choose a view to modify.</value>
   </data>
   <data name="&gt;&gt;configurationsExplanationLabel.Name" xml:space="preserve">
     <value>configurationsExplanationLabel</value>
@@ -396,7 +490,44 @@
     <value>configurationsTableLayoutPanel</value>
   </data>
   <data name="&gt;&gt;configurationsExplanationLabel.ZOrder" xml:space="preserve">
-    <value>3</value>
+    <value>5</value>
+  </data>
+  <data name="resetButton.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29m
+        dHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAABAdEVYdENvcHlyaWdodABDb3B5cmlnaHQgqSAyMDA1
+        IGFuZCBmb2xsb3dpbmcgeWVhcnMgRGV2Q29tcG9uZW50cyBMTEMyIOTwAAAB20lEQVQ4T2PABbIZGPzb
+        ZKTjoVzSQJWoSP/5qvL/CyzM9kOFiAMZDAz8fcZG+18tX/z/z9L5/xebmRBvQDoDg/2SyIj3Xw7s/f+7
+        s/n/76bq/zuSEt/PNDCY3wr0DlQZdlApL19/dOqU/3+vXvr/u7nm/6+U2P+/0+P////16/+/N6//P1i+
+        7P96e/vzkxgY9KFaECANKLi3t/f/v3t3/v8qy4dojo/4/zsq+P/vUL//f7JT//+dM/P/v2NH/l/Jz3s/
+        C5tr8hgY4veEh7z/M7UPbDNYc2LU/z8Fmf//pCX+/+Pn+f9PiP//v9On/D/t6/1+MQODPFQrApQDXbLY
+        QO/8167W/79T48CaDzravd9ravL+cWLs/z8p8f//Otn9/zup//82cTHsgdsAjIVZ0pLrn5fk//9TV/l/
+        q642WOFMoAsPamnc/5EU+/9vZOj/+4H+/zdgcwUM9DAw5J/z9vi/Q1sLbtMSoOG7JcTP/wjy+/8zJeH/
+        FgaGfqgUdjAN6KUZaAG2FmjIFS2N9/9iIv5fkJMlLZHBwDagd95YmP6/p676HypEOrgiKnz/iYL8/xNA
+        F0GFSAOHgWH0Vkb6/ylg6oUKkQaANus/4uD4f45cA0AAqLn+PAODPABiSd9Ul34AwwAAAABJRU5ErkJg
+        gg==
+</value>
+  </data>
+  <data name="resetButton.Location" type="System.Drawing.Point, System.Drawing">
+    <value>237, 109</value>
+  </data>
+  <data name="resetButton.Size" type="System.Drawing.Size, System.Drawing">
+    <value>32, 32</value>
+  </data>
+  <data name="resetButton.TabIndex" type="System.Int32, mscorlib">
+    <value>15</value>
+  </data>
+  <data name="&gt;&gt;resetButton.Name" xml:space="preserve">
+    <value>resetButton</value>
+  </data>
+  <data name="&gt;&gt;resetButton.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;resetButton.Parent" xml:space="preserve">
+    <value>configurationsTableLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;resetButton.ZOrder" xml:space="preserve">
+    <value>6</value>
   </data>
   <data name="configurationsTableLayoutPanel.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
@@ -405,7 +536,7 @@
     <value>3, 16</value>
   </data>
   <data name="configurationsTableLayoutPanel.RowCount" type="System.Int32, mscorlib">
-    <value>4</value>
+    <value>7</value>
   </data>
   <data name="configurationsTableLayoutPanel.Size" type="System.Drawing.Size, System.Drawing">
     <value>272, 306</value>
@@ -426,7 +557,7 @@
     <value>0</value>
   </data>
   <data name="configurationsTableLayoutPanel.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
-    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="configurationsListView" Row="1" RowSpan="3" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="removeButton" Row="2" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="copyButton" Row="1" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="configurationsExplanationLabel" Row="0" RowSpan="1" Column="0" ColumnSpan="2" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Percent,100,Absolute,38,Absolute,20" /&gt;&lt;Rows Styles="Absolute,30,AutoSize,0,AutoSize,0,Percent,100" /&gt;&lt;/TableLayoutSettings&gt;</value>
+    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="importButton" Row="4" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="exportButton" Row="5" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="configurationsListView" Row="1" RowSpan="6" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="removeButton" Row="2" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="copyButton" Row="1" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="configurationsExplanationLabel" Row="0" RowSpan="1" Column="0" ColumnSpan="2" /&gt;&lt;Control Name="resetButton" Row="3" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Percent,100,Absolute,38" /&gt;&lt;Rows Styles="Absolute,30,AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0,Percent,100,Absolute,20" /&gt;&lt;/TableLayoutSettings&gt;</value>
   </data>
   <data name="configurationsGroupBox.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
@@ -441,7 +572,7 @@
     <value>0</value>
   </data>
   <data name="configurationsGroupBox.Text" xml:space="preserve">
-    <value>Dictionary Configurations</value>
+    <value>Dictionary Views</value>
   </data>
   <data name="&gt;&gt;configurationsGroupBox.Name" xml:space="preserve">
     <value>configurationsGroupBox</value>
@@ -501,7 +632,7 @@
     <value>15</value>
   </data>
   <data name="publicationsExplanationLabel.Text" xml:space="preserve">
-    <value>Checked Publications are affected by the selected Configuration on the left.</value>
+    <value>Select the publications that will use the highlighted view on the left.</value>
   </data>
   <data name="&gt;&gt;publicationsExplanationLabel.Name" xml:space="preserve">
     <value>publicationsExplanationLabel</value>
@@ -611,11 +742,8 @@
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
     <value>527, 406</value>
   </data>
-  <data name="$this.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
-  </data>
   <data name="$this.Text" xml:space="preserve">
-    <value>Dictionary Configuration Manager</value>
+    <value>Manage Dictionary Views</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>DictionaryConfigurationManagerDlg</value>

@@ -10,9 +10,10 @@
 // </remarks>
 
 using System;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.Text;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Test.TestUtils;
 
 namespace SIL.FieldWorks.Common.RootSites
 {
@@ -105,8 +106,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			if ((m_displayType & DisplayType.kLiteralStringLabels) != 0)
 			{
-				ITsStrFactory factory = TsStrFactoryClass.Create();
-				vwenv.AddString(factory.MakeString("Label" + m_counter++, m_wsDefault));
+				vwenv.AddString(TsStringUtils.MakeString("Label" + m_counter++, m_wsDefault));
 			}
 			switch(frag)
 			{
@@ -168,7 +168,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				case 6: // StTxtPara, display details of our outer object
 					int hvoOuter, tag, ihvo;
 					vwenv.GetOuterObject(vwenv.EmbeddingLevel - 1, out hvoOuter, out tag, out ihvo);
-					ITsString tss = TsStringHelper.MakeTSS("Hvo = " + hvoOuter + "; Tag = " + tag + "; Ihvo = " + ihvo,
+					ITsString tss = TsStringUtils.MakeString("Hvo = " + hvoOuter + "; Tag = " + tag + "; Ihvo = " + ihvo,
 						m_wsDefault);
 					vwenv.AddString(tss);
 					break;
@@ -219,8 +219,7 @@ namespace SIL.FieldWorks.Common.RootSites
 					vwenv.set_IntProperty((int)FwTextPropType.ktptEditable,
 						(int)FwTextPropVar.ktpvEnum,
 						(int)TptEditable.ktptNotEditable);
-					ITsStrFactory strFactory = TsStrFactoryClass.Create();
-					vwenv.AddString(strFactory.MakeString(" ", DefaultWs));
+					vwenv.AddString(TsStringUtils.MakeString(" ", DefaultWs));
 					vwenv.AddStringProp(StTxtParaTags.kflidContents, null);
 					vwenv.CloseParagraph();
 					break;
@@ -259,8 +258,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		public override ITsString GetStrForGuid(string bstrGuid)
 		{
-			TsStrFactory strFactory = TsStrFactoryClass.Create();
-			return strFactory.MakeString("\uFEFFa", m_wsDefault);
+			return TsStringUtils.MakeString("\uFEFFa", m_wsDefault);
 		}
 		#endregion
 	}

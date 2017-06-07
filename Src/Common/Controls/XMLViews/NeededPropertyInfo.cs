@@ -4,8 +4,7 @@
 // --------------------------------------------------------------------------------------------
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.Common.Controls
 {

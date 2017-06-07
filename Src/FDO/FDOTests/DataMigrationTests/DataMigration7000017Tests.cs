@@ -1,16 +1,9 @@
-// Copyright (c) 2010-2013 SIL International
+// Copyright (c) 2010-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: DataMigration7000017Tests.cs
-// Responsibility: mcconnel
-//
-// <remarks>
-// </remarks>
 
 using System.Collections.Generic;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
 
 namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
@@ -35,7 +28,8 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 
 			var mockMdc = SetupMdc();
 
-			IDomainObjectDTORepository repoDTO = new DomainObjectDtoRepository(7000016, dtos, mockMdc, null, FwDirectoryFinder.FdoDirectories);
+			IDomainObjectDTORepository repoDTO = new DomainObjectDtoRepository(7000016, dtos, mockMdc, null,
+				TestDirectoryFinder.FdoDirectories);
 
 			// SUT: Do the migration.
 			m_dataMigrationManager.PerformMigration(repoDTO, 7000017, new DummyProgressDlg());
@@ -136,7 +130,8 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 
 			var mockMdc = SetupMdc();
 
-			IDomainObjectDTORepository repoDTO = new DomainObjectDtoRepository(7000016, dtos, mockMdc, null, FwDirectoryFinder.FdoDirectories);
+			IDomainObjectDTORepository repoDTO = new DomainObjectDtoRepository(7000016, dtos, mockMdc, null,
+				TestDirectoryFinder.FdoDirectories);
 
 			// SUT: Do the migration.
 			m_dataMigrationManager.PerformMigration(repoDTO, 7000017, new DummyProgressDlg());

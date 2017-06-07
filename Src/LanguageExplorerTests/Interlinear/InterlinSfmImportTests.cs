@@ -1,9 +1,8 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -12,23 +11,15 @@ using System.Xml.XPath;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using NUnit.Framework;
 using Sfm2Xml;
-using SIL.CoreImpl;
-using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.LexText.Controls;
-using SIL.FieldWorks.Test.TestUtils;
 using SilEncConverters40;
+using SIL.CoreImpl.WritingSystems;
 
 namespace LanguageExplorerTests.Interlinear
 {
 	[TestFixture]
-	public class InterlinSfmImportTests : BaseTest
+	public class InterlinSfmImportTests
 	{
-		[SuppressMessage("Gendarme.Rules.Portability", "NewLineLiteralRule",
-			Justification="New lines in input strings are different depending on platform")]
-		public InterlinSfmImportTests()
-		{
-		}
-
 		private string input1 =
 			@"\_sh v3.0  943  S Texts
 \id Abu

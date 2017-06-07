@@ -1,18 +1,20 @@
-// Copyright (c) 2003-2015 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.WritingSystems;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
@@ -21,7 +23,7 @@ using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.Resources;
 using SIL.Reporting;
-using SIL.Utils;
+using SIL.Xml;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -610,7 +612,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <returns>The column name</returns>
 		public string GetColumnName(int icol)
 		{
-			return XmlUtils.GetAttributeValue(ColumnSpecs[icol], "label");
+			return XmlUtils.GetOptionalAttributeValue(ColumnSpecs[icol], "label");
 		}
 
 		/// <summary>
@@ -671,8 +673,7 @@ namespace SIL.FieldWorks.Common.Controls
 			get
 			{
 				CheckDisposed();
-				if (m_sorter is IFWDisposable && ((IFWDisposable)m_sorter).IsDisposed)
-					m_sorter = null;
+
 				return m_sorter;
 			}
 			set
@@ -1135,7 +1136,7 @@ namespace SIL.FieldWorks.Common.Controls
 			if (!m_fIsInitialized)
 				return;
 			m_lastChangedSelectionListItemsClass = (int) m_xbv.Vc.ListItemsClass;
-			SaveSelectionItems(new Set<int>(selectionItemsToSave));
+			SaveSelectionItems(new HashSet<int>(selectionItemsToSave));
 		}
 
 		/// <summary>
@@ -1284,7 +1285,7 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			// Currently, if you add a new attribute here,
 			// you need to update the conditionals in LayoutFinder.SameFinder (cf. LT-2858).
-			string label = XmlUtils.GetLocalizedAttributeValue(node, "label", null);
+			string label = StringTable.Table.LocalizeAttributeValue(XmlUtils.GetOptionalAttributeValue(node, "label", null));
 			if (label == null)
 			{
 				if (node.Attribute("label") == null)
@@ -1335,7 +1336,7 @@ namespace SIL.FieldWorks.Common.Controls
 		private void SaveAllSelectionItems()
 		{
 			// save the latest selection state.
-			SaveSelectionItems(new Set<int>(AllItems));
+			SaveSelectionItems(new HashSet<int>(AllItems));
 		}
 
 		/// <summary>
@@ -1343,7 +1344,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// <param name="itemsToSaveSelectionState">items that need to be saved,
 		/// especially those that the user has changed in selection status</param>
-		private void SaveSelectionItems(Set<int> itemsToSaveSelectionState)
+		private void SaveSelectionItems(HashSet<int> itemsToSaveSelectionState)
 		{
 			if (m_xbv.Vc.HasSelectColumn && BulkEditBar != null && m_sortItemProvider is IMultiListSortItemProvider)
 			{
@@ -1414,7 +1415,7 @@ namespace SIL.FieldWorks.Common.Controls
 		private void RemoveInvalidOldSelectedItems(ref IDictionary<int, object> items, bool fExpectToBeSelected)
 		{
 			var objRepo = Cache.ServiceLocator.ObjectRepository;
-			Set<int> invalidSelectedItems = new Set<int>();
+			var invalidSelectedItems = new HashSet<int>();
 			foreach (KeyValuePair<int, object> item in items)
 			{
 				// LTB-1650 - test if item still exists:
@@ -1901,8 +1902,8 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				CheckDisposed();
 
-				m_rootb = VwRootBoxClass.Create();
-				m_rootb.SetSite(this);
+				base.MakeRoot();
+
 				ReadOnlyView = ReadOnlySelect;
 				Vc.Cache = Cache;
 				m_rootb.SetRootObject(m_hvoRoot, Vc, XmlBrowseViewVc.kfragRoot, m_styleSheet);
@@ -2439,7 +2440,7 @@ namespace SIL.FieldWorks.Common.Controls
 				if (vis != "always" && vis != "menu")
 					continue;
 
-				string label = XmlUtils.GetLocalizedAttributeValue( node, "label", null) ??
+				string label = StringTable.Table.LocalizeAttributeValue(XmlUtils.GetOptionalAttributeValue( node, "label", null)) ??
 							   XmlUtils.GetManditoryAttributeValue(node, "label");
 				MenuItem mi = new MenuItem(label, ConfigItemClicked);
 
@@ -2587,8 +2588,6 @@ namespace SIL.FieldWorks.Common.Controls
 			m_scrollContainer.PerformLayout();
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="ch gets added to Columns collection and disposed there")]
 		private void RebuildHeaderColumns(List<XElement> colSpecs, Dictionary<XElement, int> widths)
 		{
 			m_lvHeader.BeginUpdate();
@@ -2670,8 +2669,6 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="args"></param>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "menu is a reference")]
 		private void ConfigItemClicked(object sender, EventArgs args)
 		{
 			// If we have changes we need to commit, do it before we mess up the column sequence.
@@ -2876,7 +2873,7 @@ namespace SIL.FieldWorks.Common.Controls
 		private int IndexOfColumn(string colName)
 		{
 			return ColumnSpecs.FindIndex(delegate(XElement item)
-			{ return XmlUtils.GetAttributeValue(item, "label") == colName; });
+			{ return XmlUtils.GetOptionalAttributeValue(item, "label") == colName; });
 		}
 
 		/// <summary>
@@ -2909,8 +2906,8 @@ namespace SIL.FieldWorks.Common.Controls
 		}
 
 		// Note: often we also want to update LayoutCache.LayoutVersionNumber.
-		// (last updated by JohnT, March 12, 2013, for 7.3 beta release)
-		internal const int kBrowseViewVersion = 16;
+		// (last updated by Jason Naylor, Nov 16, 2016, for ExtendedNote Bulk editing)
+		internal const int kBrowseViewVersion = 18;
 
 		/// <summary>
 		/// Column has been added or removed, update all child windows.
@@ -3784,7 +3781,7 @@ namespace SIL.FieldWorks.Common.Controls
 	/// <summary>
 	/// This class manages the parts of the BrowseViewer that scroll horizontally in sync.
 	/// </summary>
-	public class BrowseViewScroller : UserControl, IFWDisposable
+	public class BrowseViewScroller : UserControl
 	{
 		BrowseViewer m_bv;
 
@@ -3870,7 +3867,7 @@ namespace SIL.FieldWorks.Common.Controls
 	/// It is intended to be used in a using() construct, so that its Dispose() forces a RootBox.Reconstruct()
 	/// at the end of the using block and then makes sure the scroll position is valid.
 	/// </summary>
-	internal class ReconstructPreservingBVScrollPosition : IFWDisposable
+	internal class ReconstructPreservingBVScrollPosition : IDisposable
 	{
 		BrowseViewer m_bv;
 		int m_irow;

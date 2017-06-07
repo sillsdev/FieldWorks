@@ -1,26 +1,20 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Drawing;
 using System.Reflection;
-using System.Collections;
-using System.ComponentModel;
 using System.Text;
 using System.Windows.Forms;
 using System.Diagnostics;
 using Microsoft.Win32;
-
-using SIL.Utils;
 
 namespace SIL.Utils
 {
 	/// <summary>
 	/// Summary description for UsageEmailDialog.
 	/// </summary>
-	public class UsageEmailDialog : Form, IFWDisposable
+	public class UsageEmailDialog : Form
 	{
 		private TabControl tabControl1;
 		private TabPage tabPage1;
@@ -152,8 +146,6 @@ namespace SIL.Utils
 		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification = "TODO-Linux: LinkLabel.TabStop is missing from Mono")]
 		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(UsageEmailDialog));

@@ -9,9 +9,11 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
+using SIL.CoreImpl.Text;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.FDO.Application;
 
 namespace SIL.FieldWorks.Common.Widgets
@@ -236,7 +238,9 @@ namespace SIL.FieldWorks.Common.Widgets
 			AutoScroll = true;
 
 			// Sandbox cache.
-			m_sda = VwCacheDaClass.Create();
+			var cda = VwCacheDaClass.Create();
+			cda.TsStrFactory = TsStringUtils.TsStrFactory;
+			m_sda = cda;
 			m_sda.WritingSystemFactory = WritingSystemFactory;
 			m_sda.SetActionHandler(new SimpleActionHandler());
 
@@ -251,8 +255,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			// If no paragraphs were passed in, then create one to get the user started off.
 			if (memHvos.Count == 0)
 			{
-				ITsStrFactory strFact = TsStrFactoryClass.Create();
-				ITsString paraStr = strFact.MakeString(String.Empty, CurrentWs);
+				ITsString paraStr = TsStringUtils.EmptyString(CurrentWs);
 				m_sda.SetString(kDummyParaHvo, StTxtParaTags.kflidContents, paraStr);
 				memHvos.Add(kDummyParaHvo);
 			}
@@ -356,10 +359,8 @@ namespace SIL.FieldWorks.Common.Widgets
 			if (m_sda == null || DesignMode)
 				return;
 
-			if (m_rootb == null)
-				m_rootb = VwRootBoxClass.Create();
+			base.MakeRoot();
 
-			m_rootb.SetSite(this);
 			HorizMargin = 5;
 
 			// Set up a new view constructor.
@@ -369,7 +370,6 @@ namespace SIL.FieldWorks.Common.Widgets
 			m_rootb.DataAccess = m_sda;
 			m_rootb.SetRootObject(kMemTextHvo, m_vc, (int)StTextFrags.kfrText, m_styleSheet);
 
-			base.MakeRoot();
 			m_dxdLayoutWidth = kForceLayout;
 		}
 
@@ -689,18 +689,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		public UndoResult Undo()
 		{
 			throw new NotImplementedException();
-		}
-
-		public IUndoGrouper UndoGrouper
-		{
-			get
-			{
-				throw new NotImplementedException();
-			}
-			set
-			{
-				throw new NotImplementedException();
-			}
 		}
 
 		public int UndoableActionCount

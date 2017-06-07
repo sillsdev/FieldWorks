@@ -12,11 +12,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Cellar;
+using SIL.CoreImpl.Text;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.FDO.CoreTests
 {
@@ -313,7 +313,7 @@ namespace SIL.FieldWorks.FDO.CoreTests
 					{
 						var lf = le.Services.GetInstance<IMoStemAllomorphFactory>().Create();
 						le.LexemeFormOA = lf;
-						lf.Form.VernacularDefaultWritingSystem = lf.Cache.TsStrFactory.MakeString(form,
+						lf.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString(form,
 							Cache.DefaultVernWs);
 					});
 		}
@@ -334,13 +334,12 @@ namespace SIL.FieldWorks.FDO.CoreTests
 			CheckChanges(1, -1, 0, 0, 0, 0, 0);
 			ClearChanges();
 
-			var tsf = Cache.TsStrFactory;
 			var userWs = Cache.WritingSystemFactory.UserWs;
 			ITsString importResidue;
 			int originalImportResidueLength = 0;
 			UndoableUnitOfWorkHelper.Do("Undo stuff", "Redo stuff", m_actionHandler, () =>
 			{
-				importResidue = tsf.MakeString("import residue", userWs);
+				importResidue = TsStringUtils.MakeString("import residue", userWs);
 				originalImportResidueLength = importResidue.Length;
 				le.ImportResidue = importResidue;
 			});
@@ -355,7 +354,7 @@ namespace SIL.FieldWorks.FDO.CoreTests
 			int newImportResidueLength = 0;
 			UndoableUnitOfWorkHelper.Do("Undo stuff", "Redo stuff", m_actionHandler, () =>
 			{
-				importResidue = tsf.MakeString("new import residue", userWs);
+				importResidue = TsStringUtils.MakeString("new import residue", userWs);
 				newImportResidueLength = importResidue.Length;
 				le.ImportResidue = importResidue;
 			});
@@ -418,7 +417,6 @@ namespace SIL.FieldWorks.FDO.CoreTests
 		[Test]
 		public void MultiUnicodeTests()
 		{
-			var tsf = Cache.TsStrFactory;
 			var englishWsHvo = Cache.WritingSystemFactory.GetWsFromStr("en");
 			var spanishWsHvo = Cache.WritingSystemFactory.GetWsFromStr("es");
 			var lp = Cache.LanguageProject;
@@ -429,10 +427,10 @@ namespace SIL.FieldWorks.FDO.CoreTests
 				// Set LP's Description.
 				lp.Description.set_String(
 					englishWsHvo,
-					tsf.MakeString("Stateful FDO Test Language Project: Desc", englishWsHvo));
+					TsStringUtils.MakeString("Stateful FDO Test Language Project: Desc", englishWsHvo));
 				lp.Description.set_String(
 					spanishWsHvo,
-					tsf.MakeString("Proyecto de prueba: FDO: desc", spanishWsHvo));
+					TsStringUtils.MakeString("Proyecto de prueba: FDO: desc", spanishWsHvo));
 
 				undoHelper.RollBack = false;
 			}
@@ -489,7 +487,7 @@ namespace SIL.FieldWorks.FDO.CoreTests
 			ClearChanges();
 
 			var userWs = Cache.WritingSystemFactory.UserWs;
-			var bldr = TsPropsBldrClass.Create();
+			var bldr = TsStringUtils.MakePropsBldr();
 			bldr.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, "Arial");
 			bldr.SetIntPropValues((int)FwTextPropType.ktptWs, 0, userWs);
 			var tpp = bldr.GetTextProps();
@@ -764,11 +762,10 @@ namespace SIL.FieldWorks.FDO.CoreTests
 			using (var undoHelper = new NonUndoableUnitOfWorkHelper(m_actionHandler))
 			{
 				sda.SetBoolean(wf.Hvo, customCertifiedFlid, false);
-				var tsf = Cache.TsStrFactory;
 				sda.SetString(wf.Hvo, customITsStringFlid,
-					tsf.MakeString("New ITsString", userWs));
+					TsStringUtils.MakeString("New ITsString", userWs));
 				sda.SetMultiStringAlt(wf.Hvo, customMultiUnicodeFlid,
-					userWs, tsf.MakeString("New unicode ITsString", userWs));
+					userWs, TsStringUtils.MakeString("New unicode ITsString", userWs));
 				sda.SetObjProp(wf.Hvo, customAtomicReferenceFlid, person.Hvo);
 				undoHelper.RollBack = false;
 			}

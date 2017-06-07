@@ -2,12 +2,9 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.FDO;
+using SIL.CoreImpl.Text;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.FDO.FDOTests
 {
@@ -19,10 +16,9 @@ namespace SIL.FieldWorks.FDO.FDOTests
 	[TestFixture]
 	public class CmFilterTests : ScrInMemoryFdoTestBase
 	{
-
-		private ITsString makeString(string str)
+		private ITsString MakeString(string str)
 		{
-			return Cache.TsStrFactory.MakeString(str, Cache.DefaultVernWs);
+			return TsStringUtils.MakeString(str, Cache.DefaultVernWs);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -50,10 +46,10 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			filter.RowsOS.Add(row);
 			ICmCell cell1 = Cache.ServiceLocator.GetInstance<ICmCellFactory>().Create();
 			row.CellsOS.Add(cell1);
-			cell1.Contents = makeString("= 1");
+			cell1.Contents = MakeString("= 1");
 			ICmCell cell2 = Cache.ServiceLocator.GetInstance<ICmCellFactory>().Create();
 			row.CellsOS.Add(cell2);
-			cell2.Contents = makeString("= 5");
+			cell2.Contents = MakeString("= 5");
 
 			// Check the result
 			filter.InitCriteria();
@@ -85,10 +81,10 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			filter.RowsOS.Add(row);
 			ICmCell cell1 = Cache.ServiceLocator.GetInstance<ICmCellFactory>().Create();
 			row.CellsOS.Add(cell1);
-			cell1.Contents =  makeString("= 5");
+			cell1.Contents =  MakeString("= 5");
 			ICmCell cell2 = Cache.ServiceLocator.GetInstance<ICmCellFactory>().Create();
 			row.CellsOS.Add(cell2);
-			cell2.Contents =  makeString("= 10");
+			cell2.Contents =  MakeString("= 10");
 
 			// Check the result
 			filter.InitCriteria();
@@ -124,7 +120,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			filter.RowsOS.Add(row);
 			ICmCell cell1 = Cache.ServiceLocator.GetInstance<ICmCellFactory>().Create();
 			row.CellsOS.Add(cell1);
-			cell1.Contents =  makeString(">= 5");
+			cell1.Contents =  MakeString(">= 5");
 
 			// Check the result
 			filter.InitCriteria();
@@ -162,7 +158,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			filter.RowsOS.Add(row);
 			ICmCell cell1 = Cache.ServiceLocator.GetInstance<ICmCellFactory>().Create();
 			row.CellsOS.Add(cell1);
-			cell1.Contents=  makeString("<= 5");
+			cell1.Contents=  MakeString("<= 5");
 
 			// Check the result
 			filter.InitCriteria();
@@ -205,10 +201,10 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			filter.RowsOS.Add(row);
 			ICmCell cell1 = Cache.ServiceLocator.GetInstance<ICmCellFactory>().Create();
 			row.CellsOS.Add(cell1);
-			cell1.Contents = makeString("<= 5");
+			cell1.Contents = MakeString("<= 5");
 			ICmCell cell2 = Cache.ServiceLocator.GetInstance<ICmCellFactory>().Create();
 			row.CellsOS.Add(cell2);
-			cell2.Contents = makeString(">= 3");
+			cell2.Contents = MakeString(">= 3");
 
 			// Check the result
 			filter.InitCriteria();
@@ -247,7 +243,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			filter.RowsOS.Add(row);
 			ICmCell cell1 = Cache.ServiceLocator.GetInstance<ICmCellFactory>().Create();
 			row.CellsOS.Add(cell1);
-			cell1.Contents=  makeString("= 5");
+			cell1.Contents=  MakeString("= 5");
 
 			// Check the result
 			filter.InitCriteria();

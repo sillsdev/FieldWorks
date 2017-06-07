@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>LanguageExplorer</RootNamespace>
     <AssemblyName>LanguageExplorer</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -44,15 +44,17 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\DistFiles\Aga.Controls.dll</HintPath>
     </Reference>
-    <Reference Include="BasicUtils">
-      <HintPath>..\..\Output\Release\BasicUtils.dll</HintPath>
+    <Reference Include="FwKernelInterfaces, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Debug\FwKernelInterfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="ViewsInterfaces">
+      <Name>ViewsInterfaces</Name>
+      <HintPath>..\..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
     </Reference>
     <Reference Include="Chorus, Version=2.5.61.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Release\Chorus.exe</HintPath>
-    </Reference>
-    <Reference Include="COMInterfaces">
-      <HintPath>..\..\Output\Release\COMInterfaces.dll</HintPath>
     </Reference>
     <Reference Include="CoreImpl">
       <HintPath>..\..\Output\Release\CoreImpl.dll</HintPath>
@@ -161,10 +163,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Release\Sfm2Xml.dll</HintPath>
     </Reference>
-    <Reference Include="SharedScrUtils, Version=9.0.0.39641, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Release\SharedScrUtils.dll</HintPath>
-    </Reference>
     <Reference Include="SIL.Collections, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Release\SIL.Collections.dll</HintPath>
@@ -188,10 +186,6 @@
     <Reference Include="ParserCore, Version=9.0.0.8713, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Release\ParserCore.dll</HintPath>
-    </Reference>
-    <Reference Include="PhonEnvValidator, Version=9.0.0.11055, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Release\PhonEnvValidator.dll</HintPath>
     </Reference>
     <Reference Include="Reporting, Version=9.0.0.19060, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
@@ -553,10 +547,20 @@
     <Compile Include="Areas\Grammar\Tools\PosEdit\MetaRuleFormulaSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="Areas\Lexicon\LexEntryChangeHandler.cs" />
     <Compile Include="Areas\Lexicon\LexiconResources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>LexiconResources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Areas\Lexicon\LexReferenceUnidirectionalLauncher.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Areas\Lexicon\LexReferenceUnidirectionalSlice.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Areas\Lexicon\LexReferenceUnidirectionalView.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Areas\Lexicon\Tools\Edit\AffixRuleFormulaControl.cs">
       <SubType>UserControl</SubType>
@@ -1548,9 +1552,7 @@
     <Compile Include="Areas\TextsAndWords\Discourse\ConstituentChart.Designer.cs">
       <DependentUpon>ConstituentChart.cs</DependentUpon>
     </Compile>
-    <Compile Include="Areas\TextsAndWords\Discourse\ConstituentChartLogic.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Areas\TextsAndWords\Discourse\ConstituentChartLogic.cs" />
     <Compile Include="Areas\TextsAndWords\Discourse\DiscourseExportDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -1683,7 +1685,6 @@
     <Content Include="images\Notebook.ico" />
     <Content Include="LT.ico" />
     <None Include="images\Text_And_Words.ico" />
-    <None Include="gendarme-LanguageExplorer.ignore" />
     <None Include="images\Grammar.ico" />
     <Content Include="images\Lexicon32.ico" />
   </ItemGroup>

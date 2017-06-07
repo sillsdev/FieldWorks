@@ -1,16 +1,20 @@
-// Copyright (c) 2014 SIL International
+// Copyright (c) 2014-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
-using System.Diagnostics.CodeAnalysis;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Xml;
 using System.Diagnostics;
 using System.IO;
+using System.Xml.Linq;
+using System.Xml.XPath;
 using SIL.CoreImpl;
 using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.Xml;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
@@ -19,7 +23,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	/// These utilities must implement the IUtility class and can set several labels in the dialog to explain the conditions where they
 	/// are needed and their behavior.
 	/// </summary>
-	public class UtilityDlg : Form, IFlexComponent, IFWDisposable
+	public class UtilityDlg : Form, IFlexComponent
 	{
 		private string m_whenDescription;
 		private string m_whatDescription;
@@ -215,8 +219,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// Setup the dlg with needed information.
 		/// </summary>
 		/// <param name="configurationParameters"></param>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		public void SetDlgInfo(XmlNode configurationParameters)
 		{
 			CheckDisposed();
@@ -224,7 +226,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			Debug.Assert(configurationParameters != null);
 
 			// <parameters title="FieldWorks Project Utilities" filename="Language Explorer\Configuration\UtilityCatalogInclude.xml"/>
-			this.Text = XmlUtils.GetLocalizedAttributeValue(configurationParameters, "title", "FieldWorks Project Utilities");
+			Text = StringTable.Table.LocalizeAttributeValue(XmlUtils.GetOptionalAttributeValue(configurationParameters, "title", "FieldWorks Project Utilities"));
 			string utilsPathname = Path.Combine(FwDirectoryFinder.CodeDirectory,
 			XmlUtils.GetManditoryAttributeValue(configurationParameters, "filename"));
 			// Get the folder path:
@@ -237,16 +239,15 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			string[] files = Directory.GetFiles(utilsFolderName, searchPattern, SearchOption.TopDirectoryOnly);
 			foreach (string pathname in files)
 			{
-				XmlDocument document = new XmlDocument();
-				document.Load(pathname);
-				foreach (XmlNode node in document.SelectNodes("utilityCatalog/utility"))
+				var document = XDocument.Load(pathname);
+				foreach (var node in document.XPathSelectElements("utilityCatalog/utility"))
 				{
 					/*
 					<utilityCatalog>
 						<utility assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.HomographResetter"/>
 					</utilityCatalog>
 					*/
-					IUtility util = DynamicLoader.CreateObject(node) as IUtility;
+					var util = DynamicLoader.CreateObject(node) as IUtility;
 					util.Dialog = this; // Must be set before adding it to the control.
 					util.LoadUtilities();
 				}
@@ -420,7 +421,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				//m_lSteps.Text = String.Empty;
 				//int totalSteps = m_clbUtilities.CheckedItems.Count;
 				//int currentStep = 0;
-				Set<IUtility> checkedItems = new Set<IUtility>();
+				var checkedItems = new HashSet<IUtility>();
 				foreach (IUtility util in m_clbUtilities.CheckedItems)
 				{
 					//m_lSteps.SuspendLayout();

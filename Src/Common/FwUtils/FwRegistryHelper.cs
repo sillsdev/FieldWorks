@@ -1,24 +1,14 @@
-// Copyright (c) 2010-2013 SIL International
+// Copyright (c) 2010-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: FwRegistryHelper.cs
-// Responsibility: FW Team
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
-using System.Drawing.Text;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Security;
 using Microsoft.Win32;
-using SIL.FieldWorks.FDO;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.FwUtils
@@ -93,8 +83,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 			/// non-administrator logins.
 			/// </summary>
 			/// ------------------------------------------------------------------------------------
-			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-				Justification = "We're returning an object")]
 			public RegistryKey FieldWorksRegistryKeyLocalMachine
 			{
 				get
@@ -118,8 +106,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 			/// non-administrator logins.
 			/// </summary>
 			/// ------------------------------------------------------------------------------------
-			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-				Justification = "We're returning an object")]
 			public RegistryKey FieldWorksBridgeRegistryKeyLocalMachine
 			{
 				get
@@ -134,8 +120,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 			/// NOTE: This will throw with non-administrative logons! Be ready for that.
 			/// </summary>
 			/// ------------------------------------------------------------------------------------
-			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-				Justification = "We're returning an object")]
 			public RegistryKey FieldWorksRegistryKeyLocalMachineForWriting
 			{
 				get
@@ -149,8 +133,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 			/// Gets the default (current user) Registry key for FieldWorks.
 			/// </summary>
 			/// ------------------------------------------------------------------------------------
-			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-				Justification = "We're returning an object")]
 			public RegistryKey FieldWorksRegistryKey
 			{
 				get { return RegistryHelper.SettingsKey(FieldWorksRegistryKeyName); }
@@ -161,8 +143,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 			/// Gets the default (current user) Registry key for FieldWorks without the version number.
 			/// </summary>
 			/// ------------------------------------------------------------------------------------
-			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-				Justification = "We're returning an object")]
 			public RegistryKey FieldWorksVersionlessRegistryKey
 			{
 				get { return RegistryHelper.SettingsKey(); }
@@ -204,7 +184,16 @@ namespace SIL.FieldWorks.Common.FwUtils
 					return false;
 				}
 			}
-			}
+		}
+
+		/// <summary>
+		/// Sets the company and product key names.
+		/// </summary>
+		public static void Initialize()
+		{
+			RegistryHelper.CompanyName = "SIL";
+			RegistryHelper.ProductName = "FieldWorks";
+		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

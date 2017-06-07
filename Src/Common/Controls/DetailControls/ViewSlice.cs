@@ -5,7 +5,7 @@
 using System;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.Utils;
+using SIL.Xml;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {

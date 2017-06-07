@@ -1,10 +1,6 @@
-// Copyright (c) 2002-2013 SIL International
+// Copyright (c) 2002-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: FwListView.cs
-// Responsibility: DavidO
-// Last reviewed:
 //
 // <remarks>
 // This subclass of the ListView control allows items and subitems to be custom drawn.
@@ -15,18 +11,9 @@
 // </remarks>
 
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
-using System.Drawing.Drawing2D;
-using System.Resources;
-using System.Drawing.Text;
-using System.Reflection;
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -38,14 +25,14 @@ namespace SIL.FieldWorks.Common.Controls
 	/// </summary>
 	///--------------------------------------------------------------------------------
 	[Serializable]
-	public class FwListView : ListView, IFWDisposable
+	public class FwListView : ListView
 	{
 		/// <summary>
 		/// This set is used to remember which rows have had forced repaints the first time the
 		/// mouse moves over them, compensating for an extra DrawItem event sent by the wrapped
 		/// Win32 control.
 		/// </summary>
-		private Set<ListViewItem> m_invalidatedItemList = new Set<ListViewItem>();
+		private HashSet<ListViewItem> m_invalidatedItemList = new HashSet<ListViewItem>();
 
 		///--------------------------------------------------------------------------------
 		/// <summary>

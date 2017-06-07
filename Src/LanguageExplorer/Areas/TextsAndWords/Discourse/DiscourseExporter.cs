@@ -1,4 +1,4 @@
-// Copyright (c) 2008-2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,11 +6,12 @@ using System;
 using System.Diagnostics;
 using System.Xml;
 using SIL.FieldWorks.FDO;
-using SIL.Utils;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using System.Collections.Generic;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
+using SIL.CoreImpl.Text;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 {
@@ -26,7 +27,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		private readonly XmlWriter m_writer;
 		private readonly FdoCache m_cache;
 		private readonly IVwViewConstructor m_vc;
-		private readonly Set<int> m_usedWritingSystems = new Set<int>();
+		private readonly HashSet<int> m_usedWritingSystems = new HashSet<int>();
 		private int m_wsGloss;
 		private readonly List<string> m_glossesInCellCollector = new List<string>();
 		private readonly List<int> m_frags = new List<int>();
@@ -63,7 +64,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 #if DEBUG
 		~DiscourseExporter()
 		{
-			System.Diagnostics.Debug.WriteLine("****** Missing Dispose() call for " + GetType().ToString() + " *******");
 			Dispose(false);
 		}
 #endif
@@ -79,11 +79,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// <summary/>
 		protected virtual void Dispose(bool fDisposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (fDisposing && !IsDisposed)
 			{
 				// dispose managed and unmanaged objects
-				((IDisposable)m_writer).Dispose();
+				m_writer.Dispose();
 			}
 
 			IsDisposed = true;
@@ -310,9 +310,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			ITsString newTss;
 			var ws = GetWsFromTsString(tss);
 			if (tss == ((ConstChartVc)m_vc).m_sMovedTextBefore)
-				newTss = m_cache.TsStrFactory.MakeString("Preposed", ws);
+				newTss = TsStringUtils.MakeString("Preposed", ws);
 			else
-				newTss = m_cache.TsStrFactory.MakeString("Postposed", ws);
+				newTss = TsStringUtils.MakeString("Postposed", ws);
 			var hvoTarget = m_sda.get_ObjectProp(m_hvoCurr,
 					ConstChartMovedTextMarkerTags.kflidWordGroup); // the CCWordGroup we refer to
 			if (ConstituentChartLogic.HasPreviousMovedItemOnLine(m_chart, hvoTarget))

@@ -1,20 +1,22 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Resources;
-using SIL.Utils;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
@@ -76,14 +78,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				m_fIconsForAnalysisChoices = fIconsForAnalysisChoices;
 				m_wsAnalysis = caches.MainCache.DefaultAnalWs;
 				m_wsUi = caches.MainCache.LanguageWritingSystemFactoryAccessor.UserWs;
-				m_tssMissingMorphs = m_tsf.MakeString(ITextStrings.ksStars, m_sandbox.RawWordformWs);
-				m_tssEmptyAnalysis = m_tsf.MakeString("", m_wsAnalysis);
-				m_tssEmptyVern = m_tsf.MakeString("", m_sandbox.RawWordformWs);
+				m_tssMissingMorphs = TsStringUtils.MakeString(ITextStrings.ksStars, m_sandbox.RawWordformWs);
+				m_tssEmptyAnalysis = TsStringUtils.EmptyString(m_wsAnalysis);
+				m_tssEmptyVern = TsStringUtils.EmptyString(m_sandbox.RawWordformWs);
 				m_tssMissingEntry = m_tssMissingMorphs;
 				// It's tempting to re-use m_tssMissingMorphs, but the analysis and vernacular default
 				// fonts may have different sizes, requiring differnt line heights to align things well.
-				m_tssMissingMorphGloss = m_tsf.MakeString(ITextStrings.ksStars, m_wsAnalysis);
-				m_tssMissingMorphPos = m_tsf.MakeString(ITextStrings.ksStars, m_wsAnalysis);
+				m_tssMissingMorphGloss = TsStringUtils.MakeString(ITextStrings.ksStars, m_wsAnalysis);
+				m_tssMissingMorphPos = TsStringUtils.MakeString(ITextStrings.ksStars, m_wsAnalysis);
 				m_tssMissingWordPos = m_tssMissingMorphPos;
 				m_PulldownArrowPic = OLECvt.ConvertImageToComPicture(ResourceHelper.InterlinPopupArrow);
 				m_dxmpArrowPicWidth = ConvertPictureWidthToMillipoints(m_PulldownArrowPic.Picture);
@@ -139,7 +141,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			/// <summary/>
 			protected virtual void Dispose(bool fDisposing)
 			{
-				System.Diagnostics.Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType().ToString() + " *******");
+				Debug.WriteLineIf(!fDisposing, "******* Missing Dispose() call for " + GetType() + " *******");
 				if (fDisposing && !IsDisposed)
 				{
 					// Dispose managed resources here.
@@ -151,7 +153,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				m_sandbox = null; // Client gave it to us, so has to deal with it.
 				m_caches = null; // Client gave it to us, so has to deal with it.
 				m_PulldownArrowPic = null;
-				m_tsf = null;
 				m_tssMissingEntry = null; // Same as m_tssMissingMorphs, so just null it.
 				m_tssMissingWordPos = null; // Same as m_tssMissingMorphPos, so just null it.
 				m_tssMissingMorphs = null;
@@ -279,42 +280,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					(int)FwTextPropVar.ktpvDefault, color);
 			}
 
-			/// <summary>
-			/// Add the specified string in the specified color to the display, using the UI Writing system.
-			/// </summary>
-			protected static void AddColoredString(IVwEnv vwenv, int color, ITsStrFactory tsf, int ws, string str)
-			{
-				SetColor(vwenv, color);
-				vwenv.AddString(tsf.MakeString(str, ws));
-			}
-
-			/// <summary>
-			/// Add to the vwenv the label(s) for a gloss line.
-			/// If multiple glosses are wanted, it generates a set of labels
-			/// </summary>
-			public void AddGlossLabels(IVwEnv vwenv, ITsStrFactory tsf, int color, string baseLabel,
-				FdoCache cache, WsListManager wsList)
-			{
-				if (wsList != null && wsList.AnalysisWsLabels.Length > 1)
-				{
-					ITsString tssBase = MakeUiElementString(baseLabel, cache.DefaultUserWs, null);
-					ITsString space = tsf.MakeString(" ", cache.DefaultUserWs);
-					foreach (ITsString tssLabel in wsList.AnalysisWsLabels)
-					{
-						SetColor(vwenv, color);
-						vwenv.OpenParagraph();
-						vwenv.AddString(tssBase);
-						vwenv.AddString(space);
-						vwenv.AddString(tssLabel);
-						vwenv.CloseParagraph();
-					}
-				}
-				else
-				{
-					AddColoredString(vwenv, color, tsf, cache.DefaultAnalWs, baseLabel);
-				}
-			}
-
 			private void AddPullDownIcon(IVwEnv vwenv, int tag)
 			{
 				if (m_fIconsForAnalysisChoices)
@@ -338,19 +303,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					(int)FwTextPropVar.ktpvMilliPoint,
 					m_dxmpArrowPicWidth + kmpIconMargin);
 			}
-
-			/// <summary>
-			/// If fWantIcon is true, add a pull-down icon; otherwise, set enough indent so the
-			/// next thing in the paragraph will line up with things that have icons.
-			/// </summary>
-			private void SetIndentOrDisplayPullDown(IVwEnv vwenv, int tag, bool fWantIcon)
-			{
-				if (fWantIcon)
-					AddPullDownIcon(vwenv, tag);
-				else
-					SetIndentForMissingIcon(vwenv);
-			}
-
 			public override void Display(IVwEnv vwenv, int hvo, int frag)
 			{
 				CheckDisposed();
@@ -505,10 +457,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 			private int GetBestAlt(int hvo, int tag, int wsPreferred, int wsDefault, int[] wsList)
 			{
-				Set<int> wsSet = new Set<int>();
+				var wsSet = new HashSet<int>();
 				if (wsPreferred != 0)
 					wsSet.Add(wsPreferred);
-				wsSet.AddRange(wsList);
+				wsSet.UnionWith(wsList);
 				// We're not dealing with a real cache, so can't call something like this:
 				//ws = LangProject.InterpretWsLabel(m_caches.MainCache,
 				//	LangProject.GetMagicWsNameFromId(ws),
@@ -644,7 +596,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					AddPullDownIcon(vwenv, ktagWordGlossIcon);
 					m_fIconForWordGloss = true;
 				}
-				else if (m_fIconForWordGloss == true && cGlosses == 0)
+				else if (m_fIconForWordGloss && cGlosses == 0)
 				{
 					// reset
 					m_fIconForWordGloss = false;
@@ -655,8 +607,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					//set directly to the MultipleApproved color rather than the stored one
 					//the state of the two could be different.
 					SetBGColor(vwenv, InterlinVc.MultipleApprovedGuessColor);
-					ITsStrFactory fact = TsStrFactoryClass.Create();
-					ITsString count = TsStringUtils.MakeTss(fact, Cache.DefaultUserWs, "" + cGlosses);
+					ITsString count = TsStringUtils.MakeString("" + cGlosses, Cache.DefaultUserWs);
 					//make the number black.
 					SetColor(vwenv, 0);
 					vwenv.set_IntProperty((int)FwTextPropType.ktptMarginTrailing,

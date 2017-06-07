@@ -9,7 +9,7 @@ namespace SIL.CoreImpl
 	/// <summary>
 	/// Interface for a property table.
 	/// </summary>
-	public interface IPropertyTable : IFWDisposable
+	public interface IPropertyTable : IDisposable
 	{
 		#region Get property values
 		/// <summary>

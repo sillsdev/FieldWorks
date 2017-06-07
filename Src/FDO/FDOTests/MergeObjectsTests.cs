@@ -13,8 +13,8 @@
 using System;
 
 using NUnit.Framework;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.CoreImpl.Text;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.Infrastructure.Impl;
 
 namespace SIL.FieldWorks.FDO.FDOTests
@@ -105,7 +105,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 		private ITsString AnalysisTss(string form)
 		{
-			return Cache.TsStrFactory.MakeString(form, Cache.DefaultAnalWs);
+			return TsStringUtils.MakeString(form, Cache.DefaultAnalWs);
 		}
 
 		private ICmPossibility MakePossibility(ICmPossibilityList list, string name)
@@ -209,7 +209,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			var result = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
 			var lf = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
 			result.LexemeFormOA = lf;
-			lf.Form.VernacularDefaultWritingSystem = Cache.TsStrFactory.MakeString(form, Cache.DefaultVernWs);
+			lf.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString(form, Cache.DefaultVernWs);
 			return result;
 		}
 
@@ -380,18 +380,18 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			ILexSense lsSrc = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
 			lmeSrc.SensesOS.Add(lsSrc);
 
-			ITsPropsBldr propsBldr = TsPropsBldrClass.Create();
+			ITsPropsBldr propsBldr = TsStringUtils.MakePropsBldr();
 			propsBldr.SetIntPropValues((int)FwTextPropType.ktptWs, 0, engWs);
 			ITsTextProps ttpEng = propsBldr.GetTextProps();
 
-			ITsStrBldr tsb = TsStrBldrClass.Create();
+			ITsStrBldr tsb = TsStringUtils.MakeStrBldr();
 			tsb.SetProperties(0, 0, ttpEng);
 			ITsString tssEmpty = tsb.GetString();
 			tsb.Replace(0, 0, virginiaCreeper, ttpEng);
 			tsb.SetIntPropValues(10, 20, (int) FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault, 50);
 			ITsString tssVirginiaCreeper = tsb.GetString();
 
-			ITsStrBldr tsb2 = TsStrBldrClass.Create();
+			ITsStrBldr tsb2 = TsStringUtils.MakeStrBldr();
 			tsb2.Replace(0, 0, whiteOak, ttpEng);
 			tsb2.SetIntPropValues(5, 10, (int) FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault, 500);
 			ITsString tssWhiteOak = tsb2.GetString();
@@ -468,17 +468,17 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			ILexEntry lmeKeeper = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
 			ILexEntry lmeSrc = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
 
-			ITsPropsBldr propsBldr = TsPropsBldrClass.Create();
+			ITsPropsBldr propsBldr = TsStringUtils.MakePropsBldr();
 			propsBldr.SetIntPropValues((int)FwTextPropType.ktptWs, 0, engWs);
 			ITsTextProps ttpEng = propsBldr.GetTextProps();
 
-			ITsStrBldr tsb = TsStrBldrClass.Create();
+			ITsStrBldr tsb = TsStringUtils.MakeStrBldr();
 			tsb.Replace(0, 0, eng, ttpEng);
 			tsb.SetIntPropValues(7, 10, (int) FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault, 50);
 			ITsString tssEng = tsb.GetString();
 
 			string append = "Append";
-			ITsStrBldr tsb2 = TsStrBldrClass.Create();
+			ITsStrBldr tsb2 = TsStringUtils.MakeStrBldr();
 			tsb2.Replace(0, 0, append, ttpEng);
 			tsb2.SetIntPropValues(2, 4, (int) FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault, 500);
 			ITsString tssAppend = tsb2.GetString();
@@ -488,7 +488,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			tsb.ReplaceTsString(tsb.Length, tsb.Length, tssAppend);
 			ITsString tssConcat = tsb.GetString();
 
-			ITsStrBldr tsb3 = TsStrBldrClass.Create();
+			ITsStrBldr tsb3 = TsStringUtils.MakeStrBldr();
 			tsb3.Replace(0, 0, es, ttpEng);
 			tsb3.SetIntPropValues(5, 8, (int) FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault, 500);
 			ITsString tssEs = tsb3.GetString();
@@ -723,7 +723,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		private ILexSense MakeSense(ILexEntry entry, string gloss)
 		{
 			var sense = MakeSense(entry);
-			sense.Gloss.AnalysisDefaultWritingSystem = Cache.TsStrFactory.MakeString(gloss, Cache.DefaultAnalWs);
+			sense.Gloss.AnalysisDefaultWritingSystem = TsStringUtils.MakeString(gloss, Cache.DefaultAnalWs);
 			return sense;
 		}
 

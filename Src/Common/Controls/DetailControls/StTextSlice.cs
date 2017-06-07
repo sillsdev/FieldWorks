@@ -7,8 +7,10 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.Text;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
@@ -230,17 +232,16 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			var view = (StTextView)RootSite;
 			var textHvo = 0;
-			NonUndoableUnitOfWorkHelper.Do(m_cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
-			{
-				var sda = m_cache.DomainDataByFlid;
-				textHvo = sda.MakeNewObject(StTextTags.kClassId, m_obj.Hvo, m_flid, -2);
-				var hvoStTxtPara = sda.MakeNewObject(StTxtParaTags.kClassId, textHvo, StTextTags.kflidParagraphs, 0);
-				var tsf = m_cache.TsStrFactory;
-				sda.SetString(hvoStTxtPara, StTxtParaTags.kflidContents, tsf.EmptyString(m_ws == 0 ? m_cache.DefaultAnalWs : m_ws));
-			});
-			view.StText = m_cache.ServiceLocator.GetInstance<IStTextRepository>().GetObject(textHvo);
+				NonUndoableUnitOfWorkHelper.Do(m_cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
+				{
+					var sda = m_cache.DomainDataByFlid;
+					textHvo = sda.MakeNewObject(StTextTags.kClassId, m_obj.Hvo, m_flid, -2);
+					var hvoStTxtPara = sda.MakeNewObject(StTxtParaTags.kClassId, textHvo, StTextTags.kflidParagraphs, 0);
+					sda.SetString(hvoStTxtPara, StTxtParaTags.kflidContents, TsStringUtils.EmptyString(m_ws == 0 ? m_cache.DefaultAnalWs : m_ws));
+				});
+				view.StText = m_cache.ServiceLocator.GetInstance<IStTextRepository>().GetObject(textHvo);
+			}
 		}
-	}
 
 	#region RootSite class
 
@@ -357,13 +358,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		public override void MakeRoot()
 		{
 			CheckDisposed();
-			base.MakeRoot();
 
 			if (m_fdoCache == null || DesignMode)
 				return;
 
-			m_rootb = VwRootBoxClass.Create();
-			m_rootb.SetSite(this);
+			base.MakeRoot();
+
 			m_rootb.DataAccess = m_fdoCache.DomainDataByFlid;
 			if (m_text != null)
 				m_rootb.SetRootObject(m_text.Hvo, m_vc, (int)StTextFrags.kfrText, m_styleSheet);

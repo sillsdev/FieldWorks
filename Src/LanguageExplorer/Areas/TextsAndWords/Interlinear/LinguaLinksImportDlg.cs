@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,15 +6,15 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Windows.Forms;
 using SIL.CoreImpl;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.Resources;
@@ -55,7 +55,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 	/// <summary>
 	/// Summary description for IFwImportDialog.
 	/// </summary>
-	public class LinguaLinksImportDlg : Form, IFWDisposable, IFwExtension
+	public class LinguaLinksImportDlg : Form, IFwExtension
 	{
 		public const int kLlName = 0;
 		public const int kFwName = 1;
@@ -248,8 +248,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification = "TODO-Linux: LinkLabel.TabStop is missing from Mono")]
 		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LinguaLinksImportDlg));
@@ -863,7 +861,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			lvItem = listViewMapping.Items[selIndex];
 			IApp app = m_propertyTable.GetValue<IApp>("App");
 			using (LexImportWizardLanguage dlg = new LexImportWizardLanguage(m_cache,
-					m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), app, FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable)))
+				m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), app))
 			{
 				llName = lvItem.Text;
 				fwName = lvItem.SubItems[1].Text;

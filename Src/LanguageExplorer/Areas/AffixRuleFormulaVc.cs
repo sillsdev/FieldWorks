@@ -2,7 +2,9 @@ using System;
 using System.Drawing;
 using System.Linq;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.Text;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
 
@@ -37,7 +39,7 @@ namespace LanguageExplorer.Areas
 		public AffixRuleFormulaVc(FdoCache cache, IPropertyTable propertyTable)
 			: base(cache, propertyTable)
 		{
-			ITsPropsBldr tpb = TsPropsBldrClass.Create();
+			ITsPropsBldr tpb = TsStringUtils.MakePropsBldr();
 			tpb.SetStrPropValue((int)FwTextPropType.ktptFontFamily, MiscUtils.StandardSansSerif);
 			tpb.SetIntPropValues((int)FwTextPropType.ktptFontSize, (int)FwTextPropVar.ktpvMilliPoint, 10000);
 			tpb.SetIntPropValues((int)FwTextPropType.ktptBorderColor, (int)FwTextPropVar.ktpvDefault,
@@ -47,7 +49,7 @@ namespace LanguageExplorer.Areas
 			tpb.SetIntPropValues((int)FwTextPropType.ktptEditable, (int)FwTextPropVar.ktpvEnum, (int)TptEditable.ktptNotEditable);
 			m_headerProps = tpb.GetTextProps();
 
-			tpb = TsPropsBldrClass.Create();
+			tpb = TsStringUtils.MakePropsBldr();
 			tpb.SetIntPropValues((int)FwTextPropType.ktptBold, (int)FwTextPropVar.ktpvEnum, (int)FwTextToggleVal.kttvForceOn);
 			tpb.SetIntPropValues((int)FwTextPropType.ktptFontSize, (int)FwTextPropVar.ktpvMilliPoint, 24000);
 			tpb.SetIntPropValues((int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault,
@@ -57,7 +59,7 @@ namespace LanguageExplorer.Areas
 			tpb.SetIntPropValues((int)FwTextPropType.ktptEditable, (int)FwTextPropVar.ktpvEnum, (int)TptEditable.ktptNotEditable);
 			m_arrowProps = tpb.GetTextProps();
 
-			tpb = TsPropsBldrClass.Create();
+			tpb = TsStringUtils.MakePropsBldr();
 			tpb.SetIntPropValues((int)FwTextPropType.ktptBorderTop, (int)FwTextPropVar.ktpvMilliPoint, 1000);
 			tpb.SetIntPropValues((int)FwTextPropType.ktptBorderBottom, (int)FwTextPropVar.ktpvMilliPoint, 1000);
 			tpb.SetIntPropValues((int)FwTextPropType.ktptBorderTrailing, (int)FwTextPropVar.ktpvMilliPoint, 1000);
@@ -66,7 +68,7 @@ namespace LanguageExplorer.Areas
 			tpb.SetIntPropValues((int)FwTextPropType.ktptAlign, (int)FwTextPropVar.ktpvEnum, (int)FwTextAlign.ktalCenter);
 			m_ctxtProps = tpb.GetTextProps();
 
-			tpb = TsPropsBldrClass.Create();
+			tpb = TsStringUtils.MakePropsBldr();
 			tpb.SetIntPropValues((int)FwTextPropType.ktptBorderBottom, (int)FwTextPropVar.ktpvMilliPoint, 1000);
 			tpb.SetIntPropValues((int)FwTextPropType.ktptBorderTrailing, (int)FwTextPropVar.ktpvMilliPoint, 1000);
 			tpb.SetIntPropValues((int)FwTextPropType.ktptBorderColor, (int)FwTextPropVar.ktpvDefault,
@@ -77,19 +79,18 @@ namespace LanguageExplorer.Areas
 				(int)ColorUtil.ConvertColorToBGR(Color.Gray));
 			m_indexProps = tpb.GetTextProps();
 
-			tpb = TsPropsBldrClass.Create();
+			tpb = TsStringUtils.MakePropsBldr();
 			tpb.SetIntPropValues((int)FwTextPropType.ktptBorderBottom, (int)FwTextPropVar.ktpvMilliPoint, 1000);
 			tpb.SetIntPropValues((int)FwTextPropType.ktptBorderColor, (int)FwTextPropVar.ktpvDefault,
 				(int)ColorUtil.ConvertColorToBGR(Color.Gray));
 			m_resultProps = tpb.GetTextProps();
 
-			var tsf = m_cache.TsStrFactory;
 			var userWs = m_cache.DefaultUserWs;
-			m_inputStr = tsf.MakeString(AreaResources.ksAffixRuleInput, userWs);
-			m_indexStr = tsf.MakeString(AreaResources.ksAffixRuleIndex, userWs);
-			m_resultStr = tsf.MakeString(AreaResources.ksAffixRuleResult, userWs);
-			m_doubleArrow = tsf.MakeString("\u21d2", userWs);
-			m_space = tsf.MakeString(" ", userWs);
+			m_inputStr = TsStringUtils.MakeString(AreaResources.ksAffixRuleInput, userWs);
+			m_indexStr = TsStringUtils.MakeString(AreaResources.ksAffixRuleIndex, userWs);
+			m_resultStr = TsStringUtils.MakeString(AreaResources.ksAffixRuleResult, userWs);
+			m_doubleArrow = TsStringUtils.MakeString("\u21d2", userWs);
+			m_space = TsStringUtils.MakeString(" ", userWs);
 		}
 
 		protected override int GetMaxNumLines()
@@ -128,7 +129,6 @@ namespace LanguageExplorer.Areas
 
 		public override void Display(IVwEnv vwenv, int hvo, int frag)
 		{
-			ITsStrFactory tsf = m_cache.TsStrFactory;
 			int userWs = m_cache.DefaultUserWs;
 			switch (frag)
 			{
@@ -162,7 +162,7 @@ namespace LanguageExplorer.Areas
 					vwenv.NoteDependency(new[] {m_rule.Hvo}, new[] {MoAffixProcessTags.kflidInput}, 1 );
 					for (int i = 0; i < m_rule.InputOS.Count; i++)
 					{
-						int idxWidth = GetStrWidth(tsf.MakeString(Convert.ToString(i + 1), userWs), m_indexProps, vwenv);
+						int idxWidth = GetStrWidth(TsStringUtils.MakeString(Convert.ToString(i + 1), userWs), m_indexProps, vwenv);
 						int ctxtWidth = GetWidth(m_rule.InputOS[i], vwenv);
 						ctxtLens[i].nVal = Math.Max(idxWidth, ctxtWidth) + 8000 + 1000;
 						ctxtLens[i].unit = VwUnit.kunPoint1000;
@@ -253,7 +253,7 @@ namespace LanguageExplorer.Areas
 					{
 						vwenv.Props = m_indexProps;
 						vwenv.OpenTableCell(1, 1);
-						vwenv.AddString(tsf.MakeString(Convert.ToString(i + 1), userWs));
+						vwenv.AddString(TsStringUtils.MakeString(Convert.ToString(i + 1), userWs));
 						vwenv.CloseTableCell();
 					}
 
@@ -428,7 +428,7 @@ namespace LanguageExplorer.Areas
 			if (tag == ktagIndex)
 			{
 				// pass the index in the frag argument
-				return m_cache.TsStrFactory.MakeString(Convert.ToString(frag), m_cache.DefaultUserWs);
+				return TsStringUtils.MakeString(Convert.ToString(frag), m_cache.DefaultUserWs);
 			}
 			switch (frag)
 			{

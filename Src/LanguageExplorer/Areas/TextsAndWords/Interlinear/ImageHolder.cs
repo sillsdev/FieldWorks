@@ -1,25 +1,17 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ImageHolder.cs
-// Responsibility:
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Windows.Forms;
 using System.Diagnostics;
-using SIL.Utils;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
 	/// <summary>
 	/// Summary description for ImageHolder.
 	/// </summary>
-	public class ImageHolder : UserControl, IFWDisposable
+	public class ImageHolder : UserControl
 	{
 		private System.Windows.Forms.Button button1;
 		public ImageList buttonImages;

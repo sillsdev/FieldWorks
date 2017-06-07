@@ -11,11 +11,12 @@
 
 using System;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.Cellar;
+using SIL.CoreImpl.Text;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
@@ -34,11 +35,9 @@ namespace SIL.FieldWorks.Common.RootSites
 	public abstract class FwBaseVc : VwBaseVc
 	{
 		/// <summary>The view construtor's cache.</summary>
-		protected FdoCache m_cache = null;
+		protected FdoCache m_cache;
 		/// <summary>The hvo of the language project.</summary>
 		protected int m_hvoLangProject;
-		/// <summary>TS String factory</summary>
-		protected ITsStrFactory m_tsf = TsStrFactoryClass.Create();
 		private static StringBuilder s_footnoteIconString;
 
 		/// ------------------------------------------------------------------------------------
@@ -109,7 +108,6 @@ namespace SIL.FieldWorks.Common.RootSites
 				var sda = vwenv.DataAccess as ISilDataAccessManaged;
 				Debug.Assert(sda != null);
 				var genDate = sda.get_GenDateProp(vwenv.CurrentObject(), tag);
-				var tsf = TsStrFactoryClass.Create();
 				string str = "";
 				switch (frag)
 				{
@@ -123,7 +121,7 @@ namespace SIL.FieldWorks.Common.RootSites
 						str = genDate.ToSortString();
 						break;
 				}
-				return tsf.MakeString(str, sda.WritingSystemFactory.UserWs);
+				return TsStringUtils.MakeString(str, sda.WritingSystemFactory.UserWs);
 			}
 			else
 				return base.DisplayVariant(vwenv, tag, frag);
@@ -154,8 +152,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <param name="vwenv">The view environment</param>
 		/// <param name="hvo">The ID of the embedded object</param>
 		/// -----------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification="Added TODO-Linux comment")]
 		public override void DisplayEmbeddedObject(IVwEnv vwenv, int hvo)
 		{
 			// See if it is a CmPicture.
@@ -227,7 +223,7 @@ namespace SIL.FieldWorks.Common.RootSites
 
 		private ITsString GetPictureString()
 		{
-			var bldr = Cache.TsStrFactory.MakeString(RootSiteStrings.ksPicture, Cache.DefaultUserWs).GetBldr();
+			var bldr = TsStringUtils.MakeString(RootSiteStrings.ksPicture, Cache.DefaultUserWs).GetBldr();
 			bldr.SetIntPropValues(0, bldr.Length, (int)FwTextPropType.ktptEditable,
 				(int)FwTextPropVar.ktpvEnum, (int)TptEditable.ktptNotEditable);
 			return bldr.GetString();
@@ -243,8 +239,8 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		protected static ITsString GetFootnoteIconString(int ws, Guid footnoteGuid)
 		{
-			ITsStrBldr bldr = TsStrBldrClass.Create();
-			ITsPropsBldr propsBldr = TsPropsBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
+			ITsPropsBldr propsBldr = TsStringUtils.MakePropsBldr();
 			propsBldr.SetIntPropValues((int)FwTextPropType.ktptWs, 0, ws);
 
 			StringBuilder iconData = FootnoteIconString;
@@ -267,8 +263,8 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		protected ITsString MakeUiElementString(string text, int uiWs, Action<ITsPropsBldr> SetAdditionalProps)
 		{
-			ITsStrBldr bldr = m_tsf.GetBldr();
-			ITsPropsBldr propsBldr = TsPropsBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
+			ITsPropsBldr propsBldr = TsStringUtils.MakePropsBldr();
 			propsBldr.SetIntPropValues((int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault, uiWs);
 			propsBldr.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, StyleServices.UiElementStylename);
 			if (SetAdditionalProps != null)

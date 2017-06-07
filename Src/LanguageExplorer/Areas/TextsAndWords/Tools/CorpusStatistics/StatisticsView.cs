@@ -4,7 +4,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Windows.Forms;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
@@ -15,14 +14,13 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.XWorks;
-using SIL.Utils;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 {
 	/// <summary>
 	/// The main view for the "corpusStatistics" tool in the "textsWords" area.
 	/// </summary>
-	internal sealed partial class StatisticsView : UserControl, IMajorFlexComponent, IMainContentControl, IFWDisposable
+	internal sealed partial class StatisticsView : UserControl, IMajorFlexComponent, IMainContentControl
 	{
 		private InterlinearTextsRecordClerk _interlinearTextsRecordClerk;
 		private ToolStrip _toolStripView;
@@ -154,8 +152,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 		/// <remarks>
 		/// This is called on the component that is becoming active.
 		/// </remarks>
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification = "See TODO-Linux comment")]
 		public void Activate(ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip, ToolStripContainer toolStripContainer,
 			StatusBar statusbar)
 		{
@@ -260,11 +256,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 		}
 
 		#endregion
-
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="REVIEW: I'm not sure if/where Font gets disposed)")]
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification="See TODO-Linux comment")]
+		
 		private void RebuildStatisticsTable()
 		{
 			statisticsBox.Clear();
@@ -284,7 +276,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 			var wordCount = 0;
 			var uniqueWords = 0;
 			var languageCount = new Dictionary<int, int>();
-			var languageTypeCount = new Dictionary<int, Set<string>>();
+			var languageTypeCount = new Dictionary<int, HashSet<string>>();
 			//for each interesting text
 			foreach (var interestingText in textList.InterestingTexts)
 			{
@@ -319,7 +311,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 								languageCount.Add(ws, 1);
 							}
 							//increase the count of unique words(types) for this language
-							Set<string> pair;
+							HashSet<string> pair;
 							if (languageTypeCount.TryGetValue(ws, out pair))
 							{
 								//add the string for this writing system in all lower case to the set, unique count is case insensitive
@@ -328,7 +320,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 							else
 							{
 								//add the string for this writing system in all lower case to the set, unique count is case insensitive
-								languageTypeCount.Add(ws, new Set<String> { word.Wordform.Form.get_String(ws).Text.ToLower() });
+								languageTypeCount.Add(ws, new HashSet<String> { word.Wordform.Form.get_String(ws).Text.ToLower() });
 							}
 						}
 					}
@@ -408,7 +400,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 
 		#endregion
 
-		#region Implementation of IFWDisposable
+		#region Implementation of IDisposable
 
 		/// <summary>
 		/// This method throws an ObjectDisposedException if IsDisposed returns

@@ -1,4 +1,4 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="14.0">
   <PropertyGroup>
 	<ProjectType>Local</ProjectType>
 	<ProductVersion>8.0.50727</ProductVersion>
@@ -79,9 +79,9 @@
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\..\Output\Release\AccessibilityHelper.dll</HintPath>
 	</Reference>
-	<Reference Include="COMInterfaces, Version=4.1.0.9, Culture=neutral, processorArchitecture=MSIL">
+	<Reference Include="ViewsInterfaces, Version=4.1.0.9, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\Output\Release\COMInterfaces.dll</HintPath>
+	  <HintPath>..\..\..\Output\Release\ViewsInterfaces.dll</HintPath>
 	</Reference>
 	<Reference Include="GuiTestDriver, Version=4.1.2530.28879, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
@@ -89,7 +89,7 @@
 	</Reference>
 	<Reference Include="nunit.framework">
 	  <Name>nunit.framework</Name>
-	  <HintPath>..\..\..\Bin\NUnit\bin\nunit.framework.dll</HintPath>
+	  <HintPath>..\..\..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
 	</Reference>
 	<Reference Include="System">
 	  <Name>System</Name>

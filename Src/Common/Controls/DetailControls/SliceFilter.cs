@@ -4,10 +4,10 @@
 
 using System;
 using SIL.FieldWorks.FDO;
-using SIL.Utils;
 using System.Collections.Generic;
 using System.Xml.Linq;
 using System.Xml.XPath;
+using SIL.Xml;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
@@ -38,9 +38,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <summary>
 		/// tell whether to include the slice
 		/// </summary>
-		/// <param name="configurationNode"></param>
-		/// <param name="obj"></param>
-		/// <param name="flid"></param>
 		/// <returns>true if this slice should be included</returns>
 		virtual public bool IncludeSlice(XElement configurationNode, ICmObject obj, int flid, HashSet<Tuple<int, int>> propsToMonitor)
 		{

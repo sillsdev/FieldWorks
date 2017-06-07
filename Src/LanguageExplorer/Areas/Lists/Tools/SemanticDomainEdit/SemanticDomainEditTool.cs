@@ -9,9 +9,9 @@ using LanguageExplorer.Controls;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks;
-using SIL.Utils;
 
 namespace LanguageExplorer.Areas.Lists.Tools.SemanticDomainEdit
 {
@@ -119,11 +119,8 @@ namespace LanguageExplorer.Areas.Lists.Tools.SemanticDomainEdit
 		/// </remarks>
 		public void FinishRefresh()
 		{
-#if RANDYTODO
-			// TODO: If tool uses a SDA decorator (IRefreshable), then call its "Refresh" method.
-#endif
 			_recordClerk.ReloadIfNeeded();
-			((IRefreshable)_recordClerk.VirtualListPublisher).Refresh();
+			((DomainDataByFlidDecoratorBase)_recordClerk.VirtualListPublisher).Refresh();
 		}
 
 		/// <summary>

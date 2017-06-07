@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2016-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -7,20 +7,19 @@ using System.Drawing;
 using System.Collections;
 using System.Windows.Forms;
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FwCoreDlgs;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
 	/// <summary>
 	/// Summary description for LexImportWizardCharMarkerDlg.
 	/// </summary>
-	public class LexImportWizardCharMarkerDlg : Form, IFWDisposable
+	public class LexImportWizardCharMarkerDlg : Form
 	{
 		private Label lblBeginMarker;
 		private Label lblEndMarker;
@@ -512,7 +511,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private void btnAdd_Click(object sender, EventArgs e)
 		{
-			using (var dlg = new LexImportWizardLanguage(m_cache, m_uiLangs, m_helpTopicProvider, m_app, m_stylesheet))
+			using (var dlg = new LexImportWizardLanguage(m_cache, m_uiLangs, m_helpTopicProvider, m_app))
 			{
 				if (dlg.ShowDialog(this) == DialogResult.OK)
 				{

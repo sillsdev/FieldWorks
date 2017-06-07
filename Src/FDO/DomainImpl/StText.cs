@@ -9,10 +9,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Cellar;
+using SIL.CoreImpl.Text;
 
 namespace SIL.FieldWorks.FDO.DomainImpl
 {
@@ -206,14 +207,14 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					if (OwningFlid == ScrSectionTags.kflidHeading)
 					{
 						string sFmt = Strings.ksSectionHeading;
-						int iMin = sFmt.IndexOf("{0}");
+						int iMin = sFmt.IndexOf("{0}", StringComparison.Ordinal);
 						if (iMin < 0)
 						{
 							tssTitle = m_cache.MakeUserTss(sFmt);
 						}
 						else
 						{
-							ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
+							ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 							if (iMin > 0)
 								tisb.AppendTsString(m_cache.MakeUserTss(sFmt.Substring(0, iMin)));
 							tisb.AppendTsString(tssTitle);
@@ -229,13 +230,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				IText text = Owner as IText;
 				tssTitle = text.Name.get_String(ws);
 			}
-			else
-			{
-				// throw?
-			}
-			if (tssTitle == null)
-				tssTitle = TsStrFactoryClass.Create().EmptyString(Cache.DefaultAnalWs);
-			return tssTitle;
+			return tssTitle ?? TsStringUtils.EmptyString(Cache.DefaultAnalWs);
 		}
 
 
@@ -308,7 +303,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					newPara.StyleName = paraStyleName;
 			}
 			if (ws != 0)
-				newPara.Contents = Services.GetInstance<ITsStrFactory>().EmptyString(ws);
+				newPara.Contents = TsStringUtils.EmptyString(ws);
 			return newPara;
 		}
 
@@ -492,7 +487,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// ------------------------------------------------------------------------------------
 		private ITsString SourceOfTextForWs(int ws)
 		{
-			return OwningFlid == TextTags.kflidContents ? ((IText)Owner).Source.get_String(ws) : Cache.TsStrFactory.EmptyString(ws);
+			return OwningFlid == TextTags.kflidContents ? ((IText)Owner).Source.get_String(ws) : TsStringUtils.EmptyString(ws);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -504,7 +499,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// ------------------------------------------------------------------------------------
 		public ITsString CommentForWs(int ws)
 		{
-			return OwningFlid == TextTags.kflidContents ? ((CmMajorObject)Owner).Description.get_String(ws) : Cache.TsStrFactory.EmptyString(ws);
+			return OwningFlid == TextTags.kflidContents ? ((CmMajorObject)Owner).Description.get_String(ws) : TsStringUtils.EmptyString(ws);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -576,7 +571,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			if (Owner is IText)
 				return ((IText)Owner).Abbreviation.get_String(ws);
-			return Cache.TsStrFactory.EmptyString(ws);
+			return TsStringUtils.EmptyString(ws);
 		}
 
 		/// <summary>

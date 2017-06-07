@@ -10,17 +10,14 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.WritingSystems;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Resources;
 using SIL.Utils;
 using SIL.Windows.Forms;
-using SILUBS.SharedScrUtils;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
@@ -65,7 +62,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private Dictionary<string, List<ContextInfo>> m_contextInfoLists;
 		private FdoCache m_cache;
 		private IWritingSystemContainer m_wsContainer;
-		private ILgCharacterPropertyEngine m_charPropEng;
 		private IApp m_app;
 		private CoreWritingSystemDefinition m_ws;
 		private int m_gridRowHeight;
@@ -95,23 +91,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			gridContext.GridColor = ColorHelper.CalculateColor(SystemColors.WindowText,
 				SystemColors.Window, 35);
 			m_sInitialScanMsgLabel = lblScanMsg.Text;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the character property engine to use for this control.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		private ILgCharacterPropertyEngine CharPropEngine
-		{
-			get
-			{
-				if (m_wsContainer.DefaultVernacularWritingSystem != null)
-					return m_wsContainer.DefaultVernacularWritingSystem.CharPropEngine;
-				if (m_charPropEng == null)
-					m_charPropEng = LgIcuCharPropEngineClass.Create();
-				return m_charPropEng;
-			}
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -319,7 +298,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		private CharacterCategorizer CharacterCategorizer
 		{
-			get { return new FwCharacterCategorizer(ValidCharacters, CharPropEngine); }
+			get { return new FwCharacterCategorizer(ValidCharacters); }
 		}
 		#endregion
 
@@ -654,7 +633,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				{
 					if (m_fileData[i].IndexOfAny(controlChars) >= 0)
 						throw new Exception(FWCoreDlgsErrors.ksInvalidControlCharacterFound);
-					m_fileData[i] = CharPropEngine.NormalizeD(m_fileData[i]);
+					m_fileData[i] = Common.FwKernelInterfaces.Icu.Normalize(m_fileData[i], Common.FwKernelInterfaces.Icu.UNormalizationMode.UNORM_NFD);
 				}
 			}
 		}
@@ -851,6 +830,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public ContextGrid()
 		{
 			DoubleBuffered = true;
+		}
+
+		/// <summary/>
+		protected override void Dispose(bool disposing)
+		{
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
+			base.Dispose(disposing);
 		}
 	}
 

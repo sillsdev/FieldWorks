@@ -10,9 +10,10 @@
 // </remarks>
 // --------------------------------------------------------------------------------------------
 using System.Windows.Forms;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.Utils;
 using SIL.FieldWorks.FDO;
+using SIL.Xml;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
@@ -50,7 +51,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			if (m_fieldName != null)
 			{
 				// have chooser title use the same text as the label
-				m_fieldName = XmlUtils.GetLocalizedAttributeValue(m_configurationNode, "label", m_fieldName);
+				m_fieldName = StringTable.Table.LocalizeAttributeValue(XmlUtils.GetOptionalAttributeValue(m_configurationNode, "label", m_fieldName));
 			}
 		}
 

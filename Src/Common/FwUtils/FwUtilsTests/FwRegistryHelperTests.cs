@@ -1,14 +1,10 @@
-﻿// Copyright (c) 2003-2013 SIL International
+﻿// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: FwRegistryHelperTests.cs
-// Responsibility:
-// ---------------------------------------------------------------------------------------------
+
 using System.Linq;
 using Microsoft.Win32;
 using NUnit.Framework;
-using SIL.FieldWorks.Test.TestUtils;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.FwUtils
@@ -17,7 +13,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 	/// Test the FwRegistryHelper class.
 	/// </summary>
 	[TestFixture]
-	public class FwRegistryHelperTests : BaseTest
+	public class FwRegistryHelperTests
 	{
 		private DummyFwRegistryHelper m_helper;
 
@@ -52,6 +48,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		private void AssertRegistrySubkeyPresent(RegistryKey key, string subKeyName)
 		{
+			Assert.IsTrue(key.SubKeyCount > 0, "Registry key {0} does not have any subkeys, can't find {1}", key.Name, subKeyName);
 			Assert.IsTrue(RegistryHelper.KeyExists(key, subKeyName),
 				"Registry subkey {0} was not found in {1}.", subKeyName, key.Name);
 		}
@@ -146,13 +143,13 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public void ExpectedSettingsRetained_7_To_9_Upgrade()
 		{
 			using (var version7Key = m_helper.SetupVersion7Settings())
-			using (var version9Key = m_helper.SetupVersion9Settings())
 			{
 				// SUT
 				Assert.IsTrue(FwRegistryHelper.UpgradeUserSettingsIfNeeded());
 
-				// Make sure select expected info was moved to v9.
-				VerifyExpectedV9Results(version9Key);
+				using (var version9Key = m_helper.SetupVersion9Settings())
+					// Make sure select expected info was moved to v9.
+					VerifyExpectedV9Results(version9Key);
 			}
 		}
 
@@ -163,13 +160,13 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public void ExpectedSettingsRetained_8_To_9_Upgrade()
 		{
 			using (var version8Key = m_helper.SetupVersion8Settings())
-			using (var version9Key = m_helper.SetupVersion9Settings())
 			{
 				// SUT
 				Assert.IsTrue(FwRegistryHelper.UpgradeUserSettingsIfNeeded());
 
 				// Make sure select expected info was moved to v9.
-				VerifyExpectedV9Results(version9Key);
+				using (var version9Key = m_helper.SetupVersion9Settings())
+					VerifyExpectedV9Results(version9Key);
 			}
 		}
 
@@ -179,15 +176,15 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[Test]
 		public void ExpectedSettingsRetained_7_and_8_To_9_Upgrade()
 		{
-			using (var version7Key = m_helper.SetupVersion7Settings())
-			using (var version8Key = m_helper.SetupVersion8Settings())
-			using (var version9Key = m_helper.SetupVersion9Settings())
+			using (m_helper.SetupVersion7Settings())
+			using (m_helper.SetupVersion8Settings())
 			{
 				// SUT
 				Assert.IsTrue(FwRegistryHelper.UpgradeUserSettingsIfNeeded());
 
 				// Make sure select expected info was moved to v9.
-				VerifyExpectedV9Results(version9Key);
+				using (var version9Key = m_helper.SetupVersion9Settings())
+					VerifyExpectedV9Results(version9Key);
 			}
 		}
 
@@ -197,8 +194,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[Test]
 		public void V7_KeyRemoved_7_To_9_Upgrade()
 		{
-			using (var version7Key = m_helper.SetupVersion7Settings())
-			using (var version9Key = m_helper.SetupVersion9Settings())
+			using (m_helper.SetupVersion7Settings())
+			using (m_helper.SetupVersion9Settings())
 			{
 				// SUT
 				Assert.IsTrue(FwRegistryHelper.UpgradeUserSettingsIfNeeded());
@@ -355,10 +352,13 @@ namespace SIL.FieldWorks.Common.FwUtils
 				// Not in 9.
 				AssertRegistrySubkeyNotPresent(version9Key, FwRegistryHelper.TranslationEditor);
 				AssertRegistrySubkeyNotPresent(version9Key, DummyFwRegistryHelper.FlexKeyName);
+			}
+			// SUT
+			Assert.IsTrue(FwRegistryHelper.UpgradeUserSettingsIfNeeded());
 
-				// SUT
-				Assert.IsTrue(FwRegistryHelper.UpgradeUserSettingsIfNeeded());
-
+			using (m_helper.GetSettingsSubKeyForVersion(FwRegistryHelper.OldFieldWorksRegistryKeyNameVersion7))
+			using (var version9Key = m_helper.GetSettingsSubKeyForVersion(FwRegistryHelper.FieldWorksRegistryKeyName))
+			{
 				// Didn't make it into 9.
 				AssertRegistrySubkeyNotPresent(version9Key, FwRegistryHelper.TranslationEditor);
 				AssertRegistryValueNotPresent(version9Key, DummyFwRegistryHelper.FlexKeyName, DummyFwRegistryHelper.Crashes);
@@ -381,10 +381,13 @@ namespace SIL.FieldWorks.Common.FwUtils
 				// Not in 9.
 				AssertRegistrySubkeyNotPresent(version9Key, FwRegistryHelper.TranslationEditor);
 				AssertRegistrySubkeyNotPresent(version9Key, DummyFwRegistryHelper.FlexKeyName);
+			}
+			// SUT
+			Assert.IsTrue(FwRegistryHelper.UpgradeUserSettingsIfNeeded());
 
-				// SUT
-				Assert.IsTrue(FwRegistryHelper.UpgradeUserSettingsIfNeeded());
-
+			using (m_helper.GetSettingsSubKeyForVersion(FwRegistryHelper.OldFieldWorksRegistryKeyNameVersion8))
+			using (var version9Key = m_helper.GetSettingsSubKeyForVersion(FwRegistryHelper.FieldWorksRegistryKeyName))
+			{
 				// Didn't make it into 9.
 				AssertRegistrySubkeyNotPresent(version9Key, FwRegistryHelper.TranslationEditor);
 				AssertRegistryValueNotPresent(version9Key, DummyFwRegistryHelper.FlexKeyName, DummyFwRegistryHelper.Crashes);
@@ -411,10 +414,14 @@ namespace SIL.FieldWorks.Common.FwUtils
 				// Not in 9.
 				AssertRegistrySubkeyNotPresent(version9Key, FwRegistryHelper.TranslationEditor);
 				AssertRegistrySubkeyNotPresent(version9Key, DummyFwRegistryHelper.FlexKeyName);
+			}
+			// SUT
+			Assert.IsTrue(FwRegistryHelper.UpgradeUserSettingsIfNeeded());
 
-				// SUT
-				Assert.IsTrue(FwRegistryHelper.UpgradeUserSettingsIfNeeded());
-
+			using (m_helper.GetSettingsSubKeyForVersion(FwRegistryHelper.OldFieldWorksRegistryKeyNameVersion7))
+			using (m_helper.GetSettingsSubKeyForVersion(FwRegistryHelper.OldFieldWorksRegistryKeyNameVersion8))
+			using (var version9Key = m_helper.GetSettingsSubKeyForVersion(FwRegistryHelper.FieldWorksRegistryKeyName))
+			{
 				// Didn't make it into 9.
 				AssertRegistrySubkeyNotPresent(version9Key, FwRegistryHelper.TranslationEditor);
 				AssertRegistryValueNotPresent(version9Key, DummyFwRegistryHelper.FlexKeyName, DummyFwRegistryHelper.Crashes);

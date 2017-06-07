@@ -1,20 +1,18 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using ECInterfaces;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Resources;
-using SIL.Utils;
 using SilEncConverters40;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
@@ -24,7 +22,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	/// </summary>
 	/// <remarks>Public so we can test it</remarks>
 	/// ------------------------------------------------------------------------------------
-	public class CnvtrPropertiesCtrl : UserControl, IFWDisposable
+	public class CnvtrPropertiesCtrl : UserControl
 	{
 		// Note: several of these controls are public in order to facilitate testing.
 		// Few of them are actually required by other classes
@@ -355,8 +353,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary>
 		/// This provides a reasonable sort order for Code Pages supported as encodings.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification="See comment below")]
 		private int CompareEncInfo(System.Text.EncodingInfo x, System.Text.EncodingInfo y)
 		{
 			// EncodingInfo.DisplayName is marked with MonoTODO since it simply returns Name,
@@ -375,8 +371,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <param name="e">The <see cref="T:System.EventArgs"/> instance containing the event
 		/// data.</param>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification="See TODO-Linux comment")]
 		private void cboConverter_SelectedIndexChanged(object sender, System.EventArgs e)
 		{
 			txtMapFile.Text = "";
@@ -473,17 +467,14 @@ namespace SIL.FieldWorks.FwCoreDlgs
 						// fill in combo items.
 						cboSpec.BeginUpdate();
 						cboSpec.Items.Clear();
-						ILgIcuConverterEnumerator lice = LgIcuConverterEnumeratorClass.Create();
-						int cconv = lice.Count;
-
 						try
 						{
-							for (int i = 0; i < cconv; i++)
+							// TODO: Why does bare "Icu.GetConverterIdsAndNames" not work in the next line?
+							// It picks up icu.net's Icu class instead of FwKernelInterfaces's Icu class. But why?
+							foreach (IcuIdAndName idAndName in Common.FwKernelInterfaces.Icu.GetConverterIdsAndNames())
 							{
-								string name = lice.get_ConverterName(i);
-								string id = lice.get_ConverterId(i);
-								if (!String.IsNullOrEmpty(name))
-									cboSpec.Items.Add(new CnvtrSpecComboItem(name, id));
+								if (!String.IsNullOrEmpty(idAndName.Name))
+									cboSpec.Items.Add(new CnvtrSpecComboItem(idAndName.Name, idAndName.Id));
 							}
 						}
 						catch (Exception ee)
@@ -503,13 +494,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 						// fill in combo items.
 						cboSpec.BeginUpdate();
 						cboSpec.Items.Clear();
-						ILgIcuTransliteratorEnumerator lite = LgIcuTransliteratorEnumeratorClass.Create();
-						int ctrans = lite.Count;
-						for (int i = 0; i < ctrans; i++)
+						foreach (IcuIdAndName idAndName in Common.FwKernelInterfaces.Icu.GetTransliteratorIdsAndNames())
 						{
-							string name = lite.get_TransliteratorName(i);
-							string id = lite.get_TransliteratorId(i);
-							cboSpec.Items.Add(new CnvtrSpecComboItem(name, id));
+							cboSpec.Items.Add(new CnvtrSpecComboItem(idAndName.Name, idAndName.Id));
 						}
 						cboSpec.EndUpdate();
 						break;
@@ -960,8 +947,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <param name="e">The <see cref="T:System.EventArgs"/> instance containing the event
 		/// data.</param>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "myParentCtrl is a reference")]
 		private void btnMore_Click(object sender, EventArgs e)
 		{
 			Control myParentCtrl = Parent;
@@ -1021,8 +1006,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <param name="sender">The source of the event.</param>
 		/// <param name="e">The <see cref="T:System.EventArgs"/> instance containing the event data.</param>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "myParentCtrl is a reference")]
 		private void btnModify_Click(object sender, EventArgs e)
 		{
 			// call the v2.2 interface to "AutoConfigure" a converter

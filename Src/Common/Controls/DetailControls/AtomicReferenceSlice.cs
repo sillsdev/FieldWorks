@@ -1,19 +1,14 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: AtomicReferenceSlice.cs
-// Responsibility:
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
+
 using System;
 using System.Diagnostics;
 using System.Windows.Forms;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
-using SIL.Utils;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.Xml;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
@@ -214,7 +209,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			if (Control == null)
 				return;
 
-			string caption = XmlUtils.GetLocalizedAttributeValue(ConfigurationNode, "label", "");
+			string caption = StringTable.Table.LocalizeAttributeValue(XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "label", ""));
 			var launcher = (AtomicReferenceLauncher)Control;
 			Publisher.Publish("RegisterHelpTargetWithId", new object[]{launcher.AtomicRefViewControl, caption, HelpId});
 			Publisher.Publish("RegisterHelpTargetWithId", new object[]{launcher.PanelControl, caption, HelpId, "Button"});

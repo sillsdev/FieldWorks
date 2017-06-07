@@ -81,9 +81,9 @@
 	  <Name>AccessibilityHelper</Name>
 	  <HintPath>..\..\..\Output\Release\AccessibilityHelper.dll</HintPath>
 	</Reference>
-	<Reference Include="COMInterfaces">
-	  <Name>COMInterfaces</Name>
-	  <HintPath>..\..\..\Output\Release\COMInterfaces.dll</HintPath>
+	<Reference Include="ViewsInterfaces">
+	  <Name>ViewsInterfaces</Name>
+	  <HintPath>..\..\..\Output\Release\ViewsInterfaces.dll</HintPath>
 	</Reference>
 	<Reference Include="GuiTestDriver">
 	  <Name>GuiTestDriver</Name>
@@ -91,7 +91,7 @@
 	</Reference>
 	<Reference Include="nunit.framework">
 	  <Name>nunit.framework</Name>
-	  <HintPath>..\..\..\Bin\NUnit\bin\nunit.framework.dll</HintPath>
+	  <HintPath>..\..\..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
 	</Reference>
 	<Reference Include="System">
 	  <Name>System</Name>

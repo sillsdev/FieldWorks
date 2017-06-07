@@ -3,7 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using SIL.FieldWorks.FDO;
-using SIL.Utils;
+using SIL.Xml;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {

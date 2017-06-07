@@ -5,15 +5,16 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.CoreImpl;
+using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.CoreImpl.Cellar;
+using SIL.CoreImpl.Text;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
@@ -41,7 +42,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		public override void ReloadVector()
 		{
 			CheckDisposed();
-			ITsStrFactory tsf = m_fdoCache.TsStrFactory;
 			int ws = 0;
 			if (m_rootObj != null && m_rootObj.IsValidObject)
 			{
@@ -72,7 +72,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 			if (ws == 0)
 				ws = m_fdoCache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle;
-			m_sda.Strings[khvoFake] = tsf.EmptyString(ws);
+			m_sda.Strings[khvoFake] = TsStringUtils.EmptyString(ws);
 			base.ReloadVector();
 		}
 
@@ -90,7 +90,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			if (m_sda == null)
 			{
 				m_sda = new SdaDecorator((ISilDataAccessManaged) m_fdoCache.DomainDataByFlid, m_fdoCache, m_displayNameProperty, m_displayWs);
-				m_sda.Empty = m_fdoCache.TsStrFactory.EmptyString(m_fdoCache.DefaultAnalWs);
+				m_sda.Empty = TsStringUtils.EmptyString(m_fdoCache.DefaultAnalWs);
 			}
 			return m_sda;
 		}
@@ -180,8 +180,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// This class maintains a cache allowing possibility item display names to be looked up rather than computed after the
 		/// first time they are used.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-			Justification="Cache is a reference and will be disposed in parent class")]
 		internal class SdaDecorator : DomainDataByFlidDecoratorBase
 		{
 			private FdoCache Cache { get; set; }
@@ -220,7 +218,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				ObjectLabel label = ObjectLabel.CreateObjectLabel(Cache, obj, DisplayNameProperty, DisplayWs);
 				ITsString tss = label.AsTss;
 				if (tss == null)
-					tss = Cache.TsStrFactory.EmptyString(Cache.DefaultUserWs);
+					tss = TsStringUtils.EmptyString(Cache.DefaultUserWs);
 				Strings[hvo] = tss;
 				return tss; // never return null!
 			}

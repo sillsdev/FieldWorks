@@ -1,23 +1,22 @@
-// Copyright (c) 2008-2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.Utils;
 using SIL.CoreImpl;
+using SIL.Xml;
 using Win32 = SIL.FieldWorks.Common.FwUtils.Win32;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Discourse
@@ -301,8 +300,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		// padding (pixels) to autoresize column width to prevent wrapping
 		private const int kColPadding = 4;
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "changingColHdr is a reference")]
 		internal void m_headerMainCols_ColumnAutoResize(int icolChanged)
 		{
 			var maxWidth = MaxUseableWidth();
@@ -547,8 +544,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			ComputeButtonWidths();
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "c and c2 are references")]
 		private void ComputeButtonWidths()
 		{
 			//GetColumnWidths();
@@ -1257,7 +1252,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 	/// It's main function is to handle double-clicks on column boundaries so the chart (which is neither
 	/// a ListView nor a BrowseViewer) can resize its columns.
 	/// </summary>
-	public class ChartHeaderView : ListView, IFWDisposable
+	public class ChartHeaderView : ListView
 	{
 		private ConstituentChart m_chart;
 

@@ -800,6 +800,7 @@ public:  // we can make anything public since the whole class is private to this
 	int m_itss;					// index of next item in m_pts to add
 	IVwGraphics * m_pvg;
 	ILgWritingSystemFactoryPtr m_qwsf;
+	IRenderEngineFactoryPtr m_qref;
 
 	int m_dxAvailWidth;			// the available width in which we were asked to lay out
 
@@ -1340,7 +1341,11 @@ public:  // we can make anything public since the whole class is private to this
 
 		ISilDataAccessPtr qsda;
 		if (pvpbox && pvpbox->Root())
+		{
 			qsda = pvpbox->Root()->GetDataAccess();
+			CheckHr(pvpbox->Root()->get_RenderEngineFactory(&m_qref));
+			Assert(m_qref);
+		}
 		if (!qsda)
 			ThrowHr(WarnHr(E_FAIL));
 		CheckHr(qsda->get_WritingSystemFactory(&m_qwsf));
@@ -1726,7 +1731,10 @@ public:  // we can make anything public since the whole class is private to this
 		CheckHr(m_pts->GetCharProps(ich, &m_chrp, &ichMin, &ichLim));
 		m_pts->SetWritingSystemFactory(m_qwsf);		// Just to be safe.
 		CheckHr(m_pvg->SetupGraphics(&m_chrp));
-		CheckHr(m_qwsf->get_Renderer(m_chrp.ws, m_pvg, &m_qre));
+		ILgWritingSystemPtr qws;
+		CheckHr(m_qwsf->get_EngineOrNull(m_chrp.ws, &qws));
+		Assert(qws.Ptr());
+		CheckHr(m_qref->get_Renderer(qws, m_pvg, &m_qre));
 		Assert(m_qre.Ptr());
 	}
 
@@ -2733,8 +2741,6 @@ public:  // we can make anything public since the whole class is private to this
 				OLECHAR chmarker = m_fParaRtl ? 0x200f : 0x200e; // RLM : LRM
 				OLECHAR * rgch = NewObj OLECHAR[*pdichwLimSeg];
 				CheckHr(m_pts->Fetch(ichwMin, ichwMin + *pdichwLimSeg, rgch));
-				ILgCharacterPropertyEnginePtr qcpe;
-				qcpe.CreateInstance(CLSID_LgIcuCharPropEngine);
 
 				// We're looking for a sequence of the marker character, some white space, and another marker.
 				// this loop can find a marker that is the last character of the segment with no following white
@@ -2751,12 +2757,8 @@ public:  // we can make anything public since the whole class is private to this
 					}
 					else
 					{
-						ComBool fIsSep;
-						CheckHr(qcpe->get_IsSeparator(rgch[i], &fIsSep));
-						if (!fIsSep)
-						{
+						if (!StrUtil::IsSeparator(rgch[i]))
 							ichfirstMarker = -1; // reset the search
-						}
 					}
 				}
 				delete[] rgch;
@@ -2869,10 +2871,10 @@ public:  // we can make anything public since the whole class is private to this
 				}
 				OLECHAR ch;
 				CheckHr(m_pts->Fetch(ichLastBox, ichLastBox + 1, &ch));
-				ILgCharacterPropertyEnginePtr qchprpeng;
-				qchprpeng.CreateInstance(CLSID_LgIcuCharPropEngine);
+				ILgLineBreakerPtr qlb;
+				qlb.CreateInstance(CLSID_LgLineBreaker);
 				byte lbp;
-				CheckHr(qchprpeng->GetLineBreakProps(&ch, 1, &lbp));
+				CheckHr(qlb->GetLineBreakProps(&ch, 1, &lbp));
 				lbp &= 0x1f; // strip 'is it a space' high bit
 				// If it's a space (or other character which provides a break opportunity after),
 				// go ahead and break. Otherwise treat as bad break.
@@ -5019,19 +5021,13 @@ bool VwParagraphBox::WsNearStartOfLine(IVwTextSource * pts, VwBox * pboxStartOfL
 	if (!psbox)
 		return true;
 
-	// NOTE: This depends only on the Unicode general category, not on the language.
-	ILgCharacterPropertyEnginePtr qchprpeng;
-	qchprpeng.CreateInstance(CLSID_LgIcuCharPropEngine);
-
 	int ichMin = psbox->IchMin();
-	ComBool fIsSep;
 
 	OLECHAR * rgch = NewObj OLECHAR[ichChange - ichMin];
 	CheckHr(pts->Fetch(ichMin, ichChange, rgch));
 	for (int ich = 0; ich < ichChange - ichMin; ich++)
 	{
-		CheckHr(qchprpeng->get_IsSeparator(rgch[ich], &fIsSep));
-		if (fIsSep)
+		if (StrUtil::IsSeparator(rgch[ich]))
 		{
 			delete[] rgch;
 			return true;
@@ -8403,7 +8399,7 @@ class SpellCheckMethod
 	ICheckWordPtr m_qcw; // last dict obtained.
 	ILgWritingSystemFactoryPtr m_qwsf;
 	int m_ws; // ws to which m_qcpe applies.
-	ILgCharacterPropertyEnginePtr m_qcpe; // valid for chars from m_ich to m_ichLimRun
+	ILgWritingSystemPtr m_qws; // valid for chars from m_ich to m_ichLimRun
 public:
 	SpellCheckMethod(VwParagraphBox * pvpbox)
 	{
@@ -8423,7 +8419,7 @@ public:
 	{
 	}
 
-	void EnsureRightCpe()
+	void EnsureRightWs()
 	{
 		if (m_ich < m_ichLimRun)
 			return;
@@ -8433,8 +8429,7 @@ public:
 		if (chrp.ws == m_ws)
 			return; // new run, but same WS.
 		m_ws = chrp.ws;
-		ILgWritingSystemPtr qws;
-		CheckHr(m_qwsf->get_CharPropEngine(m_ws, &m_qcpe));
+		CheckHr(m_qwsf->get_EngineOrNull(m_ws, &m_qws));
 	}
 
 
@@ -8446,10 +8441,14 @@ public:
 		bool fInWord = false;
 		for (m_ich = 0; m_ich < m_cch; m_ich++)
 		{
-			EnsureRightCpe();
-			ComBool isWordForming;
+			EnsureRightWs();
 			OLECHAR ch = m_text[m_ich];
-			CheckHr(m_qcpe->get_IsWordForming(ch, &isWordForming));
+			ComBool isWordForming;
+			if (m_qws)
+				CheckHr(m_qws->get_IsWordForming(ch, &isWordForming));
+			else
+				isWordForming = StrUtil::IsWordForming(ch);
+
 			// For consistency with double-click, and so we can detect embedded verse numbers, we
 			// also consider numeric characters word-forming here. Often they are eliminated
 			// because a style marks them as do-not-check. We also include the special character
@@ -8460,7 +8459,7 @@ public:
 				if (ch == L'\xFEFF' || ch == L'\xFFFC')
 					isWordForming = true;
 				else
-					CheckHr(m_qcpe->get_IsNumber(ch, &isWordForming));
+					isWordForming = StrUtil::IsNumber(ch);
 			}
 			if (isWordForming)
 			{
@@ -9407,13 +9406,6 @@ int VwParagraphBox::BorderBottom()
 	return 0;
 }
 
-// qsort function for sorting an array of pointers to integers by the magnitude of the
-// integers pointed to.
-int compareIntPtrs(const void * ppv1, const void * ppv2)
-{
-	return **((int **)ppv1) - **((int **)ppv2);
-}
-
 /*----------------------------------------------------------------------------------------------
 	Normalize each string in your text source to Nfd (limitation: there may possibly be
 	non-normalized sequences crossing string boundaries). Fix as well as possible any selections
@@ -9620,126 +9612,6 @@ void VwParagraphBox::Search(VwPattern * ppat, IVwSearchKiller * pxserkl)
 		CheckHr(ppat->put_StoppedAtLimit(true));
 	}
 }
-
-/*----------------------------------------------------------------------------------------------
-	Write the contents of a paragraph box to the stream in WorldPad XML format.
-
-	@param pstrm Pointer to an IStream object for output.
-----------------------------------------------------------------------------------------------*/
-// ENHANCE: check for internal structure, such as pictures or interlinear text.
-void VwParagraphBox::WriteWpxText(IStream * pstrm)
-{
-	AssertPtr(pstrm);
-	AssertPtr(m_qts);
-
-	ILgWritingSystemFactoryPtr qwsf;
-	GetWritingSystemFactory(&qwsf);
-
-	FormatToStream(pstrm, "  <StTxtPara>%n");
-	FormatToStream(pstrm, "    <StyleRules1002>%n");
-	ITsTextPropsPtr qttp;
-	CheckHr(m_qzvps->get_TextProps(&qttp));
-	qttp->WriteAsXml(pstrm, qwsf, 6);
-	FormatToStream(pstrm, "    </StyleRules1002>%n");
-	FormatToStream(pstrm, "    <Contents1003>%n");
-	FormatToStream(pstrm, "      <Str>");
-
-	LgCharRenderProps chrpPara;
-	int nVal;
-	int nVar;
-	chrpPara.clrBack = 0;
-	chrpPara.clrFore = 0;
-	chrpPara.ttvBold = 0;
-	chrpPara.ttvItalic = 0;
-	chrpPara.ssv = 0;
-	chrpPara.fWsRtl = 0;
-	chrpPara.nDirDepth = 0;
-	chrpPara.dympHeight = 0;
-	chrpPara.dympOffset = 0;
-	HRESULT hr = qttp->GetIntPropValues(ktptWs, &nVar, &nVal);
-	if (hr == S_OK)
-	{
-		chrpPara.ws = nVal;
-	}
-	hr = qttp->GetIntPropValues(ktptBackColor, &nVar, &nVal);
-	if (hr == S_OK)
-		chrpPara.clrBack = nVal;
-	hr = qttp->GetIntPropValues(ktptForeColor, &nVar, &nVal);
-	if (hr == S_OK)
-		chrpPara.clrFore = nVal;
-	hr = qttp->GetIntPropValues(ktptBold, &nVar, &nVal);
-	if (hr == S_OK)
-		chrpPara.ttvBold = nVal;
-	hr = qttp->GetIntPropValues(ktptItalic, &nVar, &nVal);
-	if (hr == S_OK)
-		chrpPara.ttvItalic = nVal;
-	hr = qttp->GetIntPropValues(ktptSuperscript, &nVar, &nVal);
-	if (hr == S_OK)
-		chrpPara.ssv = (byte)nVal;
-	hr = qttp->GetIntPropValues(ktptRightToLeft, &nVar, &nVal);
-	if (hr == S_OK)
-		chrpPara.fWsRtl = (byte)nVal;
-	hr = qttp->GetIntPropValues(ktptDirectionDepth, &nVar, &nVal);
-	if (hr == S_OK)
-		chrpPara.nDirDepth = nVal;
-	hr = qttp->GetIntPropValues(ktptFontSize, &nVar, &nVal);
-	if (hr == S_OK)
-		chrpPara.dympHeight = nVal;
-	hr = qttp->GetIntPropValues(ktptOffset, &nVar, &nVal);
-	if (hr == S_OK)
-		chrpPara.dympOffset = nVal;
-	StrUniBuf stubFont;
-	SmartBstr sbstr;
-	hr = qttp->GetStrPropValue(ktptFontFamily, &sbstr);
-	if (hr == S_OK)
-		stubFont.Assign(sbstr.Chars(), sbstr.Length());
-	int cchSeg;
-	CheckHr(m_qts->get_Length(&cchSeg));
-	Vector<OLECHAR> vch;
-	vch.Resize(cchSeg);
-	CheckHr(m_qts->Fetch(0, cchSeg, vch.Begin()));
-	int ich;
-	int ichMinChar;
-	int ichLimChar;
-	LgCharRenderProps chrp;
-	StrUniBuf stub;
-	for (ich = 0; ich < cchSeg; ich = ichLimChar)
-	{
-		CheckHr(m_qts->GetCharProps(ich, &chrp, &ichMinChar, &ichLimChar));
-		Assert(ichMinChar <= ich);
-		Assert(ichLimChar > ich);
-		FormatToStream(pstrm, "<Run");
-		FwXml::WriteIntTextProp(pstrm, qwsf, ktptWs, ktpvDefault, chrp.ws);
-		if (chrp.clrBack != chrpPara.clrBack)
-			FwXml::WriteIntTextProp(pstrm, qwsf, ktptBackColor, 0, chrp.clrBack);
-		if (chrp.clrFore != chrpPara.clrFore)
-			FwXml::WriteIntTextProp(pstrm, qwsf, ktptForeColor, 0, chrp.clrFore);
-		if (chrp.ttvBold != chrpPara.ttvBold)
-			FwXml::WriteIntTextProp(pstrm, qwsf, ktptBold, 0, chrp.ttvBold);
-		if (chrp.ttvItalic != chrpPara.ttvItalic)
-			FwXml::WriteIntTextProp(pstrm, qwsf, ktptItalic, 0, chrp.ttvItalic);
-		if (chrp.ssv != chrpPara.ssv)
-			FwXml::WriteIntTextProp(pstrm, qwsf, ktptSuperscript, 0, chrp.ssv);
-		if (chrp.fWsRtl != chrpPara.fWsRtl)
-			FwXml::WriteIntTextProp(pstrm, qwsf, ktptRightToLeft, 0, chrp.fWsRtl ? 1 : 0);
-		if (chrp.nDirDepth != chrpPara.nDirDepth)
-			FwXml::WriteIntTextProp(pstrm, qwsf, ktptDirectionDepth, 0, chrp.nDirDepth);
-		if (chrp.dympHeight != chrpPara.dympHeight)
-			FwXml::WriteIntTextProp(pstrm, qwsf, ktptFontSize, ktpvMilliPoint, chrp.dympHeight);
-		if (chrp.dympOffset != chrpPara.dympOffset)
-			FwXml::WriteIntTextProp(pstrm, qwsf, ktptOffset, ktpvMilliPoint, chrp.dympOffset);
-		stub.Assign(chrp.szFaceName);
-		if (stub != stubFont)
-			FwXml::WriteStrTextProp(pstrm, ktptFontFamily, stub.Bstr());
-		FormatToStream(pstrm, "/>");
-		WriteXmlUnicode(pstrm, vch.Begin() + ich, ichLimChar - ich);
-	}
-
-	FormatToStream(pstrm, "</Str>%n");
-	FormatToStream(pstrm, "    </Contents1003>%n");
-	FormatToStream(pstrm, "  </StTxtPara>%n");
-}
-
 
 /*----------------------------------------------------------------------------------------------
 	Draw the borders, and fill the interior with the background color. Paragraphs override

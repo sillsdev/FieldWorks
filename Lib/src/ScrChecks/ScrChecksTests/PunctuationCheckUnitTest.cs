@@ -8,7 +8,7 @@ using System.Text;
 using NUnit.Framework;
 using System.Diagnostics;
 using System.IO;
-using SILUBS.SharedScrUtils;
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace SILUBS.ScriptureChecks
 {

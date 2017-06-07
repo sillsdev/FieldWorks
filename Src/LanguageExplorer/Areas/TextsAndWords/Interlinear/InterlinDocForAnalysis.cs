@@ -10,14 +10,16 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.Text;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
-using Rect = SIL.FieldWorks.Common.COMInterfaces.Rect;
+using Rect = SIL.FieldWorks.Common.ViewsInterfaces.Rect;
 
 #if __MonoCS__
 using SIL.FieldWorks.Common.FwUtils;
@@ -1477,10 +1479,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			int wsText = WritingSystemServices.ActualWs(Cache, WritingSystemServices.kwsVernInParagraph,
 				m_hvoRoot, StTextTags.kflidParagraphs);
 
-			ITsStrBldr bldr = TsStrBldrClass.Create();
-			ITsStrFactory tsf = TsStrFactoryClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bool fOpenPunc = false;
-			ITsString space = TsStringUtils.MakeTss(" ", ws);
+			ITsString space = TsStringUtils.MakeString(" ", ws);
 			foreach (var analysis in seg.AnalysesRS)
 			{
 				ITsString insert = null;

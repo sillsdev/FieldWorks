@@ -14,11 +14,12 @@ using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.Xml.Linq;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.Text;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
@@ -133,15 +134,15 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		public void FinishInit(XElement configurationNode)
 		{
 			var textStyle = configurationNode.Attribute("textStyle");
-			if (textStyle != null)
-			{
-				TextStyle = textStyle.Value;
-				if (m_atomicReferenceVc != null)
+				if (textStyle != null)
 				{
-					m_atomicReferenceVc.TextStyle = textStyle.Value;
+					TextStyle = textStyle.Value;
+					if (m_atomicReferenceVc != null)
+					{
+						m_atomicReferenceVc.TextStyle = textStyle.Value;
+					}
 				}
 			}
-		}
 
 		#endregion // Construction, initialization, and disposal
 
@@ -156,8 +157,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				return;
 
 			SetReferenceVc();
-			m_rootb = VwRootBoxClass.Create();
-			m_rootb.SetSite(this);
 			m_rootb.DataAccess = GetDataAccess();
 			SetRootBoxObj();
 		}
@@ -336,14 +335,13 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 						(int)FwTextPropVar.ktpvDefault,
 						(int)TptEditable.ktptNotEditable);
 					ITsString tss;
-					ITsStrFactory tsf = m_cache.TsStrFactory;
 					Debug.Assert(hvo != 0);
 					// Use reflection to get a prebuilt name if we can.  Otherwise
 					// settle for piecing together a string.
 					Debug.Assert(m_cache != null);
 					var obj = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo);
 					Debug.Assert(obj != null);
-					System.Type type = obj.GetType();
+					Type type = obj.GetType();
 					System.Reflection.PropertyInfo pi = type.GetProperty("TsName",
 						System.Reflection.BindingFlags.Instance |
 						System.Reflection.BindingFlags.Public |
@@ -369,7 +367,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 							object info = pi.GetValue(obj, null);
 							// handle the object type
 							if (info is String)
-								tss = tsf.MakeString((string)info, ws);
+								tss = TsStringUtils.MakeString((string) info, ws);
 							else if (info is IMultiUnicode)
 							{
 								var accessor = info as IMultiUnicode;
@@ -387,7 +385,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 							tss = obj.ShortNameTSS; // prefer this, which is hopefully smart about wss.
 							if (tss == null || tss.Length == 0)
 							{
-								tss = tsf.MakeString(obj.ShortName, ws);
+								tss = TsStringUtils.MakeString(obj.ShortName, ws);
 							}
 						}
 					}

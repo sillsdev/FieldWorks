@@ -11,7 +11,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.Reporting;
@@ -997,17 +997,6 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		public int RedoableSequenceCount
 		{
 			get { return m_redoBundles.Count; }
-		}
-
-		/// <summary>
-		/// This will return the current UndoGrouper for the AH if one exists, otherwise returns null.
-		/// This will set the UndoGrouper for this AH.
-		///</summary>
-		/// <returns>A IUndoGrouper </returns>
-		public IUndoGrouper UndoGrouper
-		{
-			get { throw new NotSupportedException("'UndoGrouper getter' is not supported."); }
-			set { throw new NotSupportedException("'UndoGrouper setter' is not supported."); }
 		}
 
 		/// <summary>

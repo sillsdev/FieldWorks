@@ -1,15 +1,10 @@
-// Copyright (c) 2004-2013 SIL International
+// Copyright (c) 2004-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ArchiveMaintenanceDialog.cs
-// Responsibility: TE team
 
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
-
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
@@ -18,6 +13,7 @@ using SIL.Utils;
 using SIL.FieldWorks.FDO;
 using System.Diagnostics;
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.TE
 {
@@ -27,7 +23,7 @@ namespace SIL.FieldWorks.TE
 	/// Dialog for displaying and managing saved versions.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public class SavedVersionsDialog : Form, IBookVersionAgent, IFWDisposable
+	public class SavedVersionsDialog : Form, IBookVersionAgent
 	{
 		#region Data members
 		/// <summary>the tree view</summary>

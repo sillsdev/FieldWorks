@@ -1,20 +1,20 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.Phonology;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Framework.DetailControls;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Validation;
 
 namespace LanguageExplorer.Areas
 {
@@ -314,8 +314,6 @@ namespace LanguageExplorer.Areas
 
 			#endregion INotifyControlInCurrentSlice implementation
 
-			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-				Justification="FindForm() returns a reference")]
 			private void DoValidation(bool refresh)
 			{
 				Form frm = FindForm();
@@ -359,17 +357,15 @@ namespace LanguageExplorer.Areas
 			{
 				CheckDisposed();
 
-				base.MakeRoot();
-
 				if (m_fdoCache == null || DesignMode)
 					return;
 
 				// A crude way of making sure the property we want is loaded into the cache.
 				m_env = m_fdoCache.ServiceLocator.GetInstance<IPhEnvironmentRepository>().GetObject(m_hvoObj);
 				m_vc = new StringRepSliceVc();
-				// Review JohnT: why doesn't the base class do this??
-				m_rootb = VwRootBoxClass.Create();
-				m_rootb.SetSite(this);
+
+				base.MakeRoot();
+
 				// And maybe this too, at least by default?
 				m_rootb.DataAccess = m_fdoCache.MainCacheAccessor;
 

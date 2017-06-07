@@ -9,7 +9,7 @@
 // </remarks>
 // ---------------------------------------------------------------------------------------------
 using NUnit.Framework;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Text;
 using SIL.FieldWorks.FDO.DomainServices;
 
 namespace SIL.FieldWorks.FDO.FDOTests
@@ -64,7 +64,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			// This is a test string for ReferenceAdjusterService tests.
 
 			var hvoVernWs = Cache.DefaultVernWs;
-			m_txtPara.Contents = TsStringUtils.MakeTss("This is a test string for ReferenceAdjusterService tests.", hvoVernWs);
+			m_txtPara.Contents = TsStringUtils.MakeString("This is a test string for ReferenceAdjusterService tests.", hvoVernWs);
 			ParseText();
 		}
 

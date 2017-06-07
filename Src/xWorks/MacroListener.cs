@@ -4,11 +4,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
-using System.Xml;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
@@ -21,8 +20,6 @@ namespace SIL.FieldWorks.XWorks
 	/// To create a macro, make an Assembly with a name starting with "Macro" that implements IFlexMacro, build it,
 	/// and drop the DLL in the FieldWorks root directory.
 	/// </summary>
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification="m_mediator is a reference")]
 	public class MacroListener : IFlexComponent
 	{
 		#region Implementation of IPropertyTableProvider

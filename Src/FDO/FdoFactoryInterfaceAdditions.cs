@@ -5,8 +5,8 @@
 using System;
 using System.Collections.Generic;
 using System.Xml;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.WritingSystems;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.DomainServices;
 
 namespace SIL.FieldWorks.FDO
@@ -100,6 +100,14 @@ namespace SIL.FieldWorks.FDO
 		ILexRefType Create(Guid guid, ILexRefType owner);
 	}
 
+	public partial interface ILexReferenceFactory
+	{
+		/// <summary>
+		/// Constructor to build a ILexReference with specific attributes
+		/// </summary>
+		ILexReference Create(Guid guid, ILexRefType owner);
+	}
+
 	/// <summary>
 	/// Internal interface for use by merging code to create a copy of a CmPerson that exists in another project.
 	/// </summary>
@@ -127,6 +135,19 @@ namespace SIL.FieldWorks.FDO
 		/// It will be added to the end of the SubPossibilities list.
 		/// </summary>
 		ICmPossibility Create(Guid guid, ICmPossibility owner);
+	}
+	public partial interface ICmCustomItemFactory
+	{
+		/// <summary>
+		/// Create a new ICmCustomItem instance with the given guid and owner.
+		/// It will be added to the end of the Possibilities list.
+		/// </summary>
+		ICmPossibility Create(Guid guid, ICmPossibilityList owner);
+		/// <summary>
+		/// Create a new ICmCustomItem instance with the given guid and owner.
+		/// It will be added to the end of the SubPossibilities list.
+		/// </summary>
+		ICmPossibility Create(Guid guid, ICmCustomItem owner);
 	}
 
 	/// <summary>

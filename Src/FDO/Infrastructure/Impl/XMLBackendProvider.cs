@@ -1,9 +1,6 @@
-// Copyright (c) 2010-2013 SIL International
+// Copyright (c) 2010-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: XMLBackendProvider.cs
-// Responsibility: FW Team
 
 using System;
 using System.Collections.Generic;
@@ -13,7 +10,6 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
-using SIL.CoreImpl;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
 using SIL.IO.FileLock;
 using SIL.Lexicon;
@@ -252,7 +248,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 								reader.MoveToElement();
 								cfiList.Add(cfi);
 							}
-							RegisterOriginalCustomProperties(cfiList);
+							RegisterOriginalCustomProperties(cfiList, m_startupVersionNumber);
 						}
 					}
 
@@ -370,14 +366,14 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			}
 			// No backup, or the user didn't want to try. Show Unable to Open Project dialog box.
 			UnlockProject();
-			throw new StartupException(message);
+			throw new FdoInitializationException(message);
 		}
 
 		internal virtual void LockProject()
 		{
 			m_fileLock = SimpleFileLock.CreateFromFilePath(ProjectId.Path + ".lock");
 			if (!m_fileLock.TryAcquireLock())
-				throw new FdoFileLockedException(String.Format(Properties.Resources.kstidLockFileLocked, ProjectId.Name), true);
+				throw new FdoFileLockedException(string.Format(Properties.Resources.kstidLockFileLocked, ProjectId.Name));
 			m_lastWriteTime = File.GetLastWriteTimeUtc(ProjectId.Path);
 		}
 
@@ -460,12 +456,8 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		protected void PerformCommit(HashSet<ICmObjectOrSurrogate> newbies, HashSet<ICmObjectOrSurrogate> dirtballs, HashSet<ICmObjectId> goners,
 			IEnumerable<CustomFieldInfo> customFields)
 		{
-			if (CommitThread == null || !CommitThread.WaitForNextRequest())
+			if (CommitThread == null)
 			{
-				// If thread is already dead, then WaitForNextRequest will return false, but we still have to call Dispose() on it.
-				if (CommitThread != null)
-					CommitThread.Dispose();
-
 				CommitThread = new ConsumerThread<int, CommitWork>(Work);
 				CommitThread.Start();
 			}

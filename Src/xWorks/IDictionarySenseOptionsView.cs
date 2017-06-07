@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -14,7 +14,13 @@ namespace SIL.FieldWorks.XWorks
 
 		bool SenseInPara { get; set; }
 
+		bool FirstSenseInline { get; set; }
+
 		string NumberingStyle { get; set; }
+
+		string ParentSenseNumberingStyle { get; set; }
+
+		bool ParentSenseNumberingStyleVisible { set; }
 
 		string BeforeText { get; set; }
 
@@ -29,9 +35,13 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>Populate the Sense Number Style dropdown</summary>
 		void SetStyles(List<StyleComboItem> styles, string selectedStyle);
 
+		bool FirstSenseInlineVisible { set; }
+
 		event EventHandler BeforeTextChanged;
 
 		event EventHandler NumberingStyleChanged;
+
+		event EventHandler ParentSenseNumberingStyleChanged;
 
 		event EventHandler AfterTextChanged;
 
@@ -46,6 +56,6 @@ namespace SIL.FieldWorks.XWorks
 
 		event EventHandler SenseInParaChanged;
 
-
+		event EventHandler FirstSenseInlineChanged;
 	}
 }

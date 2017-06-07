@@ -10,13 +10,15 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using NUnit.Framework;
+using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Test.TestUtils;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
 
@@ -35,7 +37,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// Possible footnote fragments
 		/// </summary>
 		///  ----------------------------------------------------------------------------------------
-		private enum FootnoteFrags: int
+		private enum FootnoteFrags
 		{
 			/// <summary>Scripture</summary>
 			kfrScripture = 100, // debug is easier if different range from tags
@@ -188,9 +190,6 @@ namespace SIL.FieldWorks.Common.RootSites
 
 				base.MakeRoot();
 
-				m_rootb = VwRootBoxClass.Create();
-				m_rootb.SetSite(this);
-
 				// Set up a new view constructor.
 				m_footnoteVc = new DummyFootnoteVc(m_fdoCache);
 				m_footnoteVc.DisplayTranslation = m_displayTranslation;
@@ -254,16 +253,15 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			IScrFootnote footnote = Cache.ServiceLocator.GetInstance<IScrFootnoteFactory>().Create();
 			m_scr.ScriptureBooksOS[0].FootnotesOS.Add(footnote);
-			footnote.FootnoteMarker = Cache.TsStrFactory.MakeString("a", Cache.WritingSystemFactory.GetWsFromStr("en"));
+			footnote.FootnoteMarker = TsStringUtils.MakeString("a", Cache.WritingSystemFactory.GetWsFromStr("en"));
 
 			// Add the guid property so we can get it out as a string.
-			ITsPropsBldr propsBldr = TsPropsBldrClass.Create();
-			byte[] objData = TsStringUtils.GetObjData(footnote.Guid, 1);
+			ITsPropsBldr propsBldr = TsStringUtils.MakePropsBldr();
+			byte[] objData = TsStringUtils.GetObjData(footnote.Guid, FwObjDataTypes.kodtPictEvenHot);
 			propsBldr.SetStrPropValueRgch(1, objData, objData.Length);
 
 			// Get the guid property as a string.
-			string sObjData;
-			propsBldr.GetStrPropValue(1, out sObjData);
+			string sObjData = propsBldr.GetStrPropValue(1);
 
 			StVc vc = new StVc(Cache.WritingSystemFactory.UserWs) { Cache = Cache };
 			ITsString footnoteMarker = vc.GetStrForGuid(sObjData.Substring(1));
@@ -294,7 +292,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			IScrBook book = m_scr.ScriptureBooksOS[0];
 			IScrFootnote footnote = AddFootnote(book, (IStTxtPara)book.TitleOA.ParagraphsOS[0], 0, "This is a footnote");
-			footnote.FootnoteMarker = Cache.TsStrFactory.MakeString("a", Cache.WritingSystemFactory.GetWsFromStr("en"));
+			footnote.FootnoteMarker = TsStringUtils.MakeString("a", Cache.WritingSystemFactory.GetWsFromStr("en"));
 			// Prepare the test by creating a footnote view
 			FwStyleSheet styleSheet = new FwStyleSheet();
 			styleSheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles);
@@ -304,49 +302,49 @@ namespace SIL.FieldWorks.Common.RootSites
 			PubSubSystemFactory.CreatePubSubSystem(out publisher, out subscriber);
 			using (var propertyTable = PropertyTableFactory.CreatePropertyTable(publisher))
 			{
-				using (DummyFootnoteView footnoteView = new DummyFootnoteView(Cache))
-				{
-					footnoteView.StyleSheet = styleSheet;
-					footnoteView.Visible = false;
+			using (DummyFootnoteView footnoteView = new DummyFootnoteView(Cache))
+			{
+				footnoteView.StyleSheet = styleSheet;
+				footnoteView.Visible = false;
 					footnoteView.InitializeFlexComponent(new FlexComponentParameters(propertyTable, publisher, subscriber));
 
-					// We don't actually want to show it, but we need to force the view to create the root
-					// box and lay it out so that various test stuff can happen properly.
-					footnoteView.MakeRoot();
-					footnoteView.CallLayout();
+				// We don't actually want to show it, but we need to force the view to create the root
+				// box and lay it out so that various test stuff can happen properly.
+				footnoteView.MakeRoot();
+				footnoteView.CallLayout();
 
-					// Select the footnote marker and some characters of the footnote paragraph
-					footnoteView.RootBox.MakeSimpleSel(true, false, false, true);
-					SelectionHelper selHelper = SelectionHelper.GetSelectionInfo(null, footnoteView);
-					selHelper.IchAnchor = 0;
-					selHelper.IchEnd = 5;
-					SelLevInfo[] selLevInfo = new SelLevInfo[3];
-					Assert.AreEqual(4, selHelper.GetNumberOfLevels(SelectionHelper.SelLimitType.End));
-					Array.Copy(selHelper.GetLevelInfo(SelectionHelper.SelLimitType.End), 1, selLevInfo, 0, 3);
-					selHelper.SetLevelInfo(SelectionHelper.SelLimitType.End, selLevInfo);
-					selHelper.SetTextPropId(SelectionHelper.SelLimitType.End,
-						StTxtParaTags.kflidContents);
-					selHelper.SetSelection(true);
+				// Select the footnote marker and some characters of the footnote paragraph
+				footnoteView.RootBox.MakeSimpleSel(true, false, false, true);
+				SelectionHelper selHelper = SelectionHelper.GetSelectionInfo(null, footnoteView);
+				selHelper.IchAnchor = 0;
+				selHelper.IchEnd = 5;
+				SelLevInfo[] selLevInfo = new SelLevInfo[3];
+				Assert.AreEqual(4, selHelper.GetNumberOfLevels(SelectionHelper.SelLimitType.End));
+				Array.Copy(selHelper.GetLevelInfo(SelectionHelper.SelLimitType.End), 1, selLevInfo, 0, 3);
+				selHelper.SetLevelInfo(SelectionHelper.SelLimitType.End, selLevInfo);
+				selHelper.SetTextPropId(SelectionHelper.SelLimitType.End,
+					StTxtParaTags.kflidContents);
+				selHelper.SetSelection(true);
 
-					// Now the real test:
-					IVwSelection sel = footnoteView.RootBox.Selection;
-					ITsString tss;
-					sel.GetSelectionString(out tss, string.Empty);
-					Assert.AreEqual("a ", tss.Text.Substring(0, 2));
+				// Now the real test:
+				IVwSelection sel = footnoteView.RootBox.Selection;
+				ITsString tss;
+				sel.GetSelectionString(out tss, string.Empty);
+				Assert.AreEqual("a ", tss.Text.Substring(0, 2));
 
-					// make sure the marker and the space are read-only (maybe have to select each run
-					// separately to make this test truly correct)
-					ITsTextProps[] vttp;
-					IVwPropertyStore[] vvps;
-					int cttp;
-					SelectionHelper.GetSelectionProps(sel, out vttp, out vvps, out cttp);
-					Assert.IsTrue(cttp >= 2);
-					Assert.IsFalse(SelectionHelper.IsEditable(vttp[0], vvps[0]),
-						"Footnote marker is not read-only");
-					Assert.IsFalse(SelectionHelper.IsEditable(vttp[1], vvps[1]),
-						"Space after marker is not read-only");
-				}
+				// make sure the marker and the space are read-only (maybe have to select each run
+				// separately to make this test truly correct)
+				ITsTextProps[] vttp;
+				IVwPropertyStore[] vvps;
+				int cttp;
+				SelectionHelper.GetSelectionProps(sel, out vttp, out vvps, out cttp);
+				Assert.IsTrue(cttp >= 2);
+				Assert.IsFalse(SelectionHelper.IsEditable(vttp[0], vvps[0]),
+					"Footnote marker is not read-only");
+				Assert.IsFalse(SelectionHelper.IsEditable(vttp[1], vvps[1]),
+					"Space after marker is not read-only");
 			}
+		}
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -365,7 +363,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			// add a translation to the footnote
 			ICmTranslation translation = para.GetOrCreateBT();
 			int analWs = Cache.DefaultAnalWs;
-			translation.Translation.set_String(analWs, TsStringHelper.MakeTSS("abcde", analWs));
+			translation.Translation.set_String(analWs, TsStringUtils.MakeString("abcde", analWs));
 
 			FwStyleSheet styleSheet = new FwStyleSheet();
 			styleSheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles);
@@ -376,27 +374,27 @@ namespace SIL.FieldWorks.Common.RootSites
 			PubSubSystemFactory.CreatePubSubSystem(out publisher, out subscriber);
 			using (var propertyTable = PropertyTableFactory.CreatePropertyTable(publisher))
 			{
-				using (DummyFootnoteView footnoteView = new DummyFootnoteView(Cache, true))
-				{
-					footnoteView.StyleSheet = styleSheet;
-					footnoteView.Visible = false;
+			using (DummyFootnoteView footnoteView = new DummyFootnoteView(Cache, true))
+			{
+				footnoteView.StyleSheet = styleSheet;
+				footnoteView.Visible = false;
 					footnoteView.InitializeFlexComponent(new FlexComponentParameters(propertyTable, publisher, subscriber));
 
-					// We don't actually want to show it, but we need to force the view to create the root
-					// box and lay it out so that various test stuff can happen properly.
-					footnoteView.MakeRoot();
-					footnoteView.CallLayout();
+				// We don't actually want to show it, but we need to force the view to create the root
+				// box and lay it out so that various test stuff can happen properly.
+				footnoteView.MakeRoot();
+				footnoteView.CallLayout();
 
-					// Select the footnote marker and some characters of the footnote paragraph
-					footnoteView.RootBox.MakeSimpleSel(true, true, false, true);
+				// Select the footnote marker and some characters of the footnote paragraph
+				footnoteView.RootBox.MakeSimpleSel(true, true, false, true);
 
-					// Now the real test:
-					IVwSelection sel = footnoteView.RootBox.Selection.GrowToWord();
-					ITsString tss;
-					sel.GetSelectionString(out tss, string.Empty);
-					Assert.AreEqual("abcde", tss.Text);
-				}
+				// Now the real test:
+				IVwSelection sel = footnoteView.RootBox.Selection.GrowToWord();
+				ITsString tss;
+				sel.GetSelectionString(out tss, string.Empty);
+				Assert.AreEqual("abcde", tss.Text);
 			}
+		}
 		}
 
 		/// ------------------------------------------------------------------------------------

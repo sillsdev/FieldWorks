@@ -1,9 +1,6 @@
-// Copyright (c) 2009-2013 SIL International
+// Copyright (c) 2009-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: FdoRepositoryAdditions.cs
-// Responsibility: FW Team
 //
 // <remarks>
 // Add additional methods/properties to Repository interfaces in this file.
@@ -11,17 +8,19 @@
 // </remarks>
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.DomainImpl;
-using SIL.FieldWorks.FDO.Validation;
 using SIL.Utils;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.CoreImpl;
-using System.Diagnostics.CodeAnalysis;
+using SIL.CoreImpl.Cellar;
+using SIL.CoreImpl.Phonology;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
 
 namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 {
@@ -180,7 +179,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		/// <summary>
 		/// Flids on which EnsureCompleteIncomingRefs has been called.
 		/// </summary>
-		Set<int> m_completeIncomingRefs = new Set<int>();
+		private readonly HashSet<int> m_completeIncomingRefs = new HashSet<int>();
 		/// <summary>
 		/// Objects created (not fluffed up from an external store) since this repo was set up.
 		/// Note that some of these may have been deleted. That's rare enough that we live with
@@ -739,7 +738,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 							revIndex.WritingSystem = wsObj.Id;
 							revIndex.Name.SetUserWritingSystem(wsObj.DisplayLabel);
 							revIndex.PartsOfSpeechOA = m_cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
-							revIndex.PartsOfSpeechOA.Name.set_String(ws, m_cache.TsStrFactory.MakeString(
+							revIndex.PartsOfSpeechOA.Name.set_String(ws, TsStringUtils.MakeString(
 								String.Format(Strings.ksReversalIndexPOSListName, wsObj.DisplayLabel), ws));
 							revIndex.PartsOfSpeechOA.ItemClsid = PartOfSpeechTags.kClassId;
 							revIndex.PartsOfSpeechOA.IsSorted = true;
@@ -809,7 +808,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			if (possiblePhrase == null || possiblePhrase.Length == 0 || m_firstWordToPhrases == null)
 				return;
 			string firstWordLowered;
-			var firstWord = ParagraphParser.FirstWord(possiblePhrase, m_cache.WritingSystemFactory, out firstWordLowered);
+			var firstWord = ParagraphParser.FirstWord(possiblePhrase, m_cache.ServiceLocator.WritingSystemManager, out firstWordLowered);
 			if (firstWordLowered == null || firstWordLowered.Length == possiblePhrase.Length)
 				return;
 			HashSet<ITsString> phrases;
@@ -828,7 +827,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			if (possiblePhrase == null || possiblePhrase.Length == 0 || m_firstWordToPhrases == null)
 				return;
 			string firstWordLowered;
-			var firstWord = ParagraphParser.FirstWord(possiblePhrase, m_cache.WritingSystemFactory, out firstWordLowered);
+			var firstWord = ParagraphParser.FirstWord(possiblePhrase, m_cache.ServiceLocator.WritingSystemManager, out firstWordLowered);
 			if (firstWordLowered.Length == possiblePhrase.Length)
 				return;
 			HashSet<ITsString> phrases;
@@ -849,7 +848,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 				string lcForm = cf.ToLower(tssForm.Text);
 				// we want to look up the lower case form only if the given form was not already lowercased.
 				if (lcForm != tssForm.Text)
-					TryGetObject(TsStringUtils.MakeTss(lcForm, ws), false, out wf);
+					TryGetObject(TsStringUtils.MakeString(lcForm, ws), false, out wf);
 			}
 			return wf != null;
 		}
@@ -967,7 +966,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 
 			// FWR-3119 Won't find a match if 'form' with diacritics is NFC
 			// and wfiWordforms are NFD! This causes AddToDictionary to add duplicate each time.
-			var decompForm = Cache.TsStrFactory.MakeString(form, ws).get_NormalizedForm(
+			var decompForm = TsStringUtils.MakeString(form, ws).get_NormalizedForm(
 				FwNormalizationMode.knmNFD).Text;
 
 			return (from wf in AllInstances()
@@ -1133,7 +1132,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		/// LexEntry/LexSense in ShowComplexFormsIn.
 		public IEnumerable<ILexEntry> GetVisibleComplexFormEntries(ICmObject mainEntryOrSense)
 		{
-			var retval = new Set<ILexEntry>();
+			var retval = new HashSet<ILexEntry>();
 			foreach (ILexEntryRef ler in m_cache.ServiceLocator.GetInstance<ILexEntryRefRepository>().AllInstances())
 			{
 				if (ler.RefType == LexEntryRefTags.krtComplexForm && ler.ShowComplexFormsInRS.Contains(mainEntryOrSense))
@@ -1154,7 +1153,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 				candidates = entry.ComplexFormRefsWithThisComponentEntry;
 			else
 				candidates = ((LexSense) mainEntryOrSense).ComplexFormRefsWithThisComponentSense;
-			var retval = new Set<ILexEntry>();
+			var retval = new HashSet<ILexEntry>();
 			foreach (ILexEntryRef ler in candidates)
 			{
 				if (ler.RefType == LexEntryRefTags.krtComplexForm)
@@ -1168,7 +1167,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 
 		// A temporary cache for fast lookup of headwords (for sorting).
 		// Cleared
-		Dictionary<ILexEntry, string> m_cachedHeadwords = new Dictionary<ILexEntry, string>();
+		private ConcurrentDictionary<ILexEntry, string> m_cachedHeadwords = new ConcurrentDictionary<ILexEntry, string>();
 
 		internal void SomeHeadWordChanged()
 		{
@@ -1181,6 +1180,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			if (m_cachedHeadwords.TryGetValue(entry, out result))
 				return result;
 			result = entry.HeadWord.Text;
+			Debug.Assert(result != null);
 			m_cachedHeadwords[entry] = result;
 			return result;
 		}
@@ -1197,7 +1197,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		/// LexEntry/LexSense in PrmimaryLexemes.
 		public IEnumerable<ILexEntry> GetSubentries(ICmObject mainEntryOrSense)
 		{
-			var retval = new Set<ILexEntry>();
+			var retval = new HashSet<ILexEntry>();
 			foreach (ILexEntryRef ler in m_cache.ServiceLocator.GetInstance<ILexEntryRefRepository>().AllInstances())
 			{
 				if (ler.RefType == LexEntryRefTags.krtComplexForm && ler.PrimaryLexemesRS.Contains(mainEntryOrSense))
@@ -1213,7 +1213,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		/// LexEntry/LexSense as the main entry or sense.
 		public IEnumerable<ILexEntry> GetVariantFormEntries(ICmObject mainEntryOrSense)
 		{
-			Set<ILexEntry> retval = new Set<ILexEntry>();
+			var retval = new HashSet<ILexEntry>();
 			foreach (ILexEntryRef ler in m_cache.ServiceLocator.GetInstance<ILexEntryRefRepository>().AllInstances())
 			{
 				// For a variant, ComponentLexemes is all that matters; PrimaryLexemes is not used.
@@ -1366,8 +1366,6 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		/// is true, then match against lexeme forms even if citation forms exist.  (This behavior is needed
 		/// to fix LT-6024 for categorized entry [now called Collect Words].)
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "cache is a reference")]
 		List<ILexEntry> ILexEntryRepositoryInternal.CollectHomographs(string sForm, int hvo, List<ILexEntry> entries,
 														  IMoMorphType morphType, bool fMatchLexForms)
 		{
@@ -1450,8 +1448,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 				string wsLocale = cache.ServiceLocator.WritingSystemManager.Get(wsWf).IcuLocale;
 				string sLower = Icu.ToLower(tssWf.Text, wsLocale);
 				ITsTextProps ttp = tssWf.get_PropertiesAt(0);
-				ITsStrFactory tsf = TsStrFactoryClass.Create();
-				tssWf = tsf.MakeStringWithPropsRgch(sLower, sLower.Length, ttp);
+				tssWf = TsStringUtils.MakeString(sLower, ttp);
 				entries = FindEntriesForWordformWorker(cache, tssWf, wfa, ref duplicates);
 			}
 			return entries;
@@ -1468,7 +1465,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 
 			int wsVern = TsStringUtils.GetWsAtOffset(tssWf, 0);
 
-			var entries = new Set<ILexEntry>();
+			var entries = new HashSet<ILexEntry>();
 
 			// Get the entries from the matching wordform.
 			// Get matching wordform.
@@ -1481,28 +1478,28 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			{
 				if (wfa != null && matchingWordforms[0].AnalysesOC.Contains(wfa))
 				{
-					entries.AddRange(wfa.MorphBundlesOS
-							.Where(mb => mb.MorphRA != null)
-							.Select(mb => mb.MorphRA.OwnerOfClass<ILexEntry>()));
+					entries.UnionWith(wfa.MorphBundlesOS
+						.Where(mb => mb.MorphRA != null)
+						.Select(mb => mb.MorphRA.OwnerOfClass<ILexEntry>()));
 				}
 				else
 				{
 					foreach (IWfiAnalysis analysis in matchingWordforms[0].AnalysesOC.Where(a => a.ApprovalStatusIcon == (int) Opinions.approves))
 					{
-						entries.AddRange(analysis.MorphBundlesOS
+						entries.UnionWith(analysis.MorphBundlesOS
 							.Where(mb => mb.MorphRA != null)
 							.Select(mb => mb.MorphRA.OwnerOfClass<ILexEntry>()));
 					}
 				}
 			}
 			// Get the entries from the matching MoForms.
-			entries.AddRange(
+			entries.UnionWith(
 				cache.ServiceLocator.GetInstance<IMoFormRepository>().AllInstances()
 				.Where(mf => mf.Form.get_String(wsVern) != null && mf.Form.get_String(wsVern).Text == wf)
 				.Select(mf => mf.OwnerOfClass<ILexEntry>()));
 
 			// Get the entries from the citation form
-			entries.AddRange(
+			entries.UnionWith(
 				cache.ServiceLocator.GetInstance<ILexEntryRepository>().AllInstances()
 				.Where(entry => entry.CitationForm.get_String(wsVern) != null && entry.CitationForm.get_String(wsVern).Text == wf));
 
@@ -1538,15 +1535,14 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			if (tssWf == null || tssWf.Length == 0)
 				return null;
 
-			var wsVern = TsStringUtils.GetWsAtOffset(tssWf, 0);
-			var icuEngine = cache.LanguageWritingSystemFactoryAccessor.get_CharPropEngine(wsVern);
-			var wf = icuEngine.ToLower(tssWf.Text);
+			CoreWritingSystemDefinition wsVern = cache.ServiceLocator.WritingSystemManager.Get(tssWf.get_WritingSystemAt(0));
+			string wf = Icu.ToLower(tssWf.Text, wsVern.IcuLocale);
 			ILexEntry matchingEntry = null;
 
 			// Check for Lexeme form.
 			matchingEntry = (
 				from e in cache.LanguageProject.LexDbOA.Entries
-				where e.LexemeFormOA != null && GetLowercaseStringFromMultiUnicodeSafely(icuEngine, e.LexemeFormOA.Form, wsVern) == wf
+				where e.LexemeFormOA != null && GetLowercaseStringFromMultiUnicodeSafely(e.LexemeFormOA.Form, wsVern) == wf
 				orderby e.HomographNumber
 				select e
 				).FirstOrDefault();
@@ -1555,7 +1551,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			if (matchingEntry == null)
 				matchingEntry = (
 					from e in cache.LanguageProject.LexDbOA.Entries
-					where GetLowercaseStringFromMultiUnicodeSafely(icuEngine, e.CitationForm, wsVern) == wf
+					where GetLowercaseStringFromMultiUnicodeSafely(e.CitationForm, wsVern) == wf
 					orderby e.HomographNumber
 					select e
 					).FirstOrDefault();
@@ -1566,7 +1562,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 					from e in cache.LanguageProject.LexDbOA.Entries
 					where (
 						from af in e.AlternateFormsOS
-						where GetLowercaseStringFromMultiUnicodeSafely(icuEngine, af.Form, wsVern) == wf
+						where GetLowercaseStringFromMultiUnicodeSafely(af.Form, wsVern) == wf
 						select af
 						).FirstOrDefault() != null
 					orderby e.HomographNumber
@@ -1597,16 +1593,16 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			return matchingEntry;
 		}
 
-		private string GetLowercaseStringFromMultiUnicodeSafely(ILgCharacterPropertyEngine icuEngine, IMultiUnicode form, int ws)
+		private string GetLowercaseStringFromMultiUnicodeSafely(IMultiUnicode form, CoreWritingSystemDefinition ws)
 		{
 			if (form == null)
 				return string.Empty;
 
-			var formTsstring = form.get_String(ws);
+			ITsString formTsstring = form.get_String(ws.Handle);
 			if (formTsstring == null || formTsstring.Length == 0)
 				return string.Empty;
 
-			return icuEngine.ToLower(formTsstring.Text);
+			return Icu.ToLower(formTsstring.Text, ws.IcuLocale);
 		}
 	}
 	#endregion

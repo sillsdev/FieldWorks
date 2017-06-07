@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -7,8 +7,6 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Drawing;
 using System.Text;
-
-using SIL.Utils;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
@@ -64,13 +62,15 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			/// <summary>Codepoint length must be 4-6 digits</summary>
 			longCodepoint,
 			/// <summary>If there is a decomposition type, you need a decomposition</summary>
-			mustEnterDecomp
+			mustEnterDecomp,
+			/// <summary>Codepoint is not a valid 21-bit Unicode code point ranging from 0 through 10FFFF</summary>
+			outsideRange
 		}
 
 		/// <summary>
 		/// Contains a Set of ErrorMessage objects that the user currently needs to address.
 		/// </summary>
-		private Dictionary<TextBox, Set<ErrorMessage>> errorTable = new Dictionary<TextBox, Set<ErrorMessage>>();
+		private Dictionary<TextBox, HashSet<ErrorMessage>> errorTable = new Dictionary<TextBox, HashSet<ErrorMessage>>();
 		/// <summary>
 		/// A Dictionary you need to define when you create a new instance of this class. It should contain
 		/// the TextBox as a key and the Label association as a value.
@@ -101,7 +101,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <param name="message">The error message you wish to add</param>
 		public void AddMessage(TextBox textBox, ErrorMessage message)
 		{
-			Set<ErrorMessage> listOfMessages = null;
+			HashSet<ErrorMessage> listOfMessages;
 			if (errorTable.TryGetValue(textBox, out listOfMessages))
 			{
 				// An entry for this message box exists
@@ -110,8 +110,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			else
 			{
 				// Not found, so initialize it.
-				listOfMessages = new Set<ErrorMessage>();
-				listOfMessages.Add(message);
+				listOfMessages = new HashSet<ErrorMessage> {message};
 				errorTable.Add(textBox, listOfMessages);
 			}
 			DisplayErrorTable();
@@ -122,7 +121,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		/// <param name="textBox">The text box where the error appears</param>
 		/// <param name="messages">The set of messages you wish to add</param>
-		public void AddMessage(TextBox textBox, Set<ErrorMessage> messages)
+		public void AddMessage(TextBox textBox, ISet<ErrorMessage> messages)
 		{
 			foreach(ErrorMessage message in messages)
 				AddMessage(textBox, message);
@@ -151,7 +150,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				label.Text = "";
 			}
 
-			foreach(KeyValuePair<TextBox, Set<ErrorMessage>> kvp in errorTable)
+			foreach(KeyValuePair<TextBox, HashSet<ErrorMessage>> kvp in errorTable)
 			{
 				Label currentLabel = labelAssociation[kvp.Key];
 				StringBuilder newLabelText = new StringBuilder(currentLabel.Text);

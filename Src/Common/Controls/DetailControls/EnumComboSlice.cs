@@ -1,14 +1,7 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: EnumComboSlice.cs
-// Responsibility:
-// Last reviewed:
-//
-// <remarks>
-// Implements the an XDE editor which displays a combobox of labels, but underlyingly based on integers.
-// </remarks>
+
 using System;
 using System.Windows.Forms;
 using System.Diagnostics;
@@ -19,7 +12,9 @@ using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
 using SIL.Utils;
 using System.Reflection;
 using System.Xml.Linq;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.Xml;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {

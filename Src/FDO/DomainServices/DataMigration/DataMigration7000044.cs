@@ -1,14 +1,10 @@
-﻿// Copyright (c) 2011-2013 SIL International
+﻿// Copyright (c) 2011-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: DataMigration7000044.cs
-// Responsibility: mcconnel
 
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using SIL.CoreImpl;
 using System;
 using SIL.WritingSystems.Migration;
 
@@ -45,7 +41,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 				// Skip migrating the global repository if we're just running tests. Slow and may not be wanted.
 				// In a real project we do this first; thus if by any chance a WS is differently renamed in
 				// the two folders, the renaming that is right for this project wins.
-				var globalWsFolder = DirectoryFinder.OldGlobalWritingSystemStoreDirectory;
+				var globalWsFolder = FdoFileHelper.OldGlobalWritingSystemStoreDirectory;
 				var globalMigrator = new LdmlInFolderWritingSystemRepositoryMigrator(globalWsFolder, NoteMigration, 2);
 				globalMigrator.Migrate();
 			}

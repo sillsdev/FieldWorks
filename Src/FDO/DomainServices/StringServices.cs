@@ -1,21 +1,23 @@
-// Copyright (c) 2010-2013 SIL International
+// Copyright (c) 2010-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading;
 using System.Xml;
 using System.Xml.Linq;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.Cellar;
+using SIL.CoreImpl.Text;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
+using SIL.Xml;
 
 namespace SIL.FieldWorks.FDO.DomainServices
 {
@@ -24,6 +26,10 @@ namespace SIL.FieldWorks.FDO.DomainServices
 	/// </summary>
 	public static class StringServices
 	{
+		// Mono is slow with multiple string calls to the resources,
+		// therefore we need a cached member variable.
+		private static string m_CacheQuestions;
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the empty name of the file.
@@ -238,9 +244,9 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		{
 			var citationForm = CitationFormWithAffixTypeStaticForWs(entry, wsVern, defaultCf);
 			if (String.IsNullOrEmpty(citationForm))
-				return entry.Cache.TsStrFactory.EmptyString(wsVern);
-			var tisb = TsIncStrBldrClass.Create();
-			AddHeadwordForWsAndHn(entry, wsVern, nHomograph, hv, tisb, citationForm);
+				return TsStringUtils.EmptyString(wsVern);
+			var tisb = TsStringUtils.MakeIncStrBldr();
+			AddHeadwordForWsAndHn(entry, wsVern, nHomograph, hv, tisb, citationForm, entry.Cache);
 			return tisb.GetString();
 		}
 
@@ -259,40 +265,48 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			var citationForm = CitationFormWithAffixTypeStaticForWs(entry, wsVern, defaultCf);
 			if (String.IsNullOrEmpty(citationForm))
 			{
-				tisb.AppendTsString(entry.Cache.TsStrFactory.EmptyString(wsVern)); // avoids COM Exception!
+				tisb.AppendTsString(TsStringUtils.EmptyString(wsVern)); // avoids COM Exception!
 				return;
 			}
-			AddHeadwordForWsAndHn(entry, wsVern, nHomograph, hv, tisb, citationForm);
+			AddHeadwordForWsAndHn(entry, wsVern, nHomograph, hv, tisb, citationForm, entry.Cache);
 		}
 
-		private static void AddHeadwordForWsAndHn(ILexEntry entry, int wsVern, int nHomograph,
-			HomographConfiguration.HeadwordVariant hv, ITsIncStrBldr tisb, string citationForm)
+		private static void AddHeadwordForWsAndHn(ILexEntry entry, int wsVern, int nHomograph, HomographConfiguration.HeadwordVariant hv,
+			ITsIncStrBldr tisb, string citationForm, FdoCache cache)
 		{
-			tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, wsVern);
 			var hc = entry.Services.GetInstance<HomographConfiguration>();
 			if (hc.HomographNumberBefore)
-				InsertHomographNumber(tisb, nHomograph, hc, hv);
+				InsertHomographNumber(tisb, nHomograph, hc, hv, cache);
+			tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, wsVern);
 			tisb.Append(citationForm);
 
-			// (EricP) Tried to automatically update the homograph number, but doing that here will
-			// steal away manual changes to the HomographNumber column. Also suppressing PropChanged
-			// is necessary when HomographNumber column is enabled, otherwise changing the entry index can hang.
-			//using (new IgnorePropChanged(cache, PropChangedHandling.SuppressView))
-			//{
-			//	  ValidateExistingHomographs(CollectHomographs(cache, ShortName1StaticForWs(cache, hvo, wsVern), 0, morphType));
-			//}
-
 			if (!hc.HomographNumberBefore)
-				InsertHomographNumber(tisb, nHomograph, hc, hv);
+				InsertHomographNumber(tisb, nHomograph, hc, hv, cache);
 		}
 
 		private static void InsertHomographNumber(ITsIncStrBldr tisb, int nHomograph, HomographConfiguration hc,
-			HomographConfiguration.HeadwordVariant hv)
+			HomographConfiguration.HeadwordVariant hv, FdoCache cache)
 		{
 			if (nHomograph > 0 && hc.ShowHomographNumber(hv))
 			{
 				tisb.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, HomographConfiguration.ksHomographNumberStyle);
-				tisb.Append(nHomograph.ToString());
+				if (!string.IsNullOrEmpty(hc.WritingSystem))
+				{
+					tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, cache.WritingSystemFactory.GetWsFromStr(hc.WritingSystem));
+				}
+				else
+				{
+					tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, cache.DefaultVernWs);
+				}
+				var hnString = nHomograph.ToString();
+				if (hc.CustomHomographNumbers.Count == 10)
+				{
+					for (var i = 0; i < 10; ++i)
+					{
+						hnString = hnString.Replace(i.ToString(), hc.CustomHomographNumbers[i]);
+					}
+				}
+				tisb.Append(hnString);
 				tisb.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, null);
 			}
 		}
@@ -366,8 +380,8 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			}
 
 			// Give up.
-			tsb.AppendTsString(entry.Cache.TsStrFactory.MakeString(
-				Strings.ksQuestions,
+			tsb.AppendTsString(TsStringUtils.MakeString(
+				DefaultHomographString(),
 				entry.Cache.DefaultUserWs));
 		}
 
@@ -431,7 +445,9 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// </summary>
 		public static string DefaultHomographString()
 		{
-			return Strings.ksQuestions;
+			if (m_CacheQuestions == null)
+				m_CacheQuestions = Strings.ksQuestions;
+			return m_CacheQuestions;
 		}
 
 		/// <summary>
@@ -813,7 +829,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// <returns></returns>
 		public static ITsString CrawlRuns(ITsString str, Func<ITsString, ITsString> runModifier)
 		{
-			ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
+			ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 			bool modified = false;
 			bool empty = true;
 			for (int i = 0; i < str.RunCount; i++)
@@ -834,6 +850,46 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				return null;
 
 			return modified ? tisb.GetString() : str;
+		}
+
+		/// <summary>
+		/// Convert an encoded attribute string into plain text.
+		/// </summary>
+		internal static string DecodeXmlAttribute(string sInput)
+		{
+			string sOutput = sInput;
+			if (!String.IsNullOrEmpty(sOutput) && sOutput.Contains("&"))
+			{
+				sOutput = sOutput.Replace("&gt;", ">");
+				sOutput = sOutput.Replace("&lt;", "<");
+				sOutput = sOutput.Replace("&apos;", "'");
+				sOutput = sOutput.Replace("&quot;", "\"");
+				sOutput = sOutput.Replace("&amp;", "&");
+			}
+			for (int idx = sOutput.IndexOf("&#"); idx >= 0; idx = sOutput.IndexOf("&#"))
+			{
+				int idxEnd = sOutput.IndexOf(';', idx);
+				if (idxEnd < 0)
+					break;
+				string sOrig = sOutput.Substring(idx, (idxEnd - idx) + 1);
+				string sNum = sOutput.Substring(idx + 2, idxEnd - (idx + 2));
+				string sReplace = null;
+				int chNum = 0;
+				if (sNum[0] == 'x' || sNum[0] == 'X')
+				{
+					if (Int32.TryParse(sNum.Substring(1), NumberStyles.HexNumber, NumberFormatInfo.InvariantInfo, out chNum))
+						sReplace = Char.ConvertFromUtf32(chNum);
+				}
+				else
+				{
+					if (Int32.TryParse(sNum, out chNum))
+						sReplace = Char.ConvertFromUtf32(chNum);
+				}
+				if (sReplace == null)
+					sReplace = sNum;
+				sOutput = sOutput.Replace(sOrig, sReplace);
+			}
+			return sOutput;
 		}
 	}
 }

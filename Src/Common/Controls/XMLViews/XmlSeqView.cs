@@ -1,29 +1,24 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: XmlView.cs
-// Responsibility: WordWorks
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
+
 using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Printing;
 using System.Linq;
 using System.Windows.Forms;
-using System.Xml;
 using System.Xml.Linq;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Framework;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.Xml;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -311,13 +306,10 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			CheckDisposed();
 
-			base.MakeRoot();
-
 			if (m_fdoCache == null || DesignMode)
 				return;
 
-			IVwRootBox rootb = VwRootBoxClass.Create();
-			rootb.SetSite(this);
+			base.MakeRoot();
 
 			bool fEditable = XmlUtils.GetOptionalBooleanAttributeValue(m_specElement, "editable", true);
 			string toolName = PropertyTable.GetValue<string>("currentContentControl");
@@ -337,15 +329,14 @@ namespace SIL.FieldWorks.Common.Controls
 				m_fShowFailingItems ? null : ItemDisplayCondition, sda) {IdentifySource = true};
 			ReadOnlyView = !fEditable;
 			if (!fEditable)
-				rootb.MaxParasToScan = 0;
+				m_rootb.MaxParasToScan = 0;
 			m_xmlVc.Cache = m_fdoCache;
 			m_xmlVc.MainSeqFlid = m_mainFlid;
 
-			rootb.DataAccess = sda;
+			m_rootb.DataAccess = sda;
 			m_xmlVc.DataAccess = sda;
 
-			rootb.SetRootObject(m_hvoRoot, m_xmlVc, RootFrag, m_styleSheet);
-			m_rootb = rootb;
+			m_rootb.SetRootObject(m_hvoRoot, m_xmlVc, RootFrag, m_styleSheet);
 		}
 
 		private ISilDataAccess GetSda()
@@ -586,6 +577,7 @@ namespace SIL.FieldWorks.Common.Controls
 		protected override void Dispose(bool fDisposing)
 		{
 			Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			base.Dispose(fDisposing);
 			if (!fDisposing || IsDisposed || m_savedSelection == null || m_rootSite.RootBox.Height <= 0)
 				return;
 

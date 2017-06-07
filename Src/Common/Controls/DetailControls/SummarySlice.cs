@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -9,12 +9,15 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.Text;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.Utils;
+using SIL.Xml;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
@@ -543,6 +546,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			BackColor = SystemColors.Window;
 		}
 
+		protected override void Dispose(bool disposing)
+		{
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
+			base.Dispose(disposing);
+		}
+
 		protected override Size DefaultSize
 		{
 			get
@@ -722,21 +731,18 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		public override void MakeRoot()
 		{
 			CheckDisposed();
-			base.MakeRoot();
 
 			if (m_fdoCache == null || DesignMode)
 				return;
 
-			IVwRootBox rootb = VwRootBoxClass.Create();
-			rootb.SetSite(this);
+			base.MakeRoot();
 
 			m_vc = new LiteralLabelVc(m_text, m_fdoCache.WritingSystemFactory.UserWs);
 
-			rootb.DataAccess = m_fdoCache.DomainDataByFlid;
+			m_rootb.DataAccess = m_fdoCache.DomainDataByFlid;
 
 			// Since the VC just displays a literal, both the root HVO and the root frag are arbitrary.
-			rootb.SetRootObject(1, m_vc, 2, StyleSheet);
-			m_rootb = rootb;
+			m_rootb.SetRootObject(1, m_vc, 2, StyleSheet);
 			// pathologically (mainly during Refresh, it seems) the slice width may get set before
 			// the root box is created, and no further size adjustment may take place, in which case,
 			// when we have made the root, we need to adjust the width it occupies in the parent slice.

@@ -4,7 +4,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -18,6 +17,7 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.XWorks;
 using SIL.Utils;
+using SIL.Xml;
 using WaitCursor = SIL.FieldWorks.Common.FwUtils.WaitCursor;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
@@ -104,8 +104,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="args"></param>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "Gendarme is just too dumb to understand the try...finally pattern to ensure disposal of dlg")]
 		private void LaunchFilterTextsDialog(object sender, EventArgs args)
 		{
 			IFilterTextsDialog<IStText> dlg = null;
@@ -142,7 +140,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		}
 
 		/// <summary>Export the data according to specifications.</summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "Using using")]
 		protected override void DoExport(string outPath)
 		{
 			using (var dlg = new ProgressDialogWithTask(this) { IsIndeterminate = true, AllowCancel = false, Message = ITextStrings.ksExporting_ })

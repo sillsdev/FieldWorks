@@ -1,16 +1,10 @@
 // Copyright (c) 2010-2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: NotebookImportWiz.cs
-// Responsibility: mcconnel
-//
-// <remarks>
-// </remarks>
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -18,11 +12,8 @@ using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
@@ -31,6 +22,13 @@ using SIL.FieldWorks.FwCoreDlgs.BackupRestore;
 using SIL.FieldWorks.Resources;
 using SIL.Utils;
 using SilEncConverters40;
+using SIL.CoreImpl;
+using SIL.CoreImpl.Cellar;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.Xml;
 
 namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 {
@@ -887,7 +885,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 			}
 			m_lvMappingLanguages.Sort();
 			IApp app = m_propertyTable.GetValue<IApp>("App");
-			m_btnAddWritingSystem.Initialize(m_cache, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), app, m_stylesheet, wss);
+			m_btnAddWritingSystem.Initialize(m_cache, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), app, wss);
 		}
 
 		private ListViewItem CreateListViewItemForWS(CoreWritingSystemDefinition ws)
@@ -2086,8 +2084,6 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 			m_mapWsEncConv.Add(ecc.WritingSystem.Id, ecc);
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void ReadMarkerSetting(XmlNode xnMarker)
 		{
 			try
@@ -3284,7 +3280,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 				rgsText.Add(String.Empty);
 				rgcmText.Add(null);
 			}
-			ITsIncStrBldr tisb = m_cache.TsStrFactory.GetIncBldr();
+			ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 			for (int i = 0; i < rgsText.Count; ++i)
 			{
 				string sRun = rgsText[i];
@@ -4676,7 +4672,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 					possList.Add(item);
 				else
 					itemParent.SubPossibilitiesOS.Add(item);
-				ITsString tss = m_cache.TsStrFactory.MakeString(rgsHier[i], m_cache.DefaultAnalWs);
+				ITsString tss = TsStringUtils.MakeString(rgsHier[i], m_cache.DefaultAnalWs);
 				item.Name.AnalysisDefaultWritingSystem = tss;
 				item.Abbreviation.AnalysisDefaultWritingSystem = tss;
 				map.Add(rgsHier[i].ToLowerInvariant(), item);

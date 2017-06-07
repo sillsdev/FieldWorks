@@ -1,7 +1,9 @@
 using System;
 using System.Drawing;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.Text;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
 
@@ -32,13 +34,13 @@ namespace LanguageExplorer.Areas
 		public MetaRuleFormulaVc(FdoCache cache, IPropertyTable propertyTable)
 			: base(cache, propertyTable)
 		{
-			ITsPropsBldr tpb = TsPropsBldrClass.Create();
+			ITsPropsBldr tpb = TsStringUtils.MakePropsBldr();
 			tpb.SetIntPropValues((int)FwTextPropType.ktptBorderColor, (int)FwTextPropVar.ktpvDefault,
 				(int)ColorUtil.ConvertColorToBGR(Color.Gray));
 			tpb.SetIntPropValues((int)FwTextPropType.ktptAlign, (int)FwTextPropVar.ktpvEnum, (int)FwTextAlign.ktalCenter);
 			m_inputCtxtProps = tpb.GetTextProps();
 
-			tpb = TsPropsBldrClass.Create();
+			tpb = TsStringUtils.MakePropsBldr();
 			tpb.SetIntPropValues((int)FwTextPropType.ktptBorderColor, (int)FwTextPropVar.ktpvDefault,
 				(int)ColorUtil.ConvertColorToBGR(Color.Gray));
 			tpb.SetIntPropValues((int)FwTextPropType.ktptAlign, (int)FwTextPropVar.ktpvEnum, (int)FwTextAlign.ktalCenter);
@@ -47,7 +49,7 @@ namespace LanguageExplorer.Areas
 				(int)ColorUtil.ConvertColorToBGR(Color.Gray));
 			m_resultCtxtProps = tpb.GetTextProps();
 
-			tpb = TsPropsBldrClass.Create();
+			tpb = TsStringUtils.MakePropsBldr();
 			tpb.SetStrPropValue((int)FwTextPropType.ktptFontFamily, MiscUtils.StandardSansSerif);
 			tpb.SetIntPropValues((int)FwTextPropType.ktptFontSize, (int)FwTextPropVar.ktpvMilliPoint, 10000);
 			tpb.SetIntPropValues((int)FwTextPropType.ktptBorderColor, (int)FwTextPropVar.ktpvDefault,
@@ -58,7 +60,7 @@ namespace LanguageExplorer.Areas
 			tpb.SetIntPropValues((int)FwTextPropType.ktptEditable, (int)FwTextPropVar.ktpvEnum, (int)TptEditable.ktptNotEditable);
 			m_colHeaderProps = tpb.GetTextProps();
 
-			tpb = TsPropsBldrClass.Create();
+			tpb = TsStringUtils.MakePropsBldr();
 			tpb.SetStrPropValue((int)FwTextPropType.ktptFontFamily, MiscUtils.StandardSansSerif);
 			tpb.SetIntPropValues((int)FwTextPropType.ktptFontSize, (int)FwTextPropVar.ktpvMilliPoint, 10000);
 			tpb.SetIntPropValues((int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault,
@@ -67,13 +69,12 @@ namespace LanguageExplorer.Areas
 			tpb.SetIntPropValues((int)FwTextPropType.ktptEditable, (int)FwTextPropVar.ktpvEnum, (int)TptEditable.ktptNotEditable);
 			m_rowHeaderProps = tpb.GetTextProps();
 
-			var tsf = m_cache.TsStrFactory;
 			var userWs = m_cache.DefaultUserWs;
-			m_inputStr = tsf.MakeString(AreaResources.ksMetaRuleInput, userWs);
-			m_resultStr = tsf.MakeString(AreaResources.ksMetaRuleResult, userWs);
-			m_leftEnvStr = tsf.MakeString(AreaResources.ksMetaRuleLeftEnv, userWs);
-			m_rightEnvStr = tsf.MakeString(AreaResources.ksMetaRuleRightEnv, userWs);
-			m_switchStr = tsf.MakeString(AreaResources.ksMetaRuleSwitch, userWs);
+			m_inputStr = TsStringUtils.MakeString(AreaResources.ksMetaRuleInput, userWs);
+			m_resultStr = TsStringUtils.MakeString(AreaResources.ksMetaRuleResult, userWs);
+			m_leftEnvStr = TsStringUtils.MakeString(AreaResources.ksMetaRuleLeftEnv, userWs);
+			m_rightEnvStr = TsStringUtils.MakeString(AreaResources.ksMetaRuleRightEnv, userWs);
+			m_switchStr = TsStringUtils.MakeString(AreaResources.ksMetaRuleSwitch, userWs);
 		}
 
 		protected override int GetMaxNumLines()

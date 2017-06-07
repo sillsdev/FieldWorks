@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.Utils;
@@ -247,8 +247,7 @@ namespace SIL.FieldWorks.XWorks
 					if (cvDel > 0)
 					{
 						if (ClearInvalidObjects(m_scriptureTexts, CoreTexts.Count, IncludeScripture))
-							if (!m_propertyTable.IsDisposed)
-								UpdatePropertyTable();
+							UpdatePropertyTable();
 					}
 					break;
 				default:
@@ -343,14 +342,14 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		public static string MakeIdList(IEnumerable<ICmObject> objects)
 		{
-			return objects.ToString(",", obj => Convert.ToBase64String(obj.Guid.ToByteArray()));
+			return string.Join(",", objects.Select(obj => Convert.ToBase64String(obj.Guid.ToByteArray())));
 		}
 		/// <summary>
 		/// Make a string that corresponds to a list of guids.
 		/// </summary>
 		public static string MakeIdList(IEnumerable<Guid> objects)
 		{
-			return objects.ToString(",", guid => Convert.ToBase64String(guid.ToByteArray()));
+			return string.Join(",", objects.Select(guid => Convert.ToBase64String(guid.ToByteArray())));
 		}
 
 		/// <summary>

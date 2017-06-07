@@ -5,9 +5,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.Text;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.CoreTests;
 using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.FieldWorks.FDO.DomainServices;
@@ -48,7 +48,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 										() =>
 										{
 											domain.Name.AnalysisDefaultWritingSystem =
-												Cache.TsStrFactory.MakeString("new name", Cache.DefaultAnalWs);
+												TsStringUtils.MakeString("new name", Cache.DefaultAnalWs);
 										});
 			CheckChange(CmPossibilityTags.kClassId, domain, "ShortNameTSS", 0, "new name".Length, "a name".Length, "Short name not notified when name changed");
 		}
@@ -155,7 +155,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 											domain = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create();
 											acDomains.PossibilitiesOS.Add(domain);
 											domain.Name.AnalysisDefaultWritingSystem =
-												Cache.TsStrFactory.MakeString(name, Cache.DefaultAnalWs);
+												TsStringUtils.MakeString(name, Cache.DefaultAnalWs);
 										});
 			return domain;
 		}
@@ -171,7 +171,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			UndoableUnitOfWorkHelper.Do("undo set form", "redo", m_actionHandler,
 				() =>
 				{
-					entry.LexemeFormOA.Form.VernacularDefaultWritingSystem = Cache.TsStrFactory.MakeString("formX", Cache.DefaultVernWs);
+					entry.LexemeFormOA.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString("formX", Cache.DefaultVernWs);
 				});
 			CheckChange(LexEntryTags.kClassId, entry, "MLHeadWord", Cache.DefaultVernWs, 0, 0, "MlHeadword not updated when Form changed");
 		}
@@ -187,7 +187,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			UndoableUnitOfWorkHelper.Do("undo set form", "redo", m_actionHandler,
 				() =>
 				{
-					entry.CitationForm.VernacularDefaultWritingSystem = Cache.TsStrFactory.MakeString("formX", Cache.DefaultVernWs);
+					entry.CitationForm.VernacularDefaultWritingSystem = TsStringUtils.MakeString("formX", Cache.DefaultVernWs);
 				});
 			CheckChange(LexEntryTags.kClassId, entry, "MLHeadWord", Cache.DefaultVernWs, 0, 0, "MlHeadword not updated when Form changed");
 		}
@@ -338,10 +338,10 @@ namespace SIL.FieldWorks.FDO.FDOTests
 											var form = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
 											entry.LexemeFormOA = form;
 											form.Form.VernacularDefaultWritingSystem =
-												Cache.TsStrFactory.MakeString(lf, Cache.DefaultVernWs);
+												TsStringUtils.MakeString(lf, Cache.DefaultVernWs);
 											var sense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
 											entry.SensesOS.Add(sense);
-											sense.Gloss.AnalysisDefaultWritingSystem = Cache.TsStrFactory.MakeString(gloss, Cache.DefaultAnalWs);
+											sense.Gloss.AnalysisDefaultWritingSystem = TsStringUtils.MakeString(gloss, Cache.DefaultAnalWs);
 										});
 			return entry;
 		}
@@ -366,7 +366,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 											domain = Cache.ServiceLocator.GetInstance<ICmSemanticDomainFactory>().Create();
 											semDomains.PossibilitiesOS.Add(domain);
 											domain.Name.AnalysisDefaultWritingSystem =
-												Cache.TsStrFactory.MakeString(name, Cache.DefaultAnalWs);
+												TsStringUtils.MakeString(name, Cache.DefaultAnalWs);
 										});
 			return domain;
 		}
@@ -416,7 +416,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				{
 					entry = Cache.ServiceLocator.GetInstance<IReversalIndexEntryFactory>().Create();
 					index.EntriesOC.Add(entry);
-					entry.ReversalForm.AnalysisDefaultWritingSystem = Cache.TsStrFactory.MakeString(form, Cache.DefaultAnalWs);
+					entry.ReversalForm.AnalysisDefaultWritingSystem = TsStringUtils.MakeString(form, Cache.DefaultAnalWs);
 				});
 			return entry;
 		}
@@ -768,7 +768,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 					result = Cache.ServiceLocator.GetInstance<ILexRefTypeFactory>().Create();
 					Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.Add(result);
 					result.MappingType = (int)LexRefTypeTags.MappingTypes.kmtSenseSequence;
-					result.Name.AnalysisDefaultWritingSystem = Cache.TsStrFactory.MakeString(name, Cache.DefaultAnalWs);
+					result.Name.AnalysisDefaultWritingSystem = TsStringUtils.MakeString(name, Cache.DefaultAnalWs);
 				});
 			return result;
 
@@ -941,7 +941,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				{
 					result = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
 					owner.SensesOS.Add(result);
-					result.Gloss.AnalysisDefaultWritingSystem = Cache.TsStrFactory.MakeString(name, Cache.DefaultAnalWs);
+					result.Gloss.AnalysisDefaultWritingSystem = TsStringUtils.MakeString(name, Cache.DefaultAnalWs);
 				});
 			return result;
 
@@ -959,7 +959,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			// lexeme form
 			PrepareToTrackPropChanged();
 			UndoableUnitOfWorkHelper.Do("undo set LF", "redo", m_actionHandler,
-				() => entry1.LexemeFormOA.Form.set_String(Cache.DefaultVernWs, Cache.TsStrFactory.MakeString("boot", Cache.DefaultVernWs)));
+				() => entry1.LexemeFormOA.Form.set_String(Cache.DefaultVernWs, TsStringUtils.MakeString("boot", Cache.DefaultVernWs)));
 			CheckChange(LexSenseTags.kClassId, sense1, "MLOwnerOutlineName", Cache.DefaultVernWs, 0, 0,
 						"Changing lexeme form should update MLOwnerOutlineName of sense");
 			CheckChange(LexSenseTags.kClassId, sense2, "MLOwnerOutlineName", Cache.DefaultVernWs, 0, 0,
@@ -967,7 +967,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			// citation form
 			PrepareToTrackPropChanged();
 			UndoableUnitOfWorkHelper.Do("undo set CF", "redo", m_actionHandler,
-				() => entry1.CitationForm.set_String(Cache.DefaultVernWs, Cache.TsStrFactory.MakeString("bootA", Cache.DefaultVernWs)));
+				() => entry1.CitationForm.set_String(Cache.DefaultVernWs, TsStringUtils.MakeString("bootA", Cache.DefaultVernWs)));
 			CheckChange(LexSenseTags.kClassId, sense1, "MLOwnerOutlineName", Cache.DefaultVernWs, 0, 0,
 						"Changing citation form should update MLOwnerOutlineName of sense");
 			CheckChange(LexSenseTags.kClassId, sense2, "MLOwnerOutlineName", Cache.DefaultVernWs, 0, 0,
@@ -1024,7 +1024,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			UndoableUnitOfWorkHelper.Do("undo change title", "redo", m_actionHandler,
 				() =>
 				{
-					record.Title = Cache.TsStrFactory.MakeString("Joe goes fishing", Cache.DefaultAnalWs);
+					record.Title = TsStringUtils.MakeString("Joe goes fishing", Cache.DefaultAnalWs);
 				});
 			len = record.ShortNameTSS.Length;
 			CheckChange(RnGenericRecTags.kClassId, record, "ShortNameTSS", 0, len, 0,
@@ -1048,7 +1048,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			UndoableUnitOfWorkHelper.Do("undo change title", "redo", m_actionHandler,
 				() =>
 				{
-					record.Title = Cache.TsStrFactory.MakeString("Joe goes fishing", Cache.DefaultAnalWs);
+					record.Title = TsStringUtils.MakeString("Joe goes fishing", Cache.DefaultAnalWs);
 				});
 			var len = subrecord.SubrecordOf.Length;
 			CheckChange(RnGenericRecTags.kClassId, subrecord, "SubrecordOf", 0, len, 0,
@@ -1105,7 +1105,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 					{
 						entry = Cache.ServiceLocator.GetInstance<IRnGenericRecFactory>().Create();
 						Cache.LangProject.ResearchNotebookOA.RecordsOC.Add(entry);
-						entry.Title = Cache.TsStrFactory.MakeString(title, Cache.DefaultAnalWs);
+						entry.Title = TsStringUtils.MakeString(title, Cache.DefaultAnalWs);
 						entry.TypeRA = typeList.PossibilitiesOS[0];
 					});
 			return entry;
@@ -1120,7 +1120,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				{
 					entry = Cache.ServiceLocator.GetInstance<IRnGenericRecFactory>().Create();
 					parent.SubRecordsOS.Insert(index, entry);
-					entry.Title = Cache.TsStrFactory.MakeString(title, Cache.DefaultAnalWs);
+					entry.Title = TsStringUtils.MakeString(title, Cache.DefaultAnalWs);
 					entry.TypeRA = typeList.PossibilitiesOS[0];
 				});
 			return entry;
@@ -1147,7 +1147,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 					{
 						var aType = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create();
 						recTypes.PossibilitiesOS.Add(aType);
-						aType.Name.AnalysisDefaultWritingSystem = Cache.TsStrFactory.MakeString("test type", Cache.DefaultAnalWs);
+						aType.Name.AnalysisDefaultWritingSystem = TsStringUtils.MakeString("test type", Cache.DefaultAnalWs);
 					});
 			}
 			return recTypes;
@@ -1166,7 +1166,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			UndoableUnitOfWorkHelper.Do("undo change title", "redo", m_actionHandler,
 				() =>
 				{
-					text.Name.AnalysisDefaultWritingSystem = Cache.TsStrFactory.MakeString("renamed", Cache.DefaultAnalWs);
+					text.Name.AnalysisDefaultWritingSystem = TsStringUtils.MakeString("renamed", Cache.DefaultAnalWs);
 				});
 			var len = "renamed".Length;
 			CheckChange(StTextTags.kClassId, stText, "Title", Cache.DefaultAnalWs, 0, 0,
@@ -1181,7 +1181,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				{
 					result = Cache.ServiceLocator.GetInstance<ITextFactory>().Create();
 					//Cache.LangProject.TextsOC.Add(result);
-					result.Name.AnalysisDefaultWritingSystem = Cache.TsStrFactory.MakeString(title, Cache.DefaultAnalWs);
+					result.Name.AnalysisDefaultWritingSystem = TsStringUtils.MakeString(title, Cache.DefaultAnalWs);
 					result.ContentsOA = Cache.ServiceLocator.GetInstance<IStTextFactory>().Create();
 				});
 			return result;
@@ -1199,7 +1199,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			UndoableUnitOfWorkHelper.Do("undo change comment", "redo", m_actionHandler,
 				() =>
 				{
-					text.Description.AnalysisDefaultWritingSystem = Cache.TsStrFactory.MakeString("new description", Cache.DefaultAnalWs);
+					text.Description.AnalysisDefaultWritingSystem = TsStringUtils.MakeString("new description", Cache.DefaultAnalWs);
 				});
 			var len = "new description".Length;
 			CheckChange(StTextTags.kClassId, stText, "Comment", Cache.DefaultAnalWs, 0, 0,
@@ -1218,7 +1218,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			UndoableUnitOfWorkHelper.Do("undo change abbr", "redo", m_actionHandler,
 				() =>
 				{
-					text.Abbreviation.AnalysisDefaultWritingSystem = Cache.TsStrFactory.MakeString("myT", Cache.DefaultAnalWs);
+					text.Abbreviation.AnalysisDefaultWritingSystem = TsStringUtils.MakeString("myT", Cache.DefaultAnalWs);
 				});
 			var len = "myT".Length;
 			CheckChange(StTextTags.kClassId, stText, "TitleAbbreviation", Cache.DefaultAnalWs, 0, 0,
@@ -1331,7 +1331,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			int length = para.Contents.Length;
 			int start = 0;
 			if (length == 0)
-				para.Contents = Cache.TsStrFactory.MakeString(contents, Cache.DefaultVernWs);
+				para.Contents = TsStringUtils.MakeString(contents, Cache.DefaultVernWs);
 			else
 			{
 				var bldr = para.Contents.GetBldr();
@@ -1515,7 +1515,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 		private ITsString AnalysisTss(string form)
 		{
-			return Cache.TsStrFactory.MakeString(form, Cache.DefaultAnalWs);
+			return TsStringUtils.MakeString(form, Cache.DefaultAnalWs);
 		}
 
 		ILexExampleSentence MakeExample(ILexSense sense, string text)
@@ -1533,7 +1533,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 		private ITsString VernacularTss(string form)
 		{
-			return Cache.TsStrFactory.MakeString(form, Cache.DefaultVernWs);
+			return TsStringUtils.MakeString(form, Cache.DefaultVernWs);
 		}
 	}
 }

@@ -1,4 +1,4 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="14.0">
   <PropertyGroup>
 	<ProjectType>Local</ProjectType>
 	<ProductVersion>9.0.30729</ProductVersion>
@@ -98,9 +98,9 @@
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\..\..\..\Output\Debug\BasicUtils.dll</HintPath>
 	</Reference>
-	<Reference Include="COMInterfaces, Version=4.1.0.9, Culture=neutral, processorArchitecture=MSIL">
+	<Reference Include="ViewsInterfaces, Version=4.1.0.9, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\..\..\Output\Debug\COMInterfaces.dll</HintPath>
+	  <HintPath>..\..\..\..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
 	</Reference>
 	<Reference Include="FwControls">
 	  <Name>FwControls</Name>

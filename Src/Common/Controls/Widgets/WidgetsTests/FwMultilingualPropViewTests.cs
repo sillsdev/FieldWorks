@@ -1,27 +1,24 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using NUnit.Framework;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Test.TestUtils;
 
 namespace SIL.FieldWorks.Common.Widgets
 {
 	[TestFixture]
-	public class FwMultilingualPropViewTests : BaseTest
+	public class FwMultilingualPropViewTests
 	{
 		/// <summary>
 		/// Dummy implementation of IFwMultilingualPropViewDataSource to allow testing FwMultilingualPropView
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-			Justification="Unit tests - Cache and Grid are never assigned to, so there is no need to call Dispose()")]
 		internal class DummyFwMultilingualPropViewDataSource : IFwMultilingualPropViewDataSource
 		{
 			protected WritingSystemManager m_writingSystemManager = new WritingSystemManager();
@@ -49,7 +46,7 @@ namespace SIL.FieldWorks.Common.Widgets
 
 			public ITsString GetMultiStringAlt(int tag, int ws)
 			{
-				var bldr = COMInterfaces.TsStrBldrClass.Create();
+				var bldr = TsStringUtils.MakeStrBldr();
 				bldr.SetIntPropValues(0, bldr.Length, (int)FwTextPropType.ktptWs, 0, m_list[0]);
 				return bldr.GetString();
 			}

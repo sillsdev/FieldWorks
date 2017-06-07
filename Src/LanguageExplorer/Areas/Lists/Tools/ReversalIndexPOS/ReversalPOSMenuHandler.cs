@@ -1,11 +1,10 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Controls;
@@ -13,7 +12,6 @@ using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.XWorks;
-using SIL.Utils;
 
 namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 {
@@ -28,14 +26,9 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 	internal sealed class ReversalPOSMenuHandler : DTMenuHandler
 	{
 #if RANDYTODO
-	/// <summary>
-	/// handle the message to see if the menu item should be enabled
-	/// </summary>
-	/// <param name="commandObject"></param>
-	/// <param name="display"></param>
-	/// <returns></returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "slice is a reference")]
+		/// <summary>
+		/// handle the message to see if the menu item should be enabled
+		/// </summary>
 		public virtual bool OnDisplayMoveReversalPOS(object commandObject,
 			ref UIItemDisplayProperties display)
 		{
@@ -118,8 +111,6 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 		/// <param name="commandObject"></param>
 		/// <param name="display"></param>
 		/// <returns></returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "slice is a reference")]
 		public virtual bool OnDisplayMergeReversalPOS(object commandObject,
 			ref UIItemDisplayProperties display)
 		{
@@ -171,11 +162,6 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 	/// <summary>
 	/// handle the message to see if the menu item should be enabled
 	/// </summary>
-	/// <param name="commandObject"></param>
-	/// <param name="display"></param>
-	/// <returns></returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "slice is a reference")]
 		public virtual bool OnDisplayPromoteReversalSubPOS(object commandObject,
 			ref UIItemDisplayProperties display)
 		{
@@ -190,8 +176,6 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 #endif
 
 		/// <summary />
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "slice and cache are references")]
 		public bool OnPromoteReversalSubPOS(object cmd)
 		{
 			Slice slice = m_dataEntryForm.CurrentSlice;
@@ -234,7 +218,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 			}
 		}
 
-		private Set<ICmPossibility> MergeOrMoveCandidates
+		private ISet<ICmPossibility> MergeOrMoveCandidates
 		{
 			get
 			{

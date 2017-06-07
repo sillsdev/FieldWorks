@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -9,10 +9,11 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;		// controls and etc...
 using System.Windows.Forms.VisualStyles;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.Utils;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 
 namespace SIL.FieldWorks.Common.Widgets
 {
@@ -21,10 +22,10 @@ namespace SIL.FieldWorks.Common.Widgets
 	/// has an FdoCache, but it is used only to figure out the writing systems to use; the control
 	/// works with a dummy cache, object, and flid, and the resulting text must be read back.
 	/// </summary>
-	public class LabeledMultiStringControl : UserControl, IVwNotifyChange, IFWDisposable
+	public class LabeledMultiStringControl : UserControl, IVwNotifyChange
 	{
 		InnerLabeledMultiStringControl m_innerControl;
-		bool m_isHot = false;
+		bool m_isHot;
 		bool m_hasBorder;
 		Padding m_textPadding;
 
@@ -388,8 +389,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			CheckDisposed();
 
-			ITsStrFactory tsf = TsStrFactoryClass.Create();
-			SetValue(ws, tsf.MakeString(txt, ws));
+			SetValue(ws, TsStringUtils.MakeString(txt, ws));
 		}
 
 		/// <summary>

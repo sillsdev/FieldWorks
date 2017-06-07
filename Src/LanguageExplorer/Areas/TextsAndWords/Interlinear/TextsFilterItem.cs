@@ -4,7 +4,7 @@
 
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {

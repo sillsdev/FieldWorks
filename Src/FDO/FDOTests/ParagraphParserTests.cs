@@ -1,24 +1,23 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using System.Xml;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.Utils;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.WritingSystems;
+using SIL.Xml;
 
 namespace SIL.FieldWorks.FDO.FDOTests
 {
@@ -36,32 +35,6 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			int BeginOffset { get; set; }
 		}
 
-		abstract class MockStTxtParaAnnotation : IMockStTxtParaAnnotation, ICloneable
-		{
-			#region IMockStTxtParaAnnotation Members
-
-			public int Hvo { get; set; }
-
-			public int BeginOffset { get; set; }
-
-			#endregion
-
-			internal void SetMockStTxtParaAnnotationCoreProperties(int hvo, int beginOffset)
-			{
-				Hvo = hvo;
-				BeginOffset = beginOffset;
-			}
-
-			#region ICloneable Members
-
-			public object Clone()
-			{
-				return this.MemberwiseClone();
-			}
-
-			#endregion
-		}
-
 		/// <summary>
 		///
 		/// </summary>
@@ -69,7 +42,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// <returns></returns>
 		protected string ConfigurationFilePath(string fileRelativePath)
 		{
-			return Path.Combine(FwDirectoryFinder.SourceDirectory, fileRelativePath);
+			return Path.Combine(TestDirectoryFinder.SourceDirectory, fileRelativePath);
 		}
 
 		/// <summary>
@@ -105,7 +78,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// <summary>
 		/// Given the internal kind of node list that XmlDocuments use, convert it to a regular list of XmlNodes.
 		/// </summary>
-		static internal List<XmlNode> NodeListToNodes(XmlNodeList nl)
+		internal static List<XmlNode> NodeListToNodes(XmlNodeList nl)
 		{
 			List<XmlNode> nodes = new List<XmlNode>();
 			foreach (XmlNode node in nl)
@@ -113,7 +86,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			return nodes;
 		}
 
-		static internal void MoveSiblingNodes(XmlNode srcStartNode, XmlNode targetParentNode, XmlNode limChildNode)
+		internal static void MoveSiblingNodes(XmlNode srcStartNode, XmlNode targetParentNode, XmlNode limChildNode)
 		{
 			XmlNode srcParentNode = srcStartNode.ParentNode;
 			List<XmlNode> siblingNodes = NodeListToNodes(srcParentNode.ChildNodes);
@@ -131,10 +104,18 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			}
 		}
 
+		private static int GetIndexAmongSiblings(XmlNode node)
+		{
+			XmlNode parent = node.ParentNode;
+			if (parent != null)
+				return node.SelectNodes("./preceding-sibling::" + node.LocalName)?.Count ?? -1;
+			return -1;
+		}
+
 		/// <summary>
 		/// This abstract class can be used to validate any paragraph structure against an existing IStTxtPara structure.
 		/// </summary>
-		abstract public class ParagraphValidator
+		public abstract class ParagraphValidator
 		{
 			/// <summary>
 			///
@@ -148,7 +129,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			/// </summary>
 			/// <param name="expectedParaInfo"></param>
 			/// <param name="actualParaInfo"></param>
-			virtual public void ValidateParagraphs(XmlNode expectedParaInfo, IStTxtPara actualParaInfo)
+			public virtual void ValidateParagraphs(XmlNode expectedParaInfo, IStTxtPara actualParaInfo)
 			{
 				string paraContext = String.Format("Para({0})", GetParagraphContext(expectedParaInfo));
 				ValidateParagraphSegments(expectedParaInfo, actualParaInfo, paraContext);
@@ -161,7 +142,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			/// <param name="expectedParaInfo"></param>
 			/// <param name="actualParaInfo"></param>
 			/// <param name="paraContext"></param>
-			virtual protected void ValidateParagraphSegments(XmlNode expectedParaInfo, IStTxtPara actualParaInfo, string paraContext)
+			protected virtual void ValidateParagraphSegments(XmlNode expectedParaInfo, IStTxtPara actualParaInfo, string paraContext)
 			{
 				var expectedSegments = GetExpectedSegments(expectedParaInfo);
 				var actualSegments = actualParaInfo.SegmentsOS.ToList();
@@ -189,7 +170,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			/// <param name="expectedSegment"></param>
 			/// <param name="actualSegment"></param>
 			/// <param name="segmentContext"></param>
-			virtual protected void ValidateSegmentOuterElements(object expectedSegment, ISegment actualSegment, string segmentContext)
+			protected virtual void ValidateSegmentOuterElements(object expectedSegment, ISegment actualSegment, string segmentContext)
 			{
 				// base override
 				return;
@@ -201,7 +182,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			/// <param name="expectedSegment"></param>
 			/// <param name="actualSegment"></param>
 			/// <param name="segmentContext"></param>
-			virtual protected void ValidateSegmentSegForms(object expectedSegment, ISegment actualSegment, string segmentContext)
+			protected virtual void ValidateSegmentSegForms(object expectedSegment, ISegment actualSegment, string segmentContext)
 			{
 				ArrayList expectedSegForms = GetExpectedSegmentForms(expectedSegment);
 				IList<IAnalysis> actualSegForms = GetActualSegmentForms(actualSegment);
@@ -229,7 +210,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			/// <param name="expectedSegForm"></param>
 			/// <param name="actualSegForm"></param>
 			/// <param name="segFormContext"></param>
-			virtual protected void ValidateSegFormOuterElements(object expectedSegForm, IAnalysis actualSegForm, string segFormContext)
+			protected virtual void ValidateSegFormOuterElements(object expectedSegForm, IAnalysis actualSegForm, string segFormContext)
 			{
 				return;
 			}
@@ -240,7 +221,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			/// <param name="expectedSegForm"></param>
 			/// <param name="actualSegForm"></param>
 			/// <param name="segFormContext"></param>
-			virtual protected void ValidateSegForms(object expectedSegForm, IAnalysis actualSegForm, string segFormContext)
+			protected virtual void ValidateSegForms(object expectedSegForm, IAnalysis actualSegForm, string segFormContext)
 			{
 				return;
 			}
@@ -250,26 +231,26 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			/// </summary>
 			/// <param name="expectedParaInfo"></param>
 			/// <returns></returns>
-			abstract protected string GetParagraphContext(object expectedParaInfo);
+			protected abstract string GetParagraphContext(object expectedParaInfo);
 
 			/// <summary>
 			///
 			/// </summary>
 			/// <param name="expectedParaInfo"></param>
 			/// <returns></returns>
-			abstract protected List<XmlNode> GetExpectedSegments(XmlNode expectedParaInfo);
+			protected abstract List<XmlNode> GetExpectedSegments(XmlNode expectedParaInfo);
 			/// <summary>
 			///
 			/// </summary>
 			/// <param name="expectedSegment"></param>
 			/// <returns></returns>
-			abstract protected ArrayList GetExpectedSegmentForms(object expectedSegment);
+			protected abstract ArrayList GetExpectedSegmentForms(object expectedSegment);
 			/// <summary>
 			///
 			/// </summary>
 			/// <param name="actualSegment"></param>
 			/// <returns></returns>
-			abstract protected IList<IAnalysis> GetActualSegmentForms(ISegment actualSegment);
+			protected abstract IList<IAnalysis> GetActualSegmentForms(ISegment actualSegment);
 		}
 
 		/// <summary>
@@ -379,12 +360,12 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			/// </summary>
 			/// <param name="expectedParaInfo"></param>
 			/// <returns></returns>
-			override protected string GetParagraphContext(object expectedParaInfo)
+			protected override string GetParagraphContext(object expectedParaInfo)
 			{
 				XmlNode expectedParaDefn = expectedParaInfo as XmlNode;
 				StringBuilder sb = new StringBuilder();
 				sb.Append("[");
-				sb.Append(XmlUtils.GetIndexAmongSiblings(expectedParaDefn));
+				sb.Append(GetIndexAmongSiblings(expectedParaDefn));
 				sb.Append("] ");
 				sb.Append(XmlUtils.GetManditoryAttributeValue(expectedParaInfo as XmlNode, "id"));
 				return sb.ToString();
@@ -395,7 +376,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			/// Get a list of the XmlNodes (CmBaseAnnotations in the Segments16 property) of the input XmlNode,
 			/// which represents an StTxtPara in our test data.
 			/// </summary>
-			override protected List<XmlNode> GetExpectedSegments(XmlNode expectedParaInfo)
+			protected override List<XmlNode> GetExpectedSegments(XmlNode expectedParaInfo)
 			{
 				return ParagraphBuilder.SegmentNodes(expectedParaInfo);
 			}
@@ -405,7 +386,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			/// </summary>
 			/// <param name="expectedSegment"></param>
 			/// <returns></returns>
-			override protected ArrayList GetExpectedSegmentForms(object expectedSegment)
+			protected override ArrayList GetExpectedSegmentForms(object expectedSegment)
 			{
 				return new ArrayList(ParagraphBuilder.SegmentFormNodes(expectedSegment as XmlNode).ToArray());
 			}
@@ -415,7 +396,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			/// </summary>
 			/// <param name="actualSegment"></param>
 			/// <returns></returns>
-			override protected IList<IAnalysis> GetActualSegmentForms(ISegment actualSegment)
+			protected override IList<IAnalysis> GetActualSegmentForms(ISegment actualSegment)
 			{
 				return actualSegment.AnalysesRS.ToList();
 			}
@@ -515,7 +496,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			/// <param name="leMain"></param>
 			/// <param name="variantType"></param>
 			/// <returns>hvo of the resulting LexEntryRef</returns>
-			virtual public ILexEntryRef SetVariantOf(int iSegment, int iSegForm, ILexEntry leMain, ILexEntryType variantType)
+			public virtual ILexEntryRef SetVariantOf(int iSegment, int iSegForm, ILexEntry leMain, ILexEntryType variantType)
 			{
 				if (variantType == null)
 					throw new ArgumentNullException("requires non-null variantType parameter.");
@@ -533,12 +514,12 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				return ler;
 			}
 
-			virtual internal IWfiWordform SetAlternateCase(string wordform, int iOccurrenceInParagraph, StringCaseStatus targetState)
+			internal virtual IWfiWordform SetAlternateCase(string wordform, int iOccurrenceInParagraph, StringCaseStatus targetState)
 			{
 				return null; // override
 			}
 
-			virtual public IWfiWordform SetAlternateCase(int iSegment, int iSegForm, StringCaseStatus targetState, out string alternateCaseForm)
+			public virtual IWfiWordform SetAlternateCase(int iSegment, int iSegForm, StringCaseStatus targetState, out string alternateCaseForm)
 			{
 				// Get actual segment form.
 				var analysisActual = GetAnalysis(iSegment, iSegForm);
@@ -561,25 +542,25 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				}
 
 				// Find or create the new wordform.
-				IWfiWordform wfAlternateCase = WfiWordformServices.FindOrCreateWordform(m_cache, TsStringUtils.MakeTss(alternateCaseForm, ws));
+				IWfiWordform wfAlternateCase = WfiWordformServices.FindOrCreateWordform(m_cache, TsStringUtils.MakeString(alternateCaseForm, ws));
 
 				// Set the annotation to this wordform.
 				SetAnalysis(iSegment, iSegForm, wfAlternateCase);
 				return wfAlternateCase;
 			}
 
-			virtual internal IWfiGloss SetDefaultWordGloss(string wordform, int iOccurrenceInParagraph)
+			internal virtual IWfiGloss SetDefaultWordGloss(string wordform, int iOccurrenceInParagraph)
 			{
 				return null;	// override
 			}
 
-			virtual internal IWfiGloss SetDefaultWordGloss(int iSegment, int iSegForm, out string gloss)
+			internal virtual IWfiGloss SetDefaultWordGloss(int iSegment, int iSegForm, out string gloss)
 			{
 				return SetDefaultWordGloss(iSegment, iSegForm, null, out gloss);
 			}
 
 
-			virtual internal IWfiGloss SetDefaultWordGloss(int iSegment, int iSegForm, IWfiAnalysis actualWfiAnalysis, out string gloss)
+			internal virtual IWfiGloss SetDefaultWordGloss(int iSegment, int iSegForm, IWfiAnalysis actualWfiAnalysis, out string gloss)
 			{
 				gloss = "";
 				// Get actual segment form.
@@ -619,7 +600,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			/// Walk through the paragraph and create word glosses (formatted: wordform.segNum.segFormNum) and segment annotations.
 			/// </summary>
 			/// <returns>list of wordglosses for each analysis in the paragraph, including non-wordforms (ie. hvo == 0).</returns>
-			internal protected virtual IList<IWfiGloss> SetupDefaultWordGlosses()
+			protected internal virtual IList<IWfiGloss> SetupDefaultWordGlosses()
 			{
 				int iseg = 0;
 				IList<IWfiGloss> wordGlosses = new List<IWfiGloss>();
@@ -714,7 +695,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			/// Creates a new analysis with the given MoForms belonging to the wordform currently
 			/// at the given position and inserts it into the segment's analysis in place of the wordform.
 			/// </summary>
-			virtual public IWfiAnalysis BreakIntoMorphs(int iSegment, int iSegForm, ArrayList moForms)
+			public virtual IWfiAnalysis BreakIntoMorphs(int iSegment, int iSegForm, ArrayList moForms)
 			{
 				var actualAnalysis = GetAnalysis(iSegment, iSegForm);
 				// Find or create the current analysis of the actual annotation.
@@ -744,7 +725,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				return actualWfiAnalysis;
 			}
 
-			virtual public IWfiMorphBundle SetMorphSense(int iSegment, int iSegForm, int iMorphBundle, ILexSense sense)
+			public virtual IWfiMorphBundle SetMorphSense(int iSegment, int iSegForm, int iMorphBundle, ILexSense sense)
 			{
 				var analysis = GetAnalysis(iSegment, iSegForm);
 				// Find or create the current analysis of the actual annotation.
@@ -763,7 +744,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			}
 
 
-			virtual internal protected int MergeAdjacentAnnotations(int iSegment, int iSegForm)
+			protected internal virtual int MergeAdjacentAnnotations(int iSegment, int iSegForm)
 			{
 				var analysisOccurrence = new AnalysisOccurrence(m_para.SegmentsOS[iSegment], iSegForm);
 				analysisOccurrence.MakePhraseWithNextWord();
@@ -771,7 +752,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				return analysisOccurrence.Analysis.Hvo;
 			}
 
-			virtual internal protected void BreakPhrase(int iSegment, int iSegForm)
+			protected internal virtual void BreakPhrase(int iSegment, int iSegForm)
 			{
 				var analysisOccurrence = new AnalysisOccurrence(m_para.SegmentsOS[iSegment], iSegForm);
 				analysisOccurrence.BreakPhrase();
@@ -819,7 +800,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				m_pb = pb;
 			}
 
-			override internal IWfiWordform SetAlternateCase(string wordform, int iOccurrenceInParagraph, StringCaseStatus targetState)
+			internal override IWfiWordform SetAlternateCase(string wordform, int iOccurrenceInParagraph, StringCaseStatus targetState)
 			{
 				int iSegment = -1;
 				int iSegForm = -1;
@@ -828,7 +809,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				return SetAlternateCase(iSegment, iSegForm, targetState, out alternateWordform);
 			}
 
-			override internal IWfiGloss SetDefaultWordGloss(string wordform, int iOccurrenceInParagraph)
+			internal override IWfiGloss SetDefaultWordGloss(string wordform, int iOccurrenceInParagraph)
 			{
 				int iSegment = -1;
 				int iSegForm = -1;
@@ -837,14 +818,14 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				return SetDefaultWordGloss(iSegment, iSegForm, out gloss);
 			}
 
-			override public IWfiWordform SetAlternateCase(int iSegment, int iSegForm, StringCaseStatus targetState, out string alternateCaseForm)
+			public override IWfiWordform SetAlternateCase(int iSegment, int iSegForm, StringCaseStatus targetState, out string alternateCaseForm)
 			{
 				IWfiWordform wfAlternateCase = base.SetAlternateCase(iSegment, iSegForm, targetState, out alternateCaseForm);
 				m_pb.SetExpectedValuesForAnalysis(m_pb.SegmentFormNode(iSegment, iSegForm), wfAlternateCase.Hvo);
 				return wfAlternateCase;
 			}
 
-			override public IWfiAnalysis BreakIntoMorphs(int iSegment, int iSegForm, ArrayList moForms)
+			public override IWfiAnalysis BreakIntoMorphs(int iSegment, int iSegForm, ArrayList moForms)
 			{
 				IWfiAnalysis wfiAnalysis = base.BreakIntoMorphs(iSegment, iSegForm, moForms);
 				m_pb.SetExpectedValuesForAnalysis(m_pb.SegmentFormNode(iSegment, iSegForm), wfiAnalysis.Hvo);
@@ -927,7 +908,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			/// <summary>
 			/// </summary>
 			/// <returns>hvo of new analysis.</returns>
-			override internal IWfiGloss SetDefaultWordGloss(int iSegment, int iSegForm, out string gloss)
+			internal override IWfiGloss SetDefaultWordGloss(int iSegment, int iSegForm, out string gloss)
 			{
 				return SetDefaultWordGloss(iSegment, iSegForm, null, out gloss);
 			}
@@ -940,7 +921,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			/// <param name="wfiAnalysis">wfi analysis to add gloss to.</param>
 			/// <param name="gloss"></param>
 			/// <returns></returns>
-			override internal IWfiGloss SetDefaultWordGloss(int iSegment, int iSegForm, IWfiAnalysis wfiAnalysis, out string gloss)
+			internal override IWfiGloss SetDefaultWordGloss(int iSegment, int iSegForm, IWfiAnalysis wfiAnalysis, out string gloss)
 			{
 				IWfiGloss wfiGloss = base.SetDefaultWordGloss(iSegment, iSegForm, wfiAnalysis, out gloss);
 				m_pb.SetExpectedValuesForAnalysis(m_pb.SegmentFormNode(iSegment, iSegForm), wfiGloss.Hvo);
@@ -960,7 +941,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			/// Walk through the paragraph and create word glosses, and segment annotations.
 			/// </summary>
 			/// <returns>list of wordglosses, including 0's for nonwordforms</returns>
-			internal protected override IList<IWfiGloss> SetupDefaultWordGlosses()
+			protected internal override IList<IWfiGloss> SetupDefaultWordGlosses()
 			{
 				IList<IWfiGloss> wordGlosses = new List<IWfiGloss>();
 				int iseg = 0;
@@ -1116,7 +1097,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 					int wsWord = GetWsFromStringNode(StringValueNode(iSegment, iSegForm));
 					var wfFactory =
 						m_cache.ServiceLocator.GetInstance<IWfiWordformFactory>();
-					analysis = wfFactory.Create(TsStringUtils.MakeTss(word, wsWord));
+					analysis = wfFactory.Create(TsStringUtils.MakeString(word, wsWord));
 				}
 				else
 				{
@@ -1148,11 +1129,40 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			/// <summary>
 			/// get a clone of a node (and its owning document)
 			/// </summary>
-			/// <param name="node"></param>
-			/// <returns></returns>
 			internal static XmlNode Snapshot(XmlNode node)
 			{
-				return XmlUtils.CloneNodeWithDocument(node);
+				if (node == null)
+					return null;
+
+				// get the xpath of the node in its document
+				if (node.NodeType != XmlNodeType.Document)
+				{
+					string xpath = GetXPathInDocument(node);
+					XmlNode clonedOwner = node.OwnerDocument?.CloneNode(true);
+					return clonedOwner?.SelectSingleNode(xpath);
+				}
+
+				return node.CloneNode(true);
+			}
+
+			/// <summary>
+			/// build an xpath to the given node in its document.
+			/// </summary>
+			private static string GetXPathInDocument(XmlNode node)
+			{
+				if (node == null || node.NodeType != XmlNodeType.Element)
+					return "";
+				//XmlNode parent = node.ParentNode;
+				// start with the name of the node, and tentatively guess it to be the root element.
+				string xpath = $"/{node.LocalName}";
+				// append the index of the node amongst any preceding siblings.
+				int index = GetIndexAmongSiblings(node);
+				if (index != -1)
+				{
+					index = index + 1; // add one for an xpath index.
+					xpath += $"[{index}]";
+				}
+				return string.Concat(GetXPathInDocument(node.ParentNode), xpath);
 			}
 
 			internal IStTxtPara ActualParagraph
@@ -1160,7 +1170,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				get { return m_para; }
 			}
 
-			static protected XmlNode GetStTxtParaDefnNode(FDO.IText text, XmlNode textsDefn, int iPara, out IStTxtPara para)
+			protected static XmlNode GetStTxtParaDefnNode(FDO.IText text, XmlNode textsDefn, int iPara, out IStTxtPara para)
 			{
 				para = text.ContentsOA.ParagraphsOS[iPara] as IStTxtPara;
 				Debug.Assert(para != null);
@@ -1185,8 +1195,6 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				return paraNode;
 			}
 
-			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-				Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 			internal IStTxtPara BuildParagraphContent(XmlNode paraDefn)
 			{
 				if (paraDefn.Name != "StTxtPara")
@@ -1209,13 +1217,11 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				if (m_para.Contents == null)
 				{
 				   // make sure it has an empty content
-					m_para.Contents = TsStringUtils.MakeTss("", m_cache.DefaultVernWs);
+					m_para.Contents = TsStringUtils.MakeString("", m_cache.DefaultVernWs);
 				}
 				return m_para;
 			}
 
-			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-				Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 			internal ITsString RebuildParagraphContentFromStrings()
 			{
 				try
@@ -1245,14 +1251,14 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 			internal IStTxtPara CreateNewParagraph(XmlNode paraDefn)
 			{
-				int iInsertAt = XmlUtils.GetIndexAmongSiblings(paraDefn);
+				int iInsertAt = GetIndexAmongSiblings(paraDefn);
 				m_para = this.CreateParagraph(iInsertAt);
 				m_paraDefn = paraDefn;
 				m_paraDefn.Attributes["id"].Value = m_para.Hvo.ToString();
 				return m_para;
 			}
 
-			static public void CopyContents(IStTxtPara paraSrc, IStTxtPara paraTarget)
+			public static void CopyContents(IStTxtPara paraSrc, IStTxtPara paraTarget)
 			{
 				paraTarget.Contents = paraSrc.Contents;
 			}
@@ -1320,7 +1326,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				// Now make the one we actually want, even if it already had an item in the Analyses list.
 				string stringValue = StringValue(iSegment, iSegForm);
 				int ws = GetWsFromStringNode(StringValueNode(iSegment, iSegForm));
-				IWfiWordform actualWordform = WfiWordformServices.FindOrCreateWordform(m_cache, TsStringUtils.MakeTss(stringValue, ws));
+				IWfiWordform actualWordform = WfiWordformServices.FindOrCreateWordform(m_cache, TsStringUtils.MakeString(stringValue, ws));
 				XmlNode fileItem = SegmentFormNode(iSegment, iSegForm);
 				fileItem.Attributes["id"].Value = actualWordform.Hvo.ToString();
 				ExportCbaNodeToReal(iSegment, iSegForm);
@@ -1342,8 +1348,6 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			/// analysis glosses.
 			/// </summary>
 			/// <returns></returns>
-			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-				Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 			internal ITsString GenerateParaContentFromAnnotations()
 			{
 				m_expectedWordformsAndOccurrences = new Dictionary<string, int>();
@@ -1355,7 +1359,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				int ichMinSeg = 0;
 				int ichLimSeg = 0;
 				// Create TsString for Paragraph Contents.
-				ITsStrBldr contentsBldr = TsStrBldrClass.Create();
+				ITsStrBldr contentsBldr = TsStringUtils.MakeStrBldr();
 				contentsBldr.Clear();
 				foreach (XmlNode segment in segments)
 				{
@@ -1469,7 +1473,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 			private static ITsTextProps MakeTextProps(int ws)
 			{
-				ITsPropsBldr propBldr = TsPropsBldrClass.Create();
+				ITsPropsBldr propBldr = TsStringUtils.MakePropsBldr();
 				propBldr.SetIntPropValues((int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault, ws);
 				ITsTextProps props = propBldr.GetTextProps();
 				return props;
@@ -1510,7 +1514,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			internal void SetExpectedValuesForSegment(XmlNode annotationDefn, int ichMin)
 			{
 				if (annotationDefn.Attributes["beginOffset"] == null)
-					XmlUtils.AppendAttribute(annotationDefn, "beginOffset", ichMin.ToString());
+					XmlUtils.SetAttribute(annotationDefn, "beginOffset", ichMin.ToString());
 				else
 					annotationDefn.Attributes["beginOffset"].Value = ichMin.ToString();
 			}
@@ -1556,8 +1560,6 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				HaveParsed = true;
 			}
 
-			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-				Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 			XmlNode SegmentNode(int iSegment)
 			{
 				XmlNodeList cbaSegmentNodes = SegmentNodeList();
@@ -1584,8 +1586,6 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				return cbaSegFormNodes;
 			}
 
-			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-				Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 			internal XmlNode SegmentFormNode(int iSegment, int iSegForm)
 			{
 				XmlNodeList cbaSegFormNodes = SegmentFormNodeList(iSegment);
@@ -1601,37 +1601,29 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			/// Get a list of the XmlNodes (CmBaseAnnotations in the Segments16 property) of the input XmlNode,
 			/// which represents an StTxtPara in our test data.
 			/// </summary>
-			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-				Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
-			static internal List<XmlNode> SegmentNodes(XmlNode paraDefn)
+			internal static List<XmlNode> SegmentNodes(XmlNode paraDefn)
 			{
 				return NodeListToNodes(SegmentNodeList(paraDefn));
 			}
 
-			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-				Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 			internal List<XmlNode> SegmentNodes()
 			{
 				return NodeListToNodes(SegmentNodeList());
 			}
 
-			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-				Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
-			static internal List<XmlNode> SegmentFormNodes(XmlNode segment)
+			internal static List<XmlNode> SegmentFormNodes(XmlNode segment)
 			{
 				return NodeListToNodes(SegmentFormNodeList(segment));
 			}
 
-			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-				Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 			internal XmlNode GetSegmentFormInfo(string wordform, int iOccurrenceInParagraph, out int iSegment, out int iSegForm)
 			{
 				XmlNodeList cbaSegFormNodes = m_paraDefn.SelectNodes("./Segments16/CmBaseAnnotation/SegmentForms37/CmBaseAnnotation[StringValue37='" + wordform + "']");
 				Debug.Assert(cbaSegFormNodes != null);
 				Debug.Assert(iOccurrenceInParagraph >= 0 && iOccurrenceInParagraph < cbaSegFormNodes.Count);
 				XmlNode cbaSegForm = cbaSegFormNodes[iOccurrenceInParagraph];
-				iSegForm = XmlUtils.GetIndexAmongSiblings(cbaSegForm);
-				iSegment = XmlUtils.GetIndexAmongSiblings(cbaSegForm.ParentNode.ParentNode);
+				iSegForm = GetIndexAmongSiblings(cbaSegForm);
+				iSegment = GetIndexAmongSiblings(cbaSegForm.ParentNode.ParentNode);
 				return cbaSegForm;
 			}
 
@@ -1732,8 +1724,6 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				return newSegment;
 			}
 
-			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-				Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 			internal XmlElement CreateSegmentForms()
 			{
 				Debug.Assert(m_paraDefn.SelectNodes(".//Segments16/CmBaseAnnotation").Count == 1);
@@ -1767,8 +1757,6 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				return NeedToRebuildParagraphContentFromAnnotations;
 			}
 
-			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-				Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 			internal bool DeleteSegmentBreak(int iSegment, int iSegForm)
 			{
 				// get first segment
@@ -1852,7 +1840,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				return NeedToRebuildParagraphContentFromAnnotations;
 			}
 
-			virtual internal bool MergeAdjacentAnnotations(int iSegment, int iSegForm)
+			internal virtual bool MergeAdjacentAnnotations(int iSegment, int iSegForm)
 			{
 				// change the paragraph definition spec.
 				this.ReplaceSegmentForm(iSegment, iSegForm + 1, String.Format("{0} {1}",
@@ -1865,7 +1853,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				return NeedToRebuildParagraphContentFromAnnotations;
 			}
 
-			virtual internal bool BreakPhraseAnnotation(int iSegment, int iSegForm)
+			internal virtual bool BreakPhraseAnnotation(int iSegment, int iSegForm)
 			{
 				string[] words = StringValue(iSegment, iSegForm).Split(new char[] { ' ' });
 				// insert these in reverse order.
@@ -1914,7 +1902,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			/// </summary>
 			/// <param name="cbaNode"></param>
 			/// <returns></returns>
-			static internal int GetAnalysisId(XmlNode cbaNode)
+			internal static int GetAnalysisId(XmlNode cbaNode)
 			{
 				return XmlUtils.GetMandatoryIntegerAttributeValue(cbaNode, "id");
 			}
@@ -1944,8 +1932,6 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				m_cache = cache;
 			}
 
-			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-				Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 			internal FDO.IText BuildText(XmlNode textDefn)
 			{
 				if (textDefn.Name != "Text")
@@ -2138,7 +2124,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 						MoveSiblingNodes(startingNodeToMoveToNewPara, newSegForms, null);
 
 						// get the next segment if any.
-						int iSeg = XmlUtils.GetIndexAmongSiblings(startingNodeToMoveToNewPara.ParentNode.ParentNode);
+						int iSeg = GetIndexAmongSiblings(startingNodeToMoveToNewPara.ParentNode.ParentNode);
 						List<XmlNode> segmentNodes = pb.SegmentNodes();
 						startingSegNode = segmentNodes[iSeg].NextSibling;
 					}
@@ -2168,11 +2154,9 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				return newParaDefn;
 			}
 
-			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-				Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 			internal void DeleteParagraphBreak(XmlNode paraNodeToDelBreak)
 			{
-				int iParaToDeleteBreak = XmlUtils.GetIndexAmongSiblings(paraNodeToDelBreak);
+				int iParaToDeleteBreak = GetIndexAmongSiblings(paraNodeToDelBreak);
 				XmlNodeList paragraphs = paraNodeToDelBreak.ParentNode.SelectNodes("StTxtPara");
 				XmlNode nextParaNode = paragraphs[iParaToDeleteBreak + 1];
 				// IStTxtPara/Segments/CmBaseAnnotation[]
@@ -2246,8 +2230,6 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			/// </summary>
 			XmlNode m_selectedNode = null;
 
-			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-				Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 			internal XmlNode SelectedNode
 			{
 				get
@@ -2367,7 +2349,6 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			{
 				m_text.Name.set_String(ws, name);
 			}
-
 		}
 
 	}
@@ -2498,15 +2479,15 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 			//// Set an empty text name and check.
 			var text = (IText) sttext.Owner;
-			text.Name.AnalysisDefaultWritingSystem = Cache.TsStrFactory.EmptyString(Cache.DefaultAnalWs);
+			text.Name.AnalysisDefaultWritingSystem = TsStringUtils.EmptyString(Cache.DefaultAnalWs);
 			Assert.That(analysis1.Reference.Text, Is.EqualTo("1.1"));
 
 			//// Try with a name less than 5 chars.
-			text.Name.AnalysisDefaultWritingSystem = Cache.TsStrFactory.MakeString("abc", Cache.DefaultAnalWs);
+			text.Name.AnalysisDefaultWritingSystem = TsStringUtils.MakeString("abc", Cache.DefaultAnalWs);
 			Assert.That(analysis1.Reference.Text, Is.EqualTo("abc 1.1"));
 
 			// It prefers to use the abbreviation.
-			text.Abbreviation.AnalysisDefaultWritingSystem = Cache.TsStrFactory.MakeString("mg", Cache.DefaultAnalWs);
+			text.Abbreviation.AnalysisDefaultWritingSystem = TsStringUtils.MakeString("mg", Cache.DefaultAnalWs);
 			Assert.That(analysis1.Reference.Text, Is.EqualTo("mg 1.1"));
 		}
 
@@ -2529,7 +2510,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			int length = para.Contents.Length;
 			int start = 0;
 			if (length == 0)
-				para.Contents = Cache.TsStrFactory.MakeString(contents, Cache.DefaultVernWs);
+				para.Contents = TsStringUtils.MakeString(contents, Cache.DefaultVernWs);
 			else
 			{
 				var bldr = para.Contents.GetBldr();
@@ -2547,7 +2528,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			//Cache.LangProject.TextsOC.Add(text);
 			var result = Cache.ServiceLocator.GetInstance<IStTextFactory>().Create();
 			text.ContentsOA = result;
-			text.Name.AnalysisDefaultWritingSystem = Cache.TsStrFactory.MakeString(title, Cache.DefaultAnalWs);
+			text.Name.AnalysisDefaultWritingSystem = TsStringUtils.MakeString(title, Cache.DefaultAnalWs);
 			var para = Cache.ServiceLocator.GetInstance<IStTxtParaFactory>().Create();
 			result.ParagraphsOS.Add(para);
 			return result;
@@ -3019,9 +3000,9 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 			// Try adding some freeform translations to third segment.
 			segments[2].FreeTranslation.AnalysisDefaultWritingSystem =
-				Cache.TsStrFactory.MakeString("Segment2: Freeform translation.", Cache.DefaultAnalWs);
+				TsStringUtils.MakeString("Segment2: Freeform translation.", Cache.DefaultAnalWs);
 			segments[2].LiteralTranslation.AnalysisDefaultWritingSystem =
-				Cache.TsStrFactory.MakeString("Segment2: Literal translation.", Cache.DefaultAnalWs);
+				TsStringUtils.MakeString("Segment2: Literal translation.", Cache.DefaultAnalWs);
 
 			// make sure the other segments don't have freeform annotations.
 			Assert.That(segments[0].FreeTranslation.AvailableWritingSystemIds.Length, Is.EqualTo(0));
@@ -3054,7 +3035,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			string formLexEntry = "xnihimbilira";
 			var morphTypeRepository = Cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>();
 			var rootMorphType = morphTypeRepository. GetObject(MoMorphTypeTags.kguidMorphRoot);
-			ITsString tssLexEntryForm = TsStringUtils.MakeTss(formLexEntry, Cache.DefaultVernWs);
+			ITsString tssLexEntryForm = TsStringUtils.MakeString(formLexEntry, Cache.DefaultVernWs);
 			var entryFactory = Cache.ServiceLocator.GetInstance<ILexEntryFactory>();
 			ILexEntry xnihimbilira_Entry = entryFactory.Create(rootMorphType, tssLexEntryForm, "xnihimbilira.sense1", null);
 
@@ -3299,7 +3280,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			IStTxtPara paraGlossed = m_text1.ContentsOA.AddNewTextPara("Normal");
 			IStTxtPara paraGuessed = m_text1.ContentsOA.AddNewTextPara("Normal");
 
-			paraGlossed.Contents = TsStringUtils.MakeTss("xxxcrayzee xxxyouneek xxxsintents.", Cache.DefaultVernWs);
+			paraGlossed.Contents = TsStringUtils.MakeString("xxxcrayzee xxxyouneek xxxsintents.", Cache.DefaultVernWs);
 			paraGuessed.Contents = paraGlossed.Contents;
 
 			// collect expected guesses from the glosses in the first paragraph.
@@ -3314,7 +3295,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			ValidateGuesses(expectedGuessesBeforeEdit, paraGuessed);
 
 			// now edit the paraGuessed and expected Guesses.
-			paraGuessed.Contents = TsStringUtils.MakeTss("xxxcrayzee xxxguessless xxxyouneek xxxsintents.", Cache.DefaultVernWs);
+			paraGuessed.Contents = TsStringUtils.MakeString("xxxcrayzee xxxguessless xxxyouneek xxxsintents.", Cache.DefaultVernWs);
 			IList<IWfiGloss> expectedGuessesAfterEdit = new List<IWfiGloss>(expectedGuesses);
 			// we don't expect a guess for the inserted word, so insert 0 after first twfic.
 			expectedGuessesAfterEdit.Insert(1, null);

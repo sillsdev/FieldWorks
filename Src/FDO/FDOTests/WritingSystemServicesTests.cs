@@ -4,8 +4,9 @@
 
 using System.Collections.Generic;
 using NUnit.Framework;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FDO.Infrastructure.Impl;
@@ -62,21 +63,21 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			var entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
 			var sense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
 			entry.SensesOS.Add(sense);
-			sense.Definition.set_String(frId, Cache.TsStrFactory.MakeString("fr", frId));
-			sense.Definition.set_String(enId, Cache.TsStrFactory.MakeString("en", enId));
-			sense.Definition.set_String(ptId, Cache.TsStrFactory.MakeString("pt", ptId));
+			sense.Definition.set_String(frId, TsStringUtils.MakeString("fr", frId));
+			sense.Definition.set_String(enId, TsStringUtils.MakeString("en", enId));
+			sense.Definition.set_String(ptId, TsStringUtils.MakeString("pt", ptId));
 			int wsId;
 			//SUT magic gets first analysis when there is one.
 			WritingSystemServices.GetMagicStringAlt(Cache, Cache.MainCacheAccessor,
 																 WritingSystemServices.kwsFirstAnal, sense.Hvo, sense.Definition.Flid, false, out wsId);
 			Assert.AreEqual(wsId, frId, "Did not pull first analysis language first.");
 			//SUT magic gets second analysis when the first is empty
-			sense.Definition.set_String(frId, Cache.TsStrFactory.MakeString("", frId)); //wipe french
+			sense.Definition.set_String(frId, TsStringUtils.EmptyString(frId)); //wipe french
 			WritingSystemServices.GetMagicStringAlt(Cache, Cache.MainCacheAccessor,
 																 WritingSystemServices.kwsFirstAnal, sense.Hvo, sense.Definition.Flid, false, out wsId);
 			Assert.AreEqual(wsId, enId, "Did not pull second analysis language when first was empty.");
 			//SUT magic gets non current analysis when all current analysis languages are empty
-			sense.Definition.set_String(enId, Cache.TsStrFactory.MakeString("", enId)); //wipe english
+			sense.Definition.set_String(enId, TsStringUtils.EmptyString(enId)); //wipe english
 			WritingSystemServices.GetMagicStringAlt(Cache, Cache.MainCacheAccessor,
 																 WritingSystemServices.kwsFirstAnal, sense.Hvo, sense.Definition.Flid, false, out wsId);
 			Assert.AreEqual(wsId, ptId, "Did not pull from non current analysis language when all current languages were empty.");
@@ -115,24 +116,24 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			var entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
 			var sense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
 			entry.SensesOS.Add(sense);
-			sense.Definition.set_String(frId, Cache.TsStrFactory.MakeString("fr", frId));
-			sense.Definition.set_String(enId, Cache.TsStrFactory.MakeString("en", enId));
-			sense.Definition.set_String(ptId, Cache.TsStrFactory.MakeString("pt", ptId));
-			entry.CitationForm.set_String(mluId, Cache.TsStrFactory.MakeString("To'abaita", mluId));
-			entry.CitationForm.set_String(senId, Cache.TsStrFactory.MakeString("Sena", senId));
-			entry.CitationForm.set_String(sekId, Cache.TsStrFactory.MakeString("Sekani", sekId));
+			sense.Definition.set_String(frId, TsStringUtils.MakeString("fr", frId));
+			sense.Definition.set_String(enId, TsStringUtils.MakeString("en", enId));
+			sense.Definition.set_String(ptId, TsStringUtils.MakeString("pt", ptId));
+			entry.CitationForm.set_String(mluId, TsStringUtils.MakeString("To'abaita", mluId));
+			entry.CitationForm.set_String(senId, TsStringUtils.MakeString("Sena", senId));
+			entry.CitationForm.set_String(sekId, TsStringUtils.MakeString("Sekani", sekId));
 			int wsId;
 			//SUT magic gets first analysis when there is one.
 			WritingSystemServices.GetMagicStringAlt(Cache, Cache.MainCacheAccessor,
 																 WritingSystemServices.kwsFirstAnal, sense.Hvo, sense.Definition.Flid, false, out wsId);
 			Assert.AreEqual(wsId, frId, "Did not pull first analysis language first.");
 			//SUT magic gets second analysis when the first is empty
-			sense.Definition.set_String(frId, Cache.TsStrFactory.MakeString("", frId)); //wipe french
+			sense.Definition.set_String(frId, TsStringUtils.EmptyString(frId)); //wipe french
 			WritingSystemServices.GetMagicStringAlt(Cache, Cache.MainCacheAccessor,
 																 WritingSystemServices.kwsFirstAnal, sense.Hvo, sense.Definition.Flid, false, out wsId);
 			Assert.AreEqual(wsId, enId, "Did not pull second analysis language when first was empty.");
 			//SUT magic gets non current analysis when all current analysis languages are empty
-			sense.Definition.set_String(enId, Cache.TsStrFactory.MakeString("", enId)); //wipe english
+			sense.Definition.set_String(enId, TsStringUtils.EmptyString(enId)); //wipe english
 			WritingSystemServices.GetMagicStringAlt(Cache, Cache.MainCacheAccessor,
 																 WritingSystemServices.kwsFirstAnal, sense.Hvo, sense.Definition.Flid, false, out wsId);
 			Assert.AreEqual(wsId, ptId, "Did not pull from non current analysis language when all current languages were empty.");
@@ -141,12 +142,12 @@ namespace SIL.FieldWorks.FDO.FDOTests
 																 WritingSystemServices.kwsFirstVern, entry.Hvo, entry.CitationForm.Flid, false, out wsId);
 			Assert.AreEqual(wsId, mluId, "Did not pull first vernacular language first.");
 			//SUT magic gets second vernacular when the first is empty
-			entry.CitationForm.set_String(mluId, Cache.TsStrFactory.MakeString("", mluId)); //wipe Sena
+			entry.CitationForm.set_String(mluId, TsStringUtils.EmptyString(mluId)); //wipe Sena
 			WritingSystemServices.GetMagicStringAlt(Cache, Cache.MainCacheAccessor,
 																 WritingSystemServices.kwsFirstVern, entry.Hvo, entry.CitationForm.Flid, false, out wsId);
 			Assert.AreEqual(wsId, senId, "Did not pull second vernacular language when first was empty.");
 			//SUT magic gets non current vernacular when all current analysis languages are empty
-			entry.CitationForm.set_String(senId, Cache.TsStrFactory.MakeString("", senId)); //wipe To'abaita
+			entry.CitationForm.set_String(senId, TsStringUtils.EmptyString(senId)); //wipe To'abaita
 			WritingSystemServices.GetMagicStringAlt(Cache, Cache.MainCacheAccessor,
 																 WritingSystemServices.kwsFirstVern, entry.Hvo, entry.CitationForm.Flid, false, out wsId);
 			Assert.AreEqual(wsId, sekId, "Did not pull from non current vernacular language when all current languages were empty.");
@@ -170,21 +171,21 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			Cache.LangProject.AddToCurrentVernacularWritingSystems(senWs);
 			Cache.LangProject.VernacularWritingSystems.Add(sekWs);
 			var entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
-			entry.CitationForm.set_String(mluId, Cache.TsStrFactory.MakeString("To'abaita", mluId));
-			entry.CitationForm.set_String(senId, Cache.TsStrFactory.MakeString("Sena", senId));
-			entry.CitationForm.set_String(sekId, Cache.TsStrFactory.MakeString("Sekani", sekId));
+			entry.CitationForm.set_String(mluId, TsStringUtils.MakeString("To'abaita", mluId));
+			entry.CitationForm.set_String(senId, TsStringUtils.MakeString("Sena", senId));
+			entry.CitationForm.set_String(sekId, TsStringUtils.MakeString("Sekani", sekId));
 			int wsId;
 			//SUT magic gets first vernacular when there is one.
 			WritingSystemServices.GetMagicStringAlt(Cache, Cache.MainCacheAccessor,
 																 WritingSystemServices.kwsFirstVern, entry.Hvo, entry.CitationForm.Flid, false, out wsId);
 			Assert.AreEqual(wsId, mluId, "Did not pull first vernacular language first.");
 			//SUT magic gets second vernacular when the first is empty
-			entry.CitationForm.set_String(mluId, Cache.TsStrFactory.MakeString("", mluId)); //wipe Sena
+			entry.CitationForm.set_String(mluId, TsStringUtils.EmptyString(mluId)); //wipe Sena
 			WritingSystemServices.GetMagicStringAlt(Cache, Cache.MainCacheAccessor,
 																 WritingSystemServices.kwsFirstVern, entry.Hvo, entry.CitationForm.Flid, false, out wsId);
 			Assert.AreEqual(wsId, senId, "Did not pull second vernacular language when first was empty.");
 			//SUT magic gets non current vernacular when all current vernacular languages are empty
-			entry.CitationForm.set_String(senId, Cache.TsStrFactory.MakeString("", senId)); //wipe To'abaita
+			entry.CitationForm.set_String(senId, TsStringUtils.EmptyString(senId)); //wipe To'abaita
 			WritingSystemServices.GetMagicStringAlt(Cache, Cache.MainCacheAccessor,
 																 WritingSystemServices.kwsFirstVernOrAnal, entry.Hvo, entry.CitationForm.Flid, false, out wsId);
 			Assert.AreEqual(wsId, sekId, "Did not pull from non current vernacular language when all current languages were empty.");
@@ -204,15 +205,15 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			Cache.LangProject.CurrentPronunciationWritingSystems.Add(mluWs);
 			Cache.LangProject.CurrentPronunciationWritingSystems.Add(senWs);
 			var entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
-			entry.CitationForm.set_String(mluId, Cache.TsStrFactory.MakeString("To'abaita", mluId));
-			entry.CitationForm.set_String(senId, Cache.TsStrFactory.MakeString("Sena", senId));
+			entry.CitationForm.set_String(mluId, TsStringUtils.MakeString("To'abaita", mluId));
+			entry.CitationForm.set_String(senId, TsStringUtils.MakeString("Sena", senId));
 			int wsId;
 			//SUT magic gets first pronuciation when there is one.
 			WritingSystemServices.GetMagicStringAlt(Cache, Cache.MainCacheAccessor,
 																 WritingSystemServices.kwsFirstPronunciation, entry.Hvo, entry.CitationForm.Flid, false, out wsId);
 			Assert.AreEqual(wsId, mluId, "Did not pull first pronuciation language first.");
 			//SUT magic gets second pronuciation when the first is empty
-			entry.CitationForm.set_String(mluId, Cache.TsStrFactory.MakeString("", mluId)); //wipe Sena
+			entry.CitationForm.set_String(mluId, TsStringUtils.EmptyString(mluId)); //wipe Sena
 			WritingSystemServices.GetMagicStringAlt(Cache, Cache.MainCacheAccessor,
 																 WritingSystemServices.kwsFirstPronunciation, entry.Hvo, entry.CitationForm.Flid, false, out wsId);
 			Assert.AreEqual(wsId, senId, "Did not pull second pronuciation language when first was empty.");
@@ -276,20 +277,20 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			CoreWritingSystemDefinition newWs;
 			var ws = WritingSystemServices.FindOrCreateWritingSystem(Cache, null, "en-NO", true, false, out newWs);
 			// A string property NOT using the WS we will change.
-			entry0.ImportResidue = Cache.TsStrFactory.MakeString("hello", Cache.DefaultAnalWs);
+			entry0.ImportResidue = TsStringUtils.MakeString("hello", Cache.DefaultAnalWs);
 			// A multilingual one using the WS.
-			entry0.LiteralMeaning.set_String(Cache.DefaultAnalWs, Cache.TsStrFactory.MakeString("whatever", Cache.DefaultAnalWs));
+			entry0.LiteralMeaning.set_String(Cache.DefaultAnalWs, TsStringUtils.MakeString("whatever", Cache.DefaultAnalWs));
 
 			var entry1 = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
 			var sense1 = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
 			entry1.SensesOS.Add(sense1);
 			// Sense1 should be dirty: it has a gloss in the changing WS.
-			sense1.Gloss.set_String(newWs.Handle, Cache.TsStrFactory.MakeString("whatever", newWs.Handle));
+			sense1.Gloss.set_String(newWs.Handle, TsStringUtils.MakeString("whatever", newWs.Handle));
 
 			// Entry2 should be dirty: it has a string property with a run in the changing WS.
 			var entry2 = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
-			var bldr = Cache.TsStrFactory.MakeString("abc ", Cache.DefaultAnalWs).GetBldr();
-			bldr.ReplaceTsString(bldr.Length, bldr.Length, Cache.TsStrFactory.MakeString("def", newWs.Handle));
+			var bldr = TsStringUtils.MakeString("abc ", Cache.DefaultAnalWs).GetBldr();
+			bldr.ReplaceTsString(bldr.Length, bldr.Length, TsStringUtils.MakeString("def", newWs.Handle));
 			var stringWithNewWs = bldr.GetString();
 			entry2.ImportResidue = stringWithNewWs;
 
@@ -345,7 +346,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			var sense1 = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
 			entry1.SensesOS.Add(sense1);
 			// Sense1 should be dirty: it has a gloss in the changing WS.
-			sense1.Gloss.set_String(fromWs.Handle, Cache.TsStrFactory.MakeString("whatever", fromWs.Handle));
+			sense1.Gloss.set_String(fromWs.Handle, TsStringUtils.MakeString("whatever", fromWs.Handle));
 			m_actionHandler.EndUndoTask();
 			UndoableUnitOfWorkHelper.Do("doit", "undoit", m_actionHandler,
 				() => WritingSystemServices.MergeWritingSystems(Cache, fromWs, toWs));
@@ -386,7 +387,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			var fontOverride = new FontInfo();
 			fontOverride.m_italic.ExplicitValue = true;
 			fontOverrides[fromWs.Handle] = fontOverride;
-			var bldr = TsPropsBldrClass.Create();
+			var bldr = TsStringUtils.MakePropsBldr();
 			BaseStyleInfo.SaveFontOverridesToBuilder(fontOverrides, bldr);
 			style1.Rules = bldr.GetTextProps();
 			m_actionHandler.EndUndoTask();
@@ -420,7 +421,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			fontOverride = new FontInfo();
 			fontOverride.m_bold.ExplicitValue = true;
 			fontOverrides[toWs.Handle] = fontOverride;
-			var bldr = TsPropsBldrClass.Create();
+			var bldr = TsStringUtils.MakePropsBldr();
 			BaseStyleInfo.SaveFontOverridesToBuilder(fontOverrides, bldr);
 			style1.Rules = bldr.GetTextProps();
 			m_actionHandler.EndUndoTask();

@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2015 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,15 +6,14 @@ using System;
 using System.Windows.Forms;
 using System.Drawing;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using SIL.CoreImpl;
-using SIL.Utils;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Widgets;
+using SIL.Xml;
 
 namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 {
@@ -23,7 +22,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 	/// When the user (or test code) issues commands, this class also invokes the corresponding methods on the
 	/// Inflectional Affix Template control.
 	/// </summary>
-	public class InflAffixTemplateMenuHandler : IFlexComponent, IFWDisposable
+	public class InflAffixTemplateMenuHandler : IFlexComponent, IDisposable
 	{
 		/// <summary>
 		/// Inflectiona Affix Template Control.
@@ -350,8 +349,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 			}
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-				Justification="Dispose not used elsewhere for creating XCore.Command objects")]
 		internal virtual void HandleFwMenuSelection(object sender, EventArgs ea)
 		{
 			CheckDisposed();
@@ -400,7 +397,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 			Debug.Assert(xnMenu != null && xnMenu.HasElements && xnMenu.Elements().Any());
 			foreach (var xnItem in xnMenu.Elements())
 			{
-				string sCmd = XmlUtils.GetAttributeValue(xnItem, "command");
+				string sCmd = XmlUtils.GetOptionalAttributeValue(xnItem, "command");
 				Debug.Assert(!String.IsNullOrEmpty(sCmd));
 				if (String.IsNullOrEmpty(sCmd))
 					continue;
@@ -408,8 +405,8 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 				Debug.Assert(xn != null);
 				if (xn == null)
 					continue;
-				string sMsg = XmlUtils.GetAttributeValue(xn, "message");
-				string sLabel = XmlUtils.GetAttributeValue(xn, "label");
+				string sMsg = XmlUtils.GetOptionalAttributeValue(xn, "message");
+				string sLabel = XmlUtils.GetOptionalAttributeValue(xn, "label");
 				Debug.Assert(!String.IsNullOrEmpty(sMsg) && !String.IsNullOrEmpty(sLabel));
 				if (String.IsNullOrEmpty(sMsg) || String.IsNullOrEmpty(sLabel))
 					continue;
@@ -479,7 +476,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 
 		public string Message
 		{
-			get { return XmlUtils.GetAttributeValue(m_xnConfig, "message"); }
+			get { return XmlUtils.GetOptionalAttributeValue(m_xnConfig, "message"); }
 		}
 
 		public bool Enabled

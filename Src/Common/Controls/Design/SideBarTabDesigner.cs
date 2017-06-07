@@ -12,7 +12,6 @@
 
 using System;
 using System.Collections;
-using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Windows.Forms;
 using System.Windows.Forms.Design;
@@ -25,13 +24,6 @@ namespace SIL.FieldWorks.Common.Controls.Design
 	/// </summary>
 	public class SideBarTabDesigner: ControlDesigner
 	{
-		/// <summary>
-		/// Initializes a new instance of the SideBarTabDesigner class.
-		/// </summary>
-		public SideBarTabDesigner()
-		{
-		}
-
 		/// <summary>
 		/// We shadow the Enabled property, so that the Tab (and the buttons) is not
 		/// selectable by clicking the mouse
@@ -110,5 +102,11 @@ namespace SIL.FieldWorks.Common.Controls.Design
 			base.PostFilterProperties(properties);
 		}
 
+		///
+		protected override void Dispose(bool disposing)
+		{
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ******");
+			base.Dispose(disposing);
+		}
 	}
 }

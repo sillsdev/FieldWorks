@@ -1,18 +1,17 @@
-// Copyright (c) 2016 SIL International
+// Copyright (c) 2016-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
-using System.IO;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using Gecko;
 using SIL.CoreImpl;
-using SIL.Utils;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.FieldWorks.FDO;
 using SIL.Windows.Forms.HtmlBrowser;
+using SIL.Xml;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -20,7 +19,7 @@ namespace SIL.FieldWorks.XWorks
 	/// XhtmlRecordDocView implements a RecordView (view showing one object at a time from a sequence)
 	/// in which the single object is displayed using generated XHTML in a (Gecko) browser.
 	/// </summary>
-	public class XhtmlRecordDocView : RecordView
+	public class XhtmlRecordDocView : RecordView, IVwNotifyChange
 	{
 		private XWebBrowser m_mainView;
 		internal string m_configObjectName;
@@ -50,6 +49,8 @@ namespace SIL.FieldWorks.XWorks
 			if (browser != null)
 				browser.DomClick += OnDomClick;
 			m_fullyInitialized = true;
+			// Add ourselves as a listener for changes to the item we are displaying
+			Clerk.VirtualListPublisher.AddNotification(this);
 		}
 
 		/// <summary>
@@ -67,7 +68,6 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Handle a mouse click in the web browser displaying the xhtml.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "element does NOT need to be disposed locally!")]
 		private void OnDomClick(object sender, DomMouseEventArgs e)
 		{
 			XhtmlDocView.CloseContextMenuIfOpen();
@@ -83,16 +83,41 @@ namespace SIL.FieldWorks.XWorks
 			}
 			else if (e.Button == GeckoMouseButton.Right)
 			{
-				XhtmlDocView.HandleDomRightClick(browser, e, element, PropertyTable, Publisher, m_configObjectName);
+				XhtmlDocView.HandleDomRightClick(browser, e, element, new FlexComponentParameters(PropertyTable, Publisher, Subscriber), m_configObjectName);
 			}
+		}
+
+#if RANDYTODO
+		/// <summary>
+		/// Enable the 'File Print...' menu option for the LexEdit dictionary preview
+		/// </summary>
+		public bool OnDisplayPrint(object parameter, UIItemDisplayProperties display)
+		{
+			display.Enabled = display.Visible = true;
+			return true;
+		}
+#endif
+
+		/// <summary>
+		/// Handle the 'File Print...' menu item click (defined in the Lexicon areaConfiguration.xml)
+		/// </summary>
+		/// <param name="commandObject"></param>
+		/// <returns></returns>
+		public bool OnPrint(object commandObject)
+		{
+			XhtmlDocView.PrintPage(m_mainView);
+			return true;
 		}
 
 		protected override void ShowRecord()
 		{
-			if (!m_fullyInitialized)
+			if (!m_fullyInitialized || IsDisposed || m_mainView.IsDisposed || !Visible)
 				return;
 			base.ShowRecord();
 			var cmo = Clerk.CurrentObject;
+			// Don't steal focus
+			Enabled = false;
+			m_mainView.DocumentCompleted += EnableRecordDocView;
 			if (cmo != null && cmo.Hvo > 0)
 			{
 				var configurationFile = DictionaryConfigurationListener.GetCurrentConfiguration(PropertyTable);
@@ -111,6 +136,44 @@ namespace SIL.FieldWorks.XWorks
 			{
 				m_mainView.DocumentText = "<html><body></body></html>";
 			}
+		}
+
+		private void EnableRecordDocView(object sender, WebBrowserDocumentCompletedEventArgs e)
+		{
+			Enabled = true;
+			m_mainView.DocumentCompleted -= EnableRecordDocView;
+		}
+
+		/// <summary>
+		/// If the item we are showing changes update the view.
+		/// </summary>
+		public void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
+		{
+#if RANDYTODO
+			if (Clerk == null || m_mainView == null || m_mediator == null || hvo != Clerk.CurrentObjectHvo)
+				return;
+
+			var gb = m_mainView.NativeBrowser as GeckoWebBrowser;
+			if (gb != null && gb.Document != null)
+			{
+				gb.Document.Body.SetAttribute("style", "background-color:#DEDEDE");
+			}
+			if (!m_mediator.IdleQueue.Contains(ShowRecordOnIdle))
+			{
+				m_mediator.IdleQueue.Add(IdleQueuePriority.High, ShowRecordOnIdle);
+			}
+#endif
+		}
+
+		private bool ShowRecordOnIdle(object arg)
+		{
+			if (IsDisposed)
+				return true; // no longer necessary to refresh the view
+			var ui = Cache.ServiceLocator.GetInstance<IFdoUI>();
+			if (ui != null && DateTime.Now - ui.LastActivityTime < TimeSpan.FromMilliseconds(400))
+				return false; // Don't interrupt a user who is busy typing. Wait for a pause to refresh the view.
+			ShowRecord();
+			return true;
 		}
 	}
 }

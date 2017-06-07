@@ -1,25 +1,19 @@
-// Copyright (c) 2005-2013 SIL International
+// Copyright (c) 2005-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: MappingDetailsCtrl.cs
-// Responsibility: TomB
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FwCoreDlgControls;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.TE
 {
@@ -28,7 +22,7 @@ namespace SIL.FieldWorks.TE
 	/// Summary description for MappingDetailsCtrl.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public class MappingDetailsCtrl : UserControl, IFWDisposable
+	public class MappingDetailsCtrl : UserControl
 	{
 		#region Custom Events
 		/// <summary>Handles ValidStateChanged events.</summary>

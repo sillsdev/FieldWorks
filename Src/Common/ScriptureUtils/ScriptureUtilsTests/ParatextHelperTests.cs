@@ -1,23 +1,17 @@
-// Copyright (c) 2011-2013 SIL International
+// Copyright (c) 2011-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ParatextHelperTests.cs
-// Responsibility: FW Team
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using NUnit.Framework;
 using Paratext;
 using Paratext.LexicalClient;
-using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.Test.ProjectUnpacker;
-using SIL.FieldWorks.Test.TestUtils;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.ScriptureUtils
@@ -196,8 +190,6 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 		/// Adds a dummy project to the simulated Paratext collection.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="ScrText gets added to Projects collection and disposed there")]
 		public void AddProject(string shortName, string associatedProject, string baseProject,
 			bool editable, bool isResource, string booksPresent, Utilities.Enum<ProjectType> translationType)
 		{
@@ -244,21 +236,15 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
 	[Platform(Exclude="Linux", Reason = "fails on Linux on build machine in fixture setup")]
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification="Unit test - m_ptHelper gets disposed in TearDown()")]
-	public class ParatextHelperUnitTests : BaseTest
+	public class ParatextHelperUnitTests
 	{
 		private MockParatextHelper m_ptHelper;
 
 		#region Setup/Teardown
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public override void FixtureTeardown()
+		/// <summary />
+		[TestFixtureTearDown]
+		public void FixtureTeardown()
 		{
-			base.FixtureTeardown();
 			ParatextHelper.Manager.Reset();
 		}
 
@@ -304,8 +290,6 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="found is a reference")]
 		public void GetAssociatedProject()
 		{
 			m_ptHelper.AddProject("MNKY", "Soup");

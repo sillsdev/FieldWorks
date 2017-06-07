@@ -3,7 +3,6 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.Common.FwUtils;
@@ -41,8 +40,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary>
 		/// Initializes the menu for either "Find" or "Replace"
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="Added to MenuItems collection and disposed there.")]
 		private void Init()
 		{
 			if (m_isFind)

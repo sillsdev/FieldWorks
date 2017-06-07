@@ -56,7 +56,8 @@ alltargets: \
 	nativetargets \
 	FwResources \
 	Utilities-BasicUtils \
-	common-COMInterfaces \
+	common-ViewsInterfaces \
+	common-FwKernelInterfaces \
 	common-Utils \
 	Utilities-MessageBoxExLib \
 	Utilities-XMLUtils \
@@ -156,7 +157,8 @@ clean: \
 	views-Test-clean \
 	kernel-Test-clean \
 	language-Test-clean \
-	common-COMInterfaces-clean \
+	common-ViewsInterfaces-clean \
+	common-FwKernelInterfaces-clean \
 	common-SimpleRootSite-clean \
 	common-RootSite-clean \
 	common-Framework-clean \
@@ -203,10 +205,12 @@ idl: idl-do
 # extracting the GUIDs is now done with a xbuild target, please run 'xbuild /t:generateLinuxIdlFiles'
 
 idl-do:
-	$(MAKE) -C$(SRC)/Common/COMInterfaces -f IDLMakefile all
+	$(MAKE) -C$(SRC)/Common/ViewsInterfaces -f IDLMakefile all
+	$(MAKE) -C$(SRC)/Common/FwKernelInterfaces -f IDLMakefile all
 
 idl-clean:
-	$(MAKE) -C$(SRC)/Common/COMInterfaces -f IDLMakefile clean
+	$(MAKE) -C$(SRC)/Common/ViewsInterfaces -f IDLMakefile clean
+	$(MAKE) -C$(SRC)/Common/FwKernelInterfaces -f IDLMakefile clean
 
 fieldworks-flex.1.gz: DistFiles/Linux/fieldworks-flex.1.xml
 	docbook2x-man DistFiles/Linux/fieldworks-flex.1.xml
@@ -221,11 +225,12 @@ install-tree-fdo:
 	# Create directories
 	install -d $(DESTDIR)/usr/lib/fieldworks
 	install -d $(DESTDIR)/usr/lib/fieldworks/icu-bin
-	install -d $(DESTDIR)/usr/lib/pkgconfig
+	install -d $(DESTDIR)/usr/lib/fieldworks/Firefox
 	install -d $(DESTDIR)/usr/share/fieldworks
 	install -d $(DESTDIR)/var/lib/fieldworks
 	# Install libraries and their support files
 	install -m 644 $(OUT_DIR)/*.{dll*,so} $(DESTDIR)/usr/lib/fieldworks
+	install -m 644 $(OUT_DIR)/Firefox/*.* $(DESTDIR)/usr/lib/fieldworks/Firefox
 	install -m 644 $(OUT_DIR)/{*.compmap,components.map} $(DESTDIR)/usr/lib/fieldworks
 	install -m 644 Lib/src/icu/install$(ARCH)/lib/lib* $(DESTDIR)/usr/lib/fieldworks
 	# Install executables and scripts
@@ -288,8 +293,12 @@ install-tree: fieldworks-flex.1.gz unicodechareditor.1.gz install-tree-fdo
 install-menuentries:
 	# Add to Applications menu
 	install -d $(DESTDIR)/usr/share/pixmaps
+	install -d $(DESTDIR)/usr/share/icons/hicolor/64x64/apps
+	install -d $(DESTDIR)/usr/share/icons/hicolor/128x128/apps
 	install -d $(DESTDIR)/usr/share/applications
 	install -m 644 Src/LexText/LexTextExe/LT.png $(DESTDIR)/usr/share/pixmaps/fieldworks-flex.png
+	install -m 644 Src/LexText/LexTextExe/LT64.png $(DESTDIR)/usr/share/icons/hicolor/64x64/apps/fieldworks-flex.png
+	install -m 644 Src/LexText/LexTextExe/LT128.png $(DESTDIR)/usr/share/icons/hicolor/128x128/apps/fieldworks-flex.png
 	desktop-file-install --dir $(DESTDIR)/usr/share/applications Lib/linux/fieldworks-flex.desktop
 	desktop-file-install --dir $(DESTDIR)/usr/share/applications Lib/linux/unicodechareditor.desktop
 
@@ -310,6 +319,8 @@ uninstall: uninstall-menuentries
 uninstall-menuentries:
 	rm -f $(DESTDIR)/usr/share/pixmaps/fieldworks-flex.png
 	rm -f $(DESTDIR)/usr/share/applications/fieldworks-flex.desktop
+	rm -f $(DESTDIR)/usr/share/icons/hicolor/64x64/apps/fieldworks-flex.png
+	rm -f $(DESTDIR)/usr/share/icons/hicolor/128x128/apps/fieldworks-flex.png
 
 installable-COM-all:
 	mkdir -p $(COM_DIR)/installer$(ARCH)
@@ -493,10 +504,15 @@ DbAccessFirebird-check:
 	$(MAKE) -C$(SRC)/DbAccessFirebird check
 
 # $(MAKE) Common items
-common-COMInterfaces:
-	(cd $(BUILD_ROOT)/Build && xbuild /t:COMInterfaces)
-common-COMInterfaces-clean:
-	(cd $(BUILD_ROOT)/Build && xbuild /t:COMInterfaces /property:action=clean)
+common-ViewsInterfaces:
+	(cd $(BUILD_ROOT)/Build && xbuild /t:ViewsInterfaces)
+common-ViewsInterfaces-clean:
+	(cd $(BUILD_ROOT)/Build && xbuild /t:ViewsInterfaces /property:action=clean)
+
+common-FwKernelInterfaces:
+	(cd $(BUILD_ROOT)/Build && xbuild /t:FwKernelInterfaces)
+common-FwKernelInterfaces-clean:
+	(cd $(BUILD_ROOT)/Build && xbuild /t:FwKernelInterfaces /property:action=clean)
 
 common-Utils:
 	$(MAKE) -C$(SRC)/Common/Utils all
@@ -716,20 +732,21 @@ Fw:
 Fw-build:
 	(cd $(BUILD_ROOT)/Build && xbuild /t:remakefw)
 
-# Import certificates so mono applications can check ssl certificates, specifically when a build task
-# downloads dependency dlls. Output md5sum of certificates imported for the record.
 InstallCerts:
 	cd $$(mktemp -d) \
 		&& wget -q -O certdata.txt "http://mxr.mozilla.org/seamonkey/source/security/nss/lib/ckfw/builtins/certdata.txt?raw=1" \
 		&& md5sum certdata.txt \
 		&& mozroots --import --sync --file certdata.txt
 
+# As of 2017-03-27, localize is more likely to crash running on mono 3 than to actually have a real localization problem. So try it a few times so that a random crash doesn't fail a packaging job that has been running for over an hour.
 Fw-build-package: InstallCerts
 	cd $(BUILD_ROOT)/Build \
-		&& xbuild '/t:build4package;zipLocalizedLists;localize' /property:config=release /property:packaging=yes
+		&& xbuild '/t:remakefw;zipLocalizedLists' /property:config=release /property:packaging=yes \
+		&& ./multitry xbuild '/t:localize' /property:config=release /property:packaging=yes
 
 Fw-build-package-fdo: InstallCerts
 	cd $(BUILD_ROOT)/Build \
+		&& xbuild /t:refreshTargets \
 		&& xbuild '/t:build4package-fdo' /property:config=release /property:packaging=yes
 
 TE-run: ComponentsMap-nodep

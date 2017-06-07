@@ -1,4 +1,4 @@
-// Copyright (c) 2002-2015 SIL International
+// Copyright (c) 2002-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -10,14 +10,14 @@ using System.Xml.Linq;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.WordWorks.Parser;
-using SIL.Utils;
+using SIL.ObjectModel;
 
 namespace LanguageExplorer.Areas.TextsAndWords
 {
 	/// <summary>
 	/// Handles acquiring a parser and safely subscribing to and receiving events from it.
 	/// </summary>
-	internal sealed class ParserConnection : FwDisposableBase, IAsyncResult
+	internal sealed class ParserConnection : DisposableBase, IAsyncResult
 	{
 		private readonly ParserScheduler m_scheduler;
 

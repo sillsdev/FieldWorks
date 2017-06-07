@@ -1,20 +1,13 @@
-// Copyright (c) 2003-2015 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: HtmlControl.cs
-// Responsibility: RandyR
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
 
 using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Runtime.InteropServices;
+using System.ComponentModel;
 using System.Windows.Forms;
-using Gecko;
 using MsHtmHstInterop;
+using System.Runtime.InteropServices;
+using Gecko;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
@@ -63,6 +56,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary>
 		/// Get/Set the URL for the control.
 		/// </summary>
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public string URL
 		{
 			get
@@ -105,6 +100,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// The HTML text of the document currently loaded in the browser
 		/// TODO: implement get for GeckoFX browser
 		/// </summary>
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public string DocumentText
 		{
 			get
@@ -123,8 +120,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// Initializes a new instance of the <see cref="HtmlControl"/> class.
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification = "The offending code compiles only on Windows")]
 		public HtmlControl()
 		{
 			// This call is required by the Windows.Forms Form Designer.
@@ -287,8 +282,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// the contents of this method with the code editor.
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification = "The offending code compiles only on Windows")]
 		private void InitializeComponent()
 		{
 //			System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(HtmlControl));
@@ -346,7 +339,5 @@ namespace SIL.FieldWorks.Common.FwUtils
 	/// <summary>
 	/// Delegate declaration.
 	/// </summary>
-	/// <param name="sender"></param>
-	/// <param name="e"></param>
 	public delegate void HtmlControlEventHandler(object sender, HtmlControlEventArgs e);
 }

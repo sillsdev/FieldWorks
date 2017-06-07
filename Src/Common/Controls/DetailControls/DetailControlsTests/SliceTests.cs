@@ -69,7 +69,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		}
 
 		/// <summary>Helper</summary>
-		private static XElement CreateXmlElementFromOuterXmlOf(string outerXml)
+		public static XElement CreateXmlElementFromOuterXmlOf(string outerXml)
 		{
 			return XElement.Parse(outerXml);
 		}

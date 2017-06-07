@@ -5,7 +5,9 @@
 using System;
 using System.Collections.Generic;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.Text;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.LexText.Controls;
@@ -51,11 +53,10 @@ namespace LanguageExplorer.Areas
 		protected RuleFormulaVcBase(FdoCache cache, IPropertyTable propertyTable)
 			: base(cache, propertyTable)
 		{
-			ITsStrFactory tsf = m_cache.TsStrFactory;
 			int userWs = m_cache.DefaultUserWs;
 			m_propertyTable = propertyTable;
-			m_infinity = tsf.MakeString("\u221e", userWs);
-			m_x = tsf.MakeString("X", userWs);
+			m_infinity = TsStringUtils.MakeString("\u221e", userWs);
+			m_x = TsStringUtils.MakeString("X", userWs);
 		}
 
 		/// <summary>
@@ -352,7 +353,7 @@ namespace LanguageExplorer.Areas
 				case kfragIterCtxtMax:
 					// if the max value is -1, it indicates that it is infinite
 					int i = m_cache.DomainDataByFlid.get_IntProp(vwenv.CurrentObject(), tag);
-					tss = i == -1 ? m_infinity : m_cache.TsStrFactory.MakeString(Convert.ToString(i), m_cache.DefaultUserWs);
+					tss = i == -1 ? m_infinity : TsStringUtils.MakeString(Convert.ToString(i), m_cache.DefaultUserWs);
 					break;
 
 				case kfragXVariable:
@@ -373,7 +374,7 @@ namespace LanguageExplorer.Areas
 
 		ITsString CreateFeatureLine(IFsClosedValue value)
 		{
-			ITsIncStrBldr featLine = TsIncStrBldrClass.Create();
+			ITsIncStrBldr featLine = TsStringUtils.MakeIncStrBldr();
 			featLine.AppendTsString(value.ValueRA != null ? value.ValueRA.Abbreviation.BestAnalysisAlternative : m_questions);
 			featLine.Append(" ");
 			featLine.AppendTsString(value.FeatureRA != null ? value.FeatureRA.Abbreviation.BestAnalysisAlternative : m_questions);
@@ -386,10 +387,10 @@ namespace LanguageExplorer.Areas
 			if (varIndex == -1)
 				return m_questions;
 
-			ITsIncStrBldr varLine = TsIncStrBldrClass.Create();
+			ITsIncStrBldr varLine = TsStringUtils.MakeIncStrBldr();
 			if (!polarity)
-				varLine.AppendTsString(m_cache.TsStrFactory.MakeString("-", m_cache.DefaultUserWs));
-			varLine.AppendTsString(m_cache.TsStrFactory.MakeString(VariableNames[varIndex], m_cache.DefaultUserWs));
+				varLine.AppendTsString(TsStringUtils.MakeString("-", m_cache.DefaultUserWs));
+			varLine.AppendTsString(TsStringUtils.MakeString(VariableNames[varIndex], m_cache.DefaultUserWs));
 			varLine.Append(" ");
 			varLine.AppendTsString(var.FeatureRA == null ? m_questions : var.FeatureRA.Abbreviation.BestAnalysisAlternative);
 			return varLine.GetString();
@@ -535,7 +536,7 @@ namespace LanguageExplorer.Areas
 					}
 					int fontHeight = GetFontHeight(m_cache.DefaultUserWs);
 					int superSubHeight = (fontHeight * 2) / 3;
-					ITsPropsBldr tpb = TsPropsBldrClass.Create();
+					ITsPropsBldr tpb = TsStringUtils.MakePropsBldr();
 					tpb.SetIntPropValues((int)FwTextPropType.ktptFontSize, (int)FwTextPropVar.ktpvMilliPoint, superSubHeight);
 					len += GetMinMaxWidth(ctxt, tpb.GetTextProps(), vwenv);
 				}
@@ -547,11 +548,10 @@ namespace LanguageExplorer.Areas
 
 		int GetMinMaxWidth(IPhIterationContext ctxt, ITsTextProps props, IVwEnv vwenv)
 		{
-			var tsf = m_cache.TsStrFactory;
 			var userWs = m_cache.DefaultUserWs;
-			int minWidth = GetStrWidth(tsf.MakeString(Convert.ToString(ctxt.Minimum), userWs),
+			int minWidth = GetStrWidth(TsStringUtils.MakeString(Convert.ToString(ctxt.Minimum), userWs),
 				props, vwenv);
-			ITsString maxStr = ctxt.Maximum == -1 ? m_infinity : tsf.MakeString(Convert.ToString(ctxt.Maximum), userWs);
+			ITsString maxStr = ctxt.Maximum == -1 ? m_infinity : TsStringUtils.MakeString(Convert.ToString(ctxt.Maximum), userWs);
 			int maxWidth = GetStrWidth(maxStr, props, vwenv);
 			return Math.Max(minWidth, maxWidth);
 		}

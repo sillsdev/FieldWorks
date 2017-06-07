@@ -1,16 +1,15 @@
-﻿// Copyright (c) 2010-2013 SIL International
+﻿// Copyright (c) 2010-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.Text;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO.FDOTests
@@ -27,10 +26,9 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
 			var wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
-			var tssFactory = Cache.TsStrFactory;
-			var begin = tssFactory.MakeString("beginning", wsEn);
-			var end = tssFactory.MakeString("end", wsFr);
-			ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
+			var begin = TsStringUtils.MakeString("beginning", wsEn);
+			var end = TsStringUtils.MakeString("end", wsFr);
+			ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 			tisb.AppendTsString(begin);
 			tisb.AppendTsString(end);
 			ITsString result = null;
@@ -43,9 +41,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public void StringServices_CrawlRunsCanDeleteAllRuns()
 		{
 			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
-			var tssFactory = Cache.TsStrFactory;
-			var begin = tssFactory.MakeString("beginning", wsEn);
-			ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
+			var begin = TsStringUtils.MakeString("beginning", wsEn);
+			ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 			tisb.AppendTsString(begin);
 			ITsString result = null;
 			Assert.DoesNotThrow(() => result = StringServices.CrawlRuns(tisb.GetString(), run => run.get_WritingSystemAt(0) == wsEn ? null : run));
@@ -58,10 +55,9 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
 			var wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
-			var tssFactory = Cache.TsStrFactory;
-			var begin = tssFactory.MakeString("beginning", wsEn);
-			var end = tssFactory.MakeString("end", wsFr);
-			ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
+			var begin = TsStringUtils.MakeString("beginning", wsEn);
+			var end = TsStringUtils.MakeString("end", wsFr);
+			ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 			tisb.AppendTsString(begin);
 			tisb.AppendTsString(end);
 			ITsString result = null;
@@ -75,11 +71,10 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
 			var wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
-			var tssFactory = Cache.TsStrFactory;
-			var begin = tssFactory.MakeString("beginning", wsEn);
-			var middle = tssFactory.MakeString("middle", wsFr);
-			var end = tssFactory.MakeString("end", wsEn);
-			ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
+			var begin = TsStringUtils.MakeString("beginning", wsEn);
+			var middle = TsStringUtils.MakeString("middle", wsFr);
+			var end = TsStringUtils.MakeString("end", wsEn);
+			ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 			tisb.AppendTsString(begin);
 			tisb.AppendTsString(middle);
 			tisb.AppendTsString(end);
@@ -94,9 +89,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
 			var wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
-			var tssFactory = Cache.TsStrFactory;
-			var begin = tssFactory.MakeString("beginning", wsEn);
-			ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
+			var begin = TsStringUtils.MakeString("beginning", wsEn);
+			ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 			tisb.AppendTsString(begin);
 			ITsString result = null;
 			Assert.DoesNotThrow(() => result = StringServices.CrawlRuns(tisb.GetString(), run => run.get_WritingSystemAt(0) == wsFr ? null : run));
@@ -109,10 +103,9 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
 			var wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
-			var tssFactory = Cache.TsStrFactory;
-			var begin = tssFactory.MakeString("beginning", wsEn);
-			var end = tssFactory.MakeString("end", wsEn);
-			ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
+			var begin = TsStringUtils.MakeString("beginning", wsEn);
+			var end = TsStringUtils.MakeString("end", wsEn);
+			ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 			tisb.AppendTsString(begin);
 			tisb.AppendTsString(end);
 			ITsString result = null;
@@ -147,7 +140,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 			// And in some simple string properties, and some paragraph styles
 			var sttext = MakeText(new ITsString[] {testString1, testString2, testString1,
-				Cache.TsStrFactory.MakeString("nothing", Cache.DefaultVernWs)},
+				TsStringUtils.MakeString("nothing", Cache.DefaultVernWs)},
 				new string[] { "red", "blue", "purple", "black" });
 
 			StringServices.ReplaceStyles(Cache, specification);
@@ -170,6 +163,31 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			}
 		}
 
+		/// <summary/>
+		[Test]
+		public void StringServices_HeadwordForWsAndWritingSystem_CustomHeadwordNumbers()
+		{
+			var entry1 = MakeEntry("a", "first homograph");
+			var hc = Cache.ServiceLocator.GetInstance<HomographConfiguration>();
+			hc.WritingSystem = "fr";
+			hc.CustomHomographNumbers = new List<string> { "O", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX" };
+			var headwordForWs = StringServices.HeadWordForWsAndHn(entry1, Cache.DefaultVernWs, 1, "???");
+			VerifyString(headwordForWs, new []{ "a", "I"}, new [] { Cache.DefaultVernWs, Cache.DefaultVernWs });
+			hc.CustomHomographNumbers = new List<string>();
+		}
+
+		/// <summary/>
+		[Test]
+		public void StringServices_HeadwordForWsAndWritingSystem_NumberBeforeKeepsWsForHw()
+		{
+			var entry1 = MakeEntry("a", "first homograph");
+			var hc = Cache.ServiceLocator.GetInstance<HomographConfiguration>();
+			hc.WritingSystem = "en";
+			hc.HomographNumberBefore = true;
+			var headwordForWs = StringServices.HeadWordForWsAndHn(entry1, Cache.DefaultVernWs, 1, "???");
+			VerifyString(headwordForWs, new[] { "1", "a" }, new[] { Cache.DefaultAnalWs, Cache.DefaultVernWs });
+		}
+
 
 		private void VerifyString(ITsString tss, string[] parts, string[] expectedStyles)
 		{
@@ -189,10 +207,29 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			}
 		}
 
+		private void VerifyString(ITsString tss, string[] parts, int[] expectedWritingSystems)
+		{
+			// The number of runs is not necessarily the same as the number of parts, because some runs may have merged.
+			Assert.AreEqual(parts.Length, expectedWritingSystems.Length);
+			Assert.That(tss.Length, Is.EqualTo((from item in parts select item.Length).Sum()));
+			int start = 0;
+			for (int i = 0; i < parts.Length; i++)
+			{
+				int end = start + parts[i].Length;
+				var sub = tss.GetSubstring(start, end);
+				Assert.That(sub.RunCount, Is.EqualTo(1), " part " + i + " (" + parts[i] + ") has too many runs in string " + tss.Text);
+				Assert.That(sub.Text, Is.EqualTo(parts[i]));
+				int ignore;
+				Assert.That(sub.get_Properties(0).GetIntPropValues((int)FwTextPropType.ktptWs, out ignore), Is.EqualTo(expectedWritingSystems[i]),
+					" part " + i + " (" + parts[i] + ") has the wrong ws " + tss.Text);
+				start = end;
+			}
+		}
+
 		private ITsString MakeStyledString(int ws, string[] parts, string[] styles)
 		{
 			Assert.AreEqual(parts.Length, styles.Length);
-			var bldr = Cache.TsStrFactory.MakeString("", ws).GetBldr();
+			ITsStrBldr bldr = TsStringUtils.EmptyString(ws).GetBldr();
 			for (int i = 0; i < parts.Length; i++)
 			{
 				var content = parts[i];
@@ -210,10 +247,10 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			var form = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
 			entry.LexemeFormOA = form;
 			form.Form.VernacularDefaultWritingSystem =
-				Cache.TsStrFactory.MakeString(lf, Cache.DefaultVernWs);
+				TsStringUtils.MakeString(lf, Cache.DefaultVernWs);
 			var sense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
 			entry.SensesOS.Add(sense);
-			sense.Gloss.AnalysisDefaultWritingSystem = Cache.TsStrFactory.MakeString(gloss,
+			sense.Gloss.AnalysisDefaultWritingSystem = TsStringUtils.MakeString(gloss,
 				Cache.DefaultAnalWs);
 			return entry;
 		}
@@ -229,7 +266,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				var para = paraFactory.Create();
 				sttext.ParagraphsOS.Add(para);
 				para.Contents = paragraphs[i];
-				var bldr = TsPropsBldrClass.Create();
+				var bldr = TsStringUtils.MakePropsBldr();
 				bldr.SetStrPropValue((int) FwTextPropType.ktptNamedStyle, styles[i]);
 				para.StyleRules = bldr.GetTextProps();
 			}
@@ -253,7 +290,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			var paraFactory = Cache.ServiceLocator.GetInstance<IStTxtParaFactory>();
 			var para = paraFactory.Create();
 			sttext.ParagraphsOS.Add(para);
-			para.Contents = Cache.TsStrFactory.MakeString(content, Cache.DefaultVernWs);
+			para.Contents = TsStringUtils.MakeString(content, Cache.DefaultVernWs);
 			return para;
 		}
 
@@ -267,8 +304,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			// Test cases cover multistring, regular string, two matches in same string, and a link that doesn't match.
 			var entry = MakeEntry("kick", "hit with foot");
 			var link = FileUtils.ChangeWindowsPathIfLinux(@"c:\testlangproj\linkedFiles\other\Myfile.wav");
-			var tss = Cache.TsStrFactory.MakeString("This here is a link", Cache.DefaultAnalWs);
-			var bldr = tss.GetBldr();
+			ITsString tss = TsStringUtils.MakeString("This here is a link", Cache.DefaultAnalWs);
+			ITsStrBldr bldr = tss.GetBldr();
 			var linkStyle = MakeStyle("testStyle");
 			StringServices.MarkTextInBldrAsHyperlink(bldr, 5, 9, link, linkStyle);
 			entry.LiteralMeaning.AnalysisDefaultWritingSystem = bldr.GetString();
@@ -402,8 +439,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			var entry = MakeEntry("kick", "hit with foot");
 			// Foreign-style path is set by a foreign-platform FieldWorks
 			var link = origPathSetInDatabase;
-			var tss = Cache.TsStrFactory.MakeString("This here is a link", Cache.DefaultAnalWs);
-			var bldr = tss.GetBldr();
+			ITsString tss = TsStringUtils.MakeString("This here is a link", Cache.DefaultAnalWs);
+			ITsStrBldr bldr = tss.GetBldr();
 			var linkStyle = MakeStyle("testStyle");
 			StringServices.MarkTextInBldrAsHyperlink(bldr, 5, 9, link, linkStyle);
 			entry.LiteralMeaning.AnalysisDefaultWritingSystem = bldr.GetString();
@@ -462,7 +499,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			var entry = MakeEntry("kick", "hit with foot");
 
 			var link = origPathSetInDatabase;
-			var paragraph = Cache.TsStrFactory.MakeString("abc" + link + "def", Cache.DefaultAnalWs);
+			ITsString paragraph = TsStringUtils.MakeString("abc" + link + "def", Cache.DefaultAnalWs);
 			var linkBeginning = "abc".Length;
 			var linkEnding = linkBeginning + link.Length;
 			var bldr = paragraph.GetBldr();
@@ -524,6 +561,19 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			int ichMinActual, ichLimActual;
 			tss.GetBoundsOfRun(tss.get_RunAt(ichMin), out ichMinActual, out ichLimActual);
 			Assert.That(ichLimActual, Is.EqualTo(ichLim));
+		}
+
+		/// <summary>
+		/// Tests StringServices.DecodeXmlAttribute()
+		/// </summary>
+		[Test]
+		public void DecodeXmlAttributeTest()
+		{
+			string sFixed = StringServices.DecodeXmlAttribute("abc&amp;def&lt;ghi&gt;jkl&quot;mno&apos;pqr&amp;stu");
+			Assert.AreEqual("abc&def<ghi>jkl\"mno'pqr&stu", sFixed, "Failed to decode reserved characters");
+
+			sFixed = StringServices.DecodeXmlAttribute("abc&amp;def&#xD;&#xA;ghi&#x1F;jkl&#x7F;&#x9F;mno");
+			Assert.AreEqual("abc&def\r\nghi\u001Fjkl\u007F\u009Fmno", sFixed, "Failed to decode escaped unicode characters");
 		}
 	}
 }

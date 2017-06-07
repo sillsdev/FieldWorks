@@ -15,12 +15,37 @@ Last reviewed:
 #pragma once
 #include "Main.h"
 
+#ifdef WIN32
+#define NEWLINE "\r\n"
+#else
+#define NEWLINE "\n"
+#endif
+
 namespace TestViews
 {
+	static const StrUni g_pszTest(L"This is a test!");
+	static const int g_cchTest = 15;
+	static const StrUni g_pszTest2(L"TESTING");
+	static const int g_cchTest2 = 7;
+
+	const StrUni kszEng(L"en");
+	const StrUni kszTest(L"test");
+	const StrUni kszTest2(L"tst2");
+
 	extern ILgWritingSystemFactoryPtr g_qwsf;
 	extern int g_wsEng;
 	extern int g_wsFrn;
 	extern int g_wsGer;
+	extern int g_wsTest;
+	extern int g_wsTest2;
+
+	enum
+	{
+		// Arbitrary values chosen more or less at random...
+		kwsENG = 25,
+		kwsSPN = 26,
+		kwsSTK = 123456789
+	};
 
 	void CreateTestWritingSystemFactory();
 	void CloseTestWritingSystemFactory();
@@ -58,6 +83,7 @@ namespace TestViews
 #include "DummyRootsite.h"
 #include "DummyBaseVc.h"
 #include "MockLgWritingSystemFactory.h"
+#include "MockRenderEngineFactory.h"
 
 // Local Variables:
 // mode:C++

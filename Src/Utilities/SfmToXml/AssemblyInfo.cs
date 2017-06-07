@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Reflection;
+using System.Runtime.CompilerServices;
 
 //
 // General Information about an assembly is controlled through the following
@@ -11,3 +12,4 @@ using System.Reflection;
 //
 [assembly: AssemblyTitle("Sfm2Xml")]
 [assembly: AssemblyDescription("Converts an SFM file, using a mapping file, to XML")]
+[assembly:InternalsVisibleTo("Sfm2XmlTests")]

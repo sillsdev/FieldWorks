@@ -5,9 +5,9 @@
 using System;
 using System.Globalization;
 using System.Xml.Linq;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.Utils;
+using SIL.CoreImpl.Cellar;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.Xml;
 
 namespace SIL.FieldWorks.Filters
 {
@@ -270,15 +270,15 @@ namespace SIL.FieldWorks.Filters
 		public override void PersistAsXml(XElement node)
 		{
 			base.PersistAsXml(node);
-			XmlUtils.AppendAttribute(node, "start", m_start.ToString("s", DateTimeFormatInfo.InvariantInfo));
-			XmlUtils.AppendAttribute(node, "end", m_end.ToString("s", DateTimeFormatInfo.InvariantInfo));
-			XmlUtils.AppendAttribute(node, "type", ((int)m_type).ToString());
-			XmlUtils.AppendAttribute(node, "genDate", HandleGenDate.ToString());
+			XmlUtils.SetAttribute(node, "start", m_start.ToString("s", DateTimeFormatInfo.InvariantInfo));
+			XmlUtils.SetAttribute(node, "end", m_end.ToString("s", DateTimeFormatInfo.InvariantInfo));
+			XmlUtils.SetAttribute(node, "type", ((int)m_type).ToString());
+			XmlUtils.SetAttribute(node, "genDate", HandleGenDate.ToString());
 			if (HandleGenDate)
 			{
-				XmlUtils.AppendAttribute(node, "startAD", IsStartAD.ToString());
-				XmlUtils.AppendAttribute(node, "endAD", IsEndAD.ToString());
-				XmlUtils.AppendAttribute(node, "unspecific", UnspecificMatching.ToString());
+				XmlUtils.SetAttribute(node, "startAD", IsStartAD.ToString());
+				XmlUtils.SetAttribute(node, "endAD", IsEndAD.ToString());
+				XmlUtils.SetAttribute(node, "unspecific", UnspecificMatching.ToString());
 			}
 		}
 

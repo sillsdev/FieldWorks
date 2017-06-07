@@ -1,9 +1,6 @@
-// Copyright (c) 2008-2014 SIL International
+// Copyright (c) 2008-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: FdoInterfaceAdditions.cs
-// Responsibility: FW Team
 //
 // <remarks>
 // Additions to FDO model interfaces go here.
@@ -14,14 +11,13 @@ using System;
 using System.Collections.Generic;
 using System.Xml;
 using System.Collections;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.Cellar;
+using SIL.CoreImpl.Scripture;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Utils;
-using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SILUBS.SharedScrUtils;
 
 // Add additional methods/properties to domain object in this file.
 // Add new interfaces to the FdoInterfaceDeclarations.cs file.
@@ -672,6 +668,11 @@ namespace SIL.FieldWorks.FDO
 		/// that exposes certain LexSense- and LexEntry-specific fields.
 		/// </summary>
 		IEnumerable<ISenseOrEntry> PrimarySensesOrEntries { get; }
+
+		/// <summary>
+		/// This is a virtual property.  It returns the list of all Dialect Labels for this variant's Owner
+		/// </summary>
+		IFdoReferenceSequence<ICmPossibility> VariantEntryDialectLabels { get; }
 	}
 
 	public partial interface ILexReference
@@ -941,6 +942,18 @@ namespace SIL.FieldWorks.FDO
 	}
 
 	/// <summary>
+	/// Non-model interface additions for ILexPronunciation.
+	/// </summary>
+	public partial interface ILexPronunciation
+	{
+		/// <summary>
+		/// The publications from which this is not excluded, that is, the ones in which it
+		/// SHOULD be published.
+		/// </summary>
+		IFdoSet<ICmPossibility> PublishIn { get; }
+	}
+
+	/// <summary>
 	/// Non-model interface additions for ILexSense.
 	/// </summary>
 	public partial interface ILexSense : IVariantComponentLexeme
@@ -1059,7 +1072,7 @@ namespace SIL.FieldWorks.FDO
 		/// </summary>
 		/// <param name="hvoDomain"></param>
 		/// <param name="newHvos">Set of new senses (including hvoSense).</param>
-		bool RDEMergeSense(int hvoDomain, Set<int> newHvos);
+		bool RDEMergeSense(int hvoDomain, ISet<int> newHvos);
 
 		/// <summary>
 		/// This is a backreference (virtual) property.  It returns the list of object ids for
@@ -1091,9 +1104,21 @@ namespace SIL.FieldWorks.FDO
 		IEnumerable<ILexEntry> Subentries { get; }
 
 		/// <summary>
-		/// This is a entry reference property. It returns the list of all the LexEntryRef objects that refer to this LexSense.
+		/// This is an entry reference property. It returns the list of all the LexEntryRef objects that refer to this LexSense.
 		/// </summary>
 		IEnumerable<ILexEntryRef> EntryRefsWithThisMainSense { get; }
+
+		/// <summary>
+		/// This property returns the list of all the LexEntryRef objects that refer to this LexSense
+		/// or its owning LexEntry.
+		/// </summary>
+		IEnumerable<ILexEntryRef> MainEntryRefs { get; }
+
+		/// <summary>
+		/// This is a virtual property that ensures that a Sense shows its owning Entry's
+		/// DialectLabels if it has none of its own.
+		/// </summary>
+		IFdoReferenceSequence<ICmPossibility> DialectLabelsSenseOrEntry { get; }
 	}
 
 	/// <summary>
@@ -1181,7 +1206,7 @@ namespace SIL.FieldWorks.FDO
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the complex form entries, that is, the entries which should be shown
-		/// in the complex forms list for this entry in stem-based view.
+		/// in the complex forms list for this entry in lexeme-based view.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		IEnumerable<ILexEntry> VisibleComplexFormEntries { get; }
@@ -1262,6 +1287,15 @@ namespace SIL.FieldWorks.FDO
 		/// </summary>
 		[VirtualProperty(CellarPropertyType.MultiUnicode)]
 		IMultiAccessorBase MLHeadWord
+		{
+			get;
+		}
+
+		/// <summary>
+		/// Virtual property allows Headword to be read through cache using the DictionaryReference homograph number configuration
+		/// </summary>
+		[VirtualProperty(CellarPropertyType.MultiUnicode)]
+		IMultiAccessorBase HeadWordRef
 		{
 			get;
 		}
@@ -1624,6 +1658,9 @@ namespace SIL.FieldWorks.FDO
 
 		/// <summary/>
 		IEnumerable<IMoInflAffixSlot> Slots { get; }
+
+		/// <summary/>
+		IEnumerable<IMoMorphType> MorphTypes { get; }
 	}
 
 	/// <summary>
@@ -1634,7 +1671,7 @@ namespace SIL.FieldWorks.FDO
 		/// <summary>
 		/// Get all possibilities, recursively, that are ultimately owned by the list.
 		/// </summary>
-		Set<ICmPossibility> ReallyReallyAllPossibilities
+		ISet<ICmPossibility> ReallyReallyAllPossibilities
 		{
 			get;
 		}
@@ -1645,12 +1682,6 @@ namespace SIL.FieldWorks.FDO
 		/// </summary>
 		/// <returns></returns>
 		string GetWsString();
-
-		/// <summary>
-		///
-		/// </summary>
-		/// <returns></returns>
-		string ItemsTypeName();
 
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
@@ -1707,12 +1738,6 @@ namespace SIL.FieldWorks.FDO
 		ICmObject MoveIfNeeded(ICmPossibility possSrc);
 
 		/// <summary>
-		///
-		/// </summary>
-		/// <returns></returns>
-		string ItemTypeName();
-
-		/// <summary>
 		/// Abbreviation and Name with hyphen between.
 		/// </summary>
 		string AbbrAndName
@@ -1725,13 +1750,13 @@ namespace SIL.FieldWorks.FDO
 		/// For Performance (used in conjunction with PreLoadList).
 		/// </summary>
 		/// <returns>Set of subpossibilities</returns>
-		Set<int> SubPossibilities();
+		ISet<int> SubPossibilities();
 
 
 		/// <summary>
 		///
 		/// </summary>
-		Set<ICmPossibility> ReallyReallyAllPossibilities
+		ISet<ICmPossibility> ReallyReallyAllPossibilities
 		{
 			get;
 		}
@@ -4278,6 +4303,11 @@ namespace SIL.FieldWorks.FDO
 			set;
 		}
 
+		/// <summary>
+		/// Initializes the import set. This must be called before use.
+		/// </summary>
+		void Initialize(IVwStylesheet stylesheet, string teStylesPath);
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Get a MappingSet that is appropriate for the ImportDomain
@@ -4440,17 +4470,6 @@ namespace SIL.FieldWorks.FDO
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets/sets stylesheet for settings.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		IVwStylesheet StyleSheet
-		{
-			get;
-			set;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
 		/// Sets the Overlapping File Resolver
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
@@ -4564,6 +4583,12 @@ namespace SIL.FieldWorks.FDO
 		/// <param name="ich">character offset where insertion is to occur</param>
 		/// ------------------------------------------------------------------------------------
 		void InsertORCAt(ITsStrBldr tsStrBldr, int ich);
+
+		/// <summary>
+		/// The publications from which this is not excluded, that is, the ones in which it
+		/// SHOULD be published.
+		/// </summary>
+		IFdoSet<ICmPossibility> PublishIn { get; }
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -5156,8 +5181,10 @@ namespace SIL.FieldWorks.FDO
 		/// one (which is probably the only one), or creates new settings if none exist.
 		/// </summary>
 		/// <param name="importType">type of import type to find.</param>
+		/// <param name="stylesheet">The stylesheet.</param>
+		/// <param name="teStylesPath">The TE styles path.</param>
 		/// ------------------------------------------------------------------------------------
-		IScrImportSet FindOrCreateDefaultImportSettings(TypeOfImport importType);
+		IScrImportSet FindOrCreateDefaultImportSettings(TypeOfImport importType, IVwStylesheet stylesheet, string teStylesPath);
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -5905,6 +5932,11 @@ namespace SIL.FieldWorks.FDO
 		Guid EntryGuid { get; }
 
 		/// <summary>
+		/// The HeadWordRef property if wrapping LexEntry, or the HeadWord virtual property for LexSense
+		/// </summary>
+		IMultiAccessorBase HeadWordRef { get; }
+
+		/// <summary>
 		/// The HeadWord property if wrapping LexEntry, or the HeadWord virtual property for LexSense
 		/// </summary>
 		ITsString HeadWord { get; }
@@ -5928,5 +5960,15 @@ namespace SIL.FieldWorks.FDO
 		/// Returns the SummaryDefinition on Entry, or Gloss on Sense
 		/// </summary>
 		IMultiAccessorBase GlossOrSummary { get; }
+
+		/// <summary>
+		/// Returns the entryRefs for the entry/owning entry for the sense
+		/// </summary>
+		IFdoOwningSequence<ILexEntryRef> PrimaryEntryRefs { get; }
+
+		/// <summary>
+		/// Returns the dialect labels for the entry or sense
+		/// </summary>
+		IFdoReferenceSequence<ICmPossibility> DialectLabelsRS { get; }
 	}
 }

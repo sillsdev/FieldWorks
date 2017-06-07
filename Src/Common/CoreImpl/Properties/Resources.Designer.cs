@@ -176,6 +176,78 @@ namespace SIL.CoreImpl.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The abbreviation for the class &apos;{0}&apos; was not found in the set of Natural Classes..
+        /// </summary>
+        public static string ksBadClassInEnv {
+            get {
+                return ResourceManager.GetString("ksBadClassInEnv", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to There is a problem with this environment string &apos;{0}&apos;:.
+        /// </summary>
+        public static string ksBadEnv {
+            get {
+                return ResourceManager.GetString("ksBadEnv", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to There is some kind of error somewhere around here: &apos;{0}&apos;.  It may be a missing underscore _, two or more underscores, a missing slash /, something beyond a word boundary symbol #, or two or more word boundary symbols at the same edge..
+        /// </summary>
+        public static string ksBadEnvSyntax {
+            get {
+                return ResourceManager.GetString("ksBadEnvSyntax", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The phoneme which begins &apos;{0}&apos; was not found in the set of representations for any Phoneme..
+        /// </summary>
+        public static string ksBadPhonemeInEnv {
+            get {
+                return ResourceManager.GetString("ksBadPhonemeInEnv", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to There is a missing closing square bracket &apos;]&apos; somewhere around here: &apos;{0}&apos;..
+        /// </summary>
+        public static string ksMissingCloseBracketInEnv {
+            get {
+                return ResourceManager.GetString("ksMissingCloseBracketInEnv", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to There is a missing closing parenthesis &apos;)&apos; somewhere around here: &apos;{0}&apos;..
+        /// </summary>
+        public static string ksMissingCloseParenInEnv {
+            get {
+                return ResourceManager.GetString("ksMissingCloseParenInEnv", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to There is a missing opening square bracket &apos;[&apos; somewhere around here: &apos;{0}&apos;..
+        /// </summary>
+        public static string ksMissingOpenBracketInEnv {
+            get {
+                return ResourceManager.GetString("ksMissingOpenBracketInEnv", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to There is a missing opening parenthesis &apos;(&apos; somewhere around here: &apos;{0}&apos;..
+        /// </summary>
+        public static string ksMissingOpenParenInEnv {
+            get {
+                return ResourceManager.GetString("ksMissingOpenParenInEnv", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to http://downloads.sil.org/FieldWorks/appcastBTEbetas.xml.
         /// </summary>
         public static string kstidAppcastBteBetasUrl {

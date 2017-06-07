@@ -11,15 +11,14 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.Utils;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
 using System.Xml.Linq;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using SIL.CoreImpl;
-using Rect = SIL.FieldWorks.Common.COMInterfaces.Rect;
+using SIL.Xml;
+using Rect = SIL.FieldWorks.Common.ViewsInterfaces.Rect;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 {
@@ -130,8 +129,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 			if (m_fdoCache == null || DesignMode || m_wfiAnalysis == null)
 				return;
 
-			m_rootb = VwRootBoxClass.Create();
-			m_rootb.SetSite(this);
+			base.MakeRoot();
 
 			m_vc = new InterlinVc(m_fdoCache);
 			// Theory has it that the slices that have 'true' in this attribute will allow the sandbox to be used.
@@ -164,8 +162,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 			const int selectorId = InterlinVc.kfragSingleInterlinearAnalysisWithLabelsLeftAlign;
 			m_rootb.SetRootObject(m_wfiAnalysis.Hvo, m_vc, selectorId, m_styleSheet);
 
-			base.MakeRoot();
-
 			if (!IsEditable)
 				return;
 
@@ -186,8 +182,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 				TurnOnSandbox();
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "parent is a reference")]
 		InterlinearSlice MySlice
 		{
 			get

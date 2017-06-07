@@ -9,7 +9,7 @@ using NUnit.Framework;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.Utils;
+using SIL.Xml;
 
 namespace XMLViewsTests
 {

@@ -3078,67 +3078,60 @@ rule {Unanalyzed circumfix on a fully analyzed stem where second is an infix}
 	  | (Note: we do not allow for a derivational circumfix to attach to a Full in order to produce a partial - that would be an error.)
 
 			  | affixes on partial with non-final inflection
-rule {One or more unanalyzed prefixes and suffixes on partial with non-final inflection}
+rule {One or more unanalyzed prefixes and suffixes on partial}
   Partial_1 = Prefs Partial_2 Suffs
 								| percolation
   <Partial_1 inflected> = <Partial_2 inflected>
   <Partial_1 synCat> = <Partial_2 synCat>
 								| constraints
-  <Partial_2 blocksInflection> = +
   <Partial_2> == ~[synCat:unknown]
 
-rule {One or more unanalyzed prefixes on partial with non-final inflection}
+rule {One or more unanalyzed prefixes on partial}
   Partial_1 = Prefs Partial_2
 								| percolation
   <Partial_1 inflected> = <Partial_2 inflected>
   <Partial_1 synCat> = <Partial_2 synCat>
 								| constraints
-  <Partial_2 blocksInflection> = +
   <Partial_2> == ~[synCat:unknown]
 
-rule {One or more unanalyzed suffixes on partial with non-final inflection}
+rule {One or more unanalyzed suffixes on partial}
   Partial_1 =          Partial_2 Suffs
 								| percolation
   <Partial_1 inflected> = <Partial_2 inflected>
   <Partial_1 synCat> = <Partial_2 synCat>
 								| constraints
-  <Partial_2 blocksInflection> = +
   <Partial_2> == ~[synCat:unknown]
 
-rule {Unanalyzed circumfix on partial with non-final inflection}
+rule {Unanalyzed circumfix on partial}
   Partial_1 = circumPfx Partial_2 circumSfx
 								| percolation
   <Partial_1 inflected> = <Partial_2 inflected>
   <Partial_1 synCat> = <Partial_2 synCat>
 								| constraints
-  <Partial_2 blocksInflection> = +
   <Partial_2> == ~[synCat:unknown]
-rule {Unanalyzed circumfix on partial with non-final inflection, where second part is an infix}
+rule {Unanalyzed circumfix on partial, where second part is an infix}
   Partial_1 = circumPfx_1 circumPfx_2 Partial_2
 								| percolation
   <Partial_1 inflected> = <Partial_2 inflected>
   <Partial_1 synCat> = <Partial_2 synCat>
 								| constraints
-  <Partial_2 blocksInflection> = +
   <Partial_2> == ~[synCat:unknown]
 								| rightmost "prefix" must be an infix
   <circumPfx_2> == [morphType : infix]
 
-rule {Derivational circumfix on partial with non-final inflection}
+rule {Derivational circumfix on partial}
   Partial_1 = derivCircumPfx Partial_2 derivCircumSfx
 								| percolation
   <Partial_1 inflected> = <Partial_2 inflected>
   <Partial_1 synCat> = <Partial_2 synCat>
 								| constraints
-  <Partial_2 blocksInflection> = +
   <Partial_2> == ~[synCat:unknown]
-rule {Derivational circumfix on partial with non-final inflection, where second part is an infix}
+rule {Derivational circumfix on partial, where second part is an infix}
   Partial_1 = derivCircumPfx_1 derivCircumPfx_2 Partial_2
 								| percolation
   <Partial_1 inflected> = <Partial_2 inflected>
   <Partial_1 synCat> = <Partial_2 synCat>
 								| constraints
-  <Partial_2 blocksInflection> = +
   <Partial_2> == ~[synCat:unknown]
 								| rightmost "prefix" must be an infix
    <derivCircumPfx_2> == [morphType : infix]
@@ -3340,6 +3333,114 @@ rule {A derivational prefix added to a sequence of prefixes; the derivational ca
 
   }
 
+rule {A derivational prefix added to a partial analysis}
+Partial_1 = derivPfx Partial_2
+								| percolation
+<Partial_1 synCat> = <derivPfx toCat>
+								| constraints
+{
+  
+		<Partial_2 synCat>           = <derivPfx fromCat>
+		<Partial_2 synCat>           = <derivPfx envCat>
+		/
+		<derivPfx fromCat>        = 256
+		<derivPfx envCat>         = 256
+{
+	  
+		<Partial_2 synCat>           = 256 /
+		<Partial_2 synCat>           = 13146 /
+		<Partial_2 synCat>           = 13147 /
+		<Partial_2 synCat>           = 13148 /
+		<Partial_2 synCat>           = 13339 /
+		<Partial_2 synCat>           = 13681 /
+		<Partial_2 synCat>           = 24234 /
+		<Partial_2 synCat>           = 24235 /
+		<Partial_2 synCat>           = 24236
+}
+
+		/
+		<derivPfx fromCat>        = 24234
+		<derivPfx envCat>         = 24234
+{
+	  
+		<Partial_2 synCat>           = 24234 /
+		<Partial_2 synCat>           = 24235 /
+		<Partial_2 synCat>           = 24236
+}
+
+		/
+		<derivPfx fromCat>        = 258
+		<derivPfx envCat>         = 258
+{
+	  
+		<Partial_2 synCat>           = 258 /
+		<Partial_2 synCat>           = 16929 /
+		<Partial_2 synCat>           = 16930 /
+		<Partial_2 synCat>           = 22932
+}
+
+		/
+		<derivPfx fromCat>        = 13605
+		<derivPfx envCat>         = 13605
+{
+	  
+		<Partial_2 synCat>           = 13605 /
+		<Partial_2 synCat>           = 13683
+}
+
+		/
+		<derivPfx fromCat>        = 13696
+		<derivPfx envCat>         = 13696
+{
+	  
+		<Partial_2 synCat>           = 13696 /
+		<Partial_2 synCat>           = 13697 /
+		<Partial_2 synCat>           = 13698
+}
+
+		/
+		<derivPfx fromCat>        = 13744
+		<derivPfx envCat>         = 13744
+{
+	  
+		<Partial_2 synCat>           = 13744 /
+		<Partial_2 synCat>           = 13765 /
+		<Partial_2 synCat>           = 13766 /
+		<Partial_2 synCat>           = 23342
+}
+
+		/
+		<derivPfx fromCat>        = 13765
+		<derivPfx envCat>         = 13765
+{
+	  
+		<Partial_2 synCat>           = 13765 /
+		<Partial_2 synCat>           = 13766 /
+		<Partial_2 synCat>           = 23342
+}
+
+		/
+		<derivPfx fromCat>        = 20333
+		<derivPfx envCat>         = 20333
+{
+	  
+		<Partial_2 synCat>           = 20333 /
+		<Partial_2 synCat>           = 20334 /
+		<Partial_2 synCat>           = 20335
+}
+
+		/
+		<derivPfx fromCat>        = 22963
+		<derivPfx envCat>         = 22963
+{
+	  
+		<Partial_2 synCat>           = 22963 /
+		<Partial_2 synCat>           = 22964 /
+		<Partial_2 synCat>           = 23053
+}
+
+  }
+
 rule {An unanalyzed suffix added to a sequence of suffixes}
   Suffixes_1 = (Suffixes_2) suffix
 								| percolation
@@ -3537,9 +3638,129 @@ rule {A derivational suffix added to a sequence of suffixes; the derivational ca
 
   }
 
+rule {A derivational suffix added to a partial analysis}
+Partial_1 = Partial_2 derivSfx
+								| percolation
+<Partial_1 synCat> = <derivSfx toCat>
+								| constraints
+{
+  
+		<Partial_2 synCat>           = <derivSfx fromCat>
+		<Partial_2 synCat>           = <derivSfx envCat>
+		/
+		<derivSfx fromCat>        = 256
+		<derivSfx envCat>         = 256
+{
+	  
+		<Partial_2 synCat>           = 256 /
+		<Partial_2 synCat>           = 13146 /
+		<Partial_2 synCat>           = 13147 /
+		<Partial_2 synCat>           = 13148 /
+		<Partial_2 synCat>           = 13339 /
+		<Partial_2 synCat>           = 13681 /
+		<Partial_2 synCat>           = 24234 /
+		<Partial_2 synCat>           = 24235 /
+		<Partial_2 synCat>           = 24236
+}
 
+		/
+		<derivSfx fromCat>        = 24234
+		<derivSfx envCat>         = 24234
+{
+	  
+		<Partial_2 synCat>           = 24234 /
+		<Partial_2 synCat>           = 24235 /
+		<Partial_2 synCat>           = 24236
+}
+
+		/
+		<derivSfx fromCat>        = 258
+		<derivSfx envCat>         = 258
+{
+	  
+		<Partial_2 synCat>           = 258 /
+		<Partial_2 synCat>           = 16929 /
+		<Partial_2 synCat>           = 16930 /
+		<Partial_2 synCat>           = 22932
+}
+
+		/
+		<derivSfx fromCat>        = 13605
+		<derivSfx envCat>         = 13605
+{
+	  
+		<Partial_2 synCat>           = 13605 /
+		<Partial_2 synCat>           = 13683
+}
+
+		/
+		<derivSfx fromCat>        = 13696
+		<derivSfx envCat>         = 13696
+{
+	  
+		<Partial_2 synCat>           = 13696 /
+		<Partial_2 synCat>           = 13697 /
+		<Partial_2 synCat>           = 13698
+}
+
+		/
+		<derivSfx fromCat>        = 13744
+		<derivSfx envCat>         = 13744
+{
+	  
+		<Partial_2 synCat>           = 13744 /
+		<Partial_2 synCat>           = 13765 /
+		<Partial_2 synCat>           = 13766 /
+		<Partial_2 synCat>           = 23342
+}
+
+		/
+		<derivSfx fromCat>        = 13765
+		<derivSfx envCat>         = 13765
+{
+	  
+		<Partial_2 synCat>           = 13765 /
+		<Partial_2 synCat>           = 13766 /
+		<Partial_2 synCat>           = 23342
+}
+
+		/
+		<derivSfx fromCat>        = 20333
+		<derivSfx envCat>         = 20333
+{
+	  
+		<Partial_2 synCat>           = 20333 /
+		<Partial_2 synCat>           = 20334 /
+		<Partial_2 synCat>           = 20335
+}
+
+		/
+		<derivSfx fromCat>        = 22963
+		<derivSfx envCat>         = 22963
+{
+	  
+		<Partial_2 synCat>           = 22963 /
+		<Partial_2 synCat>           = 22964 /
+		<Partial_2 synCat>           = 23053
+}
+
+  }
+
+
+rule {Partially analyzed stem that's been inflected with empty template}
+	Partial = PartialInflected
+								| percolation
+	<Partial synCat> = <PartialInflected synCat>
+								| constraints
+	<Partial synCat> = <PartialInflected synCat>
+	<Partial morphoSyntax> = <PartialInflected morphoSyntax>
+
+	<Partial inflected> = +
+	<PartialInflected inflected> = +
+
+	
 rule {Partially analyzed stem with inflectional template  13149}
-  Partial_1 =  Partial_2  13150_0  :
+		Partial_1 =   Partial_2 13150_0  :
 														 | percolation
   <Partial_1 synCat>       = <Partial_2 synCat>
 														 | constraints
@@ -3551,7 +3772,7 @@ rule {Partially analyzed stem with inflectional template  13149}
   <Partial_2 inflected> = -
 		
 rule {Partially analyzed stem with inflectional template  13166}
-  Partial_1 =  13205_0 Partial_2  (13303_0) (13196_1)  :
+		Partial_1 =   13205_0 Partial_2 (13303_0) (13196_1)  :
 														 | percolation
   <Partial_1 synCat>       = <Partial_2 synCat>
 														 | constraints
@@ -3565,7 +3786,7 @@ rule {Partially analyzed stem with inflectional template  13166}
   <Partial_2 inflected> = -
 		
 rule {Partially analyzed stem with inflectional template  17101}
-  Partial_1 =  17102_0 Partial_2  13150_0  :
+		Partial_1 =   17102_0 Partial_2 13150_0  :
 														 | percolation
   <Partial_1 synCat>       = <Partial_2 synCat>
 														 | constraints
@@ -3578,7 +3799,7 @@ rule {Partially analyzed stem with inflectional template  17101}
   <Partial_2 inflected> = -
 		
 rule {Partially analyzed stem with inflectional template  17117}
-  Partial_1 =  17102_0 13205_1 Partial_2  (13303_0) (13196_1)  :
+		Partial_1 =   17102_0 13205_1 Partial_2 (13303_0) (13196_1)  :
 														 | percolation
   <Partial_1 synCat>       = <Partial_2 synCat>
 														 | constraints
@@ -3593,7 +3814,7 @@ rule {Partially analyzed stem with inflectional template  17117}
   <Partial_2 inflected> = -
 		
 rule {Partially analyzed stem with inflectional template  13277}
-  Partial_1 =  13205_0 Partial_2  (13303_0) (13196_1)  :
+		Partial_1 =   13205_0 Partial_2 (13303_0) (13196_1)  :
 														 | percolation
   <Partial_1 synCat>       = <Partial_2 synCat>
 														 | constraints
@@ -3607,7 +3828,7 @@ rule {Partially analyzed stem with inflectional template  13277}
   <Partial_2 inflected> = -
 		
 rule {Partially analyzed stem with inflectional template  17118}
-  Partial_1 =  17102_0 13205_1 Partial_2  (13303_0) (13196_1)  :
+		Partial_1 =   17102_0 13205_1 Partial_2 (13303_0) (13196_1)  :
 														 | percolation
   <Partial_1 synCat>       = <Partial_2 synCat>
 														 | constraints
@@ -3622,19 +3843,19 @@ rule {Partially analyzed stem with inflectional template  17118}
   <Partial_2 inflected> = -
 		
 rule {Partially analyzed stem with inflectional template  13278}
-  Partial_1 =  Partial_2  13279_0  :
+		PartialInflected =   Partial (13279_0)  :
 														 | percolation
-  <Partial_1 synCat>       = <Partial_2 synCat>
+  <PartialInflected synCat>       = <Partial synCat>
 														 | constraints
-  <Partial_2 synCat>       = 13148 
+  <Partial synCat>       = 13148 
 
   <Partial_1 morphoSyntax>    = <13279_0 morphoSyntax>
 														 | constraint
-  <Partial_1 inflected> = +
-  <Partial_2 inflected> = -
+  <PartialInflected inflected> = +
+  <Partial inflected> = -
 		
 rule {Partially analyzed stem with inflectional template  13329}
-  Partial_1 =  13205_0 Partial_2  (13196_0)  :
+		Partial_1 =   13205_0 Partial_2 (13196_0)  :
 														 | percolation
   <Partial_1 synCat>       = <Partial_2 synCat>
 														 | constraints
@@ -3647,7 +3868,7 @@ rule {Partially analyzed stem with inflectional template  13329}
   <Partial_2 inflected> = -
 		
 rule {Partially analyzed stem with inflectional template  17119}
-  Partial_1 =  17102_0 13205_1 Partial_2  (13196_0)  :
+		Partial_1 =   17102_0 13205_1 Partial_2 (13196_0)  :
 														 | percolation
   <Partial_1 synCat>       = <Partial_2 synCat>
 														 | constraints
@@ -3661,19 +3882,19 @@ rule {Partially analyzed stem with inflectional template  17119}
   <Partial_2 inflected> = -
 		
 rule {Partially analyzed stem with inflectional template  13340}
-  Partial_1 =  Partial_2  13341_0  :
+		PartialInflected =   Partial (13341_0)  :
 														 | percolation
-  <Partial_1 synCat>       = <Partial_2 synCat>
+  <PartialInflected synCat>       = <Partial synCat>
 														 | constraints
-  <Partial_2 synCat>       = 13339 
+  <Partial synCat>       = 13339 
 
   <Partial_1 morphoSyntax>    = <13341_0 morphoSyntax>
 														 | constraint
-  <Partial_1 inflected> = +
-  <Partial_2 inflected> = -
+  <PartialInflected inflected> = +
+  <Partial inflected> = -
 		
 rule {Partially analyzed stem with inflectional template  17120}
-  Partial_1 =  17102_0 Partial_2  (13341_0)  :
+		Partial_1 =   17102_0 Partial_2 (13341_0)  :
 														 | percolation
   <Partial_1 synCat>       = <Partial_2 synCat>
 														 | constraints
@@ -3686,7 +3907,7 @@ rule {Partially analyzed stem with inflectional template  17120}
   <Partial_2 inflected> = -
 		
 rule {Partially analyzed stem with inflectional template  16931}
-  Partial_1 =  (16932_0) (24689_1) Partial_2  16933_0  :
+		Partial_1 =   (16932_0) (24689_1) Partial_2 16933_0  :
 														 | percolation
   <Partial_1 synCat>       = <Partial_2 synCat>
 														 | constraints
@@ -3700,7 +3921,7 @@ rule {Partially analyzed stem with inflectional template  16931}
   <Partial_2 inflected> = -
 		
 rule {Partially analyzed stem with inflectional template  22719}
-  Partial_1 =  (16932_0) (24689_1) Partial_2  22720_0 22008_1  :
+		Partial_1 =   (16932_0) (24689_1) Partial_2 22720_0 22008_1  :
 														 | percolation
   <Partial_1 synCat>       = <Partial_2 synCat>
 														 | constraints
@@ -3715,7 +3936,7 @@ rule {Partially analyzed stem with inflectional template  22719}
   <Partial_2 inflected> = -
 		
 rule {Partially analyzed stem with inflectional template  20765}
-  Partial_1 =  20766_0 (16932_1) (24689_2) Partial_2  22008_0  :
+		Partial_1 =   20766_0 (16932_1) (24689_2) Partial_2 22008_0  :
 														 | percolation
   <Partial_1 synCat>       = <Partial_2 synCat>
 														 | constraints
@@ -3730,7 +3951,7 @@ rule {Partially analyzed stem with inflectional template  20765}
   <Partial_2 inflected> = -
 		
 rule {Partially analyzed stem with inflectional template  22730}
-  Partial_1 =  20766_0 (16932_1) (24689_2) Partial_2  22731_0 16933_1  :
+		Partial_1 =   20766_0 (16932_1) (24689_2) Partial_2 22731_0 16933_1  :
 														 | percolation
   <Partial_1 synCat>       = <Partial_2 synCat>
 														 | constraints
@@ -3746,7 +3967,7 @@ rule {Partially analyzed stem with inflectional template  22730}
   <Partial_2 inflected> = -
 		
 rule {Partially analyzed stem with inflectional template  17170}
-  Partial_1 =  17164_0 (24689_1) Partial_2  (17165_0)  :
+		Partial_1 =   17164_0 (24689_1) Partial_2 (17165_0)  :
 														 | percolation
   <Partial_1 synCat>       = <Partial_2 synCat>
 														 | constraints
@@ -3760,7 +3981,7 @@ rule {Partially analyzed stem with inflectional template  17170}
   <Partial_2 inflected> = -
 		
 rule {Partially analyzed stem with inflectional template  17169}
-  Partial_1 =  (17122_0) (24689_1) Partial_2  17142_0  :
+		Partial_1 =   (17122_0) (24689_1) Partial_2 17142_0  :
 														 | percolation
   <Partial_1 synCat>       = <Partial_2 synCat>
 														 | constraints
@@ -3774,7 +3995,7 @@ rule {Partially analyzed stem with inflectional template  17169}
   <Partial_2 inflected> = -
 		
 rule {Partially analyzed stem with inflectional template  17006}
-  Partial_1 =  (16932_0) 17007_1 (24689_2) (17053_3) Partial_2  16933_0  :
+		Partial_1 =   (16932_0) 17007_1 (24689_2) (17053_3) Partial_2 16933_0  :
 														 | percolation
   <Partial_1 synCat>       = <Partial_2 synCat>
 														 | constraints
@@ -3790,7 +4011,7 @@ rule {Partially analyzed stem with inflectional template  17006}
   <Partial_2 inflected> = -
 		
 rule {Partially analyzed stem with inflectional template  17060}
-  Partial_1 =  17061_0 (24689_1) (17053_2) Partial_2  16933_0  :
+		Partial_1 =   17061_0 (24689_1) (17053_2) Partial_2 16933_0  :
 														 | percolation
   <Partial_1 synCat>       = <Partial_2 synCat>
 														 | constraints
@@ -3805,7 +4026,7 @@ rule {Partially analyzed stem with inflectional template  17060}
   <Partial_2 inflected> = -
 		
 rule {Partially analyzed stem with inflectional template  22742}
-  Partial_1 =  (16932_0) 17007_1 (24689_2) (17053_3) Partial_2  22720_0 22008_1  :
+		Partial_1 =   (16932_0) 17007_1 (24689_2) (17053_3) Partial_2 22720_0 22008_1  :
 														 | percolation
   <Partial_1 synCat>       = <Partial_2 synCat>
 														 | constraints
@@ -3822,7 +4043,7 @@ rule {Partially analyzed stem with inflectional template  22742}
   <Partial_2 inflected> = -
 		
 rule {Partially analyzed stem with inflectional template  22743}
-  Partial_1 =  17061_0 (24689_1) (17053_2) Partial_2  22720_0 22008_1  :
+		Partial_1 =   17061_0 (24689_1) (17053_2) Partial_2 22720_0 22008_1  :
 														 | percolation
   <Partial_1 synCat>       = <Partial_2 synCat>
 														 | constraints
@@ -3838,7 +4059,7 @@ rule {Partially analyzed stem with inflectional template  22743}
   <Partial_2 inflected> = -
 		
 rule {Partially analyzed stem with inflectional template  20774}
-  Partial_1 =  20766_0 (16932_1) 17007_2 (24689_3) (17053_4) Partial_2  22008_0  :
+		Partial_1 =   20766_0 (16932_1) 17007_2 (24689_3) (17053_4) Partial_2 22008_0  :
 														 | percolation
   <Partial_1 synCat>       = <Partial_2 synCat>
 														 | constraints
@@ -3855,7 +4076,7 @@ rule {Partially analyzed stem with inflectional template  20774}
   <Partial_2 inflected> = -
 		
 rule {Partially analyzed stem with inflectional template  20775}
-  Partial_1 =  20766_0 17061_1 (24689_2) (17053_3) Partial_2  22008_0  :
+		Partial_1 =   20766_0 17061_1 (24689_2) (17053_3) Partial_2 22008_0  :
 														 | percolation
   <Partial_1 synCat>       = <Partial_2 synCat>
 														 | constraints
@@ -3871,7 +4092,7 @@ rule {Partially analyzed stem with inflectional template  20775}
   <Partial_2 inflected> = -
 		
 rule {Partially analyzed stem with inflectional template  22744}
-  Partial_1 =  20766_0 (16932_1) 17007_2 (24689_3) (17053_4) Partial_2  22731_0 16933_1  :
+		Partial_1 =   20766_0 (16932_1) 17007_2 (24689_3) (17053_4) Partial_2 22731_0 16933_1  :
 														 | percolation
   <Partial_1 synCat>       = <Partial_2 synCat>
 														 | constraints
@@ -3889,7 +4110,7 @@ rule {Partially analyzed stem with inflectional template  22744}
   <Partial_2 inflected> = -
 		
 rule {Partially analyzed stem with inflectional template  22745}
-  Partial_1 =  20766_0 17061_1 (24689_2) (17053_3) Partial_2  22731_0 16933_1  :
+		Partial_1 =   20766_0 17061_1 (24689_2) (17053_3) Partial_2 22731_0 16933_1  :
 														 | percolation
   <Partial_1 synCat>       = <Partial_2 synCat>
 														 | constraints
@@ -3906,7 +4127,7 @@ rule {Partially analyzed stem with inflectional template  22745}
   <Partial_2 inflected> = -
 		
 rule {Partially analyzed stem with inflectional template  17163}
-  Partial_1 =  17164_0 17007_1 (24689_2) (17053_3) Partial_2  (17165_0)  :
+		Partial_1 =   17164_0 17007_1 (24689_2) (17053_3) Partial_2 (17165_0)  :
 														 | percolation
   <Partial_1 synCat>       = <Partial_2 synCat>
 														 | constraints
@@ -3922,7 +4143,7 @@ rule {Partially analyzed stem with inflectional template  17163}
   <Partial_2 inflected> = -
 		
 rule {Partially analyzed stem with inflectional template  17121}
-  Partial_1 =  (17122_0) 17007_1 (24689_2) (17053_3) Partial_2  17142_0  :
+		Partial_1 =   (17122_0) 17007_1 (24689_2) (17053_3) Partial_2 17142_0  :
 														 | percolation
   <Partial_1 synCat>       = <Partial_2 synCat>
 														 | constraints
@@ -3938,7 +4159,7 @@ rule {Partially analyzed stem with inflectional template  17121}
   <Partial_2 inflected> = -
 		
 rule {Partially analyzed stem with inflectional template  58164}
-  Partial_1 =  20766_0 (16932_1) 17007_2 (24689_3) (17053_4) Partial_2  58165_0 16933_1  :
+		Partial_1 =   20766_0 (16932_1) 17007_2 (24689_3) (17053_4) Partial_2 58165_0 16933_1  :
 														 | percolation
   <Partial_1 synCat>       = <Partial_2 synCat>
 														 | constraints
@@ -3956,7 +4177,7 @@ rule {Partially analyzed stem with inflectional template  58164}
   <Partial_2 inflected> = -
 		
 rule {Partially analyzed stem with inflectional template  22935}
-  Partial_1 =  (16932_0) 17007_1 (24689_2) (17053_3) (22936_4) Partial_2  16933_0  :
+		Partial_1 =   (16932_0) 17007_1 (24689_2) (17053_3) (22936_4) Partial_2 16933_0  :
 														 | percolation
   <Partial_1 synCat>       = <Partial_2 synCat>
 														 | constraints
@@ -3973,7 +4194,7 @@ rule {Partially analyzed stem with inflectional template  22935}
   <Partial_2 inflected> = -
 		
 rule {Partially analyzed stem with inflectional template  22953}
-  Partial_1 =  17061_0 (24689_1) (17053_2) (22936_3) Partial_2  16933_0  :
+		Partial_1 =   17061_0 (24689_1) (17053_2) (22936_3) Partial_2 16933_0  :
 														 | percolation
   <Partial_1 synCat>       = <Partial_2 synCat>
 														 | constraints
@@ -3989,7 +4210,7 @@ rule {Partially analyzed stem with inflectional template  22953}
   <Partial_2 inflected> = -
 		
 rule {Partially analyzed stem with inflectional template  22954}
-  Partial_1 =  (16932_0) 17007_1 (24689_2) (17053_3) (22936_4) Partial_2  22720_0 22008_1  :
+		Partial_1 =   (16932_0) 17007_1 (24689_2) (17053_3) (22936_4) Partial_2 22720_0 22008_1  :
 														 | percolation
   <Partial_1 synCat>       = <Partial_2 synCat>
 														 | constraints
@@ -4007,7 +4228,7 @@ rule {Partially analyzed stem with inflectional template  22954}
   <Partial_2 inflected> = -
 		
 rule {Partially analyzed stem with inflectional template  22955}
-  Partial_1 =  17061_0 (24689_1) (17053_2) (22936_3) Partial_2  22720_0 22008_1  :
+		Partial_1 =   17061_0 (24689_1) (17053_2) (22936_3) Partial_2 22720_0 22008_1  :
 														 | percolation
   <Partial_1 synCat>       = <Partial_2 synCat>
 														 | constraints
@@ -4024,7 +4245,7 @@ rule {Partially analyzed stem with inflectional template  22955}
   <Partial_2 inflected> = -
 		
 rule {Partially analyzed stem with inflectional template  22956}
-  Partial_1 =  20766_0 (16932_1) 17007_2 (24689_3) (17053_4) (22936_5) Partial_2  22008_0  :
+		Partial_1 =   20766_0 (16932_1) 17007_2 (24689_3) (17053_4) (22936_5) Partial_2 22008_0  :
 														 | percolation
   <Partial_1 synCat>       = <Partial_2 synCat>
 														 | constraints
@@ -4042,7 +4263,7 @@ rule {Partially analyzed stem with inflectional template  22956}
   <Partial_2 inflected> = -
 		
 rule {Partially analyzed stem with inflectional template  22957}
-  Partial_1 =  20766_0 17061_1 (24689_2) (17053_3) (22936_4) Partial_2  22008_0  :
+		Partial_1 =   20766_0 17061_1 (24689_2) (17053_3) (22936_4) Partial_2 22008_0  :
 														 | percolation
   <Partial_1 synCat>       = <Partial_2 synCat>
 														 | constraints
@@ -4059,7 +4280,7 @@ rule {Partially analyzed stem with inflectional template  22957}
   <Partial_2 inflected> = -
 		
 rule {Partially analyzed stem with inflectional template  22958}
-  Partial_1 =  20766_0 (16932_1) 17007_2 (24689_3) (17053_4) (22936_5) Partial_2  22731_0 16933_1  :
+		Partial_1 =   20766_0 (16932_1) 17007_2 (24689_3) (17053_4) (22936_5) Partial_2 22731_0 16933_1  :
 														 | percolation
   <Partial_1 synCat>       = <Partial_2 synCat>
 														 | constraints
@@ -4078,7 +4299,7 @@ rule {Partially analyzed stem with inflectional template  22958}
   <Partial_2 inflected> = -
 		
 rule {Partially analyzed stem with inflectional template  22959}
-  Partial_1 =  20766_0 17061_1 (24689_2) (17053_3) (22936_4) Partial_2  22731_0 16933_1  :
+		Partial_1 =   20766_0 17061_1 (24689_2) (17053_3) (22936_4) Partial_2 22731_0 16933_1  :
 														 | percolation
   <Partial_1 synCat>       = <Partial_2 synCat>
 														 | constraints
@@ -4096,7 +4317,7 @@ rule {Partially analyzed stem with inflectional template  22959}
   <Partial_2 inflected> = -
 		
 rule {Partially analyzed stem with inflectional template  22960}
-  Partial_1 =  17164_0 17007_1 (24689_2) (17053_3) (22936_4) Partial_2  (17165_0)  :
+		Partial_1 =   17164_0 17007_1 (24689_2) (17053_3) (22936_4) Partial_2 (17165_0)  :
 														 | percolation
   <Partial_1 synCat>       = <Partial_2 synCat>
 														 | constraints
@@ -4113,7 +4334,7 @@ rule {Partially analyzed stem with inflectional template  22960}
   <Partial_2 inflected> = -
 		
 rule {Partially analyzed stem with inflectional template  22962}
-  Partial_1 =  (17122_0) 17007_1 (24689_2) (17053_3) (22936_4) Partial_2  17142_0  :
+		Partial_1 =   (17122_0) 17007_1 (24689_2) (17053_3) (22936_4) Partial_2 17142_0  :
 														 | percolation
   <Partial_1 synCat>       = <Partial_2 synCat>
 														 | constraints
@@ -4130,20 +4351,20 @@ rule {Partially analyzed stem with inflectional template  22962}
   <Partial_2 inflected> = -
 		
 rule {Partially analyzed stem with inflectional template  23219}
-  Partial_1 =  23222_0 Partial_2  23223_0  :
+		PartialInflected =   (23222_0) Partial (23223_0)  :
 														 | percolation
-  <Partial_1 synCat>       = <Partial_2 synCat>
+  <PartialInflected synCat>       = <Partial synCat>
 														 | constraints
-  <Partial_2 synCat>       = 19944 
+  <Partial synCat>       = 19944 
 
   <Partial_1 morphoSyntax>    = <23222_0 morphoSyntax>
   <Partial_1 morphoSyntax>    = <23223_0 morphoSyntax>
 														 | constraint
-  <Partial_1 inflected> = +
-  <Partial_2 inflected> = -
+  <PartialInflected inflected> = +
+  <Partial inflected> = -
 		
 rule {Partially analyzed stem with inflectional template  22965}
-  Partial_1 =  22966_0 Partial_2   :
+		Partial_1 =   22966_0 Partial_2  :
 														 | percolation
   <Partial_1 synCat>       = <Partial_2 synCat>
 														 | constraints

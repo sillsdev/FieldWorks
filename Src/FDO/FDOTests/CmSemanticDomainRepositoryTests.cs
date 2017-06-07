@@ -1,23 +1,15 @@
-﻿// Copyright (c) 2012-2013 SIL International
+﻿// Copyright (c) 2012-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: CmSemanticDomainRepositoryTests.cs
-// Responsibility:
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
-// --------------------------------------------------------------------------------------------
+
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.Application.ApplicationServices;
 using NUnit.Framework;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
 using SIL.FieldWorks.FDO.Infrastructure;
 
 namespace SIL.FieldWorks.FDO.FDOTests
@@ -189,8 +181,6 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// <summary>
 		/// Load the test data into the Semantic Domains list.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Portability", "NewLineLiteralRule",
-			Justification="Multiline string - git uses platform specific line endings")]
 		protected override void CreateTestData()
 		{
 			base.CreateTestData();
@@ -239,7 +229,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			var result = MakeEntryWithForm(form);
 			var sense = m_senseFactory.Create();
 			result.SensesOS.Add(sense);
-			sense.Gloss.AnalysisDefaultWritingSystem = Cache.TsStrFactory.MakeString(
+			sense.Gloss.AnalysisDefaultWritingSystem = TsStringUtils.MakeString(
 				gloss, Cache.DefaultAnalWs);
 			return result;
 		}
@@ -248,7 +238,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			var entry = m_entryFactory.Create();
 			entry.LexemeFormOA = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
-			entry.LexemeFormOA.Form.VernacularDefaultWritingSystem = Cache.TsStrFactory.MakeString(
+			entry.LexemeFormOA.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString(
 				form, Cache.DefaultVernWs);
 			return entry;
 		}
@@ -397,7 +387,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			const string expectedNum2 = "8.3.3"; // group3 match 'sunshine', under 'Light'
 			const string expectedName2 = "Light";
 			const string filePath = @"Templates\semdom.xml";
-			var homeDir = FwDirectoryFinder.CodeDirectory;
+			var homeDir = TestDirectoryFinder.CodeDirectory;
 			LoadSemDomTestDataFromFile(Path.Combine(homeDir, filePath));
 
 			// SUT

@@ -12,11 +12,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 	internal sealed class LexReferenceTreeRootView : AtomicReferenceView
 	{
 		/// <summary />
-		public LexReferenceTreeRootView() : base()
-		{
-		}
-
-		/// <summary />
 		public override void SetReferenceVc()
 		{
 			CheckDisposed();

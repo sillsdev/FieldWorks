@@ -3,7 +3,6 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
@@ -15,7 +14,7 @@ namespace SIL.FieldWorks.Common.FwUtils.MessageBoxEx
 	/// An advanced MessageBox that supports customizations like Font, Icon,
 	/// Buttons and Saved Responses
 	/// </summary>
-	internal class MessageBoxExForm : Form, IFWDisposable
+	internal class MessageBoxExForm : Form
 	{
 		#region Constants
 		private const int LEFT_PADDING = 12;
@@ -224,7 +223,7 @@ namespace SIL.FieldWorks.Common.FwUtils.MessageBoxEx
 		}
 
 		/// <summary>
-		/// Set/Set value to paly an alert sound.
+		/// Set/Set value to play an alert sound.
 		/// </summary>
 		public bool PlayAlertSound
 		{
@@ -764,8 +763,6 @@ namespace SIL.FieldWorks.Common.FwUtils.MessageBoxEx
 		/// <summary>
 		/// Layout all the controls
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="buttonCtrl is added to _buttonControlsTable and disposed in Dispose()")]
 		private void LayoutControls()
 		{
 			panelIcon.Location = new Point(LEFT_PADDING, TOP_PADDING);

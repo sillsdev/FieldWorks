@@ -1,20 +1,13 @@
-// Copyright (c) 2004-2013 SIL International
+// Copyright (c) 2004-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: EmptyScripture.cs
-// Responsibility:
-//
-// <remarks>
-// </remarks>
+
 using System;
 using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.TE
 {
@@ -25,7 +18,7 @@ namespace SIL.FieldWorks.TE
 	/// in it yet.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public class EmptyScripture : Form, IFWDisposable, IFlexComponent
+	public class EmptyScripture : Form, IFlexComponent
 	{
 		#region Option enumeration
 		/// ------------------------------------------------------------------------------------
@@ -377,8 +370,6 @@ namespace SIL.FieldWorks.TE
 		/// </summary>
 		/// <param name="e"></param>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="SetParentForm() returns a reference")]
 		protected override void OnClosing(CancelEventArgs e)
 		{
 			base.OnClosing(e);

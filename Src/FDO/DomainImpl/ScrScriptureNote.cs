@@ -1,9 +1,6 @@
-// Copyright (c) 2002-2013 SIL International
+// Copyright (c) 2002-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: FdoScripture.cs
-// Responsibility: TE Team
 //
 // <remarks>
 // For change history before July 2009, look in FdoScripture.cs
@@ -11,11 +8,10 @@
 
 using System;
 using System.Diagnostics;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.ScriptureUtils;
-using SILUBS.SharedScrUtils;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Scripture;
+using SIL.CoreImpl.Text;
 
 namespace SIL.FieldWorks.FDO.DomainImpl
 {
@@ -528,7 +524,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			if (bldr == null)
 			{
 				IStTxtPara para = text.AddNewTextPara(ScrStyleNames.Remark);
-				para.Contents = TsStringUtils.MakeTss(String.Empty, Cache.DefaultAnalWs);
+				para.Contents = TsStringUtils.MakeString(String.Empty, Cache.DefaultAnalWs);
 			}
 			else
 			{

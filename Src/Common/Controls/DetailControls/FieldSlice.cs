@@ -11,9 +11,8 @@
 // --------------------------------------------------------------------------------------------
 using System.Windows.Forms;
 using System.Diagnostics;
-
 using SIL.FieldWorks.FDO;
-using SIL.Utils;
+using SIL.Xml;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {

@@ -1,21 +1,12 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Filters;
-using SIL.Utils;
-using SIL.FieldWorks.Common.Framework;	// various help routines
 using SIL.FieldWorks.Common.FwUtils;
-
-// ShowHelp
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -25,7 +16,7 @@ namespace SIL.FieldWorks.Common.Controls
 	///
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public partial class SimpleDateMatchDlg : Form, IFWDisposable
+	public partial class SimpleDateMatchDlg : Form
 	{
 		private const string s_helpTopic = "khtpFilterRestrict";
 		private IHelpTopicProvider m_helpTopicProvider;

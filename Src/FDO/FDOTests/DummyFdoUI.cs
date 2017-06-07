@@ -1,11 +1,9 @@
-// Copyright (c) 2013-2014 SIL International
+// Copyright (c) 2013-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO.FDOTests
@@ -13,19 +11,20 @@ namespace SIL.FieldWorks.FDO.FDOTests
 	/// <summary>
 	/// Dummy implementation of IFdoUI for unit tests
 	/// </summary>
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification="m_threadHelper is a singleton and disposed by the SingletonsContainer")]
 	public class DummyFdoUI : IFdoUI
 	{
-		private readonly ThreadHelper m_threadHelper = SingletonsContainer.Get<ThreadHelper>();
+		/// <summary>
+		/// Initializes a new instance of the <see cref="DummyFdoUI"/> class.
+		/// </summary>
+		public DummyFdoUI()
+		{
+			SynchronizeInvoke = new SingleThreadedSynchronizeInvoke();
+		}
 
 		/// <summary>
 		/// Gets the object that is used to invoke methods on the main UI thread.
 		/// </summary>
-		public ISynchronizeInvoke SynchronizeInvoke
-		{
-			get { return m_threadHelper; }
-		}
+		public ISynchronizeInvoke SynchronizeInvoke { get; }
 
 		/// <summary>
 		/// Gets the error message.
@@ -112,6 +111,14 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// <param name="caption"></param>
 		/// <param name="helpTopic"></param>
 		public void DisplayMessage(MessageType type, string message, string caption, string helpTopic)
+		{
+			throw new NotImplementedException();
+		}
+
+		/// <summary>
+		/// Displays the circular reference breaker report.
+		/// </summary>
+		public void DisplayCircularRefBreakerReport(string report, string caption)
 		{
 			throw new NotImplementedException();
 		}

@@ -73,6 +73,13 @@ namespace SIL.FieldWorks.FDO
 		void ReportDuplicateGuids(string errorText);
 
 		/// <summary>
+		/// Displays the circular reference breaker report.
+		/// </summary>
+		/// <param name="msg">Message.</param>
+		/// <param name="caption">Caption.</param>
+		void DisplayCircularRefBreakerReport(string msg, string caption);
+
+		/// <summary>
 		/// Present a message to the user and allow the options to Retry or Cancel
 		/// </summary>
 		/// <param name="msg">The message.</param>

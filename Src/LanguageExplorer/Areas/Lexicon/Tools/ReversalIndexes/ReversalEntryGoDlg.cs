@@ -4,13 +4,14 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.LexText.Controls;
@@ -64,10 +65,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 		{
 			get { return "ReversalEntryGo"; }
 		}
-
 		/// <summary />
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "searchEngine is disposed by the mediator.")]
 		protected override void InitializeMatchingObjects(FdoCache cache)
 		{
 			var xnWindow = m_propertyTable.GetValue<XElement>("WindowConfiguration");
@@ -84,7 +82,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 			var wsObj = (CoreWritingSystemDefinition) m_cbWritingSystems.SelectedItem;
 			if (wsObj != null)
 			{
-				ITsString tss = m_tsf.MakeString(string.Empty, wsObj.Handle);
+				ITsString tss = TsStringUtils.EmptyString(wsObj.Handle);
 				var field = new SearchField(ReversalIndexEntryTags.kflidReversalForm, tss);
 				m_matchingObjectsBrowser.SearchAsync(new[] { field });
 			}
@@ -125,7 +123,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 			if (m_oldSearchKey != string.Empty || searchKey != string.Empty)
 				StartSearchAnimation();
 
-			ITsString tss = m_tsf.MakeString(searchKey, wsObj.Handle);
+			ITsString tss = TsStringUtils.MakeString(searchKey, wsObj.Handle);
 			var field = new SearchField(ReversalIndexEntryTags.kflidReversalForm, tss);
 			m_matchingObjectsBrowser.SearchAsync(new[] { field });
 		}

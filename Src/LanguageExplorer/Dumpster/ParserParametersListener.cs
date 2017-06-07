@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2015 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -9,14 +9,13 @@ using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.Utils;
 
 namespace LanguageExplorer.Dumpster
 {
 	/// <summary>
 	/// Summary description for ParserParametersListener.
 	/// </summary>
-	internal sealed class ParserParametersListener : IFlexComponent, IFWDisposable
+	internal sealed class ParserParametersListener : IFlexComponent, IDisposable
 	{
 		#region Implementation of IPropertyTableProvider
 

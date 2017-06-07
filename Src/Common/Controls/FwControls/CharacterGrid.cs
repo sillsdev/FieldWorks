@@ -1,21 +1,18 @@
-// Copyright (c) 2004-2013 SIL International
+// Copyright (c) 2004-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: CharacterGrid.cs
-// Responsibility: TE Team
 
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
 
@@ -26,7 +23,7 @@ namespace SIL.FieldWorks.Common.Controls
 	///
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public class CharacterGrid : DataGridView, IFWDisposable
+	public class CharacterGrid : DataGridView
 	{
 #if !__MonoCS__
 		[DllImport("gdi32.dll", CharSet=CharSet.Auto)]
@@ -61,7 +58,6 @@ namespace SIL.FieldWorks.Common.Controls
 		private int m_cellWidth = 40;
 		private int m_cellHeight = 45;
 		private bool m_loadCharactersFromFont = true;
-		private ILgCharacterPropertyEngine m_cpe;
 		private Font m_fntForSpecialChar;
 		private CharacterInfoToolTip m_toolTip;
 		private IComparer m_sortComparer = null;
@@ -81,8 +77,6 @@ namespace SIL.FieldWorks.Common.Controls
 		/// Initializes a new instance of the <see cref="CharacterGrid"/> class.
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification="Added a TODO-Linux comment")]
 		public CharacterGrid()
 		{
 			DoubleBuffered = true;
@@ -350,31 +344,6 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				CheckDisposed();
 				return ClientSize.Width; // -SystemInformation.VerticalScrollBarWidth - 1;
-			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets or sets the ILgCharacterPropertyEngine used when loading the grid from a font.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[Browsable(false)]
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public ILgCharacterPropertyEngine CharPropEngine
-		{
-			get { CheckDisposed(); return m_cpe; }
-			set
-			{
-				CheckDisposed();
-				if (m_cpe != value)
-				{
-					m_cpe = value;
-					if (IsHandleCreated)
-					{
-						RemoveAllCharacters();
-						LoadGrid();
-					}
-				}
 			}
 		}
 
@@ -924,21 +893,7 @@ namespace SIL.FieldWorks.Common.Controls
 			if (ch == StringUtils.kChObject || ch == StringUtils.kchReplacement)
 				return false;
 
-			if (m_cpe == null)
-			{
-				return ((m_fSymbolCharSet || !char.IsLetterOrDigit(ch)) &&
-					!char.IsWhiteSpace(ch) && !char.IsControl(ch));
-			}
-
-			UcdProperty ucdProp = UcdProperty.GetInstance(m_cpe.get_GeneralCategory(ch));
-			string sUcdRep = ucdProp.UcdRepresentation;
-
-			if (string.IsNullOrEmpty(sUcdRep))
-				return false;
-
-			char charCat = sUcdRep.ToUpperInvariant()[0];
-			return charCat == 'S' || charCat == 'P' ||
-				(m_fSymbolCharSet && (charCat == 'L' || charCat == 'N'));
+			return Icu.IsSymbol(ch) || Icu.IsPunct(ch) || (m_fSymbolCharSet && (Icu.IsLetter(ch) || Icu.IsNumeric(ch)));
 		}
 
 		/// ------------------------------------------------------------------------------------

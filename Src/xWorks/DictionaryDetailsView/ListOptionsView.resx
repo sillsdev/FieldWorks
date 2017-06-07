@@ -148,7 +148,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;listView.ZOrder" xml:space="preserve">
-    <value>3</value>
+    <value>4</value>
   </data>
   <data name="buttonUp.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Right</value>
@@ -175,7 +175,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;buttonUp.ZOrder" xml:space="preserve">
-    <value>2</value>
+    <value>3</value>
   </data>
   <data name="buttonDown.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Right</value>
@@ -202,7 +202,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;buttonDown.ZOrder" xml:space="preserve">
-    <value>1</value>
+    <value>2</value>
   </data>
   <data name="checkBoxDisplayOption.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Bottom, Left</value>
@@ -211,7 +211,7 @@
     <value>True</value>
   </data>
   <data name="checkBoxDisplayOption.Location" type="System.Drawing.Point, System.Drawing">
-    <value>4, 121</value>
+    <value>3, 121</value>
   </data>
   <data name="checkBoxDisplayOption.Size" type="System.Drawing.Size, System.Drawing">
     <value>200, 17</value>
@@ -220,7 +220,7 @@
     <value>2</value>
   </data>
   <data name="checkBoxDisplayOption.Text" xml:space="preserve">
-    <value>Display Writing System Abbreviations</value>
+    <value>Display &amp;Writing System Abbreviations</value>
   </data>
   <data name="&gt;&gt;checkBoxDisplayOption.Name" xml:space="preserve">
     <value>checkBoxDisplayOption</value>
@@ -232,7 +232,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;checkBoxDisplayOption.ZOrder" xml:space="preserve">
-    <value>0</value>
+    <value>1</value>
   </data>
   <data name="labelListView.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -259,7 +259,40 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;labelListView.ZOrder" xml:space="preserve">
+    <value>5</value>
+  </data>
+  <data name="checkBoxDisplayOption2.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Bottom, Left</value>
+  </data>
+  <data name="checkBoxDisplayOption2.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="checkBoxDisplayOption2.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="checkBoxDisplayOption2.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 140</value>
+  </data>
+  <data name="checkBoxDisplayOption2.Size" type="System.Drawing.Size, System.Drawing">
+    <value>228, 17</value>
+  </data>
+  <data name="checkBoxDisplayOption2.TabIndex" type="System.Int32, mscorlib">
     <value>4</value>
+  </data>
+  <data name="checkBoxDisplayOption2.Text" xml:space="preserve">
+    <value>&amp;Display each Note in a separate paragraph</value>
+  </data>
+  <data name="&gt;&gt;checkBoxDisplayOption2.Name" xml:space="preserve">
+    <value>checkBoxDisplayOption2</value>
+  </data>
+  <data name="&gt;&gt;checkBoxDisplayOption2.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;checkBoxDisplayOption2.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;checkBoxDisplayOption2.ZOrder" xml:space="preserve">
+    <value>0</value>
   </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
@@ -268,7 +301,7 @@
     <value>6, 13</value>
   </data>
   <data name="$this.Size" type="System.Drawing.Size, System.Drawing">
-    <value>300, 140</value>
+    <value>300, 162</value>
   </data>
   <data name="&gt;&gt;invisibleHeaderToSetColWidth.Name" xml:space="preserve">
     <value>invisibleHeaderToSetColWidth</value>

@@ -3,7 +3,6 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Diagnostics;
 
 namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 {

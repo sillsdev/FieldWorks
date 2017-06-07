@@ -3,12 +3,12 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Xml.Linq;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.Utils;
 using SIL.FieldWorks.FDO;
-using SIL.CoreImpl;
+using SIL.CoreImpl.SpellChecking;
+using SIL.CoreImpl.Text;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.Xml;
 
 namespace SIL.FieldWorks.Filters
 {
@@ -36,12 +36,10 @@ namespace SIL.FieldWorks.Filters
 		/// </summary>
 		/// <param name="arg"></param>
 		/// <returns></returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="GetDictionary() returns a reference")]
 		public override bool Matches(ITsString arg)
 		{
 			var dict = SpellingHelper.GetSpellChecker(m_ws, WritingSystemFactory);
-			return new SpellCheckMethod(arg, dict, m_ws, WritingSystemFactory.get_CharPropEngine(m_ws)).Run();
+			return new SpellCheckMethod(arg, dict, WritingSystemFactory.get_EngineOrNull(m_ws)).Run();
 		}
 
 		/// <summary>
@@ -62,10 +60,10 @@ namespace SIL.FieldWorks.Filters
 		/// </summary>
 		/// <param name="node">The node.</param>
 		/// ---------------------------------------------------------------------------------------
-		public override void PersistAsXml(XElement node)
+		public override void PersistAsXml(XElement element)
 		{
-			base.PersistAsXml(node);
-			XmlUtils.AppendAttribute(node, "ws", m_ws.ToString());
+			base.PersistAsXml(element);
+			XmlUtils.SetAttribute(element, "ws", m_ws.ToString());
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -74,10 +72,10 @@ namespace SIL.FieldWorks.Filters
 		/// </summary>
 		/// <param name="node">The node.</param>
 		/// ------------------------------------------------------------------------------------
-		public override void InitXml(XElement node)
+		public override void InitXml(XElement element)
 		{
-			base.InitXml(node);
-			m_ws = XmlUtils.GetMandatoryIntegerAttributeValue(node, "ws");
+			base.InitXml(element);
+			m_ws = XmlUtils.GetMandatoryIntegerAttributeValue(element, "ws");
 		}
 
 		/// <summary>
@@ -99,12 +97,11 @@ namespace SIL.FieldWorks.Filters
 	/// </summary>
 	internal class SpellCheckMethod
 	{
-		ITsString m_tss; // main string to check.
-		string m_text; // to check, text of m_tss.
-		int m_cch; // total count of characters in source.
-		ILgCharacterPropertyEngine m_cpe;
-		ISpellEngine m_dict;
-		int m_ws; // only text in this language is checked.
+		private readonly ITsString m_tss; // main string to check.
+		private readonly string m_text; // to check, text of m_tss.
+		private readonly int m_cch; // total count of characters in source.
+		private readonly ISpellEngine m_dict;
+		private readonly ILgWritingSystem m_ws; // only text in this language is checked.
 
 		/// <summary>
 		/// Make one
@@ -112,14 +109,11 @@ namespace SIL.FieldWorks.Filters
 		/// <param name="tss"></param>
 		/// <param name="dict"></param>
 		/// <param name="ws"></param>
-		public SpellCheckMethod(ITsString tss, ISpellEngine dict, int ws, ILgCharacterPropertyEngine cpe)
+		public SpellCheckMethod(ITsString tss, ISpellEngine dict, ILgWritingSystem ws)
 		{
 			m_tss = tss;
-			m_text = tss.Text;
-			if (m_text == null)
-				m_text = "";
+			m_text = tss.Text ?? string.Empty;
 			m_cch = m_text.Length;
-			m_cpe = cpe;
 			m_dict = dict;
 			m_ws = ws;
 		}
@@ -131,13 +125,13 @@ namespace SIL.FieldWorks.Filters
 		public bool Run()
 		{
 			//if we have no valid dictionary then all the words must be spelled right?
-			if(m_dict == null)
+			if (m_dict == null)
 				return false;
 			int ichMinWord = 0;
 			bool fInWord = false;
 			for (int ich = 0; ich < m_cch; ich++)
 			{
-				bool isWordForming = m_cpe.get_IsWordForming(m_text[ich]);
+				bool isWordForming = m_ws.get_IsWordForming(m_text[ich]);
 				if (isWordForming)
 				{
 					if (!fInWord)
@@ -169,15 +163,15 @@ namespace SIL.FieldWorks.Filters
 			ITsTextProps props = m_tss.FetchRunInfoAt(ichMinWord, out tri);
 			int var;
 			int ws = props.GetIntPropValues((int)FwTextPropType.ktptWs, out var);
-			bool fFoundOurWs = (ws == m_ws);
-			bool fFoundOtherWs = (ws != m_ws);
+			bool fFoundOurWs = ws == m_ws.Handle;
+			bool fFoundOtherWs = ws != m_ws.Handle;
 
 			while (tri.ichLim < ichLimWord)
 			{
 				props = m_tss.FetchRunInfoAt(tri.ichLim, out tri);
 				ws = props.GetIntPropValues((int)FwTextPropType.ktptWs, out var);
-				fFoundOurWs |= (ws == m_ws);
-				fFoundOtherWs |= (ws != m_ws);
+				fFoundOurWs |= ws == m_ws.Handle;
+				fFoundOtherWs |= ws != m_ws.Handle;
 			}
 			if (!fFoundOurWs)
 				return false; // don't check words with nothing in interesting WS.

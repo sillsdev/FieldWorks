@@ -5,8 +5,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.DomainServices;
 
 namespace SIL.FieldWorks.FDO.FDOTests
@@ -23,8 +24,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			Cache.LangProject.AnalysisWritingSystems.Add(
 				Cache.WritingSystemFactory.get_EngineOrNull(germanWsId) as CoreWritingSystemDefinition);
 			lexFactory = Cache.ServiceLocator.GetInstance<ILexEntryFactory>();
-			tssGermanGloss = Cache.TsStrFactory.MakeString("da", germanWsId);
-			var tssVernacForm = Cache.TsStrFactory.MakeString("bunk", Cache.DefaultVernWs);
+			tssGermanGloss = TsStringUtils.MakeString("da", germanWsId);
+			ITsString tssVernacForm = TsStringUtils.MakeString("bunk", Cache.DefaultVernWs);
 			var msa = new SandboxGenericMSA
 			{
 				MainPOS = Cache.LangProject.PartsOfSpeechOA.PossibilitiesOS.Where(
@@ -87,7 +88,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			Cache.LangProject.AnalysisWritingSystems.Add(
 				Cache.WritingSystemFactory.get_EngineOrNull(germanWsId) as CoreWritingSystemDefinition);
 			var lexFactory = Cache.ServiceLocator.GetInstance<ILexEntryFactory>();
-			tssGermanGloss = Cache.TsStrFactory.MakeString("da", germanWsId);
+			tssGermanGloss = TsStringUtils.MakeString("da", germanWsId);
 			entry = lexFactory.Create();
 			lexSenseFactory = Cache.ServiceLocator.GetInstance<ILexSenseFactory>();
 			msa = new SandboxGenericMSA

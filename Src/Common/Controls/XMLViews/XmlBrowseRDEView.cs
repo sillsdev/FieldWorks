@@ -1,15 +1,17 @@
-// Copyright (c) 2005-2016 SIL International
+// Copyright (c) 2005-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using SIL.CoreImpl;
+using SIL.CoreImpl.Text;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.RootSites;
@@ -17,7 +19,8 @@ using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.Xml;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -347,7 +350,7 @@ namespace SIL.FieldWorks.Common.Controls
 				var kflid = XMLViewsDataCache.ktagEditColumnBase + i;
 				var wsCol = WritingSystemServices.GetWritingSystem(m_fdoCache, columns[i - 1], null,
 					m_fdoCache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle).Handle;
-				sda.SetMultiStringAlt(XmlRDEBrowseViewVc.khvoNewItem, kflid, wsCol, Cache.TsStrFactory.MakeString("", wsCol));
+				sda.SetMultiStringAlt(XmlRDEBrowseViewVc.khvoNewItem, kflid, wsCol, TsStringUtils.EmptyString(wsCol));
 			}
 			// Set the selection to the first column.
 			SetSelectionToFirstColumnInNewRow();
@@ -797,7 +800,7 @@ namespace SIL.FieldWorks.Common.Controls
 				{
 					RDEVc.EditableObjectsRemoveInvalidObjects();
 
-					Set<int> idsClone = RDEVc.EditableObjectsClone();
+					ISet<int> idsClone = RDEVc.EditableObjectsClone();
 					fInDoMerges = true;
 					Type targetType = ReflectionHelper.GetType(RDEVc.EditRowAssembly, RDEVc.EditRowClass);
 					System.Reflection.MethodInfo mi = targetType.GetMethod(RDEVc.EditRowMergeMethod);
@@ -867,8 +870,6 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="rcSrcRoot"></param>
 		/// <param name="rcDstRoot"></param>
 		/// <returns></returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="Context menu - can't dispose right away")]
 		protected override bool OnRightMouseUp(Point pt, Rectangle rcSrcRoot, Rectangle rcDstRoot)
 		{
 			var sel = MakeSelectionAt(new MouseEventArgs(MouseButtons.Right, 1, pt.X, pt.Y, 0));

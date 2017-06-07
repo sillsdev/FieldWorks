@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -9,15 +9,18 @@ using System.Collections.Generic;
 using System.Text;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.FDO.DomainServices;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.Application;
 using System.ComponentModel;
-using SIL.Utils;
-using ComponentsExtensionMethods = SIL.FieldWorks.Common.FwUtils.ComponentsExtensionMethods;
+//using ComponentsExtensionMethods = SIL.FieldWorks.Common.FwUtils.ComponentsExtensionMethods;
 using WaitCursor = SIL.FieldWorks.Common.FwUtils.WaitCursor;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
@@ -151,7 +154,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			/// This allows either the launcher or the embedded view to communicate size changes to
 			/// the embedding slice.
 			/// </summary>
-			public event SIL.Utils.FwViewSizeChangedEventHandler ViewSizeChanged;
+			public event FwViewSizeChangedEventHandler ViewSizeChanged;
 
 			#endregion Events
 
@@ -204,9 +207,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			protected int m_heightView;
 			/// <summary />
 			protected int m_hvoOldSelection;
-			/// <summary />
-			protected ITsStrFactory m_tsf = TsStrFactoryClass.Create();
-			/// <summary />
 			protected int m_hvoObj;
 			/// <summary />
 			protected ILexSense m_sense;
@@ -249,9 +249,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 				m_sense = null;
 				m_vc = null;
-				if (m_tsf != null)
-					System.Runtime.InteropServices.Marshal.ReleaseComObject(m_tsf);
-				m_tsf = null;
 				m_sdaRev = null;
 				m_usedIndices = null;
 			}
@@ -361,7 +358,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				List<int> currentEntries = new List<int>();
 				int countIndices = m_sdaRev.get_VecSize(m_sense.Hvo, kFlidIndices);
 				int hvoReal = 0;
-				Set<int> writingSystemsModified = new Set<int>();
+				var writingSystemsModified = new HashSet<int>();
 				for (int i = 0; i < countIndices; ++i)
 				{
 					int hvoIndex = m_sdaRev.get_VecItem(m_sense.Hvo, kFlidIndices, i);
@@ -617,18 +614,16 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			{
 				CheckDisposed();
 
-				base.MakeRoot();
-
 				if (m_fdoCache == null || DesignMode)
 					return;
 
 				// A crude way of making sure the property we want is loaded into the cache.
-				m_sense = (ILexSense)m_fdoCache.ServiceLocator.GetObject(m_hvoObj);
-				// Review JohnT: why doesn't the base class do this??
-				m_rootb = VwRootBoxClass.Create();
-				m_rootb.SetSite(this);
+				m_sense = (ILexSense) m_fdoCache.ServiceLocator.GetObject(m_hvoObj);
+
+				base.MakeRoot();
+
 				if (m_sdaRev == null)
-					m_sdaRev = new ReversalEntryDataAccess(m_fdoCache.DomainDataByFlid as ISilDataAccessManaged);
+					m_sdaRev = new ReversalEntryDataAccess(m_fdoCache.DomainDataByFlid as ISilDataAccessManaged) {TsStrFactory = TsStringUtils.TsStrFactory};
 
 				LoadDummyCache(false);
 
@@ -679,7 +674,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					m_sdaRev.CacheUnicodeProp(idx.Hvo, ReversalIndexTags.kflidWritingSystem, idx.WritingSystem, idx.WritingSystem.Length);
 					// Cache the WS abbreviation in the dummy cache.
 					m_sdaRev.CacheStringProp(ws.Handle, ReversalEntryDataAccess.kflidWsAbbr,
-						m_fdoCache.TsStrFactory.MakeString(ws.Abbreviation, m_fdoCache.DefaultUserWs));
+						TsStringUtils.MakeString(ws.Abbreviation, m_fdoCache.DefaultUserWs));
 
 					// Cache entries used by the sense for idx.
 					// Cache the vector of IDs for referenced reversal entries.
@@ -694,7 +689,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 						entryIds.Add(rie.Hvo);
 					int wsHandle = m_fdoCache.ServiceLocator.WritingSystemManager.GetWsFromStr(idx.WritingSystem);
 					// Cache a dummy string for each WS.
-					ITsString tssEmpty = m_tsf.EmptyString(wsHandle);
+					ITsString tssEmpty = TsStringUtils.EmptyString(wsHandle);
 					m_sdaRev.CacheStringAlt(m_dummyId, ReversalIndexEntryTags.kflidReversalForm,
 						wsHandle, tssEmpty);
 					entryIds.Add(m_dummyId--);
@@ -737,7 +732,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 						}
 						if (form != null)
 						{
-							ITsString tss = m_tsf.MakeString(form, ws);
+							ITsString tss = TsStringUtils.MakeString(form, ws);
 							m_sdaRev.CacheStringAlt(ent.Hvo, ReversalIndexEntryTags.kflidReversalForm, ws, tss);
 						}
 					}
@@ -826,7 +821,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				ITsTextProps props = tss.get_PropertiesAt(0);
 				int nVar;
 				ws = props.GetIntPropValues((int)FwTextPropType.ktptWs, out nVar);
-				ITsString tssEmpty = m_tsf.EmptyString(ws);
+				ITsString tssEmpty = TsStringUtils.EmptyString(ws);
 				m_sdaRev.CacheStringAlt(m_dummyId, ReversalIndexEntryTags.kflidReversalForm,
 					ws, tssEmpty);
 				// Refresh
@@ -924,7 +919,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			/// <summary/>
 			protected virtual void Dispose(bool fDisposing)
 			{
-				System.Diagnostics.Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType().ToString() + " *******");
+				System.Diagnostics.Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType() + " *******");
 				if (fDisposing && !IsDisposed)
 				{
 					// Dispose managed resources here.
@@ -936,7 +931,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				m_cache = null;
 				m_usedIndices = null;
 				m_ttpLabel = null;
-				m_tsf = null;
 				IsDisposed = true;
 			}
 			#endregion
@@ -1063,7 +1057,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 							Debug.Assert(rie != null);
 							List<CoreWritingSystemDefinition> rgWs = WritingSystemServices.GetReversalIndexWritingSystems(m_cache, rie.Hvo, false);
 							int wsAnal = m_cache.DefaultAnalWs;
-							ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
+							ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 							tisb.SetIntPropValues((int)FwTextPropType.ktptWs,
 								(int)FwTextPropVar.ktpvDefault, wsAnal);
 							tisb.SetIntPropValues((int)FwTextPropType.ktptEditable,
@@ -1096,14 +1090,14 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 											// We have to totally replace the properties set by ttpLabel.  The
 											// simplest way is to create another ITsString with the simple base
 											// property of only the default analysis writing system.
-											ITsPropsBldr tpbBase = TsPropsBldrClass.Create();
+											ITsPropsBldr tpbBase = TsStringUtils.MakePropsBldr();
 											tpbBase.SetIntPropValues((int)FwTextPropType.ktptWs,
 												(int)FwTextPropVar.ktpvDefault, wsAnal);
 											ttpBase = tpbBase.GetTextProps();
 										}
-										ITsString tssWs = m_tsf.MakeStringWithPropsRgch(sWs, sWs.Length, ttpLabel);
+										ITsString tssWs = TsStringUtils.MakeString(sWs, ttpLabel);
 										tisb.AppendTsString(tssWs);
-										ITsString tssSpace = m_tsf.MakeStringWithPropsRgch(" ", 1, ttpBase);
+										ITsString tssSpace = TsStringUtils.MakeString(" ", ttpBase);
 										tisb.AppendTsString(tssSpace);
 									}
 									tisb.SetIntPropValues((int)FwTextPropType.ktptWs,
@@ -1301,7 +1295,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					if (m_mapHvoWsRevForm.TryGetValue(key, out tss))
 						return tss;
 					else
-						return TsStrFactoryClass.Create().EmptyString(ws); // do NOT return null!
+						return TsStrFactory.EmptyString(ws); // do NOT return null!
 				}
 				else
 				{
@@ -1402,7 +1396,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			{
 				throw new NotSupportedException();
 			}
-
+			
+			/// <summary />
+			public ITsStrFactory TsStrFactory { get; set; }
+			
 			/// <summary />
 			public void CacheObjProp(int obj, int tag, int val)
 			{

@@ -2,15 +2,15 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
 using System.Windows.Forms;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
 	/// <summary>
 	/// Interface for a record bar.
 	/// </summary>
-	public interface IRecordBar : IFWDisposable
+	public interface IRecordBar : IDisposable
 	{
 		/// <summary>
 		/// Get the TreeView control, or null, if using a ListView.

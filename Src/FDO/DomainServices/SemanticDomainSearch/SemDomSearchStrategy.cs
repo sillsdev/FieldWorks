@@ -15,8 +15,6 @@ namespace SIL.FieldWorks.FDO.DomainServices.SemanticDomainSearch
 	/// An abstract class to be instantiated by a class that knows how to sort
 	/// semantic domains into buckets.
 	/// </summary>
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification="Cache is a reference and will be disposed in parent class.")]
 	public abstract class SemDomSearchStrategy
 	{
 		#region Member Variables

@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,17 +6,16 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Reporting;
-using SIL.Utils;
 using SIL.CoreImpl;
 using SILUBS.SharedScrControls;
-using SILUBS.SharedScrUtils;
+using SIL.CoreImpl.Scripture;
 
 namespace SIL.FieldWorks.TE
 {
@@ -25,7 +24,7 @@ namespace SIL.FieldWorks.TE
 	/// ImportDialog - gather information for a data import
 	/// </summary>
 	///-------------------------------------------------------------------------------
-	public class ImportDialog : Form, IFWDisposable
+	public class ImportDialog : Form
 	{
 		#region Member data
 		// Make these static so their values will be retained
@@ -181,6 +180,13 @@ namespace SIL.FieldWorks.TE
 		{
 			if (IsDisposed)
 				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
+		}
+
+		/// <summary/>
+		protected override void Dispose(bool disposing)
+		{
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ****** ");
+			base.Dispose(disposing);
 		}
 
 		#region Windows Form Designer generated code

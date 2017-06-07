@@ -161,6 +161,15 @@ namespace SIL.FieldWorks.FdoUi
 		}
 
 		/// <summary>
+		/// Displays the circular reference breaker report.
+		/// </summary>
+		public void DisplayCircularRefBreakerReport(string report, string caption)
+		{
+			var icon = MessageBoxIcon.Information;
+			m_synchronizeInvoke.Invoke(() => MessageBox.Show(report, caption, MessageBoxButtons.OK, icon));
+		}
+
+		/// <summary>
 		/// show a dialog or output to the error log, as appropriate.
 		/// </summary>
 		/// <param name="error">the exception you want to report</param>

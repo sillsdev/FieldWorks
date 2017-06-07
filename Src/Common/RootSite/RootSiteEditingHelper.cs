@@ -5,14 +5,14 @@
 // File: RootSiteEditingHelper.cs
 // Responsibility:
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.SpellChecking;
+using SIL.CoreImpl.Text;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
@@ -199,8 +199,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// Make spell checking menu options using the DotNetBar adapter.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="we store a reference to AddToDictMenuItem for later use. REVIEW: we never dispose it.")]
 		private List<string> MakeSpellCheckMenuOptions(Point mousePos, RootSite rootsite,
 			ITMAdapter tmAdapter, string menuName, string addToDictMenuName,
 			string changeMultipleMenuName, string insertBeforeMenuName)
@@ -1093,8 +1091,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 			if (!sel.IsRange)
 			{
-				ITsStrFactory tsf = TsStrFactoryClass.Create();
-				tssLink = tsf.MakeString(clip, sda.WritingSystemFactory.UserWs);
+				tssLink = TsStringUtils.MakeString(clip, sda.WritingSystemFactory.UserWs);
 				tsb = tssLink.GetBldr();
 			}
 

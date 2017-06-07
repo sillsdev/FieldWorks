@@ -6,10 +6,11 @@ using System;
 using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.CoreImpl;
 using System.Collections.Generic;
+using SIL.CoreImpl.Cellar;
+using SIL.CoreImpl.Text;
 
 namespace SIL.FieldWorks.FDO.DomainImpl
 {
@@ -22,30 +23,28 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// Common code for loading a MultiUnicodeAccessor.
 		/// </summary>
 		internal static void LoadMultiUnicodeAccessor(ICmObject obj, int flid, XElement reader,
-			ref IMultiUnicode multiUnicodeProperty,
-			ILgWritingSystemFactory wsf, ITsStrFactory tsf)
+			ref IMultiUnicode multiUnicodeProperty, ILgWritingSystemFactory wsf)
 		{
 			if (obj == null) throw new ArgumentNullException("obj");
 			if (reader == null) throw new ArgumentNullException("reader");
 
 			// Deal with MultiUnicode data type.
 			multiUnicodeProperty = new MultiUnicodeAccessor(obj, flid);
-			((MultiAccessor)multiUnicodeProperty).LoadFromDataStoreInternal(reader, wsf, tsf);
+			((MultiAccessor)multiUnicodeProperty).LoadFromDataStoreInternal(reader, wsf);
 		}
 
 		/// <summary>
 		/// Common code for loading a MultiStringAccessor.
 		/// </summary>
 		internal static void LoadMultiStringAccessor(ICmObject obj, int flid, XElement reader,
-			ref IMultiString multiStringProperty,
-			ILgWritingSystemFactory wsf, ITsStrFactory tsf)
+			ref IMultiString multiStringProperty, ILgWritingSystemFactory wsf)
 		{
 			if (obj == null) throw new ArgumentNullException("obj");
 			if (reader == null) throw new ArgumentNullException("reader");
 
 			// Deal with MultiUnicode data type.
 			multiStringProperty = new MultiStringAccessor(obj, flid);
-			((MultiAccessor)multiStringProperty).LoadFromDataStoreInternal(reader, wsf, tsf);
+			((MultiAccessor)multiStringProperty).LoadFromDataStoreInternal(reader, wsf);
 		}
 
 		/// <summary>
@@ -129,6 +128,10 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			if (reader == null) throw new ArgumentNullException("reader");
 
+			// ENHANCE: it would be better to use DateTime.Parse instead of parsing this ourselves.
+			// However, this changes the way we interpret the milliseconds. Currently 1:2:3.4 is
+			// incorrectly interpreted as 1 hour, 2 minutes, 3 seconds and 4 milliseconds instead
+			// of 4/10 of a second, i.e. 400 milliseconds.
 			var dtParts = reader.Attribute("val").Value.Split(new[] { '-', ' ', ':', '.' });
 			var asUtc = new DateTime(
 				Int32.Parse(dtParts[0]),
@@ -137,7 +140,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				Int32.Parse(dtParts[3]),
 				Int32.Parse(dtParts[4]),
 				Int32.Parse(dtParts[5]),
-				Int32.Parse(dtParts[6]));
+				dtParts.Length > 6 ? Int32.Parse(dtParts[6]) : 0);
 			return asUtc.ToLocalTime(); // Return local time, not UTC, which is what is stored.
 		}
 

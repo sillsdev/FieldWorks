@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -8,7 +8,7 @@ using System.Linq;
 using SIL.PaToFdoInterfaces;
 using SIL.FieldWorks.FDO;
 using System.Xml.Serialization;
-using SIL.Utils;
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.PaObjects
 {
@@ -81,8 +81,15 @@ namespace SIL.FieldWorks.PaObjects
 			xVariants = lxEntry.VariantFormEntryBackRefs.Select(x => new PaVariant(x)).ToList();
 			xGuid = lxEntry.Guid;
 
-			if (lxEntry.EtymologyOA != null)
-				xEtymology = PaMultiString.Create(lxEntry.EtymologyOA.Form, svcloc);
+			// append all etymology forms together separated by commas
+			if (lxEntry.EtymologyOS.Count > 0)
+			{
+				xEtymology = new PaMultiString();
+				foreach (var etymology in lxEntry.EtymologyOS)
+				{
+					PaMultiString.Append(xEtymology, etymology.Form, svcloc);
+				}
+			}
 
 			xComplexFormInfo = (from eref in lxEntry.EntryRefsOS
 								let pcfi = PaComplexFormInfo.Create(eref)

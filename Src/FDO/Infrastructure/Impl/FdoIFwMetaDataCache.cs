@@ -12,8 +12,10 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Runtime.InteropServices; // Needed for Marshal
 using System.Reflection; // To load meta data cache file data.
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.Cellar;
+using SIL.Extensions;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+
 //using SIL.Utils;
 
 /* From Field$ table
@@ -74,8 +76,6 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification="See TODO-Linux comment")]
 		internal FdoMetaDataCache()
 		{
 			m_initialized = false;
@@ -84,30 +84,44 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			VirtualPropertyAttribute.ResetFlidCounter();
 			FieldDescription.ClearDataAbout();
 
-			var cmObjectTypes = new List<Type>();
-			foreach (var fdoType in Assembly.GetExecutingAssembly().GetTypes())
-			{
-				// TODO-Linux: System.Boolean System.Type::op_Equality(System.Type,System.Type)
-				// is marked with [MonoTODO] and might not work as expected in 4.0.
-				if (fdoType.Namespace != "SIL.FieldWorks.FDO.DomainImpl"
-					|| !fdoType.IsClass
-					|| fdoType.GetInterface("ICmObject") == null)
-				{
-					// Skip irrelvant stuff.
-					continue;
-				}
+			var cmObjectTypesBaseFirst = CmObjectTypesBaseFirst();
 
-				cmObjectTypes.Add(fdoType);
-			}
-			CmObjectSurrogate.InitializeConstructors(cmObjectTypes);
+			CmObjectSurrogate.InitializeConstructors(cmObjectTypesBaseFirst);
 
-			InitializeMetaDataCache(cmObjectTypes);
+			InitializeMetaDataCache(cmObjectTypesBaseFirst);
 
 			m_initialized = true;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification="See TODO-Linux comment")]
+		/// <summary/>
+		/// <returns>The CmObject types in the executing assembly with the base types ordered first</returns>
+		private static List<Type> CmObjectTypesBaseFirst()
+		{
+			var cmObjectTypes = Assembly.GetExecutingAssembly().GetTypes().Where(t => t.Namespace == "SIL.FieldWorks.FDO.DomainImpl"
+				&& t.IsClass && t.GetInterface("ICmObject") != null).ToList();
+			// Take the list of all the ICmObject types in the assembly and make sure that the base types appear first
+			var cmObjectTypesBaseFirst = new List<Type>();
+			var type = cmObjectTypes[0];
+			while (cmObjectTypes.Count > 0)
+			{
+				// If the basetype is also a CmObject type and not yet added then go add it first
+				if (cmObjectTypes.Contains(type.BaseType))
+				{
+					type = type.BaseType;
+				}
+				else // the basetype is either not a CmObject or already added to the sorted list
+				{
+					cmObjectTypesBaseFirst.Add(type); // Add to the end, remove from the list and move on
+					cmObjectTypes.Remove(type);
+					if (cmObjectTypes.Count > 0)
+					{
+						type = cmObjectTypes[0];
+					}
+				}
+			}
+			return cmObjectTypesBaseFirst;
+		}
+
 		private void InitializeMetaDataCache(IEnumerable<Type> cmObjectTypes)
 		{
 			//AddClassesAndProps(cmObjectTypes);

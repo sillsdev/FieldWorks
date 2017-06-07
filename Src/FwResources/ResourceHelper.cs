@@ -64,7 +64,7 @@ namespace SIL.FieldWorks.Resources
 		AllImage,
 		/// <summary>*.wav, *.snd, *.au, *.aif, *.aifc, *.aiff, *.wma, *.mp3</summary>
 		AllAudio,
-		/// <summary>*.avi, *.wmv, *.wvx, *.mpeg, *.mpg, *.mpe, *.m1v, *.mp2, *.mpv2, *.mpa</summary>
+		/// <summary>*.mp4, *.avi, *.wmv, *.wvx, *.mpeg, *.mpg, *.mpe, *.m1v, *.mp2, *.mpv2, *.mpa</summary>
 		AllVideo,
 		/// <summary>Lift (*.lift)</summary>
 		LIFT,
@@ -148,7 +148,7 @@ namespace SIL.FieldWorks.Resources
 			s_fileFilterExtensions[FileFilterType.AllCCTable] = "*.cc; *.cct";
 			s_fileFilterExtensions[FileFilterType.AllImage] = "*.bmp; *.jpg; *.jpeg; *.gif; *.png; *.tif; *.tiff; *.ico; *.wmf; *.pcx; *.cgm";
 			s_fileFilterExtensions[FileFilterType.AllAudio] = "*.wav; *.snd; *.au; *.aif; *.aifc; *.aiff; *.wma; *.mp3";
-			s_fileFilterExtensions[FileFilterType.AllVideo] = "*.avi; *.wmv; *.wvx; *.mpeg; *.mpg; *.mpe; *.m1v; *.mp2; *.mpv2; *.mpa";
+			s_fileFilterExtensions[FileFilterType.AllVideo] = "*.mp4; *.avi; *.wmv; *.wvx; *.mpeg; *.mpg; *.mpe; *.m1v; *.mp2; *.mpv2; *.mpa";
 			s_fileFilterExtensions[FileFilterType.LIFT] = "*" + FwFileExtensions.ksLexiconInterchangeFormat;
 			s_fileFilterExtensions[FileFilterType.AllShoeboxDictionaryDatabases] = "*.mdf; *.di; *.dic; *.db; *.sfm; *.sf";
 			s_fileFilterExtensions[FileFilterType.ToolboxLanguageFiles] = "*.lng";

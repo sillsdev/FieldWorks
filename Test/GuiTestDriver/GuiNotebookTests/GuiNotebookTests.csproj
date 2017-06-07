@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
 	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
 	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -10,7 +10,7 @@
 	<AppDesignerFolder>Properties</AppDesignerFolder>
 	<RootNamespace>GuiNotebookTests</RootNamespace>
 	<AssemblyName>GuiNotebookTests</AssemblyName>
-	<TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+	<TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
 	<FileAlignment>512</FileAlignment>
 	<SccProjectName>SAK</SccProjectName>
 	<SccLocalPath>SAK</SccLocalPath>
@@ -35,7 +35,7 @@
 	<WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-	<Reference Include="COMInterfaces, Version=6.9.2.19640, Culture=neutral, processorArchitecture=MSIL" />
+	<Reference Include="ViewsInterfaces, Version=6.9.2.19640, Culture=neutral, processorArchitecture=MSIL" />
 	<Reference Include="FDO, Version=6.9.2.19747, Culture=neutral, processorArchitecture=MSIL" />
 	<Reference Include="FwControls, Version=6.9.2.19745, Culture=neutral, processorArchitecture=MSIL" />
 	<Reference Include="nunit.framework, Version=2.5.3.9345, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">

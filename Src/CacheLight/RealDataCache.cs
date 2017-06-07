@@ -1,14 +1,14 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices; // needed for Marshal
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.Utils;
 using System.Diagnostics;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Cellar;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 
 namespace SIL.FieldWorks.CacheLight
 {
@@ -16,7 +16,7 @@ namespace SIL.FieldWorks.CacheLight
 	/// Interface for RealDataCache that combines the different interfaces that RealDataCache
 	/// implements. This more easily allows to use a substitute implementation in unit tests.
 	/// </summary>
-	public interface IRealDataCache : ISilDataAccess, IVwCacheDa, IStructuredTextDataAccess, IFWDisposable
+	public interface IRealDataCache : ISilDataAccess, IVwCacheDa, IStructuredTextDataAccess, IDisposable
 	{
 		/// <summary>
 		/// Gets or sets the paragraph contents field id.
@@ -138,10 +138,6 @@ namespace SIL.FieldWorks.CacheLight
 
 		#endregion Properties
 
-		#region Construction and Initialization
-
-		#endregion Construction and Initialization
-
 		#region Other methods
 
 		private void MakeDirty(int hvo)
@@ -260,7 +256,7 @@ namespace SIL.FieldWorks.CacheLight
 						if (m_clids.Count == 0)
 						{
 							var countAllClasses = MetaDataCache.ClassCount;
-							using (var clids = MarshalEx.ArrayToNative<int>(countAllClasses))
+							using (ArrayPtr clids = MarshalEx.ArrayToNative<int>(countAllClasses))
 							{
 								MetaDataCache.GetClassIds(countAllClasses, clids);
 								var uIds = MarshalEx.NativeToArray<int>(clids, countAllClasses);
@@ -340,6 +336,10 @@ namespace SIL.FieldWorks.CacheLight
 		#region ISilDataAccess/IVwCacheDa implementation (Cache/Set/Get)
 
 		#region Object Prop methods (DONE)
+		/// <summary>
+		/// Gets or sets the string factory.
+		/// </summary>
+		public ITsStrFactory TsStrFactory { get; set; }
 
 		/// <summary>Member CacheObjProp</summary>
 		/// <param name='obj'>obj</param>
@@ -1037,8 +1037,7 @@ namespace SIL.FieldWorks.CacheLight
 			{
 				// Note: Normally, this would throw a KeyNotFoundException,
 				// but the interface says we have to return an empty string.
-				var tsf = TsStrFactoryClass.Create();
-				tss = tsf.MakeString(string.Empty, ws);
+				tss = TsStrFactory.EmptyString(ws);
 				// If it is not a Compute every time virtual, go ahead and cache it
 				if (!removeFromCache)
 					SetMultiStringAlt(hvo, tag, ws, tss); // Save it for next time.
@@ -1057,7 +1056,7 @@ namespace SIL.FieldWorks.CacheLight
 		{
 			CheckDisposed();
 
-			var tsms = TsMultiStringClass.Create();
+			var tsms = new TsMultiString();
 			foreach (var key in m_extendedKeyCache.Keys)
 			{
 				if (key.Hvo == hvo && key.Flid == tag)

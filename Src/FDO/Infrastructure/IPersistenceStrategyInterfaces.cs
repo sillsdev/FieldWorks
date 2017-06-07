@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -14,7 +14,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure
 	/// enumerate data stores, and initialize before loading
 	/// on a specific data  store.
 	/// </summary>
-	public interface IDataSetup : IFWDisposable
+	public interface IDataSetup : IDisposable
 	{
 		/// <summary>
 		/// Load domain.
@@ -136,7 +136,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure
 	/// <summary>
 	/// This interface defines ways to read data from some data storage device.
 	/// </summary>
-	internal interface IDataReader : IFWDisposable
+	internal interface IDataReader : IDisposable
 	{
 		/// <summary>
 		/// Get the CmObject for the given Guid.
@@ -264,7 +264,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure
 	/// so they should take steps to ensure that only one operation is performed for
 	/// any given surrogate.
 	/// </remarks>
-	internal interface IDataStorer : IFWDisposable
+	internal interface IDataStorer : IDisposable
 	{
 		bool Commit(HashSet<ICmObjectOrSurrogate> newbies, HashSet<ICmObjectOrSurrogate> dirtballs, HashSet<ICmObjectId> goners);
 		void CompleteAllCommits();

@@ -9,7 +9,6 @@ using System.Windows.Forms;
 using System.Xml;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.Utils;
 
 namespace LanguageExplorer.Controls
 {
@@ -28,7 +27,7 @@ namespace LanguageExplorer.Controls
 	/// Most of the methods in these interfaces will be pass-through methods to m_mainControl,
 	/// but we will try to get some use out of them, as well.
 	/// </remarks>
-	internal sealed partial class PaneBarContainer : UserControl, IPaneBarContainer, IFWDisposable, IPostLayoutInit
+	internal sealed partial class PaneBarContainer : UserControl, IPaneBarContainer, IPostLayoutInit
 	{
 		#region Data Members
 
@@ -133,8 +132,6 @@ namespace LanguageExplorer.Controls
 
 		#endregion Properties
 
-		#region IFWDisposable implementation, in part
-
 		/// <summary>
 		/// Check to see if the object has been disposed.
 		/// All public Properties and Methods should call this
@@ -145,8 +142,6 @@ namespace LanguageExplorer.Controls
 			if (IsDisposed)
 				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
 		}
-
-		#endregion IFWDisposable implementation, in part
 
 		#region IMainUserControl implementation
 

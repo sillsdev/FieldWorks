@@ -1,15 +1,11 @@
-// Copyright (c) 2004-2013 SIL International
+// Copyright (c) 2004-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: SimpleRootSite.cs
-// Responsibility: FW Team
 
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Drawing.Printing;
 using System.Linq;
@@ -18,8 +14,12 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using Accessibility;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FDO.Application;
 using SIL.Keyboarding;
 using SIL.Utils;
 using SIL.Windows.Forms.Keyboarding;
@@ -38,7 +38,7 @@ namespace SIL.FieldWorks.Common.RootSites
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	public class SimpleRootSite : UserControl, IVwRootSite, IRootSite, IFlexComponent,
-		IEditingCallbacks, IReceiveSequentialMessages, IMessageFilter, IFWDisposable
+		IEditingCallbacks, IReceiveSequentialMessages, IMessageFilter
 	{
 		#region Events
 		/// <summary>
@@ -343,6 +343,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			m_messageSequencer = new MessageSequencer(this);
 			m_graphicsManager = CreateGraphicsManager();
 			m_orientationManager = CreateOrientationManager();
+			if(LicenseManager.UsageMode != LicenseUsageMode.Designtime)
 			SubscribeToRootSiteEventHandlerEvents();
 		}
 
@@ -363,7 +364,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		private void SubscribeToRootSiteEventHandlerEvents()
 		{
-			if (!KeyboardController.IsInitialized)
+			if (!KeyboardController.IsInitialized || m_rootSiteEventHandler != null)
 				return;
 #if __MonoCS__
 			m_rootSiteEventHandler = new IbusRootSiteEventHandler(this);
@@ -371,6 +372,15 @@ namespace SIL.FieldWorks.Common.RootSites
 			m_rootSiteEventHandler = new WindowsLanguageProfileSink(this);
 #endif
 			KeyboardController.RegisterControl(this, m_rootSiteEventHandler);
+		}
+
+		private void UnsubscribeFromRootSiteEventHandlerEvents()
+		{
+			if (!KeyboardController.IsInitialized || m_rootSiteEventHandler == null)
+				return;
+
+			KeyboardController.UnregisterControl(this);
+			m_rootSiteEventHandler = null;
 		}
 
 		/// <summary>
@@ -395,7 +405,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// -----------------------------------------------------------------------------------
 		protected override void Dispose(bool disposing)
 		{
-			Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + "******************");
+			Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + " ******************");
 			// Must not be run more than once.
 			if (IsDisposed)
 				return;
@@ -428,6 +438,8 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			if (disposing)
 			{
+				UnsubscribeFromRootSiteEventHandlerEvents();
+
 				if (m_rootb != null)
 					CloseRootBox();
 
@@ -457,9 +469,6 @@ namespace SIL.FieldWorks.Common.RootSites
 				}
 				if (components != null)
 					components.Dispose();
-				#if __MonoCS__
-				KeyboardController.UnregisterControl(this);
-				#endif
 			}
 
 			if (m_vdrb != null && Marshal.IsComObject(m_vdrb))
@@ -822,11 +831,14 @@ namespace SIL.FieldWorks.Common.RootSites
 			{
 				CheckDisposed();
 
+				// check if this property will actually change
+				if (EditingHelper.Editable == !value)
+					return;
+
 				// If this is read-only, it should not try to handle keyboard input in general.
 				if (EditingHelper.Editable && value)
 				{
-					if (KeyboardController.IsInitialized)
-						KeyboardController.UnregisterControl(this);
+					UnsubscribeFromRootSiteEventHandlerEvents();
 				}
 				else if (!EditingHelper.Editable && !value)
 				{
@@ -1735,12 +1747,11 @@ namespace SIL.FieldWorks.Common.RootSites
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets the (estimated) height of one line
+		/// Gets the (estimated) height of one line in pixels
 		/// </summary>
 		/// <remarks>
 		/// Should we use the selection text properties and stylesheet to get a more specific value?
 		/// (font height + 4pt?)
-		/// Note: the calculation below returns 18 for what would be 18.6667 (if Dpi.Y==96).
 		/// </remarks>
 		/// ------------------------------------------------------------------------------------
 		public int LineHeight
@@ -1748,7 +1759,8 @@ namespace SIL.FieldWorks.Common.RootSites
 			get
 			{
 				CheckDisposed();
-				return 14 * Dpi.Y / 72; // 14 points is typically about a line.
+				// use Math.Ceiling to make sure sure the height doesn't round down inappropriately
+				return (int)(14 * Math.Ceiling(Dpi.Y / (float)72)); // 14 points is typically about a line. 72 points/inch.
 			}
 		}
 
@@ -1843,11 +1855,11 @@ namespace SIL.FieldWorks.Common.RootSites
 		public virtual bool RefreshDisplay()
 		{
 			CheckDisposed();
-			if (m_rootb == null || m_rootb.Site == null)
+			if (m_rootb?.Site == null)
 				return false;
 
-			if (m_rootb.DataAccess is IRefreshable)
-				((IRefreshable)m_rootb.DataAccess).Refresh();
+			var decorator = m_rootb.DataAccess as DomainDataByFlidDecoratorBase;
+			decorator?.Refresh();
 
 			// If we aren't visible or don't belong to a form, then set a flag to do a refresh
 			// the next time we go visible.
@@ -1869,8 +1881,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 			finally
 			{
-				if (restorer != null)
-					restorer.Dispose();
+				restorer?.Dispose();
 			}
 			//Enhance: If all refreshable descendants are handled this should return true
 			return false;
@@ -2123,8 +2134,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// Note: this does not implement the lower level IPrintRootSite.Print(pd).
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="FindForm() returns a reference")]
 		public virtual void Print(PrintDocument pd)
 		{
 			CheckDisposed();
@@ -4417,8 +4426,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// Set focus to our window
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="FindForm() returns a reference")]
 		private void SwitchFocusHere()
 		{
 			if (FindForm() == Form.ActiveForm)
@@ -4445,6 +4452,11 @@ namespace SIL.FieldWorks.Common.RootSites
 #else
 			m_vdrb = new SIL.FieldWorks.Views.VwDrawRootBuffered(); // Managed object on Linux
 #endif
+			m_rootb = VwRootBoxClass.Create();
+			m_rootb.RenderEngineFactory = SingletonsContainer.Get<RenderEngineFactory>();
+			m_rootb.TsStrFactory = TsStringUtils.TsStrFactory;
+			m_rootb.SetSite(this);
+
 			m_fRootboxMade = true;
 		}
 
@@ -5510,8 +5522,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <param name="pvo">Overlay</param>
 		/// <param name="itag">Index of tag</param>
 		/// -----------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="FindForm() returns a reference")]
 		public void ModifyOverlay(bool fApplyTag, IVwOverlay pvo, int itag)
 		{
 			CheckDisposed();
@@ -5997,8 +6007,6 @@ namespace SIL.FieldWorks.Common.RootSites
 
 		#region Sequential message processing enforcement
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "parent is a reference")]
 		private Form ContainingWindow()
 		{
 			for (var parent = Parent; parent != null; parent = parent.Parent)
@@ -6203,7 +6211,7 @@ namespace SIL.FieldWorks.Common.RootSites
 	/// } // this resumes drawing the parent object
 	/// </example>
 	/// ------------------------------------------------------------------------------------
-	public class SuspendDrawing : IFWDisposable
+	public class SuspendDrawing : IDisposable
 	{
 		private IRootSite m_parent;
 
@@ -6286,7 +6294,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </remarks>
 		protected virtual void Dispose(bool disposing)
 		{
-			Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + "******************");
+			Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + " ******************");
 			// Must not be run more than once.
 			if (m_isDisposed)
 				return;

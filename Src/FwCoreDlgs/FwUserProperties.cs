@@ -1,13 +1,6 @@
-// Copyright (c) 2002-2013 SIL International
+// Copyright (c) 2002-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: FwUserProperties.cs
-// Responsibility: TE Team
-//
-// <remarks>
-// Heavily modified (January-July 2004) by Sarah Doorenbos (sarahdoorenbos@yahoo.com)
-// </remarks>
 
 using System;
 using System.Diagnostics;
@@ -17,7 +10,6 @@ using System.Windows.Forms;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Drawing;
-using SIL.Utils;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 
@@ -33,7 +25,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	/// If needed, they can be found in the source tree...go for the version before my checkin on Nov 5 2010.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public class FwUserProperties : Form, IFWDisposable
+	public class FwUserProperties : Form
 	{
 		#region FwUserProperties Data Members
 		#region Designer Variables

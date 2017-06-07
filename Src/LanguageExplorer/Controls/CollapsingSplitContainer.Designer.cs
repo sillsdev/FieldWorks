@@ -2,8 +2,6 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System.Diagnostics.CodeAnalysis;
-
 namespace LanguageExplorer.Controls
 {
 	partial class CollapsingSplitContainer
@@ -72,8 +70,6 @@ namespace LanguageExplorer.Controls
 		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification="TabStop is not implemented on Mono")]
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();

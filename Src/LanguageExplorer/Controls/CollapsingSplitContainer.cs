@@ -1,4 +1,4 @@
-// Copyright (c) 2007-2015 SIL International
+// Copyright (c) 2007-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -22,7 +22,7 @@ namespace LanguageExplorer.Controls
 	/// will have to do that.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public partial class CollapsingSplitContainer : SplitContainer, ICollapsingSplitContainer, IFWDisposable, IPostLayoutInit
+	public partial class CollapsingSplitContainer : SplitContainer, ICollapsingSplitContainer, IPostLayoutInit
 	{
 		/// <summary />
 		public const int kCollapsedSize = 16;
@@ -343,7 +343,7 @@ namespace LanguageExplorer.Controls
 
 		#endregion Properties
 
-		#region IFwDisposable implementation
+		#region Disposable implementation
 
 		/// <summary>
 		/// Check to see if the object has been disposed.
@@ -356,7 +356,7 @@ namespace LanguageExplorer.Controls
 				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
 		}
 
-		#endregion IFwDisposable implementation
+		#endregion Disposable implementation
 
 		#region Protected general methods
 
@@ -664,7 +664,6 @@ namespace LanguageExplorer.Controls
 				m_wantResetControls = true;
 			}
 		}
-
 		#endregion Event handler methods
 
 		/// <summary />

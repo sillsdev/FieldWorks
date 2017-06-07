@@ -2,15 +2,15 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System.Diagnostics.CodeAnalysis;
 using System.Xml.Linq;
 using System.Xml.XPath;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace LanguageExplorer.Areas.TextsAndWords
 {
@@ -45,9 +45,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		#endregion Construction, Initialization, and Disposal
 
 		#region Other methods
-
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "searchEngine is disposed by the property table.")]
 		protected override void InitializeMatchingObjects(FdoCache cache)
 		{
 			var xnWindow = m_propertyTable.GetValue<XElement>("WindowConfiguration");
@@ -62,7 +59,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			var wsObj = (CoreWritingSystemDefinition) m_cbWritingSystems.SelectedItem;
 			if (wsObj != null)
 			{
-				ITsString tssForm = m_tsf.MakeString(string.Empty, wsObj.Handle);
+				ITsString tssForm = TsStringUtils.EmptyString(wsObj.Handle);
 				var field = new SearchField(WfiWordformTags.kflidForm, tssForm);
 				m_matchingObjectsBrowser.SearchAsync(new[] { field });
 			}
@@ -98,7 +95,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			m_oldSearchKey = searchKey;
 			m_oldSearchWs = wsSelHvo;
 
-			ITsString tssForm = m_tsf.MakeString(form ?? string.Empty, vernWs);
+			ITsString tssForm = TsStringUtils.MakeString(form ?? string.Empty, vernWs);
 			var field = new SearchField(WfiWordformTags.kflidForm, tssForm);
 			m_matchingObjectsBrowser.SearchAsync(new[] { field });
 		}

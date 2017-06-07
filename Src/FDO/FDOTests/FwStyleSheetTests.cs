@@ -1,20 +1,13 @@
-// Copyright (c) 2007-2013 SIL International
+// Copyright (c) 2007-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: FwStyleSheetTests.cs
-// Responsibility: TE Team
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Text;
 using NUnit.Framework;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.ScriptureUtils;
-using SIL.FieldWorks.FDO.Application;
+using SIL.CoreImpl.Scripture;
+using SIL.CoreImpl.Text;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.DomainServices;
 
 namespace SIL.FieldWorks.FDO.FDOTests.CellarTests
@@ -122,7 +115,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.CellarTests
 		[Test]
 		public void AddDeleteStyle()
 		{
-			var tsPropsBldr = TsPropsBldrClass.Create();
+			var tsPropsBldr = TsStringUtils.MakePropsBldr();
 			var ttpFormattingProps = tsPropsBldr.GetTextProps(); // default properties
 			var nStylesOrig = m_styleSheet.CStyles;
 
@@ -173,36 +166,6 @@ namespace SIL.FieldWorks.FDO.FDOTests.CellarTests
 
 			// attempting to delete this built-in style should throw an exception
 			m_styleSheet.Delete(hvoStyle);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Tests the GetFaceNameFromStyle method.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[Test]
-		public void GetFontFaceNameFromStyle()
-		{
-			// Get the default font names
-			CoreWritingSystemDefinition defaultVernWs = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
-			string defaultSerif = defaultVernWs.DefaultFontName;
-
-			// do the tests
-			m_styleSheet.SetStyleFont("Section Head", "Helvetica");
-			Assert.AreEqual("Helvetica", m_styleSheet.GetFaceNameFromStyle("Section Head",
-				defaultVernWs.Handle, m_wsf));
-
-			m_styleSheet.SetStyleFont("Paragraph", "Symbol");
-			Assert.AreEqual("Symbol", m_styleSheet.GetFaceNameFromStyle("Paragraph",
-				defaultVernWs.Handle, m_wsf));
-
-			m_styleSheet.SetStyleFont("Intro Section Head", StyleServices.DefaultFont);
-			Assert.AreEqual(defaultSerif, m_styleSheet.GetFaceNameFromStyle(
-				"Intro Section Head", defaultVernWs.Handle, m_wsf));
-
-			m_styleSheet.SetStyleFont("Intro Paragraph", StyleServices.DefaultFont);
-			Assert.AreEqual(defaultSerif, m_styleSheet.GetFaceNameFromStyle("Intro Paragraph",
-				defaultVernWs.Handle, m_wsf));
 		}
 
 		///--------------------------------------------------------------------------------------

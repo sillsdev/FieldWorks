@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="14.0">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
     <ProductVersion>9.0.30729</ProductVersion>
@@ -30,7 +30,7 @@
     <SccAuxPath>
     </SccAuxPath>
     <OldToolsVersion>3.5</OldToolsVersion>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <TargetFrameworkProfile />
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
@@ -97,92 +97,42 @@
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BasicUtilsTests, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
+    <Reference Include="CoreImplTests, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\BasicUtilsTests.dll</HintPath>
+      <HintPath>..\..\..\..\Output\Debug\CoreImplTests.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework">
       <Name>nunit.framework</Name>
-      <HintPath>..\..\..\..\Bin\NUnit\bin\nunit.framework.dll</HintPath>
+      <HintPath>..\..\..\..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.TestUtilities, Version=3.1.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Downloads\SIL.TestUtilities.dll</HintPath>
+    </Reference>
+    <Reference Include="SilUtilsTests, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Output\Debug\SilUtilsTests.dll</HintPath>
     </Reference>
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
     <Reference Include="System.Core" />
-    <Reference Include="System.Xml">
-      <Name>System.XML</Name>
-    </Reference>
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="TestUtils, Version=6.1.0.43066, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\TestUtils.dll</HintPath>
-    </Reference>
     <Reference Include="XMLUtils">
-      <SpecificVersion>False</SpecificVersion>
       <Name>XMLUtils</Name>
       <HintPath>..\..\..\..\Output\Debug\XMLUtils.dll</HintPath>
     </Reference>
     <Reference Include="FwUtilsTests">
-      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\FwUtilsTests.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
     <Compile Include="..\..\..\AssemblyInfoForTests.cs">
       <Link>AssemblyInfoForTests.cs</Link>
     </Compile>
     <Compile Include="DynamicLoaderTests.cs" />
-    <Compile Include="ErrorReporterTests.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <Compile Include="StringTableTests.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="XElementExtensionsTests.cs" />
-    <Compile Include="XmlUtilsTest.cs">
-      <SubType>Code</SubType>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="food\fruit\citrus\strings-en.xml" />
-    <EmbeddedResource Include="food\fruit\sortOfFruitInclude.xml" />
-    <EmbeddedResource Include="food\fruit\strings-en.xml" />
-    <EmbeddedResource Include="food\veggiesInclude.xml" />
-    <EmbeddedResource Include="food\veggiesIncludeWithSubInclude.xml" />
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="TransformTestFiles\ResultNoParams.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="TransformTestFiles\ResultNoParamsMSXML2.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="TransformTestFiles\ResultWithParams.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="TransformTestFiles\ResultWithParamsMSXML2.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="TransformTestFiles\Test.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="TransformTestFiles\Test.xsl" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="TransformTestFiles\ResultWithParams-Linux.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="TransformTestFiles\ResultNoParams-Linux.xml" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

@@ -1,20 +1,17 @@
-// Copyright (c) 2010-2013 SIL International
+// Copyright (c) 2010-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: DataStoreInitializationServices.cs
-// Responsibility: TE Team
 
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.Scripture;
+using SIL.CoreImpl.Text;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.Reporting;
 using SIL.Utils;
-using SILUBS.SharedScrUtils;
 
 namespace SIL.FieldWorks.FDO.DomainServices
 {

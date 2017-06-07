@@ -5,7 +5,6 @@
 // File: FilterAllTextsDialog.cs
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows.Forms;
 using SIL.CoreImpl;
@@ -51,6 +50,15 @@ namespace SIL.FieldWorks.Common.Controls
 			m_treeTexts.AfterCheck += OnCheckedChanged;
 			AccessibleName = "FilterAllTextsDialog";
 		}
+
+		/// <summary/>
+		protected override void Dispose(bool disposing)
+		{
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ******");
+			if (disposing)
+				components?.Dispose();
+			base.Dispose(disposing);
+		}
 		#endregion
 
 		#region Windows Form Designer generated code
@@ -60,8 +68,6 @@ namespace SIL.FieldWorks.Common.Controls
 		/// the contents of this method with the code editor.
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="m_btnCancel and m_btnHelp get added to Controls collection and disposed there")]
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();

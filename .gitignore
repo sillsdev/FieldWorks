@@ -4,8 +4,12 @@ GeneratedAssemblyInfo.cs
 Collection.cpp
 Build/FieldWorks.targets
 Build/GlobalInclude.properties
-Src/Common/COMInterfaces/FwKernel.cs
-Src/Common/COMInterfaces/Views.cs
+Build/NuGet.exe
+Build/nunit.framework.dll
+Build/packages.config
+Build/*.pdb
+Src/Common/FwKernelInterfaces/FwKernel.cs
+Src/Common/ViewsInterfaces/Views.cs
 Src/Common/CoreImpl/CellarPropertyType.cs
 DistFiles/Data/
 DistFiles/Icu40/data/
@@ -21,11 +25,13 @@ DistFiles/Language Explorer/Configuration/FLExXmlConfiguration.xpr
 Downloads/
 Installer/
 Localizations/
+packages/
 Bin/_setLatestBuildConfig.bat
 Bin/_setroot.bat
 Lib/debug/DebugProcs.lib
 Lib/debug/Generic.lib
 Lib/debug/unit++.lib
+Lib/debug/unit++.pdb
 Lib/release/DebugProcs.lib
 Lib/release/Generic.lib
 Lib/release/unit++.lib
@@ -59,6 +65,8 @@ _user.mak.lnx
 *.opensdf
 .project
 app.config
+*.VC.db
+*.VC.opendb
 
 .dotest/
 .depend
@@ -138,3 +146,5 @@ DistFiles/Icu*.zip
 DistFiles/Icu*/icudt*l
 DistFiles/Icu*/*.*
 Bin/NUnit/
+.vs/
+.idea/

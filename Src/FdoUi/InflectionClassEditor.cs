@@ -1,21 +1,23 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
+using System.Linq;
+using System.Xml.Linq;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.Utils;
 using SIL.CoreImpl;
-using System.Linq;
-using System.Xml.Linq;
+using SIL.CoreImpl.Text;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.Xml;
 
 namespace SIL.FieldWorks.FdoUi
 {
@@ -29,7 +31,7 @@ namespace SIL.FieldWorks.FdoUi
 	/// sort of makes sense to put it here as a class that is quite specific to a particular
 	/// part of the model.
 	/// </summary>
-	public class InflectionClassEditor : IBulkEditSpecControl, IFWDisposable
+	public class InflectionClassEditor : IBulkEditSpecControl, IDisposable
 	{
 		TreeCombo m_tree;
 		FdoCache m_cache;
@@ -298,7 +300,7 @@ namespace SIL.FieldWorks.FdoUi
 
 			var pos = GetPOS();
 			// A Set of eligible parts of speech to use in filtering.
-			Set<int> possiblePOS = GetPossiblePartsOfSpeech();
+			HashSet<int> possiblePOS = GetPossiblePartsOfSpeech();
 			// Make a Dictionary from HVO of entry to list of modified senses.
 			var sensesByEntryAndPos = new Dictionary<Tuple<ILexEntry, IPartOfSpeech>, List<ILexSense>>();
 			int i = 0;
@@ -405,7 +407,7 @@ namespace SIL.FieldWorks.FdoUi
 		/// <param name="sda"></param>
 		/// <param name="hvoPos"></param>
 		/// <param name="possiblePOS"></param>
-		void AddChildPos(ISilDataAccess sda, int hvoPos, Set<int> possiblePOS)
+		void AddChildPos(ISilDataAccess sda, int hvoPos, HashSet<int> possiblePOS)
 		{
 			possiblePOS.Add(hvoPos);
 			int chvo = sda.get_VecSize(hvoPos, CmPossibilityTags.kflidSubPossibilities);
@@ -418,17 +420,13 @@ namespace SIL.FieldWorks.FdoUi
 		/// Fake doing the change by setting the specified property to the appropriate value
 		/// for each item in the list. Disable items that can't be set.
 		/// </summary>
-		/// <param name="itemsToChange"></param>
-		/// <param name="tagMadeUpFieldIdentifier"></param>
-		/// <param name="tagEnable"></param>
-		/// <param name="state"></param>
 		public void FakeDoit(IEnumerable<int> itemsToChange, int tagMadeUpFieldIdentifier, int tagEnable, ProgressState state)
 		{
 			CheckDisposed();
 
-			ITsString tss = TsStringUtils.MakeTss(m_selectedLabel, m_cache.DefaultAnalWs);
+			ITsString tss = TsStringUtils.MakeString(m_selectedLabel, m_cache.DefaultAnalWs);
 			// Build a Set of parts of speech that can take this class.
-			Set<int> possiblePOS = GetPossiblePartsOfSpeech();
+			HashSet<int> possiblePOS = GetPossiblePartsOfSpeech();
 
 			int i = 0;
 			// Report progress 50 times or every 100 items, whichever is more (but no more than once per item!)
@@ -488,7 +486,7 @@ namespace SIL.FieldWorks.FdoUi
 			}
 		}
 
-		private bool IsItemEligible(ISilDataAccess sda, int hvo, Set<int> possiblePOS)
+		private bool IsItemEligible(ISilDataAccess sda, int hvo, HashSet<int> possiblePOS)
 		{
 			bool fEnable = false;
 			var ls = m_cache.ServiceLocator.GetInstance<ILexSenseRepository>().GetObject(hvo);
@@ -518,10 +516,10 @@ namespace SIL.FieldWorks.FdoUi
 			return null;
 		}
 
-		private Set<int> GetPossiblePartsOfSpeech()
+		private HashSet<int> GetPossiblePartsOfSpeech()
 		{
 			ISilDataAccess sda = m_cache.DomainDataByFlid;
-			Set<int> possiblePOS = new Set<int>();
+			var possiblePOS = new HashSet<int>();
 			if (m_selectedHvo != 0)
 			{
 				var rootPos = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(m_selectedHvo);

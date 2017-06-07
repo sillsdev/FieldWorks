@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -7,11 +7,10 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows.Forms;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FwCoreDlgs;
-using SIL.Utils;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
@@ -21,7 +20,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 	/// bigger edit box, and it displays some helpful (?) information to assist in marking the
 	/// morpheme types.
 	/// </summary>
-	public class EditMorphBreaksDlg : Form, IFWDisposable
+	public class EditMorphBreaksDlg : Form
 	{
 		private Button m_btnOk;
 		private Button m_btnCancel;

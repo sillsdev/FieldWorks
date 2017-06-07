@@ -1,28 +1,27 @@
-// Copyright (c) 2008-2013 SIL International
+// Copyright (c) 2008-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: LiftMerger.cs
-// Responsibility: SteveMc (original version by John Hatton as extension)
 
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Xml;
 using SIL.Lift;
 using SIL.Lift.Parsing;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.Cellar;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Utils;
+using SIL.Xml;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -33,7 +32,6 @@ namespace SIL.FieldWorks.LexText.Controls
 	public partial class FlexLiftMerger : ILexiconMerger<LiftObject, CmLiftEntry, CmLiftSense, CmLiftExample>
 	{
 		readonly FdoCache m_cache;
-		readonly ITsPropsFactory m_tpf = TsPropsFactoryClass.Create();
 		ITsString m_tssEmpty;
 		readonly GuidConverter m_gconv = (GuidConverter)TypeDescriptor.GetConverter(typeof(Guid));
 		public const string LiftDateTimeFormat = "yyyy-MM-ddTHH:mm:ssK";	// wants UTC, but works with Local
@@ -121,10 +119,10 @@ namespace SIL.FieldWorks.LexText.Controls
 			new Dictionary<object, Dictionary<MuElement, List<IReversalIndexEntry>>>();
 
 		/// <summary>Set of guids for elements/senses that were found in the LIFT file.</summary>
-		readonly Set<Guid> m_setUnchangedEntry = new Set<Guid>();
+		private readonly HashSet<Guid> m_setUnchangedEntry = new HashSet<Guid>();
 
-		readonly Set<Guid> m_setChangedEntry = new Set<Guid>();
-		readonly Set<int> m_deletedObjects = new Set<int>();
+		private readonly HashSet<Guid> m_setChangedEntry = new HashSet<Guid>();
+		private readonly HashSet<int> m_deletedObjects = new HashSet<int>();
 
 		public enum MergeStyle
 		{
@@ -198,7 +196,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			m_cSensesAdded = 0;
 			m_cache = cache;
-			m_tssEmpty = cache.TsStrFactory.EmptyString(cache.DefaultUserWs);
+			m_tssEmpty = TsStringUtils.EmptyString(cache.DefaultUserWs);
 			m_msImport = msImport;
 			m_fTrustModTimes = fTrustModTimes;
 			m_wsManager = cache.ServiceLocator.WritingSystemManager;
@@ -351,6 +349,8 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private void InitializeReverseLexRefTypesMap()
 		{
+			if (m_cache.LangProject.LexDbOA.ReferencesOA == null)
+				return;
 			int ws;
 			foreach (ILexRefType lrt in m_cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS)
 			{
@@ -379,8 +379,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void LoadCategoryCatalog()
 		{
 			string sPath = System.IO.Path.Combine(FwDirectoryFinder.CodeDirectory,
@@ -392,16 +390,14 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				foreach (XmlNode node in xnTop.SelectNodes("item"))
 				{
-					string sType = XmlUtils.GetAttributeValue(node, "type");
-					string sId = XmlUtils.GetAttributeValue(node, "id");
+					string sType = XmlUtils.GetOptionalAttributeValue(node, "type");
+					string sId = XmlUtils.GetOptionalAttributeValue(node, "id");
 					if (sType == "category" && !String.IsNullOrEmpty(sId))
 						LoadCategoryNode(node, sId, null);
 				}
 			}
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void LoadCategoryNode(XmlNode node, string id, string parent)
 		{
 			var cat = new EticCategory {Id = id, ParentId = parent};
@@ -409,21 +405,21 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				foreach (XmlNode xn in node.SelectNodes("abbrev"))
 				{
-					var sWs = XmlUtils.GetAttributeValue(xn, "ws");
+					var sWs = XmlUtils.GetOptionalAttributeValue(xn, "ws");
 					var sAbbrev = xn.InnerText;
 					if (!String.IsNullOrEmpty(sWs) && !String.IsNullOrEmpty(sAbbrev))
 						cat.SetAbbrev(sWs, sAbbrev);
 				}
 				foreach (XmlNode xn in node.SelectNodes("term"))
 				{
-					var sWs = XmlUtils.GetAttributeValue(xn, "ws");
+					var sWs = XmlUtils.GetOptionalAttributeValue(xn, "ws");
 					var sName = xn.InnerText;
 					if (!String.IsNullOrEmpty(sWs) && !String.IsNullOrEmpty(sName))
 						cat.SetName(sWs, sName);
 				}
 				foreach (XmlNode xn in node.SelectNodes("def"))
 				{
-					var sWs = XmlUtils.GetAttributeValue(xn, "ws");
+					var sWs = XmlUtils.GetOptionalAttributeValue(xn, "ws");
 					var sDesc = xn.InnerText;
 					if (!String.IsNullOrEmpty(sWs) && !String.IsNullOrEmpty(sDesc))
 						cat.SetDesc(sWs, sDesc);
@@ -434,8 +430,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				foreach (XmlNode xn in node.SelectNodes("item"))
 				{
-					var sType = XmlUtils.GetAttributeValue(xn, "type");
-					var sChildId = XmlUtils.GetAttributeValue(xn, "id");
+					var sType = XmlUtils.GetOptionalAttributeValue(xn, "type");
+					var sChildId = XmlUtils.GetOptionalAttributeValue(xn, "id");
 					if (sType == "category" && !String.IsNullOrEmpty(sChildId))
 						LoadCategoryNode(xn, sChildId, id);
 				}
@@ -476,8 +472,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_deletedGuids.Add(le.Guid);
 			if (le.LexemeFormOA != null)
 				m_deletedGuids.Add(le.LexemeFormOA.Guid);
-			if (le.EtymologyOA != null)
-				m_deletedGuids.Add(le.EtymologyOA.Guid);
+			foreach (var ety in le.EtymologyOS)
+				m_deletedGuids.Add(ety.Guid);
 			foreach (var msa in le.MorphoSyntaxAnalysesOC)
 				m_deletedGuids.Add(msa.Guid);
 			foreach (var er in le.EntryRefsOS)
@@ -760,8 +756,6 @@ namespace SIL.FieldWorks.LexText.Controls
 					relationTypeName, targetId, extensible.GetType().Name));
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private static void FillInExtensibleElementsFromRawXml(LiftObject obj, string rawXml)
 		{
 			if (rawXml.IndexOf("<trait") > 0 ||
@@ -808,8 +802,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// </summary>
 		/// <param name="node"></param>
 		/// <returns>lift field with contents safe-XML</returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private static LiftField CreateLiftFieldFromXml(XmlNode node)
 		{
 			string fieldType = XmlUtils.GetManditoryAttributeValue(node, "type");
@@ -842,8 +834,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// </summary>
 		/// <param name="node"></param>
 		/// <returns>safe-XML</returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private static LiftMultiText CreateLiftMultiTextFromXml(XmlNode node)
 		{
 			LiftMultiText text = new LiftMultiText();
@@ -851,7 +841,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				try
 				{
-					string lang = XmlUtils.GetAttributeValue(xnForm, "lang");
+					string lang = XmlUtils.GetOptionalAttributeValue(xnForm, "lang");
 					XmlNode xnText = xnForm.SelectSingleNode("text");
 					if (xnText != null)
 					{
@@ -885,13 +875,11 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// </summary>
 		/// <param name="node"></param>
 		/// <returns></returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private static LiftTrait CreateLiftTraitFromXml(XmlNode node)
 		{
 			LiftTrait trait = new LiftTrait();
-			trait.Name = XmlUtils.GetAttributeValue(node, "name");
-			trait.Value = XmlUtils.GetAttributeValue(node, "value");
+			trait.Name = XmlUtils.GetOptionalAttributeValue(node, "name");
+			trait.Value = XmlUtils.GetOptionalAttributeValue(node, "value");
 			foreach (XmlNode n in node.SelectNodes("annotation"))
 			{
 				LiftAnnotation ann = CreateLiftAnnotationFromXml(n);
@@ -924,7 +912,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <returns></returns>
 		private static DateTime GetOptionalDateTime(XmlNode node, string tag)
 		{
-			string sWhen = XmlUtils.GetAttributeValue(node, tag);
+			string sWhen = XmlUtils.GetOptionalAttributeValue(node, tag);
 			if (String.IsNullOrEmpty(sWhen))
 			{
 				return default(DateTime);
@@ -1095,8 +1083,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="abbrev">safe-xml</param>
 		/// <param name="rawXml"></param>
 		/// <param name="featSystem"></param>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void ProcessFeatureDefinition(string id, string guidAttr, string parent,
 			LiftMultiText description, LiftMultiText label, LiftMultiText abbrev, string rawXml,
 			IFsFeatureSystem featSystem)
@@ -1135,11 +1121,11 @@ namespace SIL.FieldWorks.LexText.Controls
 			XmlNode xnRightGlossSep = null;
 			foreach (XmlNode xn in traits)
 			{
-				string name = XmlUtils.GetAttributeValue(xn, "name");
+				string name = XmlUtils.GetOptionalAttributeValue(xn, "name");
 				switch (name)
 				{
 					case "catalog-source-id":
-						sCatalogId = XmlUtils.GetAttributeValue(xn, "value");
+						sCatalogId = XmlUtils.GetOptionalAttributeValue(xn, "value");
 						break;
 					case "display-to-right":
 						fDisplayToRight = XmlUtils.GetBooleanAttributeValue(xn, "value");
@@ -1148,21 +1134,21 @@ namespace SIL.FieldWorks.LexText.Controls
 						fShowInGloss = XmlUtils.GetBooleanAttributeValue(xn, "value");
 						break;
 					case "feature-definition-type":
-						sSubclassType = XmlUtils.GetAttributeValue(xn, "value");
+						sSubclassType = XmlUtils.GetOptionalAttributeValue(xn, "value");
 						break;
 					case "type":
-						sComplexType = XmlUtils.GetAttributeValue(xn, "value");
+						sComplexType = XmlUtils.GetOptionalAttributeValue(xn, "value");
 						break;
 					case "ws-selector":
 						nWsSelector = XmlUtils.GetMandatoryIntegerAttributeValue(xn, "value");
 						break;
 					case "writing-system":
-						sWs = XmlUtils.GetAttributeValue(xn, "value");
+						sWs = XmlUtils.GetOptionalAttributeValue(xn, "value");
 						break;
 					default:
 						if (name.EndsWith("-feature-value"))
 						{
-							string sVal = XmlUtils.GetAttributeValue(xn, "value");
+							string sVal = XmlUtils.GetOptionalAttributeValue(xn, "value");
 							if (!String.IsNullOrEmpty(sVal))
 								rgsValues.Add(sVal);
 						}
@@ -1171,7 +1157,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 			foreach (XmlNode xn in fields)
 			{
-				string type = XmlUtils.GetAttributeValue(xn, "type");
+				string type = XmlUtils.GetOptionalAttributeValue(xn, "type");
 				switch (type)
 				{
 					case "gloss-abbrev":
@@ -1329,8 +1315,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void MergeInMultiUnicode(IMultiUnicode mu, XmlNode xnField)
 		{
 			int ws = 0;
@@ -1427,8 +1411,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="abbrev">safe-XML</param>
 		/// <param name="rawXml"></param>
 		/// <param name="featSystem"></param>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void ProcessFeatureStrucType(string id, string guidAttr, string parent,
 			LiftMultiText description, LiftMultiText label, LiftMultiText abbrev, string rawXml,
 			IFsFeatureSystem featSystem)
@@ -1446,7 +1428,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			List<string> rgsFeatures = new List<string>();
 			foreach (XmlNode xn in traits)
 			{
-				string name = XmlUtils.GetAttributeValue(xn, "name");
+				string name = XmlUtils.GetOptionalAttributeValue(xn, "name");
 				switch (name)
 				{
 					case "catalog-source-id":
@@ -1521,8 +1503,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="label">safe-XML</param>
 		/// <param name="abbrev">safe-XML</param>
 		/// <param name="rawXml"></param>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void ProcessFeatureValue(string range, string id, string guidAttr, string parent,
 			LiftMultiText description, LiftMultiText label, LiftMultiText abbrev, string rawXml)
 		{
@@ -1541,11 +1521,11 @@ namespace SIL.FieldWorks.LexText.Controls
 			bool fShowInGloss = false;
 			foreach (XmlNode xn in traits)
 			{
-				string name = XmlUtils.GetAttributeValue(xn, "name");
+				string name = XmlUtils.GetOptionalAttributeValue(xn, "name");
 				switch (name)
 				{
 					case "catalog-source-id":
-						sCatalogId = XmlUtils.GetAttributeValue(xn, "value");
+						sCatalogId = XmlUtils.GetOptionalAttributeValue(xn, "value");
 						break;
 					case "show-in-gloss":
 						fShowInGloss = XmlUtils.GetBooleanAttributeValue(xn, "value");
@@ -1703,7 +1683,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				IFsClosedFeature featClosed = feat as IFsClosedFeature;
 				if (featClosed != null)
 				{
-					Set<string> setIds = new Set<string>();
+					var setIds = new HashSet<string>();
 					for (int i = 0; i < featClosed.Abbreviation.StringCount; ++i)
 					{
 						int ws;
@@ -1745,8 +1725,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="label">safe-XML</param>
 		/// <param name="abbrev">safe-XML</param>
 		/// <param name="rawXml"></param>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void ProcessStemName(string range, string id, string guidAttr, string parent,
 			LiftMultiText description, LiftMultiText label, LiftMultiText abbrev, string rawXml)
 		{
@@ -1783,10 +1761,10 @@ namespace SIL.FieldWorks.LexText.Controls
 			XmlNodeList traits = xdoc.FirstChild.SelectNodes("trait");
 			foreach (XmlNode xn in traits)
 			{
-				var name = XmlUtils.GetAttributeValue(xn, "name");
+				var name = XmlUtils.GetOptionalAttributeValue(xn, "name");
 				if (name == "feature-set")
 				{
-					var value = XmlUtils.GetAttributeValue(xn, "value");
+					var value = XmlUtils.GetOptionalAttributeValue(xn, "value");
 					if (setFeats.Contains(value))
 						continue;
 					IFsFeatStruc ffs = ParseFeatureString(value, stem);
@@ -1924,7 +1902,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				ProcessEntryFields(le, entry);
 				CreateEntryVariants(le, entry);
 				CreateEntryPronunciations(le, entry);
-				ProcessEntryEtymologies(le, entry);
+				CreateEntryEtymologies(le, entry);
 				ProcessEntryRelations(le, entry);
 				foreach (CmLiftSense sense in entry.Senses)
 					CreateEntrySense(le, sense);
@@ -2020,11 +1998,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			ILexEntry le = entry.CmObject as ILexEntry;
 			if (LexemeFormsConflict(le, entry))
 				return true;
-			if (EntryEtymologiesConflict(le.EtymologyOA, entry.Etymologies))
-			{
-				m_cdConflict = new ConflictingEntry("Etymology", le, this);
+			if (EntryEtymologiesConflict(le, entry.Etymologies))
 				return true;
-			}
 			if (EntryFieldsConflict(le, entry.Fields))
 				return true;
 			if (EntryNotesConflict(le, entry.Notes))
@@ -2052,10 +2027,10 @@ namespace SIL.FieldWorks.LexText.Controls
 			ProcessEntryFields(le, entry);
 			MergeEntryVariants(le, entry);
 			MergeEntryPronunciations(le, entry);
-			ProcessEntryEtymologies(le, entry);
+			MergeEntryEtymologies(le, entry);
 			ProcessEntryRelations(le, entry);
 			Dictionary<CmLiftSense, ILexSense> map = new Dictionary<CmLiftSense, ILexSense>();
-			Set<int> setUsed = new Set<int>();
+			var setUsed = new HashSet<int>();
 			foreach (CmLiftSense sense in entry.Senses)
 			{
 				ILexSense ls = FindExistingSense(le.SensesOS, sense);
@@ -2194,7 +2169,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				int clsid = 0;
 				if (mf == null)
 				{
-					string form = Icu.Normalize(XmlUtils.DecodeXml(entry.LexicalForm.FirstValue.Value.Text), Icu.UNormalizationMode.UNORM_NFD);
+					string form = Icu.Normalize(XmlUtils.DecodeXmlAttribute(entry.LexicalForm.FirstValue.Value.Text), Icu.UNormalizationMode.UNORM_NFD);
 					IMoMorphType mmt = FindMorphType(ref form, out clsid,
 						le.Guid, LexEntryTags.kflidLexemeForm);
 					if (mmt.IsAffixType)
@@ -2279,6 +2254,9 @@ namespace SIL.FieldWorks.LexText.Controls
 						if (le.DoNotUseForParsing != fDontUse && (m_fCreatingNewEntry || m_msImport != MergeStyle.MsKeepOld))
 							le.DoNotUseForParsing = fDontUse;
 						break;
+					case RangeNames.sDbDialectLabelsOA:
+						ProcessEntryDialects(le, lt.Value);
+						break;
 					default:
 						ProcessUnknownTrait(entry, lt, le);
 						break;
@@ -2294,6 +2272,16 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			if (!le.DoNotPublishInRC.Contains(publication))
 				le.DoNotPublishInRC.Add(publication);
+		}
+
+		private void ProcessEntryDialects(ILexEntry le, string traitValue)
+		{
+			// This does fine adding dialects to an entry,
+			// it won't remove dialects that the merging entry doesn't use.
+			var dialect = FindOrCreateDialect(traitValue);
+
+			if (!le.DialectLabelsRS.Contains(dialect))
+				le.DialectLabelsRS.Add(dialect);
 		}
 
 		private void ProcessUnknownTrait(LiftObject liftObject, LiftTrait lt, ICmObject cmo)
@@ -2798,7 +2786,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			var ich = 0;
 			ParaData para = null;
 			var fNewPara = true;
-			ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
+			ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 			tisb.SetIntPropValues((int) FwTextPropType.ktptWs, 0, wsText);
 			var wsCurrent = wsText;
 			string styleCurrent = null;
@@ -2819,7 +2807,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					{
 						tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, wsText);
 						tisb.SetStrPropValue((int) FwTextPropType.ktptNamedStyle, null);
-						tisb.Append(XmlUtils.DecodeXml(data));
+						tisb.Append(XmlUtils.DecodeXmlAttribute(data));
 					}
 				}
 				if (fNewPara)
@@ -2853,14 +2841,14 @@ namespace SIL.FieldWorks.LexText.Controls
 				if (span.Spans.Count > 0)
 					ProcessNestedSpans(text, span, wsCurrent, styleCurrent, tisb);
 				else
-					tisb.Append(XmlUtils.DecodeXml(text.Text.Substring(span.Index, span.Length)));
+					tisb.Append(XmlUtils.DecodeXmlAttribute(text.Text.Substring(span.Index, span.Length)));
 				ich = span.Index + span.Length;
 			}
 			if (ich < text.Text.Length)
 			{
 				tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, wsText);
 				tisb.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, null);
-				tisb.Append(XmlUtils.DecodeXml(text.Text.Substring(ich, text.Text.Length - ich)));
+				tisb.Append(XmlUtils.DecodeXmlAttribute(text.Text.Substring(ich, text.Text.Length - ich)));
 			}
 			if (tisb.Text.Length > 0)
 			{
@@ -3063,7 +3051,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				if (tssForm.Text != realForm)
 				{
 					// make a new tsString with the old ws.
-					tssRealForm = TsStringUtils.MakeTss(realForm,
+					tssRealForm = TsStringUtils.MakeString(realForm,
 						TsStringUtils.GetWsAtOffset(tssForm, 0));
 				}
 				else
@@ -3428,7 +3416,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					try
 					{
 						if (!String.IsNullOrEmpty(sLabel))
-							media.Label.set_String(ws, XmlUtils.DecodeXml(sLabel));
+							media.Label.set_String(ws, XmlUtils.DecodeXmlAttribute(sLabel));
 						if (!String.IsNullOrEmpty(sPath))
 						{
 							ICmFolder cmfMedia = null;
@@ -3452,7 +3440,7 @@ namespace SIL.FieldWorks.LexText.Controls
 								ICmFolderFactory factFolder = m_cache.ServiceLocator.GetInstance<ICmFolderFactory>();
 								cmfMedia = factFolder.Create();
 								m_cache.LangProject.MediaOC.Add(cmfMedia);
-								cmfMedia.Name.UserDefaultWritingSystem = m_cache.TsStrFactory.MakeString(CmFolderTags.LocalMedia, m_cache.DefaultUserWs);
+								cmfMedia.Name.UserDefaultWritingSystem = TsStringUtils.MakeString(CmFolderTags.LocalMedia, m_cache.DefaultUserWs);
 							}
 							ICmFile file = null;
 							foreach (ICmFile cf in cmfMedia.FilesOC)
@@ -3676,66 +3664,128 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
-		private void ProcessEntryEtymologies(ILexEntry le, CmLiftEntry entry)
+		private void CreateEntryEtymologies(ILexEntry le, CmLiftEntry entry)
 		{
-			bool fFirst = true;
-			foreach (CmLiftEtymology let in entry.Etymologies)
+			foreach (CmLiftEtymology liftEtymology in entry.Etymologies)
 			{
-				if (fFirst)
-				{
-					if (le.EtymologyOA == null)
-					{
-						ILexEtymology ety = CreateNewLexEtymology();
-						le.EtymologyOA = ety;
-					}
-					AddNewWsToVernacular();
-					MergeInMultiUnicode(le.EtymologyOA.Form, LexEtymologyTags.kflidForm, let.Form, le.EtymologyOA.Guid);
-					AddNewWsToAnalysis();
-					MergeInMultiUnicode(le.EtymologyOA.Gloss, LexEtymologyTags.kflidGloss, let.Gloss, le.EtymologyOA.Guid);
-					// See LT-11765 for issues here.
-					if (let.Source != null && let.Source != "UNKNOWN")
-					{
-						if (!m_fCreatingNewEntry && m_msImport == MergeStyle.MsKeepOld)
-						{
-							if (String.IsNullOrEmpty(le.EtymologyOA.Source))
-								le.EtymologyOA.Source = let.Source;
-						}
-						else
-						{
-							le.EtymologyOA.Source = let.Source;
-						}
-					}
-					ProcessEtymologyFieldsAndTraits(le.EtymologyOA, let);
-					StoreDatesInResidue(le.EtymologyOA, let);
-					fFirst = false;
-				}
-				else
-				{
-					StoreEtymologyAsResidue(le, let);
-				}
+				AddNewWsToVernacular();
+				ILexEtymology ety = CreateNewLexEtymology();
+				le.EtymologyOS.Add(ety);
+				MergeInMultiUnicode(ety.Form, LexEtymologyTags.kflidForm, liftEtymology.Form, ety.Guid);
+				AddNewWsToAnalysis();
+				MergeInMultiUnicode(ety.Gloss, LexEtymologyTags.kflidGloss, liftEtymology.Gloss, ety.Guid);
+				ProcessEtymologyFieldsAndTraits(ety, liftEtymology);
+				StoreAnnotationsAndDatesInResidue(ety, liftEtymology);
 			}
 		}
 
-		private bool EntryEtymologiesConflict(ILexEtymology lexety, List<CmLiftEtymology> list)
+		private void MergeEntryEtymologies(ILexEntry le, CmLiftEntry entry)
 		{
-			if (lexety == null || list.Count == 0)
-				return false;
-			foreach (CmLiftEtymology ety in list)
+			var dictHvoLiftEtym = new Dictionary<int, CmLiftEtymology>();
+			foreach (CmLiftEtymology liftEtym in entry.Etymologies)
 			{
 				AddNewWsToVernacular();
-				if (MultiUnicodeStringsConflict(lexety.Form, ety.Form, false, Guid.Empty, 0))
-					return true;
+				var etym = FindMatchingEtymology(le, dictHvoLiftEtym, liftEtym);
+				if (etym == null)
+				{
+					etym = CreateNewLexEtymology();
+					le.EtymologyOS.Add(etym);
+					dictHvoLiftEtym.Add(etym.Hvo, liftEtym);
+				}
+				MergeInMultiUnicode(etym.Form, LexEtymologyTags.kflidForm, liftEtym.Form, etym.Guid);
 				AddNewWsToAnalysis();
-				if (MultiUnicodeStringsConflict(lexety.Gloss, ety.Gloss, false, Guid.Empty, 0))
-					return true;
-				IgnoreNewWs();
-				if (StringsConflict(lexety.Source, ety.Source))
-					return true;
-				if (EtymologyFieldsConflict(lexety, ety.Fields))
-					return true;
-				break;
+				MergeInMultiUnicode(etym.Gloss, LexEtymologyTags.kflidGloss, liftEtym.Gloss, etym.Guid);
+				// See LT-11765 for issues here.
+				if (liftEtym.Source != null && liftEtym.Source != "UNKNOWN")
+				{
+					etym.LiftResidue = liftEtym.Source; // Source is no longer part of the model
+				}
+				ProcessEtymologyFieldsAndTraits(etym, liftEtym);
+				StoreDatesInResidue(etym, liftEtym);
 			}
-			return false;
+		}
+
+		/// <summary>
+		/// Find the best matching etymology in the lex entry (if one exists) for the imported LiftEtymology let.
+		/// At least one form must match if any forms exist on either side.
+		/// As a side-effect, dictHvoLiftEtym has the matching hvo keyed to the imported data (if one exists).
+		/// </summary>
+		/// <returns>best match, or null</returns>
+		private ILexEtymology FindMatchingEtymology(ILexEntry le, Dictionary<int, CmLiftEtymology> dictHvoLiftEtym, CmLiftEtymology let)
+		{
+			ILexEtymology lexEtym = null;
+			var cMatches = 0;
+			foreach (var etym in le.EtymologyOS)
+			{
+				if (dictHvoLiftEtym.ContainsKey(etym.Hvo))
+					continue;
+				bool fFormMatches = false;
+				var cCurrent = 0;
+				AddNewWsToVernacular();
+				if (let.Form.Count == 0)
+				{
+					Dictionary<int, string> forms = GetAllUnicodeAlternatives(etym.Form);
+					fFormMatches = forms.Count == 0;
+				}
+				else
+				{
+					cCurrent = MultiUnicodeStringMatches(etym.Form, let.Form, false, Guid.Empty, 0);
+					fFormMatches = cCurrent > cMatches;
+				}
+				if (fFormMatches)
+				{
+					cMatches = cCurrent;
+					lexEtym = etym;
+				}
+			}
+			if (lexEtym == null)
+				return null;
+			dictHvoLiftEtym.Add(lexEtym.Hvo, let);
+			return lexEtym;
+		}
+
+		private bool EntryEtymologiesConflict(ILexEntry le, List<CmLiftEtymology> list)
+		{
+			if (le.EtymologyOS.Count == 0 || list.Count == 0)
+				return false;
+			int cCommon = 0;
+			Dictionary<int, CmLiftEtymology> dictHvoEtymology = new Dictionary<int, CmLiftEtymology>();
+			foreach (CmLiftEtymology lety in list)
+			{
+				AddNewWsToVernacular();
+				var etym = FindMatchingEtymology(le, dictHvoEtymology, lety);
+				if (etym != null)
+				{
+					if (MultiUnicodeStringsConflict(etym.Form, lety.Form, false, Guid.Empty, 0))
+					{
+						m_cdConflict = new ConflictingEntry(String.Format("Form ({0})",
+							TsStringAsHtml(etym.Form.BestVernacularAlternative, m_cache)), le, this);
+						return true;
+					}
+					AddNewWsToAnalysis();
+					if (MultiUnicodeStringsConflict(etym.Gloss, lety.Gloss, false, Guid.Empty, 0))
+					{
+						m_cdConflict = new ConflictingEntry(String.Format("Gloss ({0})",
+							TsStringAsHtml(etym.Form.BestAnalysisAlternative, m_cache)), le, this);
+						return true;
+					}
+					if (EtymologyFieldsConflict(etym, lety.Fields))
+						return true;
+					IgnoreNewWs();
+					if (StringsConflict(etym.LiftResidue, lety.Source))
+						return true;
+					++cCommon;
+				}
+			}
+			if (cCommon < Math.Min(le.EtymologyOS.Count, list.Count))
+			{
+				m_cdConflict = new ConflictingEntry("Etymologies", le, this);
+				return true;
+			}
+			else
+			{
+				return false;
+			}
 		}
 
 		private void ProcessEtymologyFieldsAndTraits(ILexEtymology ety, CmLiftEtymology let)
@@ -3748,9 +3798,18 @@ namespace SIL.FieldWorks.LexText.Controls
 					case "comment":
 						MergeInMultiString(ety.Comment, LexEtymologyTags.kflidComment, field.Content, ety.Guid);
 						break;
-					//case "multiform":		causes problems on round-tripping
-					//    MergeIn(ety.Form, field.Content, ety.Guid);
-					//    break;
+					case "languagenotes":
+						MergeInMultiString(ety.LanguageNotes, LexEtymologyTags.kflidLanguageNotes, field.Content, ety.Guid);
+						break;
+					case "preccomment":
+						MergeInMultiString(ety.PrecComment, LexEtymologyTags.kflidPrecComment, field.Content, ety.Guid);
+						break;
+					case "note":
+						MergeInMultiString(ety.Note, LexEtymologyTags.kflidNote, field.Content, ety.Guid);
+						break;
+					case "bibliography":
+						MergeInMultiString(ety.Bibliography, LexEtymologyTags.kflidBibliography, field.Content, ety.Guid);
+						break;
 					default:
 						ProcessUnknownField(ety, let, field,
 							"LexEtymology", "custom-etymology-", LexEtymologyTags.kClassId);
@@ -3759,7 +3818,20 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 			foreach (LiftTrait trait in let.Traits)
 			{
-				StoreTraitAsResidue(ety, trait);
+				switch (trait.Name.ToLowerInvariant())
+				{
+					case RangeNames.sDbLanguagesOA:
+						ICmPossibility lang = FindOrCreateLanguagePossibility(trait.Value);
+						if (!ety.LanguageRS.Any(l => l == lang) &&
+							(m_fCreatingNewEntry || m_msImport != MergeStyle.MsKeepOld || !ety.LanguageRS.Any()))
+						{
+							ety.LanguageRS.Add(lang);
+						}
+						break;
+					default:
+						StoreTraitAsResidue(ety, trait);
+						break;
+				}
 			}
 		}
 
@@ -3774,6 +3846,22 @@ namespace SIL.FieldWorks.LexText.Controls
 				{
 					case "comment":
 						if (MultiTsStringsConflict(lexety.Comment, field.Content))
+							return true;
+						break;
+					case "languagenotes":
+						if (MultiTsStringsConflict(lexety.LanguageNotes, field.Content))
+							return true;
+						break;
+					case "preccomment":
+						if (MultiTsStringsConflict(lexety.PrecComment, field.Content))
+							return true;
+						break;
+					case "note":
+						if (MultiTsStringsConflict(lexety.Note, field.Content))
+							return true;
+						break;
+					case "bibliography":
+						if (MultiTsStringsConflict(lexety.Bibliography, field.Content))
 							return true;
 						break;
 				}
@@ -3901,7 +3989,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			ProcessSenseTraits(ls, sense);
 
 			Dictionary<CmLiftSense, ILexSense> map = new Dictionary<CmLiftSense, ILexSense>();
-			Set<int> setUsed = new Set<int>();
+			var setUsed = new HashSet<int>();
 			foreach (CmLiftSense sub in sense.Subsenses)
 			{
 				ILexSense lsSub = FindExistingSense(ls.SensesOS, sub);
@@ -3951,7 +4039,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				CreateExampleTranslations(les, expl);
 				ProcessExampleNotes(les, expl);
 				if (TsStringIsNullOrEmpty(les.Reference) && !String.IsNullOrEmpty(expl.Source))
-					les.Reference = m_cache.TsStrFactory.MakeString(expl.Source, m_cache.DefaultAnalWs);
+					les.Reference = TsStringUtils.MakeString(expl.Source, m_cache.DefaultAnalWs);
 				ProcessExampleFields(les, expl);
 				ProcessExampleTraits(les, expl);
 				StoreExampleResidue(les, expl);
@@ -3961,7 +4049,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		private void MergeSenseExamples(ILexSense ls, CmLiftSense sense)
 		{
 			Dictionary<CmLiftExample, ILexExampleSentence> map = new Dictionary<CmLiftExample, ILexExampleSentence>();
-			Set<int> setUsed = new Set<int>();
+			var setUsed = new HashSet<int>();
 			foreach (CmLiftExample expl in sense.Examples)
 			{
 				ILexExampleSentence les = FindingMatchingExampleSentence(ls, expl);
@@ -3993,7 +4081,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				ProcessExampleFields(les, expl);
 				ProcessExampleTraits(les, expl);
 				if (TsStringIsNullOrEmpty(les.Reference) && !String.IsNullOrEmpty(expl.Source))
-					les.Reference = m_cache.TsStrFactory.MakeString(expl.Source, m_cache.DefaultAnalWs);
+					les.Reference = TsStringUtils.MakeString(expl.Source, m_cache.DefaultAnalWs);
 			}
 		}
 
@@ -4194,7 +4282,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		private void MergeExampleTranslations(ILexExampleSentence les, CmLiftExample expl)
 		{
 			Dictionary<LiftTranslation, ICmTranslation> map = new Dictionary<LiftTranslation, ICmTranslation>();
-			Set<int> setUsed = new Set<int>();
+			var setUsed = new HashSet<int>();
 			AddNewWsToAnalysis();
 			foreach (LiftTranslation tran in expl.Translations)
 			{
@@ -4561,7 +4649,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					m_factCmPossibility = m_cache.ServiceLocator.GetInstance<ICmPossibilityFactory>();
 				poss = m_factCmPossibility.Create();
 				m_cache.LangProject.MorphologicalDataOA.ProdRestrictOA.PossibilitiesOS.Add(poss);
-				ITsString tss = m_cache.TsStrFactory.MakeString(sValue, m_cache.DefaultAnalWs);
+				ITsString tss = TsStringUtils.MakeString(sValue, m_cache.DefaultAnalWs);
 				poss.Name.AnalysisDefaultWritingSystem = tss;
 				poss.Abbreviation.AnalysisDefaultWritingSystem = tss;
 				m_rgnewExceptFeat.Add(poss);
@@ -5694,7 +5782,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		private void MergeSenseIllustrations(ILexSense ls, CmLiftSense sense)
 		{
 			Dictionary<LiftUrlRef, ICmPicture> map = new Dictionary<LiftUrlRef, ICmPicture>();
-			Set<int> setUsed = new Set<int>();
+			var setUsed = new HashSet<int>();
 			AddNewWsToBothVernAnal();
 			foreach (LiftUrlRef uref in sense.Illustrations)
 			{
@@ -5936,7 +6024,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					sNewNorm = Icu.Normalize(sNew, Icu.UNormalizationMode.UNORM_NFD);
 				// LiftMultiText parameter may have come in with escaped characters which need to be
 				// converted to plain text before comparing with existing entries
-				MuElement mue = new MuElement(ws, Icu.Normalize(XmlUtils.DecodeXml(sNewNorm), Icu.UNormalizationMode.UNORM_NFD));
+				MuElement mue = new MuElement(ws, Icu.Normalize(XmlUtils.DecodeXmlAttribute(sNewNorm), Icu.UNormalizationMode.UNORM_NFD));
 				if (rie == null && mapToRIEs.TryGetValue(mue, out rgrie))
 				{
 					foreach (IReversalIndexEntry rieT in rgrie)
@@ -5992,9 +6080,9 @@ namespace SIL.FieldWorks.LexText.Controls
 				if (contents == null || contents.Keys.Count == 0)
 					return null;
 				if (contents.Keys.Count == 1)
-					sWs = XmlUtils.DecodeXml(contents.FirstValue.Key);
+					sWs = XmlUtils.DecodeXmlAttribute(contents.FirstValue.Key);
 				else
-					sWs = XmlUtils.DecodeXml(contents.FirstValue.Key.Split(new char[] { '_', '-' })[0]);
+					sWs = XmlUtils.DecodeXmlAttribute(contents.FirstValue.Key.Split(new char[] { '_', '-' })[0]);
 			}
 			AddNewWsToAnalysis();
 			int ws = GetWsFromStr(sWs);
@@ -6406,6 +6494,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				ls.StatusRA = null;
 				ls.UsageTypesRC.Clear();
 				ls.DoNotPublishInRC.Clear();
+				ls.DialectLabelsRS.Clear();
 			}
 			ICmPossibility poss;
 			foreach (LiftTrait lt in sense.Traits)
@@ -6424,6 +6513,11 @@ namespace SIL.FieldWorks.LexText.Controls
 						ICmSemanticDomain sem = FindOrCreateSemanticDomain(lt.Value);
 						if (!ls.SemanticDomainsRC.Contains(sem))
 							ls.SemanticDomainsRC.Add(sem);
+						break;
+					case RangeNames.sDbDialectLabelsOA:
+						poss = FindOrCreateDialect(lt.Value);
+						if (!ls.DialectLabelsRS.Contains(poss))
+							ls.DialectLabelsRS.Add(poss);
 						break;
 					case RangeNames.sDbDomainTypesOAold1: // original FLEX export = DomainType
 					case RangeNames.sDbDomainTypesOA:
@@ -6478,6 +6572,9 @@ namespace SIL.FieldWorks.LexText.Controls
 					case RangeNames.sSemanticDomainListOA:
 						poss = FindOrCreateSemanticDomain(lt.Value);
 						// how do you detect conflicts in a reference list?
+						break;
+					case RangeNames.sDbDialectLabelsOA:
+						poss = FindOrCreateDialect(lt.Value);
 						break;
 					case RangeNames.sDbDomainTypesOAold1:	// original FLEX export = DomainType
 					case RangeNames.sDbDomainTypesOA:

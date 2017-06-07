@@ -7,7 +7,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -22,14 +21,15 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.Utils;
+using SIL.FieldWorks.WordWorks.Parser;
+using SIL.Xml;
 
 namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 {
 	/// <summary>
 	/// Summary description for GrammarSketchHtmlViewer.
 	/// </summary>
-	internal sealed class GrammarSketchHtmlViewer : UserControl, IMainContentControl, IFWDisposable
+	internal sealed class GrammarSketchHtmlViewer : UserControl, IMainContentControl, IDisposable
 	{
 		#region Data Members
 
@@ -129,8 +129,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 			get { return Path.Combine(UtilityHtmlPath, "InitialDocument.htm"); }
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "We're returning an object")]
 		private RegistryKey RegistryKey
 		{
 			get
@@ -275,8 +273,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Design", "UseCorrectDisposeSignaturesRule",
-			Justification = "The class derives from UserControl. Therefore Dispose(bool) can't be private")]
 		protected override void Dispose(bool disposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
@@ -550,7 +546,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 			XslCompiledTransform transform;
 			if (!m_transforms.TryGetValue(xslName, out transform))
 			{
-				transform = XmlUtils.CreateTransform(xslName, xslAssembly);
+				transform = M3ToXAmpleTransformer.CreateTransform(xslName, xslAssembly);
 				m_transforms[xslName] = transform;
 			}
 

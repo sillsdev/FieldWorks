@@ -2,13 +2,10 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using NUnit.Framework;
+using SIL.CoreImpl.Text;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.Common.COMInterfaces;
 
 namespace SIL.FieldWorks.FDO.FDOTests
 {
@@ -52,7 +49,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			NonUndoableUnitOfWorkHelper.Do(m_actionHandler,
 				() =>
 					entry.LexemeFormOA.Form.VernacularDefaultWritingSystem =
-						Cache.TsStrFactory.MakeString("changed", Cache.DefaultVernWs)); // triggers PropChanged, which triggers another UOW
+						TsStringUtils.MakeString("changed", Cache.DefaultVernWs)); // triggers PropChanged, which triggers another UOW
 			Assert.That(propChangeHandler.Entry, Is.Not.Null);
 		}
 
@@ -65,7 +62,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			var form = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
 			entry.LexemeFormOA = form;
 			form.Form.VernacularDefaultWritingSystem =
-				Cache.TsStrFactory.MakeString(lf, Cache.DefaultVernWs);
+				TsStringUtils.MakeString(lf, Cache.DefaultVernWs);
 			return entry;
 		}
 		class PropChangedImplementor : IVwNotifyChange

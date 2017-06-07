@@ -11,16 +11,18 @@ using System.Windows.Forms;
 using System.Xml;
 using LanguageExplorer.Areas.TextsAndWords.Discourse;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.Text;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.FwUtils.MessageBoxEx;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.XWorks;
-using SIL.Utils;
+using SIL.Xml;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
@@ -235,7 +237,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			if (m_informationBar != null && m_configurationParametersElement != null)
 			{
-				string sAltTitle = XmlUtils.GetAttributeValue(m_configurationParametersElement, "altTitleId");
+				string sAltTitle = XmlUtils.GetOptionalAttributeValue(m_configurationParametersElement, "altTitleId");
 				if (!String.IsNullOrEmpty(sAltTitle))
 				{
 					string sTitle = StringTable.Table.GetString(sAltTitle, "AlternativeTitles");
@@ -958,7 +960,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					if(stText.MainWritingSystem == globalDefaultWs)
 					{
 						NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
-							((IStTxtPara)stText.ParagraphsOS[0]).Contents = TsStringUtils.MakeTss(string.Empty, Cache.DefaultVernWs));
+							((IStTxtPara)stText.ParagraphsOS[0]).Contents = TsStringUtils.MakeString(string.Empty, Cache.DefaultVernWs));
 					}
 
 					// since we have no text, we should not sit on any of the analyses tabs,

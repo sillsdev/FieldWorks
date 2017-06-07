@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2016 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -7,11 +7,11 @@ using System.IO;
 using System.Windows.Forms;
 using NUnit.Framework;
 using SIL.CoreImpl;
+using SIL.CoreImpl.Text;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
@@ -75,7 +75,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			NonUndoableUnitOfWorkHelper.Do(m_actionHandler, () =>
 			{
 				m_entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
-				m_entry.CitationForm.VernacularDefaultWritingSystem = TsStringUtils.MakeTss("rubbish", Cache.DefaultVernWs);
+				m_entry.CitationForm.VernacularDefaultWritingSystem = TsStringUtils.MakeString("rubbish", Cache.DefaultVernWs);
 				// We set both alternatives because currently the default part for Bibliography uses vernacular,
 				// but I think this will probably get fixed. Anyway, this way the test is robust.
 				m_entry.Bibliography.SetAnalysisDefaultWritingSystem("My rubbishy bibliography");
@@ -211,6 +211,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			Assert.AreEqual("Bibliography", (m_dtree.Controls[2] as Slice).Label);
 			Assert.AreEqual(0, (m_dtree.Controls[1] as Slice).Indent); // was 1, but indent currently suppressed.
 		}
+
 		/// <summary></summary>
 		[Test]
 		[Ignore("Collapsed nodes are currently not implemented")]
@@ -240,7 +241,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			m_entry.SensesOS.Add(sense2);
 			Cache.MainCacheAccessor.SetString(sense2.Hvo,
 				LexSenseTags.kflidScientificName,
-				TsStringUtils.MakeTss("blah blah", Cache.DefaultAnalWs));
+				TsStringUtils.MakeString("blah blah", Cache.DefaultAnalWs));
 
 			m_propertyTable.Dispose();
 			PubSubSystemFactory.CreatePubSubSystem(out m_publisher, out m_subscriber);
@@ -263,8 +264,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			m_parent.Dispose();
 			m_parent = null;
 
-			ILexEtymology lm = Cache.ServiceLocator.GetInstance<ILexEtymologyFactory>().Create();
-			m_entry.EtymologyOA = lm;
+			var etymology = Cache.ServiceLocator.GetInstance<ILexEtymologyFactory>().Create();
+			m_entry.EtymologyOS.Add(etymology);
 
 			m_propertyTable.Dispose();
 			PubSubSystemFactory.CreatePubSubSystem(out m_publisher, out m_subscriber);
@@ -278,16 +279,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			// Adding an etymology gets us just no more slices so far,
 			// because it doesn't have a form or source
 			Assert.AreEqual(3, m_dtree.Controls.Count);
-			//Assert.AreEqual("Etymology", (m_dtree.Controls[3] as Slice).Label);
 			m_parent.Close();
 			m_parent.Dispose();
 			m_parent = null;
 
-			lm.Source = "source";
-			// Again set both because I'm not sure which it really
-			// should be.
-			lm.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeTss("rubbish", Cache.DefaultVernWs);
-			lm.Form.AnalysisDefaultWritingSystem = TsStringUtils.MakeTss("rubbish", Cache.DefaultAnalWs);
+			etymology.LanguageNotes.AnalysisDefaultWritingSystem = TsStringUtils.MakeString("source language", Cache.DefaultAnalWs);
+			etymology.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString("rubbish", Cache.DefaultVernWs);
 
 			m_propertyTable.Dispose();
 			PubSubSystemFactory.CreatePubSubSystem(out m_publisher, out m_subscriber);
@@ -301,7 +298,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			// When the etymology has something we get two more.
 			Assert.AreEqual(5, m_dtree.Controls.Count);
 			Assert.AreEqual("Form", (m_dtree.Controls[3] as Slice).Label);
-			Assert.AreEqual("Source", (m_dtree.Controls[4] as Slice).Label);
+			Assert.AreEqual("Source Language Notes", (m_dtree.Controls[4] as Slice).Label);
 		}
 	}
 }

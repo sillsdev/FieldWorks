@@ -1,11 +1,7 @@
-// Copyright (c) 2010-2013 SIL International
+// Copyright (c) 2010-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: XmlBrowseViewSelectionRestorer.cs
-// Responsibility: FLEx Team
 
-using System;
 using SIL.FieldWorks.Common.RootSites;
 
 namespace SIL.FieldWorks.Common.Controls

@@ -26,5 +26,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			InitializeComponent();
 		}
+
+		protected override void Dispose(bool disposing)
+		{
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
+			base.Dispose(disposing);
+		}
 	}
 }

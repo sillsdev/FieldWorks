@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="lib">
       <UniqueIdentifier>{93082814-1f92-4f0a-8d50-4986e93800bb}</UniqueIdentifier>
@@ -21,8 +21,13 @@
     <ClInclude Include="lib\VwUndo.h">
       <Filter>lib</Filter>
     </ClInclude>
+    <ClInclude Include="lib\UtilView.h">
+      <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\ActionHandler.h">
+      <Filter>lib</Filter>
+    </ClInclude>
     <ClInclude Include="Main.h" />
-    <ClInclude Include="lib\UtilView.h" />
     <ClInclude Include="VwAccessRoot.h" />
     <ClInclude Include="VwEnv.h" />
     <ClInclude Include="VwInvertedViews.h" />
@@ -41,6 +46,55 @@
     <ClInclude Include="VwTextBoxes.h" />
     <ClInclude Include="VwTextStore.h" />
     <ClInclude Include="VwTxtSrc.h" />
+    <ClInclude Include="lib\GraphiteEngine.h">
+      <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\GraphiteSegment.h">
+      <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\LgLineBreaker.h">
+      <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\RomRenderEngine.h">
+      <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\RomRenderSegment.h">
+      <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\UniscribeEngine.h">
+      <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\UniscribeSegment.h">
+      <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\UniscribeLinux.h">
+      <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\LgUnicodeCollateInit.h">
+      <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\LgUnicodeCollater.h">
+      <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\DebugReport.h">
+      <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\TextServ.h">
+      <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\TsPropsFactory.h">
+      <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\TsStrFactory.h">
+      <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\TsString.h">
+      <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\TsTextProps.h">
+      <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="ViewsGlobals.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="lib\VwBaseDataAccess.cpp">
@@ -56,6 +110,9 @@
       <Filter>lib</Filter>
     </ClCompile>
     <ClCompile Include="lib\VwUndo.cpp">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\ActionHandler.cpp">
       <Filter>lib</Filter>
     </ClCompile>
     <ClCompile Include="dlldatax.c" />
@@ -78,6 +135,52 @@
     <ClCompile Include="VwTextBoxes.cpp" />
     <ClCompile Include="VwTextStore.cpp" />
     <ClCompile Include="VwTxtSrc.cpp" />
+    <ClCompile Include="lib\GraphiteEngine.cpp">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\GraphiteSegment.cpp">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\LgLineBreaker.cpp">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\RomRenderEngine.cpp">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\RomRenderSegment.cpp">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\UniscribeEngine.cpp">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\UniscribeSegment.cpp">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\UniscribeLinux.cpp">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\LgUnicodeCollater.cpp">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\DebugReport.cpp">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\TextServ.cpp">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\TsPropsFactory.cpp">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\TsStrFactory.cpp">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\TsString.cpp">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\TsTextProps.cpp">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="ViewsGlobals.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\bin\mkvw.bat" />
@@ -85,6 +188,7 @@
     <None Include="Views.idh" />
     <None Include="Views.mak" />
     <None Include="Makefile" />
+    <None Include="Render.idh" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Views.rc" />

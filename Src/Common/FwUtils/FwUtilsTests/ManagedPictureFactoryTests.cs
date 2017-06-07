@@ -1,22 +1,17 @@
-// Copyright (c) 2009-2013 SIL International
+// Copyright (c) 2009-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ManagedPictureFactoryTests.cs
-// Responsibility:
 
 using System.Drawing;
 using NUnit.Framework;
 using System.IO;
 using System.Drawing.Imaging;
-using SIL.Utils;
-using SIL.FieldWorks.Test.TestUtils;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
 	/// <summary/>
 	[TestFixture]
-	public class ManagedPictureFactoryTests: BaseTest
+	public class ManagedPictureFactoryTests
 	{
 		/// <summary></summary>
 		[Test]

@@ -1,22 +1,15 @@
-// Copyright (c) 2004-2013 SIL International
+// Copyright (c) 2004-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: CellarTests.cs
-// Responsibility: TE Team
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Linq;
 using NUnit.Framework;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.DomainImpl;
 using System.Xml;
 using System.IO;
-using SIL.FieldWorks.Common.FwUtils;
+using SIL.CoreImpl.Text;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.DomainServices;
 
 namespace SIL.FieldWorks.FDO.FDOTests.CellarTests
@@ -353,11 +346,11 @@ namespace SIL.FieldWorks.FDO.FDOTests.CellarTests
 			var le = servLoc.GetInstance<ILexEntryFactory>().Create();
 
 			var ws = Cache.DefaultVernWs;
-			le.CitationForm.set_String(ws, Cache.TsStrFactory.MakeString(cf, ws));
+			le.CitationForm.set_String(ws, TsStringUtils.MakeString(cf, ws));
 			var ls = servLoc.GetInstance<ILexSenseFactory>().Create();
 			le.SensesOS.Add(ls);
 			ws = Cache.DefaultAnalWs;
-			ls.Definition.set_String(ws, Cache.TsStrFactory.MakeString(defn, ws));
+			ls.Definition.set_String(ws, TsStringUtils.MakeString(defn, ws));
 			ls.SemanticDomainsRC.Add(domain);
 			var msa = servLoc.GetInstance<IMoStemMsaFactory>().Create();
 			le.MorphoSyntaxAnalysesOC.Add(msa);
@@ -489,7 +482,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.CellarTests
 
 			// Set up the xml fs description
 			XmlDocument doc = new XmlDocument();
-			string sFileDir = Path.Combine(FwDirectoryFinder.SourceDirectory, @"FDO/FDOTests/TestData");
+			string sFileDir = Path.Combine(TestDirectoryFinder.SourceDirectory, "FDO", "FDOTests", "TestData");
 			string sFile = Path.Combine(sFileDir, "FeatureSystem2.xml");
 
 			doc.Load(sFile);
@@ -695,7 +688,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.CellarTests
 		{
 			ICmAgent agent = Cache.LangProject.DefaultComputerAgent;
 			IWfiWordform wf = WfiWordformServices.FindOrCreateWordform(Cache,
-				TsStringUtils.MakeTss("xxxyyyzzz12234", Cache.DefaultVernWs));
+				TsStringUtils.MakeString("xxxyyyzzz12234", Cache.DefaultVernWs));
 			IWfiAnalysis wa = Cache.ServiceLocator.GetInstance<IWfiAnalysisFactory>().Create();
 			wf.AnalysesOC.Add(wa);
 			Assert.AreEqual(Opinions.noopinion, wa.GetAgentOpinion(agent));

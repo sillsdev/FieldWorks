@@ -6,7 +6,7 @@ using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using NUnit.Framework;
 using Rhino.Mocks;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;

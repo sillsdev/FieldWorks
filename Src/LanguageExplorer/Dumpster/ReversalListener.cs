@@ -6,9 +6,9 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using SIL.CoreImpl;
+using SIL.CoreImpl.WritingSystems;
 using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.FDO;
-using SIL.Utils;
 
 namespace LanguageExplorer.Dumpster
 {
@@ -37,7 +37,7 @@ namespace LanguageExplorer.Dumpster
 	/// 1. 'Find' dlg for reversal entries.
 	/// 2.
 	/// </summary>
-	internal sealed class ReversalListener : IFlexComponent, IFWDisposable
+	internal sealed class ReversalListener : IFlexComponent, IDisposable
 	{
 		#region IDisposable & Co. implementation
 		// Region last reviewed: never

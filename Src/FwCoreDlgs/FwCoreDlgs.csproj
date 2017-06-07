@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="14.0">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
     <ProductVersion>9.0.21022</ProductVersion>
@@ -30,7 +30,7 @@
     <SccAuxPath>
     </SccAuxPath>
     <OldToolsVersion>3.5</OldToolsVersion>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -96,18 +96,10 @@
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BasicUtils, Version=4.1.1.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="ViewsInterfaces">
+      <Name>ViewsInterfaces</Name>
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\BasicUtils.dll</HintPath>
-    </Reference>
-    <Reference Include="COMInterfaces">
-      <Name>COMInterfaces</Name>
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\COMInterfaces.dll</HintPath>
-    </Reference>
-    <Reference Include="Controls.Design, Version=4.1.0.9, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\Controls.Design.dll</HintPath>
+      <HintPath>..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
     </Reference>
     <Reference Include="CoreImpl, Version=6.1.0.17531, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -151,10 +143,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\FwUtils.dll</HintPath>
     </Reference>
-    <Reference Include="ICSharpCode.SharpZipLib, Version=0.85.5.452, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Lib\debug\ICSharpCode.SharpZipLib.dll</HintPath>
-    </Reference>
     <Reference Include="icu.net, Version=1.2.0.0, Culture=neutral, PublicKeyToken=416fdd914afa6b66, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Downloads\icu.net.dll</HintPath>
@@ -175,10 +163,6 @@
     <Reference Include="ScriptureUtils, Version=8.0.9.31119, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\ScriptureUtils.dll</HintPath>
-    </Reference>
-    <Reference Include="SharedScrUtils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\SharedScrUtils.dll</HintPath>
     </Reference>
     <Reference Include="SIL.Core, Version=2.6.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
@@ -241,6 +225,9 @@
     <Reference Include="SIL.Windows.Forms">
       <HintPath>..\..\Downloads\SIL.Windows.Forms.dll</HintPath>
     </Reference>
+    <Reference Include="FwKernelInterfaces">
+      <HintPath>..\..\Output\Debug\FwKernelInterfaces.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\CommonAssemblyInfo.cs">
@@ -298,6 +285,12 @@
       <DependentUpon>RestoreProjectDlg.cs</DependentUpon>
     </Compile>
     <Compile Include="BackupRestore\RestoreProjectPresenter.cs" />
+    <Compile Include="BasicFindDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="BasicFindDialog.Designer.cs">
+      <DependentUpon>BasicFindDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="CharContextCtrl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -329,6 +322,7 @@
     <Compile Include="DeleteWritingSystemWarningDialog.Designer.cs">
       <DependentUpon>DeleteWritingSystemWarningDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="FwCharacterCategorizer.cs" />
     <Compile Include="FwCheckAnthroListDlg.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -382,7 +376,7 @@
     <Compile Include="ErrorMessage.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="FindReplaceCollectorEnv.cs" />
+    <Compile Include="FindCollectorEnv.cs" />
     <Compile Include="FwChooserDlg.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -511,6 +505,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="BackupRestore\RestoreProjectDlg.resx">
       <DependentUpon>RestoreProjectDlg.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="BasicFindDialog.resx">
+      <DependentUpon>BasicFindDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="CharContextCtrl.resx">
       <DependentUpon>CharContextCtrl.cs</DependentUpon>
@@ -647,7 +644,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="gendarme-FwCoreDlgs.ignore" />
     <None Include="Resources\FwCopyRight.png" />
   </ItemGroup>
   <ItemGroup>

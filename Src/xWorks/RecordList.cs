@@ -1,9 +1,7 @@
-// Copyright (c) 2004-2015 SIL International
+// Copyright (c) 2004-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: RecordList.cs
-// History: John Hatton, created
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -12,8 +10,10 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.Cellar;
 using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
@@ -21,16 +21,17 @@ using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Filters;
+using SIL.ObjectModel;
 using SIL.Reporting;
 using SIL.Utils;
-using ConfigurationException = SIL.Utils.ConfigurationException;
+using ConfigurationException = System.Configuration.ConfigurationException;
 
 namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
 	/// RecordList is a vector of objects
 	/// </summary>
-	public class RecordList : FwDisposableBase, IFlexComponent, IVwNotifyChange, ISortItemProvider
+	public class RecordList : DisposableBase, IFlexComponent, IVwNotifyChange, ISortItemProvider
 	{
 		#region Events
 
@@ -286,11 +287,7 @@ namespace SIL.FieldWorks.XWorks
 			get
 			{
 				CheckDisposed();
-				// we only have a reference to the filter which means that it might have been
-				// disposed. In that case treat it as if we wouldn't have a filter.
-				var disposable = m_filter as IFWDisposable;
-				if (disposable != null && disposable.IsDisposed)
-					m_filter = null;
+
 				return m_filter;
 			}
 			set
@@ -621,7 +618,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 		#endregion Properties
 
-		#region FwDisposableBase
+		#region DisposableBase
 
 		protected override void DisposeManagedResources()
 		{
@@ -658,7 +655,7 @@ namespace SIL.FieldWorks.XWorks
 			Subscriber = null;
 		}
 
-		#endregion FwDisposableBase
+		#endregion DisposableBase
 
 		#region IVwNotifyChange implementation
 
@@ -1265,9 +1262,9 @@ namespace SIL.FieldWorks.XWorks
 				int cOrigSortObjects = m_sortedObjects.Count;
 				// Note: We start with a Set, since it can't have duplicates.
 				// First remove the given hvos from our sort items.
-				Set<int> unwantedIndices = new Set<int>(IndicesOfSortItems(hvosToRemove));
+				var unwantedIndices = new HashSet<int>(IndicesOfSortItems(hvosToRemove));
 				// then remove any remaining items that point to invalid objects.
-				unwantedIndices.AddRange(IndicesOfInvalidSortItems());
+				unwantedIndices.UnionWith(IndicesOfInvalidSortItems());
 				// Put the now unique indices into a list,
 				// so we can make sure they are processed in reverse order.
 				List<int> sortedIndices = new List<int>(unwantedIndices.ToArray());
@@ -2270,7 +2267,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			var target = m_cache.ServiceLocator.ObjectRepository.GetObject(hvoTarget);
-			var owners = new Set<int>();
+			var owners = new HashSet<int>();
 			for(var owner = target.Owner; owner != null; owner = owner.Owner)
 				owners.Add(owner.Hvo);
 

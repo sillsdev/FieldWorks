@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using NUnit.Framework;
-using System.Diagnostics.CodeAnalysis;
 using LanguageExplorer.Controls.SilSidePane;
 
 namespace LanguageExplorerTests.SilSidePaneTests
@@ -169,8 +168,6 @@ namespace LanguageExplorerTests.SilSidePaneTests
 
 		#region ContainingControl
 		[Test]
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "containingControl is a reference")]
 		public void ContainingControlTest()
 		{
 			Control containingControl = _sidePane.Parent;

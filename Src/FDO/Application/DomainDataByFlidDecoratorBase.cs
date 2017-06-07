@@ -1,19 +1,13 @@
-// Copyright (c) 2008-2013 SIL International
+// Copyright (c) 2008-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: DomainDataByFlidDecoratorBase.cs
-// Responsibility: Randy Regnier
-// Last reviewed: never
 
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using System.Diagnostics;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.Cellar;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO.Application
 {
@@ -25,7 +19,7 @@ namespace SIL.FieldWorks.FDO.Application
 	/// the DomainDataByFlid (ISilDataAccess) for regular data access.
 	/// </summary>
 	[ComVisible(true)]
-	public abstract class DomainDataByFlidDecoratorBase : SilDataAccessManagedBase, IVwNotifyChange, IRefreshable, ISuspendRefresh
+	public abstract class DomainDataByFlidDecoratorBase : SilDataAccessManagedBase, IVwNotifyChange
 	{
 		private readonly ISilDataAccessManaged m_domainDataByFlid;
 
@@ -45,7 +39,7 @@ namespace SIL.FieldWorks.FDO.Application
 		/// </remarks>
 		protected DomainDataByFlidDecoratorBase(ISilDataAccessManaged domainDataByFlid)
 		{
-			if (domainDataByFlid == null) throw new ArgumentNullException("domainDataByFlid");
+			if (domainDataByFlid == null) throw new ArgumentNullException(nameof(domainDataByFlid));
 
 			m_domainDataByFlid = domainDataByFlid;
 		}
@@ -53,10 +47,7 @@ namespace SIL.FieldWorks.FDO.Application
 		/// <summary>
 		/// Get the SDA which this one decorates.
 		/// </summary>
-		public ISilDataAccessManaged BaseSda
-		{
-			get { return m_domainDataByFlid; }
-		}
+		public ISilDataAccessManaged BaseSda => m_domainDataByFlid;
 
 		#region ISilDataAccess implementation
 
@@ -1105,8 +1096,7 @@ namespace SIL.FieldWorks.FDO.Application
 		public virtual void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
 		{
 			var noteChange = m_domainDataByFlid as IVwNotifyChange;
-			if (noteChange != null)
-				noteChange.PropChanged(hvo, tag, ivMin, cvIns, cvDel);
+			noteChange?.PropChanged(hvo, tag, ivMin, cvIns, cvDel);
 		}
 
 		/// <summary>
@@ -1114,8 +1104,8 @@ namespace SIL.FieldWorks.FDO.Application
 		/// </summary>
 		public virtual void Refresh()
 		{
-			if (BaseSda is IRefreshable)
-				((IRefreshable)BaseSda).Refresh();
+			var decorator = m_domainDataByFlid as DomainDataByFlidDecoratorBase;
+			decorator?.Refresh();
 		}
 
 		/// <summary>
@@ -1123,8 +1113,8 @@ namespace SIL.FieldWorks.FDO.Application
 		/// </summary>
 		public virtual void SuspendRefresh()
 		{
-			if (BaseSda is ISuspendRefresh)
-				((ISuspendRefresh)BaseSda).SuspendRefresh();
+			var decorator = m_domainDataByFlid as DomainDataByFlidDecoratorBase;
+			decorator?.SuspendRefresh();
 		}
 
 		/// <summary>
@@ -1132,8 +1122,8 @@ namespace SIL.FieldWorks.FDO.Application
 		/// </summary>
 		public virtual void ResumeRefresh()
 		{
-			if (BaseSda is ISuspendRefresh)
-				((ISuspendRefresh)BaseSda).ResumeRefresh();
+			var decorator = m_domainDataByFlid as DomainDataByFlidDecoratorBase;
+			decorator?.ResumeRefresh();
 		}
 	}
 
@@ -2225,158 +2215,5 @@ namespace SIL.FieldWorks.FDO.Application
 		}
 
 		#endregion
-	}
-
-	/// <summary>
-	/// A struct that can be used as the key in a Dictionary.
-	/// This could be used for the ley in a subclass of FdoSilDataAccessDecoratorBase.
-	/// </summary>
-	[DebuggerDisplay("Hvo={m_hvo},Flid={m_flid}")]
-	public struct HvoFlidKey
-	{
-		private readonly int m_hvo;
-		private readonly int m_flid;
-
-		/// <summary>
-		///
-		/// </summary>
-		public int Hvo
-		{
-			get { return m_hvo; }
-		}
-
-		/// <summary>
-		///
-		/// </summary>
-		public int Flid
-		{
-			get { return m_flid; }
-		}
-
-		/// <summary>
-		///
-		/// </summary>
-		/// <param name="hvo"></param>
-		/// <param name="flid"></param>
-		public HvoFlidKey(int hvo, int flid)
-		{
-			m_hvo = hvo;
-			m_flid = flid;
-		}
-
-		/// <summary>
-		///
-		/// </summary>
-		/// <param name="obj"></param>
-		/// <returns></returns>
-		public override bool Equals(object obj)
-		{
-			if (!(obj is HvoFlidKey))
-				return false;
-
-			var hfk = (HvoFlidKey)obj;
-			return (hfk.m_hvo == m_hvo)
-				   && (hfk.m_flid == m_flid);
-		}
-
-		/// <summary>
-		///
-		/// </summary>
-		/// <returns></returns>
-		public override int GetHashCode()
-		{
-			return (m_hvo ^ m_flid);
-		}
-
-		/// <summary>
-		///
-		/// </summary>
-		/// <returns></returns>
-		public override string ToString()
-		{
-			return String.Format("{0}^{1}", m_hvo, m_flid);
-		}
-	}
-
-	/// <summary>
-	///
-	/// </summary>
-	[DebuggerDisplay("Hvo={m_hvo},Flid={m_flid},WS={m_ws}")]
-	public struct HvoFlidWSKey
-	{
-		private readonly int m_hvo;
-		private readonly int m_flid;
-		private readonly int m_ws;
-
-		/// <summary>
-		///
-		/// </summary>
-		public int Hvo
-		{
-			get { return m_hvo; }
-		}
-
-		/// <summary>
-		///
-		/// </summary>
-		public int Flid
-		{
-			get { return m_flid; }
-		}
-
-		/// <summary>
-		///
-		/// </summary>
-		public int Ws
-		{
-			get { return m_ws; }
-		}
-
-		/// <summary>
-		///
-		/// </summary>
-		/// <param name="hvo"></param>
-		/// <param name="flid"></param>
-		/// <param name="ws"></param>
-		public HvoFlidWSKey(int hvo, int flid, int ws)
-		{
-			m_hvo = hvo;
-			m_flid = flid;
-			m_ws = ws;
-		}
-
-		/// <summary>
-		///
-		/// </summary>
-		/// <param name="obj"></param>
-		/// <returns></returns>
-		public override bool Equals(object obj)
-		{
-			if (!(obj is HvoFlidWSKey))
-				return false;
-
-			var key = (HvoFlidWSKey)obj;
-			return (key.m_hvo == m_hvo)
-				   && (key.m_flid == m_flid)
-				   && (key.m_ws == m_ws);
-		}
-
-		/// <summary>
-		///
-		/// </summary>
-		/// <returns></returns>
-		public override int GetHashCode()
-		{
-			return (m_hvo ^ m_flid ^ m_ws);
-		}
-
-		/// <summary>
-		///
-		/// </summary>
-		/// <returns></returns>
-		public override string ToString()
-		{
-			return String.Format("{0}^{1}^{2}", m_hvo, m_flid, m_ws);
-		}
 	}
 }

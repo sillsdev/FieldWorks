@@ -845,6 +845,15 @@ namespace SIL.FieldWorks.LexText.Controls {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The following Dialect labels were added to the language project:.
+        /// </summary>
+        internal static string ksDialectsAdded {
+            get {
+                return ResourceManager.GetString("ksDialectsAdded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Discarded field.
         /// </summary>
         internal static string ksDiscardedField {
@@ -1651,6 +1660,15 @@ namespace SIL.FieldWorks.LexText.Controls {
         internal static string ksLanguageDefinition {
             get {
                 return ResourceManager.GetString("ksLanguageDefinition", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The following Languages were added to the language project:.
+        /// </summary>
+        internal static string ksLanguagesAdded {
+            get {
+                return ResourceManager.GetString("ksLanguagesAdded", resourceCulture);
             }
         }
         
@@ -3069,15 +3087,6 @@ namespace SIL.FieldWorks.LexText.Controls {
         internal static string ksUnknownCategory {
             get {
                 return ResourceManager.GetString("ksUnknownCategory", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to &lt;Unknown Complex Form&gt;.
-        /// </summary>
-        internal static string ksUnknownComplexForm {
-            get {
-                return ResourceManager.GetString("ksUnknownComplexForm", resourceCulture);
             }
         }
         

@@ -44,8 +44,6 @@ interface ITsIncStrBldr;
 interface ITsPropsBldr;
 interface ITsMultiString;
 
-interface ILgWritingSystemFactory;
-
 /*----------------------------------------------------------------------------------------------
 	Note: In some of the interfaces that follow there are method names that end with "At" and
 	similar method names without the "At".  The distinction is as follows.  The "At" suffix
@@ -228,6 +226,7 @@ typedef [v1_enum] enum FwTextPropType
 	ktptTags = 5, // prop holds sequence of 8-char items, each the memcpy-equivalent of a GUID
 	ktptObjData = 6, // prop holds data about an embedded object.
 		// (The first character indicates the nature of the data, see VwTextBoxes.cpp.)
+	ktptCustomBullet = 7,
 
 	/*------------------------------------------------------------------------------------------
 		Properties that originated in the views subsystem.  These are a mixture of integer and
@@ -683,7 +682,7 @@ typedef struct TsRunInfo
 	created from instances of TsStrFactory, TsStrBldr and TsIncStrBldr.
 	Hungarian: tss
 ----------------------------------------------------------------------------------------------*/
-DeclareInterface(TsString, Unknown, 295B2E11-B149-49C5-9BE9-9F46185609AA)
+DeclareInterface(TsString, Unknown, 321B7BB3-29AF-41D1-93DE-4A11BF386C82)
 {
 	// Fetch the raw text.
 	[propget, id(0)] HRESULT Text(
@@ -787,38 +786,10 @@ DeclareInterface(TsString, Unknown, 295B2E11-B149-49C5-9BE9-9F46185609AA)
 	HRESULT GetIncBldr(
 		[out, retval] ITsIncStrBldr ** pptisb);
 
-	// Serialization.
-	HRESULT GetFactoryClsid(
-		[out, retval] CLSID * pclsid);
-	HRESULT SerializeFmt(
-		[in] IStream * pstrm);
-	HRESULT SerializeFmtRgb(
-		[out, size_is(cbMax)] BYTE * prgb,
-		[in] int cbMax,
-		[out, retval] int * pcbNeeded);
-
 	// Equality
 	HRESULT Equals(
 		[in] ITsString * ptss,
 		[out, retval] ComBool * pfEqual);
-
-	// Write the string to the stream in standard FieldWorks XML format.  Indent the
-	// number of spaces given by cchIndent, which may be zero.
-	HRESULT WriteAsXml(
-		[in] IStream * pstrm,
-		[in] ILgWritingSystemFactory * pwsf,
-		[in] int cchIndent,
-		[in] int ws,
-		[in] ComBool fWriteObjData);
-
-	// Return a string in standard FieldWorks XML format. Indent the
-	// number of spaces given by cchIndent, which may be zero.
-	HRESULT GetXmlString(
-		[in] ILgWritingSystemFactory * pwsf,
-		[in] int cchIndent,
-		[in] int ws,
-		[in] ComBool fWriteObjData,
-		[out, retval] BSTR * pbstr);
 
 	// Return whether the string is already in the specified normal form.
 	// Note that a string may be considered to be in NFC
@@ -851,7 +822,7 @@ DeclareInterface(TsString, Unknown, 295B2E11-B149-49C5-9BE9-9F46185609AA)
 	// (or the end of the string).
 	[restricted, local] HRESULT NfdAndFixOffsets(
 		[out] ITsString ** pptssRet,
-		[in, size_is(cichOffsetsToFix)] int ** prgpichOffsetsToFix, // indirectly in/out
+		[in, out, size_is(cichOffsetsToFix)] int ** prgpichOffsetsToFix, // indirectly in/out
 		[in] int cichOffsetsToFix);
 
 	// Fetch the string from ichMin to ichLim. Return the string as a ITsString.
@@ -859,42 +830,6 @@ DeclareInterface(TsString, Unknown, 295B2E11-B149-49C5-9BE9-9F46185609AA)
 		[in] int ichMin,
 		[in] int ichLim,
 		[out, retval] ITsString ** pptssRet);
-
-	// Write the string to the stream in standard FieldWorks XML format.  Indent the
-	// number of spaces given by cchIndent, which may be zero.
-	HRESULT WriteAsXmlExtended(
-		[in] IStream * pstrm,
-		[in] ILgWritingSystemFactory * pwsf,
-		[in] int cchIndent,
-		[in] int ws,
-		[in] ComBool fWriteObjData,
-		[in] ComBool fUseRFC4646);
-
-	// Optimizations/shortcuts (there are other ways to do these things, but they are high-frequency
-	// and having these shortcuts minimizes round trips to unmanaged code).
-
-	// Shortcut to get the indicated string property for the indicated run.
-	HRESULT get_StringProperty(
-		[in] int iRun,
-		[in] int tpt,
-		[out, retval] BSTR * pbstr);
-	// Shortcut to get the indicated string property for the indicated character position.
-	HRESULT get_StringPropertyAt(
-		[in] int ich,
-		[in] int tpt,
-		[out, retval] BSTR * pbstr);
-	// Shortcut to get WS at given run
-	HRESULT get_WritingSystem(
-		[in] int irun,
-		[out, retval] int * pws);
-	// Shortcut to get WS at given ich
-	HRESULT get_WritingSystemAt(
-		[in] int ich,
-		[out, retval] int * pws);
-	// Shortcut to determine whether a run is an ORC
-	HRESULT get_IsRunOrc(
-		[in] int iRun,
-		[out, retval] ComBool * pfIsOrc);
 };
 
 
@@ -905,7 +840,7 @@ DeclareInterface(TsString, Unknown, 295B2E11-B149-49C5-9BE9-9F46185609AA)
 	obtaining a builder object with a call to GetBldr.
 	Hungarian: ttp
 ----------------------------------------------------------------------------------------------*/
-DeclareInterface(TsTextProps, Unknown, 4FA0B99A-5A56-41A4-BE8B-B89BC62251A5)
+DeclareInterface(TsTextProps, Unknown, 9B804BE2-0F75-4182-AC97-77F477546AB0)
 {
 
 	// Fetch the number of integer properties.
@@ -945,36 +880,6 @@ DeclareInterface(TsTextProps, Unknown, 4FA0B99A-5A56-41A4-BE8B-B89BC62251A5)
 	// TsTextProps.)
 	HRESULT GetBldr(
 		[out, retval] ITsPropsBldr ** pptpb);
-
-	// Serialization.
-	HRESULT GetFactoryClsid(
-		[out, retval] CLSID * pclsid);
-	HRESULT Serialize(
-		[in] IStream * pstrm);
-	// If cbMax is not large enough, S_FALSE is returned and *pcb is set to the required size.
-	HRESULT SerializeRgb(
-		[out, size_is(cbMax)] BYTE * prgb,
-		[in] int cbMax,
-		[out, retval] int * pcb);
-	// Serialize a set of text property objects as would be needed for a string object in
-	// the database. It is assumed that for any runs for which we want to use duplicated property
-	// information, the ITsTextProps themselves are redundant in rgpttp.
-	HRESULT SerializeRgPropsRgb(
-		[in] int cpttp,
-		[in] ITsTextProps ** rgpttp,
-		[in] int * rgich,
-		[out, size_is(cbMax)] BYTE * prgb,
-		[in] int cbMax,
-		[out, retval] int * pcb);
-
-	// Write the text properties to the stream in standard FieldWorks XML format.  Indent the
-	// number of spaces given by cchIndent, which may be zero.
-	// Note that this is for standalone text property objects, not for those embedded inside
-	// strings: those are handled by the ITsString method itself.
-	HRESULT WriteAsXml(
-		[in] IStream * pstrm,
-		[in] ILgWritingSystemFactory * pwsf,
-		[in] int cchIndent);
 };
 
 
@@ -989,28 +894,8 @@ DeclareInterface(TsTextProps, Unknown, 4FA0B99A-5A56-41A4-BE8B-B89BC62251A5)
 	provided by the factory.
 	Hungarian: tsf
 ----------------------------------------------------------------------------------------------*/
-DeclareInterface(TsStrFactory, Unknown, C10EA417-8317-4048-AC90-103F8BDFB325)
+DeclareInterface(TsStrFactory, Unknown, 721A8D21-9900-4CB0-B4C0-9380A23140E3)
 {
-	HRESULT DeserializeStringStreams(
-		[in] IStream * pstrmTxt,
-		[in] IStream * pstrmFmt,
-		[out, retval] ITsString ** pptss);
-	HRESULT DeserializeString(
-		[in] BSTR bstrTxt,
-		[in] IStream * pstrmFmt,
-		[out, retval] ITsString ** pptss);
-	HRESULT DeserializeStringRgb(
-		[in] BSTR bstrTxt,
-		[in, size_is(cbFmt)] const BYTE * prgbFmt,
-		[in] int cbFmt,
-		[out, retval] ITsString ** pptss);
-	HRESULT DeserializeStringRgch(
-		[in, size_is(*pcchTxt)] const OLECHAR * prgchTxt,
-		[in, out] int * pcchTxt,
-		[in, size_is(*pcbFmt)] const BYTE * prgbFmt,
-		[in, out] int * pcbFmt,
-		[out, retval] ITsString ** pptss);
-
 	// Creates a simple ITsString from the BSTR with writing system. The default old writing
 	// system is assumed for this string. If ws is zero, the ws/ows stack is empty. If the string
 	// length is zero, properties are not set.
@@ -1044,30 +929,6 @@ DeclareInterface(TsStrFactory, Unknown, C10EA417-8317-4048-AC90-103F8BDFB325)
 	HRESULT GetIncBldr(
 		[out, retval] ITsIncStrBldr ** pptisb);
 
-	// Run information
-	// Fetch the number of runs in the given format prgch.
-	[propget] HRESULT RunCount(
-		[in, size_is(cbFmt)] const BYTE * prgbFmt,
-		[in] int cbFmt,
-		[out, retval] int * pcrun);
-
-	// Fetch the run information at a given character position relative to the format prgch.
-	// ich must be a valid character postion.
-	HRESULT FetchRunInfoAt(
-		[in, size_is(cbFmt)] const BYTE * prgbFmt,
-		[in] int cbFmt,
-		[in] int ich,
-		[out] TsRunInfo * ptri,
-		[out, retval] ITsTextProps ** ppttp);
-	// Fetch the run information for a particular run in for format prgch. irun must be a valid
-	// run index.
-	HRESULT FetchRunInfo(
-		[in, size_is(cbFmt)] const BYTE * prgbFmt,
-		[in] int cbFmt,
-		[in] int irun,
-		[out] TsRunInfo * ptri,
-		[out, retval] ITsTextProps ** ppttp);
-
 	// Return an empty string in the specified writing system.
 	// These are typically cached so a new object does not have to be created every time.
 	HRESULT EmptyString(
@@ -1083,26 +944,8 @@ DeclareInterface(TsStrFactory, Unknown, C10EA417-8317-4048-AC90-103F8BDFB325)
 	property builder.
 	Hungarian: tpf
 ----------------------------------------------------------------------------------------------*/
-DeclareInterface(TsPropsFactory, Unknown, 8DCE56A6-CFF1-4402-95FE-2B574912B54E)
+DeclareInterface(TsPropsFactory, Unknown, FF3D947F-1D35-487B-A769-5B6C68722054)
 {
-	HRESULT DeserializeProps(
-		[in] IStream * pstrm,
-		[out, retval] ITsTextProps ** ppttp);
-	HRESULT DeserializePropsRgb(
-		[in, size_is(*pcb)] const BYTE * prgb,
-		[in, out] int * pcb,
-		[out, retval] ITsTextProps ** ppttp);
-	// Create a set of TsTextProps from the string. DOES NOT create a separate object for
-	// runs that have duplicate properties; the return array will point to duplicate copies
-	// of the TsTextProps.
-	HRESULT DeserializeRgPropsRgb(
-		[in] int cpttpMax,
-		[in, size_is(*pcb)] const BYTE * prgb,
-		[in, out] int * pcb,
-		[out] int * pcpttpRet,
-		[out, size_is(cpttpMax)] ITsTextProps ** rgpttp,
-		[out, size_is(cpttpMax)] int * rgich);
-
 	// Creates a property object containing ws writing system, ows old writing system, and a character
 	// style (kstpCharStyle) value passed as a BSTR.  The ws value may be zero which means
 	// no writing system is specified.  bstrStyle may be NULL.  If ws is zero, ows must also be zero.
@@ -1144,7 +987,7 @@ DeclareInterface(TsPropsFactory, Unknown, 8DCE56A6-CFF1-4402-95FE-2B574912B54E)
 ----------------------------------------------------------------------------------------------*/
 // REVIEW: ShonK, JeffG(JeffG): Should TsStrBldr derive off of TsStrBase?  and
 // Should Strbuilder(s) accept TsPropsBldrs
-DeclareInterface(TsStrBldr, Unknown, F1EF76E6-BE04-11d3-8D9A-005004DEFEC4)
+DeclareInterface(TsStrBldr, Unknown, 71D84C4A-10A2-4A7C-B58C-D01386DAE5F7)
 {
 	// With the exception of the Replace*, PushEcoding, GetString methods, all other methods are
 	// the same as the methods with the same names found on ITsString. Please refer to ITsString
@@ -1252,16 +1095,6 @@ DeclareInterface(TsStrBldr, Unknown, F1EF76E6-BE04-11d3-8D9A-005004DEFEC4)
 
 	HRESULT Clear(
 		);
-
-	// Serialization.
-	HRESULT GetBldrClsid(
-		[out, retval] CLSID * pclsid);
-	HRESULT SerializeFmt(
-		[in] IStream * pstrm);
-	HRESULT SerializeFmtRgb(
-		[out, size_is(cbMax)] BYTE * prgb,
-		[in] int cbMax,
-		[out, retval] int * pcbNeeded);
 };
 
 
@@ -1275,7 +1108,7 @@ DeclareInterface(TsStrBldr, Unknown, F1EF76E6-BE04-11d3-8D9A-005004DEFEC4)
 	An ITsString object and be created by calling GetString.
 	Hungarian: tisb
 ----------------------------------------------------------------------------------------------*/
-DeclareInterface(TsIncStrBldr, Unknown, F1EF76E7-BE04-11d3-8D9A-005004DEFEC4)
+DeclareInterface(TsIncStrBldr, Unknown, 87ECD3CD-6011-485F-8651-DBA0B79245AF)
 {
 	// Fetch the raw text.
 	[propget, id(0)] HRESULT Text(
@@ -1315,15 +1148,6 @@ DeclareInterface(TsIncStrBldr, Unknown, F1EF76E7-BE04-11d3-8D9A-005004DEFEC4)
 	HRESULT Clear(
 		);
 
-	// Serialization.
-	HRESULT GetIncBldrClsid(
-		[out, retval] CLSID * pclsid);
-	HRESULT SerializeFmt(
-		[in] IStream * pstrm);
-	HRESULT SerializeFmtRgb(
-		[out, size_is(cbMax)] BYTE * prgb,
-		[in] int cbMax,
-		[out, retval] int * pcbNeeded);
 	// Set a string property by passing a byte array and length.
 	// In some cases easier to use from C#.
 	HRESULT SetStrPropValueRgch(
@@ -1349,13 +1173,13 @@ DeclareInterface(TsPropsBldr, Unknown, F1EF76E8-BE04-11d3-8D9A-005004DEFEC4)
 		[in] int iv,
 		[out] int * ptpt,
 		[out] int * pnVar,
-		[out] int * pnVal);
+		[out, retval] int * pnVal);
 	// Fetch the variation and value of an integer property.  If an invalid tpt value is passed,
 	// return S_FALSE and set both *pnVar and *pnVal to -1.
 	HRESULT GetIntPropValues(
 		[in] int tpt,
 		[out] int * pnVar,
-		[out] int * pnVal);
+		[out, retval] int * pnVal);
 
 	// Fetch the number of string properties.
 	[propget] HRESULT StrPropCount(
@@ -1364,12 +1188,12 @@ DeclareInterface(TsPropsBldr, Unknown, F1EF76E8-BE04-11d3-8D9A-005004DEFEC4)
 	HRESULT GetStrProp(
 		[in] int iv,
 		[out] int * ptpt,
-		[out] BSTR * pbstrVal);
+		[out, retval] BSTR * pbstrVal);
 	// Fetch the value of a string property.  If an invalid tpt value is passed, return S_FALSE
 	// and set *pbstrVal to NULL.
 	HRESULT GetStrPropValue(
 		[in] int tpt,
-		[out] BSTR * pbstrVal);
+		[out, retval] BSTR * pbstrVal);
 
 
 	// Set an integer property.  If nVar and nVal are -1, the integer property is deleted.
@@ -1434,43 +1258,205 @@ DeclareInterface(TsMultiString, Unknown, DD409520-C212-11d3-9BB7-00400541F9E9)
 		[in] ITsString * ptss);
 };
 
-/***********************************************************************************************
-	CoClass definitions.
-***********************************************************************************************/
-#ifndef NO_COCLASSES
-DeclareCoClass(TsStrFactory, F1EF76E9-BE04-11d3-8D9A-005004DEFEC4)
+// A style may be one of two possible style types - Paragraph or Character.
+typedef [v1_enum] enum StyleType
 {
-	interface ITsStrFactory;
-	interface IMarshal;
-};
+	kstParagraph = 0,
+	kstCharacter,
+	kstLim
+} StyleType;
 
+// Possible values of the ktptBulNumScheme property. See the ${VwStyleProperty}
+// enumeration. Members of the enumeration can specify a particular style for
+// numbering paragraphs, or one of the standard FieldWorks bullets.
+typedef [v1_enum] enum VwBulNum {
+	kvbnNone = 0,
+	kvbnNumberBase = 10,	// Number styles
+	kvbnArabic = kvbnNumberBase,
+	kvbnRomanUpper,
+	kvbnRomanLower,
+	kvbnLetterUpper,
+	kvbnLetterLower,
+	kvbnArabic01,
+	kvbnNumberMax,
+	// Make no attempt to give names to all the bullets.  Just identify them with
+	// kvbnBulletBase + x, where x is the kctidFbnCbBullet combo-box selection.
+	kvbnBulletBase = 100,	// Bullets.
+	kvbnBullet = kvbnBulletBase,
+	kvbnBulletMax = kvbnBulletBase + 100 // allow up to 100 bullet types
+} VwBulNum; // Hungarian vbn
 
-DeclareCoClass(TsPropsFactory, F1EF76EA-BE04-11d3-8D9A-005004DEFEC4)
+/*******************************************************************************************
+	Interface IVwStylesheet
+	Represents a style sheet expressed as a collection of named TsTextProps objects.
+
+	@h3{When to implement}
+	Usually you will use a standard implementation. It may be useful to make your own
+	subclass of ${AfStyleSheet}, with a custom data source. Or, you could make your own if
+	you want a completely different way of managing styles.
+
+	@h3{When to use}
+	The main use is to pass as an argument to ${IVwRootBox#SetRootObjects}, thus specifying
+	what named styles mean within a particular view.
+
+	@h3{How to obtain an instance}
+	Use NewObj on ${AfStyleSheet} (or a subclass). A common case is to create an
+	${AfDbStylesheet} and initialize it with the information in the database about the
+	stylesheet for a particular language project.
+
+	@h3{Hungarian: vss}
+*******************************************************************************************/
+DeclareInterface(VwStylesheet, Unknown, D77C0DBC-C7BC-441d-9587-1E3664E1BCD3)
 {
-	interface ITsPropsFactory;
-	interface IMarshal;
+	// Gets the name of the default paragraph style to use as the base for new styles
+	// (Usually "Normal")
+	HRESULT GetDefaultBasedOnStyleName(
+		[out, retval] BSTR * pbstrNormal);
+
+	// Gets the style name that is the default style to use for the given context
+	HRESULT GetDefaultStyleForContext(
+		[in] int nContext,
+		[in] ComBool fCharStyle,
+		[out, retval] BSTR * pbstrStyleName);
+
+	// Put the DEFINITION of a style--that is, the properties that are explicitly set
+	// for this style, excluding inherited items.
+	HRESULT PutStyle(
+		[in] BSTR bstrName,
+		[in] BSTR bstrUsage,
+		[in] HVO hvoStyle,
+		[in] HVO hvoBasedOn,
+		[in] HVO hvoNext,
+		[in] int nType,
+		[in] ComBool fBuiltIn,
+		[in] ComBool fModified,
+		[in] ITsTextProps * pttp);
+	//:> ENHANCE EberhardB: Add parameter for usage
+
+	// Retrieve the EFFECT of a style--that is, the net effect of the named style
+	// and everything it inherits from. (That is, all the modifications they make
+	// to the overall system defaults--it does not have to include every possible property.)
+	// If there is no such name recored, set ppttp to NULL and return S_FALSE.
+	// Comparisons are case sensitive (A != a).
+	HRESULT GetStyleRgch(
+		[in] int cch,
+		[in, size_is(cch)] OLECHAR * prgchName,
+		[out, retval] ITsTextProps ** ppttp);
+
+	// Retrieve the name of the style that should be applied to the next paragraph,
+	// if Enter is pressed when the selection is an IP at the end of a paragraph
+	// that has the named paragraph style bstrName.
+	// @error E_INVALIDARG if the name is not the name of a valid style.
+	HRESULT GetNextStyle(
+		[in] BSTR bstrName,
+		[out, retval] BSTR * pbstrNext);
+	// Retrieve the name of the style on which bstrName is based.
+	// @error E_INVALIDARG if the name is not the name of a valid style.
+	HRESULT GetBasedOn(
+		[in] BSTR bstrName,
+		[out, retval] BSTR * pbstrBasedOn);
+	// Retrieve information about whether bstrName is a character or paragraph style.
+	// The result is a member of the ${StyleType} enumeration (this should probably
+	// be moved to this IDH file?), that is, kstParagraph or kstCharacter.
+	// We could have used a boolean, but were not entirely sure we would never have
+	// more types. Also,the enumeration makes it clear what each means.
+	// @error E_INVALIDARG if the name is not the name of a valid style.
+	HRESULT GetType(
+		[in] BSTR bstrName,
+		[out, retval] int * pnType);
+
+	// Retrieve the "context" of the style.
+	// The result is a context, the meaning of whose value is application-specific.
+	// Context 0 means general, or undefined.
+	// @error E_INVALIDARG if the name is not the name of a valid style.
+	HRESULT GetContext(
+		[in] BSTR bstrName,
+		[out, retval] int * pnContext);
+
+	// Sets the pfBuiltIn parameter to true if the style is a predefined style
+	// @error E_INVALIDARG if the name is not the name of a valid style.
+	HRESULT IsBuiltIn(
+		[in] BSTR bstrName,
+		[out, retval] ComBool * pfBuiltIn);
+
+	// Sets the pfModified parameter to true if the (built-in) style was modified by the user
+	// @error E_INVALIDARG if the name is not the name of a valid style.
+	HRESULT IsModified(
+		[in] BSTR bstrName,
+		[out, retval] ComBool * pfModified);
+
+	// ENHANCE EberhardB: Add method for usage
+
+	// Return the associated Data Access object in which the style definitions are stored.
+	// ENHANCE JohnT: get rid of this! It is currently needed in practice, but has no good
+	// place in this interface. An IVwStyleSheet does not HAVE to be stored in an ISilDataAccess.
+	[propget] HRESULT DataAccess(
+		[out, retval] ISilDataAccess ** ppsda);
+
+	// Return an HVO for a newly created style.
+	HRESULT MakeNewStyle(
+		[out, retval] HVO * phvoNewStyle);
+
+	// Remove style.
+	HRESULT Delete(
+		[in] HVO hvoStyle);
+	// Get the total number of styles in the style sheet.
+	[propget] HRESULT CStyles(
+		[out, retval] int * pcttp);
+	// Get the HVO of the Nth style (in an arbitrary order).
+	[propget] HRESULT NthStyle(
+		[in] int ihvo,
+		[out, retval] HVO * phvo);
+
+	// Get the Name of the Nth style (in an arbitrary order).
+	[propget] HRESULT NthStyleName(
+		[in] int ihvo,
+		[out, retval] BSTR * pbstrStyleName);
+
+	// A special style that contains only the parts of "Normal" that relate to the Font tab.
+	// This is automatically maintained as "Normal" is edited.  If there is no "Normal" style,
+	// sets *ppttp to NULL. This is not currently considered an error.
+	[propget] HRESULT NormalFontStyle(
+		[out, retval] ITsTextProps ** ppttp);
+
+	// Return true if the given style is one that is protected within the style sheet.
+	[propget] HRESULT IsStyleProtected(
+		[in] BSTR bstrName,
+		[out, retval] ComBool * pfProtected);
+
+	// Cache a new value for the properties of the specified style, without writing it
+	// out anywhere or marking the style as 'dirty'. This is typically used when making
+	// explicit the implicit default values of 'Normal', which should not lead to an
+	// undoable action.
+	HRESULT CacheProps(
+		[in] int cch,
+		[in, size_is(cch)] OLECHAR * prgchName,
+		[in] HVO hvoStyle,
+		[in] ITsTextProps * pttp);
+
+
+	// ENHANCE JohnT: add the following:
+#if 0
+	// ENHANCE JohnT: we probably also need a method to retrieve a style defn.
+
+	// Put the DEFINITION of a style--that is, the properties that are explicitly set
+	// for this style, excluding inherited items.
+	[propput] HRESULT Style(
+		[in] BSTR bstrName,
+		[in] ITsTextProps * pttp);
+	// Retrieve the EFFECT of a style--that is, the net effect of the named style
+	// and everything it inherits from. (That is, all the modifications they make
+	// to the overall system defaults--it does not have to include every possible property.)
+	[propget] HRESULT Style(
+		[in] BSTR bstrName,
+		[out, retval] ITsTextProps ** ppttp);
+	// Retrieve all styles
+	HRESULT GetStyle(
+		[in] int ittp,
+		[out] BSTR * pbstrName,
+		[out] ITsTextProps ** ppttp);
+	// Remove style
+	HRESULT Delete(
+		[in] BSTR bstrName);
+#endif
 };
-
-
-DeclareCoClass(TsStrBldr, F1EF76EB-BE04-11d3-8D9A-005004DEFEC4)
-{
-	interface ITsStrBldr;
-};
-
-
-DeclareCoClass(TsIncStrBldr, F1EF76EC-BE04-11d3-8D9A-005004DEFEC4)
-{
-	interface ITsIncStrBldr;
-};
-
-
-DeclareCoClass(TsPropsBldr, F1EF76ED-BE04-11d3-8D9A-005004DEFEC4)
-{
-	interface ITsPropsBldr;
-};
-
-DeclareCoClass(TsMultiString, 7A1B89C0-C2D6-11d3-9BB7-00400541F9E9)
-{
-	interface ITsMultiString;
-};
-#endif // !NO_COCLASSES

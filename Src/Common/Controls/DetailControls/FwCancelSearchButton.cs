@@ -28,6 +28,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			m_searchInactiveImage = FieldWorks.Resources.Images.Search;
 		}
 
+		protected override void Dispose(bool disposing)
+		{
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
+			base.Dispose(disposing);
+		}
+
 		public void Init()
 		{
 			SearchIsActive = false;

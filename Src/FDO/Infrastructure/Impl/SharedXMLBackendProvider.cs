@@ -276,8 +276,6 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			m_commitLog = CreateOrOpen(CommitLogName, m_settings.SharedXMLBackendCommitLogSize, createdNew);
 		}
 
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification = "An actual file is passed into MemoryMappedFile.CreateOrOpen")]
 		private MemoryMappedFile CreateOrOpen(string name, long capacity, bool createdNew)
 		{
 #if __MonoCS__
@@ -292,15 +290,15 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 				using (var fs = new FileStream(name, FileMode.CreateNew))
 					fs.SetLength(capacity);
 			}
-#endif
+			return MemoryMappedFile.CreateFromFile(name);
+#else
 			return MemoryMappedFile.CreateOrOpen(name, capacity);
+#endif
 		}
 
 		/// <summary>
 		/// Checks for peer processes that have exited unexpectedly and update the metadata accordingly.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "The process is disposed later.")]
 		private bool CheckExitedPeerProcesses(CommitLogMetadata metadata)
 		{
 			bool changed = false;

@@ -62,5 +62,28 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				}
 			}
 		}
+
+		/// <summary> 
+		/// Clean up any resources being used.
+		/// </summary>
+		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+		protected override void Dispose(bool disposing)
+		{
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+
+			if (disposing)
+			{
+				if (m_paneBar != null)
+				{
+					var pbAsControl = m_paneBar as Control;
+					pbAsControl?.Dispose();
+				}
+			}
+
+			m_paneBar = null;
+			PropertyTable = null;
+
+			base.Dispose(disposing);
+		}
 	}
 }

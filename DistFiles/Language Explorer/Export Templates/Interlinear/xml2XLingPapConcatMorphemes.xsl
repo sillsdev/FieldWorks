@@ -100,7 +100,7 @@
 <!--                </xsl:if>-->
 			</xsl:for-each>
 		</xsl:variable>
-		<interlinear text="T-{$sThisTextId}-{$sLevel}" textref="T-{$sThisTextId}-{$sLevel}">
+		<interlinear text="T-ID{$sThisTextId}-{$sLevel}" textref="T-ID{$sThisTextId}-{$sLevel}">
 			<xsl:call-template name="OutputInterlinearContent"/>
 		</interlinear>
 	</xsl:template>

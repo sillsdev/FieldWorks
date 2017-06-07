@@ -5,7 +5,7 @@
 using System.Windows.Forms;
 using NUnit.Framework;
 using SIL.FieldWorks.CacheLight;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
@@ -105,7 +105,6 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		{
 			base.TestSetup();
 			m_basicView.AutoScroll = true;
-			m_basicView.Visible = true;
 
 			ClipboardUtils.Manager.SetClipboardAdapter(new ClipboardStub());
 		}

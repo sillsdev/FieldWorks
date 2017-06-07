@@ -15,16 +15,18 @@ using System.IO;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.Cellar;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
 using SIL.WritingSystems;
+using SIL.Xml;
 using WaitCursor = SIL.FieldWorks.Common.FwUtils.WaitCursor;
 
 namespace SIL.FieldWorks.XWorks
@@ -328,7 +330,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				if (m_tssSpace == null)
 				{
-					ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
+					ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 					tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, m_cache.DefaultAnalWs);
 					tisb.Append(" ");
 					m_tssSpace = tisb.GetString();
@@ -344,7 +346,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				if (m_tssCommaSpace == null)
 				{
-					ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
+					ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 					tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, m_cache.DefaultAnalWs);
 					tisb.Append(", ");
 					m_tssCommaSpace = tisb.GetString();

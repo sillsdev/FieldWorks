@@ -1,22 +1,26 @@
-﻿// This really needs to be refactored with MasterCategoryListDlg.cs
+﻿// Copyright (c) 2017 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
+// This really needs to be refactored with MasterCategoryListDlg.cs
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.Cellar;
+using SIL.CoreImpl.Text;
 using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.Utils;
 using SIL.Windows.Forms;
 
 namespace SIL.FieldWorks.LexText.Controls
@@ -28,7 +32,7 @@ namespace SIL.FieldWorks.LexText.Controls
 	/// A user may choose the "<n/a>" option to remove a feature/value pair from an existing feature structure.
 	/// If returns a feature structure with the selected feature/value pairs.
 	/// </summary>
-	public class PhonologicalFeatureChooserDlg : Form, IFWDisposable
+	public class PhonologicalFeatureChooserDlg : Form
 	{
 		private IPropertyTable m_propertyTable;
 		private IPublisher m_publisher;
@@ -547,7 +551,7 @@ namespace SIL.FieldWorks.LexText.Controls
 						m_sda.SetObjProp(feat.Hvo, PhonologicalFeaturePublisher.ValueFlid, closedValue.ValueRA.Hvo);
 					}
 					else
-					{  
+					{
 						if (m_ctxt != null && ShowFeatureConstraintValues)
 						{
 							string str;
@@ -689,8 +693,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification = "TODO-Linux: LinkLabel.TabStop is missing from Mono")]
 		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PhonologicalFeatureChooserDlg));
@@ -869,8 +871,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_helpTopic);
 		}
 
-		[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-			Justification="m_cache is a reference and will be disposed in parent class")]
 		class PhonologicalFeaturePublisher : ObjectListPublisher
 		{
 			public const int ListFlid = 89999988;
@@ -940,7 +940,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					string str;
 					if (!m_unicodeProps.TryGetValue(hvo, out str))
 						str = "";
-					var tssString = m_cache.TsStrFactory.MakeString(str, m_cache.DefaultUserWs);
+					var tssString = TsStringUtils.MakeString(str, m_cache.DefaultUserWs);
 
 					return tssString;
 				}
@@ -973,7 +973,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				public override int GetFieldId(string bstrClassName, string bstrFieldName, bool fIncludeBaseClasses)
 				{
 					if (bstrClassName == "FsClosedFeature" && bstrFieldName == "DummyPolarity")
-						return PolarityFlid; 
+						return PolarityFlid;
 					if (bstrClassName == "FsClosedFeature" && bstrFieldName == "DummyValue")
 						return ValueFlid;
 					return base.GetFieldId(bstrClassName, bstrFieldName, fIncludeBaseClasses);

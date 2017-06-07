@@ -58,7 +58,7 @@
 		<part id="RnGenericRec-Detail-AnthroCodes" type="Detail">
 			<slice field="AnthroCodes" label="Anthropology Categories" editor="possVectorReference" menu="mnuDataTree-Help">
 				<deParams ws="best analysis" displayProperty="AbbrAndNameTSS"/>
-				<chooserInfo helpBrowser="true">
+				<chooserInfo helpBrowser="false">
 					<!-- Duplicates info in Text-Detail-NotebookFields-->
 					<chooserLink type="goto" label="Edit the Anthropology Categories" tool="anthroEdit" />
 				</chooserInfo>

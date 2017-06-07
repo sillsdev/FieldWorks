@@ -1,18 +1,15 @@
-// Copyright (c) 2014-2015 SIL International
+// Copyright (c) 2014-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.Test.TestUtils;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
@@ -23,7 +20,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
-	public sealed class BEPPortTests: BaseTest
+	public sealed class BEPPortTests
 	{
 		/// <summary>Random number generator to prevent filename conflicts</summary>
 		private readonly Random m_random;
@@ -93,23 +90,33 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 		/// <summary>
 		/// Wipe out the current BEP's file(s), since it is about to be created ex-nihilo.
 		/// </summary>
-		/// <param name="backendParameters"></param>
-		private static void DeleteDatabase(BackendStartupParameter backendParameters)
+		private static void DeleteDatabase(BackendStartupParameter backendParameters, bool assertThatDbWasDeleted = true)
 		{
 			string pathname = string.Empty;
 			if(backendParameters.ProjectId.Type != FDOBackendProviderType.kMemoryOnly)
 				pathname = backendParameters.ProjectId.Path;
 			if(backendParameters.ProjectId.Type != FDOBackendProviderType.kMemoryOnly &&
-			File.Exists(pathname))
+				File.Exists(pathname))
 			{
-				File.Delete(pathname);
-				//The File.Delete command returns before the OS has actually removed the file,
-				//this causes re-creation of the file to fail intermittently so we'll wait a bit for it to be gone.
-				for(var i = 0; File.Exists(pathname) && i < 5; ++i)
+				try
 				{
-					Thread.Sleep(10);
+					File.Delete(pathname);
+					//The File.Delete command returns before the OS has actually removed the file,
+					//this causes re-creation of the file to fail intermittently so we'll wait a bit for it to be gone.
+					for (var i = 0; File.Exists(pathname) && i < 5; ++i)
+					{
+						Thread.Sleep(10);
+					}
 				}
-				Assert.That(!File.Exists(pathname), "Database file failed to be deleted.");
+				catch (IOException)
+				{
+					// Don't crash, fail the assert if we couldn't delete the file
+				}
+				// We want to assert during the setup of test conditions because the test isn't valid if we don't start clean
+				// If we fail to delete the files after the test (beause the OS hangs on to the handle too long for instance)
+				//  this is not cause to fail the test.
+				if (assertThatDbWasDeleted)
+					Assert.That(!File.Exists(pathname), "Database file failed to be deleted.");
 			}
 		}
 
@@ -126,8 +133,6 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 		/// </summary>
 		[Test]
 		[Combinatorial]
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "source/targetDataSetup are singletons; disposed by service locator")]
 		public void PortAllBEPsTestsUsingAnAlreadyOpenedSource(
 			[Values(FDOBackendProviderType.kXML, FDOBackendProviderType.kMemoryOnly)]
 			FDOBackendProviderType sourceType,
@@ -137,13 +142,15 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 			var sourceBackendStartupParameters = GenerateBackendStartupParameters(false, sourceType);
 			var targetBackendStartupParameters = GenerateBackendStartupParameters(true, targetType);
 
+			// Make sure we start from a clean slate
 			DeleteDatabase(sourceBackendStartupParameters);
 
 			// Set up data source, but only do it once.
 			var sourceGuids = new List<Guid>();
-			using (var sourceCache = FdoCache.CreateCacheWithNewBlankLangProj(
-				new TestProjectId(sourceBackendStartupParameters.ProjectId.Type,
-								sourceBackendStartupParameters.ProjectId.Path), "en", "fr", "en", new DummyFdoUI(), FwDirectoryFinder.FdoDirectories, new FdoSettings()))
+			var sourceProjectId = new TestProjectId(sourceBackendStartupParameters.ProjectId.Type,
+				sourceBackendStartupParameters.ProjectId.Path);
+			using (var sourceCache = FdoCache.CreateCacheWithNewBlankLangProj(sourceProjectId, "en", "fr", "en", new DummyFdoUI(),
+				TestDirectoryFinder.FdoDirectories, new FdoSettings()))
 			{
 				// BEP is a singleton, so we shouldn't call Dispose on it. This will be done
 				// by service locator.
@@ -155,9 +162,10 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 				DeleteDatabase(targetBackendStartupParameters);
 
 				// Migrate source data to new BEP.
-				using (var targetCache = FdoCache.CreateCacheCopy(
-					new TestProjectId(targetBackendStartupParameters.ProjectId.Type,
-									targetBackendStartupParameters.ProjectId.Path), "en", new DummyFdoUI(), FwDirectoryFinder.FdoDirectories, new FdoSettings(), sourceCache))
+				var targetProjectId = new TestProjectId(targetBackendStartupParameters.ProjectId.Type,
+					targetBackendStartupParameters.ProjectId.Path);
+				using (var targetCache = FdoCache.CreateCacheCopy(targetProjectId, "en", new DummyFdoUI(),
+					TestDirectoryFinder.FdoDirectories, new FdoSettings(), sourceCache))
 				{
 					// BEP is a singleton, so we shouldn't call Dispose on it. This will be done
 					// by service locator.
@@ -167,6 +175,9 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 					CompareResults(sourceGuids, targetCache);
 				}
 			}
+			// Try to clean up after ourselves
+			DeleteDatabase(sourceBackendStartupParameters, false);
+			DeleteDatabase(targetBackendStartupParameters, false);
 		}
 
 		/// <summary>
@@ -184,8 +195,6 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 		/// all targets.</remarks>
 		[Test]
 		[Combinatorial]
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "source/targetDataSetup are singletons; disposed by service locator")]
 		public void PortAllBEPsTestsUsingAnUnopenedSource(
 			[Values(FDOBackendProviderType.kXML)]
 			FDOBackendProviderType sourceType,
@@ -200,14 +209,15 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 
 			var sourceGuids = new List<Guid>();
 
+			// Make sure we start from a clean slate
 			DeleteDatabase(sourceBackendStartupParameters);
 			DeleteDatabase(targetBackendStartupParameters);
 
 			// Set up data source
-			var projId = new TestProjectId(sourceBackendStartupParameters.ProjectId.Type,
-													sourceBackendStartupParameters.ProjectId.Path);
-			using (FdoCache sourceCache = FdoCache.CreateCacheWithNewBlankLangProj(
-				projId, "en", "fr", "en", new DummyFdoUI(), FwDirectoryFinder.FdoDirectories, new FdoSettings()))
+			var sourceProjectId = new TestProjectId(sourceBackendStartupParameters.ProjectId.Type,
+				sourceBackendStartupParameters.ProjectId.Path);
+			using (FdoCache sourceCache = FdoCache.CreateCacheWithNewBlankLangProj(sourceProjectId, "en", "fr", "en", new DummyFdoUI(),
+				TestDirectoryFinder.FdoDirectories, new FdoSettings()))
 			{
 				// BEP is a singleton, so we shouldn't call Dispose on it. This will be done
 				// by service locator.
@@ -219,18 +229,22 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 
 			// Migrate source data to new BEP.
 			IThreadedProgress progressDlg = new DummyProgressDlg();
-			using (var targetCache = FdoCache.CreateCacheWithNoLangProj(
-				new TestProjectId(targetBackendStartupParameters.ProjectId.Type, null), "en", new DummyFdoUI(), FwDirectoryFinder.FdoDirectories, new FdoSettings()))
+			var targetProjectId = new TestProjectId(targetBackendStartupParameters.ProjectId.Type, null);
+			using (var targetCache = FdoCache.CreateCacheWithNoLangProj(targetProjectId, "en", new DummyFdoUI(),
+				TestDirectoryFinder.FdoDirectories, new FdoSettings()))
 			{
 				// BEP is a singleton, so we shouldn't call Dispose on it. This will be done
 				// by service locator.
 				var targetDataSetup = GetMainBEPInterface(targetCache);
 				targetDataSetup.InitializeFromSource(new TestProjectId(targetBackendStartupParameters.ProjectId.Type,
-																		targetBackendStartupParameters.ProjectId.Path), sourceBackendStartupParameters, "en", progressDlg);
+					targetBackendStartupParameters.ProjectId.Path), sourceBackendStartupParameters, "en", progressDlg);
 				targetDataSetup.LoadDomain(BackendBulkLoadDomain.All);
 				CompareResults(sourceGuids, targetCache);
 			}
 			sourceGuids.Clear();
+			// Try to clean up after ourselves
+			DeleteDatabase(sourceBackendStartupParameters, false);
+			DeleteDatabase(targetBackendStartupParameters, false);
 		}
 		#endregion
 	}

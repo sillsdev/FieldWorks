@@ -1,9 +1,7 @@
-// Copyright (c) 2003-2014 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: BaseGoDlg.cs
-// Responsibility: Randy Regnier
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -11,19 +9,20 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Resources;
-using SIL.Utils;
 using SIL.Windows.Forms;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
 	/// <summary/>
-	public class BaseGoDlg : Form, IFWDisposable
+	public class BaseGoDlg : Form
 	{
 		#region	Data members
 
@@ -32,7 +31,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		protected ICmObject m_selObject;
 		protected HashSet<int> m_vernHvos;
 		protected HashSet<int> m_analHvos;
-		protected ITsStrFactory m_tsf;
 		/// <summary />
 		protected IPropertyTable m_propertyTable;
 		/// <summary />
@@ -210,7 +208,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 			}
 			m_cache = null;
-			m_tsf = null;
 
 			base.Dispose(disposing);
 		}
@@ -234,7 +231,6 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			Debug.Assert(cache != null);
 			m_cache = cache;
-			m_tsf = cache.TsStrFactory; // do this very early, other initializers may depend on it.
 
 			m_propertyTable = propertyTable;
 			m_publisher = publisher;
@@ -281,7 +277,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_tbForm.WritingSystemFactory = cache.WritingSystemFactory;
 			m_tbForm.WritingSystemCode = ws;
 			m_tbForm.AdjustStringHeight = false;
-			m_tbForm.Tss = m_tsf.MakeString("", ws);
+			m_tbForm.Tss = TsStringUtils.EmptyString(ws);
 			m_tbForm.StyleSheet = stylesheet;
 
 			// Setup the fancy message text box.
@@ -579,7 +575,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		protected void ResetForm()
 		{
-			m_tbForm.Tss = m_tsf.MakeString("", m_tbForm.WritingSystemCode);
+			m_tbForm.Tss = TsStringUtils.EmptyString(m_tbForm.WritingSystemCode);
 			m_tbForm.Select();
 		}
 

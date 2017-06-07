@@ -1,19 +1,12 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: RecordEditView.cs
-// Responsibility:
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
+
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing.Printing;
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
@@ -21,11 +14,12 @@ using System.Collections.Generic;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using System.Diagnostics.CodeAnalysis;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Framework;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.Xml;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -83,8 +77,6 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Initializes a new instance of the <see cref="RecordEditView"/> class.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "DataTree gets disposed in Dispose()")]
 		public RecordEditView(XElement configurationParametersElement, XDocument sliceFilterDocument, RecordClerk recordClerk, DTMenuHandler dataTreeMenuHandler)
 			: this(configurationParametersElement, sliceFilterDocument, recordClerk, dataTreeMenuHandler, new DataTree())
 		{
@@ -93,15 +85,11 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Initializes a new instance of the <see cref="RecordEditView"/> class.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "DataTree gets disposed in Dispose()")]
 		public RecordEditView(XElement configurationParametersElement, XDocument sliceFilterDocument, RecordClerk recordClerk)
 			: this(configurationParametersElement, sliceFilterDocument, recordClerk, new DTMenuHandler(), new DataTree())
 		{
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "DataTree gets disposed in Dispose()")]
 		protected RecordEditView(XElement configurationParametersElement, XDocument sliceFilterDocument, RecordClerk recordClerk, DTMenuHandler dataTreeMenuHandler, DataTree dataEntryForm)
 			: base(configurationParametersElement, recordClerk)
 		{
@@ -347,20 +335,17 @@ namespace SIL.FieldWorks.XWorks
 			try
 			{
 				m_dataEntryForm.Show();
-				using (new WaitCursor(this))
+				// Enhance: Maybe do something here to allow changing the templates without the starting the application.
+				ICmObject obj = Clerk.CurrentObject;
+
+				if (m_showDescendantInRoot)
 				{
-					// Enhance: Maybe do something here to allow changing the templates without the starting the application.
-					ICmObject obj = Clerk.CurrentObject;
-
-					if (m_showDescendantInRoot)
-					{
-						// find the root object of the current object
-						while (obj.Owner != Clerk.OwningObject)
-							obj = obj.Owner;
-					}
-
-					m_dataEntryForm.ShowObject(obj, m_layoutName, m_layoutChoiceField, Clerk.CurrentObject, ShouldSuppressFocusChange(rni));
+					// find the root object of the current object
+					while (obj.Owner != Clerk.OwningObject)
+						obj = obj.Owner;
 				}
+
+				m_dataEntryForm.ShowObject(obj, m_layoutName, m_layoutChoiceField, Clerk.CurrentObject, ShouldSuppressFocusChange(rni));
 			}
 			catch (Exception error)
 			{
@@ -405,13 +390,13 @@ namespace SIL.FieldWorks.XWorks
 
 			m_layoutName = XmlUtils.GetOptionalAttributeValue(m_configurationParametersElement, "layout");
 			m_layoutChoiceField = XmlUtils.GetOptionalAttributeValue(m_configurationParametersElement, "layoutChoiceField");
-			m_titleField = XmlUtils.GetAttributeValue(m_configurationParametersElement, "titleField");
+			m_titleField = XmlUtils.GetOptionalAttributeValue(m_configurationParametersElement, "titleField");
 			if (!string.IsNullOrEmpty(m_titleField))
 				Cache.DomainDataByFlid.AddNotification(this);
-			string titleId = XmlUtils.GetAttributeValue(m_configurationParametersElement, "altTitleId");
+			string titleId = XmlUtils.GetOptionalAttributeValue(m_configurationParametersElement, "altTitleId");
 			if (titleId != null)
 				m_titleStr = StringTable.Table.GetString(titleId, "AlternativeTitles");
-			m_printLayout = XmlUtils.GetAttributeValue(m_configurationParametersElement, "printLayout");
+			m_printLayout = XmlUtils.GetOptionalAttributeValue(m_configurationParametersElement, "printLayout");
 		}
 
 		protected override void SetupDataContext()

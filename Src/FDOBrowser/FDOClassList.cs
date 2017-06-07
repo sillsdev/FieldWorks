@@ -11,7 +11,6 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FDO;
 using System.IO;
-using SIL.Utils;
 
 namespace FDOBrowser
 {

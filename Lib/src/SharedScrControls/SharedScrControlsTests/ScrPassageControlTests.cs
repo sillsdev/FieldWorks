@@ -1,16 +1,12 @@
-// --------------------------------------------------------------------------------------------
-// Copyright (c) 2011-2015 SIL International
+// Copyright (c) 2011-2016 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ScrPassageControlTest.cs
-// --------------------------------------------------------------------------------------------
+
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 
 using NUnit.Framework;
-using SILUBS.SharedScrUtils;
+using SIL.CoreImpl.Scripture;
 
 namespace SILUBS.SharedScrControls
 {
@@ -223,9 +219,6 @@ namespace SILUBS.SharedScrControls
 	/// Tests the Scripture Passage Control
 	/// </summary>
 	[TestFixture]
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification="Unit test - m_ctrlOwner gets disposed in TestTearDown(), m_scp and " +
-		"m_filteredScp get added to m_ctrlOwner.Controls collection")]
 	public class ScrPassageControlTest
 	{
 		private Form m_ctrlOwner;

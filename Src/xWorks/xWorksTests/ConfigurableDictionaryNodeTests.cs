@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
+using System.Linq;
 using NUnit.Framework;
 // ReSharper disable InconsistentNaming
 
@@ -14,7 +15,7 @@ namespace SIL.FieldWorks.XWorks
 		public void ChildlessCanDeepClone()
 		{
 			var parent = new ConfigurableDictionaryNode();
-			var child = new ConfigurableDictionaryNode { After = "after", IsEnabled = true, SubField = "sub", IsCustomField = true, Parent = parent };
+			var child = new ConfigurableDictionaryNode { After = "after", IsEnabled = true, SubField = "sub", IsCustomField = true, HideCustomFields = true, Parent = parent };
 			parent.Children = new List<ConfigurableDictionaryNode> { child };
 			// SUT
 			var clone = child.DeepCloneUnderSameParent();
@@ -39,7 +40,6 @@ namespace SIL.FieldWorks.XWorks
 
 		private static void VerifyDuplication(ConfigurableDictionaryNode clone, ConfigurableDictionaryNode node)
 		{
-			Assert.That(clone.Parent, Is.EqualTo(node.Parent));
 			Assert.That(clone.Parent, Is.SameAs(node.Parent));
 			VerifyDuplicationInner(clone, node);
 		}
@@ -56,6 +56,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(clone.ReferenceItem, Is.EqualTo(node.ReferenceItem));
 			Assert.That(clone.IsEnabled, Is.EqualTo(node.IsEnabled));
 			Assert.That(clone.IsCustomField, Is.EqualTo(node.IsCustomField));
+			Assert.That(clone.HideCustomFields, Is.EqualTo(node.HideCustomFields));
 			Assert.That(clone.Label, Is.EqualTo(node.Label));
 			// Intentionally-omitted fields: IsDuplicate, LabelSuffix
 
@@ -105,11 +106,11 @@ namespace SIL.FieldWorks.XWorks
 		public void DuplicateIsPutAmongSiblings()
 		{
 			var parent = new ConfigurableDictionaryNode();
-			var childA = new ConfigurableDictionaryNode() { After = "after", IsEnabled = true, Parent = parent };
-			var grandchildA = new ConfigurableDictionaryNode() { Before = "childBefore", Parent = childA };
-			childA.Children = new List<ConfigurableDictionaryNode>() { grandchildA };
-			var childB = new ConfigurableDictionaryNode() { After = "nodeBAfter", Parent = parent };
-			parent.Children = new List<ConfigurableDictionaryNode>() { childA, childB };
+			var childA = new ConfigurableDictionaryNode { After = "after", IsEnabled = true, Parent = parent };
+			var grandchildA = new ConfigurableDictionaryNode { Before = "childBefore", Parent = childA };
+			childA.Children = new List<ConfigurableDictionaryNode> { grandchildA };
+			var childB = new ConfigurableDictionaryNode { After = "nodeBAfter", Parent = parent };
+			parent.Children = new List<ConfigurableDictionaryNode> { childA, childB };
 
 			// SUT
 			var duplicate = childA.DuplicateAmongSiblings();
@@ -121,8 +122,8 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void DuplicatesAreMarkedAsSuch()
 		{
-			var parent = new ConfigurableDictionaryNode() { Children = new List<ConfigurableDictionaryNode>() };
-			var node = new ConfigurableDictionaryNode() { Parent = parent };
+			var parent = new ConfigurableDictionaryNode { Children = new List<ConfigurableDictionaryNode>() };
+			var node = new ConfigurableDictionaryNode { Parent = parent };
 			parent.Children.Add(node);
 			Assert.That(node.IsDuplicate, Is.False);
 
@@ -135,11 +136,11 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void DuplicatesHaveUniqueLabelSuffixes()
 		{
-			var parent = new ConfigurableDictionaryNode() { Children = new List<ConfigurableDictionaryNode>() };
+			var parent = new ConfigurableDictionaryNode { Children = new List<ConfigurableDictionaryNode>() };
 			var nodeToDuplicateLabel = "node";
-			var nodeToDuplicate = new ConfigurableDictionaryNode() { Parent = parent, Label = nodeToDuplicateLabel, LabelSuffix = null};
-			var otherNodeA = new ConfigurableDictionaryNode() { Parent = parent, Label = "node", LabelSuffix = "1" };
-			var otherNodeB = new ConfigurableDictionaryNode() { Parent = parent, Label = "node", LabelSuffix = "B" };
+			var nodeToDuplicate = new ConfigurableDictionaryNode { Parent = parent, Label = nodeToDuplicateLabel, LabelSuffix = null};
+			var otherNodeA = new ConfigurableDictionaryNode { Parent = parent, Label = "node", LabelSuffix = "1" };
+			var otherNodeB = new ConfigurableDictionaryNode { Parent = parent, Label = "node", LabelSuffix = "B" };
 			parent.Children.Add(nodeToDuplicate);
 			parent.Children.Add(otherNodeA);
 			parent.Children.Add(otherNodeB);
@@ -153,12 +154,64 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void DuplicatesGroupingNodeChildrenAffectSuffixes()
+		{
+#if RANDYTODO
+			var nodeToDuplicateLabel = "node";
+			var nodeToDuplicate = new ConfigurableDictionaryNode { Label = nodeToDuplicateLabel, LabelSuffix = null };
+			var dupUnderGroup = new ConfigurableDictionaryNode { Label = nodeToDuplicateLabel, LabelSuffix = "1" };
+			var groupingNode = new ConfigurableDictionaryNode
+			{
+				Label = "groupNode", DictionaryNodeOptions = new DictionaryNodeGroupingOptions(),
+				Children = new List<ConfigurableDictionaryNode> { dupUnderGroup }
+			};
+			var parent = new ConfigurableDictionaryNode { Children = new List<ConfigurableDictionaryNode> { nodeToDuplicate, groupingNode } };
+			CssGeneratorTests.PopulateFieldsForTesting(parent);
+
+			// SUT
+			var duplicate = nodeToDuplicate.DuplicateAmongSiblings();
+			var inGroupDup = dupUnderGroup.DuplicateAmongSiblings();
+			Assert.That(duplicate.Label, Is.EqualTo(nodeToDuplicateLabel), "should not have changed original node label");
+			Assert.That(nodeToDuplicate.LabelSuffix, Is.Null, "should not have changed original node label suffix");
+			Assert.That(duplicate.LabelSuffix, Is.EqualTo("2"), "(1) was used in the group, so the suffix should be 2");
+			Assert.That(inGroupDup.LabelSuffix, Is.EqualTo("3"), "(2) was used in the group parent, so the suffix should be 3");
+#endif
+		}
+
+		[Test]
+		public void DuplicatesSharedGroupingNodeChildrenAffectSuffixes()
+		{
+#if RANDYTODO
+			var nodeToDuplicateLabel = "node";
+			var nodeToDuplicate = new ConfigurableDictionaryNode { FieldDescription = nodeToDuplicateLabel };
+			var dupUnderShardGroup = new ConfigurableDictionaryNode { FieldDescription = nodeToDuplicateLabel, LabelSuffix = "1" };
+			var sharedNode = new ConfigurableDictionaryNode
+			{
+				Label = "Shared",
+				Children = new List<ConfigurableDictionaryNode> { dupUnderShardGroup },
+				DictionaryNodeOptions = new DictionaryNodeGroupingOptions()
+			};
+			var sharedGroupRefNode = new ConfigurableDictionaryNode { ReferenceItem = "Shared", DictionaryNodeOptions = new DictionaryNodeGroupingOptions() };
+			var root = new ConfigurableDictionaryNode { Children = new List<ConfigurableDictionaryNode> { sharedGroupRefNode, nodeToDuplicate } };
+			CssGeneratorTests.PopulateFieldsForTesting(DictionaryConfigurationModelTests.CreateSimpleSharingModel(root, sharedNode));
+
+			// SUT
+			var duplicate = nodeToDuplicate.DuplicateAmongSiblings();
+			var inGroupDup = dupUnderShardGroup.DuplicateAmongSiblings();
+			Assert.That(duplicate.Label, Is.EqualTo(nodeToDuplicateLabel), "should not have changed original node label");
+			Assert.That(nodeToDuplicate.LabelSuffix, Is.Null, "should not have changed original node label suffix");
+			Assert.That(duplicate.LabelSuffix, Is.EqualTo("2"), "(1) was used in the group, so the suffix should be 2");
+			Assert.That(inGroupDup.LabelSuffix, Is.EqualTo("3"), "(2) was used in the group parent, so the suffix should be 3");
+#endif
+		}
+
+		[Test]
 		public void DuplicateIsPutImmediatelyAfterOriginal()
 		{
 			var parent = new ConfigurableDictionaryNode();
-			var nodeA = new ConfigurableDictionaryNode() { Parent = parent };
-			var nodeB = new ConfigurableDictionaryNode() { Parent = parent };
-			parent.Children = new List<ConfigurableDictionaryNode>() { nodeA, nodeB };
+			var nodeA = new ConfigurableDictionaryNode { Parent = parent };
+			var nodeB = new ConfigurableDictionaryNode { Parent = parent };
+			parent.Children = new List<ConfigurableDictionaryNode> { nodeA, nodeB };
 			Assert.That(parent.Children[0], Is.SameAs(nodeA));
 
 			// SUT
@@ -171,20 +224,75 @@ namespace SIL.FieldWorks.XWorks
 		public void DuplicateLastItemDoesNotThrow()
 		{
 			var parent = new ConfigurableDictionaryNode();
-			var nodeA = new ConfigurableDictionaryNode() { Parent = parent };
-			var nodeB = new ConfigurableDictionaryNode() { Parent = parent };
-			parent.Children = new List<ConfigurableDictionaryNode>() { nodeA, nodeB };
+			var nodeA = new ConfigurableDictionaryNode { Parent = parent };
+			var nodeB = new ConfigurableDictionaryNode { Parent = parent };
+			parent.Children = new List<ConfigurableDictionaryNode> { nodeA, nodeB };
 
 			// SUT
 			Assert.DoesNotThrow(() => nodeB.DuplicateAmongSiblings(), "problem with edge case");
 		}
 
 		[Test]
+		public void DuplicateGroupNodeDoesNotDuplicateChildren()
+		{
+			var parent = new ConfigurableDictionaryNode();
+			var groupNode = new ConfigurableDictionaryNode { Parent = parent, DictionaryNodeOptions = new DictionaryNodeGroupingOptions() };
+			var nodeB = new ConfigurableDictionaryNode { Parent = groupNode };
+			groupNode.Children = new List<ConfigurableDictionaryNode> { nodeB };
+			parent.Children = new List<ConfigurableDictionaryNode> { groupNode };
+
+			// SUT
+			var duplicate = groupNode.DuplicateAmongSiblings();
+			Assert.AreEqual(1, groupNode.Children.Count);
+			Assert.IsNull(duplicate.Children);
+		}
+
+		[Test]
+		public void DuplicateGroupNodeParentDoesDuplicateGroupNodeChildren()
+		{
+			var parent = new ConfigurableDictionaryNode();
+			var groupNode = new ConfigurableDictionaryNode { Parent = parent, DictionaryNodeOptions = new DictionaryNodeGroupingOptions() };
+			var nodeB = new ConfigurableDictionaryNode { Parent = groupNode };
+			groupNode.Children = new List<ConfigurableDictionaryNode> { nodeB };
+			parent.Children = new List<ConfigurableDictionaryNode> { groupNode };
+
+			// SUT
+			var duplicate = parent.DuplicateAmongSiblings(new List<ConfigurableDictionaryNode>());
+			VerifyDuplication(duplicate, parent);
+		}
+
+		[Test]
+		public void DuplicateSharedNodeParentMaintainsLink()
+		{
+			var sharedItem = new ConfigurableDictionaryNode { Label = "Shared" };
+			var masterParent = new ConfigurableDictionaryNode { ReferenceItem = "Shared", ReferencedNode = sharedItem };
+			var clone = masterParent.DeepCloneUnderParent(null, true); // SUT: pretend this is a recursive call
+			Assert.AreEqual(masterParent.ReferenceItem, clone.ReferenceItem);
+			Assert.AreSame(masterParent.ReferencedNode, clone.ReferencedNode);
+		}
+
+		[Test]
+		public void DuplicateSharedNodeDeepClones()
+		{
+			var sharedChild = new ConfigurableDictionaryNode { Label = "kid" };
+			var sharedItem = new ConfigurableDictionaryNode { Label = "Shared", Children = new List<ConfigurableDictionaryNode> { sharedChild } };
+			var masterParent = new ConfigurableDictionaryNode
+			{
+				ReferenceItem = "Shared", ReferencedNode = sharedItem,
+				Children = new List<ConfigurableDictionaryNode>() // just because we haven't any doesn't mean the list is null!
+			};
+			var clone = masterParent.DeepCloneUnderSameParent(); // SUT
+			Assert.Null(clone.ReferenceItem);
+			Assert.Null(clone.ReferencedNode);
+			VerifyDuplicationList(clone.Children, masterParent.ReferencedOrDirectChildren, clone);
+		}
+
+		[Test]
 		public void CanDuplicateRootNode()
 		{
-			var rootNodeA = new ConfigurableDictionaryNode() { Parent = null, Before="beforeA" };
-			var rootNodeB = new ConfigurableDictionaryNode() { Parent = null };
-			var rootNodes = new List<ConfigurableDictionaryNode>() { rootNodeA, rootNodeB };
+			var rootNodeA = new ConfigurableDictionaryNode { Parent = null, Before="beforeA" };
+			var rootNodeB = new ConfigurableDictionaryNode { Parent = null };
+			var rootNodes = new List<ConfigurableDictionaryNode> { rootNodeA, rootNodeB };
 
 			// SUT
 			var duplicate = rootNodeA.DuplicateAmongSiblings(rootNodes);
@@ -196,8 +304,8 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void CanUnlink()
 		{
-			var parent = new ConfigurableDictionaryNode() { Children = new List<ConfigurableDictionaryNode>(), Parent = null };
-			var node = new ConfigurableDictionaryNode() { Children = new List<ConfigurableDictionaryNode>(), Parent = parent };
+			var parent = new ConfigurableDictionaryNode { Children = new List<ConfigurableDictionaryNode>(), Parent = null };
+			var node = new ConfigurableDictionaryNode { Children = new List<ConfigurableDictionaryNode>(), Parent = parent };
 			parent.Children.Add(node);
 			// SUT
 			node.UnlinkFromParent();
@@ -211,8 +319,8 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void CanUnlinkTwice()
 		{
-			var parent = new ConfigurableDictionaryNode() { Children = new List<ConfigurableDictionaryNode>(), Parent = null };
-			var node = new ConfigurableDictionaryNode() { Children = new List<ConfigurableDictionaryNode>(), Parent = parent };
+			var parent = new ConfigurableDictionaryNode { Children = new List<ConfigurableDictionaryNode>(), Parent = null };
+			var node = new ConfigurableDictionaryNode { Children = new List<ConfigurableDictionaryNode>(), Parent = parent };
 			parent.Children.Add(node);
 			node.UnlinkFromParent();
 			Assert.That(node.Parent, Is.Null); // node is now at the root of a hierarchy
@@ -223,10 +331,10 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void CanChangeSuffix()
 		{
-			var parent = new ConfigurableDictionaryNode() { Children = new List<ConfigurableDictionaryNode>(), Parent = null };
+			var parent = new ConfigurableDictionaryNode { Children = new List<ConfigurableDictionaryNode>(), Parent = null };
 
 			var originallabel = "originalLabel";
-			var node = new ConfigurableDictionaryNode() { Parent = parent, Label = originallabel, LabelSuffix = "orig"};
+			var node = new ConfigurableDictionaryNode { Parent = parent, Label = originallabel, LabelSuffix = "orig"};
 			parent.Children.Add(node);
 
 			var newSuffix = "new";
@@ -239,10 +347,10 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void CanAddInitialSuffix()
 		{
-			var parent = new ConfigurableDictionaryNode() { Children = new List<ConfigurableDictionaryNode>(), Parent = null };
+			var parent = new ConfigurableDictionaryNode { Children = new List<ConfigurableDictionaryNode>(), Parent = null };
 
 			var originallabel = "originalLabel";
-			var node = new ConfigurableDictionaryNode() { Parent = parent, Label = originallabel, LabelSuffix = null };
+			var node = new ConfigurableDictionaryNode { Parent = parent, Label = originallabel, LabelSuffix = null };
 			parent.Children.Add(node);
 
 			var newSuffix = "new";
@@ -255,8 +363,8 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void ReportSuccessfulChangedSuffix()
 		{
-			var parent = new ConfigurableDictionaryNode() { Children = new List<ConfigurableDictionaryNode>(), Parent = null };
-			var node = new ConfigurableDictionaryNode() { Parent = parent, Label = "originalLabel",LabelSuffix = "blah" };
+			var parent = new ConfigurableDictionaryNode { Children = new List<ConfigurableDictionaryNode>(), Parent = null };
+			var node = new ConfigurableDictionaryNode { Parent = parent, Label = "originalLabel",LabelSuffix = "blah" };
 			parent.Children.Add(node);
 
 			// SUT
@@ -267,11 +375,11 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void CantHaveTwoSiblingsWithSameNonNullSuffix()
 		{
-			var parent = new ConfigurableDictionaryNode() { Children = new List<ConfigurableDictionaryNode>(), Parent = null };
+			var parent = new ConfigurableDictionaryNode { Children = new List<ConfigurableDictionaryNode>(), Parent = null };
 			var originalLabel = "originalLabel";
 			var originalSuffix = "originalSuffix";
-			var node = new ConfigurableDictionaryNode() { Parent = parent, Label = originalLabel, LabelSuffix = originalSuffix};
-			var otherNode = new ConfigurableDictionaryNode() { Parent = parent, Label = originalLabel, LabelSuffix = "otherSuffix"};
+			var node = new ConfigurableDictionaryNode { Parent = parent, Label = originalLabel, LabelSuffix = originalSuffix};
+			var otherNode = new ConfigurableDictionaryNode { Parent = parent, Label = originalLabel, LabelSuffix = "otherSuffix"};
 			parent.Children.Add(node);
 			parent.Children.Add(otherNode);
 
@@ -284,10 +392,10 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void CanRequestChangingSuffixToSameSuffix()
 		{
-			var parent = new ConfigurableDictionaryNode() { Children = new List<ConfigurableDictionaryNode>(), Parent = null };
+			var parent = new ConfigurableDictionaryNode { Children = new List<ConfigurableDictionaryNode>(), Parent = null };
 			var originalLabel = "originalLabel";
 			var originalSuffix = "blah";
-			var node = new ConfigurableDictionaryNode() { Parent = parent, Label = originalLabel, LabelSuffix = originalSuffix };
+			var node = new ConfigurableDictionaryNode { Parent = parent, Label = originalLabel, LabelSuffix = originalSuffix };
 			parent.Children.Add(node);
 
 			// SUT
@@ -299,13 +407,31 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void CanChangeSuffixOfRootNode()
 		{
-			var rootNode = new ConfigurableDictionaryNode() { Parent = null, Label = "rootNode",LabelSuffix = "orig" };
-			var rootNodes = new List<ConfigurableDictionaryNode>() { rootNode };
+			var rootNode = new ConfigurableDictionaryNode { Parent = null, Label = "rootNode",LabelSuffix = "orig" };
+			var rootNodes = new List<ConfigurableDictionaryNode> { rootNode };
 
 			// SUT
 			var result = rootNode.ChangeSuffix("new", rootNodes);
 			Assert.That(result, Is.True, "allow changing suffix of root");
 			Assert.That(rootNode.LabelSuffix, Is.EqualTo("new"), "failed to change suffix");
+		}
+
+		[Test]
+		public void ReferencedOrDirectChildren_PrefersReferencedChildren()
+		{
+			var refChild = new ConfigurableDictionaryNode { Label = "ReferencedChild" };
+			var refNode = new ConfigurableDictionaryNode { Children = new List<ConfigurableDictionaryNode> { refChild } };
+			var child = new ConfigurableDictionaryNode { Label = "DirectChild" };
+			var parent = new ConfigurableDictionaryNode { Children = new List<ConfigurableDictionaryNode> { child }, ReferencedNode = refNode };
+			Assert.AreSame(refChild, parent.ReferencedOrDirectChildren.First());
+		}
+
+		[Test]
+		public void ReferencedOrDirectChildren_FallsBackOnDirectChildren()
+		{
+			var child = new ConfigurableDictionaryNode { Label = "DirectChild" };
+			var parent = new ConfigurableDictionaryNode { Children = new List<ConfigurableDictionaryNode> { child } };
+			Assert.AreSame(child, parent.ReferencedOrDirectChildren.First());
 		}
 
 		[Test]
@@ -408,13 +534,157 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void HasCorrectDisplayLabel()
 		{
-			var nodeWithNullSuffix = new ConfigurableDictionaryNode() {Label = "label", LabelSuffix = null};
+			var nodeWithNullSuffix = new ConfigurableDictionaryNode {Label = "label", LabelSuffix = null};
 			// SUT
 			Assert.That(nodeWithNullSuffix.DisplayLabel, Is.EqualTo("label"), "DisplayLabel should omit parentheses and suffix if suffix is null");
 
-			var nodeWithSuffix = new ConfigurableDictionaryNode() { Label = "label2", LabelSuffix = "suffix2" };
+			var nodeWithSuffix = new ConfigurableDictionaryNode { Label = "label2", LabelSuffix = "suffix2" };
 			// SUT
 			Assert.That(nodeWithSuffix.DisplayLabel, Is.EqualTo("label2 (suffix2)"), "DisplayLabel should include suffix");
+		}
+
+		[Test]
+		public void HasCorrectDisplayLabelForGroup()
+		{
+			var nodeWithNullSuffix = new ConfigurableDictionaryNode { Label = "label", LabelSuffix = null, DictionaryNodeOptions = new DictionaryNodeGroupingOptions() };
+			// SUT
+			Assert.That(nodeWithNullSuffix.DisplayLabel, Is.EqualTo("[label]"), "GroupingNodes should be bracketed");
+
+			var nodeWithSuffix = new ConfigurableDictionaryNode { Label = "label2", LabelSuffix = "suffix2", DictionaryNodeOptions = new DictionaryNodeGroupingOptions() };
+			// SUT
+			Assert.That(nodeWithSuffix.DisplayLabel, Is.EqualTo("[label2 (suffix2)]"), "Suffic should be inside the bracket for a grouping node");
+		}
+
+		[Test]
+		public void IsHeadWord_HeadWord_True()
+		{
+			Assert.True(new ConfigurableDictionaryNode {
+				Label = "Headword",
+				FieldDescription = "MLHeadWord",
+				CSSClassNameOverride = "headword"
+			}.IsHeadWord);
+		}
+
+		[Test]
+		public void IsHeadWord_NonStandardHeadWord_True()
+		{
+			Assert.True(new ConfigurableDictionaryNode
+			{
+				Label = "Other Form",
+				FieldDescription = "MLHeadWord",
+				CSSClassNameOverride = "headword"
+			}.IsHeadWord);
+			Assert.True(new ConfigurableDictionaryNode
+			{
+				Label = "Referenced Headword",
+				FieldDescription = "ReversalName",
+				CSSClassNameOverride = "headword"
+			}.IsHeadWord);
+			Assert.True(new ConfigurableDictionaryNode
+			{
+				Label = "Headword",
+				FieldDescription = "OwningEntry",
+				SubField = "MLHeadWord",
+				CSSClassNameOverride = "headword"
+			}.IsHeadWord);
+			Assert.True(new ConfigurableDictionaryNode
+			{
+				Label = "Headword",
+				FieldDescription = "MLHeadWord",
+				CSSClassNameOverride = "mainheadword"
+			}.IsHeadWord);
+		}
+
+		[Test]
+		public void IsHeadWord_NonHeadWord_False()
+		{
+			Assert.False(new ConfigurableDictionaryNode
+			{
+				Label = "Headword",
+				FieldDescription = "OwningEntry",
+				CSSClassNameOverride = "alternateform"
+			}.IsHeadWord);
+		}
+
+		[Test]
+		public void IsMainEntry_MainEntry_True()
+		{
+			var mainEntryNode = new ConfigurableDictionaryNode { FieldDescription = "LexEntry", CSSClassNameOverride = "entry", Parent = null };
+			Assert.True(mainEntryNode.IsMainEntry, "Main Entry");
+		}
+
+		[Test]
+		public void IsMainEntry_StemBasedMainEntry_ComplexForms_True_ButNotReadonly()
+		{
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				CSSClassNameOverride = "mainentrycomplex",
+				DictionaryNodeOptions = new DictionaryNodeListOptions(),
+				Parent = null
+			};
+			Assert.True(mainEntryNode.IsMainEntry, "Main Entry");
+		}
+
+		[Test]
+		public void IsMainEntry_MainReversalIndexEntry_True()
+		{
+			var mainEntryNode = new ConfigurableDictionaryNode { FieldDescription = "ReversalIndexEntry", CSSClassNameOverride = "reversalindexentry", Parent = null };
+			Assert.True(mainEntryNode.IsMainEntry, "Main Entry");
+		}
+
+		[Test]
+		public void IsMainEntry_MinorEntry_False()
+		{
+			var minorEntryNode = new ConfigurableDictionaryNode { FieldDescription = "LexEntry", CSSClassNameOverride = "minorentry", Parent = null };
+			Assert.False(minorEntryNode.IsMainEntry, "Main Entry");
+		}
+
+		[Test]
+		public void IsMainEntry_OtherEntry_False()
+		{
+			var mainEntryNode = new ConfigurableDictionaryNode { FieldDescription = "LexEntry", CSSClassNameOverride = "entry", Parent = null };
+			var someNode = new ConfigurableDictionaryNode { FieldDescription = "MLHeadWord", CSSClassNameOverride = "mainheadword", Parent = mainEntryNode };
+			Assert.False(someNode.IsMainEntry, "Main Entry");
+		}
+
+		[Test]
+		public void IsMasterParent()
+		{
+			var children = new List<ConfigurableDictionaryNode> { new ConfigurableDictionaryNode() };
+			var sharedNode = new ConfigurableDictionaryNode { Children = children };
+			var masterParent = new ConfigurableDictionaryNode { ReferencedNode = sharedNode };
+			var otherParent = new ConfigurableDictionaryNode { ReferencedNode = sharedNode };
+			sharedNode.Parent = masterParent;
+			var standaloneParent = new ConfigurableDictionaryNode { Children = children };
+
+			Assert.True(masterParent.IsMasterParent, "Shared Node's Parent should be Master Parent");
+			Assert.False(otherParent.IsMasterParent, "Other node referring to Shared node should not be Master Parent");
+			Assert.False(standaloneParent.IsMasterParent, "node with only direct children should not be Master Parent");
+
+			Assert.False(masterParent.IsSubordinateParent, "Shared Node's Parent should not be Subordinate Parent");
+			Assert.True(otherParent.IsSubordinateParent, "Other node referring to Shared node should be Subordinate Parent");
+			Assert.False(standaloneParent.IsSubordinateParent, "node with only direct children should not be Subordinate Parent (to whom would it subord?)");
+		}
+
+		[Test]
+		public void TryGetMasterParent()
+		{
+#if RANDYTODO
+			var child = new ConfigurableDictionaryNode();
+			var sharedNode = new ConfigurableDictionaryNode { Label = "Shared", Children = new List<ConfigurableDictionaryNode> { child } };
+			var masterParent = new ConfigurableDictionaryNode { ReferenceItem = "Shared" };
+			var root = new ConfigurableDictionaryNode { Children = new List<ConfigurableDictionaryNode> { masterParent } };
+			CssGeneratorTests.PopulateFieldsForTesting(DictionaryConfigurationModelTests.CreateSimpleSharingModel(root, sharedNode));
+
+			ConfigurableDictionaryNode returnedMasterParent;
+			Assert.True(child.TryGetMasterParent(out returnedMasterParent)); // SUT
+			Assert.AreSame(masterParent, returnedMasterParent);
+			Assert.False(masterParent.TryGetMasterParent(out returnedMasterParent), "The master parent doesn't *have* a master parent, it *is* one"); // SUT
+			Assert.IsNull(returnedMasterParent, "Master Parent");
+			Assert.False(root.TryGetMasterParent(out returnedMasterParent), "The root node *certainly* doesn't have a master parent"); // SUT
+			Assert.IsNull(returnedMasterParent, "Root Node");
+#endif
 		}
 	}
 }

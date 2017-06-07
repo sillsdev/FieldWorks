@@ -76,7 +76,7 @@ namespace ControlExtenders
 		private RegistryKey m_settingsKey = null;
 		#endregion private members
 
-		#region initialization
+		#region initialization y disposal
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// constructor
@@ -110,6 +110,12 @@ namespace ControlExtenders
 			this.ResumeLayout(false);
 		}
 
+		/// <summary/>
+		protected override void Dispose(bool disposing)
+		{
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ******");
+			base.Dispose(disposing);
+		}
 		#endregion initialization
 
 		#region properties

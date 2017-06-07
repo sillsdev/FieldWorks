@@ -1,26 +1,12 @@
-// Copyright (c) 2006-2013 SIL International
+// Copyright (c) 2006-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: SequenceOptionsDlg.cs
-// Responsibility: TE Team
-//
-// <remarks>
-// </remarks>
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using SIL.CoreImpl;
-using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Drawing;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.Utils;
-using SIL.FieldWorks.Common.Framework;
 
 namespace SIL.FieldWorks.TE
 {
@@ -29,7 +15,7 @@ namespace SIL.FieldWorks.TE
 	///
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public partial class SequenceOptionsDlg : Form, IFWDisposable
+	public partial class SequenceOptionsDlg : Form
 	{
 		private IHelpTopicProvider m_helpTopicProvider;
 

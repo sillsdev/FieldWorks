@@ -1,9 +1,6 @@
-// Copyright (c) 2005-2013 SIL International
+// Copyright (c) 2005-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: FootnotePropertiesSelector.cs
-// Responsibility: TE Team
 
 using System;
 using System.ComponentModel;
@@ -12,19 +9,19 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.Scripture;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.ScriptureUtils;
+using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.TE
 {
 	/// <summary>
 	/// Summary description for FootnotePropertiesSelector.
 	/// </summary>
-	public class FootnotePropertiesSelector : UserControl, IFWDisposable
+	public class FootnotePropertiesSelector : UserControl
 	{
 		#region Member Variables
 		private const int kMaxMarkerLength = 3;
@@ -44,8 +41,6 @@ namespace SIL.FieldWorks.TE
 		private System.Windows.Forms.RadioButton optSymbol;
 		private System.Windows.Forms.RadioButton optAlpha;
 		private System.Windows.Forms.CheckBox chkShowRef;
-		// This must be disposed of properly as a COM object.
-		private ILgCharacterPropertyEngine m_cpe = null;
 		private bool m_fRestartSequence;
 		private CheckBox chkShowCustomSymbol;
 
@@ -91,7 +86,6 @@ namespace SIL.FieldWorks.TE
 			// Must not be run more than once.
 			if (IsDisposed)
 			{
-				Debug.Assert(m_cpe == null);
 				return;
 			}
 
@@ -102,7 +96,6 @@ namespace SIL.FieldWorks.TE
 					components.Dispose();
 				}
 			}
-			m_cpe = null;
 			base.Dispose( disposing );
 		}
 
@@ -135,12 +128,12 @@ namespace SIL.FieldWorks.TE
 
 			if (m_styleSheet is FwStyleSheet)
 			{
-				string fontFace = ((FwStyleSheet)m_styleSheet).GetFaceNameFromStyle(
-					ScrStyleNames.FootnoteMarker,
+				using (var font = FontHeightAdjuster.GetFontForStyle(ScrStyleNames.FootnoteMarker, m_styleSheet,
 					cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle,
-					cache.LanguageWritingSystemFactoryAccessor);
-
-				txtMarker.Font = new Font(fontFace, 10);
+					cache.LanguageWritingSystemFactoryAccessor))
+				{
+					txtMarker.Font = new Font(font.Name, 10);
+				}
 			}
 			txtMarker.MaxLength = kMaxMarkerLength;
 
@@ -417,22 +410,6 @@ namespace SIL.FieldWorks.TE
 				return FootnoteMarkerTypes.SymbolicFootnoteMarker;
 			}
 		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Get the Unicode character properties engine.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[Browsable(false)]
-		private ILgCharacterPropertyEngine UnicodeCharProps
-		{
-			get
-			{
-				if (m_cpe == null)
-					m_cpe = m_cache.ServiceLocator.UnicodeCharProps;
-				return m_cpe;
-			}
-		}
 		#endregion
 
 		#region Event Handler Methods
@@ -512,7 +489,7 @@ namespace SIL.FieldWorks.TE
 		private void btnChooseSymbol_Click(object sender, System.EventArgs e)
 		{
 			using (Font fnt = new Font(txtMarker.Font.Name, 20))
-			using (SymbolChooserDlg dlg = new SymbolChooserDlg(fnt, UnicodeCharProps, m_helpTopicProvider))
+			using (SymbolChooserDlg dlg = new SymbolChooserDlg(fnt, m_helpTopicProvider))
 			{
 				// Make the initial character in the symbol dialog the last character in the
 				// marker string.
@@ -571,12 +548,12 @@ namespace SIL.FieldWorks.TE
 		{
 			LogicalFont logfont = new LogicalFont(txtMarker.Font);
 			bool fSymbolFont = (logfont.lfCharSet == (byte)TextMetricsCharacterSet.Symbol);
-			if (UnicodeCharProps.get_IsSeparator(e.KeyChar) || (!fSymbolFont &&
-				(UnicodeCharProps.get_IsLetter(e.KeyChar) ||
-				UnicodeCharProps.get_IsNumber(e.KeyChar))))
+			if (Icu.IsSeparator(e.KeyChar) || (!fSymbolFont &&
+				(Icu.IsLetter(e.KeyChar) ||
+				Icu.IsNumeric(e.KeyChar))))
 			{
 				e.Handled = true;
-				MiscUtils.ErrorBeep();
+				FwUtils.ErrorBeep();
 			}
 		}
 

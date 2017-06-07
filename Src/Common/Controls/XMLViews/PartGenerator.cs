@@ -1,20 +1,20 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
 using SIL.FieldWorks.FDO;
-using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.CoreImpl.Cellar;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.Xml;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -232,7 +232,7 @@ namespace SIL.FieldWorks.Common.Controls
 				GeneratePartsFromLayouts(m_rootClassId, fieldName, fieldId, ref output);
 				ReplaceParamsInAttributes(output, labelName, fieldName, fieldId, className);
 				// LT-6956 : custom fields have the additional attribute "originalLabel", so add it here.
-				XmlUtils.AppendAttribute(output, "originalLabel", labelName);
+				XmlUtils.SetAttribute(output, "originalLabel", labelName);
 			}
 			return result;
 		}
@@ -315,7 +315,7 @@ namespace SIL.FieldWorks.Common.Controls
 			foreach (var node in output.XPathSelectElements(".//*"))
 			{
 				if (XmlUtils.GetOptionalAttributeValue(node, "field") == fieldName)
-					XmlUtils.AppendAttribute(node, "class", className);
+					XmlUtils.SetAttribute(node, "class", className);
 			}
 		}
 
@@ -458,7 +458,7 @@ namespace SIL.FieldWorks.Common.Controls
 			internal void DoTheAppends()
 			{
 				foreach (var xa in m_targets)
-					XmlUtils.AppendAttribute(xa.Parent, m_newAttrName, m_newAttrVal);
+					XmlUtils.SetAttribute(xa.Parent, m_newAttrName, m_newAttrVal);
 			}
 		}
 
@@ -643,7 +643,7 @@ namespace SIL.FieldWorks.Common.Controls
 		public ObjectValuePartGenerator(FdoCache cache, XElement input, XmlVc vc, int rootClassId)
 			: base(cache, input, vc, rootClassId)
 		{
-			m_objectPath = XmlUtils.GetAttributeValue(input, "objectPath");
+			m_objectPath = XmlUtils.GetOptionalAttributeValue(input, "objectPath");
 			if (m_objectPath == null)
 				throw new ArgumentException("ObjectValuePartGenerator expects input to have objectPath attribute.");
 			// Enhance: generalize this

@@ -5,17 +5,18 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;		// controls and etc...
 using SIL.Media;
-using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.FDO.Infrastructure;
 using System.Text;
 using System.Xml.Linq;
+using SIL.CoreImpl;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
 
 namespace SIL.FieldWorks.Common.Widgets
 {
@@ -161,7 +162,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			}
 
 			m_soundControls = null;
-			m_innerView = null;
+				m_innerView = null;
 			PropertyTable = null;
 			Publisher = null;
 			Subscriber = null;
@@ -300,8 +301,6 @@ namespace SIL.FieldWorks.Common.Widgets
 			m_soundControls.Clear();
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-						Justification="soundFieldControl gets disposed in Dispose method")]
 		private void SetupSoundControls()
 		{
 			if (m_innerView.WritingSystemsToDisplay == null)
@@ -346,11 +345,18 @@ namespace SIL.FieldWorks.Common.Widgets
 							path = tryPath;
 					}
 				}
+				try
+				{
 				soundFieldControl.Path = path;
 				soundFieldControl.BeforeStartingToRecord += soundFieldControl_BeforeStartingToRecord;
 				soundFieldControl.SoundRecorded += soundFieldControl_SoundRecorded;
 				soundFieldControl.SoundDeleted += soundFieldControl_SoundDeleted;
 				Controls.Add(soundFieldControl);
+			}
+				catch (Exception e)
+				{
+					Debug.WriteLine(e.Message);
+				}
 			}
 		}
 
@@ -363,7 +369,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			var handle = ws == null ? 0 : ws.Handle;
 			NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(m_innerView.Cache.ActionHandlerAccessor,
 				() => m_innerView.Cache.DomainDataByFlid.SetMultiStringAlt(m_innerView.HvoObj, m_innerView.Flid, handle,
-					m_innerView.Cache.TsStrFactory.MakeString("", handle)));
+					TsStringUtils.EmptyString(handle)));
 		}
 
 		void soundFieldControl_BeforeStartingToRecord(object sender, EventArgs e)
@@ -376,7 +382,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			var ws = WsForSoundField(sc, out dummy);
 			NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(m_innerView.Cache.ActionHandlerAccessor,
 				() => m_innerView.Cache.DomainDataByFlid.SetMultiStringAlt(m_innerView.HvoObj, m_innerView.Flid,
-					ws.Handle, m_innerView.Cache.TsStrFactory.MakeString(filename, ws.Handle)));
+					ws.Handle, TsStringUtils.MakeString(filename, ws.Handle)));
 		}
 
 		private string CreateNewSoundFilename(out string path)
@@ -387,7 +393,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			// Make up a unique file name for the new recording. It starts with the shortname of the object
 			// so as to somewhat link them together, then adds a unique timestamp, then if by any chance
 			// that exists it keeps trying.
-			var baseNameForFile = obj.ShortName;
+			var baseNameForFile = obj.ShortName ?? string.Empty;
 			// LT-12926: Path.ChangeExtension checks for invalid filename chars,
 			// so we need to fix the filename before calling it.
 			foreach (var c in Path.GetInvalidFileNameChars())
@@ -416,7 +422,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			{
 				NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(m_innerView.Cache.ActionHandlerAccessor,
 					() => m_innerView.Cache.DomainDataByFlid.SetMultiStringAlt(m_innerView.HvoObj, m_innerView.Flid,
-						ws.Handle, m_innerView.Cache.TsStrFactory.MakeString(filenameNew, ws.Handle)));
+						ws.Handle, TsStringUtils.MakeString(filenameNew, ws.Handle)));
 			}
 		}
 

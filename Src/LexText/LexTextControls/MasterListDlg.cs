@@ -1,14 +1,8 @@
-// Copyright (c) 2007-2013 SIL International
+// Copyright (c) 2007-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: MasterListDlg.cs
-// Responsibility:
-//
-// <remarks>
-// </remarks>
+
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
@@ -16,7 +10,6 @@ using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.LexText.Controls.MGA;
-using SIL.Utils;
 using SIL.Windows.Forms;
 
 namespace SIL.FieldWorks.LexText.Controls
@@ -24,7 +17,7 @@ namespace SIL.FieldWorks.LexText.Controls
 	/// <summary>
 	/// Summary description for MasterListDlg.
 	/// </summary>
-	public class MasterListDlg : Form, IFWDisposable
+	public class MasterListDlg : Form
 	{
 		protected IFdoOwningCollection<IFsFeatDefn> m_featureList;
 		protected bool m_launchedFromInsertMenu = false;
@@ -56,8 +49,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		protected string s_helpTopic = "khtpInsertInflectionFeature";
 		protected System.Windows.Forms.HelpProvider helpProvider;
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "treeView gets disposed in Dispose")]
 		public MasterListDlg()
 		{
 			GlossListTreeView treeView = new GlossListTreeView();
@@ -268,8 +259,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification = "TODO-Linux: LinkLabel.TabStop is missing from Mono")]
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();

@@ -13,12 +13,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 	internal sealed class LexReferencePairView : AtomicReferenceView
 	{
 		/// <summary />
-		private ICmObject m_displayParent = null;
-
-		/// <summary />
-		public LexReferencePairView() : base()
-		{
-		}
+		private ICmObject m_displayParent;
 
 		/// <summary />
 		public override void SetReferenceVc()

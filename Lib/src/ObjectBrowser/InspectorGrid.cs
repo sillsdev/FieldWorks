@@ -34,8 +34,6 @@ namespace SIL.ObjectBrowser
 		/// Initializes a new instance of the <see cref="InspectorGrid"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification="See TODO-Linux comment")]
 		public InspectorGrid()
 		{
 			DoubleBuffered = true;
@@ -62,6 +60,12 @@ namespace SIL.ObjectBrowser
 				m_szHotSpot = new Size(img.Width, img.Height);
 				m_dxVLine = (int)(m_szHotSpot.Width * 1.5);
 			}
+		}
+
+		protected override void Dispose(bool disposing)
+		{
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
+			base.Dispose(disposing);
 		}
 
 		/// ------------------------------------------------------------------------------------

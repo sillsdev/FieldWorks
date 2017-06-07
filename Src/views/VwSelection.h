@@ -40,7 +40,7 @@ Most of its methods are stubs. A few MUST be implemented by any subclass.
 Hungarian: vwsel
 ----------------------------------------------------------------------------------------------*/
 class VwSelection :
-#if WIN32
+#ifdef WIN32
 	public SilDispatchImpl<IVwSelection, &IID_IVwSelection, &LIBID_Views>
 #else
 	public IVwSelection
@@ -125,7 +125,10 @@ public:
 	STDMETHOD(get_IsEditable)(ComBool * pfEditable);
 	STDMETHOD(get_IsEnabled)(ComBool * pfEnabled);
 
-	void MarkInvalid() {m_qrootb.Clear();}
+	virtual void MarkInvalid()
+	{
+		m_qrootb.Clear();
+	}
 
 	virtual VwRootBox * RootBox();
 	bool IsValid() { return (bool)m_qrootb; }
@@ -510,6 +513,13 @@ public:
 		bool fAssocPrevious);
 	VwTextSelection(VwParagraphBox * pvpbox, int ichAnchor, int ichEnd,
 		bool fAssocPrevious, VwParagraphBox * pvpboxEnd);
+
+	virtual void MarkInvalid()
+	{
+		VwSelection::MarkInvalid();
+		m_qttp.Clear();
+	}
+
 	virtual bool IsInsertionPoint() // override
 	{
 		return m_ichAnchor == m_ichEnd && !m_pvpboxEnd;

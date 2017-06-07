@@ -4,7 +4,6 @@
 
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.FDO;
-using System.Diagnostics.CodeAnalysis;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 {
@@ -17,8 +16,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// <summary>
 		/// Initializes a new instance of the <see cref="LexReferenceTreeRootSlice"/> class.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "LexReferenceTreeRootLauncher gets added to panel's Controls collection and disposed there")]
 		public LexReferenceTreeRootSlice()
 			: base(new LexReferenceTreeRootLauncher())
 		{

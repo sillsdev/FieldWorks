@@ -1,20 +1,11 @@
-// Copyright (c) 2004-2013 SIL International
+// Copyright (c) 2004-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: DataUpdateMonitor.cs
-// Responsibility:
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Diagnostics;
 using System.Windows.Forms;
-
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.RootSites
 {
@@ -62,7 +53,7 @@ namespace SIL.FieldWorks.Common.RootSites
 	/// <remarks>The purpose of the DataUpdateMonitor is to fix real and potential crashes
 	/// resulting from processing windows messages when a data operation is in progress.</remarks>
 	/// ----------------------------------------------------------------------------------------
-	public class DataUpdateMonitor : IFWDisposable
+	public class DataUpdateMonitor : IDisposable
 	{
 		// Keys are ISilDataAccess objects, values are UpdateSemaphore objects
 		private static UpdateSemaphore s_updateSemaphore;
@@ -172,7 +163,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		protected virtual void Dispose(bool disposing)
 		{
-			Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + "******************");
+			Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + " ******************");
 			// Must not be run more than once.
 			if (m_isDisposed)
 				return;

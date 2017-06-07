@@ -5,7 +5,6 @@
 using System;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils.MessageBoxEx;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
@@ -26,7 +25,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 	/// name of the derived class.
 	///
 	/// </summary>
-	public class MainUserControl : UserControl, IFWDisposable, IMainUserControl
+	public class MainUserControl : UserControl, IMainUserControl
 	{
 		/// <summary>
 		/// Check to see if the object has been disposed.
@@ -36,7 +35,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
+				throw new ObjectDisposedException(string.Format("'{0}' in use after being disposed.", GetType().Name));
 		}
 
 		#region Accessibility functionality for MainUserControl derived objects

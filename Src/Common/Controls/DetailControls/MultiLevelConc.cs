@@ -1,17 +1,13 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
-using System.Windows.Forms;
-
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
@@ -321,15 +317,13 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			public override void MakeRoot()
 			{
 				CheckDisposed();
-				base.MakeRoot();
 
 				if (m_fdoCache == null || DesignMode)
 					return;
 
-				IVwRootBox rootb = VwRootBoxClass.Create();
-				rootb.SetSite(this);
+				base.MakeRoot();
 
-				rootb.DataAccess = m_fdoCache.DomainDataByFlid;
+				m_rootb.DataAccess = m_fdoCache.DomainDataByFlid;
 
 				m_vc = m_info.Vc;
 				if (m_vc == null)
@@ -348,8 +342,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				// If it doesn't give us one the vc will obtain a key string from the policy
 				// directly. The frag argument is arbitrary. Note that we have to use a non-zero
 				// HVO, even when it doesn't mean anything, to avoid triggering an Assert in the Views code.
-				rootb.SetRootObject(m_info.Hvo == 0 ? 1 : m_info.Hvo, m_vc, 1, m_styleSheet);
-				this.m_rootb = rootb;
+				m_rootb.SetRootObject(m_info.Hvo == 0 ? 1 : m_info.Hvo, m_vc, 1, m_styleSheet);
 			}
 		}
 
@@ -451,19 +444,16 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			IConcSliceInfo csi = (IConcSliceInfo)m_items[i];
 			ViewSlice vs = new ConcSlice(new ConcView(csi));
 			if (csi.Count > 0)
-				vs.Expansion = DataTree.TreeItemState.ktisCollapsed;
-			Set<Slice> newKids = new Set<Slice>(1);
-			newKids.Add(vs);
+				vs.Expansion = TreeItemState.ktisCollapsed;
+			var newKids = new HashSet<Slice> {vs};
 			InsertSliceRange(i, newKids);
 			return vs;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="DummyConSlice gets added to control collection and disposed there.")]
 		public void InsertDummies(ConcSlice concSlice, int index, int count)
 		{
 			CheckDisposed();
-			Set<Slice> dummies = new Set<Slice>(count);
+			var dummies = new HashSet<Slice>();
 			for (int i = 0; i < dummies.Count; i++)
 				dummies.Add(new DummyConcSlice(concSlice));
 			InsertSliceRange(index, dummies);

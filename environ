@@ -8,8 +8,8 @@ BASE=$(pwd)
 COM=$(dirname "${BASE}")/libcom/COM
 ARCH=$(uname -m)
 [ -z "$BUILD" ] && BUILD=Debug
-[ -z "$MONO_PREFIX" ] && MONO_PREFIX=/opt/mono-sil
-[ -z "$MONO_SILPKGDIR" ] && MONO_SILPKGDIR=/opt/mono-sil
+[ -z "$MONO_PREFIX" ] && MONO_PREFIX=/opt/mono4-sil
+[ -z "$MONO_SILPKGDIR" ] && MONO_SILPKGDIR=/opt/mono4-sil
 
 # Dependency locations
 # search for xulrunner and geckofx, select the best, and add its location to LD_LIBRARY_PATH
@@ -23,7 +23,7 @@ MONO_ENV_OPTIONS="-O=-gshared"
 
 # Directory settings
 PATH="${BASE}/Output_${ARCH}/${BUILD}:\
-${BASE}/Lib/src/icu/install${ARCH}/bin:${BASE}/Lib/src/icu/source/build${ARCH}/bin:\
+${BASE}/Lib/src/icu/install${ARCH}/bin:${BASE}/Lib/src/icu/source/bin:\
 ${COM}/build${ARCH}/bin:\
 ${PATH}"
 LD_LIBRARY_PATH="${BASE}/Output_${ARCH}/${BUILD}:\
@@ -74,7 +74,7 @@ then
 	[ -d /var/lib/fieldworks/registry ] && cp -r /var/lib/fieldworks/registry $FW_CommonAppData
 fi
 
-MONO_PATH="${BASE}/DistFiles:${BASE}/Output_${ARCH}/${BUILD}:${GDK_SHARP}:${GECKOFX}:${ENC_CONVERTERS}"
+MONO_PATH="${BASE}/DistFiles:${BASE}/Output_${ARCH}/${BUILD}:${GDK_SHARP}:${ENC_CONVERTERS}:${GECKOFX}"
 MONO_TRACE_LISTENER="Console.Out"
 #MONO_IOMAP=case
 MONO_MWF_SCALING=disable

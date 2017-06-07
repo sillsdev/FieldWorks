@@ -3,7 +3,6 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using NUnit.Framework;
 using SIL.Keyboarding;
 using SIL.Windows.Forms.Keyboarding;
@@ -25,8 +24,6 @@ namespace SIL.FieldWorks.Common.FwUtils.Attributes
 		/// <summary>
 		/// Initialize keyboard controller
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "Keyboard.Controller gets disposed")]
 		public override void BeforeTest(TestDetails testDetails)
 		{
 			base.BeforeTest(testDetails);

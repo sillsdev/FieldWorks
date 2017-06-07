@@ -1,13 +1,9 @@
-// Copyright (c) 2010-2013 SIL International
+// Copyright (c) 2010-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: UnitOfWorkHelper.cs
-// Responsibility: FW Team
 
 using System;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.Utils;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.FDO.Infrastructure
 {
@@ -16,7 +12,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure
 	/// Base class for UnitOfWorkHelpers
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public abstract class UnitOfWorkHelper : IFWDisposable
+	public abstract class UnitOfWorkHelper : IDisposable
 	{
 		/// <summary>The undo stack that is handling the actions that will be created during
 		/// the task</summary>
@@ -50,7 +46,6 @@ namespace SIL.FieldWorks.FDO.Infrastructure
 			// The base class finalizer is called automatically.
 		}
 
-		#region Implementation of IFWDisposable
 		/// <summary>
 		/// This method throws an ObjectDisposedException if IsDisposed returns
 		///             true.  This is the case where a method or property in an object is being
@@ -68,8 +63,6 @@ namespace SIL.FieldWorks.FDO.Infrastructure
 		/// Add the public property for knowing if the object has been disposed of yet
 		/// </summary>
 		public bool IsDisposed { get; private set; }
-
-		#endregion
 
 		#region Implementation of IDisposable
 

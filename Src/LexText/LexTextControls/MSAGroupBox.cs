@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -8,9 +8,10 @@ using System.Windows.Forms;
 using System.Diagnostics;
 using System.Collections.Generic;
 using SIL.CoreImpl;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO;
-using SIL.Utils;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Common.Widgets;
 
@@ -20,7 +21,7 @@ namespace SIL.FieldWorks.LexText.Controls
 	/// This control handles all of the various text labels and other widgets
 	/// used to set up an MSA of any of the classes.
 	/// </summary>
-	public class MSAGroupBox : UserControl, IFWDisposable
+	public class MSAGroupBox : UserControl
 	{
 		#region Data members
 
@@ -35,7 +36,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		private IPartOfSpeech m_selectedMainPOS = null;
 		private IPartOfSpeech m_selectedSecondaryPOS = null;
 		private IMoInflAffixSlot m_selectedSlot = null;
-		private ITsStrFactory m_tsf = null;
 		private bool m_skipEvents = false;
 		private IMoMorphType m_morphType;
 
@@ -451,7 +451,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// </summary>
 		protected override void Dispose( bool disposing )
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
 				return;
@@ -516,7 +516,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			CheckDisposed();
 
 			m_parentForm = parentForm;
-			m_tsf = cache.TsStrFactory;
 			m_cache = cache;
 			m_propertyTable = propertyTable;
 			m_publisher = publisher;
@@ -528,9 +527,9 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			m_fwcbAffixTypes.WritingSystemFactory = m_cache.WritingSystemFactory;
 			m_fwcbAffixTypes.WritingSystemCode = defAnalWs.Handle;
-			m_fwcbAffixTypes.Items.Add(m_tsf.MakeString(LexTextControls.ksNotSure, defUserWs));
-			m_fwcbAffixTypes.Items.Add(m_tsf.MakeString(LexTextControls.ksInflectional, defUserWs));
-			m_fwcbAffixTypes.Items.Add(m_tsf.MakeString(LexTextControls.ksDerivational, defUserWs));
+			m_fwcbAffixTypes.Items.Add(TsStringUtils.MakeString(LexTextControls.ksNotSure, defUserWs));
+			m_fwcbAffixTypes.Items.Add(TsStringUtils.MakeString(LexTextControls.ksInflectional, defUserWs));
+			m_fwcbAffixTypes.Items.Add(TsStringUtils.MakeString(LexTextControls.ksDerivational, defUserWs));
 			m_fwcbAffixTypes.StyleSheet = stylesheet;
 			m_fwcbAffixTypes.AdjustStringHeight = false;
 
@@ -716,7 +715,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					if (name != null && name.Length > 0) // Don't add empty strings.
 					{
 						HvoTssComboItem newItem = new HvoTssComboItem(slot.Hvo,
-							m_tsf.MakeString(name, m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle));
+							TsStringUtils.MakeString(name, m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle));
 						itemsToAdd.Add(newItem);
 						if (m_selectedSlot != null && m_selectedSlot.Hvo == newItem.Hvo)
 							matchIdx = itemsToAdd.Count - 1;

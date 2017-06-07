@@ -2,7 +2,6 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System.Diagnostics.CodeAnalysis;
 namespace SIL.FieldWorks.FwCoreDlgs
 {
 	partial class FwUpdateReportDlg
@@ -34,8 +33,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		// TODO-Linux: UseEXDialog is not implemented, will always use default dialog
 		// (printDialog1.UseEXDialog)
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification="See TODO-Linux comment")]
 		private void InitializeComponent()
 		{
 			System.Windows.Forms.Label spearatorLine;

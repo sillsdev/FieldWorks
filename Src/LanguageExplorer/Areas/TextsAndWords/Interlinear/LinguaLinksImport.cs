@@ -11,9 +11,8 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
-using System.IO;
 using System.Text;
+using System.IO;
 using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Serialization;
@@ -21,11 +20,12 @@ using System.Xml.XPath;
 using System.Xml.Xsl;
 using ECInterfaces;
 using SilEncConverters40;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application.ApplicationServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
+using SIL.CoreImpl.Text;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
@@ -217,18 +217,15 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		internal void ImportWordsFrag(Word[] words, ImportAnalysesLevel analysesLevel)
 		{
 			s_importOptions = new ImportInterlinearOptions {AnalysesLevel = analysesLevel};
-			var tsStrFactory = m_cache.ServiceLocator.GetInstance<ITsStrFactory>();
 			NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
 			{
 				foreach (var word in words)
 				{
-					CreateWordAnalysisStack(m_cache, word, tsStrFactory);
+					CreateWordAnalysisStack(m_cache, word);
 				}
 			});
 		}
 
-		[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-			Justification="BirdData is a reference")]
 		public class ImportInterlinearOptions
 		{
 			public IThreadedProgress Progress;
@@ -446,7 +443,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		/// <param name="progress"></param>
 		/// <returns></returns>
-		virtual protected DialogResult ShowPossibleMergeDialog(IThreadedProgress progress)
+		protected virtual DialogResult ShowPossibleMergeDialog(IThreadedProgress progress)
 		{							//we need to invoke the dialog on the main thread so we can use the progress dialog as the parent.
 			//otherwise the message box can be displayed behind everything
 			IAsyncResult asyncResult = progress.SynchronizeInvoke.BeginInvoke(new ShowDialogAboveProgressbarDelegate(ShowDialogAboveProgressbar),
@@ -460,26 +457,23 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			return (DialogResult)progress.SynchronizeInvoke.EndInvoke(asyncResult);
 		}
 
-		private static ITsString GetSpaceAdjustedPunctString(ILgWritingSystemFactory wsFactory, ITsStrFactory tsStrFactory,
-															 item item, ITsString wordString, char space, bool followsWord)
+		private static ITsString GetSpaceAdjustedPunctString(ILgWritingSystemFactory wsFactory, item item, ITsString wordString, char space, bool followsWord)
 		{
-			if(item.Value.Length > 0)
+			if (item.Value.Length > 0)
 			{
 				var index = 0;
-				ITsString tempValue = AdjustPunctStringForCharacter(wsFactory, tsStrFactory, item, wordString, item.Value[index], index, space, followsWord);
+				ITsString tempValue = AdjustPunctStringForCharacter(wsFactory, item, wordString, item.Value[index], index, space, followsWord);
 				if(item.Value.Length > 1)
 				{
 					index = item.Value.Length - 1;
-					tempValue = AdjustPunctStringForCharacter(wsFactory, tsStrFactory, item, tempValue, item.Value[index], index, space, followsWord);
+					tempValue = AdjustPunctStringForCharacter(wsFactory, item, tempValue, item.Value[index], index, space, followsWord);
 				}
 				return tempValue;
 			}
 			return wordString;
 		}
 
-		private static ITsString AdjustPunctStringForCharacter(
-			ILgWritingSystemFactory wsFactory, ITsStrFactory tsStrFactory,
-			item item, ITsString wordString, char punctChar, int index,
+		private static ITsString AdjustPunctStringForCharacter(ILgWritingSystemFactory wsFactory, item item, ITsString wordString, char punctChar, int index,
 			char space, bool followsWord)
 		{
 			bool spaceBefore = false;
@@ -519,7 +513,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				ILgWritingSystem wsEngine;
 				if (TryGetWsEngine(wsFactory, item.lang, out wsEngine))
 				{
-					wordBuilder.ReplaceTsString(0, 0, tsStrFactory.MakeString("" + space,
+					wordBuilder.ReplaceTsString(0, 0, TsStringUtils.MakeString("" + space,
 						wsEngine.Handle));
 				}
 				wordString = wordBuilder.GetString();
@@ -529,7 +523,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				ILgWritingSystem wsEngine;
 				if (TryGetWsEngine(wsFactory, item.lang, out wsEngine))
 				{
-					wordBuilder.ReplaceTsString(index, index, tsStrFactory.MakeString("" + space,
+					wordBuilder.ReplaceTsString(index, index, TsStringUtils.MakeString("" + space,
 						wsEngine.Handle));
 				}
 				wordString = wordBuilder.GetString();
@@ -540,7 +534,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				if (TryGetWsEngine(wsFactory, item.lang, out wsEngine))
 				{
 					wordBuilder.ReplaceTsString(wordBuilder.Length, wordBuilder.Length,
-						tsStrFactory.MakeString("" + space, wsEngine.Handle));
+						TsStringUtils.MakeString("" + space, wsEngine.Handle));
 				}
 				wordString = wordBuilder.GetString();
 			}
@@ -1558,7 +1552,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			try
 			{
-				XmlImportData xid = new XmlImportData(m_cache);
+				XmlImportData xid = new XmlImportData(m_cache, true);
 				xid.ImportData(m_nextInput, m_progress);
 				return true;
 			}

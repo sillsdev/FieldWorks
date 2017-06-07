@@ -11,6 +11,7 @@
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.IO;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.FwUtils.Pathway
 {
@@ -27,9 +28,10 @@ namespace SIL.FieldWorks.Common.FwUtils.Pathway
 		{
 			get
 			{
+				const string installDirValue = "PathwayDir46";
 				object regObj;
 				if (RegistryHelper.RegEntryValueExists(RegistryHelper.CompanyKey, SilSubKey.Pathway,
-					"PathwayDir", out regObj))
+					installDirValue, out regObj))
 				{
 					return (string)regObj;
 				}
@@ -37,16 +39,13 @@ namespace SIL.FieldWorks.Common.FwUtils.Pathway
 				// Some broken Windows machines can have trouble accessing HKLM (LT-15158).
 				if (RegistryHelper.CompanyKeyLocalMachine == null)
 				{
-					string companyName = "SIL";
-					string defaultDir = Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), companyName), "Pathway7");
-					if (Directory.Exists(defaultDir))
-						return defaultDir;
-					else
-						return string.Empty;
+					var companyName = "SIL";
+					var defaultDir = Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), companyName), "Pathway7");
+					return Directory.Exists(defaultDir) ? defaultDir : string.Empty;
 				}
 
 				if (RegistryHelper.RegEntryValueExists(RegistryHelper.CompanyKeyLocalMachine, SilSubKey.Pathway,
-					"PathwayDir", out regObj))
+					installDirValue, out regObj))
 				{
 					return (string) regObj;
 				}

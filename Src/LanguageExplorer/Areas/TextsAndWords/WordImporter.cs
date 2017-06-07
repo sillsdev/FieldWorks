@@ -1,16 +1,13 @@
-// Copyright (c) 2002-2015 SIL International
+// Copyright (c) 2002-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-// <remarks>
-// Implements WordImporter
-// </remarks>
-
 using System.IO;
 using System.Collections.Generic;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.Common.COMInterfaces;
-
 namespace LanguageExplorer.Areas.TextsAndWords
 {
 	/// <summary>
@@ -18,22 +15,13 @@ namespace LanguageExplorer.Areas.TextsAndWords
 	/// </summary>
 	internal sealed class WordImporter
 	{
-		private ILgCharacterPropertyEngine m_lgCharPropEngineVern;
-		private FdoCache m_cache;
-		private int m_ws;
+		private readonly FdoCache m_cache;
+		private readonly CoreWritingSystemDefinition m_ws;
 
 		public WordImporter(FdoCache cache)
 		{
 			m_cache = cache;
-			m_ws = cache.DefaultVernWs;
-
-			//the following comment is from the FDO Scripture class, so the answer may appear there.
-
-			// Get a default character property engine.
-			// REVIEW SteveMc(TomB): We need the cpe for the primary vernacular writing system. What
-			// should we be passing as the second param (i.e., the old writing system)? For now,
-			// 0 seems to work.
-			m_lgCharPropEngineVern = m_cache.LanguageWritingSystemFactoryAccessor.get_CharPropEngine(m_cache.DefaultVernWs);
+			m_ws = cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
 		}
 
 		public void PopulateWordset(string path, IWfiWordSet wordSet)
@@ -77,7 +65,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			int totalLengh = buffer.Length;
 			for(int i = 0; i < totalLengh; i++)
 			{
-				bool isWordforming = m_lgCharPropEngineVern.get_IsWordForming(buffer[i]);
+				bool isWordforming = m_ws.get_IsWordForming(buffer[i]);
 				if (isWordforming)
 				{
 					length++;
@@ -91,7 +79,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 					string word = buffer.Substring(start, length);
 					if (!wordforms.ContainsKey(word))
 					{
-						var tss = m_cache.TsStrFactory.MakeString(word, m_ws);
+						ITsString tss = TsStringUtils.MakeString(word, m_ws.Handle);
 						wordforms.Add(word, WfiWordformServices.FindOrCreateWordform(m_cache, tss));
 					}
 					length = 0;

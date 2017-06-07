@@ -3,8 +3,9 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
-using SIL.Utils;
+using SIL.Xml;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
@@ -22,7 +23,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			base.FinishInit();
 			// have chooser title use the same text as the label
-			m_fieldName = XmlUtils.GetLocalizedAttributeValue(m_configurationNode, "label", m_fieldName);
+			m_fieldName = StringTable.Table.LocalizeAttributeValue(XmlUtils.GetOptionalAttributeValue(m_configurationNode, "label", m_fieldName));
 
 			((GenDateLauncher)Control).InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 			((GenDateLauncher)Control).Initialize(m_cache, m_obj, m_flid, m_fieldName, m_persistenceProvider,

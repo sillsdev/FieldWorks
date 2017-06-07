@@ -1,13 +1,13 @@
-// Copyright (c) 2004-2015 SIL International
+// Copyright (c) 2004-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Diagnostics;
 using System.Linq;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FwCoreDlgs;
-using SIL.Utils;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 {

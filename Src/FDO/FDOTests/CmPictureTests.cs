@@ -1,21 +1,17 @@
-// Copyright (c) 2005-2013 SIL International
+// Copyright (c) 2005-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: CmPictureTests.cs
-// Responsibility: TE Team
 
 using System;
 using System.Collections.Generic;
 using System.IO;
-
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Test.TestUtils;
 using NUnit.Framework;
 using SIL.Utils;
 using SIL.FieldWorks.FDO.DomainServices;
 using System.Text;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.FDO.FDOTests
 {
@@ -64,7 +60,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 			m_pictureFactory = Cache.ServiceLocator.GetInstance<ICmPictureFactory>();
 			m_pict = m_pictureFactory.Create(m_internalPath,
-				Cache.TsStrFactory.MakeString("Test picture", Cache.DefaultVernWs),
+				TsStringUtils.MakeString("Test picture", Cache.DefaultVernWs),
 				CmFolderTags.LocalPictures);
 
 			Assert.IsNotNull(m_pict);
@@ -342,7 +338,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			m_fileOs.AddFile(sNewFile, "456", Encoding.Default);
 
 			m_pict.UpdatePicture(sNewFile,
-				Cache.TsStrFactory.MakeString("Updated Picture", Cache.DefaultVernWs),
+				TsStringUtils.MakeString("Updated Picture", Cache.DefaultVernWs),
 				CmFolderTags.LocalPictures, Cache.DefaultVernWs);
 			Assert.AreEqual("Updated Picture", m_pict.Caption.VernacularDefaultWritingSystem.Text);
 			string internalPathUpdated = m_pict.PictureFileRA.InternalPath;
@@ -361,7 +357,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			string sNewFile = Path.DirectorySeparatorChar + Path.GetRandomFileName();
 			m_pict.UpdatePicture(sNewFile,
-				Cache.TsStrFactory.MakeString("Updated Picture", Cache.DefaultVernWs),
+				TsStringUtils.MakeString("Updated Picture", Cache.DefaultVernWs),
 				CmFolderTags.LocalPictures, Cache.DefaultVernWs);
 			Assert.AreEqual("Updated Picture", m_pict.Caption.VernacularDefaultWritingSystem.Text);
 			string internalPathUpdated = m_pict.PictureFileRA.InternalPath;

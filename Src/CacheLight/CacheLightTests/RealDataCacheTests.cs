@@ -7,11 +7,12 @@ using System.Collections.Generic; // Needed for KeyNotFoundException.
 using System.IO;
 using NUnit.Framework;
 using SIL.FieldWorks.CacheLight;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Test.TestUtils;
 using SIL.Utils;
 using System.Text;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Cellar;
+using SIL.CoreImpl.Text;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 
 namespace SIL.FieldWorks.CacheLightTests
 {
@@ -64,8 +65,8 @@ namespace SIL.FieldWorks.CacheLightTests
 		public virtual void FixtureTearDown()
 		{
 			FileUtils.Manager.Reset();
-					m_realDataCache.Dispose();
-			}
+			m_realDataCache.Dispose();
+		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -407,7 +408,7 @@ namespace SIL.FieldWorks.CacheLightTests
 			var clid = SilDataAccess.MetaDataCache.GetClassId("ClassG");
 			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class, clid);
 
-			var tsPropsBuilder = TsPropsBldrClass.Create();
+			var tsPropsBuilder = TsStringUtils.MakePropsBldr();
 			var props = tsPropsBuilder.GetTextProps();
 			var tag = SilDataAccess.MetaDataCache.GetFieldId("ClassG", "TextPropsProp7", false);
 			SilDataAccess.SetUnknown(hvo, tag, props);
@@ -443,7 +444,7 @@ namespace SIL.FieldWorks.CacheLightTests
 			var clid = SilDataAccess.MetaDataCache.GetClassId("ClassE");
 			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class, clid);
 
-			var tsPropsBuilder = TsPropsBldrClass.Create();
+			var tsPropsBuilder = TsStringUtils.MakePropsBldr();
 			var props = tsPropsBuilder.GetTextProps();
 			var tag = SilDataAccess.MetaDataCache.GetFieldId("ClassE", "UnicodeProp4", false);
 			SilDataAccess.SetUnknown(hvo, tag, props);
@@ -461,7 +462,7 @@ namespace SIL.FieldWorks.CacheLightTests
 			var clid = SilDataAccess.MetaDataCache.GetClassId("ClassG");
 			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class, clid);
 
-			var tsPropsBuilder = TsPropsBldrClass.Create();
+			var tsPropsBuilder = TsStringUtils.MakePropsBldr();
 			var tag = SilDataAccess.MetaDataCache.GetFieldId("ClassG", "TextPropsProp7", false);
 			SilDataAccess.SetUnknown(hvo, tag, tsPropsBuilder);
 		}
@@ -540,7 +541,7 @@ namespace SIL.FieldWorks.CacheLightTests
 			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class, clid);
 			var tag = SilDataAccess.MetaDataCache.GetFieldId("ClassJ", "StringProp10", false);
 
-			var tsString = TsStringUtils.MakeTss("/ a _", 42, "Verse");
+			var tsString = TsStringUtils.MakeString("/ a _", 42, "Verse");
 			SilDataAccess.SetString(hvo, tag, tsString);
 
 			var tsStringNew = SilDataAccess.get_StringProp(hvo, tag);
@@ -574,8 +575,7 @@ namespace SIL.FieldWorks.CacheLightTests
 			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class, clid);
 			var tag = SilDataAccess.MetaDataCache.GetFieldId("ClassK", "MultiStringProp11", false);
 
-			var tsf = TsStrFactoryClass.Create();
-			var tss = tsf.MakeString("Verb", 1);
+			var tss = TsStringUtils.MakeString("Verb", 1);
 			SilDataAccess.SetMultiStringAlt(hvo, tag, 1, tss);
 
 			var tssNew = SilDataAccess.get_MultiStringAlt(hvo, tag, 1);
@@ -594,17 +594,13 @@ namespace SIL.FieldWorks.CacheLightTests
 			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class, clid);
 			var tag = SilDataAccess.MetaDataCache.GetFieldId("ClassK", "MultiStringProp11", false);
 
-			var tsf = TsStrFactoryClass.Create();
-			var tss = tsf.MakeString("Verb", 1);
+			var tss = TsStringUtils.MakeString("Verb", 1);
 			SilDataAccess.SetMultiStringAlt(hvo, tag, 1, tss);
-			tss = tsf.MakeString("Verbo", 2);
+			tss = TsStringUtils.MakeString("Verbo", 2);
 			SilDataAccess.SetMultiStringAlt(hvo, tag, 2, tss);
 
 			var tsms = SilDataAccess.get_MultiStringProp(hvo, tag);
 			Assert.AreEqual(tsms.StringCount, 2);
-
-			// TsMultiString's are required to be created and released by same thread
-			System.Runtime.InteropServices.Marshal.ReleaseComObject(tsms);
 		}
 
 		/// <summary>
@@ -620,8 +616,7 @@ namespace SIL.FieldWorks.CacheLightTests
 			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class, clid);
 			var tag = SilDataAccess.MetaDataCache.GetFieldId("ClassK", "MultiStringProp11", false);
 
-			var tsf = TsStrFactoryClass.Create();
-			var tss = tsf.MakeString("Verb", 1);
+			var tss = TsStringUtils.MakeString("Verb", 1);
 			SilDataAccess.SetMultiStringAlt(hvo, tag, 0, tss);
 		}
 
@@ -638,8 +633,7 @@ namespace SIL.FieldWorks.CacheLightTests
 			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class, clid);
 			var tag = SilDataAccess.MetaDataCache.GetFieldId("ClassK", "MultiStringProp11", false);
 
-			var tsf = TsStrFactoryClass.Create();
-			var tss = tsf.MakeString("Verb", 1);
+			var tss = TsStringUtils.MakeString("Verb", 1);
 			SilDataAccess.SetMultiStringAlt(hvo, tag, -1, tss);
 		}
 

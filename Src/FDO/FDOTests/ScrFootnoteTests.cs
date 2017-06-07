@@ -1,17 +1,13 @@
-// Copyright (c) 2004-2013 SIL International
+// Copyright (c) 2004-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ScrFootnoteTests.cs
-// Responsibility: TE Team
 
 using System;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.Test.TestUtils;
-using SIL.FieldWorks.Common.ScriptureUtils;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Scripture;
+using SIL.CoreImpl.Text;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.FDO.FDOTests
 {
@@ -1150,9 +1146,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void GetMarkerForFootnote_Scripture_Nothing()
 		{
-			IScrFootnote footnote = (IScrFootnote)m_genesis.FootnotesOS[1];
-			IStTxtPara para = footnote.AddNewTextPara(ScrStyleNames.NormalFootnoteParagraph);
-			ITsStrFactory factory = TsStrFactoryClass.Create();
+			IScrFootnote footnote = m_genesis.FootnotesOS[1];
+			footnote.AddNewTextPara(ScrStyleNames.NormalFootnoteParagraph);
 			m_scr.FootnoteMarkerType = FootnoteMarkerTypes.NoFootnoteMarker;
 			m_scr.CrossRefMarkerType = FootnoteMarkerTypes.AutoFootnoteMarker;  // Just to make sure it's not using this by mistake
 			AssertEx.AreTsStringsEqual(MakeMarker(""), footnote.FootnoteMarker);
@@ -1167,9 +1162,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void GetMarkerForFootnote_Scripture_LiteralSymbol()
 		{
-			IScrFootnote footnote = (IScrFootnote)m_genesis.FootnotesOS[1];
-			IStTxtPara para = footnote.AddNewTextPara(ScrStyleNames.NormalFootnoteParagraph);
-			ITsStrFactory factory = TsStrFactoryClass.Create();
+			IScrFootnote footnote = m_genesis.FootnotesOS[1];
+			footnote.AddNewTextPara(ScrStyleNames.NormalFootnoteParagraph);
 			m_scr.FootnoteMarkerType = FootnoteMarkerTypes.SymbolicFootnoteMarker;
 			m_scr.FootnoteMarkerSymbol = "$";
 			m_scr.CrossRefMarkerType = FootnoteMarkerTypes.AutoFootnoteMarker;  // Just to make sure it's not using this by mistake
@@ -1210,9 +1204,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void GetMarkerForCrossRef_Scripture_Nothing()
 		{
-			IScrFootnote footnote = (IScrFootnote)m_genesis.FootnotesOS[1];
-			IStTxtPara para = footnote.AddNewTextPara(ScrStyleNames.CrossRefFootnoteParagraph);
-			ITsStrFactory factory = TsStrFactoryClass.Create();
+			IScrFootnote footnote = m_genesis.FootnotesOS[1];
+			footnote.AddNewTextPara(ScrStyleNames.CrossRefFootnoteParagraph);
 			m_scr.CrossRefMarkerType = FootnoteMarkerTypes.NoFootnoteMarker;
 			m_scr.FootnoteMarkerType = FootnoteMarkerTypes.AutoFootnoteMarker; // Just to make sure it's not using this by mistake
 			AssertEx.AreTsStringsEqual(MakeMarker(""), footnote.FootnoteMarker);
@@ -1227,9 +1220,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void GetMarkerForCrossRef_Scripture_LiteralSymbol()
 		{
-			IScrFootnote footnote = (IScrFootnote)m_genesis.FootnotesOS[1];
-			IStTxtPara para = footnote.AddNewTextPara(ScrStyleNames.CrossRefFootnoteParagraph);
-			ITsStrFactory factory = TsStrFactoryClass.Create();
+			IScrFootnote footnote = m_genesis.FootnotesOS[1];
+			footnote.AddNewTextPara(ScrStyleNames.CrossRefFootnoteParagraph);
 			m_scr.CrossRefMarkerType = FootnoteMarkerTypes.SymbolicFootnoteMarker;
 			m_scr.CrossRefMarkerSymbol = "$";
 			m_scr.FootnoteMarkerType = FootnoteMarkerTypes.AutoFootnoteMarker; // Just to make sure it's not using this by mistake
@@ -1321,8 +1313,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// ------------------------------------------------------------------------------------
 		private ITsString MakeMarker(string marker)
 		{
-			ITsStrBldr bldr = TsStrBldrClass.Create();
-			ITsPropsBldr propBldr = TsPropsBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
+			ITsPropsBldr propBldr = TsStringUtils.MakePropsBldr();
 			propBldr.SetStrPropValue((int)FwTextPropType.ktptNamedStyle,
 				ScrStyleNames.FootnoteMarker);
 			propBldr.SetIntPropValues((int)FwTextPropType.ktptWs, 0,

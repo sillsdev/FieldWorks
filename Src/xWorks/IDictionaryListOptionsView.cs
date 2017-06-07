@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -23,6 +23,9 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 
 		/// <summary>Whether or not the single "display option" checkbox below the list is checked</summary>
 		bool DisplayOptionCheckBoxChecked { get; set; }
+
+		/// <summary>Whether or not the single "display option2" checkbox below the list is checked</summary>
+		bool DisplayOptionCheckBox2Checked { get; set; }
 
 		/// <summary>
 		/// Enabled option set to MoveUp button
@@ -73,6 +76,9 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 
 		/// <summary>EventHandler for the single "display option" checkbox below the list</summary>
 		event EventHandler DisplayOptionCheckBoxChanged;
+
+		/// <summary>EventHandler for the single "display option2" checkbox below the list</summary>
+		event EventHandler DisplayOptionCheckBox2Changed;
 
 
 

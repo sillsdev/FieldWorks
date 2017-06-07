@@ -1,20 +1,15 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ScrTxtParaTests.cs
-// Responsibility: TE Team
 
 using System;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.Utils;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.Test.TestUtils;
-using SILUBS.SharedScrUtils;
+using SIL.CoreImpl.Scripture;
 using System.Collections.Generic;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Text;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.FDO.FDOTests
 {
@@ -198,7 +193,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			IScrSection section = AddSectionToMockedBook(book);
 			IScrTxtPara para = AddParaToMockedSectionContent(section, ScrStyleNames.NormalParagraph);
 			// Add a range of text with a character style.
-			ITsPropsBldr propsBldr = TsPropsBldrClass.Create();
+			ITsPropsBldr propsBldr = TsStringUtils.MakePropsBldr();
 			propsBldr.SetIntPropValues((int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault, Cache.DefaultVernWs);
 			propsBldr.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, ScrStyleNames.Doxology);
 			ITsStrBldr tssBldr = para.Contents.GetBldr();
@@ -230,7 +225,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			IScrSection section = AddSectionToMockedBook(book);
 			IScrTxtPara para = AddParaToMockedSectionContent(section, ScrStyleNames.NormalParagraph);
 			// Add a range of text with a character style.
-			ITsPropsBldr propsBldr = TsPropsBldrClass.Create();
+			ITsPropsBldr propsBldr = TsStringUtils.MakePropsBldr();
 			propsBldr.SetIntPropValues((int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault, Cache.DefaultVernWs);
 			propsBldr.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, ScrStyleNames.Doxology);
 			ITsStrBldr tssBldr = para.Contents.GetBldr();
@@ -295,7 +290,6 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public void Context_Title()
 		{
 			// add section and content
-			ITsStrFactory factory = TsStrFactoryClass.Create();
 			AddTitleToMockedBook(m_book, "Matthew");
 
 			Assert.AreEqual(ContextValues.Title, ((IScrTxtPara)m_book.TitleOA.ParagraphsOS[0]).Context);
@@ -310,7 +304,6 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public void Context_Footnote()
 		{
 			// add section and content
-			ITsStrFactory factory = TsStrFactoryClass.Create();
 			IStText title = AddTitleToMockedBook(m_book, "Matthew");
 			IStTxtPara para = AddParaToMockedText(title, ScrStyleNames.MainBookTitle);
 			IScrFootnote footnote = AddFootnote(m_book, para, 0, "Some text");
@@ -948,7 +941,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			// Insert a new paragraph at the beginning of the first section
 			IScrTxtPara newPara = (IScrTxtPara)m_section.ContentOA.InsertNewTextPara(0, ScrStyleNames.NormalParagraph);
-			newPara.Contents = TsStringUtils.MakeTss("Some text at beginning of section without previous verse",
+			newPara.Contents = TsStringUtils.MakeString("Some text at beginning of section without previous verse",
 				Cache.DefaultVernWs);
 
 			BCVRef refStart, refEnd;
@@ -975,7 +968,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			// Add a new paragraph at the end of the first section
 			IScrTxtPara newPara = (IScrTxtPara)m_section.ContentOA.AddNewTextPara(ScrStyleNames.NormalParagraph);
-			newPara.Contents = TsStringUtils.MakeTss("Text at the end of the section.",
+			newPara.Contents = TsStringUtils.MakeString("Text at the end of the section.",
 				Cache.DefaultVernWs);
 
 			BCVRef refStart, refEnd;
@@ -1467,7 +1460,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			// The main current application of this is a complex delete followed by inserting a character, so try that.
 			IStTxtPara paraOrig = m_currentText[0];
-			paraOrig.Contents = Cache.TsStrFactory.MakeString("First stinkin' Para", Cache.DefaultVernWs);
+			paraOrig.Contents = TsStringUtils.MakeString("First stinkin' Para", Cache.DefaultVernWs);
 			IStFootnote footnote1 = AddFootnote(m_book, paraOrig, 14, "Footnote text");
 
 			IScrTxtParaFactory paraFactory = Cache.ServiceLocator.GetInstance<IScrTxtParaFactory>();
@@ -1582,11 +1575,10 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			IStTxtPara para = m_currentText[0];
 
 			ITsString tss = para.Contents;
-			ITsStrFactory factory = Cache.TsStrFactory;
 			using (DummyFileMaker fileMaker = new DummyFileMaker("junk.jpg", true))
 			{
 				ICmPicture pict = Cache.ServiceLocator.GetInstance<ICmPictureFactory>().Create(fileMaker.Filename,
-					factory.MakeString("Test picture", Cache.DefaultVernWs),
+					TsStringUtils.MakeString("Test picture", Cache.DefaultVernWs),
 					CmFolderTags.LocalPictures);
 				para.Contents = pict.InsertORCAt(tss, 0);
 				tss = para.Contents;
@@ -1745,13 +1737,13 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public void SetContainingPara_MultipleFootnoteAdded()
 		{
 			IScrTxtPara para = (IScrTxtPara)m_currentText.ParagraphsOS[0];
-			para.Contents = Cache.TsStrFactory.MakeString("Test data", Cache.DefaultVernWs);
+			para.Contents = TsStringUtils.MakeString("Test data", Cache.DefaultVernWs);
 			IScrFootnote footnote1 = Cache.ServiceLocator.GetInstance<IScrFootnoteFactory>().Create();
 			IScrFootnote footnote2 = Cache.ServiceLocator.GetInstance<IScrFootnoteFactory>().Create();
 			m_book.FootnotesOS.Add(footnote1);
 			m_book.FootnotesOS.Add(footnote2);
 
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, "Test data", StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
 			TsStringUtils.InsertOrcIntoPara(footnote1.Guid, FwObjDataTypes.kodtOwnNameGuidHot, bldr, 0, 0, Cache.DefaultVernWs);
 			TsStringUtils.InsertOrcIntoPara(footnote2.Guid, FwObjDataTypes.kodtOwnNameGuidHot, bldr, 5, 5, Cache.DefaultVernWs);
@@ -1773,13 +1765,13 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public void SetContainingPara_ReplaceFootnote()
 		{
 			IScrTxtPara para = (IScrTxtPara)m_currentText.ParagraphsOS[0];
-			para.Contents = Cache.TsStrFactory.MakeString("Test data", Cache.DefaultVernWs);
+			para.Contents = TsStringUtils.MakeString("Test data", Cache.DefaultVernWs);
 			IScrFootnote originalFootnote = AddFootnote(m_book, para, 0);
 
 			IScrFootnote newFootnote = Cache.ServiceLocator.GetInstance<IScrFootnoteFactory>().Create();
 			m_book.FootnotesOS.Add(newFootnote);
 
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, "Test data", StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
 			TsStringUtils.InsertOrcIntoPara(newFootnote.Guid, FwObjDataTypes.kodtOwnNameGuidHot, bldr, 0, 0, Cache.DefaultVernWs);
 			para.Contents = bldr.GetString();

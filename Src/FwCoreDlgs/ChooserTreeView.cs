@@ -5,11 +5,11 @@
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
+using SIL.CoreImpl.Text;
+using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.FDO;
-using SIL.Utils;
-using SIL.CoreImpl;
 
-namespace SIL.FieldWorks.Common.Controls
+namespace SIL.FieldWorks.FwCoreDlgs
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
@@ -208,9 +208,9 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			if (m_lblSelectedCategories != null)
 			{
-				m_lblSelectedCategories.Text = (SelectedItems.Count == 0 ?
-					FwCoreDlgs.Properties.Resources.kstidNoPossibilitySelectedText :
-					SelectedItems.ToString(", "));
+				m_lblSelectedCategories.Text = SelectedItems.Count == 0 ?
+					FieldWorks.FwCoreDlgs.Properties.Resources.kstidNoPossibilitySelectedText :
+					string.Join(", ", SelectedItems);
 			}
 		}
 

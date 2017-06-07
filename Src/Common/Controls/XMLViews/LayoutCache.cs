@@ -1,23 +1,23 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Diagnostics;
 using System.Linq;
 using System.Xml.Linq;
 using System.Xml.XPath;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.Utils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
+using SIL.ObjectModel;
+using SIL.Xml;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -69,10 +69,10 @@ namespace SIL.FieldWorks.Common.Controls
 		}
 
 		/// <summary>
-		/// Layout Version Number (last updated by JohnT, 18 June 2013, as part of LT-14656).
+		/// Layout Version Number (last updated by GordonM, 10 June 2016, as part of Etymology cluster update).
 		/// </summary>
 		/// <remarks>Note: often we also want to update BrowseViewer.kBrowseViewVersion.</remarks>
-		public static readonly int LayoutVersionNumber = 24;
+		public static readonly int LayoutVersionNumber = 25;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -282,7 +282,7 @@ namespace SIL.FieldWorks.Common.Controls
 	/// <summary>
 	/// Helper for handling switching between related (ListItemClass) lists.
 	/// </summary>
-	public class PartOwnershipTree : FwDisposableBase
+	public class PartOwnershipTree : DisposableBase
 	{
 		FdoCache m_cache = null;
 		XElement m_classOwnershipTree = null;
@@ -328,7 +328,7 @@ namespace SIL.FieldWorks.Common.Controls
 			get { return m_cache; }
 		}
 
-		#region FwDisposableBase overrides
+		#region DisposableBase overrides
 		/// <summary>
 		///
 		/// </summary>
@@ -338,7 +338,7 @@ namespace SIL.FieldWorks.Common.Controls
 			m_classOwnershipTree = null;
 			m_parentToChildrenSpecs = null;
 		}
-		#endregion FwDisposableBase overrides
+		#endregion DisposableBase overrides
 
 
 		/// <summary>
@@ -383,9 +383,9 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="flidForCurrentList"></param>
 		/// <param name="commonAncestors"></param>
 		/// <returns></returns>
-		public HashSet<int> FindCorrespondingItemsInCurrentList(int flidForItemsBeforeListChange, HashSet<int> itemsBeforeListChange, int flidForCurrentList, out HashSet<int> commonAncestors)
+		public ISet<int> FindCorrespondingItemsInCurrentList(int flidForItemsBeforeListChange, ISet<int> itemsBeforeListChange, int flidForCurrentList, out ISet<int> commonAncestors)
 		{
-			HashSet<int> relatives = new HashSet<int>();
+			var relatives = new HashSet<int>();
 			commonAncestors = new HashSet<int>();
 			int newListItemsClass = GhostParentHelper.GetBulkEditDestinationClass(Cache, flidForCurrentList);
 			int prevListItemsClass = GhostParentHelper.GetBulkEditDestinationClass(Cache, flidForItemsBeforeListChange);
@@ -459,7 +459,7 @@ namespace SIL.FieldWorks.Common.Controls
 							if (!commonAncestors.Contains(hvoCommonAncestor))
 							{
 								GhostParentHelper gph = GetGhostParentHelper(flidForCurrentList);
-								HashSet<int> descendents = GetDescendents(hvoCommonAncestor, flidForCurrentList);
+								ISet<int> descendents = GetDescendents(hvoCommonAncestor, flidForCurrentList);
 								if (descendents.Count > 0)
 								{
 									relatives.UnionWith(descendents);
@@ -482,7 +482,7 @@ namespace SIL.FieldWorks.Common.Controls
 			return GhostParentHelper.CreateIfPossible(Cache.ServiceLocator, flidToTry);
 		}
 
-		private HashSet<int> GetDescendents(int hvoCommonAncestor, int relativesFlid)
+		private ISet<int> GetDescendents(int hvoCommonAncestor, int relativesFlid)
 		{
 			var listPropertyName = Cache.MetaDataCacheAccessor.GetFieldName(relativesFlid);
 			var parentObjName = Cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoCommonAncestor).ClassName;

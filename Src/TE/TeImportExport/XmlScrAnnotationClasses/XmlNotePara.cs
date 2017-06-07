@@ -5,17 +5,16 @@
 // File: XmlNotePara.cs
 // Responsibility: DavidO
 
-using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml.Serialization;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Common.ScriptureUtils;
-using SIL.Utils;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Scripture;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.TE
 {

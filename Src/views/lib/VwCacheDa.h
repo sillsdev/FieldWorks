@@ -430,6 +430,8 @@ public:
 	STDMETHOD(putref_MetaDataCache)(IFwMetaDataCache * pmdc);
 	STDMETHOD(MoveString)(int hvoSource, PropTag flidSrc, int wsSrc, int ichMin,
 		int ichLim, HVO hvoDst, PropTag flidDst, int wsDst, int ichDest, ComBool fDstIsNew);
+	STDMETHOD(get_TsStrFactory)(ITsStrFactory ** pptsf);
+	STDMETHOD(putref_TsStrFactory)(ITsStrFactory * ptsf);
 
 protected:
 	HVO m_hvoNext;

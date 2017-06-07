@@ -1,23 +1,15 @@
-// Copyright (c) 2007-2013 SIL International
+// Copyright (c) 2007-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: GraphicsManager.cs
-// Responsibility: TE Team
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
-using System.Windows.Forms;
 using System.Drawing;
+using System.Windows.Forms;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.Reporting;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.Utils;
 
-namespace SIL.CoreImpl
+namespace SIL.FieldWorks.Common.FwUtils
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
@@ -25,11 +17,9 @@ namespace SIL.CoreImpl
 	/// HDC in the VwGraphics.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	[SuppressMessage("Gendarme.Rules.Correctness", "DisposableFieldsShouldBeDisposedRule",
-		Justification="m_parent is a reference")]
-	public class GraphicsManager : IFWDisposable
+	public class GraphicsManager : IDisposable
 	{
-		private volatile int m_cactInitGraphics = 0;
+		private volatile int m_cactInitGraphics;
 		private Graphics m_graphics;
 		/// <summary></summary>
 		protected IVwGraphicsWin32 m_vwGraphics;
@@ -110,7 +100,7 @@ namespace SIL.CoreImpl
 		/// ------------------------------------------------------------------------------------
 		protected virtual void Dispose(bool disposing)
 		{
-			Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + "******************");
+			Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + " ******************");
 			if (disposing)
 			{
 				Debug.Assert(m_cactInitGraphics == 0, "We should release the HDC before disposing");

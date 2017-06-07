@@ -7,7 +7,6 @@
 using System;
 using System.IO;
 using System.Linq;
-using System.Media;
 using System.Windows.Forms;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Controls.FileDialog;
@@ -587,7 +586,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 		/// ------------------------------------------------------------------------------------
 		protected virtual void IssueBeep()
 		{
-			SystemSounds.Beep.Play();
+			FwUtils.ErrorBeep();
 		}
 
 		#endregion

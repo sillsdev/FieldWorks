@@ -55,6 +55,9 @@
 		<command id="CmdJumpToConfidenceList" label="Show in {0} list" message="JumpToTool">
 			<parameters tool="confidenceEdit" className="CmPossibility" ownerClass="LangProject" ownerField="ConfidenceLevels"/>
 		</command>
+		<command id="CmdJumpToDialectLabelsList" label="Show in {0} list" message="JumpToTool">
+			<parameters tool="dialectsListEdit" className="CmPossibility" ownerClass="LexDb" ownerField="DialectLabels"/>
+		</command>
 		<command id="CmdJumpToDiscChartMarkerList" label="Show in {0} list" message="JumpToTool">
 			<parameters tool="chartmarkEdit" className="CmPossibility" ownerClass="DsDiscourseData" ownerField="ChartMarkers"/>
 		</command>
@@ -63,6 +66,12 @@
 		</command>
 		<command id="CmdJumpToEducationList" label="Show in {0} list" message="JumpToTool">
 			<parameters tool="educationEdit" className="CmPossibility" ownerClass="LangProject" ownerField="Education"/>
+		</command>
+		<command id="CmdJumpToExtNoteTypeList" label="Show in {0} list" message="JumpToTool">
+			<parameters tool="extNoteTypeEdit" className="CmPossibility" ownerClass="LexDb" ownerField="ExtendedNoteTypes"/>
+		</command>
+		<command id="CmdJumpToLanguagesList" label="Show in {0} list" message="JumpToTool">
+			<parameters tool="languagesListEdit" className="CmPossibility" ownerClass="LexDb" ownerField="Languages"/>
 		</command>
 		<command id="CmdJumpToRoleList" label="Show in {0} list" message="JumpToTool">
 			<parameters tool="roleEdit" className="CmPossibility" ownerClass="LangProject" ownerField="Roles"/>

@@ -3,15 +3,12 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using Aga.Controls.Tree;
 using SIL.FieldWorks.FDO;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification="m_complexImage and m_closedImage are references")]
 	public class InflFeatureTreeModel : TreeModel
 	{
 		private readonly IFsFeatureSystem m_fdoFeatSys;

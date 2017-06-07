@@ -10,7 +10,7 @@ using System.Windows.Forms;
 
 using NUnit.Framework;
 
-using SIL.CoreImpl;
+using SIL.CoreImpl.WritingSystems;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
 
@@ -31,7 +31,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <param name="cache">The cache.</param>
 		/// ------------------------------------------------------------------------------------
 		public DummyFwProjPropertiesDlg(FdoCache cache)
-			: base(cache, null, null, null)
+			: base(cache, null, null)
 		{
 		}
 

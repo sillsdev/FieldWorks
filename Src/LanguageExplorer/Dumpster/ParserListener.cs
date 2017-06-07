@@ -1,17 +1,6 @@
-// Copyright (c) 2002-2015 SIL International
+// Copyright (c) 2002-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-// <remarks>
-// This is an XCore "Listener" which facilitates interaction with the Parser.
-// </remarks>
-// <example>
-//	<code>
-//		<listeners>
-//			<listener assemblyPath="LexTextDll.dll" class="SIL.FieldWorks.LexText"/>
-//		</listeners>
-//	</code>
-// </example>
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -19,7 +8,7 @@ using System.Linq;
 using System.Windows.Forms;
 using LanguageExplorer.Areas.TextsAndWords;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
@@ -33,7 +22,7 @@ namespace LanguageExplorer.Dumpster
 	/// this class just gets all the parser calling and event and receiving
 	/// out of the form code. It is scheduled for refactoring
 	/// </summary>
-	internal sealed class ParserListener : IFlexComponent, IFWDisposable, IVwNotifyChange
+	internal sealed class ParserListener : IFlexComponent, IDisposable, IVwNotifyChange
 	{
 		private FdoCache m_cache; //a pointer to the one owned by from the form
 		/// <summary>
@@ -218,20 +207,9 @@ namespace LanguageExplorer.Dumpster
 				if (ex != null)
 				{
 					DisconnectFromParser();
-					var iree = ex as InvalidReduplicationEnvironmentException;
-					if (iree != null)
-					{
-						string msg = String.Format(ParserUIStrings.ksHermitCrabReduplicationProblem, iree.Morpheme,
-							iree.Message);
-						MessageBox.Show(Form.ActiveForm, msg, ParserUIStrings.ksBadAffixForm,
-								MessageBoxButtons.OK, MessageBoxIcon.Error);
-					}
-					else
-					{
-						var app = PropertyTable.GetValue<IApp>("App");
-						ErrorReporter.ReportException(ex, app.SettingsKey, app.SupportEmailAddress,
-													  app.ActiveMainWindow, false);
-					}
+					var app = PropertyTable.GetValue<IApp>("App");
+					ErrorReporter.ReportException(ex, app.SettingsKey, app.SupportEmailAddress,
+													app.ActiveMainWindow, false);
 				}
 				else
 				{

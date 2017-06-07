@@ -5,11 +5,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Cellar;
+using SIL.CoreImpl.Text;
 using SIL.Utils;
 using SIL.FieldWorks.FDO.DomainServices;
 
@@ -147,7 +146,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			get
 			{
-				ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
+				ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 				if (TypeRA != null)
 					tisb.AppendTsString(TypeRA.Name.BestAnalysisAlternative);
 				tisb.SetIntPropValues((int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault,
@@ -171,7 +170,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			get
 			{
 				if (!(Owner is RnGenericRec))
-					return Cache.TsStrFactory.EmptyString(Cache.DefaultAnalWs);
+					return TsStringUtils.EmptyString(Cache.DefaultAnalWs);
 				var pattern = Strings.ksNumberOfParent; // typically "{0} of {1}".
 				return FormatNumberOfParent(pattern);
 			}
@@ -266,7 +265,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				var items = SubRecordsOS.Count;
 				if (items > 0)
 				{
-					ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
+					ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 					tisb.AppendTsString(ShortNameTSS);
 					tisb.Append(String.Format(SIL.FieldWorks.FDO.Application.ApplicationServices.AppStrings.ksNotebkDeleteSubRecords,items));
 					return tisb.GetString();
@@ -309,7 +308,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			get
 			{
-				ITsStrBldr bldr = m_cache.TsStrFactory.GetBldr();
+				ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 				bldr.SetIntPropValues(0, 0,
 					(int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault, m_cache.DefaultAnalWs);
 				return SubrecordIndexTSS(bldr);
@@ -343,8 +342,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				notebook.UpdateAllRecords();
 
 				int flid = m_cache.MetaDataCache.GetFieldId2(RnGenericRecTags.kClassId, "IndexInOwnerTSS", false);
-				ITsString dummy = m_cache.TsStrFactory.MakeString("", m_cache.DefaultAnalWs);
-				RegisterAllSubrecordIndexTSSChanged(this.SubRecordsOS, flid, dummy);
+				ITsString dummy = TsStringUtils.EmptyString(m_cache.DefaultAnalWs);
+				RegisterAllSubrecordIndexTSSChanged(SubRecordsOS, flid, dummy);
 				NoteSubrecordOfChanges(this, e.Index);
 			}
 			base.AddObjectSideEffectsInternal(e);
@@ -368,8 +367,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				notebook.UpdateAllRecords();
 
 				int flid = m_cache.MetaDataCache.GetFieldId2(RnGenericRecTags.kClassId, "IndexInOwnerTSS", false);
-				ITsString dummy = m_cache.TsStrFactory.MakeString("", m_cache.DefaultAnalWs);
-				RegisterAllSubrecordIndexTSSChanged(this.SubRecordsOS, flid, dummy);
+				ITsString dummy = TsStringUtils.EmptyString(m_cache.DefaultAnalWs);
+				RegisterAllSubrecordIndexTSSChanged(SubRecordsOS, flid, dummy);
 				NoteSubrecordOfChanges(this, e.Index);
 			}
 			base.RemoveObjectSideEffectsInternal(e);

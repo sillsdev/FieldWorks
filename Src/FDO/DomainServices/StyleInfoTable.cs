@@ -8,7 +8,7 @@
 using System;
 using System.Diagnostics;
 using System.Collections.Generic;
-using SIL.CoreImpl;
+using SIL.CoreImpl.WritingSystems;
 
 namespace SIL.FieldWorks.FDO.DomainServices
 {

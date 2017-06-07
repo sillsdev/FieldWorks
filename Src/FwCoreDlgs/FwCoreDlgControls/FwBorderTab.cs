@@ -1,27 +1,13 @@
-// Copyright (c) 2006-2013 SIL International
+// Copyright (c) 2006-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: FwBorderTab.cs
-// Responsibility: TE Team
-//
-// <remarks>
-// </remarks>
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
-using System.Data;
-using System.Text;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
 using System.Diagnostics;
-
-using SIL.Utils;
-using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
-using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.FwCoreDlgControls
 {
@@ -30,7 +16,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 	/// Control for the Border tab on the styles dialog
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public partial class FwBorderTab : UserControl, IFWDisposable, IStylesTab
+	public partial class FwBorderTab : UserControl, IStylesTab
 	{
 		#region Data Members
 		/// <summary>
@@ -88,8 +74,6 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		/// <param name="sender">The source of the event.</param>
 		/// <param name="e">The <see cref="T:System.Windows.Forms.PaintEventArgs"/> instance containing the event data.</param>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "g is a reference")]
 		private void m_pnlBorderPreview_Paint(object sender, PaintEventArgs e)
 		{
 			Graphics g = e.Graphics;

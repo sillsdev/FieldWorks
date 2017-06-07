@@ -1,14 +1,7 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ReferenceComboBoxSlice.cs
-// Responsibility: RandyR
-// Last reviewed:
-//
-// <remarks>
-// Implements the "referenceComboBox" XDE editor.
-// </remarks>
+
 using System;
 using System.Windows.Forms;
 using System.Diagnostics;
@@ -19,7 +12,7 @@ using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.Utils;
+using SIL.Xml;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
@@ -35,8 +28,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <summary>
 		/// Constructor.
 		/// </summary>
+		/// <param name="cache"></param>
 		/// <param name="obj">CmObject that is being displayed.</param>
 		/// <param name="flid">The field identifier for the attribute we are displaying.</param>
+		/// <param name="persistenceProvider"></param>
 		public ReferenceComboBoxSlice(FdoCache cache, ICmObject obj, int flid,
 			IPersistenceProvider persistenceProvider)
 			: base(new UserControl(), cache, obj, flid)
@@ -201,7 +196,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 			if (Control != null)
 			{
-				string caption = XmlUtils.GetLocalizedAttributeValue(ConfigurationNode, "label", "");
+				string caption = StringTable.Table.LocalizeAttributeValue(XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "label", ""));
 				Publisher.Publish("RegisterHelpTargetWithId", new object[]{m_combo.Controls[0], caption, HelpId});
 				//balloon was making it hard to actually click this
 				//Mediator.SendMessage("RegisterHelpTargetWithId",

@@ -1,9 +1,6 @@
-// Copyright (c) 2006-2013 SIL International
+// Copyright (c) 2006-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: FwStylesDlg.cs
-// Responsibility: TE Team
 
 using System;
 using System.Diagnostics;
@@ -11,15 +8,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using SIL.CoreImpl;
+using SIL.CoreImpl.Text;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.FwCoreDlgControls;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.Utils;
 using SIL.FieldWorks.FDO.DomainServices;
+using StyleInfo = SIL.FieldWorks.FwCoreDlgControls.StyleInfo;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
@@ -48,7 +47,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	/// The new Styles Dialog
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public partial class FwStylesDlg : Form, IFWDisposable
+	public partial class FwStylesDlg : Form
 	{
 		/// <summary>Delegate to set the properties of a StyleInfo to the factory default settings.</summary>
 		public Action<StyleInfo> SetPropsToFactorySettings { get; set; }
@@ -64,7 +63,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private FdoCache m_cache;
 		private FwStyleSheet m_styleSheet;
 		/// <summary></summary>
-		protected Set<string> m_deletedStyleNames = new Set<string>();
+		protected HashSet<string> m_deletedStyleNames = new HashSet<string>();
 		/// <summary></summary>
 		protected Dictionary<string, string> m_renamedStyles = new Dictionary<string, string>();
 		private StyleInfo m_normalStyleInfo;

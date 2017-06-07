@@ -9,13 +9,7 @@
 // <remarks>
 // </remarks>
 
-using System;
-using System.Drawing;
-using System.Collections;
-using System.ComponentModel;
 using System.Windows.Forms;
-using Microsoft.Win32;
-using SIL.FieldWorks.Common.Controls;
 
 namespace SIL.FieldWorks.Common.Controls
 {

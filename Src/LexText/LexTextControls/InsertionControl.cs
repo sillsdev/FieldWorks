@@ -1,10 +1,9 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -21,7 +20,7 @@ namespace SIL.FieldWorks.LexText.Controls
 	/// It provides an <c>Insert</c> event that indicates when a user has attempted
 	/// to insert an item.
 	/// </summary>
-	public class InsertionControl : UserControl, IFWDisposable
+	public class InsertionControl : UserControl
 	{
 		public event EventHandler<InsertEventArgs> Insert;
 
@@ -32,6 +31,13 @@ namespace SIL.FieldWorks.LexText.Controls
 			public GrowLabel()
 			{
 				AutoSize = false;
+			}
+
+			/// <summary/>
+			protected override void Dispose(bool disposing)
+			{
+				System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
+				base.Dispose(disposing);
 			}
 
 			private void ResizeLabel()
@@ -164,10 +170,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <summary>
 		/// Updates the options display.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification = "TODO-Linux: LinkLabel.TabStop is missing from Mono")]
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "The controls are always added to m_insertPanel. They should be disposed when m_insertPanel is diposed.")]
 		public void UpdateOptionsDisplay()
 		{
 			CheckDisposed();

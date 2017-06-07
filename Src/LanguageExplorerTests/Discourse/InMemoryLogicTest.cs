@@ -4,7 +4,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows.Forms;
 using LanguageExplorer;
@@ -192,8 +191,6 @@ namespace LanguageExplorerTests.Discourse
 		/// Test the contents of a 'make dependent clause' context menu for row 2 of four rows.
 		/// </summary>
 		[Test]
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="AssertHasMenuWithText() returns a reference. The menu item itself is part of the menu item collection.")]
 		public void MakeContextMenuRow2of4()
 		{
 			m_helper.MakeDefaultChartMarkers();
@@ -255,8 +252,6 @@ namespace LanguageExplorerTests.Discourse
 		}
 
 		[Test]
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="AssertHasMenuWithText() returns a reference. The menu item itself is part of the menu item collection.")]
 		public void CellContextPreposedPostposed()
 		{
 			var allParaOccurrences = m_helper.MakeAnalysesUsedN(2);
@@ -395,8 +390,6 @@ namespace LanguageExplorerTests.Discourse
 		}
 
 		[Test]
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="AssertHasMenuWithText() returns a reference. The menu item itself is part of the menu item collection.")]
 		public void CellContextPrePostposedOtherClause()
 		{
 			var allParaOccurrences = m_helper.MakeAnalysesUsedN(4);
@@ -445,8 +438,6 @@ namespace LanguageExplorerTests.Discourse
 		}
 
 		[Test]
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="AssertHasMenuWithText() returns a reference. The menu item itself is part of the menu item collection.")]
 		public void CellContextMoveWord()
 		{
 			var allParaOccurrences = m_helper.MakeAnalysesUsedN(3);
@@ -483,8 +474,6 @@ namespace LanguageExplorerTests.Discourse
 		}
 
 		[Test]
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="AssertHasMenuWithText() returns a reference. The menu item itself is part of the menu item collection.")]
 		public void InsertRowMenuItem()
 		{
 			var allParaOccurrences = m_helper.MakeAnalysesUsedN(1);
@@ -500,8 +489,6 @@ namespace LanguageExplorerTests.Discourse
 		/// That may change, e.g., to enforce same sentence.
 		/// </summary>
 		[Test]
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="AssertHasMenuWithText() returns a reference. The menu item itself is part of the menu item collection.")]
 		public void MakeContextMenuRow5of10()
 		{
 			m_helper.MakeDefaultChartMarkers();

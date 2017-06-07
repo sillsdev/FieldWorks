@@ -8,7 +8,6 @@
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.ServiceModel;
 using System.Threading;
 using System.Windows.Forms;
@@ -85,10 +84,6 @@ namespace SIL.FieldWorks.LexicalProvider
 		/// <param name="provider">The provider.</param>
 		/// <param name="providerType">Type of the provider.</param>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="See review comment")]
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification="See TODO-Linux comment")]
 		internal static void StartProvider(Uri providerLocation, object provider, Type providerType)
 		{
 			if (s_runningProviders.ContainsKey(providerType))

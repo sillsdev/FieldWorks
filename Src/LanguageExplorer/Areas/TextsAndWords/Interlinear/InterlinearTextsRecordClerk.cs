@@ -1,16 +1,18 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows.Forms;
 using Paratext;
 using SIL.CoreImpl;
+using SIL.CoreImpl.Scripture;
+using SIL.CoreImpl.Text;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.FDO;
@@ -19,7 +21,6 @@ using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.XWorks;
 using SIL.Utils;
-using SILUBS.SharedScrUtils;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
@@ -217,8 +218,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "Gendarme is just too dumb to understand the try...finally pattern to ensure disposal of dlg")]
 		internal bool AddTexts()
 		{
 			CheckDisposed();
@@ -462,7 +461,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		internal void CreateFirstParagraph(IStText stText, int wsText)
 		{
 			var txtPara = stText.AddNewTextPara(null);
-			txtPara.Contents = TsStringUtils.MakeTss(string.Empty, wsText);
+			txtPara.Contents = TsStringUtils.MakeString(string.Empty, wsText);
 		}
 
 		private int GetWsForNewText()
@@ -532,8 +531,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			IScripture scr = Cache.LangProject.TranslatedScriptureOA;
 			bool haveSomethingToImport = NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 				{
-					IScrImportSet importSettings = scr.FindOrCreateDefaultImportSettings(TypeOfImport.Paratext6);
-					importSettings.StyleSheet = ScriptureStylesheet;
+					IScrImportSet importSettings = scr.FindOrCreateDefaultImportSettings(TypeOfImport.Paratext6, ScriptureStylesheet,
+						FwDirectoryFinder.TeStylesPath);
 					ScrText paratextProj = ParatextHelper.GetAssociatedProject(Cache.ProjectId);
 					importSettings.ParatextScrProj = paratextProj.Name;
 					importSettings.StartRef = new BCVRef(bookNum, 0, 0);
@@ -548,7 +547,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					{
 						List<ScrText> btProjects = ParatextHelper.GetBtsForProject(paratextProj).ToList();
 						if (btProjects.Count > 0 && (string.IsNullOrEmpty(importSettings.ParatextBTProj) ||
-													 !btProjects.Any(st => st.Name == importSettings.ParatextBTProj)))
+							!btProjects.Any(st => st.Name == importSettings.ParatextBTProj)))
 						{
 							importSettings.ParatextBTProj = btProjects[0].Name;
 						}

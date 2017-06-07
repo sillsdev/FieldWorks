@@ -5,11 +5,11 @@
 using System;
 using System.Xml.Linq;
 using SIL.CoreImpl;
-using SIL.Utils;
 using SIL.FieldWorks.Common.Framework.DetailControls;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.Xml;
 
 namespace LanguageExplorer.Areas.Grammar
 {

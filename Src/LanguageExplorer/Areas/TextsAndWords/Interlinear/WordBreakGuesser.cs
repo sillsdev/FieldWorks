@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,12 +6,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.Utils;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
@@ -21,7 +20,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 	/// </summary>
 	public class WordBreakGuesser
 	{
-		Set<string> m_words = new Set<string>(); // From text of word to dummy.
+		private readonly HashSet<string> m_words = new HashSet<string>(); // From text of word to dummy.
 		int m_maxChars; // length of longest word
 		private int m_minChars = int.MaxValue; // length of shortest word
 		ISilDataAccess m_sda;
@@ -129,18 +128,18 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			//split the text on everything found in the OtherCharacters section
 			string[] distinctPhrases = vc != null ? txt.Split(vc.OtherCharacters.ToArray(), StringSplitOptions.None) //ws info was good, use it
 												  : Regex.Replace(txt, "\\p{P}", ".").Split('.'); //bad ws info, replace all punct with . and split on .
-			Set<WordLoc> allWords = new Set<WordLoc>();
+			var allWords = new HashSet<WordLoc>();
 			int adjustment = 0;
 			foreach (var distinctPhrase in distinctPhrases)
 			{
 				if(distinctPhrase.Length > 0) //split will give us an empty string wherever there was a punctuation
 				{
-					Set<WordLoc> foundWords = FindAllMatches(0, distinctPhrase.Length, distinctPhrase);
+					ISet<WordLoc> foundWords = FindAllMatches(0, distinctPhrase.Length, distinctPhrase);
 					foreach (var foundWord in foundWords)
 					{
 						foundWord.Start += adjustment;
 					}
-					allWords.AddRange(foundWords);
+					allWords.UnionWith(foundWords);
 					adjustment += distinctPhrase.Length;
 				}
 				++adjustment; //rather than just adding 1 to the adjustment above adjust here. This will handle oddities like ,, or ".
@@ -184,7 +183,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <param name="txt"></param>
 		/// <param name="allWords"></param>
 		/// <returns></returns>
-		protected static List<WordLoc> BestMatches(string txt, Set<WordLoc> allWords)
+		protected static List<WordLoc> BestMatches(string txt, ISet<WordLoc> allWords)
 		{
 			//initialize the matches to an empty list, and the score to the maximum integer
 			List<WordLoc> bestMatches = new List<WordLoc>();
@@ -223,7 +222,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <param name="node">The current node to traverse</param>
 		/// <param name="allWords">The list of possible words in the string</param>
 		/// <param name="txt">The sentence to search</param>
-		private static void SearchPartition(Dictionary<int, Partition> partitionList, Partition node, Set<WordLoc> allWords, string txt)
+		private static void SearchPartition(Dictionary<int, Partition> partitionList, Partition node, ISet<WordLoc> allWords, string txt)
 		{
 			//for every word in the word list that starts at the index of the current node, create a partition with that word added
 			//and the index moved to the end of that word
@@ -319,11 +318,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <param name="limit">this limit should be one less than the text length to avoid matching false whole sentence wordforms</param>
 		/// <param name="txt"></param>
 		/// <returns></returns>
-		protected Set<WordLoc> FindAllMatches(int start, int limit, string txt)
+		protected ISet<WordLoc> FindAllMatches(int start, int limit, string txt)
 		{
 			if(limit == txt.Length)
 				--limit;
-			Set<WordLoc> matches = new Set<WordLoc>();
+			var matches = new HashSet<WordLoc>();
 			int max = Math.Min(limit - start, m_maxChars);
 			for (int index = 0; index < txt.Length; ++index)
 			{

@@ -1,10 +1,9 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Diagnostics;
 using System.Reflection;
@@ -18,22 +17,27 @@ using SIL.FieldWorks.FDO.DomainServices.SemanticDomainSearch;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.Resources;
 using SIL.Utils;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.Application;
-using SIL.CoreImpl;
 using SIL.FieldWorks.Common.RootSites;
 using SilEncConverters40;
+using SIL.CoreImpl;
+using SIL.CoreImpl.Cellar;
+using SIL.CoreImpl.SpellChecking;
+using SIL.CoreImpl.Text;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.Xml;
 
 namespace SIL.FieldWorks.Common.Controls
 {
 	/// <summary>
 	/// Summary description for BulkEditBar.
 	/// </summary>
-	public class BulkEditBar : UserControl, IFWDisposable
+	public class BulkEditBar : UserControl
 	{
 
 		private Label m_operationLabel;
@@ -152,7 +156,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 		// This set is used in figuring which items to enable when deleting (specifically senses, at present).
 		// Contins the Ids of things in ItemsToChange(false).
-		Set<int> m_items;
+		ISet<int> m_items;
 
 		// These variables are used in computing whether a ClickCopy target should actually
 		// be changed.  (This feature is used by Wordform Bulk Edit.)
@@ -249,7 +253,7 @@ namespace SIL.FieldWorks.Common.Controls
 			// todo: give it a tab stop.
 			m_transduceTab.Controls.Add(m_trdNonEmptyTargetControl);
 			m_transduceTargetCombo.SelectedIndexChanged += new EventHandler(m_transduceTargetCombo_SelectedIndexChanged);
-			m_enableBulkEditTabsNode = XmlUtils.FindNode(spec, "enableBulkEditTabs");
+			m_enableBulkEditTabsNode = XmlUtils.FindElement(spec, "enableBulkEditTabs");
 			if (m_enableBulkEditTabsNode != null)
 			{
 				m_bulkCopyTab.Enabled = XmlUtils.GetOptionalBooleanAttributeValue(m_enableBulkEditTabsNode, "enableBEBulkCopy", true);
@@ -450,7 +454,7 @@ namespace SIL.FieldWorks.Common.Controls
 				icol++;
 				if (m_beItems[icol] != null)
 				{
-					string label = XmlUtils.GetLocalizedAttributeValue(colSpec, "label", null);
+					string label = StringTable.Table.LocalizeAttributeValue(XmlUtils.GetOptionalAttributeValue(colSpec, "label", null));
 					if (label == null)
 						label = XmlUtils.GetManditoryAttributeValue(colSpec, "label");
 					m_listChoiceTargetCombo.Items.Add(new TargetFieldItem(label, icol));
@@ -649,7 +653,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 		internal static string GetColumnLabel(XElement colSpec)
 		{
-			string colName = XmlUtils.GetLocalizedAttributeValue(colSpec, "label", null);
+			string colName = StringTable.Table.LocalizeAttributeValue(XmlUtils.GetOptionalAttributeValue(colSpec, "label", null));
 			if (colName == null)
 				colName = XmlUtils.GetManditoryAttributeValue(colSpec, "label");
 			return colName;
@@ -659,8 +663,6 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// <param name="colSpec"></param>
 		/// <returns></returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "besc gets added to a BulkEditItem and disposed there")]
 		protected virtual BulkEditItem MakeItem(XElement colSpec)
 		{
 			string beSpec = XmlUtils.GetOptionalAttributeValue(colSpec, "bulkEdit", "");
@@ -1248,7 +1250,7 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-		List<ListClassTargetFieldItem> ListItemsClassesInfo(Set<int> classes)
+		List<ListClassTargetFieldItem> ListItemsClassesInfo(HashSet<int> classes)
 		{
 			List<ListClassTargetFieldItem> targetClasses = new List<ListClassTargetFieldItem>();
 			foreach (int classId in classes)
@@ -1913,21 +1915,11 @@ namespace SIL.FieldWorks.Common.Controls
 			return (from obj in objects select obj.Hvo).ToList(); // probably counted at least twice and enumerated, so collection is likely more efficient.
 		}
 
-		internal Set<int> ItemsToChangeSet(bool fOnlyIfSelected)
+		internal ISet<int> ItemsToChangeSet(bool fOnlyIfSelected)
 		{
 			CheckDisposed();
 
-			Set<int> itemsToChange = new Set<int>();
-			if (fOnlyIfSelected)
-			{
-				itemsToChange.AddRange(m_bv.CheckedItems);
-			}
-			else
-			{
-				itemsToChange.AddRange(m_bv.AllItems);
-			}
-
-			return itemsToChange;
+			return new HashSet<int>(fOnlyIfSelected ? m_bv.CheckedItems : m_bv.AllItems);
 		}
 
 		/// <summary>
@@ -1987,7 +1979,7 @@ namespace SIL.FieldWorks.Common.Controls
 							{
 								BulkEditItem bei = m_beItems[m_itemIndex];
 								bei.BulkEditControl.DoIt(ItemsToChange(true), state);
-								FixReplacedItems(bei.BulkEditControl);
+								m_bv.RefreshDisplay();
 							}
 						}
 						else if (m_operationsTabControl.SelectedTab == m_findReplaceTab)
@@ -2092,7 +2084,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		private void DeleteSelectedObjects(ProgressState state)
 		{
-			Set<int> idsToDelete = new Set<int>();
+			var idsToDelete = new HashSet<int>();
 			UpdateCurrentGhostParentHelper(); // needed for code below.
 			foreach (int hvo in ItemsToChange(true))
 			{
@@ -2165,7 +2157,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// asking the user whether to proceed. The type of message depends somewhat on the situation.
 		/// </summary>
 		/// <returns>true, if okay to continue with delete</returns>
-		private bool CheckMultiDeleteConditionsAndReport(Set<int> idsToDelete, out bool fUndo)
+		private bool CheckMultiDeleteConditionsAndReport(HashSet<int> idsToDelete, out bool fUndo)
 		{
 			int cOrphans = 0;
 			if (m_expectedListItemsClassId == LexEntryTags.kClassId ||
@@ -2274,7 +2266,7 @@ namespace SIL.FieldWorks.Common.Controls
 			AddStringFieldItemsToCombo(m_deleteWhatCombo, null, false);
 			// Add support for deleting "rows" only for the classes
 			// that have associated columns installed (LT-9128).
-			Set<int> targetClassesNeeded = new Set<int>();
+			var targetClassesNeeded = new HashSet<int>();
 			// Always allow deleting the primary row (e.g. Entries)
 			targetClassesNeeded.Add(m_bulkEditListItemsClasses[0]);
 			// Go through each of the column-deletable string fields, and add rows to delete.
@@ -2889,7 +2881,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 			private string SerializeSettings()
 			{
-				return XmlUtils.SerializeObjectToXmlString(this);
+				return Xml.XmlSerializationHelper.SerializeToString(this, true);
 			}
 
 			/// <summary>
@@ -2925,8 +2917,7 @@ namespace SIL.FieldWorks.Common.Controls
 					Type targetType = assembly.GetType(baseClassTypeName + "+" + className, false);
 
 					// deserialize
-					restoredTabPageSettings = (BulkEditTabPageSettings)
-						XmlUtils.DeserializeXmlString(settingsXml, targetType);
+					restoredTabPageSettings = (BulkEditTabPageSettings)FwUtils.XmlSerializationHelper.DeserializeXmlString(settingsXml, targetType);
 				}
 				if (restoredTabPageSettings == null)
 					restoredTabPageSettings = new BulkEditTabPageSettings();
@@ -3516,7 +3507,7 @@ namespace SIL.FieldWorks.Common.Controls
 				// store the Replace string into the Pattern
 				m_bulkEditBar.m_pattern.ReplaceWith = m_bulkEditBar.m_tssReplace;
 				VwPatternSerializableSettings patternSettings = new VwPatternSerializableSettings(m_bulkEditBar.m_pattern);
-				string patternAsXml = XmlUtils.SerializeObjectToXmlString(patternSettings);
+				string patternAsXml = Xml.XmlSerializationHelper.SerializeToString(patternSettings);
 				bulkEditBar.m_propertyTable.SetProperty(keyFindPattern, patternAsXml, true, false);
 			}
 
@@ -3579,8 +3570,7 @@ namespace SIL.FieldWorks.Common.Controls
 						{
 							// next see if we can restore the pattern from deserializing settings stored in the property table.
 							string patternAsXml = m_bulkEditBar.m_propertyTable.GetValue<string>(BuildFindPatternKey(m_bulkEditBar));
-							VwPatternSerializableSettings settings = (VwPatternSerializableSettings)XmlUtils.DeserializeXmlString(patternAsXml,
-								typeof(VwPatternSerializableSettings));
+							VwPatternSerializableSettings settings = (VwPatternSerializableSettings)FwUtils.XmlSerializationHelper.DeserializeXmlString(patternAsXml, typeof(VwPatternSerializableSettings));
 							if (settings != null)
 								m_pattern = settings.NewPattern;
 							if (m_pattern == null)
@@ -3637,8 +3627,6 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "selectedTab is a reference")]
 		private void m_operationsTabControl_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			m_operationLabel.Text = s_labels[m_operationsTabControl.SelectedIndex];
@@ -3746,16 +3734,15 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 			if (ws == -50)
 				ws = m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle;
-			ITsStrFactory tsf = m_cache.TsStrFactory;
 
 			if (m_tssReplace == null)
-				m_tssReplace = tsf.MakeString("", ws);
+				m_tssReplace = TsStringUtils.EmptyString(ws);
 			else
 			{
 				// If we have a replacement TsString, but no pattern, keep the text but
 				// no properties.
 				if (m_pattern == null)
-					m_tssReplace = tsf.MakeString(m_tssReplace.Text, ws);
+					m_tssReplace = TsStringUtils.MakeString(m_tssReplace.Text, ws);
 				else if (!m_pattern.MatchOldWritingSystem)
 				{
 					// We have both a string and a pattern. We want to clear writing system information
@@ -3769,7 +3756,7 @@ namespace SIL.FieldWorks.Common.Controls
 			if (m_pattern != null)
 			{
 				if (m_pattern.Pattern == null)
-					m_pattern.Pattern = tsf.MakeString("", ws);
+					m_pattern.Pattern = TsStringUtils.EmptyString(ws);
 				else if (!m_pattern.MatchOldWritingSystem)
 				{
 					// Enforce the expected writing system; but don't clear styles.
@@ -3818,7 +3805,7 @@ namespace SIL.FieldWorks.Common.Controls
 					return;
 				m_findReplaceSummaryLabel.BackColor = SystemColors.Control;
 				var wsArgs = TsStringUtils.GetWsAtOffset(m_tssReplace, 0);
-				ITsIncStrBldr bldr = TsIncStrBldrClass.Create();
+				ITsIncStrBldr bldr = TsStringUtils.MakeIncStrBldr();
 				bldr.SetIntPropValues((int)FwTextPropType.ktptFontSize, (int)FwTextPropVar.ktpvMilliPoint, 16000);
 				bldr.SetIntPropValues((int)FwTextPropType.ktptBold, (int)FwTextPropVar.ktpvEnum, (int)FwTextToggleVal.kttvForceOn);
 
@@ -3902,8 +3889,6 @@ namespace SIL.FieldWorks.Common.Controls
 			//    combo.SelectedItem = newSelection;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "accessor gets added to a FieldComboItem and disposed there")]
 		private FieldComboItem AddStringFieldItemsToCombo(ComboBox combo, FieldComboItem selectedItem, bool fIsSourceCombo)
 		{
 			FieldComboItem newSelection = null;
@@ -3919,7 +3904,7 @@ namespace SIL.FieldWorks.Common.Controls
 					{
 						accessor = new ManyOnePathSortItemReadWriter(m_cache, node, m_bv, m_propertyTable.GetValue<IApp>("App"));
 					}
-					else
+					else if(!IsColumnWsBothVernacularAndAnalysis(node))
 					{
 						accessor = FieldReadWriter.Create(node, m_cache, m_bv.RootObjectHvo);
 					}
@@ -3932,7 +3917,7 @@ namespace SIL.FieldWorks.Common.Controls
 				}
 				catch
 				{
-					Debug.Fail(String.Format("There was an error creating Delete combo item for column ({0})"), optionLabel);
+					Debug.Fail(string.Format("There was an error creating Delete combo item for column ({0})"), optionLabel);
 					// skip buggy column
 					continue;
 				}
@@ -3943,6 +3928,26 @@ namespace SIL.FieldWorks.Common.Controls
 					newSelection = item;
 			}
 			return newSelection;
+		}
+
+		/// <summary/>
+		/// <returns>true if the ws attribute for the column indicates both vernacular and analysis writing systems, false otherwise</returns>
+		private bool IsColumnWsBothVernacularAndAnalysis(XElement node)
+		{
+			var wsAttributeValue = XmlUtils.GetOptionalAttributeValue(node, "ws", null);
+			if (wsAttributeValue != null)
+			{
+				var magicWsId = WritingSystemServices.GetMagicWsIdFromName(wsAttributeValue.Substring("$ws=".Length));
+				switch (magicWsId)
+				{
+					case WritingSystemServices.kwsAnalVerns:
+					case WritingSystemServices.kwsFirstAnalOrVern:
+					case WritingSystemServices.kwsFirstVernOrAnal:
+						return true;
+					default: return false;
+				}
+			}
+			return false;
 		}
 
 		private void xbv_ClickCopy(object sender, ClickCopyEventArgs e)
@@ -4543,7 +4548,7 @@ namespace SIL.FieldWorks.Common.Controls
 	/// handle a list choice bulk edit operation. (The name reflects an original intent
 	/// that it should handle any kind of bulk edit for its column.)
 	/// </summary>
-	public class BulkEditItem : IFWDisposable
+	public class BulkEditItem : IDisposable
 	{
 		IBulkEditSpecControl m_beCcontrol;
 
@@ -4925,8 +4930,7 @@ namespace SIL.FieldWorks.Common.Controls
 			ITsString tssNew = m_srcAccessor.CurrentValue(hvo);
 			if (tssNew == null)
 			{
-				ITsStrFactory tsf = TsStrFactoryClass.Create();
-				tssNew = tsf.MakeString("", m_accessor.WritingSystem);
+				tssNew = TsStringUtils.EmptyString(m_accessor.WritingSystem);
 			}
 			if (m_options == NonEmptyTargetOptions.Append)
 			{
@@ -4983,12 +4987,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 		protected override ITsString NewValue(int hvo)
 		{
-			ITsString tssSrc = m_srcAccessor.CurrentValue(hvo);
-			ITsStrFactory tsf = TsStrFactoryClass.Create();
-			if (tssSrc == null)
-			{
-				tssSrc = tsf.MakeString("", m_accessor.WritingSystem);
-			}
+			ITsString tssSrc = m_srcAccessor.CurrentValue(hvo) ?? TsStringUtils.EmptyString(m_accessor.WritingSystem);
 			if (m_fFailed) // once we've had a failure don't try any more this pass.
 				return tssSrc;
 			string old = tssSrc.Text;
@@ -5006,7 +5005,7 @@ namespace SIL.FieldWorks.Common.Controls
 					return tssSrc;
 				}
 			}
-			ITsString tssNew = tsf.MakeString(converted, m_accessor.WritingSystem);
+			ITsString tssNew = TsStringUtils.MakeString(converted, m_accessor.WritingSystem);
 			if (m_options == NonEmptyTargetOptions.Append)
 			{
 				ITsString tssOld = OldValue(hvo);
@@ -5051,12 +5050,7 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			if (!base.OkToChange(hvo))
 				return false;
-			ITsString tss = OldValue(hvo);
-			if (tss == null)
-			{
-				ITsStrFactory tsf = TsStrFactoryClass.Create();
-				tss = tsf.MakeString("", m_accessor.WritingSystem);
-			}
+			ITsString tss = OldValue(hvo) ?? TsStringUtils.EmptyString(m_accessor.WritingSystem);
 			m_textSourceInit.SetString(tss);
 			int ichMin, ichLim;
 			m_pattern.FindIn(m_ts, 0, tss.Length, true, out ichMin, out ichLim, null);
@@ -5070,14 +5064,8 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <returns></returns>
 		protected override ITsString NewValue(int hvo)
 		{
-			ITsString tss = OldValue(hvo);
-			if (tss == null)
-			{
-				ITsStrFactory tsf = TsStrFactoryClass.Create();
-				tss = tsf.MakeString("", m_accessor.WritingSystem);
-			}
+			ITsString tss = OldValue(hvo) ?? TsStringUtils.EmptyString(m_accessor.WritingSystem);
 			m_textSourceInit.SetString(tss);
-			int ichMin, ichLim;
 			int ichStartSearch = 0;
 			ITsStrBldr tsb = null;
 			int delta = 0; // Amount added to length of string (negative if shorter).
@@ -5096,6 +5084,7 @@ namespace SIL.FieldWorks.Common.Controls
 			int ichLimLastMatch = -1;
 			for ( ; ichStartSearch <= cch; )
 			{
+				int ichMin, ichLim;
 				m_pattern.FindIn(m_ts, ichStartSearch, cch, true, out ichMin, out ichLim, null);
 				if (ichMin < 0)
 					break;
@@ -5138,12 +5127,11 @@ namespace SIL.FieldWorks.Common.Controls
 	/// </summary>
 	internal class ClearMethod : DoItMethod
 	{
-		ITsString m_newValue;
+		private readonly ITsString m_newValue;
 		public ClearMethod(FdoCache cache, ISilDataAccessManaged sda, FieldReadWriter accessor, XElement spec)
 			: base(cache, sda, accessor, spec)
 		{
-			ITsStrFactory tsf = TsStrFactoryClass.Create();
-			m_newValue = tsf.MakeString("", accessor.WritingSystem);
+			m_newValue = TsStringUtils.EmptyString(accessor.WritingSystem);
 		}
 
 		/// <summary>
@@ -5385,7 +5373,7 @@ namespace SIL.FieldWorks.Common.Controls
 		public override void FakeDoit(IEnumerable<int> itemsToChange, int tagMadeUpFieldIdentifier, int tagEnabled, ProgressState state)
 		{
 			int val = ((IntComboItem) m_combo.SelectedItem).Value;
-			ITsString tssVal = m_cache.TsStrFactory.MakeString(m_combo.SelectedItem.ToString(),
+			ITsString tssVal = TsStringUtils.MakeString(m_combo.SelectedItem.ToString(),
 				m_cache.ServiceLocator.WritingSystemManager.UserWs);
 			int i = 0;
 			// Report progress 50 times or every 100 items, whichever is more
@@ -5525,7 +5513,7 @@ namespace SIL.FieldWorks.Common.Controls
 		public override void FakeDoit(IEnumerable<int> itemsToChange, int tagMadeUpFieldIdentifier, int tagEnabled, ProgressState state)
 		{
 			int val = (m_combo.SelectedItem as IntComboItem).Value;
-			ITsString tssVal = TsStringUtils.MakeTss(m_combo.SelectedItem.ToString(), m_cache.DefaultUserWs);
+			ITsString tssVal = TsStringUtils.MakeString(m_combo.SelectedItem.ToString(), m_cache.DefaultUserWs);
 			int i = 0;
 			// Report progress 50 times or every 100 items, whichever is more
 			// (but no more than once per item!)
@@ -6046,8 +6034,8 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 			// Don't allow <Not Sure> for MorphType selection.  See FWR-1632.
 			if (m_hvoList != m_cache.LangProject.LexDbOA.MorphTypesOA.Hvo)
-				m_combo.Items.Add(new HvoTssComboItem(0, m_cache.TsStrFactory.MakeString(XMLViewsStrings.ksNotSure, m_cache.WritingSystemFactory.UserWs)));
-			m_combo.SelectedIndexChanged += new EventHandler(m_combo_SelectedIndexChanged);
+				m_combo.Items.Add(new HvoTssComboItem(0, TsStringUtils.MakeString(XMLViewsStrings.ksNotSure, m_cache.WritingSystemFactory.UserWs)));
+			m_combo.SelectedIndexChanged += m_combo_SelectedIndexChanged;
 		}
 
 		private List<HvoLabelItem> GetLabeledList()
@@ -6150,7 +6138,6 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary/>
 		~FlatListChooserBEditControl()
 		{
-			System.Diagnostics.Debug.WriteLine("****** Missing Dispose() call for " + GetType().ToString() + " *******");
 			Dispose(false);
 		}
 		#endif
@@ -6568,7 +6555,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 		private ITsString BuildValueString(IEnumerable<ICmObject> chosenObjs)
 		{
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			ITsString sep = null; // also acts as first-time flag.
 			foreach (var obj in chosenObjs)
 			{
@@ -6577,7 +6564,7 @@ namespace SIL.FieldWorks.Common.Controls
 				if (sep == null)
 				{
 					// first time create it
-					sep = m_cache.TsStrFactory.MakeString(", ",
+					sep = TsStringUtils.MakeString(", ",
 						 m_cache.ServiceLocator.WritingSystemManager.UserWs);
 				}
 				else
@@ -6588,7 +6575,7 @@ namespace SIL.FieldWorks.Common.Controls
 				bldr.ReplaceTsString(bldr.Length, bldr.Length, tss);
 			}
 			var tssVal = bldr.Length > 0 ? bldr.GetString() :
-				TsStringUtils.MakeTss("", m_cache.ServiceLocator.WritingSystemManager.UserWs);
+				TsStringUtils.MakeString("", m_cache.ServiceLocator.WritingSystemManager.UserWs);
 			return tssVal;
 		}
 		#endregion
@@ -6618,9 +6605,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 	}
 
-	[SuppressMessage("Gendarme.Rules.Correctness", "DisposableFieldsShouldBeDisposedRule",
-		Justification = "m_bar owns this object; circular reference")]
-	class SemanticDomainChooserBEditControl : ComplexListChooserBEditControl, IFWDisposable
+	class SemanticDomainChooserBEditControl : ComplexListChooserBEditControl, IDisposable
 	{
 		private Button m_suggestButton;
 		private bool m_doingSuggest; // as opposed to 'regular' Preview
@@ -6739,8 +6724,6 @@ namespace SIL.FieldWorks.Common.Controls
 			m_bar.LaunchPreview();
 		}
 
-		#region IFWDisposable Implementation
-
 		/// <summary>
 		/// Check to see if the object has been disposed.
 		/// All public Properties and Methods should call this
@@ -6785,8 +6768,6 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			Dispose(false);
 		}
-
-		#endregion
 	}
 
 	class VariantEntryTypesChooserBEditControl : ComplexListChooserBEditControl
@@ -6799,7 +6780,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 	class ComplexEntryTypesChooserBEditControl : ComplexListChooserBEditControl
 	{
-		Set<int> m_complexEntryRefs = null;
+		HashSet<int> m_complexEntryRefs = null;
 
 		internal ComplexEntryTypesChooserBEditControl(FdoCache cache, IPropertyTable propertyTable, XElement colSpec)
 			: base(cache, propertyTable, colSpec)
@@ -6815,11 +6796,11 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			if (m_complexEntryRefs == null)
 			{
-				m_complexEntryRefs = new Set<int>();
+				m_complexEntryRefs = new HashSet<int>();
 				Dictionary<int, List<int>> dict = new Dictionary<int,List<int>>();
 				// go through each list and add the values to our set.
 				foreach (List<int> refs in dict.Values)
-					m_complexEntryRefs.AddRange(refs);
+					m_complexEntryRefs.UnionWith(refs);
 			}
 			return !m_complexEntryRefs.Contains(hvoItem);
 		}
@@ -6958,10 +6939,11 @@ namespace SIL.FieldWorks.Common.Controls
 						{
 							// Report progress 50 times or every 100 items, whichever is more
 							// (but no more than once per item!)
-							Set<int> idsToDel = new Set<int>();
+							var idsToDel = new HashSet<int>();
 							var newForms = new Dictionary<IMoForm, ILexEntry>();
 							int interval = Math.Min(80, Math.Max(itemsToChange.Count()/50, 1));
 							int i = 0;
+							var rgmsaOld = new List<IMoMorphSynAnalysis>();
 							foreach (int hvoLexEntry in itemsToChange)
 							{
 								// Guess we're 80% done when through all but deleting leftover objects and moving
@@ -6995,6 +6977,13 @@ namespace SIL.FieldWorks.Common.Controls
 									var entry = m_cache.ServiceLocator.GetInstance<ILexEntryRepository>().GetObject(hvoLexEntry);
 									var affix = m_cache.ServiceLocator.GetInstance<IMoAffixAllomorphRepository>().GetObject(hvoLexemeForm);
 									var stem = stemAlloFactory.Create();
+									rgmsaOld.Clear();
+									foreach (var msa in entry.MorphoSyntaxAnalysesOC)
+									{
+										if (!(msa is IMoStemMsa))
+											rgmsaOld.Add(msa);
+									}
+									entry.ReplaceObsoleteMsas(rgmsaOld);
 									SwapFormValues(entry, affix, stem, hvoSelMorphType, idsToDel);
 									foreach (var env in affix.PhoneEnvRC)
 										stem.PhoneEnvRC.Add(env);
@@ -7006,6 +6995,13 @@ namespace SIL.FieldWorks.Common.Controls
 									var entry = m_cache.ServiceLocator.GetInstance<ILexEntryRepository>().GetObject(hvoLexEntry);
 									var stem = m_cache.ServiceLocator.GetInstance<IMoStemAllomorphRepository>().GetObject(hvoLexemeForm);
 									var affix = afxAlloFactory.Create();
+									rgmsaOld.Clear();
+									foreach (var msa in entry.MorphoSyntaxAnalysesOC)
+									{
+										if (msa is IMoStemMsa)
+											rgmsaOld.Add(msa);
+									}
+									entry.ReplaceObsoleteMsas(rgmsaOld);
 									SwapFormValues(entry, stem, affix, hvoSelMorphType, idsToDel);
 									foreach (var env in stem.PhoneEnvRC)
 										affix.PhoneEnvRC.Add(env);
@@ -7038,7 +7034,7 @@ namespace SIL.FieldWorks.Common.Controls
 		// Swap values of various attributes between an existing form that is a LexemeForm and
 		// a newly created one. Includes adding the new one to the alternate forms of the entry, and
 		// the id of the old one to a map of things to delete.
-		private void SwapFormValues(ILexEntry entry, IMoForm origForm, IMoForm newForm, int typeHvo, Set<int> idsToDel)
+		private void SwapFormValues(ILexEntry entry, IMoForm origForm, IMoForm newForm, int typeHvo, HashSet<int> idsToDel)
 		{
 			entry.AlternateFormsOS.Add(newForm);
 			origForm.SwapReferences(newForm);
@@ -7359,10 +7355,9 @@ namespace SIL.FieldWorks.Common.Controls
 			if (m_flidType == (int)CellarPropertyType.Unicode)
 			{
 				var ustring = m_sda.get_UnicodeProp(hvoStringOwner, m_flid);
-				// Enhance: For the time being Default Analysis Ws is sufficient because this is most likely
-				// an Etymology.Source field. If there is ever a Unicode vernacular field that is
-				// made Bulk Editable, we will need to rethink this code.
-				return m_cache.TsStrFactory.MakeString(ustring ?? string.Empty, m_cache.DefaultAnalWs);
+				// Enhance: For the time being Default Analysis Ws is sufficient. If there is ever
+				// a Unicode vernacular field that is made Bulk Editable, we will need to rethink this code.
+				return TsStringUtils.MakeString(ustring ?? string.Empty, m_cache.DefaultAnalWs);
 			}
 			return m_sda.get_StringProp(hvoStringOwner, m_flid);
 		}

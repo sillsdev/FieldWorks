@@ -1,15 +1,9 @@
 // Copyright (c) 2006-2013 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: SimpleRootSiteTests_ScrollSelectionIntoView.cs
-// Responsibility:
 
-using System;
 using System.Drawing;
-using System.Windows.Forms;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.Utils;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using NUnit.Framework;
 
 namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests

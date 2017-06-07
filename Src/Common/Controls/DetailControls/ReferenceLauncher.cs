@@ -11,13 +11,13 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using SIL.CoreImpl;
+using SIL.CoreImpl.Cellar;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils.MessageBoxEx;
 using SIL.FieldWorks.FDO;
-using SIL.Utils;
+using SIL.Xml;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
@@ -111,8 +111,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <remarks>
 		/// Subclasses should override this method, if the SimpleListChooser is not suitable.
 		/// </remarks>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="FindForm() returns a reference")]
 		protected override void HandleChooser()
 		{
 			string displayWs = "analysis vernacular";

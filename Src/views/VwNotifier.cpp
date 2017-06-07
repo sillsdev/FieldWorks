@@ -694,7 +694,9 @@ STDMETHODIMP VwNotifier::PropChanged(HVO hvo, int tag, int ivMin, int cvIns, int
 						// the fragment.
 						SmartBstr sbstr;
 						CheckHr(qsda->get_UnicodeProp(hvo, tag, &sbstr));
-						qtsf.CreateInstance(CLSID_TsStrFactory);
+						if (!qtsf)
+							CheckHr(prootb->get_TsStrFactory(&qtsf));
+						AssertPtr(qtsf);
 						CheckHr(qtsf->MakeStringRgch(sbstr.Chars(), sbstr.Length(), frag, &qtssNew));
 					}
 					break;
@@ -702,12 +704,18 @@ STDMETHODIMP VwNotifier::PropChanged(HVO hvo, int tag, int ivMin, int cvIns, int
 					// Read the integer, use the standard default conversion to make a string
 					int nVal;
 					CheckHr(qsda->get_IntProp(hvo, tag, &nVal));
-					VwEnv::IntToTsString(nVal, &qtsf, prootb->GetDataAccess(), &qtssNew);
+					if (!qtsf)
+						CheckHr(prootb->get_TsStrFactory(&qtsf));
+					AssertPtr(qtsf);
+					VwEnv::IntToTsString(nVal, qtsf, prootb->GetDataAccess(), &qtssNew);
 					break;
 				case kvnpTimeProp:
 					int64 nTime;
 					CheckHr(qsda->get_TimeProp(hvo, tag, (int64 *)(&nTime)));
-					VwEnv::TimeToTsString(nTime, frag, prootb->GetDataAccess(), &qtssNew);
+					if (!qtsf)
+						CheckHr(prootb->get_TsStrFactory(&qtsf));
+					AssertPtr(qtsf);
+					VwEnv::TimeToTsString(nTime, frag, qtsf, prootb->GetDataAccess(), &qtssNew);
 					break;
 
 				case kvnpStringAltMember:

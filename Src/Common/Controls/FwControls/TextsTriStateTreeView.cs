@@ -1,22 +1,20 @@
-// Copyright (c) 2004-2013 SIL International
+// Copyright (c) 2004-2016 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: TextsTriStateTreeView.cs
 
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows.Forms;
 using Paratext;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.Scripture;
+using SIL.CoreImpl.Text;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Language;
 using SIL.FieldWorks.Resources;
-using SILUBS.SharedScrUtils;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -436,7 +434,6 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <returns><c>true</c> if the dummy node was replaced by real child node(s)</returns>
 		/// <remarks>protected virtual for unit tests</remarks>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification="FindForm() returns a reference")]
 		protected virtual bool FillInBookChildren(TreeNode bookNode)
 		{
 			IScrBook book = bookNode.Tag as IScrBook;

@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -9,18 +9,19 @@ using System.Diagnostics;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using SIL.CoreImpl;
+using SIL.CoreImpl.WritingSystems;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.Utils;
 using SIL.WritingSystems;
+using SIL.Xml;
 
 namespace SIL.FieldWorks.Common.Controls
 {
 	/// <summary>
 	/// Summary description for ColumnConfigureDialg.
 	/// </summary>
-	public class ColumnConfigureDialog : Form, IFWDisposable
+	public class ColumnConfigureDialog : Form
 	{
 		private const string s_helpTopic = "khtpConfigureColumns";
 		private Label label1;
@@ -30,11 +31,11 @@ namespace SIL.FieldWorks.Common.Controls
 		private Button okButton;
 		private Button cancelButton;
 		private Button helpButton;
-		private Button addButton;
+		internal Button addButton;
 		private Button removeButton;
 		internal Button moveUpButton;
 		internal Button moveDownButton;
-		private FwOverrideComboBox wsCombo;
+		internal FwOverrideComboBox wsCombo;
 		private Label label3;
 		internal ListView currentList;
 
@@ -78,7 +79,7 @@ namespace SIL.FieldWorks.Common.Controls
 		WsComboContent m_wccCurrent = WsComboContent.kwccNone;
 		private int m_hvoRootObj = 0;
 
-		private ListView optionsList;
+		internal ListView optionsList;
 		private HelpProvider helpProvider;
 		private IContainer components;
 		private ColumnHeader columnHeader1;
@@ -223,9 +224,22 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			if (wsLabel != "")
 			{
+				var itemToSelect = wsLabel;
+				switch (wsLabel)
+				{
+					case "analysis vernacular":
+					case "vernacular analysis":
+						itemToSelect = wsLabel.Split(' ')[0];
+						break;
+				}
 				foreach (WsComboItem item in wsCombo.Items)
-					if (item.Id == wsLabel)
+				{
+					if (item.Id == itemToSelect)
+					{
 						wsCombo.SelectedItem = item;
+						break;
+					}
+				}
 			}
 		}
 
@@ -551,7 +565,7 @@ namespace SIL.FieldWorks.Common.Controls
 		ListViewItem MakeCurrentItem(XElement node)
 		{
 			var cols = new string[2];
-			var label = XmlUtils.GetLocalizedAttributeValue(node, "label", null);
+			var label = StringTable.Table.LocalizeAttributeValue(XmlUtils.GetOptionalAttributeValue(node, "label", null));
 			if (label == null)
 				label = XmlUtils.GetManditoryAttributeValue(node, "label");
 			cols[0] = label;
@@ -563,7 +577,7 @@ namespace SIL.FieldWorks.Common.Controls
 			// or 2) the user deleted the Writing System... try to revert to a default ws
 			//       unless there is a column for that already, in which case return null
 			//       so we can delete this column.
-			if (String.IsNullOrEmpty(dispCategory) && !String.IsNullOrEmpty(wsParam))
+			if (string.IsNullOrEmpty(dispCategory) && !string.IsNullOrEmpty(wsParam))
 			{
 				// Display the language name, not its ICU locale.
 				CoreWritingSystemDefinition ws;
@@ -594,7 +608,7 @@ namespace SIL.FieldWorks.Common.Controls
 				itemWithToolTip .ImageIndex = 0;
 			}
 
-			return itemWithToolTip ;
+			return itemWithToolTip;
 		}
 
 		private string TranslateWsParamToLocalizedDisplayCategory(string wsParam)
@@ -1104,11 +1118,9 @@ namespace SIL.FieldWorks.Common.Controls
 
 		private string GetColumnLabel(int columnIndex)
 		{
-			string label = XmlUtils.GetLocalizedAttributeValue(CurrentSpecs[columnIndex],
-															   "originalLabel", null);
+			string label = StringTable.Table.LocalizeAttributeValue(XmlUtils.GetOptionalAttributeValue(CurrentSpecs[columnIndex], "originalLabel", null));
 			if (label == null)
-				label = XmlUtils.GetLocalizedAttributeValue(CurrentSpecs[columnIndex],
-															"label", null);
+				label = StringTable.Table.LocalizeAttributeValue(XmlUtils.GetOptionalAttributeValue(CurrentSpecs[columnIndex], "label", null));
 			if (label == null)
 				label = XmlUtils.GetManditoryAttributeValue(CurrentSpecs[columnIndex], "label");
 			return label;
@@ -1122,7 +1134,8 @@ namespace SIL.FieldWorks.Common.Controls
 			int index = CurrentListIndex;
 			if (index >= 0)
 				currentList.Items[index].Selected = false;
-			AddCurrentItem(columnBeingAdded).Selected = true;
+			var currentItem = AddCurrentItem(columnBeingAdded);
+			currentItem.Selected = true;
 
 			//When adding the columnBeingAdded, try to adjust the label so that it is unique. This happens when
 			//the column is already one that exists in the list of currentColumns.
@@ -1144,6 +1157,8 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				ShowDuplicatesWarning(GetDuplicateColumns());
 			}
+			// Select the item in the ws combo box by its name (see MakeCurrentItem method for details of item construction)
+			wsCombo.SelectedItem = currentItem.SubItems[1];
 
 			currentList.Focus();
 		}
@@ -1416,9 +1431,9 @@ namespace SIL.FieldWorks.Common.Controls
 				// (to possibly append an abbreviation to) and the original writing system (so
 				// we know whether to mark it at all).
 				if (!String.IsNullOrEmpty(sWsOrig))
-					XmlUtils.AppendAttribute(replacement, "originalWs", sWsOrig);
+					XmlUtils.SetAttribute(replacement, "originalWs", sWsOrig);
 				else
-					XmlUtils.AppendAttribute(replacement, "originalWs", currentList.Items[index].SubItems[1].Text);
+					XmlUtils.SetAttribute(replacement, "originalWs", currentList.Items[index].SubItems[1].Text);
 			}
 
 			GenerateColumnLabel(replacement, m_cache);
@@ -1463,7 +1478,7 @@ namespace SIL.FieldWorks.Common.Controls
 				// (to possibly append an abbreviation to) and the original writing system (so
 				// we know whether to mark it at all).
 				originalLabel = XmlUtils.GetManditoryAttributeValue(colSpec, "label");
-				XmlUtils.AppendAttribute(colSpec, "originalLabel", originalLabel);
+				XmlUtils.SetAttribute(colSpec, "originalLabel", originalLabel);
 			}
 
 			string label = originalLabel;
@@ -1497,7 +1512,7 @@ namespace SIL.FieldWorks.Common.Controls
 					label += " (" + extra + ")";
 			}
 
-			XmlUtils.AppendAttribute(colSpec, "label", label);
+			XmlUtils.SetAttribute(colSpec, "label", label);
 		}
 
 		private void helpButton_Click(object sender, EventArgs e)
@@ -1512,10 +1527,10 @@ namespace SIL.FieldWorks.Common.Controls
 
 			public int Compare(XElement x, XElement y)
 			{
-				string xVal = XmlUtils.GetLocalizedAttributeValue(x, "label", null);
+				string xVal = StringTable.Table.LocalizeAttributeValue(XmlUtils.GetOptionalAttributeValue(x, "label", null));
 				if (xVal == null)
 					xVal = XmlUtils.GetManditoryAttributeValue(x, "label");
-				string yVal = XmlUtils.GetLocalizedAttributeValue(y, "label", null);
+				string yVal = StringTable.Table.LocalizeAttributeValue(XmlUtils.GetOptionalAttributeValue(y, "label", null));
 				if (yVal == null)
 					yVal = XmlUtils.GetManditoryAttributeValue(y, "label");
 				return xVal.CompareTo(yVal);

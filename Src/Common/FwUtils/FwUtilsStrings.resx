@@ -200,4 +200,23 @@ If you want to use Paratext with this project, make a change in this project (so
     <value>FieldWorks project name not specified.</value>
     <comment>Message shown when FLEx is started with one of the project types but no database name is supplied.</comment>
   </data>
+  <data name="kstidAppVersionFmt" xml:space="preserve">
+    <value>Version: {0}  {1}  {2}</value>
+    <comment>Displays in the Help/About box and the splash screen</comment>
+  </data>
+  <data name="kstidLicense" xml:space="preserve">
+    <value>This software is licensed under the LGPL, version 2.1 or later</value>
+    <comment>Displays in the Help/About box and the splash screen</comment>
+  </data>
+  <data name="kstidLicenseURL" xml:space="preserve">
+    <value>(http://www.gnu.org/licenses/lgpl-2.1.html)</value>
+    <comment>Displays in the Help/About box</comment>
+  </data>
+  <data name="kstidMajorVersionFmt" xml:space="preserve">
+    <value>Version: {0}</value>
+    <comment>Displays in the Help/About box and the splash screen</comment>
+  </data>
+  <data name="XMLConfigurationError" xml:space="preserve">
+    <value>XML Configuration Error</value>
+  </data>
 </root>

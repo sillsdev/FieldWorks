@@ -1,16 +1,13 @@
-// --------------------------------------------------------------------------------------------
-// Copyright (c) 2011-2015 SIL International
+// Copyright (c) 2011-2016 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ScrPassageDropDown.cs
-// --------------------------------------------------------------------------------------------
+
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using SILUBS.SharedScrUtils;
+using SIL.CoreImpl.Scripture;
 
 namespace SILUBS.SharedScrControls
 {
@@ -52,11 +49,11 @@ namespace SILUBS.SharedScrControls
 
 		private byte[] m_rowsInCVDropDown = new byte[]
 		{
-			1,  2,  3,  4,  5,  3,  7,  4,  3,  5, 6,   4,  7,  7,  3,	//  1 - 15
-			4,  6,  6,  5,  5,  7,  6,  6,  6,  5, 7,   9,  7,  6,  6,	// 16 - 30
-			8,  8, 11,  7,  7,  6, 10,  8,  8,  8, 7,   7,  9,  9,  9,	// 31 - 45
-			8,  8,  8,  7, 10,  9,  9,  9,  9, 11, 8,  10, 10, 10, 10,	// 46 - 60
-			9,  9,  9,  8, 11, 11, 10, 10, 10, 10, 9,   9, 11, 11, 15,	// 61 - 75
+			1,  2,  3,  4,  5,  3,  7,  4,  3,  5,   6,  4,  7,  7,  3,	//  1 - 15
+			4,  6,  6,  5,  5,  7,  6,  6,  6,  5,   7,  9,  7,  6,  6,	// 16 - 30
+			8,  8, 11,  7,  7,  6, 10,  8,  8,  8,   7,  7,  9,  9,  9,	// 31 - 45
+			8,  8,  8,  7, 10,  9,  9,  9,  9, 11,   8, 10, 10, 10, 10,	// 46 - 60
+			9,  9,  9,  8, 11, 11, 10, 10, 10, 10,   9,  9, 11, 11, 15,	// 61 - 75
 			11, 11, 13, 10, 10,  9, 12, 12, 12, 11, 11, 11, 11, 15, 10,	// 76 - 90
 			13, 12, 12, 12, 12, 12, 14, 14, 11, 10, 13, 13, 13, 13, 15,	// 91 - 105
 			12, 12, 12, 11, 11, 14, 14, 13, 13, 13, 13, 13, 15, 15, 15,	// 106 - 120
@@ -96,7 +93,7 @@ namespace SILUBS.SharedScrControls
 		private ScrVers m_versification;
 		#endregion
 
-		#region Contructor and initialization
+		#region Contructor, initialization, and disposal
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="ScrPassageDropDown"/> class.
@@ -183,6 +180,24 @@ namespace SILUBS.SharedScrControls
 			}
 		}
 
+		/// <summary/>
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing && !IsDisposed)
+			{
+				components?.Dispose();
+				if (m_buttons != null)
+					foreach (var button in m_buttons)
+						button?.Dispose();
+			}
+			components = null;
+			m_buttons = null;
+			BookSelected = null;
+			ChapterSelected = null;
+			VerseSelected = null;
+
+			base.Dispose(disposing);
+		}
 		#endregion
 
 		#region Properties

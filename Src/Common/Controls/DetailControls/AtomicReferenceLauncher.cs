@@ -11,9 +11,9 @@ using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
-using SIL.Utils;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.Xml;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
@@ -113,10 +113,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			}
 		}
 
-		protected virtual ICmObject Target
+		protected internal virtual ICmObject Target
 		{
 			get
 			{
+				if (!m_obj.IsValidObject)
+					return null;
 				var hvo = m_cache.DomainDataByFlid.get_ObjectProp(m_obj.Hvo, m_flid);
 				return hvo > 0 ? m_cache.ServiceLocator.GetObject(hvo) : null;
 			}

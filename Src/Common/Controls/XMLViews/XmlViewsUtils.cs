@@ -1,21 +1,26 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Linq;
-using System.Xml;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Text;
+using System.Globalization;
+using System.IO;
+using System.Reflection;
+using System.Text; // StringBuilder
 using System.Xml.Linq;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Utils;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Filters;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Cellar;
+using SIL.CoreImpl.WritingSystems;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
+using SIL.Xml;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -94,7 +99,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <returns>true if we found a value associated with the given key. false if result is in *{key}* format.</returns>
 		public static bool TryFindString(string group, string key, out string result)
 		{
-			result = StringTable.Table.GetString(key, group);
+			result = StringTable.Table.GetString(key, @group);
 			return FoundStringTableString(key, result);
 		}
 
@@ -209,7 +214,7 @@ namespace SIL.FieldWorks.Common.Controls
 			int index = 0;
 			foreach (var node in nodes)
 			{
-				string sAttr = XmlUtils.GetLocalizedAttributeValue(node, attName, null);
+				string sAttr = StringTable.Table.LocalizeAttributeValue(XmlUtils.GetOptionalAttributeValue(node, attName, null));
 				if (sAttr == attVal)
 					return index;
 				index++;
@@ -303,7 +308,7 @@ namespace SIL.FieldWorks.Common.Controls
 		public static string DateTimeCompString(DateTime dt)
 		{
 			var format = "u";	// 2000-08-17 23:32:32Z
-			return dt.ToString(format, System.Globalization.DateTimeFormatInfo.InvariantInfo);
+			return dt.ToString(format, DateTimeFormatInfo.InvariantInfo);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -690,7 +695,6 @@ namespace SIL.FieldWorks.Common.Controls
 		internal static string[] AddStringFromOtherObj(XElement frag, int hvoTarget, FdoCache cache, ISilDataAccess sda)
 		{
 			int flid = XmlVc.GetFlid(frag, hvoTarget, sda);
-			ITsStrFactory tsf = cache.TsStrFactory;
 			CellarPropertyType itype = (CellarPropertyType)sda.MetaDataCache.GetFieldType(flid);
 			if (itype == CellarPropertyType.Unicode)
 			{
@@ -832,7 +836,7 @@ namespace SIL.FieldWorks.Common.Controls
 					// if multipara is false, otherwise as for "div"
 					if (XmlUtils.GetOptionalBooleanAttributeValue(layout, "multipara", false))
 						return ChildKeys(fdoCache, sda, layout, hvo, layoutCache, caller, wsForce);
-					return AssembleChildKeys(fdoCache, sda, layout, hvo, layoutCache, caller, wsForce);
+						return AssembleChildKeys(fdoCache, sda, layout, hvo, layoutCache, caller, wsForce);
 
 				case "part":
 				{
@@ -953,7 +957,7 @@ namespace SIL.FieldWorks.Common.Controls
 						return new[] {DateTimeCompString(dt)};
 					}
 					var stFieldName = XmlUtils.GetManditoryAttributeValue(layout, "field");
-					throw new Exception("Bad field type (" + stFieldName + " for hvo " + hvo + " found for " +
+						throw new Exception("Bad field type (" + stFieldName + " for hvo " + hvo + " found for " +
 						layout.Name + "  property " + flid + " in " + layout);
 				}
 				case "picture":
@@ -1204,6 +1208,13 @@ namespace SIL.FieldWorks.Common.Controls
 					return wsContainer.DefaultVernacularWritingSystem.Handle;
 				case "pronunciation":
 					return wsContainer.DefaultPronunciationWritingSystem.Handle;
+				case "reversal":
+				{
+					if (WritingSystemServices.CurrentReversalWsId > 0)
+						return WritingSystemServices.CurrentReversalWsId;
+					int wsmagic;
+					return WritingSystemServices.InterpretWsLabel(cache, wsParam, wsContainer.DefaultAnalysisWritingSystem, 0, 0, null, out wsmagic);
+				}
 				case "":
 					return wsContainer.DefaultAnalysisWritingSystem.Handle;		// Most likely value.
 				default:
@@ -1240,6 +1251,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 		private const string sUnspecComplexFormType = "a0000000-dd15-4a03-9032-b40faaa9a754";
 		private const string sUnspecVariantType = "b0000000-c40e-433e-80b5-31da08771344";
+		private const string sUnspecExtendedNoteType = "c0000000-dd15-4a03-9032-b40faaa9a754";
 
 		/// <summary>
 		/// Returns a 'fake' Guid used to filter unspecified Complex Form types in
@@ -1259,6 +1271,115 @@ namespace SIL.FieldWorks.Common.Controls
 		public static Guid GetGuidForUnspecifiedVariantType()
 		{
 			return new Guid(sUnspecVariantType);
+		}
+
+		/// <summary>
+		/// Returns a 'fake' Guid used to filter unspecified Extended Note types in
+		/// XmlVc. Setup in configuration files by XmlDocConfigureDlg.
+		/// </summary>
+		/// <returns></returns>
+		public static Guid GetGuidForUnspecifiedExtendedNoteType()
+		{
+			return new Guid(sUnspecExtendedNoteType);
+		}
+
+		/// <summary>
+		/// Get a Time property value coverted to a DateTime value.
+		/// </summary>
+		public static DateTime GetTimeProperty(ISilDataAccess sda, int hvo, int flid)
+		{
+			long silTime;
+			try
+			{
+				silTime = sda.get_TimeProp(hvo, flid);
+				return SilTime.ConvertFromSilTime(silTime);
+			}
+			catch
+			{
+				return DateTime.MinValue;
+			}
+		}
+
+		/// <summary>
+		/// Set a Time property to a given DateTime value.
+		/// </summary>
+		public static void SetTimeProperty(ISilDataAccess sda, int hvo, int flid, DateTime dt)
+		{
+			long silTime = SilTime.ConvertToSilTime(dt);
+			sda.SetTime(hvo, flid, silTime);
+		}
+
+		/// <summary>
+		/// Utility function to find a methodInfo for the named method.
+		/// It is a static method of the class specified in the EditRowClass of the EditRowAssembly.
+		/// </summary>
+		public static MethodInfo GetStaticMethod(XElement node, string sAssemblyAttr, string sClassAttr,
+			string sMethodName, out Type typeFound)
+		{
+			string sAssemblyName = XmlUtils.GetOptionalAttributeValue(node, sAssemblyAttr);
+			string sClassName = XmlUtils.GetOptionalAttributeValue(node, sClassAttr);
+			MethodInfo mi = GetStaticMethod(sAssemblyName, sClassName, sMethodName,
+				"node " + node.GetOuterXml(), out typeFound);
+			return mi;
+		}
+
+		/// <summary>
+		/// Utility function to find a methodInfo for the named method.
+		/// It is a static method of the class specified in the EditRowClass of the EditRowAssembly.
+		/// </summary>
+		public static MethodInfo GetStaticMethod(string sAssemblyName, string sClassName,
+			string sMethodName, string sContext, out Type typeFound)
+		{
+			typeFound = null;
+			Assembly assemblyFound;
+			try
+			{
+				string baseDir = Path.GetDirectoryName(
+						Assembly.GetExecutingAssembly().CodeBase).
+					Substring(MiscUtils.IsUnix ? 5 : 6);
+				assemblyFound = Assembly.LoadFrom(
+					Path.Combine(baseDir, sAssemblyName));
+			}
+			catch (Exception error)
+			{
+				string sMainMsg = "DLL at " + sAssemblyName;
+				string sMsg = MakeGetStaticMethodErrorMessage(sMainMsg, sContext);
+				throw new RuntimeConfigurationException(sMsg, error);
+			}
+			Debug.Assert(assemblyFound != null);
+			try
+			{
+				typeFound = assemblyFound.GetType(sClassName);
+			}
+			catch (Exception error)
+			{
+				string sMainMsg = "class called " + sClassName;
+				string sMsg = MakeGetStaticMethodErrorMessage(sMainMsg, sContext);
+				throw new RuntimeConfigurationException(sMsg, error);
+			}
+			// TODO-Linux: System.Boolean System.Type::op_Inequality(System.Type,System.Type)
+			// is marked with [MonoTODO] and might not work as expected in 4.0.
+			Debug.Assert(typeFound != null);
+			MethodInfo mi;
+			try
+			{
+				mi = typeFound.GetMethod(sMethodName);
+			}
+			catch (Exception error)
+			{
+				string sMainMsg = "method called " + sMethodName + " of class " + sClassName +
+				                  " in assembly " + sAssemblyName;
+				string sMsg = MakeGetStaticMethodErrorMessage(sMainMsg, sContext);
+				throw new RuntimeConfigurationException(sMsg, error);
+			}
+			return mi;
+		}
+
+		private static string MakeGetStaticMethodErrorMessage(string sMainMsg, string sContext)
+		{
+			string sResult = "GetStaticMethod() could not find the " + sMainMsg +
+			                 " while processing " + sContext;
+			return sResult;
 		}
 	}
 

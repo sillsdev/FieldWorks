@@ -1,10 +1,7 @@
-// Copyright (c) 2007-2013 SIL International
+// Copyright (c) 2007-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: FwTextBox.cs
-// Responsibility:
-//
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -12,13 +9,17 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl;
+using SIL.CoreImpl.Cellar;
+using SIL.CoreImpl.Text;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Reporting;
 using SIL.Utils;
-using SIL.CoreImpl;
 
 namespace SIL.FieldWorks.Common.Widgets
 {
@@ -42,7 +43,7 @@ namespace SIL.FieldWorks.Common.Widgets
 	///	to do this even if you are not using TsString data.
 	/// </summary>
 	/// -----------------------------------------------------------------------------------------
-	public class FwTextBox : UserControl, IFWDisposable, IVwNotifyChange, ISupportInitialize
+	public class FwTextBox : UserControl, IVwNotifyChange, ISupportInitialize
 	{
 		#region Data Members
 
@@ -72,7 +73,9 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// ------------------------------------------------------------------------------------
 		public FwTextBox()
 		{
+			bool inDesigner = LicenseManager.UsageMode == LicenseUsageMode.Designtime;
 			m_innerFwTextBox = new InnerFwTextBox();
+			m_innerFwTextBox.InDesigner = inDesigner;
 
 			if (Application.RenderWithVisualStyles)
 				DoubleBuffered = true;
@@ -81,6 +84,8 @@ namespace SIL.FieldWorks.Common.Widgets
 			Padding = Application.RenderWithVisualStyles ? new Padding(2) : new Padding(1, 2, 1, 1);
 			m_innerFwTextBox.Dock = DockStyle.Fill;
 			Controls.Add(m_innerFwTextBox);
+			if (!inDesigner)
+			{
 			// This causes us to get a notification when the string gets changed,
 			// so we can fire our TextChanged event.
 			m_sda = m_innerFwTextBox.DataAccess;
@@ -90,6 +95,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			m_innerFwTextBox.GotFocus += m_innerFwTextBox_GotFocus;
 			m_innerFwTextBox.MouseEnter += m_innerFwTextBox_MouseEnter;
 			m_innerFwTextBox.MouseLeave += m_innerFwTextBox_MouseLeave;
+			}
 
 			// This makes it, by default if the container's initialization doesn't change it,
 			// the same default size as a standard text box.
@@ -191,8 +197,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// <PermissionSet>
 		/// 	<IPermission class="System.Security.Permissions.FileIOPermission, mscorlib, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" version="1" Unrestricted="true"/>
 		/// </PermissionSet>
-		[BrowsableAttribute(false),
-			DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public new BorderStyle BorderStyle
 		{
 			get
@@ -221,8 +226,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// <PermissionSet>
 		/// 	<IPermission class="System.Security.Permissions.FileIOPermission, mscorlib, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" version="1" Unrestricted="true"/>
 		/// </PermissionSet>
-		[BrowsableAttribute(false),
-			DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public new Padding Padding
 		{
 			get
@@ -309,8 +313,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// Gets the height the box would like to be to neatly display its current data.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[BrowsableAttribute(false),
-			DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public int PreferredHeight
 		{
 			get
@@ -336,8 +339,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// Gets the height of the text.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[BrowsableAttribute(false),
-			DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public int TextHeight
 		{
 			get
@@ -354,8 +356,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// Get the preferred width given the current stylesheet and string.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[BrowsableAttribute(false),
-			DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public int PreferredWidth
 		{
 			get
@@ -804,7 +805,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// Get the selection from the text box
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[BrowsableAttribute(false), DesignerSerializationVisibilityAttribute
+		[Browsable(false), DesignerSerializationVisibility
 										(DesignerSerializationVisibility.Hidden)]
 		public IVwSelection Selection
 		{
@@ -818,7 +819,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// <summary>
 		/// Gets or sets the starting point of text selected in the text box.
 		/// </summary>
-		[BrowsableAttribute(false), DesignerSerializationVisibilityAttribute
+		[Browsable(false), DesignerSerializationVisibility
 										(DesignerSerializationVisibility.Hidden)]
 		public int SelectionStart
 		{
@@ -839,7 +840,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// <summary>
 		/// Gets or sets the number of characters selected in the text box.
 		/// </summary>
-		[BrowsableAttribute(false), DesignerSerializationVisibilityAttribute
+		[Browsable(false), DesignerSerializationVisibility
 										(DesignerSerializationVisibility.Hidden)]
 		public int SelectionLength
 		{
@@ -861,7 +862,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// Gets or sets the selected text.
 		/// </summary>
 		/// <value>The selected text.</value>
-		[BrowsableAttribute(false), DesignerSerializationVisibilityAttribute
+		[Browsable(false), DesignerSerializationVisibility
 										(DesignerSerializationVisibility.Hidden)]
 		public string SelectedText
 		{
@@ -882,7 +883,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// Gets or sets the selected TSS.
 		/// </summary>
 		/// <value>The selected TSS.</value>
-		[BrowsableAttribute(false), DesignerSerializationVisibilityAttribute
+		[Browsable(false), DesignerSerializationVisibility
 										(DesignerSerializationVisibility.Hidden)]
 		public ITsString SelectedTss
 		{
@@ -971,8 +972,8 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// styled string.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[ BrowsableAttribute(true)]
-		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Visible)]
+		[ Browsable(true)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
 		public override string Text
 		{
 			get
@@ -1007,7 +1008,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// The real string of the embedded control.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[BrowsableAttribute(false),
+		[Browsable(false),
 			DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public virtual ITsString Tss
 		{
@@ -1450,8 +1451,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			ITsString tss;
 			if (!m_strings.TryGetValue(key, out tss))
 			{
-				ITsStrFactory tsf = TsStrFactoryClass.Create();
-				tss = tsf.MakeString("", ws == 0 ? m_wsf.UserWs : ws);
+				tss = TsStringUtils.EmptyString(ws == 0 ? m_wsf.UserWs : ws);
 				m_strings[key] = tss;
 			}
 			return tss;
@@ -1685,15 +1685,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		private bool m_fIsDisposing;
 		internal int m_mpEditHeight;
 
-		/// <summary>
-		/// This variable serves the purpose of DesignMode (which unfortunately always returns
-		/// false).  If it is false, then using ITsString objects (and related objects) is not
-		/// possible, presumably because the COM DLL isn't registered (which it isn't explicitly
-		/// for FW 7 since FW 7 uses registration free COM via manifest files), and that's
-		/// presumably because we're being invoked from Visual Studio in DesignMode.
-		/// </summary>
-		bool m_fTssRegistered;
-
 		#endregion Data members
 
 		#region Constructor/destructor
@@ -1707,15 +1698,9 @@ namespace SIL.FieldWorks.Common.Widgets
 			m_DataAccess = new TextBoxDataAccess();
 			// Check for the availability of the FwKernel COM DLL.  Too bad we have to catch an
 			// exception to make this check...
-			try
+			if(LicenseManager.UsageMode != LicenseUsageMode.Designtime)
 			{
-				ITsStrBldr bldr = TsStrBldrClass.Create();
 				m_vc = new TextBoxVc(this);
-				m_fTssRegistered = true;
-			}
-			catch
-			{
-				m_fTssRegistered = false;
 			}
 			// So many things blow up so badly if we don't have one of these that I finally decided to just
 			// make one, even though it won't always, perhaps not often, be the one we want.
@@ -1830,9 +1815,9 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			if (m_fUsingTempWsFactory)
 			{
+				SingletonsContainer.Get<RenderEngineFactory>().ClearRenderEngines(m_wsf);
 				var disposable = m_wsf as IDisposable;
-				if (disposable != null)
-					disposable.Dispose();
+				disposable?.Dispose();
 				m_wsf = null;
 				m_fUsingTempWsFactory = false;
 			}
@@ -1877,8 +1862,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// But I left it here in case we change our minds about the constructor.)
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[BrowsableAttribute(false),
-			DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)]
+		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public override ILgWritingSystemFactory WritingSystemFactory
 		{
 			get
@@ -1920,8 +1904,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// If one has not been supplied use the User interface writing system from the factory.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[BrowsableAttribute(false),
-			DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)]
+		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public int WritingSystemCode
 		{
 			get
@@ -1941,7 +1924,7 @@ namespace SIL.FieldWorks.Common.Widgets
 				// If the contents is currently empty, make sure inital typing will occur in this WS.
 				// (Unless it is zero, which is not a valid WS...hope it gets changed again if so.)
 				if (Tss.Length == 0 && value != 0)
-					Tss = TsStringUtils.MakeTss("", value);
+					Tss = TsStringUtils.MakeString("", value);
 			}
 		}
 
@@ -1950,8 +1933,8 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// The stylesheet used for the data being displayed.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[BrowsableAttribute(false)]
-		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)]
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public override IVwStylesheet StyleSheet
 		{
 			get
@@ -2001,15 +1984,15 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// The real string we are displaying.
 		/// </summary>
 		/// <value>The TSS.</value>
-		[BrowsableAttribute(false)]
-		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)]
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public ITsString Tss
 		{
 			get
 			{
 				CheckDisposed();
 
-				if (m_DataAccess == null || !m_fTssRegistered)
+				if (m_DataAccess == null || InDesigner)
 					return null;
 
 				if (m_wsf == null)
@@ -2052,7 +2035,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			if (tss == null || tss.Length == 0)
 				return tss;
 
-			ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
+			ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 			List<ITsString> lines = TsStringUtils.Split(tss, new[] { oldSubStr }, StringSplitOptions.None);
 			for (int i = 0; i < lines.Count; i++)
 			{
@@ -2114,8 +2097,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// styled string.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[ BrowsableAttribute(true),
-			DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Visible)]
+		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
 		public override string Text
 		{
 			get
@@ -2135,7 +2117,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			set
 			{
 				CheckDisposed();
-				Tss = TsStringUtils.MakeTss(value, WritingSystemCode);
+				Tss = TsStringUtils.MakeString(value, WritingSystemCode);
 			}
 		}
 
@@ -2165,15 +2147,14 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// Thrown when setting the value to less than zero.
 		/// </exception>
 		/// ------------------------------------------------------------------------------------
-		[BrowsableAttribute(false), DesignerSerializationVisibilityAttribute
-										(DesignerSerializationVisibility.Hidden)]
+		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public int SelectionStart
 		{
 			get
 			{
 				CheckDisposed();
 
-				if (RootBox == null)
+				if (RootBox == null || InDesigner)
 					return 0;
 				IVwSelection sel = RootBox.Selection;
 				if (sel == null)
@@ -2212,15 +2193,14 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// Thrown when setting the value to less than zero.
 		/// </exception>
 		/// ------------------------------------------------------------------------------------
-		[BrowsableAttribute(false), DesignerSerializationVisibilityAttribute
-										(DesignerSerializationVisibility.Hidden)]
+		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public virtual int SelectionLength
 		{
 			get
 			{
 				CheckDisposed();
 
-				if (RootBox == null)
+				if (RootBox == null || InDesigner)
 					return 0;
 				IVwSelection sel = RootBox.Selection;
 				if (sel == null)
@@ -2248,9 +2228,15 @@ namespace SIL.FieldWorks.Common.Widgets
 		}
 
 		/// <summary>
+		/// Because InnerFwTextBox is an embedded control <code>InDesigner</code> does not return usable information.
+		/// </summary>
+		protected internal bool InDesigner { get; set; }
+
+		/// <summary>
 		/// Gets or sets the selected text.
 		/// </summary>
 		/// <value>The selected text.</value>
+		[Browsable(false)]
 		public string SelectedText
 		{
 			get
@@ -2268,7 +2254,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			set
 			{
 				CheckDisposed();
-				SelectedTss = TsStringUtils.MakeTss(value, WritingSystemCode);
+				SelectedTss = TsStringUtils.MakeString(value, WritingSystemCode);
 			}
 		}
 
@@ -2276,6 +2262,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// Gets or sets the selected TSS.
 		/// </summary>
 		/// <value>The selected TSS.</value>
+		[Browsable(false)]
 		public ITsString SelectedTss
 		{
 			get
@@ -2338,14 +2325,14 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			CheckDisposed();
 
-			if (DesignMode)
+			if (InDesigner)
 				return;
-			m_rootb = VwRootBoxClass.Create();
-			m_rootb.SetSite(this);
+
+			base.MakeRoot();
+
 			m_rootb.DataAccess = m_DataAccess;
 			m_rootb.SetRootObject(khvoRoot, m_vc, kfragRoot, StyleSheet);
 			m_dxdLayoutWidth = kForceLayout; // Don't try to draw until we get OnSize and do layout.
-			base.MakeRoot();
 			m_DataAccess.AddNotification(this);
 			//Text = "This is a view"; // Todo: remove after preliminary testing.
 			//m_rootb.MakeSimpleSel(true, true, true, true);
@@ -2662,10 +2649,13 @@ namespace SIL.FieldWorks.Common.Widgets
 				try
 				{
 					IVwCacheDa cda = VwCacheDaClass.Create();
+					cda.TsStrFactory = TsStringUtils.TsStrFactory;
 					ISilDataAccess sda = (ISilDataAccess) cda;
 					sda.WritingSystemFactory = WritingSystemFactory;
 					sda.SetString(khvoRoot, ktagText, FontHeightAdjuster.GetUnadjustedTsString(Tss));
 					IVwRootBox rootb = VwRootBoxClass.Create();
+					rootb.RenderEngineFactory = SingletonsContainer.Get<RenderEngineFactory>();
+					rootb.TsStrFactory = TsStringUtils.TsStrFactory;
 					rootb.SetSite(this);
 					rootb.DataAccess = sda;
 					rootb.SetRootObject(khvoRoot, m_vc, kfragRoot, StyleSheet);
@@ -2712,14 +2702,17 @@ namespace SIL.FieldWorks.Common.Widgets
 				{
 					m_vc.SaveSize = true;
 					IVwCacheDa cda = VwCacheDaClass.Create();
+					cda.TsStrFactory = TsStringUtils.TsStrFactory;
 					ISilDataAccess sda = (ISilDataAccess)cda;
 					sda.WritingSystemFactory = WritingSystemFactory;
 					sda.SetString(khvoRoot, ktagText, FontHeightAdjuster.GetUnadjustedTsString(Tss));
 					IVwRootBox rootb = VwRootBoxClass.Create();
+					rootb.RenderEngineFactory = SingletonsContainer.Get<RenderEngineFactory>();
+					rootb.TsStrFactory = TsStringUtils.TsStrFactory;
 					rootb.SetSite(this);
 					rootb.DataAccess = sda;
 					rootb.SetRootObject(khvoRoot, m_vc, kfragRoot, StyleSheet);
-					int dx = 0;
+					int dx;
 					using (new HoldGraphics(this))
 					{
 						rootb.Layout(m_graphicsManager.VwGraphics, GetAvailWidth(rootb));
@@ -2770,7 +2763,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			CheckDisposed();
 
-			if (!DoAdjustHeight || !m_fTssRegistered)
+			if (!DoAdjustHeight || m_DataAccess == null || Tss == null)
 				return false;
 
 			// Reduce the font size of any run in the new string as necessary to keep the text
@@ -2818,7 +2811,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		protected override void OnSizeChanged(EventArgs e)
 		{
 			base.OnSizeChanged(e);
-			if (!m_fTssRegistered)
+			if (m_DataAccess == null)
 				return;
 
 			m_mpEditHeight = FwTextBox.GetDympMaxHeight(this);
@@ -2828,7 +2821,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			// string has something in it.  See LT-9472.
 			// Also don't try if we have no selection; this can produce undesirable scrolling when the
 			// window is just too narrow. LT-11073
-			if (m_rootb.Selection == null)
+			if (m_rootb == null || m_rootb.Selection == null)
 				return;
 			ITsString tss = Tss;
 			if (m_WritingSystem != 0 || (tss != null && tss.Text != null))

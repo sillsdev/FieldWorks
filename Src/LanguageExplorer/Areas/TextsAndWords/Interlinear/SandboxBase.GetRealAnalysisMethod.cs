@@ -3,11 +3,11 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows.Forms;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 
@@ -113,8 +113,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			/// Do the bulk of the computation, everything after initial error checking, which is now nonexistent.
 			/// </summary>
 			/// <returns>HVO of analysis (WfiWordform, WfiAnalyis, or WfiGloss)</returns>
-			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-				Justification = "fdoCache is a reference")]
 			private IAnalysis FinishItOff()
 			{
 				FdoCache fdoCache = m_caches.MainCache;

@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,15 +6,14 @@ using System;
 using System.Collections;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.Text;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.Widgets
 {
@@ -70,7 +69,7 @@ namespace SIL.FieldWorks.Common.Widgets
 	/// the writing systems of any TsStrings it is asked to display. It will improve performance
 	/// to do this even if you are not using TsString data.
 	/// </summary>
-	public class FwListBox : Panel, IFWDisposable, IVwNotifyChange, IFwListBox
+	public class FwListBox : Panel, IVwNotifyChange, IFwListBox
 	{
 		/// <summary></summary>
 		public event EventHandler SelectedIndexChanged;
@@ -178,8 +177,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// Default Constructor.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "m_innerFwListBox gets added to the Controls collection and disposed there")]
 		public FwListBox()
 		{
 			m_items = new ObjectCollection(this);
@@ -763,8 +760,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			ITssValue tv = item as ITssValue;
 			if (tv != null)
 				return tv.AsTss;
-			ITsStrFactory tsf = TsStrFactoryClass.Create();
-			return tsf.MakeString(item != null ? item.ToString() : string.Empty, WritingSystemCode);
+			return TsStringUtils.MakeString(item != null ? item.ToString() : string.Empty, WritingSystemCode);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -776,7 +772,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// on the control.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public class ObjectCollection : IList, IFWDisposable
+		public class ObjectCollection : IList, IDisposable
 		{
 			private ArrayList m_list;
 			private IFwListBox m_owner;
@@ -1285,6 +1281,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			m_owner = owner;
 			m_cacheDa = VwCacheDaClass.Create();
+			m_cacheDa.TsStrFactory = TsStringUtils.TsStrFactory;
 			m_dataAccess = (ISilDataAccess)m_cacheDa;
 			// So many things blow up so badly if we don't have one of these that I finally decided to just
 			// make one, even though it won't always, perhaps not often, be the one we want.
@@ -1431,15 +1428,15 @@ namespace SIL.FieldWorks.Common.Widgets
 
 			if (DesignMode)
 				return;
-			m_rootb = VwRootBoxClass.Create();
-			m_rootb.SetSite(this);
+
+			base.MakeRoot();
+
 			m_rootb.DataAccess = m_dataAccess;
 			if (m_vc == null)
 				m_vc = new ListBoxVc(this);
 			m_rootb.SetRootObject(khvoRoot, m_vc, kfragRoot, m_styleSheet);
 			m_dxdLayoutWidth = kForceLayout; // Don't try to draw until we get OnSize and do layout.
 			EditingHelper.DefaultCursor = Cursors.Arrow;
-			base.MakeRoot();
 		}
 
 		/// <summary>
@@ -1626,7 +1623,6 @@ namespace SIL.FieldWorks.Common.Widgets
 	internal class ListBoxVc : FwBaseVc
 	{
 		protected IFwListBoxSite m_listbox;
-		protected ITsString m_tssBlanks;
 
 		/// <summary>
 		/// Construct one. Must be part of an InnerFwListBox.
@@ -1635,14 +1631,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		internal ListBoxVc(IFwListBoxSite listbox)
 		{
 			m_listbox = listbox;
-			//UpdateBlankString(listbox);
 		}
-
-		//public void UpdateBlankString(IFwListBoxSite listbox)
-		//{
-		//    ITsStrFactory tsf = TsStrFactoryClass.Create();
-		//    m_tssBlanks = tsf.MakeString (new string(' ', 200), m_listbox.WritingSystemCode);
-		//}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -1652,8 +1641,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// <param name="hvo">The HVo of the object to display</param>
 		/// <param name="frag">The fragment to lay out</param>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "f is a reference")]
 		public override void Display(IVwEnv vwenv, int hvo, int frag)
 		{
 			switch (frag)

@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -7,11 +7,12 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Diagnostics;
 using SIL.CoreImpl;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.Utils;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Common.Widgets;
 
 namespace SIL.FieldWorks.LexText.Controls
@@ -19,7 +20,7 @@ namespace SIL.FieldWorks.LexText.Controls
 	/// <summary>
 	/// Summary description for Form1.
 	/// </summary>
-	public class AddNewSenseDlg : Form, IFWDisposable
+	public class AddNewSenseDlg : Form
 	{
 		private const string s_helpTopic = "khtpAddNewSense";
 		private System.Windows.Forms.HelpProvider helpProvider;
@@ -420,7 +421,7 @@ namespace SIL.FieldWorks.LexText.Controls
 						var lsNew = m_cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
 						m_le.SensesOS.Add(lsNew);
 						int defAnalWs = m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle;
-						lsNew.Gloss.set_String(defAnalWs, m_cache.TsStrFactory.MakeString(m_fwtbGloss.Text, defAnalWs));
+						lsNew.Gloss.set_String(defAnalWs, TsStringUtils.MakeString(m_fwtbGloss.Text, defAnalWs));
 
 						lsNew.SandboxMSA = m_msaGroupBox.SandboxMSA;
 						m_newSenseID = lsNew.Hvo;

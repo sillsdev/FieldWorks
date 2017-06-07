@@ -9,17 +9,15 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Globalization;
-using System.Media;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
 using Icu;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
@@ -27,12 +25,10 @@ using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Resources;
 using SIL.Keyboarding;
 using SIL.Utils;
 using SIL.Windows.Forms;
-using SILUBS.SharedScrUtils;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
@@ -146,7 +142,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			/// <summary/>
 			~ValidCharGridsManager()
 			{
-				Debug.WriteLine("****** Missing Dispose() call for " + GetType() + " *******");
 				Dispose(false);
 			}
 			#endif
@@ -575,8 +570,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			/// Handles the click on one of the "Treat as..." context menu items.
 			/// </summary>
 			/// ---------------------------------------------------------------------------------
-			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-				Justification="MoveSelectedChars() returns a reference.")]
 			private void HandleTreatAsClick(object sender, EventArgs e)
 			{
 				MoveSelectedChars();
@@ -627,7 +620,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		#region Data members
 		private readonly CoreWritingSystemDefinition m_ws;
-		private ILgCharacterPropertyEngine m_chrPropEng;
 		private readonly IHelpTopicProvider m_helpTopicProvider;
 		private readonly IApp m_app;
 		private Font m_fntForSpecialChar;
@@ -712,8 +704,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <param name="wsName">The name of the writing system for which this dialog is setting
 		/// the valid characters. Can not be <c>null</c> or <c>String.Empty</c>.</param>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "gridcol is a reference")]
 		public ValidCharactersDlg(FdoCache cache, IWritingSystemContainer wsContainer,
 			IHelpTopicProvider helpTopicProvider, IApp app, CoreWritingSystemDefinition ws, string wsName) : this()
 		{
@@ -725,8 +715,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			if (cache != null)
 				m_wsManager = cache.ServiceLocator.WritingSystemManager;
-
-			m_chrPropEng = LgIcuCharPropEngineClass.Create();
 
 			m_lblWsName.Text = string.Format(m_lblWsName.Text, wsName);
 
@@ -799,11 +787,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					m_validCharsGridMngr.Dispose();
 				if (m_chkBoxColHdrHandler != null)
 					m_chkBoxColHdrHandler.Dispose();
-				if (m_chrPropEng != null && Marshal.IsComObject(m_chrPropEng))
-				{
-					Marshal.ReleaseComObject(m_chrPropEng);
-					m_chrPropEng = null;
-				}
 				if (m_openFileDialog != null)
 					m_openFileDialog.Dispose();
 				if (components != null)
@@ -1061,7 +1044,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 				if (txt == txtManualCharEntry)
 				{
-					chr = m_chrPropEng.NormalizeD(txtManualCharEntry.Text);
+					chr = Common.FwKernelInterfaces.Icu.Normalize(txtManualCharEntry.Text, Common.FwKernelInterfaces.Icu.UNormalizationMode.UNORM_NFD);
 					fClearText = true;
 				}
 				else
@@ -1071,7 +1054,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					if (int.TryParse(txt.Text, NumberStyles.HexNumber, null, out codepoint))
 					{
 						chr = ((char) codepoint).ToString(CultureInfo.InvariantCulture);
-						if (m_chrPropEng.get_IsMark(chr[0]))
+						if (Common.FwKernelInterfaces.Icu.IsMark(chr[0]))
 						{
 							ShowMessageBox(FwCoreDlgs.kstidLoneDiacriticNotValid);
 							return;
@@ -1129,7 +1112,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					try
 					{
 						if (!string.IsNullOrEmpty(chr))
-						chr = m_chrPropEng.NormalizeD(chr);
+						chr = Common.FwKernelInterfaces.Icu.Normalize(chr, Common.FwKernelInterfaces.Icu.UNormalizationMode.UNORM_NFD);
 					}
 					catch
 					{
@@ -1249,14 +1232,14 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			if (txtManualCharEntry.Text.Length > 0)
 			{
-				string origCharsKd = m_chrPropEng.NormalizeD(txtManualCharEntry.Text);
+				string origCharsKd = Common.FwKernelInterfaces.Icu.Normalize(txtManualCharEntry.Text, Common.FwKernelInterfaces.Icu.UNormalizationMode.UNORM_NFD);
 				int savSelStart = txtManualCharEntry.SelectionStart;
-				string newChars = TsStringUtils.ValidateCharacterSequence(origCharsKd, m_chrPropEng);
+				string newChars = TsStringUtils.ValidateCharacterSequence(origCharsKd);
 
 				if (newChars.Length == 0)
 				{
 					string s = origCharsKd.Trim();
-					if (s.Length > 0 && m_chrPropEng.get_IsMark(s[0]))
+					if (s.Length > 0 && Common.FwKernelInterfaces.Icu.IsMark(s[0]))
 						ShowMessageBox(FwCoreDlgs.kstidLoneDiacriticNotValid);
 					else
 						IssueBeep();
@@ -1305,10 +1288,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		private void VerifyCharInRange(FwTextBox textbox, Label lbl)
 		{
-			string txt = textbox.Text.Length >= 1 ? m_chrPropEng.NormalizeD(textbox.Text) : String.Empty;
+			string txt = textbox.Text.Length >= 1 ? Common.FwKernelInterfaces.Icu.Normalize(textbox.Text, Common.FwKernelInterfaces.Icu.UNormalizationMode.UNORM_NFD) : String.Empty;
 			int chrCode = (txt.Length >= 1 ? txt[0] : 0);
 
-			if (txt.Length > 1 || (chrCode > 0 && m_chrPropEng.get_IsMark(chrCode)))
+			if (txt.Length > 1 || (chrCode > 0 && Common.FwKernelInterfaces.Icu.IsMark(chrCode)))
 			{
 				IssueBeep();
 				lbl.ForeColor = Color.Red;
@@ -1337,10 +1320,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				return;
 
 			var chars = new List<string>();
-			foreach (string c in UnicodeSet.ToCharacters(Common.COMInterfaces.Icu.GetExemplarCharacters(icuLocale)))
+			foreach (string c in UnicodeSet.ToCharacters(Common.FwKernelInterfaces.Icu.GetExemplarCharacters(icuLocale)))
 			{
 				chars.Add(c.Normalize(NormalizationForm.FormD));
-				chars.Add(Common.COMInterfaces.Icu.ToUpper(c, icuLocale).Normalize(NormalizationForm.FormD));
+				chars.Add(Common.FwKernelInterfaces.Icu.ToUpper(c, icuLocale).Normalize(NormalizationForm.FormD));
 			}
 			m_validCharsGridMngr.AddCharacters(chars);
 		}
@@ -1575,7 +1558,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				{
 					case kiCharCol:
 						string chr = m_inventoryRows[i].Character;
-						if (!Common.COMInterfaces.Icu.IsSpace(chr[0]) && !Common.COMInterfaces.Icu.IsControl(chr[0]))
+						if (!Common.FwKernelInterfaces.Icu.IsSpace(chr[0]) && !Common.FwKernelInterfaces.Icu.IsControl(chr[0]))
 						{
 							e.Value = chr;
 							gridCharInventory[e.ColumnIndex, e.RowIndex].Tag = null;
@@ -1603,8 +1586,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <param name="sender">The source of the event.</param>
 		/// <param name="e">The <see cref="T:System.Windows.Forms.DataGridViewCellFormattingEventArgs"/> instance containing the event data.</param>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "cell is a reference")]
 		private void gridCharInventory_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
 		{
 			DataGridViewCell cell = gridCharInventory[e.ColumnIndex, e.RowIndex];
@@ -1786,9 +1767,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					string chr;
 					if (!normalizedChars.TryGetValue(txtTokSub.Text, out chr))
 					{
-						chr = m_chrPropEng.NormalizeD(txtTokSub.Text);
+						chr = Common.FwKernelInterfaces.Icu.Normalize(txtTokSub.Text, Common.FwKernelInterfaces.Icu.UNormalizationMode.UNORM_NFD);
 						if (chr == "\n" || chr == "\r" || !TsStringUtils.IsCharacterDefined(chr)
-							|| !TsStringUtils.IsValidChar(chr, m_chrPropEng))
+							|| !TsStringUtils.IsValidChar(chr))
 						{
 							chr = string.Empty;
 						}
@@ -1959,7 +1940,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		protected virtual void IssueBeep()
 		{
-			SystemSounds.Beep.Play();
+			FwUtils.ErrorBeep();
 		}
 
 		/// ------------------------------------------------------------------------------------

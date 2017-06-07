@@ -6,7 +6,8 @@ using System;
 using System.IO;
 using System.Linq;
 using NUnit.Framework;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.LexText.Controls;
 
@@ -1756,8 +1757,8 @@ namespace LexTextControlsTests
 			var refTypeRepo = Cache.ServiceLocator.GetInstance<ILexRefTypeRepository>();
 			var refTypeFactory = Cache.ServiceLocator.GetInstance<ILexRefTypeFactory>();
 			var testType = refTypeFactory.Create(new Guid("b7862f14-ea5e-11de-8d47-0013722f8dec"), null);
-			testType.Name.set_String(wsEn, Cache.TsStrFactory.MakeString("Test" + normalizedOmega, wsEn));
-			testType.Abbreviation.set_String(wsEn, Cache.TsStrFactory.MakeString("test", wsEn));
+			testType.Name.set_String(wsEn, TsStringUtils.MakeString("Test" + normalizedOmega, wsEn));
+			testType.Abbreviation.set_String(wsEn, TsStringUtils.MakeString("test", wsEn));
 			Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.Add(testType);
 			var refTypeCountBeforeImport = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.Count;
 			var liftFile = CreateInputFile(liftWithSenseUsingNonAsciiRelation);

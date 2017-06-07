@@ -1,27 +1,30 @@
-﻿// Copyright (c) 2014 SIL International
+// Copyright (c) 2014-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.COMInterfaces;
+using System.Xml.Linq;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
-using SIL.Utils;
+using SIL.Xml;
 using SIL.FieldWorks.Filters;
 using SIL.CoreImpl;
-using System.Collections;
-using System.Xml.Linq;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.Common.Controls
 {
 	/// <summary>
 	/// A browse view that displays the results of a search.
 	/// </summary>
-	public class MatchingObjectsBrowser : UserControl, IFWDisposable
+	public class MatchingObjectsBrowser : UserControl
 	{
 		#region Events
 
@@ -351,7 +354,7 @@ namespace SIL.FieldWorks.Common.Controls
 			var results = new List<string>();
 			foreach (var columnSpec in m_bvMatches.ColumnSpecs)
 			{
-				var colLabel = Utils.XmlUtils.GetOptionalAttributeValue(columnSpec, "layout", null);
+				var colLabel = XmlUtils.GetOptionalAttributeValue(columnSpec, "layout", null);
 				if (colLabel == null)
 				{
 					// In this case we are likely dealing with a dialog that does NOT use IsVisibleColumn()

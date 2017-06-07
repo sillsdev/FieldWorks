@@ -40,8 +40,6 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		/// A <see cref="T:System.Collections.Generic.IEnumerator`1"/> that can be used to iterate through the collection.
 		/// </returns>
 		/// <filterpriority>1</filterpriority>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "Caller is responsible to dispose enumerator")]
 		public IEnumerator<T> GetEnumerator()
 		{
 			var inverse = new HashSet<T>(m_inverse);

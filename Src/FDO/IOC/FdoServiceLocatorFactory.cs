@@ -1,18 +1,14 @@
-// Copyright (c) 2009-2013 SIL International
+// Copyright (c) 2009-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ServiceLocatorFactory.cs
-// Responsibility: Randy Regnier
-// Last reviewed: never
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using Microsoft.Practices.ServiceLocation;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.WritingSystems;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.Application.Impl;
 using SIL.FieldWorks.FDO.DomainImpl;
@@ -20,7 +16,6 @@ using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FDO.Infrastructure.Impl;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
-using SIL.Utils;
 using StructureMap;
 using StructureMap.Configuration.DSL;
 using StructureMap.Pipeline;
@@ -32,7 +27,7 @@ namespace SIL.FieldWorks.FDO.IOC
 	/// Factory for hard-wired FDO Common Service Locator.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	internal sealed partial class FdoServiceLocatorFactory : IServiceLocatorBootstrapper
+	internal sealed partial class FdoServiceLocatorFactory
 	{
 		private readonly FDOBackendProviderType m_backendProviderType;
 		private readonly IFdoUI m_ui;
@@ -53,8 +48,6 @@ namespace SIL.FieldWorks.FDO.IOC
 			m_dirs = dirs;
 			m_settings = settings;
 		}
-
-		#region Implementation of IServiceLocatorBootstrapper
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -78,7 +71,7 @@ namespace SIL.FieldWorks.FDO.IOC
 				.For<IDataMigrationManager>()
 				.Use<FdoDataMigrationManager>();
 
-			// Add FdoCache
+			// Add HomographConfiguration
 			registry
 				.For<HomographConfiguration>()
 				.LifecycleIs(new SingletonLifecycle())
@@ -94,18 +87,6 @@ namespace SIL.FieldWorks.FDO.IOC
 				.For<IParagraphCounterRepository>()
 				.LifecycleIs(new SingletonLifecycle())
 				.Use<ParagraphCounterRepository>();
-
-			// Add IFilteredScrBookRepository
-			registry
-				.For<IFilteredScrBookRepository>()
-				.LifecycleIs(new SingletonLifecycle())
-				.Use<FilteredScrBookRepository>();
-
-			// Add ITsStrFactory
-			registry
-				.For<ITsStrFactory>()
-				.LifecycleIs(new SingletonLifecycle())
-				.Use(c => TsStrFactoryClass.Create());
 
 			// Add MDC
 			registry
@@ -275,8 +256,6 @@ namespace SIL.FieldWorks.FDO.IOC
 
 			return new StructureMapServiceLocator(container);
 		}
-
-		#endregion
 	}
 
 	/// <summary>
@@ -290,7 +269,6 @@ namespace SIL.FieldWorks.FDO.IOC
 		IFdoServiceLocator, IServiceLocatorInternal, IDisposable
 	{
 		private Container m_container;
-		private ILgCharacterPropertyEngine m_lgpe;
 
 		/// <summary>
 		/// Constructor
@@ -330,7 +308,7 @@ namespace SIL.FieldWorks.FDO.IOC
 		/// <summary/>
 		private void Dispose(bool fDisposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType() + " *******");
+			Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType() + " *******");
 			if (fDisposing && !IsDisposed)
 			{
 				// dispose managed and unmanaged objects
@@ -349,7 +327,6 @@ namespace SIL.FieldWorks.FDO.IOC
 				}
 			}
 			m_container = null;
-			m_lgpe = null;
 			IsDisposed = true;
 		}
 		#endregion
@@ -401,8 +378,6 @@ namespace SIL.FieldWorks.FDO.IOC
 		/// <returns>
 		/// The requested service instance.
 		/// </returns>
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification="See TODO-Linux comment")]
 		public override TService GetInstance<TService>()
 		{
 			// IActionHandler is special - want to return the current one in use.
@@ -576,20 +551,6 @@ namespace SIL.FieldWorks.FDO.IOC
 			get
 			{
 				return GetInstance<IdentityMap>();
-			}
-		}
-
-		/// <summary>
-		/// Shortcut to the Unicode character property engine.
-		/// </summary>
-		public ILgCharacterPropertyEngine UnicodeCharProps
-		{
-			get
-			{
-				if (m_lgpe == null)
-					m_lgpe = LgIcuCharPropEngineClass.Create();
-
-				return m_lgpe; // m_baseServiceLocator.GetInstance<ILgCharacterPropertyEngine>();
 			}
 		}
 		#endregion

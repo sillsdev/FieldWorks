@@ -15,8 +15,10 @@ namespace SIL.FieldWorks.XWorks
 	[XmlInclude(typeof(DictionaryNodeSenseOptions))]
 	[XmlInclude(typeof(DictionaryNodeListOptions))]
 	[XmlInclude(typeof(DictionaryNodeWritingSystemOptions))]
-	[XmlInclude(typeof(DictionaryNodeComplexFormOptions))]
+	[XmlInclude(typeof(DictionaryNodeListAndParaOptions))]
+	[XmlInclude(typeof(DictionaryNodeWritingSystemAndParaOptions))]
 	[XmlInclude(typeof(DictionaryNodePictureOptions))]
+	[XmlInclude(typeof(DictionaryNodeGroupingOptions))]
 	public abstract class DictionaryNodeOptions
 	{
 		/// <summary>
@@ -56,6 +58,10 @@ namespace SIL.FieldWorks.XWorks
 		[XmlAttribute(AttributeName = "numberingStyle")]
 		public string NumberingStyle { get; set; }
 
+		// Example values: ""->none; %j->Joined; %.->Separated by dot
+		[XmlAttribute(AttributeName = "parentSenseNumberingStyle")]
+		public string ParentSenseNumberingStyle { get; set; }
+
 		[XmlAttribute(AttributeName = "numberAfter")]
 		public string AfterNumber { get; set; }
 
@@ -67,6 +73,9 @@ namespace SIL.FieldWorks.XWorks
 
 		[XmlAttribute(AttributeName = "displayEachSenseInParagraph")]
 		public bool DisplayEachSenseInAParagraph { get; set; }
+
+		[XmlAttribute(AttributeName = "displayFirstSenseInline")]
+		public bool DisplayFirstSenseInline { get; set; }
 
 		public override DictionaryNodeOptions DeepClone()
 		{
@@ -99,7 +108,10 @@ namespace SIL.FieldWorks.XWorks
 			Sense,
 			/// <summary>Lexical Relations, including Reverses, having to do with Entry</summary>
 			[XmlEnum("entry")]
-			Entry
+			Entry,
+			/// <summary>Extended Note Types</summary>
+			[XmlEnum("note")]
+			Note
 		}
 
 		public class DictionaryNodeOption
@@ -146,17 +158,34 @@ namespace SIL.FieldWorks.XWorks
 		}
 	}
 
-	/// <summary>Options for Referenced Complex Forms</summary>
-	public class DictionaryNodeComplexFormOptions : DictionaryNodeListOptions
+	/// <summary>Options for items that may be displayed in paragraphs</summary>
+	public class DictionaryNodeListAndParaOptions : DictionaryNodeListOptions, IParaOption
 	{
 		[XmlAttribute(AttributeName = "displayEachComplexFormInParagraph")]
-		public bool DisplayEachComplexFormInAParagraph { get; set; }
+		public bool DisplayEachInAParagraph { get; set; }
 
 		public override DictionaryNodeOptions DeepClone()
 		{
-			return DeepCloneInto(new DictionaryNodeComplexFormOptions());
+			return DeepCloneInto(new DictionaryNodeListAndParaOptions());
 		}
 	}
+
+	public class DictionaryNodeWritingSystemAndParaOptions : DictionaryNodeWritingSystemOptions, IParaOption
+	{
+		[XmlAttribute(AttributeName = "displayInParagraph")]
+		public bool DisplayEachInAParagraph { get; set; }
+
+		public override DictionaryNodeOptions DeepClone()
+		{
+			return DeepCloneInto(new DictionaryNodeWritingSystemAndParaOptions());
+		}
+	}
+
+	public interface IParaOption
+	{
+		bool DisplayEachInAParagraph { get; set; }
+	}
+
 
 	/// <summary>Options for selecting and ordering WritingSystems</summary>
 	public class DictionaryNodeWritingSystemOptions : DictionaryNodeOptions
@@ -210,6 +239,18 @@ namespace SIL.FieldWorks.XWorks
 		}
 	}
 
+	/// <remarks>deprecated; needed for migration</remarks>
+	public class DictionaryNodeReferringSenseOptions : DictionaryNodeOptions
+	{
+		[XmlElement(ElementName = "WritingSystemOptions")]
+		public DictionaryNodeWritingSystemOptions WritingSystemOptions { get; set; }
+
+		public override DictionaryNodeOptions DeepClone()
+		{
+			return WritingSystemOptions.DeepClone(); // this is what migration should do anyway
+		}
+	}
+
 	/// <summary>Options for formatting Pictures</summary>
 	public class DictionaryNodePictureOptions : DictionaryNodeOptions
 	{
@@ -244,6 +285,21 @@ namespace SIL.FieldWorks.XWorks
 		public override DictionaryNodeOptions DeepClone()
 		{
 			return DeepCloneInto(new DictionaryNodePictureOptions());
+		}
+	}
+
+	/// <summary>Options for allowing the grouping of nodes which are not related in the model</summary>
+	public class DictionaryNodeGroupingOptions : DictionaryNodeOptions, IParaOption
+	{
+		[XmlText]
+		public string Description { get; set; }
+
+		[XmlAttribute(AttributeName = "displayGroupInParagraph")]
+		public bool DisplayEachInAParagraph { get; set; }
+
+		public override DictionaryNodeOptions DeepClone()
+		{
+			return DeepCloneInto(new DictionaryNodeGroupingOptions());
 		}
 	}
 }

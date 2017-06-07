@@ -283,7 +283,8 @@ namespace LexTextControlsTests
 					3, // lex entries in file
 					false, // don't want to display import report
 					"", // phase 1 html report, only used in generating messages, I think.
-					LexImport.s_sPhase1FileName // required always
+					LexImport.s_sPhase1FileName, // required always
+					true // create entries for missing link targets
 				});
 				Assert.That(entryRepo.AllInstances().Count(), Is.EqualTo(expectedCreations), "wrong number of entries created");
 

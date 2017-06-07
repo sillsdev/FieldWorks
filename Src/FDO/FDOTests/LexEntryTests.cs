@@ -11,12 +11,13 @@
 using System;
 using System.Linq;
 using NUnit.Framework;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.CoreTests;
 using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.FieldWorks.FDO.Infrastructure;
 using System.Collections.Generic;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.FDO.FDOTests
 {
@@ -341,7 +342,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		IWfiWordform MakeWordform(string form)
 		{
 			var result = Cache.ServiceLocator.GetInstance<IWfiWordformFactory>().Create();
-			result.Form.VernacularDefaultWritingSystem = Cache.TsStrFactory.MakeString(form, Cache.DefaultVernWs);
+			result.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString(form, Cache.DefaultVernWs);
 			return result;
 		}
 		IWfiAnalysis MakeAnalysis(IWfiWordform wf, ILexSense sense)
@@ -400,7 +401,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			var entry = MakeEntry();
 			var process = Cache.ServiceLocator.GetInstance<IMoAffixProcessFactory>().Create();
 			entry.LexemeFormOA = process;
-			process.Form.set_String(ws, Cache.TsStrFactory.MakeString(form, ws));
+			process.Form.set_String(ws, TsStringUtils.MakeString(form, ws));
 			process.MorphTypeRA = Cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(morphType);
 			return entry;
 		}
@@ -807,7 +808,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			Assert.That(newEntry.AlternateFormsOS[1].Form.VernacularDefaultWritingSystem.Text, Is.EqualTo("alt2"));
 			Assert.That(newEntry.PronunciationsOS[0].Form.VernacularDefaultWritingSystem.Text, Is.EqualTo("pron"));
 			Assert.That(newEntry.EntryRefsOS, Has.Count.EqualTo(1));
-			Assert.That(newEntry.EtymologyOA, Is.Not.Null);
+			Assert.That(newEntry.EtymologyOS, Has.Count.EqualTo(1));
 		}
 
 		// Reflect changes in VerifyCopiedProperties
@@ -882,7 +883,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		private ILexEtymology MakeEtymology(ILexEntry entry)
 		{
 			var form = Cache.ServiceLocator.GetInstance<ILexEtymologyFactory>().Create();
-			entry.EtymologyOA = form;
+			entry.EtymologyOS.Add(form);;
 			return form;
 		}
 		private IMoStemAllomorph MakeLexemeForm(ILexEntry entry)
@@ -917,11 +918,11 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 		private ITsString MakeAnalysisString(string input)
 		{
-			return Cache.TsStrFactory.MakeString(input, Cache.DefaultAnalWs);
+			return TsStringUtils.MakeString(input, Cache.DefaultAnalWs);
 		}
 		private ITsString MakeVernString(string input)
 		{
-			return Cache.TsStrFactory.MakeString(input, Cache.DefaultVernWs);
+			return TsStringUtils.MakeString(input, Cache.DefaultVernWs);
 		}
 		private ILexEntry MakeEntry()
 		{
@@ -964,7 +965,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		private IPartOfSpeech MakePartOfSpeech(string name)
 		{
 			var partOfSpeech = MakePartOfSpeech();
-			partOfSpeech.Name.AnalysisDefaultWritingSystem = Cache.TsStrFactory.MakeString(name, Cache.DefaultAnalWs);
+			partOfSpeech.Name.AnalysisDefaultWritingSystem = TsStringUtils.MakeString(name, Cache.DefaultAnalWs);
 			return partOfSpeech;
 		}
 
@@ -1091,21 +1092,17 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				int vernWs = Cache.DefaultVernWs;
 				var entryFactory = Cache.ServiceLocator.GetInstance<ILexEntryFactory>();
 				var formFactory = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>();
-				var ldb = Cache.LangProject.LexDbOA;
-				var tsf = Cache.TsStrFactory;
-				var morphTypeRoot =
-					Cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphRoot);
 				var entry1 = entryFactory.Create();
 				var morph1 = formFactory.Create();
 				entry1.LexemeFormOA = morph1;
-				morph1.Form.set_String(vernWs, tsf.MakeString("rot", vernWs));
+				morph1.Form.set_String(vernWs, TsStringUtils.MakeString("rot", vernWs));
 
 				Assert.AreEqual(0, entry1.HomographNumber, "sole entry should have homograph number zero.");
 
 				var entry2 = entryFactory.Create();
 				var morph2 = formFactory.Create();
 				entry2.LexemeFormOA = morph2;
-				morph2.Form.set_String(vernWs, tsf.MakeString("rot", vernWs));
+				morph2.Form.set_String(vernWs, TsStringUtils.MakeString("rot", vernWs));
 				Assert.AreEqual(1, entry1.HomographNumber,
 					"old entry with duplicate LF should have homograph number one.");
 				Assert.AreEqual(2, entry2.HomographNumber,
@@ -1114,7 +1111,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				var entry3 = entryFactory.Create();
 				var morph3 = formFactory.Create();
 				entry3.LexemeFormOA = morph3;
-				morph3.Form.set_String(vernWs, tsf.MakeString("blau", vernWs));
+				morph3.Form.set_String(vernWs, TsStringUtils.MakeString("blau", vernWs));
 				Assert.AreEqual(0, entry3.HomographNumber, "new entry with unique LF should have homograph number zero.");
 				Assert.AreEqual(1, entry1.HomographNumber,
 					"old entry with duplicate LF should have homograph number one (unchanged).");
@@ -1122,7 +1119,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 					"new entry with duplicate LF should have homograph number one (unchanged).");
 
 				// Since citation form takes precedence, changing this should make it a homograph.
-				entry3.CitationForm.set_String(vernWs, tsf.MakeString("rot", vernWs));
+				entry3.CitationForm.set_String(vernWs, TsStringUtils.MakeString("rot", vernWs));
 				Assert.AreEqual(1, entry1.HomographNumber,
 					"old entry with duplicate LF should have homograph number one (unchanged).");
 				Assert.AreEqual(2, entry2.HomographNumber,
@@ -1132,12 +1129,12 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				var entry4 = entryFactory.Create();
 				var morph4 = formFactory.Create();
 				entry4.LexemeFormOA = morph4;
-				morph4.Form.set_String(vernWs, tsf.MakeString("blau", vernWs));
+				morph4.Form.set_String(vernWs, TsStringUtils.MakeString("blau", vernWs));
 				Assert.AreEqual(0, entry4.HomographNumber,
 					"new entry is not a homograph even though LF matches, since CF of other does not.");
 
 				// Changing the CF of entry 1 should make it no longer a homograph of 'rot' but now a homograph of 'blau'.
-				entry1.CitationForm.set_String(vernWs, tsf.MakeString("blau", vernWs));
+				entry1.CitationForm.set_String(vernWs, TsStringUtils.MakeString("blau", vernWs));
 				Assert.AreEqual(2, entry1.HomographNumber, "changed entry is now a homograph of blau).");
 				Assert.AreEqual(1, entry2.HomographNumber,
 					"old homograph 2 is now homograph 1, since old H1 is no longer 'rot').");
@@ -1150,18 +1147,18 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				entry5.LexemeFormOA = morph5;
 				var morph5A = formFactory.Create();
 				entry5.AlternateFormsOS.Add(morph5A);
-				morph5A.Form.set_String(vernWs, tsf.MakeString("blau", vernWs));
+				morph5A.Form.set_String(vernWs, TsStringUtils.MakeString("blau", vernWs));
 				Assert.AreEqual(3, entry5.HomographNumber, "new blau homograph based on alternate form.");
 
 				// At this point we have entry 2(rot1), entry3(rot2), entry1(blau1), entry4(blau2), and entry5(blau3).
 				var entry6 = entryFactory.Create();
 				var morph6 = formFactory.Create();
 				entry6.LexemeFormOA = morph6;
-				morph6.Form.set_String(vernWs, tsf.MakeString("blau", vernWs));
+				morph6.Form.set_String(vernWs, TsStringUtils.MakeString("blau", vernWs));
 				Assert.AreEqual(4, entry6.HomographNumber, "one more blau homograph.");
 
 				// Try changing the lexeme form to affect things.
-				morph5.Form.set_String(vernWs, tsf.MakeString("grun", vernWs));
+				morph5.Form.set_String(vernWs, TsStringUtils.MakeString("grun", vernWs));
 				Assert.AreEqual(0, entry5.HomographNumber, "changing lexeme form makes it no longer a homograph.");
 				Assert.AreEqual(3, entry6.HomographNumber, "last blau homograph reduces number.");
 
@@ -1329,8 +1326,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 								"2) second entry should have homograph number 0.");
 
 				// 3) Edit case: Type a lf 1st vWs for both entries -> hns 1 + 2
-				lex1.LexemeFormOA.Form.set_String(frWsId, Cache.TsStrFactory.MakeString("z", frWsId));
-				lex2.LexemeFormOA.Form.set_String(frWsId, Cache.TsStrFactory.MakeString("z", frWsId));
+				lex1.LexemeFormOA.Form.set_String(frWsId, TsStringUtils.MakeString("z", frWsId));
+				lex2.LexemeFormOA.Form.set_String(frWsId, TsStringUtils.MakeString("z", frWsId));
 				Assert.AreEqual(1, lex1.HomographNumber,
 								"3) first entry should have homograph number 1.");
 				Assert.AreEqual(2, lex2.HomographNumber,
@@ -1413,8 +1410,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			var morph = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
 			result.LexemeFormOA = morph;
 			morph.MorphTypeRA = mt;
-			morph.Form.set_String(wsId1, Cache.TsStrFactory.MakeString(form1, wsId1));
-			morph.Form.set_String(wsId2, Cache.TsStrFactory.MakeString(form2, wsId2));
+			morph.Form.set_String(wsId1, TsStringUtils.MakeString(form1, wsId1));
+			morph.Form.set_String(wsId2, TsStringUtils.MakeString(form2, wsId2));
 			return result;
 		}
 
@@ -1563,7 +1560,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			var morph = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
 			result.LexemeFormOA = morph;
 			var vernWs = Cache.DefaultVernWs;
-			morph.Form.set_String(vernWs, Cache.TsStrFactory.MakeString(form, vernWs));
+			morph.Form.set_String(vernWs, TsStringUtils.MakeString(form, vernWs));
 			morph.MorphTypeRA = mt;
 			return result;
 		}
@@ -1574,7 +1571,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			var morph = Cache.ServiceLocator.GetInstance<IMoAffixAllomorphFactory>().Create();
 			result.LexemeFormOA = morph;
 			var vernWs = Cache.DefaultVernWs;
-			morph.Form.set_String(vernWs, Cache.TsStrFactory.MakeString(form, vernWs));
+			morph.Form.set_String(vernWs, TsStringUtils.MakeString(form, vernWs));
 			morph.MorphTypeRA = mt;
 			return result;
 		}
@@ -1694,14 +1691,14 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		private ILexSense MakeSense(ILexEntry entry, string gloss)
 		{
 			var sense = MakeSense(entry);
-			sense.Gloss.AnalysisDefaultWritingSystem = Cache.TsStrFactory.MakeString(gloss, Cache.DefaultAnalWs);
+			sense.Gloss.AnalysisDefaultWritingSystem = TsStringUtils.MakeString(gloss, Cache.DefaultAnalWs);
 			return sense;
 		}
 
 		private ILexSense MakeSense(ILexSense parent, string gloss)
 		{
 			var sense = MakeSense(parent);
-			sense.Gloss.AnalysisDefaultWritingSystem = Cache.TsStrFactory.MakeString(gloss, Cache.DefaultAnalWs);
+			sense.Gloss.AnalysisDefaultWritingSystem = TsStringUtils.MakeString(gloss, Cache.DefaultAnalWs);
 			return sense;
 		}
 
@@ -1709,7 +1706,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			var entry = MakeEntry();
 			var lexform = MakeLexemeForm(entry);
-			lexform.Form.VernacularDefaultWritingSystem = Cache.TsStrFactory.MakeString(form, Cache.DefaultVernWs);
+			lexform.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString(form, Cache.DefaultVernWs);
 			return entry;
 		}
 
@@ -1717,7 +1714,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			var entry = MakeEntry();
 			var lexform = MakeAffixForm(entry, morphType);
-			lexform.Form.VernacularDefaultWritingSystem = Cache.TsStrFactory.MakeString(form, Cache.DefaultVernWs);
+			lexform.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString(form, Cache.DefaultVernWs);
 			return entry;
 		}
 
@@ -1845,7 +1842,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 					var naturalClass = services.GetInstance<IPhNCFeaturesFactory>().Create();
 					Cache.LangProject.PhonologicalDataOA.NaturalClassesOS.Add(naturalClass);
 					naturalClass.Abbreviation.set_String(analysisWs,
-						Cache.TsStrFactory.MakeString("V", analysisWs));
+						TsStringUtils.MakeString("V", analysisWs));
 
 					// Create an entry
 					var entry = MakeEntry();
@@ -1856,7 +1853,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 					var environment = services.GetInstance<IPhEnvironmentFactory>().Create();
 					Cache.LangProject.PhonologicalDataOA.EnvironmentsOS.Add(environment);
 					stemAllomorph.PhoneEnvRC.Add(environment);
-					environment.StringRepresentation = Cache.TsStrFactory.MakeString(@"\_([V])[C][V]",
+					environment.StringRepresentation = TsStringUtils.MakeString(@"\_([V])[C][V]",
 						analysisWs);
 
 					// SUT
@@ -1883,19 +1880,19 @@ namespace SIL.FieldWorks.FDO.FDOTests
 					var naturalClass = services.GetInstance<IPhNCFeaturesFactory>().Create();
 					Cache.LangProject.PhonologicalDataOA.NaturalClassesOS.Add(naturalClass);
 					naturalClass.Abbreviation.set_String(analysisWs,
-						Cache.TsStrFactory.MakeString("V", analysisWs));
+						TsStringUtils.MakeString("V", analysisWs));
 
 					// Create an entry
 					var entry = MakeEntry();
 					var stemAllomorph = services.GetInstance<IMoStemAllomorphFactory>().Create();
 					entry.LexemeFormOA = stemAllomorph;
-					stemAllomorph.Form.set_String(vernWs, Cache.TsStrFactory.MakeString("[C^1][V^1]", vernWs));
+					stemAllomorph.Form.set_String(vernWs, TsStringUtils.MakeString("[C^1][V^1]", vernWs));
 
 					// Add environment to entry with natural class abbreviation present and indexed
 					var environment = services.GetInstance<IPhEnvironmentFactory>().Create();
 					Cache.LangProject.PhonologicalDataOA.EnvironmentsOS.Add(environment);
 					stemAllomorph.PhoneEnvRC.Add(environment);
-					environment.StringRepresentation = Cache.TsStrFactory.MakeString(@"\_[C^1][V^1]",
+					environment.StringRepresentation = TsStringUtils.MakeString(@"\_[C^1][V^1]",
 						analysisWs);
 
 					// SUT
@@ -1922,19 +1919,19 @@ namespace SIL.FieldWorks.FDO.FDOTests
 					var naturalClass = services.GetInstance<IPhNCFeaturesFactory>().Create();
 					Cache.LangProject.PhonologicalDataOA.NaturalClassesOS.Add(naturalClass);
 					naturalClass.Abbreviation.set_String(analysisWs,
-						Cache.TsStrFactory.MakeString("V", analysisWs));
+						TsStringUtils.MakeString("V", analysisWs));
 
 					// Create an entry
 					var entry = MakeEntry();
 					var stemAllomorph = services.GetInstance<IMoStemAllomorphFactory>().Create();
 					entry.LexemeFormOA = stemAllomorph;
-					stemAllomorph.Form.set_String(vernWs, Cache.TsStrFactory.MakeString("[C^1][V^1]", vernWs));
+					stemAllomorph.Form.set_String(vernWs, TsStringUtils.MakeString("[C^1][V^1]", vernWs));
 
 					// Add environment to entry with natural class abbreviation present and indexed
 					var environment = services.GetInstance<IPhEnvironmentFactory>().Create();
 					Cache.LangProject.PhonologicalDataOA.EnvironmentsOS.Add(environment);
 					stemAllomorph.PhoneEnvRC.Add(environment);
-					environment.StringRepresentation = Cache.TsStrFactory.MakeString(@"\_[C^1][V^1]",
+					environment.StringRepresentation = TsStringUtils.MakeString(@"\_[C^1][V^1]",
 						analysisWs);
 
 					// SUT
@@ -1961,19 +1958,19 @@ namespace SIL.FieldWorks.FDO.FDOTests
 					var naturalClass = services.GetInstance<IPhNCFeaturesFactory>().Create();
 					Cache.LangProject.PhonologicalDataOA.NaturalClassesOS.Add(naturalClass);
 					naturalClass.Abbreviation.set_String(analysisWs,
-						Cache.TsStrFactory.MakeString("V", analysisWs));
+						TsStringUtils.MakeString("V", analysisWs));
 
 					// Create an entry
 					var entry = MakeEntry();
 					var affixAllomorph = services.GetInstance<IMoAffixAllomorphFactory>().Create();
 					entry.LexemeFormOA = affixAllomorph;
-					affixAllomorph.Form.set_String(vernWs, Cache.TsStrFactory.MakeString("[C^1][V^1]", vernWs));
+					affixAllomorph.Form.set_String(vernWs, TsStringUtils.MakeString("[C^1][V^1]", vernWs));
 
 					// Add environment to entry with natural class abbreviation present and indexed
 					var environment = services.GetInstance<IPhEnvironmentFactory>().Create();
 					Cache.LangProject.PhonologicalDataOA.EnvironmentsOS.Add(environment);
 					affixAllomorph.PhoneEnvRC.Add(environment);
-					environment.StringRepresentation = Cache.TsStrFactory.MakeString(@"\_[C^1][V^1]",
+					environment.StringRepresentation = TsStringUtils.MakeString(@"\_[C^1][V^1]",
 						analysisWs);
 
 					// SUT
@@ -1998,7 +1995,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 					var naturalClass = services.GetInstance<IPhNCFeaturesFactory>().Create();
 					Cache.LangProject.PhonologicalDataOA.NaturalClassesOS.Add(naturalClass);
 					naturalClass.Abbreviation.set_String(analysisWs,
-						Cache.TsStrFactory.MakeString("V", analysisWs));
+						TsStringUtils.MakeString("V", analysisWs));
 
 					// Create an entry
 					var entry = MakeEntry();
@@ -2009,7 +2006,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 					var environment = services.GetInstance<IPhEnvironmentFactory>().Create();
 					Cache.LangProject.PhonologicalDataOA.EnvironmentsOS.Add(environment);
 					stemAllomorph.PhoneEnvRC.Add(environment);
-					environment.StringRepresentation = Cache.TsStrFactory.MakeString(@"\_[C][V]",
+					environment.StringRepresentation = TsStringUtils.MakeString(@"\_[C][V]",
 						analysisWs);
 
 					// SUT

@@ -11,10 +11,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
-using System.Xml;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
+using SIL.CoreImpl.Text;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
@@ -198,7 +198,7 @@ namespace SIL.FieldWorks.FdoUi
 					string wsLocale = cache.ServiceLocator.WritingSystemManager.Get(wsWf).IcuLocale;
 					string sLower = Icu.ToLower(tssWf.Text, wsLocale);
 					ITsTextProps ttp = tssWf.get_PropertiesAt(0);
-					tssWf = cache.TsStrFactory.MakeStringWithPropsRgch(sLower, sLower.Length, ttp);
+					tssWf = TsStringUtils.MakeString(sLower, ttp);
 					leui = FindEntryForWordform(cache, tssWf);
 				}
 
@@ -642,9 +642,9 @@ namespace SIL.FieldWorks.FdoUi
 						if (tssVariantTypeRevAbbr != null && tssVariantTypeRevAbbr.Length > 0)
 						{
 							if (fNeedInitialPlus)
-								vwenv.AddString(TsStringUtils.MakeTss("+", m_cache.DefaultUserWs));
+								vwenv.AddString(TsStringUtils.MakeString("+", m_cache.DefaultUserWs));
 							else
-								vwenv.AddString(TsStringUtils.MakeTss(",", m_cache.DefaultUserWs));
+								vwenv.AddString(TsStringUtils.MakeString(",", m_cache.DefaultUserWs));
 							vwenv.AddString(tssVariantTypeRevAbbr);
 							fNeedInitialPlus = false;
 						}
@@ -694,7 +694,7 @@ namespace SIL.FieldWorks.FdoUi
 							m_wsActual = wsActual;
 							fGotLabel = true;
 							if (sPrefix != null)
-								vwenv.AddString(TsStringUtils.MakeTss(sPrefix, wsActual));
+								vwenv.AddString(TsStringUtils.MakeString(sPrefix, wsActual));
 							vwenv.AddObjProp(LexEntryTags.kflidLexemeForm, this, kfragFormForm);
 						}
 					}
@@ -705,7 +705,7 @@ namespace SIL.FieldWorks.FdoUi
 						{
 							m_wsActual = wsActual;
 							if (sPrefix != null)
-								vwenv.AddString(TsStringUtils.MakeTss(sPrefix, wsActual));
+								vwenv.AddString(TsStringUtils.MakeString(sPrefix, wsActual));
 							vwenv.AddStringAltMember(LexEntryTags.kflidCitationForm, wsActual, this);
 							fGotLabel = true;
 						}
@@ -715,14 +715,14 @@ namespace SIL.FieldWorks.FdoUi
 					{
 						// If that fails just show two questions marks.
 						if (sPrefix != null)
-							vwenv.AddString(TsStringUtils.MakeTss(sPrefix, wsActual));
-						vwenv.AddString(m_cache.TsStrFactory.MakeString(FdoUiStrings.ksQuestions, defUserWs));	// was "??", not "???"
+							vwenv.AddString(TsStringUtils.MakeString(sPrefix, wsActual));
+						vwenv.AddString(TsStringUtils.MakeString(FdoUiStrings.ksQuestions, defUserWs));	// was "??", not "???"
 					}
 
 					// If we have a lexeme form type show the appropriate postfix.
 					if (hvoType != 0)
 					{
-						vwenv.AddString(TsStringUtils.MakeTss(
+						vwenv.AddString(TsStringUtils.MakeString(
 							sda.get_UnicodeProp(hvoType, MoMorphTypeTags.kflidPostfix), wsActual));
 					}
 
@@ -736,7 +736,7 @@ namespace SIL.FieldWorks.FdoUi
 						// this allows our TsStringCollectorEnv to properly encode the superscript.
 						// ideally, TsStringCollectorEnv could be made smarter to handle SetIntPropValues
 						// since AppendTss treats the given Tss as atomic.
-						ITsIncStrBldr tsBldr = TsIncStrBldrClass.Create();
+						ITsIncStrBldr tsBldr = TsStringUtils.MakeIncStrBldr();
 						tsBldr.SetIntPropValues((int)FwTextPropType.ktptSuperscript,
 							(int)FwTextPropVar.ktpvEnum,
 							(int)FwSuperscriptVal.kssvSub);

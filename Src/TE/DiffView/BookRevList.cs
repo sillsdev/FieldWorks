@@ -1,18 +1,11 @@
-// Copyright (c) 2007-2013 SIL International
+// Copyright (c) 2007-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: BookRevList.cs
-// Responsibility: TE Team
 
 using System;
 using System.Collections.Generic;
 using System.Collections;
-using System.Windows.Forms;
-
 using SIL.FieldWorks.FDO;
-using SIL.Utils;
-
 
 namespace SIL.FieldWorks.TE
 {
@@ -21,7 +14,7 @@ namespace SIL.FieldWorks.TE
 	/// Stores a list of book revisions guaranteed to have unique canonical numbers.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public class BookRevList : IFWDisposable, IEnumerable
+	public class BookRevList : IDisposable, IEnumerable
 	{
 		#region member variables
 		// the list of IScrBook revisions

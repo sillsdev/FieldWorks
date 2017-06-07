@@ -1,17 +1,14 @@
-// Copyright (c) 2005-2013 SIL International
+// Copyright (c) 2005-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: StFootnoteTests.cs
-// Responsibility: TE Team
 
 using System;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Test.TestUtils;
-using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.Utils;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Scripture;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.FDO.FDOTests
 {
@@ -64,13 +61,13 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			m_footnote = servloc.GetInstance<IScrFootnoteFactory>().Create();
 			m_book = AddBookToMockedScripture(1, "Genesis");
 			m_book.FootnotesOS.Add(m_footnote);
-			m_footnote.FootnoteMarker = TsStringUtils.MakeTss("a", m_vernWs);
+			m_footnote.FootnoteMarker = TsStringUtils.MakeString("a", m_vernWs);
 			m_scr.DisplaySymbolInFootnote = true;
 			m_scr.DisplayFootnoteReference = false;
 
 			// create one empty footnote para
 			m_footnotePara = m_footnote.AddNewTextPara(ScrStyleNames.NormalFootnoteParagraph);
-			m_footnotePara.Contents = TsStringUtils.MakeTss(string.Empty, m_vernWs);
+			m_footnotePara.Contents = TsStringUtils.MakeString(string.Empty, m_vernWs);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -107,7 +104,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void GetTextRepresentation_withBrackets()
 		{
-			m_footnotePara.Contents = TsStringUtils.MakeTss("Text in <brackets>", m_vernWs);
+			m_footnotePara.Contents = TsStringUtils.MakeString("Text in <brackets>", m_vernWs);
 
 			Assert.AreEqual("<FN><M>a</M><P><PS>Note General Paragraph</PS>" +
 				"<RUN WS='fr'>Text in &lt;brackets&gt;</RUN></P></FN>",
@@ -210,12 +207,12 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Ignore("'ValidateAddObjectInternal' won't allow two paras in one footnote.")]
 		public void GetTextRepresentation_twoParas()
 		{
-			m_footnotePara.Contents = TsStringUtils.MakeTss("Paragraph One", m_vernWs);
+			m_footnotePara.Contents = TsStringUtils.MakeString("Paragraph One", m_vernWs);
 
 			// create second para
 			IStTxtPara para = m_footnote.AddNewTextPara("Note Exegesis Paragraph");
 
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, "Paragraph Two", StyleUtils.CharStyleTextProps(
 				"Foreign", m_wsUr));
 			para.Contents = bldr.GetString();
@@ -254,7 +251,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			SetupBackTrans();
 
-			m_footnotePara.Contents = TsStringUtils.MakeTss("Text in <brackets>", m_vernWs);
+			m_footnotePara.Contents = TsStringUtils.MakeString("Text in <brackets>", m_vernWs);
 			AddRunToMockedTrans(m_trans, m_wsEs, "Spanish BT in <brackets>", null);
 			AddRunToMockedTrans(m_trans, m_wsDe, "German BT in <brackets>", null);
 
@@ -278,7 +275,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			SetupBackTrans();
 
-			ITsIncStrBldr strBldr = TsIncStrBldrClass.Create();
+			ITsIncStrBldr strBldr = TsStringUtils.MakeIncStrBldr();
 			strBldr.SetIntPropValues((int)FwTextPropType.ktptWs,
 				(int)FwTextPropVar.ktpvDefault, m_vernWs);
 
@@ -410,13 +407,13 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public void CreateFromStringRep_twoCharStylePara()
 		{
 
-			ITsPropsBldr propsBldr = TsPropsBldrClass.Create();
+			ITsPropsBldr propsBldr = TsStringUtils.MakePropsBldr();
 			propsBldr.SetIntPropValues((int)FwTextPropType.ktptWs,
 				(int)FwTextPropVar.ktpvDefault,
 				m_vernWs);
 			propsBldr.SetStrPropValue((int)FwTextPropType.ktptNamedStyle,
 				"Emphasis");
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, "Test Text", propsBldr.GetTextProps());
 			propsBldr.SetStrPropValue((int)FwTextPropType.ktptNamedStyle,
 				null);
@@ -453,7 +450,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 			// create second para
 			IStTxtPara para = m_footnote.AddNewTextPara("Note Exegesis Paragraph");
-			bldr = TsStrBldrClass.Create();
+			bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, "Paragraph Two", StyleUtils.CharStyleTextProps("Foreign", m_wsUr));
 			para.Contents = bldr.GetString();
 
@@ -479,11 +476,11 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			SetupBackTrans();
 
 			// Setup expected results for the footnote
-			ITsPropsBldr propsBldr = TsPropsBldrClass.Create();
+			ITsPropsBldr propsBldr = TsStringUtils.MakePropsBldr();
 			propsBldr.SetIntPropValues((int)FwTextPropType.ktptWs,
 				(int)FwTextPropVar.ktpvDefault, m_vernWs);
 			propsBldr.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, null);
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, "Text in <brackets>", propsBldr.GetTextProps());
 			propsBldr.SetStrPropValue((int)FwTextPropType.ktptNamedStyle,
 				null);
@@ -515,7 +512,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			SetupBackTrans();
 
-			ITsIncStrBldr strBldr = TsIncStrBldrClass.Create();
+			ITsIncStrBldr strBldr = TsStringUtils.MakeIncStrBldr();
 			strBldr.SetIntPropValues((int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault, m_vernWs);
 
 			// Setup expected results for the footnote

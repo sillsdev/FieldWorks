@@ -11,18 +11,15 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 
 using NUnit.Framework;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.Scripture;
+using SIL.CoreImpl.Text;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.FDOTests;
-using SIL.FieldWorks.Test.TestUtils;
-
-using SILUBS.SharedScrUtils;
-
 #if __MonoCS__
 #pragma warning disable 419 // ambiguous reference; mono bug #639867
 #endif
@@ -50,8 +47,6 @@ namespace SIL.FieldWorks.TE.ImportTests
 		/// Constructor to use when using an in-memory cache
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "TeImportNoUi gets disposed in Dispose")]
 		public DummyTeImporter(IScrImportSet settings, FdoTestBase testBase,
 			FwStyleSheet styleSheet) :
 			base(settings, testBase.Cache, styleSheet, new DummyUndoImportManager(testBase),
@@ -816,8 +811,6 @@ namespace SIL.FieldWorks.TE.ImportTests
 		/// Initialize a dummy scripture object wrapper.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="DummyScrObjWrapper is assigned to SOWrapper and disposed in Dispose()")]
 		protected override void InitScriptureObject()
 		{
 			// The tests that use this DummyTeImporter do not utilize a scr obj to read real
@@ -1125,17 +1118,9 @@ namespace SIL.FieldWorks.TE.ImportTests
 				ScrStyleNames.MainBookTitle, "de", null);
 			int wsExpected = Cache.ServiceLocator.WritingSystemManager.GetWsFromStr("de");
 			m_importer.AddImportStyleProxyForMapping(mapping, m_importer.HtStyleProxy);
-			ImportStyleProxy proxy = ((ImportStyleProxy)m_importer.HtStyleProxy[@"\hello"]);
+			ImportStyleProxy proxy = m_importer.HtStyleProxy[@"\hello"];
 			Assert.AreEqual(StyleType.kstParagraph, proxy.StyleType);
-			ITsPropsFactory pillowtex = TsPropsFactoryClass.Create();
-			int cb = proxy.ParaProps.Length;
-			ITsTextProps proxyParaProps = pillowtex.DeserializePropsRgb(proxy.ParaProps, ref cb);
-			string sHowDifferent;
-			if (!TsTextPropsHelper.PropsAreEqual(StyleUtils.ParaStyleTextProps(ScrStyleNames.MainBookTitle),
-				proxyParaProps, out sHowDifferent))
-			{
-				Assert.Fail(sHowDifferent);
-			}
+			Assert.AreEqual(ScrStyleNames.MainBookTitle, proxy.StyleId);
 			Assert.AreEqual(wsExpected, proxy.TsTextProps.GetWs());
 		}
 
@@ -1152,16 +1137,8 @@ namespace SIL.FieldWorks.TE.ImportTests
 			ImportMappingInfo mapping = new ImportMappingInfo(@"\bye", MarkerDomain.Note,
 				ScrStyleNames.MainBookTitle, "blah", null);
 			m_importer.AddImportStyleProxyForMapping(mapping, m_importer.HtStyleProxy);
-			ImportStyleProxy proxy = ((ImportStyleProxy)m_importer.HtStyleProxy[@"\bye"]);
-			ITsPropsFactory chrysler = TsPropsFactoryClass.Create();
-			int cb = proxy.ParaProps.Length;
-			ITsTextProps proxyParaProps = chrysler.DeserializePropsRgb(proxy.ParaProps, ref cb);
-			string sHowDifferent;
-			if (!TsTextPropsHelper.PropsAreEqual(StyleUtils.ParaStyleTextProps(ScrStyleNames.MainBookTitle),
-				proxyParaProps, out sHowDifferent))
-			{
-				Assert.Fail(sHowDifferent);
-			}
+			ImportStyleProxy proxy = m_importer.HtStyleProxy[@"\bye"];
+			Assert.AreEqual(ScrStyleNames.MainBookTitle, proxy.StyleId);
 			Assert.AreEqual(m_wsAnal, proxy.TsTextProps.GetWs());
 		}
 
@@ -1180,7 +1157,6 @@ namespace SIL.FieldWorks.TE.ImportTests
 			m_importer.AddImportStyleProxyForMapping(mapping, m_importer.HtStyleProxy);
 			ImportStyleProxy proxy = ((ImportStyleProxy)m_importer.HtStyleProxy[mapping.BeginMarker]);
 			Assert.AreEqual(StyleType.kstCharacter, proxy.StyleType);
-			ITsPropsFactory pillowtex = TsPropsFactoryClass.Create();
 			ITsTextProps proxyTextProps = proxy.TsTextProps;
 			string sHowDifferent;
 			if (!TsTextPropsHelper.PropsAreEqual(StyleUtils.CharStyleTextProps("Really bold text", wsExpected),
@@ -1199,8 +1175,8 @@ namespace SIL.FieldWorks.TE.ImportTests
 		[Test]
 		public void PrevRunIsVerseNumber()
 		{
-			ITsStrBldr bldr = TsStrBldrClass.Create();
-			ITsPropsBldr props = TsPropsBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
+			ITsPropsBldr props = TsStringUtils.MakePropsBldr();
 
 			// This will do nothing except make sure it doesn't throw an exception
 			Assert.IsFalse(m_importer.PrevRunIsVerseNumber(null));
@@ -3697,8 +3673,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 			Assert.AreEqual(new ScrReference(1, 1, 0, m_scr.Versification),
 				ReflectionHelper.GetField(m_importer, "m_firstImportedRef") as ScrReference);
 
-			ITsStrFactory fact = TsStrFactoryClass.Create();
-			ITsString tssExpected = fact.MakeString(string.Empty, m_wsVern);
+			ITsString tssExpected = TsStringUtils.EmptyString(m_wsVern);
 
 			// Verify the section head
 			Assert.AreEqual(1, section.HeadingOA.ParagraphsOS.Count);

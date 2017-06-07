@@ -11,13 +11,14 @@
 // </remarks>
 
 using System;
-using System.Diagnostics;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Cellar;
+using SIL.CoreImpl.Text;
 using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
@@ -57,7 +58,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 						ObjectLabel label = ObjectLabel.CreateObjectLabel(m_fdoCache, list.PossibilitiesOS[0], m_displayNameProperty, m_displayWs);
 						ws = label.AsTss.get_WritingSystem(0);
 					}
-					m_sda.Tss = m_fdoCache.TsStrFactory.EmptyString(ws);
+					m_sda.Tss = TsStringUtils.EmptyString(ws);
 				}
 			}
 

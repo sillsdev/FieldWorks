@@ -1,9 +1,8 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 
@@ -148,8 +147,6 @@ namespace LanguageExplorer.Areas
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Design", "UseCorrectDisposeSignaturesRule",
-			Justification = "Has to be protected in sealed class, since the superclass has it be protected.")]
 		protected override void Dispose( bool disposing )
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");

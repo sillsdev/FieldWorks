@@ -7,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -22,11 +21,10 @@ using SIL.CoreImpl;
 using LanguageExplorer.Controls.SilSidePane;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Framework;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.FieldWorks.FDO.DomainServices;
@@ -95,8 +93,6 @@ namespace LanguageExplorer.Impls
 		/// <summary>
 		/// Create new instance of window.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "IPropertyTable is disposed when closed.")]
 		public FwMainWnd(IFlexApp flexApp, FwMainWnd wndCopyFrom, FwLinkArgs linkArgs)
 			: this()
 		{
@@ -212,8 +208,6 @@ namespace LanguageExplorer.Impls
 			/// <summary>
 			/// replace every "include" node in the document with the nodes that it references
 			/// </summary>
-			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-				Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 			private void ProcessDom(Dictionary<string, XmlDocument> cachedDoms, string parentPath, XmlDocument dom)
 			{
 				XmlNode nodeForError = null;
@@ -255,8 +249,6 @@ namespace LanguageExplorer.Impls
 			/// </summary>
 			/// <param name="includeNode">include" node, possibly containing "overrides" nodes</param>
 			/// <returns>true if we processed an "overrides" node.</returns>
-			[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-				Justification = "See TODO-Linux comment")]
 			private static void HandleIncludeOverrides(XmlNode includeNode)
 			{
 				XmlNode parentNode = includeNode.ParentNode;
@@ -489,8 +481,6 @@ namespace LanguageExplorer.Impls
 				return CreateFragmentWithTargetNodes(query, document);
 			}
 
-			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-				Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 			private static XmlDocumentFragment CreateFragmentWithTargetNodes(string query, XmlDocument document)
 			{
 				//find the nodes specified in the XML query
@@ -506,6 +496,125 @@ namespace LanguageExplorer.Impls
 				return fragment;
 			}
 		}
+
+	internal interface IResolvePath
+	{
+		/// <summary>
+		/// Given some description of a directory or file, return the path to the actual directory.
+		/// </summary>
+		/// <param name="path"></param>
+		/// <param name="fIgnoreMissingFile">If true, return null if not found. Otherwise throw.</param>
+		/// <exception cref="FileNotFoundException">thrown into the resulting directory does not exist</exception>
+		/// <returns></returns>
+		string Resolve(string path, bool fIgnoreMissingFile);
+		string Resolve(string path);
+		string Resolve (string parentPath, string path);
+		string Resolve(string parentPath, string path, bool fIgnoreMissingFile);
+
+		string BaseDirectory {get; set;}
+	}
+
+	/// <summary>
+	/// A simple, non-FieldWorks-reliant implementation which provides a base directory and
+	/// replaces any environment variables
+	/// </summary>
+	internal class SimpleResolver : IResolvePath
+	{
+		private string m_baseDirectory=null;
+
+		internal string Resolve(string path)
+		{
+			return Resolve(path, false);
+		}
+
+		/// <summary>
+		/// Try to resolve the path, but if fIgnoreMissingFile is true, don't complain if it doesn't exist; return null.
+		/// </summary>
+		/// <param name="path"></param>
+		/// <param name="fIgnoreMissingFile"></param>
+		/// <returns></returns>
+		public string Resolve(string path, bool fIgnoreMissingFile)
+		{
+			string result = System.Environment.ExpandEnvironmentVariables(path);
+			if (m_baseDirectory!= null)
+				result = System.IO.Path.Combine(m_baseDirectory, result);
+			else
+				result = System.IO.Path.GetFullPath(result);
+
+#if __MonoCS__
+			// TODO-Linux: xml files contain include paths of the form fruit\veggies
+			// which System.IO.File.Exists (on Linux) can't handle because of the '\' char
+			// so we convert if System.IO.File.Exists fails and reattempt the Exists method
+
+			string modifiedResult;
+			if (!System.IO.File.Exists(result))
+			{
+				modifiedResult = result.Replace('\\', '/');
+				if (System.IO.File.Exists(modifiedResult))
+					result = modifiedResult;
+			}
+#endif
+
+			if (!System.IO.File.Exists(result))
+			{
+				if (fIgnoreMissingFile)
+					return null;
+				else
+					throw new FileNotFoundException(result);
+			}
+			return result;
+		}
+
+		/// <summary>
+		/// try to find the file, first looking in the given parentPath. Throw if not found.
+		/// </summary>
+		/// <param name="parentPath"></param>
+		/// <param name="path"></param>
+		/// <returns></returns>
+		public string Resolve(string parentPath, string path)
+		{
+			return Resolve(parentPath, path, false);
+		}
+		/// <summary>
+		/// try to find the file, first looking in the given parentPath.
+		/// </summary>
+		/// <param name="parentPath"></param>
+		/// <param name="path"></param>
+		/// <param name="fIgnoreMissingFile">If true, return null if not found. Otherwise throw.</param>
+		/// <returns></returns>
+		public string Resolve(string parentPath, string path, bool fIgnoreMissingFile)
+		{
+			string result = System.Environment.ExpandEnvironmentVariables(path);
+			if (parentPath!= null)
+				result = System.IO.Path.Combine(parentPath, result);
+			else
+				result = System.IO.Path.GetFullPath(result);
+
+			if(!System.IO.File.Exists(result))
+				return Resolve(path, fIgnoreMissingFile);//using the parentPath did not help, try looking in the base directory
+
+			return result;
+		}
+
+		public void test()
+		{
+		}
+
+		/// <summary>
+		/// If you specify this, then any future paths will be resolved relative to this directory.
+		/// Otherwise, they will be resolved relative to the current working directory.
+		///
+		/// environment variables will be expanded.
+		/// </summary>
+		public string  BaseDirectory
+		{
+			get { return m_baseDirectory; }
+			set
+			{
+				m_baseDirectory= System.Environment.ExpandEnvironmentVariables(value);
+			}
+		}
+	}
 #endif
 
 		/// <summary>
@@ -526,8 +635,6 @@ namespace LanguageExplorer.Impls
 			}
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "activeForm is a reference")]
 		private void RestoreWindowSettings(bool wasCrashDuringPreviousStartup)
 		{
 			const string id = "Language Explorer";
@@ -738,8 +845,6 @@ namespace LanguageExplorer.Impls
 			_currentArea.Activate(mainContainer, _menuStrip, toolStripContainer, _statusbar);
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "IPropertyTable is a reference")]
 		private void SetupPropertyTable()
 		{
 			PubSubSystemFactory.CreatePubSubSystem(out _publisher, out _subscriber);
@@ -813,8 +918,6 @@ namespace LanguageExplorer.Impls
 			configMigrator.MigrateOldConfigurationsIfNeeded();
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "StatusBarTextBox and StatusBarProgressPanel are references")]
 		private void AddCustomStatusBarPanels()
 		{
 			// Insert first, so it ends up last in the three that are inserted.
@@ -1182,14 +1285,12 @@ namespace LanguageExplorer.Impls
 
 		#endregion
 
-		#region Implementation of IFWDisposable
+		#region Implementation of IDisposable
 
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
 		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-		[SuppressMessage("Gendarme.Rules.Design", "UseCorrectDisposeSignaturesRule",
-			Justification = "Has to be protected in sealed class, since the superclass has it be protected.")]
 		protected override void Dispose(bool disposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
@@ -1457,14 +1558,10 @@ namespace LanguageExplorer.Impls
 			LaunchProjPropertiesDlg(sender == setUpWritingSystemsToolStripMenuItem || sender == setUpWritingSystemsToolStripMenuItem1);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Launches the proj properties DLG.
 		/// </summary>
 		/// <param name="startOnWSPage">if set to <c>true</c> [start on WS page].</param>
-		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "cache is disposed elsewhere.")]
 		private void LaunchProjPropertiesDlg(bool startOnWSPage)
 		{
 			var cache = _flexApp.Cache;
@@ -1474,7 +1571,7 @@ namespace LanguageExplorer.Impls
 			var fDbRenamed = false;
 			var sProject = cache.ProjectId.Name;
 			var sLinkedFilesRootDir = cache.LangProject.LinkedFilesRootDir;
-			using (var dlg = new FwProjPropertiesDlg(cache, _flexApp, _flexApp, FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable)))
+			using (var dlg = new FwProjPropertiesDlg(cache, _flexApp, _flexApp))
 			{
 				dlg.ProjectPropertiesChanged += ProjectProperties_Changed;
 				if (startOnWSPage)

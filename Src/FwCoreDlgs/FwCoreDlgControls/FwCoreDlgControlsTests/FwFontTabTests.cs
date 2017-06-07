@@ -1,20 +1,13 @@
-// Copyright (c) 2007-2013 SIL International
+// Copyright (c) 2007-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: StyleInfoTests.cs
-// Responsibility: TE Team
-//
-// <remarks>
-// </remarks>
-// ---------------------------------------------------------------------------------------------
 
 using NUnit.Framework;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.Utils;
 using System.Windows.Forms;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.FwCoreDlgControls
 {
@@ -101,9 +94,9 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		public void FillFontNames_IsAlphabeticallySorted()
 		{
 			const int firstActualFontNameInListLocation = 4;
-			CallMethod(m_fontTab,"FillFontNames", true);
-			var fontNames = ((ComboBox) GetField(m_fontTab, "m_cboFontNames")).Items;
-			for (var i = firstActualFontNameInListLocation; i+1 < fontNames.Count; i++)
+			m_fontTab.FillFontNames(true);
+			ComboBox.ObjectCollection fontNames = m_fontTab.FontNamesComboBox.Items;
+			for (int i = firstActualFontNameInListLocation; i + 1 < fontNames.Count; i++)
 			{
 				// Check that each font in the list is alphabetically before the next font in the list
 				Assert.LessOrEqual(fontNames[i] as string, fontNames[i+1] as string, "Font names not alphabetically sorted.");

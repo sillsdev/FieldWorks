@@ -1,22 +1,18 @@
-// Copyright (c) 2007-2013 SIL International
+// Copyright (c) 2007-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ScrInMemoryFdoTestBase.cs
-// Responsibility: TE Team
 
 using System;
 using System.Diagnostics;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.Utils;
-using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SILUBS.SharedScrUtils;
+using SIL.CoreImpl.Scripture;
 using System.Text;
-using SIL.FieldWorks.Test.TestUtils;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.FDO.FDOTests
 {
@@ -49,18 +45,6 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		protected int m_wsDe;
 
 		#region Overrides
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Override to TestSetup to clear book filters between tests.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public override void TestSetup()
-		{
-			Cache.ServiceLocator.GetInstance<IFilteredScrBookRepository>().Clear();
-
-			base.TestSetup();
-		}
-
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes Scripture for testing.
@@ -125,28 +109,28 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			ICmPossibility category =
 				Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create();
 			m_scr.NoteCategoriesOA.PossibilitiesOS.Add(category);
-			category.Name.set_String(m_wsEn, TsStringUtils.MakeTss("Discourse", m_wsEn));
+			category.Name.set_String(m_wsEn, TsStringUtils.MakeString("Discourse", m_wsEn));
 
 			// Add an annotation category (for Grammar)
 			category = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create();
 			m_scr.NoteCategoriesOA.PossibilitiesOS.Add(category);
-			category.Name.set_String(m_wsEn, TsStringUtils.MakeTss("Grammar", m_wsEn));
+			category.Name.set_String(m_wsEn, TsStringUtils.MakeString("Grammar", m_wsEn));
 
 			// add a sub-annotation category (for "Pronominal reference")
 			ICmPossibility subCategory =
 				Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create();
 			category.SubPossibilitiesOS.Add(subCategory);
-			subCategory.Name.set_String(m_wsEn, TsStringUtils.MakeTss("Pronominal reference", m_wsEn));
+			subCategory.Name.set_String(m_wsEn, TsStringUtils.MakeString("Pronominal reference", m_wsEn));
 
 			// add a sub-sub-annotation category (for "Extended use")
 			subCategory = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create();
 			category.SubPossibilitiesOS.Add(subCategory);
-			subCategory.Name.set_String(m_wsEn, TsStringUtils.MakeTss("Extended use", m_wsEn));
+			subCategory.Name.set_String(m_wsEn, TsStringUtils.MakeString("Extended use", m_wsEn));
 
 			// Add an annotation category (for Gnarly)
 			category = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create();
 			m_scr.NoteCategoriesOA.PossibilitiesOS.Add(category);
-			category.Name.set_String(m_wsEn, TsStringUtils.MakeTss("Gnarly", m_wsEn));
+			category.Name.set_String(m_wsEn, TsStringUtils.MakeString("Gnarly", m_wsEn));
 		}
 		#endregion
 
@@ -285,7 +269,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			var frWs = Cache.WritingSystemFactory.GetWsFromStr("fr");
 			var para = section.HeadingOA.AddNewTextPara(headingStyleName);
-			para.Contents = Cache.TsStrFactory.MakeString(headingText, frWs);
+			para.Contents = TsStringUtils.MakeString(headingText, frWs);
 			return (IScrTxtPara)para;
 		}
 
@@ -471,7 +455,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// ------------------------------------------------------------------------------------
 		public IStText AddTitleToMockedBook(IScrBook book, string titleText, int ws)
 		{
-			ITsString titleTss = Cache.TsStrFactory.MakeString(titleText, ws);
+			ITsString titleTss = TsStringUtils.MakeString(titleText, ws);
 			return AddTitleToMockedBook(book, titleTss, ScrStyleNames.MainBookTitle);
 		}
 
@@ -517,7 +501,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				m_lp.TranslatedScriptureOA.ScriptureBooksOS, nBookNumber);
 
 			int frWs = Cache.ServiceLocator.WritingSystemManager.GetWsFromStr("fr");
-			ITsString tss = Cache.TsStrFactory.MakeString(bookName, frWs);
+			ITsString tss = TsStringUtils.MakeString(bookName, frWs);
 			book.Name.set_String(frWs, tss);
 			book.BookIdRA.BookName.set_String(frWs, tss);
 
@@ -540,7 +524,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 			// Set up the book
 			int enWs = Cache.WritingSystemFactory.GetWsFromStr("en");
-			book.Name.set_String(enWs, Cache.TsStrFactory.MakeString(bookName, enWs));
+			book.Name.set_String(enWs, TsStringUtils.MakeString(bookName, enWs));
 
 			return book;
 		}
@@ -701,7 +685,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			if (!String.IsNullOrEmpty(sDiscussion))
 			{
 				StTxtParaBldr paraBldr = new StTxtParaBldr(Cache);
-				ITsPropsBldr propsBldr = TsPropsBldrClass.Create();
+				ITsPropsBldr propsBldr = TsStringUtils.MakePropsBldr();
 				propsBldr.SetIntPropValues((int)FwTextPropType.ktptWs, 0, Cache.DefaultAnalWs);
 				paraBldr.AppendRun(sDiscussion, propsBldr.GetTextProps());
 				annotation.DiscussionOA = Cache.ServiceLocator.GetInstance<IStJournalTextFactory>().Create();
@@ -933,7 +917,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			string format, int ws)
 		{
 			if (strBldr == null)
-				strBldr = TsStrBldrClass.Create();
+				strBldr = TsStringUtils.MakeStrBldr();
 
 			if (string.IsNullOrEmpty(format))
 				strBldr.Replace(0, 0, string.Empty, StyleUtils.CharStyleTextProps(null, ws));
@@ -1001,7 +985,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 						IScrFootnote footnote = Cache.ServiceLocator.GetInstance<IScrFootnoteFactory>().Create();
 						book.FootnotesOS.Add(footnote);
 						TsStringUtils.InsertOrcIntoPara(footnote.Guid, FwObjDataTypes.kodtOwnNameGuidHot, strBldr, strBldr.Length, strBldr.Length, ws);
-						footnote.FootnoteMarker = TsStringHelper.MakeTSS("a", ws); // auto-generate
+						footnote.FootnoteMarker = TsStringUtils.MakeString("a", ws); // auto-generate
 						if (fieldData.IndexOf(@"\f") != -1)
 							Debug.Assert(false, @"Format string must not nest \f within another \f..\^");
 						IScrTxtPara para = AppendParagraph(footnote, fieldData, ws); //recursively calls CreateText to process any char styles

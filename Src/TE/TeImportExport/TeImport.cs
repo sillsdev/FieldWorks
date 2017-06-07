@@ -1,26 +1,25 @@
-// Copyright (c) 2002-2015 SIL International
+// Copyright (c) 2002-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Threading;
 
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.Scripture;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Reporting;
 using SIL.Utils;
-using SILUBS.SharedScrUtils;
 
 namespace SIL.FieldWorks.TE
 {
@@ -112,7 +111,7 @@ namespace SIL.FieldWorks.TE
 		public BTPictureInfo(string captionText, string sCopyright, int ws, string filename,
 			int lineNumber, string segment, BCVRef reference)
 		{
-			m_strbldrCaption = TsIncStrBldrClass.Create();
+			m_strbldrCaption = TsStringUtils.MakeIncStrBldr();
 			m_strbldrCaption.SetIntPropValues((int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault, ws);
 			if (!String.IsNullOrEmpty(captionText))
 				m_strbldrCaption.Append(captionText);
@@ -134,7 +133,7 @@ namespace SIL.FieldWorks.TE
 	/// <remarks>Note: this class runs on a background thread. It can't call any UI methods
 	/// directly!</remarks>
 	/// ----------------------------------------------------------------------------------------
-	public abstract class TeImporter : IFWDisposable
+	public abstract class TeImporter : IDisposable
 	{
 		#region class ToolboxPictureInfo
 		/// ----------------------------------------------------------------------------------------
@@ -806,8 +805,6 @@ namespace SIL.FieldWorks.TE
 		/// <summary>Default Annotation style proxy</summary>
 		protected ImportStyleProxy m_DefaultAnnotationStyleProxy;
 
-		/// <summary>Factory for creating TsStrings.</summary>
-		protected ITsStrFactory m_TsStringFactory = TsStrFactoryClass.Create();
 		/// <summary>The writing system of the current back trans para being processed --
 		/// needed to be able to stick BT character runs into the proper BT para</summary>
 		protected int m_wsCurrBtPara;
@@ -901,9 +898,6 @@ namespace SIL.FieldWorks.TE
 		protected int m_iNextBtPara;
 		/// <summary>Annotation type for translator notes</summary>
 		private ICmAnnotationDefn m_scrTranslatorAnnotationDef;
-
-		/// <summary>cached copy of the ICU character properties</summary>
-		private ILgCharacterPropertyEngine m_cpe;
 
 		/// <summary> segment to be evaluated to determine whether it is a marker or footnote
 		/// text (see TE-5002)</summary>
@@ -1186,7 +1180,7 @@ namespace SIL.FieldWorks.TE
 
 			// Build generic character props for use with different runs of text and analysis
 			// character properties
-			ITsPropsBldr tsPropsBldr = TsPropsBldrClass.Create();
+			ITsPropsBldr tsPropsBldr = TsStringUtils.MakePropsBldr();
 			// analysis character properties
 			tsPropsBldr.SetIntPropValues((int)FwTextPropType.ktptWs, 0, m_wsAnal);
 			m_analTextProps = tsPropsBldr.GetTextProps();
@@ -1634,7 +1628,7 @@ namespace SIL.FieldWorks.TE
 							InsertPicture(); // Already found a caption for the current picture; treat this as a new picture.
 						if (m_currPictureInfo == null)
 							m_currPictureInfo = new ToolboxPictureInfo();
-						m_currPictureInfo.Caption = TsIncStrBldrClass.Create();
+						m_currPictureInfo.Caption = TsStringUtils.MakeIncStrBldr();
 						m_currPictureInfo.Caption.SetIntPropValues((int)FwTextPropType.ktptWs,
 							(int)FwTextPropVar.ktpvDefault, m_wsVern);
 						m_currPictureInfo.Caption.Append(m_sSegmentText);
@@ -1733,7 +1727,7 @@ namespace SIL.FieldWorks.TE
 							ws = GetWsForImportDomain();
 
 						if (m_scrBook != null)
-							m_scrBook.Name.set_String(ws, TsStringUtils.MakeTss(m_sSegmentText.Trim(), ws));
+							m_scrBook.Name.set_String(ws, TsStringUtils.MakeString(m_sSegmentText.Trim(), ws));
 
 						// REVIEW: Should we call SetInCharStyle here?
 						if (m_styleProxy.EndMarker != null)
@@ -2379,7 +2373,7 @@ namespace SIL.FieldWorks.TE
 						ich < m_sSegmentText.Length;
 						ich++)
 					{
-						if (UnicodeCharProps.get_IsPunctuation(m_sSegmentText[ich]))
+						if (Icu.IsPunct(m_sSegmentText[ich]))
 						{
 							string sSave = m_sSegmentText.Substring(ich + 1);
 							m_sSegmentText = m_sSegmentText.Substring(0, ich + 1);
@@ -2429,7 +2423,7 @@ namespace SIL.FieldWorks.TE
 			{
 				ws = GetWsForContext(currBldr);
 			}
-			ITsPropsBldr propsBldr = TsPropsBldrClass.Create();
+			ITsPropsBldr propsBldr = TsStringUtils.MakePropsBldr();
 			propsBldr.SetIntPropValues((int)FwTextPropType.ktptWs, 0, ws);
 			return propsBldr.GetTextProps();
 		}
@@ -2624,7 +2618,7 @@ namespace SIL.FieldWorks.TE
 						ProcessBtParaStart();
 					}
 				}
-				strbldr = TsStringUtils.MakeTss("", m_wsCurrBtPara).GetBldr();
+				strbldr = TsStringUtils.MakeString("", m_wsCurrBtPara).GetBldr();
 				Debug.Assert(m_wsCurrBtPara != 0);
 				m_BTStrBldrs[m_wsCurrBtPara] = strbldr;
 			}
@@ -2655,7 +2649,7 @@ namespace SIL.FieldWorks.TE
 					// remember that we are now processing a footnote
 					SetInFootnote();
 					CheckDataForFootnoteMarker();
-					m_BTFootnoteStrBldr  = TsStrBldrClass.Create();
+					m_BTFootnoteStrBldr  = TsStringUtils.MakeStrBldr();
 					m_sBtFootnoteParaStyle = (m_styleProxy.StyleType == StyleType.kstCharacter) ?
 						m_DefaultFootnoteParaProxy.StyleId : m_styleProxy.StyleId;
 					if (m_importDomain == ImportDomain.Main)
@@ -3006,7 +3000,7 @@ namespace SIL.FieldWorks.TE
 			if (ichMarker > 0)
 			{
 				string s = strbldr.GetChars(ichMarker - 1, ichMarker);
-				if (UnicodeCharProps.get_IsSeparator(s[0]))
+				if (Icu.IsSeparator(s[0]))
 					ichMarker--;
 			}
 			if (m_CurrBTFootnote != null)
@@ -3016,7 +3010,7 @@ namespace SIL.FieldWorks.TE
 
 				ICmTranslation transl = para.GetOrCreateBT();
 				ITsString btTss = m_BTFootnoteStrBldr.Length == 0 ?
-					m_TsStringFactory.MakeString(string.Empty, m_wsCurrBtPara) :
+					TsStringUtils.EmptyString(m_wsCurrBtPara) :
 					m_BTFootnoteStrBldr.GetString();
 				transl.Translation.set_String(m_wsCurrBtPara, btTss);
 				m_CurrBTFootnote.InsertRefORCIntoTrans(strbldr, ichMarker, m_wsCurrBtPara);
@@ -3269,7 +3263,7 @@ namespace SIL.FieldWorks.TE
 
 			// Set the title of the book in the UI language.
 			CurrentBook.Name.UserDefaultWritingSystem =
-				TsStringUtils.MakeTss(CurrentBook.BestUIName, m_cache.DefaultUserWs);
+				TsStringUtils.MakeString(CurrentBook.BestUIName, m_cache.DefaultUserWs);
 
 			// Create an empty title paragraph in case we don't get a Main Title.
 			FinalizePrevTitle();
@@ -3391,7 +3385,7 @@ namespace SIL.FieldWorks.TE
 			{
 				// First trim trailing space if necessary
 				string s = bldr.Text;
-				if (UnicodeCharProps.get_IsSeparator(s[s.Length - 1]))
+				if (Icu.IsSeparator(s[s.Length - 1]))
 					bldr.Replace(s.Length - 1, s.Length, null, null);
 
 				AddTextToPara(kHardLineBreak, props, bldr);
@@ -3423,7 +3417,7 @@ namespace SIL.FieldWorks.TE
 			if (m_styleProxy.StyleId == ScrStyleNames.MainBookTitle && sTitle.Length > 0 &&
 				tssBookName != null && String.IsNullOrEmpty(tssBookName.Text))
 			{
-				CurrentBook.Name.set_String(ws, TsStringUtils.MakeTss(sTitle, ws));
+				CurrentBook.Name.set_String(ws, TsStringUtils.MakeString(sTitle, ws));
 
 				// To show the vernacular name in the progress dialog, enable this code
 				//					if (m_progressDlg != null)
@@ -3793,10 +3787,10 @@ namespace SIL.FieldWorks.TE
 				}
 				int cchLength = strbldr.Length;
 				// Remove extra space.
-				if (cchLength > 0 && UnicodeCharProps.get_IsSeparator(sText[0]))
+				if (cchLength > 0 && Icu.IsSeparator(sText[0]))
 				{
 					string s = strbldr.GetChars(cchLength - 1, cchLength);
-					if (UnicodeCharProps.get_IsSeparator(s[0]))
+					if (Icu.IsSeparator(s[0]))
 						sText = sText.Substring(1);
 				}
 
@@ -4135,7 +4129,7 @@ namespace SIL.FieldWorks.TE
 					IStTxtPara footnotePara = (IStTxtPara)footnote.ParagraphsOS[0];
 					ICmTranslation transl = footnotePara.GetOrCreateBT();
 					transl.Translation.set_String(ws, info.bldr.Length == 0 ?
-						m_TsStringFactory.MakeString(string.Empty, ws) : info.bldr.GetString());
+						TsStringUtils.EmptyString(ws) : info.bldr.GetString());
 
 					footnote.InsertRefORCIntoTrans(bldr, info.ichOffset + iFootnote, ws);
 					iFootnote++;
@@ -4151,9 +4145,6 @@ namespace SIL.FieldWorks.TE
 		/// ------------------------------------------------------------------------------------
 		private void AddBTPictureCaptionsAndCopyrights()
 		{
-#pragma warning disable 219
-			ITsStrFactory factory = TsStrFactoryClass.Create();
-#pragma warning restore 219
 			for (int index = 0; index < m_BTPendingPictures.Count; index++)
 			{
 				ICmPicture picture = FindCorrespondingPicture(index);
@@ -4188,7 +4179,7 @@ namespace SIL.FieldWorks.TE
 			if (length == 0)
 				return;
 			string s = bldr.GetChars(length - 1, length);
-			if (UnicodeCharProps.get_IsSeparator(s[0]))
+			if (Icu.IsSeparator(s[0]))
 			{
 				// remove the trailing space from the builder
 				bldr.Replace(length - 1, length, null, null);
@@ -4223,7 +4214,7 @@ namespace SIL.FieldWorks.TE
 			ITsStrBldr strbldr = m_ParaBldr.StringBuilder;
 			int ichMarker = m_ParaBldr.Length;
 			bool fInsertSpaceAfterCaller = false;
-			if (UnicodeCharProps.get_IsSeparator(m_ParaBldr.FinalCharInPara))
+			if (Icu.IsSeparator(m_ParaBldr.FinalCharInPara))
 				ichMarker--;
 			else if (m_settings.ImportTypeEnum == TypeOfImport.Other)
 			{
@@ -4364,22 +4355,6 @@ namespace SIL.FieldWorks.TE
 		protected override bool InMainImportDomain
 		{
 			get { return m_prevImportDomain != ImportDomain.Main; }
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Get the Unicode character properties engine.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[Browsable(false)]
-		private ILgCharacterPropertyEngine UnicodeCharProps
-		{
-			get
-			{
-				if (m_cpe == null)
-					m_cpe = m_cache.ServiceLocator.UnicodeCharProps;
-				return m_cpe;
-			}
 		}
 		#endregion
 
@@ -4566,7 +4541,6 @@ namespace SIL.FieldWorks.TE
 			}
 
 			// Dispose unmanaged resources here, whether disposing is true or false.
-			m_cpe = null;
 			m_settings = null;
 			m_SOWrapper = null;
 			m_sSegmentText = null;
@@ -4580,7 +4554,6 @@ namespace SIL.FieldWorks.TE
 			m_lastPara = null;
 			m_BookTitleParaProxy = null;
 			m_DefaultFootnoteParaProxy = null;
-			m_TsStringFactory = null;
 			m_BTFootnoteStrBldr = null;
 			m_CurrParaPictures = null;
 			m_CurrParaFootnotes = null;

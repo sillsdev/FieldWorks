@@ -6,8 +6,9 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using NUnit.Framework;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.Scripture;
+using SIL.CoreImpl.Text;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.FDOTests;
@@ -593,8 +594,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 			{
 				IScrTxtPara para = Cache.ServiceLocator.GetInstance<IScrTxtParaFactory>().CreateWithStyle(
 					stjt, ScrStyleNames.Remark);
-				ITsStrFactory fact = TsStrFactoryClass.Create();
-				para.Contents = fact.MakeString(paraText, Cache.DefaultAnalWs);
+				para.Contents = TsStringUtils.MakeString(paraText, Cache.DefaultAnalWs);
 			}
 		}
 

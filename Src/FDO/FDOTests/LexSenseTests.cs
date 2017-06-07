@@ -1,18 +1,18 @@
-// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Linq;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.CoreTests;
 using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.Utils;
 using System.Xml;
 using System.Collections.Generic;
 using System;
+using SIL.CoreImpl.Text;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 {
@@ -195,8 +195,8 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 				var entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
 				var sense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
 				entry.SensesOS.Add(sense);
-				sense.Definition.set_String(ws, Cache.TsStrFactory.MakeString("definition", ws));
-				sense.Gloss.set_String(ws, Cache.TsStrFactory.MakeString("gloss", ws));
+				sense.Definition.set_String(ws, TsStringUtils.MakeString("definition", ws));
+				sense.Gloss.set_String(ws, TsStringUtils.MakeString("gloss", ws));
 
 				var dorg = sense.DefinitionOrGloss;
 				Assert.That(dorg.BestAnalysisAlternative.Text, Contains.Substring("definition"));
@@ -215,7 +215,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 				var entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
 				var sense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
 				entry.SensesOS.Add(sense);
-				sense.Gloss.set_String(ws, Cache.TsStrFactory.MakeString("gloss", ws));
+				sense.Gloss.set_String(ws, TsStringUtils.MakeString("gloss", ws));
 
 				var dorg = sense.DefinitionOrGloss;
 				Assert.That(dorg.BestAnalysisAlternative.Text, Contains.Substring("gloss"));
@@ -234,8 +234,8 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 				var entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
 				var sense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
 				entry.SensesOS.Add(sense);
-				sense.Definition.set_String(ws, Cache.TsStrFactory.MakeString("", ws));
-				sense.Gloss.set_String(ws, Cache.TsStrFactory.MakeString("gloss", ws));
+				sense.Definition.set_String(ws, TsStringUtils.EmptyString(ws));
+				sense.Gloss.set_String(ws, TsStringUtils.MakeString("gloss", ws));
 
 				var dorg = sense.DefinitionOrGloss;
 				Assert.That(dorg.BestAnalysisAlternative.Text, Contains.Substring("gloss"));
@@ -265,7 +265,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 			// Attempt to merge it and verify that it survives.
 
 			ILexEntry le1 = MakeLexEntry("xyzTest1", "xyzDefn1.1", semDom1);
-			Set<int> newItems = new Set<int>();
+			var newItems = new HashSet<int>();
 			ILexSense sense1 = le1.SensesOS[0];
 			newItems.Add(sense1.Hvo);
 
@@ -279,7 +279,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 			// Verify that old LE1 survives and now has two senses; new sense has xyzDefn1.2.
 			// Verify that LE2 is deleted and LE3 survives.
 			ILexEntry le2 = MakeLexEntry("xyzTest1", "xyzDefn1.2", semDom2);
-			Set<int> newItems2 = new Set<int>();
+			var newItems2 = new HashSet<int>();
 			ILexSense sense2 = le2.SensesOS[0];
 			newItems2.Add(sense2.Hvo);
 
@@ -305,7 +305,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 			// It also gains exactly one new sense;
 			// And LE4 and LE5 are both deleted.
 			ILexEntry le4 = MakeLexEntry("xyzTest1", "xyzDefn1.2", semDom3);
-			Set<int> newItems3 = new Set<int>();
+			var newItems3 = new HashSet<int>();
 			ILexSense sense4 = le4.SensesOS[0];
 			newItems3.Add(sense4.Hvo);
 
@@ -336,7 +336,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 			// Try adding four senses, three for the same CF, but which doesn't pre-exist.
 			// Also, the three are exact duplicates.
 			ILexEntry le6 = MakeLexEntry("xyzTest6", "xyzDefn6.1", semDom4);
-			Set<int> newItems4 = new Set<int>();
+			var newItems4 = new HashSet<int>();
 			ILexSense sense6 = le6.SensesOS[0];
 			newItems4.Add(sense6.Hvo);
 
@@ -378,7 +378,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 			// Attempt to merge it and verify that it survives.
 
 			ILexEntry red = MakeLexEntry("red", "", "rot", "", semDom1);
-			Set<int> newItems = new Set<int>();
+			var newItems = new HashSet<int>();
 			ILexSense sense1 = red.SensesOS[0];
 			newItems.Add(sense1.Hvo);
 			bool fSenseDeleted = RunMergeSense(red);
@@ -714,8 +714,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 		private bool RunMergeSense(ILexEntry entry)
 		{
 			var sense = entry.SensesOS[0];
-			var newItems = new Set<int>();
-			newItems.Add(sense.Hvo);
+			var newItems = new HashSet<int> {sense.Hvo};
 			var fSenseDeleted = sense.RDEMergeSense(sense.SemanticDomainsRC.ToArray()[0].Hvo, newItems);
 			return fSenseDeleted;
 		}
@@ -736,11 +735,11 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 			var le = servLoc.GetInstance<ILexEntryFactory>().Create();
 
 			var ws = Cache.DefaultVernWs;
-			le.CitationForm.set_String(ws, Cache.TsStrFactory.MakeString(cf, ws));
+			le.CitationForm.set_String(ws, TsStringUtils.MakeString(cf, ws));
 			var ls = servLoc.GetInstance<ILexSenseFactory>().Create();
 			le.SensesOS.Add(ls);
 			ws = Cache.DefaultAnalWs;
-			ls.Definition.set_String(ws, Cache.TsStrFactory.MakeString(defn, ws));
+			ls.Definition.set_String(ws, TsStringUtils.MakeString(defn, ws));
 			if (domain != null)
 				ls.SemanticDomainsRC.Add(domain);
 			var msa = servLoc.GetInstance<IMoStemMsaFactory>().Create();
@@ -874,7 +873,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 			var nodes = MakeNodeList(new[] { "Word (Citation Form)", "Meaning (Gloss)"}, false);
 			nodes.AddRange(MakeNodeList(new[] {"Morph Type"}, true));
 			ITsString[] data = { MakeVernString("kick"),
-				MakeAnalysisString("strike with foot"), Cache.TsStrFactory.EmptyString(Cache.DefaultAnalWs)};
+				MakeAnalysisString("strike with foot"), TsStringUtils.EmptyString(Cache.DefaultAnalWs)};
 
 			int hvoSense = senseFactory.RDENewSense(mySd.Hvo, nodes, data);
 
@@ -882,6 +881,116 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 			var entry = (ILexEntry)sense.Owner;
 			Assert.That(entry.CitationForm.VernacularDefaultWritingSystem.Text, Is.EqualTo("kick"));
 			Assert.That(sense.Gloss.AnalysisDefaultWritingSystem.Text, Is.EqualTo("strike with foot"));
+		}
+
+		/// <summary>
+		/// Test that we can make a new sense where there is a dialect label that matches the data.
+		/// </summary>
+		[Test]
+		public void RDENewSense_Handles_MatchingDialectLabel()
+		{
+			var senseFactory = Cache.ServiceLocator.GetInstance<LexSenseFactory>();
+			var dialectFactory = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>();
+			var dialectLabel = dialectFactory.Create(Guid.NewGuid(), Cache.LangProject.LexDbOA.DialectLabelsOA);
+			dialectLabel.Name.set_String(Cache.DefaultAnalWs, MakeAnalysisString("east"));
+			var mySd = MakeSemanticDomain();
+			var nodes = MakeNodeList(new string[] { "Word (Citation Form)", "Meaning (Gloss)" }, false);
+			nodes.Add(MakeTransduceListNode("Dialect Labels(Entry)", "LexDb.DialectLabels", "LexEntry.DialectLabels"));
+			ITsString[] data = { MakeVernString("kick"), MakeAnalysisString("strike with foot"), MakeAnalysisString("east")};
+
+			int hvoSense = senseFactory.RDENewSense(mySd.Hvo, nodes, data);
+
+			var sense = Cache.ServiceLocator.GetInstance<ILexSenseRepository>().GetObject(hvoSense);
+			var entry = (ILexEntry)sense.Owner;
+			Assert.That(entry.DialectLabelsRS.First().Name.AnalysisDefaultWritingSystem.Text, Is.EqualTo("east"),
+				"Failed to add a dialect label reference. An item from the list specified should have matched the data");
+		}
+
+		/// <summary>
+		/// Test that we can make a new sense even if the dialect label can not be matched and set from the data.
+		/// </summary>
+		[Test]
+		public void RDENewSense_Handles_NonMatchingDialectLabel()
+		{
+			var senseFactory = Cache.ServiceLocator.GetInstance<LexSenseFactory>();
+			var dialectFactory = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>();
+			var dialectLabel = dialectFactory.Create(Guid.NewGuid(), Cache.LangProject.LexDbOA.DialectLabelsOA);
+			dialectLabel.Name.set_String(Cache.DefaultAnalWs, MakeAnalysisString("east"));
+			var mySd = MakeSemanticDomain();
+			var nodes = MakeNodeList(new string[] { "Word (Citation Form)", "Meaning (Gloss)" }, false);
+			nodes.Add(MakeTransduceListNode("Dialect Labels(Entry)", "LexDb.DialectLabels", "LexEntry.DialectLabels"));
+			ITsString[] data = { MakeVernString("kick"), MakeAnalysisString("strike with foot"), MakeAnalysisString("west") };
+
+			int hvoSense = senseFactory.RDENewSense(mySd.Hvo, nodes, data);
+
+			var sense = Cache.ServiceLocator.GetInstance<ILexSenseRepository>().GetObject(hvoSense);
+			var entry = (ILexEntry)sense.Owner;
+			Assert.That(entry.DialectLabelsRS.Count, Is.EqualTo(0));
+		}
+
+		/// <summary>
+		/// Test that we can make a new sense where there is a dialect label that has an abbreviation that matches the data.
+		/// </summary>
+		[Test]
+		public void RDENewSense_Handles_MatchingDialectLabelAbbrev()
+		{
+			var senseFactory = Cache.ServiceLocator.GetInstance<LexSenseFactory>();
+			var dialectFactory = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>();
+			var dialectLabel = dialectFactory.Create(Guid.NewGuid(), Cache.LangProject.LexDbOA.DialectLabelsOA);
+			dialectLabel.Name.set_String(Cache.DefaultAnalWs, MakeAnalysisString("east"));
+			dialectLabel.Abbreviation.set_String(Cache.DefaultAnalWs, MakeAnalysisString("e"));
+			var mySd = MakeSemanticDomain();
+			var nodes = MakeNodeList(new string[] { "Word (Citation Form)", "Meaning (Gloss)" }, false);
+			nodes.Add(MakeTransduceListNode("Dialect Labels(Entry)", "LexDb.DialectLabels", "LexEntry.DialectLabels"));
+			ITsString[] data = { MakeVernString("kick"), MakeAnalysisString("strike with foot"), MakeAnalysisString("e") };
+
+			int hvoSense = senseFactory.RDENewSense(mySd.Hvo, nodes, data);
+
+			var sense = Cache.ServiceLocator.GetInstance<ILexSenseRepository>().GetObject(hvoSense);
+			var entry = (ILexEntry)sense.Owner;
+			Assert.That(entry.DialectLabelsRS.First().Name.AnalysisDefaultWritingSystem.Text, Is.EqualTo("east"));
+		}
+
+		/// <summary>
+		/// Test that we can make a new sense where there is a dialect label that has an abbreviation that matches the data and ignore Case and Diacritic.
+		/// </summary>
+		[Test]
+		public void RDENewSense_Handles_MatchingDialectLabelIgnoreCaseAndDiacritic()
+		{
+			var senseFactory = Cache.ServiceLocator.GetInstance<LexSenseFactory>();
+			var dialectFactory = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>();
+			var dialectLabel = dialectFactory.Create(Guid.NewGuid(), Cache.LangProject.LexDbOA.DialectLabelsOA);
+			dialectLabel.Name.set_String(Cache.DefaultAnalWs, MakeAnalysisString("ăEast"));
+			var mySd = MakeSemanticDomain();
+			var nodes = MakeNodeList(new string[] { "Word (Citation Form)", "Meaning (Gloss)" }, false);
+			nodes.Add(MakeTransduceListNode("Dialect Labels(Entry)", "LexDb.DialectLabels", "LexEntry.DialectLabels"));
+			ITsString[] data = { MakeVernString("kick"), MakeAnalysisString("strike with foot"), MakeAnalysisString("aeast") };
+
+			int hvoSense = senseFactory.RDENewSense(mySd.Hvo, nodes, data);
+
+			var sense = Cache.ServiceLocator.GetInstance<ILexSenseRepository>().GetObject(hvoSense);
+			var entry = (ILexEntry)sense.Owner;
+			Assert.That(entry.DialectLabelsRS.First().Name.AnalysisDefaultWritingSystem.Text, Is.EqualTo("ăEast"),
+				"Failed to add a dialect label reference. An item from the list specified should have matched the data and ignored Case and Diacritic");
+		}
+
+		/// <summary>
+		/// Test that we can make a new sense where there is a dialect label.
+		/// </summary>
+		[Test]
+		public void RDENewSense_Handles_CrashWhenNoDialectLabel()
+		{
+			var senseFactory = Cache.ServiceLocator.GetInstance<LexSenseFactory>();
+			var mySd = MakeSemanticDomain();
+			var nodes = MakeNodeList(new string[] { "Word (Citation Form)", "Meaning (Gloss)" }, false);
+			nodes.Add(MakeTransduceListNode("Dialect Labels(Entry)", "LexDb.DialectLabels", "LexEntry.DialectLabels"));
+			ITsString[] data = { MakeVernString("kick"), MakeAnalysisString("strike with foot"), MakeAnalysisString("aeast") };
+
+			int hvoSense = senseFactory.RDENewSense(mySd.Hvo, nodes, data);
+
+			var sense = Cache.ServiceLocator.GetInstance<ILexSenseRepository>().GetObject(hvoSense);
+			var entry = (ILexEntry)sense.Owner;
+			Assert.That(entry.DialectLabelsRS.Count, Is.EqualTo(0));
 		}
 
 		/// <summary>
@@ -899,12 +1008,12 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 			nodes.AddRange(transduceList);
 
 			// First merge tests case where old value is empty.
-			XmlUtils.SetAttribute(transduceList[0], "transduce", "LexEntry.Bibliography");
-			XmlUtils.SetAttribute(transduceList[1], "transduce", "LexSense.SemanticsNote");
-			XmlUtils.SetAttribute(transduceList[2], "transduce", "LexSense.ScientificName");
-			XmlUtils.SetAttribute(transduceList[3], "transduce", "LexExampleSentence.Example");
-			XmlUtils.SetAttribute(transduceList[4], "transduce", "LexExampleSentence.Reference");
-			XmlUtils.SetAttribute(transduceList[5], "transduce", "CmTranslation.Translation");
+			SetAttribute(transduceList[0], "transduce", "LexEntry.Bibliography");
+			SetAttribute(transduceList[1], "transduce", "LexSense.SemanticsNote");
+			SetAttribute(transduceList[2], "transduce", "LexSense.ScientificName");
+			SetAttribute(transduceList[3], "transduce", "LexExampleSentence.Example");
+			SetAttribute(transduceList[4], "transduce", "LexExampleSentence.Reference");
+			SetAttribute(transduceList[5], "transduce", "CmTranslation.Translation");
 			ITsString[] data = { MakeVernString("kick"),
 				MakeAnalysisString("strike with foot"), MakeAnalysisString("see Encycopledia under football"), MakeVernString("used for a forceful motion"),
 				MakeAnalysisString("kickS"), MakeVernString("kick the ball"), MakeAnalysisString("my head"), MakeAnalysisString("strike the ball with your foot")};
@@ -938,22 +1047,54 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 			foreach (var item in labels)
 			{
 				var node = doc.CreateElement("column");
-				XmlUtils.SetAttribute(node, "label", item);
+				SetAttribute(node, "label", item);
 				if (!editable)
-					XmlUtils.SetAttribute(node, "editable", "false");
+					SetAttribute(node, "editable", "false");
 				result.Add(node);
 			}
 			return result;
 		}
 
+		private XmlNode MakeTransduceListNode(string label, string list, string transduce)
+		{
+			var doc = new XmlDocument();
+			var node = doc.CreateElement("column");
+			SetAttribute(node, "label", label);
+			SetAttribute(node, "transduce", transduce);
+			SetAttribute(node, "list", list);
+			SetAttribute(node, "editable", "true");
+			return node;
+		}
+
+		/// <summary>
+		/// Change the value of the specified attribute, appending it if not already present.
+		/// </summary>
+		private static void SetAttribute(XmlNode parent, string attrName, string attrVal)
+		{
+			XmlAttribute xa = parent.Attributes?[attrName];
+			if (xa != null)
+			{
+				xa.Value = attrVal;
+			}
+			else
+			{
+				xa = parent.OwnerDocument?.CreateAttribute(attrName);
+				if (xa != null)
+				{
+					xa.Value = attrVal;
+					parent.Attributes?.Append(xa);
+				}
+			}
+		}
+
 		private ITsString MakeVernString(string arg)
 		{
-			return Cache.TsStrFactory.MakeString(arg, Cache.DefaultVernWs);
+			return TsStringUtils.MakeString(arg, Cache.DefaultVernWs);
 		}
 
 		private ITsString MakeAnalysisString(string arg)
 		{
-			return Cache.TsStrFactory.MakeString(arg, Cache.DefaultAnalWs);
+			return TsStringUtils.MakeString(arg, Cache.DefaultAnalWs);
 		}
 
 		private ICmSemanticDomain MakeSemanticDomain()

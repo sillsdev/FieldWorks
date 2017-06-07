@@ -658,67 +658,60 @@ rule {Unanalyzed circumfix on a fully analyzed stem where second is an infix}
 	  | (Note: we do not allow for a derivational circumfix to attach to a Full in order to produce a partial - that would be an error.)
 
 			  | affixes on partial with non-final inflection
-rule {One or more unanalyzed prefixes and suffixes on partial with non-final inflection}
+rule {One or more unanalyzed prefixes and suffixes on partial}
   Partial_1 = Prefs Partial_2 Suffs
 								| percolation
   <Partial_1 inflected> = <Partial_2 inflected>
   <Partial_1 synCat> = <Partial_2 synCat>
 								| constraints
-  <Partial_2 blocksInflection> = +
   <Partial_2> == ~[synCat:unknown]
 
-rule {One or more unanalyzed prefixes on partial with non-final inflection}
+rule {One or more unanalyzed prefixes on partial}
   Partial_1 = Prefs Partial_2
 								| percolation
   <Partial_1 inflected> = <Partial_2 inflected>
   <Partial_1 synCat> = <Partial_2 synCat>
 								| constraints
-  <Partial_2 blocksInflection> = +
   <Partial_2> == ~[synCat:unknown]
 
-rule {One or more unanalyzed suffixes on partial with non-final inflection}
+rule {One or more unanalyzed suffixes on partial}
   Partial_1 =          Partial_2 Suffs
 								| percolation
   <Partial_1 inflected> = <Partial_2 inflected>
   <Partial_1 synCat> = <Partial_2 synCat>
 								| constraints
-  <Partial_2 blocksInflection> = +
   <Partial_2> == ~[synCat:unknown]
 
-rule {Unanalyzed circumfix on partial with non-final inflection}
+rule {Unanalyzed circumfix on partial}
   Partial_1 = circumPfx Partial_2 circumSfx
 								| percolation
   <Partial_1 inflected> = <Partial_2 inflected>
   <Partial_1 synCat> = <Partial_2 synCat>
 								| constraints
-  <Partial_2 blocksInflection> = +
   <Partial_2> == ~[synCat:unknown]
-rule {Unanalyzed circumfix on partial with non-final inflection, where second part is an infix}
+rule {Unanalyzed circumfix on partial, where second part is an infix}
   Partial_1 = circumPfx_1 circumPfx_2 Partial_2
 								| percolation
   <Partial_1 inflected> = <Partial_2 inflected>
   <Partial_1 synCat> = <Partial_2 synCat>
 								| constraints
-  <Partial_2 blocksInflection> = +
   <Partial_2> == ~[synCat:unknown]
 								| rightmost "prefix" must be an infix
   <circumPfx_2> == [morphType : infix]
 
-rule {Derivational circumfix on partial with non-final inflection}
+rule {Derivational circumfix on partial}
   Partial_1 = derivCircumPfx Partial_2 derivCircumSfx
 								| percolation
   <Partial_1 inflected> = <Partial_2 inflected>
   <Partial_1 synCat> = <Partial_2 synCat>
 								| constraints
-  <Partial_2 blocksInflection> = +
   <Partial_2> == ~[synCat:unknown]
-rule {Derivational circumfix on partial with non-final inflection, where second part is an infix}
+rule {Derivational circumfix on partial, where second part is an infix}
   Partial_1 = derivCircumPfx_1 derivCircumPfx_2 Partial_2
 								| percolation
   <Partial_1 inflected> = <Partial_2 inflected>
   <Partial_1 synCat> = <Partial_2 synCat>
 								| constraints
-  <Partial_2 blocksInflection> = +
   <Partial_2> == ~[synCat:unknown]
 								| rightmost "prefix" must be an infix
    <derivCircumPfx_2> == [morphType : infix]
@@ -760,6 +753,26 @@ rule {A derivational prefix added to a sequence of prefixes; the derivational ca
 
   }
 
+rule {A derivational prefix added to a partial analysis}
+Partial_1 = derivPfx Partial_2
+								| percolation
+<Partial_1 synCat> = <derivPfx toCat>
+								| constraints
+{
+  
+		<Partial_2 synCat>           = <derivPfx fromCat>
+		<Partial_2 synCat>           = <derivPfx envCat>
+		/
+		<derivPfx fromCat>        = 260
+		<derivPfx envCat>         = 260
+{
+	  
+		<Partial_2 synCat>           = 260 /
+		<Partial_2 synCat>           = 261
+}
+
+  }
+
 rule {An unanalyzed suffix added to a sequence of suffixes}
   Suffixes_1 = (Suffixes_2) suffix
 								| percolation
@@ -797,9 +810,41 @@ rule {A derivational suffix added to a sequence of suffixes; the derivational ca
 
   }
 
+rule {A derivational suffix added to a partial analysis}
+Partial_1 = Partial_2 derivSfx
+								| percolation
+<Partial_1 synCat> = <derivSfx toCat>
+								| constraints
+{
+  
+		<Partial_2 synCat>           = <derivSfx fromCat>
+		<Partial_2 synCat>           = <derivSfx envCat>
+		/
+		<derivSfx fromCat>        = 260
+		<derivSfx envCat>         = 260
+{
+	  
+		<Partial_2 synCat>           = 260 /
+		<Partial_2 synCat>           = 261
+}
 
+  }
+
+
+rule {Partially analyzed stem that's been inflected with empty template}
+	Partial = PartialInflected
+								| percolation
+	<Partial synCat> = <PartialInflected synCat>
+								| constraints
+	<Partial synCat> = <PartialInflected synCat>
+	<Partial morphoSyntax> = <PartialInflected morphoSyntax>
+
+	<Partial inflected> = +
+	<PartialInflected inflected> = +
+
+	
 rule {Partially analyzed stem with inflectional template  15004}
-  Partial_1 =  Partial_2  15005_0  :
+		Partial_1 =   Partial_2 15005_0  :
 														 | percolation
   <Partial_1 synCat>       = <Partial_2 synCat>
 														 | constraints
@@ -811,17 +856,17 @@ rule {Partially analyzed stem with inflectional template  15004}
   <Partial_2 inflected> = -
 		
 rule {Partially analyzed stem with inflectional template  15331}
-  Partial_1 =  15332_0 Partial_2  15333_0  :
+		PartialInflected =   (15332_0) Partial (15333_0)  :
 														 | percolation
-  <Partial_1 synCat>       = <Partial_2 synCat>
+  <PartialInflected synCat>       = <Partial synCat>
 														 | constraints
-  <Partial_2 synCat>       = 262 
+  <Partial synCat>       = 262 
 
   <Partial_1 morphoSyntax>    = <15332_0 morphoSyntax>
   <Partial_1 morphoSyntax>    = <15333_0 morphoSyntax>
 														 | constraint
-  <Partial_1 inflected> = +
-  <Partial_2 inflected> = -
+  <PartialInflected inflected> = +
+  <Partial inflected> = -
 		
 		| if there are no compound rules, use the remaining rules:
 			| these allow derivational affixes next to the stem

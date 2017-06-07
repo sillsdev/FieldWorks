@@ -1,27 +1,24 @@
-// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic; // Needed for generic Di
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Xml;
-using System.Runtime.InteropServices; // needed for Marshal
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.Utils;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Cellar;
+using SIL.CoreImpl.Text;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.CacheLight
 {
 	/// <summary>
 	/// Loads original styled Fieldworks XML data into a RealDataCache.
 	/// </summary>
-	public sealed class RealCacheLoader : IFWDisposable
+	public sealed class RealCacheLoader : IDisposable
 	{
 		private IFwMetaDataCache m_metaDataCache;
 		private RealDataCache m_realDataCache;
-		private ITsStrFactory m_itsf = TsStrFactoryClass.Create();
 		private TsStringfactory m_tsf;
 		private Dictionary<string, int> m_wsCache = new Dictionary<string,int>();
 		private Dictionary<HvoFlidKey, XmlNode> m_delayedAtomicReferences = new Dictionary<HvoFlidKey, XmlNode>();
@@ -33,7 +30,7 @@ namespace SIL.FieldWorks.CacheLight
 		/// </summary>
 		public RealCacheLoader()
 		{
-			m_tsf = new TsStringfactory(m_itsf, m_wsCache);
+			m_tsf = new TsStringfactory(m_wsCache);
 		}
 
 		#region IDisposable & Co. implementation
@@ -134,13 +131,6 @@ namespace SIL.FieldWorks.CacheLight
 			}
 
 			// Dispose unmanaged resources here, whether disposing is true or false.
-
-			if (m_itsf != null)
-			{
-				if (Marshal.IsComObject(m_itsf))
-					Marshal.ReleaseComObject(m_itsf);
-				m_itsf = null;
-			}
 			m_tsf = null;
 			m_metaDataCache = null;
 			m_realDataCache = null;
@@ -165,7 +155,7 @@ namespace SIL.FieldWorks.CacheLight
 		{
 			CheckDisposed();
 
-			m_realDataCache = new RealDataCache {CheckWithMDC = false};
+			m_realDataCache = new RealDataCache {CheckWithMDC = false, TsStrFactory = TsStringUtils.TsStrFactory};
 
 			try
 			{
@@ -321,8 +311,6 @@ namespace SIL.FieldWorks.CacheLight
 			return hvo;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "nodeList is a reference")]
 		private void LoadObject(XmlNode objectNode, int hvo, int clid, IDictionary<int, int> objects)
 		{
 			// Optimize by looping over the child nodes,
@@ -412,7 +400,7 @@ namespace SIL.FieldWorks.CacheLight
 						{
 							var ws = m_wsCache[uniNode.Attributes["ws"].Value];
 							var uniText = uniNode.InnerText;
-							m_realDataCache.CacheStringAlt(hvo, flid, ws, m_itsf.MakeString(uniText, ws));
+							m_realDataCache.CacheStringAlt(hvo, flid, ws, TsStringUtils.MakeString(uniText, ws));
 						}
 						break;
 

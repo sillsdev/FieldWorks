@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
 
 namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
@@ -81,7 +80,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 			mockMDC.AddClass(3, "CmAnnotationDefn", "CmObject", new List<string>());
 			mockMDC.AddClass(4, "StText", "CmObject", new List<string>());
 			mockMDC.AddClass(5, "StTxtPara", "CmObject", new List<string>());
-			IDomainObjectDTORepository dtoRepos = new DomainObjectDtoRepository(7000009, dtos, mockMDC, null, FwDirectoryFinder.FdoDirectories);
+			IDomainObjectDTORepository dtoRepos = new DomainObjectDtoRepository(7000009, dtos, mockMDC, null, TestDirectoryFinder.FdoDirectories);
 
 			// Collect the various annotation defns.
 			var annDefnDtos = new Dictionary<string, DomainObjectDTO>();
@@ -1165,7 +1164,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 			mockMDC.AddClass(16, "ConstChartMovedTextMarker", "ConstituentChartCellPart", new List<string>());
 			mockMDC.AddClass(17, "ConstChartClauseMarker", "ConstituentChartCellPart", new List<string>());
 			mockMDC.AddClass(18, "ConstChartTag", "ConstituentChartCellPart", new List<string>());
-			return new DomainObjectDtoRepository(7000009, dtos, mockMDC, null, FwDirectoryFinder.FdoDirectories);
+			return new DomainObjectDtoRepository(7000009, dtos, mockMDC, null, TestDirectoryFinder.FdoDirectories);
 		}
 
 		private static void CheckXfics(IDomainObjectDTORepository dtoRepos,

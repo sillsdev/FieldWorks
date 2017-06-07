@@ -1,9 +1,6 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: XDumper.cs
-// Responsibility:
 
 using System;
 using System.IO;
@@ -13,16 +10,19 @@ using System.Reflection;
 using System.Collections;
 using System.Collections.Generic;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.Application.ApplicationServices;
 using SIL.Utils;
 using System.Text;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.CoreImpl;
 using System.Linq;
+using SIL.CoreImpl.Cellar;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.Xml;
 
 namespace SIL.FieldWorks.Common.FXT
 {
@@ -535,10 +535,10 @@ namespace SIL.FieldWorks.Common.FXT
 
 		private bool VariableTestsPass(XmlNode node)
 		{
-			string variableName = XmlUtils.GetAttributeValue(node, "variableistrue");
+			string variableName = XmlUtils.GetOptionalAttributeValue(node, "variableistrue");
 			if (!String.IsNullOrEmpty(variableName))
 				return TestVariable(variableName, true);
-			variableName = XmlUtils.GetAttributeValue(node, "variableisfalse");
+			variableName = XmlUtils.GetOptionalAttributeValue(node, "variableisfalse");
 			if (!String.IsNullOrEmpty(variableName))
 				return TestVariable(variableName, false);
 			return true;
@@ -1876,8 +1876,8 @@ namespace SIL.FieldWorks.Common.FXT
 			}
 			else if (obj is ICmObject)
 			{
-				string itemLabel = XmlUtils.GetAttributeValue(node, "itemLabel");
-				string itemProperty = XmlUtils.GetAttributeValue(node, "itemProperty");
+				string itemLabel = XmlUtils.GetOptionalAttributeValue(node, "itemLabel");
+				string itemProperty = XmlUtils.GetOptionalAttributeValue(node, "itemProperty");
 				if (!String.IsNullOrEmpty(itemLabel) && !String.IsNullOrEmpty(itemProperty))
 				{
 					object x = GetProperty(obj as ICmObject, itemProperty);
@@ -2197,32 +2197,19 @@ namespace SIL.FieldWorks.Common.FXT
 		protected int[] LoadVirtualField(ICmObject currentObject, string field)
 		{
 			object obj = GetProperty(currentObject, field);
-			if (obj is int[])
-			{
-				return obj as int[];
-			}
-			else if (obj is System.Collections.ArrayList)
-			{
-				throw new InvalidOperationException("No array lists are to be used. in fact, as of this writing, FDO uses none at all.");
-			}
-			else if (obj is List<int>)
-			{
-				return (obj as List<int>).ToArray();
-			}
-			else if (obj is Set<int>)
-			{
-				return (obj as Set<int>).ToArray();
-			}
-			else if (obj is int)
+
+			var enumerable = obj as IEnumerable<int>;
+			if (enumerable != null)
+				return enumerable.ToArray();
+
+			if (obj is int)
 			{
 				int[] hvos = new int[1];
-				hvos[0] = (int)obj;
+				hvos[0] = (int) obj;
 				return hvos;
 			}
-			else
-			{
-				return new int[0];
-			}
+
+			return new int[0];
 		}
 
 		/// <summary>
@@ -2524,6 +2511,15 @@ namespace SIL.FieldWorks.Common.FXT
 				{
 					if (rghvo[i] == hvoOpen)
 						continue;
+				}
+				// If this is a unidirectional type relation, only process elements if the
+				//  first element is the currently open object.
+				if (nMappingType == (int)LexRefTypeTags.MappingTypes.kmtSenseUnidirectional ||
+					nMappingType == (int)LexRefTypeTags.MappingTypes.kmtEntryUnidirectional ||
+					nMappingType == (int)LexRefTypeTags.MappingTypes.kmtEntryOrSenseUnidirectional)
+				{
+					if (hvoOpen != rghvo[0])
+						break;
 				}
 				slr.CrossRefHvo = rghvo[i];
 				DoChildren(contentsStream, slr, classNode, null);

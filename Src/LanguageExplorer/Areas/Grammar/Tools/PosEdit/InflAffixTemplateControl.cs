@@ -5,21 +5,21 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.Text;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework.DetailControls;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.Utils;
 using SIL.CoreImpl;
-using Rect = SIL.FieldWorks.Common.COMInterfaces.Rect;
+using SIL.Xml;
 
 namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 {
@@ -48,7 +48,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 		protected event InflAffixTemplateEventHandler ShowContextMenu;
 
 		public InflAffixTemplateControl(FdoCache cache, int hvoRoot, XElement xnSpec)
-			: base(hvoRoot, XmlUtils.GetAttributeValue(xnSpec, "layout"), true)
+			: base(hvoRoot, XmlUtils.GetOptionalAttributeValue(xnSpec, "layout"), true)
 		{
 			m_xnSpec = xnSpec.Element("deParams");
 			Cache = cache;
@@ -183,8 +183,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 		/// The slice is no longer a direct parent, so hunt for it up the Parent chain.
 		/// </summary>
 		/// <returns></returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "ctl is a reference")]
 		private Slice FindParentSlice()
 		{
 			Control ctl = this.Parent;
@@ -1056,7 +1054,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 			}
 			else if (m_obj.ClassID == MoInflAffixTemplateTags.kClassId)
 			{
-				var tssStem = Cache.TsStrFactory.MakeString(m_sStem, Cache.DefaultUserWs);
+				var tssStem = TsStringUtils.MakeString(m_sStem, Cache.DefaultUserWs);
 				return DoXXXReplace(sLabel, tssStem);
 			}
 			else
@@ -1131,8 +1129,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 			CheckDisposed();
 			if (m_obj.ClassID == MoInflAffMsaTags.kClassId)
 			{
-				ITsStrFactory tsf = TsStrFactoryClass.Create();
-				return tsf.MakeString(sLabel, Cache.DefaultUserWs);
+				return TsStringUtils.MakeString(sLabel, Cache.DefaultUserWs);
 			}
 			else
 			{
@@ -1154,7 +1151,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 			{
 				// Display help only if there's a topic linked to the generated ID in the resource file.
 				if (PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider").GetHelpString(m_ChooseInflectionalAffixHelpTopic) != null)
-					return Cache.TsStrFactory.MakeString(sLabel, Cache.DefaultUserWs);
+					return TsStringUtils.MakeString(sLabel, Cache.DefaultUserWs);
 			}
 			return null;
 		}
@@ -1221,7 +1218,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 			}
 			else
 			{
-				return Cache.TsStrFactory.MakeString(AreaResources.ksQuestions, Cache.DefaultUserWs);
+				return TsStringUtils.MakeString(AreaResources.ksQuestions, Cache.DefaultUserWs);
 			}
 		}
 
@@ -1237,8 +1234,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 
 		private ITsString DoReplaceToken(string sSource, ITsString tssReplace, string sToken)
 		{
-			ITsStrFactory tsf = TsStrFactoryClass.Create();
-			ITsString tss = tsf.MakeString(sSource, Cache.DefaultUserWs);
+			ITsString tss = TsStringUtils.MakeString(sSource, Cache.DefaultUserWs);
 			return DoReplaceToken(tss, tssReplace, sToken);
 		}
 

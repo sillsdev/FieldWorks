@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -7,8 +7,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.Cellar;
+using SIL.CoreImpl.Text;
 using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.DomainServices;
@@ -476,7 +478,7 @@ namespace SIL.FieldWorks.XWorks
 
 		ITsString EmptyUserString()
 		{
-			return TsStrFactoryClass.Create().MakeString("", BaseSda.WritingSystemFactory.UserWs);
+			return TsStringUtils.EmptyString(BaseSda.WritingSystemFactory.UserWs);
 		}
 		public override ITsString get_StringProp(int hvo, int tag)
 		{
@@ -497,21 +499,21 @@ namespace SIL.FieldWorks.XWorks
 						var text = GetStText(hvo);
 						if (text != null)
 							return text.Title.get_String(ws);
-						return TsStrFactoryClass.Create().MakeString("", ws);
+						return TsStringUtils.EmptyString(ws);
 					}
 				case kflidTextSource:
 					{
 						var text = GetStText(hvo);
 						if (text != null)
 							return text.Source.get_String(ws);
-						return TsStrFactoryClass.Create().MakeString("", ws);
+						return TsStringUtils.EmptyString(ws);
 					}
 				case kflidTextComment:
 					{
 						var text = GetStText(hvo);
 						if (text != null)
 							return text.Comment.get_String(ws);
-						return TsStrFactoryClass.Create().MakeString("", ws);
+						return TsStringUtils.EmptyString(ws);
 					}
 			}
 			return base.get_MultiStringAlt(hvo, tag, ws);

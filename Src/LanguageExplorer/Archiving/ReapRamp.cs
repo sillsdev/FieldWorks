@@ -19,6 +19,7 @@ using SIL.FieldWorks.Resources;
 using SIL.Reporting;
 using SIL.Windows.Forms.PortableSettingsProvider;
 using SIL.CoreImpl;
+using SIL.CoreImpl.WritingSystems;
 using SIL.Keyboarding;
 using SIL.PlatformUtilities;
 

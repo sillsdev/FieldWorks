@@ -10,6 +10,7 @@ using System.IO;
 using System.Xml;
 using LanguageExplorer.Areas.TextsAndWords.Discourse;
 using SIL.CoreImpl;
+using SIL.CoreImpl.Text;
 using SIL.FieldWorks.Common.FwUtils;
 
 namespace LanguageExplorerTests.Discourse
@@ -116,7 +117,7 @@ namespace LanguageExplorerTests.Discourse
 
 				// Let's have some notes on row 0.
 				//var notesText = Cache.ServiceLocator.GetInstance<IStTextFactory>().Create();
-				row0.Notes = Cache.TsStrFactory.MakeString("This is a test note", Cache.DefaultAnalWs);
+				row0.Notes = TsStringUtils.MakeString("This is a test note", Cache.DefaultAnalWs);
 				//var notesPara = Cache.ServiceLocator.GetInstance<IStTxtParaFactory>().Create();
 				//notesText.ParagraphsOS.Add(notesPara);
 				//notesPara.Contents = ;

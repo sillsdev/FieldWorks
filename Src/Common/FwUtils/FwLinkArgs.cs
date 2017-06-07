@@ -1,8 +1,7 @@
-// Copyright (c) 2010-2015 SIL International
+// Copyright (c) 2010-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: FwLinkArgs.cs
+
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -10,7 +9,6 @@ using System.Text;
 using System.Collections.Generic;
 using System.Web;
 using SIL.FieldWorks.FDO;
-using SIL.Utils;
 using SIL.Reporting;
 
 namespace SIL.FieldWorks.Common.FwUtils
@@ -393,7 +391,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			if (urlDatabase == project)
 			{
 				properties[idxDatabase] = "database=this$";
-				string fixedUrl = kFwUrlPrefix + HttpUtility.UrlEncode(properties.ToString("&"));
+				string fixedUrl = kFwUrlPrefix + HttpUtility.UrlEncode(string.Join("&", properties));
 				return fixedUrl;
 			}
 			else

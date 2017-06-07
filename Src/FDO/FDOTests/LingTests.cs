@@ -1,26 +1,18 @@
-﻿// Copyright (c) 2002-2013 SIL International
+﻿// Copyright (c) 2002-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: LingTests.cs
-// Responsibility: John Hatton
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
 using NUnit.Framework;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.Phonology;
+using SIL.CoreImpl.Text;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.FDOTests.CellarTests;
-using SIL.FieldWorks.FDO.Validation;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 {
@@ -223,7 +215,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 		{
 			var lme = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
 			lme.LexemeFormOA = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
-			lme.LexemeFormOA.Form.VernacularDefaultWritingSystem = Cache.TsStrFactory.MakeString(sLexForm, Cache.DefaultVernWs);
+			lme.LexemeFormOA.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString(sLexForm, Cache.DefaultVernWs);
 			return lme;
 		}
 
@@ -237,7 +229,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 			// Make a wordform which has a random number in it in order to reduce the chance to the word is already loaded.
 			string kWordForm = "aaa" + kSpecialCharacter;
 			IWfiWordform word = Cache.ServiceLocator.GetInstance<IWfiWordformFactory>().Create();
-			word.Form.VernacularDefaultWritingSystem = Cache.TsStrFactory.MakeString(kWordForm, Cache.DefaultVernWs);
+			word.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString(kWordForm, Cache.DefaultVernWs);
 			Assert.IsTrue(word.Hvo != 0, "Adding word failed, gave hvo = 0");
 
 			int checkIndex = kWordForm.Length - 1;
@@ -253,7 +245,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 		{
 			string kWordForm = "aaa";
 			IWfiWordform word = Cache.ServiceLocator.GetInstance<IWfiWordformFactory>().Create();
-			word.Form.VernacularDefaultWritingSystem = Cache.TsStrFactory.MakeString(kWordForm, Cache.DefaultVernWs);
+			word.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString(kWordForm, Cache.DefaultVernWs);
 			Assert.IsTrue(word.Hvo != 0, "Adding word failed, gave hvo = 0");
 			IWfiWordform wf = null;
 			foreach (var x in Cache.ServiceLocator.GetInstance<IWfiWordformRepository>().AllInstances())
@@ -306,7 +298,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 			Assert.That(mdam.FeaturesTSS.Length, Is.EqualTo(0),
 				"2 with no features, FeaturesTSS should produce an empty string");
 
-			ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
+			ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 			var featStruc2 = Cache.ServiceLocator.GetInstance<IFsFeatStrucFactory>().Create();
 			mdam.ToMsFeaturesOA = featStruc2;
 			var featSpec2 = Cache.ServiceLocator.GetInstance<IFsClosedValueFactory>().Create();
@@ -351,7 +343,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 			mdsm.InflFeatsOA = featStruc6;
 			var featSpec6 = Cache.ServiceLocator.GetInstance<IFsClosedValueFactory>().Create();
 			featStruc6.FeatureSpecsOC.Add(featSpec6);
-			ITsIncStrBldr tisc = TsIncStrBldrClass.Create();
+			ITsIncStrBldr tisc = TsStringUtils.MakeIncStrBldr();
 			tisc.AppendTsString(featStruc5.ShortNameTSS);
 			tisc.AppendTsString(Cache.MakeUserTss(" / "));
 			tisc.AppendTsString(featStruc6.ShortNameTSS);
@@ -383,7 +375,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 			var cmPoss = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create();
 			restrictionsList.PossibilitiesOS.Add(cmPoss);
 			msm.ProdRestrictRC.Add(cmPoss);
-			ITsIncStrBldr tisc = TsIncStrBldrClass.Create();
+			ITsIncStrBldr tisc = TsStringUtils.MakeIncStrBldr();
 			tisc.AppendTsString(cmPoss.Abbreviation.BestAnalysisVernacularAlternative);
 			Assert.That(msm.ExceptionFeaturesTSS.Text, Is.EqualTo(tisc.Text),
 				"1 with prodRestrict, ExceptionFeaturesTSS should not be an empty string");
@@ -391,7 +383,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 			//Test for MoDerivAffMsa
 			IMoDerivAffMsa mdam = Cache.ServiceLocator.GetInstance<IMoDerivAffMsaFactory>().Create();
 			le.MorphoSyntaxAnalysesOC.Add(mdam);
-			ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
+			ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 			tisb.AppendTsString(Cache.MakeUserTss(""));
 			Assert.That(mdam.ExceptionFeaturesTSS.Length, Is.EqualTo(0),
 				"2 with no prodRestrict, ExceptionFeaturesTSS should produce an empty string");
@@ -505,13 +497,13 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 
 			IPhNCSegments c1 = Cache.ServiceLocator.GetInstance<IPhNCSegmentsFactory>().Create();
 			Cache.LangProject.PhonologicalDataOA.NaturalClassesOS.Add(c1);
-			c1.Abbreviation.AnalysisDefaultWritingSystem = Cache.TsStrFactory.MakeString("a", Cache.DefaultAnalWs);
+			c1.Abbreviation.AnalysisDefaultWritingSystem = TsStringUtils.MakeString("a", Cache.DefaultAnalWs);
 			IPhNCSegments c2 = Cache.ServiceLocator.GetInstance<IPhNCSegmentsFactory>().Create();
 			Cache.LangProject.PhonologicalDataOA.NaturalClassesOS.Add(c2);
-			c2.Abbreviation.AnalysisDefaultWritingSystem = Cache.TsStrFactory.MakeString("b", Cache.DefaultAnalWs);
+			c2.Abbreviation.AnalysisDefaultWritingSystem = TsStringUtils.MakeString("b", Cache.DefaultAnalWs);
 			IPhNCFeatures c3 = Cache.ServiceLocator.GetInstance<IPhNCFeaturesFactory>().Create();
 			Cache.LangProject.PhonologicalDataOA.NaturalClassesOS.Add(c3);
-			c3.Abbreviation.AnalysisDefaultWritingSystem = Cache.TsStrFactory.MakeString("c", Cache.DefaultAnalWs);
+			c3.Abbreviation.AnalysisDefaultWritingSystem = TsStringUtils.MakeString("c", Cache.DefaultAnalWs);
 
 			string[] sa2 = Cache.LangProject.PhonologicalDataOA.AllNaturalClassAbbrs().ToArray();
 			Assert.IsTrue(sa2.Length == 3, "Expect three abbreviations in the set of natural classes");
@@ -963,7 +955,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 			le.SensesOS.Add(ls);
 			ls.Definition.set_String(Cache.DefaultAnalWs, "xyzDefn1.1");
 
-			IMoForm m = MorphServices.MakeMorph(le, TsStringUtils.MakeTss("-is", Cache.DefaultVernWs));
+			IMoForm m = MorphServices.MakeMorph(le, TsStringUtils.MakeString("-is", Cache.DefaultVernWs));
 			Assert.AreEqual(mmtSuffix, m.MorphTypeRA);
 			Assert.AreEqual("is", m.Form.get_String(systems.First().Handle).Text);
 			Assert.IsTrue(m is IMoAffixAllomorph, "\"-is\" should have produced an affix allomorph");
@@ -1101,8 +1093,8 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 			entry.CitationForm.set_String(Cache.DefaultVernWs, sULForm);
 			IMoAffixAllomorph allomorph = Cache.ServiceLocator.GetInstance<IMoAffixAllomorphFactory>().Create();
 			entry.LexemeFormOA = allomorph;
-			Set<ICmPossibility> morphTypes = Cache.LangProject.LexDbOA.MorphTypesOA.ReallyReallyAllPossibilities;
-			foreach (IMoMorphType mmt in morphTypes)
+			ISet<ICmPossibility> morphTypes = Cache.LangProject.LexDbOA.MorphTypesOA.ReallyReallyAllPossibilities;
+			foreach (IMoMorphType mmt in morphTypes.Cast<IMoMorphType>())
 			{
 				allomorph.MorphTypeRA = mmt;
 				if (mmt.Guid == MoMorphTypeTags.kguidMorphBoundRoot)
@@ -1531,10 +1523,10 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 			var form = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
 			entry.LexemeFormOA = form;
 			form.Form.VernacularDefaultWritingSystem =
-				Cache.TsStrFactory.MakeString(lf, Cache.DefaultVernWs);
+				TsStringUtils.MakeString(lf, Cache.DefaultVernWs);
 			var sense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
 			entry.SensesOS.Add(sense);
-			sense.Gloss.AnalysisDefaultWritingSystem = Cache.TsStrFactory.MakeString(gloss, Cache.DefaultAnalWs);
+			sense.Gloss.AnalysisDefaultWritingSystem = TsStringUtils.MakeString(gloss, Cache.DefaultAnalWs);
 			return entry;
 		}
 
@@ -1546,7 +1538,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 			result = Cache.ServiceLocator.GetInstance<ILexRefTypeFactory>().Create();
 			Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.Add(result);
 			result.MappingType = (int)LexRefTypeTags.MappingTypes.kmtSenseTree;
-			result.Name.AnalysisDefaultWritingSystem = Cache.TsStrFactory.MakeString(name, Cache.DefaultAnalWs);
+			result.Name.AnalysisDefaultWritingSystem = TsStringUtils.MakeString(name, Cache.DefaultAnalWs);
 			return result;
 		}
 
@@ -1665,7 +1657,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 			var le = servLoc.GetInstance<ILexEntryFactory>().Create();
 
 			var ws = Cache.DefaultVernWs;
-			le.CitationForm.set_String(ws, Cache.TsStrFactory.MakeString(cf, ws));
+			le.CitationForm.set_String(ws, TsStringUtils.MakeString(cf, ws));
 			AddLexSense(le, defn, domain, null);
 			return le;
 		}
@@ -1676,7 +1668,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 			var ws = Cache.DefaultAnalWs;
 			var ls = servLoc.GetInstance<ILexSenseFactory>().Create();
 			le.SensesOS.Add(ls);
-			ls.Definition.set_String(ws, Cache.TsStrFactory.MakeString(defn, ws));
+			ls.Definition.set_String(ws, TsStringUtils.MakeString(defn, ws));
 			if (domain != null)
 				ls.SemanticDomainsRC.Add(domain);
 			var msaToAdd = msa ?? servLoc.GetInstance<IMoStemMsaFactory>().Create();
@@ -2445,11 +2437,10 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 			var variantEntryTypes = Cache.LangProject.LexDbOA.VariantEntryTypesOA;
 			Assert.That(variantEntryTypes, Is.Not.Null);
 			Assert.That(variantEntryTypes, Is.EqualTo(Cache.LangProject.LexDbOA.VariantEntryTypesOA), "should not make a new one each time!");
-			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
-			Assert.That(variantEntryTypes.PossibilitiesOS.Count, Is.EqualTo(6));
+			Assert.That(variantEntryTypes.PossibilitiesOS.Count, Is.EqualTo(7));
 			var letFactory = Cache.ServiceLocator.GetInstance<ILexEntryTypeFactory>();
-			var lexEntryType1 = variantEntryTypes.PossibilitiesOS[0] as ILexEntryType;
-			var lexEntryType2 = variantEntryTypes.PossibilitiesOS[1] as ILexEntryType;
+			var lexEntryType1 = (ILexEntryType)variantEntryTypes.PossibilitiesOS[0];
+			var lexEntryType2 = (ILexEntryType)variantEntryTypes.PossibilitiesOS[1];
 			var lexEntryType1Sub1 = letFactory.Create();
 			lexEntryType1.SubPossibilitiesOS.Add(lexEntryType1Sub1);
 
@@ -2468,9 +2459,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 			ler2.VariantEntryTypesRS.Add(lexEntryType1);
 
 			var progressBar = new DummyProgressDlg();
-			var itemsToChange = new List<ILexEntryType>();
-			itemsToChange.Add(lexEntryType1);
-			itemsToChange.Add(lexEntryType1Sub1);
+			var itemsToChange = new List<ILexEntryType> { lexEntryType1, lexEntryType1Sub1 };
 
 			Cache.LangProject.LexDbOA.ConvertLexEntryInflTypes(progressBar, itemsToChange);
 			var leit1 = ler1.VariantEntryTypesRS[0];
@@ -2483,11 +2472,11 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 			variantEntryTypes = Cache.LangProject.LexDbOA.VariantEntryTypesOA;
 			Assert.That(variantEntryTypes, Is.Not.Null);
 			Assert.That(variantEntryTypes, Is.EqualTo(Cache.LangProject.LexDbOA.VariantEntryTypesOA), "should not make a new one each time!");
-			Assert.That(variantEntryTypes.PossibilitiesOS.Count, Is.EqualTo(6));
+			Assert.That(variantEntryTypes.PossibilitiesOS.Count, Is.EqualTo(7));
 
-			lexEntryType1 = variantEntryTypes.PossibilitiesOS[0] as ILexEntryType;
+			lexEntryType1 = (ILexEntryType)variantEntryTypes.PossibilitiesOS[0];
 			Assert.AreEqual(LexEntryInflTypeTags.kClassId, lexEntryType1.ClassID, "first type should be irregularly inflected form");
-			lexEntryType1Sub1 = lexEntryType1.SubPossibilitiesOS[0] as ILexEntryType;
+			lexEntryType1Sub1 = (ILexEntryType)lexEntryType1.SubPossibilitiesOS[0];
 			Assert.AreEqual(LexEntryInflTypeTags.kClassId, lexEntryType1Sub1.ClassID, "first sub-type of first type should be irregularly inflected form");
 		}
 
@@ -2500,10 +2489,10 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 			var variantEntryTypes = Cache.LangProject.LexDbOA.VariantEntryTypesOA;
 			Assert.That(variantEntryTypes, Is.Not.Null);
 			Assert.That(variantEntryTypes, Is.EqualTo(Cache.LangProject.LexDbOA.VariantEntryTypesOA), "should not make a new one each time!");
-			Assert.That(variantEntryTypes.PossibilitiesOS.Count, Is.EqualTo(6));
+			Assert.That(variantEntryTypes.PossibilitiesOS.Count, Is.EqualTo(7));
 			var leitFactory = Cache.ServiceLocator.GetInstance<ILexEntryInflTypeFactory>();
-			var lexEntryInflType1 = variantEntryTypes.PossibilitiesOS[3] as ILexEntryInflType;
-			var lexEntryInflType2 = variantEntryTypes.PossibilitiesOS[4] as ILexEntryInflType;
+			var lexEntryInflType1 = (ILexEntryInflType)variantEntryTypes.PossibilitiesOS[3];
+			var lexEntryInflType2 = (ILexEntryInflType)variantEntryTypes.PossibilitiesOS[4];
 			var lexEntryInflType1Sub1 = leitFactory.Create();
 			lexEntryInflType1.SubPossibilitiesOS.Insert(0, lexEntryInflType1Sub1);
 
@@ -2522,9 +2511,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 			ler2.VariantEntryTypesRS.Add(lexEntryInflType1);
 
 			var progressBar = new DummyProgressDlg();
-			var itemsToChange = new List<ILexEntryType>();
-			itemsToChange.Add(lexEntryInflType1);
-			itemsToChange.Add(lexEntryInflType1Sub1);
+			var itemsToChange = new List<ILexEntryType> { lexEntryInflType1, lexEntryInflType1Sub1 };
 
 			Cache.LangProject.LexDbOA.ConvertLexEntryTypes(progressBar, itemsToChange);
 			var let1 = ler1.VariantEntryTypesRS[0];
@@ -2537,11 +2524,11 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 			variantEntryTypes = Cache.LangProject.LexDbOA.VariantEntryTypesOA;
 			Assert.That(variantEntryTypes, Is.Not.Null);
 			Assert.That(variantEntryTypes, Is.EqualTo(Cache.LangProject.LexDbOA.VariantEntryTypesOA), "should not make a new one each time!");
-			Assert.That(variantEntryTypes.PossibilitiesOS.Count, Is.EqualTo(6));
+			Assert.That(variantEntryTypes.PossibilitiesOS.Count, Is.EqualTo(7));
 
-			var lexEntryType1 = variantEntryTypes.PossibilitiesOS[3] as ILexEntryType;
+			var lexEntryType1 = (ILexEntryType)variantEntryTypes.PossibilitiesOS[3];
 			Assert.AreEqual(LexEntryTypeTags.kClassId, lexEntryType1.ClassID, "third type should be variant");
-			var lexEntryType1Sub1 = lexEntryType1.SubPossibilitiesOS[0] as ILexEntryType;
+			var lexEntryType1Sub1 = (ILexEntryType)lexEntryType1.SubPossibilitiesOS[0];
 			Assert.AreEqual(LexEntryTypeTags.kClassId, lexEntryType1Sub1.ClassID, "third's first type should be variant");
 		}
 	}

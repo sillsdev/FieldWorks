@@ -3,8 +3,6 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
-using System.Runtime.ExceptionServices;
-using System.Windows.Forms.VisualStyles;
 using LanguageExplorer;
 using LanguageExplorer.Impls;
 using NUnit.Framework;

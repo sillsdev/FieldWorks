@@ -4,12 +4,12 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
 using System.Text;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.Text;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
@@ -100,7 +100,7 @@ namespace SIL.FieldWorks.XWorks
 			var form = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
 			entry.LexemeFormOA = form;
 			form.Form.VernacularDefaultWritingSystem =
-				Cache.TsStrFactory.MakeString(lf, Cache.DefaultVernWs);
+				TsStringUtils.MakeString(lf, Cache.DefaultVernWs);
 			AddSense(entry, gloss);
 			return entry;
 		}
@@ -109,7 +109,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var sense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
 			entry.SensesOS.Add(sense);
-			sense.Gloss.AnalysisDefaultWritingSystem = Cache.TsStrFactory.MakeString(gloss,
+			sense.Gloss.AnalysisDefaultWritingSystem = TsStringUtils.MakeString(gloss,
 				Cache.DefaultAnalWs);
 			return sense;
 		}
@@ -130,13 +130,11 @@ namespace SIL.FieldWorks.XWorks
 			result = Cache.ServiceLocator.GetInstance<ILexRefTypeFactory>().Create();
 			Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.Add(result);
 			result.MappingType = (int) LexRefTypeTags.MappingTypes.kmtSenseSequence;
-			result.Name.AnalysisDefaultWritingSystem = Cache.TsStrFactory.MakeString(name, Cache.DefaultAnalWs);
+			result.Name.AnalysisDefaultWritingSystem = TsStringUtils.MakeString(name, Cache.DefaultAnalWs);
 			return result;
 		}
 	}
 
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification="m_cache is a reference")]
 	class TestRootSite : SimpleRootSite
 	{
 		private FdoCache m_cache;
@@ -152,19 +150,18 @@ namespace SIL.FieldWorks.XWorks
 
 		public override void MakeRoot()
 		{
+			Vc = new TestVc(m_cache);
+
+			WritingSystemFactory = m_cache.WritingSystemFactory;
+
 			base.MakeRoot();
 
-			Vc = new TestVc(m_cache);
-			m_rootb = VwRootBoxClass.Create();
-			m_rootb.SetSite(this);
 			m_rootb.DataAccess = m_cache.DomainDataByFlid;
 
 			m_rootb.SetRootObject(m_hvoRoot, Vc, 1, null);
 		}
 	}
 
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification="m_cache is a reference")]
 	class TestVc: VwBaseVc
 	{
 		private FdoCache m_cache;

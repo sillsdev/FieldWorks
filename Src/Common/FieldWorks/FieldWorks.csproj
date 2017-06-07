@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="14.0">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -24,7 +24,7 @@
     </SccAuxPath>
     <SccProvider>
     </SccProvider>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <NoWin32Manifest>true</NoWin32Manifest>
     <ApplicationIcon>BookOnCubeVersion.ico</ApplicationIcon>
     <PublishUrl>publish\</PublishUrl>
@@ -71,13 +71,9 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BasicUtils, Version=6.1.1.30632, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="ViewsInterfaces, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\BasicUtils.dll</HintPath>
-    </Reference>
-    <Reference Include="COMInterfaces, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\COMInterfaces.dll</HintPath>
+      <HintPath>..\..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
     </Reference>
     <Reference Include="CoreImpl, Version=6.9.4.17937, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -104,14 +100,10 @@
       <HintPath>..\..\..\Output\Debug\FwUtils.dll</HintPath>
     </Reference>
     <Reference Include="Geckofx-Core">
-      <Package>Geckofx-Core</Package>
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Downloads\Geckofx-Core.dll</HintPath>
+      <HintPath>..\..\..\Output\Debug\Geckofx-Core.dll</HintPath>
     </Reference>
     <Reference Include="Geckofx-Winforms">
-      <Package>Geckofx-WinForms</Package>
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Downloads\Geckofx-Winforms.dll</HintPath>
+      <HintPath>..\..\..\Output\Debug\Geckofx-Winforms.dll</HintPath>
     </Reference>
     <Reference Include="ICSharpCode.SharpZipLib, Version=0.85.5.452, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -193,6 +185,12 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\Framework.dll</HintPath>
     </Reference>
+    <Reference Include="FwKernelInterfaces">
+      <HintPath>..\..\Output\Debug\FwKernelInterfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="icu.net">
+      <HintPath>..\..\..\Downloads\icu.net.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\CommonAssemblyInfo.cs">
@@ -244,7 +242,6 @@
     <Compile Include="WelcomeToFieldWorksDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <None Include="gendarme-FieldWorks.ignore" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

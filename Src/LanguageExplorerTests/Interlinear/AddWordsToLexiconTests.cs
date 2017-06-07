@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -7,13 +7,14 @@ using System.Linq;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using NUnit.Framework;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.Text;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.Utils;
+using SIL.ObjectModel;
 
 namespace LanguageExplorerTests.Interlinear
 {
@@ -52,7 +53,7 @@ namespace LanguageExplorerTests.Interlinear
 			m_text1.ContentsOA = stText1;
 			var para1 = stText1.AddNewTextPara(null);
 			(m_text1.ContentsOA[0]).Contents =
-				TsStringUtils.MakeTss("xxxa xxxb xxxc xxxd xxxe, xxxa xxxb.", Cache.DefaultVernWs);
+				TsStringUtils.MakeString("xxxa xxxb xxxc xxxd xxxe, xxxa xxxb.", Cache.DefaultVernWs);
 			InterlinMaster.LoadParagraphAnnotationsAndGenerateEntryGuessesIfNeeded(stText1, false);
 
 			// setup language project parts of speech
@@ -157,7 +158,7 @@ namespace LanguageExplorerTests.Interlinear
 
 			internal ITsString SetTssInSandbox(int flid, int ws, string str)
 			{
-				ITsString tss = TsStringUtils.MakeTss(str, ws);
+				ITsString tss = TsStringUtils.MakeString(str, ws);
 				switch (flid)
 				{
 					default:
@@ -294,7 +295,7 @@ namespace LanguageExplorerTests.Interlinear
 		/// <summary>
 		/// keeps track of how many UndoTasks we create during a test.
 		/// </summary>
-		internal class UndoableUOWHelperForTests : FwDisposableBase
+		internal class UndoableUOWHelperForTests : DisposableBase
 		{
 			private IActionHandler m_actionHandler;
 			private Queue<UOW> m_taskQueue = new Queue<UOW>();
@@ -373,7 +374,7 @@ namespace LanguageExplorerTests.Interlinear
 			m_sandbox.SwitchWord(cba0_0);
 
 			// verify that the word gloss is empty
-			ITsString tssEmpty = TsStringUtils.MakeTss("", Cache.DefaultAnalWs);
+			ITsString tssEmpty = TsStringUtils.MakeString("", Cache.DefaultAnalWs);
 			ITsString tssWordGloss = m_sandbox.GetTssInSandbox(InterlinLineChoices.kflidWordGloss,
 															   Cache.DefaultAnalWs);
 			CompareTss(tssEmpty, tssWordGloss);
@@ -492,9 +493,9 @@ namespace LanguageExplorerTests.Interlinear
 			var cba0_0 = GetCba(0, 0, 0);
 			m_sandbox.SwitchWord(cba0_0);
 			string formLexEntry = "xxxab";
-			ITsString tssLexEntryForm = TsStringUtils.MakeTss(formLexEntry, Cache.DefaultVernWs);
+			ITsString tssLexEntryForm = TsStringUtils.MakeString(formLexEntry, Cache.DefaultVernWs);
 			string formAllomorph = "xxxa";
-			ITsString tssAllomorphForm = TsStringUtils.MakeTss(formAllomorph, Cache.DefaultVernWs);
+			ITsString tssAllomorphForm = TsStringUtils.MakeString(formAllomorph, Cache.DefaultVernWs);
 
 			// first create an entry with a matching allomorph that doesn't match 'verb' POS we will be selecting in the sandbox
 			ILexEntry lexEntry_NounPos;
@@ -606,13 +607,13 @@ namespace LanguageExplorerTests.Interlinear
 		/// <param name="lexEntry1_Sense1"></param>
 		private void SetupLexEntryAndSense(string formLexEntry, string senseGloss, string partOfSpeech, out ILexEntry lexEntry1_Entry, out ILexSense lexEntry1_Sense1)
 		{
-			ITsString tssLexEntryForm = TsStringUtils.MakeTss(formLexEntry, Cache.DefaultVernWs);
+			ITsString tssLexEntryForm = TsStringUtils.MakeString(formLexEntry, Cache.DefaultVernWs);
 			// create a sense with a matching gloss
 			var entryComponents = MorphServices.BuildEntryComponents(Cache, tssLexEntryForm);
 			int hvoSenseMsaPos = m_sandbox.GetComboItemHvo(m_propertyTable, InterlinLineChoices.kflidWordPos, 0, partOfSpeech);
 			if (hvoSenseMsaPos != 0)
 				entryComponents.MSA.MainPOS = Cache.ServiceLocator.GetInstance<IPartOfSpeechRepository>().GetObject(hvoSenseMsaPos);
-			entryComponents.GlossAlternatives.Add(TsStringUtils.MakeTss(senseGloss, Cache.DefaultAnalWs));
+			entryComponents.GlossAlternatives.Add(TsStringUtils.MakeString(senseGloss, Cache.DefaultAnalWs));
 			ILexEntry newEntry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(entryComponents);
 			lexEntry1_Entry = newEntry;
 			lexEntry1_Sense1 = newEntry.SensesOS[0];

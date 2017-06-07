@@ -942,7 +942,6 @@ template<typename XChar, typename Pfn>
 	else if (fLongDate)
 	{
 #if WIN32
-		achar rgchFmt[81];
 		cchFmt = ::GetLocaleInfo(LOCALE_USER_DEFAULT, LOCALE_SLONGDATE, rgchFmt, 80);
 		stubFmt.Assign(rgchFmt);
 #else
@@ -952,7 +951,6 @@ template<typename XChar, typename Pfn>
 	else
 	{
 #if WIN32
-		achar rgchFmt[81];
 		cchFmt = ::GetLocaleInfo(LOCALE_USER_DEFAULT, LOCALE_SSHORTDATE, rgchFmt, 80);
 		stubFmt.Assign(rgchFmt);
 #else
@@ -997,9 +995,9 @@ template<typename XChar, typename Pfn>
 	// Format date proper
 	for (int i = 0; i < stubFmt.Length(); )
 	{
-		int n;
+		int ndx;
 		wchar ch = stubFmt.GetAt(i);
-		for (n = 1; n < 4 && i + n < stubFmt.Length() && stubFmt.GetAt(i + n) == ch; ++n)
+		for (ndx = 1; ndx < 4 && i + ndx < stubFmt.Length() && stubFmt.GetAt(i + ndx) == ch; ++ndx)
 		{			// count run of same char
 		}
 		switch (ch)
@@ -1008,20 +1006,20 @@ template<typename XChar, typename Pfn>
 			fDiscard = false;
 			if (nDay != 0)
 			{
-				if (n >= 3 && (nGenDate < 0 || nYear < 1900 || nMonth <= 0))
+				if (ndx >= 3 && (nGenDate < 0 || nYear < 1900 || nMonth <= 0))
 					fDiscard = true; // don't show day of week and punctuation after it
 				else
-					cch += FormatDateDay(n, rgchTemp + cch, SizeOfArray(rgchTemp) - cch, nYear, nMonth, nDay);
+					cch += FormatDateDay(ndx, rgchTemp + cch, SizeOfArray(rgchTemp) - cch, nYear, nMonth, nDay);
 			}
 			break;
 		case 'M': // month
 			fDiscard = false;
 			if (nMonth != 0)
-				cch += FormatDateMonth(n, rgchTemp + cch, SizeOfArray(rgchTemp) - cch, nMonth);
+				cch += FormatDateMonth(ndx, rgchTemp + cch, SizeOfArray(rgchTemp) - cch, nMonth);
 			break;
 		case 'y': // year
 			fDiscard = false;
-			cch += FormatDateYear(n, rgchTemp + cch, SizeOfArray(rgchTemp) - cch, nYear);
+			cch += FormatDateYear(ndx, rgchTemp + cch, SizeOfArray(rgchTemp) - cch, nYear);
 			break;
 		case 'g': // period/era
 			fDiscard = false;
@@ -1035,12 +1033,12 @@ template<typename XChar, typename Pfn>
 		default: // just copy anything else
 			if (!fDiscard)
 			{
-				for (int j = 0; j < n; j++)
+				for (int j = 0; j < ndx; j++)
 					rgchTemp[cch++] = stubFmt.GetAt(i+j);
 			}
 			break;
 		}
-		i += n;
+		i += ndx;
 	}
 #else
 	if(fLongDate)
@@ -5448,5 +5446,42 @@ void StrUtil::FixForSqlQuotedString(StrUni & stu)
 	{
 		stu.Replace(ich + 1, ich + 1, "'", 1);
 		ich = stu.FindCh('\'', ich + 2);
+	}
+}
+
+bool StrUtil::IsSeparator(int ch)
+{
+	int cc = u_charType(ch);
+	return cc >= U_SPACE_SEPARATOR && cc <= U_PARAGRAPH_SEPARATOR;
+}
+
+bool StrUtil::IsNumber(int ch)
+{
+	int cc = u_charType(ch);
+	return cc >= U_DECIMAL_DIGIT_NUMBER && cc <= U_OTHER_NUMBER;
+}
+
+bool StrUtil::IsMark(int ch)
+{
+	int cc = u_charType(ch);
+	return cc >= U_NON_SPACING_MARK && cc <= U_COMBINING_SPACING_MARK;
+}
+
+bool StrUtil::IsWordForming(int ch)
+{
+	int cc = u_charType(ch);
+	switch (cc)
+	{
+		case U_UPPERCASE_LETTER:
+		case U_LOWERCASE_LETTER:
+		case U_TITLECASE_LETTER:
+		case U_MODIFIER_LETTER:
+		case U_OTHER_LETTER:
+		case U_NON_SPACING_MARK:
+		case U_COMBINING_SPACING_MARK:
+		case U_MODIFIER_SYMBOL:
+			return true;
+		default:
+			return false;
 	}
 }

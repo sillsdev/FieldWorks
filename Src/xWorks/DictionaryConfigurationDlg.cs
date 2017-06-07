@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using Gecko;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.XWorks.DictionaryDetailsView;
 using SIL.Windows.Forms;
 
@@ -170,8 +171,7 @@ namespace SIL.FieldWorks.XWorks
 		private List<GeckoElement> _highlightedElements;
 		private const string HighlightStyle = "background-color:Yellow ";	// LightYellow isn't really bold enough marking to my eyes for this feature.
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "element does NOT need to be disposed locally!")]
-		public void HighlightContent(ConfigurableDictionaryNode configNode)
+		public void HighlightContent(ConfigurableDictionaryNode configNode, FdoCache cache)
 		{
 			if (m_preview.IsDisposed)
 				return;
@@ -190,7 +190,7 @@ namespace SIL.FieldWorks.XWorks
 				return;
 			var browser = (GeckoWebBrowser)m_preview.NativeBrowser;
 			// Surprisingly, xpath does not work for xml documents in geckofx, so we need to search manually for the node we want.
-			_highlightedElements = FindConfiguredItem(configNode, browser);
+			_highlightedElements = FindConfiguredItem(configNode, browser, cache);
 			foreach (var element in _highlightedElements)
 			{
 				// add background-color to the style, preserving any existing style.  (See LT-17222.)
@@ -203,9 +203,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "body is a reference")]
-		private static List<GeckoElement> FindConfiguredItem(ConfigurableDictionaryNode selectedConfigNode, GeckoWebBrowser browser)
+		private static List<GeckoElement> FindConfiguredItem(ConfigurableDictionaryNode selectedConfigNode, GeckoWebBrowser browser, FdoCache cache)
 		{
 			var elements = new List<GeckoElement>();
 			var body = browser.Document.Body;
@@ -217,19 +215,19 @@ namespace SIL.FieldWorks.XWorks
 			foreach (var div in body.GetElementsByTagName("div"))
 			{
 				if (Equals(div.ParentElement, body) && div.GetAttribute("class") == topLevelClass)
-					elements.AddRange(FindMatchingSpans(selectedConfigNode, div, topLevelConfigNode));
+					elements.AddRange(FindMatchingSpans(selectedConfigNode, div, topLevelConfigNode, cache));
 			}
 			return elements;
 		}
 
+		/// <summary>
+		/// Returns the top-level ancestor of the given node
+		/// </summary>
 		private static ConfigurableDictionaryNode GetTopLevelNode(ConfigurableDictionaryNode childNode)
 		{
-			ConfigurableDictionaryNode topLevelConfigNode = null;
-			for (var node = childNode; node != null; node = node.Parent)
-			{
-				topLevelConfigNode = node;
-			}
-			return topLevelConfigNode;
+			while (childNode.Parent != null)
+				childNode = childNode.Parent;
+			return childNode;
 		}
 
 		private static bool DoesGeckoElementOriginateFromConfigNode(ConfigurableDictionaryNode configNode, GeckoElement element,
@@ -239,18 +237,20 @@ namespace SIL.FieldWorks.XWorks
 			GeckoElement dummyElement;
 			var classListForGeckoElement = XhtmlDocView.GetClassListFromGeckoElement(element, out dummyGuid, out dummyElement);
 			classListForGeckoElement.RemoveAt(0); // don't need the top level class
-			var nodeToMatch = DictionaryConfigurationController.FindStartingConfigNode(topLevelNode, classListForGeckoElement);
+			var nodeToMatch = DictionaryConfigurationController.FindConfigNode(topLevelNode, classListForGeckoElement);
 			return Equals(nodeToMatch, configNode);
 		}
 
 		private static IEnumerable<GeckoElement> FindMatchingSpans(ConfigurableDictionaryNode selectedNode, GeckoElement parent,
-			ConfigurableDictionaryNode topLevelNode)
+			ConfigurableDictionaryNode topLevelNode, FdoCache cache)
 		{
 			var elements = new List<GeckoElement>();
 			var desiredClass = CssGenerator.GetClassAttributeForConfig(selectedNode);
+			if (ConfiguredXHTMLGenerator.IsCollectionNode(selectedNode, cache))
+				desiredClass = CssGenerator.GetClassAttributeForCollectionItem(selectedNode);
 			foreach (var span in parent.GetElementsByTagName("span"))
 			{
-				if (span.GetAttribute("class") == desiredClass &&
+				if (span.GetAttribute("class") != null && span.GetAttribute("class").Split(' ')[0] == desiredClass &&
 					DoesGeckoElementOriginateFromConfigNode(selectedNode, span, topLevelNode))
 				{
 					elements.Add(span);

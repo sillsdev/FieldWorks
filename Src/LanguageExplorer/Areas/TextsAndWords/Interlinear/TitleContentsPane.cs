@@ -5,10 +5,12 @@
 using System;
 using System.Diagnostics;
 using System.Drawing;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.RootSites;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.FDO.DomainServices;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
@@ -130,17 +132,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			if (m_fdoCache == null || DesignMode /*|| m_hvoRoot == 0*/)
 				return;
 
-			m_rootb = VwRootBoxClass.Create();
-			m_rootb.SetSite(this);
+			base.MakeRoot();
 
 			m_vc = new TitleContentsVc(m_fdoCache);
 			SetupVc();
 
 			m_rootb.DataAccess = m_fdoCache.MainCacheAccessor;
 
-			m_rootb.SetRootObject(m_hvoRoot, m_vc, (int)TitleContentsVc.kfragRoot, m_styleSheet);
-
-			base.MakeRoot();
+			m_rootb.SetRootObject(m_hvoRoot, m_vc, TitleContentsVc.kfragRoot, m_styleSheet);
 
 			//TODO:
 			//ptmw->RegisterRootBox(qrootb);
@@ -223,14 +222,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		public TitleContentsVc(FdoCache cache)
 		{
 			int wsUser = cache.DefaultUserWs;
-			ITsStrFactory tsf = TsStrFactoryClass.Create();
-			m_tssTitle = tsf.MakeString(ITextStrings.ksTitle, wsUser);
-			ITsPropsBldr tpb = TsPropsBldrClass.Create();
+			m_tssTitle = TsStringUtils.MakeString(ITextStrings.ksTitle, wsUser);
+			ITsPropsBldr tpb = TsStringUtils.MakePropsBldr();
 			tpb.SetIntPropValues((int)FwTextPropType.ktptBold,
 				(int)FwTextPropVar.ktpvEnum,
 				(int)FwTextToggleVal.kttvForceOn);
 			m_ttpBold = tpb.GetTextProps();
-			tpb = TsPropsBldrClass.Create();
+			tpb = TsStringUtils.MakePropsBldr();
 			// Set some padding all around.
 			tpb.SetIntPropValues((int)FwTextPropType.ktptPadTop,
 				(int) FwTextPropVar.ktpvMilliPoint, 1000);
@@ -269,9 +267,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				//m_WsLabels[i] = LgWritingSystem.UserAbbr(cache, m_writingSystems[i].Hvo);
 				// For now (August 2008), try English abbreviation before UI writing system.
 				// (See LT-8185.)
-				m_WsLabels[i] = cache.TsStrFactory.MakeString(m_writingSystems[i].Abbreviation, cache.DefaultUserWs);
+				m_WsLabels[i] = TsStringUtils.MakeString(m_writingSystems[i].Abbreviation, cache.DefaultUserWs);
 				if (String.IsNullOrEmpty(m_WsLabels[i].Text))
-					m_WsLabels[i] = cache.TsStrFactory.MakeString(m_writingSystems[i].Abbreviation, cache.DefaultUserWs);
+					m_WsLabels[i] = TsStringUtils.MakeString(m_writingSystems[i].Abbreviation, cache.DefaultUserWs);
 			}
 		}
 

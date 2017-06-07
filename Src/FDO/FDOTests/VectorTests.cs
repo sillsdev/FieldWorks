@@ -1,9 +1,6 @@
-// Copyright (c) 2002-2013 SIL International
+// Copyright (c) 2002-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: VectorTests.cs
-// Responsibility: RandyR
 //
 // <remarks>
 // Implements VectorTests.
@@ -12,9 +9,10 @@
 using System;
 using System.Linq;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.FDO.FDOTests;
 using Rhino.Mocks;
+using SIL.CoreImpl.Scripture;
+using SIL.CoreImpl.Text;
 using SIL.FieldWorks.FDO.Infrastructure;
 
 namespace SIL.FieldWorks.FDO.CoreTests.VectorTests
@@ -378,7 +376,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.VectorTests
 		{
 			var result = MakeEntryWithForm(form);
 			var sense = MakeSense(result);
-			sense.Gloss.AnalysisDefaultWritingSystem = Cache.TsStrFactory.MakeString(gloss, Cache.DefaultAnalWs);
+			sense.Gloss.AnalysisDefaultWritingSystem = TsStringUtils.MakeString(gloss, Cache.DefaultAnalWs);
 			return result;
 		}
 
@@ -386,7 +384,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.VectorTests
 		{
 			var entry = MakeEntry();
 			var lexform = MakeLexemeForm(entry);
-			lexform.Form.VernacularDefaultWritingSystem = Cache.TsStrFactory.MakeString(form, Cache.DefaultVernWs);
+			lexform.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString(form, Cache.DefaultVernWs);
 			return entry;
 		}
 		private ILexEntry MakeEntry()
@@ -657,7 +655,6 @@ namespace SIL.FieldWorks.FDO.CoreTests.VectorTests
 		{
 			// Setup a chart on a text
 			var servLoc = Cache.ServiceLocator;
-			var tssFact = Cache.TsStrFactory;
 			var ws = Cache.DefaultVernWs;
 			var chart = SetupChart();
 			var dummyPoss = chart.TemplateRA;
@@ -665,8 +662,8 @@ namespace SIL.FieldWorks.FDO.CoreTests.VectorTests
 			var chartTagFact = servLoc.GetInstance<IConstChartTagFactory>();
 
 			// Setup the Cell sequence in a row using chart tag objects.
-			var row0 = rowFact.Create(chart, 0, tssFact.MakeString("1a", ws));
-			var row1 = rowFact.Create(chart, 1, tssFact.MakeString("1b", ws));
+			var row0 = rowFact.Create(chart, 0, TsStringUtils.MakeString("1a", ws));
+			var row1 = rowFact.Create(chart, 1, TsStringUtils.MakeString("1b", ws));
 			var tag1 = chartTagFact.Create(row0, 0, dummyPoss, dummyPoss);
 			var tag2 = chartTagFact.Create(row0, 1, dummyPoss, dummyPoss);
 			var tag3 = chartTagFact.Create(row1, 0, dummyPoss, dummyPoss);
@@ -684,8 +681,6 @@ namespace SIL.FieldWorks.FDO.CoreTests.VectorTests
 		private IDsConstChart SetupChart()
 		{
 			var servLoc = Cache.ServiceLocator;
-			var tssFact = Cache.TsStrFactory;
-			var ws = Cache.DefaultVernWs;
 			var text = servLoc.GetInstance<ITextFactory>().Create();
 			//Cache.LangProject.TextsOC.Add(text);
 			var stText = servLoc.GetInstance<IStTextFactory>().Create();

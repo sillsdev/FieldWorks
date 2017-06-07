@@ -25,8 +25,10 @@ Description:
 // any other headers (not precompiled)
 
 using namespace std;
-
+#pragma warning(push)
+#pragma warning(disable: 4458) // declaration of 'type' hides class member
 #include "IcuCommon.h"
+#pragma warning(pop)
 
 #undef THIS_FILE
 DEFINE_THIS_FILE
@@ -1257,9 +1259,9 @@ STDMETHODIMP VwTextStore::GetTextExt(TsViewCookie vcView, LONG acpStart, LONG ac
 	{
 		Rect rcSecondary;
 		ComBool fSplit;
-		ComBool fEndBeforeAnchor;
+		ComBool fEBAIgnored;
 		CheckHr(qsel->Location(hg.m_qvg, hg.m_rcSrcRoot, hg.m_rcDstRoot, &rcSel,
-			&rcSecondary, &fSplit, &fEndBeforeAnchor));
+			&rcSecondary, &fSplit, &fEBAIgnored));
 	}
 #if WIN32
 	rcSel.ClientToScreen(hwnd);

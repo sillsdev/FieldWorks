@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -9,7 +9,6 @@ using System.Web;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
 using SIL.Utils;
 
@@ -25,6 +24,8 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 	[TestFixture]
 	public class DataMigration7000040Tests : DataMigrationTestsBase
 	{
+		private const string FwUrlPrefix = "silfw://localhost/link?";
+
 		///--------------------------------------------------------------------------------------
 		/// <summary>
 		///  Test the migration from version 7000039 to 7000040.
@@ -43,7 +44,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 			mockMDC.AddClass(3, "LexEntry", "CmObject", new List<string>());
 
 			IDomainObjectDTORepository dtoRepos = new DomainObjectDtoRepository(7000039, dtos, mockMDC,
-				FileUtils.ChangePathToPlatform("C:\\WW\\DistFiles\\Projects\\TokPisin"), FwDirectoryFinder.FdoDirectories);
+				FileUtils.ChangePathToPlatform("C:\\WW\\DistFiles\\Projects\\TokPisin"), TestDirectoryFinder.FdoDirectories);
 			// Do Migration
 			m_dataMigrationManager.PerformMigration(dtoRepos, 7000040, new DummyProgressDlg());
 
@@ -142,9 +143,9 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 					Assert.AreEqual("silfw", linkType);
 					break;
 			}
-			Assert.IsTrue(externalLink.StartsWith(FwLinkArgs.kFwUrlPrefix),
-				"silfw link should start with " + FwLinkArgs.kFwUrlPrefix);
-			string query = HttpUtility.UrlDecode(externalLink.Substring(FwLinkArgs.kFwUrlPrefix.Length));
+			Assert.IsTrue(externalLink.StartsWith(FwUrlPrefix),
+				"silfw link should start with " + FwUrlPrefix);
+			string query = HttpUtility.UrlDecode(externalLink.Substring(FwUrlPrefix.Length));
 			string[] rgsProps = query.Split(new char[] { '&' }, StringSplitOptions.RemoveEmptyEntries);
 			string tool = null;
 			Guid guid = Guid.Empty;

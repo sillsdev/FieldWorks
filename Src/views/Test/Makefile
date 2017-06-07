@@ -16,10 +16,8 @@ LIB_UNIT = $(BUILD_ROOT)/Lib/src/unit++/build$(ARCH)
 
 VIEWS_LIB	= $(VIEWS_OBJ)/lib
 
-KERNELTEST_SRC = $(KERNEL_SRC)/Test
-
 DEFINES := -DGR_FW -DVIEWSDLL -DSUPPRESS_FW_EXCEPTION_HANDLING \
-	-D_VW_GRAPHICS_DEBUG -DVIEWSTEST -DWIN32_KEY_VALUES=1
+	-D_VW_GRAPHICS_DEBUG -DVIEWSTEST -DWIN32_KEY_VALUES=1 -DGRAPHITE2_STATIC
 
 ifeq ($(BUILD_CONFIG),Debug)
 	DEFINES  := $(DEFINES) -D_DEBUG
@@ -28,11 +26,13 @@ else
 	OPTIMIZATIONS = -O3
 endif
 
-PACKAGES = glib-2.0 gtk+-2.0 glibmm-2.4 gtkmm-2.4 gdkmm-2.4 cairomm-1.0 pangomm-1.4 freetype2 uuid
+PACKAGES = gdk-2.0 glib-2.0 gtk+-2.0 glibmm-2.4 gtkmm-2.4 gdkmm-2.4 cairomm-1.0 pangomm-1.4 freetype2 uuid
+
+GR2_INC = $(BUILD_ROOT)/Lib/src/graphite2/include
 
 INCLUDES := -I$(VIEWS_SRC) -I$(VIEWS_SRC)/lib -I$(VIEWS_SRC)/Test \
 		-I$(GENERIC_SRC) -I$(APPCORE_SRC) -I$(CELLAR_SRC) -I$(KERNEL_SRC) \
-		-I$(KERNELTEST_SRC)\
+		-I$(GR2_INC) -I$(DEBUGPROCS_SRC) \
 
 INCLUDES := \
 	$(shell icu-config --detect-prefix --cppflags) \
@@ -66,6 +66,7 @@ LINK_LIBS := \
 	$(LIB_UNIT)/libunit++.a \
 	$(OUT_DIR)/libGeneric.a \
 	$(OUT_DIR)/libAppCore.a \
+	$(BUILD_ROOT)/Lib/linux/$(BUILD_CONFIG)/libgraphite2.a \
 	$(COM_OUT_DIR)/libFwKernelTlb.a \
 	$(COM_OUT_DIR)/libViewsTlb.a \
 	$(OUT_DIR)/libDebugProcs.a
@@ -88,13 +89,26 @@ VIEWS_OBJS = \
 	$(VIEWS_OBJ)/VwTableBox.o \
 	$(VIEWS_OBJ)/VwTextBoxes.o \
 	$(VIEWS_OBJ)/VwTxtSrc.o \
+	$(VIEWS_LIB)/ActionHandler.o \
 	$(VIEWS_LIB)/DisplayCapsInfo.o \
 	$(VIEWS_LIB)/VwBaseDataAccess.o \
 	$(VIEWS_LIB)/VwBaseVirtualHandler.o \
 	$(VIEWS_LIB)/VwCacheDa.o \
 	$(VIEWS_LIB)/VwColor.o \
 	$(VIEWS_LIB)/VwUndo.o \
+	$(VIEWS_LIB)/RomRenderEngine.o \
+	$(VIEWS_LIB)/RomRenderSegment.o \
+	$(VIEWS_LIB)/GraphiteEngine.o \
+	$(VIEWS_LIB)/GraphiteSegment.o \
+	$(VIEWS_LIB)/LgLineBreaker.o \
+	$(VIEWS_LIB)/LgUnicodeCollater.o \
 	$(GENERIC_OBJ)/ModuleEntry.o \
+	$(VIEWS_LIB)/TsString.o \
+	$(VIEWS_LIB)/TsTextProps.o \
+	$(VIEWS_LIB)/TsStrFactory.o \
+	$(VIEWS_LIB)/TsPropsFactory.o \
+	$(VIEWS_LIB)/TextServ.o \
+	$(VIEWS_OBJ)/TextProps1.o \
 
 DEPS = $(PRECOMPS:%.gch=%.d)
 
@@ -127,9 +141,11 @@ $(INT_DIR)/Collection.cpp: \
 	DummyBaseVc.h \
 	DummyRootsite.h \
 	testViews.h \
-	$(KERNELTEST_SRC)/MockLgWritingSystemFactory.h \
-	$(KERNELTEST_SRC)/MockLgWritingSystem.h \
+	MockLgWritingSystemFactory.h \
+	MockLgWritingSystem.h \
+	TestLgCollatingEngine.h \
 	TestNotifier.h \
+	TestUndoStack.h \
 	TestLayoutPage.h \
 	TestVwTxtSrc.h \
 	TestVwParagraph.h \
@@ -141,7 +157,16 @@ $(INT_DIR)/Collection.cpp: \
 	TestVwSelection.h \
 	TestInsertDiffPara.h \
 	TestVwTextBoxes.h \
-	TestVwTableBox.h
+	TestVwTableBox.h \
+	TestLgLineBreaker.h \
+	TestRomRenderEngine.h \
+	TestGraphiteEngine.h \
+	RenderEngineTestBase.h \
+	MockRenderEngineFactory.h \
+	TestTsStrBldr.h \
+	TestTsString.h \
+	TestTsPropsBldr.h \
+	TestTsTextProps.h
 	@echo Collecting tests for testViews
 	$(COLLECT) $^ $@
 

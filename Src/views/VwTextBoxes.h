@@ -429,7 +429,6 @@ public:
 	virtual void Search(VwPattern * ppat, IVwSearchKiller * pxserkl = NULL);
 	void MakeSourceNfd();
 
-	void WriteWpxText(IStream * pstrm);
 	virtual OLECHAR * Name()
 	{
 		static OleStringLiteral name(L"Paragraph");
@@ -546,6 +545,13 @@ protected:
 	bool FindOverlayBoundary(VwStringBox * psbox, bool fOpening, bool fRightToLeft,
 		int * pxd, Rect rcSrc, Rect rcDst, IVwGraphics * pvg);
 	bool NoSignificantSizeChange(int dysHeight, int dxsWidth);
+
+	// qsort function for sorting an array of pointers to integers by the magnitude of the
+	// integers pointed to.
+	static int compareIntPtrs(const void * ppv1, const void * ppv2)
+	{
+		return **((int **)ppv1) - **((int **)ppv2);
+	}
 
 public:
 	int ComputeOuterWidth();

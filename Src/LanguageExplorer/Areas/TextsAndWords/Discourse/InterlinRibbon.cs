@@ -1,4 +1,4 @@
-// Copyright (c) 2008-2015 SIL International
+// Copyright (c) 2008-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -7,8 +7,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.Text;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
@@ -256,8 +257,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		{
 			CheckDisposed();
 
-			m_rootb = VwRootBoxClass.Create();
-			m_rootb.SetSite(this);
+			base.MakeRoot();
 
 			m_vc = new RibbonVc(this);
 
@@ -273,7 +273,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			m_rootb.DataAccess = Decorator;
 			m_rootb.SetRootObject(HvoRoot, m_vc, kfragRibbonWordforms, this.StyleSheet);
 
-			base.MakeRoot();
 			m_rootb.Activate(VwSelectionState.vssOutOfFocus); // Makes selection visible even before ever got focus.\
 			MakeInitialSelection();
 		}

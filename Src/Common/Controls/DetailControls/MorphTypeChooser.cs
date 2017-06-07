@@ -25,6 +25,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <param name="persistProvider">The persist provider.</param>
 		/// <param name="labels">The labels.</param>
 		/// <param name="fieldName">the user-readable name of the field that is being edited</param>
+		/// <param name="helpTopicProvider"></param>
 		public MorphTypeChooser(IPersistenceProvider persistProvider,
 			IEnumerable<ObjectLabel> labels, string fieldName, IHelpTopicProvider helpTopicProvider) :
 			base(persistProvider, labels, fieldName, helpTopicProvider)
@@ -50,6 +51,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <param name="displayNameProperty">The display name property.</param>
 		/// <param name="flid">The flid.</param>
 		/// <param name="sShowAllTypes">The show all types string.</param>
+		/// <param name="helpTopicProvider"></param>
 		public MorphTypeChooser(IPersistenceProvider persistProvider,
 			IEnumerable<ObjectLabel> labels, string fieldName, ICmObject obj, string displayNameProperty,
 			int flid, string sShowAllTypes, IHelpTopicProvider helpTopicProvider) :

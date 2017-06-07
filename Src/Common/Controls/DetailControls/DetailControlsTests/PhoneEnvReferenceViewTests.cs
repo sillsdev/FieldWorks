@@ -4,7 +4,7 @@
 
 using NUnit.Framework;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.Text;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
@@ -32,7 +32,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			var root = form.Hvo;
 			var hvos = new [] {-5000, -5001, -5002};
 			sda.CacheVecProp(root, PhoneEnvReferenceView.kMainObjEnvironments, hvos, hvos.Length);
-			sda.SetString(hvos[1], PhoneEnvReferenceView.kEnvStringRep, TsStrFactoryClass.Create().MakeString("abc", 6));
+			sda.SetString(hvos[1], PhoneEnvReferenceView.kEnvStringRep, TsStringUtils.MakeString("abc", 6));
 			IPublisher publisher;
 			ISubscriber subscriber;
 			PubSubSystemFactory.CreatePubSubSystem(out publisher, out subscriber);

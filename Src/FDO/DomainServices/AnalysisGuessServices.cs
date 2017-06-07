@@ -10,8 +10,9 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.CoreImpl;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
 using SIL.FieldWorks.FDO.Infrastructure;
 
 namespace SIL.FieldWorks.FDO.DomainServices
@@ -650,13 +651,12 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			if (occurrence.Analysis is IWfiWordform && occurrence.Index == 0)
 			{
 				ITsString tssWfBaseline = occurrence.BaselineText;
-				var tracker = new CpeTracker(Cache.WritingSystemFactory, tssWfBaseline);
-				ILgCharacterPropertyEngine cpe = tracker.CharPropEngine(0);
-				string sLower = cpe.ToLower(tssWfBaseline.Text);
+				CoreWritingSystemDefinition ws = Cache.ServiceLocator.WritingSystemManager.Get(tssWfBaseline.get_WritingSystemAt(0));
+				string sLower = Icu.ToLower(tssWfBaseline.Text, ws.IcuLocale);
 				// don't bother looking up the lowercased wordform if the instanceOf is already in lowercase form.
 				if (sLower != tssWfBaseline.Text)
 				{
-					ITsString tssLower = TsStringUtils.MakeTss(sLower, TsStringUtils.GetWsAtOffset(tssWfBaseline, 0));
+					ITsString tssLower = TsStringUtils.MakeString(sLower, TsStringUtils.GetWsAtOffset(tssWfBaseline, 0));
 					IWfiWordform lowercaseWf;
 					if (Cache.ServiceLocator.GetInstance<IWfiWordformRepository>().TryGetObject(tssLower, out lowercaseWf))
 					{

@@ -1,9 +1,6 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: CharacterMappingSettings.cs
-// Responsibility: TE Team
 
 using System;
 using System.Reflection;
@@ -12,8 +9,7 @@ using System.Windows.Forms;
 using System.Diagnostics;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Drawing;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.Utils;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
@@ -25,7 +21,7 @@ namespace SIL.FieldWorks.TE
 	/// CharacterMappingSettings is a dialog box with fields to edit an ECMapping for a
 	/// character style. It is used in the Import Wizard to edit additional mappings.
 	/// </summary>
-	public class CharacterMappingSettings : Form, IFWDisposable
+	public class CharacterMappingSettings : Form
 	{
 		#region Custom events
 		/// <summary>Handler for allowing caller to check if proposed mapping is a duplicate.</summary>

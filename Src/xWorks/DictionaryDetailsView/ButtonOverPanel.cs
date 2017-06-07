@@ -47,5 +47,15 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 			add { button.Click += value; }
 			remove { button.Click -= value; }
 		}
+
+		/// <summary>
+		/// On Mono, the height of ButtonOverPanel can be too small to show its two controls, causing LT-18097. Set the height to help Mono.
+		/// </summary>
+		protected override void OnSizeChanged(EventArgs e)
+		{
+			base.OnSizeChanged(e);
+			if (Height < panel.Location.Y + panel.Height)
+				Height = panel.Location.Y + panel.Height;
+		}
 	}
 }

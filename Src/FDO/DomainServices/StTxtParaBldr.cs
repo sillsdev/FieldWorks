@@ -10,8 +10,8 @@
 // </remarks>
 
 using System;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.CoreImpl;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.CoreImpl.Text;
 
 namespace SIL.FieldWorks.FDO.DomainServices
 {
@@ -32,8 +32,6 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		private ITsStrBldr m_ParaStrBldr;
 		/// <summary>TsTextProps for the paragraph.</summary>
 		private string m_ParaStyleName;
-		/// <summary>Unicode character properties engine</summary>
-		private ILgCharacterPropertyEngine m_cpe;
 		#endregion
 
 		#region Constructors
@@ -47,8 +45,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			System.Diagnostics.Debug.Assert(cache != null);
 			m_cache = cache;
 
-			ITsStrFactory tsStringFactory = cache.TsStrFactory;
-			m_ParaStrBldr = tsStringFactory.GetBldr();
+			m_ParaStrBldr = TsStringUtils.MakeStrBldr();
 
 			// Give the builder a default WS so a created string will be legal. If any text
 			// is added to the builder, it should replace this WS with the correct WS.
@@ -266,10 +263,8 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// ------------------------------------------------------------------------------------
 		public void TrimTrailingSpaceInPara()
 		{
-			if (m_cpe == null)
-				m_cpe = m_cache.ServiceLocator.UnicodeCharProps;
 			// check if the last char sent to the builder is a space
-			if (Length != 0 && m_cpe.get_IsSeparator(FinalCharInPara))
+			if (Length != 0 && Icu.IsSeparator(FinalCharInPara))
 				m_ParaStrBldr.Replace(Length - 1, Length, null, null);
 		}
 		#endregion

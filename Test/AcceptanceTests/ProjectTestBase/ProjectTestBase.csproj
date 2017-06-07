@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
 	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
 	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -10,7 +10,7 @@
 	<AppDesignerFolder>Properties</AppDesignerFolder>
 	<RootNamespace>SIL.FieldWorks.AcceptanceTests.TE</RootNamespace>
 	<AssemblyName>ProjectTestBase</AssemblyName>
-	<TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+	<TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
 	<FileAlignment>512</FileAlignment>
 	<SccProjectName>SAK</SccProjectName>
 	<SccLocalPath>SAK</SccLocalPath>
@@ -39,9 +39,9 @@
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\..\Output\Debug\BasicUtils.dll</HintPath>
 	</Reference>
-	<Reference Include="COMInterfaces, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+	<Reference Include="ViewsInterfaces, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\Output\Debug\COMInterfaces.dll</HintPath>
+	  <HintPath>..\..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
 	</Reference>
 	<Reference Include="FDO, Version=6.1.1.23144, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>

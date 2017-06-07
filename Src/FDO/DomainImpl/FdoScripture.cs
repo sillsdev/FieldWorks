@@ -1,13 +1,6 @@
-// Copyright (c) 2002-2013 SIL International
+// Copyright (c) 2002-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: FdoScripture.cs
-// Responsibility: TE Team
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Collections.Generic;
@@ -15,11 +8,11 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Text;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.ScriptureUtils;
+using SIL.CoreImpl.Scripture;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.DomainServices;
-using SILUBS.SharedScrUtils;
 
 namespace SIL.FieldWorks.FDO.DomainImpl
 {
@@ -304,7 +297,6 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 						return null;
 					case FootnoteMarkerTypes.SymbolicFootnoteMarker:
 						return CrossRefMarkerSymbol_Effective;
-					case FootnoteMarkerTypes.AutoFootnoteMarker:
 					default:
 						return ScriptureTags.kDefaultAutoFootnoteMarker;
 				}
@@ -401,8 +393,10 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// one (which is probably the only one), or creates new settings if none exist.
 		/// </summary>
 		/// <param name="importType">type of import type to find</param>
+		/// <param name="stylesheet">The stylesheet.</param>
+		/// <param name="teStylesPath">The TE styles path.</param>
 		/// ------------------------------------------------------------------------------------
-		public IScrImportSet FindOrCreateDefaultImportSettings(TypeOfImport importType)
+		public IScrImportSet FindOrCreateDefaultImportSettings(TypeOfImport importType, IVwStylesheet stylesheet, string teStylesPath)
 		{
 			IScrImportSet settings = DefaultImportSettings_internal;
 
@@ -430,7 +424,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			IScrImportSet newSettings =
 				m_cache.ServiceLocator.GetInstance<IScrImportSetFactory>().Create();
 			ImportSettingsOC.Add(newSettings);
-			newSettings.ImportType = (int)importType;
+			newSettings.ImportType = (int) importType;
+			newSettings.Initialize(stylesheet, teStylesPath);
 			return newSettings;
 		}
 
@@ -1076,17 +1071,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					tssTitle = bldr.GetString();
 				}
 			}
-			else
-			{
-				// throw.
-			}
-			if (tssTitle == null)
-			{
-				// return an empty string.
-				ITsStrFactory isf = TsStrFactoryClass.Create();
-				tssTitle = isf.MakeString("", ws);
-			}
-			return tssTitle;
+			return tssTitle ?? TsStringUtils.EmptyString(ws);
 		}
 
 		/// ------------------------------------------------------------------------------------

@@ -1,15 +1,14 @@
-// Copyright (c) 2006-2015 SIL International
+// Copyright (c) 2006-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Xml;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.ScriptureUtils;
+using SIL.CoreImpl.Scripture;
+using SIL.CoreImpl.Text;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.FDO.DomainServices
 {
@@ -22,21 +21,15 @@ namespace SIL.FieldWorks.FDO.DomainServices
 	public class ScrMappingList : IEnumerable
 	{
 		#region data members
-		private MappingSet m_mappingSet;
-		private SortedList<string, ImportMappingInfo> m_list = new SortedList<string, ImportMappingInfo>();
-		private bool m_fMappingDeleted = false;
+		private readonly MappingSet m_mappingSet;
+		private readonly SortedList<string, ImportMappingInfo> m_list = new SortedList<string, ImportMappingInfo>();
+		private bool m_fMappingDeleted;
 
-		private IVwStylesheet m_stylesheet;
-
-		private static Dictionary<string, string> s_defaultMappings = new Dictionary<string, string>();
-		private static Dictionary<string, string> s_defaultProperties = new Dictionary<string, string>();
-		private static Dictionary<string, string> s_defaultExclusions = new Dictionary<string, string>();
+		private bool m_defaultMappingsLoaded;
+		private readonly Dictionary<string, string> m_defaultMappings = new Dictionary<string, string>();
+		private readonly Dictionary<string, string> m_defaultProperties = new Dictionary<string, string>();
+		private readonly Dictionary<string, string> m_defaultExclusions = new Dictionary<string, string>();
 		#endregion
-
-		/// <summary>
-		/// Gets or sets the TE styles path.
-		/// </summary>
-		public static string TeStylesPath { get; set; }
 
 		#region public static readonly members
 		/// <summary>Book marker</summary>
@@ -48,7 +41,6 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		#endregion
 
 		#region Constructor
-
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="ScrMappingList"/> class.
@@ -56,11 +48,13 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// <param name="mappingSet">Indicates which type of mapping group this list represents
 		/// </param>
 		/// <param name="stylesheet">The stylesheet</param>
+		/// <param name="teStylesPath">The TE styles path.</param>
 		/// ------------------------------------------------------------------------------------
-		public ScrMappingList(MappingSet mappingSet, IVwStylesheet stylesheet)
+		public ScrMappingList(MappingSet mappingSet, IVwStylesheet stylesheet, string teStylesPath)
 		{
 			m_mappingSet = mappingSet;
-			m_stylesheet = stylesheet;
+			StyleSheet = stylesheet;
+			TeStylesPath = teStylesPath;
 		}
 		#endregion
 
@@ -75,7 +69,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		{
 			if (mapping == null)
 				throw new ArgumentNullException();
-			if (mapping.BeginMarker == null || mapping.BeginMarker == string.Empty)
+			if (string.IsNullOrEmpty(mapping.BeginMarker))
 				throw new ArgumentException("Begin marker must be set before adding mapping to the list.");
 
 			if (mapping.BeginMarker == MarkerChapter)
@@ -160,11 +154,11 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			ImportDomain importDomain, bool fAutoMapBtMarkers, bool isInUse)
 		{
 			// Look for the marker - if it is found and it maps to a Style, then we are done
-			if (this[marker] != null && !String.IsNullOrEmpty(this[marker].StyleName))
+			if (this[marker] != null && !string.IsNullOrEmpty(this[marker].StyleName))
 				return this[marker];
 
 			// Read the TEStyles XML file to generate a table of mappings
-			if (s_defaultMappings.Count == 0)
+			if (!m_defaultMappingsLoaded && !string.IsNullOrEmpty(TeStylesPath))
 				ReadDefaultMappings();
 
 			string styleName;
@@ -179,7 +173,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				// domain. Probably need to have a separate import mapping set in TeStyles.xml that has
 				// default mappings for the Annotations domain.
 				styleName = null;
-				excluded = s_defaultExclusions.ContainsKey(marker); //Make sure to check exclusions (TE-5703)
+				excluded = m_defaultExclusions.ContainsKey(marker); //Make sure to check exclusions (TE-5703)
 				target = MappingTargetType.TEStyle;
 			}
 			else if (!GetDefaultMapping(marker, out styleName, out excluded, out target, ref markerDomain))
@@ -213,8 +207,8 @@ namespace SIL.FieldWorks.FDO.DomainServices
 							// We only want to map to the BackTrans domain when mapping to a paragraph
 							// style because character styles automatically assume the domain of their
 							// containing paragraphs.
-							if (m_stylesheet == null || styleName == null ||
-								m_stylesheet.GetType(styleName) == (int)StyleType.kstParagraph)
+							if (StyleSheet == null || styleName == null ||
+								StyleSheet.GetType(styleName) == (int)StyleType.kstParagraph)
 							{
 								markerDomain |= MarkerDomain.BackTrans;
 							}
@@ -327,8 +321,6 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// objects.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "We're returning an object")]
 		public IEnumerator GetEnumerator()
 		{
 			return m_list.Values.GetEnumerator();
@@ -353,10 +345,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// Gets a count of the number of ImportMappingInfo items in the list.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public int Count
-		{
-			get { return m_list.Count; }
-		}
+		public int Count => m_list.Count;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -404,16 +393,15 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets/sets stylesheet.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public IVwStylesheet StyleSheet
-		{
-			get { return m_stylesheet; }
-			set { m_stylesheet = value; }
-		}
+		public IVwStylesheet StyleSheet { get; }
+
+		/// <summary>
+		/// Gets or sets the TE styles path.
+		/// </summary>
+		public string TeStylesPath { get; }
 
 		#endregion
 
@@ -423,8 +411,6 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// Read the TEStyles.xml file to get the default marker mappings
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void ReadDefaultMappings()
 		{
 			XmlDocument doc = new XmlDocument();
@@ -437,13 +423,14 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				if (type == "style")
 				{
 					string styleName = mapNode.Attributes["styleName"].Value.Replace("_", " ");
-					s_defaultMappings.Add(marker, styleName);
+					m_defaultMappings.Add(marker, styleName);
 				}
 				else if (type == "property")
-					s_defaultProperties.Add(marker, mapNode.Attributes["propertyName"].Value);
+					m_defaultProperties.Add(marker, mapNode.Attributes["propertyName"].Value);
 				else if (type == "excluded")
-					s_defaultExclusions.Add(marker, string.Empty);
+					m_defaultExclusions.Add(marker, string.Empty);
 			}
+			m_defaultMappingsLoaded = true;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -466,20 +453,20 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			excluded = false;
 			target = MappingTargetType.TEStyle;
 
-			if (s_defaultMappings.ContainsKey(marker))
+			if (m_defaultMappings.ContainsKey(marker))
 			{
-				styleName = s_defaultMappings[marker];
-				markerDomain = ScriptureServices.GetDefaultDomainForStyle(m_stylesheet, styleName);
+				styleName = m_defaultMappings[marker];
+				markerDomain = ScriptureServices.GetDefaultDomainForStyle(StyleSheet, styleName);
 				return true;
 			}
-			if (s_defaultExclusions.ContainsKey(marker))
+			if (m_defaultExclusions.ContainsKey(marker))
 			{
 				excluded = true;
 				return true;
 			}
-			if (s_defaultProperties.ContainsKey(marker))
+			if (m_defaultProperties.ContainsKey(marker))
 			{
-				switch (s_defaultProperties[marker])
+				switch (m_defaultProperties[marker])
 				{
 					case "Figure":
 						target = MappingTargetType.Figure;

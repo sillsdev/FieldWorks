@@ -1,6 +1,7 @@
-// Copyright (c) 2003-2015 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -9,8 +10,11 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Drawing;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
@@ -29,7 +33,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	/// Find/Replace dialog
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public class FwFindReplaceDlg : Form, IFWDisposable, IMessageFilter
+	public class FwFindReplaceDlg : Form, IMessageFilter
 	{
 		#region Constants
 		private const string kPersistenceLabel = "FindReplace_";
@@ -284,10 +288,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			ILgWritingSystemFactory wsf = m_cache.WritingSystemFactory;
 			fweditFindText.WritingSystemFactory = fweditReplaceText.WritingSystemFactory = wsf;
-			ITsStrFactory strFact = m_cache.TsStrFactory;
 			CoreWritingSystemDefinition defVernWs = m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
-			FindText = strFact.MakeString(string.Empty, defVernWs.Handle);
-			ReplaceText = strFact.MakeString(string.Empty, defVernWs.Handle);
+			FindText = TsStringUtils.EmptyString(defVernWs.Handle);
+			ReplaceText = TsStringUtils.EmptyString(defVernWs.Handle);
 			// Make sure each of the edit boxes has a reasonable writing system assigned.
 			// (See LT-5130 for what can happen otherwise.)
 			fweditFindText.WritingSystemCode = wsEdit;
@@ -324,7 +327,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				// Set the TSS of the edit box to an empty string if it isn't set.
 				if (FindText == null)
 				{
-					FindText = m_cache.TsStrFactory.MakeString(
+					FindText = TsStringUtils.MakeString(
 						string.Empty,
 						m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle);
 				}
@@ -388,7 +391,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					// The best we can do is take the properties of the first run which should
 					// be fine for most cases.
 					ITsTextProps props = FindText.get_Properties(0);
-					ITsStrBldr replaceBldr = TsStrBldrClass.Create();
+					ITsStrBldr replaceBldr = TsStringUtils.MakeStrBldr();
 					replaceBldr.Replace(0, 0, "", props);
 					ReplaceText = replaceBldr.GetString();
 				}
@@ -543,6 +546,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					Application.RemoveMessageFilter(this);
 					m_messageFilterInstalled = false;
 				}
+				m_findEnvironment?.Dispose();
 			}
 			m_helpTopicProvider = null;
 			m_searchKiller = null;
@@ -552,6 +556,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_cache = null;
 			regexContextMenuReplace = null;
 			regexContextMenuFind = null;
+			m_findEnvironment = null;
 			base.Dispose(disposing);
 		}
 		#endregion // Construction, initialization, destruction
@@ -1970,6 +1975,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			IVwViewConstructor vc;
 			IVwStylesheet styleSheet;
 			rootSite.RootBox.GetRootObject(out hvoRoot, out vc, out frag, out styleSheet);
+			m_findEnvironment?.Dispose();
 			m_findEnvironment = fSearchForward
 				? new FindCollectorEnv(vc, DataAccess, hvoRoot, frag, m_vwFindPattern, m_searchKiller)
 				: new ReverseFindCollectorEnv(vc, DataAccess, hvoRoot, frag, m_vwFindPattern, m_searchKiller);
@@ -2229,10 +2235,144 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			// Get ORCs from selection so that they can be appended after the text has been replaced.
 			ITsStrBldr stringBldr = tssSel.GetBldr();
-			ReplaceAllCollectorEnv.ReplaceString(stringBldr, tssSel, 0, tssSel.Length, tssReplace, 0, fEmptySearch, fUseWS);
+			ReplaceString(stringBldr, tssSel, 0, tssSel.Length, tssReplace, 0, fEmptySearch, fUseWS);
 
 			// finally - do the replacement
 			sel.ReplaceWithTsString(stringBldr.GetString().get_NormalizedForm(FwNormalizationMode.knmNFD));
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Replaces the string.
+		/// </summary>
+		/// <param name="tsbBuilder">The string builder for the text to be replaced.</param>
+		/// <param name="tssInput">The input string to be replaced.</param>
+		/// <param name="ichMinInput">The start in the input string.</param>
+		/// <param name="ichLimInput">The lim in the input string.</param>
+		/// <param name="tssReplace">The replacement text. This should come from VwPattern.ReplacementText,
+		/// NOT VwPattern.ReplaceWith. The former includes any ORCs that need to be saved from the input, as well as
+		/// properly handling $1, $2 etc. in regular expressions.</param>
+		/// <param name="delta">length difference between tssInput and tsbBuilder from previous
+		/// replacements.</param>
+		/// <param name="fEmptySearch"><c>true</c> if search text is empty (irun.e. we're searching
+		/// for a style or Writing System)</param>
+		/// <param name="fUseWs">if set to <c>true</c> use the writing system used in the
+		/// replace string of the Find/Replace dialog.</param>
+		/// <returns>Change in length of the string.</returns>
+		/// ------------------------------------------------------------------------------------
+		private static int ReplaceString(ITsStrBldr tsbBuilder, ITsString tssInput,
+			int ichMinInput, int ichLimInput, ITsString tssReplace, int delta, bool fEmptySearch,
+			bool fUseWs)
+		{
+			int initialLength = tsbBuilder.Length;
+			int replaceRunCount = tssReplace.RunCount;
+
+			// Determine whether to replace the sStyleName. We do this if any of the runs of
+			// the replacement string have the sStyleName set (to something other than
+			// Default Paragraph Characters).
+			bool fUseStyle = false;
+			bool fUseTags = false;
+
+			// ENHANCE (EberhardB): If we're not doing a RegEx search we could store these flags
+			// since they don't change.
+			TsRunInfo runInfo;
+			for (int irunReplace = 0; irunReplace < replaceRunCount; irunReplace++)
+			{
+				ITsTextProps textProps = tssReplace.FetchRunInfo(irunReplace, out runInfo);
+				string sStyleName =
+					textProps.GetStrPropValue((int)FwTextPropType.ktptNamedStyle);
+				if (sStyleName != null && sStyleName.Length > 0)
+					fUseStyle = true;
+
+				//string tags = textProps.GetStrPropValue((int)FwTextPropType.ktptTags);
+				//if (tags.Length > 0)
+				//    fUseTags = true;
+			}
+
+			int iRunInput = tssInput.get_RunAt(ichMinInput);
+			ITsTextProps selProps = tssInput.get_Properties(iRunInput);
+			ITsPropsBldr propsBldr = selProps.GetBldr();
+
+			// Remove all tags that are anywhere in the Find-what string. But also include any
+			// other tags that are present in the first run of the found string. So the resulting
+			// replacement string will have any tags in the first char of the selection plus
+			// any specified replacement tags.
+			//			Vector<StrUni> vstuTagsToRemove;
+			//			GetTagsToRemove(m_qtssFindWhat, &fUseTags, vstuTagsToRemove);
+			//			Vector<StrUni> vstuTagsToInclude;
+			//			GetTagsToInclude(qtssSel, vstuTagsToRemove, vstuTagsToInclude);
+
+			// Make a string builder to accumulate the real replacement string.
+
+			// Copy the runs of the replacement string, adjusting the properties.
+			// Make a string builder to accumulate the real replacement string.
+			ITsStrBldr stringBldr = TsStringUtils.MakeStrBldr();
+
+			// Copy the runs of the replacement string, adjusting the properties.
+			for (int irun = 0; irun < replaceRunCount; irun++)
+			{
+				ITsTextProps ttpReplaceRun = tssReplace.FetchRunInfo(irun, out runInfo);
+				if (TsStringUtils.GetGuidFromRun(tssReplace, irun) != Guid.Empty)
+				{
+					// If the run was a footnote or picture ORC, then just use the run
+					// properties as they are.
+				}
+				else if (fUseWs || fUseStyle || fUseTags)
+				{
+					// Copy only writing system/old writing system, char sStyleName and/or
+					// tag info into the builder.
+					if (fUseWs)
+					{
+						int ttv, ws;
+						ws = ttpReplaceRun.GetIntPropValues((int)FwTextPropType.ktptWs, out ttv);
+						propsBldr.SetIntPropValues((int)FwTextPropType.ktptWs, ttv, ws);
+					}
+					if (fUseStyle)
+					{
+						string sStyleName = ttpReplaceRun.GetStrPropValue(
+							(int)FwTextPropType.ktptNamedStyle);
+
+						if (sStyleName == FwStyleSheet.kstrDefaultCharStyle)
+							propsBldr.SetStrPropValue((int)FwTextPropType.ktptNamedStyle,
+								null);
+						else
+							propsBldr.SetStrPropValue((int)FwTextPropType.ktptNamedStyle,
+								sStyleName);
+					}
+					//if (fUseTags)
+					//{
+					//    string sTagsRepl = ttpReplaceRun.GetStrPropValue(ktptTags);
+					//    string sTags = AddReplacementTags(vstuTagsToInclude, sTagsRepl);
+					//    propsBldr.SetStrPropValue(ktptTags, sTags);
+					//}
+					ttpReplaceRun = propsBldr.GetTextProps();
+				}
+				else
+				{
+					// Its not a footnote so copy all props exactly from (the first run of the) matched text.
+					ttpReplaceRun = selProps;
+				}
+
+				// Insert modified run into string builder.
+				if (fEmptySearch && tssReplace.Length == 0)
+				{
+					// We are just replacing an ws/ows/sStyleName/tags. The text remains unchanged.
+					// ENHANCE (SharonC): Rework this when we get patterns properly implemented.
+					string runText = tssInput.get_RunText(iRunInput);
+					if (runText.Length > ichLimInput - ichMinInput)
+						runText = runText.Substring(0, ichLimInput - ichMinInput);
+					stringBldr.Replace(0, 0, runText, ttpReplaceRun);
+				}
+				else
+				{
+					stringBldr.Replace(runInfo.ichMin, runInfo.ichMin,
+						tssReplace.get_RunText(irun), ttpReplaceRun);
+				}
+			}
+
+			tsbBuilder.ReplaceTsString(delta + ichMinInput, delta + ichLimInput, stringBldr.GetString());
+			int finalLength = tsbBuilder.Length;
+			return finalLength - initialLength;
 		}
 
 		#endregion
@@ -2798,7 +2938,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			if (m_patternWs != 0)
 			{
 				// create a monoWs pattern text for the new pattern.
-				m_pattern.Pattern = TsStringUtils.MakeTss(m_patternString, m_patternWs);
+				m_pattern.Pattern = TsStringUtils.MakeString(m_patternString, m_patternWs);
 			}
 		}
 
@@ -2849,7 +2989,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			if (m_replaceWithWs != 0)
 			{
 				// create a monoWs pattern text for the new pattern.
-				m_pattern.ReplaceWith = TsStringUtils.MakeTss(m_replaceWithString, m_replaceWithWs);
+				m_pattern.ReplaceWith = TsStringUtils.MakeString(m_replaceWithString, m_replaceWithWs);
 			}
 		}
 

@@ -1,16 +1,15 @@
-// Copyright (c) 2007-2013 SIL International
+// Copyright (c) 2007-2016 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: FwTextBoxCell.cs
-// Responsibility: TE Team
 
 using System;
 using System.ComponentModel;
-using System.Drawing;
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.COMInterfaces;
-using System.Diagnostics.CodeAnalysis;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+#if __MonoCS__
+using System.Drawing;
+using SIL.FieldWorks.Common.ViewsInterfaces;
+#endif
 
 namespace SIL.FieldWorks.Common.Widgets
 {
@@ -21,13 +20,11 @@ namespace SIL.FieldWorks.Common.Widgets
 	/// ----------------------------------------------------------------------------------------
 	public class FwTextBoxCell : DataGridViewTextBoxCell
 	{
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:FwTextBoxCell"/> class.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public FwTextBoxCell() : base()
+		/// <summary/>
+		protected override void Dispose(bool disposing)
 		{
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ******");
+			base.Dispose(disposing);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -282,8 +279,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// <summary>
 		/// Derive the LgCharRenderProps from the DataGridViewCellStyle and FwTextBoxColumn.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "font is a reference")]
 		private LgCharRenderProps GetRenderProps(DataGridViewCellStyle cellStyle, FwTextBoxColumn col)
 		{
 			var renderProps = new LgCharRenderProps();

@@ -1,23 +1,15 @@
-// Copyright (c) 2009-2013 SIL International
+// Copyright (c) 2009-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: TestBaseForTestsThatCreateTempFilesBasedOnResources.cs
-// Responsibility: TE Team
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Resources;
 using System.Text;
 using NUnit.Framework;
-using SIL.FieldWorks.Test.TestUtils;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
@@ -27,7 +19,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
-	public class TestBaseForTestsThatCreateTempFilesBasedOnResources : BaseTest
+	public class TestBaseForTestsThatCreateTempFilesBasedOnResources
 	{
 		private static List<string> s_foldersToDelete = new List<string>();
 
@@ -47,8 +39,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		///
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification="See TODO-Linux comment")]
 		protected string CreateTempTestFiles(Type resourcesType, string folderName)
 		{
 			var folderPath = Path.Combine(Path.GetTempPath(), folderName);

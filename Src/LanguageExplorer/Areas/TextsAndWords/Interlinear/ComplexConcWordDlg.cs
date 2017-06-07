@@ -9,7 +9,9 @@ using System.Windows.Forms;
 using Aga.Controls.Tree;
 using Aga.Controls.Tree.NodeControls;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
@@ -176,8 +178,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				return;
 			}
 			textBox.WritingSystemCode = ws.Handle;
-			ITsStrFactory tsf = TsStrFactoryClass.Create();
-			textBox.Tss = tsf.MakeString(textBox.Text.Trim(), ws.Handle);
+			textBox.Tss = TsStringUtils.MakeString(textBox.Text.Trim(), ws.Handle);
 		}
 
 		private void m_valueComboBox_CreatingEditor(object sender, EditEventArgs e)

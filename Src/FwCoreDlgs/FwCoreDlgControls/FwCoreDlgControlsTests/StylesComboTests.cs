@@ -13,13 +13,11 @@ using System.Collections;
 using System.Windows.Forms;
 using System.Diagnostics;
 using NUnit.Framework;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Resources;
+using SIL.CoreImpl.Text;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.Utils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FDO.DomainServices;
 
 namespace SIL.FieldWorks.FwCoreDlgControls

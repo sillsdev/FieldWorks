@@ -9,16 +9,18 @@ using System.Windows.Forms;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using NUnit.Framework;
 using Rhino.Mocks;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.Test.TestUtils;
 using SIL.Utils;
 using SIL.WritingSystems;
 using SIL.CoreImpl;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace LanguageExplorerTests.Interlinear
 {
@@ -64,7 +66,7 @@ namespace LanguageExplorerTests.Interlinear
 			m_stText0 = stTextFactory.Create();
 			m_text0.ContentsOA = m_stText0;
 			m_para0_0 = m_stText0.AddNewTextPara(null);
-			m_para0_0.Contents = TsStringUtils.MakeTss("Xxxhope xxxthis xxxwill xxxdo. xxxI xxxhope.", wsXkal.Handle);
+			m_para0_0.Contents = TsStringUtils.MakeString("Xxxhope xxxthis xxxwill xxxdo. xxxI xxxhope.", wsXkal.Handle);
 
 			InterlinMaster.LoadParagraphAnnotationsAndGenerateEntryGuessesIfNeeded(m_stText0, false);
 			// paragraph 0_0 simply has wordforms as analyses
@@ -209,7 +211,7 @@ namespace LanguageExplorerTests.Interlinear
 
 			m_interlinDoc.OnAddWordGlossesToFreeTrans(null);
 
-			AssertEx.AreTsStringsEqual(TsStringUtils.MakeTss("hope this works.", Cache.DefaultAnalWs),
+			AssertEx.AreTsStringsEqual(TsStringUtils.MakeString("hope this works.", Cache.DefaultAnalWs),
 				seg.FreeTranslation.AnalysisDefaultWritingSystem);
 		}
 
@@ -435,6 +437,12 @@ namespace LanguageExplorerTests.Interlinear
 		{
 			CurrentAnalysisTree = new AnalysisTree();
 			NewAnalysisTree = new AnalysisTree();
+		}
+
+		protected override void Dispose(bool disposing)
+		{
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
+			base.Dispose(disposing);
 		}
 
 		#region IAnalysisControlInternal Members

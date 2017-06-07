@@ -1,30 +1,31 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 using System.Xml;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.FwUtils.MessageBoxEx;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.Utils;
 using SIL.Windows.Forms;
+using SIL.Xml;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
 	/// <summary>
 	/// Summary description for MasterCategoryListDlg.
 	/// </summary>
-	public class MasterCategoryListDlg : Form, IFWDisposable
+	public class MasterCategoryListDlg : Form
 	{
 		private ICmPossibilityList m_posList;
 		private bool m_launchedFromInsertMenu = false;
@@ -157,13 +158,13 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			Debug.Assert(posList != null);
 			m_cache = posList.Cache;
-			var posSet = new Set<IPartOfSpeech>();
+			var posSet = new HashSet<IPartOfSpeech>();
 			foreach (IPartOfSpeech pos in posList.ReallyReallyAllPossibilities)
 				posSet.Add(pos);
 			LoadMasterCategories(posSet);
 		}
 
-		private void LoadMasterCategories(Set<IPartOfSpeech> posSet)
+		private void LoadMasterCategories(HashSet<IPartOfSpeech> posSet)
 		{
 			XmlDocument doc = new XmlDocument();
 			doc.Load(Path.Combine(FwDirectoryFinder.TemplateDirectory, "GOLDEtic.xml"));
@@ -192,15 +193,13 @@ namespace SIL.FieldWorks.LexText.Controls
 			} while ((node = node.NextNode) != null);
 		}
 
-		private void AddNodes(Set<IPartOfSpeech> posSet, XmlNodeList nodeList, TreeNodeCollection treeNodes, FdoCache cache)
+		private void AddNodes(HashSet<IPartOfSpeech> posSet, XmlNodeList nodeList, TreeNodeCollection treeNodes, FdoCache cache)
 		{
 			foreach (XmlNode node in nodeList)
 				AddNode(posSet, node, treeNodes, cache);
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
-		private void AddNode(Set<IPartOfSpeech> posSet, XmlNode node, TreeNodeCollection treeNodes, FdoCache cache)
+		private void AddNode(HashSet<IPartOfSpeech> posSet, XmlNode node, TreeNodeCollection treeNodes, FdoCache cache)
 		{
 			if (node.Attributes["id"].InnerText == "PartOfSpeechValue")
 			{
@@ -237,8 +236,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification = "TODO-Linux: LinkLabel.TabStop is missing from Mono")]
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
@@ -552,9 +549,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			private IPartOfSpeech m_pos;
 			private XmlNode m_node; // need to remember the node so can put info for *all* writing systems into databas
 
-			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-				Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
-			public static MasterCategory Create(Set<IPartOfSpeech> posSet, XmlNode node, FdoCache cache)
+			public static MasterCategory Create(ISet<IPartOfSpeech> posSet, XmlNode node, FdoCache cache)
 			{
 				/*
 				<item type="category" id="Adjective" guid="30d07580-5052-4d91-bc24-469b8b2d7df9">
@@ -644,12 +639,11 @@ namespace SIL.FieldWorks.LexText.Controls
 					int termWs = wsf.GetWsFromStr(m_termWs);
 					int abbrevWs = wsf.GetWsFromStr(m_abbrevWs);
 					int defWs = wsf.GetWsFromStr(m_defWs);
-					ITsStrFactory tsf = cache.TsStrFactory;
 					if (m_node == null)
 					{ // should not happen, but just in case... we still get something useful
-						m_pos.Name.set_String(termWs, tsf.MakeString(m_term, termWs));
-						m_pos.Abbreviation.set_String(abbrevWs, tsf.MakeString(m_abbrev, abbrevWs));
-						m_pos.Description.set_String(defWs, tsf.MakeString(m_def, defWs));
+						m_pos.Name.set_String(termWs, TsStringUtils.MakeString(m_term, termWs));
+						m_pos.Abbreviation.set_String(abbrevWs, TsStringUtils.MakeString(m_abbrev, abbrevWs));
+						m_pos.Description.set_String(defWs, TsStringUtils.MakeString(m_def, defWs));
 					}
 					else
 					{
@@ -665,7 +659,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			private void SetContentFromNode(FdoCache cache, string sNodeName, bool fFixName, ITsMultiString item)
 			{
 				ILgWritingSystemFactory wsf = cache.WritingSystemFactory;
-				ITsStrFactory tsf = cache.TsStrFactory;
 				int iWS;
 				XmlNode nd;
 				bool fContentFound = false; // be pessimistic
@@ -682,12 +675,12 @@ namespace SIL.FieldWorks.LexText.Controls
 					else
 						sNodeContent = nd.InnerText;
 					iWS = wsf.GetWsFromStr(sWS);
-					item.set_String(iWS, (tsf.MakeString(sNodeContent, iWS)));
+					item.set_String(iWS, TsStringUtils.MakeString(sNodeContent, iWS));
 				}
 				if (!fContentFound)
 				{
 					iWS = cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle;
-					item.set_String(iWS, tsf.MakeString("", iWS));
+					item.set_String(iWS, TsStringUtils.EmptyString(iWS));
 				}
 			}
 
@@ -707,7 +700,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				if (posList.Owner is IReversalIndex)
 					guid = new Guid();
 				else
-					guid = new Guid(XmlUtils.GetAttributeValue(m_node, "guid"));
+					guid = new Guid(XmlUtils.GetOptionalAttributeValue(m_node, "guid"));
 				var posFactory = cache.ServiceLocator.GetInstance<IPartOfSpeechFactory>();
 				if (subItemOwner != null)
 				{

@@ -5,17 +5,15 @@
 // File: AutoMergeTests.cs
 // Responsibility: TE Team
 
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
 using NUnit.Framework;
-
+using SIL.CoreImpl.Scripture;
+using SIL.CoreImpl.Text;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.Common.ScriptureUtils;
-using SIL.CoreImpl;
-using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.TE
@@ -328,7 +326,7 @@ namespace SIL.FieldWorks.TE
 			AddVerse(para1Curr, 0, 31, "It was all good.");
 
 			// Build the "revision" sections
-			m_genesisRevision.TitleOA[0].Contents = Cache.TsStrFactory.MakeString(string.Empty,
+			m_genesisRevision.TitleOA[0].Contents = TsStringUtils.EmptyString(
 				Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle);
 			IScrSection section1Rev = CreateSection(m_genesisRevision, "My Second Section");
 			IScrTxtPara para1Rev = AddParaToMockedSectionContent(section1Rev, ScrStyleNames.NormalParagraph);
@@ -371,7 +369,7 @@ namespace SIL.FieldWorks.TE
 		public void NewSectionAtStartOfBook_NoTitleInCurrentVersion()
 		{
 			// Build the "current" section
-			m_genesis.TitleOA[0].Contents = Cache.TsStrFactory.MakeString(string.Empty,
+			m_genesis.TitleOA[0].Contents = TsStringUtils.EmptyString(
 				Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle);
 
 			IScrSection origSection1Curr = CreateSection(m_genesis, "My Second Section");
@@ -511,7 +509,7 @@ namespace SIL.FieldWorks.TE
 			paraCurr = AddParaToMockedSectionContent(origSection2Curr, ScrStyleNames.NormalParagraph);
 			AddVerse(paraCurr, 3, 14, "God told the snake:");
 			paraCurr = AddParaToMockedSectionContent(origSection2Curr, ScrStyleNames.Line1);
-			paraCurr.Contents = Cache.TsStrFactory.MakeString("Dude, you are toast!",
+			paraCurr.Contents = TsStringUtils.MakeString("Dude, you are toast!",
 				Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle);
 			paraCurr = AddParaToMockedSectionContent(origSection2Curr, ScrStyleNames.Line1);
 			AddVerse(paraCurr, 0, 15, "Jesus is gonna crush your head!");
@@ -753,7 +751,7 @@ namespace SIL.FieldWorks.TE
 		public void NewSectionAtEndOfBook_TitleChanged()
 		{
 			// Build the "current" section
-			m_genesis.TitleOA[0].Contents = Cache.TsStrFactory.MakeString("First Book of the Bible",
+			m_genesis.TitleOA[0].Contents = TsStringUtils.MakeString("First Book of the Bible",
 				Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle);
 
 			IScrSection section1Curr = CreateSection(m_genesis, "My First Section");
@@ -795,7 +793,7 @@ namespace SIL.FieldWorks.TE
 		[Test]
 		public void DoPartialOverwrite_NoTitleInRevision()
 		{
-			m_genesisRevision.TitleOA[0].Contents = Cache.TsStrFactory.MakeString(String.Empty,
+			m_genesisRevision.TitleOA[0].Contents = TsStringUtils.EmptyString(
 				Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle);
 			List<IScrSection> sectionsToRemove = new List<IScrSection>();
 
@@ -873,7 +871,7 @@ namespace SIL.FieldWorks.TE
 		[Test]
 		public void DoPartialOverwrite_TitleInRevision()
 		{
-			m_genesisRevision.TitleOA[0].Contents = Cache.TsStrFactory.MakeString("The Start of Everything",
+			m_genesisRevision.TitleOA[0].Contents = TsStringUtils.MakeString("The Start of Everything",
 				Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle);
 			List<IScrSection> sectionsToRemove = new List<IScrSection>();
 
@@ -954,7 +952,7 @@ namespace SIL.FieldWorks.TE
 		public void DoPartialOverwrite_RevIsSuperSetOfCur()
 		{
 			((IScrTxtPara)m_genesisRevision.TitleOA.ParagraphsOS[0]).Contents
-				= Cache.TsStrFactory.MakeString("The Start of Everything",
+				= TsStringUtils.MakeString("The Start of Everything",
 				Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle);
 			List<IScrSection> sectionsToRemove = new List<IScrSection>();
 
@@ -1054,7 +1052,7 @@ namespace SIL.FieldWorks.TE
 		public void DoPartialOverwrite_RevIsPartialChapterOfCur()
 		{
 			((IScrTxtPara)m_genesisRevision.TitleOA.ParagraphsOS[0]).Contents
-				= Cache.TsStrFactory.MakeString("The Start of Everything",
+				= TsStringUtils.MakeString("The Start of Everything",
 				Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle);
 			List<IScrSection> sectionsToRemove = new List<IScrSection>();
 

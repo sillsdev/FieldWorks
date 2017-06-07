@@ -6,8 +6,7 @@ using System.Diagnostics;
 using System.Drawing;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.Common.COMInterfaces;
-using System.Diagnostics.CodeAnalysis;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit
 {
@@ -22,8 +21,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit
 		/// <summary>
 		/// Initializes a new instance of the <see cref="AdhocCoProhibAtomicReferenceSlice"/> class.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "AdhocCoProhibAtomicLauncher gets added to panel's Controls collection and disposed there")]
 		public AdhocCoProhibAtomicReferenceSlice()
 			: base(new AdhocCoProhibAtomicLauncher())
 		{

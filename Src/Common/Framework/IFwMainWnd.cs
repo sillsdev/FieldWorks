@@ -1,14 +1,14 @@
-// Copyright (c) 2002-2015 SIL International
+// Copyright (c) 2002-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
 using System.Drawing;
 using System.Windows.Forms;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.Framework
 {
@@ -19,7 +19,7 @@ namespace SIL.FieldWorks.Common.Framework
 	/// </summary>
 	/// <remarks>In normal operations, an IFwMainWnd implementation expects to be cast to Form.</remarks>
 	/// ------------------------------------------------------------------------------------
-	public interface IFwMainWnd : IFWDisposable, IPropertyTableProvider, IPublisherProvider, ISubscriberProvider
+	public interface IFwMainWnd : IDisposable, IPropertyTableProvider, IPublisherProvider, ISubscriberProvider
 	{
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

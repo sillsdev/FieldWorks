@@ -4,13 +4,12 @@
 
 using System;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
-using System.Xml.XPath;
 using SIL.CoreImpl;
+using SIL.CoreImpl.Cellar;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.Framework.DetailControls;
@@ -23,7 +22,7 @@ using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.Resources;
-using SIL.Utils;
+using SIL.Xml;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -124,8 +123,6 @@ namespace SIL.FieldWorks.XWorks
 			return true;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "current is a reference")]
 		private bool CanInsertPictureOrMediaFile(object cmd, out int flid)
 		{
 #if RANDYTODO
@@ -714,8 +711,6 @@ namespace SIL.FieldWorks.XWorks
 			return true;	//we handled this.
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "current is a reference")]
 		protected virtual bool DeleteObject(Command command)
 		{
 			Slice current = m_dataEntryForm.CurrentSlice;
@@ -731,8 +726,6 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="commandObject"></param>
 		/// <param name="display"></param>
 		/// <returns></returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "current is a reference")]
 		public virtual bool OnDisplayDataTreeDelete(object commandObject,
 			ref UIItemDisplayProperties display)
 		{
@@ -776,8 +769,6 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		/// <param name="cmd"></param>
 		/// <returns></returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "current is a reference")]
 		public virtual bool OnDataTreeDeleteReference(object cmd)
 		{
 			Command command = (Command)cmd;
@@ -794,8 +785,6 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="commandObject"></param>
 		/// <param name="display"></param>
 		/// <returns></returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "current is a reference")]
 		public virtual bool OnDisplayDataTreeDeleteReference(object commandObject,
 			ref UIItemDisplayProperties display)
 		{
@@ -814,8 +803,6 @@ namespace SIL.FieldWorks.XWorks
 		}
 #endif
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "current is a reference")]
 		public bool OnDataTreeMerge(object cmd)
 		{
 			Slice current = m_dataEntryForm.CurrentSlice;
@@ -832,8 +819,6 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="commandObject"></param>
 		/// <param name="display"></param>
 		/// <returns></returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "current is a reference")]
 		public virtual bool OnDisplayDataTreeMerge(object commandObject, ref UIItemDisplayProperties display)
 		{
 			Slice current = m_dataEntryForm.CurrentSlice;
@@ -845,8 +830,6 @@ namespace SIL.FieldWorks.XWorks
 		}
 #endif
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "current is a reference")]
 		public bool OnDataTreeSplit(object cmd)
 		{
 			Slice current = m_dataEntryForm.CurrentSlice;
@@ -863,8 +846,6 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="commandObject"></param>
 		/// <param name="display"></param>
 		/// <returns></returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "current is a reference")]
 		public virtual bool OnDisplayDataTreeSplit(object commandObject,
 			ref UIItemDisplayProperties display)
 		{
@@ -880,8 +861,6 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		/// <param name="cmd"></param>
 		/// <returns></returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "current is a reference")]
 		public bool OnDataTreeEdit(object cmd)
 		{
 			Slice current = m_dataEntryForm.CurrentSlice;
@@ -898,8 +877,6 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		/// <param name="cmd"></param>
 		/// <returns></returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "current is a reference")]
 		public bool OnDataTreeAddReference(object cmd)
 		{
 			Slice current = m_dataEntryForm.CurrentSlice;
@@ -916,8 +893,6 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="commandObject"></param>
 		/// <param name="display"></param>
 		/// <returns></returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "current is a reference")]
 		public virtual bool OnDisplayDataTreeEdit(object commandObject, ref UIItemDisplayProperties display)
 		{
 			Slice current = m_dataEntryForm.CurrentSlice;
@@ -950,8 +925,6 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		/// <param name="cmd"></param>
 		/// <returns>true to indicate the message was handled</returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "slice and parent are references")]
 		public bool OnMoveUpObjectInSequence(object cmd)
 		{
 			Slice slice = m_dataEntryForm.CurrentSlice;
@@ -987,8 +960,6 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="commandObject"></param>
 		/// <param name="display"></param>
 		/// <returns></returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "slice and cache are references")]
 		public virtual bool OnDisplayMoveUpObjectInSequence(object commandObject,
 			ref UIItemDisplayProperties display)
 		{
@@ -1043,8 +1014,6 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		/// <param name="cmd"></param>
 		/// <returns>true to indicate the message was handled</returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "slice and parent are references")]
 		public virtual bool OnMoveDownObjectInSequence(object cmd)
 		{
 			Slice slice = m_dataEntryForm.CurrentSlice;
@@ -1084,8 +1053,6 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="commandObject"></param>
 		/// <param name="display"></param>
 		/// <returns></returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "slice and cache are references")]
 		public virtual bool OnDisplayMoveDownObjectInSequence(object commandObject,
 			ref UIItemDisplayProperties display)
 		{
@@ -1218,6 +1185,10 @@ namespace SIL.FieldWorks.XWorks
 							{
 								insertPos = ent.EntryRefsOS.Count;
 								ent.EntryRefsOS.Add(ler);
+								const string unspecVariantEntryTypeGuid = "3942addb-99fd-43e9-ab7d-99025ceb0d4e";
+								var type = ent.Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS
+									.First(lrt => lrt.Guid.ToString() == unspecVariantEntryTypeGuid) as ILexEntryType;
+								ler.VariantEntryTypesRS.Add(type);
 								ler.RefType = LexEntryRefTags.krtVariant;
 								ler.HideMinorEntry = 0;
 							}
@@ -1225,6 +1196,10 @@ namespace SIL.FieldWorks.XWorks
 							{
 								insertPos = 0;
 								ent.EntryRefsOS.Insert(insertPos, ler);
+								const string unspecComplexFormEntryTypeGuid = "fec038ed-6a8c-4fa5-bc96-a4f515a98c50";
+								var type = ent.Cache.LangProject.LexDbOA.ComplexEntryTypesOA.PossibilitiesOS
+									.First(lrt => lrt.Guid.ToString() == unspecComplexFormEntryTypeGuid) as ILexEntryType;
+								ler.ComplexEntryTypesRS.Add(type);
 								ler.RefType = LexEntryRefTags.krtComplexForm;
 								ler.HideMinorEntry = 0; // LT-10928
 								ent.ChangeRootToStem();
@@ -1235,8 +1210,6 @@ namespace SIL.FieldWorks.XWorks
 			return false;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "current is a reference")]
 		public bool OnDisplayAddComponentToPrimary(object commandObject, ref UIItemDisplayProperties display)
 		{
 			Slice current = m_dataEntryForm.CurrentSlice;
@@ -1271,8 +1244,6 @@ namespace SIL.FieldWorks.XWorks
 		}
 #endif
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "current is a reference")]
 		public bool OnAddComponentToPrimary(object argument)
 		{
 			Slice current = m_dataEntryForm.CurrentSlice;
@@ -1329,8 +1300,6 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="commandObject">The command to build the popup menu.</param>
 		/// <param name="display">The display properties for this slice.</param>
 		/// <returns>true if the VisibleComplexFormEntries part should be put on the popup menu.</returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "complexFormsSlice is a reference")]
 		public bool OnDisplayVisibleComplexForm(object commandObject, ref UIItemDisplayProperties display)
 		{
 			display.Visible = display.Enabled = false; // item shows on some wrong slice menus if not false
@@ -1364,8 +1333,6 @@ namespace SIL.FieldWorks.XWorks
 		}
 #endif
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "current is a reference")]
 		public bool OnVisibleComplexForm(object argument)
 		{
 			Slice current = m_dataEntryForm.CurrentSlice;
@@ -1449,8 +1416,6 @@ namespace SIL.FieldWorks.XWorks
 		/// Gets a selected component's HVO; a component of a complex form.
 		/// </summary>
 		/// <returns>The HVO of the selected component or 0 if there is none.</returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "current is a reference")]
 		private int GetSelectedComponentHvo()
 		{
 			Slice current = m_dataEntryForm.CurrentSlice;
@@ -1495,8 +1460,6 @@ namespace SIL.FieldWorks.XWorks
 		/// Invoked by a DataTree (which is in turn invoked by the slice)
 		/// when the context menu for a slice is needed.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "slice is a reference")]
 		public ContextMenu ShowSliceContextMenu(object sender, SliceMenuRequestArgs e)
 		{
 			Slice slice = e.Slice;

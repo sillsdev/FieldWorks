@@ -4,10 +4,10 @@
 
 using System;
 using System.Collections;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.Filters;
-using SIL.Utils;
 
 namespace LanguageExplorer.Areas.TextsAndWords
 {

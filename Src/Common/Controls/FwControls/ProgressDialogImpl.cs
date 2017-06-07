@@ -1,18 +1,11 @@
-// Copyright (c) 2007-2013 SIL International
+// Copyright (c) 2007-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ProgressDialog.cs
-// Responsibility: TE Team
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.Controls
@@ -33,7 +26,7 @@ namespace SIL.FieldWorks.Common.Controls
 	/// also deals with the multi-threading issues when we want to update the progress dialog
 	/// from the background thread.</remarks>
 	/// ----------------------------------------------------------------------------------------
-	internal partial class ProgressDialogImpl : Form, IProgress, IFWDisposable
+	internal partial class ProgressDialogImpl : Form, IProgress
 	{
 		#region Member variables
 		/// <summary>

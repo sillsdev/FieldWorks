@@ -1,15 +1,12 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
 using NUnit.Framework;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Test.TestUtils;
+using SIL.CoreImpl.WritingSystems;
 using SIL.Utils;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO.DomainServices;
 using SIL.WritingSystems;
 
 namespace SIL.FieldWorks.FDO.FDOTests
@@ -20,7 +17,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
-	public class ValidCharactersTests : BaseTest
+	public class ValidCharactersTests
 	{
 		private Exception m_lastException;
 		private WritingSystemManager m_wsManager;
@@ -28,9 +25,9 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// <summary>
 		/// Sets up the fixture.
 		/// </summary>
-		public override void FixtureSetup()
+		[TestFixtureSetUp]
+		public void FixtureSetup()
 		{
-			base.FixtureSetup();
 			m_wsManager = new WritingSystemManager();
 		}
 
@@ -412,8 +409,6 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			CoreWritingSystemDefinition ws = m_wsManager.Create("en-US");
 			ValidCharacters validChars = ValidCharacters.Load(ws);
-			var cpe = new DummyCharPropEngine();
-			ReflectionHelper.SetField(validChars, "m_cpe", cpe);
 			Assert.AreEqual(ValidCharacterType.WordForming,
 							ReflectionHelper.GetResult(validChars, "GetNaturalCharType", (int) 'a'));
 			Assert.AreEqual(ValidCharacterType.WordForming,

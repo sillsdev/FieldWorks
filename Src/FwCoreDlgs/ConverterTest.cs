@@ -1,10 +1,9 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Drawing.Text;
 using System.IO;
@@ -14,7 +13,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
 using ECInterfaces;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
@@ -22,6 +21,8 @@ using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
 using SilEncConverters40;
+using SIL.CoreImpl.Text;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
@@ -48,7 +49,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	/// class!
 	/// </summary>
 	/// -----------------------------------------------------------------------------------------
-	internal class ConverterTest : UserControl, IFWDisposable
+	internal class ConverterTest : UserControl
 	{
 		private FwOverrideComboBox outputFontCombo;
 		private OpenFileDialogAdapter ofDlg;
@@ -321,8 +322,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "fontFamilies contains references")]
 		private void ConverterTest_Load(object sender, System.EventArgs e)
 		{
 			// This is a fall-back if the creator does not have a converters object.
@@ -630,10 +629,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			if (m_sda == null)
 			{
-				m_sda = VwCacheDaClass.Create();
+				var cda = VwCacheDaClass.Create();
+				cda.TsStrFactory = TsStringUtils.TsStrFactory;
+				m_sda = cda;
 				if (WritingSystemFactory != null)
 					m_sda.WritingSystemFactory = WritingSystemFactory;
-				m_cd = (IVwCacheDa) m_sda;
+				m_cd = cda;
 			}
 			else
 			{
@@ -666,8 +667,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			CheckDisposed();
 
-			ITsStrFactory tsf = TsStrFactoryClass.Create();
-			AddPara(tsf.MakeString(para, WritingSystemFactory.UserWs));
+			AddPara(TsStringUtils.MakeString(para, WritingSystemFactory.UserWs));
 		}
 
 		/// <summary>
@@ -699,8 +699,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			if (!GotCacheOrWs || DesignMode)
 				return;
 
-			m_rootb = VwRootBoxClass.Create();
-			m_rootb.SetSite(this);
+			base.MakeRoot();
+
 			m_svc = new SampleVc();
 			m_svc.FontName = m_fontName;
 
@@ -708,7 +708,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_rootb.DataAccess = m_sda;
 			m_rootb.SetRootObject(m_hvoRoot, m_svc, (int)SampleFrags.kfrText, null);
 			m_dxdLayoutWidth = kForceLayout; // Don't try to draw until we get OnSize and do layout.
-			base.MakeRoot();
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -717,8 +716,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		/// <param name="e"></param>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="FindForm() returns a reference")]
 		protected override void OnKeyDown(KeyEventArgs e)
 		{
 			base.OnKeyDown(e);

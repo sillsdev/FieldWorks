@@ -1,20 +1,18 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using NUnit.Framework;
 using Paratext.LexicalContracts;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.Text;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.Test.TestUtils;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.ParatextLexiconPlugin
 {
@@ -22,14 +20,11 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 	/// FDO lexicon tests
 	/// </summary>
 	[TestFixture]
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification="Fields are diposed in test teardown")]
-	public class FdoLexiconTests : BaseTest
+	public class FdoLexiconTests
 	{
 		private ThreadHelper m_threadHelper;
 		private FdoLexicon m_lexicon;
 		private FdoCache m_cache;
-		private ActivationContextHelper m_activationContext;
 
 		/// <summary>
 		/// Set up the unit tests
@@ -38,21 +33,17 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		public void SetUp()
 		{
 			Icu.InitIcuDataDir();
-			m_activationContext = new ActivationContextHelper("FwParatextLexiconPlugin.dll.manifest");
-			using (m_activationContext.Activate())
-			{
-				m_threadHelper = new ThreadHelper();
-				var ui = new DummyFdoUI(m_threadHelper);
-				var projectId = new ParatextLexiconPluginProjectID(FDOBackendProviderType.kMemoryOnly, "Test.fwdata");
-				m_cache = FdoCache.CreateCacheWithNewBlankLangProj(projectId, "en", "fr", "en", ui, ParatextLexiconPluginDirectoryFinder.FdoDirectories, new FdoSettings());
-				NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
-					{
-						m_cache.ServiceLocator.WritingSystems.AddToCurrentAnalysisWritingSystems(m_cache.ServiceLocator.WritingSystemManager.Get("fr"));
-						m_cache.ServiceLocator.WritingSystems.AddToCurrentVernacularWritingSystems(m_cache.ServiceLocator.WritingSystemManager.Get("en"));
-						m_cache.LangProject.MorphologicalDataOA.ParserParameters = "<ParserParameters><XAmple><MaxNulls>1</MaxNulls><MaxPrefixes>5</MaxPrefixes><MaxInfixes>1</MaxInfixes><MaxSuffixes>5</MaxSuffixes><MaxInterfixes>0</MaxInterfixes><MaxAnalysesToReturn>10</MaxAnalysesToReturn></XAmple><ActiveParser>XAmple</ActiveParser></ParserParameters>";
-					});
-			}
-			m_lexicon = new FdoLexicon("Test", "FieldWorks:Test", m_cache, m_cache.DefaultVernWs, m_activationContext);
+			m_threadHelper = new ThreadHelper();
+			var ui = new DummyFdoUI(m_threadHelper);
+			var projectId = new ParatextLexiconPluginProjectID(FDOBackendProviderType.kMemoryOnly, "Test.fwdata");
+			m_cache = FdoCache.CreateCacheWithNewBlankLangProj(projectId, "en", "fr", "en", ui, ParatextLexiconPluginDirectoryFinder.FdoDirectories, new FdoSettings());
+			NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
+				{
+					m_cache.ServiceLocator.WritingSystems.AddToCurrentAnalysisWritingSystems(m_cache.ServiceLocator.WritingSystemManager.Get("fr"));
+					m_cache.ServiceLocator.WritingSystems.AddToCurrentVernacularWritingSystems(m_cache.ServiceLocator.WritingSystemManager.Get("en"));
+					m_cache.LangProject.MorphologicalDataOA.ParserParameters = "<ParserParameters><XAmple><MaxNulls>1</MaxNulls><MaxPrefixes>5</MaxPrefixes><MaxInfixes>1</MaxInfixes><MaxSuffixes>5</MaxSuffixes><MaxInterfixes>0</MaxInterfixes><MaxAnalysesToReturn>10</MaxAnalysesToReturn></XAmple><ActiveParser>XAmple</ActiveParser></ParserParameters>";
+				});
+			m_lexicon = new FdoLexicon("Test", "FieldWorks:Test", m_cache, m_cache.DefaultVernWs);
 		}
 
 		/// <summary>
@@ -63,7 +54,6 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		{
 			m_lexicon.Dispose();
 			m_cache.Dispose();
-			m_activationContext.Dispose();
 			m_threadHelper.Dispose();
 		}
 
@@ -553,7 +543,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
 			{
 				ILexEntry entry = m_cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(m_cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphStem),
-					m_cache.TsStrFactory.MakeString("form", m_cache.DefaultVernWs), "gloss", new SandboxGenericMSA());
+					TsStringUtils.MakeString("form", m_cache.DefaultVernWs), "gloss", new SandboxGenericMSA());
 				entry.LexemeFormOA.MorphTypeRA = null;
 			});
 
@@ -574,7 +564,23 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
 			{
 				m_cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(m_cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphStem),
-					m_cache.TsStrFactory.MakeString("form", m_cache.ServiceLocator.WritingSystems.VernacularWritingSystems.ElementAt(1).Handle), "gloss", new SandboxGenericMSA());
+					TsStringUtils.MakeString("form", m_cache.ServiceLocator.WritingSystems.VernacularWritingSystems.ElementAt(1).Handle), "gloss", new SandboxGenericMSA());
+			});
+			Assert.That(m_lexicon.Lexemes.Count(), Is.EqualTo(1));
+			Assert.That(m_lexicon.Lexemes.Single().LexicalForm, Is.EqualTo(string.Empty));
+		}
+
+		/// <summary>
+		/// Test when an entry has a null lexeme form.
+		/// </summary>
+		[Test]
+		public void NullLexemeForm()
+		{
+			NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
+			{
+				ILexEntry entry = m_cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(m_cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphStem),
+					TsStringUtils.MakeString("form", m_cache.ServiceLocator.WritingSystems.VernacularWritingSystems.ElementAt(1).Handle), "gloss", new SandboxGenericMSA());
+				entry.LexemeFormOA = null;
 			});
 			Assert.That(m_lexicon.Lexemes.Count(), Is.EqualTo(1));
 			Assert.That(m_lexicon.Lexemes.Single().LexicalForm, Is.EqualTo(string.Empty));
@@ -589,11 +595,11 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
 			{
 				ILexEntry entry1 = m_cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(m_cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphStem),
-					m_cache.TsStrFactory.MakeString("form1", m_cache.DefaultVernWs), "gloss1", new SandboxGenericMSA());
+					TsStringUtils.MakeString("form1", m_cache.DefaultVernWs), "gloss1", new SandboxGenericMSA());
 				ILexEntry entry2 = m_cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(m_cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphStem),
-					m_cache.TsStrFactory.MakeString("form2", m_cache.DefaultVernWs), "gloss2", new SandboxGenericMSA());
+					TsStringUtils.MakeString("form2", m_cache.DefaultVernWs), "gloss2", new SandboxGenericMSA());
 				ILexEntry entry3 = m_cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(m_cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphStem),
-					m_cache.TsStrFactory.MakeString("form3", m_cache.DefaultVernWs), "gloss3", new SandboxGenericMSA());
+					TsStringUtils.MakeString("form3", m_cache.DefaultVernWs), "gloss3", new SandboxGenericMSA());
 				m_cache.LangProject.LexDbOA.ReferencesOA = m_cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
 
 				ILexRefType entryLexRefType = m_cache.ServiceLocator.GetInstance<ILexRefTypeFactory>().Create();
@@ -625,11 +631,11 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
 			{
 				ILexEntry entry1 = m_cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(m_cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphStem),
-					m_cache.TsStrFactory.MakeString("form1", m_cache.DefaultVernWs), "gloss1", new SandboxGenericMSA());
+					TsStringUtils.MakeString("form1", m_cache.DefaultVernWs), "gloss1", new SandboxGenericMSA());
 				ILexEntry entry2 = m_cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(m_cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphStem),
-					m_cache.TsStrFactory.MakeString("form2", m_cache.DefaultVernWs), "gloss2", new SandboxGenericMSA());
+					TsStringUtils.MakeString("form2", m_cache.DefaultVernWs), "gloss2", new SandboxGenericMSA());
 				ILexEntry entry3 = m_cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(m_cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphStem),
-					m_cache.TsStrFactory.MakeString("form3", m_cache.DefaultVernWs), "gloss3", new SandboxGenericMSA());
+					TsStringUtils.MakeString("form3", m_cache.DefaultVernWs), "gloss3", new SandboxGenericMSA());
 				m_cache.LangProject.LexDbOA.ReferencesOA = m_cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
 
 				ILexRefType senseLexRefType = m_cache.ServiceLocator.GetInstance<ILexRefTypeFactory>().Create();

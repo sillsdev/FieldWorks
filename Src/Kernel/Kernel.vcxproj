@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -24,12 +24,12 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-	<ConfigurationType>Makefile</ConfigurationType>
-	<PlatformToolset>v120</PlatformToolset>
+    <ConfigurationType>Makefile</ConfigurationType>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-	<ConfigurationType>Makefile</ConfigurationType>
-	<PlatformToolset>v120</PlatformToolset>
+    <ConfigurationType>Makefile</ConfigurationType>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -71,75 +71,17 @@
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="ActionHandler.cpp" />
-    <ClCompile Include="DebugReport.cpp" />
     <ClCompile Include="dlldatax.c" />
-    <ClCompile Include="GraphiteEngine.cpp" />
-    <ClCompile Include="GraphiteSegment.cpp" />
-    <ClCompile Include="LgIcuCharPropEngine.cpp" />
-    <ClCompile Include="LgIcuWrappers.cpp" />
-    <ClCompile Include="LgKeymanHandler.cpp" />
-    <ClCompile Include="LgNumericEngine.cpp" />
-    <ClCompile Include="LgSimpleEngines.cpp" />
-    <ClCompile Include="LocaleIndex.cpp" />
-    <ClCompile Include="RegexMatcherWrapper.cpp" />
-    <ClCompile Include="RomRenderEngine.cpp" />
-    <ClCompile Include="RomRenderSegment.cpp" />
-    <ClCompile Include="TextServ.cpp" />
-    <ClCompile Include="TsMultiStr.cpp" />
-    <ClCompile Include="TsPropsFactory.cpp" />
-    <ClCompile Include="TsStrFactory.cpp" />
-    <ClCompile Include="TsString.cpp" />
-    <ClCompile Include="TsTextProps.cpp" />
-    <ClCompile Include="UniscribeEngine.cpp" />
-    <ClCompile Include="UniscribeLinux.cpp" />
-    <ClCompile Include="UniscribeSegment.cpp" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="FwKernel.def" />
     <None Include="FwKernel.idh" />
     <None Include="FwKernel.mak" />
     <None Include="Language.idh" />
     <None Include="Makefile" />
-    <None Include="Render.idh" />
     <None Include="TextServ.idh" />
   </ItemGroup>
   <ItemGroup>
     <Midl Include="FwKernelPs.idl" />
     <Midl Include="FwKernelTlb.idl" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="ActionHandler.h" />
-    <ClInclude Include="DebugReport.h" />
-    <ClInclude Include="GraphiteEngine.h" />
-    <ClInclude Include="GraphiteSegment.h" />
-    <ClInclude Include="IcuCleanupManager.h" />
-    <ClInclude Include="LangResource.h" />
-    <ClInclude Include="LgIcuCharPropEngine.h" />
-    <ClInclude Include="LgIcuCharPropertyInit.h" />
-    <ClInclude Include="LgIcuWrappers.h" />
-    <ClInclude Include="LgKeymanHandler.h" />
-    <ClInclude Include="LgNumericEngine.h" />
-    <ClInclude Include="LgSimpleEngines.h" />
-    <ClInclude Include="LgUnicodeCollateInit.h" />
-    <ClInclude Include="LgUnicodeCollater.h" />
-    <ClInclude Include="LocaleIndex.h" />
-    <ClInclude Include="Main.h" />
-    <ClInclude Include="RegexMatcherWrapper.h" />
-    <ClInclude Include="RomRenderEngine.h" />
-    <ClInclude Include="RomRenderSegment.h" />
-    <ClInclude Include="TextServ.h" />
-    <ClInclude Include="TsMultiStr.h" />
-    <ClInclude Include="TsPropsFactory.h" />
-    <ClInclude Include="TsStrFactory.h" />
-    <ClInclude Include="TsString.h" />
-    <ClInclude Include="TsTextProps.h" />
-    <ClInclude Include="UniscribeEngine.h" />
-    <ClInclude Include="UniscribeLinux.h" />
-    <ClInclude Include="UniscribeSegment.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="FwKernel.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

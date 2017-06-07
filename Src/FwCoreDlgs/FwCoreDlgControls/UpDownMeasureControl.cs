@@ -1,18 +1,9 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2016-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Collections;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Resources;
-using System.Reflection; // to get Assembly for opening resource manager.
 using System.Windows.Forms;
-using System.Diagnostics;
-
-using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.FwCoreDlgControls
@@ -20,7 +11,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 	/// <summary>
 	/// The UpDownMeasureControl is a spinner control that handles measurements (in, cm, pt, etc)
 	/// </summary>
-	public class UpDownMeasureControl : UpDownBase, IFWDisposable
+	public class UpDownMeasureControl : UpDownBase
 	{
 		#region Member Data
 		/// <summary>
@@ -59,6 +50,13 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		{
 			if (IsDisposed)
 				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
+		}
+
+		/// <summary/>
+		protected override void Dispose(bool disposing)
+		{
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ******");
+			base.Dispose(disposing);
 		}
 
 		#region Public Properties

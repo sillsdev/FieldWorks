@@ -3,23 +3,25 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.CoreImpl.Cellar;
+using SIL.CoreImpl.Text;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.Utils;
-using Rect = SIL.FieldWorks.Common.COMInterfaces.Rect;
+using Rect = SIL.FieldWorks.Common.ViewsInterfaces.Rect;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
@@ -329,7 +331,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <returns></returns>
 		static internal bool IsPhrase(string word)
 		{
-			return !String.IsNullOrEmpty(word) && word.IndexOfAny(SIL.Utils.Unicode.SpaceChars) != -1;
+			return !String.IsNullOrEmpty(word) && word.IndexOfAny(Unicode.SpaceChars) != -1;
 		}
 
 		/// <summary>
@@ -1183,7 +1185,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <returns>true if any guessing is involved.</returns>
 		private bool LoadRealDataIntoSec1(int hvoSbWord, bool fLookForDefaults, bool fAdjustCase)
 		{
-			ITsStrFactory tsf = TsStrFactoryClass.Create();
 			IVwCacheDa cda = (IVwCacheDa)m_caches.DataAccess;
 			if (CurrentAnalysisTree.Analysis == null)
 			{
@@ -1201,7 +1202,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			m_caches.Map(hvoSbWord, CurrentAnalysisTree.Wordform.Hvo); // Review: any reason to map these?
 			ISilDataAccess sdaMain = m_caches.MainCache.MainCacheAccessor;
 			CopyStringsToSecondary(InterlinLineChoices.kflidWord, sdaMain, CurrentAnalysisTree.Wordform.Hvo,
-				WfiWordformTags.kflidForm, cda, hvoSbWord, ktagSbWordForm, tsf);
+				WfiWordformTags.kflidForm, cda, hvoSbWord, ktagSbWordForm);
 			CaseFunctions cf = VernCaseFuncs(RawWordform);
 			m_case = cf.StringCase(RawWordform.Text);
 			// empty it in case we're redoing after choose from combo.
@@ -1228,7 +1229,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 							// Enhance: may NOT want to do this, when we get the baseline consistently
 							// keeping original case.
 							CopyStringsToSecondary(InterlinLineChoices.kflidWord, sdaMain, CurrentAnalysisTree.Wordform.Hvo,
-								WfiWordformTags.kflidForm, cda, hvoSbWord, ktagSbWordForm, tsf);
+								WfiWordformTags.kflidForm, cda, hvoSbWord, ktagSbWordForm);
 						}
 					}
 					// Hide the analysis combo if there's no default analysis (which means there are
@@ -1255,7 +1256,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// Set every alternative of the word gloss, whether or not we have one...this
 			// ensures clearing it out if we once had something but do no longer.
 			CopyStringsToSecondary(InterlinLineChoices.kflidWordGloss, sdaMain, m_hvoWordGloss,
-				WfiGlossTags.kflidForm, cda, hvoSbWord, ktagSbWordGloss, tsf);
+				WfiGlossTags.kflidForm, cda, hvoSbWord, ktagSbWordGloss);
 			cda.CacheIntProp(hvoSbWord, ktagSbWordGlossGuess, fGuessing);
 			cda.CacheObjProp(hvoSbWord, ktagSbWordPos, 0); // default.
 			if (analysis != null) // Might still be, if no default is available.
@@ -1264,7 +1265,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				if (category != null)
 				{
 					int hvoWordPos = CreateSecondaryAndCopyStrings(InterlinLineChoices.kflidWordPos, category.Hvo,
-																   CmPossibilityTags.kflidAbbreviation, hvoSbWord, sdaMain, cda, tsf);
+																   CmPossibilityTags.kflidAbbreviation, hvoSbWord, sdaMain, cda);
 					cda.CacheObjProp(hvoSbWord, ktagSbWordPos, hvoWordPos);
 					cda.CacheIntProp(hvoWordPos, ktagSbNamedObjGuess, fGuessing);
 				}
@@ -1293,7 +1294,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 							hvoMorphForm = m_caches.DataAccess.MakeNewObject(kclsidSbNamedObj, mb.Hvo,
 																			 ktagSbMorphForm, -2); // -2 for atomic
 							CopyStringsToSecondary(InterlinLineChoices.kflidMorphemes, sdaMain, mb.Hvo,
-												   WfiMorphBundleTags.kflidForm, cda, hvoMorphForm, ktagSbNamedObjName, tsf);
+												   WfiMorphBundleTags.kflidForm, cda, hvoMorphForm, ktagSbNamedObjName);
 							// We will slightly adjust the form we display in the default vernacular WS.
 							var specMorphemes = m_choices.GetPrimarySpec(InterlinLineChoices.kflidMorphemes);
 							int wsForm;
@@ -1324,14 +1325,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 									bldrError.AppendLine(e.Message);
 								}
 							}
-							tssForm = TsStringUtils.MakeTss(realForm, RawWordformWs);
+							tssForm = TsStringUtils.MakeString(realForm, RawWordformWs);
 							cda.CacheStringAlt(hvoMorphForm, ktagSbNamedObjName, wsVern, tssForm);
 						}
 						else
 						{
 							// Create the secondary object corresponding to the MoForm in the usual way from the form object.
 							hvoMorphForm = CreateSecondaryAndCopyStrings(InterlinLineChoices.kflidMorphemes, mf.Hvo,
-																		 MoFormTags.kflidForm, hvoSbWord, sdaMain, cda, tsf);
+																		 MoFormTags.kflidForm, hvoSbWord, sdaMain, cda);
 							// Store the prefix and postfix markers from the MoMorphType object.
 							int hvoMorphType = sdaMain.get_ObjectProp(mf.Hvo,
 																	  MoFormTags.kflidMorphType);
@@ -1345,10 +1346,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						}
 						if (!String.IsNullOrEmpty(sPrefix))
 							cda.CacheStringProp(hvoMbSec, ktagSbMorphPrefix,
-												tsf.MakeString(sPrefix, wsVern));
+												TsStringUtils.MakeString(sPrefix, wsVern));
 						if (!String.IsNullOrEmpty(sPostfix))
 							cda.CacheStringProp(hvoMbSec, ktagSbMorphPostfix,
-												tsf.MakeString(sPostfix, wsVern));
+												TsStringUtils.MakeString(sPostfix, wsVern));
 
 						// Link the SbMorph to its form object, noting if it is a guess.
 						cda.CacheObjProp(hvoMbSec, ktagSbMorphForm, hvoMorphForm);
@@ -1379,7 +1380,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 							{
 								// add normal LexGloss without variant info
 								hvoLexSenseSec = CreateSecondaryAndCopyStrings(InterlinLineChoices.kflidLexGloss, senseReal.Hvo,
-											 LexSenseTags.kflidGloss, hvoSbWord, sdaMain, cda, tsf);
+											 LexSenseTags.kflidGloss, hvoSbWord, sdaMain, cda);
 							}
 							cda.CacheObjProp(hvoMbSec, ktagSbMorphGloss, hvoLexSenseSec);
 							cda.CacheIntProp(hvoLexSenseSec, ktagSbNamedObjGuess, fGuessing);
@@ -1423,7 +1424,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 							// that can own MoForms. We don't actually create the LexEntry, to
 							// improve performance. All the relevant data should already have
 							// been loaded while creating the main interlinear view.
-							LoadSecDataForEntry(entryReal, senseReal, hvoSbWord, cda, wsVern, hvoMbSec, fGuessing, sdaMain, tsf);
+							LoadSecDataForEntry(entryReal, senseReal, hvoSbWord, cda, wsVern, hvoMbSec, fGuessing, sdaMain);
 						}
 					}
 					if (bldrError.Length > 0)
@@ -1448,7 +1449,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					if (fAdjustCase && CaseStatus == StringCaseStatus.title &&
 						tssForm != null && tssForm.Length > 0)
 					{
-						tssForm = TsStringUtils.MakeTss(cf.ToLower(tssForm.Text), this.RawWordformWs);
+						tssForm = TsStringUtils.MakeString(cf.ToLower(tssForm.Text), this.RawWordformWs);
 						m_tssWordform = tssForm; // need this to be set in case hvoWordformRef set to zero.
 						// If we adjust the case of the form, we must adjust the hvo as well,
 						// or any analyses created will go to the wrong WfiWordform.
@@ -1496,18 +1497,18 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		}
 
 		private int CreateSecondaryAndCopyStrings(int flidChoices, int hvoMain, int flidMain, int hvoSbWord,
-			ISilDataAccess sdaMain, IVwCacheDa cda, ITsStrFactory tsf)
+			ISilDataAccess sdaMain, IVwCacheDa cda)
 		{
 			int hvoSec = m_caches.FindOrCreateSec(hvoMain,
 				kclsidSbNamedObj, hvoSbWord, ktagSbWordDummy);
-			CopyStringsToSecondary(flidChoices, sdaMain, hvoMain, flidMain, cda, hvoSec, ktagSbNamedObjName, tsf);
+			CopyStringsToSecondary(flidChoices, sdaMain, hvoMain, flidMain, cda, hvoSec, ktagSbNamedObjName);
 			return hvoSec;
 		}
 
 		private int CreateSecondaryAndCopyStrings(int flidChoices, int hvoMain, int flidMain)
 		{
 			return CreateSecondaryAndCopyStrings(flidChoices, hvoMain, flidMain, kSbWord,
-				m_caches.MainCache.MainCacheAccessor, m_caches.DataAccess as IVwCacheDa, null);
+				m_caches.MainCache.MainCacheAccessor, m_caches.DataAccess as IVwCacheDa);
 		}
 
 		/// <summary>
@@ -1547,7 +1548,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		}
 
 		private void CopyStringsToSecondary(IList<int> writingSystems, ISilDataAccess sdaMain, int hvoMain,
-			int flidMain, IVwCacheDa cda, int hvoSec, int flidSec, ITsStrFactory tsf)
+			int flidMain, IVwCacheDa cda, int hvoSec, int flidSec)
 		{
 			CheckDisposed();
 			foreach (int ws in writingSystems)
@@ -1579,7 +1580,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 				if (hvoMain == 0)
 				{
-					tss = MakeTss("", wsActual, tsf);
+					tss = TsStringUtils.EmptyString(wsActual);
 				}
 				else
 				{
@@ -1596,10 +1597,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// cache.
 		/// </summary>
 		internal void CopyStringsToSecondary(int flidChoices, ISilDataAccess sdaMain, int hvoMain,
-			int flidMain, IVwCacheDa cda, int hvoSec, int flidSec, ITsStrFactory tsf)
+			int flidMain, IVwCacheDa cda, int hvoSec, int flidSec)
 		{
 			var writingSystems = m_caches.MainCache.ServiceLocator.WritingSystems.AllWritingSystems.Select(ws => ws.Handle).ToList();
-			CopyStringsToSecondary(writingSystems, sdaMain, hvoMain, flidMain, cda, hvoSec, flidSec, tsf);
+			CopyStringsToSecondary(writingSystems, sdaMain, hvoMain, flidMain, cda, hvoSec, flidSec);
 		}
 
 		private static void CacheStringAltForAllCurrentWs(IEnumerable<int> currentWsList, IVwCacheDa cda, int hvoSec, int flidSec,
@@ -1612,7 +1613,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					if (hvoMain != 0)
 						tssMain = sdaMain.get_MultiStringAlt(hvoMain, flidMain, ws1);
 					else
-						tssMain = TsStringUtils.MakeTss("", ws1);
+						tssMain = TsStringUtils.MakeString("", ws1);
 					return tssMain;
 				});
 		}
@@ -1626,7 +1627,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				if (createStringAlt != null)
 					tssMain = createStringAlt(ws1);
 				if (tssMain == null)
-					tssMain = TsStringUtils.MakeTss("", ws1);
+					tssMain = TsStringUtils.MakeString("", ws1);
 				cda.CacheStringAlt(hvoSec, flidSec, ws1, tssMain);
 			}
 		}
@@ -1756,7 +1757,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		}
 
 		private void LoadSecDataForEntry(ILexEntry entryReal, ILexSense senseReal, int hvoSbWord, IVwCacheDa cda, int wsVern,
-			int hvoMbSec, int fGuessing, ISilDataAccess sdaMain, ITsStrFactory tsf)
+			int hvoMbSec, int fGuessing, ISilDataAccess sdaMain)
 		{
 			int hvoEntry = m_caches.FindOrCreateSec(entryReal.Hvo, kclsidSbNamedObj,
 				hvoSbWord, ktagSbWordDummy);
@@ -1780,10 +1781,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				int hvoLf = sdaMain.get_ObjectProp(hvoEntryToDisplay, LexEntryTags.kflidLexemeForm);
 				if (hvoLf != 0)
 					CopyStringsToSecondary(writingSystems, sdaMain, hvoLf,
-						MoFormTags.kflidForm, cda, hvoEntry, ktagSbNamedObjName, tsf);
+						MoFormTags.kflidForm, cda, hvoEntry, ktagSbNamedObjName);
 				else
 					CopyStringsToSecondary(writingSystems, sdaMain, hvoEntryToDisplay,
-						LexEntryTags.kflidCitationForm, cda, hvoEntry, ktagSbNamedObjName, tsf);
+						LexEntryTags.kflidCitationForm, cda, hvoEntry, ktagSbNamedObjName);
 			}
 		}
 
@@ -1840,18 +1841,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				// Ignore any problems
 			}
 			return sel;
-		}
-
-		/// <summary>
-		/// Make a string in the specified ws, using the provided TSF if possible,
-		/// if passed null, make one.
-		/// </summary>
-		private ITsString MakeTss(string text, int ws, ITsStrFactory tsf)
-		{
-			ITsStrFactory tsfT = tsf;
-			if (tsfT == null)
-				tsfT = TsStrFactoryClass.Create();
-			return tsfT.MakeString(text, ws);
 		}
 
 		/// <summary>
@@ -2929,7 +2918,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			if (m_ComboHandler != null)
 			{
-				(m_ComboHandler as IDisposable).Dispose();
+				m_ComboHandler.Dispose();
 				m_ComboHandler = null;
 			}
 		}
@@ -3777,12 +3766,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			CheckDisposed();
 
-			ITsStrFactory tsf = TsStrFactoryClass.Create();
-			IVwCacheDa cda = m_caches.DataAccess as IVwCacheDa;
+			var cda = (IVwCacheDa) m_caches.DataAccess;
 			foreach (int wsId in m_choices.WritingSystemsForFlid(InterlinLineChoices.kflidWordGloss, true))
 			{
-				ITsString tss;
-				tss = tsf.MakeString("", wsId);
+				ITsString tss = TsStringUtils.EmptyString(wsId);
 				cda.CacheStringAlt(kSbWord, ktagSbWordGloss, wsId, tss);
 			}
 		}
@@ -3794,7 +3781,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <returns></returns>
 		public bool ShouldSave(bool fSaveGuess)
 		{
-			return m_caches.DataAccess.IsDirty() || fSaveGuess && this.UsingGuess;
+			return m_caches.DataAccess.IsDirty() || fSaveGuess && UsingGuess;
 		}
 
 		/// <summary>
@@ -3864,8 +3851,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			if (m_caches.MainCache == null || DesignMode)
 				return;
 
-			m_rootb = VwRootBoxClass.Create();
-			m_rootb.SetSite(this);
+			base.MakeRoot();
 
 			m_vc = new SandboxVc(m_caches, m_choices, IconsForAnalysisChoices, this);
 			m_vc.ShowMorphBundles = m_fShowMorphBundles;
@@ -3878,7 +3864,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			m_rootb.SetRootObject(kSbWord, m_vc, SandboxVc.kfragBundle, m_stylesheet);
 
 			m_dxdLayoutWidth = kForceLayout; // Don't try to draw until we get OnSize and do layout.
-			base.MakeRoot();
 			// For some reason, we don't always initialize our control size to be the same as our rootbox.
 			this.Margin = new Padding(3, 0, 3, 1);
 			SyncControlSizeToRootBoxSize();
@@ -4150,8 +4135,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// but select the indicated item.
 		/// </summary>
 		/// <param name="e"></param>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "tree is a reference")]
 		protected override void OnKeyPress(KeyPressEventArgs e)
 		{
 			if (!PassKeysToKeyboardHandler)
@@ -4352,8 +4335,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			return tagRightClickTextProp;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="CmObjectUi.HandleCtrlClick disposes itself when its done")]
 		protected override void OnMouseUp(MouseEventArgs e)
 		{
 			base.OnMouseUp(e);
@@ -4510,8 +4491,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			return m_caches.RealHvo(hvoTarget);
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "container is a reference")]
 		private FocusBoxController Controller
 		{
 			get
@@ -4527,8 +4506,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "cache is a reference")]
 		public virtual bool OnJumpToTool(object commandObject)
 		{
 #if RANDYTODO

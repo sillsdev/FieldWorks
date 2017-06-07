@@ -8,11 +8,12 @@ using System.Xml.Linq;
 using System.Xml.XPath;
 using System.Xml.Xsl;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.WritingSystems;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
-using SIL.Utils;
+using SIL.FieldWorks.WordWorks.Parser;
 
 namespace LanguageExplorer.Areas.TextsAndWords
 {
@@ -22,7 +23,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 		public ParserTraceUITransform(string xslName)
 		{
-			m_transform = XmlUtils.CreateTransform(xslName, "PresentationTransforms");
+			m_transform = M3ToXAmpleTransformer.CreateTransform(xslName, "PresentationTransforms");
 		}
 
 		public string Transform(IPropertyTable propertyTable, XDocument doc, string baseName)

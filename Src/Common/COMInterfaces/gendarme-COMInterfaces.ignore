@@ -1,7 +1,0 @@
-# Gendarme filter file to suppress reporting of defects
-
-#-----------------------------------------------------------------------------------------------
-R: Gendarme.Rules.BadPractice.OnlyUseDisposeForIDisposableTypesRule
-
-# interface exposes Dispose() for COM objects
-T: SIL.FieldWorks.Common.COMInterfaces.IComDisposable

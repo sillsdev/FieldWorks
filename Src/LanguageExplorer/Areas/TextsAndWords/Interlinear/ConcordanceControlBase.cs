@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -13,11 +13,11 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.XWorks;
-using SIL.Utils;
+using SIL.Xml;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
-	public class ConcordanceControlBase : UserControl, IMainContentControl, IFWDisposable
+	public class ConcordanceControlBase : UserControl, IMainContentControl
 	{
 		protected XmlNode m_configurationParameters;
 		protected FdoCache m_cache;
@@ -126,6 +126,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			if (IsDisposed)
 				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
+		}
+
+		protected override void Dispose(bool disposing)
+		{
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
+			base.Dispose(disposing);
 		}
 
 		// True after the first time we do it.

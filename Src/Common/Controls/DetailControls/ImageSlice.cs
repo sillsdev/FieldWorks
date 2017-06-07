@@ -1,22 +1,10 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ImageSlice.cs
-// Responsibility:
-// Last reviewed:
-//
-// <remarks>
-// Implements a simple Image XDE editor.
-// </remarks>
 
-using System;
 using System.Windows.Forms;
 using System.Drawing;
-using System.Diagnostics;
-
 using SIL.Utils;
-using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
@@ -31,8 +19,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <param name="distFilesPath">the path to the distfiles Directory</param>
 		/// <param name="relativeImagePath">they path to the image, relative to the distfiles Directory</param>
 		/// <remarks>Will throw an exception if the image is not found.</remarks>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "PictureBox gets added to the Controls collection in the base class and disposed there")]
 		public ImageSlice(string distFilesPath, string relativeImagePath) : base(new PictureBox())
 		{
 			string sPathname = System.IO.Path.Combine(distFilesPath, relativeImagePath);

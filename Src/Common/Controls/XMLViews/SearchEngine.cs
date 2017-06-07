@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -7,9 +7,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.Text;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.ObjectModel;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.Controls
@@ -37,7 +39,7 @@ namespace SIL.FieldWorks.Common.Controls
 	/// <summary>
 	/// An abstract class for performing indexing and searching asynchronously.
 	/// </summary>
-	public abstract class SearchEngine : FwDisposableBase, IVwNotifyChange
+	public abstract class SearchEngine : DisposableBase, IVwNotifyChange
 	{
 		/// <summary>
 		/// Gets the search engine.
@@ -78,7 +80,7 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			m_cache = cache;
 			m_searcher = new StringSearcher<int>(type, m_cache.ServiceLocator.WritingSystemManager);
-			m_thread = new ConsumerThread<int, SearchField[]>(HandleWork) { IsBackground = true };
+			m_thread = new ConsumerThread<int, SearchField[]>(HandleWork);
 			m_synchronizationContext = SynchronizationContext.Current;
 			m_syncRoot = new object();
 			m_indexObjPos = new Dictionary<Tuple<int, int>, int>();

@@ -1,10 +1,6 @@
-// Copyright (c) 2002-2013 SIL International
+// Copyright (c) 2002-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: OverridesLing.cs
-// Responsibility: Randy Regnier
-// Last reviewed:
 //
 // <remarks>
 // This file holds the overrides of the generated classes for the Ling module.
@@ -16,11 +12,13 @@ using System.Diagnostics;
 using System.Text;
 using System.Collections.Generic;
 using System.Xml; // XMLWriter
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Cellar;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
 
 namespace SIL.FieldWorks.FDO.DomainImpl
 {
@@ -71,7 +69,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		public virtual ITsString FeaturesTSS
 		{
 			get
-			{ return m_cache.TsStrFactory.MakeString("", Cache.DefaultAnalWs); }
+			{ return TsStringUtils.EmptyString(Cache.DefaultAnalWs); }
 		}
 
 		/// <summary>
@@ -80,7 +78,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		[VirtualProperty(CellarPropertyType.String)]
 		public virtual ITsString ExceptionFeaturesTSS
 		{
-			get { return m_cache.TsStrFactory.MakeString("", Cache.DefaultAnalWs); }
+			get { return TsStringUtils.EmptyString(Cache.DefaultAnalWs); }
 		}
 
 		/// <summary>
@@ -313,7 +311,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			get
 			{
-				var tisb = TsIncStrBldrClass.Create();
+				var tisb = TsStringUtils.MakeIncStrBldr();
 				tisb.AppendTsString(OwnerOfClass<ILexEntry>().HeadWord);
 				tisb.Append(" ");
 				tisb.AppendTsString(InterlinearNameTSS);
@@ -357,7 +355,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// <returns></returns>
 		public virtual ITsString PartOfSpeechForWsTSS(int ws)
 		{
-			return Cache.TsStrFactory.EmptyString(ws);
+			return TsStringUtils.EmptyString(ws);
 		}
 
 		/// <summary>
@@ -367,7 +365,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// <returns></returns>
 		public virtual ITsString InflectionClassForWsTSS(int ws)
 		{
-			return Cache.TsStrFactory.EmptyString(ws);
+			return TsStringUtils.EmptyString(ws);
 		}
 
 		/// <summary>
@@ -379,6 +377,18 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			get
 			{
 				return new IMoInflAffixSlot[0];
+			}
+		}
+
+		/// <summary>
+		/// Return the MorphType objects for the MSA.
+		/// </summary>
+		[VirtualProperty(CellarPropertyType.ReferenceSequence, "MoMorphType")]
+		public virtual IEnumerable<IMoMorphType> MorphTypes
+		{
+			get
+			{
+				return new IMoMorphType[0];
 			}
 		}
 
@@ -516,6 +526,17 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 	internal partial class MoDerivAffMsa
 	{
 		/// <summary>
+		/// override to return our MorphTypes.
+		/// </summary>
+		public override IEnumerable<IMoMorphType> MorphTypes
+		{
+			get
+			{
+				return OwningEntry.MorphTypes;
+			}
+		}
+
+		/// <summary>
 		///
 		/// </summary>
 		public override ITsString FeaturesTSS
@@ -526,7 +547,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				IFsFeatStruc featTo = ToMsFeaturesOA;
 				if (featFrom != null || featTo != null)
 				{
-					ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
+					ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 					if (featFrom != null)
 						tisb.AppendTsString(featFrom.ShortNameTSS);
 					else
@@ -552,7 +573,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			get
 			{
-				ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
+				ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 				if (FromProdRestrictRC.Count > 0)
 				{
 					bool fFirst = true;
@@ -811,7 +832,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 						}
 					}
 				}
-				return Cache.TsStrFactory.MakeString(
+				return TsStringUtils.MakeString(
 					sMsaName,
 					m_cache.DefaultUserWs);
 			}
@@ -831,9 +852,9 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 
 		private ITsString InterlinearAffix(ITsString tssFromPartOfSpeech, ITsString tssToPartOfSpeech)
 		{
-			ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
+			ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 			tisb.AppendTsString(tssFromPartOfSpeech);
-			tisb.AppendTsString(TsStringUtils.MakeTss(">", m_cache.WritingSystemFactory.UserWs));
+			tisb.AppendTsString(TsStringUtils.MakeString(">", m_cache.WritingSystemFactory.UserWs));
 			tisb.AppendTsString(tssToPartOfSpeech);
 			return tisb.GetString();
 		}
@@ -881,7 +902,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			var posTo = ToPartOfSpeechRA;
 			if (posFrom != null || posTo != null)
 			{
-				var tisb = TsIncStrBldrClass.Create();
+				var tisb = TsStringUtils.MakeIncStrBldr();
 				if (posFrom != null)
 				{
 					var tssPOS = posFrom.Abbreviation.get_String(ws);
@@ -927,7 +948,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			var icTo = ToInflectionClassRA;
 			if (icFrom != null || icTo != null)
 			{
-				var tisb = TsIncStrBldrClass.Create();
+				var tisb = TsStringUtils.MakeIncStrBldr();
 				if (icFrom != null)
 				{
 					var tssIC = icFrom.Abbreviation.get_String(ws);
@@ -1021,20 +1042,20 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			{
 				case MoDerivAffMsaTags.kflidFromInflectionClass:
 					if (FromPartOfSpeechRA != null)
-						return FromPartOfSpeechRA.AllInflectionClasses.Cast<ICmObject>();
+						return FromPartOfSpeechRA.AllInflectionClasses;
 					break;
 				case MoDerivAffMsaTags.kflidToInflectionClass:
 					if (ToPartOfSpeechRA != null)
-						return ToPartOfSpeechRA.AllInflectionClasses.Cast<ICmObject>();
+						return ToPartOfSpeechRA.AllInflectionClasses;
 					break;
 				case MoDerivAffMsaTags.kflidFromStemName:
 					if (FromPartOfSpeechRA != null)
-						return FromPartOfSpeechRA.AllStemNames.Cast<ICmObject>();
+						return FromPartOfSpeechRA.AllStemNames;
 					break;
 				default:
 					return base.ReferenceTargetCandidates(flid);
 			}
-			return new Set<ICmObject>(0);
+			return Enumerable.Empty<ICmObject>();
 		}
 
 		/// <summary>
@@ -1091,7 +1112,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			{
 				if (ProdRestrictRC.Count > 0)
 				{
-					ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
+					ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 					bool fFirst = true;
 					foreach (CmPossibility pss in ProdRestrictRC)
 					{
@@ -1258,7 +1279,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			get
 			{
-				var tisb = TsIncStrBldrClass.Create();
+				var tisb = TsStringUtils.MakeIncStrBldr();
 				AddChooserName(tisb);
 
 				return tisb.GetString();
@@ -1292,15 +1313,15 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				{
 					// LT-7075 was crashing when it was null,
 					// trying to get the Guid.
-					var guid = System.Guid.Empty;
+					var guid = Guid.Empty;
 					if (form.MorphTypeRA != null)
 						guid = form.MorphTypeRA.Guid;
 					if ((guid != MoMorphTypeTags.kguidMorphClitic) &&
 						(guid != MoMorphTypeTags.kguidMorphEnclitic) &&
 						(guid != MoMorphTypeTags.kguidMorphProclitic))
-						return Cache.TsStrFactory.MakeString(Strings.ksStemNoCatInfo, userWs);
+						return TsStringUtils.MakeString(Strings.ksStemNoCatInfo, userWs);
 				}
-				return Cache.TsStrFactory.MakeString(Strings.ksCliticNoCatInfo, userWs);
+				return TsStringUtils.MakeString(Strings.ksCliticNoCatInfo, userWs);
 			}
 		}
 
@@ -1319,27 +1340,23 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			var userWs = m_cache.WritingSystemFactory.UserWs;
 			if (PartOfSpeechRA == null)
-				return TsStringUtils.MakeTss(Strings.ksNotSure, userWs);
+				return TsStringUtils.MakeString(Strings.ksNotSure, userWs);
 
 			var tssName = tssPartOfSpeech;
 			var bldr = tssName.GetBldr();
 			int cch = bldr.Length;
 			if (InflectionClassRA != null)
 			{
-				bldr.ReplaceTsString(cch, cch, TsStringUtils.MakeTss("  (", userWs));
+				bldr.ReplaceTsString(cch, cch, TsStringUtils.MakeString("  (", userWs));
 				cch = bldr.Length;
 				bldr.ReplaceTsString(cch, cch, InflectionClassRA.Abbreviation.BestAnalysisVernacularAlternative);
 				cch = bldr.Length;
-				bldr.ReplaceTsString(cch, cch, TsStringUtils.MakeTss(") ", userWs));
-			}
-			else
-			{
-				bldr.ReplaceTsString(cch, cch, TsStringUtils.MakeTss(" ", userWs));
+				bldr.ReplaceTsString(cch, cch, TsStringUtils.MakeString(")", userWs));
 			}
 			cch = bldr.Length;
 			var features = MsFeaturesOA;
 			if (features != null)
-				bldr.ReplaceTsString(cch, cch, TsStringUtils.MakeTss(features.ShortName, userWs));
+				bldr.ReplaceTsString(cch, cch, TsStringUtils.MakeString(features.ShortName, userWs));
 
 			return bldr.GetString();
 		}
@@ -1464,14 +1481,13 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			{
 				case MoStemMsaTags.kflidInflectionClass:
 					if (PartOfSpeechRA != null)
-						return PartOfSpeechRA.AllInflectionClasses.Cast<ICmObject>();
-					break;
+						return PartOfSpeechRA.AllInflectionClasses;
+					return Enumerable.Empty<ICmObject>();
 				case MoStemMsaTags.kflidFromPartsOfSpeech:
-					return Cache.LangProject.PartsOfSpeechOA.PossibilitiesOS.Cast<ICmObject>();
+					return Cache.LangProject.PartsOfSpeechOA.PossibilitiesOS;
 				default:
 					return base.ReferenceTargetCandidates(flid);
 			}
-			return new Set<ICmObject>(0);
 		}
 
 		/// <summary>
@@ -1574,7 +1590,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			{
 				if (FromProdRestrictRC.Count > 0)
 				{
-					ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
+					ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 					bool fFirst = true;
 					foreach (CmPossibility pss in FromProdRestrictRC)
 					{
@@ -1849,7 +1865,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 						}
 					}
 				}
-				return Cache.TsStrFactory.MakeString(
+				return TsStringUtils.MakeString(
 					sMsaName,
 					m_cache.DefaultUserWs);
 			}
@@ -1865,7 +1881,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			get
 			{
 				var entry = Owner as ILexEntry;
-				var tisb = TsIncStrBldrClass.Create();
+				var tisb = TsStringUtils.MakeIncStrBldr();
 				(entry as LexEntry).CitationFormWithAffixTypeTss(tisb);
 				tisb.Append(" ");
 				var tssGloss = GetFirstGlossOfMSAThatMatchesTss(entry.SensesOS);
@@ -1925,24 +1941,23 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		private ITsString InterlinearInflectionalAffix(ITsString tssPartOfSpeech, int ws)
 		{
 			if (PartOfSpeechRA == null)
-				return TsStringUtils.MakeTss(Strings.ksInflectsAnyCat, m_cache.WritingSystemFactory.UserWs);
+				return TsStringUtils.MakeString(Strings.ksInflectsAnyCat, m_cache.WritingSystemFactory.UserWs);
 
-			var tsf = Cache.TsStrFactory;
-			var tisb = TsIncStrBldrClass.Create();
+			ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 			var userWs = m_cache.WritingSystemFactory.UserWs;
 
 			tisb.AppendTsString(tssPartOfSpeech);
-			tisb.AppendTsString(tsf.MakeString(":", userWs));
+			tisb.AppendTsString(TsStringUtils.MakeString(":", userWs));
 
 			var cnt = 0;
 			foreach (MoInflAffixSlot slot in SlotsRC)
 			{
 				if (cnt++ > 0)
-					tisb.AppendTsString(tsf.MakeString("/", userWs));
+					tisb.AppendTsString(TsStringUtils.MakeString("/", userWs));
 				tisb.AppendTsString(slot.ShortNameTSSforWS(ws));
 			}
 			if (cnt == 0) // No slots.
-				tisb.AppendTsString(tsf.MakeString(Strings.ksAny, userWs));
+				tisb.AppendTsString(TsStringUtils.MakeString(Strings.ksAny, userWs));
 			return tisb.GetString();
 		}
 
@@ -1955,6 +1970,17 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			get
 			{
 				return SlotsRC;
+			}
+		}
+
+		/// <summary>
+		/// override to return our MorphTypes.
+		/// </summary>
+		public override IEnumerable<IMoMorphType> MorphTypes
+		{
+			get
+			{
+				return OwningEntry.MorphTypes;
 			}
 		}
 
@@ -2085,12 +2111,11 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			{
 				case MoInflAffMsaTags.kflidSlots:
 					if (PartOfSpeechRA != null)
-						return DomainObjectServices.GetSlots(Cache, Owner as ILexEntry, PartOfSpeechRA).Cast<ICmObject>();
-					break;
+						return DomainObjectServices.GetSlots(Cache, Owner as ILexEntry, PartOfSpeechRA);
+					return Enumerable.Empty<ICmObject>();
 				default:
 					return base.ReferenceTargetCandidates(flid);
 			}
-			return new Set<ICmObject>(0);
 		}
 
 		/// <summary>
@@ -2123,7 +2148,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				IFsFeatStruc featInfl = InflFeatsOA;
 				if (featMS != null && featInfl != null)
 				{
-					ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
+					ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 					tisb.AppendTsString(featMS.ShortNameTSS);
 					tisb.AppendTsString(m_cache.MakeUserTss(" / "));
 					tisb.AppendTsString(featInfl.ShortNameTSS);
@@ -2153,7 +2178,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			{
 				if (ProdRestrictRC.Count > 0)
 				{
-					ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
+					ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 					bool fFirst = true;
 					foreach (CmPossibility pss in ProdRestrictRC)
 					{
@@ -2325,6 +2350,17 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 	internal partial class MoUnclassifiedAffixMsa
 	{
 		/// <summary>
+		/// override to return our MorphTypes.
+		/// </summary>
+		public override IEnumerable<IMoMorphType> MorphTypes
+		{
+			get
+			{
+				return OwningEntry.MorphTypes;
+			}
+		}
+
+		/// <summary>
 		/// The way we want to show this in an interlinear view
 		/// </summary>
 		public override string InterlinearName
@@ -2419,7 +2455,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 							? Strings.ksAffixAttachesToAny
 							: String.Format(Strings.ksAffixFoundOnX,
 											CmPossibility.BestAnalysisOrVernName(m_cache, PartOfSpeechRA).Text);
-				return Cache.TsStrFactory.MakeString(
+				return TsStringUtils.MakeString(
 					sMsaName,
 					m_cache.DefaultUserWs);
 			}
@@ -2464,11 +2500,10 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			get
 			{
-				var tsf = Cache.TsStrFactory;
 				var pos = PartOfSpeechRA;
 				return pos != null
 						? CmPossibility.BestAnalysisOrVernAbbr(Cache, PartOfSpeechRA.Hvo)
-						: tsf.MakeString(
+						: TsStringUtils.MakeString(
 							Strings.ksAttachesToAnyCat,
 							Cache.DefaultUserWs);
 			}
@@ -2539,7 +2574,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			get
 			{
 				var userWs = m_cache.WritingSystemFactory.UserWs;
-				var tisb = TsIncStrBldrClass.Create();
+				var tisb = TsStringUtils.MakeIncStrBldr();
 				tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, userWs);
 				tisb.Append(String.Format(Strings.ksDeleteAffixTemplate));
 				return tisb.GetString();
@@ -2743,7 +2778,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			get
 			{
 				var userWs = m_cache.WritingSystemFactory.UserWs;
-				var tisb = TsIncStrBldrClass.Create();
+				var tisb = TsStringUtils.MakeIncStrBldr();
 				tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, userWs);
 				tisb.Append(String.Format(Strings.ksDeleteAffixSlot, " "));
 				tisb.AppendTsString(ShortNameTSS);
@@ -2779,18 +2814,16 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// <returns></returns>
 		public ITsString ShortNameTSSforWS(int wsAnal)
 		{
-			var tsf = Cache.TsStrFactory;
-			var tisb = TsIncStrBldrClass.Create();
+			ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 
 			if (Optional)
-				tisb.AppendTsString(tsf.MakeString("(", m_cache.WritingSystemFactory.UserWs));
+				tisb.AppendTsString(TsStringUtils.MakeString("(", m_cache.WritingSystemFactory.UserWs));
 
-			ITsString tss = null;
-			tss = WritingSystemServices.GetMagicStringAlt(Cache, wsAnal, Hvo, (int)MoInflAffixSlotTags.kflidName);
+			ITsString tss = WritingSystemServices.GetMagicStringAlt(Cache, wsAnal, Hvo, MoInflAffixSlotTags.kflidName);
 			tisb.AppendTsString(tss);
 
 			if (Optional)
-				tisb.AppendTsString(tsf.MakeString(")", m_cache.WritingSystemFactory.UserWs));
+				tisb.AppendTsString(TsStringUtils.MakeString(")", m_cache.WritingSystemFactory.UserWs));
 
 			return tisb.GetString();
 		}
@@ -2860,7 +2893,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			get
 			{
 				var userWs = m_cache.WritingSystemFactory.UserWs;
-				var tisb = TsIncStrBldrClass.Create();
+				var tisb = TsStringUtils.MakeIncStrBldr();
 				tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, userWs);
 				tisb.Append(String.Format(Strings.ksDeleteInflectionClass, " "));
 				tisb.AppendTsString(ShortNameTSS);
@@ -3147,14 +3180,13 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			else
 			{
 				// create default infix position environment
-				var strFact = cache.TsStrFactory;
 				var defAnalWs = entry.Services.WritingSystems.DefaultAnalysisWritingSystem;
 				var ppd = cache.LangProject.PhonologicalDataOA;
 				env = new PhEnvironment();
 				ppd.EnvironmentsOS.Add(env);
-				env.StringRepresentation = strFact.MakeString(sDefaultPostionEnvironment, cache.DefaultVernWs);
-				env.Description.set_String(defAnalWs.Handle, strFact.MakeString("Default infix position environment", defAnalWs.Handle));
-				env.Name.set_String(defAnalWs.Handle, strFact.MakeString("After stem-initial consonant", defAnalWs.Handle));
+				env.StringRepresentation = TsStringUtils.MakeString(sDefaultPostionEnvironment, cache.DefaultVernWs);
+				env.Description.set_String(defAnalWs.Handle, TsStringUtils.MakeString("Default infix position environment", defAnalWs.Handle));
+				env.Name.set_String(defAnalWs.Handle, TsStringUtils.MakeString("After stem-initial consonant", defAnalWs.Handle));
 				infix.PositionRS.Add(env);
 			}
 		}
@@ -3182,7 +3214,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			{
 				var vernWs = m_cache.DefaultVernWs;
 				var userWs = m_cache.DefaultUserWs;
-				var tisb = TsIncStrBldrClass.Create();
+				var tisb = TsStringUtils.MakeIncStrBldr();
 				tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, vernWs);
 				tisb.AppendTsString(ShortNameTSS);
 
@@ -3260,7 +3292,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			{
 				var wsVern = TsStringUtils.GetWsAtOffset(value, 0);
 				Form.set_String(wsVern,
-								m_cache.TsStrFactory.MakeString(MorphServices.EnsureNoMarkers(value.Text, m_cache), wsVern));
+								TsStringUtils.MakeString(MorphServices.EnsureNoMarkers(value.Text, m_cache), wsVern));
 			}
 		}
 
@@ -3325,7 +3357,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			get
 			{
-				var tisb = TsIncStrBldrClass.Create();
+				var tisb = TsStringUtils.MakeIncStrBldr();
 				string pre = null;
 				string post = null;
 				if (MorphTypeRA != null)
@@ -3403,7 +3435,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				if (tss != null || tss.Length > 0)
 					return tss;
 
-				return Cache.TsStrFactory.MakeString(
+				return TsStringUtils.MakeString(
 					Strings.ksQuestions,
 					Cache.DefaultUserWs);
 			}
@@ -4566,7 +4598,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			get
 			{
 				var userWs = m_cache.WritingSystemFactory.UserWs;
-				var tisb = TsIncStrBldrClass.Create();
+				var tisb = TsStringUtils.MakeIncStrBldr();
 				tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, userWs);
 				tisb.Append(String.Format(Strings.ksDeleteStemName));
 				return tisb.GetString();

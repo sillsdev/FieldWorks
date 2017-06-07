@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 using NUnit.Framework;
 using SIL.FieldWorks.XWorks.DictionaryDetailsView;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.XWorks
 {

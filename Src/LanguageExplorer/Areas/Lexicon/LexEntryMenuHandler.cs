@@ -3,9 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
-using System.Linq;
 using System.Xml.Linq;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.FDO;
@@ -144,8 +142,6 @@ namespace LanguageExplorer.Areas.Lexicon
 		/// </summary>
 		/// <param name="cmd"></param>
 		/// <returns>true to indicate the message was handled</returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "slice is a reference")]
 		public bool OnDataTreeDeleteSense(object cmd)
 		{
 			Command command = (Command)cmd;
@@ -159,8 +155,6 @@ namespace LanguageExplorer.Areas.Lexicon
 			return true;	//we handled this.
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "slice is a reference")]
 		public bool OnDemoteSense(object cmd)
 		{
 			Command command = (Command) cmd;
@@ -230,8 +224,6 @@ namespace LanguageExplorer.Areas.Lexicon
 		/// <param name="commandObject"></param>
 		/// <param name="display"></param>
 		/// <returns></returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "slice is a reference")]
 		public virtual bool OnDisplayDemoteSense(object commandObject,
 			ref UIItemDisplayProperties display)
 		{
@@ -251,8 +243,6 @@ namespace LanguageExplorer.Areas.Lexicon
 			return true; //we've handled this
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "slice is a reference")]
 		public bool OnPromoteSense(object cmd)
 		{
 			Command command = (Command) cmd;
@@ -290,8 +280,6 @@ namespace LanguageExplorer.Areas.Lexicon
 		/// <param name="commandObject"></param>
 		/// <param name="display"></param>
 		/// <returns></returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "slice is a reference")]
 		public virtual bool OnDisplayPromoteSense(object commandObject,
 			ref UIItemDisplayProperties display)
 		{
@@ -309,9 +297,6 @@ namespace LanguageExplorer.Areas.Lexicon
 		}
 #endif
 
-		/// <summary />
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "slice is a reference")]
 		public bool OnPictureProperties(object cmd)
 		{
 			Slice slice = m_dataEntryForm.CurrentSlice;
@@ -367,8 +352,6 @@ namespace LanguageExplorer.Areas.Lexicon
 			});
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "slice is a reference")]
 		public virtual bool OnSwapAllomorphWithLexeme(object cmd)
 		{
 			Slice slice = m_dataEntryForm.CurrentSlice;
@@ -461,8 +444,6 @@ namespace LanguageExplorer.Areas.Lexicon
 			return true;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "slice is a reference")]
 		public virtual bool OnDisplayConvertAllomorph(object commandObject, ref UIItemDisplayProperties display)
 		{
 			Command cmd = commandObject as Command;
@@ -475,8 +456,6 @@ namespace LanguageExplorer.Areas.Lexicon
 			return true;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "slice is a reference")]
 		public bool OnConvertAllomorph(object cmd)
 		{
 			var command = cmd as Command;

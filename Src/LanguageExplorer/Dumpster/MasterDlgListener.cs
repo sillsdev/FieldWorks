@@ -1,18 +1,17 @@
-// Copyright (c) 2005-2015 SIL International
+// Copyright (c) 2005-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Xml;
 using SIL.CoreImpl;
-using SIL.Utils;
 
 namespace LanguageExplorer.Dumpster
 {
 	/// <summary>
 	/// Listener class for adding POSes via Insert menu.
 	/// </summary>
-	public class MasterDlgListener : IFlexComponent, IFWDisposable
+	public class MasterDlgListener : IFlexComponent, IDisposable
 	{
 		#region Data members
 		/// <summary>

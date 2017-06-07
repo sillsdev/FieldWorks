@@ -7,7 +7,7 @@ using System.Diagnostics;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
@@ -17,7 +17,7 @@ using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.Filters;
-using SIL.Utils;
+using SIL.Xml;
 using WaitCursor = SIL.FieldWorks.Common.FwUtils.WaitCursor;
 
 namespace SIL.FieldWorks.XWorks
@@ -499,7 +499,7 @@ namespace SIL.FieldWorks.XWorks
 
 			string titleStr = "";
 			// See if we have an AlternativeTitle string table id for an alternate title.
-			string titleId = XmlUtils.GetAttributeValue(m_configurationParametersElement,
+			string titleId = XmlUtils.GetOptionalAttributeValue(m_configurationParametersElement,
 				"altTitleId");
 			if (titleId != null)
 			{
@@ -545,7 +545,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			// If we have a format attribute, format the title accordingly.
-			string sFmt = XmlUtils.GetAttributeValue(m_configurationParametersElement, "TitleFormat");
+			string sFmt = XmlUtils.GetOptionalAttributeValue(m_configurationParametersElement, "TitleFormat");
 			if (sFmt != null)
 			{
 				 titleStr = String.Format(sFmt, titleStr);

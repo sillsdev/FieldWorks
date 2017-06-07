@@ -1,15 +1,8 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ReallySimpleListChooser.cs
-// Responsibility:
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
+
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Collections;
 using System.Collections.Generic;
@@ -23,17 +16,23 @@ using System.Linq;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using SIL.CoreImpl;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.Utils;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.Xml;
+#if __MonoCS__
+using SIL.Utils;
+#endif
 
 namespace SIL.FieldWorks.Common.Controls
 {
 	/// <summary></summary>
-	public class ReallySimpleListChooser : Form, IFWDisposable
+	public class ReallySimpleListChooser : Form
 	{
 		/// <summary />
 		protected ObjectLabel m_chosenLabel;
@@ -859,7 +858,7 @@ namespace SIL.FieldWorks.Common.Controls
 						m_sTextParam = co.DisplayLabel;
 					}
 				}
-				string sFlid = XmlUtils.GetAttributeValue(node, "flidTextParam");
+				string sFlid = XmlUtils.GetOptionalAttributeValue(node, "flidTextParam");
 				if (sFlid != null)
 				{
 					try
@@ -877,10 +876,10 @@ namespace SIL.FieldWorks.Common.Controls
 					}
 				}
 
-				string sTitle = XmlUtils.GetAttributeValue(node, "title");
+				string sTitle = XmlUtils.GetOptionalAttributeValue(node, "title");
 				if (sTitle != null)
 					Title = sTitle;
-				string sText = XmlUtils.GetAttributeValue(node, "text");
+				string sText = XmlUtils.GetOptionalAttributeValue(node, "text");
 				if (sText != null)
 					InstructionalText = sText;
 				var linkNodes = node.Elements("chooserLink").ToList();
@@ -888,12 +887,12 @@ namespace SIL.FieldWorks.Common.Controls
 				for (int i = linkNodes.Count - 1; i >= 0 ; --i)
 				{
 					string sType = XmlUtils.GetOptionalAttributeValue(linkNodes[i], "type", "goto").ToLower();
-					string sLabel = XmlUtils.GetLocalizedAttributeValue(linkNodes[i], "label", null);
+					string sLabel = StringTable.Table.LocalizeAttributeValue(XmlUtils.GetOptionalAttributeValue(linkNodes[i], "label", null));
 					switch (sType)
 					{
 					case "goto":
 					{
-						string sTool = XmlUtils.GetAttributeValue(linkNodes[i], "tool");
+						string sTool = XmlUtils.GetOptionalAttributeValue(linkNodes[i], "tool");
 						if (sLabel != null && sTool != null)
 						{
 							AddLink(sLabel, LinkType.kGotoLink, new FwLinkArgs(sTool, m_guidLink));
@@ -902,7 +901,7 @@ namespace SIL.FieldWorks.Common.Controls
 					}
 					case "dialog":
 					{
-						string sDialog = XmlUtils.GetAttributeValue(linkNodes[i], "dialog");
+						string sDialog = XmlUtils.GetOptionalAttributeValue(linkNodes[i], "dialog");
 						// TODO: make use of sDialog somehow to create a ChooserCommand object.
 						// TODO: maybe even better, use a new SubDialog object that allows us
 						// to call the specified dialog, then return to this dialog, adding
@@ -914,7 +913,7 @@ namespace SIL.FieldWorks.Common.Controls
 					}
 					case "simple":
 					{
-						string sTool = XmlUtils.GetAttributeValue(linkNodes[i], "tool");
+						string sTool = XmlUtils.GetOptionalAttributeValue(linkNodes[i], "tool");
 						if (sLabel != null && sTool != null)
 						{
 							AddSimpleLink(sLabel, sTool, linkNodes[i]);
@@ -947,7 +946,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </remarks>
 		private XElement GenerateChooserInfoForCustomNode(XElement configNode)
 		{
-			string editor = XmlUtils.GetAttributeValue(configNode, "editor");
+			string editor = XmlUtils.GetOptionalAttributeValue(configNode, "editor");
 			if (configNode.Name != "slice" || editor != "autoCustom" || m_hvoTextParam == 0)
 				return null;
 			ICmObject obj = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(m_hvoTextParam);
@@ -975,11 +974,11 @@ namespace SIL.FieldWorks.Common.Controls
 					var xnParam = xnCommand.Element("parameters");
 					if (xnParam != null)
 					{
-						if (XmlUtils.GetAttributeValue(xnParam, "className") == itemClass &&
-							XmlUtils.GetAttributeValue(xnParam, "ownerClass") == listOwnerClass &&
-							XmlUtils.GetAttributeValue(xnParam, "ownerField") == listField)
+						if (XmlUtils.GetOptionalAttributeValue(xnParam, "className") == itemClass &&
+							XmlUtils.GetOptionalAttributeValue(xnParam, "ownerClass") == listOwnerClass &&
+							XmlUtils.GetOptionalAttributeValue(xnParam, "ownerField") == listField)
 						{
-							sTool = XmlUtils.GetAttributeValue(xnParam, "tool");
+							sTool = XmlUtils.GetOptionalAttributeValue(xnParam, "tool");
 							if (!String.IsNullOrEmpty(sTool))
 								break;
 						}
@@ -1012,24 +1011,24 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				foreach (var xnClerk in xnItem.Elements("parameters/clerks/clerk"))
 				{
-					string sClerkId = XmlUtils.GetAttributeValue(xnClerk, "id");
+					string sClerkId = XmlUtils.GetOptionalAttributeValue(xnClerk, "id");
 					if (String.IsNullOrEmpty(sClerkId))
 						continue;
 					var xnList = xnClerk.Element("recordList");
 					if (xnList == null)
 						continue;
-					if (XmlUtils.GetAttributeValue(xnList, "owner") == listOwnerClass &&
-						XmlUtils.GetAttributeValue(xnList, "property") == listField)
+					if (XmlUtils.GetOptionalAttributeValue(xnList, "owner") == listOwnerClass &&
+						XmlUtils.GetOptionalAttributeValue(xnList, "property") == listField)
 					{
 						foreach (var xnTool in xnItem.Elements("parameters/tools/tool"))
 						{
-							string sTool = XmlUtils.GetAttributeValue(xnTool, "value");
+							string sTool = XmlUtils.GetOptionalAttributeValue(xnTool, "value");
 							if (String.IsNullOrEmpty(sTool))
 								continue;
 							var xnParam = xnTool.Element("control/parameters/control/parameters");
 							if (xnParam == null)
 								continue;
-							string sClerk = XmlUtils.GetAttributeValue(xnParam, "clerk");
+							string sClerk = XmlUtils.GetOptionalAttributeValue(xnParam, "clerk");
 							if (sClerk == sClerkId)
 								return sTool;
 						}
@@ -1864,7 +1863,7 @@ namespace SIL.FieldWorks.Common.Controls
 			return stack;
 		}
 
-		#region we-might-not-need-this-stuff-anymore
+#region we-might-not-need-this-stuff-anymore
 		/// <summary>
 		/// Finds the node at root level.
 		/// </summary>
@@ -1935,7 +1934,7 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 			return null;
 		}
-		#endregion
+#endregion
 
 		/// <summary>
 		/// returns the object that was selected, or null and cancelled.
@@ -2034,15 +2033,13 @@ namespace SIL.FieldWorks.Common.Controls
 			base.Dispose( disposing );
 		}
 
-		#region Windows Form Designer generated code
+#region Windows Form Designer generated code
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification = "TODO-Linux: LinkLabel.TabStop is missing from Mono")]
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
@@ -2277,7 +2274,7 @@ namespace SIL.FieldWorks.Common.Controls
 			this.ResumeLayout(false);
 
 		}
-		#endregion
+#endregion
 
 		private void HandleCommmandChoice(ChooserCommandNode node)
 		{

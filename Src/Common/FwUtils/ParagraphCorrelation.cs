@@ -11,9 +11,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using SIL.FieldWorks.Common.COMInterfaces;
 using System.Text;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.FwUtils
@@ -28,7 +27,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		private string m_para1;
 		private string m_para2;
 		private double m_correlationFactor;
-		private ILgCharacterPropertyEngine m_charPropEngine;
 
 		/// <summary>
 		/// The word list is a hashtable that maps words to word counts in the two paragraphs.
@@ -42,8 +40,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// Initializes a new instance of the <see cref="ParagraphCorrelation"/> class.
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
-		public ParagraphCorrelation(string para1, string para2,
-			ILgCharacterPropertyEngine charPropEngine)
+		public ParagraphCorrelation(string para1, string para2)
 		{
 			m_para1 = (para1 == null) ? string.Empty : para1;
 			m_para2 = (para2 == null) ? string.Empty : para2;
@@ -52,7 +49,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 			else
 			{
 				m_wordList = new Dictionary<string, int[]>();
-				m_charPropEngine = charPropEngine;
 				BuildCorrelation();
 			}
 		}
@@ -139,8 +135,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 			for (int iChar = 0; iChar < para.Length; iChar++)
 			{
-				if (!m_charPropEngine.get_IsNumber(para[iChar]) &&
-					!m_charPropEngine.get_IsPunctuation(para[iChar]))
+				if (!Icu.IsNumeric(para[iChar]) &&
+					!Icu.IsPunct(para[iChar]))
 				{
 					strBldr.Append(para[iChar]);
 				}
@@ -156,17 +152,13 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		/// <param name="stringCurr">current string</param>
 		/// <param name="stringRev">revision string</param>
-		/// <param name="charPropEngine">The character property engine used to determine whether
-		/// the characters in the paragraph are digits or punctuation (and therefore need to
-		/// be removed).</param>
 		/// <returns>
 		/// correlation factor between stringCurr and stringRev
 		/// </returns>
 		/// ------------------------------------------------------------------------------------
-		public static double DetermineStringCorrelation(string stringCurr, string stringRev,
-			ILgCharacterPropertyEngine charPropEngine)
+		public static double DetermineStringCorrelation(string stringCurr, string stringRev)
 		{
-			ParagraphCorrelation pc = new ParagraphCorrelation(stringCurr, stringRev, charPropEngine);
+			ParagraphCorrelation pc = new ParagraphCorrelation(stringCurr, stringRev);
 			return pc.CorrelationFactor;
 		}
 		#endregion

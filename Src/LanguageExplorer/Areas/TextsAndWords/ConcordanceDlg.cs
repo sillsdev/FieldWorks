@@ -7,21 +7,21 @@ using System.Drawing;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Forms;
-using System.Diagnostics.CodeAnalysis;
 using System.Xml;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FdoUi;
-using SIL.FieldWorks.Common.Controls;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.XWorks;
 using WaitCursor = SIL.FieldWorks.Common.FwUtils.WaitCursor;
+using SIL.CoreImpl.Text;
+using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace LanguageExplorer.Areas.TextsAndWords
 {
@@ -256,8 +256,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Design", "UseCorrectDisposeSignaturesRule",
-			Justification = "The class derives from Form. Therefore Dispose(bool) can't be private in a sealed class.")]
 		protected override void Dispose(bool disposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
@@ -345,8 +343,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				get { return m_progressBar.Control; }
 			}
 
-			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-				Justification = "We're returning a reference")]
 			public Form Form
 			{
 				get { return m_progressBar.Control.FindForm(); }

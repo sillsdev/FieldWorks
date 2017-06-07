@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -7,12 +7,13 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.Utils;
 using SIL.Windows.Forms;
 
 namespace SIL.FieldWorks.LexText.Controls
@@ -20,7 +21,7 @@ namespace SIL.FieldWorks.LexText.Controls
 	/// <summary>
 	/// Summary description for MsaCreatorDlg.
 	/// </summary>
-	public class MsaCreatorDlg : Form, IFWDisposable
+	public class MsaCreatorDlg : Form
 	{
 		#region Data Members
 
@@ -129,7 +130,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_fwtbSenses.AdjustForStyleSheet(this, null, m_propertyTable);
 			m_fwtbSenses.AdjustStringHeight = false;
 
-			ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
+			ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 			tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, m_cache.DefaultAnalWs);
 			var msaRepository = m_cache.ServiceLocator.GetInstance<IMoMorphSynAnalysisRepository>();
 			if (hvoOriginalMsa != 0)

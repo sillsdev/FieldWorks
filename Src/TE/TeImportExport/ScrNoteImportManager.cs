@@ -11,12 +11,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.WritingSystems;
-using SILUBS.SharedScrUtils;
 using System.Diagnostics;
 using System.Globalization;
+using SIL.CoreImpl.WritingSystems;
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.TE
 {

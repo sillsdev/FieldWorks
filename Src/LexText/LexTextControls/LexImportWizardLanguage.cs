@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -7,24 +7,21 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Forms;
-
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FwCoreDlgs;
-using SilEncConverters40;	// for the encoding converters
-using SIL.Utils;
-using SIL.FieldWorks.Common.FwUtils;
+using SilEncConverters40;
+using SIL.CoreImpl;
+using SIL.CoreImpl.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
-
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
 	/// <summary>
 	/// Summary description for LexImportWizardLanguage.
 	/// </summary>
-	public class LexImportWizardLanguage : Form, IFWDisposable
+	public class LexImportWizardLanguage : Form
 	{
 		private Label lblComment;
 		private Label lblLangDesc;
@@ -42,7 +39,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		private FdoCache m_cache;
 		private IHelpTopicProvider m_helpTopicProvider;
 		private IApp m_app;
-		private IVwStylesheet m_stylesheet;
 		// class to contain 'ws' information to be put in combo boxes
 		class WsInfo
 		{
@@ -134,12 +130,11 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="app">The app.</param>
 		/// ------------------------------------------------------------------------------------
 		public LexImportWizardLanguage(FdoCache cache, Hashtable existingLangDesc,
-			IHelpTopicProvider helpTopicProvider, IApp app, IVwStylesheet stylesheet) : this()
+			IHelpTopicProvider helpTopicProvider, IApp app) : this()
 		{
 			m_existingLangDescriptors = existingLangDesc; //
 			m_cache = cache;
 			m_app = app;
-			m_stylesheet = stylesheet;
 			m_LinguaLinksImport = false; // (Bev) this is an SFM import
 			setupHelp(helpTopicProvider);
 		}
@@ -153,7 +148,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="app">The app.</param>
 		/// ------------------------------------------------------------------------------------
 		public LexImportWizardLanguage(FdoCache cache, IHelpTopicProvider helpTopicProvider,
-			IApp app, IVwStylesheet stylesheet) : this(cache, new Hashtable(), helpTopicProvider, app, stylesheet)
+			IApp app) : this(cache, new Hashtable(), helpTopicProvider, app)
 		{
 			m_LinguaLinksImport = true;
 			tbLangDesc.ReadOnly = true; // don't let them change the language name
@@ -397,7 +392,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			cbWS.Sorted = false;
 			var wsiIgnore = new WsInfo();
 			cbWS.Items.Add(wsiIgnore);
-			btnAddWS.Initialize(m_cache, m_helpTopicProvider, m_app, m_stylesheet, m_cache.ServiceLocator.WritingSystemManager.WritingSystems);
+			btnAddWS.Initialize(m_cache, m_helpTopicProvider, m_app, m_cache.ServiceLocator.WritingSystemManager.WritingSystems);
 
 			// select the proper index if there is a valid writing system
 			int index = 0;

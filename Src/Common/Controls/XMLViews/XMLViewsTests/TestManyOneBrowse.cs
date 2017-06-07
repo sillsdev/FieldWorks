@@ -1,4 +1,4 @@
-// Copyright (c) 2010-2013 SIL International
+// Copyright (c) 2010-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 using System.Collections;
@@ -8,14 +8,15 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Xml.Linq;
 using NUnit.Framework;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
 using SIL.FieldWorks.CacheLight;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Filters;
-using SIL.Utils;
-
+using SIL.Xml;
 
 namespace XMLViewsTests
 {
@@ -24,7 +25,7 @@ namespace XMLViewsTests
 	/// to the root object of each row.
 	/// </summary>
 	[TestFixture]
-	public class TestManyOneBrowse : SIL.FieldWorks.Test.TestUtils.BaseTest
+	public class TestManyOneBrowse
 	{
 		private IFwMetaDataCache m_mdc;
 		private ISilDataAccess m_sda;
@@ -71,7 +72,8 @@ namespace XMLViewsTests
 			// - MoStemMsa (2, 11)
 			// - MoDerivationalMsa (10)
 			m_cda = VwCacheDaClass.Create();
-			m_sda = m_cda as ISilDataAccess;
+			m_cda.TsStrFactory = TsStringUtils.TsStrFactory;
+			m_sda = (ISilDataAccess) m_cda;
 			m_wsManager = new WritingSystemManager();
 			m_sda.WritingSystemFactory = m_wsManager;
 			var parser = new SimpleDataParser(m_mdc, m_cda);

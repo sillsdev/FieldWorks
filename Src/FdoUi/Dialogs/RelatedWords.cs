@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -9,19 +9,20 @@ using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.Text;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Resources;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.FdoUi.Dialogs
 {
 	/// <summary>
 	/// Summary description for RelatedWords.
 	/// </summary>
-	public class RelatedWords : Form, IFWDisposable
+	public class RelatedWords : Form
 	{
 		private Button m_btnInsert;
 		private Button m_btnClose;
@@ -113,6 +114,7 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 				select sd.Hvo).ToArray();
 
 			cdaTemp = VwCacheDaClass.Create();
+			cdaTemp.TsStrFactory = TsStringUtils.TsStrFactory;
 			foreach (var sd in domains)
 			{
 				cdaTemp.CacheStringProp(sd.Hvo, RelatedWordsVc.ktagName,
@@ -135,8 +137,8 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 		/// <param name="hvoEntry">ID of the lexical entry we're working with</param>
 		/// <param name="relsOut">an array of IDs (HVOs) for related objects</param>
 		/// <param name="cdaTemp"></param>
-		/// <returns>false if the entry has no associated lexical relations, or none of them are linked to any other entries.</returns>
-		//
+		/// <returns>false if the entry has no associated lexical relations, or none of them are linked to any other entries.
+		/// </returns>
 		static private bool LoadLexicalRelationInfo(FdoCache cache, int hvoEntry, out int[] relsOut, IVwCacheDa cdaTemp)
 		{
 			var relatedObjectIds = new List<int>();
@@ -178,14 +180,9 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 			return relsOut.Length > 0;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Create a view with a single LexEntry object.
 		/// </summary>
-		/// <param name="hvoEntry"></param>
-		/// <param name="cache"></param>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
 		public static XmlView MakeSummaryView(int hvoEntry, FdoCache cache, IVwStylesheet styleSheet)
 		{
 			XmlView xv = new XmlView(hvoEntry, "publishStem", false);
@@ -193,7 +190,6 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 			xv.StyleSheet = styleSheet;
 			return xv;
 		}
-
 
 		public RelatedWords(FdoCache cache, IVwSelection sel, int hvoEntry, int[] domains, int[] lexrels,
 			IVwCacheDa cdaTemp, IVwStylesheet styleSheet, bool hideInsertButton)
@@ -618,14 +614,10 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 
 			base.MakeRoot();
 
-			IVwRootBox rootb = VwRootBoxClass.Create();
-			rootb.SetSite(this);
-
 			m_vc = new RelatedWordsVc(m_wsUser, m_headword);
 
-			rootb.DataAccess = m_sda;
+			m_rootb.DataAccess = m_sda;
 
-			m_rootb = rootb;
 			m_rootb.SetRootObject(m_hvoRoot, m_vc, RelatedWordsVc.kfragRoot, m_styleSheet);
 			m_fRootboxMade = true;
 		}
@@ -743,11 +735,10 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 		public RelatedWordsVc(int wsUser, ITsString headword)
 		{
 			m_wsDefault = wsUser;
-			ITsStrFactory tsf = TsStrFactoryClass.Create();
-			m_tssColon = tsf.MakeString(": ", wsUser);
-			m_tssComma = tsf.MakeString(", ", wsUser);
-			m_tssSdRelation = tsf.MakeString(FdoUiStrings.ksWordsRelatedBySemanticDomain, wsUser);
-			m_tssLexRelation = tsf.MakeString(FdoUiStrings.ksLexicallyRelatedWords, wsUser);
+			m_tssColon = TsStringUtils.MakeString(": ", wsUser);
+			m_tssComma = TsStringUtils.MakeString(", ", wsUser);
+			m_tssSdRelation = TsStringUtils.MakeString(FdoUiStrings.ksWordsRelatedBySemanticDomain, wsUser);
+			m_tssLexRelation = TsStringUtils.MakeString(FdoUiStrings.ksLexicallyRelatedWords, wsUser);
 
 			var semanticDomainStrBuilder = m_tssSdRelation.GetBldr();
 			var index = semanticDomainStrBuilder.Text.IndexOf("{0}");

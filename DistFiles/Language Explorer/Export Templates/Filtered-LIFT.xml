@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <template type="LIFT" filtered="true">
 	<FxtDocumentDescription dataLabel="Filtered Lexicon" formatLabel="LIFT 0.13 XML" defaultExtension="lift" filter="LIFT files (*.lift)|*.lift|XML files (*.xml)|*.xml|All files (*.*)|*.*">
-Export the lexicon in the Lexicon Interchange FormaT (LIFT) version 0.13.  See http://code.google.com/p/lift-standard for more information about LIFT. The export uses the filtered record list and dumps all fields for each record.</FxtDocumentDescription>
+Export the lexicon as files in a folder according to the Lexicon Interchange FormaT (LIFT) version 0.13.  See http://code.google.com/p/lift-standard for more information about LIFT.  It places in a folder a .lift file and the other files and folders needed to make a complete "LIFT export". Exports only records showing in the current filter. Outputs all fields for each record.</FxtDocumentDescription>
 </template>

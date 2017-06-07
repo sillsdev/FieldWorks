@@ -3,7 +3,6 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using SIL.FieldWorks.Common.Framework.DetailControls;
-using System.Diagnostics.CodeAnalysis;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 {
@@ -15,8 +14,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// <summary>
 		/// Initializes a new instance of the <see cref="EntrySequenceReferenceSlice"/> class.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "EntrySequenceReferenceLauncher gets added to panel's Controls collection and disposed there")]
 		public EntrySequenceReferenceSlice()
 			: base(new EntrySequenceReferenceLauncher())
 		{

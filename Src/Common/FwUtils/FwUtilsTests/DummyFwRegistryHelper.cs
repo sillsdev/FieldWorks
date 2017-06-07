@@ -113,8 +113,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			get
 			{
-				return Registry.CurrentUser.CreateSubKey(
-					@"Software\SIL\FieldWorks\UnitTests");
+				return Registry.CurrentUser.CreateSubKey(@"Software\SIL\FieldWorks\UnitTests");
 			}
 		}
 
@@ -135,12 +134,19 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		public RegistryKey SetupVersion7Settings()
 		{
-			var version7Key = FieldWorksVersionlessRegistryKey.CreateSubKey(
-				FwRegistryHelper.OldFieldWorksRegistryKeyNameVersion7);
+			var version7Key = GetSettingsSubKeyForVersion(FwRegistryHelper.OldFieldWorksRegistryKeyNameVersion7);
 
 			SetBasicKeysAndValues(version7Key);
 
 			return version7Key;
+		}
+
+		/// <summary>
+		/// For testing the upgrade of user registry keys from FW7 to FW8
+		/// </summary>
+		public RegistryKey GetSettingsSubKeyForVersion(string versionKey)
+		{
+			return FieldWorksVersionlessRegistryKey.CreateSubKey(versionKey);
 		}
 
 		private static void SetBasicKeysAndValues(RegistryKey versionKey)
@@ -188,7 +194,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <returns></returns>
 		public RegistryKey SetupVersion8Settings()
 		{
-			var version8Key = FieldWorksVersionlessRegistryKey.CreateSubKey(FwRegistryHelper.OldFieldWorksRegistryKeyNameVersion8);
+			var version8Key = GetSettingsSubKeyForVersion(FwRegistryHelper.OldFieldWorksRegistryKeyNameVersion8);
 
 			SetBasicKeysAndValues(version8Key);
 
@@ -203,7 +209,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <returns></returns>
 		public RegistryKey SetupVersion9Settings()
 		{
-			var version9Key = FieldWorksVersionlessRegistryKey.CreateSubKey(FwRegistryHelper.FieldWorksRegistryKeyName);
+			var version9Key = GetSettingsSubKeyForVersion(FwRegistryHelper.FieldWorksRegistryKeyName);
 
 			version9Key.SetValue(UserWs, "sp");
 

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ldml>
+	<identity>
+		<version
+			number="" />
+		<generation
+			date="2016-07-07T16:54:21" />
+		<language
+			type="qaa" />
+		<script
+			type="Zxxx" />
+		<variant
+			type="x-kal-audio" />
+	</identity>
+	<collations />
+	<special xmlns:palaso="urn://palaso.org/ldmlExtensions/v1">
+		<palaso:abbreviation
+			value="KalAud" />
+		<palaso:defaultFontFamily
+			value="Charis SIL" />
+		<palaso:languageName
+			value="Kalaba" />
+		<palaso:spellCheckingId
+			value="qaa_Zxxx_x_kal_audio" />
+		<palaso:version
+			value="2" />
+	</special>
+	<special xmlns:palaso2="urn://palaso.org/ldmlExtensions/v2">
+		<palaso2:knownKeyboards>
+			<palaso2:keyboard
+				layout="US"
+				locale="en-US"
+				os="Win32NT" />
+		</palaso2:knownKeyboards>
+		<palaso2:version
+			value="2" />
+	</special>
+	<special xmlns:fw="urn://fieldworks.sil.org/ldmlExtensions/v1">
+		<fw:graphiteEnabled
+			value="False" />
+		<fw:scriptName
+			value="Code for unwritten documents" />
+		<fw:validChars
+			value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-16&quot;?&gt; &lt;ValidCharacters&gt;   &lt;WordForming&gt;'￼-￼a￼A￼b￼B￼c￼C￼d￼D￼e￼E￼f￼F￼g￼G￼h￼H￼i￼I￼j￼J￼k￼K￼l￼L￼m￼M￼n￼N￼o￼O￼p￼P￼q￼Q￼r￼R￼s￼S￼t￼T￼u￼U￼v￼V￼w￼W￼x￼X￼y￼Y￼z￼Z&lt;/WordForming&gt;   &lt;Numeric /&gt;0￼1￼2￼3￼4￼5￼6￼7￼8￼9   &lt;Other&gt;U+0020￼!￼&quot;￼&amp;amp;￼(￼)￼,￼.￼/￼:￼;￼?￼[￼]￼{￼}&lt;/Other&gt; &lt;/ValidCharacters&gt;" />
+		<fw:variantName
+			value="Audio" />
+		<fw:windowsLCID
+			value="1033" />
+	</special>
+</ldml>

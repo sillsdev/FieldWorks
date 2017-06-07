@@ -12,7 +12,7 @@
 
 using System;
 using System.Collections.Generic;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.DomainServices.SemanticDomainSearch;
 using SIL.Utils;
@@ -592,32 +592,6 @@ namespace SIL.FieldWorks.FDO
 		/// height estimator</param>
 		/// ------------------------------------------------------------------------------------
 		IParagraphCounter GetParaCounter(int viewTypeId);
-	}
-	#endregion
-
-	#region IFilteredScrBookRepository
-	/// ----------------------------------------------------------------------------------------
-	/// <summary>
-	/// Repository of Scripture book filters
-	/// </summary>
-	/// ----------------------------------------------------------------------------------------
-	public interface IFilteredScrBookRepository
-	{
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Removes all of the book filters from this repository
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		void Clear();
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets virtual property handler corresponding to filter instance.
-		/// </summary>
-		/// <param name="filterInstance">Number used to make filters unique for each main
-		/// window</param>
-		/// ------------------------------------------------------------------------------------
-		FilteredScrBooks GetFilterInstance(int filterInstance);
 	}
 	#endregion
 

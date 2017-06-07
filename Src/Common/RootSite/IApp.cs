@@ -16,14 +16,13 @@ using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FwCoreDlgs;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.RootSites
 {
 	/// <summary>
 	/// Interface for application.
 	/// </summary>
-	public interface IApp : IFWDisposable, IHelpTopicProvider, IFeedbackInfoProvider, ISettings, IMessageFilter, IProjectSpecificSettingsKeyProvider
+	public interface IApp : IDisposable, IHelpTopicProvider, IFeedbackInfoProvider, ISettings, IMessageFilter, IProjectSpecificSettingsKeyProvider
 	{
 		/// -----------------------------------------------------------------------------------
 		/// <summary>

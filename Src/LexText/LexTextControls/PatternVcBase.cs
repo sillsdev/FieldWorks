@@ -1,6 +1,8 @@
 ﻿using System.Linq;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.Text;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
@@ -73,7 +75,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			int userWs = m_cache.DefaultUserWs;
 			int maxFontSize = Cache.ServiceLocator.WritingSystems.AllWritingSystems.Select(ws => GetFontHeight(ws.Handle)).Max();
 
-			ITsPropsBldr tpb = TsPropsBldrClass.Create();
+			ITsPropsBldr tpb = TsStringUtils.MakePropsBldr();
 			// specify the writing system, so that font info for a specific WS in the normal style does not override these props
 			tpb.SetIntPropValues((int) FwTextPropType.ktptWs, 0, userWs);
 			// use Charis SIL because it supports the special characters that are needed for
@@ -83,31 +85,30 @@ namespace SIL.FieldWorks.LexText.Controls
 			tpb.SetIntPropValues((int) FwTextPropType.ktptFontSize, (int) FwTextPropVar.ktpvMilliPoint, maxFontSize);
 			m_bracketProps = tpb.GetTextProps();
 
-			tpb = TsPropsBldrClass.Create();
+			tpb = TsStringUtils.MakePropsBldr();
 			tpb.SetIntPropValues((int) FwTextPropType.ktptMarginLeading, (int) FwTextPropVar.ktpvMilliPoint, PileMargin);
 			tpb.SetIntPropValues((int) FwTextPropType.ktptMarginTrailing, (int) FwTextPropVar.ktpvMilliPoint, PileMargin);
 			m_pileProps = tpb.GetTextProps();
 
-			ITsStrFactory tsf = m_cache.TsStrFactory;
-			m_empty = tsf.MakeString("", userWs);
-			m_leftBracketUpHook = tsf.MakeString("\u23a1", userWs);
-			m_leftBracketExt = tsf.MakeString("\u23a2", userWs);
-			m_leftBracketLowHook = tsf.MakeString("\u23a3", userWs);
-			m_rightBracketUpHook = tsf.MakeString("\u23a4", userWs);
-			m_rightBracketExt = tsf.MakeString("\u23a5", userWs);
-			m_rightBracketLowHook = tsf.MakeString("\u23a6", userWs);
-			m_leftBracket = tsf.MakeString("[", userWs);
-			m_rightBracket = tsf.MakeString("]", userWs);
-			m_leftParenUpHook = tsf.MakeString("\u239b", userWs);
-			m_leftParenExt = tsf.MakeString("\u239c", userWs);
-			m_leftParenLowHook = tsf.MakeString("\u239d", userWs);
-			m_rightParenUpHook = tsf.MakeString("\u239e", userWs);
-			m_rightParenExt = tsf.MakeString("\u239f", userWs);
-			m_rightParenLowHook = tsf.MakeString("\u23a0", userWs);
-			m_leftParen = tsf.MakeString("(", userWs);
-			m_rightParen = tsf.MakeString(")", userWs);
-			m_questions = tsf.MakeString("???", userWs);
-			m_zwSpace = tsf.MakeString("\u200b", userWs);
+			m_empty = TsStringUtils.EmptyString(userWs);
+			m_leftBracketUpHook = TsStringUtils.MakeString("\u23a1", userWs);
+			m_leftBracketExt = TsStringUtils.MakeString("\u23a2", userWs);
+			m_leftBracketLowHook = TsStringUtils.MakeString("\u23a3", userWs);
+			m_rightBracketUpHook = TsStringUtils.MakeString("\u23a4", userWs);
+			m_rightBracketExt = TsStringUtils.MakeString("\u23a5", userWs);
+			m_rightBracketLowHook = TsStringUtils.MakeString("\u23a6", userWs);
+			m_leftBracket = TsStringUtils.MakeString("[", userWs);
+			m_rightBracket = TsStringUtils.MakeString("]", userWs);
+			m_leftParenUpHook = TsStringUtils.MakeString("\u239b", userWs);
+			m_leftParenExt = TsStringUtils.MakeString("\u239c", userWs);
+			m_leftParenLowHook = TsStringUtils.MakeString("\u239d", userWs);
+			m_rightParenUpHook = TsStringUtils.MakeString("\u239e", userWs);
+			m_rightParenExt = TsStringUtils.MakeString("\u239f", userWs);
+			m_rightParenLowHook = TsStringUtils.MakeString("\u23a0", userWs);
+			m_leftParen = TsStringUtils.MakeString("(", userWs);
+			m_rightParen = TsStringUtils.MakeString(")", userWs);
+			m_questions = TsStringUtils.MakeString("???", userWs);
+			m_zwSpace = TsStringUtils.MakeString("\u200b", userWs);
 		}
 
 		public override ITsString DisplayVariant(IVwEnv vwenv, int tag, int frag)

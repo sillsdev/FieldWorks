@@ -1,22 +1,12 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2016 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: UndoTaskHelperTests.cs
-// Responsibility: TE Team
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
 
 using System;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
 
 using NUnit.Framework;
-
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.Infrastructure;
 
 namespace SIL.FieldWorks.Common.RootSites

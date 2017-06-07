@@ -1,22 +1,23 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
+using SIL.Xml;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
@@ -25,8 +26,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 	/// </summary>
 	public class MultiStringSlice : ViewPropertySlice
 	{
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "LabaledMultiStringView gets added to the Controls collection and disposed there")]
 		public MultiStringSlice(ICmObject obj, int flid, int ws, int wsOptional, bool forceIncludeEnglish, bool editable, bool spellCheck)
 		{
 			var view = new LabeledMultiStringView(obj.Hvo, flid, ws, wsOptional, forceIncludeEnglish, editable, spellCheck);
@@ -213,14 +212,14 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				if (Control == null)
 					return GetVisibleWritingSystems();
 				var result = ((LabeledMultiStringView) Control).WritingSystemsToDisplay;
-				if (result.Count() == 0)
+				if (result.Count == 0)
 					return GetVisibleWritingSystems();
 				return result;
 			}
 			set
 			{
-				var labeledMultiStringView = ((LabeledMultiStringView) Control);
-				if (ArrayUtils.AreEqual(labeledMultiStringView.WritingSystemsToDisplay, value))
+				var labeledMultiStringView = (LabeledMultiStringView) Control;
+				if (labeledMultiStringView.WritingSystemsToDisplay?.SequenceEqual(value) ?? false)
 					return; // no change.
 				labeledMultiStringView.WritingSystemsToDisplay = value.ToList();
 				labeledMultiStringView.RefreshDisplay();

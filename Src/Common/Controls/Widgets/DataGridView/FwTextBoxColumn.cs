@@ -14,12 +14,11 @@ using System.Diagnostics;
 using System.Windows.Forms;
 using System.Drawing;
 using System.ComponentModel;
-
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
-using System.Diagnostics.CodeAnalysis;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.Common.Widgets
 {
@@ -63,8 +62,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// </summary>
 		/// <param name="cache">The cache.</param>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "FwTextBoxCell gets disposed in Dispose()")]
 		public FwTextBoxColumn(FdoCache cache) : base(new FwTextBoxCell())
 		{
 			m_DisposeCellTemplate = true;
@@ -89,12 +86,11 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// set to <c>false</c> if called by GC. If this parameter is <c>false</c> we shouldn't
 		/// access any managed objects since these might already have been destroyed.</param>
 		/// ------------------------------------------------------------------------------------
+		//[SuppressMessage("Clouseau", "MissingDisposeCall", Justification = "Debug.WriteLineIf statement disabled because of a bug in .NET DataGridView:"
+		//	+ "DataGridView.AddRange() creates a temporary clone that it doesn't dispose, so we will always get this warning message and we can't do anything about it.")]
 		protected override void Dispose(bool disposing)
 		{
-			// Debug.WriteLineIf statement disabled because of a bug in .NET DataGridView:
-			// DataGridView.AddRange() creates a temporary clone that it doesn't dispose, so we
-			// will always get this warning message and we can't do anything about it.
-			// Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** (but this might not be your fault)");
 			if (disposing)
 			{
 				if (m_textBoxControl != null)
@@ -367,10 +363,10 @@ namespace SIL.FieldWorks.Common.Widgets
 			string faceName;
 			if (m_styleSheet != null)
 			{
-				// When there is a stylesheet, use it to get the font face name for the style
-				// name specified in the text props. If there is no style name in the text props,
-				// GetFaceNameFromStyle() should return the font face for the normal style.
-				faceName = m_styleSheet.GetFaceNameFromStyle(styleName, ws, m_cache);
+				using (var font = FontHeightAdjuster.GetFontForStyle(styleName, m_styleSheet, ws, m_cache.WritingSystemFactory))
+				{
+					faceName = font == null ? null : font.Name;
+				}
 			}
 			else
 			{
@@ -535,13 +531,12 @@ namespace SIL.FieldWorks.Common.Widgets
 			int ws = GetWritingSystemHandle(rowIndex);
 			if (ws <= 0)
 			{
-				ITsIncStrBldr strBldr = TsIncStrBldrClass.Create();
+				ITsIncStrBldr strBldr = TsStringUtils.MakeIncStrBldr();
 				strBldr.Append(string.Empty);
 				return strBldr.GetString();
 			}
 
-			ITsStrFactory tsf = TsStrFactoryClass.Create();
-			return tsf.MakeString(string.Empty, ws);
+			return TsStringUtils.EmptyString(ws);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -568,8 +563,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		///
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "fnt and family are references")]
 		public void SetZoomFactor(float factor)
 		{
 			if (DefaultCellStyle != null)

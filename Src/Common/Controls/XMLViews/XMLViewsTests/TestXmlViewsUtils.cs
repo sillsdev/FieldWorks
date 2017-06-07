@@ -4,15 +4,16 @@
 
 using System;
 using System.Linq;
+using System.Xml.Linq;
+using System.Xml.XPath;
+using NUnit.Framework;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.Filters;
-using NUnit.Framework;
-using System.Xml.Linq;
-using System.Xml.XPath;
-using SIL.Utils;
+using SIL.CoreImpl.Text;
+using SIL.Xml;
 
 namespace XMLViewsTests
 {
@@ -162,7 +163,7 @@ namespace XMLViewsTests
 		public void StringsFor()
 		{
 			var entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
-			entry.CitationForm.VernacularDefaultWritingSystem = Cache.TsStrFactory.MakeString("kick", Cache.DefaultVernWs);
+			entry.CitationForm.VernacularDefaultWritingSystem = TsStringUtils.MakeString("kick", Cache.DefaultVernWs);
 			var doc = XDocument.Parse(@"<string class='LexEntry' field='CitationForm'/>");
 			var node = doc.Root;
 			var strings = XmlViewsUtils.StringsFor(Cache, Cache.DomainDataByFlid, node, entry.Hvo, null, null,

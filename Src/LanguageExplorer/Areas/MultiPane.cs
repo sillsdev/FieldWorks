@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Windows.Forms;
 using LanguageExplorer.Controls;
@@ -204,8 +203,6 @@ namespace LanguageExplorer.Areas
 
 		#region ICtrlTabProvider implementation
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "result is a reference")]
 		public Control PopulateCtrlTabTargetCandidateList(List<Control> targetCandidates)
 		{
 			if (targetCandidates == null)

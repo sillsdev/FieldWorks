@@ -1,22 +1,16 @@
-// Copyright (c) 2009-2013 SIL International
+// Copyright (c) 2009-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ValidCharactersDlgTests.cs
-// Responsibility: TE Team
-// ---------------------------------------------------------------------------------------------
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.FwUtils;
+using SIL.CoreImpl.WritingSystems;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Resources;
-using SIL.FieldWorks.Test.TestUtils;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.FwCoreDlgs
@@ -27,7 +21,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
-	public class ValidCharactersDlgTests : BaseTest
+	public class ValidCharactersDlgTests
 	{
 		private DummyValidCharactersDlg m_dlg;
 
@@ -133,7 +127,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		[Test]
 		public void AddSingleCharacter_InvalidManualEntry_BogusChar()
 		{
-			m_dlg.ManualCharEntryTextBox.Text = "\u5678"; // see DummyCharPropEngine.get_GeneralCategory
+			m_dlg.ManualCharEntryTextBox.Text = "\u2065";
 
 			Assert.AreEqual(String.Empty, m_dlg.ManualCharEntryTextBox.Text,
 				"The manual entry text box should be cleared.");
@@ -245,7 +239,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		public DummyValidCharactersDlg()
 		{
-			ReflectionHelper.SetField(this, "m_chrPropEng", new DummyCharPropEngine());
 			MessageBoxText = new List<string>();
 		}
 

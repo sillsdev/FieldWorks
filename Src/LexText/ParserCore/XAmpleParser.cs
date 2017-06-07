@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -14,12 +14,12 @@ using System.Xml.Linq;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.Utils;
+using SIL.ObjectModel;
 using XAmpleManagedWrapper;
 
 namespace SIL.FieldWorks.WordWorks.Parser
 {
-	public class XAmpleParser : FwDisposableBase, IParser
+	public class XAmpleParser : DisposableBase, IParser
 	{
 		private static readonly char[] Digits = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
 

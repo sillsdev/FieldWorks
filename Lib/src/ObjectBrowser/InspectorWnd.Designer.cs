@@ -20,8 +20,6 @@ namespace SIL.ObjectBrowser
 		/// the contents of this method with the code editor.
 		/// </summary>
 		// TODO-Linux: VirtualMode is not supported on Mono
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification="See TODO-Linux comment")]
 		private void InitializeComponent()
 		{
 			this.gridInspector = new InspectorGrid();

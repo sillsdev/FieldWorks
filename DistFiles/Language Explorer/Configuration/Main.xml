@@ -571,14 +571,17 @@ InterlinMaster user:
 			<item command="CmdJumpToNotebookEditWithFilter"/>
 
 			<item command="CmdJumpToConfidenceList"/>
+			<item command="CmdJumpToDialectLabelsList"/>
 			<item command="CmdJumpToDiscChartMarkerList"/>
 			<item command="CmdJumpToDiscChartTemplateList"/>
 			<item command="CmdJumpToEducationList"/>
 			<item command="CmdJumpToRoleList"/>
+			<item command="CmdJumpToExtNoteTypeList"/>
 			<item command="CmdJumpToComplexEntryTypeList"/>
 			<item command="CmdJumpToVariantEntryTypeList"/>
 			<item command="CmdJumpToTextMarkupTagsList"/>
 			<item command="CmdJumpToLexRefTypeList"/>
+			<item command="CmdJumpToLanguagesList"/>
 			<item command="CmdJumpToLocationList"/>
 			<item command="CmdJumpToPublicationList"/>
 			<item command="CmdJumpToMorphTypeList"/>
@@ -618,7 +621,7 @@ InterlinMaster user:
 				<item command="CmdPublicationsJumpToDefault"/>
 			</menu>
 			<menu id="ReversalIndexPaneMenu" icon="MenuWidget" alignment="left">
-			<menu inline="true" emptyAllowed="true" behavior="singlePropertyAtomicValue" list="ReversalIndexList" property="ReversalIndexGuid" />
+			<menu inline="true" emptyAllowed="true" behavior="singlePropertyAtomicValue" list="ReversalIndexList" property="ReversalIndexPublicationLayout" />
 			<item label="-" translate="do not translate"/>
 			<item command="CmdConfigureDictionary"/>
 			</menu>

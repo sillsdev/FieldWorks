@@ -5,10 +5,8 @@
 // File: ApplicationBusyDialog.cs
 
 using System;
-using System.Diagnostics;
 using System.Threading;
 using System.Windows.Forms;
-using System.Collections.Generic;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.FwUtils;

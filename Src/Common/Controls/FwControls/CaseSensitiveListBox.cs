@@ -5,10 +5,7 @@
 // File: CaseSensistiveListBox.cs
 // Responsibility: TE TEam
 
-using System;
 using System.Windows.Forms;
-
-using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -29,6 +26,13 @@ namespace SIL.FieldWorks.Common.Controls
 			Sorted = true;
 		}
 
+
+		/// <summary/>
+		protected override void Dispose(bool disposing)
+		{
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ******");
+			base.Dispose(disposing);
+		}
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Finds the first item in the <see cref="T:System.Windows.Forms.ListBox"/> that starts

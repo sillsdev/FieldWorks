@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -10,7 +10,6 @@ using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.LexText.Controls;
-using System.Diagnostics.CodeAnalysis;
 using SIL.FieldWorks.XWorks;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
@@ -48,8 +47,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 			return true;//we handled this, no need to ask anyone else.
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "slice and cache are references")]
 		public bool OnPromoteReversalindexEntry(object cmd)
 		{
 			//Command command = (Command) cmd;
@@ -93,8 +90,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 		/// <param name="commandObject"></param>
 		/// <param name="display"></param>
 		/// <returns></returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "slice is a reference")]
 		public virtual bool OnDisplayPromoteReversalindexEntry(object commandObject,
 			ref UIItemDisplayProperties display)
 		{
@@ -112,10 +107,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 			return true; //we've handled this
 		}
 #endif
-
 		/// <summary />
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "slice is a reference")]
 		public bool OnMoveReversalindexEntry(object cmd)
 		{
 			using (var dlg = new ReversalEntryGoDlg())
@@ -165,8 +157,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 		/// <param name="commandObject"></param>
 		/// <param name="display"></param>
 		/// <returns></returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "slice is a reference")]
 		public virtual bool OnDisplayMoveReversalindexEntry(object commandObject,
 			ref UIItemDisplayProperties display)
 		{

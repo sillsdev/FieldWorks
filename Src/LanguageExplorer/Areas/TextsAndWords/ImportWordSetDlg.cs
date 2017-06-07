@@ -1,13 +1,14 @@
-// Copyright (c) 2003-2015 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
+//
 // <remarks>
 // Implementation of:
 //		ImportWordSetDlg - Dialog for editing XML representation of parser parameters
 //                            (MoMorphData : ParserParameters)
 // </remarks>
+
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.Controls;
@@ -16,14 +17,13 @@ using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Resources;
-using SIL.Utils;
 
 namespace LanguageExplorer.Areas.TextsAndWords
 {
 	/// <summary>
 	/// Summary description for ImportWordSetDlg.
 	/// </summary>
-	internal sealed class ImportWordSetDlg : Form, IFWDisposable
+	internal sealed class ImportWordSetDlg : Form
 	{
 		#region Data members
 		private IPublisher m_publisher;
@@ -89,8 +89,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Design", "UseCorrectDisposeSignaturesRule",
-			Justification = "The class derives from Form. Therefore Dispose(bool) can't be private in a sealed class.")]
 		protected override void Dispose(bool disposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");

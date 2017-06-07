@@ -1,20 +1,19 @@
-// Copyright (c) 2002-2013 SIL International
+// Copyright (c) 2002-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ImportWizard.cs
 
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using Microsoft.Win32;
 using Paratext;
 using SIL.CoreImpl;
+using SIL.CoreImpl.Scripture;
+using SIL.CoreImpl.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Drawing;
 using SIL.FieldWorks.Common.FwUtils;
@@ -37,7 +36,7 @@ namespace SIL.FieldWorks.TE
 	/// converting a Standard Format project for access by ScriptureObjects.
 	/// </summary>
 	/// -----------------------------------------------------------------------------------
-	public class ImportWizard : Form, IFWDisposable
+	public class ImportWizard : Form
 	{
 		#region ImportWizard Enums
 		/// -----------------------------------------------------------------------------------
@@ -256,11 +255,10 @@ namespace SIL.FieldWorks.TE
 			m_cache = scr.Cache;
 
 			// Attempt to get the default import settings.
-			m_settings = m_scr.FindOrCreateDefaultImportSettings(TypeOfImport.Unknown);
+			m_settings = m_scr.FindOrCreateDefaultImportSettings(TypeOfImport.Unknown, m_StyleSheet, FwDirectoryFinder.TeStylesPath);
 			if (m_settings.ImportTypeEnum == TypeOfImport.Unknown)
 				m_settings.ImportTypeEnum = TypeOfImport.Paratext6;
-
-			InitializeScrImportSettings();
+			m_settings.OverlappingFileResolver = m_resolver;
 
 			// Initialize controls based on settings provided
 			switch (m_settings.ImportTypeEnum)
@@ -293,18 +291,6 @@ namespace SIL.FieldWorks.TE
 				m_annotationViewHelper.AddStyles(m_StyleSheet,
 					MappingDetailsCtrl.AllPseudoStyles);
 			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Initializes the Scripture import settings object. This should be called whenever
-		/// m_settings is reassigned to a new instance of the ScrImportSet class.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		private void InitializeScrImportSettings()
-		{
-			m_settings.StyleSheet = m_StyleSheet;
-			m_settings.OverlappingFileResolver = m_resolver;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1148,8 +1134,6 @@ namespace SIL.FieldWorks.TE
 		/// loaded.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="REVIEW: ParatextHelper.GetAssociatedProject() returns a reference?")]
 		private void LoadParatextProjectCombos()
 		{
 			ScrText assocProj = ParatextHelper.GetAssociatedProject(m_cache.ProjectId);
@@ -1747,8 +1731,6 @@ namespace SIL.FieldWorks.TE
 		/// project cannot be found, and that's the type of project the user specified,
 		/// then it's not OK to proceed.</returns>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification="See TODO-Linux comment")]
 		private bool ValidToGoForward()
 		{
 			if (m_settings == null)
@@ -2107,7 +2089,7 @@ namespace SIL.FieldWorks.TE
 			rect.X += textWidth;
 			rect.Width -= textWidth;
 			Color backColor = e.Item.Selected ? SystemColors.Highlight : lv.BackColor;
-			TextRenderer.DrawText(e.Graphics, "...", lv.Font, rect, ColorUtil.LightInverse(backColor),
+			TextRenderer.DrawText(e.Graphics, "...", lv.Font, rect, LightInverse(backColor),
 				TextFormatFlags.LeftAndRightPadding | TextFormatFlags.SingleLine | TextFormatFlags.VerticalCenter);
 
 			textWidth = (int)Math.Round(e.Graphics.MeasureString("...", lv.Font).Width);
@@ -2115,6 +2097,20 @@ namespace SIL.FieldWorks.TE
 			rect.Width -= textWidth;
 			TextRenderer.DrawText(e.Graphics, mapping.EndMarker, lv.Font, rect, foreColor,
 				TextFormatFlags.LeftAndRightPadding | TextFormatFlags.SingleLine | TextFormatFlags.VerticalCenter);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Compute a color which is the inverse of the given color, but just a little lighter.
+		/// </summary>
+		/// <param name="baseColor">Color whose light inverse is to be computed.</param>
+		/// <returns>A color which ia a little lighter than the inverse of the given color
+		/// </returns>
+		/// ------------------------------------------------------------------------------------
+		private static Color LightInverse(Color baseColor)
+		{
+			return Color.FromArgb((int)((int)(baseColor.R * 0.7) ^ 0xFF),
+				(int)((int)(baseColor.G * 0.7) ^ 0xFF), (int)((int)(baseColor.B * 0.7) ^ 0xFF));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -2170,9 +2166,9 @@ namespace SIL.FieldWorks.TE
 		{
 			NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(m_cache.ActionHandlerAccessor, () =>
 			{
-				m_settings = m_scr.FindOrCreateDefaultImportSettings(importType);
+				m_settings = m_scr.FindOrCreateDefaultImportSettings(importType, m_StyleSheet, FwDirectoryFinder.TeStylesPath);
 			});
-			InitializeScrImportSettings();
+			m_settings.OverlappingFileResolver = m_resolver;
 		}
 		#endregion
 

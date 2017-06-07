@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -8,10 +8,11 @@ using System.Diagnostics;
 using System.Linq;
 using System.Xml;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Scripture;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.DomainImpl;
 
 namespace SIL.FieldWorks.FDO.FDOTests
@@ -38,7 +39,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 								MatchOneMoreInitialTN = true
 							};
 			adjuster.OldContents = "pus yalola nihimbilira.";
-			adjuster.SetNewContents(Cache.TsStrFactory.MakeString("pus yalola nihimbilira.", spanishWs));
+			adjuster.SetNewContents(TsStringUtils.MakeString("pus yalola nihimbilira.", spanishWs));
 			Cache.LangProject.AddToCurrentVernacularWritingSystems((CoreWritingSystemDefinition) Cache.WritingSystemFactory.get_Engine("es"));
 			adjuster.RunTest();
 		}
@@ -76,7 +77,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			};
 			//											        1         2         3         4         5         6         7         8         9
 			//								          0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890
-			var bldr = Cache.TsStrFactory.MakeString("(TB: kajem) diki mi diki lapolo neki tari di ten te (TB: tarin) dep xy",
+			ITsStrBldr bldr = TsStringUtils.MakeString("(TB: kajem) diki mi diki lapolo neki tari di ten te (TB: tarin) dep xy",
 				Cache.DefaultVernWs).GetBldr();
 			// The two 'TB' labels are supposed to be English.
 			bldr.SetIntPropValues(1,3, (int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault, Cache.DefaultAnalWs);
@@ -137,13 +138,13 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			text.ContentsOA = sttext;
 			var para = Cache.ServiceLocator.GetInstance<IStTxtParaFactory>().Create();
 			sttext.ParagraphsOS.Add(para);
-			para.Contents = Cache.TsStrFactory.MakeString("xyzhello", Cache.DefaultVernWs);
+			para.Contents = TsStringUtils.MakeString("xyzhello", Cache.DefaultVernWs);
 			using (var pp = new ParagraphParser(Cache))
 					pp.Parse(para);
 			var wf = Cache.ServiceLocator.GetInstance<IWfiWordformRepository>().GetMatchingWordform(Cache.DefaultVernWs,
 				"xyzhello");
 			Cache.ServiceLocator.ObjectRepository.AddFocusedObject(wf);
-			para.Contents = Cache.TsStrFactory.MakeString("xyhello", Cache.DefaultVernWs);
+			para.Contents = TsStringUtils.MakeString("xyhello", Cache.DefaultVernWs);
 			m_actionHandler.EndUndoTask();
 
 			Assert.That(wf.IsValidObject, "the focused wordform should not have been deleted");
@@ -573,7 +574,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				MatchingFinalAnalyses = 0,
 				MatchOneMoreInitialTN = true
 			};
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, "1Good", StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
 			bldr.SetStrPropValue(0, 1, (int)FwTextPropType.ktptNamedStyle, ScrStyleNames.VerseNumber);
 			adjuster.SetOldContents(bldr.GetString());
@@ -600,7 +601,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				MatchingFinalAnalyses = 0,
 				MatchOneMoreInitialTN = true,
 			};
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, "1Goody 2Bad.", StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
 			bldr.SetStrPropValue(0, 1, (int)FwTextPropType.ktptNamedStyle, ScrStyleNames.VerseNumber);
 			bldr.SetStrPropValue(7, 8, (int)FwTextPropType.ktptNamedStyle, ScrStyleNames.VerseNumber);
@@ -624,7 +625,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			{
 				MatchingInitialSegments = 8,
 			};
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			//	                          1         2         3         4         5         6         7         8         9
 			//                  0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890
 			bldr.Replace(0, 0, "1Goody 2Bad. But not too bad. 3Wonderful. And nice.", StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
@@ -652,7 +653,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				MatchingInitialSegments = 2,
 				MatchingFinalSegments = 1,
 			};
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			//	                          1         2         3         4         5         6         7         8         9
 			//                  0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890
 			bldr.Replace(0, 0, "1Goody 2Bad. But not too bad. 3Wonderful. And nice.", StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
@@ -683,7 +684,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				MatchOneMoreInitialTN = true,
 				MatchOneMoreFinalTN = true,
 			};
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, "1Goody .Bad.", StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
 			bldr.SetStrPropValue(0, 1, (int)FwTextPropType.ktptNamedStyle, ScrStyleNames.VerseNumber);
 			adjuster.SetOldContents(bldr.GetString());
@@ -710,7 +711,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				MatchOneMoreInitialTN = true,
 				MatchOneMoreFinalTN = true,
 			};
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, "1Goody .Bad.", StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
 			bldr.SetStrPropValue(0, 1, (int)FwTextPropType.ktptNamedStyle, ScrStyleNames.VerseNumber);
 			adjuster.SetOldContents(bldr.GetString());
@@ -737,7 +738,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				MatchOneMoreInitialTN = true,
 				MatchOneMoreFinalTN = true,
 			};
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, "1Goody .Bad.", StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
 			bldr.SetStrPropValue(0, 1, (int)FwTextPropType.ktptNamedStyle, ScrStyleNames.VerseNumber);
 			adjuster.SetOldContents(bldr.GetString());
@@ -765,7 +766,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				MatchOneMoreInitialTN = false,
 				MatchOneMoreFinalTN = true
 			};
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, "1Goody. 2Bad.", StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
 			bldr.SetStrPropValue(0, 1, (int)FwTextPropType.ktptNamedStyle, ScrStyleNames.VerseNumber);
 			adjuster.SetOldContents(bldr.GetString());
@@ -793,7 +794,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				MatchOneMoreInitialTN = true,
 				MatchOneMoreFinalTN = false
 			};
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, "1Goodyr 2Bad.", StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
 			bldr.SetStrPropValue(0, 1, (int)FwTextPropType.ktptNamedStyle, ScrStyleNames.VerseNumber);
 			adjuster.SetOldContents(bldr.GetString());
@@ -817,7 +818,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				MatchOneMoreInitialTN = true,
 			};
 			// Create a string with an ORC in the middle for the old contents
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, "Start", StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
 			TsStringUtils.InsertOrcIntoPara(Guid.NewGuid(), FwObjDataTypes.kodtOwnNameGuidHot, bldr, bldr.Length, bldr.Length, Cache.DefaultVernWs);
 			bldr.Replace(bldr.Length, bldr.Length, " end", StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
@@ -1353,7 +1354,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			adjuster.ChangeMaker = text =>
 			{
 				var paraNew = text.InsertNewTextPara(0, null);
-				paraNew.Contents = paraNew.Cache.TsStrFactory.MakeString("New", paraNew.Cache.DefaultVernWs);
+				paraNew.Contents = TsStringUtils.MakeString("New", paraNew.Cache.DefaultVernWs);
 			};
 			adjuster.RunTest();
 		}
@@ -1380,10 +1381,9 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 				var para = text[0];
 				var paraNew = text.InsertNewTextPara(0, null);
-				paraNew.Contents = paraNew.Cache.TsStrFactory.MakeString("new", paraNew.Cache.DefaultVernWs);
+				paraNew.Contents = TsStringUtils.MakeString("new", paraNew.Cache.DefaultVernWs);
 				para.Contents = para.Contents.Insert(0,
-													 para.Cache.TsStrFactory.MakeString("more new ",
-																						para.Cache.DefaultVernWs));
+					TsStringUtils.MakeString("more new ", para.Cache.DefaultVernWs));
 
 			};
 			adjuster.RunTest();
@@ -1503,7 +1503,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			text.ContentsOA = stText;
 			var para = Cache.ServiceLocator.GetInstance<IStTxtParaFactory>().Create();
 			stText.ParagraphsOS.Add(para);
-			para.Contents = Cache.TsStrFactory.MakeString("Pus yalola nihimbilira. Nihimbilira pus yalola.", Cache.DefaultVernWs);
+			para.Contents = TsStringUtils.MakeString("Pus yalola nihimbilira. Nihimbilira pus yalola.", Cache.DefaultVernWs);
 			var paraNew = stText.InsertNewTextPara(1, null);
 			para.SegmentsOS.Clear(); // get rid of analysis generated by side effects.
 			text.Cache.DomainDataByFlid.MoveString(para.Hvo, StTxtParaTags.kflidContents, 0,
@@ -2743,7 +2743,6 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		private IStTextFactory m_stTextFactory;
 		private ITextFactory m_textFactory;
 		private IStTxtParaFactory m_paraFactory;
-		private ITsStrFactory m_tssFactory;
 		private int m_wsEn, m_wsFr;
 
 		//The list of analyses of the old text before we modified it.
@@ -2758,7 +2757,6 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			m_stTextFactory = Cache.ServiceLocator.GetInstance<IStTextFactory>();
 			m_textFactory = Cache.ServiceLocator.GetInstance<ITextFactory>();
 			m_paraFactory = Cache.ServiceLocator.GetInstance<IStTxtParaFactory>();
-			m_tssFactory = TsStrFactoryClass.Create();
 			m_oldText = MakeStText();
 			m_newText = MakeStText();
 			m_wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
@@ -2769,7 +2767,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			set
 			{
-				SetOldContents(m_tssFactory.MakeString(value, Cache.DefaultVernWs));
+				SetOldContents(TsStringUtils.MakeString(value, Cache.DefaultVernWs));
 			}
 		}
 
@@ -2787,7 +2785,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			set
 			{
-				SetNewContents(m_tssFactory.MakeString(value, Cache.DefaultVernWs));
+				SetNewContents(TsStringUtils.MakeString(value, Cache.DefaultVernWs));
 			}
 		}
 		internal void SetNewContents(ITsString value)
@@ -2798,13 +2796,13 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		internal void AddOldParagraph(String text)
 		{
 			var para = m_oldText.AddNewTextPara(null);
-			para.Contents = m_tssFactory.MakeString(text, Cache.DefaultVernWs);
+			para.Contents = TsStringUtils.MakeString(text, Cache.DefaultVernWs);
 		}
 
 		internal void AddNewParagraph(String text)
 		{
 			var para = m_newText.AddNewTextPara(null);
-			para.Contents = m_tssFactory.MakeString(text, Cache.DefaultVernWs);
+			para.Contents = TsStringUtils.MakeString(text, Cache.DefaultVernWs);
 		}
 
 		internal virtual void RunTest()
@@ -3082,26 +3080,26 @@ namespace SIL.FieldWorks.FDO.FDOTests
 						continue;
 
 					seg.FreeTranslation.set_String(m_wsEn,
-						m_tssFactory.MakeString("English Translation of Para " + ipara + " Segment " + iseg + ". ", m_wsEn));
+						TsStringUtils.MakeString("English Translation of Para " + ipara + " Segment " + iseg + ". ", m_wsEn));
 					seg.FreeTranslation.set_String(m_wsFr,
-						m_tssFactory.MakeString("French Translation of Para " + ipara + " Segment " + iseg + ".", m_wsFr));
+						TsStringUtils.MakeString("French Translation of Para " + ipara + " Segment " + iseg + ".", m_wsFr));
 
 					seg.LiteralTranslation.set_String(m_wsEn,
-						m_tssFactory.MakeString("English Literal Translation of Para " + ipara + " Segment " + iseg + ".", m_wsEn));
+						TsStringUtils.MakeString("English Literal Translation of Para " + ipara + " Segment " + iseg + ".", m_wsEn));
 					seg.LiteralTranslation.set_String(m_wsFr,
-						m_tssFactory.MakeString(" French Literal Translation of Para " + ipara + " Segment " + iseg + ".", m_wsFr));
+						TsStringUtils.MakeString(" French Literal Translation of Para " + ipara + " Segment " + iseg + ".", m_wsFr));
 
 					INote note = noteFactory.Create();
 					seg.NotesOS.Add(note);
 					note.Content.set_String(m_wsEn,
-						m_tssFactory.MakeString("First English Note of Para " + ipara + " Segment " + iseg + ".", m_wsEn));
+						TsStringUtils.MakeString("First English Note of Para " + ipara + " Segment " + iseg + ".", m_wsEn));
 					note.Content.set_String(m_wsFr,
-						m_tssFactory.MakeString("First French Note of Para " + ipara + " Segment " + iseg + ".", m_wsFr));
+						TsStringUtils.MakeString("First French Note of Para " + ipara + " Segment " + iseg + ".", m_wsFr));
 
 					note = noteFactory.Create();
 					seg.NotesOS.Add(note);
 					note.Content.set_String(m_wsFr,
-						m_tssFactory.MakeString("Second French Note of Para " + ipara + " Segment " + iseg + ".", m_wsFr));
+						TsStringUtils.MakeString("Second French Note of Para " + ipara + " Segment " + iseg + ".", m_wsFr));
 
 					iseg++;
 				}
@@ -3572,7 +3570,6 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		protected IConstChartWordGroupRepository m_cellRepo;
 		protected IConstChartWordGroupFactory m_cellFact;
 		protected IConstChartRowFactory m_rowFact;
-		internal ITsStrFactory m_tssFact;
 		internal List<CellSkeleton> m_oldCellSkels;
 		internal List<CellSkeleton> m_newCellSkels;
 		internal ICmPossibility m_template;
@@ -3587,7 +3584,6 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			m_cellFact = Cache.ServiceLocator.GetInstance<IConstChartWordGroupFactory>();
 			m_cellRepo = Cache.ServiceLocator.GetInstance<IConstChartWordGroupRepository>();
 			m_rowFact = Cache.ServiceLocator.GetInstance<IConstChartRowFactory>();
-			m_tssFact = Cache.TsStrFactory; // for creating row labels
 
 			m_oldCellSkels = new List<CellSkeleton>();
 			m_newCellSkels = new List<CellSkeleton>();
@@ -3757,7 +3753,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			var crows = chart.RowsOS.Count + 1; // count after adding new row!
 			var ws = Cache.WritingSystemFactory.GetWsFromStr("en");
 			Debug.Assert(ws > 0, "No English writing system?");
-			var rowLabel = m_tssFact.MakeString(crows.ToString(), ws);
+			var rowLabel = TsStringUtils.MakeString(crows.ToString(), ws);
 			var row = m_rowFact.Create(chart, crows - 1, rowLabel);
 			row.EndSentence = true; // don't want to deal with 1a, 1b, etc.
 		}

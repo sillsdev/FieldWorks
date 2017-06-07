@@ -5,10 +5,11 @@
 using System;
 using System.Diagnostics;
 using Microsoft.Practices.ServiceLocation;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
 
 namespace SIL.FieldWorks.FDO.DomainServices
 {
@@ -188,10 +189,10 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			ICmAnnotationDefn noteAnnDef = AddAnnotationDefn(posList, CmAnnotationDefnTags.kguidAnnNote);
 			ICmAnnotationDefn noteSubDef = AddAnnotationDefn(noteAnnDef, CmAnnotationDefnTags.kguidAnnConsultantNote);
 			noteSubDef.UserCanCreate = true;
-			noteSubDef.Name.UserDefaultWritingSystem = TsStringUtils.MakeTss("Consultant", lp.Cache.DefaultUserWs);
+			noteSubDef.Name.UserDefaultWritingSystem = TsStringUtils.MakeString("Consultant", lp.Cache.DefaultUserWs);
 			noteSubDef = AddAnnotationDefn(noteAnnDef, CmAnnotationDefnTags.kguidAnnTranslatorNote);
 			noteSubDef.UserCanCreate = true;
-			noteSubDef.Name.UserDefaultWritingSystem = TsStringUtils.MakeTss("Translator", lp.Cache.DefaultUserWs);
+			noteSubDef.Name.UserDefaultWritingSystem = TsStringUtils.MakeString("Translator", lp.Cache.DefaultUserWs);
 
 			// Others
 			AddAnnotationDefn(posList, CmAnnotationDefnTags.kguidAnnComment);
@@ -270,10 +271,12 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			//LangProject.StatusOA.ItemClsid = CmPossibilityTags.kClassId;
 			lexDb.SenseTypesOA = listFactory.Create();
 			lexDb.SenseTypesOA.ItemClsid = CmPossibilityTags.kClassId;
+			lexDb.PublicationTypesOA = listFactory.Create();
+			lexDb.PublicationTypesOA.ItemClsid = CmPossibilityTags.kClassId;
+			SetMinimalPublicationType(lexDb);
 
 			AddMorphTypes(lexDb);
 
-			var mdcManaged = servLoc.GetInstance<IFwMetaDataCacheManaged>();
 			var listFactoryInternal = listFactory as ICmPossibilityListFactoryInternal;
 			lexDb.ComplexEntryTypesOA = listFactoryInternal.Create(
 				new Guid("1ee09905-63dd-4c7a-a9bd-1d496743ccd6"),
@@ -284,9 +287,93 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				dataReader.GetNextRealHvo());
 			lexDb.VariantEntryTypesOA.ItemClsid = LexEntryTypeTags.kClassId;
 			AddEntryTypes(lexDb);
+			lexDb.ExtendedNoteTypesOA = listFactoryInternal.Create(
+				new Guid("ed6b2dcc-e82f-4631-b61a-6b630de332d0"),
+				dataReader.GetNextRealHvo());
+			lexDb.ExtendedNoteTypesOA.ItemClsid = CmPossibilityTags.kClassId;
+			AddExtendedNoteTypes(lexDb);
+			lexDb.LanguagesOA = listFactoryInternal.Create(
+			new Guid("487c15b0-2ced-4417-8b77-9075f4a21e5f"),
+			dataReader.GetNextRealHvo());
+			lexDb.LanguagesOA.ItemClsid = CmPossibilityTags.kClassId;
+			lexDb.DialectLabelsOA = listFactoryInternal.Create(
+			new Guid("a3a8188b-ab00-4a43-b925-a1eed62287ba"),
+			dataReader.GetNextRealHvo());
+			lexDb.DialectLabelsOA.ItemClsid = CmPossibilityTags.kClassId;
 
 			// TODO: add lexDb.Introduction, lexDb.Domain/Subentry/Sense,
 			// lexDb.AllomorphConditions, lexDb.Status
+		}
+
+		private static void SetMinimalPublicationType(ILexDb lexDb)
+		{
+			var servLoc = lexDb.Cache.ServiceLocator;
+			var wsMgr = servLoc.WritingSystemManager;
+			var eng = wsMgr.UserWritingSystem.Handle;
+			lexDb.PublicationTypesOA.Name.set_String(eng, "Publications");
+			var possibilityFactory = servLoc.GetInstance<ICmPossibilityFactory>() as ICmPossibilityFactoryInternal;
+			var dataReader = (IDataReader)servLoc.GetInstance<IDataSetup>();
+			var poss = possibilityFactory.Create(
+				Guid.NewGuid(),
+				dataReader.GetNextRealHvo(),
+				lexDb.PublicationTypesOA, 0);
+			poss.Name.set_String(eng, "Main Dictionary");
+			poss.Abbreviation.set_String(eng, "Main");
+			poss.IsProtected = true;
+		}
+
+		private static void AddExtendedNoteTypes(ILexDb lexDb)
+		{
+			var cache = lexDb.Cache;
+			var servLoc = cache.ServiceLocator;
+			var dataReader = (IDataReader)servLoc.GetInstance<IDataSetup>();
+			var eng = servLoc.WritingSystemManager.UserWritingSystem;
+
+			var typesList = lexDb.ExtendedNoteTypesOA;
+			var possibilityFactory = servLoc.GetInstance<ICmPossibilityFactory>() as ICmPossibilityFactoryInternal;
+			for (var i = 1; i <= 5; i++)
+			{
+				var guid = Guid.Empty;
+				ITsString name = null;
+				ITsString abbr = null;
+				switch (i)
+				{
+					case 1:
+						guid = new Guid("2f06d436-b1e0-47ae-a42e-1f7b893c5fc2");
+						name = TsStringUtils.MakeString("Collocation", eng.Handle);
+						abbr = TsStringUtils.MakeString("Coll.", eng.Handle);
+						break;
+					case 2:
+						guid = new Guid("7ad06e7d-15d1-42b0-ae19-9c05b7c0b181");
+						name = TsStringUtils.MakeString("Cultural", eng.Handle);
+						abbr = TsStringUtils.MakeString("Cult.", eng.Handle);
+						break;
+					case 3:
+						guid = new Guid("d3d28628-60c9-4917-8185-ba64c59f20c3");
+						name = TsStringUtils.MakeString("Discourse", eng.Handle);
+						abbr = TsStringUtils.MakeString("Disc.", eng.Handle);
+						break;
+					case 4:
+						guid = new Guid("30115b33-608a-4506-9f9c-2457cab4f4a8");
+						name = TsStringUtils.MakeString("Grammar", eng.Handle);
+						abbr = TsStringUtils.MakeString("Gram.", eng.Handle);
+						break;
+					case 5:
+						guid = new Guid("5dd29371-fdb0-497a-a2fb-7ca69b00ad4f");
+						name = TsStringUtils.MakeString("Semantic", eng.Handle);
+						abbr = TsStringUtils.MakeString("Sem.", eng.Handle);
+						break;
+				}
+
+				// Create the ExtendedNoteType.
+				var poss = possibilityFactory.Create(
+					guid,
+					dataReader.GetNextRealHvo(),
+					typesList,
+					i - 1); // Zero based ord.
+				poss.Name.set_String(eng.Handle, name);
+				poss.Abbreviation.set_String(eng.Handle, abbr);
+			}
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -300,47 +387,51 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			var cache = lexDb.Cache;
 			var servLoc = cache.ServiceLocator;
 			var dataReader = (IDataReader)servLoc.GetInstance<IDataSetup>();
-			var tsf = cache.TsStrFactory;
 			var eng = servLoc.WritingSystemManager.UserWritingSystem;
 
 			var complexEntryTypesList = lexDb.ComplexEntryTypesOA;
-			var lexEntryTypeFactory = servLoc.GetInstance<ILexEntryTypeFactory>() as ILexEntryTypeFactoryInternal;
-			for (var i = 1; i <= 6; i++)
+			var lexEntryTypeFactory = (ILexEntryTypeFactoryInternal)servLoc.GetInstance<ILexEntryTypeFactory>();
+			for (var i = 0; i <= 6; i++)
 			{
 				var guid = Guid.Empty;
 				ITsString name = null;
 				ITsString abbr = null;
 				switch (i)
 				{
+					case 0:
+						guid = new Guid("fec038ed-6a8c-4fa5-bc96-a4f515a98c50");
+						name = TsStringUtils.MakeString("Unspecified Complex Form", eng.Handle);
+						abbr = TsStringUtils.MakeString("unspec. comp. form of", eng.Handle);
+						break;
 					case 1:
 						guid = new Guid("1f6ae209-141a-40db-983c-bee93af0ca3c");
-						name = tsf.MakeString("Compound", eng.Handle);
-						abbr = tsf.MakeString("comp. of", eng.Handle);
+						name = TsStringUtils.MakeString("Compound", eng.Handle);
+						abbr = TsStringUtils.MakeString("comp. of", eng.Handle);
 						break;
 					case 2:
 						guid = new Guid("73266a3a-48e8-4bd7-8c84-91c730340b7d");
-						name = tsf.MakeString("Contraction", eng.Handle);
-						abbr = tsf.MakeString("cont. of", eng.Handle);
+						name = TsStringUtils.MakeString("Contraction", eng.Handle);
+						abbr = TsStringUtils.MakeString("cont. of", eng.Handle);
 						break;
 					case 3:
 						guid = new Guid("98c273c4-f723-4fb0-80df-eede2204dfca");
-						name = tsf.MakeString("Derivation", eng.Handle);
-						abbr = tsf.MakeString("der. of", eng.Handle);
+						name = TsStringUtils.MakeString("Derivation", eng.Handle);
+						abbr = TsStringUtils.MakeString("der. of", eng.Handle);
 						break;
 					case 4:
 						guid = new Guid("b2276dec-b1a6-4d82-b121-fd114c009c59");
-						name = tsf.MakeString("Idiom", eng.Handle);
-						abbr = tsf.MakeString("id. of", eng.Handle);
+						name = TsStringUtils.MakeString("Idiom", eng.Handle);
+						abbr = TsStringUtils.MakeString("id. of", eng.Handle);
 						break;
 					case 5:
 						guid = new Guid("35cee792-74c8-444e-a9b7-ed0461d4d3b7");
-						name = tsf.MakeString("Phrasal Verb", eng.Handle);
-						abbr = tsf.MakeString("p.v.", eng.Handle);
+						name = TsStringUtils.MakeString("Phrasal Verb", eng.Handle);
+						abbr = TsStringUtils.MakeString("p.v.", eng.Handle);
 						break;
 					case 6:
 						guid = new Guid("9466d126-246e-400b-8bba-0703e09bc567");
-						name = tsf.MakeString("Saying", eng.Handle);
-						abbr = tsf.MakeString("say.", eng.Handle);
+						name = TsStringUtils.MakeString("Saying", eng.Handle);
+						abbr = TsStringUtils.MakeString("say.", eng.Handle);
 						break;
 				}
 
@@ -349,48 +440,53 @@ namespace SIL.FieldWorks.FDO.DomainServices
 					guid,
 					dataReader.GetNextRealHvo(),
 					complexEntryTypesList,
-					i - 1, // Zero based ord.
+					i, // Zero based ord.
 					name, eng.Handle,
 					abbr, eng.Handle);
 			}
 
-			var entryTypesList = lexDb.VariantEntryTypesOA;
-			for (var i = 1; i <= 6; i++)
+			var variantEntryTypesList = lexDb.VariantEntryTypesOA;
+			for (var i = 0; i <= 6; i++)
 			{
 				var guid = Guid.Empty;
 				ITsString name = null;
 				ITsString abbr = null;
 				switch (i)
 				{
+					case 0:
+						guid = new Guid("3942addb-99fd-43e9-ab7d-99025ceb0d4e");
+						name = TsStringUtils.MakeString("Unspecified Variant", eng.Handle);
+						abbr = TsStringUtils.MakeString("unspec. var. of", eng.Handle);
+						break;
 					case 1:
 						guid = new Guid("024b62c9-93b3-41a0-ab19-587a0030219a");
-						name = tsf.MakeString("Dialectal Variant", eng.Handle);
-						abbr = tsf.MakeString("dial. var. of", eng.Handle);
+						name = TsStringUtils.MakeString("Dialectal Variant", eng.Handle);
+						abbr = TsStringUtils.MakeString("dial. var. of", eng.Handle);
 						break;
 					case 2:
 						guid = new Guid("4343b1ef-b54f-4fa4-9998-271319a6d74c");
-						name = tsf.MakeString("Free Variant", eng.Handle);
-						abbr = tsf.MakeString("fr. var. of", eng.Handle);
+						name = TsStringUtils.MakeString("Free Variant", eng.Handle);
+						abbr = TsStringUtils.MakeString("fr. var. of", eng.Handle);
 						break;
 					case 3:
 						guid = LexEntryTypeTags.kguidLexTypIrregInflectionVar;
-						name = tsf.MakeString("Irregular Inflectional Variant", eng.Handle);
-						abbr = tsf.MakeString("irr. inf. var. of", eng.Handle);
+						name = TsStringUtils.MakeString("Irregular Inflectional Variant", eng.Handle);
+						abbr = TsStringUtils.MakeString("irr. inf. var. of", eng.Handle);
 						break;
 					case 4:
 						guid = LexEntryTypeTags.kguidLexTypPluralVar;
-						name = tsf.MakeString("Plural Variant", eng.Handle);
-						abbr = tsf.MakeString("pl. var. of", eng.Handle);
+						name = TsStringUtils.MakeString("Plural Variant", eng.Handle);
+						abbr = TsStringUtils.MakeString("pl. var. of", eng.Handle);
 						break;
 					case 5:
 						guid = LexEntryTypeTags.kguidLexTypPastVar;
-						name = tsf.MakeString("Past Variant", eng.Handle);
-						abbr = tsf.MakeString("pst. var. of", eng.Handle);
+						name = TsStringUtils.MakeString("Past Variant", eng.Handle);
+						abbr = TsStringUtils.MakeString("pst. var. of", eng.Handle);
 						break;
 					case 6:
 						guid = new Guid("0c4663b3-4d9a-47af-b9a1-c8565d8112ed");
-						name = tsf.MakeString("Spelling Variant", eng.Handle);
-						abbr = tsf.MakeString("sp. var. of", eng.Handle);
+						name = TsStringUtils.MakeString("Spelling Variant", eng.Handle);
+						abbr = TsStringUtils.MakeString("sp. var. of", eng.Handle);
 						break;
 				}
 
@@ -399,9 +495,8 @@ namespace SIL.FieldWorks.FDO.DomainServices
 					guid == LexEntryTypeTags.kguidLexTypPluralVar ||
 					guid == LexEntryTypeTags.kguidLexTypPastVar)
 				{
-					entryTypesList.PossibilitiesOS.Insert(i - 1,
-						new LexEntryInflType(cache, dataReader.GetNextRealHvo(), guid));
-					var leit = entryTypesList.PossibilitiesOS[i - 1] as ILexEntryInflType;
+					variantEntryTypesList.PossibilitiesOS.Insert(i, new LexEntryInflType(cache, dataReader.GetNextRealHvo(), guid));
+					var leit = (ILexEntryInflType)variantEntryTypesList.PossibilitiesOS[i];
 					leit.Name.set_String(eng.Handle, name);
 					leit.Abbreviation.set_String(eng.Handle, abbr);
 					// todo: ReverseAbbr
@@ -412,8 +507,8 @@ namespace SIL.FieldWorks.FDO.DomainServices
 					lexEntryTypeFactory.Create(
 						guid,
 						dataReader.GetNextRealHvo(),
-						entryTypesList,
-						i - 1, // Zero based ord.
+						variantEntryTypesList,
+						i, // Zero based ord.
 						name, eng.Handle,
 						abbr, eng.Handle);
 				}
@@ -432,7 +527,6 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			var servLoc = cache.ServiceLocator;
 			var dataReader = (IDataReader)servLoc.GetInstance<IDataSetup>();
 			var lexEntryTypeFactory = servLoc.GetInstance<IMoMorphTypeFactory>() as IMoMorphTypeFactoryInternal;
-			var tsf = cache.TsStrFactory;
 			var eng = servLoc.WritingSystemManager.UserWritingSystem;
 
 			var morphTypesList = servLoc.GetInstance<ICmPossibilityListFactory>().Create();
@@ -453,125 +547,125 @@ namespace SIL.FieldWorks.FDO.DomainServices
 						guid = new Guid("d7f713e4-e8cf-11d3-9764-00c04f186933");
 						prefix = "*";
 						secondaryOrder = 2;
-						name = tsf.MakeString("bound root", eng.Handle);
-						abbr = tsf.MakeString("bd root", eng.Handle);
+						name = TsStringUtils.MakeString("bound root", eng.Handle);
+						abbr = TsStringUtils.MakeString("bd root", eng.Handle);
 						break;
 					case 2:
 						guid = new Guid("d7f713e7-e8cf-11d3-9764-00c04f186933");
 						prefix = "*";
 						secondaryOrder = 2;
-						name = tsf.MakeString("bound stem", eng.Handle);
-						abbr = tsf.MakeString("bd stem", eng.Handle);
+						name = TsStringUtils.MakeString("bound stem", eng.Handle);
+						abbr = TsStringUtils.MakeString("bd stem", eng.Handle);
 						break;
 					case 3:
 						guid = new Guid("d7f713df-e8cf-11d3-9764-00c04f186933");
 						secondaryOrder = 1;
-						name = tsf.MakeString("circumfix", eng.Handle);
-						abbr = tsf.MakeString("cfx", eng.Handle);
+						name = TsStringUtils.MakeString("circumfix", eng.Handle);
+						abbr = TsStringUtils.MakeString("cfx", eng.Handle);
 						break;
 					case 4:
 						guid = new Guid("d7f713e1-e8cf-11d3-9764-00c04f186933");
 						prefix = "=";
 						secondaryOrder = 7;
-						name = tsf.MakeString("enclitic", eng.Handle);
-						abbr = tsf.MakeString("enclit", eng.Handle);
+						name = TsStringUtils.MakeString("enclitic", eng.Handle);
+						abbr = TsStringUtils.MakeString("enclit", eng.Handle);
 						break;
 					case 5:
 						guid = new Guid("d7f713da-e8cf-11d3-9764-00c04f186933");
 						prefix = "-";
 						postfix = "-";
 						secondaryOrder = 5;
-						name = tsf.MakeString("infix", eng.Handle);
-						abbr = tsf.MakeString("ifx", eng.Handle);
+						name = TsStringUtils.MakeString("infix", eng.Handle);
+						abbr = TsStringUtils.MakeString("ifx", eng.Handle);
 						break;
 					case 6:
 						guid = new Guid("56db04bf-3d58-44cc-b292-4c8aa68538f4");
 						secondaryOrder = 1;
-						name = tsf.MakeString("particle", eng.Handle);
-						abbr = tsf.MakeString("part", eng.Handle);
+						name = TsStringUtils.MakeString("particle", eng.Handle);
+						abbr = TsStringUtils.MakeString("part", eng.Handle);
 						break;
 					case 7:
 						guid = new Guid("d7f713db-e8cf-11d3-9764-00c04f186933");
 						postfix = "-";
 						secondaryOrder = 3;
-						name = tsf.MakeString("prefix", eng.Handle);
-						abbr = tsf.MakeString("pfx", eng.Handle);
+						name = TsStringUtils.MakeString("prefix", eng.Handle);
+						abbr = TsStringUtils.MakeString("pfx", eng.Handle);
 						break;
 					case 8:
 						guid = new Guid("d7f713e2-e8cf-11d3-9764-00c04f186933");
 						postfix = "=";
 						secondaryOrder = 4;
-						name = tsf.MakeString("proclitic", eng.Handle);
-						abbr = tsf.MakeString("proclit", eng.Handle);
+						name = TsStringUtils.MakeString("proclitic", eng.Handle);
+						abbr = TsStringUtils.MakeString("proclit", eng.Handle);
 						break;
 					case 9:
 						guid = new Guid("d7f713e5-e8cf-11d3-9764-00c04f186933");
 						secondaryOrder = 1;
-						name = tsf.MakeString("root", eng.Handle);
-						abbr = tsf.MakeString("ubd root", eng.Handle);
+						name = TsStringUtils.MakeString("root", eng.Handle);
+						abbr = TsStringUtils.MakeString("ubd root", eng.Handle);
 						break;
 					case 10:
 						guid = new Guid("d7f713dc-e8cf-11d3-9764-00c04f186933");
 						prefix = "=";
 						postfix = "=";
 						secondaryOrder = 5;
-						name = tsf.MakeString("simulfix", eng.Handle);
-						abbr = tsf.MakeString("smfx", eng.Handle);
+						name = TsStringUtils.MakeString("simulfix", eng.Handle);
+						abbr = TsStringUtils.MakeString("smfx", eng.Handle);
 						break;
 					case 11:
 						guid = new Guid("d7f713e8-e8cf-11d3-9764-00c04f186933");
 						secondaryOrder = 1;
-						name = tsf.MakeString("stem", eng.Handle);
-						abbr = tsf.MakeString("ubd stem", eng.Handle);
+						name = TsStringUtils.MakeString("stem", eng.Handle);
+						abbr = TsStringUtils.MakeString("ubd stem", eng.Handle);
 						break;
 					case 12:
 						guid = new Guid("d7f713dd-e8cf-11d3-9764-00c04f186933");
 						prefix = "-";
 						secondaryOrder = 6;
-						name = tsf.MakeString("suffix", eng.Handle);
-						abbr = tsf.MakeString("sfx", eng.Handle);
+						name = TsStringUtils.MakeString("suffix", eng.Handle);
+						abbr = TsStringUtils.MakeString("sfx", eng.Handle);
 						break;
 					case 13:
 						guid = new Guid("d7f713de-e8cf-11d3-9764-00c04f186933");
 						prefix = "~";
 						postfix = "~";
 						secondaryOrder = 5;
-						name = tsf.MakeString("suprafix", eng.Handle);
-						abbr = tsf.MakeString("spfx", eng.Handle);
+						name = TsStringUtils.MakeString("suprafix", eng.Handle);
+						abbr = TsStringUtils.MakeString("spfx", eng.Handle);
 						break;
 					case 14:
 						guid = new Guid("18d9b1c3-b5b6-4c07-b92c-2fe1d2281bd4");
 						prefix = "-";
 						postfix = "-";
-						name = tsf.MakeString("infixing interfix", eng.Handle);
-						abbr = tsf.MakeString("ifxnfx", eng.Handle);
+						name = TsStringUtils.MakeString("infixing interfix", eng.Handle);
+						abbr = TsStringUtils.MakeString("ifxnfx", eng.Handle);
 						break;
 					case 15:
 						guid = new Guid("af6537b0-7175-4387-ba6a-36547d37fb13");
 						postfix = "-";
-						name = tsf.MakeString("prefixing interfix", eng.Handle);
-						abbr = tsf.MakeString("pfxnfx", eng.Handle);
+						name = TsStringUtils.MakeString("prefixing interfix", eng.Handle);
+						abbr = TsStringUtils.MakeString("pfxnfx", eng.Handle);
 						break;
 					case 16:
 						guid = new Guid("3433683d-08a9-4bae-ae53-2a7798f64068");
 						prefix = "-";
-						name = tsf.MakeString("suffixing interfix", eng.Handle);
-						abbr = tsf.MakeString("sfxnfx", eng.Handle);
+						name = TsStringUtils.MakeString("suffixing interfix", eng.Handle);
+						abbr = TsStringUtils.MakeString("sfxnfx", eng.Handle);
 						break;
 					case 17:
 						guid = new Guid("a23b6faa-1052-4f4d-984b-4b338bdaf95f");
-						name = tsf.MakeString("phrase", eng.Handle);
-						abbr = tsf.MakeString("phr", eng.Handle);
+						name = TsStringUtils.MakeString("phrase", eng.Handle);
+						abbr = TsStringUtils.MakeString("phr", eng.Handle);
 						break;
 					case 18:
 						guid = new Guid("0cc8c35a-cee9-434d-be58-5d29130fba5b");
-						name = tsf.MakeString("discontiguous phrase", eng.Handle);
-						abbr = tsf.MakeString("dis phr", eng.Handle);
+						name = TsStringUtils.MakeString("discontiguous phrase", eng.Handle);
+						abbr = TsStringUtils.MakeString("dis phr", eng.Handle);
 						break;
 					case 19:
 						guid = new Guid("c2d140e5-7ca9-41f4-a69a-22fc7049dd2c");
-						name = tsf.MakeString("clitic", eng.Handle);
-						abbr = tsf.MakeString("clit", eng.Handle);
+						name = TsStringUtils.MakeString("clitic", eng.Handle);
+						abbr = TsStringUtils.MakeString("clit", eng.Handle);
 						break;
 				}
 

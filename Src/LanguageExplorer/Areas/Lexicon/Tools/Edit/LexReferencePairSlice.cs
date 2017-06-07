@@ -5,8 +5,7 @@
 using System.Diagnostics;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Framework.DetailControls;
-using SIL.Utils;
-using System.Diagnostics.CodeAnalysis;
+using SIL.Xml;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 {
@@ -21,8 +20,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// Constructor must be public (and with no arguments) for creation by reflection
 		/// based on mention in XML configuration files.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "LexReferencePairLauncher gets added to panel's Controls collection and disposed there")]
 		public LexReferencePairSlice()
 			: base(new LexReferencePairLauncher())
 		{

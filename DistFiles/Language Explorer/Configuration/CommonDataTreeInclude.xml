@@ -85,10 +85,16 @@
 	<menu id="PaneBar-ShowHiddenFields-charttempEdit" label="">
 		<item label="Show Hidden Fields" boolProperty="ShowHiddenFields-charttempEdit" defaultVisible="true" settingsGroup="local"/>
 	</menu>
+	<menu id="PaneBar-ShowHiddenFields-dialectsListEdit" label="">
+		<item label="Show Hidden Fields" boolProperty="ShowHiddenFields-dialectsListEdit" defaultVisible="true" settingsGroup="local"/>
+	</menu>
 	<menu id="PaneBar-ShowHiddenFields-educationEdit" label="">
 		<item label="Show Hidden Fields" boolProperty="ShowHiddenFields-educationEdit" defaultVisible="true" settingsGroup="local"/>
 	</menu>
-		<menu id="PaneBar-ShowHiddenFields-roleEdit" label="">
+	<menu id="PaneBar-ShowHiddenFields-extNoteTypeEdit" label="">
+		<item label="Show Hidden Fields" boolProperty="ShowHiddenFields-extNoteTypeEdit" defaultVisible="true" settingsGroup="local"/>
+	</menu>
+	<menu id="PaneBar-ShowHiddenFields-roleEdit" label="">
 		<item label="Show Hidden Fields" boolProperty="ShowHiddenFields-roleEdit" defaultVisible="true" settingsGroup="local"/>
 	</menu>
 		<menu id="PaneBar-ShowHiddenFields-genresEdit" label="">
@@ -96,6 +102,9 @@
 	</menu>
 	<menu id="PaneBar-ShowHiddenFields-featureTypesAdvancedEdit" label="">
 		<item label="Show Hidden Fields" boolProperty="ShowHiddenFields-featureTypesAdvancedEdit" defaultVisible="true" settingsGroup="local"/>
+	</menu>
+	<menu id="PaneBar-ShowHiddenFields-languagesListEdit" label="">
+		<item label="Show Hidden Fields" boolProperty="ShowHiddenFields-languagesListEdit" defaultVisible="true" settingsGroup="local"/>
 	</menu>
 	<menu id="PaneBar-ShowHiddenFields-lexRefEdit" label="">
 		<item label="Show Hidden Fields" boolProperty="ShowHiddenFields-lexRefEdit" defaultVisible="true" settingsGroup="local"/>

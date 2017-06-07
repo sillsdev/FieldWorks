@@ -13,11 +13,13 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Cellar;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
 
 namespace SIL.FieldWorks.FDO.DomainImpl
 {
@@ -732,7 +734,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			get
 			{
-				var tisb = TsIncStrBldrClass.Create();
+				var tisb = TsStringUtils.MakeIncStrBldr();
 				tisb.SetIntPropValues((int)FwTextPropType.ktptEditable,
 									  (int)FwTextPropVar.ktpvEnum,
 									  (int)TptEditable.ktptNotEditable);
@@ -743,7 +745,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 							  select item;
 				if (okRefs.FirstOrDefault() != null)
 				{
-					var desc = Cache.TsStrFactory.MakeString(": " + Strings.ksMemberOfWordSet + " \"", Cache.DefaultUserWs);
+					var desc = TsStringUtils.MakeString(": " + Strings.ksMemberOfWordSet + " \"", Cache.DefaultUserWs);
 					tisb.AppendTsString(desc);
 					bool fFirst = true;
 					foreach (var item in okRefs)
@@ -779,7 +781,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				if (tss != null && tss.Length != 0)
 					return tss;
 
-				return Cache.TsStrFactory.MakeString(
+				return TsStringUtils.MakeString(
 					Strings.ksQuestions,
 					Cache.DefaultUserWs);
 			}
@@ -885,8 +887,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			var wssToChange = mf.Form.AvailableWritingSystemIds;
 			foreach (var ws in Form.AvailableWritingSystemIds)
 			{
-				if (!Enumerable.Contains(wssToChange, ws))
-					Form.set_String(ws, Cache.TsStrFactory.EmptyString(ws));
+				if (!wssToChange.Contains(ws))
+					Form.set_String(ws, TsStringUtils.EmptyString(ws));
 			}
 			// ideally we'd populate the new Form with only the ws's of the MoForm.Form.
 			// but there may be someone holding on to the old MultiString accessor, so don't
@@ -969,7 +971,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 						++annotationCount;
 					}
 				}
-				ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
+				ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 				tisb.SetIntPropValues((int)FwTextPropType.ktptEditable,
 					(int)FwTextPropVar.ktpvEnum,
 					(int)TptEditable.ktptNotEditable);
@@ -1056,7 +1058,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					}
 				}
 
-				return Cache.TsStrFactory.MakeString(
+				return TsStringUtils.MakeString(
 					Strings.ksUnnamed,
 					Cache.DefaultUserWs);
 			}
@@ -1185,7 +1187,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			{
 				var cnt = 0;
 				var vernWs = m_cache.DefaultVernWs;
-				var tisb = TsIncStrBldrClass.Create();
+				var tisb = TsStringUtils.MakeIncStrBldr();
 				tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, vernWs);
 				ITsString formSN;
 				foreach (var mb in MorphBundlesOS)
@@ -1236,7 +1238,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			get
 			{
 				int vernWs = m_cache.DefaultVernWs;
-				ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
+				ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 				tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, vernWs);
 				tisb.AppendTsString(ShortNameTSS);
 
@@ -1614,7 +1616,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					}
 				}
 
-				return Cache.TsStrFactory.MakeString(
+				return TsStringUtils.MakeString(
 					Strings.ksUntitled,
 					Cache.DefaultUserWs);
 			}

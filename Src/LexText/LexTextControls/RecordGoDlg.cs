@@ -3,13 +3,14 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 
@@ -38,8 +39,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			SetDlgInfo(cache, wp, propertyTable, publisher, subscriber, form, cache.DefaultAnalWs);
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "searchEngine is disposed by the mediator.")]
 		protected override void InitializeMatchingObjects(FdoCache cache)
 		{
 			var xnWindow = m_propertyTable.GetValue<XElement>("WindowConfiguration");
@@ -54,7 +53,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			var ws = (CoreWritingSystemDefinition) m_cbWritingSystems.SelectedItem;
 			if (ws != null)
 			{
-				ITsString tss = m_tsf.MakeString(string.Empty, ws.Handle);
+				ITsString tss = TsStringUtils.MakeString(string.Empty, ws.Handle);
 				var field = new SearchField(RnGenericRecTags.kflidTitle, tss);
 				m_matchingObjectsBrowser.SearchAsync(new[] { field });
 			}
@@ -81,7 +80,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (m_oldSearchKey != string.Empty || searchKey != string.Empty)
 				StartSearchAnimation();
 
-			ITsString tss = m_tsf.MakeString(searchKey, wsSelHvo);
+			ITsString tss = TsStringUtils.MakeString(searchKey, wsSelHvo);
 			var field = new SearchField(RnGenericRecTags.kflidTitle, tss);
 			m_matchingObjectsBrowser.SearchAsync(new[] { field });
 		}
@@ -91,7 +90,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			using (var dlg = new InsertRecordDlg())
 			{
 				string title = m_tbForm.Text.Trim();
-				ITsString titleTrimmed = TsStringUtils.MakeTss(title, TsStringUtils.GetWsAtOffset(m_tbForm.Tss, 0));
+				ITsString titleTrimmed = TsStringUtils.MakeString(title, TsStringUtils.GetWsAtOffset(m_tbForm.Tss, 0));
 				dlg.SetDlgInfo(m_cache, m_propertyTable, m_publisher, m_cache.LanguageProject.ResearchNotebookOA, titleTrimmed);
 				if (dlg.ShowDialog() == DialogResult.OK)
 				{

@@ -1,9 +1,6 @@
-// Copyright (c) 2010-2013 SIL International
+// Copyright (c) 2010-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: UnicodeCharEditorTests.cs
-// Responsibility: mcconnel
 //
 // <remarks>
 // Since these tests modify the ICU data files, run the ICU data compilers, and then use ICU
@@ -16,10 +13,9 @@ using System;
 using System.IO;
 using System.Text.RegularExpressions;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.COMInterfaces;
 using ICSharpCode.SharpZipLib.Zip;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.UnicodeCharEditor
 {
@@ -47,9 +43,6 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		[TestFixtureSetUp]
 		public void Setup()
 		{
-			RegistryHelper.CompanyName = "SIL";
-			RegistryHelper.ProductName = "FieldWorks";
-
 			Assert.IsTrue(InitializeIcuData());
 			m_sCustomCharsFile = Path.Combine(Icu.DefaultDirectory, "CustomChars.xml");
 			m_sCustomCharsBackup = Path.Combine(Icu.DefaultDirectory, "TestBackupForCustomChars.xml");
@@ -161,21 +154,21 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 			Assert.AreEqual(Icu.UCharCategory.U_PRIVATE_USE_CHAR, Icu.GetCharType(kChar2));
 			Assert.AreEqual(Icu.UCharCategory.U_UNASSIGNED, Icu.GetCharType(kChar3));
 			Assert.AreEqual(Icu.UCharCategory.U_UNASSIGNED, Icu.GetCharType(kChar4));
-			var decompositionType = Icu.GetDecompositionType(kChar1);
+			var decompositionType = Icu.GetDecompositionTypeInfo(kChar1);
 			Assert.AreEqual("[none]", decompositionType.Description);
-			decompositionType = Icu.GetDecompositionType(kChar2);
+			decompositionType = Icu.GetDecompositionTypeInfo(kChar2);
 			Assert.AreEqual("[none]", decompositionType.Description);
-			decompositionType = Icu.GetDecompositionType(kChar3);
+			decompositionType = Icu.GetDecompositionTypeInfo(kChar3);
 			Assert.AreEqual("[none]", decompositionType.Description);
-			decompositionType = Icu.GetDecompositionType(kChar4);
+			decompositionType = Icu.GetDecompositionTypeInfo(kChar4);
 			Assert.AreEqual("[none]", decompositionType.Description);
-			var numericType = Icu.GetNumericType(kChar1);
+			var numericType = Icu.GetNumericTypeInfo(kChar1);
 			Assert.AreEqual("[none]", numericType.Description);
-			numericType = Icu.GetNumericType(kChar2);
+			numericType = Icu.GetNumericTypeInfo(kChar2);
 			Assert.AreEqual("[none]", numericType.Description);
-			numericType = Icu.GetNumericType(kChar3);
+			numericType = Icu.GetNumericTypeInfo(kChar3);
 			Assert.AreEqual("[none]", numericType.Description);
-			numericType = Icu.GetNumericType(kChar4);
+			numericType = Icu.GetNumericTypeInfo(kChar4);
 			Assert.AreEqual("[none]", numericType.Description);
 			var prettyName = Icu.GetPrettyICUCharName("\xE000");
 			Assert.IsNull(prettyName);
@@ -234,19 +227,19 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 			Assert.AreEqual(Icu.UCharCategory.U_OTHER_PUNCTUATION, cat);
 			cat = Icu.GetCharType(kChar4);
 			Assert.AreEqual(Icu.UCharCategory.U_DECIMAL_DIGIT_NUMBER, cat);
-			var decompositionType = Icu.GetDecompositionType(kChar1);
+			var decompositionType = Icu.GetDecompositionTypeInfo(kChar1);
 			Assert.AreEqual("[none]", decompositionType.Description);
-			decompositionType = Icu.GetDecompositionType(kChar2);
+			decompositionType = Icu.GetDecompositionTypeInfo(kChar2);
 			Assert.AreEqual("[none]", decompositionType.Description);
-			decompositionType = Icu.GetDecompositionType(kChar3);
+			decompositionType = Icu.GetDecompositionTypeInfo(kChar3);
 			Assert.AreEqual("[none]", decompositionType.Description);
-			decompositionType = Icu.GetDecompositionType(kChar4);
+			decompositionType = Icu.GetDecompositionTypeInfo(kChar4);
 			Assert.AreEqual("[none]", decompositionType.Description);
-			var numericType = Icu.GetNumericType(kChar1);
+			var numericType = Icu.GetNumericTypeInfo(kChar1);
 			Assert.AreEqual("[none]", numericType.Description);
-			numericType = Icu.GetNumericType(kChar2);
+			numericType = Icu.GetNumericTypeInfo(kChar2);
 			Assert.AreEqual("[none]", numericType.Description);
-			numericType = Icu.GetNumericType(kChar3);
+			numericType = Icu.GetNumericTypeInfo(kChar3);
 			Assert.AreEqual("[none]", numericType.Description);
 
 			// Current implementation (as of ICU50) is not overriding numeric type since we don't use it anywhere.

@@ -4,7 +4,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Windows.Forms;
 using SIL.CoreImpl;
@@ -124,8 +123,6 @@ namespace LanguageExplorer.Areas.Notebook
 		/// <remarks>
 		/// This is called on the component that is becoming active.
 		/// </remarks>
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification = "See TODO-Linux comment")]
 		public void Activate(ICollapsingSplitContainer mainCollapsingSplitContainer,
 			MenuStrip menuStrip, ToolStripContainer toolStripContainer, StatusBar statusbar)
 		{

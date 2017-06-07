@@ -1,4 +1,4 @@
-// Copyright (c) 2002-2015 SIL International
+// Copyright (c) 2002-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -16,8 +15,9 @@ using System.Windows.Forms;
 using Microsoft.Win32;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Framework;
+using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.FwUtils.MessageBoxEx;
 using SIL.FieldWorks.Common.RootSites;
@@ -39,8 +39,6 @@ namespace LanguageExplorer.Impls
 	/// <remarks>
 	/// There is only one of these per process, but it can contain multiple windows.
 	/// </remarks>
-	[SuppressMessage("Gendarme.Rules.Correctness", "DisposableFieldsShouldBeDisposedRule",
-		Justification = "m_activeMainWindow and m_windowToCloseOnIdle are references")]
 	internal sealed class LexTextApp : IFlexApp
 	{
 #if RANDYTODO
@@ -137,12 +135,10 @@ Old Mediator methods/commands
 
 		#region non-interface properties
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Guid for the application (used for uniquely identifying DB items that "belong" to
 		///		this app.
 		/// </summary>
-		/// -----------------------------------------------------------------------------------
 		private static Guid AppGuid
 		{
 			get
@@ -159,11 +155,9 @@ Old Mediator methods/commands
 			get { return FwSubKey.LexText; }
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the FwFindReplaceDlg
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		private FwFindReplaceDlg FindReplaceDialog
 		{
 			get
@@ -175,13 +169,9 @@ Old Mediator methods/commands
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the currently active form.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "activeForm is disposed elsewhere")]
 		private Form ActiveForm
 		{
 			get
@@ -202,12 +192,10 @@ Old Mediator methods/commands
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the application's find pattern for the find/replace dialog. (If one does not
 		/// already exist, a new one is created.)
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		private IVwPattern FindPattern
 		{
 			get
@@ -223,13 +211,9 @@ Old Mediator methods/commands
 
 		#region IProjectSpecificSettingsKeyProvider interface implementation
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the project specific settings key.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "We're returning an object")]
 		public RegistryKey ProjectSpecificSettingsKey
 		{
 			get
@@ -253,8 +237,6 @@ Old Mediator methods/commands
 		/// <returns>
 		/// true to filter the message and stop it from being dispatched; false to allow the message to continue to the next filter or control.
 		/// </returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "c is a reference")]
 		public bool PreFilterMessage(ref Message m)
 			{
 			if (m.Msg != (int)Win32.WinMsgs.WM_KEYDOWN && m.Msg != (int)Win32.WinMsgs.WM_KEYUP)
@@ -279,13 +261,9 @@ Old Mediator methods/commands
 
 		#region ISettings interface implementation
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// The RegistryKey for this application.
 		/// </summary>
-		///***********************************************************************************
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "We're returning an object")]
 		public RegistryKey SettingsKey
 		{
 			get
@@ -298,7 +276,6 @@ Old Mediator methods/commands
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// For now, app has no settings to save. This method is required
 		/// as part of ISettings implementation. Note that the SaveSettings() method is the
@@ -306,7 +283,6 @@ Old Mediator methods/commands
 		/// one is NEVER called!
 		/// </summary>
 		/// <exception cref="NotSupportedException">Client is to use "SaveSettings" method, not this one.</exception>
-		/// ------------------------------------------------------------------------------------
 		public void SaveSettingsNow()
 		{
 			throw new NotSupportedException("'SaveSettingsNow' is not supported. Use 'SaveSettings' method instead.");
@@ -359,7 +335,7 @@ Old Mediator methods/commands
 		}
 		#endregion IHelpTopicProvider interface implementation
 
-		#region IFWDisposable interface implementation
+		#region IDisposable interface implementation
 
 		/// <summary>
 		/// See if the object has been disposed.
@@ -517,7 +493,7 @@ Old Mediator methods/commands
 			GC.SuppressFinalize(this);
 		}
 		#endregion IDisposable interface implementation
-		#endregion IFWDisposable interface implementation
+		#endregion IDisposable interface implementation
 
 		#region IApp interface implementation
 
@@ -2071,8 +2047,6 @@ Old Mediator methods/commands
 		/// <summary>
 		/// Display the import commands only while in the appropriate area.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "mediator is a reference")]
 		private bool OnDisplayLaunchConnectedDialog(object parameters, ref UIItemDisplayProperties display)
 		{
 			display.Enabled = false;

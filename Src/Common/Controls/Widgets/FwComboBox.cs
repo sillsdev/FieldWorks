@@ -1,16 +1,16 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
 using SIL.Utils; // for Win32 message defns.
@@ -106,7 +106,7 @@ namespace SIL.FieldWorks.Common.Widgets
 	/// ComboBox. Classes that extend this class provide an implementation of the drop down
 	/// box.
 	/// </summary>
-	public abstract class FwComboBoxBase : UserControl, IFWDisposable, IVwNotifyChange, IWritingSystemAndStylesheet
+	public abstract class FwComboBoxBase : UserControl, IVwNotifyChange, IWritingSystemAndStylesheet
 	{
 		#region Events
 		/// <summary>
@@ -1041,8 +1041,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// <summary>
 		/// Shows the drop down box.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "parent is a reference")]
 		protected void ShowDropDownBox()
 		{
 			CheckDisposed();
@@ -1339,11 +1337,7 @@ namespace SIL.FieldWorks.Common.Widgets
 					ListBox.SameItemSelected -= m_listBox_SameItemSelected;
 				}
 			}
-			if (m_tssPrevious != null)
-			{
-				Marshal.ReleaseComObject(m_tssPrevious);
-				m_tssPrevious = null;
-			}
+			m_tssPrevious = null;
 
 			base.Dispose(disposing);
 		}
@@ -2022,8 +2016,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// <summary>
 		/// Make one.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "m_previousForm is a reference")]
 		public ComboListBox()
 		{
 			m_activateOnShow = true;
@@ -2365,7 +2357,7 @@ namespace SIL.FieldWorks.Common.Widgets
 	/// ------------------------------------------------------------------------------------
 	/// <summary>Message filter for detecting events that may hide the compbo </summary>
 	/// ------------------------------------------------------------------------------------
-	internal class FwComboMessageFilter : IMessageFilter, IFWDisposable
+	internal class FwComboMessageFilter : IMessageFilter, IDisposable
 	{
 		private ComboListBox m_comboListbox;
 		private bool m_fGotMouseDown; // true after a mouse down occurs anywhere at all.
@@ -2815,6 +2807,13 @@ namespace SIL.FieldWorks.Common.Widgets
 				Image = ResourceHelper.ComboMenuArrowIcon; // no text, just the image
 				BackColor = SystemColors.Control;
 			}
+		}
+
+		/// <summary/>
+		protected override void Dispose(bool disposing)
+		{
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ******");
+			base.Dispose(disposing);
 		}
 
 		/// <summary>

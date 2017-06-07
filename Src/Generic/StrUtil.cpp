@@ -37,8 +37,8 @@ bool GetIcuDir(HKEY hkRoot, char* dir, DWORD size)
 	if (lRet == ERROR_SUCCESS)
 	{
 		DWORD dwType;
-		long lRet = ::RegQueryValueExA(hk, "Icu" ICU_VERSION "DataDir", NULL, &dwType, (BYTE*) dir, &size);
-		if (lRet == ERROR_SUCCESS && dwType == REG_SZ)
+		long lQueryRetVal = ::RegQueryValueExA(hk, "Icu" ICU_VERSION "DataDir", NULL, &dwType, (BYTE*) dir, &size);
+		if (lQueryRetVal == ERROR_SUCCESS && dwType == REG_SZ)
 			fRes = true;
 		::RegCloseKey(hk);
 	}

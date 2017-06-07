@@ -4,9 +4,10 @@
 
 using System.Diagnostics;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
-using SIL.CoreImpl;
+using SIL.CoreImpl.WritingSystems;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.COMInterfaces;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 {

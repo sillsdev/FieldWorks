@@ -1,21 +1,16 @@
-// Copyright (c) 2009-2013 SIL International
+// Copyright (c) 2009-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: RootSiteEditingHelperTests.cs
-// Responsibility: FW Team
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 
 using NUnit.Framework;
 
-using SIL.CoreImpl;
-using SIL.FieldWorks.Test.TestUtils;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.Text;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.RootSites
 {
@@ -57,11 +52,10 @@ namespace SIL.FieldWorks.Common.RootSites
 			{
 				using (DummyFileMaker filemaker = new DummyFileMaker("junk.jpg", true))
 				{
-					ITsStrFactory factory = TsStrFactoryClass.Create();
 					using (var editHelper = new RootSiteEditingHelper(Cache, null))
 					{
 						ICmPicture pict = Cache.ServiceLocator.GetInstance<ICmPictureFactory>().Create(
-							filemaker.Filename, factory.MakeString("Test picture", Cache.DefaultVernWs),
+							filemaker.Filename, TsStringUtils.MakeString("Test picture", Cache.DefaultVernWs),
 							CmFolderTags.LocalPictures);
 						Assert.IsNotNull(pict);
 						Assert.IsTrue(pict.PictureFileRA.AbsoluteInternalPath == pict.PictureFileRA.InternalPath);

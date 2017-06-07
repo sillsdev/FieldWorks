@@ -1,21 +1,8 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: MessageSlice.cs
-// Responsibility:
-// Last reviewed:
-//
-// <remarks>
-// Implements a simple Message XDE editor.
-// </remarks>
 
-using System;
 using System.Windows.Forms;
-using System.Drawing;
-using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
-
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
@@ -25,8 +12,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 	public class MessageSlice : Slice
 	{
 		/// <summary> Constructor.</summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "Label gets added to the Controls collection in the base class and disposed there")]
 		public MessageSlice(string message) : base(new Label())
 		{
 			this.Control.Text = message;

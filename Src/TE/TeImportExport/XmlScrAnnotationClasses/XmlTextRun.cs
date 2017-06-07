@@ -7,11 +7,11 @@
 
 using System;
 using System.Xml.Serialization;
-using SIL.FieldWorks.Common.COMInterfaces;
 using System.Diagnostics;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Common.Framework;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Text;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.TE
 {

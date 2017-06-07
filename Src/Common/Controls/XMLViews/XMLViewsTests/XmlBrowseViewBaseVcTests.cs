@@ -2,10 +2,6 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.Controls;
 
@@ -14,6 +10,19 @@ namespace XMLViewsTests
 	[TestFixture]
 	public class XmlBrowseViewBaseVcTests
 	{
+		[Test]
+		public void MigrateVersion18Columns_ExtendedNoteColumns()
+		{
+			var input = @"<column layout='ExtNoteType' label='Ext. Note Type' multipara='true' ws='$ws=analysis' transduce='LexExtendedNote.ExtendedNoteType' ghostListField='LexDb.AllPossibleExtendedNotes' editable='false' visibility='dialog' />
+				<column layout='ExtNoteDiscussion' label='Ext. Note Discussion' multipara='true' ws='$ws=analysis' transduce='LexExtendedNote.Discussion' ghostListField='LexDb.AllPossibleExtendedNotes' editable='false' visibility='dialog' />
+				".Replace("'", "\"");
+			var expectedOutput = @"<column layout='ExtNoteType' label='Ext. Note - Type' multipara='true' ghostListField='LexDb.AllExtendedNoteTargets' visibility='dialog' list='LexDb.ExtendedNoteTypes' field='LexExtendedNote.ExtendedNoteType' bulkEdit='atomicFlatListItem' displayWs='best vernoranal' displayNameProperty='ShortNameTSS'/>
+				<column layout='ExtNoteDiscussion' label='Ext. Note - Discussion' multipara='true' ws='$ws=analysis' transduce='LexExtendedNote.Discussion' ghostListField='LexDb.AllExtendedNoteTargets' editable='true' visibility='dialog' />
+				".Replace("'", "\"");
+			var output = XmlBrowseViewBaseVc.FixVersion18Columns(input);
+			Assert.That(output, Is.EqualTo(expectedOutput), "transduce attributes should be added");
+		}
+
 		[Test]
 		public void MigrateVersion16Columns_Etymology()
 		{

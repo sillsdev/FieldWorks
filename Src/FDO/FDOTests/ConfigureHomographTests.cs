@@ -3,13 +3,10 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.Text;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.DomainImpl;
-using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 
 namespace SIL.FieldWorks.FDO.FDOTests
@@ -26,6 +23,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		private ILexSense m_kickS1;
 		private ILexEntry m_rightCorrect; // homograph 1
 		private ILexSense m_rightCorrectS2;
+		private ILexSense m_rightCorrectSubSense;
+		private ILexSense m_rightCorrectSubSubSense;
 		private ILexEntry m_rightDirection; // homograph 2
 		private ILexSense m_rightDirectionS1;
 		private int m_wsVern;
@@ -48,6 +47,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 						m_kickS1 = m_kick.SensesOS[0];
 						m_rightCorrect = MakeEntry("right", "correct");
 						m_rightCorrectS2 = MakeSense(m_rightCorrect, "morally perfect");
+						m_rightCorrectSubSense = MakeSense(m_rightCorrectS2, "test");
+						m_rightCorrectSubSubSense = MakeSense(m_rightCorrectSubSense, "test");
 						m_rightDirection = MakeEntry("right", "turn right");
 						m_rightDirectionS1 = m_rightDirection.SensesOS[0];
 					});
@@ -67,7 +68,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			var lme = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
 			lme.LexemeFormOA = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
-			lme.LexemeFormOA.Form.VernacularDefaultWritingSystem = Cache.TsStrFactory.MakeString(sLexForm, Cache.DefaultVernWs);
+			lme.LexemeFormOA.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString(sLexForm, Cache.DefaultVernWs);
 			MakeSense(lme, gloss);
 			return lme;
 		}
@@ -76,7 +77,15 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			var sense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
 			lme.SensesOS.Add(sense);
-			sense.Gloss.AnalysisDefaultWritingSystem = Cache.TsStrFactory.MakeString(gloss, Cache.DefaultAnalWs);
+			sense.Gloss.AnalysisDefaultWritingSystem = TsStringUtils.MakeString(gloss, Cache.DefaultAnalWs);
+			return sense;
+		}
+
+		private ILexSense MakeSense(ILexSense parentSense, string gloss)
+		{
+			var sense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
+			parentSense.SensesOS.Add(sense);
+			sense.Gloss.AnalysisDefaultWritingSystem = TsStringUtils.MakeString(gloss, Cache.DefaultAnalWs);
 			return sense;
 		}
 
@@ -176,6 +185,29 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				() => m_hc.ShowSenseNumberReversal = false);
 
 		}
+
+		/// <summary>
+		/// Check the sense number formatting.
+		/// </summary>
+		[Test]
+		public void SenseNumberFormatting()
+		{
+			ResetConfiguration();
+			m_hc.ksSenseNumberStyle = "%A";
+			m_hc.ksSubSenseNumberStyle = "%a";
+			m_hc.ksParentSenseNumberStyle = "%j";
+			m_hc.ksParentSubSenseNumberStyle = "%.";
+
+			VerifyTss(m_rightCorrectSubSubSense.OwnerOutlineNameForWs(m_wsVern),
+				new[]
+					{
+						new Run("right", m_wsVern, ""),
+						new Run("1", m_wsVern, HomographConfiguration.ksHomographNumberStyle),
+						new Run(" ", m_wsVern, ""),
+						new Run("Ba.1", m_wsAnalysis, "Sense-Reference-Number")
+					});
+		}
+
 		private void TrySenseOutlineName(Func<ILexSense, int, ITsString> reader, HomographConfiguration.HeadwordVariant hv,
 			Action turnOffSenseNumber)
 		{
@@ -185,7 +217,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				new[] { new Run("right", m_wsVern, ""), new Run("2", m_wsVern, HomographConfiguration.ksHomographNumberStyle) });
 			var numAfterCorrect2Runs = new[] { new Run("right", m_wsVern, ""),
 				new Run("1", m_wsVern, HomographConfiguration.ksHomographNumberStyle),
-				new Run(" 2", m_wsAnalysis, HomographConfiguration.ksSenseReferenceNumberStyle)};
+				new Run(" ", m_wsVern, ""),
+				new Run("2", m_wsAnalysis, HomographConfiguration.ksSenseReferenceNumberStyle)};
 			VerifyTss(reader(m_rightCorrectS2, m_wsVern), numAfterCorrect2Runs);
 			// Owner outline is affected by putting homograph number first.
 			m_hc.HomographNumberBefore = true;
@@ -193,8 +226,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			VerifyTss(reader(m_rightDirectionS1, m_wsVern),
 				new[] {  new Run("2", m_wsVern, HomographConfiguration.ksHomographNumberStyle), new Run("right", m_wsVern, "") });
 			var numBeforeCorrect2Runs = new[] { new Run("1", m_wsVern, HomographConfiguration.ksHomographNumberStyle),
-				new Run("right", m_wsVern, ""),
-				new Run(" 2", m_wsAnalysis, HomographConfiguration.ksSenseReferenceNumberStyle)};
+				new Run("right ", m_wsVern, ""),
+				new Run("2", m_wsAnalysis, HomographConfiguration.ksSenseReferenceNumberStyle)};
 			VerifyTss(reader(m_rightCorrectS2, m_wsVern), numBeforeCorrect2Runs);
 			// Not by hiding HN in main or reversal cross-refs
 			m_hc.SetShowHomographNumber(HomographConfiguration.HeadwordVariant.ReversalCrossRef, false);

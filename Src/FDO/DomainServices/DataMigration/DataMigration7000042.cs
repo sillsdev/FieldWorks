@@ -1,9 +1,6 @@
-﻿// Copyright (c) 2011-2013 SIL International
+﻿// Copyright (c) 2011-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: DataMigration7000042.cs
-// Responsibility: mcconnel
 
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +8,6 @@ using System.Text;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using System;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 {
@@ -25,15 +21,15 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 	internal class DataMigration7000042 : IDataMigration
 	{
 		private readonly Dictionary<string, string> m_mapGuidName =
-			new Dictionary<string, string>(new StringIgnoreCaseComparer());
+			new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 		private readonly Dictionary<string, string> m_mapNameGuid =
-			new Dictionary<string, string>(new StringIgnoreCaseComparer());
+			new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 		private readonly Dictionary<string, string> m_mapGuidOwner =
-			new Dictionary<string, string>(new StringIgnoreCaseComparer());
+			new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 		private readonly Dictionary<string, List<NewDtoInfo>> m_mapGuidNewDtos =
-			new Dictionary<string, List<NewDtoInfo>>(new StringIgnoreCaseComparer());
+			new Dictionary<string, List<NewDtoInfo>>(StringComparer.OrdinalIgnoreCase);
 		private readonly Dictionary<string, string> m_mapBadGoodGuids =
-			new Dictionary<string, string>(new StringIgnoreCaseComparer());
+			new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 		#region IDataMigration Members
 
 		public void PerformMigration(IDomainObjectDTORepository repoDto)

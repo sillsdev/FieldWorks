@@ -1,24 +1,12 @@
-// Copyright (c) 2002-2013 SIL International
+// Copyright (c) 2002-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: InformationBar.cs
-// Responsibility: ToddJ
-// Last reviewed:
-//
-// <remarks>Implementation of InformationBar and InfoBarTextButton</remarks>
-// ------------------------------------------------------------------------------
-//
+
 using System;
-using System.Collections;
 using System.ComponentModel;
 using System.Drawing;
-using System.Data;
 using System.Windows.Forms;
-using System.Diagnostics;
-
 using SIL.Utils;
-using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -29,7 +17,7 @@ namespace SIL.FieldWorks.Common.Controls
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[ToolboxBitmap(typeof(InformationBar), "resources.InformationBar.ico")]
-	public class InformationBar : UserControl, IFWDisposable
+	public class InformationBar : UserControl
 	{
 		private System.ComponentModel.IContainer components;
 		private InformationBarButtonCollection m_buttons = null;
@@ -236,8 +224,6 @@ namespace SIL.FieldWorks.Common.Controls
 		[Category("Appearance")]
 		[DefaultValue(17)]
 		[Description("The default button width.")]
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "button is a reference")]
 		public int ButtonWidth
 		{
 			get

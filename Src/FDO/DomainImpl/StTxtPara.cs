@@ -9,10 +9,11 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO.DomainImpl
@@ -25,7 +26,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 	internal partial class StTxtPara
 	{
 		#region Member variables
-		internal bool m_paraCloneInProgress = false;
+		internal bool m_paraCloneInProgress;
 		#endregion
 
 		#region Properties
@@ -67,8 +68,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			{
 				// Unusual case, possibly hvoPara is not actually a para at all, for example, it may
 				// be a picture caption. For now we make an empty reference so at least it won't crash.
-				ITsStrFactory tsf = TsStrFactoryClass.Create();
-				return tsf.MakeString("", Cache.DefaultUserWs);
+				return TsStringUtils.EmptyString(Cache.DefaultUserWs);
 			}
 			ITsString tssName = null;
 			bool fUsingAbbreviation = false;
@@ -93,7 +93,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				bldr.ReplaceTsString(8, bldr.Length, null);
 
 			// Make a TsTextProps specifying just the writing system.
-			ITsPropsBldr propBldr = TsPropsBldrClass.Create();
+			ITsPropsBldr propBldr = TsStringUtils.MakePropsBldr();
 			int dummy;
 			int wsActual = bldr.get_Properties(0).GetIntPropValues((int)FwTextPropType.ktptWs, out dummy);
 			propBldr.SetIntPropValues((int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault, wsActual);
@@ -400,7 +400,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			TsRunInfo tri, FwObjDataTypes odt, Guid guidOfNewObj)
 		{
 			// build new ObjData properties of the ORC for the new object
-			byte[] objData = TsStringUtils.GetObjData(guidOfNewObj, (byte)odt);
+			byte[] objData = TsStringUtils.GetObjData(guidOfNewObj, odt);
 			ITsPropsBldr propsBldr = ttp.GetBldr();
 			propsBldr.SetStrPropValueRgch((int)FwTextPropType.ktptObjData,
 				objData, objData.Length);
@@ -523,7 +523,6 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					segment.CollectUniqueWordforms(wordforms);
 				}
 			}
-			return;
 		}
 
 		#region Internal event handlers

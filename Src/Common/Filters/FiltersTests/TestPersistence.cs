@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -7,8 +7,11 @@ using System.Collections;
 using System.IO;
 using System.Xml.Linq;
 using NUnit.Framework;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.FDO.Infrastructure;
@@ -166,7 +169,7 @@ namespace SIL.FieldWorks.Filters
 			// IntMatcher is abstract
 			RangeIntMatcher rangeIntMatch = new RangeIntMatcher(5, 23);
 			rangeIntMatch.WritingSystemFactory = Cache.WritingSystemFactory;
-			ITsString tssLabel = Cache.TsStrFactory.MakeString("label1", defAnalWs.Handle);
+			ITsString tssLabel = TsStringUtils.MakeString("label1", defAnalWs.Handle);
 			rangeIntMatch.Label = tssLabel;
 			OwnIntPropFinder ownIntFinder = new OwnIntPropFinder(m_sda, 551);
 
@@ -177,7 +180,6 @@ namespace SIL.FieldWorks.Filters
 
 			andFilter.Add(rangeIntFilter);
 
-			ITsStrFactory tsf = Cache.TsStrFactory;
 			int ws = defAnalWs.Handle;
 			IVwPattern m_pattern = VwPatternClass.Create();
 			m_pattern.MatchOldWritingSystem = false;
@@ -192,7 +194,7 @@ namespace SIL.FieldWorks.Filters
 			andFilter.Add(otherFilter);
 
 			OwnMlPropFinder mlPropFinder = new OwnMlPropFinder(m_sda, 788, 23);
-			m_pattern.Pattern = tsf.MakeString("hello", ws);
+			m_pattern.Pattern = TsStringUtils.MakeString("hello", ws);
 			var filter = new FilterBarCellFilter(mlPropFinder, new ExactMatcher(m_pattern));
 			m_objectsToDispose.Add(filter);
 			andFilter.Add(filter);
@@ -204,7 +206,7 @@ namespace SIL.FieldWorks.Filters
 			m_pattern.MatchWholeWord = false;
 			m_pattern.MatchCase = false;
 			m_pattern.UseRegularExpressions = false;
-			m_pattern.Pattern = tsf.MakeString("goodbye", ws);
+			m_pattern.Pattern = TsStringUtils.MakeString("goodbye", ws);
 			filter = new FilterBarCellFilter(monoPropFinder, new BeginMatcher(m_pattern));
 			m_objectsToDispose.Add(filter);
 			andFilter.Add(filter);
@@ -217,7 +219,7 @@ namespace SIL.FieldWorks.Filters
 			m_pattern.MatchWholeWord = false;
 			m_pattern.MatchCase = false;
 			m_pattern.UseRegularExpressions = false;
-			m_pattern.Pattern = tsf.MakeString("exit", ws);
+			m_pattern.Pattern = TsStringUtils.MakeString("exit", ws);
 			filter = new FilterBarCellFilter(oneIndMlPropFinder, new EndMatcher(m_pattern));
 			m_objectsToDispose.Add(filter);
 			andFilter.Add(filter);
@@ -230,7 +232,7 @@ namespace SIL.FieldWorks.Filters
 			m_pattern.MatchWholeWord = false;
 			m_pattern.MatchCase = false;
 			m_pattern.UseRegularExpressions = false;
-			m_pattern.Pattern = tsf.MakeString("whatever", ws);
+			m_pattern.Pattern = TsStringUtils.MakeString("whatever", ws);
 			filter = new FilterBarCellFilter(mimlPropFinder, new AnywhereMatcher(m_pattern));
 			m_objectsToDispose.Add(filter);
 			andFilter.Add(filter);
@@ -251,7 +253,7 @@ namespace SIL.FieldWorks.Filters
 			m_pattern.MatchWholeWord = false;
 			m_pattern.MatchCase = false;
 			m_pattern.UseRegularExpressions = false;
-			m_pattern.Pattern = tsf.MakeString("pattern", ws);
+			m_pattern.Pattern = TsStringUtils.MakeString("pattern", ws);
 			filter = new FilterBarCellFilter(oneIndAtomFinder, new InvertMatcher(new RegExpMatcher(m_pattern)));
 			m_objectsToDispose.Add(filter);
 			andFilter.Add(filter);

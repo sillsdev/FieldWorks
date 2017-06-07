@@ -8,8 +8,6 @@
 // <remarks>
 // </remarks>
 
-using System;
-
 namespace SIL.FieldWorks.FwCoreDlgControls
 {
 	/// ----------------------------------------------------------------------------------------

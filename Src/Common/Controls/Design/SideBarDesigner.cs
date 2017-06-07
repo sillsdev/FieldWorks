@@ -10,9 +10,7 @@
 // SideBar.
 // --------------------------------------------------------------------------------------------
 
-using System;
 using System.Collections;
-using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Windows.Forms;
 using System.Windows.Forms.Design;
@@ -25,13 +23,6 @@ namespace SIL.FieldWorks.Common.Controls.Design
 	/// </summary>
 	public class SideBarDesigner: ControlDesigner
 	{
-		/// <summary>
-		/// Initializes a new instance of the SideBarDesigner class.
-		/// </summary>
-		public SideBarDesigner()
-		{
-		}
-
 		/// <summary>
 		/// Allows a designer to change or remove items from the set of properties that it
 		/// exposes through a TypeDescriptor
@@ -55,5 +46,11 @@ namespace SIL.FieldWorks.Common.Controls.Design
 			base.PostFilterProperties(properties);
 		}
 
+		/// <summary/>
+		protected override void Dispose(bool disposing)
+		{
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ******");
+			base.Dispose(disposing);
+		}
 	}
 }

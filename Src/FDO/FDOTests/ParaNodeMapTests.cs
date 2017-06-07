@@ -5,10 +5,7 @@
 // File: ParaNodeMapTests.cs
 // Responsibility: TE Team
 
-using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Diagnostics;
 using NUnit.Framework;
 using SIL.FieldWorks.FDO.DomainServices;
 
@@ -20,7 +17,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
-	public class ParaNodeMapTests: SIL.FieldWorks.Test.TestUtils.BaseTest
+	public class ParaNodeMapTests
 	{
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

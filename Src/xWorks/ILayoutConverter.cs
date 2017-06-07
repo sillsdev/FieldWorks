@@ -1,11 +1,10 @@
-// Copyright (c) 2014 SIL International
+// Copyright (c) 2014-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
 using System.Xml.Linq;
 using SIL.FieldWorks.FDO;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -28,7 +27,7 @@ namespace SIL.FieldWorks.XWorks
 		FdoCache Cache { get; }
 
 		/// <summary/>
-		StringTable StringTable { get; }
+		bool UseStringTable { get; }
 
 		/// <summary/>
 		LayoutLevels LayoutLevels { get; }

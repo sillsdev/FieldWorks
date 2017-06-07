@@ -3,14 +3,14 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Text;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using NUnit.Framework;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.FDOTests;
@@ -24,8 +24,6 @@ namespace LanguageExplorerTests.Interlinear
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification="Unit test - m_stream gets disposed in TestTearDown()")]
 	public class ImportInterlinearAnalysesTests : MemoryOnlyBackendProviderReallyRestoredForEachTestTestBase
 	{
 		private MemoryStream m_Stream;
@@ -263,11 +261,11 @@ namespace LanguageExplorerTests.Interlinear
 				text.ContentsOA = sttext;
 				IStTxtPara para = sl.GetInstance<IStTxtParaFactory>().Create();
 				sttext.ParagraphsOS.Add(para);
-				para.Contents = Cache.TsStrFactory.MakeString("supercalifragilisticexpialidocious", wsf.get_Engine("en").Handle);
+				para.Contents = TsStringUtils.MakeString("supercalifragilisticexpialidocious", wsf.get_Engine("en").Handle);
 				paraContents = para.Contents;
 				ISegment segment = sl.GetInstance<ISegmentFactory>().Create();
 				para.SegmentsOS.Add(segment);
-				ITsString wform = TsStringUtils.MakeTss("supercalifragilisticexpialidocious",
+				ITsString wform = TsStringUtils.MakeString("supercalifragilisticexpialidocious",
 					wsf.get_Engine("en").Handle);
 				word = sl.GetInstance<IWfiWordformFactory>().Create(wform);
 				segment.AnalysesRS.Add(word);
@@ -346,11 +344,11 @@ namespace LanguageExplorerTests.Interlinear
 				text.ContentsOA = sttext;
 				IStTxtPara para = sl.GetInstance<IStTxtParaFactory>().Create();
 				sttext.ParagraphsOS.Add(para);
-				para.Contents = Cache.TsStrFactory.MakeString("supercalifragilisticexpialidocious", wsf.get_Engine("en").Handle);
+				para.Contents = TsStringUtils.MakeString("supercalifragilisticexpialidocious", wsf.get_Engine("en").Handle);
 				paraContents = para.Contents;
 				ISegment segment = sl.GetInstance<ISegmentFactory>().Create();
 				para.SegmentsOS.Add(segment);
-				ITsString wform = TsStringUtils.MakeTss("supercalifragilisticexpialidocious",
+				ITsString wform = TsStringUtils.MakeString("supercalifragilisticexpialidocious",
 					wsf.get_Engine("en").Handle);
 				word = sl.GetInstance<IWfiWordformFactory>().Create(wform);
 				segment.AnalysesRS.Add(word);
@@ -431,11 +429,11 @@ namespace LanguageExplorerTests.Interlinear
 				text.ContentsOA = sttext;
 				IStTxtPara para = sl.GetInstance<IStTxtParaFactory>().Create();
 				sttext.ParagraphsOS.Add(para);
-				para.Contents = Cache.TsStrFactory.MakeString("supercalifragilisticexpialidocious", wsf.get_Engine("en").Handle);
+				para.Contents = TsStringUtils.MakeString("supercalifragilisticexpialidocious", wsf.get_Engine("en").Handle);
 				paraContents = para.Contents;
 				ISegment segment = sl.GetInstance<ISegmentFactory>().Create();
 				para.SegmentsOS.Add(segment);
-				ITsString wform = TsStringUtils.MakeTss("supercalifragilisticexpialidocious",
+				ITsString wform = TsStringUtils.MakeString("supercalifragilisticexpialidocious",
 					wsf.get_Engine("en").Handle);
 				segGuid = segment.Guid;
 				word = sl.GetInstance<IWfiWordformFactory>().Create(wform);
@@ -510,11 +508,11 @@ namespace LanguageExplorerTests.Interlinear
 				text.ContentsOA = sttext;
 				IStTxtPara para = sl.GetInstance<IStTxtParaFactory>().Create();
 				sttext.ParagraphsOS.Add(para);
-				para.Contents = Cache.TsStrFactory.MakeString("supercalifragilisticexpialidocious", wsf.get_Engine("en").Handle);
+				para.Contents = TsStringUtils.MakeString("supercalifragilisticexpialidocious", wsf.get_Engine("en").Handle);
 				paraContents = para.Contents;
 				ISegment segment = sl.GetInstance<ISegmentFactory>().Create();
 				para.SegmentsOS.Add(segment);
-				ITsString wform = TsStringUtils.MakeTss("supercalifragilisticexpialidocious",
+				ITsString wform = TsStringUtils.MakeString("supercalifragilisticexpialidocious",
 					wsf.get_Engine("en").Handle);
 				segGuid = segment.Guid;
 				word = sl.GetInstance<IWfiWordformFactory>().Create(wform);
@@ -590,11 +588,11 @@ namespace LanguageExplorerTests.Interlinear
 				text.ContentsOA = sttext;
 				IStTxtPara para = sl.GetInstance<IStTxtParaFactory>().Create();
 				sttext.ParagraphsOS.Add(para);
-				para.Contents = Cache.TsStrFactory.MakeString("supercalifragilisticexpialidocious", wsf.get_Engine("en").Handle);
+				para.Contents = TsStringUtils.MakeString("supercalifragilisticexpialidocious", wsf.get_Engine("en").Handle);
 				paraContents = para.Contents;
 				ISegment segment = sl.GetInstance<ISegmentFactory>().Create();
 				para.SegmentsOS.Add(segment);
-				ITsString wform = TsStringUtils.MakeTss("supercalifragilisticexpialidocious",
+				ITsString wform = TsStringUtils.MakeString("supercalifragilisticexpialidocious",
 					wsf.get_Engine("en").Handle);
 				segGuid = segment.Guid;
 				word = sl.GetInstance<IWfiWordformFactory>().Create(wform);
@@ -698,7 +696,7 @@ namespace LanguageExplorerTests.Interlinear
 			{
 				var wf = Cache.ServiceLocator.GetInstance<IWfiWordformFactory>().Create();
 				int wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
-				wf.Form.set_String(wsEn, Cache.TsStrFactory.MakeString("this is a phrase", wsEn));
+				wf.Form.set_String(wsEn, TsStringUtils.MakeString("this is a phrase", wsEn));
 			});
 			var li = new BIRDFormatImportTests.LLIMergeExtension(Cache, null, null);
 			var options = CreateImportInterlinearOptions(xml);

@@ -22,10 +22,13 @@ using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.Utils;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Cellar;
+using SIL.CoreImpl.Text;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.Xml;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
@@ -116,15 +119,15 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		public void FinishInit(XElement configurationNode)
 		{
 			var textStyle = configurationNode.Attribute("textStyle");
-			if (textStyle != null)
-			{
-				TextStyle = textStyle.Value;
-				if (m_VectorReferenceVc != null)
+				if (textStyle != null)
 				{
-					m_VectorReferenceVc.TextStyle = textStyle.Value;
+					TextStyle = textStyle.Value;
+					if (m_VectorReferenceVc != null)
+					{
+						m_VectorReferenceVc.TextStyle = textStyle.Value;
+					}
 				}
 			}
-		}
 
 		#endregion // Construction, initialization, and disposal
 
@@ -133,14 +136,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		public override void MakeRoot()
 		{
 			CheckDisposed();
-			base.MakeRoot();
 
 			if (m_fdoCache == null || DesignMode)
 				return;
 
 			m_VectorReferenceVc = CreateVectorReferenceVc();
-			m_rootb = VwRootBoxClass.Create();
-			m_rootb.SetSite(this);
+			base.MakeRoot();
 			m_rootb.DataAccess = GetDataAccess();
 			SetupRoot();
 		}
@@ -764,7 +765,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 							(int)FwTextPropVar.ktpvDefault,
 							(int)TptEditable.ktptNotEditable);
 						ITsString tss;
-						ITsStrFactory tsf = m_cache.TsStrFactory;
 						Debug.Assert(hvo != 0);
 #if USEBESTWS
 					if (m_displayWs != null && m_displayWs.StartsWith("best"))
@@ -810,7 +810,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 								if (s is ITsString)
 									tss = (ITsString)s;
 								else
-									tss = tsf.MakeString((string)s, ws);
+									tss = TsStringUtils.MakeString((string)s, ws);
 							}
 							else
 							{

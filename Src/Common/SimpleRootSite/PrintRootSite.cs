@@ -6,13 +6,13 @@
 // Responsibility: TE Team
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Drawing.Printing;
 using System.IO;
 using System.Windows.Forms;
-
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.Text;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.RootSites
@@ -104,8 +104,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		/// <param name="e"></param>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "e.Graphics is a reference")]
 		private void Init(PrintPageEventArgs e)
 		{
 #if false
@@ -142,6 +140,8 @@ namespace SIL.FieldWorks.Common.RootSites
 
 				// Make a rootbox for printing and initialize it.
 				m_rootb = VwRootBoxClass.Create();
+				m_rootb.RenderEngineFactory = SingletonsContainer.Get<RenderEngineFactory>();
+				m_rootb.TsStrFactory = TsStringUtils.TsStrFactory;
 				m_rootb.SetSite(this);
 				m_rootb.DataAccess = m_sda;
 				m_rootb.SetRootObject(m_hvo, m_vc, m_frags, m_styleSheet);
@@ -217,8 +217,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "e.Graphics is a reference")]
 		private void pd_PrintPage(object sender, PrintPageEventArgs e)
 		{
 			// If the print rootsite hasn't been initialized yet, do so now.
@@ -408,8 +406,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		/// <param name="e"></param>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "e.Graphics is a reference")]
 		private void SetMargins(PrintPageEventArgs e)
 		{
 			int dpiX = (int)e.Graphics.DpiX;

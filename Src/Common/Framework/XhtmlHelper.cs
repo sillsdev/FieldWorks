@@ -4,19 +4,18 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Xml;
 using System.Xml.Linq;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.Utils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.CoreImpl;
+using SIL.CoreImpl.WritingSystems;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.Xml;
 
 namespace SIL.FieldWorks.Common.Framework
 {
@@ -85,7 +84,7 @@ namespace SIL.FieldWorks.Common.Framework
 		/// </summary>
 		/// <param name="cssClass"></param>
 		/// <param name="node"></param>
-		public void MapCssClassToXmlNode(string cssClass, XElement node)
+		public void MapCssClassToXElement(string cssClass, XElement node)
 		{
 			m_mapCssClassToXnode.Add(GetValidCssClassName(cssClass), node);
 		}

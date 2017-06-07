@@ -14,6 +14,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 	public static class SpecialCharacterHandling
 	{
 		private static Dictionary<char, string> s_visibleCharacterSubstitutions;
+		private static Dictionary<char, string> s_cssCharacterSubstitutions;
 
 		private static Dictionary<char, string> VisibleCharacterSubstitutions
 		{
@@ -31,7 +32,6 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 			{
 				// Dot
 				{' ', "\u2219"},
-
 				// Right-arrow
 				{'\t', "\u279D"},
 
@@ -52,7 +52,9 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 				{'\u200D', "[ZWJ]"},
 				{'\uFEFF', "[ZWNBSP]"},
 				{'\u200C', "[ZWNJ]"},
-				{'\u200B', "[ZWSP]"}
+				{'\u200B', "[ZWSP]"},
+				{'\u00A0', "[NBSP]"},
+				{'\u202F', "[NNBSP]"}
 			};
 		}
 
@@ -88,7 +90,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 		/// <summary>
 		/// Substitute visible characters for some invisible ones.
 		/// </summary>
-		private static string InvisibleToVisibleCharacters(string operand)
+		internal static string InvisibleToVisibleCharacters(string operand)
 		{
 			foreach (var replacement in VisibleCharacterSubstitutions)
 				operand = operand.Replace(replacement.Key.ToString(), replacement.Value);
@@ -99,6 +101,23 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 		{
 			foreach (var replacement in VisibleCharacterSubstitutions)
 				operand = operand.Replace(replacement.Value, replacement.Key.ToString());
+			return operand;
+		}
+
+		private static void PopulateCssCharacterSubstitutions()
+		{
+			s_cssCharacterSubstitutions = new Dictionary<char, string>
+			{
+				{'\'', "\\'"} // Apostrophe
+			};
+		}
+
+		public static string MakeSafeCss(string operand)
+		{
+			if (s_cssCharacterSubstitutions == null)
+				PopulateCssCharacterSubstitutions();
+			foreach (var replacement in s_cssCharacterSubstitutions)
+				operand = operand.Replace(replacement.Key.ToString(), replacement.Value);
 			return operand;
 		}
 	}

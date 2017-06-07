@@ -2,7 +2,6 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Xml.Linq;
 using System.Xml.Xsl;
@@ -11,8 +10,6 @@ using SIL.FieldWorks.FDO;
 
 namespace LanguageExplorer.Areas.TextsAndWords
 {
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification="m_cache and m_mediator are references")]
 	internal sealed class HCTrace : IParserTrace
 	{
 		private static ParserTraceUITransform s_traceTransform;

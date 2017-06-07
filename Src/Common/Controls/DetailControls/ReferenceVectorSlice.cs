@@ -7,16 +7,16 @@
 // Last reviewed:
 //
 // <remarks>
-//	These slices are useful for collections andsequences.  No re-ordering is not supported
+//	These slices are useful for collections and sequences.  No re-ordering is not supported
 //	for sequences. Also, adding the same element multiple times is not allowed for collections,
 //	but it is for sequences.
 // </remarks>
 using System;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
-using SIL.Utils;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
+using SIL.Xml;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
@@ -173,8 +173,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		}
 #endif
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="GetView() returns a reference")]
 		public bool OnAlphabeticalOrder(object args)
 		{
 			GetView().RemoveOrdering();
@@ -182,8 +180,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		}
 
 #if RANDYTODO
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="GetView() returns a reference")]
 		public virtual bool OnDisplayAlphabeticalOrder(object commandObject, ref UIItemDisplayProperties display)
 		{
 			display.Enabled = display.Visible = GetView().RootPropertySupportsVirtualOrdering();
@@ -281,7 +277,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			{
 				if (Publisher != null)
 				{
-					string caption = XmlUtils.GetLocalizedAttributeValue(ConfigurationNode, "label", "");
+					string caption = StringTable.Table.LocalizeAttributeValue(XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "label", ""));
 					var vrl = (VectorReferenceLauncher)Control;
 					Publisher.Publish("RegisterHelpTargetWithId", new object[]{vrl.Controls[1], caption, HelpId});
 					Publisher.Publish("RegisterHelpTargetWithId", new object[]{vrl.Controls[0], caption, HelpId, "Button"});

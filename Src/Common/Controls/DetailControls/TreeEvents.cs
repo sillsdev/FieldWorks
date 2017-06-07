@@ -25,7 +25,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		/// <param name="slice"></param>
 		public TreeNodeEventArgs(Control context, Slice slice, Point location)
 		{
 			m_location = location;

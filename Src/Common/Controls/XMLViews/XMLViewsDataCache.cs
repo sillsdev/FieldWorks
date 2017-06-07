@@ -5,11 +5,13 @@
 using System;
 using System.Collections.Generic;
 using System.Xml.Linq;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.Cellar;
+using SIL.CoreImpl.Text;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.Utils;
+using SIL.Xml;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -253,8 +255,7 @@ namespace SIL.FieldWorks.Common.Controls
 				return result;
 			if (tag == m_tagReversalEntriesBulkText && result1 != null)
 				return result1;
-			ITsStrFactory tsf = TsStrFactoryClass.Create();
-			return tsf.MakeString("", ws);
+			return TsStringUtils.EmptyString(ws);
 		}
 
 		/// <summary>
@@ -304,17 +305,15 @@ namespace SIL.FieldWorks.Common.Controls
 				}
 				if (tss == null)
 				{
-					foreach (var x in m_mlStringCache.Keys)
+					foreach (HvoFlidWSKey x in m_mlStringCache.Keys)
 					{
-						ITsStrFactory tsf = TsStrFactoryClass.Create();
-						return tsf.EmptyString(x.Ws);
+						return TsStringUtils.EmptyString(x.Ws);
 					}
 				}
 				if (tss != null)
 				{
-					ITsStrFactory tsf = TsStrFactoryClass.Create();
 					var ws = TsStringUtils.GetWsOfRun(tss, 0);
-					return tsf.EmptyString(ws);
+					return TsStringUtils.EmptyString(ws);
 				}
 				// Enhance JohnT: might be desirable to return empty string rather than crashing,
 				// but as things stand, we don't know what would be a sensible WS.

@@ -1,10 +1,6 @@
-// Copyright (c) 2003-2015 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: RecordClerk.cs
-// Authorship History: John Hatton
-// Last reviewed:
 //
 // <remarks>
 #if RANDYTODO
@@ -35,15 +31,17 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.Cellar;
+using SIL.CoreImpl.Text;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
@@ -53,17 +51,19 @@ using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.FdoUi.Dialogs;
 using SIL.FieldWorks.Filters;
+using SIL.ObjectModel;
 using SIL.Reporting;
 using SIL.Utils;
+using SIL.Xml;
+using ConfigurationException = SIL.FieldWorks.Common.FwUtils.ConfigurationException;
 using WaitCursor = SIL.FieldWorks.Common.FwUtils.WaitCursor;
-using ConfigurationException = SIL.Utils.ConfigurationException;
 
 namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
 	/// Takes care of a list of records, standing between it and the UI.
 	/// </summary>
-	public class RecordClerk : IFWDisposable, IFlexComponent, IRecordListUpdater, IAnalysisOccurrenceFromHvo, IVwNotifyChange, IBulkPropChanged
+	public class RecordClerk : IDisposable, IFlexComponent, IRecordListUpdater, IAnalysisOccurrenceFromHvo, IVwNotifyChange, IBulkPropChanged
 	{
 		/// <summary>
 		/// Display for required default sorter.
@@ -81,6 +81,9 @@ namespace SIL.FieldWorks.XWorks
 		/// gets to be represented by and interact with the tree bar.
 		/// </summary>
 		protected RecordBarHandler m_recordBarHandler;
+
+		private const string StatusBarRecordNumber = "StatusPanelRecordNumber";
+
 		/// <summary>
 		/// The record list for the clerk.
 		/// </summary>
@@ -502,8 +505,6 @@ namespace SIL.FieldWorks.XWorks
 			if (disposing)
 			{
 				// Dispose managed resources here.
-				//ResetStatusBarPanel("StatusPanelRecordNumber", "");
-				//ResetStatusBarPanel("StatusPanelMessage", "");
 				m_list.ListChanged -= OnListChanged;
 				m_list.AboutToReload -= m_list_AboutToReload;
 				m_list.DoneReload -= m_list_DoneReload;
@@ -673,7 +674,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			SortName = PropertyTable.GetValue<string>(SortNamePropertyTableId, SettingsGroup.LocalSettings);
 
-			var persistSorter = PropertyTable.GetValue<string>(SorterPropertyTableId, SettingsGroup.LocalSettings);
+			var persistSorter = PropertyTable.GetValue<string>(SorterPropertyTableId, SettingsGroup.LocalSettings, null);
 			if (m_list.Sorter != null)
 			{
 				// if the persisted object string of the existing sorter matches the one in the property table
@@ -698,19 +699,37 @@ namespace SIL.FieldWorks.XWorks
 			{
 				sorter = m_defaultSorter;
 				SortName = m_defaultSortLabel;
-				}
-			// If sorter is still null, allow any sorter which may have been installed during
-			// record list initialization to prevail.
-			if (sorter == null)
-			{
-				return false; // we didn't change anything.
 			}
+			// If sorter is null, allow any sorter which may have been installed during
+			// record list initialization to prevail.
+			if (sorter != null)
+			{
+				// (LT-9515) restored sorters need to set some properties that could not be persisted.
+				var cache = PropertyTable.GetValue<FdoCache>("cache");
+				sorter.Cache = cache;
+				if (sorter is GenRecordSorter)
+				{
+					var comparer = ((GenRecordSorter)sorter).Comparer;
+					WritingSystemComparer subComparer = null;
+					if(comparer != null)
+						subComparer = ((StringFinderCompare)comparer).SubComparer as WritingSystemComparer;
+					if (subComparer != null)
+					{
+						var subComparerWsId = subComparer.WsId;
+						var wsId = cache.WritingSystemFactory.GetWsFromStr(subComparerWsId);
+						if (wsId == 0)
+							return false;
+					}
+				}
 				if (m_list.Sorter == sorter)
 					return false;
-			// (LT-9515) restored sorters need to set some properties that could not be persisted.
+				// (LT-9515) restored sorters need to set some properties that could not be persisted.
 				m_list.Sorter = sorter;
+				m_list.TransferOwnership(sorter as IDisposable);
 				return true;
 			}
+			return false; // we didn't change anything.
+		}
 
 		/// <summary>
 		/// Compares the state of the filters and sorters to persisted values in property table
@@ -877,14 +896,14 @@ namespace SIL.FieldWorks.XWorks
 			{
 				CheckDisposed();
 
-				if (m_rch != null)
+				if (m_rch != null && !ReferenceEquals(m_rch, value))
 				{
 					// Store it, since we need to clear out the
 					// data member to avoid an infinite loop in calling its Dispose method,
 					// which then tries to call this setter with null.
-					var gonner = m_rch;
+					var goner = m_rch;
 					m_rch = null;
-					gonner.Dispose();
+					goner.Dispose();
 				}
 				m_rch = value;
 			}
@@ -1526,7 +1545,7 @@ namespace SIL.FieldWorks.XWorks
 			var realHolder = (ToolTipHolder)holder;
 			if (m_list.IsCurrentObjectValid() && realHolder.ToolTip.Contains("{0}"))
 			{
-				realHolder.ToolTip = String.Format(realHolder.ToolTip, GetTypeNameForUi(m_list.CurrentObject));
+				realHolder.ToolTip = string.Format(realHolder.ToolTip, GetTypeNameForUi(m_list.CurrentObject));
 			}
 			return true;
 		}
@@ -1534,18 +1553,8 @@ namespace SIL.FieldWorks.XWorks
 
 		private string GetTypeNameForUi(ICmObject obj)
 		{
-			if (obj is ICmPossibility)
-				return (obj as ICmPossibility).ItemTypeName();
-			IFsFeatureSystem featsys = obj.OwnerOfClass(FsFeatureSystemTags.kClassId) as IFsFeatureSystem;
-			if (featsys != null)
-			{
-				if (featsys.OwningFlid == LangProjectTags.kflidPhFeatureSystem)
-				{
-					string sClass = StringTable.Table.GetString(obj.ClassName, "ClassNames");
-					return StringTable.Table.GetString(sClass + "-Phonological", "AlternativeTypeNames");
-				}
-			}
-			return StringTable.Table.GetString(obj.ClassName, "ClassNames");
+			using (var uiObj = CmObjectUi.MakeUi(obj))
+				return uiObj.DisplayNameOfClass;
 		}
 
 		private bool ShouldNotHandleDeletionMessage
@@ -1592,7 +1601,7 @@ namespace SIL.FieldWorks.XWorks
 					if (uiObj.CanDelete(out cannotDeleteMsg))
 						dlg.SetDlgInfo(uiObj, Cache, PropertyTable);
 					else
-						dlg.SetDlgInfo(uiObj, Cache, PropertyTable, Cache.TsStrFactory.MakeString(cannotDeleteMsg, Cache.DefaultUserWs));
+						dlg.SetDlgInfo(uiObj, Cache, PropertyTable, TsStringUtils.MakeString(cannotDeleteMsg, Cache.DefaultUserWs));
 				}
 				var window = PropertyTable.GetValue<Form>("window");
 				if (DialogResult.Yes == dlg.ShowDialog(window))
@@ -1853,13 +1862,21 @@ namespace SIL.FieldWorks.XWorks
 			bool fIgnore = PropertyTable.GetValue<bool>("IgnoreStatusPanel");
 			if (fIgnore)
 				return;
+			// JohnT: if we're not controlling the record list, we probably have no business trying to
+			// control the status bar. But we may need a separate control over this.
+			// Note that it can be definitely wrong to update it; this Clerk may not have anything
+			// to do with the current window contents.
 			if (IsControllingTheRecordTreeBar)
 			{
-				// JohnT: if we're not controlling the record list, we probably have no business trying to
-				// control the status bar. But we may need a separate control over this.
-				// Note that it can be definitely wrong to update it; this Clerk may not have anything
-				// to do with the current window contents.
-				UpdateStatusBarRecordNumber();
+				if (WantStatusBarRecordNumber)
+				{
+					UpdateStatusBarRecordNumber();
+				}
+				else
+				{
+					ResetStatusBarPanel(StatusBarRecordNumber, " ");
+					ResetStatusBarMessageForCurrentObject();
+				}
 			}
 
 #if RANDYTODO
@@ -1893,6 +1910,15 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		private bool WantStatusBarRecordNumber
+		{
+			get
+			{
+				var currentControlObject = PropertyTable.GetValue<string>("currentContentControl", null);
+				return !(currentControlObject == "lexiconDictionary" || currentControlObject == "reversalToolEditComplete");
+			}
+		}
+
 		private void UpdateStatusBarRecordNumber()
 		{
 			var noRecordsDefaultText = StringTable.Table.GetString("No Records", "Misc");// FwXApp.XWorksResources.GetString("stidNoRecords");
@@ -1914,7 +1940,7 @@ namespace SIL.FieldWorks.XWorks
 				s = noRecordsText;
 			}
 
-			ResetStatusBarPanel("StatusPanelRecordNumber", s);
+			ResetStatusBarPanel(StatusBarRecordNumber, s);
 			ResetStatusBarMessageForCurrentObject();
 		}
 
@@ -3074,7 +3100,7 @@ namespace SIL.FieldWorks.XWorks
 		/// By default, it will suspend full Reloads initiated by PropChanged until we finish.
 		/// During dispose, we'll ReloadList if we tried to reload the list via PropChanged.
 		/// </summary>
-		public class ListUpdateHelper : FwDisposableBase
+		public class ListUpdateHelper : DisposableBase
 		{
 			public class ListUpdateHelperOptions
 			{
@@ -3166,8 +3192,6 @@ namespace SIL.FieldWorks.XWorks
 			/// <param name="fWasAlreadySuppressed">Usually, clerk.ListLoadingSuppressed. When we know we just
 			/// created the clerk, already in a suppressed state, and want to treat it as if this
 			/// list update helper did the suppressing, pass false, even though the list may in fact be already suppressed.</param>
-			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-				Justification = "parentClerk is a reference")]
 			public ListUpdateHelper(RecordClerk clerk, bool fWasAlreadySuppressed)
 			{
 				m_clerk = clerk;
@@ -3250,7 +3274,7 @@ namespace SIL.FieldWorks.XWorks
 				m_fTriggerPendingReloadOnDispose = false;
 				m_fOriginalLoadRequestedWhileSuppressed = false;
 			}
-			#region FwDisposableBase Members
+			#region DisposableBase Members
 
 			protected override void DisposeManagedResources()
 			{
@@ -3288,7 +3312,7 @@ namespace SIL.FieldWorks.XWorks
 				m_waitCursor = null;
 			}
 
-			#endregion FwDisposableBase
+			#endregion DisposableBase
 		}
 
 		private ListUpdateHelper m_bulkEditUpdateHelper;
@@ -3395,13 +3419,11 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Make up for weakness of XmlNode.SelectSingleNode.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private static XElement FindClerkNode(XElement parameterNode, string clerk)
 		{
 			foreach (var node in parameterNode.XPathSelectElements("ancestor::parameters/clerks/clerk"))
 			{
-				string id = XmlUtils.GetAttributeValue(node, "id");
+				string id = XmlUtils.GetOptionalAttributeValue(node, "id");
 				if (id == clerk)
 					return node;
 			}

@@ -1,25 +1,19 @@
-// Copyright (c) 2005-2013 SIL International
+// Copyright (c) 2005-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: SummaryDialogForm.cs
-// Responsibility:
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.FdoUi.Dialogs
 {
@@ -40,7 +34,7 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 	/// should pop up to find a different entry to display with a new SummaryDialogForm.
 	/// </remarks>
 	/// ----------------------------------------------------------------------------------------
-	internal class SummaryDialogForm : Form, IFWDisposable
+	internal class SummaryDialogForm : Form
 	{
 		#region Member variables
 		private List<int> m_rghvo;
@@ -89,7 +83,6 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 			Initialize(tssForm, helpProvider, helpFileKey, styleSheet);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Constructor for multiple matching LexEntry objects.
 		/// </summary>
@@ -99,8 +92,6 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 		/// <param name="helpFileKey">The help file key.</param>
 		/// <param name="styleSheet">The stylesheet.</param>
 		/// <param name="cache">The cache.</param>
-		/// <param name="mediator">The mediator.</param>
-		/// ------------------------------------------------------------------------------------
 		internal SummaryDialogForm(List<int> rghvo, ITsString tssForm, IHelpTopicProvider helpProvider,
 			string helpFileKey, IVwStylesheet styleSheet, FdoCache cache)
 		{

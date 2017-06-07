@@ -115,7 +115,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 		public void FinishRefresh()
 		{
 #if RANDYTODO
-			// TODO: If tool uses a SDA decorator (IRefreshable), then call its "Refresh" method.
+			// TODO: If tool uses a SDA decorator (DomainDataByFlidDecoratorBase), then call its "Refresh" method.
 #endif
 			_recordClerk.ReloadIfNeeded();
 		}

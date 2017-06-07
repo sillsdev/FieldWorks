@@ -9,9 +9,10 @@ using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using SIL.CoreImpl.Text;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.Utils;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 
 namespace SIL.FieldWorks.Common.RootSites
 {
@@ -98,7 +99,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				get
 				{
 					CheckDisposed();
-					ITsPropsBldr bldr = TsPropsBldrClass.Create();
+					ITsPropsBldr bldr = TsStringUtils.MakePropsBldr();
 					bldr.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, "Figure caption");
 					return bldr.GetTextProps();
 				}
@@ -113,8 +114,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		protected VwBaseVc m_basicViewVc;
 		/// <summary></summary>
 		protected SelectionHelper m_SelectionHelper;
-		/// <summary></summary>
-		private ILgCharacterPropertyEngine m_vernLgCharPropEngine;
 
 		///// <summary>HVO of dummy root object</summary>
 		//public const int kHvoRoot = 1001;
@@ -177,7 +176,6 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 			m_basicViewVc = null;
 			m_SelectionHelper = null;
-			m_vernLgCharPropEngine = null;
 		}
 
 		#region Component Designer generated code
@@ -347,11 +345,10 @@ namespace SIL.FieldWorks.Common.RootSites
 			var para2 = stTxtParaFactory.Create();
 			text.ParagraphsOS.Add(para2);
 
-			ITsStrFactory tsf = Cache.TsStrFactory;
-			ITsString tss = tsf.MakeString(firstPara, ws);
+			ITsString tss = TsStringUtils.MakeString(firstPara, ws);
 			para1.Contents = tss;
 
-			tss = tsf.MakeString(secondPara, ws);
+			tss = TsStringUtils.MakeString(secondPara, ws);
 			para2.Contents = tss;
 		}
 
@@ -438,9 +435,6 @@ namespace SIL.FieldWorks.Common.RootSites
 				return;
 
 			base.MakeRoot();
-
-			m_rootb = VwRootBoxClass.Create();
-			m_rootb.SetSite(this);
 
 			// Set up a new view constructor.
 			m_basicViewVc = CreateVc(flid);
@@ -790,27 +784,6 @@ namespace SIL.FieldWorks.Common.RootSites
 				}
 
 				return nSelWidth;
-			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public ILgCharacterPropertyEngine CharPropEngine
-		{
-			get
-			{
-				CheckDisposed();
-
-				if (m_vernLgCharPropEngine == null)
-				{
-					m_vernLgCharPropEngine =
-						m_fdoCache.WritingSystemFactory.get_CharPropEngine(
-						m_fdoCache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle);
-
-				}
-				return m_vernLgCharPropEngine;
 			}
 		}
 

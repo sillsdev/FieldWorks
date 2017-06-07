@@ -9,14 +9,13 @@
 using System;
 using System.Collections.Specialized; // for StringCollection
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ScriptureUtils;
@@ -25,7 +24,7 @@ using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Reporting;
 using SIL.Utils;
-using SILUBS.SharedScrUtils;
+using SIL.CoreImpl.Scripture;
 
 namespace SIL.FieldWorks.TE
 {
@@ -40,7 +39,6 @@ namespace SIL.FieldWorks.TE
 		#region Member data
 		private readonly FdoCache m_cache;
 		private readonly Form m_mainWnd;
-		private readonly ITeImportCallbacks m_importCallbacks;
 		private readonly FwStyleSheet m_styleSheet;
 		private readonly IHelpTopicProvider m_helpTopicProvider;
 		private readonly IFlexApp m_app;
@@ -52,37 +50,6 @@ namespace SIL.FieldWorks.TE
 		/// </summary>
 		private UndoImportManager m_undoImportManager;
 		#endregion
-
-		private class DummyImportCallbacks : ITeImportCallbacks
-		{
-			#region ITeImportCallbacks Members
-
-			public FilteredScrBooks BookFilter
-			{
-				get { return null; }
-			}
-
-			public float DraftViewZoomPercent
-			{
-				get { return 1.0f; }
-			}
-
-			public float FootnoteZoomPercent
-			{
-				get { return 1.0f; }
-			}
-
-			public bool GotoVerse(ScrReference targetRef)
-			{
-				throw new NotImplementedException();
-			}
-
-			public void UpdateKeyTermsView()
-			{
-				throw new NotImplementedException();
-			}
-			#endregion
-		}
 
 		#region Constructor
 		/// ------------------------------------------------------------------------------------
@@ -100,7 +67,6 @@ namespace SIL.FieldWorks.TE
 			: this(app.Cache, styleSheet, app, fParatextStreamlinedImport)
 		{
 			m_mainWnd = mainWnd;
-			m_importCallbacks = new DummyImportCallbacks();
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -208,9 +174,7 @@ namespace SIL.FieldWorks.TE
 					firstImported = ImportWithUndoTask(importSettings, true, updateDescription);
 				}
 				firstImported = CompleteImport(firstImported);
-				if (!m_fParatextStreamlinedImport)
-					SetSelectionsAfterImport(firstImported);
-				return (firstImported != ScrReference.Empty);
+				return firstImported != ScrReference.Empty;
 			}
 			finally
 			{
@@ -231,10 +195,9 @@ namespace SIL.FieldWorks.TE
 			IScrImportSet importSettings = null;
 			NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
 			{
-				importSettings =
-					scr.FindOrCreateDefaultImportSettings(TypeOfImport.Unknown);
+				importSettings = scr.FindOrCreateDefaultImportSettings(TypeOfImport.Unknown, m_styleSheet,
+					FwDirectoryFinder.TeStylesPath);
 			});
-			importSettings.StyleSheet = m_styleSheet;
 
 			importSettings.OverlappingFileResolver = new ConfirmOverlappingFileReplaceDialog(m_helpTopicProvider);
 			if (!importSettings.BasicSettingsExist)
@@ -404,8 +367,6 @@ namespace SIL.FieldWorks.TE
 		/// <param name="fDisplayUi">if set to <c>true</c> shows the UI.</param>
 		/// <returns>The first reference that was imported</returns>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification="See TODO-Linux comment")]
 		private ScrReference InternalImport(IScrImportSet importSettings, bool fDisplayUi)
 		{
 			ScrReference firstImported = ScrReference.Empty;
@@ -724,7 +685,7 @@ namespace SIL.FieldWorks.TE
 //					{
 //						//set formatting info in proxy
 //						ITsTextProps tsTextPropsFormat;
-//						ITsPropsBldr tsPropsBldr = TsPropsBldrClass.Create();
+//						ITsPropsBldr tsPropsBldr = TsStringUtils.MakePropsBldr();
 //						//REVIEW: Should we get formatting info from scTag
 //						tsPropsBldr.SetIntPropValues((int)FwTextPropType.ktptItalic,
 //							(int)FwTextPropVar.ktpvEnum, (int)FwTextToggleVal.kttvInvert); //italic for now
@@ -750,34 +711,12 @@ namespace SIL.FieldWorks.TE
 		/// ------------------------------------------------------------------------------------
 		protected virtual void DisplayImportedBooksDlg(IScrDraft backupSavedVersion)
 		{
-			using (ImportedBooks dlg = new ImportedBooks(m_cache, m_styleSheet,
-				ImportedVersion, m_importCallbacks.DraftViewZoomPercent,
-				m_importCallbacks.FootnoteZoomPercent, backupSavedVersion, m_importCallbacks.BookFilter,
+			using (ImportedBooks dlg = new ImportedBooks(m_cache, m_styleSheet, ImportedVersion, backupSavedVersion,
 				UndoManager.ImportedBooks.Keys, m_helpTopicProvider, m_app))
 			{
 				dlg.ShowOrSave(m_mainWnd, m_fParatextStreamlinedImport);
 			}
 		}
 		#endregion
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Set selections after import.
-		/// </summary>
-		/// <param name="firstReference">The first reference of imported stuff.</param>
-		/// ------------------------------------------------------------------------------------
-		private void SetSelectionsAfterImport(ScrReference firstReference)
-		{
-			if (!firstReference.IsEmpty)
-			{
-				// Set the IP at the beginning of the imported material (i.e. the first reference,
-				// not the first segment).
-				m_importCallbacks.GotoVerse(firstReference);
-			}
-
-			// If we are in the Key Terms view then update the view in case we imported
-			// a book so that it is possible to select the verse for the current key term.
-			m_importCallbacks.UpdateKeyTermsView();
-		}
 	}
 }

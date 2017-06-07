@@ -1,24 +1,16 @@
-// Copyright (c) 2009-2013 SIL International
+// Copyright (c) 2009-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: TaggingTests.cs
-// Responsibility: MartinG
-//
-// <remarks>
-// </remarks>
 
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using System.Xml;
 using NUnit.Framework;
-using SIL.CoreImpl;
+using SIL.CoreImpl.WritingSystems;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.Utils;
 using SIL.WritingSystems;
 
 namespace LanguageExplorerTests.Interlinear
@@ -233,8 +225,6 @@ namespace LanguageExplorerTests.Interlinear
 		/// </summary>
 		/// <param name="expectedStates">The expected checked state array (one per subitem).</param>
 		/// <param name="menu1">The menu.</param>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "item is a reference")]
 		private static void AssertMenuCheckState(bool[] expectedStates, ToolStripItemCollection menu1)
 		{
 			Assert.AreEqual(expectedStates.Length, menu1.Count,
@@ -259,7 +249,7 @@ namespace LanguageExplorerTests.Interlinear
 			// This may eventually fail because there are no occurrences selected.
 			// Should we even make the menu if nothing is selected?
 
-			using (ContextMenuStrip strip = new ContextMenuStrip())
+			using (var strip = new ContextMenuStrip())
 			{
 				m_tagChild.CallMakeContextMenuForTags(strip, m_textMarkupTags);
 
@@ -597,7 +587,7 @@ namespace LanguageExplorerTests.Interlinear
 		[Test]
 		public void DeleteTagAnnot_SetOfTwo()
 		{
-			var tagsToDelete = new Set<ITextTag>();
+			var tagsToDelete = new HashSet<ITextTag>();
 
 			// Setup the SelectedWordforms property for first tag
 			var tempList = new List<AnalysisOccurrence> {m_occurrences[0], m_occurrences[1]};

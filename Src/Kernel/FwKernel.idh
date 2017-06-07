@@ -9,11 +9,21 @@ Last reviewed: never
 
 	Defines "Kernel" interfaces widely used in FieldWorks, not including the TextServ
 	interfaces which, though part of FwKernel, are in a separate IDH file.
+	Also includes interfaces related to:
+	-Data access (ISilDataAccess)
+	-Undo/redo functionality (IActionHandler, IUndoAction, ISqlUndoAction)
+
 -------------------------------------------------------------------------------*//*:End Ignore*/
 
-interface ITsString;
-interface IUndoGrouper;		// used by ActionHandler
 interface IFwMetaDataCache;
+interface ILgWritingSystemFactory;
+interface ITsMultiString;
+interface ITsString;
+interface ITsTextProps;
+interface IVwStylesheet;
+
+typedef int HVO; // Hungarian hvo; Handle to viewable object.
+typedef int PropTag; // Hungarian tag
 
 typedef [v1_enum] enum UndoResult
 {
@@ -26,6 +36,118 @@ typedef [v1_enum] enum UndoResult
 	kuresError,			// A serious unexpected error occurred. The group has been rolled back.
 						// Typically a Refresh is needed along with an error message.
 } UndoResult;
+
+/*------------------------------------------------------------------------------------------
+	Interface for a simple approach to initializing a class by passing it a raw data buffer.
+	Primarily for classes intended to be instantiated via an IClassInitMoniker object.
+	ENHANCE JohnT: Does this definition belong somewhere else?
+	Hungarian: simi
+------------------------------------------------------------------------------------------*/
+DeclareInterface(SimpleInit, Unknown, 6433D19E-2DA2-4041-B202-DB118EE1694D)
+{
+	[restricted] HRESULT InitNew(
+		[in, size_is(cb)] const BYTE * prgb,
+		[in] int cb);
+
+	// Return the initialization data previously passed in.
+	[propget, restricted] HRESULT InitializationData(
+		[out, retval] BSTR * pbstr);
+};
+
+/*******************************************************************************************
+	Interface ICheckWord
+	This interface is implemented by a Views Client which wishes to have the Views code
+	perform spell-checking. It is passed a word and indicates whether it is correct.
+
+	@h3{When to implement}
+	Implement this to enable spell-checking.
+
+	@h3{When to use}
+	You will not use this directly.
+
+	@h3{How to obtain an instance}
+	You must provide one
+
+	@h3{Hungarian: cw}
+*******************************************************************************************/
+DeclareInterface(CheckWord, Unknown, 69F4D944-C786-47EC-94F7-15193EED6758)
+{
+	HRESULT Check(
+		[in] LPCOLESTR pszWord,
+		[out, retval] ComBool * pfCorrect);
+}
+
+/*******************************************************************************************
+	Interface IGetSpellChecker
+	This interface is implemented by a Views Client which wishes to have the Views code
+	perform spell-checking. It is passed a dictionary identifier and returns an ICheckWord
+	if spell-checking should be performed for that identifier.
+
+	@h3{When to implement}
+	Implement this to enable spell-checking. Pass an instance to VwRootbox::SetSpellingRepository().
+
+	@h3{When to use}
+	You will not use this directly.
+
+	@h3{How to obtain an instance}
+	You must provide one.
+
+	@h3{Hungarian: gsp}
+*******************************************************************************************/
+DeclareInterface(GetSpellChecker, Unknown, F0A60670-D280-45EA-A5C5-F0B84C027EFC)
+{
+	HRESULT GetChecker(
+		[in] LPCOLESTR pszDictId,
+		[out, retval] ICheckWord ** pcw);
+}
+
+/*******************************************************************************************
+	Interface IVwNotifyChange
+	This interface is implemented by objects that want to receive notifications of changes
+	to properties of viewable objects (HVOs). Usually these notifications are sent by
+	implementors of ISilDataAccess, and the notification is requested by calling
+	${ISilDataAccess#AddNotification}. Most commonly, notifications are requested by
+	objects within the view subsystem (such as ${VwNotifier}), but others may do so as well.
+
+	@h3{When to implement}
+	Most users of the View subsystem will not need to implement this interface, as the
+	View subsystem automatically requests most notifications that are required to keep the
+	display up to date. However, anyone who wants notifications of property changes may
+	do so.
+
+	@h3{When to use}
+	Most programmers will not use this interface directly. Implementors of ${ISilDataAccess}
+	must do so by contract when requested to send notifications. Usually this will be
+	achieved, if you need to implement ISilDataAccess at all, by inheriting from ${VwBaseDa}.
+
+	@h3{How to obtain an instance}
+	There is no straightforward way to get an instance of any of the standard
+	implementations.
+
+	@h3{Hungarian: vnc}
+*******************************************************************************************/
+DeclareInterface(VwNotifyChange, Unknown, 6C456541-C2B6-11d3-8078-0000C0FB81B5)
+{
+	// Informs the recipient that a property of an object has changed. In some cases, may
+	// provide useful information about how much of it changed. Note that some objects
+	// reporting changes may not have full information about the extent of the change, in
+	// which case, they should err on the side of exaggerating it, for example by
+	// pretending that all objects were deleted and  a new group inserted.
+	// @param hvo The object that changed
+	// @param tag The property that changed
+	// @param ivMin For vectors, the starting index where the change occurred.
+	// For MultiStrings, the writing system where the change occurred.
+	// @param cvIns For vectors, the number of items inserted. For atomic objects,
+	//	1 if an item was added. Otherwise (including basic properties), 0.
+	// @param cvDel For vectors, the number of items deleted. For atomic objects,
+	//	1 if an item was deleted. Otherwise (including basic properties), 0.
+	HRESULT PropChanged(
+		[in] HVO hvo,
+		[in] PropTag tag,
+		[in] int ivMin,
+		[in] int cvIns,
+		[in] int cvDel);
+};
 
 
 /***********************************************************************************************
@@ -101,7 +223,7 @@ DeclareInterface(UndoAction, Unknown, B831F535-0D5F-42c8-BF9F-7F5ECA2C4657)
 
 	@h3{Hungarian: acth}
 *******************************************************************************************/
-DeclareInterface(ActionHandler, Unknown, 0F8EA3BE-C982-40f8-B674-25B8482EB222)
+DeclareInterface(ActionHandler, Unknown, 7E8BC421-4CB2-4CF9-8C4C-73A5FD87CA7A)
 {
 	// Begin a sequence of actions that will be treated as one task for the purposes
 	// of undo and redo. If there is already such a task in process, this sequence will be
@@ -289,14 +411,6 @@ DeclareInterface(ActionHandler, Unknown, 0F8EA3BE-C982-40f8-B674-25B8482EB222)
 	[propget] HRESULT RedoableSequenceCount(
 		[out, retval] int * pcSeq);
 
-	// This will return the current UndoGrouper for the AH - if one exists, otherwise returns null.
-	[propget] HRESULT UndoGrouper(
-		[out, retval] IUndoGrouper ** ppundg);
-
-	// This will set the UndoGrouper for this AH.
-	[propput] HRESULT UndoGrouper(
-		[in] IUndoGrouper * pundg);
-
 	// Tells whether an Undo or Redo operation is in progress. During such operations,
 	// actions should not be added to the sequence, and some other side-effect tasks
 	// may be suppressed. For example, we don't update modify times when a data field
@@ -310,12 +424,735 @@ DeclareInterface(ActionHandler, Unknown, 0F8EA3BE-C982-40f8-B674-25B8482EB222)
 	[propget] HRESULT SuppressSelections(
 		[out, retval] ComBool * pfSupressSel);
 };
+
 #ifndef NO_COCLASSES
-DeclareCoClass(ActionHandler, 6A46D810-7F14-4151-80F5-0B13FFC1F917)
+DeclareCoClass(ActionHandler, CF0F1C0B-0E44-4C1E-9912-2048ED12C2B4)
 {
 	interface IActionHandler;
 };
 #endif // !NO_COCLASSES
+
+/*******************************************************************************************
+	Interface ISilDataAccess
+	This interface provides object property data to the view and allows properties to be
+	updated and objects to be added or deleted.It also allows client code to register
+	itself to be notified if a given property changes.
+
+	ENHANCE JohnT: these methods are rather inconsistent in what they do when no value is
+	found for a property being read.
+
+	@h3{When to implement}
+	Most users will use the standard implementations in ${VwCacheDa} or ${CustViewDa}. You
+	can make your own if you want to store data in a special way and make it available to
+	the view subsystem. In such cases it will usually be helpful to inherit from
+	${VwBaseDataAccess}.
+
+	@h3{When to use}
+	Pass an instance of this interface to a ${IVwRootBox#putref_DataAccess} when
+	initializing it. You can also use it directly to read and write data. In the case of
+	${CustViewDa}, this has the effect of an immediate update to the database.
+
+	Another common use is within an implementation of ${IVwViewConstructor} to get
+	direct access to the data being displayed.
+
+	@h3{How to obtain an instance}
+	${VwCacheDa} is often instantiated directly using NewObj. We may soon provide a way to
+	create one using CoCreateInstance.
+
+	CustViewDa is initially obtained by using NewObj. Usually there is one master instance
+	of this class per database.  In a database application it is obtained by calling
+	${AfDbApp::GetDbInfo), asking the resulting ${AfDbInfo} for its AfLpInfo, and asking
+	that to ${AfLpInfo#GetDataAccess}. This process may well change (hopefully simplifying)
+	as we refine the factoring of the AfApp subclasses to offer the right functions at each
+	level, and as we improve the encapsulation of CustViewDa. (The name of the latter may
+	well change, too.)
+
+	In a view constructor, call ${IVwEnv#get_DataAccess}, using the pvwenv passed to most
+	view constructor methods.
+
+	@h3{Hungarian: sda}
+*******************************************************************************************/
+DeclareInterface(SilDataAccess, Unknown, 26E6E70E-53EB-4372-96F1-0F4707CCD1EB)
+{
+	// Obtain the value of an atomic object property.  The output parameter @i{phvo} will be
+	// set to zero if no object is stored.
+	// @return S_FALSE if the object property is not in the cache.  S_OK if it is. Some
+	// implementations may choose to load the data instead, other implementations
+	// may return S_OK and set @i{phvo} to zero.
+	[propget] HRESULT ObjectProp(
+		[in] HVO hvo,
+		[in] PropTag tag,
+		[out, retval] HVO * phvo);
+	// Obtain one item from an object sequence or collection property.
+	// @param index Indicates the item of interest. @b{Zero based}.
+	//
+	// @error E_INVALIDARG if index is out of range.
+	[propget] HRESULT VecItem(
+		[in] HVO hvo,
+		[in] PropTag tag,
+		[in] int index, // first item is 0
+		[out, retval] HVO * phvo);
+	// Get the length of the specified sequence or collection property.
+	[propget] HRESULT VecSize(
+		[in] HVO hvo,
+		[in] PropTag tag,
+		[out, retval] int * pchvo);
+	// Get the length of the specified sequence or collection property.
+	[propget] HRESULT VecSizeAssumeCached(
+		[in] HVO hvo,
+		[in] PropTag tag,
+		[out, retval] int * pchvo);
+	// Get the full contents of the specified sequence in one go.
+	HRESULT VecProp(
+		[in] HVO hvo,
+		[in] PropTag tag,
+		[in] int chvoMax,
+		[out] int * pchvo,
+		[out, size_is(chvoMax), length_is(*pchvo)] HVO * prghvo);
+
+
+	// Get the value of a binary property.
+	// @param prgb, cbMax Buffer to which to copy data. May pass NULL, 0 to request
+	// required length.
+	// @param pcb Indicates how many bytes of binary data were read.
+	// @error E_FAIL if buffer is too small (other than zero length).
+	// @return S_FALSE if no value is known for this property. *pcb will be zero.
+	// Some implementations may return S_OK and set @i{*pcb} to zero.
+	HRESULT BinaryPropRgb(
+		[in] HVO obj,
+		[in] PropTag tag,
+		[out, size_is(cbMax)] byte * prgb,
+		[in] int cbMax,
+		[out] int * pcb);
+	// Get the value of a property whose value is a GUID.
+	// @return S_FALSE if no value is known for this property. *pguid will be GUID_NULL,
+	// all zeros.
+	// Some implementations may return S_OK and set @i{*puid} to zero.
+	[propget] HRESULT GuidProp(
+		[in] HVO hvo,
+		[in] PropTag tag,
+		[out, retval] GUID * puid);
+	// Get the object that has the given guid.
+	// @return S_FALSE if no value is known for this property. *Hvo will be 0.
+	// Some implementations may return S_OK and set @i{*pHvo} to zero.
+	[propget] HRESULT ObjFromGuid(
+		[in] GUID uid,
+		[out, retval] HVO * pHvo);
+	// Get the value of a integer property. May also be used for enumerations.
+	// @return 0 if no value known for this property.
+	// ENHANCE JohnT: shouldn't it also return S_FALSE?
+	[propget] HRESULT IntProp(
+		[in] HVO hvo,
+		[in] PropTag tag,
+		[out, retval] int * pn);
+	// Get the value of a 64-bit integer property (often actually a time).
+	// @return 0 if no value known for this property.
+	// ENHANCE JohnT: shouldn't it also return S_FALSE?
+	[propget] HRESULT Int64Prop(
+		[in] HVO hvo,
+		[in] PropTag tag,
+		[out, retval] __int64 * plln);
+	// Get the value of a boolean property.
+	// @return false if no value known for this property.
+	[propget] HRESULT BooleanProp(
+		[in] HVO hvo,
+		[in] PropTag tag,
+		[out, retval] ComBool * pn);
+	// Get the value of one alternative of a Multilingual alternation.
+	// @return an empty string in the correct writing system if no value recorded.
+	[propget] HRESULT MultiStringAlt(
+		[in] HVO hvo,
+		[in] PropTag tag,
+		[in] int ws,
+		[out, retval] ITsString ** pptss);
+	// Method used to get a whole MultiString when asked to display all the alternatives.
+	// This is unusual and not widely implemented.
+	[propget] HRESULT MultiStringProp(
+		[in] HVO hvo,
+		[in] PropTag tag,
+		[out, retval] ITsMultiString ** pptms);
+	// Read an arbitrary property as a variant.  The view subsystem does not care what
+	// kind of value you put in the variant.  However, when you use AddProp, the view
+	// subsystem calls back to Prop to get the variant which is then passed to
+	// DisplayVariant.  DisplayVariant must be prepared to handle whatever Prop puts there.
+	// If you put an IUnknown or IDispatch value in the variant, the Views code will
+	// call Release once on that object. Normally you should pass a ${SmartVariant}.
+	// @return S_FALSE (and variant VT-EMPTY) if no known value for this property, or
+	// if the implemetation does not know how to represent it as a variant. Current
+	// implementations can represent 32 and 64 bit integers and (non-multilingual) strings.
+	// Some implementations may return S_OK and variant VT-EMPTY.
+	[propget] HRESULT Prop(
+		[in] HVO hvo,
+		[in] PropTag tag,
+		[out, retval] VARIANT * pvar);
+	// Read a (non-multilingual) string property.
+	// @return an empty string, writing system 0, if property not found.
+	[propget] HRESULT StringProp(
+		[in] HVO hvo,
+		[in] PropTag tag,
+		[out, retval] ITsString ** pptss);
+	// Read a time property.
+	// @param ptim Actually an SilTime.
+	// @return 0 if property not found.
+	[propget] HRESULT TimeProp(
+		[in] HVO hvo,
+		[in] PropTag tag,
+		[out, retval] __int64 * ptim);
+	// Read a Unicode string property. (Note also ${#UnicodePropRgch} if you don't want
+	// a BSTR allocated.
+	// @return NULL, S_FALSE if property not found. Some implementations may return
+	// S_OK and empty string if property not found.
+	[propget] HRESULT UnicodeProp(
+		[in] HVO obj,
+		[in] PropTag tag,
+		[out, retval] BSTR * pbstr);
+	// Sets a Unicode string property.
+	[propput] HRESULT UnicodeProp(
+		[in] HVO obj,
+		[in] PropTag tag,
+		[in] BSTR bstr);
+	// Read a Unicode string property. See ${get_UnicodeProp} for a BSTR result.
+	// @param prgch Buffer for result. Pass NULL to inquire length.
+	// @param cchMax Buffer length for result. Pass 0 to inquire length.
+	// @error E_FAIL if buffer too small.
+	// @return *pcch 0, S_FALSE if property not found (or S_OK from some implementations).
+	HRESULT UnicodePropRgch(
+		[in] HVO obj,
+		[in] PropTag tag,
+		[out, size_is(cchMax)] OLECHAR * prgch,
+		[in] int cchMax,
+		[out] int * pcch);
+	// Get an object which is typically a non-CmObject derived from a Binary field.
+	// It is up to each SilDataAccess what kinds of objects it can persist in this way.
+	// The current ones mostly use this for ${ITsTextProps}.
+	[propget] HRESULT UnknownProp(
+		[in] HVO hvo,
+		[in] PropTag tag,
+		[out, retval] IUnknown ** ppunk);
+
+	// Begin a sequence of actions that will be treated as one task for the purposes
+	// of undo and redo. If there is already such a task in process, this sequence will be
+	// included (nested) in that one, and the descriptive strings will be ignored.
+	// @param bstrUndo Short description of an action.  This is intended to appear on the
+	// "undo" menu item (e.g. "Typing" or "Clear")
+	// @param bstrRedo Short description of an action.  This is intended to appear on the
+	// "redo" menu item (e.g. "Typing" or "Clear").  Usually, this is the same as @i{bstrUndo}
+	HRESULT BeginUndoTask(
+		[in] BSTR bstrUndo,
+		[in] BSTR bstrRedo);
+
+	// End the current task sequence. If an outer sequence is in progress, that one will
+	// continue.
+	HRESULT EndUndoTask();
+
+	// Continue the previous sequence. This is intended to be called from a place like
+	// OnIdle that performs "clean-up" operations that are really part of the previous
+	// sequence.
+	HRESULT ContinueUndoTask();
+
+	// End the current sequence, and any outer ones that are in progress. This is intended
+	// to be used as a clean-up function to get everything back in sync.
+	HRESULT EndOuterUndoTask();
+
+	// End current sequences and rollback pending changes on the action handler.
+	HRESULT Rollback();
+
+	// Break the current undo task into two at the current point. Subsequent actions will
+	// be part of the new task which will be assigned the given labels.
+	HRESULT BreakUndoTask(
+		[in] BSTR bstrUndo,
+		[in] BSTR bstrRedo);
+
+	// Begin a sequence of actions that cannot be undone.
+	// This sequence will commit any previous undo actions.
+	HRESULT BeginNonUndoableTask();
+
+	// End the task sequence and commit it.
+	HRESULT EndNonUndoableTask();
+
+	// Return the IActionHandler that is being used to record undo information.
+	// May be NULL
+	HRESULT GetActionHandler(
+		[out, retval] IActionHandler ** ppacth);
+
+	// Set the IActionHandler that is being used to record undo information.
+	// May be NULL
+	HRESULT SetActionHandler(
+		[in] IActionHandler * pacth);
+
+	// Delete the specified object. Use this when you know the owning property
+	// is not in the cache, or for some other reason don't care about having the
+	// owning property cleaned up. Usually use ${#DeleteObjOwner}.
+	//
+	// The caller should also call PropChanged to notify interested parties.
+	HRESULT DeleteObj(
+		[in] HVO hvoObj);
+	// Delete an object and clean up the owning property
+	// If the owning property is not cached at all, the object is simply deleted.
+	// This is not an error. In a database application, deletion ensures that any
+	// subsequent read of the owning property will get the modified value of the
+	// owning property.
+	// @param hvoObj the one to delete.
+	// @param ihvo Pass -2 for atomic properties.
+	// For collections or sequences, if you know the position, pass it; otherwise,
+	// pass -1.
+
+	// The caller should also call PropChanged to notify interested parties.
+	HRESULT DeleteObjOwner(
+		[in] HVO hvoOwner,
+		[in] HVO hvoObj,
+		[in] PropTag tag,
+		[in] int ihvo);
+	// Insert chvo new objects after the one at ihvo, which functions as a pattern.
+	// Typically used when splitting a paragraph at ihvo.
+	// The new objects should generally be similar to the one at ihvo, except that
+	// the main text property that forms the paragraph body should be empty.
+	// If the object has a paragraph style property, the new objects should have
+	// the same style as the one at ihvo, except that, if a stylesheet is passed,
+	// each successive paragraph inserted should have the appropriate next style
+	// for the one named in the previous paragraph.
+
+	// The caller should also call PropChanged to notify interested parties.
+	HRESULT InsertNew(
+		[in] HVO hvoObj,
+		[in] PropTag tag,
+		[in] int ihvo,
+		[in] int chvo,
+		[in] IVwStylesheet * pss);
+	// Make a new object owned in a particular position. The object is created immediately.
+	// (Actually in the database, in database implementations; this will roll back if
+	// the transaction is not committed.)
+	// If ord is >= 0, the object is inserted in the appropriate place in the (presumed
+	// sequence) property, both in the database itself and in the data access object's
+	// internal cache, if that property is cached.
+	// If ord is < 0, it is entered as a null into the database, which is appropriate for
+	// collection and atomic properties.
+	// Specifically, use -2 for an atomic property, and -1 for a collection; this will
+	// ensure that the cache is updated. You may use -3 if you know the property is not
+	// currently cached.
+
+	// The caller should also call PropChanged to notify interested parties.
+	HRESULT MakeNewObject(
+		[in] int clid,
+		[in] HVO hvoOwner,
+		[in] PropTag tag,
+		[in] int ord,
+		[out, retval] HVO * phvoNew);
+
+	// Change the owner of a range of objects in a sequence (given by the indexes
+	// ihvoStart and ihvoEnd) and insert them in another sequence. The object is
+	// inserted in the destination sequence before the object located at ihvoDstStart.
+	// The "ord" values change accordingly (first one to ihvoDstStart).
+
+	// The caller should also call PropChanged to notify interested parties.
+	HRESULT MoveOwnSeq(
+		[in] HVO hvoSrcOwner,
+		[in] PropTag tagSrc,
+		[in] int ihvoStart,
+		[in] int ihvoEnd,
+		[in] HVO hvoDstOwner,
+		[in] PropTag tagDst,
+		[in] int ihvoDstStart);
+
+	// Change the owner of an object. The source and destination objects can be of
+	// any type. If the destination is a sequence, one can specify the location to
+	// insert the object. The object is inserted in the destination sequence before
+	// the object located at ihvoDstStart.
+
+	// The caller should also call PropChanged to notify interested parties.
+	HRESULT MoveOwn(
+		[in] HVO hvoSrcOwner,
+		[in] PropTag tagSrc,
+		[in] HVO hvo,
+		[in] HVO hvoDstOwner,
+		[in] PropTag tagDst,
+		[in] int ihvoDstStart);
+
+	// Replace the range of objects [ihvoMin, ihvoLim) in property tag of object hvoObj
+	// with the sequence of chvo objects at prghvo. (prghvo may be null if chvo is zero;
+	// this amounts to a deletion).
+	// Use this for REFERENCE sequences and collections; use methods like ${#MoveOwnSeq},
+	// ${#MakeNewObject}, or ${#DeleteObjOwner} to make similar changes to owning sequences
+	// and collections.
+	// The actual objects deleted will be the ones at the specified positions in the cache.
+	// Therefore if you are using a collection it is important to be sure that the way the
+	// items are ordered is going to give the effect you expect. (Indeed, even for sequences,
+	// you could load things into the cache in some order other than by their ord field,
+	// though this would be unusual.)
+
+	// The caller should also call PropChanged to notify interested parties,
+	// except where the change is being made to a newly created object.
+	HRESULT Replace(
+		[in] HVO hvoObj,
+		[in] PropTag tag,
+		[in] int ihvoMin,
+		[in] int ihvoLim,
+		[in, size_is(chvo)] HVO * prghvo,
+		[in] int chvo);
+
+	// Change the value of an atomic REFERENCE property. (Use ${MakeNewObject} or
+	// ${DeleteObjOwner} to make similar changes to owning atomic properties.
+
+	// The caller should also call PropChanged to notify interested parties,
+	// except where the change is being made to a newly created object.
+	HRESULT SetObjProp(
+		[in] HVO hvo,
+		[in] PropTag tag,
+		[in] HVO hvoObj);
+
+	// This processes all atomic and sequence owning and reference props in the cache
+	// and removes the given hvo from any property where it is found. PropChanged is
+	// called on each modified property to notify interested parties.
+	HRESULT RemoveObjRefs(
+		[in] HVO hvo);
+
+	// Change a binary data property of an object.
+
+	// The caller should also call PropChanged to notify interested parties,
+	// except where the change is being made to a newly created object.
+	HRESULT SetBinary(
+		[in] HVO hvo,
+		[in] PropTag tag,
+		[in, size_is(cb)] byte * prgb,
+		[in] int cb);
+
+	// Change a GUID property of an object.
+
+	// The caller should also call PropChanged to notify interested parties,
+	// except where the change is being made to a newly created object.
+	HRESULT SetGuid(
+		[in] HVO hvo,
+		[in] PropTag tag,
+		[in] GUID uid);
+
+	// Change an integer property of an object.
+
+	// The caller should also call PropChanged to notify interested parties,
+	// except where the change is being made to a newly created object.
+	HRESULT SetInt(
+		[in] HVO hvo,
+		[in] PropTag tag,
+		[in] int n);
+
+	// Change a long integer property of an object.
+
+	// The caller should also call PropChanged to notify interested parties,
+	// except where the change is being made to a newly created object.
+	HRESULT SetInt64(
+		[in] HVO hvo,
+		[in] PropTag tag,
+		[in] __int64 lln);
+
+	// Change an boolean property of an object.
+	// The caller should also call PropChanged to notify interested parties,
+	// except where the change is being made to a newly created object.
+	HRESULT SetBoolean(
+		[in] HVO hvo,
+		[in] PropTag tag,
+		[in] ComBool n);
+
+	// Change one alternative of a multilingual string property of an object.
+
+	// The caller should also call PropChanged to notify interested parties,
+	// except where the change is being made to a newly created object.
+	HRESULT SetMultiStringAlt(
+		[in] HVO hvo,
+		[in] PropTag tag,
+		[in] int ws,
+		[in] ITsString * ptss);
+
+	// Change a string-valued property of an object.
+
+	// The caller should also call PropChanged to notify interested parties,
+	// except where the change is being made to a newly created object.
+	HRESULT SetString(
+		[in] HVO hvo,
+		[in] PropTag tag,
+		[in] ITsString * ptss);
+
+	// Change a time property of an object.
+
+	// The caller should also call PropChanged to notify interested parties,
+	// except where the change is being made to a newly created object.
+	HRESULT SetTime(
+		[in] HVO hvo,
+		[in] PropTag tag,
+		[in] __int64 lln);
+
+	// Change a Unicode property of an object.
+
+	// The caller should also call PropChanged to notify interested parties,
+	// except where the change is being made to a newly created object.
+	HRESULT SetUnicode(
+		[in] HVO hvo,
+		[in] PropTag tag,
+		[in, size_is(cch)] OLECHAR * prgch,
+		[in] int cch);
+
+	// Change a binary property of an object to a suitable representation of
+	// the object represented by the IUnknown. Particular implementations may
+	// differ in the range of object types supported. The current implementation
+	// only handles ITsTextProps objects.
+
+	// The caller should also call PropChanged to notify interested parties,
+	// except where the change is being made to a newly created object.
+	HRESULT SetUnknown(
+		[in] HVO hvo,
+		[in] PropTag tag,
+		[in] IUnknown * punk);
+
+	// Request notification when properties change. The ${IVwNotifyChange#PropChanged}
+	// method will be called when the property changes (provided the client making the
+	// change properly calles ${#PropChanged}.
+	HRESULT AddNotification(
+		[in] IVwNotifyChange * pnchng);
+
+	// Notify clients who have requested it that the specified property is changing.
+	// The last five arguments indicate the nature of the change, as in
+	// ${IVwNotifyChange#PropChanged}. In general, that method will be called for
+	// all clients that have requested notification. Certain variations in this
+	// process can be made using the first two arguments.
+
+	// If pct is kpctNotifyAll, the first argument is ignored, and all clients are
+	// notified in an arbitrary order. (Currently this is also the default behavior
+	// if some unrecognized constant is passed. This may eventually become an error.)
+
+	// If pct is kpctNotifyMeThenAll, then the object indicated by the first argument
+	// is notified first. This allows the main focus window to update first.
+
+	// If pct is kpctNotifyAllButMe, then the object indicated by the first argument
+	// is not notified at all, even if it is listed as requesting notification. This
+	// is useful when the object making the change has already done the work that it
+	// would normally do when receiving such a notification.
+	HRESULT PropChanged(
+		[in] IVwNotifyChange * pnchng,
+		[in] int pct,
+		[in] HVO hvo,
+		[in] int tag,
+		[in] int ivMin,
+		[in] int cvIns,
+		[in] int cvDel);
+
+	// Request removal from the list of objects to notify when properties change.
+	HRESULT RemoveNotification(
+		[in] IVwNotifyChange * pnchng);
+
+	// Get the display index for the property item. Used in prop changed processing
+	// since the SilDataAccess given to the VwRootBox may be filtered.
+	// Display index will be -1 if the item is not being displayed.
+	HRESULT GetDisplayIndex(
+		[in] HVO hvoOwn,
+		[in] int tag,
+		[in] int ihvo,
+		[out, retval] int * ihvoDisp);
+
+	// Get the language writing system factory associated with the database associated with
+	// the underlying object.
+	[propget] HRESULT WritingSystemFactory(
+		[out, retval] ILgWritingSystemFactory ** ppwsf);
+
+	// Set the language writing system factory associated with the database associated with
+	// the underlying object.
+	[propputref] HRESULT WritingSystemFactory(
+		[in] ILgWritingSystemFactory * pwsf);
+
+	// Fill in the given array with the encodings this database finds interesting, up
+	// to the given max, and return the number obtained--eg, vernacular plus analysis
+	// encodings. (Currently this is used by the Styles dialog to flesh out the fonts tab.)
+
+	// ENHANCE JohnT: Replace with a method or methods asking for specifc kinds of encodings?
+
+	// Return a list of the encodings that are of interest within the database.
+	// If cwsMax is zero, return the actual number (but no encodings).
+	// If there is not enough room, return E_INVALIDARG.
+	[propget] HRESULT WritingSystemsOfInterest(
+		[in] int cwsMax,
+		[out, size_is(cwsMax)] int * pws,
+		[out, retval] int * pcws);
+
+	// Insert the object hvoDst at position ihvo in property tag of the object hvoSrc,
+	// and associate the given bstrExtra info with it.
+	//
+	// To enable storing extra info, add something like the following to PostCM.sql:
+	//
+	// if exists (select * from sysobjects where name = 'StTxtPara_TextObjects')
+	//	begin
+	//		ALTER TABLE StTxtPara_TextObjects
+	//		ADD Extra nvarchar(4000) NULL
+	//	end
+
+	// This also requires creating a new stored procedure like
+	// InsertRef_StTxtPara_TextObjects_Extra$ for any relationship table that needs it.
+
+	// The caller should also call PropChanged to notify interested parties,
+	// except where the change is being made to a newly created object.
+
+	// NOTE: This is not fully implemented yet.
+	HRESULT InsertRelExtra(
+		[in] HVO hvoSrc,
+		[in] PropTag tag,
+		[in] int ihvo,
+		[in] HVO hvoDst,
+		[in] BSTR bstrExtra);
+
+	// Update the bstrExtra info associated with the object at
+	// position ihvo in property tag of the object hvoSrc.
+	//
+	// To enable storing extra info, add something like the following to PostCM.sql:
+	//
+	// if exists (select * from sysobjects where name = 'StTxtPara_TextObjects')
+	//	begin
+	//		ALTER TABLE StTxtPara_TextObjects
+	//		ADD Extra nvarchar(4000) NULL
+	//	end
+
+	// This also requires creating a new stored procedure like
+	// InsertRef_StTxtPara_TextObjects_Extra$ for any relationship table that needs it.
+
+	// The caller should also call PropChanged to notify interested parties,
+	// except where the change is being made to a newly created object.
+
+	// NOTE: This is not fully implemented yet.
+	HRESULT UpdateRelExtra(
+		[in] HVO hvoSrc,
+		[in] PropTag tag,
+		[in] int ihvo,
+		[in] BSTR bstrExtra);
+
+	// Get the bstrExtra info associated with the object at
+	// position ihvo in property tag of the object hvoSrc.
+	//
+	// To enable extra info, add something like the following to PostCM.sql:
+	//
+	// if exists (select * from sysobjects where name = 'StTxtPara_TextObjects')
+	//	begin
+	//		ALTER TABLE StTxtPara_TextObjects
+	//		ADD Extra nvarchar(4000) NULL
+	//	end
+
+	// NOTE: This is not fully implemented yet.
+	HRESULT GetRelExtra(
+		[in] HVO hvoSrc,
+		[in] PropTag tag,
+		[in] int ihvo,
+		[out, retval] BSTR * pbstrExtra);
+
+	// Find out whether a particular property is cached.
+	// Eventually we may support using kcptNil as 'any' but not yet.
+	// cpt is a member of the defines in CmTypes.h
+	// ws is ignored unless cpt is kcptMulti...
+	[propget] HRESULT IsPropInCache(
+		[in] HVO hvo,
+		[in] PropTag tag,
+		[in] int cpt,
+		[in] int ws,
+		[out, retval] ComBool * pfCached);
+
+	// A method that indicates if the cache has changed since it was first loaded by means
+	// of Set* methods.  Basically what this means is that client code has called one
+	// of the property modification methods (eg. "Set" methods, NewObject, DeleteObject*,
+	// MoveOwnSeq, or Replace methods).
+
+	// ENHANCE JohnT: It would be nice to have
+	// a way to retrieve information about what changed.
+	HRESULT IsDirty(
+		[out, retval] ComBool * pf);
+
+	// Clear the dirty flag (typically after saving).
+	HRESULT ClearDirty();
+
+	// Get the meta data cache, if any. Type IUnknown is used to avoid circularity
+	// between FieldWorks components in type definitions.
+	// (Arguably these functions would make more sense in IVwCachDa. But they are
+	// very parallel to the writing system factory methods, which are well-established
+	// in this interface.)
+	[propget] HRESULT MetaDataCache(
+		[out, retval] IFwMetaDataCache ** ppmdc);
+
+	// Set the meta data cache.
+	// (Note that currently this is most commonly done in the Init method of IVwOleDbDa.
+	// A setter is added here so that non-database caches can have metadata.)
+	[propputref] HRESULT MetaDataCache(
+		[in] IFwMetaDataCache * pmdc);
+
+	// Test whether an HVO represents a valid object. For the simple memory cache,
+	// any HVO is potentially valid, and true will be returned; but for the database
+	// cache, it will test that the object has a known class. For dummy objects, this
+	// just tests that there is a class in the cache, but for objects not known to be
+	// dummies, it does an actual SQL query EVERY time it is called. This can get VERY
+	// expensive; try not to do it for every object in a long loop.
+	[propget] HRESULT IsValidObject(
+		[in] HVO hvo,
+		[out, retval] ComBool * pfValid);
+
+	// Test whether the specified ID is in the range of dummy objects that have been
+	// allocated by this cache. Note that a true result does NOT guarantee that we have
+	// the necessary class information to create, say, an FDO object. You may want to
+	// also check IsValidObject (which in this case will be fast) if this returns true.
+	[propget] HRESULT IsDummyId(
+		[in] HVO hvo,
+		[out, retval] ComBool * pfDummy);
+
+	// Return the index of hvo in the flid vector of hvoOwn.
+	// @param hvoOwn The object ID of the owner.
+	// @param flid The parameter on hvoOwn that owns hvo.
+	// @param hvo The target object ID we are looking for.
+	// @param ihvo Pointer to return the index, or -1 if not found.
+	// @return S_OK with index in *pihvo, or E_POINTER if pihvo is a NULL pointer.
+	// Return -1 if hvo is not present in the flid vector of hvoOwn.
+	HRESULT GetObjIndex(
+		[in] HVO hvoOwn,
+		[in] int flid,
+		[in] HVO hvo,
+		[out, retval] int * ihvo);
+
+	// Return a string outline number for the given hvo. hvo should be recursively owned in
+	// the flid property. For a doubly-nested subentry, this may return 1.2.4. It does not
+	// return a number for the major entry. If an owner is missing, the string generated
+	// thus far is returned.
+	// @param hvo The object for which we want the outline number.
+	// @param flid The field ID which presumably owns hvo.
+	// @param fFinPer True if we want to append a final period to the string.
+	// @param pbstr Pointer to the BSTR receiving the outline string.
+	// @return S_OK with outline number in *pbstr, or E_POINTER if pbstr is a NULL pointer.
+	HRESULT GetOutlineNumber(
+		[in] HVO hvo,
+		[in] int flid,
+		[in] ComBool fFinPer,
+		[out, retval] BSTR * pbstr);
+
+	// Move a (sub)string from one string property to another. Specifically, the range of characters
+	// from ichMin to ichLim is removed from property flidSrc on object hvoSrc (in writing system wsSrc,
+	// if the property is multilingual), and inserted at ichDest in property flidDst of hvoDst
+	// (in writing system wsDst, if that property is multilingual). The ws arguments should be zero for
+	// non-multilingual strings.
+	// Current plans call for this to be implemented only to handle cases where the source and
+	// destination are the Contents of different paragraphs.
+	// @param fDstIsNew True if the destination paragraph is a brand new paragraph. In this
+	// case the segment translation for the partially moved segment doesn't need to be
+	// copied over to the destination paragraph because the source paragraph will be keeping
+	// its segment translation.
+	HRESULT MoveString(
+		[in] int hvoSource,
+		[in] PropTag flidSrc,
+		[in] int wsSrc,
+		[in] int ichMin,
+		[in] int ichLim,
+		[in] HVO hvoDst,
+		[in] PropTag flidDst,
+		[in] int wsDst,
+		[in] int ichDest,
+		[in] ComBool fDstIsNew);
+};
+
+// Specifies the source of the field in the MetaDataCache.
+// @h3{Hungarian fs}
+typedef [v1_enum] enum FieldSource
+{
+	kModel = 0, // Comes for the UML model
+	kCustom = 1, // Added by the user
+	kVirtual = 2, // Added by program
+} FieldSource;
 
 /***********************************************************************************************
 	Interface FwMetaDataCache
@@ -619,6 +1456,53 @@ DeclareInterface(FwMetaDataCache, Unknown, EDBB1DED-7065-4b56-A262-746453835451)
 		[out, retval] BSTR * pbstrFieldName);
 }
 
+
+/*******************************************************************************************
+	Interface IStructuredTextDataAccess
+	This interface provides information about specific flids used for storing data about
+	structured text. Certain editing operations implemented by the view need those flids in
+	order to request properties of texts and paragraphs.
+
+	@h3{When to implement}
+	Any implementation of ISILDataAccess that wants to allow editing of structured texts
+	needs to implement this. Specifically, this is needed for pasting multiple paragraphs,
+	dealing with editing when multiple paragraphs are selected, formatting paragraphs, etc.
+
+	@h3{How to obtain an instance}
+	Attempt to cast the ISILDataAccess to see if it implements this interface.
+
+	@h3{Hungarian: stda}
+*******************************************************************************************/
+DeclareInterface(StructuredTextDataAccess, Unknown, A2A4F9FA-D4E8-4bfb-B6B7-5F45DAF2DC0C)
+{
+	// Obtain the flid used for accessing the contents (a TsString) of a paragraph.
+	[propget] HRESULT ParaContentsFlid(
+		[out, retval] PropTag * pflid);
+
+	// Obtain the flid used for accessing the Properties (TsTextProps) of a paragraph.
+	[propget] HRESULT ParaPropertiesFlid(
+		[out, retval] PropTag * pflid);
+
+	// Obtain the flid used for accessing the paragraphs of a text.
+	[propget] HRESULT TextParagraphsFlid(
+		[out, retval] PropTag * pflid);
+};
+
+
+// Strategies that can be requested by callers of ${ISilDataAccess#PropChanged} for
+// broadcasting changes. The client can request a simple broadcast to everyone, request
+// that the notification be sent first to the requester (this can help make the active
+// window more responsive), or to everyone except the requester (this is appropriate when
+// the requester has already updated its own window).
+// @h3{Hungarian pct}
+typedef [v1_enum] enum PropChangeType
+{
+	kpctNotifyMeThenAll,
+	kpctNotifyAll,
+	kpctNotifyAllButMe,
+} PropChangeType;
+
+
 #ifdef DEBUG
 /*----------------------------------------------------------------------------------------------
 	Report type
@@ -697,55 +1581,7 @@ DeclareInterface(DebugReport, Unknown, 3D6A0880-D17D-4e4a-9DE9-861A85CA4046)
 	HRESULT ClearSink();
 };
 
-#ifndef NO_COCLASSES
-DeclareCoClass(DebugReport, 24636FD1-DB8D-4b2c-B4C0-44C2592CA482)
-{
-	interface IDebugReport;
-};
-#endif // !NO_COCLASSES
-
 #endif // DEBUG
-
-/*******************************************************************************************
-	Interface IUndoGrouper
-	This interface supports grouping a seq. of Undo and/or Redo actions into a transaction.
-	Note that it is NOT used for the grouping of the original 'doing' of the actions; that
-	is the responsibility of the code that is executing the original actions. Rather, it
-	is used by the ActionHandler during an actual Undo or Redo operation to group the
-	(possibly several) UndoActions that make up a single action-handler Undo/Redo.
-
-	@h3{When to implement}
-	The existing implementation in IOleDbEncap is sufficient.
-
-	@h3{When to use}
-	Pass the instance of this to the ActionHandler if you have one. All other calls will be
-	made by the ActionHandler.
-
-	@h3{How to obtain an instance}
-	QueryInterface on IOleDbEncap.
-
-	@h3{Hungarian: undg}
-*******************************************************************************************/
-DeclareInterface(UndoGrouper, Unknown, C38348D3-392C-4e02-BD50-A01DC4189E1D)
-{
-	// Called before the seq of undo actions is undone or redone. (Begin Transaction)
-	// Returns a handle that must be passed to the corresponding EndGroup or CancelGroup.
-	HRESULT BeginGroup(
-		[out, retval] int * phndl);
-
-	// Called to end a seq of undo actions. (End Transaction)
-	HRESULT EndGroup(
-		[in] int hndl);
-
-	// Call following and error condition to return things to the state where it was when the
-	// BeginGroup was called. (Rollback)
-	HRESULT CancelGroup(
-		[in] int hndl);
-};
-
-#ifndef NO_COCLASSES
-
-#endif /*!NO_COCLASSES*/
 
 /*******************************************************************************************
 	Interface IComDisposable

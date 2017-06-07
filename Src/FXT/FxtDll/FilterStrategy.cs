@@ -1,23 +1,6 @@
-// Copyright (c) 2004-2013 SIL International
+// Copyright (c) 2004-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: FilterStrategy.cs
-// Responsibility: John Hatton
-// Last reviewed:
-//
-// <remarks>
-//	"Strategy" comes from the design pattern of the name ("Design patterns" (gang of 4))
-//	Filters will be used to decide on whether to dump a particular object based on such
-//		things as
-//			Different sensitivities to the completeness/correctness of the object (especially
-//			when feeding the parser).
-//			User-defined properties, such as which lexical items are to be
-//				part of a particular dictionary.
-// </remarks>
-
-using System;
-using System.Diagnostics;
 
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;

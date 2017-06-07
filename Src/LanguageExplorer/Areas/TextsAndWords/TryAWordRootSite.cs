@@ -9,13 +9,15 @@ using System.Diagnostics;
 using System.Drawing;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using SIL.CoreImpl;
+using SIL.CoreImpl.WritingSystems;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Framework;
-using Rect = SIL.FieldWorks.Common.COMInterfaces.Rect;
+using Rect = SIL.FieldWorks.Common.ViewsInterfaces.Rect;
 
 namespace LanguageExplorer.Areas.TextsAndWords
 {
@@ -116,8 +118,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			if (m_fdoCache == null || DesignMode)
 				return;
 
-			m_rootb = VwRootBoxClass.Create();
-			m_rootb.SetSite(this);
+			base.MakeRoot();
 
 			m_vc = new InterlinVc(m_fdoCache);
 			// Theory has it that the slices that have 'true' in this attribute will allow the sandbox to be used.
@@ -138,8 +139,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 			if (m_wordform != null)
 				m_rootb.SetRootObject(m_wordform.Hvo, m_vc, m_kfragSingleInterlinearAnalysisWithLabels, m_styleSheet);
-
-			base.MakeRoot();
 
 			SetSandboxSize(); // in case we already have a current annotation.
 			SetBackgroundColor();

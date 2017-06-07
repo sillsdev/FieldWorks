@@ -4,11 +4,12 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Xml;
-using SIL.CoreImpl;
-using SIL.Utils;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.Cellar;
+using SIL.CoreImpl.Text;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.Xml;
 
 namespace XMLViewsTests
 {
@@ -18,17 +19,16 @@ namespace XMLViewsTests
 	/// </summary>
 	public class SimpleDataParser
 	{
-		IFwMetaDataCache m_mdc;
-		IVwCacheDa m_cda;
-		ISilDataAccess m_sda;
-		ILgWritingSystemFactory m_wsf;
-		ITsStrFactory m_tsf = TsStrFactoryClass.Create();
+		private readonly IFwMetaDataCache m_mdc;
+		private readonly IVwCacheDa m_cda;
+		private readonly ISilDataAccess m_sda;
+		private readonly ILgWritingSystemFactory m_wsf;
 
 		public SimpleDataParser(IFwMetaDataCache mdc, IVwCacheDa cda)
 		{
 			m_mdc = mdc;
 			m_cda = cda;
-			m_sda = cda as ISilDataAccess;
+			m_sda = (ISilDataAccess) cda;
 			m_wsf = m_sda.WritingSystemFactory;
 		}
 
@@ -157,7 +157,7 @@ namespace XMLViewsTests
 		ITsString MakeString(int ws, XmlNode elt)
 		{
 			string val = XmlUtils.GetManditoryAttributeValue(elt, "val");
-			return m_tsf.MakeString(val, ws);
+			return TsStringUtils.MakeString(val, ws);
 		}
 
 		int GetWritingSystem(XmlNode elt)

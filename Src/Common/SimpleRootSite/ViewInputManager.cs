@@ -1,15 +1,14 @@
-// Copyright (c) 2011-2013 SIL International
+// Copyright (c) 2011-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System.Runtime.InteropServices;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.Keyboarding;
-using SIL.Utils;
-using SIL.Windows.Forms.Keyboarding;
-
 #if __MonoCS__
+
+using System.Runtime.InteropServices;
+using SIL.CoreImpl.WritingSystems;
+using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.Keyboarding;
+using SIL.Windows.Forms.Keyboarding;
 
 namespace SIL.FieldWorks.Common.RootSites
 {

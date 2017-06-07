@@ -4,10 +4,11 @@
 
 using System;
 using System.Collections;
+using System.Linq;
 using System.Xml.Linq;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
-using SIL.Utils;
+using SIL.Xml;
 
 namespace SIL.FieldWorks.Filters
 {
@@ -71,8 +72,8 @@ namespace SIL.FieldWorks.Filters
 		public override void PersistAsXml(XElement node)
 		{
 			base.PersistAsXml (node);
-			XmlUtils.AppendAttribute(node, "id", m_id);
-			XmlUtils.AppendAttribute(node, "wordlist", XmlUtils.MakeIntegerListValue(m_hvos));
+			XmlUtils.SetAttribute(node, "id", m_id);
+			XmlUtils.SetAttribute(node, "wordlist", XmlUtils.MakeStringFromList(m_hvos.ToList()));
 		}
 
 		/// ------------------------------------------------------------------------------------

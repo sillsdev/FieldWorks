@@ -2,9 +2,11 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.Cellar;
+using SIL.CoreImpl.Text;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.FDO.DomainServices;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
@@ -67,7 +69,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		public override void Display(IVwEnv vwenv, int hvo, int frag)
 		{
-			ITsStrFactory tsf = null;
 			switch (frag)
 			{
 				case kfragStText: // The whole text, root object for the InterlinDocChild.
@@ -112,8 +113,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					else
 					{
 						// just add a blank title.
-						tsf = TsStrFactoryClass.Create();
-						ITsString blankTitle = tsf.MakeString("", m_wsAnalysis);
+						ITsString blankTitle = TsStringUtils.EmptyString(m_wsAnalysis);
 						vwenv.AddString(blankTitle);
 					}
 					vwenv.CloseParagraph();
@@ -131,8 +131,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					else
 					{
 						// just add a blank source.
-						tsf = TsStrFactoryClass.Create();
-						ITsString tssBlank = tsf.MakeString("", m_wsAnalysis);
+						ITsString tssBlank = TsStringUtils.EmptyString(m_wsAnalysis);
 						vwenv.AddString(tssBlank);
 					}
 					vwenv.set_IntProperty((int)FwTextPropType.ktptMarginBottom,

@@ -1,27 +1,17 @@
-// Copyright (c) 2004-2013 SIL International
+// Copyright (c) 2004-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: FdoScriptureTests.cs
-// Responsibility: TE Team
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
-
-using System.Text;
-
 using NUnit.Framework;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.ScriptureUtils;
+using SIL.CoreImpl.Scripture;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.Resources;
-using SIL.FieldWorks.Test.TestUtils;
 using SIL.Utils;
-using SILUBS.SharedScrUtils;
 
 namespace SIL.FieldWorks.FDO.FDOTests
 {
@@ -74,13 +64,13 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				errorType1.IsProtected = true;
 				errorType1.Name.SetUserWritingSystem("Dummy Check 1");
 				errorType1.Description.UserDefaultWritingSystem =
-					TsStringUtils.MakeTss("does nothing", Cache.DefaultUserWs);
+					TsStringUtils.MakeString("does nothing", Cache.DefaultUserWs);
 
 				ICmAnnotationDefn errorType2 = factory.Create(kCheckId2, annDefnChkError);
 				errorType2.IsProtected = true;
 				errorType2.Name.SetUserWritingSystem("Dummy Check 2");
 				errorType2.Description.UserDefaultWritingSystem =
-					TsStringUtils.MakeTss("does nothing", Cache.DefaultUserWs);
+					TsStringUtils.MakeString("does nothing", Cache.DefaultUserWs);
 			});
 		}
 		#endregion
@@ -1237,11 +1227,10 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		protected ICmPicture InsertTestPicture(IStTxtPara para, int ichPos)
 		{
 			ICmPicture pict;
-			using (DummyFileMaker filemaker = new DummyFileMaker("junk.jpg", true))
+			using (var filemaker = new DummyFileMaker("junk.jpg", true))
 			{
-				ITsStrFactory factory = TsStrFactoryClass.Create();
 				pict = Cache.ServiceLocator.GetInstance<ICmPictureFactory>().Create(filemaker.Filename,
-					factory.MakeString("Test picture caption", Cache.DefaultVernWs),
+					TsStringUtils.MakeString("Test picture caption", Cache.DefaultVernWs),
 					CmFolderTags.LocalPictures);
 				ITsStrBldr bldr = para.Contents.GetBldr();
 				pict.InsertORCAt(bldr, ichPos);

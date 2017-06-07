@@ -1,18 +1,18 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Drawing;
 using System.Windows.Forms;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Utils;
-using Rect = SIL.FieldWorks.Common.COMInterfaces.Rect;
+using SIL.CoreImpl.Text;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+using Rect = SIL.FieldWorks.Common.ViewsInterfaces.Rect;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
@@ -20,7 +20,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 	/// This class handles the functions of the combo box that is used to choose a
 	/// different existing analysis.
 	/// </summary>
-	internal class ChooseAnalysisHandler : IComboHandler, IFWDisposable
+	internal class ChooseAnalysisHandler : IComboHandler, IDisposable
 	{
 		int m_hvoAnalysis; // The current 'analysis', may be wordform, analysis, gloss.
 		int m_hvoSrc; // the object (CmAnnotation? or SbWordform) we're analyzing.
@@ -260,7 +260,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		void AddSeparatorLine()
 		{
 			//review
-			ITsStrBldr builder = TsStrBldrClass.Create();
+			ITsStrBldr builder = TsStringUtils.MakeStrBldr();
 			builder.Replace(0,0,"-------", null);
 			builder.SetIntPropValues(0, builder.Length, (int)FwTextPropType.ktptWs,
 				(int)FwTextPropVar.ktpvDefault, m_cache.DefaultUserWs);
@@ -318,8 +318,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		protected ITsString MakeSimpleString(String str)
 		{
-			ITsStrBldr builder = TsStrBldrClass.Create();
-			ITsPropsBldr bldr = TsPropsBldrClass.Create();
+			ITsStrBldr builder = TsStringUtils.MakeStrBldr();
+			ITsPropsBldr bldr = TsStringUtils.MakePropsBldr();
 			bldr.SetIntPropValues((int)FwTextPropType.ktptWs,
 				(int)FwTextPropVar.ktpvDefault, m_cache.DefaultUserWs);
 			bldr.SetIntPropValues((int)FwTextPropType.ktptFontSize,
@@ -333,7 +333,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		// Todo: finish implementing (add the gloss!)
 		static internal ITsString MakeGlossStringRep(IWfiGloss wg, FdoCache fdoCache, bool fUseStyleSheet)
 		{
-			ITsStrBldr tsb = TsStrBldrClass.Create();
+			ITsStrBldr tsb = TsStringUtils.MakeStrBldr();
 			var wa = wg.Owner as IWfiAnalysis;
 
 			var category = wa.CategoryRA;
@@ -366,11 +366,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			ITsTextProps posTextProperties = PartOfSpeechTextProperties(fdoCache, true, fUseStyleSheet);
 			ITsTextProps formTextProperties = FormTextProperties(fdoCache, fUseStyleSheet, wsVern);
 			ITsTextProps glossTextProperties = GlossTextProperties(fdoCache, true, fUseStyleSheet);
-			ITsStrBldr tsb = TsStrBldrClass.Create();
+			ITsStrBldr tsb = TsStringUtils.MakeStrBldr();
 			ISilDataAccess sda = fdoCache.MainCacheAccessor;
 			int cmorph = wa.MorphBundlesOS.Count;
 			if (cmorph == 0)
-				return TsStringUtils.MakeTss(ITextStrings.ksNoMorphemes, fdoCache.DefaultUserWs);
+				return TsStringUtils.MakeString(ITextStrings.ksNoMorphemes, fdoCache.DefaultUserWs);
 			bool fRtl = fdoCache.ServiceLocator.WritingSystemManager.Get(wsVern).RightToLeftScript;
 			int start = 0;
 			int lim = cmorph;
@@ -450,7 +450,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		public static ITsTextProps FormTextProperties(FdoCache fdoCache, bool fUseStyleSheet, int wsVern)
 		{
 			int color =(int) CmObjectUi.RGB(Color.DarkBlue);
-			ITsPropsBldr bldr = TsPropsBldrClass.Create();
+			ITsPropsBldr bldr = TsStringUtils.MakePropsBldr();
 			if (!fUseStyleSheet)
 			{
 				bldr.SetIntPropValues((int)FwTextPropType.ktptFontSize ,
@@ -472,7 +472,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		public static ITsTextProps GlossTextProperties(FdoCache fdoCache, bool inAnalysisLine, bool fUseStyleSheet)
 		{
 			int color =(int) CmObjectUi.RGB(Color.DarkRed);
-			ITsPropsBldr bldr = TsPropsBldrClass.Create();
+			ITsPropsBldr bldr = TsStringUtils.MakePropsBldr();
 			if (!fUseStyleSheet)
 			{
 				bldr.SetIntPropValues((int)FwTextPropType.ktptFontSize ,
@@ -497,7 +497,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		public static ITsTextProps PartOfSpeechTextProperties(FdoCache fdoCache, bool inAnalysisLine, bool fUseStyleSheet)
 		{
 			int color =(int) CmObjectUi.RGB(Color.Green);
-			ITsPropsBldr bldr = TsPropsBldrClass.Create();
+			ITsPropsBldr bldr = TsStringUtils.MakePropsBldr();
 			if (!fUseStyleSheet)
 			{
 				bldr.SetIntPropValues((int)FwTextPropType.ktptFontSize ,

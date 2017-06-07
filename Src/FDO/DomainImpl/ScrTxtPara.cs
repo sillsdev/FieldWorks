@@ -1,21 +1,16 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ScrTxtPara.cs
-// Responsibility: TE Team
 
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.ScriptureUtils;
+using SIL.CoreImpl.Scripture;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.Utils;
-using SILUBS.SharedScrUtils;
 
 namespace SIL.FieldWorks.FDO.DomainImpl
 {
@@ -129,8 +124,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			IStTxtPara footnotePara = newFootnote.AddNewTextPara(ScrStyleNames.NormalFootnoteParagraph);
 			// Insert an empty run into the footnote paragraph in order to set the
 			// default writing system.
-			ITsStrFactory strFactory = TsStrFactoryClass.Create();
-			footnotePara.Contents =	strFactory.MakeString(string.Empty, m_cache.DefaultVernWs);
+			footnotePara.Contents =	TsStringUtils.EmptyString(m_cache.DefaultVernWs);
 
 			return newFootnote;
 		}
@@ -804,7 +798,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			}
 			else if (cvFoundBt == ChapterVerseFound.Chapter)
 			{
-				MiscUtils.ErrorBeep(); // TODO TE-2278: Need to implement this scenario
+				// TODO TE-2278: Need to implement this scenario
 				return "400 CHAPTER FOUND, NO VERSE";
 			}
 			else // No chapter or verse found in the back translation
@@ -994,7 +988,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				//If previous character is neither white space nor a chapter number...
 				ITsString tss = (wsAlt == 0) ? Contents : GetOrCreateBT().Translation.get_String(wsAlt);
 				ITsTextProps ttp = tss.get_PropertiesAt(ichIns - 1);
-				if (!m_cache.ServiceLocator.UnicodeCharProps.get_IsSeparator(tss.Text[ichIns - 1]) &&
+				if (!Icu.IsSeparator(tss.Text[ichIns - 1]) &&
 					ttp.Style() != ScrStyleNames.ChapterNumber)
 				{
 					//add a space.
@@ -1146,10 +1140,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			// Determine the appropriate verse number string to insert here
 			sVerseNumIns = GetVernVerseNumberToInsert(ichMin, true);
 			if (sVerseNumIns == null)
-			{
-				MiscUtils.ErrorBeep();
 				return false;
-			}
 
 			CoreWritingSystemDefinition wsObj = Services.WritingSystems.DefaultVernacularWritingSystem;
 			int defVernWs = wsObj.Handle;
@@ -2095,8 +2086,6 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// </summary>
 		/// <returns>An enumerator for getting the verses from this paragraph</returns>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "We're returning an object")]
 		public virtual IEnumerator GetEnumerator()
 		{
 			return new ScrVerseSet(this, true);
@@ -2479,8 +2468,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		public void Clear()
 		{
 			RemoveOwnedObjectsForString(0, Contents.Length);
-			Contents = Cache.TsStrFactory.MakeString(string.Empty,
-				m_cache.DefaultVernWs);
+			Contents = TsStringUtils.EmptyString(m_cache.DefaultVernWs);
 			TranslationsOC.Clear();
 		}
 		#endregion

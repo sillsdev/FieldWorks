@@ -10,10 +10,8 @@ using System.Diagnostics;
 using System.Collections.Generic;
 using System.Text;
 using System.Drawing;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Resources;
-using SIL.Utils;
+using SIL.CoreImpl.Text;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
@@ -604,7 +602,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 
 			m_style = style;
 			style.Name = m_name;
-			style.Usage.UserDefaultWritingSystem = Cache.TsStrFactory.MakeString(
+			style.Usage.UserDefaultWritingSystem = TsStringUtils.MakeString(
 				m_usage,
 				Cache.ServiceLocator.WritingSystemManager.UserWs);
 			style.Type = m_styleType;
@@ -625,7 +623,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 						// If the based-on style cannot be inherited from, then this style must
 						// be a copy of another style, from which it will have inherited its
 						// context, structure, and function.
-						if (basedOn.CanInheritFrom)
+						if (basedOn.CanInheritFrom && basedOn.UserLevel > 0)
 						{
 							m_context = basedOn.Context;
 							m_structure = basedOn.Structure;
@@ -642,7 +640,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			style.UserLevel = m_userLevel;
 
 			// Build the text props
-			ITsPropsBldr styleProps = TsPropsBldrClass.Create();
+			ITsPropsBldr styleProps = TsStringUtils.MakePropsBldr();
 
 			if (m_defaultFontInfo.m_fontName.IsExplicit)
 			{

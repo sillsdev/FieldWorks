@@ -1,21 +1,14 @@
-// Copyright (c) 2006-2013 SIL International
+// Copyright (c) 2006-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: FwBulletsTab.cs
-// Responsibility: TE Team
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
-
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.Text;
 using SIL.FieldWorks.Common.Controls;
-using SIL.Utils;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.DomainServices;
 
 namespace SIL.FieldWorks.FwCoreDlgControls
@@ -25,7 +18,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 	///
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public partial class FwBulletsTab : UserControl, IFWDisposable, IStylesTab
+	public partial class FwBulletsTab : UserControl, IStylesTab
 	{
 		#region Member Data
 		/// <summary>
@@ -203,6 +196,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			m_nudStartAt.Value = bulletInfo.m_start;
 			m_chkStartAt.Checked = (bulletInfo.m_start != 1);
 
+			m_tbBulletCustom.Text = bulletInfo.m_bulletCustom;
 			m_tbTextBefore.Text = bulletInfo.m_textBefore;
 			m_tbTextAfter.Text = bulletInfo.m_textAfter;
 
@@ -278,9 +272,17 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 				bulInfo.m_numberScheme = VwBulNum.kvbnNone;
 			else if (m_rbBullet.Checked)
 			{
-				bulInfo.m_numberScheme = (VwBulNum)((int)VwBulNum.kvbnBulletBase +
-					m_cboBulletScheme.SelectedIndex);
-				bulInfo.FontInfo = m_BulletsFontInfo;
+				if (m_tbBulletCustom.Text.Length > 0)
+				{
+					bulInfo.m_bulletCustom = m_tbBulletCustom.Text;
+					bulInfo.FontInfo = m_BulletsFontInfo;
+					bulInfo.m_numberScheme = (VwBulNum) ((int) VwBulNum.kvbnBulletBase);
+				}
+				else
+				{
+					bulInfo.m_numberScheme = (VwBulNum) ((int) VwBulNum.kvbnBulletBase + m_cboBulletScheme.SelectedIndex);
+					bulInfo.FontInfo = m_BulletsFontInfo;
+				}
 			}
 			else if (m_rbNumber.Checked)
 			{
@@ -425,7 +427,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 				m_chkStartAt.Checked = true;
 
 			UpdateBulletInfo(ref m_currentStyleBulletInfo);
-			ITsPropsBldr propsBldr = TsPropsBldrClass.Create();
+			ITsPropsBldr propsBldr = TsStringUtils.MakePropsBldr();
 			m_currentStyleBulletInfo.ConvertAsTextProps(propsBldr);
 			propsBldr.SetIntPropValues((int)FwTextPropType.ktptSpaceBefore,
 					(int)FwTextPropVar.ktpvMilliPoint, 6000);

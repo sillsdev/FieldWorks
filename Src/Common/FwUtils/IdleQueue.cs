@@ -1,11 +1,10 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows.Forms;
 using SIL.Utils;
@@ -141,7 +140,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 	/// the application is idle. This queue must be created and disposed on the UI thread. It is thread-safe
 	/// within individual methods and properties, but not across method and property calls.
 	/// </summary>
-	public class IdleQueue : ICollection<IdleQueueTask>, IFWDisposable
+	public class IdleQueue : ICollection<IdleQueueTask>, IDisposable
 	{
 		private readonly PriorityQueue<IdleQueuePriority, IdleQueueTask> m_queue = new PriorityQueue<IdleQueuePriority, IdleQueueTask>();
 		private readonly object m_syncRoot = new object();
@@ -224,10 +223,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 			IsDisposed = true;
 		}
-
-		#endregion
-
-		#region Implementation of IFWDisposable
 
 		/// <summary>
 		/// Add the public property for knowing if the object has been disposed of yet
@@ -447,8 +442,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 				yield return task;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "We're returning an object")]
 		IEnumerator IEnumerable.GetEnumerator()
 		{
 			return GetEnumerator();

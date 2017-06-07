@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
-
 namespace SIL.FieldWorks.LexText.Controls
 {
 	/// <summary>
@@ -90,17 +90,15 @@ namespace SIL.FieldWorks.LexText.Controls
 		public override void MakeRoot()
 		{
 			CheckDisposed();
-			base.MakeRoot();
 
 			if (m_fdoCache == null || DesignMode)
 				return;
 
-			m_rootb = VwRootBoxClass.Create();
+			base.MakeRoot();
 			// the default value of 4 for MaxParasToScan isn't high enough when using the arrow keys to move
 			// the cursor between items in a rule when the number of lines in the rule is high, since there might
 			// be a large number of non-editable empty lines in a pile
 			m_rootb.MaxParasToScan = 10;
-			m_rootb.SetSite(this);
 			m_rootb.DataAccess = m_sda;
 			// JohnT: this notification removal was introduced by Damien in change list 25875, along with removing
 			// several IgnorePropChanged wrappers in RuleFormulaControl. I don't know why we ever wanted to not see

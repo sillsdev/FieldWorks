@@ -7,7 +7,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -16,8 +15,10 @@ using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using NUnit.Framework;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.Cellar;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
@@ -30,6 +31,7 @@ using SIL.Lift.Parsing;
 using SIL.TestUtilities;
 using SIL.Utils;
 using SIL.WritingSystems;
+using SIL.Xml;
 
 namespace LexTextControlsTests
 {
@@ -1036,8 +1038,6 @@ namespace LexTextControlsTests
 		/// </summary>
 		///--------------------------------------------------------------------------------------
 		[Test]
-		[SuppressMessage("Gendarme.Rules.Portability", "NewLineLiteralRule",
-			Justification="Unit test - we're testing with different combinations of newline chars")]
 		public void TestLiftImport4()
 		{
 			// Setup
@@ -2174,7 +2174,7 @@ namespace LexTextControlsTests
 			entry.LexemeFormOA = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
 			entry.LexemeFormOA.Form.set_String(Cache.DefaultVernWs, "some entry");
 			entry.SensesOS.Add(sense);
-			sense.Gloss.set_String(english, Cache.TsStrFactory.MakeString("blank", english));
+			sense.Gloss.set_String(english, TsStringUtils.MakeString("blank", english));
 			var entryCreationMs = entry.DateCreated.Millisecond;
 			var entryModifiedMs = entry.DateModified.Millisecond;
 			var basicLiftEntry = new[]
@@ -2688,7 +2688,7 @@ namespace LexTextControlsTests
 			Assert.AreEqual(3, text.ParagraphsOS.Count, "The first Long Text field should have three paragraphs.");
 
 			Assert.IsNull(text.ParagraphsOS[0].StyleName);
-			ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
+			ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
 			tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, wsEn);
 			tisb.Append("This test paragraph does not have a style explicitly assigned.");
@@ -2831,7 +2831,7 @@ namespace LexTextControlsTests
 			Assert.IsNotNull(para);
 			Assert.AreEqual("Numbered List", para.StyleName);
 			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
-			var tss = Cache.TsStrFactory.MakeString("This is the fourth paragraph.", wsEn);
+			var tss = TsStringUtils.MakeString("This is the fourth paragraph.", wsEn);
 			Assert.AreEqual(tss.Text, para.Contents.Text);
 			Assert.IsTrue(tss.Equals(para.Contents), "The fourth paragraph contents should not have changed.");
 		}
@@ -2937,7 +2937,7 @@ namespace LexTextControlsTests
 			Assert.AreEqual(cpara, text.ParagraphsOS.Count,
 				String.Format("The first Long Text field should have {0} paragraphs.", cpara));
 			Assert.AreEqual("Bulleted List", text.ParagraphsOS[0].StyleName);
-			ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
+			ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
 			tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, wsEn);
 			tisb.Append("This is a test of sorts.  This field can contain ");
@@ -3008,19 +3008,19 @@ namespace LexTextControlsTests
 			var para1 = Cache.ServiceLocator.GetInstance<IStTxtParaFactory>().Create();
 			text.ParagraphsOS.Add(para1);
 			para1.StyleName = "Numbered List";
-			para1.Contents = Cache.TsStrFactory.MakeString("This is the first paragraph.", Cache.DefaultAnalWs);
+			para1.Contents = TsStringUtils.MakeString("This is the first paragraph.", Cache.DefaultAnalWs);
 			var para2 = Cache.ServiceLocator.GetInstance<IStTxtParaFactory>().Create();
 			text.ParagraphsOS.Add(para2);
 			para2.StyleName = "Numbered List";
-			para2.Contents = Cache.TsStrFactory.MakeString("This is the second paragraph.", Cache.DefaultAnalWs);
+			para2.Contents = TsStringUtils.MakeString("This is the second paragraph.", Cache.DefaultAnalWs);
 			var para3 = Cache.ServiceLocator.GetInstance<IStTxtParaFactory>().Create();
 			text.ParagraphsOS.Add(para3);
 			para3.StyleName = "Numbered List";
-			para3.Contents = Cache.TsStrFactory.MakeString("This is the third paragraph.", Cache.DefaultAnalWs);
+			para3.Contents = TsStringUtils.MakeString("This is the third paragraph.", Cache.DefaultAnalWs);
 			var para4 = Cache.ServiceLocator.GetInstance<IStTxtParaFactory>().Create();
 			text.ParagraphsOS.Add(para4);
 			para4.StyleName = "Numbered List";
-			para4.Contents = Cache.TsStrFactory.MakeString("This is the fourth paragraph.", Cache.DefaultAnalWs);
+			para4.Contents = TsStringUtils.MakeString("This is the fourth paragraph.", Cache.DefaultAnalWs);
 
 			return flidCustom;
 		}
@@ -3487,6 +3487,74 @@ namespace LexTextControlsTests
 			Assert.That(example0.LiftResidue, Is.Not.StringContaining("do-not-publish-in"));
 		}
 
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// Prove that a custom list with custom list items imports correctly.
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void TestLiftImportOfCustomList()
+		{
+			var customListGuid = "cd19e27d-e404-4bf1-9be4-baba071a431f";
+			var customListItemGuid = "821105b6-02a0-4ef2-8ea8-225e120142f7";
+			var customListLiftData = new[]
+			{
+				"<?xml version='1.0' encoding='UTF-8' ?>",
+				"<lift producer='SIL.FLEx 8.3.6.42804' version='0.13'>",
+				"<header>",
+				"<ranges>",
+				"<range id='CustomList' href='file://E:/WorkFiles/Lifty/Lifty.lift-ranges'/>",
+				"</ranges>",
+				"<fields/>",
+				"</header>",
+				"</lift>"
+			};
+			var customListRanges = new[]
+			{
+				"<?xml version='1.0' encoding='UTF-8'?>",
+				"<lift-ranges>}",
+				"<range id='CustomList' guid='" + customListGuid + "'>",
+				"<range-element id='CustomItemOne' guid='" + customListItemGuid + "'>",
+				"<label>",
+				"<form lang='en'><text>CustomItemOne</text></form>",
+				"</label>",
+				"<abbrev>",
+				"<form lang='en'><text>cio</text></form>",
+				"</abbrev>",
+				"<description>",
+				"<form lang='en'><text>descriptivo</text></form>",
+				"</description>",
+				"</range-element>",
+				"</range>",
+				"</lift-ranges>"
+			};
+			SetWritingSystems("fr");
+
+			//Create the LIFT data file
+			var sOrigFile = CreateInputFile(customListLiftData);
+			//Create the LIFT ranges file
+			var sOrigRangesFile = CreateInputRangesFile(customListRanges);
+
+			// prove that our setup is good and we are importing these objects
+			Assert.Throws<KeyNotFoundException>(()=>Cache.ServiceLocator.ObjectRepository.GetObject(new Guid(customListGuid)));
+			Assert.Throws<KeyNotFoundException>(() => Cache.ServiceLocator.ObjectRepository.GetObject(new Guid(customListItemGuid)));
+
+			// SUT
+			var logFile = TryImportWithRanges(sOrigFile, sOrigRangesFile, 0);
+			File.Delete(sOrigFile);
+			File.Delete(sOrigRangesFile);
+
+			// Verification
+			Assert.IsNotNull(logFile);
+			File.Delete(logFile);
+
+			var customList = Cache.ServiceLocator.ObjectRepository.GetObject(new Guid(customListGuid)) as ICmPossibilityList;
+			Assert.NotNull(customList);
+			var customListItem = Cache.ServiceLocator.ObjectRepository.GetObject(new Guid(customListItemGuid));
+			Assert.NotNull(customListItem);
+			Assert.IsTrue(customListItem is ICmCustomItem);
+		}
+
 		static private readonly string[] s_BadMorphTypeTestData = new[]
 		{
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
@@ -3799,9 +3867,9 @@ namespace LexTextControlsTests
 			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
 			var statusList = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().CreateUnowned("status", wsEn);
 			var confirmed = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create(new Guid("bd80cd3e-ea5e-11de-9871-0013722f8dec"), statusList);
-			confirmed.Name.set_String(wsEn, Cache.TsStrFactory.MakeString("Confirmed", wsEn));
+			confirmed.Name.set_String(wsEn, TsStringUtils.MakeString("Confirmed", wsEn));
 			var pending = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create(new Guid("bd964254-ea5e-11de-8cdf-0013722f8dec"), statusList);
-			pending.Name.set_String(wsEn, Cache.TsStrFactory.MakeString("Pending", wsEn));
+			pending.Name.set_String(wsEn, TsStringUtils.MakeString("Pending", wsEn));
 			var entryNew = new FieldDescription(Cache)
 			{
 				Type = CellarPropertyType.ReferenceAtomic,
@@ -3877,7 +3945,7 @@ namespace LexTextControlsTests
 			var lexPronunciation = Cache.ServiceLocator.GetInstance<ILexPronunciationFactory>().Create();
 			entry.PronunciationsOS.Add(lexPronunciation);
 			if (ws > 0)
-				lexPronunciation.Form.set_String(ws, Cache.TsStrFactory.MakeString(pronunciation, ws));
+				lexPronunciation.Form.set_String(ws, TsStringUtils.MakeString(pronunciation, ws));
 		}
 
 		[Test]
@@ -4001,10 +4069,10 @@ namespace LexTextControlsTests
 			Assert.That(Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS, Has.Count.EqualTo(1), "Should start out with just the one LRT");
 			var en = Cache.WritingSystemFactory.GetWsFromStr("en");
 			var de = Cache.WritingSystemFactory.GetWsFromStr("de");
-			lrt.Name.AnalysisDefaultWritingSystem = TsStringUtils.MakeTss("Antonym", en);
-			lrt.Description.AnalysisDefaultWritingSystem = TsStringUtils.MakeTss("Opposite", en);
-			lrt.Description.set_String(de, TsStringUtils.MakeTss("OppositeG", de));
-			lrt.Abbreviation.set_String(de, TsStringUtils.MakeTss("AntG", de));
+			lrt.Name.AnalysisDefaultWritingSystem = TsStringUtils.MakeString("Antonym", en);
+			lrt.Description.AnalysisDefaultWritingSystem = TsStringUtils.MakeString("Opposite", en);
+			lrt.Description.set_String(de, TsStringUtils.MakeString("OppositeG", de));
+			lrt.Abbreviation.set_String(de, TsStringUtils.MakeString("AntG", de));
 
 			//Create the LIFT data file
 			var sOrigFile = CreateInputFile(_minimalLiftData);

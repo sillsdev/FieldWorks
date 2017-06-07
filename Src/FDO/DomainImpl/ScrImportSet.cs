@@ -1,17 +1,14 @@
-// Copyright (c) 2006-2013 SIL International
+// Copyright (c) 2006-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: FdoScripture.cs
-// Responsibility: TE Team
 
 using System;
 using System.Collections;
 using System.Collections.Specialized;
 using System.Diagnostics;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SILUBS.SharedScrUtils;
+using SIL.CoreImpl.Scripture;
+using SIL.CoreImpl.Text;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FDO.DomainServices;
 
@@ -27,8 +24,6 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		#region data members
 		private readonly ScrImportFileInfoFactory m_scrImpFinfoFact = new ScrImportFileInfoFactory();
 
-		/// <summary>The stylesheet</summary>
-		protected IVwStylesheet m_stylesheet;
 		/// <summary>
 		/// Contains an in-memory list of all of the Scripture domain files for import
 		/// </summary>
@@ -61,37 +56,12 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		private bool m_fImportAnnotations;
 		private BCVRef m_startRef;
 		private BCVRef m_endRef;
+
+		private IVwStylesheet m_stylesheet;
+		private string m_teStylesPath;
 		#endregion
 
 		#region Construction & initialization
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Initialize the ScrImportSet. Sets the default values after the initialization of a
-		/// CmObject. At the point that this method is called, the object should have an HVO,
-		/// Guid, and a cache set.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		protected override void SetDefaultValuesAfterInit()
-		{
-			base.SetDefaultValuesAfterInit();
-			DoCommonNonModelSetup();
-		}
-
-		private void DoCommonNonModelSetup()
-		{
-			m_scrMappingsList = new ScrMappingList(MappingSet.Main, m_stylesheet);
-			m_notesMappingsList = new ScrMappingList(MappingSet.Notes, m_stylesheet);
-
-			LoadInMemoryMappingLists();
-			LoadSources(false);
-		}
-
-		protected override void DoAdditionalReconstruction()
-		{
-			base.DoAdditionalReconstruction();
-			DoCommonNonModelSetup();
-		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -533,32 +503,21 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets/sets stylesheet for settings.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public IVwStylesheet StyleSheet
-		{
-			get
-			{
-				lock (SyncRoot)
-					return m_stylesheet;
-			}
-			set
-			{
-				lock (SyncRoot)
-				{
-					m_stylesheet = value;
-					// need to set this on the mapping lists also.
-					m_scrMappingsList.StyleSheet = value;
-					m_notesMappingsList.StyleSheet = value;
-				}
-			}
-		}
 		#endregion
 
 		#region Public Methods
+
+		public void Initialize(IVwStylesheet stylesheet, string teStylesPath)
+		{
+			lock (SyncRoot)
+			{
+				m_stylesheet = stylesheet;
+				m_teStylesPath = teStylesPath;
+
+				InitMappingLists();
+			}
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Check all files that are about to be imported in the given reference range to see
@@ -870,7 +829,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				m_scrFileInfoList = null;
 				m_btFileInfoLists = new Hashtable();
 				m_notesFileInfoLists = new Hashtable();
-				SetDefaultValuesAfterInit();
+				InitMappingLists();
 			}
 		}
 
@@ -1306,6 +1265,15 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					file.InternalPath = fileInfo.FileName;
 				}
 			});
+		}
+
+		private void InitMappingLists()
+		{
+			m_scrMappingsList = new ScrMappingList(MappingSet.Main, m_stylesheet, m_teStylesPath);
+			m_notesMappingsList = new ScrMappingList(MappingSet.Notes, m_stylesheet, m_teStylesPath);
+
+			LoadInMemoryMappingLists();
+			LoadSources(false);
 		}
 		#endregion
 	}

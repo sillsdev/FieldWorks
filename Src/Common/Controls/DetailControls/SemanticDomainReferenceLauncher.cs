@@ -8,7 +8,6 @@
 // </remarks>
 
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using System.Xml.XPath;
 using SIL.CoreImpl;
@@ -39,8 +38,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <remarks>
 		/// Subclasses should override this method, if the SimpleListChooser is not suitable.
 		/// </remarks>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "FindForm() returns a reference")]
 		protected override void HandleChooser()
 		{
 			const string displayWs = "best analysis";

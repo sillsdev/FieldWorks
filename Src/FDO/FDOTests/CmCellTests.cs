@@ -8,16 +8,10 @@
 // <remarks>
 // </remarks>
 
-using System;
-
 using NUnit.Framework;
-
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Test.TestUtils;
 using SIL.Utils;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Text;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.FDO.FDOTests
 {
@@ -79,8 +73,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public void ParseIntegerMatchCriteria_Equality()
 		{
 			// Set the matching criteria for this filter cell
-			ITsStrFactory factory = TsStrFactoryClass.Create();
-			m_cell.Contents = factory.MakeString("= 0", Cache.DefaultUserWs);
+			m_cell.Contents = TsStringUtils.MakeString("= 0", Cache.DefaultUserWs);
 
 			m_cell.ParseIntegerMatchCriteria();
 
@@ -88,7 +81,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			Assert.AreEqual(0, m_cell.MatchValue);
 
 			// repeat test with a different value
-			m_cell.Contents = factory.MakeString("= 1", Cache.DefaultUserWs);
+			m_cell.Contents = TsStringUtils.MakeString("= 1", Cache.DefaultUserWs);
 
 			m_cell.ParseIntegerMatchCriteria();
 
@@ -105,8 +98,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public void ParseIntegerMatchCriteria_GreaterThanEqual()
 		{
 			// Set the matching criteria for this filter cell
-			ITsStrFactory factory = TsStrFactoryClass.Create();
-			m_cell.Contents = factory.MakeString(">= 5", Cache.DefaultUserWs);
+			m_cell.Contents = TsStringUtils.MakeString(">= 5", Cache.DefaultUserWs);
 
 			m_cell.ParseIntegerMatchCriteria();
 
@@ -114,7 +106,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			Assert.AreEqual(5, m_cell.MatchValue);
 
 			// repeat test with a different value
-			m_cell.Contents = factory.MakeString(">= 1", Cache.DefaultUserWs);
+			m_cell.Contents = TsStringUtils.MakeString(">= 1", Cache.DefaultUserWs);
 
 			m_cell.ParseIntegerMatchCriteria();
 
@@ -131,8 +123,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public void ParseIntegerMatchCriteria_LessThanEqual()
 		{
 			// Set the matching criteria for this filter cell
-			ITsStrFactory factory = TsStrFactoryClass.Create();
-			m_cell.Contents = factory.MakeString("<= 5", Cache.DefaultUserWs);
+			m_cell.Contents = TsStringUtils.MakeString("<= 5", Cache.DefaultUserWs);
 
 			m_cell.ParseIntegerMatchCriteria();
 
@@ -140,7 +131,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			Assert.AreEqual(5, m_cell.MatchValue);
 
 			// repeat test with a different value
-			m_cell.Contents = factory.MakeString("<= 1", Cache.DefaultUserWs);
+			m_cell.Contents = TsStringUtils.MakeString("<= 1", Cache.DefaultUserWs);
 
 			m_cell.ParseIntegerMatchCriteria();
 
@@ -161,15 +152,14 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			m_cell.SetIntegerMatchCriteria(ComparisonTypes.kEquals, 0);
 
 			//verify the result
-			ITsStrFactory factory = TsStrFactoryClass.Create();
-			AssertEx.AreTsStringsEqual(factory.MakeString("= 0", Cache.DefaultUserWs),
+			AssertEx.AreTsStringsEqual(TsStringUtils.MakeString("= 0", Cache.DefaultUserWs),
 				m_cell.Contents);
 
 			// repeat test with a different value
 			m_cell.SetIntegerMatchCriteria(ComparisonTypes.kEquals, 1);
 
 			//verify the result
-			AssertEx.AreTsStringsEqual(factory.MakeString("= 1", Cache.DefaultUserWs),
+			AssertEx.AreTsStringsEqual(TsStringUtils.MakeString("= 1", Cache.DefaultUserWs),
 				m_cell.Contents);
 		}
 
@@ -184,15 +174,14 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			m_cell.SetIntegerMatchCriteria(ComparisonTypes.kGreaterThanEqual, 5);
 
 			//verify the result
-			ITsStrFactory factory = TsStrFactoryClass.Create();
-			AssertEx.AreTsStringsEqual(factory.MakeString(">= 5", Cache.DefaultUserWs),
+			AssertEx.AreTsStringsEqual(TsStringUtils.MakeString(">= 5", Cache.DefaultUserWs),
 				m_cell.Contents);
 
 			// repeat test with a different value
 			m_cell.SetIntegerMatchCriteria(ComparisonTypes.kGreaterThanEqual, 10);
 
 			//verify the result
-			AssertEx.AreTsStringsEqual(factory.MakeString(">= 10", Cache.DefaultUserWs),
+			AssertEx.AreTsStringsEqual(TsStringUtils.MakeString(">= 10", Cache.DefaultUserWs),
 				m_cell.Contents);
 		}
 
@@ -207,15 +196,14 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			m_cell.SetIntegerMatchCriteria(ComparisonTypes.kLessThanEqual, 5);
 
 			//verify the result
-			ITsStrFactory factory = TsStrFactoryClass.Create();
-			AssertEx.AreTsStringsEqual(factory.MakeString("<= 5", Cache.DefaultUserWs),
+			AssertEx.AreTsStringsEqual(TsStringUtils.MakeString("<= 5", Cache.DefaultUserWs),
 				m_cell.Contents);
 
 			// repeat test with a different value
 			m_cell.SetIntegerMatchCriteria(ComparisonTypes.kLessThanEqual, 10);
 
 			//verify the result
-			AssertEx.AreTsStringsEqual(factory.MakeString("<= 10", Cache.DefaultUserWs),
+			AssertEx.AreTsStringsEqual(TsStringUtils.MakeString("<= 10", Cache.DefaultUserWs),
 				m_cell.Contents);
 		}
 		#endregion
@@ -233,8 +221,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			m_cell.SetObjectMatchCriteria(null, false, false);
 
 			//verify the result
-			ITsStrFactory factory = TsStrFactoryClass.Create();
-			AssertEx.AreTsStringsEqual(factory.MakeString("Matches ", Cache.DefaultUserWs),
+			AssertEx.AreTsStringsEqual(TsStringUtils.MakeString("Matches ", Cache.DefaultUserWs),
 				m_cell.Contents);
 		}
 
@@ -250,7 +237,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			m_cell.SetObjectMatchCriteria(m_categoryGrammar, false, false);
 
 			//verify the result
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, "Matches ", StyleUtils.CharStyleTextProps(null, Cache.DefaultUserWs));
 			TsStringUtils.InsertOrcIntoPara(m_categoryGrammar.Guid,
 				FwObjDataTypes.kodtNameGuidHot, bldr, bldr.Length,
@@ -271,7 +258,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			m_cell.SetObjectMatchCriteria(m_categoryGrammar, false, true);
 
 			//verify the result
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, "Empty or Matches ", StyleUtils.CharStyleTextProps(null, Cache.DefaultUserWs));
 			TsStringUtils.InsertOrcIntoPara(m_categoryGrammar.Guid,
 				FwObjDataTypes.kodtNameGuidHot, bldr, bldr.Length,
@@ -293,7 +280,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			m_cell.SetObjectMatchCriteria(m_categoryGrammar, true, true);
 
 			//verify the result
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, "Empty or Matches  +subitems",
 				StyleUtils.CharStyleTextProps(null, Cache.DefaultUserWs));
 			TsStringUtils.InsertOrcIntoPara(m_categoryGrammar.Guid,
@@ -314,7 +301,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			m_cell.SetObjectMatchCriteria(null, true, false);
 
 			//verify the result
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, "Matches +subitems", StyleUtils.CharStyleTextProps(null, Cache.DefaultUserWs));
 
 			AssertEx.AreTsStringsEqual(bldr.GetString(), m_cell.Contents);
@@ -430,8 +417,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public void ParseObjectMatchCriteria_MatchWithoutSubItemsNoDefault()
 		{
 			// Set the matching criteria for this filter cell
-			ITsStrFactory factory = TsStrFactoryClass.Create();
-			m_cell.Contents = factory.MakeString("Matches ", Cache.DefaultUserWs);
+			m_cell.Contents = TsStringUtils.MakeString("Matches ", Cache.DefaultUserWs);
 
 			m_cell.ParseObjectMatchCriteria();
 
@@ -451,7 +437,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public void ParseObjectMatchCriteria_MatchWithoutSubItemsDefaultSet()
 		{
 			// Set the matching criteria for this filter cell
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, "Matches ", StyleUtils.CharStyleTextProps(null, Cache.DefaultUserWs));
 			TsStringUtils.InsertOrcIntoPara(m_categoryGrammar.Guid,
 				FwObjDataTypes.kodtNameGuidHot, bldr, bldr.Length,
@@ -476,7 +462,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public void ParseObjectMatchCriteria_MatchWithSubItemsDefaultSet()
 		{
 			// Set the matching criteria for this filter cell
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, "Matches  +subitems", StyleUtils.CharStyleTextProps(null, Cache.DefaultUserWs));
 			TsStringUtils.InsertOrcIntoPara(m_categoryGrammar.Guid,
 				FwObjDataTypes.kodtNameGuidHot, bldr, 8, 8, Cache.DefaultUserWs);
@@ -500,7 +486,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public void ParseObjectMatchCriteria_MatchEmptyOrObjectWithoutSubitems()
 		{
 			// Set the matching criteria for this filter cell
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, "Empty or Matches ", StyleUtils.CharStyleTextProps(null, Cache.DefaultUserWs));
 			TsStringUtils.InsertOrcIntoPara(m_categoryDiscourse.Guid,
 				FwObjDataTypes.kodtNameGuidHot, bldr, bldr.Length,

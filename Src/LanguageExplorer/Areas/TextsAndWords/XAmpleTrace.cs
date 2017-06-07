@@ -8,7 +8,6 @@
 //		XAmpleTrace - Deal with results of an XAmple trace
 // </remarks>
 
-using System.Diagnostics.CodeAnalysis;
 using System.Xml.Linq;
 using SIL.CoreImpl;
 
@@ -17,8 +16,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 	/// <summary>
 	/// Summary description for XAmpleTrace.
 	/// </summary>
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification="m_mediator is a reference")]
 	internal sealed class XAmpleTrace : IParserTrace
 	{
 		private static ParserTraceUITransform s_traceTransform;

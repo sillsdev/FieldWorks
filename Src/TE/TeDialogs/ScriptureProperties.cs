@@ -1,9 +1,6 @@
-// Copyright (c) 2004-2013 SIL International
+// Copyright (c) 2004-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ScriptureProperties.cs
-// Responsibility: TE Team
 
 using System;
 using System.Collections.Generic;
@@ -14,13 +11,12 @@ using System.Text;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SILUBS.SharedScrUtils;
+using SIL.CoreImpl.Scripture;
 
 namespace SIL.FieldWorks.TE
 {
@@ -29,7 +25,7 @@ namespace SIL.FieldWorks.TE
 	/// Summary description for ScriptureProperties.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public class ScriptureProperties : Form, IFWDisposable
+	public class ScriptureProperties : Form
 	{
 		#region Member variables
 		/// <summary>Index of the tab for user properties account</summary>
@@ -731,7 +727,7 @@ namespace SIL.FieldWorks.TE
 					text = textBox.Tag as string;
 					if (text != null)
 					{
-						MiscUtils.ErrorBeep();
+						FwUtils.ErrorBeep();
 						textBox.Text = text;
 						textBox.SelectAll();
 					}
@@ -826,8 +822,6 @@ namespace SIL.FieldWorks.TE
 		{
 			char zeroDigit = (m_scr.UseScriptDigits ? (char)m_scr.ScriptDigitZero : '0');
 
-			ILgCharacterPropertyEngine charEngine = m_cache.ServiceLocator.UnicodeCharProps;
-
 			foreach (IScrBook book in m_scr.ScriptureBooksOS)
 			{
 				// update the status with the book name.
@@ -838,7 +832,7 @@ namespace SIL.FieldWorks.TE
 				foreach (IScrSection section in book.SectionsOS)
 				{
 					foreach (IScrTxtPara para in section.ContentOA.ParagraphsOS)
-						ConvertChapterVerseNumbers(para, zeroDigit, charEngine);
+						ConvertChapterVerseNumbers(para, zeroDigit);
 				}
 
 				progressDlg.Step(0);
@@ -853,14 +847,12 @@ namespace SIL.FieldWorks.TE
 		/// </summary>
 		/// <param name="para">Paragraph to be converted</param>
 		/// <param name="zeroDigit">Character representing zero for chapter/verse numbers</param>
-		/// <param name="charEngine">Unicode character properties engine</param>
 		/// <returns>true if chapter or verse numbers were changed in paragraph</returns>
 		/// <remarks>Return value is only used for testing.  Also, method is made virtual so
 		/// test class can override it.  Allows testing to limit amount of processing for sake of
 		/// time.</remarks>
 		/// ------------------------------------------------------------------------------------
-		protected virtual bool ConvertChapterVerseNumbers(IScrTxtPara para, char zeroDigit,
-			ILgCharacterPropertyEngine charEngine)
+		protected virtual bool ConvertChapterVerseNumbers(IScrTxtPara para, char zeroDigit)
 		{
 			ITsString tss = para.Contents;
 			ITsStrBldr tssBldr = tss.GetBldr();
@@ -880,8 +872,8 @@ namespace SIL.FieldWorks.TE
 					StringBuilder strBldr = new StringBuilder(runChars.Length);
 					foreach (char c in runChars)
 					{
-						if (charEngine.get_IsNumber(c))
-							strBldr.Append((char) (zeroDigit + charEngine.get_NumericValue(c)));
+						if (Icu.IsNumeric(c))
+							strBldr.Append((char) (zeroDigit + Icu.u_Digit(c, 10)));
 						else
 							strBldr.Append(c);
 					}

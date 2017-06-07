@@ -7,7 +7,6 @@
 // Responsibility: FW Team, especially David Olson (this is of interest to PA also)
 // ---------------------------------------------------------------------------------------------
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.IO;
 using System.Configuration;
@@ -439,8 +438,6 @@ namespace SIL.Utils
 		/// specified binding.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification="See TODO-Linux comment")]
 		private static object Invoke(object binding, string name, object[] args, BindingFlags flags)
 		{
 			// If binding is a Type then assume we're invoking a static method, property

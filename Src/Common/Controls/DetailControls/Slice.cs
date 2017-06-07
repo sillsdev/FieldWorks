@@ -1,20 +1,21 @@
-// Copyright (c) 2014 SIL International
+// Copyright (c) 2014-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.Cellar;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
@@ -22,6 +23,7 @@ using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.Utils;
+using SIL.Xml;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
@@ -44,23 +46,24 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 	/// but I worked with it quite a while without finding the true problem.
 	/// So, I went back to a Slice having a SplitContainer,
 	/// rather than the better option of it being a SplitContainer.
+#endif
 	///</remarks>
-	public class Slice : SplitContainer, IFlexComponent, IFWDisposable
+#if SLICE_IS_SPLITCONTAINER
+	public class Slice : SplitContainer, IFlexComponent
 #else
-	///</remarks>
-	public class Slice : UserControl, IFlexComponent, IFWDisposable
+	public class Slice : UserControl, IFlexComponent
 #endif
 	{
-		#region Constants
+#region Constants
 
 		/// <summary>
 		/// If label width is made wider than this, switch to full labels.
 		/// </summary>
 		const int MaxAbbrevWidth = 60;
 
-		#endregion Constants
+#endregion Constants
 
-		#region Data members
+#region Data members
 
 		/// <summary>
 		/// Subscribe to this event if you want to provide a Context menu for this slice
@@ -95,9 +98,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		protected Slice m_parentSlice;
 		private SplitContainer m_splitter;
 
-		#endregion Data members
+#endregion Data members
 
-		#region Properties
+#region Properties
 
 		/// <summary>
 		/// The weight of object that starts at the beginning of this slice.
@@ -393,13 +396,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			}
 		}
 
-		#endregion Properties
+#endregion Properties
 
-		#region Construction and initialization
+#region Construction and initialization
 
 		/// <summary></summary>
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification="TabStop is not implemented in Mono, but we set TabStop to false so it's not a problem.")]
 		public Slice()
 		{
 #if SLICE_IS_SPLITCONTAINER
@@ -453,9 +454,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			TakeFocus(false);
 		}
 
-		#endregion Construction and initialization
+#endregion Construction and initialization
 
-		#region Miscellaneous UI methods
+#region Miscellaneous UI methods
 
 		/// <summary></summary>
 		public virtual void RegisterWithContextHelper()
@@ -467,7 +468,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				//It's OK to send null as an id
 				if (Publisher != null) // helpful for robustness and testing.
 				{
-					var caption = XmlUtils.GetLocalizedAttributeValue(ConfigurationNode, "label", "");
+					var caption = StringTable.Table.LocalizeAttributeValue(XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "label", ""));
 					Publisher.Publish("RegisterHelpTargetWithId", new object[] { Control, caption, HelpId });
 				}
 			}
@@ -480,8 +481,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				CheckDisposed();
 
 				//if the idea has not been added, try using the "field" attribute as the key
-				return XmlUtils.GetAttributeValue(ConfigurationNode, "id")
-					?? XmlUtils.GetAttributeValue(ConfigurationNode, "field");
+				return XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "id")
+					?? XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "field");
 			}
 		}
 
@@ -519,9 +520,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			CheckDisposed();
 		}
 
-		#endregion Miscellaneous UI methods
+#endregion Miscellaneous UI methods
 
-		#region events, clicking, etc.
+#region events, clicking, etc.
 
 		/// <summary></summary>
 		public void OnTreeNodeClick(object sender, EventArgs args)
@@ -593,9 +594,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				Control.Focus();
 		}
 
-		#endregion events, clicking, etc.
+#endregion events, clicking, etc.
 
-		#region Tree management
+#region Tree management
 
 		/// <summary>
 		/// In some contexts we insert into the slice array a 'dummy' slice
@@ -675,8 +676,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		}
 
 		/// <summary></summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "slice is a reference")]
 		public virtual void SetCurrentState(bool isCurrent)
 		{
 			CheckDisposed();
@@ -921,7 +920,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			}
 		}
 
-		#region IDisposable override
+#region IDisposable override
 
 		/// <summary></summary>
 		public void CheckDisposed()
@@ -995,7 +994,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			base.Dispose(disposing);
 		}
 
-		#endregion IDisposable override
+#endregion IDisposable override
 
 		/// <summary>
 		/// This method determines how much we should indent nodes produced from "part ref"
@@ -1109,9 +1108,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					false, parameter, false, caller);
 		}
 
-		#endregion Tree management
+#endregion Tree management
 
-		#region Tree Display
+#region Tree Display
 
 		// Delegation methods (mainly or entirely duplicate similar methods on embedded control).
 		/// <summary></summary>
@@ -1217,7 +1216,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			{
 				CheckDisposed();
 
-				return XmlUtils.GetLocalizedAttributeValue(m_configurationNode, "tooltip", Label);
+				return StringTable.Table.LocalizeAttributeValue(XmlUtils.GetOptionalAttributeValue(m_configurationNode, "tooltip", Label));
 			}
 		}
 
@@ -1342,8 +1341,13 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		private string GetGeneratedHelpTopicId(string helpTopicPrefix, string fieldName)
 		{
-			string className = Cache.DomainDataByFlid.MetaDataCache.GetClassName(Object.ClassID);
-			string toolName = PropertyTable.GetValue<string>("currentContentControl");
+			var ownerClassName = Object.Owner == null ? null : Object.Owner.ClassName;
+			var className = Cache.DomainDataByFlid.MetaDataCache.GetClassName(Object.ClassID);
+			// Distinguish the Example (sense) field and the expanded example (LexExtendedNote) field
+			className = (fieldName == "Example" && ownerClassName == "LexExtendedNote") ? "LexExtendedNote" : className;
+			// Distinguish the Translation (sense) field and the expanded example (LexExtendedNote) field
+			className = fieldName.StartsWith("Translation")&& (ownerClassName == "LexExtendedNote" || (Object.Owner != null && Object.Owner.ClassName == "LexExtendedNote")) ? "LexExtendedNote" : className;
+			var toolName = PropertyTable.GetValue<string>("currentContentControl");
 
 			string generatedHelpTopicID;
 
@@ -1530,8 +1534,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			}
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "parentSlice is a reference")]
 		bool IsDescendant(Slice slice)
 		{
 			var parentSlice = slice.ParentSlice;
@@ -1555,8 +1557,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <summary>
 		/// Collapse this node, which is at position iSlice in its parent.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="FieldOrDummyAt() returns a reference")]
 		public virtual void Collapse(int iSlice)
 		{
 			CheckDisposed();
@@ -1663,9 +1663,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			}
 		}
 
-		#endregion Tree Display
+#endregion Tree Display
 
-		#region Miscellaneous data methods
+#region Miscellaneous data methods
 
 		/// <summary>
 		/// Get the context for this slice considered as a member of a sequence.
@@ -1679,8 +1679,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <param name="ihvoPosition">Position of this object in owning sequence;
 		/// or current position in cache, if a collection.</param>
 		/// <returns>true if this slice is part of an owning sequence property.</returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "cache is a reference")]
 		public bool GetSeqContext(out int hvoOwner, out int flid, out int ihvoPosition)
 		{
 			CheckDisposed();
@@ -1749,8 +1747,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <param name="hvoOwner">Owner of the object this slice is part of.</param>
 		/// <param name="flid">Owning atomic property this is part of.</param>
 		/// <returns>true if this slice is part of an owning atomic property.</returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "cache is a reference")]
 		public bool GetAtomicContext(out int hvoOwner, out int flid)
 		{
 			CheckDisposed();
@@ -1805,9 +1801,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			return m_cache.DomainDataByFlid.MetaDataCache.GetFieldType(flid);
 		}
 
-		#endregion Miscellaneous data methods
+#endregion Miscellaneous data methods
 
-		#region Menu Command Handlers
+#region Menu Command Handlers
 
 		/// <summary>
 		/// do an insertion
@@ -2059,7 +2055,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					}
 				}
 			}
-			var slices = new Set<Slice>(ContainingDataTree.Slices);
+			var slices = new HashSet<Slice>(ContainingDataTree.Slices);
 
 			// Save DataTree for the finally block.  Note premature return below due to IsDisposed.  See LT-9005.
 			DataTree dtContainer = ContainingDataTree;
@@ -2207,8 +2203,6 @@ only be sent to the subscribers one at a time and considered done as soon as som
 		/// <summary>
 		/// Focus the specified slice (or the first of its children that can accept focus).
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "slice is a reference")]
 		public Slice FocusSliceOrChild()
 		{
 			CheckDisposed();
@@ -2305,8 +2299,6 @@ only be sent to the subscribers one at a time and considered done as soon as som
 		/// starting with the slice itself. An arbitrary maximum distance (currently 40) is imposed,
 		/// to minimize the time spent getting and using these; usually one of the first few is used.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="FieldOrDummyAt() returns a reference")]
 		internal List<Slice> GetCloseSlices()
 		{
 			int index = IndexInContainer;
@@ -2645,7 +2637,7 @@ only be sent to the subscribers one at a time and considered done as soon as som
 			return true;
 		}
 
-		#endregion Menu Command Handlers
+#endregion Menu Command Handlers
 
 		/// <summary>
 		/// Updates the display of a slice, if an hvo and tag it cares about has changed in some way.
@@ -2907,25 +2899,25 @@ only be sent to the subscribers one at a time and considered done as soon as som
 		/// </summary>
 		private bool BeingDiscarded { get; set; }
 
-		#region Implementation of IPropertyTableProvider
+#region Implementation of IPropertyTableProvider
 
 		/// <summary>
 		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
 		/// </summary>
 		public IPropertyTable PropertyTable { get; private set; }
 
-		#endregion
+#endregion
 
-		#region Implementation of IPublisherProvider
+#region Implementation of IPublisherProvider
 
 		/// <summary>
 		/// Get the IPublisher.
 		/// </summary>
 		public IPublisher Publisher { get; private set; }
 
-		#endregion
+#endregion
 
-		#region Implementation of ISubscriberProvider
+#region Implementation of ISubscriberProvider
 
 		/// <summary>
 		/// Get the ISubscriber.
@@ -2962,6 +2954,6 @@ only be sent to the subscribers one at a time and considered done as soon as som
 			}
 		}
 
-		#endregion
+#endregion
 	}
 }

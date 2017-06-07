@@ -1,23 +1,22 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Xml;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.ScriptureUtils;
+using SIL.CoreImpl.Cellar;
+using SIL.CoreImpl.Scripture;
+using SIL.CoreImpl.Text;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Reporting;
-using SIL.Utils;
-using SILUBS.SharedScrUtils;
+using SIL.Xml;
 
 namespace SIL.FieldWorks.FDO.DomainImpl
 {
@@ -45,6 +44,30 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 	}
 	#endregion
 
+	#region LexReferenceFactory
+	internal partial class LexReferenceFactory
+	{
+		public ILexReference Create(Guid guid, ILexRefType owner)
+		{
+			ILexReference lexReference;
+			if(guid == Guid.Empty)
+			{
+				lexReference = Create();
+			}
+			else
+			{
+				var hvo = ((IDataReader)m_cache.ServiceLocator.GetInstance<IDataSetup>()).GetNextRealHvo();
+				lexReference = new LexReference(m_cache, hvo, guid);
+			}
+			if(owner != null)
+			{
+				owner.MembersOC.Add(lexReference);
+			}
+			return lexReference;
+		}
+	}
+	#endregion
+
 	#region LexSenseFactory class
 	internal partial class LexSenseFactory
 	{
@@ -62,8 +85,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			// Handle gloss.
 			if (!string.IsNullOrEmpty(gloss))
 			{
-				var defAnalWs = entry.Cache.DefaultAnalWs;
-				var gls = entry.Cache.TsStrFactory.MakeString(gloss, defAnalWs);
+				int defAnalWs = entry.Cache.DefaultAnalWs;
+				ITsString gls = TsStringUtils.MakeString(gloss, defAnalWs);
 
 				return Create(entry, sandboxMSA, gls);
 			}
@@ -307,20 +330,71 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 						throw new ArgumentException(
 							string.Format("transduce attribute of column argument specifies an unhandled class ({0})"), className);
 				}
-				if (mdc.GetFieldType(flid) == (int)CellarPropertyType.String)
+				if (mdc.GetFieldType(flid) == (int) CellarPropertyType.String)
 					ls.Cache.DomainDataByFlid.SetString(hvo, flid, val);
-				else // asssume multistring
-					ls.Cache.DomainDataByFlid.SetMultiStringAlt(hvo, flid, ws, val);
+				else
+				{
+					var list = XmlUtils.GetOptionalAttributeValue(column, "list");
+					if (list == null)
+					{
+						// asssume multistring
+						ls.Cache.DomainDataByFlid.SetMultiStringAlt(hvo, flid, ws, val);
+					}
+					else
+					{
+						var matchedPossibility = FindMatchingPossibilityItem(ls.Cache, list, val);
+						if(matchedPossibility != null)
+						{
+							// Insert the found possibility into the beginning of the list
+							ls.Cache.DomainDataByFlid.Replace(hvo, flid, 0, 0, new[] { matchedPossibility.Hvo }, 1);
+						}
+					}
+				}
 				return true;
 			}
 			throw new ArgumentException("transduce attr for column spec has wrong number of parts " + transduce + " " + column.OuterXml);
+		}
+
+		/// <summary>
+		/// Will attempt to match the name or abbreviation for the given string and writing system in the list.
+		/// </summary>
+		/// <param name="cache"></param>
+		/// <param name="list">e.g. LexDb.DialectLabels</param>
+		/// <param name="item"></param>
+		/// <returns></returns>
+		private static ICmPossibility FindMatchingPossibilityItem(FdoCache cache, string list, ITsString item)
+		{
+			if (TsStringUtils.IsNullOrEmpty(item))
+				return null;
+			var mdc = cache.MetaDataCache;
+			var listParts = list.Split('.');
+			var flid = mdc.GetFieldId(listParts[0], listParts[1], true);
+			ICmPossibilityList listItems;
+			switch (listParts[0])
+			{
+				case "LexDb":
+					var lexDbHvo = cache.LangProject.LexDbOA.Hvo;
+					var listHvo = cache.DomainDataByFlid.get_ObjectProp(lexDbHvo, flid);
+					listItems = (ICmPossibilityList)cache.ServiceLocator.GetObject(listHvo);
+					break;
+				default:
+					Debug.Fail("Lists not owned by LexDb are not yet handled.");
+					// ReSharper disable once HeuristicUnreachableCode -- reachable if not debugging.
+					return null;
+			}
+
+			var wsHandles = cache.LangProject.AllWritingSystems.Select(ws => ws.Handle).ToList();
+			return listItems.PossibilitiesOS.FirstOrDefault(poss => wsHandles.Any(ws =>
+				string.Compare(item.Text, poss.Abbreviation.get_String(ws).Text, CultureInfo.CurrentCulture, CompareOptions.IgnoreNonSpace | CompareOptions.IgnoreCase) == 0 ||
+				string.Compare(item.Text, poss.Name.get_String(ws).Text, CultureInfo.CurrentCulture, CompareOptions.IgnoreNonSpace | CompareOptions.IgnoreCase) == 0));
 		}
 
 		private ICmTranslation GetOrMakeFirstTranslation(ILexExampleSentence example)
 		{
 			if (example.TranslationsOC.Count == 0)
 			{
-				var cmTranslation = example.Services.GetInstance<ICmTranslationFactory>().Create(example, m_cache.ServiceLocator.GetInstance<ICmPossibilityRepository>().GetObject(CmPossibilityTags.kguidTranFreeTranslation));
+				var cmTranslation = example.Services.GetInstance<ICmTranslationFactory>().Create(example,
+					m_cache.ServiceLocator.GetInstance<ICmPossibilityRepository>().GetObject(CmPossibilityTags.kguidTranFreeTranslation));
 				example.TranslationsOC.Add(cmTranslation);
 			}
 			return example.TranslationsOC.ToArray()[0];
@@ -395,7 +469,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// <returns></returns>
 		public ILexEntry Create(IMoMorphType morphType, ITsString tssLexemeForm, string gloss, SandboxGenericMSA sandboxMSA)
 		{
-			var tssGloss = m_cache.TsStrFactory.MakeString(gloss, m_cache.DefaultAnalWs);
+			ITsString tssGloss = TsStringUtils.MakeString(gloss, m_cache.DefaultAnalWs);
 			return Create(morphType, tssLexemeForm, tssGloss, sandboxMSA);
 		}
 
@@ -438,11 +512,11 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// <returns></returns>
 		public ILexEntry Create(string entryFullForm, string senseGloss, SandboxGenericMSA msa)
 		{
-			ITsString tssFullForm = TsStringUtils.MakeTss(entryFullForm, m_cache.DefaultVernWs);
+			ITsString tssFullForm = TsStringUtils.MakeString(entryFullForm, m_cache.DefaultVernWs);
 			// create a sense with a matching gloss
 			var entryComponents = MorphServices.BuildEntryComponents(m_cache, tssFullForm);
 			entryComponents.MSA = msa;
-			entryComponents.GlossAlternatives.Add(TsStringUtils.MakeTss(senseGloss, m_cache.DefaultAnalWs));
+			entryComponents.GlossAlternatives.Add(TsStringUtils.MakeString(senseGloss, m_cache.DefaultAnalWs));
 			return m_cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(entryComponents);
 		}
 
@@ -456,7 +530,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			if (entryComponents.MorphType == null)
 				throw new ArgumentException("Expected entryComponents to already have MorphType");
 			var tssGloss =
-				entryComponents.GlossAlternatives.DefaultIfEmpty(TsStringUtils.MakeTss("", m_cache.DefaultAnalWs)).
+				entryComponents.GlossAlternatives.DefaultIfEmpty(TsStringUtils.MakeString("", m_cache.DefaultAnalWs)).
 					FirstOrDefault();
 			ILexEntry newEntry = Create(entryComponents.MorphType,
 				entryComponents.LexemeFormAlternatives[0],
@@ -495,12 +569,10 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			return newEntry;
 		}
 		/// <summary>
-		/// Create a new entry with the given guid owned by the given owner.
+		/// Create a new entry with the given guid.
 		/// </summary>
-		public ILexEntry Create(Guid guid, ILexDb owner)
+		public ILexEntry Create(Guid guid, ILexDb ignored)
 		{
-			if (owner == null) throw new ArgumentNullException("owner");
-
 			ILexEntry le;
 			if (guid == Guid.Empty)
 			{
@@ -558,14 +630,14 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				mmt = mmtPrefix; // force a prefix if it's neither a prefix nor an infix
 #pragma warning disable 168
 			var allomorph = MoForm.CreateAllomorph(entry, sense.MorphoSyntaxAnalysisRA,
-												   TsStringUtils.MakeTss(sLeftMember, wsVern), mmt, false);
+												   TsStringUtils.MakeString(sLeftMember, wsVern), mmt, false);
 #pragma warning disable 168
 			mmt = MorphServices.FindMorphType(m_cache, ref sRightMember, out clsidForm);
 			if ((mmt.Hvo != mmtInfix.Hvo) &&
 				(mmt.Hvo != mmtSuffix.Hvo))
 				mmt = mmtSuffix; // force a suffix if it's neither a suffix nor an infix
 			allomorph = MoForm.CreateAllomorph(entry, sense.MorphoSyntaxAnalysisRA,
-											   TsStringUtils.MakeTss(sRightMember, wsVern), mmt, false);
+											   TsStringUtils.MakeString(sRightMember, wsVern), mmt, false);
 
 			return lexemeAllo;
 		}
@@ -1248,6 +1320,33 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 	}
 	#endregion
 
+	#region CmCustomItemFactory class
+	internal partial class CmCustomItemFactory
+	{
+		public ICmPossibility Create(Guid guid, ICmPossibilityList owner)
+		{
+			if (owner == null) throw new ArgumentNullException("owner");
+
+			int hvo = ((IDataReader)m_cache.ServiceLocator.GetInstance<IDataSetup>()).GetNextRealHvo();
+
+			var retval = new CmCustomItem(m_cache, hvo, guid);
+			owner.PossibilitiesOS.Add(retval);
+			return retval;
+		}
+
+		public ICmPossibility Create(Guid guid, ICmCustomItem owner)
+		{
+			if (owner == null) throw new ArgumentNullException("owner");
+
+			int hvo = ((IDataReader)m_cache.ServiceLocator.GetInstance<IDataSetup>()).GetNextRealHvo();
+
+			var retval = new CmCustomItem(m_cache, hvo, guid);
+			owner.SubPossibilitiesOS.Add(retval);
+			return retval;
+		}
+	}
+	#endregion
+
 	#region CmAnthroItemFactory class
 	/// <summary>
 	/// Add methods added to ICmAnthroItemFactory.
@@ -1728,7 +1827,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			int anchorLoc, IPictureLocationBridge locationParser)
 		{
 			string[] tokens = sTextRepOfPicture.Split('|');
-			if (!CmPictureServices.ValidTextRepOfPicture(tokens))
+			if (tokens.Length < 9 || tokens[0] != CmPictureTags.kClassName)
 				throw new ArgumentException("The clipboard format for a Picture was invalid");
 			string sDescription = tokens[1];
 			string srcFilename = tokens[2];
@@ -1818,7 +1917,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			string sLayoutPos, string sLocationRange, string sCopyright, string sCaption,
 			PictureLocationRangeType locRangeType, string sScaleFactor)
 		{
-			return Create(srcFilename, m_cache.TsStrFactory.MakeString(sCaption, m_cache.DefaultVernWs),
+			return Create(srcFilename, TsStringUtils.MakeString(sCaption, m_cache.DefaultVernWs),
 				sDescription, sLayoutPos, sScaleFactor, locRangeType, anchorLoc, locationParser,
 				sLocationRange, sCopyright, sFolder);
 		}
@@ -2071,8 +2170,6 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// <returns>A ScrFootnote with the properties set to the properties in the
 		/// given string representation</returns>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		public IScrFootnote CreateFromStringRep(IScrBook book, string sTextRepOfFootnote,
 			int footnoteIndex, string footnoteMarkerStyleName)
 		{
@@ -2099,7 +2196,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					// Footnote marker
 					if (bla.Name == "M")
 					{
-						createdFootnote.FootnoteMarker = TsStringUtils.MakeTss(bla.InnerText,
+						createdFootnote.FootnoteMarker = TsStringUtils.MakeString(bla.InnerText,
 							m_cache.DefaultVernWs, footnoteMarkerStyleName);
 					}
 					// start of a paragraph
@@ -2107,7 +2204,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					{
 						IScrTxtPara newPara = m_cache.ServiceLocator.GetInstance<IScrTxtParaFactory>().CreateWithStyle(
 							createdFootnote, ScrStyleNames.NormalFootnoteParagraph);
-						ITsIncStrBldr paraBldr = TsIncStrBldrClass.Create();
+						ITsIncStrBldr paraBldr = TsStringUtils.MakeIncStrBldr();
 						ICmTranslation trans = null;
 						ILgWritingSystemFactory wsf = book.Cache.WritingSystemFactory;
 						foreach (XmlNode paraTextNode in bla.ChildNodes)
@@ -2141,7 +2238,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 								Debug.Assert(transWS != 0, "Unable to find ws from ICU Locale");
 
 								// Build a TsString from the run(s) description.
-								ITsIncStrBldr strBldr = TsIncStrBldrClass.Create();
+								ITsIncStrBldr strBldr = TsStringUtils.MakeIncStrBldr();
 								foreach (XmlNode transTextNode in paraTextNode.ChildNodes)
 								{
 									if (transTextNode.Name != "RUN")
@@ -2373,7 +2470,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			owner.ParagraphsOS.Insert(iPos, newPara);
 			newPara.GetOrCreateBT(); // Make sure the CmTranslation is created.
 			newPara.StyleRules = StyleUtils.ParaStyleTextProps(styleName);
-			newPara.Contents = newPara.Cache.TsStrFactory.EmptyString(newPara.Cache.DefaultVernWs);
+			newPara.Contents = TsStringUtils.EmptyString(newPara.Cache.DefaultVernWs);
 			return newPara;
 		}
 	}

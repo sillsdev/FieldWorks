@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2015 SIL International
+// Copyright (c) 2014-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,20 +6,21 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using System.Xml.XPath;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.Application.ApplicationServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
 using SIL.WritingSystems;
 using SIL.WritingSystems.Migration;
+using SIL.Xml;
 
 namespace SIL.FieldWorks.FDO.DomainServices
 {
@@ -90,7 +91,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		{
 			get
 			{
-				var tpb = TsPropsBldrClass.Create();
+				var tpb = TsStringUtils.MakePropsBldr();
 				tpb.SetIntPropValues((int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault,
 					(int)ColorUtil.ConvertColorToBGR(Color.FromKnownColor(KnownColor.ControlDarkDark)));
 				//				// This is the formula (red + (blue * 256 + green) * 256) for a FW RGB color,
@@ -112,29 +113,31 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			}
 		}
 
-		private static readonly BidirHashtable s_magicWsIdToWsName;
+		private static readonly Dictionary<int, string> MagicWsIdToWsName = new Dictionary<int, string>
+		{
+			{kwsAnal, "analysis"},
+			{kwsVern, "vernacular"},
+			{kwsVerns, "all vernacular"},
+			{kwsAnals, "all analysis"},
+			{kwsAnalVerns, "analysis vernacular"},
+			{kwsVernAnals, "vernacular analysis"},
+			{kwsFirstAnal, "best analysis"},
+			{kwsFirstVern, "best vernacular"},
+			{kwsFirstAnalOrVern, "best analorvern"},
+			{kwsFirstVernOrAnal, "best vernoranal"},
+			{kwsPronunciation, "pronunciation"},
+			{kwsFirstPronunciation, "best pronunciation"},
+			{kwsPronunciations, "all pronunciation"},
+			{kwsReversalIndex, "reversal"},
+			{kwsAllReversalIndex, "all reversal"},
+			{kwsVernInParagraph, "vern in para"},
+			{kwsFirstVernOrNamed, "best vernornamed"}
+		};
+		private static readonly Dictionary<string, int> MagicWsNameToWsId;
 
 		static WritingSystemServices()
 		{
-			s_magicWsIdToWsName = new BidirHashtable();
-
-			s_magicWsIdToWsName[kwsAnal] = "analysis";
-			s_magicWsIdToWsName[kwsVern] = "vernacular";
-			s_magicWsIdToWsName[kwsVerns] = "all vernacular";
-			s_magicWsIdToWsName[kwsAnals] = "all analysis";
-			s_magicWsIdToWsName[kwsAnalVerns] = "analysis vernacular";
-			s_magicWsIdToWsName[kwsVernAnals] = "vernacular analysis";
-			s_magicWsIdToWsName[kwsFirstAnal] = "best analysis";
-			s_magicWsIdToWsName[kwsFirstVern] = "best vernacular";
-			s_magicWsIdToWsName[kwsFirstAnalOrVern] = "best analorvern";
-			s_magicWsIdToWsName[kwsFirstVernOrAnal] = "best vernoranal";
-			s_magicWsIdToWsName[kwsPronunciation] = "pronunciation";
-			s_magicWsIdToWsName[kwsFirstPronunciation] = "best pronunciation";
-			s_magicWsIdToWsName[kwsPronunciations] = "all pronunciation";
-			s_magicWsIdToWsName[kwsReversalIndex] = "reversal";
-			s_magicWsIdToWsName[kwsAllReversalIndex] = "all reversal";
-			s_magicWsIdToWsName[kwsVernInParagraph] = "vern in para";
-			s_magicWsIdToWsName[kwsFirstVernOrNamed] = "best vernornamed";
+			MagicWsNameToWsId = MagicWsIdToWsName.ToDictionary(kvp => kvp.Value, kvp => kvp.Key);
 		}
 
 		/// <summary>
@@ -245,6 +248,10 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				// If it has a parameter tag, strip it off.
 				string wsSpec = StringServices.GetWsSpecWithoutPrefix(xa.Value);
 				int wsMagicOut; // required output arg not used.
+				// LT-16301 If the user specifies a ws (like 'fr') the Get for a magic wsid crashes
+				// before we get to interpret the wsSpec, so convert the default to an actual ws first.
+				if (wsid < 0)
+					wsid = ActualWs(cache, sda, wsid, hvo, flid);
 				wsid = InterpretWsLabel(cache, sda, wsSpec, cache.ServiceLocator.WritingSystemManager.Get(wsid),
 					hvo,
 					flid,
@@ -646,15 +653,16 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// <returns></returns>
 		public static int GetMagicWsIdFromName(string wsSpec)
 		{
-			int wsMagic = 0;
 			if (wsSpec == null)
 				return 0;
-			if (s_magicWsIdToWsName.ContainsValue(wsSpec))
-				wsMagic = (int) s_magicWsIdToWsName.ReverseLookup(wsSpec);
+
+			int wsMagic;
+			if (MagicWsNameToWsId.TryGetValue(wsSpec, out wsMagic))
+				return wsMagic;
 			// JohnT: took this out, because ConfigureFieldDlg wants to pass names of specific writing systems
 			// and get zero back, as indicated in the method comment.
 			//Debug.Assert(wsMagic != 0, "Method encountered a Magic Ws string that it did not understand");
-			return wsMagic;
+			return 0;
 		}
 
 		/// <summary>
@@ -843,7 +851,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 						retWs = defaultVernWs;
 						return null;
 					}
-					var triedWsList = new Set<int>();
+					var triedWsList = new HashSet<int>();
 					// try the current vernacular writing systems
 					if (TryFirstWsInList(sda, hvo, flid, cache.LanguageProject.CurrentVernacularWritingSystems.Handles(),
 						ref triedWsList, out retWs, out retTss))
@@ -1105,7 +1113,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		}
 
 		private static bool TryFirstWsInList(ISilDataAccess sda, int hvo, int flid,
-			IEnumerable<int> wssToTry, ref Set<int> wssTried, out int retWs, out ITsString retTss)
+			IEnumerable<int> wssToTry, ref HashSet<int> wssTried, out int retWs, out ITsString retTss)
 		{
 			retTss = null;
 			retWs = 0;
@@ -1138,11 +1146,12 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// </summary>
 		public static string GetMagicWsNameFromId(int wsMagic)
 		{
-			var wsName = "";
-			if (s_magicWsIdToWsName.Contains(wsMagic))
-				wsName = (string) s_magicWsIdToWsName[wsMagic];
-			Debug.Assert(wsName != "", "Method encountered a Magic Ws ID that it did not understand");
-			return wsName;
+			string wsName;
+			if (MagicWsIdToWsName.TryGetValue(wsMagic, out wsName))
+				return wsName;
+
+			Debug.Fail("Method encountered a Magic Ws ID that it did not understand");
+			return string.Empty;
 		}
 
 		/// <summary>
@@ -1395,6 +1404,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 
 			// Where a reversal index is linked to the origWsId, remove the entire reversal index,
 			// not just its references to the origWsId. (See LT-14482.)
+			// FIXME: Modify the reversal index to preserve the reversal index entries
 			var condemnedReversals = servLocator.GetInstance<IReversalIndexRepository>().AllInstances().Where(reversalIndex =>
 				reversalIndex.WritingSystem == origWsId).ToList();
 			foreach (var condemnedReversal in condemnedReversals)
@@ -2024,8 +2034,6 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// An <see cref="T:System.Collections.IEnumerator"/> object that can be used to iterate through the collection.
 		/// </returns>
 		/// <filterpriority>2</filterpriority>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "We're returning an object")]
 		IEnumerator IEnumerable.GetEnumerator()
 		{
 			return GetEnumerator();

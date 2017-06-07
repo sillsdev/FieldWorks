@@ -1,9 +1,6 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ImportWizardTests.cs
-// Responsibility: TE Team
 
 using System;
 using System.Linq;
@@ -12,12 +9,11 @@ using System.Windows.Forms;
 using NUnit.Framework;
 using Paratext;
 using Rhino.Mocks;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Scripture;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
-using SIL.FieldWorks.Resources;
 using SIL.Utils;
 using SIL.FieldWorks.Test.ProjectUnpacker;
 using SIL.FieldWorks.FDO.DomainServices;
@@ -473,10 +469,9 @@ namespace SIL.FieldWorks.TE.ImportComponentsTests
 		/// ------------------------------------------------------------------------------------
 		protected override void CreateTestData()
 		{
-			m_scr.FindOrCreateDefaultImportSettings(TypeOfImport.Other);
-
 			m_styleSheet = new FwStyleSheet();
 			m_styleSheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles);
+			m_scr.FindOrCreateDefaultImportSettings(TypeOfImport.Other, m_styleSheet, FwDirectoryFinder.TeStylesPath);
 		}
 
 		/// ---------------------------------------------------------------------------------

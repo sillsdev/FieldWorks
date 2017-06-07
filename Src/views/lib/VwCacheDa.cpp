@@ -915,9 +915,8 @@ STDMETHODIMP VwCacheDa::get_MultiStringAlt(HVO hvo, PropTag tag, int ws, ITsStri
 	}
 	else
 	{
-		ITsStrFactoryPtr qtsf;
-		qtsf.CreateInstance(CLSID_TsStrFactory);
-		CheckHr(qtsf->EmptyString(ws, pptss));
+		AssertPtr(m_qtsf);
+		CheckHr(m_qtsf->EmptyString(ws, pptss));
 		return hrRet;
 	}
 
@@ -964,12 +963,11 @@ STDMETHODIMP VwCacheDa::get_StringProp(HVO hvo, PropTag tag, ITsString ** pptss)
 		*pptss = qtss.Detach();
 		return S_OK;
 	}
-	ITsStrFactoryPtr qtsf;
-	qtsf.CreateInstance(CLSID_TsStrFactory);
 	int wsUser;
 	AssertPtr(m_qwsf);
 	CheckHr(m_qwsf->get_UserWs(&wsUser));
-	CheckHr(qtsf->EmptyString(wsUser, pptss));
+	AssertPtr(m_qtsf);
+	CheckHr(m_qtsf->EmptyString(wsUser, pptss));
 	return hrRet;
 
 	END_COM_METHOD(g_fact, IID_ISilDataAccess);
@@ -3565,6 +3563,35 @@ STDMETHODIMP VwCacheDa::get_IsDummyId(HVO hvo, ComBool * pfDummy)
 
 	END_COM_METHOD(g_fact, IID_IVwCacheDa);
 }
+
+/*----------------------------------------------------------------------------------------------
+	Gets the string factory.
+----------------------------------------------------------------------------------------------*/
+STDMETHODIMP VwCacheDa::get_TsStrFactory(ITsStrFactory ** pptsf)
+{
+	BEGIN_COM_METHOD
+	ChkComOutPtr(pptsf);
+
+	AssertPtr(m_qtsf);
+	*pptsf = m_qtsf;
+	(*pptsf)->AddRef();
+
+	END_COM_METHOD(g_fact, IID_IVwCacheDa)
+}
+
+/*----------------------------------------------------------------------------------------------
+	Sets the string factory.
+----------------------------------------------------------------------------------------------*/
+STDMETHODIMP VwCacheDa::putref_TsStrFactory(ITsStrFactory * ptsf)
+{
+	BEGIN_COM_METHOD
+	ChkComArgPtrN(ptsf);
+
+	m_qtsf = ptsf;
+
+	END_COM_METHOD(g_fact, IID_IVwCacheDa)
+}
+
 /*----------------------------------------------------------------------------------------------
 	Try running a virtual property. Return a result indicating whether we found one and, if
 	so, whether it is a 'ComputeEveryTime'.

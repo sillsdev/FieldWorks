@@ -1,21 +1,13 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ScrVerse.cs
-// Responsibility: TE Team
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Collections;
-using SIL.FieldWorks.Common.ScriptureUtils;
-using SILUBS.SharedScrUtils;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using System.Collections.Generic;
-using SIL.CoreImpl;
-using Logos.Utility;
+using SIL.CoreImpl.Scripture;
+using SIL.CoreImpl.Text;
 
 namespace SIL.FieldWorks.FDO.DomainServices
 {
@@ -513,18 +505,18 @@ namespace SIL.FieldWorks.FDO.DomainServices
 	{
 		#region Member Data
 		// member variables
-		private BCVRef m_startRef;
-		private BCVRef m_endRef;
-		private ITsString m_text;
-		private ParaNodeMap m_address;
-		private IScrTxtPara m_Para;
-		private IStText m_ParaOwner;
-		private int m_ichMinVerse;
-		private int m_ichMinText;
+		private readonly BCVRef m_startRef;
+		private readonly BCVRef m_endRef;
+		private readonly ITsString m_text;
+		private readonly ParaNodeMap m_address;
+		private readonly IScrTxtPara m_Para;
+		private readonly IStText m_ParaOwner;
+		private readonly int m_ichMinVerse;
+		private readonly int m_ichMinText;
 		private bool m_chapterNumberRun;
-		private bool m_verseNumberRun;
-		private bool m_completePara;
-		private bool m_isStanzaBreak;
+		private readonly bool m_verseNumberRun;
+		private readonly bool m_completePara;
+		private readonly bool m_isStanzaBreak;
 		#endregion
 
 		#region Construction
@@ -636,8 +628,15 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// ------------------------------------------------------------------------------------
 		public override int GetHashCode()
 		{
-			return HashCodeUtility.CombineHashCodes(m_startRef.BBCCCVVV, m_endRef.BBCCCVVV,
-				Text.GetHashCode(), TextStartIndex, TextLength, VerseStartIndex, Para.Hvo);
+			int code = 23;
+			code = code * 31 + m_startRef.BBCCCVVV.GetHashCode();
+			code = code * 31 + m_endRef.BBCCCVVV.GetHashCode();
+			code = code * 31 + Text.GetHashCode();
+			code = code * 31 + TextStartIndex.GetHashCode();
+			code = code * 31 + TextLength.GetHashCode();
+			code = code * 31 + VerseStartIndex.GetHashCode();
+			code = code * 31 + Para.Hvo.GetHashCode();
+			return code;
 		}
 
 		#endregion

@@ -1,11 +1,10 @@
-// SilSidePane, Copyright 2009 SIL International. All rights reserved.
+// SilSidePane, Copyright 2008-2016 SIL International. All rights reserved.
 // SilSidePane is licensed under the Code Project Open License (CPOL), <http://www.codeproject.com/info/cpol10.aspx>.
 // Derived from OutlookBar v2 2005 <http://www.codeproject.com/KB/vb/OutlookBar.aspx>, Copyright 2007 by Star Vega.
 // Changed in 2008 and 2009 by SIL International to convert to C# and add more functionality.
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -82,10 +81,17 @@ namespace LanguageExplorer.Controls.SilSidePane
 			ItemAreaStyle = SidePaneItemAreaStyle.Buttons;
 		}
 
-		/// <summary></summary>
+		/// <summary>Constructor</summary>
+		/// <param name="itemAreaStyle"> SidePaneItemAreaStyle to use for this sidepane's item area </param>
+		public SidePane(SidePaneItemAreaStyle itemAreaStyle)
+			: this()
+		{
+			ItemAreaStyle = itemAreaStyle;
+		}
+
 		protected override void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "***** Missing Dispose() call for " + GetType() + ". *******");
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "******* Missing Dispose() call for " + GetType() + ". *******");
 			if (disposing)
 			{
 
@@ -190,8 +196,6 @@ namespace LanguageExplorer.Controls.SilSidePane
 
 		/// <remarks>Cannot add the same tab more than once. Cannot add a tab with the same name as
 		/// an existing tab.</remarks>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "itemArea is disposed when closed.")]
 		internal void AddTab(Tab tab)
 		{
 			if (tab == null)
@@ -313,8 +317,6 @@ namespace LanguageExplorer.Controls.SilSidePane
 		/// <summary>
 		/// Gets the currently selected tab, or null if there is no tab selected.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "currentTabWidget is a reference")]
 		internal Tab CurrentTab
 		{
 			get

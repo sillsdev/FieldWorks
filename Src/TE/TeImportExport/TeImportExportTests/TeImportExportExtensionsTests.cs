@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -33,6 +33,7 @@ namespace SIL.FieldWorks.TE
 			IScrImportSet importSettings = Cache.ServiceLocator.GetInstance<IScrImportSetFactory>().Create();
 			Cache.LanguageProject.TranslatedScriptureOA.ImportSettingsOC.Add(importSettings);
 			importSettings.ImportTypeEnum = TypeOfImport.Other;
+			importSettings.Initialize(null, null);
 
 			var fileOs = new MockFileOS();
 			try
@@ -66,6 +67,7 @@ namespace SIL.FieldWorks.TE
 			IScrImportSet importSettings = Cache.ServiceLocator.GetInstance<IScrImportSetFactory>().Create();
 			Cache.LanguageProject.TranslatedScriptureOA.ImportSettingsOC.Add(importSettings);
 			importSettings.ImportTypeEnum = TypeOfImport.Paratext6;
+			importSettings.Initialize(null, null);
 
 			var fileOs = new MockFileOS();
 			MockParatextHelper ptHelper = null;
@@ -95,8 +97,7 @@ namespace SIL.FieldWorks.TE
 			finally
 			{
 				ParatextHelper.Manager.Reset();
-				if (ptHelper != null)
-					ptHelper.Dispose();
+				ptHelper?.Dispose();
 				FileUtils.Manager.Reset();
 			}
 		}
@@ -112,6 +113,7 @@ namespace SIL.FieldWorks.TE
 			IScrImportSet importSettings = Cache.ServiceLocator.GetInstance<IScrImportSetFactory>().Create();
 			Cache.LanguageProject.TranslatedScriptureOA.ImportSettingsOC.Add(importSettings);
 			importSettings.ImportTypeEnum = TypeOfImport.Paratext5;
+			importSettings.Initialize(null, null);
 			ImportProjectIsAccessible_helper(importSettings);
 		}
 
@@ -126,6 +128,7 @@ namespace SIL.FieldWorks.TE
 			IScrImportSet importSettings = Cache.ServiceLocator.GetInstance<IScrImportSetFactory>().Create();
 			Cache.LanguageProject.TranslatedScriptureOA.ImportSettingsOC.Add(importSettings);
 			importSettings.ImportTypeEnum = TypeOfImport.Other;
+			importSettings.Initialize(null, null);
 			ImportProjectIsAccessible_helper(importSettings);
 		}
 

@@ -1,20 +1,17 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using NUnit.Framework;
-using SIL.CoreImpl;
-using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.LexText.Controls;
-using SIL.FieldWorks.Test.TestUtils;
 using Sfm2Xml;
+using SIL.CoreImpl.WritingSystems;
 
 namespace LexTextControlsTests
 {
@@ -22,14 +19,8 @@ namespace LexTextControlsTests
 	/// These are largely adapted from the tests in LanguageExplorer.Areas.TextsAndWords.Interlinear.InterlinSfmImportTests
 	/// </summary>
 	[TestFixture]
-	public class WordsSfmImportTests : BaseTest
+	public class WordsSfmImportTests
 	{
-		[SuppressMessage("Gendarme.Rules.Portability", "NewLineLiteralRule",
-			Justification="New lines in input strings are different depending on platform")]
-		public WordsSfmImportTests()
-		{
-		}
-
 		/// <summary>
 		/// This tests out most aspects of the conversion.
 		/// </summary>

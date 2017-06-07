@@ -1,13 +1,12 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Xml;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.Utils;
+using SIL.Xml;
 
 namespace SIL.FieldWorks.LexText.Controls.MGA
 {
@@ -45,7 +44,7 @@ namespace SIL.FieldWorks.LexText.Controls.MGA
 						m_fInDatabase = featSys.GetFeature(sId) != null;
 						break;
 					case GlossListTreeView.ImageKind.userChoice: // closed feature
-						string sStatus = XmlUtils.GetAttributeValue(m_node, "status");
+						string sStatus = XmlUtils.GetOptionalAttributeValue(m_node, "status");
 						m_fInDatabase = featSys.GetFeature(sId) != null;
 						if (sStatus == "proxy")
 						{

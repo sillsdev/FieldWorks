@@ -15,7 +15,7 @@ using Paratext;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Utils;
-using SILUBS.SharedScrUtils;
+using SIL.CoreImpl.Scripture;
 using SIL.Reporting;
 
 namespace SIL.FieldWorks.Common.ScriptureUtils
@@ -315,8 +315,6 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 					importSettings.ParatextNotesProj = null;
 			}
 
-			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-				Justification = "See REVIEW comment")]
 			private bool LoadProjectMappings(string project, ScrMappingList mappingList, ImportDomain domain)
 			{
 				// If the new project ID is null, then do not load mappings.

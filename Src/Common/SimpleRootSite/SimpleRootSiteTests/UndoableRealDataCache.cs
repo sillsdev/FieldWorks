@@ -4,10 +4,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Cellar;
 using SIL.FieldWorks.CacheLight;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 
 namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 {
@@ -209,18 +209,6 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			}
 		}
 
-		public IUndoGrouper UndoGrouper
-		{
-			get
-			{
-				throw new NotImplementedException();
-			}
-			set
-			{
-				throw new NotImplementedException();
-			}
-		}
-
 		public bool IsUndoOrRedoInProgress
 		{
 			get
@@ -245,8 +233,6 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 	/// <summary>
 	/// Undoable real data cache.
 	/// </summary>
-	[SuppressMessage("Gendarme.Rules.Design", "UseCorrectDisposeSignaturesRule",
-		Justification = "Unit test")]
 	public class UndoableRealDataCache : IRealDataCache
 	{
 		public enum ObjType
@@ -294,8 +280,6 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			public object Object { get; private set; }
 		}
 
-		[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-			Justification = "m_Cache is a reference")]
 		public class CacheUndoAction: IUndoAction
 		{
 			private IRealDataCache m_Cache;
@@ -411,6 +395,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			m_isDirty = true;
 		}
 
+		public ITsStrFactory TsStrFactory { get; set; }
 
 		/// <summary>
 		/// Member CacheObjProp
@@ -1470,13 +1455,25 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			m_cache.CheckDisposed();
 		}
 
-		/// <summary/>
 		/// <remarks>
 		/// Must not be virtual.
 		/// </remarks>
 		public void Dispose()
 		{
-			m_cache.Dispose();
+			Dispose(true);
+			GC.SuppressFinalize(this);
+		}
+
+		~UndoableRealDataCache()
+		{
+			Dispose(false);
+		}
+
+		protected virtual void Dispose(bool disposing)
+		{
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
+			if (disposing)
+				m_cache.Dispose();
 		}
 
 		/// <summary>

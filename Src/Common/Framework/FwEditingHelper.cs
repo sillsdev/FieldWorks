@@ -14,10 +14,11 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Resources;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Text;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.Common.Framework
@@ -416,8 +417,7 @@ namespace SIL.FieldWorks.Common.Framework
 			if (propTag == SimpleRootSite.kTagUserPrompt)
 			{
 				ich = 0;
-				ITsStrFactory factory = m_cache.TsStrFactory;
-				tss = factory.MakeString(string.Empty, m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle);
+				tss = TsStringUtils.EmptyString(m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle);
 				propTag = StTxtParaTags.kflidContents;
 				helper.SetTextPropId(SelectionHelper.SelLimitType.Anchor, StTxtParaTags.kflidContents);
 				helper.SetTextPropId(SelectionHelper.SelLimitType.End, StTxtParaTags.kflidContents);

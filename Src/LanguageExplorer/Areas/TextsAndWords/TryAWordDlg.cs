@@ -1,15 +1,10 @@
-// Copyright (c) 2003-2015 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-// <remarks>
-// Implementation of:
-//		TryAWordDlg - Dialog for parsing a single wordform
-// </remarks>
 
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -20,7 +15,6 @@ using SIL.CoreImpl;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.WordWorks.Parser;
 using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
 
@@ -30,7 +24,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 	/// <summary>
 	/// Summary description for TryAWordDlg.
 	/// </summary>
-	internal sealed class TryAWordDlg : Form, IFlexComponent, IFWDisposable
+	internal sealed class TryAWordDlg : Form, IFlexComponent
 	{
 		private const string PersistProviderID = "TryAWord";
 		private const string HelpTopicID = "khtpTryAWord";
@@ -126,8 +120,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 		#endregion
 
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification = "Code in question is only compiled on Windows")]
 		internal void SetDlgInfo(IWfiWordform wordform, ParserListener parserListener)
 		{
 			m_persistProvider = PersistenceProviderFactory.CreatePersistenceProvider(PropertyTable);
@@ -166,8 +158,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			}
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="TryAWordRootSite gets added to control collection and disposed there")]
 		private void SetRootSite()
 		{
 			m_rootsite = new TryAWordRootSite()
@@ -192,8 +182,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			return StringTable.Table.GetString(id, "Linguistics/Morphology/TryAWord");
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="HtmlControl gets added to control collection and disposed there")]
 		private void InitHtmlControl()
 		{
 			m_htmlControl = new HtmlControl
@@ -247,8 +235,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Design", "UseCorrectDisposeSignaturesRule",
-			Justification = "The class derives from Form. Therefore Dispose(bool) can't be private in a sealed class.")]
 		protected override void Dispose( bool disposing )
 		{
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
@@ -573,19 +559,8 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				m_parserListener.DisconnectFromParser();
 				m_statusLabel.Text = ParserStoppedMessage();
 				m_tryItButton.Enabled = true;
-				var iree = ex as InvalidReduplicationEnvironmentException;
-				if (iree != null)
-				{
-					string msg = String.Format(ParserUIStrings.ksHermitCrabReduplicationProblem, iree.Morpheme,
-						iree.Message);
-					MessageBox.Show(this, msg, ParserUIStrings.ksBadAffixForm,
-							MessageBoxButtons.OK, MessageBoxIcon.Error);
-				}
-				else
-				{
-					var app = PropertyTable.GetValue<IApp>("App");
-					ErrorReporter.ReportException(ex, app.SettingsKey, app.SupportEmailAddress, this, false);
-				}
+				var app = PropertyTable.GetValue<IApp>("App");
+				ErrorReporter.ReportException(ex, app.SettingsKey, app.SupportEmailAddress, this, false);
 				return;
 			}
 

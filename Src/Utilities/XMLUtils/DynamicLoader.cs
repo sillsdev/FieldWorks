@@ -12,6 +12,8 @@ using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.Xml;
 
 namespace SIL.Utils
 {

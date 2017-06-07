@@ -5,8 +5,8 @@
 using Microsoft.Practices.ServiceLocation;
 using System;
 
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.WritingSystems;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.Infrastructure;
 
 namespace SIL.FieldWorks.FDO
@@ -83,11 +83,6 @@ namespace SIL.FieldWorks.FDO
 		/// Shortcut to the writing system factory that gives meaning to writing systems.
 		/// </summary>
 		ILgWritingSystemFactory WritingSystemFactory { get; }
-
-		/// <summary>
-		/// Shortcut to the Unicode character property engine.
-		/// </summary>
-		ILgCharacterPropertyEngine UnicodeCharProps { get; }
 	}
 
 	/// <summary>

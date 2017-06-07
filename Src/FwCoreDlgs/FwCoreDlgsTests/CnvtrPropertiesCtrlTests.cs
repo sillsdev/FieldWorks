@@ -1,21 +1,15 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using System.Threading;
 using System.Windows.Forms;
 using NUnit.Framework;
 
 using ECInterfaces;
-using SIL.Utils.Attributes;
 using SilEncConverters40;
 using SIL.FieldWorks.FwCoreDlgs;
-using SIL.FieldWorks.Test.TestUtils;
-using SIL.Utils;
 
 namespace AddConverterDlgTests
 {
@@ -173,9 +167,7 @@ namespace AddConverterDlgTests
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification="Unit test. m_myDlg gets disposed in FixtureTearDown method.")]
-	public class CnvtrPropertiesControlTests : BaseTest
+	public class CnvtrPropertiesControlTests
 	{
 		private DummyAddCnvtrDlg m_myDlg;
 		private DummyCnvtrPropertiesCtrl m_myCtrl;
@@ -190,10 +182,9 @@ namespace AddConverterDlgTests
 		/// <see cref="CnvtrPropertiesCtrl"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public override void FixtureSetup()
+		[TestFixtureSetUp]
+		public void FixtureSetup()
 		{
-			base.FixtureSetup();
-
 			var encConverters = new EncConverters();
 			// Remove any encoding converters we created that have been left over due to a crash
 			// or other mishap.  (That's why we use wierd names starting with ZZZUnitTest, so
@@ -254,7 +245,8 @@ namespace AddConverterDlgTests
 		/// <summary>
 		/// Clean up after running all the tests.
 		/// </summary>
-		public override void FixtureTeardown()
+		[TestFixtureTearDown]
+		public void FixtureTeardown()
 		{
 			EncConverters encConverters;
 			// Dispose managed resources here.
@@ -302,8 +294,6 @@ namespace AddConverterDlgTests
 
 			// Remove any encoding converters that we may have created during this test run.
 			RemoveTestConverters(encConverters, "Installed mappings after test teardown:");
-
-			base.FixtureTeardown();
 		}
 
 		void RemoveTestConverters(EncConverters encConverters, string testMessage)

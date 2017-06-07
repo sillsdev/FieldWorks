@@ -3,7 +3,6 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
@@ -37,8 +36,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		///
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "SilButtonCell gets disposed in Dispose")]
 		public SilButtonColumn() : base(new SilButtonCell())
 		{
 			base.DefaultCellStyle.Font = SystemInformation.MenuFont;
@@ -229,8 +226,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		///
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="FindForm() returns a reference")]
 		internal void ShowToolTip()
 		{
 			if ((m_toolTip != null && m_toolTip.Active) ||
@@ -294,6 +289,13 @@ namespace SIL.FieldWorks.Common.Widgets
 		private bool m_mouseDownOnButton = false;
 		private bool m_enabled = true;
 
+		/// <summary/>
+		protected override void Dispose(bool disposing)
+		{
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ******");
+			base.Dispose(disposing);
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Repaint the cell when it's enabled property changes.
@@ -344,8 +346,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// specified row.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "row is a reference")]
 		private bool InternalShowButton(int rowIndex)
 		{
 			bool owningColShowValue =
@@ -524,8 +524,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// Draws the button in the cell.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "buttonFont is a reference")]
 		private void DrawButton(Graphics g, Rectangle rcbtn, int rowIndex)
 		{
 			if (!InternalShowButton(rowIndex))

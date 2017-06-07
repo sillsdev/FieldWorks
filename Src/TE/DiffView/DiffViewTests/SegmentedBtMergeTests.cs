@@ -1,21 +1,19 @@
-﻿// Copyright (c) 2007-2013 SIL International
+﻿// Copyright (c) 2007-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: SegmentedBtMergeTests.cs
-// Responsibility: TE Team
 
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using NUnit.Framework;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.Scripture;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.Test.TestUtils;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.Utils;
 
@@ -200,7 +198,7 @@ namespace SIL.FieldWorks.TE
 					foundSegment.LiteralTranslation.set_String(ws.Handle, trans.Replace("Trans", "Literal"));
 					if (note != null)
 					{
-						ITsString tss = TsStrFactoryClass.Create().MakeString("Note" + ws.IcuLocale, ws.Handle);
+						ITsString tss = TsStringUtils.MakeString("Note" + ws.IcuLocale, ws.Handle);
 						note.Content.set_String(ws.Handle, tss);
 					}
 				}
@@ -2489,7 +2487,7 @@ namespace SIL.FieldWorks.TE
 			para2Curr.ParseIsCurrent = fParseIsCurrent;
 			IScrTxtPara para3Curr = AddParaToMockedSectionContent(sectionCurr, ScrStyleNames.NormalParagraph);
 			AddVerseSegment(para3Curr, 0, 2, "Stirring up anger produces strife.", "Stirring trans");
-			para3Curr.Contents = para3Curr.Contents.Insert(0, TsStringUtils.MakeTss(" ", Cache.DefaultVernWs));
+			para3Curr.Contents = para3Curr.Contents.Insert(0, TsStringUtils.MakeString(" ", Cache.DefaultVernWs));
 			para3Curr.ParseIsCurrent = fParseIsCurrent;
 
 			// Build up the "revision" paragraphs

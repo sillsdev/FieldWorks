@@ -1,22 +1,20 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Xml;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.FixData;
-using SIL.FieldWorks.Test.TestUtils;
 using SIL.TestUtilities;
 
 namespace FixFwDataDllTests
 {
-	class FwDataFixerTest : BaseTest
+	class FwDataFixerTest
 	{
 		private const string WordformswithsameformTestDir = "WordformsWithSameForm";
 		private List<string> _errors = new List<string>();
@@ -55,15 +53,14 @@ namespace FixFwDataDllTests
 		private readonly string[] m_testFileDirectories =
 			{
 				"DuplicateGuid", "DanglingCustomListReference", "DanglingCustomProperty", "DanglingReference",
-				"DuplicateWs", "SequenceFixer", "EntryWithExtraMSA", "EntryWithMsaAndNoSenses", "TagAndCellRefs", "GenericDates",
+				"DuplicateWs", "SequenceFixer", "EntryWithExtraMSA", "EntryWithMsaAndNoSenses", "EntryExtraMsaAndBustedSenseRef", "TagAndCellRefs", "GenericDates",
 				"HomographFixer", WordformswithsameformTestDir, "MorphBundleProblems", "MissingBasicCustomField", "DeletedMsaRefBySenseAndBundle",
 				"DuplicateNameCustomList", "SingleTargetLexRefs", "DuplicateStyles"
 			};
 
 		[TestFixtureSetUp]
-		public override void FixtureSetup()
+		public void FixtureSetup()
 		{
-			base.FixtureSetup();
 			basePath = Path.Combine(Path.Combine(Path.Combine(Path.Combine(FwDirectoryFinder.SourceDirectory, "Utilities"), "FixFwDataDll"), "FixFwDataDllTests"), "TestData");
 			foreach (var testDir in m_testFileDirectories)
 				CopyTestData(testDir);
@@ -755,6 +752,31 @@ namespace FixFwDataDllTests
 		}
 
 		[Test]
+		public void TestEntryWithOneExtraMsaAndOneSenseWithABustedRef()
+		{
+			var testPath = Path.Combine(basePath, "EntryExtraMsaAndBustedSenseRef");
+			_errors.Clear();
+			Assert.DoesNotThrow(() =>
+			{
+				var data = new FwDataFixer(Path.Combine(testPath, "BasicFixup.fwdata"), new DummyProgressDlg(),
+										   LogErrors, ErrorCount);
+
+				// SUT
+				data.FixErrorsAndSave();
+			}, "Exception running the data fixer on the entry with MSA and no senses test data.");
+			Assert.That(_errors.Count, Is.GreaterThan(0), "fixing anything should log an error");
+
+			// check that the msa was there originally
+			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.bak")).HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class=\"LexEntry\"]/MorphoSyntaxAnalyses/objsur", 2);
+			// And that it was deleted.
+			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class=\"LexEntry\"]/MorphoSyntaxAnalyses/objsur", 1);
+			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class=\"LexSense\"]/MorphoSyntaxAnalysis/objsur", 1);
+		}
+
+		[Test]
 		public void TestDanglingTextTagAndChartReferences()
 		{
 			var testPath = Path.Combine(basePath, "TagAndCellRefs");
@@ -844,8 +866,6 @@ namespace FixFwDataDllTests
 		/// LT-13509 Identical entries homograph numbering inconsistency.
 		/// </summary>
 		[Test]
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		public void TestForHomographNumberInconsistency()
 		{
 			// Setup
@@ -992,8 +1012,6 @@ namespace FixFwDataDllTests
 			VerifyHn(xmlDoc, irrelevantElseGuid, "2"); // a homograph in french (though not in the first AUni ws)
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void VerifyHn(XmlDocument xmlDoc, string guid, string expectedHn)
 		{
 			XmlNodeList entries;

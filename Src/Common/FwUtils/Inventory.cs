@@ -1,9 +1,8 @@
-// Copyright (c) 2003-2015 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text;
 using System.Diagnostics;
@@ -14,6 +13,7 @@ using System.Xml.Linq;
 using System.Xml.XPath;
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
+using SIL.Xml;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
@@ -318,7 +318,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			{
 				string sVersion = XmlUtils.GetOptionalAttributeValue(element, "version");
 				if (sVersion == null && m_version != 0)
-					XmlUtils.AppendAttribute(element, "version", m_version.ToString());
+					XmlUtils.SetAttribute(element, "version", m_version.ToString());
 			}
 			string name = null;
 			var layoutName = XmlUtils.GetOptionalAttributeValue(element, "name", "");
@@ -621,10 +621,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// Compute and save in m_mainDoc a node which represents the actual meaning of the given
 		/// alteration node, which has the specified element name and keys.
 		/// </summary>
-		/// <param name="attrvals"></param>
-		/// <param name="alteration"></param>
-		/// <param name="elementName"></param>
-		/// <returns></returns>
 		private XElement ApplyAlteration(string elementName, string[] attrvals, XElement alteration)
 		{
 			string baseName = XmlUtils.GetManditoryAttributeValue(alteration, "base");
@@ -679,8 +675,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 			return unified;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "ChildNodes returns a reference")]
 		private void UnifyChildren(XElement alteration, XElement baseNode, XElement unified)
 		{
 			var reorder = XmlUtils.GetOptionalBooleanAttributeValue(alteration, "reorder", false);
@@ -727,9 +721,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// If there is a node in remainingOthers which 'matches' item (in name and
 		/// specified keys), remove and return it; otherwise return null.
 		/// </summary>
-		/// <param name="remainingOthers"></param>
-		/// <param name="target"></param>
-		/// <returns></returns>
 		XElement MatchAndRemove(ICollection<XElement> remainingOthers, XElement target)
 		{
 			var elementName = target.Name.LocalName;
@@ -1059,8 +1050,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <remarks>
 		/// tests over in XMLVIews need access to this method.
 		/// </remarks>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		public void AddElementsFromFiles(IEnumerable<string> filePaths, int version, bool loadUserOverRides)
 		{
 			Debug.Assert(filePaths != null);
@@ -1216,38 +1205,38 @@ namespace SIL.FieldWorks.Common.FwUtils
 					}
 					else
 					{
-					string[] keyAttrs;
-					var key = GetKeyMain(node, out keyAttrs);
+						string[] keyAttrs;
+						var key = GetKeyMain(node, out keyAttrs);
 					XElement current;
-					if (m_getElementTable.TryGetValue(key, out current))
-					{
-						XElement merged = Merger.Merge(current, node, m_mainDoc, string.Empty);
-						if (loadUserOverRides)
-							XmlUtils.SetAttribute(merged, "version", version.ToString());
-						survivors.Add(merged);
-						wasMerged = true;
-					}
-					else
-					{
-						// May be part of a named view or a duplicated node. Look for the unmodified one to merge with.
-						string[] standardKeyVals;
-						var oldLayoutSuffix = LayoutKeyUtils.GetSuffixedPartOfNamedViewOrDuplicateNode(keyAttrs, key.KeyVals, out standardKeyVals);
-						if (!string.IsNullOrEmpty(oldLayoutSuffix))
+						if (m_getElementTable.TryGetValue(key, out current))
 						{
-							var originalKey = new GetElementKey(key.ElementName, standardKeyVals, m_mainDoc);
-							if (m_getElementTable.TryGetValue(originalKey, out current))
+						XElement merged = Merger.Merge(current, node, m_mainDoc, string.Empty);
+							if (loadUserOverRides)
+								XmlUtils.SetAttribute(merged, "version", version.ToString());
+							survivors.Add(merged);
+							wasMerged = true;
+						}
+						else
+						{
+							// May be part of a named view or a duplicated node. Look for the unmodified one to merge with.
+							string[] standardKeyVals;
+							var oldLayoutSuffix = LayoutKeyUtils.GetSuffixedPartOfNamedViewOrDuplicateNode(keyAttrs, key.KeyVals, out standardKeyVals);
+							if (!string.IsNullOrEmpty(oldLayoutSuffix))
 							{
+								var originalKey = new GetElementKey(key.ElementName, standardKeyVals, m_mainDoc);
+								if (m_getElementTable.TryGetValue(originalKey, out current))
+								{
 								var merged = Merger.Merge(current, node, m_mainDoc, oldLayoutSuffix);
-								// We'll do the below and a bunch of other mods inside of LayoutMerger from now on.
-								//XmlUtils.SetAttribute(merged, "name", originalKey[2]); // give it the name from before
-								if (loadUserOverRides)
-									XmlUtils.SetAttribute(merged, "version", version.ToString(CultureInfo.InvariantCulture));
-								survivors.Add(merged);
-								wasMerged = true;
+									// We'll do the below and a bunch of other mods inside of LayoutMerger from now on.
+									//XmlUtils.SetAttribute(merged, "name", originalKey[2]); // give it the name from before
+									if (loadUserOverRides)
+										XmlUtils.SetAttribute(merged, "version", version.ToString(CultureInfo.InvariantCulture));
+									survivors.Add(merged);
+									wasMerged = true;
+								}
 							}
 						}
 					}
-				}
 				}
 				else if (fileVersion == version)
 				{
@@ -1563,19 +1552,15 @@ namespace SIL.FieldWorks.Common.FwUtils
 			public override string ToString()
 			{
 				var bldr = new StringBuilder();
-				if (!String.IsNullOrEmpty(m_elementName))
+				if (!string.IsNullOrEmpty(m_elementName))
 					bldr.AppendFormat("{0}: ", m_elementName);
 				if (m_attrvals != null)
-					bldr.Append(m_attrvals.ToString("-"));
-				if (bldr.Length > 0)
-					return bldr.ToString();
-
-				return base.ToString();
+					bldr.Append(string.Join("-", m_attrvals));
+				return bldr.Length > 0 ? bldr.ToString() : base.ToString();
 			}
 		}
 
-		/// <summary />
-		public HashSet<string> ExistingDuplicateKeys()
+		public ISet<string> ExistingDuplicateKeys()
 		{
 			var set = new HashSet<string>();
 			foreach (var dupKey in
@@ -1618,7 +1603,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			}
 			var original = (XElement)path[i++];
 			var result = original.Clone();
-			XmlUtils.AppendAttribute(result, "version", version.ToString());
+			XmlUtils.SetAttribute(result, "version", version.ToString());
 			XElement finalPartRef = null;
 			var currentParent = result;
 			for (; i < path.Length; i++)
@@ -1676,14 +1661,14 @@ namespace SIL.FieldWorks.Common.FwUtils
 					// behavior of that layout.
 					currentChild = new XElement("part");
 					currentParent.Add(currentChild);
-					XmlUtils.AppendAttribute(currentChild, "ref", partId);
+					XmlUtils.SetAttribute(currentChild, "ref", partId);
 					if (XmlUtils.GetOptionalAttributeValue(node, "ref") == "Custom")
 					{
 						// In this case (and possibly this case only, at least, we weren't doing it
 						// before), we need to copy the param attribute.
 						var param = XmlUtils.GetOptionalAttributeValue(node, "param");
 						if (!string.IsNullOrEmpty(param))
-							XmlUtils.AppendAttribute(currentChild, "param", param);
+							XmlUtils.SetAttribute(currentChild, "param", param);
 					}
 				}
 
@@ -1691,7 +1676,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 				currentParent = currentChild; // if we continue we want a child of this next.
 			}
 			Debug.Assert(finalPartRef != null);
-			XmlUtils.AppendAttribute(finalPartRef, attrName, value);
+			XmlUtils.SetAttribute(finalPartRef, attrName, value);
 
 			newPartRef = finalPartRef;
 

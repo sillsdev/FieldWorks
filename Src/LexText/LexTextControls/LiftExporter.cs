@@ -8,15 +8,11 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Xml;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
@@ -24,6 +20,12 @@ using SIL.Utils;
 using System.Text;
 using SIL.FieldWorks.FDO.Application.ApplicationServices;
 using System.Windows.Forms;
+using SIL.CoreImpl.Cellar;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.Xml;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -32,8 +34,6 @@ namespace SIL.FieldWorks.LexText.Controls
 	/// Export the lexicon as a LIFT file.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification="m_cache is a reference")]
 	public class LiftExporter
 	{
 		/// <summary></summary>
@@ -55,7 +55,11 @@ namespace SIL.FieldWorks.LexText.Controls
 		private readonly WritingSystemManager m_wsManager;
 		private readonly int m_wsEn;
 		private readonly int m_wsBestAnalVern;
-		private Dictionary<Guid, string> m_CmPossibilityListsReferencedByFields = new Dictionary<Guid, string>();
+		private readonly int m_wsBestVernAnal;
+		/// <summary>
+		/// This contains the possibility lists that are custom or that are referenced by a custom field.
+		/// </summary>
+		private Dictionary<Guid, string> m_CmPossListsReferencedOrCustom = new Dictionary<Guid, string>();
 		private Dictionary<Guid, string> m_ListsGuidToRangeName = new Dictionary<Guid, string>();
 		private readonly ICmPossibilityListRepository m_repoCmPossibilityLists;
 		private readonly ISilDataAccessManaged m_sda;
@@ -74,6 +78,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				m_wsEn = cache.DefaultUserWs;
 			m_wsManager = cache.ServiceLocator.WritingSystemManager;
 			m_wsBestAnalVern = (int)SpecialWritingSystemCodes.BestAnalysisOrVernacular;
+			m_wsBestVernAnal = (int)SpecialWritingSystemCodes.BestVernacularOrAnalysis;
 		}
 
 		/// <summary>
@@ -106,13 +111,12 @@ namespace SIL.FieldWorks.LexText.Controls
 			ExportLift(w, folderPath, repoLexEntry.AllInstances(), repoLexEntry.Count);
 		}
 
-		private void ExportLift(TextWriter w, string folderPath,
-			IEnumerable<ILexEntry> entries, int cEntries)
+		public void ExportLift(TextWriter w, string folderPath, IEnumerable<ILexEntry> entries, int entryCount)
 		{
 			FolderPath = folderPath;
 			if (SetProgressMessage != null)
 			{
-				var ma = new ProgressMessageArgs { Max = cEntries, MessageId = "ksExportingLift" };
+				var ma = new ProgressMessageArgs { Max = entryCount, MessageId = "ksExportingLift" };
 				SetProgressMessage(this, ma);
 			}
 
@@ -122,15 +126,15 @@ namespace SIL.FieldWorks.LexText.Controls
 				Directory.Delete(Path.Combine(FolderPath, "audio"), true);
 
 			w.WriteLine("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>");
-			w.WriteLine("<!-- See http://code.google.com/p/lift-standard for more information on the format used here. -->");
+			w.WriteLine("<!-- See https://github.com/sillsdev/lift-standard for more information on the format used here. -->");
 			w.WriteLine("<lift producer=\"SIL.FLEx {0}\" version=\"0.13\">", GetVersion());
 
 			//Determine which custom fields ones point to a CmPossibility List (either custom or standard).
 			//Determine which ones point to a custom CmPossibility List and make sure we output that list as a range.
 			//Also if a List is not referred to by standard fields, it might not be output as a range, so if the List
 			//is referenced by a custom field, then that List does need to be output to the LIFT ranges file.
-			m_CmPossibilityListsReferencedByFields = GetCmPossibilityListsReferencedByFields(entries);
-			MapCmPossibilityListGuidsToLiftRangeNames(m_CmPossibilityListsReferencedByFields);
+			m_CmPossListsReferencedOrCustom = GetCustomListsAndReferencedLists(entries);
+			MapCmPossibilityListGuidsToLiftRangeNames(m_CmPossListsReferencedOrCustom);
 
 			WriteHeaderInformation(w);
 			foreach (var entry in entries)
@@ -252,8 +256,10 @@ namespace SIL.FieldWorks.LexText.Controls
 			WriteString(w, "field", "type=\"import-residue\"", "form", entry.ImportResidue);
 			foreach (var alt in entry.AlternateFormsOS)
 				WriteAlternateForm(w, alt);
-			if (entry.EtymologyOA != null)
-				WriteEtymology(w, entry.EtymologyOA);
+			foreach (var etym in entry.EtymologyOS)
+				WriteEtymology(w, etym);
+			foreach (var dialect in entry.DialectLabelsRS)
+				WriteTrait(w, RangeNames.sDbDialectLabelsOA, dialect.Name, m_wsBestVernAnal);
 			foreach (var er in entry.EntryRefsOS)
 				WriteLexEntryRef(w, er);
 			foreach (var ler in entry.LexEntryReferences)
@@ -310,7 +316,7 @@ namespace SIL.FieldWorks.LexText.Controls
 										Path.Combine(FdoFileHelper.GetMediaDir(m_cache.LangProject.LinkedFilesRootDir), internalPath),
 										"audio");
 									if (internalPath != exportedForm)
-										tssString = m_cache.TsStrFactory.MakeString(exportedForm, ws);
+										tssString = TsStringUtils.MakeString(exportedForm, ws);
 								}
 								WriteFormElement(w, ws, tssString);
 							}
@@ -559,6 +565,15 @@ namespace SIL.FieldWorks.LexText.Controls
 					if (target.Hvo == hvoOpen)
 						continue;
 				}
+				// If this is a unidirectional type relation, only show elements if the
+				//  first element is the currently open object.
+				if (nMappingType == (int)LexRefTypeTags.MappingTypes.kmtSenseUnidirectional ||
+					nMappingType == (int)LexRefTypeTags.MappingTypes.kmtEntryUnidirectional ||
+					nMappingType == (int)LexRefTypeTags.MappingTypes.kmtEntryOrSenseUnidirectional)
+				{
+					if (hvoOpen != lref.TargetsRS[0].Hvo)
+						break;
+				}
 				slr.CrossRefHvo = target.Hvo;
 				w.Write("<relation");
 				WriteLiftDates(w, lref);
@@ -661,11 +676,17 @@ namespace SIL.FieldWorks.LexText.Controls
 			w.Write("<etymology");
 			WriteLiftDates(w, ety);
 			w.Write(" type=\"{0}\"", MakeSafeAndNormalizedAttribute(GetProperty(ety, "LiftType").ToString()));
-			w.Write(" source=\"{0}\"", MakeSafeAndNormalizedAttribute(GetProperty(ety, "LiftSource").ToString()));
+			w.Write(" source=\"{0}\"", string.Empty);
 			w.WriteLine(">");
 			WriteAllForms(w, null, null, "form", ety.Form);
 			WriteAllForms(w, null, null, "gloss", ety.Gloss);
 			WriteAllForms(w, "field", "type=\"comment\"", "form", ety.Comment);
+			WriteAllForms(w, "field", "type=\"preccomment\"", "form", ety.PrecComment);
+			foreach (var lang in ety.LanguageRS)
+				WritePossibilityLiftTrait(RangeNames.sDbLanguagesOA, w, lang.Hvo);
+			WriteAllForms(w, "field", "type=\"note\"", "form", ety.Note);
+			WriteAllForms(w, "field", "type=\"bibliography\"", "form", ety.Bibliography);
+			WriteAllForms(w, "field", "type=\"languagenotes\"", "form", ety.LanguageNotes);
 			WriteLiftResidue(w, ety);
 			w.WriteLine("</etymology>");
 		}
@@ -780,6 +801,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			WriteString(w, "note", "type=\"source\"", "form", sense.Source);
 			foreach (var anthro in sense.AnthroCodesRC)
 				WriteTrait(w, RangeNames.sAnthroListOA, anthro.Abbreviation, m_wsBestAnalVern);
+			foreach (var dialect in sense.DialectLabelsRS)
+				WriteTrait(w, RangeNames.sDbDialectLabelsOA, dialect.Name, m_wsBestVernAnal);
 			foreach (var dom in sense.DomainTypesRC)
 				WriteTrait(w, RangeNames.sDbDomainTypesOA, dom.Name, m_wsBestAnalVern);
 			foreach (var reversal in sense.ReversalEntriesRC)
@@ -1139,12 +1162,12 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="sRangesFile"></param>
 		private void WriteRangeRefsForListsReferencedByFields(TextWriter w, string sRangesFile)
 		{
-			foreach (var posList in m_CmPossibilityListsReferencedByFields)
+			foreach (var posList in m_CmPossListsReferencedOrCustom)
 			{
 				//We actually want to export any range which is referenced by a Custom field and is not already output.
 				//not just Custom ranges.
 				String rangeName;
-				var haveValue = m_CmPossibilityListsReferencedByFields.TryGetValue(posList.Key, out rangeName);
+				var haveValue = m_CmPossListsReferencedOrCustom.TryGetValue(posList.Key, out rangeName);
 				w.WriteLine("<range id=\"{0}\" href=\"file://{1}\"/>",
 				MakeSafeAndNormalizedAttribute(rangeName), sRangesFile);
 			}
@@ -1638,7 +1661,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		public void ExportLiftRanges(StringWriter w)
 		{
 			w.WriteLine("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-			w.WriteLine("<!-- See http://code.google.com/p/lift-standard for more information on the format used here. -->");
+			w.WriteLine("<!-- See http://github.com/sillsdev/lift-standard for more information on the format used here. -->");
 			w.WriteLine("<lift-ranges>");
 			WriteEtymologyRange(w);
 			WriteGrammaticalInfoRange(w);
@@ -1668,12 +1691,12 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private void WriteAnyOtherRangesReferencedByFields(TextWriter w)
 		{
-			foreach (var possList in m_CmPossibilityListsReferencedByFields)
+			foreach (var possList in m_CmPossListsReferencedOrCustom)
 			{
 				//We actually want to export any range which is referenced by a Custom field and is not already output.
 				//not just Custom ranges.
 				String rangeName;
-				var gotRangeName = m_CmPossibilityListsReferencedByFields.TryGetValue(possList.Key, out rangeName);
+				var gotRangeName = m_CmPossListsReferencedOrCustom.TryGetValue(possList.Key, out rangeName);
 				var customPossList = m_repoCmPossibilityLists.GetObject(possList.Key);
 				w.WriteLine("<!-- This is a custom list or other list which is not output by default but if referenced in the data of a field.  -->");
 				WritePossibilityListAsRange(w, rangeName, customPossList, customPossList.Guid.ToString());
@@ -2270,24 +2293,27 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
-		private Dictionary<Guid, string> GetCmPossibilityListsReferencedByFields(IEnumerable<ILexEntry> entries)
+		/// <summary>
+		/// Find all the lists referenced by custom fields and all the custom possibility lists
+		/// </summary>
+		private Dictionary<Guid, string> GetCustomListsAndReferencedLists(IEnumerable<ILexEntry> entries)
 		{
-			var cmPossibilityListsReferenced = new Dictionary<Guid, string>();
+			var listsToBeExported = new Dictionary<Guid, string>();
 
 			foreach (var entry in entries)
 			{
-				GetListsNotAddedYet(entry, cmPossibilityListsReferenced);
+				GetListsNotAddedYet(entry, listsToBeExported);
 				foreach (var sense in entry.SensesOS)
 				{
-					GetListsNotAddedYet(sense, cmPossibilityListsReferenced);
+					GetListsNotAddedYet(sense, listsToBeExported);
 					foreach (var example in sense.ExamplesOS)
 					{
-						GetListsNotAddedYet(example, cmPossibilityListsReferenced);
+						GetListsNotAddedYet(example, listsToBeExported);
 					}
 				}
 				foreach (var allomorph in entry.AlternateFormsOS)
 				{
-					GetListsNotAddedYet(allomorph, cmPossibilityListsReferenced);
+					GetListsNotAddedYet(allomorph, listsToBeExported);
 				}
 			}
 			// Add in possibility lists referenced by custom fields
@@ -2303,26 +2329,40 @@ namespace SIL.FieldWorks.LexText.Controls
 					case CellarPropertyType.ReferenceCollection:
 					case CellarPropertyType.ReferenceSequence:
 						var listGuid = m_mdc.GetFieldListRoot(flid);
-						if (cmPossibilityListsReferenced.ContainsKey(listGuid))
+						if (listsToBeExported.ContainsKey(listGuid))
 							continue;
 						ICmPossibilityList possList;
 						if (possListRepo.TryGetObject(listGuid, out possList))
 						{
 							var rangeName = RangeNames.GetRangeNameForLiftExport(m_mdc, possList);
-							if (!cmPossibilityListsReferenced.ContainsKey(possList.Guid))
-								cmPossibilityListsReferenced.Add(possList.Guid, MakeSafeAndNormalizedXml(rangeName));
+							if (!listsToBeExported.ContainsKey(possList.Guid))
+								listsToBeExported.Add(possList.Guid, MakeSafeAndNormalizedXml(rangeName));
 						}
 						break;
 					default:
 						break;
 				}
 			}
-			return cmPossibilityListsReferenced;
+			GetCustomListsNotYetAdded(possListRepo, listsToBeExported);
+			return listsToBeExported;
+		}
+
+		private void GetCustomListsNotYetAdded(ICmPossibilityListRepository possListRepo, Dictionary<Guid, string> listsToBeExported)
+		{
+			foreach (var list in possListRepo.AllInstances())
+			{
+				// If a list has no owner then it is a user added (custom) list
+				if (list.Owner == null && !listsToBeExported.ContainsKey(list.Guid))
+				{
+					var rangeName = RangeNames.GetRangeNameForLiftExport(m_mdc, list);
+					listsToBeExported[list.Guid] = MakeSafeAndNormalizedXml(rangeName);
+				}
+			}
 		}
 
 		private void GetListsNotAddedYet(ICmObject obj, Dictionary<Guid, string> cmPossibilityListsReferenced)
 		{
-			var cmPossibilityListGuidsTemp = GetCmPossibiityListsObjectReferences(obj);
+			var cmPossibilityListGuidsTemp = GetCmPossibilityListsObjectReferences(obj);
 			foreach (var possList in cmPossibilityListGuidsTemp)
 			{
 				if (!cmPossibilityListsReferenced.ContainsKey(possList.Key))
@@ -2332,7 +2372,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
-		private Dictionary<Guid, string> GetCmPossibiityListsObjectReferences(ICmObject obj)
+		private Dictionary<Guid, string> GetCmPossibilityListsObjectReferences(ICmObject obj)
 		{
 			var cmPossibilityListsReferencedByFields = new Dictionary<Guid, string>();
 			foreach (var flid in m_mdc.GetFields(obj.ClassID, true, (int)CellarPropertyTypeFilter.All))
@@ -2340,16 +2380,15 @@ namespace SIL.FieldWorks.LexText.Controls
 				var type = (CellarPropertyType) m_mdc.GetFieldType(flid);
 
 				//First of all only fields which have the following types will have references to data in lists.
-				if ((type == CellarPropertyType.ReferenceAtomic ||
+				if (type == CellarPropertyType.ReferenceAtomic ||
 					 type == CellarPropertyType.ReferenceCollection ||
-					 type == CellarPropertyType.ReferenceSequence))
+					 type == CellarPropertyType.ReferenceSequence)
 				{
-					var fieldName = m_mdc.GetFieldName(flid);
 					var fieldDstClsName = m_mdc.GetDstClsName(flid);
 
-					if ((fieldDstClsName.Equals("CmPossibility") ||
+					if (fieldDstClsName.Equals("CmPossibility") ||
 						 fieldDstClsName.Equals("CmSemanticDomain") ||
-						 fieldDstClsName.Equals("CmAnthroItem")))
+						 fieldDstClsName.Equals("CmAnthroItem"))
 					{
 						switch (type)
 						{
@@ -2513,9 +2552,15 @@ namespace SIL.FieldWorks.LexText.Controls
 		public const string sDbComplexEntryTypesOA = "complex-form-types";
 
 		/// <summary> </summary>
+		public const string sDbDialectLabelsOA = "dialect-labels";
+
+		/// <summary> </summary>
 		public const string sDbDomainTypesOA = "domain-type";
 		/// <summary> </summary>
 		public const string sDbDomainTypesOAold1 = "domaintype";
+
+		/// <summary> </summary>
+		public const string sDbLanguagesOA = "languages";
 
 		/// <summary> </summary>
 		public const string sDbMorphTypesOAold = "MorphType";
@@ -2629,7 +2674,11 @@ namespace SIL.FieldWorks.LexText.Controls
 
 				case "ComplexEntryTypes": rangeName = sDbComplexEntryTypesOA; break;
 
+				case "DialectLabels": rangeName = sDbDialectLabelsOA; break;
+
 				case "DomainTypes": rangeName = sDbDomainTypesOA; break;
+
+				case "Languages": rangeName = sDbLanguagesOA; break;
 
 				case "MorphTypes": rangeName = sDbMorphTypesOA; break;
 
@@ -2689,8 +2738,10 @@ namespace SIL.FieldWorks.LexText.Controls
 				//=========================================================================================
 				//lists under m_cache.LangProject.LexDbOA
 				case sDbComplexEntryTypesOA:
+				case sDbDialectLabelsOA:
 				case sDbDomainTypesOA:
 				case sDbDomainTypesOAold1:
+				case sDbLanguagesOA:
 				case sDbMorphTypesOAold:
 				case sDbMorphTypesOA:
 				case sDbPublicationTypesOA:

@@ -1,9 +1,8 @@
-﻿// Copyright (c) 2014-2014 SIL International
+﻿// Copyright (c) 2014-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Xml.Linq;
 using SIL.FieldWorks.FDO;
@@ -14,8 +13,6 @@ using SIL.Machine.FeatureModel;
 
 namespace SIL.FieldWorks.WordWorks.Parser
 {
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification = "m_cache is a reference and disposed in the parent class")]
 	internal class FwXmlTraceManager : ITraceManager
 	{
 		private readonly FdoCache m_cache;
@@ -29,7 +26,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		public void AnalyzeWord(Language lang, Word input)
 		{
-			input.CurrentTrace = new XElement("WordAnalysisTrace", new XElement("InputWord", input.Shape.ToString(lang.SurfaceStratum.SymbolTable, true)));
+			input.CurrentTrace = new XElement("WordAnalysisTrace", new XElement("InputWord", input.Shape.ToString(lang.SurfaceStratum.CharacterDefinitionTable, true)));
 		}
 
 		public void BeginUnapplyStratum(Stratum stratum, Word input)
@@ -90,7 +87,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		{
 			var trace = new XElement("LexLookupTrace",
 				new XElement("Stratum", stratum.Name),
-				new XElement("Shape", input.Shape.ToRegexString(stratum.SymbolTable, true)));
+				new XElement("Shape", input.Shape.ToRegexString(stratum.CharacterDefinitionTable, true)));
 			((XElement) input.CurrentTrace).Add(trace);
 		}
 
@@ -112,6 +109,11 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		public void NonFinalTemplateAppliedLast(Stratum stratum, Word word)
 		{
 			((XElement) word.CurrentTrace).Add(new XElement("FailureReason", new XAttribute("type", "nonFinalTemplate")));
+		}
+
+		public void ApplicableTemplatesNotApplied(Stratum stratum, Word word)
+		{
+			((XElement) word.CurrentTrace).Add(new XElement("FailureReason", new XAttribute("type", "noTemplatesApplied")));
 		}
 
 		public void EndApplyStratum(Stratum stratum, Word output)
@@ -141,9 +143,9 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				{
 					case FailureReason.RequiredSyntacticFeatureStruct:
 						pruleTrace.Add(new XElement("FailureReason", new XAttribute("type", "category"),
-							new XElement("Category", (FeatureSymbol) input.SyntacticFeatureStruct.GetValue<SymbolicFeatureValue>("pos")),
-							new XElement("RequiredCategories", sr.RequiredSyntacticFeatureStruct.GetValue<SymbolicFeatureValue>("pos")
-								.Values.Select(pos => new XElement("Category", pos)))));
+							new XElement("Category", input.SyntacticFeatureStruct.PartsOfSpeech().FirstOrDefault()),
+							new XElement("RequiredCategories", sr.RequiredSyntacticFeatureStruct.PartsOfSpeech()
+								.Select(pos => new XElement("Category", pos)))));
 						break;
 
 					case FailureReason.RequiredMprFeatures:
@@ -207,9 +209,9 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				case FailureReason.RequiredSyntacticFeatureStruct:
 					Debug.Assert(aprule != null);
 					var requiredFS = (FeatureStruct) failureObj;
-					var requiredPos = requiredFS.GetValue<SymbolicFeatureValue>("pos");
-					var inputPos = input.SyntacticFeatureStruct.GetValue<SymbolicFeatureValue>("pos");
-					if (requiredPos.Values.Intersect(inputPos.Values).Any())
+					FeatureSymbol[] requiredPos = requiredFS.PartsOfSpeech().ToArray();
+					FeatureSymbol[] inputPos = input.SyntacticFeatureStruct.PartsOfSpeech().ToArray();
+					if (requiredPos.Intersect(inputPos).Any())
 					{
 						trace.Add(new XElement("FailureReason", new XAttribute("type", "inflFeats"),
 							CreateInflFeaturesElement("InflFeatures", input.SyntacticFeatureStruct),
@@ -218,12 +220,12 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					else
 					{
 						trace.Add(new XElement("FailureReason", new XAttribute("type", "pos"),
-							new XElement("Pos", string.Join(", ", inputPos.Values.Select(s => s.Description))),
-							new XElement("RequiredPos", string.Join(", ", requiredPos.Values.Select(s => s.Description)))));
+							new XElement("Pos", string.Join(", ", inputPos.Select(s => s.Description))),
+							new XElement("RequiredPos", string.Join(", ", requiredPos.Select(s => s.Description)))));
 					}
 					break;
 
-				case FailureReason.StemName:
+				case FailureReason.RequiredStemName:
 					trace.Add(new XElement("FailureReason", new XAttribute("type", "fromStemName"),
 						new XElement("StemName", failureObj)));
 					break;
@@ -261,6 +263,18 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					}
 					break;
 
+				case FailureReason.MaxApplicationCount:
+					trace.Add(new XElement("FailureReason", new XAttribute("type", "maxAppCount")));
+					break;
+
+				case FailureReason.NonPartialRuleProhibitedAfterFinalTemplate:
+					trace.Add(new XElement("FailureReason", new XAttribute("type", "nonPartialRuleAfterFinalTemplate")));
+					break;
+
+				case FailureReason.NonPartialRuleRequiredAfterNonFinalTemplate:
+					trace.Add(new XElement("FailureReason", new XAttribute("type", "partialRuleAfterNonFinalTemplate")));
+					break;
+
 				default:
 					return;
 			}
@@ -282,7 +296,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			XElement trace;
 			switch (reason)
 			{
-				case FailureReason.ExcludedAllomorphCoOccurrences:
+				case FailureReason.AllomorphCoOccurrenceRules:
 					var alloRule = (AllomorphCoOccurrenceRule) failureObj;
 					trace = CreateParseCompleteElement(word,
 						new XElement("FailureReason", new XAttribute("type", "adhocProhibitionRule"),
@@ -292,7 +306,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 							new XElement("Adjacency", alloRule.Adjacency)));
 					break;
 
-				case FailureReason.ExcludedMorphemeCoOccurrences:
+				case FailureReason.MorphemeCoOccurrenceRules:
 					var morphemeRule = (MorphemeCoOccurrenceRule) failureObj;
 					trace = CreateParseCompleteElement(word,
 						new XElement("FailureReason", new XAttribute("type", "adhocProhibitionRule"),
@@ -302,7 +316,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 							new XElement("Adjacency", morphemeRule.Adjacency)));
 					break;
 
-				case FailureReason.RequiredEnvironments:
+				case FailureReason.Environments:
 					trace = CreateParseCompleteElement(word,
 						new XElement("FailureReason", new XAttribute("type", "environment"),
 							CreateAllomorphElement(allomorph),
@@ -321,9 +335,16 @@ namespace SIL.FieldWorks.WordWorks.Parser
 							CreateInflFeaturesElement("RequiredInflFeatures", (FeatureStruct) failureObj)));
 					break;
 
-				case FailureReason.StemName:
+				case FailureReason.RequiredStemName:
 					trace = CreateParseCompleteElement(word,
-						new XElement("FailureReason", new XAttribute("type", "stemName"),
+						new XElement("FailureReason", new XAttribute("type", "requiredStemName"),
+							CreateAllomorphElement(allomorph),
+							new XElement("StemName", failureObj)));
+					break;
+
+				case FailureReason.ExcludedStemName:
+					trace = CreateParseCompleteElement(word,
+						new XElement("FailureReason", new XAttribute("type", "excludedStemName"),
 							CreateAllomorphElement(allomorph),
 							new XElement("StemName", failureObj)));
 					break;
@@ -357,7 +378,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		private static XElement CreateInflFeaturesElement(string name, FeatureStruct fs)
 		{
-			return new XElement(name, fs.GetValue<FeatureStruct>("head").ToString().Replace(",", ""));
+			return new XElement(name, fs.Head().ToString().Replace(",", ""));
 		}
 
 		private static XElement CreateWordElement(string name, Word word, bool analysis)
@@ -366,7 +387,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			if (word == null)
 				wordStr = "*None*";
 			else
-				wordStr = analysis ? word.Shape.ToRegexString(word.Stratum.SymbolTable, true) : word.Shape.ToString(word.Stratum.SymbolTable, true);
+				wordStr = analysis ? word.Shape.ToRegexString(word.Stratum.CharacterDefinitionTable, true) : word.Shape.ToString(word.Stratum.CharacterDefinitionTable, true);
 			return new XElement(name, wordStr);
 		}
 
@@ -376,7 +397,13 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			IMoMorphSynAnalysis msa;
 			if (msaID == 0 || !m_cache.ServiceLocator.GetInstance<IMoMorphSynAnalysisRepository>().TryGetObject(msaID, out msa))
 				return null;
-			return HCParser.CreateMorphemeElement(msa);
+
+			var inflTypeID = (int?) morpheme.Properties["InflTypeID"] ?? 0;
+			ILexEntryInflType inflType = null;
+			if (inflTypeID != 0 && !m_cache.ServiceLocator.GetInstance<ILexEntryInflTypeRepository>().TryGetObject(inflTypeID, out inflType))
+				return null;
+
+			return HCParser.CreateMorphemeElement(msa, inflType);
 		}
 
 		private static XElement CreateMorphologicalRuleElement(IMorphologicalRule rule)
@@ -388,7 +415,11 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		private static XElement CreateHCRuleElement(string name, IHCRule rule)
 		{
-			return new XElement(name, new XAttribute("id", (int?) rule.Properties["ID"] ?? 0), rule.Name);
+			int id = 0;
+			var morpheme = rule as Morpheme;
+			if (morpheme != null)
+				id = (int?) morpheme.Properties["ID"] ?? 0;
+			return new XElement(name, new XAttribute("id", id), rule.Name);
 		}
 
 		private XElement CreateAllomorphElement(Allomorph allomorph)
@@ -401,18 +432,18 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				if (!m_cache.ServiceLocator.GetInstance<IMoInflAffixSlotRepository>().TryGetObject(slotID, out slot))
 					return null;
 
-				var inflTypeID = (int) allomorph.Morpheme.Properties["InflTypeID"];
-				ILexEntryInflType inflType;
-				if (!m_cache.ServiceLocator.GetInstance<ILexEntryInflTypeRepository>().TryGetObject(inflTypeID, out inflType))
+				var nullInflTypeID = (int) allomorph.Morpheme.Properties["InflTypeID"];
+				ILexEntryInflType nullInflType;
+				if (!m_cache.ServiceLocator.GetInstance<ILexEntryInflTypeRepository>().TryGetObject(nullInflTypeID, out nullInflType))
 					return null;
 
 				var isPrefix = (bool) allomorph.Properties["IsPrefix"];
 				return new XElement("Allomorph", new XAttribute("id", 0), new XAttribute("type", isPrefix ? MoMorphTypeTags.kMorphPrefix : MoMorphTypeTags.kMorphSuffix),
 					new XElement("Form", "^0"),
 					new XElement("Morpheme", new XAttribute("id", 0), new XAttribute("type", "infl"),
-						new XElement("HeadWord", string.Format("Automatically generated null affix for the {0} irregularly inflected form", inflType.Name.BestAnalysisAlternative.Text)),
-						new XElement("Gloss", (inflType.GlossPrepend.BestAnalysisAlternative.Text == "***" ? "" : inflType.GlossPrepend.BestAnalysisAlternative.Text)
-							+ (inflType.GlossAppend.BestAnalysisAlternative.Text == "***" ? "" : inflType.GlossAppend.BestAnalysisAlternative.Text)),
+						new XElement("HeadWord", string.Format("Automatically generated null affix for the {0} irregularly inflected form", nullInflType.Name.BestAnalysisAlternative.Text)),
+						new XElement("Gloss", (nullInflType.GlossPrepend.BestAnalysisAlternative.Text == "***" ? "" : nullInflType.GlossPrepend.BestAnalysisAlternative.Text)
+							+ (nullInflType.GlossAppend.BestAnalysisAlternative.Text == "***" ? "" : nullInflType.GlossAppend.BestAnalysisAlternative.Text)),
 						new XElement("Category", slot.OwnerOfClass<IPartOfSpeech>().Abbreviation.BestAnalysisAlternative.Text),
 						new XElement("Slot", new XAttribute("optional", slot.Optional), slot.Name.BestAnalysisAlternative.Text)));
 			}
@@ -429,7 +460,12 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			if (!m_cache.ServiceLocator.GetInstance<IMoMorphSynAnalysisRepository>().TryGetObject(msaID, out msa))
 				return null;
 
-			return HCParser.CreateAllomorphElement("Allomorph", form, msa, formID2 != 0);
+			var inflTypeID = (int?) allomorph.Morpheme.Properties["InflTypeID"] ?? 0;
+			ILexEntryInflType inflType = null;
+			if (inflTypeID != 0 && !m_cache.ServiceLocator.GetInstance<ILexEntryInflTypeRepository>().TryGetObject(inflTypeID, out inflType))
+				return null;
+
+			return HCParser.CreateAllomorphElement("Allomorph", form, msa, inflType, formID2 != 0);
 		}
 	}
 }

@@ -4,11 +4,7 @@
 
 using System;
 using System.Windows.Forms;
-using System.ComponentModel;
-using System.Drawing;
-using System.Diagnostics;
-
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FdoUi;
@@ -144,14 +140,13 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			public override void MakeRoot()
 			{
 				CheckDisposed();
-				base.MakeRoot();
 
 				if (m_fdoCache == null || DesignMode)
 					return;
-				m_vc = new AtomicRefTypeAheadVc(m_flid, m_fdoCache);
 
-				m_rootb = VwRootBoxClass.Create();
-				m_rootb.SetSite(this);
+				base.MakeRoot();
+
+				m_vc = new AtomicRefTypeAheadVc(m_flid, m_fdoCache);
 				m_rootb.DataAccess = m_fdoCache.DomainDataByFlid;
 
 				// arg3 is a meaningless initial fragment, since this VC only displays one thing.

@@ -10,9 +10,11 @@ using SIL.CoreImpl;
 
 namespace LanguageExplorer.Impls
 {
+#if RANDYTODO
 	// TODO: Upgrade to .Net 4.5 and use MEF 2.0 instead of reflection. (Ok, MEF will use Reflection, but that is fine.)
 	// TODO: MEF will need to create the AreaRepository, and thus the areas, on a per window scope.
 	// TODO: MEF in .Net 4 can't do scoping beyond singleton or per call.
+#endif
 	/// <summary>
 	/// Repository for IArea implementations.
 	/// </summary>
@@ -46,7 +48,7 @@ namespace LanguageExplorer.Impls
 			}
 		}
 
-		#region Implementation of IAreaRepository
+#region Implementation of IAreaRepository
 
 		/// <summary>
 		/// Get the most recently persisted area, or the default area if
@@ -112,36 +114,36 @@ namespace LanguageExplorer.Impls
 			return retval;
 		}
 
-		#endregion
+#endregion
 
-		#region Implementation of IPropertyTableProvider
+#region Implementation of IPropertyTableProvider
 
 		/// <summary>
 		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
 		/// </summary>
 		public IPropertyTable PropertyTable { get; private set; }
 
-		#endregion
+#endregion
 
-		#region Implementation of IPublisherProvider
+#region Implementation of IPublisherProvider
 
 		/// <summary>
 		/// Get the IPublisher.
 		/// </summary>
 		public IPublisher Publisher { get; private set; }
 
-		#endregion
+#endregion
 
-		#region Implementation of ISubscriberProvider
+#region Implementation of ISubscriberProvider
 
 		/// <summary>
 		/// Get the ISubscriber.
 		/// </summary>
 		public ISubscriber Subscriber { get; private set; }
 
-		#endregion
+#endregion
 
-		#region Implementation of IFlexComponent
+#region Implementation of IFlexComponent
 
 		/// <summary>
 		/// Initialize a FLEx component with the basic interfaces.
@@ -161,6 +163,6 @@ namespace LanguageExplorer.Impls
 			}
 		}
 
-		#endregion
+#endregion
 	}
 }

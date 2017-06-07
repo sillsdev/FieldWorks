@@ -1,14 +1,8 @@
-// --------------------------------------------------------------------------------------------
 // Copyright (c) 2011-2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-//
-// File: LabelButton.cs
-// Responsibility: DavidO
-// --------------------------------------------------------------------------------------------
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 
 using System.Windows.Forms;
@@ -80,6 +74,19 @@ namespace SILUBS.SharedScrControls
 			ResizeRedraw = true;
 
 			SetTextAlignment();
+		}
+
+		/// <summary>Dispose: deregister event handlers</summary>
+		protected override void Dispose(bool disposing)
+		{
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
+			if (disposing)
+			{
+				PaintBackground = null;
+				PaintText = null;
+				PaintImage = null;
+			}
+			base.Dispose(disposing);
 		}
 
 		#region Properties
@@ -216,8 +223,6 @@ namespace SILUBS.SharedScrControls
 		/// </summary>
 		/// <param name="e"></param>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "e.Graphics is a reference")]
 		protected new virtual void OnPaintBackground(PaintEventArgs e)
 		{
 			DeterminePaintState();

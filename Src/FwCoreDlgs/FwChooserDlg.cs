@@ -1,19 +1,15 @@
-// Copyright (c) 2006-2013 SIL International
+// Copyright (c) 2006-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: FwChooserDlg.cs
-// Responsibility: TE Team
+
 using System;
 using Microsoft.Win32;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Controls;
-using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
 
@@ -24,7 +20,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	/// Summary description for FwChooserDlg.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public class FwChooserDlg : Form, IFWDisposable, ISettings, ICmPossibilitySupplier
+	public class FwChooserDlg : Form, ISettings, ICmPossibilitySupplier
 	{
 		#region Data members
 		/// <summary>The possibility list used to populate the tree</summary>
@@ -180,7 +176,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FwChooserDlg));
-			this.tvPossibilities = new SIL.FieldWorks.Common.Controls.ChooserTreeView();
+			this.tvPossibilities = new ChooserTreeView();
 			this.btnOk = new System.Windows.Forms.Button();
 			this.btnCancel = new System.Windows.Forms.Button();
 			this.btnHelp = new System.Windows.Forms.Button();
@@ -344,8 +340,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// Get the registry key for this dialog.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "We're returning an object")]
 		public virtual RegistryKey SettingsKey
 		{
 			get

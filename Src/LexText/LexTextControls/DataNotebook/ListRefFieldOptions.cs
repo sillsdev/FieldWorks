@@ -13,7 +13,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.Cellar;
+using SIL.CoreImpl.WritingSystems;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 
@@ -112,12 +113,12 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 		}
 
 
-		internal void Initialize(FdoCache cache, IHelpTopicProvider helpTopicProvider, IApp app, IVwStylesheet stylesheet,
-			NotebookImportWiz.RnSfMarker rsfm, CellarPropertyType cpt)
+		internal void Initialize(FdoCache cache, IHelpTopicProvider helpTopicProvider, IApp app, NotebookImportWiz.RnSfMarker rsfm,
+			CellarPropertyType cpt)
 		{
 			m_cache = cache;
 			m_helpTopicProvider = helpTopicProvider;
-			m_btnAddWritingSystem.Initialize(m_cache, helpTopicProvider, app, stylesheet);
+			m_btnAddWritingSystem.Initialize(m_cache, helpTopicProvider, app);
 			NotebookImportWiz.InitializeWritingSystemCombo(rsfm.m_tlo.m_wsId, cache,
 				m_cbWritingSystem);
 

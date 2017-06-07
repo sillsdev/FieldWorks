@@ -1,9 +1,7 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: XmlVc.cs
-// Responsibility: WordWorks
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -12,8 +10,11 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.Cellar;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.RootSites;
@@ -23,7 +24,9 @@ using SIL.FieldWorks.FDO.Application.ApplicationServices;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.Resources;
+using SIL.ObjectModel;
 using SIL.Utils;
+using SIL.Xml;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -362,7 +365,7 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-		Set<int> m_lastLoadRecent = new Set<int>();
+		HashSet<int> m_lastLoadRecent = new HashSet<int>();
 
 
 		/// ------------------------------------------------------------------------------------
@@ -911,8 +914,7 @@ namespace SIL.FieldWorks.Common.Controls
 				sLabel = qws.Id;
 			if (sLabel == null)
 				sLabel = XMLViewsStrings.ksUNK;
-			ITsStrFactory tsf = cache.TsStrFactory;
-			ITsIncStrBldr tisb = tsf.GetIncBldr();
+			ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 			tisb.SetIntPropValues((int)FwTextPropType.ktptWs,
 				0, cache.ServiceLocator.WritingSystemManager.UserWs);
 			tisb.SetIntPropValues((int)FwTextPropType.ktptEditable,
@@ -931,9 +933,8 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				if (!s_fMultiFirst && s_sMultiSep != null && s_sMultiSep != "")
 				{
-					ITsStrFactory tsf = cache.TsStrFactory;
 					int wsUi = cache.WritingSystemFactory.UserWs;
-					ITsString tss = tsf.MakeString(s_sMultiSep, wsUi);
+					ITsString tss = TsStringUtils.MakeString(s_sMultiSep, wsUi);
 					vwenv.AddString(tss);
 				}
 				else
@@ -1078,7 +1079,7 @@ namespace SIL.FieldWorks.Common.Controls
 			ITsString tssSep = null;
 			if (sep != null)
 			{
-				tssSep = m_cache.TsStrFactory.MakeString(sep,
+				tssSep = TsStringUtils.MakeString(sep,
 					m_cache.ServiceLocator.WritingSystemManager.UserWs);
 			}
 			bool fLabel = XmlUtils.GetOptionalBooleanAttributeValue(caller, "showLabels", false); // true to 'separate' using multistring labels.
@@ -1239,14 +1240,14 @@ namespace SIL.FieldWorks.Common.Controls
 							//   <computedString method="GetFeatureValueTSS" argument="$fieldName"/>
 							// </part>
 							var obj = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo);
-							string method = XmlUtils.GetAttributeValue(frag, "method");
+							string method = XmlUtils.GetOptionalAttributeValue(frag, "method");
 							if (!String.IsNullOrEmpty(method))
 							{
 								Type objType = obj.GetType();
 								System.Reflection.MethodInfo mi = objType.GetMethod(method);
 								if (mi != null)
 								{
-									string argument = XmlUtils.GetAttributeValue(frag, "argument");
+									string argument = XmlUtils.GetOptionalAttributeValue(frag, "argument");
 									if (!String.IsNullOrEmpty(argument))
 									{
 										var value = (ITsString)mi.Invoke(obj, new object[] {argument});
@@ -1550,7 +1551,7 @@ namespace SIL.FieldWorks.Common.Controls
 								var dtNode = XmlViewsUtils.CopyWithParamDefaults(frag);
 								string format;
 								if (vwenv is SortCollectorEnv)
-									format = System.Globalization.DateTimeFormatInfo.InvariantInfo.SortableDateTimePattern;
+									format = DateTimeFormatInfo.InvariantInfo.SortableDateTimePattern;
 								else
 									format = XmlUtils.GetOptionalAttributeValue(dtNode, "format");
 								string formattedDateTime;
@@ -1558,12 +1559,12 @@ namespace SIL.FieldWorks.Common.Controls
 								{
 									if (format != null)
 									{
-										formattedDateTime = dt.ToString(format, System.Globalization.DateTimeFormatInfo.CurrentInfo);
+										formattedDateTime = dt.ToString(format, DateTimeFormatInfo.CurrentInfo);
 									}
 									else
 									{
 										// "G" format takes user's system ShortDate format appended by system LongTime format.
-										formattedDateTime = dt.ToString("G", System.Globalization.DateTimeFormatInfo.CurrentInfo);
+										formattedDateTime = dt.ToString("G", DateTimeFormatInfo.CurrentInfo);
 									}
 								}
 								catch (FormatException e)
@@ -1572,9 +1573,8 @@ namespace SIL.FieldWorks.Common.Controls
 									formattedDateTime = errorMsg;
 									throw new ConfigurationException(errorMsg, frag, e);
 								}
-								ITsStrFactory tsf = m_cache.TsStrFactory;
 								int systemWs = m_cache.ServiceLocator.WritingSystemManager.UserWs;
-								ITsString tss = tsf.MakeString(formattedDateTime, systemWs);
+								ITsString tss = TsStringUtils.MakeString(formattedDateTime, systemWs);
 								if (vwenv is ConfiguredExport)
 									vwenv.AddTimeProp(flid, 0);
 								AddStringThatCounts(vwenv, tss, caller);
@@ -1621,7 +1621,7 @@ namespace SIL.FieldWorks.Common.Controls
 								ws = m_cache.WritingSystemFactory.GetWsFromStr(sWs);
 							else
 								ws = m_cache.WritingSystemFactory.UserWs;
-							vwenv.AddString(m_cache.TsStrFactory.MakeString(literal, ws));
+							vwenv.AddString(TsStringUtils.MakeString(literal, ws));
 							break;
 						}
 					case "if":
@@ -1675,7 +1675,7 @@ namespace SIL.FieldWorks.Common.Controls
 								(value < labels.Length))
 							{
 								int wsUi = m_cache.WritingSystemFactory.UserWs;
-								ITsString tss = m_cache.TsStrFactory.MakeString(labels[value], wsUi);
+								ITsString tss = TsStringUtils.MakeString(labels[value], wsUi);
 								vwenv.AddString(tss);
 								NoteDependency(vwenv, hvo, flid);
 							}
@@ -1830,13 +1830,13 @@ namespace SIL.FieldWorks.Common.Controls
 						break;
 				}
 			}
-			catch (SIL.Utils.ConfigurationException)
+			catch (ConfigurationException)
 			{
 				throw;
 			}
 			catch (Exception error)
 			{
-				throw new SIL.Utils.ConfigurationException(
+				throw new ConfigurationException(
 					"There was an error processing this fragment. " + error.Message, frag, error);
 			}
 		}
@@ -2613,7 +2613,7 @@ namespace SIL.FieldWorks.Common.Controls
 			var sublayout = XmlUtils.GetFirstNonCommentChild(parent);
 			if (sublayout.Name != "sublayout")
 				return;
-			var sublayoutName = XmlUtils.GetAttributeValue(sublayout, "name");
+			var sublayoutName = XmlUtils.GetOptionalAttributeValue(sublayout, "name");
 			if (string.IsNullOrEmpty(sublayoutName))
 				return;
 			parent = GetNodeForPart(firstChildHvo, sublayoutName, true);
@@ -2751,7 +2751,7 @@ namespace SIL.FieldWorks.Common.Controls
 			bool fShowAsParagraphs = XmlUtils.GetOptionalBooleanAttributeValue(frag, "showasindentedpara", false);
 			if (fShowAsParagraphs)
 				return;
-			string item = XmlUtils.GetLocalizedAttributeValue(frag, attrName, null);
+			string item = StringTable.Table.LocalizeAttributeValue(XmlUtils.GetOptionalAttributeValue(frag, attrName, null));
 			if (String.IsNullOrEmpty(item))
 			{
 				if (DelayedNumberExists)
@@ -2759,10 +2759,10 @@ namespace SIL.FieldWorks.Common.Controls
 				else
 					return;
 			}
-			var tss = m_cache.TsStrFactory.MakeString(item,
+			var tss = TsStringUtils.MakeString(item,
 				m_cache.ServiceLocator.WritingSystemManager.UserWs);
 			var tssNumber = GetDelayedNumber(frag, vwenv is TestCollectorEnv);
-			var sStyle = XmlUtils.GetAttributeValue(frag, attrName + "Style");
+			var sStyle = XmlUtils.GetOptionalAttributeValue(frag, attrName + "Style");
 			var fMadePara = false;
 			var fMadeDefaultStyleSpan = false;
 			if (String.IsNullOrEmpty(sStyle))
@@ -2868,7 +2868,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		internal void AddMarkedString(IVwEnv vwenv, XElement whereFrom, string input, int ws)
 		{
-			var bldr = TsIncStrBldrClass.Create();
+			var bldr = TsStringUtils.MakeIncStrBldr();
 			bldr.SetIntPropValues((int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault, ws);
 			if (IdentifySource)
 				bldr.SetStrPropValue((int)FwTextPropType.ktptBulNumTxtBef, NodeIdentifier(whereFrom));
@@ -3004,7 +3004,7 @@ namespace SIL.FieldWorks.Common.Controls
 				{
 					// If we have filtering set to show only certain types of minor entries,
 					// apply the filter before we try adding the object to the view.  (LT-10953)
-					var validTypes = new Set<Guid>();
+					var validTypes = new HashSet<Guid>();
 					var entryType = XmlUtils.GetOptionalAttributeValue(caller, "entrytype");
 					Debug.Assert(entryType == "minor");
 					var rgsGuidsPlus = guidsFilter.Split(',');
@@ -3638,8 +3638,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 		static void NoteStringValDependency(IVwEnv vwenv, int hvo, int flid, int ws, string val)
 		{
-			ITsStrFactory tsf = TsStrFactoryClass.Create();
-			vwenv.NoteStringValDependency(hvo, flid, ws, tsf.MakeString(val, ws));
+			vwenv.NoteStringValDependency(hvo, flid, ws, TsStringUtils.MakeString(val, ws));
 		}
 
 		/// <summary>
@@ -3662,11 +3661,10 @@ namespace SIL.FieldWorks.Common.Controls
 					ITsString tsString = sda.get_StringProp(hvo, flid);
 					int var;
 					int realWs = tsString.get_Properties(0).GetIntPropValues((int) FwTextPropType.ktptWs, out var);
-					ITsStrFactory tsf = TsStrFactoryClass.Create();
 					// Third argument must be 0 to indicate a non-multistring.
 					// Fourth argument is the TsString version of the string we are testing against.
 					// The display will update for a change in whether it is true that sda.get_StringProp(hvo, flid) is equal to arg4
-					vwenv.NoteStringValDependency(hvo, flid, 0, tsf.MakeString(stringValue, realWs));
+					vwenv.NoteStringValDependency(hvo, flid, 0, TsStringUtils.MakeString(stringValue, realWs));
 					value = tsString.Text;
 				} // otherwise we don't have an object, and will treat the current value as null.
 				if (value == null && stringValue == "")
@@ -4206,7 +4204,7 @@ namespace SIL.FieldWorks.Common.Controls
 					var xnParent = node.Parent;
 					if (xnParent != null && xnParent.Name == "part")
 					{
-						string sId = XmlUtils.GetAttributeValue(xnParent, "id");
+						string sId = XmlUtils.GetOptionalAttributeValue(xnParent, "id");
 						if (sId != null && sId.Contains("-Custom") && sId.Contains("_" + fieldName))
 							return true;
 			}
@@ -5675,7 +5673,7 @@ namespace SIL.FieldWorks.Common.Controls
 	/// <summary>
 	/// Compares CmObjects using their SortKey property.
 	/// </summary>
-	class CmObjectComparer : FwDisposableBase, IComparer<int>
+	class CmObjectComparer : DisposableBase, IComparer<int>
 	{
 		private IntPtr m_col = IntPtr.Zero;
 		private readonly FdoCache m_cache;

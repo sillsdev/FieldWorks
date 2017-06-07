@@ -1,17 +1,16 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.Utils;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Scripture;
+using SIL.CoreImpl.Text;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.FDO.FDOTests
 {
@@ -77,9 +76,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void SegmentBreaks()
 		{
-			ITsStrFactory tsf = TsStrFactoryClass.Create();
 			string test1 = "This is a simple sentence";
-			ITsString tss = tsf.MakeString(test1, m_wsEn);
+			ITsString tss = TsStringUtils.MakeString(test1, m_wsEn);
 			m_para.Contents = tss;
 			List<int> results;
 			var segments = m_pp.CollectSegments(tss, out results);
@@ -88,7 +86,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			VerifySegment(segments[0], 0, test1.Length, m_para, "no punct string");
 
 			// Empty string.
-			ITsString tssEmpty = tsf.MakeString("", m_wsEn);
+			ITsString tssEmpty = TsStringUtils.MakeString("", m_wsEn);
 			m_para.Contents = tssEmpty;
 			segments = m_pp.CollectSegments(tssEmpty, out results);
 			VerifyBreaks(new int[0], results, "empty string");
@@ -97,7 +95,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			string test2 = "This is a more complex sentence (ending with a 'quote').";
 			string test3 = "  2 ";
 			string test4 = "This is the second sentence.";
-			ITsString tssMulti = tsf.MakeString(test2 + test3 + test4, m_wsEn);
+			ITsString tssMulti = TsStringUtils.MakeString(test2 + test3 + test4, m_wsEn);
 			m_para.Contents = tssMulti;
 			segments = m_pp.CollectSegments(tssMulti, out results);
 			VerifyBreaks(new int[] {test2.Length - 1, test2.Length + test3.Length + test4.Length - 1}, results, "multi-sentence string");
@@ -125,7 +123,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 			string test6 = "13 1 ";
 			string test7 = "121";
-			ITsString tssStartFinish = tsf.MakeString(test6 + test2 + test7, m_wsEn);
+			ITsString tssStartFinish = TsStringUtils.MakeString(test6 + test2 + test7, m_wsEn);
 			bldr = tssStartFinish.GetBldr();
 			bldr.SetStrPropValue(0, 2, (int)FwTextPropType.ktptNamedStyle,
 								 ScrStyleNames.ChapterNumber);
@@ -148,7 +146,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			// However, anything non-white between two label-style runs separates them. Change the space between the
 			// two runs to something that's neither an EOS nor a letter.
 			bldr = tssStartFinish.GetBldr();
-			bldr.ReplaceTsString(2,3, tsf.MakeString(":", m_wsEn));
+			bldr.ReplaceTsString(2,3, TsStringUtils.MakeString(":", m_wsEn));
 			ITsString tssSplitLabelRuns = bldr.GetString();
 			m_para.Contents = tssSplitLabelRuns;
 			segments = m_pp.CollectSegments(tssSplitLabelRuns, out results);
@@ -165,7 +163,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 			// Check that we get the correct breaks when the material before a label segment doesn't have an EOS.
 			string test8 = "This text has no EOS ";
-			ITsString tssMultiNoEos = tsf.MakeString(test8 + test3 + test4, m_wsEn);
+			ITsString tssMultiNoEos = TsStringUtils.MakeString(test8 + test3 + test4, m_wsEn);
 			bldr = tssMultiNoEos.GetBldr();
 			bldr.SetStrPropValue(test8.Length + 2, test8.Length + 3, (int)FwTextPropType.ktptNamedStyle,
 								 ScrStyleNames.VerseNumber);
@@ -188,9 +186,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void EllipsesAndRefs()
 		{
-			ITsStrFactory tsf = TsStrFactoryClass.Create();
 			string test1 = "This is...not ... a simple sentence; it discusses Scripture (Gen 1.2 and Rom 1.2-4.5) and has ellipses.";
-			ITsString tss = tsf.MakeString(test1, m_wsEn);
+			ITsString tss = TsStringUtils.MakeString(test1, m_wsEn);
 			m_para.Contents = tss;
 			List<int> results;
 			var segments = m_pp.CollectSegments(tss, out results);
@@ -201,7 +198,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			string test2a = "Here we have";
 			string twoDots = "..";
 			string test2b = "just two periods, and at the end, another two";
-			tss = tsf.MakeString(test2a + twoDots + test2b + twoDots, m_wsEn);
+			tss = TsStringUtils.MakeString(test2a + twoDots + test2b + twoDots, m_wsEn);
 			m_para.Contents = tss;
 			segments = m_pp.CollectSegments(tss, out results);
 			VerifyBreaks(new int[] { test2a.Length, test2a.Length + 2 + test2b.Length }, results, "string with double dots");
@@ -210,7 +207,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			VerifySegment(segments[1], test2a.Length + 2, tss.Length, m_para, "string with double dots(2)");
 
 			string test3 = "This sentence ends with an ellipsis...";
-			tss = tsf.MakeString(test3, m_wsEn);
+			tss = TsStringUtils.MakeString(test3, m_wsEn);
 			m_para.Contents = tss;
 			segments = m_pp.CollectSegments(tss, out results);
 			VerifyBreaks(new int[] {  }, results, "string with final ellipsis");
@@ -218,7 +215,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			VerifySegment(segments[0], 0, test3.Length, m_para, "string with final ellipsis");
 
 			string fourDots = "....";
-			tss = tsf.MakeString(test2a + fourDots + test2b + fourDots, m_wsEn);
+			tss = TsStringUtils.MakeString(test2a + fourDots + test2b + fourDots, m_wsEn);
 			m_para.Contents = tss;
 			segments = m_pp.CollectSegments(tss, out results);
 			VerifyBreaks(new int[] { test2a.Length, test2a.Length + 4 + test2b.Length }, results, "string with four dots");
@@ -229,7 +226,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 			string test5a = "Here is a number and two dots: 5";
 			string test5b = "2 and another number, and the final dot has a number before it: 2.";
-			tss = tsf.MakeString(test5a + twoDots + test5b, m_wsEn);
+			tss = TsStringUtils.MakeString(test5a + twoDots + test5b, m_wsEn);
 			m_para.Contents = tss;
 			segments = m_pp.CollectSegments(tss, out results);
 			VerifyBreaks(new int[] { test5a.Length, test5a.Length + 2 + test5b.Length - 1 }, results, "string with numbers and double dots");
@@ -245,9 +242,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void LeadingPunctuation()
 		{
-			ITsStrFactory tsf = TsStrFactoryClass.Create();
 			string test1 = "?This is a question with special punctuation?";
-			ITsString tss = tsf.MakeString(test1, m_wsEn);
+			ITsString tss = TsStringUtils.MakeString(test1, m_wsEn);
 			m_para.Contents = tss;
 			List<int> results;
 			var segments = m_pp.CollectSegments(tss, out results);
@@ -277,11 +273,10 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void OrcIsNotLabel()
 		{
-			ITsStrFactory tsf = TsStrFactoryClass.Create();
 			// String with embedded ORC.
 			string testPart1 = "This is a simple sentence";
 			string test = testPart1 + " with a footnote.";
-			ITsString tss = tsf.MakeString(test, m_wsEn);
+			ITsString tss = TsStringUtils.MakeString(test, m_wsEn);
 			// To be recognized an ORC must have unique properties.
 			ITsStrBldr bldr = tss.GetBldr();
 			TsStringUtils.InsertOrcIntoPara(Guid.NewGuid(), FwObjDataTypes.kodtOwnNameGuidHot, bldr, testPart1.Length,
@@ -301,12 +296,11 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void HardLineBreaks()
 		{
-			ITsStrFactory tsf = TsStrFactoryClass.Create();
 			// String with embedded ORC.
 			string test1 = "This is a simple sentence";
 			string lineBreak = StringUtils.kChHardLB.ToString();
 			string test3 = "with a hard break.";
-			ITsString tss = tsf.MakeString(test1 + lineBreak + test3, m_wsEn);
+			ITsString tss = TsStringUtils.MakeString(test1 + lineBreak + test3, m_wsEn);
 			m_para.Contents = tss;
 			List<int> results;
 			var segments = m_pp.CollectSegments(tss, out results);
@@ -320,7 +314,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 			// Now try with an EOS before the hard break.
 			string test1a = "This is a proper sentence?!";
-			tss = tsf.MakeString(test1a + lineBreak + test3, m_wsEn);
+			tss = TsStringUtils.MakeString(test1a + lineBreak + test3, m_wsEn);
 			m_para.Contents = tss;
 			segments = m_pp.CollectSegments(tss, out results);
 			VerifyBreaks(new int[] { test1a.Length - 2, test1a.Length + 1, tss.Length - 1 },

@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Windows.Forms;
 using SIL.CoreImpl;
@@ -14,14 +13,15 @@ using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.Utils;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
 	/// <summary>
 	/// Summary description for ConfigureInterlinDialog.
 	/// </summary>
-	public class ConfigureInterlinDialog : Form, IFWDisposable
+	public class ConfigureInterlinDialog : Form
 	{
 		private Label label1;
 		private Label label2;
@@ -629,8 +629,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			e.DrawText();
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "We return the Brush")]
 		private Brush GetBrush(InterlinLineSpec spec, bool selected)
 		{
 			Brush textBrush = SystemBrushes.ControlText;
@@ -645,8 +643,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			return textBrush;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "backBrush is a reference")]
 		private void DrawItem(System.Windows.Forms.DrawListViewItemEventArgs e, InterlinLineSpec spec)
 		{
 			Brush backBrush = SystemBrushes.ControlLightLight;

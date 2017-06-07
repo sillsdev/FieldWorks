@@ -1,9 +1,6 @@
-// Copyright (c) 2006-2013 SIL International
+// Copyright (c) 2006-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: FwFontTab.cs
-// Responsibility: TE Team
 
 using System;
 using System.Diagnostics;
@@ -12,11 +9,10 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
-using SIL.CoreImpl;
+using SIL.CoreImpl.WritingSystems;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Controls;
-using SIL.Utils;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Resources;
 
@@ -27,7 +23,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 	///
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public partial class FwFontTab : UserControl, IFWDisposable, IStylesTab
+	public partial class FwFontTab : UserControl, IStylesTab
 	{
 		#region Data Members
 		/// <summary>
@@ -406,6 +402,15 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		}
 		#endregion
 
+		internal ComboBox FontNamesComboBox
+		{
+			get
+			{
+				CheckDisposed();
+				return m_cboFontNames;
+			}
+		}
+
 		#region private methods
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -415,7 +420,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		/// magic font names and real font names; otherwise only the magic font names will be in
 		/// the list.</param>
 		/// ------------------------------------------------------------------------------------
-		private void FillFontNames(bool fIncludeRealFontNames)
+		internal void FillFontNames(bool fIncludeRealFontNames)
 		{
 			if (m_fFontListIncludesRealNames == fIncludeRealFontNames &&
 				m_cboFontNames.Items.Count > 0)

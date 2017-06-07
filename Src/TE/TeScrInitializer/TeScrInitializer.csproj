@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="14.0">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
     <ProductVersion>9.0.30729</ProductVersion>
@@ -36,7 +36,7 @@
     <SccAuxPath>
     </SccAuxPath>
     <OldToolsVersion>3.5</OldToolsVersion>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -102,15 +102,7 @@
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BasicUtils, Version=4.1.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\BasicUtils.dll</HintPath>
-    </Reference>
-    <Reference Include="COMInterfaces">
-      <Name>COMInterfaces</Name>
-      <HintPath>..\..\..\Output\Debug\COMInterfaces.dll</HintPath>
-    </Reference>
-    <Reference Include="CoreImpl, Version=6.1.0.25408, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="CoreImpl">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\CoreImpl.dll</HintPath>
     </Reference>
@@ -142,25 +134,13 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\DistFiles\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
-    <Reference Include="Reporting, Version=1.0.3126.18585, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\Reporting.dll</HintPath>
-    </Reference>
     <Reference Include="RootSite">
       <Name>RootSite</Name>
       <HintPath>..\..\..\Output\Debug\RootSite.dll</HintPath>
     </Reference>
-    <Reference Include="ScriptureUtils">
-      <Name>ScriptureUtils</Name>
-      <HintPath>..\..\..\Output\Debug\ScriptureUtils.dll</HintPath>
-    </Reference>
     <Reference Include="ScrUtilsInterfaces">
       <Name>ScrUtilsInterfaces</Name>
       <HintPath>..\..\..\Output\Debug\ScrUtilsInterfaces.dll</HintPath>
-    </Reference>
-    <Reference Include="SharedScrUtils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\SharedScrUtils.dll</HintPath>
     </Reference>
     <Reference Include="SIL.Core, Version=2.6.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
@@ -173,23 +153,10 @@
     <Reference Include="SilUtils, Version=7.0.6.18756, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
     </Reference>
-    <Reference Include="SimpleRootSite">
-      <Name>SimpleRootSite</Name>
-      <HintPath>..\..\..\Output\Debug\SimpleRootSite.dll</HintPath>
-    </Reference>
-    <Reference Include="Palaso">
-      <HintPath>..\..\..\Output\Debug\Palaso.dll</HintPath>
-    </Reference>
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
     <Reference Include="System.Core" />
-    <Reference Include="System.Data">
-      <Name>System.Data</Name>
-    </Reference>
-    <Reference Include="System.Drawing">
-      <Name>System.Drawing</Name>
-    </Reference>
     <Reference Include="System.Windows.Forms">
       <Name>System.Windows.Forms</Name>
     </Reference>
@@ -202,6 +169,9 @@
       <Name>TeStylesXml</Name>
       <HintPath>..\..\..\Output\Debug\TeStylesXml.dll</HintPath>
     </Reference>
+    <Reference Include="FwKernelInterfaces">
+      <HintPath>..\..\..\Output\Debug\FwKernelInterfaces.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\CommonAssemblyInfo.cs">
@@ -213,7 +183,9 @@
     <Compile Include="BiblicalTermsList.cs" />
     <Compile Include="BiblicalTermsLocalization.cs" />
     <Compile Include="TeScrBookRefsInit.cs" />
-    <Compile Include="FixedOrphanFootnoteReportDlg.cs" />
+    <Compile Include="FixedOrphanFootnoteReportDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="FixedOrphanFootnoteReportDlg.Designer.cs">
       <DependentUpon>FixedOrphanFootnoteReportDlg.cs</DependentUpon>
     </Compile>

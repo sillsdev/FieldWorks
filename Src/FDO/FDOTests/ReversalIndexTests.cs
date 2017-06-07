@@ -2,11 +2,8 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using NUnit.Framework;
+using SIL.CoreImpl.Text;
 using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.FieldWorks.FDO.Infrastructure;
 
@@ -84,7 +81,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			UndoableUnitOfWorkHelper.Do("undo set rie name", "redo set rie name", m_actionHandler,
 				() =>
 					{
-						bank.ReversalForm.set_String(wsEn, bank.Cache.TsStrFactory.MakeString("moneybank", wsEn));
+						bank.ReversalForm.set_String(wsEn, TsStringUtils.MakeString("moneybank", wsEn));
 						moneybank = revIndex.FindOrCreateReversalEntry("moneybank");
 					});
 			Assert.AreEqual(bank, moneybank, "changing existing name should allow us to find old one under new name");
@@ -134,7 +131,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			var ls = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create() as LexSense;
 			le.SensesOS.Add(ls);
 
-			ls.ReversalEntriesBulkText.set_String(wsEn, Cache.TsStrFactory.MakeString("bank:of river;riverbank;shore", wsEn));
+			ls.ReversalEntriesBulkText.set_String(wsEn, TsStringUtils.MakeString("bank:of river;riverbank;shore", wsEn));
 
 			Assert.AreEqual(3, ls.ReversalEntriesRC.Count);
 			var revIndex = Cache.ServiceLocator.GetInstance<IReversalIndexRepository>().FindOrCreateIndexForWs(wsEn);
@@ -145,14 +142,14 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			var ls2 = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create() as LexSense;
 			le.SensesOS.Add(ls2);
 
-			ls2.ReversalEntriesBulkText.set_String(wsEn, Cache.TsStrFactory.MakeString("moneylender;invest", wsEn));
+			ls2.ReversalEntriesBulkText.set_String(wsEn, TsStringUtils.MakeString("moneylender;invest", wsEn));
 			Assert.AreEqual(2, ls2.ReversalEntriesRC.Count);
 			Assert.IsTrue(ls2.ReversalEntriesRC.Contains(revIndex.FindOrCreateReversalEntry("moneylender")), "sense should have moneylender RE");
 			Assert.IsTrue(ls2.ReversalEntriesRC.Contains(revIndex.FindOrCreateReversalEntry("invest")), "sense should have invest RE");
 			Assert.AreEqual(3, ls.ReversalEntriesRC.Count, "other sense should not be affected");
 
 			var oldriverbank = revIndex.FindOrCreateReversalEntry("riverbank");
-			ls.ReversalEntriesBulkText.set_String(wsEn, Cache.TsStrFactory.MakeString("bank:of river;shore;river-bank;side", wsEn));
+			ls.ReversalEntriesBulkText.set_String(wsEn, TsStringUtils.MakeString("bank:of river;shore;river-bank;side", wsEn));
 			Assert.AreEqual(4, ls.ReversalEntriesRC.Count);
 			Assert.IsTrue(ls.ReversalEntriesRC.Contains(revIndex.FindOrCreateReversalEntry("bank:of river")), "sense should have bank:of river RE");
 			Assert.IsTrue(ls.ReversalEntriesRC.Contains(revIndex.FindOrCreateReversalEntry("river-bank")), "sense should have riverbank RE");

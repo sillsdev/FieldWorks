@@ -6,7 +6,6 @@ using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 using System.Xml.Serialization;
-using SIL.CoreImpl;
 
 namespace SIL.FieldWorks.Common.FwUtils.MessageBoxEx
 {
@@ -128,7 +127,7 @@ namespace SIL.FieldWorks.Common.FwUtils.MessageBoxEx
 		/// </summary>
 		public static void ReadSettingsFile()
 		{
-			string path = DirectoryFinder.CommonAppDataFolder("FieldWorks");
+			string path = FwDirectoryFinder.CommonAppDataFolder("FieldWorks");
 
 			if (!File.Exists(path))
 				return;

@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -9,11 +9,10 @@ using System.Windows.Forms;
 using System.Linq;
 using System.Xml.Linq;
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.Utils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.Common.COMInterfaces;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -22,7 +21,7 @@ namespace SIL.FieldWorks.Common.Controls
 	///
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public partial class FlatListView : UserControl, IFWDisposable
+	public partial class FlatListView : UserControl
 	{
 		/// <summary>
 		/// This event notifies you that the selected object changed, passing an argument from which you can
@@ -110,7 +109,7 @@ namespace SIL.FieldWorks.Common.Controls
 		}
 		#endregion
 
-		#region IFWDisposable Members
+		#region IDisposable Members
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

@@ -19,8 +19,8 @@ using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Reporting;
-using SILUBS.SharedScrUtils;
-using ScrVers = SILUBS.SharedScrUtils.ScrVers;
+using SIL.CoreImpl.Scripture;
+using ScrVers = SIL.CoreImpl.Scripture.ScrVers;
 
 namespace SIL.FieldWorks.TE
 {

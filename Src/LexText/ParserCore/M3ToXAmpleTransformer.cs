@@ -13,6 +13,8 @@ using System.Xml.Linq;
 using System.Xml.XPath;
 using System.Xml.Xsl;
 using System.Linq;
+using System.Reflection;
+using System.Xml;
 using SIL.Utils;
 using SIL.WordWorks.GAFAWS.PositionAnalysis;
 
@@ -163,7 +165,62 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		private XslCompiledTransform CreateTransform(string xslName)
 		{
-			return XmlUtils.CreateTransform(xslName, "ApplicationTransforms");
+			return CreateTransform(xslName, "ApplicationTransforms");
+		}
+
+		public static XslCompiledTransform CreateTransform(string xslName, string assemblyName)
+		{
+			var transform = new XslCompiledTransform();
+			if (MiscUtils.IsDotNet)
+			{
+				// Assumes the XSL has been precompiled.  xslName is the name of the precompiled class
+				Type type = Type.GetType(xslName + "," + assemblyName);
+				Debug.Assert(type != null);
+				transform.Load(type);
+			}
+			else
+			{
+				string libPath = Path.GetDirectoryName(FileUtils.StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase));
+				Assembly transformAssembly = Assembly.LoadFrom(Path.Combine(libPath, assemblyName + ".dll"));
+				using (Stream stream = transformAssembly.GetManifestResourceStream(xslName + ".xsl"))
+				{
+					Debug.Assert(stream != null);
+					using (XmlReader reader = XmlReader.Create(stream))
+						transform.Load(reader, new XsltSettings(true, false), new XmlResourceResolver(transformAssembly));
+				}
+			}
+			return transform;
+		}
+
+		private class XmlResourceResolver : XmlUrlResolver
+		{
+			private readonly Assembly m_assembly;
+
+			public XmlResourceResolver(Assembly assembly)
+			{
+				m_assembly = assembly;
+			}
+
+			public override Uri ResolveUri(Uri baseUri, string relativeUri)
+			{
+				if (baseUri == null)
+					return new Uri(string.Format("res://{0}", relativeUri));
+				return base.ResolveUri(baseUri, relativeUri);
+			}
+
+			public override object GetEntity(Uri absoluteUri, string role, Type ofObjectToReturn)
+			{
+				switch (absoluteUri.Scheme)
+				{
+					case "res":
+						return m_assembly.GetManifestResourceStream(absoluteUri.OriginalString.Substring(6));
+
+					default:
+						// Handle file:// and http://
+						// requests from the XmlUrlResolver base class
+						return base.GetEntity(absoluteUri, role, ofObjectToReturn);
+				}
+			}
 		}
 	}
 }

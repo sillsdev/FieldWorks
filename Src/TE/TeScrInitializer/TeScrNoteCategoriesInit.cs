@@ -8,14 +8,10 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Xml;
 using System.Xml.Schema;
-using System.Windows.Forms;
-
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.Controls;
+using SIL.CoreImpl.Text;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
@@ -37,7 +33,6 @@ namespace SIL.FieldWorks.TE
 		/// <summary>The XmlNode from which to get the note category info</summary>
 		protected XmlNode m_categories;
 
-		private ITsStrFactory m_strFactory = TsStrFactoryClass.Create();
 		private string m_wsId;
 		private int m_defUserWs;
 		private IFdoServiceLocator m_servLoc;
@@ -174,8 +169,6 @@ namespace SIL.FieldWorks.TE
 		/// Load the Scr notes categories from the given XML document
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		protected virtual void CreateScrNoteCategories()
 		{
 			// Save the previous categories for all of the notes.
@@ -185,7 +178,7 @@ namespace SIL.FieldWorks.TE
 			m_scr.NoteCategoriesOA.ItemClsid = CmPossibilityTags.kClassId;
 			m_scr.NoteCategoriesOA.WsSelector = WritingSystemServices.kwsAnals;
 			m_scr.NoteCategoriesOA.Name.set_String(m_defUserWs,
-				m_strFactory.MakeString(TeResourceHelper.GetResourceString("kstidScrNoteCategoriesListName"),
+				TsStringUtils.MakeString(TeResourceHelper.GetResourceString("kstidScrNoteCategoriesListName"),
 				m_defUserWs));
 
 
@@ -300,8 +293,6 @@ namespace SIL.FieldWorks.TE
 		/// <param name="index">0-based position in the list of possibilities</param>
 		/// <param name="node">XML node to get info from</param>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void CreateNoteCategory(ICmObject owner, int index, XmlNode node)
 		{
 			if (owner is ICmPossibilityList || owner is ICmPossibility)
@@ -324,7 +315,7 @@ namespace SIL.FieldWorks.TE
 						int ws = GetWs(descNode.Attributes);
 						string alternative = descNode.InnerText;
 						if (ws > 0 && alternative != null && alternative != string.Empty)
-							category.Description.set_String(ws, m_strFactory.MakeString(alternative, ws));
+							category.Description.set_String(ws, TsStringUtils.MakeString(alternative, ws));
 						// REVIEW: What should we do when the writing system is not defined in the database?
 					}
 				}
@@ -356,7 +347,7 @@ namespace SIL.FieldWorks.TE
 				int ws = GetWs(node.Attributes);
 				string alternative = node.InnerText;
 				if (ws > 0 && alternative != null && alternative != string.Empty)
-					multiUnicodeproperty.set_String(ws, m_strFactory.MakeString(alternative, ws));
+					multiUnicodeproperty.set_String(ws, TsStringUtils.MakeString(alternative, ws));
 				// REVIEW: What should we do when the writing system is not defined in the database?
 			}
 		}

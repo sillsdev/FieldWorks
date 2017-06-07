@@ -1,9 +1,7 @@
 // --------------------------------------------------------------------------------------------
-// Copyright (c) 2007-2015 SIL International
+// Copyright (c) 2007-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: Win32.cs
 //
 // <remarks>
 // Declaration of wrappers for Win32 methods
@@ -15,11 +13,12 @@ using System.Text;
 using System.Windows.Forms.VisualStyles;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
+
 #if __MonoCS__
-using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 #endif
-using SIL.FieldWorks.Common.COMInterfaces;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
@@ -1083,8 +1082,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public static extern int MessageBox(IntPtr hWnd, string lpText, string lpCaption,
 			uint uType);
 #else
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="temp is a reference")]
 		public static int MessageBox(IntPtr hWnd, string lpText, string lpCaption,
 			uint uType)
 		{
@@ -1333,11 +1330,14 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public static bool PostMessage(IntPtr hWnd, int Msg, uint wParam, uint lParam)
 		{
 			if (s_postMessage == null)
+			{
+				var enumType = MonoWinFormsAssembly.GetType("System.Windows.Forms.Msg");
 				s_postMessage = XplatUI.GetMethod("PostMessage",
 					System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static,
 					null,
-					new Type[] { typeof(IntPtr), typeof(int), typeof(IntPtr), typeof(IntPtr) },
+					new Type[] { typeof(IntPtr), enumType, typeof(IntPtr), typeof(IntPtr) },
 					null);
+			}
 			return (bool)s_postMessage.Invoke(null, new object[] {hWnd, Msg, (IntPtr)wParam, (IntPtr)lParam});
 		}
 #endif
@@ -1380,8 +1380,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[DllImport("user32.dll", ExactSpelling = true, CharSet = CharSet.Auto)]
 		public static extern IntPtr GetParent(IntPtr hWnd);
 #else
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="temp is a reference")]
 		public static IntPtr GetParent(IntPtr hWnd)
 		{
 			System.Windows.Forms.Control temp = System.Windows.Forms.Panel.FromHandle(hWnd);
@@ -1397,8 +1395,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[DllImport("user32.dll")]
 		public extern static bool SetForegroundWindow(IntPtr hWnd);
 #else
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="temp is a reference")]
 		public static bool SetForegroundWindow(IntPtr hWnd)
 		{
 			System.Windows.Forms.Control temp = System.Windows.Forms.Panel.FromHandle(hWnd);
@@ -1429,8 +1425,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[DllImport("user32.dll")]
 		public extern static bool GetWindowRect(IntPtr hWnd, out Rect rect);
 #else
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="temp is a reference")]
 		public static bool GetWindowRect(IntPtr hWnd, out Rect rect)
 		{
 			System.Windows.Forms.Control temp = System.Windows.Forms.Panel.FromHandle(hWnd);

@@ -1,19 +1,15 @@
-// Copyright (c) 2010-2013 SIL International
+// Copyright (c) 2010-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: PUAMigrator.cs
-// Responsibility: mcconnel
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Xml;
 using System.Xml.Linq;
 using Microsoft.Win32;
-using SIL.FieldWorks.Common.FwUtils;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.UnicodeCharEditor
 {
@@ -27,13 +23,6 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 	{
 		Dictionary<int, string> m_mapPuaCodeData = new Dictionary<int, string>();
 		bool m_fDirty = false;
-
-		/// <summary>
-		/// Constructor.
-		/// </summary>
-		public PUAMigrator()
-		{
-		}
 
 		/// <summary>
 		/// Migrate and/or install any custom character definitions found.
@@ -82,8 +71,6 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 			}
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "klm is a reference")]
 		private string[] GetLangFiles()
 		{
 			RegistryKey klm = RegistryHelper.CompanyKeyLocalMachine;

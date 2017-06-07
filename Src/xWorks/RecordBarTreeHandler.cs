@@ -1,31 +1,27 @@
-// Copyright (c) 2003-2015 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: TreeBarHandler.cs
-// Authorship History: John Hatton
-// Last reviewed:
 //
 // <remarks>
 //	This class is responsible for populating the XCore tree bar with the records
 //	that are given to it by the RecordClerk.
 // </remarks>
+
 using System;
 using SIL.FieldWorks.FdoUi;
 using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
-using System.Xml;
+using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Filters;
-using SIL.Utils;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Text;
 using SIL.FieldWorks.FDO.Infrastructure;
-using System.Diagnostics.CodeAnalysis;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FwCoreDlgControls;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -33,7 +29,7 @@ namespace SIL.FieldWorks.XWorks
 	/// <summary>
 	/// Responsible for populating the tree bar with the records.
 	/// </summary>
-	public abstract class RecordBarHandler : IFWDisposable
+	public abstract class RecordBarHandler : IDisposable
 	{
 		protected IPropertyTable m_propertyTable;
 		protected FdoCache m_cache;
@@ -216,7 +212,7 @@ namespace SIL.FieldWorks.XWorks
 		protected virtual void UpdateHeaderVisibility()
 		{
 			var window = m_propertyTable.GetValue<IFwMainWnd>("window");
-			if (window == null || window.IsDisposed)
+			if (window == null)
 				return;
 
 			window.RecordBarControl.ShowHeaderControl = false;
@@ -252,8 +248,6 @@ namespace SIL.FieldWorks.XWorks
 			return possibility.OwningFlid != CmPossibilityTags.kflidSubPossibilities;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "ToolStripMenuItems get added to the menu and disposed there")]
 		protected override ContextMenuStrip CreateTreebarContextMenuStrip()
 		{
 			ContextMenuStrip menu = base.CreateTreebarContextMenuStrip();
@@ -261,8 +255,8 @@ namespace SIL.FieldWorks.XWorks
 				&& !(RecordList.OwningObject as ICmPossibilityList).IsSorted)
 			{
 				// Move up and move down items make sense
-				menu.Items.Add(new ToolStripMenuItem(xWorksStrings.MoveUp));
-				menu.Items.Add(new ToolStripMenuItem(xWorksStrings.MoveDown));
+				menu.Items.Add(new DisposableToolStripMenuItem(xWorksStrings.MoveUp));
+				menu.Items.Add(new DisposableToolStripMenuItem(xWorksStrings.MoveDown));
 			}
 			return menu;
 		}
@@ -475,7 +469,7 @@ namespace SIL.FieldWorks.XWorks
 				using (new WaitCursor((Form)window))
 				{
 					var tree = window.TreeStyleRecordList;
-					var expandedItems = new Set<int>();
+					var expandedItems = new HashSet<int>();
 					if (m_tree != null && !m_expand)
 						GetExpandedItems(m_tree.Nodes, expandedItems);
 					m_tree = tree;
@@ -537,7 +531,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		/// <param name="treeNodeCollection"></param>
 		/// <param name="expandedItems"></param>
-		private void GetExpandedItems(TreeNodeCollection treeNodeCollection, Set<int> expandedItems)
+		private void GetExpandedItems(TreeNodeCollection treeNodeCollection, HashSet<int> expandedItems)
 		{
 			foreach (TreeNode node in treeNodeCollection)
 			{
@@ -556,7 +550,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		/// <param name="treeNodeCollection"></param>
 		/// <param name="expandedItems"></param>
-		private void ExpandItems(TreeNodeCollection treeNodeCollection, Set<int> expandedItems)
+		private void ExpandItems(TreeNodeCollection treeNodeCollection, HashSet<int> expandedItems)
 		{
 			foreach (TreeNode node in treeNodeCollection)
 			{
@@ -570,7 +564,7 @@ namespace SIL.FieldWorks.XWorks
 
 		protected virtual ContextMenuStrip CreateTreebarContextMenuStrip()
 		{
-			var promoteMenuItem = new ToolStripMenuItem(xWorksStrings.Promote);
+			var promoteMenuItem = new DisposableToolStripMenuItem(xWorksStrings.Promote);
 			var contStrip = new ContextMenuStrip();
 			contStrip.Items.Add(promoteMenuItem);
 			return contStrip;

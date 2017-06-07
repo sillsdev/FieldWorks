@@ -1,12 +1,12 @@
-// Copyright (c) 2003-2015 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
@@ -16,8 +16,10 @@ using System.Text;
 using System.Windows.Forms;
 using SilEncConverters40;
 using SIL.CoreImpl;
+using SIL.CoreImpl.SpellChecking;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
@@ -29,7 +31,6 @@ using SIL.FieldWorks.FwCoreDlgControls;
 using SIL.FieldWorks.Resources;
 using SIL.Windows.Forms.WritingSystems;
 using SIL.WritingSystems;
-using SIL.Utils;
 using MatchedPair = SIL.WritingSystems.MatchedPair;
 
 namespace SIL.FieldWorks.FwCoreDlgs
@@ -37,7 +38,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	/// <summary>
 	/// The writing system properties dialog.
 	/// </summary>
-	public class WritingSystemPropertiesDialog : Form, IFWDisposable
+	public class WritingSystemPropertiesDialog : Form
 	{
 		private enum CollationRulesType
 		{
@@ -94,15 +95,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <param name="wsContainer">The ws container.</param>
 		/// <param name="helpTopicProvider">The help topic provider.</param>
 		/// <param name="app">The app.</param>
-		/// <param name="stylesheet">The stylesheet.</param>
 		/// <param name="displayRelatedWss">if set to <c>true</c> related writing systems will be displayed.</param>
 		/// <param name="defaultName">The default language name for the new writing system.</param>
 		/// <param name="newWritingSystems">The new writing systems.</param>
 		/// <returns></returns>
 		public static bool ShowNewDialog(Form owner, FdoCache cache, WritingSystemManager wsManager,
 			IWritingSystemContainer wsContainer, IHelpTopicProvider helpTopicProvider, IApp app,
-			IVwStylesheet stylesheet, bool displayRelatedWss, string defaultName,
-			out IEnumerable<CoreWritingSystemDefinition> newWritingSystems)
+			bool displayRelatedWss, string defaultName, out IEnumerable<CoreWritingSystemDefinition> newWritingSystems)
 		{
 			newWritingSystems = null;
 			string languageTag, languageName;
@@ -125,7 +124,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 
 			using (new WaitCursor(owner))
-			using (var wsPropsDlg = new WritingSystemPropertiesDialog(cache, wsManager, wsContainer, helpTopicProvider, app, stylesheet))
+			using (var wsPropsDlg = new WritingSystemPropertiesDialog(cache, wsManager, wsContainer, helpTopicProvider, app))
 			{
 				wsPropsDlg.SetupDialog(languageTag, languageName, displayRelatedWss);
 
@@ -167,12 +166,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <param name="wsContainer">The ws container.</param>
 		/// <param name="helpTopicProvider">The help topic provider.</param>
 		/// <param name="app">The app.</param>
-		/// <param name="stylesheet">The stylesheet.</param>
 		/// <param name="newWritingSystems">The new writing systems.</param>
 		/// <returns></returns>
 		public static bool ShowModifyDialog(Form owner, CoreWritingSystemDefinition selectedWS, bool addNewForLangOfSelectedWs, FdoCache cache,
-			IWritingSystemContainer wsContainer, IHelpTopicProvider helpTopicProvider, IApp app, IVwStylesheet stylesheet,
-			out IEnumerable<CoreWritingSystemDefinition> newWritingSystems)
+			IWritingSystemContainer wsContainer, IHelpTopicProvider helpTopicProvider, IApp app, out IEnumerable<CoreWritingSystemDefinition> newWritingSystems)
 		{
 			newWritingSystems = null;
 			if (!cache.ServiceLocator.WritingSystemManager.CanSave(selectedWS))
@@ -183,7 +180,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 			using (new WaitCursor(owner))
 			using (var wsPropsDlg = new WritingSystemPropertiesDialog(cache, cache.ServiceLocator.WritingSystemManager,
-				wsContainer, helpTopicProvider, app, stylesheet))
+				wsContainer, helpTopicProvider, app))
 			{
 				wsPropsDlg.SetupDialog(selectedWS, true);
 				if (addNewForLangOfSelectedWs)
@@ -215,10 +212,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary></summary>
 		protected readonly WritingSystemManager m_wsManager;
 		private readonly IWritingSystemContainer m_wsContainer;
-		private readonly IVwStylesheet m_stylesheet;
 		private readonly IHelpTopicProvider m_helpTopicProvider;
 		private readonly IApp m_app;
-		private readonly ITsStrFactory m_tsf;
 
 		// Change flags
 		private bool m_fChanged;
@@ -365,16 +360,14 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <param name="wsContainer">The ws container.</param>
 		/// <param name="helpTopicProvider">The help topic provider.</param>
 		/// <param name="app">The app.</param>
-		/// <param name="stylesheet">The stylesheet.</param>
 		public WritingSystemPropertiesDialog(FdoCache cache, WritingSystemManager wsManager, IWritingSystemContainer wsContainer,
-			IHelpTopicProvider helpTopicProvider, IApp app, IVwStylesheet stylesheet) : this()
+			IHelpTopicProvider helpTopicProvider, IApp app) : this()
 		{
 			m_cache = cache;
 			m_wsManager = wsManager;
 			m_wsContainer = wsContainer;
 			m_helpTopicProvider = helpTopicProvider;
 			m_app = app;
-			m_stylesheet = stylesheet;
 		}
 
 		/// <summary>
@@ -390,7 +383,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			AccessibleName = GetType().Name;
 			m_lblValidCharacters.Tag = m_lblValidCharacters.Text;
 			m_lblEncodingConverter.Tag = m_lblEncodingConverter.Text;
-			m_tsf = TsStrFactoryClass.Create();
 
 			LoadSortUsingComboBox();
 			LoadSortLanguageComboBox();
@@ -637,7 +629,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					m_sortRulesLoadPanel.Visible = true;
 					m_sortingHelpLabel.Text = string.Format(FwCoreDlgs.kstidIcuSortingHelp, Environment.NewLine);
 					var icuCollation = (IcuRulesCollationDefinition) ws.DefaultCollation;
-					m_sortRulesTextBox.Tss = m_tsf.MakeString(icuCollation.CollationRules.Replace("\t", ""), ws.Handle);
+					m_sortRulesTextBox.Tss = TsStringUtils.MakeString(icuCollation.CollationRules.Replace("\t", ""), ws.Handle);
 					break;
 
 				case CollationRulesType.CustomSimple:
@@ -647,7 +639,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					m_sortRulesLoadPanel.Visible = false;
 					m_sortingHelpLabel.Text = string.Format(FwCoreDlgs.kstidSimpleSortingHelp, Environment.NewLine);
 					var simpleCollation = (SimpleRulesCollationDefinition) ws.DefaultCollation;
-					m_sortRulesTextBox.Tss = m_tsf.MakeString(simpleCollation.SimpleRules, ws.Handle);
+					m_sortRulesTextBox.Tss = TsStringUtils.MakeString(simpleCollation.SimpleRules, ws.Handle);
 					break;
 
 				case CollationRulesType.OtherLanguage:
@@ -732,11 +724,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		private static string GetDictionaryName(String languageId)
 		{
-			Common.COMInterfaces.Icu.UErrorCode err;
+			Common.FwKernelInterfaces.Icu.UErrorCode err;
 			string country;
-			Common.COMInterfaces.Icu.GetDisplayCountry(languageId, "en", out country, out err);
+			Common.FwKernelInterfaces.Icu.GetDisplayCountry(languageId, "en", out country, out err);
 			string languageName;
-			Common.COMInterfaces.Icu.GetDisplayLanguage(languageId, "en", out languageName, out err);
+			Common.FwKernelInterfaces.Icu.GetDisplayLanguage(languageId, "en", out languageName, out err);
 			var languageAndCountry = new StringBuilder(languageName);
 			if (!string.IsNullOrEmpty(country))
 				languageAndCountry.AppendFormat(" ({0})", country);
@@ -755,8 +747,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			return !m_wsContainer.AllWritingSystems.Contains(origWs);
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "textBrush is a reference")]
 		private void m_listBoxRelatedWSs_DrawItem(object sender, DrawItemEventArgs e)
 		{
 			if (e.Index == -1)
@@ -888,8 +878,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// the contents of this method with the code editor.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification = "TODO-Linux: LinkLabel.TabStop is missing from Mono")]
 		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(WritingSystemPropertiesDialog));
@@ -1515,7 +1503,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			if (!CheckOkToChangeContext())
 				return;
 
-				string origLangName = m_tbLanguageName.Text;
+			string origLangName = m_tbLanguageName.Text;
 			string selectedLanguageTag;
 			string desiredLanguageName;
 			if (!ChooseLanguage(out selectedLanguageTag, out desiredLanguageName))
@@ -1527,40 +1515,40 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			RegionSubtag regionSubtag;
 			IEnumerable<VariantSubtag> variantSubtags;
 			if (!IetfLanguageTag.TryGetSubtags(selectedLanguageTag, out languageSubtag, out scriptSubtag, out regionSubtag, out variantSubtags))
-					return;
+				return;
 			languageSubtag = new LanguageSubtag(languageSubtag, desiredLanguageName);
 			foreach (CoreWritingSystemDefinition ws in m_listBoxRelatedWSs.Items)
-				{
+			{
 				ws.Language = languageSubtag;
 				if (scriptSubtag != null)
 					ws.Script = scriptSubtag;
 				if (regionSubtag != null)
 					ws.Region = regionSubtag;
-				}
+			}
 
 			if (!CheckWSIetfLanguageTagChange())
-				{
-					// revert back to original language
+			{
+				// revert back to original language
 				foreach (var wsData in origWsData)
-					{
+				{
 					wsData.WritingSystem.Language = wsData.Language;
 					if (!wsData.IsChanged)
 						wsData.WritingSystem.AcceptChanges();
-					}
-				}
-				else
-				{
-				Set_tbLanguageName(languageSubtag.Name);
-					SetupEthnologueCode(CurrentWritingSystem);
-					if (m_tbLanguageName.Text != origLangName)
-					{
-						int len = Math.Min(3, m_tbLanguageName.Text.Length);
-						m_ShortWsName.Text = m_tbLanguageName.Text.Substring(0, len);
-					}
-
-					UpdateDialogWithChangesToLanguageName();
 				}
 			}
+			else
+			{
+				Set_tbLanguageName(languageSubtag.Name);
+				SetupEthnologueCode(CurrentWritingSystem);
+				if (m_tbLanguageName.Text != origLangName)
+				{
+					int len = Math.Min(3, m_tbLanguageName.Text.Length);
+					m_ShortWsName.Text = m_tbLanguageName.Text.Substring(0, len);
+				}
+
+				UpdateDialogWithChangesToLanguageName();
+			}
+		}
 
 		/// <summary>
 		/// Returns a private use language code that is guaranteed to be valid and unique for both the
@@ -1645,7 +1633,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		protected virtual bool ChooseLanguage(out string selectedLanguageTag, out string desiredLanguageName)
 		{
 			using (var dlg = new LanguageLookupDialog())
-		{
+			{
 				dlg.StartPosition = FormStartPosition.CenterParent;
 				dlg.MatchingLanguageFilter = FilterLocalizedLanguages;
 				dlg.SearchText = CurrentWritingSystem.Language.Name;
@@ -1764,17 +1752,17 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			try
 			{
 				foreach (KeyValuePair<CoreWritingSystemDefinition, CoreWritingSystemDefinition> kvp in m_tempWritingSystems)
-			{
+				{
 					CoreWritingSystemDefinition tempWS = kvp.Key;
 					CoreWritingSystemDefinition origWS = kvp.Value;
 
 					if (IsNew(tempWS))
-				{
+					{
 						m_wsManager.Replace(tempWS);
-					m_fChanged = true;
-				}
+						m_fChanged = true;
+					}
 					else if (tempWS.IsChanged)
-				{
+					{
 						string oldId = origWS.Id;
 						origWS.Copy(tempWS);
 						if (oldId != tempWS.LanguageTag)
@@ -1784,13 +1772,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 							if (uowHelper != null)
 								WritingSystemServices.UpdateWritingSystemId(m_cache, origWS, oldId);
 						}
-					m_fChanged = true;
+						m_fChanged = true;
+					}
 				}
-			}
-						m_wsManager.Save();
+				m_wsManager.Save();
 				if (uowHelper != null)
 					uowHelper.RollBack = false;
-					}
+			}
 			finally
 			{
 				if (uowHelper != null)
@@ -1968,8 +1956,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			if (baseLocale == null)
 				baseLocale = "";
 
-			string sortRules = Common.COMInterfaces.Icu.GetCollationRules(baseLocale);
-			m_sortRulesTextBox.Tss = m_tsf.MakeString(sortRules == null ? "" : sortRules.Replace("&", Environment.NewLine + "&").Trim(),
+			string sortRules = Common.FwKernelInterfaces.Icu.GetCollationRules(baseLocale);
+			m_sortRulesTextBox.Tss = TsStringUtils.MakeString(sortRules == null ? "" : sortRules.Replace("&", Environment.NewLine + "&").Trim(),
 				CurrentWritingSystem.Handle);
 
 			var resources = new ComponentResourceManager(typeof(WritingSystemPropertiesDialog));

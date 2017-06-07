@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="14.0">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
     <ProductVersion>9.0.30729</ProductVersion>
@@ -28,7 +28,7 @@
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
     <OldToolsVersion>3.5</OldToolsVersion>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -94,92 +94,86 @@
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="COMInterfaces">
-      <Name>COMInterfaces</Name>
-      <HintPath>..\..\..\..\Output\Debug\COMInterfaces.dll</HintPath>
-    </Reference>
-    <Reference Include="FDO, Version=9.0.0.33131, Culture=neutral, processorArchitecture=x86">
+    <Reference Include="CoreImplTests, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Release\FDO.dll</HintPath>
+      <HintPath>..\..\..\..\Output\Debug\CoreImplTests.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.TestUtilities, Version=3.1.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Downloads\SIL.TestUtilities.dll</HintPath>
+    </Reference>
+    <Reference Include="SilUtilsTests, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Output\Debug\SilUtilsTests.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="ViewsInterfaces">
+      <Name>ViewsInterfaces</Name>
+      <HintPath>..\..\..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework">
       <Name>nunit.framework</Name>
-      <HintPath>..\..\..\..\Bin\NUnit\bin\nunit.framework.dll</HintPath>
+      <HintPath>..\..\..\..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
     <Reference Include="System.Core" />
     <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Drawing" />
     <Reference Include="SIL.Windows.Forms.Keyboarding">
-      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Downloads\SIL.Windows.Forms.Keyboarding.dll</HintPath>
     </Reference>
-    <Reference Include="BasicUtils">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\BasicUtils.dll</HintPath>
-    </Reference>
-    <Reference Include="BasicUtilsTests">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\BasicUtilsTests.dll</HintPath>
-    </Reference>
     <Reference Include="CoreImpl">
-      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\CoreImpl.dll</HintPath>
     </Reference>
     <Reference Include="FwUtils">
-      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\FwUtils.dll</HintPath>
     </Reference>
-    <Reference Include="NMock">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Bin\nmock\NMock.dll</HintPath>
-    </Reference>
     <Reference Include="SilUtils">
-      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\SilUtils.dll</HintPath>
     </Reference>
     <Reference Include="System.Xml" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="TestUtils">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\TestUtils.dll</HintPath>
-    </Reference>
+    <Reference Include="System.Drawing" />
     <Reference Include="SIL.Core">
-      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Downloads\SIL.Core.dll</HintPath>
     </Reference>
-    <Reference Include="XMLUtils, Version=9.0.0.16028, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Release\XMLUtils.dll</HintPath>
+    <Reference Include="FwKernelInterfaces">
+      <HintPath>..\..\..\Output\Debug\FwKernelInterfaces.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ProjectIDTests.cs" />
-    <Compile Include="TestBaseForTestsThatCreateTempFilesBasedOnResources.cs" />
-    <None Include="App.config" />
-    <Compile Include="CaseFunctionsTest.cs" />
-    <Compile Include="FwDirectoryFinderTests.cs" />
-    <Compile Include="DummyCharPropEngine.cs" />
-    <Compile Include="DummyFwRegistryHelper.cs" />
-    <Compile Include="FwLinkArgsTests.cs" />
-    <Compile Include="FwRegistryHelperTests.cs" />
-    <Compile Include="InventoryTests.cs" />
-    <Compile Include="MeasurementUtilsTest.cs" />
-    <Compile Include="MoreStringUtilsTests.cs" />
-    <Compile Include="ParagraphCorrelationTests.cs" />
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
+    <Compile Include="AlphaOutlineTests.cs" />
+    <Compile Include="Attributes\CreateComObjectsFromManifestAttribute.cs" />
+    <Compile Include="Attributes\HandleApplicationThreadExceptionAttribute.cs" />
+    <Compile Include="Attributes\SuppressErrorBeepsAttribute.cs" />
+    <Compile Include="CharEnumeratorForByteArrayTests.cs" />
+    <Compile Include="DebugProcsTests.cs" />
+    <Compile Include="InterfacesTests.cs" />
+    <Compile Include="DisposableObjectsSetTests.cs" />
+    <Compile Include="IVwCacheDaTests.cs" />
+    <Compile Include="LayoutKeyUtilsTests.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="ShowHelpTests.cs" />
-    <None Include="BuildInclude.targets" />
+    <Compile Include="SimpleLoggerTests.cs" />
+    <Compile Include="StringTableTests.cs" />
+    <Compile Include="TempSFFileMaker.cs" />
+    <Compile Include="TempSFFileMakerTests.cs" />
+    <Compile Include="TestBaseForTestsThatCreateTempFilesBasedOnResources.cs" />
+    <Compile Include="TestFwStylesheet.cs" />
+    <Compile Include="TestFwStylesheetTests.cs" />
+    <Compile Include="XmlHelper.cs" />
+    <None Include="App.config" />
+    <Compile Include="FwDirectoryFinderTests.cs" />
+    <Compile Include="DummyFwRegistryHelper.cs" />
+    <Compile Include="FwLinkArgsTests.cs" />
+    <Compile Include="FwRegistryHelperTests.cs" />
+    <Compile Include="MatchedPairsTests.cs" />
+    <Compile Include="MeasurementUtilsTest.cs" />
+    <Compile Include="ParagraphCorrelationTests.cs" />
+    <Compile Include="QuotationMarksTests.cs" />
     <Compile Include="ClipboardStub.cs" />
     <Compile Include="ImagePictureTest.cs" />
     <Compile Include="MessageBoxStub.cs" />
@@ -187,11 +181,19 @@
     <Compile Include="Attributes\InitializeRealKeyboardControllerAttribute.cs" />
     <Compile Include="Attributes\SetMessageBoxAdapterAttribute.cs" />
     <Compile Include="DummyKeyboardAdaptor.cs" />
-    <Compile Include="Attributes\SetCompanyAndProductAndIcuEnvForTestsAttribute.cs" />
+    <Compile Include="Attributes\InitializeFwRegistryHelperAttribute.cs" />
     <Compile Include="..\..\..\AssemblyInfoForTests.cs">
       <Link>AssemblyInfoForTests.cs</Link>
     </Compile>
     <Compile Include="ManagedPictureFactoryTests.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="food\fruit\citrus\strings-en.xml" />
+    <EmbeddedResource Include="food\fruit\strings-en.xml" />
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -211,9 +213,13 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="InventoryBaseTestFiles\Base1Layouts.xml" />
-    <Content Include="InventoryBaseTestFiles\Base2Layouts.xml" />
-    <Content Include="InventoryLaterTestFiles\Override1Layouts.xml" />
+    <None Include="food\fruit\sortOfFruitInclude.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="food\veggiesInclude.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="food\veggiesIncludeWithSubInclude.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
@@ -222,5 +228,4 @@
     <PostBuildEvent>
     </PostBuildEvent>
   </PropertyGroup>
-  <ItemGroup />
 </Project>

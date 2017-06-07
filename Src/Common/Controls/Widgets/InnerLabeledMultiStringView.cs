@@ -1,4 +1,4 @@
-// Copyright (c) 2010-2015 SIL International
+// Copyright (c) 2010-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -8,12 +8,14 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;		// controls and etc...
 using System.Xml.Linq;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Cellar;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.Widgets
 {
@@ -373,7 +375,6 @@ namespace SIL.FieldWorks.Common.Widgets
 			CheckDisposed();
 
 			m_rootb = null;
-			base.MakeRoot();
 
 			if (m_fdoCache == null || DesignMode)
 				return;
@@ -381,12 +382,11 @@ namespace SIL.FieldWorks.Common.Widgets
 			m_rgws = WritingSystemOptions;
 
 			int wsUser = m_fdoCache.WritingSystemFactory.UserWs;
-			m_vc = new InnerLabeledMultiStringViewVc(m_flid, m_rgws, wsUser, m_editable, m_fdoCache.TsStrFactory, this);
+			m_vc = new InnerLabeledMultiStringViewVc(m_flid, m_rgws, wsUser, m_editable, this);
 
-			// Review JohnT: why doesn't the base class do this??
-			m_rootb = VwRootBoxClass.Create();
-			m_rootb.SetSite(this);
+			base.MakeRoot();
 
+			Debug.Assert(m_rootb != null);
 			// And maybe this too, at least by default?
 			m_rootb.DataAccess = m_fdoCache.DomainDataByFlid;
 
@@ -457,21 +457,42 @@ namespace SIL.FieldWorks.Common.Widgets
 
 		/// <summary>
 		/// Make a selection in the specified writing system at the specified character offset.
-		/// Note: selecting other than the first writing system is not yet implemented.
 		/// </summary>
 		public void SelectAt(int ws, int ich)
 		{
 			CheckDisposed();
 
-			Debug.Assert(ws == m_rgws[0].Handle);
+			var cpropPrevious = 0;
+			if (ws != m_rgws[0].Handle)
+			{
+				// According to the documentation on RootBox.MakeTextSelection, cpropPrevious
+				// needs to be the index into the ws array that matches the ws to be selected.
+				cpropPrevious = GetRightPositionInWsArray(ws);
+				if (cpropPrevious < 0)
+				{
+					Debug.Fail("InnerLabeledMultiStringView could not select correct ws");
+					cpropPrevious = 0; // safety net to keep from crashing outright.
+				}
+			}
 			try
 			{
-				RootBox.MakeTextSelection(0, 0, null, m_flid, 0, ich, ich, ws, true, -1, null, true);
+				RootBox.MakeTextSelection(0, 0, null, m_flid, cpropPrevious, ich, ich, ws, true, -1, null, true);
 			}
 			catch (Exception)
 			{
 				Debug.Assert(false, "Unexpected failure to make selection in LabeledMultiStringView");
 			}
+		}
+
+		private int GetRightPositionInWsArray(int ws)
+		{
+			var i = 0;
+			for (; i < m_rgws.Count; i++)
+			{
+				if (m_rgws[i].Handle == ws)
+					break;
+			}
+			return i == m_rgws.Count ? -1 : i;
 		}
 	}
 
@@ -487,12 +508,11 @@ namespace SIL.FieldWorks.Common.Widgets
 		int m_wsEn;
 		internal int m_mDxmpLabelWidth;
 
-		public LabeledMultiStringVc(int flid, List<CoreWritingSystemDefinition> rgws, int wsUser, bool editable, int wsEn, ITsStrFactory tsf)
+		public LabeledMultiStringVc(int flid, List<CoreWritingSystemDefinition> rgws, int wsUser, bool editable, int wsEn)
 		{
 			Reuse(flid, rgws, editable);
 			m_ttpLabel = WritingSystemServices.AbbreviationTextProperties;
 			m_wsEn = wsEn == 0 ? wsUser : wsEn;
-			m_tsf = tsf;
 			// Here's the C++ code which does the same thing using styles.
 			//				StrUni stuLangCodeStyle(L"Language Code");
 			//				ITsPropsFactoryPtr qtpf;
@@ -541,7 +561,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			if (string.IsNullOrEmpty(result))
 				result = "??";
 
-			return m_tsf.MakeString(result, m_wsEn);
+			return TsStringUtils.MakeString(result, m_wsEn);
 		}
 
 		public override void Display(IVwEnv vwenv, int hvo, int frag)
@@ -594,7 +614,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			vwenv.MakeColumns(1, vlColMain);
 
 			vwenv.OpenTableBody();
-			var visibleWss = new Set<ILgWritingSystem>();
+			var visibleWss = new HashSet<ILgWritingSystem>();
 			// if we passed in a view and have WritingSystemsToDisplay
 			// then we'll load that list in order to filter our larger m_rgws list.
 			AddViewWritingSystems(visibleWss);
@@ -666,7 +686,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// <summary>
 		/// Subclass with LabeledMultiStringView tests for empty alternatives and returns true to skip them.
 		/// </summary>
-		internal virtual bool SkipEmptyWritingSystem(Set<ILgWritingSystem> visibleWss, int i, int hvo)
+		internal virtual bool SkipEmptyWritingSystem(ISet<ILgWritingSystem> visibleWss, int i, int hvo)
 		{
 			return false;
 		}
@@ -674,7 +694,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// <summary>
 		/// Subclass with LabelledMultiStringView gets extra WSS to display from it.
 		/// </summary>
-		internal virtual void AddViewWritingSystems(Set<ILgWritingSystem> visibleWss)
+		internal virtual void AddViewWritingSystems(ISet<ILgWritingSystem> visibleWss)
 		{
 		}
 
@@ -695,8 +715,8 @@ namespace SIL.FieldWorks.Common.Widgets
 		private InnerLabeledMultiStringView m_view;
 
 		public InnerLabeledMultiStringViewVc(int flid, List<CoreWritingSystemDefinition> rgws, int wsUser, bool editable,
-			ITsStrFactory tsf, InnerLabeledMultiStringView view)
-			: base(flid, rgws, wsUser, editable, view.WritingSystemFactory.GetWsFromStr("en"), tsf)
+			InnerLabeledMultiStringView view)
+			: base(flid, rgws, wsUser, editable, view.WritingSystemFactory.GetWsFromStr("en"))
 		{
 			m_view = view;
 			Debug.Assert(m_view != null);
@@ -708,13 +728,13 @@ namespace SIL.FieldWorks.Common.Widgets
 			m_view.TriggerDisplay(vwenv);
 		}
 
-		internal override void AddViewWritingSystems(Set<ILgWritingSystem> visibleWss)
+		internal override void AddViewWritingSystems(ISet<ILgWritingSystem> visibleWss)
 		{
 			if (m_view.WritingSystemsToDisplay != null)
-				visibleWss.AddRange(m_view.WritingSystemsToDisplay);
+				visibleWss.UnionWith(m_view.WritingSystemsToDisplay);
 		}
 
-		internal override bool SkipEmptyWritingSystem(Set<ILgWritingSystem> visibleWss, int i, int hvo)
+		internal override bool SkipEmptyWritingSystem(ISet<ILgWritingSystem> visibleWss, int i, int hvo)
 		{
 			// if we have defined writing systems to display, we want to
 			// show those, plus other options that have data.

@@ -1,17 +1,16 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using SIL.CoreImpl;
-using SIL.Utils;
+using SIL.CoreImpl.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.WritingSystems;
 
 namespace SIL.FieldWorks.FwCoreDlgControls
@@ -19,7 +18,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 	/// <summary>
 	/// Summary description for RegionVariantControl.
 	/// </summary>
-	public class RegionVariantControl : UserControl, IFWDisposable
+	public class RegionVariantControl : UserControl
 	{
 		private Label m_variantNameLabel;
 		// Note: this currently has a max length set to 30. This is to ensure that any
@@ -74,6 +73,13 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		{
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
+		}
+
+		/// <summary/>
+		protected override void Dispose(bool disposing)
+		{
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ******");
+			base.Dispose(disposing);
 		}
 
 		#region Component Designer generated code
@@ -586,8 +592,6 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		/// to the user and return false. This should prevent the user from closing the
 		/// containing form using OK, but not from cancelling.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="FindForm() returns a reference")]
 		public bool CheckValid()
 		{
 			CheckDisposed();
@@ -926,7 +930,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			{
 				// Stop the character from being entered into the control since it is not valid.
 				e.Handled = true;
-				MiscUtils.ErrorBeep();
+				FwUtils.ErrorBeep();
 			}
 		}
 

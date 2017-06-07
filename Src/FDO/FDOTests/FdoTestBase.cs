@@ -13,13 +13,11 @@
 using System;
 using System.IO;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.Test.TestUtils;
-using SIL.Utils;
-using SIL.CoreImpl;
-using System.Diagnostics.CodeAnalysis;
+using SIL.CoreImpl.Cellar;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.FDO.FDOTests
 {
@@ -35,7 +33,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 	/// and add relevant test data to its nearly empty LanguageProperty.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public abstract class FdoTestBase : BaseTest
+	[TestFixture]
+	public abstract class FdoTestBase
 	{
 		private FdoCache m_cache;
 		/// <summary></summary>
@@ -83,10 +82,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[TestFixtureSetUp]
-		public override void FixtureSetup()
+		public virtual void FixtureSetup()
 		{
-			base.FixtureSetup();
-
 			SetupEverythingButBase();
 		}
 
@@ -97,10 +94,6 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			if (m_cache != null)
 				DisposeEverythingButBase();
-			// We need FieldWorks here to get the correct registry key HKLM\Software\SIL\FieldWorks.
-			// The default without this would be HKLM\Software\SIL\SIL FieldWorks, which breaks some tests.
-			RegistryHelper.ProductName = "FieldWorks";
-			FdoTestHelper.SetupStaticFdoProperties();
 			m_cache = CreateCache();
 			m_actionHandler = m_cache.ServiceLocator.GetInstance<IActionHandler>();
 		}
@@ -111,11 +104,9 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[TestFixtureTearDown]
-		public override void FixtureTeardown()
+		public virtual void FixtureTeardown()
 		{
 			DisposeEverythingButBase();
-
-			base.FixtureTeardown();
 		}
 
 		/// <summary>
@@ -123,8 +114,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// </summary>
 		protected void DisposeEverythingButBase()
 		{
-			if (m_cache != null)
-				m_cache.Dispose();
+			m_cache?.Dispose();
 			m_cache = null;
 			m_actionHandler = null;
 		}
@@ -138,7 +128,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[SetUp]
 		public virtual void TestSetup()
 		{
-			ClipboardUtils.Manager.SetClipboardAdapter(new ClipboardStub());
+			// ClipboardUtils.Manager.SetClipboardAdapter(new ClipboardStub());
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -170,12 +160,20 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// <param name="loadType"></param>
 		/// <param name="settings"></param>
 		/// <returns>a working FdoCache</returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "ThreadHelper gets disposed in FixtureTeardown")]
 		protected FdoCache BootstrapSystem(IProjectIdentifier projectId, BackendBulkLoadDomain loadType, FdoSettings settings)
 		{
-			var retval = m_internalRestart ? FdoCache.CreateCacheFromExistingData(projectId, "en", new DummyFdoUI(), FwDirectoryFinder.FdoDirectories, settings, new DummyProgressDlg()) :
-				FdoCache.CreateCacheWithNewBlankLangProj(projectId, "en", "fr", "en", new DummyFdoUI(), FwDirectoryFinder.FdoDirectories, settings);
+			FdoCache retval;
+			if (m_internalRestart)
+			{
+				retval = FdoCache.CreateCacheFromExistingData(projectId, "en", new DummyFdoUI(), TestDirectoryFinder.FdoDirectories,
+					settings, new DummyProgressDlg());
+			}
+			else
+			{
+				retval = FdoCache.CreateCacheWithNewBlankLangProj(projectId, "en", "fr", "en", new DummyFdoUI(),
+					TestDirectoryFinder.FdoDirectories, settings);
+			}
+
 			var dataSetup = retval.ServiceLocator.GetInstance<IDataSetup>();
 			dataSetup.LoadDomain(loadType);
 			return retval;
@@ -231,8 +229,25 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			/// </summary>
 			public void Dispose()
 			{
-				m_customField.MarkForDeletion = true;
-				m_customField.UpdateCustomField();
+				Dispose(true);
+				GC.SuppressFinalize(this);
+			}
+
+			/// <summary/>
+			private void Dispose(bool disposing)
+			{
+				System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
+				if (disposing)
+				{
+					m_customField.MarkForDeletion = true;
+					m_customField.UpdateCustomField();
+				}
+			}
+
+			/// <summary/>
+			~CustomFieldForTest()
+			{
+				Dispose(false);
 			}
 		}
 	}
@@ -411,8 +426,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// ------------------------------------------------------------------------------------
 		public void AddRunToMockedPara(IStTxtPara para, string runText, string runStyleName)
 		{
-			ITsPropsFactory propFact = TsPropsFactoryClass.Create();
-			ITsTextProps runStyle = propFact.MakeProps(runStyleName, Cache.DefaultVernWs, 0);
+			ITsTextProps runStyle = TsStringUtils.MakeProps(runStyleName, Cache.DefaultVernWs);
 			ITsStrBldr bldr = para.Contents.GetBldr();
 			bldr.Replace(bldr.Length, bldr.Length, runText, runStyle);
 			para.Contents = bldr.GetString();
@@ -428,8 +442,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// ------------------------------------------------------------------------------------
 		public void AddRunToMockedPara(IStTxtPara para, string runText, int ws)
 		{
-			ITsPropsFactory propFact = TsPropsFactoryClass.Create();
-			ITsTextProps runStyle = propFact.MakeProps(null, ws, 0);
+			ITsTextProps runStyle = TsStringUtils.MakeProps(null, ws);
 			ITsStrBldr bldr = para.Contents.GetBldr();
 			bldr.Replace(bldr.Length, bldr.Length, runText, runStyle);
 			para.Contents = bldr.GetString();
@@ -461,8 +474,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// ------------------------------------------------------------------------------------
 		protected void AddRunToMockedTrans(ICmTranslation trans, int btWS, int runWS, string runText, string runStyleName)
 		{
-			ITsPropsFactory propFact = TsPropsFactoryClass.Create();
-			ITsTextProps runProps = propFact.MakeProps(runStyleName, runWS, 0);
+			ITsTextProps runProps = TsStringUtils.MakeProps(runStyleName, runWS);
 			ITsStrBldr bldr = trans.Translation.get_String(btWS).GetBldr();
 			bldr.Replace(bldr.Length, bldr.Length, runText, runProps);
 			trans.Translation.set_String(btWS, bldr.GetString());
@@ -479,7 +491,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		protected ICmTranslation AddBtToMockedParagraph(IStTxtPara owner, int wsTrans)
 		{
 			ICmTranslation trans = owner.GetOrCreateBT();
-			trans.Translation.set_String(wsTrans, Cache.TsStrFactory.MakeString(string.Empty, wsTrans));
+			trans.Translation.set_String(wsTrans, TsStringUtils.EmptyString(wsTrans));
 			return trans;
 		}
 
@@ -569,7 +581,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		protected IStTxtPara AddParaToMockedText(IStText owner, string paraStyleName)
 		{
 			IStTxtPara para = owner.AddNewTextPara(paraStyleName);
-			para.Contents = Cache.TsStrFactory.MakeString(string.Empty, Cache.DefaultVernWs);
+			para.Contents = TsStringUtils.EmptyString(Cache.DefaultVernWs);
 			return para;
 		}
 
@@ -620,7 +632,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			Assert.IsNotNull(itext.ContentsOA);
 			IStTxtPara para = itext.ContentsOA.AddNewTextPara(null);
 			int wsFr = Cache.ServiceLocator.GetInstance<ILgWritingSystemFactory>().GetWsFromStr("fr");
-			para.Contents = TsStringUtils.MakeTss(paraText, wsFr);
+			para.Contents = TsStringUtils.MakeString(paraText, wsFr);
 			return para;
 		}
 
@@ -700,7 +712,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			style.Function = function;
 			style.Type = (isCharStyle ? StyleType.kstCharacter : StyleType.kstParagraph);
 			style.UserLevel = userLevel;
-			ITsPropsBldr bldr = TsPropsBldrClass.Create();
+			ITsPropsBldr bldr = TsStringUtils.MakePropsBldr();
 			style.Rules = bldr.GetTextProps();
 			style.IsBuiltIn = isBuiltIn;
 			return style;

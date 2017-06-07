@@ -11,12 +11,11 @@ using System.IO;
 using NUnit.Framework;
 
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.ScriptureUtils;
-using SIL.FieldWorks.Test.TestUtils;
-using SILUBS.SharedScrUtils;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Scripture;
+using SIL.CoreImpl.Text;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.TE.ImportTests
@@ -153,7 +152,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 			// verify the footnote text
 			IStFootnote footnote = mark.FootnotesOS[0];
 			IStTxtPara para = (IStTxtPara)footnote.ParagraphsOS[0];
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, "is a footnote", StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
 			AssertEx.AreTsStringsEqual(bldr.GetString(), para.Contents);
 			Assert.AreEqual(FootnoteMarkerTypes.AutoFootnoteMarker, m_scr.FootnoteMarkerType);
@@ -216,7 +215,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 			// verify the footnote text
 			IStFootnote footnote = mark.FootnotesOS[0];
 			IStTxtPara para = (IStTxtPara)footnote.ParagraphsOS[0];
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, "A big footnote issue", StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
 			AssertEx.AreTsStringsEqual(bldr.GetString(), para.Contents);
 			Assert.AreEqual(FootnoteMarkerTypes.AutoFootnoteMarker, m_scr.FootnoteMarkerType);
@@ -401,7 +400,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 			// verify the footnote text
 			IStFootnote footnote = (IStFootnote)mark.FootnotesOS[0];
 			IStTxtPara para = (IStTxtPara)footnote.ParagraphsOS[0];
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, "This is a footnote", StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
 			AssertEx.AreTsStringsEqual(bldr.GetString(), para.Contents);
 			Assert.AreEqual(FootnoteMarkerTypes.SymbolicFootnoteMarker, m_scr.FootnoteMarkerType);
@@ -464,7 +463,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 			// verify the footnote text
 			IStFootnote footnote = (IStFootnote)mark.FootnotesOS[0];
 			IStTxtPara para = (IStTxtPara)footnote.ParagraphsOS[0];
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, "I wish This is a footnote", StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
 			AssertEx.AreTsStringsEqual(bldr.GetString(), para.Contents);
 			Assert.AreEqual(FootnoteMarkerTypes.AutoFootnoteMarker, m_scr.FootnoteMarkerType);
@@ -531,7 +530,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 			// verify the footnote text
 			IStFootnote footnote = (IStFootnote)mark.FootnotesOS[0];
 			IStTxtPara para = (IStTxtPara)footnote.ParagraphsOS[0];
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, "footnote", StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
 			bldr.Replace(0, 0, "a ", StyleUtils.CharStyleTextProps("Quoted Text", Cache.DefaultVernWs));
 			bldr.Replace(0, 0, "is ", StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
@@ -666,7 +665,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 			// verify the footnote text
 			IStFootnote footnote = mark.FootnotesOS[0];
 			IStTxtPara para = (IStTxtPara)footnote.ParagraphsOS[0];
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, "a footnote", StyleUtils.CharStyleTextProps("Quoted Text", Cache.DefaultVernWs));
 			bldr.Replace(0, 0, "This is ", StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
 			AssertEx.AreTsStringsEqual(bldr.GetString(), para.Contents);
@@ -734,7 +733,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 			// verify the footnote text
 			IStFootnote footnote = mark.FootnotesOS[0];
 			IStTxtPara para = (IStTxtPara)footnote.ParagraphsOS[0];
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, "footnote", StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
 			bldr.Replace(0, 0, "a ", StyleUtils.CharStyleTextProps("Quoted Text", Cache.DefaultVernWs));
 			bldr.Replace(0, 0, "This is ", StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));

@@ -12,7 +12,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 
 namespace SIL.FieldWorks.Common.RootSites
 {

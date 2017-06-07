@@ -1,17 +1,14 @@
-// Copyright (c) 2007-2015 SIL International
+// Copyright (c) 2007-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: BookPropertiesTests.cs
-// Responsibility: TE Team
 //
 // <remarks> Only one test, which fails on Linux due to some change external to this repository; TE is being sunset: Ignore </remarks>
 
 using NUnit.Framework;
 using System.Linq;
+using SIL.CoreImpl.Scripture;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.FDO.DomainServices;
 

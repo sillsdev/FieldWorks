@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,11 +6,12 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
 using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.Utils;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
@@ -21,7 +22,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 	/// used by MultiStringSlice, and probably by other classes that are nothing to do with
 	/// IText. I'm thinking it might belong in the same DLL as LangProject.
 	/// </summary>
-	public class WsListManager : IFWDisposable
+	public class WsListManager : IDisposable
 	{
 		ILangProject m_lp;
 		ITsString m_tssColon;
@@ -222,11 +223,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				{
 					ITsTextProps ttp = LanguageCodeStyle;
 					var labels = new List<ITsString>();
-					ITsStrFactory tsf = TsStrFactoryClass.Create();
 					foreach (CoreWritingSystemDefinition ws in AnalysisWss.Cast<CoreWritingSystemDefinition>())
 					{
 						string sAbbr = ws.Abbreviation;
-						labels.Add(tsf.MakeStringWithPropsRgch(sAbbr, sAbbr.Length, ttp));
+						labels.Add(TsStringUtils.MakeString(sAbbr, ttp));
 					}
 					m_labels = labels.ToArray();
 					m_labelBasis = AnalysisWsIds;
@@ -238,7 +238,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		public static ITsString WsLabel(FdoCache cache, int ws)
 		{
 			CoreWritingSystemDefinition wsObj = cache.ServiceLocator.WritingSystemManager.Get(ws);
-			ITsString abbr = TsStringUtils.MakeTss(wsObj.Abbreviation, cache.DefaultUserWs, "Language Code");
+			ITsString abbr = TsStringUtils.MakeString(wsObj.Abbreviation, cache.DefaultUserWs, "Language Code");
 			ITsStrBldr tsb = abbr.GetBldr();
 			tsb.SetProperties(0, tsb.Length, LanguageCodeTextProps(cache.DefaultUserWs));
 			return tsb.GetString();
@@ -256,8 +256,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 			if (m_tssColon == null)
 			{
-				ITsStrFactory tsf = TsStrFactoryClass.Create();
-				m_tssColon = tsf.MakeString(": ", m_lp.Cache.DefaultUserWs);
+				m_tssColon = TsStringUtils.MakeString(": ", m_lp.Cache.DefaultUserWs);
 			}
 			if (m_ttpLabelStyle == null)
 			{
@@ -287,7 +286,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		public static ITsTextProps LanguageCodeTextProps(int wsUser)
 		{
-			ITsPropsBldr tpb = TsPropsBldrClass.Create();
+			ITsPropsBldr tpb = TsStringUtils.MakePropsBldr();
 			tpb.SetIntPropValues((int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault,
 				wsUser);
 			tpb.SetIntPropValues((int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault,

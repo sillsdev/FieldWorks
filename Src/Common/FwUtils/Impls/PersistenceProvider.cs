@@ -3,7 +3,6 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Windows.Forms;
 using SIL.CoreImpl;
@@ -12,10 +11,8 @@ using SIL.Windows.Forms;
 namespace SIL.FieldWorks.Common.FwUtils.Impls
 {
 	/// <summary>
-	///  A PersistenceProvider which uses the PropertyTable
+	///  A PersistenceProvider which uses the IPropertyTable
 	/// </summary>
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification = "m_propertyTable variable is a reference")]
 	internal class PersistenceProvider : IPersistenceProvider
 	{
 		protected string m_contextString;

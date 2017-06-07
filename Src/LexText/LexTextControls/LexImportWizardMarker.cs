@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,7 +6,6 @@ using System;
 using System.Collections;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
@@ -15,19 +14,19 @@ using System.Xml.Xsl;
 using SIL.CoreImpl;
 using Gecko;
 using Sfm2Xml;
+using SIL.CoreImpl.Text;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.Utils;
 using TreeView = System.Windows.Forms.TreeView;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
 	/// <summary></summary>
-	public class LexImportWizardMarker : Form, IFWDisposable
+	public class LexImportWizardMarker : Form
 	{
 		private Label lblMarker;
 		private Label m_lblMarker;
@@ -59,7 +58,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		private FdoCache m_cache;
 		private IHelpTopicProvider m_helpTopicProvider;
 		private IApp m_app;
-		private IVwStylesheet m_stylesheet;
 		private string m_refFuncString;
 		private string m_refFuncStringOrig;
 		private Button buttonHelp;	// initial value
@@ -87,7 +85,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		}
 
 		public void Init(MarkerPresenter.ContentMapping currentMarker, Hashtable uiLangsHT, FdoCache cache,
-			IHelpTopicProvider helpTopicProvider, IApp app, IVwStylesheet stylesheet)
+			IHelpTopicProvider helpTopicProvider, IApp app)
 		{
 			CheckDisposed();
 
@@ -95,7 +93,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_cache = cache;
 			m_helpTopicProvider = helpTopicProvider;
 			m_app = app;
-			m_stylesheet = stylesheet;
 			helpProvider.HelpNamespace = helpTopicProvider.HelpFile;
 			helpProvider.SetHelpKeyword(this, helpTopicProvider.GetHelpString(s_helpTopic));
 			helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
@@ -454,8 +451,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification = "Code in question is only compiled on Windows")]
 		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LexImportWizardMarker));
@@ -711,7 +706,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private void btnAddLangDesc_Click(object sender, EventArgs e)
 		{
-			using (var dlg = new LexImportWizardLanguage(m_cache, m_uiLangs, m_helpTopicProvider, m_app, m_stylesheet))
+			using (var dlg = new LexImportWizardLanguage(m_cache, m_uiLangs, m_helpTopicProvider, m_app))
 			{
 			if (dlg.ShowDialog(this) == DialogResult.OK)
 			{
@@ -845,7 +840,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (field.IsRef)
 			{
 				lblFunction.Text = LexTextControls.ksLexicalRelationType;
-				int pos = -1;
 				//string abbr, name, reverseAbbr, reverseName;
 				rbAbbrAbbr.Checked = true;
 				rbAbbrName.Checked = false;
@@ -860,9 +854,11 @@ namespace SIL.FieldWorks.LexText.Controls
 							case (int)MappingTypes.kmtEntryCollection:
 							case (int)MappingTypes.kmtEntryPair:
 							case (int)MappingTypes.kmtEntrySequence:
+							case (int)MappingTypes.kmtEntryUnidirectional:
 							case (int)MappingTypes.kmtEntryOrSenseCollection:
 							case (int)MappingTypes.kmtEntryOrSensePair:
 							case (int)MappingTypes.kmtEntryOrSenseSequence:
+							case (int)MappingTypes.kmtEntryOrSenseUnidirectional:
 								//abbr = lrt.Abbreviation.AnalysisDefaultWritingSystem.Text;
 								//name = lrt.Name.AnalysisDefaultWritingSystem.Text;
 								//AddAbbrAndNameInfo(abbr, name, "en", null, null, null);
@@ -893,9 +889,11 @@ namespace SIL.FieldWorks.LexText.Controls
 							case (int)MappingTypes.kmtSenseCollection:
 							case (int)MappingTypes.kmtSensePair:
 							case (int)MappingTypes.kmtSenseSequence:
+							case (int)MappingTypes.kmtSenseUnidirectional:
 							case (int)MappingTypes.kmtEntryOrSenseCollection:
 							case (int)MappingTypes.kmtEntryOrSensePair:
 							case (int)MappingTypes.kmtEntryOrSenseSequence:
+							case (int)MappingTypes.kmtEntryOrSenseUnidirectional:
 								//abbr = lrt.Abbreviation.AnalysisDefaultWritingSystem.Text;
 								//name = lrt.Name.AnalysisDefaultWritingSystem.Text;
 								//AddAbbrAndNameInfo(abbr, name, "en", null, null, null);
@@ -922,38 +920,25 @@ namespace SIL.FieldWorks.LexText.Controls
 					foreach (var let in m_cache.LangProject.LexDbOA.VariantEntryTypesOA.ReallyReallyAllPossibilities)
 					{
 						AddAbbrAndNameInfo(let.Abbreviation, let.Name, null, null);
-						//int wsActual;
-						//ITsString tssAnal = let.Name. GetAlternativeOrBestTss(m_cache.DefaultAnalWs, out wsActual);
-						//name = tssAnal.Text;
-						//string ws = m_cache.LanguageWritingSystemFactoryAccessor.GetStrFromWs(wsActual);
-						//AddAbbrAndNameInfo(null, name, ws, null, null, null);
 					}
 				}
 				else if (field.ID == "sub")
 				{
 					lblFunction.Text = LexTextControls.ksComplexFormType;
-					// fill the comboBox with the names of the Variant objects
+					// fill the comboBox with the names of the Complex Form objects
 					foreach (var let in m_cache.LangProject.LexDbOA.ComplexEntryTypesOA.ReallyReallyAllPossibilities)
 					{
 						AddAbbrAndNameInfo(let.Abbreviation, let.Name, null, null);
-						//int wsActual;
-						//ITsString tssAnal = let.Name.GetAlternativeOrBestTss(m_cache.DefaultAnalWs, out wsActual);
-						//name = tssAnal.Text;
-						//string ws = m_cache.LanguageWritingSystemFactoryAccessor.GetStrFromWs(wsActual);
-						//AddAbbrAndNameInfo(null, name, ws, null, null, null);
 					}
 				}
 
-
 				// now select the one with the correct abbreviation
-				pos = -1;
+				var pos = -1;
 				if (m_refFuncString.Length > 0)
 					pos = cbFunction.FindString(m_refFuncString);
-				if (pos >= 0)
-				{
-					cbFunction.SelectedIndex = pos;
-					cbFunction.Text = cbFunction.SelectedItem as string;
-				}
+
+				cbFunction.SelectedIndex = pos >= 0 ? pos : 0;
+				cbFunction.Text = cbFunction.SelectedItem as string;
 			}
 			// The radio buttons for abbr and Name are set when initialized - so don't reset them
 		}
@@ -1172,10 +1157,9 @@ namespace SIL.FieldWorks.LexText.Controls
 						NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
 							{
 								owningSeq.Add(newType);
-								var strFact = m_cache.TsStrFactory;
 								var userWs = m_cache.WritingSystemFactory.UserWs;
-								newType.Name.set_String(userWs, strFact.MakeString(funcText, userWs));
-								newType.Description.set_String(userWs, strFact.MakeString(description, userWs));
+								newType.Name.set_String(userWs, TsStringUtils.MakeString(funcText, userWs));
+								newType.Description.set_String(userWs, TsStringUtils.MakeString(description, userWs));
 							});
 					}
 				}

@@ -5,21 +5,10 @@
 // File: BookRevListTests.cs
 // Responsibility: TE Team
 
-using System;
-using System.IO;
-using System.Collections.Generic;
-using System.Diagnostics;
-
 using NUnit.Framework;
 
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.Utils;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Test.TestUtils;
-using SIL.FieldWorks.Common.ScriptureUtils;
-using SIL.FieldWorks.Common.Controls;
 
 namespace SIL.FieldWorks.TE
 {

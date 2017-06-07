@@ -8,7 +8,6 @@
 // --------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -41,8 +40,6 @@ namespace SIL.Utils
 		/// <param name="text">The text.</param>
 		/// <returns>The string with all of the new lines normalized</returns>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Portability", "NewLineLiteralRule",
-			Justification="Replacing/normalizing newlines")]
 		public static string NormalizeNewLines(string text)
 		{
 			return text.Replace("\r\n", "\n");
@@ -353,7 +350,7 @@ namespace SIL.Utils
 		/// ------------------------------------------------------------------------------------
 		public static string CharacterCodepoints(this string chrs)
 		{
-			return chrs.ToString(", ", GetUnicodeValueString);
+			return string.Join(", ", chrs.Select(item => GetUnicodeValueString(item)));
 		}
 
 		/// ------------------------------------------------------------------------------------

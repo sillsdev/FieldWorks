@@ -9,16 +9,18 @@ BUILD_PRODUCT=Views
 BUILD_EXTENSION=dll
 BUILD_REGSVR=1
 
-DEFS=$(DEFS) /DGR_FW /DVIEWSDLL /D_MERGE_PROXYSTUB /I"$(COM_OUT_DIR)" /I"$(COM_OUT_DIR_RAW)"
+DEFS=$(DEFS) /DGRAPHITE2_STATIC /DGR_FW /DVIEWSDLL /D_MERGE_PROXYSTUB /I"$(COM_OUT_DIR)" /I"$(COM_OUT_DIR_RAW)"
 
 VIEWS_SRC=$(BUILD_ROOT)\Src\Views
 GENERIC_SRC=$(BUILD_ROOT)\Src\Generic
 VIEWS_LIB_SRC=$(BUILD_ROOT)\Src\Views\Lib
 AFCORE_SRC=$(BUILD_ROOT)\Src\AppCore
 COMMONDLGS_SRC=$(BUILD_ROOT)\Src\CommonCOMDlgs
+GR2_INC=$(BUILD_ROOT)\Lib\src\graphite2\include
+DEBUGPROCS_SRC=$(BUILD_ROOT)\src\DebugProcs
 
 # Set the USER_INCLUDE environment variable.
-UI=$(VIEWS_SRC);$(VIEWS_LIB_SRC);$(GENERIC_SRC);$(AFCORE_SRC);$(COMMONDLGS_SRC)
+UI=$(VIEWS_SRC);$(VIEWS_LIB_SRC);$(GENERIC_SRC);$(AFCORE_SRC);$(COMMONDLGS_SRC);$(DEBUGPROCS_SRC);$(GR2_INC)
 
 !IF "$(USER_INCLUDE)"!=""
 USER_INCLUDE=$(UI);$(USER_INCLUDE);
@@ -34,7 +36,8 @@ PATH=$(COM_OUT_DIR);$(PATH)
 
 RCFILE=Views.rc
 DEFFILE=Views.def
-LINK_LIBS= Generic.lib $(LINK_LIBS)
+LINK_LIBS= Generic.lib Usp10.lib xmlparse-utf16.lib graphite2.lib $(LINK_LIBS)
+PS_OBJ_DEPS= $(OBJ_DIR)\Common\FwKernel\FwKernelPs_p.obj $(OBJ_DIR)\Common\FwKernel\FwKernelPs_i.obj
 
 # === Object Lists ===
 
@@ -63,24 +66,39 @@ OBJ_VIEWS=\
 	$(INT_DIR)\autopch\VwPrintContext.obj\
 	$(INT_DIR)\autopch\VwBaseDataAccess.obj\
 	$(INT_DIR)\autopch\VwCacheDa.obj\
+	$(INT_DIR)\autopch\ActionHandler.obj\
 	$(INT_DIR)\autopch\VwUndo.obj\
 	$(INT_DIR)\autopch\VwLazyBox.obj\
 	$(INT_DIR)\autopch\VwPattern.obj\
-	$(INT_DIR)\autopch\WriteXml.obj\
 	$(INT_DIR)\autopch\FwStyledText.obj\
 	$(INT_DIR)\autopch\VwSynchronizer.obj\
 	$(INT_DIR)\autopch\VwTextStore.obj\
 	$(INT_DIR)\autopch\VwBaseVirtualHandler.obj\
+	$(INT_DIR)\autopch\UniscribeEngine.obj\
+	$(INT_DIR)\autopch\UniscribeSegment.obj\
+	$(INT_DIR)\autopch\GraphiteEngine.obj\
+	$(INT_DIR)\autopch\GraphiteSegment.obj\
+	$(INT_DIR)\autopch\RomRenderEngine.obj\
+	$(INT_DIR)\autopch\RomRenderSegment.obj\
+	$(INT_DIR)\autopch\LgLineBreaker.obj\
+	$(INT_DIR)\autopch\LgUnicodeCollater.obj\
+	$(INT_DIR)\autopch\TsString.obj\
+	$(INT_DIR)\autopch\TsTextProps.obj\
+	$(INT_DIR)\autopch\TsStrFactory.obj\
+	$(INT_DIR)\autopch\TsPropsFactory.obj\
+	$(INT_DIR)\autopch\TextServ.obj\
+	$(INT_DIR)\autopch\TextProps1.obj\
+	$(INT_DIR)\autopch\DebugReport.obj\
 	$(INT_DIR)\autopch\dlldatax.obj\
 
 
-OBJ_AUTOPCH=$(OBJ_VIEWS) $(OBJ_GENERIC)
+OBJ_AUTOPCH=$(OBJ_VIEWS) $(OBJ_GENERIC) $(PS_OBJ_DEPS)
 
 IDL_MAIN=$(COM_OUT_DIR)\ViewsTlb.idl
 
 PS_MAIN=ViewsPs
 
-OBJ_ALL= $(OBJ_VIEWS) $(OBJ_GENERIC) $(OBJ_NOPCH) $(OBJ_GENPCH)
+OBJ_ALL= $(OBJ_VIEWS) $(OBJ_GENERIC) $(OBJ_NOPCH) $(OBJ_GENPCH) $(PS_OBJ_DEPS)
 
 # === Targets ===
 !INCLUDE "$(BUILD_ROOT)\bld\_targ.mak"

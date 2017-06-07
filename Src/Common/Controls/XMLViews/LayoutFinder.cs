@@ -8,14 +8,18 @@ using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Xml.Linq;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.Cellar;
+using SIL.CoreImpl.Text;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Filters;
 using SIL.Utils;
+using SIL.Xml;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -409,7 +413,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// ------------------------------------------------------------------------------------
 		public virtual void PersistAsXml(XElement node)
 		{
-			XmlUtils.AppendAttribute(node, "layout", m_layoutName);
+			XmlUtils.SetAttribute(node, "layout", m_layoutName);
 			node.Add(m_colSpec);
 			}
 
@@ -755,9 +759,9 @@ namespace SIL.FieldWorks.Common.Controls
 		public override void PersistAsXml(XElement node)
 		{
 			base.PersistAsXml(node);
-			XmlUtils.AppendAttribute(node, "sortmethod", m_sMethodName);
+			XmlUtils.SetAttribute(node, "sortmethod", m_sMethodName);
 			if (!string.IsNullOrEmpty(m_wsName))
-				XmlUtils.AppendAttribute(node, "ws", m_wsName);
+				XmlUtils.SetAttribute(node, "ws", m_wsName);
 		}
 
 		/// ------------------------------------------------------------------------------------

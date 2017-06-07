@@ -3,7 +3,6 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Controls;
@@ -20,8 +19,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 	/// 1) It expects an ILexEntry instead of an ILexEntryRef;
 	/// 2) It displays the EntryGoDlg instead of the LinkEntryOrSenseDlg.
 	/// </summary>
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification="m_parentWindow is a reference")]
 	internal class AddComplexFormChooserCommand : ChooserCommand
 	{
 		private readonly ILexEntry m_lexEntry;

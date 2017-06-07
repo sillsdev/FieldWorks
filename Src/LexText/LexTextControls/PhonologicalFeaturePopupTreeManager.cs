@@ -4,10 +4,10 @@
 
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using System.Linq;
 using SIL.CoreImpl;
+using SIL.CoreImpl.Text;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Widgets;
 
@@ -18,15 +18,13 @@ namespace SIL.FieldWorks.LexText.Controls
 	/// </summary>
 	public class PhonologicalFeaturePopupTreeManager : PopupTreeManager
 	{
-		private const int kEmpty = 0;
-		private const int kLine = -1;
 		/// <summary>
 		/// Used to indicate that a feature needs to be removed from the list of feature/value pairs in a phoneme
 		/// </summary>
 		public const int kRemoveThisFeature = -2;
 		private const int kChoosePhonologicaFeatures = -3;
 		private List<ICmBaseAnnotation> m_annotations = new List<ICmBaseAnnotation>();
-		private IFsClosedFeature m_closedFeature;
+		private readonly IFsClosedFeature m_closedFeature;
 		/// <summary>
 		/// Constructor.
 		/// </summary>
@@ -98,19 +96,12 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 
 			popupTree.Nodes.Add(new HvoTreeNode(
-					Cache.TsStrFactory.MakeString(LexTextControls.ksRemoveThisFeature, Cache.WritingSystemFactory.UserWs),
+					TsStringUtils.MakeString(LexTextControls.ksRemoveThisFeature, Cache.WritingSystemFactory.UserWs),
 					kRemoveThisFeature));
-			/* Trying this now without using the phonological feature chooser; if users ask for it, will reconsider.
-			 * popupTree.Nodes.Add(new HvoTreeNode(
-					Cache.TsStrFactory.MakeString(LexTextControls.ksChoosePhonFeats, Cache.WritingSystemFactory.UserWs),
-					kChoosePhonologicaFeatures));*/
 
 			return match;
-
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="pt is a reference")]
 		protected override void m_treeCombo_AfterSelect(object sender, TreeViewEventArgs e)
 		{
 			HvoTreeNode selectedNode = e.Node as HvoTreeNode;
@@ -170,8 +161,6 @@ namespace SIL.FieldWorks.LexText.Controls
 						}
 						Cache.DomainDataByFlid.EndUndoTask();
 					}
-					break;
-				default:
 					break;
 			}
 			// FWR-3432 - If we get here and we still haven't got a valid Hvo, don't continue

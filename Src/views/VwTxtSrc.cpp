@@ -1700,11 +1700,8 @@ void VwConcTxtSrc::AdjustDiscards()
 	UChar32 uch32;
 	int ichStartBuf = 0; // doesn't matter, empty to start with
 	int cchBuf = 0; // none loaded yet.
-	ILgCharacterPropertyEnginePtr qcpe;
-	LgGeneralCharCategory gcc;
 	if (m_ichMinItem > cchInitial)
 	{
-		qcpe.CreateInstance(CLSID_LgIcuCharPropEngine);
 		const int bufSize = cchInitial * 3/2;
 		OLECHAR rgchBuf[bufSize];
 		int cchBase = 0; // count of base characters from ich to m_ichMinItem
@@ -1726,15 +1723,13 @@ void VwConcTxtSrc::AdjustDiscards()
 				uch32 = (unsigned)ch;
 			}
 			// Check for a diacritic mark.
-			CheckHr(qcpe->get_GeneralCategory(uch32, &gcc));
-			if (gcc < kccMn || gcc > kccMe)
+			if (!StrUtil::IsMark(uch32))
 				cchBase++;
 		}
 		m_cchDiscardInitial = max(ich, 0);
 	}
 	if (cch - m_ichLimItem > cchFinal)
 	{
-		qcpe.CreateInstance(CLSID_LgIcuCharPropEngine);
 		const int bufSize = cchFinal * 3/2;
 		OLECHAR rgchBuf[bufSize];
 		int cchBase = 0; // count of base characters from m_ichLimItem to ich
@@ -1757,8 +1752,7 @@ void VwConcTxtSrc::AdjustDiscards()
 				uch32 = (unsigned)ch;
 			}
 			// Check for a diacritic mark.
-			CheckHr(qcpe->get_GeneralCategory(uch32, &gcc));
-			if (gcc < kccMn || gcc > kccMe)
+			if (!StrUtil::IsMark(uch32))
 			{
 				cchBase++;
 				ichLastBase = ich;

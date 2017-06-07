@@ -14,12 +14,12 @@
 //
 // EB/2009-08-20: The only method we currently use is OLECvt.ToOLE_IPictureDisp.
 // If we need the other methods we should copy the interface definitions from
-// stdole to COMInterfaces/ComWrapper.cs since stdole isn't available on Linux.
+// stdole to ViewsInterfaces/ComWrapper.cs since stdole isn't available on Linux.
 
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
@@ -32,14 +32,22 @@ namespace SIL.FieldWorks.Common.FwUtils
 		: AxHost
 #endif
 	{
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification = "Offending code compiles only on Windows")]
 		private OLECvt()
 #if !__MonoCS__
 			: base("")
 #endif
 		{
 		}
+
+#if !__MonoCS__
+		/// <summary/>
+		protected override void Dispose(bool disposing)
+		{
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ******");
+			base.Dispose(disposing);
+		}
+#endif
+
 
 #if UNUSED
 		/// <summary>
@@ -58,10 +66,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		/// <param name="image"></param>
 		/// <returns></returns>
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification = "Offending code compiles only on Windows")]
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "Method returns a reference")]
 		public static IPictureDisp ToOLE_IPictureDisp(Image image)
 		{
 #if !__MonoCS__

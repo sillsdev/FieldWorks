@@ -1,30 +1,19 @@
-// Copyright (c) 2010-2013 SIL International
+// Copyright (c) 2010-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: Program.cs
-// Responsibility: mcconnel
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using Microsoft.Win32;
-using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
 using SIL.Utils;
 using SIL.WritingSystems.Migration;
 
-// we can't use an exit code < -1 on Linux. However, this app won't work on Linux anyways
-// since we don't have MS SQL Server there.
-[assembly:SuppressMessage("Gendarme.Rules.Portability", "ExitCodeIsLimitedOnUnixRule",
-		Justification="Not intended to be run on Linux")]
 namespace SIL.FieldWorks.MigrateSqlDbs.MigrateProjects
 {
 	/// ----------------------------------------------------------------------------------------
@@ -65,7 +54,7 @@ namespace SIL.FieldWorks.MigrateSqlDbs.MigrateProjects
 				else if (rgArgs[i] == "-chars")
 					s_fMigrateChars = true;
 			}
-			RegistryHelper.ProductName = "FieldWorks";	// needed to access proper registry values
+			FwRegistryHelper.Initialize(); // needed to access proper registry values
 
 			if (s_fMigrateChars && s_fDebug)
 				MessageBox.Show("Warning: MigrateSqlDbs called with no-longer valid argument, '-chars'. Run 'UnicodeCharEditor -i' instead.");
@@ -73,7 +62,7 @@ namespace SIL.FieldWorks.MigrateSqlDbs.MigrateProjects
 			// TE-9422. If we had an older version of FW7 installed, ldml files are < verion 2, so will cause
 			// a crash if we don't migrate the files to version 2 before opening a project with the current version.
 			// TODO (WS_FIX): should we migrate all the way to version 3?
-			string globalWsFolder = DirectoryFinder.OldGlobalWritingSystemStoreDirectory;
+			string globalWsFolder = FdoFileHelper.OldGlobalWritingSystemStoreDirectory;
 			var globalMigrator = new LdmlInFolderWritingSystemRepositoryMigrator(globalWsFolder, NoteMigration, 2);
 			globalMigrator.Migrate();
 

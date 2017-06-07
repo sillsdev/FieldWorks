@@ -10,14 +10,15 @@ using LanguageExplorer.Areas.TextsAndWords;
 using NUnit.Framework;
 using Rhino.Mocks;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
+using SIL.CoreImpl.Text;
 using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.XWorks;
 using SIL.Utils;
 
@@ -57,6 +58,7 @@ namespace LanguageExplorerTests.TextsAndWords
 
 			PubSubSystemFactory.CreatePubSubSystem(out m_publisher, out m_subscriber);
 			m_propertyTable = PropertyTableFactory.CreatePropertyTable(m_publisher);
+			m_propertyTable.SetProperty("cache", Cache, false, false);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -72,6 +74,13 @@ namespace LanguageExplorerTests.TextsAndWords
 
 			if (m_propertyTable != null)
 			{
+				var interestingTextlist = m_propertyTable.GetValue<InterestingTextList>("InterestingTexts");
+				if (interestingTextlist != null)
+				{
+					Cache.ServiceLocator.GetInstance<ISilDataAccessManaged>().RemoveNotification(interestingTextlist);
+					m_propertyTable.RemoveProperty("InterestingTexts");
+				}
+				m_propertyTable.RemoveProperty("cache");
 				m_propertyTable.Dispose();
 			}
 			m_propertyTable = null;
@@ -352,7 +361,7 @@ namespace LanguageExplorerTests.TextsAndWords
 				{
 					IScrBook book = Cache.ServiceLocator.GetInstance<IScrBookFactory>().Create(1, out stText);
 					paraT = Cache.ServiceLocator.GetInstance<IScrTxtParaFactory>().CreateWithStyle(stText, "Monkey");
-					paraT.Contents = TsStringUtils.MakeTss(sParaText, Cache.DefaultVernWs);
+					paraT.Contents = TsStringUtils.MakeString(sParaText, Cache.DefaultVernWs);
 					object owner = ReflectionHelper.CreateObject("FDO.dll", "SIL.FieldWorks.FDO.Infrastructure.Impl.CmObjectId", BindingFlags.NonPublic,
 						new object[] { book.Guid });
 					ReflectionHelper.SetField(stText, "m_owner", owner);
@@ -365,7 +374,7 @@ namespace LanguageExplorerTests.TextsAndWords
 					text.ContentsOA = stText;
 					paraT = Cache.ServiceLocator.GetInstance<IStTxtParaFactory>().Create();
 					stText.ParagraphsOS.Add(paraT);
-					paraT.Contents = TsStringUtils.MakeTss(sParaText, Cache.DefaultVernWs);
+					paraT.Contents = TsStringUtils.MakeString(sParaText, Cache.DefaultVernWs);
 				}
 				foreach (ISegment seg in paraT.SegmentsOS)
 				{
@@ -374,7 +383,7 @@ namespace LanguageExplorerTests.TextsAndWords
 				}
 			});
 
-			var rsda = new RespellingSda((ISilDataAccessManaged)Cache.MainCacheAccessor, Cache.ServiceLocator);
+			var rsda = new RespellingSda(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, Cache.ServiceLocator);
 			InterestingTextList dummyTextList = MockRepository.GenerateStub<InterestingTextList>(m_propertyTable, Cache.ServiceLocator.GetInstance<ITextRepository>(),
 			Cache.ServiceLocator.GetInstance<IStTextRepository>());
 			if (clidPara == ScrTxtParaTags.kClassId)
@@ -382,7 +391,7 @@ namespace LanguageExplorerTests.TextsAndWords
 			else
 				dummyTextList.Stub(t1 => t1.InterestingTexts).Return(new IStText[1] { stText });
 			ReflectionHelper.SetField(rsda, "m_interestingTexts", dummyTextList);
-			rsda.SetCache(Cache);
+			rsda.InitializeFlexComponent(new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber));
 			rsda.SetOccurrences(0, paraFrags);
 			ObjectListPublisher publisher = new ObjectListPublisher(rsda, kObjectListFlid);
 			XMLViewsDataCache xmlCache = MockRepository.GenerateStub<XMLViewsDataCache>(publisher, true, new Dictionary<int, int>());
@@ -434,7 +443,7 @@ namespace LanguageExplorerTests.TextsAndWords
 				{
 					IScrBook book = Cache.ServiceLocator.GetInstance<IScrBookFactory>().Create(1, out stText);
 					paraT = Cache.ServiceLocator.GetInstance<IScrTxtParaFactory>().CreateWithStyle(stText, "Monkey");
-					paraT.Contents = TsStringUtils.MakeTss(sParaText, Cache.DefaultVernWs);
+					paraT.Contents = TsStringUtils.MakeString(sParaText, Cache.DefaultVernWs);
 					object owner = ReflectionHelper.CreateObject("FDO.dll", "SIL.FieldWorks.FDO.Infrastructure.Impl.CmObjectId", BindingFlags.NonPublic,
 						new object[] { book.Guid });
 					ReflectionHelper.SetField(stText, "m_owner", owner);
@@ -447,7 +456,7 @@ namespace LanguageExplorerTests.TextsAndWords
 					text.ContentsOA = stText;
 					paraT = Cache.ServiceLocator.GetInstance<IStTxtParaFactory>().Create();
 					stText.ParagraphsOS.Add(paraT);
-					paraT.Contents = TsStringUtils.MakeTss(sParaText, Cache.DefaultVernWs);
+					paraT.Contents = TsStringUtils.MakeString(sParaText, Cache.DefaultVernWs);
 				}
 				foreach (ISegment seg in paraT.SegmentsOS)
 				{
@@ -458,7 +467,7 @@ namespace LanguageExplorerTests.TextsAndWords
 				}
 			});
 
-			var rsda = new RespellingSda((ISilDataAccessManaged)Cache.MainCacheAccessor, Cache.ServiceLocator);
+			var rsda = new RespellingSda(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, Cache.ServiceLocator);
 			InterestingTextList dummyTextList = MockRepository.GenerateStub<InterestingTextList>(m_propertyTable, Cache.ServiceLocator.GetInstance<ITextRepository>(),
 			Cache.ServiceLocator.GetInstance<IStTextRepository>());
 			if (clidPara == ScrTxtParaTags.kClassId)
@@ -466,7 +475,7 @@ namespace LanguageExplorerTests.TextsAndWords
 			else
 				dummyTextList.Stub(t1 => t1.InterestingTexts).Return(new IStText[1] { stText });
 			ReflectionHelper.SetField(rsda, "m_interestingTexts", dummyTextList);
-			rsda.SetCache(Cache);
+			rsda.InitializeFlexComponent(new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber));
 			rsda.SetOccurrences(0, paraFrags);
 			ObjectListPublisher publisher = new ObjectListPublisher(rsda, kObjectListFlid);
 			XMLViewsDataCache xmlCache = MockRepository.GenerateStub<XMLViewsDataCache>(publisher, true, new Dictionary<int, int>());
@@ -488,7 +497,6 @@ namespace LanguageExplorerTests.TextsAndWords
 		private void SetMultimorphemicAnalyses(IEnumerable<IParaFragment> thisSegParaFrags, string[] morphsToCreate)
 		{
 			var morphFact = Cache.ServiceLocator.GetInstance<IWfiMorphBundleFactory>();
-			var tssFact = Cache.TsStrFactory;
 			// IWfiWordform, IWfiAnalysis, and IWfiGloss objects will have already been created.
 			// Still need to add WfiMorphBundles as per morphsToCreate.
 			foreach (IWfiWordform wordform in thisSegParaFrags.Select(x => x.Analysis))
@@ -500,7 +508,7 @@ namespace LanguageExplorerTests.TextsAndWords
 				{
 					var bundle = morphFact.Create();
 					analysis.MorphBundlesOS.Add(bundle);
-					bundle.Form.VernacularDefaultWritingSystem = tssFact.MakeString(morpheme, Cache.DefaultVernWs);
+					bundle.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString(morpheme, Cache.DefaultVernWs);
 				}
 			}
 		}

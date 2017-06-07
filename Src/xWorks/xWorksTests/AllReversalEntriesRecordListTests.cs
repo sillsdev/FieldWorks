@@ -32,7 +32,7 @@ namespace SIL.FieldWorks.XWorks
 		protected IReversalIndex m_revIndex;
 
 
-		#region IDisposable Section (pass Gendarme rules)
+		#region IDisposable Section
 		~AllReversalEntriesRecordListTestBase()
 		{
 			Dispose(false);
@@ -81,7 +81,7 @@ namespace SIL.FieldWorks.XWorks
 			get;
 			private set;
 		}
-		#endregion IDisposable Section (pass Gendarme rules)
+		#endregion IDisposable Section
 
 		#region Setup and Teardown
 		/// <summary>

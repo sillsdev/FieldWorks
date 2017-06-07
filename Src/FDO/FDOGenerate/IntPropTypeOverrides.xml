@@ -11,7 +11,7 @@
 	<Class id="Scripture">
 		<property name="FootnoteMarkerType" type="FootnoteMarkerTypes"/>
 		<property name="CrossRefMarkerType" type="FootnoteMarkerTypes"/>
-		<property name="Versification" type="SILUBS.SharedScrUtils.ScrVers"/>
+		<property name="Versification" type="SIL.CoreImpl.Scripture.ScrVers"/>
 	</Class>
 	<Class id="ScrScriptureNote">
 		<property name="ResolutionStatus" type="NoteStatus"/>

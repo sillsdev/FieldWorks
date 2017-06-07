@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="14.0">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
     <ProductVersion>9.0.21022</ProductVersion>
@@ -16,6 +16,7 @@
     <AssemblyKeyContainerName>
     </AssemblyKeyContainerName>
     <AssemblyName>FDO</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <DefaultClientScript>JScript</DefaultClientScript>
     <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
     <DefaultTargetSchema>IE50</DefaultTargetSchema>
@@ -87,12 +88,17 @@
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BasicUtils">
-      <HintPath>..\..\Output\Debug\BasicUtils.dll</HintPath>
+    <Reference Include="FwKernelInterfaces, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Debug\FwKernelInterfaces.dll</HintPath>
     </Reference>
     <Reference Include="SIL.Core, Version=2.6.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Downloads\SIL.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.Core.Desktop, Version=4.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Downloads\SIL.Core.Desktop.dll</HintPath>
     </Reference>
     <Reference Include="SIL.Lexicon, Version=3.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
@@ -102,23 +108,13 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Downloads\SIL.WritingSystems.dll</HintPath>
     </Reference>
-    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Runtime.Remoting" />
     <Reference Include="System.Runtime.Serialization">
       <RequiredTargetFramework>3.0</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="COMInterfaces">
-      <Name>COMInterfaces</Name>
-      <HintPath>..\..\Output\Debug\COMInterfaces.dll</HintPath>
-    </Reference>
-    <Reference Include="PhonEnvValidator">
-      <Name>PhonEnvValidator</Name>
-      <HintPath>..\..\Output\Debug\PhonEnvValidator.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Drawing">
       <Name>System.Drawing</Name>
@@ -126,27 +122,14 @@
     <Reference Include="System.Xml">
       <Name>System.XML</Name>
     </Reference>
-    <Reference Include="XMLUtils">
-      <Name>XMLUtils</Name>
-      <HintPath>..\..\Output\Debug\XMLUtils.dll</HintPath>
-    </Reference>
     <Reference Include="CoreImpl">
       <HintPath>..\..\Output\Debug\CoreImpl.dll</HintPath>
     </Reference>
     <Reference Include="ICSharpCode.SharpZipLib">
       <HintPath>..\..\Lib\debug\ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>
-    <Reference Include="Logos.Utility">
-      <HintPath>..\..\DistFiles\Logos.Utility.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation">
       <HintPath>..\..\DistFiles\Microsoft.Practices.ServiceLocation.dll</HintPath>
-    </Reference>
-    <Reference Include="ScrUtilsInterfaces">
-      <HintPath>..\..\Output\Debug\ScrUtilsInterfaces.dll</HintPath>
-    </Reference>
-    <Reference Include="SharedScrUtils">
-      <HintPath>..\..\Output\Debug\SharedScrUtils.dll</HintPath>
     </Reference>
     <Reference Include="StructureMap">
       <HintPath>..\..\DistFiles\StructureMap.dll</HintPath>
@@ -180,10 +163,13 @@
     <Compile Include="Application\ReferenceTracker.cs" />
     <Compile Include="CacheKey.cs" />
     <Compile Include="DomainServices\DataMigration\DataMigration7000069.cs" />
+    <Compile Include="DomainServices\DataMigration\DataMigration7000070.cs" />
+    <Compile Include="DomainServices\DataMigration\DataMigration7000071.cs" />
     <Compile Include="DomainServices\DataMigration\WritingSystemIdMigrator.cs" />
     <Compile Include="DomainServices\SharedBackendServices.cs" />
     <Compile Include="FdoDataMigrationForbiddenException.cs" />
     <Compile Include="FdoFileLockedException.cs" />
+    <Compile Include="FdoInitializationException.cs" />
     <Compile Include="FdoSettings.cs" />
     <Compile Include="Infrastructure\Impl\CommitLogMetadata.cs" />
     <Compile Include="Infrastructure\Impl\CommitLogRecord.cs" />
@@ -203,7 +189,6 @@
     <Compile Include="DomainImpl\Virtuals.cs" />
     <Compile Include="DomainServices\AnalysisGuessServices.cs" />
     <Compile Include="DomainServices\AnalysisOccurrence.cs" />
-    <Compile Include="DomainServices\AndIFilter.cs" />
     <Compile Include="DomainServices\BackupRestore\BackupProjectSettings.cs" />
     <Compile Include="DomainServices\BackupRestore\BackupSettings.cs" />
     <Compile Include="DomainServices\BackupRestore\BackupFileSettings.cs" />
@@ -216,6 +201,7 @@
     <Compile Include="DomainServices\BackupRestore\RestoreProjectSettings.cs" />
     <Compile Include="DomainServices\BaseStyleInfo.cs" />
     <Compile Include="DomainServices\BootstrapNewLanguageProject.cs" />
+    <Compile Include="DomainServices\CircularRefBreakerService.cs" />
     <Compile Include="DomainImpl\ScrBook.cs" />
     <Compile Include="DomainImpl\ScrBookRef.cs" />
     <Compile Include="DomainImpl\ScrFootnote.cs" />
@@ -228,7 +214,6 @@
     <Compile Include="DomainImpl\StTxtPara.cs" />
     <Compile Include="DomainServices\BtConverter.cs" />
     <Compile Include="DomainServices\BulletInfo.cs" />
-    <Compile Include="DomainServices\CmPictureServices.cs" />
     <Compile Include="DomainServices\ConstraintFailure.cs" />
     <Compile Include="DomainServices\CopyObject.cs" />
     <Compile Include="DomainServices\DataMigration\DataMigration7000058.cs" />
@@ -296,14 +281,11 @@
     <Compile Include="DomainServices\DataMigration\IDomainObjectDTORepository.cs" />
     <Compile Include="DomainServices\DataStoreInitializationServices.cs" />
     <Compile Include="DomainServices\DomainObjectServices.cs" />
-    <Compile Include="DomainServices\FilteredScrBooks.cs" />
     <Compile Include="DomainServices\DataMigration\IDataMigration.cs" />
     <Compile Include="DomainServices\DataMigration\IDataMigrationManager.cs" />
     <Compile Include="DomainServices\FontInfo.cs" />
-    <Compile Include="DomainServices\FwCharacterCategorizer.cs" />
     <Compile Include="DomainServices\FwStyleSheet.cs" />
     <Compile Include="DomainServices\GetServicesFromFWClass.cs" />
-    <Compile Include="DomainServices\GhostParentHelper.cs" />
     <Compile Include="DomainServices\ImportFileSource.cs" />
     <Compile Include="DomainServices\ImportMappingInfo.cs" />
     <Compile Include="DomainServices\IScrImportFileInfo.cs" />
@@ -330,7 +312,6 @@
     <Compile Include="DomainServices\StTxtParaBldr.cs" />
     <Compile Include="DomainServices\StyleInfoTable.cs" />
     <Compile Include="DomainServices\StyleServices.cs" />
-    <Compile Include="DomainServices\ValidCharacters.cs" />
     <Compile Include="DomainServices\VirtualOrderingServices.cs" />
     <Compile Include="DomainServices\WfiWordformServices.cs" />
     <Compile Include="DomainServices\WritingSystemServices.cs" />
@@ -373,7 +354,6 @@
     <Compile Include="Infrastructure\Impl\DataSortingService.cs" />
     <Compile Include="Infrastructure\Impl\FdoInvertSet.cs" />
     <Compile Include="Infrastructure\Impl\FdoRepositoryBase.cs" />
-    <Compile Include="Infrastructure\Impl\FilteredScrBookRepository.cs" />
     <Compile Include="Infrastructure\Impl\GeneratedFDOBackendProvider.cs" />
     <Compile Include="Infrastructure\Impl\CmSemanticDomainRepository.cs" />
     <Compile Include="Infrastructure\Impl\ObjectSurrogateEquater.cs" />
@@ -457,7 +437,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="FdoCacheIFwDisposableInterfaceImpl.cs" />
+    <Compile Include="FdoCacheIDisposableInterfaceImpl.cs" />
     <Compile Include="fdoCache.cs" />
     <Compile Include="FdoEnumerations.cs" />
     <None Include="FDOGenerate\IDomainDataByFlidAccessorMethods.vm.cs" />
@@ -478,7 +458,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Strings.resx</DependentUpon>
     </Compile>
-    <Compile Include="UserProfiles.cs" />
+    <Compile Include="Features.cs" />
     <Compile Include="AssemblyInfo.cs" />
     <EmbeddedResource Include="Application\ApplicationServices\AppStrings.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -503,7 +483,6 @@
     <None Include="FDOGenerate\HandGenerated.xml">
       <SubType>Designer</SubType>
     </None>
-    <None Include="gendarme-FDO.ignore" />
   </ItemGroup>
   <ItemGroup>
     <None Include="FDOGenerate\IntPropTypeOverrides.xml" />
@@ -553,7 +532,6 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <DistFiles>../../DistFiles</DistFiles>

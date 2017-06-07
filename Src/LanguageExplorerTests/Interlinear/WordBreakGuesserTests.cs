@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -8,7 +8,8 @@ using NUnit.Framework;
 
 namespace LanguageExplorerTests.Interlinear
 {
-	class WordBreakGuesserTests
+	[TestFixture]
+	public class WordBreakGuesserTests
 	{
 		/// <summary>
 		/// Test to make sure that the best match is found, not just the first or shortest word
@@ -107,7 +108,7 @@ namespace LanguageExplorerTests.Interlinear
 			//returns an integer array of the starting index for every word in the best match.
 			public int[] BreakResults(string txt)
 			{
-				SIL.Utils.Set<WordLoc> matches = FindAllMatches(0, txt.Length - 1, txt);
+				ISet<WordLoc> matches = FindAllMatches(0, txt.Length - 1, txt);
 				List<WordLoc> results = BestMatches(txt, matches);
 				int[] wordBreaks = new int[results.Count];
 				for (int i = 0; i < results.Count; i++)

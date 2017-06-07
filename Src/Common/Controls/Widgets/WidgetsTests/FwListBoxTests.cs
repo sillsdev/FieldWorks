@@ -1,18 +1,12 @@
-﻿// Copyright (c) 2010-2013 SIL International
+﻿// Copyright (c) 2010-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: FwListBoxTests.cs
-// Responsibility:
-//
-// <remarks>
-// </remarks>
-// ---------------------------------------------------------------------------------------------
 
 using NUnit.Framework;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Test.TestUtils;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.Common.Widgets
 {
@@ -22,7 +16,7 @@ namespace SIL.FieldWorks.Common.Widgets
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
-	public class FwListBoxTests : BaseTest
+	public class FwListBoxTests
 	{
 		#region Data Members
 		TestFwStylesheet m_stylesheet;
@@ -30,9 +24,9 @@ namespace SIL.FieldWorks.Common.Widgets
 		int m_hvoEnglishWs;
 		#endregion
 
-		public override void FixtureSetup()
+		[TestFixtureSetUp]
+		public void FixtureSetup()
 		{
-			base.FixtureSetup();
 			m_wsManager = new WritingSystemManager();
 
 			// setup English ws.
@@ -52,7 +46,7 @@ namespace SIL.FieldWorks.Common.Widgets
 
 				using (var collection = new FwListBox.ObjectCollection(listBox))
 				{
-					ITsString testString = TsStringHelper.MakeTSS("test", m_hvoEnglishWs);
+					ITsString testString = TsStringUtils.MakeString("test", m_hvoEnglishWs);
 
 					// The Test
 					collection.Add(testString);
@@ -70,7 +64,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			{
 				using (var collection = new FwListBox.ObjectCollection(listBox))
 				{
-					ITsString testString = TsStringHelper.MakeTSS("test", m_hvoEnglishWs);
+					ITsString testString = TsStringUtils.MakeString("test", m_hvoEnglishWs);
 					collection.Add(testString);
 
 					// The Test
@@ -88,7 +82,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			{
 				using (var collection = new FwListBox.ObjectCollection(listBox))
 				{
-					ITsString testString = TsStringHelper.MakeTSS("test", m_hvoEnglishWs);
+					ITsString testString = TsStringUtils.MakeString("test", m_hvoEnglishWs);
 					collection.Add(testString);
 
 					// The Test
@@ -107,8 +101,8 @@ namespace SIL.FieldWorks.Common.Widgets
 			{
 				using (var collection = new FwListBox.ObjectCollection(listBox))
 				{
-					ITsString testString1 = TsStringHelper.MakeTSS("test1", m_hvoEnglishWs);
-					ITsString testString2 = TsStringHelper.MakeTSS("test2", m_hvoEnglishWs);
+					ITsString testString1 = TsStringUtils.MakeString("test1", m_hvoEnglishWs);
+					ITsString testString2 = TsStringUtils.MakeString("test2", m_hvoEnglishWs);
 					collection.Add(testString1);
 
 					// The Test
@@ -184,7 +178,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			{
 					using (var innerFwListBox = new InnerFwListBox(listBox))
 					{
-						ITsString testString1 = TsStringHelper.MakeTSS("test1", m_hvoEnglishWs);
+						ITsString testString1 = TsStringUtils.MakeString("test1", m_hvoEnglishWs);
 						listBox.Items.Add(testString1);
 						innerFwListBox.MakeRoot();
 						listBox.HighlightedIndex = 0;

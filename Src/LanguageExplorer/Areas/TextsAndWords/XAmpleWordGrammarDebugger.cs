@@ -5,7 +5,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -18,8 +17,6 @@ using SIL.FieldWorks.FDO;
 
 namespace LanguageExplorer.Areas.TextsAndWords
 {
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification="m_cache and m_mediator are references")]
 	internal sealed class XAmpleWordGrammarDebugger
 	{
 		private static ParserTraceUITransform s_pageTransform;

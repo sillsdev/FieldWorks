@@ -527,122 +527,59 @@ STDMETHODIMP VwRootBox::get_DataAccess(ISilDataAccess ** ppsda)
 	END_COM_METHOD(g_fact, IID_IVwRootBox);
 }
 
-//:>********************************************************************************************
-//:>	Serialization
-//:>********************************************************************************************
-
 /*----------------------------------------------------------------------------------------------
-	Write the contents of the box to a stream; read it back and reconstruct the boxes. Links to
-	the underlying objects are not recorded.
+	Gets the render engine factory.
 ----------------------------------------------------------------------------------------------*/
-STDMETHODIMP VwRootBox::Serialize(IStream * pstrm)
+STDMETHODIMP VwRootBox::get_RenderEngineFactory(IRenderEngineFactory ** ppref)
 {
 	BEGIN_COM_METHOD;
-	ChkComArgPtr(pstrm);
-	Assert(false);
-	ThrowInternalError(E_NOTIMPL);
-	END_COM_METHOD(g_fact, IID_IVwRootBox);
-}
+	ChkComOutPtr(ppref);
 
-/*----------------------------------------------------------------------------------------------
-	Restore the state of a newly created box from info saved by Serialize().
-----------------------------------------------------------------------------------------------*/
-STDMETHODIMP VwRootBox::Deserialize(IStream * pstrm)
-{
-	BEGIN_COM_METHOD;
-	ChkComArgPtr(pstrm);
-	Assert(false);
-	ThrowInternalError(E_NOTIMPL);
-	END_COM_METHOD(g_fact, IID_IVwRootBox);
-}
-
-
-/*----------------------------------------------------------------------------------------------
-	Write the contents of this root box to the stream in WorldPad XML format.
-
-	@param pstrm Pointer to an IStream object for output.
-----------------------------------------------------------------------------------------------*/
-STDMETHODIMP VwRootBox::WriteWpx(IStream * pstrm)
-{
-	BEGIN_COM_METHOD;
-	ChkComArgPtr(pstrm);
-
-	// Sorry, this will expand everything.  There's no getting around it!
-	VwGroupBox * pgbox = dynamic_cast<VwGroupBox *>(FirstRealBox());
-	Assert(pgbox);
-	VwBox * pbox;
-	for (pbox = pgbox->FirstRealBox(); pbox; pbox = pbox->NextRealBox())
-		WriteWpxBoxes(pstrm, pbox);
+	*ppref = m_qref;
+	AddRefObj(*ppref);
 
 	END_COM_METHOD(g_fact, IID_IVwRootBox);
 }
 
 /*----------------------------------------------------------------------------------------------
-	Write the contents of a box owned by a VwGroupBox to the stream in WorldPad XML format.
-
-	@param pstrm Pointer to an IStream object for output.
-	@param pbox Pointer to an inner box owned by a pile box.
+	Sets the render engine factory.
 ----------------------------------------------------------------------------------------------*/
-void VwRootBox::WriteWpxBoxes(IStream * pstrm, VwBox * pbox)
+STDMETHODIMP VwRootBox::putref_RenderEngineFactory(IRenderEngineFactory * pref)
 {
-	AssertPtr(pstrm);
-	AssertPtr(pbox);
+	BEGIN_COM_METHOD;
+	ChkComArgPtr(pref);
 
-	if (pbox->IsParagraphBox())
-	{
-		// This is the only kind of box we currently know how to write out in WorldPad XML
-		// format.
-		VwParagraphBox * pvpbox = dynamic_cast<VwParagraphBox *>(pbox);
-		AssertPtr(pvpbox);
-		pvpbox->WriteWpxText(pstrm);
-		return;
-	}
-	// If this is a group box, recurse!
-	VwGroupBox * pgbox = dynamic_cast<VwGroupBox *>(pbox);
-	if (pgbox)
-	{
-		// Sorry, this will expand everything.  There's no getting around it!
-		for (pbox = pgbox->FirstRealBox(); pbox; pbox = pbox->NextRealBox())
-			WriteWpxBoxes(pstrm, pbox);
-		return;
-	}
-#if 99-99
-	FormatToStream(pstrm, "  <StTxtPara>%n");
-	FormatToStream(pstrm, "    <StyleRules1002>%n");
-	FormatToStream(pstrm, "      <Prop namedStyle=\"Normal\"/>%n");
-	FormatToStream(pstrm, "    </StyleRules1002>%n");
-	FormatToStream(pstrm, "    <Contents1003>%n");
-	FormatToStream(pstrm, "      <Str><Run ws=\"ENG\" ows=\"0\" bold=\"on\" italic=\"on\"/>");
-	FormatToStream(pstrm, "DEBUG: This box ");
-	FormatToStream(pstrm, "<Run ws=\"ENG\" ows=\"0\"/>(%08x)", pbox);
-	FormatToStream(pstrm, "<Run ws=\"ENG\" ows=\"0\" bold=\"on\" italic=\"on\"/>");
-	FormatToStream(pstrm, " is ");
-	if (pbox->IsLazyBox())
-	{
-		FormatToStream(pstrm, "Lazy!!");
-	}
-	else if (pbox->IsStringBox())
-	{
-		FormatToStream(pstrm, "a StringBox.");
-	}
-	else if (pbox->IsBoxFromTsString())
-	{
-		FormatToStream(pstrm, "from a TsString.");
-	}
-	else if (pbox->IsInnerPileBox())
-	{
-		FormatToStream(pstrm, "an InnerPileBox.");
-	}
-	else
-	{
-		FormatToStream(pstrm, "an unknown type??");
-	}
-	FormatToStream(pstrm, "</Str>%n");
-	FormatToStream(pstrm, "    </Contents1003>%n");
-	FormatToStream(pstrm, "  </StTxtPara>%n");
-#endif
+	m_qref = pref;
+
+	END_COM_METHOD(g_fact, IID_IVwRootBox);
 }
 
+/*----------------------------------------------------------------------------------------------
+	Gets the string factory.
+----------------------------------------------------------------------------------------------*/
+STDMETHODIMP VwRootBox::get_TsStrFactory(ITsStrFactory ** pptsf)
+{
+	BEGIN_COM_METHOD;
+	ChkComOutPtr(pptsf);
+
+	*pptsf = m_qtsf;
+	AddRefObj(*pptsf);
+
+	END_COM_METHOD(g_fact, IID_IVwRootBox);
+}
+
+/*----------------------------------------------------------------------------------------------
+	Sets the string factory.
+----------------------------------------------------------------------------------------------*/
+STDMETHODIMP VwRootBox::putref_TsStrFactory(ITsStrFactory * ptsf)
+{
+	BEGIN_COM_METHOD;
+	ChkComArgPtr(ptsf);
+
+	m_qtsf = ptsf;
+
+	END_COM_METHOD(g_fact, IID_IVwRootBox);
+}
 
 //:>********************************************************************************************
 //:>	Selections
@@ -2713,7 +2650,7 @@ STDMETHODIMP VwRootBox::DrawingErrors(IVwGraphics * pvg)
 
 	HRESULT hr;
 
-	IgnoreHr(hr = Style()->DrawingErrors(pvg));
+	IgnoreHr(hr = Style()->DrawingErrors(m_qref, pvg));
 	if (FAILED(hr))
 		return hr;
 
@@ -3617,6 +3554,7 @@ STDMETHODIMP VwRootBox::Close()
 		m_qsda.Clear();
 	}
 	m_qsync.Clear();
+	m_qref.Clear();
 
 #ifdef ENABLE_TSF
 	// m_qvim gets created in the c'tor, so one could think of destroying it in the
@@ -4984,7 +4922,7 @@ STDMETHODIMP VwDrawRootBuffered::DrawTheRoot(IVwRootBox * prootb, HDC hdc, RECT 
 	if (m_hdcMem)
 	{
 		HBITMAP hbmp = (HBITMAP)::GetCurrentObject(m_hdcMem, OBJ_BITMAP);
-		BOOL fSuccess = AfGdi::DeleteObjectBitmap(hbmp);
+		fSuccess = AfGdi::DeleteObjectBitmap(hbmp);
 		Assert(fSuccess);
 		fSuccess = AfGdi::DeleteDC(m_hdcMem);
 		Assert(fSuccess);
@@ -5098,7 +5036,7 @@ STDMETHODIMP VwDrawRootBuffered:: DrawTheRootRotated(IVwRootBox * prootb, HDC hd
 	if (m_hdcMem)
 	{
 		HBITMAP hbmp = (HBITMAP)::GetCurrentObject(m_hdcMem, OBJ_BITMAP);
-		BOOL fSuccess = AfGdi::DeleteObjectBitmap(hbmp);
+		fSuccess = AfGdi::DeleteObjectBitmap(hbmp);
 		Assert(fSuccess);
 		fSuccess = AfGdi::DeleteDC(m_hdcMem);
 		Assert(fSuccess);

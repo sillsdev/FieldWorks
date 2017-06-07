@@ -1,16 +1,12 @@
-﻿// Copyright (c) 2010-2013 SIL International
+﻿// Copyright (c) 2010-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: DataMigrationTests7000002.cs
-// Responsibility: FW team
 
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml.Linq;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
 
 namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
@@ -177,7 +173,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 			mockMDC.AddClass(9, "ScrFootnote", "CmObject", new List<string>());
 			mockMDC.AddClass(10, "ScrTxtPara", "CmObject", new List<string>());
 			mockMDC.AddClass(11, "StPara", "CmObject", new List<string> { "StTxtPara" });
-			IDomainObjectDTORepository dtoRepos = new DomainObjectDtoRepository(7000001, dtos, mockMDC, null, FwDirectoryFinder.FdoDirectories);
+			IDomainObjectDTORepository dtoRepos = new DomainObjectDtoRepository(7000001, dtos, mockMDC, null, TestDirectoryFinder.FdoDirectories);
 
 			m_dataMigrationManager.PerformMigration(dtoRepos, 7000002, new DummyProgressDlg());
 			Assert.AreEqual(7000002, dtoRepos.CurrentModelVersion, "Wrong updated version.");

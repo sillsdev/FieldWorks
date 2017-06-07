@@ -5,13 +5,15 @@ using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.Utils;
 using SIL.CoreImpl;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -407,7 +409,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				var ws = (CoreWritingSystemDefinition) m_cbWritingSystems.SelectedItem;
 				if (m_cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems.Contains(ws))
-					tssNewVariantLexemeForm = TsStringUtils.MakeTss(trimmed, ws.Handle);
+					tssNewVariantLexemeForm = TsStringUtils.MakeString(trimmed, ws.Handle);
 			}
 			return tssNewVariantLexemeForm;
 		}

@@ -2,7 +2,6 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using System.Linq;
 using SIL.FieldWorks.Common.Framework.DetailControls;
@@ -15,8 +14,6 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 	internal sealed class RecordReferenceVectorLauncher : VectorReferenceLauncher
 	{
 		/// <summary />
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="FindForm() returns a reference")]
 		protected override void HandleChooser()
 		{
 			using (var dlg = new RecordGoDlg())

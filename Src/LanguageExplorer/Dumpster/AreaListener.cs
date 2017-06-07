@@ -1,20 +1,14 @@
-// Copyright (c) 2012-2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Xml;
 using SIL.FieldWorks.FDO;
-using SIL.Reporting;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Framework;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.Utils;
-using ConfigurationException = SIL.Utils.ConfigurationException;
+using SIL.Xml;
 
 namespace LanguageExplorer.Dumpster
 {
@@ -24,7 +18,7 @@ namespace LanguageExplorer.Dumpster
 	/// <summary>
 	/// Summary description for AreaListener.
 	/// </summary>
-	internal sealed class AreaListener : IFWDisposable
+	internal sealed class AreaListener : IDisposable
 	{
 		#region Member variables
 
@@ -235,8 +229,6 @@ namespace LanguageExplorer.Dumpster
 			//display.List.Add(label, value, sbsview, importedToolNode.SelectSingleNode("control"));
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="see REVIEW comment - code is possibly wrong")]
 		private void AddClerkToConfigForList(ICmPossibilityList curList, XmlNode windowConfig)
 		{
 			// Put the clerk node in the window configuration for this list
@@ -317,14 +309,12 @@ namespace LanguageExplorer.Dumpster
 		/// <summary>
 		/// Make up for weakness of XmlNode.SelectSingleNode.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private XmlNode FindToolParamNode(XmlNode windowConfig, ICmPossibilityList curList)
 		{
 			string toolname = GetCustomListToolName(curList);
 			foreach (XmlNode node in windowConfig.SelectNodes("//item[@value='lists']/parameters/tools/tool"))
 			{
-				string value = XmlUtils.GetAttributeValue(node, "value");
+				string value = XmlUtils.GetOptionalAttributeValue(node, "value");
 				if (value == toolname)
 				{
 					XmlNode xn = node.SelectSingleNode("control/parameters/control/parameters");
@@ -334,13 +324,11 @@ namespace LanguageExplorer.Dumpster
 			return null;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private XmlNode FindToolNode(XmlNode windowConfig, string areaName, string toolName)
 		{
 			foreach (XmlNode node in windowConfig.SelectNodes(GetToolXPath(areaName)))
 			{
-				string value = XmlUtils.GetAttributeValue(node, "value");
+				string value = XmlUtils.GetOptionalAttributeValue(node, "value");
 				if (value == toolName)
 					return node;
 			}
@@ -594,8 +582,6 @@ namespace LanguageExplorer.Dumpster
 			return true;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private static bool IsToolInArea(string toolName, string area, XmlNode windowConfiguration)
 		{
 			XmlNodeList nodes = windowConfiguration.SelectNodes(GetToolXPath(area));

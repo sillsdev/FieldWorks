@@ -2,9 +2,10 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 using System;
+using System.Linq;
 using System.Xml.Linq;
-using SIL.Utils;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.Xml;
 
 namespace  SIL.FieldWorks.Filters
 {
@@ -19,15 +20,15 @@ namespace  SIL.FieldWorks.Filters
 	/// </summary>
 	public class RangeIntMatcher : IntMatcher
 	{
-		int m_min;
-		int m_max;
+		private long m_min;
+		private long m_max;
 
 		/// <summary>
 		/// Create one.
 		/// </summary>
 		/// <param name="min"></param>
 		/// <param name="max"></param>
-		public RangeIntMatcher(int min, int max)
+		public RangeIntMatcher(long min, long max)
 		{
 			m_min = min;
 			m_max = max;
@@ -46,7 +47,7 @@ namespace  SIL.FieldWorks.Filters
 		/// </summary>
 		/// <value>The min.</value>
 		/// ------------------------------------------------------------------------------------
-		public int Min
+		public long Min
 		{
 			get {return m_min; }
 		}
@@ -56,7 +57,7 @@ namespace  SIL.FieldWorks.Filters
 		/// </summary>
 		/// <value>The max.</value>
 		/// ------------------------------------------------------------------------------------
-		public int Max
+		public long Max
 		{
 			get { return m_max; }
 		}
@@ -70,8 +71,8 @@ namespace  SIL.FieldWorks.Filters
 		public override void PersistAsXml(XElement node)
 		{
 			base.PersistAsXml (node);
-			XmlUtils.AppendAttribute(node, "min", m_min.ToString());
-			XmlUtils.AppendAttribute(node, "max", m_max.ToString());
+			XmlUtils.SetAttribute(node, "min", m_min.ToString());
+			XmlUtils.SetAttribute(node, "max", m_max.ToString());
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -101,8 +102,15 @@ namespace  SIL.FieldWorks.Filters
 		{
 			if (stringval == null || String.IsNullOrEmpty(stringval.Text))
 				return false;
-			int val = Int32.Parse(stringval.Text);
-			return val >= m_min && val <= m_max;
+			try
+			{
+				var values = stringval.Text.Split(' ').Select(s => long.Parse(s));
+				return values.Any(x => x >= m_min && x <= m_max);
+			}
+			catch (OverflowException)
+			{
+				return false;
+			}
 		}
 
 		/// <summary>
@@ -192,7 +200,7 @@ namespace  SIL.FieldWorks.Filters
 		public override void PersistAsXml(XElement node)
 		{
 			base.PersistAsXml (node);
-			XmlUtils.AppendAttribute(node, "val", m_val.ToString());
+			XmlUtils.SetAttribute(node, "val", m_val.ToString());
 		}
 
 		/// ------------------------------------------------------------------------------------------

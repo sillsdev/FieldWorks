@@ -1,13 +1,7 @@
-// Copyright (c) 2005-2013 SIL International
+// Copyright (c) 2005-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: XmlBrowseViewBaseVc.cs
-// Responsibility: Randy Regnier
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
+
 using System;
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
@@ -21,12 +15,15 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.Utils;
 using SIL.FieldWorks.Filters;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Resources; // for check-box icons.
 using SIL.FieldWorks.Common.RootSites;
 using SIL.CoreImpl;
+using SIL.CoreImpl.Cellar;
+using SIL.CoreImpl.WritingSystems;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.Xml;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -282,6 +279,14 @@ namespace SIL.FieldWorks.Common.Controls
 						case 15:
 							savedCols = FixVersion16Columns(savedCols);
 							savedCols = savedCols.Replace("root version=\"15\"", "root version=\"16\"");
+							goto case 16;
+						case 16:
+							savedCols = FixVersion17Columns(savedCols);
+							savedCols = savedCols.Replace("root version=\"16\"", "root version=\"17\"");
+							goto case 17;
+						case 17:
+							savedCols = FixVersion18Columns(savedCols);
+							savedCols = savedCols.Replace("root version=\"17\"", "root version=\"18\"");
 							propertyTable.SetProperty(colListId, savedCols, true, true);
 							doc = XDocument.Parse(savedCols);
 							break;
@@ -306,6 +311,47 @@ namespace SIL.FieldWorks.Common.Controls
 				doc = null;
 			}
 			return doc;
+		}
+
+		/// <summary>
+		/// Handles the changes we made to browse columns between 8.3 Alpha and 8.3 Beta 2
+		/// 8.3 (version 18, Nov 11, 2016).
+		/// </summary>
+		/// <param name="savedColsInput"></param>
+		/// <returns></returns>
+		internal static string FixVersion18Columns(string savedColsInput)
+		{
+			var savedCols = savedColsInput;
+			savedCols = ChangeAttrValue(savedCols, "ExtNoteType", "ghostListField", "LexDb.AllPossibleExtendedNotes", "LexDb.AllExtendedNoteTargets");
+			savedCols = ChangeAttrValue(savedCols, "ExtNoteType", "label", "Ext. Note Type", "Ext. Note - Type");
+			savedCols = RemoveAttr(savedCols, "ExtNoteType", "editable");
+			savedCols = RemoveAttr(savedCols, "ExtNoteType", "ws");
+			savedCols = RemoveAttr(savedCols, "ExtNoteType", "transduce");
+			savedCols = AppendAttrValue(savedCols, "ExtNoteType", "list", "LexDb.ExtendedNoteTypes");
+			savedCols = AppendAttrValue(savedCols, "ExtNoteType", "field", "LexExtendedNote.ExtendedNoteType");
+			savedCols = AppendAttrValue(savedCols, "ExtNoteType", "bulkEdit", "atomicFlatListItem");
+			savedCols = AppendAttrValue(savedCols, "ExtNoteType", "displayWs", "best vernoranal");
+			savedCols = AppendAttrValue(savedCols, "ExtNoteType", "displayNameProperty", "ShortNameTSS");
+			savedCols = ChangeAttrValue(savedCols, "ExtNoteDiscussion", "ghostListField", "LexDb.AllPossibleExtendedNotes", "LexDb.AllExtendedNoteTargets");
+			savedCols = ChangeAttrValue(savedCols, "ExtNoteDiscussion", "label", "Ext. Note Discussion", "Ext. Note - Discussion");
+			savedCols = ChangeAttrValue(savedCols, "ExtNoteDiscussion", "editable", "false", "true");
+			return savedCols;
+		}
+
+		/// <summary>
+		/// Handles the changes we made to browse columns (other than additions) between roughly 7.3 (March 12, 2013) and
+		/// 8.3 (version 17, June 15, 2016).
+		/// </summary>
+		/// <param name="savedColsInput"></param>
+		/// <returns></returns>
+		internal static string FixVersion17Columns(string savedColsInput)
+		{
+			var savedCols = savedColsInput;
+			savedCols = ChangeAttrValue(savedCols, "EtymologyGloss", "transduce", "LexEntry.Etymology.Gloss", "LexEtymology.Gloss");
+			savedCols = ChangeAttrValue(savedCols, "EtymologySource", "transduce", "LexEntry.Etymology.Source", "LexEtymology.Source");
+			savedCols = ChangeAttrValue(savedCols, "EtymologyForm", "transduce", "LexEntry.Etymology.Form", "LexEtymology.Form");
+			savedCols = ChangeAttrValue(savedCols, "EtymologyComment", "transduce", "LexEntry.Etymology.Comment", "LexEtymology.Comment");
+			return savedCols;
 		}
 
 		/// <summary>
@@ -388,6 +434,21 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 			return savedCols;
 		}
+
+		private static string RemoveAttr(string savedCols, string layoutName, string attrName)
+		{
+			var pattern = new Regex("<column [^>]*layout *= *\"" + layoutName + "\"[^>]*(" + attrName + "=\"[^\r\n\t\f ]*\" )");
+			var match = pattern.Match(savedCols);
+			if (match.Success)
+			{
+				int index = match.Groups[1].Index;
+				// It is better to use Groups(1).Length here rather than attrValue.Length, because there may be some RE pattern
+				// in attrValue (e.g., \\$) which would make a discrepancy.
+				savedCols = savedCols.Substring(0, index) + savedCols.Substring(index + match.Groups[1].Length);
+			}
+			return savedCols;
+		}
+
 		private static string AppendAttrValue(string savedCols, string layoutName, string attrName, string attrValue)
 		{
 			return AppendAttrValue(savedCols, layoutName, false, attrName, attrValue);
@@ -554,8 +615,8 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				if (columnForCustomField != null)
 				{
-					string fieldName = XmlUtils.GetAttributeValue(columnForCustomField, "field");
-					string className = XmlUtils.GetAttributeValue(columnForCustomField, "class");
+					string fieldName = XmlUtils.GetOptionalAttributeValue(columnForCustomField, "field");
+					string className = XmlUtils.GetOptionalAttributeValue(columnForCustomField, "class");
 					if (!String.IsNullOrEmpty(fieldName) && !String.IsNullOrEmpty(className))
 					{
 						if ((m_mdc as IFwMetaDataCacheManaged).FieldExists(className, fieldName, false))
@@ -568,7 +629,7 @@ namespace SIL.FieldWorks.Common.Controls
 				}
 				if (propWs != null)
 				{
-					XmlUtils.AppendAttribute(node, "originalLabel", GetNewLabelFromMatchingCustomField(possibleColumns, propWs.flid));
+					XmlUtils.SetAttribute(node, "originalLabel", GetNewLabelFromMatchingCustomField(possibleColumns, propWs.flid));
 					ColumnConfigureDialog.GenerateColumnLabel(node, m_cache);
 				}
 				else
@@ -594,8 +655,7 @@ namespace SIL.FieldWorks.Common.Controls
 					// the flid of the updated custom field node matches the given flid of the old node.
 					if (propWs != null && propWs.flid == flid)
 					{
-						string label = XmlUtils.GetLocalizedAttributeValue(possibleColumn,
-								"label", null);
+						string label = StringTable.Table.LocalizeAttributeValue(XmlUtils.GetOptionalAttributeValue(possibleColumn, "label", null));
 						return label;
 					}
 				}
@@ -612,7 +672,7 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			// Look for a child node which is similar to this (value of ws attribute may differ):
 			// <string field="ReversalEntriesText" ws="$ws=es"/>
-			var child = XmlUtils.FindNode(node, "string");
+			var child = XmlUtils.FindElement(node, "string");
 			if (child != null &&
 				XmlUtils.GetOptionalAttributeValue(child, "field") == "ReversalEntriesText")
 			{
@@ -1106,7 +1166,7 @@ namespace SIL.FieldWorks.Common.Controls
 				if (xn.Parent != null && xn.Parent.Name == "obj")
 				{
 					// Special case: object property, string field is on a derived object.
-					string fieldObj = XmlUtils.GetAttributeValue(xn.Parent, "field");
+					string fieldObj = XmlUtils.GetOptionalAttributeValue(xn.Parent, "field");
 					if (mdc.FieldExists(objectClid, fieldObj, true))
 					{
 						var flidObj = m_mdc.GetFieldId2(objectClid, fieldObj, true);
@@ -1449,7 +1509,7 @@ namespace SIL.FieldWorks.Common.Controls
 			var xa = node.Attribute("ws");
 			var xn = node;
 			if (xa == null)
-				xn = XmlUtils.FindNode(node, "string");
+				xn = XmlUtils.FindElement(node, "string");
 			var wsBest = 0;
 			if (xn != null)
 			{
@@ -1701,7 +1761,7 @@ namespace SIL.FieldWorks.Common.Controls
 #pragma warning disable 414
 			FdoCache m_cache;
 #pragma warning restore 414
-			Set<int> m_hvosInCell = new Set<int>();
+			private readonly HashSet<int> m_hvosInCell = new HashSet<int>();
 
 			/// <summary>
 			///
@@ -1731,7 +1791,7 @@ namespace SIL.FieldWorks.Common.Controls
 			/// <summary>
 			/// Return the list of hvos used to build the display in DisplayCell.
 			/// </summary>
-			public Set<int> HvosCollectedInCell
+			public ISet<int> HvosCollectedInCell
 			{
 				get
 				{

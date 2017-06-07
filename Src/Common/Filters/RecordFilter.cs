@@ -43,14 +43,17 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Xml.Linq;
 using SIL.Utils;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.CoreImpl;
+using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.WritingSystems;
+using SIL.Xml;
 
 namespace SIL.FieldWorks.Filters
 {
@@ -308,7 +311,7 @@ namespace SIL.FieldWorks.Filters
 		/// ------------------------------------------------------------------------------------
 		public virtual void PersistAsXml(XElement node)
 		{
-			XmlUtils.AppendAttribute(node, "name", m_name);
+			XmlUtils.SetAttribute(node, "name", m_name);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -383,7 +386,7 @@ namespace SIL.FieldWorks.Filters
 		public override void PersistAsXml(XElement node)
 		{
 			base.PersistAsXml(node);
-			XmlUtils.AppendAttribute(node, "classIds", XmlUtils.MakeListValue(m_classIds));
+			XmlUtils.SetAttribute(node, "classIds", XmlUtils.MakeStringFromList(m_classIds));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -436,7 +439,7 @@ namespace SIL.FieldWorks.Filters
 			{
 				int cls = cache.DomainDataByFlid.MetaDataCache.GetClassId(name.Trim());
 				if (cls <= 0)
-					throw new SIL.Utils.ConfigurationException("The class name '" + name + "' is not valid");
+					throw new ConfigurationException("The class name '" + name + "' is not valid");
 				m_classIds.Add(cls);
 			}
 		}
@@ -588,7 +591,7 @@ namespace SIL.FieldWorks.Filters
 			if (m_tssLabel != null)
 			{
 				string contents = TsStringUtils.GetXmlRep(m_tssLabel, m_wsf, 0, false);
-				XmlUtils.AppendAttribute(node, "label", contents);
+				XmlUtils.SetAttribute(node, "label", contents);
 			}
 		}
 
@@ -842,8 +845,6 @@ namespace SIL.FieldWorks.Filters
 		/// <returns></returns>
 		/// <remarks>For most subclasses, it is enough if it is the same class and pattern.</remarks>
 		/// ---------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification="See TODO-Linux comment")]
 		public override bool SameMatcher(IMatcher other)
 		{
 			if (!(other is SimpleStringMatcher))
@@ -946,12 +947,12 @@ namespace SIL.FieldWorks.Filters
 		public override void PersistAsXml(XElement node)
 		{
 			base.PersistAsXml (node);
-			XmlUtils.AppendAttribute(node, "pattern", m_pattern.Pattern.Text);
+			XmlUtils.SetAttribute(node, "pattern", m_pattern.Pattern.Text);
 			int var;
 			int ws = m_pattern.Pattern.get_PropertiesAt(0).GetIntPropValues((int)FwTextPropType.ktptWs, out var);
-			XmlUtils.AppendAttribute(node, "ws", ws.ToString());
-			XmlUtils.AppendAttribute(node, "matchCase", m_pattern.MatchCase.ToString());
-			XmlUtils.AppendAttribute(node, "matchDiacritics", m_pattern.MatchDiacritics.ToString());
+			XmlUtils.SetAttribute(node, "ws", ws.ToString());
+			XmlUtils.SetAttribute(node, "matchCase", m_pattern.MatchCase.ToString());
+			XmlUtils.SetAttribute(node, "matchDiacritics", m_pattern.MatchDiacritics.ToString());
 			// NOTE!! if any more properties of the matcher become significant, they should be
 			// accounted for also in SameMatcher!
 		}
@@ -979,12 +980,10 @@ namespace SIL.FieldWorks.Filters
 
 				if(m_persistNode != null && m_pattern.Pattern == null)
 				{
-					ITsString tss;
-					ITsStrFactory tsf = value.TsStrFactory;
 					int ws = XmlUtils.GetOptionalIntegerValue(m_persistNode,
 						"ws",
 						value.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle);
-					tss = tsf.MakeString(XmlUtils.GetManditoryAttributeValue(m_persistNode, "pattern"), ws);
+					ITsString tss = TsStringUtils.MakeString(XmlUtils.GetManditoryAttributeValue(m_persistNode, "pattern"), ws);
 					m_pattern.Pattern = tss;
 
 					m_pattern.MatchCase = XmlUtils.GetOptionalBooleanAttributeValue(m_persistNode, "matchCase", false);
@@ -1725,7 +1724,7 @@ namespace SIL.FieldWorks.Filters
 		public override void PersistAsXml(XElement node)
 		{
 			base.PersistAsXml(node);
-			XmlUtils.AppendAttribute(node, "flid", m_flid.ToString());
+			XmlUtils.SetAttribute(node, "flid", m_flid.ToString());
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1835,7 +1834,7 @@ namespace SIL.FieldWorks.Filters
 		public override void PersistAsXml(XElement node)
 		{
 			base.PersistAsXml(node);
-			XmlUtils.AppendAttribute(node, "flid", m_flid.ToString());
+			XmlUtils.SetAttribute(node, "flid", m_flid.ToString());
 		}
 
 		/// ---------------------------------------------------------------------------------------
@@ -1959,9 +1958,9 @@ namespace SIL.FieldWorks.Filters
 		public override void PersistAsXml(XElement node)
 		{
 			base.PersistAsXml(node);
-			XmlUtils.AppendAttribute(node, "flidVec", m_flidVec.ToString());
-			XmlUtils.AppendAttribute(node, "flidString", m_flidString.ToString());
-			XmlUtils.AppendAttribute(node, "ws", m_ws.ToString());
+			XmlUtils.SetAttribute(node, "flidVec", m_flidVec.ToString());
+			XmlUtils.SetAttribute(node, "flidString", m_flidString.ToString());
+			XmlUtils.SetAttribute(node, "ws", m_ws.ToString());
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -2094,9 +2093,9 @@ namespace SIL.FieldWorks.Filters
 		public override void PersistAsXml(XElement node)
 		{
 			base.PersistAsXml(node);
-			XmlUtils.AppendAttribute(node, "flidVec", XmlUtils.MakeIntegerListValue(m_flidVec));
-			XmlUtils.AppendAttribute(node, "flidString", m_flidString.ToString());
-			XmlUtils.AppendAttribute(node, "ws", m_ws.ToString());
+			XmlUtils.SetAttribute(node, "flidVec", XmlUtils.MakeIntegerListValue(m_flidVec));
+			XmlUtils.SetAttribute(node, "flidString", m_flidString.ToString());
+			XmlUtils.SetAttribute(node, "ws", m_ws.ToString());
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -2275,9 +2274,9 @@ namespace SIL.FieldWorks.Filters
 		public override void PersistAsXml(XElement node)
 		{
 			base.PersistAsXml(node);
-			XmlUtils.AppendAttribute(node, "flidAtom", m_flidAtom.ToString());
-			XmlUtils.AppendAttribute(node, "flidString", m_flidString.ToString());
-			XmlUtils.AppendAttribute(node, "ws", m_ws.ToString());
+			XmlUtils.SetAttribute(node, "flidAtom", m_flidAtom.ToString());
+			XmlUtils.SetAttribute(node, "flidString", m_flidString.ToString());
+			XmlUtils.SetAttribute(node, "ws", m_ws.ToString());
 		}
 
 		/// ------------------------------------------------------------------------------------------

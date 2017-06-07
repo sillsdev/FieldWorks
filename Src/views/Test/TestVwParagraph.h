@@ -267,14 +267,18 @@ namespace TestViews
 			HRESULT hr;
 			// Create test data in a temporary cache.
 			// First make some generic objects.
+			ITsStrFactoryPtr qtsf;
+			qtsf.CreateInstance(CLSID_TsStrFactory);
 			IVwCacheDaPtr qcda;
 			qcda.CreateInstance(CLSID_VwCacheDa);
+			qcda->putref_TsStrFactory(qtsf);
 			ISilDataAccessPtr qsda;
 			qcda->QueryInterface(IID_ISilDataAccess, (void **)&qsda);
 			qsda->putref_WritingSystemFactory(g_qwsf);
 
-			ITsStrFactoryPtr qtsf;
-			qtsf.CreateInstance(CLSID_TsStrFactory);
+			IRenderEngineFactoryPtr qref;
+			qref.Attach(NewObj MockRenderEngineFactory);
+
 			ITsStringPtr qtss;
 			// Now make two strings, the contents of paragraphs 1 and 2.
 			StrUni stuPara1(L"This is the first" A_WITH_DIAERESIS_AND_MACRON L" test string");
@@ -289,8 +293,8 @@ namespace TestViews
 
 			// Now make them the paragraphs of an StText.
 			HVO rghvo[3] = {khvoString1, khvoString2, khvoString3};
-			HVO hvoRoot = 101;
-			qcda->CacheVecProp(hvoRoot, kflidStText_Paragraphs, rghvo, 3);
+			HVO hvoRootBox = 101;
+			qcda->CacheVecProp(hvoRootBox, kflidStText_Paragraphs, rghvo, 3);
 
 			// Now make the root box and view constructor and Graphics object.
 			IVwRootBoxPtr qrootb;
@@ -310,7 +314,9 @@ namespace TestViews
 				IVwViewConstructorPtr qvc;
 				qvc.Attach(NewObj NormalizeDummyVc());
 				qrootb->putref_DataAccess(qsda);
-				qrootb->SetRootObject(hvoRoot, qvc, kfragBase, NULL);
+				qrootb->putref_RenderEngineFactory(qref);
+				qrootb->putref_TsStrFactory(qtsf);
+				qrootb->SetRootObject(hvoRootBox, qvc, kfragBase, NULL);
 				DummyRootSitePtr qdrs;
 				qdrs.Attach(NewObj DummyRootSite());
 				Rect rcSrc(0, 0, 96, 96);
@@ -544,11 +550,17 @@ namespace TestViews
 		void testInnerPileLayout()
 		{
 			// Now make the root box and view constructor and Graphics object.
+			ITsStrFactoryPtr qtsf;
+			qtsf.CreateInstance(CLSID_TsStrFactory);
 			IVwCacheDaPtr qcda;
 			qcda.CreateInstance(CLSID_VwCacheDa);
+			qcda->putref_TsStrFactory(qtsf);
 			ISilDataAccessPtr qsda;
 			qcda->QueryInterface(IID_ISilDataAccess, (void **)&qsda);
 			qsda->putref_WritingSystemFactory(g_qwsf);
+
+			IRenderEngineFactoryPtr qref;
+			qref.Attach(NewObj MockRenderEngineFactory);
 
 			IVwRootBoxPtr qrootb;
 #ifdef WIN32
@@ -569,6 +581,8 @@ namespace TestViews
 				IVwViewConstructorPtr qvc;
 				qvc.Attach(NewObj InnerPileDummyVc());
 				qrootb->putref_DataAccess(qsda);
+				qrootb->putref_RenderEngineFactory(qref);
+				m_qrootb->putref_TsStrFactory(qtsf);
 				qrootb->SetRootObject(hvoRoot, qvc, kfragBase, NULL);
 				DummyRootSitePtr qdrs;
 				qdrs.Attach(NewObj DummyRootSite());
@@ -636,11 +650,17 @@ namespace TestViews
 		// test spell checking
 		void testSpellCheck()
 		{
+			ITsStrFactoryPtr qtsf;
+			qtsf.CreateInstance(CLSID_TsStrFactory);
 			IVwCacheDaPtr qcda;
 			qcda.CreateInstance(CLSID_VwCacheDa);
+			qcda->putref_TsStrFactory(qtsf);
 			ISilDataAccessPtr qsda;
 			qcda->QueryInterface(IID_ISilDataAccess, (void **)&qsda);
 			qsda->putref_WritingSystemFactory(g_qwsf);
+
+			IRenderEngineFactoryPtr qref;
+			qref.Attach(NewObj MockRenderEngineFactory);
 
 			IVwRootBoxPtr qrootb;
 			qrootb.Attach(NewObj MockDictRootBox());		// ref count initialy 1
@@ -649,8 +669,6 @@ namespace TestViews
 			// Note: in case this test is ever run with a real dictionary, the second word should be
 			// clearly bad English. To make it fail with the English mock, it must have exactly 8 letters.
 			StrUni testData(L"The xzklymgz string");
-			ITsStrFactoryPtr qtsf;
-			qtsf.CreateInstance(CLSID_TsStrFactory);
 			ITsStringPtr qtss;
 			qtsf->MakeString(testData.Bstr(), g_wsEng, &qtss);
 			qcda->CacheStringProp(hvoRoot, kflidStTxtPara_Contents, qtss);
@@ -664,6 +682,8 @@ namespace TestViews
 				IVwViewConstructorPtr qvc;
 				qvc.Attach(NewObj NestedStringDummyVc());
 				qrootb->putref_DataAccess(qsda);
+				qrootb->putref_RenderEngineFactory(qref);
+				qrootb->putref_TsStrFactory(qtsf);
 				qrootb->SetRootObject(hvoRoot, qvc, kfragBase, NULL);
 				DummyRootSitePtr qdrs;
 				qdrs.Attach(NewObj DummyRootSite());

@@ -7,9 +7,11 @@ using System.Text;
 using System.Windows.Forms;
 using NUnit.Framework;
 
-using SIL.CoreImpl;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
 using SIL.FieldWorks.CacheLight;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
@@ -34,8 +36,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		{
 			CheckDisposed();
 
-			ITsPropsFactory propsFact = TsPropsFactoryClass.Create();
-			return GetTextFromClipboard(null, false, propsFact.MakeProps("bla", 1, 0));
+			return GetTextFromClipboard(null, false, TsStringUtils.MakeProps("bla", 1));
 		}
 
 		protected override bool IsParagraphLevelTag(int tag)
@@ -90,17 +91,15 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			// Add a title to the root object
 			int hvoTitle = m_cache.MakeNewObject(SimpleRootsiteTestsConstants.kclsidStText, m_hvoRoot, SimpleRootsiteTestsConstants.kflidDocTitle, -2);
 			int hvoTitlePara1 = m_cache.MakeNewObject(SimpleRootsiteTestsConstants.kclsidStTxtPara, hvoTitle, SimpleRootsiteTestsConstants.kflidTextParas, 0);
-			ITsStrFactory tsStrFactory = TsStrFactoryClass.Create();
 			m_cache.CacheStringProp(hvoTitlePara1, SimpleRootsiteTestsConstants.kflidParaContents,
-				tsStrFactory.MakeString("The First Book of the Law given by Moses", m_wsEng));
-			ITsPropsFactory fact  = TsPropsFactoryClass.Create();
-			m_cache.SetUnknown(hvoTitlePara1, SimpleRootsiteTestsConstants.kflidParaProperties, fact.MakeProps("Title", m_wsEng, 0));
+				TsStringUtils.MakeString("The First Book of the Law given by Moses", m_wsEng));
+			m_cache.SetUnknown(hvoTitlePara1, SimpleRootsiteTestsConstants.kflidParaProperties, TsStringUtils.MakeProps("Title", m_wsEng));
 
 			int hvoTitlePara2 = m_cache.MakeNewObject(SimpleRootsiteTestsConstants.kclsidStTxtPara, hvoTitle, SimpleRootsiteTestsConstants.kflidTextParas, 1);
 			string secondParaContents = "and Aaron";
 			m_cache.CacheStringProp(hvoTitlePara2, SimpleRootsiteTestsConstants.kflidParaContents,
-				tsStrFactory.MakeString(secondParaContents, m_wsEng));
-			m_cache.SetUnknown(hvoTitlePara2, SimpleRootsiteTestsConstants.kflidParaProperties, fact.MakeProps("Conclusion", m_wsEng, 0));
+				TsStringUtils.MakeString(secondParaContents, m_wsEng));
+			m_cache.SetUnknown(hvoTitlePara2, SimpleRootsiteTestsConstants.kflidParaProperties, TsStringUtils.MakeProps("Conclusion", m_wsEng));
 
 			ShowForm(SimpleViewVc.DisplayType.kTitle |
 				SimpleViewVc.DisplayType.kUseParaProperties |
@@ -136,17 +135,15 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			// Add a title to the root object
 			int hvoTitle = m_cache.MakeNewObject(SimpleRootsiteTestsConstants.kclsidStText, m_hvoRoot, SimpleRootsiteTestsConstants.kflidDocTitle, -2);
 			int hvoTitlePara1 = m_cache.MakeNewObject(SimpleRootsiteTestsConstants.kclsidStTxtPara, hvoTitle, SimpleRootsiteTestsConstants.kflidTextParas, 0);
-			ITsStrFactory tsStrFactory = TsStrFactoryClass.Create();
 			m_cache.CacheStringProp(hvoTitlePara1, SimpleRootsiteTestsConstants.kflidParaContents,
-				tsStrFactory.MakeString("The First Book of the Law given by Moses", m_wsEng));
-			ITsPropsFactory fact = TsPropsFactoryClass.Create();
-			m_cache.SetUnknown(hvoTitlePara1, SimpleRootsiteTestsConstants.kflidParaProperties, fact.MakeProps("Title", m_wsEng, 0));
+				TsStringUtils.MakeString("The First Book of the Law given by Moses", m_wsEng));
+			m_cache.SetUnknown(hvoTitlePara1, SimpleRootsiteTestsConstants.kflidParaProperties, TsStringUtils.MakeProps("Title", m_wsEng));
 
 			int hvoTitlePara2 = m_cache.MakeNewObject(SimpleRootsiteTestsConstants.kclsidStTxtPara, hvoTitle, SimpleRootsiteTestsConstants.kflidTextParas, 1);
 			string secondParaContents = "and Aaron";
 			m_cache.CacheStringProp(hvoTitlePara2, SimpleRootsiteTestsConstants.kflidParaContents,
-				tsStrFactory.MakeString(secondParaContents, m_wsEng));
-			m_cache.SetUnknown(hvoTitlePara2, SimpleRootsiteTestsConstants.kflidParaProperties, fact.MakeProps("Title", m_wsEng, 0));
+				TsStringUtils.MakeString(secondParaContents, m_wsEng));
+			m_cache.SetUnknown(hvoTitlePara2, SimpleRootsiteTestsConstants.kflidParaProperties, TsStringUtils.MakeProps("Title", m_wsEng));
 
 			ShowForm(SimpleViewVc.DisplayType.kTitle |
 				SimpleViewVc.DisplayType.kUseParaProperties |
@@ -250,9 +247,8 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			// Add a title to the root object
 			int hvoTitle = m_cache.MakeNewObject(SimpleRootsiteTestsConstants.kclsidStText, m_hvoRoot, SimpleRootsiteTestsConstants.kflidDocTitle, -2);
 			int hvoTitlePara = m_cache.MakeNewObject(SimpleRootsiteTestsConstants.kclsidStTxtPara, hvoTitle, SimpleRootsiteTestsConstants.kflidTextParas, 0);
-			ITsStrFactory tsStrFactory = TsStrFactoryClass.Create();
 			m_cache.CacheStringProp(hvoTitlePara, SimpleRootsiteTestsConstants.kflidParaContents,
-				tsStrFactory.MakeString("The First Book of the Law given by Moses", m_wsFrn));
+				TsStringUtils.MakeString("The First Book of the Law given by Moses", m_wsFrn));
 
 			ShowForm(Lng.English, SimpleViewVc.DisplayType.kNormal |
 				SimpleViewVc.DisplayType.kTitle);
@@ -436,10 +432,9 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			wsManager.GetOrSet("swg", out swgWs);
 			int wsSwg = swgWs.Handle;
 
-			var strFactory = TsStrFactoryClass.Create();
-			var incStrBldr = strFactory.GetIncBldr();
-			incStrBldr.AppendTsString(strFactory.MakeString("Gogomer ", wsSwg));
-			incStrBldr.AppendTsString(strFactory.MakeString("cucumber", wsEng));
+			var incStrBldr = TsStringUtils.MakeIncStrBldr();
+			incStrBldr.AppendTsString(TsStringUtils.MakeString("Gogomer ", wsSwg));
+			incStrBldr.AppendTsString(TsStringUtils.MakeString("cucumber", wsEng));
 			EditingHelper.SetTsStringOnClipboard(incStrBldr.GetString(), false, wsManager);
 
 			var tss = m_basicView.EditingHelper.GetTsStringFromClipboard(wsManager);
@@ -462,11 +457,10 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			CoreWritingSystemDefinition enWs;
 			wsManager.GetOrSet("en", out enWs);
 			int wsEng = enWs.Handle;
-			var strFactory = TsStrFactoryClass.Create();
 			var originalInput = "\x7a7a\x60f3\x79d1\x5b78\x0020\xd558";
 			var input = originalInput.Normalize(NormalizationForm.FormD);
 			Assert.That(originalInput, Is.Not.EqualTo(input)); // make sure input is NOT NFC
-			var tss = strFactory.MakeString(input, wsEng);
+			var tss = TsStringUtils.MakeString(input, wsEng);
 			EditingHelper.SetTsStringOnClipboard(tss, false, wsManager);
 			var newDataObj = ClipboardUtils.GetDataObject();
 			Assert.IsNotNull(newDataObj, "Couldn't get DataObject from clipboard");

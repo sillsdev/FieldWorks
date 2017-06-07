@@ -1,26 +1,20 @@
-// Copyright (c) 2005-2013 SIL International
+// Copyright (c) 2005-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: XmlBrowseViewBase.cs
-// Responsibility: Randy Regnier
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
+
 using System;
 using System.Drawing;
 using System.Windows.Forms;
+using System.Xml.Linq;
 using System.Diagnostics;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO.Application;
-using SIL.Utils;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.FwUtils;
-using System.Diagnostics.CodeAnalysis;
-using System.Xml.Linq;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.CoreImpl;
+using SIL.Xml;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -1853,8 +1847,6 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// <param name="e"></param>
 		/// <returns></returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "scrollBar is a reference")]
 		private bool DoMouseWheelVScroll(MouseEventArgs e)
 		{
 			if (m_bv == null)
@@ -1910,8 +1902,8 @@ namespace SIL.FieldWorks.Common.Controls
 			if (m_fdoCache == null || DesignMode)
 				return;
 
-			m_rootb = VwRootBoxClass.Create();
-			m_rootb.SetSite(this);
+			base.MakeRoot();
+
 			// Only change it if it is null or different.
 			// Otherwise, it does an uneeded disposal/creation of the layout cache.
 			if (m_xbvvc.Cache == null || m_xbvvc.Cache != m_fdoCache)
@@ -1925,7 +1917,6 @@ namespace SIL.FieldWorks.Common.Controls
 			m_rootb.DataAccess = m_sda;
 
 			RootObjectHvo = m_hvoRoot;
-			base.MakeRoot();
 			m_bv.SpecialCache.AddNotification(this);
 			m_dxdLayoutWidth = kForceLayout; // Don't try to draw until we get OnSize and do layout.
 			// Filter bar uses info from our VC and can't fininish init until we make it.

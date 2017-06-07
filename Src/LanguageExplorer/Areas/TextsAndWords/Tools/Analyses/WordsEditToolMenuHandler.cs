@@ -5,13 +5,12 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using System.Xml;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Framework;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
@@ -47,8 +46,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 		/// Returns the object of the current slice, or (if no slice is marked current)
 		/// the object of the first slice, or (if there are no slices, or no data entry form) null.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="FieldAt() returns a reference")]
 		private ICmObject CurrentSliceObject
 		{
 			get

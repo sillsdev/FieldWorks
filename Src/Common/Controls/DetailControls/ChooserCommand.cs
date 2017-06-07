@@ -1,24 +1,19 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ChooserCommand.cs
-// Responsibility: Andy Black
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
+
 using System;
 using System.Windows.Forms;
 using System.Linq;
 using SIL.CoreImpl;
+using SIL.CoreImpl.Text;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.Common.Controls;
-using SIL.Utils;
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
@@ -132,7 +127,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 						pos.AffixSlotsOC.Add(slot);
 						string sNewSlotName = StringTable.Table.GetString("NewSlotName", "Linguistics/Morphology/TemplateTable");
 						int defAnalWs = m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle;
-						slot.Name.set_String(defAnalWs, m_cache.TsStrFactory.MakeString(sNewSlotName, defAnalWs));
+						slot.Name.set_String(defAnalWs, TsStringUtils.MakeString(sNewSlotName, defAnalWs));
 						slot.Optional = m_fOptional;
 					});
 			// Enhance JohnT: usually the newly created slot will also get inserted into a template.

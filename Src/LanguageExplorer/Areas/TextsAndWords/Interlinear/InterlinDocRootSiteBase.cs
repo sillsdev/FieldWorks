@@ -1,21 +1,22 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.FieldWorks.FwCoreDlgControls;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
@@ -64,15 +65,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			if (m_fdoCache == null || DesignMode)
 				return;
 
-			MakeRootInternal();
-
 			base.MakeRoot();
+			MakeRootInternal();
 		}
 
 		protected virtual void MakeRootInternal()
 		{
-			m_rootb = VwRootBoxClass.Create();
-			m_rootb.SetSite(this);
 			// Setting this result too low can result in moving a cursor from an editable field
 			// to a non-editable field (e.g. with Control-Right and Control-Left cursor
 			// commands).  Normally we could set this to only a few (e.g. 4). but in
@@ -109,7 +107,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		}
 #endif
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "parent is a reference")]
 		public bool OnExportInterlinear(object argument)
 		{
 			// If the currently selected text is from Scripture, then we need to give the dialog
@@ -498,8 +495,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "ToolStripSeparator gets added to the menu and disposed there")]
 		private ContextMenuStrip MakeContextMenu(int ilineChoice)
 		{
 			var menu = new ContextMenuStrip();
@@ -554,8 +549,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			return menu;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="ToolStripMenuItem added to menu.Items collection and disposed there")]
 		private void AddHideLineMenuItem(ContextMenuStrip menu,
 			InterlinLineChoices curLineChoices, int ilineChoice)
 		{
@@ -575,8 +568,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			return result;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="menuItem added to addSubMenu.DropDownItems collection and disposed there")]
 		private void AddAdditionalWsMenuItem(ToolStripMenuItem addSubMenu,
 			InterlinLineChoices curLineChoices, int ilineChoice)
 		{
@@ -636,8 +627,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			return ws;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="ToolStripMenuItem gets added to menu.Items collection and disposed there")]
 		private void AddMoveUpMenuItem(ContextMenuStrip menu, int ilineChoice)
 		{
 			var moveUpItem = new ToolStripMenuItem(ITextStrings.ksMoveUp) { Tag = ilineChoice };
@@ -645,8 +634,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			menu.Items.Add(moveUpItem);
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="ToolStripMenuItem gets added to menu.Items collection and disposed there")]
 		private void AddMoveDownMenuItem(ContextMenuStrip menu, int ilineChoice)
 		{
 			var moveDownItem = new ToolStripMenuItem(ITextStrings.ksMoveDown) { Tag = ilineChoice };
@@ -654,8 +641,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			menu.Items.Add(moveDownItem);
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="AddLineMenuItem gets added to addLineSubMenu.DropDownItems collection and disposed there")]
 		private void AddNewLineMenuItem(ToolStripMenuItem addLineSubMenu, InterlinLineChoices curLineChoices)
 		{
 			// Add menu options to add lines of flids that are in default list, but don't currently appear.
@@ -929,8 +914,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			m_rootb.PropChanged(occurrence.Segment.Hvo, SegmentTags.kflidAnalyses, occurrence.Index, 1, 1);
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "parentControl is a reference")]
 		internal InterlinMaster GetMaster()
 		{
 			for (Control parentControl = Parent; parentControl != null; parentControl = parentControl.Parent)
@@ -1149,6 +1132,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			m_ws = ws;
 		}
 
+		protected override void Dispose(bool disposing)
+		{
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
+			base.Dispose(disposing);
+		}
+
 		public int Flid
 		{
 			get { return m_flid; }
@@ -1178,6 +1167,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		public AddLineMenuItem(int flid)
 		{
 			m_flid = flid;
+		}
+
+		protected override void Dispose(bool disposing)
+		{
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
+			base.Dispose(disposing);
 		}
 
 		public int Flid

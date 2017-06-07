@@ -1,10 +1,10 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Xml.Linq;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.Utils;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.Xml;
 
 namespace SIL.FieldWorks.Filters
 {
@@ -57,7 +57,7 @@ namespace SIL.FieldWorks.Filters
 		public override void PersistAsXml(XElement node)
 		{
 			base.PersistAsXml (node);
-			XmlUtils.AppendAttribute(node, "flid", m_flid.ToString());
+			XmlUtils.SetAttribute(node, "flid", m_flid.ToString());
 		}
 
 		/// ------------------------------------------------------------------------------------

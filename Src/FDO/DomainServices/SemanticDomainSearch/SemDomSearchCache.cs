@@ -16,8 +16,6 @@ namespace SIL.FieldWorks.FDO.DomainServices.SemanticDomainSearch
 	/// bulk editing of LexSense.SemanticDomains collections by computer-generated
 	/// suggestions.
 	/// </summary>
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification = "m_cache is a reference")]
 	public class SemDomSearchCache
 	{
 		// Cached words from Semantic Domain Name and Example Words fields

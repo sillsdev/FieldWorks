@@ -1,18 +1,16 @@
-// Copyright (c) 2003-2015 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
-using SIL.Utils;
 
 namespace LanguageExplorer.Areas.Notebook
 {
 	/// <summary>
 	/// Summary description for ImageHolder.
 	/// </summary>
-	internal sealed class ImageHolder : UserControl, IFWDisposable
+	public class ImageHolder : UserControl
 	{
 		public ImageList buttonImages;
 		private System.ComponentModel.IContainer components;
@@ -49,9 +47,6 @@ namespace LanguageExplorer.Areas.Notebook
 		/// <param name="disposing"><c>true</c> to release both managed and unmanaged
 		/// resources; <c>false</c> to release only unmanaged resources.
 		/// </param>
-		/// -----------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Design", "UseCorrectDisposeSignaturesRule",
-			Justification = "Has to be protected in sealed class, since the superclass has it be protected.")]
 		protected override void Dispose( bool disposing )
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ****** ");

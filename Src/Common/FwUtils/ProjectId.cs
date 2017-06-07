@@ -1,11 +1,10 @@
-// Copyright (c) 2010-2016 SIL International
+// Copyright (c) 2010-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Diagnostics;
 using System.Runtime.Serialization;
-using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
 using SysPath = System.IO.Path;

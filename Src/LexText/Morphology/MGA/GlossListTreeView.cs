@@ -1,34 +1,24 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: GLossListTreeView.cs
-// Responsibility: Andy Black
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Text;
 using System.Xml;
 using System.Windows.Forms;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.Utils;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Text;
+using SIL.Xml;
 
 namespace SIL.FieldWorks.LexText.Controls.MGA
 {
 	/// <summary>
 	/// Summary description for GlossListTreeView.
 	/// </summary>
-	public class GlossListTreeView : TreeView, IFWDisposable
+	public class GlossListTreeView : TreeView
 	{
 		public enum ImageKind
 		{
@@ -210,14 +200,13 @@ namespace SIL.FieldWorks.LexText.Controls.MGA
 			// get top node
 			XmlNode treeTop = dom.SelectSingleNode(m_sTopOfList);
 			// set CheckBoxes value
-			string sAttr = XmlUtils.GetAttributeValue(treeTop, "checkBoxes");
-			CheckBoxes = XmlUtils.GetBooleanAttributeValue(sAttr);
+			//string sAttr = XmlUtils.GetAttributeValue(treeTop, "checkBoxes");
+			CheckBoxes = XmlUtils.GetBooleanAttributeValue(treeTop, "checkBoxes");
 			// set complex name separator value
-			m_sAfterSeparator = XmlUtils.GetAttributeValue(treeTop, "afterSeparator");
-			m_sComplexNameSeparator = XmlUtils.GetAttributeValue(treeTop, "complexNameSeparator");
+			m_sAfterSeparator = XmlUtils.GetOptionalAttributeValue(treeTop, "afterSeparator");
+			m_sComplexNameSeparator = XmlUtils.GetOptionalAttributeValue(treeTop, "complexNameSeparator");
 			// set complex name first value
-			sAttr = XmlUtils.GetAttributeValue(treeTop, "complexNameFirst");
-			m_fComplexNameFirst = XmlUtils.GetBooleanAttributeValue(sAttr);
+			m_fComplexNameFirst = XmlUtils.GetBooleanAttributeValue(treeTop, "complexNameFirst");
 			// set writing system abbreviation value
 			SetWritingSystemAbbrev(sDefaultAnalysisWritingSystem, dom);
 			return treeTop;
@@ -252,8 +241,6 @@ namespace SIL.FieldWorks.LexText.Controls.MGA
 			m_sAbbrevNodeXPath = "abbrev[@ws='" + m_sWritingSystemAbbrev + "']";
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void PopulateTreeView(XmlDocument dom, XmlNode treeTop)
 		{
 			XmlNodeList nodes = dom.SelectNodes(m_sTopOfList + "/item");
@@ -261,7 +248,7 @@ namespace SIL.FieldWorks.LexText.Controls.MGA
 			{
 				AddNode(node, null, dom);
 			}
-			string sExpandAll = XmlUtils.GetAttributeValue(treeTop, "expandAll");
+			string sExpandAll = XmlUtils.GetOptionalAttributeValue(treeTop, "expandAll");
 			if (XmlUtils.GetBooleanAttributeValue(sExpandAll))
 				ExpandAll();
 			else
@@ -270,8 +257,6 @@ namespace SIL.FieldWorks.LexText.Controls.MGA
 
 		#endregion
 		#region private methods
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="Added to ImageList and disposed there.")]
 		private void CommonInit()
 		{
 			AfterCollapse += new TreeViewEventHandler(OnAfterCollapse);
@@ -430,11 +415,9 @@ namespace SIL.FieldWorks.LexText.Controls.MGA
 				tn.ImageIndex = tn.SelectedImageIndex = (int)ImageKind.openFolder;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void AddNode(XmlNode currentNode, TreeNode parentNode, XmlDocument dom)
 		{
-			string sStatus = XmlUtils.GetAttributeValue(currentNode, "status");
+			string sStatus = XmlUtils.GetOptionalAttributeValue(currentNode, "status");
 			if (sStatus == "hidden")
 				return;
 			if (sStatus == "proxy")
@@ -443,7 +426,7 @@ namespace SIL.FieldWorks.LexText.Controls.MGA
 			}
 			XmlNodeList nodes = currentNode.SelectNodes("item");
 			TreeNode newNode = null;
-			string sType = XmlUtils.GetAttributeValue(currentNode, "type");
+			string sType = XmlUtils.GetOptionalAttributeValue(currentNode, "type");
 			if (sType == "fsType")
 			{ // skip an fsType to get to its contents
 				newNode = parentNode;
@@ -485,11 +468,9 @@ namespace SIL.FieldWorks.LexText.Controls.MGA
 			return newNode;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void FleshOutProxy(XmlNode currentNode, XmlDocument dom)
 		{
-			string sTarget = XmlUtils.GetAttributeValue(currentNode, "target");
+			string sTarget = XmlUtils.GetOptionalAttributeValue(currentNode, "target");
 			XmlNode xn = dom.SelectSingleNode("//item[@id='" + sTarget + "']");
 			if (xn != null)
 			{
@@ -528,9 +509,9 @@ namespace SIL.FieldWorks.LexText.Controls.MGA
 		private string GetTypeOfCrossReference(XmlNode currentNode, XmlDocument dom)
 		{
 			string sType;
-			string sTarget = XmlUtils.GetAttributeValue(currentNode, "target");
+			string sTarget = XmlUtils.GetOptionalAttributeValue(currentNode, "target");
 			XmlNode xn = dom.SelectSingleNode("//item[@id='" + sTarget + "']");
-			sType = XmlUtils.GetAttributeValue(xn, "type");
+			sType = XmlUtils.GetOptionalAttributeValue(xn, "type");
 			return sType;
 		}
 

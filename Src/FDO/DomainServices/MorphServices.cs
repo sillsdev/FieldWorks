@@ -7,12 +7,13 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.FieldWorks.FDO.Infrastructure.Impl;
 using SIL.Utils;
 using System.Diagnostics.CodeAnalysis;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
 
 namespace SIL.FieldWorks.FDO.DomainServices
 {
@@ -162,7 +163,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		{
 			return MakeMorph(
 				owningEntry,
-				owningEntry.Cache.TsStrFactory.MakeString(
+				TsStringUtils.MakeString(
 					fullForm,
 					owningEntry.Cache.DefaultVernWs));
 		}
@@ -219,7 +220,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 
 			var wsVern = TsStringUtils.GetWsAtOffset(tssfullForm, 0);
 			allomorph.Form.set_String(wsVern,
-							owningEntry.Cache.TsStrFactory.MakeString(EnsureNoMarkers(tssfullForm.Text, owningEntry.Cache), wsVern));
+							TsStringUtils.MakeString(EnsureNoMarkers(tssfullForm.Text, owningEntry.Cache), wsVern));
 			return allomorph;
 		}
 
@@ -423,7 +424,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				string postfix;
 				GetAffixMarkers(cache, formWithMarkers.Text, out prefix, out postfix);
 				morphComponents.Prefix = prefix;
-				morphComponents.TssForm = TsStringUtils.MakeTss(form, TsStringUtils.GetWsAtOffset(formWithMarkers, 0));
+				morphComponents.TssForm = TsStringUtils.MakeString(form, TsStringUtils.GetWsAtOffset(formWithMarkers, 0));
 				morphComponents.Postfix = postfix;
 			}
 			return morphComponents;
@@ -676,7 +677,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				sb.AppendTsString(tssGlossAffix);
 			string extractedSeparator = ExtractDivider(tssGlossAffix.Text, prepend ? -1 : 0);
 			if (String.IsNullOrEmpty(extractedSeparator))
-				sb.AppendTsString(TsStringUtils.MakeTss(sSeparator, wsUser.Handle));
+				sb.AppendTsString(TsStringUtils.MakeString(sSeparator, wsUser.Handle));
 			if (!prepend)
 				sb.AppendTsString(tssGlossAffix);
 		}
@@ -713,14 +714,12 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// <param name="wsGloss"></param>
 		/// <param name="sbJoinedGlossPrepend"></param>
 		/// <param name="sbJoinedGlossAppend"></param>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "cache is a reference")]
 		public static void JoinGlossAffixesOfInflVariantTypes(IEnumerable<ILexEntryType> variantEntryTypesRs, CoreWritingSystemDefinition wsGloss,
 												out ITsIncStrBldr sbJoinedGlossPrepend,
 												out ITsIncStrBldr sbJoinedGlossAppend)
 		{
-			sbJoinedGlossPrepend = TsIncStrBldrClass.Create();
-			sbJoinedGlossAppend = TsIncStrBldrClass.Create();
+			sbJoinedGlossPrepend = TsStringUtils.MakeIncStrBldr();
+			sbJoinedGlossAppend = TsStringUtils.MakeIncStrBldr();
 
 			const string sSeparator = kDefaultSeparatorLexEntryInflTypeGlossAffix;
 
@@ -752,8 +751,6 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		///<param name="wsGloss"></param>
 		///<param name="variantEntryTypes"></param>
 		///<returns></returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "cache is a reference")]
 		public static ITsString MakeGlossWithReverseAbbrs(IMultiStringAccessor gloss, CoreWritingSystemDefinition wsGloss, IList<ILexEntryType> variantEntryTypes)
 		{
 			if (variantEntryTypes == null || variantEntryTypes.Count() == 0 || variantEntryTypes.First() == null)
@@ -762,11 +759,11 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			var wsUser = cache.ServiceLocator.WritingSystemManager.UserWritingSystem;
 			IList<IMultiUnicode> reverseAbbrs = (from variantType in variantEntryTypes
 												 select variantType.ReverseAbbr).ToList();
-			var sb = TsIncStrBldrClass.Create();
+			ITsIncStrBldr sb = TsStringUtils.MakeIncStrBldr();
 			AddGloss(sb, gloss, wsGloss);
 			const string sBeginSeparator = kDefaultBeginSeparatorLexEntryTypeReverseAbbr;
 			if (reverseAbbrs.Count() > 0)
-				sb.AppendTsString(TsStringUtils.MakeTss(sBeginSeparator, wsUser.Handle));
+				sb.AppendTsString(TsStringUtils.MakeString(sBeginSeparator, wsUser.Handle));
 			AddVariantTypeGlossInfo(sb, wsGloss, reverseAbbrs, wsUser);
 			return sb.Text.Length > 0 ? sb.GetString() : null;
 		}
@@ -777,8 +774,6 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// <param name="gloss"></param>
 		/// <param name="wsGloss"></param>
 		/// <returns></returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "cache is a reference")]
 		public static ITsString MakeGlossOptionWithInflVariantTypes(ILexEntryType variantEntryType, IMultiStringAccessor gloss, CoreWritingSystemDefinition wsGloss)
 		{
 			var inflVariantEntryType = variantEntryType as ILexEntryInflType;
@@ -790,7 +785,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			if (tssGloss.Length == 0)
 				tssGloss = gloss.NotFoundTss;
 
-			var sb = TsIncStrBldrClass.Create();
+			var sb = TsStringUtils.MakeIncStrBldr();
 			var cache = inflVariantEntryType.Cache;
 			var wsUser = cache.ServiceLocator.WritingSystemManager.UserWritingSystem;
 
@@ -819,11 +814,11 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// <param name="wsGloss"></param>
 		/// <param name="wsUser"></param>
 		/// <returns></returns>
-		public static ITsString AddTssGlossAffix(TsIncStrBldr sb, IMultiUnicode glossAffixAccessor,
+		public static ITsString AddTssGlossAffix(ITsIncStrBldr sb, IMultiUnicode glossAffixAccessor,
 			CoreWritingSystemDefinition wsGloss, CoreWritingSystemDefinition wsUser)
 		{
 			if (sb == null)
-				sb = TsIncStrBldrClass.Create();
+				sb = TsStringUtils.MakeIncStrBldr();
 			int wsActual1;
 			ITsString tssGlossPrepend = glossAffixAccessor.GetAlternativeOrBestTss(wsGloss.Handle, out wsActual1);
 			if (tssGlossPrepend != null && tssGlossPrepend.Length != 0)
@@ -834,7 +829,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			return tssGlossPrepend;
 		}
 
-		private static void AddGloss(TsIncStrBldr sb, IMultiStringAccessor gloss, CoreWritingSystemDefinition wsGloss)
+		private static void AddGloss(ITsIncStrBldr sb, IMultiStringAccessor gloss, CoreWritingSystemDefinition wsGloss)
 		{
 			ITsString tssGloss = GetTssGloss(gloss, wsGloss);
 			sb.AppendTsString(tssGloss);
@@ -849,7 +844,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			return tssGloss;
 		}
 
-		private static void AddVariantTypeGlossInfo(TsIncStrBldr sb, CoreWritingSystemDefinition wsGloss, IList<IMultiUnicode> multiUnicodeAccessors, CoreWritingSystemDefinition wsUser)
+		private static void AddVariantTypeGlossInfo(ITsIncStrBldr sb, CoreWritingSystemDefinition wsGloss, IList<IMultiUnicode> multiUnicodeAccessors, CoreWritingSystemDefinition wsUser)
 		{
 			const string sSeriesSeparator = kDefaultSeriesSeparatorLexEntryTypeReverseAbbr;
 			var fBeginSeparator = true;
@@ -860,7 +855,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				// just concatenate them together separated by comma.
 				if (tssVariantTypeInfo == null || tssVariantTypeInfo.Length <= 0) continue;
 				if (!fBeginSeparator)
-					sb.AppendTsString(TsStringUtils.MakeTss(sSeriesSeparator, wsUser.Handle));
+					sb.AppendTsString(TsStringUtils.MakeString(sSeriesSeparator, wsUser.Handle));
 				sb.AppendTsString((tssVariantTypeInfo));
 				fBeginSeparator = false;
 			}

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,11 +6,11 @@ using System;
 using System.Xml;
 using System.IO;
 using NUnit.Framework;
-using SIL.CoreImpl;
 using SIL.FieldWorks.CacheLight;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.Utils;
 using System.Text;
+using SIL.CoreImpl.Cellar;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.CacheLightTests
 {
@@ -20,7 +20,7 @@ namespace SIL.FieldWorks.CacheLightTests
 	/// Test cache initialization.
 	/// </summary>
 	[TestFixture]
-	public class MetaDataCacheInitializationTests: SIL.FieldWorks.Test.TestUtils.BaseTest
+	public class MetaDataCacheInitializationTests
 	{
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -28,17 +28,16 @@ namespace SIL.FieldWorks.CacheLightTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[TestFixtureSetUp]
-		public override void FixtureSetup()
+		public void FixtureSetup()
 		{
-			base.FixtureSetup();
 			FileUtils.Manager.SetFileAdapter(new MockFileOS());
 		}
 
 		/// <summary/>
-		public override void FixtureTeardown()
+		[TestFixtureTearDown]
+		public void FixtureTeardown()
 		{
 			FileUtils.Manager.Reset();
-			base.FixtureTeardown();
 		}
 
 		/// <summary>

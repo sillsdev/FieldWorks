@@ -1,23 +1,23 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
+using System.Linq;
+using System.Xml.Linq;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.Utils;
-using SIL.CoreImpl;
-using System.Linq;
-using System.Xml.Linq;
 using SIL.FieldWorks.LexText.Controls;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.CoreImpl;
+using SIL.CoreImpl.Text;
+using SIL.Xml;
 
 namespace SIL.FieldWorks.FdoUi
 {
@@ -30,9 +30,7 @@ namespace SIL.FieldWorks.FdoUi
 	/// sort of makes sense to put it here as a class that is quite specific to a particular
 	/// part of the model.
 	/// </summary>
-	[SuppressMessage("Gendarme.Rules.Correctness", "DisposableFieldsShouldBeDisposedRule",
-		Justification="m_cache and m_mediator are references")]
-	public class PhonologicalFeatureEditor : IBulkEditSpecControl, IFWDisposable
+	public class PhonologicalFeatureEditor : IBulkEditSpecControl, IDisposable
 	{
 		private TreeCombo m_tree;
 		private FdoCache m_cache;
@@ -61,7 +59,7 @@ namespace SIL.FieldWorks.FdoUi
 			m_publisher = publisher;
 			string displayWs = XmlUtils.GetOptionalAttributeValue(configurationNode, "displayWs", "best analorvern");
 			m_displayWs = WritingSystemServices.GetMagicWsIdFromName(displayWs);
-			string layout = XmlUtils.GetAttributeValue(configurationNode, "layout");
+			string layout = XmlUtils.GetOptionalAttributeValue(configurationNode, "layout");
 			if (!String.IsNullOrEmpty(layout))
 			{
 				const string layoutName = "CustomMultiStringForFeatureDefn_";
@@ -469,7 +467,7 @@ namespace SIL.FieldWorks.FdoUi
 			{
 				labelToShow = " "; // it is the remove option so we just show nothing after the arrow
 			}
-			ITsString tss = TsStringUtils.MakeTss(labelToShow, m_cache.DefaultAnalWs);
+			ITsString tss = TsStringUtils.MakeString(labelToShow, m_cache.DefaultAnalWs);
 			int i = 0;
 			// Report progress 50 times or every 100 items, whichever is more (but no more than once per item!)
 			int interval = Math.Min(100, Math.Max(itemsToChange.Count()/50, 1));

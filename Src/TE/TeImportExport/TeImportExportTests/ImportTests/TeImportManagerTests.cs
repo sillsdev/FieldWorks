@@ -1,21 +1,17 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: TeImportTest.cs
-// Responsibility: TE Team
-// --------------------------------------------------------------------------------------------
+
 using System.Collections.Generic;
+using System.Linq;
 using NUnit.Framework;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
-using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.FDO.FDOTests;
-using SILUBS.SharedScrUtils;
+using SIL.CoreImpl.Scripture;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 
@@ -81,10 +77,10 @@ namespace SIL.FieldWorks.TE.ImportTests
 	/// ----------------------------------------------------------------------------------------
 	internal class MockScrObjWrapper : ScrObjWrapper
 	{
-		private List<SegmentInfo> m_segmentList;
+		private readonly List<SegmentInfo> m_segmentList;
 		private int m_curSeg;
 		private BCVRef m_ref;
-		private MockTeImporter m_importer;
+		private readonly MockTeImporter m_importer;
 		private int m_wsOverride;
 
 		public static bool s_fSimulateCancel = true;
@@ -97,7 +93,6 @@ namespace SIL.FieldWorks.TE.ImportTests
 		/// <param name="segmentList">The segment list.</param>
 		/// ------------------------------------------------------------------------------------
 		public MockScrObjWrapper(MockTeImporter importer, List<SegmentInfo> segmentList)
-			: base()
 		{
 			m_importer = importer;
 			m_segmentList = segmentList;
@@ -294,16 +289,6 @@ namespace SIL.FieldWorks.TE.ImportTests
 	{
 		private bool m_fCancel;
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Initializes a new instance of the <see cref="DummyTeImportUi"/> class.
-		/// </summary>
-		/// <param name="progressDlg">The progress DLG.</param>
-		/// ------------------------------------------------------------------------------------
-		public DummyTeImportUi(ProgressDialogWithTask progressDlg)
-		{
-		}
-
 		/// <summary>
 		///
 		/// </summary>
@@ -379,10 +364,10 @@ namespace SIL.FieldWorks.TE.ImportTests
 	public class DummyTeImportManager : TeImportManager
 	{
 		#region Member data
-		private IScripture m_scr;
-		private Set<int> m_originalDrafts;
-		internal int m_cDisplayImportedBooksDlgCalled = 0;
-		private bool m_fSimulateAcceptAllBooks = false;
+		private readonly IScripture m_scr;
+		private HashSet<int> m_originalDrafts;
+		internal int m_cDisplayImportedBooksDlgCalled;
+		private bool m_fSimulateAcceptAllBooks;
 		//private bool m_fSimulateDeleteAllBooks = false;
 		#endregion
 
@@ -410,7 +395,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 		/// ------------------------------------------------------------------------------------
 		internal void ResetOriginalDrafts()
 		{
-			m_originalDrafts = new Set<int>(m_scr.ArchivedDraftsOC.ToHvoArray());
+			m_originalDrafts = new HashSet<int>(m_scr.ArchivedDraftsOC.ToHvoArray());
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -451,13 +436,14 @@ namespace SIL.FieldWorks.TE.ImportTests
 		/// import).
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		internal Set<int> NewSavedVersions
+		internal ISet<int> NewSavedVersions
 		{
 			get
 			{
 				// This is a kludgy way to get the new saved version since CallImportWithUndoTask
 				// does not save it.
-				return new Set<int>(m_scr.ArchivedDraftsOC.ToHvoArray()).Difference(m_originalDrafts);
+
+				return new HashSet<int>(m_scr.ArchivedDraftsOC.ToHvoArray().Except(m_originalDrafts));
 			}
 		}
 
@@ -517,7 +503,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 		/// ------------------------------------------------------------------------------------
 		protected override TeImportUi CreateTeImportUi(ProgressDialogWithTask progressDialog)
 		{
-			return new DummyTeImportUi(progressDialog);
+			return new DummyTeImportUi();
 		}
 		#endregion
 	}
@@ -624,7 +610,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 
 			NonUndoableUnitOfWorkHelper.Do(m_actionHandler, () =>
 			{
-				m_settings = m_scr.FindOrCreateDefaultImportSettings(TypeOfImport.Unknown);
+				m_settings = m_scr.FindOrCreateDefaultImportSettings(TypeOfImport.Unknown, m_styleSheet, FwDirectoryFinder.TeStylesPath);
 				DummyTeImporter.MakeSFImportTestSettings(m_settings);
 			});
 		}
@@ -733,7 +719,6 @@ namespace SIL.FieldWorks.TE.ImportTests
 
 			int hvoJudeOrig = jude.Hvo;
 			int cBooksOrig = m_scr.ScriptureBooksOS.Count;
-			jude = null;
 
 			List<SegmentInfo> al = new List<SegmentInfo>(2);
 			// process a \id segment to import Jude (an existing book)
@@ -820,9 +805,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 			Assert.IsNotNull(jude, "This test is invalid if Jude does not exist.");
 
 			int hvoJudeOrig = jude.Hvo;
-			int ownOrdJudeOrig = jude.OwnOrd;
 			int cBooksOrig = m_scr.ScriptureBooksOS.Count;
-			jude = null;
 
 			// process a \id segment to import Philemon (an existing book)
 			List<SegmentInfo> al = new List<SegmentInfo>(2);
@@ -1054,15 +1037,11 @@ namespace SIL.FieldWorks.TE.ImportTests
 			m_settings.ImportTranslation = true;
 			MockScrObjWrapper.s_fSimulateCancel = false;
 
-			int origActCount = Cache.ActionHandlerAccessor.UndoableSequenceCount;
-
 			Assert.IsNull(m_scr.FindBook(1), "This test is invalid if Genesis is in the test DB.");
 			IScrBook jude = m_scr.FindBook(65);
 			Assert.IsNotNull(jude, "This test is invalid if Jude isn't in the test DB.");
-			int hvoJudeOrig = jude.Hvo;
 			IStTxtPara scrHead1Para1 = GetFirstScriptureSectionHeadParaInBook(jude);
 			Assert.IsNotNull(scrHead1Para1, "This test is invalid if we can't find a normal Scripture section for Jude 1:1.");
-			int cBooksOrig = m_scr.ScriptureBooksOS.Count;
 
 			List<SegmentInfo> al = new List<SegmentInfo>(7);
 			// process an \id segment to import the BT for an existing a book
@@ -1116,15 +1095,11 @@ namespace SIL.FieldWorks.TE.ImportTests
 			m_settings.ImportTranslation = true;
 			MockScrObjWrapper.s_fSimulateCancel = false;
 
-			int origActCount = Cache.ActionHandlerAccessor.UndoableSequenceCount;
-
 			Assert.IsNull(m_scr.FindBook(1), "This test is invalid if Genesis is in the test DB.");
 			IScrBook jude = m_scr.FindBook(65);
 			Assert.IsNotNull(jude, "This test is invalid if Jude isn't in the test DB.");
-			int hvoJudeOrig = jude.Hvo;
 			IStTxtPara scrHead1Para1 = GetFirstScriptureSectionHeadParaInBook(jude);
 			Assert.IsNotNull(scrHead1Para1, "This test is invalid if we can't find a normal Scripture section for Jude 1:1.");
-			int cBooksOrig = m_scr.ScriptureBooksOS.Count;
 
 			List<SegmentInfo> al = new List<SegmentInfo>(7);
 			// process an \id segment to import the BT for an existing a book
@@ -1186,15 +1161,11 @@ namespace SIL.FieldWorks.TE.ImportTests
 			m_settings.ImportTranslation = true;
 			MockScrObjWrapper.s_fSimulateCancel = false;
 
-			int origActCount = Cache.ActionHandlerAccessor.UndoableSequenceCount;
-
 			Assert.IsNull(m_scr.FindBook(1), "This test is invalid if Genesis is in the test DB.");
 			IScrBook jude = m_scr.FindBook(65);
 			Assert.IsNotNull(jude, "This test is invalid if Jude isn't in the test DB.");
-			int hvoJudeOrig = jude.Hvo;
 			IStTxtPara scrHead1Para1 = GetFirstScriptureSectionHeadParaInBook(jude);
 			Assert.IsNotNull(scrHead1Para1, "This test is invalid if we can't find a normal Scripture section for Jude 1:1.");
-			int cBooksOrig = m_scr.ScriptureBooksOS.Count;
 
 			List<SegmentInfo> al = new List<SegmentInfo>(7);
 			// process an \id segment to import the BT for an existing a book
@@ -1269,15 +1240,11 @@ namespace SIL.FieldWorks.TE.ImportTests
 			m_settings.ImportBackTranslation = true;
 			MockScrObjWrapper.s_fSimulateCancel = false;
 
-			int origActCount = Cache.ActionHandlerAccessor.UndoableSequenceCount;
-
 			Assert.IsNull(m_scr.FindBook(1), "This test is invalid if Genesis is in the test DB.");
 			IScrBook jude = m_scr.FindBook(65);
 			Assert.IsNotNull(jude, "This test is invalid if Jude isn't in the test DB.");
-			int hvoJudeOrig = jude.Hvo;
 			IStTxtPara scrHead1Para1 = GetFirstScriptureSectionHeadParaInBook(jude);
 			Assert.IsNotNull(scrHead1Para1, "This test is invalid if we can't find a normal Scripture section for Jude 1:1.");
-			int cBooksOrig = m_scr.ScriptureBooksOS.Count;
 
 			List<SegmentInfo> al = new List<SegmentInfo>(7);
 			// process an \id segment to import the BT for an existing a book
@@ -1320,15 +1287,11 @@ namespace SIL.FieldWorks.TE.ImportTests
 			m_settings.ImportBackTranslation = true;
 			MockScrObjWrapper.s_fSimulateCancel = false;
 
-			int origActCount = Cache.ActionHandlerAccessor.UndoableSequenceCount;
-
 			Assert.IsNull(m_scr.FindBook(1), "This test is invalid if Genesis is in the test DB.");
 			IScrBook jude = m_scr.FindBook(65);
 			Assert.IsNotNull(jude, "This test is invalid if Jude isn't in the test DB.");
-			int hvoJudeOrig = jude.Hvo;
 			IStTxtPara scrHead1Para1 = GetFirstScriptureSectionHeadParaInBook(jude);
 			Assert.IsNotNull(scrHead1Para1, "This test is invalid if we can't find a normal Scripture section for Jude 1:1.");
-			int cBooksOrig = m_scr.ScriptureBooksOS.Count;
 
 			List<SegmentInfo> al = new List<SegmentInfo>(7);
 			// process an \id segment to import the BT for an existing a book
@@ -1379,15 +1342,11 @@ namespace SIL.FieldWorks.TE.ImportTests
 			m_settings.ImportBackTranslation = true;
 			MockScrObjWrapper.s_fSimulateCancel = false;
 
-			int origActCount = Cache.ActionHandlerAccessor.UndoableSequenceCount;
-
 			Assert.IsNull(m_scr.FindBook(1), "This test is invalid if Genesis is in the test DB.");
 			IScrBook jude = m_scr.FindBook(65);
 			Assert.IsNotNull(jude, "This test is invalid if Jude isn't in the test DB.");
-			int hvoJudeOrig = jude.Hvo;
 			IStTxtPara scrHead1Para1 = GetFirstScriptureSectionHeadParaInBook(jude);
 			Assert.IsNotNull(scrHead1Para1, "This test is invalid if we can't find a normal Scripture section for Jude 1:1.");
-			int cBooksOrig = m_scr.ScriptureBooksOS.Count;
 
 			List<SegmentInfo> al = new List<SegmentInfo>(7);
 			// process an \id segment to import the BT for an existing a book
@@ -1715,7 +1674,6 @@ namespace SIL.FieldWorks.TE.ImportTests
 
 			IScrBook jude = m_scr.FindBook(65);
 			Assert.IsNotNull(jude, "This test is invalid if Jude isn't in the test DB.");
-			int cBooksOrig = m_scr.ScriptureBooksOS.Count;
 
 			List<SegmentInfo> al = new List<SegmentInfo>(3);
 			// process a \id segment to import an existing a book
@@ -1728,10 +1686,10 @@ namespace SIL.FieldWorks.TE.ImportTests
 			Assert.AreEqual(1, m_importMgr.NewSavedVersions.Count, "We should have an imported version but not a backup saved version.");
 			Assert.AreEqual(origActCount + 1, Cache.ActionHandlerAccessor.UndoableSequenceCount,
 				"Should have 1 extra undo action.");
+#if WANTTESTPORT // can't do this any longer - what is the impact on this test?
 			// Call ProcessChapterVerseNums to simulate an edit in the diff dialog.
 			jude = m_scr.FindBook(65);
 			IScrTxtPara sc1Para = (IScrTxtPara)jude.SectionsOS[0].ContentOA.ParagraphsOS[0];
-#if WANTTESTPORT // can't do this any longer - what is the impact on this test?
 			sc1Para.ProcessChapterVerseNums(0, 1, 0);
 #endif
 			Assert.AreEqual("&Undo Import", Cache.ActionHandlerAccessor.GetUndoText());

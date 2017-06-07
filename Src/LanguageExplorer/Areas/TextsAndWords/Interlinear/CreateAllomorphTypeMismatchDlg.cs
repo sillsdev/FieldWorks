@@ -1,18 +1,17 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Diagnostics;
 using System.Windows.Forms;
-using SIL.Utils;
+using System.Diagnostics;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
 	/// <summary>
 	/// Summary description for CreateAllomorphTypeMismatchDlg.
 	/// </summary>
-	public class CreateAllomorphTypeMismatchDlg : Form, IFWDisposable
+	public class CreateAllomorphTypeMismatchDlg : Form
 	{
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Button m_btnYes;

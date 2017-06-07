@@ -1,23 +1,25 @@
-﻿// Copyright (c) 2014-2014 SIL International
+﻿// Copyright (c) 2014-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Xml;
 using System.Xml.Linq;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.HermitCrab;
 using SIL.Machine.Annotations;
-using SIL.Utils;
+using SIL.ObjectModel;
 
 namespace SIL.FieldWorks.WordWorks.Parser
 {
-	public class HCParser : FwDisposableBase, IParser
+	public class HCParser : DisposableBase, IParser
 	{
 		private readonly FdoCache m_cache;
 		private Morpher m_morpher;
@@ -88,7 +90,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					if (GetMorphs(wordAnalysis, out morphs))
 					{
 						analyses.Add(new ParseAnalysis(morphs.Select(mi =>
-							new ParseMorph(mi.Form, mi.Msa, mi.LexEntryRef != null ? mi.LexEntryRef.VariantEntryTypesRS[0] as ILexEntryInflType : null))));
+							new ParseMorph(mi.Form, mi.Msa, mi.InflType))));
 					}
 				}
 				result = new ParseResult(analyses);
@@ -130,7 +132,9 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			using (XmlWriter writer = XmlWriter.Create(loadErrorsFile))
 			using (new WorkerThreadReadHelper(m_cache.ServiceLocator.GetInstance<IWorkerThreadReadHandler>()))
 			{
-				m_language = HCLoader.Load(m_spanFactory, m_cache, writer);
+				writer.WriteStartElement("LoadErrors");
+				m_language = HCLoader.Load(m_spanFactory, m_cache, new XmlHCLoadErrorLogger(writer));
+				writer.WriteEndElement();
 				XElement parserParamsElem = XElement.Parse(m_cache.LanguageProject.MorphologicalDataOA.ParserParameters);
 				XElement delReappsElem = parserParamsElem.Elements("ParserParameters").Elements("HC").Elements("DelReapps").FirstOrDefault();
 				if (delReappsElem != null)
@@ -173,7 +177,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					{
 						List<MorphInfo> morphs;
 						if (GetMorphs(wordAnalysis, out morphs))
-							wordformElem.Add(new XElement("Analysis", morphs.Select(mi => CreateAllomorphElement("Morph", mi.Form, mi.Msa, mi.IsCircumfix))));
+							wordformElem.Add(new XElement("Analysis", morphs.Select(mi => CreateAllomorphElement("Morph", mi.Form, mi.Msa, mi.InflType, mi.IsCircumfix))));
 					}
 					if (tracing)
 						wordformElem.Add(new XElement("Trace", trace));
@@ -268,7 +272,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				if (formID == 0)
 					continue;
 				var formID2 = (int?) allomorph.Properties["ID2"] ?? 0;
-				string formStr = ws.Shape.GetNodes(morph.Span).ToString(ws.Stratum.SymbolTable, false);
+				string formStr = ws.Shape.GetNodes(morph.Span).ToString(ws.Stratum.CharacterDefinitionTable, false);
 				int curFormID;
 				MorphInfo morphInfo;
 				if (!morphs.TryGetValue(allomorph.Morpheme, out morphInfo))
@@ -301,9 +305,9 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					return false;
 				}
 
-				var lexEntryRefID = (int?) allomorph.Morpheme.Properties["LexEntryRefID"] ?? 0;
-				ILexEntryRef lexEntryRef = null;
-				if (lexEntryRefID > 0 && !m_cache.ServiceLocator.GetInstance<ILexEntryRefRepository>().TryGetObject(lexEntryRefID, out lexEntryRef))
+				var inflTypeID = (int?) allomorph.Morpheme.Properties["InflTypeID"] ?? 0;
+				ILexEntryInflType inflType = null;
+				if (inflTypeID > 0 && !m_cache.ServiceLocator.GetInstance<ILexEntryInflTypeRepository>().TryGetObject(inflTypeID, out inflType))
 				{
 					result = null;
 					return false;
@@ -314,13 +318,13 @@ namespace SIL.FieldWorks.WordWorks.Parser
 						Form = form,
 						String = formStr,
 						Msa = msa,
-						LexEntryRef = lexEntryRef,
+						InflType = inflType,
 						IsCircumfix = formID2 > 0
 					};
 
 				morphs[allomorph.Morpheme] = morphInfo;
 
-				switch (form.MorphTypeRA.Guid.ToString())
+				switch ((form.MorphTypeRA == null ? Guid.Empty : form.MorphTypeRA.Guid).ToString())
 				{
 					case MoMorphTypeTags.kMorphInfix:
 					case MoMorphTypeTags.kMorphInfixingInterfix:
@@ -384,16 +388,17 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			return "unknown";
 		}
 
-		internal static XElement CreateAllomorphElement(string name, IMoForm form, IMoMorphSynAnalysis msa, bool circumfix)
+		internal static XElement CreateAllomorphElement(string name, IMoForm form, IMoMorphSynAnalysis msa, ILexEntryInflType inflType, bool circumfix)
 		{
-			var elem = new XElement(name, new XAttribute("id", form.Hvo), new XAttribute("type", GetMorphTypeString(circumfix ? MoMorphTypeTags.kguidMorphCircumfix : form.MorphTypeRA.Guid)),
+			Guid morphTypeGuid = circumfix ? MoMorphTypeTags.kguidMorphCircumfix : (form.MorphTypeRA == null ? Guid.Empty : form.MorphTypeRA.Guid);
+			var elem = new XElement(name, new XAttribute("id", form.Hvo), new XAttribute("type", GetMorphTypeString(morphTypeGuid)),
 				new XElement("Form", circumfix ? form.OwnerOfClass<ILexEntry>().HeadWord.Text : form.GetFormWithMarkers(form.Cache.DefaultVernWs)),
 				new XElement("LongName", form.LongName));
-			elem.Add(CreateMorphemeElement(msa));
+			elem.Add(CreateMorphemeElement(msa, inflType));
 			return elem;
 		}
 
-		internal static XElement CreateMorphemeElement(IMoMorphSynAnalysis msa)
+		internal static XElement CreateMorphemeElement(IMoMorphSynAnalysis msa, ILexEntryInflType inflType)
 		{
 			var msaElem = new XElement("Morpheme", new XAttribute("id", msa.Hvo));
 			switch (msa.ClassID)
@@ -441,7 +446,23 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			}
 
 			msaElem.Add(new XElement("HeadWord", msa.OwnerOfClass<ILexEntry>().HeadWord.Text));
-			msaElem.Add(new XElement("Gloss", msa.GetGlossOfFirstSense()));
+
+			var glossSB = new StringBuilder();
+			if (inflType != null)
+			{
+				string prepend = inflType.GlossPrepend.BestAnalysisAlternative.Text;
+				if (prepend != "***")
+					glossSB.Append(prepend);
+			}
+			ILexSense sense = msa.OwnerOfClass<ILexEntry>().SenseWithMsa(msa);
+			glossSB.Append(sense == null ? ParserCoreStrings.ksQuestions : sense.Gloss.BestAnalysisAlternative.Text);
+			if (inflType != null)
+			{
+				string append = inflType.GlossAppend.BestAnalysisAlternative.Text;
+				if (append != "***")
+					glossSB.Append(append);
+			}
+			msaElem.Add(new XElement("Gloss", glossSB.ToString()));
 			return msaElem;
 		}
 
@@ -452,8 +473,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			{
 				string phonemesFoundSoFar = ise.String.Substring(0, ise.Position);
 				string rest = ise.String.Substring(ise.Position);
-				LgGeneralCharCategory cc = m_cache.ServiceLocator.UnicodeCharProps.get_GeneralCategory(rest[0]);
-				if (cc == LgGeneralCharCategory.kccMn)
+				if (Icu.GetCharType(rest[0]) == Icu.UCharCategory.U_NON_SPACING_MARK)
 				{
 					// the first character is a diacritic, combining type of character
 					// insert a space so it does not show on top of a single quote in the message string
@@ -471,9 +491,78 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			public IMoForm Form { get; set; }
 			public string String { get; set; }
 			public IMoMorphSynAnalysis Msa { get; set; }
-			public ILexEntryRef LexEntryRef { get; set; }
+			public ILexEntryInflType InflType { get; set; }
 			public bool IsCircumfix { get; set; }
 		}
 		#endregion
+
+		class XmlHCLoadErrorLogger : IHCLoadErrorLogger
+		{
+			private readonly XmlWriter m_xmlWriter;
+
+			public XmlHCLoadErrorLogger(XmlWriter xmlWriter)
+			{
+				m_xmlWriter = xmlWriter;
+			}
+
+			public void InvalidShape(string str, int errorPos, IMoMorphSynAnalysis msa)
+			{
+				m_xmlWriter.WriteStartElement("LoadError");
+				m_xmlWriter.WriteAttributeString("type", "invalid-shape");
+				m_xmlWriter.WriteElementString("Form", str);
+				m_xmlWriter.WriteElementString("Position", errorPos.ToString(CultureInfo.InvariantCulture));
+				m_xmlWriter.WriteElementString("Hvo", msa.Hvo.ToString(CultureInfo.InvariantCulture));
+				m_xmlWriter.WriteEndElement();
+			}
+
+			public void InvalidAffixProcess(IMoAffixProcess affixProcess, bool isInvalidLhs, IMoMorphSynAnalysis msa)
+			{
+				m_xmlWriter.WriteStartElement("LoadError");
+				m_xmlWriter.WriteAttributeString("type", "invalid-affix-process");
+				m_xmlWriter.WriteElementString("Form", affixProcess.Form.BestVernacularAlternative.Text);
+				m_xmlWriter.WriteElementString("InvalidLhs", isInvalidLhs.ToString(CultureInfo.InvariantCulture));
+				m_xmlWriter.WriteElementString("Hvo", msa.Hvo.ToString(CultureInfo.InvariantCulture));
+				m_xmlWriter.WriteEndElement();
+			}
+
+			public void InvalidPhoneme(IPhPhoneme phoneme)
+			{
+				m_xmlWriter.WriteStartElement("LoadError");
+				m_xmlWriter.WriteAttributeString("type", "invalid-phoneme");
+				m_xmlWriter.WriteElementString("Name", phoneme.ShortName);
+				m_xmlWriter.WriteElementString("Hvo", phoneme.Hvo.ToString(CultureInfo.InvariantCulture));
+				m_xmlWriter.WriteEndElement();
+			}
+
+			public void DuplicateGrapheme(IPhPhoneme phoneme)
+			{
+				m_xmlWriter.WriteStartElement("LoadError");
+				m_xmlWriter.WriteAttributeString("type", "duplicate-grapheme");
+				m_xmlWriter.WriteElementString("Name", phoneme.ShortName);
+				m_xmlWriter.WriteElementString("Hvo", phoneme.Hvo.ToString(CultureInfo.InvariantCulture));
+				m_xmlWriter.WriteEndElement();
+			}
+
+			public void InvalidEnvironment(IMoForm form, IPhEnvironment env, string reason, IMoMorphSynAnalysis msa)
+			{
+				m_xmlWriter.WriteStartElement("LoadError");
+				m_xmlWriter.WriteAttributeString("type", "invalid-environment");
+				m_xmlWriter.WriteElementString("Form", form.Form.VernacularDefaultWritingSystem.Text);
+				m_xmlWriter.WriteElementString("Env", env.StringRepresentation.Text);
+				m_xmlWriter.WriteElementString("Hvo", msa.Hvo.ToString(CultureInfo.InvariantCulture));
+				m_xmlWriter.WriteElementString("Reason", reason);
+				m_xmlWriter.WriteEndElement();
+			}
+
+			public void InvalidReduplicationForm(IMoForm form, string reason, IMoMorphSynAnalysis msa)
+			{
+				m_xmlWriter.WriteStartElement("LoadError");
+				m_xmlWriter.WriteAttributeString("type", "invalid-redup-form");
+				m_xmlWriter.WriteElementString("Form", form.Form.VernacularDefaultWritingSystem.Text);
+				m_xmlWriter.WriteElementString("Hvo", msa.Hvo.ToString(CultureInfo.InvariantCulture));
+				m_xmlWriter.WriteElementString("Reason", reason);
+				m_xmlWriter.WriteEndElement();
+			}
+		}
 	}
 }

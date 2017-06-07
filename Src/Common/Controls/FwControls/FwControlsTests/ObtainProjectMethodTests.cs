@@ -8,13 +8,12 @@ using System.Reflection;
 using System.Xml;
 using NUnit.Framework;
 using SIL.CoreImpl;
-using SIL.FieldWorks.FDO;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.Controls
 {
 	/// <summary>
-	/// This is the beginnings of tests of the ObtainProjectMethod. Only part of it is tested.
+	/// This is the beginning of tests of the ObtainProjectMethod. Only part of it is tested.
 	/// </summary>
 	[TestFixture]
 	public class ObtainProjectMethodTests

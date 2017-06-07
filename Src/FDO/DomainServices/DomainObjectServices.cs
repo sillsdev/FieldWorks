@@ -1,8 +1,6 @@
-// Copyright (c) 2009-2013 SIL International
+// Copyright (c) 2009-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: DomainObjectServices.cs
 
 using System;
 using System.Collections.Generic;
@@ -10,17 +8,16 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Xml;
-using System.Xml.Linq;
-using SIL.CoreImpl;
-using System.Xml.XPath;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.ScriptureUtils;
+using SIL.CoreImpl.Scripture;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.ObjectModel;
 using SIL.Reporting;
 using SIL.Utils;
-using SILUBS.SharedScrUtils;
 
 namespace SIL.FieldWorks.FDO.DomainServices
 {
@@ -282,8 +279,8 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			ICmTranslation originalBT = para.GetBT(); // Can be null
 			foreach (int ws in wss)
 			{
-				ITsTextProps wsOnlyProps = StyleUtils.CharStyleTextProps(null, ws);
-				ITsStrBldr bldr = TsStrBldrClass.Create();
+				var wsOnlyProps = StyleUtils.CharStyleTextProps(null, ws);
+				var bldr = TsStringUtils.MakeStrBldr();
 				bool wantNextSpace = false; // suppresses space before the first thing we add.
 				bool haveBtText = false; // Text that isn't segment label text
 				bool lastSegWasLabel = false;
@@ -483,7 +480,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 								}
 								// adjust the owned ORC
 								Guid revGuid = archivedBook.FootnotesOS[iFootnote].Guid;
-								objData = TsStringUtils.GetObjData(revGuid, (byte)FwObjDataTypes.kodtOwnNameGuidHot);
+								objData = TsStringUtils.GetObjData(revGuid, FwObjDataTypes.kodtOwnNameGuidHot);
 								propsBldr = ttp.GetBldr();
 								propsBldr.SetStrPropValueRgch(
 									(int)FwTextPropType.ktptObjData,
@@ -506,7 +503,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 
 								// update the ORC in the revision to point to the new picture
 								objData = TsStringUtils.GetObjData(newPicture.Guid,
-									(byte)FwObjDataTypes.kodtGuidMoveableObjDisp);
+									FwObjDataTypes.kodtGuidMoveableObjDisp);
 								propsBldr = ttp.GetBldr();
 								propsBldr.SetStrPropValueRgch(
 									(int)FwTextPropType.ktptObjData,
@@ -567,7 +564,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 						// Guid mapping back to orignal draft found. Update it.
 						byte[] objData;
 						objData = TsStringUtils.GetObjData(newGuid,
-							(byte)FwObjDataTypes.kodtNameGuidHot);
+							FwObjDataTypes.kodtNameGuidHot);
 						ITsPropsBldr propsBldr;
 						propsBldr = ttp.GetBldr();
 						propsBldr.SetStrPropValueRgch(
@@ -1659,7 +1656,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 	/// update, to prevent recursion/re-entrancy.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	internal class BackTranslationAndFreeTranslationUpdateHelper : FwDisposableBase
+	internal class BackTranslationAndFreeTranslationUpdateHelper : DisposableBase
 	{
 		[ThreadStatic]
 		private static IStTxtPara s_para;
@@ -2281,7 +2278,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 
 			ICmFolder foldr = cache.ServiceLocator.GetInstance<ICmFolderFactory>().Create();
 			prop.Add(foldr);
-			foldr.Name.AnalysisDefaultWritingSystem = cache.TsStrFactory.MakeString(sFolder,
+			foldr.Name.AnalysisDefaultWritingSystem = TsStringUtils.MakeString(sFolder,
 				WritingSystemServices.FallbackUserWs(cache));
 
 			return foldr;
@@ -2344,11 +2341,11 @@ namespace SIL.FieldWorks.FDO.DomainServices
 	public class SectionAdjustmentSuppressionHelper: IDisposable
 	{
 		private static SectionAdjustmentSuppressionHelper s_helper;
-		private Set<ScrSection> m_sections;
+		private HashSet<ScrSection> m_sections;
 
 		private SectionAdjustmentSuppressionHelper()
 		{
-			m_sections = new Set<ScrSection>();
+			m_sections = new HashSet<ScrSection>();
 			s_helper = this;
 		}
 
@@ -2417,95 +2414,6 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			IsDisposed = true;
 		}
 	#endregion
-	}
-	#endregion
-
-	#region ReversalIndexServices class
-	/// <summary>
-	/// Utility services relating to Reversal Indexes
-	/// </summary>
-	public static class ReversalIndexServices
-	{
-
-		/// <summary>
-		/// Create configuration file for analysis writing systems in Reversal Index
-		/// </summary>
-		/// <param name="wsMgr">IWritingSystemManager</param>
-		/// <param name="cache">The FDO cache</param>
-		/// <param name="defaultConfigDir">Default Configuration directory</param>
-		/// <param name="projectsDir">Projects directory</param>
-		/// <param name="originalProjectName">Project Name</param>
-		public static void CreateReversalIndexConfigurationFile(WritingSystemManager wsMgr, FdoCache cache, string defaultConfigDir, string projectsDir, string originalProjectName)
-		{
-			const string configFileExtension = ".fwdictconfig";
-			const string revIndexDir = "ReversalIndex";
-			const string configDir = "ConfigurationSettings";
-			const string allIndexesFileName = "AllReversalIndexes";
-			const string dictConfigElement = "DictionaryConfiguration";
-
-			var wsList = new List<string>();
-			var defaultWsFilePath = Path.Combine(defaultConfigDir, revIndexDir,
-				allIndexesFileName + configFileExtension);
-			var newWsFilePath = Path.Combine(projectsDir, originalProjectName, configDir,
-				revIndexDir);
-			var analysisWsArray = cache.LangProject.AnalysisWss.Trim().Replace("  "," ").Split(' ');
-			if (!Directory.Exists(newWsFilePath))
-				Directory.CreateDirectory(newWsFilePath);
-			//Create new Configuration File
-			foreach (var curWs in analysisWsArray)
-			{
-				if (curWs.ToLower().Contains("audio"))
-					continue;
-
-				var curWsLabel = wsMgr.Get(curWs).DisplayLabel;
-				wsList.Add(curWsLabel);
-				var newWsCompleteFilePath = Path.Combine(newWsFilePath, curWsLabel + configFileExtension);
-				if (File.Exists(newWsCompleteFilePath))
-					continue;
-
-				File.Copy(defaultWsFilePath, newWsCompleteFilePath, false);
-				File.SetAttributes(newWsCompleteFilePath, FileAttributes.Normal);
-				var xmldoc = XDocument.Load(newWsCompleteFilePath);
-				var xElement = xmldoc.XPathSelectElement(dictConfigElement).Attribute("name");
-				xElement.Value = curWsLabel;
-				xElement = xmldoc.XPathSelectElement(dictConfigElement).Attribute("writingSystem");
-				xElement.Value = curWs;
-				xmldoc.Save(newWsCompleteFilePath);
-
-				var wsObj = wsMgr.Get(curWs);
-				if (wsObj != null && wsObj.DisplayLabel.ToLower().IndexOf("audio", StringComparison.Ordinal) == -1)
-				{
-					UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW("Undo Adding reversal Guid", "Redo Adding reversal Guid",
-						cache.ActionHandlerAccessor,
-						() => GetOrCreateWsGuid(wsObj, cache));
-				}
-			}
-			//Delete old Configuration Files for WS's that are no longer part of this project
-			if (!Directory.Exists(newWsFilePath))
-				return;
-			var files = Directory.GetFiles(newWsFilePath, "*" + configFileExtension, SearchOption.AllDirectories);
-			foreach (var file in files)
-			{
-				var fileName = Path.GetFileNameWithoutExtension(file);
-				if (fileName != null && !fileName.Contains(allIndexesFileName) && !wsList.Any(ws => fileName.Contains(ws)))
-				{
-					File.Delete(file);
-				}
-			}
-		}
-
-		/// <summary>
-		/// Method returns Guid of existing or created writing system
-		/// </summary>
-		/// <param name="wsObj">Writing system Object</param>
-		/// <param name="cache">The FDO cache</param>
-		/// <returns>returns Guid</returns>
-		public static Guid GetOrCreateWsGuid(CoreWritingSystemDefinition wsObj, FdoCache cache)
-		{
-			var riRepo = cache.ServiceLocator.GetInstance<IReversalIndexRepository>();
-			var mHvoRevIdx = riRepo.FindOrCreateIndexForWs(wsObj.Handle).Hvo;
-			return cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(mHvoRevIdx).Guid;
-		}
 	}
 	#endregion
 }

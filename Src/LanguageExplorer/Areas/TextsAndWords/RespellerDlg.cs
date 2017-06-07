@@ -1,4 +1,4 @@
-// Copyright (c) 2009-2015 SIL International
+// Copyright (c) 2009-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -11,14 +11,17 @@ using System.Diagnostics;
 using System.Xml.Linq;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using SIL.CoreImpl;
+using SIL.CoreImpl.Cellar;
+using SIL.CoreImpl.SpellChecking;
+using SIL.CoreImpl.Text;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Controls;
-using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Drawing;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.Infrastructure;
@@ -122,6 +125,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			PropertyTable = flexComponentParameters.PropertyTable;
 			Publisher = flexComponentParameters.Publisher;
 			Subscriber = flexComponentParameters.Subscriber;
+			m_cache = PropertyTable.GetValue<FdoCache>("cache");
 		}
 
 		#endregion
@@ -629,8 +633,8 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// <returns></returns>
 		private bool AllWillChange(out bool someWillChange)
 		{
-			var checkedItems = new Set<int>(m_sourceSentences.CheckedItems);
-			var changeCount = checkedItems.Intersection(m_enabledItems).Count;
+			var checkedItems = new HashSet<int>(m_sourceSentences.CheckedItems);
+			int changeCount = checkedItems.Intersect(m_enabledItems).Count();
 			someWillChange = changeCount > 0;
 			return changeCount == m_enabledItems.Count && !m_fOtherOccurrencesExist;
 		}
@@ -895,7 +899,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		// The spelling change
 		private readonly string m_oldSpelling;
 		private readonly string m_newSpelling;
-		readonly Set<int> m_changes = new Set<int>(); // CBAs that represent occurrences we will change.
+		private readonly HashSet<int> m_changes = new HashSet<int>(); // CBAs that represent occurrences we will change.
 		/// <summary>
 		/// Key is hvo of StTxtPara, value is list (eventually sorted by BeginOffset) of
 		/// CBAs that refer to it AND ARE BEING CHANGED.
@@ -935,10 +939,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// HVO of original wordform (possibly made real during DoIt) for old spelling.
 		/// </summary>
 		internal int OldWordform { get; private set; }
-
-		// These preserve the old spelling-dictionary status for Undo.
-		bool m_fWasOldSpellingCorrect = false;
-		bool m_fWasNewSpellingCorrect = false;
 
 		// Info to support efficient Undo/Redo for large lists of changes.
 		//readonly List<int> m_hvosToChangeIntProps = new List<int>(); // objects with integer props needing change
@@ -1539,26 +1539,24 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		private IWfiWordform FindOrCreateWordform(string sForm, int wsForm)
 		{
 			return RepoWf.GetMatchingWordform(wsForm, sForm) ??
-				FactWf.Create(m_cache.TsStrFactory.MakeString(sForm, wsForm));
+				FactWf.Create(TsStringUtils.MakeString(sForm, wsForm));
 		}
 
 		private void SetOldOccurrencesOfWordforms(int flidOccurrences, IWfiWordform wfOld, IWfiWordform wfNew)
 		{
 			OldWordform = wfOld.Hvo;
 			m_oldOccurrencesOldWf = m_specialSda.VecProp(wfOld.Hvo, flidOccurrences);
-			m_fWasOldSpellingCorrect = wfOld.SpellingStatus == (int)SpellingStatusStates.correct;
 
 			NewWordform = wfNew.Hvo;
 			m_oldOccurrencesNewWf = m_specialSda.VecProp(wfNew.Hvo, flidOccurrences);
-			m_fWasNewSpellingCorrect = wfNew.SpellingStatus == (int)SpellingStatusStates.correct;
 		}
 
 		private void SetNewOccurrencesOfWordforms(ProgressDialogWorkingOn progress)
 		{
-			Set<int> changes = new Set<int>();
+			var changes = new HashSet<int>();
 			foreach (ParaChangeInfo info in m_changedParas.Values)
 			{
-				changes.AddRange(info.Changes);
+				changes.UnionWith(info.Changes);
 			}
 			if (AllChanged)
 			{
@@ -1935,7 +1933,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 	/// <summary>
 	/// Entend the ConcDecorator with a few more properties needed for respelling.
 	/// </summary>
-	public class RespellingSda : ConcDecorator, ISetCache
+	public class RespellingSda : ConcDecorator
 	{
 		internal class RespellInfo
 		{
@@ -1951,9 +1949,10 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 		Dictionary<int, RespellInfo> m_mapRespell = new Dictionary<int, RespellInfo>();
 
-		public RespellingSda(ISilDataAccessManaged domainDataByFlid, IFdoServiceLocator services)
+		public RespellingSda(FdoCache cache, ISilDataAccessManaged domainDataByFlid, IFdoServiceLocator services)
 			: base(domainDataByFlid, services)
 		{
+			Cache = cache;
 			SetOverrideMdc(new RespellingMdc(MetaDataCache as IFwMetaDataCacheManaged));
 		}
 
@@ -2137,7 +2136,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 							continue; // bizarre, just for defensiveness.
 						var picture = (ICmPicture) obj;
 						var caption = picture.Caption.get_String(Cache.DefaultVernWs);
-						var wordMaker = new WordMaker(caption, Cache.LanguageWritingSystemFactoryAccessor);
+						var wordMaker = new WordMaker(caption, Cache.ServiceLocator.WritingSystemManager);
 						for (; ; )
 						{
 							int ichMin;
@@ -2169,11 +2168,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		}
 
 		FdoCache Cache { set; get; }
-
-		public void SetCache(FdoCache cache)
-		{
-			Cache = cache;
-		}
 	}
 
 	internal class CaptionParaFragment : IParaFragment

@@ -1,4 +1,4 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="14.0">
   <PropertyGroup>
 	<ProjectType>Local</ProjectType>
 	<ProductVersion>9.0.30729</ProductVersion>
@@ -27,7 +27,7 @@
 	<UpgradeBackupLocation>
 	</UpgradeBackupLocation>
 	<OldToolsVersion>2.0</OldToolsVersion>
-	<TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+	<TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
 	<TargetFrameworkSubset>
 	</TargetFrameworkSubset>
   </PropertyGroup>
@@ -82,9 +82,9 @@
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\..\Output\Release\AccessibilityHelper.dll</HintPath>
 	</Reference>
-	<Reference Include="COMInterfaces">
-	  <Name>COMInterfaces</Name>
-	  <HintPath>..\..\..\Output\Release\COMInterfaces.dll</HintPath>
+	<Reference Include="ViewsInterfaces">
+	  <Name>ViewsInterfaces</Name>
+	  <HintPath>..\..\..\Output\Release\ViewsInterfaces.dll</HintPath>
 	</Reference>
 	<Reference Include="GuiTestDriver, Version=6.1.3615.30107, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>

@@ -8,17 +8,15 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
+using SIL.CoreImpl.SpellChecking;
+using SIL.CoreImpl.Text;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.FDO;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.RootSites
 {
@@ -145,7 +143,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			if (nonSpellingError)
 				itemAdd.Enabled = false;
 			menu.Items.Insert(iMenuItem++, itemAdd);
-			itemAdd.Image = SIL.FieldWorks.Resources.ResourceHelper.SpellingIcon;
+			itemAdd.Image = Resources.ResourceHelper.SpellingIcon;
 			itemAdd.Click += spellingMenuItemClick;
 			return iMenuItem;
 		}
@@ -187,8 +185,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// SpellCorrectMenuItems returned, but some clients use it in creating other menu options.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="we store a reference to SpellCorrectMenuItem for later use. REVIEW: we never dispose it.")]
 		public ICollection<SpellCorrectMenuItem> GetSuggestions(Point mousePos,
 			SimpleRootSite rootsite, out int hvoObj, out int tag, out int wsAlt, out int wsText,
 			out string word, out ISpellEngine dict, out bool nonSpellingError)
@@ -226,8 +222,8 @@ namespace SIL.FieldWorks.Common.RootSites
 			ILgWritingSystemFactory wsf = rootsite.RootBox.DataAccess.WritingSystemFactory;
 
 			// May need to enlarge the word beyond what GrowToWord does, if there is adjacent wordforming material.
-			int ichMinAdjust = AdjustWordBoundary(wsf, tss, ichMin, -1, 0) + 1; // further expanded start of word.
-			int ichLimAdjust = AdjustWordBoundary(wsf, tss, ichLim - 1, 1, tss.Length); // further expanded lim of word.
+			int ichMinAdjust = AdjustWordBoundary(wsf, tss, false, ichMin, 0) + 1; // further expanded start of word.
+			int ichLimAdjust = AdjustWordBoundary(wsf, tss, true, ichLim - 1, tss.Length); // further expanded lim of word.
 			// From the ends we can strip stuff with different spell-checking properties.
 			IVwStylesheet styles = rootsite.RootBox.Stylesheet;
 			int spellProps = SpellCheckProps(tss, ichMin, styles);
@@ -237,8 +233,6 @@ namespace SIL.FieldWorks.Common.RootSites
 				ichLimAdjust--;
 			ichMin = ichMinAdjust;
 			ichLim = ichLimAdjust;
-
-			ITsStrFactory tsf = TsStrFactoryClass.Create();
 
 			// Now we have the specific range we will check. Get the actual string.
 			ITsStrBldr bldr = tss.GetBldr();
@@ -274,7 +268,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			ICollection<string> suggestions = dict.Suggest(word);
 			foreach (string suggest in suggestions)
 			{
-				ITsString replacement = tsf.MakeStringRgch(suggest, suggest.Length, wsText);
+				ITsString replacement = TsStringUtils.MakeString(suggest, wsText);
 				if (keepOrcs != null)
 				{
 					ITsStrBldr bldrRep = keepOrcs.GetBldr();
@@ -290,22 +284,21 @@ namespace SIL.FieldWorks.Common.RootSites
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Given a start character position that is within a word, and an delta that is +/- 1,
+		/// Given a start character position that is within a word, and a direction
 		/// return the index of the first non-wordforming (and non-number) character in that direction,
 		/// or -1 if the start of the string is reached, or string.Length if the end is reached.
 		/// For our purposes here, ORC (0xfffc) is considered word-forming.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private int AdjustWordBoundary(ILgWritingSystemFactory wsf, ITsString tss, int ichStart,
-			int delta, int lim)
+		private int AdjustWordBoundary(ILgWritingSystemFactory wsf, ITsString tss, bool forward,
+			int ichStart, int lim)
 		{
-			string text = tss.Text;
 			int ich;
-			for (ich = ichStart + delta; !BeyondLim(ich, delta, lim); ich += delta)
+			for (ich = NextCharIndex(tss, forward, ichStart); !BeyondLim(forward, ich, lim); ich = NextCharIndex(tss, forward, ich))
 			{
-				ILgCharacterPropertyEngine cpe = TsStringUtils.GetCharPropEngineAtOffset(tss, wsf, ich);
-				char ch = text[ich];
-				if (!cpe.get_IsWordForming(ch) && !cpe.get_IsNumber(ch) && ch != 0xfffc)
+				int ch = tss.CharAt(ich);
+				ILgWritingSystem ws = wsf.get_EngineOrNull(tss.get_WritingSystemAt(ich));
+				if (!ws.get_IsWordForming(ch) && !Icu.IsNumeric(ch) && ch != 0xfffc)
 					break;
 			}
 			return ich;
@@ -316,9 +309,14 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// Determins whether ich has passed the limit
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private bool BeyondLim(int ich, int delta, int lim)
+		private static bool BeyondLim(bool forward, int ich, int lim)
 		{
-			return (delta < 0) ? (ich < lim) : (ich >= lim);
+			return forward ? ich >= lim : ich < lim;
+		}
+
+		private static int NextCharIndex(ITsString tss, bool forward, int ich)
+		{
+			return forward ? tss.NextCharIndex(ich) : tss.PrevCharIndex(ich);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -371,8 +369,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// tssWord to something that does not contain them, and retain the orcs to append to any substitutions (returned in tssKeepOrcs).
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="we store a reference to SpellCorrectMenuItem for later use. REVIEW: we never dispose it.")]
 		private IList<SpellCorrectMenuItem> MakeEmbeddedNscSuggestion(ref ITsString tssWord, IVwStylesheet styles, IVwRootBox rootb,
 			int hvoObj, int tag, int wsAlt, int ichMin, int ichLim, out ITsString tssKeepOrcs)
 		{
@@ -412,7 +408,7 @@ namespace SIL.FieldWorks.Common.RootSites
 						if (bldrWord == null)
 						{
 							bldrWord = tssWord.GetBldr();
-							bldrKeepOrcs = TsStrBldrClass.Create();
+							bldrKeepOrcs = TsStringUtils.MakeStrBldr();
 						}
 						bldrWord.Replace(ich - bldrWordOffset, ich - bldrWordOffset + 1, "", null);
 						bldrKeepOrcs.Replace(bldrKeepOrcs.Length, bldrKeepOrcs.Length, "\xfffc", ttp);
@@ -459,8 +455,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// writing systems
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="we store a reference to SpellCorrectMenuItem for later use. REVIEW: we never dispose it.")]
 		private ICollection<SpellCorrectMenuItem> MakeWssSuggestions(ITsString tssWord,
 			List<int> wss, IVwRootBox rootb, int hvoObj, int tag, int wsAlt,
 			int ichMin, int ichLim)
@@ -508,13 +502,13 @@ namespace SIL.FieldWorks.Common.RootSites
 	/// </summary>
 	public class SpellCorrectMenuItem : ToolStripMenuItem
 	{
-		IVwRootBox m_rootb;
-		int m_hvoObj;
-		int m_tag;
-		int m_wsAlt; // 0 if not multilingual--not yet implemented.
-		int m_ichMin; // where to make the change.
-		int m_ichLim; // end of string to replace
-		ITsString m_tssReplacement;
+		private readonly IVwRootBox m_rootb;
+		private readonly int m_hvoObj;
+		private readonly int m_tag;
+		private readonly int m_wsAlt; // 0 if not multilingual--not yet implemented.
+		private readonly int m_ichMin; // where to make the change.
+		private readonly int m_ichLim; // end of string to replace
+		private readonly ITsString m_tssReplacement;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -531,6 +525,13 @@ namespace SIL.FieldWorks.Common.RootSites
 			m_ichMin = ichMin;
 			m_ichLim = ichLim;
 			m_tssReplacement = tss;
+		}
+
+		/// <summary/>
+		protected override void Dispose(bool disposing)
+		{
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ******");
+			base.Dispose(disposing);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -590,6 +591,13 @@ namespace SIL.FieldWorks.Common.RootSites
 			m_wsAlt = wsAlt;
 			m_wsText = wsText;
 			m_cache = cache;
+		}
+
+		/// <summary/>
+		protected override void Dispose(bool disposing)
+		{
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ******");
+			base.Dispose(disposing);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -655,7 +663,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			{
 				// Create it. (Caller has already started the UOW.)
 				wf = servLoc.GetInstance<IWfiWordformFactory>().Create(
-								m_cache.TsStrFactory.MakeString(word, ws));
+								TsStringUtils.MakeString(word, ws));
 			}
 			wf.SpellingStatus = (int)SpellingStatusStates.correct;
 		}

@@ -1,18 +1,13 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: LangProjectTests.cs
-// Responsibility: TE Team
 
 using System;
 using System.IO;
 using System.Collections.Generic;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.Utils;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.CoreImpl;
+using SIL.CoreImpl.WritingSystems;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.FDO.FDOTests
 {
@@ -41,11 +36,11 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 			ILgWritingSystemFactory factWs = Cache.ServiceLocator.GetInstance<ILgWritingSystemFactory>();
 			Assert.LessOrEqual(list.Count, factWs.NumberOfWs, "factory list is at least as large as AllWritingSystems");
-			Set<int> set = new Set<int>();
+			var set = new HashSet<int>();
 			using (ArrayPtr rgwsT = MarshalEx.ArrayToNative<int>(factWs.NumberOfWs))
 			{
 				factWs.GetWritingSystems(rgwsT, factWs.NumberOfWs);
-				set.AddRange(MarshalEx.NativeToArray<int>(rgwsT, factWs.NumberOfWs));
+				set.UnionWith(MarshalEx.NativeToArray<int>(rgwsT, factWs.NumberOfWs));
 			}
 			int wsEn = factWs.GetWsFromStr("en");
 			Assert.AreNotEqual(0, wsEn, "factory should contain English WS");
@@ -82,11 +77,11 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			string sVern = factWs.GetStrFromWs(Cache.DefaultVernWs);
 			Assert.IsTrue(Cache.LangProject.CurVernWss.Contains(sVern));
 			Assert.IsTrue(Cache.LangProject.VernWss.Contains(sVern));
-			Set<string> setVern = new Set<string>();
-			setVern.AddRange(Cache.LangProject.VernWss.Split(rgchSplit));
+			var setVern = new HashSet<string>();
+			setVern.UnionWith(Cache.LangProject.VernWss.Split(rgchSplit));
 			Assert.Less(0, setVern.Count, "should be at least one Vernacular WS");
-			Set<string> setCurVern = new Set<string>();
-			setCurVern.AddRange(Cache.LangProject.CurVernWss.Split(rgchSplit));
+			var setCurVern = new HashSet<string>();
+			setCurVern.UnionWith(Cache.LangProject.CurVernWss.Split(rgchSplit));
 			Assert.Less(0, setCurVern.Count, "should be at least one Current Vernacular WS");
 			Assert.LessOrEqual(setCurVern.Count, setVern.Count, "at least as many Current Vernacular as Vernacular");
 			foreach (string x in setCurVern)
@@ -104,11 +99,11 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			string sAnal = factWs.GetStrFromWs(Cache.DefaultAnalWs);
 			Assert.IsTrue(Cache.LangProject.CurAnalysisWss.Contains(sAnal));
 			Assert.IsTrue(Cache.LangProject.AnalysisWss.Contains(sAnal));
-			Set<string> setAnal = new Set<string>();
-			setAnal.AddRange(Cache.LangProject.AnalysisWss.Split(rgchSplit));
+			var setAnal = new HashSet<string>();
+			setAnal.UnionWith(Cache.LangProject.AnalysisWss.Split(rgchSplit));
 			Assert.Less(0, setAnal.Count, "should be at least one Analysis WS");
-			Set<string> setCurAnal = new Set<string>();
-			setCurAnal.AddRange(Cache.LangProject.CurAnalysisWss.Split(rgchSplit));
+			var setCurAnal = new HashSet<string>();
+			setCurAnal.UnionWith(Cache.LangProject.CurAnalysisWss.Split(rgchSplit));
 			Assert.Less(0, setCurAnal.Count, "should be at least one Current Analysis WS");
 			Assert.LessOrEqual(setCurAnal.Count, setAnal.Count, "at least as many Current Analysis as Analysis");
 			foreach (string x in setCurAnal)
@@ -172,32 +167,32 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public void LinkedFilesRootDirTests()
 		{
 			//test when LinkedFiles is in the project's root folder
-			var projectFolder = Path.Combine(FwDirectoryFinder.ProjectsDirectory, "TestProjectName");
+			var projectFolder = Path.Combine(TestDirectoryFinder.ProjectsDirectory, "TestProjectName");
 			var linkedFilesFullPath = Path.Combine(projectFolder, "LinkedFiles");
 			Cache.LanguageProject.LinkedFilesRootDir = linkedFilesFullPath;
 			var outputLinkedFilesFullPath = Cache.LanguageProject.LinkedFilesRootDir;
 			Assert.True(linkedFilesFullPath.Equals(outputLinkedFilesFullPath));
 
 			//test when linked files is in FW Projects folder
-			linkedFilesFullPath = Path.Combine(FwDirectoryFinder.ProjectsDirectory, "LinkedFiles");
+			linkedFilesFullPath = Path.Combine(TestDirectoryFinder.ProjectsDirectory, "LinkedFiles");
 			Cache.LanguageProject.LinkedFilesRootDir = linkedFilesFullPath;
 			outputLinkedFilesFullPath = Cache.LanguageProject.LinkedFilesRootDir;
 			Assert.True(linkedFilesFullPath.Equals(outputLinkedFilesFullPath));
 
 			//test when linked files is in the CommonApplicationData shared folder
-			linkedFilesFullPath = Path.Combine(DirectoryFinder.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "LinkedFiles");
+			linkedFilesFullPath = Path.Combine(FdoFileHelper.CommonApplicationData, "LinkedFiles");
 			Cache.LanguageProject.LinkedFilesRootDir = linkedFilesFullPath;
 			outputLinkedFilesFullPath = Cache.LanguageProject.LinkedFilesRootDir;
 			Assert.True(linkedFilesFullPath.Equals(outputLinkedFilesFullPath));
 
 			//test when the linked files is in the User's MyDocuments folder
-			linkedFilesFullPath = Path.Combine(DirectoryFinder.GetFolderPath(Environment.SpecialFolder.MyDocuments), "LinkedFiles");
+			linkedFilesFullPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "LinkedFiles");
 			Cache.LanguageProject.LinkedFilesRootDir = linkedFilesFullPath;
 			outputLinkedFilesFullPath = Cache.LanguageProject.LinkedFilesRootDir;
 			Assert.True(linkedFilesFullPath.Equals(outputLinkedFilesFullPath));
 
 			//test when the linked files is in some other location and therefore is just stored as an absolute full path.
-			linkedFilesFullPath = Path.Combine(DirectoryFinder.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "LinkedFiles");
+			linkedFilesFullPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "LinkedFiles");
 			Cache.LanguageProject.LinkedFilesRootDir = linkedFilesFullPath;
 			outputLinkedFilesFullPath = Cache.LanguageProject.LinkedFilesRootDir;
 			Assert.True(linkedFilesFullPath.Equals(outputLinkedFilesFullPath));

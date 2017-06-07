@@ -13,8 +13,9 @@
 using System;
 using System.Windows.Forms;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.WritingSystems;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
@@ -84,31 +85,31 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// </summary>
 		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
 		public override void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
-		{
+			{
 			base.InitializeFlexComponent(flexComponentParameters);
 
-			//Set the stylesheet so that the font size for the...
+				//Set the stylesheet so that the font size for the...
 			IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable);
-			m_tree.StyleSheet = stylesheet;
-			var list = m_cache.LanguageProject.PartsOfSpeechOA;
+				m_tree.StyleSheet = stylesheet;
+				var list = m_cache.LanguageProject.PartsOfSpeechOA;
 
-			m_MSAPopupTreeManager = new MSAPopupTreeManager(m_tree, m_cache, list,
+				m_MSAPopupTreeManager = new MSAPopupTreeManager(m_tree, m_cache, list,
 				m_tree.WritingSystemCode, true, PropertyTable, Publisher,
 				PropertyTable.GetValue<Form>("window"));
-			m_MSAPopupTreeManager.AfterSelect += m_MSAPopupTreeManager_AfterSelect;
-			m_MSAPopupTreeManager.Sense = m_obj as ILexSense;
-			m_MSAPopupTreeManager.PersistenceProvider = m_persistProvider;
+				m_MSAPopupTreeManager.AfterSelect += m_MSAPopupTreeManager_AfterSelect;
+				m_MSAPopupTreeManager.Sense = m_obj as ILexSense;
+				m_MSAPopupTreeManager.PersistenceProvider = m_persistProvider;
 
-			try
-			{
-				m_handlingMessage = true;
-				m_tree.SelectedNode = m_MSAPopupTreeManager.MakeTargetMenuItem();
+				try
+				{
+					m_handlingMessage = true;
+					m_tree.SelectedNode = m_MSAPopupTreeManager.MakeTargetMenuItem();
+				}
+				finally
+				{
+					m_handlingMessage = false;
+				}
 			}
-			finally
-			{
-				m_handlingMessage = false;
-			}
-		}
 
 		#endregion
 

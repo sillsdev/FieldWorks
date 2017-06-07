@@ -10,14 +10,13 @@ using System.IO;
 using System.Diagnostics;
 using System.Xml;
 
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.Controls;
+using SIL.CoreImpl.Scripture;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
 using SIL.FieldWorks.Common.Framework;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
-using SILUBS.SharedScrUtils;
 
 namespace SIL.FieldWorks.TE
 {
@@ -118,8 +117,6 @@ namespace SIL.FieldWorks.TE
 		/// <param name="progressDlg">Progress dialog</param>
 		/// <param name="rootNode">The XmlNode from which to read the publication info</param>
 		/// -------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		protected void SetNamesAndAbbreviations(IProgress progressDlg, XmlNode rootNode)
 		{
 			IScrRefSystem srs = m_cache.ServiceLocator.GetInstance<IScrRefSystemRepository>().Singleton;
@@ -130,7 +127,6 @@ namespace SIL.FieldWorks.TE
 			progressDlg.Maximum = tagList.Count * BCVRef.LastBook;
 			progressDlg.Position = 0;
 			progressDlg.Title = TeResourceHelper.GetResourceString("kstidCreatingBookNames");
-			ITsStrFactory tsf = m_cache.TsStrFactory;
 			CoreWritingSystemDefinition ws;
 
 			foreach (XmlNode writingSystem in tagList)
@@ -158,11 +154,11 @@ namespace SIL.FieldWorks.TE
 
 					int wsHandle = ws.Handle;
 					if (sName != null)
-						bookRef.BookName.set_String(wsHandle, tsf.MakeString(sName, wsHandle));
+						bookRef.BookName.set_String(wsHandle, TsStringUtils.MakeString(sName, wsHandle));
 					if (sAbbrev != null)
-						bookRef.BookAbbrev.set_String(wsHandle, tsf.MakeString(sAbbrev, wsHandle));
+						bookRef.BookAbbrev.set_String(wsHandle, TsStringUtils.MakeString(sAbbrev, wsHandle));
 					if (sAltName != null)
-						bookRef.BookNameAlt.set_String(wsHandle, tsf.MakeString(sAltName, wsHandle));
+						bookRef.BookNameAlt.set_String(wsHandle, TsStringUtils.MakeString(sAltName, wsHandle));
 				}
 			}
 			// Finally, update resource version in database.

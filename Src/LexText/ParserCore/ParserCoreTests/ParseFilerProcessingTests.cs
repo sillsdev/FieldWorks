@@ -1,20 +1,16 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ParseFilerProcessingTests.cs
-// Responsibility: Randy Regnier
-// Last reviewed:
 //
 // <remarks>
 // Implements the ParseFilerProcessingTests unit tests.
 // </remarks>
-// buildtest ParseFiler-nodep
 
 using System;
 using System.Linq;
 using NUnit.Framework;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
@@ -84,7 +80,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			if (wf == null)
 			{
 				UndoableUnitOfWorkHelper.Do("Undo create", "Redo create", m_actionHandler,
-					() => wf = servLoc.GetInstance<IWfiWordformFactory>().Create(Cache.TsStrFactory.MakeString(form, m_vernacularWS.Handle)));
+					() => wf = servLoc.GetInstance<IWfiWordformFactory>().Create(TsStringUtils.MakeString(form, m_vernacularWS.Handle)));
 			}
 			return wf;
 		}
@@ -209,14 +205,14 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				ILexEntry catN = m_entryFactory.Create();
 				IMoStemAllomorph catNForm = m_stemAlloFactory.Create();
 				catN.AlternateFormsOS.Add(catNForm);
-				catNForm.Form.VernacularDefaultWritingSystem = Cache.TsStrFactory.MakeString("catNTEST", m_vernacularWS.Handle);
+				catNForm.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString("catNTEST", m_vernacularWS.Handle);
 				IMoStemMsa catNMsa = m_stemMsaFactory.Create();
 				catN.MorphoSyntaxAnalysesOC.Add(catNMsa);
 
 				ILexEntry sPl = m_entryFactory.Create();
 				IMoAffixAllomorph sPlForm = m_afxAlloFactory.Create();
 				sPl.AlternateFormsOS.Add(sPlForm);
-				sPlForm.Form.VernacularDefaultWritingSystem = Cache.TsStrFactory.MakeString("sPLTEST", m_vernacularWS.Handle);
+				sPlForm.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString("sPLTEST", m_vernacularWS.Handle);
 				IMoInflAffMsa sPlMsa = m_inflAffMsaFactory.Create();
 				sPl.MorphoSyntaxAnalysesOC.Add(sPlMsa);
 
@@ -224,14 +220,14 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				ILexEntry catV = m_entryFactory.Create();
 				IMoStemAllomorph catVForm = m_stemAlloFactory.Create();
 				catV.AlternateFormsOS.Add(catVForm);
-				catVForm.Form.VernacularDefaultWritingSystem = Cache.TsStrFactory.MakeString("catVTEST", m_vernacularWS.Handle);
+				catVForm.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString("catVTEST", m_vernacularWS.Handle);
 				IMoStemMsa catVMsa = m_stemMsaFactory.Create();
 				catV.MorphoSyntaxAnalysesOC.Add(catVMsa);
 
 				ILexEntry sAgr = m_entryFactory.Create();
 				IMoAffixAllomorph sAgrForm = m_afxAlloFactory.Create();
 				sAgr.AlternateFormsOS.Add(sAgrForm);
-				sAgrForm.Form.VernacularDefaultWritingSystem = Cache.TsStrFactory.MakeString("sAGRTEST", m_vernacularWS.Handle);
+				sAgrForm.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString("sAGRTEST", m_vernacularWS.Handle);
 				IMoInflAffMsa sAgrMsa = m_inflAffMsaFactory.Create();
 				sAgr.MorphoSyntaxAnalysesOC.Add(sAgrMsa);
 
@@ -269,7 +265,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				ILexEntry snakeN = m_entryFactory.Create();
 				IMoStemAllomorph snakeNForm = m_stemAlloFactory.Create();
 				snakeN.AlternateFormsOS.Add(snakeNForm);
-				snakeNForm.Form.VernacularDefaultWritingSystem = Cache.TsStrFactory.MakeString("snakeNTEST", m_vernacularWS.Handle);
+				snakeNForm.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString("snakeNTEST", m_vernacularWS.Handle);
 				IMoStemMsa snakeNMsa = m_stemMsaFactory.Create();
 				snakeN.MorphoSyntaxAnalysesOC.Add(snakeNMsa);
 
@@ -277,7 +273,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				ILexEntry bullN = m_entryFactory.Create();
 				IMoStemAllomorph bullNForm = m_stemAlloFactory.Create();
 				bullN.AlternateFormsOS.Add(bullNForm);
-				bullNForm.Form.VernacularDefaultWritingSystem = Cache.TsStrFactory.MakeString("bullNTEST", m_vernacularWS.Handle);
+				bullNForm.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString("bullNTEST", m_vernacularWS.Handle);
 				IMoStemMsa bullNMsa = m_stemMsaFactory.Create();
 				bullN.MorphoSyntaxAnalysesOC.Add(bullNMsa);
 
@@ -317,7 +313,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				ILexEntry pigN = m_entryFactory.Create();
 				IMoStemAllomorph pigNForm = m_stemAlloFactory.Create();
 				pigN.AlternateFormsOS.Add(pigNForm);
-				pigNForm.Form.VernacularDefaultWritingSystem = Cache.TsStrFactory.MakeString("pigNTEST", m_vernacularWS.Handle);
+				pigNForm.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString("pigNTEST", m_vernacularWS.Handle);
 				IMoStemMsa pigNMsa = m_stemMsaFactory.Create();
 				pigN.MorphoSyntaxAnalysesOC.Add(pigNMsa);
 				ILexSense pigNSense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
@@ -384,7 +380,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				ILexEntry pigN = m_entryFactory.Create();
 				IMoStemAllomorph pigNForm = m_stemAlloFactory.Create();
 				pigN.AlternateFormsOS.Add(pigNForm);
-				pigNForm.Form.VernacularDefaultWritingSystem = Cache.TsStrFactory.MakeString("pigNTEST", m_vernacularWS.Handle);
+				pigNForm.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString("pigNTEST", m_vernacularWS.Handle);
 				IMoStemMsa pigNMsa = m_stemMsaFactory.Create();
 				pigN.MorphoSyntaxAnalysesOC.Add(pigNMsa);
 				ILexSense pigNSense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
@@ -427,7 +423,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				ILexEntry pigN = m_entryFactory.Create();
 				IMoStemAllomorph pigNForm = m_stemAlloFactory.Create();
 				pigN.AlternateFormsOS.Add(pigNForm);
-				pigNForm.Form.VernacularDefaultWritingSystem = Cache.TsStrFactory.MakeString("pigNTEST", m_vernacularWS.Handle);
+				pigNForm.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString("pigNTEST", m_vernacularWS.Handle);
 				IMoStemMsa pigNMsa = m_stemMsaFactory.Create();
 				pigN.MorphoSyntaxAnalysesOC.Add(pigNMsa);
 				ILexSense pigNSense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
@@ -477,7 +473,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				ILexEntry believeV = m_entryFactory.Create();
 				IMoStemAllomorph believeVForm = m_stemAlloFactory.Create();
 				believeV.AlternateFormsOS.Add(believeVForm);
-				believeVForm.Form.VernacularDefaultWritingSystem = Cache.TsStrFactory.MakeString("believeVTEST", m_vernacularWS.Handle);
+				believeVForm.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString("believeVTEST", m_vernacularWS.Handle);
 				IMoStemMsa believeVMsa = m_stemMsaFactory.Create();
 				believeV.MorphoSyntaxAnalysesOC.Add(believeVMsa);
 				ILexSense believeVSense = m_senseFactory.Create();
@@ -487,7 +483,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				ILexEntry seekV = m_entryFactory.Create();
 				IMoStemAllomorph seekVForm = m_stemAlloFactory.Create();
 				believeV.AlternateFormsOS.Add(seekVForm);
-				seekVForm.Form.VernacularDefaultWritingSystem = Cache.TsStrFactory.MakeString("seekVTEST", m_vernacularWS.Handle);
+				seekVForm.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString("seekVTEST", m_vernacularWS.Handle);
 				IMoStemMsa seekVMsa = m_stemMsaFactory.Create();
 				seekV.MorphoSyntaxAnalysesOC.Add(seekVMsa);
 				ILexSense seekVSense = m_senseFactory.Create();
@@ -497,7 +493,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				ILexEntry crebV = m_entryFactory.Create();
 				IMoStemAllomorph crebVForm = m_stemAlloFactory.Create();
 				crebV.AlternateFormsOS.Add(crebVForm);
-				crebVForm.Form.VernacularDefaultWritingSystem = Cache.TsStrFactory.MakeString("crebVTEST", m_vernacularWS.Handle);
+				crebVForm.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString("crebVTEST", m_vernacularWS.Handle);
 				ILexEntryRef lexEntryref = m_lexEntryRefFactory.Create();
 				crebV.EntryRefsOS.Add(lexEntryref);
 				lexEntryref.ComponentLexemesRS.Add(believeV);
@@ -512,14 +508,14 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				ILexEntry nullPast = m_entryFactory.Create();
 				IMoAffixAllomorph nullPastForm = m_afxAlloFactory.Create();
 				nullPast.AlternateFormsOS.Add(nullPastForm);
-				nullPastForm.Form.VernacularDefaultWritingSystem = Cache.TsStrFactory.MakeString("nullPASTTEST", m_vernacularWS.Handle);
+				nullPastForm.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString("nullPASTTEST", m_vernacularWS.Handle);
 				IMoInflAffMsa nullPastMsa = m_inflAffMsaFactory.Create();
 				nullPast.MorphoSyntaxAnalysesOC.Add(nullPastMsa);
 
 				ILexEntry nullPlural = m_entryFactory.Create();
 				IMoAffixAllomorph nullPluralForm = m_afxAlloFactory.Create();
 				nullPlural.AlternateFormsOS.Add(nullPluralForm);
-				nullPluralForm.Form.VernacularDefaultWritingSystem = Cache.TsStrFactory.MakeString("nullPLURALTEST", m_vernacularWS.Handle);
+				nullPluralForm.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString("nullPLURALTEST", m_vernacularWS.Handle);
 				IMoInflAffMsa nullPluralMsa = m_inflAffMsaFactory.Create();
 				nullPlural.MorphoSyntaxAnalysesOC.Add(nullPluralMsa);
 
@@ -570,7 +566,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				ILexEntry believeV = m_entryFactory.Create();
 				IMoStemAllomorph believeVForm = m_stemAlloFactory.Create();
 				believeV.AlternateFormsOS.Add(believeVForm);
-				believeVForm.Form.VernacularDefaultWritingSystem = Cache.TsStrFactory.MakeString("believeVTEST", m_vernacularWS.Handle);
+				believeVForm.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString("believeVTEST", m_vernacularWS.Handle);
 				IMoStemMsa believeVMsa = m_stemMsaFactory.Create();
 				believeV.MorphoSyntaxAnalysesOC.Add(believeVMsa);
 				ILexSense believeVSense = m_senseFactory.Create();
@@ -580,7 +576,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				ILexEntry brubV = m_entryFactory.Create();
 				IMoStemAllomorph brubVForm = m_stemAlloFactory.Create();
 				brubV.AlternateFormsOS.Add(brubVForm);
-				brubVForm.Form.VernacularDefaultWritingSystem = Cache.TsStrFactory.MakeString("brubVTEST", m_vernacularWS.Handle);
+				brubVForm.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString("brubVTEST", m_vernacularWS.Handle);
 				ILexEntryRef lexEntryref = m_lexEntryRefFactory.Create();
 				brubV.EntryRefsOS.Add(lexEntryref);
 				lexEntryref.ComponentLexemesRS.Add(believeV);
@@ -589,14 +585,14 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				ILexEntry nullPresent = m_entryFactory.Create();
 				IMoAffixAllomorph nullPresentForm = m_afxAlloFactory.Create();
 				nullPresent.AlternateFormsOS.Add(nullPresentForm);
-				nullPresentForm.Form.VernacularDefaultWritingSystem = Cache.TsStrFactory.MakeString("nullPRESENTTEST", m_vernacularWS.Handle);
+				nullPresentForm.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString("nullPRESENTTEST", m_vernacularWS.Handle);
 				IMoInflAffMsa nullPresentMsa = m_inflAffMsaFactory.Create();
 				nullPresent.MorphoSyntaxAnalysesOC.Add(nullPresentMsa);
 
 				ILexEntry sPlural = m_entryFactory.Create();
 				IMoAffixAllomorph sPluralForm = m_afxAlloFactory.Create();
 				sPlural.AlternateFormsOS.Add(sPluralForm);
-				sPluralForm.Form.VernacularDefaultWritingSystem = Cache.TsStrFactory.MakeString("sPLURALTEST", m_vernacularWS.Handle);
+				sPluralForm.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString("sPLURALTEST", m_vernacularWS.Handle);
 				IMoInflAffMsa sPluralMsa = m_inflAffMsaFactory.Create();
 				sPlural.MorphoSyntaxAnalysesOC.Add(sPluralMsa);
 

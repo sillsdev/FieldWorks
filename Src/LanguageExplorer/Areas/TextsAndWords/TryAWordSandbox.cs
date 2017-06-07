@@ -3,8 +3,8 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.COMInterfaces;
 
 namespace LanguageExplorer.Areas.TextsAndWords
 {

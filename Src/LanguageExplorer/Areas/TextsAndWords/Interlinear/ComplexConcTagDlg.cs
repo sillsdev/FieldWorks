@@ -32,6 +32,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			AccessibleName = GetType().Name;
 		}
 
+		/// <summary/>
+		protected override void Dispose(bool disposing)
+		{
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
+			base.Dispose(disposing);
+		}
+
 		public void SetDlgInfo(FdoCache cache, IPropertyTable propertyTable, IPublisher publisher, ComplexConcTagNode node)
 		{
 			m_cache = cache;

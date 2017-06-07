@@ -5,7 +5,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -168,8 +167,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <param name="changesReceived">true if S/R made changes to the project.</param>
 		/// <param name="projectName">Name of the project to be opened after launch returns.</param>
 		/// <returns>true if successful, false otherwise</returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="ServiceHost gets disposed in KillTheHost()")]
 		public static bool LaunchFieldworksBridge(string projectFolder, string userName, string command, string projectGuid,
 			int fwmodelVersionNumber, string liftModelVersionNumber, string writingSystemId, Action onNonBlockerCommandComplete,
 			out bool changesReceived, out string projectName)
@@ -244,8 +241,18 @@ namespace SIL.FieldWorks.Common.FwUtils
 		private static void LaunchFlexBridge(IIPCHost host, string command, string args, Action onNonBlockerCommandComplete,
 			ref bool changesReceived, ref string projectName)
 		{
+			string flexbridgeLauncher = FullFieldWorksBridgePath();
+			if (MiscUtils.IsUnix)
+			{
+				flexbridgeLauncher = FwDirectoryFinder.FlexBridgeFolder + "/flexbridge";
+			}
+			if (!File.Exists(flexbridgeLauncher))
+			{
+				Console.WriteLine("Warning: Attempting to use non-existent flexbridge launcher {0}", flexbridgeLauncher);
+			}
+
 			// Launch the bridge process.
-			using (Process.Start(FullFieldWorksBridgePath(), args))
+			using (Process.Start(flexbridgeLauncher, args))
 			{
 			}
 
@@ -303,8 +310,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		static IIPCClient _client;
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="REVIEW: It is unclear if disposing the ChannelFactory affects channelClient.")]
 		private static void BeginEmergencyExitChute(string pipeID)
 		{
 			try

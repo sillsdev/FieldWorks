@@ -1,20 +1,22 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using System.Xml.Linq;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.Cellar;
+using SIL.CoreImpl.Text;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.Utils;
+using SIL.Xml;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
@@ -192,18 +194,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			{
 				CheckDisposed();
 
-				base.MakeRoot();
-
-				if (DesignMode)
+				if (m_fdoCache == null || DesignMode)
 					return;
 
-				// Review JohnT: why doesn't the base class do this??
-				m_rootb = VwRootBoxClass.Create();
-				m_rootb.SetSite(this);
+				base.MakeRoot();
 
-
-
-				m_sda = new GhostDaDecorator(m_fdoCache.DomainDataByFlid as ISilDataAccessManaged, m_fdoCache.TsStrFactory.EmptyString(m_wsToCreate), m_clidDst);
+				m_sda = new GhostDaDecorator(m_fdoCache.DomainDataByFlid as ISilDataAccessManaged, TsStringUtils.EmptyString(m_wsToCreate), m_clidDst);
 
 				m_rootb.DataAccess = m_sda;
 
@@ -212,7 +208,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				// arg1 is a meaningless root HVO, since this VC only displays one dummy property and gets it from the ghostDA,
 				// which ignores the HVO.
 				// arg3 is a meaningless initial fragment, since this VC only displays one thing.
-				m_rootb.SetRootObject(GhostStringSlice.khvoFake, m_vc, 1, m_styleSheet);
+				m_rootb.SetRootObject(khvoFake, m_vc, 1, m_styleSheet);
 			}
 		#endregion // RootSite implementation
 
@@ -349,8 +345,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			/// a slice node with editor 'string' or 'multistring' as appropriate.
 			/// AddSeqNode is similar, except that it may display layouts of multiple objects.
 			/// </summary>
-			static void RestoreSelection(int ich, DataTree datatree, object[] key,
-				int hvoNewObj, int flidObjProp, int flidStringProp, int ws)
+			static void RestoreSelection(int ich, DataTree datatree, object[] key, int hvoNewObj, int flidStringProp, int ws)
 			{
 				// To be written.
 				foreach (Slice slice in datatree.Slices)
@@ -434,8 +429,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				return true;
 			}
 
-			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-				Justification = "datatree is a reference")]
 			private void SwitchToReal()
 			{
 				// Depending on compile switch for SLICE_IS_SPLITCONTAINER,
@@ -465,7 +458,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				int hvoNewObj = MakeRealObject(tssTyped);
 
 				// Now try to make a suitable selection in the slice that replaces this.
-				RestoreSelection(ich, datatree, parentKey, hvoNewObj, flidEmptyProp, flidStringProp, wsToCreate);
+				RestoreSelection(ich, datatree, parentKey, hvoNewObj, flidStringProp, wsToCreate);
 			}
 		}
 

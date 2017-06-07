@@ -1,10 +1,6 @@
-// Copyright (c) 2007-2013 SIL International
+// Copyright (c) 2007-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: MergeImportedDifferences.cs
-// Responsibility: TE Team
-// ---------------------------------------------------------------------------------------------
 
 using System;
 using System.Collections;
@@ -13,16 +9,17 @@ using System.Diagnostics;
 using System.Text;
 using System.Windows.Forms;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.Scripture;
+using SIL.CoreImpl.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Reporting;
 using SIL.Utils;
-using SILUBS.SharedScrUtils;
 
 namespace SIL.FieldWorks.TE
 {
@@ -43,23 +40,15 @@ namespace SIL.FieldWorks.TE
 
 		private readonly IFlexApp m_app;
 		private readonly IHelpTopicProvider m_helpTopicProvider;
-		/// <summary>The Scripture object</summary>
-		private readonly FwStyleSheet m_styleSheet;
-		private readonly float m_zoomPercentageDraft;
-		private readonly float m_zoomPercentageFootnote;
 		/// <summary>The saved version containing the imported books.</summary>
 		protected readonly IScrDraft m_importVersion;
 		/// <summary>The version to use for originals of merged or overwritten books.</summary>
 		protected IScrDraft m_backupVersion;
-		private readonly FilteredScrBooks m_bookFilter;
 		private Form m_owningForm;
 		/// <summary></summary>
 		protected readonly IScripture m_scr;
 
-		private readonly Set<int> m_booksBackedUp = new Set<int>();
-
-		private readonly List<IScrBook> m_newBooks = new List<IScrBook>();
-		private readonly List<IScrBook> m_overwrittenBooks = new List<IScrBook>();
+		private readonly HashSet<int> m_booksBackedUp = new HashSet<int>();
 		#endregion
 
 		#region ImportedBookStatus enum
@@ -109,26 +98,17 @@ namespace SIL.FieldWorks.TE
 		/// <param name="cache">The cache.</param>
 		/// <param name="styleSheet">The style sheet.</param>
 		/// <param name="importVersion">The ScrDraft containing the imported books.</param>
-		/// <param name="zoomPercentageDraft">The zoom percentage of the draft view.</param>
-		/// <param name="zoomPercentageFootnote">The zoom percentage of the footnote view.</param>
 		/// <param name="backupVersion">where to store stuff overwritten or merged.</param>
-		/// <param name="bookFilter">bookFilter to which to add new books</param>
 		/// <param name="booksImported">The canonical numbers of the books which were
 		/// imported (unordered).</param>
 		/// <param name="helpTopicProvider">The help topic provider.</param>
 		/// <param name="app">The application.</param>
 		/// --------------------------------------------------------------------------------
 		public ImportedBooks(FdoCache cache, FwStyleSheet styleSheet,
-			IScrDraft importVersion, float zoomPercentageDraft, float zoomPercentageFootnote,
-			IScrDraft backupVersion, FilteredScrBooks bookFilter, IEnumerable<int> booksImported,
+			IScrDraft importVersion, IScrDraft backupVersion, IEnumerable<int> booksImported,
 			IHelpTopicProvider helpTopicProvider, IFlexApp app) :
 			this(cache, importVersion, backupVersion, helpTopicProvider, app)
 		{
-			m_styleSheet = styleSheet;
-			m_zoomPercentageDraft = zoomPercentageDraft;
-			m_zoomPercentageFootnote = zoomPercentageFootnote;
-			m_bookFilter = bookFilter;
-
 			foreach (int bookId in booksImported)
 			{
 				IScrBook rev = importVersion.FindBook(bookId);
@@ -145,7 +125,7 @@ namespace SIL.FieldWorks.TE
 					UndoableUnitOfWorkHelper.Do("Add book", "Add book",
 						m_cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
 					{
-						m_newBooks.Add(m_scr.CopyBookToCurrent(rev));
+						OnBookAdded(m_scr.CopyBookToCurrent(rev));
 					});
 				}
 				else
@@ -235,7 +215,7 @@ namespace SIL.FieldWorks.TE
 		public void MakeBackupIfNeeded(BookMerger bookMerger)
 		{
 			// Copy original to backup
-			using (WaitCursor wc = new WaitCursor(this))
+			using (new WaitCursor(this))
 			{
 				ReplaceBookInBackup(bookMerger.BookCurr, false);
 			}
@@ -289,14 +269,10 @@ namespace SIL.FieldWorks.TE
 						// Either no back translations might be lost, or the user has confirmed that they
 						// want to overwrite them.
 						if (typeOfOverwrite == OverwriteType.Partial)
-						{
 							PartialOverwrite(bookMerger, sectionsToRemove);
-						}
 						else
-						{
-							m_newBooks.Add(OverwriteBook(bookMerger));
-							m_overwrittenBooks.Add(currentBook); // this is the original current book
-						}
+							OnBookOverwritten(currentBook, OverwriteBook(bookMerger));
+
 						undoHelper.RollBack = false;
 					}
 					SetItemStatus(item, ImportedBookStatus.Overwritten);
@@ -473,14 +449,6 @@ namespace SIL.FieldWorks.TE
 					// Enhance JohnT: Normally we would make sure all these changes were a single Undo action,
 					// but for now we know this is part of a still larger Undoable task, the whole import.
 					// CollapseToMark is used to convert them all into one.
-
-					if (m_bookFilter != null)
-					{
-						// Insert any new books into bookfilter that need to be visible
-						m_bookFilter.Add(m_newBooks);
-						UndoChangeFilter undoItem = new UndoChangeFilter(m_bookFilter, m_newBooks, m_overwrittenBooks);
-						m_cache.ActionHandlerAccessor.AddAction(undoItem);
-					}
 
 					// Delete empty revisions created for this import.
 					//if (m_booksImported.BooksOS.Count == 0)
@@ -1044,133 +1012,20 @@ namespace SIL.FieldWorks.TE
 			}
 		}
 
+		/// <summary>
+		/// Called when a book is added.
+		/// </summary>
+		protected virtual void OnBookAdded(IScrBook newBook)
+		{
+		}
+
+		/// <summary>
+		/// Called when a book is overwritten.
+		/// </summary>
+		protected virtual void OnBookOverwritten(IScrBook oldBook, IScrBook newBook)
+		{
+		}
+
 		#endregion
 	}
-	#region class UndoChangeFilter
-	/// ----------------------------------------------------------------------------------------
-	/// <summary>
-	/// Implements Undo to remove added books from filter.
-	/// </summary>
-	/// ----------------------------------------------------------------------------------------
-	internal class UndoChangeFilter : IUndoAction
-	{
-		private FilteredScrBooks m_filter;
-		List<IScrBook> m_newBooks;
-		List<IScrBook> m_overwrittenBooksToRestore;
-		IScrBook[] m_originalBookList;
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Make one.
-		/// </summary>
-		/// <param name="filter">The filter.</param>
-		/// <param name="newBooks">The new books.</param>
-		/// ------------------------------------------------------------------------------------
-		public UndoChangeFilter(FilteredScrBooks filter, List<IScrBook> newBooks)
-		{
-			m_newBooks = newBooks;
-			m_filter = filter;
-			m_originalBookList = filter.SavedFilter;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Make one.
-		/// </summary>
-		/// <param name="filter">The filter.</param>
-		/// <param name="m_newBooks">The new books.</param>
-		/// <param name="overwrittenBooksToRestore">The books to put back in the filter if the
-		/// user performs an undo of imported books that overwrote existing books.</param>
-		/// ------------------------------------------------------------------------------------
-		public UndoChangeFilter(FilteredScrBooks filter, List<IScrBook> m_newBooks,
-			List<IScrBook> overwrittenBooksToRestore) : this(filter, m_newBooks)
-		{
-			m_overwrittenBooksToRestore = overwrittenBooksToRestore;
-		}
-
-		#region IUndoAction Members
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Irreversibly commits an action.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public void Commit()
-		{
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// True for most actions, which make changes to data; false for actions that represent
-		/// updates to the user interface, like replacing the selection.
-		/// </summary>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
-		public bool IsDataChange
-		{
-			get { return false; }
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// False, because Scripture import can't be redone.
-		/// </summary>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
-		public bool IsRedoable
-		{
-			get { return false; }
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Reapplies (or "redoes") an action.
-		/// </summary>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
-		public bool Redo()
-		{
-			m_filter.FilteredBooks = m_originalBookList;
-			return true;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Sets whether this undo action should notify the world that the action has been undone
-		/// or redone. For ISqlUndoAction, this supresses the PropChanged notifications.
-		/// </summary>
-		/// <value></value>
-		/// <returns>A System.Boolean </returns>
-		/// ------------------------------------------------------------------------------------
-		public bool SuppressNotification
-		{
-			set { }
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Reverses (or "undoes") an action. Sets pfSuccess to true if successful. If not successful
-		/// because the database state has changed unexpectedly, sets pfSuccess to false but still
-		/// returns S_OK. More catastrophic errors may produce error result codes.
-		/// </summary>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
-		public bool Undo()
-		{
-			foreach (IScrBook book in m_newBooks)
-			{
-				int index = m_filter.GetBookIndex(book);
-				if (index >= 0)
-					m_filter.Remove(index);
-			}
-
-			if (m_overwrittenBooksToRestore != null && m_overwrittenBooksToRestore.Count > 0)
-				m_filter.Add(m_overwrittenBooksToRestore.ToArray());
-
-			return true;
-		}
-		#endregion
-
-	}
-	#endregion
 }

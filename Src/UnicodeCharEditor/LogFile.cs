@@ -1,15 +1,8 @@
-// Copyright (c) 2010-2013 SIL International
+// Copyright (c) 2010-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: LogFile.cs
-// Responsibility: mcconnel
-//
-// <remarks>
-// </remarks>
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Microsoft.Win32;
 using SIL.Utils;
@@ -50,8 +43,6 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		///<summary>
 		///</summary>
 		///<param name="line"></param>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="GetLogFile() returns a reference to a singleton")]
 		public static void AddVerboseLine(string line)
 		{
 			if (GetLogFile().VerboseLogging)
@@ -61,8 +52,6 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		///<summary>
 		///</summary>
 		///<returns></returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="GetLogFile() returns a reference to a singleton")]
 		public static bool IsLogging()
 		{
 			return GetLogFile().Logging;
@@ -130,7 +119,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 								{
 									m_sFileName = (string)regKey.GetValue("InstallLanguageLog");
 									if (m_sFileName != null)
-										m_file = new StreamWriter(m_sFileName, true);
+										m_file = new StreamWriter(m_sFileName, true) { AutoFlush = true};
 									else
 									{
 										Console.WriteLine(
@@ -204,7 +193,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 			/// <summary/>
 			private void Dispose(bool fDisposing)
 			{
-				System.Diagnostics.Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType().ToString() + " *******");
+				System.Diagnostics.Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType() + " *******");
 				if (fDisposing)
 				{
 					// dispose managed and unmanaged objects

@@ -3,7 +3,6 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows.Forms;
 using SIL.FieldWorks.FDO;
@@ -12,8 +11,6 @@ using SIL.FieldWorks.FwCoreDlgs;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification="The creator/owner of this class is responsible to dispose the passed in dialog")]
 	public class ParseIsCurrentFixer : IUtility
 	{
 		public string Label

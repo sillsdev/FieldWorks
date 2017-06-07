@@ -3,11 +3,11 @@
 /* this ALWAYS GENERATED file contains the definitions for the interfaces */
 
 
- /* File created by MIDL compiler version 8.00.0603 */
-/* at Thu Oct 29 18:13:53 2015
+ /* File created by MIDL compiler version 8.01.0620 */
+/* at Tue Jan 19 10:14:07 2038
  */
 /* Compiler settings for C:\develop\fwrepo\fw\Output\Common\FwKernelTlb.idl:
-    Oicf, W1, Zp8, env=Win32 (32b run), target_arch=X86 8.00.0603 
+    Oicf, W1, Zp8, env=Win32 (32b run), target_arch=X86 8.01.0620 
     protocol : dce , ms_ext, c_ext, robust
     error checks: allocation ref bounds_check enum stub_data 
     VC __declspec() decoration level: 
@@ -29,7 +29,7 @@
 
 #ifndef __RPCNDR_H_VERSION__
 #error this stub requires an updated version of <rpcndr.h>
-#endif // __RPCNDR_H_VERSION__
+#endif /* __RPCNDR_H_VERSION__ */
 
 
 #ifndef __FwKernelTlb_h__
@@ -41,6 +41,27 @@
 
 /* Forward Declarations */ 
 
+#ifndef __IFwMetaDataCache_FWD_DEFINED__
+#define __IFwMetaDataCache_FWD_DEFINED__
+typedef interface IFwMetaDataCache IFwMetaDataCache;
+
+#endif 	/* __IFwMetaDataCache_FWD_DEFINED__ */
+
+
+#ifndef __ILgWritingSystemFactory_FWD_DEFINED__
+#define __ILgWritingSystemFactory_FWD_DEFINED__
+typedef interface ILgWritingSystemFactory ILgWritingSystemFactory;
+
+#endif 	/* __ILgWritingSystemFactory_FWD_DEFINED__ */
+
+
+#ifndef __ITsMultiString_FWD_DEFINED__
+#define __ITsMultiString_FWD_DEFINED__
+typedef interface ITsMultiString ITsMultiString;
+
+#endif 	/* __ITsMultiString_FWD_DEFINED__ */
+
+
 #ifndef __ITsString_FWD_DEFINED__
 #define __ITsString_FWD_DEFINED__
 typedef interface ITsString ITsString;
@@ -48,18 +69,46 @@ typedef interface ITsString ITsString;
 #endif 	/* __ITsString_FWD_DEFINED__ */
 
 
-#ifndef __IUndoGrouper_FWD_DEFINED__
-#define __IUndoGrouper_FWD_DEFINED__
-typedef interface IUndoGrouper IUndoGrouper;
+#ifndef __ITsTextProps_FWD_DEFINED__
+#define __ITsTextProps_FWD_DEFINED__
+typedef interface ITsTextProps ITsTextProps;
 
-#endif 	/* __IUndoGrouper_FWD_DEFINED__ */
+#endif 	/* __ITsTextProps_FWD_DEFINED__ */
 
 
-#ifndef __IFwMetaDataCache_FWD_DEFINED__
-#define __IFwMetaDataCache_FWD_DEFINED__
-typedef interface IFwMetaDataCache IFwMetaDataCache;
+#ifndef __IVwStylesheet_FWD_DEFINED__
+#define __IVwStylesheet_FWD_DEFINED__
+typedef interface IVwStylesheet IVwStylesheet;
 
-#endif 	/* __IFwMetaDataCache_FWD_DEFINED__ */
+#endif 	/* __IVwStylesheet_FWD_DEFINED__ */
+
+
+#ifndef __ISimpleInit_FWD_DEFINED__
+#define __ISimpleInit_FWD_DEFINED__
+typedef interface ISimpleInit ISimpleInit;
+
+#endif 	/* __ISimpleInit_FWD_DEFINED__ */
+
+
+#ifndef __ICheckWord_FWD_DEFINED__
+#define __ICheckWord_FWD_DEFINED__
+typedef interface ICheckWord ICheckWord;
+
+#endif 	/* __ICheckWord_FWD_DEFINED__ */
+
+
+#ifndef __IGetSpellChecker_FWD_DEFINED__
+#define __IGetSpellChecker_FWD_DEFINED__
+typedef interface IGetSpellChecker IGetSpellChecker;
+
+#endif 	/* __IGetSpellChecker_FWD_DEFINED__ */
+
+
+#ifndef __IVwNotifyChange_FWD_DEFINED__
+#define __IVwNotifyChange_FWD_DEFINED__
+typedef interface IVwNotifyChange IVwNotifyChange;
+
+#endif 	/* __IVwNotifyChange_FWD_DEFINED__ */
 
 
 #ifndef __IUndoAction_FWD_DEFINED__
@@ -88,6 +137,20 @@ typedef struct ActionHandler ActionHandler;
 #endif 	/* __ActionHandler_FWD_DEFINED__ */
 
 
+#ifndef __ISilDataAccess_FWD_DEFINED__
+#define __ISilDataAccess_FWD_DEFINED__
+typedef interface ISilDataAccess ISilDataAccess;
+
+#endif 	/* __ISilDataAccess_FWD_DEFINED__ */
+
+
+#ifndef __IStructuredTextDataAccess_FWD_DEFINED__
+#define __IStructuredTextDataAccess_FWD_DEFINED__
+typedef interface IStructuredTextDataAccess IStructuredTextDataAccess;
+
+#endif 	/* __IStructuredTextDataAccess_FWD_DEFINED__ */
+
+
 #ifndef __IDebugReportSink_FWD_DEFINED__
 #define __IDebugReportSink_FWD_DEFINED__
 typedef interface IDebugReportSink IDebugReportSink;
@@ -102,30 +165,11 @@ typedef interface IDebugReport IDebugReport;
 #endif 	/* __IDebugReport_FWD_DEFINED__ */
 
 
-#ifndef __DebugReport_FWD_DEFINED__
-#define __DebugReport_FWD_DEFINED__
-
-#ifdef __cplusplus
-typedef class DebugReport DebugReport;
-#else
-typedef struct DebugReport DebugReport;
-#endif /* __cplusplus */
-
-#endif 	/* __DebugReport_FWD_DEFINED__ */
-
-
 #ifndef __IComDisposable_FWD_DEFINED__
 #define __IComDisposable_FWD_DEFINED__
 typedef interface IComDisposable IComDisposable;
 
 #endif 	/* __IComDisposable_FWD_DEFINED__ */
-
-
-#ifndef __ITsTextProps_FWD_DEFINED__
-#define __ITsTextProps_FWD_DEFINED__
-typedef interface ITsTextProps ITsTextProps;
-
-#endif 	/* __ITsTextProps_FWD_DEFINED__ */
 
 
 #ifndef __ITsStrFactory_FWD_DEFINED__
@@ -163,469 +207,11 @@ typedef interface ITsPropsBldr ITsPropsBldr;
 #endif 	/* __ITsPropsBldr_FWD_DEFINED__ */
 
 
-#ifndef __ITsMultiString_FWD_DEFINED__
-#define __ITsMultiString_FWD_DEFINED__
-typedef interface ITsMultiString ITsMultiString;
-
-#endif 	/* __ITsMultiString_FWD_DEFINED__ */
-
-
-#ifndef __ILgWritingSystemFactory_FWD_DEFINED__
-#define __ILgWritingSystemFactory_FWD_DEFINED__
-typedef interface ILgWritingSystemFactory ILgWritingSystemFactory;
-
-#endif 	/* __ILgWritingSystemFactory_FWD_DEFINED__ */
-
-
-#ifndef __TsStrFactory_FWD_DEFINED__
-#define __TsStrFactory_FWD_DEFINED__
-
-#ifdef __cplusplus
-typedef class TsStrFactory TsStrFactory;
-#else
-typedef struct TsStrFactory TsStrFactory;
-#endif /* __cplusplus */
-
-#endif 	/* __TsStrFactory_FWD_DEFINED__ */
-
-
-#ifndef __TsPropsFactory_FWD_DEFINED__
-#define __TsPropsFactory_FWD_DEFINED__
-
-#ifdef __cplusplus
-typedef class TsPropsFactory TsPropsFactory;
-#else
-typedef struct TsPropsFactory TsPropsFactory;
-#endif /* __cplusplus */
-
-#endif 	/* __TsPropsFactory_FWD_DEFINED__ */
-
-
-#ifndef __TsStrBldr_FWD_DEFINED__
-#define __TsStrBldr_FWD_DEFINED__
-
-#ifdef __cplusplus
-typedef class TsStrBldr TsStrBldr;
-#else
-typedef struct TsStrBldr TsStrBldr;
-#endif /* __cplusplus */
-
-#endif 	/* __TsStrBldr_FWD_DEFINED__ */
-
-
-#ifndef __TsIncStrBldr_FWD_DEFINED__
-#define __TsIncStrBldr_FWD_DEFINED__
-
-#ifdef __cplusplus
-typedef class TsIncStrBldr TsIncStrBldr;
-#else
-typedef struct TsIncStrBldr TsIncStrBldr;
-#endif /* __cplusplus */
-
-#endif 	/* __TsIncStrBldr_FWD_DEFINED__ */
-
-
-#ifndef __TsPropsBldr_FWD_DEFINED__
-#define __TsPropsBldr_FWD_DEFINED__
-
-#ifdef __cplusplus
-typedef class TsPropsBldr TsPropsBldr;
-#else
-typedef struct TsPropsBldr TsPropsBldr;
-#endif /* __cplusplus */
-
-#endif 	/* __TsPropsBldr_FWD_DEFINED__ */
-
-
-#ifndef __TsMultiString_FWD_DEFINED__
-#define __TsMultiString_FWD_DEFINED__
-
-#ifdef __cplusplus
-typedef class TsMultiString TsMultiString;
-#else
-typedef struct TsMultiString TsMultiString;
-#endif /* __cplusplus */
-
-#endif 	/* __TsMultiString_FWD_DEFINED__ */
-
-
-#ifndef __IVwGraphics_FWD_DEFINED__
-#define __IVwGraphics_FWD_DEFINED__
-typedef interface IVwGraphics IVwGraphics;
-
-#endif 	/* __IVwGraphics_FWD_DEFINED__ */
-
-
-#ifndef __IJustifyingRenderer_FWD_DEFINED__
-#define __IJustifyingRenderer_FWD_DEFINED__
-typedef interface IJustifyingRenderer IJustifyingRenderer;
-
-#endif 	/* __IJustifyingRenderer_FWD_DEFINED__ */
-
-
-#ifndef __ISimpleInit_FWD_DEFINED__
-#define __ISimpleInit_FWD_DEFINED__
-typedef interface ISimpleInit ISimpleInit;
-
-#endif 	/* __ISimpleInit_FWD_DEFINED__ */
-
-
-#ifndef __IVwGraphicsWin32_FWD_DEFINED__
-#define __IVwGraphicsWin32_FWD_DEFINED__
-typedef interface IVwGraphicsWin32 IVwGraphicsWin32;
-
-#endif 	/* __IVwGraphicsWin32_FWD_DEFINED__ */
-
-
-#ifndef __VwGraphicsWin32_FWD_DEFINED__
-#define __VwGraphicsWin32_FWD_DEFINED__
-
-#ifdef __cplusplus
-typedef class VwGraphicsWin32 VwGraphicsWin32;
-#else
-typedef struct VwGraphicsWin32 VwGraphicsWin32;
-#endif /* __cplusplus */
-
-#endif 	/* __VwGraphicsWin32_FWD_DEFINED__ */
-
-
-#ifndef __IVwTextSource_FWD_DEFINED__
-#define __IVwTextSource_FWD_DEFINED__
-typedef interface IVwTextSource IVwTextSource;
-
-#endif 	/* __IVwTextSource_FWD_DEFINED__ */
-
-
-#ifndef __IVwJustifier_FWD_DEFINED__
-#define __IVwJustifier_FWD_DEFINED__
-typedef interface IVwJustifier IVwJustifier;
-
-#endif 	/* __IVwJustifier_FWD_DEFINED__ */
-
-
-#ifndef __ILgSegment_FWD_DEFINED__
-#define __ILgSegment_FWD_DEFINED__
-typedef interface ILgSegment ILgSegment;
-
-#endif 	/* __ILgSegment_FWD_DEFINED__ */
-
-
-#ifndef __IRenderEngine_FWD_DEFINED__
-#define __IRenderEngine_FWD_DEFINED__
-typedef interface IRenderEngine IRenderEngine;
-
-#endif 	/* __IRenderEngine_FWD_DEFINED__ */
-
-
-#ifndef __RomRenderEngine_FWD_DEFINED__
-#define __RomRenderEngine_FWD_DEFINED__
-
-#ifdef __cplusplus
-typedef class RomRenderEngine RomRenderEngine;
-#else
-typedef struct RomRenderEngine RomRenderEngine;
-#endif /* __cplusplus */
-
-#endif 	/* __RomRenderEngine_FWD_DEFINED__ */
-
-
-#ifndef __UniscribeEngine_FWD_DEFINED__
-#define __UniscribeEngine_FWD_DEFINED__
-
-#ifdef __cplusplus
-typedef class UniscribeEngine UniscribeEngine;
-#else
-typedef struct UniscribeEngine UniscribeEngine;
-#endif /* __cplusplus */
-
-#endif 	/* __UniscribeEngine_FWD_DEFINED__ */
-
-
-#ifndef __GraphiteEngine_FWD_DEFINED__
-#define __GraphiteEngine_FWD_DEFINED__
-
-#ifdef __cplusplus
-typedef class GraphiteEngine GraphiteEngine;
-#else
-typedef struct GraphiteEngine GraphiteEngine;
-#endif /* __cplusplus */
-
-#endif 	/* __GraphiteEngine_FWD_DEFINED__ */
-
-
-#ifndef __IRenderingFeatures_FWD_DEFINED__
-#define __IRenderingFeatures_FWD_DEFINED__
-typedef interface IRenderingFeatures IRenderingFeatures;
-
-#endif 	/* __IRenderingFeatures_FWD_DEFINED__ */
-
-
-#ifndef __ILgCharacterPropertyEngine_FWD_DEFINED__
-#define __ILgCharacterPropertyEngine_FWD_DEFINED__
-typedef interface ILgCharacterPropertyEngine ILgCharacterPropertyEngine;
-
-#endif 	/* __ILgCharacterPropertyEngine_FWD_DEFINED__ */
-
-
-#ifndef __ILgStringConverter_FWD_DEFINED__
-#define __ILgStringConverter_FWD_DEFINED__
-typedef interface ILgStringConverter ILgStringConverter;
-
-#endif 	/* __ILgStringConverter_FWD_DEFINED__ */
-
-
-#ifndef __ILgTokenizer_FWD_DEFINED__
-#define __ILgTokenizer_FWD_DEFINED__
-typedef interface ILgTokenizer ILgTokenizer;
-
-#endif 	/* __ILgTokenizer_FWD_DEFINED__ */
-
-
-#ifndef __ILgSpellCheckFactory_FWD_DEFINED__
-#define __ILgSpellCheckFactory_FWD_DEFINED__
-typedef interface ILgSpellCheckFactory ILgSpellCheckFactory;
-
-#endif 	/* __ILgSpellCheckFactory_FWD_DEFINED__ */
-
-
-#ifndef __ILgSpellChecker_FWD_DEFINED__
-#define __ILgSpellChecker_FWD_DEFINED__
-typedef interface ILgSpellChecker ILgSpellChecker;
-
-#endif 	/* __ILgSpellChecker_FWD_DEFINED__ */
-
-
-#ifndef __ILgCollatingEngine_FWD_DEFINED__
-#define __ILgCollatingEngine_FWD_DEFINED__
-typedef interface ILgCollatingEngine ILgCollatingEngine;
-
-#endif 	/* __ILgCollatingEngine_FWD_DEFINED__ */
-
-
-#ifndef __ILgSearchEngine_FWD_DEFINED__
-#define __ILgSearchEngine_FWD_DEFINED__
-typedef interface ILgSearchEngine ILgSearchEngine;
-
-#endif 	/* __ILgSearchEngine_FWD_DEFINED__ */
-
-
 #ifndef __ILgWritingSystem_FWD_DEFINED__
 #define __ILgWritingSystem_FWD_DEFINED__
 typedef interface ILgWritingSystem ILgWritingSystem;
 
 #endif 	/* __ILgWritingSystem_FWD_DEFINED__ */
-
-
-#ifndef __ILgIcuCharPropEngine_FWD_DEFINED__
-#define __ILgIcuCharPropEngine_FWD_DEFINED__
-typedef interface ILgIcuCharPropEngine ILgIcuCharPropEngine;
-
-#endif 	/* __ILgIcuCharPropEngine_FWD_DEFINED__ */
-
-
-#ifndef __ILgNumericEngine_FWD_DEFINED__
-#define __ILgNumericEngine_FWD_DEFINED__
-typedef interface ILgNumericEngine ILgNumericEngine;
-
-#endif 	/* __ILgNumericEngine_FWD_DEFINED__ */
-
-
-#ifndef __ILgKeymanHandler_FWD_DEFINED__
-#define __ILgKeymanHandler_FWD_DEFINED__
-typedef interface ILgKeymanHandler ILgKeymanHandler;
-
-#endif 	/* __ILgKeymanHandler_FWD_DEFINED__ */
-
-
-#ifndef __ILgIcuConverterEnumerator_FWD_DEFINED__
-#define __ILgIcuConverterEnumerator_FWD_DEFINED__
-typedef interface ILgIcuConverterEnumerator ILgIcuConverterEnumerator;
-
-#endif 	/* __ILgIcuConverterEnumerator_FWD_DEFINED__ */
-
-
-#ifndef __ILgIcuTransliteratorEnumerator_FWD_DEFINED__
-#define __ILgIcuTransliteratorEnumerator_FWD_DEFINED__
-typedef interface ILgIcuTransliteratorEnumerator ILgIcuTransliteratorEnumerator;
-
-#endif 	/* __ILgIcuTransliteratorEnumerator_FWD_DEFINED__ */
-
-
-#ifndef __ILgIcuLocaleEnumerator_FWD_DEFINED__
-#define __ILgIcuLocaleEnumerator_FWD_DEFINED__
-typedef interface ILgIcuLocaleEnumerator ILgIcuLocaleEnumerator;
-
-#endif 	/* __ILgIcuLocaleEnumerator_FWD_DEFINED__ */
-
-
-#ifndef __ILgIcuResourceBundle_FWD_DEFINED__
-#define __ILgIcuResourceBundle_FWD_DEFINED__
-typedef interface ILgIcuResourceBundle ILgIcuResourceBundle;
-
-#endif 	/* __ILgIcuResourceBundle_FWD_DEFINED__ */
-
-
-#ifndef __IRegexMatcher_FWD_DEFINED__
-#define __IRegexMatcher_FWD_DEFINED__
-typedef interface IRegexMatcher IRegexMatcher;
-
-#endif 	/* __IRegexMatcher_FWD_DEFINED__ */
-
-
-#ifndef __RegexMatcherWrapper_FWD_DEFINED__
-#define __RegexMatcherWrapper_FWD_DEFINED__
-
-#ifdef __cplusplus
-typedef class RegexMatcherWrapper RegexMatcherWrapper;
-#else
-typedef struct RegexMatcherWrapper RegexMatcherWrapper;
-#endif /* __cplusplus */
-
-#endif 	/* __RegexMatcherWrapper_FWD_DEFINED__ */
-
-
-#ifndef __LgSystemCollater_FWD_DEFINED__
-#define __LgSystemCollater_FWD_DEFINED__
-
-#ifdef __cplusplus
-typedef class LgSystemCollater LgSystemCollater;
-#else
-typedef struct LgSystemCollater LgSystemCollater;
-#endif /* __cplusplus */
-
-#endif 	/* __LgSystemCollater_FWD_DEFINED__ */
-
-
-#ifndef __LgUnicodeCollater_FWD_DEFINED__
-#define __LgUnicodeCollater_FWD_DEFINED__
-
-#ifdef __cplusplus
-typedef class LgUnicodeCollater LgUnicodeCollater;
-#else
-typedef struct LgUnicodeCollater LgUnicodeCollater;
-#endif /* __cplusplus */
-
-#endif 	/* __LgUnicodeCollater_FWD_DEFINED__ */
-
-
-#ifndef __LgIcuCharPropEngine_FWD_DEFINED__
-#define __LgIcuCharPropEngine_FWD_DEFINED__
-
-#ifdef __cplusplus
-typedef class LgIcuCharPropEngine LgIcuCharPropEngine;
-#else
-typedef struct LgIcuCharPropEngine LgIcuCharPropEngine;
-#endif /* __cplusplus */
-
-#endif 	/* __LgIcuCharPropEngine_FWD_DEFINED__ */
-
-
-#ifndef __LgCPWordTokenizer_FWD_DEFINED__
-#define __LgCPWordTokenizer_FWD_DEFINED__
-
-#ifdef __cplusplus
-typedef class LgCPWordTokenizer LgCPWordTokenizer;
-#else
-typedef struct LgCPWordTokenizer LgCPWordTokenizer;
-#endif /* __cplusplus */
-
-#endif 	/* __LgCPWordTokenizer_FWD_DEFINED__ */
-
-
-#ifndef __LgWfiSpellChecker_FWD_DEFINED__
-#define __LgWfiSpellChecker_FWD_DEFINED__
-
-#ifdef __cplusplus
-typedef class LgWfiSpellChecker LgWfiSpellChecker;
-#else
-typedef struct LgWfiSpellChecker LgWfiSpellChecker;
-#endif /* __cplusplus */
-
-#endif 	/* __LgWfiSpellChecker_FWD_DEFINED__ */
-
-
-#ifndef __LgMSWordSpellChecker_FWD_DEFINED__
-#define __LgMSWordSpellChecker_FWD_DEFINED__
-
-#ifdef __cplusplus
-typedef class LgMSWordSpellChecker LgMSWordSpellChecker;
-#else
-typedef struct LgMSWordSpellChecker LgMSWordSpellChecker;
-#endif /* __cplusplus */
-
-#endif 	/* __LgMSWordSpellChecker_FWD_DEFINED__ */
-
-
-#ifndef __LgNumericEngine_FWD_DEFINED__
-#define __LgNumericEngine_FWD_DEFINED__
-
-#ifdef __cplusplus
-typedef class LgNumericEngine LgNumericEngine;
-#else
-typedef struct LgNumericEngine LgNumericEngine;
-#endif /* __cplusplus */
-
-#endif 	/* __LgNumericEngine_FWD_DEFINED__ */
-
-
-#ifndef __LgKeymanHandler_FWD_DEFINED__
-#define __LgKeymanHandler_FWD_DEFINED__
-
-#ifdef __cplusplus
-typedef class LgKeymanHandler LgKeymanHandler;
-#else
-typedef struct LgKeymanHandler LgKeymanHandler;
-#endif /* __cplusplus */
-
-#endif 	/* __LgKeymanHandler_FWD_DEFINED__ */
-
-
-#ifndef __LgIcuConverterEnumerator_FWD_DEFINED__
-#define __LgIcuConverterEnumerator_FWD_DEFINED__
-
-#ifdef __cplusplus
-typedef class LgIcuConverterEnumerator LgIcuConverterEnumerator;
-#else
-typedef struct LgIcuConverterEnumerator LgIcuConverterEnumerator;
-#endif /* __cplusplus */
-
-#endif 	/* __LgIcuConverterEnumerator_FWD_DEFINED__ */
-
-
-#ifndef __LgIcuTransliteratorEnumerator_FWD_DEFINED__
-#define __LgIcuTransliteratorEnumerator_FWD_DEFINED__
-
-#ifdef __cplusplus
-typedef class LgIcuTransliteratorEnumerator LgIcuTransliteratorEnumerator;
-#else
-typedef struct LgIcuTransliteratorEnumerator LgIcuTransliteratorEnumerator;
-#endif /* __cplusplus */
-
-#endif 	/* __LgIcuTransliteratorEnumerator_FWD_DEFINED__ */
-
-
-#ifndef __LgIcuResourceBundle_FWD_DEFINED__
-#define __LgIcuResourceBundle_FWD_DEFINED__
-
-#ifdef __cplusplus
-typedef class LgIcuResourceBundle LgIcuResourceBundle;
-#else
-typedef struct LgIcuResourceBundle LgIcuResourceBundle;
-#endif /* __cplusplus */
-
-#endif 	/* __LgIcuResourceBundle_FWD_DEFINED__ */
-
-
-#ifndef __LgIcuLocaleEnumerator_FWD_DEFINED__
-#define __LgIcuLocaleEnumerator_FWD_DEFINED__
-
-#ifdef __cplusplus
-typedef class LgIcuLocaleEnumerator LgIcuLocaleEnumerator;
-#else
-typedef struct LgIcuLocaleEnumerator LgIcuLocaleEnumerator;
-#endif /* __cplusplus */
-
-#endif 	/* __LgIcuLocaleEnumerator_FWD_DEFINED__ */
 
 
 /* header files for imported files */
@@ -696,6 +282,13 @@ extern RPC_IF_HANDLE __MIDL_itf_FwKernelTlb_0000_0000_v0_0_s_ifspec;
 
 
 
+
+
+
+typedef int HVO;
+
+typedef int PropTag;
+
 typedef /* [v1_enum] */ 
 enum UndoResult
     {
@@ -706,6 +299,26 @@ enum UndoResult
     } 	UndoResult;
 
 GENERIC_DECLARE_SMART_INTERFACE_PTR(
+ISimpleInit
+,
+6433D19E-2DA2-4041-B202-DB118EE1694D
+);
+GENERIC_DECLARE_SMART_INTERFACE_PTR(
+ICheckWord
+,
+69F4D944-C786-47EC-94F7-15193EED6758
+);
+GENERIC_DECLARE_SMART_INTERFACE_PTR(
+IGetSpellChecker
+,
+F0A60670-D280-45EA-A5C5-F0B84C027EFC
+);
+GENERIC_DECLARE_SMART_INTERFACE_PTR(
+IVwNotifyChange
+,
+6C456541-C2B6-11d3-8078-0000C0FB81B5
+);
+GENERIC_DECLARE_SMART_INTERFACE_PTR(
 IUndoAction
 ,
 B831F535-0D5F-42c8-BF9F-7F5ECA2C4657
@@ -713,18 +326,44 @@ B831F535-0D5F-42c8-BF9F-7F5ECA2C4657
 GENERIC_DECLARE_SMART_INTERFACE_PTR(
 IActionHandler
 ,
-0F8EA3BE-C982-40f8-B674-25B8482EB222
+7E8BC421-4CB2-4CF9-8C4C-73A5FD87CA7A
 );
 ATTACH_GUID_TO_CLASS(class,
-6A46D810-7F14-4151-80F5-0B13FFC1F917
+CF0F1C0B-0E44-4C1E-9912-2048ED12C2B4
 ,
 ActionHandler
 );
+GENERIC_DECLARE_SMART_INTERFACE_PTR(
+ISilDataAccess
+,
+26E6E70E-53EB-4372-96F1-0F4707CCD1EB
+);
+typedef /* [v1_enum] */ 
+enum FieldSource
+    {
+        kModel	= 0,
+        kCustom	= 1,
+        kVirtual	= 2
+    } 	FieldSource;
+
 GENERIC_DECLARE_SMART_INTERFACE_PTR(
 IFwMetaDataCache
 ,
 EDBB1DED-7065-4b56-A262-746453835451
 );
+GENERIC_DECLARE_SMART_INTERFACE_PTR(
+IStructuredTextDataAccess
+,
+A2A4F9FA-D4E8-4bfb-B6B7-5F45DAF2DC0C
+);
+typedef /* [v1_enum] */ 
+enum PropChangeType
+    {
+        kpctNotifyMeThenAll	= 0,
+        kpctNotifyAll	= ( kpctNotifyMeThenAll + 1 ) ,
+        kpctNotifyAllButMe	= ( kpctNotifyAll + 1 ) 
+    } 	PropChangeType;
+
 typedef /* [v1_enum] */ 
 enum CrtReportType
     {
@@ -743,22 +382,11 @@ IDebugReport
 ,
 3D6A0880-D17D-4e4a-9DE9-861A85CA4046
 );
-ATTACH_GUID_TO_CLASS(class,
-24636FD1-DB8D-4b2c-B4C0-44C2592CA482
-,
-DebugReport
-);
-GENERIC_DECLARE_SMART_INTERFACE_PTR(
-IUndoGrouper
-,
-C38348D3-392C-4e02-BD50-A01DC4189E1D
-);
 GENERIC_DECLARE_SMART_INTERFACE_PTR(
 IComDisposable
 ,
 CA9AAF91-4C34-4c6a-8E07-97C1A7B3486A
 );
-
 
 
 
@@ -834,6 +462,7 @@ enum FwTextPropType
         ktptTabList	= 4,
         ktptTags	= 5,
         ktptObjData	= 6,
+        ktptCustomBullet	= 7,
         ktptRightToLeft	= 128,
         ktptDirectionDepth	= 129,
         ktptFontVariations	= 130,
@@ -1026,32 +655,32 @@ typedef struct TsRunInfo
 GENERIC_DECLARE_SMART_INTERFACE_PTR(
 ITsString
 ,
-295B2E11-B149-49C5-9BE9-9F46185609AA
+321B7BB3-29AF-41D1-93DE-4A11BF386C82
 );
 GENERIC_DECLARE_SMART_INTERFACE_PTR(
 ITsTextProps
 ,
-4FA0B99A-5A56-41A4-BE8B-B89BC62251A5
+9B804BE2-0F75-4182-AC97-77F477546AB0
 );
 GENERIC_DECLARE_SMART_INTERFACE_PTR(
 ITsStrFactory
 ,
-C10EA417-8317-4048-AC90-103F8BDFB325
+721A8D21-9900-4CB0-B4C0-9380A23140E3
 );
 GENERIC_DECLARE_SMART_INTERFACE_PTR(
 ITsPropsFactory
 ,
-8DCE56A6-CFF1-4402-95FE-2B574912B54E
+FF3D947F-1D35-487B-A769-5B6C68722054
 );
 GENERIC_DECLARE_SMART_INTERFACE_PTR(
 ITsStrBldr
 ,
-F1EF76E6-BE04-11d3-8D9A-005004DEFEC4
+71D84C4A-10A2-4A7C-B58C-D01386DAE5F7
 );
 GENERIC_DECLARE_SMART_INTERFACE_PTR(
 ITsIncStrBldr
 ,
-F1EF76E7-BE04-11d3-8D9A-005004DEFEC4
+87ECD3CD-6011-485F-8651-DBA0B79245AF
 );
 GENERIC_DECLARE_SMART_INTERFACE_PTR(
 ITsPropsBldr
@@ -1063,118 +692,38 @@ ITsMultiString
 ,
 DD409520-C212-11d3-9BB7-00400541F9E9
 );
-ATTACH_GUID_TO_CLASS(class,
-F1EF76E9-BE04-11d3-8D9A-005004DEFEC4
+typedef /* [v1_enum] */ 
+enum StyleType
+    {
+        kstParagraph	= 0,
+        kstCharacter	= ( kstParagraph + 1 ) ,
+        kstLim	= ( kstCharacter + 1 ) 
+    } 	StyleType;
+
+typedef /* [v1_enum] */ 
+enum VwBulNum
+    {
+        kvbnNone	= 0,
+        kvbnNumberBase	= 10,
+        kvbnArabic	= kvbnNumberBase,
+        kvbnRomanUpper	= ( kvbnArabic + 1 ) ,
+        kvbnRomanLower	= ( kvbnRomanUpper + 1 ) ,
+        kvbnLetterUpper	= ( kvbnRomanLower + 1 ) ,
+        kvbnLetterLower	= ( kvbnLetterUpper + 1 ) ,
+        kvbnArabic01	= ( kvbnLetterLower + 1 ) ,
+        kvbnNumberMax	= ( kvbnArabic01 + 1 ) ,
+        kvbnBulletBase	= 100,
+        kvbnBullet	= kvbnBulletBase,
+        kvbnBulletMax	= ( kvbnBulletBase + 100 ) 
+    } 	VwBulNum;
+
+GENERIC_DECLARE_SMART_INTERFACE_PTR(
+IVwStylesheet
 ,
-TsStrFactory
-);
-ATTACH_GUID_TO_CLASS(class,
-F1EF76EA-BE04-11d3-8D9A-005004DEFEC4
-,
-TsPropsFactory
-);
-ATTACH_GUID_TO_CLASS(class,
-F1EF76EB-BE04-11d3-8D9A-005004DEFEC4
-,
-TsStrBldr
-);
-ATTACH_GUID_TO_CLASS(class,
-F1EF76EC-BE04-11d3-8D9A-005004DEFEC4
-,
-TsIncStrBldr
-);
-ATTACH_GUID_TO_CLASS(class,
-F1EF76ED-BE04-11d3-8D9A-005004DEFEC4
-,
-TsPropsBldr
-);
-ATTACH_GUID_TO_CLASS(class,
-7A1B89C0-C2D6-11d3-9BB7-00400541F9E9
-,
-TsMultiString
+D77C0DBC-C7BC-441d-9587-1E3664E1BCD3
 );
 
-
-
-
-
-typedef /* [v1_enum] */ 
-enum LgLineBreak
-    {
-        klbNoBreak	= 0,
-        klbWsBreak	= 10,
-        klbWordBreak	= 15,
-        klbGoodBreak	= 19,
-        klbHyphenBreak	= 20,
-        klbLetterBreak	= 30,
-        klbClipBreak	= 40
-    } 	LgLineBreak;
-
-typedef /* [v1_enum] */ 
-enum LgLineBreakStatus
-    {
-        kflbsBrk	= 0x1,
-        kflbsSpace	= 0x2,
-        kflbsBrkL	= 0x4
-    } 	LgLineBreakStatus;
-
-typedef /* [v1_enum] */ 
-enum LgIPDrawMode
-    {
-        kdmNormal	= 0,
-        kdmSplitPrimary	= ( kdmNormal + 1 ) ,
-        kdmSplitSecondary	= ( kdmSplitPrimary + 1 ) 
-    } 	LgIPDrawMode;
-
-typedef /* [v1_enum] */ 
-enum LgIpValidResult
-    {
-        kipvrOK	= 0,
-        kipvrBad	= ( kipvrOK + 1 ) ,
-        kipvrUnknown	= ( kipvrBad + 1 ) 
-    } 	LgIpValidResult;
-
-typedef /* [v1_enum] */ 
-enum LgTrailingWsHandling
-    {
-        ktwshAll	= 0,
-        ktwshNoWs	= ( ktwshAll + 1 ) ,
-        ktwshOnlyWs	= ( ktwshNoWs + 1 ) 
-    } 	LgTrailingWsHandling;
-
-typedef /* [v1_enum] */ 
-enum LgUtfForm
-    {
-        kutf8	= 0,
-        kutf16	= ( kutf8 + 1 ) ,
-        kutf32	= ( kutf16 + 1 ) 
-    } 	LgUtfForm;
-
-typedef /* [v1_enum] */ 
-enum VwGenericFontNames
-    {
-        kvgfnCustom	= 0,
-        kvgfnSerif	= ( kvgfnCustom + 1 ) ,
-        kvgfnSansSerif	= ( kvgfnSerif + 1 ) ,
-        kvgfnMonospace	= ( kvgfnSansSerif + 1 ) 
-    } 	VwGenericFontNames;
-
-typedef /* [v1_enum] */ 
-enum VwFontStyle
-    {
-        kfsNormal	= 0,
-        kfsItalic	= ( kfsNormal + 1 ) ,
-        kfsOblique	= ( kfsItalic + 1 ) 
-    } 	VwFontStyle;
-
-typedef /* [v1_enum] */ 
-enum VwTextUnderline
-    {
-        ktuNoUnderline	= 0,
-        ktuSingleUnderline	= ( ktuNoUnderline + 1 ) 
-    } 	VwTextUnderline;
-
-typedef /* [public][public][public][public][public][public] */ struct __MIDL___MIDL_itf_FwKernelTlb_0001_0087_0001
+typedef /* [public][public] */ struct __MIDL___MIDL_itf_FwKernelTlb_0001_0086_0001
     {
     COLORREF clrFore;
     COLORREF clrBack;
@@ -1192,1093 +741,18 @@ typedef /* [public][public][public][public][public][public] */ struct __MIDL___M
     OLECHAR szFontVar[ 64 ];
     } 	LgCharRenderProps;
 
-typedef 
-enum ScriptDirCode
-    {
-        kfsdcNone	= 0,
-        kfsdcHorizLtr	= 1,
-        kfsdcHorizRtl	= 2,
-        kfsdcVertFromLeft	= 4,
-        kfsdcVertFromRight	= 8
-    } 	ScriptDirCode;
-
-typedef 
-enum JustGlyphAttr
-    {
-        kjgatStretch	= 1,
-        kjgatShrink	= ( kjgatStretch + 1 ) ,
-        kjgatWeight	= ( kjgatShrink + 1 ) ,
-        kjgatStep	= ( kjgatWeight + 1 ) ,
-        kjgatChunk	= ( kjgatStep + 1 ) ,
-        kjgatWidth	= ( kjgatChunk + 1 ) ,
-        kjgatBreak	= ( kjgatWidth + 1 ) ,
-        kjgatStretchInSteps	= ( kjgatBreak + 1 ) ,
-        kjgatWidthInSteps	= ( kjgatStretchInSteps + 1 ) ,
-        kjgatAdvWidth	= ( kjgatWidthInSteps + 1 ) ,
-        kjgatAdvHeight	= ( kjgatAdvWidth + 1 ) ,
-        kjgatBbLeft	= ( kjgatAdvHeight + 1 ) ,
-        kjgatBbRight	= ( kjgatBbLeft + 1 ) ,
-        kjgatBbTop	= ( kjgatBbRight + 1 ) ,
-        kjgatBbBottom	= ( kjgatBbTop + 1 ) 
-    } 	JustGlyphAttr;
-
-typedef /* [public][public] */ struct __MIDL___MIDL_itf_FwKernelTlb_0001_0087_0002
-    {
-    ScriptDirCode sdcPara;
-    ScriptDirCode sdcOuter;
-    } 	LgParaRenderProps;
-
-typedef /* [public][public] */ struct __MIDL___MIDL_itf_FwKernelTlb_0001_0087_0003
-    {
-    OLECHAR glyphIndex;
-    int x;
-    int y;
-    } 	GlyphInfo;
-
-GENERIC_DECLARE_SMART_INTERFACE_PTR(
-ISimpleInit
-,
-6433D19E-2DA2-4041-B202-DB118EE1694D
-);
-GENERIC_DECLARE_SMART_INTERFACE_PTR(
-IVwGraphics
-,
-F7233278-EA87-4FC9-83E2-CB7CC45DEBE7
-);
-GENERIC_DECLARE_SMART_INTERFACE_PTR(
-IVwGraphicsWin32
-,
-C955E295-A259-47D4-8158-4C7A3539D35E
-);
-ATTACH_GUID_TO_CLASS(class,
-D888DB98-83A9-4592-AAD2-F18F6F74AB87
-,
-VwGraphicsWin32
-);
-GENERIC_DECLARE_SMART_INTERFACE_PTR(
-IVwTextSource
-,
-6C0465AC-17C5-4C9C-8AF3-62221F2F7707
-);
-GENERIC_DECLARE_SMART_INTERFACE_PTR(
-IVwJustifier
-,
-22D5E030-5239-4924-BF1B-6B4F2CBBABA5
-);
-GENERIC_DECLARE_SMART_INTERFACE_PTR(
-ILgSegment
-,
-3818E245-6A0B-45A7-A5D6-52694931279E
-);
-typedef /* [public][public][v1_enum] */ 
-enum __MIDL___MIDL_itf_FwKernelTlb_0001_0094_0001
-    {
-        kestNoMore	= 0,
-        kestMoreLines	= ( kestNoMore + 1 ) ,
-        kestHardBreak	= ( kestMoreLines + 1 ) ,
-        kestBadBreak	= ( kestHardBreak + 1 ) ,
-        kestOkayBreak	= ( kestBadBreak + 1 ) ,
-        kestWsBreak	= ( kestOkayBreak + 1 ) ,
-        kestMoreWhtsp	= ( kestWsBreak + 1 ) ,
-        kestNothingFit	= ( kestMoreWhtsp + 1 ) 
-    } 	LgEndSegmentType;
-
-GENERIC_DECLARE_SMART_INTERFACE_PTR(
-IRenderEngine
-,
-7F4B8F79-2A40-408C-944B-848B14D65D23
-);
-ATTACH_GUID_TO_CLASS(class,
-6EACAB83-6BDC-49CA-8F66-8C116D3EEBD8
-,
-RomRenderEngine
-);
-ATTACH_GUID_TO_CLASS(class,
-1287735C-3CAD-41CD-986C-39D7C0DF0314
-,
-UniscribeEngine
-);
-ATTACH_GUID_TO_CLASS(class,
-62EBEEBF-14EA-43D9-A27A-EF013E14145A
-,
-GraphiteEngine
-);
-GENERIC_DECLARE_SMART_INTERFACE_PTR(
-IRenderingFeatures
-,
-75AFE861-3C17-4F16-851F-A36F5FFABCC6
-);
-GENERIC_DECLARE_SMART_INTERFACE_PTR(
-IJustifyingRenderer
-,
-1141174B-923F-4C43-BA43-8A326B76A3F2
-);
-
-
-
-
-
-
-
-
-
-
-
-typedef /* [v1_enum] */ 
-enum LgGeneralCharCategory
-    {
-        kccLu	= 0,
-        kccLl	= ( kccLu + 1 ) ,
-        kccLt	= ( kccLl + 1 ) ,
-        kccLm	= ( kccLt + 1 ) ,
-        kccLo	= ( kccLm + 1 ) ,
-        kccMn	= ( kccLo + 1 ) ,
-        kccMc	= ( kccMn + 1 ) ,
-        kccMe	= ( kccMc + 1 ) ,
-        kccNd	= ( kccMe + 1 ) ,
-        kccNl	= ( kccNd + 1 ) ,
-        kccNo	= ( kccNl + 1 ) ,
-        kccZs	= ( kccNo + 1 ) ,
-        kccZl	= ( kccZs + 1 ) ,
-        kccZp	= ( kccZl + 1 ) ,
-        kccCc	= ( kccZp + 1 ) ,
-        kccCf	= ( kccCc + 1 ) ,
-        kccCs	= ( kccCf + 1 ) ,
-        kccCo	= ( kccCs + 1 ) ,
-        kccCn	= ( kccCo + 1 ) ,
-        kccPc	= ( kccCn + 1 ) ,
-        kccPd	= ( kccPc + 1 ) ,
-        kccPs	= ( kccPd + 1 ) ,
-        kccPe	= ( kccPs + 1 ) ,
-        kccPi	= ( kccPe + 1 ) ,
-        kccPf	= ( kccPi + 1 ) ,
-        kccPo	= ( kccPf + 1 ) ,
-        kccSm	= ( kccPo + 1 ) ,
-        kccSc	= ( kccSm + 1 ) ,
-        kccSk	= ( kccSc + 1 ) ,
-        kccSo	= ( kccSk + 1 ) 
-    } 	LgGeneralCharCategory;
-
-typedef /* [v1_enum] */ 
-enum LgBidiCategory
-    {
-        kbicL	= 0,
-        kbicLRE	= ( kbicL + 1 ) ,
-        kbicLRO	= ( kbicLRE + 1 ) ,
-        kbicR	= ( kbicLRO + 1 ) ,
-        kbicAL	= ( kbicR + 1 ) ,
-        kbicRLE	= ( kbicAL + 1 ) ,
-        kbicRLO	= ( kbicRLE + 1 ) ,
-        kbicPDF	= ( kbicRLO + 1 ) ,
-        kbicEN	= ( kbicPDF + 1 ) ,
-        kbicES	= ( kbicEN + 1 ) ,
-        kbicET	= ( kbicES + 1 ) ,
-        kbicAN	= ( kbicET + 1 ) ,
-        kbicCS	= ( kbicAN + 1 ) ,
-        kbicNSM	= ( kbicCS + 1 ) ,
-        kbicBN	= ( kbicNSM + 1 ) ,
-        kbicB	= ( kbicBN + 1 ) ,
-        kbicS	= ( kbicB + 1 ) ,
-        kbicWS	= ( kbicS + 1 ) ,
-        kbicON	= ( kbicWS + 1 ) 
-    } 	LgBidiCategory;
-
-typedef /* [v1_enum] */ 
-enum LgLBP
-    {
-        klbpAI	= 0,
-        klbpAL	= ( klbpAI + 1 ) ,
-        klbpB2	= ( klbpAL + 1 ) ,
-        klbpBA	= ( klbpB2 + 1 ) ,
-        klbpBB	= ( klbpBA + 1 ) ,
-        klbpBK	= ( klbpBB + 1 ) ,
-        klbpCB	= ( klbpBK + 1 ) ,
-        klbpCL	= ( klbpCB + 1 ) ,
-        klbpCM	= ( klbpCL + 1 ) ,
-        klbpCR	= ( klbpCM + 1 ) ,
-        klbpEX	= ( klbpCR + 1 ) ,
-        klbpGL	= ( klbpEX + 1 ) ,
-        klbpHY	= ( klbpGL + 1 ) ,
-        klbpID	= ( klbpHY + 1 ) ,
-        klbpIN	= ( klbpID + 1 ) ,
-        klbpIS	= ( klbpIN + 1 ) ,
-        klbpLF	= ( klbpIS + 1 ) ,
-        klbpNS	= ( klbpLF + 1 ) ,
-        klbpNU	= ( klbpNS + 1 ) ,
-        klbpOP	= ( klbpNU + 1 ) ,
-        klbpPO	= ( klbpOP + 1 ) ,
-        klbpPR	= ( klbpPO + 1 ) ,
-        klbpQU	= ( klbpPR + 1 ) ,
-        klbpSA	= ( klbpQU + 1 ) ,
-        klbpSG	= ( klbpSA + 1 ) ,
-        klbpSP	= ( klbpSG + 1 ) ,
-        klbpSY	= ( klbpSP + 1 ) ,
-        klbpXX	= ( klbpSY + 1 ) ,
-        klbpZW	= ( klbpXX + 1 ) 
-    } 	LgLBP;
-
-typedef /* [v1_enum] */ 
-enum LgDecompMapTag
-    {
-        kdtNoTag	= 0,
-        kdtFont	= ( kdtNoTag + 1 ) ,
-        kdtNoBreak	= ( kdtFont + 1 ) ,
-        kdtInitial	= ( kdtNoBreak + 1 ) ,
-        kdtMedial	= ( kdtInitial + 1 ) ,
-        kdtFinal	= ( kdtMedial + 1 ) ,
-        kdtIsolated	= ( kdtFinal + 1 ) ,
-        kdtCircle	= ( kdtIsolated + 1 ) ,
-        kdtSuper	= ( kdtCircle + 1 ) ,
-        kdtSub	= ( kdtSuper + 1 ) ,
-        kdtVertical	= ( kdtSub + 1 ) ,
-        kdtWide	= ( kdtVertical + 1 ) ,
-        kdtNarrow	= ( kdtWide + 1 ) ,
-        kdtSmall	= ( kdtNarrow + 1 ) ,
-        kdtSquare	= ( kdtSmall + 1 ) ,
-        kdtFraction	= ( kdtSquare + 1 ) ,
-        kdtCompat	= ( kdtFraction + 1 ) 
-    } 	LgDecompMapTag;
-
-typedef /* [v1_enum] */ 
-enum LgXMLTag
-    {
-        kxmlInvalid	= 0,
-        kxmlChardefs	= ( kxmlInvalid + 1 ) ,
-        kxmlDef	= ( kxmlChardefs + 1 ) ,
-        kxmlUdata	= ( kxmlDef + 1 ) ,
-        kxmlLinebrk	= ( kxmlUdata + 1 ) 
-    } 	LgXMLTag;
-
 GENERIC_DECLARE_SMART_INTERFACE_PTR(
 ILgWritingSystem
 ,
-FF923C7E-A7C1-4760-B8E5-7A6D28F4AECB
-);
-typedef /* [v1_enum] */ 
-enum LgCollatingOptions
-    {
-        fcoDefault	= 0,
-        fcoIgnoreCase	= 1,
-        fcoDontIgnoreVariant	= 2,
-        fcoLim	= ( fcoDontIgnoreVariant + 1 ) 
-    } 	LgCollatingOptions;
-
-GENERIC_DECLARE_SMART_INTERFACE_PTR(
-ILgCollatingEngine
-,
-D27A3D8C-D3FE-4E25-9097-8F4A1FB30361
-);
-GENERIC_DECLARE_SMART_INTERFACE_PTR(
-ILgCharacterPropertyEngine
-,
-890C5B18-6E95-438E-8ADE-A4FFADDF0684
-);
-GENERIC_DECLARE_SMART_INTERFACE_PTR(
-ILgIcuCharPropEngine
-,
-E8689492-7622-427b-8518-6339294FD227
-);
-GENERIC_DECLARE_SMART_INTERFACE_PTR(
-ILgSearchEngine
-,
-09FCA8D5-5BF6-4BFF-A317-E0126410D79A
-);
-GENERIC_DECLARE_SMART_INTERFACE_PTR(
-ILgStringConverter
-,
-8BE2C911-6A81-48B5-A27F-B8CE63983082
-);
-GENERIC_DECLARE_SMART_INTERFACE_PTR(
-ILgTokenizer
-,
-577C6DA1-CFC1-4AFB-82B2-AF818EC2FE9F
-);
-typedef /* [v1_enum] */ 
-enum LgSpellCheckOptions
-    {
-        fsplcNil	= 0,
-        fsplcSuggestFromUserDict	= 0x1,
-        fsplcIgnoreAllCaps	= 0x2,
-        fsplcIgnoreMixedDigits	= 0x4,
-        fsplcIgnoreRomanNumerals	= 0x8,
-        fsplcFindUncappedSentences	= 0x10,
-        fsplcFindMissingSpaces	= 0x20,
-        fsplcFindRepeatWord	= 0x40,
-        fsplcFindExtraSpaces	= 0x80,
-        fsplcFindSpacesBeforePunc	= 0x100,
-        fsplcFindSpacesAfterPunc	= 0x200,
-        fsplcFindInitialNumerals	= 0x800,
-        fsplcQuickSuggest	= 0x2000,
-        fsplcUseAllOpenUdr	= 0x4000,
-        fsplcSglStepSugg	= 0x10000,
-        fsplcIgnoreSingleLetter	= 0x20000
-    } 	LgSpellCheckOptions;
-
-typedef /* [v1_enum] */ 
-enum LgSpellCheckResults
-    {
-        scrsNoErrors	= 0,
-        scrsUnknownInputWord	= 1,
-        scrsReturningChangeAlways	= 2,
-        scrsReturningChangeOnce	= 3,
-        scrsInvalidHyphenation	= 4,
-        scrsErrorCapitalization	= 5,
-        scrsWordConsideredAbbreviation	= 6,
-        scrsHyphChangesSpelling	= 7,
-        scrsNoMoreSuggestions	= 8,
-        scrsMoreInfoThanBufferCouldHold	= 9,
-        scrsNoSentenceStartCap	= 10,
-        scrsRepeatWord	= 11,
-        scrsExtraSpaces	= 12,
-        scrsMissingSpace	= 13,
-        scrsInitialNumeral	= 14
-    } 	LgSpellCheckResults;
-
-GENERIC_DECLARE_SMART_INTERFACE_PTR(
-ILgSpellChecker
-,
-E3661AF5-26C6-4907-9243-610DAD84D9D4
-);
-GENERIC_DECLARE_SMART_INTERFACE_PTR(
-ILgSpellCheckFactory
-,
-9F9298F5-FD41-44B0-83BA-BED9F56CF974
-);
-GENERIC_DECLARE_SMART_INTERFACE_PTR(
-ILgNumericEngine
-,
-CBBF35E1-CE39-4EEC-AEBD-5B4AAAA52B6C
+9C0513AB-1AB9-4741-9C49-FA65FA83B7CC
 );
 GENERIC_DECLARE_SMART_INTERFACE_PTR(
 ILgWritingSystemFactory
 ,
-22376578-BFEB-4c46-8D72-C9154890DD16
-);
-GENERIC_DECLARE_SMART_INTERFACE_PTR(
-ILgKeymanHandler
-,
-3F42144B-509F-4def-8DD3-6D8D26677001
-);
-GENERIC_DECLARE_SMART_INTERFACE_PTR(
-ILgIcuConverterEnumerator
-,
-8E6D558E-8755-4EA1-9FF6-039D375312E9
-);
-GENERIC_DECLARE_SMART_INTERFACE_PTR(
-ILgIcuTransliteratorEnumerator
-,
-50F2492C-6C46-48BA-8B7F-5F04153AB2CC
-);
-GENERIC_DECLARE_SMART_INTERFACE_PTR(
-ILgIcuLocaleEnumerator
-,
-08F649D0-D8AB-447B-AAB6-21F85CFA743C
-);
-GENERIC_DECLARE_SMART_INTERFACE_PTR(
-ILgIcuResourceBundle
-,
-C243C72A-0D15-44D9-ABCB-A6E875A7659A
-);
-GENERIC_DECLARE_SMART_INTERFACE_PTR(
-IRegexMatcher
-,
-6C62CCF0-4EE1-493C-8092-319B6CFBEEBC
-);
-ATTACH_GUID_TO_CLASS(class,
-13D5C6D3-39D9-4BDA-A3F8-A5CAF6A6940A
-,
-RegexMatcherWrapper
-);
-ATTACH_GUID_TO_CLASS(class,
-E361F805-C902-4306-A5D8-F7802B0E7365
-,
-LgSystemCollater
-);
-ATTACH_GUID_TO_CLASS(class,
-0D9900D2-1693-481F-AA70-7EA64F264EC4
-,
-LgUnicodeCollater
-);
-ATTACH_GUID_TO_CLASS(class,
-30D75676-A10F-48FE-9627-EBF4061EA49D
-,
-LgIcuCharPropEngine
-);
-ATTACH_GUID_TO_CLASS(class,
-7CE7CE94-AC47-42A5-823F-2F8EF51A9007
-,
-LgCPWordTokenizer
-);
-ATTACH_GUID_TO_CLASS(class,
-818445E2-0282-4688-8BB7-147FAACFF73A
-,
-LgWfiSpellChecker
-);
-ATTACH_GUID_TO_CLASS(class,
-5CF96DA5-299E-4FC5-A990-2D2FCEE7834D
-,
-LgMSWordSpellChecker
-);
-ATTACH_GUID_TO_CLASS(class,
-FF22A7AB-223E-4D04-B648-0AE40588261D
-,
-LgNumericEngine
-);
-ATTACH_GUID_TO_CLASS(class,
-69ACA99C-F852-4C2C-9B5F-FF83238A17A5
-,
-LgKeymanHandler
-);
-ATTACH_GUID_TO_CLASS(class,
-9E729461-F80D-4796-BA17-086BC61907F1
-,
-LgIcuConverterEnumerator
-);
-ATTACH_GUID_TO_CLASS(class,
-3F1FD0A4-B2B1-4589-BC82-9CEF5BA84F4E
-,
-LgIcuTransliteratorEnumerator
-);
-ATTACH_GUID_TO_CLASS(class,
-0DD7FC1A-AB97-4A39-882C-269760D86619
-,
-LgIcuResourceBundle
-);
-ATTACH_GUID_TO_CLASS(class,
-E426656C-64F7-480E-92F4-D41A7BFFD066
-,
-LgIcuLocaleEnumerator
+CC2BD14F-ACCE-4246-9192-9C29441A5A09
 );
 
 #define LIBID_FwKernelLib __uuidof(FwKernelLib)
-
-#ifndef __ITsString_INTERFACE_DEFINED__
-#define __ITsString_INTERFACE_DEFINED__
-
-/* interface ITsString */
-/* [unique][object][uuid] */ 
-
-
-#define IID_ITsString __uuidof(ITsString)
-
-#if defined(__cplusplus) && !defined(CINTERFACE)
-    
-    MIDL_INTERFACE("295B2E11-B149-49C5-9BE9-9F46185609AA")
-    ITsString : public IUnknown
-    {
-    public:
-        virtual /* [id][propget] */ HRESULT STDMETHODCALLTYPE get_Text( 
-            /* [retval][out] */ BSTR *pbstr) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_Length( 
-            /* [retval][out] */ int *pcch) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_RunCount( 
-            /* [retval][out] */ int *pcrun) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_RunAt( 
-            /* [in] */ int ich,
-            /* [retval][out] */ int *pirun) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_MinOfRun( 
-            /* [in] */ int irun,
-            /* [retval][out] */ int *pichMin) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_LimOfRun( 
-            /* [in] */ int irun,
-            /* [retval][out] */ int *pichLim) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE GetBoundsOfRun( 
-            /* [in] */ int irun,
-            /* [out] */ int *pichMin,
-            /* [out] */ int *pichLim) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE FetchRunInfoAt( 
-            /* [in] */ int ich,
-            /* [out] */ TsRunInfo *ptri,
-            /* [retval][out] */ ITsTextProps **ppttp) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE FetchRunInfo( 
-            /* [in] */ int irun,
-            /* [out] */ TsRunInfo *ptri,
-            /* [retval][out] */ ITsTextProps **ppttp) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_RunText( 
-            /* [in] */ int irun,
-            /* [retval][out] */ BSTR *pbstr) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE GetChars( 
-            /* [in] */ int ichMin,
-            /* [in] */ int ichLim,
-            /* [retval][out] */ BSTR *pbstr) = 0;
-        
-        virtual /* [local][restricted] */ HRESULT STDMETHODCALLTYPE FetchChars( 
-            /* [in] */ int ichMin,
-            /* [in] */ int ichLim,
-            /* [size_is][out][in] */ OLECHAR *prgch) = 0;
-        
-        virtual /* [local][restricted] */ HRESULT STDMETHODCALLTYPE LockText( 
-            /* [string][out] */ const OLECHAR **pprgch,
-            /* [out] */ int *pcch) = 0;
-        
-        virtual /* [local][restricted] */ HRESULT STDMETHODCALLTYPE UnlockText( 
-            /* [string][in] */ const OLECHAR *prgch) = 0;
-        
-        virtual /* [local][restricted] */ HRESULT STDMETHODCALLTYPE LockRun( 
-            /* [in] */ int irun,
-            /* [string][out] */ const OLECHAR **pprgch,
-            /* [out] */ int *pcch) = 0;
-        
-        virtual /* [local][restricted] */ HRESULT STDMETHODCALLTYPE UnlockRun( 
-            /* [in] */ int irun,
-            /* [string][in] */ const OLECHAR *prgch) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_PropertiesAt( 
-            /* [in] */ int ich,
-            /* [retval][out] */ ITsTextProps **ppttp) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_Properties( 
-            /* [in] */ int irun,
-            /* [retval][out] */ ITsTextProps **ppttp) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE GetBldr( 
-            /* [retval][out] */ ITsStrBldr **pptsb) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE GetIncBldr( 
-            /* [retval][out] */ ITsIncStrBldr **pptisb) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE GetFactoryClsid( 
-            /* [retval][out] */ CLSID *pclsid) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE SerializeFmt( 
-            /* [in] */ IStream *pstrm) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE SerializeFmtRgb( 
-            /* [size_is][out] */ BYTE *prgb,
-            /* [in] */ int cbMax,
-            /* [retval][out] */ int *pcbNeeded) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE Equals( 
-            /* [in] */ ITsString *ptss,
-            /* [retval][out] */ ComBool *pfEqual) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE WriteAsXml( 
-            /* [in] */ IStream *pstrm,
-            /* [in] */ ILgWritingSystemFactory *pwsf,
-            /* [in] */ int cchIndent,
-            /* [in] */ int ws,
-            /* [in] */ ComBool fWriteObjData) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE GetXmlString( 
-            /* [in] */ ILgWritingSystemFactory *pwsf,
-            /* [in] */ int cchIndent,
-            /* [in] */ int ws,
-            /* [in] */ ComBool fWriteObjData,
-            /* [retval][out] */ BSTR *pbstr) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_IsNormalizedForm( 
-            /* [in] */ FwNormalizationMode nm,
-            /* [retval][out] */ ComBool *pfRet) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_NormalizedForm( 
-            /* [in] */ FwNormalizationMode nm,
-            /* [retval][out] */ ITsString **pptssRet) = 0;
-        
-        virtual /* [local][restricted] */ HRESULT STDMETHODCALLTYPE NfdAndFixOffsets( 
-            /* [out] */ ITsString **pptssRet,
-            /* [size_is][in] */ int **prgpichOffsetsToFix,
-            /* [in] */ int cichOffsetsToFix) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE GetSubstring( 
-            /* [in] */ int ichMin,
-            /* [in] */ int ichLim,
-            /* [retval][out] */ ITsString **pptssRet) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE WriteAsXmlExtended( 
-            /* [in] */ IStream *pstrm,
-            /* [in] */ ILgWritingSystemFactory *pwsf,
-            /* [in] */ int cchIndent,
-            /* [in] */ int ws,
-            /* [in] */ ComBool fWriteObjData,
-            /* [in] */ ComBool fUseRFC4646) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE get_StringProperty( 
-            /* [in] */ int iRun,
-            /* [in] */ int tpt,
-            /* [retval][out] */ BSTR *pbstr) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE get_StringPropertyAt( 
-            /* [in] */ int ich,
-            /* [in] */ int tpt,
-            /* [retval][out] */ BSTR *pbstr) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE get_WritingSystem( 
-            /* [in] */ int irun,
-            /* [retval][out] */ int *pws) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE get_WritingSystemAt( 
-            /* [in] */ int ich,
-            /* [retval][out] */ int *pws) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE get_IsRunOrc( 
-            /* [in] */ int iRun,
-            /* [retval][out] */ ComBool *pfIsOrc) = 0;
-        
-    };
-    
-    
-#else 	/* C style interface */
-
-    typedef struct ITsStringVtbl
-    {
-        BEGIN_INTERFACE
-        
-        HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
-            ITsString * This,
-            /* [in] */ REFIID riid,
-            /* [annotation][iid_is][out] */ 
-            _COM_Outptr_  void **ppvObject);
-        
-        ULONG ( STDMETHODCALLTYPE *AddRef )( 
-            ITsString * This);
-        
-        ULONG ( STDMETHODCALLTYPE *Release )( 
-            ITsString * This);
-        
-        /* [id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_Text )( 
-            ITsString * This,
-            /* [retval][out] */ BSTR *pbstr);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_Length )( 
-            ITsString * This,
-            /* [retval][out] */ int *pcch);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_RunCount )( 
-            ITsString * This,
-            /* [retval][out] */ int *pcrun);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_RunAt )( 
-            ITsString * This,
-            /* [in] */ int ich,
-            /* [retval][out] */ int *pirun);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_MinOfRun )( 
-            ITsString * This,
-            /* [in] */ int irun,
-            /* [retval][out] */ int *pichMin);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_LimOfRun )( 
-            ITsString * This,
-            /* [in] */ int irun,
-            /* [retval][out] */ int *pichLim);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetBoundsOfRun )( 
-            ITsString * This,
-            /* [in] */ int irun,
-            /* [out] */ int *pichMin,
-            /* [out] */ int *pichLim);
-        
-        HRESULT ( STDMETHODCALLTYPE *FetchRunInfoAt )( 
-            ITsString * This,
-            /* [in] */ int ich,
-            /* [out] */ TsRunInfo *ptri,
-            /* [retval][out] */ ITsTextProps **ppttp);
-        
-        HRESULT ( STDMETHODCALLTYPE *FetchRunInfo )( 
-            ITsString * This,
-            /* [in] */ int irun,
-            /* [out] */ TsRunInfo *ptri,
-            /* [retval][out] */ ITsTextProps **ppttp);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_RunText )( 
-            ITsString * This,
-            /* [in] */ int irun,
-            /* [retval][out] */ BSTR *pbstr);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetChars )( 
-            ITsString * This,
-            /* [in] */ int ichMin,
-            /* [in] */ int ichLim,
-            /* [retval][out] */ BSTR *pbstr);
-        
-        /* [local][restricted] */ HRESULT ( STDMETHODCALLTYPE *FetchChars )( 
-            ITsString * This,
-            /* [in] */ int ichMin,
-            /* [in] */ int ichLim,
-            /* [size_is][out][in] */ OLECHAR *prgch);
-        
-        /* [local][restricted] */ HRESULT ( STDMETHODCALLTYPE *LockText )( 
-            ITsString * This,
-            /* [string][out] */ const OLECHAR **pprgch,
-            /* [out] */ int *pcch);
-        
-        /* [local][restricted] */ HRESULT ( STDMETHODCALLTYPE *UnlockText )( 
-            ITsString * This,
-            /* [string][in] */ const OLECHAR *prgch);
-        
-        /* [local][restricted] */ HRESULT ( STDMETHODCALLTYPE *LockRun )( 
-            ITsString * This,
-            /* [in] */ int irun,
-            /* [string][out] */ const OLECHAR **pprgch,
-            /* [out] */ int *pcch);
-        
-        /* [local][restricted] */ HRESULT ( STDMETHODCALLTYPE *UnlockRun )( 
-            ITsString * This,
-            /* [in] */ int irun,
-            /* [string][in] */ const OLECHAR *prgch);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_PropertiesAt )( 
-            ITsString * This,
-            /* [in] */ int ich,
-            /* [retval][out] */ ITsTextProps **ppttp);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_Properties )( 
-            ITsString * This,
-            /* [in] */ int irun,
-            /* [retval][out] */ ITsTextProps **ppttp);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetBldr )( 
-            ITsString * This,
-            /* [retval][out] */ ITsStrBldr **pptsb);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetIncBldr )( 
-            ITsString * This,
-            /* [retval][out] */ ITsIncStrBldr **pptisb);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetFactoryClsid )( 
-            ITsString * This,
-            /* [retval][out] */ CLSID *pclsid);
-        
-        HRESULT ( STDMETHODCALLTYPE *SerializeFmt )( 
-            ITsString * This,
-            /* [in] */ IStream *pstrm);
-        
-        HRESULT ( STDMETHODCALLTYPE *SerializeFmtRgb )( 
-            ITsString * This,
-            /* [size_is][out] */ BYTE *prgb,
-            /* [in] */ int cbMax,
-            /* [retval][out] */ int *pcbNeeded);
-        
-        HRESULT ( STDMETHODCALLTYPE *Equals )( 
-            ITsString * This,
-            /* [in] */ ITsString *ptss,
-            /* [retval][out] */ ComBool *pfEqual);
-        
-        HRESULT ( STDMETHODCALLTYPE *WriteAsXml )( 
-            ITsString * This,
-            /* [in] */ IStream *pstrm,
-            /* [in] */ ILgWritingSystemFactory *pwsf,
-            /* [in] */ int cchIndent,
-            /* [in] */ int ws,
-            /* [in] */ ComBool fWriteObjData);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetXmlString )( 
-            ITsString * This,
-            /* [in] */ ILgWritingSystemFactory *pwsf,
-            /* [in] */ int cchIndent,
-            /* [in] */ int ws,
-            /* [in] */ ComBool fWriteObjData,
-            /* [retval][out] */ BSTR *pbstr);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IsNormalizedForm )( 
-            ITsString * This,
-            /* [in] */ FwNormalizationMode nm,
-            /* [retval][out] */ ComBool *pfRet);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_NormalizedForm )( 
-            ITsString * This,
-            /* [in] */ FwNormalizationMode nm,
-            /* [retval][out] */ ITsString **pptssRet);
-        
-        /* [local][restricted] */ HRESULT ( STDMETHODCALLTYPE *NfdAndFixOffsets )( 
-            ITsString * This,
-            /* [out] */ ITsString **pptssRet,
-            /* [size_is][in] */ int **prgpichOffsetsToFix,
-            /* [in] */ int cichOffsetsToFix);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetSubstring )( 
-            ITsString * This,
-            /* [in] */ int ichMin,
-            /* [in] */ int ichLim,
-            /* [retval][out] */ ITsString **pptssRet);
-        
-        HRESULT ( STDMETHODCALLTYPE *WriteAsXmlExtended )( 
-            ITsString * This,
-            /* [in] */ IStream *pstrm,
-            /* [in] */ ILgWritingSystemFactory *pwsf,
-            /* [in] */ int cchIndent,
-            /* [in] */ int ws,
-            /* [in] */ ComBool fWriteObjData,
-            /* [in] */ ComBool fUseRFC4646);
-        
-        HRESULT ( STDMETHODCALLTYPE *get_StringProperty )( 
-            ITsString * This,
-            /* [in] */ int iRun,
-            /* [in] */ int tpt,
-            /* [retval][out] */ BSTR *pbstr);
-        
-        HRESULT ( STDMETHODCALLTYPE *get_StringPropertyAt )( 
-            ITsString * This,
-            /* [in] */ int ich,
-            /* [in] */ int tpt,
-            /* [retval][out] */ BSTR *pbstr);
-        
-        HRESULT ( STDMETHODCALLTYPE *get_WritingSystem )( 
-            ITsString * This,
-            /* [in] */ int irun,
-            /* [retval][out] */ int *pws);
-        
-        HRESULT ( STDMETHODCALLTYPE *get_WritingSystemAt )( 
-            ITsString * This,
-            /* [in] */ int ich,
-            /* [retval][out] */ int *pws);
-        
-        HRESULT ( STDMETHODCALLTYPE *get_IsRunOrc )( 
-            ITsString * This,
-            /* [in] */ int iRun,
-            /* [retval][out] */ ComBool *pfIsOrc);
-        
-        END_INTERFACE
-    } ITsStringVtbl;
-
-    interface ITsString
-    {
-        CONST_VTBL struct ITsStringVtbl *lpVtbl;
-    };
-
-    
-
-#ifdef COBJMACROS
-
-
-#define ITsString_QueryInterface(This,riid,ppvObject)	\
-    ( (This)->lpVtbl -> QueryInterface(This,riid,ppvObject) ) 
-
-#define ITsString_AddRef(This)	\
-    ( (This)->lpVtbl -> AddRef(This) ) 
-
-#define ITsString_Release(This)	\
-    ( (This)->lpVtbl -> Release(This) ) 
-
-
-#define ITsString_get_Text(This,pbstr)	\
-    ( (This)->lpVtbl -> get_Text(This,pbstr) ) 
-
-#define ITsString_get_Length(This,pcch)	\
-    ( (This)->lpVtbl -> get_Length(This,pcch) ) 
-
-#define ITsString_get_RunCount(This,pcrun)	\
-    ( (This)->lpVtbl -> get_RunCount(This,pcrun) ) 
-
-#define ITsString_get_RunAt(This,ich,pirun)	\
-    ( (This)->lpVtbl -> get_RunAt(This,ich,pirun) ) 
-
-#define ITsString_get_MinOfRun(This,irun,pichMin)	\
-    ( (This)->lpVtbl -> get_MinOfRun(This,irun,pichMin) ) 
-
-#define ITsString_get_LimOfRun(This,irun,pichLim)	\
-    ( (This)->lpVtbl -> get_LimOfRun(This,irun,pichLim) ) 
-
-#define ITsString_GetBoundsOfRun(This,irun,pichMin,pichLim)	\
-    ( (This)->lpVtbl -> GetBoundsOfRun(This,irun,pichMin,pichLim) ) 
-
-#define ITsString_FetchRunInfoAt(This,ich,ptri,ppttp)	\
-    ( (This)->lpVtbl -> FetchRunInfoAt(This,ich,ptri,ppttp) ) 
-
-#define ITsString_FetchRunInfo(This,irun,ptri,ppttp)	\
-    ( (This)->lpVtbl -> FetchRunInfo(This,irun,ptri,ppttp) ) 
-
-#define ITsString_get_RunText(This,irun,pbstr)	\
-    ( (This)->lpVtbl -> get_RunText(This,irun,pbstr) ) 
-
-#define ITsString_GetChars(This,ichMin,ichLim,pbstr)	\
-    ( (This)->lpVtbl -> GetChars(This,ichMin,ichLim,pbstr) ) 
-
-#define ITsString_FetchChars(This,ichMin,ichLim,prgch)	\
-    ( (This)->lpVtbl -> FetchChars(This,ichMin,ichLim,prgch) ) 
-
-#define ITsString_LockText(This,pprgch,pcch)	\
-    ( (This)->lpVtbl -> LockText(This,pprgch,pcch) ) 
-
-#define ITsString_UnlockText(This,prgch)	\
-    ( (This)->lpVtbl -> UnlockText(This,prgch) ) 
-
-#define ITsString_LockRun(This,irun,pprgch,pcch)	\
-    ( (This)->lpVtbl -> LockRun(This,irun,pprgch,pcch) ) 
-
-#define ITsString_UnlockRun(This,irun,prgch)	\
-    ( (This)->lpVtbl -> UnlockRun(This,irun,prgch) ) 
-
-#define ITsString_get_PropertiesAt(This,ich,ppttp)	\
-    ( (This)->lpVtbl -> get_PropertiesAt(This,ich,ppttp) ) 
-
-#define ITsString_get_Properties(This,irun,ppttp)	\
-    ( (This)->lpVtbl -> get_Properties(This,irun,ppttp) ) 
-
-#define ITsString_GetBldr(This,pptsb)	\
-    ( (This)->lpVtbl -> GetBldr(This,pptsb) ) 
-
-#define ITsString_GetIncBldr(This,pptisb)	\
-    ( (This)->lpVtbl -> GetIncBldr(This,pptisb) ) 
-
-#define ITsString_GetFactoryClsid(This,pclsid)	\
-    ( (This)->lpVtbl -> GetFactoryClsid(This,pclsid) ) 
-
-#define ITsString_SerializeFmt(This,pstrm)	\
-    ( (This)->lpVtbl -> SerializeFmt(This,pstrm) ) 
-
-#define ITsString_SerializeFmtRgb(This,prgb,cbMax,pcbNeeded)	\
-    ( (This)->lpVtbl -> SerializeFmtRgb(This,prgb,cbMax,pcbNeeded) ) 
-
-#define ITsString_Equals(This,ptss,pfEqual)	\
-    ( (This)->lpVtbl -> Equals(This,ptss,pfEqual) ) 
-
-#define ITsString_WriteAsXml(This,pstrm,pwsf,cchIndent,ws,fWriteObjData)	\
-    ( (This)->lpVtbl -> WriteAsXml(This,pstrm,pwsf,cchIndent,ws,fWriteObjData) ) 
-
-#define ITsString_GetXmlString(This,pwsf,cchIndent,ws,fWriteObjData,pbstr)	\
-    ( (This)->lpVtbl -> GetXmlString(This,pwsf,cchIndent,ws,fWriteObjData,pbstr) ) 
-
-#define ITsString_get_IsNormalizedForm(This,nm,pfRet)	\
-    ( (This)->lpVtbl -> get_IsNormalizedForm(This,nm,pfRet) ) 
-
-#define ITsString_get_NormalizedForm(This,nm,pptssRet)	\
-    ( (This)->lpVtbl -> get_NormalizedForm(This,nm,pptssRet) ) 
-
-#define ITsString_NfdAndFixOffsets(This,pptssRet,prgpichOffsetsToFix,cichOffsetsToFix)	\
-    ( (This)->lpVtbl -> NfdAndFixOffsets(This,pptssRet,prgpichOffsetsToFix,cichOffsetsToFix) ) 
-
-#define ITsString_GetSubstring(This,ichMin,ichLim,pptssRet)	\
-    ( (This)->lpVtbl -> GetSubstring(This,ichMin,ichLim,pptssRet) ) 
-
-#define ITsString_WriteAsXmlExtended(This,pstrm,pwsf,cchIndent,ws,fWriteObjData,fUseRFC4646)	\
-    ( (This)->lpVtbl -> WriteAsXmlExtended(This,pstrm,pwsf,cchIndent,ws,fWriteObjData,fUseRFC4646) ) 
-
-#define ITsString_get_StringProperty(This,iRun,tpt,pbstr)	\
-    ( (This)->lpVtbl -> get_StringProperty(This,iRun,tpt,pbstr) ) 
-
-#define ITsString_get_StringPropertyAt(This,ich,tpt,pbstr)	\
-    ( (This)->lpVtbl -> get_StringPropertyAt(This,ich,tpt,pbstr) ) 
-
-#define ITsString_get_WritingSystem(This,irun,pws)	\
-    ( (This)->lpVtbl -> get_WritingSystem(This,irun,pws) ) 
-
-#define ITsString_get_WritingSystemAt(This,ich,pws)	\
-    ( (This)->lpVtbl -> get_WritingSystemAt(This,ich,pws) ) 
-
-#define ITsString_get_IsRunOrc(This,iRun,pfIsOrc)	\
-    ( (This)->lpVtbl -> get_IsRunOrc(This,iRun,pfIsOrc) ) 
-
-#endif /* COBJMACROS */
-
-
-#endif 	/* C style interface */
-
-
-
-
-#endif 	/* __ITsString_INTERFACE_DEFINED__ */
-
-
-#ifndef __IUndoGrouper_INTERFACE_DEFINED__
-#define __IUndoGrouper_INTERFACE_DEFINED__
-
-/* interface IUndoGrouper */
-/* [unique][object][uuid] */ 
-
-
-#define IID_IUndoGrouper __uuidof(IUndoGrouper)
-
-#if defined(__cplusplus) && !defined(CINTERFACE)
-    
-    MIDL_INTERFACE("C38348D3-392C-4e02-BD50-A01DC4189E1D")
-    IUndoGrouper : public IUnknown
-    {
-    public:
-        virtual HRESULT STDMETHODCALLTYPE BeginGroup( 
-            /* [retval][out] */ int *phndl) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE EndGroup( 
-            /* [in] */ int hndl) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE CancelGroup( 
-            /* [in] */ int hndl) = 0;
-        
-    };
-    
-    
-#else 	/* C style interface */
-
-    typedef struct IUndoGrouperVtbl
-    {
-        BEGIN_INTERFACE
-        
-        HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
-            IUndoGrouper * This,
-            /* [in] */ REFIID riid,
-            /* [annotation][iid_is][out] */ 
-            _COM_Outptr_  void **ppvObject);
-        
-        ULONG ( STDMETHODCALLTYPE *AddRef )( 
-            IUndoGrouper * This);
-        
-        ULONG ( STDMETHODCALLTYPE *Release )( 
-            IUndoGrouper * This);
-        
-        HRESULT ( STDMETHODCALLTYPE *BeginGroup )( 
-            IUndoGrouper * This,
-            /* [retval][out] */ int *phndl);
-        
-        HRESULT ( STDMETHODCALLTYPE *EndGroup )( 
-            IUndoGrouper * This,
-            /* [in] */ int hndl);
-        
-        HRESULT ( STDMETHODCALLTYPE *CancelGroup )( 
-            IUndoGrouper * This,
-            /* [in] */ int hndl);
-        
-        END_INTERFACE
-    } IUndoGrouperVtbl;
-
-    interface IUndoGrouper
-    {
-        CONST_VTBL struct IUndoGrouperVtbl *lpVtbl;
-    };
-
-    
-
-#ifdef COBJMACROS
-
-
-#define IUndoGrouper_QueryInterface(This,riid,ppvObject)	\
-    ( (This)->lpVtbl -> QueryInterface(This,riid,ppvObject) ) 
-
-#define IUndoGrouper_AddRef(This)	\
-    ( (This)->lpVtbl -> AddRef(This) ) 
-
-#define IUndoGrouper_Release(This)	\
-    ( (This)->lpVtbl -> Release(This) ) 
-
-
-#define IUndoGrouper_BeginGroup(This,phndl)	\
-    ( (This)->lpVtbl -> BeginGroup(This,phndl) ) 
-
-#define IUndoGrouper_EndGroup(This,hndl)	\
-    ( (This)->lpVtbl -> EndGroup(This,hndl) ) 
-
-#define IUndoGrouper_CancelGroup(This,hndl)	\
-    ( (This)->lpVtbl -> CancelGroup(This,hndl) ) 
-
-#endif /* COBJMACROS */
-
-
-#endif 	/* C style interface */
-
-
-
-
-#endif 	/* __IUndoGrouper_INTERFACE_DEFINED__ */
-
 
 #ifndef __IFwMetaDataCache_INTERFACE_DEFINED__
 #define __IFwMetaDataCache_INTERFACE_DEFINED__
@@ -2724,6 +1198,1478 @@ LgIcuLocaleEnumerator
 #endif 	/* __IFwMetaDataCache_INTERFACE_DEFINED__ */
 
 
+#ifndef __ILgWritingSystemFactory_INTERFACE_DEFINED__
+#define __ILgWritingSystemFactory_INTERFACE_DEFINED__
+
+/* interface ILgWritingSystemFactory */
+/* [unique][object][uuid] */ 
+
+
+#define IID_ILgWritingSystemFactory __uuidof(ILgWritingSystemFactory)
+
+#if defined(__cplusplus) && !defined(CINTERFACE)
+    
+    MIDL_INTERFACE("CC2BD14F-ACCE-4246-9192-9C29441A5A09")
+    ILgWritingSystemFactory : public IUnknown
+    {
+    public:
+        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_Engine( 
+            /* [in] */ BSTR bstrId,
+            /* [retval][out] */ ILgWritingSystem **ppwseng) = 0;
+        
+        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_EngineOrNull( 
+            /* [in] */ int ws,
+            /* [retval][out] */ ILgWritingSystem **ppwseng) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE GetWsFromStr( 
+            /* [in] */ BSTR bstr,
+            /* [retval][out] */ int *pws) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE GetStrFromWs( 
+            /* [in] */ int ws,
+            /* [retval][out] */ BSTR *pbstr) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE GetIcuLocaleFromWs( 
+            /* [in] */ int ws,
+            /* [retval][out] */ BSTR *pbstr) = 0;
+        
+        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_NumberOfWs( 
+            /* [retval][out] */ int *pcws) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE GetWritingSystems( 
+            /* [size_is][out] */ int *rgws,
+            /* [in] */ int cws) = 0;
+        
+        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_UserWs( 
+            /* [retval][out] */ int *pws) = 0;
+        
+        virtual /* [propput] */ HRESULT STDMETHODCALLTYPE put_UserWs( 
+            /* [in] */ int ws) = 0;
+        
+    };
+    
+    
+#else 	/* C style interface */
+
+    typedef struct ILgWritingSystemFactoryVtbl
+    {
+        BEGIN_INTERFACE
+        
+        HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
+            ILgWritingSystemFactory * This,
+            /* [in] */ REFIID riid,
+            /* [annotation][iid_is][out] */ 
+            _COM_Outptr_  void **ppvObject);
+        
+        ULONG ( STDMETHODCALLTYPE *AddRef )( 
+            ILgWritingSystemFactory * This);
+        
+        ULONG ( STDMETHODCALLTYPE *Release )( 
+            ILgWritingSystemFactory * This);
+        
+        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_Engine )( 
+            ILgWritingSystemFactory * This,
+            /* [in] */ BSTR bstrId,
+            /* [retval][out] */ ILgWritingSystem **ppwseng);
+        
+        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_EngineOrNull )( 
+            ILgWritingSystemFactory * This,
+            /* [in] */ int ws,
+            /* [retval][out] */ ILgWritingSystem **ppwseng);
+        
+        HRESULT ( STDMETHODCALLTYPE *GetWsFromStr )( 
+            ILgWritingSystemFactory * This,
+            /* [in] */ BSTR bstr,
+            /* [retval][out] */ int *pws);
+        
+        HRESULT ( STDMETHODCALLTYPE *GetStrFromWs )( 
+            ILgWritingSystemFactory * This,
+            /* [in] */ int ws,
+            /* [retval][out] */ BSTR *pbstr);
+        
+        HRESULT ( STDMETHODCALLTYPE *GetIcuLocaleFromWs )( 
+            ILgWritingSystemFactory * This,
+            /* [in] */ int ws,
+            /* [retval][out] */ BSTR *pbstr);
+        
+        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_NumberOfWs )( 
+            ILgWritingSystemFactory * This,
+            /* [retval][out] */ int *pcws);
+        
+        HRESULT ( STDMETHODCALLTYPE *GetWritingSystems )( 
+            ILgWritingSystemFactory * This,
+            /* [size_is][out] */ int *rgws,
+            /* [in] */ int cws);
+        
+        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_UserWs )( 
+            ILgWritingSystemFactory * This,
+            /* [retval][out] */ int *pws);
+        
+        /* [propput] */ HRESULT ( STDMETHODCALLTYPE *put_UserWs )( 
+            ILgWritingSystemFactory * This,
+            /* [in] */ int ws);
+        
+        END_INTERFACE
+    } ILgWritingSystemFactoryVtbl;
+
+    interface ILgWritingSystemFactory
+    {
+        CONST_VTBL struct ILgWritingSystemFactoryVtbl *lpVtbl;
+    };
+
+    
+
+#ifdef COBJMACROS
+
+
+#define ILgWritingSystemFactory_QueryInterface(This,riid,ppvObject)	\
+    ( (This)->lpVtbl -> QueryInterface(This,riid,ppvObject) ) 
+
+#define ILgWritingSystemFactory_AddRef(This)	\
+    ( (This)->lpVtbl -> AddRef(This) ) 
+
+#define ILgWritingSystemFactory_Release(This)	\
+    ( (This)->lpVtbl -> Release(This) ) 
+
+
+#define ILgWritingSystemFactory_get_Engine(This,bstrId,ppwseng)	\
+    ( (This)->lpVtbl -> get_Engine(This,bstrId,ppwseng) ) 
+
+#define ILgWritingSystemFactory_get_EngineOrNull(This,ws,ppwseng)	\
+    ( (This)->lpVtbl -> get_EngineOrNull(This,ws,ppwseng) ) 
+
+#define ILgWritingSystemFactory_GetWsFromStr(This,bstr,pws)	\
+    ( (This)->lpVtbl -> GetWsFromStr(This,bstr,pws) ) 
+
+#define ILgWritingSystemFactory_GetStrFromWs(This,ws,pbstr)	\
+    ( (This)->lpVtbl -> GetStrFromWs(This,ws,pbstr) ) 
+
+#define ILgWritingSystemFactory_GetIcuLocaleFromWs(This,ws,pbstr)	\
+    ( (This)->lpVtbl -> GetIcuLocaleFromWs(This,ws,pbstr) ) 
+
+#define ILgWritingSystemFactory_get_NumberOfWs(This,pcws)	\
+    ( (This)->lpVtbl -> get_NumberOfWs(This,pcws) ) 
+
+#define ILgWritingSystemFactory_GetWritingSystems(This,rgws,cws)	\
+    ( (This)->lpVtbl -> GetWritingSystems(This,rgws,cws) ) 
+
+#define ILgWritingSystemFactory_get_UserWs(This,pws)	\
+    ( (This)->lpVtbl -> get_UserWs(This,pws) ) 
+
+#define ILgWritingSystemFactory_put_UserWs(This,ws)	\
+    ( (This)->lpVtbl -> put_UserWs(This,ws) ) 
+
+#endif /* COBJMACROS */
+
+
+#endif 	/* C style interface */
+
+
+
+
+#endif 	/* __ILgWritingSystemFactory_INTERFACE_DEFINED__ */
+
+
+#ifndef __ITsMultiString_INTERFACE_DEFINED__
+#define __ITsMultiString_INTERFACE_DEFINED__
+
+/* interface ITsMultiString */
+/* [unique][object][uuid] */ 
+
+
+#define IID_ITsMultiString __uuidof(ITsMultiString)
+
+#if defined(__cplusplus) && !defined(CINTERFACE)
+    
+    MIDL_INTERFACE("DD409520-C212-11d3-9BB7-00400541F9E9")
+    ITsMultiString : public IUnknown
+    {
+    public:
+        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_StringCount( 
+            /* [retval][out] */ int *pctss) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE GetStringFromIndex( 
+            /* [in] */ int iws,
+            /* [out] */ int *pws,
+            /* [retval][out] */ ITsString **pptss) = 0;
+        
+        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_String( 
+            /* [in] */ int ws,
+            /* [retval][out] */ ITsString **pptss) = 0;
+        
+        virtual /* [propputref] */ HRESULT STDMETHODCALLTYPE putref_String( 
+            /* [in] */ int ws,
+            /* [in] */ ITsString *ptss) = 0;
+        
+    };
+    
+    
+#else 	/* C style interface */
+
+    typedef struct ITsMultiStringVtbl
+    {
+        BEGIN_INTERFACE
+        
+        HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
+            ITsMultiString * This,
+            /* [in] */ REFIID riid,
+            /* [annotation][iid_is][out] */ 
+            _COM_Outptr_  void **ppvObject);
+        
+        ULONG ( STDMETHODCALLTYPE *AddRef )( 
+            ITsMultiString * This);
+        
+        ULONG ( STDMETHODCALLTYPE *Release )( 
+            ITsMultiString * This);
+        
+        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_StringCount )( 
+            ITsMultiString * This,
+            /* [retval][out] */ int *pctss);
+        
+        HRESULT ( STDMETHODCALLTYPE *GetStringFromIndex )( 
+            ITsMultiString * This,
+            /* [in] */ int iws,
+            /* [out] */ int *pws,
+            /* [retval][out] */ ITsString **pptss);
+        
+        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_String )( 
+            ITsMultiString * This,
+            /* [in] */ int ws,
+            /* [retval][out] */ ITsString **pptss);
+        
+        /* [propputref] */ HRESULT ( STDMETHODCALLTYPE *putref_String )( 
+            ITsMultiString * This,
+            /* [in] */ int ws,
+            /* [in] */ ITsString *ptss);
+        
+        END_INTERFACE
+    } ITsMultiStringVtbl;
+
+    interface ITsMultiString
+    {
+        CONST_VTBL struct ITsMultiStringVtbl *lpVtbl;
+    };
+
+    
+
+#ifdef COBJMACROS
+
+
+#define ITsMultiString_QueryInterface(This,riid,ppvObject)	\
+    ( (This)->lpVtbl -> QueryInterface(This,riid,ppvObject) ) 
+
+#define ITsMultiString_AddRef(This)	\
+    ( (This)->lpVtbl -> AddRef(This) ) 
+
+#define ITsMultiString_Release(This)	\
+    ( (This)->lpVtbl -> Release(This) ) 
+
+
+#define ITsMultiString_get_StringCount(This,pctss)	\
+    ( (This)->lpVtbl -> get_StringCount(This,pctss) ) 
+
+#define ITsMultiString_GetStringFromIndex(This,iws,pws,pptss)	\
+    ( (This)->lpVtbl -> GetStringFromIndex(This,iws,pws,pptss) ) 
+
+#define ITsMultiString_get_String(This,ws,pptss)	\
+    ( (This)->lpVtbl -> get_String(This,ws,pptss) ) 
+
+#define ITsMultiString_putref_String(This,ws,ptss)	\
+    ( (This)->lpVtbl -> putref_String(This,ws,ptss) ) 
+
+#endif /* COBJMACROS */
+
+
+#endif 	/* C style interface */
+
+
+
+
+#endif 	/* __ITsMultiString_INTERFACE_DEFINED__ */
+
+
+#ifndef __ITsString_INTERFACE_DEFINED__
+#define __ITsString_INTERFACE_DEFINED__
+
+/* interface ITsString */
+/* [unique][object][uuid] */ 
+
+
+#define IID_ITsString __uuidof(ITsString)
+
+#if defined(__cplusplus) && !defined(CINTERFACE)
+    
+    MIDL_INTERFACE("321B7BB3-29AF-41D1-93DE-4A11BF386C82")
+    ITsString : public IUnknown
+    {
+    public:
+        virtual /* [id][propget] */ HRESULT STDMETHODCALLTYPE get_Text( 
+            /* [retval][out] */ BSTR *pbstr) = 0;
+        
+        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_Length( 
+            /* [retval][out] */ int *pcch) = 0;
+        
+        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_RunCount( 
+            /* [retval][out] */ int *pcrun) = 0;
+        
+        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_RunAt( 
+            /* [in] */ int ich,
+            /* [retval][out] */ int *pirun) = 0;
+        
+        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_MinOfRun( 
+            /* [in] */ int irun,
+            /* [retval][out] */ int *pichMin) = 0;
+        
+        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_LimOfRun( 
+            /* [in] */ int irun,
+            /* [retval][out] */ int *pichLim) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE GetBoundsOfRun( 
+            /* [in] */ int irun,
+            /* [out] */ int *pichMin,
+            /* [out] */ int *pichLim) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE FetchRunInfoAt( 
+            /* [in] */ int ich,
+            /* [out] */ TsRunInfo *ptri,
+            /* [retval][out] */ ITsTextProps **ppttp) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE FetchRunInfo( 
+            /* [in] */ int irun,
+            /* [out] */ TsRunInfo *ptri,
+            /* [retval][out] */ ITsTextProps **ppttp) = 0;
+        
+        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_RunText( 
+            /* [in] */ int irun,
+            /* [retval][out] */ BSTR *pbstr) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE GetChars( 
+            /* [in] */ int ichMin,
+            /* [in] */ int ichLim,
+            /* [retval][out] */ BSTR *pbstr) = 0;
+        
+        virtual /* [local][restricted] */ HRESULT STDMETHODCALLTYPE FetchChars( 
+            /* [in] */ int ichMin,
+            /* [in] */ int ichLim,
+            /* [size_is][out][in] */ OLECHAR *prgch) = 0;
+        
+        virtual /* [local][restricted] */ HRESULT STDMETHODCALLTYPE LockText( 
+            /* [string][out] */ const OLECHAR **pprgch,
+            /* [out] */ int *pcch) = 0;
+        
+        virtual /* [local][restricted] */ HRESULT STDMETHODCALLTYPE UnlockText( 
+            /* [string][in] */ const OLECHAR *prgch) = 0;
+        
+        virtual /* [local][restricted] */ HRESULT STDMETHODCALLTYPE LockRun( 
+            /* [in] */ int irun,
+            /* [string][out] */ const OLECHAR **pprgch,
+            /* [out] */ int *pcch) = 0;
+        
+        virtual /* [local][restricted] */ HRESULT STDMETHODCALLTYPE UnlockRun( 
+            /* [in] */ int irun,
+            /* [string][in] */ const OLECHAR *prgch) = 0;
+        
+        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_PropertiesAt( 
+            /* [in] */ int ich,
+            /* [retval][out] */ ITsTextProps **ppttp) = 0;
+        
+        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_Properties( 
+            /* [in] */ int irun,
+            /* [retval][out] */ ITsTextProps **ppttp) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE GetBldr( 
+            /* [retval][out] */ ITsStrBldr **pptsb) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE GetIncBldr( 
+            /* [retval][out] */ ITsIncStrBldr **pptisb) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE Equals( 
+            /* [in] */ ITsString *ptss,
+            /* [retval][out] */ ComBool *pfEqual) = 0;
+        
+        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_IsNormalizedForm( 
+            /* [in] */ FwNormalizationMode nm,
+            /* [retval][out] */ ComBool *pfRet) = 0;
+        
+        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_NormalizedForm( 
+            /* [in] */ FwNormalizationMode nm,
+            /* [retval][out] */ ITsString **pptssRet) = 0;
+        
+        virtual /* [local][restricted] */ HRESULT STDMETHODCALLTYPE NfdAndFixOffsets( 
+            /* [out] */ ITsString **pptssRet,
+            /* [size_is][out][in] */ int **prgpichOffsetsToFix,
+            /* [in] */ int cichOffsetsToFix) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE GetSubstring( 
+            /* [in] */ int ichMin,
+            /* [in] */ int ichLim,
+            /* [retval][out] */ ITsString **pptssRet) = 0;
+        
+    };
+    
+    
+#else 	/* C style interface */
+
+    typedef struct ITsStringVtbl
+    {
+        BEGIN_INTERFACE
+        
+        HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
+            ITsString * This,
+            /* [in] */ REFIID riid,
+            /* [annotation][iid_is][out] */ 
+            _COM_Outptr_  void **ppvObject);
+        
+        ULONG ( STDMETHODCALLTYPE *AddRef )( 
+            ITsString * This);
+        
+        ULONG ( STDMETHODCALLTYPE *Release )( 
+            ITsString * This);
+        
+        /* [id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_Text )( 
+            ITsString * This,
+            /* [retval][out] */ BSTR *pbstr);
+        
+        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_Length )( 
+            ITsString * This,
+            /* [retval][out] */ int *pcch);
+        
+        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_RunCount )( 
+            ITsString * This,
+            /* [retval][out] */ int *pcrun);
+        
+        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_RunAt )( 
+            ITsString * This,
+            /* [in] */ int ich,
+            /* [retval][out] */ int *pirun);
+        
+        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_MinOfRun )( 
+            ITsString * This,
+            /* [in] */ int irun,
+            /* [retval][out] */ int *pichMin);
+        
+        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_LimOfRun )( 
+            ITsString * This,
+            /* [in] */ int irun,
+            /* [retval][out] */ int *pichLim);
+        
+        HRESULT ( STDMETHODCALLTYPE *GetBoundsOfRun )( 
+            ITsString * This,
+            /* [in] */ int irun,
+            /* [out] */ int *pichMin,
+            /* [out] */ int *pichLim);
+        
+        HRESULT ( STDMETHODCALLTYPE *FetchRunInfoAt )( 
+            ITsString * This,
+            /* [in] */ int ich,
+            /* [out] */ TsRunInfo *ptri,
+            /* [retval][out] */ ITsTextProps **ppttp);
+        
+        HRESULT ( STDMETHODCALLTYPE *FetchRunInfo )( 
+            ITsString * This,
+            /* [in] */ int irun,
+            /* [out] */ TsRunInfo *ptri,
+            /* [retval][out] */ ITsTextProps **ppttp);
+        
+        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_RunText )( 
+            ITsString * This,
+            /* [in] */ int irun,
+            /* [retval][out] */ BSTR *pbstr);
+        
+        HRESULT ( STDMETHODCALLTYPE *GetChars )( 
+            ITsString * This,
+            /* [in] */ int ichMin,
+            /* [in] */ int ichLim,
+            /* [retval][out] */ BSTR *pbstr);
+        
+        /* [local][restricted] */ HRESULT ( STDMETHODCALLTYPE *FetchChars )( 
+            ITsString * This,
+            /* [in] */ int ichMin,
+            /* [in] */ int ichLim,
+            /* [size_is][out][in] */ OLECHAR *prgch);
+        
+        /* [local][restricted] */ HRESULT ( STDMETHODCALLTYPE *LockText )( 
+            ITsString * This,
+            /* [string][out] */ const OLECHAR **pprgch,
+            /* [out] */ int *pcch);
+        
+        /* [local][restricted] */ HRESULT ( STDMETHODCALLTYPE *UnlockText )( 
+            ITsString * This,
+            /* [string][in] */ const OLECHAR *prgch);
+        
+        /* [local][restricted] */ HRESULT ( STDMETHODCALLTYPE *LockRun )( 
+            ITsString * This,
+            /* [in] */ int irun,
+            /* [string][out] */ const OLECHAR **pprgch,
+            /* [out] */ int *pcch);
+        
+        /* [local][restricted] */ HRESULT ( STDMETHODCALLTYPE *UnlockRun )( 
+            ITsString * This,
+            /* [in] */ int irun,
+            /* [string][in] */ const OLECHAR *prgch);
+        
+        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_PropertiesAt )( 
+            ITsString * This,
+            /* [in] */ int ich,
+            /* [retval][out] */ ITsTextProps **ppttp);
+        
+        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_Properties )( 
+            ITsString * This,
+            /* [in] */ int irun,
+            /* [retval][out] */ ITsTextProps **ppttp);
+        
+        HRESULT ( STDMETHODCALLTYPE *GetBldr )( 
+            ITsString * This,
+            /* [retval][out] */ ITsStrBldr **pptsb);
+        
+        HRESULT ( STDMETHODCALLTYPE *GetIncBldr )( 
+            ITsString * This,
+            /* [retval][out] */ ITsIncStrBldr **pptisb);
+        
+        HRESULT ( STDMETHODCALLTYPE *Equals )( 
+            ITsString * This,
+            /* [in] */ ITsString *ptss,
+            /* [retval][out] */ ComBool *pfEqual);
+        
+        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IsNormalizedForm )( 
+            ITsString * This,
+            /* [in] */ FwNormalizationMode nm,
+            /* [retval][out] */ ComBool *pfRet);
+        
+        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_NormalizedForm )( 
+            ITsString * This,
+            /* [in] */ FwNormalizationMode nm,
+            /* [retval][out] */ ITsString **pptssRet);
+        
+        /* [local][restricted] */ HRESULT ( STDMETHODCALLTYPE *NfdAndFixOffsets )( 
+            ITsString * This,
+            /* [out] */ ITsString **pptssRet,
+            /* [size_is][out][in] */ int **prgpichOffsetsToFix,
+            /* [in] */ int cichOffsetsToFix);
+        
+        HRESULT ( STDMETHODCALLTYPE *GetSubstring )( 
+            ITsString * This,
+            /* [in] */ int ichMin,
+            /* [in] */ int ichLim,
+            /* [retval][out] */ ITsString **pptssRet);
+        
+        END_INTERFACE
+    } ITsStringVtbl;
+
+    interface ITsString
+    {
+        CONST_VTBL struct ITsStringVtbl *lpVtbl;
+    };
+
+    
+
+#ifdef COBJMACROS
+
+
+#define ITsString_QueryInterface(This,riid,ppvObject)	\
+    ( (This)->lpVtbl -> QueryInterface(This,riid,ppvObject) ) 
+
+#define ITsString_AddRef(This)	\
+    ( (This)->lpVtbl -> AddRef(This) ) 
+
+#define ITsString_Release(This)	\
+    ( (This)->lpVtbl -> Release(This) ) 
+
+
+#define ITsString_get_Text(This,pbstr)	\
+    ( (This)->lpVtbl -> get_Text(This,pbstr) ) 
+
+#define ITsString_get_Length(This,pcch)	\
+    ( (This)->lpVtbl -> get_Length(This,pcch) ) 
+
+#define ITsString_get_RunCount(This,pcrun)	\
+    ( (This)->lpVtbl -> get_RunCount(This,pcrun) ) 
+
+#define ITsString_get_RunAt(This,ich,pirun)	\
+    ( (This)->lpVtbl -> get_RunAt(This,ich,pirun) ) 
+
+#define ITsString_get_MinOfRun(This,irun,pichMin)	\
+    ( (This)->lpVtbl -> get_MinOfRun(This,irun,pichMin) ) 
+
+#define ITsString_get_LimOfRun(This,irun,pichLim)	\
+    ( (This)->lpVtbl -> get_LimOfRun(This,irun,pichLim) ) 
+
+#define ITsString_GetBoundsOfRun(This,irun,pichMin,pichLim)	\
+    ( (This)->lpVtbl -> GetBoundsOfRun(This,irun,pichMin,pichLim) ) 
+
+#define ITsString_FetchRunInfoAt(This,ich,ptri,ppttp)	\
+    ( (This)->lpVtbl -> FetchRunInfoAt(This,ich,ptri,ppttp) ) 
+
+#define ITsString_FetchRunInfo(This,irun,ptri,ppttp)	\
+    ( (This)->lpVtbl -> FetchRunInfo(This,irun,ptri,ppttp) ) 
+
+#define ITsString_get_RunText(This,irun,pbstr)	\
+    ( (This)->lpVtbl -> get_RunText(This,irun,pbstr) ) 
+
+#define ITsString_GetChars(This,ichMin,ichLim,pbstr)	\
+    ( (This)->lpVtbl -> GetChars(This,ichMin,ichLim,pbstr) ) 
+
+#define ITsString_FetchChars(This,ichMin,ichLim,prgch)	\
+    ( (This)->lpVtbl -> FetchChars(This,ichMin,ichLim,prgch) ) 
+
+#define ITsString_LockText(This,pprgch,pcch)	\
+    ( (This)->lpVtbl -> LockText(This,pprgch,pcch) ) 
+
+#define ITsString_UnlockText(This,prgch)	\
+    ( (This)->lpVtbl -> UnlockText(This,prgch) ) 
+
+#define ITsString_LockRun(This,irun,pprgch,pcch)	\
+    ( (This)->lpVtbl -> LockRun(This,irun,pprgch,pcch) ) 
+
+#define ITsString_UnlockRun(This,irun,prgch)	\
+    ( (This)->lpVtbl -> UnlockRun(This,irun,prgch) ) 
+
+#define ITsString_get_PropertiesAt(This,ich,ppttp)	\
+    ( (This)->lpVtbl -> get_PropertiesAt(This,ich,ppttp) ) 
+
+#define ITsString_get_Properties(This,irun,ppttp)	\
+    ( (This)->lpVtbl -> get_Properties(This,irun,ppttp) ) 
+
+#define ITsString_GetBldr(This,pptsb)	\
+    ( (This)->lpVtbl -> GetBldr(This,pptsb) ) 
+
+#define ITsString_GetIncBldr(This,pptisb)	\
+    ( (This)->lpVtbl -> GetIncBldr(This,pptisb) ) 
+
+#define ITsString_Equals(This,ptss,pfEqual)	\
+    ( (This)->lpVtbl -> Equals(This,ptss,pfEqual) ) 
+
+#define ITsString_get_IsNormalizedForm(This,nm,pfRet)	\
+    ( (This)->lpVtbl -> get_IsNormalizedForm(This,nm,pfRet) ) 
+
+#define ITsString_get_NormalizedForm(This,nm,pptssRet)	\
+    ( (This)->lpVtbl -> get_NormalizedForm(This,nm,pptssRet) ) 
+
+#define ITsString_NfdAndFixOffsets(This,pptssRet,prgpichOffsetsToFix,cichOffsetsToFix)	\
+    ( (This)->lpVtbl -> NfdAndFixOffsets(This,pptssRet,prgpichOffsetsToFix,cichOffsetsToFix) ) 
+
+#define ITsString_GetSubstring(This,ichMin,ichLim,pptssRet)	\
+    ( (This)->lpVtbl -> GetSubstring(This,ichMin,ichLim,pptssRet) ) 
+
+#endif /* COBJMACROS */
+
+
+#endif 	/* C style interface */
+
+
+
+
+#endif 	/* __ITsString_INTERFACE_DEFINED__ */
+
+
+#ifndef __ITsTextProps_INTERFACE_DEFINED__
+#define __ITsTextProps_INTERFACE_DEFINED__
+
+/* interface ITsTextProps */
+/* [unique][object][uuid] */ 
+
+
+#define IID_ITsTextProps __uuidof(ITsTextProps)
+
+#if defined(__cplusplus) && !defined(CINTERFACE)
+    
+    MIDL_INTERFACE("9B804BE2-0F75-4182-AC97-77F477546AB0")
+    ITsTextProps : public IUnknown
+    {
+    public:
+        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_IntPropCount( 
+            /* [retval][out] */ int *pcv) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE GetIntProp( 
+            /* [in] */ int iv,
+            /* [out] */ int *ptpt,
+            /* [out] */ int *pnVar,
+            /* [retval][out] */ int *pnVal) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE GetIntPropValues( 
+            /* [in] */ int tpt,
+            /* [out] */ int *pnVar,
+            /* [retval][out] */ int *pnVal) = 0;
+        
+        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_StrPropCount( 
+            /* [retval][out] */ int *pcv) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE GetStrProp( 
+            /* [in] */ int iv,
+            /* [out] */ int *ptpt,
+            /* [retval][out] */ BSTR *pbstrVal) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE GetStrPropValue( 
+            /* [in] */ int tpt,
+            /* [retval][out] */ BSTR *pbstrVal) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE GetBldr( 
+            /* [retval][out] */ ITsPropsBldr **pptpb) = 0;
+        
+    };
+    
+    
+#else 	/* C style interface */
+
+    typedef struct ITsTextPropsVtbl
+    {
+        BEGIN_INTERFACE
+        
+        HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
+            ITsTextProps * This,
+            /* [in] */ REFIID riid,
+            /* [annotation][iid_is][out] */ 
+            _COM_Outptr_  void **ppvObject);
+        
+        ULONG ( STDMETHODCALLTYPE *AddRef )( 
+            ITsTextProps * This);
+        
+        ULONG ( STDMETHODCALLTYPE *Release )( 
+            ITsTextProps * This);
+        
+        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IntPropCount )( 
+            ITsTextProps * This,
+            /* [retval][out] */ int *pcv);
+        
+        HRESULT ( STDMETHODCALLTYPE *GetIntProp )( 
+            ITsTextProps * This,
+            /* [in] */ int iv,
+            /* [out] */ int *ptpt,
+            /* [out] */ int *pnVar,
+            /* [retval][out] */ int *pnVal);
+        
+        HRESULT ( STDMETHODCALLTYPE *GetIntPropValues )( 
+            ITsTextProps * This,
+            /* [in] */ int tpt,
+            /* [out] */ int *pnVar,
+            /* [retval][out] */ int *pnVal);
+        
+        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_StrPropCount )( 
+            ITsTextProps * This,
+            /* [retval][out] */ int *pcv);
+        
+        HRESULT ( STDMETHODCALLTYPE *GetStrProp )( 
+            ITsTextProps * This,
+            /* [in] */ int iv,
+            /* [out] */ int *ptpt,
+            /* [retval][out] */ BSTR *pbstrVal);
+        
+        HRESULT ( STDMETHODCALLTYPE *GetStrPropValue )( 
+            ITsTextProps * This,
+            /* [in] */ int tpt,
+            /* [retval][out] */ BSTR *pbstrVal);
+        
+        HRESULT ( STDMETHODCALLTYPE *GetBldr )( 
+            ITsTextProps * This,
+            /* [retval][out] */ ITsPropsBldr **pptpb);
+        
+        END_INTERFACE
+    } ITsTextPropsVtbl;
+
+    interface ITsTextProps
+    {
+        CONST_VTBL struct ITsTextPropsVtbl *lpVtbl;
+    };
+
+    
+
+#ifdef COBJMACROS
+
+
+#define ITsTextProps_QueryInterface(This,riid,ppvObject)	\
+    ( (This)->lpVtbl -> QueryInterface(This,riid,ppvObject) ) 
+
+#define ITsTextProps_AddRef(This)	\
+    ( (This)->lpVtbl -> AddRef(This) ) 
+
+#define ITsTextProps_Release(This)	\
+    ( (This)->lpVtbl -> Release(This) ) 
+
+
+#define ITsTextProps_get_IntPropCount(This,pcv)	\
+    ( (This)->lpVtbl -> get_IntPropCount(This,pcv) ) 
+
+#define ITsTextProps_GetIntProp(This,iv,ptpt,pnVar,pnVal)	\
+    ( (This)->lpVtbl -> GetIntProp(This,iv,ptpt,pnVar,pnVal) ) 
+
+#define ITsTextProps_GetIntPropValues(This,tpt,pnVar,pnVal)	\
+    ( (This)->lpVtbl -> GetIntPropValues(This,tpt,pnVar,pnVal) ) 
+
+#define ITsTextProps_get_StrPropCount(This,pcv)	\
+    ( (This)->lpVtbl -> get_StrPropCount(This,pcv) ) 
+
+#define ITsTextProps_GetStrProp(This,iv,ptpt,pbstrVal)	\
+    ( (This)->lpVtbl -> GetStrProp(This,iv,ptpt,pbstrVal) ) 
+
+#define ITsTextProps_GetStrPropValue(This,tpt,pbstrVal)	\
+    ( (This)->lpVtbl -> GetStrPropValue(This,tpt,pbstrVal) ) 
+
+#define ITsTextProps_GetBldr(This,pptpb)	\
+    ( (This)->lpVtbl -> GetBldr(This,pptpb) ) 
+
+#endif /* COBJMACROS */
+
+
+#endif 	/* C style interface */
+
+
+
+
+#endif 	/* __ITsTextProps_INTERFACE_DEFINED__ */
+
+
+#ifndef __IVwStylesheet_INTERFACE_DEFINED__
+#define __IVwStylesheet_INTERFACE_DEFINED__
+
+/* interface IVwStylesheet */
+/* [unique][object][uuid] */ 
+
+
+#define IID_IVwStylesheet __uuidof(IVwStylesheet)
+
+#if defined(__cplusplus) && !defined(CINTERFACE)
+    
+    MIDL_INTERFACE("D77C0DBC-C7BC-441d-9587-1E3664E1BCD3")
+    IVwStylesheet : public IUnknown
+    {
+    public:
+        virtual HRESULT STDMETHODCALLTYPE GetDefaultBasedOnStyleName( 
+            /* [retval][out] */ BSTR *pbstrNormal) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE GetDefaultStyleForContext( 
+            /* [in] */ int nContext,
+            /* [in] */ ComBool fCharStyle,
+            /* [retval][out] */ BSTR *pbstrStyleName) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE PutStyle( 
+            /* [in] */ BSTR bstrName,
+            /* [in] */ BSTR bstrUsage,
+            /* [in] */ HVO hvoStyle,
+            /* [in] */ HVO hvoBasedOn,
+            /* [in] */ HVO hvoNext,
+            /* [in] */ int nType,
+            /* [in] */ ComBool fBuiltIn,
+            /* [in] */ ComBool fModified,
+            /* [in] */ ITsTextProps *pttp) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE GetStyleRgch( 
+            /* [in] */ int cch,
+            /* [size_is][in] */ OLECHAR *prgchName,
+            /* [retval][out] */ ITsTextProps **ppttp) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE GetNextStyle( 
+            /* [in] */ BSTR bstrName,
+            /* [retval][out] */ BSTR *pbstrNext) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE GetBasedOn( 
+            /* [in] */ BSTR bstrName,
+            /* [retval][out] */ BSTR *pbstrBasedOn) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE GetType( 
+            /* [in] */ BSTR bstrName,
+            /* [retval][out] */ int *pnType) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE GetContext( 
+            /* [in] */ BSTR bstrName,
+            /* [retval][out] */ int *pnContext) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE IsBuiltIn( 
+            /* [in] */ BSTR bstrName,
+            /* [retval][out] */ ComBool *pfBuiltIn) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE IsModified( 
+            /* [in] */ BSTR bstrName,
+            /* [retval][out] */ ComBool *pfModified) = 0;
+        
+        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_DataAccess( 
+            /* [retval][out] */ ISilDataAccess **ppsda) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE MakeNewStyle( 
+            /* [retval][out] */ HVO *phvoNewStyle) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE Delete( 
+            /* [in] */ HVO hvoStyle) = 0;
+        
+        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_CStyles( 
+            /* [retval][out] */ int *pcttp) = 0;
+        
+        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_NthStyle( 
+            /* [in] */ int ihvo,
+            /* [retval][out] */ HVO *phvo) = 0;
+        
+        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_NthStyleName( 
+            /* [in] */ int ihvo,
+            /* [retval][out] */ BSTR *pbstrStyleName) = 0;
+        
+        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_NormalFontStyle( 
+            /* [retval][out] */ ITsTextProps **ppttp) = 0;
+        
+        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_IsStyleProtected( 
+            /* [in] */ BSTR bstrName,
+            /* [retval][out] */ ComBool *pfProtected) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE CacheProps( 
+            /* [in] */ int cch,
+            /* [size_is][in] */ OLECHAR *prgchName,
+            /* [in] */ HVO hvoStyle,
+            /* [in] */ ITsTextProps *pttp) = 0;
+        
+    };
+    
+    
+#else 	/* C style interface */
+
+    typedef struct IVwStylesheetVtbl
+    {
+        BEGIN_INTERFACE
+        
+        HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
+            IVwStylesheet * This,
+            /* [in] */ REFIID riid,
+            /* [annotation][iid_is][out] */ 
+            _COM_Outptr_  void **ppvObject);
+        
+        ULONG ( STDMETHODCALLTYPE *AddRef )( 
+            IVwStylesheet * This);
+        
+        ULONG ( STDMETHODCALLTYPE *Release )( 
+            IVwStylesheet * This);
+        
+        HRESULT ( STDMETHODCALLTYPE *GetDefaultBasedOnStyleName )( 
+            IVwStylesheet * This,
+            /* [retval][out] */ BSTR *pbstrNormal);
+        
+        HRESULT ( STDMETHODCALLTYPE *GetDefaultStyleForContext )( 
+            IVwStylesheet * This,
+            /* [in] */ int nContext,
+            /* [in] */ ComBool fCharStyle,
+            /* [retval][out] */ BSTR *pbstrStyleName);
+        
+        HRESULT ( STDMETHODCALLTYPE *PutStyle )( 
+            IVwStylesheet * This,
+            /* [in] */ BSTR bstrName,
+            /* [in] */ BSTR bstrUsage,
+            /* [in] */ HVO hvoStyle,
+            /* [in] */ HVO hvoBasedOn,
+            /* [in] */ HVO hvoNext,
+            /* [in] */ int nType,
+            /* [in] */ ComBool fBuiltIn,
+            /* [in] */ ComBool fModified,
+            /* [in] */ ITsTextProps *pttp);
+        
+        HRESULT ( STDMETHODCALLTYPE *GetStyleRgch )( 
+            IVwStylesheet * This,
+            /* [in] */ int cch,
+            /* [size_is][in] */ OLECHAR *prgchName,
+            /* [retval][out] */ ITsTextProps **ppttp);
+        
+        HRESULT ( STDMETHODCALLTYPE *GetNextStyle )( 
+            IVwStylesheet * This,
+            /* [in] */ BSTR bstrName,
+            /* [retval][out] */ BSTR *pbstrNext);
+        
+        HRESULT ( STDMETHODCALLTYPE *GetBasedOn )( 
+            IVwStylesheet * This,
+            /* [in] */ BSTR bstrName,
+            /* [retval][out] */ BSTR *pbstrBasedOn);
+        
+        HRESULT ( STDMETHODCALLTYPE *GetType )( 
+            IVwStylesheet * This,
+            /* [in] */ BSTR bstrName,
+            /* [retval][out] */ int *pnType);
+        
+        HRESULT ( STDMETHODCALLTYPE *GetContext )( 
+            IVwStylesheet * This,
+            /* [in] */ BSTR bstrName,
+            /* [retval][out] */ int *pnContext);
+        
+        HRESULT ( STDMETHODCALLTYPE *IsBuiltIn )( 
+            IVwStylesheet * This,
+            /* [in] */ BSTR bstrName,
+            /* [retval][out] */ ComBool *pfBuiltIn);
+        
+        HRESULT ( STDMETHODCALLTYPE *IsModified )( 
+            IVwStylesheet * This,
+            /* [in] */ BSTR bstrName,
+            /* [retval][out] */ ComBool *pfModified);
+        
+        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_DataAccess )( 
+            IVwStylesheet * This,
+            /* [retval][out] */ ISilDataAccess **ppsda);
+        
+        HRESULT ( STDMETHODCALLTYPE *MakeNewStyle )( 
+            IVwStylesheet * This,
+            /* [retval][out] */ HVO *phvoNewStyle);
+        
+        HRESULT ( STDMETHODCALLTYPE *Delete )( 
+            IVwStylesheet * This,
+            /* [in] */ HVO hvoStyle);
+        
+        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_CStyles )( 
+            IVwStylesheet * This,
+            /* [retval][out] */ int *pcttp);
+        
+        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_NthStyle )( 
+            IVwStylesheet * This,
+            /* [in] */ int ihvo,
+            /* [retval][out] */ HVO *phvo);
+        
+        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_NthStyleName )( 
+            IVwStylesheet * This,
+            /* [in] */ int ihvo,
+            /* [retval][out] */ BSTR *pbstrStyleName);
+        
+        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_NormalFontStyle )( 
+            IVwStylesheet * This,
+            /* [retval][out] */ ITsTextProps **ppttp);
+        
+        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IsStyleProtected )( 
+            IVwStylesheet * This,
+            /* [in] */ BSTR bstrName,
+            /* [retval][out] */ ComBool *pfProtected);
+        
+        HRESULT ( STDMETHODCALLTYPE *CacheProps )( 
+            IVwStylesheet * This,
+            /* [in] */ int cch,
+            /* [size_is][in] */ OLECHAR *prgchName,
+            /* [in] */ HVO hvoStyle,
+            /* [in] */ ITsTextProps *pttp);
+        
+        END_INTERFACE
+    } IVwStylesheetVtbl;
+
+    interface IVwStylesheet
+    {
+        CONST_VTBL struct IVwStylesheetVtbl *lpVtbl;
+    };
+
+    
+
+#ifdef COBJMACROS
+
+
+#define IVwStylesheet_QueryInterface(This,riid,ppvObject)	\
+    ( (This)->lpVtbl -> QueryInterface(This,riid,ppvObject) ) 
+
+#define IVwStylesheet_AddRef(This)	\
+    ( (This)->lpVtbl -> AddRef(This) ) 
+
+#define IVwStylesheet_Release(This)	\
+    ( (This)->lpVtbl -> Release(This) ) 
+
+
+#define IVwStylesheet_GetDefaultBasedOnStyleName(This,pbstrNormal)	\
+    ( (This)->lpVtbl -> GetDefaultBasedOnStyleName(This,pbstrNormal) ) 
+
+#define IVwStylesheet_GetDefaultStyleForContext(This,nContext,fCharStyle,pbstrStyleName)	\
+    ( (This)->lpVtbl -> GetDefaultStyleForContext(This,nContext,fCharStyle,pbstrStyleName) ) 
+
+#define IVwStylesheet_PutStyle(This,bstrName,bstrUsage,hvoStyle,hvoBasedOn,hvoNext,nType,fBuiltIn,fModified,pttp)	\
+    ( (This)->lpVtbl -> PutStyle(This,bstrName,bstrUsage,hvoStyle,hvoBasedOn,hvoNext,nType,fBuiltIn,fModified,pttp) ) 
+
+#define IVwStylesheet_GetStyleRgch(This,cch,prgchName,ppttp)	\
+    ( (This)->lpVtbl -> GetStyleRgch(This,cch,prgchName,ppttp) ) 
+
+#define IVwStylesheet_GetNextStyle(This,bstrName,pbstrNext)	\
+    ( (This)->lpVtbl -> GetNextStyle(This,bstrName,pbstrNext) ) 
+
+#define IVwStylesheet_GetBasedOn(This,bstrName,pbstrBasedOn)	\
+    ( (This)->lpVtbl -> GetBasedOn(This,bstrName,pbstrBasedOn) ) 
+
+#define IVwStylesheet_GetType(This,bstrName,pnType)	\
+    ( (This)->lpVtbl -> GetType(This,bstrName,pnType) ) 
+
+#define IVwStylesheet_GetContext(This,bstrName,pnContext)	\
+    ( (This)->lpVtbl -> GetContext(This,bstrName,pnContext) ) 
+
+#define IVwStylesheet_IsBuiltIn(This,bstrName,pfBuiltIn)	\
+    ( (This)->lpVtbl -> IsBuiltIn(This,bstrName,pfBuiltIn) ) 
+
+#define IVwStylesheet_IsModified(This,bstrName,pfModified)	\
+    ( (This)->lpVtbl -> IsModified(This,bstrName,pfModified) ) 
+
+#define IVwStylesheet_get_DataAccess(This,ppsda)	\
+    ( (This)->lpVtbl -> get_DataAccess(This,ppsda) ) 
+
+#define IVwStylesheet_MakeNewStyle(This,phvoNewStyle)	\
+    ( (This)->lpVtbl -> MakeNewStyle(This,phvoNewStyle) ) 
+
+#define IVwStylesheet_Delete(This,hvoStyle)	\
+    ( (This)->lpVtbl -> Delete(This,hvoStyle) ) 
+
+#define IVwStylesheet_get_CStyles(This,pcttp)	\
+    ( (This)->lpVtbl -> get_CStyles(This,pcttp) ) 
+
+#define IVwStylesheet_get_NthStyle(This,ihvo,phvo)	\
+    ( (This)->lpVtbl -> get_NthStyle(This,ihvo,phvo) ) 
+
+#define IVwStylesheet_get_NthStyleName(This,ihvo,pbstrStyleName)	\
+    ( (This)->lpVtbl -> get_NthStyleName(This,ihvo,pbstrStyleName) ) 
+
+#define IVwStylesheet_get_NormalFontStyle(This,ppttp)	\
+    ( (This)->lpVtbl -> get_NormalFontStyle(This,ppttp) ) 
+
+#define IVwStylesheet_get_IsStyleProtected(This,bstrName,pfProtected)	\
+    ( (This)->lpVtbl -> get_IsStyleProtected(This,bstrName,pfProtected) ) 
+
+#define IVwStylesheet_CacheProps(This,cch,prgchName,hvoStyle,pttp)	\
+    ( (This)->lpVtbl -> CacheProps(This,cch,prgchName,hvoStyle,pttp) ) 
+
+#endif /* COBJMACROS */
+
+
+#endif 	/* C style interface */
+
+
+
+
+#endif 	/* __IVwStylesheet_INTERFACE_DEFINED__ */
+
+
+#ifndef __ISimpleInit_INTERFACE_DEFINED__
+#define __ISimpleInit_INTERFACE_DEFINED__
+
+/* interface ISimpleInit */
+/* [unique][object][uuid] */ 
+
+
+#define IID_ISimpleInit __uuidof(ISimpleInit)
+
+#if defined(__cplusplus) && !defined(CINTERFACE)
+    
+    MIDL_INTERFACE("6433D19E-2DA2-4041-B202-DB118EE1694D")
+    ISimpleInit : public IUnknown
+    {
+    public:
+        virtual /* [restricted] */ HRESULT STDMETHODCALLTYPE InitNew( 
+            /* [size_is][in] */ const BYTE *prgb,
+            /* [in] */ int cb) = 0;
+        
+        virtual /* [restricted][propget] */ HRESULT STDMETHODCALLTYPE get_InitializationData( 
+            /* [retval][out] */ BSTR *pbstr) = 0;
+        
+    };
+    
+    
+#else 	/* C style interface */
+
+    typedef struct ISimpleInitVtbl
+    {
+        BEGIN_INTERFACE
+        
+        HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
+            ISimpleInit * This,
+            /* [in] */ REFIID riid,
+            /* [annotation][iid_is][out] */ 
+            _COM_Outptr_  void **ppvObject);
+        
+        ULONG ( STDMETHODCALLTYPE *AddRef )( 
+            ISimpleInit * This);
+        
+        ULONG ( STDMETHODCALLTYPE *Release )( 
+            ISimpleInit * This);
+        
+        /* [restricted] */ HRESULT ( STDMETHODCALLTYPE *InitNew )( 
+            ISimpleInit * This,
+            /* [size_is][in] */ const BYTE *prgb,
+            /* [in] */ int cb);
+        
+        /* [restricted][propget] */ HRESULT ( STDMETHODCALLTYPE *get_InitializationData )( 
+            ISimpleInit * This,
+            /* [retval][out] */ BSTR *pbstr);
+        
+        END_INTERFACE
+    } ISimpleInitVtbl;
+
+    interface ISimpleInit
+    {
+        CONST_VTBL struct ISimpleInitVtbl *lpVtbl;
+    };
+
+    
+
+#ifdef COBJMACROS
+
+
+#define ISimpleInit_QueryInterface(This,riid,ppvObject)	\
+    ( (This)->lpVtbl -> QueryInterface(This,riid,ppvObject) ) 
+
+#define ISimpleInit_AddRef(This)	\
+    ( (This)->lpVtbl -> AddRef(This) ) 
+
+#define ISimpleInit_Release(This)	\
+    ( (This)->lpVtbl -> Release(This) ) 
+
+
+#define ISimpleInit_InitNew(This,prgb,cb)	\
+    ( (This)->lpVtbl -> InitNew(This,prgb,cb) ) 
+
+#define ISimpleInit_get_InitializationData(This,pbstr)	\
+    ( (This)->lpVtbl -> get_InitializationData(This,pbstr) ) 
+
+#endif /* COBJMACROS */
+
+
+#endif 	/* C style interface */
+
+
+
+
+#endif 	/* __ISimpleInit_INTERFACE_DEFINED__ */
+
+
+#ifndef __ICheckWord_INTERFACE_DEFINED__
+#define __ICheckWord_INTERFACE_DEFINED__
+
+/* interface ICheckWord */
+/* [unique][object][uuid] */ 
+
+
+#define IID_ICheckWord __uuidof(ICheckWord)
+
+#if defined(__cplusplus) && !defined(CINTERFACE)
+    
+    MIDL_INTERFACE("69F4D944-C786-47EC-94F7-15193EED6758")
+    ICheckWord : public IUnknown
+    {
+    public:
+        virtual HRESULT STDMETHODCALLTYPE Check( 
+            /* [in] */ LPCOLESTR pszWord,
+            /* [retval][out] */ ComBool *pfCorrect) = 0;
+        
+    };
+    
+    
+#else 	/* C style interface */
+
+    typedef struct ICheckWordVtbl
+    {
+        BEGIN_INTERFACE
+        
+        HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
+            ICheckWord * This,
+            /* [in] */ REFIID riid,
+            /* [annotation][iid_is][out] */ 
+            _COM_Outptr_  void **ppvObject);
+        
+        ULONG ( STDMETHODCALLTYPE *AddRef )( 
+            ICheckWord * This);
+        
+        ULONG ( STDMETHODCALLTYPE *Release )( 
+            ICheckWord * This);
+        
+        HRESULT ( STDMETHODCALLTYPE *Check )( 
+            ICheckWord * This,
+            /* [in] */ LPCOLESTR pszWord,
+            /* [retval][out] */ ComBool *pfCorrect);
+        
+        END_INTERFACE
+    } ICheckWordVtbl;
+
+    interface ICheckWord
+    {
+        CONST_VTBL struct ICheckWordVtbl *lpVtbl;
+    };
+
+    
+
+#ifdef COBJMACROS
+
+
+#define ICheckWord_QueryInterface(This,riid,ppvObject)	\
+    ( (This)->lpVtbl -> QueryInterface(This,riid,ppvObject) ) 
+
+#define ICheckWord_AddRef(This)	\
+    ( (This)->lpVtbl -> AddRef(This) ) 
+
+#define ICheckWord_Release(This)	\
+    ( (This)->lpVtbl -> Release(This) ) 
+
+
+#define ICheckWord_Check(This,pszWord,pfCorrect)	\
+    ( (This)->lpVtbl -> Check(This,pszWord,pfCorrect) ) 
+
+#endif /* COBJMACROS */
+
+
+#endif 	/* C style interface */
+
+
+
+
+#endif 	/* __ICheckWord_INTERFACE_DEFINED__ */
+
+
+#ifndef __IGetSpellChecker_INTERFACE_DEFINED__
+#define __IGetSpellChecker_INTERFACE_DEFINED__
+
+/* interface IGetSpellChecker */
+/* [unique][object][uuid] */ 
+
+
+#define IID_IGetSpellChecker __uuidof(IGetSpellChecker)
+
+#if defined(__cplusplus) && !defined(CINTERFACE)
+    
+    MIDL_INTERFACE("F0A60670-D280-45EA-A5C5-F0B84C027EFC")
+    IGetSpellChecker : public IUnknown
+    {
+    public:
+        virtual HRESULT STDMETHODCALLTYPE GetChecker( 
+            /* [in] */ LPCOLESTR pszDictId,
+            /* [retval][out] */ ICheckWord **pcw) = 0;
+        
+    };
+    
+    
+#else 	/* C style interface */
+
+    typedef struct IGetSpellCheckerVtbl
+    {
+        BEGIN_INTERFACE
+        
+        HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
+            IGetSpellChecker * This,
+            /* [in] */ REFIID riid,
+            /* [annotation][iid_is][out] */ 
+            _COM_Outptr_  void **ppvObject);
+        
+        ULONG ( STDMETHODCALLTYPE *AddRef )( 
+            IGetSpellChecker * This);
+        
+        ULONG ( STDMETHODCALLTYPE *Release )( 
+            IGetSpellChecker * This);
+        
+        HRESULT ( STDMETHODCALLTYPE *GetChecker )( 
+            IGetSpellChecker * This,
+            /* [in] */ LPCOLESTR pszDictId,
+            /* [retval][out] */ ICheckWord **pcw);
+        
+        END_INTERFACE
+    } IGetSpellCheckerVtbl;
+
+    interface IGetSpellChecker
+    {
+        CONST_VTBL struct IGetSpellCheckerVtbl *lpVtbl;
+    };
+
+    
+
+#ifdef COBJMACROS
+
+
+#define IGetSpellChecker_QueryInterface(This,riid,ppvObject)	\
+    ( (This)->lpVtbl -> QueryInterface(This,riid,ppvObject) ) 
+
+#define IGetSpellChecker_AddRef(This)	\
+    ( (This)->lpVtbl -> AddRef(This) ) 
+
+#define IGetSpellChecker_Release(This)	\
+    ( (This)->lpVtbl -> Release(This) ) 
+
+
+#define IGetSpellChecker_GetChecker(This,pszDictId,pcw)	\
+    ( (This)->lpVtbl -> GetChecker(This,pszDictId,pcw) ) 
+
+#endif /* COBJMACROS */
+
+
+#endif 	/* C style interface */
+
+
+
+
+#endif 	/* __IGetSpellChecker_INTERFACE_DEFINED__ */
+
+
+#ifndef __IVwNotifyChange_INTERFACE_DEFINED__
+#define __IVwNotifyChange_INTERFACE_DEFINED__
+
+/* interface IVwNotifyChange */
+/* [unique][object][uuid] */ 
+
+
+#define IID_IVwNotifyChange __uuidof(IVwNotifyChange)
+
+#if defined(__cplusplus) && !defined(CINTERFACE)
+    
+    MIDL_INTERFACE("6C456541-C2B6-11d3-8078-0000C0FB81B5")
+    IVwNotifyChange : public IUnknown
+    {
+    public:
+        virtual HRESULT STDMETHODCALLTYPE PropChanged( 
+            /* [in] */ HVO hvo,
+            /* [in] */ PropTag tag,
+            /* [in] */ int ivMin,
+            /* [in] */ int cvIns,
+            /* [in] */ int cvDel) = 0;
+        
+    };
+    
+    
+#else 	/* C style interface */
+
+    typedef struct IVwNotifyChangeVtbl
+    {
+        BEGIN_INTERFACE
+        
+        HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
+            IVwNotifyChange * This,
+            /* [in] */ REFIID riid,
+            /* [annotation][iid_is][out] */ 
+            _COM_Outptr_  void **ppvObject);
+        
+        ULONG ( STDMETHODCALLTYPE *AddRef )( 
+            IVwNotifyChange * This);
+        
+        ULONG ( STDMETHODCALLTYPE *Release )( 
+            IVwNotifyChange * This);
+        
+        HRESULT ( STDMETHODCALLTYPE *PropChanged )( 
+            IVwNotifyChange * This,
+            /* [in] */ HVO hvo,
+            /* [in] */ PropTag tag,
+            /* [in] */ int ivMin,
+            /* [in] */ int cvIns,
+            /* [in] */ int cvDel);
+        
+        END_INTERFACE
+    } IVwNotifyChangeVtbl;
+
+    interface IVwNotifyChange
+    {
+        CONST_VTBL struct IVwNotifyChangeVtbl *lpVtbl;
+    };
+
+    
+
+#ifdef COBJMACROS
+
+
+#define IVwNotifyChange_QueryInterface(This,riid,ppvObject)	\
+    ( (This)->lpVtbl -> QueryInterface(This,riid,ppvObject) ) 
+
+#define IVwNotifyChange_AddRef(This)	\
+    ( (This)->lpVtbl -> AddRef(This) ) 
+
+#define IVwNotifyChange_Release(This)	\
+    ( (This)->lpVtbl -> Release(This) ) 
+
+
+#define IVwNotifyChange_PropChanged(This,hvo,tag,ivMin,cvIns,cvDel)	\
+    ( (This)->lpVtbl -> PropChanged(This,hvo,tag,ivMin,cvIns,cvDel) ) 
+
+#endif /* COBJMACROS */
+
+
+#endif 	/* C style interface */
+
+
+
+
+#endif 	/* __IVwNotifyChange_INTERFACE_DEFINED__ */
+
+
 #ifndef __IUndoAction_INTERFACE_DEFINED__
 #define __IUndoAction_INTERFACE_DEFINED__
 
@@ -2863,7 +2809,7 @@ LgIcuLocaleEnumerator
 
 #if defined(__cplusplus) && !defined(CINTERFACE)
     
-    MIDL_INTERFACE("0F8EA3BE-C982-40f8-B674-25B8482EB222")
+    MIDL_INTERFACE("7E8BC421-4CB2-4CF9-8C4C-73A5FD87CA7A")
     IActionHandler : public IUnknown
     {
     public:
@@ -2959,12 +2905,6 @@ LgIcuLocaleEnumerator
         
         virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_RedoableSequenceCount( 
             /* [retval][out] */ int *pcSeq) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_UndoGrouper( 
-            /* [retval][out] */ IUndoGrouper **ppundg) = 0;
-        
-        virtual /* [propput] */ HRESULT STDMETHODCALLTYPE put_UndoGrouper( 
-            /* [in] */ IUndoGrouper *pundg) = 0;
         
         virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_IsUndoOrRedoInProgress( 
             /* [retval][out] */ ComBool *pfInProgress) = 0;
@@ -3116,14 +3056,6 @@ LgIcuLocaleEnumerator
             IActionHandler * This,
             /* [retval][out] */ int *pcSeq);
         
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_UndoGrouper )( 
-            IActionHandler * This,
-            /* [retval][out] */ IUndoGrouper **ppundg);
-        
-        /* [propput] */ HRESULT ( STDMETHODCALLTYPE *put_UndoGrouper )( 
-            IActionHandler * This,
-            /* [in] */ IUndoGrouper *pundg);
-        
         /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IsUndoOrRedoInProgress )( 
             IActionHandler * This,
             /* [retval][out] */ ComBool *pfInProgress);
@@ -3245,12 +3177,6 @@ LgIcuLocaleEnumerator
 #define IActionHandler_get_RedoableSequenceCount(This,pcSeq)	\
     ( (This)->lpVtbl -> get_RedoableSequenceCount(This,pcSeq) ) 
 
-#define IActionHandler_get_UndoGrouper(This,ppundg)	\
-    ( (This)->lpVtbl -> get_UndoGrouper(This,ppundg) ) 
-
-#define IActionHandler_put_UndoGrouper(This,pundg)	\
-    ( (This)->lpVtbl -> put_UndoGrouper(This,pundg) ) 
-
 #define IActionHandler_get_IsUndoOrRedoInProgress(This,pfInProgress)	\
     ( (This)->lpVtbl -> get_IsUndoOrRedoInProgress(This,pfInProgress) ) 
 
@@ -3272,9 +3198,1141 @@ LgIcuLocaleEnumerator
 
 #ifdef __cplusplus
 
-class DECLSPEC_UUID("6A46D810-7F14-4151-80F5-0B13FFC1F917")
+class DECLSPEC_UUID("CF0F1C0B-0E44-4C1E-9912-2048ED12C2B4")
 ActionHandler;
 #endif
+
+#ifndef __ISilDataAccess_INTERFACE_DEFINED__
+#define __ISilDataAccess_INTERFACE_DEFINED__
+
+/* interface ISilDataAccess */
+/* [unique][object][uuid] */ 
+
+
+#define IID_ISilDataAccess __uuidof(ISilDataAccess)
+
+#if defined(__cplusplus) && !defined(CINTERFACE)
+    
+    MIDL_INTERFACE("26E6E70E-53EB-4372-96F1-0F4707CCD1EB")
+    ISilDataAccess : public IUnknown
+    {
+    public:
+        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_ObjectProp( 
+            /* [in] */ HVO hvo,
+            /* [in] */ PropTag tag,
+            /* [retval][out] */ HVO *phvo) = 0;
+        
+        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_VecItem( 
+            /* [in] */ HVO hvo,
+            /* [in] */ PropTag tag,
+            /* [in] */ int index,
+            /* [retval][out] */ HVO *phvo) = 0;
+        
+        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_VecSize( 
+            /* [in] */ HVO hvo,
+            /* [in] */ PropTag tag,
+            /* [retval][out] */ int *pchvo) = 0;
+        
+        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_VecSizeAssumeCached( 
+            /* [in] */ HVO hvo,
+            /* [in] */ PropTag tag,
+            /* [retval][out] */ int *pchvo) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE VecProp( 
+            /* [in] */ HVO hvo,
+            /* [in] */ PropTag tag,
+            /* [in] */ int chvoMax,
+            /* [out] */ int *pchvo,
+            /* [length_is][size_is][out] */ HVO *prghvo) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE BinaryPropRgb( 
+            /* [in] */ HVO obj,
+            /* [in] */ PropTag tag,
+            /* [size_is][out] */ byte *prgb,
+            /* [in] */ int cbMax,
+            /* [out] */ int *pcb) = 0;
+        
+        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_GuidProp( 
+            /* [in] */ HVO hvo,
+            /* [in] */ PropTag tag,
+            /* [retval][out] */ GUID *puid) = 0;
+        
+        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_ObjFromGuid( 
+            /* [in] */ GUID uid,
+            /* [retval][out] */ HVO *pHvo) = 0;
+        
+        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_IntProp( 
+            /* [in] */ HVO hvo,
+            /* [in] */ PropTag tag,
+            /* [retval][out] */ int *pn) = 0;
+        
+        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_Int64Prop( 
+            /* [in] */ HVO hvo,
+            /* [in] */ PropTag tag,
+            /* [retval][out] */ __int64 *plln) = 0;
+        
+        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_BooleanProp( 
+            /* [in] */ HVO hvo,
+            /* [in] */ PropTag tag,
+            /* [retval][out] */ ComBool *pn) = 0;
+        
+        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_MultiStringAlt( 
+            /* [in] */ HVO hvo,
+            /* [in] */ PropTag tag,
+            /* [in] */ int ws,
+            /* [retval][out] */ ITsString **pptss) = 0;
+        
+        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_MultiStringProp( 
+            /* [in] */ HVO hvo,
+            /* [in] */ PropTag tag,
+            /* [retval][out] */ ITsMultiString **pptms) = 0;
+        
+        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_Prop( 
+            /* [in] */ HVO hvo,
+            /* [in] */ PropTag tag,
+            /* [retval][out] */ VARIANT *pvar) = 0;
+        
+        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_StringProp( 
+            /* [in] */ HVO hvo,
+            /* [in] */ PropTag tag,
+            /* [retval][out] */ ITsString **pptss) = 0;
+        
+        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_TimeProp( 
+            /* [in] */ HVO hvo,
+            /* [in] */ PropTag tag,
+            /* [retval][out] */ __int64 *ptim) = 0;
+        
+        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_UnicodeProp( 
+            /* [in] */ HVO obj,
+            /* [in] */ PropTag tag,
+            /* [retval][out] */ BSTR *pbstr) = 0;
+        
+        virtual /* [propput] */ HRESULT STDMETHODCALLTYPE put_UnicodeProp( 
+            /* [in] */ HVO obj,
+            /* [in] */ PropTag tag,
+            /* [in] */ BSTR bstr) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE UnicodePropRgch( 
+            /* [in] */ HVO obj,
+            /* [in] */ PropTag tag,
+            /* [size_is][out] */ OLECHAR *prgch,
+            /* [in] */ int cchMax,
+            /* [out] */ int *pcch) = 0;
+        
+        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_UnknownProp( 
+            /* [in] */ HVO hvo,
+            /* [in] */ PropTag tag,
+            /* [retval][out] */ IUnknown **ppunk) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE BeginUndoTask( 
+            /* [in] */ BSTR bstrUndo,
+            /* [in] */ BSTR bstrRedo) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE EndUndoTask( void) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE ContinueUndoTask( void) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE EndOuterUndoTask( void) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE Rollback( void) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE BreakUndoTask( 
+            /* [in] */ BSTR bstrUndo,
+            /* [in] */ BSTR bstrRedo) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE BeginNonUndoableTask( void) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE EndNonUndoableTask( void) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE GetActionHandler( 
+            /* [retval][out] */ IActionHandler **ppacth) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE SetActionHandler( 
+            /* [in] */ IActionHandler *pacth) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE DeleteObj( 
+            /* [in] */ HVO hvoObj) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE DeleteObjOwner( 
+            /* [in] */ HVO hvoOwner,
+            /* [in] */ HVO hvoObj,
+            /* [in] */ PropTag tag,
+            /* [in] */ int ihvo) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE InsertNew( 
+            /* [in] */ HVO hvoObj,
+            /* [in] */ PropTag tag,
+            /* [in] */ int ihvo,
+            /* [in] */ int chvo,
+            /* [in] */ IVwStylesheet *pss) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE MakeNewObject( 
+            /* [in] */ int clid,
+            /* [in] */ HVO hvoOwner,
+            /* [in] */ PropTag tag,
+            /* [in] */ int ord,
+            /* [retval][out] */ HVO *phvoNew) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE MoveOwnSeq( 
+            /* [in] */ HVO hvoSrcOwner,
+            /* [in] */ PropTag tagSrc,
+            /* [in] */ int ihvoStart,
+            /* [in] */ int ihvoEnd,
+            /* [in] */ HVO hvoDstOwner,
+            /* [in] */ PropTag tagDst,
+            /* [in] */ int ihvoDstStart) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE MoveOwn( 
+            /* [in] */ HVO hvoSrcOwner,
+            /* [in] */ PropTag tagSrc,
+            /* [in] */ HVO hvo,
+            /* [in] */ HVO hvoDstOwner,
+            /* [in] */ PropTag tagDst,
+            /* [in] */ int ihvoDstStart) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE Replace( 
+            /* [in] */ HVO hvoObj,
+            /* [in] */ PropTag tag,
+            /* [in] */ int ihvoMin,
+            /* [in] */ int ihvoLim,
+            /* [size_is][in] */ HVO *prghvo,
+            /* [in] */ int chvo) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE SetObjProp( 
+            /* [in] */ HVO hvo,
+            /* [in] */ PropTag tag,
+            /* [in] */ HVO hvoObj) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE RemoveObjRefs( 
+            /* [in] */ HVO hvo) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE SetBinary( 
+            /* [in] */ HVO hvo,
+            /* [in] */ PropTag tag,
+            /* [size_is][in] */ byte *prgb,
+            /* [in] */ int cb) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE SetGuid( 
+            /* [in] */ HVO hvo,
+            /* [in] */ PropTag tag,
+            /* [in] */ GUID uid) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE SetInt( 
+            /* [in] */ HVO hvo,
+            /* [in] */ PropTag tag,
+            /* [in] */ int n) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE SetInt64( 
+            /* [in] */ HVO hvo,
+            /* [in] */ PropTag tag,
+            /* [in] */ __int64 lln) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE SetBoolean( 
+            /* [in] */ HVO hvo,
+            /* [in] */ PropTag tag,
+            /* [in] */ ComBool n) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE SetMultiStringAlt( 
+            /* [in] */ HVO hvo,
+            /* [in] */ PropTag tag,
+            /* [in] */ int ws,
+            /* [in] */ ITsString *ptss) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE SetString( 
+            /* [in] */ HVO hvo,
+            /* [in] */ PropTag tag,
+            /* [in] */ ITsString *ptss) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE SetTime( 
+            /* [in] */ HVO hvo,
+            /* [in] */ PropTag tag,
+            /* [in] */ __int64 lln) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE SetUnicode( 
+            /* [in] */ HVO hvo,
+            /* [in] */ PropTag tag,
+            /* [size_is][in] */ OLECHAR *prgch,
+            /* [in] */ int cch) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE SetUnknown( 
+            /* [in] */ HVO hvo,
+            /* [in] */ PropTag tag,
+            /* [in] */ IUnknown *punk) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE AddNotification( 
+            /* [in] */ IVwNotifyChange *pnchng) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE PropChanged( 
+            /* [in] */ IVwNotifyChange *pnchng,
+            /* [in] */ int pct,
+            /* [in] */ HVO hvo,
+            /* [in] */ int tag,
+            /* [in] */ int ivMin,
+            /* [in] */ int cvIns,
+            /* [in] */ int cvDel) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE RemoveNotification( 
+            /* [in] */ IVwNotifyChange *pnchng) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE GetDisplayIndex( 
+            /* [in] */ HVO hvoOwn,
+            /* [in] */ int tag,
+            /* [in] */ int ihvo,
+            /* [retval][out] */ int *ihvoDisp) = 0;
+        
+        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_WritingSystemFactory( 
+            /* [retval][out] */ ILgWritingSystemFactory **ppwsf) = 0;
+        
+        virtual /* [propputref] */ HRESULT STDMETHODCALLTYPE putref_WritingSystemFactory( 
+            /* [in] */ ILgWritingSystemFactory *pwsf) = 0;
+        
+        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_WritingSystemsOfInterest( 
+            /* [in] */ int cwsMax,
+            /* [size_is][out] */ int *pws,
+            /* [retval][out] */ int *pcws) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE InsertRelExtra( 
+            /* [in] */ HVO hvoSrc,
+            /* [in] */ PropTag tag,
+            /* [in] */ int ihvo,
+            /* [in] */ HVO hvoDst,
+            /* [in] */ BSTR bstrExtra) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE UpdateRelExtra( 
+            /* [in] */ HVO hvoSrc,
+            /* [in] */ PropTag tag,
+            /* [in] */ int ihvo,
+            /* [in] */ BSTR bstrExtra) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE GetRelExtra( 
+            /* [in] */ HVO hvoSrc,
+            /* [in] */ PropTag tag,
+            /* [in] */ int ihvo,
+            /* [retval][out] */ BSTR *pbstrExtra) = 0;
+        
+        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_IsPropInCache( 
+            /* [in] */ HVO hvo,
+            /* [in] */ PropTag tag,
+            /* [in] */ int cpt,
+            /* [in] */ int ws,
+            /* [retval][out] */ ComBool *pfCached) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE IsDirty( 
+            /* [retval][out] */ ComBool *pf) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE ClearDirty( void) = 0;
+        
+        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_MetaDataCache( 
+            /* [retval][out] */ IFwMetaDataCache **ppmdc) = 0;
+        
+        virtual /* [propputref] */ HRESULT STDMETHODCALLTYPE putref_MetaDataCache( 
+            /* [in] */ IFwMetaDataCache *pmdc) = 0;
+        
+        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_IsValidObject( 
+            /* [in] */ HVO hvo,
+            /* [retval][out] */ ComBool *pfValid) = 0;
+        
+        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_IsDummyId( 
+            /* [in] */ HVO hvo,
+            /* [retval][out] */ ComBool *pfDummy) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE GetObjIndex( 
+            /* [in] */ HVO hvoOwn,
+            /* [in] */ int flid,
+            /* [in] */ HVO hvo,
+            /* [retval][out] */ int *ihvo) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE GetOutlineNumber( 
+            /* [in] */ HVO hvo,
+            /* [in] */ int flid,
+            /* [in] */ ComBool fFinPer,
+            /* [retval][out] */ BSTR *pbstr) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE MoveString( 
+            /* [in] */ int hvoSource,
+            /* [in] */ PropTag flidSrc,
+            /* [in] */ int wsSrc,
+            /* [in] */ int ichMin,
+            /* [in] */ int ichLim,
+            /* [in] */ HVO hvoDst,
+            /* [in] */ PropTag flidDst,
+            /* [in] */ int wsDst,
+            /* [in] */ int ichDest,
+            /* [in] */ ComBool fDstIsNew) = 0;
+        
+    };
+    
+    
+#else 	/* C style interface */
+
+    typedef struct ISilDataAccessVtbl
+    {
+        BEGIN_INTERFACE
+        
+        HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
+            ISilDataAccess * This,
+            /* [in] */ REFIID riid,
+            /* [annotation][iid_is][out] */ 
+            _COM_Outptr_  void **ppvObject);
+        
+        ULONG ( STDMETHODCALLTYPE *AddRef )( 
+            ISilDataAccess * This);
+        
+        ULONG ( STDMETHODCALLTYPE *Release )( 
+            ISilDataAccess * This);
+        
+        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_ObjectProp )( 
+            ISilDataAccess * This,
+            /* [in] */ HVO hvo,
+            /* [in] */ PropTag tag,
+            /* [retval][out] */ HVO *phvo);
+        
+        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_VecItem )( 
+            ISilDataAccess * This,
+            /* [in] */ HVO hvo,
+            /* [in] */ PropTag tag,
+            /* [in] */ int index,
+            /* [retval][out] */ HVO *phvo);
+        
+        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_VecSize )( 
+            ISilDataAccess * This,
+            /* [in] */ HVO hvo,
+            /* [in] */ PropTag tag,
+            /* [retval][out] */ int *pchvo);
+        
+        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_VecSizeAssumeCached )( 
+            ISilDataAccess * This,
+            /* [in] */ HVO hvo,
+            /* [in] */ PropTag tag,
+            /* [retval][out] */ int *pchvo);
+        
+        HRESULT ( STDMETHODCALLTYPE *VecProp )( 
+            ISilDataAccess * This,
+            /* [in] */ HVO hvo,
+            /* [in] */ PropTag tag,
+            /* [in] */ int chvoMax,
+            /* [out] */ int *pchvo,
+            /* [length_is][size_is][out] */ HVO *prghvo);
+        
+        HRESULT ( STDMETHODCALLTYPE *BinaryPropRgb )( 
+            ISilDataAccess * This,
+            /* [in] */ HVO obj,
+            /* [in] */ PropTag tag,
+            /* [size_is][out] */ byte *prgb,
+            /* [in] */ int cbMax,
+            /* [out] */ int *pcb);
+        
+        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_GuidProp )( 
+            ISilDataAccess * This,
+            /* [in] */ HVO hvo,
+            /* [in] */ PropTag tag,
+            /* [retval][out] */ GUID *puid);
+        
+        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_ObjFromGuid )( 
+            ISilDataAccess * This,
+            /* [in] */ GUID uid,
+            /* [retval][out] */ HVO *pHvo);
+        
+        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IntProp )( 
+            ISilDataAccess * This,
+            /* [in] */ HVO hvo,
+            /* [in] */ PropTag tag,
+            /* [retval][out] */ int *pn);
+        
+        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_Int64Prop )( 
+            ISilDataAccess * This,
+            /* [in] */ HVO hvo,
+            /* [in] */ PropTag tag,
+            /* [retval][out] */ __int64 *plln);
+        
+        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_BooleanProp )( 
+            ISilDataAccess * This,
+            /* [in] */ HVO hvo,
+            /* [in] */ PropTag tag,
+            /* [retval][out] */ ComBool *pn);
+        
+        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_MultiStringAlt )( 
+            ISilDataAccess * This,
+            /* [in] */ HVO hvo,
+            /* [in] */ PropTag tag,
+            /* [in] */ int ws,
+            /* [retval][out] */ ITsString **pptss);
+        
+        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_MultiStringProp )( 
+            ISilDataAccess * This,
+            /* [in] */ HVO hvo,
+            /* [in] */ PropTag tag,
+            /* [retval][out] */ ITsMultiString **pptms);
+        
+        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_Prop )( 
+            ISilDataAccess * This,
+            /* [in] */ HVO hvo,
+            /* [in] */ PropTag tag,
+            /* [retval][out] */ VARIANT *pvar);
+        
+        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_StringProp )( 
+            ISilDataAccess * This,
+            /* [in] */ HVO hvo,
+            /* [in] */ PropTag tag,
+            /* [retval][out] */ ITsString **pptss);
+        
+        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_TimeProp )( 
+            ISilDataAccess * This,
+            /* [in] */ HVO hvo,
+            /* [in] */ PropTag tag,
+            /* [retval][out] */ __int64 *ptim);
+        
+        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_UnicodeProp )( 
+            ISilDataAccess * This,
+            /* [in] */ HVO obj,
+            /* [in] */ PropTag tag,
+            /* [retval][out] */ BSTR *pbstr);
+        
+        /* [propput] */ HRESULT ( STDMETHODCALLTYPE *put_UnicodeProp )( 
+            ISilDataAccess * This,
+            /* [in] */ HVO obj,
+            /* [in] */ PropTag tag,
+            /* [in] */ BSTR bstr);
+        
+        HRESULT ( STDMETHODCALLTYPE *UnicodePropRgch )( 
+            ISilDataAccess * This,
+            /* [in] */ HVO obj,
+            /* [in] */ PropTag tag,
+            /* [size_is][out] */ OLECHAR *prgch,
+            /* [in] */ int cchMax,
+            /* [out] */ int *pcch);
+        
+        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_UnknownProp )( 
+            ISilDataAccess * This,
+            /* [in] */ HVO hvo,
+            /* [in] */ PropTag tag,
+            /* [retval][out] */ IUnknown **ppunk);
+        
+        HRESULT ( STDMETHODCALLTYPE *BeginUndoTask )( 
+            ISilDataAccess * This,
+            /* [in] */ BSTR bstrUndo,
+            /* [in] */ BSTR bstrRedo);
+        
+        HRESULT ( STDMETHODCALLTYPE *EndUndoTask )( 
+            ISilDataAccess * This);
+        
+        HRESULT ( STDMETHODCALLTYPE *ContinueUndoTask )( 
+            ISilDataAccess * This);
+        
+        HRESULT ( STDMETHODCALLTYPE *EndOuterUndoTask )( 
+            ISilDataAccess * This);
+        
+        HRESULT ( STDMETHODCALLTYPE *Rollback )( 
+            ISilDataAccess * This);
+        
+        HRESULT ( STDMETHODCALLTYPE *BreakUndoTask )( 
+            ISilDataAccess * This,
+            /* [in] */ BSTR bstrUndo,
+            /* [in] */ BSTR bstrRedo);
+        
+        HRESULT ( STDMETHODCALLTYPE *BeginNonUndoableTask )( 
+            ISilDataAccess * This);
+        
+        HRESULT ( STDMETHODCALLTYPE *EndNonUndoableTask )( 
+            ISilDataAccess * This);
+        
+        HRESULT ( STDMETHODCALLTYPE *GetActionHandler )( 
+            ISilDataAccess * This,
+            /* [retval][out] */ IActionHandler **ppacth);
+        
+        HRESULT ( STDMETHODCALLTYPE *SetActionHandler )( 
+            ISilDataAccess * This,
+            /* [in] */ IActionHandler *pacth);
+        
+        HRESULT ( STDMETHODCALLTYPE *DeleteObj )( 
+            ISilDataAccess * This,
+            /* [in] */ HVO hvoObj);
+        
+        HRESULT ( STDMETHODCALLTYPE *DeleteObjOwner )( 
+            ISilDataAccess * This,
+            /* [in] */ HVO hvoOwner,
+            /* [in] */ HVO hvoObj,
+            /* [in] */ PropTag tag,
+            /* [in] */ int ihvo);
+        
+        HRESULT ( STDMETHODCALLTYPE *InsertNew )( 
+            ISilDataAccess * This,
+            /* [in] */ HVO hvoObj,
+            /* [in] */ PropTag tag,
+            /* [in] */ int ihvo,
+            /* [in] */ int chvo,
+            /* [in] */ IVwStylesheet *pss);
+        
+        HRESULT ( STDMETHODCALLTYPE *MakeNewObject )( 
+            ISilDataAccess * This,
+            /* [in] */ int clid,
+            /* [in] */ HVO hvoOwner,
+            /* [in] */ PropTag tag,
+            /* [in] */ int ord,
+            /* [retval][out] */ HVO *phvoNew);
+        
+        HRESULT ( STDMETHODCALLTYPE *MoveOwnSeq )( 
+            ISilDataAccess * This,
+            /* [in] */ HVO hvoSrcOwner,
+            /* [in] */ PropTag tagSrc,
+            /* [in] */ int ihvoStart,
+            /* [in] */ int ihvoEnd,
+            /* [in] */ HVO hvoDstOwner,
+            /* [in] */ PropTag tagDst,
+            /* [in] */ int ihvoDstStart);
+        
+        HRESULT ( STDMETHODCALLTYPE *MoveOwn )( 
+            ISilDataAccess * This,
+            /* [in] */ HVO hvoSrcOwner,
+            /* [in] */ PropTag tagSrc,
+            /* [in] */ HVO hvo,
+            /* [in] */ HVO hvoDstOwner,
+            /* [in] */ PropTag tagDst,
+            /* [in] */ int ihvoDstStart);
+        
+        HRESULT ( STDMETHODCALLTYPE *Replace )( 
+            ISilDataAccess * This,
+            /* [in] */ HVO hvoObj,
+            /* [in] */ PropTag tag,
+            /* [in] */ int ihvoMin,
+            /* [in] */ int ihvoLim,
+            /* [size_is][in] */ HVO *prghvo,
+            /* [in] */ int chvo);
+        
+        HRESULT ( STDMETHODCALLTYPE *SetObjProp )( 
+            ISilDataAccess * This,
+            /* [in] */ HVO hvo,
+            /* [in] */ PropTag tag,
+            /* [in] */ HVO hvoObj);
+        
+        HRESULT ( STDMETHODCALLTYPE *RemoveObjRefs )( 
+            ISilDataAccess * This,
+            /* [in] */ HVO hvo);
+        
+        HRESULT ( STDMETHODCALLTYPE *SetBinary )( 
+            ISilDataAccess * This,
+            /* [in] */ HVO hvo,
+            /* [in] */ PropTag tag,
+            /* [size_is][in] */ byte *prgb,
+            /* [in] */ int cb);
+        
+        HRESULT ( STDMETHODCALLTYPE *SetGuid )( 
+            ISilDataAccess * This,
+            /* [in] */ HVO hvo,
+            /* [in] */ PropTag tag,
+            /* [in] */ GUID uid);
+        
+        HRESULT ( STDMETHODCALLTYPE *SetInt )( 
+            ISilDataAccess * This,
+            /* [in] */ HVO hvo,
+            /* [in] */ PropTag tag,
+            /* [in] */ int n);
+        
+        HRESULT ( STDMETHODCALLTYPE *SetInt64 )( 
+            ISilDataAccess * This,
+            /* [in] */ HVO hvo,
+            /* [in] */ PropTag tag,
+            /* [in] */ __int64 lln);
+        
+        HRESULT ( STDMETHODCALLTYPE *SetBoolean )( 
+            ISilDataAccess * This,
+            /* [in] */ HVO hvo,
+            /* [in] */ PropTag tag,
+            /* [in] */ ComBool n);
+        
+        HRESULT ( STDMETHODCALLTYPE *SetMultiStringAlt )( 
+            ISilDataAccess * This,
+            /* [in] */ HVO hvo,
+            /* [in] */ PropTag tag,
+            /* [in] */ int ws,
+            /* [in] */ ITsString *ptss);
+        
+        HRESULT ( STDMETHODCALLTYPE *SetString )( 
+            ISilDataAccess * This,
+            /* [in] */ HVO hvo,
+            /* [in] */ PropTag tag,
+            /* [in] */ ITsString *ptss);
+        
+        HRESULT ( STDMETHODCALLTYPE *SetTime )( 
+            ISilDataAccess * This,
+            /* [in] */ HVO hvo,
+            /* [in] */ PropTag tag,
+            /* [in] */ __int64 lln);
+        
+        HRESULT ( STDMETHODCALLTYPE *SetUnicode )( 
+            ISilDataAccess * This,
+            /* [in] */ HVO hvo,
+            /* [in] */ PropTag tag,
+            /* [size_is][in] */ OLECHAR *prgch,
+            /* [in] */ int cch);
+        
+        HRESULT ( STDMETHODCALLTYPE *SetUnknown )( 
+            ISilDataAccess * This,
+            /* [in] */ HVO hvo,
+            /* [in] */ PropTag tag,
+            /* [in] */ IUnknown *punk);
+        
+        HRESULT ( STDMETHODCALLTYPE *AddNotification )( 
+            ISilDataAccess * This,
+            /* [in] */ IVwNotifyChange *pnchng);
+        
+        HRESULT ( STDMETHODCALLTYPE *PropChanged )( 
+            ISilDataAccess * This,
+            /* [in] */ IVwNotifyChange *pnchng,
+            /* [in] */ int pct,
+            /* [in] */ HVO hvo,
+            /* [in] */ int tag,
+            /* [in] */ int ivMin,
+            /* [in] */ int cvIns,
+            /* [in] */ int cvDel);
+        
+        HRESULT ( STDMETHODCALLTYPE *RemoveNotification )( 
+            ISilDataAccess * This,
+            /* [in] */ IVwNotifyChange *pnchng);
+        
+        HRESULT ( STDMETHODCALLTYPE *GetDisplayIndex )( 
+            ISilDataAccess * This,
+            /* [in] */ HVO hvoOwn,
+            /* [in] */ int tag,
+            /* [in] */ int ihvo,
+            /* [retval][out] */ int *ihvoDisp);
+        
+        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_WritingSystemFactory )( 
+            ISilDataAccess * This,
+            /* [retval][out] */ ILgWritingSystemFactory **ppwsf);
+        
+        /* [propputref] */ HRESULT ( STDMETHODCALLTYPE *putref_WritingSystemFactory )( 
+            ISilDataAccess * This,
+            /* [in] */ ILgWritingSystemFactory *pwsf);
+        
+        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_WritingSystemsOfInterest )( 
+            ISilDataAccess * This,
+            /* [in] */ int cwsMax,
+            /* [size_is][out] */ int *pws,
+            /* [retval][out] */ int *pcws);
+        
+        HRESULT ( STDMETHODCALLTYPE *InsertRelExtra )( 
+            ISilDataAccess * This,
+            /* [in] */ HVO hvoSrc,
+            /* [in] */ PropTag tag,
+            /* [in] */ int ihvo,
+            /* [in] */ HVO hvoDst,
+            /* [in] */ BSTR bstrExtra);
+        
+        HRESULT ( STDMETHODCALLTYPE *UpdateRelExtra )( 
+            ISilDataAccess * This,
+            /* [in] */ HVO hvoSrc,
+            /* [in] */ PropTag tag,
+            /* [in] */ int ihvo,
+            /* [in] */ BSTR bstrExtra);
+        
+        HRESULT ( STDMETHODCALLTYPE *GetRelExtra )( 
+            ISilDataAccess * This,
+            /* [in] */ HVO hvoSrc,
+            /* [in] */ PropTag tag,
+            /* [in] */ int ihvo,
+            /* [retval][out] */ BSTR *pbstrExtra);
+        
+        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IsPropInCache )( 
+            ISilDataAccess * This,
+            /* [in] */ HVO hvo,
+            /* [in] */ PropTag tag,
+            /* [in] */ int cpt,
+            /* [in] */ int ws,
+            /* [retval][out] */ ComBool *pfCached);
+        
+        HRESULT ( STDMETHODCALLTYPE *IsDirty )( 
+            ISilDataAccess * This,
+            /* [retval][out] */ ComBool *pf);
+        
+        HRESULT ( STDMETHODCALLTYPE *ClearDirty )( 
+            ISilDataAccess * This);
+        
+        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_MetaDataCache )( 
+            ISilDataAccess * This,
+            /* [retval][out] */ IFwMetaDataCache **ppmdc);
+        
+        /* [propputref] */ HRESULT ( STDMETHODCALLTYPE *putref_MetaDataCache )( 
+            ISilDataAccess * This,
+            /* [in] */ IFwMetaDataCache *pmdc);
+        
+        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IsValidObject )( 
+            ISilDataAccess * This,
+            /* [in] */ HVO hvo,
+            /* [retval][out] */ ComBool *pfValid);
+        
+        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IsDummyId )( 
+            ISilDataAccess * This,
+            /* [in] */ HVO hvo,
+            /* [retval][out] */ ComBool *pfDummy);
+        
+        HRESULT ( STDMETHODCALLTYPE *GetObjIndex )( 
+            ISilDataAccess * This,
+            /* [in] */ HVO hvoOwn,
+            /* [in] */ int flid,
+            /* [in] */ HVO hvo,
+            /* [retval][out] */ int *ihvo);
+        
+        HRESULT ( STDMETHODCALLTYPE *GetOutlineNumber )( 
+            ISilDataAccess * This,
+            /* [in] */ HVO hvo,
+            /* [in] */ int flid,
+            /* [in] */ ComBool fFinPer,
+            /* [retval][out] */ BSTR *pbstr);
+        
+        HRESULT ( STDMETHODCALLTYPE *MoveString )( 
+            ISilDataAccess * This,
+            /* [in] */ int hvoSource,
+            /* [in] */ PropTag flidSrc,
+            /* [in] */ int wsSrc,
+            /* [in] */ int ichMin,
+            /* [in] */ int ichLim,
+            /* [in] */ HVO hvoDst,
+            /* [in] */ PropTag flidDst,
+            /* [in] */ int wsDst,
+            /* [in] */ int ichDest,
+            /* [in] */ ComBool fDstIsNew);
+        
+        END_INTERFACE
+    } ISilDataAccessVtbl;
+
+    interface ISilDataAccess
+    {
+        CONST_VTBL struct ISilDataAccessVtbl *lpVtbl;
+    };
+
+    
+
+#ifdef COBJMACROS
+
+
+#define ISilDataAccess_QueryInterface(This,riid,ppvObject)	\
+    ( (This)->lpVtbl -> QueryInterface(This,riid,ppvObject) ) 
+
+#define ISilDataAccess_AddRef(This)	\
+    ( (This)->lpVtbl -> AddRef(This) ) 
+
+#define ISilDataAccess_Release(This)	\
+    ( (This)->lpVtbl -> Release(This) ) 
+
+
+#define ISilDataAccess_get_ObjectProp(This,hvo,tag,phvo)	\
+    ( (This)->lpVtbl -> get_ObjectProp(This,hvo,tag,phvo) ) 
+
+#define ISilDataAccess_get_VecItem(This,hvo,tag,index,phvo)	\
+    ( (This)->lpVtbl -> get_VecItem(This,hvo,tag,index,phvo) ) 
+
+#define ISilDataAccess_get_VecSize(This,hvo,tag,pchvo)	\
+    ( (This)->lpVtbl -> get_VecSize(This,hvo,tag,pchvo) ) 
+
+#define ISilDataAccess_get_VecSizeAssumeCached(This,hvo,tag,pchvo)	\
+    ( (This)->lpVtbl -> get_VecSizeAssumeCached(This,hvo,tag,pchvo) ) 
+
+#define ISilDataAccess_VecProp(This,hvo,tag,chvoMax,pchvo,prghvo)	\
+    ( (This)->lpVtbl -> VecProp(This,hvo,tag,chvoMax,pchvo,prghvo) ) 
+
+#define ISilDataAccess_BinaryPropRgb(This,obj,tag,prgb,cbMax,pcb)	\
+    ( (This)->lpVtbl -> BinaryPropRgb(This,obj,tag,prgb,cbMax,pcb) ) 
+
+#define ISilDataAccess_get_GuidProp(This,hvo,tag,puid)	\
+    ( (This)->lpVtbl -> get_GuidProp(This,hvo,tag,puid) ) 
+
+#define ISilDataAccess_get_ObjFromGuid(This,uid,pHvo)	\
+    ( (This)->lpVtbl -> get_ObjFromGuid(This,uid,pHvo) ) 
+
+#define ISilDataAccess_get_IntProp(This,hvo,tag,pn)	\
+    ( (This)->lpVtbl -> get_IntProp(This,hvo,tag,pn) ) 
+
+#define ISilDataAccess_get_Int64Prop(This,hvo,tag,plln)	\
+    ( (This)->lpVtbl -> get_Int64Prop(This,hvo,tag,plln) ) 
+
+#define ISilDataAccess_get_BooleanProp(This,hvo,tag,pn)	\
+    ( (This)->lpVtbl -> get_BooleanProp(This,hvo,tag,pn) ) 
+
+#define ISilDataAccess_get_MultiStringAlt(This,hvo,tag,ws,pptss)	\
+    ( (This)->lpVtbl -> get_MultiStringAlt(This,hvo,tag,ws,pptss) ) 
+
+#define ISilDataAccess_get_MultiStringProp(This,hvo,tag,pptms)	\
+    ( (This)->lpVtbl -> get_MultiStringProp(This,hvo,tag,pptms) ) 
+
+#define ISilDataAccess_get_Prop(This,hvo,tag,pvar)	\
+    ( (This)->lpVtbl -> get_Prop(This,hvo,tag,pvar) ) 
+
+#define ISilDataAccess_get_StringProp(This,hvo,tag,pptss)	\
+    ( (This)->lpVtbl -> get_StringProp(This,hvo,tag,pptss) ) 
+
+#define ISilDataAccess_get_TimeProp(This,hvo,tag,ptim)	\
+    ( (This)->lpVtbl -> get_TimeProp(This,hvo,tag,ptim) ) 
+
+#define ISilDataAccess_get_UnicodeProp(This,obj,tag,pbstr)	\
+    ( (This)->lpVtbl -> get_UnicodeProp(This,obj,tag,pbstr) ) 
+
+#define ISilDataAccess_put_UnicodeProp(This,obj,tag,bstr)	\
+    ( (This)->lpVtbl -> put_UnicodeProp(This,obj,tag,bstr) ) 
+
+#define ISilDataAccess_UnicodePropRgch(This,obj,tag,prgch,cchMax,pcch)	\
+    ( (This)->lpVtbl -> UnicodePropRgch(This,obj,tag,prgch,cchMax,pcch) ) 
+
+#define ISilDataAccess_get_UnknownProp(This,hvo,tag,ppunk)	\
+    ( (This)->lpVtbl -> get_UnknownProp(This,hvo,tag,ppunk) ) 
+
+#define ISilDataAccess_BeginUndoTask(This,bstrUndo,bstrRedo)	\
+    ( (This)->lpVtbl -> BeginUndoTask(This,bstrUndo,bstrRedo) ) 
+
+#define ISilDataAccess_EndUndoTask(This)	\
+    ( (This)->lpVtbl -> EndUndoTask(This) ) 
+
+#define ISilDataAccess_ContinueUndoTask(This)	\
+    ( (This)->lpVtbl -> ContinueUndoTask(This) ) 
+
+#define ISilDataAccess_EndOuterUndoTask(This)	\
+    ( (This)->lpVtbl -> EndOuterUndoTask(This) ) 
+
+#define ISilDataAccess_Rollback(This)	\
+    ( (This)->lpVtbl -> Rollback(This) ) 
+
+#define ISilDataAccess_BreakUndoTask(This,bstrUndo,bstrRedo)	\
+    ( (This)->lpVtbl -> BreakUndoTask(This,bstrUndo,bstrRedo) ) 
+
+#define ISilDataAccess_BeginNonUndoableTask(This)	\
+    ( (This)->lpVtbl -> BeginNonUndoableTask(This) ) 
+
+#define ISilDataAccess_EndNonUndoableTask(This)	\
+    ( (This)->lpVtbl -> EndNonUndoableTask(This) ) 
+
+#define ISilDataAccess_GetActionHandler(This,ppacth)	\
+    ( (This)->lpVtbl -> GetActionHandler(This,ppacth) ) 
+
+#define ISilDataAccess_SetActionHandler(This,pacth)	\
+    ( (This)->lpVtbl -> SetActionHandler(This,pacth) ) 
+
+#define ISilDataAccess_DeleteObj(This,hvoObj)	\
+    ( (This)->lpVtbl -> DeleteObj(This,hvoObj) ) 
+
+#define ISilDataAccess_DeleteObjOwner(This,hvoOwner,hvoObj,tag,ihvo)	\
+    ( (This)->lpVtbl -> DeleteObjOwner(This,hvoOwner,hvoObj,tag,ihvo) ) 
+
+#define ISilDataAccess_InsertNew(This,hvoObj,tag,ihvo,chvo,pss)	\
+    ( (This)->lpVtbl -> InsertNew(This,hvoObj,tag,ihvo,chvo,pss) ) 
+
+#define ISilDataAccess_MakeNewObject(This,clid,hvoOwner,tag,ord,phvoNew)	\
+    ( (This)->lpVtbl -> MakeNewObject(This,clid,hvoOwner,tag,ord,phvoNew) ) 
+
+#define ISilDataAccess_MoveOwnSeq(This,hvoSrcOwner,tagSrc,ihvoStart,ihvoEnd,hvoDstOwner,tagDst,ihvoDstStart)	\
+    ( (This)->lpVtbl -> MoveOwnSeq(This,hvoSrcOwner,tagSrc,ihvoStart,ihvoEnd,hvoDstOwner,tagDst,ihvoDstStart) ) 
+
+#define ISilDataAccess_MoveOwn(This,hvoSrcOwner,tagSrc,hvo,hvoDstOwner,tagDst,ihvoDstStart)	\
+    ( (This)->lpVtbl -> MoveOwn(This,hvoSrcOwner,tagSrc,hvo,hvoDstOwner,tagDst,ihvoDstStart) ) 
+
+#define ISilDataAccess_Replace(This,hvoObj,tag,ihvoMin,ihvoLim,prghvo,chvo)	\
+    ( (This)->lpVtbl -> Replace(This,hvoObj,tag,ihvoMin,ihvoLim,prghvo,chvo) ) 
+
+#define ISilDataAccess_SetObjProp(This,hvo,tag,hvoObj)	\
+    ( (This)->lpVtbl -> SetObjProp(This,hvo,tag,hvoObj) ) 
+
+#define ISilDataAccess_RemoveObjRefs(This,hvo)	\
+    ( (This)->lpVtbl -> RemoveObjRefs(This,hvo) ) 
+
+#define ISilDataAccess_SetBinary(This,hvo,tag,prgb,cb)	\
+    ( (This)->lpVtbl -> SetBinary(This,hvo,tag,prgb,cb) ) 
+
+#define ISilDataAccess_SetGuid(This,hvo,tag,uid)	\
+    ( (This)->lpVtbl -> SetGuid(This,hvo,tag,uid) ) 
+
+#define ISilDataAccess_SetInt(This,hvo,tag,n)	\
+    ( (This)->lpVtbl -> SetInt(This,hvo,tag,n) ) 
+
+#define ISilDataAccess_SetInt64(This,hvo,tag,lln)	\
+    ( (This)->lpVtbl -> SetInt64(This,hvo,tag,lln) ) 
+
+#define ISilDataAccess_SetBoolean(This,hvo,tag,n)	\
+    ( (This)->lpVtbl -> SetBoolean(This,hvo,tag,n) ) 
+
+#define ISilDataAccess_SetMultiStringAlt(This,hvo,tag,ws,ptss)	\
+    ( (This)->lpVtbl -> SetMultiStringAlt(This,hvo,tag,ws,ptss) ) 
+
+#define ISilDataAccess_SetString(This,hvo,tag,ptss)	\
+    ( (This)->lpVtbl -> SetString(This,hvo,tag,ptss) ) 
+
+#define ISilDataAccess_SetTime(This,hvo,tag,lln)	\
+    ( (This)->lpVtbl -> SetTime(This,hvo,tag,lln) ) 
+
+#define ISilDataAccess_SetUnicode(This,hvo,tag,prgch,cch)	\
+    ( (This)->lpVtbl -> SetUnicode(This,hvo,tag,prgch,cch) ) 
+
+#define ISilDataAccess_SetUnknown(This,hvo,tag,punk)	\
+    ( (This)->lpVtbl -> SetUnknown(This,hvo,tag,punk) ) 
+
+#define ISilDataAccess_AddNotification(This,pnchng)	\
+    ( (This)->lpVtbl -> AddNotification(This,pnchng) ) 
+
+#define ISilDataAccess_PropChanged(This,pnchng,pct,hvo,tag,ivMin,cvIns,cvDel)	\
+    ( (This)->lpVtbl -> PropChanged(This,pnchng,pct,hvo,tag,ivMin,cvIns,cvDel) ) 
+
+#define ISilDataAccess_RemoveNotification(This,pnchng)	\
+    ( (This)->lpVtbl -> RemoveNotification(This,pnchng) ) 
+
+#define ISilDataAccess_GetDisplayIndex(This,hvoOwn,tag,ihvo,ihvoDisp)	\
+    ( (This)->lpVtbl -> GetDisplayIndex(This,hvoOwn,tag,ihvo,ihvoDisp) ) 
+
+#define ISilDataAccess_get_WritingSystemFactory(This,ppwsf)	\
+    ( (This)->lpVtbl -> get_WritingSystemFactory(This,ppwsf) ) 
+
+#define ISilDataAccess_putref_WritingSystemFactory(This,pwsf)	\
+    ( (This)->lpVtbl -> putref_WritingSystemFactory(This,pwsf) ) 
+
+#define ISilDataAccess_get_WritingSystemsOfInterest(This,cwsMax,pws,pcws)	\
+    ( (This)->lpVtbl -> get_WritingSystemsOfInterest(This,cwsMax,pws,pcws) ) 
+
+#define ISilDataAccess_InsertRelExtra(This,hvoSrc,tag,ihvo,hvoDst,bstrExtra)	\
+    ( (This)->lpVtbl -> InsertRelExtra(This,hvoSrc,tag,ihvo,hvoDst,bstrExtra) ) 
+
+#define ISilDataAccess_UpdateRelExtra(This,hvoSrc,tag,ihvo,bstrExtra)	\
+    ( (This)->lpVtbl -> UpdateRelExtra(This,hvoSrc,tag,ihvo,bstrExtra) ) 
+
+#define ISilDataAccess_GetRelExtra(This,hvoSrc,tag,ihvo,pbstrExtra)	\
+    ( (This)->lpVtbl -> GetRelExtra(This,hvoSrc,tag,ihvo,pbstrExtra) ) 
+
+#define ISilDataAccess_get_IsPropInCache(This,hvo,tag,cpt,ws,pfCached)	\
+    ( (This)->lpVtbl -> get_IsPropInCache(This,hvo,tag,cpt,ws,pfCached) ) 
+
+#define ISilDataAccess_IsDirty(This,pf)	\
+    ( (This)->lpVtbl -> IsDirty(This,pf) ) 
+
+#define ISilDataAccess_ClearDirty(This)	\
+    ( (This)->lpVtbl -> ClearDirty(This) ) 
+
+#define ISilDataAccess_get_MetaDataCache(This,ppmdc)	\
+    ( (This)->lpVtbl -> get_MetaDataCache(This,ppmdc) ) 
+
+#define ISilDataAccess_putref_MetaDataCache(This,pmdc)	\
+    ( (This)->lpVtbl -> putref_MetaDataCache(This,pmdc) ) 
+
+#define ISilDataAccess_get_IsValidObject(This,hvo,pfValid)	\
+    ( (This)->lpVtbl -> get_IsValidObject(This,hvo,pfValid) ) 
+
+#define ISilDataAccess_get_IsDummyId(This,hvo,pfDummy)	\
+    ( (This)->lpVtbl -> get_IsDummyId(This,hvo,pfDummy) ) 
+
+#define ISilDataAccess_GetObjIndex(This,hvoOwn,flid,hvo,ihvo)	\
+    ( (This)->lpVtbl -> GetObjIndex(This,hvoOwn,flid,hvo,ihvo) ) 
+
+#define ISilDataAccess_GetOutlineNumber(This,hvo,flid,fFinPer,pbstr)	\
+    ( (This)->lpVtbl -> GetOutlineNumber(This,hvo,flid,fFinPer,pbstr) ) 
+
+#define ISilDataAccess_MoveString(This,hvoSource,flidSrc,wsSrc,ichMin,ichLim,hvoDst,flidDst,wsDst,ichDest,fDstIsNew)	\
+    ( (This)->lpVtbl -> MoveString(This,hvoSource,flidSrc,wsSrc,ichMin,ichLim,hvoDst,flidDst,wsDst,ichDest,fDstIsNew) ) 
+
+#endif /* COBJMACROS */
+
+
+#endif 	/* C style interface */
+
+
+
+
+#endif 	/* __ISilDataAccess_INTERFACE_DEFINED__ */
+
+
+#ifndef __IStructuredTextDataAccess_INTERFACE_DEFINED__
+#define __IStructuredTextDataAccess_INTERFACE_DEFINED__
+
+/* interface IStructuredTextDataAccess */
+/* [unique][object][uuid] */ 
+
+
+#define IID_IStructuredTextDataAccess __uuidof(IStructuredTextDataAccess)
+
+#if defined(__cplusplus) && !defined(CINTERFACE)
+    
+    MIDL_INTERFACE("A2A4F9FA-D4E8-4bfb-B6B7-5F45DAF2DC0C")
+    IStructuredTextDataAccess : public IUnknown
+    {
+    public:
+        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_ParaContentsFlid( 
+            /* [retval][out] */ PropTag *pflid) = 0;
+        
+        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_ParaPropertiesFlid( 
+            /* [retval][out] */ PropTag *pflid) = 0;
+        
+        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_TextParagraphsFlid( 
+            /* [retval][out] */ PropTag *pflid) = 0;
+        
+    };
+    
+    
+#else 	/* C style interface */
+
+    typedef struct IStructuredTextDataAccessVtbl
+    {
+        BEGIN_INTERFACE
+        
+        HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
+            IStructuredTextDataAccess * This,
+            /* [in] */ REFIID riid,
+            /* [annotation][iid_is][out] */ 
+            _COM_Outptr_  void **ppvObject);
+        
+        ULONG ( STDMETHODCALLTYPE *AddRef )( 
+            IStructuredTextDataAccess * This);
+        
+        ULONG ( STDMETHODCALLTYPE *Release )( 
+            IStructuredTextDataAccess * This);
+        
+        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_ParaContentsFlid )( 
+            IStructuredTextDataAccess * This,
+            /* [retval][out] */ PropTag *pflid);
+        
+        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_ParaPropertiesFlid )( 
+            IStructuredTextDataAccess * This,
+            /* [retval][out] */ PropTag *pflid);
+        
+        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_TextParagraphsFlid )( 
+            IStructuredTextDataAccess * This,
+            /* [retval][out] */ PropTag *pflid);
+        
+        END_INTERFACE
+    } IStructuredTextDataAccessVtbl;
+
+    interface IStructuredTextDataAccess
+    {
+        CONST_VTBL struct IStructuredTextDataAccessVtbl *lpVtbl;
+    };
+
+    
+
+#ifdef COBJMACROS
+
+
+#define IStructuredTextDataAccess_QueryInterface(This,riid,ppvObject)	\
+    ( (This)->lpVtbl -> QueryInterface(This,riid,ppvObject) ) 
+
+#define IStructuredTextDataAccess_AddRef(This)	\
+    ( (This)->lpVtbl -> AddRef(This) ) 
+
+#define IStructuredTextDataAccess_Release(This)	\
+    ( (This)->lpVtbl -> Release(This) ) 
+
+
+#define IStructuredTextDataAccess_get_ParaContentsFlid(This,pflid)	\
+    ( (This)->lpVtbl -> get_ParaContentsFlid(This,pflid) ) 
+
+#define IStructuredTextDataAccess_get_ParaPropertiesFlid(This,pflid)	\
+    ( (This)->lpVtbl -> get_ParaPropertiesFlid(This,pflid) ) 
+
+#define IStructuredTextDataAccess_get_TextParagraphsFlid(This,pflid)	\
+    ( (This)->lpVtbl -> get_TextParagraphsFlid(This,pflid) ) 
+
+#endif /* COBJMACROS */
+
+
+#endif 	/* C style interface */
+
+
+
+
+#endif 	/* __IStructuredTextDataAccess_INTERFACE_DEFINED__ */
+
 
 #ifndef __IDebugReportSink_INTERFACE_DEFINED__
 #define __IDebugReportSink_INTERFACE_DEFINED__
@@ -3460,14 +4518,6 @@ ActionHandler;
 #endif 	/* __IDebugReport_INTERFACE_DEFINED__ */
 
 
-#define CLSID_DebugReport __uuidof(DebugReport)
-
-#ifdef __cplusplus
-
-class DECLSPEC_UUID("24636FD1-DB8D-4b2c-B4C0-44C2592CA482")
-DebugReport;
-#endif
-
 #ifndef __IComDisposable_INTERFACE_DEFINED__
 #define __IComDisposable_INTERFACE_DEFINED__
 
@@ -3546,230 +4596,6 @@ DebugReport;
 #endif 	/* __IComDisposable_INTERFACE_DEFINED__ */
 
 
-#ifndef __ITsTextProps_INTERFACE_DEFINED__
-#define __ITsTextProps_INTERFACE_DEFINED__
-
-/* interface ITsTextProps */
-/* [unique][object][uuid] */ 
-
-
-#define IID_ITsTextProps __uuidof(ITsTextProps)
-
-#if defined(__cplusplus) && !defined(CINTERFACE)
-    
-    MIDL_INTERFACE("4FA0B99A-5A56-41A4-BE8B-B89BC62251A5")
-    ITsTextProps : public IUnknown
-    {
-    public:
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_IntPropCount( 
-            /* [retval][out] */ int *pcv) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE GetIntProp( 
-            /* [in] */ int iv,
-            /* [out] */ int *ptpt,
-            /* [out] */ int *pnVar,
-            /* [retval][out] */ int *pnVal) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE GetIntPropValues( 
-            /* [in] */ int tpt,
-            /* [out] */ int *pnVar,
-            /* [retval][out] */ int *pnVal) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_StrPropCount( 
-            /* [retval][out] */ int *pcv) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE GetStrProp( 
-            /* [in] */ int iv,
-            /* [out] */ int *ptpt,
-            /* [retval][out] */ BSTR *pbstrVal) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE GetStrPropValue( 
-            /* [in] */ int tpt,
-            /* [retval][out] */ BSTR *pbstrVal) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE GetBldr( 
-            /* [retval][out] */ ITsPropsBldr **pptpb) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE GetFactoryClsid( 
-            /* [retval][out] */ CLSID *pclsid) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE Serialize( 
-            /* [in] */ IStream *pstrm) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE SerializeRgb( 
-            /* [size_is][out] */ BYTE *prgb,
-            /* [in] */ int cbMax,
-            /* [retval][out] */ int *pcb) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE SerializeRgPropsRgb( 
-            /* [in] */ int cpttp,
-            /* [in] */ ITsTextProps **rgpttp,
-            /* [in] */ int *rgich,
-            /* [size_is][out] */ BYTE *prgb,
-            /* [in] */ int cbMax,
-            /* [retval][out] */ int *pcb) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE WriteAsXml( 
-            /* [in] */ IStream *pstrm,
-            /* [in] */ ILgWritingSystemFactory *pwsf,
-            /* [in] */ int cchIndent) = 0;
-        
-    };
-    
-    
-#else 	/* C style interface */
-
-    typedef struct ITsTextPropsVtbl
-    {
-        BEGIN_INTERFACE
-        
-        HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
-            ITsTextProps * This,
-            /* [in] */ REFIID riid,
-            /* [annotation][iid_is][out] */ 
-            _COM_Outptr_  void **ppvObject);
-        
-        ULONG ( STDMETHODCALLTYPE *AddRef )( 
-            ITsTextProps * This);
-        
-        ULONG ( STDMETHODCALLTYPE *Release )( 
-            ITsTextProps * This);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IntPropCount )( 
-            ITsTextProps * This,
-            /* [retval][out] */ int *pcv);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetIntProp )( 
-            ITsTextProps * This,
-            /* [in] */ int iv,
-            /* [out] */ int *ptpt,
-            /* [out] */ int *pnVar,
-            /* [retval][out] */ int *pnVal);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetIntPropValues )( 
-            ITsTextProps * This,
-            /* [in] */ int tpt,
-            /* [out] */ int *pnVar,
-            /* [retval][out] */ int *pnVal);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_StrPropCount )( 
-            ITsTextProps * This,
-            /* [retval][out] */ int *pcv);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetStrProp )( 
-            ITsTextProps * This,
-            /* [in] */ int iv,
-            /* [out] */ int *ptpt,
-            /* [retval][out] */ BSTR *pbstrVal);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetStrPropValue )( 
-            ITsTextProps * This,
-            /* [in] */ int tpt,
-            /* [retval][out] */ BSTR *pbstrVal);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetBldr )( 
-            ITsTextProps * This,
-            /* [retval][out] */ ITsPropsBldr **pptpb);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetFactoryClsid )( 
-            ITsTextProps * This,
-            /* [retval][out] */ CLSID *pclsid);
-        
-        HRESULT ( STDMETHODCALLTYPE *Serialize )( 
-            ITsTextProps * This,
-            /* [in] */ IStream *pstrm);
-        
-        HRESULT ( STDMETHODCALLTYPE *SerializeRgb )( 
-            ITsTextProps * This,
-            /* [size_is][out] */ BYTE *prgb,
-            /* [in] */ int cbMax,
-            /* [retval][out] */ int *pcb);
-        
-        HRESULT ( STDMETHODCALLTYPE *SerializeRgPropsRgb )( 
-            ITsTextProps * This,
-            /* [in] */ int cpttp,
-            /* [in] */ ITsTextProps **rgpttp,
-            /* [in] */ int *rgich,
-            /* [size_is][out] */ BYTE *prgb,
-            /* [in] */ int cbMax,
-            /* [retval][out] */ int *pcb);
-        
-        HRESULT ( STDMETHODCALLTYPE *WriteAsXml )( 
-            ITsTextProps * This,
-            /* [in] */ IStream *pstrm,
-            /* [in] */ ILgWritingSystemFactory *pwsf,
-            /* [in] */ int cchIndent);
-        
-        END_INTERFACE
-    } ITsTextPropsVtbl;
-
-    interface ITsTextProps
-    {
-        CONST_VTBL struct ITsTextPropsVtbl *lpVtbl;
-    };
-
-    
-
-#ifdef COBJMACROS
-
-
-#define ITsTextProps_QueryInterface(This,riid,ppvObject)	\
-    ( (This)->lpVtbl -> QueryInterface(This,riid,ppvObject) ) 
-
-#define ITsTextProps_AddRef(This)	\
-    ( (This)->lpVtbl -> AddRef(This) ) 
-
-#define ITsTextProps_Release(This)	\
-    ( (This)->lpVtbl -> Release(This) ) 
-
-
-#define ITsTextProps_get_IntPropCount(This,pcv)	\
-    ( (This)->lpVtbl -> get_IntPropCount(This,pcv) ) 
-
-#define ITsTextProps_GetIntProp(This,iv,ptpt,pnVar,pnVal)	\
-    ( (This)->lpVtbl -> GetIntProp(This,iv,ptpt,pnVar,pnVal) ) 
-
-#define ITsTextProps_GetIntPropValues(This,tpt,pnVar,pnVal)	\
-    ( (This)->lpVtbl -> GetIntPropValues(This,tpt,pnVar,pnVal) ) 
-
-#define ITsTextProps_get_StrPropCount(This,pcv)	\
-    ( (This)->lpVtbl -> get_StrPropCount(This,pcv) ) 
-
-#define ITsTextProps_GetStrProp(This,iv,ptpt,pbstrVal)	\
-    ( (This)->lpVtbl -> GetStrProp(This,iv,ptpt,pbstrVal) ) 
-
-#define ITsTextProps_GetStrPropValue(This,tpt,pbstrVal)	\
-    ( (This)->lpVtbl -> GetStrPropValue(This,tpt,pbstrVal) ) 
-
-#define ITsTextProps_GetBldr(This,pptpb)	\
-    ( (This)->lpVtbl -> GetBldr(This,pptpb) ) 
-
-#define ITsTextProps_GetFactoryClsid(This,pclsid)	\
-    ( (This)->lpVtbl -> GetFactoryClsid(This,pclsid) ) 
-
-#define ITsTextProps_Serialize(This,pstrm)	\
-    ( (This)->lpVtbl -> Serialize(This,pstrm) ) 
-
-#define ITsTextProps_SerializeRgb(This,prgb,cbMax,pcb)	\
-    ( (This)->lpVtbl -> SerializeRgb(This,prgb,cbMax,pcb) ) 
-
-#define ITsTextProps_SerializeRgPropsRgb(This,cpttp,rgpttp,rgich,prgb,cbMax,pcb)	\
-    ( (This)->lpVtbl -> SerializeRgPropsRgb(This,cpttp,rgpttp,rgich,prgb,cbMax,pcb) ) 
-
-#define ITsTextProps_WriteAsXml(This,pstrm,pwsf,cchIndent)	\
-    ( (This)->lpVtbl -> WriteAsXml(This,pstrm,pwsf,cchIndent) ) 
-
-#endif /* COBJMACROS */
-
-
-#endif 	/* C style interface */
-
-
-
-
-#endif 	/* __ITsTextProps_INTERFACE_DEFINED__ */
-
-
 #ifndef __ITsStrFactory_INTERFACE_DEFINED__
 #define __ITsStrFactory_INTERFACE_DEFINED__
 
@@ -3781,33 +4607,10 @@ DebugReport;
 
 #if defined(__cplusplus) && !defined(CINTERFACE)
     
-    MIDL_INTERFACE("C10EA417-8317-4048-AC90-103F8BDFB325")
+    MIDL_INTERFACE("721A8D21-9900-4CB0-B4C0-9380A23140E3")
     ITsStrFactory : public IUnknown
     {
     public:
-        virtual HRESULT STDMETHODCALLTYPE DeserializeStringStreams( 
-            /* [in] */ IStream *pstrmTxt,
-            /* [in] */ IStream *pstrmFmt,
-            /* [retval][out] */ ITsString **pptss) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE DeserializeString( 
-            /* [in] */ BSTR bstrTxt,
-            /* [in] */ IStream *pstrmFmt,
-            /* [retval][out] */ ITsString **pptss) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE DeserializeStringRgb( 
-            /* [in] */ BSTR bstrTxt,
-            /* [size_is][in] */ const BYTE *prgbFmt,
-            /* [in] */ int cbFmt,
-            /* [retval][out] */ ITsString **pptss) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE DeserializeStringRgch( 
-            /* [size_is][in] */ const OLECHAR *prgchTxt,
-            /* [out][in] */ int *pcchTxt,
-            /* [size_is][in] */ const BYTE *prgbFmt,
-            /* [out][in] */ int *pcbFmt,
-            /* [retval][out] */ ITsString **pptss) = 0;
-        
         virtual HRESULT STDMETHODCALLTYPE MakeString( 
             /* [in] */ BSTR bstr,
             /* [in] */ int ws,
@@ -3830,25 +4633,6 @@ DebugReport;
         
         virtual HRESULT STDMETHODCALLTYPE GetIncBldr( 
             /* [retval][out] */ ITsIncStrBldr **pptisb) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_RunCount( 
-            /* [size_is][in] */ const BYTE *prgbFmt,
-            /* [in] */ int cbFmt,
-            /* [retval][out] */ int *pcrun) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE FetchRunInfoAt( 
-            /* [size_is][in] */ const BYTE *prgbFmt,
-            /* [in] */ int cbFmt,
-            /* [in] */ int ich,
-            /* [out] */ TsRunInfo *ptri,
-            /* [retval][out] */ ITsTextProps **ppttp) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE FetchRunInfo( 
-            /* [size_is][in] */ const BYTE *prgbFmt,
-            /* [in] */ int cbFmt,
-            /* [in] */ int irun,
-            /* [out] */ TsRunInfo *ptri,
-            /* [retval][out] */ ITsTextProps **ppttp) = 0;
         
         virtual HRESULT STDMETHODCALLTYPE EmptyString( 
             /* [in] */ int ws,
@@ -3874,33 +4658,6 @@ DebugReport;
         
         ULONG ( STDMETHODCALLTYPE *Release )( 
             ITsStrFactory * This);
-        
-        HRESULT ( STDMETHODCALLTYPE *DeserializeStringStreams )( 
-            ITsStrFactory * This,
-            /* [in] */ IStream *pstrmTxt,
-            /* [in] */ IStream *pstrmFmt,
-            /* [retval][out] */ ITsString **pptss);
-        
-        HRESULT ( STDMETHODCALLTYPE *DeserializeString )( 
-            ITsStrFactory * This,
-            /* [in] */ BSTR bstrTxt,
-            /* [in] */ IStream *pstrmFmt,
-            /* [retval][out] */ ITsString **pptss);
-        
-        HRESULT ( STDMETHODCALLTYPE *DeserializeStringRgb )( 
-            ITsStrFactory * This,
-            /* [in] */ BSTR bstrTxt,
-            /* [size_is][in] */ const BYTE *prgbFmt,
-            /* [in] */ int cbFmt,
-            /* [retval][out] */ ITsString **pptss);
-        
-        HRESULT ( STDMETHODCALLTYPE *DeserializeStringRgch )( 
-            ITsStrFactory * This,
-            /* [size_is][in] */ const OLECHAR *prgchTxt,
-            /* [out][in] */ int *pcchTxt,
-            /* [size_is][in] */ const BYTE *prgbFmt,
-            /* [out][in] */ int *pcbFmt,
-            /* [retval][out] */ ITsString **pptss);
         
         HRESULT ( STDMETHODCALLTYPE *MakeString )( 
             ITsStrFactory * This,
@@ -3930,28 +4687,6 @@ DebugReport;
             ITsStrFactory * This,
             /* [retval][out] */ ITsIncStrBldr **pptisb);
         
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_RunCount )( 
-            ITsStrFactory * This,
-            /* [size_is][in] */ const BYTE *prgbFmt,
-            /* [in] */ int cbFmt,
-            /* [retval][out] */ int *pcrun);
-        
-        HRESULT ( STDMETHODCALLTYPE *FetchRunInfoAt )( 
-            ITsStrFactory * This,
-            /* [size_is][in] */ const BYTE *prgbFmt,
-            /* [in] */ int cbFmt,
-            /* [in] */ int ich,
-            /* [out] */ TsRunInfo *ptri,
-            /* [retval][out] */ ITsTextProps **ppttp);
-        
-        HRESULT ( STDMETHODCALLTYPE *FetchRunInfo )( 
-            ITsStrFactory * This,
-            /* [size_is][in] */ const BYTE *prgbFmt,
-            /* [in] */ int cbFmt,
-            /* [in] */ int irun,
-            /* [out] */ TsRunInfo *ptri,
-            /* [retval][out] */ ITsTextProps **ppttp);
-        
         HRESULT ( STDMETHODCALLTYPE *EmptyString )( 
             ITsStrFactory * This,
             /* [in] */ int ws,
@@ -3980,18 +4715,6 @@ DebugReport;
     ( (This)->lpVtbl -> Release(This) ) 
 
 
-#define ITsStrFactory_DeserializeStringStreams(This,pstrmTxt,pstrmFmt,pptss)	\
-    ( (This)->lpVtbl -> DeserializeStringStreams(This,pstrmTxt,pstrmFmt,pptss) ) 
-
-#define ITsStrFactory_DeserializeString(This,bstrTxt,pstrmFmt,pptss)	\
-    ( (This)->lpVtbl -> DeserializeString(This,bstrTxt,pstrmFmt,pptss) ) 
-
-#define ITsStrFactory_DeserializeStringRgb(This,bstrTxt,prgbFmt,cbFmt,pptss)	\
-    ( (This)->lpVtbl -> DeserializeStringRgb(This,bstrTxt,prgbFmt,cbFmt,pptss) ) 
-
-#define ITsStrFactory_DeserializeStringRgch(This,prgchTxt,pcchTxt,prgbFmt,pcbFmt,pptss)	\
-    ( (This)->lpVtbl -> DeserializeStringRgch(This,prgchTxt,pcchTxt,prgbFmt,pcbFmt,pptss) ) 
-
 #define ITsStrFactory_MakeString(This,bstr,ws,pptss)	\
     ( (This)->lpVtbl -> MakeString(This,bstr,ws,pptss) ) 
 
@@ -4006,15 +4729,6 @@ DebugReport;
 
 #define ITsStrFactory_GetIncBldr(This,pptisb)	\
     ( (This)->lpVtbl -> GetIncBldr(This,pptisb) ) 
-
-#define ITsStrFactory_get_RunCount(This,prgbFmt,cbFmt,pcrun)	\
-    ( (This)->lpVtbl -> get_RunCount(This,prgbFmt,cbFmt,pcrun) ) 
-
-#define ITsStrFactory_FetchRunInfoAt(This,prgbFmt,cbFmt,ich,ptri,ppttp)	\
-    ( (This)->lpVtbl -> FetchRunInfoAt(This,prgbFmt,cbFmt,ich,ptri,ppttp) ) 
-
-#define ITsStrFactory_FetchRunInfo(This,prgbFmt,cbFmt,irun,ptri,ppttp)	\
-    ( (This)->lpVtbl -> FetchRunInfo(This,prgbFmt,cbFmt,irun,ptri,ppttp) ) 
 
 #define ITsStrFactory_EmptyString(This,ws,pptss)	\
     ( (This)->lpVtbl -> EmptyString(This,ws,pptss) ) 
@@ -4041,27 +4755,10 @@ DebugReport;
 
 #if defined(__cplusplus) && !defined(CINTERFACE)
     
-    MIDL_INTERFACE("8DCE56A6-CFF1-4402-95FE-2B574912B54E")
+    MIDL_INTERFACE("FF3D947F-1D35-487B-A769-5B6C68722054")
     ITsPropsFactory : public IUnknown
     {
     public:
-        virtual HRESULT STDMETHODCALLTYPE DeserializeProps( 
-            /* [in] */ IStream *pstrm,
-            /* [retval][out] */ ITsTextProps **ppttp) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE DeserializePropsRgb( 
-            /* [size_is][in] */ const BYTE *prgb,
-            /* [out][in] */ int *pcb,
-            /* [retval][out] */ ITsTextProps **ppttp) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE DeserializeRgPropsRgb( 
-            /* [in] */ int cpttpMax,
-            /* [size_is][in] */ const BYTE *prgb,
-            /* [out][in] */ int *pcb,
-            /* [out] */ int *pcpttpRet,
-            /* [size_is][out] */ ITsTextProps **rgpttp,
-            /* [size_is][out] */ int *rgich) = 0;
-        
         virtual HRESULT STDMETHODCALLTYPE MakeProps( 
             /* [in] */ BSTR bstrStyle,
             /* [in] */ int ws,
@@ -4098,26 +4795,6 @@ DebugReport;
         
         ULONG ( STDMETHODCALLTYPE *Release )( 
             ITsPropsFactory * This);
-        
-        HRESULT ( STDMETHODCALLTYPE *DeserializeProps )( 
-            ITsPropsFactory * This,
-            /* [in] */ IStream *pstrm,
-            /* [retval][out] */ ITsTextProps **ppttp);
-        
-        HRESULT ( STDMETHODCALLTYPE *DeserializePropsRgb )( 
-            ITsPropsFactory * This,
-            /* [size_is][in] */ const BYTE *prgb,
-            /* [out][in] */ int *pcb,
-            /* [retval][out] */ ITsTextProps **ppttp);
-        
-        HRESULT ( STDMETHODCALLTYPE *DeserializeRgPropsRgb )( 
-            ITsPropsFactory * This,
-            /* [in] */ int cpttpMax,
-            /* [size_is][in] */ const BYTE *prgb,
-            /* [out][in] */ int *pcb,
-            /* [out] */ int *pcpttpRet,
-            /* [size_is][out] */ ITsTextProps **rgpttp,
-            /* [size_is][out] */ int *rgich);
         
         HRESULT ( STDMETHODCALLTYPE *MakeProps )( 
             ITsPropsFactory * This,
@@ -4161,15 +4838,6 @@ DebugReport;
     ( (This)->lpVtbl -> Release(This) ) 
 
 
-#define ITsPropsFactory_DeserializeProps(This,pstrm,ppttp)	\
-    ( (This)->lpVtbl -> DeserializeProps(This,pstrm,ppttp) ) 
-
-#define ITsPropsFactory_DeserializePropsRgb(This,prgb,pcb,ppttp)	\
-    ( (This)->lpVtbl -> DeserializePropsRgb(This,prgb,pcb,ppttp) ) 
-
-#define ITsPropsFactory_DeserializeRgPropsRgb(This,cpttpMax,prgb,pcb,pcpttpRet,rgpttp,rgich)	\
-    ( (This)->lpVtbl -> DeserializeRgPropsRgb(This,cpttpMax,prgb,pcb,pcpttpRet,rgpttp,rgich) ) 
-
 #define ITsPropsFactory_MakeProps(This,bstrStyle,ws,ows,ppttp)	\
     ( (This)->lpVtbl -> MakeProps(This,bstrStyle,ws,ows,ppttp) ) 
 
@@ -4201,7 +4869,7 @@ DebugReport;
 
 #if defined(__cplusplus) && !defined(CINTERFACE)
     
-    MIDL_INTERFACE("F1EF76E6-BE04-11d3-8D9A-005004DEFEC4")
+    MIDL_INTERFACE("71D84C4A-10A2-4A7C-B58C-D01386DAE5F7")
     ITsStrBldr : public IUnknown
     {
     public:
@@ -4295,17 +4963,6 @@ DebugReport;
             /* [retval][out] */ ITsString **pptss) = 0;
         
         virtual HRESULT STDMETHODCALLTYPE Clear( void) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE GetBldrClsid( 
-            /* [retval][out] */ CLSID *pclsid) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE SerializeFmt( 
-            /* [in] */ IStream *pstrm) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE SerializeFmtRgb( 
-            /* [size_is][out] */ BYTE *prgb,
-            /* [in] */ int cbMax,
-            /* [retval][out] */ int *pcbNeeded) = 0;
         
     };
     
@@ -4439,20 +5096,6 @@ DebugReport;
         HRESULT ( STDMETHODCALLTYPE *Clear )( 
             ITsStrBldr * This);
         
-        HRESULT ( STDMETHODCALLTYPE *GetBldrClsid )( 
-            ITsStrBldr * This,
-            /* [retval][out] */ CLSID *pclsid);
-        
-        HRESULT ( STDMETHODCALLTYPE *SerializeFmt )( 
-            ITsStrBldr * This,
-            /* [in] */ IStream *pstrm);
-        
-        HRESULT ( STDMETHODCALLTYPE *SerializeFmtRgb )( 
-            ITsStrBldr * This,
-            /* [size_is][out] */ BYTE *prgb,
-            /* [in] */ int cbMax,
-            /* [retval][out] */ int *pcbNeeded);
-        
         END_INTERFACE
     } ITsStrBldrVtbl;
 
@@ -4536,15 +5179,6 @@ DebugReport;
 #define ITsStrBldr_Clear(This)	\
     ( (This)->lpVtbl -> Clear(This) ) 
 
-#define ITsStrBldr_GetBldrClsid(This,pclsid)	\
-    ( (This)->lpVtbl -> GetBldrClsid(This,pclsid) ) 
-
-#define ITsStrBldr_SerializeFmt(This,pstrm)	\
-    ( (This)->lpVtbl -> SerializeFmt(This,pstrm) ) 
-
-#define ITsStrBldr_SerializeFmtRgb(This,prgb,cbMax,pcbNeeded)	\
-    ( (This)->lpVtbl -> SerializeFmtRgb(This,prgb,cbMax,pcbNeeded) ) 
-
 #endif /* COBJMACROS */
 
 
@@ -4567,7 +5201,7 @@ DebugReport;
 
 #if defined(__cplusplus) && !defined(CINTERFACE)
     
-    MIDL_INTERFACE("F1EF76E7-BE04-11d3-8D9A-005004DEFEC4")
+    MIDL_INTERFACE("87ECD3CD-6011-485F-8651-DBA0B79245AF")
     ITsIncStrBldr : public IUnknown
     {
     public:
@@ -4597,17 +5231,6 @@ DebugReport;
             /* [retval][out] */ ITsString **pptss) = 0;
         
         virtual HRESULT STDMETHODCALLTYPE Clear( void) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE GetIncBldrClsid( 
-            /* [retval][out] */ CLSID *pclsid) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE SerializeFmt( 
-            /* [in] */ IStream *pstrm) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE SerializeFmtRgb( 
-            /* [size_is][out] */ BYTE *prgb,
-            /* [in] */ int cbMax,
-            /* [retval][out] */ int *pcbNeeded) = 0;
         
         virtual HRESULT STDMETHODCALLTYPE SetStrPropValueRgch( 
             /* [in] */ int tpt,
@@ -4672,20 +5295,6 @@ DebugReport;
         HRESULT ( STDMETHODCALLTYPE *Clear )( 
             ITsIncStrBldr * This);
         
-        HRESULT ( STDMETHODCALLTYPE *GetIncBldrClsid )( 
-            ITsIncStrBldr * This,
-            /* [retval][out] */ CLSID *pclsid);
-        
-        HRESULT ( STDMETHODCALLTYPE *SerializeFmt )( 
-            ITsIncStrBldr * This,
-            /* [in] */ IStream *pstrm);
-        
-        HRESULT ( STDMETHODCALLTYPE *SerializeFmtRgb )( 
-            ITsIncStrBldr * This,
-            /* [size_is][out] */ BYTE *prgb,
-            /* [in] */ int cbMax,
-            /* [retval][out] */ int *pcbNeeded);
-        
         HRESULT ( STDMETHODCALLTYPE *SetStrPropValueRgch )( 
             ITsIncStrBldr * This,
             /* [in] */ int tpt,
@@ -4742,15 +5351,6 @@ DebugReport;
 #define ITsIncStrBldr_Clear(This)	\
     ( (This)->lpVtbl -> Clear(This) ) 
 
-#define ITsIncStrBldr_GetIncBldrClsid(This,pclsid)	\
-    ( (This)->lpVtbl -> GetIncBldrClsid(This,pclsid) ) 
-
-#define ITsIncStrBldr_SerializeFmt(This,pstrm)	\
-    ( (This)->lpVtbl -> SerializeFmt(This,pstrm) ) 
-
-#define ITsIncStrBldr_SerializeFmtRgb(This,prgb,cbMax,pcbNeeded)	\
-    ( (This)->lpVtbl -> SerializeFmtRgb(This,prgb,cbMax,pcbNeeded) ) 
-
 #define ITsIncStrBldr_SetStrPropValueRgch(This,tpt,rgchVal,nValLength)	\
     ( (This)->lpVtbl -> SetStrPropValueRgch(This,tpt,rgchVal,nValLength) ) 
 
@@ -4790,12 +5390,12 @@ DebugReport;
             /* [in] */ int iv,
             /* [out] */ int *ptpt,
             /* [out] */ int *pnVar,
-            /* [out] */ int *pnVal) = 0;
+            /* [retval][out] */ int *pnVal) = 0;
         
         virtual HRESULT STDMETHODCALLTYPE GetIntPropValues( 
             /* [in] */ int tpt,
             /* [out] */ int *pnVar,
-            /* [out] */ int *pnVal) = 0;
+            /* [retval][out] */ int *pnVal) = 0;
         
         virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_StrPropCount( 
             /* [retval][out] */ int *pcv) = 0;
@@ -4803,11 +5403,11 @@ DebugReport;
         virtual HRESULT STDMETHODCALLTYPE GetStrProp( 
             /* [in] */ int iv,
             /* [out] */ int *ptpt,
-            /* [out] */ BSTR *pbstrVal) = 0;
+            /* [retval][out] */ BSTR *pbstrVal) = 0;
         
         virtual HRESULT STDMETHODCALLTYPE GetStrPropValue( 
             /* [in] */ int tpt,
-            /* [out] */ BSTR *pbstrVal) = 0;
+            /* [retval][out] */ BSTR *pbstrVal) = 0;
         
         virtual HRESULT STDMETHODCALLTYPE SetIntPropValues( 
             /* [in] */ int tpt,
@@ -4858,13 +5458,13 @@ DebugReport;
             /* [in] */ int iv,
             /* [out] */ int *ptpt,
             /* [out] */ int *pnVar,
-            /* [out] */ int *pnVal);
+            /* [retval][out] */ int *pnVal);
         
         HRESULT ( STDMETHODCALLTYPE *GetIntPropValues )( 
             ITsPropsBldr * This,
             /* [in] */ int tpt,
             /* [out] */ int *pnVar,
-            /* [out] */ int *pnVal);
+            /* [retval][out] */ int *pnVal);
         
         /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_StrPropCount )( 
             ITsPropsBldr * This,
@@ -4874,12 +5474,12 @@ DebugReport;
             ITsPropsBldr * This,
             /* [in] */ int iv,
             /* [out] */ int *ptpt,
-            /* [out] */ BSTR *pbstrVal);
+            /* [retval][out] */ BSTR *pbstrVal);
         
         HRESULT ( STDMETHODCALLTYPE *GetStrPropValue )( 
             ITsPropsBldr * This,
             /* [in] */ int tpt,
-            /* [out] */ BSTR *pbstrVal);
+            /* [retval][out] */ BSTR *pbstrVal);
         
         HRESULT ( STDMETHODCALLTYPE *SetIntPropValues )( 
             ITsPropsBldr * This,
@@ -4972,4487 +5572,6 @@ DebugReport;
 #endif 	/* __ITsPropsBldr_INTERFACE_DEFINED__ */
 
 
-#ifndef __ITsMultiString_INTERFACE_DEFINED__
-#define __ITsMultiString_INTERFACE_DEFINED__
-
-/* interface ITsMultiString */
-/* [unique][object][uuid] */ 
-
-
-#define IID_ITsMultiString __uuidof(ITsMultiString)
-
-#if defined(__cplusplus) && !defined(CINTERFACE)
-    
-    MIDL_INTERFACE("DD409520-C212-11d3-9BB7-00400541F9E9")
-    ITsMultiString : public IUnknown
-    {
-    public:
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_StringCount( 
-            /* [retval][out] */ int *pctss) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE GetStringFromIndex( 
-            /* [in] */ int iws,
-            /* [out] */ int *pws,
-            /* [retval][out] */ ITsString **pptss) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_String( 
-            /* [in] */ int ws,
-            /* [retval][out] */ ITsString **pptss) = 0;
-        
-        virtual /* [propputref] */ HRESULT STDMETHODCALLTYPE putref_String( 
-            /* [in] */ int ws,
-            /* [in] */ ITsString *ptss) = 0;
-        
-    };
-    
-    
-#else 	/* C style interface */
-
-    typedef struct ITsMultiStringVtbl
-    {
-        BEGIN_INTERFACE
-        
-        HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
-            ITsMultiString * This,
-            /* [in] */ REFIID riid,
-            /* [annotation][iid_is][out] */ 
-            _COM_Outptr_  void **ppvObject);
-        
-        ULONG ( STDMETHODCALLTYPE *AddRef )( 
-            ITsMultiString * This);
-        
-        ULONG ( STDMETHODCALLTYPE *Release )( 
-            ITsMultiString * This);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_StringCount )( 
-            ITsMultiString * This,
-            /* [retval][out] */ int *pctss);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetStringFromIndex )( 
-            ITsMultiString * This,
-            /* [in] */ int iws,
-            /* [out] */ int *pws,
-            /* [retval][out] */ ITsString **pptss);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_String )( 
-            ITsMultiString * This,
-            /* [in] */ int ws,
-            /* [retval][out] */ ITsString **pptss);
-        
-        /* [propputref] */ HRESULT ( STDMETHODCALLTYPE *putref_String )( 
-            ITsMultiString * This,
-            /* [in] */ int ws,
-            /* [in] */ ITsString *ptss);
-        
-        END_INTERFACE
-    } ITsMultiStringVtbl;
-
-    interface ITsMultiString
-    {
-        CONST_VTBL struct ITsMultiStringVtbl *lpVtbl;
-    };
-
-    
-
-#ifdef COBJMACROS
-
-
-#define ITsMultiString_QueryInterface(This,riid,ppvObject)	\
-    ( (This)->lpVtbl -> QueryInterface(This,riid,ppvObject) ) 
-
-#define ITsMultiString_AddRef(This)	\
-    ( (This)->lpVtbl -> AddRef(This) ) 
-
-#define ITsMultiString_Release(This)	\
-    ( (This)->lpVtbl -> Release(This) ) 
-
-
-#define ITsMultiString_get_StringCount(This,pctss)	\
-    ( (This)->lpVtbl -> get_StringCount(This,pctss) ) 
-
-#define ITsMultiString_GetStringFromIndex(This,iws,pws,pptss)	\
-    ( (This)->lpVtbl -> GetStringFromIndex(This,iws,pws,pptss) ) 
-
-#define ITsMultiString_get_String(This,ws,pptss)	\
-    ( (This)->lpVtbl -> get_String(This,ws,pptss) ) 
-
-#define ITsMultiString_putref_String(This,ws,ptss)	\
-    ( (This)->lpVtbl -> putref_String(This,ws,ptss) ) 
-
-#endif /* COBJMACROS */
-
-
-#endif 	/* C style interface */
-
-
-
-
-#endif 	/* __ITsMultiString_INTERFACE_DEFINED__ */
-
-
-#ifndef __ILgWritingSystemFactory_INTERFACE_DEFINED__
-#define __ILgWritingSystemFactory_INTERFACE_DEFINED__
-
-/* interface ILgWritingSystemFactory */
-/* [unique][object][uuid] */ 
-
-
-#define IID_ILgWritingSystemFactory __uuidof(ILgWritingSystemFactory)
-
-#if defined(__cplusplus) && !defined(CINTERFACE)
-    
-    MIDL_INTERFACE("22376578-BFEB-4c46-8D72-C9154890DD16")
-    ILgWritingSystemFactory : public IUnknown
-    {
-    public:
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_Engine( 
-            /* [in] */ BSTR bstrIcuLocale,
-            /* [retval][out] */ ILgWritingSystem **ppwseng) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_EngineOrNull( 
-            /* [in] */ int ws,
-            /* [retval][out] */ ILgWritingSystem **ppwseng) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE GetWsFromStr( 
-            /* [in] */ BSTR bstr,
-            /* [retval][out] */ int *pwsId) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE GetStrFromWs( 
-            /* [in] */ int wsId,
-            /* [retval][out] */ BSTR *pbstr) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_NumberOfWs( 
-            /* [retval][out] */ int *pcws) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE GetWritingSystems( 
-            /* [size_is][out] */ int *rgws,
-            /* [in] */ int cws) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_CharPropEngine( 
-            /* [in] */ int ws,
-            /* [retval][out] */ ILgCharacterPropertyEngine **pplcpe) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_Renderer( 
-            /* [in] */ int ws,
-            /* [in] */ IVwGraphics *pvg,
-            /* [retval][out] */ IRenderEngine **ppre) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_RendererFromChrp( 
-            /* [in] */ IVwGraphics *pvg,
-            /* [out][in] */ LgCharRenderProps *pchrp,
-            /* [retval][out] */ IRenderEngine **ppre) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_UserWs( 
-            /* [retval][out] */ int *pws) = 0;
-        
-        virtual /* [propput] */ HRESULT STDMETHODCALLTYPE put_UserWs( 
-            /* [in] */ int ws) = 0;
-        
-    };
-    
-    
-#else 	/* C style interface */
-
-    typedef struct ILgWritingSystemFactoryVtbl
-    {
-        BEGIN_INTERFACE
-        
-        HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
-            ILgWritingSystemFactory * This,
-            /* [in] */ REFIID riid,
-            /* [annotation][iid_is][out] */ 
-            _COM_Outptr_  void **ppvObject);
-        
-        ULONG ( STDMETHODCALLTYPE *AddRef )( 
-            ILgWritingSystemFactory * This);
-        
-        ULONG ( STDMETHODCALLTYPE *Release )( 
-            ILgWritingSystemFactory * This);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_Engine )( 
-            ILgWritingSystemFactory * This,
-            /* [in] */ BSTR bstrIcuLocale,
-            /* [retval][out] */ ILgWritingSystem **ppwseng);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_EngineOrNull )( 
-            ILgWritingSystemFactory * This,
-            /* [in] */ int ws,
-            /* [retval][out] */ ILgWritingSystem **ppwseng);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetWsFromStr )( 
-            ILgWritingSystemFactory * This,
-            /* [in] */ BSTR bstr,
-            /* [retval][out] */ int *pwsId);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetStrFromWs )( 
-            ILgWritingSystemFactory * This,
-            /* [in] */ int wsId,
-            /* [retval][out] */ BSTR *pbstr);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_NumberOfWs )( 
-            ILgWritingSystemFactory * This,
-            /* [retval][out] */ int *pcws);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetWritingSystems )( 
-            ILgWritingSystemFactory * This,
-            /* [size_is][out] */ int *rgws,
-            /* [in] */ int cws);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_CharPropEngine )( 
-            ILgWritingSystemFactory * This,
-            /* [in] */ int ws,
-            /* [retval][out] */ ILgCharacterPropertyEngine **pplcpe);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_Renderer )( 
-            ILgWritingSystemFactory * This,
-            /* [in] */ int ws,
-            /* [in] */ IVwGraphics *pvg,
-            /* [retval][out] */ IRenderEngine **ppre);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_RendererFromChrp )( 
-            ILgWritingSystemFactory * This,
-            /* [in] */ IVwGraphics *pvg,
-            /* [out][in] */ LgCharRenderProps *pchrp,
-            /* [retval][out] */ IRenderEngine **ppre);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_UserWs )( 
-            ILgWritingSystemFactory * This,
-            /* [retval][out] */ int *pws);
-        
-        /* [propput] */ HRESULT ( STDMETHODCALLTYPE *put_UserWs )( 
-            ILgWritingSystemFactory * This,
-            /* [in] */ int ws);
-        
-        END_INTERFACE
-    } ILgWritingSystemFactoryVtbl;
-
-    interface ILgWritingSystemFactory
-    {
-        CONST_VTBL struct ILgWritingSystemFactoryVtbl *lpVtbl;
-    };
-
-    
-
-#ifdef COBJMACROS
-
-
-#define ILgWritingSystemFactory_QueryInterface(This,riid,ppvObject)	\
-    ( (This)->lpVtbl -> QueryInterface(This,riid,ppvObject) ) 
-
-#define ILgWritingSystemFactory_AddRef(This)	\
-    ( (This)->lpVtbl -> AddRef(This) ) 
-
-#define ILgWritingSystemFactory_Release(This)	\
-    ( (This)->lpVtbl -> Release(This) ) 
-
-
-#define ILgWritingSystemFactory_get_Engine(This,bstrIcuLocale,ppwseng)	\
-    ( (This)->lpVtbl -> get_Engine(This,bstrIcuLocale,ppwseng) ) 
-
-#define ILgWritingSystemFactory_get_EngineOrNull(This,ws,ppwseng)	\
-    ( (This)->lpVtbl -> get_EngineOrNull(This,ws,ppwseng) ) 
-
-#define ILgWritingSystemFactory_GetWsFromStr(This,bstr,pwsId)	\
-    ( (This)->lpVtbl -> GetWsFromStr(This,bstr,pwsId) ) 
-
-#define ILgWritingSystemFactory_GetStrFromWs(This,wsId,pbstr)	\
-    ( (This)->lpVtbl -> GetStrFromWs(This,wsId,pbstr) ) 
-
-#define ILgWritingSystemFactory_get_NumberOfWs(This,pcws)	\
-    ( (This)->lpVtbl -> get_NumberOfWs(This,pcws) ) 
-
-#define ILgWritingSystemFactory_GetWritingSystems(This,rgws,cws)	\
-    ( (This)->lpVtbl -> GetWritingSystems(This,rgws,cws) ) 
-
-#define ILgWritingSystemFactory_get_CharPropEngine(This,ws,pplcpe)	\
-    ( (This)->lpVtbl -> get_CharPropEngine(This,ws,pplcpe) ) 
-
-#define ILgWritingSystemFactory_get_Renderer(This,ws,pvg,ppre)	\
-    ( (This)->lpVtbl -> get_Renderer(This,ws,pvg,ppre) ) 
-
-#define ILgWritingSystemFactory_get_RendererFromChrp(This,pvg,pchrp,ppre)	\
-    ( (This)->lpVtbl -> get_RendererFromChrp(This,pvg,pchrp,ppre) ) 
-
-#define ILgWritingSystemFactory_get_UserWs(This,pws)	\
-    ( (This)->lpVtbl -> get_UserWs(This,pws) ) 
-
-#define ILgWritingSystemFactory_put_UserWs(This,ws)	\
-    ( (This)->lpVtbl -> put_UserWs(This,ws) ) 
-
-#endif /* COBJMACROS */
-
-
-#endif 	/* C style interface */
-
-
-
-
-#endif 	/* __ILgWritingSystemFactory_INTERFACE_DEFINED__ */
-
-
-#define CLSID_TsStrFactory __uuidof(TsStrFactory)
-
-#ifdef __cplusplus
-
-class DECLSPEC_UUID("F1EF76E9-BE04-11d3-8D9A-005004DEFEC4")
-TsStrFactory;
-#endif
-
-#define CLSID_TsPropsFactory __uuidof(TsPropsFactory)
-
-#ifdef __cplusplus
-
-class DECLSPEC_UUID("F1EF76EA-BE04-11d3-8D9A-005004DEFEC4")
-TsPropsFactory;
-#endif
-
-#define CLSID_TsStrBldr __uuidof(TsStrBldr)
-
-#ifdef __cplusplus
-
-class DECLSPEC_UUID("F1EF76EB-BE04-11d3-8D9A-005004DEFEC4")
-TsStrBldr;
-#endif
-
-#define CLSID_TsIncStrBldr __uuidof(TsIncStrBldr)
-
-#ifdef __cplusplus
-
-class DECLSPEC_UUID("F1EF76EC-BE04-11d3-8D9A-005004DEFEC4")
-TsIncStrBldr;
-#endif
-
-#define CLSID_TsPropsBldr __uuidof(TsPropsBldr)
-
-#ifdef __cplusplus
-
-class DECLSPEC_UUID("F1EF76ED-BE04-11d3-8D9A-005004DEFEC4")
-TsPropsBldr;
-#endif
-
-#define CLSID_TsMultiString __uuidof(TsMultiString)
-
-#ifdef __cplusplus
-
-class DECLSPEC_UUID("7A1B89C0-C2D6-11d3-9BB7-00400541F9E9")
-TsMultiString;
-#endif
-
-#ifndef __IVwGraphics_INTERFACE_DEFINED__
-#define __IVwGraphics_INTERFACE_DEFINED__
-
-/* interface IVwGraphics */
-/* [unique][object][uuid] */ 
-
-
-#define IID_IVwGraphics __uuidof(IVwGraphics)
-
-#if defined(__cplusplus) && !defined(CINTERFACE)
-    
-    MIDL_INTERFACE("F7233278-EA87-4FC9-83E2-CB7CC45DEBE7")
-    IVwGraphics : public IUnknown
-    {
-    public:
-        virtual HRESULT STDMETHODCALLTYPE InvertRect( 
-            /* [in] */ int xLeft,
-            /* [in] */ int yTop,
-            /* [in] */ int xRight,
-            /* [in] */ int yBottom) = 0;
-        
-        virtual /* [propput] */ HRESULT STDMETHODCALLTYPE put_ForeColor( 
-            /* [in] */ int clr) = 0;
-        
-        virtual /* [propput] */ HRESULT STDMETHODCALLTYPE put_BackColor( 
-            /* [in] */ int clr) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE DrawRectangle( 
-            /* [in] */ int xLeft,
-            /* [in] */ int yTop,
-            /* [in] */ int xRight,
-            /* [in] */ int yBottom) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE DrawHorzLine( 
-            /* [in] */ int xLeft,
-            /* [in] */ int xRight,
-            /* [in] */ int y,
-            /* [in] */ int dyHeight,
-            /* [in] */ int cdx,
-            /* [size_is][in] */ int *prgdx,
-            /* [out][in] */ int *pdxStart) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE DrawLine( 
-            /* [in] */ int xLeft,
-            /* [in] */ int yTop,
-            /* [in] */ int xRight,
-            /* [in] */ int yBottom) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE DrawText( 
-            /* [in] */ int x,
-            /* [in] */ int y,
-            /* [in] */ int cch,
-            /* [size_is][in] */ const OLECHAR *prgch,
-            /* [in] */ int xStretch) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE DrawGlyphs( 
-            /* [in] */ int x,
-            /* [in] */ int y,
-            /* [in] */ int cgi,
-            /* [size_is][in] */ const GlyphInfo *prggi) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE GetTextExtent( 
-            /* [in] */ int cch,
-            /* [size_is][in] */ const OLECHAR *prgch,
-            /* [out] */ int *px,
-            /* [out] */ int *py) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE GetTextLeadWidth( 
-            /* [in] */ int cch,
-            /* [size_is][in] */ const OLECHAR *prgch,
-            /* [in] */ int ich,
-            /* [in] */ int xStretch,
-            /* [retval][out] */ int *px) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE GetClipRect( 
-            /* [out] */ int *pxLeft,
-            /* [out] */ int *pyTop,
-            /* [out] */ int *pxRight,
-            /* [out] */ int *pyBottom) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE GetFontEmSquare( 
-            /* [retval][out] */ int *pxyFontEmSquare) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE GetGlyphMetrics( 
-            /* [in] */ int chw,
-            /* [out] */ int *psBoundingWidth,
-            /* [out] */ int *pyBoundingHeight,
-            /* [out] */ int *pxBoundingX,
-            /* [out] */ int *pyBoundingY,
-            /* [out] */ int *pxAdvanceX,
-            /* [out] */ int *pyAdvanceY) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE GetFontData( 
-            /* [in] */ int nTableId,
-            /* [out][in] */ int *pcbTableSz,
-            /* [size_is][out] */ BYTE *prgb) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE XYFromGlyphPoint( 
-            /* [in] */ int chw,
-            /* [in] */ int nPoint,
-            /* [out] */ int *pxRet,
-            /* [out] */ int *pyRet) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_FontAscent( 
-            /* [retval][out] */ int *py) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_FontDescent( 
-            /* [retval][out] */ int *pyRet) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_FontCharProperties( 
-            /* [retval][out] */ LgCharRenderProps *pchrp) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE ReleaseDC( void) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_XUnitsPerInch( 
-            /* [retval][out] */ int *pxInch) = 0;
-        
-        virtual /* [propput] */ HRESULT STDMETHODCALLTYPE put_XUnitsPerInch( 
-            /* [in] */ int xInch) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_YUnitsPerInch( 
-            /* [retval][out] */ int *pyInch) = 0;
-        
-        virtual /* [propput] */ HRESULT STDMETHODCALLTYPE put_YUnitsPerInch( 
-            /* [in] */ int yInch) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE GetSuperscriptHeightRatio( 
-            /* [out] */ int *piNumerator,
-            /* [out] */ int *piDenominator) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE GetSuperscriptYOffsetRatio( 
-            /* [out] */ int *piNumerator,
-            /* [out] */ int *piDenominator) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE GetSubscriptHeightRatio( 
-            /* [out] */ int *piNumerator,
-            /* [out] */ int *piDenominator) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE GetSubscriptYOffsetRatio( 
-            /* [out] */ int *piNumerator,
-            /* [out] */ int *piDenominator) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE SetupGraphics( 
-            /* [out][in] */ LgCharRenderProps *pchrp) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE PushClipRect( 
-            /* [in] */ RECT rcClip) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE PopClipRect( void) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE DrawPolygon( 
-            /* [in] */ int cvpnt,
-            /* [size_is][in] */ POINT prgvpnt[  ]) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE RenderPicture( 
-            /* [in] */ IPicture *ppic,
-            /* [in] */ int x,
-            /* [in] */ int y,
-            /* [in] */ int cx,
-            /* [in] */ int cy,
-            /* [in] */ OLE_XPOS_HIMETRIC xSrc,
-            /* [in] */ OLE_YPOS_HIMETRIC ySrc,
-            /* [in] */ OLE_XSIZE_HIMETRIC cxSrc,
-            /* [in] */ OLE_YSIZE_HIMETRIC cySrc,
-            /* [in] */ LPCRECT prcWBounds) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE MakePicture( 
-            /* [size_is][in] */ byte *pbData,
-            /* [in] */ int cbData,
-            /* [retval][out] */ IPicture **pppic) = 0;
-        
-    };
-    
-    
-#else 	/* C style interface */
-
-    typedef struct IVwGraphicsVtbl
-    {
-        BEGIN_INTERFACE
-        
-        HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
-            IVwGraphics * This,
-            /* [in] */ REFIID riid,
-            /* [annotation][iid_is][out] */ 
-            _COM_Outptr_  void **ppvObject);
-        
-        ULONG ( STDMETHODCALLTYPE *AddRef )( 
-            IVwGraphics * This);
-        
-        ULONG ( STDMETHODCALLTYPE *Release )( 
-            IVwGraphics * This);
-        
-        HRESULT ( STDMETHODCALLTYPE *InvertRect )( 
-            IVwGraphics * This,
-            /* [in] */ int xLeft,
-            /* [in] */ int yTop,
-            /* [in] */ int xRight,
-            /* [in] */ int yBottom);
-        
-        /* [propput] */ HRESULT ( STDMETHODCALLTYPE *put_ForeColor )( 
-            IVwGraphics * This,
-            /* [in] */ int clr);
-        
-        /* [propput] */ HRESULT ( STDMETHODCALLTYPE *put_BackColor )( 
-            IVwGraphics * This,
-            /* [in] */ int clr);
-        
-        HRESULT ( STDMETHODCALLTYPE *DrawRectangle )( 
-            IVwGraphics * This,
-            /* [in] */ int xLeft,
-            /* [in] */ int yTop,
-            /* [in] */ int xRight,
-            /* [in] */ int yBottom);
-        
-        HRESULT ( STDMETHODCALLTYPE *DrawHorzLine )( 
-            IVwGraphics * This,
-            /* [in] */ int xLeft,
-            /* [in] */ int xRight,
-            /* [in] */ int y,
-            /* [in] */ int dyHeight,
-            /* [in] */ int cdx,
-            /* [size_is][in] */ int *prgdx,
-            /* [out][in] */ int *pdxStart);
-        
-        HRESULT ( STDMETHODCALLTYPE *DrawLine )( 
-            IVwGraphics * This,
-            /* [in] */ int xLeft,
-            /* [in] */ int yTop,
-            /* [in] */ int xRight,
-            /* [in] */ int yBottom);
-        
-        HRESULT ( STDMETHODCALLTYPE *DrawText )( 
-            IVwGraphics * This,
-            /* [in] */ int x,
-            /* [in] */ int y,
-            /* [in] */ int cch,
-            /* [size_is][in] */ const OLECHAR *prgch,
-            /* [in] */ int xStretch);
-        
-        HRESULT ( STDMETHODCALLTYPE *DrawGlyphs )( 
-            IVwGraphics * This,
-            /* [in] */ int x,
-            /* [in] */ int y,
-            /* [in] */ int cgi,
-            /* [size_is][in] */ const GlyphInfo *prggi);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetTextExtent )( 
-            IVwGraphics * This,
-            /* [in] */ int cch,
-            /* [size_is][in] */ const OLECHAR *prgch,
-            /* [out] */ int *px,
-            /* [out] */ int *py);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetTextLeadWidth )( 
-            IVwGraphics * This,
-            /* [in] */ int cch,
-            /* [size_is][in] */ const OLECHAR *prgch,
-            /* [in] */ int ich,
-            /* [in] */ int xStretch,
-            /* [retval][out] */ int *px);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetClipRect )( 
-            IVwGraphics * This,
-            /* [out] */ int *pxLeft,
-            /* [out] */ int *pyTop,
-            /* [out] */ int *pxRight,
-            /* [out] */ int *pyBottom);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetFontEmSquare )( 
-            IVwGraphics * This,
-            /* [retval][out] */ int *pxyFontEmSquare);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetGlyphMetrics )( 
-            IVwGraphics * This,
-            /* [in] */ int chw,
-            /* [out] */ int *psBoundingWidth,
-            /* [out] */ int *pyBoundingHeight,
-            /* [out] */ int *pxBoundingX,
-            /* [out] */ int *pyBoundingY,
-            /* [out] */ int *pxAdvanceX,
-            /* [out] */ int *pyAdvanceY);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetFontData )( 
-            IVwGraphics * This,
-            /* [in] */ int nTableId,
-            /* [out][in] */ int *pcbTableSz,
-            /* [size_is][out] */ BYTE *prgb);
-        
-        HRESULT ( STDMETHODCALLTYPE *XYFromGlyphPoint )( 
-            IVwGraphics * This,
-            /* [in] */ int chw,
-            /* [in] */ int nPoint,
-            /* [out] */ int *pxRet,
-            /* [out] */ int *pyRet);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_FontAscent )( 
-            IVwGraphics * This,
-            /* [retval][out] */ int *py);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_FontDescent )( 
-            IVwGraphics * This,
-            /* [retval][out] */ int *pyRet);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_FontCharProperties )( 
-            IVwGraphics * This,
-            /* [retval][out] */ LgCharRenderProps *pchrp);
-        
-        HRESULT ( STDMETHODCALLTYPE *ReleaseDC )( 
-            IVwGraphics * This);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_XUnitsPerInch )( 
-            IVwGraphics * This,
-            /* [retval][out] */ int *pxInch);
-        
-        /* [propput] */ HRESULT ( STDMETHODCALLTYPE *put_XUnitsPerInch )( 
-            IVwGraphics * This,
-            /* [in] */ int xInch);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_YUnitsPerInch )( 
-            IVwGraphics * This,
-            /* [retval][out] */ int *pyInch);
-        
-        /* [propput] */ HRESULT ( STDMETHODCALLTYPE *put_YUnitsPerInch )( 
-            IVwGraphics * This,
-            /* [in] */ int yInch);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetSuperscriptHeightRatio )( 
-            IVwGraphics * This,
-            /* [out] */ int *piNumerator,
-            /* [out] */ int *piDenominator);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetSuperscriptYOffsetRatio )( 
-            IVwGraphics * This,
-            /* [out] */ int *piNumerator,
-            /* [out] */ int *piDenominator);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetSubscriptHeightRatio )( 
-            IVwGraphics * This,
-            /* [out] */ int *piNumerator,
-            /* [out] */ int *piDenominator);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetSubscriptYOffsetRatio )( 
-            IVwGraphics * This,
-            /* [out] */ int *piNumerator,
-            /* [out] */ int *piDenominator);
-        
-        HRESULT ( STDMETHODCALLTYPE *SetupGraphics )( 
-            IVwGraphics * This,
-            /* [out][in] */ LgCharRenderProps *pchrp);
-        
-        HRESULT ( STDMETHODCALLTYPE *PushClipRect )( 
-            IVwGraphics * This,
-            /* [in] */ RECT rcClip);
-        
-        HRESULT ( STDMETHODCALLTYPE *PopClipRect )( 
-            IVwGraphics * This);
-        
-        HRESULT ( STDMETHODCALLTYPE *DrawPolygon )( 
-            IVwGraphics * This,
-            /* [in] */ int cvpnt,
-            /* [size_is][in] */ POINT prgvpnt[  ]);
-        
-        HRESULT ( STDMETHODCALLTYPE *RenderPicture )( 
-            IVwGraphics * This,
-            /* [in] */ IPicture *ppic,
-            /* [in] */ int x,
-            /* [in] */ int y,
-            /* [in] */ int cx,
-            /* [in] */ int cy,
-            /* [in] */ OLE_XPOS_HIMETRIC xSrc,
-            /* [in] */ OLE_YPOS_HIMETRIC ySrc,
-            /* [in] */ OLE_XSIZE_HIMETRIC cxSrc,
-            /* [in] */ OLE_YSIZE_HIMETRIC cySrc,
-            /* [in] */ LPCRECT prcWBounds);
-        
-        HRESULT ( STDMETHODCALLTYPE *MakePicture )( 
-            IVwGraphics * This,
-            /* [size_is][in] */ byte *pbData,
-            /* [in] */ int cbData,
-            /* [retval][out] */ IPicture **pppic);
-        
-        END_INTERFACE
-    } IVwGraphicsVtbl;
-
-    interface IVwGraphics
-    {
-        CONST_VTBL struct IVwGraphicsVtbl *lpVtbl;
-    };
-
-    
-
-#ifdef COBJMACROS
-
-
-#define IVwGraphics_QueryInterface(This,riid,ppvObject)	\
-    ( (This)->lpVtbl -> QueryInterface(This,riid,ppvObject) ) 
-
-#define IVwGraphics_AddRef(This)	\
-    ( (This)->lpVtbl -> AddRef(This) ) 
-
-#define IVwGraphics_Release(This)	\
-    ( (This)->lpVtbl -> Release(This) ) 
-
-
-#define IVwGraphics_InvertRect(This,xLeft,yTop,xRight,yBottom)	\
-    ( (This)->lpVtbl -> InvertRect(This,xLeft,yTop,xRight,yBottom) ) 
-
-#define IVwGraphics_put_ForeColor(This,clr)	\
-    ( (This)->lpVtbl -> put_ForeColor(This,clr) ) 
-
-#define IVwGraphics_put_BackColor(This,clr)	\
-    ( (This)->lpVtbl -> put_BackColor(This,clr) ) 
-
-#define IVwGraphics_DrawRectangle(This,xLeft,yTop,xRight,yBottom)	\
-    ( (This)->lpVtbl -> DrawRectangle(This,xLeft,yTop,xRight,yBottom) ) 
-
-#define IVwGraphics_DrawHorzLine(This,xLeft,xRight,y,dyHeight,cdx,prgdx,pdxStart)	\
-    ( (This)->lpVtbl -> DrawHorzLine(This,xLeft,xRight,y,dyHeight,cdx,prgdx,pdxStart) ) 
-
-#define IVwGraphics_DrawLine(This,xLeft,yTop,xRight,yBottom)	\
-    ( (This)->lpVtbl -> DrawLine(This,xLeft,yTop,xRight,yBottom) ) 
-
-#define IVwGraphics_DrawText(This,x,y,cch,prgch,xStretch)	\
-    ( (This)->lpVtbl -> DrawText(This,x,y,cch,prgch,xStretch) ) 
-
-#define IVwGraphics_DrawGlyphs(This,x,y,cgi,prggi)	\
-    ( (This)->lpVtbl -> DrawGlyphs(This,x,y,cgi,prggi) ) 
-
-#define IVwGraphics_GetTextExtent(This,cch,prgch,px,py)	\
-    ( (This)->lpVtbl -> GetTextExtent(This,cch,prgch,px,py) ) 
-
-#define IVwGraphics_GetTextLeadWidth(This,cch,prgch,ich,xStretch,px)	\
-    ( (This)->lpVtbl -> GetTextLeadWidth(This,cch,prgch,ich,xStretch,px) ) 
-
-#define IVwGraphics_GetClipRect(This,pxLeft,pyTop,pxRight,pyBottom)	\
-    ( (This)->lpVtbl -> GetClipRect(This,pxLeft,pyTop,pxRight,pyBottom) ) 
-
-#define IVwGraphics_GetFontEmSquare(This,pxyFontEmSquare)	\
-    ( (This)->lpVtbl -> GetFontEmSquare(This,pxyFontEmSquare) ) 
-
-#define IVwGraphics_GetGlyphMetrics(This,chw,psBoundingWidth,pyBoundingHeight,pxBoundingX,pyBoundingY,pxAdvanceX,pyAdvanceY)	\
-    ( (This)->lpVtbl -> GetGlyphMetrics(This,chw,psBoundingWidth,pyBoundingHeight,pxBoundingX,pyBoundingY,pxAdvanceX,pyAdvanceY) ) 
-
-#define IVwGraphics_GetFontData(This,nTableId,pcbTableSz,prgb)	\
-    ( (This)->lpVtbl -> GetFontData(This,nTableId,pcbTableSz,prgb) ) 
-
-#define IVwGraphics_XYFromGlyphPoint(This,chw,nPoint,pxRet,pyRet)	\
-    ( (This)->lpVtbl -> XYFromGlyphPoint(This,chw,nPoint,pxRet,pyRet) ) 
-
-#define IVwGraphics_get_FontAscent(This,py)	\
-    ( (This)->lpVtbl -> get_FontAscent(This,py) ) 
-
-#define IVwGraphics_get_FontDescent(This,pyRet)	\
-    ( (This)->lpVtbl -> get_FontDescent(This,pyRet) ) 
-
-#define IVwGraphics_get_FontCharProperties(This,pchrp)	\
-    ( (This)->lpVtbl -> get_FontCharProperties(This,pchrp) ) 
-
-#define IVwGraphics_ReleaseDC(This)	\
-    ( (This)->lpVtbl -> ReleaseDC(This) ) 
-
-#define IVwGraphics_get_XUnitsPerInch(This,pxInch)	\
-    ( (This)->lpVtbl -> get_XUnitsPerInch(This,pxInch) ) 
-
-#define IVwGraphics_put_XUnitsPerInch(This,xInch)	\
-    ( (This)->lpVtbl -> put_XUnitsPerInch(This,xInch) ) 
-
-#define IVwGraphics_get_YUnitsPerInch(This,pyInch)	\
-    ( (This)->lpVtbl -> get_YUnitsPerInch(This,pyInch) ) 
-
-#define IVwGraphics_put_YUnitsPerInch(This,yInch)	\
-    ( (This)->lpVtbl -> put_YUnitsPerInch(This,yInch) ) 
-
-#define IVwGraphics_GetSuperscriptHeightRatio(This,piNumerator,piDenominator)	\
-    ( (This)->lpVtbl -> GetSuperscriptHeightRatio(This,piNumerator,piDenominator) ) 
-
-#define IVwGraphics_GetSuperscriptYOffsetRatio(This,piNumerator,piDenominator)	\
-    ( (This)->lpVtbl -> GetSuperscriptYOffsetRatio(This,piNumerator,piDenominator) ) 
-
-#define IVwGraphics_GetSubscriptHeightRatio(This,piNumerator,piDenominator)	\
-    ( (This)->lpVtbl -> GetSubscriptHeightRatio(This,piNumerator,piDenominator) ) 
-
-#define IVwGraphics_GetSubscriptYOffsetRatio(This,piNumerator,piDenominator)	\
-    ( (This)->lpVtbl -> GetSubscriptYOffsetRatio(This,piNumerator,piDenominator) ) 
-
-#define IVwGraphics_SetupGraphics(This,pchrp)	\
-    ( (This)->lpVtbl -> SetupGraphics(This,pchrp) ) 
-
-#define IVwGraphics_PushClipRect(This,rcClip)	\
-    ( (This)->lpVtbl -> PushClipRect(This,rcClip) ) 
-
-#define IVwGraphics_PopClipRect(This)	\
-    ( (This)->lpVtbl -> PopClipRect(This) ) 
-
-#define IVwGraphics_DrawPolygon(This,cvpnt,prgvpnt)	\
-    ( (This)->lpVtbl -> DrawPolygon(This,cvpnt,prgvpnt) ) 
-
-#define IVwGraphics_RenderPicture(This,ppic,x,y,cx,cy,xSrc,ySrc,cxSrc,cySrc,prcWBounds)	\
-    ( (This)->lpVtbl -> RenderPicture(This,ppic,x,y,cx,cy,xSrc,ySrc,cxSrc,cySrc,prcWBounds) ) 
-
-#define IVwGraphics_MakePicture(This,pbData,cbData,pppic)	\
-    ( (This)->lpVtbl -> MakePicture(This,pbData,cbData,pppic) ) 
-
-#endif /* COBJMACROS */
-
-
-#endif 	/* C style interface */
-
-
-
-
-#endif 	/* __IVwGraphics_INTERFACE_DEFINED__ */
-
-
-#ifndef __IJustifyingRenderer_INTERFACE_DEFINED__
-#define __IJustifyingRenderer_INTERFACE_DEFINED__
-
-/* interface IJustifyingRenderer */
-/* [unique][object][uuid] */ 
-
-
-#define IID_IJustifyingRenderer __uuidof(IJustifyingRenderer)
-
-#if defined(__cplusplus) && !defined(CINTERFACE)
-    
-    MIDL_INTERFACE("1141174B-923F-4C43-BA43-8A326B76A3F2")
-    IJustifyingRenderer : public IUnknown
-    {
-    public:
-        virtual HRESULT STDMETHODCALLTYPE GetGlyphAttributeFloat( 
-            /* [in] */ int iGlyph,
-            /* [in] */ int kjgatId,
-            /* [in] */ int nLevel,
-            /* [out] */ float *pValueRet) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE GetGlyphAttributeInt( 
-            /* [in] */ int iGlyph,
-            /* [in] */ int kjgatId,
-            /* [in] */ int nLevel,
-            /* [out] */ int *pValueRet) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE SetGlyphAttributeFloat( 
-            /* [in] */ int iGlyph,
-            /* [in] */ int kjgatId,
-            /* [in] */ int nLevel,
-            /* [in] */ float value) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE SetGlyphAttributeInt( 
-            /* [in] */ int iGlyph,
-            /* [in] */ int kjgatId,
-            /* [in] */ int nLevel,
-            /* [in] */ int value) = 0;
-        
-    };
-    
-    
-#else 	/* C style interface */
-
-    typedef struct IJustifyingRendererVtbl
-    {
-        BEGIN_INTERFACE
-        
-        HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
-            IJustifyingRenderer * This,
-            /* [in] */ REFIID riid,
-            /* [annotation][iid_is][out] */ 
-            _COM_Outptr_  void **ppvObject);
-        
-        ULONG ( STDMETHODCALLTYPE *AddRef )( 
-            IJustifyingRenderer * This);
-        
-        ULONG ( STDMETHODCALLTYPE *Release )( 
-            IJustifyingRenderer * This);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetGlyphAttributeFloat )( 
-            IJustifyingRenderer * This,
-            /* [in] */ int iGlyph,
-            /* [in] */ int kjgatId,
-            /* [in] */ int nLevel,
-            /* [out] */ float *pValueRet);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetGlyphAttributeInt )( 
-            IJustifyingRenderer * This,
-            /* [in] */ int iGlyph,
-            /* [in] */ int kjgatId,
-            /* [in] */ int nLevel,
-            /* [out] */ int *pValueRet);
-        
-        HRESULT ( STDMETHODCALLTYPE *SetGlyphAttributeFloat )( 
-            IJustifyingRenderer * This,
-            /* [in] */ int iGlyph,
-            /* [in] */ int kjgatId,
-            /* [in] */ int nLevel,
-            /* [in] */ float value);
-        
-        HRESULT ( STDMETHODCALLTYPE *SetGlyphAttributeInt )( 
-            IJustifyingRenderer * This,
-            /* [in] */ int iGlyph,
-            /* [in] */ int kjgatId,
-            /* [in] */ int nLevel,
-            /* [in] */ int value);
-        
-        END_INTERFACE
-    } IJustifyingRendererVtbl;
-
-    interface IJustifyingRenderer
-    {
-        CONST_VTBL struct IJustifyingRendererVtbl *lpVtbl;
-    };
-
-    
-
-#ifdef COBJMACROS
-
-
-#define IJustifyingRenderer_QueryInterface(This,riid,ppvObject)	\
-    ( (This)->lpVtbl -> QueryInterface(This,riid,ppvObject) ) 
-
-#define IJustifyingRenderer_AddRef(This)	\
-    ( (This)->lpVtbl -> AddRef(This) ) 
-
-#define IJustifyingRenderer_Release(This)	\
-    ( (This)->lpVtbl -> Release(This) ) 
-
-
-#define IJustifyingRenderer_GetGlyphAttributeFloat(This,iGlyph,kjgatId,nLevel,pValueRet)	\
-    ( (This)->lpVtbl -> GetGlyphAttributeFloat(This,iGlyph,kjgatId,nLevel,pValueRet) ) 
-
-#define IJustifyingRenderer_GetGlyphAttributeInt(This,iGlyph,kjgatId,nLevel,pValueRet)	\
-    ( (This)->lpVtbl -> GetGlyphAttributeInt(This,iGlyph,kjgatId,nLevel,pValueRet) ) 
-
-#define IJustifyingRenderer_SetGlyphAttributeFloat(This,iGlyph,kjgatId,nLevel,value)	\
-    ( (This)->lpVtbl -> SetGlyphAttributeFloat(This,iGlyph,kjgatId,nLevel,value) ) 
-
-#define IJustifyingRenderer_SetGlyphAttributeInt(This,iGlyph,kjgatId,nLevel,value)	\
-    ( (This)->lpVtbl -> SetGlyphAttributeInt(This,iGlyph,kjgatId,nLevel,value) ) 
-
-#endif /* COBJMACROS */
-
-
-#endif 	/* C style interface */
-
-
-
-
-#endif 	/* __IJustifyingRenderer_INTERFACE_DEFINED__ */
-
-
-#ifndef __ISimpleInit_INTERFACE_DEFINED__
-#define __ISimpleInit_INTERFACE_DEFINED__
-
-/* interface ISimpleInit */
-/* [unique][object][uuid] */ 
-
-
-#define IID_ISimpleInit __uuidof(ISimpleInit)
-
-#if defined(__cplusplus) && !defined(CINTERFACE)
-    
-    MIDL_INTERFACE("6433D19E-2DA2-4041-B202-DB118EE1694D")
-    ISimpleInit : public IUnknown
-    {
-    public:
-        virtual /* [restricted] */ HRESULT STDMETHODCALLTYPE InitNew( 
-            /* [size_is][in] */ const BYTE *prgb,
-            /* [in] */ int cb) = 0;
-        
-        virtual /* [restricted][propget] */ HRESULT STDMETHODCALLTYPE get_InitializationData( 
-            /* [retval][out] */ BSTR *pbstr) = 0;
-        
-    };
-    
-    
-#else 	/* C style interface */
-
-    typedef struct ISimpleInitVtbl
-    {
-        BEGIN_INTERFACE
-        
-        HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
-            ISimpleInit * This,
-            /* [in] */ REFIID riid,
-            /* [annotation][iid_is][out] */ 
-            _COM_Outptr_  void **ppvObject);
-        
-        ULONG ( STDMETHODCALLTYPE *AddRef )( 
-            ISimpleInit * This);
-        
-        ULONG ( STDMETHODCALLTYPE *Release )( 
-            ISimpleInit * This);
-        
-        /* [restricted] */ HRESULT ( STDMETHODCALLTYPE *InitNew )( 
-            ISimpleInit * This,
-            /* [size_is][in] */ const BYTE *prgb,
-            /* [in] */ int cb);
-        
-        /* [restricted][propget] */ HRESULT ( STDMETHODCALLTYPE *get_InitializationData )( 
-            ISimpleInit * This,
-            /* [retval][out] */ BSTR *pbstr);
-        
-        END_INTERFACE
-    } ISimpleInitVtbl;
-
-    interface ISimpleInit
-    {
-        CONST_VTBL struct ISimpleInitVtbl *lpVtbl;
-    };
-
-    
-
-#ifdef COBJMACROS
-
-
-#define ISimpleInit_QueryInterface(This,riid,ppvObject)	\
-    ( (This)->lpVtbl -> QueryInterface(This,riid,ppvObject) ) 
-
-#define ISimpleInit_AddRef(This)	\
-    ( (This)->lpVtbl -> AddRef(This) ) 
-
-#define ISimpleInit_Release(This)	\
-    ( (This)->lpVtbl -> Release(This) ) 
-
-
-#define ISimpleInit_InitNew(This,prgb,cb)	\
-    ( (This)->lpVtbl -> InitNew(This,prgb,cb) ) 
-
-#define ISimpleInit_get_InitializationData(This,pbstr)	\
-    ( (This)->lpVtbl -> get_InitializationData(This,pbstr) ) 
-
-#endif /* COBJMACROS */
-
-
-#endif 	/* C style interface */
-
-
-
-
-#endif 	/* __ISimpleInit_INTERFACE_DEFINED__ */
-
-
-#ifndef __IVwGraphicsWin32_INTERFACE_DEFINED__
-#define __IVwGraphicsWin32_INTERFACE_DEFINED__
-
-/* interface IVwGraphicsWin32 */
-/* [unique][object][uuid] */ 
-
-
-#define IID_IVwGraphicsWin32 __uuidof(IVwGraphicsWin32)
-
-#if defined(__cplusplus) && !defined(CINTERFACE)
-    
-    MIDL_INTERFACE("C955E295-A259-47D4-8158-4C7A3539D35E")
-    IVwGraphicsWin32 : public IVwGraphics
-    {
-    public:
-        virtual HRESULT STDMETHODCALLTYPE Initialize( 
-            /* [in] */ HDC hdc) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE GetDeviceContext( 
-            /* [retval][out] */ HDC *phdc) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE SetMeasureDc( 
-            /* [in] */ HDC hdc) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE SetClipRect( 
-            /* [in] */ RECT *prcClip) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE GetTextStyleContext( 
-            /* [retval][out] */ HDC *ppContext) = 0;
-        
-    };
-    
-    
-#else 	/* C style interface */
-
-    typedef struct IVwGraphicsWin32Vtbl
-    {
-        BEGIN_INTERFACE
-        
-        HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
-            IVwGraphicsWin32 * This,
-            /* [in] */ REFIID riid,
-            /* [annotation][iid_is][out] */ 
-            _COM_Outptr_  void **ppvObject);
-        
-        ULONG ( STDMETHODCALLTYPE *AddRef )( 
-            IVwGraphicsWin32 * This);
-        
-        ULONG ( STDMETHODCALLTYPE *Release )( 
-            IVwGraphicsWin32 * This);
-        
-        HRESULT ( STDMETHODCALLTYPE *InvertRect )( 
-            IVwGraphicsWin32 * This,
-            /* [in] */ int xLeft,
-            /* [in] */ int yTop,
-            /* [in] */ int xRight,
-            /* [in] */ int yBottom);
-        
-        /* [propput] */ HRESULT ( STDMETHODCALLTYPE *put_ForeColor )( 
-            IVwGraphicsWin32 * This,
-            /* [in] */ int clr);
-        
-        /* [propput] */ HRESULT ( STDMETHODCALLTYPE *put_BackColor )( 
-            IVwGraphicsWin32 * This,
-            /* [in] */ int clr);
-        
-        HRESULT ( STDMETHODCALLTYPE *DrawRectangle )( 
-            IVwGraphicsWin32 * This,
-            /* [in] */ int xLeft,
-            /* [in] */ int yTop,
-            /* [in] */ int xRight,
-            /* [in] */ int yBottom);
-        
-        HRESULT ( STDMETHODCALLTYPE *DrawHorzLine )( 
-            IVwGraphicsWin32 * This,
-            /* [in] */ int xLeft,
-            /* [in] */ int xRight,
-            /* [in] */ int y,
-            /* [in] */ int dyHeight,
-            /* [in] */ int cdx,
-            /* [size_is][in] */ int *prgdx,
-            /* [out][in] */ int *pdxStart);
-        
-        HRESULT ( STDMETHODCALLTYPE *DrawLine )( 
-            IVwGraphicsWin32 * This,
-            /* [in] */ int xLeft,
-            /* [in] */ int yTop,
-            /* [in] */ int xRight,
-            /* [in] */ int yBottom);
-        
-        HRESULT ( STDMETHODCALLTYPE *DrawText )( 
-            IVwGraphicsWin32 * This,
-            /* [in] */ int x,
-            /* [in] */ int y,
-            /* [in] */ int cch,
-            /* [size_is][in] */ const OLECHAR *prgch,
-            /* [in] */ int xStretch);
-        
-        HRESULT ( STDMETHODCALLTYPE *DrawGlyphs )( 
-            IVwGraphicsWin32 * This,
-            /* [in] */ int x,
-            /* [in] */ int y,
-            /* [in] */ int cgi,
-            /* [size_is][in] */ const GlyphInfo *prggi);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetTextExtent )( 
-            IVwGraphicsWin32 * This,
-            /* [in] */ int cch,
-            /* [size_is][in] */ const OLECHAR *prgch,
-            /* [out] */ int *px,
-            /* [out] */ int *py);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetTextLeadWidth )( 
-            IVwGraphicsWin32 * This,
-            /* [in] */ int cch,
-            /* [size_is][in] */ const OLECHAR *prgch,
-            /* [in] */ int ich,
-            /* [in] */ int xStretch,
-            /* [retval][out] */ int *px);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetClipRect )( 
-            IVwGraphicsWin32 * This,
-            /* [out] */ int *pxLeft,
-            /* [out] */ int *pyTop,
-            /* [out] */ int *pxRight,
-            /* [out] */ int *pyBottom);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetFontEmSquare )( 
-            IVwGraphicsWin32 * This,
-            /* [retval][out] */ int *pxyFontEmSquare);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetGlyphMetrics )( 
-            IVwGraphicsWin32 * This,
-            /* [in] */ int chw,
-            /* [out] */ int *psBoundingWidth,
-            /* [out] */ int *pyBoundingHeight,
-            /* [out] */ int *pxBoundingX,
-            /* [out] */ int *pyBoundingY,
-            /* [out] */ int *pxAdvanceX,
-            /* [out] */ int *pyAdvanceY);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetFontData )( 
-            IVwGraphicsWin32 * This,
-            /* [in] */ int nTableId,
-            /* [out][in] */ int *pcbTableSz,
-            /* [size_is][out] */ BYTE *prgb);
-        
-        HRESULT ( STDMETHODCALLTYPE *XYFromGlyphPoint )( 
-            IVwGraphicsWin32 * This,
-            /* [in] */ int chw,
-            /* [in] */ int nPoint,
-            /* [out] */ int *pxRet,
-            /* [out] */ int *pyRet);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_FontAscent )( 
-            IVwGraphicsWin32 * This,
-            /* [retval][out] */ int *py);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_FontDescent )( 
-            IVwGraphicsWin32 * This,
-            /* [retval][out] */ int *pyRet);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_FontCharProperties )( 
-            IVwGraphicsWin32 * This,
-            /* [retval][out] */ LgCharRenderProps *pchrp);
-        
-        HRESULT ( STDMETHODCALLTYPE *ReleaseDC )( 
-            IVwGraphicsWin32 * This);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_XUnitsPerInch )( 
-            IVwGraphicsWin32 * This,
-            /* [retval][out] */ int *pxInch);
-        
-        /* [propput] */ HRESULT ( STDMETHODCALLTYPE *put_XUnitsPerInch )( 
-            IVwGraphicsWin32 * This,
-            /* [in] */ int xInch);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_YUnitsPerInch )( 
-            IVwGraphicsWin32 * This,
-            /* [retval][out] */ int *pyInch);
-        
-        /* [propput] */ HRESULT ( STDMETHODCALLTYPE *put_YUnitsPerInch )( 
-            IVwGraphicsWin32 * This,
-            /* [in] */ int yInch);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetSuperscriptHeightRatio )( 
-            IVwGraphicsWin32 * This,
-            /* [out] */ int *piNumerator,
-            /* [out] */ int *piDenominator);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetSuperscriptYOffsetRatio )( 
-            IVwGraphicsWin32 * This,
-            /* [out] */ int *piNumerator,
-            /* [out] */ int *piDenominator);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetSubscriptHeightRatio )( 
-            IVwGraphicsWin32 * This,
-            /* [out] */ int *piNumerator,
-            /* [out] */ int *piDenominator);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetSubscriptYOffsetRatio )( 
-            IVwGraphicsWin32 * This,
-            /* [out] */ int *piNumerator,
-            /* [out] */ int *piDenominator);
-        
-        HRESULT ( STDMETHODCALLTYPE *SetupGraphics )( 
-            IVwGraphicsWin32 * This,
-            /* [out][in] */ LgCharRenderProps *pchrp);
-        
-        HRESULT ( STDMETHODCALLTYPE *PushClipRect )( 
-            IVwGraphicsWin32 * This,
-            /* [in] */ RECT rcClip);
-        
-        HRESULT ( STDMETHODCALLTYPE *PopClipRect )( 
-            IVwGraphicsWin32 * This);
-        
-        HRESULT ( STDMETHODCALLTYPE *DrawPolygon )( 
-            IVwGraphicsWin32 * This,
-            /* [in] */ int cvpnt,
-            /* [size_is][in] */ POINT prgvpnt[  ]);
-        
-        HRESULT ( STDMETHODCALLTYPE *RenderPicture )( 
-            IVwGraphicsWin32 * This,
-            /* [in] */ IPicture *ppic,
-            /* [in] */ int x,
-            /* [in] */ int y,
-            /* [in] */ int cx,
-            /* [in] */ int cy,
-            /* [in] */ OLE_XPOS_HIMETRIC xSrc,
-            /* [in] */ OLE_YPOS_HIMETRIC ySrc,
-            /* [in] */ OLE_XSIZE_HIMETRIC cxSrc,
-            /* [in] */ OLE_YSIZE_HIMETRIC cySrc,
-            /* [in] */ LPCRECT prcWBounds);
-        
-        HRESULT ( STDMETHODCALLTYPE *MakePicture )( 
-            IVwGraphicsWin32 * This,
-            /* [size_is][in] */ byte *pbData,
-            /* [in] */ int cbData,
-            /* [retval][out] */ IPicture **pppic);
-        
-        HRESULT ( STDMETHODCALLTYPE *Initialize )( 
-            IVwGraphicsWin32 * This,
-            /* [in] */ HDC hdc);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetDeviceContext )( 
-            IVwGraphicsWin32 * This,
-            /* [retval][out] */ HDC *phdc);
-        
-        HRESULT ( STDMETHODCALLTYPE *SetMeasureDc )( 
-            IVwGraphicsWin32 * This,
-            /* [in] */ HDC hdc);
-        
-        HRESULT ( STDMETHODCALLTYPE *SetClipRect )( 
-            IVwGraphicsWin32 * This,
-            /* [in] */ RECT *prcClip);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetTextStyleContext )( 
-            IVwGraphicsWin32 * This,
-            /* [retval][out] */ HDC *ppContext);
-        
-        END_INTERFACE
-    } IVwGraphicsWin32Vtbl;
-
-    interface IVwGraphicsWin32
-    {
-        CONST_VTBL struct IVwGraphicsWin32Vtbl *lpVtbl;
-    };
-
-    
-
-#ifdef COBJMACROS
-
-
-#define IVwGraphicsWin32_QueryInterface(This,riid,ppvObject)	\
-    ( (This)->lpVtbl -> QueryInterface(This,riid,ppvObject) ) 
-
-#define IVwGraphicsWin32_AddRef(This)	\
-    ( (This)->lpVtbl -> AddRef(This) ) 
-
-#define IVwGraphicsWin32_Release(This)	\
-    ( (This)->lpVtbl -> Release(This) ) 
-
-
-#define IVwGraphicsWin32_InvertRect(This,xLeft,yTop,xRight,yBottom)	\
-    ( (This)->lpVtbl -> InvertRect(This,xLeft,yTop,xRight,yBottom) ) 
-
-#define IVwGraphicsWin32_put_ForeColor(This,clr)	\
-    ( (This)->lpVtbl -> put_ForeColor(This,clr) ) 
-
-#define IVwGraphicsWin32_put_BackColor(This,clr)	\
-    ( (This)->lpVtbl -> put_BackColor(This,clr) ) 
-
-#define IVwGraphicsWin32_DrawRectangle(This,xLeft,yTop,xRight,yBottom)	\
-    ( (This)->lpVtbl -> DrawRectangle(This,xLeft,yTop,xRight,yBottom) ) 
-
-#define IVwGraphicsWin32_DrawHorzLine(This,xLeft,xRight,y,dyHeight,cdx,prgdx,pdxStart)	\
-    ( (This)->lpVtbl -> DrawHorzLine(This,xLeft,xRight,y,dyHeight,cdx,prgdx,pdxStart) ) 
-
-#define IVwGraphicsWin32_DrawLine(This,xLeft,yTop,xRight,yBottom)	\
-    ( (This)->lpVtbl -> DrawLine(This,xLeft,yTop,xRight,yBottom) ) 
-
-#define IVwGraphicsWin32_DrawText(This,x,y,cch,prgch,xStretch)	\
-    ( (This)->lpVtbl -> DrawText(This,x,y,cch,prgch,xStretch) ) 
-
-#define IVwGraphicsWin32_DrawGlyphs(This,x,y,cgi,prggi)	\
-    ( (This)->lpVtbl -> DrawGlyphs(This,x,y,cgi,prggi) ) 
-
-#define IVwGraphicsWin32_GetTextExtent(This,cch,prgch,px,py)	\
-    ( (This)->lpVtbl -> GetTextExtent(This,cch,prgch,px,py) ) 
-
-#define IVwGraphicsWin32_GetTextLeadWidth(This,cch,prgch,ich,xStretch,px)	\
-    ( (This)->lpVtbl -> GetTextLeadWidth(This,cch,prgch,ich,xStretch,px) ) 
-
-#define IVwGraphicsWin32_GetClipRect(This,pxLeft,pyTop,pxRight,pyBottom)	\
-    ( (This)->lpVtbl -> GetClipRect(This,pxLeft,pyTop,pxRight,pyBottom) ) 
-
-#define IVwGraphicsWin32_GetFontEmSquare(This,pxyFontEmSquare)	\
-    ( (This)->lpVtbl -> GetFontEmSquare(This,pxyFontEmSquare) ) 
-
-#define IVwGraphicsWin32_GetGlyphMetrics(This,chw,psBoundingWidth,pyBoundingHeight,pxBoundingX,pyBoundingY,pxAdvanceX,pyAdvanceY)	\
-    ( (This)->lpVtbl -> GetGlyphMetrics(This,chw,psBoundingWidth,pyBoundingHeight,pxBoundingX,pyBoundingY,pxAdvanceX,pyAdvanceY) ) 
-
-#define IVwGraphicsWin32_GetFontData(This,nTableId,pcbTableSz,prgb)	\
-    ( (This)->lpVtbl -> GetFontData(This,nTableId,pcbTableSz,prgb) ) 
-
-#define IVwGraphicsWin32_XYFromGlyphPoint(This,chw,nPoint,pxRet,pyRet)	\
-    ( (This)->lpVtbl -> XYFromGlyphPoint(This,chw,nPoint,pxRet,pyRet) ) 
-
-#define IVwGraphicsWin32_get_FontAscent(This,py)	\
-    ( (This)->lpVtbl -> get_FontAscent(This,py) ) 
-
-#define IVwGraphicsWin32_get_FontDescent(This,pyRet)	\
-    ( (This)->lpVtbl -> get_FontDescent(This,pyRet) ) 
-
-#define IVwGraphicsWin32_get_FontCharProperties(This,pchrp)	\
-    ( (This)->lpVtbl -> get_FontCharProperties(This,pchrp) ) 
-
-#define IVwGraphicsWin32_ReleaseDC(This)	\
-    ( (This)->lpVtbl -> ReleaseDC(This) ) 
-
-#define IVwGraphicsWin32_get_XUnitsPerInch(This,pxInch)	\
-    ( (This)->lpVtbl -> get_XUnitsPerInch(This,pxInch) ) 
-
-#define IVwGraphicsWin32_put_XUnitsPerInch(This,xInch)	\
-    ( (This)->lpVtbl -> put_XUnitsPerInch(This,xInch) ) 
-
-#define IVwGraphicsWin32_get_YUnitsPerInch(This,pyInch)	\
-    ( (This)->lpVtbl -> get_YUnitsPerInch(This,pyInch) ) 
-
-#define IVwGraphicsWin32_put_YUnitsPerInch(This,yInch)	\
-    ( (This)->lpVtbl -> put_YUnitsPerInch(This,yInch) ) 
-
-#define IVwGraphicsWin32_GetSuperscriptHeightRatio(This,piNumerator,piDenominator)	\
-    ( (This)->lpVtbl -> GetSuperscriptHeightRatio(This,piNumerator,piDenominator) ) 
-
-#define IVwGraphicsWin32_GetSuperscriptYOffsetRatio(This,piNumerator,piDenominator)	\
-    ( (This)->lpVtbl -> GetSuperscriptYOffsetRatio(This,piNumerator,piDenominator) ) 
-
-#define IVwGraphicsWin32_GetSubscriptHeightRatio(This,piNumerator,piDenominator)	\
-    ( (This)->lpVtbl -> GetSubscriptHeightRatio(This,piNumerator,piDenominator) ) 
-
-#define IVwGraphicsWin32_GetSubscriptYOffsetRatio(This,piNumerator,piDenominator)	\
-    ( (This)->lpVtbl -> GetSubscriptYOffsetRatio(This,piNumerator,piDenominator) ) 
-
-#define IVwGraphicsWin32_SetupGraphics(This,pchrp)	\
-    ( (This)->lpVtbl -> SetupGraphics(This,pchrp) ) 
-
-#define IVwGraphicsWin32_PushClipRect(This,rcClip)	\
-    ( (This)->lpVtbl -> PushClipRect(This,rcClip) ) 
-
-#define IVwGraphicsWin32_PopClipRect(This)	\
-    ( (This)->lpVtbl -> PopClipRect(This) ) 
-
-#define IVwGraphicsWin32_DrawPolygon(This,cvpnt,prgvpnt)	\
-    ( (This)->lpVtbl -> DrawPolygon(This,cvpnt,prgvpnt) ) 
-
-#define IVwGraphicsWin32_RenderPicture(This,ppic,x,y,cx,cy,xSrc,ySrc,cxSrc,cySrc,prcWBounds)	\
-    ( (This)->lpVtbl -> RenderPicture(This,ppic,x,y,cx,cy,xSrc,ySrc,cxSrc,cySrc,prcWBounds) ) 
-
-#define IVwGraphicsWin32_MakePicture(This,pbData,cbData,pppic)	\
-    ( (This)->lpVtbl -> MakePicture(This,pbData,cbData,pppic) ) 
-
-
-#define IVwGraphicsWin32_Initialize(This,hdc)	\
-    ( (This)->lpVtbl -> Initialize(This,hdc) ) 
-
-#define IVwGraphicsWin32_GetDeviceContext(This,phdc)	\
-    ( (This)->lpVtbl -> GetDeviceContext(This,phdc) ) 
-
-#define IVwGraphicsWin32_SetMeasureDc(This,hdc)	\
-    ( (This)->lpVtbl -> SetMeasureDc(This,hdc) ) 
-
-#define IVwGraphicsWin32_SetClipRect(This,prcClip)	\
-    ( (This)->lpVtbl -> SetClipRect(This,prcClip) ) 
-
-#define IVwGraphicsWin32_GetTextStyleContext(This,ppContext)	\
-    ( (This)->lpVtbl -> GetTextStyleContext(This,ppContext) ) 
-
-#endif /* COBJMACROS */
-
-
-#endif 	/* C style interface */
-
-
-
-
-#endif 	/* __IVwGraphicsWin32_INTERFACE_DEFINED__ */
-
-
-#define CLSID_VwGraphicsWin32 __uuidof(VwGraphicsWin32)
-
-#ifdef __cplusplus
-
-class DECLSPEC_UUID("D888DB98-83A9-4592-AAD2-F18F6F74AB87")
-VwGraphicsWin32;
-#endif
-
-#ifndef __IVwTextSource_INTERFACE_DEFINED__
-#define __IVwTextSource_INTERFACE_DEFINED__
-
-/* interface IVwTextSource */
-/* [unique][object][uuid] */ 
-
-
-#define IID_IVwTextSource __uuidof(IVwTextSource)
-
-#if defined(__cplusplus) && !defined(CINTERFACE)
-    
-    MIDL_INTERFACE("6C0465AC-17C5-4C9C-8AF3-62221F2F7707")
-    IVwTextSource : public IUnknown
-    {
-    public:
-        virtual HRESULT STDMETHODCALLTYPE Fetch( 
-            /* [in] */ int ichMin,
-            /* [in] */ int ichLim,
-            /* [size_is][out] */ OLECHAR *prgchBuf) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_Length( 
-            /* [retval][out] */ int *pcch) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE FetchSearch( 
-            /* [in] */ int ichMin,
-            /* [in] */ int ichLim,
-            /* [size_is][out] */ OLECHAR *prgchBuf) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_LengthSearch( 
-            /* [retval][out] */ int *pcch) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE GetCharProps( 
-            /* [in] */ int ich,
-            /* [out] */ LgCharRenderProps *pchrp,
-            /* [out] */ int *pichMin,
-            /* [out] */ int *pichLim) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE GetParaProps( 
-            /* [in] */ int ich,
-            /* [out] */ LgParaRenderProps *pchrp,
-            /* [out] */ int *pichMin,
-            /* [out] */ int *pichLim) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE GetCharStringProp( 
-            /* [in] */ int ich,
-            /* [in] */ int nId,
-            /* [out] */ BSTR *pbstr,
-            /* [out] */ int *pichMin,
-            /* [out] */ int *pichLim) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE GetParaStringProp( 
-            /* [in] */ int ich,
-            /* [in] */ int nId,
-            /* [out] */ BSTR *pbstr,
-            /* [out] */ int *pichMin,
-            /* [out] */ int *pichLim) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE GetSubString( 
-            /* [in] */ int ichMin,
-            /* [in] */ int ichLim,
-            /* [retval][out] */ ITsString **pptss) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE GetWsFactory( 
-            /* [retval][out] */ ILgWritingSystemFactory **ppwsf) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE LogToSearch( 
-            /* [in] */ int ichlog,
-            /* [retval][out] */ int *pichSearch) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE SearchToLog( 
-            /* [in] */ int ichSearch,
-            /* [in] */ ComBool fAssocPrev,
-            /* [retval][out] */ int *pichLog) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE LogToRen( 
-            /* [in] */ int ichLog,
-            /* [retval][out] */ int *pichRen) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE RenToLog( 
-            /* [in] */ int ichRen,
-            /* [retval][out] */ int *pichLog) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE SearchToRen( 
-            /* [in] */ int ichSearch,
-            /* [in] */ ComBool fAssocPrev,
-            /* [retval][out] */ int *pichRen) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE RenToSearch( 
-            /* [in] */ int ichRen,
-            /* [retval][out] */ int *pichSearch) = 0;
-        
-    };
-    
-    
-#else 	/* C style interface */
-
-    typedef struct IVwTextSourceVtbl
-    {
-        BEGIN_INTERFACE
-        
-        HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
-            IVwTextSource * This,
-            /* [in] */ REFIID riid,
-            /* [annotation][iid_is][out] */ 
-            _COM_Outptr_  void **ppvObject);
-        
-        ULONG ( STDMETHODCALLTYPE *AddRef )( 
-            IVwTextSource * This);
-        
-        ULONG ( STDMETHODCALLTYPE *Release )( 
-            IVwTextSource * This);
-        
-        HRESULT ( STDMETHODCALLTYPE *Fetch )( 
-            IVwTextSource * This,
-            /* [in] */ int ichMin,
-            /* [in] */ int ichLim,
-            /* [size_is][out] */ OLECHAR *prgchBuf);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_Length )( 
-            IVwTextSource * This,
-            /* [retval][out] */ int *pcch);
-        
-        HRESULT ( STDMETHODCALLTYPE *FetchSearch )( 
-            IVwTextSource * This,
-            /* [in] */ int ichMin,
-            /* [in] */ int ichLim,
-            /* [size_is][out] */ OLECHAR *prgchBuf);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_LengthSearch )( 
-            IVwTextSource * This,
-            /* [retval][out] */ int *pcch);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetCharProps )( 
-            IVwTextSource * This,
-            /* [in] */ int ich,
-            /* [out] */ LgCharRenderProps *pchrp,
-            /* [out] */ int *pichMin,
-            /* [out] */ int *pichLim);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetParaProps )( 
-            IVwTextSource * This,
-            /* [in] */ int ich,
-            /* [out] */ LgParaRenderProps *pchrp,
-            /* [out] */ int *pichMin,
-            /* [out] */ int *pichLim);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetCharStringProp )( 
-            IVwTextSource * This,
-            /* [in] */ int ich,
-            /* [in] */ int nId,
-            /* [out] */ BSTR *pbstr,
-            /* [out] */ int *pichMin,
-            /* [out] */ int *pichLim);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetParaStringProp )( 
-            IVwTextSource * This,
-            /* [in] */ int ich,
-            /* [in] */ int nId,
-            /* [out] */ BSTR *pbstr,
-            /* [out] */ int *pichMin,
-            /* [out] */ int *pichLim);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetSubString )( 
-            IVwTextSource * This,
-            /* [in] */ int ichMin,
-            /* [in] */ int ichLim,
-            /* [retval][out] */ ITsString **pptss);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetWsFactory )( 
-            IVwTextSource * This,
-            /* [retval][out] */ ILgWritingSystemFactory **ppwsf);
-        
-        HRESULT ( STDMETHODCALLTYPE *LogToSearch )( 
-            IVwTextSource * This,
-            /* [in] */ int ichlog,
-            /* [retval][out] */ int *pichSearch);
-        
-        HRESULT ( STDMETHODCALLTYPE *SearchToLog )( 
-            IVwTextSource * This,
-            /* [in] */ int ichSearch,
-            /* [in] */ ComBool fAssocPrev,
-            /* [retval][out] */ int *pichLog);
-        
-        HRESULT ( STDMETHODCALLTYPE *LogToRen )( 
-            IVwTextSource * This,
-            /* [in] */ int ichLog,
-            /* [retval][out] */ int *pichRen);
-        
-        HRESULT ( STDMETHODCALLTYPE *RenToLog )( 
-            IVwTextSource * This,
-            /* [in] */ int ichRen,
-            /* [retval][out] */ int *pichLog);
-        
-        HRESULT ( STDMETHODCALLTYPE *SearchToRen )( 
-            IVwTextSource * This,
-            /* [in] */ int ichSearch,
-            /* [in] */ ComBool fAssocPrev,
-            /* [retval][out] */ int *pichRen);
-        
-        HRESULT ( STDMETHODCALLTYPE *RenToSearch )( 
-            IVwTextSource * This,
-            /* [in] */ int ichRen,
-            /* [retval][out] */ int *pichSearch);
-        
-        END_INTERFACE
-    } IVwTextSourceVtbl;
-
-    interface IVwTextSource
-    {
-        CONST_VTBL struct IVwTextSourceVtbl *lpVtbl;
-    };
-
-    
-
-#ifdef COBJMACROS
-
-
-#define IVwTextSource_QueryInterface(This,riid,ppvObject)	\
-    ( (This)->lpVtbl -> QueryInterface(This,riid,ppvObject) ) 
-
-#define IVwTextSource_AddRef(This)	\
-    ( (This)->lpVtbl -> AddRef(This) ) 
-
-#define IVwTextSource_Release(This)	\
-    ( (This)->lpVtbl -> Release(This) ) 
-
-
-#define IVwTextSource_Fetch(This,ichMin,ichLim,prgchBuf)	\
-    ( (This)->lpVtbl -> Fetch(This,ichMin,ichLim,prgchBuf) ) 
-
-#define IVwTextSource_get_Length(This,pcch)	\
-    ( (This)->lpVtbl -> get_Length(This,pcch) ) 
-
-#define IVwTextSource_FetchSearch(This,ichMin,ichLim,prgchBuf)	\
-    ( (This)->lpVtbl -> FetchSearch(This,ichMin,ichLim,prgchBuf) ) 
-
-#define IVwTextSource_get_LengthSearch(This,pcch)	\
-    ( (This)->lpVtbl -> get_LengthSearch(This,pcch) ) 
-
-#define IVwTextSource_GetCharProps(This,ich,pchrp,pichMin,pichLim)	\
-    ( (This)->lpVtbl -> GetCharProps(This,ich,pchrp,pichMin,pichLim) ) 
-
-#define IVwTextSource_GetParaProps(This,ich,pchrp,pichMin,pichLim)	\
-    ( (This)->lpVtbl -> GetParaProps(This,ich,pchrp,pichMin,pichLim) ) 
-
-#define IVwTextSource_GetCharStringProp(This,ich,nId,pbstr,pichMin,pichLim)	\
-    ( (This)->lpVtbl -> GetCharStringProp(This,ich,nId,pbstr,pichMin,pichLim) ) 
-
-#define IVwTextSource_GetParaStringProp(This,ich,nId,pbstr,pichMin,pichLim)	\
-    ( (This)->lpVtbl -> GetParaStringProp(This,ich,nId,pbstr,pichMin,pichLim) ) 
-
-#define IVwTextSource_GetSubString(This,ichMin,ichLim,pptss)	\
-    ( (This)->lpVtbl -> GetSubString(This,ichMin,ichLim,pptss) ) 
-
-#define IVwTextSource_GetWsFactory(This,ppwsf)	\
-    ( (This)->lpVtbl -> GetWsFactory(This,ppwsf) ) 
-
-#define IVwTextSource_LogToSearch(This,ichlog,pichSearch)	\
-    ( (This)->lpVtbl -> LogToSearch(This,ichlog,pichSearch) ) 
-
-#define IVwTextSource_SearchToLog(This,ichSearch,fAssocPrev,pichLog)	\
-    ( (This)->lpVtbl -> SearchToLog(This,ichSearch,fAssocPrev,pichLog) ) 
-
-#define IVwTextSource_LogToRen(This,ichLog,pichRen)	\
-    ( (This)->lpVtbl -> LogToRen(This,ichLog,pichRen) ) 
-
-#define IVwTextSource_RenToLog(This,ichRen,pichLog)	\
-    ( (This)->lpVtbl -> RenToLog(This,ichRen,pichLog) ) 
-
-#define IVwTextSource_SearchToRen(This,ichSearch,fAssocPrev,pichRen)	\
-    ( (This)->lpVtbl -> SearchToRen(This,ichSearch,fAssocPrev,pichRen) ) 
-
-#define IVwTextSource_RenToSearch(This,ichRen,pichSearch)	\
-    ( (This)->lpVtbl -> RenToSearch(This,ichRen,pichSearch) ) 
-
-#endif /* COBJMACROS */
-
-
-#endif 	/* C style interface */
-
-
-
-
-#endif 	/* __IVwTextSource_INTERFACE_DEFINED__ */
-
-
-#ifndef __IVwJustifier_INTERFACE_DEFINED__
-#define __IVwJustifier_INTERFACE_DEFINED__
-
-/* interface IVwJustifier */
-/* [unique][object][uuid] */ 
-
-
-#define IID_IVwJustifier __uuidof(IVwJustifier)
-
-#if defined(__cplusplus) && !defined(CINTERFACE)
-    
-    MIDL_INTERFACE("22D5E030-5239-4924-BF1B-6B4F2CBBABA5")
-    IVwJustifier : public IUnknown
-    {
-    public:
-        virtual HRESULT STDMETHODCALLTYPE AdjustGlyphWidths( 
-            /* [in] */ IJustifyingRenderer *pjren,
-            /* [in] */ int iGlyphMin,
-            /* [in] */ int iGlyphLim,
-            /* [in] */ float dxCurrentWidth,
-            /* [in] */ float dxDesiredWidth) = 0;
-        
-    };
-    
-    
-#else 	/* C style interface */
-
-    typedef struct IVwJustifierVtbl
-    {
-        BEGIN_INTERFACE
-        
-        HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
-            IVwJustifier * This,
-            /* [in] */ REFIID riid,
-            /* [annotation][iid_is][out] */ 
-            _COM_Outptr_  void **ppvObject);
-        
-        ULONG ( STDMETHODCALLTYPE *AddRef )( 
-            IVwJustifier * This);
-        
-        ULONG ( STDMETHODCALLTYPE *Release )( 
-            IVwJustifier * This);
-        
-        HRESULT ( STDMETHODCALLTYPE *AdjustGlyphWidths )( 
-            IVwJustifier * This,
-            /* [in] */ IJustifyingRenderer *pjren,
-            /* [in] */ int iGlyphMin,
-            /* [in] */ int iGlyphLim,
-            /* [in] */ float dxCurrentWidth,
-            /* [in] */ float dxDesiredWidth);
-        
-        END_INTERFACE
-    } IVwJustifierVtbl;
-
-    interface IVwJustifier
-    {
-        CONST_VTBL struct IVwJustifierVtbl *lpVtbl;
-    };
-
-    
-
-#ifdef COBJMACROS
-
-
-#define IVwJustifier_QueryInterface(This,riid,ppvObject)	\
-    ( (This)->lpVtbl -> QueryInterface(This,riid,ppvObject) ) 
-
-#define IVwJustifier_AddRef(This)	\
-    ( (This)->lpVtbl -> AddRef(This) ) 
-
-#define IVwJustifier_Release(This)	\
-    ( (This)->lpVtbl -> Release(This) ) 
-
-
-#define IVwJustifier_AdjustGlyphWidths(This,pjren,iGlyphMin,iGlyphLim,dxCurrentWidth,dxDesiredWidth)	\
-    ( (This)->lpVtbl -> AdjustGlyphWidths(This,pjren,iGlyphMin,iGlyphLim,dxCurrentWidth,dxDesiredWidth) ) 
-
-#endif /* COBJMACROS */
-
-
-#endif 	/* C style interface */
-
-
-
-
-#endif 	/* __IVwJustifier_INTERFACE_DEFINED__ */
-
-
-#ifndef __ILgSegment_INTERFACE_DEFINED__
-#define __ILgSegment_INTERFACE_DEFINED__
-
-/* interface ILgSegment */
-/* [unique][object][uuid] */ 
-
-
-#define IID_ILgSegment __uuidof(ILgSegment)
-
-#if defined(__cplusplus) && !defined(CINTERFACE)
-    
-    MIDL_INTERFACE("3818E245-6A0B-45A7-A5D6-52694931279E")
-    ILgSegment : public IUnknown
-    {
-    public:
-        virtual HRESULT STDMETHODCALLTYPE DrawText( 
-            /* [in] */ int ichBase,
-            /* [in] */ IVwGraphics *pvg,
-            /* [in] */ RECT rcSrc,
-            /* [in] */ RECT rcDst,
-            /* [out] */ int *dxdWidth) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE Recompute( 
-            /* [in] */ int ichBase,
-            /* [in] */ IVwGraphics *pvg) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_Width( 
-            /* [in] */ int ichBase,
-            /* [in] */ IVwGraphics *pvg,
-            /* [retval][out] */ int *px) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_RightOverhang( 
-            /* [in] */ int ichBase,
-            /* [in] */ IVwGraphics *pvg,
-            /* [retval][out] */ int *px) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_LeftOverhang( 
-            /* [in] */ int ichBase,
-            /* [in] */ IVwGraphics *pvg,
-            /* [retval][out] */ int *px) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_Height( 
-            /* [in] */ int ichBase,
-            /* [in] */ IVwGraphics *pvg,
-            /* [retval][out] */ int *py) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_Ascent( 
-            /* [in] */ int ichBase,
-            /* [in] */ IVwGraphics *pvg,
-            /* [retval][out] */ int *py) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE Extent( 
-            /* [in] */ int ichBase,
-            /* [in] */ IVwGraphics *pvg,
-            /* [out] */ int *px,
-            /* [out] */ int *py) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE BoundingRect( 
-            /* [in] */ int ichBase,
-            /* [in] */ IVwGraphics *pvg,
-            /* [in] */ RECT rcSrc,
-            /* [in] */ RECT rcDst,
-            /* [retval][out] */ RECT *prcBounds) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE GetActualWidth( 
-            /* [in] */ int ichBase,
-            /* [in] */ IVwGraphics *pvg,
-            /* [in] */ RECT rcSrc,
-            /* [in] */ RECT rcDst,
-            /* [out] */ int *dxdWidth) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_AscentOverhang( 
-            /* [in] */ int ichBase,
-            /* [in] */ IVwGraphics *pvg,
-            /* [retval][out] */ int *py) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_DescentOverhang( 
-            /* [in] */ int ichBase,
-            /* [in] */ IVwGraphics *pvg,
-            /* [retval][out] */ int *py) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_RightToLeft( 
-            /* [in] */ int ichBase,
-            /* [retval][out] */ ComBool *pfResult) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_DirectionDepth( 
-            /* [in] */ int ichBase,
-            /* [out] */ int *pnDepth,
-            /* [retval][out] */ ComBool *pfWeak) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE SetDirectionDepth( 
-            /* [in] */ int ichwBase,
-            /* [in] */ int nNewDepth) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_WritingSystem( 
-            /* [in] */ int ichBase,
-            /* [retval][out] */ int *pws) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_Lim( 
-            /* [in] */ int ichBase,
-            /* [retval][out] */ int *pdich) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_LimInterest( 
-            /* [in] */ int ichBase,
-            /* [retval][out] */ int *pdich) = 0;
-        
-        virtual /* [propput] */ HRESULT STDMETHODCALLTYPE put_EndLine( 
-            /* [in] */ int ichBase,
-            /* [in] */ IVwGraphics *pvg,
-            /* [in] */ ComBool fNewVal) = 0;
-        
-        virtual /* [propput] */ HRESULT STDMETHODCALLTYPE put_StartLine( 
-            /* [in] */ int ichBase,
-            /* [in] */ IVwGraphics *pvg,
-            /* [in] */ ComBool fNewVal) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_StartBreakWeight( 
-            /* [in] */ int ichBase,
-            /* [in] */ IVwGraphics *pvg,
-            /* [retval][out] */ LgLineBreak *plb) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_EndBreakWeight( 
-            /* [in] */ int ichBase,
-            /* [in] */ IVwGraphics *pvg,
-            /* [retval][out] */ LgLineBreak *plb) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_Stretch( 
-            /* [in] */ int ichBase,
-            /* [retval][out] */ int *pxs) = 0;
-        
-        virtual /* [propput] */ HRESULT STDMETHODCALLTYPE put_Stretch( 
-            /* [in] */ int ichBase,
-            /* [in] */ int xs) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE IsValidInsertionPoint( 
-            /* [in] */ int ichBase,
-            /* [in] */ IVwGraphics *pvg,
-            /* [in] */ int ich,
-            /* [retval][out] */ LgIpValidResult *pipvr) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE DoBoundariesCoincide( 
-            /* [in] */ int ichBase,
-            /* [in] */ IVwGraphics *pvg,
-            /* [in] */ ComBool fBoundaryEnd,
-            /* [in] */ ComBool fBoundaryRight,
-            /* [retval][out] */ ComBool *pfResult) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE DrawInsertionPoint( 
-            /* [in] */ int ichBase,
-            /* [in] */ IVwGraphics *pvg,
-            /* [in] */ RECT rcSrc,
-            /* [in] */ RECT rcDst,
-            /* [in] */ int ich,
-            /* [in] */ ComBool fAssocPrev,
-            /* [in] */ ComBool fOn,
-            /* [in] */ LgIPDrawMode dm) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE PositionsOfIP( 
-            /* [in] */ int ichBase,
-            /* [in] */ IVwGraphics *pvg,
-            /* [in] */ RECT rcSrc,
-            /* [in] */ RECT rcDst,
-            /* [in] */ int ich,
-            /* [in] */ ComBool fAssocPrev,
-            /* [in] */ LgIPDrawMode dm,
-            /* [out] */ RECT *rectPrimary,
-            /* [out] */ RECT *rectSecondary,
-            /* [out] */ ComBool *pfPrimaryHere,
-            /* [out] */ ComBool *pfSecHere) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE DrawRange( 
-            /* [in] */ int ichBase,
-            /* [in] */ IVwGraphics *pvg,
-            /* [in] */ RECT rcSrc,
-            /* [in] */ RECT rcDst,
-            /* [in] */ int ichMin,
-            /* [in] */ int ichLim,
-            /* [in] */ int ydTop,
-            /* [in] */ int ydBottom,
-            /* [in] */ ComBool bOn,
-            /* [in] */ ComBool fIsLastLineOfSelection,
-            /* [retval][out] */ RECT *rsBounds) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE PositionOfRange( 
-            /* [in] */ int ichBase,
-            /* [in] */ IVwGraphics *pvg,
-            /* [in] */ RECT rcSrc,
-            /* [in] */ RECT rcDst,
-            /* [in] */ int ichMin,
-            /* [in] */ int ichim,
-            /* [in] */ int ydTop,
-            /* [in] */ int ydBottom,
-            /* [in] */ ComBool fIsLastLineOfSelection,
-            /* [out] */ RECT *rsBounds,
-            /* [retval][out] */ ComBool *pfAnythingToDraw) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE PointToChar( 
-            /* [in] */ int ichBase,
-            /* [in] */ IVwGraphics *pvg,
-            /* [in] */ RECT rcSrc,
-            /* [in] */ RECT rcDst,
-            /* [in] */ POINT ptdClickPosition,
-            /* [out] */ int *pich,
-            /* [out] */ ComBool *pfAssocPrev) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE ArrowKeyPosition( 
-            /* [in] */ int ichBase,
-            /* [in] */ IVwGraphics *pvg,
-            /* [out][in] */ int *pich,
-            /* [out][in] */ ComBool *pfAssocPrev,
-            /* [in] */ ComBool fRight,
-            /* [in] */ ComBool fMovingIn,
-            /* [out] */ ComBool *pfResult) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE ExtendSelectionPosition( 
-            /* [in] */ int ichBase,
-            /* [in] */ IVwGraphics *pvg,
-            /* [out][in] */ int *pich,
-            /* [in] */ ComBool fAssocPrevMatch,
-            /* [in] */ ComBool fAssocPrevNeeded,
-            /* [in] */ int ichAnchor,
-            /* [in] */ ComBool fRight,
-            /* [in] */ ComBool fMovingIn,
-            /* [out] */ ComBool *pfRet) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE GetCharPlacement( 
-            /* [in] */ int ichBase,
-            /* [in] */ IVwGraphics *pvg,
-            /* [in] */ int ichMin,
-            /* [in] */ int ichLim,
-            /* [in] */ RECT rcSrc,
-            /* [in] */ RECT rcDst,
-            /* [in] */ ComBool fSkipSpace,
-            /* [in] */ int cxdMax,
-            /* [out] */ int *pcxd,
-            /* [size_is][out] */ int *prgxdLefts,
-            /* [size_is][out] */ int *prgxdRights,
-            /* [size_is][out] */ int *prgydUnderTops) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE DrawTextNoBackground( 
-            /* [in] */ int ichBase,
-            /* [in] */ IVwGraphics *pvg,
-            /* [in] */ RECT rcSrc,
-            /* [in] */ RECT rcDst,
-            /* [out] */ int *dxdWidth) = 0;
-        
-    };
-    
-    
-#else 	/* C style interface */
-
-    typedef struct ILgSegmentVtbl
-    {
-        BEGIN_INTERFACE
-        
-        HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
-            ILgSegment * This,
-            /* [in] */ REFIID riid,
-            /* [annotation][iid_is][out] */ 
-            _COM_Outptr_  void **ppvObject);
-        
-        ULONG ( STDMETHODCALLTYPE *AddRef )( 
-            ILgSegment * This);
-        
-        ULONG ( STDMETHODCALLTYPE *Release )( 
-            ILgSegment * This);
-        
-        HRESULT ( STDMETHODCALLTYPE *DrawText )( 
-            ILgSegment * This,
-            /* [in] */ int ichBase,
-            /* [in] */ IVwGraphics *pvg,
-            /* [in] */ RECT rcSrc,
-            /* [in] */ RECT rcDst,
-            /* [out] */ int *dxdWidth);
-        
-        HRESULT ( STDMETHODCALLTYPE *Recompute )( 
-            ILgSegment * This,
-            /* [in] */ int ichBase,
-            /* [in] */ IVwGraphics *pvg);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_Width )( 
-            ILgSegment * This,
-            /* [in] */ int ichBase,
-            /* [in] */ IVwGraphics *pvg,
-            /* [retval][out] */ int *px);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_RightOverhang )( 
-            ILgSegment * This,
-            /* [in] */ int ichBase,
-            /* [in] */ IVwGraphics *pvg,
-            /* [retval][out] */ int *px);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_LeftOverhang )( 
-            ILgSegment * This,
-            /* [in] */ int ichBase,
-            /* [in] */ IVwGraphics *pvg,
-            /* [retval][out] */ int *px);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_Height )( 
-            ILgSegment * This,
-            /* [in] */ int ichBase,
-            /* [in] */ IVwGraphics *pvg,
-            /* [retval][out] */ int *py);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_Ascent )( 
-            ILgSegment * This,
-            /* [in] */ int ichBase,
-            /* [in] */ IVwGraphics *pvg,
-            /* [retval][out] */ int *py);
-        
-        HRESULT ( STDMETHODCALLTYPE *Extent )( 
-            ILgSegment * This,
-            /* [in] */ int ichBase,
-            /* [in] */ IVwGraphics *pvg,
-            /* [out] */ int *px,
-            /* [out] */ int *py);
-        
-        HRESULT ( STDMETHODCALLTYPE *BoundingRect )( 
-            ILgSegment * This,
-            /* [in] */ int ichBase,
-            /* [in] */ IVwGraphics *pvg,
-            /* [in] */ RECT rcSrc,
-            /* [in] */ RECT rcDst,
-            /* [retval][out] */ RECT *prcBounds);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetActualWidth )( 
-            ILgSegment * This,
-            /* [in] */ int ichBase,
-            /* [in] */ IVwGraphics *pvg,
-            /* [in] */ RECT rcSrc,
-            /* [in] */ RECT rcDst,
-            /* [out] */ int *dxdWidth);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_AscentOverhang )( 
-            ILgSegment * This,
-            /* [in] */ int ichBase,
-            /* [in] */ IVwGraphics *pvg,
-            /* [retval][out] */ int *py);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_DescentOverhang )( 
-            ILgSegment * This,
-            /* [in] */ int ichBase,
-            /* [in] */ IVwGraphics *pvg,
-            /* [retval][out] */ int *py);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_RightToLeft )( 
-            ILgSegment * This,
-            /* [in] */ int ichBase,
-            /* [retval][out] */ ComBool *pfResult);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_DirectionDepth )( 
-            ILgSegment * This,
-            /* [in] */ int ichBase,
-            /* [out] */ int *pnDepth,
-            /* [retval][out] */ ComBool *pfWeak);
-        
-        HRESULT ( STDMETHODCALLTYPE *SetDirectionDepth )( 
-            ILgSegment * This,
-            /* [in] */ int ichwBase,
-            /* [in] */ int nNewDepth);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_WritingSystem )( 
-            ILgSegment * This,
-            /* [in] */ int ichBase,
-            /* [retval][out] */ int *pws);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_Lim )( 
-            ILgSegment * This,
-            /* [in] */ int ichBase,
-            /* [retval][out] */ int *pdich);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_LimInterest )( 
-            ILgSegment * This,
-            /* [in] */ int ichBase,
-            /* [retval][out] */ int *pdich);
-        
-        /* [propput] */ HRESULT ( STDMETHODCALLTYPE *put_EndLine )( 
-            ILgSegment * This,
-            /* [in] */ int ichBase,
-            /* [in] */ IVwGraphics *pvg,
-            /* [in] */ ComBool fNewVal);
-        
-        /* [propput] */ HRESULT ( STDMETHODCALLTYPE *put_StartLine )( 
-            ILgSegment * This,
-            /* [in] */ int ichBase,
-            /* [in] */ IVwGraphics *pvg,
-            /* [in] */ ComBool fNewVal);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_StartBreakWeight )( 
-            ILgSegment * This,
-            /* [in] */ int ichBase,
-            /* [in] */ IVwGraphics *pvg,
-            /* [retval][out] */ LgLineBreak *plb);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_EndBreakWeight )( 
-            ILgSegment * This,
-            /* [in] */ int ichBase,
-            /* [in] */ IVwGraphics *pvg,
-            /* [retval][out] */ LgLineBreak *plb);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_Stretch )( 
-            ILgSegment * This,
-            /* [in] */ int ichBase,
-            /* [retval][out] */ int *pxs);
-        
-        /* [propput] */ HRESULT ( STDMETHODCALLTYPE *put_Stretch )( 
-            ILgSegment * This,
-            /* [in] */ int ichBase,
-            /* [in] */ int xs);
-        
-        HRESULT ( STDMETHODCALLTYPE *IsValidInsertionPoint )( 
-            ILgSegment * This,
-            /* [in] */ int ichBase,
-            /* [in] */ IVwGraphics *pvg,
-            /* [in] */ int ich,
-            /* [retval][out] */ LgIpValidResult *pipvr);
-        
-        HRESULT ( STDMETHODCALLTYPE *DoBoundariesCoincide )( 
-            ILgSegment * This,
-            /* [in] */ int ichBase,
-            /* [in] */ IVwGraphics *pvg,
-            /* [in] */ ComBool fBoundaryEnd,
-            /* [in] */ ComBool fBoundaryRight,
-            /* [retval][out] */ ComBool *pfResult);
-        
-        HRESULT ( STDMETHODCALLTYPE *DrawInsertionPoint )( 
-            ILgSegment * This,
-            /* [in] */ int ichBase,
-            /* [in] */ IVwGraphics *pvg,
-            /* [in] */ RECT rcSrc,
-            /* [in] */ RECT rcDst,
-            /* [in] */ int ich,
-            /* [in] */ ComBool fAssocPrev,
-            /* [in] */ ComBool fOn,
-            /* [in] */ LgIPDrawMode dm);
-        
-        HRESULT ( STDMETHODCALLTYPE *PositionsOfIP )( 
-            ILgSegment * This,
-            /* [in] */ int ichBase,
-            /* [in] */ IVwGraphics *pvg,
-            /* [in] */ RECT rcSrc,
-            /* [in] */ RECT rcDst,
-            /* [in] */ int ich,
-            /* [in] */ ComBool fAssocPrev,
-            /* [in] */ LgIPDrawMode dm,
-            /* [out] */ RECT *rectPrimary,
-            /* [out] */ RECT *rectSecondary,
-            /* [out] */ ComBool *pfPrimaryHere,
-            /* [out] */ ComBool *pfSecHere);
-        
-        HRESULT ( STDMETHODCALLTYPE *DrawRange )( 
-            ILgSegment * This,
-            /* [in] */ int ichBase,
-            /* [in] */ IVwGraphics *pvg,
-            /* [in] */ RECT rcSrc,
-            /* [in] */ RECT rcDst,
-            /* [in] */ int ichMin,
-            /* [in] */ int ichLim,
-            /* [in] */ int ydTop,
-            /* [in] */ int ydBottom,
-            /* [in] */ ComBool bOn,
-            /* [in] */ ComBool fIsLastLineOfSelection,
-            /* [retval][out] */ RECT *rsBounds);
-        
-        HRESULT ( STDMETHODCALLTYPE *PositionOfRange )( 
-            ILgSegment * This,
-            /* [in] */ int ichBase,
-            /* [in] */ IVwGraphics *pvg,
-            /* [in] */ RECT rcSrc,
-            /* [in] */ RECT rcDst,
-            /* [in] */ int ichMin,
-            /* [in] */ int ichim,
-            /* [in] */ int ydTop,
-            /* [in] */ int ydBottom,
-            /* [in] */ ComBool fIsLastLineOfSelection,
-            /* [out] */ RECT *rsBounds,
-            /* [retval][out] */ ComBool *pfAnythingToDraw);
-        
-        HRESULT ( STDMETHODCALLTYPE *PointToChar )( 
-            ILgSegment * This,
-            /* [in] */ int ichBase,
-            /* [in] */ IVwGraphics *pvg,
-            /* [in] */ RECT rcSrc,
-            /* [in] */ RECT rcDst,
-            /* [in] */ POINT ptdClickPosition,
-            /* [out] */ int *pich,
-            /* [out] */ ComBool *pfAssocPrev);
-        
-        HRESULT ( STDMETHODCALLTYPE *ArrowKeyPosition )( 
-            ILgSegment * This,
-            /* [in] */ int ichBase,
-            /* [in] */ IVwGraphics *pvg,
-            /* [out][in] */ int *pich,
-            /* [out][in] */ ComBool *pfAssocPrev,
-            /* [in] */ ComBool fRight,
-            /* [in] */ ComBool fMovingIn,
-            /* [out] */ ComBool *pfResult);
-        
-        HRESULT ( STDMETHODCALLTYPE *ExtendSelectionPosition )( 
-            ILgSegment * This,
-            /* [in] */ int ichBase,
-            /* [in] */ IVwGraphics *pvg,
-            /* [out][in] */ int *pich,
-            /* [in] */ ComBool fAssocPrevMatch,
-            /* [in] */ ComBool fAssocPrevNeeded,
-            /* [in] */ int ichAnchor,
-            /* [in] */ ComBool fRight,
-            /* [in] */ ComBool fMovingIn,
-            /* [out] */ ComBool *pfRet);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetCharPlacement )( 
-            ILgSegment * This,
-            /* [in] */ int ichBase,
-            /* [in] */ IVwGraphics *pvg,
-            /* [in] */ int ichMin,
-            /* [in] */ int ichLim,
-            /* [in] */ RECT rcSrc,
-            /* [in] */ RECT rcDst,
-            /* [in] */ ComBool fSkipSpace,
-            /* [in] */ int cxdMax,
-            /* [out] */ int *pcxd,
-            /* [size_is][out] */ int *prgxdLefts,
-            /* [size_is][out] */ int *prgxdRights,
-            /* [size_is][out] */ int *prgydUnderTops);
-        
-        HRESULT ( STDMETHODCALLTYPE *DrawTextNoBackground )( 
-            ILgSegment * This,
-            /* [in] */ int ichBase,
-            /* [in] */ IVwGraphics *pvg,
-            /* [in] */ RECT rcSrc,
-            /* [in] */ RECT rcDst,
-            /* [out] */ int *dxdWidth);
-        
-        END_INTERFACE
-    } ILgSegmentVtbl;
-
-    interface ILgSegment
-    {
-        CONST_VTBL struct ILgSegmentVtbl *lpVtbl;
-    };
-
-    
-
-#ifdef COBJMACROS
-
-
-#define ILgSegment_QueryInterface(This,riid,ppvObject)	\
-    ( (This)->lpVtbl -> QueryInterface(This,riid,ppvObject) ) 
-
-#define ILgSegment_AddRef(This)	\
-    ( (This)->lpVtbl -> AddRef(This) ) 
-
-#define ILgSegment_Release(This)	\
-    ( (This)->lpVtbl -> Release(This) ) 
-
-
-#define ILgSegment_DrawText(This,ichBase,pvg,rcSrc,rcDst,dxdWidth)	\
-    ( (This)->lpVtbl -> DrawText(This,ichBase,pvg,rcSrc,rcDst,dxdWidth) ) 
-
-#define ILgSegment_Recompute(This,ichBase,pvg)	\
-    ( (This)->lpVtbl -> Recompute(This,ichBase,pvg) ) 
-
-#define ILgSegment_get_Width(This,ichBase,pvg,px)	\
-    ( (This)->lpVtbl -> get_Width(This,ichBase,pvg,px) ) 
-
-#define ILgSegment_get_RightOverhang(This,ichBase,pvg,px)	\
-    ( (This)->lpVtbl -> get_RightOverhang(This,ichBase,pvg,px) ) 
-
-#define ILgSegment_get_LeftOverhang(This,ichBase,pvg,px)	\
-    ( (This)->lpVtbl -> get_LeftOverhang(This,ichBase,pvg,px) ) 
-
-#define ILgSegment_get_Height(This,ichBase,pvg,py)	\
-    ( (This)->lpVtbl -> get_Height(This,ichBase,pvg,py) ) 
-
-#define ILgSegment_get_Ascent(This,ichBase,pvg,py)	\
-    ( (This)->lpVtbl -> get_Ascent(This,ichBase,pvg,py) ) 
-
-#define ILgSegment_Extent(This,ichBase,pvg,px,py)	\
-    ( (This)->lpVtbl -> Extent(This,ichBase,pvg,px,py) ) 
-
-#define ILgSegment_BoundingRect(This,ichBase,pvg,rcSrc,rcDst,prcBounds)	\
-    ( (This)->lpVtbl -> BoundingRect(This,ichBase,pvg,rcSrc,rcDst,prcBounds) ) 
-
-#define ILgSegment_GetActualWidth(This,ichBase,pvg,rcSrc,rcDst,dxdWidth)	\
-    ( (This)->lpVtbl -> GetActualWidth(This,ichBase,pvg,rcSrc,rcDst,dxdWidth) ) 
-
-#define ILgSegment_get_AscentOverhang(This,ichBase,pvg,py)	\
-    ( (This)->lpVtbl -> get_AscentOverhang(This,ichBase,pvg,py) ) 
-
-#define ILgSegment_get_DescentOverhang(This,ichBase,pvg,py)	\
-    ( (This)->lpVtbl -> get_DescentOverhang(This,ichBase,pvg,py) ) 
-
-#define ILgSegment_get_RightToLeft(This,ichBase,pfResult)	\
-    ( (This)->lpVtbl -> get_RightToLeft(This,ichBase,pfResult) ) 
-
-#define ILgSegment_get_DirectionDepth(This,ichBase,pnDepth,pfWeak)	\
-    ( (This)->lpVtbl -> get_DirectionDepth(This,ichBase,pnDepth,pfWeak) ) 
-
-#define ILgSegment_SetDirectionDepth(This,ichwBase,nNewDepth)	\
-    ( (This)->lpVtbl -> SetDirectionDepth(This,ichwBase,nNewDepth) ) 
-
-#define ILgSegment_get_WritingSystem(This,ichBase,pws)	\
-    ( (This)->lpVtbl -> get_WritingSystem(This,ichBase,pws) ) 
-
-#define ILgSegment_get_Lim(This,ichBase,pdich)	\
-    ( (This)->lpVtbl -> get_Lim(This,ichBase,pdich) ) 
-
-#define ILgSegment_get_LimInterest(This,ichBase,pdich)	\
-    ( (This)->lpVtbl -> get_LimInterest(This,ichBase,pdich) ) 
-
-#define ILgSegment_put_EndLine(This,ichBase,pvg,fNewVal)	\
-    ( (This)->lpVtbl -> put_EndLine(This,ichBase,pvg,fNewVal) ) 
-
-#define ILgSegment_put_StartLine(This,ichBase,pvg,fNewVal)	\
-    ( (This)->lpVtbl -> put_StartLine(This,ichBase,pvg,fNewVal) ) 
-
-#define ILgSegment_get_StartBreakWeight(This,ichBase,pvg,plb)	\
-    ( (This)->lpVtbl -> get_StartBreakWeight(This,ichBase,pvg,plb) ) 
-
-#define ILgSegment_get_EndBreakWeight(This,ichBase,pvg,plb)	\
-    ( (This)->lpVtbl -> get_EndBreakWeight(This,ichBase,pvg,plb) ) 
-
-#define ILgSegment_get_Stretch(This,ichBase,pxs)	\
-    ( (This)->lpVtbl -> get_Stretch(This,ichBase,pxs) ) 
-
-#define ILgSegment_put_Stretch(This,ichBase,xs)	\
-    ( (This)->lpVtbl -> put_Stretch(This,ichBase,xs) ) 
-
-#define ILgSegment_IsValidInsertionPoint(This,ichBase,pvg,ich,pipvr)	\
-    ( (This)->lpVtbl -> IsValidInsertionPoint(This,ichBase,pvg,ich,pipvr) ) 
-
-#define ILgSegment_DoBoundariesCoincide(This,ichBase,pvg,fBoundaryEnd,fBoundaryRight,pfResult)	\
-    ( (This)->lpVtbl -> DoBoundariesCoincide(This,ichBase,pvg,fBoundaryEnd,fBoundaryRight,pfResult) ) 
-
-#define ILgSegment_DrawInsertionPoint(This,ichBase,pvg,rcSrc,rcDst,ich,fAssocPrev,fOn,dm)	\
-    ( (This)->lpVtbl -> DrawInsertionPoint(This,ichBase,pvg,rcSrc,rcDst,ich,fAssocPrev,fOn,dm) ) 
-
-#define ILgSegment_PositionsOfIP(This,ichBase,pvg,rcSrc,rcDst,ich,fAssocPrev,dm,rectPrimary,rectSecondary,pfPrimaryHere,pfSecHere)	\
-    ( (This)->lpVtbl -> PositionsOfIP(This,ichBase,pvg,rcSrc,rcDst,ich,fAssocPrev,dm,rectPrimary,rectSecondary,pfPrimaryHere,pfSecHere) ) 
-
-#define ILgSegment_DrawRange(This,ichBase,pvg,rcSrc,rcDst,ichMin,ichLim,ydTop,ydBottom,bOn,fIsLastLineOfSelection,rsBounds)	\
-    ( (This)->lpVtbl -> DrawRange(This,ichBase,pvg,rcSrc,rcDst,ichMin,ichLim,ydTop,ydBottom,bOn,fIsLastLineOfSelection,rsBounds) ) 
-
-#define ILgSegment_PositionOfRange(This,ichBase,pvg,rcSrc,rcDst,ichMin,ichim,ydTop,ydBottom,fIsLastLineOfSelection,rsBounds,pfAnythingToDraw)	\
-    ( (This)->lpVtbl -> PositionOfRange(This,ichBase,pvg,rcSrc,rcDst,ichMin,ichim,ydTop,ydBottom,fIsLastLineOfSelection,rsBounds,pfAnythingToDraw) ) 
-
-#define ILgSegment_PointToChar(This,ichBase,pvg,rcSrc,rcDst,ptdClickPosition,pich,pfAssocPrev)	\
-    ( (This)->lpVtbl -> PointToChar(This,ichBase,pvg,rcSrc,rcDst,ptdClickPosition,pich,pfAssocPrev) ) 
-
-#define ILgSegment_ArrowKeyPosition(This,ichBase,pvg,pich,pfAssocPrev,fRight,fMovingIn,pfResult)	\
-    ( (This)->lpVtbl -> ArrowKeyPosition(This,ichBase,pvg,pich,pfAssocPrev,fRight,fMovingIn,pfResult) ) 
-
-#define ILgSegment_ExtendSelectionPosition(This,ichBase,pvg,pich,fAssocPrevMatch,fAssocPrevNeeded,ichAnchor,fRight,fMovingIn,pfRet)	\
-    ( (This)->lpVtbl -> ExtendSelectionPosition(This,ichBase,pvg,pich,fAssocPrevMatch,fAssocPrevNeeded,ichAnchor,fRight,fMovingIn,pfRet) ) 
-
-#define ILgSegment_GetCharPlacement(This,ichBase,pvg,ichMin,ichLim,rcSrc,rcDst,fSkipSpace,cxdMax,pcxd,prgxdLefts,prgxdRights,prgydUnderTops)	\
-    ( (This)->lpVtbl -> GetCharPlacement(This,ichBase,pvg,ichMin,ichLim,rcSrc,rcDst,fSkipSpace,cxdMax,pcxd,prgxdLefts,prgxdRights,prgydUnderTops) ) 
-
-#define ILgSegment_DrawTextNoBackground(This,ichBase,pvg,rcSrc,rcDst,dxdWidth)	\
-    ( (This)->lpVtbl -> DrawTextNoBackground(This,ichBase,pvg,rcSrc,rcDst,dxdWidth) ) 
-
-#endif /* COBJMACROS */
-
-
-#endif 	/* C style interface */
-
-
-
-
-#endif 	/* __ILgSegment_INTERFACE_DEFINED__ */
-
-
-#ifndef __IRenderEngine_INTERFACE_DEFINED__
-#define __IRenderEngine_INTERFACE_DEFINED__
-
-/* interface IRenderEngine */
-/* [unique][object][uuid] */ 
-
-
-#define IID_IRenderEngine __uuidof(IRenderEngine)
-
-#if defined(__cplusplus) && !defined(CINTERFACE)
-    
-    MIDL_INTERFACE("7F4B8F79-2A40-408C-944B-848B14D65D23")
-    IRenderEngine : public IUnknown
-    {
-    public:
-        virtual HRESULT STDMETHODCALLTYPE InitRenderer( 
-            /* [in] */ IVwGraphics *pvg,
-            /* [in] */ BSTR bstrData) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_FontIsValid( 
-            /* [retval][out] */ ComBool *pfValid) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_SegDatMaxLength( 
-            /* [retval][out] */ int *cb) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE FindBreakPoint( 
-            /* [in] */ IVwGraphics *pvg,
-            /* [in] */ IVwTextSource *pts,
-            /* [in] */ IVwJustifier *pvjus,
-            /* [in] */ int ichMin,
-            /* [in] */ int ichLim,
-            /* [in] */ int ichLimBacktrack,
-            /* [in] */ ComBool fNeedFinalBreak,
-            /* [in] */ ComBool fStartLine,
-            /* [in] */ int dxMaxWidth,
-            /* [in] */ LgLineBreak lbPref,
-            /* [in] */ LgLineBreak lbMax,
-            /* [in] */ LgTrailingWsHandling twsh,
-            /* [in] */ ComBool fParaRightToLeft,
-            /* [out] */ ILgSegment **ppsegRet,
-            /* [out] */ int *pdichLimSeg,
-            /* [out] */ int *pdxWidth,
-            /* [out] */ LgEndSegmentType *pest,
-            /* [in] */ ILgSegment *psegPrev) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_ScriptDirection( 
-            /* [retval][out] */ int *pgrfsdc) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_ClassId( 
-            /* [retval][out] */ GUID *pguid) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_WritingSystemFactory( 
-            /* [retval][out] */ ILgWritingSystemFactory **ppwsf) = 0;
-        
-        virtual /* [propputref] */ HRESULT STDMETHODCALLTYPE putref_WritingSystemFactory( 
-            /* [in] */ ILgWritingSystemFactory *pwsf) = 0;
-        
-    };
-    
-    
-#else 	/* C style interface */
-
-    typedef struct IRenderEngineVtbl
-    {
-        BEGIN_INTERFACE
-        
-        HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
-            IRenderEngine * This,
-            /* [in] */ REFIID riid,
-            /* [annotation][iid_is][out] */ 
-            _COM_Outptr_  void **ppvObject);
-        
-        ULONG ( STDMETHODCALLTYPE *AddRef )( 
-            IRenderEngine * This);
-        
-        ULONG ( STDMETHODCALLTYPE *Release )( 
-            IRenderEngine * This);
-        
-        HRESULT ( STDMETHODCALLTYPE *InitRenderer )( 
-            IRenderEngine * This,
-            /* [in] */ IVwGraphics *pvg,
-            /* [in] */ BSTR bstrData);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_FontIsValid )( 
-            IRenderEngine * This,
-            /* [retval][out] */ ComBool *pfValid);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_SegDatMaxLength )( 
-            IRenderEngine * This,
-            /* [retval][out] */ int *cb);
-        
-        HRESULT ( STDMETHODCALLTYPE *FindBreakPoint )( 
-            IRenderEngine * This,
-            /* [in] */ IVwGraphics *pvg,
-            /* [in] */ IVwTextSource *pts,
-            /* [in] */ IVwJustifier *pvjus,
-            /* [in] */ int ichMin,
-            /* [in] */ int ichLim,
-            /* [in] */ int ichLimBacktrack,
-            /* [in] */ ComBool fNeedFinalBreak,
-            /* [in] */ ComBool fStartLine,
-            /* [in] */ int dxMaxWidth,
-            /* [in] */ LgLineBreak lbPref,
-            /* [in] */ LgLineBreak lbMax,
-            /* [in] */ LgTrailingWsHandling twsh,
-            /* [in] */ ComBool fParaRightToLeft,
-            /* [out] */ ILgSegment **ppsegRet,
-            /* [out] */ int *pdichLimSeg,
-            /* [out] */ int *pdxWidth,
-            /* [out] */ LgEndSegmentType *pest,
-            /* [in] */ ILgSegment *psegPrev);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_ScriptDirection )( 
-            IRenderEngine * This,
-            /* [retval][out] */ int *pgrfsdc);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_ClassId )( 
-            IRenderEngine * This,
-            /* [retval][out] */ GUID *pguid);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_WritingSystemFactory )( 
-            IRenderEngine * This,
-            /* [retval][out] */ ILgWritingSystemFactory **ppwsf);
-        
-        /* [propputref] */ HRESULT ( STDMETHODCALLTYPE *putref_WritingSystemFactory )( 
-            IRenderEngine * This,
-            /* [in] */ ILgWritingSystemFactory *pwsf);
-        
-        END_INTERFACE
-    } IRenderEngineVtbl;
-
-    interface IRenderEngine
-    {
-        CONST_VTBL struct IRenderEngineVtbl *lpVtbl;
-    };
-
-    
-
-#ifdef COBJMACROS
-
-
-#define IRenderEngine_QueryInterface(This,riid,ppvObject)	\
-    ( (This)->lpVtbl -> QueryInterface(This,riid,ppvObject) ) 
-
-#define IRenderEngine_AddRef(This)	\
-    ( (This)->lpVtbl -> AddRef(This) ) 
-
-#define IRenderEngine_Release(This)	\
-    ( (This)->lpVtbl -> Release(This) ) 
-
-
-#define IRenderEngine_InitRenderer(This,pvg,bstrData)	\
-    ( (This)->lpVtbl -> InitRenderer(This,pvg,bstrData) ) 
-
-#define IRenderEngine_get_FontIsValid(This,pfValid)	\
-    ( (This)->lpVtbl -> get_FontIsValid(This,pfValid) ) 
-
-#define IRenderEngine_get_SegDatMaxLength(This,cb)	\
-    ( (This)->lpVtbl -> get_SegDatMaxLength(This,cb) ) 
-
-#define IRenderEngine_FindBreakPoint(This,pvg,pts,pvjus,ichMin,ichLim,ichLimBacktrack,fNeedFinalBreak,fStartLine,dxMaxWidth,lbPref,lbMax,twsh,fParaRightToLeft,ppsegRet,pdichLimSeg,pdxWidth,pest,psegPrev)	\
-    ( (This)->lpVtbl -> FindBreakPoint(This,pvg,pts,pvjus,ichMin,ichLim,ichLimBacktrack,fNeedFinalBreak,fStartLine,dxMaxWidth,lbPref,lbMax,twsh,fParaRightToLeft,ppsegRet,pdichLimSeg,pdxWidth,pest,psegPrev) ) 
-
-#define IRenderEngine_get_ScriptDirection(This,pgrfsdc)	\
-    ( (This)->lpVtbl -> get_ScriptDirection(This,pgrfsdc) ) 
-
-#define IRenderEngine_get_ClassId(This,pguid)	\
-    ( (This)->lpVtbl -> get_ClassId(This,pguid) ) 
-
-#define IRenderEngine_get_WritingSystemFactory(This,ppwsf)	\
-    ( (This)->lpVtbl -> get_WritingSystemFactory(This,ppwsf) ) 
-
-#define IRenderEngine_putref_WritingSystemFactory(This,pwsf)	\
-    ( (This)->lpVtbl -> putref_WritingSystemFactory(This,pwsf) ) 
-
-#endif /* COBJMACROS */
-
-
-#endif 	/* C style interface */
-
-
-
-
-#endif 	/* __IRenderEngine_INTERFACE_DEFINED__ */
-
-
-#define CLSID_RomRenderEngine __uuidof(RomRenderEngine)
-
-#ifdef __cplusplus
-
-class DECLSPEC_UUID("6EACAB83-6BDC-49CA-8F66-8C116D3EEBD8")
-RomRenderEngine;
-#endif
-
-#define CLSID_UniscribeEngine __uuidof(UniscribeEngine)
-
-#ifdef __cplusplus
-
-class DECLSPEC_UUID("1287735C-3CAD-41CD-986C-39D7C0DF0314")
-UniscribeEngine;
-#endif
-
-#define CLSID_GraphiteEngine __uuidof(GraphiteEngine)
-
-#ifdef __cplusplus
-
-class DECLSPEC_UUID("62EBEEBF-14EA-43D9-A27A-EF013E14145A")
-GraphiteEngine;
-#endif
-
-#ifndef __IRenderingFeatures_INTERFACE_DEFINED__
-#define __IRenderingFeatures_INTERFACE_DEFINED__
-
-/* interface IRenderingFeatures */
-/* [unique][object][uuid] */ 
-
-
-#define IID_IRenderingFeatures __uuidof(IRenderingFeatures)
-
-#if defined(__cplusplus) && !defined(CINTERFACE)
-    
-    MIDL_INTERFACE("75AFE861-3C17-4F16-851F-A36F5FFABCC6")
-    IRenderingFeatures : public IUnknown
-    {
-    public:
-        virtual HRESULT STDMETHODCALLTYPE GetFeatureIDs( 
-            /* [in] */ int cMax,
-            /* [size_is][out] */ int *prgFids,
-            /* [out] */ int *pcfid) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE GetFeatureLabel( 
-            /* [in] */ int fid,
-            /* [in] */ int nLanguage,
-            /* [out] */ BSTR *pbstrLabel) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE GetFeatureValues( 
-            /* [in] */ int fid,
-            /* [in] */ int cfvalMax,
-            /* [size_is][out] */ int *prgfval,
-            /* [out] */ int *pcfval,
-            /* [out] */ int *pfvalDefault) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE GetFeatureValueLabel( 
-            /* [in] */ int fid,
-            /* [in] */ int fval,
-            /* [in] */ int nLanguage,
-            /* [out] */ BSTR *pbstrLabel) = 0;
-        
-    };
-    
-    
-#else 	/* C style interface */
-
-    typedef struct IRenderingFeaturesVtbl
-    {
-        BEGIN_INTERFACE
-        
-        HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
-            IRenderingFeatures * This,
-            /* [in] */ REFIID riid,
-            /* [annotation][iid_is][out] */ 
-            _COM_Outptr_  void **ppvObject);
-        
-        ULONG ( STDMETHODCALLTYPE *AddRef )( 
-            IRenderingFeatures * This);
-        
-        ULONG ( STDMETHODCALLTYPE *Release )( 
-            IRenderingFeatures * This);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetFeatureIDs )( 
-            IRenderingFeatures * This,
-            /* [in] */ int cMax,
-            /* [size_is][out] */ int *prgFids,
-            /* [out] */ int *pcfid);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetFeatureLabel )( 
-            IRenderingFeatures * This,
-            /* [in] */ int fid,
-            /* [in] */ int nLanguage,
-            /* [out] */ BSTR *pbstrLabel);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetFeatureValues )( 
-            IRenderingFeatures * This,
-            /* [in] */ int fid,
-            /* [in] */ int cfvalMax,
-            /* [size_is][out] */ int *prgfval,
-            /* [out] */ int *pcfval,
-            /* [out] */ int *pfvalDefault);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetFeatureValueLabel )( 
-            IRenderingFeatures * This,
-            /* [in] */ int fid,
-            /* [in] */ int fval,
-            /* [in] */ int nLanguage,
-            /* [out] */ BSTR *pbstrLabel);
-        
-        END_INTERFACE
-    } IRenderingFeaturesVtbl;
-
-    interface IRenderingFeatures
-    {
-        CONST_VTBL struct IRenderingFeaturesVtbl *lpVtbl;
-    };
-
-    
-
-#ifdef COBJMACROS
-
-
-#define IRenderingFeatures_QueryInterface(This,riid,ppvObject)	\
-    ( (This)->lpVtbl -> QueryInterface(This,riid,ppvObject) ) 
-
-#define IRenderingFeatures_AddRef(This)	\
-    ( (This)->lpVtbl -> AddRef(This) ) 
-
-#define IRenderingFeatures_Release(This)	\
-    ( (This)->lpVtbl -> Release(This) ) 
-
-
-#define IRenderingFeatures_GetFeatureIDs(This,cMax,prgFids,pcfid)	\
-    ( (This)->lpVtbl -> GetFeatureIDs(This,cMax,prgFids,pcfid) ) 
-
-#define IRenderingFeatures_GetFeatureLabel(This,fid,nLanguage,pbstrLabel)	\
-    ( (This)->lpVtbl -> GetFeatureLabel(This,fid,nLanguage,pbstrLabel) ) 
-
-#define IRenderingFeatures_GetFeatureValues(This,fid,cfvalMax,prgfval,pcfval,pfvalDefault)	\
-    ( (This)->lpVtbl -> GetFeatureValues(This,fid,cfvalMax,prgfval,pcfval,pfvalDefault) ) 
-
-#define IRenderingFeatures_GetFeatureValueLabel(This,fid,fval,nLanguage,pbstrLabel)	\
-    ( (This)->lpVtbl -> GetFeatureValueLabel(This,fid,fval,nLanguage,pbstrLabel) ) 
-
-#endif /* COBJMACROS */
-
-
-#endif 	/* C style interface */
-
-
-
-
-#endif 	/* __IRenderingFeatures_INTERFACE_DEFINED__ */
-
-
-#ifndef __ILgCharacterPropertyEngine_INTERFACE_DEFINED__
-#define __ILgCharacterPropertyEngine_INTERFACE_DEFINED__
-
-/* interface ILgCharacterPropertyEngine */
-/* [unique][object][uuid] */ 
-
-
-#define IID_ILgCharacterPropertyEngine __uuidof(ILgCharacterPropertyEngine)
-
-#if defined(__cplusplus) && !defined(CINTERFACE)
-    
-    MIDL_INTERFACE("890C5B18-6E95-438E-8ADE-A4FFADDF0684")
-    ILgCharacterPropertyEngine : public IUnknown
-    {
-    public:
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_GeneralCategory( 
-            /* [in] */ int ch,
-            /* [retval][out] */ LgGeneralCharCategory *pcc) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_BidiCategory( 
-            /* [in] */ int ch,
-            /* [retval][out] */ LgBidiCategory *pbic) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_IsLetter( 
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_IsWordForming( 
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_IsPunctuation( 
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_IsNumber( 
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_IsSeparator( 
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_IsSymbol( 
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_IsMark( 
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_IsOther( 
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_IsUpper( 
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_IsLower( 
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_IsTitle( 
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_IsModifier( 
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_IsOtherLetter( 
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_IsOpen( 
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_IsClose( 
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_IsWordMedial( 
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_IsControl( 
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_ToLowerCh( 
-            /* [in] */ int ch,
-            /* [retval][out] */ int *pch) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_ToUpperCh( 
-            /* [in] */ int ch,
-            /* [retval][out] */ int *pch) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_ToTitleCh( 
-            /* [in] */ int ch,
-            /* [retval][out] */ int *pch) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE ToLower( 
-            /* [in] */ BSTR bstr,
-            /* [retval][out] */ BSTR *pbstr) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE ToUpper( 
-            /* [in] */ BSTR bstr,
-            /* [retval][out] */ BSTR *pbstr) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE ToTitle( 
-            /* [in] */ BSTR bstr,
-            /* [retval][out] */ BSTR *pbstr) = 0;
-        
-        virtual /* [restricted] */ HRESULT STDMETHODCALLTYPE ToLowerRgch( 
-            /* [size_is][in] */ OLECHAR *prgchIn,
-            /* [in] */ int cchIn,
-            /* [size_is][out] */ OLECHAR *prgchOut,
-            /* [in] */ int cchOut,
-            /* [out] */ int *pcchRet) = 0;
-        
-        virtual /* [restricted] */ HRESULT STDMETHODCALLTYPE ToUpperRgch( 
-            /* [size_is][in] */ OLECHAR *prgchIn,
-            /* [in] */ int cchIn,
-            /* [size_is][out] */ OLECHAR *prgchOut,
-            /* [in] */ int cchOut,
-            /* [out] */ int *pcchRet) = 0;
-        
-        virtual /* [restricted] */ HRESULT STDMETHODCALLTYPE ToTitleRgch( 
-            /* [size_is][in] */ OLECHAR *prgchIn,
-            /* [in] */ int cchIn,
-            /* [size_is][out] */ OLECHAR *prgchOut,
-            /* [in] */ int cchOut,
-            /* [out] */ int *pcchRet) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_IsUserDefinedClass( 
-            /* [in] */ int ch,
-            /* [in] */ int chClass,
-            /* [retval][out] */ ComBool *pfRet) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_SoundAlikeKey( 
-            /* [in] */ BSTR bstrValue,
-            /* [retval][out] */ BSTR *pbstrKey) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_CharacterName( 
-            /* [in] */ int ch,
-            /* [retval][out] */ BSTR *pbstrName) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_Decomposition( 
-            /* [in] */ int ch,
-            /* [retval][out] */ BSTR *pbstr) = 0;
-        
-        virtual /* [restricted] */ HRESULT STDMETHODCALLTYPE DecompositionRgch( 
-            /* [in] */ int ch,
-            /* [in] */ int cchMax,
-            /* [out] */ OLECHAR *prgch,
-            /* [out] */ int *pcch,
-            /* [out] */ ComBool *pfHasDecomp) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_FullDecomp( 
-            /* [in] */ int ch,
-            /* [retval][out] */ BSTR *pbstrOut) = 0;
-        
-        virtual /* [restricted] */ HRESULT STDMETHODCALLTYPE FullDecompRgch( 
-            /* [in] */ int ch,
-            /* [in] */ int cchMax,
-            /* [out] */ OLECHAR *prgch,
-            /* [out] */ int *pcch,
-            /* [out] */ ComBool *pfHasDecomp) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_NumericValue( 
-            /* [in] */ int ch,
-            /* [retval][out] */ int *pn) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_CombiningClass( 
-            /* [in] */ int ch,
-            /* [retval][out] */ int *pn) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_Comment( 
-            /* [in] */ int ch,
-            /* [retval][out] */ BSTR *pbstr) = 0;
-        
-        virtual /* [restricted] */ HRESULT STDMETHODCALLTYPE GetLineBreakProps( 
-            /* [size_is][in] */ const OLECHAR *prgchIn,
-            /* [in] */ int cchIn,
-            /* [size_is][out] */ byte *prglbOut) = 0;
-        
-        virtual /* [restricted] */ HRESULT STDMETHODCALLTYPE GetLineBreakStatus( 
-            /* [size_is][in] */ const byte *prglbpIn,
-            /* [in] */ int cb,
-            /* [size_is][out] */ byte *prglbsOut) = 0;
-        
-        virtual /* [restricted] */ HRESULT STDMETHODCALLTYPE GetLineBreakInfo( 
-            /* [size_is][in] */ const OLECHAR *prgchIn,
-            /* [in] */ int cchIn,
-            /* [in] */ int ichMin,
-            /* [in] */ int ichLim,
-            /* [size_is][out] */ byte *prglbsOut,
-            /* [out] */ int *pichBreak) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE StripDiacritics( 
-            /* [in] */ BSTR bstr,
-            /* [retval][out] */ BSTR *pbstr) = 0;
-        
-        virtual /* [restricted] */ HRESULT STDMETHODCALLTYPE StripDiacriticsRgch( 
-            /* [size_is][in] */ OLECHAR *prgchIn,
-            /* [in] */ int cchIn,
-            /* [size_is][out] */ OLECHAR *prgchOut,
-            /* [in] */ int cchMaxOut,
-            /* [out] */ int *pcchOut) = 0;
-        
-        virtual /* [restricted] */ HRESULT STDMETHODCALLTYPE NormalizeKdRgch( 
-            /* [size_is][in] */ OLECHAR *prgchIn,
-            /* [in] */ int cchIn,
-            /* [size_is][out] */ OLECHAR *prgchOut,
-            /* [in] */ int cchMaxOut,
-            /* [out] */ int *pcchOut) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE NormalizeD( 
-            /* [in] */ BSTR bstr,
-            /* [retval][out] */ BSTR *pbstr) = 0;
-        
-        virtual /* [restricted] */ HRESULT STDMETHODCALLTYPE NormalizeDRgch( 
-            /* [size_is][in] */ OLECHAR *prgchIn,
-            /* [in] */ int cchIn,
-            /* [size_is][out] */ OLECHAR *prgchOut,
-            /* [in] */ int cchMaxOut,
-            /* [out] */ int *pcchOut) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_Locale( 
-            /* [retval][out] */ int *pnLocale) = 0;
-        
-        virtual /* [propput] */ HRESULT STDMETHODCALLTYPE put_Locale( 
-            /* [in] */ int nLocale) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE GetLineBreakText( 
-            /* [in] */ int cchMax,
-            /* [out] */ OLECHAR *prgchOut,
-            /* [out] */ int *pcchOut) = 0;
-        
-        virtual /* [propput] */ HRESULT STDMETHODCALLTYPE put_LineBreakText( 
-            /* [size_is][in] */ OLECHAR *prgchIn,
-            /* [in] */ int cchMax) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE LineBreakBefore( 
-            /* [in] */ int ichIn,
-            /* [out] */ int *pichOut,
-            /* [out] */ LgLineBreak *plbWeight) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE LineBreakAfter( 
-            /* [in] */ int ichIn,
-            /* [out] */ int *pichOut,
-            /* [out] */ LgLineBreak *plbWeight) = 0;
-        
-    };
-    
-    
-#else 	/* C style interface */
-
-    typedef struct ILgCharacterPropertyEngineVtbl
-    {
-        BEGIN_INTERFACE
-        
-        HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
-            ILgCharacterPropertyEngine * This,
-            /* [in] */ REFIID riid,
-            /* [annotation][iid_is][out] */ 
-            _COM_Outptr_  void **ppvObject);
-        
-        ULONG ( STDMETHODCALLTYPE *AddRef )( 
-            ILgCharacterPropertyEngine * This);
-        
-        ULONG ( STDMETHODCALLTYPE *Release )( 
-            ILgCharacterPropertyEngine * This);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_GeneralCategory )( 
-            ILgCharacterPropertyEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ LgGeneralCharCategory *pcc);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_BidiCategory )( 
-            ILgCharacterPropertyEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ LgBidiCategory *pbic);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IsLetter )( 
-            ILgCharacterPropertyEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IsWordForming )( 
-            ILgCharacterPropertyEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IsPunctuation )( 
-            ILgCharacterPropertyEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IsNumber )( 
-            ILgCharacterPropertyEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IsSeparator )( 
-            ILgCharacterPropertyEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IsSymbol )( 
-            ILgCharacterPropertyEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IsMark )( 
-            ILgCharacterPropertyEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IsOther )( 
-            ILgCharacterPropertyEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IsUpper )( 
-            ILgCharacterPropertyEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IsLower )( 
-            ILgCharacterPropertyEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IsTitle )( 
-            ILgCharacterPropertyEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IsModifier )( 
-            ILgCharacterPropertyEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IsOtherLetter )( 
-            ILgCharacterPropertyEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IsOpen )( 
-            ILgCharacterPropertyEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IsClose )( 
-            ILgCharacterPropertyEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IsWordMedial )( 
-            ILgCharacterPropertyEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IsControl )( 
-            ILgCharacterPropertyEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_ToLowerCh )( 
-            ILgCharacterPropertyEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ int *pch);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_ToUpperCh )( 
-            ILgCharacterPropertyEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ int *pch);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_ToTitleCh )( 
-            ILgCharacterPropertyEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ int *pch);
-        
-        HRESULT ( STDMETHODCALLTYPE *ToLower )( 
-            ILgCharacterPropertyEngine * This,
-            /* [in] */ BSTR bstr,
-            /* [retval][out] */ BSTR *pbstr);
-        
-        HRESULT ( STDMETHODCALLTYPE *ToUpper )( 
-            ILgCharacterPropertyEngine * This,
-            /* [in] */ BSTR bstr,
-            /* [retval][out] */ BSTR *pbstr);
-        
-        HRESULT ( STDMETHODCALLTYPE *ToTitle )( 
-            ILgCharacterPropertyEngine * This,
-            /* [in] */ BSTR bstr,
-            /* [retval][out] */ BSTR *pbstr);
-        
-        /* [restricted] */ HRESULT ( STDMETHODCALLTYPE *ToLowerRgch )( 
-            ILgCharacterPropertyEngine * This,
-            /* [size_is][in] */ OLECHAR *prgchIn,
-            /* [in] */ int cchIn,
-            /* [size_is][out] */ OLECHAR *prgchOut,
-            /* [in] */ int cchOut,
-            /* [out] */ int *pcchRet);
-        
-        /* [restricted] */ HRESULT ( STDMETHODCALLTYPE *ToUpperRgch )( 
-            ILgCharacterPropertyEngine * This,
-            /* [size_is][in] */ OLECHAR *prgchIn,
-            /* [in] */ int cchIn,
-            /* [size_is][out] */ OLECHAR *prgchOut,
-            /* [in] */ int cchOut,
-            /* [out] */ int *pcchRet);
-        
-        /* [restricted] */ HRESULT ( STDMETHODCALLTYPE *ToTitleRgch )( 
-            ILgCharacterPropertyEngine * This,
-            /* [size_is][in] */ OLECHAR *prgchIn,
-            /* [in] */ int cchIn,
-            /* [size_is][out] */ OLECHAR *prgchOut,
-            /* [in] */ int cchOut,
-            /* [out] */ int *pcchRet);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IsUserDefinedClass )( 
-            ILgCharacterPropertyEngine * This,
-            /* [in] */ int ch,
-            /* [in] */ int chClass,
-            /* [retval][out] */ ComBool *pfRet);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_SoundAlikeKey )( 
-            ILgCharacterPropertyEngine * This,
-            /* [in] */ BSTR bstrValue,
-            /* [retval][out] */ BSTR *pbstrKey);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_CharacterName )( 
-            ILgCharacterPropertyEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ BSTR *pbstrName);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_Decomposition )( 
-            ILgCharacterPropertyEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ BSTR *pbstr);
-        
-        /* [restricted] */ HRESULT ( STDMETHODCALLTYPE *DecompositionRgch )( 
-            ILgCharacterPropertyEngine * This,
-            /* [in] */ int ch,
-            /* [in] */ int cchMax,
-            /* [out] */ OLECHAR *prgch,
-            /* [out] */ int *pcch,
-            /* [out] */ ComBool *pfHasDecomp);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_FullDecomp )( 
-            ILgCharacterPropertyEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ BSTR *pbstrOut);
-        
-        /* [restricted] */ HRESULT ( STDMETHODCALLTYPE *FullDecompRgch )( 
-            ILgCharacterPropertyEngine * This,
-            /* [in] */ int ch,
-            /* [in] */ int cchMax,
-            /* [out] */ OLECHAR *prgch,
-            /* [out] */ int *pcch,
-            /* [out] */ ComBool *pfHasDecomp);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_NumericValue )( 
-            ILgCharacterPropertyEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ int *pn);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_CombiningClass )( 
-            ILgCharacterPropertyEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ int *pn);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_Comment )( 
-            ILgCharacterPropertyEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ BSTR *pbstr);
-        
-        /* [restricted] */ HRESULT ( STDMETHODCALLTYPE *GetLineBreakProps )( 
-            ILgCharacterPropertyEngine * This,
-            /* [size_is][in] */ const OLECHAR *prgchIn,
-            /* [in] */ int cchIn,
-            /* [size_is][out] */ byte *prglbOut);
-        
-        /* [restricted] */ HRESULT ( STDMETHODCALLTYPE *GetLineBreakStatus )( 
-            ILgCharacterPropertyEngine * This,
-            /* [size_is][in] */ const byte *prglbpIn,
-            /* [in] */ int cb,
-            /* [size_is][out] */ byte *prglbsOut);
-        
-        /* [restricted] */ HRESULT ( STDMETHODCALLTYPE *GetLineBreakInfo )( 
-            ILgCharacterPropertyEngine * This,
-            /* [size_is][in] */ const OLECHAR *prgchIn,
-            /* [in] */ int cchIn,
-            /* [in] */ int ichMin,
-            /* [in] */ int ichLim,
-            /* [size_is][out] */ byte *prglbsOut,
-            /* [out] */ int *pichBreak);
-        
-        HRESULT ( STDMETHODCALLTYPE *StripDiacritics )( 
-            ILgCharacterPropertyEngine * This,
-            /* [in] */ BSTR bstr,
-            /* [retval][out] */ BSTR *pbstr);
-        
-        /* [restricted] */ HRESULT ( STDMETHODCALLTYPE *StripDiacriticsRgch )( 
-            ILgCharacterPropertyEngine * This,
-            /* [size_is][in] */ OLECHAR *prgchIn,
-            /* [in] */ int cchIn,
-            /* [size_is][out] */ OLECHAR *prgchOut,
-            /* [in] */ int cchMaxOut,
-            /* [out] */ int *pcchOut);
-        
-        /* [restricted] */ HRESULT ( STDMETHODCALLTYPE *NormalizeKdRgch )( 
-            ILgCharacterPropertyEngine * This,
-            /* [size_is][in] */ OLECHAR *prgchIn,
-            /* [in] */ int cchIn,
-            /* [size_is][out] */ OLECHAR *prgchOut,
-            /* [in] */ int cchMaxOut,
-            /* [out] */ int *pcchOut);
-        
-        HRESULT ( STDMETHODCALLTYPE *NormalizeD )( 
-            ILgCharacterPropertyEngine * This,
-            /* [in] */ BSTR bstr,
-            /* [retval][out] */ BSTR *pbstr);
-        
-        /* [restricted] */ HRESULT ( STDMETHODCALLTYPE *NormalizeDRgch )( 
-            ILgCharacterPropertyEngine * This,
-            /* [size_is][in] */ OLECHAR *prgchIn,
-            /* [in] */ int cchIn,
-            /* [size_is][out] */ OLECHAR *prgchOut,
-            /* [in] */ int cchMaxOut,
-            /* [out] */ int *pcchOut);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_Locale )( 
-            ILgCharacterPropertyEngine * This,
-            /* [retval][out] */ int *pnLocale);
-        
-        /* [propput] */ HRESULT ( STDMETHODCALLTYPE *put_Locale )( 
-            ILgCharacterPropertyEngine * This,
-            /* [in] */ int nLocale);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetLineBreakText )( 
-            ILgCharacterPropertyEngine * This,
-            /* [in] */ int cchMax,
-            /* [out] */ OLECHAR *prgchOut,
-            /* [out] */ int *pcchOut);
-        
-        /* [propput] */ HRESULT ( STDMETHODCALLTYPE *put_LineBreakText )( 
-            ILgCharacterPropertyEngine * This,
-            /* [size_is][in] */ OLECHAR *prgchIn,
-            /* [in] */ int cchMax);
-        
-        HRESULT ( STDMETHODCALLTYPE *LineBreakBefore )( 
-            ILgCharacterPropertyEngine * This,
-            /* [in] */ int ichIn,
-            /* [out] */ int *pichOut,
-            /* [out] */ LgLineBreak *plbWeight);
-        
-        HRESULT ( STDMETHODCALLTYPE *LineBreakAfter )( 
-            ILgCharacterPropertyEngine * This,
-            /* [in] */ int ichIn,
-            /* [out] */ int *pichOut,
-            /* [out] */ LgLineBreak *plbWeight);
-        
-        END_INTERFACE
-    } ILgCharacterPropertyEngineVtbl;
-
-    interface ILgCharacterPropertyEngine
-    {
-        CONST_VTBL struct ILgCharacterPropertyEngineVtbl *lpVtbl;
-    };
-
-    
-
-#ifdef COBJMACROS
-
-
-#define ILgCharacterPropertyEngine_QueryInterface(This,riid,ppvObject)	\
-    ( (This)->lpVtbl -> QueryInterface(This,riid,ppvObject) ) 
-
-#define ILgCharacterPropertyEngine_AddRef(This)	\
-    ( (This)->lpVtbl -> AddRef(This) ) 
-
-#define ILgCharacterPropertyEngine_Release(This)	\
-    ( (This)->lpVtbl -> Release(This) ) 
-
-
-#define ILgCharacterPropertyEngine_get_GeneralCategory(This,ch,pcc)	\
-    ( (This)->lpVtbl -> get_GeneralCategory(This,ch,pcc) ) 
-
-#define ILgCharacterPropertyEngine_get_BidiCategory(This,ch,pbic)	\
-    ( (This)->lpVtbl -> get_BidiCategory(This,ch,pbic) ) 
-
-#define ILgCharacterPropertyEngine_get_IsLetter(This,ch,pfRet)	\
-    ( (This)->lpVtbl -> get_IsLetter(This,ch,pfRet) ) 
-
-#define ILgCharacterPropertyEngine_get_IsWordForming(This,ch,pfRet)	\
-    ( (This)->lpVtbl -> get_IsWordForming(This,ch,pfRet) ) 
-
-#define ILgCharacterPropertyEngine_get_IsPunctuation(This,ch,pfRet)	\
-    ( (This)->lpVtbl -> get_IsPunctuation(This,ch,pfRet) ) 
-
-#define ILgCharacterPropertyEngine_get_IsNumber(This,ch,pfRet)	\
-    ( (This)->lpVtbl -> get_IsNumber(This,ch,pfRet) ) 
-
-#define ILgCharacterPropertyEngine_get_IsSeparator(This,ch,pfRet)	\
-    ( (This)->lpVtbl -> get_IsSeparator(This,ch,pfRet) ) 
-
-#define ILgCharacterPropertyEngine_get_IsSymbol(This,ch,pfRet)	\
-    ( (This)->lpVtbl -> get_IsSymbol(This,ch,pfRet) ) 
-
-#define ILgCharacterPropertyEngine_get_IsMark(This,ch,pfRet)	\
-    ( (This)->lpVtbl -> get_IsMark(This,ch,pfRet) ) 
-
-#define ILgCharacterPropertyEngine_get_IsOther(This,ch,pfRet)	\
-    ( (This)->lpVtbl -> get_IsOther(This,ch,pfRet) ) 
-
-#define ILgCharacterPropertyEngine_get_IsUpper(This,ch,pfRet)	\
-    ( (This)->lpVtbl -> get_IsUpper(This,ch,pfRet) ) 
-
-#define ILgCharacterPropertyEngine_get_IsLower(This,ch,pfRet)	\
-    ( (This)->lpVtbl -> get_IsLower(This,ch,pfRet) ) 
-
-#define ILgCharacterPropertyEngine_get_IsTitle(This,ch,pfRet)	\
-    ( (This)->lpVtbl -> get_IsTitle(This,ch,pfRet) ) 
-
-#define ILgCharacterPropertyEngine_get_IsModifier(This,ch,pfRet)	\
-    ( (This)->lpVtbl -> get_IsModifier(This,ch,pfRet) ) 
-
-#define ILgCharacterPropertyEngine_get_IsOtherLetter(This,ch,pfRet)	\
-    ( (This)->lpVtbl -> get_IsOtherLetter(This,ch,pfRet) ) 
-
-#define ILgCharacterPropertyEngine_get_IsOpen(This,ch,pfRet)	\
-    ( (This)->lpVtbl -> get_IsOpen(This,ch,pfRet) ) 
-
-#define ILgCharacterPropertyEngine_get_IsClose(This,ch,pfRet)	\
-    ( (This)->lpVtbl -> get_IsClose(This,ch,pfRet) ) 
-
-#define ILgCharacterPropertyEngine_get_IsWordMedial(This,ch,pfRet)	\
-    ( (This)->lpVtbl -> get_IsWordMedial(This,ch,pfRet) ) 
-
-#define ILgCharacterPropertyEngine_get_IsControl(This,ch,pfRet)	\
-    ( (This)->lpVtbl -> get_IsControl(This,ch,pfRet) ) 
-
-#define ILgCharacterPropertyEngine_get_ToLowerCh(This,ch,pch)	\
-    ( (This)->lpVtbl -> get_ToLowerCh(This,ch,pch) ) 
-
-#define ILgCharacterPropertyEngine_get_ToUpperCh(This,ch,pch)	\
-    ( (This)->lpVtbl -> get_ToUpperCh(This,ch,pch) ) 
-
-#define ILgCharacterPropertyEngine_get_ToTitleCh(This,ch,pch)	\
-    ( (This)->lpVtbl -> get_ToTitleCh(This,ch,pch) ) 
-
-#define ILgCharacterPropertyEngine_ToLower(This,bstr,pbstr)	\
-    ( (This)->lpVtbl -> ToLower(This,bstr,pbstr) ) 
-
-#define ILgCharacterPropertyEngine_ToUpper(This,bstr,pbstr)	\
-    ( (This)->lpVtbl -> ToUpper(This,bstr,pbstr) ) 
-
-#define ILgCharacterPropertyEngine_ToTitle(This,bstr,pbstr)	\
-    ( (This)->lpVtbl -> ToTitle(This,bstr,pbstr) ) 
-
-#define ILgCharacterPropertyEngine_ToLowerRgch(This,prgchIn,cchIn,prgchOut,cchOut,pcchRet)	\
-    ( (This)->lpVtbl -> ToLowerRgch(This,prgchIn,cchIn,prgchOut,cchOut,pcchRet) ) 
-
-#define ILgCharacterPropertyEngine_ToUpperRgch(This,prgchIn,cchIn,prgchOut,cchOut,pcchRet)	\
-    ( (This)->lpVtbl -> ToUpperRgch(This,prgchIn,cchIn,prgchOut,cchOut,pcchRet) ) 
-
-#define ILgCharacterPropertyEngine_ToTitleRgch(This,prgchIn,cchIn,prgchOut,cchOut,pcchRet)	\
-    ( (This)->lpVtbl -> ToTitleRgch(This,prgchIn,cchIn,prgchOut,cchOut,pcchRet) ) 
-
-#define ILgCharacterPropertyEngine_get_IsUserDefinedClass(This,ch,chClass,pfRet)	\
-    ( (This)->lpVtbl -> get_IsUserDefinedClass(This,ch,chClass,pfRet) ) 
-
-#define ILgCharacterPropertyEngine_get_SoundAlikeKey(This,bstrValue,pbstrKey)	\
-    ( (This)->lpVtbl -> get_SoundAlikeKey(This,bstrValue,pbstrKey) ) 
-
-#define ILgCharacterPropertyEngine_get_CharacterName(This,ch,pbstrName)	\
-    ( (This)->lpVtbl -> get_CharacterName(This,ch,pbstrName) ) 
-
-#define ILgCharacterPropertyEngine_get_Decomposition(This,ch,pbstr)	\
-    ( (This)->lpVtbl -> get_Decomposition(This,ch,pbstr) ) 
-
-#define ILgCharacterPropertyEngine_DecompositionRgch(This,ch,cchMax,prgch,pcch,pfHasDecomp)	\
-    ( (This)->lpVtbl -> DecompositionRgch(This,ch,cchMax,prgch,pcch,pfHasDecomp) ) 
-
-#define ILgCharacterPropertyEngine_get_FullDecomp(This,ch,pbstrOut)	\
-    ( (This)->lpVtbl -> get_FullDecomp(This,ch,pbstrOut) ) 
-
-#define ILgCharacterPropertyEngine_FullDecompRgch(This,ch,cchMax,prgch,pcch,pfHasDecomp)	\
-    ( (This)->lpVtbl -> FullDecompRgch(This,ch,cchMax,prgch,pcch,pfHasDecomp) ) 
-
-#define ILgCharacterPropertyEngine_get_NumericValue(This,ch,pn)	\
-    ( (This)->lpVtbl -> get_NumericValue(This,ch,pn) ) 
-
-#define ILgCharacterPropertyEngine_get_CombiningClass(This,ch,pn)	\
-    ( (This)->lpVtbl -> get_CombiningClass(This,ch,pn) ) 
-
-#define ILgCharacterPropertyEngine_get_Comment(This,ch,pbstr)	\
-    ( (This)->lpVtbl -> get_Comment(This,ch,pbstr) ) 
-
-#define ILgCharacterPropertyEngine_GetLineBreakProps(This,prgchIn,cchIn,prglbOut)	\
-    ( (This)->lpVtbl -> GetLineBreakProps(This,prgchIn,cchIn,prglbOut) ) 
-
-#define ILgCharacterPropertyEngine_GetLineBreakStatus(This,prglbpIn,cb,prglbsOut)	\
-    ( (This)->lpVtbl -> GetLineBreakStatus(This,prglbpIn,cb,prglbsOut) ) 
-
-#define ILgCharacterPropertyEngine_GetLineBreakInfo(This,prgchIn,cchIn,ichMin,ichLim,prglbsOut,pichBreak)	\
-    ( (This)->lpVtbl -> GetLineBreakInfo(This,prgchIn,cchIn,ichMin,ichLim,prglbsOut,pichBreak) ) 
-
-#define ILgCharacterPropertyEngine_StripDiacritics(This,bstr,pbstr)	\
-    ( (This)->lpVtbl -> StripDiacritics(This,bstr,pbstr) ) 
-
-#define ILgCharacterPropertyEngine_StripDiacriticsRgch(This,prgchIn,cchIn,prgchOut,cchMaxOut,pcchOut)	\
-    ( (This)->lpVtbl -> StripDiacriticsRgch(This,prgchIn,cchIn,prgchOut,cchMaxOut,pcchOut) ) 
-
-#define ILgCharacterPropertyEngine_NormalizeKdRgch(This,prgchIn,cchIn,prgchOut,cchMaxOut,pcchOut)	\
-    ( (This)->lpVtbl -> NormalizeKdRgch(This,prgchIn,cchIn,prgchOut,cchMaxOut,pcchOut) ) 
-
-#define ILgCharacterPropertyEngine_NormalizeD(This,bstr,pbstr)	\
-    ( (This)->lpVtbl -> NormalizeD(This,bstr,pbstr) ) 
-
-#define ILgCharacterPropertyEngine_NormalizeDRgch(This,prgchIn,cchIn,prgchOut,cchMaxOut,pcchOut)	\
-    ( (This)->lpVtbl -> NormalizeDRgch(This,prgchIn,cchIn,prgchOut,cchMaxOut,pcchOut) ) 
-
-#define ILgCharacterPropertyEngine_get_Locale(This,pnLocale)	\
-    ( (This)->lpVtbl -> get_Locale(This,pnLocale) ) 
-
-#define ILgCharacterPropertyEngine_put_Locale(This,nLocale)	\
-    ( (This)->lpVtbl -> put_Locale(This,nLocale) ) 
-
-#define ILgCharacterPropertyEngine_GetLineBreakText(This,cchMax,prgchOut,pcchOut)	\
-    ( (This)->lpVtbl -> GetLineBreakText(This,cchMax,prgchOut,pcchOut) ) 
-
-#define ILgCharacterPropertyEngine_put_LineBreakText(This,prgchIn,cchMax)	\
-    ( (This)->lpVtbl -> put_LineBreakText(This,prgchIn,cchMax) ) 
-
-#define ILgCharacterPropertyEngine_LineBreakBefore(This,ichIn,pichOut,plbWeight)	\
-    ( (This)->lpVtbl -> LineBreakBefore(This,ichIn,pichOut,plbWeight) ) 
-
-#define ILgCharacterPropertyEngine_LineBreakAfter(This,ichIn,pichOut,plbWeight)	\
-    ( (This)->lpVtbl -> LineBreakAfter(This,ichIn,pichOut,plbWeight) ) 
-
-#endif /* COBJMACROS */
-
-
-#endif 	/* C style interface */
-
-
-
-
-#endif 	/* __ILgCharacterPropertyEngine_INTERFACE_DEFINED__ */
-
-
-#ifndef __ILgStringConverter_INTERFACE_DEFINED__
-#define __ILgStringConverter_INTERFACE_DEFINED__
-
-/* interface ILgStringConverter */
-/* [unique][object][uuid] */ 
-
-
-#define IID_ILgStringConverter __uuidof(ILgStringConverter)
-
-#if defined(__cplusplus) && !defined(CINTERFACE)
-    
-    MIDL_INTERFACE("8BE2C911-6A81-48B5-A27F-B8CE63983082")
-    ILgStringConverter : public IUnknown
-    {
-    public:
-        virtual HRESULT STDMETHODCALLTYPE ConvertString( 
-            /* [in] */ BSTR bstrIn,
-            /* [retval][out] */ BSTR *pbstrOut) = 0;
-        
-        virtual /* [restricted] */ HRESULT STDMETHODCALLTYPE ConvertStringRgch( 
-            /* [size_is][in] */ const OLECHAR *prgch,
-            /* [in] */ int cch,
-            /* [in] */ int cchMax,
-            /* [size_is][out] */ OLECHAR *prgchOut,
-            /* [out] */ int *pcchOut) = 0;
-        
-    };
-    
-    
-#else 	/* C style interface */
-
-    typedef struct ILgStringConverterVtbl
-    {
-        BEGIN_INTERFACE
-        
-        HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
-            ILgStringConverter * This,
-            /* [in] */ REFIID riid,
-            /* [annotation][iid_is][out] */ 
-            _COM_Outptr_  void **ppvObject);
-        
-        ULONG ( STDMETHODCALLTYPE *AddRef )( 
-            ILgStringConverter * This);
-        
-        ULONG ( STDMETHODCALLTYPE *Release )( 
-            ILgStringConverter * This);
-        
-        HRESULT ( STDMETHODCALLTYPE *ConvertString )( 
-            ILgStringConverter * This,
-            /* [in] */ BSTR bstrIn,
-            /* [retval][out] */ BSTR *pbstrOut);
-        
-        /* [restricted] */ HRESULT ( STDMETHODCALLTYPE *ConvertStringRgch )( 
-            ILgStringConverter * This,
-            /* [size_is][in] */ const OLECHAR *prgch,
-            /* [in] */ int cch,
-            /* [in] */ int cchMax,
-            /* [size_is][out] */ OLECHAR *prgchOut,
-            /* [out] */ int *pcchOut);
-        
-        END_INTERFACE
-    } ILgStringConverterVtbl;
-
-    interface ILgStringConverter
-    {
-        CONST_VTBL struct ILgStringConverterVtbl *lpVtbl;
-    };
-
-    
-
-#ifdef COBJMACROS
-
-
-#define ILgStringConverter_QueryInterface(This,riid,ppvObject)	\
-    ( (This)->lpVtbl -> QueryInterface(This,riid,ppvObject) ) 
-
-#define ILgStringConverter_AddRef(This)	\
-    ( (This)->lpVtbl -> AddRef(This) ) 
-
-#define ILgStringConverter_Release(This)	\
-    ( (This)->lpVtbl -> Release(This) ) 
-
-
-#define ILgStringConverter_ConvertString(This,bstrIn,pbstrOut)	\
-    ( (This)->lpVtbl -> ConvertString(This,bstrIn,pbstrOut) ) 
-
-#define ILgStringConverter_ConvertStringRgch(This,prgch,cch,cchMax,prgchOut,pcchOut)	\
-    ( (This)->lpVtbl -> ConvertStringRgch(This,prgch,cch,cchMax,prgchOut,pcchOut) ) 
-
-#endif /* COBJMACROS */
-
-
-#endif 	/* C style interface */
-
-
-
-
-#endif 	/* __ILgStringConverter_INTERFACE_DEFINED__ */
-
-
-#ifndef __ILgTokenizer_INTERFACE_DEFINED__
-#define __ILgTokenizer_INTERFACE_DEFINED__
-
-/* interface ILgTokenizer */
-/* [unique][object][uuid] */ 
-
-
-#define IID_ILgTokenizer __uuidof(ILgTokenizer)
-
-#if defined(__cplusplus) && !defined(CINTERFACE)
-    
-    MIDL_INTERFACE("577C6DA1-CFC1-4AFB-82B2-AF818EC2FE9F")
-    ILgTokenizer : public IUnknown
-    {
-    public:
-        virtual /* [restricted] */ HRESULT STDMETHODCALLTYPE GetToken( 
-            /* [size_is][in] */ OLECHAR *prgchInput,
-            /* [in] */ int cch,
-            /* [out] */ int *pichMin,
-            /* [out] */ int *pichLim) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_TokenStart( 
-            /* [in] */ BSTR bstrInput,
-            /* [in] */ int ichFirst,
-            /* [retval][out] */ int *pichMin) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_TokenEnd( 
-            /* [in] */ BSTR bstrInput,
-            /* [in] */ int ichFirst,
-            /* [retval][out] */ int *pichLim) = 0;
-        
-    };
-    
-    
-#else 	/* C style interface */
-
-    typedef struct ILgTokenizerVtbl
-    {
-        BEGIN_INTERFACE
-        
-        HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
-            ILgTokenizer * This,
-            /* [in] */ REFIID riid,
-            /* [annotation][iid_is][out] */ 
-            _COM_Outptr_  void **ppvObject);
-        
-        ULONG ( STDMETHODCALLTYPE *AddRef )( 
-            ILgTokenizer * This);
-        
-        ULONG ( STDMETHODCALLTYPE *Release )( 
-            ILgTokenizer * This);
-        
-        /* [restricted] */ HRESULT ( STDMETHODCALLTYPE *GetToken )( 
-            ILgTokenizer * This,
-            /* [size_is][in] */ OLECHAR *prgchInput,
-            /* [in] */ int cch,
-            /* [out] */ int *pichMin,
-            /* [out] */ int *pichLim);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_TokenStart )( 
-            ILgTokenizer * This,
-            /* [in] */ BSTR bstrInput,
-            /* [in] */ int ichFirst,
-            /* [retval][out] */ int *pichMin);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_TokenEnd )( 
-            ILgTokenizer * This,
-            /* [in] */ BSTR bstrInput,
-            /* [in] */ int ichFirst,
-            /* [retval][out] */ int *pichLim);
-        
-        END_INTERFACE
-    } ILgTokenizerVtbl;
-
-    interface ILgTokenizer
-    {
-        CONST_VTBL struct ILgTokenizerVtbl *lpVtbl;
-    };
-
-    
-
-#ifdef COBJMACROS
-
-
-#define ILgTokenizer_QueryInterface(This,riid,ppvObject)	\
-    ( (This)->lpVtbl -> QueryInterface(This,riid,ppvObject) ) 
-
-#define ILgTokenizer_AddRef(This)	\
-    ( (This)->lpVtbl -> AddRef(This) ) 
-
-#define ILgTokenizer_Release(This)	\
-    ( (This)->lpVtbl -> Release(This) ) 
-
-
-#define ILgTokenizer_GetToken(This,prgchInput,cch,pichMin,pichLim)	\
-    ( (This)->lpVtbl -> GetToken(This,prgchInput,cch,pichMin,pichLim) ) 
-
-#define ILgTokenizer_get_TokenStart(This,bstrInput,ichFirst,pichMin)	\
-    ( (This)->lpVtbl -> get_TokenStart(This,bstrInput,ichFirst,pichMin) ) 
-
-#define ILgTokenizer_get_TokenEnd(This,bstrInput,ichFirst,pichLim)	\
-    ( (This)->lpVtbl -> get_TokenEnd(This,bstrInput,ichFirst,pichLim) ) 
-
-#endif /* COBJMACROS */
-
-
-#endif 	/* C style interface */
-
-
-
-
-#endif 	/* __ILgTokenizer_INTERFACE_DEFINED__ */
-
-
-#ifndef __ILgSpellCheckFactory_INTERFACE_DEFINED__
-#define __ILgSpellCheckFactory_INTERFACE_DEFINED__
-
-/* interface ILgSpellCheckFactory */
-/* [unique][object][uuid] */ 
-
-
-#define IID_ILgSpellCheckFactory __uuidof(ILgSpellCheckFactory)
-
-#if defined(__cplusplus) && !defined(CINTERFACE)
-    
-    MIDL_INTERFACE("9F9298F5-FD41-44B0-83BA-BED9F56CF974")
-    ILgSpellCheckFactory : public IUnknown
-    {
-    public:
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_Checker( 
-            /* [retval][out] */ ILgSpellChecker **ppspchk) = 0;
-        
-    };
-    
-    
-#else 	/* C style interface */
-
-    typedef struct ILgSpellCheckFactoryVtbl
-    {
-        BEGIN_INTERFACE
-        
-        HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
-            ILgSpellCheckFactory * This,
-            /* [in] */ REFIID riid,
-            /* [annotation][iid_is][out] */ 
-            _COM_Outptr_  void **ppvObject);
-        
-        ULONG ( STDMETHODCALLTYPE *AddRef )( 
-            ILgSpellCheckFactory * This);
-        
-        ULONG ( STDMETHODCALLTYPE *Release )( 
-            ILgSpellCheckFactory * This);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_Checker )( 
-            ILgSpellCheckFactory * This,
-            /* [retval][out] */ ILgSpellChecker **ppspchk);
-        
-        END_INTERFACE
-    } ILgSpellCheckFactoryVtbl;
-
-    interface ILgSpellCheckFactory
-    {
-        CONST_VTBL struct ILgSpellCheckFactoryVtbl *lpVtbl;
-    };
-
-    
-
-#ifdef COBJMACROS
-
-
-#define ILgSpellCheckFactory_QueryInterface(This,riid,ppvObject)	\
-    ( (This)->lpVtbl -> QueryInterface(This,riid,ppvObject) ) 
-
-#define ILgSpellCheckFactory_AddRef(This)	\
-    ( (This)->lpVtbl -> AddRef(This) ) 
-
-#define ILgSpellCheckFactory_Release(This)	\
-    ( (This)->lpVtbl -> Release(This) ) 
-
-
-#define ILgSpellCheckFactory_get_Checker(This,ppspchk)	\
-    ( (This)->lpVtbl -> get_Checker(This,ppspchk) ) 
-
-#endif /* COBJMACROS */
-
-
-#endif 	/* C style interface */
-
-
-
-
-#endif 	/* __ILgSpellCheckFactory_INTERFACE_DEFINED__ */
-
-
-#ifndef __ILgSpellChecker_INTERFACE_DEFINED__
-#define __ILgSpellChecker_INTERFACE_DEFINED__
-
-/* interface ILgSpellChecker */
-/* [unique][object][uuid] */ 
-
-
-#define IID_ILgSpellChecker __uuidof(ILgSpellChecker)
-
-#if defined(__cplusplus) && !defined(CINTERFACE)
-    
-    MIDL_INTERFACE("E3661AF5-26C6-4907-9243-610DAD84D9D4")
-    ILgSpellChecker : public IUnknown
-    {
-    public:
-        virtual HRESULT STDMETHODCALLTYPE Init( 
-            /* [in] */ LPCOLESTR pszwCustom) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE SetOptions( 
-            /* [in] */ int grfsplc) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE Check( 
-            /* [size_is][in] */ const OLECHAR *prgchw,
-            /* [in] */ int cchw,
-            /* [out] */ int *pichMinBad,
-            /* [out] */ int *pichLimBad,
-            /* [out] */ BSTR *pbstrBad,
-            /* [out] */ BSTR *pbstrSuggest,
-            /* [out] */ int *pscrs) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE Suggest( 
-            /* [size_is][in] */ const OLECHAR *prgchw,
-            /* [in] */ int cchw,
-            /* [in] */ ComBool fFirst,
-            /* [out] */ BSTR *pbstrSuggest) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE IgnoreAll( 
-            /* [in] */ LPCOLESTR pszw) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE Change( 
-            /* [in] */ LPCOLESTR pszwSrc,
-            /* [in] */ LPCOLESTR pszwDst,
-            ComBool fAll) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE AddToUser( 
-            /* [in] */ LPCOLESTR pszw) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE FlushIgnoreList( void) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE FlushChangeList( 
-            /* [in] */ ComBool fAll) = 0;
-        
-    };
-    
-    
-#else 	/* C style interface */
-
-    typedef struct ILgSpellCheckerVtbl
-    {
-        BEGIN_INTERFACE
-        
-        HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
-            ILgSpellChecker * This,
-            /* [in] */ REFIID riid,
-            /* [annotation][iid_is][out] */ 
-            _COM_Outptr_  void **ppvObject);
-        
-        ULONG ( STDMETHODCALLTYPE *AddRef )( 
-            ILgSpellChecker * This);
-        
-        ULONG ( STDMETHODCALLTYPE *Release )( 
-            ILgSpellChecker * This);
-        
-        HRESULT ( STDMETHODCALLTYPE *Init )( 
-            ILgSpellChecker * This,
-            /* [in] */ LPCOLESTR pszwCustom);
-        
-        HRESULT ( STDMETHODCALLTYPE *SetOptions )( 
-            ILgSpellChecker * This,
-            /* [in] */ int grfsplc);
-        
-        HRESULT ( STDMETHODCALLTYPE *Check )( 
-            ILgSpellChecker * This,
-            /* [size_is][in] */ const OLECHAR *prgchw,
-            /* [in] */ int cchw,
-            /* [out] */ int *pichMinBad,
-            /* [out] */ int *pichLimBad,
-            /* [out] */ BSTR *pbstrBad,
-            /* [out] */ BSTR *pbstrSuggest,
-            /* [out] */ int *pscrs);
-        
-        HRESULT ( STDMETHODCALLTYPE *Suggest )( 
-            ILgSpellChecker * This,
-            /* [size_is][in] */ const OLECHAR *prgchw,
-            /* [in] */ int cchw,
-            /* [in] */ ComBool fFirst,
-            /* [out] */ BSTR *pbstrSuggest);
-        
-        HRESULT ( STDMETHODCALLTYPE *IgnoreAll )( 
-            ILgSpellChecker * This,
-            /* [in] */ LPCOLESTR pszw);
-        
-        HRESULT ( STDMETHODCALLTYPE *Change )( 
-            ILgSpellChecker * This,
-            /* [in] */ LPCOLESTR pszwSrc,
-            /* [in] */ LPCOLESTR pszwDst,
-            ComBool fAll);
-        
-        HRESULT ( STDMETHODCALLTYPE *AddToUser )( 
-            ILgSpellChecker * This,
-            /* [in] */ LPCOLESTR pszw);
-        
-        HRESULT ( STDMETHODCALLTYPE *FlushIgnoreList )( 
-            ILgSpellChecker * This);
-        
-        HRESULT ( STDMETHODCALLTYPE *FlushChangeList )( 
-            ILgSpellChecker * This,
-            /* [in] */ ComBool fAll);
-        
-        END_INTERFACE
-    } ILgSpellCheckerVtbl;
-
-    interface ILgSpellChecker
-    {
-        CONST_VTBL struct ILgSpellCheckerVtbl *lpVtbl;
-    };
-
-    
-
-#ifdef COBJMACROS
-
-
-#define ILgSpellChecker_QueryInterface(This,riid,ppvObject)	\
-    ( (This)->lpVtbl -> QueryInterface(This,riid,ppvObject) ) 
-
-#define ILgSpellChecker_AddRef(This)	\
-    ( (This)->lpVtbl -> AddRef(This) ) 
-
-#define ILgSpellChecker_Release(This)	\
-    ( (This)->lpVtbl -> Release(This) ) 
-
-
-#define ILgSpellChecker_Init(This,pszwCustom)	\
-    ( (This)->lpVtbl -> Init(This,pszwCustom) ) 
-
-#define ILgSpellChecker_SetOptions(This,grfsplc)	\
-    ( (This)->lpVtbl -> SetOptions(This,grfsplc) ) 
-
-#define ILgSpellChecker_Check(This,prgchw,cchw,pichMinBad,pichLimBad,pbstrBad,pbstrSuggest,pscrs)	\
-    ( (This)->lpVtbl -> Check(This,prgchw,cchw,pichMinBad,pichLimBad,pbstrBad,pbstrSuggest,pscrs) ) 
-
-#define ILgSpellChecker_Suggest(This,prgchw,cchw,fFirst,pbstrSuggest)	\
-    ( (This)->lpVtbl -> Suggest(This,prgchw,cchw,fFirst,pbstrSuggest) ) 
-
-#define ILgSpellChecker_IgnoreAll(This,pszw)	\
-    ( (This)->lpVtbl -> IgnoreAll(This,pszw) ) 
-
-#define ILgSpellChecker_Change(This,pszwSrc,pszwDst,fAll)	\
-    ( (This)->lpVtbl -> Change(This,pszwSrc,pszwDst,fAll) ) 
-
-#define ILgSpellChecker_AddToUser(This,pszw)	\
-    ( (This)->lpVtbl -> AddToUser(This,pszw) ) 
-
-#define ILgSpellChecker_FlushIgnoreList(This)	\
-    ( (This)->lpVtbl -> FlushIgnoreList(This) ) 
-
-#define ILgSpellChecker_FlushChangeList(This,fAll)	\
-    ( (This)->lpVtbl -> FlushChangeList(This,fAll) ) 
-
-#endif /* COBJMACROS */
-
-
-#endif 	/* C style interface */
-
-
-
-
-#endif 	/* __ILgSpellChecker_INTERFACE_DEFINED__ */
-
-
-#ifndef __ILgCollatingEngine_INTERFACE_DEFINED__
-#define __ILgCollatingEngine_INTERFACE_DEFINED__
-
-/* interface ILgCollatingEngine */
-/* [unique][object][uuid] */ 
-
-
-#define IID_ILgCollatingEngine __uuidof(ILgCollatingEngine)
-
-#if defined(__cplusplus) && !defined(CINTERFACE)
-    
-    MIDL_INTERFACE("D27A3D8C-D3FE-4E25-9097-8F4A1FB30361")
-    ILgCollatingEngine : public IUnknown
-    {
-    public:
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_SortKey( 
-            /* [in] */ BSTR bstrValue,
-            /* [in] */ LgCollatingOptions colopt,
-            /* [retval][out] */ BSTR *pbstrKey) = 0;
-        
-        virtual /* [restricted] */ HRESULT STDMETHODCALLTYPE SortKeyRgch( 
-            /* [size_is][in] */ const OLECHAR *pch,
-            /* [in] */ int cchIn,
-            /* [in] */ LgCollatingOptions colopt,
-            /* [in] */ int cchMaxOut,
-            /* [size_is][out] */ OLECHAR *pchKey,
-            /* [out] */ int *pcchOut) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE Compare( 
-            /* [in] */ BSTR bstrValue1,
-            /* [in] */ BSTR bstrValue2,
-            /* [in] */ LgCollatingOptions colopt,
-            /* [retval][out] */ int *pnVal) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_WritingSystemFactory( 
-            /* [retval][out] */ ILgWritingSystemFactory **ppwsf) = 0;
-        
-        virtual /* [propputref] */ HRESULT STDMETHODCALLTYPE putref_WritingSystemFactory( 
-            /* [in] */ ILgWritingSystemFactory *pwsf) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_SortKeyVariant( 
-            /* [in] */ BSTR bstrValue,
-            /* [in] */ LgCollatingOptions colopt,
-            /* [retval][out] */ VARIANT *psaKey) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE CompareVariant( 
-            /* [in] */ VARIANT saValue1,
-            /* [in] */ VARIANT saValue2,
-            /* [in] */ LgCollatingOptions colopt,
-            /* [retval][out] */ int *pnVal) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE Open( 
-            /* [in] */ BSTR bstrLocale) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE Close( void) = 0;
-        
-    };
-    
-    
-#else 	/* C style interface */
-
-    typedef struct ILgCollatingEngineVtbl
-    {
-        BEGIN_INTERFACE
-        
-        HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
-            ILgCollatingEngine * This,
-            /* [in] */ REFIID riid,
-            /* [annotation][iid_is][out] */ 
-            _COM_Outptr_  void **ppvObject);
-        
-        ULONG ( STDMETHODCALLTYPE *AddRef )( 
-            ILgCollatingEngine * This);
-        
-        ULONG ( STDMETHODCALLTYPE *Release )( 
-            ILgCollatingEngine * This);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_SortKey )( 
-            ILgCollatingEngine * This,
-            /* [in] */ BSTR bstrValue,
-            /* [in] */ LgCollatingOptions colopt,
-            /* [retval][out] */ BSTR *pbstrKey);
-        
-        /* [restricted] */ HRESULT ( STDMETHODCALLTYPE *SortKeyRgch )( 
-            ILgCollatingEngine * This,
-            /* [size_is][in] */ const OLECHAR *pch,
-            /* [in] */ int cchIn,
-            /* [in] */ LgCollatingOptions colopt,
-            /* [in] */ int cchMaxOut,
-            /* [size_is][out] */ OLECHAR *pchKey,
-            /* [out] */ int *pcchOut);
-        
-        HRESULT ( STDMETHODCALLTYPE *Compare )( 
-            ILgCollatingEngine * This,
-            /* [in] */ BSTR bstrValue1,
-            /* [in] */ BSTR bstrValue2,
-            /* [in] */ LgCollatingOptions colopt,
-            /* [retval][out] */ int *pnVal);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_WritingSystemFactory )( 
-            ILgCollatingEngine * This,
-            /* [retval][out] */ ILgWritingSystemFactory **ppwsf);
-        
-        /* [propputref] */ HRESULT ( STDMETHODCALLTYPE *putref_WritingSystemFactory )( 
-            ILgCollatingEngine * This,
-            /* [in] */ ILgWritingSystemFactory *pwsf);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_SortKeyVariant )( 
-            ILgCollatingEngine * This,
-            /* [in] */ BSTR bstrValue,
-            /* [in] */ LgCollatingOptions colopt,
-            /* [retval][out] */ VARIANT *psaKey);
-        
-        HRESULT ( STDMETHODCALLTYPE *CompareVariant )( 
-            ILgCollatingEngine * This,
-            /* [in] */ VARIANT saValue1,
-            /* [in] */ VARIANT saValue2,
-            /* [in] */ LgCollatingOptions colopt,
-            /* [retval][out] */ int *pnVal);
-        
-        HRESULT ( STDMETHODCALLTYPE *Open )( 
-            ILgCollatingEngine * This,
-            /* [in] */ BSTR bstrLocale);
-        
-        HRESULT ( STDMETHODCALLTYPE *Close )( 
-            ILgCollatingEngine * This);
-        
-        END_INTERFACE
-    } ILgCollatingEngineVtbl;
-
-    interface ILgCollatingEngine
-    {
-        CONST_VTBL struct ILgCollatingEngineVtbl *lpVtbl;
-    };
-
-    
-
-#ifdef COBJMACROS
-
-
-#define ILgCollatingEngine_QueryInterface(This,riid,ppvObject)	\
-    ( (This)->lpVtbl -> QueryInterface(This,riid,ppvObject) ) 
-
-#define ILgCollatingEngine_AddRef(This)	\
-    ( (This)->lpVtbl -> AddRef(This) ) 
-
-#define ILgCollatingEngine_Release(This)	\
-    ( (This)->lpVtbl -> Release(This) ) 
-
-
-#define ILgCollatingEngine_get_SortKey(This,bstrValue,colopt,pbstrKey)	\
-    ( (This)->lpVtbl -> get_SortKey(This,bstrValue,colopt,pbstrKey) ) 
-
-#define ILgCollatingEngine_SortKeyRgch(This,pch,cchIn,colopt,cchMaxOut,pchKey,pcchOut)	\
-    ( (This)->lpVtbl -> SortKeyRgch(This,pch,cchIn,colopt,cchMaxOut,pchKey,pcchOut) ) 
-
-#define ILgCollatingEngine_Compare(This,bstrValue1,bstrValue2,colopt,pnVal)	\
-    ( (This)->lpVtbl -> Compare(This,bstrValue1,bstrValue2,colopt,pnVal) ) 
-
-#define ILgCollatingEngine_get_WritingSystemFactory(This,ppwsf)	\
-    ( (This)->lpVtbl -> get_WritingSystemFactory(This,ppwsf) ) 
-
-#define ILgCollatingEngine_putref_WritingSystemFactory(This,pwsf)	\
-    ( (This)->lpVtbl -> putref_WritingSystemFactory(This,pwsf) ) 
-
-#define ILgCollatingEngine_get_SortKeyVariant(This,bstrValue,colopt,psaKey)	\
-    ( (This)->lpVtbl -> get_SortKeyVariant(This,bstrValue,colopt,psaKey) ) 
-
-#define ILgCollatingEngine_CompareVariant(This,saValue1,saValue2,colopt,pnVal)	\
-    ( (This)->lpVtbl -> CompareVariant(This,saValue1,saValue2,colopt,pnVal) ) 
-
-#define ILgCollatingEngine_Open(This,bstrLocale)	\
-    ( (This)->lpVtbl -> Open(This,bstrLocale) ) 
-
-#define ILgCollatingEngine_Close(This)	\
-    ( (This)->lpVtbl -> Close(This) ) 
-
-#endif /* COBJMACROS */
-
-
-#endif 	/* C style interface */
-
-
-
-
-#endif 	/* __ILgCollatingEngine_INTERFACE_DEFINED__ */
-
-
-#ifndef __ILgSearchEngine_INTERFACE_DEFINED__
-#define __ILgSearchEngine_INTERFACE_DEFINED__
-
-/* interface ILgSearchEngine */
-/* [unique][object][uuid] */ 
-
-
-#define IID_ILgSearchEngine __uuidof(ILgSearchEngine)
-
-#if defined(__cplusplus) && !defined(CINTERFACE)
-    
-    MIDL_INTERFACE("09FCA8D5-5BF6-4BFF-A317-E0126410D79A")
-    ILgSearchEngine : public IUnknown
-    {
-    public:
-        virtual HRESULT STDMETHODCALLTYPE SetPattern( 
-            /* [in] */ BSTR bstrPattern,
-            /* [in] */ ComBool fIgnoreCase,
-            /* [in] */ ComBool fIgnoreModifiers,
-            /* [in] */ ComBool fUseSoundAlike,
-            /* [in] */ ComBool fUseWildCards) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE SetReplacePattern( 
-            /* [in] */ BSTR bstrPattern) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE ShowPatternDialog( 
-            /* [in] */ BSTR bstrTitle,
-            /* [in] */ ILgWritingSystem *pwse,
-            /* [in] */ ComBool fForReplace,
-            /* [retval][out] */ ComBool *pfGoAhead) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE FindString( 
-            /* [in] */ BSTR bstrSource,
-            /* [in] */ int ichFirst,
-            /* [out] */ int *ichMinFound,
-            /* [out] */ int *ichLimFound,
-            /* [retval][out] */ ComBool *pfFound) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE FindReplace( 
-            /* [in] */ BSTR bstrSource,
-            /* [in] */ int ichFirst,
-            /* [out] */ int *ichMinFound,
-            /* [out] */ int *ichLimFound,
-            /* [retval][out] */ BSTR *pbstrReplacement) = 0;
-        
-    };
-    
-    
-#else 	/* C style interface */
-
-    typedef struct ILgSearchEngineVtbl
-    {
-        BEGIN_INTERFACE
-        
-        HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
-            ILgSearchEngine * This,
-            /* [in] */ REFIID riid,
-            /* [annotation][iid_is][out] */ 
-            _COM_Outptr_  void **ppvObject);
-        
-        ULONG ( STDMETHODCALLTYPE *AddRef )( 
-            ILgSearchEngine * This);
-        
-        ULONG ( STDMETHODCALLTYPE *Release )( 
-            ILgSearchEngine * This);
-        
-        HRESULT ( STDMETHODCALLTYPE *SetPattern )( 
-            ILgSearchEngine * This,
-            /* [in] */ BSTR bstrPattern,
-            /* [in] */ ComBool fIgnoreCase,
-            /* [in] */ ComBool fIgnoreModifiers,
-            /* [in] */ ComBool fUseSoundAlike,
-            /* [in] */ ComBool fUseWildCards);
-        
-        HRESULT ( STDMETHODCALLTYPE *SetReplacePattern )( 
-            ILgSearchEngine * This,
-            /* [in] */ BSTR bstrPattern);
-        
-        HRESULT ( STDMETHODCALLTYPE *ShowPatternDialog )( 
-            ILgSearchEngine * This,
-            /* [in] */ BSTR bstrTitle,
-            /* [in] */ ILgWritingSystem *pwse,
-            /* [in] */ ComBool fForReplace,
-            /* [retval][out] */ ComBool *pfGoAhead);
-        
-        HRESULT ( STDMETHODCALLTYPE *FindString )( 
-            ILgSearchEngine * This,
-            /* [in] */ BSTR bstrSource,
-            /* [in] */ int ichFirst,
-            /* [out] */ int *ichMinFound,
-            /* [out] */ int *ichLimFound,
-            /* [retval][out] */ ComBool *pfFound);
-        
-        HRESULT ( STDMETHODCALLTYPE *FindReplace )( 
-            ILgSearchEngine * This,
-            /* [in] */ BSTR bstrSource,
-            /* [in] */ int ichFirst,
-            /* [out] */ int *ichMinFound,
-            /* [out] */ int *ichLimFound,
-            /* [retval][out] */ BSTR *pbstrReplacement);
-        
-        END_INTERFACE
-    } ILgSearchEngineVtbl;
-
-    interface ILgSearchEngine
-    {
-        CONST_VTBL struct ILgSearchEngineVtbl *lpVtbl;
-    };
-
-    
-
-#ifdef COBJMACROS
-
-
-#define ILgSearchEngine_QueryInterface(This,riid,ppvObject)	\
-    ( (This)->lpVtbl -> QueryInterface(This,riid,ppvObject) ) 
-
-#define ILgSearchEngine_AddRef(This)	\
-    ( (This)->lpVtbl -> AddRef(This) ) 
-
-#define ILgSearchEngine_Release(This)	\
-    ( (This)->lpVtbl -> Release(This) ) 
-
-
-#define ILgSearchEngine_SetPattern(This,bstrPattern,fIgnoreCase,fIgnoreModifiers,fUseSoundAlike,fUseWildCards)	\
-    ( (This)->lpVtbl -> SetPattern(This,bstrPattern,fIgnoreCase,fIgnoreModifiers,fUseSoundAlike,fUseWildCards) ) 
-
-#define ILgSearchEngine_SetReplacePattern(This,bstrPattern)	\
-    ( (This)->lpVtbl -> SetReplacePattern(This,bstrPattern) ) 
-
-#define ILgSearchEngine_ShowPatternDialog(This,bstrTitle,pwse,fForReplace,pfGoAhead)	\
-    ( (This)->lpVtbl -> ShowPatternDialog(This,bstrTitle,pwse,fForReplace,pfGoAhead) ) 
-
-#define ILgSearchEngine_FindString(This,bstrSource,ichFirst,ichMinFound,ichLimFound,pfFound)	\
-    ( (This)->lpVtbl -> FindString(This,bstrSource,ichFirst,ichMinFound,ichLimFound,pfFound) ) 
-
-#define ILgSearchEngine_FindReplace(This,bstrSource,ichFirst,ichMinFound,ichLimFound,pbstrReplacement)	\
-    ( (This)->lpVtbl -> FindReplace(This,bstrSource,ichFirst,ichMinFound,ichLimFound,pbstrReplacement) ) 
-
-#endif /* COBJMACROS */
-
-
-#endif 	/* C style interface */
-
-
-
-
-#endif 	/* __ILgSearchEngine_INTERFACE_DEFINED__ */
-
-
 #ifndef __ILgWritingSystem_INTERFACE_DEFINED__
 #define __ILgWritingSystem_INTERFACE_DEFINED__
 
@@ -9464,7 +5583,7 @@ GraphiteEngine;
 
 #if defined(__cplusplus) && !defined(CINTERFACE)
     
-    MIDL_INTERFACE("FF923C7E-A7C1-4760-B8E5-7A6D28F4AECB")
+    MIDL_INTERFACE("9C0513AB-1AB9-4741-9C49-FA65FA83B7CC")
     ILgWritingSystem : public IUnknown
     {
     public:
@@ -9483,24 +5602,30 @@ GraphiteEngine;
         virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_RightToLeftScript( 
             /* [retval][out] */ ComBool *pfRightToLeft) = 0;
         
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_Renderer( 
-            /* [in] */ IVwGraphics *pvg,
-            /* [retval][out] */ IRenderEngine **ppreneng) = 0;
-        
         virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_DefaultFontFeatures( 
             /* [retval][out] */ BSTR *pbstr) = 0;
         
         virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_DefaultFontName( 
             /* [retval][out] */ BSTR *pbstr) = 0;
         
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_CharPropEngine( 
-            /* [retval][out] */ ILgCharacterPropertyEngine **pppropeng) = 0;
-        
         virtual HRESULT STDMETHODCALLTYPE InterpretChrp( 
             /* [out][in] */ LgCharRenderProps *pchrp) = 0;
         
         virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_UseNfcContext( 
             /* [retval][out] */ ComBool *pUseNfc) = 0;
+        
+        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_IsWordForming( 
+            /* [in] */ int ch,
+            /* [retval][out] */ ComBool *pfRet) = 0;
+        
+        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_IcuLocale( 
+            /* [retval][out] */ BSTR *pbstr) = 0;
+        
+        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_IsGraphiteEnabled( 
+            /* [retval][out] */ ComBool *pfRet) = 0;
+        
+        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_WritingSystemFactory( 
+            /* [retval][out] */ ILgWritingSystemFactory **ppwsf) = 0;
         
     };
     
@@ -9543,11 +5668,6 @@ GraphiteEngine;
             ILgWritingSystem * This,
             /* [retval][out] */ ComBool *pfRightToLeft);
         
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_Renderer )( 
-            ILgWritingSystem * This,
-            /* [in] */ IVwGraphics *pvg,
-            /* [retval][out] */ IRenderEngine **ppreneng);
-        
         /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_DefaultFontFeatures )( 
             ILgWritingSystem * This,
             /* [retval][out] */ BSTR *pbstr);
@@ -9556,10 +5676,6 @@ GraphiteEngine;
             ILgWritingSystem * This,
             /* [retval][out] */ BSTR *pbstr);
         
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_CharPropEngine )( 
-            ILgWritingSystem * This,
-            /* [retval][out] */ ILgCharacterPropertyEngine **pppropeng);
-        
         HRESULT ( STDMETHODCALLTYPE *InterpretChrp )( 
             ILgWritingSystem * This,
             /* [out][in] */ LgCharRenderProps *pchrp);
@@ -9567,6 +5683,23 @@ GraphiteEngine;
         /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_UseNfcContext )( 
             ILgWritingSystem * This,
             /* [retval][out] */ ComBool *pUseNfc);
+        
+        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IsWordForming )( 
+            ILgWritingSystem * This,
+            /* [in] */ int ch,
+            /* [retval][out] */ ComBool *pfRet);
+        
+        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IcuLocale )( 
+            ILgWritingSystem * This,
+            /* [retval][out] */ BSTR *pbstr);
+        
+        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IsGraphiteEnabled )( 
+            ILgWritingSystem * This,
+            /* [retval][out] */ ComBool *pfRet);
+        
+        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_WritingSystemFactory )( 
+            ILgWritingSystem * This,
+            /* [retval][out] */ ILgWritingSystemFactory **ppwsf);
         
         END_INTERFACE
     } ILgWritingSystemVtbl;
@@ -9606,23 +5739,29 @@ GraphiteEngine;
 #define ILgWritingSystem_get_RightToLeftScript(This,pfRightToLeft)	\
     ( (This)->lpVtbl -> get_RightToLeftScript(This,pfRightToLeft) ) 
 
-#define ILgWritingSystem_get_Renderer(This,pvg,ppreneng)	\
-    ( (This)->lpVtbl -> get_Renderer(This,pvg,ppreneng) ) 
-
 #define ILgWritingSystem_get_DefaultFontFeatures(This,pbstr)	\
     ( (This)->lpVtbl -> get_DefaultFontFeatures(This,pbstr) ) 
 
 #define ILgWritingSystem_get_DefaultFontName(This,pbstr)	\
     ( (This)->lpVtbl -> get_DefaultFontName(This,pbstr) ) 
 
-#define ILgWritingSystem_get_CharPropEngine(This,pppropeng)	\
-    ( (This)->lpVtbl -> get_CharPropEngine(This,pppropeng) ) 
-
 #define ILgWritingSystem_InterpretChrp(This,pchrp)	\
     ( (This)->lpVtbl -> InterpretChrp(This,pchrp) ) 
 
 #define ILgWritingSystem_get_UseNfcContext(This,pUseNfc)	\
     ( (This)->lpVtbl -> get_UseNfcContext(This,pUseNfc) ) 
+
+#define ILgWritingSystem_get_IsWordForming(This,ch,pfRet)	\
+    ( (This)->lpVtbl -> get_IsWordForming(This,ch,pfRet) ) 
+
+#define ILgWritingSystem_get_IcuLocale(This,pbstr)	\
+    ( (This)->lpVtbl -> get_IcuLocale(This,pbstr) ) 
+
+#define ILgWritingSystem_get_IsGraphiteEnabled(This,pfRet)	\
+    ( (This)->lpVtbl -> get_IsGraphiteEnabled(This,pfRet) ) 
+
+#define ILgWritingSystem_get_WritingSystemFactory(This,ppwsf)	\
+    ( (This)->lpVtbl -> get_WritingSystemFactory(This,ppwsf) ) 
 
 #endif /* COBJMACROS */
 
@@ -9634,1599 +5773,6 @@ GraphiteEngine;
 
 #endif 	/* __ILgWritingSystem_INTERFACE_DEFINED__ */
 
-
-#ifndef __ILgIcuCharPropEngine_INTERFACE_DEFINED__
-#define __ILgIcuCharPropEngine_INTERFACE_DEFINED__
-
-/* interface ILgIcuCharPropEngine */
-/* [unique][object][uuid] */ 
-
-
-#define IID_ILgIcuCharPropEngine __uuidof(ILgIcuCharPropEngine)
-
-#if defined(__cplusplus) && !defined(CINTERFACE)
-    
-    MIDL_INTERFACE("E8689492-7622-427b-8518-6339294FD227")
-    ILgIcuCharPropEngine : public ILgCharacterPropertyEngine
-    {
-    public:
-        virtual HRESULT STDMETHODCALLTYPE Initialize( 
-            /* [in] */ BSTR bstrLanguage,
-            /* [in] */ BSTR bstrScript,
-            /* [in] */ BSTR bstrCountry,
-            /* [in] */ BSTR bstrVariant) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE InitCharOverrides( 
-            /* [in] */ BSTR bstrWsCharsList) = 0;
-        
-    };
-    
-    
-#else 	/* C style interface */
-
-    typedef struct ILgIcuCharPropEngineVtbl
-    {
-        BEGIN_INTERFACE
-        
-        HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
-            ILgIcuCharPropEngine * This,
-            /* [in] */ REFIID riid,
-            /* [annotation][iid_is][out] */ 
-            _COM_Outptr_  void **ppvObject);
-        
-        ULONG ( STDMETHODCALLTYPE *AddRef )( 
-            ILgIcuCharPropEngine * This);
-        
-        ULONG ( STDMETHODCALLTYPE *Release )( 
-            ILgIcuCharPropEngine * This);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_GeneralCategory )( 
-            ILgIcuCharPropEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ LgGeneralCharCategory *pcc);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_BidiCategory )( 
-            ILgIcuCharPropEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ LgBidiCategory *pbic);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IsLetter )( 
-            ILgIcuCharPropEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IsWordForming )( 
-            ILgIcuCharPropEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IsPunctuation )( 
-            ILgIcuCharPropEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IsNumber )( 
-            ILgIcuCharPropEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IsSeparator )( 
-            ILgIcuCharPropEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IsSymbol )( 
-            ILgIcuCharPropEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IsMark )( 
-            ILgIcuCharPropEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IsOther )( 
-            ILgIcuCharPropEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IsUpper )( 
-            ILgIcuCharPropEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IsLower )( 
-            ILgIcuCharPropEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IsTitle )( 
-            ILgIcuCharPropEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IsModifier )( 
-            ILgIcuCharPropEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IsOtherLetter )( 
-            ILgIcuCharPropEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IsOpen )( 
-            ILgIcuCharPropEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IsClose )( 
-            ILgIcuCharPropEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IsWordMedial )( 
-            ILgIcuCharPropEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IsControl )( 
-            ILgIcuCharPropEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_ToLowerCh )( 
-            ILgIcuCharPropEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ int *pch);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_ToUpperCh )( 
-            ILgIcuCharPropEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ int *pch);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_ToTitleCh )( 
-            ILgIcuCharPropEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ int *pch);
-        
-        HRESULT ( STDMETHODCALLTYPE *ToLower )( 
-            ILgIcuCharPropEngine * This,
-            /* [in] */ BSTR bstr,
-            /* [retval][out] */ BSTR *pbstr);
-        
-        HRESULT ( STDMETHODCALLTYPE *ToUpper )( 
-            ILgIcuCharPropEngine * This,
-            /* [in] */ BSTR bstr,
-            /* [retval][out] */ BSTR *pbstr);
-        
-        HRESULT ( STDMETHODCALLTYPE *ToTitle )( 
-            ILgIcuCharPropEngine * This,
-            /* [in] */ BSTR bstr,
-            /* [retval][out] */ BSTR *pbstr);
-        
-        /* [restricted] */ HRESULT ( STDMETHODCALLTYPE *ToLowerRgch )( 
-            ILgIcuCharPropEngine * This,
-            /* [size_is][in] */ OLECHAR *prgchIn,
-            /* [in] */ int cchIn,
-            /* [size_is][out] */ OLECHAR *prgchOut,
-            /* [in] */ int cchOut,
-            /* [out] */ int *pcchRet);
-        
-        /* [restricted] */ HRESULT ( STDMETHODCALLTYPE *ToUpperRgch )( 
-            ILgIcuCharPropEngine * This,
-            /* [size_is][in] */ OLECHAR *prgchIn,
-            /* [in] */ int cchIn,
-            /* [size_is][out] */ OLECHAR *prgchOut,
-            /* [in] */ int cchOut,
-            /* [out] */ int *pcchRet);
-        
-        /* [restricted] */ HRESULT ( STDMETHODCALLTYPE *ToTitleRgch )( 
-            ILgIcuCharPropEngine * This,
-            /* [size_is][in] */ OLECHAR *prgchIn,
-            /* [in] */ int cchIn,
-            /* [size_is][out] */ OLECHAR *prgchOut,
-            /* [in] */ int cchOut,
-            /* [out] */ int *pcchRet);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IsUserDefinedClass )( 
-            ILgIcuCharPropEngine * This,
-            /* [in] */ int ch,
-            /* [in] */ int chClass,
-            /* [retval][out] */ ComBool *pfRet);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_SoundAlikeKey )( 
-            ILgIcuCharPropEngine * This,
-            /* [in] */ BSTR bstrValue,
-            /* [retval][out] */ BSTR *pbstrKey);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_CharacterName )( 
-            ILgIcuCharPropEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ BSTR *pbstrName);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_Decomposition )( 
-            ILgIcuCharPropEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ BSTR *pbstr);
-        
-        /* [restricted] */ HRESULT ( STDMETHODCALLTYPE *DecompositionRgch )( 
-            ILgIcuCharPropEngine * This,
-            /* [in] */ int ch,
-            /* [in] */ int cchMax,
-            /* [out] */ OLECHAR *prgch,
-            /* [out] */ int *pcch,
-            /* [out] */ ComBool *pfHasDecomp);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_FullDecomp )( 
-            ILgIcuCharPropEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ BSTR *pbstrOut);
-        
-        /* [restricted] */ HRESULT ( STDMETHODCALLTYPE *FullDecompRgch )( 
-            ILgIcuCharPropEngine * This,
-            /* [in] */ int ch,
-            /* [in] */ int cchMax,
-            /* [out] */ OLECHAR *prgch,
-            /* [out] */ int *pcch,
-            /* [out] */ ComBool *pfHasDecomp);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_NumericValue )( 
-            ILgIcuCharPropEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ int *pn);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_CombiningClass )( 
-            ILgIcuCharPropEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ int *pn);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_Comment )( 
-            ILgIcuCharPropEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ BSTR *pbstr);
-        
-        /* [restricted] */ HRESULT ( STDMETHODCALLTYPE *GetLineBreakProps )( 
-            ILgIcuCharPropEngine * This,
-            /* [size_is][in] */ const OLECHAR *prgchIn,
-            /* [in] */ int cchIn,
-            /* [size_is][out] */ byte *prglbOut);
-        
-        /* [restricted] */ HRESULT ( STDMETHODCALLTYPE *GetLineBreakStatus )( 
-            ILgIcuCharPropEngine * This,
-            /* [size_is][in] */ const byte *prglbpIn,
-            /* [in] */ int cb,
-            /* [size_is][out] */ byte *prglbsOut);
-        
-        /* [restricted] */ HRESULT ( STDMETHODCALLTYPE *GetLineBreakInfo )( 
-            ILgIcuCharPropEngine * This,
-            /* [size_is][in] */ const OLECHAR *prgchIn,
-            /* [in] */ int cchIn,
-            /* [in] */ int ichMin,
-            /* [in] */ int ichLim,
-            /* [size_is][out] */ byte *prglbsOut,
-            /* [out] */ int *pichBreak);
-        
-        HRESULT ( STDMETHODCALLTYPE *StripDiacritics )( 
-            ILgIcuCharPropEngine * This,
-            /* [in] */ BSTR bstr,
-            /* [retval][out] */ BSTR *pbstr);
-        
-        /* [restricted] */ HRESULT ( STDMETHODCALLTYPE *StripDiacriticsRgch )( 
-            ILgIcuCharPropEngine * This,
-            /* [size_is][in] */ OLECHAR *prgchIn,
-            /* [in] */ int cchIn,
-            /* [size_is][out] */ OLECHAR *prgchOut,
-            /* [in] */ int cchMaxOut,
-            /* [out] */ int *pcchOut);
-        
-        /* [restricted] */ HRESULT ( STDMETHODCALLTYPE *NormalizeKdRgch )( 
-            ILgIcuCharPropEngine * This,
-            /* [size_is][in] */ OLECHAR *prgchIn,
-            /* [in] */ int cchIn,
-            /* [size_is][out] */ OLECHAR *prgchOut,
-            /* [in] */ int cchMaxOut,
-            /* [out] */ int *pcchOut);
-        
-        HRESULT ( STDMETHODCALLTYPE *NormalizeD )( 
-            ILgIcuCharPropEngine * This,
-            /* [in] */ BSTR bstr,
-            /* [retval][out] */ BSTR *pbstr);
-        
-        /* [restricted] */ HRESULT ( STDMETHODCALLTYPE *NormalizeDRgch )( 
-            ILgIcuCharPropEngine * This,
-            /* [size_is][in] */ OLECHAR *prgchIn,
-            /* [in] */ int cchIn,
-            /* [size_is][out] */ OLECHAR *prgchOut,
-            /* [in] */ int cchMaxOut,
-            /* [out] */ int *pcchOut);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_Locale )( 
-            ILgIcuCharPropEngine * This,
-            /* [retval][out] */ int *pnLocale);
-        
-        /* [propput] */ HRESULT ( STDMETHODCALLTYPE *put_Locale )( 
-            ILgIcuCharPropEngine * This,
-            /* [in] */ int nLocale);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetLineBreakText )( 
-            ILgIcuCharPropEngine * This,
-            /* [in] */ int cchMax,
-            /* [out] */ OLECHAR *prgchOut,
-            /* [out] */ int *pcchOut);
-        
-        /* [propput] */ HRESULT ( STDMETHODCALLTYPE *put_LineBreakText )( 
-            ILgIcuCharPropEngine * This,
-            /* [size_is][in] */ OLECHAR *prgchIn,
-            /* [in] */ int cchMax);
-        
-        HRESULT ( STDMETHODCALLTYPE *LineBreakBefore )( 
-            ILgIcuCharPropEngine * This,
-            /* [in] */ int ichIn,
-            /* [out] */ int *pichOut,
-            /* [out] */ LgLineBreak *plbWeight);
-        
-        HRESULT ( STDMETHODCALLTYPE *LineBreakAfter )( 
-            ILgIcuCharPropEngine * This,
-            /* [in] */ int ichIn,
-            /* [out] */ int *pichOut,
-            /* [out] */ LgLineBreak *plbWeight);
-        
-        HRESULT ( STDMETHODCALLTYPE *Initialize )( 
-            ILgIcuCharPropEngine * This,
-            /* [in] */ BSTR bstrLanguage,
-            /* [in] */ BSTR bstrScript,
-            /* [in] */ BSTR bstrCountry,
-            /* [in] */ BSTR bstrVariant);
-        
-        HRESULT ( STDMETHODCALLTYPE *InitCharOverrides )( 
-            ILgIcuCharPropEngine * This,
-            /* [in] */ BSTR bstrWsCharsList);
-        
-        END_INTERFACE
-    } ILgIcuCharPropEngineVtbl;
-
-    interface ILgIcuCharPropEngine
-    {
-        CONST_VTBL struct ILgIcuCharPropEngineVtbl *lpVtbl;
-    };
-
-    
-
-#ifdef COBJMACROS
-
-
-#define ILgIcuCharPropEngine_QueryInterface(This,riid,ppvObject)	\
-    ( (This)->lpVtbl -> QueryInterface(This,riid,ppvObject) ) 
-
-#define ILgIcuCharPropEngine_AddRef(This)	\
-    ( (This)->lpVtbl -> AddRef(This) ) 
-
-#define ILgIcuCharPropEngine_Release(This)	\
-    ( (This)->lpVtbl -> Release(This) ) 
-
-
-#define ILgIcuCharPropEngine_get_GeneralCategory(This,ch,pcc)	\
-    ( (This)->lpVtbl -> get_GeneralCategory(This,ch,pcc) ) 
-
-#define ILgIcuCharPropEngine_get_BidiCategory(This,ch,pbic)	\
-    ( (This)->lpVtbl -> get_BidiCategory(This,ch,pbic) ) 
-
-#define ILgIcuCharPropEngine_get_IsLetter(This,ch,pfRet)	\
-    ( (This)->lpVtbl -> get_IsLetter(This,ch,pfRet) ) 
-
-#define ILgIcuCharPropEngine_get_IsWordForming(This,ch,pfRet)	\
-    ( (This)->lpVtbl -> get_IsWordForming(This,ch,pfRet) ) 
-
-#define ILgIcuCharPropEngine_get_IsPunctuation(This,ch,pfRet)	\
-    ( (This)->lpVtbl -> get_IsPunctuation(This,ch,pfRet) ) 
-
-#define ILgIcuCharPropEngine_get_IsNumber(This,ch,pfRet)	\
-    ( (This)->lpVtbl -> get_IsNumber(This,ch,pfRet) ) 
-
-#define ILgIcuCharPropEngine_get_IsSeparator(This,ch,pfRet)	\
-    ( (This)->lpVtbl -> get_IsSeparator(This,ch,pfRet) ) 
-
-#define ILgIcuCharPropEngine_get_IsSymbol(This,ch,pfRet)	\
-    ( (This)->lpVtbl -> get_IsSymbol(This,ch,pfRet) ) 
-
-#define ILgIcuCharPropEngine_get_IsMark(This,ch,pfRet)	\
-    ( (This)->lpVtbl -> get_IsMark(This,ch,pfRet) ) 
-
-#define ILgIcuCharPropEngine_get_IsOther(This,ch,pfRet)	\
-    ( (This)->lpVtbl -> get_IsOther(This,ch,pfRet) ) 
-
-#define ILgIcuCharPropEngine_get_IsUpper(This,ch,pfRet)	\
-    ( (This)->lpVtbl -> get_IsUpper(This,ch,pfRet) ) 
-
-#define ILgIcuCharPropEngine_get_IsLower(This,ch,pfRet)	\
-    ( (This)->lpVtbl -> get_IsLower(This,ch,pfRet) ) 
-
-#define ILgIcuCharPropEngine_get_IsTitle(This,ch,pfRet)	\
-    ( (This)->lpVtbl -> get_IsTitle(This,ch,pfRet) ) 
-
-#define ILgIcuCharPropEngine_get_IsModifier(This,ch,pfRet)	\
-    ( (This)->lpVtbl -> get_IsModifier(This,ch,pfRet) ) 
-
-#define ILgIcuCharPropEngine_get_IsOtherLetter(This,ch,pfRet)	\
-    ( (This)->lpVtbl -> get_IsOtherLetter(This,ch,pfRet) ) 
-
-#define ILgIcuCharPropEngine_get_IsOpen(This,ch,pfRet)	\
-    ( (This)->lpVtbl -> get_IsOpen(This,ch,pfRet) ) 
-
-#define ILgIcuCharPropEngine_get_IsClose(This,ch,pfRet)	\
-    ( (This)->lpVtbl -> get_IsClose(This,ch,pfRet) ) 
-
-#define ILgIcuCharPropEngine_get_IsWordMedial(This,ch,pfRet)	\
-    ( (This)->lpVtbl -> get_IsWordMedial(This,ch,pfRet) ) 
-
-#define ILgIcuCharPropEngine_get_IsControl(This,ch,pfRet)	\
-    ( (This)->lpVtbl -> get_IsControl(This,ch,pfRet) ) 
-
-#define ILgIcuCharPropEngine_get_ToLowerCh(This,ch,pch)	\
-    ( (This)->lpVtbl -> get_ToLowerCh(This,ch,pch) ) 
-
-#define ILgIcuCharPropEngine_get_ToUpperCh(This,ch,pch)	\
-    ( (This)->lpVtbl -> get_ToUpperCh(This,ch,pch) ) 
-
-#define ILgIcuCharPropEngine_get_ToTitleCh(This,ch,pch)	\
-    ( (This)->lpVtbl -> get_ToTitleCh(This,ch,pch) ) 
-
-#define ILgIcuCharPropEngine_ToLower(This,bstr,pbstr)	\
-    ( (This)->lpVtbl -> ToLower(This,bstr,pbstr) ) 
-
-#define ILgIcuCharPropEngine_ToUpper(This,bstr,pbstr)	\
-    ( (This)->lpVtbl -> ToUpper(This,bstr,pbstr) ) 
-
-#define ILgIcuCharPropEngine_ToTitle(This,bstr,pbstr)	\
-    ( (This)->lpVtbl -> ToTitle(This,bstr,pbstr) ) 
-
-#define ILgIcuCharPropEngine_ToLowerRgch(This,prgchIn,cchIn,prgchOut,cchOut,pcchRet)	\
-    ( (This)->lpVtbl -> ToLowerRgch(This,prgchIn,cchIn,prgchOut,cchOut,pcchRet) ) 
-
-#define ILgIcuCharPropEngine_ToUpperRgch(This,prgchIn,cchIn,prgchOut,cchOut,pcchRet)	\
-    ( (This)->lpVtbl -> ToUpperRgch(This,prgchIn,cchIn,prgchOut,cchOut,pcchRet) ) 
-
-#define ILgIcuCharPropEngine_ToTitleRgch(This,prgchIn,cchIn,prgchOut,cchOut,pcchRet)	\
-    ( (This)->lpVtbl -> ToTitleRgch(This,prgchIn,cchIn,prgchOut,cchOut,pcchRet) ) 
-
-#define ILgIcuCharPropEngine_get_IsUserDefinedClass(This,ch,chClass,pfRet)	\
-    ( (This)->lpVtbl -> get_IsUserDefinedClass(This,ch,chClass,pfRet) ) 
-
-#define ILgIcuCharPropEngine_get_SoundAlikeKey(This,bstrValue,pbstrKey)	\
-    ( (This)->lpVtbl -> get_SoundAlikeKey(This,bstrValue,pbstrKey) ) 
-
-#define ILgIcuCharPropEngine_get_CharacterName(This,ch,pbstrName)	\
-    ( (This)->lpVtbl -> get_CharacterName(This,ch,pbstrName) ) 
-
-#define ILgIcuCharPropEngine_get_Decomposition(This,ch,pbstr)	\
-    ( (This)->lpVtbl -> get_Decomposition(This,ch,pbstr) ) 
-
-#define ILgIcuCharPropEngine_DecompositionRgch(This,ch,cchMax,prgch,pcch,pfHasDecomp)	\
-    ( (This)->lpVtbl -> DecompositionRgch(This,ch,cchMax,prgch,pcch,pfHasDecomp) ) 
-
-#define ILgIcuCharPropEngine_get_FullDecomp(This,ch,pbstrOut)	\
-    ( (This)->lpVtbl -> get_FullDecomp(This,ch,pbstrOut) ) 
-
-#define ILgIcuCharPropEngine_FullDecompRgch(This,ch,cchMax,prgch,pcch,pfHasDecomp)	\
-    ( (This)->lpVtbl -> FullDecompRgch(This,ch,cchMax,prgch,pcch,pfHasDecomp) ) 
-
-#define ILgIcuCharPropEngine_get_NumericValue(This,ch,pn)	\
-    ( (This)->lpVtbl -> get_NumericValue(This,ch,pn) ) 
-
-#define ILgIcuCharPropEngine_get_CombiningClass(This,ch,pn)	\
-    ( (This)->lpVtbl -> get_CombiningClass(This,ch,pn) ) 
-
-#define ILgIcuCharPropEngine_get_Comment(This,ch,pbstr)	\
-    ( (This)->lpVtbl -> get_Comment(This,ch,pbstr) ) 
-
-#define ILgIcuCharPropEngine_GetLineBreakProps(This,prgchIn,cchIn,prglbOut)	\
-    ( (This)->lpVtbl -> GetLineBreakProps(This,prgchIn,cchIn,prglbOut) ) 
-
-#define ILgIcuCharPropEngine_GetLineBreakStatus(This,prglbpIn,cb,prglbsOut)	\
-    ( (This)->lpVtbl -> GetLineBreakStatus(This,prglbpIn,cb,prglbsOut) ) 
-
-#define ILgIcuCharPropEngine_GetLineBreakInfo(This,prgchIn,cchIn,ichMin,ichLim,prglbsOut,pichBreak)	\
-    ( (This)->lpVtbl -> GetLineBreakInfo(This,prgchIn,cchIn,ichMin,ichLim,prglbsOut,pichBreak) ) 
-
-#define ILgIcuCharPropEngine_StripDiacritics(This,bstr,pbstr)	\
-    ( (This)->lpVtbl -> StripDiacritics(This,bstr,pbstr) ) 
-
-#define ILgIcuCharPropEngine_StripDiacriticsRgch(This,prgchIn,cchIn,prgchOut,cchMaxOut,pcchOut)	\
-    ( (This)->lpVtbl -> StripDiacriticsRgch(This,prgchIn,cchIn,prgchOut,cchMaxOut,pcchOut) ) 
-
-#define ILgIcuCharPropEngine_NormalizeKdRgch(This,prgchIn,cchIn,prgchOut,cchMaxOut,pcchOut)	\
-    ( (This)->lpVtbl -> NormalizeKdRgch(This,prgchIn,cchIn,prgchOut,cchMaxOut,pcchOut) ) 
-
-#define ILgIcuCharPropEngine_NormalizeD(This,bstr,pbstr)	\
-    ( (This)->lpVtbl -> NormalizeD(This,bstr,pbstr) ) 
-
-#define ILgIcuCharPropEngine_NormalizeDRgch(This,prgchIn,cchIn,prgchOut,cchMaxOut,pcchOut)	\
-    ( (This)->lpVtbl -> NormalizeDRgch(This,prgchIn,cchIn,prgchOut,cchMaxOut,pcchOut) ) 
-
-#define ILgIcuCharPropEngine_get_Locale(This,pnLocale)	\
-    ( (This)->lpVtbl -> get_Locale(This,pnLocale) ) 
-
-#define ILgIcuCharPropEngine_put_Locale(This,nLocale)	\
-    ( (This)->lpVtbl -> put_Locale(This,nLocale) ) 
-
-#define ILgIcuCharPropEngine_GetLineBreakText(This,cchMax,prgchOut,pcchOut)	\
-    ( (This)->lpVtbl -> GetLineBreakText(This,cchMax,prgchOut,pcchOut) ) 
-
-#define ILgIcuCharPropEngine_put_LineBreakText(This,prgchIn,cchMax)	\
-    ( (This)->lpVtbl -> put_LineBreakText(This,prgchIn,cchMax) ) 
-
-#define ILgIcuCharPropEngine_LineBreakBefore(This,ichIn,pichOut,plbWeight)	\
-    ( (This)->lpVtbl -> LineBreakBefore(This,ichIn,pichOut,plbWeight) ) 
-
-#define ILgIcuCharPropEngine_LineBreakAfter(This,ichIn,pichOut,plbWeight)	\
-    ( (This)->lpVtbl -> LineBreakAfter(This,ichIn,pichOut,plbWeight) ) 
-
-
-#define ILgIcuCharPropEngine_Initialize(This,bstrLanguage,bstrScript,bstrCountry,bstrVariant)	\
-    ( (This)->lpVtbl -> Initialize(This,bstrLanguage,bstrScript,bstrCountry,bstrVariant) ) 
-
-#define ILgIcuCharPropEngine_InitCharOverrides(This,bstrWsCharsList)	\
-    ( (This)->lpVtbl -> InitCharOverrides(This,bstrWsCharsList) ) 
-
-#endif /* COBJMACROS */
-
-
-#endif 	/* C style interface */
-
-
-
-
-#endif 	/* __ILgIcuCharPropEngine_INTERFACE_DEFINED__ */
-
-
-#ifndef __ILgNumericEngine_INTERFACE_DEFINED__
-#define __ILgNumericEngine_INTERFACE_DEFINED__
-
-/* interface ILgNumericEngine */
-/* [unique][object][uuid] */ 
-
-
-#define IID_ILgNumericEngine __uuidof(ILgNumericEngine)
-
-#if defined(__cplusplus) && !defined(CINTERFACE)
-    
-    MIDL_INTERFACE("CBBF35E1-CE39-4EEC-AEBD-5B4AAAA52B6C")
-    ILgNumericEngine : public IUnknown
-    {
-    public:
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_IntToString( 
-            /* [in] */ int n,
-            /* [retval][out] */ BSTR *bstr) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_IntToPrettyString( 
-            /* [in] */ int n,
-            /* [retval][out] */ BSTR *bstr) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_StringToInt( 
-            /* [in] */ BSTR bstr,
-            /* [retval][out] */ int *pn) = 0;
-        
-        virtual /* [restricted] */ HRESULT STDMETHODCALLTYPE StringToIntRgch( 
-            /* [size_is][in] */ OLECHAR *prgch,
-            /* [in] */ int cch,
-            /* [out] */ int *pn,
-            /* [out] */ int *pichUnused) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_DblToString( 
-            /* [in] */ double dbl,
-            /* [in] */ int cchFracDigits,
-            /* [retval][out] */ BSTR *bstr) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_DblToPrettyString( 
-            /* [in] */ double dbl,
-            /* [in] */ int cchFracDigits,
-            /* [retval][out] */ BSTR *bstr) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_DblToExpString( 
-            /* [in] */ double dbl,
-            /* [in] */ int cchFracDigits,
-            /* [retval][out] */ BSTR *bstr) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_StringToDbl( 
-            /* [in] */ BSTR bstr,
-            /* [retval][out] */ double *pdbl) = 0;
-        
-        virtual /* [restricted] */ HRESULT STDMETHODCALLTYPE StringToDblRgch( 
-            /* [size_is][in] */ OLECHAR *prgch,
-            /* [in] */ int cch,
-            /* [out] */ double *pdbl,
-            /* [out] */ int *pichUnused) = 0;
-        
-    };
-    
-    
-#else 	/* C style interface */
-
-    typedef struct ILgNumericEngineVtbl
-    {
-        BEGIN_INTERFACE
-        
-        HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
-            ILgNumericEngine * This,
-            /* [in] */ REFIID riid,
-            /* [annotation][iid_is][out] */ 
-            _COM_Outptr_  void **ppvObject);
-        
-        ULONG ( STDMETHODCALLTYPE *AddRef )( 
-            ILgNumericEngine * This);
-        
-        ULONG ( STDMETHODCALLTYPE *Release )( 
-            ILgNumericEngine * This);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IntToString )( 
-            ILgNumericEngine * This,
-            /* [in] */ int n,
-            /* [retval][out] */ BSTR *bstr);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IntToPrettyString )( 
-            ILgNumericEngine * This,
-            /* [in] */ int n,
-            /* [retval][out] */ BSTR *bstr);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_StringToInt )( 
-            ILgNumericEngine * This,
-            /* [in] */ BSTR bstr,
-            /* [retval][out] */ int *pn);
-        
-        /* [restricted] */ HRESULT ( STDMETHODCALLTYPE *StringToIntRgch )( 
-            ILgNumericEngine * This,
-            /* [size_is][in] */ OLECHAR *prgch,
-            /* [in] */ int cch,
-            /* [out] */ int *pn,
-            /* [out] */ int *pichUnused);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_DblToString )( 
-            ILgNumericEngine * This,
-            /* [in] */ double dbl,
-            /* [in] */ int cchFracDigits,
-            /* [retval][out] */ BSTR *bstr);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_DblToPrettyString )( 
-            ILgNumericEngine * This,
-            /* [in] */ double dbl,
-            /* [in] */ int cchFracDigits,
-            /* [retval][out] */ BSTR *bstr);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_DblToExpString )( 
-            ILgNumericEngine * This,
-            /* [in] */ double dbl,
-            /* [in] */ int cchFracDigits,
-            /* [retval][out] */ BSTR *bstr);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_StringToDbl )( 
-            ILgNumericEngine * This,
-            /* [in] */ BSTR bstr,
-            /* [retval][out] */ double *pdbl);
-        
-        /* [restricted] */ HRESULT ( STDMETHODCALLTYPE *StringToDblRgch )( 
-            ILgNumericEngine * This,
-            /* [size_is][in] */ OLECHAR *prgch,
-            /* [in] */ int cch,
-            /* [out] */ double *pdbl,
-            /* [out] */ int *pichUnused);
-        
-        END_INTERFACE
-    } ILgNumericEngineVtbl;
-
-    interface ILgNumericEngine
-    {
-        CONST_VTBL struct ILgNumericEngineVtbl *lpVtbl;
-    };
-
-    
-
-#ifdef COBJMACROS
-
-
-#define ILgNumericEngine_QueryInterface(This,riid,ppvObject)	\
-    ( (This)->lpVtbl -> QueryInterface(This,riid,ppvObject) ) 
-
-#define ILgNumericEngine_AddRef(This)	\
-    ( (This)->lpVtbl -> AddRef(This) ) 
-
-#define ILgNumericEngine_Release(This)	\
-    ( (This)->lpVtbl -> Release(This) ) 
-
-
-#define ILgNumericEngine_get_IntToString(This,n,bstr)	\
-    ( (This)->lpVtbl -> get_IntToString(This,n,bstr) ) 
-
-#define ILgNumericEngine_get_IntToPrettyString(This,n,bstr)	\
-    ( (This)->lpVtbl -> get_IntToPrettyString(This,n,bstr) ) 
-
-#define ILgNumericEngine_get_StringToInt(This,bstr,pn)	\
-    ( (This)->lpVtbl -> get_StringToInt(This,bstr,pn) ) 
-
-#define ILgNumericEngine_StringToIntRgch(This,prgch,cch,pn,pichUnused)	\
-    ( (This)->lpVtbl -> StringToIntRgch(This,prgch,cch,pn,pichUnused) ) 
-
-#define ILgNumericEngine_get_DblToString(This,dbl,cchFracDigits,bstr)	\
-    ( (This)->lpVtbl -> get_DblToString(This,dbl,cchFracDigits,bstr) ) 
-
-#define ILgNumericEngine_get_DblToPrettyString(This,dbl,cchFracDigits,bstr)	\
-    ( (This)->lpVtbl -> get_DblToPrettyString(This,dbl,cchFracDigits,bstr) ) 
-
-#define ILgNumericEngine_get_DblToExpString(This,dbl,cchFracDigits,bstr)	\
-    ( (This)->lpVtbl -> get_DblToExpString(This,dbl,cchFracDigits,bstr) ) 
-
-#define ILgNumericEngine_get_StringToDbl(This,bstr,pdbl)	\
-    ( (This)->lpVtbl -> get_StringToDbl(This,bstr,pdbl) ) 
-
-#define ILgNumericEngine_StringToDblRgch(This,prgch,cch,pdbl,pichUnused)	\
-    ( (This)->lpVtbl -> StringToDblRgch(This,prgch,cch,pdbl,pichUnused) ) 
-
-#endif /* COBJMACROS */
-
-
-#endif 	/* C style interface */
-
-
-
-
-#endif 	/* __ILgNumericEngine_INTERFACE_DEFINED__ */
-
-
-#ifndef __ILgKeymanHandler_INTERFACE_DEFINED__
-#define __ILgKeymanHandler_INTERFACE_DEFINED__
-
-/* interface ILgKeymanHandler */
-/* [unique][object][uuid] */ 
-
-
-#define IID_ILgKeymanHandler __uuidof(ILgKeymanHandler)
-
-#if defined(__cplusplus) && !defined(CINTERFACE)
-    
-    MIDL_INTERFACE("3F42144B-509F-4def-8DD3-6D8D26677001")
-    ILgKeymanHandler : public IUnknown
-    {
-    public:
-        virtual HRESULT STDMETHODCALLTYPE Init( 
-            /* [in] */ ComBool fForce) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE Close( void) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_ActiveKeyboardName( 
-            /* [retval][out] */ BSTR *pbstrName) = 0;
-        
-    };
-    
-    
-#else 	/* C style interface */
-
-    typedef struct ILgKeymanHandlerVtbl
-    {
-        BEGIN_INTERFACE
-        
-        HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
-            ILgKeymanHandler * This,
-            /* [in] */ REFIID riid,
-            /* [annotation][iid_is][out] */ 
-            _COM_Outptr_  void **ppvObject);
-        
-        ULONG ( STDMETHODCALLTYPE *AddRef )( 
-            ILgKeymanHandler * This);
-        
-        ULONG ( STDMETHODCALLTYPE *Release )( 
-            ILgKeymanHandler * This);
-        
-        HRESULT ( STDMETHODCALLTYPE *Init )( 
-            ILgKeymanHandler * This,
-            /* [in] */ ComBool fForce);
-        
-        HRESULT ( STDMETHODCALLTYPE *Close )( 
-            ILgKeymanHandler * This);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_ActiveKeyboardName )( 
-            ILgKeymanHandler * This,
-            /* [retval][out] */ BSTR *pbstrName);
-        
-        END_INTERFACE
-    } ILgKeymanHandlerVtbl;
-
-    interface ILgKeymanHandler
-    {
-        CONST_VTBL struct ILgKeymanHandlerVtbl *lpVtbl;
-    };
-
-    
-
-#ifdef COBJMACROS
-
-
-#define ILgKeymanHandler_QueryInterface(This,riid,ppvObject)	\
-    ( (This)->lpVtbl -> QueryInterface(This,riid,ppvObject) ) 
-
-#define ILgKeymanHandler_AddRef(This)	\
-    ( (This)->lpVtbl -> AddRef(This) ) 
-
-#define ILgKeymanHandler_Release(This)	\
-    ( (This)->lpVtbl -> Release(This) ) 
-
-
-#define ILgKeymanHandler_Init(This,fForce)	\
-    ( (This)->lpVtbl -> Init(This,fForce) ) 
-
-#define ILgKeymanHandler_Close(This)	\
-    ( (This)->lpVtbl -> Close(This) ) 
-
-#define ILgKeymanHandler_get_ActiveKeyboardName(This,pbstrName)	\
-    ( (This)->lpVtbl -> get_ActiveKeyboardName(This,pbstrName) ) 
-
-#endif /* COBJMACROS */
-
-
-#endif 	/* C style interface */
-
-
-
-
-#endif 	/* __ILgKeymanHandler_INTERFACE_DEFINED__ */
-
-
-#ifndef __ILgIcuConverterEnumerator_INTERFACE_DEFINED__
-#define __ILgIcuConverterEnumerator_INTERFACE_DEFINED__
-
-/* interface ILgIcuConverterEnumerator */
-/* [unique][object][uuid] */ 
-
-
-#define IID_ILgIcuConverterEnumerator __uuidof(ILgIcuConverterEnumerator)
-
-#if defined(__cplusplus) && !defined(CINTERFACE)
-    
-    MIDL_INTERFACE("8E6D558E-8755-4EA1-9FF6-039D375312E9")
-    ILgIcuConverterEnumerator : public IUnknown
-    {
-    public:
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_Count( 
-            /* [retval][out] */ int *pcconv) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_ConverterName( 
-            /* [in] */ int iconv,
-            /* [retval][out] */ BSTR *pbstrName) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_ConverterId( 
-            /* [in] */ int iconv,
-            /* [retval][out] */ BSTR *pbstrName) = 0;
-        
-    };
-    
-    
-#else 	/* C style interface */
-
-    typedef struct ILgIcuConverterEnumeratorVtbl
-    {
-        BEGIN_INTERFACE
-        
-        HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
-            ILgIcuConverterEnumerator * This,
-            /* [in] */ REFIID riid,
-            /* [annotation][iid_is][out] */ 
-            _COM_Outptr_  void **ppvObject);
-        
-        ULONG ( STDMETHODCALLTYPE *AddRef )( 
-            ILgIcuConverterEnumerator * This);
-        
-        ULONG ( STDMETHODCALLTYPE *Release )( 
-            ILgIcuConverterEnumerator * This);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_Count )( 
-            ILgIcuConverterEnumerator * This,
-            /* [retval][out] */ int *pcconv);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_ConverterName )( 
-            ILgIcuConverterEnumerator * This,
-            /* [in] */ int iconv,
-            /* [retval][out] */ BSTR *pbstrName);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_ConverterId )( 
-            ILgIcuConverterEnumerator * This,
-            /* [in] */ int iconv,
-            /* [retval][out] */ BSTR *pbstrName);
-        
-        END_INTERFACE
-    } ILgIcuConverterEnumeratorVtbl;
-
-    interface ILgIcuConverterEnumerator
-    {
-        CONST_VTBL struct ILgIcuConverterEnumeratorVtbl *lpVtbl;
-    };
-
-    
-
-#ifdef COBJMACROS
-
-
-#define ILgIcuConverterEnumerator_QueryInterface(This,riid,ppvObject)	\
-    ( (This)->lpVtbl -> QueryInterface(This,riid,ppvObject) ) 
-
-#define ILgIcuConverterEnumerator_AddRef(This)	\
-    ( (This)->lpVtbl -> AddRef(This) ) 
-
-#define ILgIcuConverterEnumerator_Release(This)	\
-    ( (This)->lpVtbl -> Release(This) ) 
-
-
-#define ILgIcuConverterEnumerator_get_Count(This,pcconv)	\
-    ( (This)->lpVtbl -> get_Count(This,pcconv) ) 
-
-#define ILgIcuConverterEnumerator_get_ConverterName(This,iconv,pbstrName)	\
-    ( (This)->lpVtbl -> get_ConverterName(This,iconv,pbstrName) ) 
-
-#define ILgIcuConverterEnumerator_get_ConverterId(This,iconv,pbstrName)	\
-    ( (This)->lpVtbl -> get_ConverterId(This,iconv,pbstrName) ) 
-
-#endif /* COBJMACROS */
-
-
-#endif 	/* C style interface */
-
-
-
-
-#endif 	/* __ILgIcuConverterEnumerator_INTERFACE_DEFINED__ */
-
-
-#ifndef __ILgIcuTransliteratorEnumerator_INTERFACE_DEFINED__
-#define __ILgIcuTransliteratorEnumerator_INTERFACE_DEFINED__
-
-/* interface ILgIcuTransliteratorEnumerator */
-/* [unique][object][uuid] */ 
-
-
-#define IID_ILgIcuTransliteratorEnumerator __uuidof(ILgIcuTransliteratorEnumerator)
-
-#if defined(__cplusplus) && !defined(CINTERFACE)
-    
-    MIDL_INTERFACE("50F2492C-6C46-48BA-8B7F-5F04153AB2CC")
-    ILgIcuTransliteratorEnumerator : public IUnknown
-    {
-    public:
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_Count( 
-            /* [retval][out] */ int *pctrans) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_TransliteratorName( 
-            /* [in] */ int itrans,
-            /* [retval][out] */ BSTR *pbstrName) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_TransliteratorId( 
-            /* [in] */ int iconv,
-            /* [retval][out] */ BSTR *pbstrName) = 0;
-        
-    };
-    
-    
-#else 	/* C style interface */
-
-    typedef struct ILgIcuTransliteratorEnumeratorVtbl
-    {
-        BEGIN_INTERFACE
-        
-        HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
-            ILgIcuTransliteratorEnumerator * This,
-            /* [in] */ REFIID riid,
-            /* [annotation][iid_is][out] */ 
-            _COM_Outptr_  void **ppvObject);
-        
-        ULONG ( STDMETHODCALLTYPE *AddRef )( 
-            ILgIcuTransliteratorEnumerator * This);
-        
-        ULONG ( STDMETHODCALLTYPE *Release )( 
-            ILgIcuTransliteratorEnumerator * This);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_Count )( 
-            ILgIcuTransliteratorEnumerator * This,
-            /* [retval][out] */ int *pctrans);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_TransliteratorName )( 
-            ILgIcuTransliteratorEnumerator * This,
-            /* [in] */ int itrans,
-            /* [retval][out] */ BSTR *pbstrName);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_TransliteratorId )( 
-            ILgIcuTransliteratorEnumerator * This,
-            /* [in] */ int iconv,
-            /* [retval][out] */ BSTR *pbstrName);
-        
-        END_INTERFACE
-    } ILgIcuTransliteratorEnumeratorVtbl;
-
-    interface ILgIcuTransliteratorEnumerator
-    {
-        CONST_VTBL struct ILgIcuTransliteratorEnumeratorVtbl *lpVtbl;
-    };
-
-    
-
-#ifdef COBJMACROS
-
-
-#define ILgIcuTransliteratorEnumerator_QueryInterface(This,riid,ppvObject)	\
-    ( (This)->lpVtbl -> QueryInterface(This,riid,ppvObject) ) 
-
-#define ILgIcuTransliteratorEnumerator_AddRef(This)	\
-    ( (This)->lpVtbl -> AddRef(This) ) 
-
-#define ILgIcuTransliteratorEnumerator_Release(This)	\
-    ( (This)->lpVtbl -> Release(This) ) 
-
-
-#define ILgIcuTransliteratorEnumerator_get_Count(This,pctrans)	\
-    ( (This)->lpVtbl -> get_Count(This,pctrans) ) 
-
-#define ILgIcuTransliteratorEnumerator_get_TransliteratorName(This,itrans,pbstrName)	\
-    ( (This)->lpVtbl -> get_TransliteratorName(This,itrans,pbstrName) ) 
-
-#define ILgIcuTransliteratorEnumerator_get_TransliteratorId(This,iconv,pbstrName)	\
-    ( (This)->lpVtbl -> get_TransliteratorId(This,iconv,pbstrName) ) 
-
-#endif /* COBJMACROS */
-
-
-#endif 	/* C style interface */
-
-
-
-
-#endif 	/* __ILgIcuTransliteratorEnumerator_INTERFACE_DEFINED__ */
-
-
-#ifndef __ILgIcuLocaleEnumerator_INTERFACE_DEFINED__
-#define __ILgIcuLocaleEnumerator_INTERFACE_DEFINED__
-
-/* interface ILgIcuLocaleEnumerator */
-/* [unique][object][uuid] */ 
-
-
-#define IID_ILgIcuLocaleEnumerator __uuidof(ILgIcuLocaleEnumerator)
-
-#if defined(__cplusplus) && !defined(CINTERFACE)
-    
-    MIDL_INTERFACE("08F649D0-D8AB-447B-AAB6-21F85CFA743C")
-    ILgIcuLocaleEnumerator : public IUnknown
-    {
-    public:
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_Count( 
-            /* [retval][out] */ int *pclocale) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_Name( 
-            /* [in] */ int iloc,
-            /* [retval][out] */ BSTR *pbstrName) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_Language( 
-            /* [in] */ int iloc,
-            /* [retval][out] */ BSTR *pbstrName) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_Country( 
-            /* [in] */ int iloc,
-            /* [retval][out] */ BSTR *pbstrName) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_Variant( 
-            /* [in] */ int iloc,
-            /* [retval][out] */ BSTR *pbstrName) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_DisplayName( 
-            /* [in] */ int iloc,
-            /* [in] */ BSTR bstrLocaleName,
-            /* [retval][out] */ BSTR *pbstrName) = 0;
-        
-    };
-    
-    
-#else 	/* C style interface */
-
-    typedef struct ILgIcuLocaleEnumeratorVtbl
-    {
-        BEGIN_INTERFACE
-        
-        HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
-            ILgIcuLocaleEnumerator * This,
-            /* [in] */ REFIID riid,
-            /* [annotation][iid_is][out] */ 
-            _COM_Outptr_  void **ppvObject);
-        
-        ULONG ( STDMETHODCALLTYPE *AddRef )( 
-            ILgIcuLocaleEnumerator * This);
-        
-        ULONG ( STDMETHODCALLTYPE *Release )( 
-            ILgIcuLocaleEnumerator * This);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_Count )( 
-            ILgIcuLocaleEnumerator * This,
-            /* [retval][out] */ int *pclocale);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_Name )( 
-            ILgIcuLocaleEnumerator * This,
-            /* [in] */ int iloc,
-            /* [retval][out] */ BSTR *pbstrName);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_Language )( 
-            ILgIcuLocaleEnumerator * This,
-            /* [in] */ int iloc,
-            /* [retval][out] */ BSTR *pbstrName);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_Country )( 
-            ILgIcuLocaleEnumerator * This,
-            /* [in] */ int iloc,
-            /* [retval][out] */ BSTR *pbstrName);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_Variant )( 
-            ILgIcuLocaleEnumerator * This,
-            /* [in] */ int iloc,
-            /* [retval][out] */ BSTR *pbstrName);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_DisplayName )( 
-            ILgIcuLocaleEnumerator * This,
-            /* [in] */ int iloc,
-            /* [in] */ BSTR bstrLocaleName,
-            /* [retval][out] */ BSTR *pbstrName);
-        
-        END_INTERFACE
-    } ILgIcuLocaleEnumeratorVtbl;
-
-    interface ILgIcuLocaleEnumerator
-    {
-        CONST_VTBL struct ILgIcuLocaleEnumeratorVtbl *lpVtbl;
-    };
-
-    
-
-#ifdef COBJMACROS
-
-
-#define ILgIcuLocaleEnumerator_QueryInterface(This,riid,ppvObject)	\
-    ( (This)->lpVtbl -> QueryInterface(This,riid,ppvObject) ) 
-
-#define ILgIcuLocaleEnumerator_AddRef(This)	\
-    ( (This)->lpVtbl -> AddRef(This) ) 
-
-#define ILgIcuLocaleEnumerator_Release(This)	\
-    ( (This)->lpVtbl -> Release(This) ) 
-
-
-#define ILgIcuLocaleEnumerator_get_Count(This,pclocale)	\
-    ( (This)->lpVtbl -> get_Count(This,pclocale) ) 
-
-#define ILgIcuLocaleEnumerator_get_Name(This,iloc,pbstrName)	\
-    ( (This)->lpVtbl -> get_Name(This,iloc,pbstrName) ) 
-
-#define ILgIcuLocaleEnumerator_get_Language(This,iloc,pbstrName)	\
-    ( (This)->lpVtbl -> get_Language(This,iloc,pbstrName) ) 
-
-#define ILgIcuLocaleEnumerator_get_Country(This,iloc,pbstrName)	\
-    ( (This)->lpVtbl -> get_Country(This,iloc,pbstrName) ) 
-
-#define ILgIcuLocaleEnumerator_get_Variant(This,iloc,pbstrName)	\
-    ( (This)->lpVtbl -> get_Variant(This,iloc,pbstrName) ) 
-
-#define ILgIcuLocaleEnumerator_get_DisplayName(This,iloc,bstrLocaleName,pbstrName)	\
-    ( (This)->lpVtbl -> get_DisplayName(This,iloc,bstrLocaleName,pbstrName) ) 
-
-#endif /* COBJMACROS */
-
-
-#endif 	/* C style interface */
-
-
-
-
-#endif 	/* __ILgIcuLocaleEnumerator_INTERFACE_DEFINED__ */
-
-
-#ifndef __ILgIcuResourceBundle_INTERFACE_DEFINED__
-#define __ILgIcuResourceBundle_INTERFACE_DEFINED__
-
-/* interface ILgIcuResourceBundle */
-/* [unique][object][uuid] */ 
-
-
-#define IID_ILgIcuResourceBundle __uuidof(ILgIcuResourceBundle)
-
-#if defined(__cplusplus) && !defined(CINTERFACE)
-    
-    MIDL_INTERFACE("C243C72A-0D15-44D9-ABCB-A6E875A7659A")
-    ILgIcuResourceBundle : public IUnknown
-    {
-    public:
-        virtual HRESULT STDMETHODCALLTYPE Init( 
-            /* [in] */ BSTR bstrPath,
-            /* [in] */ BSTR locale) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_Key( 
-            /* [retval][out] */ BSTR *pbstrKey) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_String( 
-            /* [retval][out] */ BSTR *pbstrString) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_Name( 
-            /* [retval][out] */ BSTR *pbstrName) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_GetSubsection( 
-            /* [in] */ BSTR bstrSectionName,
-            /* [retval][out] */ ILgIcuResourceBundle **pprb) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_HasNext( 
-            /* [retval][out] */ ComBool *pfHasNext) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_Next( 
-            /* [retval][out] */ ILgIcuResourceBundle **pprb) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_Size( 
-            /* [retval][out] */ int *pcrb) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_StringEx( 
-            /* [in] */ int irb,
-            /* [retval][out] */ BSTR *pbstr) = 0;
-        
-    };
-    
-    
-#else 	/* C style interface */
-
-    typedef struct ILgIcuResourceBundleVtbl
-    {
-        BEGIN_INTERFACE
-        
-        HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
-            ILgIcuResourceBundle * This,
-            /* [in] */ REFIID riid,
-            /* [annotation][iid_is][out] */ 
-            _COM_Outptr_  void **ppvObject);
-        
-        ULONG ( STDMETHODCALLTYPE *AddRef )( 
-            ILgIcuResourceBundle * This);
-        
-        ULONG ( STDMETHODCALLTYPE *Release )( 
-            ILgIcuResourceBundle * This);
-        
-        HRESULT ( STDMETHODCALLTYPE *Init )( 
-            ILgIcuResourceBundle * This,
-            /* [in] */ BSTR bstrPath,
-            /* [in] */ BSTR locale);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_Key )( 
-            ILgIcuResourceBundle * This,
-            /* [retval][out] */ BSTR *pbstrKey);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_String )( 
-            ILgIcuResourceBundle * This,
-            /* [retval][out] */ BSTR *pbstrString);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_Name )( 
-            ILgIcuResourceBundle * This,
-            /* [retval][out] */ BSTR *pbstrName);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_GetSubsection )( 
-            ILgIcuResourceBundle * This,
-            /* [in] */ BSTR bstrSectionName,
-            /* [retval][out] */ ILgIcuResourceBundle **pprb);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_HasNext )( 
-            ILgIcuResourceBundle * This,
-            /* [retval][out] */ ComBool *pfHasNext);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_Next )( 
-            ILgIcuResourceBundle * This,
-            /* [retval][out] */ ILgIcuResourceBundle **pprb);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_Size )( 
-            ILgIcuResourceBundle * This,
-            /* [retval][out] */ int *pcrb);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_StringEx )( 
-            ILgIcuResourceBundle * This,
-            /* [in] */ int irb,
-            /* [retval][out] */ BSTR *pbstr);
-        
-        END_INTERFACE
-    } ILgIcuResourceBundleVtbl;
-
-    interface ILgIcuResourceBundle
-    {
-        CONST_VTBL struct ILgIcuResourceBundleVtbl *lpVtbl;
-    };
-
-    
-
-#ifdef COBJMACROS
-
-
-#define ILgIcuResourceBundle_QueryInterface(This,riid,ppvObject)	\
-    ( (This)->lpVtbl -> QueryInterface(This,riid,ppvObject) ) 
-
-#define ILgIcuResourceBundle_AddRef(This)	\
-    ( (This)->lpVtbl -> AddRef(This) ) 
-
-#define ILgIcuResourceBundle_Release(This)	\
-    ( (This)->lpVtbl -> Release(This) ) 
-
-
-#define ILgIcuResourceBundle_Init(This,bstrPath,locale)	\
-    ( (This)->lpVtbl -> Init(This,bstrPath,locale) ) 
-
-#define ILgIcuResourceBundle_get_Key(This,pbstrKey)	\
-    ( (This)->lpVtbl -> get_Key(This,pbstrKey) ) 
-
-#define ILgIcuResourceBundle_get_String(This,pbstrString)	\
-    ( (This)->lpVtbl -> get_String(This,pbstrString) ) 
-
-#define ILgIcuResourceBundle_get_Name(This,pbstrName)	\
-    ( (This)->lpVtbl -> get_Name(This,pbstrName) ) 
-
-#define ILgIcuResourceBundle_get_GetSubsection(This,bstrSectionName,pprb)	\
-    ( (This)->lpVtbl -> get_GetSubsection(This,bstrSectionName,pprb) ) 
-
-#define ILgIcuResourceBundle_get_HasNext(This,pfHasNext)	\
-    ( (This)->lpVtbl -> get_HasNext(This,pfHasNext) ) 
-
-#define ILgIcuResourceBundle_get_Next(This,pprb)	\
-    ( (This)->lpVtbl -> get_Next(This,pprb) ) 
-
-#define ILgIcuResourceBundle_get_Size(This,pcrb)	\
-    ( (This)->lpVtbl -> get_Size(This,pcrb) ) 
-
-#define ILgIcuResourceBundle_get_StringEx(This,irb,pbstr)	\
-    ( (This)->lpVtbl -> get_StringEx(This,irb,pbstr) ) 
-
-#endif /* COBJMACROS */
-
-
-#endif 	/* C style interface */
-
-
-
-
-#endif 	/* __ILgIcuResourceBundle_INTERFACE_DEFINED__ */
-
-
-#ifndef __IRegexMatcher_INTERFACE_DEFINED__
-#define __IRegexMatcher_INTERFACE_DEFINED__
-
-/* interface IRegexMatcher */
-/* [unique][object][uuid] */ 
-
-
-#define IID_IRegexMatcher __uuidof(IRegexMatcher)
-
-#if defined(__cplusplus) && !defined(CINTERFACE)
-    
-    MIDL_INTERFACE("6C62CCF0-4EE1-493C-8092-319B6CFBEEBC")
-    IRegexMatcher : public IUnknown
-    {
-    public:
-        virtual HRESULT STDMETHODCALLTYPE Init( 
-            /* [in] */ BSTR bstrPattern,
-            /* [in] */ ComBool fMatchCase) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE Reset( 
-            /* [in] */ BSTR bstrInput) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE Find( 
-            /* [in] */ int ich,
-            /* [retval][out] */ ComBool *pfFound) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_Start( 
-            /* [in] */ int igroup,
-            /* [retval][out] */ int *pich) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_End( 
-            /* [in] */ int igroup,
-            /* [retval][out] */ int *pich) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_ErrorMessage( 
-            /* [retval][out] */ BSTR *pbstrMsg) = 0;
-        
-    };
-    
-    
-#else 	/* C style interface */
-
-    typedef struct IRegexMatcherVtbl
-    {
-        BEGIN_INTERFACE
-        
-        HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
-            IRegexMatcher * This,
-            /* [in] */ REFIID riid,
-            /* [annotation][iid_is][out] */ 
-            _COM_Outptr_  void **ppvObject);
-        
-        ULONG ( STDMETHODCALLTYPE *AddRef )( 
-            IRegexMatcher * This);
-        
-        ULONG ( STDMETHODCALLTYPE *Release )( 
-            IRegexMatcher * This);
-        
-        HRESULT ( STDMETHODCALLTYPE *Init )( 
-            IRegexMatcher * This,
-            /* [in] */ BSTR bstrPattern,
-            /* [in] */ ComBool fMatchCase);
-        
-        HRESULT ( STDMETHODCALLTYPE *Reset )( 
-            IRegexMatcher * This,
-            /* [in] */ BSTR bstrInput);
-        
-        HRESULT ( STDMETHODCALLTYPE *Find )( 
-            IRegexMatcher * This,
-            /* [in] */ int ich,
-            /* [retval][out] */ ComBool *pfFound);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_Start )( 
-            IRegexMatcher * This,
-            /* [in] */ int igroup,
-            /* [retval][out] */ int *pich);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_End )( 
-            IRegexMatcher * This,
-            /* [in] */ int igroup,
-            /* [retval][out] */ int *pich);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_ErrorMessage )( 
-            IRegexMatcher * This,
-            /* [retval][out] */ BSTR *pbstrMsg);
-        
-        END_INTERFACE
-    } IRegexMatcherVtbl;
-
-    interface IRegexMatcher
-    {
-        CONST_VTBL struct IRegexMatcherVtbl *lpVtbl;
-    };
-
-    
-
-#ifdef COBJMACROS
-
-
-#define IRegexMatcher_QueryInterface(This,riid,ppvObject)	\
-    ( (This)->lpVtbl -> QueryInterface(This,riid,ppvObject) ) 
-
-#define IRegexMatcher_AddRef(This)	\
-    ( (This)->lpVtbl -> AddRef(This) ) 
-
-#define IRegexMatcher_Release(This)	\
-    ( (This)->lpVtbl -> Release(This) ) 
-
-
-#define IRegexMatcher_Init(This,bstrPattern,fMatchCase)	\
-    ( (This)->lpVtbl -> Init(This,bstrPattern,fMatchCase) ) 
-
-#define IRegexMatcher_Reset(This,bstrInput)	\
-    ( (This)->lpVtbl -> Reset(This,bstrInput) ) 
-
-#define IRegexMatcher_Find(This,ich,pfFound)	\
-    ( (This)->lpVtbl -> Find(This,ich,pfFound) ) 
-
-#define IRegexMatcher_get_Start(This,igroup,pich)	\
-    ( (This)->lpVtbl -> get_Start(This,igroup,pich) ) 
-
-#define IRegexMatcher_get_End(This,igroup,pich)	\
-    ( (This)->lpVtbl -> get_End(This,igroup,pich) ) 
-
-#define IRegexMatcher_get_ErrorMessage(This,pbstrMsg)	\
-    ( (This)->lpVtbl -> get_ErrorMessage(This,pbstrMsg) ) 
-
-#endif /* COBJMACROS */
-
-
-#endif 	/* C style interface */
-
-
-
-
-#endif 	/* __IRegexMatcher_INTERFACE_DEFINED__ */
-
-
-#define CLSID_RegexMatcherWrapper __uuidof(RegexMatcherWrapper)
-
-#ifdef __cplusplus
-
-class DECLSPEC_UUID("13D5C6D3-39D9-4BDA-A3F8-A5CAF6A6940A")
-RegexMatcherWrapper;
-#endif
-
-#define CLSID_LgSystemCollater __uuidof(LgSystemCollater)
-
-#ifdef __cplusplus
-
-class DECLSPEC_UUID("E361F805-C902-4306-A5D8-F7802B0E7365")
-LgSystemCollater;
-#endif
-
-#define CLSID_LgUnicodeCollater __uuidof(LgUnicodeCollater)
-
-#ifdef __cplusplus
-
-class DECLSPEC_UUID("0D9900D2-1693-481F-AA70-7EA64F264EC4")
-LgUnicodeCollater;
-#endif
-
-#define CLSID_LgIcuCharPropEngine __uuidof(LgIcuCharPropEngine)
-
-#ifdef __cplusplus
-
-class DECLSPEC_UUID("30D75676-A10F-48FE-9627-EBF4061EA49D")
-LgIcuCharPropEngine;
-#endif
-
-#define CLSID_LgCPWordTokenizer __uuidof(LgCPWordTokenizer)
-
-#ifdef __cplusplus
-
-class DECLSPEC_UUID("7CE7CE94-AC47-42A5-823F-2F8EF51A9007")
-LgCPWordTokenizer;
-#endif
-
-#define CLSID_LgWfiSpellChecker __uuidof(LgWfiSpellChecker)
-
-#ifdef __cplusplus
-
-class DECLSPEC_UUID("818445E2-0282-4688-8BB7-147FAACFF73A")
-LgWfiSpellChecker;
-#endif
-
-#define CLSID_LgMSWordSpellChecker __uuidof(LgMSWordSpellChecker)
-
-#ifdef __cplusplus
-
-class DECLSPEC_UUID("5CF96DA5-299E-4FC5-A990-2D2FCEE7834D")
-LgMSWordSpellChecker;
-#endif
-
-#define CLSID_LgNumericEngine __uuidof(LgNumericEngine)
-
-#ifdef __cplusplus
-
-class DECLSPEC_UUID("FF22A7AB-223E-4D04-B648-0AE40588261D")
-LgNumericEngine;
-#endif
-
-#define CLSID_LgKeymanHandler __uuidof(LgKeymanHandler)
-
-#ifdef __cplusplus
-
-class DECLSPEC_UUID("69ACA99C-F852-4C2C-9B5F-FF83238A17A5")
-LgKeymanHandler;
-#endif
-
-#define CLSID_LgIcuConverterEnumerator __uuidof(LgIcuConverterEnumerator)
-
-#ifdef __cplusplus
-
-class DECLSPEC_UUID("9E729461-F80D-4796-BA17-086BC61907F1")
-LgIcuConverterEnumerator;
-#endif
-
-#define CLSID_LgIcuTransliteratorEnumerator __uuidof(LgIcuTransliteratorEnumerator)
-
-#ifdef __cplusplus
-
-class DECLSPEC_UUID("3F1FD0A4-B2B1-4589-BC82-9CEF5BA84F4E")
-LgIcuTransliteratorEnumerator;
-#endif
-
-#define CLSID_LgIcuResourceBundle __uuidof(LgIcuResourceBundle)
-
-#ifdef __cplusplus
-
-class DECLSPEC_UUID("0DD7FC1A-AB97-4A39-882C-269760D86619")
-LgIcuResourceBundle;
-#endif
-
-#define CLSID_LgIcuLocaleEnumerator __uuidof(LgIcuLocaleEnumerator)
-
-#ifdef __cplusplus
-
-class DECLSPEC_UUID("E426656C-64F7-480E-92F4-D41A7BFFD066")
-LgIcuLocaleEnumerator;
-#endif
 #endif /* __FwKernelLib_LIBRARY_DEFINED__ */
 
 /* Additional Prototypes for ALL interfaces */

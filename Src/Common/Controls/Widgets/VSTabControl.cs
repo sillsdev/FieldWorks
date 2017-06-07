@@ -4,10 +4,8 @@
 
 using System;
 using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Runtime.InteropServices;
-using System.Security.Permissions;
 using System.Text;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
@@ -150,8 +148,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// <value></value>
 		/// <returns>true if right-to-left mirror placement is turned on; false for standard child control placement. The default is false.
 		/// </returns>
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification="RightToLeftLayout is not supported in Mono, but we don't allow RTL here.")]
 		public override bool RightToLeftLayout
 		{
 			get { return base.RightToLeftLayout; }

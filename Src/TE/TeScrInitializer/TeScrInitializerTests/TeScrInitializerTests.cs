@@ -1,21 +1,17 @@
-// Copyright (c) 2004-2013 SIL International
+// Copyright (c) 2004-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: TeScrInitializerTests.cs
-// Responsibility: TE team
 
 using System;
 using System.Collections.Generic;
 
 using NUnit.Framework;
-using SIL.CoreImpl;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.Utils;
-using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.FDO.FDOTests;
-using SILUBS.SharedScrUtils;
+using SIL.CoreImpl.Scripture;
+using SIL.CoreImpl.Text;
 
 namespace SIL.FieldWorks.TE
 {
@@ -273,14 +269,13 @@ namespace SIL.FieldWorks.TE
 
 			// Update section 2's paragraph contents to include the picture
 			ITsStrBldr tsStrBldr = para.Contents.GetBldr();
-			ITsStrFactory factory = TsStrFactoryClass.Create();
 			string filename;
 			if (MiscUtils.IsUnix)
 				filename = "/tmp/junk.jpg";
 			else
 				filename = "c:\\junk.jpg";
 			ICmPicture pict = Cache.ServiceLocator.GetInstance<ICmPictureFactory>().Create(filename,
-				factory.MakeString("Test picture", Cache.DefaultVernWs), CmFolderTags.LocalPictures);
+				TsStringUtils.MakeString("Test picture", Cache.DefaultVernWs), CmFolderTags.LocalPictures);
 			Assert.IsNotNull(pict);
 			pict.InsertORCAt(tsStrBldr, 11);
 			para.Contents = tsStrBldr.GetString();
@@ -320,7 +315,6 @@ namespace SIL.FieldWorks.TE
 
 			// Update the paragraph contents to include the picture
 			ITsStrBldr tsStrBldr = para.Contents.GetBldr();
-			ITsStrFactory factory = TsStrFactoryClass.Create();
 			TsStringUtils.InsertOrcIntoPara(Guid.NewGuid(), FwObjDataTypes.kodtOwnNameGuidHot,
 				tsStrBldr, 11, 11, Cache.DefaultVernWs);
 			para.Contents = tsStrBldr.GetString();

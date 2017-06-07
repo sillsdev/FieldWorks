@@ -1,21 +1,13 @@
-// Copyright (c) 2002-2013 SIL International
+// Copyright (c) 2002-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ColorPickerMatrix.cs
-// Responsibility: TeTeam
-// Last reviewed:
-//
-// Implementation of ColorPickerMatrix
-// --------------------------------------------------------------------------------------------
 
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 
-using SIL.CoreImpl;
-using SIL.Utils;
+using SIL.CoreImpl.Text;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -24,7 +16,7 @@ namespace SIL.FieldWorks.Common.Controls
 	///
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public partial class ColorPickerMatrix : UserControl, IFWDisposable
+	public partial class ColorPickerMatrix : UserControl
 	{
 		/// <summary></summary>
 		public event EventHandler ColorPicked;

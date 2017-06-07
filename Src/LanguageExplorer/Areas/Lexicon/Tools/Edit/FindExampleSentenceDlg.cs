@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -9,8 +9,9 @@ using System.Windows.Forms;
 using System.Xml;
 using LanguageExplorer.Controls.PaneBar;
 using SIL.CoreImpl;
+using SIL.CoreImpl.Text;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FdoUi;
@@ -100,16 +101,12 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		#endregion
 
-		#region IFWDisposable Members
-
 		/// <summary />
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
 				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
 		}
-
-		#endregion
 
 		#region IFwGuiControl Members
 
@@ -124,11 +121,22 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			if (sourceObject is ILexExampleSentence)
 			{
 				m_les = sourceObject as ILexExampleSentence;
-				m_owningSense = (ILexSense)m_les.Owner;
+				if (m_les.Owner is ILexSense)
+				{
+					m_owningSense = (ILexSense)m_les.Owner;
+				}
+				else if (m_les.Owner is ILexExtendedNote)
+				{
+					m_owningSense = (ILexSense)m_les.Owner.Owner;
+				}
 			}
 			else if (sourceObject is ILexSense)
 			{
 				m_owningSense = sourceObject as ILexSense;
+			}
+			else if (sourceObject is ILexExtendedNote)
+			{
+				m_owningSense = sourceObject.Owner as ILexSense;
 			}
 			else
 			{
@@ -267,7 +275,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 							}
 							// copy the segment string into the new LexExampleSentence
 							// Enhance: bold the relevant occurrence(s).
-							newLexExample.Example.VernacularDefaultWritingSystem = seg.BaselineText;
+							// LT-11388 Make sure baseline text gets copied into correct ws
+							var baseWs = GetBestVernWsForNewExample(seg);
+							newLexExample.Example.set_String(baseWs, seg.BaselineText);
 							if (seg.FreeTranslation.AvailableWritingSystemIds.Length > 0)
 							{
 								var trans = m_cache.ServiceLocator.GetInstance<ICmTranslationFactory>().Create(newLexExample,
@@ -297,6 +307,17 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 							newLexExample.Reference = tsb.GetString();
 						}
 					});
+		}
+
+		private int GetBestVernWsForNewExample(ISegment seg)
+		{
+			var baseWs = seg.BaselineText.get_WritingSystem(0);
+			if (baseWs < 1)
+				return m_cache.DefaultVernWs;
+
+			var possibleWss = m_cache.ServiceLocator.WritingSystems.VernacularWritingSystems;
+			var wsObj = m_cache.ServiceLocator.WritingSystemManager.Get(baseWs);
+			return possibleWss.Contains(wsObj) ? baseWs : m_cache.DefaultVernWs;
 		}
 
 		private void btnHelp_Click(object sender, EventArgs e)

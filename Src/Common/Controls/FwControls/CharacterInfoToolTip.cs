@@ -11,8 +11,8 @@ using System.Media;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
 using System.Drawing.Drawing2D;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.CoreImpl;
+using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -147,7 +147,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 			if (m_ctrl == null)
 			{
-				SystemSounds.Beep.Play();
+				FwUtils.FwUtils.ErrorBeep();
 				return;
 			}
 

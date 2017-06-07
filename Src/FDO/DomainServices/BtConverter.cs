@@ -1,13 +1,10 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.Utils;
+using SIL.CoreImpl.Text;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.FDO.DomainServices
 {
@@ -19,10 +16,8 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		private List<SegGroup> m_segGroups;
 		private IList<ISegment> m_segments; // The corresponding actual segments.
 		private IList<TsStringSegment> m_BtSegs; // How the BT would break into segments if we did that.
-		private readonly Set<int> m_labelSegIndexes = new Set<int>(); // indexes into m_segments that are (verse/chapter) labels.
+		private readonly HashSet<int> m_labelSegIndexes = new HashSet<int>(); // indexes into m_segments that are (verse/chapter) labels.
 		private readonly IStTxtPara m_para;
-		private readonly FdoCache m_cache;
-		private readonly ILgCharacterPropertyEngine m_cpe;
 		private readonly IScripture m_scr;
 		private readonly int m_wsBt;
 
@@ -36,8 +31,6 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		private BtConverter(IStTxtPara para, int wsBt)
 		{
 			m_para = para;
-			m_cache = para.Cache;
-			m_cpe = m_cache.ServiceLocator.UnicodeCharProps;
 			m_scr = para.Cache.LangProject.TranslatedScriptureOA;
 			m_wsBt = wsBt;
 		}
@@ -144,7 +137,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		{
 			if (iParaSeg == 0 && igroup > 0 && m_segGroups[igroup - 1].ParaSegs.Count == 0)
 			{
-				ITsStrBldr bldr = TsStrBldrClass.Create();
+				ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 				SegGroup prevGroup = m_segGroups[igroup - 1];
 				foreach (TsStringSegment seg in prevGroup.BtSegs)
 					AppendWithOptionalSpace(bldr, seg.String);
@@ -205,8 +198,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 
 		bool IsWhite(char c)
 		{
-			LgGeneralCharCategory cc = m_cpe.get_GeneralCategory(c);
-			return cc == LgGeneralCharCategory.kccZs;
+			return Icu.GetCharType(c) == Icu.UCharCategory.U_SPACE_SEPARATOR;
 		}
 
 		// Get the segments of the paragraph, making sure they are real and have at least empty (but real)

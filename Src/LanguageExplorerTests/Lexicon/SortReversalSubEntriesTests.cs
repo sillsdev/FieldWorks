@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using NUnit.Framework;
+using SIL.CoreImpl.Text;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
 using LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes;
@@ -50,7 +51,7 @@ namespace LanguageExplorerTests.Lexicon
 			IReversalIndex revIndex = m_revIndexRepo.FindOrCreateIndexForWs(wsObj.Handle);
 			//Add an entry to the Reveral index
 			revIndex.EntriesOC.Add(revIndexEntry);
-			revIndexEntry.ReversalForm.set_String(wsObj.Handle, Cache.TsStrFactory.MakeString(riForm, wsObj.Handle));
+			revIndexEntry.ReversalForm.set_String(wsObj.Handle, TsStringUtils.MakeString(riForm, wsObj.Handle));
 			return revIndexEntry;
 		}
 
@@ -59,7 +60,7 @@ namespace LanguageExplorerTests.Lexicon
 			var wsObj = Cache.LanguageProject.DefaultAnalysisWritingSystem;
 			var revIndexEntry = m_revIndexEntryFactory.Create();
 			indexEntry.SubentriesOS.Add(revIndexEntry);
-			revIndexEntry.ReversalForm.set_String(wsObj.Handle, Cache.TsStrFactory.MakeString(subEntryForm, wsObj.Handle));
+			revIndexEntry.ReversalForm.set_String(wsObj.Handle, TsStringUtils.MakeString(subEntryForm, wsObj.Handle));
 			return revIndexEntry;
 		}
 	}

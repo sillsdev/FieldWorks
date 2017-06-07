@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014-2016 SIL International
+﻿// Copyright (c) 2014-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Serialization;
-using SIL.Utils;
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -48,17 +48,21 @@ namespace SIL.FieldWorks.XWorks
 		{
 			get
 			{
+				string localizedLabel;
 				if (StringTable == null)
 				{
-					if (LabelSuffix == null)
-						return Label;
-					return string.Format("{0} ({1})", Label, LabelSuffix);
+					localizedLabel = LabelSuffix == null ? Label : string.Format("{0} ({1})", Label, LabelSuffix);
 				}
-				var localLabel = StringTable.LocalizeAttributeValue(Label);
-				if (LabelSuffix == null)
-					return localLabel;
-				var localSuffix = StringTable.LocalizeAttributeValue(LabelSuffix);
-				return string.Format("{0} ({1})", localLabel, localSuffix);
+				else
+				{
+					localizedLabel = LabelSuffix == null ? StringTable.LocalizeAttributeValue(Label) : string.Format("{0} ({1})",
+						StringTable.LocalizeAttributeValue(Label), StringTable.LocalizeAttributeValue(LabelSuffix));
+				}
+				if (DictionaryNodeOptions is DictionaryNodeGroupingOptions)
+				{
+					return string.Format("[{0}]", localizedLabel);
+				}
+				return localizedLabel;
 			}
 		}
 
@@ -74,7 +78,7 @@ namespace SIL.FieldWorks.XWorks
 		[XmlAttribute(AttributeName = "isDuplicate")]
 		public bool IsDuplicate { get; set; } // REVIEW (Hasso) 2014.04: could we use get { return !string.IsNullOrEmpty(NameSuffix); }?
 
-		/// <summary>ShouldSerialize[Attribute] is a magic method to prevent serializing the default value. May not work until Mono 3.3.0</summary>
+		/// <summary>ShouldSerialize[Attribute] is a magic method to prevent serializing the default value</summary>
 		public bool ShouldSerializeIsDuplicate() { return IsDuplicate; }
 
 		/// <summary>
@@ -83,8 +87,17 @@ namespace SIL.FieldWorks.XWorks
 		[XmlAttribute(AttributeName = "isCustomField")]
 		public bool IsCustomField { get; set; }
 
-		/// <summary>ShouldSerialize[Attribute] is a magic method to prevent serializing the default value. May not work until Mono 3.3.0</summary>
+		/// <summary>ShouldSerialize[Attribute] is a magic method to prevent serializing the default value</summary>
 		public bool ShouldSerializeIsCustomField() { return IsCustomField; }
+
+		/// <summary>
+		/// Should we hide custom fields which would show as children of this node.
+		/// </summary>
+		[XmlAttribute(AttributeName = "hideCustomFields")]
+		public bool HideCustomFields { get; set; }
+
+		/// <summary>ShouldSerialize[Attribute] is a magic method to prevent serializing the default value</summary>
+		public bool ShouldSerializeHideCustomFields() { return HideCustomFields; }
 
 		/// <summary>
 		/// The style to apply to the data configured by this node
@@ -111,7 +124,6 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// ShouldSerialize[Attribute] is a magic method to prevent serialization of the default value.
 		/// XMLSerializer looks for this method to determine whether to serialize each Element and Attribute.
-		/// May not work in Mono until Mono 3.3.0.
 		/// </summary>
 		public bool ShouldSerializeStyleType()
 		{
@@ -160,10 +172,13 @@ namespace SIL.FieldWorks.XWorks
 		/// Type specific configuration options for this configurable node;
 		/// </summary>
 		[XmlElement("WritingSystemOptions", typeof(DictionaryNodeWritingSystemOptions))]
+		[XmlElement("WritingSystemAndParaOptions", typeof(DictionaryNodeWritingSystemAndParaOptions))]
+		[XmlElement("ReferringSenseOptions", typeof(DictionaryNodeReferringSenseOptions))]
 		[XmlElement("ListTypeOptions", typeof(DictionaryNodeListOptions))]
-		[XmlElement("ComplexFormOptions", typeof(DictionaryNodeComplexFormOptions))]
+		[XmlElement("ComplexFormOptions", typeof(DictionaryNodeListAndParaOptions))]
 		[XmlElement("SenseOptions", typeof(DictionaryNodeSenseOptions))]
 		[XmlElement("PictureOptions", typeof(DictionaryNodePictureOptions))]
+		[XmlElement("GroupingOptions", typeof(DictionaryNodeGroupingOptions))]
 		public DictionaryNodeOptions DictionaryNodeOptions { get; set; }
 
 		/// <summary>
@@ -194,40 +209,119 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		[XmlIgnore]
 		public List<ConfigurableDictionaryNode> ReferencedOrDirectChildren
-		{ // TODO pH better name? Dependents? AllChildren? Niblets?
-			get { return ReferencedNode == null ? Children : ReferencedNode.Children; }
+		{
+			get { return ReferencedNode == null ? Children : ReferencedNode.Children; } // REVIEW (Hasso) 2016.03: optimize by caching
+		}
+
+		/// <summary>If node is a HeadWord node.</summary>
+		internal bool IsHeadWord { get { return CSSClassNameOverride == "headword" || CSSClassNameOverride == "mainheadword"; } }
+
+		/// <summary>If node is a Main Entry node.</summary>
+		internal bool IsMainEntry
+		{
+			get
+			{
+				switch (CSSClassNameOverride)
+				{
+					case "entry":
+					case "mainentrycomplex":
+					case "reversalindexentry":
+						return true;
+					default:
+						return false;
+				}
+			}
+		}
+
+		/// <summary>
+		/// Whether this node is the master parent of a SharedItem
+		/// </summary>
+		internal bool IsMasterParent { get { return ReferencedNode != null && ReferenceEquals(this, ReferencedNode.Parent); } }
+
+		/// <summary>
+		/// True when this node is a parent of a SharedItem, but not the Master Parent
+		/// </summary>
+		internal bool IsSubordinateParent { get { return ReferencedNode != null && !ReferenceEquals(this, ReferencedNode.Parent); } }
+
+		/// <summary>
+		/// Whether this is a SharedItem.
+		/// </summary>
+		internal bool IsSharedItem { get { return Parent != null && Parent.ReferencedNode != null; } }
+
+		/// <summary>
+		/// Whether this has a SharedItem anywhere in its ancestry
+		/// </summary>
+		internal bool IsSharedItemOrDescendant { get { ConfigurableDictionaryNode dummy; return TryGetMasterParent(out dummy); } }
+
+		/// <summary>
+		/// Finds the nearest Master Parent in this node's ancestry if this is a SharedItem or descendent;
+		/// returns false (out null) if this is a direct descendent of a Part.
+		/// </summary>
+		internal bool TryGetMasterParent(out ConfigurableDictionaryNode masterParent)
+		{
+			for (masterParent = Parent; masterParent != null; masterParent = masterParent.Parent)
+				if (masterParent.ReferencedNode != null)
+					return true;
+			return false;
 		}
 
 		/// <summary>
 		/// Clone this node. Point to the same Parent object. Deep-clone Children and DictionaryNodeOptions.
 		/// </summary>
+		/// <remarks>
+		/// Grouping node children are cloned only in recursive calls.
+		/// Referenced children are cloned only if this is NOT a recursive call.
+		/// </remarks>
 		internal ConfigurableDictionaryNode DeepCloneUnderSameParent()
+		{
+			return DeepCloneUnderParent(Parent);
+		}
+
+		/// <summary>
+		/// Clone this node, point to the given Parent. Deep-clone Children and DictionaryNodeOptions
+		/// </summary>
+		/// <remarks>
+		/// Grouping node children are cloned only if this is a recursive call.
+		/// Referenced children are cloned only if this is NOT a recursive call.
+		/// </remarks>
+		internal ConfigurableDictionaryNode DeepCloneUnderParent(ConfigurableDictionaryNode parent, bool isRecursiveCall = false)
 		{
 			var clone = new ConfigurableDictionaryNode();
 
-			// Copy everything over at first, importantly handling strings, bools, and Parent.
-			var properties = typeof (ConfigurableDictionaryNode).GetProperties();
+			// Copy everything over at first, importantly handling strings, bools.
+			var properties = typeof(ConfigurableDictionaryNode).GetProperties();
 			foreach (var property in properties)
 			{
-				// Skip read-only properties (eg DisplayLabel)
-				if (!property.CanWrite)
+				// Skip Parent and read-only properties (eg DisplayLabel)
+				if (!property.CanWrite || property.Name == "Parent")
 					continue;
 				var originalValue = property.GetValue(this, null);
 				property.SetValue(clone, originalValue, null);
 			}
+			clone.ReferencedNode = ReferencedNode; // GetProperties() doesn't return internal properties; copy here
+			clone.Parent = parent;
 
 			// Deep-clone Children
-			if (Children != null)
+			if (Children != null && Children.Any())
 			{
-				var clonedChildren = new List<ConfigurableDictionaryNode>();
-				foreach (var child in Children)
+				if (isRecursiveCall || !(DictionaryNodeOptions is DictionaryNodeGroupingOptions))
 				{
-					var clonedChild = child.DeepCloneUnderSameParent();
 					// Cloned children should point to their newly-cloned parent
-					clonedChild.Parent = clone;
-					clonedChildren.Add(clonedChild);
+					clone.Children = Children.Select(child => child.DeepCloneUnderParent(clone, true)).ToList();
 				}
-				clone.Children = clonedChildren;
+				else
+				{
+					// Cloning children of a group creates problems because the children can be moved out of the group.
+					// Also the only expected use of cloning a group is to get a new group to group different children.
+					clone.Children = null;
+				}
+			}
+			else if (!isRecursiveCall && ReferencedNode != null && ReferencedNode.Children != null)
+			{
+				// Allow users to configure copies of Shared nodes (e.g. Subentries) separately
+				clone.ReferencedNode = null;
+				clone.ReferenceItem = null;
+				clone.Children = ReferencedNode.Children.Select(child => child.DeepCloneUnderParent(clone, true)).ToList();
 			}
 
 			// Deep-clone DictionaryNodeOptions
@@ -285,7 +379,8 @@ namespace SIL.FieldWorks.XWorks
 
 			// Provide a suffix to distinguish among similar dictionary items.
 			int suffix = 1;
-			while (siblings.Exists(sibling => sibling.Label == this.Label && sibling.LabelSuffix == suffix.ToString()))
+			// Check that no siblings have a matching suffix, and that no children of grouping siblings have a matching suffix
+			while (duplicate.NodeWithSameDisplayLabelExists(suffix.ToString(), siblings))
 			{
 				suffix++;
 			}
@@ -318,11 +413,39 @@ namespace SIL.FieldWorks.XWorks
 
 		public bool ChangeSuffix(string newSuffix, List<ConfigurableDictionaryNode> siblings)
 		{
-			if (siblings.Exists(sibling => !ReferenceEquals(sibling, this) && sibling.Label == this.Label && sibling.LabelSuffix == newSuffix))
+			if (NodeWithSameDisplayLabelExists(newSuffix, siblings))
 				return false;
 
 			LabelSuffix = newSuffix;
 			return true;
+		}
+
+		private bool NodeWithSameDisplayLabelExists(string newSuffix, List<ConfigurableDictionaryNode> siblings)
+		{
+			return GatherReallyReallyAllSiblings(siblings)
+				.Exists(node => !ReferenceEquals(node, this) && node.Label == Label && node.LabelSuffix == newSuffix);
+		}
+
+		/// <summary>sibling nodes and all related children of grouping nodes together for comparison (null for top-level nodes)</summary>
+		[XmlIgnore]
+		public List<ConfigurableDictionaryNode> ReallyReallyAllSiblings
+		{
+			get { return Parent == null ? null : GatherReallyReallyAllSiblings(Parent.Children); }
+		}
+
+		private List<ConfigurableDictionaryNode> GatherReallyReallyAllSiblings(List<ConfigurableDictionaryNode> siblings)
+		{
+			if (Parent != null && Parent.DictionaryNodeOptions is DictionaryNodeGroupingOptions)
+			{
+				siblings = Parent.IsSharedItem ? Parent.Parent.Parent.ReferencedOrDirectChildren : Parent.Parent.ReferencedOrDirectChildren;
+			}
+			var reallyReallyAllSiblings = new List<ConfigurableDictionaryNode>(siblings);
+			foreach (var sibling in siblings.Where(sibling => sibling.DictionaryNodeOptions is DictionaryNodeGroupingOptions))
+			{
+				if(sibling.ReferencedOrDirectChildren != null)
+					reallyReallyAllSiblings.AddRange(sibling.ReferencedOrDirectChildren);
+			}
+			return reallyReallyAllSiblings;
 		}
 	}
 }

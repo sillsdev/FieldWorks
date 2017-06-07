@@ -1,4 +1,4 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="14.0">
   <PropertyGroup>
 	<ProjectType>Local</ProjectType>
 	<ProductVersion>8.0.50727</ProductVersion>
@@ -79,9 +79,9 @@
 	<Reference Include="BasicUtils, Version=4.1.1.0, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
 	</Reference>
-	<Reference Include="COMInterfaces">
-	  <Name>COMInterfaces</Name>
-	  <HintPath>..\..\..\..\Output\Debug\COMInterfaces.dll</HintPath>
+	<Reference Include="ViewsInterfaces">
+	  <Name>ViewsInterfaces</Name>
+	  <HintPath>..\..\..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
 	</Reference>
 	<Reference Include="FwControls">
 	  <Name>FwControls</Name>
@@ -89,7 +89,7 @@
 	</Reference>
 	<Reference Include="nunit.framework">
 	  <Name>nunit.framework</Name>
-	  <HintPath>..\..\..\..\Bin\NUnit\bin\nunit.framework.dll</HintPath>
+	  <HintPath>..\..\..\..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
 	</Reference>
 	<Reference Include="System">
 	  <Name>System</Name>

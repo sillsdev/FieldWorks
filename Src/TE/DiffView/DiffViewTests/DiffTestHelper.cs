@@ -1,23 +1,13 @@
-// Copyright (c) 2009-2013 SIL International
+// Copyright (c) 2009-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: DiffTestHelper.cs
-// Responsibility: TE Team
-//
-// <remarks>
-// </remarks>
 
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using SIL.FieldWorks.Common.ScriptureUtils;
-using SILUBS.SharedScrUtils;
+using SIL.CoreImpl.Scripture;
 using NUnit.Framework;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.TE
 {
@@ -635,7 +625,7 @@ namespace SIL.FieldWorks.TE
 						Assert.AreEqual(sectionsAdded, diff.SectionsCurr.First());
 					}
 					else if (sectionsAdded is IScrSection[])
-						Assert.IsTrue(ArrayUtils.AreEqual((IScrSection[])sectionsAdded, diff.SectionsCurr));
+						Assert.That(sectionsAdded, Is.EqualTo(diff.SectionsCurr));
 					else
 						Assert.Fail("Invalid parameter type");
 
@@ -661,7 +651,7 @@ namespace SIL.FieldWorks.TE
 						Assert.AreEqual(sectionsAdded, diff.SectionsRev.First());
 					}
 					else if (sectionsAdded is IScrSection[])
-						Assert.IsTrue(ArrayUtils.AreEqual((IScrSection[])sectionsAdded, diff.SectionsRev));
+						Assert.That(sectionsAdded, Is.EqualTo(diff.SectionsRev));
 					else
 						Assert.Fail("Invalid parameter type");
 

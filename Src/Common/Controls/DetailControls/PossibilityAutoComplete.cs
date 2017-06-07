@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -7,17 +7,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.Text;
 using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.Utils;
+using SIL.ObjectModel;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
-	public class PossibilityAutoComplete : FwDisposableBase
+	public class PossibilityAutoComplete : DisposableBase
 	{
 		private readonly FdoCache m_cache;
 		private readonly Control m_control;
@@ -237,9 +238,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 						m_searcher.Add(poss, 0, tss);
 						if (name != null)
 						{
-							var tisb = TsIncStrBldrClass.Create();
+							var tisb = TsStringUtils.MakeIncStrBldr();
 							tisb.AppendTsString(tss);
-							tisb.AppendTsString(m_cache.TsStrFactory.MakeString(" - ", m_cache.DefaultUserWs));
+							tisb.AppendTsString(TsStringUtils.MakeString(" - ", m_cache.DefaultUserWs));
 							tisb.AppendTsString(name);
 							m_searcher.Add(poss, 0, tisb.GetString());
 						}

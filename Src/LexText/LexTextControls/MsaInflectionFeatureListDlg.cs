@@ -1,17 +1,20 @@
+// Copyright (c) 2017 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 // This really needs to be refactored with MasterCategoryListDlg.cs
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using SIL.CoreImpl;
+using SIL.CoreImpl.Cellar;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.Utils;
 using SIL.Windows.Forms;
 
 namespace SIL.FieldWorks.LexText.Controls
@@ -19,7 +22,7 @@ namespace SIL.FieldWorks.LexText.Controls
 	/// <summary>
 	/// Summary description for MsaInflectionFeatureListDlg.
 	/// </summary>
-	public class MsaInflectionFeatureListDlg : Form, IFWDisposable
+	public class MsaInflectionFeatureListDlg : Form
 	{
 		private IPropertyTable m_propertyTable;
 		protected FdoCache m_cache;
@@ -199,7 +202,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			linkLabel1.Enabled = m_highestPOS != null;
 		}
-
 		/// <summary>
 		/// Load the tree items if the starting point is a feature structure.
 		/// </summary>
@@ -433,8 +435,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification = "TODO-Linux: LinkLabel.TabStop is missing from Mono")]
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();

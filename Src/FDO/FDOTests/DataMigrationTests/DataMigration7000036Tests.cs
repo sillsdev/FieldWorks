@@ -1,16 +1,12 @@
-﻿// Copyright (c) 2011-2013 SIL International
+﻿// Copyright (c) 2011-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: DataMigrationTests7000036.cs
-// Responsibility: FW team
 
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Xml.Linq;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
 using System;
 using SIL.FieldWorks.FDO.DomainImpl;
@@ -172,7 +168,8 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 			mockMDC.AddClass(10, "ScrTxtPara", "StTxtPara", new List<string>());
 			mockMDC.AddClass(11, "StPara", "CmObject", new List<string> { "StTxtPara" });
 			mockMDC.AddClass(12, "StJounalText", "StText", new List<string>());
-			IDomainObjectDTORepository dtoRepos = new DomainObjectDtoRepository(7000035, dtos, mockMDC, null, FwDirectoryFinder.FdoDirectories);
+			IDomainObjectDTORepository dtoRepos = new DomainObjectDtoRepository(7000035, dtos, mockMDC, null,
+				TestDirectoryFinder.FdoDirectories);
 
 			DateTime beforeMigration = DateTime.Now.AddSeconds(-1); // avoid tick problem
 

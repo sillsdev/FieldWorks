@@ -1,14 +1,10 @@
-// Copyright (c) 2007-2013 SIL International
+// Copyright (c) 2007-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ProgressDialogWithTask.cs
-// Responsibility: TE Team
 
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
@@ -25,7 +21,7 @@ namespace SIL.FieldWorks.Common.Controls
 	/// in the background.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public class ProgressDialogWithTask : IThreadedProgress, IFWDisposable
+	public class ProgressDialogWithTask : IThreadedProgress, IDisposable
 	{
 		/// <summary>
 		/// Occurs when [canceling].
@@ -90,8 +86,6 @@ namespace SIL.FieldWorks.Common.Controls
 			m_worker.RunWorkerCompleted += m_worker_RunWorkerCompleted;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="m_worker gets disposed in Dispose()")]
 		private void InitOnOwnerThread()
 		{
 			if (m_synchronizeInvoke != null && m_synchronizeInvoke.InvokeRequired)
@@ -787,8 +781,6 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "owner is a reference")]
 		private void m_progressDialog_FormClosing(object sender, FormClosingEventArgs e)
 		{
 			if (m_worker.IsBusy)

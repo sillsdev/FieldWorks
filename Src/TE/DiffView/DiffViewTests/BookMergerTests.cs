@@ -1,25 +1,18 @@
-﻿// Copyright (c) 2004-2013 SIL International
+﻿// Copyright (c) 2004-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: BookMergerTests.cs
-// Responsibility: TE Team
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-
 using NUnit.Framework;
 
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Test.TestUtils;
 using SIL.FieldWorks.Common.ScriptureUtils;
-using SILUBS.SharedScrUtils;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Scripture;
+using SIL.CoreImpl.Text;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.TE
@@ -12750,11 +12743,10 @@ namespace SIL.FieldWorks.TE
 			IScrTxtPara para = (putPicInRev ? paraRev : paraCur);
 
 			// Add picture to revision.
-			ITsStrFactory factory = TsStrFactoryClass.Create();
 			using (DummyFileMaker fileMaker = new DummyFileMaker("junk.jpg", true))
 			{
 				ICmPicture pict = Cache.ServiceLocator.GetInstance<ICmPictureFactory>().Create(fileMaker.Filename,
-					factory.MakeString("Test picture", Cache.DefaultVernWs),
+					TsStringUtils.MakeString("Test picture", Cache.DefaultVernWs),
 					CmFolderTags.LocalPictures);
 
 				para.Contents = pict.InsertORCAt(para.Contents, picPos);
@@ -24786,7 +24778,7 @@ namespace SIL.FieldWorks.TE
 				  para1Curr, ichMinCurr, ichLimCurr, para1Rev, ichMinRev, ichLimRev);
 
 			// Delete the paragraph from the section contents to simulate editing
-			sectionCurr.ContentOA[0].Contents = Cache.TsStrFactory.MakeString(string.Empty,
+			sectionCurr.ContentOA[0].Contents = TsStringUtils.EmptyString(
 				Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle);
 
 			m_bookMerger.CallRecalculateDifferences();

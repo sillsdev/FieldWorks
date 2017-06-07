@@ -1,9 +1,7 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: FwNewLangProject.cs
-// Responsibility: TE Team
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -12,6 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using SIL.CoreImpl;
+using SIL.CoreImpl.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Drawing;
 using SIL.FieldWorks.Common.FwUtils;
@@ -29,7 +28,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	/// FwNewLangProject dialog.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public class FwNewLangProject : Form, IFWDisposable
+	public class FwNewLangProject : Form
 	{
 		#region Data members
 		private bool m_fIgnoreClose;
@@ -705,7 +704,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					m_fIgnoreClose = true;
 					DialogResult = DialogResult.Cancel;
 				}
-				else if (e is StartupException)
+				else if (e is FdoInitializationException)
 				{
 					MessageBox.Show(string.Format(FwCoreDlgs.kstidErrorNewDb, e.Message),
 						FwUtils.ksSuiteName);
@@ -927,7 +926,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				Enumerable.Empty<CoreWritingSystemDefinition>(), Enumerable.Empty<CoreWritingSystemDefinition>(), Enumerable.Empty<CoreWritingSystemDefinition>());
 			IEnumerable<CoreWritingSystemDefinition> newWritingSystems;
 			if (WritingSystemPropertiesDialog.ShowNewDialog(this, null, m_wsManager, wsContainer, m_helpTopicProvider, (IApp) m_helpTopicProvider,
-				null, false, defaultName, out newWritingSystems))
+				false, defaultName, out newWritingSystems))
 			{
 				UpdateLanguageCombos();
 				string selectedWsId = newWritingSystems.First().Id;

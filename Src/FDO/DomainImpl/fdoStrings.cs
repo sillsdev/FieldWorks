@@ -21,10 +21,10 @@ using System.Xml;
 using System.Diagnostics;
 using System.Xml.Linq;
 
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Utils;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Text;
 
 namespace SIL.FieldWorks.FDO.DomainImpl
 {
@@ -65,10 +65,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// <summary>
 		/// Allows iterating over the available alternatives. Nb: VirtualStringAccessor does not implement.
 		/// </summary>
-		/// <param name="iws"></param>
-		/// <param name="_ws"></param>
-		/// <returns></returns>
-		public abstract ITsString GetStringFromIndex(int iws, out int _ws);
+		public abstract ITsString GetStringFromIndex(int iws, out int ws);
 
 		/// <summary>
 		/// Allows iterating over the available alternatives. Nb: VirtualStringAccessor does not implement.
@@ -88,9 +85,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// <summary>
 		/// Set an alternative by writing system.
 		/// </summary>
-		/// <param name="ws"></param>
-		/// <param name="_tss"></param>
-		public abstract void set_String(int ws, ITsString _tss);
+		public abstract void set_String(int ws, ITsString tss);
 		public abstract int[] AvailableWritingSystemIds { get;}
 
 		#endregion
@@ -115,7 +110,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			get
 			{
-				return TsStringUtils.MakeTss(Strings.ksStars, m_object.Cache.WritingSystemFactory.UserWs);
+				return TsStringUtils.MakeString(Strings.ksStars, m_object.Cache.WritingSystemFactory.UserWs);
 			}
 		}
 
@@ -163,7 +158,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// <param name="val"></param>
 		public void set_String(int ws, string val)
 		{
-			set_String(ws, m_object.Cache.TsStrFactory.MakeString(val, ws));
+			set_String(ws, TsStringUtils.MakeString(val, ws));
 		}
 
 
@@ -302,7 +297,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			var bestWs = WritingSystemServices.ActualWs(m_object.Cache, ws, m_object.Hvo, m_flid);
 			return (bestWs == 0 ? null : get_String(bestWs)) ??
-				   m_object.Cache.TsStrFactory.MakeString(Strings.ksStars, m_object.Cache.WritingSystemFactory.UserWs);
+				   TsStringUtils.MakeString(Strings.ksStars, m_object.Cache.WritingSystemFactory.UserWs);
 		}
 	}
 
@@ -377,18 +372,18 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// <summary>
 		/// 'reader' is the main property node.
 		/// </summary>
-		internal void LoadFromDataStoreInternal(XElement reader, ILgWritingSystemFactory wsf, ITsStrFactory tsf)
+		internal void LoadFromDataStoreInternal(XElement reader, ILgWritingSystemFactory wsf)
 		{
 			if (!reader.HasElements)
 				return;
 
-			FromXml(reader, wsf, tsf);
+			FromXml(reader, wsf);
 		}
 
 		/// <summary>
 		/// Reconstitute data.
 		/// </summary>
-		protected virtual void FromXml(XElement reader, ILgWritingSystemFactory wsf, ITsStrFactory tsf)
+		protected virtual void FromXml(XElement reader, ILgWritingSystemFactory wsf)
 		{
 			foreach (var aStrNode in reader.Elements("AStr"))
 			{
@@ -464,7 +459,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		public override ITsString get_String(int ws)
 		{
 			ITsString tss;
-			return TryGetValue(ws, out tss) ? tss : m_object.Cache.TsStrFactory.EmptyString(ws);
+			return TryGetValue(ws, out tss) ? tss : TsStringUtils.EmptyString(ws);
 		}
 
 		/// <summary>
@@ -621,7 +616,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 						 && srcAlt != null && srcAlt.Length != 0
 						 && !myAlt.Equals(srcAlt))
 				{
-					var newBldr = m_object.Cache.TsStrFactory.GetIncBldr();
+					ITsIncStrBldr newBldr = TsStringUtils.MakeIncStrBldr();
 					newBldr.AppendTsString(get_String(ws));
 					newBldr.Append(sep);
 					newBldr.AppendTsString(source.get_String(ws));
@@ -908,12 +903,12 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			writer.WriteEndElement();
 		}
 
-		protected override void FromXml(XElement reader, ILgWritingSystemFactory wsf, ITsStrFactory tsf)
+		protected override void FromXml(XElement reader, ILgWritingSystemFactory wsf)
 		{
 			foreach (var aUniNode in reader.Elements("AUni"))
 			{
 				ITsString tss;
-				int wsHvo = ReadMultiUnicodeAlternative(aUniNode, wsf, tsf, out tss);
+				int wsHvo = ReadMultiUnicodeAlternative(aUniNode, wsf, out tss);
 				// Throwing out a string with a duplicate ws is probably better than crashing
 				// and preventing a db from being opened.  This should never happen, but there's
 				// at least one converted project that has had this occur.
@@ -923,7 +918,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			}
 		}
 
-		static internal int ReadMultiUnicodeAlternative(XElement aUniNode, ILgWritingSystemFactory wsf, ITsStrFactory tsf, out ITsString tss)
+		internal static int ReadMultiUnicodeAlternative(XElement aUniNode, ILgWritingSystemFactory wsf, out ITsString tss)
 		{
 			tss = null;
 			var sValue = aUniNode.Value;
@@ -947,7 +942,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			if (wsHvo == 0)
 				return 0;
 			var text = Icu.Normalize(sValue, Icu.UNormalizationMode.UNORM_NFD);
-			tss = tsf.MakeString(text, wsHvo);
+			tss = TsStringUtils.MakeString(text, wsHvo);
 			return wsHvo;
 		}
 	}

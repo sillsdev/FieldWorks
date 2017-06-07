@@ -1,11 +1,6 @@
-// Copyright (c) 2002-2013 SIL International
+// Copyright (c) 2002-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: CmObject.cs
-// Responsibility: Randy Regnier
-// Last reviewed: never
-//
 //
 // <remarks>
 // Implementation of:
@@ -17,15 +12,16 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Xml; // MemoryStream.
 using System.Xml.Linq;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.Cellar;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
@@ -487,7 +483,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			get
 			{
-				return m_cache.TsStrFactory.MakeString(ShortName, m_cache.DefaultAnalWs);
+				return TsStringUtils.MakeString(ShortName, m_cache.DefaultAnalWs);
 			}
 		}
 
@@ -511,7 +507,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			get
 			{
-				return Cache.TsStrFactory.MakeString(ShortName + " - " + ClassName + " " + Hvo.ToString(),
+				return TsStringUtils.MakeString(ShortName + " - " + ClassName + " " + Hvo,
 					Cache.DefaultUserWs);
 			}
 		}
@@ -743,8 +739,6 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// <param name="fLoseNoStringData"></param>
 		/// <param name="flidList">List of property flids to consider for merging</param>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification="See TODO-Linux comment")]
 		public void MergeSelectedPropertiesOfObject(ICmObject objSrc, bool fLoseNoStringData, int[] flidList)
 		{
 			var mdc = (IFwMetaDataCacheManaged)m_cache.MetaDataCache;
@@ -1168,7 +1162,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			cmObject.EnsureCompleteIncomingRefs();
 			// FWR-2969 If merging senses, m_incomingRefs will sometimes get changed
 			// by ReplaceAReference.
-			var refs = new Set<IReferenceSource>(cmObject.m_incomingRefs);
+			var refs = new HashSet<IReferenceSource>(cmObject.m_incomingRefs);
 			foreach (var source in refs)
 			{
 				source.ReplaceAReference(objOld, objNew);
@@ -2267,6 +2261,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			var seq = GetNonModelPropertyForSDA(flid);
 			if (seq is IFdoList<ICmObject>)
 				((IFdoList<ICmObject>)seq).Replace(start, numberToDelete, thingsToAdd);
+			else if (seq is IFdoList<ICmPossibility>)
+				((IFdoList<ICmPossibility>)seq).Replace(start, numberToDelete, thingsToAdd);
 			else
 				throw new InvalidOperationException("Attempted to perform Replace on a property that is not a known sequence: " + flid);
 		}
@@ -3190,7 +3186,6 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			//var servLoc = Cache.ServiceLocator;
 			var mdc = loadingServices.m_mdcManaged;
 			var wsf = loadingServices.m_wsf;
-			var tsf = loadingServices.m_tsf;
 			var uowService = loadingServices.m_uowService;
 			var surrRepos = loadingServices.m_surrRepository;
 			var cmObjRepos = loadingServices.m_cmObjRepository;
@@ -3281,11 +3276,11 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 						break;
 					case CellarPropertyType.MultiString:
 						data = new MultiStringAccessor(this, flid);
-						((MultiAccessor)data).LoadFromDataStoreInternal(customPropertyElement, wsf, tsf);
+						((MultiAccessor)data).LoadFromDataStoreInternal(customPropertyElement, wsf);
 						break;
 					case CellarPropertyType.MultiUnicode:
 						data = new MultiUnicodeAccessor(this, flid);
-						((MultiAccessor)data).LoadFromDataStoreInternal(customPropertyElement, wsf, tsf);
+						((MultiAccessor)data).LoadFromDataStoreInternal(customPropertyElement, wsf);
 						break;
 					case CellarPropertyType.OwningCollection:
 						data = new FdoOwningCollection<ICmObject>(

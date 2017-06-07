@@ -7,12 +7,12 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Xml.Linq;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Cellar;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.Utils;
+using SIL.Xml;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -43,17 +43,17 @@ namespace SIL.FieldWorks.XWorks
 			{
 				if (xnLayoutType.Name.LocalName != "layoutType")
 					continue;
-				var sLabel = XmlUtils.GetAttributeValue(xnLayoutType, "label");
+				var sLabel = XmlUtils.GetOptionalAttributeValue(xnLayoutType, "label");
 				if (sLabel == "$wsName") // if the label for the layout matches $wsName then this is a reversal index layout
 				{
-					string sLayout = XmlUtils.GetAttributeValue(xnLayoutType, "layout");
+					string sLayout = XmlUtils.GetOptionalAttributeValue(xnLayoutType, "layout");
 					Debug.Assert(sLayout.EndsWith("-$ws"));
 					bool fReversalIndex = true;
 					foreach (var config in xnLayoutType.Elements())
 					{
 						if (config.Name.LocalName != "configure")
 							continue;
-						var sClass = XmlUtils.GetAttributeValue(config, "class");
+						var sClass = XmlUtils.GetOptionalAttributeValue(config, "class");
 						if (sClass != "ReversalIndexEntry")
 						{
 							fReversalIndex = false;
@@ -76,7 +76,8 @@ namespace SIL.FieldWorks.XWorks
 				else
 				{
 					var rgltnStyle = BuildLayoutTree(xnLayoutType, converter);
-					converter.AddDictionaryTypeItem(xnLayoutType, rgltnStyle);
+					if (rgltnStyle.Count > 0)
+						converter.AddDictionaryTypeItem(xnLayoutType, rgltnStyle);
 				}
 			}
 		}
@@ -93,7 +94,7 @@ namespace SIL.FieldWorks.XWorks
 				{
 					if (config.Name.LocalName != "configure")
 						continue;
-					var sInternalLayout = XmlUtils.GetAttributeValue(config, "layout");
+					var sInternalLayout = XmlUtils.GetOptionalAttributeValue(config, "layout");
 					Debug.Assert(sInternalLayout.EndsWith("-$ws"));
 					if (config.HasAttributes)
 						config.Attribute("layout").Value = sInternalLayout.Replace("$ws", sWsTag);
@@ -114,10 +115,13 @@ namespace SIL.FieldWorks.XWorks
 				if (config.Name.LocalName != "configure")
 					continue;
 				var ltn = BuildMainLayout(config, converter);
-				if (XmlUtils.GetOptionalBooleanAttributeValue(config, "hideConfig", false))
-					treeNodeList.AddRange(Enumerable.Cast<XmlDocConfigureDlg.LayoutTreeNode>(ltn.Nodes));
-				else
-					treeNodeList.Add(ltn);
+				if (ltn != null)
+				{
+					if (XmlUtils.GetOptionalBooleanAttributeValue(config, "hideConfig", false))
+						treeNodeList.AddRange(Enumerable.Cast<XmlDocConfigureDlg.LayoutTreeNode>(ltn.Nodes));
+					else
+						treeNodeList.Add(ltn);
+				}
 			}
 			return treeNodeList;
 		}
@@ -133,9 +137,13 @@ namespace SIL.FieldWorks.XWorks
 			var layoutName = mainLayoutNode.LayoutName;
 			var layout = converter.GetLayoutElement(className, layoutName);
 			if (layout == null)
-				throw new Exception("Cannot configure layout " + layoutName + " of class " + className + " because it does not exist");
+			{
+				var msg = String.Format("Cannot configure layout {0} of class {1} because it does not exist",layoutName, className);
+				converter.LogConversionError(msg);
+				return null;
+			}
 			mainLayoutNode.ParentLayout = layout;	// not really the parent layout, but the parent of this node's children
-			string sVisible = XmlUtils.GetAttributeValue(layout, "visibility");
+			string sVisible = XmlUtils.GetOptionalAttributeValue(layout, "visibility");
 			mainLayoutNode.Checked = sVisible != "never";
 			AddChildNodes(layout, mainLayoutNode, mainLayoutNode.Nodes.Count, converter);
 			mainLayoutNode.OriginalNumberOfSubnodes = mainLayoutNode.Nodes.Count;
@@ -145,7 +153,6 @@ namespace SIL.FieldWorks.XWorks
 		internal static void AddChildNodes(XElement layout, XmlDocConfigureDlg.LayoutTreeNode ltnParent, int iStart, ILayoutConverter converter)
 		{
 			bool fMerging = iStart < ltnParent.Nodes.Count;
-			int iNode = iStart;
 			string className = XmlUtils.GetManditoryAttributeValue(layout, "class");
 			var nodes = PartGenerator.GetGeneratedChildren(layout, converter.Cache,
 																						new[] { "ref", "label" });
@@ -233,7 +240,6 @@ namespace SIL.FieldWorks.XWorks
 					{
 						converter.LayoutLevels.Pop();
 					}
-					++iNode;
 				}
 			}
 		}
@@ -242,9 +248,6 @@ namespace SIL.FieldWorks.XWorks
 		/// Walk the tree of child nodes, storing information for each &lt;obj&gt; or &lt;seq&gt;
 		/// node.
 		/// </summary>
-		/// <param name="xmlNodeList"></param>
-		/// <param name="className"></param>
-		/// <param name="ltn"></param>
 		private static void ProcessChildNodes(IEnumerable<XElement> xmlNodeList, string className, XmlDocConfigureDlg.LayoutTreeNode ltn, ILayoutConverter converter)
 		{
 			foreach (var xn in xmlNodeList)
@@ -286,7 +289,7 @@ namespace SIL.FieldWorks.XWorks
 				if (sField == "VisibleComplexFormBackRefs" || sField == "ComplexFormsNotSubentries")
 				{
 					//The existence of the attribute is important for this setting, not its value!
-					var sShowAsIndentedPara = XmlUtils.GetAttributeValue(ltn.Configuration, "showasindentedpara");
+					var sShowAsIndentedPara = XmlUtils.GetOptionalAttributeValue(ltn.Configuration, "showasindentedpara");
 					ltn.ShowComplexFormParaConfig = !String.IsNullOrEmpty(sShowAsIndentedPara);
 				}
 			}

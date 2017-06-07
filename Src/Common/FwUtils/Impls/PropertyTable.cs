@@ -1,21 +1,18 @@
-// Copyright (c) 2003-2015 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: PropertyTable.cs
-// Authorship History: John Hatton
 
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
-using System.IO;
 using System.Security;
-using System.Threading;
 using System.Windows.Forms;
 using System.Xml.Serialization;
+using System.IO;
+using System.Threading;		// for Monitor (dlh)
+using System.Text;
 using SIL.CoreImpl;
-using SIL.Utils;
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.Common.FwUtils.Impls
 {
@@ -23,9 +20,7 @@ namespace SIL.FieldWorks.Common.FwUtils.Impls
 	/// Table of properties, some of which are persisted, and some that are not.
 	/// </summary>
 	[Serializable]
-	[SuppressMessage("Gendarme.Rules.Correctness", "DisposableFieldsShouldBeDisposedRule",
-		Justification = "variable is a reference; it is owned by parent")]
-	internal sealed class PropertyTable : IPropertyTable
+	internal sealed class PropertyTable : IPropertyTable, IDisposable
 	{
 		private IPublisher Publisher { get; set; }
 
@@ -318,7 +313,7 @@ namespace SIL.FieldWorks.Common.FwUtils.Impls
 		{
 			if (!Monitor.TryEnter(m_properties))
 			{
-				MiscUtils.ErrorBeep();
+				FwUtils.ErrorBeep();
 				TraceVerboseLine(">>>>>>>*****  colision: <A>  ********<<<<<<<<<<<");
 				Monitor.Enter(m_properties);
 			}
@@ -357,7 +352,7 @@ namespace SIL.FieldWorks.Common.FwUtils.Impls
 		}
 
 		/// <summary>
-		/// Get the property if type "T"
+		/// Get the property of type "T"
 		/// </summary>
 		/// <typeparam name="T">Type of property to return</typeparam>
 		/// <param name="name">Name of property to return</param>
@@ -395,7 +390,7 @@ namespace SIL.FieldWorks.Common.FwUtils.Impls
 		{
 			if (!Monitor.TryEnter(m_properties))
 			{
-				MiscUtils.ErrorBeep();
+				FwUtils.ErrorBeep();
 				TraceVerboseLine(">>>>>>>*****  colision: <A>  ********<<<<<<<<<<<");
 				Monitor.Enter(m_properties);
 			}

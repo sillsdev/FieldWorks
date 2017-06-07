@@ -9,7 +9,7 @@ BUILD_PRODUCT=testViews
 BUILD_EXTENSION=exe
 BUILD_REGSVR=0
 
-DEFS=$(DEFS) /DGR_FW /DVIEWSDLL
+DEFS=$(DEFS) /DGR_FW /DVIEWSDLL /DGRAPHITE2_STATIC
 
 UNITPP_INC=$(BUILD_ROOT)\Include\unit++
 VIEWS_SRC=$(BUILD_ROOT)\Src\Views
@@ -17,10 +17,11 @@ VIEWS_LIB_SRC=$(BUILD_ROOT)\Src\Views\Lib
 VIEWSTEST_SRC=$(BUILD_ROOT)\Src\Views\Test
 GENERIC_SRC=$(BUILD_ROOT)\Src\Generic
 APPCORE_SRC=$(BUILD_ROOT)\Src\AppCore
-FWKERNELTEST_SRC=$(BUILD_ROOT)\Src\Kernel\Test
+GR2_INC=$(BUILD_ROOT)\Lib\src\graphite2\include
+DEBUGPROCS_SRC=$(BUILD_ROOT)\src\DebugProcs
 
 # Set the USER_INCLUDE environment variable.
-UI=$(UNITPP_INC);$(VIEWSTEST_SRC);$(VIEWS_SRC);$(VIEWS_LIB_SRC);$(GENERIC_SRC);$(APPCORE_SRC);$(FWKERNELTEST_SRC)
+UI=$(UNITPP_INC);$(VIEWSTEST_SRC);$(VIEWS_SRC);$(VIEWS_LIB_SRC);$(GENERIC_SRC);$(APPCORE_SRC);$(GR2_INC);$(DEBUGPROCS_SRC)
 
 !IF "$(USER_INCLUDE)"!=""
 USER_INCLUDE=$(UI);$(USER_INCLUDE)
@@ -37,7 +38,7 @@ PATH=$(COM_OUT_DIR);$(PATH)
 
 LINK_OPTS=$(LINK_OPTS:/subsystem:windows=/subsystem:console) /LIBPATH:"$(BUILD_ROOT)\Lib\$(BUILD_CONFIG)"
 CPPUNIT_LIBS=unit++.lib
-LINK_LIBS=$(CPPUNIT_LIBS) Generic.lib xmlparse.lib $(LINK_LIBS)
+LINK_LIBS=$(CPPUNIT_LIBS) Generic.lib xmlparse.lib Usp10.lib graphite2.lib $(LINK_LIBS)
 
 # === Object Lists ===
 
@@ -63,16 +64,30 @@ OBJ_VIEWSTESTSUITE=\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Views\autopch\VwPrintContext.obj\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Views\autopch\VwBaseDataAccess.obj\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Views\autopch\VwCacheDa.obj\
+	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Views\autopch\ActionHandler.obj\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Views\autopch\VwUndo.obj\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Views\autopch\VwBaseVirtualHandler.obj\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Views\autopch\VwLazyBox.obj\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Views\autopch\VwPattern.obj\
-	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Views\autopch\WriteXml.obj\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Views\autopch\FwStyledText.obj\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Views\autopch\VwSynchronizer.obj\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Views\autopch\VwTextStore.obj\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Views\autopch\VwLayoutStream.obj\
+	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Views\autopch\UniscribeEngine.obj\
+	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Views\autopch\UniscribeSegment.obj\
+	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Views\autopch\RomRenderEngine.obj\
+	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Views\autopch\RomRenderSegment.obj\
+	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Views\autopch\GraphiteEngine.obj\
+	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Views\autopch\GraphiteSegment.obj\
+	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Views\autopch\LgLineBreaker.obj\
+	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Views\autopch\LgUnicodeCollater.obj\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Views\autopch\ViewsGlobals.obj\
+	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Views\autopch\TsString.obj\
+	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Views\autopch\TsTextProps.obj\
+	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Views\autopch\TsStrFactory.obj\
+	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Views\autopch\TsPropsFactory.obj\
+	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Views\autopch\TextServ.obj\
+	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Views\autopch\TextProps1.obj\
 
 
 OBJ_ALL=$(OBJ_VIEWSTESTSUITE)
@@ -102,10 +117,12 @@ $(INT_DIR)\genpch\Collection.obj: $(VIEWSTEST_SRC)\Collection.cpp
 
 $(VIEWSTEST_SRC)\Collection.cpp: $(VIEWSTEST_SRC)\DummyBaseVc.h $(VIEWSTEST_SRC)\DummyRootsite.h\
  $(VIEWSTEST_SRC)\testViews.h\
- $(FWKERNELTEST_SRC)\MockLgWritingSystemFactory.h\
- $(FWKERNELTEST_SRC)\MockLgWritingSystem.h\
+ $(VIEWSTEST_SRC)\MockLgWritingSystemFactory.h\
+ $(VIEWSTEST_SRC)\MockLgWritingSystem.h\
  $(VIEWSTEST_SRC)\TestNotifier.h\
+ $(VIEWSTEST_SRC)\TestUndoStack.h\
  $(VIEWSTEST_SRC)\TestLayoutPage.h\
+ $(VIEWSTEST_SRC)\TestLgCollatingEngine.h\
  $(VIEWSTEST_SRC)\TestVirtualHandlers.h\
  $(VIEWSTEST_SRC)\TestVwTxtSrc.h\
  $(VIEWSTEST_SRC)\TestVwParagraph.h\
@@ -121,6 +138,15 @@ $(VIEWSTEST_SRC)\Collection.cpp: $(VIEWSTEST_SRC)\DummyBaseVc.h $(VIEWSTEST_SRC)
  $(VIEWSTEST_SRC)\TestVwGraphics.h \
  $(VIEWSTEST_SRC)\TestVwTextBoxes.h \
  $(VIEWSTEST_SRC)\TestVwTableBox.h \
-
+ $(VIEWSTEST_SRC)\TestLgLineBreaker.h\
+ $(VIEWSTEST_SRC)\TestUniscribeEngine.h\
+ $(VIEWSTEST_SRC)\TestRomRenderEngine.h\
+ $(VIEWSTEST_SRC)\TestGraphiteEngine.h\
+ $(VIEWSTEST_SRC)\RenderEngineTestBase.h\
+ $(VIEWSTEST_SRC)\MockRenderEngineFactory.h\
+ $(VIEWSTEST_SRC)\TestTsStrBldr.h\
+ $(VIEWSTEST_SRC)\TestTsString.h\
+ $(VIEWSTEST_SRC)\TestTsPropsBldr.h\
+ $(VIEWSTEST_SRC)\TestTsTextProps.h
 	$(DISPLAY) Collecting tests for $(BUILD_PRODUCT).$(BUILD_EXTENSION)
 	$(COLLECT) $** $(VIEWSTEST_SRC)\Collection.cpp

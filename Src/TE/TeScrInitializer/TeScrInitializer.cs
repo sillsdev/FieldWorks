@@ -8,14 +8,15 @@ using System.Diagnostics;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.CoreImpl;
+using SIL.CoreImpl.Scripture;
 using System.Collections.Generic;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SILUBS.SharedScrUtils;
 using System;
+using SIL.CoreImpl.Text;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.TE
@@ -585,14 +586,14 @@ namespace SIL.FieldWorks.TE
 				{
 					IStFootnote footnote = currentFootnote.footnote;
 
-					byte[] footnoteObjData = TsStringUtils.GetObjData(footnote.Guid, (byte)FwObjDataTypes.kodtNameGuidHot);
+					byte[] footnoteObjData = TsStringUtils.GetObjData(footnote.Guid, FwObjDataTypes.kodtNameGuidHot);
 					propsBldr.SetStrPropValueRgch((int)FwTextPropType.ktptObjData, footnoteObjData, footnoteObjData.Length);
 
 					bldr.SetProperties(orc.ich, orc.ich + 1, propsBldr.GetTextProps());
 					currentFootnote.location = orc; // No longer an orphan :-)
 					iFootnote++; // We're now using this one
 
-					issuesToReport.Add(String.Format(Properties.Resources.kstidConnectedFootnoteToMarker, orc.ToString(m_scr)));
+					issuesToReport.Add(string.Format(Properties.Resources.kstidConnectedFootnoteToMarker, orc.ToString(m_scr)));
 				}
 
 				para.Contents = bldr.GetString();

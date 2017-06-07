@@ -3,7 +3,6 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using SIL.FieldWorks.Common.Framework.DetailControls;
-using System.Diagnostics.CodeAnalysis;
 
 namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 {
@@ -11,8 +10,6 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 	internal sealed class RecordReferenceVectorSlice : CustomReferenceVectorSlice
 	{
 		/// <summary />
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "RecordReferenceVectorLauncher gets added to panel's Controls collection and disposed there")]
 		public RecordReferenceVectorSlice()
 			: base(new RecordReferenceVectorLauncher())
 		{

@@ -1,10 +1,6 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: MGATests.cs
-// Responsibility: Andy Black
-// Last reviewed:
 //
 // <remarks>
 // Unit tests for GlossListBox and GlossListTreeView
@@ -15,9 +11,8 @@ using System.IO;
 using System.Xml;
 using NUnit.Framework;
 using SIL.FieldWorks.FDO.FDOTests;
-using SIL.FieldWorks.Test.TestUtils;
-using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.Xml;
 
 namespace SIL.FieldWorks.LexText.Controls.MGA
 {
@@ -101,7 +96,7 @@ namespace SIL.FieldWorks.LexText.Controls.MGA
 	/// Test sets for the GlossListTreeView class.
 	/// </summary>
 	[TestFixture]
-	public class GlossListTreeViewTest : BaseTest
+	public class GlossListTreeViewTest
 	{
 		private GlossListTreeView treeViewGlossList;
 		private string sXmlFile = Path.Combine(FwDirectoryFinder.CodeDirectory,
@@ -109,9 +104,6 @@ namespace SIL.FieldWorks.LexText.Controls.MGA
 		private XmlDocument dom = new XmlDocument();
 		private string m_sTopOfList = "eticGlossList";
 
-		public GlossListTreeViewTest()
-		{
-		}
 		/// <summary>
 		///
 		/// </summary>
@@ -164,7 +156,7 @@ namespace SIL.FieldWorks.LexText.Controls.MGA
 		{
 
 			XmlNode treeTop = dom.SelectSingleNode(m_sTopOfList);
-			Assert.IsNull(XmlUtils.GetAttributeValue(treeTop, "nonExistant"), "Expected null object");
+			Assert.IsNull(XmlUtils.GetOptionalAttributeValue(treeTop, "nonExistant"), "Expected null object");
 		}
 		[Test]
 		public void TreeNodeBitmapTest()

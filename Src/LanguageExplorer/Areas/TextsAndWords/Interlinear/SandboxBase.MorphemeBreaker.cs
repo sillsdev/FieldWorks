@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -7,11 +7,14 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Windows.Forms;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
+using SIL.CoreImpl.Text;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.ObjectModel;
 using SIL.Utils;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
@@ -33,7 +36,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			int m_hvoSbWord; // HVO of the Sandbox word that will own the new morphs
 			int m_cOldMorphs;
 			int m_cNewMorphs;
-			ITsStrFactory m_tsf = TsStrFactoryClass.Create();
 			int m_wsVern = 0;
 			IMoMorphTypeRepository m_types;
 			int m_imorph = 0;
@@ -56,7 +58,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				m_input = input;
 				m_hvoSbWord = hvoSbWord;
 				m_cOldMorphs = m_sda.get_VecSize(m_hvoSbWord, ktagSbWordMorphs);
-				ITsStrFactory m_tsf = TsStrFactoryClass.Create();
 				m_wsVern = wsVern;
 				m_types = m_caches.MainCache.ServiceLocator.GetInstance<IMoMorphTypeRepository>();
 				m_sandbox = sandbox;
@@ -145,11 +146,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				{
 					// This might be redundant, but it isn't expensive.
 					m_cda.CacheStringAlt(hvoSbForm, ktagSbNamedObjName, m_wsVern,
-						m_tsf.MakeString(realForm, m_wsVern));
+						TsStringUtils.MakeString(realForm, m_wsVern));
 					m_cda.CacheStringProp(hvoSbMorph, ktagSbMorphPrefix,
-						m_tsf.MakeString(mmt.Prefix, m_wsVern));
+						TsStringUtils.MakeString(mmt.Prefix, m_wsVern));
 					m_cda.CacheStringProp(hvoSbMorph, ktagSbMorphPostfix,
-						m_tsf.MakeString(mmt.Postfix, m_wsVern));
+						TsStringUtils.MakeString(mmt.Postfix, m_wsVern));
 					//m_cda.CacheIntProp(hvoSbMorph, ktagSbMorphClsid, clsidForm);
 					//m_cda.CacheIntProp(hvoSbMorph, ktagSbMorphRealType, mmt.Hvo);
 					// Fill in defaults.
@@ -487,7 +488,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				int ichMatch = 0;
 				do
 				{
-					ichMatch = sourceString.IndexOfAny(SIL.Utils.Unicode.SpaceChars, ichMatch);
+					ichMatch = sourceString.IndexOfAny(Unicode.SpaceChars, ichMatch);
 					if (ichMatch != -1)
 					{
 						whiteSpaceOffsets.Add(ichMatch);
@@ -594,12 +595,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				string origInput = m_input;
 				m_input = m_input.Trim();
 				// first see if the selection was at the end of the input string on a whitespace
-				if (origInput.LastIndexOfAny(SIL.Utils.Unicode.SpaceChars) == (origInput.Length - 1) &&
+				if (origInput.LastIndexOfAny(Unicode.SpaceChars) == (origInput.Length - 1) &&
 					m_ichSelInput == origInput.Length)
 				{
 					m_ichSelInput = m_input.Length;	// adjust to the new length
 				}
-				else if (origInput.IndexOfAny(SIL.Utils.Unicode.SpaceChars) == 0 &&
+				else if (origInput.IndexOfAny(Unicode.SpaceChars) == 0 &&
 					m_ichSelInput >= 0)
 				{
 					// if we trimmed something from the start of our input string
@@ -637,7 +638,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					rgsli[0].tag = ktagSbMorphForm; // leave other slots zero
 
 				// Set writing system of the selection (LT-16593).
-				var propsBuilder = TsPropsBldrClass.Create();
+				var propsBuilder = TsStringUtils.MakePropsBldr();
 				propsBuilder.SetIntPropValues((int)FwTextPropType.ktptWs,
 					(int)FwTextPropVar.ktpvDefault, m_wsVern);
 				try
@@ -689,7 +690,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 	/// Again, this is basically done by figuring the combined morphemes, deleting the space,
 	/// then figuring the resulting morphemes (and restoring the selection).
 	/// </summary>
-	internal class SandboxEditMonitor : FwDisposableBase, IVwNotifyChange
+	internal class SandboxEditMonitor : DisposableBase, IVwNotifyChange
 	{
 		SandboxBase m_sandbox; // The sandbox we're working from.
 		string m_morphString; // The representation of the current morphemes as a simple string.
@@ -781,8 +782,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			int ws = this.VernWsForPrimaryMorphemeLine;
 			m_ichSel = -1;
 
-			ITsStrBldr builder = TsStrBldrClass.Create();
-			ITsString space = TsStringUtils.MakeTss(" ", ws);
+			ITsStrBldr builder = TsStringUtils.MakeStrBldr();
+			ITsString space = TsStringUtils.MakeString(" ", ws);
 			ISilDataAccess sda = m_sandbox.Caches.DataAccess;
 
 			ITsString tssWordform = m_sandbox.SbWordForm(ws);
@@ -829,7 +830,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private static bool IsBaseWordPhrase(string baseWord)
 		{
 
-			bool fBaseWordIsPhrase = baseWord.IndexOfAny(SIL.Utils.Unicode.SpaceChars) != -1;
+			bool fBaseWordIsPhrase = baseWord.IndexOfAny(Unicode.SpaceChars) != -1;
 			return fBaseWordIsPhrase;
 		}
 
@@ -1081,7 +1082,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			get { return m_monitorPropChanges; }
 		}
 
-		#region FwDisposableBase
+		#region DisposableBase
 
 		protected override void DisposeManagedResources()
 		{
@@ -1103,7 +1104,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 	#endregion SandboxEditMonitor class
 
-	internal class SandboxEditMonitorHelper : FwDisposableBase
+	internal class SandboxEditMonitorHelper : DisposableBase
 	{
 		internal SandboxEditMonitorHelper(SandboxEditMonitor editMonitor, bool fSuspendMonitor)
 		{

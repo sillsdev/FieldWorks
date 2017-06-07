@@ -11,9 +11,9 @@
 using System;
 using System.Collections.Generic;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Text;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.FDO.FDOTests
 {
@@ -73,7 +73,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			// This is a test string for CopyObject tests.
 
 			int hvoVernWs = Cache.DefaultVernWs;
-			m_txtPara.Contents = TsStringUtils.MakeTss("This is a test string for CopyObject tests.", hvoVernWs);
+			m_txtPara.Contents = TsStringUtils.MakeString("This is a test string for CopyObject tests.", hvoVernWs);
 		}
 
 		#endregion
@@ -88,7 +88,6 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			var m_DsConstChartFactory = m_servLoc.GetInstance<IDsConstChartFactory>();
 			var rowFact = m_servLoc.GetInstance<IConstChartRowFactory>();
-			var tssFact = Cache.TsStrFactory;
 			// easiest thing to put in a test chart are tags
 			var tagFact = m_servLoc.GetInstance<IConstChartTagFactory>();
 			var template = Cache.LangProject.GetDefaultChartTemplate();
@@ -97,9 +96,9 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				Cache.LangProject.DiscourseDataOA,
 				m_stTxt,
 				template);
-			var row1 = rowFact.Create(srcChart, 0, tssFact.MakeString("1a", m_ws_en));
-			var row2 = rowFact.Create(srcChart, 1, tssFact.MakeString("1b", m_ws_en));
-			var row3 = rowFact.Create(srcChart, 2, tssFact.MakeString("1c", m_ws_en));
+			var row1 = rowFact.Create(srcChart, 0, TsStringUtils.MakeString("1a", m_ws_en));
+			var row2 = rowFact.Create(srcChart, 1, TsStringUtils.MakeString("1b", m_ws_en));
+			var row3 = rowFact.Create(srcChart, 2, TsStringUtils.MakeString("1c", m_ws_en));
 			tagFact.Create(row1, 0, template.SubPossibilitiesOS[0], possTags.SubPossibilitiesOS[0]);
 			tagFact.Create(row1, 1, template.SubPossibilitiesOS[2], possTags.SubPossibilitiesOS[0]);
 			tagFact.Create(row2, 0, template.SubPossibilitiesOS[1], possTags.SubPossibilitiesOS[0]);
@@ -210,7 +209,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 			// Make a Wordform Object
 			var wordform = Cache.ServiceLocator.GetInstance<IWfiWordformFactory>().Create();
-			wordform.Form.VernacularDefaultWritingSystem = Cache.TsStrFactory.MakeString("rubbish", Cache.DefaultVernWs);
+			wordform.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString("rubbish", Cache.DefaultVernWs);
 			source.Add(wordform);
 
 			// SUT

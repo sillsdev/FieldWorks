@@ -4,14 +4,14 @@
 
 using System.Collections.Generic;
 using System.Xml.Linq;
-using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.FDOTests;
-using SIL.Utils;
 using NUnit.Framework;
+using SIL.CoreImpl.Cellar;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FDO;
+using SIL.Xml;
 
 namespace XMLViewsTests
 {

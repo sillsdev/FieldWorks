@@ -5,11 +5,12 @@
 using System;
 using System.Collections.Generic;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.FDO;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.Utils;
 using SIL.FieldWorks.FDO.Infrastructure;
 
@@ -81,10 +82,10 @@ namespace SIL.FieldWorks.TE.ImportTests
 			var possFactory = cache.ServiceLocator.GetInstance<ICmPossibilityFactory>();
 
 			// Initialize text.
-			ITsPropsBldr ttpBldr = TsPropsBldrClass.Create();
+			ITsPropsBldr ttpBldr = TsStringUtils.MakePropsBldr();
 			ttpBldr.SetIntPropValues((int)FwTextPropType.ktptWs,
 									 (int)FwTextPropVar.ktpvDefault, ws);
-			ITsStrBldr tsStrBldr = TsStrBldrClass.Create();
+			ITsStrBldr tsStrBldr = TsStringUtils.MakeStrBldr();
 
 			// Set possibilities on top level--"Level 1a"
 			ICmPossibility possibility1a = possFactory.Create();

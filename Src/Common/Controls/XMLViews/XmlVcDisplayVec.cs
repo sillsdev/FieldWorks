@@ -1,24 +1,22 @@
-// Copyright (c) 2011-2014 SIL International
+// Copyright (c) 2011-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: XmlVcDisplayVec.cs
-// Responsibility: GordonM
-//
-// <remarks>
-// </remarks>
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Xml.Linq;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.Text;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FwCoreDlgControls;
 using SIL.Utils;
+using SIL.Xml;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -28,8 +26,6 @@ namespace SIL.FieldWorks.Common.Controls
 	/// object whose primary purpose is to allow refactoring of this huge method.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification="m_cache is a reference")]
 	public class XmlVcDisplayVec
 	{
 		#region Member Variables
@@ -87,7 +83,6 @@ namespace SIL.FieldWorks.Common.Controls
 		}
 
 		const string strEng = "en";
-		const int kflidSenseMsa = LexSenseTags.kflidMorphoSyntaxAnalysis;
 
 		/// <summary>
 		/// The main entry point to do the work of the original method.
@@ -212,7 +207,7 @@ namespace SIL.FieldWorks.Common.Controls
 				tssBefore = SetBeforeString(specialAttrsNode, listDelimitNode);
 				// We need a line break here to force the inner pile of paragraphs to begin at
 				// the margin, rather than somewhere in the middle of the line.
-				m_vwEnv.AddString(m_cache.TsStrFactory.MakeString(StringUtils.kChHardLB.ToString(),
+				m_vwEnv.AddString(TsStringUtils.MakeString(StringUtils.kChHardLB.ToString(),
 					m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle));
 				m_vwEnv.OpenInnerPile();
 			}
@@ -311,7 +306,7 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				var sTag = CalculateAndFormatSenseLabel(hvo, ihvo, xaNum.Value);
 
-				ITsStrBldr tsb = m_cache.TsStrFactory.GetBldr();
+				ITsStrBldr tsb = TsStringUtils.MakeStrBldr();
 				tsb.Replace(0, 0, sTag, ttpNum);
 				ITsString tss = tsb.GetString();
 				m_numberPartRef = listDelimitNode;
@@ -322,12 +317,12 @@ namespace SIL.FieldWorks.Common.Controls
 		private ITsString SetBeforeString(XElement specialAttrsNode, XElement listDelimitNode)
 		{
 			ITsString tssBefore = null;
-			string sBefore = XmlUtils.GetLocalizedAttributeValue(listDelimitNode, "before", null);
+			string sBefore = StringTable.Table.LocalizeAttributeValue(XmlUtils.GetOptionalAttributeValue(listDelimitNode, "before", null));
 			if (!String.IsNullOrEmpty(sBefore) || DelayedNumberExists)
 			{
 				if (sBefore == null)
 					sBefore = String.Empty;
-				tssBefore = m_cache.TsStrFactory.MakeString(sBefore, m_cache.WritingSystemFactory.UserWs);
+				tssBefore = TsStringUtils.MakeString(sBefore, m_cache.WritingSystemFactory.UserWs);
 				tssBefore = ApplyStyleToBeforeString(listDelimitNode, tssBefore);
 				tssBefore = ApplyDelayedNumber(specialAttrsNode, tssBefore);
 			}
@@ -336,7 +331,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 		private static ITsString ApplyStyleToBeforeString(XElement listDelimitNode, ITsString tssBefore)
 		{
-			var sStyle = XmlUtils.GetAttributeValue(listDelimitNode, "beforeStyle");
+			var sStyle = XmlUtils.GetOptionalAttributeValue(listDelimitNode, "beforeStyle");
 			if (!String.IsNullOrEmpty(sStyle))
 			{
 				var bldr = tssBefore.GetBldr();
@@ -362,7 +357,7 @@ namespace SIL.FieldWorks.Common.Controls
 		private ITsTextProps SetNumberTextProperties(int wsEng, XElement listDelimitNode)
 		{
 			ITsTextProps ttpNum;
-			ITsPropsBldr tpb = TsPropsFactoryClass.Create().GetPropsBldr();
+			ITsPropsBldr tpb = TsStringUtils.MakePropsBldr();
 			// TODO: find more appropriate writing system?
 			tpb.SetIntPropValues((int) FwTextPropType.ktptWs, 0, wsEng);
 			string style = XmlUtils.GetOptionalAttributeValue(listDelimitNode, "numstyle", null);
@@ -529,6 +524,20 @@ namespace SIL.FieldWorks.Common.Controls
 					new NumberingStyleComboItem("a  b  c", "%a"),
 					new NumberingStyleComboItem("I  II  III", "%I"),
 					new NumberingStyleComboItem("i  ii  iii", "%i"),
+				};
+			}
+		}
+
+		/// <summary>Returns the list of parent sense number styles</summary>
+		public static List<NumberingStyleComboItem> SupportedParentSenseNumberStyles
+		{
+			get
+			{
+				return new List<NumberingStyleComboItem>
+				{
+					new NumberingStyleComboItem(XMLViewsStrings.ksNone, ""),
+					new NumberingStyleComboItem("Joined", "%j"),
+					new NumberingStyleComboItem("Separated by dot", "%."),
 				};
 			}
 		}

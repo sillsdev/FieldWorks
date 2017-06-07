@@ -8,17 +8,16 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.Infrastructure.Impl;
 using SIL.Utils;
 using System.Reflection;
 using Rhino.Mocks;
-using System.Collections;
+using SIL.CoreImpl.Cellar;
+using SIL.CoreImpl.Text;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.FDO.CoreTests
 {
@@ -235,7 +234,7 @@ namespace SIL.FieldWorks.FDO.CoreTests
 			Assert.AreEqual(0, Cache.LanguageProject.MainCountry.StringCount, "Wrong number of alternatives for Cache.LanguageProject.MainCountryAccessor");
 
 			// Create a good string.
-			var firstNewValue = Cache.TsStrFactory.MakeString("Mexico", english.Handle);
+			var firstNewValue = TsStringUtils.MakeString("Mexico", english.Handle);
 			using (var undoHelper = new UndoableUnitOfWorkHelper(m_actionHandler, "add MainCountry alt"))
 			{
 				Cache.LanguageProject.MainCountry.set_String(english.Handle, firstNewValue);
@@ -248,7 +247,7 @@ namespace SIL.FieldWorks.FDO.CoreTests
 			Assert.AreEqual(1, Cache.LanguageProject.MainCountry.StringCount, "Wrong number of alternatives for Cache.LanguageProject.MainCountryAccessor");
 			Assert.AreSame(firstNewValue, Cache.LanguageProject.MainCountry.get_String(english.Handle));
 
-			var secondNewValue = Cache.TsStrFactory.MakeString("USA", english.Handle);
+			var secondNewValue = TsStringUtils.MakeString("USA", english.Handle);
 			using (var undoHelper = new UndoableUnitOfWorkHelper(m_actionHandler, "add MainCountry alt"))
 			{
 				Cache.LanguageProject.MainCountry.set_String(english.Handle, secondNewValue);
@@ -350,7 +349,7 @@ namespace SIL.FieldWorks.FDO.CoreTests
 			UndoableUnitOfWorkHelper.Do("undo set meaning", "redo", Cache.ActionHandlerAccessor,
 				() =>
 				{
-					le.LiteralMeaning.AnalysisDefaultWritingSystem = Cache.TsStrFactory.MakeString("meaning", wsAnalysis);
+					le.LiteralMeaning.AnalysisDefaultWritingSystem = TsStringUtils.MakeString("meaning", wsAnalysis);
 				});
 			var mod2 = le.DateModified;
 			Assert.That(mod2, Is.GreaterThan(mod1));
@@ -372,7 +371,7 @@ namespace SIL.FieldWorks.FDO.CoreTests
 			UndoableUnitOfWorkHelper.Do("undo set residue", "redo", Cache.ActionHandlerAccessor,
 				() =>
 				{
-					ls1.ImportResidue = Cache.TsStrFactory.MakeString("residue", wsAnalysis);
+					ls1.ImportResidue = TsStringUtils.MakeString("residue", wsAnalysis);
 				});
 			var mod4 = le.DateModified;
 			Assert.That(mod4, Is.GreaterThan(mod3));
@@ -449,11 +448,11 @@ namespace SIL.FieldWorks.FDO.CoreTests
 		public void UnknownTests()
 		{
 			var userWs = Cache.WritingSystemFactory.UserWs;
-			var bldr = TsPropsBldrClass.Create();
+			var bldr = TsStringUtils.MakePropsBldr();
 			bldr.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, "Arial");
 			bldr.SetIntPropValues((int)FwTextPropType.ktptWs, 0, userWs);
 			var tppOriginal = bldr.GetTextProps();
-			bldr = TsPropsBldrClass.Create();
+			bldr = TsStringUtils.MakePropsBldr();
 			bldr.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, "Times new Roman");
 			bldr.SetIntPropValues((int)FwTextPropType.ktptWs, 0, userWs);
 			var tppNew = bldr.GetTextProps();
@@ -612,7 +611,7 @@ namespace SIL.FieldWorks.FDO.CoreTests
 			m_actionHandler.Commit();
 
 			var startValue = le.ImportResidue;
-			var secondValue = Cache.TsStrFactory.MakeString("import residue",
+			var secondValue = TsStringUtils.MakeString("import residue",
 															Cache.WritingSystemFactory.UserWs);
 			using (var undoHelper = new UndoableUnitOfWorkHelper(m_actionHandler, "Add import residue"))
 			{
@@ -632,7 +631,7 @@ namespace SIL.FieldWorks.FDO.CoreTests
 			Assert.AreEqual("(Nothing to Redo.)", m_actionHandler.GetRedoText(), "Wrong redo text.");
 
 			// Set to new value.
-			var thirdValue = Cache.TsStrFactory.MakeString("new import residue",
+			var thirdValue = TsStringUtils.MakeString("new import residue",
 														   Cache.WritingSystemFactory.UserWs);
 			using (var undoHelper = new UndoableUnitOfWorkHelper(m_actionHandler, "Change import residue"))
 			{
@@ -1060,27 +1059,6 @@ namespace SIL.FieldWorks.FDO.CoreTests
 			Assert.IsFalse(m_actionHandler.get_TasksSinceMark(false));
 		}
 
-		/// <summary>
-		/// Make sure UndoGrouper 'getter' is not yet supported at all.
-		/// </summary>
-		[Test]
-		[ExpectedException(typeof(NotSupportedException))]
-		public void get_UndoGrouperTest()
-		{
-			var grouper = m_actionHandler.UndoGrouper;
-			Assert.IsNull(grouper, "Can't get here.");
-		}
-
-		/// <summary>
-		/// Make sure UndoGrouper 'setter' is not yet supported at all.
-		/// </summary>
-		[Test]
-		[ExpectedException(typeof(NotSupportedException))]
-		public void set_UndoGrouperTest()
-		{
-			m_actionHandler.UndoGrouper = null;
-		}
-
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Test TopMarkHandle
@@ -1305,7 +1283,7 @@ namespace SIL.FieldWorks.FDO.CoreTests
 				stack2,
 				() =>
 				{
-					ls1.Gloss.AnalysisDefaultWritingSystem = Cache.TsStrFactory.MakeString("rubbish", Cache.DefaultAnalWs);
+					ls1.Gloss.AnalysisDefaultWritingSystem = TsStringUtils.MakeString("rubbish", Cache.DefaultAnalWs);
 				});
 			Assert.That(oldStack.CanUndo(), Is.False);
 			Assert.That(stack2.CanUndo(), Is.True);
@@ -1887,11 +1865,10 @@ namespace SIL.FieldWorks.FDO.CoreTests
 			var sda = Cache.DomainDataByFlid;
 			var startingValue = sda.get_BooleanProp(wf.Hvo, customCertifiedFlid);
 			var newValue = !startingValue;
-			var tsf = Cache.TsStrFactory;
 			var userWs = Cache.WritingSystemFactory.UserWs;
-			var emptyStr = tsf.EmptyString(userWs);
-			var newStringValue = tsf.MakeString("New ITsString", userWs);
-			var newUnicodeTsStringValue = tsf.MakeString("New unicode ITsString", userWs);
+			var emptyStr = TsStringUtils.EmptyString(userWs);
+			var newStringValue = TsStringUtils.MakeString("New ITsString", userWs);
+			var newUnicodeTsStringValue = TsStringUtils.MakeString("New unicode ITsString", userWs);
 			using (var undoHelper = new UndoableUnitOfWorkHelper(m_actionHandler, "set Certified"))
 			{
 				sda.SetBoolean(wf.Hvo, customCertifiedFlid, newValue);
@@ -2014,8 +1991,8 @@ namespace SIL.FieldWorks.FDO.CoreTests
 					stText.ParagraphsOS.Add(para1);
 					para2 = paraFactory.Create();
 					stText.ParagraphsOS.Add(para2);
-					para1.Contents = Cache.TsStrFactory.MakeString("First Para", Cache.DefaultVernWs);
-					para2.Contents = Cache.TsStrFactory.MakeString("Second Thing", Cache.DefaultVernWs);
+					para1.Contents = TsStringUtils.MakeString("First Para", Cache.DefaultVernWs);
+					para2.Contents = TsStringUtils.MakeString("Second Thing", Cache.DefaultVernWs);
 				});
 			// First test change merges two paragraphs.
 			UndoableUnitOfWorkHelper.Do("delete", "redo", m_actionHandler,
@@ -2025,7 +2002,7 @@ namespace SIL.FieldWorks.FDO.CoreTests
 					Cache.DomainDataByFlid.MoveString(para2.Hvo, StTxtParaTags.kflidContents, 0, "Second ".Length, "Second Thing".Length,
 						para1.Hvo, StTxtParaTags.kflidContents, 0, "First Para".Length, false);
 					// Delete " Para".
-					para1.Contents = Cache.TsStrFactory.MakeString("First Thing", Cache.DefaultVernWs);
+					para1.Contents = TsStringUtils.MakeString("First Thing", Cache.DefaultVernWs);
 					// Delete para 2 altogether.
 					stText.ParagraphsOS.RemoveAt(1);
 				});
@@ -2033,7 +2010,7 @@ namespace SIL.FieldWorks.FDO.CoreTests
 				() =>
 				{
 					// Insert a character into para1
-					para1.Contents = Cache.TsStrFactory.MakeString("First XThing", Cache.DefaultVernWs);
+					para1.Contents = TsStringUtils.MakeString("First XThing", Cache.DefaultVernWs);
 				});
 			var extensions = m_actionHandler as IActionHandlerExtensions;
 			extensions.MergeLastTwoUnitsOfWork();
@@ -2053,7 +2030,7 @@ namespace SIL.FieldWorks.FDO.CoreTests
 			// Before we can do undo or redo we need to have actually done something
 			// so here is some test data so we can do undos and redos.
 			var english = Cache.LanguageProject.CurrentAnalysisWritingSystems.First();
-			var firstNewValue = Cache.TsStrFactory.MakeString("Some Value", english.Handle);
+			var firstNewValue = TsStringUtils.MakeString("Some Value", english.Handle);
 			var actionHandlerExtensions = (IActionHandlerExtensions)m_actionHandler;
 			int didUndoOrRedoCounter = 0;
 			using (var undoHelper = new UndoableUnitOfWorkHelper(m_actionHandler, "Some Test Value"))
@@ -2118,7 +2095,7 @@ namespace SIL.FieldWorks.FDO.CoreTests
 		public void DoAtEndOfPropChanged_TasksAreDone()
 		{
 			var english = Cache.LanguageProject.CurrentAnalysisWritingSystems.First();
-			var firstNewValue = Cache.TsStrFactory.MakeString("Some Value", english.Handle);
+			var firstNewValue = TsStringUtils.MakeString("Some Value", english.Handle);
 			var actionHandlerExtensions = (IActionHandlerExtensions)m_actionHandler;
 			int doAtEndOfPropChangedAlwaysCount = 0;
 			var doAtEndOfPropChangedCount1 = 0;
@@ -2203,7 +2180,7 @@ namespace SIL.FieldWorks.FDO.CoreTests
 		public void DoAtEndOfPropChanged_RollbackAbortsTasks()
 		{
 			var english = Cache.LanguageProject.CurrentAnalysisWritingSystems.First();
-			var firstNewValue = Cache.TsStrFactory.MakeString("Some Value", english.Handle);
+			var firstNewValue = TsStringUtils.MakeString("Some Value", english.Handle);
 			var actionHandlerExtensions = (IActionHandlerExtensions)m_actionHandler;
 
 			using (var undoHelper = new UndoableUnitOfWorkHelper(m_actionHandler, "Some Test Value"))

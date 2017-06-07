@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -7,10 +7,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Xml.Linq;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.Cellar;
+using SIL.CoreImpl.Text;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.DomainImpl;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 {
@@ -829,7 +829,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 						{
 							var currentItems = (from obj in currentInternal.GetVectorProperty(flid) select obj.Guid).ToArray();
 							var foreignItems = TargetsInForignElement(element);
-							if (ArrayUtils.AreEqual(currentItems, foreignItems))
+							if (currentItems.SequenceEqual(foreignItems))
 								continue;
 							if (processChangeRecord(new FdoVectorPropertyChanged(currentObj, flid, currentItems, foreignItems)))
 								return;
@@ -895,11 +895,10 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 							if (element == null)
 								continue;
 							var wsf = currentObj.Services.WritingSystemFactory;
-							var tsf = currentObj.Cache.TsStrFactory;
 							foreach (var aStrNode in element.Elements("AUni"))
 							{
 								ITsString tss;
-								int ws = MultiUnicodeAccessor.ReadMultiUnicodeAlternative(aStrNode, wsf, tsf, out tss);
+								int ws = MultiUnicodeAccessor.ReadMultiUnicodeAlternative(aStrNode, wsf, out tss);
 								if (ws == 0)
 									continue;
 								var multiString = currentInternal.GetITsMultiStringProperty(flid);

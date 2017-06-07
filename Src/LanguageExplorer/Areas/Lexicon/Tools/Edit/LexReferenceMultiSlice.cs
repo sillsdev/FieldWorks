@@ -3,7 +3,6 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.Drawing;
@@ -12,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
 using SIL.CoreImpl;
+using SIL.CoreImpl.Text;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.Common.Controls;
@@ -19,10 +19,11 @@ using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.FdoUi.Dialogs;
 using SIL.Utils;
 using SIL.FieldWorks.Common.Framework.DetailControls;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.FwUtils.MessageBoxEx;
 using SIL.FieldWorks.LexText.Controls;
+using SIL.Xml;
 using WaitCursor = SIL.FieldWorks.Common.FwUtils.WaitCursor;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
@@ -164,6 +165,17 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			// change the label for a Tree relationship.
 			switch ((LexRefTypeTags.MappingTypes)lrt.MappingType)
 			{
+				case LexRefTypeTags.MappingTypes.kmtSenseUnidirectional:
+				case LexRefTypeTags.MappingTypes.kmtEntryUnidirectional:
+				case LexRefTypeTags.MappingTypes.kmtEntryOrSenseUnidirectional:
+					if (chvoTargets > 0)
+					{
+						int hvoFirst = sda.get_VecItem(lr.Hvo, LexReferenceTags.kflidTargets, 0);
+						if (hvoFirst != m_obj.Hvo)
+							return;
+					}
+					break;
+
 				case LexRefTypeTags.MappingTypes.kmtSenseTree:
 				case LexRefTypeTags.MappingTypes.kmtEntryTree:
 				case LexRefTypeTags.MappingTypes.kmtEntryOrSenseTree:
@@ -200,6 +212,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				case LexRefTypeTags.MappingTypes.kmtSenseCollection:
 					sXml += " class=\"LanguageExplorer.Areas.Lexicon.Tools.Edit.LexReferenceCollectionSlice\"";
 					break;
+				case LexRefTypeTags.MappingTypes.kmtSenseUnidirectional:
+					sXml += " class=\"SIL.FieldWorks.XWorks.LexEd.LexReferenceUnidirectionalSlice\"";
+					break;
 				case LexRefTypeTags.MappingTypes.kmtSensePair:
 				case LexRefTypeTags.MappingTypes.kmtSenseAsymmetricPair: // Sense Pair with different Forward/Reverse names
 				case LexRefTypeTags.MappingTypes.kmtEntryPair:
@@ -231,6 +246,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					//sMenu = "mnuDataTree-DeleteFromLexEntryReference"; we used to have distinct strings in the menu
 					sMenu = "mnuDataTree-DeleteAddLexReference";
 					break;
+				case LexRefTypeTags.MappingTypes.kmtEntryUnidirectional:
+					sXml += " class=\"SIL.FieldWorks.XWorks.LexEd.LexReferenceUnidirectionalSlice\"";
+					//sMenu = "mnuDataTree-DeleteFromLexEntryReference"; we used to have distinct strings in the menu
+					sMenu = "mnuDataTree-DeleteAddLexReference";
+					break;
 				case LexRefTypeTags.MappingTypes.kmtEntryTree:
 					//sMenu = "mnuDataTree-DeleteFromLexEntryReference"; we used to have distinct strings in the menu
 					sMenu = "mnuDataTree-DeleteAddLexReference";
@@ -247,6 +267,12 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					break;
 				case LexRefTypeTags.MappingTypes.kmtEntryOrSenseCollection:
 					sXml += " class=\"LanguageExplorer.Areas.Lexicon.Tools.Edit.LexReferenceCollectionSlice\"";
+					if (m_obj is ILexEntry)
+						//sMenu = "mnuDataTree-DeleteFromLexEntryReference"; we used to have distinct strings in the menu
+						sMenu = "mnuDataTree-DeleteAddLexReference";
+					break;
+				case LexRefTypeTags.MappingTypes.kmtEntryOrSenseUnidirectional:
+					sXml += " class=\"SIL.FieldWorks.XWorks.LexEd.LexReferenceUnidirectionalSlice\"";
 					if (m_obj is ILexEntry)
 						//sMenu = "mnuDataTree-DeleteFromLexEntryReference"; we used to have distinct strings in the menu
 						sMenu = "mnuDataTree-DeleteAddLexReference";
@@ -315,9 +341,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			}
 		}
 
-		/// <summary />
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "ToolStripMenuItems are added to menu and disposed there")]
 		private ContextMenuStrip SetupContextMenuStrip()
 		{
 			ContextMenuStrip contextMenuStrip = new System.Windows.Forms.ContextMenuStrip();
@@ -337,6 +360,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 						case LexRefTypeTags.MappingTypes.kmtSenseTree:
 						case LexRefTypeTags.MappingTypes.kmtSenseSequence:
 						case LexRefTypeTags.MappingTypes.kmtSenseAsymmetricPair:
+						case LexRefTypeTags.MappingTypes.kmtSenseUnidirectional:
 							continue;
 						default:
 							break;
@@ -351,6 +375,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 						case LexRefTypeTags.MappingTypes.kmtEntryTree:
 						case LexRefTypeTags.MappingTypes.kmtEntrySequence:
 						case LexRefTypeTags.MappingTypes.kmtEntryAsymmetricPair:
+						case LexRefTypeTags.MappingTypes.kmtEntryUnidirectional:
 							continue;
 						default:
 							break;
@@ -371,12 +396,15 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					case LexRefTypeTags.MappingTypes.kmtSenseCollection:
 					case LexRefTypeTags.MappingTypes.kmtSensePair:
 					case LexRefTypeTags.MappingTypes.kmtSenseSequence:
+					case LexRefTypeTags.MappingTypes.kmtSenseUnidirectional:
 					case LexRefTypeTags.MappingTypes.kmtEntryCollection:
 					case LexRefTypeTags.MappingTypes.kmtEntryPair:
 					case LexRefTypeTags.MappingTypes.kmtEntrySequence:
+					case LexRefTypeTags.MappingTypes.kmtEntryUnidirectional:
 					case LexRefTypeTags.MappingTypes.kmtEntryOrSenseCollection:
 					case LexRefTypeTags.MappingTypes.kmtEntryOrSensePair:
 					case LexRefTypeTags.MappingTypes.kmtEntryOrSenseSequence:
+					case LexRefTypeTags.MappingTypes.kmtEntryOrSenseUnidirectional:
 						label = string.Format(formatName, name);
 						break;
 					case LexRefTypeTags.MappingTypes.kmtSenseTree:
@@ -674,6 +702,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					case LexRefTypeTags.MappingTypes.kmtSenseCollection:
 					case LexRefTypeTags.MappingTypes.kmtSensePair:
 					case LexRefTypeTags.MappingTypes.kmtSenseAsymmetricPair:
+					case LexRefTypeTags.MappingTypes.kmtSenseUnidirectional:
 					// Sense pair with different Forward/Reverse names
 					case LexRefTypeTags.MappingTypes.kmtSenseSequence:
 					case LexRefTypeTags.MappingTypes.kmtSenseTree:
@@ -685,6 +714,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					case LexRefTypeTags.MappingTypes.kmtEntryCollection:
 					case LexRefTypeTags.MappingTypes.kmtEntryPair:
 					case LexRefTypeTags.MappingTypes.kmtEntryAsymmetricPair:
+					case LexRefTypeTags.MappingTypes.kmtEntryUnidirectional:
 					// Entry pair with different Forward/Reverse names
 					case LexRefTypeTags.MappingTypes.kmtEntrySequence:
 					case LexRefTypeTags.MappingTypes.kmtEntryTree:
@@ -695,6 +725,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					case LexRefTypeTags.MappingTypes.kmtEntryOrSenseCollection:
 					case LexRefTypeTags.MappingTypes.kmtEntryOrSenseSequence:
 					case LexRefTypeTags.MappingTypes.kmtEntryOrSenseTree:
+					case LexRefTypeTags.MappingTypes.kmtEntryOrSenseUnidirectional:
 						dlg = new LinkEntryOrSenseDlg();
 						sTitle = String.Format(LanguageExplorerResources.ksIdentifyXLexEntryOrSense, lrt.Name.BestAnalysisAlternative.Text);
 						break;
@@ -829,7 +860,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 						var analWs = lrtOwner.Services.WritingSystems.DefaultAnalysisWritingSystem.Handle;
 						var userWs = m_cache.WritingSystemFactory.UserWs;
-						var tisb = TsIncStrBldrClass.Create();
+						var tisb = TsStringUtils.MakeIncStrBldr();
 						tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, userWs);
 
 						switch ((LexRefTypeTags.MappingTypes)lrtOwner.MappingType)
@@ -903,7 +934,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 						var lrtOwner = lr.Owner as ILexRefType;
 
 						var userWs = m_cache.WritingSystemFactory.UserWs;
-						var tisb = TsIncStrBldrClass.Create();
+						var tisb = TsStringUtils.MakeIncStrBldr();
 						tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, userWs);
 
 						switch ((LexRefTypeTags.MappingTypes)lrtOwner.MappingType)
@@ -911,6 +942,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 						case LexRefTypeTags.MappingTypes.kmtSenseTree:
 						case LexRefTypeTags.MappingTypes.kmtEntryTree:
 						case LexRefTypeTags.MappingTypes.kmtEntryOrSenseTree:
+						case LexRefTypeTags.MappingTypes.kmtSenseUnidirectional:
+						case LexRefTypeTags.MappingTypes.kmtEntryUnidirectional:
+						case LexRefTypeTags.MappingTypes.kmtEntryOrSenseUnidirectional:
 							tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, userWs);
 							tisb.Append(String.Format(LanguageExplorerResources.ksDeleteLexTree, StringUtils.kChHardLB));
 							dlg.SetDlgInfo(ui, m_cache, PropertyTable, tisb.GetString());

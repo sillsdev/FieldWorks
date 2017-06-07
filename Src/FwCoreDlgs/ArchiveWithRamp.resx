@@ -117,4 +117,280 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="m_help.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Bottom, Right</value>
+  </data>
+  <data name="m_help.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="m_help.Location" type="System.Drawing.Point, System.Drawing">
+    <value>266, 298</value>
+  </data>
+  <data name="m_help.Size" type="System.Drawing.Size, System.Drawing">
+    <value>75, 23</value>
+  </data>
+  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="m_help.TabIndex" type="System.Int32, mscorlib">
+    <value>12</value>
+  </data>
+  <data name="m_help.Text" xml:space="preserve">
+    <value>Help</value>
+  </data>
+  <data name="&gt;&gt;m_help.Name" xml:space="preserve">
+    <value>m_help</value>
+  </data>
+  <data name="&gt;&gt;m_help.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_help.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_help.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="m_cancel.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Bottom, Right</value>
+  </data>
+  <data name="m_cancel.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="m_cancel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>184, 298</value>
+  </data>
+  <data name="m_cancel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>75, 23</value>
+  </data>
+  <data name="m_cancel.TabIndex" type="System.Int32, mscorlib">
+    <value>11</value>
+  </data>
+  <data name="m_cancel.Text" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="&gt;&gt;m_cancel.Name" xml:space="preserve">
+    <value>m_cancel</value>
+  </data>
+  <data name="&gt;&gt;m_cancel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_cancel.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_cancel.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="m_archive.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Bottom, Right</value>
+  </data>
+  <data name="m_archive.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="m_archive.Location" type="System.Drawing.Point, System.Drawing">
+    <value>103, 298</value>
+  </data>
+  <data name="m_archive.Size" type="System.Drawing.Size, System.Drawing">
+    <value>75, 23</value>
+  </data>
+  <data name="m_archive.TabIndex" type="System.Int32, mscorlib">
+    <value>10</value>
+  </data>
+  <data name="m_archive.Text" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="&gt;&gt;m_archive.Name" xml:space="preserve">
+    <value>m_archive</value>
+  </data>
+  <data name="&gt;&gt;m_archive.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_archive.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_archive.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="m_lblMostRecentBackup.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="m_lblMostRecentBackup.Location" type="System.Drawing.Point, System.Drawing">
+    <value>32, 50</value>
+  </data>
+  <data name="m_lblMostRecentBackup.Size" type="System.Drawing.Size, System.Drawing">
+    <value>69, 13</value>
+  </data>
+  <data name="m_lblMostRecentBackup.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="m_lblMostRecentBackup.Text" xml:space="preserve">
+    <value>(None found)</value>
+  </data>
+  <data name="&gt;&gt;m_lblMostRecentBackup.Name" xml:space="preserve">
+    <value>m_lblMostRecentBackup</value>
+  </data>
+  <data name="&gt;&gt;m_lblMostRecentBackup.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblMostRecentBackup.Parent" xml:space="preserve">
+    <value>m_whichBackup</value>
+  </data>
+  <data name="&gt;&gt;m_lblMostRecentBackup.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="m_rbExistingBackup.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="m_rbExistingBackup.Location" type="System.Drawing.Point, System.Drawing">
+    <value>4, 27</value>
+  </data>
+  <data name="m_rbExistingBackup.Size" type="System.Drawing.Size, System.Drawing">
+    <value>157, 17</value>
+  </data>
+  <data name="m_rbExistingBackup.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="m_rbExistingBackup.Text" xml:space="preserve">
+    <value>Use most recent backup file</value>
+  </data>
+  <data name="m_rbExistingBackup.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleCenter</value>
+  </data>
+  <data name="&gt;&gt;m_rbExistingBackup.Name" xml:space="preserve">
+    <value>m_rbExistingBackup</value>
+  </data>
+  <data name="&gt;&gt;m_rbExistingBackup.Type" xml:space="preserve">
+    <value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_rbExistingBackup.Parent" xml:space="preserve">
+    <value>m_whichBackup</value>
+  </data>
+  <data name="&gt;&gt;m_rbExistingBackup.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="m_rbNewBackup.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="m_rbNewBackup.Location" type="System.Drawing.Point, System.Drawing">
+    <value>4, 4</value>
+  </data>
+  <data name="m_rbNewBackup.Size" type="System.Drawing.Size, System.Drawing">
+    <value>143, 17</value>
+  </data>
+  <data name="m_rbNewBackup.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="m_rbNewBackup.Text" xml:space="preserve">
+    <value>Create a new backup file</value>
+  </data>
+  <data name="&gt;&gt;m_rbNewBackup.Name" xml:space="preserve">
+    <value>m_rbNewBackup</value>
+  </data>
+  <data name="&gt;&gt;m_rbNewBackup.Type" xml:space="preserve">
+    <value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_rbNewBackup.Parent" xml:space="preserve">
+    <value>m_whichBackup</value>
+  </data>
+  <data name="&gt;&gt;m_rbNewBackup.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="m_whichBackup.Location" type="System.Drawing.Point, System.Drawing">
+    <value>30, 42</value>
+  </data>
+  <data name="m_whichBackup.Size" type="System.Drawing.Size, System.Drawing">
+    <value>293, 73</value>
+  </data>
+  <data name="m_whichBackup.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="&gt;&gt;m_whichBackup.Name" xml:space="preserve">
+    <value>m_whichBackup</value>
+  </data>
+  <data name="&gt;&gt;m_whichBackup.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_whichBackup.Parent" xml:space="preserve">
+    <value>m_frame</value>
+  </data>
+  <data name="&gt;&gt;m_whichBackup.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="m_fieldWorksBackup.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="m_fieldWorksBackup.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="m_fieldWorksBackup.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="m_fieldWorksBackup.Location" type="System.Drawing.Point, System.Drawing">
+    <value>15, 21</value>
+  </data>
+  <data name="m_fieldWorksBackup.Size" type="System.Drawing.Size, System.Drawing">
+    <value>134, 17</value>
+  </data>
+  <data name="m_fieldWorksBackup.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="m_fieldWorksBackup.Text" xml:space="preserve">
+    <value>FieldWorks backup file</value>
+  </data>
+  <data name="&gt;&gt;m_fieldWorksBackup.Name" xml:space="preserve">
+    <value>m_fieldWorksBackup</value>
+  </data>
+  <data name="&gt;&gt;m_fieldWorksBackup.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_fieldWorksBackup.Parent" xml:space="preserve">
+    <value>m_frame</value>
+  </data>
+  <data name="&gt;&gt;m_fieldWorksBackup.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="m_frame.Location" type="System.Drawing.Point, System.Drawing">
+    <value>12, 12</value>
+  </data>
+  <data name="m_frame.Size" type="System.Drawing.Size, System.Drawing">
+    <value>329, 265</value>
+  </data>
+  <data name="m_frame.TabIndex" type="System.Int32, mscorlib">
+    <value>13</value>
+  </data>
+  <data name="m_frame.Text" xml:space="preserve">
+    <value>Items to Archive</value>
+  </data>
+  <data name="&gt;&gt;m_frame.Name" xml:space="preserve">
+    <value>m_frame</value>
+  </data>
+  <data name="&gt;&gt;m_frame.Type" xml:space="preserve">
+    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_frame.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_frame.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
+    <value>6, 13</value>
+  </data>
+  <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
+    <value>353, 333</value>
+  </data>
+  <data name="$this.StartPosition" type="System.Windows.Forms.FormStartPosition, System.Windows.Forms">
+    <value>CenterParent</value>
+  </data>
+  <data name="$this.Text" xml:space="preserve">
+    <value>Archive With RAMP</value>
+  </data>
+  <data name="&gt;&gt;$this.Name" xml:space="preserve">
+    <value>ArchiveWithRamp</value>
+  </data>
+  <data name="&gt;&gt;$this.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Form, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
 </root>

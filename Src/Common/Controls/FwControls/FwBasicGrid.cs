@@ -41,9 +41,13 @@ namespace SIL.FieldWorks.Common.Controls
 
 			DefaultCellStyle.SelectionForeColor = m_selRowForeColor;
 			DefaultCellStyle.SelectionBackColor = m_selRowBackColor;
+		}
 
-			//BorderStyle = (Application.VisualStyleState == VisualStyleState.NoneEnabled ?
-			//    BorderStyle.Fixed3D : BorderStyle.FixedSingle);
+		/// <summary/>
+		protected override void Dispose(bool disposing)
+		{
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ******");
+			base.Dispose(disposing);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -61,51 +65,6 @@ namespace SIL.FieldWorks.Common.Controls
 				Invalidate();
 			}
 		}
-
-		///// ------------------------------------------------------------------------------------
-		///// <summary>
-		/////
-		///// </summary>
-		///// ------------------------------------------------------------------------------------
-		//public new BorderStyle BorderStyle
-		//{
-		//    get { return base.BorderStyle; }
-		//    set
-		//    {
-		//        base.BorderStyle = value;
-
-		//        m_overrideBorderDrawing = (value == BorderStyle.FixedSingle &&
-		//            (Application.VisualStyleState == VisualStyleState.NonClientAreaEnabled ||
-		//            Application.VisualStyleState == VisualStyleState.ClientAndNonClientAreasEnabled));
-		//    }
-		//}
-
-		///// ------------------------------------------------------------------------------------
-		///// <summary>
-		/////
-		///// </summary>
-		///// ------------------------------------------------------------------------------------
-		//public bool DrawVisualStyleBorder
-		//{
-		//    get { return m_overrideBorderDrawing; }
-		//    set { m_overrideBorderDrawing = value; }
-		//}
-
-		///// ------------------------------------------------------------------------------------
-		///// <summary>
-		///// After the panel has been resized, force the border to be repainted. I found that
-		///// often, after resizing the panel at runtime (e.g. when it's docked inside a
-		///// splitter panel and the splitter moved), the portion of the border that was newly
-		///// repainted didn't show the overriden border color handled by the WndProc above.
-		///// </summary>
-		///// ------------------------------------------------------------------------------------
-		//protected override void OnClientSizeChanged(EventArgs e)
-		//{
-		//    base.OnClientSizeChanged(e);
-
-		//    if (m_overrideBorderDrawing)
-		//        Utils.Win32.SendMessage(Handle, PaintingHelper.WM_NCPAINT, 1, 0);
-		//}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -140,23 +99,5 @@ namespace SIL.FieldWorks.Common.Controls
 				e.Handled = true;
 			}
 		}
-
-		///// ------------------------------------------------------------------------------------
-		///// <summary>
-		///// Catch the non client area paint message so we can paint a border around the
-		///// explorer bar that isn't black.
-		///// </summary>
-		///// ------------------------------------------------------------------------------------
-		//protected override void WndProc(ref Message m)
-		//{
-		//    base.WndProc(ref m);
-
-		//    if (m.Msg == PaintingHelper.WM_NCPAINT && m_overrideBorderDrawing)
-		//    {
-		//        PaintingHelper.DrawCustomBorder(this);
-		//        m.Result = IntPtr.Zero;
-		//        m.Msg = 0;
-		//    }
-		//}
 	}
 }

@@ -2,12 +2,10 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using NUnit.Framework;
@@ -125,8 +123,6 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// Check that custom property declarations are sorted.
 		/// </summary>
 		[Test]
-		[SuppressMessage("Gendarme.Rules.Portability", "NewLineLiteralRule",
-			Justification="Newline is in source file and so will be correct according to current platform")]
 		public void CustomPropertiesAreSorted()
 		{
 			const string sortedCustomData =
@@ -169,8 +165,6 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// Check that a main element is sorted.
 		/// </summary>
 		[Test]
-		[SuppressMessage("Gendarme.Rules.Portability", "NewLineLiteralRule",
-			Justification="Newline is in source file and so will be correct according to current platform")]
 		public void SortMainElement()
 		{
 			const string rt =
@@ -231,8 +225,6 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// Check that the whole file is sorted.
 		/// </summary>
 		[Test]
-		[SuppressMessage("Gendarme.Rules.Portability", "NewLineLiteralRule",
-			Justification="Newline is in source file and so will be correct according to current platform")]
 		public void SortEntireFile()
 		{
 			const string rt =

@@ -4,6 +4,7 @@
 
 using Microsoft.Practices.ServiceLocation;
 using NUnit.Framework;
+using SIL.CoreImpl.Text;
 using SIL.FieldWorks.FDO.DomainImpl;
 
 namespace SIL.FieldWorks.FDO.FDOTests
@@ -69,7 +70,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			{
 				var aType = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create();
 				recTypes.PossibilitiesOS.Add(aType);
-				aType.Name.AnalysisDefaultWritingSystem = Cache.TsStrFactory.MakeString("test type", Cache.DefaultAnalWs);
+				aType.Name.AnalysisDefaultWritingSystem = TsStringUtils.MakeString("test type", Cache.DefaultAnalWs);
 			}
 			return recTypes;
 		}
@@ -80,7 +81,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			IRnGenericRec entry = null;
 			entry = Cache.ServiceLocator.GetInstance<IRnGenericRecFactory>().Create();
 			Cache.LangProject.ResearchNotebookOA.RecordsOC.Add(entry);
-			entry.Title = Cache.TsStrFactory.MakeString(title, Cache.DefaultAnalWs);
+			entry.Title = TsStringUtils.MakeString(title, Cache.DefaultAnalWs);
 			entry.TypeRA = typeList.PossibilitiesOS[0];
 			return (RnGenericRec)entry;
 		}
@@ -91,7 +92,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			IRnGenericRec entry = null;
 			entry = Cache.ServiceLocator.GetInstance<IRnGenericRecFactory>().Create();
 			parent.SubRecordsOS.Insert(index, entry);
-			entry.Title = Cache.TsStrFactory.MakeString(title, Cache.DefaultAnalWs);
+			entry.Title = TsStringUtils.MakeString(title, Cache.DefaultAnalWs);
 			entry.TypeRA = typeList.PossibilitiesOS[0];
 			return (RnGenericRec)entry;
 		}

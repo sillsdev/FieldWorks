@@ -1,21 +1,16 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: XmlView.cs
-// Responsibility: WordWorks
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
+
 using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Collections.Generic;
 using System.Xml.Linq;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Framework;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 
 namespace SIL.FieldWorks.Common.Controls
@@ -263,13 +258,10 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			CheckDisposed();
 
-			base.MakeRoot();
-
 			if (m_fdoCache == null || DesignMode)
 				return;
 
-			IVwRootBox rootb = VwRootBoxClass.Create();
-			rootb.SetSite(this);
+			base.MakeRoot();
 
 			if (m_sda == null)
 				m_sda = m_fdoCache.DomainDataByFlid;
@@ -283,10 +275,9 @@ namespace SIL.FieldWorks.Common.Controls
 			};
 			// let it use the decorator if any.
 
-			rootb.DataAccess = m_sda;
+			m_rootb.DataAccess = m_sda;
 			//if (this.EditingHelper != null)
 			//    this.EditingHelper.Editable = m_fEditable;
-			m_rootb = rootb;
 			RootObjectHvo = m_hvoRoot;
 		}
 

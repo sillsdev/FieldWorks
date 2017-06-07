@@ -10,7 +10,6 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using System;
 using System.Collections.Generic;
-using SIL.FieldWorks.Common.RootSites;
 
 namespace SIL.FieldWorks.Common.Framework
 {

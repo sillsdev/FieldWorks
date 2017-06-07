@@ -5,7 +5,7 @@
 using System;
 
 using SIL.FieldWorks.XWorks;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Controls;
 
 namespace LanguageExplorer.Areas.TextsAndWords

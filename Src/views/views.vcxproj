@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Bounds|Win32">
       <Configuration>Bounds</Configuration>
@@ -27,18 +27,18 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-	<ConfigurationType>Makefile</ConfigurationType>
-    <PlatformToolset>v120</PlatformToolset>
+    <ConfigurationType>Makefile</ConfigurationType>
+    <PlatformToolset>v140</PlatformToolset>
     <UseOfMfc>false</UseOfMfc>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Bounds|Win32'" Label="Configuration">
-	<ConfigurationType>Makefile</ConfigurationType>
-    <PlatformToolset>v120</PlatformToolset>
+    <ConfigurationType>Makefile</ConfigurationType>
+    <PlatformToolset>v140</PlatformToolset>
     <UseOfMfc>false</UseOfMfc>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-	<ConfigurationType>Makefile</ConfigurationType>
-    <PlatformToolset>v120</PlatformToolset>
+    <ConfigurationType>Makefile</ConfigurationType>
+    <PlatformToolset>v140</PlatformToolset>
     <UseOfMfc>false</UseOfMfc>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
@@ -87,7 +87,7 @@
     <NMakeReBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\Bin\mkvw.bat d cc</NMakeReBuildCommandLine>
     <NMakeCleanCommandLine Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\Bin\mkvw.bat d e</NMakeCleanCommandLine>
     <NMakeOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\Output\Debug\views.dll</NMakeOutput>
-    <NMakePreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+    <NMakePreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">DEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
     <NMakeIncludeSearchPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\Output\Common\Raw;..\..\Output\Common;..\Kernel;..\Generic;.;$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
     <NMakeForcedIncludes Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NMakeForcedIncludes)</NMakeForcedIncludes>
     <NMakeAssemblySearchPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NMakeAssemblySearchPath)</NMakeAssemblySearchPath>
@@ -103,17 +103,33 @@
     <IncludePath>..\..\include;..\Generic;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Bounds|Win32'">
-    <IncludePath>..\..\include;..\Generic;$(IncludePath)</IncludePath>
+    <IncludePath>..\..\include;..\Generic;..\Kernel;..\AppCore;.\lib;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>..\..\include;..\Generic;$(IncludePath)</IncludePath>
+    <IncludePath>..\..\include;..\Generic;..\Kernel;..\AppCore;.\lib;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>..\..\include;..\Generic;$(IncludePath)</IncludePath>
+    <IncludePath>..\..\include;..\Generic;..\Kernel;..\AppCore;.\lib;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="lib\DebugReport.h" />
+    <ClInclude Include="lib\GraphiteEngine.h" />
+    <ClInclude Include="lib\GraphiteSegment.h" />
+    <ClInclude Include="lib\LgLineBreaker.h" />
+    <ClInclude Include="lib\LgUnicodeCollateInit.h" />
+    <ClInclude Include="lib\LgUnicodeCollater.h" />
+    <ClInclude Include="lib\RomRenderEngine.h" />
+    <ClInclude Include="lib\RomRenderSegment.h" />
+    <ClInclude Include="lib\TextServ.h" />
+    <ClInclude Include="lib\TsPropsFactory.h" />
+    <ClInclude Include="lib\TsStrFactory.h" />
+    <ClInclude Include="lib\TsString.h" />
+    <ClInclude Include="lib\TsTextProps.h" />
+    <ClInclude Include="lib\UniscribeEngine.h" />
+    <ClInclude Include="lib\UniscribeLinux.h" />
+    <ClInclude Include="lib\UniscribeSegment.h" />
     <ClInclude Include="lib\VwBaseDataAccess.h" />
     <ClInclude Include="lib\VwBaseVc.h" />
     <ClInclude Include="lib\VwCacheDa.h" />
@@ -121,6 +137,8 @@
     <ClInclude Include="lib\VwUndo.h" />
     <ClInclude Include="Main.h" />
     <ClInclude Include="lib\UtilView.h" />
+    <ClInclude Include="lib\ActionHandler.h" />
+    <ClInclude Include="ViewsGlobals.h" />
     <ClInclude Include="VwAccessRoot.h" />
     <ClInclude Include="VwEnv.h" />
     <ClInclude Include="VwInvertedViews.h" />
@@ -141,6 +159,21 @@
     <ClInclude Include="VwTxtSrc.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="lib\DebugReport.cpp" />
+    <ClCompile Include="lib\GraphiteEngine.cpp" />
+    <ClCompile Include="lib\GraphiteSegment.cpp" />
+    <ClCompile Include="lib\LgLineBreaker.cpp" />
+    <ClCompile Include="lib\LgUnicodeCollater.cpp" />
+    <ClCompile Include="lib\RomRenderEngine.cpp" />
+    <ClCompile Include="lib\RomRenderSegment.cpp" />
+    <ClCompile Include="lib\TextServ.cpp" />
+    <ClCompile Include="lib\TsPropsFactory.cpp" />
+    <ClCompile Include="lib\TsStrFactory.cpp" />
+    <ClCompile Include="lib\TsString.cpp" />
+    <ClCompile Include="lib\TsTextProps.cpp" />
+    <ClCompile Include="lib\UniscribeEngine.cpp" />
+    <ClCompile Include="lib\UniscribeLinux.cpp" />
+    <ClCompile Include="lib\UniscribeSegment.cpp" />
     <ClCompile Include="lib\VwBaseDataAccess.cpp" />
     <ClCompile Include="lib\VwBaseVc.cpp" />
     <ClCompile Include="lib\VwCacheDa.cpp" />
@@ -148,6 +181,8 @@
     <ClCompile Include="lib\VwUndo.cpp" />
     <ClCompile Include="dlldatax.c" />
     <ClCompile Include="ExplicitInstantiation.cpp" />
+    <ClCompile Include="lib\ActionHandler.cpp" />
+    <ClCompile Include="ViewsGlobals.cpp" />
     <ClCompile Include="VwAccessRoot.cpp" />
     <ClCompile Include="VwEnv.cpp" />
     <ClCompile Include="VwInvertedViews.cpp" />
@@ -170,6 +205,7 @@
   <ItemGroup>
     <None Include="..\..\Bin\mkvw.bat" />
     <None Include="Makefile" />
+    <None Include="Render.idh" />
     <None Include="Views.def" />
     <None Include="Views.idh" />
     <None Include="Views.mak" />

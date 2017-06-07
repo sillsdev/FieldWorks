@@ -17,14 +17,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 	internal sealed class GhostLexRefSlice : Slice
 	{
 		/// <summary />
-		public GhostLexRefSlice()
-		{
-		}
-
-		/// <summary />
 		public override void FinishInit()
 		{
-			this.Control = new GhostLexRefLauncher(m_obj, m_configurationNode);
+			Control = new GhostLexRefLauncher(m_obj, m_configurationNode);
 		}
 
 		/// <summary />

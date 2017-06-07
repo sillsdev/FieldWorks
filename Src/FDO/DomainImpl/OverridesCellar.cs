@@ -1,23 +1,23 @@
-// Copyright (c) 2008-2013 SIL International
+// Copyright (c) 2008-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: OverridesCellar.cs
-// Responsibility: FW Team
+
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Collections.Generic;
 using System.Text; // StringBuilder
 using System.Xml; // XMLWriter
 using System.Diagnostics;
 using System.IO;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.Utils;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Cellar;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
 using SIL.WritingSystems;
+using SIL.Xml;
 
 // This is a hack to apply changes from develop branch (where we already got of rid of TE related
 // classes) to lfmerge branch. Things are more complicated here in lfmerge branch: We want to
@@ -423,16 +423,9 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			get
 			{
-#pragma warning disable 219
-				ITsStrFactory tsf = Cache.TsStrFactory;
 				ITsString tss = Name.AnalysisDefaultWritingSystem;
-				int ws = Cache.WritingSystemFactory.UserWs;
-#pragma warning restore 219
 				if (tss == null || tss.Length == 0)
-				{
 					tss = Name.VernacularDefaultWritingSystem;
-					ws = m_cache.DefaultVernWs;
-				}
 				return tss;
 			}
 		}
@@ -572,7 +565,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 
 
 		/// ------------------------------------------------------------------------------------
-	/// <summary>
+		/// <summary>
 		/// Get a set of hvos that are suitable for targets to a reference property.
 		/// Note that in this case we override this as WELL as ReferenceTargetOwner, in order
 		/// to filter the list to human agents.
@@ -585,13 +578,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			switch (flid)
 			{
 				case CmAnnotationTags.kflidSource:
-					Set<ICmObject> set = new Set<ICmObject>();
-					foreach (ICmAgent agent in m_cache.LangProject.AnalyzingAgentsOC)
-					{
-						if (agent.Human)
-							set.Add(agent);
-					}
-					return set;
+					return m_cache.LangProject.AnalyzingAgentsOC.Where(a => a.Human);
 				default:
 					return base.ReferenceTargetCandidates(flid);
 			}
@@ -874,15 +861,15 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// <summary>
 		/// Get all possibilities, recursively, that are ultimately owned by the list.
 		/// </summary>
-		public Set<ICmPossibility> ReallyReallyAllPossibilities
+		public ISet<ICmPossibility> ReallyReallyAllPossibilities
 		{
 			get
 			{
-				Set<ICmPossibility> set = new Set<ICmPossibility>();
+				var set = new HashSet<ICmPossibility>();
 				foreach (var pss in PossibilitiesOS)
 				{
 					set.Add(pss);
-					set.AddRange(pss.ReallyReallyAllPossibilities);
+					set.UnionWith(pss.ReallyReallyAllPossibilities);
 				}
 				return set;
 			}
@@ -942,25 +929,6 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				}
 				return result;
 			}
-		}
-
-		/// <summary>
-		/// The type of items contained in this list.
-		/// </summary>
-		/// <returns></returns>
-		public string ItemsTypeName()
-		{
-			string listName;
-			if (Owner != null)
-				listName = Cache.DomainDataByFlid.MetaDataCache.GetFieldName(OwningFlid);
-			else
-				listName = Name.BestAnalysisVernacularAlternative.Text;
-			var itemsTypeName = StringTable.Table.GetString(listName, "PossibilityListItemTypeNames");
-			return itemsTypeName != "*" + listName + "*"
-					? itemsTypeName
-					: (PossibilitiesOS.Count > 0
-						? StringTable.Table.GetString(PossibilitiesOS[0].GetType().Name, "ClassNames")
-						: itemsTypeName);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1190,17 +1158,6 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 	/// </summary>
 	internal partial class CmCustomItem
 	{
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// The name for the type of CmCustomItem.
-		/// </summary>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
-		public override string ItemTypeName()
-		{
-			return StringTable.Table.GetString(GetType().Name, "ClassNames");
-		}
-
 		/// <summary>
 		/// Gets an ITsString that represents the shortname of this object.
 		/// </summary>
@@ -1326,25 +1283,6 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			return newOwner;
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// The name for the type of CmPossibility. Subclasses may override.
-		/// </summary>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
-		public virtual string ItemTypeName()
-		{
-			var owningList = OwningList;
-			if (owningList.OwningFlid == 0)
-				return StringTable.Table.GetString(GetType().Name, "ClassNames");
-			var owningFieldName =
-				Cache.DomainDataByFlid.MetaDataCache.GetFieldName(owningList.OwningFlid);
-			var itemsTypeName = owningList.ItemsTypeName();
-			return itemsTypeName != "*" + owningFieldName + "*"
-					? itemsTypeName
-					: StringTable.Table.GetString(GetType().Name, "ClassNames");
-		}
-
 		/// <summary>
 		///
 		/// </summary>
@@ -1452,7 +1390,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// For Performance (used in conjunction with PreLoadList).
 		/// </summary>
 		/// <returns>Set of subpossibilities</returns>
-		public Set<int> SubPossibilities()
+		public ISet<int> SubPossibilities()
 		{
 			throw new NotImplementedException();
 		}
@@ -1493,15 +1431,15 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// <summary>
 		/// Get all possibilities, recursively, that are ultimately owned by the possibility.
 		/// </summary>
-		public Set<ICmPossibility> ReallyReallyAllPossibilities
+		public ISet<ICmPossibility> ReallyReallyAllPossibilities
 		{
 			get
 			{
-				var set = new Set<ICmPossibility>();
+				var set = new HashSet<ICmPossibility>();
 				foreach (var pss in SubPossibilitiesOS)
 				{
 					set.Add(pss);
-					set.AddRange(pss.ReallyReallyAllPossibilities);
+					set.UnionWith(pss.ReallyReallyAllPossibilities);
 				}
 				return set;
 			}
@@ -1525,13 +1463,17 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			get
 			{
-				var tisb = TsIncStrBldrClass.Create();
-				var tsf = Cache.TsStrFactory;
+				var tisb = TsStringUtils.MakeIncStrBldr();
 				tisb.AppendTsString(Abbreviation.BestAnalysisAlternative);
-				tisb.AppendTsString(tsf.MakeString(Strings.ksNameAbbrSep, m_cache.DefaultUserWs));
+				tisb.AppendTsString(TsStringUtils.MakeString(Strings.ksNameAbbrSep, m_cache.DefaultUserWs));
 				tisb.AppendTsString(Name.BestAnalysisAlternative);
 				return tisb.GetString();
 			}
+		}
+
+		public ITsString VernOrAnalAbbrTSS
+		{
+			get { return BestVernOrAnalysisAbbreviation(Cache, this); }
 		}
 
 		/// <summary>
@@ -1633,7 +1575,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			if (pss != null)
 				tss = WritingSystemServices.GetMagicStringAlt(cache, wsMagic, pss.Hvo, flid);
 			if (tss == null || tss.Length == 0)
-				tss = TsStringUtils.MakeTss(defValue, cache.WritingSystemFactory.UserWs);
+				tss = TsStringUtils.MakeString(defValue, cache.WritingSystemFactory.UserWs);
 			return tss;
 		}
 
@@ -1654,11 +1596,25 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			}
 			if (tss == null || tss.Length == 0)
 			{
-				tss = TsStringUtils.MakeTss(Strings.ksQuestions, cache.WritingSystemFactory.UserWs);
+				tss = TsStringUtils.MakeString(Strings.ksQuestions, cache.WritingSystemFactory.UserWs);
 				// JohnT: how about this?
 				//return TsStringUtils.MakeTss("a " + this.GetType().Name + " with no name", cache.WritingSystemFactory.UserWs);
 			}
 			return tss;
+		}
+
+		/// <summary>
+		/// Return the Abbreviation for the specified CmPossibility (or '???' if it has no name
+		/// or pss is null). Return the best available vernacular or analysis abbreviation (in that order).
+		/// </summary>
+		/// <param name="cache"></param>
+		/// <param name="pss"></param>
+		/// <returns></returns>
+		internal static ITsString BestVernOrAnalysisAbbreviation(FdoCache cache, ICmPossibility pss)
+		{
+			return BestAlternative(cache, pss,
+								   WritingSystemServices.kwsFirstVernOrAnal,
+								   CmPossibilityTags.kflidAbbreviation, Strings.ksQuestions);
 		}
 
 		/// <summary>
@@ -1678,7 +1634,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			}
 			if (tss == null || tss.Length == 0)
 			{
-				tss = TsStringUtils.MakeTss(Strings.ksQuestions, cache.WritingSystemFactory.UserWs);
+				tss = TsStringUtils.MakeString(Strings.ksQuestions, cache.WritingSystemFactory.UserWs);
 			}
 			return tss;
 		}
@@ -2121,9 +2077,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			switch (flid)
 			{
 				case FsComplexFeatureTags.kflidType:
-					Set<ICmObject> set = new Set<ICmObject>();
-					set.AddRange(m_cache.LangProject.MsFeatureSystemOA.TypesOC);
-					return set;
+					return m_cache.LangProject.MsFeatureSystemOA.TypesOC;
 				default:
 					return base.ReferenceTargetCandidates(flid);
 			}
@@ -2144,7 +2098,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			get
 			{
-				var tisb = TsIncStrBldrClass.Create();
+				var tisb = TsStringUtils.MakeIncStrBldr();
 				tisb.AppendTsString(Name.BestAnalysisAlternative);
 				if (TypeRA != null)
 				{
@@ -2184,27 +2138,26 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			get
 			{
-				ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
-				ITsStrFactory tsf = Cache.TsStrFactory;
+				ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 				int analWs = m_cache.DefaultAnalWs;
 
-				tisb.AppendTsString(tsf.MakeString("[", analWs));
+				tisb.AppendTsString(TsStringUtils.MakeString("[", analWs));
 
 				IFsFeatDefn feature = FeatureRA;
 				if (feature != null)
-					tisb.AppendTsString(tsf.MakeString(feature.Name.BestAnalysisAlternative.Text, analWs));
+					tisb.AppendTsString(TsStringUtils.MakeString(feature.Name.BestAnalysisAlternative.Text, analWs));
 				else
-					tisb.AppendTsString(tsf.MakeString(Strings.ksQuestions, analWs));
+					tisb.AppendTsString(TsStringUtils.MakeString(Strings.ksQuestions, analWs));
 
-				tisb.AppendTsString(tsf.MakeString(" : ", analWs));
+				tisb.AppendTsString(TsStringUtils.MakeString(" : ", analWs));
 
 				IFsSymFeatVal value = ValueRA;
 				if (value != null)
-					tisb.AppendTsString(tsf.MakeString(value.Name.BestAnalysisAlternative.Text, analWs));
+					tisb.AppendTsString(TsStringUtils.MakeString(value.Name.BestAnalysisAlternative.Text, analWs));
 				else
-					tisb.AppendTsString(tsf.MakeString(Strings.ksQuestions, analWs));
+					tisb.AppendTsString(TsStringUtils.MakeString(Strings.ksQuestions, analWs));
 
-				tisb.AppendTsString(tsf.MakeString("]", analWs));
+				tisb.AppendTsString(TsStringUtils.MakeString("]", analWs));
 
 				return tisb.GetString();
 			}
@@ -2268,7 +2221,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// <returns></returns>
 		public ITsString GetFeatureValueString(bool fLongForm)
 		{
-			var tisb = TsIncStrBldrClass.Create();
+			var tisb = TsStringUtils.MakeIncStrBldr();
 			tisb.SetIntPropValues((int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault, Cache.DefaultUserWs);
 
 			var sFeature = GetFeatureString(fLongForm);
@@ -2352,26 +2305,20 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// <returns>A set of hvos.</returns>
 		public override IEnumerable<ICmObject> ReferenceTargetCandidates(int flid)
 		{
-			Set<ICmObject> set = null;
 			switch (flid)
 			{
 				case FsFeatureSpecificationTags.kflidFeature:
 					// Find all exception features for the "owning" PartOfSpeech and all of its owning POSes
-					set = GetFeatureList();
-					break;
+					return GetFeatureList();
 				case FsClosedValueTags.kflidValue:
-					set = new Set<ICmObject>();
-					if (FeatureRA != null)
-					{
-						IFsClosedFeature feat = FeatureRA as IFsClosedFeature;
-						if (feat != null)
-							set.AddRange(feat.ValuesOC);
-					}
-					break;
+					var set = new HashSet<ICmObject>();
+					IFsClosedFeature feat = FeatureRA as IFsClosedFeature;
+					if (feat != null)
+						set.UnionWith(feat.ValuesOC);
+					return set;
 				default:
 					return base.ReferenceTargetCandidates(flid);
 			}
-			return set;
 		}
 
 		/// <summary>
@@ -2514,7 +2461,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 
 		private ITsString GetFeatureValueString(bool fLongForm)
 		{
-			var tisb = TsIncStrBldrClass.Create();
+			var tisb = TsStringUtils.MakeIncStrBldr();
 			tisb.SetIntPropValues((int)FwTextPropType.ktptWs,
 				0, Cache.DefaultAnalWs);
 			var sFeature = GetFeatureString(fLongForm);
@@ -2526,7 +2473,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 
 		private ITsString GetFeatureValueStringSorted()
 		{
-			var tisb = TsIncStrBldrClass.Create();
+			var tisb = TsStringUtils.MakeIncStrBldr();
 			tisb.SetIntPropValues((int)FwTextPropType.ktptWs,
 				0, Cache.DefaultAnalWs);
 			var sFeature = GetFeatureString(true);
@@ -2719,7 +2666,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				// The XML is from a file shipped with FieldWorks. It is quite likely multiple users
 				// of a project could independently add the same items, so we create them with fixed guids
 				// so merge will recognize them as the same objects.
-				string guid = XmlUtils.GetAttributeValue(item.SelectSingleNode("fs"), "typeguid");
+				string guid = XmlUtils.GetManditoryAttributeValue(item.SelectSingleNode("fs"), "typeguid");
 				fst = Services.GetInstance<IFsFeatStrucTypeFactory>().Create(new Guid(guid), this);
 				fst.CatalogSourceId = type;
 
@@ -2729,7 +2676,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					// do not have any real values for abbrev, name, or description.  Just use the abbreviation
 					foreach (CoreWritingSystemDefinition ws in Services.WritingSystems.AnalysisWritingSystems)
 					{
-						var tss = m_cache.TsStrFactory.MakeString(type, ws.Handle);
+						ITsString tss = TsStringUtils.MakeString(type, ws.Handle);
 						fst.Abbreviation.set_String(ws.Handle, tss);
 						fst.Name.set_String(ws.Handle, tss);
 					}
@@ -2835,14 +2782,14 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			if (node != null)
 			{
-				var ws = cache.WritingSystemFactory.GetWsFromStr(XmlUtils.GetAttributeValue(node, "ws"));
+				var ws = cache.WritingSystemFactory.GetWsFromStr(XmlUtils.GetManditoryAttributeValue(node, "ws"));
 				var newValue = node.InnerText;
 				if (ws <= 0)
 				{
 					ws = cache.DefaultAnalWs;
 					newValue = node.InnerXml;
 				}
-				item.set_String(ws, cache.TsStrFactory.MakeString(newValue, ws));
+				item.set_String(ws, TsStringUtils.MakeString(newValue, ws));
 			}
 		}
 	}
@@ -2933,8 +2880,6 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// </summary>
 		/// <param name="other"></param>
 		/// <returns></returns>
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification="See TODO-Linux comment")]
 		public virtual bool IsEquivalent(IFsAbstractStructure other)
 		{
 			if (other == null)
@@ -2978,8 +2923,6 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// </summary>
 		/// <param name="other"></param>
 		/// <returns></returns>
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification="See TODO-Linux comment")]
 		public virtual bool IsEquivalent(IFsFeatureSpecification other)
 		{
 			if (other == null)
@@ -3004,9 +2947,9 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// Find all exception features for the "owning" PartOfSpeech and all of its owning POSes
 		/// </summary>
 		/// <returns>list of these features</returns>
-		protected Set<ICmObject> GetFeatureList()
+		protected ISet<ICmObject> GetFeatureList()
 		{
-			Set<ICmObject> set = new Set<ICmObject>();
+			var set = new HashSet<ICmObject>();
 			IFsFeatStruc fs = Owner as IFsFeatStruc;
 			if (fs != null)
 			{
@@ -3049,14 +2992,14 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 							case MoDerivAffMsaTags.kflidToMsFeatures: // fall through
 							case MoInflAffMsaTags.kflidInflFeats: // fall through
 							case MoStemMsaTags.kflidMsFeatures:
-								set.AddRange(pos.InflectableFeatsRC);
+								set.UnionWith(pos.InflectableFeatsRC);
 								break;
 							case MoCompoundRuleTags.kflidToProdRestrict: // fall through
 							case MoDerivAffMsaTags.kflidFromProdRestrict: // fall through
 							case MoDerivAffMsaTags.kflidToProdRestrict: // fall through
 							case MoInflAffMsaTags.kflidFromProdRestrict: // fall through
 							case MoStemMsaTags.kflidProdRestrict:
-								set.AddRange(pos.BearableFeaturesRC);
+								set.UnionWith(pos.BearableFeaturesRC);
 								break;
 						}
 						pos = Owner as IPartOfSpeech;
@@ -3142,9 +3085,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			switch (flid)
 			{
 				case FsFeatureSpecificationTags.kflidFeature:
-					Set<ICmObject> set = new Set<ICmObject>();
-					set.AddRange(m_cache.LangProject.MsFeatureSystemOA.FeaturesOC);
-					return set;
+					return m_cache.LangProject.MsFeatureSystemOA.FeaturesOC;
 				default:
 					return base.ReferenceTargetCandidates(flid);
 			}
@@ -3227,12 +3168,12 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					// Find all exception features for the "owning" PartOfSpeech and all of its owning POSes
 					return GetFeatureList();
 				case FsNegatedValueTags.kflidValue:
-					Set<ICmObject> set = new Set<ICmObject>();
+					var set = new HashSet<ICmObject>();
 					if (FeatureRA != null)
 					{
 						IFsClosedFeature feat = FeatureRA as IFsClosedFeature;
 						if (feat != null)
-							set.AddRange(feat.ValuesOC);
+							set.UnionWith(feat.ValuesOC);
 					}
 					return set;
 				default:
@@ -3482,9 +3423,9 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			foreach (CoreWritingSystemDefinition ws in Services.WritingSystems.AnalysisWritingSystems)
 			{
-				Abbreviation.set_String(ws.Handle, Cache.TsStrFactory.MakeString(sAbbrev, ws.Handle));
+				Abbreviation.set_String(ws.Handle, TsStringUtils.MakeString(sAbbrev, ws.Handle));
 				if (ws.Id == "en")
-					Name.set_String(ws.Handle, Cache.TsStrFactory.MakeString(sName, ws.Handle));
+					Name.set_String(ws.Handle, TsStringUtils.MakeString(sName, ws.Handle));
 			}
 			ShowInGloss = true;
 		}
@@ -3551,7 +3492,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			get
 			{
 				var userWs = m_cache.WritingSystemFactory.UserWs;
-				var tisb = TsIncStrBldrClass.Create();
+				var tisb = TsStringUtils.MakeIncStrBldr();
 				tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, userWs);
 				tisb.Append(String.Format(Strings.ksDeleteFeatureSet, " "));
 				tisb.AppendTsString(LongNameTSS);
@@ -3750,7 +3691,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// <returns></returns>
 		public ITsString GetFeatureValueTSS(string featureName)
 		{
-			var tisb = TsIncStrBldrClass.Create();
+			var tisb = TsStringUtils.MakeIncStrBldr();
 			tisb.SetIntPropValues((int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault, Cache.DefaultUserWs);
 
 			var features = from s in FeatureSpecsOC
@@ -3959,7 +3900,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 
 		private ITsString GetFeatureValueString(bool fLongForm)
 		{
-			var tisb = TsIncStrBldrClass.Create();
+			var tisb = TsStringUtils.MakeIncStrBldr();
 			var iCount = FeatureSpecsOC.Count;
 			if (fLongForm && iCount > 0)
 			{
@@ -4017,7 +3958,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 
 		internal ITsString GetFeatureValueStringSorted()
 		{
-			var tisb = TsIncStrBldrClass.Create();
+			var tisb = TsStringUtils.MakeIncStrBldr();
 			var iCount = FeatureSpecsOC.Count;
 			if (iCount > 0)
 			{
@@ -4099,14 +4040,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			switch (flid)
 			{
 				case FsFeatStrucTags.kflidType:
-					Set<ICmObject> set = new Set<ICmObject>();
-#if NotNow
-					// for now when only have exception features...
-					FsFeatStrucType fsType = m_cache.LangProject.GetExceptionFeatureType();
-					set.Add(fsType);
-#endif
-					set.AddRange(m_cache.LangProject.MsFeatureSystemOA.TypesOC);
-					return set;
+					return m_cache.LangProject.MsFeatureSystemOA.TypesOC;
 				default:
 					return base.ReferenceTargetCandidates(flid);
 			}
@@ -4764,11 +4698,11 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// </summary>
 		protected int m_ianalysis;
 
-		public ParagraphAnalysisFinder(ITsString baseline, ILgWritingSystemFactory wsf)
+		public ParagraphAnalysisFinder(ITsString baseline, WritingSystemManager wsManager)
 		{
 			Baseline = baseline;
 			m_length = Baseline.Length;
-			m_wordMaker = new WordMaker(Baseline, wsf);
+			m_wordMaker = new WordMaker(Baseline, wsManager);
 		}
 
 		public ITsString Baseline { get; private set; }
@@ -4859,7 +4793,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// </summary>
 		/// <param name="seg"></param>
 		public ParagraphOffsetsMethod(ISegment seg)
-			: base(seg.BaselineText, seg.Services.WritingSystemFactory)
+			: base(seg.BaselineText, seg.Services.WritingSystemManager)
 		{
 			m_segment = seg;
 		}

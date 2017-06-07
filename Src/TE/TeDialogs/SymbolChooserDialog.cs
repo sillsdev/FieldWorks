@@ -1,30 +1,24 @@
-// Copyright (c) 2004-2013 SIL International
+// Copyright (c) 2004-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: SymbolChooser.cs
-// Responsibility: TE Team
 
 using System;
 using System.Drawing;
 using System.Windows.Forms;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.Framework;
-using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.COMInterfaces;
 
 namespace SIL.FieldWorks.TE
 {
 	/// <summary>
 	/// Summary description for SymbolChooser.
 	/// </summary>
-	public class SymbolChooserDlg : Form, IFWDisposable
+	public class SymbolChooserDlg : Form
 	{
 		private IHelpTopicProvider m_helpTopicProvider;
-		private System.Windows.Forms.Panel panel1;
-		private SIL.FieldWorks.Common.Controls.CharacterGrid charGrid;
-		private System.Windows.Forms.Label lblFontName;
+		private Panel panel1;
+		private Common.Controls.CharacterGrid charGrid;
+		private Label lblFontName;
 		private Button btnHelp;
 		private Button btnCancel;
 		private Button btnOK;
@@ -49,16 +43,12 @@ namespace SIL.FieldWorks.TE
 		/// the font used in the glyph grid.
 		/// </summary>
 		/// <param name="font">Font used in the glyph grid.</param>
-		/// <param name="cpe">An ILgCharacterPropertyEngine. Set this to null to use the
-		/// .Net methods for determining whether or not a codepoint should be added to
-		/// the grid.</param>
 		/// <param name="helpTopicProvider">The help topic provider.</param>
 		/// ------------------------------------------------------------------------------------
-		public SymbolChooserDlg(Font font, ILgCharacterPropertyEngine cpe, IHelpTopicProvider helpTopicProvider)
+		public SymbolChooserDlg(Font font, IHelpTopicProvider helpTopicProvider)
 			: this()
 		{
 			m_helpTopicProvider = helpTopicProvider;
-			charGrid.CharPropEngine = cpe;
 			charGrid.Font = font;
 			lblFontName.Text = font.Name;
 		}

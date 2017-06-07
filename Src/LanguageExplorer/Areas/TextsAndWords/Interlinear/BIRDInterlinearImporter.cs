@@ -5,12 +5,12 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application.ApplicationServices;
@@ -48,8 +48,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				MessageBoxIcon.Warning);
 		}
 
-		[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-			Justification="Cache is a reference")]
 		internal class TextCreationParams
 		{
 			internal Interlineartext InterlinText;
@@ -118,13 +116,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					}
 					//set newSegment to the old, or create a brand new one.
 					ISegment newSegment = oldSegment as ISegment ?? cache.ServiceLocator.GetInstance<ISegmentFactory>().Create(newTextPara, offset);
-					var tsStrFactory = cache.ServiceLocator.GetInstance<ITsStrFactory>();
 					//Fill in the ELAN time information if it is present.
 					AddELANInfoToSegment(cache, phrase, newSegment);
 					ITsString phraseText = null;
 					bool textInFile = false;
 					//Add all of the data from <item> elements into the segment.
-					AddSegmentItemData(cache, wsFactory, phrase, newSegment, tsStrFactory, ref textInFile, ref phraseText);
+					AddSegmentItemData(cache, wsFactory, phrase, newSegment, ref textInFile, ref phraseText);
 					bool lastWasWord = false;
 					if (phrase.WordsContent != null && phrase.WordsContent.Words != null)
 					{
@@ -135,7 +132,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 							// a wordform. Eventual parsing of the text will do so.
 							if (!textInFile)
 							{
-								UpdatePhraseTextForWordItems(wsFactory, tsStrFactory, ref phraseText, phrase.WordsContent.Words[0], ref lastWasWord, space);
+								UpdatePhraseTextForWordItems(wsFactory, ref phraseText, phrase.WordsContent.Words[0], ref lastWasWord, space);
 							}
 						}
 						else
@@ -145,9 +142,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 								//If the text of the phrase was not given in the document build it from the words.
 								if (!textInFile)
 								{
-									UpdatePhraseTextForWordItems(wsFactory, tsStrFactory, ref phraseText, word, ref lastWasWord, space);
+									UpdatePhraseTextForWordItems(wsFactory, ref phraseText, word, ref lastWasWord, space);
 								}
-								AddWordToSegment(newSegment, word, tsStrFactory);
+								AddWordToSegment(newSegment, word);
 							}
 						}
 					}
@@ -240,14 +237,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					}
 					//set newSegment to the old, or create a brand new one.
 					ISegment newSegment = oldSegment as ISegment ?? cache.ServiceLocator.GetInstance<ISegmentFactory>().Create(newTextPara, offset);
-					var tsStrFactory = cache.ServiceLocator.GetInstance<ITsStrFactory>();
 					//Fill in the ELAN time information if it is present.
 					AddELANInfoToSegment(cache, phrase, newSegment);
 
 					ITsString phraseText = null;
 					bool textInFile = false;
 					//Add all of the data from <item> elements into the segment.
-					AddSegmentItemData(cache, wsFactory, phrase, newSegment, tsStrFactory, ref textInFile, ref phraseText);
+					AddSegmentItemData(cache, wsFactory, phrase, newSegment, ref textInFile, ref phraseText);
 
 					bool lastWasWord = false;
 					if (phrase.WordsContent != null && phrase.WordsContent.Words != null)
@@ -257,9 +253,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 							//If the text of the phrase was not found in a "txt" item for this segment then build it from the words.
 							if (!textInFile)
 							{
-								UpdatePhraseTextForWordItems(wsFactory, tsStrFactory, ref phraseText, word, ref lastWasWord, space);
+								UpdatePhraseTextForWordItems(wsFactory, ref phraseText, word, ref lastWasWord, space);
 							}
-							MergeWordToSegment(newSegment, word, tsStrFactory);
+							MergeWordToSegment(newSegment, word);
 						}
 					}
 					UpdateParagraphTextForPhrase(newTextPara, ref offset, phraseText);
@@ -283,7 +279,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				offset += phraseText.Length;
 				var bldr = newTextPara.Contents.GetBldr();
 				var oldText = (bldr.Text ?? "").Trim();
-				if (oldText.Length > 0 && !TsStringUtils.IsEndOfSentenceChar(oldText[oldText.Length - 1], LgGeneralCharCategory.kccPo))
+				if (oldText.Length > 0 && !TsStringUtils.IsEndOfSentenceChar(oldText[oldText.Length - 1], Icu.UCharCategory.U_OTHER_PUNCTUATION))
 				{
 					// 'segment' does not end with recognizable EOS character. Add our special one.
 					bldr.Replace(bldr.Length, bldr.Length, "\x00A7", null);
@@ -308,13 +304,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <summary>
 		/// This method will update the phraseText ref item with the contents of the item entries under the word
 		/// </summary>
-		/// <param name="wsFactory"></param>
-		/// <param name="tsStrFactory"></param>
-		/// <param name="phraseText"></param>
-		/// <param name="word"></param>
-		/// <param name="lastWasWord"></param>
-		/// <param name="space"></param>
-		private static void UpdatePhraseTextForWordItems(ILgWritingSystemFactory wsFactory, ITsStrFactory tsStrFactory, ref ITsString phraseText, Word word, ref bool lastWasWord, char space)
+		private static void UpdatePhraseTextForWordItems(ILgWritingSystemFactory wsFactory, ref ITsString phraseText, Word word, ref bool lastWasWord, char space)
 		{
 			bool isWord = false;
 			foreach (var item in word.Items)
@@ -325,7 +315,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						isWord = true;
 						goto case "punct";
 					case "punct":
-						ITsString wordString = tsStrFactory.MakeString(item.Value,
+						ITsString wordString = TsStringUtils.MakeString(item.Value,
 							GetWsEngine(wsFactory, item.lang).Handle);
 						if (phraseText == null)
 						{
@@ -337,11 +327,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 							if (lastWasWord && isWord) //two words next to each other deserve a space between
 							{
 								phraseBldr.ReplaceTsString(phraseText.Length, phraseText.Length,
-								   tsStrFactory.MakeString("" + space, GetWsEngine(wsFactory, item.lang).Handle));
+								   TsStringUtils.MakeString("" + space, GetWsEngine(wsFactory, item.lang).Handle));
 							}
 							else if (!isWord) //handle punctuation
 							{
-								wordString = GetSpaceAdjustedPunctString(wsFactory, tsStrFactory,
+								wordString = GetSpaceAdjustedPunctString(wsFactory,
 									item, wordString, space, lastWasWord);
 							}
 							phraseBldr.ReplaceTsString(phraseBldr.Length, phraseBldr.Length, wordString);
@@ -360,10 +350,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <param name="wsFactory"></param>
 		/// <param name="phrase"></param>
 		/// <param name="newSegment"></param>
-		/// <param name="tsStrFactory"></param>
 		/// <param name="textInFile">This reference boolean indicates if there was a text item in the phrase</param>
 		/// <param name="phraseText">This reference string will be filled with the contents of the "txt" item in the phrase if it is there</param>
-		private static void AddSegmentItemData(FdoCache cache, ILgWritingSystemFactory wsFactory, Phrase phrase, ISegment newSegment, ITsStrFactory tsStrFactory, ref bool textInFile, ref ITsString phraseText)
+		private static void AddSegmentItemData(FdoCache cache, ILgWritingSystemFactory wsFactory, Phrase phrase, ISegment newSegment, ref bool textInFile, ref ITsString phraseText)
 		{
 			if (phrase.Items != null)
 			{
@@ -372,7 +361,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					switch (item.type)
 					{
 						case "reference-label":
-							newSegment.Reference = tsStrFactory.MakeString(item.Value,
+							newSegment.Reference = TsStringUtils.MakeString(item.Value,
 								GetWsEngine(wsFactory, item.lang).Handle);
 							break;
 						case "gls":
@@ -387,7 +376,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 							note.Content.set_String(GetWsEngine(wsFactory, item.lang).Handle, item.Value);
 							break;
 						case "txt":
-							phraseText = tsStrFactory.MakeString(item.Value, GetWsEngine(wsFactory, item.lang).Handle);
+							phraseText = TsStringUtils.MakeString(item.Value, GetWsEngine(wsFactory, item.lang).Handle);
 							textInFile = true;
 							break;
 					}
@@ -434,7 +423,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			return newPerson;
 		}
 
-		private static void MergeWordToSegment(ISegment newSegment, Word word, ITsStrFactory tsStrFactory)
+		private static void MergeWordToSegment(ISegment newSegment, Word word)
 		{
 			if(!String.IsNullOrEmpty(word.guid))
 			{
@@ -448,12 +437,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				}
 				else
 				{
-					AddWordToSegment(newSegment, word, tsStrFactory);
+					AddWordToSegment(newSegment, word);
 				}
 			}
 			else
 			{
-				AddWordToSegment(newSegment, word, tsStrFactory);
+				AddWordToSegment(newSegment, word);
 			}
 		}
 
@@ -644,11 +633,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			return writingSystem;
 		}
 
-		private static void AddWordToSegment(ISegment newSegment, Word word, ITsStrFactory strFactory)
+		private static void AddWordToSegment(ISegment newSegment, Word word)
 		{
 			//use the items under the word to determine what kind of thing to add to the segment
 			var cache = newSegment.Cache;
-			IAnalysis analysis = CreateWordAnalysisStack(cache, word, strFactory);
+			IAnalysis analysis = CreateWordAnalysisStack(cache, word);
 
 			// Add to segment
 			if (analysis != null)
@@ -657,7 +646,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 		}
 
-		private static IAnalysis CreateWordAnalysisStack(FdoCache cache, Word word, ITsStrFactory strFactory)
+		private static IAnalysis CreateWordAnalysisStack(FdoCache cache, Word word)
 		{
 			if (word.Items == null || word.Items.Length <= 0) return null;
 			IAnalysis analysis = null;
@@ -670,11 +659,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				{
 					case "txt":
 						wsMainVernWs = GetWsEngine(wsFact, wordItem.lang);
-						wordForm = strFactory.MakeString(wordItem.Value, wsMainVernWs.Handle);
+						wordForm = TsStringUtils.MakeString(wordItem.Value, wsMainVernWs.Handle);
 						analysis = WfiWordformServices.FindOrCreateWordform(cache, wordForm);
 						break;
 					case "punct":
-						wordForm = strFactory.MakeString(wordItem.Value,
+						wordForm = TsStringUtils.MakeString(wordItem.Value,
 														 GetWsEngine(wsFact, wordItem.lang).Handle);
 						analysis = WfiWordformServices.FindOrCreatePunctuationform(cache, wordForm);
 						break;
@@ -686,7 +675,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// now add any alternative word forms. (overwrite any existing)
 			if (analysis != null && analysis.HasWordform)
 			{
-				AddAlternativeWssToWordform(analysis, word, wsMainVernWs, strFactory);
+				AddAlternativeWssToWordform(analysis, word, wsMainVernWs);
 			}
 
 			if (analysis != null)
@@ -718,24 +707,19 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// add any alternative forms (in alternative writing systems) to the wordform.
 		/// Overwrite any existing alternative form in a given alternative writing system.
 		/// </summary>
-		/// <param name="analysis"></param>
-		/// <param name="word"></param>
-		/// <param name="wsMainVernWs"></param>
-		/// <param name="strFactory"></param>
-		private static void AddAlternativeWssToWordform(IAnalysis analysis, Word word, ILgWritingSystem wsMainVernWs, ITsStrFactory strFactory)
+		private static void AddAlternativeWssToWordform(IAnalysis analysis, Word word, ILgWritingSystem wsMainVernWs)
 		{
 			ILgWritingSystemFactory wsFact = analysis.Cache.WritingSystemFactory;
 			var wf = analysis.Wordform;
 			foreach (var wordItem in word.Items)
 			{
-				ITsString wffAlt = null;
 				switch (wordItem.type)
 				{
 					case "txt":
 						var wsAlt = GetWsEngine(wsFact, wordItem.lang);
 						if (wsAlt.Handle == wsMainVernWs.Handle)
 							continue;
-						wffAlt = strFactory.MakeString(wordItem.Value, wsAlt.Handle);
+						ITsString wffAlt = TsStringUtils.MakeString(wordItem.Value, wsAlt.Handle);
 						if (wffAlt.Length > 0)
 							wf.Form.set_String(wsAlt.Handle, wffAlt);
 						break;
@@ -748,12 +732,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		/// <param name="word"></param>
 		/// <param name="analysis">the new analysis Gloss. If multiple glosses, returns the last one created.</param>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "cache is a reference")]
 		private static void UpgradeToWordGloss(Word word, ref IAnalysis analysis)
 		{
 			FdoCache cache = analysis.Cache;
-			var tsStrFactory = cache.ServiceLocator.GetInstance<ITsStrFactory>();
 			var wsFact = cache.WritingSystemFactory;
 			if (s_importOptions.AnalysesLevel == ImportAnalysesLevel.WordGloss)
 			{
@@ -781,7 +762,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						wordGlossItem.analysisStatus != analysisStatusTypes.humanApproved) continue;
 					// first make sure that an existing gloss does not already exist. (i.e. don't add duplicate glosses)
 					int wsNewGloss = GetWsEngine(wsFact, wordGlossItem.lang).Handle;
-					ITsString newGlossTss = tsStrFactory.MakeString(wordGlossItem.Value,
+					ITsString newGlossTss = TsStringUtils.MakeString(wordGlossItem.Value,
 																	wsNewGloss);
 					var wfiWord = analysis.Wordform;
 					bool hasGlosses = wfiWord.AnalysesOC.Any(wfia => wfia.MeaningsOC.Any());

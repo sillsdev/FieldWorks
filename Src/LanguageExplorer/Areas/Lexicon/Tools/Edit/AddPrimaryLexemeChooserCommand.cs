@@ -3,7 +3,6 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Controls;
@@ -15,8 +14,6 @@ using SIL.FieldWorks.LexText.Controls;
 namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 {
 	/// <summary />
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification="m_parentWindow is a reference")]
 	internal class AddPrimaryLexemeChooserCommand : ChooserCommand
 	{
 		private readonly ILexEntryRef m_lexEntryRef;

@@ -1,11 +1,6 @@
-// Copyright (c) 2002-2013 SIL International
+// Copyright (c) 2002-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: LangProject.cs
-// Responsibility: Randy Regnier
-// Last reviewed: never
-//
 //
 // <remarks>
 // Implementation of:
@@ -13,17 +8,18 @@
 // </remarks>
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Collections.Generic;
 using System.Xml;
 
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.Utils; // Needed for Set class.
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Cellar;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
+using SIL.Xml;
 
 namespace SIL.FieldWorks.FDO.DomainImpl
 {
@@ -424,7 +420,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			var defAnalWs = m_cache.DefaultAnalWs;
 			parent.Name.set_String(
 				defAnalWs,
-				Cache.TsStrFactory.MakeString(
+				TsStringUtils.MakeString(
 					XmlUtils.GetManditoryAttributeValue(spec, "name"),
 					defAnalWs));
 			foreach (XmlNode child in spec.ChildNodes)
@@ -512,12 +508,11 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		private static void InitItem(XmlNode item, ICmPossibility poss)
 		{
 			var defAnalWs = poss.Cache.DefaultAnalWs;
-			var strFact = poss.Cache.TsStrFactory;
 
 			// Set name property
 			poss.Name.set_String(
 				defAnalWs,
-				strFact.MakeString(
+				TsStringUtils.MakeString(
 					XmlUtils.GetManditoryAttributeValue(item, "name"),
 					defAnalWs));
 
@@ -527,7 +522,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				abbr = poss.Name.AnalysisDefaultWritingSystem.Text;
 			poss.Abbreviation.set_String(
 				defAnalWs,
-				strFact.MakeString(
+				TsStringUtils.MakeString(
 					abbr,
 					defAnalWs));
 
@@ -789,8 +784,6 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// <summary>
 		/// Class that allows us to clear the WS caches when an action that (might have) changed them is undone or redone.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-			Justification="m_cache is a reference and will be disposed in parent class.")]
 		class UndoWsChangeAction : UndoActionBase
 		{
 			public FdoCache Cache { get; set; }

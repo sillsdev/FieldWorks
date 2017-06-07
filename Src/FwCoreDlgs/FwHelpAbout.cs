@@ -1,18 +1,14 @@
-// Copyright (c) 2002-2013 SIL International
+// Copyright (c) 2002-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: FwHelpAbout.cs
-// Responsibility: TE Team
+
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Windows.Forms;
-using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
 
@@ -24,7 +20,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	/// FW Help about dialog (previously HelpAboutDlg in AfDialog.cpp)
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public class FwHelpAbout : Form, IFWDisposable
+	public class FwHelpAbout : Form
 	{
 		#region Data members
 
@@ -55,10 +51,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// Constructor
 		/// </summary>
 		/// ----------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification = "TODO-Linux: LinkLabel.TabStop is missing from Mono")]
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "m_systemMonitorLink is added to Controls collection and disposed there")]
 		public FwHelpAbout()
 		{
 			//
@@ -116,17 +108,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					.Concat<KeyValuePair<string, string>>(LinuxPackageUtils.FindInstalledPackages("fieldworks-enc-converters"))
 					.Concat<KeyValuePair<string, string>>(LinuxPackageUtils.FindInstalledPackages("flexbridge"))
 					.Concat<KeyValuePair<string, string>>(LinuxPackageUtils.FindInstalledPackages("fieldworks-l10n-*"))
-					.Concat<KeyValuePair<string, string>>(LinuxPackageUtils.FindInstalledPackages("mono-sil"))
-					.Concat<KeyValuePair<string, string>>(LinuxPackageUtils.FindInstalledPackages("libgdiplus-sil"))
-					.Concat<KeyValuePair<string, string>>(LinuxPackageUtils.FindInstalledPackages("gtk-sharp2-sil"))
-					.Concat<KeyValuePair<string, string>>(LinuxPackageUtils.FindInstalledPackages("mono-basic-sil"))
-					.Concat<KeyValuePair<string, string>>(LinuxPackageUtils.FindInstalledPackages("*geckofx*"))
+					.Concat<KeyValuePair<string, string>>(LinuxPackageUtils.FindInstalledPackages("mono4-sil"))
+					.Concat<KeyValuePair<string, string>>(LinuxPackageUtils.FindInstalledPackages("libgdiplus4-sil"))
+					.Concat<KeyValuePair<string, string>>(LinuxPackageUtils.FindInstalledPackages("gtk-sharp4-sil"))
+					.Concat<KeyValuePair<string, string>>(LinuxPackageUtils.FindInstalledPackages("mono-basic4-sil"))
 					.Concat<KeyValuePair<string, string>>(LinuxPackageUtils.FindInstalledPackages("chmsee"))
-					.Concat<KeyValuePair<string, string>>(LinuxPackageUtils.FindInstalledPackages("pathway"))
-					.Concat<KeyValuePair<string, string>>(LinuxPackageUtils.FindInstalledPackages("fieldworks-mono"))
-					.Concat<KeyValuePair<string, string>>(LinuxPackageUtils.FindInstalledPackages("fieldworks-libgdiplus"))
-					.Concat<KeyValuePair<string, string>>(LinuxPackageUtils.FindInstalledPackages("fieldworks-gtk-sharp2"))
-					.Concat<KeyValuePair<string, string>>(LinuxPackageUtils.FindInstalledPackages("fieldworks-mono-basic")))
+					.Concat<KeyValuePair<string, string>>(LinuxPackageUtils.FindInstalledPackages("pathway")))
 				{
 					versionInformation.AppendText(String.Format("{0} {1}{2}", info.Key, info.Value, Environment.NewLine));
 				}
@@ -172,8 +159,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification = "TODO-Linux: LinkLabel.TabStop is missing from Mono")]
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
@@ -196,78 +181,78 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_toolTip = new System.Windows.Forms.ToolTip(this.components);
 			((System.ComponentModel.ISupportInitialize)(fieldWorksIcon)).BeginInit();
 			this.SuspendLayout();
-			// 
+			//
 			// buttonOk
-			// 
+			//
 			buttonOk.BackColor = System.Drawing.SystemColors.Control;
 			buttonOk.DialogResult = System.Windows.Forms.DialogResult.OK;
 			resources.ApplyResources(buttonOk, "buttonOk");
 			buttonOk.Name = "buttonOk";
 			m_toolTip.SetToolTip(buttonOk, resources.GetString("buttonOk.ToolTip"));
 			buttonOk.UseVisualStyleBackColor = true;
-			// 
+			//
 			// lblSILFieldWorks1
-			// 
+			//
 			resources.ApplyResources(lblSILFieldWorks1, "lblSILFieldWorks1");
 			lblSILFieldWorks1.Name = "lblSILFieldWorks1";
-			// 
+			//
 			// fieldWorksIcon
-			// 
+			//
 			resources.ApplyResources(fieldWorksIcon, "fieldWorksIcon");
 			fieldWorksIcon.Name = "fieldWorksIcon";
 			fieldWorksIcon.TabStop = false;
-			// 
+			//
 			// m_toolTip
-			// 
+			//
 			m_toolTip.AutomaticDelay = 100;
 			m_toolTip.AutoPopDelay = 1000;
 			m_toolTip.InitialDelay = 100;
 			m_toolTip.ReshowDelay = 100;
-			// 
+			//
 			// lblAvailableDiskSpace
-			// 
+			//
 			resources.ApplyResources(this.lblAvailableDiskSpace, "lblAvailableDiskSpace");
 			this.lblAvailableDiskSpace.Name = "lblAvailableDiskSpace";
-			// 
+			//
 			// lblAvailableMemory
-			// 
+			//
 			resources.ApplyResources(this.lblAvailableMemory, "lblAvailableMemory");
 			this.lblAvailableMemory.Name = "lblAvailableMemory";
-			// 
+			//
 			// lblName
-			// 
+			//
 			resources.ApplyResources(this.lblName, "lblName");
 			this.lblName.Name = "lblName";
-			// 
+			//
 			// lblCopyright
-			// 
+			//
 			resources.ApplyResources(this.lblCopyright, "lblCopyright");
 			this.lblCopyright.Name = "lblCopyright";
-			// 
+			//
 			// edtAvailableDiskSpace
-			// 
+			//
 			this.edtAvailableDiskSpace.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
 			resources.ApplyResources(this.edtAvailableDiskSpace, "edtAvailableDiskSpace");
 			this.edtAvailableDiskSpace.Name = "edtAvailableDiskSpace";
-			// 
+			//
 			// edtAvailableMemory
-			// 
+			//
 			this.edtAvailableMemory.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
 			resources.ApplyResources(this.edtAvailableMemory, "edtAvailableMemory");
 			this.edtAvailableMemory.Name = "edtAvailableMemory";
-			// 
+			//
 			// lblAppVersion
-			// 
+			//
 			resources.ApplyResources(this.lblAppVersion, "lblAppVersion");
 			this.lblAppVersion.Name = "lblAppVersion";
-			// 
+			//
 			// lblFwVersion
-			// 
+			//
 			resources.ApplyResources(this.lblFwVersion, "lblFwVersion");
 			this.lblFwVersion.Name = "lblFwVersion";
-			// 
+			//
 			// FwHelpAbout
-			// 
+			//
 			this.AcceptButton = buttonOk;
 			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;

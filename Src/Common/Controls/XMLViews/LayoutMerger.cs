@@ -1,12 +1,14 @@
-﻿// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
+using System.Text.RegularExpressions;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.Utils;
+using SIL.Xml;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -58,9 +60,11 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		private Dictionary<string, bool> m_oldPartsFound;
 		private HashSet<XElement> m_insertedMissing; // missing nodes we already inserted.
-		readonly HashSet<string> m_safeAttrs = new HashSet<string>(
-			new[] { "before", "after", "sep", "ws", "style", "showLabels", "number", "numstyle", "numsingle", "visibility",
-				"singlegraminfofirst", "showasindentedpara", "reltypeseq", "dup","entrytypeseq" });
+		private readonly HashSet<string> m_safeAttrs = new HashSet<string>
+		{
+			"before", "after", "sep", "ws", "style", "showLabels", "number", "numstyle", "numsingle", "visibility",
+			"singlegraminfofirst", "showasindentedpara", "reltypeseq", "dup", "entrytypeseq", "flowType"
+		};
 
 		private const string NameAttr = "name";
 		private const string LabelAttr = "label";
@@ -147,7 +151,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 		private void FixUpPartRefLabelAttrForDupNode(XElement partRefNode, string dupKey)
 		{
-			if (string.IsNullOrEmpty(Utils.XmlUtils.GetOptionalAttributeValue(partRefNode, LabelAttr, string.Empty)))
+			if (string.IsNullOrEmpty(XmlUtils.GetOptionalAttributeValue(partRefNode, LabelAttr, string.Empty)))
 				return; // nothing to do
 
 			var xaLabel = partRefNode.Attribute(LabelAttr);
@@ -168,23 +172,41 @@ namespace SIL.FieldWorks.Common.Controls
 		// newMaster and oldConfigured nodes.
 		private static string GetKey(XElement node)
 		{
-			var key = Utils.XmlUtils.GetOptionalAttributeValue(node, RefAttr, string.Empty);
+			var key = XmlUtils.GetOptionalAttributeValue(node, RefAttr, string.Empty);
 			if (key == ChildStr)
-				key = Utils.XmlUtils.GetOptionalAttributeValue(node, LabelAttr, ChildStr);
+				key = XmlUtils.GetOptionalAttributeValue(node, LabelAttr, ChildStr);
 			return key;
 		}
 
-		// For most parts, the key is the ref attribute, but if that is $child, it's a custom field and
-		// the label is the best way to distinguish. On the other hand, we need to be able to distinguish
-		// parts that have been duplicated too, so we have a second sort of key that also uses the dup attribute.
-		// This allows us to compare different oldConfigured nodes with the relevant newMaster node to see
-		// if this one is a duplicate node.
-		private static string GetKeyWithDup(XElement node)
+		/// <summary>
+		/// For most parts, the key is the ref attribute, but if that is $child, it's a custom field and
+		/// the label is the best way to distinguish. On the other hand, we need to be able to distinguish
+		/// parts that have been duplicated too, so we have a second sort of key that also uses the dup attribute.
+		/// This allows us to compare different oldConfigured nodes with the relevant newMaster node to see
+		/// if this one is a duplicate node.
+		/// </summary>
+		/// <param name="node">XmlNode from old configured parts Dictionary</param>
+		/// <param name="isInitializing">When building the parts dictionary this should be true</param>
+		/// <returns>Key with dup value</returns>
+		private string GetKeyWithDup(XElement node, bool isInitializing)
 		{
-			var key = Utils.XmlUtils.GetOptionalAttributeValue(node, RefAttr, string.Empty);
+			var key = XmlUtils.GetOptionalAttributeValue(node, RefAttr, string.Empty);
 			if (key == ChildStr)
-				key = Utils.XmlUtils.GetOptionalAttributeValue(node, LabelAttr, ChildStr);
-			var dup = Utils.XmlUtils.GetOptionalAttributeValue(node, DupAttr, string.Empty);
+				key = XmlUtils.GetOptionalAttributeValue(node, LabelAttr, ChildStr);
+			var dup = XmlUtils.GetOptionalAttributeValue(node, DupAttr, string.Empty);
+			if (isInitializing && m_labelAttrSuffix.ContainsKey(key + dup))
+			{
+				if (!dup.Contains(".")) return key + dup;
+				//numIncr value are getting from the label attribute text which are between the paranthesis
+				var labelKey = XmlUtils.GetOptionalAttributeValue(node, LabelAttr, ChildStr);
+				var numIncr = Regex.Match(labelKey, @"\(([^)]*)\)").Groups[1].Value;
+				dup = String.Join(".", dup + "-" + numIncr);
+				//Updating dup value in node attribute
+				if (node.Attributes().Any())
+				{
+					node.Attribute("dup").SetValue(dup);
+				}
+			}
 			return key + dup;
 		}
 
@@ -199,9 +221,10 @@ namespace SIL.FieldWorks.Common.Controls
 					continue;
 				var baseKey = GetKey(child);
 				m_oldPartsFound[baseKey] = false;
-				var dupKey = GetKeyWithDup(child);
+				var dupKey = GetKeyWithDup(child, true);
 				if (dupKey == baseKey)
 					continue;
+
 				m_labelAttrSuffix.Add(dupKey, LayoutKeyUtils.GetPossibleLabelSuffix(child));
 				m_partLevelParamAttrSuffix.Add(dupKey, LayoutKeyUtils.GetPossibleParamSuffix(child));
 			}
@@ -211,7 +234,7 @@ namespace SIL.FieldWorks.Common.Controls
 		// input range. Currently this requires both that it has a ref of $child and the key doesn't match ANY part node in the input.
 		bool WantToCopyMissingItem(XElement node)
 		{
-			if (Utils.XmlUtils.GetOptionalAttributeValue(node, RefAttr, string.Empty) != ChildStr)
+			if (XmlUtils.GetOptionalAttributeValue(node, RefAttr, string.Empty) != ChildStr)
 				return false;
 			var key = GetKey(node);
 			if (m_insertedMissing.Contains(node))
@@ -249,7 +272,7 @@ namespace SIL.FieldWorks.Common.Controls
 				{
 					var copy = CopyToOutput(child);
 					CopySafeAttrs(copy, oldNode);
-					var dupKey = GetKeyWithDup(oldNode);
+					var dupKey = GetKeyWithDup(oldNode, false);
 					if (dupKey != key)
 					{
 						// This duplicate may have suffixes to attach
@@ -277,7 +300,7 @@ namespace SIL.FieldWorks.Common.Controls
 		private void CheckForAndReattachLayoutParamSuffix(XElement workingNode)
 		{
 			if (string.IsNullOrEmpty(m_layoutParamAttrSuffix) ||
-				string.IsNullOrEmpty(Utils.XmlUtils.GetOptionalAttributeValue(workingNode, ParamAttr, string.Empty)))
+				string.IsNullOrEmpty(XmlUtils.GetOptionalAttributeValue(workingNode, ParamAttr, string.Empty)))
 				return; // nothing to do
 
 			var xaParam = workingNode.Attribute(ParamAttr);
@@ -300,8 +323,20 @@ namespace SIL.FieldWorks.Common.Controls
 			foreach (var xa in oldConfiguredPartRef.Attributes())
 			{
 				if (m_safeAttrs.Contains(xa.Name.LocalName))
+				{
 					XmlUtils.SetAttribute(copy, xa.Name.LocalName, xa.Value);
+				}
+				else if (NeedsAsParaParamSet(copy, xa))
+				{
+					XmlUtils.SetAttribute(copy, ParamAttr, xa.Value.Substring(0, xa.Value.IndexOf("_AsPara", StringComparison.Ordinal) + "_AsPara".Length)); // truncate after _AsPara
+				}
 			}
+		}
+
+		private static bool NeedsAsParaParamSet(XElement copy, XAttribute xa)
+		{
+			return xa.Name == ParamAttr && xa.Value.Contains("_AsPara")
+				&& copy.Attributes().Any() && copy.Attribute(ParamAttr) != null && !copy.Attribute(ParamAttr).Value.Contains("_AsPara");
 		}
 
 		/// <summary>

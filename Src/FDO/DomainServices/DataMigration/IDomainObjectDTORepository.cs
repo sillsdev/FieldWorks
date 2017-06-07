@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Xml.Linq;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Cellar;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
 
@@ -203,7 +203,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 		/// <summary>
 		/// Create a custom field using the given values.
 		/// </summary>
-		void CreateCustomField(string className, string fieldName, SIL.CoreImpl.CellarPropertyType cpt,
+		void CreateCustomField(string className, string fieldName, CellarPropertyType cpt,
 			int destClid, string helpString, int wsSelector, Guid listRoot);
 
 		/// ------------------------------------------------------------------------------------

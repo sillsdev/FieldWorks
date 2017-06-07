@@ -1,24 +1,19 @@
-// Copyright (c) 2009-2013 SIL International
+// Copyright (c) 2009-2016 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: LexImportWizard.cs
-// Responsibility: FLEx Team
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 using Microsoft.Win32;
 using Sfm2Xml;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;	// FW WS stuff
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
@@ -26,6 +21,11 @@ using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FwCoreDlgs.BackupRestore;
 using SIL.FieldWorks.Resources;
 using SilEncConverters40;
+using SIL.CoreImpl.Cellar;
+using SIL.CoreImpl.WritingSystems;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -95,6 +95,8 @@ namespace SIL.FieldWorks.LexText.Controls
 		private System.Windows.Forms.ColumnHeader columnHeaderCM4;
 		private ImageList imageList1;	// key=sfm, value=ClsAutoField
 		private OpenFileDialogAdapter openFileDialog;
+		private CheckBox m_chkCreateMissingLinks;
+		private const string kOptionKeyMissingLinkCheckbox = "chkCreateMissingLinks";
 
 		private static LexImportWizard m_wizard = null;
 
@@ -252,6 +254,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			AcceptButton = null;
 			btnModifyMappingLanguage.Enabled = false;
 			btnModifyContentMapping.Enabled = false;
+			m_chkCreateMissingLinks.Checked = false;
 			string dictFileToImport = string.Empty;
 			m_SettingsFileName.Items.Clear();
 			m_SettingsFileName.Items.Add(m_sMDFImportMap);
@@ -391,11 +394,11 @@ namespace SIL.FieldWorks.LexText.Controls
 				// LT-6620 : putting in an invalid path was causing an exception in the openFileDialog.ShowDialog()
 				// Now we make sure parts are valid before setting the values in the openfile dialog.
 				string dir = string.Empty;
-				try
+
+				if (!string.IsNullOrEmpty(currentFile) && FileUtils.IsFilePathValid(currentFile))
 				{
 					dir = Path.GetDirectoryName(currentFile);
 				}
-				catch{}
 				if (Directory.Exists(dir))
 					openFileDialog.InitialDirectory = dir;
 				// if we don't set it to something, it remembers the last file it saw. This can be
@@ -406,10 +409,10 @@ namespace SIL.FieldWorks.LexText.Controls
 				else
 					openFileDialog.FileName = "";
 
-				openFileDialog.Title = String.Format(LexTextControls.ksSelectXFile, fileType.ToString());
+				openFileDialog.Title = string.Format(LexTextControls.ksSelectXFile, fileType);
 				if (openFileDialog.ShowDialog() == DialogResult.OK)
 				{
-					bool isValid = false;
+					bool isValid;
 					string text;
 
 					// Before doing the 'fileType' based tests, make sure it's not a PhaseX file
@@ -421,8 +424,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					else if (fileType == OFType.Database)
 					{
 						text = LexTextControls.ksStandardFormat;
-						Sfm2Xml.IsSfmFile validFile = new Sfm2Xml.IsSfmFile(openFileDialog.FileName);
-						isValid = validFile.IsValid;
+						isValid = new IsSfmFile(openFileDialog.FileName).IsValid;
 					}
 					else if (fileType == OFType.SaveAs)
 					{
@@ -444,15 +446,13 @@ namespace SIL.FieldWorks.LexText.Controls
 							MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
 						if (dr == DialogResult.Yes)
 							return openFileDialog.FileName;
-						else if (dr == DialogResult.No)
+						if (dr == DialogResult.No)
 							continue;
-						else
-							break;	// exit with current still
+						break;	// exit with current still
 					}
 					return openFileDialog.FileName;
 				}
-				else
-					done = true;
+				done = true;
 			}
 			return currentFile;
 		}
@@ -462,7 +462,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (m_formHasLoaded)
 			{
 				m_dirtySenseLastSave = true;
-				m_dirtyMapFile = !(m_processedMapFile == m_SettingsFileName.Text);
+				m_dirtyMapFile = m_processedMapFile != m_SettingsFileName.Text;
 				AllowQuickFinishButton();
 			}
 		}
@@ -539,16 +539,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				}
 				else
 				{
-					// reset them to m_sMDFImportMap and dbfile + .map
-					m_SettingsFileName.Items.Clear();
-					m_SettingsFileName.Items.Add(m_sMDFImportMap);
-					m_SettingsFileName.SelectedIndex = 0;
-					m_SaveAsFileName.Text = RemoveTheFileExtension(m_DatabaseFileName.Text) + "-import-settings.map";
-					if (System.IO.File.Exists(m_SaveAsFileName.Text))
-					{
-						int pos = m_SettingsFileName.Items.Add(m_SaveAsFileName.Text);
-						m_SettingsFileName.SelectedIndex = pos;
-					}
+					SetDefaultSettings();
 				}
 			}
 			m_dirtyInputFile = !(m_processedInputFile == m_DatabaseFileName.Text);
@@ -560,6 +551,20 @@ namespace SIL.FieldWorks.LexText.Controls
 				//					NextButtonEnabled = true;
 				//				else
 				//					NextButtonEnabled = false;
+			}
+		}
+
+		private void SetDefaultSettings()
+		{
+			// reset them to m_sMDFImportMap and dbfile + .map
+			m_SettingsFileName.Items.Clear();
+			m_SettingsFileName.Items.Add(m_sMDFImportMap);
+			m_SettingsFileName.SelectedIndex = 0;
+			m_SaveAsFileName.Text = RemoveTheFileExtension(m_DatabaseFileName.Text) + "-import-settings.map";
+			if (System.IO.File.Exists(m_SaveAsFileName.Text))
+			{
+				int pos = m_SettingsFileName.Items.Add(m_SaveAsFileName.Text);
+				m_SettingsFileName.SelectedIndex = pos;
 			}
 		}
 
@@ -665,12 +670,12 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			System.Text.StringBuilder sbHelp = new System.Text.StringBuilder();
 			sbHelp.Append("<Field uiname=\"");
-			sbHelp.Append(MakeVaildXML(fd.Userlabel));
+			sbHelp.Append(MakeValidXML(fd.Userlabel));
 			sbHelp.Append("\"><Help>");
 			if (fd.HelpString != null && fd.HelpString.Trim().Length > 0)
 			{
 				sbHelp.Append("<Usage>");
-				sbHelp.Append(MakeVaildXML(fd.HelpString));
+				sbHelp.Append(MakeValidXML(fd.HelpString));
 				sbHelp.Append("</Usage>");
 			}
 			sbHelp.Append("<Settings>Set the Language Descriptor to the language of this field.</Settings>");
@@ -774,7 +779,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			return customFields;
 		}
 
-		protected string MakeVaildXML(string input)
+		protected string MakeValidXML(string input)
 		{
 			return input.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
 		}
@@ -859,7 +864,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			// get list of current Language descriptor values
 			Hashtable langDescs = GetUILanguages();
 
-			using (var dlg = new LexImportWizardLanguage(m_cache, langDescs, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_app, m_stylesheet))
+			using (var dlg = new LexImportWizardLanguage(m_cache, langDescs, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_app))
 			{
 			if (dlg.ShowDialog(this) == DialogResult.OK)
 			{
@@ -904,7 +909,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 
 			using (var dlg = new LexImportWizardLanguage(m_cache, langDescs,
-					m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_app, m_stylesheet))
+					m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_app))
 			{
 			dlg.LangToModify(desc, name, map);
 			if (dlg.ShowDialog(this) == DialogResult.OK)
@@ -1000,6 +1005,25 @@ namespace SIL.FieldWorks.LexText.Controls
 			listViewContentMapping.Columns[1].Width = 0;
 			listViewContentMapping.EndUpdate();
 #endif
+		}
+
+		void ReadOptionInfoFromMapFile()
+		{
+			var oc = new OptionConverter();
+			var options = oc.Options(m_SettingsFileName.Text);
+			if (options == null) return;
+			foreach (var option in options)
+			{
+				switch (option.Key)
+				{
+					case kOptionKeyMissingLinkCheckbox:
+						m_chkCreateMissingLinks.Checked = option.Value;
+						break;
+					default:
+						Debug.Fail(string.Format("Unknown option key {0}", option.Key));
+						break;
+				}
+			}
 		}
 
 		private void SetListViewItemColor(ref ListViewItem item)
@@ -1115,7 +1139,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			contentMapping = listViewContentMapping.Items[selIndex].Tag as MarkerPresenter.ContentMapping;
 			using (LexImportWizardMarker dlg = new LexImportWizardMarker(m_LexFields))
 			{
-				dlg.Init(contentMapping, langDescs, m_cache, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_app, m_stylesheet);
+				dlg.Init(contentMapping, langDescs, m_cache, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_app);
 			DialogResult dr = dlg.ShowDialog(this);
 
 			// Custom fields have to be handled independantly of the dialogresult being ok sense they
@@ -1673,8 +1697,13 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			Hashtable uiLangsNew = GetUILanguages();
 
+			// ================================================================
+			// Build the list of options
+			var options = new List<Sfm2Xml.ILexImportOption>();
+			options.Add(new LexImportOption(kOptionKeyMissingLinkCheckbox, "Checkbox", m_chkCreateMissingLinks.Checked));
+
 			// this is the external way through common objects to create the map file
-			Sfm2Xml.STATICS.NewMapFileBuilder(uiLangsNew, m_LexFields, m_CustomFields, sfmInfo, ifMarker, m_SaveAsFileName.Text);
+			Sfm2Xml.STATICS.NewMapFileBuilder(uiLangsNew, m_LexFields, m_CustomFields, sfmInfo, ifMarker, m_SaveAsFileName.Text, options);
 
 		}
 
@@ -1913,7 +1942,8 @@ namespace SIL.FieldWorks.LexText.Controls
 					lexImport.Error += OnImportError;
 					bool fRet = (bool)dlg.RunTask(true, lexImport.Import,
 						runToCompletion, lastStep, startPhase, m_DatabaseFileName.Text, m_cEntries,
-						m_DisplayImportReport.Checked, m_sPhase1HtmlReport, LexImport.s_sPhase1FileName);
+						m_DisplayImportReport.Checked, m_sPhase1HtmlReport, LexImport.s_sPhase1FileName,
+						m_chkCreateMissingLinks.Checked);
 
 					if (fRet)
 						DialogResult = DialogResult.OK;	// only 'OK' if not exception
@@ -1959,8 +1989,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// retrieve the last import file that was imported via the wizard from the registry.
 		/// </summary>
 		/// <returns></returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "key is a reference")]
 		private bool GetLastImportFile(out string fileName)
 		{
 			fileName = string.Empty;
@@ -2007,11 +2035,11 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				using (RegistryKey key = m_app.SettingsKey)
 				{
-				if (key == null)
-					return;
+					if (key == null)
+						return;
 
-				// save it as the most recent dictionary file for import
-				key.SetValue("LatestImportDictFile", dbImportName);
+					// save it as the most recent dictionary file for import
+					key.SetValue("LatestImportDictFile", dbImportName);
 				}
 
 				string dbHash = dbImportName.GetHashCode().ToString();
@@ -2019,18 +2047,18 @@ namespace SIL.FieldWorks.LexText.Controls
 				// save it to the folder of imported dictionary files
 				using (var key = m_app.SettingsKey.CreateSubKey("ImportDictFiles"))
 				{
-				key.SetValue("ImportFile" + dbHash, dbImportName);
+					key.SetValue("ImportFile" + dbHash, dbImportName);
 				}
 
 				// save the support files for this: map and 'save as' files
 				using (var key = m_app.SettingsKey.CreateSubKey("ImportFile" + dbHash))
 				{
-				if (key != null)
-				{
-					key.SetValue("Settings", m_SettingsFileName.Text);
-					key.SetValue("SaveAs", m_SaveAsFileName.Text);
+					if (key != null)
+					{
+						key.SetValue("Settings", m_SettingsFileName.Text);
+						key.SetValue("SaveAs", m_SaveAsFileName.Text);
+					}
 				}
-			}
 			}
 			// also need to create the map file - or go down trying...
 			SaveNewMapFile();
@@ -2312,6 +2340,10 @@ namespace SIL.FieldWorks.LexText.Controls
 		private bool UsesInvalidFileNames(bool runSilent)
 		{
 			bool fStayHere = false;
+			if (!File.Exists(m_SettingsFileName.Text))
+			{
+				SetDefaultSettings();
+			}
 			if (m_isPhaseInputFile)
 			{
 				;
@@ -2406,6 +2438,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					tabSteps.SelectedIndex = 6;	// 0-7
 					UpdateStepLabel();
 				}
+				ReadOptionInfoFromMapFile();
 			}
 			else if (CurrentStepNumber == 4)
 			{
@@ -2459,24 +2492,25 @@ namespace SIL.FieldWorks.LexText.Controls
 			this.btnModifyMappingLanguage = new System.Windows.Forms.Button();
 			this.btnAddMappingLanguage = new System.Windows.Forms.Button();
 			this.listViewMappingLanguages = new System.Windows.Forms.ListView();
-			this.LangcolumnHeader1 = new System.Windows.Forms.ColumnHeader();
-			this.LangcolumnHeader2 = new System.Windows.Forms.ColumnHeader();
-			this.LangcolumnHeader3 = new System.Windows.Forms.ColumnHeader();
+			this.LangcolumnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.LangcolumnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.LangcolumnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.lblMappingLanguagesInstructions = new System.Windows.Forms.Label();
 			this.lblMappingLanguages = new System.Windows.Forms.Label();
 			this.tabPage4 = new System.Windows.Forms.TabPage();
+			this.m_chkCreateMissingLinks = new System.Windows.Forms.CheckBox();
 			this.lblTotalMarkers = new System.Windows.Forms.Label();
 			this.btnModifyContentMapping = new System.Windows.Forms.Button();
 			this.lblContentInstructions2 = new System.Windows.Forms.Label();
 			this.lblContentInstructions1 = new System.Windows.Forms.Label();
 			this.lblContentMappings = new System.Windows.Forms.Label();
 			this.listViewContentMapping = new System.Windows.Forms.ListView();
-			this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
-			this.columnHeader6 = new System.Windows.Forms.ColumnHeader();
-			this.columnHeader5 = new System.Windows.Forms.ColumnHeader();
-			this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
-			this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
-			this.columnHeader4 = new System.Windows.Forms.ColumnHeader();
+			this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.columnHeader6 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.tabPage6 = new System.Windows.Forms.TabPage();
 			this.btnDeleteCharMapping = new System.Windows.Forms.Button();
 			this.btnModifyCharMapping = new System.Windows.Forms.Button();
@@ -2484,10 +2518,10 @@ namespace SIL.FieldWorks.LexText.Controls
 			this.label2 = new System.Windows.Forms.Label();
 			this.label4 = new System.Windows.Forms.Label();
 			this.listViewCharMappings = new System.Windows.Forms.ListView();
-			this.columnHeaderCM1 = new System.Windows.Forms.ColumnHeader();
-			this.columnHeaderCM2 = new System.Windows.Forms.ColumnHeader();
-			this.columnHeaderCM3 = new System.Windows.Forms.ColumnHeader();
-			this.columnHeaderCM4 = new System.Windows.Forms.ColumnHeader();
+			this.columnHeaderCM1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.columnHeaderCM2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.columnHeaderCM3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.columnHeaderCM4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.tabPage5 = new System.Windows.Forms.TabPage();
 			this.tvBeginMarkers = new System.Windows.Forms.TreeView();
 			this.imageList1 = new System.Windows.Forms.ImageList(this.components);
@@ -2724,9 +2758,9 @@ namespace SIL.FieldWorks.LexText.Controls
 			//
 			resources.ApplyResources(this.listViewMappingLanguages, "listViewMappingLanguages");
 			this.listViewMappingLanguages.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-			this.LangcolumnHeader1,
-			this.LangcolumnHeader2,
-			this.LangcolumnHeader3});
+				this.LangcolumnHeader1,
+				this.LangcolumnHeader2,
+				this.LangcolumnHeader3});
 			this.listViewMappingLanguages.FullRowSelect = true;
 			this.listViewMappingLanguages.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
 			this.listViewMappingLanguages.HideSelection = false;
@@ -2734,9 +2768,9 @@ namespace SIL.FieldWorks.LexText.Controls
 			this.listViewMappingLanguages.Name = "listViewMappingLanguages";
 			this.listViewMappingLanguages.UseCompatibleStateImageBehavior = false;
 			this.listViewMappingLanguages.View = System.Windows.Forms.View.Details;
+			this.listViewMappingLanguages.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.listViewMappingLanguages_ColumnClick);
 			this.listViewMappingLanguages.SelectedIndexChanged += new System.EventHandler(this.listViewMappingLanguages_SelectedIndexChanged);
 			this.listViewMappingLanguages.DoubleClick += new System.EventHandler(this.listViewMappingLanguages_DoubleClick);
-			this.listViewMappingLanguages.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.listViewMappingLanguages_ColumnClick);
 			//
 			// LangcolumnHeader1
 			//
@@ -2763,6 +2797,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			// tabPage4
 			//
 			resources.ApplyResources(this.tabPage4, "tabPage4");
+			this.tabPage4.Controls.Add(this.m_chkCreateMissingLinks);
 			this.tabPage4.Controls.Add(this.lblTotalMarkers);
 			this.tabPage4.Controls.Add(this.btnModifyContentMapping);
 			this.tabPage4.Controls.Add(this.lblContentInstructions2);
@@ -2771,6 +2806,12 @@ namespace SIL.FieldWorks.LexText.Controls
 			this.tabPage4.Controls.Add(this.listViewContentMapping);
 			this.tabPage4.Name = "tabPage4";
 			this.tabPage4.UseVisualStyleBackColor = true;
+			//
+			// m_chkCreateMissingLinks
+			//
+			resources.ApplyResources(this.m_chkCreateMissingLinks, "m_chkCreateMissingLinks");
+			this.m_chkCreateMissingLinks.Name = "m_chkCreateMissingLinks";
+			this.m_chkCreateMissingLinks.UseVisualStyleBackColor = true;
 			//
 			// lblTotalMarkers
 			//
@@ -2803,12 +2844,12 @@ namespace SIL.FieldWorks.LexText.Controls
 			//
 			resources.ApplyResources(this.listViewContentMapping, "listViewContentMapping");
 			this.listViewContentMapping.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-			this.columnHeader1,
-			this.columnHeader6,
-			this.columnHeader5,
-			this.columnHeader2,
-			this.columnHeader3,
-			this.columnHeader4});
+				this.columnHeader1,
+				this.columnHeader6,
+				this.columnHeader5,
+				this.columnHeader2,
+				this.columnHeader3,
+				this.columnHeader4});
 			this.listViewContentMapping.FullRowSelect = true;
 			this.listViewContentMapping.HideSelection = false;
 			this.listViewContentMapping.MultiSelect = false;
@@ -2816,9 +2857,9 @@ namespace SIL.FieldWorks.LexText.Controls
 			this.listViewContentMapping.Sorting = System.Windows.Forms.SortOrder.Ascending;
 			this.listViewContentMapping.UseCompatibleStateImageBehavior = false;
 			this.listViewContentMapping.View = System.Windows.Forms.View.Details;
+			this.listViewContentMapping.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.listViewContentMapping_ColumnClick);
 			this.listViewContentMapping.SelectedIndexChanged += new System.EventHandler(this.listViewContentMapping_SelectedIndexChanged);
 			this.listViewContentMapping.DoubleClick += new System.EventHandler(this.listViewContentMapping_DoubleClick);
-			this.listViewContentMapping.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.listViewContentMapping_ColumnClick);
 			//
 			// columnHeader1
 			//
@@ -2887,10 +2928,10 @@ namespace SIL.FieldWorks.LexText.Controls
 			// listViewCharMappings
 			//
 			this.listViewCharMappings.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-			this.columnHeaderCM1,
-			this.columnHeaderCM2,
-			this.columnHeaderCM3,
-			this.columnHeaderCM4});
+				this.columnHeaderCM1,
+				this.columnHeaderCM2,
+				this.columnHeaderCM3,
+				this.columnHeaderCM4});
 			this.listViewCharMappings.FullRowSelect = true;
 			this.listViewCharMappings.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
 			this.listViewCharMappings.HideSelection = false;
@@ -2936,8 +2977,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			this.tvBeginMarkers.ShowLines = false;
 			this.tvBeginMarkers.ShowRootLines = false;
 			this.tvBeginMarkers.BeforeCollapse += new System.Windows.Forms.TreeViewCancelEventHandler(this.tvBeginMarkers_BeforeCollapse);
-			this.tvBeginMarkers.MouseDown += new System.Windows.Forms.MouseEventHandler(this.tvBeginMarkers_MouseUp);
 			this.tvBeginMarkers.KeyUp += new System.Windows.Forms.KeyEventHandler(this.tvBeginMarkers_KeyUp);
+			this.tvBeginMarkers.MouseDown += new System.Windows.Forms.MouseEventHandler(this.tvBeginMarkers_MouseUp);
 			//
 			// imageList1
 			//
@@ -3018,8 +3059,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			this.m_DisplayImportReport.Checked = true;
 			this.m_DisplayImportReport.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.m_DisplayImportReport.Name = "m_DisplayImportReport";
-			this.m_DisplayImportReport.KeyUp += new System.Windows.Forms.KeyEventHandler(this.m_DisplayImportReport_KeyUp);
 			this.m_DisplayImportReport.KeyDown += new System.Windows.Forms.KeyEventHandler(this.m_DisplayImportReport_KeyDown);
+			this.m_DisplayImportReport.KeyUp += new System.Windows.Forms.KeyEventHandler(this.m_DisplayImportReport_KeyUp);
 			//
 			// lblReadyToImportInstructions
 			//
@@ -3052,17 +3093,17 @@ namespace SIL.FieldWorks.LexText.Controls
 			this.Name = "LexImportWizard";
 			this.ShowInTaskbar = false;
 			this.StepNames = new string[] {
-		resources.GetString("$this.StepNames"),
-		resources.GetString("$this.StepNames1"),
-		resources.GetString("$this.StepNames2"),
-		resources.GetString("$this.StepNames3"),
-		resources.GetString("$this.StepNames4"),
-		resources.GetString("$this.StepNames5"),
-		resources.GetString("$this.StepNames6"),
-		resources.GetString("$this.StepNames7")};
+				resources.GetString("$this.StepNames"),
+				resources.GetString("$this.StepNames1"),
+				resources.GetString("$this.StepNames2"),
+				resources.GetString("$this.StepNames3"),
+				resources.GetString("$this.StepNames4"),
+				resources.GetString("$this.StepNames5"),
+				resources.GetString("$this.StepNames6"),
+				resources.GetString("$this.StepNames7")};
 			this.StepPageCount = 8;
-			this.Load += new System.EventHandler(this.LexImportWizard_Load);
 			this.Closing += new System.ComponentModel.CancelEventHandler(this.LexImportWizard_Closing);
+			this.Load += new System.EventHandler(this.LexImportWizard_Load);
 			this.Controls.SetChildIndex(this.btnQuickFinish, 0);
 			this.Controls.SetChildIndex(this.panSteps, 0);
 			this.Controls.SetChildIndex(this.tabSteps, 0);
@@ -3078,6 +3119,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			this.tabPage2.PerformLayout();
 			this.tabPage3.ResumeLayout(false);
 			this.tabPage4.ResumeLayout(false);
+			this.tabPage4.PerformLayout();
 			this.tabPage6.ResumeLayout(false);
 			this.tabPage5.ResumeLayout(false);
 			this.tabPage7.ResumeLayout(false);
@@ -3292,8 +3334,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			return true;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private int ProcessErrorLogErrors(System.Xml.XmlDocument xmlMap, ref string sHtml)
 		{
 			int errorCount = 0;
@@ -3390,8 +3430,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			return errorCount;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private int ProcessErrorLogWarnings(System.Xml.XmlDocument xmlMap, ref string sHtml)
 		{
 			int warningCount = 0;
@@ -3435,8 +3473,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			return warningCount;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void ProcessErrorLogCautions(System.Xml.XmlDocument xmlMap, ref string sHtmlOUT)
 		{
 			string fileName = m_processedInputFile;
@@ -3566,8 +3602,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			sHtmlOUT += sHtml.ToString();
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void ProcessErrorLogSfmInfo(System.Xml.XmlDocument xmlMap, ref string sHtml)
 		{
 			System.Xml.XmlNode infoNode =
@@ -3796,7 +3830,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		}
 #endif
 
-// This moving button logic has issues on mono.
+// This moving button logic has issues on mono. (and on Windows, if truth be told!)
 #if !__MonoCS__
 		protected override void OnSizeChanged(EventArgs e)
 		{
@@ -3846,6 +3880,7 @@ namespace SIL.FieldWorks.LexText.Controls
 						MoveButton(btnAddCharMapping, diffWidth, diffHeight);
 						MoveButton(btnModifyCharMapping, diffWidth, diffHeight);
 						MoveButton(btnDeleteCharMapping, diffWidth, diffHeight);
+						MoveButton(m_chkCreateMissingLinks, diffWidth, diffHeight);
 					}
 					else
 					{//this is for 120 dpi (125% Windows 7 display settings)
@@ -3856,6 +3891,7 @@ namespace SIL.FieldWorks.LexText.Controls
 						MoveButton2(btnAddCharMapping, diffWidth, buttonYCoord);
 						MoveButton2(btnModifyCharMapping, diffWidth, buttonYCoord);
 						MoveButton2(btnDeleteCharMapping, diffWidth, buttonYCoord);
+						MoveButton2(m_chkCreateMissingLinks, diffWidth, buttonYCoord);
 					}
 
 					// update the 'original' size for future OnSize msgs
@@ -3865,7 +3901,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
-		private void MoveButton(Button btn, int dw, int dh)
+		private void MoveButton(ButtonBase btn, int dw, int dh)
 		{
 			Point oldPoint = btn.Location;
 			oldPoint.X += dw;
@@ -3873,7 +3909,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			btn.Location = oldPoint;
 		}
 
-		private void MoveButton2(Button btn, int dw, int YCoord)
+		private void MoveButton2(ButtonBase btn, int dw, int YCoord)
 		{
 			Point oldPoint = btn.Location;
 			oldPoint.X += dw;
@@ -3929,7 +3965,14 @@ namespace SIL.FieldWorks.LexText.Controls
 				listViewMappingLanguages.Height = lblSteps.Top - btnAddMappingLanguage.Height -  listViewMappingLanguages.Top - 20;
 
 				listViewContentMapping.Width = tabSteps.Width - 40;
-				listViewContentMapping.Height = tabSteps.Bottom - btnModifyContentMapping.Height - listViewContentMapping.Top - 20;
+				// LT-10904 added checkbox
+				listViewContentMapping.Height =
+					tabSteps.Bottom - btnModifyContentMapping.Height - m_chkCreateMissingLinks.Height - listViewContentMapping.Top - 20;
+				var nudge = 0;
+				if (MiscUtils.IsUnix)
+					nudge = 25;
+				// LT-17974 Adjust layout on Linux/Mono so checkbox and modify button are not overlapping.
+				listViewContentMapping.Height -= nudge;
 
 				listViewCharMappings.Width = tabSteps.Width - 40;
 				listViewCharMappings.Height = tabSteps.Bottom - btnModifyCharMapping.Height - listViewCharMappings.Top - 20;
@@ -4063,23 +4106,23 @@ namespace SIL.FieldWorks.LexText.Controls
 			selectedIFM = listViewCharMappings.Items[selIndex].Tag as Sfm2Xml.ClsInFieldMarker;
 			using (var dlg = new LexImportWizardCharMarkerDlg(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_app, m_stylesheet))
 			{
-			dlg.Init(selectedIFM, GetUILanguages(), m_cache);
-			dlg.SetExistingBeginMarkers(ExtractExistingBeginMarkers(true));
-			dlg.SetExistingEndMarkers(ExtractExistingEndMarkers(true));
-			dlg.SetExistingElementNames(ExtractExistingElementNames(true));
-			if (dlg.ShowDialog(this) == DialogResult.OK)
-			{
-				m_dirtySenseLastSave = true;
-				// remove the old from the treeview display
-				listViewCharMappings.Items[selIndex].Selected = false;
-				listViewCharMappings.Items[selIndex].Focused = false;
-				listViewCharMappings.Items.RemoveAt(selIndex);
+				dlg.Init(selectedIFM, GetUILanguages(), m_cache);
+				dlg.SetExistingBeginMarkers(ExtractExistingBeginMarkers(true));
+				dlg.SetExistingEndMarkers(ExtractExistingEndMarkers(true));
+				dlg.SetExistingElementNames(ExtractExistingElementNames(true));
+				if (dlg.ShowDialog(this) == DialogResult.OK)
+				{
+					m_dirtySenseLastSave = true;
+					// remove the old from the treeview display
+					listViewCharMappings.Items[selIndex].Selected = false;
+					listViewCharMappings.Items[selIndex].Focused = false;
+					listViewCharMappings.Items.RemoveAt(selIndex);
 
-				// now update the item and add it again and then select it
-				AddInLineMarker(dlg.IFM(), true);
-				listViewCharMappings.Focus();
+					// now update the item and add it again and then select it
+					AddInLineMarker(dlg.IFM(), true);
+					listViewCharMappings.Focus();
+				}
 			}
-		}
 		}
 
 		private void btnDeleteCharMapping_Click(object sender, System.EventArgs e)

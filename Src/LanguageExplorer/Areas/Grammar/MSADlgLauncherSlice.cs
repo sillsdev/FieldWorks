@@ -6,10 +6,10 @@ using System;
 using System.Drawing;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.Utils;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Widgets;
+using SIL.Xml;
 
 namespace LanguageExplorer.Areas.Grammar
 {

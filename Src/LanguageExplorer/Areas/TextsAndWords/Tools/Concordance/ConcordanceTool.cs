@@ -105,7 +105,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Concordance
 		public void FinishRefresh()
 		{
 #if RANDYTODO
-			// TODO: If tool uses a SDA decorator (IRefreshable), then call its "Refresh" method.
+			// TODO: If tool uses a SDA decorator (DomainDataByFlidDecoratorBase), then call its "Refresh" method.
 			// TODO: Call "ReloadIfNeeded" on Record clerk(s).
 #endif
 		}

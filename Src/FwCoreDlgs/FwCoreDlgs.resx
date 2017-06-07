@@ -214,6 +214,7 @@
   </data>
   <data name="kstidDeleteLabel" xml:space="preserve">
     <value>Delete User Configuration</value>
+		<comment>Not sure what kind of configuration this is referring to.</comment>
   </data>
   <data name="kstidAddPuaTitle" xml:space="preserve">
     <value>Add Custom Character</value>
@@ -798,6 +799,7 @@ Enter a shorter name.</value>
   </data>
   <data name="ksConfigurationSettingsRestoreDlg" xml:space="preserve">
     <value>Configuration settings</value>
+		<comment>Used in the Restore dialog to refer to all kinds of configuration in FieldWorks</comment>
   </data>
   <data name="ksMediaFilesRestoreDlg" xml:space="preserve">
     <value>Linked files</value>

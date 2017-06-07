@@ -1,12 +1,11 @@
-// Copyright (c) 2003-2015 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
@@ -42,10 +41,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 	///	OnPaint yourself, just don't make the changes to OnPaint. In some cases, we've observed
 	///	infinite loops from calling Invalidate and aborting OnPaint. This has not been fully tested.
 	/// </summary>
-	[SuppressMessage("Gendarme.Rules.Correctness", "DisposableFieldsShouldBeDisposedRule",
-		Justification = "m_master variable is a reference")]
-	public sealed class MessageSequencer : IFWDisposable
+	public sealed class MessageSequencer : IDisposable
 	{
+#if TESTMS
+		private int m_obj;
+		private static bool s_fMatchingHvo;
+#endif
 		private Control m_master;
 		private IReceiveSequentialMessages m_receiver;
 		private SafeQueue m_messages = new SafeQueue();
@@ -70,7 +71,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		}
 
 		// Set uses a Dictionary for fast lookup.
-		static Set<int> msgs;
+		static HashSet<int> msgs;
 
 		/// <summary>Create the Set just once</summary>
 		private static void CreateSet()
@@ -79,7 +80,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			{
 				if (msgs != null)
 					return;
-				msgs = new Set<int>(s_seqMessages);
+				msgs = new HashSet<int>(s_seqMessages);
 			}
 		}
 
@@ -92,7 +93,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 										  (int) Win32.WinMsgs.WM_RBUTTONDOWN,
 										  (int) Win32.WinMsgs.WM_RBUTTONUP,
 										  (int) Win32.WinMsgs.WM_LBUTTONDBLCLK,
-										  (int) Win32.WinMsgs.WM_RBUTTONDBLCLK,
 										  (int) Win32.WinMsgs.WM_MOUSEMOVE,
 										  (int) Win32.WinMsgs.WM_SETFOCUS,
 										  (int) Win32.WinMsgs.WM_KILLFOCUS,
@@ -115,50 +115,118 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <param name="m"></param>
 		public void SequenceWndProc(ref Message m)
 		{
+#if TESTMS
+			if (m_master.GetType().Name == "AtomicReferenceView" && m_obj == 0)
+			{
+				PropertyInfo pi = m_master.GetType().GetProperty("ObjectHvo");
+				if (pi != null)
+					m_obj = (int)pi.GetValue(m_master, null);
+				s_fMatchingHvo = m_obj == 6166; // (m_obj == 6166 || m_obj == 6792);
+			}
+#endif
+#if TESTMS
+			Debug.WriteLineIf(s_fMatchingHvo, "MessageSequencer.SequenceWndProc start: " + m_obj.ToString());
+#endif
 			CheckDisposed();
+#if TESTMS
+			//Debug.WriteLineIf(m_matchingHvo, "MessageSequencer.SequenceWndProc Must not be disposed.");
+#endif
 
 			if (!MethodNeedsSequencing(ref m))
 			{
+#if TESTMS
+				Debug.WriteLineIf(s_fMatchingHvo, "MessageSequencer.SequenceWndProc: MethodNeedsSequencing=false: normal handling of message: " + m.ToString());
+#endif
 				m_receiver.OriginalWndProc(ref m);
 				return; // not a message we care about.
 			}
 			if (m_fReentering)
 			{
+#if TESTMS
+				Debug.WriteLineIf(s_fMatchingHvo, "MessageSequencer.SequenceWndProc: m_fReentering==true: cache  message: " + m.ToString());
+#endif
 				m_messages.Add(m); // queue and process at end of outer call
 			}
 			else
 			{
+#if TESTMS
+				Debug.WriteLineIf(s_fMatchingHvo, "MessageSequencer.SequenceWndProc m_fReentering==false");
+#endif
 				try
 				{
+#if TESTMS
+					Debug.WriteLineIf(s_fMatchingHvo, "MessageSequencer.SequenceWndProc try: reset m_fReentering to true; original value: " + m_fReentering.ToString());
+#endif
 					m_fReentering = true;
+#if TESTMS
+					//Debug.WriteLineIf(m_matchingHvo, "MessageSequencer.SequenceWndProc try: call m_receiver.OriginalWndProc(ref m)");
+					Debug.WriteLineIf(s_fMatchingHvo, "MessageSequencer.SequenceWndProc normal handling of watched message start: " + m.ToString());
+#endif
 					m_receiver.OriginalWndProc(ref m);
+#if TESTMS
+					//Debug.WriteLineIf(m_matchingHvo, "MessageSequencer.SequenceWndProc try: finished call m_receiver.OriginalWndProc(ref m)");
+					Debug.WriteLineIf(s_fMatchingHvo, "MessageSequencer.SequenceWndProc normal handling of watched message end: " + m.ToString());
+#endif
 					// At this point, we've finished processing the original message.
 					// If there are pending messages, run them. Note that they, too, may
 					// generate interrupts, so we're still in 'reentrant' mode.
+#if TESTMS
+					Debug.WriteLineIf(s_fMatchingHvo, "MessageSequencer.SequenceWndProc try: call DoPendingMessages()");
+#endif
 					// Need to check, since a non-blocking message handler 'out there'
 					// could have called PauseMessageQueueing(), which will set it to false.
 					DoPendingMessages();
+#if TESTMS
+					Debug.WriteLineIf(s_fMatchingHvo, "MessageSequencer.SequenceWndProc try: finished call DoPendingMessages()");
+#endif
 				}
 				finally
 				{
+#if TESTMS
+					Debug.WriteLineIf(s_fMatchingHvo, "MessageSequencer.SequenceWndProc finally: reset m_fReentering to false; original value: " + m_fReentering.ToString());
+#endif
 					m_fReentering = false;
 				}
 			}
+#if TESTMS
+			Debug.WriteLineIf(s_fMatchingHvo, "MessageSequencer.SequenceWndProc end: " + m_obj.ToString());
+#endif
 		}
 
 		// Execute any pending messages.
 		private void DoPendingMessages()
 		{
+#if TESTMS
+			Debug.WriteLineIf(s_fMatchingHvo, "MessageSequencer.DoPendingMessages start: " + m_obj.ToString());
+			Debug.WriteLineIf(s_fMatchingHvo, "MessageSequencer.DoPendingMessages Asserting m_fReentering to be true; " + "original value: " + m_fReentering.ToString());
+			if (!m_fReentering)
+			{
+				Debug.WriteLineIf(s_fMatchingHvo, "MessageSequencer.DoPendingMessages Failed Assert: Debug.Assert(m_fReentering);");
+				Debug.WriteLine(String.Format("Master: {0}", m_master));
+			}
+#endif
 			// This can happen, if the client called PauseMessageQueueing in a non-modal environment,
 			// which just kept going. PauseMessageQueueing is only to be used in a modal context, that
 			// does not keep going right away.
 			Debug.Assert(m_fReentering, "You probably are using PauseMessageQueueing in a non-modal context.");
+#if TESTMS
+			Debug.WriteLineIf(s_fMatchingHvo, "MessageSequencer.DoPendingMessages Passed Assert: Debug.Assert(m_fReentering);");
+#endif
 			// A Refresh message can dispose of this object while this object is handling that message.
 			while (m_messages != null && m_messages.Count > 0)
 			{
 				Message m1 = (Message)m_messages.Remove();
+#if TESTMS
+				Debug.WriteLineIf(s_fMatchingHvo, "MessageSequencer.DoPendingMessages handle cached message (start): " + m1.ToString());
+#endif
 				m_receiver.OriginalWndProc(ref m1);
+#if TESTMS
+				Debug.WriteLineIf(s_fMatchingHvo, "MessageSequencer.DoPendingMessages resend message (done): " + m1.ToString());
+#endif
 			}
+#if TESTMS
+			Debug.WriteLineIf(s_fMatchingHvo, "MessageSequencer.DoPendingMessages end: " + m_obj.ToString());
+#endif
 		}
 
 		/// <summary>
@@ -167,25 +235,59 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <param name="e"></param>
 		public void SequenceOnPaint(PaintEventArgs e)
 		{
+#if TESTMS
+			Debug.WriteLineIf(s_fMatchingHvo, "MessageSequencer.SequenceOnPaint start: " + m_obj.ToString());
+#endif
 			CheckDisposed();
+#if TESTMS
+			//Debug.WriteLineIf(m_matchingHvo, "MessageSequencer.SequenceOnPaint Must not be disposed.");
+#endif
+#if TESTMS
+			Debug.WriteLineIf(s_fMatchingHvo, "MessageSequencer.SequenceOnPaint check m_fReentering value; original value: " + m_fReentering.ToString());
+#endif
 
 			if (m_fReentering)
 			{
+#if TESTMS
+				Debug.WriteLineIf(s_fMatchingHvo, "MessageSequencer.SequenceOnPaint: m_fReentering==true: call m_master.Invalidate()");
+#endif
 				m_master.Invalidate();
+#if TESTMS
+				Debug.WriteLineIf(s_fMatchingHvo, "MessageSequencer.SequenceOnPaint finished m_master.Invalidate()");
+#endif
 			}
 			else
 			{
+#if TESTMS
+				Debug.WriteLineIf(s_fMatchingHvo, "MessageSequencer.SequenceOnPaint try: reset m_fReentering to true; original value: " + m_fReentering.ToString());
+#endif
 				m_fReentering = true;
 				try
 				{
+#if TESTMS
+					Debug.WriteLineIf(s_fMatchingHvo, "MessageSequencer.SequenceOnPaint try:  call m_receiver.OriginalOnPaint start: " + e.ToString());
+#endif
 					m_receiver.OriginalOnPaint(e);
+#if TESTMS
+					Debug.WriteLineIf(s_fMatchingHvo, "MessageSequencer.SequenceOnPaint try:  call m_receiver.OriginalOnPaint end: " + e.ToString());
+#endif
 				}
 				finally
 				{
+#if TESTMS
+					Debug.WriteLineIf(s_fMatchingHvo, "MessageSequencer.SequenceOnPaint finally: call DoPendingMessages()");
+#endif
 					DoPendingMessages();
+#if TESTMS
+					Debug.WriteLineIf(s_fMatchingHvo, "MessageSequencer.SequenceOnPaint try: finished call DoPendingMessages()");
+					Debug.WriteLineIf(s_fMatchingHvo, "MessageSequencer.SequenceOnPaint finally: reset m_fReentering to false; original value: " + m_fReentering.ToString());
+#endif
 					m_fReentering = false;
 				}
 			}
+#if TESTMS
+			Debug.WriteLineIf(s_fMatchingHvo, "MessageSequencer.SequenceOnPaint end: " + m_obj.ToString());
+#endif
 		}
 
 		/// <summary>
@@ -203,15 +305,38 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </remarks>
 		public bool PauseMessageQueueing()
 		{
+#if TESTMS
+			Debug.WriteLineIf(s_fMatchingHvo, "MessageSequencer.PauseMessageQueueing start: " + m_obj.ToString());
+#endif
 			CheckDisposed();
+#if TESTMS
+			//Debug.WriteLineIf(m_matchingHvo, "MessageSequencer.PauseMessageQueueing Must not be disposed.");
+			Debug.WriteLineIf(s_fMatchingHvo, "MessageSequencer.PauseMessageQueueing check m_fReentering vakue; original value: " + m_fReentering.ToString());
+#endif
 
 			if (m_fReentering)
 			{
+#if TESTMS
+				Debug.WriteLineIf(s_fMatchingHvo, "MessageSequencer.PauseMessageQueueing: m_fReentering==true: call DoPendingMessages()");
+#endif
 				DoPendingMessages();
+#if TESTMS
+				Debug.WriteLineIf(s_fMatchingHvo, "MessageSequencer.PauseMessageQueueing: finished call DoPendingMessages()");
+				Debug.WriteLineIf(s_fMatchingHvo, "MessageSequencer.PauseMessageQueueing: reset m_fReentering to false; original value: " + m_fReentering.ToString());
+#endif
 				m_fReentering = false;
+#if TESTMS
+				Debug.WriteLineIf(s_fMatchingHvo, "MessageSequencer.PauseMessageQueueing end returning true: " + m_obj.ToString());
+#endif
 				return true;
 			}
-			return false;
+			else
+			{
+#if TESTMS
+				Debug.WriteLineIf(s_fMatchingHvo, "MessageSequencer.PauseMessageQueueing end returning false: " + m_obj.ToString());
+#endif
+				return false;
+			}
 		}
 
 		/// <summary>
@@ -225,9 +350,19 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </remarks>
 		public void ResumeMessageQueueing()
 		{
+#if TESTMS
+			Debug.WriteLineIf(s_fMatchingHvo, "MessageSequencer.ResumeMessageQueueing start: " + m_obj.ToString());
+#endif
 			CheckDisposed();
+#if TESTMS
+			//Debug.WriteLineIf(m_matchingHvo, "MessageSequencer.ResumeMessageQueueing Must not be disposed.");
+			Debug.WriteLineIf(s_fMatchingHvo, "MessageSequencer.PauseMessageQueueing: reset m_fReentering to true; original value: " + m_fReentering.ToString());
+#endif
 
 			m_fReentering = true;
+#if TESTMS
+			Debug.WriteLineIf(s_fMatchingHvo, "MessageSequencer.ResumeMessageQueueing end: " + m_obj.ToString());
+#endif
 		}
 
 		/// <summary>
@@ -385,114 +520,115 @@ namespace SIL.FieldWorks.Common.FwUtils
 		}
 
 		#endregion IDisposable & Co. implementation
+	}
+
+	/// <summary>
+	/// This class implements a queue. As far as possible, it attempts to handle the possibility that
+	/// any allocation of memory might result in a recursive call to Add.
+	/// </summary>
+	public class SafeQueue
+	{
+		// We try to keep this many empty slots in the array to handle reentrant calls to Add.
+		const int kmargin = 50;
+		object[] m_queue = new object[kmargin * 2];
+		// If m_lim >= m_min, items in queue are from m_min to m_lim-1.
+		// If m_lim < m_min, items run from m_min to the end, then from 0 to m_lim-1.
+		// There is always at least one empty slot in the array.
+		int m_lim; // limit of occupied range; index of where to put next item.
+		int m_min; // start of occupied range; first object to return.
+		bool m_fGrowing = false;
 
 		/// <summary>
-		/// This class implements a queue. As far as possible, it attempts to handle the possibility that
-		/// any allocation of memory might result in a recursive call to Add.
+		/// Add an object to the (end of the) queue.
 		/// </summary>
-		private sealed class SafeQueue
+		/// <param name="obj"></param>
+		public void Add(object obj)
 		{
-			// We try to keep this many empty slots in the array to handle reentrant calls to Add.
-			const int kmargin = 50;
-			object[] m_queue = new object[kmargin * 2];
-			// If m_lim >= m_min, items in queue are from m_min to m_lim-1.
-			// If m_lim < m_min, items run from m_min to the end, then from 0 to m_lim-1.
-			// There is always at least one empty slot in the array.
-			int m_lim; // limit of occupied range; index of where to put next item.
-			int m_min; // start of occupied range; first object to return.
-			bool m_fGrowing = false;
-
-			/// <summary>
-			/// Add an object to the (end of the) queue.
-			/// </summary>
-			/// <param name="obj"></param>
-			public void Add(object obj)
+			if (FreeSlotCount < 1)
+				throw new Exception("Message Sequence Queue overflow");
+			// Before anything else change the state of the queue so that it's actually added.
+			m_queue[PostIncrement(ref m_lim)] = obj;
+			// If we don't have enough slots, first try moving things.
+			if (FreeSlotCount < kmargin && !m_fGrowing)
 			{
-				if (FreeSlotCount < 1)
-					throw new Exception("Message Sequence Queue overflow");
-				// Before anything else change the state of the queue so that it's actually added.
-				m_queue[PostIncrement(ref m_lim)] = obj;
-				// If we don't have enough slots, first try moving things.
-				if (FreeSlotCount < kmargin && !m_fGrowing)
+				// grow the array.
+				m_fGrowing = true;
+				try
 				{
-					// grow the array.
-					m_fGrowing = true;
-					try
-					{
-						// Recursive call may happen here! Hopefully there's still room to add them.
-						object[] newQueue = GetNewArray(m_queue.Length + kmargin * 2);
-						m_queue.CopyTo(newQueue, 0);
-						if (m_lim < m_min)
-						{
-							// The elements are supposed to go up to the end of the array.
-							for (int i = m_min; i < m_queue.Length; i++)
-							{
-								newQueue[i + newQueue.Length - m_queue.Length] = m_queue[i];
-							}
-							m_min += newQueue.Length - m_queue.Length;
-						}
-						m_queue = newQueue;
-					}
-					finally
-					{
-						m_fGrowing = false;
-					}
-				}
-			}
-
-			/// <summary>
-			/// Increment the argument and (like n++) return the OLD value.
-			/// Wraps around from m_messages.Length to 0.
-			/// </summary>
-			/// <param name="current"></param>
-			/// <returns></returns>
-			int PostIncrement(ref int current)
-			{
-				int ret = current++;
-				if (current == m_queue.Length)
-					current = 0;
-				return ret;
-			}
-
-			/// <summary>
-			/// Create a new object array of the given size.
-			/// </summary>
-			/// <param name="length"></param>
-			/// <returns></returns>
-			private object[] GetNewArray(int length)
-			{
-				return new object[length];
-			}
-
-			/// <summary>
-			/// Remove an object from the start of the queue, and return it.
-			/// </summary>
-			/// <returns></returns>
-			public object Remove()
-			{
-				if (Count == 0)
-					throw new Exception("Remove from empty queue");
-
-				return m_queue[PostIncrement(ref m_min)];
-			}
-
-			// The number of free slots is one LESS than the length minus what we have.
-			int FreeSlotCount
-			{
-				get { return m_queue.Length - Count - 1; }
-			}
-
-			/// <summary>
-			/// The number of items in the queue.
-			/// </summary>
-			public int Count
-			{
-				get
-				{
+					// Recursive call may happen here! Hopefully there's still room to add them.
+					object[] newQueue = GetNewArray(m_queue.Length + kmargin * 2);
+					m_queue.CopyTo(newQueue, 0);
 					if (m_lim < m_min)
-						return m_queue.Length - m_min + m_lim;
-					return m_lim - m_min;
+					{
+						// The elements are supposed to go up to the end of the array.
+						for (int i = m_min; i < m_queue.Length; i++)
+						{
+							newQueue[i + newQueue.Length - m_queue.Length] = m_queue[i];
+						}
+						m_min += newQueue.Length - m_queue.Length;
+					}
+					m_queue = newQueue;
 				}
+				finally
+				{
+					m_fGrowing = false;
+				}
+			}
+		}
+
+		/// <summary>
+		/// Increment the argument and (like n++) return the OLD value.
+		/// Wraps around from m_messages.Length to 0.
+		/// </summary>
+		/// <param name="current"></param>
+		/// <returns></returns>
+		int PostIncrement(ref int current)
+		{
+			int ret = current++;
+			if (current == m_queue.Length)
+				current = 0;
+			return ret;
+		}
+
+		/// <summary>
+		/// This is virtual so in testing we can deliberately make it do reentrant calls.
+		/// </summary>
+		/// <param name="length"></param>
+		/// <returns></returns>
+
+		protected virtual object[] GetNewArray(int length)
+		{
+			return new object[length];
+		}
+
+		/// <summary>
+		/// Remove an object from the start of the queue, and return it.
+		/// </summary>
+		/// <returns></returns>
+		public object Remove()
+		{
+			if (Count == 0)
+				throw new Exception("Remove from empty queue");
+
+			return m_queue[PostIncrement(ref m_min)];
+		}
+
+		// The number of free slots is one LESS than the length minus what we have.
+		int FreeSlotCount
+		{
+			get { return m_queue.Length - Count - 1; }
+		}
+
+		/// <summary>
+		/// The number of items in the queue.
+		/// </summary>
+		public int Count
+		{
+			get
+			{
+				if (m_lim < m_min)
+					return m_queue.Length - m_min + m_lim;
+				return m_lim - m_min;
 			}
 		}
 	}

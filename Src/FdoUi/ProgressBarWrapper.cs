@@ -3,9 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.FdoUi
@@ -13,7 +11,6 @@ namespace SIL.FieldWorks.FdoUi
 	/// <summary>
 	/// Wrapper class to allow a ProgressBar to function as an IProgress
 	/// </summary>
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule", Justification="Disposable member is exposed for Dispose call if necessary")]
 	public class ProgressBarWrapper : IProgress
 	{
 		private readonly ProgressBar m_progressBar;

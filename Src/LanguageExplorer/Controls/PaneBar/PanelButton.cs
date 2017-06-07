@@ -3,7 +3,6 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Windows.Forms;
 using SIL.CoreImpl;
@@ -65,8 +64,6 @@ namespace LanguageExplorer.Controls.PaneBar
 			set { _dataTree = value; }
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "Controls added to collection")]
 		private void SetLabel()
 		{
 			const int checkBoxWidth = 17;

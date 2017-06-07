@@ -18,20 +18,20 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 	public partial class DetailsView : UserControl, IDictionaryDetailsView
 	{
 		// These are needed to make up for deficiencies in Anchoring to the Bottom in Linux/Mono.
-		readonly int m_deltaStyleLabel;
-		readonly int m_deltaStyleCombo;
-		readonly int m_deltaTextBoxLabel;
-		readonly int m_deltaTextBox;
+		private readonly int m_deltaStyleLabel;
+		private readonly int m_deltaStyleCombo;
+		private readonly int m_deltaTextBoxLabel;
+		private readonly int m_deltaTextBox;
 
 		public DetailsView()
 		{
 			InitializeComponent();
 
 			// Capture the initial offsets to use in updating when our Height changes.
-			m_deltaStyleLabel = this.Height - labelStyle.Location.Y;
-			m_deltaStyleCombo = this.Height - dropDownStyle.Location.Y;
-			m_deltaTextBoxLabel = this.Height - labelAfter.Location.Y;
-			m_deltaTextBox = this.Height - textBoxAfter.Location.Y;
+			m_deltaStyleLabel = Height - labelStyle.Location.Y;
+			m_deltaStyleCombo = Height - dropDownStyle.Location.Y;
+			m_deltaTextBoxLabel = Height - labelAfter.Location.Y;
+			m_deltaTextBox = Height - textBoxAfter.Location.Y;
 
 			textBoxBefore.KeyDown += UnicodeCharacterEditingHelper.HandleKeyDown;
 			textBoxAfter.KeyDown += UnicodeCharacterEditingHelper.HandleKeyDown;
@@ -44,7 +44,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 			buttonStyles.Click += SwapComboBoxAsSenderForButtonClickEvent;
 		}
 
-		private Control m_OptionsView = null;
+		private UserControl m_OptionsView;
 
 		//
 		// User configuration properties
@@ -127,7 +127,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 		/// </summary>
 		private void SetPanelOptionsSize()
 		{
-			panelOptions.Size = new Size(this.Width - 10, this.Height - (m_deltaStyleLabel + 10));
+			panelOptions.Size = new Size(Width - 10, Height - (m_deltaStyleLabel + 10));
 		}
 
 		public event EventHandler StyleSelectionChanged

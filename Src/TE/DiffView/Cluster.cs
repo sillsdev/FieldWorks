@@ -16,7 +16,7 @@ using System.Linq;
 using SIL.FieldWorks.FDO;
 using System.Diagnostics;
 using SIL.Utils;
-using SILUBS.SharedScrUtils;
+using SIL.CoreImpl.Scripture;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices;
 
@@ -931,9 +931,8 @@ namespace SIL.FieldWorks.TE
 				if (verseCurr.StartRef == verseRev.StartRef && verseCurr.EndRef == verseRev.EndRef)
 				{
 					correlationFactor = ParagraphCorrelation.DetermineStringCorrelation(
-						(verseCurr.Text != null) ? verseCurr.Text.Text : null,
-						(verseRev.Text != null) ? verseRev.Text.Text : null,
-						m_cache.ServiceLocator.UnicodeCharProps);
+						verseCurr.Text != null ? verseCurr.Text.Text : null,
+						verseRev.Text != null ? verseRev.Text.Text : null);
 					if (correlationFactor >= correlationThreshold)
 					{
 						// There is enough correlation to create a more-simple cluster here.
@@ -985,7 +984,7 @@ namespace SIL.FieldWorks.TE
 				if (verseCurr.StartRef == verseRev.StartRef && verseCurr.EndRef == verseRev.EndRef)
 				{
 					correlationFactor = ParagraphCorrelation.DetermineStringCorrelation(verseCurr.Text.Text,
-						verseRev.Text.Text, m_cache.ServiceLocator.UnicodeCharProps);
+						verseRev.Text.Text);
 
 					if (correlationFactor >= correlationThreshold)
 					{

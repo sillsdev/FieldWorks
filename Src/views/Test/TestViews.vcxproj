@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -23,12 +23,12 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-	<ConfigurationType>Makefile</ConfigurationType>
-	<PlatformToolset>v120</PlatformToolset>
+    <ConfigurationType>Makefile</ConfigurationType>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-	<ConfigurationType>Makefile</ConfigurationType>
-	<PlatformToolset>v120</PlatformToolset>
+    <ConfigurationType>Makefile</ConfigurationType>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -67,6 +67,12 @@
     <NMakeAssemblySearchPath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(NMakeAssemblySearchPath)</NMakeAssemblySearchPath>
     <NMakeForcedUsingAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(NMakeForcedUsingAssemblies)</NMakeForcedUsingAssemblies>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IncludePath>..\..\Kernel\test;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <IncludePath>..\..\Kernel\test;$(IncludePath)</IncludePath>
+  </PropertyGroup>
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -77,12 +83,26 @@
     <ClInclude Include="BasicVc.h" />
     <ClInclude Include="DummyBaseVc.h" />
     <ClInclude Include="DummyRootsite.h" />
+    <ClInclude Include="MockLgWritingSystem.h" />
+    <ClInclude Include="MockLgWritingSystemFactory.h" />
+    <ClInclude Include="MockRenderEngineFactory.h" />
+    <ClInclude Include="RenderEngineTestBase.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="TestAutoLoad.h" />
+    <ClInclude Include="TestGraphiteEngine.h" />
     <ClInclude Include="TestInsertDiffPara.h" />
     <ClInclude Include="TestLayoutPage.h" />
     <ClInclude Include="TestLazyBox.h" />
+    <ClInclude Include="TestLgCollatingEngine.h" />
+    <ClInclude Include="TestLgLineBreaker.h" />
+    <ClInclude Include="TestTsPropsBldr.h" />
+    <ClInclude Include="TestTsStrBldr.h" />
+    <ClInclude Include="TestTsString.h" />
+    <ClInclude Include="TestTsTextProps.h" />
+    <ClInclude Include="TestUndoStack.h" />
     <ClInclude Include="TestNotifier.h" />
+    <ClInclude Include="TestRomRenderEngine.h" />
+    <ClInclude Include="TestUniscribeEngine.h" />
     <ClInclude Include="testViews.h" />
     <ClInclude Include="TestVirtualHandlers.h" />
     <ClInclude Include="TestVwEnv.h" />

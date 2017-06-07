@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="14.0">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
     <ProductVersion>9.0.30729</ProductVersion>
@@ -37,7 +37,7 @@
     </SccAuxPath>
     <OldToolsVersion>3.5</OldToolsVersion>
     <IsWebBootstrapper>false</IsWebBootstrapper>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -102,13 +102,9 @@
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BasicUtils, Version=4.1.1.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="SilUtils, Version=9.0.0.25850, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\BasicUtils.dll</HintPath>
-    </Reference>
-    <Reference Include="COMInterfaces">
-      <Name>COMInterfaces</Name>
-      <HintPath>..\..\..\..\Output\Debug\COMInterfaces.dll</HintPath>
+      <HintPath>..\..\..\..\Output\Debug\SilUtils.dll</HintPath>
     </Reference>
     <Reference Include="CoreImpl, Version=9.0.0.12149, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
@@ -118,54 +114,23 @@
       <Name>FDO</Name>
       <HintPath>..\..\..\..\Output\debug\FDO.dll</HintPath>
     </Reference>
-    <Reference Include="Framework">
-      <Name>Framework</Name>
-      <HintPath>..\..\..\..\Output\Debug\Framework.dll</HintPath>
+    <Reference Include="CoreImpl">
+      <Name>CoreImpl</Name>
+      <HintPath>..\..\..\..\Output\debug\CoreImpl.dll</HintPath>
     </Reference>
     <Reference Include="FwControls">
       <Name>FwControls</Name>
       <HintPath>..\..\..\..\Output\Debug\FwControls.dll</HintPath>
     </Reference>
-    <Reference Include="FwResources">
-      <Name>FwResources</Name>
-      <HintPath>..\..\..\..\Output\Debug\FwResources.dll</HintPath>
-    </Reference>
     <Reference Include="FwUtils">
       <Name>FwUtils</Name>
       <HintPath>..\..\..\..\Output\Debug\FwUtils.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\DistFiles\Microsoft.Practices.ServiceLocation.dll</HintPath>
-    </Reference>
-    <Reference Include="Reporting">
-      <Name>Reporting</Name>
-      <HintPath>..\..\..\..\Output\Debug\Reporting.dll</HintPath>
-    </Reference>
-    <Reference Include="RootSite">
-      <Name>RootSite</Name>
-      <HintPath>..\..\..\..\Output\Debug\RootSite.dll</HintPath>
-    </Reference>
-    <Reference Include="ScriptureUtils">
-      <Name>ScriptureUtils</Name>
-      <HintPath>..\..\..\..\Output\debug\ScriptureUtils.dll</HintPath>
-    </Reference>
-    <Reference Include="ScrUtilsInterfaces">
-      <Name>ScrUtilsInterfaces</Name>
-      <HintPath>..\..\..\..\Output\Debug\ScrUtilsInterfaces.dll</HintPath>
-    </Reference>
     <Reference Include="SharedScrControls, Version=7.2.0.19910, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
     </Reference>
-    <Reference Include="SharedScrUtils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\SharedScrUtils.dll</HintPath>
-    </Reference>
     <Reference Include="System">
       <Name>System</Name>
-    </Reference>
-    <Reference Include="System.Data">
-      <Name>System.Data</Name>
     </Reference>
     <Reference Include="System.Drawing">
       <Name>System.Drawing</Name>
@@ -184,6 +149,9 @@
     </Reference>
     <Reference Include="SIL.Core">
       <HintPath>..\..\..\..\Downloads\SIL.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="FwKernelInterfaces">
+      <HintPath>..\..\..\Output\Debug\FwKernelInterfaces.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

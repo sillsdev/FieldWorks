@@ -1,19 +1,10 @@
-// Copyright (c) 2006-2013 SIL International
+// Copyright (c) 2006-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: StatusBarProgressHandler.cs
-// Responsibility: TE Team
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
-
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.Framework
@@ -23,7 +14,7 @@ namespace SIL.FieldWorks.Common.Framework
 	/// Handles displaying progress in the status bar.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public class StatusBarProgressHandler: IProgress, IFWDisposable
+	public class StatusBarProgressHandler: IProgress, IDisposable
 	{
 		event CancelEventHandler IProgress.Canceling
 		{
@@ -202,8 +193,6 @@ namespace SIL.FieldWorks.Common.Framework
 		/// Gets the progress as a form (used for message box owners, etc).
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "FindForm() returns a reference")]
 		public Form Form
 		{
 			get { return m_progressBar.Control.FindForm(); }
@@ -310,7 +299,6 @@ namespace SIL.FieldWorks.Common.Framework
 		#endregion
 
 		#region Disposing stuff
-		#region IFWDisposable Members
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -337,8 +325,6 @@ namespace SIL.FieldWorks.Common.Framework
 		/// <value></value>
 		/// ------------------------------------------------------------------------------------
 		public bool IsDisposed { get; private set; }
-
-		#endregion
 
 		#region IDisposable Members
 

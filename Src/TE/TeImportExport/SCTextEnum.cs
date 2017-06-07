@@ -1,23 +1,19 @@
-// Copyright (c) 2005-2013 SIL International
+// Copyright (c) 2005-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: SCTextEnum.cs
-// Responsibility: TE Team
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using System.Diagnostics;
-using SIL.CoreImpl;
+using System.Linq;
+using SIL.CoreImpl.Scripture;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using ECInterfaces;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
 using SIL.Utils;
-using SILUBS.SharedScrUtils;
 
 namespace SIL.FieldWorks.FDO.DomainServices
 {
@@ -99,7 +95,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			m_InlineBeginAndEndMarkers.Sort(new StrLengthComparer(false));
 
 			// Build a list of all of the characters that inline markers start with
-			Set<char> tempCharList = new Set<char>();
+			var tempCharList = new HashSet<char>();
 			foreach (string marker in m_InlineBeginAndEndMarkers)
 				tempCharList.Add(marker[0]); // Set ignores duplicates.
 

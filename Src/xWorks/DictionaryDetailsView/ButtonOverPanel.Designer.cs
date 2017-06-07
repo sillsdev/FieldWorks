@@ -45,13 +45,13 @@
 			this.button.Name = "button";
 			this.button.UseVisualStyleBackColor = true;
 			// 
-			// ButtonWithPane
+			// ButtonOverPanel
 			// 
 			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this.button);
 			this.Controls.Add(this.panel);
-			this.Name = "ButtonWithPane";
+			this.Name = "ButtonOverPanel";
 			this.ResumeLayout(false);
 
 		}

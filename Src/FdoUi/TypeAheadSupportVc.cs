@@ -4,14 +4,14 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Cellar;
+using SIL.CoreImpl.Text;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.FdoUi
 {
@@ -511,8 +511,6 @@ namespace SIL.FieldWorks.FdoUi
 		/// he intended. Set hvoNew to 0 (and return tssTyped) if it doesn't match any option.
 		/// It is assumed that he is setting an object in property m_tag of object m_hvoParent.
 		/// </summary>
-		/// <param name="tssTyped"></param>
-		/// <returns></returns>
 		protected virtual ITsString Lookup(ITsString tssTyped, out ICmObject objNew)
 		{
 			var parent = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(m_hvoParent);

@@ -1,19 +1,9 @@
-// Copyright (c) 2006-2013 SIL International
+// Copyright (c) 2006-2016 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ProgressLineDesigner.cs
-// Responsibility: TE Team
-//
-// <remarks>
-// </remarks>
 
-using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using System.Text;
 using System.Windows.Forms.Design;
 
 namespace SIL.FieldWorks.Common.Controls.Design
@@ -27,23 +17,12 @@ namespace SIL.FieldWorks.Common.Controls.Design
 	{
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="T:ProgressLineDesigner"/> class.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public ProgressLineDesigner()
-		{
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
 		/// Receives a call when the control that the designer is managing has painted its
 		/// surface so the designer can paint any additional adornments on top of the control.
 		/// </summary>
 		/// <param name="pe">A <see cref="T:System.Windows.Forms.PaintEventArgs"></see> the
 		/// designer can use to draw on the control.</param>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="foreBrush is disposed in finally block")]
 		protected override void OnPaintAdornments(System.Windows.Forms.PaintEventArgs pe)
 		{
 			base.OnPaintAdornments(pe);
@@ -76,10 +55,16 @@ namespace SIL.FieldWorks.Common.Controls.Design
 				}
 				finally
 				{
-					if (foreBrush != null)
-						foreBrush.Dispose();
+					foreBrush?.Dispose();
 				}
 			}
+		}
+
+		/// <summary/>
+		protected override void Dispose(bool disposing)
+		{
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ******");
+			base.Dispose(disposing);
 		}
 	}
 }

@@ -8,16 +8,15 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
-using SIL.Utils;
-using System.Diagnostics.CodeAnalysis;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using System.Xml.Linq;
 using SIL.CoreImpl;
+using SIL.Xml;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
@@ -217,7 +216,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		private void OnEditDomainsLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
-			var toolName = XmlUtils.GetAttributeValue(LinkNode, "tool");
+			var toolName = XmlUtils.GetOptionalAttributeValue(LinkNode, "tool");
 			var commands = new List<string>
 										{
 											"AboutToFollowLink",
@@ -412,8 +411,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			domainList.EndUpdate();
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "cache is a reference")]
 		private static Font GetFontForFormFromObjectLabels(IEnumerable<ObjectLabel> labelList, IVwStylesheet stylesheet)
 		{
 			var cache = labelList.First().Object.Cache;

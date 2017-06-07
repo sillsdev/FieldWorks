@@ -11,7 +11,6 @@
 // --------------------------------------------------------------------------------------------
 
 using SIL.FieldWorks.Common.Framework.DetailControls;
-using System.Diagnostics.CodeAnalysis;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 {
@@ -23,8 +22,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 		/// <summary>
 		/// Initializes a new instance of the <see cref="RevEntrySensesCollectionReferenceSlice"/> class.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "RevEntrySensesCollectionReferenceLauncher gets added to panel's Controls collection and disposed there")]
 		public RevEntrySensesCollectionReferenceSlice()
 			: base(new RevEntrySensesCollectionReferenceLauncher())
 		{

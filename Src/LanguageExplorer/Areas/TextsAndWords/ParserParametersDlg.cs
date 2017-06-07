@@ -1,6 +1,7 @@
-// Copyright (c) 2003-2015 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
+//
 // <remarks>
 // Implementation of:
 //		ParserParametersDlg - Dialog for editing XML representation of parser parameters
@@ -10,13 +11,11 @@
 using System;
 using System.Data;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Linq;
 using SIL.CoreImpl;
-using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
 
 namespace LanguageExplorer.Areas.TextsAndWords
@@ -24,7 +23,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 	/// <summary>
 	/// Summary description for ParserParametersDlg.
 	/// </summary>
-	internal sealed class ParserParametersDlg : Form, IFWDisposable
+	internal sealed class ParserParametersDlg : Form
 	{
 		private const string HelpTopic = "khtpParserParamters";
 
@@ -109,8 +108,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Design", "UseCorrectDisposeSignaturesRule",
-			Justification = "The class derives from Form. Therefore Dispose(bool) can't be private in a sealed class.")]
 		protected override void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
@@ -278,8 +275,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// <summary>
 		/// Set up the dlg in preparation to showing it.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="m_dsParserParameters gets disposed in Dispose()")]
 		public void SetDlgInfo(string title, string parserParameters)
 		{
 			CheckDisposed();
@@ -341,8 +336,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			return new DataView(table) { AllowNew = false };
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "DataColumns get added to collection and disposed there")]
 		private DataTable CreateXAmpleDataTable()
 		{
 			var tblXAmple = new DataTable(XAmple);
@@ -356,8 +349,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			return tblXAmple;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "DataColumns get added to collection and disposed there")]
 		private DataTable CreateHCDataTable()
 		{
 			var tblHC = new DataTable(HC);

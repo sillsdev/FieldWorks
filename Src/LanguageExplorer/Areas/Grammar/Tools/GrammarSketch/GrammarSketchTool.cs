@@ -3,7 +3,6 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Windows.Forms;
 using SIL.CoreImpl;
@@ -111,8 +110,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 		/// <remarks>
 		/// This is called on the component that is becoming active.
 		/// </remarks>
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification = "See TODO-Linux comment")]
 		public void Activate(ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip, ToolStripContainer toolStripContainer,
 			StatusBar statusbar)
 		{
@@ -157,7 +154,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 		public void FinishRefresh()
 		{
 #if RANDYTODO
-			// TODO: If tool uses a SDA decorator (IRefreshable), then call its "Refresh" method.
+			// TODO: If tool uses a SDA decorator (DomainDataByFlidDecoratorBase), then call its "Refresh" method.
 			// TODO: Call "ReloadIfNeeded" on Record clerk(s).
 #endif
 		}

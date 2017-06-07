@@ -237,7 +237,7 @@ PS_OBJ=$(PS_OBJ) $(COM_INT_DIR)\$(PS_MAIN)_d.obj  $(COM_INT_DIR)\$(PS_MAIN)_i.ob
 
 
 $(PS_DLL_MAIN): $(PS_H_MAIN) $(PS_DEF_MAIN) $(PS_OBJ)
-	link /dll /out:$(PS_DLL_MAIN) /def:$(PS_DEF_MAIN) $(LINK_OPTS_PS) /entry:DllMain /implib:$(COM_INT_DIR)\$(PS_MAIN).lib $(PS_OBJ) kernel32.lib rpcns4.lib rpcrt4.lib oleaut32.lib uuid.lib ole32.lib
+	link /dll /out:$(PS_DLL_MAIN) /def:$(PS_DEF_MAIN) $(LINK_OPTS_PS) /entry:DllMain /implib:$(COM_INT_DIR)\$(PS_MAIN).lib $(PS_OBJ) ucrt.lib vcruntime.lib $(PS_OBJ_DEPS) kernel32.lib rpcns4.lib rpcrt4.lib oleaut32.lib uuid.lib ole32.lib
 
 
 {$(COM_OUT_DIR_RAW)}.c{$(COM_INT_DIR)}.obj:

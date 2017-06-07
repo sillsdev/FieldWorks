@@ -8,7 +8,10 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Xml;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
@@ -18,6 +21,7 @@ using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.XWorks;
+using SIL.Xml;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
@@ -235,7 +239,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				UndoableUnitOfWorkHelper.Do(ITextStrings.ksUndoInsertInvisibleSpace, ITextStrings.ksRedoInsertInvisibleSpace,
 					Cache.ActionHandlerAccessor,
-					() => sel.ReplaceWithTsString(Cache.TsStrFactory.MakeString(AnalysisOccurrence.KstrZws, ws)));
+					() => sel.ReplaceWithTsString(TsStringUtils.MakeString(AnalysisOccurrence.KstrZws, ws)));
 			}
 			helper.SetIch(SelectionHelper.SelLimitType.Anchor, ich + 1);
 			helper.SetIch(SelectionHelper.SelLimitType.End, ich + 1);
@@ -423,8 +427,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			if (m_fdoCache == null || DesignMode || m_hvoRoot == 0)
 				return;
 
-			m_rootb = VwRootBoxClass.Create();
-			m_rootb.SetSite(this);
+			base.MakeRoot();
 
 			int wsFirstPara = GetWsOfFirstWordOfFirstTextPara();
 			m_vc = new RawTextVc(m_rootb, m_fdoCache, wsFirstPara);
@@ -435,8 +438,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			m_rootb.DataAccess = m_showSpaceDa;
 
 			m_rootb.SetRootObject(m_hvoRoot, m_vc, (int)StTextFrags.kfrText, m_styleSheet);
-
-			base.MakeRoot();
 		}
 
 		/// <summary>
@@ -472,7 +473,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			IStText stText = Cache.ServiceLocator.GetInstance<IStTextRepository>().GetObject(m_hvoRoot);
 			if (m_configurationParameters != null)
 			{
-				m_vc.Editable = SIL.Utils.XmlUtils.GetOptionalBooleanAttributeValue(
+				m_vc.Editable = XmlUtils.GetOptionalBooleanAttributeValue(
 					m_configurationParameters, "editable", true);
 				m_vc.Editable &= !ScriptureServices.ScriptureIsResponsibleFor(stText);
 			}
@@ -1077,18 +1078,18 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			string userPrompt = ITextStrings.ksEnterOrPasteHere;
 
-			ITsPropsBldr ttpBldr = TsPropsBldrClass.Create();
+			ITsPropsBldr ttpBldr = TsStringUtils.MakePropsBldr();
 			ttpBldr.SetIntPropValues((int)FwTextPropType.ktptBackColor,
 				(int)FwTextPropVar.ktpvDefault, Color.LightGray.ToArgb());
 			ttpBldr.SetIntPropValues((int)FwTextPropType.ktptWs,
 				(int)FwTextPropVar.ktpvDefault, Cache.DefaultUserWs);
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, userPrompt, ttpBldr.GetTextProps());
 			// Begin the prompt with a zero-width space in the vernacular writing system (with
 			// no funny colors).  This ensures anything the user types (or pastes from a non-FW
 			// clipboard) is put in that WS.
 			// 200B == zero-width space.
-			ITsPropsBldr ttpBldr2 = TsPropsBldrClass.Create();
+			ITsPropsBldr ttpBldr2 = TsStringUtils.MakePropsBldr();
 			ttpBldr2.SetIntPropValues((int)FwTextPropType.ktptWs,
 				(int)FwTextPropVar.ktpvDefault, Cache.DefaultVernWs);
 			bldr.Replace(0, 0, "\u200B", ttpBldr2.GetTextProps());
@@ -1099,7 +1100,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			get
 			{
-				ITsPropsBldr bldr = TsPropsBldrClass.Create();
+				ITsPropsBldr bldr = TsStringUtils.MakePropsBldr();
 				bldr.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, "Dictionary-Pictures");
 				bldr.SetIntPropValues((int)FwTextPropType.ktptEditable,
 					(int)FwTextPropVar.ktpvEnum,

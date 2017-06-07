@@ -1,9 +1,8 @@
-﻿// Copyright (c) 2013-15 SIL International
+﻿// Copyright (c) 2013-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using Microsoft.Win32;
 using SIL.Reporting;
@@ -20,9 +19,7 @@ namespace LanguageExplorer
 	/// create a Palaso dialog, create an instance of this class, passing it the dialog.
 	/// </summary>
 	/// ------------------------------------------------------------------------------------
-	[SuppressMessage("Gendarme.Rules.Correctness", "DisposableFieldsShouldBeDisposedRule",
-	Justification = "m_parentForm is a reference")]
-	internal sealed class SILErrorReportingAdapter : IErrorReporter, IFWDisposable
+	internal sealed class SILErrorReportingAdapter : IErrorReporter, IDisposable
 	{
 		private Form m_parentForm;
 		private RegistryKey m_registryKey;
@@ -84,7 +81,7 @@ namespace LanguageExplorer
 		}
 		#endregion
 
-		#region IFWDisposable
+		#region IDisposable
 
 		public void CheckDisposed()
 		{

@@ -6,9 +6,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Xml;
-
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.Utils;
+using SIL.CoreImpl.Text;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.CacheLight
 {
@@ -17,19 +16,17 @@ namespace SIL.FieldWorks.CacheLight
 	/// </summary>
 	internal sealed class TsStringfactory
 	{
-		private ITsStrFactory m_tsf;
-		private readonly Dictionary<string, int> m_wsCache = new Dictionary<string, int>();
+		private readonly Dictionary<string, int> m_wsCache;
 
-		public TsStringfactory(ITsStrFactory tsf, Dictionary<string, int> wsCache)
+		public TsStringfactory(Dictionary<string, int> wsCache)
 		{
-			m_tsf = tsf;
 			m_wsCache = wsCache;
 		}
 
 		public ITsString CreateFromAStr(XmlNode aStrNode, out int wsAStr)
 		{
 			wsAStr = m_wsCache[aStrNode.Attributes["ws"].Value];
-			var tisb = m_tsf.GetIncBldr();
+			ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 			tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, wsAStr);
 			ProcessRunElements(aStrNode.ChildNodes, tisb);
 
@@ -38,7 +35,7 @@ namespace SIL.FieldWorks.CacheLight
 
 		public ITsString CreateFromStr(XmlNode strNode)
 		{
-			var tisb = m_tsf.GetIncBldr();
+			ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 			ProcessRunElements(strNode.ChildNodes, tisb);
 
 			return tisb.GetString();

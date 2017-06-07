@@ -15,12 +15,15 @@ using System.Windows.Forms;
 using System.Diagnostics;
 using System.IO;
 using SIL.CoreImpl;
+using SIL.CoreImpl.Text;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.Utils;
+using SIL.Xml;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
@@ -454,18 +457,17 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		public override void MakeRoot()
 		{
 			CheckDisposed();
-			base.MakeRoot();
 
 			if (m_fdoCache == null || DesignMode)
 				return;
 
-			m_rootb = VwRootBoxClass.Create();
-			m_rootb.SetSite(this);
+			base.MakeRoot();
+
 			m_rootb.DataAccess = m_fdoCache.DomainDataByFlid;
 			m_vc = new AudioVisualVc(m_fdoCache, m_flid, "InternalPath");
 			if (m_file != null)
 			{
-				m_rootb.SetRootObject(m_file.Hvo, m_vc, AudioVisualView.kfragPathname,
+				m_rootb.SetRootObject(m_file.Hvo, m_vc, kfragPathname,
 					m_rootb.Stylesheet);
 			}
 
@@ -503,14 +505,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					vwenv.set_IntProperty((int)FwTextPropType.ktptEditable,
 						(int)FwTextPropVar.ktpvDefault,
 						(int)TptEditable.ktptNotEditable);
-					ITsString tss;
-					ITsStrFactory tsf = m_cache.TsStrFactory;
 					Debug.Assert(hvo != 0);
 					Debug.Assert(m_cache != null);
 					var file = m_cache.ServiceLocator.GetInstance<ICmFileRepository>().GetObject(hvo);
 					Debug.Assert(file != null);
 					string path = file.AbsoluteInternalPath;
-					tss = tsf.MakeString(path, m_cache.WritingSystemFactory.UserWs);
+					ITsString tss = TsStringUtils.MakeString(path, m_cache.WritingSystemFactory.UserWs);
 					vwenv.OpenParagraph();
 					vwenv.NoteDependency( new [] { m_cache.LangProject.Hvo, file.Hvo},
 						new [] {LangProjectTags.kflidLinkedFilesRootDir, CmFileTags.kflidInternalPath}, 2);

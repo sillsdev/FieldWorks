@@ -1,20 +1,15 @@
-// Copyright (c) 2009-2013 SIL International
+// Copyright (c) 2009-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: FdoTestHelper.cs
-// Responsibility: FW Team
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using SIL.FieldWorks.Common.COMInterfaces;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Text;
 using SIL.Utils;
-using System.Diagnostics.CodeAnalysis;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.FDO.FDOTests
 {
@@ -74,7 +69,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 						CreateAnalysisForWord(word, segment, cache.DefaultAnalWs, fCreateGlosses);
 						return true;
 					},
-					(sPunc, iAnalysis) => CreatePuncForm(segment, cache.TsStrFactory.MakeString(sPunc, cache.DefaultVernWs)),
+					(sPunc, iAnalysis) => CreatePuncForm(segment, TsStringUtils.MakeString(sPunc, cache.DefaultVernWs)),
 					(ichOrc, iAnalysis) => CreatePuncForm(segment, paraContents.Substring(segment.BeginOffset + ichOrc, 1)));
 			}
 		}
@@ -103,8 +98,6 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// <param name="fCreateGlosses">if set to <c>true</c> create a gloss in addition to the
 		/// WfiWordform.</param>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "cache is a reference")]
 		private static void CreateAnalysisForWord(string word, ISegment segment, int ws,
 			bool fCreateGlosses)
 		{
@@ -114,7 +107,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			IWfiGlossFactory glossFactory = cache.ServiceLocator.GetInstance<IWfiGlossFactory>();
 			IWfiAnalysisFactory wfiAnalysisFactory = cache.ServiceLocator.GetInstance<IWfiAnalysisFactory>();
 
-			ITsString tssForm = cache.TsStrFactory.MakeString(word, cache.DefaultVernWs);
+			ITsString tssForm = TsStringUtils.MakeString(word, cache.DefaultVernWs);
 			IWfiWordform form;
 			IAnalysis analysis;
 			if (wfRepo.TryGetObject(tssForm, out form))
@@ -413,14 +406,6 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			string sObjData = props.GetStrPropValue((int)FwTextPropType.ktptObjData);
 			Assert.AreEqual(Convert.ToChar((int)FwObjDataTypes.kodtExternalPathName), sObjData[0]);
 			Assert.AreEqual(sUrl, sObjData.Substring(1));
-		}
-
-		/// <summary>
-		/// Setup static FDO properties
-		/// </summary>
-		public static void SetupStaticFdoProperties()
-		{
-			ScrMappingList.TeStylesPath = FwDirectoryFinder.TeStylesPath;
 		}
 	}
 }

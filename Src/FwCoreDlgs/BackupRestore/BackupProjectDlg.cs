@@ -6,7 +6,6 @@
 // Responsibility: FW Team
 using System;
 using System.IO;
-using System.Media;
 using System.Windows.Forms;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Controls;
@@ -15,6 +14,7 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices.BackupRestore;
 using SIL.Reporting;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 {
@@ -180,7 +180,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 		{
 			if (m_destinationFolder.Text.IndexOfAny(Path.GetInvalidPathChars()) != -1)
 			{
-				SystemSounds.Beep.Play();
+				FwUtils.ErrorBeep();
 				var fixText = m_destinationFolder.Text;
 				for (; ; )
 				{

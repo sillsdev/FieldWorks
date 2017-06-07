@@ -7,8 +7,6 @@
 // Responsibility: All SIL developers in the whole wide world
 // ---------------------------------------------------------------------------------------------
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace SIL.Utils
 {

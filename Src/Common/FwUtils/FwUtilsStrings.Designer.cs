@@ -162,6 +162,15 @@ namespace SIL.FieldWorks.Common.FwUtils {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Version: {0}  {1}  {2}.
+        /// </summary>
+        internal static string kstidAppVersionFmt {
+            get {
+                return ResourceManager.GetString("kstidAppVersionFmt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to FieldWorks has unexpectedly timed out trying to determine whether the spelling dictionary {0} exists. FieldWorks will assume there is no such dictionary, which may affect spell-checking. If you think this dictionary should exist, we recommend restarting your computer. If you see this message regularly, please report it as a bug..
         /// </summary>
         internal static string kstIdCantDoDictExists {
@@ -235,6 +244,33 @@ namespace SIL.FieldWorks.Common.FwUtils {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This software is licensed under the LGPL, version 2.1 or later.
+        /// </summary>
+        internal static string kstidLicense {
+            get {
+                return ResourceManager.GetString("kstidLicense", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to (http://www.gnu.org/licenses/lgpl-2.1.html).
+        /// </summary>
+        internal static string kstidLicenseURL {
+            get {
+                return ResourceManager.GetString("kstidLicenseURL", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Version: {0}.
+        /// </summary>
+        internal static string kstidMajorVersionFmt {
+            get {
+                return ResourceManager.GetString("kstidMajorVersionFmt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to  mm.
         /// </summary>
         internal static string kstidMm {
@@ -267,6 +303,15 @@ namespace SIL.FieldWorks.Common.FwUtils {
         internal static string ProblemRestoringSettings {
             get {
                 return ResourceManager.GetString("ProblemRestoringSettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to XML Configuration Error.
+        /// </summary>
+        internal static string XMLConfigurationError {
+            get {
+                return ResourceManager.GetString("XMLConfigurationError", resourceCulture);
             }
         }
     }

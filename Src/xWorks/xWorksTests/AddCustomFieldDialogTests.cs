@@ -16,7 +16,7 @@ namespace SIL.FieldWorks.XWorks
 	public class AddCustomFieldDialogTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
 #if RANDYTODO
-		// TODO: See is there is a replacement for this.
+		// TODO: See if there is a replacement for this.
 #endif
 		/// <summary>
 		/// Test the code that populates the Lists combo.

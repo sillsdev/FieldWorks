@@ -7,14 +7,15 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using LanguageExplorer.Areas.TextsAndWords;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.SpellChecking;
+using SIL.CoreImpl.WritingSystems;
 using SIL.FieldWorks.Common.Framework;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.Utils;
-using SIL.WritingSystems;
 
 namespace LanguageExplorer.Dumpster
 {
@@ -26,7 +27,7 @@ namespace LanguageExplorer.Dumpster
 	/// JohnT: rather contrary to its name, appears to be a place to put handlers for commands common
 	/// to tools in the Words area.
 	/// </summary>
-	internal sealed class MorphologyListener : IFlexComponent, IVwNotifyChange, IFWDisposable
+	internal sealed class MorphologyListener : IFlexComponent, IVwNotifyChange, IDisposable
 	{
 		#region Data members
 

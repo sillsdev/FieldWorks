@@ -3,8 +3,9 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Test.TestUtils;
+using SIL.CoreImpl.Text;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 
 namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 {
@@ -101,8 +102,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		{
 			if ((m_displayType & DisplayType.kLiteralStringLabels) != 0)
 			{
-				ITsStrFactory factory = TsStrFactoryClass.Create();
-				vwenv.AddString(factory.MakeString("Label" + m_counter++, m_wsDefault));
+				vwenv.AddString(TsStringUtils.MakeString("Label" + m_counter++, m_wsDefault));
 			}
 			switch(frag)
 			{
@@ -152,7 +152,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 				case 6: // StTxtPara, display details of our outer object
 					int hvoOuter, tag, ihvo;
 					vwenv.GetOuterObject(vwenv.EmbeddingLevel - 1, out hvoOuter, out tag, out ihvo);
-					ITsString tss = TsStringHelper.MakeTSS("Hvo = " + hvoOuter + "; Tag = " + tag + "; Ihvo = " + ihvo,
+					ITsString tss = TsStringUtils.MakeString("Hvo = " + hvoOuter + "; Tag = " + tag + "; Ihvo = " + ihvo,
 						m_wsDefault);
 					vwenv.AddString(tss);
 					break;
@@ -203,7 +203,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 					vwenv.set_IntProperty((int)FwTextPropType.ktptEditable,
 						(int)FwTextPropVar.ktpvEnum,
 						(int)TptEditable.ktptNotEditable);
-					ITsIncStrBldr strBldr = TsIncStrBldrClass.Create();
+					ITsIncStrBldr strBldr = TsStringUtils.MakeIncStrBldr();
 					strBldr.Append(" ");
 					vwenv.AddString(strBldr.GetString());
 					vwenv.AddStringProp(SimpleRootsiteTestsConstants.kflidParaContents, null);
@@ -281,8 +281,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		/// ------------------------------------------------------------------------------------
 		public override ITsString GetStrForGuid(string bstrGuid)
 		{
-			TsStrFactory strFactory = TsStrFactoryClass.Create();
-			return strFactory.MakeString("\uFEFFa", m_wsDefault);
+			return TsStringUtils.MakeString("\uFEFFa", m_wsDefault);
 		}
 		#endregion
 	}

@@ -9,10 +9,13 @@ using System;
 using System.IO;
 using System.Xml;
 using SIL.CoreImpl;
+using SIL.CoreImpl.Scripture;
+using SIL.CoreImpl.Text;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Framework;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FwCoreDlgControls;
+using StyleInfo = SIL.FieldWorks.FwCoreDlgControls.StyleInfo;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.Common.FwUtils;
@@ -238,7 +241,7 @@ namespace SIL.FieldWorks.TE
 		public static void CreateFactoryScrStyles(IProgress progressDlg, IScripture scr)
 		{
 			TeStylesXmlAccessor acc = new TeStylesXmlAccessor(scr);
-			acc.CreateStyles(progressDlg, scr.StylesOC, acc.LoadDoc());
+			acc.CreateStyles(progressDlg, scr.StylesOC, acc.LoadDoc(), true);
 		}
 
 		/// ------------------------------------------------------------------------------------

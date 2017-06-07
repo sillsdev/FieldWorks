@@ -1,18 +1,15 @@
-// Copyright (c) 2011-2013 SIL International
+// Copyright (c) 2011-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// Original author: MarkS 2011-02-18 ProgressStateTests.cs
 
 using System.Windows.Forms;
 using NUnit.Framework;
-using SIL.FieldWorks.Test.TestUtils;
 
 namespace SIL.FieldWorks.Common.Controls
 {
 	/// <summary/>
 	[TestFixture]
-	public class ProgressStateTests : BaseTest
+	public class ProgressStateTests
 	{
 		/// <summary/>
 		[Test]

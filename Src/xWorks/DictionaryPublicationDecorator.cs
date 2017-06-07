@@ -5,10 +5,11 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.Cellar;
+using SIL.CoreImpl.Text;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
@@ -26,8 +27,6 @@ namespace SIL.FieldWorks.XWorks
 	/// modified answers. It implements IVwPropChanged and clears its cache when relevant properties change,
 	/// though currently we do not try to generate automatic propchanges on additional affected properties.
 	/// </summary>
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification="Cache is a reference")]
 	public class DictionaryPublicationDecorator : DomainDataByFlidDecoratorBase
 	{
 		// a set of HVOs of entries, senses, and examples that should not be displayed in the publication.
@@ -236,7 +235,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private ITsString GetSenseNumberTss(ILexSense sense)
 		{
-			return Cache.TsStrFactory.MakeString(GetSenseNumber(sense),
+			return TsStringUtils.MakeString(GetSenseNumber(sense),
 				Cache.DefaultUserWs);
 		}
 
@@ -305,7 +304,7 @@ namespace SIL.FieldWorks.XWorks
 			int hn;
 			if (!m_homographNumbers.TryGetValue(entry.Hvo, out hn))
 				hn = entry.HomographNumber; // unknown entry, use its own HN instead of our override
-			ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
+			ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 			tisb.AppendTsString(StringServices.HeadWordForWsAndHn(entry, wsVern, hn, "", hv));
 			var hc = sense.Services.GetInstance<HomographConfiguration>();
 			if (hc.ShowSenseNumber(hv) && HasMoreThanOneSense(entry))
@@ -505,6 +504,9 @@ namespace SIL.FieldWorks.XWorks
 
 		private bool IsPublishableReversalEntry(IReversalIndexEntry revEntry)
 		{
+			// We should still display reversal entries that have no senses
+			if (!revEntry.ReferringSenses.Any())
+				return true;
 			foreach (var sense in revEntry.ReferringSenses)
 			{
 				if (!m_excludedItems.Contains(sense.Hvo))
@@ -598,7 +600,18 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if (item is IReversalIndexEntry)
 				return !IsPublishableReversalEntry((IReversalIndexEntry)item);
+			if (item is ILexEntryRef)
+				return !IsPublishableReference((ILexEntryRef) item);
 			return m_excludedItems.Contains(item.Hvo);
+		}
+
+		private bool IsPublishableReference(ILexEntryRef entryRef)
+		{
+			// A reference is not publishable if its owner is excluded
+			if (m_excludedItems.Contains(entryRef.Owner.Hvo))
+				return false;
+			// A reference is also not publishable if all of its PrimarySensesOrEntries are excluded
+			return entryRef.PrimarySensesOrEntries.Any(senseOrEntry => !m_excludedItems.Contains(senseOrEntry.Item.Hvo));
 		}
 	}
 }

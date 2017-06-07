@@ -10,12 +10,12 @@
 // </remarks>
 // --------------------------------------------------------------------------------------------
 using System.Drawing;
-using System.Runtime.InteropServices;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.Utils;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.CoreImpl;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.Common.RootSites
 {
@@ -183,7 +183,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				if (m_ttpNormal == null)
 				{
 					ITsPropsBldr tsPropsBuilder =
-						TsPropsBldrClass.Create();
+						TsStringUtils.MakePropsBldr();
 
 					tsPropsBuilder.SetStrPropValue(
 						(int)FwTextPropType.ktptNamedStyle,	StyleServices.NormalStyleName);
@@ -361,9 +361,8 @@ namespace SIL.FieldWorks.Common.RootSites
 			// but we should (a) be able to edit and have the first paragraph and
 			// if necessary the text itself be created; and (b) if someone adds a real
 			// paragraph and/or text in some other view, have them show up.
-			ITsStrFactory tsStrFactory = TsStrFactoryClass.Create();
 			int ws = vwenv.DataAccess.WritingSystemFactory.UserWs;
-			ITsString tssMissing = tsStrFactory.MakeStringRgch("", 0, ws);
+			ITsString tssMissing = TsStringUtils.EmptyString(ws);
 			vwenv.set_IntProperty((int)FwTextPropType.ktptParaColor,
 			(int)FwTextPropVar.ktpvDefault, m_BackColor.ToArgb());
 			vwenv.set_StringProperty((int)FwTextPropType.ktptNamedStyle,
@@ -773,10 +772,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			get
 			{
 				if (m_oneSpaceString == null)
-				{
-					ITsStrFactory tsf = TsStrFactoryClass.Create();
-					m_oneSpaceString = tsf.MakeString(" ", DefaultWs);
-				}
+					m_oneSpaceString = TsStringUtils.MakeString(" ", DefaultWs);
 				return m_oneSpaceString;
 			}
 		}

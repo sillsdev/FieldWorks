@@ -1,19 +1,19 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO;
 using System.Text;
 using NUnit.Framework;
 using SIL.CoreImpl;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
 using SIL.FieldWorks.CacheLight;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Test.TestUtils;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
@@ -77,7 +77,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 		public ITsTextProps GetStyleRgch(int cch, string _rgchName)
 		{
-			return TsPropsFactoryClass.Create().MakeProps(null, 0, 0);
+			return TsStringUtils.MakeProps(null, 0);
 		}
 
 		public int GetType(string bstrName)
@@ -102,7 +102,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 		public ITsTextProps NormalFontStyle
 		{
-			get { return TsPropsFactoryClass.Create().MakeProps(null, 0, 0); }
+			get { return TsStringUtils.MakeProps(null, 0); }
 		}
 
 		public void PutStyle(string bstrName, string bstrUsage, int hvoStyle, int hvoBasedOn, int hvoNext, int nType, bool fBuiltIn, bool fModified, ITsTextProps _ttp)
@@ -155,9 +155,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 	/// Rootsite tests.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification="Unit test. Variable disposed in Teardown method")]
-	public class SimpleRootsiteTestsBase<T> : BaseTest
+	public class SimpleRootsiteTestsBase<T>
 		where T: IRealDataCache, new()
 	{
 		/// <summary>Defines the possible languages</summary>
@@ -220,10 +218,8 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[TestFixtureSetUp]
-		public override void FixtureSetup()
+		public virtual void FixtureSetup()
 		{
-			base.FixtureSetup();
-
 			SetupTestModel(Properties.Resources.TextCacheModel_xml);
 
 			m_cache = new T
@@ -275,7 +271,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[TestFixtureTearDown]
-		public override void FixtureTeardown()
+		public virtual void FixtureTeardown()
 		{
 			FileUtils.Manager.Reset();
 
@@ -283,8 +279,6 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			// fails if we don't shut the factory down.
 			m_cache.Dispose();
 			m_cache = default(T);
-
-			base.FixtureTeardown();
 		}
 
 		/// -----------------------------------------------------------------------------------
@@ -322,7 +316,6 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		[TearDown]
 		public virtual void TestTearDown()
 		{
-			m_basicView.CloseRootBox();
 			m_basicView.Dispose();
 			m_basicView = null;
 			m_propertyTable.Dispose();
@@ -348,6 +341,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			m_basicView.MakeRoot(m_hvoRoot, SimpleRootsiteTestsConstants.kflidDocFootnotes, m_frag, m_wsEng);
 			m_basicView.CallLayout();
 			m_basicView.AutoScrollPosition = new Point(0, 0);
+			m_basicView.Visible = true;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -413,8 +407,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		/// ------------------------------------------------------------------------------------
 		public void AddRunToMockedPara(int hvoPara, string runText, int ws)
 		{
-			var propFact = TsPropsFactoryClass.Create();
-			var runStyle = propFact.MakeProps(null, ws, 0);
+			var runStyle = TsStringUtils.MakeProps(null, ws);
 			ITsString contents = m_cache.get_StringProp(hvoPara, SimpleRootsiteTestsConstants.kflidParaContents);
 			var bldr = contents.GetBldr();
 			bldr.Replace(bldr.Length, bldr.Length, runText, runStyle);
@@ -456,11 +449,10 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			int cTexts = m_cache.get_VecSize(m_hvoRoot, SimpleRootsiteTestsConstants.kflidDocFootnotes);
 			int hvoFootnote = m_cache.MakeNewObject(SimpleRootsiteTestsConstants.kclsidStFootnote, m_hvoRoot, SimpleRootsiteTestsConstants.kflidDocFootnotes, cTexts);
 			int hvoPara = m_cache.MakeNewObject(SimpleRootsiteTestsConstants.kclsidStTxtPara, hvoFootnote, SimpleRootsiteTestsConstants.kflidTextParas, 0);
-			ITsStrFactory tsStrFactory = TsStrFactoryClass.Create();
 			m_cache.CacheStringProp(hvoFootnote, SimpleRootsiteTestsConstants.kflidFootnoteMarker,
-				tsStrFactory.MakeString("a", m_wsFrn));
+				TsStringUtils.MakeString("a", m_wsFrn));
 			m_cache.CacheStringProp(hvoPara, SimpleRootsiteTestsConstants.kflidParaContents,
-				tsStrFactory.MakeString(string.Empty, m_wsFrn));
+				TsStringUtils.MakeString(string.Empty, m_wsFrn));
 			return hvoPara;
 		}
 

@@ -1,25 +1,18 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: SimpleListChooser.cs
-// Responsibility:
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
-using SIL.Utils;
+using SIL.Xml;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
@@ -154,7 +147,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			{
 				case "MakeInflAffixSlotChooserCommand":
 					{
-						string sTarget = XmlUtils.GetAttributeValue(node, "target");
+						string sTarget = XmlUtils.GetOptionalAttributeValue(node, "target");
 						int hvoPos = 0;
 						string sTopPOS = DetailControlsStrings.ksQuestionable;
 						if (sTarget == null || sTarget.ToLower() == "owner")

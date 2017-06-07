@@ -1,11 +1,7 @@
-// Copyright (c) 2007-2015 SIL International
+// Copyright (c) 2007-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: XmlDocConfigureDlg.cs
-// Responsibility:
-// Last reviewed:
-//
+
 #if DEBUG
 // <remarks>
 // Uncomment the #define if you want to see the "Restore Defaults" and "Set/Clear All" buttons.
@@ -27,17 +23,19 @@ using System.Windows.Forms;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.Cellar;
+using SIL.CoreImpl.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FwCoreDlgControls;
 using SIL.FieldWorks.FwCoreDlgs;
-using SIL.Utils;
 using SIL.Windows.Forms;
+using SIL.Xml;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -53,7 +51,7 @@ namespace SIL.FieldWorks.XWorks
 	/// hideConfig="true" attributes added to a couple of part refs just to make the node tree look
 	/// nicer to the users.
 	/// </summary>
-	public partial class XmlDocConfigureDlg : Form, IFWDisposable, ILayoutConverter
+	public partial class XmlDocConfigureDlg : Form, ILayoutConverter
 	{
 		XElement m_configurationParameters;
 		string m_defaultRootLayoutName;
@@ -237,13 +235,6 @@ namespace SIL.FieldWorks.XWorks
 #endif
 		}
 
-		//void m_cfgSenses_VisibleChanged(object sender, EventArgs e)
-		//{
-		//    // Seems at resolutions other than 96dpi this control changes its minimumSize
-		//    // when it first becomes visible, so at that point we need to adjust it.
-		//    m_cfgSenses.Height = m_cfgSenses.MinimumSize.Height;
-		//}
-
 		/// <summary>
 		/// Initialize the dialog after creating it.
 		/// </summary>
@@ -252,7 +243,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			CheckDisposed();
 			m_configurationParameters = configurationParameters;
-			string labelKey = XmlUtils.GetAttributeValue(configurationParameters, "viewTypeLabelKey");
+			string labelKey = XmlUtils.GetOptionalAttributeValue(configurationParameters, "viewTypeLabelKey");
 			if (!String.IsNullOrEmpty(labelKey))
 			{
 				string sLabel = xWorksStrings.ResourceManager.GetString(labelKey);
@@ -268,17 +259,16 @@ namespace SIL.FieldWorks.XWorks
 			m_sLayoutPropertyName = sLayoutPropertyName;
 			m_layouts = Inventory.GetInventory("layouts", cache.ProjectId.Name);
 			m_parts = Inventory.GetInventory("parts", cache.ProjectId.Name);
-			m_configObjectName = XmlUtils.GetLocalizedAttributeValue(configurationParameters, "configureObjectName", "");
-			m_configNotLocalizedObjectName = XmlUtils.GetOptionalAttributeValue(
-				configurationParameters, "configureObjectName", "");
+			m_configObjectName = StringTable.Table.LocalizeAttributeValue(XmlUtils.GetOptionalAttributeValue(configurationParameters, "configureObjectName", string.Empty));
+			m_configNotLocalizedObjectName = XmlUtils.GetOptionalAttributeValue(configurationParameters, "configureObjectName", "");
 			Text = String.Format(Text, m_configObjectName);
-			m_defaultRootLayoutName = XmlUtils.GetAttributeValue(configurationParameters, "layout");
+			m_defaultRootLayoutName = XmlUtils.GetOptionalAttributeValue(configurationParameters, "layout");
 			string sLayoutType;
 			m_propertyTable.TryGetValue(m_sLayoutPropertyName, out sLayoutType);
 			if (String.IsNullOrEmpty(sLayoutType))
 				sLayoutType = m_defaultRootLayoutName;
 
-			var configureLayouts = XmlUtils.FindNode(m_configurationParameters, "configureLayouts");
+			var configureLayouts = XmlUtils.FindElement(m_configurationParameters, "configureLayouts");
 			LegacyConfigurationUtils.BuildTreeFromLayoutAndParts(configureLayouts, this);
 			SetSelectedDictionaryTypeItem(sLayoutType);
 
@@ -383,7 +373,7 @@ namespace SIL.FieldWorks.XWorks
 				m_rgRelationTypes.Sort(ComparePossibilitiesByName);
 			}
 			// Add any new types to our ordered list (or fill in an empty list).
-			var setSortedGuids = new Set<GuidAndSubClass>();
+			var setSortedGuids = new HashSet<GuidAndSubClass>();
 			foreach (var lri in ltn.RelTypeList)
 				setSortedGuids.Add(new GuidAndSubClass(lri.ItemGuid, lri.SubClass));
 			foreach (var poss in m_rgRelationTypes)
@@ -484,7 +474,7 @@ namespace SIL.FieldWorks.XWorks
 		public void BuildEntryTypeList(LayoutTreeNode ltn, string parentLayoutName)
 		{
 			// Add any new types to our ordered list (or fill in an empty list).
-			var setGuidsFromXml = new Set<Guid>(ltn.EntryTypeList.Select(info => info.ItemGuid));
+			var setGuidsFromXml = new HashSet<Guid>(ltn.EntryTypeList.Select(info => info.ItemGuid));
 			Dictionary<Guid, ICmPossibility> mapGuidType;
 			int index;
 			switch (ltn.EntryType)
@@ -1179,7 +1169,7 @@ namespace SIL.FieldWorks.XWorks
 				var selLayout = selItem == null ? null : selItem.LayoutName;
 				m_cbDictType.Items.Clear();
 				m_tvParts.Nodes.Clear();
-				var configureLayouts = XmlUtils.FindNode(m_configurationParameters, "configureLayouts");
+				var configureLayouts = XmlUtils.FindElement(m_configurationParameters, "configureLayouts");
 				LegacyConfigurationUtils.BuildTreeFromLayoutAndParts(configureLayouts, this);
 				if (selItem != null)
 				{
@@ -2904,15 +2894,11 @@ namespace SIL.FieldWorks.XWorks
 
 		#endregion // Misc internal functions
 
-		#region IFWDisposable Members
-
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
 				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
 		}
-
-		#endregion // IFWDisposable Members
 
 		#region LayoutTreeNode class
 
@@ -2986,7 +2972,7 @@ namespace SIL.FieldWorks.XWorks
 			public LayoutTreeNode(XElement config, ILayoutConverter converter, string classParent)
 			{
 				m_xnConfig = config;
-				m_sLabel = XmlUtils.GetLocalizedAttributeValue(config, "label", null);
+				m_sLabel = StringTable.Table.LocalizeAttributeValue(XmlUtils.GetOptionalAttributeValue(config, "label", null));
 				if (config.Name == "configure")
 				{
 					m_sClassName = XmlUtils.GetManditoryAttributeValue(config, "class");
@@ -2998,8 +2984,8 @@ namespace SIL.FieldWorks.XWorks
 				{
 					m_sClassName = classParent;
 					string sRef = XmlUtils.GetManditoryAttributeValue(config, "ref");
-					if(m_sLabel == null && converter.StringTable != null)
-						m_sLabel = converter.StringTable.LocalizeAttributeValue(sRef);
+					if(m_sLabel == null && converter.UseStringTable)
+						m_sLabel = StringTable.Table.LocalizeAttributeValue(sRef);
 					if (config.Parent != null && config.Parent.Name.LocalName == "layout")
 						m_sLayoutName = XmlUtils.GetManditoryAttributeValue(config.Parent, "name");
 					else
@@ -3731,7 +3717,7 @@ namespace SIL.FieldWorks.XWorks
 			private bool OverallLayoutVisibilityChanged()
 			{
 				Debug.Assert(Level == 0);
-				string sVisible = XmlUtils.GetAttributeValue(m_xnParentLayout, "visibility");
+				string sVisible = XmlUtils.GetOptionalAttributeValue(m_xnParentLayout, "visibility");
 				bool fOldVisible = sVisible != "never";
 				return Checked != fOldVisible;
 			}
@@ -4443,7 +4429,7 @@ namespace SIL.FieldWorks.XWorks
 
 		//
 		// *** Configuration nodes look like this:
-		//"<layoutType label=\"Stem-based (complex forms as main entries)\" layout=\"publishStem\">" +
+		//"<layoutType label=\"Lexeme-based (complex forms as main entries)\" layout=\"publishStem\">" +
 		//    "<configure class=\"LexEntry\" label=\"Main Entry\" layout=\"publishStemEntry\"/>" +
 		//    "<configure class=\"LexEntry\" label=\"Minor Entry\" layout=\"publishStemMinorEntry\"/>" +
 		//"</layoutType>" +
@@ -4706,7 +4692,7 @@ namespace SIL.FieldWorks.XWorks
 
 		public FdoCache Cache { get { return m_cache; } }
 
-		public StringTable StringTable { get { return StringTable.Table; } }
+		public bool UseStringTable { get { return true; } }
 
 		public LayoutLevels LayoutLevels { get { return m_levels; } }
 

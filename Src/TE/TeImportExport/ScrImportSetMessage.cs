@@ -1,30 +1,16 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ScrImportSetMessage.cs
-// Responsibility: TomB
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
 
 using System;
-using System.Drawing;
-using System.Collections;
-using System.ComponentModel;
 using System.Windows.Forms;
-using System.Resources;
-
-using SIL.Utils;
-using SIL.FieldWorks.Common.Drawing;
 
 namespace SIL.FieldWorks.TE
 {
 	/// <summary>
 	/// Summary description for ScrImportSetMessage.
 	/// </summary>
-	public class ScrImportSetMessage : Form, IFWDisposable
+	public class ScrImportSetMessage : Form
 	{
 		/// <summary></summary>
 		protected string m_HelpUrl;
@@ -63,6 +49,13 @@ namespace SIL.FieldWorks.TE
 		{
 			if (IsDisposed)
 				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
+		}
+
+		/// <summary/>
+		protected override void Dispose(bool disposing)
+		{
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ****** ");
+			base.Dispose(disposing);
 		}
 
 		#region Windows Form Designer generated code

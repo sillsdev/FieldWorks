@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -8,6 +8,8 @@ using System.Globalization;
 using System.Linq;
 using System.Xml;
 using SIL.CoreImpl;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Utils;
@@ -18,7 +20,7 @@ namespace SIL.FieldWorks.XWorks
 	/// Populate the writing systems combo box via the writing system list
 	/// </summary>
 	/// <remarks>TODO: make a property for controlling the current WritingSystemSet.</remarks>
-	public class WritingSystemListHandler : IFlexComponent, IFWDisposable
+	public class WritingSystemListHandler : IFlexComponent, IDisposable
 	{
 		public enum WritingSystemSet {All, AllCurrent, AllAnalysis, AllVernacular, CurrentAnalysis, CurrentVernacular, CurrentPronounciation};
 		private WritingSystemSet m_currentSet = WritingSystemSet.AllCurrent;
@@ -297,7 +299,7 @@ namespace SIL.FieldWorks.XWorks
 	/// <summary>
 	/// Dummy handler to disable displaying the combined styles combobox by default.
 	/// </summary>
-	public class CombinedStylesListHandler : IFlexComponent, IFWDisposable
+	public class CombinedStylesListHandler : IFlexComponent, IDisposable
 	{
 		public enum StylesSet { All, CharacterOnly };
 
@@ -341,7 +343,7 @@ namespace SIL.FieldWorks.XWorks
 
 		#endregion
 
-		#region IFWDisposable Members
+		#region IDisposable Members
 
 		/// <summary>
 		/// Check to see if the object has been disposed.
@@ -371,10 +373,6 @@ namespace SIL.FieldWorks.XWorks
 		{
 			Dispose(false);
 		}
-
-		#endregion
-
-		#region IDisposable Members
 
 		/// <summary>
 		/// Clean up everything that we've been using.

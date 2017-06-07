@@ -56,6 +56,14 @@ namespace SIL.FieldWorks.FixData
 					}
 					break;
 				case "LexSense":
+					var subSenseElement = rt.Element("Senses");
+					if (subSenseElement != null)
+					{
+						foreach (var surrogate in subSenseElement.Elements("objsur"))
+						{
+							subSenses.Add(surrogate.Attribute("guid").Value);
+						}
+					}
 					if (!senseToMSA.ContainsKey(rtGuid))
 					{
 						var msa = rt.Element("MorphoSyntaxAnalysis");
@@ -65,14 +73,6 @@ namespace SIL.FieldWorks.FixData
 						if (objsur == null || objsur.Attribute("guid") == null)
 							break;
 						senseToMSA[rtGuid] = objsur.Attribute("guid").Value;
-					}
-					var subSenseElement = rt.Element("Senses");
-					if (subSenseElement != null)
-					{
-						foreach (var surrogate in subSenseElement.Elements("objsur"))
-						{
-							subSenses.Add(surrogate.Attribute("guid").Value);
-						}
 					}
 					break;
 				default:

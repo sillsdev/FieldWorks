@@ -15,8 +15,8 @@ using System.Diagnostics;
 using System.Xml.Linq;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.Utils;
 using SIL.FieldWorks.FDO;
+using SIL.Xml;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -255,7 +255,7 @@ namespace SIL.FieldWorks.XWorks
 			// If we're being disposed because the application is crashing, we do NOT want to save the sort
 			// sequence. It might contain bad objects, or represent a filtered state that is NOT going to
 			// be persisted because of the crash. LT-11446.
-			if (BasicUtils.InCrashedState)
+			if (FwUtils.InCrashedState)
 				return;
 			var pathname = GetClerkPersistPathname();
 			var watch = new Stopwatch();

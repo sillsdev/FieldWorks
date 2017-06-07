@@ -1,24 +1,14 @@
-// Copyright (c) 2007-2013 SIL International
+// Copyright (c) 2007-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: FwLabel.cs
-// Responsibility: TE Team
-//
-// <remarks>
-// </remarks>
 
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
-
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.RootSites;
-using SIL.Utils;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 
 namespace SIL.FieldWorks.Common.Widgets
 {
@@ -27,7 +17,7 @@ namespace SIL.FieldWorks.Common.Widgets
 	/// Simulation of a regular .NET label control which uses a view to display the text.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public class FwLabel : Control, IFWDisposable, IVwNotifyChange, ISupportInitialize
+	public class FwLabel : Control, IVwNotifyChange, ISupportInitialize
 	{
 		#region Data members
 		/// <summary>
@@ -131,7 +121,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		}
 		#endregion
 
-		#region IFWDisposable Members
+		#region IDisposable Members
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

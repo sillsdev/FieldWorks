@@ -1,9 +1,6 @@
-// Copyright (c) 2010-2013 SIL International
+// Copyright (c) 2010-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: DataStoreInitializationServicesTests.cs
-// Responsibility: TE Team
 
 using System;
 using System.Collections.Generic;
@@ -11,12 +8,11 @@ using System.Linq;
 using System.Reflection;
 using NUnit.Framework;
 using Rhino.Mocks;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.ScriptureUtils;
+using SIL.CoreImpl.Scripture;
+using SIL.CoreImpl.Text;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.Test.TestUtils;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO.FDOTests
@@ -321,8 +317,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			m_para.Stub(p => p.ClassID).Return(ScrTxtParaTags.kClassId);
 			ICmObjectId paraId = Cache.ServiceLocator.GetInstance<ICmObjectIdFactory>().NewId();
 			m_para.Stub(p => p.Id).Return(paraId);
-			ITsStrFactory fact = TsStrFactoryClass.Create();
-			m_para.Contents = fact.MakeString(string.Empty, Cache.DefaultVernWs);
+			m_para.Contents = TsStringUtils.EmptyString(Cache.DefaultVernWs);
 
 			GetBtDelegate getBtDelegate = () =>
 				m_para.TranslationsOC.FirstOrDefault(trans => trans.TypeRA != null &&
@@ -448,7 +443,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			existingTrans2.TypeRA = btType;
 			IMultiString translation = MockRepository.GenerateStub<IMultiString>();
 			translation.Stub(t => t.get_String(Cache.DefaultAnalWs)).Return(
-				Cache.TsStrFactory.MakeString(string.Empty, Cache.DefaultAnalWs));
+				TsStringUtils.EmptyString(Cache.DefaultAnalWs));
 			translation.Stub(t => t.AvailableWritingSystemIds).Return(new int[] { Cache.DefaultAnalWs });
 			existingTrans2.Stub(t => t.Translation).Return(translation);
 			m_para.TranslationsOC.Add(existingTrans2);
@@ -474,7 +469,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			m_para.TranslationsOC.Add(existingTrans2);
 			IMultiString translation = MockRepository.GenerateStub<IMultiString>();
 			translation.Stub(t => t.get_String(Cache.DefaultAnalWs)).Return(
-				Cache.TsStrFactory.MakeString("I want a monkey.", Cache.DefaultAnalWs));
+				TsStringUtils.MakeString("I want a monkey.", Cache.DefaultAnalWs));
 			existingTrans2.Stub(t => t.Translation).Return(translation);
 			translation.Stub(t => t.AvailableWritingSystemIds).Return(new int[] { Cache.DefaultAnalWs });
 			ReflectionHelper.CallMethod(typeof(DataStoreInitializationServices), "EnsureBtForPara", m_para);
@@ -501,7 +496,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			m_para.TranslationsOC.Add(existingTrans2);
 			IMultiString translation = MockRepository.GenerateStub<IMultiString>();
 			translation.Stub(t => t.get_String(Cache.DefaultAnalWs)).Return(
-				Cache.TsStrFactory.MakeString("I want another monkey.", Cache.DefaultAnalWs));
+				TsStringUtils.MakeString("I want another monkey.", Cache.DefaultAnalWs));
 			existingTrans2.Stub(t => t.Translation).Return(translation);
 			translation.Stub(t => t.AvailableWritingSystemIds).Return(new int[] { Cache.DefaultAnalWs });
 			ReflectionHelper.CallMethod(typeof(DataStoreInitializationServices), "EnsureBtForPara", m_para);
@@ -529,7 +524,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			m_para.TranslationsOC.Add(existingTrans2);
 			IMultiString translation = MockRepository.GenerateStub<IMultiString>();
 			translation.Stub(t => t.get_String(m_wsDe)).Return(
-				Cache.TsStrFactory.MakeString("I want another monkey.", m_wsDe));
+				TsStringUtils.MakeString("I want another monkey.", m_wsDe));
 			translation.Stub(t => t.AvailableWritingSystemIds).Return(new int[]{m_wsDe});
 			existingTrans2.Stub(t => t.Translation).Return(translation);
 			ReflectionHelper.CallMethod(typeof(DataStoreInitializationServices), "EnsureBtForPara", m_para);
@@ -562,9 +557,9 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			m_para.TranslationsOC.Add(existingTrans2);
 			IMultiString translation = MockRepository.GenerateStub<IMultiString>();
 			translation.Stub(t => t.get_String(m_wsDe)).Return(
-				Cache.TsStrFactory.MakeString("I want another monkey.", m_wsDe));
+				TsStringUtils.MakeString("I want another monkey.", m_wsDe));
 			translation.Stub(t => t.get_String(Cache.DefaultAnalWs)).Return(
-				Cache.TsStrFactory.MakeString("short def.", Cache.DefaultAnalWs));
+				TsStringUtils.MakeString("short def.", Cache.DefaultAnalWs));
 			translation.Stub(t => t.AvailableWritingSystemIds).Return(new int[] { Cache.DefaultAnalWs, m_wsDe });
 			existingTrans2.Stub(t => t.Translation).Return(translation);
 			ReflectionHelper.CallMethod(typeof(DataStoreInitializationServices), "EnsureBtForPara", m_para);
@@ -755,9 +750,9 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			ReflectionHelper.CallMethod(typeof(DataStoreInitializationServices), "EnsureSegmentsForPara", m_para);
 
 			Assert.AreEqual(2, m_para.SegmentsOS.Count);
-			ITsString tssSeg1 = Cache.TsStrFactory.MakeString("Whatever we want.", Cache.DefaultAnalWs);
+			ITsString tssSeg1 = TsStringUtils.MakeString("Whatever we want.", Cache.DefaultAnalWs);
 			VerifySegment(0, tssSeg1, "Whateverx wex want.", new int[0]);
-			ITsString tssSeg2 = Cache.TsStrFactory.MakeString("The second segment.", Cache.DefaultAnalWs);
+			ITsString tssSeg2 = TsStringUtils.MakeString("The second segment.", Cache.DefaultAnalWs);
 			VerifySegment(1, tssSeg2, "Thex secondx segment.", new int[0]);
 		}
 		#endregion
@@ -877,7 +872,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			ICmTranslation backTrans = Cache.ServiceLocator.GetInstance<ICmTranslationFactory>().Create(
 				m_para, Cache.ServiceLocator.GetInstance<ICmPossibilityRepository>().GetObject(CmPossibilityTags.kguidTranBackTranslation));
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, "Short sentence. Another sentence. Hahahahaha",
 				StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
 			m_para.Contents = bldr.GetString();
@@ -902,7 +897,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			ICmTranslation backTrans = Cache.ServiceLocator.GetInstance<ICmTranslationFactory>().Create(
 				m_para, Cache.ServiceLocator.GetInstance<ICmPossibilityRepository>().GetObject(CmPossibilityTags.kguidTranBackTranslation));
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			// Footnotes go here:              |       |
 			bldr.Replace(0, 0, "Short sentence. Another sentence. Hahahahaha",
 				StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
@@ -934,7 +929,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			ICmTranslation backTrans = Cache.ServiceLocator.GetInstance<ICmTranslationFactory>().Create(
 				m_para, Cache.ServiceLocator.GetInstance<ICmPossibilityRepository>().GetObject(CmPossibilityTags.kguidTranBackTranslation));
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			// Footnotes go here:                 |                 |
 			bldr.Replace(0, 0, "1Short sentence. 2Another sentence. 3Hahahahaha",
 				StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
@@ -966,7 +961,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void ParaSegmentsValid_TooMany()
 		{
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, "Short sentence. Another sentence. Hahahahaha",
 				StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
 			m_para.Contents = bldr.GetString();
@@ -990,7 +985,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void ParaSegmentsValid_TooMany_LastIsEmpty()
 		{
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, "Short sentence. Another sentence. Hahahahaha",
 				StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
 			m_para.Contents = bldr.GetString();
@@ -1013,7 +1008,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void ParaSegmentsValid_TooFew()
 		{
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, "Short sentence. Another sentence. Hahahahaha",
 				StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
 			m_para.Contents = bldr.GetString();
@@ -1035,7 +1030,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void ParaSegmentsValid_OffsetsWrong()
 		{
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, "Short sentence. Another sentence. Hahahahaha",
 				StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
 			m_para.Contents = bldr.GetString();
@@ -1058,7 +1053,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void ParaSegmentsValid_EmptyBaseline()
 		{
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, "Short sentence. Another sentence. Hahahahaha",
 				StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
 			m_para.Contents = bldr.GetString();
@@ -1081,7 +1076,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void ParaSegmentsValid_Overlapping()
 		{
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, "Short sentence. Another sentence. Hahahahaha",
 				StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
 			m_para.Contents = bldr.GetString();
@@ -1104,7 +1099,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void ParaSegmentsValid_OverlappingNonAdjacent()
 		{
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, "Short sentence. Another sentence. Hahahahaha",
 				StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
 			m_para.Contents = bldr.GetString();
@@ -1131,7 +1126,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			ICmTranslation backTrans = Cache.ServiceLocator.GetInstance<ICmTranslationFactory>().Create(
 				m_para, Cache.ServiceLocator.GetInstance<ICmPossibilityRepository>().GetObject(CmPossibilityTags.kguidTranBackTranslation));
 			backTrans.Translation.set_String(Cache.DefaultAnalWs, "Translation 1. Translation 2.");
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, "Short sentence. Another sentence. Hahahahaha",
 				StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
 			m_para.Contents = bldr.GetString();
@@ -1158,7 +1153,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			ICmTranslation backTrans = Cache.ServiceLocator.GetInstance<ICmTranslationFactory>().Create(
 				m_para, Cache.ServiceLocator.GetInstance<ICmPossibilityRepository>().GetObject(CmPossibilityTags.kguidTranBackTranslation));
 			backTrans.Translation.set_String(Cache.DefaultAnalWs, "Translation 1. Translation 2.");
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, "23", StyleUtils.CharStyleTextProps(ScrStyleNames.VerseNumber, Cache.DefaultVernWs));
 			m_para.Contents = bldr.GetString();
 
@@ -1181,7 +1176,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			ICmTranslation trans = Cache.ServiceLocator.GetInstance<ICmTranslationFactory>().Create(
 				m_para, Cache.ServiceLocator.GetInstance<ICmPossibilityRepository>().GetObject(CmPossibilityTags.kguidTranBackTranslation));
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, "Short sentence. Another sentence. Hahahahaha",
 				StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
 			m_para.Contents = bldr.GetString();
@@ -1209,7 +1204,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			ICmTranslation trans = Cache.ServiceLocator.GetInstance<ICmTranslationFactory>().Create(
 				m_para, Cache.ServiceLocator.GetInstance<ICmPossibilityRepository>().GetObject(CmPossibilityTags.kguidTranBackTranslation));
 			AddRunToMockedTrans(trans, Cache.DefaultAnalWs, "Monkey. I want a monkey. Waaaaaaa", null);
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, "Short sentence. Another sentence. Hahahahaha",
 				StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
 			m_para.Contents = bldr.GetString();
@@ -1237,7 +1232,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			ICmTranslation trans = Cache.ServiceLocator.GetInstance<ICmTranslationFactory>().Create(
 				m_para, Cache.ServiceLocator.GetInstance<ICmPossibilityRepository>().GetObject(CmPossibilityTags.kguidTranBackTranslation));
 			AddRunToMockedTrans(trans, Cache.DefaultAnalWs, "Monkey. I want a monkey. Waaaaaaa", null);
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, "Short sentence. Another sentence. Hahahahaha",
 				StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
 			m_para.Contents = bldr.GetString();
@@ -1265,7 +1260,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			ICmTranslation trans = Cache.ServiceLocator.GetInstance<ICmTranslationFactory>().Create(
 				m_para, Cache.ServiceLocator.GetInstance<ICmPossibilityRepository>().GetObject(CmPossibilityTags.kguidTranBackTranslation));
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, "Short sentence. Another sentence. Hahahahaha",
 				StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
 			m_para.Contents = bldr.GetString();
@@ -1294,7 +1289,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			ICmTranslation trans = Cache.ServiceLocator.GetInstance<ICmTranslationFactory>().Create(
 				m_para, Cache.ServiceLocator.GetInstance<ICmPossibilityRepository>().GetObject(CmPossibilityTags.kguidTranBackTranslation));
 			AddRunToMockedTrans(trans, Cache.DefaultAnalWs, "Monkey. I want a monkey. Waaaaaaa", null);
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			//                              |12               |30  |35
 			bldr.Replace(0, 0, "Short sentence. Another sentence. Hahahahaha",
 				StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
@@ -1306,11 +1301,11 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 			ReflectionHelper.CallMethod(typeof(DataStoreInitializationServices), "BlowAwaySegments", m_para);
 			VerifyParaSegmentBreaks();
-			VerifySegment(0, Cache.TsStrFactory.MakeString("Monkey. ", Cache.DefaultAnalWs),
+			VerifySegment(0, TsStringUtils.MakeString("Monkey. ", Cache.DefaultAnalWs),
 				"Monkey.x ", new int[0], new int[0], new [] { 1 });
-			VerifySegment(1, Cache.TsStrFactory.MakeString("I want a monkey. ", Cache.DefaultAnalWs),
+			VerifySegment(1, TsStringUtils.MakeString("I want a monkey. ", Cache.DefaultAnalWs),
 				"Ix wantx ax monkey.x ", new int[0], new int[0], new [] { 1 });
-			VerifySegment(2, Cache.TsStrFactory.MakeString("Waaaaaaa", Cache.DefaultAnalWs),
+			VerifySegment(2, TsStringUtils.MakeString("Waaaaaaa", Cache.DefaultAnalWs),
 				"Waaaaaaa", new int[0], new int[0], new [] { 0 });
 		}
 
@@ -1326,7 +1321,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			ICmTranslation trans = Cache.ServiceLocator.GetInstance<ICmTranslationFactory>().Create(
 				m_para, Cache.ServiceLocator.GetInstance<ICmPossibilityRepository>().GetObject(CmPossibilityTags.kguidTranBackTranslation));
 			AddRunToMockedTrans(trans, Cache.DefaultAnalWs, "Monkey. I want a monkey. Waaaaaaa", null);
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			//                              |12               |30  |35
 			bldr.Replace(0, 0, "Short sentence. Another sentence. Hahahahaha",
 				StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
@@ -1339,11 +1334,11 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 			ReflectionHelper.CallMethod(typeof(DataStoreInitializationServices), "BlowAwaySegments", m_para);
 			VerifyParaSegmentBreaks();
-			VerifySegment(0, Cache.TsStrFactory.MakeString("Monkey. ", Cache.DefaultAnalWs),
+			VerifySegment(0, TsStringUtils.MakeString("Monkey. ", Cache.DefaultAnalWs),
 				"Monkey.x ", new int[0], new int[0], new [] { 1 });
-			VerifySegment(1, Cache.TsStrFactory.MakeString("I want a monkey. ", Cache.DefaultAnalWs),
+			VerifySegment(1, TsStringUtils.MakeString("I want a monkey. ", Cache.DefaultAnalWs),
 				"Ix wantx ax monkey.x ", new int[0], new int[0], new[] { 1 });
-			VerifySegment(2, Cache.TsStrFactory.MakeString("Waaaaaaa", Cache.DefaultAnalWs),
+			VerifySegment(2, TsStringUtils.MakeString("Waaaaaaa", Cache.DefaultAnalWs),
 				"Waaaaaaa", new int[0], new int[0], new [] { 0 });
 		}
 		#endregion
@@ -1410,7 +1405,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			m_scr.ResourcesOC.Clear();
 
 			IScrBook exodus = CreateExodusData();
-			exodus.TitleOA[0].Contents = Cache.TsStrFactory.MakeString(String.Empty, Cache.DefaultVernWs);
+			exodus.TitleOA[0].Contents = TsStringUtils.EmptyString(Cache.DefaultVernWs);
 			exodus.TitleOA[0].SegmentsOS.Clear();
 
 			int undoActions = m_actionHandler.UndoableActionCount;
@@ -1436,7 +1431,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			section.ContentOA = contents;
 			IScrTxtPara para = sl.GetInstance<IScrTxtParaFactory>().CreateWithStyle(contents, "Paragraph");
 			m_scr.ResourcesOC.Clear();
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			// Footnotes go here:      |          |        |
 			bldr.Replace(0, 0, "This is a sentence for Tom and his wife. Good!",
 				StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
@@ -1465,7 +1460,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			section.ContentOA = contents;
 			IScrTxtPara para = sl.GetInstance<IScrTxtParaFactory>().CreateWithStyle(contents, "Paragraph");
 			m_scr.ResourcesOC.Clear();
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			// Footnotes go here:      |          |        |
 			bldr.Replace(0, 0, "This is a sentence for Tom and his wife. Good!",
 				StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
@@ -1510,7 +1505,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			section.ContentOA = contents;
 			var para = sl.GetInstance<IScrTxtParaFactory>().CreateWithStyle(contents, "Paragraph");
 			m_scr.ResourcesOC.Clear();
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			// Footnotes go here:                   |
 			bldr.Replace(0, 0, "First seg. This is a sentence for Tom and his wife. Good! Bad!",
 				StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
@@ -1543,7 +1538,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			section.ContentOA = contents;
 			var para = sl.GetInstance<IScrTxtParaFactory>().CreateWithStyle(contents, "Paragraph");
 			m_scr.ResourcesOC.Clear();
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			// Footnotes go here:                   |
 			bldr.Replace(0, 0, "Looks like we have a sentence for Tom and his wife. Good! Deal!",
 				StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
@@ -1576,7 +1571,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			section.ContentOA = contents;
 			var para = sl.GetInstance<IScrTxtParaFactory>().CreateWithStyle(contents, "Paragraph");
 			m_scr.ResourcesOC.Clear();
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			// Footnotes go here:                   |
 			bldr.Replace(0, 0, "Good! Deal! Was it a sentence for Tom and his wife?",
 				StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
@@ -1610,7 +1605,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			section.ContentOA = contents;
 			var para = sl.GetInstance<IScrTxtParaFactory>().CreateWithStyle(contents, "Paragraph");
 			m_scr.ResourcesOC.Clear();
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			// Footnotes go here:                   |
 			bldr.Replace(0, 0, "First seg. --,<>@~-$^&*()+=. Good! Bad!",
 				StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
@@ -1635,7 +1630,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void FixSegmentsForPara_ORCsInMiddleOfParaWithFullTrans()
 		{
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			// Footnotes go here:      |          |        |
 			bldr.Replace(0, 0, "This is a sentence for Tom and his wife. Good!",
 				StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
@@ -1667,7 +1662,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			CallFixSegmentsForPara();
 			VerifyParaSegmentBreaks();
 			VerifySegment(0, expectedSegment0FT, "Ix ate ax whole cow yesterday", new int[] { 1, 2, 1 });
-			VerifySegment(1, Cache.TsStrFactory.MakeString("Wonderful!", Cache.DefaultAnalWs),
+			VerifySegment(1, TsStringUtils.MakeString("Wonderful!", Cache.DefaultAnalWs),
 				"Wonderful!", new int[] { 1 });
 		}
 
@@ -1681,7 +1676,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public void FixSegmentsForPara_OrcFollowsHardLineBreak()
 		{
 			string strSeg1 = "This is a sentence. ";
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, strSeg1 + StringUtils.kChHardLB,
 				StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
 			Guid footnote1 = Guid.NewGuid();
@@ -1695,8 +1690,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 			CallFixSegmentsForPara();
 			VerifyParaSegmentBreaks();
-			ITsString emptyAnalFreeTrans = Cache.TsStrFactory.MakeString(String.Empty, Cache.DefaultAnalWs);
-			VerifySegment(0, Cache.TsStrFactory.MakeString("I ate", Cache.DefaultAnalWs), "Ix ate", new int[] { 1 });
+			ITsString emptyAnalFreeTrans = TsStringUtils.EmptyString(Cache.DefaultAnalWs);
+			VerifySegment(0, TsStringUtils.MakeString("I ate", Cache.DefaultAnalWs), "Ix ate", new int[] { 1 });
 			VerifySegment(1, emptyAnalFreeTrans, null, new int[0]);
 			VerifySegment(2, emptyAnalFreeTrans, null, new int[0]);
 		}
@@ -1709,7 +1704,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void FixSegmentsForPara_OrcPrecedesHardLineBreak()
 		{
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			// Footnote here:  |
 			bldr.Replace(0, 0, StringUtils.kChHardLB + "This is a sentence. ",
 				StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
@@ -1724,10 +1719,10 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 			CallFixSegmentsForPara();
 			VerifyParaSegmentBreaks();
-			ITsString emptyAnalFreeTrans = Cache.TsStrFactory.MakeString(String.Empty, Cache.DefaultAnalWs);
+			ITsString emptyAnalFreeTrans = TsStringUtils.EmptyString(Cache.DefaultAnalWs);
 			VerifySegment(0, emptyAnalFreeTrans, null, new int[0]);
 			VerifySegment(1, emptyAnalFreeTrans, null, new int[0]);
-			VerifySegment(2, Cache.TsStrFactory.MakeString("I ate", Cache.DefaultAnalWs), "Ix ate", new int[] { 1 });
+			VerifySegment(2, TsStringUtils.MakeString("I ate", Cache.DefaultAnalWs), "Ix ate", new int[] { 1 });
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1740,7 +1735,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public void FixSegmentsForPara_OrcPrecedesHardLineBreakInMiddle()
 		{
 			string strSeg1 = "This is a sentence. ";
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			// Footnote goes here:      |
 			bldr.Replace(0, 0, strSeg1 + StringUtils.kChHardLB + "More text.",
 				StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
@@ -1763,10 +1758,10 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 			CallFixSegmentsForPara();
 			VerifyParaSegmentBreaks();
-			ITsString emptyAnalFreeTrans = Cache.TsStrFactory.MakeString(String.Empty, Cache.DefaultAnalWs);
+			ITsString emptyAnalFreeTrans = TsStringUtils.EmptyString(Cache.DefaultAnalWs);
 			VerifySegment(0, expectedSegment0FT, "Ix ate", new int[] { 1 });
 			VerifySegment(1, emptyAnalFreeTrans, null, new int[0]); // hard line break
-			VerifySegment(2, Cache.TsStrFactory.MakeString("a monkey",
+			VerifySegment(2, TsStringUtils.MakeString("a monkey",
 				Cache.DefaultAnalWs), "ax monkey", new int[] { 1 });
 		}
 
@@ -1780,7 +1775,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public void FixSegmentsForPara_OrcFollowsHardLineBreakInMiddle()
 		{
 			string strSeg1 = "This is a sentence. ";
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			// Footnote goes here:                                |
 			bldr.Replace(0, 0, strSeg1 + StringUtils.kChHardLB + "More text.",
 				StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
@@ -1802,8 +1797,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 			CallFixSegmentsForPara();
 			VerifyParaSegmentBreaks();
-			ITsString emptyAnalFreeTrans = Cache.TsStrFactory.MakeString(String.Empty, Cache.DefaultAnalWs);
-			VerifySegment(0, Cache.TsStrFactory.MakeString("I ate", Cache.DefaultAnalWs), "Ix ate", new int[] { 1 });
+			ITsString emptyAnalFreeTrans = TsStringUtils.EmptyString(Cache.DefaultAnalWs);
+			VerifySegment(0, TsStringUtils.MakeString("I ate", Cache.DefaultAnalWs), "Ix ate", new int[] { 1 });
 			VerifySegment(1, emptyAnalFreeTrans, null, new int[0]); // hard line break
 			VerifySegment(2, expectedSegment2FT, "ax monkey", new int[] { 1 }); // foootnote and following text
 		}
@@ -1818,7 +1813,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public void FixSegmentsForPara_OrcAtStartOfLabelFollowsHardLineBreak()
 		{
 			string strSeg1 = "4This is a sentence. ";
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			// Footnote goes here:                                |
 			bldr.Replace(0, 0, strSeg1 + StringUtils.kChHardLB + "5More text.",
 				StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
@@ -1838,12 +1833,12 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 			CallFixSegmentsForPara();
 			VerifyParaSegmentBreaks();
-			ITsString emptyAnalFreeTrans = Cache.TsStrFactory.MakeString(String.Empty, Cache.DefaultAnalWs);
+			ITsString emptyAnalFreeTrans = TsStringUtils.EmptyString(Cache.DefaultAnalWs);
 			VerifySegment(0, emptyAnalFreeTrans, null, new int[0]);
-			VerifySegment(1, Cache.TsStrFactory.MakeString("I ate", Cache.DefaultAnalWs), "Ix ate", new int[] { 1 });
+			VerifySegment(1, TsStringUtils.MakeString("I ate", Cache.DefaultAnalWs), "Ix ate", new int[] { 1 });
 			VerifySegment(2, emptyAnalFreeTrans, null, new int[0]); // hard line break
 			VerifySegment(3, emptyAnalFreeTrans, null, new int[0]); // foootnote and verse number
-			VerifySegment(4, Cache.TsStrFactory.MakeString("a monkey", Cache.DefaultAnalWs), "ax monkey", new int[] { 1 });
+			VerifySegment(4, TsStringUtils.MakeString("a monkey", Cache.DefaultAnalWs), "ax monkey", new int[] { 1 });
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1858,7 +1853,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 			// Footnote goes here:                  |
 			string strSeg1 = "4This is a sentence. 5";
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, strSeg1 + StringUtils.kChHardLB + "More text.",
 				StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
 			bldr.SetStrPropValue(0, 1, (int)FwTextPropType.ktptNamedStyle, ScrStyleNames.VerseNumber);
@@ -1878,13 +1873,13 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			CallFixSegmentsForPara();
 
 			VerifyParaSegmentBreaks();
-			ITsString emptyAnalFreeTrans = Cache.TsStrFactory.MakeString(String.Empty, Cache.DefaultAnalWs);
+			ITsString emptyAnalFreeTrans = TsStringUtils.EmptyString(Cache.DefaultAnalWs);
 			VerifySegment(0, emptyAnalFreeTrans, null, new int[0]);
-			VerifySegment(1, Cache.TsStrFactory.MakeString("I ate", Cache.DefaultAnalWs), "Ix ate", new int[] { 1 });
+			VerifySegment(1, TsStringUtils.MakeString("I ate", Cache.DefaultAnalWs), "Ix ate", new int[] { 1 });
 			VerifySegment(2, emptyAnalFreeTrans, null, new int[0]); // verse number
 			VerifySegment(3, emptyAnalFreeTrans, null, new int[0]); // foootnote
 			VerifySegment(4, emptyAnalFreeTrans, null, new int[0]); // hard line break
-			VerifySegment(5, Cache.TsStrFactory.MakeString("a monkey", Cache.DefaultAnalWs), "ax monkey", new int[] { 1 });
+			VerifySegment(5, TsStringUtils.MakeString("a monkey", Cache.DefaultAnalWs), "ax monkey", new int[] { 1 });
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1899,7 +1894,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 			// Footnote goes here:                  |
 			string strSeg1 = "4This is a sentence. 5 ";
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, strSeg1 + StringUtils.kChHardLB + "More text.",
 				StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
 			bldr.SetStrPropValue(0, 1, (int)FwTextPropType.ktptNamedStyle, ScrStyleNames.VerseNumber);
@@ -1919,13 +1914,13 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			CallFixSegmentsForPara();
 
 			VerifyParaSegmentBreaks();
-			ITsString emptyAnalFreeTrans = Cache.TsStrFactory.MakeString(String.Empty, Cache.DefaultAnalWs);
+			ITsString emptyAnalFreeTrans = TsStringUtils.EmptyString(Cache.DefaultAnalWs);
 			VerifySegment(0, emptyAnalFreeTrans, null, new int[0]);
-			VerifySegment(1, Cache.TsStrFactory.MakeString("I ate", Cache.DefaultAnalWs), "Ix ate", new int[] { 1 });
+			VerifySegment(1, TsStringUtils.MakeString("I ate", Cache.DefaultAnalWs), "Ix ate", new int[] { 1 });
 			VerifySegment(2, emptyAnalFreeTrans, null, new int[0]); // verse number
 			VerifySegment(3, emptyAnalFreeTrans, null, new int[0]); // foootnote
 			VerifySegment(4, emptyAnalFreeTrans, null, new int[0]); // hard line break
-			VerifySegment(5, Cache.TsStrFactory.MakeString("a monkey", Cache.DefaultAnalWs), "ax monkey", new int[] { 1 });
+			VerifySegment(5, TsStringUtils.MakeString("a monkey", Cache.DefaultAnalWs), "ax monkey", new int[] { 1 });
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1937,7 +1932,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void FixSegmentsForPara_OrcPrecedesNonWordForming()
 		{
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			// Footnote here:                      |
 			bldr.Replace(0, 0, "This is a sentence.> Nother segment.",
 				StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
@@ -1960,7 +1955,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			CallFixSegmentsForPara();
 			VerifyParaSegmentBreaks();
 			VerifySegment(0, expectedSegment0FT, "Ix ate", new int[] { 2 });
-			VerifySegment(1, Cache.TsStrFactory.MakeString("a monkey", Cache.DefaultAnalWs), "ax monkey", new int[] { 1 });
+			VerifySegment(1, TsStringUtils.MakeString("a monkey", Cache.DefaultAnalWs), "ax monkey", new int[] { 1 });
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1972,7 +1967,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void FixSegmentsForPara_OrcFollowsSpaceAndNonWordForming()
 		{
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			// Footnote here:                        |
 			bldr.Replace(0, 0, "This is a sentence. <Nother segment.",
 				StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
@@ -1993,7 +1988,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 			CallFixSegmentsForPara();
 			VerifyParaSegmentBreaks();
-			VerifySegment(0, Cache.TsStrFactory.MakeString("I ate", Cache.DefaultAnalWs), "Ix ate", new int[] { 2 });
+			VerifySegment(0, TsStringUtils.MakeString("I ate", Cache.DefaultAnalWs), "Ix ate", new int[] { 2 });
 			VerifySegment(1, expectedSegment1FT, "ax monkey", new int[] { 1 });
 		}
 
@@ -2006,7 +2001,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void FixSegmentsForPara_NoAnalysesOrTranslations()
 		{
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			// Footnotes go here:      |          |        |
 			bldr.Replace(0, 0, "This is a sentence for Tom and his wife. Good!",
 			StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
@@ -2029,7 +2024,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 			CallFixSegmentsForPara();
 			VerifyParaSegmentBreaks();
-			ITsString emptyAnalFreeTrans = Cache.TsStrFactory.MakeString(String.Empty, Cache.DefaultAnalWs);
+			ITsString emptyAnalFreeTrans = TsStringUtils.EmptyString(Cache.DefaultAnalWs);
 			VerifySegment(0);
 			VerifySegment(1);
 		}
@@ -2043,7 +2038,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void FixSegmentsForPara_EmptyTranslation()
 		{
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			// Footnote goes here:    |
 			bldr.Replace(0, 0, "Before after", StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
 			Guid footnote1 = Guid.NewGuid();
@@ -2075,7 +2070,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void FixSegmentsForPara_EmptyTranslation_PrecedingSegmentEndsWithSpace()
 		{
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			// Footnote goes here:     |
 			bldr.Replace(0, 0, "Before after", StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
 			Guid footnote1 = Guid.NewGuid();
@@ -2108,7 +2103,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void FixSegmentsForPara_PictureORC()
 		{
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			// Picture goes here:                 |
 			bldr.Replace(0, 0, "This is a sentence for Tom and his wife.",
 			StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
@@ -2140,7 +2135,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void FixSegmentsForPara_OrcOnly()
 		{
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, string.Empty, StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
 			Guid footnote1 = Guid.NewGuid();
 			TsStringUtils.InsertOrcIntoPara(footnote1, FwObjDataTypes.kodtOwnNameGuidHot, bldr, 0, 0, Cache.DefaultVernWs);
@@ -2166,7 +2161,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void FixSegmentsForPara_ORCInMiddleOfWord()
 		{
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			// Picture goes here:                 |
 			bldr.Replace(0, 0, "This is a sentencefor Tom and his wife.",
 			StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
@@ -2197,7 +2192,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void FixSegmentsForPara_ORCInMiddleOfWord_FollowingFreeTransHasExtraLeadingSpace()
 		{
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			// Picture goes here:                 |
 			bldr.Replace(0, 0, "This is a sentencefor Tom and his wife.",
 			StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
@@ -2229,7 +2224,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void FixSegmentsForPara_FreeTransBeforeORCHasTrailingSpace()
 		{
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			// Picture goes here:                  |
 			bldr.Replace(0, 0, "This is a sentence for Tom and his wife.",
 			StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
@@ -2262,7 +2257,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void FixSegmentsForPara_FreeTransFollowingORCHasExtraLeadingSpace()
 		{
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			// Picture goes here:                 |
 			bldr.Replace(0, 0, "This is a sentence for Tom and his wife.",
 			StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
@@ -2294,7 +2289,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void FixSegmentsForPara_ORCsAtBeginningAndEndOfPara()
 		{
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			// Footnotes here:  |                                             |
 			bldr.Replace(0, 0, "This is a sentence for Tom and his wife. Good!",
 			StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
@@ -2337,7 +2332,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void FixSegmentsForPara_OrcBetweenSentencesWithFullTrans()
 		{
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			// Footnotes go here:                    |              |
 			bldr.Replace(0, 0, "This is sentence one. Sentence two. Sentence three.",
 			StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
@@ -2368,7 +2363,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			CallFixSegmentsForPara();
 			VerifyParaSegmentBreaks();
 			VerifySegment(0, expectedSegment0FT, "FTx ofx sentence1.", new int[] { 1 });
-			VerifySegment(1, Cache.TsStrFactory.MakeString("FT of Sentence2.", Cache.DefaultAnalWs),
+			VerifySegment(1, TsStringUtils.MakeString("FT of Sentence2.", Cache.DefaultAnalWs),
 				"FTx ofx Sentence2.", new int[] { 2 });
 			VerifySegment(2, expectedSegment2FT, "FTx ofx sentencex 3.", new int[0]);
 		}
@@ -2384,7 +2379,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void FixSegmentsForPara_OrcFollowingEOSAndQuoteMarks()
 		{
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			// Footnotes go here:                      |
 			bldr.Replace(0, 0, "\"This is sentence one.\" Sentence two.",
 			StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
@@ -2405,7 +2400,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			CallFixSegmentsForPara();
 			VerifyParaSegmentBreaks();
 			VerifySegment(0, expectedSegment0FT, "FTx ofx sentence1.", new int[0], new int[0], new int[0], false);
-			VerifySegment(1, Cache.TsStrFactory.MakeString("FT of Sentence2.", Cache.DefaultAnalWs),
+			VerifySegment(1, TsStringUtils.MakeString("FT of Sentence2.", Cache.DefaultAnalWs),
 				"FTx ofx Sentence2.", new int[0], new int[0], new int[0], false);
 		}
 
@@ -2419,7 +2414,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void FixSegmentsForPara_OrcAdjacentToVerseNumbers()
 		{
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			// Footnotes go here: |                   ||
 			bldr.Replace(0, 0, "31 This is verse one. 2 Verse two.",
 				StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
@@ -2453,7 +2448,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 			CallFixSegmentsForPara();
 			VerifyParaSegmentBreaks();
-			ITsString emptyAnalFreeTrans = Cache.TsStrFactory.MakeString(String.Empty, Cache.DefaultAnalWs);
+			ITsString emptyAnalFreeTrans = TsStringUtils.EmptyString(Cache.DefaultAnalWs);
 			VerifySegment(0, emptyAnalFreeTrans, null, new int[0]);
 			// ENHANCE: Ideally we wouldn't want the space at the end of the literral translation,
 			// however, the current code adds one and we don't feel like it's critical enough
@@ -2473,7 +2468,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void FixSegmentsForPara_OrcBetweenChapterAndVerseNumbers()
 		{
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			// Footnotes here:   ||
 			bldr.Replace(0, 0, "312This is verse two.", StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
 			bldr.SetStrPropValue(0, 1, (int)FwTextPropType.ktptNamedStyle, ScrStyleNames.ChapterNumber);
@@ -2497,13 +2492,13 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 			CallFixSegmentsForPara();
 			VerifyParaSegmentBreaks();
-			ITsString emptyAnalFreeTrans = Cache.TsStrFactory.MakeString(String.Empty, Cache.DefaultAnalWs);
+			ITsString emptyAnalFreeTrans = TsStringUtils.EmptyString(Cache.DefaultAnalWs);
 			VerifySegment(0, emptyAnalFreeTrans, null, new int[0]);
 			VerifySegment(1, expectedSegment1FT, null, new int[0]);
 			VerifySegment(2, emptyAnalFreeTrans, null, new int[0]);
 			VerifySegment(3, expectedSegment3FT, null, new int[0]);
 			VerifySegment(4, emptyAnalFreeTrans, null, new int[0]);
-			VerifySegment(5, Cache.TsStrFactory.MakeString("FT of verse 2.", Cache.DefaultAnalWs),
+			VerifySegment(5, TsStringUtils.MakeString("FT of verse 2.", Cache.DefaultAnalWs),
 				"FTx ofx versex 2.", new int[] { 1 });
 		}
 
@@ -2517,7 +2512,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void FixSegmentsForPara_OrcAfterSpaceAfterVerseNumber()
 		{
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			// Footnotes here:    |
 			bldr.Replace(0, 0, "1 This is verse two.", StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
 			bldr.SetStrPropValue(0, 1, (int)FwTextPropType.ktptNamedStyle, ScrStyleNames.VerseNumber);
@@ -2536,7 +2531,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 			CallFixSegmentsForPara();
 			VerifyParaSegmentBreaks();
-			ITsString emptyAnalFreeTrans = Cache.TsStrFactory.MakeString(String.Empty, Cache.DefaultAnalWs);
+			ITsString emptyAnalFreeTrans = TsStringUtils.EmptyString(Cache.DefaultAnalWs);
 			VerifySegment(0, emptyAnalFreeTrans, null, new int[0]);
 			VerifySegment(1, expectedSegment2FT, "FTx ofx versex 2.", new int[] { 1 });
 		}
@@ -2551,7 +2546,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void FixSegmentsForPara_OrcBeforeSpaceBeforeVerseNumber()
 		{
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			// Footnotes here:            |
 			bldr.Replace(0, 0, "1Verse one 2This is verse two.", StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
 			bldr.SetStrPropValue(0, 1, (int)FwTextPropType.ktptNamedStyle, ScrStyleNames.VerseNumber);
@@ -2573,11 +2568,11 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 			CallFixSegmentsForPara();
 			VerifyParaSegmentBreaks();
-			ITsString emptyAnalFreeTrans = Cache.TsStrFactory.MakeString(String.Empty, Cache.DefaultAnalWs);
+			ITsString emptyAnalFreeTrans = TsStringUtils.EmptyString(Cache.DefaultAnalWs);
 			VerifySegment(0, emptyAnalFreeTrans, null, new int[0]);
 			VerifySegment(1, expectedSegment2FT, "FTx ofx versex 1.", new int[] { 2 });
 			VerifySegment(2, emptyAnalFreeTrans, null, new int[0]);
-			VerifySegment(3, Cache.TsStrFactory.MakeString("FT of verse 2.", Cache.DefaultAnalWs),
+			VerifySegment(3, TsStringUtils.MakeString("FT of verse 2.", Cache.DefaultAnalWs),
 				"FTx ofx versex 2.", new int[]{ 1 });
 		}
 
@@ -2591,7 +2586,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void FixSegmentsForPara_OrcsBetweenVerseNumbersWithSpaces()
 		{
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			// Footnotes here:    | |
 			bldr.Replace(0, 0, "1     2 Verse two.", StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
 			bldr.SetStrPropValue(0, 1, (int)FwTextPropType.ktptNamedStyle, ScrStyleNames.VerseNumber);
@@ -2612,11 +2607,11 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 			CallFixSegmentsForPara();
 			VerifyParaSegmentBreaks();
-			ITsString emptyAnalFreeTrans = Cache.TsStrFactory.MakeString(String.Empty, Cache.DefaultAnalWs);
+			ITsString emptyAnalFreeTrans = TsStringUtils.EmptyString(Cache.DefaultAnalWs);
 			VerifySegment(0, emptyAnalFreeTrans, null, new int[0]);
 			VerifySegment(1, expectedSegment1FT, null, new int[0]);
 			VerifySegment(2, emptyAnalFreeTrans, null, new int[0]);
-			VerifySegment(3, Cache.TsStrFactory.MakeString("FT of verse two.", Cache.DefaultAnalWs),
+			VerifySegment(3, TsStringUtils.MakeString("FT of verse two.", Cache.DefaultAnalWs),
 				"FTx ofx versex two.", new int[0]);
 		}
 
@@ -2628,7 +2623,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void FixSegmentsForPara_DualOrcsBetweenVerseNumbers()
 		{
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			// Dual Footnotes:   |
 			bldr.Replace(0, 0, "12", StyleUtils.CharStyleTextProps(ScrStyleNames.VerseNumber, Cache.DefaultVernWs));
 			Guid footnote1 = Guid.NewGuid();
@@ -2641,7 +2636,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 			CallFixSegmentsForPara();
 			VerifyParaSegmentBreaks();
-			ITsString emptyAnalFreeTrans = Cache.TsStrFactory.MakeString(String.Empty, Cache.DefaultAnalWs);
+			ITsString emptyAnalFreeTrans = TsStringUtils.EmptyString(Cache.DefaultAnalWs);
 			VerifySegment(0);
 			VerifySegment(1);
 			VerifySegment(2);
@@ -2658,7 +2653,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void FixSegmentsForPara_OrcBeforeVerseNumberAtStartOfPara()
 		{
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			// Footnote here:   |
 			bldr.Replace(0, 0, "4This is verse four.", StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
 			bldr.SetStrPropValue(0, 1, (int)FwTextPropType.ktptNamedStyle, ScrStyleNames.VerseNumber);
@@ -2671,9 +2666,9 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 			CallFixSegmentsForPara();
 			VerifyParaSegmentBreaks();
-			ITsString emptyAnalFreeTrans = Cache.TsStrFactory.MakeString(String.Empty, Cache.DefaultAnalWs);
+			ITsString emptyAnalFreeTrans = TsStringUtils.EmptyString(Cache.DefaultAnalWs);
 			VerifySegment(0, emptyAnalFreeTrans, null, new int[0]);
-			VerifySegment(1, Cache.TsStrFactory.MakeString("FT of verse 4.", Cache.DefaultAnalWs),
+			VerifySegment(1, TsStringUtils.MakeString("FT of verse 4.", Cache.DefaultAnalWs),
 				"FTx ofx versex 4.", new int[] { 1 });
 		}
 
@@ -2688,7 +2683,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void FixSegmentsForPara_DualOrcsBeforeVerseNumberAtStartOfPara()
 		{
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			// Dual Footnotes:  |
 			bldr.Replace(0, 0, "4This is verse four.", StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
 			bldr.SetStrPropValue(0, 1, (int)FwTextPropType.ktptNamedStyle, ScrStyleNames.VerseNumber);
@@ -2703,9 +2698,9 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 			CallFixSegmentsForPara();
 			VerifyParaSegmentBreaks();
-			ITsString emptyAnalFreeTrans = Cache.TsStrFactory.MakeString(String.Empty, Cache.DefaultAnalWs);
+			ITsString emptyAnalFreeTrans = TsStringUtils.EmptyString(Cache.DefaultAnalWs);
 			VerifySegment(0, emptyAnalFreeTrans, null, new int[0]);
-			VerifySegment(1, Cache.TsStrFactory.MakeString("FT of verse 4.", Cache.DefaultAnalWs),
+			VerifySegment(1, TsStringUtils.MakeString("FT of verse 4.", Cache.DefaultAnalWs),
 				"FTx ofx versex 4.", new int[] { 1 });
 		}
 
@@ -2720,7 +2715,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void FixSegmentsForPara_DualOrcsBeforeVerseNumberMidPara()
 		{
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			// Dual Footnotes:                       |
 			bldr.Replace(0, 0, "3This is verse three. 4This is verse four.", StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
 			bldr.SetStrPropValue(0, 1, (int)FwTextPropType.ktptNamedStyle, ScrStyleNames.VerseNumber);
@@ -2746,11 +2741,11 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 			CallFixSegmentsForPara();
 			VerifyParaSegmentBreaks();
-			ITsString emptyAnalFreeTrans = Cache.TsStrFactory.MakeString(String.Empty, Cache.DefaultAnalWs);
+			ITsString emptyAnalFreeTrans = TsStringUtils.EmptyString(Cache.DefaultAnalWs);
 			VerifySegment(0, emptyAnalFreeTrans, null, new int[0]);
 			VerifySegment(1, expectedSegment1FT, "FTx ofx versex 3.", new [] { 1 });
 			VerifySegment(2, emptyAnalFreeTrans, null, new int[0]);
-			VerifySegment(3, Cache.TsStrFactory.MakeString("FT of verse 4.", Cache.DefaultAnalWs),
+			VerifySegment(3, TsStringUtils.MakeString("FT of verse 4.", Cache.DefaultAnalWs),
 				"FTx ofx versex 4.", new [] { 2 });
 		}
 
@@ -2764,7 +2759,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void FixSegmentsForPara_OrcFollowingVerseNumberAtEndOfPara()
 		{
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			// Footnote goes here:                    |
 			bldr.Replace(0, 0, "4This is verse four. 5", StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
 			bldr.SetStrPropValue(0, 1, (int)FwTextPropType.ktptNamedStyle, ScrStyleNames.VerseNumber);
@@ -2779,9 +2774,9 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 			CallFixSegmentsForPara();
 			VerifyParaSegmentBreaks();
-			ITsString emptyAnalFreeTrans = Cache.TsStrFactory.MakeString(String.Empty, Cache.DefaultAnalWs);
+			ITsString emptyAnalFreeTrans = TsStringUtils.EmptyString(Cache.DefaultAnalWs);
 			VerifySegment(0, emptyAnalFreeTrans, null, new int[0]);
-			VerifySegment(1, Cache.TsStrFactory.MakeString("FT of verse 4.", Cache.DefaultAnalWs),
+			VerifySegment(1, TsStringUtils.MakeString("FT of verse 4.", Cache.DefaultAnalWs),
 				"FTx ofx versex 4.", new int[] { 1 });
 			VerifySegment(2, emptyAnalFreeTrans, null, new int[0]);
 			VerifySegment(3, emptyAnalFreeTrans, null, new int[0]);
@@ -2798,7 +2793,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void FixSegmentsForPara_OrcRightBeforeEndOfSentenceWithFullTrans()
 		{
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			// Footnotes go here:                   |
 			bldr.Replace(0, 0, "This is sentence one. Sentence two.",
 				StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
@@ -2819,7 +2814,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			CallFixSegmentsForPara();
 			VerifyParaSegmentBreaks();
 			VerifySegment(0, expectedSegment0FT, "FTx ofx sentence1.", new int[] { 1 });
-			VerifySegment(1, Cache.TsStrFactory.MakeString("FT of Sentence2.", Cache.DefaultAnalWs),
+			VerifySegment(1, TsStringUtils.MakeString("FT of Sentence2.", Cache.DefaultAnalWs),
 				"FTx ofx Sentence2.", new int[] { 2 });
 		}
 
@@ -2832,7 +2827,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void FixSegmentsForPara_OrcRightBeforePunctAtEndOfPara()
 		{
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			// Footnotes go here:                   |
 			bldr.Replace(0, 0, "This is sentence one.",
 			StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
@@ -2866,7 +2861,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void FixSegmentsForPara_DualOrcsWithFullTrans()
 		{
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			// Dual Footnotes here:    |             |              |
 			bldr.Replace(0, 0, "This is sentence one. Sentence two. Sentence three.",
 			StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
@@ -2911,7 +2906,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			CallFixSegmentsForPara();
 			VerifyParaSegmentBreaks();
 			VerifySegment(0, expectedSegment0FT, "FTx of sentence1.", new int[] { 1, 2 });
-			VerifySegment(1, Cache.TsStrFactory.MakeString("FT of sentence2.", Cache.DefaultAnalWs),
+			VerifySegment(1, TsStringUtils.MakeString("FT of sentence2.", Cache.DefaultAnalWs),
 				"FTx ofx sentence2.", new int[0]);
 			VerifySegment(2, expectedSegment2FT, "FTx ofx sentencex 3.", new int[0]);
 		}
@@ -2927,7 +2922,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void FixSegmentsForPara_OrcsBetweenSentencesWithSpaces()
 		{
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			// Footnotes here:                       ||
 			bldr.Replace(0, 0, "This is sentence one. Sentence two.",
 			StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
@@ -2972,7 +2967,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void FixSegmentsForPara_OrcSurroundedBySpaces()
 		{
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			// Footnote here:                         |
 			bldr.Replace(0, 0, "This is sentence one.  Sentence two.",
 			StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
@@ -2993,7 +2988,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 			CallFixSegmentsForPara();
 			VerifyParaSegmentBreaks();
-			VerifySegment(0, Cache.TsStrFactory.MakeString("FT of sentence 1.", Cache.DefaultAnalWs),
+			VerifySegment(0, TsStringUtils.MakeString("FT of sentence 1.", Cache.DefaultAnalWs),
 				"FTx ofx sentencex 1.", new[] { 1 });
 			VerifySegment(1, expectedSegment1FT, "FTx ofx sentencex 2.", new int[0]);
 		}
@@ -3009,7 +3004,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void FixSegmentsForPara_OrcBetweenSentencesWithNoSpace()
 		{
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			// Footnotes here:                       |
 			bldr.Replace(0, 0, "This is sentence one.Sentence two.",
 			StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
@@ -3031,7 +3026,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			CallFixSegmentsForPara();
 			VerifyParaSegmentBreaks();
 			VerifySegment(0, expectedSegment0FT, "FTx ofx sentencex 1.", new[] { 1 });
-			VerifySegment(1, Cache.TsStrFactory.MakeString("FT of sentence 2.", Cache.DefaultAnalWs),
+			VerifySegment(1, TsStringUtils.MakeString("FT of sentence 2.", Cache.DefaultAnalWs),
 				"FTx ofx sentencex 2.", new int[0]);
 		}
 		#endregion

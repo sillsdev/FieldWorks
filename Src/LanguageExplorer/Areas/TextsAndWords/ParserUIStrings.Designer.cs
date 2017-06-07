@@ -61,15 +61,6 @@ namespace LanguageExplorer.Areas.TextsAndWords {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Bad Affix Form.
-        /// </summary>
-        internal static string ksBadAffixForm {
-            get {
-                return ResourceManager.GetString("ksBadAffixForm", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Changed value for {0} from {1} to {2}.  The value must be between {3} and {4}, inclusive..
         /// </summary>
         internal static string ksChangedValueReport {
@@ -102,15 +93,6 @@ namespace LanguageExplorer.Areas.TextsAndWords {
         internal static string ksDidNotParse {
             get {
                 return ResourceManager.GetString("ksDidNotParse", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The Hermit Crab parser cannot currently run, because the morpheme &quot;{0}&quot; has an invalid reduplication environment. The problem is {1}..
-        /// </summary>
-        internal static string ksHermitCrabReduplicationProblem {
-            get {
-                return ResourceManager.GetString("ksHermitCrabReduplicationProblem", resourceCulture);
             }
         }
         

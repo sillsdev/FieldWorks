@@ -731,7 +731,9 @@ STDMETHODIMP VwEnv::AddUnicodeProp(int tag, int ws, IVwViewConstructor * pvwvc)
 	OpenProp(tag, pvwvc, ws, kvnpUnicodeProp);
 	SmartBstr sbstr;
 	CheckHr(m_qsda->get_UnicodeProp(m_hvoCurr, tag, &sbstr));
-	GetStringFactory(&m_qtsf);
+	if (!m_qtsf)
+		CheckHr(m_qrootbox->get_TsStrFactory(&m_qtsf));
+	AssertPtr(m_qtsf);
 	CheckHr(m_qtsf->MakeStringRgch(sbstr.Chars(), sbstr.Length(), ws, &qtss));
 	AddString(qtss);
 	CloseProp();
@@ -755,7 +757,10 @@ STDMETHODIMP VwEnv::AddIntProp(int tag)
 		OpenParagraph();
 	OpenProp(tag, NULL, 0, kvnpIntProp);
 	CheckHr(m_qsda->get_IntProp(m_hvoCurr, tag, &nVal));
-	IntToTsString(nVal, &m_qtsf, m_qsda, &qtss);
+	if (!m_qtsf)
+		CheckHr(m_qrootbox->get_TsStrFactory(&m_qtsf));
+	AssertPtr(m_qtsf);
+	IntToTsString(nVal, m_qtsf, m_qsda, &qtss);
 	AddString(qtss);
 	CloseProp();
 	if (!pvpbox)
@@ -1089,14 +1094,14 @@ STDMETHODIMP VwEnv::SetParagraphMark(VwBoundaryMark boundaryMark)
 	Convert an SilTime to a TsString. The flags are currently as for the flags argument of
 	::GetDateFormat.
 ----------------------------------------------------------------------------------------------*/
-void VwEnv::TimeToTsString(int64 nTime, DWORD flags, ISilDataAccess * psda, ITsString ** pptss)
+void VwEnv::TimeToTsString(int64 nTime, DWORD flags, ITsStrFactory * ptsf, ISilDataAccess * psda, ITsString ** pptss)
 {
 	// Convert the date to a string.
 	SilTime tim = nTime;
 	StrUni stuBuf;
 	if (nTime)
 	{
-#if WIN32
+#ifdef WIN32
 		SYSTEMTIME stim;
 		stim.wYear = (unsigned short) tim.Year();
 		stim.wMonth = (unsigned short) tim.Month();
@@ -1139,9 +1144,7 @@ void VwEnv::TimeToTsString(int64 nTime, DWORD flags, ISilDataAccess * psda, ITsS
 #endif //WIN32
 		stuBuf = rgchDate;
 	}
-	ITsStrFactoryPtr qtsf;
-	qtsf.CreateInstance(CLSID_TsStrFactory);
-	CheckHr(qtsf->MakeStringRgch(stuBuf.Chars(), stuBuf.Length(), GetUserWs(psda), pptss));
+	CheckHr(ptsf->MakeStringRgch(stuBuf.Chars(), stuBuf.Length(), GetUserWs(psda), pptss));
 }
 
 /*----------------------------------------------------------------------------------------------
@@ -1157,8 +1160,11 @@ STDMETHODIMP VwEnv::AddTimeProp(int tag, DWORD flags)
 	int64 nTime;
 	CheckHr(m_qsda->get_TimeProp(m_hvoCurr, tag, (int64 *)(&nTime)));
 
+	if (!m_qtsf)
+		CheckHr(m_qrootbox->get_TsStrFactory(&m_qtsf));
+	AssertPtr(m_qtsf);
 	ITsStringPtr qtss;
-	TimeToTsString(nTime, flags, m_qsda, &qtss);
+	TimeToTsString(nTime, flags, m_qtsf, m_qsda, &qtss);
 	VwParagraphBox * pvpbox = dynamic_cast<VwParagraphBox *>(m_pgboxCurr);
 	if (!pvpbox)
 		OpenParagraph();
@@ -1530,10 +1536,11 @@ STDMETHODIMP VwEnv::CloseParagraph()
 		else
 		{
 			// Paragraph layout requires at least one string, so make a dummy literal.
-			ITsStrFactoryPtr qtsf;
-			qtsf.CreateInstance(CLSID_TsStrFactory);
+			if (!m_qtsf)
+				CheckHr(m_qrootbox->get_TsStrFactory(&m_qtsf));
+			AssertPtr(m_qtsf);
 			ITsStringPtr qtss;
-			CheckHr(qtsf->MakeStringRgch(NULL, 0, GetUserWs(m_qsda), &qtss));
+			CheckHr(m_qtsf->MakeStringRgch(NULL, 0, GetUserWs(m_qsda), &qtss));
 			AddString(qtss);
 		}
 	}
@@ -1953,6 +1960,12 @@ STDMETHODIMP VwEnv::get_StringWidth(ITsString * ptss, ITsTextProps * pttp, int *
 
 		qrootb.Attach(NewObj VwRootBox(m_qzvps));
 		qrootb->putref_DataAccess(m_qsda);
+		IRenderEngineFactoryPtr qref;
+		m_qrootbox->get_RenderEngineFactory(&qref);
+		qrootb->putref_RenderEngineFactory(qref);
+		ITsStrFactoryPtr qtsf;
+		m_qrootbox->get_TsStrFactory(&qtsf);
+		qrootb->putref_TsStrFactory(qtsf);
 		pvpboxCont->Container(qrootb);
 
 		pvpbox->Source()->Vpst().Push(VpsTssRec(qzvps, ptss));
@@ -2300,28 +2313,14 @@ void VwEnv::CloseProp()
 	Make the default display of an integer as a TsString. May be given a string factory; if not,
 	creates one and returns a pointer as a side effect.
 ----------------------------------------------------------------------------------------------*/
-void VwEnv::IntToTsString(int nVal, ITsStrFactory ** pptsf, ISilDataAccess * psda, ITsString ** pptss)
+void VwEnv::IntToTsString(int nVal, ITsStrFactory * ptsf, ISilDataAccess * psda, ITsString ** pptss)
 {
 	OLECHAR buf[20];
 
 	// the last value of itow_s is base not string length.
 	_itow_s(nVal, buf, 20, 10);		// ENHANCE: encoding-dependent conversion
 
-	GetStringFactory(pptsf);
-	CheckHr((*pptsf)->MakeStringRgch(buf, u_strlen(buf), GetUserWs(psda), pptss));
-}
-
-
-/*----------------------------------------------------------------------------------------------
-// Make sure *pptsf is set to a valid string factory. If not, create one.
-// Enhance JohnT: Most callers effectively pass &m_qtsf, which makes a new one each time...
-// Maybe that doesn't matter much as it is a singleton.
-----------------------------------------------------------------------------------------------*/
-void VwEnv::GetStringFactory(ITsStrFactory ** pptsf)
-{
-	if (!*pptsf)
-		CheckHr(CoCreateInstance(CLSID_TsStrFactory, NULL, CLSCTX_ALL,
-			IID_ITsStrFactory, (void **) pptsf));
+	CheckHr(ptsf->MakeStringRgch(buf, u_strlen(buf), GetUserWs(psda), pptss));
 }
 
 /*----------------------------------------------------------------------------------------------

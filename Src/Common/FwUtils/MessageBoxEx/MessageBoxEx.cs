@@ -286,16 +286,27 @@ namespace SIL.FieldWorks.Common.FwUtils.MessageBoxEx
 		{
 		}
 
+		~MessageBoxEx()
+		{
+			Dispose(false);
+		}
+
 		/// <summary>
 		/// Called by the manager when it is disposed
 		/// </summary>
 		public void Dispose()
 		{
-			if(_msgBox != null)
-			{
-				_msgBox.Dispose();
-			}
+			Dispose(true);
 			GC.SuppressFinalize(this);
+		}
+
+		private void Dispose(bool disposing)
+		{
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ******");
+			if(disposing)
+			{
+				_msgBox?.Dispose();
+			}
 		}
 		#endregion
 	}

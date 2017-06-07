@@ -1,17 +1,13 @@
-// Copyright (c) 2006-2013 SIL International
+// Copyright (c) 2006-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ScrSfFileList.cs
-// Responsibility: TE Team
 
 using System;
 using System.Diagnostics;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using SIL.FieldWorks.Common.ScriptureUtils;
-using SILUBS.SharedScrUtils;
+using SIL.CoreImpl.Scripture;
 
 namespace SIL.FieldWorks.FDO.DomainServices
 {

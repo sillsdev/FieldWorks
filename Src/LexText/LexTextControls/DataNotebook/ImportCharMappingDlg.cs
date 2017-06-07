@@ -11,14 +11,13 @@
 using System;
 using System.Windows.Forms;
 using System.Linq;
-
 using SIL.CoreImpl;
+using SIL.CoreImpl.WritingSystems;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.FwCoreDlgs;
 
 namespace SIL.FieldWorks.LexText.Controls.DataNotebook
@@ -88,7 +87,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 					m_cbWritingSystem.Items.Add(selectedWs);
 				m_cbWritingSystem.SelectedItem = selectedWs;
 			}
-			m_btnAddWS.Initialize(m_cache, m_helpTopicProvider, m_app, m_stylesheet, m_cache.ServiceLocator.WritingSystems.AllWritingSystems);
+			m_btnAddWS.Initialize(m_cache, m_helpTopicProvider, m_app, m_cache.ServiceLocator.WritingSystems.AllWritingSystems);
 		}
 
 		private void FillStylesCombo(string sStyle)

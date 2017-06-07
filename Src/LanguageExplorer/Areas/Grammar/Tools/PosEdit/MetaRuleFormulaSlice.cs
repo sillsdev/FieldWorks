@@ -6,10 +6,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 {
 	internal sealed class MetaRuleFormulaSlice : RuleFormulaSlice
 	{
-		public MetaRuleFormulaSlice()
-		{
-		}
-
 		public override void FinishInit()
 		{
 			CheckDisposed();

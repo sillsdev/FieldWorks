@@ -1,25 +1,21 @@
-// Copyright (c) 2010-2013 SIL International
+// Copyright (c) 2010-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: CustomListDlg.cs
-// Responsibility: GordonM
-//
-// <remarks>
-// </remarks>
+
 using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.Utils;
 using SIL.FieldWorks.FDO;
 using System.Collections.Generic;
 using SIL.CoreImpl;
+using SIL.CoreImpl.Text;
+using SIL.CoreImpl.WritingSystems;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -28,7 +24,7 @@ namespace SIL.FieldWorks.XWorks
 	/// Dialog for adding TopicListEditor-like custom lists to a Fieldworks project.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public partial class CustomListDlg : Form, IFWDisposable
+	public partial class CustomListDlg : Form
 	{
 		protected string s_helpTopic = "khtpCustomLists";
 		private HelpProvider m_helpProvider;
@@ -281,7 +277,7 @@ namespace SIL.FieldWorks.XWorks
 				for (var i = 0; i < cws; i++)
 				{
 					var curWs = m_lmscListName.Ws(i);
-					var emptyStr = Cache.TsStrFactory.EmptyString(curWs).Text;
+					var emptyStr = TsStringUtils.EmptyString(curWs).Text;
 					var lmscName = m_lmscListName.Value(curWs).Text;
 					if (repo.AllInstances().Where(
 						list => list.Name.get_String(curWs).Text != emptyStr
@@ -347,7 +343,7 @@ namespace SIL.FieldWorks.XWorks
 			ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), s_helpTopic);
 		}
 
-		#region Implementation of IFWDisposable
+		#region Implementation of IDisposable
 
 		/// <summary>
 		/// This method throws an ObjectDisposedException if IsDisposed returns true.
@@ -809,7 +805,7 @@ namespace SIL.FieldWorks.XWorks
 				for (var i = 0; i < cws; i++)
 				{
 					var curWs = m_lmscListName.Ws(i);
-					var emptyStr = Cache.TsStrFactory.EmptyString(curWs).Text;
+					var emptyStr = TsStringUtils.EmptyString(curWs).Text;
 					var lmscName = m_lmscListName.Value(curWs).Text;
 					if (repo.AllInstances().Where(
 						list => list != m_curList
@@ -839,9 +835,6 @@ namespace SIL.FieldWorks.XWorks
 			for (var i = 0; i < cws; i++)
 			{
 				var curWs = msControl.Ws(i);
-				//if (oldStrings.get_String(curWs).Text != Cache.TsStrFactory.EmptyString(curWs).Text
-				//    && oldStrings.get_String(curWs).Text != msControl.Value(curWs).Text)
-				//    return true;
 				if (oldStrings.get_String(curWs).Text != msControl.Value(curWs).Text)
 					return true;
 			}

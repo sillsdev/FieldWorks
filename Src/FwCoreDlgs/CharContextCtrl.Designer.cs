@@ -2,9 +2,6 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System.Diagnostics.CodeAnalysis;
-using System.Runtime.InteropServices;
-
 namespace SIL.FieldWorks.FwCoreDlgs
 {
 	partial class CharContextCtrl
@@ -27,13 +24,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					components.Dispose();
 				if (m_openFileDialog != null)
 					m_openFileDialog.Dispose();
-
-				if (m_charPropEng != null && Marshal.IsComObject(m_charPropEng))
-					Marshal.ReleaseComObject(m_charPropEng);
 			}
 			components = null;
 			m_openFileDialog = null;
-			m_charPropEng = null;
 			base.Dispose(disposing);
 		}
 
@@ -45,8 +38,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		// TODO-Linux: VirtualMode is not supported on Mono (gridContext.VirtualMode); TabStops
 		// are not implemented on Mono.
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification="See TODO-Linux comment")]
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
@@ -79,43 +70,43 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.pnlScan.SuspendLayout();
 			this.m_cmnuScan.SuspendLayout();
 			this.SuspendLayout();
-			// 
+			//
 			// pnlScanForPatterns
-			// 
+			//
 			resources.ApplyResources(this.pnlScanForPatterns, "pnlScanForPatterns");
 			this.pnlScanForPatterns.Name = "pnlScanForPatterns";
-			// 
+			//
 			// btnScan
-			// 
+			//
 			resources.ApplyResources(this.btnScan, "btnScan");
 			this.btnScan.Image = global::SIL.FieldWorks.FwCoreDlgs.Properties.Resources.ButtonDropDownArrow;
 			this.btnScan.Name = "btnScan";
 			this.btnScan.UseVisualStyleBackColor = true;
 			this.btnScan.Click += new System.EventHandler(this.btnScan_Click);
-			// 
+			//
 			// lblScanMsg
-			// 
+			//
 			resources.ApplyResources(this.lblScanMsg, "lblScanMsg");
 			this.lblScanMsg.AutoEllipsis = true;
 			this.lblScanMsg.Name = "lblScanMsg";
-			// 
+			//
 			// splitContainer
-			// 
+			//
 			this.splitContainer.BackColor = System.Drawing.Color.Transparent;
 			resources.ApplyResources(this.splitContainer, "splitContainer");
 			this.splitContainer.Name = "splitContainer";
-			// 
+			//
 			// splitContainer.Panel1
-			// 
+			//
 			this.splitContainer.Panel1.Controls.Add(this.pnlTokenGrid);
-			// 
+			//
 			// splitContainer.Panel2
-			// 
+			//
 			this.splitContainer.Panel2.Controls.Add(this.pnlLowerGrid);
 			this.splitContainer.TabStop = false;
-			// 
+			//
 			// pnlTokenGrid
-			// 
+			//
 			this.pnlTokenGrid.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this.pnlTokenGrid.ClipTextForChildControls = true;
 			this.pnlTokenGrid.ControlReceivingFocusOnMnemonic = null;
@@ -124,9 +115,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.pnlTokenGrid.MnemonicGeneratesClick = false;
 			this.pnlTokenGrid.Name = "pnlTokenGrid";
 			this.pnlTokenGrid.PaintExplorerBarBackground = false;
-			// 
+			//
 			// pnlLowerGrid
-			// 
+			//
 			this.pnlLowerGrid.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this.pnlLowerGrid.ClipTextForChildControls = true;
 			this.pnlLowerGrid.ControlReceivingFocusOnMnemonic = null;
@@ -136,9 +127,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.pnlLowerGrid.MnemonicGeneratesClick = false;
 			this.pnlLowerGrid.Name = "pnlLowerGrid";
 			this.pnlLowerGrid.PaintExplorerBarBackground = false;
-			// 
+			//
 			// gridContext
-			// 
+			//
 			this.gridContext.AllowUserToAddRows = false;
 			this.gridContext.AllowUserToDeleteRows = false;
 			this.gridContext.AllowUserToResizeColumns = false;
@@ -174,18 +165,18 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.gridContext.CellValueNeeded += new System.Windows.Forms.DataGridViewCellValueEventHandler(this.gridContext_CellValueNeeded);
 			this.gridContext.RowHeightInfoNeeded += new System.Windows.Forms.DataGridViewRowHeightInfoNeededEventHandler(this.HandleRowHeightInfoNeeded);
 			this.gridContext.ClientSizeChanged += new System.EventHandler(this.gridContext_ClientSizeChanged);
-			// 
+			//
 			// colRef
-			// 
+			//
 			this.colRef.DataPropertyName = "Reference";
 			dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
 			this.colRef.DefaultCellStyle = dataGridViewCellStyle1;
 			resources.ApplyResources(this.colRef, "colRef");
 			this.colRef.Name = "colRef";
 			this.colRef.ReadOnly = true;
-			// 
+			//
 			// colContextBefore
-			// 
+			//
 			this.colContextBefore.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
 			this.colContextBefore.DataPropertyName = "Before";
 			dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
@@ -193,9 +184,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			resources.ApplyResources(this.colContextBefore, "colContextBefore");
 			this.colContextBefore.Name = "colContextBefore";
 			this.colContextBefore.ReadOnly = true;
-			// 
+			//
 			// colContextItem
-			// 
+			//
 			this.colContextItem.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
 			this.colContextItem.DataPropertyName = "Character";
 			dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
@@ -204,9 +195,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			resources.ApplyResources(this.colContextItem, "colContextItem");
 			this.colContextItem.Name = "colContextItem";
 			this.colContextItem.ReadOnly = true;
-			// 
+			//
 			// colContextAfter
-			// 
+			//
 			this.colContextAfter.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
 			this.colContextAfter.DataPropertyName = "After";
 			dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
@@ -214,32 +205,32 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			resources.ApplyResources(this.colContextAfter, "colContextAfter");
 			this.colContextAfter.Name = "colContextAfter";
 			this.colContextAfter.ReadOnly = true;
-			// 
+			//
 			// pnlScan
-			// 
+			//
 			this.pnlScan.BackColor = System.Drawing.Color.Transparent;
 			this.pnlScan.Controls.Add(this.btnScan);
 			this.pnlScan.Controls.Add(this.lblScanMsg);
 			resources.ApplyResources(this.pnlScan, "pnlScan");
 			this.pnlScan.Name = "pnlScan";
-			// 
+			//
 			// m_cmnuScan
-			// 
+			//
 			this.m_cmnuScan.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.cmnuScanFile});
 			this.m_cmnuScan.Name = "m_cmnuScan";
 			this.m_cmnuScan.ShowImageMargin = false;
 			this.m_cmnuScan.ShowItemToolTips = false;
 			resources.ApplyResources(this.m_cmnuScan, "m_cmnuScan");
-			// 
+			//
 			// cmnuScanFile
-			// 
+			//
 			this.cmnuScanFile.Name = "cmnuScanFile";
 			resources.ApplyResources(this.cmnuScanFile, "cmnuScanFile");
 			this.cmnuScanFile.Click += new System.EventHandler(this.cmnuScanFile_Click);
-			// 
+			//
 			// CharContextCtrl
-			// 
+			//
 			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this.splitContainer);

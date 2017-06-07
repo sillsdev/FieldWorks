@@ -1,19 +1,21 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.CoreImpl.Cellar;
+using SIL.CoreImpl.Text;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
@@ -22,7 +24,6 @@ using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FdoUi.Dialogs;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.Reporting;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.FdoUi
 {
@@ -30,7 +31,7 @@ namespace SIL.FieldWorks.FdoUi
 	/// Allows a guicontrol to dynamically initialize with a configuration node with respect
 	/// to the given sourceObject.
 	/// </summary>
-	public interface IFwGuiControl : IFlexComponent, IFWDisposable
+	public interface IFwGuiControl : IFlexComponent, IDisposable
 	{
 		void Launch();
 	}
@@ -53,7 +54,7 @@ namespace SIL.FieldWorks.FdoUi
 		kfragPosAbbrAnalysis, // display a PartOfSpeech using its analyis Ws abbreviation.
 	}
 
-	public class CmObjectUi : IFlexComponent, IFWDisposable
+	public class CmObjectUi : IFlexComponent, IDisposable
 	{
 		#region Data members
 
@@ -243,8 +244,6 @@ namespace SIL.FieldWorks.FdoUi
 			return MakeUi(cache, hvo, cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo).ClassID);
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "result gets returned")]
 		private static CmObjectUi MakeUi(FdoCache cache, int hvo, int clsid)
 		{
 			IFwMetaDataCache mdc = cache.DomainDataByFlid.MetaDataCache;
@@ -308,6 +307,9 @@ namespace SIL.FieldWorks.FdoUi
 						break;
 					case WfiGlossTags.kClassId:
 						result = new WfiGlossUi();
+						break;
+					case CmCustomItemTags.kClassId:
+						result = new CmCustomItemUi();
 						break;
 					default:
 						realClsid = mdc.GetBaseClsId(realClsid);
@@ -836,7 +838,7 @@ namespace SIL.FieldWorks.FdoUi
 			{
 				display.Visible = display.Enabled = false;
 			}
-			display.Text = String.Format(display.Text, DisplayNameOfClass);
+			display.Text = string.Format(display.Text, DisplayNameOfClass);
 			return true;
 		}
 #endif
@@ -847,9 +849,6 @@ namespace SIL.FieldWorks.FdoUi
 			{
 				CheckDisposed();
 
-				var poss = Object as ICmPossibility;
-				if (poss != null)
-					return poss.ItemTypeName();
 				string typeName = Object.GetType().Name;
 				string className = StringTable.Table.GetString(typeName, "ClassNames");
 				if (className == "*" + typeName + "*")
@@ -947,7 +946,7 @@ namespace SIL.FieldWorks.FdoUi
 						if (CanDelete(out cannotDeleteMsg))
 							dlg.SetDlgInfo(this, m_cache, PropertyTable);
 						else
-							dlg.SetDlgInfo(this, m_cache, PropertyTable, m_cache.TsStrFactory.MakeString(cannotDeleteMsg, m_cache.DefaultUserWs));
+							dlg.SetDlgInfo(this, m_cache, PropertyTable, TsStringUtils.MakeString(cannotDeleteMsg, m_cache.DefaultUserWs));
 						if (DialogResult.Yes == dlg.ShowDialog(mainWindow))
 						{
 							ReallyDeleteUnderlyingObject();
@@ -1220,19 +1219,18 @@ namespace SIL.FieldWorks.FdoUi
 			{
 				ISilDataAccess sda = vwenv.DataAccess;
 				int wsUi = sda.WritingSystemFactory.UserWs;
-				ITsStrFactory tsf = m_cache.TsStrFactory;
 				var co = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo);
 				switch (frag)
 				{
 					case (int)VcFrags.kfragHeadWord:
 						var le = co as ILexEntry;
-						vwenv.AddString(le != null ? le.HeadWord : tsf.MakeString(co.ShortName, wsUi));
+						vwenv.AddString(le != null ? le.HeadWord : TsStringUtils.MakeString(co.ShortName, wsUi));
 						break;
 					case (int)VcFrags.kfragShortName:
-						vwenv.AddString(tsf.MakeString(co.ShortName, wsUi));
+						vwenv.AddString(TsStringUtils.MakeString(co.ShortName, wsUi));
 						break;
 					default:
-						vwenv.AddString(tsf.MakeString(co.ToString(), wsUi));
+						vwenv.AddString(TsStringUtils.MakeString(co.ToString(), wsUi));
 						break;
 				}
 			}
@@ -1254,25 +1252,24 @@ namespace SIL.FieldWorks.FdoUi
 					return;
 
 				int wsAnal = DefaultWs;
-				ITsStrFactory tsf = m_cache.TsStrFactory;
 				ICmObject co;
 				switch (frag)
 				{
 					case (int)VcFrags.kfragHeadWord:
 						co = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo);
 						var le = co as ILexEntry;
-						vwenv.AddString(le != null ? le.HeadWord : tsf.MakeString(co.ShortName, wsAnal));
+						vwenv.AddString(le != null ? le.HeadWord : TsStringUtils.MakeString(co.ShortName, wsAnal));
 						break;
 					case (int)VcFrags.kfragShortName:
 						co = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo);
-						vwenv.AddString(tsf.MakeString(co.ShortName, wsAnal));
+						vwenv.AddString(TsStringUtils.MakeString(co.ShortName, wsAnal));
 						break;
 					case (int)VcFrags.kfragPosAbbrAnalysis:
 						vwenv.AddStringAltMember(CmPossibilityTags.kflidAbbreviation, wsAnal, this);
 						break;
 					default:
 						co = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo);
-						vwenv.AddString(tsf.MakeString(co.ToString(), wsAnal));
+						vwenv.AddString(TsStringUtils.MakeString(co.ToString(), wsAnal));
 						break;
 				}
 			}
@@ -1346,8 +1343,7 @@ namespace SIL.FieldWorks.FdoUi
 				if (m_cache.DomainDataByFlid.get_ObjectProp(hvo, m_flidRef) == 0)
 				{
 					int wsUi = vwenv.DataAccess.WritingSystemFactory.UserWs;
-					ITsStrFactory tsf = m_cache.TsStrFactory;
-					vwenv.AddString(tsf.MakeString(FdoUiStrings.ksQuestions, wsUi));	// was "??", not "???"
+					vwenv.AddString(TsStringUtils.MakeString(FdoUiStrings.ksQuestions, wsUi));	// was "??", not "???"
 					vwenv.NoteDependency(new[] { hvo }, new[] { m_flidRef }, 1);
 					return false;
 				}
@@ -1440,19 +1436,18 @@ namespace SIL.FieldWorks.FdoUi
 		public override void Display(IVwEnv vwenv, int hvo, int frag)
 		{
 			int wsVern = m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle;
-			ITsStrFactory tsf = m_cache.TsStrFactory;
 			var co = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo);
 			switch (frag)
 			{
 				case (int)VcFrags.kfragHeadWord:
 					var le = co as ILexEntry;
-					vwenv.AddString(le != null ? le.HeadWord : tsf.MakeString(co.ShortName, wsVern));
+					vwenv.AddString(le != null ? le.HeadWord : TsStringUtils.MakeString(co.ShortName, wsVern));
 					break;
 				case (int)VcFrags.kfragShortName:
-					vwenv.AddString(tsf.MakeString(co.ShortName, wsVern));
+					vwenv.AddString(TsStringUtils.MakeString(co.ShortName, wsVern));
 					break;
 				default:
-					vwenv.AddString(tsf.MakeString(co.ToString(), wsVern));
+					vwenv.AddString(TsStringUtils.MakeString(co.ToString(), wsVern));
 					break;
 			}
 		}
@@ -1544,15 +1539,41 @@ namespace SIL.FieldWorks.FdoUi
 			ICmPossibilityList pssl, ref UIItemDisplayProperties display)
 		{
 			string listName = pssl.Owner != null ? cache.DomainDataByFlid.MetaDataCache.GetFieldName(pssl.OwningFlid) : pssl.Name.BestAnalysisVernacularAlternative.Text;
-			string itemTypeName = pssl.ItemsTypeName();
+			string itemTypeName = GetPossibilityDisplayName(pssl);
 			if (itemTypeName != "*" + listName + "*")
 			{
-				string formattedText = String.Format(display.Text, itemTypeName);
+				string formattedText = string.Format(display.Text, itemTypeName);
 				display.Text = formattedText;
 			}
 			return display.Text;
 		}
 #endif
+
+		public static string GetPossibilityDisplayName(ICmPossibilityList list)
+		{
+			string listName = list.Owner != null ? list.Cache.DomainDataByFlid.MetaDataCache.GetFieldName(list.OwningFlid)
+				: list.Name.BestAnalysisVernacularAlternative.Text;
+			string itemsTypeName = StringTable.Table.GetString(listName, "PossibilityListItemTypeNames");
+			if (itemsTypeName != "*" + listName + "*")
+				return itemsTypeName;
+			return list.PossibilitiesOS.Count > 0 ? StringTable.Table.GetString(list.PossibilitiesOS[0].GetType().Name, "ClassNames")
+				: itemsTypeName;
+		}
+
+		public override string DisplayNameOfClass
+		{
+			get
+			{
+				var poss = (ICmPossibility)Object;
+				ICmPossibilityList owningList = poss.OwningList;
+				if (owningList.OwningFlid == 0)
+					return StringTable.Table.GetString(poss.GetType().Name, "ClassNames");
+				string owningFieldName = m_cache.DomainDataByFlid.MetaDataCache.GetFieldName(owningList.OwningFlid);
+				string itemsTypeName = GetPossibilityDisplayName(owningList);
+				return itemsTypeName != "*" + owningFieldName + "*" ? itemsTypeName
+					: StringTable.Table.GetString(poss.GetType().Name, "ClassNames");
+			}
+		}
 
 		/// <summary>
 		/// Check whether it is OK to add a possibility to the specified item. If not, report the
@@ -1710,7 +1731,7 @@ namespace SIL.FieldWorks.FdoUi
 				msg = string.Format(poss.SubPossibilitiesOS.Count == 0 ? FdoUiStrings.ksCantDeleteMarkupTagInUse
 					: FdoUiStrings.ksCantDeleteMarkupTypeInUse, textName);
 				return false;
-	}
+			}
 
 			msg = null;
 			return true;
@@ -1779,7 +1800,6 @@ namespace SIL.FieldWorks.FdoUi
 			{
 				int wsAnal = DefaultWs;
 
-				ITsStrFactory tsf = m_cache.TsStrFactory;
 				var msa = m_cache.ServiceLocator.GetInstance<IMoMorphSynAnalysisRepository>().GetObject(hvo);
 
 				switch (frag)
@@ -2100,7 +2120,8 @@ namespace SIL.FieldWorks.FdoUi
 
 			//Situation not normal.
 			int hvoMsa;
-			var isAffixType = ls.Entry.PrimaryMorphType.IsAffixType;
+			var entryPrimaryMorphType = ls.Entry.PrimaryMorphType; // Guard against corrupted data. Every entry should have a PrimaryMorphType
+			var isAffixType = entryPrimaryMorphType == null ? false : entryPrimaryMorphType.IsAffixType;
 			foreach(var msa in ls.Entry.MorphoSyntaxAnalysesOC) //go through each MSA in the Entry list looking for one with an unknown category
 			{
 				if(!isAffixType && msa is IMoStemMsa && (msa as IMoStemMsa).PartOfSpeechRA == null)
@@ -2380,7 +2401,7 @@ namespace SIL.FieldWorks.FdoUi
 		/// <param name="referenceFlid"></param>
 		/// <param name="targetHvo"></param>
 		/// <returns></returns>
-		static public ReferenceBaseUi MakeUi(FdoCache cache, ICmObject rootObj,
+		public static ReferenceBaseUi MakeUi(FdoCache cache, ICmObject rootObj,
 			int referenceFlid, int targetHvo)
 		{
 			var iType = (CellarPropertyType)cache.DomainDataByFlid.MetaDataCache.GetFieldType(referenceFlid);
@@ -2654,5 +2675,10 @@ namespace SIL.FieldWorks.FdoUi
 			ws = tss.get_PropertiesAt(0).GetIntPropValues((int)FwTextPropType.ktptWs, out nVar);
 			return new DummyCmObject(m_hvo, tss.Text, ws);
 		}
+	}
+
+	public class CmCustomItemUi : CmPossibilityUi
+	{
+		public override string DisplayNameOfClass => StringTable.Table.GetString(Object.GetType().Name, "ClassNames");
 	}
 }

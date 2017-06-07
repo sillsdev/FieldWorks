@@ -107,11 +107,10 @@ public:
 	STDMETHOD(get_DataAccess)(ISilDataAccess ** ppsda);
 	STDMETHOD(putref_Overlay)(IVwOverlay * pvo);
 	STDMETHOD(get_Overlay)(IVwOverlay ** ppvo);
-
-	// Serialization
-	STDMETHOD(Serialize)(IStream * pstrm);
-	STDMETHOD(Deserialize)(IStream * pstrm);
-	STDMETHOD(WriteWpx)(IStream * pstrm);
+	STDMETHOD(get_RenderEngineFactory)(IRenderEngineFactory ** ppref);
+	STDMETHOD(putref_RenderEngineFactory)(IRenderEngineFactory * pref);
+	STDMETHOD(get_TsStrFactory)(ITsStrFactory ** pptsf);
+	STDMETHOD(putref_TsStrFactory)(ITsStrFactory * ptsf);
 
 	// Selections
 	STDMETHOD(get_Selection)(IVwSelection** ppsel);
@@ -403,6 +402,10 @@ protected:
 
 	IVwOverlayPtr m_qvo; // controls overlay/tagging behavior for all text
 
+	IRenderEngineFactoryPtr m_qref;
+
+	ITsStrFactoryPtr m_qtsf;
+
 	// True when a single-click created a new insertion point, or a double-click created a new
 	// selection, but don't yet have a mouse-up.
 	bool m_fNewSelection;
@@ -470,7 +473,6 @@ protected:
 	void ProcessHeaderSpecials(ITsString *ptss, ITsString ** pptssRet, int nPageNo,
 		int nPageTotal);
 	void ClearNotifiers();
-	void WriteWpxBoxes(IStream * pstrm, VwBox * pbox);
 	VwBox * GetBoxDisplaying(HVO hvoObj);
 	// Do nothing, FixSync is only relevant for child boxes.
 	virtual void FixSync(VwSynchronizer *psync, VwRootBox * prootb){}

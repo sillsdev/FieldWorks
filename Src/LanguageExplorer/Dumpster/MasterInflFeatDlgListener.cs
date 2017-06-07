@@ -15,7 +15,6 @@ namespace LanguageExplorer.Dumpster
 	/// </summary>
 	public class MasterInflFeatDlgListener : MasterDlgListener
 	{
-
 		#region Properties
 
 		protected override string PersistentLabel

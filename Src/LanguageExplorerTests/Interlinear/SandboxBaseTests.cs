@@ -1,19 +1,21 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using NUnit.Framework;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.FDOTests;
+using SIL.CoreImpl.Text;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.ObjectModel;
 
 namespace LanguageExplorerTests.Interlinear
 {
@@ -151,6 +153,7 @@ namespace LanguageExplorerTests.Interlinear
 			var wa = Cache.ServiceLocator.GetInstance<IWfiAnalysisFactory>().Create();
 			wf.AnalysesOC.Add(wa);
 			var sda = VwCacheDaClass.Create();
+			sda.TsStrFactory = TsStringUtils.TsStrFactory;
 			var wsIds = new List<int>();
 			wsIds.Add(Cache.DefaultAnalWs);
 			int hvoAbc = 123456;
@@ -196,10 +199,10 @@ namespace LanguageExplorerTests.Interlinear
 			wgAbc3.Form.AnalysisDefaultWritingSystem = MakeAnalysisString("abc");
 			var wsSpn = Cache.WritingSystemFactory.get_Engine("es").Handle;
 			var wsFrn = Cache.WritingSystemFactory.get_Engine("fr").Handle;
-			wgAbc3.Form.set_String(wsSpn, Cache.TsStrFactory.MakeString("abcS", wsSpn));
-			wgAbc3.Form.set_String(wsFrn, Cache.TsStrFactory.MakeString("abcF", wsFrn));
+			wgAbc3.Form.set_String(wsSpn, TsStringUtils.MakeString("abcS", wsSpn));
+			wgAbc3.Form.set_String(wsFrn, TsStringUtils.MakeString("abcF", wsFrn));
 			wsIds.Add(wsSpn);
-			sda.CacheStringAlt(hvoAbc, SandboxBase.ktagSbWordGloss, wsSpn, Cache.TsStrFactory.MakeString("abcS", wsSpn));
+			sda.CacheStringAlt(hvoAbc, SandboxBase.ktagSbWordGloss, wsSpn, TsStringUtils.MakeString("abcS", wsSpn));
 			Assert.That(SandboxBase.GetRealAnalysisMethod.GetBestGloss(wa, wsIds, sda, hvoAbc), Is.EqualTo(wgAbc3));
 
 			// Of two partial matches, prefer the one where other alternatives are empty.
@@ -208,9 +211,9 @@ namespace LanguageExplorerTests.Interlinear
 			var wgAbc2 = Cache.ServiceLocator.GetInstance<IWfiGlossFactory>().Create();
 			wa.MeaningsOC.Add(wgAbc2);
 			wgAbc2.Form.AnalysisDefaultWritingSystem = MakeAnalysisString("abc");
-			wgAbc2.Form.set_String(wsSpn, Cache.TsStrFactory.MakeString("abcS", wsSpn));
+			wgAbc2.Form.set_String(wsSpn, TsStringUtils.MakeString("abcS", wsSpn));
 			wsIds.Add(wsFrn);
-			sda.CacheStringAlt(hvoAbc, SandboxBase.ktagSbWordGloss, wsFrn, Cache.TsStrFactory.MakeString("abcOther", wsFrn));
+			sda.CacheStringAlt(hvoAbc, SandboxBase.ktagSbWordGloss, wsFrn, TsStringUtils.MakeString("abcOther", wsFrn));
 			Assert.That(SandboxBase.GetRealAnalysisMethod.GetBestGloss(wa, wsIds, sda, hvoAbc), Is.EqualTo(wgAbc2));
 
 			// Of two perfect matches, we prefer the one that has no other information.
@@ -218,7 +221,7 @@ namespace LanguageExplorerTests.Interlinear
 			Assert.That(SandboxBase.GetRealAnalysisMethod.GetBestGloss(wa, wsIds, sda, hvoAbc), Is.EqualTo(wgAbc2));
 
 			// We will not return one where the WfiGloss has a relevant non-empty alternative, even if the corresponding target is empty.
-			sda.CacheStringAlt(hvoAbc, SandboxBase.ktagSbWordGloss, wsSpn, Cache.TsStrFactory.MakeString("", wsSpn));
+			sda.CacheStringAlt(hvoAbc, SandboxBase.ktagSbWordGloss, wsSpn, TsStringUtils.MakeString("", wsSpn));
 			wa.MeaningsOC.Remove(wgAbc);
 			Assert.That(SandboxBase.GetRealAnalysisMethod.GetBestGloss(wa, wsIds, sda, hvoAbc), Is.Null);
 		}
@@ -375,8 +378,6 @@ namespace LanguageExplorerTests.Interlinear
 		}
 
 		[Test]
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "handlerList is a reference")]
 		public void LexEntriesComboHandler_ItemsInComboForInflVariant()
 		{
 			using (var sandbox = SetupSandbox(() =>
@@ -427,7 +428,7 @@ namespace LanguageExplorerTests.Interlinear
 					var handlerList =  handler.ComboList.Items;
 
 					Assert.That(handlerList[0].ToString(), Is.EqualTo("Add New Sense for blondeEntry ..."));
-					Assert.That(handlerList[1].ToString(), Is.EqualTo("  fair haired, ??? , blondEntry+dial.var."));
+					Assert.That(handlerList[1].ToString(), Is.EqualTo("  fair haired, ???, blondEntry+dial.var."));
 					Assert.That(handlerList[2].ToString(), Is.EqualTo("    Add New Sense..."));
 				}
 			}
@@ -740,9 +741,7 @@ namespace LanguageExplorerTests.Interlinear
 			return SandboxBase.InterlinComboHandler.MakeCombo(null, tagIcon, sandbox, morphIndex) as SandboxBase.InterlinComboHandler;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Design", "UseCorrectDisposeSignaturesRule",
-			Justification = "Nothing to dispose here, just needed to avoid a crash on TearDown.")]
-		public class MockComboHandler : IComboHandler, IDisposable
+		public class MockComboHandler : DisposableBase, IComboHandler
 		{
 			public void SetupCombo() { }
 
@@ -757,7 +756,6 @@ namespace LanguageExplorerTests.Interlinear
 
 			public int SelectedMorphHvo { get; private set; }
 			public void HandleSelectIfActive() { }
-			public void Dispose() { }
 		}
 
 		/// <summary>
@@ -835,7 +833,7 @@ namespace LanguageExplorerTests.Interlinear
 			text.ContentsOA = stText;
 			var para = Cache.ServiceLocator.GetInstance<IStTxtParaFactory>().Create();
 			stText.ParagraphsOS.Add(para);
-			para.Contents = Cache.TsStrFactory.MakeString(contents, Cache.DefaultVernWs);
+			para.Contents = TsStringUtils.MakeString(contents, Cache.DefaultVernWs);
 			var seg = Cache.ServiceLocator.GetInstance<ISegmentFactory>().Create();
 			para.SegmentsOS.Add(seg);
 			return text;
@@ -843,11 +841,11 @@ namespace LanguageExplorerTests.Interlinear
 
 		private ITsString MakeVernString(string content)
 		{
-			return Cache.TsStrFactory.MakeString(content, Cache.DefaultVernWs);
+			return TsStringUtils.MakeString(content, Cache.DefaultVernWs);
 		}
 		private ITsString MakeAnalysisString(string content)
 		{
-			return Cache.TsStrFactory.MakeString(content, Cache.DefaultAnalWs);
+			return TsStringUtils.MakeString(content, Cache.DefaultAnalWs);
 		}
 
 		private IWfiWordform MakeWordform(string form)

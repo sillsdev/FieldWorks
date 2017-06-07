@@ -53,15 +53,11 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			}
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "Disposed in caller.")]
 		public static RegistryKey FieldWorksRegistryKey
 		{
 			get { return RegistryHelper.SettingsKey(FWMajorVersion); }
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "Disposed in caller.")]
 		public static RegistryKey FieldWorksRegistryKeyLocalMachine
 		{
 			get { return RegistryHelper.SettingsKeyLocalMachine(FWMajorVersion); }

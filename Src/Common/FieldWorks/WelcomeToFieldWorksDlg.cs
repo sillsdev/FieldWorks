@@ -1,8 +1,7 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: WelcomeToFieldWorksDlg.cs
+
 using System;
 using System.ComponentModel;
 using System.Drawing;
@@ -19,7 +18,7 @@ namespace SIL.FieldWorks
 	/// Dialog presenting multiple options for how to begin a FLEx session
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	internal partial class WelcomeToFieldWorksDlg : Form, IFWDisposable
+	internal partial class WelcomeToFieldWorksDlg : Form
 	{
 		private string m_helpTopic = "khtpWelcomeToFieldworks";
 		private readonly HelpProvider helpProvider;
