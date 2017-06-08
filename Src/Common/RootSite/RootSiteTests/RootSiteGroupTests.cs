@@ -6,7 +6,6 @@ using Rhino.Mocks;
 using System.Drawing;
 using System.Windows.Forms;
 using NUnit.Framework;
-using SIL.CoreImpl;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 

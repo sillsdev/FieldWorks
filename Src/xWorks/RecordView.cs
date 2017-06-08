@@ -13,7 +13,6 @@ using System;
 using System.IO;
 using System.Diagnostics;
 using System.Xml.Linq;
-using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.Xml;

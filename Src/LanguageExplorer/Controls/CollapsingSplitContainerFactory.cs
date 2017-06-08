@@ -8,7 +8,6 @@ using System.Xml.Linq;
 using LanguageExplorer.Areas;
 using LanguageExplorer.Areas.Lists;
 using LanguageExplorer.Controls.PaneBar;
-using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.XWorks;
 

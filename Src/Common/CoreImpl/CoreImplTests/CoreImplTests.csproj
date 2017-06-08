@@ -107,7 +107,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="PubSubSystemTests.cs" />
     <Compile Include="Attributes\InitIcuForTestsAttribute.cs" />
     <Compile Include="Attributes\RedirectHKCU.cs" />
     <Compile Include="Phonology\PhonEnvRecognizerTests.cs" />

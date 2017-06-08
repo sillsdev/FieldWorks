@@ -9,7 +9,6 @@ using SIL.FieldWorks.FDO;
 using System.IO;
 using System.Xml;
 using LanguageExplorer.Areas.TextsAndWords.Discourse;
-using SIL.CoreImpl;
 using SIL.CoreImpl.Text;
 using SIL.FieldWorks.Common.FwUtils;
 

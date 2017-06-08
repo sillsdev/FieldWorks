@@ -22,7 +22,6 @@ using SIL.FieldWorks.FwCoreDlgs.BackupRestore;
 using SIL.FieldWorks.Resources;
 using SIL.Utils;
 using SilEncConverters40;
-using SIL.CoreImpl;
 using SIL.CoreImpl.Cellar;
 using SIL.CoreImpl.Text;
 using SIL.CoreImpl.WritingSystems;

@@ -13,7 +13,6 @@ using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
-using SIL.CoreImpl;
 using SIL.Xml;
 
 namespace SIL.FieldWorks.Common.Controls

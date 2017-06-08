@@ -11,7 +11,6 @@ using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using System;
 using System.Xml.Linq;
-using SIL.CoreImpl;
 using SIL.CoreImpl.Text;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.Framework;

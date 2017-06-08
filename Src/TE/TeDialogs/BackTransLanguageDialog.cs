@@ -7,7 +7,6 @@ using System.Windows.Forms;
 using SIL.CoreImpl.WritingSystems;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.CoreImpl;
 
 namespace SIL.FieldWorks.TE
 {

@@ -6,8 +6,8 @@ using System;
 using System.Collections.Generic;
 using System.Xml;
 using SIL.FieldWorks.FDO;
-using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Framework;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.Xml;
 
 namespace LanguageExplorer.Dumpster

@@ -9,7 +9,7 @@
 // <remarks>
 // </remarks>
 
-using SIL.CoreImpl;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 
 namespace SIL.FieldWorks.Common.Controls

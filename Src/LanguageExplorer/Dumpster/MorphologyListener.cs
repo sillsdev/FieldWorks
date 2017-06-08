@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using LanguageExplorer.Areas.TextsAndWords;
-using SIL.CoreImpl;
 using SIL.CoreImpl.SpellChecking;
 using SIL.CoreImpl.WritingSystems;
 using SIL.FieldWorks.Common.Framework;

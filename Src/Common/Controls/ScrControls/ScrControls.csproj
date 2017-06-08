@@ -114,10 +114,6 @@
       <Name>FDO</Name>
       <HintPath>..\..\..\..\Output\debug\FDO.dll</HintPath>
     </Reference>
-    <Reference Include="CoreImpl">
-      <Name>CoreImpl</Name>
-      <HintPath>..\..\..\..\Output\debug\CoreImpl.dll</HintPath>
-    </Reference>
     <Reference Include="FwControls">
       <Name>FwControls</Name>
       <HintPath>..\..\..\..\Output\Debug\FwControls.dll</HintPath>

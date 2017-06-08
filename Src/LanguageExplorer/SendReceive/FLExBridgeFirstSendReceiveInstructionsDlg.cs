@@ -6,7 +6,6 @@ using System;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
 

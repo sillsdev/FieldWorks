@@ -9,9 +9,9 @@ using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using SIL.CoreImpl;
 using SIL.CoreImpl.Text;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
@@ -20,10 +20,6 @@ using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
 using Rect = SIL.FieldWorks.Common.ViewsInterfaces.Rect;
-
-#if __MonoCS__
-using SIL.FieldWorks.Common.FwUtils;
-#endif
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {

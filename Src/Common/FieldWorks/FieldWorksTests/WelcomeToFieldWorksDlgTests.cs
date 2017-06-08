@@ -5,7 +5,6 @@
 using System.Windows.Forms;
 using SIL.Utils;
 using NUnit.Framework;
-using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks

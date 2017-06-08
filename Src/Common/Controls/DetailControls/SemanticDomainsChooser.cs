@@ -15,7 +15,6 @@ using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using System.Xml.Linq;
-using SIL.CoreImpl;
 using SIL.Xml;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls

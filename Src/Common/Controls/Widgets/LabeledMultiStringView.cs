@@ -14,9 +14,9 @@ using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.FDO.Infrastructure;
 using System.Text;
 using System.Xml.Linq;
-using SIL.CoreImpl;
 using SIL.CoreImpl.Text;
 using SIL.CoreImpl.WritingSystems;
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.Common.Widgets
 {

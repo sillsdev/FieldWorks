@@ -9,7 +9,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using SIL.CoreImpl;
 using SIL.CoreImpl.Cellar;
 using SIL.CoreImpl.WritingSystems;
 using SIL.FieldWorks.Common.Controls;

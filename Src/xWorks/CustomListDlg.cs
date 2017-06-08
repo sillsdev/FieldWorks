@@ -12,7 +12,6 @@ using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FDO;
 using System.Collections.Generic;
-using SIL.CoreImpl;
 using SIL.CoreImpl.Text;
 using SIL.CoreImpl.WritingSystems;
 using SIL.FieldWorks.Common.FwKernelInterfaces;

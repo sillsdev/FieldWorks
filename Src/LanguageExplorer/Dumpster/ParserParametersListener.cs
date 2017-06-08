@@ -5,8 +5,8 @@
 using System;
 using System.Windows.Forms;
 using LanguageExplorer.Areas.TextsAndWords;
-using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Framework;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
 

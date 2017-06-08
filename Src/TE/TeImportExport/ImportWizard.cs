@@ -11,7 +11,6 @@ using System.Linq;
 using System.Windows.Forms;
 using Microsoft.Win32;
 using Paratext;
-using SIL.CoreImpl;
 using SIL.CoreImpl.Scripture;
 using SIL.CoreImpl.WritingSystems;
 using SIL.FieldWorks.Common.Controls;

@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using Paratext;
-using SIL.CoreImpl;
 using SIL.CoreImpl.Scripture;
 using SIL.CoreImpl.Text;
 using SIL.FieldWorks.Common.Controls;

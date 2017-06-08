@@ -15,7 +15,6 @@ using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.Filters;
 using SIL.Utils;
 using System.Xml.Linq;
-using SIL.CoreImpl;
 using SIL.CoreImpl.Text;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 

@@ -109,22 +109,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>CoreImplStrings.resx</DependentUpon>
     </Compile>
-    <Compile Include="FlexComponentCheckingService.cs" />
-    <Compile Include="FlexComponentParameters.cs" />
-    <Compile Include="ICommandUndoRedoText.cs" />
-    <Compile Include="IFeedbackInfoProvider.cs" />
-    <Compile Include="IFlexComponent.cs" />
-    <Compile Include="IHelpTopicProvider.cs" />
-    <Compile Include="IPropertyTable.cs" />
-    <Compile Include="IPropertyTableProvider.cs" />
-    <Compile Include="IPublisher.cs" />
-    <Compile Include="IPublisherProvider.cs" />
-    <Compile Include="ISubscriber.cs" />
-    <Compile Include="ISubscriberProvider.cs" />
-    <Compile Include="PubSubSystemFactory.cs" />
-    <Compile Include="RecordFilterListProvider.cs" />
-    <Compile Include="SettingsGroup.cs" />
-    <Compile Include="TimeoutResult.cs" />
     <Compile Include="Cellar\CellarPropertyType.cs" />
     <Compile Include="Cellar\CellarPropertyTypeFilter.cs" />
     <Compile Include="Cellar\CmObjectFields.cs" />

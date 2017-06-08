@@ -4,7 +4,6 @@
 
 using System.Collections.Generic;
 using System.Windows.Forms;
-using SIL.CoreImpl;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {

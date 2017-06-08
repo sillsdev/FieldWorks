@@ -10,7 +10,6 @@ using System.Xml;
 using NUnit.Framework;
 using SIL.CoreImpl.Text;
 using SIL.IO;
-using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;

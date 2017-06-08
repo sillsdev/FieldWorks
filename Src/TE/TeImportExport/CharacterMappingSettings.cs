@@ -7,7 +7,6 @@ using System.Reflection;
 using System.Resources;
 using System.Windows.Forms;
 using System.Diagnostics;
-using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Drawing;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO;

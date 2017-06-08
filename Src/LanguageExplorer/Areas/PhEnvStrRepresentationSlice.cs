@@ -5,7 +5,6 @@
 using System;
 using System.Diagnostics;
 using System.Windows.Forms;
-using SIL.CoreImpl;
 using SIL.CoreImpl.Phonology;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Framework.DetailControls;

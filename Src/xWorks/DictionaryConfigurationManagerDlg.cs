@@ -6,7 +6,6 @@ using System;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using SIL.CoreImpl;
 using SIL.Linq;
 using SIL.FieldWorks.Common.FwUtils;
 

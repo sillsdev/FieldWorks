@@ -9,7 +9,6 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.Windows.Forms.Widgets;
-using SIL.CoreImpl;
 
 namespace SIL.FieldWorks
 {

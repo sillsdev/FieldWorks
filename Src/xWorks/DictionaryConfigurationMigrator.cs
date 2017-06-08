@@ -8,7 +8,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators;
 

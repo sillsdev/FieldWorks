@@ -6,8 +6,8 @@ using System;
 using System.Windows.Forms;
 using Microsoft.Win32;
 using SIL.Reporting;
-using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Framework;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
 
 namespace LanguageExplorer

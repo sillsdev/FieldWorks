@@ -8,7 +8,6 @@ using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
 using System.Drawing;
-using SIL.CoreImpl;
 
 namespace SIL.FieldWorks.XWorks
 {

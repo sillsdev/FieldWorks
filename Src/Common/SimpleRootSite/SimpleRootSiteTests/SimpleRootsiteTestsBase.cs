@@ -8,7 +8,6 @@ using System.Drawing;
 using System.IO;
 using System.Text;
 using NUnit.Framework;
-using SIL.CoreImpl;
 using SIL.CoreImpl.Text;
 using SIL.CoreImpl.WritingSystems;
 using SIL.FieldWorks.CacheLight;

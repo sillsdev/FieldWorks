@@ -36,7 +36,6 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using System.Xml.XPath;
-using SIL.CoreImpl;
 using SIL.CoreImpl.Cellar;
 using SIL.CoreImpl.Text;
 using SIL.FieldWorks.Common.ViewsInterfaces;

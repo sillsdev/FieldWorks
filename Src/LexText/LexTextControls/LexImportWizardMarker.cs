@@ -11,7 +11,6 @@ using System.IO;
 using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Xsl;
-using SIL.CoreImpl;
 using Gecko;
 using Sfm2Xml;
 using SIL.CoreImpl.Text;

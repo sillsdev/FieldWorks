@@ -9,7 +9,6 @@ using System.Windows.Forms;
 using System.IO;
 using System.Text;
 using System.Xml;
-using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Controls;

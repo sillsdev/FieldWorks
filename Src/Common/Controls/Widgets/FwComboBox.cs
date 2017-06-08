@@ -14,7 +14,6 @@ using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
 using SIL.Utils; // for Win32 message defns.
-using SIL.CoreImpl;
 
 namespace SIL.FieldWorks.Common.Widgets
 {

@@ -5,7 +5,6 @@
 using System;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
-using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.Common.Widgets;

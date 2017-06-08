@@ -6,7 +6,7 @@ using System;
 using System.Collections;
 using System.Linq;
 using System.Xml.Linq;
-using SIL.CoreImpl;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.Xml;
 

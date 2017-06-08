@@ -11,7 +11,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Xml.Linq;
 using System.Xml.XPath;
-using SIL.CoreImpl;
 using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.Xml;

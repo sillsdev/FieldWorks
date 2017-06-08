@@ -16,7 +16,7 @@ using SIL.FieldWorks.Common.Framework.DetailControls;
 using System.ComponentModel;
 using System.Xml.Linq;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
-using SIL.CoreImpl;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.Xml;
 using Rect = SIL.FieldWorks.Common.ViewsInterfaces.Rect;
 

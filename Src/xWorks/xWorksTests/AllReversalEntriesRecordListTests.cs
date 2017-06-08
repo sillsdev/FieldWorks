@@ -5,7 +5,6 @@
 using System.Collections.Generic;
 using System.Xml;
 using NUnit.Framework;
-using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
 #if RANDYTODO

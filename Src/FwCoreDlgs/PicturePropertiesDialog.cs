@@ -20,7 +20,6 @@ using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Resources;
 using SIL.Reporting;
 using SIL.Utils;
-using SIL.CoreImpl;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {

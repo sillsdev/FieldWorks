@@ -10,7 +10,6 @@ using System.Linq;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FwCoreDlgs.BackupRestore;
-using SIL.CoreImpl;
 using SIL.CoreImpl.WritingSystems;
 
 namespace SIL.FieldWorks.FwCoreDlgs

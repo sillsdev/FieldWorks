@@ -9,7 +9,6 @@ using System.Reflection;
 using LanguageExplorer.Areas.TextsAndWords;
 using NUnit.Framework;
 using Rhino.Mocks;
-using SIL.CoreImpl;
 using SIL.CoreImpl.Text;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.FwUtils;

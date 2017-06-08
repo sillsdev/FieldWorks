@@ -30,8 +30,7 @@ namespace SIL.FieldWorks.FdoUi
 		[Test]
 		public void FindEntryForWordform_EmptyString()
 		{
-			using (var lexEntryUi = LexEntryUi.FindEntryForWordform(Cache,
-				TsStringUtils.EmptyString(Cache.DefaultVernWs)))
+			using (var lexEntryUi = LexEntryUi.FindEntryForWordform(Cache, TsStringUtils.EmptyString(Cache.DefaultVernWs)))
 			{
 				Assert.IsNull(lexEntryUi);
 			}

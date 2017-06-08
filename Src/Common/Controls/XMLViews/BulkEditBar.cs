@@ -25,7 +25,6 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.Common.RootSites;
 using SilEncConverters40;
-using SIL.CoreImpl;
 using SIL.CoreImpl.Cellar;
 using SIL.CoreImpl.SpellChecking;
 using SIL.CoreImpl.Text;

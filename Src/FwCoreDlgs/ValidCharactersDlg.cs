@@ -15,7 +15,6 @@ using System.Globalization;
 using System.Text;
 using System.Windows.Forms;
 using Icu;
-using SIL.CoreImpl;
 using SIL.CoreImpl.Text;
 using SIL.CoreImpl.WritingSystems;
 using SIL.FieldWorks.Common.Controls;

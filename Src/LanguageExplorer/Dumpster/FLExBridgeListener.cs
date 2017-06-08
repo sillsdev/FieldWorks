@@ -16,7 +16,6 @@ using LanguageExplorer.SendReceive;
 using SIL.Lift;
 using SIL.Lift.Migration;
 using SIL.Lift.Parsing;
-using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.RootSites;

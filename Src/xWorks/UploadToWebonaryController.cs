@@ -7,11 +7,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Ionic.Zip;
-using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using System.Net;
 using System.Reflection;
 using System.Text;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.XWorks

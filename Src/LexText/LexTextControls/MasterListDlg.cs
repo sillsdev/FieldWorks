@@ -6,7 +6,6 @@ using System;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
-using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.LexText.Controls.MGA;

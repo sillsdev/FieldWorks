@@ -15,9 +15,9 @@ using SIL.Linq;
 using SIL.FieldWorks.Common.Framework;
 using SIL.WritingSystems;
 using Ionic.Zip;
-using SIL.CoreImpl;
 using SIL.CoreImpl.WritingSystems;
 using SIL.FieldWorks.Common.Controls.FileDialog;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.LexText.Controls;
 
 namespace SIL.FieldWorks.XWorks

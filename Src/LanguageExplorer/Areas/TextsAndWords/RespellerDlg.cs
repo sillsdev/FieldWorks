@@ -10,7 +10,6 @@ using System.Windows.Forms;
 using System.Diagnostics;
 using System.Xml.Linq;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
-using SIL.CoreImpl;
 using SIL.CoreImpl.Cellar;
 using SIL.CoreImpl.SpellChecking;
 using SIL.CoreImpl.Text;

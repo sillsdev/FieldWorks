@@ -18,7 +18,6 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.CoreImpl;
 using SIL.Xml;
 
 namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit

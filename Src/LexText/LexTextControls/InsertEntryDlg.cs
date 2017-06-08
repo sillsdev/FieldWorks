@@ -13,7 +13,6 @@ using System.Xml.Linq;
 using System.Xml.XPath;
 using Microsoft.Win32;
 using SIL.Collections;
-using SIL.CoreImpl;
 using SIL.CoreImpl.Text;
 using SIL.CoreImpl.WritingSystems;
 using SIL.FieldWorks.Common.Controls;

@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using System.Windows.Forms;
-using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.XWorks;
 using SIL.FieldWorks.Common.ViewsInterfaces;

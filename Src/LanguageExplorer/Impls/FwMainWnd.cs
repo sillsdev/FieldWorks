@@ -17,7 +17,6 @@ using IWshRuntimeLibrary;
 using LanguageExplorer.Archiving;
 using LanguageExplorer.Controls;
 using SIL.Code;
-using SIL.CoreImpl;
 using LanguageExplorer.Controls.SilSidePane;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;

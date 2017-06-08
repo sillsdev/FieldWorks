@@ -5,7 +5,6 @@
 // File: FilterSectionDialog.cs
 // --------------------------------------------------------------------------------------------
 
-using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.TE;

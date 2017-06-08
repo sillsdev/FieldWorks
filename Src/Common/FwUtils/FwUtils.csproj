@@ -186,6 +186,8 @@
     <Compile Include="DisposableObjectsSet.cs" />
     <Compile Include="DriveUtil.cs" />
     <Compile Include="FLExBridgeHelper.cs" />
+    <Compile Include="FlexComponentCheckingService.cs" />
+    <Compile Include="FlexComponentParameters.cs" />
     <Compile Include="FwAccessibleObject.cs" />
     <Compile Include="GeneratedFwUtils.cs" />
     <Compile Include="IChecksDataSource.cs" />
@@ -194,8 +196,11 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="ICollapsingSplitContainer.cs" />
+    <Compile Include="ICommandUndoRedoText.cs" />
     <Compile Include="ICtrlTabProvider.cs" />
     <Compile Include="IdleQueue.cs" />
+    <Compile Include="IFeedbackInfoProvider.cs" />
+    <Compile Include="IFlexComponent.cs" />
     <Compile Include="IFocusablePanePortion.cs" />
     <Compile Include="FwDirectoryFinder.cs" />
     <Compile Include="FwLinkArgs.cs" />
@@ -207,6 +212,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>FwUtilsStrings.resx</DependentUpon>
     </Compile>
+    <Compile Include="IHelpTopicProvider.cs" />
     <Compile Include="IMainContentControl.cs" />
     <Compile Include="IMainUserControl.cs" />
     <Compile Include="InstallationException.cs" />
@@ -217,8 +223,14 @@
     <Compile Include="IPersistenceProvider.cs" />
     <Compile Include="IPostLayoutInit.cs" />
     <Compile Include="IProjectSpecificSettingsKeyProvider.cs" />
+    <Compile Include="IPropertyTable.cs" />
+    <Compile Include="IPropertyTableProvider.cs" />
+    <Compile Include="IPublisher.cs" />
+    <Compile Include="IPublisherProvider.cs" />
     <Compile Include="IRecordListUpdater.cs" />
     <Compile Include="IScriptureCheck.cs" />
+    <Compile Include="ISubscriber.cs" />
+    <Compile Include="ISubscriberProvider.cs" />
     <Compile Include="ITextToken.cs" />
     <Compile Include="IReceiveSequentialMessages.cs" />
     <Compile Include="IRecordBar.cs" />
@@ -237,12 +249,15 @@
     <Compile Include="PictureHolder.cs" />
     <Compile Include="ProgressMessageArgs.cs" />
     <Compile Include="ProjectId.cs" />
+    <Compile Include="PubSubSystemFactory.cs" />
     <Compile Include="PunctuationPatterns.cs" />
     <Compile Include="QuotationMarks.cs" />
     <Compile Include="RecordErrorEventArgs.cs" />
+    <Compile Include="RecordFilterListProvider.cs" />
     <Compile Include="ReversalIndexServices.cs" />
     <Compile Include="SearchTimer.cs" />
     <Compile Include="SelectionEvents.cs" />
+    <Compile Include="SettingsGroup.cs" />
     <Compile Include="ShowHelp.cs">
       <SubType>Code</SubType>
     </Compile>

@@ -10,7 +10,7 @@
 
 using System;
 using System.Windows.Forms;
-using SIL.CoreImpl;
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 {

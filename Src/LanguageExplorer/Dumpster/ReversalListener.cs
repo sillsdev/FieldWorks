@@ -5,8 +5,8 @@
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using SIL.CoreImpl;
 using SIL.CoreImpl.WritingSystems;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.FDO;
 

@@ -9,7 +9,7 @@
 // </remarks>
 
 using System.Xml.Linq;
-using SIL.CoreImpl;
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace LanguageExplorer.Areas.TextsAndWords
 {

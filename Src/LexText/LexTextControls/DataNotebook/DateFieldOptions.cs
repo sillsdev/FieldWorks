@@ -11,7 +11,7 @@
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using SIL.CoreImpl;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 
 namespace SIL.FieldWorks.LexText.Controls.DataNotebook

@@ -15,7 +15,6 @@ using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
 using SilEncConverters40;
-using SIL.CoreImpl;
 using SIL.CoreImpl.SpellChecking;
 using SIL.CoreImpl.Text;
 using SIL.CoreImpl.WritingSystems;

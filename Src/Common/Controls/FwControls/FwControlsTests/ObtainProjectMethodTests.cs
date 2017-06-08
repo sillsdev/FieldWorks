@@ -7,7 +7,7 @@ using System.IO;
 using System.Reflection;
 using System.Xml;
 using NUnit.Framework;
-using SIL.CoreImpl;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.Controls

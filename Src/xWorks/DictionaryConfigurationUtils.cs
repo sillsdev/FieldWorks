@@ -8,7 +8,6 @@ using System.IO;
 using System.Xml;
 using SIL.FieldWorks.FDO;
 using System.Linq;
-using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.XWorks

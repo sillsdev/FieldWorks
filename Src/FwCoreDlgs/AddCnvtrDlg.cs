@@ -14,7 +14,6 @@ using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.Common.FwUtils;
 using ECInterfaces;
 using SilEncConverters40;
-using SIL.CoreImpl;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {

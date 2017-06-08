@@ -11,7 +11,6 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Diagnostics;
 using System.Xml.Linq;
-using SIL.CoreImpl;
 using SIL.CoreImpl.Cellar;
 using SIL.CoreImpl.Text;
 using SIL.CoreImpl.WritingSystems;

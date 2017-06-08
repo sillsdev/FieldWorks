@@ -12,7 +12,6 @@
 using System;
 using System.Text;
 using System.Windows.Forms;
-using SIL.CoreImpl;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {

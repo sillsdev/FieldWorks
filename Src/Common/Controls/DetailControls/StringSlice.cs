@@ -5,7 +5,6 @@
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using SIL.CoreImpl;
 using SIL.CoreImpl.Cellar;
 using SIL.CoreImpl.Text;
 using SIL.CoreImpl.WritingSystems;

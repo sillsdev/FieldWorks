@@ -15,7 +15,6 @@ using System.Xml.Linq;
 using System.Xml;
 using System.Xml.Xsl;
 using Microsoft.Win32;
-using SIL.CoreImpl;
 using SIL.CoreImpl.Text;
 using SIL.Reporting;
 using SIL.FieldWorks.Common.Controls;

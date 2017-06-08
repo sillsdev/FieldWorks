@@ -4,7 +4,7 @@
 
 using System;
 using System.Xml;
-using SIL.CoreImpl;
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace LanguageExplorer.Dumpster
 {

@@ -10,9 +10,6 @@ using System.Windows.Forms;
 using System.Xml.Serialization;
 using System.IO;
 using System.Threading;		// for Monitor (dlh)
-using System.Text;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.Common.FwUtils.Impls
 {

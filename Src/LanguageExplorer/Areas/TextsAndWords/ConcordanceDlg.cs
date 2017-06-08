@@ -15,7 +15,6 @@ using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FdoUi;
-using SIL.CoreImpl;
 using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.XWorks;
 using WaitCursor = SIL.FieldWorks.Common.FwUtils.WaitCursor;

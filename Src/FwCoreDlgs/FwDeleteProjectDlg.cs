@@ -10,7 +10,6 @@ using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using System.IO;
-using SIL.CoreImpl;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
