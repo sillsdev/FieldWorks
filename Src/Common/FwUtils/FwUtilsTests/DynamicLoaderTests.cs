@@ -5,7 +5,7 @@
 using System;
 using NUnit.Framework;
 
-namespace SIL.Utils
+namespace SIL.FieldWorks.Common.FwUtils
 {
 	/// <summary>
 	/// Beginninings of test for DynamicLoader. Most methods are not tested yet.
@@ -22,19 +22,23 @@ namespace SIL.Utils
 		{
 			var test1 = new Test1();
 			Assert.That(typeof(ITest1).IsAssignableFrom(typeof(Test1)));
-			var results = DynamicLoader.GetPlugins<ITest1>("XMLUtils*.dll");
+			var results = DynamicLoader.GetPlugins<ITest1>("FwUtils*.dll");
 			Assert.That(results, Has.Count.EqualTo(1));
 			Assert.That(results[0], Is.InstanceOf<Test1>());
 		}
 	}
 
+	/// <summary />
 	public interface ITest1
 	{
+		/// <summary />
 		string Dummy();
 	}
 
+	/// <summary />
 	public class Test1 : ITest1
 	{
+		/// <summary />
 		public string Dummy()
 		{
 			throw new NotImplementedException();

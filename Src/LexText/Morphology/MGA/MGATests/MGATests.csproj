@@ -138,10 +138,6 @@
       <Name>System.XML</Name>
     </Reference>
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="XMLUtils">
-      <Name>XMLUtils</Name>
-      <HintPath>..\..\..\..\..\Output\Debug\XMLUtils.dll</HintPath>
-    </Reference>
     <Reference Include="FDOTests">
       <Name>FDOTests</Name>
       <HintPath>..\..\..\..\..\Output\Debug\FDOTests.dll</HintPath>

@@ -1466,7 +1466,7 @@ namespace SIL.FieldWorks.Common.Controls
 					case "objectOfRowUsingViewConstructor": // display the current object using an external VC.
 						//notice this assumes that it wants a FdoCache as an argument
 						IVwViewConstructor vc =
-							(IVwViewConstructor)SIL.Utils.DynamicLoader.CreateObject(frag,
+							(IVwViewConstructor)DynamicLoader.CreateObject(frag,
 							new Object[] { m_cache });
 						int selectorId =
 							Convert.ToInt32(XmlUtils.GetManditoryAttributeValue(frag, "selector"));

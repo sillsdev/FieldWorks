@@ -193,7 +193,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 				var node = configuration.Element("menuHandler");
 				if (node != null)
 				{
-					h = (InflAffixTemplateMenuHandler) SIL.Utils.DynamicLoader.CreateObject(node);
+					h = (InflAffixTemplateMenuHandler)DynamicLoader.CreateObject(node);
 				}
 			}
 			if (h == null)			//no class specified, so just returned a generic InflAffixTemplateControl

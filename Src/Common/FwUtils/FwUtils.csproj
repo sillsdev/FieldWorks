@@ -185,6 +185,7 @@
     <Compile Include="DebugProcs.cs" />
     <Compile Include="DisposableObjectsSet.cs" />
     <Compile Include="DriveUtil.cs" />
+    <Compile Include="DynamicLoader.cs" />
     <Compile Include="FLExBridgeHelper.cs" />
     <Compile Include="FlexComponentCheckingService.cs" />
     <Compile Include="FlexComponentParameters.cs" />

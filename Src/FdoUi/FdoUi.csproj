@@ -172,10 +172,6 @@
       <HintPath>..\..\Output\Debug\Widgets.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
-    <Reference Include="XMLUtils, Version=6.1.1.30296, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\Output\Debug\XMLUtils.dll</HintPath>
-      <SpecificVersion>False</SpecificVersion>
-    </Reference>
     <Reference Include="XMLViews, Version=1.0.3685.30465, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\..\Output\Debug\XMLViews.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>

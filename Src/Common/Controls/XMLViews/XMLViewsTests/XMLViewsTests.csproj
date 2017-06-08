@@ -182,10 +182,6 @@
     <Reference Include="System.Xml">
       <Name>System.XML</Name>
     </Reference>
-    <Reference Include="XMLUtils">
-      <Name>XMLUtils</Name>
-      <HintPath>..\..\..\..\..\Output\Debug\XMLUtils.dll</HintPath>
-    </Reference>
     <Reference Include="XMLViews">
       <Name>XMLViews</Name>
       <HintPath>..\..\..\..\..\Output\Debug\XMLViews.dll</HintPath>

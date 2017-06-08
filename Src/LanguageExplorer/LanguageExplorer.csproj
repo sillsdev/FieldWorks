@@ -225,9 +225,6 @@
     <Reference Include="Widgets">
       <HintPath>..\..\Output\Release\Widgets.dll</HintPath>
     </Reference>
-    <Reference Include="XMLUtils">
-      <HintPath>..\..\Output\Release\XMLUtils.dll</HintPath>
-    </Reference>
     <Reference Include="XMLViews, Version=9.0.0.26307, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Release\XMLViews.dll</HintPath>

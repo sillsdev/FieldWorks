@@ -145,10 +145,6 @@
       <Name>System.XML</Name>
     </Reference>
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="XMLUtils">
-      <Name>XMLUtils</Name>
-      <HintPath>..\..\..\..\Output\Debug\XMLUtils.dll</HintPath>
-    </Reference>
     <Reference Include="FwKernelInterfaces">
       <HintPath>..\..\..\..\Output\Debug\FwKernelInterfaces.dll</HintPath>
     </Reference>

@@ -157,9 +157,6 @@
     <Reference Include="Widgets">
       <HintPath>..\..\..\..\Output\Debug\Widgets.dll</HintPath>
     </Reference>
-    <Reference Include="XMLUtils">
-      <HintPath>..\..\..\..\Output\Debug\XMLUtils.dll</HintPath>
-    </Reference>
     <Reference Include="XMLViews, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\..\..\..\Output\Debug\XMLViews.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>

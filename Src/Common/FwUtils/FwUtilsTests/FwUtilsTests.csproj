@@ -148,6 +148,7 @@
     <Compile Include="Attributes\SuppressErrorBeepsAttribute.cs" />
     <Compile Include="CharEnumeratorForByteArrayTests.cs" />
     <Compile Include="DebugProcsTests.cs" />
+    <Compile Include="DynamicLoaderTests.cs" />
     <Compile Include="InterfacesTests.cs" />
     <Compile Include="DisposableObjectsSetTests.cs" />
     <Compile Include="IVwCacheDaTests.cs" />

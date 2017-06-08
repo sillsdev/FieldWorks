@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -12,10 +12,10 @@ using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
-using SIL.FieldWorks.Common.FwUtils;
+using SIL.Utils;
 using SIL.Xml;
 
-namespace SIL.Utils
+namespace SIL.FieldWorks.Common.FwUtils
 {
 	/// <summary>
 	/// Summary description for DynamicLoader.
@@ -382,9 +382,6 @@ namespace SIL.Utils
 		/// it to the PersistAsXml method of the object. The root element name is supplied
 		/// as the elementName argument.
 		/// </summary>
-		/// <param name="obj"></param>
-		/// <param name="elementName"></param>
-		/// <returns></returns>
 		static public string PersistObject(object src, string elementName)
 		{
 			if (src == null)
@@ -423,9 +420,6 @@ namespace SIL.Utils
 		/// <summary>
 		/// Add to the specified node assembly and class information for the specified object.
 		/// </summary>
-		/// <param name="doc"></param>
-		/// <param name="root"></param>
-		/// <param name="sorter"></param>
 		static internal void AddAssemblyClassInfoTo(XmlNode node, object obj)
 		{
 			XmlDocument doc = node.OwnerDocument;

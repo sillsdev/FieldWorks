@@ -217,11 +217,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\Widgets.dll</HintPath>
     </Reference>
-    <Reference Include="XMLUtils">
-      <Name>XMLUtils</Name>
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\XMLUtils.dll</HintPath>
-    </Reference>
     <Reference Include="FwKernelInterfaces">
       <HintPath>..\..\..\Output\Debug\FwKernelInterfaces.dll</HintPath>
     </Reference>
