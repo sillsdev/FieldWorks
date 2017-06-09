@@ -7,6 +7,3 @@
 [submodule "Build/Src/Gendarme.MsBuild"]
 	path = Build/Src/Gendarme.MsBuild
 	url = https://github.com/sillsdev/Gendarme.MsBuild.git
-[submodule "Lib/src/hunspell"]
-	path = Lib/src/hunspell
-	url = https://github.com/sillsdev/hunspell.git
