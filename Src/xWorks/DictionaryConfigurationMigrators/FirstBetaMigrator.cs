@@ -39,7 +39,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			Cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
 			var foundOne = string.Format("{0}: Configuration was found in need of migration. - {1}",
 				appVersion, DateTime.Now.ToString("yyyy MMM d h:mm:ss"));
-			var configSettingsDir = FdoFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path));
+			var configSettingsDir = FdoFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder);
 			var dictionaryConfigLoc = Path.Combine(configSettingsDir, DictionaryConfigurationListener.DictionaryConfigurationDirectoryName);
 			var stemPath = Path.Combine(dictionaryConfigLoc, "Stem" + DictionaryConfigurationModel.FileExtension);
 			var lexemePath = Path.Combine(dictionaryConfigLoc, "Lexeme" + DictionaryConfigurationModel.FileExtension);

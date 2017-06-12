@@ -146,7 +146,7 @@ namespace SIL.FieldWorks.XWorks
 
 		internal static List<DictionaryConfigurationModel> GetConfigsNeedingMigration(FdoCache cache, int targetVersion)
 		{
-			var configSettingsDir = FdoFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(cache.ProjectId.Path));
+			var configSettingsDir = FdoFileHelper.GetConfigSettingsDir(cache.ProjectId.ProjectFolder);
 			var dictionaryConfigLoc = Path.Combine(configSettingsDir, DictionaryConfigurationListener.DictionaryConfigurationDirectoryName);
 			var reversalIndexConfigLoc = Path.Combine(configSettingsDir, DictionaryConfigurationListener.ReversalIndexConfigurationDirectoryName);
 			var projectConfigPaths = new List<string>(ConfigFilesInDir(dictionaryConfigLoc));
