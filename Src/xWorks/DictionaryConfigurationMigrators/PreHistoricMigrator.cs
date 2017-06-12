@@ -137,7 +137,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		internal bool ConfigsNeedMigratingFromPre83()
 		{
 			// If the project already has up-to-date configurations then we don't need to migrate
-			var configSettingsDir = FdoFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path));
+			var configSettingsDir = FdoFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder);
 			var newDictionaryConfigLoc = Path.Combine(configSettingsDir, DCL.DictionaryConfigurationDirectoryName);
 			if (DCM.ConfigFilesInDir(newDictionaryConfigLoc).Any())
 			{
