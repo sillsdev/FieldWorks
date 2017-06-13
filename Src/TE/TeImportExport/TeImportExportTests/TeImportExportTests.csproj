@@ -142,6 +142,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\OxesIO.dll</HintPath>
     </Reference>
+    <Reference Include="Paratext8Plugin, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Output\Debug\Paratext8Plugin.dll</HintPath>
+    </Reference>
     <Reference Include="ParatextShared, Version=7.5.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\ParatextShared.dll</HintPath>
@@ -240,9 +244,7 @@
     <Compile Include="ExportTests\DummyExportUsfm.cs" />
     <Compile Include="ExportTests\DummyFileWriter.cs" />
     <Compile Include="ExportTests\ExportHelper.cs" />
-    <Compile Include="ExportTests\ExportParatextDlgTests.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="ExportTests\ExportParatextDlgTests.cs" />
     <Compile Include="ExportTests\ExportParatextTests.cs" />
     <Compile Include="ExportTests\ExportRtfTests.cs" />
     <Compile Include="ExportTests\ExportUsfmTests.cs" />
@@ -262,9 +264,7 @@
     <Compile Include="ImportTests\TeAnnotationXmlImportTests.cs" />
     <Compile Include="ImportTests\TeImportBtInterleaved.cs" />
     <Compile Include="ImportTests\TeImportBtNonInterleaved.cs" />
-    <Compile Include="ImportTests\TeImportManagerTests.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="ImportTests\TeImportManagerTests.cs" />
     <Compile Include="ImportTests\TeImportNoUi.cs" />
     <Compile Include="ImportTests\TeImportParatext6Tests.cs" />
     <Compile Include="ImportTests\TeImportTests.cs" />
@@ -272,9 +272,7 @@
     <Compile Include="ImportTests\TeXmlImportTests.cs" />
     <Compile Include="ExportTests\XmlNoteCategoryTests.cs" />
     <Compile Include="SCTextEnumTests.cs" />
-    <Compile Include="SFFileListBuilderTests.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Include="SFFileListBuilderTests.cs" />
     <Compile Include="TeImportExportExtensionsTests.cs" />
   </ItemGroup>
   <ItemGroup>

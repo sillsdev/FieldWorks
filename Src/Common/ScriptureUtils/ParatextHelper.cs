@@ -8,6 +8,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using Microsoft.Win32;
+using Paratext;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Utils;
@@ -109,6 +110,18 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 		string JoinedNameAndFullName { get; }
 
 		/// <summary/>
+		string FileNamePrePart { get; }
+
+		/// <summary/>
+		string FileNameForm { get; }
+
+		/// <summary/>
+		string FileNamePostPart { get; }
+
+		/// <summary/>
+		object CoreScrText { get; }
+
+		/// <summary/>
 		void SetParameterValue(string resourcetext, string s);
 
 		/// <summary/>
@@ -116,6 +129,9 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 
 		/// <summary/>
 		bool IsCheckSumCurrent(int bookCanonicalNum, string checksum);
+
+		/// <summary/>
+		string GetBookCheckSum(int canonicalNum);
 	}
 
 	/// <summary/>
@@ -166,13 +182,37 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 
 		/// <summary/>
 		string EndMarker { get; }
+
+		/// <summary/>
+		TokenType Type { get; }
+
+		/// <summary>To use in places where the type is known in a specific implementation to call methods not exposed through the interface</summary>
+		object CoreToken { get; }
+
+		/// <summary/>
+		string Text { get; }
 	}
 
 	/// <summary/>
 	public interface IVerseRef
 	{
 		/// <summary/>
+		int BookNum { get; set; }
+
+		/// <summary/>
+		int ChapterNum { get; }
+
+		/// <summary/>
 		object CoreVerseRef { get; }
+
+		/// <summary/>
+		int VerseNum { get; }
+
+		/// <summary/>
+		string Segment();
+
+		/// <summary/>
+		IEnumerable<IVerseRef> AllVerses(bool v);
 	}
 
 	/// <summary/>
@@ -191,6 +231,8 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 		string Endmarker { get; set; }
 		/// <summary/>
 		ScrStyleType StyleType { get; set; }
+		/// <summary/>
+		bool IsScriptureBook { get; }
 	}
 
 	#endregion
@@ -653,7 +695,7 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 		/// ------------------------------------------------------------------------------------
 		private static bool IsProjectWritable(string projShortName, bool fPerformRefresh)
 		{
-			if (ScriptureProvider.SLTTexts.Contains(projShortName.ToLowerInvariant()))
+			if (ScriptureProvider.NonWorkingTexts.Contains(projShortName.ToLowerInvariant()))
 				return false;
 
 			if (fPerformRefresh)
@@ -699,5 +741,28 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 		StudyBible,
 		/// <summary/>
 		GlobalConsultantNotes
+	}
+
+	/// <summary/>
+	public enum TokenType
+	{
+		/// <summary/>
+		Book,
+		/// <summary/>
+		Chapter,
+		/// <summary/>
+		Verse,
+		/// <summary/>
+		Text,
+		/// <summary/>
+		Paragraph,
+		/// <summary/>
+		Character,
+		/// <summary/>
+		Note,
+		/// <summary/>
+		End,
+		/// <summary/>
+		Unknown,
 	}
 }

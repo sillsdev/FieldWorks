@@ -306,6 +306,8 @@
 		<DownloadsSilOrgDownloadUrl>http://downloads.sil.org/BuildDlls/FW8.1/</DownloadsSilOrgDownloadUrl>
 		<HermitCrabDownloadUrl>http://build.palaso.org/guestAuth/repository/download/bt410/fw-8.3.tcbuildtag</HermitCrabDownloadUrl>
 		<Icu4cDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/Libraries_Icu4cWin32FieldWorksContinuous/fw-8.2.tcbuildtag</Icu4cDownloadUrl>
+		<SILScriptureDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/Libpalaso_PalasoLinux64masterContinuous/fw-8.3.9.tcbuildtag</SILScriptureDownloadUrl>
+		<SILScriptureDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/Libpalaso_PalasoWin32masterContinuous/fw-8.3.9.tcbuildtag</SILScriptureDownloadUrl>
 		<!-- Windows/.Net and Linux/Mono use different extensions for debug information files. -->
 		<DebugInfo Condition="'$(OS)'=='Unix'">dll.mdb</DebugInfo>
 		<DebugInfo Condition="'$(OS)'=='Windows_NT'">pdb</DebugInfo>
@@ -400,6 +402,10 @@
 		<DownloadFile Address="$(Icu4cDownloadUrl)/icudt.lib" LocalFilename="$(fwrt)/Downloads/icudt.lib" Condition="'$(OS)'=='Windows_NT'"/>
 		<DownloadFile Address="$(Icu4cDownloadUrl)/icuin.lib" LocalFilename="$(fwrt)/Downloads/icuin.lib" Condition="'$(OS)'=='Windows_NT'"/>
 		<DownloadFile Address="$(Icu4cDownloadUrl)/icuuc.lib" LocalFilename="$(fwrt)/Downloads/icuuc.lib" Condition="'$(OS)'=='Windows_NT'"/>
+
+
+		<Message Text="Downloading pinned artifact for SIL.Scripture for PT8 support" />
+		<DownloadFile Address="$(SILScriptureDownloadUrl)/SIL.Scripture.dll" LocalFilename="$(fwrt)/Downloads/SIL.Scripture.dll"/>
 	</Target>
 
 	<!-- item group for downloads, to allow easy copying -->

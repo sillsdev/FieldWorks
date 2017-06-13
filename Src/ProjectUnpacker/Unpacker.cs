@@ -92,6 +92,7 @@ namespace SIL.FieldWorks.Test.ProjectUnpacker
 		}
 
 		private const string kPTSettingsRegKey = @"SOFTWARE\ScrChecks\1.0\Settings_Directory";
+		private const string kPT8SettingsRegKey = @"SOFTWARE\Paratext\8";
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -102,11 +103,14 @@ namespace SIL.FieldWorks.Test.ProjectUnpacker
 		{
 			get
 			{
+				using (RegistryKey pt8key = Registry.LocalMachine.OpenSubKey(kPT8SettingsRegKey, false))
 				using (RegistryKey key = Registry.LocalMachine.OpenSubKey(kPTSettingsRegKey, false))
 				{
-					if (key == null)
+					if (key == null && pt8key == null)
 						Assert.Ignore("This test requires Paratext to be properly installed.");
-					return key.GetValue(null) as string;
+					if(pt8key == null)
+						return key.GetValue(null) as string;
+					return pt8key.GetValue("Settings_Directory") as string;
 				}
 			}
 		}
