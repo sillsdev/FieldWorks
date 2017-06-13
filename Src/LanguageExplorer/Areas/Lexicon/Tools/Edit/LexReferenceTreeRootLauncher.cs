@@ -116,7 +116,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				owningSlice = parent as LexReferenceTreeRootSlice;
 			}
 			if (owningSlice == null)
-				throw new ConfigurationException("LexReferenceTreeRootLauncher must be a child of a LexReferenceTreeRootSlice");
+				throw new FwConfigurationException("LexReferenceTreeRootLauncher must be a child of a LexReferenceTreeRootSlice");
 			return owningSlice.ParentSlice.Object;
 		}
 

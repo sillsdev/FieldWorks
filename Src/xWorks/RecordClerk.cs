@@ -54,7 +54,6 @@ using SIL.ObjectModel;
 using SIL.Reporting;
 using SIL.Utils;
 using SIL.Xml;
-using ConfigurationException = SIL.FieldWorks.Common.FwUtils.ConfigurationException;
 using WaitCursor = SIL.FieldWorks.Common.FwUtils.WaitCursor;
 
 namespace SIL.FieldWorks.XWorks
@@ -2621,7 +2620,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			catch (ApplicationException e)
 			{
-				throw new ConfigurationException("Could not get the necessary parameter information from this command",
+				throw new FwConfigurationException("Could not get the necessary parameter information from this command",
 					command.ConfigurationNode, e);
 			}
 
@@ -3411,7 +3410,7 @@ namespace SIL.FieldWorks.XWorks
 			if (clerkNode == null)
 				clerkNode = FindClerkNode(parameterNode, clerk);
 			if (clerkNode == null)
-				throw new ConfigurationException("Could not find <clerk id=" + clerk + ">.");
+				throw new FwConfigurationException("Could not find <clerk id=" + clerk + ">.");
 			return clerkNode;
 		}
 

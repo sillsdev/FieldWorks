@@ -7,12 +7,12 @@ using System.Windows.Forms;
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
 	/// <summary>
-	/// Summary description for MessageSlice.
+	/// Summary description for LiteralMessageSlice.
 	/// </summary>
-	public class MessageSlice : Slice
+	public class LiteralMessageSlice : Slice
 	{
 		/// <summary> Constructor.</summary>
-		public MessageSlice(string message) : base(new Label())
+		public LiteralMessageSlice(string message) : base(new Label())
 		{
 			this.Control.Text = message;
 			this.Control.BackColor = System.Drawing.SystemColors.ControlLight;

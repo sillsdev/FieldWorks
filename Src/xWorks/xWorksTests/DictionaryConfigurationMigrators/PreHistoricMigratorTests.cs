@@ -23,7 +23,6 @@ using SIL.Utils;
 namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 {
 #if RANDYTODO // Some of this can be salvaged, but not the part where it loads the main xml config files.
-	[SuppressMessage("ReSharper", "InconsistentNaming")]
 	public class PreHistoricMigratorTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
 		private PreHistoricMigrator m_migrator;

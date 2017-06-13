@@ -289,11 +289,7 @@ namespace SIL.FieldWorks.Common.FwUtils.Impls
 
 			propertyValue = default(T);
 			var prop = GetProperty(GetPropertyKeyFromSettingsGroup(name, settingsGroup));
-			if (prop == null)
-			{
-				return false;
-			}
-			var basicValue = prop.value;
+			var basicValue = prop?.value;
 			if (basicValue == null)
 			{
 				return false;
@@ -303,7 +299,7 @@ namespace SIL.FieldWorks.Common.FwUtils.Impls
 				propertyValue = (T)basicValue;
 				return true;
 			}
-			throw new ArgumentException("Mismatched data type.");
+			throw new ArgumentException($"Mismatched data type. Looking for '{typeof(T)}', but was {basicValue.GetType()}.");
 		}
 
 		private Property GetProperty(string key)

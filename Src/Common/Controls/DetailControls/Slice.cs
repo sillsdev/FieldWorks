@@ -2270,7 +2270,7 @@ only be sent to the subscribers one at a time and considered done as soon as som
 			bool result = false;
 			if (obj == null)
 			{
-				throw new ConfigurationException("Slice:GetObjectHvoForMenusToOperateOn is either messed up or should not have been called, because it could not find the object to be deleted.", m_configurationNode);
+				throw new FwConfigurationException("Slice:GetObjectHvoForMenusToOperateOn is either messed up or should not have been called, because it could not find the object to be deleted.", m_configurationNode);
 			}
 				DataTree dt = ContainingDataTree;
 				try
@@ -2361,7 +2361,7 @@ only be sent to the subscribers one at a time and considered done as soon as som
 			{
 				var nodes = m_configurationNode.Elements("atomic").ToList();
 				if (nodes.Count != 1)
-					throw new ConfigurationException("Expected to find a single <atomic> element in here", m_configurationNode);
+					throw new FwConfigurationException("Expected to find a single <atomic> element in here", m_configurationNode);
 				string field = XmlUtils.GetManditoryAttributeValue(nodes[0], "field");
 				int flid = GetFlid(field);
 				Debug.Assert(flid != 0);
@@ -2517,7 +2517,7 @@ only be sent to the subscribers one at a time and considered done as soon as som
 
 			var obj = GetObjectForMenusToOperateOn();
 			if (obj == null)
-				throw new ConfigurationException("Slice:GetObjectHvoForMenusToOperateOn is either messed up or should not have been called, because it could not find the object to be merged.", m_configurationNode);
+				throw new FwConfigurationException("Slice:GetObjectHvoForMenusToOperateOn is either messed up or should not have been called, because it could not find the object to be merged.", m_configurationNode);
 
 			using (CmObjectUi ui = CmObjectUi.MakeUi(m_cache, obj.Hvo))
 			{
@@ -2571,7 +2571,7 @@ only be sent to the subscribers one at a time and considered done as soon as som
 
 			var obj = GetObjectForMenusToOperateOn();
 			if (obj == null)
-				throw new ConfigurationException("Slice:GetObjectHvoForMenusToOperateOn is either messed up or should not have been called, because it could not find the object to be moved to a copy of its owner.", m_configurationNode);
+				throw new FwConfigurationException("Slice:GetObjectHvoForMenusToOperateOn is either messed up or should not have been called, because it could not find the object to be moved to a copy of its owner.", m_configurationNode);
 
 			using (CmObjectUi ui = CmObjectUi.MakeUi(m_cache, obj.Hvo))
 			{
@@ -2590,11 +2590,11 @@ only be sent to the subscribers one at a time and considered done as soon as som
 
 			var origObj = GetObjectForMenusToOperateOn();
 			if (origObj == null)
-				throw new ConfigurationException("OriginalSlice:GetObjectHvoForMenusToOperateOn is either messed up or should not have been called, because it could not find the object to be moved to a copy of its owner.", m_configurationNode);
+				throw new FwConfigurationException("OriginalSlice:GetObjectHvoForMenusToOperateOn is either messed up or should not have been called, because it could not find the object to be moved to a copy of its owner.", m_configurationNode);
 
 			var newObj = newSlice.GetObjectForMenusToOperateOn();
 			if (newObj == null)
-				throw new ConfigurationException("NewSlice:GetObjectHvoForMenusToOperateOn is either messed up or should not have been called, because it could not find the object to be moved to a copy of its owner.", m_configurationNode);
+				throw new FwConfigurationException("NewSlice:GetObjectHvoForMenusToOperateOn is either messed up or should not have been called, because it could not find the object to be moved to a copy of its owner.", m_configurationNode);
 
 			if (origObj is ICloneableCmObject)
 			{

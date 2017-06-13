@@ -16,7 +16,6 @@ using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.DomainServices.SemanticDomainSearch;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.Resources;
-using SIL.Utils;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.Common.Widgets;
@@ -511,7 +510,7 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			string[] parts = descriptor.Trim().Split('.');
 			if (parts.Length != 2)
-				throw new ConfigurationException("atomicFlatListItem field must be class.field");
+				throw new FwConfigurationException("atomicFlatListItem field must be class.field");
 			try
 			{
 				int flid = cache.DomainDataByFlid.MetaDataCache.GetFieldId(parts[0], parts[1], true);
@@ -519,7 +518,7 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 			catch (Exception e)
 			{
-				throw new ConfigurationException("Don't recognize atomicFlatListItem field " + descriptor, e);
+				throw new FwConfigurationException("Don't recognize atomicFlatListItem field " + descriptor, e);
 			}
 		}
 
@@ -551,7 +550,7 @@ namespace SIL.FieldWorks.Common.Controls
 			if (parts.Length > 1)
 			{
 				if (parts.Length != 2)
-					throw new ConfigurationException("List id must not have more than two parts " + listpath);
+					throw new FwConfigurationException("List id must not have more than two parts " + listpath);
 				owningClass = parts[0];
 				property = parts[1];
 			}
@@ -635,16 +634,16 @@ namespace SIL.FieldWorks.Common.Controls
 					catch
 					{
 					}
-					throw new ConfigurationException(String.Format("List {0}.{1} currently not supported.", owningClass, property));
+					throw new FwConfigurationException(String.Format("List {0}.{1} currently not supported.", owningClass, property));
 				default:
-					throw new ConfigurationException(String.Format("List {0}.{1} currently not supported.", owningClass, property));
+					throw new FwConfigurationException(String.Format("List {0}.{1} currently not supported.", owningClass, property));
 			}
 			PropertyInfo pi = owner.GetType().GetProperty(key + "OA");
 			if (pi == null)
-				throw new ConfigurationException(String.Format("List {0}.{1} not in conceptual model.", owningClass, property));
+				throw new FwConfigurationException(String.Format("List {0}.{1} not in conceptual model.", owningClass, property));
 			object result = pi.GetValue(owner, null);
 			if (result != null && !(result is ICmPossibilityList))
-				throw new ConfigurationException(
+				throw new FwConfigurationException(
 					String.Format("Specified property ({0}.{1}) does not return a possibility list, but a {2}.",
 						owningClass, property, result.GetType().ToString()));
 			return (ICmPossibilityList)result;
@@ -4298,7 +4297,7 @@ namespace SIL.FieldWorks.Common.Controls
 				var cmo = cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo);
 				var mi = cmo.GetType().GetMethod(commitChanges, new[] {typeof(int)});
 				if (mi == null)
-					throw new ConfigurationException("Method " +commitChanges +
+					throw new FwConfigurationException("Method " +commitChanges +
 						" not found on class " + cmo.GetType().Name);
 				mi.Invoke(cmo, new object[] {ws});
 			}

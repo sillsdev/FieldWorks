@@ -60,7 +60,7 @@ namespace LanguageExplorer.Impls
 	///		2. exportToolStripMenuItem : the active tool can enable this and add an event handler, if needed.
 #endif
 	/// </remarks>
-	internal sealed partial class FwMainWnd : Form, IFwMainWnd
+	internal sealed partial class FwMainWnd : Form, IFwMainWnd, IRecordListOwner
 	{
 		// Used to count the number of times we've been asked to suspend Idle processing.
 		private int _countSuspendIdleProcessing = 0;
@@ -1003,6 +1003,16 @@ namespace LanguageExplorer.Impls
 		/// Placement in the IPropertyTableProvider interface lets FwApp call PropertyTable.DoStuff.
 		/// </summary>
 		public IPropertyTable PropertyTable { get; private set; }
+
+		#endregion
+
+		#region Implementation of IRecordListOwner
+
+		/// <summary>Find the IRecordListUpdater object with the given name.</summary>
+		public IRecordListUpdater FindRecordListUpdater(string name)
+		{
+			return PropertyTable.GetValue<IRecordListUpdater>(name, null);
+		}
 
 		#endregion
 

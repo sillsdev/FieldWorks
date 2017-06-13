@@ -1,6 +1,6 @@
 <!-- Please increment BrowseViewer.kBrowseViewVersion when you change these specs,
  so that XmlBrowseViewBaseVc can invalidate obsoleted columns that have been saved in each current control's ColumnList -->
-		4. A part to handle unknown field names by directing them to the owner class will need to be added in the 'bin' element for the class we are now handling
+<columns generate="childPartsForParentLayouts">
 	<!-- These columns typically appear installed in entries browse type tools in this order. -->
 	<column layout="EntryHeadwordForEntry" label="Headword" ws="$ws=vernacular" width="72000" sortmethod="FullSortKey" cansortbylength="true" visibility="always"/>
 	<column layout="LexemeFormForEntry" label="Lexeme Form" common="true" width="72000" ws="$ws=vernacular" sortmethod="MorphSortKey" cansortbylength="true" visibility="always"

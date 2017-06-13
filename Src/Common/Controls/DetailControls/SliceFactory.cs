@@ -1,13 +1,7 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: SliceFactory.cs
-// Responsibility: WordWorks
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
+
 using System;
 using System.IO;
 using System.Xml.Linq;
@@ -15,7 +9,6 @@ using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FdoUi;
-using SIL.Utils;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.CoreImpl.Cellar;
@@ -214,7 +207,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					string sTranslate = XmlUtils.GetOptionalAttributeValue(node, "translate", "");
 					if (sTranslate.Trim().ToLower() != "do not translate")
 						message = StringTable.Table.LocalizeLiteralValue(message);
-					slice = new MessageSlice(message);
+					slice = new LiteralMessageSlice(message);
 					break;
 				}
 				case "picture":
@@ -230,7 +223,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					}
 					catch (Exception error)
 					{
-						slice = new MessageSlice(String.Format(DetailControlsStrings.ksImageSliceFailed,
+						slice = new LiteralMessageSlice(String.Format(DetailControlsStrings.ksImageSliceFailed,
 							error.Message));
 					}
 					break;
@@ -378,7 +371,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					if(File.Exists(Path.Combine(fwCodeDir, editorBitmapRelativePath)))
 						slice = new ImageSlice(fwCodeDir, editorBitmapRelativePath);
 					else
-						slice = new MessageSlice(String.Format(DetailControlsStrings.ksBadEditorType, editor));
+						slice = new LiteralMessageSlice(String.Format(DetailControlsStrings.ksBadEditorType, editor));
 					break;
 				}
 			}

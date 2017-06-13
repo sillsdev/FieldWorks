@@ -21,64 +21,64 @@ namespace SIL.FieldWorks.Common.FwUtils
 	/// Use this exception when it looks like the configuration XML itself has a problem.
 	/// Thus, end-user should never see these exceptions.
 	/// </summary>
-	public class ConfigurationException : ApplicationException
+	public class FwConfigurationException : ApplicationException
 	{
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="ConfigurationException"/> class.
+		/// Initializes a new instance of the <see cref="FwConfigurationException"/> class.
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
-		public ConfigurationException(string message, XmlNode node, Exception exInner)
+		public FwConfigurationException(string message, XmlNode node, Exception exInner)
 			: base(message + Environment.NewLine + node.OuterXml, exInner)
 		{
 		}
 
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="ConfigurationException"/> class.
+		/// Initializes a new instance of the <see cref="FwConfigurationException"/> class.
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
-		public ConfigurationException(string message, XElement node, Exception exInner)
+		public FwConfigurationException(string message, XElement node, Exception exInner)
 			: base(message + Environment.NewLine + node, exInner)
 		{
 		}
 
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="ConfigurationException"/> class.
+		/// Initializes a new instance of the <see cref="FwConfigurationException"/> class.
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
-		public ConfigurationException(string message, XmlNode node)
+		public FwConfigurationException(string message, XmlNode node)
 			: base(message + Environment.NewLine + node.OuterXml)
 		{
 		}
 
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="ConfigurationException"/> class.
+		/// Initializes a new instance of the <see cref="FwConfigurationException"/> class.
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
-		public ConfigurationException(string message, XElement node)
+		public FwConfigurationException(string message, XElement node)
 			: base(message + Environment.NewLine + node)
 		{
 		}
 
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="ConfigurationException"/> class.
+		/// Initializes a new instance of the <see cref="FwConfigurationException"/> class.
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
-		public ConfigurationException(string message, Exception exInner)
+		public FwConfigurationException(string message, Exception exInner)
 			: base(message, exInner)
 		{
 		}
 
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="ConfigurationException"/> class.
+		/// Initializes a new instance of the <see cref="FwConfigurationException"/> class.
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
-		public ConfigurationException(string message)
+		public FwConfigurationException(string message)
 			: base(message)
 		{
 		}

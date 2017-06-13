@@ -1337,7 +1337,7 @@ namespace SIL.FieldWorks.Common.Controls
 							if (m_xhtml.TryGetNodeFromCssClass(tryCssClass, out oldNode))
 							{
 								// another level of duplicate!
-								throw new ConfigurationException("Two distinct XML nodes are using the same cssClass (" + cssClass
+								throw new FwConfigurationException("Two distinct XML nodes are using the same cssClass (" + cssClass
 									+ ") and writing system (" + wsNew + ") in the same export:"
 									+ Environment.NewLine + oldNode + Environment.NewLine + frag);
 							}
@@ -1345,7 +1345,7 @@ namespace SIL.FieldWorks.Common.Controls
 						}
 						else
 						{
-							throw new ConfigurationException("Two distinct XML nodes are using the same cssClass (" + cssClass
+							throw new FwConfigurationException("Two distinct XML nodes are using the same cssClass (" + cssClass
 								+ ") in the same export with the same (or no) writing system:"
 								+ Environment.NewLine + oldNode + Environment.NewLine + frag);
 						}

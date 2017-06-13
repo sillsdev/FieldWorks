@@ -19,7 +19,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 	/// <summary>
 	/// This slice supports showing the Chorus notes messages for a particular entry.
 	/// </summary>
-	internal sealed class MessageSlice : Slice
+	internal sealed class ChorusMessageSlice : Slice
 	{
 		private ChorusSystem m_chorusSystem;
 		NotesBarView m_notesBar;

@@ -1633,7 +1633,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				info = type.GetProperty(realprop, BindingFlags.Instance | BindingFlags.Public | BindingFlags.FlattenHierarchy);
 			}
 			if (info == null)
-				throw new ConfigurationException("There is no public property named '" + property + "' in " + type + ". Remember, properties often end in a two-character suffix such as OA,OS,RA, or RS.");
+				throw new FwConfigurationException("There is no public property named '" + property + "' in " + type + ". Remember, properties often end in a two-character suffix such as OA,OS,RA, or RS.");
 
 			object result;
 			try

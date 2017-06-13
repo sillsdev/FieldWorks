@@ -361,7 +361,7 @@ namespace SIL.FieldWorks.Common.Controls
 					{
 						var parts = option.Split(':');
 						if (parts.Length != 2)
-							throw new ConfigurationException("altSourceField must contain Field:SourceField;Field:SourceField...");
+							throw new FwConfigurationException("altSourceField must contain Field:SourceField;Field:SourceField...");
 						if (parts[0].Trim() == targetFieldName)
 						{
 							flidName = parts[1].Trim();

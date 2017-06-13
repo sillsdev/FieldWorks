@@ -3,8 +3,7 @@
 <PartInventory>
 	<bin class="LexEntry">
 		<part id="LexEntry-Detail-ChangeHandler" type="detail">
-			<RecordChangeHandler assemblyPath="LexEdDll.dll" listName="RecordClerk-entries"
-				class="SIL.FieldWorks.XWorks.LexEd.LexEntryChangeHandler"/>
+			<RecordChangeHandler assemblyPath="LanguageExplorer.dll" listName="RecordClerk-entries" class="LanguageExplorer.Areas.Lexicon.LexEntryChangeHandler"/>
 		</part>
 		<part id="LexEntry-Detail-LexemeForm" type="detail">
 			<obj field="LexemeForm" layout="AsLexemeFormBasic" menu="mnuDataTree-Help" ghost="Form" ghostWs="vernacular"
@@ -32,9 +31,11 @@
 			<slice field="Restrictions" label="Restrictions" editor="multistring" ws="all analysis"
 				   menu="mnuDataTree-Help" />
 		</part>
+<!-- RANDYTODO: Leave out for now, since the version of Chorus being used insists on Palaso 3, not 4.
 		<part id="LexEntry-Detail-Messages" type="detail">
-			<slice field="Self" label="Messages" editor="Custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.Tools.Edit.MessageSlice" menu="mnuDataTree-Help" helpTopicID="khtpField-LexEntry-Messages"  />
+			<slice field="Self" label="Messages" editor="Custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.Tools.Edit.ChorusMessageSlice" menu="mnuDataTree-Help" helpTopicID="khtpField-LexEntry-Messages"  />
 		</part>
+-->
 	<part id ="LexEntry-Detail-EntryRefsGhostComponents" type="detail">
 	  <if field="ComplexFormEntryRefs" lengthatmost="0">
 		<slice field="EntryRefs" label="Components" editor="Custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.Tools.Edit.GhostLexRefSlice"

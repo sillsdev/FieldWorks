@@ -144,9 +144,9 @@ namespace SIL.FieldWorks.XWorks
 			IFwMetaDataCache mdc = obj.Cache.DomainDataByFlid.MetaDataCache;
 			int clid = 0;
 			try { clid = mdc.GetClassId(className); }
-			catch { throw new ConfigurationException("Unknown class for insert command: " + className); }
+			catch { throw new FwConfigurationException("Unknown class for insert command: " + className); }
 			try { flid = mdc.GetFieldId2(clid, field, true); }
-			catch { throw new ConfigurationException("Unknown field: " + className + "." + field); }
+			catch { throw new FwConfigurationException("Unknown field: " + className + "." + field); }
 			int clidObj = obj.ClassID;
 			return (clidObj == clid); // enhance JohnT: we could allow clidObj to be a subclass of clid.
 #else // TODO: Fix this.

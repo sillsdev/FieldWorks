@@ -44,7 +44,6 @@ using SIL.Utils;
 using SIL.Windows.Forms.HtmlBrowser;
 using SIL.Windows.Forms.Keyboarding;
 using SIL.WritingSystems;
-using ConfigurationException = SIL.FieldWorks.Common.FwUtils.ConfigurationException;
 using FileUtils = SIL.Utils.FileUtils;
 
 #if __MonoCS__
@@ -1069,7 +1068,7 @@ namespace SIL.FieldWorks
 				// in the <appSettings> section of the .config file (see MSDN for details).
 				if (ShowUI)
 				{
-					bool fIsLethal = !(exception is ConfigurationException ||
+					bool fIsLethal = !(exception is FwConfigurationException ||
 						exception is ContinuableErrorException ||
 						exception.InnerException is ContinuableErrorException);
 					if (SafelyReportException(exception, parent, fIsLethal))

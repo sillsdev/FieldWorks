@@ -107,7 +107,7 @@ namespace SIL.FieldWorks.Common.Controls
 						result = new LayoutFinder(cache, layoutName, colSpec, app);
 						break;
 					default:
-						throw new ConfigurationException("unexpected sort type: " + sortType, colSpec);
+						throw new FwConfigurationException("unexpected sort type: " + sortType, colSpec);
 				}
 			}
 			else

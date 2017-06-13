@@ -5,7 +5,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Reflection;
 using System.Text;
@@ -25,9 +24,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary>
 		/// Dynamically find an assembly and create an object of the name to class.
 		/// </summary>
-		/// <param name="parentConfigNode">A parent node that must have one child nade named 'dynamicloaderinfo', which contains the two required attributes.</param>
+		/// <param name="parentConfigNode">A parent node that must have one child node named 'dynamicloaderinfo', which contains the two required attributes.</param>
 		/// <returns></returns>
-		static public Object CreateObjectUsingLoaderNode(XElement parentConfigNode)
+		public static object CreateObjectUsingLoaderNode(XElement parentConfigNode)
 		{
 			var dynLoaderNode = parentConfigNode.Element("dynamicloaderinfo");
 			if (dynLoaderNode == null)
@@ -38,23 +37,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		// Return the class of object that will be created if CreateObjectUsingLoaderNode is called with this argument.
 		// Return null if dynamic loader node not found or if it doesn't specify a valid class.
-		static public Type TypeForLoaderNode(XmlNode parentConfigNode)
-		{
-			XmlNode configuration = parentConfigNode.SelectSingleNode("dynamicloaderinfo");
-			if (configuration == null)
-				return null;
-			string assemblyPath = XmlUtils.GetManditoryAttributeValue(configuration, "assemblyPath");
-			if (assemblyPath == "null")
-				return null;
-			string className = XmlUtils.GetManditoryAttributeValue(configuration, "class");
-			Assembly assembly;
-			GetAssembly(assemblyPath, out assembly);
-			return assembly.GetType(className.Trim());
-		}
-
-		// Return the class of object that will be created if CreateObjectUsingLoaderNode is called with this argument.
-		// Return null if dynamic loader node not found or if it doesn't specify a valid class.
-		static public Type TypeForLoaderNode(XElement parentConfigNode)
+		public static Type TypeForLoaderNode(XElement parentConfigNode)
 		{
 			var configuration = parentConfigNode.Element("dynamicloaderinfo");
 			if (configuration == null)
@@ -78,13 +61,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// input configuration) to find a node that is passed as an argument to the constructor.
 		/// </summary>
 		/// <returns></returns>
-		static public Object CreateObject(XmlNode configuration)
+		public static object CreateObject(XmlNode configuration)
 		{
 			return CreateObject(configuration, CreateArgs(configuration));
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private static object[] CreateArgs(XmlNode configuration)
 		{
 			List<object> argList = new List<object>();
@@ -122,7 +103,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// The constructor arguments are supplied explicitly.
 		/// </summary>
 		/// <returns></returns>
-		static public Object CreateObject(XElement configuration, params object[] args)
+		public static object CreateObject(XElement configuration, params object[] args)
 		{
 			var assemblyPath = XmlUtils.GetManditoryAttributeValue(configuration, "assemblyPath");
 			// JohnT: see AddAssemblyPathInfo. We use this when the object we're trying to persist
@@ -139,7 +120,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// The constructor arguments are supplied explicitly.
 		/// </summary>
 		/// <returns></returns>
-		static public Object CreateObject(XmlNode configuration, params object[] args)
+		public static object CreateObject(XmlNode configuration, params object[] args)
 		{
 			string  assemblyPath = XmlUtils.GetManditoryAttributeValue(configuration, "assemblyPath");
 			// JohnT: see AddAssemblyPathInfo. We use this when the object we're trying to persist
@@ -152,12 +133,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary>
 		/// Dynamically find an assembly and create an object of the name to class.
 		/// </summary>
-		static public Object CreateObject(string assemblyPath, string className)
+		public static object CreateObject(string assemblyPath, string className)
 		{
 			return CreateObject(assemblyPath, className, null);
 		}
 
-		static string CouldNotCreateObjectMsg(string assemblyPath, string className)
+		private static string CouldNotCreateObjectMsg(string assemblyPath, string className)
 		{
 			return "Found the DLL "
 				+ assemblyPath
@@ -193,13 +174,13 @@ namespace SIL.FieldWorks.Common.FwUtils
 					bldr.Append("Inner exception message = " + inner.Message);
 					inner = inner.InnerException;
 				}
-				throw new ConfigurationException(bldr.ToString(), err);
+				throw new FwConfigurationException(bldr.ToString(), err);
 			}
 			if (thing == null)
 			{
 				// Bizarrely, CreateInstance is not specified to throw an exception if it can't
 				// find the specified class. But we want one.
-				throw new ConfigurationException(CouldNotCreateObjectMsg(assemblyPath, className));
+				throw new FwConfigurationException(CouldNotCreateObjectMsg(assemblyPath, className));
 			}
 			return thing;
 
@@ -217,7 +198,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <param name="className1"></param>
 		/// <param name="args">args to the constructor</param>
 		/// <returns></returns>
-		static public object CreateObject(string assemblyPath1, string className1, params object[] args)
+		public static object CreateObject(string assemblyPath1, string className1, params object[] args)
 		{
 			return CreateObject(assemblyPath1, className1, BindingFlags.Instance | BindingFlags.Public, args);
 		}
@@ -275,7 +256,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			// Whitespace will cause failures.
 			string assemblyPath = assemblyPath1.Trim();
-			//allow us to say "assemblyPath="%fwroot%\Src\XCo....  , at least during testing
+			//allow us to say "assemblyPath="%fwroot%\Src\Foo....  , at least during testing
 			// RR: It may allow it, but it crashes, when it can't find the dll.
 			//assemblyPath = System.Environment.ExpandEnvironmentVariables(assemblyPath);
 			string baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
@@ -296,7 +277,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 				}
 				catch (Exception error)
 				{
-					throw new RuntimeConfigurationException("XCore Could not find the DLL at :" + assemblyPath, error);
+					throw new RuntimeConfigurationException("Could not find the DLL at :" + assemblyPath, error);
 				}
 			}
 			return assemblyPath;
@@ -308,7 +289,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		/// <param name="node"></param>
 		/// <returns></returns>
-		static public object RestoreObject(XmlNode node)
+		public static object RestoreObject(XmlNode node)
 		{
 			object obj = CreateObject(node);
 			IPersistAsXml persistObj = obj as IPersistAsXml;
@@ -323,7 +304,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		/// <param name="node"></param>
 		/// <returns></returns>
-		static public object RestoreObject(XElement node)
+		public static object RestoreObject(XElement node)
 		{
 			object obj = CreateObject(node);
 			IPersistAsXml persistObj = obj as IPersistAsXml;
@@ -337,27 +318,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		/// <param name="source"></param>
 		/// <returns></returns>
-		static public object RestoreObject(string source)
+		public static object RestoreObject(string source)
 		{
-			XmlDocument doc = new XmlDocument();
-			doc.LoadXml(source);
-			return RestoreObject(doc.DocumentElement);
-		}
-
-
-		/// <summary>
-		/// Return the object obtained by calling RestoreObject on the element
-		/// selected from node by xpath.
-		/// </summary>
-		/// <param name="node"></param>
-		/// <param name="xpath"></param>
-		/// <returns></returns>
-		static public object RestoreFromChild(XmlNode node, string xpath)
-		{
-			XmlNode child = node.SelectSingleNode(xpath);
-			if (child == null)
-				throw new Exception("expected child " + xpath);
-			return RestoreObject(child);
+			return RestoreObject(XDocument.Parse(source).Root);
 		}
 
 		/// <summary>
@@ -367,7 +330,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <param name="node"></param>
 		/// <param name="xpath"></param>
 		/// <returns></returns>
-		static public object RestoreFromChild(XElement node, string xpath)
+		public static object RestoreFromChild(XElement node, string xpath)
 		{
 			var child = node.XPathSelectElement(xpath);
 			if (child == null)
@@ -382,7 +345,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// it to the PersistAsXml method of the object. The root element name is supplied
 		/// as the elementName argument.
 		/// </summary>
-		static public string PersistObject(object src, string elementName)
+		public static string PersistObject(object src, string elementName)
 		{
 			if (src == null)
 				return null;
@@ -395,18 +358,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			return root.ToString();
 		}
 
-		static public XmlNode PersistObject(object src, XmlNode parent, string elementName)
-		{
-			IPersistAsXml obj = src as IPersistAsXml;
-			XmlNode node = parent.OwnerDocument.CreateElement(elementName);
-			parent.AppendChild(node);
-			AddAssemblyClassInfoTo(node, obj);
-			if (obj != null)
-				obj.PersistAsXml(XElement.Parse(node.OuterXml));
-			return node;
-		}
-
-		static public XElement PersistObject(object src, XElement parent, string elementName)
+		public static XElement PersistObject(object src, XElement parent, string elementName)
 		{
 			IPersistAsXml obj = src as IPersistAsXml;
 			var node = new XElement(elementName);
@@ -420,28 +372,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary>
 		/// Add to the specified node assembly and class information for the specified object.
 		/// </summary>
-		static internal void AddAssemblyClassInfoTo(XmlNode node, object obj)
-		{
-			XmlDocument doc = node.OwnerDocument;
-			XmlAttribute xaAssembly = doc.CreateAttribute("assemblyPath");
-			node.Attributes.Append(xaAssembly);
-			if (obj == null)
-			{
-				xaAssembly.Value = "null";
-				return;
-			}
-			xaAssembly.Value = obj.GetType().Assembly.GetName().Name + ".dll";
-			node.Attributes.Append(xaAssembly);
-			XmlAttribute xaClass = doc.CreateAttribute("class");
-			node.Attributes.Append(xaClass);
-			xaClass.Value = obj.GetType().FullName;
-			node.Attributes.Append(xaClass);
-		}
-
-		/// <summary>
-		/// Add to the specified node assembly and class information for the specified object.
-		/// </summary>
-		static internal void AddAssemblyClassInfoTo(XElement node, object obj)
+		internal static void AddAssemblyClassInfoTo(XElement node, object obj)
 		{
 			if (obj == null)
 			{

@@ -225,7 +225,9 @@
 	</Target>
 
 	<ItemGroup>
-		<GeneratedFiles Include="$(fwrt)/Build/FieldWorks.targets"/>
+		<!-- Don't delete FieldWorks.targets - that has to be done separately, otherwise we
+		delete the file we just create previously when we run remakefw -->
+		<!--<GeneratedFiles Include="$(fwrt)/Build/FieldWorks.targets"/>-->
 		<GeneratedFiles Include="$(fwrt)/Build/packages.config"/>
 		<GeneratedFiles Include="$(fwrt)/Src/**/Collection.cpp"/>
 		<GeneratedFiles Include="$(fwrt)/Src/**/asserts.log"/>
@@ -233,7 +235,12 @@
 		<GeneratedFiles Include="$(fwrt)/Src/Common/ViewsInterfaces/Views.cs"/>
 		<GeneratedFiles Include="$(fwrt)/Src/FDO/DomainImpl/GeneratedFactoryImplementations.cs"/>
 		<GeneratedFiles Include="$(fwrt)/Src/FDO/DomainImpl/FDOGenerated.cs"/>
+		<GeneratedFiles Include="$(fwrt)/Lib/debug/unit++.lib"/>
 	</ItemGroup>
+
+	<Target Name="Clean" DependsOnTargets="CleanAll">
+		<ForceDelete Files="$(fwrt)/Build/FieldWorks.targets"/>
+	</Target>
 
 	<Target Name="CleanAll" DependsOnTargets="cleanWindows;cleanLinux">
 		<!-- remove the Obj and Output directories -->

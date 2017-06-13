@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.IO;
 using System.Reflection;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
@@ -179,6 +180,8 @@ namespace SIL.FieldWorks
 		[Test]
 		public void MakeSureIFdoUIImplementationHasNotMoved()
 		{
+			var pathname = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "FdoUi.dll");
+			var fdouiExists = File.Exists(pathname);
 			try
 			{
 				using (var threadHelper = new ThreadHelper())
@@ -189,7 +192,7 @@ namespace SIL.FieldWorks
 			}
 			catch (Exception err)
 			{
-				Assert.Fail("Somebody moved 'SIL.FieldWorks.FdoUi.FwFdoUI', or made it impossible to create via Reflection. Error mesage: {0}", err.Message);
+				Assert.Fail($"Found it '{fdouiExists}'. Path: '{pathname}'. Somebody moved 'SIL.FieldWorks.FdoUi.FwFdoUI', or made it impossible to create via Reflection. Error mesage: {err.Message}: Stack trace: '{err.StackTrace}'");
 			}
 		}
 

@@ -23,7 +23,6 @@ using SIL.FieldWorks.Filters;
 using SIL.ObjectModel;
 using SIL.Reporting;
 using SIL.Utils;
-using ConfigurationException = System.Configuration.ConfigurationException;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -1708,7 +1707,7 @@ namespace SIL.FieldWorks.XWorks
 				{
 					newSortedObjects = HandleInvalidFilterSortField();
 				}
-				catch(ConfigurationException ce)
+				catch(FwConfigurationException ce)
 				{
 					if (ce.InnerException is FDOInvalidFieldException)
 						newSortedObjects = HandleInvalidFilterSortField();
@@ -2329,7 +2328,7 @@ namespace SIL.FieldWorks.XWorks
 					}
 					catch (Exception e)
 					{
-						throw new ConfigurationException("The field '" + name + "' with owner '" +
+						throw new FwConfigurationException("The field '" + name + "' with owner '" +
 							owner + "' has not been implemented in the switch statement " +
 							"in RecordList.GetVectorFromName().", e);
 					}

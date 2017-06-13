@@ -231,7 +231,7 @@ namespace SIL.FieldWorks.Common.FXT
 				////document, which is useful if the document is, for example, an xhtml doc.
 				//m_templateRootNode =document.SelectSingleNode("//template");
 				//if (m_templateRootNode == null)
-				//	throw new ConfigurationException ("Could not find the <template> element.");
+				//	throw new FwConfigurationException ("Could not find the <template> element.");
 				//DumpObject(writer, rootObject);
 
 				Go(writer);
@@ -1302,7 +1302,7 @@ namespace SIL.FieldWorks.Common.FXT
 			if (flid == 0)
 			{
 				string sMsg = string.Format("Invalid {0}", node.Name);
-				throw new ConfigurationException(sMsg, node);
+				throw new FwConfigurationException(sMsg, node);
 			}
 			return flid;
 		}
@@ -2223,7 +2223,7 @@ namespace SIL.FieldWorks.Common.FXT
 			ICmObject currentObject, XmlNode node)
 		{
 			if (m_format != "sf")
-				throw new ConfigurationException("<refObjVector> is supported only for standard format output.");
+				throw new FwConfigurationException("<refObjVector> is supported only for standard format output.");
 
 			string label = XmlUtils.GetOptionalAttributeValue(node, "itemLabel");
 			if (label == null)
@@ -2247,7 +2247,7 @@ namespace SIL.FieldWorks.Common.FXT
 				}
 				else
 				{
-					throw new ConfigurationException("There is no field named '" + field + "' in " +
+					throw new FwConfigurationException("There is no field named '" + field + "' in " +
 						currentObject.GetType().ToString() +
 						". Remember that fields are the actual CELLAR names, so they do not have FDO suffixes like OA or RS.");
 				}
@@ -2337,7 +2337,7 @@ namespace SIL.FieldWorks.Common.FXT
 				}
 				else
 				{
-					throw new ConfigurationException ("There is no field named '" + field + "' in "+currentObject.GetType().ToString()+". Remember that fields are the actual CELLAR names, so they do not have FDO suffixes like OA or RS.");
+					throw new FwConfigurationException("There is no field named '" + field + "' in "+currentObject.GetType().ToString()+". Remember that fields are the actual CELLAR names, so they do not have FDO suffixes like OA or RS.");
 				}
 			}
 			else
@@ -2595,7 +2595,7 @@ namespace SIL.FieldWorks.Common.FXT
 			XmlNode classNode = GetClassTemplateNode(virtClass);
 			if (classNode == null)
 			{
-				throw new ConfigurationException("Unknown virtual class: " + virtClass);
+				throw new FwConfigurationException("Unknown virtual class: " + virtClass);
 			}
 			if (virtClass == "SingleLexReference")
 			{
@@ -2619,7 +2619,7 @@ namespace SIL.FieldWorks.Common.FXT
 			}
 			else
 			{
-				throw new ConfigurationException("Unsupported virtual class: " + virtClass);
+				throw new FwConfigurationException("Unsupported virtual class: " + virtClass);
 			}
 		}
 
@@ -3007,7 +3007,7 @@ namespace SIL.FieldWorks.Common.FXT
 					}
 					catch (Exception e)
 					{
-						throw new ConfigurationException(
+						throw new FwConfigurationException(
 							"Cannot understand this writing system name. Use 'analysis', 'vernacular', or one of the SpecialWritingSystemCodes.", e);
 					}
 			}
@@ -3051,7 +3051,7 @@ namespace SIL.FieldWorks.Common.FXT
 			}
 			if (info == null)
 			{
-				throw new ConfigurationException("There is no public property named '" + property + "' in " + type.ToString() + ". Remember, properties often end in a two-character suffix such as OA,OS,RA, or RS.");
+				throw new FwConfigurationException("There is no public property named '" + property + "' in " + type.ToString() + ". Remember, properties often end in a two-character suffix such as OA,OS,RA, or RS.");
 			}
 			object result = null;
 			try
@@ -3111,7 +3111,7 @@ namespace SIL.FieldWorks.Common.FXT
 			Type type = target.GetType();
 			MethodInfo mi = type.GetMethod(methodName);
 			if (mi == null)
-				throw new ConfigurationException ("There is no public method named '" + methodName + ".");
+				throw new FwConfigurationException("There is no public method named '" + methodName + ".");
 			object result = null;
 			try
 			{
@@ -3225,7 +3225,7 @@ namespace SIL.FieldWorks.Common.FXT
 			{
 				return ((CoreWritingSystemDefinition) propertyObject).Id;
 			}
-			throw new ConfigurationException ("Sorry, XDumper can not yet handle attributes of this class: '"+type.ToString()+"'.");
+			throw new FwConfigurationException("Sorry, XDumper can not yet handle attributes of this class: '"+type.ToString()+"'.");
 		}
 
 		private string ConvertNoneFoundStringToBlank(string str)

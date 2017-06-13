@@ -78,16 +78,12 @@ namespace SIL.FieldWorks.Common.Widgets
 			m_rowsAreMultiLing = rowsAreMultiLing;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
 		/// <param name="disposing">set to <c>true</c> if called from the Dispose() method,
 		/// set to <c>false</c> if called by GC. If this parameter is <c>false</c> we shouldn't
 		/// access any managed objects since these might already have been destroyed.</param>
-		/// ------------------------------------------------------------------------------------
-		//[SuppressMessage("Clouseau", "MissingDisposeCall", Justification = "Debug.WriteLineIf statement disabled because of a bug in .NET DataGridView:"
-		//	+ "DataGridView.AddRange() creates a temporary clone that it doesn't dispose, so we will always get this warning message and we can't do anything about it.")]
 		protected override void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** (but this might not be your fault)");

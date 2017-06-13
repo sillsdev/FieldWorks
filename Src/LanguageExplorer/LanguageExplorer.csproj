@@ -408,6 +408,7 @@
     </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\Parts\LexEntryParts.xml">
       <Link>XML\Parts\LexEntryParts.xml</Link>
+      <SubType>Designer</SubType>
     </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\Parts\LexSenseParts.xml">
       <Link>XML\Parts\LexSenseParts.xml</Link>
@@ -609,7 +610,7 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Areas\Lexicon\Tools\Edit\LexEntryInflTypeConverter.cs" />
-    <Compile Include="Areas\Lexicon\Tools\Edit\MessageSlice.cs">
+    <Compile Include="Areas\Lexicon\Tools\Edit\ChorusMessageSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Areas\Lexicon\Tools\ReversalIndexes\ReversalIndexEntryFormSlice.cs">

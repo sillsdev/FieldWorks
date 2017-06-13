@@ -439,7 +439,7 @@ namespace SIL.FieldWorks.Filters
 			{
 				int cls = cache.DomainDataByFlid.MetaDataCache.GetClassId(name.Trim());
 				if (cls <= 0)
-					throw new ConfigurationException("The class name '" + name + "' is not valid");
+					throw new FwConfigurationException("The class name '" + name + "' is not valid");
 				m_classIds.Add(cls);
 			}
 		}

@@ -543,7 +543,7 @@ namespace SIL.FieldWorks.Common.Controls
 					hvoDepends = FocusHvo;
 					break;
 				default:
-					throw new ConfigurationException("visibility of commandIcon must be 'objectSelected' or 'focused' but was " + condition);
+					throw new FwConfigurationException("visibility of commandIcon must be 'objectSelected' or 'focused' but was " + condition);
 			}
 			// This phony dependency allows us to regenerate a minimal part of the view when the HasFocus property changes,
 			// or when there is a change in the set of selected objects for which icons should be visible.
@@ -1529,7 +1529,7 @@ namespace SIL.FieldWorks.Common.Controls
 										formatFrag = VwBaseVc.kfragGenDateSort;
 										break;
 									default:
-										throw new ConfigurationException("Invalid format attribute value", frag);
+										throw new FwConfigurationException("Invalid format attribute value", frag);
 								}
 							}
 
@@ -1571,7 +1571,7 @@ namespace SIL.FieldWorks.Common.Controls
 								{
 									string errorMsg = "Invalid datetime format attribute (" + format + ") in " + e.Source;
 									formattedDateTime = errorMsg;
-									throw new ConfigurationException(errorMsg, frag, e);
+									throw new FwConfigurationException(errorMsg, frag, e);
 								}
 								int systemWs = m_cache.ServiceLocator.WritingSystemManager.UserWs;
 								ITsString tss = TsStringUtils.MakeString(formattedDateTime, systemWs);
@@ -1830,13 +1830,13 @@ namespace SIL.FieldWorks.Common.Controls
 						break;
 				}
 			}
-			catch (ConfigurationException)
+			catch (FwConfigurationException)
 			{
 				throw;
 			}
 			catch (Exception error)
 			{
-				throw new ConfigurationException(
+				throw new FwConfigurationException(
 					"There was an error processing this fragment. " + error.Message, frag, error);
 			}
 		}
@@ -4100,10 +4100,10 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 			catch (Exception e)
 			{
-				throw new ConfigurationException("There was a problem figuring out the flid for " + hvo, frag, e);
+				throw new FwConfigurationException("There was a problem figuring out the flid for " + hvo, frag, e);
 			}
 			if (flid == 0 && fRequired)
-				throw new ConfigurationException(string.Format("There was a problem figuring out the flid for {0}"
+				throw new FwConfigurationException(string.Format("There was a problem figuring out the flid for {0}"
 					+ "{1}This is often caused by saved settings from before a new version was installed."
 					+ "{1}Try starting the program while holding down the Shift key to clear all saved settings", hvo, Environment.NewLine), frag);
 			return flid;
@@ -4280,7 +4280,7 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 			catch (Exception e)
 			{
-				throw new ConfigurationException("There was a problem figuring out the flid for " + hvo, frag, e);
+				throw new FwConfigurationException("There was a problem figuring out the flid for " + hvo, frag, e);
 			}
 		}
 

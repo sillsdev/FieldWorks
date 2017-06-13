@@ -2878,7 +2878,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					weight = ObjectWeight.field;
 					break;
 				default:
-					throw new ConfigurationException("Invalid 'weight' value, should be heavy, normal, light, or field");
+					throw new FwConfigurationException("Invalid 'weight' value, should be heavy, normal, light, or field");
 			}
 			slice.Weight = weight;
 		}

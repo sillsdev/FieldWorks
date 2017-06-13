@@ -841,7 +841,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			CheckDisposed();
 			if (lr == null)
 			{
-				throw new ConfigurationException("Slice:GetObjectHvoForMenusToOperateOn is either messed up or should not have been called, because it could not find the object to be deleted.", m_configurationNode);
+				throw new FwConfigurationException("Slice:GetObjectHvoForMenusToOperateOn is either messed up or should not have been called, because it could not find the object to be deleted.", m_configurationNode);
 			}
 			else
 			{
@@ -917,7 +917,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			CheckDisposed();
 			if (lr == null)
 			{
-				throw new ConfigurationException("Slice:GetObjectHvoForMenusToOperateOn is either messed up or should not have been called, because it could not find the object to be deleted.", m_configurationNode);
+				throw new FwConfigurationException("Slice:GetObjectHvoForMenusToOperateOn is either messed up or should not have been called, because it could not find the object to be deleted.", m_configurationNode);
 			}
 			else
 			{
@@ -986,7 +986,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			CheckDisposed();
 			if (lr == null)
 			{
-				throw new ConfigurationException("Slice:GetObjectHvoForMenusToOperateOn is either messed up or should not have been called, because it could not find the object to be deleted.", m_configurationNode);
+				throw new FwConfigurationException("Slice:GetObjectHvoForMenusToOperateOn is either messed up or should not have been called, because it could not find the object to be deleted.", m_configurationNode);
 			}
 			else
 			{
