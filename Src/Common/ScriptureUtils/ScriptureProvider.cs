@@ -4,8 +4,16 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
+using System.ComponentModel.Composition.Hosting;
+using System.ComponentModel.Composition.Primitives;
+using System.Diagnostics.CodeAnalysis;
+using System.IO;
+using System.Linq;
+using System.Reflection;
 using Paratext;
 using Paratext.LexicalClient;
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.Common.ScriptureUtils
 {
@@ -14,26 +22,175 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 	/// </summary>
 	public class ScriptureProvider
 	{
-		private enum ProviderVersion
-		{
-			Paratext7,
-			Paratext8
-		}
+		[ImportMany]
+		private IEnumerable<Lazy<IScriptureProvider, IScriptureProviderMetadata>> _potentialScriptureProviders;
 
-		private static ProviderVersion Version;
+		/// <summary>
+		/// Singleton instance of the clas
+		/// </summary>
+		private static ScriptureProvider s_scriptureProvider;
+
+		/// <summary>
+		/// The selected IScriptureProvider to use
+		/// </summary>
+		private static IScriptureProvider _scriptureProvider;
+
+		/// <summary>
+		/// A composition container for the MEF classes, allows use of the MEF exports that we find
+		/// </summary>
+		private static CompositionContainer _container;
 
 		/// <summary>
 		/// Determine if Paratext8 is installed, if it is use it, otherwise fall back to Paratext7
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "When do you dispose a static singleton?")]
 		static ScriptureProvider()
 		{
-			Version = ProviderVersion.Paratext7;
+			s_scriptureProvider = new ScriptureProvider();
+			var catalog = new AggregateCatalog();
+			//Adds all the parts found in the same assembly as the ScriptureProvider class
+			catalog.Catalogs.Add(new AssemblyCatalog(typeof(ScriptureProvider).Assembly));
+			//Adds all the parts found in assemblies ending in Plugin.dll that reside in the FLExExe path
+			var extensionPath = Path.Combine(Path.GetDirectoryName(FwDirectoryFinder.FlexExe));
+			catalog.Catalogs.Add(new DirectoryCatalog(extensionPath, "*Plugin.dll"));
+			//Create the CompositionContainer with the parts in the catalog
+			_container = new CompositionContainer(catalog);
+			_container.SatisfyImportsOnce(s_scriptureProvider);
+
+			// Choose the ScriptureProvider that reports the newest version
+			// If both Paratext 7 and 8 are installed the plugin handling 8 will be used
+			Version maximumSupportedVersion = null;
+			foreach (Lazy<IScriptureProvider, IScriptureProviderMetadata> provider in s_scriptureProvider._potentialScriptureProviders)
+			{
+				if (maximumSupportedVersion == null || provider.Value.MaximumSupportedVersion > maximumSupportedVersion)
+				{
+					_scriptureProvider = provider.Value;
+					maximumSupportedVersion = _scriptureProvider.MaximumSupportedVersion;
+				}
+			}
+			if (_scriptureProvider == null)
+			{
+				throw new ApplicationException("No scripture providers discovered by MEF");
+			}
+		}
+
+		/// <summary>
+		/// Returns the maximum supported version of the active IScriptureProvider
+		/// </summary>
+		public static Version VersionInUse { get { return _scriptureProvider != null ? _scriptureProvider.MaximumSupportedVersion : new Version(); } }
+
+		/// <summary/>
+		public interface IScriptureProviderMetadata
+		{
+			/// <summary/>
+			string Version { get; }
+		}
+
+		/// <summary/>
+		public interface IScriptureProvider
+		{
+			/// <summary/>
+			string SettingsDirectory { get; }
+			/// <summary/>
+			IEnumerable<string> NonEditableTexts { get; }
+			/// <summary/>
+			IEnumerable<string> ScrTextNames { get; }
+			/// <summary/>
+			void Initialize(string paratextSettingsDirectory, bool overrideProjDirs);
+			/// <summary/>
+			void RefreshScrTexts();
+			/// <summary/>
+			IEnumerable<IScrText> ScrTexts();
+			/// <summary/>
+			IVerseRef MakeVerseRef(int bookNum, int i, int i1);
+			/// <summary/>
+			IScrText Get(string project);
+			/// <summary/>
+			IScrText MakeScrText(string paratextProjectId);
+			/// <summary/>
+			IScriptureProviderParserState GetParserState(IScrText ptProjectText, IVerseRef ptCurrBook);
+			/// <summary>
+			/// The version number of the most recently installed Paratext supported by this provider
+			/// </summary>
+			/// <remarks>This should return only an installed version</remarks>
+			Version MaximumSupportedVersion { get; }
+		}
+
+		[Export(typeof(IScriptureProvider))]
+		[ExportMetadata("Version", "7")]
+		private class Paratext7Provider : IScriptureProvider
+		{
+			public string SettingsDirectory { get { return ScrTextCollection.SettingsDirectory; } }
+			public IEnumerable<string> NonEditableTexts { get { return ScrTextCollection.SLTTexts; } }
+			public IEnumerable<string> ScrTextNames { get { return ScrTextCollection.ScrTextNames; } }
+			public void Initialize(string paratextSettingsDirectory, bool overrideProjDirs)
+			{
+				ScrTextCollection.Initialize(paratextSettingsDirectory, overrideProjDirs);
+			}
+
+			public void RefreshScrTexts()
+			{
+				ScrTextCollection.RefreshScrTexts();
+			}
+			public IEnumerable<IScrText> ScrTexts()
+			{
+				return WrapPtCollection(ScrTextCollection.ScrTexts(true, true),
+					new Func<ScrText, IScrText>(ptText => new PT7ScrTextWrapper(ptText)));
+			}
+
+			public IVerseRef MakeVerseRef(int bookNum, int i, int i1)
+			{
+				return new PT7VerseRefWrapper(new VerseRef(bookNum, i, i1));
+			}
+
+			public IScrText Get(string project)
+			{
+				return new PT7ScrTextWrapper(ScrTextCollection.Get(project));
+			}
+
+			public IScrText MakeScrText(string projectName)
+			{
+				return string.IsNullOrEmpty(projectName) ? new PT7ScrTextWrapper(new ScrText()) : new PT7ScrTextWrapper(new ScrText(projectName));
+			}
+
+			public IScriptureProviderParserState GetParserState(IScrText ptProjectText, IVerseRef ptCurrBook)
+			{
+				return new PT7ParserStateWrapper(new ScrParserState((ScrText)ptProjectText.CoreScrText, (VerseRef)ptCurrBook.CoreVerseRef));
+			}
+
+			public Version MaximumSupportedVersion
+			{
+				get { return FwRegistryHelper.Paratext7orLaterInstalled() ? new Version(7, 0) : new Version(); }
+			}
+
+			private class PT7ParserStateWrapper : IScriptureProviderParserState
+			{
+				private ScrParserState pt7ParserState;
+
+				public PT7ParserStateWrapper(ScrParserState scrParserState)
+				{
+					pt7ParserState = scrParserState;
+				}
+
+				public IVerseRef VerseRef { get { return new PT7VerseRefWrapper(pt7ParserState.VerseRef); } }
+
+				public void UpdateState(List<IUsfmToken> ptBookTokens, int ptCurrentToken)
+				{
+					pt7ParserState.UpdateState(new List<UsfmToken>(ptBookTokens.Select(t => (UsfmToken)t.CoreToken)), ptCurrentToken);
+				}
+			}
 		}
 
 		/// <summary/>
 		public static IScrText MakeScrText()
 		{
-			return new PTScrTextWrapper(new ScrText());
+			return MakeScrText(string.Empty);
+		}
+
+		/// <summary/>
+		public static IScrText MakeScrText(string paratextProjectId)
+		{
+			return _scriptureProvider.MakeScrText(paratextProjectId);
 		}
 
 		/// <summary/>
@@ -41,27 +198,14 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 		{
 			get
 			{
-				switch (Version)
-				{
-					case ProviderVersion.Paratext7:
-						return ScrTextCollection.SettingsDirectory;
-				}
-				return null;
+				return _scriptureProvider.SettingsDirectory;
 			}
 		}
 
 		/// <summary/>
-		public static IEnumerable<string> SLTTexts
+		public static IEnumerable<string> NonWorkingTexts
 		{
-			get
-			{
-				switch (Version)
-				{
-					case ProviderVersion.Paratext7:
-						return ScrTextCollection.SLTTexts;
-				}
-				return null;
-			}
+			get { return _scriptureProvider.NonEditableTexts; }
 		}
 
 		/// <summary/>
@@ -69,220 +213,93 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 		{
 			get
 			{
-				switch (Version)
-				{
-					case ProviderVersion.Paratext7:
-						return ScrTextCollection.ScrTextNames;
-				}
-				return null;
+				return _scriptureProvider.ScrTextNames;
 			}
 		}
 
 		/// <summary/>
 		public static void Initialize(string paratextSettingsDirectory, bool b)
 		{
-			switch (Version)
-			{
-				case ProviderVersion.Paratext7:
-					ScrTextCollection.Initialize(paratextSettingsDirectory, b);
-					break;
-			}
+			_scriptureProvider.Initialize(paratextSettingsDirectory, b);
 		}
 
 		/// <summary/>
 		public static void RefreshScrTexts()
 		{
-			switch (Version)
-			{
-				case ProviderVersion.Paratext7:
-					ScrTextCollection.RefreshScrTexts();
-					break;
-			}
+			_scriptureProvider.RefreshScrTexts();
 		}
 
 		/// <summary/>
 		public static IEnumerable<IScrText> ScrTexts()
 		{
-
-			switch (Version)
-			{
-				case ProviderVersion.Paratext7:
-					return WrapPt7Collection(ScrTextCollection.ScrTexts(true, true),
-						new Func<ScrText, IScrText>(ptText => new PTScrTextWrapper(ptText)));
-			}
-			return new IScrText[] { };
+			return _scriptureProvider.ScrTexts();
 		}
 
-		internal static IEnumerable<T> WrapPt7Collection<T, T2>(IEnumerable<T2> pt7Collection, Func<T2, T> wrapFunction)
+		/// <summary>
+		/// Return a collection of paratext objects wrapped in an interface using the provided function to do it
+		/// </summary>
+		/// <param name="ptCollection">The collection of raw paratext objects</param>
+		/// <param name="wrapFunction">The function that takes the paratext object and returns a wrapper using a FLEx interface</param>
+		public static IEnumerable<T> WrapPtCollection<T, T2>(IEnumerable<T2> ptCollection, Func<T2, T> wrapFunction)
 		{
-			var returnCollection = new List<T>();
-			foreach (var pt7obj in pt7Collection)
-			{
-				returnCollection.Add(wrapFunction.Invoke(pt7obj));
-			}
-			return returnCollection;
+			return ptCollection.Select(ptObj => wrapFunction.Invoke(ptObj)).ToList();
 		}
 
 		/// <summary/>
 		public static IScrText Get(string project)
 		{
-			return new PTScrTextWrapper(ScrTextCollection.Get(project));
+			return _scriptureProvider.Get(project);
 		}
 
 		/// <summary/>
 		public static IVerseRef MakeVerseRef(int bookNum, int i, int i1)
 		{
-			return new VerseRefWrapper(new VerseRef(bookNum, i, i1));
+			return _scriptureProvider.MakeVerseRef(bookNum, i, i1);
+		}
+
+		/// <summary/>
+		public static IScriptureProviderParserState GetParserState(IScrText ptProjectText, IVerseRef ptCurrBook)
+		{
+			return _scriptureProvider.GetParserState(ptProjectText, ptCurrBook);
+		}
+
+		/// <summary/>
+		public interface IScriptureProviderParserState
+		{
+			/// <summary/>
+			IVerseRef VerseRef { get; }
+
+			/// <summary/>
+			void UpdateState(List<IUsfmToken> m_ptBookTokens, int m_ptCurrentToken);
 		}
 	}
 
-	internal class VerseRefWrapper : IVerseRef
+	internal class PT7VerseRefWrapper : IVerseRef
 	{
 		private VerseRef pt7VerseRef;
-		public VerseRefWrapper(VerseRef verseRef)
+		public PT7VerseRefWrapper(VerseRef verseRef)
 		{
 			pt7VerseRef = verseRef;
 		}
 
 		public object CoreVerseRef { get { return pt7VerseRef;} }
-	}
 
-	internal class PTScrTextWrapper : IScrText
-	{
-		private ScrText pt7Object;
-		public PTScrTextWrapper(ScrText text)
+		public int BookNum { get { return pt7VerseRef.BookNum; } set { pt7VerseRef.BookNum = value; } }
+
+		public int ChapterNum { get { return pt7VerseRef.ChapterNum; } }
+
+		public int VerseNum { get { return pt7VerseRef.VerseNum; } }
+
+		public string Segment()
 		{
-			pt7Object = text;
+			return pt7VerseRef.Segment();
 		}
 
-		public void Reload()
+		public IEnumerable<IVerseRef> AllVerses(bool v)
 		{
-			pt7Object.Reload();
+			return ScriptureProvider.WrapPtCollection(pt7VerseRef.AllVerses(v),
+				new Func<VerseRef, IVerseRef>(verseRef => new PT7VerseRefWrapper(verseRef)));
 		}
-
-		public IScriptureProviderStyleSheet DefaultStylesheet
-		{
-			get
-			{
-				return new PT7StyleSheetWrapper(pt7Object.DefaultStylesheet);
-			}
-		}
-
-		internal class PT7StyleSheetWrapper : IScriptureProviderStyleSheet
-		{
-			private ScrStylesheet pt7StyleSheet;
-			public PT7StyleSheetWrapper(ScrStylesheet pt7ObjectDefaultStylesheet)
-			{
-				pt7StyleSheet = pt7ObjectDefaultStylesheet;
-			}
-
-			public IEnumerable<ITag> Tags
-			{
-				get { return ScriptureProvider.WrapPt7Collection(pt7StyleSheet.Tags, new Func<ScrTag, ITag>(tag => new PT7TagWrapper(tag))); }
-			}
-		}
-
-		public IScriptureProviderParser Parser
-		{
-			get { return new Pt7ParserWrapper(pt7Object.Parser); }
-		}
-
-		public IScriptureProviderBookSet BooksPresentSet
-		{
-			get
-			{
-				return new PTBookSetWrapper(pt7Object.BooksPresentSet);
-			}
-			set { throw new NotImplementedException(); }
-		}
-
-		internal class PTBookSetWrapper : IScriptureProviderBookSet
-		{
-			private BookSet pt7BookSet;
-			public PTBookSetWrapper(BookSet getValue)
-			{
-				pt7BookSet = getValue;
-			}
-
-			public IEnumerable<int> SelectedBookNumbers { get { return pt7BookSet.SelectedBookNumbers; } }
-		}
-
-		public string Name { get { return pt7Object.Name; } set { pt7Object.Name = value; } }
-
-		public ILexicalProject AssociatedLexicalProject
-		{
-			get { return new PTLexicalProjectWrapper(pt7Object.AssociatedLexicalProject); }
-			set { throw new NotImplementedException(); }
-		}
-
-		public ITranslationInfo TranslationInfo
-		{
-			get { return new PTTranslationInfoWrapper(pt7Object.TranslationInfo); }
-			set { throw new NotImplementedException(); }
-		}
-
-		public bool Editable
-		{
-			get { return pt7Object.Editable; }
-			set { pt7Object.Editable = value; }
-		}
-
-		public bool IsResourceText
-		{
-			get { return pt7Object.IsResourceText; }
-		}
-
-		public string Directory
-		{
-			get { return pt7Object.Directory; }
-			set { pt7Object.Directory = value; }
-		}
-
-		/// <summary>
-		/// For unit tests only. FLEx is not responsible for disposing of IScrText objects received from ParaText
-		/// </summary>
-		internal void DisposePTObject()
-		{
-			if(pt7Object != null)
-				pt7Object.Dispose();
-			pt7Object = null;
-		}
-
-		public void SetParameterValue(string resourcetext, string s)
-		{
-			pt7Object.SetParameterValue(resourcetext, s);
-		}
-
-		public string BooksPresent
-		{
-			get { return pt7Object.BooksPresent; }
-			set
-			{
-				pt7Object.BooksPresent = value;
-			}
-		}
-
-		public bool BookPresent(int bookCanonicalNum)
-		{
-			return pt7Object.BookPresent(bookCanonicalNum);
-		}
-
-		public bool IsCheckSumCurrent(int bookCanonicalNum, string checkSum)
-		{
-			return pt7Object.IsCheckSumCurrent(bookCanonicalNum, checkSum);
-		}
-
-		public IScrVerse Versification
-		{
-			get { return new Pt7VerseWrapper(pt7Object.Versification); }
-		}
-
-		public override string ToString()
-		{
-			return Name;
-		}
-
-		public string JoinedNameAndFullName { get { return pt7Object.JoinedNameAndFullName; } }
 	}
 
 	internal class Pt7VerseWrapper : IScrVerse
@@ -324,7 +341,7 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 
 		public IEnumerable<IUsfmToken> GetUsfmTokens(IVerseRef verseRef, bool b, bool b1)
 		{
-			return ScriptureProvider.WrapPt7Collection(pt7Parser.GetUsfmTokens((VerseRef)verseRef.CoreVerseRef, b, b1),
+			return ScriptureProvider.WrapPtCollection(pt7Parser.GetUsfmTokens((VerseRef)verseRef.CoreVerseRef, b, b1),
 				new Func<UsfmToken, IUsfmToken>(token => new PT7TokenWrapper(token)));
 		}
 	}
@@ -337,9 +354,15 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 			pt7Token = token;
 		}
 
+		public object CoreToken { get { return pt7Token; } }
+
 		public string Marker { get {return pt7Token.Marker; } }
 
 		public string EndMarker { get { return pt7Token.EndMarker; } }
+
+		public TokenType Type { get { return (TokenType)Enum.Parse(typeof(TokenType), pt7Token.Type.ToString()); } }
+
+		public string Text {  get { return pt7Token.Text; } }
 	}
 
 	internal class PT7TagWrapper : ITag
@@ -358,13 +381,21 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 			get { return (ScrStyleType)Enum.Parse(typeof(ScrStyleType), pt7Tag.StyleType.ToString()); }
 			set { pt7Tag.StyleType = (Paratext.ScrStyleType)Enum.Parse(typeof(Paratext.ScrStyleType), pt7Tag.StyleType.ToString()); }
 		}
+
+		public bool IsScriptureBook
+		{
+			get
+			{
+				return (pt7Tag.TextProperties & TextProperties.scBook) != 0;
+			}
+		}
 	}
 
-	internal class PTLexicalProjectWrapper : ILexicalProject
+	internal class PT7LexicalProjectWrapper : ILexicalProject
 	{
 		private AssociatedLexicalProject pt7Object;
 
-		public PTLexicalProjectWrapper(AssociatedLexicalProject project)
+		public PT7LexicalProjectWrapper(AssociatedLexicalProject project)
 		{
 			pt7Object = project;
 		}
@@ -386,11 +417,11 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 	}
 
 
-	internal class PTTranslationInfoWrapper : ITranslationInfo
+	internal class PT7TranslationInfoWrapper : ITranslationInfo
 	{
 		private TranslationInformation pt7Object;
 
-		public PTTranslationInfoWrapper(TranslationInformation translationInfo)
+		public PT7TranslationInfoWrapper(TranslationInformation translationInfo)
 		{
 			pt7Object = translationInfo;
 		}

@@ -12,7 +12,6 @@ using System.Linq;
 using Microsoft.Win32;
 using System.Windows.Forms;
 using System.Diagnostics;
-using Paratext;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
@@ -356,7 +355,7 @@ namespace SIL.FieldWorks.TE
 			// Get the output file or folder specification.
 			try
 			{
-				m_paratextProjFolder = ScrTextCollection.SettingsDirectory;
+				m_paratextProjFolder = ScriptureProvider.SettingsDirectory;
 			}
 			catch
 			{
@@ -568,31 +567,29 @@ namespace SIL.FieldWorks.TE
 			{
 				try
 				{
-					using (ScrText paraTextSO = new ScrText(ShortName))
-					{
-						string folder = paraTextSO.Directory;
-						m_fAppendShortNameToFolder = (folder.EndsWith(Path.DirectorySeparatorChar + ShortName));
-						BaseOutputFolder = folder;
-						m_fUserModifiedFolder = false;
-						CalculateDisplayOutputFolder();
+					var paraTextSO = ScriptureProvider.MakeScrText(ShortName);
+					string folder = paraTextSO.Directory;
+					m_fAppendShortNameToFolder = (folder.EndsWith(Path.DirectorySeparatorChar + ShortName));
+					BaseOutputFolder = folder;
+					m_fUserModifiedFolder = false;
+					CalculateDisplayOutputFolder();
 
-						FileNameFormat currentFileNameScheme = ExportScriptureDomain ? m_fileNameScheme :
-						m_BTfileNameScheme;
-						currentFileNameScheme.m_filePrefix = paraTextSO.FileNamePrePart;
-						currentFileNameScheme.m_schemeFormat =
-						FileNameFormat.GetSchemeFormatFromParatextForm(paraTextSO.FileNameForm);
-						m_fileNameScheme.m_fileSuffix = Path.GetFileNameWithoutExtension(paraTextSO.FileNamePostPart);
-						//if (ExportScriptureDomain)
-						//    m_BTfileNameScheme.m_fileSuffix = m_fileNameScheme.m_fileSuffix.Substring(0, 3) + "BT";
-						currentFileNameScheme.m_fileExtension = Path.GetExtension(paraTextSO.FileNamePostPart);
+					FileNameFormat currentFileNameScheme = ExportScriptureDomain ? m_fileNameScheme :
+					m_BTfileNameScheme;
+					currentFileNameScheme.m_filePrefix = paraTextSO.FileNamePrePart;
+					currentFileNameScheme.m_schemeFormat =
+					FileNameFormat.GetSchemeFormatFromParatextForm(paraTextSO.FileNameForm);
+					m_fileNameScheme.m_fileSuffix = Path.GetFileNameWithoutExtension(paraTextSO.FileNamePostPart);
+					//if (ExportScriptureDomain)
+					//    m_BTfileNameScheme.m_fileSuffix = m_fileNameScheme.m_fileSuffix.Substring(0, 3) + "BT";
+					currentFileNameScheme.m_fileExtension = Path.GetExtension(paraTextSO.FileNamePostPart);
 
-						// set file name scheme control with properties that check the export domain.
-						fileNameSchemeCtrl.ClearUserModifiedNameScheme();
-						fileNameSchemeCtrl.Prefix = FileNamePrefix;
-						fileNameSchemeCtrl.Scheme = FileNameScheme;
-						fileNameSchemeCtrl.Suffix = FileNameSuffix;
-						fileNameSchemeCtrl.Extension = FileNameExtension;
-					}
+					// set file name scheme control with properties that check the export domain.
+					fileNameSchemeCtrl.ClearUserModifiedNameScheme();
+					fileNameSchemeCtrl.Prefix = FileNamePrefix;
+					fileNameSchemeCtrl.Scheme = FileNameScheme;
+					fileNameSchemeCtrl.Suffix = FileNameSuffix;
+					fileNameSchemeCtrl.Extension = FileNameExtension;
 				}
 				catch
 				{

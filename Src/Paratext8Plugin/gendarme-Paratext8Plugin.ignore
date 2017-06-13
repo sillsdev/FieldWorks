@@ -1,0 +1,18 @@
+# We are merging in other assemblies that do not follow these rules
+R: Gendarme.Rules.Correctness.DisposableFieldsShouldBeDisposedRule
+A: *
+
+R: Gendarme.Rules.Correctness.EnsureLocalDisposalRule
+A: *
+
+R: Gendarme.Rules.Design.UseCorrectDisposeSignaturesRule
+A: *
+
+R: SIL.Gendarme.Rules.DebugDispose.EnsureDebugDisposeFinalizerRule
+A: *
+
+R: SIL.Gendarme.Rules.DebugDispose.EnsureDebugDisposeMissDispStatementRule
+A: *
+
+R: Gendarme.Rules.Portability.NewLineLiteralRule
+A: *

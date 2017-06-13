@@ -1,29 +1,20 @@
-// Copyright (c) 2011-2013 SIL International
+// Copyright (c) 2011-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ParatextHelperTests.cs
-// Responsibility: FW Team
 
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
-using System.IO;
 using System.Linq;
-using System.Reflection;
 using NUnit.Framework;
 using Paratext;
 using Paratext.LexicalClient;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.Test.ProjectUnpacker;
 using SIL.FieldWorks.Test.TestUtils;
 using SIL.Utils;
-using Utilities;
 
 namespace SIL.FieldWorks.Common.ScriptureUtils
 {
@@ -68,7 +59,7 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 			{
 				// dispose managed and unmanaged objects
 				foreach (var scrText in Projects)
-					((PTScrTextWrapper)scrText).DisposePTObject();
+					((PT7ScrTextWrapper)scrText).DisposePTObject();
 
 				Projects.Clear();
 			}
@@ -231,7 +222,7 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 			if (booksPresent != null)
 				scrText.BooksPresent = booksPresent;
 
-			Projects.Add(new PTScrTextWrapper(scrText));
+			Projects.Add(new PT7ScrTextWrapper(scrText));
 		}
 		#endregion
 	}
@@ -255,22 +246,15 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 		private MockParatextHelper m_ptHelper;
 
 		#region Setup/Teardown
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+
+		/// <summary/>
 		public override void FixtureTeardown()
 		{
 			base.FixtureTeardown();
 			ParatextHelper.Manager.Reset();
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+		/// <summary/>
 		[SetUp]
 		public void Setup()
 		{
@@ -328,6 +312,8 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 		[Test]
 		public void GetWritableShortNames()
 		{
+			if (ScriptureProvider.VersionInUse >= new Version(8, 0))
+				Assert.Ignore("This test is insufficiently mocked and uses Paratext7 data with Paratext8 logic if Paratext8 is installed.");
 			m_ptHelper.AddProject("MNKY");
 			m_ptHelper.AddProject("SOUP", "Monkey Soup", null, true, false);
 			m_ptHelper.AddProject("TWNS", null, null, false, false);
@@ -347,6 +333,8 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 		[Test]
 		public void IsProjectWritable()
 		{
+			if (ScriptureProvider.VersionInUse >= new Version(8, 0))
+				Assert.Ignore("This test is insufficiently mocked and uses Paratext7 data with Paratext8 logic if Paratext8 is installed.");
 			m_ptHelper.AddProject("MNKY");
 			m_ptHelper.AddProject("SOUP", "Monkey Soup", null, true, false);
 			m_ptHelper.AddProject("TWNS", null, null, false, false);
@@ -429,6 +417,8 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 		[Category("LongRunning")]
 		public void LoadParatextMappings_Normal()
 		{
+			if (ScriptureProvider.VersionInUse >= new Version(8, 0))
+				Assert.Ignore("This test uses data that is only valid for Paratext7. The test fails with Paratext8 installed.");
 			Unpacker.UnPackParatextTestProjects();
 
 			var stylesheet = new FwStyleSheet();
@@ -460,6 +450,8 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 		[Test]
 		public void LoadParatextMappings_MarkMappingsInUse()
 		{
+			if (ScriptureProvider.VersionInUse >= new Version(8, 0))
+				Assert.Ignore("This test uses data that is only valid for Paratext7. The test fails with Paratext8 installed.");
 			var stylesheet = new FwStyleSheet();
 			stylesheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles);
 			IScrImportSet importSettings = Cache.ServiceLocator.GetInstance<IScrImportSetFactory>().Create();
