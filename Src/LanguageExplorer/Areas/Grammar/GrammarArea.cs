@@ -1,10 +1,9 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
 using System.Drawing;
-using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
@@ -90,8 +89,7 @@ namespace LanguageExplorer.Areas.Grammar
 		/// <remarks>
 		/// This is called on the outgoing component, when the user switches to a component.
 		/// </remarks>
-		public void Deactivate(ICollapsingSplitContainer mainCollapsingSplitContainer,
-			MenuStrip menuStrip, ToolStripContainer toolStripContainer, StatusBar statusbar)
+		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
 		}
 
@@ -101,9 +99,7 @@ namespace LanguageExplorer.Areas.Grammar
 		/// <remarks>
 		/// This is called on the component that is becoming active.
 		/// </remarks>
-		public void Activate(ICollapsingSplitContainer mainCollapsingSplitContainer,
-			MenuStrip menuStrip,
-			ToolStripContainer toolStripContainer, StatusBar statusbar)
+		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
 		}
 
@@ -143,18 +139,12 @@ namespace LanguageExplorer.Areas.Grammar
 		/// Get the internal name of the component.
 		/// </summary>
 		/// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
-		public string MachineName
-		{
-			get { return "grammar"; }
-		}
+		public string MachineName => "grammar";
 
 		/// <summary>
 		/// User-visible localizable component name.
 		/// </summary>
-		public string UiName
-		{
-			get { return "Grammar"; }
-		}
+		public string UiName => "Grammar";
 
 		#endregion
 
@@ -173,10 +163,7 @@ namespace LanguageExplorer.Areas.Grammar
 		/// <summary>
 		/// Get the machine name of the area's default tool.
 		/// </summary>
-		public string DefaultToolMachineName
-		{
-			get { return "posEdit"; }
-		}
+		public string DefaultToolMachineName => "posEdit";
 
 		/// <summary>
 		/// Get all installed tools for the area.
@@ -209,10 +196,7 @@ namespace LanguageExplorer.Areas.Grammar
 		/// <summary>
 		/// Get the image for the area.
 		/// </summary>
-		public Image Icon
-		{
-			get { return LanguageExplorerResources.Grammar.ToBitmap(); }
-		}
+		public Image Icon => LanguageExplorerResources.Grammar.ToBitmap();
 
 		#endregion
 	}

@@ -1,9 +1,8 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Drawing;
-using System.Windows.Forms;
 using System.Xml.Linq;
 using LanguageExplorer.Controls;
 using SIL.FieldWorks.Common.FwUtils;
@@ -67,7 +66,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.DomainTypeEdit
 			Publisher = flexComponentParameters.Publisher;
 			Subscriber = flexComponentParameters.Subscriber;
 
-			PropertyTable.SetDefault(string.Format("ToolForAreaNamed_{0}", AreaMachineName), MachineName, SettingsGroup.LocalSettings, true, false);
+			PropertyTable.SetDefault($"ToolForAreaNamed_{AreaMachineName}", MachineName, SettingsGroup.LocalSettings, true, false);
 		}
 
 		#endregion
@@ -80,10 +79,12 @@ namespace LanguageExplorer.Areas.Lists.Tools.DomainTypeEdit
 		/// <remarks>
 		/// This is called on the outgoing component, when the user switches to a component.
 		/// </remarks>
-		public void Deactivate(ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip, ToolStripContainer toolStripContainer,
-			StatusBar statusbar)
+		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			CollapsingSplitContainerFactory.RemoveFromParentAndDispose(mainCollapsingSplitContainer, ref _collapsingSplitContainer, ref _recordClerk);
+			CollapsingSplitContainerFactory.RemoveFromParentAndDispose(
+				majorFlexComponentParameters.MainCollapsingSplitContainer,
+				ref _collapsingSplitContainer,
+				ref _recordClerk);
 		}
 
 		/// <summary>
@@ -92,10 +93,12 @@ namespace LanguageExplorer.Areas.Lists.Tools.DomainTypeEdit
 		/// <remarks>
 		/// This is called on the component that is becoming active.
 		/// </remarks>
-		public void Activate(ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip, ToolStripContainer toolStripContainer,
-			StatusBar statusbar)
+		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			_collapsingSplitContainer = CollapsingSplitContainerFactory.Create(new FlexComponentParameters(PropertyTable, Publisher, Subscriber), mainCollapsingSplitContainer, true,
+			_collapsingSplitContainer = CollapsingSplitContainerFactory.Create(
+				majorFlexComponentParameters.FlexComponentParameters,
+				majorFlexComponentParameters.MainCollapsingSplitContainer,
+				true,
 				XDocument.Parse(ListResources.DomainTypeEditParameters).Root, XDocument.Parse(ListResources.ListToolsSliceFilters),
 				MachineName,
 				new PossibilityListClerkParameters("DomainTypeList", PropertyTable.GetValue<FdoCache>("cache").LanguageProject.LexDbOA.DomainTypesOA, false, true, false, "best analysis"),
@@ -140,19 +143,12 @@ namespace LanguageExplorer.Areas.Lists.Tools.DomainTypeEdit
 		/// Get the internal name of the component.
 		/// </summary>
 		/// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
-		public string MachineName
-		{
-			get { return "domainTypeEdit"; }
-		}
+		public string MachineName => "domainTypeEdit";
 
 		/// <summary>
 		/// User-visible localizable component name.
 		/// </summary>
-		public string UiName
-		{
-			get { return "Academic Domains"; }
-		}
-
+		public string UiName => "Academic Domains";
 		#endregion
 
 		#region Implementation of ITool
@@ -160,23 +156,12 @@ namespace LanguageExplorer.Areas.Lists.Tools.DomainTypeEdit
 		/// <summary>
 		/// Get the area machine name the tool is for.
 		/// </summary>
-		public string AreaMachineName
-		{
-			get { return "lists"; }
-		}
+		public string AreaMachineName => "lists";
 
 		/// <summary>
 		/// Get the image for the area.
 		/// </summary>
-		public Image Icon
-		{
-			get
-			{
-				var image = Images.SideBySideView;
-				image.MakeTransparent(Color.Magenta);
-				return image;
-			}
-		}
+		public Image Icon => Images.SideBySideView.SetBackgroundColor(Color.Magenta);
 
 		#endregion
 	}

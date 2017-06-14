@@ -1100,7 +1100,15 @@ namespace SIL.FieldWorks.XWorks
 			/*m_list.CurrentIndex = m_list.CurrentIndex <= m_list.FirstItemIndex ? m_list.FirstItemIndex : m_list.CurrentIndex - 1;*/
 			m_list.CurrentIndex = m_list.PrevItemIndex;
 			BroadcastChange(false);
-			return true;	//we handled this.
+			return true;    //we handled this.
+		}
+
+		internal void MoveToIndex(int newIndex)
+		{
+			CheckDisposed();
+
+			m_list.CurrentIndex = newIndex;
+			BroadcastChange(false);
 		}
 
 		/// <summary>

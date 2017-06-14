@@ -1,5 +1,5 @@
 ﻿//#define RANDYTODOMERGEFILES
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -36,7 +36,6 @@ using SIL.Reporting;
 using SIL.Utils;
 using File = System.IO.File;
 using FileUtils = SIL.Utils.FileUtils;
-using WaitCursor = SIL.FieldWorks.Common.FwUtils.WaitCursor;
 using Win32 = SIL.FieldWorks.Common.FwUtils.Win32;
 
 #if RANDYTODOMERGEFILES
@@ -60,7 +59,7 @@ namespace LanguageExplorer.Impls
 	///		2. exportToolStripMenuItem : the active tool can enable this and add an event handler, if needed.
 #endif
 	/// </remarks>
-	internal sealed partial class FwMainWnd : Form, IFwMainWnd, IRecordListOwner
+	internal sealed partial class FwMainWnd : Form, IFwMainWnd
 	{
 		// Used to count the number of times we've been asked to suspend Idle processing.
 		private int _countSuspendIdleProcessing = 0;
@@ -78,8 +77,10 @@ namespace LanguageExplorer.Impls
 		private ISubscriber _subscriber;
 		private readonly IFlexApp _flexApp;
 		private DateTime _lastToolChange = DateTime.MinValue;
-		private HashSet<string> _toolsReportedToday = new HashSet<string>();
+		private readonly HashSet<string> _toolsReportedToday = new HashSet<string>();
 		private bool _persistWindowSize;
+		private DataNavigationManager _dataNavigationManager;
+		private readonly MajorFlexComponentParameters _majorFlexComponentParameters;
 
 		/// <summary>
 		/// Create new instance of window.
@@ -123,12 +124,27 @@ namespace LanguageExplorer.Impls
 
 			SetupPropertyTable();
 
+			_dataNavigationManager = new DataNavigationManager(Subscriber, new Dictionary<string, Tuple<ToolStripMenuItem, ToolStripButton>>
+			{
+				{DataNavigationManager.First, new Tuple<ToolStripMenuItem, ToolStripButton>(null, null/*_data_First, _tsbFirst*/)},
+				{DataNavigationManager.Previous, new Tuple<ToolStripMenuItem, ToolStripButton>(null, null/*_data_Previous, _tsbPrevious*/)},
+				{DataNavigationManager.Next, new Tuple<ToolStripMenuItem, ToolStripButton>(null, null/*_data_Next, _tsbNext*/)},
+				{DataNavigationManager.Last, new Tuple<ToolStripMenuItem, ToolStripButton>(null, null/*_data_Last, _tsbLast*/)}
+			});
+
 			RestoreWindowSettings(wasCrashDuringPreviousStartup);
 			var restoreSize = Size;
 
 			_toolRepository = new ToolRepository();
 			_areaRepository = new AreaRepository(_toolRepository);
-			_areaRepository.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
+			_majorFlexComponentParameters = new MajorFlexComponentParameters(
+				mainContainer,
+				_menuStrip,
+				toolStripContainer,
+				_statusbar,
+				_dataNavigationManager,
+				new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
+			_areaRepository.InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);
 
 			SetupOutlookBar();
 
@@ -146,11 +162,14 @@ namespace LanguageExplorer.Impls
 				}
 			}
 			if (File.Exists(CrashOnStartupDetectorPathName)) // Have to check again, because unit test check deletes it in the RestoreWindowSettings method.
+			{
 				File.Delete(CrashOnStartupDetectorPathName);
-#if RANDYTODOMERGEFILES
-			// Remove this when I'm done with project.
-			// Load xml config files and save merged document.
-			var configFilePath = Path.Combine(FwDirectoryFinder.CodeDirectory, @"Language Explorer", @"Configuration", @"Main.xml");
+			}
+
+#if RANDYTODOMERGEFILES // Remove this when I'm done with project.
+// Load xml config files and save merged document.
+			var configFilePath =
+Path.Combine(FwDirectoryFinder.CodeDirectory, @"Language Explorer", @"Configuration", @"Main.xml");
 			XmlDocument mergedConfigDoc = new XmlDocument();
 			mergedConfigDoc.Load(configFilePath);
 			// Process <include> elements
@@ -622,17 +641,11 @@ namespace LanguageExplorer.Impls
 		/// so if it exists before being created, the app didn't close properly,
 		/// and will start without using the saved settings.
 		/// </summary>
-		private static string CrashOnStartupDetectorPathName
-		{
-			get
-			{
-				return Path.Combine(
-					Path.Combine(
-					Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-					Path.Combine("SIL", "FieldWorks")),
-					"CrashOnStartupDetector.tmp");
-			}
-		}
+		private static string CrashOnStartupDetectorPathName => Path.Combine(
+			Path.Combine(
+				Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+				Path.Combine("SIL", "FieldWorks")),
+			"CrashOnStartupDetector.tmp");
 
 		private void RestoreWindowSettings(bool wasCrashDuringPreviousStartup)
 		{
@@ -801,14 +814,11 @@ namespace LanguageExplorer.Impls
 			{
 				return;  // Nothing to do.
 			}
-			if (_currentTool != null)
-			{
-				_currentTool.Deactivate(mainContainer, _menuStrip, toolStripContainer, _statusbar);
-			}
+			_currentTool?.Deactivate(_majorFlexComponentParameters);
 			_currentTool = clickedTool;
-			string areaName = _currentArea.MachineName;
+			var areaName = _currentArea.MachineName;
 			var toolName = _currentTool.MachineName;
-			PropertyTable.SetProperty(string.Format("ToolForAreaNamed_{0}", areaName), toolName, SettingsGroup.LocalSettings, true, false);
+			PropertyTable.SetProperty($"ToolForAreaNamed_{areaName}", toolName, SettingsGroup.LocalSettings, true, false);
 
 			// Do some logging.
 			Logger.WriteEvent("Switched to " + _currentTool.MachineName);
@@ -825,7 +835,7 @@ namespace LanguageExplorer.Impls
 				UsageReporter.SendNavigationNotice("SwitchToTool/{0}/{1}", areaName, toolName);
 			}
 
-			_currentTool.Activate(mainContainer, _menuStrip, toolStripContainer, _statusbar);
+			_currentTool.Activate(_majorFlexComponentParameters);
 		}
 
 		void Area_Clicked(Tab tabClicked)
@@ -835,13 +845,10 @@ namespace LanguageExplorer.Impls
 			{
 				return; // Nothing to do.
 			}
-			if (_currentArea != null)
-			{
-				_currentArea.Deactivate(mainContainer, _menuStrip, toolStripContainer, _statusbar);
-			}
+			_currentArea?.Deactivate(_majorFlexComponentParameters);
 			_currentArea = clickedArea;
 			PropertyTable.SetProperty("areaChoice", _currentArea.MachineName, SettingsGroup.LocalSettings, true, false);
-			_currentArea.Activate(mainContainer, _menuStrip, toolStripContainer, _statusbar);
+			_currentArea.Activate(_majorFlexComponentParameters);
 		}
 
 		private void SetupPropertyTable()
@@ -913,7 +920,7 @@ namespace LanguageExplorer.Impls
 		private void MigrateOldConfigurations(object newValue)
 		{
 			var configMigrator = new DictionaryConfigurationMigrator();
-			configMigrator.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
+			configMigrator.InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);
 			configMigrator.MigrateOldConfigurationsIfNeeded();
 		}
 
@@ -1030,23 +1037,14 @@ namespace LanguageExplorer.Impls
 		/// Gets the focused control of the window
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public Control FocusedControl
-		{
-			get
-			{
-				return FromHandle(Win32.GetFocus());
-			}
-		}
+		public Control FocusedControl => FromHandle(Win32.GetFocus());
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the data object cache.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public FdoCache Cache
-		{
-			get { return _flexApp.Cache; }
-		}
+		public FdoCache Cache => _flexApp.Cache;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -1311,10 +1309,7 @@ namespace LanguageExplorer.Impls
 
 			if (disposing)
 			{
-				if (components != null)
-				{
-					components.Dispose();
-				}
+				components?.Dispose();
 
 				// TODO: Is this comment still relevant?
 				// TODO: Seems like FLEx worked well with it in this place (in the original window) for a long time.
@@ -1323,18 +1318,14 @@ namespace LanguageExplorer.Impls
 				// message loop.
 				_flexApp.FwManager.ExecuteAsync(_flexApp.RemoveWindow, this);
 
-				if (_sidePane != null)
-				{
-					_sidePane.Dispose();
-					_sidePane = null;
-				}
-				if (_viewHelper != null)
-				{
-					_viewHelper.Dispose();
-					_viewHelper = null;
-				}
+				_dataNavigationManager?.Dispose();
+				_sidePane?.Dispose();
+				_viewHelper?.Dispose();
 			}
 
+			_dataNavigationManager = null;
+			_sidePane = null;
+			_viewHelper = null;
 			_currentArea = null;
 			_stylesheet = null;
 			_publisher = null;

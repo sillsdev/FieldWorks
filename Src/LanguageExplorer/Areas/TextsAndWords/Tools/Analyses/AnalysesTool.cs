@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -70,10 +70,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 		/// <remarks>
 		/// This is called on the outgoing component, when the user switches to a component.
 		/// </remarks>
-		public void Deactivate(ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip, ToolStripContainer toolStripContainer,
-			StatusBar statusbar)
+		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			MultiPaneFactory.RemoveFromParentAndDispose(mainCollapsingSplitContainer, ref _multiPane, ref _recordClerk);
+			MultiPaneFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _multiPane, ref _recordClerk);
 		}
 
 		/// <summary>
@@ -82,16 +81,15 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 		/// <remarks>
 		/// This is called on the component that is becoming active.
 		/// </remarks>
-		public void Activate(ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip, ToolStripContainer toolStripContainer,
-			StatusBar statusbar)
+		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
 			_multiPane = MultiPaneFactory.CreateMultiPaneWithTwoPaneBarContainersInMainCollapsingSplitContainer(
-				new FlexComponentParameters(PropertyTable, Publisher, Subscriber),
-				mainCollapsingSplitContainer,
+				majorFlexComponentParameters.FlexComponentParameters,
+				majorFlexComponentParameters.MainCollapsingSplitContainer,
 				this,
 				"WordsAndAnalysesMultiPane",
-				TemporaryToolProviderHack.CreateNewLabel(string.Format("WordList view for tool: {0}", MachineName)), "WordList",
-				TemporaryToolProviderHack.CreateNewLabel(string.Format("SingleWord view for tool: {0}", MachineName)), "SingleWord",
+				TemporaryToolProviderHack.CreateNewLabel($"WordList view for tool: {MachineName}"), "WordList",
+				TemporaryToolProviderHack.CreateNewLabel($"SingleWord view for tool: {MachineName}"), "SingleWord",
 				Orientation.Vertical);
 		}
 

@@ -196,8 +196,6 @@
     <Compile Include="HtmlControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="ICollapsingSplitContainer.cs" />
-    <Compile Include="ICommandUndoRedoText.cs" />
     <Compile Include="ICtrlTabProvider.cs" />
     <Compile Include="IdleQueue.cs" />
     <Compile Include="IFeedbackInfoProvider.cs" />

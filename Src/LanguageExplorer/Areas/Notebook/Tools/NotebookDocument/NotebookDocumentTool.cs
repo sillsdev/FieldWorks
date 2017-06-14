@@ -1,9 +1,8 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Drawing;
-using System.Windows.Forms;
 using System.Xml.Linq;
 using LanguageExplorer.Controls;
 using SIL.FieldWorks.Common.FwUtils;
@@ -75,10 +74,12 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookDocument
 		/// <remarks>
 		/// This is called on the outgoing component, when the user switches to a component.
 		/// </remarks>
-		public void Deactivate(ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip, ToolStripContainer toolStripContainer,
-			StatusBar statusbar)
+		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			PaneBarContainerFactory.RemoveFromParentAndDispose(mainCollapsingSplitContainer, ref _paneBarContainer, ref _recordClerk);
+			PaneBarContainerFactory.RemoveFromParentAndDispose(
+				majorFlexComponentParameters.MainCollapsingSplitContainer,
+				ref _paneBarContainer,
+				ref _recordClerk);
 		}
 
 		/// <summary>
@@ -87,16 +88,14 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookDocument
 		/// <remarks>
 		/// This is called on the component that is becoming active.
 		/// </remarks>
-		public void Activate(ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip, ToolStripContainer toolStripContainer,
-			StatusBar statusbar)
+		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
 			_configurationDocument = XDocument.Parse(NotebookResources.NotebookDocumentParameters);
 			var recordClerk = NotebookArea.CreateRecordClerkForAllNotebookAreaTools(PropertyTable.GetValue<FdoCache>("cache"));
-			var flexComponentParameterObject = new FlexComponentParameters(PropertyTable, Publisher, Subscriber);
-			recordClerk.InitializeFlexComponent(flexComponentParameterObject);
+			recordClerk.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
 			_paneBarContainer = PaneBarContainerFactory.Create(
-				flexComponentParameterObject,
-				mainCollapsingSplitContainer,
+				majorFlexComponentParameters.FlexComponentParameters,
+				majorFlexComponentParameters.MainCollapsingSplitContainer,
 				new XmlDocView(_configurationDocument.Root, recordClerk));
 		}
 
@@ -152,23 +151,12 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookDocument
 		/// <summary>
 		/// Get the area machine name the tool is for.
 		/// </summary>
-		public string AreaMachineName
-		{
-			get { return "notebook"; }
-		}
+		public string AreaMachineName => "notebook";
 
 		/// <summary>
 		/// Get the image for the area.
 		/// </summary>
-		public Image Icon
-		{
-			get
-			{
-				var image = Images.DocumentView;
-				image.MakeTransparent(Color.Magenta);
-				return image;
-			}
-		}
+		public Image Icon => Images.DocumentView.SetBackgroundColor(Color.Magenta);
 
 		#endregion
 	}

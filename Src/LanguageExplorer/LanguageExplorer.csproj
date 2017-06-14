@@ -10,6 +10,7 @@
     <RootNamespace>LanguageExplorer</RootNamespace>
     <AssemblyName>LanguageExplorer</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <LangVersion>6</LangVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -864,9 +865,11 @@
       <DependentUpon>WordsSfmImportWizard.cs</DependentUpon>
     </Compile>
     <Compile Include="Areas\TextsAndWords\Interlinear\WsListManager.cs" />
+    <Compile Include="BitmapExtensions.cs" />
     <Compile Include="Controls\PaneBarContextMenuFactory.cs" />
     <Compile Include="Controls\PossibilityListClerkParameters.cs" />
     <Compile Include="Controls\CollapsingSplitContainerFactory.cs" />
+    <Compile Include="DataNavigationManager.cs" />
     <Compile Include="Dumpster\ImportWordSetListener.cs" />
     <Compile Include="Areas\TextsAndWords\IParserTrace.cs" />
     <Compile Include="Areas\TextsAndWords\ParserConnection.cs" />
@@ -956,6 +959,8 @@
     <Compile Include="IArea.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="ICollapsingSplitContainer.cs" />
+    <Compile Include="ICommandUndoRedoText.cs" />
     <Compile Include="images\Morphology\ImageHolder.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -973,6 +978,7 @@
     <Compile Include="IToolRepository.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="MajorFlexComponentParameters.cs" />
     <Compile Include="SendReceive\FLExBridgeFirstSendReceiveInstructionsDlg.cs">
       <SubType>Form</SubType>
     </Compile>

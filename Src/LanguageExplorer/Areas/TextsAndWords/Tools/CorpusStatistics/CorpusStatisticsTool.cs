@@ -1,9 +1,8 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Drawing;
-using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
 
@@ -68,13 +67,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 		/// <remarks>
 		/// This is called on the outgoing component, when the user switches to a component.
 		/// </remarks>
-		public void Deactivate(ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip, ToolStripContainer toolStripContainer,
-			StatusBar statusbar)
+		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			_statisticsView.Deactivate(mainCollapsingSplitContainer, menuStrip, toolStripContainer, statusbar);
+			_statisticsView.Deactivate(majorFlexComponentParameters);
 
 			// Remove StatisticsView (right panel of 'mainCollapsingSplitContainer').
-			mainCollapsingSplitContainer.SecondControl = null;
+			majorFlexComponentParameters.MainCollapsingSplitContainer.SecondControl = null;
 			_statisticsView = null;
 		}
 
@@ -84,14 +82,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 		/// <remarks>
 		/// This is called on the component that is becoming active.
 		/// </remarks>
-		public void Activate(ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip, ToolStripContainer toolStripContainer,
-			StatusBar statusbar)
+		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
 			// Get the StatisticsView into right panel of 'mainCollapsingSplitContainer'.
 			_statisticsView = new StatisticsView();
-			mainCollapsingSplitContainer.SecondControl = _statisticsView;
-			_statisticsView.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-			_statisticsView.Activate(mainCollapsingSplitContainer, menuStrip, toolStripContainer, statusbar);
+			majorFlexComponentParameters.MainCollapsingSplitContainer.SecondControl = _statisticsView;
+			_statisticsView.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
+			_statisticsView.Activate(majorFlexComponentParameters);
 		}
 
 		/// <summary>

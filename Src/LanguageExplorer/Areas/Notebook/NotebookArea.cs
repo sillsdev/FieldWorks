@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -107,8 +107,7 @@ namespace LanguageExplorer.Areas.Notebook
 		/// <remarks>
 		/// This is called on the outgoing component, when the user switches to a component.
 		/// </remarks>
-		public void Deactivate(ICollapsingSplitContainer mainCollapsingSplitContainer,
-			MenuStrip menuStrip, ToolStripContainer toolStripContainer, StatusBar statusbar)
+		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
 			_fileExportMenu.Click -= FileExportMenu_Click;
 			_fileExportMenu.Enabled = _fileExportOriginalValue;
@@ -122,12 +121,11 @@ namespace LanguageExplorer.Areas.Notebook
 		/// <remarks>
 		/// This is called on the component that is becoming active.
 		/// </remarks>
-		public void Activate(ICollapsingSplitContainer mainCollapsingSplitContainer,
-			MenuStrip menuStrip, ToolStripContainer toolStripContainer, StatusBar statusbar)
+		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
 			// File->Export menu is visible and enabled in this tool.
 			// TODO-Linux: boolean 'searchAllChildren' parameter is marked with "MonoTODO".
-			_fileExportMenu = menuStrip.Items.Find("exportToolStripMenuItem", true)[0];
+			_fileExportMenu = majorFlexComponentParameters.MenuStrip.Items.Find("exportToolStripMenuItem", true)[0];
 			_fileExportOriginalValue = _fileExportMenu.Enabled;
 			_fileExportMenu.Visible = true;
 			_fileExportMenu.Enabled = true;
@@ -170,19 +168,12 @@ namespace LanguageExplorer.Areas.Notebook
 		/// Get the internal name of the component.
 		/// </summary>
 		/// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
-		public string MachineName
-		{
-			get { return "notebook"; }
-		}
+		public string MachineName => "notebook";
 
 		/// <summary>
 		/// User-visible localizable component name.
 		/// </summary>
-		public string UiName
-		{
-			get { return "Notebook"; }
-		}
-
+		public string UiName => "Notebook";
 		#endregion
 
 		#region Implementation of IArea
@@ -200,10 +191,7 @@ namespace LanguageExplorer.Areas.Notebook
 		/// <summary>
 		/// Get the machine name of the area's default tool.
 		/// </summary>
-		public string DefaultToolMachineName
-		{
-			get { return "notebookEdit"; }
-		}
+		public string DefaultToolMachineName => "notebookEdit";
 
 		/// <summary>
 		/// Get all installed tools for the area.
@@ -225,10 +213,7 @@ namespace LanguageExplorer.Areas.Notebook
 		/// <summary>
 		/// Get the image for the area.
 		/// </summary>
-		public Image Icon
-		{
-			get { return LanguageExplorerResources.Notebook.ToBitmap(); }
-		}
+		public Image Icon => LanguageExplorerResources.Notebook.ToBitmap();
 
 		#endregion
 	}

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -87,8 +87,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// <remarks>
 		/// This is called on the outgoing component, when the user switches to a component.
 		/// </remarks>
-		public void Deactivate(ICollapsingSplitContainer mainCollapsingSplitContainer,
-			MenuStrip menuStrip, ToolStripContainer toolStripContainer, StatusBar statusbar)
+		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
 			foreach (var menuTuple in _newMenusAndHandlers)
 			{
@@ -96,7 +95,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			}
 			_newMenusAndHandlers.Clear();
 
-			MultiPaneFactory.RemoveFromParentAndDispose(mainCollapsingSplitContainer, ref _multiPane, ref _recordClerk);
+			MultiPaneFactory.RemoveFromParentAndDispose(
+				majorFlexComponentParameters.MainCollapsingSplitContainer,
+				ref _multiPane,
+				ref _recordClerk);
 
 			_configurationDocument = null;
 			_recordBrowseView = null;
@@ -109,7 +111,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// <remarks>
 		/// This is called on the component that is becoming active.
 		/// </remarks>
-		public void Activate(ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip, ToolStripContainer toolStripContainer, StatusBar statusbar)
+		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
 			_configurationDocument = XDocument.Parse(LexiconResources.LexiconBrowseParameters);
 			// Modify the basic parameters for this tool.
@@ -124,13 +126,12 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			_configurationDocument.Root.Add(columnsElement);
 
 			_recordClerk = LexiconArea.CreateBasicClerkForLexiconArea(PropertyTable.GetValue<FdoCache>("cache"));
-			var flexComponentParameterObject = new FlexComponentParameters(PropertyTable, Publisher, Subscriber);
-			_recordClerk.InitializeFlexComponent(flexComponentParameterObject);
+			_recordClerk.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
 
 			_recordBrowseView = new RecordBrowseView(_configurationDocument.Root, _recordClerk);
 
 			var dataTreeMenuHandler = new LexEntryMenuHandler();
-			dataTreeMenuHandler.InitializeFlexComponent(flexComponentParameterObject);
+			dataTreeMenuHandler.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
 #if RANDYTODO
 			// TODO: Set up 'dataTreeMenuHandler' to handle menu events.
 			// TODO: Install menus and connect them to event handlers. (See "CreateContextMenuStrip" method for where the menus are.)
@@ -170,11 +171,12 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				Dock = DockStyle.Right
 			};
 			paneBar.AddControls(new List<Control> { panelMenu, panelButton });
-			_multiPane = MultiPaneFactory.CreateMultiPaneWithTwoPaneBarContainersInMainCollapsingSplitContainer(flexComponentParameterObject,
-				mainCollapsingSplitContainer,
+			_multiPane = MultiPaneFactory.CreateMultiPaneWithTwoPaneBarContainersInMainCollapsingSplitContainer(
+				majorFlexComponentParameters.FlexComponentParameters,
+				majorFlexComponentParameters.MainCollapsingSplitContainer,
 				mainMultiPaneParameters,
 				_recordBrowseView, "Browse",
-				_innerMultiPane = MultiPaneFactory.CreateNestedMultiPane(flexComponentParameterObject, nestedMultiPaneParameters), "Dictionary & Details",
+				_innerMultiPane = MultiPaneFactory.CreateNestedMultiPane(majorFlexComponentParameters.FlexComponentParameters, nestedMultiPaneParameters), "Dictionary & Details",
 				paneBar);
 			_innerMultiPane.Panel1Collapsed = !PropertyTable.GetValue<bool>(Show_DictionaryPubPreview);
 			panelButton.DatTree = recordEditView.DatTree;
@@ -436,19 +438,12 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// Get the internal name of the component.
 		/// </summary>
 		/// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
-		public string MachineName
-		{
-			get { return "lexiconEdit"; }
-		}
+		public string MachineName => "lexiconEdit";
 
 		/// <summary>
 		/// User-visible localizable component name.
 		/// </summary>
-		public string UiName
-		{
-			get { return "Lexicon Edit"; }
-		}
-
+		public string UiName => "Lexicon Edit";
 		#endregion
 
 		#region Implementation of ITool
@@ -456,23 +451,12 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// <summary>
 		/// Get the area machine name the tool is for.
 		/// </summary>
-		public string AreaMachineName
-		{
-			get { return "lexicon"; }
-		}
+		public string AreaMachineName => "lexicon";
 
 		/// <summary>
 		/// Get the image for the area.
 		/// </summary>
-		public Image Icon
-		{
-			get
-			{
-				var image = Images.SideBySideView;
-				image.MakeTransparent(Color.Magenta);
-				return image;
-			}
-		}
+		public Image Icon => Images.SideBySideView.SetBackgroundColor(Color.Magenta);
 
 		#endregion
 	}

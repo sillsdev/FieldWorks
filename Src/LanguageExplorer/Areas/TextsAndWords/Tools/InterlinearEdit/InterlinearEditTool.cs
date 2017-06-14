@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -72,10 +72,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 		/// <remarks>
 		/// This is called on the outgoing component, when the user switches to a component.
 		/// </remarks>
-		public void Deactivate(ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip, ToolStripContainer toolStripContainer,
-			StatusBar statusbar)
+		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			MultiPaneFactory.RemoveFromParentAndDispose(mainCollapsingSplitContainer, ref _multiPane, ref _recordClerk);
+			MultiPaneFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _multiPane, ref _recordClerk);
 		}
 
 		/// <summary>
@@ -84,16 +83,15 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 		/// <remarks>
 		/// This is called on the component that is becoming active.
 		/// </remarks>
-		public void Activate(ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip, ToolStripContainer toolStripContainer,
-			StatusBar statusbar)
+		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
 			_multiPane = MultiPaneFactory.CreateMultiPaneWithTwoPaneBarContainersInMainCollapsingSplitContainer(
-				new FlexComponentParameters(PropertyTable, Publisher, Subscriber),
-				mainCollapsingSplitContainer,
+				majorFlexComponentParameters.FlexComponentParameters,
+				majorFlexComponentParameters.MainCollapsingSplitContainer,
 				this,
 				"LexItemsAndDetailMultiPane",
-				TemporaryToolProviderHack.CreateNewLabel(string.Format("Browse view for tool: {0}", MachineName)), "Browse",
-				TemporaryToolProviderHack.CreateNewLabel(string.Format("Details view for tool: {0}", MachineName)), "Details",
+				TemporaryToolProviderHack.CreateNewLabel($"Browse view for tool: {MachineName}"), "Browse",
+				TemporaryToolProviderHack.CreateNewLabel($"Details view for tool: {MachineName}"), "Details",
 				Orientation.Vertical);
 		}
 

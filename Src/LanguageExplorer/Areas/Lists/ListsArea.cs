@@ -1,10 +1,9 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
 using System.Drawing;
-using System.Windows.Forms;
 using LanguageExplorer.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
@@ -87,8 +86,7 @@ namespace LanguageExplorer.Areas.Lists
 		/// <remarks>
 		/// This is called on the outgoing component, when the user switches to a component.
 		/// </remarks>
-		public void Deactivate(ICollapsingSplitContainer mainCollapsingSplitContainer,
-			MenuStrip menuStrip, ToolStripContainer toolStripContainer, StatusBar statusbar)
+		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
 		}
 
@@ -98,8 +96,7 @@ namespace LanguageExplorer.Areas.Lists
 		/// <remarks>
 		/// This is called on the component that is becoming active.
 		/// </remarks>
-		public void Activate(ICollapsingSplitContainer mainCollapsingSplitContainer,
-			MenuStrip menuStrip, ToolStripContainer toolStripContainer, StatusBar statusbar)
+		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
 		}
 
@@ -139,19 +136,12 @@ namespace LanguageExplorer.Areas.Lists
 		/// Get the internal name of the component.
 		/// </summary>
 		/// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
-		public string MachineName
-		{
-			get { return "lists"; }
-		}
+		public string MachineName => "lists";
 
 		/// <summary>
 		/// User-visible localizable component name.
 		/// </summary>
-		public string UiName
-		{
-			get { return "Lists"; }
-		}
-
+		public string UiName => "Lists";
 		#endregion
 
 		#region Implementation of IArea
@@ -169,10 +159,7 @@ namespace LanguageExplorer.Areas.Lists
 		/// <summary>
 		/// Get the machine name of the area's default tool.
 		/// </summary>
-		public string DefaultToolMachineName
-		{
-			get { return "domainTypeEdit"; }
-		}
+		public string DefaultToolMachineName => "domainTypeEdit";
 
 		/// <summary>
 		/// Get all installed tools for the area.
@@ -228,10 +215,7 @@ namespace LanguageExplorer.Areas.Lists
 		/// <summary>
 		/// Get the image for the area.
 		/// </summary>
-		public Image Icon
-		{
-			get { return LanguageExplorerResources.Lists.ToBitmap(); }
-		}
+		public Image Icon => LanguageExplorerResources.Lists.ToBitmap();
 
 		#endregion
 	}

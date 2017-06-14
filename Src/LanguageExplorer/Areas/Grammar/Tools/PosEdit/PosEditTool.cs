@@ -1,9 +1,8 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Drawing;
-using System.Windows.Forms;
 using LanguageExplorer.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.Application;
@@ -74,10 +73,12 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 		/// <remarks>
 		/// This is called on the outgoing component, when the user switches to a component.
 		/// </remarks>
-		public void Deactivate(ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip, ToolStripContainer toolStripContainer,
-			StatusBar statusbar)
+		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			PaneBarContainerFactory.RemoveFromParentAndDispose(mainCollapsingSplitContainer, ref _paneBarContainer, ref _recordClerk);
+			PaneBarContainerFactory.RemoveFromParentAndDispose(
+				majorFlexComponentParameters.MainCollapsingSplitContainer,
+				ref _paneBarContainer,
+				ref _recordClerk);
 		}
 
 		/// <summary>
@@ -86,12 +87,11 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 		/// <remarks>
 		/// This is called on the component that is becoming active.
 		/// </remarks>
-		public void Activate(ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip, ToolStripContainer toolStripContainer,
-			StatusBar statusbar)
+		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
 			_paneBarContainer = PaneBarContainerFactory.Create(
-				new FlexComponentParameters(PropertyTable, Publisher, Subscriber),
-				mainCollapsingSplitContainer,
+				majorFlexComponentParameters.FlexComponentParameters,
+				majorFlexComponentParameters.MainCollapsingSplitContainer,
 				TemporaryToolProviderHack.CreateNewLabel(this));
 		}
 
@@ -127,18 +127,12 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 		/// Get the internal name of the component.
 		/// </summary>
 		/// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
-		public string MachineName
-		{
-			get { return "posEdit"; }
-		}
+		public string MachineName => "posEdit";
 
 		/// <summary>
 		/// User-visible localizable component name.
 		/// </summary>
-		public string UiName
-		{
-			get { return "Category Edit"; }
-		}
+		public string UiName => "Category Edit";
 
 		#endregion
 
@@ -147,23 +141,12 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 		/// <summary>
 		/// Get the area machine name the tool is for.
 		/// </summary>
-		public string AreaMachineName
-		{
-			get { return "grammar"; }
-		}
+		public string AreaMachineName => "grammar";
 
 		/// <summary>
 		/// Get the image for the area.
 		/// </summary>
-		public Image Icon
-		{
-			get
-			{
-				var image = Images.EditView;
-				image.MakeTransparent(Color.Magenta);
-				return image;
-			}
-		}
+		public Image Icon => Images.EditView.SetBackgroundColor(Color.Magenta);
 
 		#endregion
 	}

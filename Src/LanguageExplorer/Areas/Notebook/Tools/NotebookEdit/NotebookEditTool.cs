@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -72,10 +72,12 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 		/// <remarks>
 		/// This is called on the outgoing component, when the user switches to a component.
 		/// </remarks>
-		public void Deactivate(ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip, ToolStripContainer toolStripContainer,
-			StatusBar statusbar)
+		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			MultiPaneFactory.RemoveFromParentAndDispose(mainCollapsingSplitContainer, ref _multiPane, ref _recordClerk);
+			MultiPaneFactory.RemoveFromParentAndDispose(
+				majorFlexComponentParameters.MainCollapsingSplitContainer,
+				ref _multiPane,
+				ref _recordClerk);
 		}
 
 		/// <summary>
@@ -84,16 +86,15 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 		/// <remarks>
 		/// This is called on the component that is becoming active.
 		/// </remarks>
-		public void Activate(ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip, ToolStripContainer toolStripContainer,
-			StatusBar statusbar)
+		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
 			_multiPane = MultiPaneFactory.CreateMultiPaneWithTwoPaneBarContainersInMainCollapsingSplitContainer(
-				new FlexComponentParameters(PropertyTable, Publisher, Subscriber),
-				mainCollapsingSplitContainer,
+				majorFlexComponentParameters.FlexComponentParameters,
+				majorFlexComponentParameters.MainCollapsingSplitContainer,
 				this,
 				"RecordBrowseAndDetailMultiPane",
-				TemporaryToolProviderHack.CreateNewLabel(string.Format("Browse view for tool: {0}", MachineName)), "Browse",
-				TemporaryToolProviderHack.CreateNewLabel(string.Format("Details view for tool: {0}", MachineName)), "Details",
+				TemporaryToolProviderHack.CreateNewLabel($"Browse view for tool: {MachineName}"), "Browse",
+				TemporaryToolProviderHack.CreateNewLabel($"Details view for tool: {MachineName}"), "Details",
 				Orientation.Vertical);
 		}
 
@@ -134,19 +135,12 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 		/// Get the internal name of the component.
 		/// </summary>
 		/// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
-		public string MachineName
-		{
-			get { return "notebookEdit"; }
-		}
+		public string MachineName => "notebookEdit";
 
 		/// <summary>
 		/// User-visible localizable component name.
 		/// </summary>
-		public string UiName
-		{
-			get { return "Record Edit"; }
-		}
-
+		public string UiName => "Record Edit";
 		#endregion
 
 		#region Implementation of ITool
@@ -154,23 +148,12 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 		/// <summary>
 		/// Get the area machine name the tool is for.
 		/// </summary>
-		public string AreaMachineName
-		{
-			get { return "notebook"; }
-		}
+		public string AreaMachineName => "notebook";
 
 		/// <summary>
 		/// Get the image for the area.
 		/// </summary>
-		public Image Icon
-		{
-			get
-			{
-				var image = Images.SideBySideView;
-				image.MakeTransparent(Color.Magenta);
-				return image;
-			}
-		}
+		public Image Icon => Images.SideBySideView.SetBackgroundColor(Color.Magenta);
 
 		#endregion
 	}

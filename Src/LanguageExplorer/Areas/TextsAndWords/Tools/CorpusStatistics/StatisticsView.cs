@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2008-2015 SIL International
+﻿// Copyright (c) 2008-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -118,8 +118,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 		/// <remarks>
 		/// This is called on the outgoing component, when the user switches to a component.
 		/// </remarks>
-		public void Deactivate(ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip, ToolStripContainer toolStripContainer,
-			StatusBar statusbar)
+		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
 			_chooseTextsToolStripButton.Click -= AddTexts_Clicked;
 			_chooseTextsToolStripMenuItem.Click -= AddTexts_Clicked;
@@ -138,7 +137,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 			if (_toolStripViewCreatedLocally)
 			{
 				// Get rid of entire toolbar, since we added it.
-				toolStripContainer.TopToolStripPanel.Controls.Remove(_toolStripView);
+				majorFlexComponentParameters.ToolStripContainer.TopToolStripPanel.Controls.Remove(_toolStripView);
 				_toolStripView.Dispose();
 				_toolStripView = null;
 				_toolStripViewCreatedLocally = false;
@@ -151,12 +150,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 		/// <remarks>
 		/// This is called on the component that is becoming active.
 		/// </remarks>
-		public void Activate(ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip, ToolStripContainer toolStripContainer,
-			StatusBar statusbar)
+		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
 			// Add toolbar button (and maybe the entire toolbar).
 			// TODO-Linux: boolean 'searchAllChildren' parameter is marked with "MonoTODO".
-			var toolbars = toolStripContainer.TopToolStripPanel.Controls.Find("toolStripView", false);
+			var toolbars = majorFlexComponentParameters.ToolStripContainer.TopToolStripPanel.Controls.Find("toolStripView", false);
 			if (toolbars.Length == 0)
 			{
 				// Need to create the tool strip ourselves.
@@ -165,8 +163,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 				{
 					Name = "toolStripView"
 				};
-				toolStripContainer.TopToolStripPanel.Controls.Add(_toolStripView);
-				toolStripContainer.TopToolStripPanel.Controls.SetChildIndex(_toolStripView, 0);
+				majorFlexComponentParameters.ToolStripContainer.TopToolStripPanel.Controls.Add(_toolStripView);
+				majorFlexComponentParameters.ToolStripContainer.TopToolStripPanel.Controls.SetChildIndex(_toolStripView, 0);
 			}
 			else
 			{
@@ -190,7 +188,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 				ToolTipText = LanguageExplorerResources.chooseTexts
 			};
 			// TODO-Linux: boolean 'searchAllChildren' parameter is marked with "MonoTODO".
-			_viewToolStripMenuItem = (ToolStripMenuItem)menuStrip.Items.Find("_viewToolStripMenuItem", true)[0];
+			_viewToolStripMenuItem = (ToolStripMenuItem)majorFlexComponentParameters.MenuStrip.Items.Find("_viewToolStripMenuItem", true)[0];
 			_viewToolStripMenuItem.DropDownItems.Add(_chooseTextsToolStripMenuItem);
 
 			_chooseTextsToolStripButton.Click += AddTexts_Clicked;
@@ -392,10 +390,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 		/// <summary>
 		/// The Area name that uses this control.
 		/// </summary>
-		public string AreaName
-		{
-			get { return "textsWords"; }
-		}
+		public string AreaName => "textsWords";
 
 		#endregion
 

@@ -1,9 +1,8 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Drawing;
-using System.Windows.Forms;
 using System.Xml.Linq;
 using LanguageExplorer.Controls;
 using SIL.FieldWorks.Common.FwUtils;
@@ -74,10 +73,12 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CategoryBrowse
 		/// <remarks>
 		/// This is called on the outgoing component, when the user switches to a component.
 		/// </remarks>
-		public void Deactivate(ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip, ToolStripContainer toolStripContainer,
-			StatusBar statusbar)
+		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			PaneBarContainerFactory.RemoveFromParentAndDispose(mainCollapsingSplitContainer, ref _paneBarContainer, ref _recordClerk);
+			PaneBarContainerFactory.RemoveFromParentAndDispose(
+				majorFlexComponentParameters.MainCollapsingSplitContainer,
+				ref _paneBarContainer,
+				ref _recordClerk);
 		}
 
 		/// <summary>
@@ -86,16 +87,14 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CategoryBrowse
 		/// <remarks>
 		/// This is called on the component that is becoming active.
 		/// </remarks>
-		public void Activate(ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip, ToolStripContainer toolStripContainer,
-			StatusBar statusbar)
+		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
 			_configurationDocument = XDocument.Parse(GrammarResources.GrammarCategoryBrowserParameters);
 			_recordClerk = GrammarArea.CreateBrowseClerkForGrammarArea(PropertyTable, false);
-			var flexComponentParameterObject = new FlexComponentParameters(PropertyTable, Publisher, Subscriber);
-			_recordClerk.InitializeFlexComponent(flexComponentParameterObject);
+			_recordClerk.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
 			_paneBarContainer = PaneBarContainerFactory.Create(
-				flexComponentParameterObject,
-				mainCollapsingSplitContainer,
+				majorFlexComponentParameters.FlexComponentParameters,
+				majorFlexComponentParameters.MainCollapsingSplitContainer,
 				new RecordBrowseView(_configurationDocument.Root, _recordClerk));
 		}
 
@@ -131,18 +130,12 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CategoryBrowse
 		/// Get the internal name of the component.
 		/// </summary>
 		/// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
-		public string MachineName
-		{
-			get { return "categoryBrowse"; }
-		}
+		public string MachineName => "categoryBrowse";
 
 		/// <summary>
 		/// User-visible localizable component name.
 		/// </summary>
-		public string UiName
-		{
-			get { return "Categories Browse"; }
-		}
+		public string UiName => "Categories Browse";
 
 		#endregion
 
@@ -151,23 +144,12 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CategoryBrowse
 		/// <summary>
 		/// Get the area machine name the tool is for.
 		/// </summary>
-		public string AreaMachineName
-		{
-			get { return "grammar"; }
-		}
+		public string AreaMachineName => "grammar";
 
 		/// <summary>
 		/// Get the image for the area.
 		/// </summary>
-		public Image Icon
-		{
-			get
-			{
-				var image = Images.BrowseView;
-				image.MakeTransparent(Color.Magenta);
-				return image;
-			}
-		}
+		public Image Icon => Images.BrowseView.SetBackgroundColor(Color.Magenta);
 
 		#endregion
 	}
