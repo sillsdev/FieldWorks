@@ -4,6 +4,7 @@
 
 using System.Drawing;
 using System.Windows.Forms;
+using LanguageExplorer.Controls.PaneBar;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks;
@@ -85,14 +86,24 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			var multiPaneParameters = new MultiPaneParameters
+			{
+				Orientation = Orientation.Vertical,
+				AreaMachineName = AreaMachineName,
+				Id = "EditViewTextsMultiPane",
+				ToolMachineName = MachineName,
+				DefaultFixedPaneSizePoints = "145",
+				DefaultPrintPane = "ITextContent",
+				DefaultFocusControl = "InterlinMaster"
+			};
 			_multiPane = MultiPaneFactory.CreateMultiPaneWithTwoPaneBarContainersInMainCollapsingSplitContainer(
 				majorFlexComponentParameters.FlexComponentParameters,
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
-				this,
-				"LexItemsAndDetailMultiPane",
-				TemporaryToolProviderHack.CreateNewLabel($"Browse view for tool: {MachineName}"), "Browse",
-				TemporaryToolProviderHack.CreateNewLabel($"Details view for tool: {MachineName}"), "Details",
-				Orientation.Vertical);
+				multiPaneParameters,
+				TemporaryToolProviderHack.CreateNewLabel($"Browse view for tool: {MachineName}"), "Browse", new PaneBar(),
+				TemporaryToolProviderHack.CreateNewLabel($"Details view for tool: {MachineName}"), "Details", new PaneBar());
+
+			_multiPane.FixedPanel = FixedPanel.Panel1;
 		}
 
 		/// <summary>
@@ -102,7 +113,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 		{
 #if RANDYTODO
 			// TODO: Call PrepareToRefresh on nested RecordBrowseView control (left side of main MultiPane splitter control).
-			// TODO: Call PrepareToRefresh on nested InterlinMaster control (right side of main MultiPane splitter control).
+			_interlinMaster.PrepareToRefresh();
+			_recordBrowseView.BrowseViewer.BrowseView.PrepareToRefresh();
 #endif
 		}
 
@@ -111,10 +123,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 		/// </summary>
 		public void FinishRefresh()
 		{
-#if RANDYTODO
-			// TODO: If tool uses a SDA decorator (DomainDataByFlidDecoratorBase), then call its "Refresh" method.
-#endif
 			_recordClerk.ReloadIfNeeded();
+#if RANDYTODO
+			((DomainDataByFlidDecoratorBase)_recordClerk.VirtualListPublisher).Refresh();
+#endif
 		}
 
 		/// <summary>
@@ -133,18 +145,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 		/// Get the internal name of the component.
 		/// </summary>
 		/// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
-		public string MachineName
-		{
-			get { return "interlinearEdit"; }
-		}
+		public string MachineName => "interlinearEdit";
 
 		/// <summary>
 		/// User-visible localizable component name.
 		/// </summary>
-		public string UiName
-		{
-			get { return "Interlinear Texts"; }
-		}
+		public string UiName => "Interlinear Texts";
 
 		#endregion
 
@@ -153,23 +159,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 		/// <summary>
 		/// Get the area machine name the tool is for.
 		/// </summary>
-		public string AreaMachineName
-		{
-			get { return "textsWords"; }
-		}
+		public string AreaMachineName => "textsWords";
 
 		/// <summary>
 		/// Get the image for the area.
 		/// </summary>
-		public Image Icon
-		{
-			get
-			{
-				var image = Images.EditView;
-				image.MakeTransparent(Color.Magenta);
-				return image;
-			}
-		}
+		public Image Icon => Images.EditView.SetBackgroundColor(Color.Magenta);
 
 		#endregion
 	}

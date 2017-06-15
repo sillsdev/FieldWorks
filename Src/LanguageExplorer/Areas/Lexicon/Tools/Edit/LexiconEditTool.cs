@@ -13,6 +13,7 @@ using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.PaneBar;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.Resources;
@@ -126,12 +127,13 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			_configurationDocument.Root.Add(columnsElement);
 
 			_recordClerk = LexiconArea.CreateBasicClerkForLexiconArea(PropertyTable.GetValue<FdoCache>("cache"));
-			_recordClerk.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
+			var flexComponentParameters = new FlexComponentParameters(PropertyTable, Publisher, Subscriber);
+			_recordClerk.InitializeFlexComponent(flexComponentParameters);
 
 			_recordBrowseView = new RecordBrowseView(_configurationDocument.Root, _recordClerk);
 
 			var dataTreeMenuHandler = new LexEntryMenuHandler();
-			dataTreeMenuHandler.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
+			dataTreeMenuHandler.InitializeFlexComponent(flexComponentParameters);
 #if RANDYTODO
 			// TODO: Set up 'dataTreeMenuHandler' to handle menu events.
 			// TODO: Install menus and connect them to event handlers. (See "CreateContextMenuStrip" method for where the menus are.)
@@ -171,25 +173,25 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				Dock = DockStyle.Right
 			};
 			paneBar.AddControls(new List<Control> { panelMenu, panelButton });
-			_multiPane = MultiPaneFactory.CreateMultiPaneWithTwoPaneBarContainersInMainCollapsingSplitContainer(
-				majorFlexComponentParameters.FlexComponentParameters,
+			_multiPane = MultiPaneFactory.CreateMultiPaneWithTwoPaneBarContainersInMainCollapsingSplitContainer(flexComponentParameters,
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
 				mainMultiPaneParameters,
-				_recordBrowseView, "Browse",
-				_innerMultiPane = MultiPaneFactory.CreateNestedMultiPane(majorFlexComponentParameters.FlexComponentParameters, nestedMultiPaneParameters), "Dictionary & Details",
-				paneBar);
+				_recordBrowseView, "Browse", new PaneBar(),
+				_innerMultiPane = MultiPaneFactory.CreateNestedMultiPane(flexComponentParameters, nestedMultiPaneParameters), "Dictionary & Details", paneBar);
 			_innerMultiPane.Panel1Collapsed = !PropertyTable.GetValue<bool>(Show_DictionaryPubPreview);
 			panelButton.DatTree = recordEditView.DatTree;
 
 			// Too early before now.
 			recordEditView.FinishInitialization();
 			((RecordDocXmlView)nestedMultiPaneParameters.FirstControlParameters.Control).ReallyShowRecordNow();
+			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
 		}
 
 		private ContextMenuStrip CreateContextMenuStrip()
 		{
 			var contextMenuStrip = new ContextMenuStrip();
 
+#if RANDYTODO
 			// Show_Dictionary_Preview menu item.
 			var contextMenuItem = CreateToolStripMenuItem(contextMenuStrip, LexiconResources.Show_DictionaryPubPreview, LexiconResources.Show_DictionaryPubPreview_ToolTip, Show_Dictionary_Preview_Clicked);
 			contextMenuItem.Checked = PropertyTable.GetValue<bool>(Show_DictionaryPubPreview);
@@ -274,8 +276,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			// TODO: Enable it and have better event handler deal with it.
 			contextMenuItem.Enabled = false;
 #endif
+#endif
 
-			return contextMenuStrip;
+			return contextMenuStrip; // Just pretend that it works for now.
 		}
 
 		private ToolStripMenuItem GetItemForItemText(string menuText)
@@ -420,6 +423,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		public void FinishRefresh()
 		{
 			_recordClerk.ReloadIfNeeded();
+			((DomainDataByFlidDecoratorBase)_recordClerk.VirtualListPublisher).Refresh();
 		}
 
 		/// <summary>

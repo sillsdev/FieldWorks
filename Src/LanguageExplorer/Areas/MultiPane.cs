@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -73,7 +73,6 @@ namespace LanguageExplorer.Areas
 			m_persistContext = parameters.PersistContext;
 			m_label = parameters.Label;
 
-			SecondCollapseZone = parameters.SecondCollapseZone;
 			Orientation = parameters.Orientation;
 			Dock = DockStyle.Fill;
 			SplitterWidth = 5;
@@ -85,6 +84,9 @@ namespace LanguageExplorer.Areas
 			SecondControl = parameters.SecondControlParameters.Control;
 			SecondLabel = parameters.SecondControlParameters.Label;
 			SecondControl.Dock = DockStyle.Fill;
+
+			// Has to be done later for clients that know about "m_defaultFocusControl".
+			SecondCollapseZone = parameters.SecondCollapseZone;
 		}
 
 		/// <summary />
@@ -287,7 +289,7 @@ namespace LanguageExplorer.Areas
 			{
 				return string.Format("MultiPaneSplitterDistance_{0}_{1}_{2}",
 					m_areaMachineName,
-					PropertyTable.GetValue("currentContentControl", string.Empty),
+					PropertyTable.GetValue("toolChoice", string.Empty),
 					m_id);
 			}
 		}
@@ -304,6 +306,16 @@ namespace LanguageExplorer.Areas
 			if (m_fOkToPersistSplit)
 			{
 				PropertyTable.SetProperty(SplitterDistancePropertyName, SplitterDistance, true, false);
+			}
+		}
+
+		/// <param name="e">An <see cref="T:System.EventArgs" /> that contains the event data. </param>
+		protected override void OnParentChanged(EventArgs e)
+		{
+			base.OnParentChanged(e);
+			if (Parent != null)
+			{
+				ResetSplitterEventHandler(true);
 			}
 		}
 
@@ -446,6 +458,7 @@ namespace LanguageExplorer.Areas
 			Panel1Collapsed = !PropertyTable.GetValue(string.Format("Show_{0}", m_id), true);
 
 			m_fOkToPersistSplit = true;
+			SetSplitterDistance();
 		}
 
 		#endregion

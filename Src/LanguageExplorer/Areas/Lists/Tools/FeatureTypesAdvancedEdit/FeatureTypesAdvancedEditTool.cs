@@ -4,6 +4,7 @@
 
 using System.Drawing;
 using System.Windows.Forms;
+using LanguageExplorer.Controls.PaneBar;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks;
@@ -89,14 +90,19 @@ namespace LanguageExplorer.Areas.Lists.Tools.FeatureTypesAdvancedEdit
 #if RANDYTODO
 			// TODO: Do not use generic list tool setup!
 #endif
+			var mainMultiPaneParameters = new MultiPaneParameters
+			{
+				Orientation = Orientation.Vertical,
+				AreaMachineName = AreaMachineName,
+				Id = "FeatureTypesAndDetailMultiPane",
+				ToolMachineName = MachineName
+			};
 			_multiPane = MultiPaneFactory.CreateMultiPaneWithTwoPaneBarContainersInMainCollapsingSplitContainer(
 				majorFlexComponentParameters.FlexComponentParameters,
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
-				this,
-				"FeatureTypesAndDetailMultiPane",
-				TemporaryToolProviderHack.CreateNewLabel($"Browse view for tool: {MachineName}"), "Browse",
-				TemporaryToolProviderHack.CreateNewLabel($"Details view for tool: {MachineName}"), "Details",
-				Orientation.Vertical);
+				mainMultiPaneParameters,
+				TemporaryToolProviderHack.CreateNewLabel($"Browse view for tool: {MachineName}"), "Browse", new PaneBar(),
+				TemporaryToolProviderHack.CreateNewLabel($"Details view for tool: {MachineName}"), "Details", new PaneBar());
 		}
 
 		/// <summary>

@@ -4,6 +4,8 @@
 
 using System.Drawing;
 using System.Windows.Forms;
+using LanguageExplorer.Areas.TextsAndWords.Interlinear;
+using LanguageExplorer.Controls.PaneBar;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks;
@@ -18,8 +20,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 	/// </summary>
 	internal sealed class WordListConcordanceTool : ITool
 	{
-		private MultiPane _multiPane;
-		private RecordClerk _recordClerk;
+		private MultiPane _outerMultiPane;
+		private RecordClerk _mainRecordClerk;
 
 		#region Implementation of IPropertyTableProvider
 
@@ -75,7 +77,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			MultiPaneFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _multiPane, ref _recordClerk);
+			MultiPaneFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _outerMultiPane, ref _mainRecordClerk);
 		}
 
 		/// <summary>
@@ -86,14 +88,21 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			_multiPane = MultiPaneFactory.CreateMultiPaneWithTwoPaneBarContainersInMainCollapsingSplitContainer(
+			var mainMultiPaneParameters = new MultiPaneParameters
+			{
+				Orientation = Orientation.Vertical,
+				AreaMachineName = AreaMachineName,
+				Id = "WordsAndOccurrencesMultiPane",
+				ToolMachineName = MachineName,
+				DefaultPrintPane = "wordOccurrenceList",
+				SecondCollapseZone = 180000
+			};
+			_outerMultiPane = MultiPaneFactory.CreateMultiPaneWithTwoPaneBarContainersInMainCollapsingSplitContainer(
 				majorFlexComponentParameters.FlexComponentParameters,
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
-				this,
-				"ReversalIndexItemsAndDetailMultiPane",
-				TemporaryToolProviderHack.CreateNewLabel($"Doc Reversals view for tool: {MachineName}"), "Doc Reversals",
-				TemporaryToolProviderHack.CreateNewLabel($"Browse Entries view for tool: {MachineName}"), "Browse Entries",
-				Orientation.Vertical);
+				mainMultiPaneParameters,
+				TemporaryToolProviderHack.CreateNewLabel($"Doc Reversals view for tool: {MachineName}"), "Doc Reversals", new PaneBar(),
+				TemporaryToolProviderHack.CreateNewLabel($"Browse Entries view for tool: {MachineName}"), "Browse Entries", new PaneBar());
 		}
 
 		/// <summary>
@@ -116,7 +125,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 #if RANDYTODO
 			// TODO: If tool uses a SDA decorator (DomainDataByFlidDecoratorBase), then call its "Refresh" method.
 #endif
-			_recordClerk.ReloadIfNeeded();
+			_mainRecordClerk.ReloadIfNeeded();
 		}
 
 		/// <summary>
@@ -127,9 +136,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 		{
 		}
 
-		#endregion
+#endregion
 
-		#region Implementation of IMajorFlexUiComponent
+#region Implementation of IMajorFlexUiComponent
 
 		/// <summary>
 		/// Get the internal name of the component.
@@ -148,9 +157,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 			get { return "Word List Concordance"; }
 		}
 
-		#endregion
+#endregion
 
-		#region Implementation of ITool
+#region Implementation of ITool
 
 		/// <summary>
 		/// Get the area machine name the tool is for.
@@ -173,6 +182,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 			}
 		}
 
-		#endregion
+#endregion
 	}
 }

@@ -4,6 +4,7 @@
 
 using System.Drawing;
 using System.Windows.Forms;
+using LanguageExplorer.Controls.PaneBar;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks;
@@ -86,14 +87,19 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			var mainMultiPaneParameters = new MultiPaneParameters
+			{
+				Orientation = Orientation.Vertical,
+				AreaMachineName = AreaMachineName,
+				Id = "ReversalIndexItemsAndDetailMultiPane",
+				ToolMachineName = MachineName
+			};
 			_multiPane = MultiPaneFactory.CreateMultiPaneWithTwoPaneBarContainersInMainCollapsingSplitContainer(
 				majorFlexComponentParameters.FlexComponentParameters,
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
-				this,
-				"ReversalIndexItemsAndDetailMultiPane",
-				TemporaryToolProviderHack.CreateNewLabel($"Doc Reversals view for tool: {MachineName}"), "Doc Reversals",
-				TemporaryToolProviderHack.CreateNewLabel($"Browse Entries view for tool: {MachineName}"), "Browse Entries",
-				Orientation.Vertical);
+				mainMultiPaneParameters,
+				TemporaryToolProviderHack.CreateNewLabel($"Doc Reversals view for tool: {MachineName}"), "Doc Reversals", new PaneBar(),
+				TemporaryToolProviderHack.CreateNewLabel($"Browse Entries view for tool: {MachineName}"), "Browse Entries", new PaneBar());
 		}
 
 		/// <summary>

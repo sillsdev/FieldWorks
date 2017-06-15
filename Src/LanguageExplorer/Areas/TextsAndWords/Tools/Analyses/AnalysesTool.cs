@@ -4,6 +4,7 @@
 
 using System.Drawing;
 using System.Windows.Forms;
+using LanguageExplorer.Controls.PaneBar;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks;
@@ -86,11 +87,15 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 			_multiPane = MultiPaneFactory.CreateMultiPaneWithTwoPaneBarContainersInMainCollapsingSplitContainer(
 				majorFlexComponentParameters.FlexComponentParameters,
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
-				this,
-				"WordsAndAnalysesMultiPane",
-				TemporaryToolProviderHack.CreateNewLabel($"WordList view for tool: {MachineName}"), "WordList",
-				TemporaryToolProviderHack.CreateNewLabel($"SingleWord view for tool: {MachineName}"), "SingleWord",
-				Orientation.Vertical);
+				new MultiPaneParameters
+				{
+					Orientation = Orientation.Vertical,
+					AreaMachineName = AreaMachineName,
+					Id = "WordsAndAnalysesMultiPane",
+					ToolMachineName = MachineName
+				},
+				TemporaryToolProviderHack.CreateNewLabel($"WordList view for tool: {MachineName}"), "WordList", new PaneBar(),
+				TemporaryToolProviderHack.CreateNewLabel($"SingleWord view for tool: {MachineName}"), "SingleWord", new PaneBar());
 		}
 
 		/// <summary>
@@ -130,19 +135,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 		/// Get the internal name of the component.
 		/// </summary>
 		/// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
-		public string MachineName
-		{
-			get { return "Analyses"; }
-		}
+		public string MachineName => "Analyses";
 
 		/// <summary>
 		/// User-visible localizable component name.
 		/// </summary>
-		public string UiName
-		{
-			get { return "Word Analyses"; }
-		}
-
+		public string UiName => "Word Analyses";
 		#endregion
 
 		#region Implementation of ITool
@@ -150,23 +148,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 		/// <summary>
 		/// Get the area machine name the tool is for.
 		/// </summary>
-		public string AreaMachineName
-		{
-			get { return "textsWords"; }
-		}
+		public string AreaMachineName => "textsWords";
 
 		/// <summary>
 		/// Get the image for the area.
 		/// </summary>
-		public Image Icon
-		{
-			get
-			{
-				var image = Images.SideBySideView;
-				image.MakeTransparent(Color.Magenta);
-				return image;
-			}
-		}
+		public Image Icon => Images.SideBySideView.SetBackgroundColor(Color.Magenta);
 
 		#endregion
 	}

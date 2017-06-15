@@ -1,8 +1,7 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
 using System.Windows.Forms;
 using LanguageExplorer.Areas;
 using SIL.FieldWorks.Common.FwUtils;
@@ -25,6 +24,29 @@ namespace LanguageExplorer.Controls
 		internal static PaneBarContainer Create(FlexComponentParameters flexComponentParameters, ICollapsingSplitContainer mainCollapsingSplitContainer, Control mainChildControl)
 		{
 			var newPaneBarContainer = new PaneBarContainer(mainChildControl);
+			mainCollapsingSplitContainer.SecondControl = newPaneBarContainer;
+			newPaneBarContainer.InitializeFlexComponent(flexComponentParameters);
+			if (mainChildControl is IFlexComponent)
+			{
+				var asFlexComponent = (IFlexComponent)mainChildControl;
+				asFlexComponent.InitializeFlexComponent(flexComponentParameters);
+			}
+			mainChildControl.BringToFront();
+
+			return newPaneBarContainer;
+		}
+
+		/// <summary>
+		/// Create a new PaneBarContainer
+		/// </summary>
+		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
+		/// <param name="mainCollapsingSplitContainer">Put the new PaneBarContainer into SecondControl.</param>
+		/// <param name="paneBar"></param>
+		/// <param name="mainChildControl">Main child control for the new PaneBarContainer</param>
+		/// <returns>The new PaneBarContainer instance.</returns>
+		internal static PaneBarContainer Create(FlexComponentParameters flexComponentParameters, ICollapsingSplitContainer mainCollapsingSplitContainer, PaneBar.PaneBar paneBar, Control mainChildControl)
+		{
+			var newPaneBarContainer = new PaneBarContainer(paneBar, mainChildControl);
 			mainCollapsingSplitContainer.SecondControl = newPaneBarContainer;
 			newPaneBarContainer.InitializeFlexComponent(flexComponentParameters);
 			if (mainChildControl is IFlexComponent)
@@ -117,7 +139,7 @@ namespace LanguageExplorer.Controls
 
 		internal static string CreateShowHiddenFieldsPropertyName(string toolMachineName)
 		{
-			return String.Format("{0}-{1}", LanguageExplorerResources.ksShowHiddenFields, toolMachineName);
+			return $"{LanguageExplorerResources.ksShowHiddenFields}-{toolMachineName}";
 		}
 	}
 }

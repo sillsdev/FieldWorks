@@ -11,6 +11,13 @@ using SIL.FieldWorks.XWorks;
 
 namespace LanguageExplorer
 {
+	/// <summary>
+	/// Manager for the four navigation buttons.
+	/// </summary>
+	/// <remarks>
+	/// The idea is that individual tools that care about such record navigation
+	/// can manage the enabled state of the four navigation buttons.
+	/// </remarks>
 	internal sealed class DataNavigationManager : IDisposable
 	{
 		internal const string First = "First";
@@ -21,6 +28,7 @@ namespace LanguageExplorer
 		private readonly Dictionary<string, Tuple<ToolStripMenuItem, ToolStripButton>> _menuItems;
 		private RecordClerk _clerk;
 
+		/// <summary />
 		internal DataNavigationManager(ISubscriber subscriber, Dictionary<string, Tuple<ToolStripMenuItem, ToolStripButton>>  menuItems)
 		{
 			if (subscriber == null)
@@ -95,6 +103,8 @@ namespace LanguageExplorer
 
 		private void SetEnabledStateForWidgets()
 		{
+#if RANDYTODO
+			// TODO: Needs those tuples set.
 			if (_clerk == null || _clerk.ListSize == 0)
 			{
 				// Disable menu items.
@@ -115,6 +125,7 @@ namespace LanguageExplorer
 				currentTuple = _menuItems[Last];
 				currentTuple.Item1.Enabled = currentTuple.Item2.Enabled = _clerk.CurrentIndex < _clerk.ListSize - 1;
 			}
+#endif
 		}
 
 #region Implementation of IDisposable

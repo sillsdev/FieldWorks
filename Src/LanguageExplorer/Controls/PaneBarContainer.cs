@@ -1,4 +1,4 @@
-// Copyright (c) 2002-2015 SIL International
+// Copyright (c) 2002-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -33,7 +33,7 @@ namespace LanguageExplorer.Controls
 		private XmlNode m_configurationParameters;
 		private Control m_mainControl;
 		private Size m_parentSizeHint;
-		private string m_defaultPrintPaneId = "";
+		//private string m_defaultPrintPaneId = string.Empty;
 		private int instanceID;
 
 		#endregion Data Members
@@ -50,7 +50,7 @@ namespace LanguageExplorer.Controls
 		internal PaneBarContainer(PaneBar.PaneBar paneBar, Control mainControl)
 			: this()
 		{
-			SuspendLayout();
+			//SuspendLayout();
 			m_mainControl = mainControl;
 			PaneBar = paneBar;
 			paneBar.Dock = DockStyle.Top;
@@ -64,8 +64,8 @@ namespace LanguageExplorer.Controls
 			mainControl.Dock = DockStyle.Fill;
 			Controls.Add(paneBar);
 			Controls.Add(m_mainControl);
-			ResumeLayout(false);
-			m_mainControl.BringToFront();
+			//ResumeLayout(false);
+			//m_mainControl.BringToFront();
 		}
 
 		/// <summary />
@@ -109,25 +109,14 @@ namespace LanguageExplorer.Controls
 		/// <remarks> at the moment, the top-level multipane is able to figure out its eventual
 		/// size without help from this. However, multipanes inside of other ones rely on this.
 		/// </remarks>
-		internal Size ParentSizeHint
-		{
-			get { return m_parentSizeHint; }
-			set { m_parentSizeHint = value; }
-		}
+		internal Size ParentSizeHint { get; set; }
 
 		/// <summary>
 		/// </summary>
-		internal String DefaultPrintPaneId
-		{
-			get { return m_defaultPrintPaneId; }
-			set { m_defaultPrintPaneId = value; }
-		}
+		internal string DefaultPrintPaneId { get; set; } = string.Empty;
 
 		/// <summary />
-		internal Control MainControl
-		{
-			get { return m_mainControl; }
-		}
+		internal Control MainControl => m_mainControl;
 
 		#endregion Properties
 
@@ -139,7 +128,7 @@ namespace LanguageExplorer.Controls
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
+				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
 		}
 
 		#region IMainUserControl implementation
@@ -190,7 +179,7 @@ namespace LanguageExplorer.Controls
 		public Control PopulateCtrlTabTargetCandidateList(List<Control> targetCandidates)
 		{
 			if (targetCandidates == null)
-				throw new ArgumentNullException("'targetCandidates' is null.");
+				throw new ArgumentNullException(nameof(targetCandidates));
 
 			// Don't bother with the IPaneBar.
 			// Just check out the main control.
@@ -207,8 +196,7 @@ namespace LanguageExplorer.Controls
 		public void PostLayoutInit()
 		{
 			var initReceiver = MainControl as IPostLayoutInit;
-			if (initReceiver != null)
-				initReceiver.PostLayoutInit();
+			initReceiver?.PostLayoutInit();
 		}
 
 		#region Implementation of IPropertyTableProvider
@@ -264,7 +252,7 @@ namespace LanguageExplorer.Controls
 
 		#region Implementation of IPaneBarContainer
 
-		public IPaneBar PaneBar { get; private set; }
+		public IPaneBar PaneBar { get; }
 
 		#endregion
 	}

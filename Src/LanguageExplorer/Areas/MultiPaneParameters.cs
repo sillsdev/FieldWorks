@@ -18,6 +18,8 @@ namespace LanguageExplorer.Areas
 		/// <summary />
 		internal string AreaMachineName { get; set; }
 		/// <summary />
+		internal int FirstCollapseZone { get; set; }
+		/// <summary />
 		internal int SecondCollapseZone { get; set; }
 		/// <summary />
 		internal string Id { get; set; }

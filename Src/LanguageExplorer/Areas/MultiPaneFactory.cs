@@ -1,8 +1,9 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Windows.Forms;
+using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.PaneBar;
 using SIL.FieldWorks.Common.FwUtils;
@@ -16,26 +17,30 @@ namespace LanguageExplorer.Areas
 	internal static class MultiPaneFactory
 	{
 		/// <summary>
-		/// Create a new nested MultiPane instance, which is nested in anotehr MultiPane control
+		/// Create a new nested MultiPane instance, which is nested in another MultiPane control
 		/// </summary>
 		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
 		/// <param name="multiPaneParameters">Boat load of goodies need to create a MultiPane.</param>
 		/// <returns>A newly created nested MultiPane instance.</returns>
 		internal static MultiPane CreateNestedMultiPane(FlexComponentParameters flexComponentParameters, MultiPaneParameters multiPaneParameters)
 		{
-			var nestedMultiPane = new MultiPane(multiPaneParameters);
 			var firstControl = multiPaneParameters.FirstControlParameters.Control;
-			InitializeSubControl(nestedMultiPane, firstControl, true);
+			firstControl.Dock = DockStyle.Fill;
 			if (firstControl is IFlexComponent)
 			{
 				((IFlexComponent)firstControl).InitializeFlexComponent(flexComponentParameters);
 			}
 			var secondControl = multiPaneParameters.SecondControlParameters.Control;
-			InitializeSubControl(nestedMultiPane, secondControl, false);
+			secondControl.Dock = DockStyle.Fill;
 			if (secondControl is IFlexComponent)
 			{
 				((IFlexComponent)secondControl).InitializeFlexComponent(flexComponentParameters);
 			}
+
+			var nestedMultiPane = new MultiPane(multiPaneParameters);
+			InitializeSubControl(nestedMultiPane, firstControl, true);
+			InitializeSubControl(nestedMultiPane, secondControl, false);
+			//nestedMultiPane.InitializeFlexComponent(flexComponentParameters);
 
 			firstControl.BringToFront();
 			secondControl.BringToFront();
@@ -47,14 +52,15 @@ namespace LanguageExplorer.Areas
 		{
 			var contentClassName = subControl.GetType().FullName;
 			if (subControl.AccessibleName == null)
+			{
 				subControl.AccessibleName = contentClassName;
+			}
 			if (!(subControl is IMainUserControl))
 			{
 #if RANDYTODO
 				// TODO: We tolerate other controls, such as those Panel hacks, while the tool displays are being set up.
 				// TODO: Once those hacks are gone, then this can be enabled.
-				throw new ApplicationException(
-					"FLEx can only handle controls which implement IMainUserControl. '" + contentClassName + "' does not.");
+				throw new ApplicationException(string.Format("FLEx can only handle controls which implement IMainUserControl. '{0}' does not.", contentClassName));
 #endif
 			}
 			subControl.Dock = DockStyle.Fill;
@@ -101,15 +107,6 @@ namespace LanguageExplorer.Areas
 		/// <returns>New instance of MultiPane that has PaneBarContainers as it two main controls.</returns>
 		internal static MultiPane CreateInMainCollapsingSplitContainer(FlexComponentParameters flexComponentParameters, ICollapsingSplitContainer mainCollapsingSplitContainer, MultiPaneParameters multiPaneParameters)
 		{
-			// All tools with MultiPane as main second child of top level mainCollapsingSplitContainer
-			// have PaneBarContainer children, which then have other main children,
-			var newMultiPane = new MultiPane(multiPaneParameters);
-
-			InitializeSubControl(newMultiPane, multiPaneParameters.FirstControlParameters.Control, true);
-			InitializeSubControl(newMultiPane, multiPaneParameters.SecondControlParameters.Control, false);
-
-			newMultiPane.InitializeFlexComponent(flexComponentParameters);
-			mainCollapsingSplitContainer.SecondControl = newMultiPane;
 			var firstControl = multiPaneParameters.FirstControlParameters.Control;
 			if (firstControl is IFlexComponent)
 			{
@@ -120,8 +117,16 @@ namespace LanguageExplorer.Areas
 			{
 				((IFlexComponent)secondControl).InitializeFlexComponent(flexComponentParameters);
 			}
-			multiPaneParameters.FirstControlParameters.Control.BringToFront();
-			multiPaneParameters.SecondControlParameters.Control.BringToFront();
+
+			// All tools with MultiPane as main second child of top level mainCollapsingSplitContainer
+			// have PaneBarContainer children, which then have other main children,
+			var newMultiPane = new MultiPane(multiPaneParameters);
+
+			InitializeSubControl(newMultiPane, multiPaneParameters.FirstControlParameters.Control, true);
+			InitializeSubControl(newMultiPane, multiPaneParameters.SecondControlParameters.Control, false);
+
+			newMultiPane.InitializeFlexComponent(flexComponentParameters);
+			mainCollapsingSplitContainer.SecondControl = newMultiPane;
 			firstControl.BringToFront();
 			secondControl.BringToFront();
 
@@ -136,78 +141,79 @@ namespace LanguageExplorer.Areas
 		/// <param name="multiPaneParameters"></param>
 		/// <param name="firstControl">Child control of new Left/Top PaneBarContainer instance</param>
 		/// <param name="firstlabel"></param>
+		/// <param name="firstPaneBar"></param>
 		/// <param name="secondControl">Child control of new Right/Bottom PaneBarContainer instance</param>
 		/// <param name="secondlabel"></param>
-		/// <param name="paneBar"></param>
+		/// <param name="secondPaneBar"></param>
 		/// <returns>New instance of MultiPane that has PaneBarContainers as it two main controls.</returns>
-		internal static MultiPane CreateMultiPaneWithTwoPaneBarContainersInMainCollapsingSplitContainer(FlexComponentParameters flexComponentParameters, ICollapsingSplitContainer mainCollapsingSplitContainer, MultiPaneParameters multiPaneParameters, Control firstControl, string firstlabel, Control secondControl, string secondlabel, PaneBar paneBar)
+		internal static MultiPane CreateMultiPaneWithTwoPaneBarContainersInMainCollapsingSplitContainer(FlexComponentParameters flexComponentParameters, ICollapsingSplitContainer mainCollapsingSplitContainer, MultiPaneParameters multiPaneParameters, Control firstControl, string firstlabel, PaneBar firstPaneBar, Control secondControl, string secondlabel, PaneBar secondPaneBar)
 		{
 			var mainCollapsingSplitContainerAsControl = (Control)mainCollapsingSplitContainer;
 			mainCollapsingSplitContainerAsControl.SuspendLayout();
 
 			multiPaneParameters.FirstControlParameters = new SplitterChildControlParameters
 			{
-				Control = PaneBarContainerFactory.Create(flexComponentParameters, firstControl),
+				Control = PaneBarContainerFactory.Create(flexComponentParameters, firstPaneBar, firstControl),
 				Label = firstlabel
 			};
 			multiPaneParameters.SecondControlParameters = new SplitterChildControlParameters
 			{
-				Control = PaneBarContainerFactory.Create(flexComponentParameters, paneBar, secondControl),
+				Control = PaneBarContainerFactory.Create(flexComponentParameters, secondPaneBar, secondControl),
 				Label = secondlabel
 			};
 
 			var multiPane = CreateInMainCollapsingSplitContainer(flexComponentParameters, mainCollapsingSplitContainer, multiPaneParameters);
 			if (secondControl is IPaneBarUser)
 			{
+				var aspbUser = (IPaneBarUser)secondControl;
+				if (aspbUser.MainPaneBar == null)
+				{
 				((IPaneBarUser)secondControl).MainPaneBar = ((IPaneBarContainer)multiPane.SecondControl).PaneBar;
+			}
 			}
 
 			mainCollapsingSplitContainerAsControl.ResumeLayout();
 			return multiPane;
 		}
 
-		/// <summary>
-		/// Create a new MultiPane instance where both main child controls are PaneBarContainer instances
-		/// </summary>
-		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
-		/// <param name="mainCollapsingSplitContainer">Parent control for the new MultiPane, which goes into its SecondControl</param>
-		/// <param name="multiPaneParameters"></param>
-		/// <param name="firstControl">Child control of new Left/Top PaneBarContainer instance</param>
-		/// <param name="firstlabel"></param>
-		/// <param name="secondControl">Child control of new Right/Bottom PaneBarContainer instance</param>
-		/// <param name="secondlabel"></param>
-		/// <returns>New instance of MultiPane that has PaneBarContainers as it two main controls.</returns>
-		internal static MultiPane CreateMultiPaneWithTwoPaneBarContainersInMainCollapsingSplitContainer(FlexComponentParameters flexComponentParameters, ICollapsingSplitContainer mainCollapsingSplitContainer, MultiPaneParameters multiPaneParameters, Control firstControl, string firstlabel, Control secondControl, string secondlabel)
+		internal static ConcordanceContainer CreateConcordanceContainer(FlexComponentParameters flexComponentParameters, ICollapsingSplitContainer mainCollapsingSplitContainer, MultiPaneParameters concordanceContainerParameters, MultiPaneParameters leftSideNestedMultiPaneParameters)
 		{
-			return CreateMultiPaneWithTwoPaneBarContainersInMainCollapsingSplitContainer(flexComponentParameters, mainCollapsingSplitContainer, multiPaneParameters, firstControl, firstlabel, secondControl, secondlabel, new PaneBar());
-		}
+			var mainCollapsingSplitContainerAsControl = (Control)mainCollapsingSplitContainer;
+			mainCollapsingSplitContainerAsControl.SuspendLayout();
 
-		/// <summary>
-		/// Create a new MultiPane instance where both main child controls are PaneBarContainer instances
-		/// </summary>
-		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
-		/// <param name="mainCollapsingSplitContainer">Parent control for the new MultiPane, which goes into its SecondControl</param>
-		/// <param name="tool"></param>
-		/// <param name="multiPaneId"></param>
-		/// <param name="firstControl">Child control of new Left/Top PaneBarContainer instance</param>
-		/// <param name="firstlabel">Label of the Left/Top control of the MultiPane</param>
-		/// <param name="secondControl">Child control of new Right/Bottom PaneBarContainer instance</param>
-		/// <param name="secondlabel">Label of the Right/Bottom control of the MultiPane</param>
-		/// <param name="orientation">Orientation of the splitter bar.</param>
-		/// <returns></returns>
-		internal static MultiPane CreateMultiPaneWithTwoPaneBarContainersInMainCollapsingSplitContainer(FlexComponentParameters flexComponentParameters, ICollapsingSplitContainer mainCollapsingSplitContainer, ITool tool, string multiPaneId, Control firstControl, string firstlabel, Control secondControl, string secondlabel, Orientation orientation)
-		{
-#if RANDYTODO
-		// TODO: Get current users switched to one of the other overloaded methods.
-#endif
-			var multiPaneParameters = new MultiPaneParameters
+			// NB: Caller creates leftSideNestedMultiPaneParameters.FirstControlParameters and leftSideNestedMultiPaneParameters.SecondControlParameters
+			// and sets the Control & Label values of each.
+			var nestedLeftSideMultiPane = CreateNestedMultiPane(flexComponentParameters, leftSideNestedMultiPaneParameters);
+			// concordanceContainerParameters.FirstControlParameters.Control & concordanceContainerParameters.SecondControlParameters.Control should both be null,
+			// but the Labels of each should be present.
+			concordanceContainerParameters.FirstControlParameters.Control = nestedLeftSideMultiPane;
+			// Set by caller, including PBC. concordanceContainerParameters.SecondControlParameters.Control;
+			var concordanceContainer = new ConcordanceContainer(concordanceContainerParameters);
+			var concordanceContainerAsControl = (Control)concordanceContainer;
+			concordanceContainerAsControl.SuspendLayout();
+			InitializeSubControl(concordanceContainer, concordanceContainerParameters.FirstControlParameters.Control, true);
+			InitializeSubControl(concordanceContainer, concordanceContainerParameters.SecondControlParameters.Control, false);
+
+			concordanceContainer.InitializeFlexComponent(flexComponentParameters);
+			mainCollapsingSplitContainer.SecondControl = concordanceContainer;
+			var firstControl = concordanceContainerParameters.FirstControlParameters.Control;
+			if (firstControl is IFlexComponent)
 			{
-				Orientation = orientation,
-				AreaMachineName = tool.AreaMachineName,
-				Id = multiPaneId,
-				ToolMachineName = tool.MachineName
-			};
-			return CreateMultiPaneWithTwoPaneBarContainersInMainCollapsingSplitContainer(flexComponentParameters, mainCollapsingSplitContainer, multiPaneParameters, firstControl, firstlabel, secondControl, secondlabel);
+				((IFlexComponent)firstControl).InitializeFlexComponent(flexComponentParameters);
+			}
+			var secondControl = concordanceContainerParameters.SecondControlParameters.Control;
+			// Already done in call to PaneBarContainerFactory.Create in calling client tool.
+			//if (secondControl is IFlexComponent)
+			//{
+			//	((IFlexComponent)secondControl).InitializeFlexComponent(flexComponentParameters);
+			//}
+			firstControl.BringToFront();
+			secondControl.BringToFront();
+
+			concordanceContainerAsControl.ResumeLayout();
+			mainCollapsingSplitContainerAsControl.ResumeLayout();
+
+			return concordanceContainer;
 		}
 
 		/// <summary>

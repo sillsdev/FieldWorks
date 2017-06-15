@@ -1,9 +1,12 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
+#if RANDYTODO
+	// TODO: Move to LE root (e.g., namespace "LanguageExplorer", after assimilating xWorks & XMLViews.
+#endif
 	/// <summary>
 	/// Interface main content controls may implement if they want to do more initialization after
 	/// the main content control is laid out (e.g., when their true size is known).

@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -15,19 +15,23 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 	/// </summary>
 	internal class ConcordanceContainer : MultiPane, IRefreshableRoot
 	{
+		/// <summary />
+		internal ConcordanceContainer(MultiPaneParameters parameters)
+			: base(parameters)
+		{
+		}
+
 		public bool RefreshDisplay()
 		{
-			ConcordanceControlBase concordanceControl = ReCurseControls(this);
+			var concordanceControl = ReCurseControls(this);
 			if (concordanceControl != null)
 			{
 				concordanceControl.RefreshDisplay();
 				return true;
 			}
 			Debug.Assert(concordanceControl != null, "ConcordanceContainer is missing the concordance control.");
-// ReSharper disable HeuristicUnreachableCode
-// (because it's wrong)
+
 			return false;
-// ReSharper restore HeuristicUnreachableCode
 		}
 
 		/// <summary>
@@ -36,7 +40,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// of the other views will be inconsistant with the ConcordanceControl and will lead to crashes or incorrect display behavior.
 		/// </summary>
 		/// <param name="parentControl">The control to Recurse</param>
-		private ConcordanceControlBase ReCurseControls(Control parentControl)
+		private static ConcordanceControlBase ReCurseControls(Control parentControl)
 		{
 			ConcordanceControlBase concordanceControl = null;
 			foreach (Control control in parentControl.Controls)
@@ -47,27 +51,27 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					continue;
 				}
 				var cv = control as IClearValues;
-				if (cv != null)
-					cv.ClearValues();
+				cv?.ClearValues();
 				var refreshable = control as IRefreshableRoot;
-				bool childrenRefreshed = false;
+				var childrenRefreshed = false;
 				if (refreshable != null)
 				{
 					childrenRefreshed = refreshable.RefreshDisplay();
 				}
-				if(!childrenRefreshed)
+				if (childrenRefreshed)
 				{
-					//Recurse into the child controls, make sure we only have one concordanceControl
-					if(concordanceControl == null)
-					{
-						concordanceControl = ReCurseControls(control);
-					}
-					else
-					{
-						var thereCanBeOnlyOne = ReCurseControls(control);
-						Debug.Assert(thereCanBeOnlyOne == null,
-									 "Two concordance controls in the same window is not supported. One won't refresh properly.");
-					}
+					continue;
+				}
+
+				//Recurse into the child controls, make sure we only have one concordanceControl
+				if(concordanceControl == null)
+				{
+					concordanceControl = ReCurseControls(control);
+				}
+				else
+				{
+					var thereCanBeOnlyOne = ReCurseControls(control);
+					Debug.Assert(thereCanBeOnlyOne == null, "Two concordance controls in the same window is not supported. One won't refresh properly.");
 				}
 			}
 			return concordanceControl;
