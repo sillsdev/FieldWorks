@@ -289,7 +289,8 @@
 		<!-- bt395 is the master branch build of ExCss for Linux development. Update when appropriate. -->
 		<ExCssBuildType Condition="'$(OS)'=='Unix'">bt395</ExCssBuildType>
 		<ExCss Condition="'$(OS)'=='Unix'">ExCSS</ExCss>
-		<Icu4cBuildType Condition="'$(OS)'=='Windows_NT'">Libraries_Icu4cWin32FieldWorksContinuous</Icu4cBuildType>
+		<Icu4cBuildType Condition="'$(OS)'=='Windows_NT' AND '$(arch)'!='x86_64'">Libraries_Icu4cWin32FieldWorksContinuous</Icu4cBuildType>
+		<Icu4cBuildType Condition="'$(OS)'=='Windows_NT' AND '$(arch)'=='x86_64'">Libraries_Icu4cWin64FieldWorksContinuous</Icu4cBuildType>
 		<HermitCrabBuildType>bt410</HermitCrabBuildType>
 		<HermitCrabBuildTag>fw-8.3.tcbuildtag</HermitCrabBuildTag>
 		<DownloadsSilOrgDownloadUrl>http://downloads.sil.org/BuildDlls/FW8.1</DownloadsSilOrgDownloadUrl>
