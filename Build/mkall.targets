@@ -10,7 +10,7 @@
 	<UsingTask TaskName="GenerateTestCoverageReport" AssemblyFile="FwBuildTasks.dll"/>
 
 	<!-- Make all of FieldWorks. -->
-	<Target Name="mkall" DependsOnTargets="CopyDlls;initLinux;initWindows;LinuxRegistry;allCpp;allCsharp;ensureTLBsUpToDate">
+	<Target Name="mkall" DependsOnTargets="CopyDlls;initLinux;initWindows;LinuxRegistry;allCpp;allCsharp;ensureTLBsUpToDate;Paratext8Plugin">
 		<Message Text="Finished mkall Target."/>
 		<CreateItem Condition="'$(action)'=='test'" Include="$(dir-outputBase)/*-nunit-output.xml">
 			<Output TaskParameter="Include" ItemName="NUnitReportFiles"/>
@@ -211,6 +211,33 @@
 					 TemplateFile="$(fwrt)/Src/FDO/FDOGenerate/CellarConstants.vm.h"
 					 WorkingDirectory="$(fwrt)/Src/FDO"
 					 Condition="'$(action)'!='clean'"/>
+	</Target>
+
+	<Choose>
+		<When Condition=" '$(config-capital)' == 'Debug' ">
+			<PropertyGroup>
+				<Paratext8PluginDefines>DEBUG TRACE CODE_ANALYSIS</Paratext8PluginDefines>
+			</PropertyGroup>
+		</When>
+		<When Condition=" '$(config-capital)' == 'Release' ">
+			<PropertyGroup>
+				<Paratext8PluginDefines>TRACE CODE_ANALYSIS</Paratext8PluginDefines>
+			</PropertyGroup>
+		</When>
+		<Otherwise>
+			<PropertyGroup>
+				<Paratext8PluginDefines>DEBUG TRACE CODE_ANALYSIS</Paratext8PluginDefines>
+			</PropertyGroup>
+		</Otherwise>
+	</Choose>
+
+	<Target Name="Paratext8Plugin" DependsOnTargets="Initialize;ScriptureUtils">
+		<MSBuild Projects="$(fwrt)\Src\Paratext8Plugin\Paratext8Plugin.csproj"
+			Targets="$(msbuild-target)"
+			Properties="$(msbuild-props);IntermediateOutputPath=$(dir-fwobj)\Paratext8Plugin\;DefineConstants=$(Paratext8PluginDefines);$(warningsAsErrors);WarningLevel=4"
+			ToolsVersion="4.0" Condition="'$(OS)'!='Unix'"/>
+		<!-- Paratext8Plugin must be built in a different environment on Unix. -->
+		<Message Text="Finished building Paratext8Plugin (on Windows)."/>
 	</Target>
 
 	<Target Name="CopyCellarBaseConstants" Inputs="$(fwrt)/Src/Kernel/CellarBaseConstants.h" Outputs="$(fwrt)/Output/Common/CellarBaseConstants.h">
