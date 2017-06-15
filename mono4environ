@@ -1,0 +1,10 @@
+#!/bin/sh
+
+# Environment settings for building the Fieldworks Paratext 8 Plugin
+# (temporary hack until all of FLEx is building against Mono 4)
+
+[ -z "$BUILD" ] && BUILD=Debug
+[ -z "$MONO_PREFIX" ] && MONO_PREFIX=/opt/mono4-sil
+[ -z "$MONO_SILPKGDIR" ] && MONO_SILPKGDIR=/opt/mono4-sil
+
+. ./environ
