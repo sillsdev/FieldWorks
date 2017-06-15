@@ -133,6 +133,8 @@ namespace LanguageExplorer.Areas.Lexicon
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			PropertyTable.SetDefault("Show_DictionaryPubPreview", true, SettingsGroup.LocalSettings, true, false);
+			PropertyTable.SetDefault("Show_reversalIndexEntryList", true, SettingsGroup.LocalSettings, false, false);
 		}
 
 		/// <summary>

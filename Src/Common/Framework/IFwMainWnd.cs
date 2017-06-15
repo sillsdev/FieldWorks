@@ -18,7 +18,7 @@ namespace SIL.FieldWorks.Common.Framework
 	/// </summary>
 	/// <remarks>In normal operations, an IFwMainWnd implementation expects to be cast to Form.</remarks>
 	/// ------------------------------------------------------------------------------------
-	public interface IFwMainWnd : IDisposable, IPropertyTableProvider, IPublisherProvider, ISubscriberProvider, IRecordListOwner
+	public interface IFwMainWnd : IDisposable, IPropertyTableProvider, IPublisherProvider, ISubscriberProvider, IRecordListOwner, IIdleQueueProvider
 	{
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

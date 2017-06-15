@@ -209,7 +209,7 @@
       <HintPath>..\..\Output\Release\SIL.WritingSystems.dll</HintPath>
     </Reference>
     <Reference Include="SilUtils">
-      <HintPath>..\..\..\..\RBR_FW_Fork\FW\Output\Release\SilUtils.dll</HintPath>
+      <HintPath>..\..\Output\Release\SilUtils.dll</HintPath>
     </Reference>
     <Reference Include="SimpleRootSite, Version=9.0.0.26288, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
@@ -237,8 +237,14 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="images\MenuWidget.bmp" />
+    <None Include="images\NavigationImages\FWFirstArrow.bmp" />
+    <None Include="images\NavigationImages\FWLastArrow.bmp" />
+    <None Include="images\NavigationImages\FWLeftArrow.bmp" />
+    <None Include="images\NavigationImages\FWRightArrow.bmp" />
     <Content Include="Resources\CompleteFilter.xml" />
-    <Content Include="Resources\LexiconEditRecordDocViewParameters.xml" />
+    <Content Include="Resources\LexiconEditRecordDocViewParameters.xml">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Resources\LexiconEditRecordEditViewParameters.xml" />
     <Content Include="Resources\MatchingEntriesParameters.xml" />
     <Content Include="Resources\TimeOfDayEditParameters.xml">
@@ -865,6 +871,10 @@
       <DependentUpon>WordsSfmImportWizard.cs</DependentUpon>
     </Compile>
     <Compile Include="Areas\TextsAndWords\Interlinear\WsListManager.cs" />
+    <Compile Include="Areas\TextsAndWords\NotifyWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Areas\TextsAndWords\ParserMenuManager.cs" />
     <Compile Include="BitmapExtensions.cs" />
     <Compile Include="Controls\PaneBarContextMenuFactory.cs" />
     <Compile Include="Controls\PossibilityListClerkParameters.cs" />
@@ -1366,6 +1376,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Areas\TextsAndWords\Interlinear\WordsSfmImportWizard.resx">
       <DependentUpon>WordsSfmImportWizard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Areas\TextsAndWords\NotifyWindow.resx">
+      <DependentUpon>NotifyWindow.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Areas\TextsAndWords\ParserParametersDlg.resx">
       <DependentUpon>ParserParametersDlg.cs</DependentUpon>

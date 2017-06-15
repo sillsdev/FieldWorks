@@ -592,7 +592,7 @@ you expect.</value>
     <value>Choose Subentries to display in Root-based views</value>
   </data>
   <data name="ksChooseVisibleComplexForms" xml:space="preserve">
-    <value>Choose Complex Forms to display in Stem-based views</value>
+    <value>Choose Complex Forms to display in Lexeme-based views</value>
   </data>
   <data name="ksChooseWhereToShowSubentry" xml:space="preserve">
     <value>Choose where to show subentry</value>
@@ -944,9 +944,6 @@ you expect.</value>
   <data name="ksUndoVariantOf" xml:space="preserve">
     <value>Undo Variant Of</value>
   </data>
-  <data name="ksChooseVisibleComplexForms" xml:space="preserve">
-    <value>Choose Complex Forms to display in Lexeme-based views</value>
-  </data>
   <data name="ksWhatIsConvertIrregularlyInflectedFormVariants" xml:space="preserve">
     <value>This utility allows you to select which variant types should be converted to irregularly inflected form variant types, which are a special sub-kind of variant types.</value>
   </data>
@@ -1078,23 +1075,8 @@ you expect.</value>
   <data name="ksRemovingCircularComponentLexeme" xml:space="preserve">
     <value>Removing {0} as component lexeme for {1}</value>
   </data>
-  <data name="ksTryIfProgramGoesPoof" xml:space="preserve">
-    <value>Try this tool if Language Explorer disappears or produces a "FieldWorks has stopped working" dialog when you try to view the Dictionary.</value>
-  </data>
-  <data name="ksFoundNCircularReferences" xml:space="preserve">
-    <value>Found {0} circular references in {1} entry references</value>
-  </data>
-  <data name="ksWhatAreCircularRefs" xml:space="preserve">
-    <value>Older versions of Language Explorer allowed the user to make two complex form entries claim each other as components.  This is no longer allowed, but older projects can be in this bad state.</value>
-  </data>
-  <data name="ksCircularRefsFixed" xml:space="preserve">
-    <value>Circular Reference Fixed</value>
-  </data>
   <data name="SomethingWentWrongLastTime" xml:space="preserve">
     <value>Something went wrong the last time this program was run. Click 'Yes' to revert to 'factory settings', 'No' to see if you can preserve your settings without crashing again.</value>
-  </data>
-  <data name="ksAlsoEmptyComplexFormInfo" xml:space="preserve">
-    <value>Also removing empty Complex Form Info from {0}</value>
   </data>
   <data name="MenuWidget" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>images\MenuWidget.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -1115,5 +1097,17 @@ you expect.</value>
 &amp;lt;li style='list-style-type:bullet;margin-left:-10pt'&amp;gt;Once you have done Send/Receive with this project, you will not be able to restore a backup over it.&amp;lt;/li&amp;gt;
 &amp;lt;/ul&amp;gt;&amp;lt;/body&amp;gt;&amp;lt;/html&amp;gt;</value>
     <comment>HTML used to display instructions for users when the Send/Receive for the first time menu item is used</comment>
+  </data>
+  <data name="FWFirstArrow" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>images\NavigationImages\FWFirstArrow.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="FWLastArrow" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>images\NavigationImages\FWLastArrow.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="FWLeftArrow" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>images\NavigationImages\FWLeftArrow.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="FWRightArrow" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>images\NavigationImages\FWRightArrow.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

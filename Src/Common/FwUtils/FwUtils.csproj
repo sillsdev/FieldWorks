@@ -212,6 +212,7 @@
       <DependentUpon>FwUtilsStrings.resx</DependentUpon>
     </Compile>
     <Compile Include="IHelpTopicProvider.cs" />
+    <Compile Include="IIdleQueueProvider.cs" />
     <Compile Include="IMainContentControl.cs" />
     <Compile Include="IMainUserControl.cs" />
     <Compile Include="InstallationException.cs" />

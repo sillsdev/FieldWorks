@@ -39,7 +39,6 @@ namespace LanguageExplorer
 			_subscriber = subscriber;
 			_menuItems = menuItems;
 
-#if RANDYTODO // TODO: add those to the UI
 			_subscriber.Subscribe("RecordNavigation", RecordNavigation_Message_Handler);
 
 			var currentTuple = _menuItems[First];
@@ -57,7 +56,6 @@ namespace LanguageExplorer
 			currentTuple = _menuItems[Last];
 			currentTuple.Item1.Click += Last_Click;
 			currentTuple.Item2.Click += Last_Click;
-#endif
 		}
 
 		private void RecordNavigation_Message_Handler(object obj)
@@ -103,8 +101,6 @@ namespace LanguageExplorer
 
 		private void SetEnabledStateForWidgets()
 		{
-#if RANDYTODO
-			// TODO: Needs those tuples set.
 			if (_clerk == null || _clerk.ListSize == 0)
 			{
 				// Disable menu items.
@@ -125,7 +121,6 @@ namespace LanguageExplorer
 				currentTuple = _menuItems[Last];
 				currentTuple.Item1.Enabled = currentTuple.Item2.Enabled = _clerk.CurrentIndex < _clerk.ListSize - 1;
 			}
-#endif
 		}
 
 #region Implementation of IDisposable
@@ -166,7 +161,6 @@ namespace LanguageExplorer
 			{
 				_subscriber.Unsubscribe("RecordNavigation", RecordNavigation_Message_Handler);
 
-#if RANDYTODO
 				var currentTuple = _menuItems[First];
 				currentTuple.Item1.Click -= First_Click;
 				currentTuple.Item2.Click -= First_Click;
@@ -182,7 +176,6 @@ namespace LanguageExplorer
 				currentTuple = _menuItems[Last];
 				currentTuple.Item1.Click -= Last_Click;
 				currentTuple.Item2.Click -= Last_Click;
-#endif
 			}
 
 			IsDisposed = true;

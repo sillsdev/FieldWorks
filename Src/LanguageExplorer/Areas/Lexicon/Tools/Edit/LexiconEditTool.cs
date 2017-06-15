@@ -146,8 +146,14 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				DefaultFixedPaneSizePoints = "60",
 				Id = "TestEditMulti",
 				ToolMachineName = MachineName,
-				FirstControlParameters = new SplitterChildControlParameters {Control = new RecordDocXmlView(XDocument.Parse(LexiconResources.LexiconEditRecordDocViewParameters).Root, _recordClerk), Label = "Dictionary"},
-				SecondControlParameters = new SplitterChildControlParameters { Control = recordEditView, Label = "Details" }
+				FirstControlParameters = new SplitterChildControlParameters
+				{
+					Control = new RecordDocXmlView(XDocument.Parse(LexiconResources.LexiconEditRecordDocViewParameters).Root, _recordClerk), Label = "Dictionary"
+				},
+				SecondControlParameters = new SplitterChildControlParameters
+				{
+					Control = recordEditView, Label = "Details"
+				}
 			};
 			var mainMultiPaneParameters = new MultiPaneParameters
 			{
@@ -191,7 +197,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		{
 			var contextMenuStrip = new ContextMenuStrip();
 
-#if RANDYTODO
 			// Show_Dictionary_Preview menu item.
 			var contextMenuItem = CreateToolStripMenuItem(contextMenuStrip, LexiconResources.Show_DictionaryPubPreview, LexiconResources.Show_DictionaryPubPreview_ToolTip, Show_Dictionary_Preview_Clicked);
 			contextMenuItem.Checked = PropertyTable.GetValue<bool>(Show_DictionaryPubPreview);
@@ -276,9 +281,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			// TODO: Enable it and have better event handler deal with it.
 			contextMenuItem.Enabled = false;
 #endif
-#endif
 
-			return contextMenuStrip; // Just pretend that it works for now.
+			return contextMenuStrip;
 		}
 
 		private ToolStripMenuItem GetItemForItemText(string menuText)

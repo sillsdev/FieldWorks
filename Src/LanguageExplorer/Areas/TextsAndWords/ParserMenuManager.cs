@@ -1,12 +1,12 @@
 // Copyright (c) 2002-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
-using LanguageExplorer.Areas.TextsAndWords;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
@@ -14,18 +14,14 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.WordWorks.Parser;
 using SIL.Utils;
-using Win32 = SIL.FieldWorks.Common.FwUtils.Win32;
 
-namespace LanguageExplorer.Dumpster
+namespace LanguageExplorer.Areas.TextsAndWords
 {
-#if RANDYTODO
-	// TODO: integrate merged changes done here into ParserListener's replacement class: ParserMenuManager
-#endif
 	/// <summary>
-	/// this class just gets all the parser calling and event and receiving
+	/// This class just gets all the parser calling and event and receiving
 	/// out of the form code. It is scheduled for refactoring
 	/// </summary>
-	internal sealed class ParserListener : IFlexComponent, IDisposable, IVwNotifyChange
+	internal sealed class ParserMenuManager : IFlexComponent, IDisposable, IVwNotifyChange
 	{
 		private FdoCache m_cache; //a pointer to the one owned by from the form
 		/// <summary>
@@ -38,36 +34,51 @@ namespace LanguageExplorer.Dumpster
 		/// <summary>
 		/// Control how much output we send to the application's listeners (e.g. visual studio output window)
 		/// </summary>
-		private TraceSwitch m_traceSwitch = new TraceSwitch("ParserListener", "");
+		private TraceSwitch m_traceSwitch = new TraceSwitch("ParserMenuManager", string.Empty);
 		private TryAWordDlg m_dialog;
 		private FormWindowState m_prevWindowState;
 		private ParserConnection m_parserConnection;
 		private Timer m_timer;
+		private StatusBarPanel _statusPanelProgress;
+		private Dictionary<string, ToolStripMenuItem> _parserToolStripMenuItems;
+		private IStText _currentStText;
+		private IWfiWordform _currentWordform;
 
-#region Implementation of IPropertyTableProvider
+		/// <summary />
+		internal ParserMenuManager(StatusBarPanel statusPanelProgress, Dictionary<string, ToolStripMenuItem> parserMenuItems)
+		{
+			_statusPanelProgress = statusPanelProgress;
+			_parserToolStripMenuItems = parserMenuItems;
+		}
+
+		#region Implementation of IPropertyTableProvider
 
 		/// <summary>
 		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
 		/// </summary>
 		public IPropertyTable PropertyTable { get; private set; }
 
-#endregion
+		#endregion
 
-#region Implementation of IPublisherProvider
+		#region Implementation of IPublisherProvider
 
 		/// <summary>
 		/// Get the IPublisher.
 		/// </summary>
 		public IPublisher Publisher { get; private set; }
 
-#endregion
+		#endregion
 
-#region Implementation of ISubscriberProvider
+		#region Implementation of ISubscriberProvider
 
 		/// <summary>
 		/// Get the ISubscriber.
 		/// </summary>
 		public ISubscriber Subscriber { get; private set; }
+
+		#endregion
+
+		#region Implentation of IFlexComponent
 
 		/// <summary>
 		/// Initialize a FLEx component with the basic interfaces.
@@ -83,9 +94,86 @@ namespace LanguageExplorer.Dumpster
 
 			m_cache = PropertyTable.GetValue<FdoCache>("cache");
 			m_sda = m_cache.MainCacheAccessor;
+
+			/*
+				{"parser", _parserToolStripMenuItem},
+				{"parseAllWords", _parseAllWordsToolStripMenuItem},
+				{"reparseAllWords", _reparseAllWordsToolStripMenuItem},
+				{"reloadGrammarLexicon", _reloadGrammarLexiconToolStripMenuItem},
+				{"stopParser", _stopParserToolStripMenuItem},
+				{"tryAWord", _tryAWordToolStripMenuItem},
+				{"parseWordsInText", _parseWordsInTextToolStripMenuItem},
+				{"parseCurrentWord", _parseCurrentWordToolStripMenuItem},
+				{"clearCurrentParserAnalyses", _clearCurrentParserAnalysesToolStripMenuItem},
+				{"defaultParserXAmple", _defaultParserXAmpleToolStripMenuItem},
+				{"phonologicalRulebasedParserHermitCrab", _phonologicalRulebasedParserHermitCrabNETToolStripMenuItem},
+				{"editParserParameters", _editParserParametersToolStripMenuItem}
+			 */
+			_parserToolStripMenuItems["parser"].DropDownOpening += ParserMenuManager_DropDownOpening;
+			_parserToolStripMenuItems["parseAllWords"].Click += ParseAllWords_Click;
+			_parserToolStripMenuItems["reparseAllWords"].Click += ReparseAllWords_Click;
+			_parserToolStripMenuItems["reloadGrammarLexicon"].Click += ReloadGrammarLexicon_Click;
+			_parserToolStripMenuItems["stopParser"].Click += StopParser_Click;
+			_parserToolStripMenuItems["tryAWord"].Click += TryAWord_Click;
+			_parserToolStripMenuItems["parseWordsInText"].Click += ParseWordsInText_Click;
+			_parserToolStripMenuItems["parseCurrentWord"].Click += ParseCurrentWord_Click;
+			_parserToolStripMenuItems["clearCurrentParserAnalyses"].Click += ClearCurrentParserAnalyses_Click;
+			_parserToolStripMenuItems["defaultParserXAmple"].Click += ChooseParser_Click;
+			_parserToolStripMenuItems["phonologicalRulebasedParserHermitCrab"].Click += ChooseParser_Click;
+			_parserToolStripMenuItems["editParserParameters"].Click += EditParserParameters_Click;
+
+			Subscriber.Subscribe("ActiveClerkSelectedObject", ActiveClerkSelectedObject_Handler);
+			Subscriber.Subscribe("TextSelectedWord", TextSelectedWord_Handler);
+
+			UpdateStatusPanelProgress();
 		}
 
-#endregion
+		private void TextSelectedWord_Handler(object newValue)
+		{
+			// newValue will be an IWfiWordform or null;
+			_currentWordform = newValue as IWfiWordform;
+		}
+
+		private void ActiveClerkSelectedObject_Handler(object newValue)
+		{
+			if (newValue is IStText)
+			{
+				_currentStText = (IStText)newValue;
+				return;
+			}
+
+			if (!(newValue is IWfiWordform))
+			{
+				return;
+			}
+
+			_currentWordform = (IWfiWordform)newValue;
+			if (m_parserConnection != null)
+			{
+				m_parserConnection.UpdateWordform(_currentWordform, ParserPriority.High);
+			}
+		}
+
+		private void ParserMenuManager_DropDownOpening(object sender, EventArgs e)
+		{
+			// Enable/Disable menus that are context sensitive.
+			_parserToolStripMenuItems["clearCurrentParserAnalyses"].Enabled = (CurrentWordform != null);
+			_parserToolStripMenuItems["parseCurrentWord"].Enabled = (CurrentWordform != null);
+
+			_parserToolStripMenuItems["parseWordsInText"].Enabled = (CurrentText != null);
+
+			_parserToolStripMenuItems["parseAllWords"].Enabled = (m_parserConnection == null);
+			_parserToolStripMenuItems["reloadGrammarLexicon"].Enabled = (m_parserConnection != null);
+			_parserToolStripMenuItems["stopParser"].Enabled = (m_parserConnection != null);
+
+			// Must wait for the queue to empty before we can fill it up again or else we run the risk of breaking the parser thread.
+			_parserToolStripMenuItems["parseAllWords"].Enabled = (m_parserConnection != null && m_parserConnection.GetQueueSize(ParserPriority.Low) == 0);
+
+			_parserToolStripMenuItems["defaultParserXAmple"].Checked = m_cache.LangProject.MorphologicalDataOA.ActiveParser == "XAmple";
+			_parserToolStripMenuItems["phonologicalRulebasedParserHermitCrab"].Checked = m_cache.LangProject.MorphologicalDataOA.ActiveParser == "HC";
+		}
+
+		#endregion
 
 		internal ParserConnection Connection
 		{
@@ -101,22 +189,7 @@ namespace LanguageExplorer.Dumpster
 			}
 		}
 
-		/// <summary>
-		/// Send the newly selected wordform on to the parser.
-		/// </summary>
-		public void OnPropertyChanged(string propertyName)
-		{
-			CheckDisposed();
-
-			if (m_parserConnection != null && propertyName == "ActiveClerkSelectedObject")
-			{
-				var wordform = PropertyTable.GetValue<IWfiWordform>(propertyName);
-				if (wordform != null)
-					m_parserConnection.UpdateWordform(wordform, ParserPriority.High);
-			}
-		}
-
-#region IVwNotifyChange Members
+		#region IVwNotifyChange Members
 
 		public void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
 		{
@@ -130,9 +203,9 @@ namespace LanguageExplorer.Dumpster
 			}
 		}
 
-#endregion
+		#endregion
 
-#region Timer Related
+		#region Timer Related
 
 		private const int TIMER_INTERVAL = 250; // every 1/4 second
 
@@ -140,8 +213,10 @@ namespace LanguageExplorer.Dumpster
 		{
 			if (m_timer == null)
 			{
-				m_timer = new Timer();
-				m_timer.Interval = TIMER_INTERVAL;
+				m_timer = new Timer
+				{
+					Interval = TIMER_INTERVAL
+				};
 				m_timer.Tick += m_timer_Tick;
 			}
 			m_timer.Start();
@@ -149,8 +224,7 @@ namespace LanguageExplorer.Dumpster
 
 		private void StopUpdateProgressTimer()
 		{
-			if (m_timer != null)
-				m_timer.Stop();
+			m_timer?.Stop();
 		}
 
 		public void m_timer_Tick(object sender, EventArgs eventArgs)
@@ -158,7 +232,7 @@ namespace LanguageExplorer.Dumpster
 			UpdateStatusPanelProgress();
 		}
 
-#endregion
+		#endregion
 
 		public bool ConnectToParser()
 		{
@@ -168,7 +242,9 @@ namespace LanguageExplorer.Dumpster
 			{
 				// Don't bother if the lexicon is empty.  See FWNX-1019.
 				if (m_cache.ServiceLocator.GetInstance<ILexEntryRepository>().Count == 0)
+				{
 					return false;
+				}
 				var window = PropertyTable.GetValue<IIdleQueueProvider>("window");
 				m_parserConnection = new ParserConnection(m_cache, window.IdleQueue);
 			}
@@ -181,10 +257,7 @@ namespace LanguageExplorer.Dumpster
 			CheckDisposed();
 
 			StopUpdateProgressTimer();
-			if (m_parserConnection != null)
-			{
-				m_parserConnection.Dispose();
-			}
+			m_parserConnection?.Dispose();
 			m_parserConnection = null;
 		}
 
@@ -200,8 +273,7 @@ namespace LanguageExplorer.Dumpster
 		// Now called by timer AND by OnIdle
 		private void UpdateStatusPanelProgress()
 		{
-			var statusMessage = ParserQueueString + " " + ParserActivityString;
-			PropertyTable.SetProperty("StatusPanelProgress", statusMessage, false, true);
+			_statusPanelProgress.Text = ParserQueueString + " " + ParserActivityString;
 
 			if (m_parserConnection != null)
 			{
@@ -210,12 +282,11 @@ namespace LanguageExplorer.Dumpster
 				{
 					DisconnectFromParser();
 					var app = PropertyTable.GetValue<IApp>("App");
-					ErrorReporter.ReportException(ex, app.SettingsKey, app.SupportEmailAddress,
-													app.ActiveMainWindow, false);
+					ErrorReporter.ReportException(ex, app.SettingsKey, app.SupportEmailAddress, app.ActiveMainWindow, false);
 				}
 				else
 				{
-					string notification = m_parserConnection.GetAndClearNotification();
+					var notification = m_parserConnection.GetAndClearNotification();
 					if (notification != null)
 					{
 						using (var nw = new NotifyWindow(notification))
@@ -228,7 +299,9 @@ namespace LanguageExplorer.Dumpster
 				}
 			}
 			if (ParserActivityString == ParserUIStrings.ksIdle_ && m_timer.Enabled)
+			{
 				StopUpdateProgressTimer();
+			}
 		}
 
 		//note that the Parser also supports an event oriented system
@@ -269,7 +342,7 @@ namespace LanguageExplorer.Dumpster
 			}
 		}
 
-#region IDisposable & Co. implementation
+		#region IDisposable & Co. implementation
 		// Region last reviewed: never
 
 		/// <summary>
@@ -281,7 +354,7 @@ namespace LanguageExplorer.Dumpster
 		{
 			if (IsDisposed)
 			{
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
+				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
 			}
 		}
 
@@ -290,15 +363,10 @@ namespace LanguageExplorer.Dumpster
 		/// </summary>
 		private bool m_isDisposed;
 
-		private const string ParserLockName = "parser";
-
 		/// <summary>
 		/// See if the object has been disposed.
 		/// </summary>
-		public bool IsDisposed
-		{
-			get { return m_isDisposed; }
-		}
+		public bool IsDisposed => m_isDisposed;
 
 		/// <summary>
 		/// Finalizer, in case client doesn't dispose it.
@@ -307,7 +375,7 @@ namespace LanguageExplorer.Dumpster
 		/// <remarks>
 		/// In case some clients forget to dispose it directly.
 		/// </remarks>
-		~ParserListener()
+		~ParserMenuManager()
 		{
 			Dispose(false);
 			// The base class finalizer is called automatically.
@@ -360,17 +428,29 @@ namespace LanguageExplorer.Dumpster
 
 			if (disposing)
 			{
-				// other clients may now parse
+				_parserToolStripMenuItems["parser"].DropDownOpening -= ParserMenuManager_DropDownOpening;
+				_parserToolStripMenuItems["parseAllWords"].Click -= ParseAllWords_Click;
+				_parserToolStripMenuItems["reparseAllWords"].Click -= ReparseAllWords_Click;
+				_parserToolStripMenuItems["reloadGrammarLexicon"].Click -= ReloadGrammarLexicon_Click;
+				_parserToolStripMenuItems["stopParser"].Click -= StopParser_Click;
+				_parserToolStripMenuItems["tryAWord"].Click -= TryAWord_Click;
+				_parserToolStripMenuItems["parseWordsInText"].Click -= ParseWordsInText_Click;
+				_parserToolStripMenuItems["parseCurrentWord"].Click -= ParseCurrentWord_Click;
+				_parserToolStripMenuItems["clearCurrentParserAnalyses"].Click -= ClearCurrentParserAnalyses_Click;
+				_parserToolStripMenuItems["defaultParserXAmple"].Click -= ChooseParser_Click;
+				_parserToolStripMenuItems["phonologicalRulebasedParserHermitCrab"].Click -= ChooseParser_Click;
+				_parserToolStripMenuItems["editParserParameters"].Click -= EditParserParameters_Click;
+				Subscriber.Unsubscribe("ActiveClerkSelectedObject", ActiveClerkSelectedObject_Handler);
+				Subscriber.Unsubscribe("TextSelectedWord", TextSelectedWord_Handler);
+
 				// Dispose managed resources here.
 				if (m_timer != null)
 				{
 					m_timer.Stop();
 					m_timer.Tick -= m_timer_Tick;
 				}
-				if (m_sda != null)
-					m_sda.RemoveNotification(this);
-				if (m_parserConnection != null)
-					m_parserConnection.Dispose();
+				m_sda?.RemoveNotification(this);
+				m_parserConnection?.Dispose();
 			}
 
 			// Dispose unmanaged resources here, whether disposing is true or false.
@@ -379,6 +459,8 @@ namespace LanguageExplorer.Dumpster
 			m_cache = null;
 			m_traceSwitch = null;
 			m_parserConnection = null;
+			_statusPanelProgress = null;
+			_parserToolStripMenuItems = null;
 			PropertyTable = null;
 			Publisher = null;
 			Subscriber = null;
@@ -386,141 +468,101 @@ namespace LanguageExplorer.Dumpster
 			m_isDisposed = true;
 		}
 
-#endregion IDisposable & Co. implementation
+		#endregion IDisposable & Co. implementation
 
-		private IStText CurrentText
-		{
-			get
-			{
-				return InInterlinearText ? PropertyTable.GetValue<IStText>("ActiveClerkSelectedObject") : null;
-			}
-		}
+		private IStText CurrentText => InInterlinearText ? _currentStText : null;
+
 		private IWfiWordform CurrentWordform
 		{
 			get
 			{
-				IWfiWordform wordform = null;
-				if (InInterlinearText)
-					wordform = PropertyTable.GetValue<IWfiWordform>("TextSelectedWord");
-				else if (InWordAnalyses)
-					wordform = PropertyTable.GetValue<IWfiWordform>("ActiveClerkSelectedObject");
-				return wordform;
-			}
-		}
-
-#region ClearSelectedWordParserAnalyses handlers
-
-#if RANDYTODO
-		public bool OnDisplayClearSelectedWordParserAnalyses(object commandObject, ref UIItemDisplayProperties display)
-		{
-			CheckDisposed();
-
-			bool enable = CurrentWordform != null;
-			display.Visible = enable;
-			display.Enabled = enable;
-
-			return true;	//we handled this.
-		}
-#endif
-
-		public bool OnClearSelectedWordParserAnalyses(object dummyObj)
-		{
-			IWfiWordform wf = CurrentWordform;
-			UndoableUnitOfWorkHelper.Do(ParserUIStrings.ksUndoClearParserAnalyses,
-				ParserUIStrings.ksRedoClearParserAnalyses, m_cache.ActionHandlerAccessor, () =>
-			{
-				foreach (IWfiAnalysis analysis in wf.AnalysesOC.ToArray())
+				if (!InInterlinearText && !InWordAnalyses)
 				{
-					ICmAgentEvaluation[] parserEvals = analysis.EvaluationsRC.Where(evaluation => !evaluation.Human).ToArray();
-					foreach (ICmAgentEvaluation parserEval in parserEvals)
-						analysis.EvaluationsRC.Remove(parserEval);
-
-					if (analysis.EvaluationsRC.Count == 0)
-						wf.AnalysesOC.Remove(analysis);
-
-					wf.Checksum = 0;
+					_currentWordform = null;
 				}
-			});
-			return true;	//we handled this.
+				return _currentWordform; // Will be null, if not in a freindly space.
+			}
 		}
 
-#endregion ClearSelectedWordParserAnalyses handlers
-
-#if RANDYTODO
-		public bool OnDisplayParseCurrentWord(object commandObject, ref UIItemDisplayProperties display)
+		private void EditParserParameters_Click(object sender, EventArgs e)
 		{
-			CheckDisposed();
-
-			bool enable = CurrentWordform != null;
-			display.Visible = enable;
-			display.Enabled = enable;
-
-			return true;	//we handled this.
-		}
-#endif
-
-		public bool OnParseCurrentWord(object argument)
-		{
-			CheckDisposed();
-
-			if (ConnectToParser())
+			using (var dlg = new ParserParametersDlg(PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
 			{
-				IWfiWordform wf = CurrentWordform;
-				m_parserConnection.UpdateWordform(wf, ParserPriority.High);
+				var md = m_cache.LangProject.MorphologicalDataOA;
+				dlg.SetDlgInfo(ParserUIStrings.ksParserParameters, md.ParserParameters);
+				if (dlg.ShowDialog(PropertyTable.GetValue<Form>("window")) == DialogResult.OK)
+				{
+					using (var helper = new UndoableUnitOfWorkHelper(m_cache.ActionHandlerAccessor, ParserUIStrings.ksUndoEditingParserParameters, ParserUIStrings.ksRedoEditingParserParameters))
+					{
+						md.ParserParameters = dlg.XmlRep;
+						helper.RollBack = false;
+					}
+				}
+			}
+		}
+
+		private void ClearCurrentParserAnalyses_Click(object sender, EventArgs e)
+		{
+			var wf = CurrentWordform;
+			if (wf == null)
+			{
+				return;
+			}
+			UndoableUnitOfWorkHelper.Do(ParserUIStrings.ksUndoClearParserAnalyses, ParserUIStrings.ksRedoClearParserAnalyses, m_cache.ActionHandlerAccessor, () =>
+				{
+					foreach (var analysis in wf.AnalysesOC.ToArray())
+					{
+						var parserEvals = analysis.EvaluationsRC.Where(evaluation => !evaluation.Human).ToArray();
+						foreach (var parserEval in parserEvals)
+						{
+							analysis.EvaluationsRC.Remove(parserEval);
+						}
+
+						if (analysis.EvaluationsRC.Count == 0)
+						{
+							wf.AnalysesOC.Remove(analysis);
+						}
+
+						wf.Checksum = 0;
+					}
+				});
+		}
+
+		private void ParseCurrentWord_Click(object sender, EventArgs e)
+		{
+			if (!ConnectToParser())
+			{
+				return;
 			}
 
-			return true;	//we handled this.
+			m_parserConnection.UpdateWordform(CurrentWordform, ParserPriority.High);
 		}
 
-#if RANDYTODO
-		public bool OnDisplayParseWordsInCurrentText(object commandObject, ref UIItemDisplayProperties display)
+		private void ParseWordsInText_Click(object sender, EventArgs e)
 		{
-			CheckDisposed();
-
-			bool enable = CurrentText != null;
-			display.Visible = enable;
-			display.Enabled = enable;
-
-			return true;	//we handled this.
-		}
-#endif
-
-		public bool OnParseWordsInCurrentText(object argument)
-		{
-			CheckDisposed();
-
-			if (ConnectToParser())
+			if (!ConnectToParser())
 			{
-				IStText text = CurrentText;
-				IEnumerable<IWfiWordform> wordforms = text.UniqueWordforms();
-				m_parserConnection.UpdateWordforms(wordforms, ParserPriority.Medium);
+				return;
 			}
 
-			return true;	//we handled this.
+			m_parserConnection.UpdateWordforms(CurrentText.UniqueWordforms(), ParserPriority.Medium);
 		}
-		public bool OnParseAllWords(object argument)
+
+		private void ParseAllWords_Click(object sender, EventArgs e)
 		{
-			CheckDisposed();
 			if (ConnectToParser())
+			{
 				m_parserConnection.UpdateWordforms(m_cache.ServiceLocator.GetInstance<IWfiWordformRepository>().AllInstances(), ParserPriority.Low);
-
-			return true;	//we handled this.
-		}
-
-		private bool InTextsWordsArea
-		{
-			get
-			{
-				string areaChoice = PropertyTable.GetValue("areaChoice", string.Empty);
-				return areaChoice == "textsWords";
 			}
 		}
+
+		private bool InTextsWordsArea => PropertyTable.GetValue("areaChoice", string.Empty) == "textsWords";
 
 		private bool InWordAnalyses
 		{
 			get
 			{
-				string toolName = PropertyTable.GetValue("currentContentControl", string.Empty);
+				var toolName = PropertyTable.GetValue("toolChoice", string.Empty);
 				return InTextsWordsArea && (toolName == "Analyses" || toolName == "wordListConcordance" || toolName == "bulkEditWordforms");
 			}
 		}
@@ -529,136 +571,65 @@ namespace LanguageExplorer.Dumpster
 		{
 			get
 			{
-				string toolName = PropertyTable.GetValue("currentContentControl", string.Empty);
-				string tabName = PropertyTable.GetValue("InterlinearTab", string.Empty);
+				var toolName = PropertyTable.GetValue("toolChoice", string.Empty);
+				var tabName = PropertyTable.GetValue("InterlinearTab", string.Empty);
 				return InTextsWordsArea && toolName == "interlinearEdit" && (tabName == "RawText" || tabName == "Interlinearizer" || tabName == "Gloss");
 			}
 		}
 
-#if RANDYTODO
-		/// <summary>
-		///
-		/// </summary>
-		/// <remarks> this is something of a hack until we come up with a generic solution to the problem
-		/// on how to control we are CommandSet are handled by listeners are visible. It is difficult
-		/// because some commands, like this one, may be appropriate from more than 1 area.</remarks>
-		/// <param name="commandObject"></param>
-		/// <param name="display"></param>
-		/// <returns></returns>
-		public bool OnDisplayParseAllWords(object commandObject, ref UIItemDisplayProperties display)
+		private void StopParser_Click(object sender, EventArgs e)
 		{
-			CheckDisposed();
-
-			display.Enabled = m_parserConnection == null;
-			return true;	//we handled this.
-		}
-
-		public bool OnDisplayReInitParser(object commandObject, ref UIItemDisplayProperties display)
-		{
-			CheckDisposed();
-
-			display.Enabled = m_parserConnection != null;
-			return true;	//we handled this.
-		}
-
-		public bool OnDisplayStopParser(object commandObject, ref UIItemDisplayProperties display)
-		{
-			CheckDisposed();
-
-			display.Enabled = m_parserConnection != null;
-			return true;	//we handled this.
-		}
-
-		public bool OnDisplayReparseAllWords(object commandObject, ref UIItemDisplayProperties display)
-		{
-			CheckDisposed();
-
-			// must wait for the queue to empty before we can fill it up again or else we run the risk of breaking the parser thread
-			display.Enabled = m_parserConnection != null && m_parserConnection.GetQueueSize(ParserPriority.Low) == 0;
-
-			return true;	//we handled this.
-		}
-#endif
-
-		public bool OnStopParser(object argument)
-		{
-			CheckDisposed();
-
 			DisconnectFromParser();
-			return true;	//we handled this.
 		}
 
-		// used by Try a Word to get the parser running
-		public bool OnReInitParser(object argument)
+		private void ReloadGrammarLexicon_Click(object sender, EventArgs e)
 		{
-			CheckDisposed();
-
 			if (m_parserConnection == null)
-				ConnectToParser();
-			else
-				m_parserConnection.ReloadGrammarAndLexicon();
-			return true; //we handled this.
-		}
-
-		public bool OnReparseAllWords(object argument)
-		{
-			CheckDisposed();
-			if (ConnectToParser())
-				m_parserConnection.UpdateWordforms(m_cache.ServiceLocator.GetInstance<IWfiWordformRepository>().AllInstances(), ParserPriority.Low);
-			return true;	//we handled this.
-		}
-
-#if RANDYTODO
-		public virtual bool OnDisplayChooseParser(object commandObject,
-			ref UIItemDisplayProperties display)
-		{
-			CheckDisposed();
-			var cmd = (Command) commandObject;
-
-			display.Checked = m_cache.LangProject.MorphologicalDataOA.ActiveParser == cmd.GetParameter("parser");
-			return true; //we've handled this
-		}
-
-		public bool OnChooseParser(object argument)
-		{
-			CheckDisposed();
-			var cmd = (Command) argument;
-
-			string newParser = cmd.GetParameter("parser");
-			if (m_cache.LangProject.MorphologicalDataOA.ActiveParser != newParser)
 			{
-				DisconnectFromParser();
-				NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
-				{
-					m_cache.LangProject.MorphologicalDataOA.ActiveParser = newParser;
-				});
+				ConnectToParser();
+			}
+			else
+			{
+				m_parserConnection.ReloadGrammarAndLexicon();
+			}
+		}
+
+		private void ReparseAllWords_Click(object sender, EventArgs e)
+		{
+			if (ConnectToParser())
+			{
+				m_parserConnection.UpdateWordforms(m_cache.ServiceLocator.GetInstance<IWfiWordformRepository>().AllInstances(), ParserPriority.Low);
+			}
+		}
+
+		private void ChooseParser_Click(object sender, EventArgs e)
+		{
+			var chooserMenuItem = (ToolStripMenuItem)sender;
+			var newParser = chooserMenuItem.Name.Contains("XAmple") ? "XAmple" : "HC";
+			if (m_cache.LangProject.MorphologicalDataOA.ActiveParser == newParser)
+			{
+				return;
 			}
 
-			return true;
+			DisconnectFromParser();
+			NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
+			{
+				m_cache.LangProject.MorphologicalDataOA.ActiveParser = newParser;
+			});
 		}
-#endif
 
-		/// <summary>
-		/// Handles the xWorks message for Try A Word
-		/// </summary>
-		/// <param name="argument">The xCore Command object.</param>
-		/// <returns>false</returns>
-		public bool OnTryAWord(object argument)
+		private void TryAWord_Click(object sender, EventArgs e)
 		{
-			CheckDisposed();
-
 			if (m_dialog == null || m_dialog.IsDisposed)
 			{
 				m_dialog = new TryAWordDlg();
-				//m_dialog.InitializeFlexComponent(Proper);
-				m_dialog.SizeChanged += (sender, e) =>
-											{
-												if (m_dialog.WindowState != FormWindowState.Minimized)
-													m_prevWindowState = m_dialog.WindowState;
-											};
-#if RANDYTODO // dlg now uses the newer ParserMenuManager class, not this older ParserListener class.
+				m_dialog.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
+				m_dialog.SizeChanged += (sender1, e1) =>
+				{
+					if (m_dialog.WindowState != FormWindowState.Minimized)
+						m_prevWindowState = m_dialog.WindowState;
+				};
 				m_dialog.SetDlgInfo(CurrentWordform, this);
-#endif
 				var form = PropertyTable.GetValue<Form>("window");
 				m_dialog.Show(form);
 				// This allows Keyman to work correctly on initial typing.
@@ -670,15 +641,17 @@ namespace LanguageExplorer.Dumpster
 			else
 			{
 				if (m_dialog.WindowState == FormWindowState.Minimized)
+				{
 					m_dialog.WindowState = m_prevWindowState;
+				}
 				else
+				{
 					m_dialog.Activate();
+				}
 			}
-
-			return true; // we handled this
 		}
 
-#region TraceSwitch methods
+		#region TraceSwitch methods
 
 		private void TraceVerbose(string s)
 		{
@@ -696,6 +669,6 @@ namespace LanguageExplorer.Dumpster
 				Trace.WriteLine("PLID="+System.Threading.Thread.CurrentThread.GetHashCode()+": "+s);
 		}
 
-#endregion TraceSwitch methods
+		#endregion TraceSwitch methods
 	}
 }

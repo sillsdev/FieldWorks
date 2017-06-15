@@ -40,25 +40,6 @@ namespace SIL.FieldWorks.Common.FwUtils.Impls
 			Publisher = publisher;
 		}
 
-#if RANDYTODO
-		// TODO: Put these in the right places.
-<!-- global persist -->
-<defaultProperties>
-	<!-- increment this to make toolbar layouts revert to default -->
-	<property name="CurrentToolbarVersion" value="1" />
-</defaultProperties>
-<!-- local persist -->
-<defaultProperties>
-	<property name="Show_DictionaryPubPreview" bool="true" persist="true" settingsGroup="local" />
-	<property name="PartsOfSpeech.posEdit.DataTree-Splitter" intValue="200" settingsGroup="local" />
-	<property name="PartsOfSpeech.posAdvancedEdit.DataTree-Splitter" intValue="200" settingsGroup="local" />
-</defaultProperties>
-<!-- local do not persist -->
-<defaultProperties>
-	<property name="Show_reversalIndexEntryList" bool="true" persist="false" settingsGroup="local" />
-</defaultProperties>
-#endif
-
 		#region IDisposable & Co. implementation
 		// Region last reviewed: never
 

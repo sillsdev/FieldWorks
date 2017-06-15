@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2017 SIL International
+// Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -10,7 +10,6 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
-using LanguageExplorer.Dumpster;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
@@ -30,7 +29,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 		#region Data members
 		private FdoCache m_cache;
-		private ParserListener m_parserListener;
+		private ParserMenuManager m_parserMenuManager;
 		private IPersistenceProvider m_persistProvider;
 		private readonly HelpProvider m_helpProvider;
 
@@ -119,11 +118,11 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 		#endregion
 
-		internal void SetDlgInfo(IWfiWordform wordform, ParserListener parserListener)
+		internal void SetDlgInfo(IWfiWordform wordform, ParserMenuManager parserMenuManager)
 		{
 			m_persistProvider = PersistenceProviderFactory.CreatePersistenceProvider(PropertyTable);
 			m_cache = PropertyTable.GetValue<FdoCache>("cache");
-			m_parserListener = parserListener;
+			m_parserMenuManager = parserMenuManager;
 
 			Text = m_cache.ProjectId.UiName + " - " + Text;
 			SetRootSite();
@@ -146,9 +145,9 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				m_helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 			}
 
-			if (m_parserListener.Connection != null)
+			if (m_parserMenuManager.Connection != null)
 			{
-				m_parserListener.Connection.TryAWordDialogIsRunning = true;
+				m_parserMenuManager.Connection.TryAWordDialogIsRunning = true;
 				m_statusLabel.Text = GetString("ParserStatusPrefix") + ParserUIStrings.ksIdle_ + GetString("ParserStatusSuffix");
 			}
 			else
@@ -402,8 +401,8 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			// remember last word used, if possible
 			PropertyTable.SetProperty("TryAWordDlg-lastWordToTry", m_wordformTextBox.Text.Trim(), SettingsGroup.LocalSettings, true, false);
 			m_persistProvider.PersistWindowSettings(PersistProviderID, this);
-			if (m_parserListener.Connection != null)
-				m_parserListener.Connection.TryAWordDialogIsRunning = false;
+			if (m_parserMenuManager.Connection != null)
+				m_parserMenuManager.Connection.TryAWordDialogIsRunning = false;
 		}
 
 		private void m_wordformTextBox_TextChanged(object sender, EventArgs e)
@@ -432,7 +431,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		private void m_tryItButton_Click(object sender, EventArgs e)
 		{
 			// get a connection, if one does not exist
-			if (m_parserListener.ConnectToParser())
+			if (m_parserMenuManager.ConnectToParser())
 			{
 				string sWord = CleanUpWord();
 				// check to see if limiting trace and, if so, if all morphs have msas
@@ -443,8 +442,8 @@ namespace LanguageExplorer.Areas.TextsAndWords
 					var uri = new Uri(Path.Combine(TransformPath, "WhileTracing.htm"));
 					m_htmlControl.URL = uri.AbsoluteUri;
 					sWord = sWord.Replace(' ', '.'); // LT-7334 to allow for phrases; do this at the last minute
-					m_parserListener.Connection.TryAWordDialogIsRunning = true; // make sure this is set properly
-					m_tryAWordResult = m_parserListener.Connection.BeginTryAWord(sWord, DoTrace, selectedTraceMorphs);
+					m_parserMenuManager.Connection.TryAWordDialogIsRunning = true; // make sure this is set properly
+					m_tryAWordResult = m_parserMenuManager.Connection.BeginTryAWord(sWord, DoTrace, selectedTraceMorphs);
 					// waiting for result, so disable Try It button
 					m_tryItButton.Enabled = false;
 				}
@@ -542,20 +541,20 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 		private void m_timer_Tick(object sender, EventArgs e)
 		{
-			if (m_parserListener == null)
+			if (m_parserMenuManager == null)
 				return;
 
-			m_statusLabel.Text = m_parserListener.ParserActivityString;
+			m_statusLabel.Text = m_parserMenuManager.ParserActivityString;
 
-			if (m_parserListener.Connection == null)
+			if (m_parserMenuManager.Connection == null)
 			{
 				m_statusLabel.Text = ParserStoppedMessage();
 				return;
 			}
-			Exception ex = m_parserListener.Connection.UnhandledException;
+			Exception ex = m_parserMenuManager.Connection.UnhandledException;
 			if (ex != null)
 			{
-				m_parserListener.DisconnectFromParser();
+				m_parserMenuManager.DisconnectFromParser();
 				m_statusLabel.Text = ParserStoppedMessage();
 				m_tryItButton.Enabled = true;
 				var app = PropertyTable.GetValue<IApp>("App");

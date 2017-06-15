@@ -116,6 +116,46 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap FWFirstArrow {
+            get {
+                object obj = ResourceManager.GetObject("FWFirstArrow", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap FWLastArrow {
+            get {
+                object obj = ResourceManager.GetObject("FWLastArrow", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap FWLeftArrow {
+            get {
+                object obj = ResourceManager.GetObject("FWLeftArrow", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap FWRightArrow {
+            get {
+                object obj = ResourceManager.GetObject("FWRightArrow", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to GUIDs changed.
         /// </summary>
         internal static string GoldEticGuidFixer_Guids_changed_Title {
@@ -2716,15 +2756,6 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Something went wrong the last time this program was run. Click &apos;Yes&apos; to revert to &apos;factory settings&apos;, &apos;No&apos; to see if you can preserve your settings without crashing again..
-        /// </summary>
-        internal static string SomethingWentWrongLastTime {
-            get {
-                return ResourceManager.GetString("SomethingWentWrongLastTime", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to &amp;lt;!DOCTYPE html&amp;gt;&amp;lt;html&amp;gt;&amp;lt;body style=&apos;font-family:&quot;Microsoft Sans Serif&quot;,&quot;sans-serif&quot;;font-size:9.5pt&apos;&amp;gt;
         ///&amp;lt;p style=&apos;font-size:11pt;margin-bottom:0in&apos;&amp;gt;Getting Started&amp;lt;/p&amp;gt;
         ///&amp;lt;p style=&apos;margin:0in;text-indent:10.5pt&apos;&amp;gt;When you begin to share data for the first time, the computer with the most authoritative copy &amp;lt;b&amp;gt;must&amp;lt;/b&amp;gt; be the first to send/receive, and all other computers must have the project &amp;lt;b&amp;gt;removed&amp;lt;/b&amp;gt; from that computer before proceeding.&amp;lt;/p&amp;gt; [rest of string was truncated]&quot;;.
@@ -2732,6 +2763,15 @@ namespace LanguageExplorer {
         internal static string SendReceiveForTheFirstTimeContent {
             get {
                 return ResourceManager.GetString("SendReceiveForTheFirstTimeContent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Something went wrong the last time this program was run. Click &apos;Yes&apos; to revert to &apos;factory settings&apos;, &apos;No&apos; to see if you can preserve your settings without crashing again..
+        /// </summary>
+        internal static string SomethingWentWrongLastTime {
+            get {
+                return ResourceManager.GetString("SomethingWentWrongLastTime", resourceCulture);
             }
         }
         

@@ -60,6 +60,10 @@ namespace LanguageExplorer.Impls
 			this.refreshToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripMenuItem5 = new System.Windows.Forms.ToolStripSeparator();
 			this._dataToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this._data_First = new System.Windows.Forms.ToolStripMenuItem();
+			this._data_Previous = new System.Windows.Forms.ToolStripMenuItem();
+			this._data_Next = new System.Windows.Forms.ToolStripMenuItem();
+			this._data_Last = new System.Windows.Forms.ToolStripMenuItem();
 			this._insertToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this._formatToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.setUpWritingSystemsToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
@@ -67,6 +71,24 @@ namespace LanguageExplorer.Impls
 			this.toolStripMenuItem6 = new System.Windows.Forms.ToolStripSeparator();
 			this.configureToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.setUpWritingSystemsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.toolStripMenuItem15 = new System.Windows.Forms.ToolStripSeparator();
+			this.toolStripMenuItem16 = new System.Windows.Forms.ToolStripSeparator();
+			this.utilitiesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this._parserToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this._parseAllWordsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this._reparseAllWordsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this._reloadGrammarLexiconToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this._stopParserToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.toolStripMenuItem17 = new System.Windows.Forms.ToolStripSeparator();
+			this._tryAWordToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this._parseWordsInTextToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this._parseCurrentWordToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this._clearCurrentParserAnalysesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.toolStripMenuItem18 = new System.Windows.Forms.ToolStripSeparator();
+			this.chooseParserToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this._defaultParserXAmpleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this._phonologicalRulebasedParserHermitCrabNETToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this._editParserParametersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this._windowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.newWindowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this._helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -88,6 +110,10 @@ namespace LanguageExplorer.Impls
 			this.redoToolStripButton = new System.Windows.Forms.ToolStripButton();
 			this.toolStripButton_Refresh = new System.Windows.Forms.ToolStripButton();
 			this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+			this._tsbFirst = new System.Windows.Forms.ToolStripButton();
+			this._tsbPrevious = new System.Windows.Forms.ToolStripButton();
+			this._tsbNext = new System.Windows.Forms.ToolStripButton();
+			this._tsbLast = new System.Windows.Forms.ToolStripButton();
 			this.toolStripContainer = new System.Windows.Forms.ToolStripContainer();
 			this.mainContainer = new LanguageExplorer.Controls.CollapsingSplitContainer();
 			this._sidePane = new LanguageExplorer.Controls.SilSidePane.SidePane();
@@ -124,6 +150,7 @@ namespace LanguageExplorer.Impls
             this._insertToolStripMenuItem,
             this._formatToolStripMenuItem,
             this._toolsToolStripMenuItem,
+            this._parserToolStripMenuItem,
             this._windowToolStripMenuItem,
             this._helpToolStripMenuItem});
 			this._menuStrip.Location = new System.Drawing.Point(0, 0);
@@ -476,9 +503,52 @@ namespace LanguageExplorer.Impls
 			// 
 			// _dataToolStripMenuItem
 			// 
+			this._dataToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this._data_First,
+            this._data_Previous,
+            this._data_Next,
+            this._data_Last});
 			this._dataToolStripMenuItem.Name = "_dataToolStripMenuItem";
 			this._dataToolStripMenuItem.Size = new System.Drawing.Size(43, 20);
 			this._dataToolStripMenuItem.Text = "&Data";
+			// 
+			// _data_First
+			// 
+			this._data_First.Image = global::LanguageExplorer.LanguageExplorerResources.FWFirstArrow;
+			this._data_First.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this._data_First.Name = "_data_First";
+			this._data_First.Size = new System.Drawing.Size(160, 26);
+			this._data_First.Text = "&First";
+			this._data_First.ToolTipText = "Show the first item.";
+			// 
+			// _data_Previous
+			// 
+			this._data_Previous.Image = global::LanguageExplorer.LanguageExplorerResources.FWLeftArrow;
+			this._data_Previous.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this._data_Previous.Name = "_data_Previous";
+			this._data_Previous.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.P)));
+			this._data_Previous.Size = new System.Drawing.Size(160, 26);
+			this._data_Previous.Text = "&Previous";
+			this._data_Previous.ToolTipText = "Show the previous item.";
+			// 
+			// _data_Next
+			// 
+			this._data_Next.Image = global::LanguageExplorer.LanguageExplorerResources.FWRightArrow;
+			this._data_Next.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this._data_Next.Name = "_data_Next";
+			this._data_Next.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.N)));
+			this._data_Next.Size = new System.Drawing.Size(160, 26);
+			this._data_Next.Text = "&Next";
+			this._data_Next.ToolTipText = "Show the next item.";
+			// 
+			// _data_Last
+			// 
+			this._data_Last.Image = global::LanguageExplorer.LanguageExplorerResources.FWLastArrow;
+			this._data_Last.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this._data_Last.Name = "_data_Last";
+			this._data_Last.Size = new System.Drawing.Size(160, 26);
+			this._data_Last.Text = "&Last";
+			this._data_Last.ToolTipText = "Show the last item.";
 			// 
 			// _insertToolStripMenuItem
 			// 
@@ -506,7 +576,10 @@ namespace LanguageExplorer.Impls
 			// 
 			this._toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripMenuItem6,
-            this.configureToolStripMenuItem});
+            this.configureToolStripMenuItem,
+            this.toolStripMenuItem15,
+            this.toolStripMenuItem16,
+            this.utilitiesToolStripMenuItem});
 			this._toolsToolStripMenuItem.Name = "_toolsToolStripMenuItem";
 			this._toolsToolStripMenuItem.Size = new System.Drawing.Size(47, 20);
 			this._toolsToolStripMenuItem.Text = "&Tools";
@@ -531,6 +604,136 @@ namespace LanguageExplorer.Impls
 			this.setUpWritingSystemsToolStripMenuItem.Text = "Se&t up Writing Systems...";
 			this.setUpWritingSystemsToolStripMenuItem.ToolTipText = "Add, remove, or change the writing systems specified for this project.";
 			this.setUpWritingSystemsToolStripMenuItem.Click += new System.EventHandler(this.File_FieldWorks_Project_Properties);
+			// 
+			// toolStripMenuItem15
+			// 
+			this.toolStripMenuItem15.Name = "toolStripMenuItem15";
+			this.toolStripMenuItem15.Size = new System.Drawing.Size(124, 6);
+			// 
+			// toolStripMenuItem16
+			// 
+			this.toolStripMenuItem16.Name = "toolStripMenuItem16";
+			this.toolStripMenuItem16.Size = new System.Drawing.Size(124, 6);
+			// 
+			// utilitiesToolStripMenuItem
+			// 
+			this.utilitiesToolStripMenuItem.Name = "utilitiesToolStripMenuItem";
+			this.utilitiesToolStripMenuItem.Size = new System.Drawing.Size(127, 22);
+			this.utilitiesToolStripMenuItem.Text = "&Utilities...";
+			this.utilitiesToolStripMenuItem.ToolTipText = "Run some special utilities to process your data.";
+			this.utilitiesToolStripMenuItem.Click += new System.EventHandler(this.utilitiesToolStripMenuItem_Click);
+			// 
+			// _parserToolStripMenuItem
+			// 
+			this._parserToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this._parseAllWordsToolStripMenuItem,
+            this._reparseAllWordsToolStripMenuItem,
+            this._reloadGrammarLexiconToolStripMenuItem,
+            this._stopParserToolStripMenuItem,
+            this.toolStripMenuItem17,
+            this._tryAWordToolStripMenuItem,
+            this._parseWordsInTextToolStripMenuItem,
+            this._parseCurrentWordToolStripMenuItem,
+            this._clearCurrentParserAnalysesToolStripMenuItem,
+            this.toolStripMenuItem18,
+            this.chooseParserToolStripMenuItem,
+            this._editParserParametersToolStripMenuItem});
+			this._parserToolStripMenuItem.Name = "_parserToolStripMenuItem";
+			this._parserToolStripMenuItem.Size = new System.Drawing.Size(51, 20);
+			this._parserToolStripMenuItem.Text = "Pa&rser";
+			// 
+			// _parseAllWordsToolStripMenuItem
+			// 
+			this._parseAllWordsToolStripMenuItem.Name = "_parseAllWordsToolStripMenuItem";
+			this._parseAllWordsToolStripMenuItem.Size = new System.Drawing.Size(228, 22);
+			this._parseAllWordsToolStripMenuItem.Text = "Pa&rse all words";
+			this._parseAllWordsToolStripMenuItem.ToolTipText = "Start the Parser running.";
+			// 
+			// _reparseAllWordsToolStripMenuItem
+			// 
+			this._reparseAllWordsToolStripMenuItem.Name = "_reparseAllWordsToolStripMenuItem";
+			this._reparseAllWordsToolStripMenuItem.Size = new System.Drawing.Size(228, 22);
+			this._reparseAllWordsToolStripMenuItem.Text = "&Reparse all words";
+			// 
+			// _reloadGrammarLexiconToolStripMenuItem
+			// 
+			this._reloadGrammarLexiconToolStripMenuItem.Name = "_reloadGrammarLexiconToolStripMenuItem";
+			this._reloadGrammarLexiconToolStripMenuItem.Size = new System.Drawing.Size(228, 22);
+			this._reloadGrammarLexiconToolStripMenuItem.Text = "Re&load Grammar / Lexicon";
+			this._reloadGrammarLexiconToolStripMenuItem.ToolTipText = "Reload the Parser information.";
+			// 
+			// _stopParserToolStripMenuItem
+			// 
+			this._stopParserToolStripMenuItem.Name = "_stopParserToolStripMenuItem";
+			this._stopParserToolStripMenuItem.Size = new System.Drawing.Size(228, 22);
+			this._stopParserToolStripMenuItem.Text = "&Stop Parser";
+			this._stopParserToolStripMenuItem.ToolTipText = "Stop the Parser.";
+			// 
+			// toolStripMenuItem17
+			// 
+			this.toolStripMenuItem17.Name = "toolStripMenuItem17";
+			this.toolStripMenuItem17.Size = new System.Drawing.Size(225, 6);
+			// 
+			// _tryAWordToolStripMenuItem
+			// 
+			this._tryAWordToolStripMenuItem.Name = "_tryAWordToolStripMenuItem";
+			this._tryAWordToolStripMenuItem.Size = new System.Drawing.Size(228, 22);
+			this._tryAWordToolStripMenuItem.Text = "&Try a Word...";
+			this._tryAWordToolStripMenuItem.ToolTipText = "Have the Parser try a single word.";
+			// 
+			// _parseWordsInTextToolStripMenuItem
+			// 
+			this._parseWordsInTextToolStripMenuItem.Name = "_parseWordsInTextToolStripMenuItem";
+			this._parseWordsInTextToolStripMenuItem.Size = new System.Drawing.Size(228, 22);
+			this._parseWordsInTextToolStripMenuItem.Text = "Parse Words in Te&xt";
+			// 
+			// _parseCurrentWordToolStripMenuItem
+			// 
+			this._parseCurrentWordToolStripMenuItem.Name = "_parseCurrentWordToolStripMenuItem";
+			this._parseCurrentWordToolStripMenuItem.Size = new System.Drawing.Size(228, 22);
+			this._parseCurrentWordToolStripMenuItem.Text = "Parse &Current Word";
+			this._parseCurrentWordToolStripMenuItem.ToolTipText = "Have the Parser parse just the current word.";
+			// 
+			// _clearCurrentParserAnalysesToolStripMenuItem
+			// 
+			this._clearCurrentParserAnalysesToolStripMenuItem.Name = "_clearCurrentParserAnalysesToolStripMenuItem";
+			this._clearCurrentParserAnalysesToolStripMenuItem.Size = new System.Drawing.Size(228, 22);
+			this._clearCurrentParserAnalysesToolStripMenuItem.Text = "Clear Current Parser &Analyses";
+			// 
+			// toolStripMenuItem18
+			// 
+			this.toolStripMenuItem18.Name = "toolStripMenuItem18";
+			this.toolStripMenuItem18.Size = new System.Drawing.Size(225, 6);
+			// 
+			// chooseParserToolStripMenuItem
+			// 
+			this.chooseParserToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this._defaultParserXAmpleToolStripMenuItem,
+            this._phonologicalRulebasedParserHermitCrabNETToolStripMenuItem});
+			this.chooseParserToolStripMenuItem.Name = "chooseParserToolStripMenuItem";
+			this.chooseParserToolStripMenuItem.Size = new System.Drawing.Size(228, 22);
+			this.chooseParserToolStripMenuItem.Text = "Choose Parser";
+			// 
+			// _defaultParserXAmpleToolStripMenuItem
+			// 
+			this._defaultParserXAmpleToolStripMenuItem.Name = "_defaultParserXAmpleToolStripMenuItem";
+			this._defaultParserXAmpleToolStripMenuItem.Size = new System.Drawing.Size(139, 22);
+			this._defaultParserXAmpleToolStripMenuItem.Tag = "";
+			this._defaultParserXAmpleToolStripMenuItem.Text = "XAmple";
+			// 
+			// _phonologicalRulebasedParserHermitCrabNETToolStripMenuItem
+			// 
+			this._phonologicalRulebasedParserHermitCrabNETToolStripMenuItem.Name = "_phonologicalRulebasedParserHermitCrabNETToolStripMenuItem";
+			this._phonologicalRulebasedParserHermitCrabNETToolStripMenuItem.Size = new System.Drawing.Size(139, 22);
+			this._phonologicalRulebasedParserHermitCrabNETToolStripMenuItem.Tag = "";
+			this._phonologicalRulebasedParserHermitCrabNETToolStripMenuItem.Text = "Hermit Crab";
+			// 
+			// _editParserParametersToolStripMenuItem
+			// 
+			this._editParserParametersToolStripMenuItem.Name = "_editParserParametersToolStripMenuItem";
+			this._editParserParametersToolStripMenuItem.Size = new System.Drawing.Size(228, 22);
+			this._editParserParametersToolStripMenuItem.Text = "&Edit Parser Parameters...";
+			this._editParserParametersToolStripMenuItem.ToolTipText = "Edit the special parameters for the Parser.";
 			// 
 			// _windowToolStripMenuItem
 			// 
@@ -665,12 +868,16 @@ namespace LanguageExplorer.Impls
             this.undoToolStripButton,
             this.redoToolStripButton,
             this.toolStripButton_Refresh,
-            this.toolStripSeparator1});
-			this.toolStripStandard.Location = new System.Drawing.Point(4, 0);
+            this.toolStripSeparator1,
+            this._tsbFirst,
+            this._tsbPrevious,
+            this._tsbNext,
+            this._tsbLast});
+			this.toolStripStandard.Location = new System.Drawing.Point(3, 0);
 			this.toolStripStandard.Name = "toolStripStandard";
-			this.toolStripStandard.Size = new System.Drawing.Size(96, 27);
+			this.toolStripStandard.Size = new System.Drawing.Size(192, 27);
 			this.toolStripStandard.TabIndex = 2;
-			this.toolStripStandard.Text = "toolStripStandard";
+			this.toolStripStandard.Text = "Standard";
 			// 
 			// toolStripSeparator2
 			// 
@@ -712,6 +919,46 @@ namespace LanguageExplorer.Impls
 			// 
 			this.toolStripSeparator1.Name = "toolStripSeparator1";
 			this.toolStripSeparator1.Size = new System.Drawing.Size(6, 27);
+			// 
+			// _tsbFirst
+			// 
+			this._tsbFirst.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this._tsbFirst.Image = global::LanguageExplorer.LanguageExplorerResources.FWFirstArrow;
+			this._tsbFirst.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this._tsbFirst.Name = "_tsbFirst";
+			this._tsbFirst.Size = new System.Drawing.Size(24, 24);
+			this._tsbFirst.Text = "toolStripButton";
+			this._tsbFirst.ToolTipText = "Show the first item.";
+			// 
+			// _tsbPrevious
+			// 
+			this._tsbPrevious.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this._tsbPrevious.Image = global::LanguageExplorer.LanguageExplorerResources.FWLeftArrow;
+			this._tsbPrevious.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this._tsbPrevious.Name = "_tsbPrevious";
+			this._tsbPrevious.Size = new System.Drawing.Size(24, 24);
+			this._tsbPrevious.Text = "toolStripButton1";
+			this._tsbPrevious.ToolTipText = "Show the previous item.";
+			// 
+			// _tsbNext
+			// 
+			this._tsbNext.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this._tsbNext.Image = global::LanguageExplorer.LanguageExplorerResources.FWRightArrow;
+			this._tsbNext.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this._tsbNext.Name = "_tsbNext";
+			this._tsbNext.Size = new System.Drawing.Size(24, 24);
+			this._tsbNext.Text = "toolStripButton1";
+			this._tsbNext.ToolTipText = "Show the next item.";
+			// 
+			// _tsbLast
+			// 
+			this._tsbLast.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this._tsbLast.Image = global::LanguageExplorer.LanguageExplorerResources.FWLastArrow;
+			this._tsbLast.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this._tsbLast.Name = "_tsbLast";
+			this._tsbLast.Size = new System.Drawing.Size(24, 24);
+			this._tsbLast.Text = "toolStripButton1";
+			this._tsbLast.ToolTipText = "Show the last item.";
 			// 
 			// toolStripContainer
 			// 
@@ -788,33 +1035,39 @@ namespace LanguageExplorer.Impls
             this.statusBarPanelProgress,
             this.statusBarPanelArea,
             this.statusBarPanelRecordNumber});
+			this._statusbar.ShowPanels = true;
 			this._statusbar.Size = new System.Drawing.Size(697, 18);
 			this._statusbar.TabIndex = 4;
 			// 
 			// statusBarPanelMessage
 			// 
+			this.statusBarPanelMessage.AutoSize = System.Windows.Forms.StatusBarPanelAutoSize.Contents;
 			this.statusBarPanelMessage.MinWidth = 40;
 			this.statusBarPanelMessage.Name = "statusBarPanelMessage";
 			this.statusBarPanelMessage.Text = "Message";
-			this.statusBarPanelMessage.Width = 40;
+			this.statusBarPanelMessage.Width = 60;
 			// 
 			// statusBarPanelProgress
 			// 
+			this.statusBarPanelProgress.AutoSize = System.Windows.Forms.StatusBarPanelAutoSize.Contents;
 			this.statusBarPanelProgress.MinWidth = 40;
 			this.statusBarPanelProgress.Name = "statusBarPanelProgress";
 			this.statusBarPanelProgress.Text = "Progress";
-			this.statusBarPanelProgress.Width = 40;
+			this.statusBarPanelProgress.Width = 59;
 			// 
 			// statusBarPanelArea
 			// 
+			this.statusBarPanelArea.AutoSize = System.Windows.Forms.StatusBarPanelAutoSize.Spring;
 			this.statusBarPanelArea.Name = "statusBarPanelArea";
-			this.statusBarPanelArea.Text = "Area";
+			this.statusBarPanelArea.Width = 470;
 			// 
 			// statusBarPanelRecordNumber
 			// 
+			this.statusBarPanelRecordNumber.AutoSize = System.Windows.Forms.StatusBarPanelAutoSize.Contents;
 			this.statusBarPanelRecordNumber.MinWidth = 40;
 			this.statusBarPanelRecordNumber.Name = "statusBarPanelRecordNumber";
 			this.statusBarPanelRecordNumber.Text = "RecordNumber";
+			this.statusBarPanelRecordNumber.Width = 91;
 			// 
 			// FwMainWnd
 			// 
@@ -931,5 +1184,31 @@ namespace LanguageExplorer.Impls
 		private LanguageExplorer.Controls.CollapsingSplitContainer mainContainer;
 		private Panel _rightPanel;
 		private Controls.SilSidePane.SidePane _sidePane;
+		private ToolStripSeparator toolStripMenuItem15;
+		private ToolStripSeparator toolStripMenuItem16;
+		private ToolStripMenuItem utilitiesToolStripMenuItem;
+		private ToolStripMenuItem _parserToolStripMenuItem;
+		private ToolStripMenuItem _parseAllWordsToolStripMenuItem;
+		private ToolStripMenuItem _reparseAllWordsToolStripMenuItem;
+		private ToolStripMenuItem _reloadGrammarLexiconToolStripMenuItem;
+		private ToolStripMenuItem _stopParserToolStripMenuItem;
+		private ToolStripSeparator toolStripMenuItem17;
+		private ToolStripMenuItem _tryAWordToolStripMenuItem;
+		private ToolStripMenuItem _parseWordsInTextToolStripMenuItem;
+		private ToolStripMenuItem _parseCurrentWordToolStripMenuItem;
+		private ToolStripMenuItem _clearCurrentParserAnalysesToolStripMenuItem;
+		private ToolStripSeparator toolStripMenuItem18;
+		private ToolStripMenuItem chooseParserToolStripMenuItem;
+		private ToolStripMenuItem _defaultParserXAmpleToolStripMenuItem;
+		private ToolStripMenuItem _phonologicalRulebasedParserHermitCrabNETToolStripMenuItem;
+		private ToolStripMenuItem _editParserParametersToolStripMenuItem;
+		private ToolStripMenuItem _data_First;
+		private ToolStripMenuItem _data_Previous;
+		private ToolStripMenuItem _data_Next;
+		private ToolStripMenuItem _data_Last;
+		private ToolStripButton _tsbFirst;
+		private ToolStripButton _tsbPrevious;
+		private ToolStripButton _tsbNext;
+		private ToolStripButton _tsbLast;
 	}
 }

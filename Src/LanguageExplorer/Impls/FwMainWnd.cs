@@ -1,4 +1,4 @@
-﻿//#define RANDYTODOMERGEFILES
+﻿//#define RANDYTODOMERGEFILES // Remove all RANDYTODOMERGEFILES, when I'm done with project.
 // Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
@@ -15,6 +15,7 @@ using System.Text;
 using System.Windows.Forms;
 using IWshRuntimeLibrary;
 using LanguageExplorer.Archiving;
+using LanguageExplorer.Areas.TextsAndWords;
 using LanguageExplorer.Controls;
 using SIL.Code;
 using LanguageExplorer.Controls.SilSidePane;
@@ -37,10 +38,10 @@ using SIL.Utils;
 using File = System.IO.File;
 using FileUtils = SIL.Utils.FileUtils;
 using Win32 = SIL.FieldWorks.Common.FwUtils.Win32;
-
 #if RANDYTODOMERGEFILES
 using System.Xml;
 using System.Collections.Specialized;
+using SIL.Xml;
 #endif
 
 namespace LanguageExplorer.Impls
@@ -79,6 +80,7 @@ namespace LanguageExplorer.Impls
 		private DateTime _lastToolChange = DateTime.MinValue;
 		private readonly HashSet<string> _toolsReportedToday = new HashSet<string>();
 		private bool _persistWindowSize;
+		private ParserMenuManager _parserMenuManager;
 		private DataNavigationManager _dataNavigationManager;
 		private readonly MajorFlexComponentParameters _majorFlexComponentParameters;
 
@@ -99,19 +101,11 @@ namespace LanguageExplorer.Impls
 			Guard.AssertThat(wndCopyFrom == null, "Support for the 'wndCopyFrom' is not yet implemented.");
 			Guard.AssertThat(linkArgs == null, "Support for the 'linkArgs' is not yet implemented.");
 
-			var wasCrashDuringPreviousStartup = File.Exists(CrashOnStartupDetectorPathName);
-			if (!wasCrashDuringPreviousStartup)
-			{
-				// Create the crash detector file for next time.
-				// Make sure the folder exists first.
-				Directory.CreateDirectory(CrashOnStartupDetectorPathName.Substring(0, CrashOnStartupDetectorPathName.LastIndexOf(Path.DirectorySeparatorChar)));
-				using (var writer = File.CreateText(CrashOnStartupDetectorPathName))
-					writer.Close();
-			}
+			var wasCrashDuringPreviousStartup = SetupCrashDetectorFile();
 
 			_flexApp = flexApp;
 
-			AddCustomStatusBarPanels();
+			SetupCustomStatusBarPanels();
 
 			_sendReceiveToolStripMenuItem.Enabled = FLExBridgeHelper.IsFlexBridgeInstalled();
 			projectLocationsToolStripMenuItem.Enabled = FwRegistryHelper.FieldWorksRegistryKeyLocalMachine.CanWriteKey();
@@ -119,24 +113,23 @@ namespace LanguageExplorer.Impls
 
 			_viewHelper = new ActiveViewHelper(this);
 
-			_stylesheet = new FwStyleSheet();
-			_stylesheet.Init(Cache, Cache.LanguageProject.Hvo, LangProjectTags.kflidStyles);
+			SetupStylesheet();
 
 			SetupPropertyTable();
 
+			RegisterSubscriptions();
+
 			_dataNavigationManager = new DataNavigationManager(Subscriber, new Dictionary<string, Tuple<ToolStripMenuItem, ToolStripButton>>
 			{
-				{DataNavigationManager.First, new Tuple<ToolStripMenuItem, ToolStripButton>(null, null/*_data_First, _tsbFirst*/)},
-				{DataNavigationManager.Previous, new Tuple<ToolStripMenuItem, ToolStripButton>(null, null/*_data_Previous, _tsbPrevious*/)},
-				{DataNavigationManager.Next, new Tuple<ToolStripMenuItem, ToolStripButton>(null, null/*_data_Next, _tsbNext*/)},
-				{DataNavigationManager.Last, new Tuple<ToolStripMenuItem, ToolStripButton>(null, null/*_data_Last, _tsbLast*/)}
+				{DataNavigationManager.First, new Tuple<ToolStripMenuItem, ToolStripButton>(_data_First, _tsbFirst)},
+				{DataNavigationManager.Previous, new Tuple<ToolStripMenuItem, ToolStripButton>(_data_Previous, _tsbPrevious)},
+				{DataNavigationManager.Next, new Tuple<ToolStripMenuItem, ToolStripButton>(_data_Next, _tsbNext)},
+				{DataNavigationManager.Last, new Tuple<ToolStripMenuItem, ToolStripButton>(_data_Last, _tsbLast)}
 			});
 
 			RestoreWindowSettings(wasCrashDuringPreviousStartup);
 			var restoreSize = Size;
 
-			_toolRepository = new ToolRepository();
-			_areaRepository = new AreaRepository(_toolRepository);
 			_majorFlexComponentParameters = new MajorFlexComponentParameters(
 				mainContainer,
 				_menuStrip,
@@ -144,496 +137,93 @@ namespace LanguageExplorer.Impls
 				_statusbar,
 				_dataNavigationManager,
 				new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-			_areaRepository.InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);
+
+			SetupRepositories();
+
+			SetupParserMenuItems();
 
 			SetupOutlookBar();
 
 			SetWindowTitle();
 
-			if (restoreSize != Size)
-			{
-				if (restoreSize != Size)
-				{
-					// It will be the same as what is now in the file and the prop table,
-					// so skip updating the table.
-					_persistWindowSize = false;
-					Size = restoreSize;
-					_persistWindowSize = true;
-				}
-			}
+			SetupWindowSizeIfNeeded(restoreSize);
+
 			if (File.Exists(CrashOnStartupDetectorPathName)) // Have to check again, because unit test check deletes it in the RestoreWindowSettings method.
 			{
 				File.Delete(CrashOnStartupDetectorPathName);
 			}
 
-#if RANDYTODOMERGEFILES // Remove this when I'm done with project.
-// Load xml config files and save merged document.
-			var configFilePath =
-Path.Combine(FwDirectoryFinder.CodeDirectory, @"Language Explorer", @"Configuration", @"Main.xml");
-			XmlDocument mergedConfigDoc = new XmlDocument();
-			mergedConfigDoc.Load(configFilePath);
-			// Process <include> elements
-			// Do includes relative to the dir of our config file
-			var resolver = new SimpleResolver
-			{
-				BaseDirectory = Path.GetDirectoryName(configFilePath)
-			};
-			var includer = new XmlIncluder(resolver)
-			{
-				SkipMissingFiles = false
-			};
-			includer.ProcessDom(configFilePath, mergedConfigDoc);
-			mergedConfigDoc.Save(@"C:\Users\Randy Regnier\Desktop\DevWork\NewDevWork\05_Remove use of main xml config files\Configuration\xWindowFullConfig.xml");
-#endif
-		}
+			IdleQueue = new IdleQueue();
+
 #if RANDYTODOMERGEFILES
-		/// <summary>
-		/// Summary description for XmlIncluder.
-		/// </summary>
-		private class XmlIncluder
-		{
-			private readonly IResolvePath m_resolver;
-
-			/// <summary></summary>
-			/// <param name="resolver">An object which can convert directory
-			///		references into actual physical directory paths.</param>
-			internal XmlIncluder(IResolvePath resolver)
-			{
-				m_resolver = resolver;
-			}
-
-			/// <summary>
-			/// True to allow missing include files to be ignored. This is useful with partial installations,
-			/// for example, TE needs some of the FLEx config files to support change multiple spelling Dialog,
-			/// but a lot of stuff can just be skipped (and therefore need not be installed).
-			/// (Pathologically, a needed file may be missing and still ignored; can't help this for now.)
-			/// </summary>
-			internal bool SkipMissingFiles { get; set; }
-
-			/// <summary>
-			/// replace every "include" node in the document with the nodes that it references
-			/// </summary>
-			internal void ProcessDom(string parentPath, XmlDocument dom)
-			{
-				var cachedDoms = new Dictionary<string, XmlDocument>
-				{
-					{parentPath, dom}
-				};
-				ProcessDom(cachedDoms, null, dom);
-				cachedDoms.Clear();
-			}
-
-			/// <summary>
-			/// replace every "include" node in the document with the nodes that it references
-			/// </summary>
-			private void ProcessDom(Dictionary<string, XmlDocument> cachedDoms, string parentPath, XmlDocument dom)
-			{
-				XmlNode nodeForError = null;
-				string baseFile = "";
-				XmlNode baseNode = dom.SelectSingleNode("//includeBase");
-				if (baseNode != null)
-				{
-					baseFile = XmlUtils.GetManditoryAttributeValue(baseNode, "path");
-					//now that we have read it, remove it, so that it does not violate the schema of
-					//the output file.
-					baseNode.ParentNode.RemoveChild(baseNode);
-				}
-
-				try
-				{
-#if !__MonoCS__
-					foreach (XmlNode includeNode in dom.SelectNodes("//include"))
-					{
-#else
-				// TODO-Linux: work around for mono bug https://bugzilla.novell.com/show_bug.cgi?id=495693
-				XmlNodeList includeList = dom.SelectNodes("//include");
-				for(int j = includeList.Count - 1; j >= 0; --j)
-				{
-					XmlNode includeNode = includeList[j];
-					if (includeNode == null)
-						continue;
+			XmlIncluder.MergeXmlConfigFiles();
 #endif
-						nodeForError = includeNode;
-						ReplaceNode(cachedDoms, parentPath, includeNode, baseFile);
-					}
-				}
-				catch (Exception error)
-				{
-					throw new ApplicationException("Error while processing <include> element:" + nodeForError.OuterXml, error);
-				}
-			}
-
-			/// <summary>
-			/// </summary>
-			/// <param name="includeNode">include" node, possibly containing "overrides" nodes</param>
-			/// <returns>true if we processed an "overrides" node.</returns>
-			private static void HandleIncludeOverrides(XmlNode includeNode)
-			{
-				XmlNode parentNode = includeNode.ParentNode;
-				XmlNode overridesNode = null;
-				// find any "overrides" node
-				foreach (XmlNode childNode in includeNode.ChildNodes)
-				{
-					// first skip over any XmlComment nodes.
-					// TODO-Linux: System.Boolean System.Type::op_Equality(System.Type,System.Type)
-					// is marked with [MonoTODO] and might not work as expected in 4.0.
-					if (childNode.GetType() == typeof(XmlComment))
-						continue;
-					if (childNode.Name == "overrides")
-						overridesNode = childNode;
-				}
-				if (overridesNode == null)
-					return;
-				// this is a group of overrides, so alter matched nodes accordingly.
-				// treat the first three element parts (element and first attribute) as a node query key,
-				// and subsequent attributes as subsitutions.
-				foreach (XmlNode overrideNode in overridesNode.ChildNodes)
-				{
-					// TODO-Linux: System.Boolean System.Type::op_Equality(System.Type,System.Type)
-					// is marked with [MonoTODO] and might not work as expected in 4.0.
-					if (overrideNode.GetType() == typeof(XmlComment))
-						continue;
-					string elementKey = overrideNode.Name;
-					string firstAttributeKey = overrideNode.Attributes[0].Name;
-					string firstAttributeValue = overrideNode.Attributes[0].Value;
-					string xPathToModifyElement = String.Format(".//{0}[@{1}='{2}']", elementKey, firstAttributeKey, firstAttributeValue);
-					XmlNode elementToModify = parentNode.SelectSingleNode(xPathToModifyElement);
-					if (elementToModify != null && elementToModify != overrideNode)
-					{
-						if (overrideNode.ChildNodes.Count > 0)
-						{
-							// replace the elementToModify with this overrideNode.
-							XmlNode parentToModify = elementToModify.ParentNode;
-							parentToModify.ReplaceChild(overrideNode.Clone(), elementToModify);
-						}
-						else
-						{
-							// just modify existing attributes or add new ones.
-							foreach (XmlAttribute xaOverride in overrideNode.Attributes)
-							{
-								// the keyAttribute will be identical, so it won't change.
-								XmlAttribute xaToModify = elementToModify.Attributes[xaOverride.Name];
-								// if the attribute exists on the node we're modifying, alter it
-								// otherwise add the new attribute.
-								if (xaToModify != null)
-									xaToModify.Value = xaOverride.Value;
-								else
-									elementToModify.Attributes.Append(xaOverride.Clone() as XmlAttribute);
-							}
-						}
-					}
-				}
-			}
-
-			/// <summary>
-			/// replace the node with the node or nodes that it refers to
-			/// </summary>
-			private void ReplaceNode(Dictionary<string, XmlDocument> cachedDoms, string parentPath, XmlNode includeNode, string defaultPath)
-			{
-				string path;
-				if (!string.IsNullOrEmpty(defaultPath))
-					path = XmlUtils.GetOptionalAttributeValue(includeNode, "path", defaultPath);
-				else
-				{
-					path = XmlUtils.GetOptionalAttributeValue(includeNode, "path");
-					if (path == null || path.Trim().Length == 0)
-						throw new ApplicationException(
-							"The path attribute was missing and no default path was specified. " + Environment.NewLine
-							+ includeNode.OuterXml);
-				}
-				XmlNode parentNode = includeNode.ParentNode;
-				try
-				{
-					/* To support extensions, we need to see if 'path' starts with 'Extensions/* /'. (without the extra space following the '*'.)
-					* If it does, then we will have to get any folders (the '*' wildcard)
-					* and see if any of them have the specified file (at end of 'path'.
-					*/
-					StringCollection paths = new StringCollection();
-					// The extension XML files should be stored in the data area, not in the code area.
-					// This reduces the need for users to have administrative privileges.
-					bool fExtension = false;
-					string extensionBaseDir = null;
-					if (path.StartsWith("Extensions") || path.StartsWith("extensions"))
-					{
-						// Extension <include> element,
-						// which may have zero or more actual extensions.
-						string extensionFileName = path.Substring(path.LastIndexOf("/") + 1);
-						string pluginBaseDir = (parentPath == null) ? m_resolver.BaseDirectory : parentPath;
-						extensionBaseDir = pluginBaseDir;
-						string sBaseCode = FwDirectoryFinder.CodeDirectory;
-						string sBaseData = FwDirectoryFinder.DataDirectory;
-						if (extensionBaseDir.StartsWith(sBaseCode) && sBaseCode != sBaseData)
-							extensionBaseDir = extensionBaseDir.Replace(sBaseCode, sBaseData);
-						// JohnT: allow the Extensions directory not even to exist. Just means no extentions, as if empty.
-						if (!Directory.Exists(extensionBaseDir + "/Extensions"))
-							return;
-						foreach (string extensionDir in Directory.GetDirectories(extensionBaseDir + "/Extensions"))
-						{
-							string extensionPathname = Path.Combine(extensionDir, extensionFileName);
-							// Add to 'paths' collection, but only from 'Extensions' on.
-							if (File.Exists(extensionPathname))
-								paths.Add(extensionPathname.Substring(extensionPathname.IndexOf("Extensions")));
-						}
-						// Check for newer versions of the extension files in the
-						// "Available Plugins" directory.  See LT-8051.
-						UpdateExtensionFilesIfNeeded(paths, pluginBaseDir, extensionBaseDir);
-						if (paths.Count == 0)
-							return;
-						fExtension = true;
-					}
-					else
-					{
-						// Standard, non-extension, <include> element.
-						paths.Add(path);
-					}
-
-					/* Any fragments (extensions or standard) will be added before the <include>
-					 * element. Aftwerwards, the <include> element will be removed.
-					 */
-					string query = XmlUtils.GetManditoryAttributeValue(includeNode, "query");
-					foreach (string innerPath in paths)
-					{
-						XmlDocumentFragment fragment;
-						if (innerPath == "$this")
-						{
-							fragment = CreateFragmentWithTargetNodes(query, includeNode.OwnerDocument);
-						}
-						else
-						{
-							fragment = GetTargetNodes(cachedDoms,
-								fExtension ? extensionBaseDir : parentPath, innerPath, query);
-						}
-						if (fragment != null)
-						{
-							XmlNode node = includeNode.OwnerDocument.ImportNode(fragment, true);
-							// Since we can't tell the index of includeNode,
-							// always add the fluffed-up node before the include node to keep it/them in the original order.
-							parentNode.InsertBefore(node, includeNode);
-						}
-					}
-					// Handle any overrides.
-					HandleIncludeOverrides(includeNode);
-				}
-				catch (Exception e)
-				{
-					// TODO-Linux: if you delete this exception block !check! flex still runs on linux.
-					Console.WriteLine("Debug ReplaceNode error: {0}", e);
-				}
-				finally
-				{
-					// Don't want the original <include> element any more, no matter what.
-					parentNode.RemoveChild(includeNode);
-				}
-			}
-
-			/// <summary>
-			/// Check for changed (or missing) files in the Extensions subdirectory (as
-			/// compared to the corresponding "Available Plugins" subdirectory).
-			/// </summary>
-			private static void UpdateExtensionFilesIfNeeded(StringCollection paths, string pluginBaseDir,
-				string extensionBaseDir)
-			{
-				if (paths.Count == 0)
-					return;
-				List<string> obsoletePaths = new List<string>();
-				foreach (string extensionPath in paths)
-				{
-					string pluginPathname = Path.Combine(pluginBaseDir, extensionPath);
-					pluginPathname = pluginPathname.Replace("Extensions", "Available Plugins");
-					if (File.Exists(pluginPathname))
-					{
-						string extensionPathname = Path.Combine(extensionBaseDir, extensionPath);
-						if (!FileUtils.AreFilesIdentical(pluginPathname, extensionPathname))
-						{
-							string extensionDir = Path.GetDirectoryName(extensionPathname);
-							Directory.Delete(extensionDir, true);
-							Directory.CreateDirectory(extensionDir);
-							File.Copy(pluginPathname, extensionPathname);
-							File.SetAttributes(extensionPathname, FileAttributes.Normal);
-							// plug-ins usually have localization strings-XX.xml files.
-							foreach (string pluginFile in Directory.GetFiles(Path.GetDirectoryName(pluginPathname), "strings-*.xml"))
-							{
-								string extensionFile = Path.Combine(extensionDir, Path.GetFileName(pluginFile));
-								File.Copy(pluginFile, extensionFile);
-								File.SetAttributes(extensionFile, FileAttributes.Normal);
-							}
-						}
-					}
-					else
-					{
-						obsoletePaths.Add(extensionPath);
-					}
-				}
-				foreach (string badPath in obsoletePaths)
-					paths.Remove(badPath);
-			}
-
-			/// <summary>
-			/// get a group of nodes specified by and XPATH query and a file path
-			/// </summary>
-			/// <remarks> this is the "inner loop" where recursion happens so that files can include other files.</remarks>
-			/// <returns></returns>
-			private XmlDocumentFragment GetTargetNodes(Dictionary<string, XmlDocument> cachedDoms, string parentPath, string path, string query)
-			{
-				path = (parentPath == null) ? m_resolver.Resolve(path, SkipMissingFiles)
-					: m_resolver.Resolve(parentPath, path, SkipMissingFiles);
-				if (path == null)
-					return null; // Only possible if m_fSkipMissingFiles is true.
-				//path = m_resolver.Resolve(parentPath,path);
-				XmlDocument document = null;
-				if (!cachedDoms.ContainsKey(path))
-				{
-					if (SkipMissingFiles && !System.IO.File.Exists(path))
-						return null;
-					document = new XmlDocument();
-					document.Load(path);
-					cachedDoms.Add(path, document);
-				}
-				else
-					document = cachedDoms[path];
-
-				//enhance:protect against infinite recursion somehow
-				//recurse so that that file itself can have <include/>s.
-				ProcessDom(cachedDoms, System.IO.Path.GetDirectoryName(path), document);
-
-				return CreateFragmentWithTargetNodes(query, document);
-			}
-
-			private static XmlDocumentFragment CreateFragmentWithTargetNodes(string query, XmlDocument document)
-			{
-				//find the nodes specified in the XML query
-				XmlNodeList list = document.SelectNodes(query);
-				XmlDocumentFragment fragment = document.CreateDocumentFragment();
-				foreach (XmlNode node in list)
-				{
-					// We must clone the node, otherwise, AppendChild merely MOVES it,
-					// modifying the document we have cached, and causing a repeat query for
-					// the same element (or any of its children) to fail.
-					fragment.AppendChild(node.Clone());
-				}
-				return fragment;
-			}
 		}
 
-	internal interface IResolvePath
-	{
-		/// <summary>
-		/// Given some description of a directory or file, return the path to the actual directory.
-		/// </summary>
-		/// <param name="path"></param>
-		/// <param name="fIgnoreMissingFile">If true, return null if not found. Otherwise throw.</param>
-		/// <exception cref="FileNotFoundException">thrown into the resulting directory does not exist</exception>
-		/// <returns></returns>
-		string Resolve(string path, bool fIgnoreMissingFile);
-		string Resolve(string path);
-		string Resolve (string parentPath, string path);
-		string Resolve(string parentPath, string path, bool fIgnoreMissingFile);
-
-		string BaseDirectory {get; set;}
-	}
-
-	/// <summary>
-	/// A simple, non-FieldWorks-reliant implementation which provides a base directory and
-	/// replaces any environment variables
-	/// </summary>
-	internal class SimpleResolver : IResolvePath
-	{
-		private string m_baseDirectory=null;
-
-		internal string Resolve(string path)
+		private static bool SetupCrashDetectorFile()
 		{
-			return Resolve(path, false);
-		}
-
-		/// <summary>
-		/// Try to resolve the path, but if fIgnoreMissingFile is true, don't complain if it doesn't exist; return null.
-		/// </summary>
-		/// <param name="path"></param>
-		/// <param name="fIgnoreMissingFile"></param>
-		/// <returns></returns>
-		public string Resolve(string path, bool fIgnoreMissingFile)
-		{
-			string result = System.Environment.ExpandEnvironmentVariables(path);
-			if (m_baseDirectory!= null)
-				result = System.IO.Path.Combine(m_baseDirectory, result);
-			else
-				result = System.IO.Path.GetFullPath(result);
-
-#if __MonoCS__
-			// TODO-Linux: xml files contain include paths of the form fruit\veggies
-			// which System.IO.File.Exists (on Linux) can't handle because of the '\' char
-			// so we convert if System.IO.File.Exists fails and reattempt the Exists method
-
-			string modifiedResult;
-			if (!System.IO.File.Exists(result))
+			if (File.Exists(CrashOnStartupDetectorPathName))
 			{
-				modifiedResult = result.Replace('\\', '/');
-				if (System.IO.File.Exists(modifiedResult))
-					result = modifiedResult;
+				return true;
 			}
-#endif
 
-			if (!System.IO.File.Exists(result))
+			// Create the crash detector file for next time.
+			// Make sure the folder exists first.
+			Directory.CreateDirectory(CrashOnStartupDetectorPathName.Substring(0, CrashOnStartupDetectorPathName.LastIndexOf(Path.DirectorySeparatorChar)));
+			using (var writer = File.CreateText(CrashOnStartupDetectorPathName))
 			{
-				if (fIgnoreMissingFile)
-					return null;
-				else
-					throw new FileNotFoundException(result);
+				writer.Close();
 			}
-			return result;
+			return false;
 		}
 
-		/// <summary>
-		/// try to find the file, first looking in the given parentPath. Throw if not found.
-		/// </summary>
-		/// <param name="parentPath"></param>
-		/// <param name="path"></param>
-		/// <returns></returns>
-		public string Resolve(string parentPath, string path)
+		private void SetupWindowSizeIfNeeded(Size restoreSize)
 		{
-			return Resolve(parentPath, path, false);
-		}
-		/// <summary>
-		/// try to find the file, first looking in the given parentPath.
-		/// </summary>
-		/// <param name="parentPath"></param>
-		/// <param name="path"></param>
-		/// <param name="fIgnoreMissingFile">If true, return null if not found. Otherwise throw.</param>
-		/// <returns></returns>
-		public string Resolve(string parentPath, string path, bool fIgnoreMissingFile)
-		{
-			string result = System.Environment.ExpandEnvironmentVariables(path);
-			if (parentPath!= null)
-				result = System.IO.Path.Combine(parentPath, result);
-			else
-				result = System.IO.Path.GetFullPath(result);
-
-			if(!System.IO.File.Exists(result))
-				return Resolve(path, fIgnoreMissingFile);//using the parentPath did not help, try looking in the base directory
-
-			return result;
-		}
-
-		public void test()
-		{
-		}
-
-		/// <summary>
-		/// If you specify this, then any future paths will be resolved relative to this directory.
-		/// Otherwise, they will be resolved relative to the current working directory.
-		///
-		/// environment variables will be expanded.
-		/// </summary>
-		public string  BaseDirectory
-		{
-			get { return m_baseDirectory; }
-			set
+			if (restoreSize == Size)
 			{
-				m_baseDirectory= System.Environment.ExpandEnvironmentVariables(value);
+				return;
 			}
+
+			// It will be the same as what is now in the file and the prop table,
+			// so skip updating the table.
+			_persistWindowSize = false;
+			Size = restoreSize;
+			_persistWindowSize = true;
 		}
-	}
-#endif
+
+		private void SetupRepositories()
+		{
+			_toolRepository = new ToolRepository();
+			_areaRepository = new AreaRepository(_toolRepository);
+			_areaRepository.InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);
+		}
+
+		private void SetupStylesheet()
+		{
+			_stylesheet = new FwStyleSheet();
+			_stylesheet.Init(Cache, Cache.LanguageProject.Hvo, LangProjectTags.kflidStyles);
+		}
+
+		private void SetupParserMenuItems()
+		{
+			var parserMenuItems = new Dictionary<string, ToolStripMenuItem>(12)
+			{
+				{"parser", _parserToolStripMenuItem},
+				{"parseAllWords", _parseAllWordsToolStripMenuItem},
+				{"reparseAllWords", _reparseAllWordsToolStripMenuItem},
+				{"reloadGrammarLexicon", _reloadGrammarLexiconToolStripMenuItem},
+				{"stopParser", _stopParserToolStripMenuItem},
+				{"tryAWord", _tryAWordToolStripMenuItem},
+				{"parseWordsInText", _parseWordsInTextToolStripMenuItem},
+				{"parseCurrentWord", _parseCurrentWordToolStripMenuItem},
+				{"clearCurrentParserAnalyses", _clearCurrentParserAnalysesToolStripMenuItem},
+				{"defaultParserXAmple", _defaultParserXAmpleToolStripMenuItem},
+				{"phonologicalRulebasedParserHermitCrab", _phonologicalRulebasedParserHermitCrabNETToolStripMenuItem},
+				{"editParserParameters", _editParserParametersToolStripMenuItem}
+			};
+			_parserMenuManager = new ParserMenuManager(_statusbar.Panels["statusBarPanelProgress"], parserMenuItems);
+			_parserMenuManager.InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);
+		}
 
 		/// <summary>
 		/// Gets the pathname of the "crash detector" file.
@@ -641,16 +231,15 @@ Path.Combine(FwDirectoryFinder.CodeDirectory, @"Language Explorer", @"Configurat
 		/// so if it exists before being created, the app didn't close properly,
 		/// and will start without using the saved settings.
 		/// </summary>
-		private static string CrashOnStartupDetectorPathName => Path.Combine(
-			Path.Combine(
-				Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-				Path.Combine("SIL", "FieldWorks")),
+		private static string CrashOnStartupDetectorPathName => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+			"SIL",
+			"FieldWorks",
 			"CrashOnStartupDetector.tmp");
 
 		private void RestoreWindowSettings(bool wasCrashDuringPreviousStartup)
 		{
 			const string id = "Language Explorer";
-			bool useExtantPrefs = ModifierKeys != Keys.Shift; // Holding shift key means don't use extant preference file, no matter what.
+			var useExtantPrefs = ModifierKeys != Keys.Shift; // Holding shift key means don't use extant preference file, no matter what.
 			if (useExtantPrefs)
 			{
 				// Tentatively RestoreProperties, but first check for a previous crash...
@@ -807,18 +396,20 @@ Path.Combine(FwDirectoryFinder.CodeDirectory, @"Language Explorer", @"Configurat
 			mainContainer.ResumeLayout(false);
 		}
 
-		void Tool_Clicked(Item itemClicked)
+		private void Tool_Clicked(Item itemClicked)
 		{
-			var clickedTool = (ITool) itemClicked.Tag;
+			var clickedTool = (ITool)itemClicked.Tag;
 			if (_currentTool == clickedTool)
 			{
 				return;  // Nothing to do.
 			}
+			_dataNavigationManager.Clerk = null;
 			_currentTool?.Deactivate(_majorFlexComponentParameters);
 			_currentTool = clickedTool;
 			var areaName = _currentArea.MachineName;
 			var toolName = _currentTool.MachineName;
 			PropertyTable.SetProperty($"ToolForAreaNamed_{areaName}", toolName, SettingsGroup.LocalSettings, true, false);
+			PropertyTable.SetProperty("toolChoice", _currentTool.MachineName, SettingsGroup.LocalSettings, true, false);
 
 			// Do some logging.
 			Logger.WriteEvent("Switched to " + _currentTool.MachineName);
@@ -838,7 +429,7 @@ Path.Combine(FwDirectoryFinder.CodeDirectory, @"Language Explorer", @"Configurat
 			_currentTool.Activate(_majorFlexComponentParameters);
 		}
 
-		void Area_Clicked(Tab tabClicked)
+		private void Area_Clicked(Tab tabClicked)
 		{
 			var clickedArea = (IArea)tabClicked.Tag;
 			if (_currentArea == clickedArea)
@@ -882,10 +473,15 @@ Path.Combine(FwDirectoryFinder.CodeDirectory, @"Language Explorer", @"Configurat
 			// Set these properties so they don't get set the first time they're accessed in a browse view menu. (cf. LT-2789)
 			PropertyTable.SetDefault("SortedFromEnd", false, SettingsGroup.LocalSettings, true, false);
 			PropertyTable.SetDefault("SortedByLength", false, SettingsGroup.LocalSettings, true, false);
+			PropertyTable.SetDefault("CurrentToolbarVersion", 1, SettingsGroup.GlobalSettings, true, false);
 			PropertyTable.SetDefault("SuspendLoadListUntilOnChangeFilter", string.Empty, SettingsGroup.LocalSettings, false, false);
 			PropertyTable.SetDefault("SuspendLoadingRecordUntilOnJumpToRecord", string.Empty, SettingsGroup.LocalSettings, false, false);
 			PropertyTable.SetDefault("SelectedWritingSystemHvosForCurrentContextMenu", string.Empty, SettingsGroup.LocalSettings, false, false);
+			// This property can be used to set the settingsGroup for context dependent properties. No need to persist it.
 			PropertyTable.SetDefault("SliceSplitterBaseDistance", -1, SettingsGroup.LocalSettings, false, false);
+			// Common to several tools in various areas, so set them here.
+			PropertyTable.SetDefault("AllowInsertLinkToFile", false, SettingsGroup.LocalSettings, false, false);
+			PropertyTable.SetDefault("AllowShowNormalFields", false, SettingsGroup.LocalSettings, false, false);
 #if RANDYTODO
 			// TODO DataTree processes both of these:
 			// TODO:	1. "ShowHiddenFields" is used by a View menu item.
@@ -913,8 +509,21 @@ Path.Combine(FwDirectoryFinder.CodeDirectory, @"Language Explorer", @"Configurat
 			PropertyTable.RemoveProperty("DoingAutomatedTest", SettingsGroup.GlobalSettings);
 			PropertyTable.RemoveProperty("RecordListLabel", SettingsGroup.GlobalSettings);
 			PropertyTable.RemoveProperty("MainContentLabel", SettingsGroup.GlobalSettings);
+			PropertyTable.RemoveProperty("StatusPanelRecordNumber");
+			PropertyTable.RemoveProperty("StatusPanelMessage");
+			PropertyTable.RemoveProperty("StatusBarPanelFilter");
+			PropertyTable.RemoveProperty("StatusBarPanelSort");
+			PropertyTable.RemoveProperty("DialogFilterStatus");
+			PropertyTable.RemoveProperty("IgnoreStatusPanel");
+		}
 
+		private void RegisterSubscriptions()
+		{
 			Subscriber.Subscribe("MigrateOldConfigurations", MigrateOldConfigurations);
+			Subscriber.Subscribe("StatusPanelRecordNumber", StatusPanelRecordNumber);
+			Subscriber.Subscribe("StatusPanelMessage", StatusPanelMessage);
+			Subscriber.Subscribe("StatusBarPanelFilter", StatusBarPanelFilter);
+			Subscriber.Subscribe("StatusBarPanelSort", StatusBarPanelSort);
 		}
 
 		private void MigrateOldConfigurations(object newValue)
@@ -924,25 +533,61 @@ Path.Combine(FwDirectoryFinder.CodeDirectory, @"Language Explorer", @"Configurat
 			configMigrator.MigrateOldConfigurationsIfNeeded();
 		}
 
-		private void AddCustomStatusBarPanels()
+		private void StatusBarPanelFilter(object newValue)
 		{
+			var newTextMsg = (string)newValue;
+			var statusBarPanelFilter = (StatusBarTextBox)_statusbar.Panels["statusBarPanelFilter"];
+			statusBarPanelFilter.TextForReal = newTextMsg;
+			statusBarPanelFilter.BackBrush = string.IsNullOrEmpty(newTextMsg) ? Brushes.Transparent : Brushes.Yellow;
+		}
+
+		private void StatusBarPanelSort(object newValue)
+		{
+			var newTextMsg = (string)newValue;
+			var statusBarPanelSort = (StatusBarTextBox)_statusbar.Panels["statusBarPanelSort"];
+			statusBarPanelSort.TextForReal = newTextMsg;
+			statusBarPanelSort.BackBrush = string.IsNullOrEmpty(newTextMsg) ? Brushes.Transparent : Brushes.Lime;
+		}
+
+		private void StatusPanelMessage(object newValue)
+		{
+			_statusbar.Panels["statusBarPanelMessage"].Text = (string)newValue;
+		}
+
+		private void StatusPanelRecordNumber(object newValue)
+		{
+			_statusbar.Panels["statusBarPanelRecordNumber"].Text = (string)newValue;
+		}
+
+		private void SetupCustomStatusBarPanels()
+		{
+			_statusbar.SuspendLayout();
 			// Insert first, so it ends up last in the three that are inserted.
-			_statusbar.Panels.Insert(3, new StatusBarTextBox(_statusbar));
-			_statusbar.Panels[3].Name = @"statusBarPanelFilter";
-			_statusbar.Panels[3].Text = @"Filter";
-			_statusbar.Panels[3].MinWidth = 40;
+			_statusbar.Panels.Insert(3, new StatusBarTextBox(_statusbar)
+			{
+				TextForReal = "Filter",
+				Name = "statusBarPanelFilter",
+				MinWidth = 40,
+				AutoSize = StatusBarPanelAutoSize.Contents
+			});
 
 			// Insert second, so it ends up in the middle of the three that are inserted.
-			_statusbar.Panels.Insert(3, new StatusBarTextBox(_statusbar));
-			_statusbar.Panels[3].Name = @"statusBarPanelSort";
-			_statusbar.Panels[3].Text = @"Sort";
-			_statusbar.Panels[3].MinWidth = 40;
+			_statusbar.Panels.Insert(3, new StatusBarTextBox(_statusbar)
+			{
+				TextForReal = "Sort",
+				Name = "statusBarPanelSort",
+				MinWidth = 40,
+				AutoSize = StatusBarPanelAutoSize.Contents
+			});
 
 			// Insert last, so it ends up first in the three that are inserted.
-			_statusbar.Panels.Insert(3, new StatusBarProgressPanel(_statusbar));
-			_statusbar.Panels[3].Name = @"statusBarPanelProgressBar";
-			_statusbar.Panels[3].Text = @"ProgressBar";
-			_statusbar.Panels[3].MinWidth = 150;
+			_statusbar.Panels.Insert(3, new StatusBarProgressPanel(_statusbar)
+			{
+				Name = "statusBarPanelProgressBar",
+				MinWidth = 150,
+				AutoSize = StatusBarPanelAutoSize.Contents
+			});
+			_statusbar.ResumeLayout(true);
 		}
 
 		private static void SetSplitContainerDistance(SplitContainer splitCont, int pixels)
@@ -1155,7 +800,13 @@ Path.Combine(FwDirectoryFinder.CodeDirectory, @"Language Explorer", @"Configurat
 		/// ------------------------------------------------------------------------------------
 		public void FinishRefresh()
 		{
+#if RANDYTODO
+			// TODO: Decide which is right.
 			Cache.ServiceLocator.GetInstance<IUndoStackManager>().Refresh();
+#else
+			// This is from my fork:
+			//ZAP?? Cache.ServiceLocator.GetInstance<IUndoStackManager>().Refresh();
+#endif
 			_currentArea.FinishRefresh();
 			Refresh();
 		}
@@ -1191,16 +842,14 @@ Path.Combine(FwDirectoryFinder.CodeDirectory, @"Language Explorer", @"Configurat
 			// ALSO, after doing a refresh with just a single application / window,
 			// the application would loose focus and you'd have to click into it to
 			// get that back, this will reset that too.
-			if (activeWnd != null)
+			if (activeWnd == null)
 			{
-				// Refresh it last, so its saved settings get restored.
-				activeWnd.FinishRefresh();
-				var activeForm = activeWnd as Form;
-				if (activeForm != null)
-				{
-					activeForm.Activate();
-				}
+				return;
 			}
+			// Refresh it last, so its saved settings get restored.
+			activeWnd.FinishRefresh();
+			var activeForm = activeWnd as Form;
+			activeForm?.Activate();
 		}
 
 		/// <summary>
@@ -1232,67 +881,45 @@ Path.Combine(FwDirectoryFinder.CodeDirectory, @"Language Explorer", @"Configurat
 		/// <summary>
 		/// Get the RecordBar (as a Control), or null if not present.
 		/// </summary>
-		public IRecordBar RecordBarControl
-		{
-			get
-			{
-				if (!(mainContainer.SecondControl is CollapsingSplitContainer))
-					return null;
-				return ((CollapsingSplitContainer)mainContainer.SecondControl).FirstControl as IRecordBar; // Will be null, if it isn't an IRecordBar.
-			}
-		}
+		public IRecordBar RecordBarControl => (mainContainer.SecondControl as CollapsingSplitContainer)?.FirstControl as IRecordBar;
 
 		/// <summary>
 		/// Get the TreeView of RecordBarControl, or null if not present, or it is not showng a tree.
 		/// </summary>
-		public TreeView TreeStyleRecordList
-		{
-			get
-			{
-				var recordBar = RecordBarControl;
-				return recordBar == null ? null : recordBar.TreeView;
-			}
-		}
+		public TreeView TreeStyleRecordList => RecordBarControl?.TreeView;
 
 		/// <summary>
 		/// Get the ListView of RecordBarControl, or null if not present, or it is not showing a list.
 		/// </summary>
-		public ListView ListStyleRecordList
-		{
-			get
-			{
-				var recordBar = RecordBarControl;
-				return recordBar == null ? null : recordBar.ListView;
-			}
-		}
-
+		public ListView ListStyleRecordList => RecordBarControl?.ListView;
 		#endregion
 
-		#region Implementation of IPublisherProvider
+#region Implementation of IPublisherProvider
 
 		/// <summary>
 		/// Get the IPublisher.
 		/// </summary>
-		public IPublisher Publisher
-		{
-			get { return _publisher; }
-		}
+		public IPublisher Publisher => _publisher;
+#endregion
 
-		#endregion
-
-		#region Implementation of ISubscriberProvider
+#region Implementation of ISubscriberProvider
 
 		/// <summary>
 		/// Get the ISubscriber.
 		/// </summary>
-		public ISubscriber Subscriber
-		{
-			get { return _subscriber; }
-		}
+		public ISubscriber Subscriber => _subscriber;
+#endregion
 
-		#endregion
+#region IIdleQueueProvider implementation
 
-		#region Implementation of IDisposable
+		/// <summary>
+		/// Get the singleton (per window) instance of IdleQueue.
+		/// </summary>
+		public IdleQueue IdleQueue { get; private set; }
+
+#endregion
+
+#region Implementation of IDisposable
 
 		/// <summary>
 		/// Clean up any resources being used.
@@ -1309,6 +936,16 @@ Path.Combine(FwDirectoryFinder.CodeDirectory, @"Language Explorer", @"Configurat
 
 			if (disposing)
 			{
+				_parserMenuManager.Dispose();
+				_dataNavigationManager.Dispose();
+				IdleQueue.Dispose();
+
+				Subscriber.Unsubscribe("MigrateOldConfigurations", MigrateOldConfigurations);
+				Subscriber.Unsubscribe("StatusPanelRecordNumber", StatusPanelRecordNumber);
+				Subscriber.Unsubscribe("StatusPanelMessage", StatusPanelRecordNumber);
+				Subscriber.Unsubscribe("StatusBarPanelFilter", StatusBarPanelFilter);
+				Subscriber.Unsubscribe("StatusBarPanelSort", StatusBarPanelSort);
+
 				components?.Dispose();
 
 				// TODO: Is this comment still relevant?
@@ -1323,6 +960,7 @@ Path.Combine(FwDirectoryFinder.CodeDirectory, @"Language Explorer", @"Configurat
 				_viewHelper?.Dispose();
 			}
 
+			_parserMenuManager = null;
 			_dataNavigationManager = null;
 			_sidePane = null;
 			_viewHelper = null;
@@ -1331,6 +969,7 @@ Path.Combine(FwDirectoryFinder.CodeDirectory, @"Language Explorer", @"Configurat
 			_publisher = null;
 			_subscriber = null;
 			_areaRepository = null;
+			IdleQueue = null;
 
 			base.Dispose(disposing);
 
@@ -1367,10 +1006,10 @@ Path.Combine(FwDirectoryFinder.CodeDirectory, @"Language Explorer", @"Configurat
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
-				throw new ObjectDisposedException(string.Format("'{0}' in use after being disposed.", GetType().Name));
+				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
 		}
 
-		#endregion
+#endregion
 
 
 		private void File_CloseWindow(object sender, EventArgs e)
@@ -1429,7 +1068,7 @@ Path.Combine(FwDirectoryFinder.CodeDirectory, @"Language Explorer", @"Configurat
 					else
 					{
 						// User probably does not have movies. Try to launch the "no movies" web page:
-						var pathNoMovies = String.Format(FwDirectoryFinder.CodeDirectory +
+						var pathNoMovies = string.Format(FwDirectoryFinder.CodeDirectory +
 							"{0}Language Explorer{0}Movies{0}notfound.html",
 							Path.DirectorySeparatorChar);
 
@@ -1453,8 +1092,7 @@ Path.Combine(FwDirectoryFinder.CodeDirectory, @"Language Explorer", @"Configurat
 			{
 				// Some other unforeseen error:
 				MessageBox.Show(null, string.Format(FrameworkStrings.ksErrorCannotLaunchMovies,
-					string.Format(FwDirectoryFinder.CodeDirectory + "{0}Language Explorer{0}Movies",
-					Path.DirectorySeparatorChar)), FrameworkStrings.ksError);
+					string.Format(FwDirectoryFinder.CodeDirectory + "{0}Language Explorer{0}Movies", Path.DirectorySeparatorChar)), FrameworkStrings.ksError);
 			}
 		}
 
@@ -1493,8 +1131,7 @@ Path.Combine(FwDirectoryFinder.CodeDirectory, @"Language Explorer", @"Configurat
 			}
 			catch (T e)
 			{
-				if (exceptionHandler != null)
-					exceptionHandler(e);
+				exceptionHandler?.Invoke(e);
 			}
 		}
 
@@ -1607,9 +1244,7 @@ Path.Combine(FwDirectoryFinder.CodeDirectory, @"Language Explorer", @"Configurat
 
 		private void SetWindowTitle()
 		{
-			Text = string.Format("{0} - {1}",
-				_flexApp.Cache.ProjectId.UiName,
-				FwUtils.ksSuiteName);
+			Text = $@"{_flexApp.Cache.ProjectId.UiName} - {FwUtils.ksSuiteName}";
 		}
 
 		private void ProjectProperties_Changed(object sender, EventArgs eventArgs)
@@ -1665,9 +1300,7 @@ Path.Combine(FwDirectoryFinder.CodeDirectory, @"Language Explorer", @"Configurat
 			var directory = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
 			if (!FileUtils.DirectoryExists(directory))
 			{
-				MessageBoxUtils.Show(string.Format(
-					"Error: Cannot create project shortcut because destination directory '{0}' does not exist.",
-					directory));
+				MessageBoxUtils.Show($"Error: Cannot create project shortcut because destination directory '{directory}' does not exist.");
 				return;
 			}
 
@@ -1902,7 +1535,7 @@ Path.Combine(FwDirectoryFinder.CodeDirectory, @"Language Explorer", @"Configurat
 			ActivateUI(true);
 #endif
 #else
-			MessageBox.Show(this, @"Export not yet implemented. Stay tuned.", @"Export not ready", MessageBoxButtons.OK);
+			MessageBox.Show(this, "Export not yet implemented. Stay tuned.", "Export not ready", MessageBoxButtons.OK);
 #endif
 		}
 
@@ -1957,7 +1590,16 @@ very simple minor adjustments. ;)"
 			}
 		}
 
-		#region Overrides of Form
+		private void utilitiesToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			using (var dlg = new UtilityDlg(_flexApp))
+			{
+				dlg.InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);
+				dlg.ShowDialog(this);
+			}
+		}
+
+#region Overrides of Form
 
 		/// <summary>
 		/// Raises the <see cref="E:System.Windows.Forms.Form.Load"/> event.
@@ -1975,6 +1617,410 @@ very simple minor adjustments. ;)"
 			_sidePane.SelectItem(_sidePane.GetTabByName(currentArea.MachineName), currentTool.MachineName);
 		}
 
-		#endregion
+#endregion
 	}
+#if RANDYTODOMERGEFILES
+	/// <summary>
+	/// A simple, non-FieldWorks-reliant implementation which provides a base directory and
+	/// replaces any environment variables
+	/// </summary>
+	internal class SimpleResolver
+	{
+		private string m_baseDirectory;
+
+		/// <summary>
+		/// Try to resolve the path, but if fIgnoreMissingFile is true, don't complain if it doesn't exist; return null.
+		/// </summary>
+		internal string Resolve(string path, bool fIgnoreMissingFile)
+		{
+			var result = Environment.ExpandEnvironmentVariables(path);
+			result = m_baseDirectory != null ? Path.Combine(m_baseDirectory, result) : Path.GetFullPath(result);
+
+			if (File.Exists(result))
+			{
+				return result;
+			}
+			if (fIgnoreMissingFile)
+			{
+				return null;
+			}
+			throw new FileNotFoundException(result);
+		}
+
+		/// <summary>
+		/// try to find the file, first looking in the given parentPath.
+		/// </summary>
+		internal string Resolve(string parentPath, string path, bool fIgnoreMissingFile)
+		{
+			var result = Environment.ExpandEnvironmentVariables(path);
+			result = parentPath != null ? Path.Combine(parentPath, result) : Path.GetFullPath(result);
+
+			return !File.Exists(result) ? Resolve(path, fIgnoreMissingFile) : result;
+		}
+
+		/// <summary>
+		/// If you specify this, then any future paths will be resolved relative to this directory.
+		/// Otherwise, they will be resolved relative to the current working directory.
+		///
+		/// environment variables will be expanded.
+		/// </summary>
+		internal string BaseDirectory
+		{
+			get { return m_baseDirectory; }
+			set
+			{
+				m_baseDirectory = Environment.ExpandEnvironmentVariables(value);
+			}
+		}
+	}
+
+	/// <summary>
+	/// Summary description for XmlIncluder.
+	/// </summary>
+	internal class XmlIncluder
+	{
+		private SimpleResolver _resolver;
+
+		internal static void MergeXmlConfigFiles()
+		{
+			var commonSourcePath = Path.Combine("Language Explorer", "Configuration", "Main.xml");
+			var baseOutputPath = Path.Combine(@"C:\Users", "Randy Regnier", "Desktop", "DevWork",
+				"NewDevWork", "05_Remove use of main xml config files", "Configuration");
+			var pathMappings = new List<Tuple<string, string>>
+			{
+				// This is the current state of the config files.
+				new Tuple<string, string>(Path.Combine(FwDirectoryFinder.CodeDirectory, commonSourcePath),
+					Path.Combine(baseOutputPath, "CombinedConfig_BleeedingEdge.xml")),
+				// This is the original state of the config files, which may be modified in develop.
+				new Tuple<string, string>(
+					Path.Combine(@"C:\", "Dev", "07_Originals", "fieldworks_develop", "DistFiles", commonSourcePath),
+					Path.Combine(baseOutputPath, "CombinedConfig_Develop.xml")),
+				// This is my old fork's file
+				new Tuple<string, string>(
+					Path.Combine(@"C:\", "Dev", "04_fw_fork", "DistFiles", commonSourcePath),
+					Path.Combine(baseOutputPath, "CombinedConfig_RegnierFork.xml"))
+			};
+			// Load both sets of xml config files and save respective merged document.
+			foreach (var mappingPair in pathMappings)
+			{
+				var mergedConfigDoc = new XmlDocument();
+				mergedConfigDoc.Load(mappingPair.Item1);
+				// Process <include> elements
+				// Do includes relative to the dir of our config file
+				var includer = new XmlIncluder
+				{
+					_resolver = new SimpleResolver
+					{
+						BaseDirectory = Path.GetDirectoryName(mappingPair.Item1)
+					},
+					SkipMissingFiles = false
+				};
+				includer.ProcessDom(mappingPair.Item1, mergedConfigDoc);
+				mergedConfigDoc.Save(mappingPair.Item2);
+			}
+		}
+
+		/// <summary>
+		/// True to allow missing include files to be ignored. This is useful with partial installations,
+		/// for example, TE needs some of the FLEx config files to support change multiple spelling Dialog,
+		/// but a lot of stuff can just be skipped (and therefore need not be installed).
+		/// (Pathologically, a needed file may be missing and still ignored; can't help this for now.)
+		/// </summary>
+		internal bool SkipMissingFiles { get; set; }
+
+		/// <summary>
+		/// replace every "include" node in the document with the nodes that it references
+		/// </summary>
+		internal void ProcessDom(string parentPath, XmlDocument dom)
+		{
+			var cachedDoms = new Dictionary<string, XmlDocument>
+			{
+				{parentPath, dom}
+			};
+			ProcessDom(cachedDoms, null, dom);
+			cachedDoms.Clear();
+		}
+
+		/// <summary>
+		/// replace every "include" node in the document with the nodes that it references
+		/// </summary>
+		private void ProcessDom(Dictionary<string, XmlDocument> cachedDoms, string parentPath, XmlDocument dom)
+		{
+			XmlNode nodeForError = null;
+			string baseFile = "";
+			XmlNode baseNode = dom.SelectSingleNode("//includeBase");
+			if (baseNode != null)
+			{
+				baseFile = XmlUtils.GetManditoryAttributeValue(baseNode, "path");
+				//now that we have read it, remove it, so that it does not violate the schema of
+				//the output file.
+				baseNode.ParentNode.RemoveChild(baseNode);
+			}
+
+			try
+			{
+				foreach (XmlNode includeNode in dom.SelectNodes("//include"))
+				{
+					nodeForError = includeNode;
+					ReplaceNode(cachedDoms, parentPath, includeNode, baseFile);
+				}
+			}
+			catch (Exception error)
+			{
+				throw new ApplicationException("Error while processing <include> element:" + nodeForError.OuterXml, error);
+			}
+		}
+
+		/// <summary>
+		/// </summary>
+		/// <param name="includeNode">include" node, possibly containing "overrides" nodes</param>
+		/// <returns>true if we processed an "overrides" node.</returns>
+		private static void HandleIncludeOverrides(XmlNode includeNode)
+		{
+			XmlNode parentNode = includeNode.ParentNode;
+			XmlNode overridesNode = null;
+			// find any "overrides" node
+			foreach (XmlNode childNode in includeNode.ChildNodes)
+			{
+				// first skip over any XmlComment nodes.
+				// TODO-Linux: System.Boolean System.Type::op_Equality(System.Type,System.Type)
+				// is marked with [MonoTODO] and might not work as expected in 4.0.
+				if (childNode.GetType() == typeof(XmlComment))
+					continue;
+				if (childNode.Name == "overrides")
+					overridesNode = childNode;
+			}
+			if (overridesNode == null)
+				return;
+			// this is a group of overrides, so alter matched nodes accordingly.
+			// treat the first three element parts (element and first attribute) as a node query key,
+			// and subsequent attributes as subsitutions.
+			foreach (XmlNode overrideNode in overridesNode.ChildNodes)
+			{
+				// TODO-Linux: System.Boolean System.Type::op_Equality(System.Type,System.Type)
+				// is marked with [MonoTODO] and might not work as expected in 4.0.
+				if (overrideNode.GetType() == typeof(XmlComment))
+					continue;
+				string elementKey = overrideNode.Name;
+				string firstAttributeKey = overrideNode.Attributes[0].Name;
+				string firstAttributeValue = overrideNode.Attributes[0].Value;
+				string xPathToModifyElement = String.Format(".//{0}[@{1}='{2}']", elementKey, firstAttributeKey, firstAttributeValue);
+				XmlNode elementToModify = parentNode.SelectSingleNode(xPathToModifyElement);
+				if (elementToModify != null && elementToModify != overrideNode)
+				{
+					if (overrideNode.ChildNodes.Count > 0)
+					{
+						// replace the elementToModify with this overrideNode.
+						XmlNode parentToModify = elementToModify.ParentNode;
+						parentToModify.ReplaceChild(overrideNode.Clone(), elementToModify);
+					}
+					else
+					{
+						// just modify existing attributes or add new ones.
+						foreach (XmlAttribute xaOverride in overrideNode.Attributes)
+						{
+							// the keyAttribute will be identical, so it won't change.
+							XmlAttribute xaToModify = elementToModify.Attributes[xaOverride.Name];
+							// if the attribute exists on the node we're modifying, alter it
+							// otherwise add the new attribute.
+							if (xaToModify != null)
+								xaToModify.Value = xaOverride.Value;
+							else
+								elementToModify.Attributes.Append(xaOverride.Clone() as XmlAttribute);
+						}
+					}
+				}
+			}
+		}
+
+		/// <summary>
+		/// replace the node with the node or nodes that it refers to
+		/// </summary>
+		private void ReplaceNode(Dictionary<string, XmlDocument> cachedDoms, string parentPath, XmlNode includeNode, string defaultPath)
+		{
+			string path;
+			if (!string.IsNullOrEmpty(defaultPath))
+				path = XmlUtils.GetOptionalAttributeValue(includeNode, "path", defaultPath);
+			else
+			{
+				path = XmlUtils.GetOptionalAttributeValue(includeNode, "path");
+				if (path == null || path.Trim().Length == 0)
+					throw new ApplicationException(
+						"The path attribute was missing and no default path was specified. " + Environment.NewLine
+						+ includeNode.OuterXml);
+			}
+			XmlNode parentNode = includeNode.ParentNode;
+			try
+			{
+				/* To support extensions, we need to see if 'path' starts with 'Extensions/* /'. (without the extra space following the '*'.)
+				* If it does, then we will have to get any folders (the '*' wildcard)
+				* and see if any of them have the specified file (at end of 'path'.
+				*/
+				StringCollection paths = new StringCollection();
+				// The extension XML files should be stored in the data area, not in the code area.
+				// This reduces the need for users to have administrative privileges.
+				bool fExtension = false;
+				string extensionBaseDir = null;
+				if (path.StartsWith("Extensions") || path.StartsWith("extensions"))
+				{
+					// Extension <include> element,
+					// which may have zero or more actual extensions.
+					string extensionFileName = path.Substring(path.LastIndexOf("/") + 1);
+					string pluginBaseDir = parentPath ?? _resolver.BaseDirectory;
+					extensionBaseDir = pluginBaseDir;
+					string sBaseCode = FwDirectoryFinder.CodeDirectory;
+					string sBaseData = FwDirectoryFinder.DataDirectory;
+					if (extensionBaseDir.StartsWith(sBaseCode) && sBaseCode != sBaseData)
+						extensionBaseDir = extensionBaseDir.Replace(sBaseCode, sBaseData);
+					// JohnT: allow the Extensions directory not even to exist. Just means no extentions, as if empty.
+					if (!Directory.Exists(extensionBaseDir + "/Extensions"))
+						return;
+					foreach (string extensionDir in Directory.GetDirectories(extensionBaseDir + "/Extensions"))
+					{
+						string extensionPathname = Path.Combine(extensionDir, extensionFileName);
+						// Add to 'paths' collection, but only from 'Extensions' on.
+						if (File.Exists(extensionPathname))
+							paths.Add(extensionPathname.Substring(extensionPathname.IndexOf("Extensions")));
+					}
+					// Check for newer versions of the extension files in the
+					// "Available Plugins" directory.  See LT-8051.
+					UpdateExtensionFilesIfNeeded(paths, pluginBaseDir, extensionBaseDir);
+					if (paths.Count == 0)
+						return;
+					fExtension = true;
+				}
+				else
+				{
+					// Standard, non-extension, <include> element.
+					paths.Add(path);
+				}
+
+				/* Any fragments (extensions or standard) will be added before the <include>
+				 * element. Aftwerwards, the <include> element will be removed.
+				 */
+				string query = XmlUtils.GetManditoryAttributeValue(includeNode, "query");
+				foreach (string innerPath in paths)
+				{
+					XmlDocumentFragment fragment;
+					if (innerPath == "$this")
+					{
+						fragment = CreateFragmentWithTargetNodes(query, includeNode.OwnerDocument);
+					}
+					else
+					{
+						fragment = GetTargetNodes(cachedDoms, fExtension ? extensionBaseDir : parentPath, innerPath, query);
+					}
+					if (fragment != null)
+					{
+						XmlNode node = includeNode.OwnerDocument.ImportNode(fragment, true);
+						// Since we can't tell the index of includeNode,
+						// always add the fluffed-up node before the include node to keep it/them in the original order.
+						parentNode.InsertBefore(node, includeNode);
+					}
+				}
+				// Handle any overrides.
+				HandleIncludeOverrides(includeNode);
+			}
+			catch (Exception e)
+			{
+				// TODO-Linux: if you delete this exception block !check! flex still runs on linux.
+				Console.WriteLine("Debug ReplaceNode error: {0}", e);
+			}
+			finally
+			{
+				// Don't want the original <include> element any more, no matter what.
+				parentNode.RemoveChild(includeNode);
+			}
+		}
+
+		/// <summary>
+		/// Check for changed (or missing) files in the Extensions subdirectory (as
+		/// compared to the corresponding "Available Plugins" subdirectory).
+		/// </summary>
+		private static void UpdateExtensionFilesIfNeeded(StringCollection paths, string pluginBaseDir,
+			string extensionBaseDir)
+		{
+			if (paths.Count == 0)
+				return;
+			List<string> obsoletePaths = new List<string>();
+			foreach (string extensionPath in paths)
+			{
+				string pluginPathname = Path.Combine(pluginBaseDir, extensionPath);
+				pluginPathname = pluginPathname.Replace("Extensions", "Available Plugins");
+				if (File.Exists(pluginPathname))
+				{
+					string extensionPathname = Path.Combine(extensionBaseDir, extensionPath);
+					if (!FileUtils.AreFilesIdentical(pluginPathname, extensionPathname))
+					{
+						string extensionDir = Path.GetDirectoryName(extensionPathname);
+						Directory.Delete(extensionDir, true);
+						Directory.CreateDirectory(extensionDir);
+						File.Copy(pluginPathname, extensionPathname);
+						File.SetAttributes(extensionPathname, FileAttributes.Normal);
+						// plug-ins usually have localization strings-XX.xml files.
+						foreach (string pluginFile in Directory.GetFiles(Path.GetDirectoryName(pluginPathname), "strings-*.xml"))
+						{
+							string extensionFile = Path.Combine(extensionDir, Path.GetFileName(pluginFile));
+							File.Copy(pluginFile, extensionFile);
+							File.SetAttributes(extensionFile, FileAttributes.Normal);
+						}
+					}
+				}
+				else
+				{
+					obsoletePaths.Add(extensionPath);
+				}
+			}
+			foreach (string badPath in obsoletePaths)
+				paths.Remove(badPath);
+		}
+
+		/// <summary>
+		/// get a group of nodes specified by and XPATH query and a file path
+		/// </summary>
+		/// <remarks> this is the "inner loop" where recursion happens so that files can include other files.</remarks>
+		/// <returns></returns>
+		private XmlDocumentFragment GetTargetNodes(Dictionary<string, XmlDocument> cachedDoms, string parentPath, string path, string query)
+		{
+			path = (parentPath == null)
+				? _resolver.Resolve(path, SkipMissingFiles)
+				: _resolver.Resolve(parentPath, path, SkipMissingFiles);
+			if (path == null)
+				return null; // Only possible if m_fSkipMissingFiles is true.
+			//path = m_resolver.Resolve(parentPath,path);
+			XmlDocument document;
+			if (!cachedDoms.ContainsKey(path))
+			{
+				if (SkipMissingFiles && !File.Exists(path))
+					return null;
+				document = new XmlDocument();
+				document.Load(path);
+				cachedDoms.Add(path, document);
+			}
+			else
+				document = cachedDoms[path];
+
+			//enhance:protect against infinite recursion somehow
+			//recurse so that that file itself can have <include/>s.
+			ProcessDom(cachedDoms, Path.GetDirectoryName(path), document);
+
+			return CreateFragmentWithTargetNodes(query, document);
+		}
+
+		private static XmlDocumentFragment CreateFragmentWithTargetNodes(string query, XmlDocument document)
+		{
+			//find the nodes specified in the XML query
+			XmlNodeList list = document.SelectNodes(query);
+			XmlDocumentFragment fragment = document.CreateDocumentFragment();
+			foreach (XmlNode node in list)
+			{
+				// We must clone the node, otherwise, AppendChild merely MOVES it,
+				// modifying the document we have cached, and causing a repeat query for
+				// the same element (or any of its children) to fail.
+				fragment.AppendChild(node.Clone());
+			}
+			return fragment;
+		}
+	}
+#endif
 }

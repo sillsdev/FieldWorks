@@ -60,7 +60,8 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 			Publisher = flexComponentParameters.Publisher;
 			Subscriber = flexComponentParameters.Subscriber;
 
-			PropertyTable.SetDefault(string.Format("ToolForAreaNamed_{0}", AreaMachineName), MachineName, SettingsGroup.LocalSettings, true, false);
+			PropertyTable.SetDefault($"ToolForAreaNamed_{AreaMachineName}", MachineName, SettingsGroup.LocalSettings, true, false);
+			PropertyTable.SetDefault("PartsOfSpeech.posEdit.DataTree-Splitter", 200, SettingsGroup.LocalSettings, true, false);
 		}
 
 		#endregion
