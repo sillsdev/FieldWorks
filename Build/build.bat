@@ -1,5 +1,14 @@
 echo off
 
+SETLOCAL ENABLEDELAYEDEXPANSION
+SET DELIMITER=-
+SET ABSOLUTESTARTDATESTRING=%date:~-4,4%%DELIMITER%%date:~-7,2%%DELIMITER%%date:~-10,2%
+SET ABSOLUTESTARTTIMESTRING=%TIME%
+::TRIM OFF the LAST 3 characters of ABSOLUTESTARTTIMESTRING, which is the decimal point and hundredths of a second
+set ABSOLUTESTARTTIMESTRING=%ABSOLUTESTARTTIMESTRING:~0,-3%
+:: Replace colons from ABSOLUTESTARTTIMESTRING with DELIMITER
+SET ABSOLUTESTARTTIMESTRING=%ABSOLUTESTARTTIMESTRING::=!DELIMITER!%
+
 REM cause Environment variable changes to be lost after this process dies:
 if not "%OS%"=="" setlocal
 
@@ -41,4 +50,22 @@ REM allow typelib registration in redirected registry key even with limited perm
 set OAPERUSERTLIBREG=1
 
 msbuild /t:refreshTargets
+
+SET STARTDATESTRING=%date:~-4,4%%DELIMITER%%date:~-7,2%%DELIMITER%%date:~-10,2%
+SET STARTTIMESTRING=%TIME%
+::TRIM OFF the LAST 3 characters of STARTTIMESTRING, which is the decimal point and hundredths of a second
+set STARTTIMESTRING=%STARTTIMESTRING:~0,-3%
+:: Replace colons from STARTTIMESTRING with DELIMITER
+SET STARTTIMESTRING=%STARTTIMESTRING::=!DELIMITER!%
+
 msbuild %*
+
+SET ENDDATESTRING=%date:~-4,4%%DELIMITER%%date:~-7,2%%DELIMITER%%date:~-10,2%
+SET ENDTIMESTRING=%TIME%
+::TRIM OFF the LAST 3 characters of ENDTIMESTRING, which is the decimal point and hundredths of a second
+set ENDTIMESTRING=%ENDTIMESTRING:~0,-3%
+:: Replace colons from ENDTIMESTRING with DELIMITER
+SET ENDTIMESTRING=%ENDTIMESTRING::=!DELIMITER!%
+echo ABSOLUTESTARTTIMESTRING %ABSOLUTESTARTDATESTRING%_%ABSOLUTESTARTTIMESTRING: =0%
+echo START %STARTDATESTRING%_%STARTTIMESTRING: =0%
+echo END %ENDDATESTRING%_%ENDTIMESTRING: =0%
