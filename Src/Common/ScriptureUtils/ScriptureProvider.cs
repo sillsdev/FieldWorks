@@ -6,11 +6,9 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
-using System.ComponentModel.Composition.Primitives;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using Paratext;
 using Paratext.LexicalClient;
 using SIL.FieldWorks.Common.FwUtils;
@@ -22,23 +20,15 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 	/// </summary>
 	public class ScriptureProvider
 	{
+#pragma warning disable 0649 // [ImportMany] *is* the initialization
 		[ImportMany]
 		private IEnumerable<Lazy<IScriptureProvider, IScriptureProviderMetadata>> _potentialScriptureProviders;
-
-		/// <summary>
-		/// Singleton instance of the clas
-		/// </summary>
-		private static ScriptureProvider s_scriptureProvider;
+#pragma warning restore 0649
 
 		/// <summary>
 		/// The selected IScriptureProvider to use
 		/// </summary>
-		private static IScriptureProvider _scriptureProvider;
-
-		/// <summary>
-		/// A composition container for the MEF classes, allows use of the MEF exports that we find
-		/// </summary>
-		private static CompositionContainer _container;
+		private static readonly IScriptureProvider _scriptureProvider;
 
 		/// <summary>
 		/// Determine if Paratext8 is installed, if it is use it, otherwise fall back to Paratext7
@@ -46,7 +36,7 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "When do you dispose a static singleton?")]
 		static ScriptureProvider()
 		{
-			s_scriptureProvider = new ScriptureProvider();
+			var scriptureProvider = new ScriptureProvider();
 			var catalog = new AggregateCatalog();
 			//Adds all the parts found in the same assembly as the ScriptureProvider class
 			catalog.Catalogs.Add(new AssemblyCatalog(typeof(ScriptureProvider).Assembly));
@@ -54,13 +44,13 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 			var extensionPath = Path.Combine(Path.GetDirectoryName(FwDirectoryFinder.FlexExe));
 			catalog.Catalogs.Add(new DirectoryCatalog(extensionPath, "*Plugin.dll"));
 			//Create the CompositionContainer with the parts in the catalog
-			_container = new CompositionContainer(catalog);
-			_container.SatisfyImportsOnce(s_scriptureProvider);
+			var container = new CompositionContainer(catalog);
+			container.SatisfyImportsOnce(scriptureProvider);
 
 			// Choose the ScriptureProvider that reports the newest version
 			// If both Paratext 7 and 8 are installed the plugin handling 8 will be used
 			Version maximumSupportedVersion = null;
-			foreach (Lazy<IScriptureProvider, IScriptureProviderMetadata> provider in s_scriptureProvider._potentialScriptureProviders)
+			foreach (Lazy<IScriptureProvider, IScriptureProviderMetadata> provider in scriptureProvider._potentialScriptureProviders)
 			{
 				if (maximumSupportedVersion == null || provider.Value.MaximumSupportedVersion > maximumSupportedVersion)
 				{
