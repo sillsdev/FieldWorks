@@ -114,9 +114,8 @@ namespace LanguageExplorer.Impls
 			_viewHelper = new ActiveViewHelper(this);
 
 			SetupStylesheet();
-
+			PubSubSystemFactory.CreatePubSubSystem(out _publisher, out _subscriber);
 			SetupPropertyTable();
-
 			RegisterSubscriptions();
 
 			_dataNavigationManager = new DataNavigationManager(Subscriber, new Dictionary<string, Tuple<ToolStripMenuItem, ToolStripButton>>
@@ -135,6 +134,7 @@ namespace LanguageExplorer.Impls
 				_menuStrip,
 				toolStripContainer,
 				_statusbar,
+				_parserMenuManager,
 				_dataNavigationManager,
 				new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 
@@ -444,9 +444,15 @@ namespace LanguageExplorer.Impls
 
 		private void SetupPropertyTable()
 		{
-			PubSubSystemFactory.CreatePubSubSystem(out _publisher, out _subscriber);
-
 			PropertyTable = PropertyTableFactory.CreatePropertyTable(_publisher);
+			LoadPropertyTable();
+			SetDefaultProperties();
+			SetTemporaryProperties();
+			RemoveObsoleteProperties();
+		}
+
+		private void LoadPropertyTable()
+		{
 			PropertyTable.UserSettingDirectory = FdoFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder);
 			PropertyTable.LocalSettingsId = "local";
 
@@ -456,9 +462,15 @@ namespace LanguageExplorer.Impls
 			}
 			PropertyTable.RestoreFromFile(PropertyTable.GlobalSettingsId);
 			PropertyTable.RestoreFromFile(PropertyTable.LocalSettingsId);
+		}
 
-			// Just in case some expected property hasn't been reloaded,
-			// see that they are loaded. "SetDefault" doesn't mess with them if they are restored.
+		/// <summary>
+		/// Just in case some expected property hasn't been reloaded,
+		/// see that they are loaded. "SetDefault" doesn't mess with them if they are restored.
+		/// </summary>
+		/// <remarks>NB: default properties of interest to areas/tools are handled by them.</remarks>
+		private void SetDefaultProperties()
+		{
 			// This is the splitter distance for the sidebar/secondary splitter pair of controls.
 			PropertyTable.SetDefault("SidebarWidthGlobal", 140, SettingsGroup.GlobalSettings, true, false);
 #if RANDYTODO
@@ -470,6 +482,7 @@ namespace LanguageExplorer.Impls
 			// This is the splitter distance for the record list/main content pair of controls.
 			PropertyTable.SetDefault("RecordListWidthGlobal", 200, SettingsGroup.GlobalSettings, true, false);
 
+			PropertyTable.SetDefault("InitialArea", "lexicon", SettingsGroup.LocalSettings, true, false);
 			// Set these properties so they don't get set the first time they're accessed in a browse view menu. (cf. LT-2789)
 			PropertyTable.SetDefault("SortedFromEnd", false, SettingsGroup.LocalSettings, true, false);
 			PropertyTable.SetDefault("SortedByLength", false, SettingsGroup.LocalSettings, true, false);
@@ -483,27 +496,24 @@ namespace LanguageExplorer.Impls
 			PropertyTable.SetDefault("AllowInsertLinkToFile", false, SettingsGroup.LocalSettings, false, false);
 			PropertyTable.SetDefault("AllowShowNormalFields", false, SettingsGroup.LocalSettings, false, false);
 #if RANDYTODO
-			// TODO DataTree processes both of these:
-			// TODO:	1. "ShowHiddenFields" is used by a View menu item.
-			// TODO:	2. "ShowHiddenFields-someToolName" is used by PanelButton.
-			// TODO: Remove this property, when the menu is set up.
+// TODO DataTree processes both of these:
+// TODO:	1. "ShowHiddenFields" is used by a View menu item.
+// TODO:	2. "ShowHiddenFields-someToolName" is used by PanelButton.
+// TODO: Remove this property, when the menu is set up.
 #endif
 			PropertyTable.SetDefault("ShowHiddenFields", false, SettingsGroup.LocalSettings, false, false);
+		}
 
-			// not stored, but needed.
-			PropertyTable.SetProperty("window", this, SettingsGroup.BestSettings, false, false);
-			PropertyTable.SetProperty("App", _flexApp, SettingsGroup.BestSettings, false, false);
-			PropertyTable.SetProperty("cache", Cache, SettingsGroup.BestSettings, false, false);
-			PropertyTable.SetProperty("HelpTopicProvider", _flexApp, false, false);
-			PropertyTable.SetProperty("FwStyleSheet", _stylesheet, false, true);
-
+		private void RemoveObsoleteProperties()
+		{
 			// Get rid of obsolete properties, if they were restored.
 #if RANDYTODO
-			// This property is driven by the needs of the current main control, not the user.
-			// <property name="ShowRecordList" bool="false" persist="true" />
-			// TODO: "ShowRecordList" may be able to go away altogether, if the individual tool controls its visibility, and it doesn't change for a given tool.
+// This property is driven by the needs of the current main control, not the user.
+// <property name="ShowRecordList" bool="false" persist="true" />
+// TODO: "ShowRecordList" may be able to go away altogether, if the individual tool controls its visibility, and it doesn't change for a given tool.
 			PropertyTable.RemoveProperty("ShowRecordList", SettingsGroup.GlobalSettings);
 #endif
+			PropertyTable.RemoveProperty("PreferredUILibrary");
 			PropertyTable.RemoveProperty("ShowSidebar", SettingsGroup.GlobalSettings);
 			PropertyTable.RemoveProperty("SidebarLabel", SettingsGroup.GlobalSettings);
 			PropertyTable.RemoveProperty("DoingAutomatedTest", SettingsGroup.GlobalSettings);
@@ -515,6 +525,19 @@ namespace LanguageExplorer.Impls
 			PropertyTable.RemoveProperty("StatusBarPanelSort");
 			PropertyTable.RemoveProperty("DialogFilterStatus");
 			PropertyTable.RemoveProperty("IgnoreStatusPanel");
+			PropertyTable.RemoveProperty("DoLog");
+			PropertyTable.RemoveProperty("ShowBalloonHelp");
+			PropertyTable.RemoveProperty("ShowMorphBundles");
+		}
+
+		private void SetTemporaryProperties()
+		{
+			// Not persisted, but needed at runtime.
+			PropertyTable.SetProperty("window", this, SettingsGroup.BestSettings, false, false);
+			PropertyTable.SetProperty("App", _flexApp, SettingsGroup.BestSettings, false, false);
+			PropertyTable.SetProperty("cache", Cache, SettingsGroup.BestSettings, false, false);
+			PropertyTable.SetProperty("HelpTopicProvider", _flexApp, false, false);
+			PropertyTable.SetProperty("FwStyleSheet", _stylesheet, false, false);
 		}
 
 		private void RegisterSubscriptions()
@@ -1690,7 +1713,7 @@ very simple minor adjustments. ;)"
 			{
 				// This is the current state of the config files.
 				new Tuple<string, string>(Path.Combine(FwDirectoryFinder.CodeDirectory, commonSourcePath),
-					Path.Combine(baseOutputPath, "CombinedConfig_BleeedingEdge.xml")),
+					Path.Combine(baseOutputPath, "CombinedConfig_BleedingEdge.xml")),
 				// This is the original state of the config files, which may be modified in develop.
 				new Tuple<string, string>(
 					Path.Combine(@"C:\", "Dev", "07_Originals", "fieldworks_develop", "DistFiles", commonSourcePath),

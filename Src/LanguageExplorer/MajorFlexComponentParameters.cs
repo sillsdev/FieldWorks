@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Windows.Forms;
+using LanguageExplorer.Areas.TextsAndWords;
 using SIL.FieldWorks.Common.FwUtils;
 
 namespace LanguageExplorer
@@ -20,21 +21,21 @@ namespace LanguageExplorer
 		internal ToolStripContainer ToolStripContainer { get; private set; }
 		/// <summary />
 		internal StatusBar Statusbar { get; private set; }
-		// /// <summary />
-		// internal ParserMenuManager ParserMenuManager { get; private set; }
+		/// <summary />
+		internal ParserMenuManager ParserMenuManager { get; private set; }
 		/// <summary />
 		internal DataNavigationManager DataNavigationManager { get; private set; }
 		/// <summary />
 		internal FlexComponentParameters FlexComponentParameters { get; private set; }
 
 		/// <summary />
-		internal MajorFlexComponentParameters(ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip, ToolStripContainer toolStripContainer, StatusBar statusbar, /*ParserMenuManager parserMenuManager,*/ DataNavigationManager dataNavigationManager, FlexComponentParameters flexComponentParameters)
+		internal MajorFlexComponentParameters(ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip, ToolStripContainer toolStripContainer, StatusBar statusbar, ParserMenuManager parserMenuManager, DataNavigationManager dataNavigationManager, FlexComponentParameters flexComponentParameters)
 		{
 			MainCollapsingSplitContainer = mainCollapsingSplitContainer;
 			MenuStrip = menuStrip;
 			ToolStripContainer = toolStripContainer;
 			Statusbar = statusbar;
-			//ParserMenuManager = parserMenuManager;
+			ParserMenuManager = parserMenuManager;
 			DataNavigationManager = dataNavigationManager;
 			FlexComponentParameters = flexComponentParameters;
 		}

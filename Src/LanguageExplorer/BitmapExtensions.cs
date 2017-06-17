@@ -8,11 +8,10 @@ namespace LanguageExplorer
 {
 	internal static class BitmapExtensions
 	{
-		internal static Image SetBackgroundColor(this Bitmap me, Color transaprentColor)
+		internal static Image SetBackgroundColor(this Bitmap me, Color transparentColor)
 		{
-			var image = me;
-			image.MakeTransparent(Color.Magenta);
-			return image;
+			me.MakeTransparent(transparentColor);
+			return me;
 		}
 	}
 }

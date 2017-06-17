@@ -71,9 +71,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			PropertyTable.SetDefault("CopyAnalysesToNewSpelling", true, SettingsGroup.GlobalSettings, true, false);
 			PropertyTable.SetDefault("MaintainCaseOnChangeSpelling", true, SettingsGroup.GlobalSettings, true, false);
 
-			// <property name="ShowMorphBundles" bool="true" persist="false" settingsGroup="local"/>
-			PropertyTable.RemoveProperty("ShowMorphBundles", SettingsGroup.LocalSettings);
-
 			// <property name="ITexts_AddWordsToLexicon" bool="false" persist="true" settingsGroup="local" />
 			// <property name="ITexts_ShowAddWordsToLexiconDlg" bool="true" persist="true" settingsGroup="local" />
 			// <property name="ITexts-ScriptureIds" value="" persist="true" settingsGroup="local" />
