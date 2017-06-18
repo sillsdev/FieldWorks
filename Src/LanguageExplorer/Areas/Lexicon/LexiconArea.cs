@@ -97,7 +97,7 @@ namespace LanguageExplorer.Areas.Lexicon
 			var hc = serviceLocator.GetInstance<HomographConfiguration>();
 			hc.PersistData = hcSettings;
 
-			PropertyTable.SetProperty("SelectedPublication", "Main Dictionary", SettingsGroup.LocalSettings, true, true);
+			PropertyTable.SetDefault("SelectedPublication", "Main Dictionary", SettingsGroup.LocalSettings, true, true);
 		}
 
 		#endregion

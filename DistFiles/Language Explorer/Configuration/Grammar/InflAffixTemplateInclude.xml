@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <window>
-	<!--<include path="../CommonDataTreeInclude.xml"/>-->
-	<!--
+<!--<include path="../CommonDataTreeInclude.xml"/>-->
+<!--
   ===========================================================
   Commands
   ===========================================================
   -->
 	<commands>
-		<!--
+<!--
 	Help - show help information
 	-->
 		<command id="CmdInflAffixTemplate-Help" label="Help..." icon="Help" message="InflAffixTemplateHelp"/>
-		<!--
+<!--
 	Parts of Speech
 	-->
 		<command id="CmdInflAffixTemplate-Insert-Slot-Before" label="Insert Slot before XXX" message="InflTemplateInsertSlotBefore">
@@ -32,17 +32,16 @@
 		<command id="CmdInflAffixTemplate-Toggle-Slot-Optionality" label="Change Optionality of XXX Slot" message="InflTemplateToggleSlotOptionality">
 			<parameters field="Slots" className="MoInflAffixTemplate"/>
 		</command>
-		<command id="CmdInflAffixTemplate-Add-InflAffixMsa" label="Add inflectional affix(es) to XXX" message="InflTemplateAddInflAffixMsa"
-			guicontrol="InflAffixMsaFlatList">
+		<command id="CmdInflAffixTemplate-Add-InflAffixMsa" label="Add inflectional affix(es) to XXX" message="InflTemplateAddInflAffixMsa" guicontrol="InflAffixMsaFlatList">
 			<parameters field="Slots" className="MoInflAffixTemplate"/>
-			<!-- this needs to be changed when the model changes -->
+<!-- this needs to be changed when the model changes -->
 		</command>
 		<command id="CmdInflAffixTemplate-Remove-InflAffixMsa" label="Remove YYY from XXX" message="InflTemplateRemoveInflAffixMsa" icon="Remove">
 			<parameters field="AffixCategory" className="MoInflAffMsa"/>
-			<!-- this needs to be changed when the model changes -->
+<!-- this needs to be changed when the model changes -->
 		</command>
 	</commands>
-	<!--
+<!--
   ===========================================================
   Context Menus
   ===========================================================
@@ -52,7 +51,7 @@
 		<menu id="mnuInflAffixTemplate-Help">
 			<item command="CmdInflAffixTemplate-Help"/>
 		</menu>
-		<!--
+<!--
 	Inflectional Affix Template
 	-->
 		<menu id="mnuInflAffixTemplate-TemplateTable">
@@ -67,7 +66,7 @@
 			<item command="CmdEntryJumpToDefault"/>
 			<item command="CmdInflAffixTemplate-Help"/>
 		</menu>
-		<!--
+<!--
 	<menu id="mnuInflAffixTemplate-POS-AffixTemplates">
 	  <item command="CmdInflAffixTemplate-Insert-POS-AffixTemplate"/>
 	  <item command="CmdInflAffixTemplate-Help"/>

@@ -4,6 +4,9 @@
 	<!-- ************************ commands ******************** -->
 	<!-- ********************************************************** -->
 	<commands>
+<!-- EXTENSIONS NOT SUPPORTED (Words_Area)
+		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/commands/*"/>)
+EXTENSIONS NOT SUPPORTED (Words_Area) -->
 		<!-- Parser commands -->
 		<command id="CmdEditParserParameters" label="_Edit Parser Parameters..." message="EditParserParameters">
 			<params className="MoMorphData"/>
@@ -15,8 +18,7 @@
 		<command id="CmdParseCurrentWord" label="Parse _Current Word" message="ParseCurrentWord"/>
 		<command id="CmdParseWordsInCurrentText" label="Parse Words in Te_xt" message="ParseWordsInCurrentText"/>
 		<command id="CmdClearSelectedWordParserAnalyses" label="Clear Current Parser _Analyses" message="ClearSelectedWordParserAnalyses"/>
-		<command id="CmdReInitializeParser" label="Re_load Grammar / Lexicon" message="ReInitParser"
-			tooltip="Reloads data from the Grammar and Lexicon, so the parser uses your latest changes."/>
+		<command id="CmdReInitializeParser" label="Re_load Grammar / Lexicon" message="ReInitParser" tooltip="Reloads data from the Grammar and Lexicon, so the parser uses your latest changes."/>
 		<command id="CmdImportWordSet" label="_Import Word Set..." message="ImportWordSet"/>
 		<command id="CmdChooseXAmpleParser" label="Default Parser (XAmple)" message="ChooseParser">
 			<parameters parser="XAmple"/>
@@ -29,11 +31,9 @@
 		<command id="CmdInsertText" label="New _Text" message="InsertInterlinText" shortcut="Ctrl+T" icon="addNewText">
 			<parameters className="StText"/>
 		</command>
+		<command id="CmdChooseTexts" label="Choose Texts..." message="AddTexts" icon="addScripture"/>
 		<command id="CmdLexiconLookup" label="Find in _Dictionary..." message="LexiconLookup" icon="findInDictionary"/>
 		<command id="CmdAddNote" label="_Note" message="AddNote" shortcut="Ctrl+N" icon="insertNote"/>
-		<command id="CmdEditSpellingStatus" label="Edit Spelling Status" message="EditSpellingStatus"/>
-		<command id="CmdViewIncorrectWords" label="View Incorrect Words in Use" message="ViewIncorrectWords"/>
-		<command id="CmdChangeSpelling" label="Change Spelling..." message="LaunchRespellerDlg"/>
 
 		<!--Note: -->
 		<!--the shortcut="Enter" does not actually work.  Other options like shortcut="Ctrl+W: do work. Therefore code was added to
@@ -50,8 +50,7 @@
 		<command id="CmdApproveAndMoveNext" label="_Approve and Move Next" message="ApproveAndMoveNext" shortcut="Enter" icon="approveAndMoveNext"/>
 		<command id="CmdBrowseMoveNext" label="Move _Next" message="BrowseMoveNext" shortcut="Shift+Enter"/>
 		<command id="CmdApproveAndMoveNextSameLine" label="Move Next, _Same Line" message="ApproveAndMoveNextSameLine" shortcut="Ctrl+Enter"/>
-		<command id="CmdApproveForWholeTextAndMoveNext" label="Approve _Throughout this Text" message="ApproveForWholeTextAndMoveNext" shortcut="Ctrl+E"
-			icon="browseAndMoveNext"/>
+		<command id="CmdApproveForWholeTextAndMoveNext" label="Approve _Throughout this Text" message="ApproveForWholeTextAndMoveNext" shortcut="Ctrl+E" icon="browseAndMoveNext"/>
 		<command id="CmdBrowseMoveNextSameLine" label="Move Next, _Same Line" message="BrowseMoveNextSameLine" shortcut="Shift+Ctrl+Enter"/>
 		<command id="CmdMoveFocusBoxRight" label="Move _Right" message="MoveFocusBoxRight" shortcut="Ctrl+Right"/>
 		<command id="CmdMoveFocusBoxLeft" label="Move _Left" message="MoveFocusBoxLeft" shortcut="Ctrl+Left"/>
@@ -67,6 +66,7 @@
 		<command id="CmdNextIncompleteBundle" label="Approve and _Jump to Next Incomplete" message="NextIncompleteBundle" shortcut="Ctrl+J"/>
 		<command id="CmdNextIncompleteBundleNc" label="_Jump to Next" message="NextIncompleteBundleNc" shortcut="Shift+Ctrl+J"/>
 		<command id="CmdPrevIncompleteBundle" label="Previous Incomplete Word" message="PrevIncompleteBundle"/>
+		<!--<command id="CmdToggleRawAndInterlinear" label="Toggle _Baseline and Interlinearize" message="ToggleRawAndInterlinear" shortcut="Ctrl+R"/>-->
 		<command id="CmdShowMorphology" label="Show _Morphology" message="ShowMorphology" shortcut="Ctrl+M"/>
 		<command id="CmdBreakPhrase" label="_Break phrase into words" message="BreakPhrase" icon="breakPhrase" shortcut="Ctrl+W"/>
 		<command id="CmdMakePhrase" label="_Make phrase with next word" message="JoinWords" icon="linkWords" shortcut="Ctrl+M"/>
@@ -74,6 +74,7 @@
 		<command id="CmdDeleteFreeTrans" label="Delete Free Translation" message="DeleteFreeform"/>
 		<command id="CmdDeleteLitTrans" label="Delete Literal Translation" message="DeleteFreeform"/>
 		<command id="CmdDeleteNote" label="Delete Note" message="DeleteFreeform"/>
+		<!--		<command id="CmdShowMorphBundles" label="Show Morphology" message="ShowMorphBundles" boolProperty="ShowMorphBundles"/> -->
 		<command id="CmdConfigureInterlinear" label="Interlinear..." message="ConfigureInterlinear"/>
 		<command id="CmdExportInterlinear" label="_Export Interlinear..." message="ExportInterlinear"/>
 		<command id="CmdExportDiscourseChart" label="Export Discourse Chart..." message="ExportDiscourse"/>
@@ -136,30 +137,15 @@
 		<command id="CmdPatternNodeSetOccur" label="Set occurrence (min. and max.)..." message="PatternNodeSetOccurrence"/>
 		<command id="CmdPatternNodeSetCriteria" label="Set criteria..." message="PatternNodeSetCriteria"/>
 		<command id="CmdPatternNodeGroup" label="Group" message="PatternNodeGroup"/>
-		
-		<!-- Help/Resources/Technical Notes on Interlinear Import... -->
-		<command id="CmdHelpNotesInterlinearImport" label="Technical Notes on _Interlinear Import..." message="HelpNotesInterlinearImport"/>
-		<command id="CmdImportInterlinearSfm" label="Standard Format I_nterlinear..." message="LaunchConnectedDialog">
-			<parameters>
-				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.TextsAndWords.Interlinear.InterlinearSfmImportWizard"/>
-			</parameters>
-		</command>
-		<command id="CmdImportWordsAndGlossesSfm" label="Standard Format W_ords and Glosses..." message="LaunchConnectedDialog">
-			<parameters>
-				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.TextsAndWords.Interlinear.WordsSfmImportWizard"/>
-			</parameters>
-		</command>
-		<command id="CmdImportInterlinearData" label="FLExText Interl_inear..." message="LaunchConnectedDialog">
-			<parameters>
-				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.TextsAndWords.Interlinear.InterlinearImportDlg"/>
-			</parameters>
-		</command>
 	</commands>
 	<!-- ********************************************************** -->
 	<!-- ************************ lists *********************** -->
 	<!-- ********************************************************** -->
 	<lists>
-		<list id="WordToolsList"/>
+<!-- EXTENSIONS NOT SUPPORTED (Words_Area)
+		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/lists/*"/>
+EXTENSIONS NOT SUPPORTED (Words_Area) -->
+		<list id="WordToolsList" a10status="DONE" />
 	</lists>
 	<!-- ********************************************************** -->
 	<!-- ************* controls (embedded browse view) ************ -->
@@ -168,8 +154,8 @@
 		<parameters id="guicontrols">
 			<guicontrol id="TextInformationPane">
 				<control>
-					<parameters area="textsWords" clerk="interlinearTexts" relatedClerk="OccurrencesOfSelectedUnit" layout="FullInformation"
-						treeBarAvailability="NotAllowed">
+					<!-- dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/ -->
+					<parameters area="textsWords" clerk="interlinearTexts" relatedClerk="OccurrencesOfSelectedUnit" layout="FullInformation" treeBarAvailability="NotAllowed">
 						<menuHandler>
 							<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.LexEntryMenuHandler"/>
 						</menuHandler>
@@ -177,28 +163,42 @@
 				</control>
 			</guicontrol>
 			<guicontrol id="WordformConcordanceBrowseView">
-				<parameters id="WordformInSegmentsOccurrenceList" selectColumn="true" defaultChecked="true" omitFromHistory="true" allowInsertDeleteRecord="false"
-					editable="false" clerk="segmentOccurrencesOfWfiWordform" filterBar="true" ShowOwnerShortname="true">
-					<include path="reusableBrowseControlConfiguration.xml" query="reusableControls/control[@id='concordanceColumns']/columns"/>
+				<parameters id="WordformInSegmentsOccurrenceList" selectColumn="true"
+					defaultChecked="true" omitFromHistory="true" allowInsertDeleteRecord="false"
+					editable="false" clerk="segmentOccurrencesOfWfiWordform" filterBar="true"
+					ShowOwnerShortname="true">
+<!-- START include (Words_Area): "reusableControls/control[@id='concordanceColumns']/columns" -->
+					<include path="reusableBrowseControlConfiguration.xml" query="reusableControls/control[@id='concordanceColumns']/columns" a10status="PARTIALLY_DONE" />
+<!-- END include (Words_Area): "reusableControls/control[@id='concordanceColumns']/columns" -->
 				</parameters>
 			</guicontrol>
 			<guicontrol id="AnalysisConcordanceBrowseView">
-				<parameters id="AnalysisInSegmentsOccurrenceList" selectColumn="true" defaultChecked="true" omitFromHistory="true" allowInsertDeleteRecord="false"
-					editable="false" clerk="segmentOccurrencesOfWfiAnalysis" filterBar="true" ShowOwnerShortname="true">
-					<include path="reusableBrowseControlConfiguration.xml" query="reusableControls/control[@id='concordanceColumns']/columns"/>
+				<parameters id="AnalysisInSegmentsOccurrenceList" selectColumn="true"
+					defaultChecked="true" omitFromHistory="true" allowInsertDeleteRecord="false"
+					editable="false" clerk="segmentOccurrencesOfWfiAnalysis" filterBar="true"
+					ShowOwnerShortname="true">
+<!-- START include (Words_Area): "reusableControls/control[@id='concordanceColumns']/columns" -->
+					<include path="reusableBrowseControlConfiguration.xml" query="reusableControls/control[@id='concordanceColumns']/columns" a10status="PARTIALLY_DONE" />
+<!-- END include (Words_Area): "reusableControls/control[@id='concordanceColumns']/columns" -->
 				</parameters>
 			</guicontrol>
 			<guicontrol id="GlossConcordanceBrowseView">
-				<parameters id="GlossInSegmentsOccurrenceList" selectColumn="true" defaultChecked="true" omitFromHistory="true" allowInsertDeleteRecord="false"
-					editable="false" clerk="segmentOccurrencesOfWfiGloss" filterBar="true" ShowOwnerShortname="true">
-					<include path="reusableBrowseControlConfiguration.xml" query="reusableControls/control[@id='concordanceColumns']/columns"/>
+				<parameters id="GlossInSegmentsOccurrenceList" selectColumn="true"
+					defaultChecked="true" omitFromHistory="true" allowInsertDeleteRecord="false"
+					editable="false" clerk="segmentOccurrencesOfWfiGloss" filterBar="true"
+					ShowOwnerShortname="true">
+<!-- START include (Words_Area): "reusableControls/control[@id='concordanceColumns']/columns" -->
+					<include path="reusableBrowseControlConfiguration.xml" query="reusableControls/control[@id='concordanceColumns']/columns" a10status="PARTIALLY_DONE" />
+<!-- END include (Words_Area): "reusableControls/control[@id='concordanceColumns']/columns" -->
 				</parameters>
 			</guicontrol>
 			<guicontrol id="WordformsBrowseView">
-				<parameters id="simpleWordList" listItemsClass="WfiWordform" clerk="matchingWords" filterBar="false" treeBarAvailability="NotAllowed"
-					defaultCursor="Arrow" hscroll="true" editable="false">
+				<parameters id="simpleWordList" listItemsClass="WfiWordform" clerk="matchingWords"
+					filterBar="false" treeBarAvailability="NotAllowed" defaultCursor="Arrow"
+					hscroll="true" editable="false">
 					<columns>
-						<column label="Wordform" ws="$ws=best vernacular" editable="false" width="100%" field="Form">
+						<column label="Wordform" ws="$ws=best vernacular" editable="false"
+							width="100%" field="Form">
 							<span>
 								<properties>
 									<editable value="false"/>
@@ -210,13 +210,18 @@
 				</parameters>
 			</guicontrol>
 			<guicontrol id="MergeWordGlossList">
-				<parameters id="mergeWordGlossList" listItemsClass="WfiGloss" filterBar="false" treeBarAvailability="NotAllowed" defaultCursor="Arrow" hscroll="true"
+				<parameters id="mergeWordGlossList" listItemsClass="WfiGloss" filterBar="false"
+					treeBarAvailability="NotAllowed" defaultCursor="Arrow" hscroll="true"
 					editable="false" selectColumn="false">
 					<columns>
 						<column label="Gloss" width="100%" layout="Form" ws="$ws=best analysis" field="Form"/>
 					</columns>
 				</parameters>
 			</guicontrol>
+<!-- EXTENSIONS NOT SUPPORTED (Words_Area)
+			<include path="Extensions/*/AreaConfigurationExtension.xml"
+				query="root/controls/parameter/guicontrol/*"/>
+EXTENSIONS NOT SUPPORTED (Words_Area) -->
 			<clerks>
 				<!-- this clerk is explicitly known to InterlinearSfmImportWizard.OnFinishButton-->
 				<clerk id="interlinearTexts" shouldHandleDeletion="false">
@@ -259,6 +264,9 @@
 					<filters/>
 					<sortMethods/>
 				</clerk>
+<!-- EXTENSIONS NOT SUPPORTED (Words_Area)
+				<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/controls/parameter/clerks/clerk/*"/>
+EXTENSIONS NOT SUPPORTED (Words_Area) -->
 			</clerks>
 		</parameters>
 	</controls>
@@ -284,17 +292,14 @@
 			</menu>
 			<item command="CmdEditParserParameters"/>
 		</menu>
+<!-- EXTENSIONS NOT SUPPORTED (Words_Area)
+		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/menubar/*"/>
+EXTENSIONS NOT SUPPORTED (Words_Area) -->
 	</menubar>
 	<!-- ********************************************************** -->
 	<!-- ************************ menuAddOn *********************** -->
 	<!-- ********************************************************** -->
 	<menuAddOn>
-		<menu id="File_Import">
-			<!-- These three comme right after  <item command="CmdImportLiftData"/> Lexicon -->
-			<item command="CmdImportInterlinearSfm"/>
-			<item command="CmdImportWordsAndGlossesSfm"/>
-			<item command="CmdImportInterlinearData"/>
-		</menu>
 		<menu id="FileExport">
 			<!-- Main File menu, but follows its "Import" menu. NB: These are *not* sub-menus of the main File->Export, but siblings of it. -->
 			<item command="CmdExportInterlinear" defaultVisible="false"/>
@@ -303,8 +308,13 @@
 		<menu id="Edit">
 			<item command="CmdGoToWfiWordform" defaultVisible="false"/>
 		</menu>
+		<menu id="View">
+			<item command="CmdChooseTexts" defaultVisible="false"/>
+			<!--<item command="CmdToggleRawAndInterlinear" defaultVisible="false"/>-->
+			<!--<item label="Show _Morphology" boolProperty="ShowMorphBundles" defaultVisible="false" /> -->
+		</menu>
+
 		<menu id="Data">
-			<item label="-" translate="do not translate"/>
 			<item command="CmdParse" defaultVisible="false"/>
 			<item label="-" translate="do not translate"/>
 			<item command="CmdApproveAndMoveNext" defaultVisible="false"/>
@@ -349,24 +359,13 @@
 			<item command="CmdLexiconLookup" defaultVisible="false"/>
 			<item label="Add Words to Lexicon" defaultVisible="false" boolProperty="ITexts_AddWordsToLexicon"/>
 		</menu>
-		<!-- This is really the Tools-Spelling submenu.-->
-		<menu id="Spelling_A">
-			<item command="CmdEditSpellingStatus" defaultVisible="false"/>
-			<item command="CmdViewIncorrectWords" defaultVisible="false"/>
-		</menu>
-		<!-- This is really the Tools-Spelling submenu.-->
-		<menu id="Spelling_B">
-			<item label="-" translate="do not translate"/>
-			<item command="CmdChangeSpelling" defaultVisible="false"/>
-		</menu>
 		<!-- This is really the Tools-Configure submenu.-->
 		<menu id="Configure">
 			<item command="CmdConfigureInterlinear" defaultVisible="false"/>
 		</menu>
-		<menu id="Help_Resources">
-			<!-- "CmdHelpNotesInterlinearImport" goes between global: CmdHelpNotesLinguaLinksDatabaseImport and CmdHelpNotesWritingSystems on the Help->Resources menu. -->
-			<item command="CmdHelpNotesInterlinearImport"/>
-		</menu>
+<!-- EXTENSIONS NOT SUPPORTED (Words_Area)
+		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/menuAddOn/*"/>
+EXTENSIONS NOT SUPPORTED (Words_Area) -->
 	</menuAddOn>
 	<!-- ********************************************************** -->
 	<!-- ************************ contextMenus *********************** -->
@@ -522,17 +521,38 @@
 			<item command="CmdPatternNodeSetCriteria"/>
 			<item command="CmdPatternNodeGroup"/>
 		</menu>
+<!-- EXTENSIONS NOT SUPPORTED (Words_Area)
+		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/contextMenus/*"/>
+EXTENSIONS NOT SUPPORTED (Words_Area) -->
 	</contextMenus>
 	<!-- ********************************************************** -->
 	<!-- ************************ sidebar *********************** -->
 	<!-- ********************************************************** -->
 	<sidebar>
 		<tab label="Word Tools" list="WordToolsList" behavior="singlePropertyAtomicValue" property="currentContentControl"/>
+		<!-- <tab label="Filters" list="WordsFiltersList" behavior="singlePropertyAtomicValue" property="words">
+	  <item id="all" label="All" boolProperty="foo" icon="NoFilter"/>
+ see RecordClerk::OnDisplayWordsFiltersList
+	</tab>-->
+<!-- EXTENSIONS NOT SUPPORTED (Words_Area)
+		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/sidebar/*"/>
+EXTENSIONS NOT SUPPORTED (Words_Area) -->
 	</sidebar>
+	<!-- ********************************************************** -->
+	<!-- ************************ toolbars *********************** -->
+	<!-- ********************************************************** -->
+	<toolbars>
+<!-- EXTENSIONS NOT SUPPORTED (Words_Area)
+		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/toolbars/*"/>
+EXTENSIONS NOT SUPPORTED (Words_Area) -->
+	</toolbars>
 	<!-- ********************************************************** -->
 	<!-- ************************ toolbarsAddOn *********************** -->
 	<!-- ********************************************************** -->
 	<toolbarsAddOn>
+		<toolbar id="View">
+			<item command="CmdChooseTexts" defaultVisible="false"/>
+		</toolbar>
 		<toolbar id="Insert">
 			<item command="CmdInsertText" defaultVisible="false"/>
 			<!--item command="CmdLexiconLookup" defaultVisible="false"/-->
@@ -545,6 +565,9 @@
 			<item command="CmdFindAndReplaceText" defaultVisible="false"/>
 			<item command="CmdBreakPhrase" defaultVisible="false"/>
 		</toolbar>
+<!-- EXTENSIONS NOT SUPPORTED (Words_Area)
+		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/toolbarsAddOn/*"/>
+EXTENSIONS NOT SUPPORTED (Words_Area) -->
 	</toolbarsAddOn>
 	<!-- ********************************************************** -->
 	<!-- ************************ resources *********************** -->
@@ -552,11 +575,17 @@
 	<resources>
 		<imageList assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.TextsAndWords.Interlinear.ImageHolder" field="buttonImages" size="small"
 			labels="findInDictionary, addLiteralTranslation, addFreeTranslation, addNewText, insertNote, findReplaceText, linkWords, breakPhrase, addScripture, approveAndMoveNext, browseAndMoveNext, tryAWord, zeroWidth, approveAll"/>
+<!-- EXTENSIONS NOT SUPPORTED (Words_Area)
+		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/resources/*"/>
+EXTENSIONS NOT SUPPORTED (Words_Area) -->
 	</resources>
 	<!-- ********************************************************** -->
 	<!-- ************************ listeners *********************** -->
 	<!-- ********************************************************** -->
 	<listeners>
+<!-- EXTENSIONS NOT SUPPORTED (Words_Area)
+		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/listeners/*"/>
+EXTENSIONS NOT SUPPORTED (Words_Area) -->
 		<listener assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Dumpster.MorphologyListener">
 			<parameters clerk="concordanceWords"/>
 		</listener>
@@ -578,8 +607,10 @@
 				</clerks>
 				<controls>
 					<control id="srcSentences">
-						<parameters id="srcSentencesList" selectColumn="true" defaultChecked="true" allowInsertDeleteRecord="false" editable="false"
-							clerk="SrcWfiWordformConc" filterBar="false" ShowOwnerShortname="true" selectionStyle="none">
+						<parameters id="srcSentencesList" selectColumn="true" defaultChecked="true"
+							allowInsertDeleteRecord="false" editable="false"
+							clerk="SrcWfiWordformConc" filterBar="false" ShowOwnerShortname="true"
+							selectionStyle="none">
 							<include path="reusableBrowseControlConfiguration.xml" query="reusableControls/control[@id='concordanceColumns']/columns"/>
 						</parameters>
 					</control>
@@ -587,6 +618,27 @@
 			</parameters>
 		</listener>
 	</listeners>
+	<!-- ********************************************************** -->
+	<!-- ************************ defaultProperties *********************** -->
+	<!-- ********************************************************** -->
+	<defaultProperties>
+<!-- EXTENSIONS NOT SUPPORTED (Words_Area)
+		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/defaultProperties/*"/>
+EXTENSIONS NOT SUPPORTED (Words_Area) -->
+		<!--This next line specifies which tool in this area is the default tool which Flex starts off in
+			  when the user switches to this area.-->
+		<property name="ToolForAreaNamed_textsWords" value="interlinearEdit" settingsGroup="local" a10status="DONE" />
+		<!--
+			Set to 'true' to remove multi-morpheme analyses on simple typo fix.
+			Otherwise, set it to false to keep them.
+			The user will get to decide in the UI.
+		-->
+		<property name="RemoveAnalyses" bool="true" persist="true" a10status="DONE" />
+		<property name="UpdateLexiconIfPossible" bool="true" persist="true" a10status="DONE" />
+		<property name="ITexts_AddWordsToLexicon" bool="false" persist="true" settingsGroup="local" a10status="DONE" />
+		<property name="ITexts_ShowAddWordsToLexiconDlg" bool="true" persist="true" settingsGroup="local" a10status="DONE" />
+		<property name="ITexts-ScriptureIds" value="" persist="true" settingsGroup="local" a10status="DONE" />
+	</defaultProperties>
 	<!-- ********************************************************** -->
 	<!-- *********************** Area Item *********************************** -->
 	<!-- ********************************************************** -->
@@ -621,13 +673,32 @@
 					</sortMethods>
 					<recordFilterListProvider assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.WfiRecordFilterListProvider"/>
 				</clerk>
+<!-- START include (Words_Area): "Analyses/toolConfiguration.xml" query="root/clerks/*" -->
+				<include path="Analyses/toolConfiguration.xml" query="root/clerks/*"/>
+<!-- END include (Words_Area): "Analyses/toolConfiguration.xml" query="root/clerks/*" -->
+<!-- START include (Words_Area): "Concordance/toolConfiguration.xml" query="root/clerks/*" -->
 				<include path="Concordance/toolConfiguration.xml" query="root/clerks/*"/>
+<!-- END include (Words_Area): "Concordance/toolConfiguration.xml" query="root/clerks/*" -->
+<!-- START include (Words_Area): "BulkEdit/toolConfiguration.xml" query="root/clerks/*" -->
+				<include path="BulkEdit/toolConfiguration.xml" query="root/clerks/*"/>
+<!-- END include (Words_Area): "BulkEdit/toolConfiguration.xml" query="root/clerks/*" -->
+<!-- EXTENSIONS NOT SUPPORTED (Words_Area)
+				<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/clerks/*"/>
+EXTENSIONS NOT SUPPORTED (Words_Area) -->
 			</clerks>
 			<tools>
 				<include path="Texts/toolConfiguration.xml" query="root/tools/*"/>
 				<include path="Concordance/toolConfiguration.xml" query="root/tools/*"/>
 				<include path="Analyses/toolConfiguration.xml" query="root/tools/*"/>
 				<include path="BulkEdit/toolConfiguration.xml" query="root/tools/*"/>
+<!-- START include (Words_Area): "tatistics/toolConfiguration.xml" query="root/tools/*" -->
+<!-- DONE
+		<include path="Statistics/toolConfiguration.xml" query="root/tools/*"/>
+DONE -->
+<!-- END include (Words_Area): "tatistics/toolConfiguration.xml" query="root/tools/*" -->
+<!-- EXTENSIONS NOT SUPPORTED (Words_Area)
+				<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/tools/*"/>
+EXTENSIONS NOT SUPPORTED (Words_Area) -->
 			</tools>
 		</parameters>
 	</item>

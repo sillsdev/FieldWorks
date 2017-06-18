@@ -1726,20 +1726,27 @@ very simple minor adjustments. ;)"
 			// Load both sets of xml config files and save respective merged document.
 			foreach (var mappingPair in pathMappings)
 			{
-				var mergedConfigDoc = new XmlDocument();
-				mergedConfigDoc.Load(mappingPair.Item1);
-				// Process <include> elements
-				// Do includes relative to the dir of our config file
-				var includer = new XmlIncluder
+				try
 				{
-					_resolver = new SimpleResolver
+					var mergedConfigDoc = new XmlDocument();
+					mergedConfigDoc.Load(mappingPair.Item1);
+					// Process <include> elements
+					// Do includes relative to the dir of our config file
+					var includer = new XmlIncluder
 					{
-						BaseDirectory = Path.GetDirectoryName(mappingPair.Item1)
-					},
-					SkipMissingFiles = false
-				};
-				includer.ProcessDom(mappingPair.Item1, mergedConfigDoc);
-				mergedConfigDoc.Save(mappingPair.Item2);
+						_resolver = new SimpleResolver
+						{
+							BaseDirectory = Path.GetDirectoryName(mappingPair.Item1)
+						},
+						SkipMissingFiles = false
+					};
+					includer.ProcessDom(mappingPair.Item1, mergedConfigDoc);
+					mergedConfigDoc.Save(mappingPair.Item2);
+				}
+				catch (Exception err)
+				{
+					Console.Write(err.Message);
+				}
 			}
 		}
 

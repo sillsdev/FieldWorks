@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <window>
 	<!--<include path="../CommonDataTreeInclude.xml"/> -->
-	<!--
+<!--
   ===========================================================
   Commands
   ===========================================================
@@ -18,7 +18,7 @@
 	No-op - no operation makes sense here
 	-->
 		<command id="CmdDataTree-Help" label="Help..." icon="Help" message="DataTreeHelp"/>
-		<!--
+<!--
 	Adhoc Co-prohibitions
 	-->
 		<command id="CmdDataTree-Insert-Adhoc-Group-Members-Allomorph" label="Insert Allomorph Rule" message="DataTreeInsert">
@@ -39,7 +39,7 @@
 		<command id="CmdDataTree-Delete-Adhoc-Group-Members-Group" label="Delete Nested Group" message="DataTreeDelete" icon="Delete">
 			<parameters field="Members" className="MoAdhocProhibGr"/>
 		</command>
-		<!--
+<!--
 	Compound Rules
 	-->
 		<command id="CmdDataTree-Create-CompoundRule-LinkerAffixAllomorph" label="Create Linker Form" message="DataTreeInsert">
@@ -48,7 +48,7 @@
 		<command id="CmdDataTree-Delete-CompoundRule-LinkerAffixAllomorph" label="Delete Linker Form" message="DataTreeDelete" icon="Delete">
 			<parameters field="Linker" className="MoAffixAllomorph"/>
 		</command>
-		<!--
+<!--
 	Features
 	-->
 		<command id="CmdDataTree-Insert-ClosedFeature-Value" label="Insert Feature Value" message="DataTreeInsert">
@@ -57,7 +57,7 @@
 		<command id="CmdDataTree-Delete-ClosedFeature-Value" label="Delete Feature Value" message="DataTreeDelete" icon="Delete">
 			<parameters field="Values" className="FsSymFeatVal"/>
 		</command>
-		<!--    <command id="CmdDataTree-Insert-FeatureStructure-ClosedFeature" label="Insert Closed Feature" message="DataTreeInsert">
+<!--    <command id="CmdDataTree-Insert-FeatureStructure-ClosedFeature" label="Insert Closed Feature" message="DataTreeInsert">
 	  <parameters field="FeatureSpecs" className="FsClosedValue"/>
 	</command>
 	<command id="CmdDataTree-Delete-FeatureStructure-Feature" label="Delete Feature" message="DataTreeDelete" icon="Delete">
@@ -70,7 +70,7 @@
 	  <parameters field="FeatureSpecs" className="FsComplexValue"/>
 	</command>
 	-->
-		<!--
+<!--
 	Parts of Speech
 	-->
 		<command id="CmdDataTree-Insert-POS-AffixSlot" label="Insert Affix Slot" message="DataTreeInsert">
@@ -112,7 +112,7 @@
 		<command id="CmdDataTree-Insert-POS-SubPossibilities" label="Insert Subcategory..." message="DataTreeInsert" icon="AddSubItem">
 			<parameters field="SubPossibilities" className="PartOfSpeech" slice="owner"/>
 		</command>
-		<!--
+<!--
 	Phonemes
 	-->
 		<command id="CmdDataTree-Insert-Phoneme-Code" label="Grapheme" message="DataTreeInsert">
@@ -121,7 +121,7 @@
 		<command id="CmdDataTree-Delete-Phoneme-Code" label="Delete Grapheme" message="DataTreeDelete" icon="Delete">
 			<parameters field="Codes" className="PhCode"/>
 		</command>
-		<!--
+<!--
 	Environments
 	-->
 		<command id="CmdDataTree-Insert-Env-Slash" label="Insert Environment slash" message="InsertSlash"/>
@@ -130,7 +130,7 @@
 		<command id="CmdDataTree-Insert-Env-OptionalItem" label="Insert Optional Item" message="InsertOptionalItem"/>
 		<command id="CmdDataTree-Insert-Env-HashMark" label="Insert Word Boundary" message="InsertHashMark"/>
 	</commands>
-	<!--
+<!--
   ===========================================================
   Context Menus
   ===========================================================
@@ -169,7 +169,7 @@
 			<!-- <item command="CmdDataTree-Help"/> -->
 		</menu>
 
-		<!--
+<!--
 	Compound Rules
 	-->
 		<menu id="mnuDataTree-CompoundRule-LinkerAffixAllomorph">
@@ -181,7 +181,7 @@
 			<item command="CmdDataTree-Delete-FeatureStructure-Feature"/>
 			<!-- <item command="CmdDataTree-Help"/> -->
 		</menu>
-		<!--
+<!--
 	Features
 	-->
 		<menu id="mnuDataTree-ClosedFeature-Values">
@@ -193,13 +193,13 @@
 			<!-- <item command="CmdDataTree-Help"/> -->
 		</menu>
 		<menu id="mnuDataTree-FeatureStructure-Features">
-			<!--      <item command="CmdDataTree-Insert-FeatureStructure-ClosedFeature"/>
+<!--      <item command="CmdDataTree-Insert-FeatureStructure-ClosedFeature"/>
 	  <item command="CmdDataTree-Insert-FeatureStructure-ComplexFeature"/>
 	  <item command="CmdDataTree-Delete-FeatureStructure-Feature"/>
 	  <item command="CmdDataTree-Delete-FeatureStructure-ComplexFeature"/> -->
 			<!-- <item command="CmdDataTree-Help"/> -->
 		</menu>
-		<!--
+<!--
 	Parts of Speech
 	-->
 		<menu id="mnuDataTree-POS-AffixSlots">
@@ -247,7 +247,7 @@
 			<item command="CmdDataTree-Insert-POS-SubPossibilities"/>
 			<!-- <item command="CmdDataTree-Help"/> -->
 		</menu>
-		<!--
+<!--
 	Phonemes
 	-->
 		<menu id="mnuDataTree-Phoneme-Codes">
@@ -258,7 +258,7 @@
 			<item command="CmdDataTree-Delete-Phoneme-Code"/>
 			<!-- <item command="CmdDataTree-Help"/> -->
 		</menu>
-		<!--
+<!--
 	Environments
 	-->
 		<menu id="mnuDataTree-StringRepresentation-Insert">

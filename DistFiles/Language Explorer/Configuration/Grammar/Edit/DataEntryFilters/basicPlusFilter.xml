@@ -3,7 +3,7 @@
 that a node is not visible. You do that by listing the node here. the id of the node must match the XDE
 node that would otherwise produce a slice which you want to hide. note that most XDE nodes
 do not otherwise have an ID; you usually have to add 1 before you can reference it in this kind of document.-->
-<SliceFilter>
+<SliceFilter a10status="Entire file is gone in my fork." >
   <node id="PartOfSpeechBearableFeatures"/>
   <node id="MoStemMsaExceptionFeatures"/>
   <node id="EndocentricCompoundToExceptionFeatures"/>
@@ -14,5 +14,5 @@ do not otherwise have an ID; you usually have to add 1 before you can reference 
   <node id="CmPossibilityConfidence"/>
   <node id="CmPossibilityResearchers"/>
   <node id="CmPossibilityRestrictions"/>
-  <!--  <node id=""/> -->
+<!--  <node id=""/> -->
 </SliceFilter>

@@ -44,7 +44,7 @@
 		<item label="Show Hidden Fields" boolProperty="ShowHiddenFields-phonemeEdit" defaultVisible="true" settingsGroup="local"/>
 	</menu>
 	<menu id="PaneBar-ShowHiddenFields-naturalClassEdit" label="">
-		<item label="Show Hidden Fields" boolProperty="ShowHiddenFields-naturalClassEdit" defaultVisible="true" settingsGroup="local"/>
+		<item label="Show Hidden Fields" boolProperty="ShowHiddenFields-naturalClassEdit" defaultVisible="true" settingsGroup="local" a10status="CASECHG" />
 	</menu>
 	<menu id="PaneBar-ShowHiddenFields-EnvironmentEdit" label="">
 		<item label="Show Hidden Fields" boolProperty="ShowHiddenFields-EnvironmentEdit" defaultVisible="true" settingsGroup="local"/>
@@ -53,7 +53,7 @@
 		<item label="Show Hidden Fields" boolProperty="ShowHiddenFields-PhonologicalRuleEdit" defaultVisible="true" settingsGroup="local"/>
 	</menu>
 	<menu id="PaneBar-ShowHiddenFields-AdhocCoprohibitionRuleEdit" label="">
-		<item label="Show Hidden Fields" boolProperty="ShowHiddenFields-AdhocCoprohibitionRuleEdit" defaultVisible="true" settingsGroup="local"/>
+		<item label="Show Hidden Fields" boolProperty="ShowHiddenFields-AdhocCoprohibitionRuleEdit" defaultVisible="true" settingsGroup="local" a10status="AUGEMNTSPELLING" />
 	</menu>
 	<menu id="PaneBar-ShowHiddenFields-phonologicalFeaturesAdvancedEdit" label="">
 	  <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-phonologicalFeaturesAdvancedEdit" defaultVisible="true" settingsGroup="local"/>
@@ -68,7 +68,7 @@
 		<item label="Show Hidden Fields" boolProperty="ShowHiddenFields-lexiconProblems" defaultVisible="true" settingsGroup="local"/>
 	</menu>
 	<menu id="PaneBar-ShowHiddenFields-rapidDataEntry" label="">
-		<item label="Show Hidden Fields" boolProperty="ShowHiddenFields-rapidDataEntry" defaultVisible="true" settingsGroup="local"/>
+		<item label="Show Hidden Fields" boolProperty="ShowHiddenFields-rapidDataEntry" defaultVisible="true" settingsGroup="local" a10status="RemovedInFork" />
 	</menu>
 	<menu id="PaneBar-ShowHiddenFields-domainTypeEdit" label="">
 		<item label="Show Hidden Fields" boolProperty="ShowHiddenFields-domainTypeEdit" defaultVisible="true" settingsGroup="local"/>
@@ -86,13 +86,13 @@
 		<item label="Show Hidden Fields" boolProperty="ShowHiddenFields-charttempEdit" defaultVisible="true" settingsGroup="local"/>
 	</menu>
 	<menu id="PaneBar-ShowHiddenFields-dialectsListEdit" label="">
-		<item label="Show Hidden Fields" boolProperty="ShowHiddenFields-dialectsListEdit" defaultVisible="true" settingsGroup="local"/>
+		<item label="Show Hidden Fields" boolProperty="ShowHiddenFields-dialectsListEdit" defaultVisible="true" settingsGroup="local" a10status="RemovedInFork" />
 	</menu>
 	<menu id="PaneBar-ShowHiddenFields-educationEdit" label="">
 		<item label="Show Hidden Fields" boolProperty="ShowHiddenFields-educationEdit" defaultVisible="true" settingsGroup="local"/>
 	</menu>
 	<menu id="PaneBar-ShowHiddenFields-extNoteTypeEdit" label="">
-		<item label="Show Hidden Fields" boolProperty="ShowHiddenFields-extNoteTypeEdit" defaultVisible="true" settingsGroup="local"/>
+		<item label="Show Hidden Fields" boolProperty="ShowHiddenFields-extNoteTypeEdit" defaultVisible="true" settingsGroup="local" a10status="RemovedInFork" />
 	</menu>
 	<menu id="PaneBar-ShowHiddenFields-roleEdit" label="">
 		<item label="Show Hidden Fields" boolProperty="ShowHiddenFields-roleEdit" defaultVisible="true" settingsGroup="local"/>
@@ -104,7 +104,7 @@
 		<item label="Show Hidden Fields" boolProperty="ShowHiddenFields-featureTypesAdvancedEdit" defaultVisible="true" settingsGroup="local"/>
 	</menu>
 	<menu id="PaneBar-ShowHiddenFields-languagesListEdit" label="">
-		<item label="Show Hidden Fields" boolProperty="ShowHiddenFields-languagesListEdit" defaultVisible="true" settingsGroup="local"/>
+		<item label="Show Hidden Fields" boolProperty="ShowHiddenFields-languagesListEdit" defaultVisible="true" settingsGroup="local" a10status="RemovedInFork" />
 	</menu>
 	<menu id="PaneBar-ShowHiddenFields-lexRefEdit" label="">
 		<item label="Show Hidden Fields" boolProperty="ShowHiddenFields-lexRefEdit" defaultVisible="true" settingsGroup="local"/>
@@ -178,6 +178,8 @@
   </contextMenus>
 	<defaultProperties>
 		<!-- These properties can be used to set the settingsGroup for context dependent properties. no need to persist these. -->
-		<property name="SliceSplitterBaseDistance" intValue="-1"  persist="false" settingsGroup="local"/>
+		<property name="SliceSplitterBaseDistance" intValue="-1"  persist="false" settingsGroup="local" a10status="DONE" />
+		<property name="ShowHiddenFields-" bool="false" persist="false" settingsGroup="local" a10status="DONE" />
+		<property name="SelectedWritingSystemHvosForCurrentContextMenu" value="" persist="false" settingsGroup="local" a10status="DONE" />
 	</defaultProperties>
 </root>

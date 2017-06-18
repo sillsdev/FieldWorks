@@ -1,21 +1,41 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- edited with XML Spy v4.4 U (http://www.xmlspy.com) by Randy Regnier (SIL International) -->
-<root>
+<root a10status="Entire file in my fork is gone" >
+	<clerks/>
 	<tools>
-		<tool label="Category Edit" value="posEdit" icon="EditView">
+		<tool label="Category Edit" value="posEdit" icon="EditView" a10status="Entire file in my fork is gone" >
 			<control>
 				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 				<parameters PaneBarGroupId="PaneBar-ShowHiddenFields-posEdit" collapse="144000">
 					<control>
 						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
 						<!-- TODO: notice this is currently called basicPlusFilter, though we did away with that label -->
-						<parameters area="grammar" clerk="categories" filterPath="Language Explorer\Configuration\Grammar\Edit\DataEntryFilters\basicPlusFilter.xml"
-							persistContext="advancedEdit" layout="default" emptyTitleId="No-PartsOfSpeech"/>
+						<parameters area="grammar" clerk="categories" filterPath="Language Explorer\Configuration\Grammar\Edit\DataEntryFilters\basicPlusFilter.xml" persistContext="advancedEdit" layout="default" emptyTitleId="No-PartsOfSpeech"/>
 					</control>
 				</parameters>
 			</control>
 		</tool>
-		<tool id="CompoundRuleEdit" label="Compound Rules" value="compoundRuleAdvancedEdit" icon="SideBySideView">
+		<tool id="CategoryBrowse" label="Categories Browse" value="categoryBrowse" icon="BrowseView" a10status="DONE" >
+			<control>
+				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+				<parameters id="POSList">
+					<control>
+						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordBrowseView"/>
+						<parameters area="grammar" id="POSList" clerk="categories" field="PartsOfSpeech" altTitleId="PartOfSpeech-Plural" filterBar="true" editable="false">
+							<columns>
+								<column label="Name" width="16%" layout="Name" ws="$ws=best analysis" field="Name"/>
+								<column label="Abbreviation" width="16%" layout="Abbreviation" ws="$ws=best analysis" field="Abbreviation"/>
+								<column label="Description" width="17%" layout="Description" ws="$ws=best analysis" field="Description"/>
+								<column label="Subcategory" width="17%" multipara="true" layout="SubPOS"/>
+								<column label="Inflection Classes" width="17%" multipara="true" layout="inflClassesBest"/>
+								<column label="Default Inflection Class" width="17%" layout="defaultInflClassBest"/>
+							</columns>
+						</parameters>
+					</control>
+				</parameters>
+			</control>
+		</tool>
+		<tool id="CompoundRuleEdit" label="Compound Rules" value="compoundRuleAdvancedEdit" icon="SideBySideView" a10status="Entire file in my fork is gone" >
 			<control>
 				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.MultiPane"/>
 				<parameters area="grammar" id="CompoundRuleItemsAndDetailMultiPane" splitterBarOrientation="vertical" firstLabel="Browse" secondLabel="Details">
@@ -25,8 +45,7 @@
 						<parameters id="CompoundRuleList">
 							<control>
 								<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordBrowseActiveView"/>
-								<parameters id="CompoundRuleList" filterBar="true" editable="false" clerk="compoundRules" altTitleId="MoCompoundRule-Plural"
-									selectColumn="true">
+								<parameters id="CompoundRuleList" filterBar="true" editable="false" clerk="compoundRules" altTitleId="MoCompoundRule-Plural" selectColumn="true">
 									<columns>
 										<column label="Active" width="10%" layout="Active" editable="true" items="0:no;1:yes" blankPossible="false" sortType="YesNo"/>
 										<column label="Name" width="15%" layout="Name" ws="$ws=best analysis" field="Name"/>
@@ -45,16 +64,14 @@
 						<parameters PaneBarGroupId="PaneBar-ShowHiddenFields-compoundRuleAdvancedEdit" collapse="144000">
 							<control>
 								<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
-								<parameters clerk="compoundRules" treeBarAvailability="NotAllowed"
-									filterPath="Language Explorer\Configuration\Grammar\Edit\DataEntryFilters\basicPlusFilter.xml" persistContext="advancedEdit"
-									layout="Edit" emptyTitleId="No-MoCompoundRules"/>
+								<parameters clerk="compoundRules" treeBarAvailability="NotAllowed" filterPath="Language Explorer\Configuration\Grammar\Edit\DataEntryFilters\basicPlusFilter.xml" persistContext="advancedEdit" layout="Edit" emptyTitleId="No-MoCompoundRules"/>
 							</control>
 						</parameters>
 					</control>
 				</parameters>
 			</control>
 		</tool>
-		<tool id="PhonemeEdit" label="Phonemes" value="phonemeEdit" icon="SideBySideView">
+		<tool id="PhonemeEdit" label="Phonemes" value="phonemeEdit" icon="SideBySideView" a10status="Entire file in my fork is gone" >
 			<control>
 				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.MultiPane"/>
 				<parameters area="grammar" id="PhonemeItemsAndDetailMultiPane" splitterBarOrientation="vertical" firstLabel="Browse" secondLabel="Details">
@@ -93,7 +110,7 @@
 				</parameters>
 			</control>
 		</tool>
-		<tool label="Phonological Features" value="phonologicalFeaturesAdvancedEdit" icon="SideBySideView">
+		<tool label="Phonological Features" value="phonologicalFeaturesAdvancedEdit" icon="SideBySideView" a10status="Entire file in my fork is gone" >
 			<control>
 				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.MultiPane"/>
 				<parameters area="grammar" id="PhonologicalFeatureItemsAndDetailMultiPane" splitterBarOrientation="vertical" firstLabel="Browse" secondLabel="Details">
@@ -103,8 +120,7 @@
 						<parameters id="PhonologicalFeaturesList">
 							<control>
 								<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordBrowseView"/>
-								<parameters id="PhonologicalFeaturesList" filterBar="true" editable="false" clerk="phonologicalfeatures"
-									altTitleId="FsFeatDefn-Phonological">
+								<parameters id="PhonologicalFeaturesList" filterBar="true" editable="false" clerk="phonologicalfeatures" altTitleId="FsFeatDefn-Phonological">
 									<columns>
 										<column label="Name" width="13%" layout="Name" ws="$ws=best analysis" field="Name"/>
 										<column label="Abbreviation" width="10%" layout="Abbreviation" ws="$ws=best analysis" field="Abbreviation"/>
@@ -121,31 +137,29 @@
 						<parameters PaneBarGroupId="PaneBar-ShowHiddenFields-phonologicalFeaturesAdvancedEdit" collapse="144000">
 							<control>
 								<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
-								<parameters area="grammar" clerk="phonologicalfeatures" layout="PhonEdit" treeBarAvailability="NotAllowed"
-									altTitleId="FsFeatDefn-PhonologicalValues" emptyTitleId="No-FsFeatDefn-Phonological"/>
+								<parameters area="grammar" clerk="phonologicalfeatures" layout="PhonEdit" treeBarAvailability="NotAllowed" altTitleId="FsFeatDefn-PhonologicalValues" emptyTitleId="No-FsFeatDefn-Phonological"/>
 							</control>
 						</parameters>
 					</control>
 				</parameters>
 			</control>
 		</tool>
-		<tool label="Bulk Edit Phoneme Features" value="bulkEditPhonemes" icon="BrowseView">
+		<tool label="Bulk Edit Phoneme Features" value="bulkEditPhonemes" icon="BrowseView" a10status="Entire file in my fork is gone. Was called toolBulkEditPhonemes." >
 			<control>
 				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 				<parameters id="PhonemesBulkEdit">
 					<control>
 						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Grammar.Tools.BulkEditPhonemes.AssignFeaturesToPhonemes"/>
-						<parameters area="grammar" id="PhonemesBulkEdit" clerk="phonemes" convertDummiesSelected="true" treeBarAvailability="NotAllowed" filterBar="true"
-							bulkEdit="true" bulkEditListItemsClasses="PhPhoneme" selectColumn="true" altTitleId="PhPhoneme-Plural">
-							<enableBulkEditTabs enableBEListChoice="true" enableBEBulkCopy="false" enableBEClickCopy="false" enableBEProcess="false"
-								enableBEFindReplace="false" enableBEOther="false" bulkEditListItemsGhostFields="PhonFeats" bulkEditListItemsClasses="PhPhoneme"/>
+						<parameters area="grammar" id="PhonemesBulkEdit" clerk="phonemes" convertDummiesSelected="true" treeBarAvailability="NotAllowed" filterBar="true" bulkEdit="true" bulkEditListItemsClasses="PhPhoneme" selectColumn="true" altTitleId="PhPhoneme-Plural">
+							<enableBulkEditTabs enableBEListChoice="true" enableBEBulkCopy="false" enableBEClickCopy="false" enableBEProcess="false" enableBEFindReplace="false" enableBEOther="false" bulkEditListItemsGhostFields="PhonFeats" bulkEditListItemsClasses="PhPhoneme"/>
+							<!--<include path="../reusableBrowseControlConfiguration.xml" query="reusableControls/control[@id='wordListColumns']/columns">-->
 							<!-- NOTE Overrides syntax: override nodes that have children replace entire target (included) node -->
+							<!--								<overrides>-->
 							<columns generate="objectValuePartsForParentLayouts">
 								<column label="Phoneme" width="5%" layout="Name" ws="$ws=best vernacular" field="Name"/>
 								<!-- Phonological Feature Defns (generated)-->
 								<generate class="FsFeatureSystem" fieldType="vector" restrictions="featureDefns" objectPath="PhFeatureSystem.Features">
-									<column layout="CustomMultiStringForFeatureDefn_$fieldName" label="$label" bulkEdit="external" common="true" ws="$ws=best analysis"
-										cansortbylength="true" visibility="always" width="4%">
+									<column layout="CustomMultiStringForFeatureDefn_$fieldName" label="$label" bulkEdit="external" common="true" ws="$ws=best analysis" cansortbylength="true" visibility="always" width="4%">
 										<dynamicloaderinfo assemblyPath="FdoUi.dll" class="SIL.FieldWorks.FdoUi.PhonologicalFeatureEditor">
 											<args>
 												<arg name="xpathToConfigurationNode" value="ancestor::column"/>
@@ -153,16 +167,28 @@
 										</dynamicloaderinfo>
 									</column>
 								</generate>
+<!--								<column label="Phonological Features" multipara="true" width="67%" bulkEdit="external" editable="false" visibility="dialog" displayWs="best analysis" layout="PhonologicalFeaturesForPhonemes">
+									<dynamicloaderinfo assemblyPath="FdoUi.dll" class="SIL.FieldWorks.FdoUi.PhonologicalFeatureEditor">
+										<args>
+											<arg name="xpathToConfigurationNode" value="ancestor::column"/>
+										</args>
+									</dynamicloaderinfo>
+									<!-\-<span>
+										<obj field="Features" layout="PhonFeats"/>
+									</span>-\->
+								</column>-->
 								<column label="Description" width="33%" layout="Description" ws="$ws=best analysis" field="Description" visibility="menu"/>
 								<column label="Graphemes" width="34%" multipara="true" layout="Codes" visibility="menu"/>
 								<column label="IPA Symbol" width="33%" layout="BasicIPASymbol" visibility="menu"/>
 							</columns>
+							<!--								</overrides>-->
+							<!--							</include>-->
 						</parameters>
 					</control>
 				</parameters>
 			</control>
 		</tool>
-		<tool id="NaturalClassesEdit" label="Natural Classes" value="naturalClassEdit" icon="SideBySideView">
+		<tool id="NaturalClassesEdit" label="Natural Classes" value="naturalClassEdit" icon="SideBySideView" a10status="Entire file in my fork is gone" >
 			<control>
 				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.MultiPane"/>
 				<parameters area="grammar" id="NaturalClassItemsAndDetailMultiPane" splitterBarOrientation="vertical" firstLabel="Browse" secondLabel="Details">
@@ -196,7 +222,7 @@
 				</parameters>
 			</control>
 		</tool>
-		<tool id="EnvironmentEdit" label="Environments" value="EnvironmentEdit" icon="SideBySideView">
+		<tool id="EnvironmentEdit" label="Environments" value="EnvironmentEdit" icon="SideBySideView" a10status="Entire file in my fork is gone" >
 			<control>
 				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.MultiPane"/>
 				<parameters area="grammar" id="EnvironmentItemsAndDetailMultiPane" splitterBarOrientation="vertical" firstLabel="Browse" secondLabel="Details">
@@ -229,7 +255,7 @@
 				</parameters>
 			</control>
 		</tool>
-		<tool id="PhonologicalRuleEdit" label="Phonological Rules" value="PhonologicalRuleEdit" icon="SideBySideView">
+		<tool id="PhonologicalRuleEdit" label="Phonological Rules" value="PhonologicalRuleEdit" icon="SideBySideView" a10status="Entire file in my fork is gone" >
 			<control>
 				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.MultiPane"/>
 				<parameters area="grammar" id="PhonologicalRuleItemsAndDetailMultiPane" splitterBarOrientation="vertical" firstLabel="Browse" secondLabel="Details">
@@ -263,7 +289,7 @@
 				</parameters>
 			</control>
 		</tool>
-		<tool id="AdhocCo-prohibitionEdit" label="Ad hoc Rules" value="AdhocCoprohibitionRuleEdit" icon="SideBySideView">
+		<tool id="AdhocCo-prohibitionEdit" label="Ad hoc Rules" value="AdhocCoprohibitionRuleEdit" icon="SideBySideView" a10status="Entire file in my fork is gone" >
 			<control>
 				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.MultiPane"/>
 				<parameters area="grammar" id="AdhocCoprohibItemsAndDetailMultiPane" splitterBarOrientation="vertical" firstLabel="Browse" secondLabel="Details">
@@ -298,7 +324,7 @@
 				</parameters>
 			</control>
 		</tool>
-		<tool label="Inflection Features" value="featuresAdvancedEdit" icon="SideBySideView">
+		<tool label="Inflection Features" value="featuresAdvancedEdit" icon="SideBySideView" a10status="Entire file in my fork is gone" >
 			<control>
 				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.MultiPane"/>
 				<parameters area="grammar" id="FeatureItemsAndDetailMultiPane" splitterBarOrientation="vertical" firstLabel="Browse" secondLabel="Details">
@@ -333,7 +359,7 @@
 				</parameters>
 			</control>
 		</tool>
-		<tool label="Exception &quot;Features&quot;" value="ProdRestrictEdit" icon="SideBySideView">
+		<tool label="Exception &quot;Features&quot;" value="ProdRestrictEdit" icon="SideBySideView" a10status="Entire file in my fork is gone" >
 			<control>
 				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.MultiPane"/>
 				<parameters area="grammar" id="ProductivityRestrictionItemsAndDetailMultiPane" splitterBarOrientation="vertical" firstLabel="Browse" secondLabel="Details">
@@ -360,16 +386,45 @@
 							<control>
 								<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
 								<!-- TODO: notice this is currently called basicPlusFilter, though we did away with that label -->
-								<parameters area="grammar" clerk="ProdRestrict"
-									filterPath="Language Explorer\Configuration\Grammar\Edit\DataEntryFilters\basicPlusFilter.xml" persistContext="advancedEdit"
-									layout="default" treeBarAvailability="NotAllowed" emptyTitleId="No-ProdRestricts"/>
+								<parameters area="grammar" clerk="ProdRestrict" filterPath="Language Explorer\Configuration\Grammar\Edit\DataEntryFilters\basicPlusFilter.xml" persistContext="advancedEdit" layout="default" treeBarAvailability="NotAllowed" emptyTitleId="No-ProdRestricts"/>
 							</control>
 						</parameters>
 					</control>
 				</parameters>
 			</control>
 		</tool>
-		<tool label="Problems" value="lexiconProblems" icon="SideBySideView">
+		<tool label="Grammar Sketch" value="grammarSketch" icon="DocumentView" a10status="DONE" >
+			<control>
+				<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.GeneratedHtmlViewer"/>
+				<parameters area="grammar" regKeyName="MorphSketchGen" dialogTitle="Generate Morphological Sketch" fileNameKey="MorphSketchFileName" stringsPath="Linguistics/Morphology/MorphSketch" saveButtonToolTip="Save Sketch as Webpage and also as XLingPaper file">
+					<retriever progressPrompt="Preparing data">
+						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.GrammarSketchDataRetriever"/>
+					</retriever>
+					<transforms>
+						<transform progressPrompt="Processing data, step 1 of 2" stylesheetName="FxtM3MorphologySketch" stylesheetAssembly="ApplicationTransforms" ext="xml" saveResult="true" saveResultPrompt="Also save as an XLingPaper file" replaceDOCTYPE="lingPaper PUBLIC &quot;-//XMLmind//DTD XLingPap//EN&quot; &quot;XLingPap.dtd&quot;">
+							<xsltParameters>
+								<!-- the value of "TransformDirectory" is a special key the FxtViewer.dll knows about -->
+								<param name="sWordWorksTransformPath" value="TransformDirectory"/>
+								<!-- the value of "prmIMaxMorphsInAppendices" is the maximum number of morphemes to show in each subsection of the appendices -->
+								<!-- NB that the prmSMaxMorphsInAppendices parameter below should be kept in sync with the prmIMaxMorphsInAppendices parameter. -->
+								<!-- if you want all the morphemes to appear, comment off the following line. -->
+								<param name="prmIMaxMorphsInAppendices" value="10"/>
+								<!-- the value of "prmSMaxMorphsInAppendices" is the analysis language's word(s) for the maximum number of morphemes to show in each subsection of the appendices -->
+								<param name="prmSMaxMorphsInAppendices" value="ten"/>
+								<!-- The name of "prmSDateTime" is a special key the FxtViewer.dll knows about; it gets the current date and time and then passes it to the transform as a parameter -->
+								<param name="prmSDateTime" value="fake"/>
+								<!-- The name of "prmVernacularFontSize" is a special key the FxtViewer.dll knows about; it gets the font size of the normal style of the vernacular font -->
+								<param name="prmVernacularFontSize" value="fake"/>
+								<!-- The name of "prmGlossFontSize" is a special key the FxtViewer.dll knows about; it gets the font size of the normal style of the analysis (gloss) font -->
+								<param name="prmGlossFontSize" value="fake"/>
+							</xsltParameters>
+						</transform>
+						<transform progressPrompt="Processing data, step 2 of 2" stylesheetName="XLingPap1" stylesheetAssembly="PresentationTransforms" ext="htm"/>
+					</transforms>
+				</parameters>
+			</control>
+		</tool>
+		<tool label="Problems" value="lexiconProblems" icon="SideBySideView" a10status="Entire file in my fork is gone" >
 			<control>
 				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 				<parameters PaneBarGroupId="PaneBar-ShowHiddenFields-lexiconProblems" collapse="144000">

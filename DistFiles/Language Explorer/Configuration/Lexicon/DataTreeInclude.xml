@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <window>
+	<!--<include path="../CommonDataTreeInclude.xml"/> -->
 	<!--
   ===========================================================
   Commands
   ===========================================================
   -->
 	<commands>
+		<!--<include query="window/commands/*"/> -->
 		<!--
 	No-op - no operation makes sense here
 	-->
@@ -63,7 +65,7 @@
 			<parameters field="Pictures" className="LexSense"/>
 		</command>
 		<command id="CmdDataTree-Properties-Picture" label="Picture Properties" message="PictureProperties">
-			<parameters field="Pictures" className="LexSense"/>
+			<parameters field="Pictures" className="LexSense" />
 		</command>
 		<!--
 	  AlternateForms
@@ -327,6 +329,7 @@
   ===========================================================
   -->
 	<contextMenus>
+		<!--<include query="window/contextMenus/*"/> -->
 		<menu id="mnuDataTree-Help">
 			<!-- <item command="CmdDataTree-Help"/> -->
 		</menu>
@@ -337,8 +340,7 @@
 			<item command="CmdDataTree-Convert-LexemeForm-AffixAllomorph"/>
 		</menu>
 		<menu id="mnuDataTree-LexemeFormContext">
-			<item command="CmdEntryJumpToConcordance"/>
-			<!-- Show Entry in Concordance -->
+			<item command="CmdEntryJumpToConcordance"/>		<!-- Show Entry in Concordance -->
 			<item command="CmdLexemeFormJumpToConcordance"/>
 			<item command="CmdDataTree-Swap-LexemeForm"/>
 		</menu>
@@ -399,7 +401,7 @@
 			<item command="CmdMorphJumpToConcordance" label="Show Allomorph in Concordance"/>
 		</menu>
 		<menu id="mnuDataTree-Picture">
-			<item command="CmdDataTree-Properties-Picture"/>
+			<item command="CmdDataTree-Properties-Picture" />
 			<item label="-" translate="do not translate"/>
 			<item command="CmdDataTree-MoveUp-Picture"/>
 			<item command="CmdDataTree-MoveDown-Picture"/>

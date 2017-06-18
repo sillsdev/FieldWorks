@@ -4,12 +4,14 @@
 	<!-- ************************ commands ******************** -->
 	<!-- ********************************************************** -->
 	<commands>
-		<command id="CmdImportSFMLexicon" label="_Standard Format Lexicon..." message="SFMImport"/>
-		<command id="CmdHelpLexicographyIntro" label="Introduction to _Lexicography..." message="HelpLexicographyIntro">
-			<parameters file="Lexicography Introduction/Introduction to Lexicography.htm"/>
-		</command>
+<!-- EXTENSIONS NOT SUPPORTED Lexicon Area
+		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/commands/*"/>
 		<include path="DataTreeInclude.xml" query="window/commands/*"/>
-		<command id="CmdGoToEntry" label="_Find lexical entry..." message="GotoLexEntry" icon="goToEntry" shortcut="Ctrl+F">
+EXTENSIONS NOT SUPPORTED Lexicon Area -->
+<!-- START include (Lexicon_Area): "DataTreeInclude.xml" query="window/commands/*" -->
+		<include path="DataTreeInclude.xml" query="window/commands/*"/>
+<!-- END include (Lexicon_Area): "DataTreeInclude.xml" query="window/commands/*" -->
+		<command id="CmdGoToEntry" label="_Find lexical entry..." message="GotoLexEntry" icon="goToEntry" shortcut="Ctrl+F" a10status="Derfined here, but used in Main.xml." >
 			<parameters title="Go To Entry" formlabel="Go _To..." okbuttonlabel="_Go"/>
 		</command>
 		<command id="CmdInsertLexEntry" label="_Entry..." message="InsertItemInVector" shortcut="Ctrl+E" icon="majorEntry">
@@ -53,18 +55,14 @@
 			<parameters title="Go To Entry" formlabel="Go _To..." okbuttonlabel="_Go"/>
 		</command>
 		<command id="CmdConfigureDictionary" label="Configure {0}" message="ConfigureDictionary"/>
-		<command id="CmdHelpNotesSFMDatabaseImport" label="Technical Notes on _SFM Database Import..." message="HelpNotesSFMDatabaseImport"/>
-		<command id="CmdImportLiftData" label="L_IFT Lexicon..." message="LaunchConnectedDialog">
-			<parameters>
-				<dynamicloaderinfo assemblyPath="LexTextControls.dll" class="SIL.FieldWorks.LexText.Controls.LiftImportDlg"/>
-			</parameters>
-		</command>
-		<command id="CmdHelpNotesLinguaLinksDatabaseImport" label="Technical Notes on Lin_guaLinks Import..." message="HelpNotesLinguaLinksDatabaseImport"/>
 	</commands>
 	<!-- ********************************************************** -->
 	<!-- ************************ lists *********************** -->
 	<!-- ********************************************************** -->
 	<lists>
+<!-- EXTENSIONS NOT SUPPORTED Lexicon Area
+		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/lists/*"/>
+EXTENSIONS NOT SUPPORTED Lexicon Area -->
 		<list id="LexicalToolsList"/>
 	</lists>
 	<!-- ********************************************************** -->
@@ -77,20 +75,40 @@
 				<parameters id="senseConcordanceControls">
 					<control id="ConcOccurrenceList">
 						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.Tools.Edit.ConcOccurrenceBrowseView"/>
-						<parameters id="ConcOccurrenceList" selectColumn="true" defaultChecked="false" forceReloadListOnInitOrChangeRoot="true" editable="false"
-							clerk="OccurrencesOfSense" filterBar="true" ShowOwnerShortname="true">
+						<parameters id="ConcOccurrenceList" selectColumn="true" defaultChecked="false" forceReloadListOnInitOrChangeRoot="true" editable="false" clerk="OccurrencesOfSense" filterBar="true" ShowOwnerShortname="true">
+<!-- START include Lexicon Area (a10status="Fork has this in resources now"): "./Words/reusableBrowseControlConfiguration.xml" query="reusableControls/control[@id='concordanceColumns']/columns" -->
 							<include path="../Words/reusableBrowseControlConfiguration.xml" query="reusableControls/control[@id='concordanceColumns']/columns"/>
+<!-- END include Lexicon Area (a10status="Fork has this in resources now"): "./Words/reusableBrowseControlConfiguration.xml" query="reusableControls/control[@id='concordanceColumns']/columns" -->
 						</parameters>
 					</control>
 					<control id="SegmentPreviewControl">
-						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordDocXmlView"/>
+						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordDocXmlView" a10status="Fork moved to: LanguageExplorer.Works.RecordDocXmlView" />
 						<parameters id="SegmentPreviewControl" clerk="OccurrencesOfSense" treeBarAvailability="NotMyBusiness" layout="publicationNew" editable="false"/>
 					</control>
 				</parameters>
 			</guicontrol>
+			<guicontrol id="matchingEntries">
+				<parameters id="lexentryMatchList" listItemsClass="LexEntry" filterBar="false" treeBarAvailability="NotAllowed" defaultCursor="Arrow" hscroll="true" altTitleId="LexEntry-Plural" editable="false">
+					<columns>
+						<column label="Headword" sortmethod="FullSortKey" ws="$ws=best vernoranal" editable="false" width="68000" layout="EntryHeadwordForFindEntry"/>
+						<column label="Lexeme Form" visibility="menu" common="true" sortmethod="MorphSortKey" ws="$ws=best vernoranal" editable="false" layout="LexemeFormForFindEntry"/>
+						<column label="Allomorphs" visibility="menu" width="36000" editable="false" ws="$ws=best vernoranal" layout="AllomorphsForFindEntry"/>
+						<column label="Morph Type" visibility="menu" editable="false" field="LexEntry.LexemeForm" subfield="MoForm.MorphType" list="LexDb.MorphTypes" layout="MorphTypeofEntry"/>
+						<column label="Citation Form" visibility="menu" sortmethod="CitationFormSortKey" ws="$ws=best vernoranal" editable="false" layout="CitationFormForFindEntry"/>
+						<column label="Glosses" editable="false" width="68000" ws="$ws=best analorvern" layout="GlossesForFindEntry"/>
+						<column label="Reversals" visibility="menu" width="68000" editable="false" ws="$ws=best analorvern" layout="ReversalsForFindEntry"/>
+						<column label="Definitions" visibility="menu" editable="false" width="68000" ws="$ws=best analorvern" layout="DefinitionsForFindEntry"/>
+						<column headerlabel="Grammatical Info." label="Grammatical Info. (Full)" visibility="menu" multipara="true" layout="MsasOfSenses" chooserFilter="external" editable="false">
+							<dynamicloaderinfo assemblyPath="FdoUi.dll" class="SIL.FieldWorks.FdoUi.EntryPosFilter"/>
+						</column>
+						<column headerlabel="Grammatical Info." label="Grammatical Info. (Abbr.)" visibility="menu" multipara="true" layout="MsasOfSensesAbbr" chooserFilter="external" editable="false">
+							<dynamicloaderinfo assemblyPath="FdoUi.dll" class="SIL.FieldWorks.FdoUi.EntryPosFilter"/>
+						</column>
+					</columns>
+				</parameters>
+			</guicontrol>
 			<guicontrol id="MergeAllomorphList">
-				<parameters id="mergeAllomorphList" listItemsClass="MoForm" filterBar="false" treeBarAvailability="NotAllowed" defaultCursor="Arrow" hscroll="true"
-					editable="false" selectColumn="false">
+				<parameters id="mergeAllomorphList" listItemsClass="MoForm" filterBar="false" treeBarAvailability="NotAllowed" defaultCursor="Arrow" hscroll="true" editable="false" selectColumn="false">
 					<columns>
 						<column label="Form" width="80%" layout="Allomorph" ws="$ws=vernacular"/>
 						<column label="Type" width="20%" layout="MorphTypeName"/>
@@ -98,8 +116,8 @@
 				</parameters>
 			</guicontrol>
 			<guicontrol id="MergeSenseList">
-				<parameters id="mergeSenseList" listItemsClass="LexSense" filterBar="false" treeBarAvailability="NotAllowed" defaultCursor="Arrow" hscroll="true"
-					editable="false" selectColumn="false">
+				<parameters id="mergeSenseList" listItemsClass="LexSense" filterBar="false" treeBarAvailability="NotAllowed" defaultCursor="Arrow"
+							hscroll="true" editable="false" selectColumn="false">
 					<columns>
 						<column label="Gloss" width="50%" layout="Gloss" ws="$ws=best analysis"/>
 						<column label="Grammatical Info." width="50%" multipara="true" layout="GrammaticalInfoAbbrForSense"/>
@@ -116,8 +134,7 @@
 				</parameters>
 			</guicontrol>
 			<guicontrol id="matchingReversalEntries">
-				<parameters id="reventryMatchList" listItemsClass="ReversalIndexEntry" filterBar="false" treeBarAvailability="NotAllowed" defaultCursor="Arrow"
-					hscroll="true" altTitleId="ReversalIndexEntry-Plural" editable="false" disableConfigButton="true">
+				<parameters id="reventryMatchList" listItemsClass="ReversalIndexEntry" filterBar="false" treeBarAvailability="NotAllowed" defaultCursor="Arrow" hscroll="true" altTitleId="ReversalIndexEntry-Plural" editable="false" disableConfigButton="true">
 					<columns>
 						<column label="Form" sortmethod="FullSortKey" ws="$ws=reversal" editable="false" width="96000">
 							<span>
@@ -145,28 +162,36 @@
 					</columns>
 				</parameters>
 			</guicontrol>
+<!-- EXTENSIONS NOT SUPPORTED Lexicon Area
+			<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/controls/parameter/guicontrol/*"/>
+EXTENSIONS NOT SUPPORTED Lexicon Area -->
 			<clerks>
 				<clerk id="OccurrencesOfSense" shouldHandleDeletion="false">
-					<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.ConcRecordClerk"/>
+					<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.ConcRecordClerk" a10status="Fork: LanguageExplorer.Works.ConcDecorator" />
 					<recordList class="LexSense" field="Occurrences">
-						<decoratorClass assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.ConcDecorator"/>
+						<decoratorClass assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.ConcDecorator" a10status="Fork: LanguageExplorer.Works.ConcDecorator" />
 					</recordList>
 					<filters/>
 					<sortMethods/>
 				</clerk>
+<!-- EXTENSIONS NOT SUPPORTED Lexicon Area
+				<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/controls/parameter/clerks/clerk/*"/>
+EXTENSIONS NOT SUPPORTED Lexicon Area -->
 			</clerks>
 		</parameters>
 	</controls>
+	<!-- ******************************************************** -->
+	<!-- ************************ menus *********************** -->
+	<!-- ******************************************************** -->
+	<menubar>
+<!-- EXTENSIONS NOT SUPPORTED Lexicon Area
+		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/menubar/*"/>
+EXTENSIONS NOT SUPPORTED Lexicon Area -->
+	</menubar>
 	<!-- ********************************************************** -->
 	<!-- ************************ menuAddOn *********************** -->
 	<!-- ********************************************************** -->
 	<menuAddOn>
-		<menu id="File_Import">
-			<!-- Goes right after the global "Translated List Content" menu.-->
-			<item command="CmdImportSFMLexicon"/>
-			<item command="CmdImportLinguaLinksData"/>
-			<item command="CmdImportLiftData"/>
-		</menu>
 		<menu id="Insert">
 			<item command="CmdInsertLexEntry" defaultVisible="false"/>
 			<item command="CmdInsertSense" defaultVisible="false"/>
@@ -195,23 +220,34 @@
 		<menu id="Tools">
 			<item command="CmdMergeEntry" defaultVisible="false"/>
 		</menu>
-		<menu id="Help_Resources_A">
-			<!-- First in the Help->Resources menu. -->
-			<item command="CmdHelpLexicographyIntro"/>
-		</menu>
-		<menu id="Help_Resources_B">
-			<!-- Goes right below the S/R menu. -->
-			<item command="CmdHelpNotesSFMDatabaseImport"/>
-			<item command="CmdHelpNotesLinguaLinksDatabaseImport"/>
-		</menu>
-		<menu id="Edit_GoToEntry">
-			<item command="CmdGoToEntry"/>
-		</menu>
+<!-- EXTENSIONS NOT SUPPORTED Lexicon Area
+		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/menuAddOn/*"/>
+EXTENSIONS NOT SUPPORTED Lexicon Area -->
 	</menuAddOn>
 	<!-- ********************************************************** -->
 	<!-- ************************ contextMenus *********************** -->
 	<!-- ********************************************************** -->
 	<contextMenus>
+		<menu id="PaneBar-LexicalDetail" label="">
+			<menu id="LexEntryPaneMenu" icon="MenuWidget">
+				<item label="Show Dictionary Preview" boolProperty="Show_DictionaryPubPreview"/>
+				<item label="-" translate="do not translate"/>
+				<item label="Insert _Sense" command="CmdInsertSense"/>
+				<item label="Insert Subsense (in sense)" command="CmdInsertSubsense"/>
+				<item label="Insert _Variant" command="CmdInsertVariant"/>
+				<item label="Insert A_llomorph" command="CmdDataTree-Insert-AlternateForm"/>
+				<item label="Insert _Pronunciation" command="CmdDataTree-Insert-Pronunciation"/>
+				<item label="Insert Sound or Movie _File" command="CmdInsertMediaFile"/>
+				<item label="Insert _Etymology" command="CmdDataTree-Insert-Etymology"/>
+				<item label="-" translate="do not translate"/>
+				<item command="CmdChangeToComplexForm"/>
+				<item command="CmdChangeToVariant"/>
+				<item command="CmdMergeEntry" defaultVisible="false"/>
+				<item label="-" translate="do not translate"/>
+				<item command="CmdRootEntryJumpToConcordance"/>
+			</menu>
+			<item label="Show Hidden Fields" boolProperty="ShowHiddenFields-lexiconEdit" defaultVisible="true" settingsGroup="local"/>
+		</menu>
 		<menu id="PaneBar-Dictionary" label="">
 			<!-- *** Put any alignment="right" menus in first. *** -->
 			<menu id="LexEntryPaneMenu" icon="MenuWidget" alignment="right">
@@ -229,37 +265,67 @@
 			</menu>
 		</menu>
 		<menu id="PaneBar-ReversalEntryDetail" label="">
-			<item label="Show Hidden Fields" boolProperty="ShowHiddenFields-reversalEditComplete" defaultVisible="true" settingsGroup="local"/>
+			<item label="Show Hidden Fields" boolProperty="ShowHiddenFields-reversalEditComplete" defaultVisible="true" settingsGroup="local" a10status="Prop renamed from ShowHiddenFields-reversalToolEditComplete" />
 		</menu>
 		<menu id="PaneBar-ShowFailingItems-Classified" label="">
 			<item label="Show Unused Items" boolProperty="ShowFailingItems-lexiconClassifiedDictionary" defaultVisible="true" settingsGroup="local"/>
 		</menu>
+<!-- START include (Lexicon_Area): "DataTreeInclude.xml" query="window/contextMenus/*" -->
 		<include path="DataTreeInclude.xml" query="window/contextMenus/*"/>
+<!-- END include (Lexicon_Area): "DataTreeInclude.xml" query="window/contextMenus/*" -->
+<!-- EXTENSIONS NOT SUPPORTED Lexicon Area
+		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/contextMenus/*"/>
+EXTENSIONS NOT SUPPORTED Lexicon Area -->
 	</contextMenus>
 	<!-- ********************************************************** -->
 	<!-- ************************ sidebar *********************** -->
 	<!-- ********************************************************** -->
 	<sidebar>
 		<tab label="Lexical Tools" list="LexicalToolsList" behavior="singlePropertyAtomicValue" property="currentContentControl"/>
+<!-- EXTENSIONS NOT SUPPORTED Lexicon Area
+		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/sidebar/*"/>
+EXTENSIONS NOT SUPPORTED Lexicon Area -->
 	</sidebar>
+	<!-- ********************************************************** -->
+	<!-- ************************ toolbars *********************** -->
+	<!-- ********************************************************** -->
+	<toolbars/>
 	<!-- ********************************************************** -->
 	<!-- ************************ toolbarsAddOn *********************** -->
 	<!-- ********************************************************** -->
 	<toolbarsAddOn>
+		<!--	Brings out bug where showing a list forces the list to set a current value which then propogates messages to a world that is not ready for them!
+
+		<toolbar id="BarViews" list="ListViews" behavior="singlePropertyAtomicValue" property="currentContentControl"/> -->
+		<!--    <include query="window/toolbars/*"/> -->
 		<toolbar id="Insert">
 			<item command="CmdInsertLexEntry" defaultVisible="false"/>
 			<item command="CmdGoToEntry" defaultVisible="false"/>
 			<item command="CmdInsertReversalEntry" defaultVisible="false"/>
 			<item command="CmdGoToReversalEntry" defaultVisible="false"/>
 		</toolbar>
+<!-- EXTENSIONS NOT SUPPORTED Lexicon Area
+		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/toolbarsAddOn/*"/>
+EXTENSIONS NOT SUPPORTED Lexicon Area -->
 	</toolbarsAddOn>
+	<!-- ********************************************************** -->
+	<!-- ************************ resources ********************* -->
+	<!-- ********************************************************** -->
+	<resources>
+<!-- EXTENSIONS NOT SUPPORTED Lexicon Area
+		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/resources/*"/>
+EXTENSIONS NOT SUPPORTED Lexicon Area -->
+	</resources>
 	<!-- ********************************************************** -->
 	<!-- ************************ listeners *********************** -->
 	<!-- ********************************************************** -->
 	<listeners>
-		<listener assemblyPath="LexTextControls.dll" class="SIL.FieldWorks.LexText.Controls.InsertEntryDlgListener"/>
-		<listener assemblyPath="LexTextControls.dll" class="SIL.FieldWorks.LexText.Controls.GoLinkEntryDlgListener"/>
-		<listener assemblyPath="LexTextControls.dll" class="SIL.FieldWorks.LexText.Controls.MergeEntryDlgListener"/>
+<!-- EXTENSIONS NOT SUPPORTED Lexicon Area
+		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/listeners/*"/>
+EXTENSIONS NOT SUPPORTED Lexicon Area -->
+		<listener assemblyPath="LexTextControls.dll" class="SIL.FieldWorks.LexText.Controls.InsertEntryDlgListener" a10status="Fork moved to: LanguageExplorer.Dumpster.xxx" />
+		<listener assemblyPath="LexTextControls.dll" class="SIL.FieldWorks.LexText.Controls.GoLinkEntryDlgListener" a10status="Fork moved to: LanguageExplorer.Dumpster.xxx" />
+		<listener assemblyPath="LexTextControls.dll" class="SIL.FieldWorks.LexText.Controls.MergeEntryDlgListener" a10status="Fork moved to: LanguageExplorer.Dumpster.xxx" />
 		<listener assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Dumpster.ReversalListener">
 			<parameters clerk="AllReversalEntries"/>
 		</listener>
@@ -268,8 +334,14 @@
 	<!-- ************************ defaultProperties ********************* -->
 	<!-- ********************************************************** -->
 	<defaultProperties>
-		<property name="Show_DictionaryPubPreview" bool="true" persist="true" settingsGroup="local"/>
+<!-- EXTENSIONS NOT SUPPORTED Lexicon Area
+		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/defaultProperties/*"/>
+EXTENSIONS NOT SUPPORTED Lexicon Area -->
+		<property name="ToolForAreaNamed_lexicon" value="lexiconEdit" settingsGroup="local" a10status="DONE" />
+		<property name="Show_DictionaryPubPreview" bool="true" persist="true" settingsGroup="local" a10status="DONE" />
 		<property name="Show_reversalIndexEntryList" bool="true" persist="false" settingsGroup="local"/>
+		<property name="ShowHiddenFields" bool="false" persist="false" settingsGroup="local" a10status="DONE_main xml" />
+		<property name="SelectedPublication" value="Main Dictionary" settingsGroup="local" a10status="DONE" />
 	</defaultProperties>
 	<!-- ********************************************************** -->
 	<!-- ************************ Area Item *********************** -->
@@ -281,6 +353,14 @@
 			</panels>
 			<clerks>
 				<!-- Only put clerks here if they are shared by various tools. Put clerks for specific tool usage in the tool definition file. -->
+				<clerk id="entries" a10status="DONE" >
+					<recordList owner="LexDb" property="Entries"/>
+					<filters/>
+					<sortMethods>
+						<sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName"/>
+						<sortMethod label="Primary Gloss" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="PrimaryGloss"/>
+					</sortMethods>
+				</clerk>
 				<clerk id="AllReversalEntries">
 					<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Dumpster.ReversalEntryClerk"/>
 					<recordList owner="ReversalIndex" property="AllEntries">
@@ -290,18 +370,17 @@
 					<sortMethods>
 						<sortMethod label="Form" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName"/>
 					</sortMethods>
+					<!--<recordFilterListProvider assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.WfiRecordFilterListProvider"/>-->
 				</clerk>
 				<clerk id="entriesOrChildren">
-					<recordList owner="LexDb" property="Entries">
-						<!-- by default load for Entries but can be for AllSenses too -->
+					<recordList owner="LexDb" property="Entries"> <!-- by default load for Entries but can be for AllSenses too -->
 						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.EntriesOrChildClassesRecordList"/>
 						<PartOwnershipTree>
 							<!-- the ClassOwnershipTree describes the relative relationship between the target classes in the possible source properties
 								 loaded by this list. This especially helps in maintaining the CurrentIndex when switching from one property to the next. -->
 							<ClassOwnershipTree>
 								<LexEntry sourceField="Entries">
-									<LexEntryRef sourceField="AllEntryRefs"
-										altSourceField="ComplexEntryTypes:AllComplexEntryRefPropertyTargets;VariantEntryTypes:AllVariantEntryRefPropertyTargets"/>
+									<LexEntryRef sourceField="AllEntryRefs" altSourceField="ComplexEntryTypes:AllComplexEntryRefPropertyTargets;VariantEntryTypes:AllVariantEntryRefPropertyTargets"/>
 									<LexPronunciation sourceField="AllPossiblePronunciations"/>
 									<LexEtymology sourceField="AllPossibleEtymologies"/>
 									<MoForm sourceField="AllPossibleAllomorphs"/>
@@ -428,13 +507,58 @@
 						<sortMethod label="Primary Gloss" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="PrimaryGloss"/>
 					</sortMethods>
 				</clerk>
+<!-- START include Lexicon Area: "Edit/toolConfiguration.xml" query="root/clerks/*" -->
+<!-- DONE
+				<include path="Edit/toolConfiguration.xml" query="root/clerks/*"/>
+DONE -->
+<!-- END include Lexicon Area: "Edit/toolConfiguration.xml" query="root/clerks/*" -->
+<!-- START include Lexicon Area: "Browse/toolConfiguration.xml" query="root/clerks/*" -->
+<!-- DONE
+				<include path="Browse/toolConfiguration.xml" query="root/clerks/*"/>
+DONE -->
+<!-- END include Lexicon Area: "Browse/toolConfiguration.xml" query="root/clerks/*" -->
+<!-- START include Lexicon Area: "Dictionary/toolConfiguration.xml" query="root/clerks/*" -->
+				<include path="Dictionary/toolConfiguration.xml" query="root/clerks/*"/>
+<!-- END include Lexicon Area: "Dictionary/toolConfiguration.xml" query="root/clerks/*" -->
+<!-- START include Lexicon Area: "RDE/toolConfiguration.xml" query="root/clerks/*" -->
 				<include path="RDE/toolConfiguration.xml" query="root/clerks/*"/>
+<!-- END include Lexicon Area: "RDE/toolConfiguration.xml" query="root/clerks/*" -->
+<!-- START include Lexicon Area: "ReversalIndices/toolConfiguration.xml" query="root/clerks/*" -->
+				<include path="ReversalIndices/toolConfiguration.xml" query="root/clerks/*"/>
+<!-- END include Lexicon Area: "ReversalIndices/toolConfiguration.xml" query="root/clerks/*" -->
+<!-- START include Lexicon Area: "ReversalEntriesBulkEdit/toolConfiguration.xml" query="root/clerks/*" -->
+				<include path="ReversalEntriesBulkEdit/toolConfiguration.xml" query="root/clerks/*"/>
+<!-- END include Lexicon Area: "ReversalEntriesBulkEdit/toolConfiguration.xml" query="root/clerks/*" -->
+<!-- EXTENSIONS NOT SUPPORTED Lexicon Area
+				<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/clerks/*"/>
+EXTENSIONS NOT SUPPORTED Lexicon Area -->
 			</clerks>
 			<tools>
+<!-- START include Lexicon Area: "Edit/toolConfiguration.xml" query="root/tools/*" -->
+<!-- DONE
+				<include path="Edit/toolConfiguration.xml" query="root/tools/*"/>
+DONE -->
+<!-- END include Lexicon Area: "Edit/toolConfiguration.xml" query="root/tools/*" -->
+<!-- START include Lexicon Area: "Browse/toolConfiguration.xml" query="root/tools/*" -->
+<!-- DONE
+				<include path="Browse/toolConfiguration.xml" query="root/tools/*"/>
+DONE -->
+<!-- END include Lexicon Area: "Browse/toolConfiguration.xml" query="root/tools/*" -->
+<!-- START include Lexicon Area: "Dictionary/toolConfiguration.xml" query="root/tools/*" -->
 				<include path="Dictionary/toolConfiguration.xml" query="root/tools/*"/>
+<!-- END include Lexicon Area: "Dictionary/toolConfiguration.xml" query="root/tools/*" -->
+<!-- START include Lexicon Area: "RDE/toolConfiguration.xml" query="root/tools/*" -->
 				<include path="RDE/toolConfiguration.xml" query="root/tools/*"/>
+<!-- END include Lexicon Area: "RDE/toolConfiguration.xml" query="root/tools/*" -->
+<!-- START include Lexicon Area: "ReversalIndices/toolConfiguration.xml" query="root/tools/*" -->
 				<include path="ReversalIndices/toolConfiguration.xml" query="root/tools/*"/>
+<!-- END include Lexicon Area: "ReversalIndices/toolConfiguration.xml" query="root/tools/*" -->
+<!-- START include Lexicon Area: "ReversalEntriesBulkEdit/toolConfiguration.xml" query="root/tools/*" -->
 				<include path="ReversalEntriesBulkEdit/toolConfiguration.xml" query="root/tools/*"/>
+<!-- END include Lexicon Area: "ReversalEntriesBulkEdit/toolConfiguration.xml" query="root/tools/*" -->
+<!-- EXTENSIONS NOT SUPPORTED Lexicon Area
+				<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/tools/*"/>
+EXTENSIONS NOT SUPPORTED Lexicon Area -->
 			</tools>
 		</parameters>
 	</item>
