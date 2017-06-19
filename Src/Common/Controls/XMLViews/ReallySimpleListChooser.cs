@@ -993,11 +993,13 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 			if (!String.IsNullOrEmpty(sTool))
 			{
+				sTool = XmlUtils.MakeSafeXmlAttribute(sTool);
 				StringBuilder bldr = new StringBuilder();
 				bldr.AppendLine("<chooserInfo>");
 				string label = list.Name.UserDefaultWritingSystem.Text;
 				if (String.IsNullOrEmpty(label) || label == list.Name.NotFoundTss.Text)
 					label = list.Name.BestAnalysisVernacularAlternative.Text;
+				label = XmlUtils.MakeSafeXmlAttribute(label);
 				bldr.AppendFormat("<chooserLink type=\"goto\" label=\"Edit the {0} list\" tool=\"{1}\"/>",
 					label, sTool);
 				bldr.AppendLine();
