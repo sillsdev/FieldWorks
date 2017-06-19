@@ -363,6 +363,7 @@ namespace SIL.FieldWorks.Filters
 			}
 		}
 
+		/// <summary>
 		/// A representation that can be used to create an equivalent LazyManyOnePathSortItem later.
 		/// Keep consistent with the ManyOnePathSortItem PersistData (and our constructor).
 		/// </summary>

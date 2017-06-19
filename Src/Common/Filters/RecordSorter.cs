@@ -311,8 +311,6 @@ namespace SIL.FieldWorks.Filters
 		/// the specified object. This default method makes a single mopsi not involving any
 		/// path.
 		/// </summary>
-		/// <param name="obj"></param>
-		/// <param name="collector"></param>
 		public virtual void CollectItems(int hvo, ArrayList collector)
 		{
 			collector.Add(new ManyOnePathSortItem(hvo, null, null));
@@ -362,6 +360,7 @@ namespace SIL.FieldWorks.Filters
 			/// Initializes a new instance of the <see cref="T:FdoCompare"/> class.
 			/// </summary>
 			/// <param name="propertyName">Name of the property.</param>
+			/// <param name="cache"></param>
 			/// --------------------------------------------------------------------------------
 			public FdoCompare(string propertyName, FdoCache cache)
 			{
@@ -1058,8 +1057,6 @@ namespace SIL.FieldWorks.Filters
 		/// the specified object. This default method makes a single mopsi not involving any
 		/// path.
 		/// </summary>
-		/// <param name="obj"></param>
-		/// <param name="collector"></param>
 		public override void CollectItems(int hvo, ArrayList collector)
 		{
 			if (m_comp is StringFinderCompare)
@@ -1281,8 +1278,6 @@ namespace SIL.FieldWorks.Filters
 		/// the specified object. This default method makes a single mopsi not involving any
 		/// path.
 		/// </summary>
-		/// <param name="obj"></param>
-		/// <param name="collector"></param>
 		public void CollectItems(int hvo, ArrayList collector)
 		{
 			m_finder.CollectItems(hvo, collector);

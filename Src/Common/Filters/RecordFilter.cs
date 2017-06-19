@@ -503,76 +503,74 @@ namespace SIL.FieldWorks.Filters
 		int WritingSystem { get; }
 	}
 
-	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// This is a base class for matchers; so far it just implements storing the label.
 	/// </summary>
-	/// ----------------------------------------------------------------------------------------
 	public abstract class BaseMatcher : IMatcher, IPersistAsXml, IStoresFdoCache
 	{
-		ITsString m_tssLabel;
+		private ITsString m_tssLabel;
 		// Todo: get this initialized somehow.
-		ILgWritingSystemFactory m_wsf; // unfortunately needed for serialization
+		private ILgWritingSystemFactory m_wsf; // unfortunately needed for serialization
 		// This is used only to save the value restored by InitXml until the Cache is set
 		// so that m_tssLabel can be computed.
-		string m_xmlLabel;
+		private string m_xmlLabel;
 
 		#region IMatcher Members
 
+		/// <summary />
 		public abstract bool Matches(ITsString arg);
 
+		/// <summary />
 		public abstract bool SameMatcher(IMatcher other);
+
 		/// <summary>
 		/// No specific writing system for most of these matchers.
 		/// </summary>
-		public virtual int WritingSystem { get { return 0;} }
+		public virtual int WritingSystem { get { return 0; } }
 
+		/// <summary />
 		public ITsString Label
 		{
 			get	{ return m_tssLabel; }
 			set	{ m_tssLabel = value; }
 		}
 
+		/// <summary />
 		public virtual bool IsValid()
 		{
 			return true;	// most matchers won't have to override this - regex is one that does though
 		}
 
+		/// <summary />
 		public virtual string ErrorMessage()
 		{
 			return String.Format(FiltersStrings.ksErrorMsg, IsValid().ToString());
 		}
 
+		/// <summary />
 		public virtual bool CanMakeValid()
 		{
 			return false;
 		}
 
+		/// <summary />
 		public virtual ITsString MakeValid()
 		{
 			return null;	// should only be called if CanMakeValid it true and that class should implement it.
 		}
 		#endregion
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// </summary>
-		/// <value></value>
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
 		public ILgWritingSystemFactory WritingSystemFactory
 		{
 			set { m_wsf = value; }
 			get { return m_wsf; }
 		}
 
-		/// ---------------------------------------------------------------------------------------
 		/// <summary>
 		/// This is overridden only by BlankMatcher currently, which matches
 		/// on an empty list of strings.
 		/// </summary>
-		/// <param name="strings"></param>
-		/// <returns></returns>
-		/// ---------------------------------------------------------------------------------------
 		public virtual bool Accept(ITsString tss)
 		{
 			return Matches(tss);
@@ -580,12 +578,9 @@ namespace SIL.FieldWorks.Filters
 
 		#region IPersistAsXml Members
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Persists as XML.
 		/// </summary>
-		/// <param name="node">The node.</param>
-		/// ------------------------------------------------------------------------------------
 		public virtual void PersistAsXml(XElement node)
 		{
 			if (m_tssLabel != null)
@@ -595,12 +590,9 @@ namespace SIL.FieldWorks.Filters
 			}
 		}
 
-		/// ---------------------------------------------------------------------------------------
 		/// <summary>
 		/// Inits the XML.
 		/// </summary>
-		/// <param name="node">The node.</param>
-		/// ---------------------------------------------------------------------------------------
 		public virtual void InitXml(XElement node)
 		{
 			m_xmlLabel = XmlUtils.GetOptionalAttributeValue(node, "label");
@@ -610,13 +602,10 @@ namespace SIL.FieldWorks.Filters
 
 		#region Implementation of IStoresFdoCache
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Set the cache. This may be used on initializers which only optionally pass
 		/// information on to a child object, so there is no getter.
 		/// </summary>
-		/// <value></value>
-		/// ------------------------------------------------------------------------------------
 		public virtual FdoCache Cache
 		{
 			set
@@ -666,15 +655,19 @@ namespace SIL.FieldWorks.Filters
 	/// </summary>
 	public abstract class SimpleStringMatcher : BaseMatcher
 	{
-		/// <summary></summary>
+		/// <summary />
 		protected IVwPattern m_pattern;
+		/// <summary />
 		protected IVwTxtSrcInit m_textSourceInit;
+		/// <summary />
 		protected IVwTextSource m_ts;
+		/// <summary />
 		protected ITsString m_tssSource;
-		protected const int m_MaxSearchStringLength = 1000;	// max lenthg of search string
-
+		/// <summary />
+		protected const int m_MaxSearchStringLength = 1000;	// max length of search string
+		/// <summary />
 		protected XElement m_persistNode;
-
+		/// <summary />
 		protected MatchRangePair m_currentMatchRangePair = new MatchRangePair(-1, -1);
 		/// <summary>
 		/// Cache for the Match set resulting from FindIn() for a string;
@@ -698,7 +691,7 @@ namespace SIL.FieldWorks.Filters
 		{
 			get
 			{
-				if(Pattern != null && !String.IsNullOrEmpty(Pattern.IcuLocale) && WritingSystemFactory != null)
+				if (Pattern != null && !String.IsNullOrEmpty(Pattern.IcuLocale) && WritingSystemFactory != null)
 					return WritingSystemFactory.GetWsFromStr(Pattern.IcuLocale);
 				return 0;
 			}
@@ -717,7 +710,7 @@ namespace SIL.FieldWorks.Filters
 			m_textSourceInit = VwStringTextSourceClass.Create();
 			m_ts = m_textSourceInit as IVwTextSource;
 
-			if(m_pattern == null)
+			if (m_pattern == null)
 				m_pattern = VwPatternClass.Create();
 		}
 
@@ -807,6 +800,7 @@ namespace SIL.FieldWorks.Filters
 			return m_results;
 		}
 
+		/// <summary />
 		protected MatchRangePair CurrentResult
 		{
 			get { return m_currentMatchRangePair; }
@@ -918,7 +912,7 @@ namespace SIL.FieldWorks.Filters
 		{
 			if (HasError())
 			{
-				return m_pattern.Pattern.GetSubstring(0, m_MaxSearchStringLength-1);
+				return m_pattern.Pattern.GetSubstring(0, m_MaxSearchStringLength - 1);
 			}
 			return base.MakeValid();
 		}
@@ -946,7 +940,7 @@ namespace SIL.FieldWorks.Filters
 		/// ---------------------------------------------------------------------------------------
 		public override void PersistAsXml(XElement node)
 		{
-			base.PersistAsXml (node);
+			base.PersistAsXml(node);
 			XmlUtils.SetAttribute(node, "pattern", m_pattern.Pattern.Text);
 			int var;
 			int ws = m_pattern.Pattern.get_PropertiesAt(0).GetIntPropValues((int)FwTextPropType.ktptWs, out var);
@@ -965,20 +959,22 @@ namespace SIL.FieldWorks.Filters
 		/// ------------------------------------------------------------------------------------
 		public override void InitXml(XElement node)
 		{
-			base.InitXml (node);
+			base.InitXml(node);
 
 			m_persistNode = node;
 		}
 
-		// The Cache property finishes the initialization that was started with InitXML
-		// We wait until here because the cache is needed to get the writing system
+		/// <summary>
+		/// The Cache property finishes the initialization that was started with InitXML
+		/// We wait until here because the cache is needed to get the writing system
+		/// </summary>
 		public override FdoCache Cache
 		{
 			set
 			{
 				base.Cache = value;
 
-				if(m_persistNode != null && m_pattern.Pattern == null)
+				if (m_persistNode != null && m_pattern.Pattern == null)
 				{
 					int ws = XmlUtils.GetOptionalIntegerValue(m_persistNode,
 						"ws",
@@ -999,8 +995,10 @@ namespace SIL.FieldWorks.Filters
 			}
 		}
 
-		// After setting the Pattern (TsString) of the VwPattern, once we have a cache, we can figure out the locale
-		// and sort rules to use based on the WS of the pattern string.
+		/// <summary>
+		/// After setting the Pattern (TsString) of the VwPattern, once we have a cache, we can figure out the locale
+		/// and sort rules to use based on the WS of the pattern string.
+		/// </summary>
 		public static void SetupPatternCollating(IVwPattern pattern, FdoCache cache)
 		{
 			pattern.IcuLocale = cache.ServiceLocator.WritingSystemFactory.GetStrFromWs(pattern.Pattern.get_WritingSystem(0));
@@ -1173,24 +1171,28 @@ namespace SIL.FieldWorks.Filters
 		/// </summary>
 		public RegExpMatcher() {}
 
+		/// <summary />
 		void Init()
 		{
 			m_pattern.UseRegularExpressions = true;
 		}
 
+		/// <summary />
 		public override bool Matches(ITsString arg)
 		{
-			if(arg == null)
+			if (arg == null)
 				return false;
 
 			return base.Matches(arg);
 		}
 
+		/// <summary />
 		protected override bool CurrentResultDoesMatch(MatchRangePair match)
 		{
 			return match.IchMin >= 0;
 		}
 
+		/// <summary />
 		public override FdoCache Cache
 		{
 			set
@@ -1200,6 +1202,7 @@ namespace SIL.FieldWorks.Filters
 			}
 		}
 
+		/// <summary />
 		public override bool IsValid()
 		{
 			string errMsg = m_pattern.ErrorMessage;
@@ -1208,6 +1211,7 @@ namespace SIL.FieldWorks.Filters
 			return false;
 		}
 
+		/// <summary />
 		public override string ErrorMessage()
 		{
 			string finalErrorMessage;
@@ -1391,12 +1395,7 @@ namespace SIL.FieldWorks.Filters
 			get { return m_matcher; }
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// </summary>
-		/// <param name="arg"></param>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
 		public override bool Matches(ITsString arg)
 		{
 			return arg != null && !m_matcher.Matches(arg);
@@ -1405,8 +1404,6 @@ namespace SIL.FieldWorks.Filters
 		/// <summary>
 		/// True if it is the same class and member vars match.
 		/// </summary>
-		/// <param name="other"></param>
-		/// <returns></returns>
 		public override bool SameMatcher(IMatcher other)
 		{
 			InvertMatcher other2 = other as InvertMatcher;
@@ -1486,11 +1483,10 @@ namespace SIL.FieldWorks.Filters
 		/// <param name="hvo">The hvo.</param>
 		/// <returns></returns>
 		string[] Strings(int hvo);
+
 		/// <summary>
-		/// Stringses the specified item.
+		/// Strings the specified item.
 		/// </summary>
-		/// <param name="item">The item.</param>
-		/// <returns></returns>
 		string[] Strings(IManyOnePathSortItem item, bool sortedFromEnd);
 		string[] SortStrings(IManyOnePathSortItem item, bool sortedFromEnd); // similar key more suitable for sorting.
 		ITsString Key(IManyOnePathSortItem item);
@@ -1555,8 +1551,6 @@ namespace SIL.FieldWorks.Filters
 		/// <summary>
 		/// Default is to return the strings for the key object.
 		/// </summary>
-		/// <param name="item"></param>
-		/// <returns></returns>
 		public string[] Strings(IManyOnePathSortItem item, bool sortedFromEnd)
 		{
 			string[] result = Strings(item.KeyObject);
@@ -1571,8 +1565,6 @@ namespace SIL.FieldWorks.Filters
 		/// <summary>
 		/// For most of these we want to return the same thing.
 		/// </summary>
-		/// <param name="item"></param>
-		/// <returns></returns>
 		public string[] SortStrings(IManyOnePathSortItem item, bool sortedFromEnd)
 		{
 			return Strings(item, sortedFromEnd);

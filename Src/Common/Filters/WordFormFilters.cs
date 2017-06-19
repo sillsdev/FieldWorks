@@ -267,10 +267,7 @@ namespace SIL.FieldWorks.Filters
 			return false;
 		}
 
-		/// <summary>
-		///
-		/// </summary>
-		/// <param name="filter"></param>
+		/// <summary />
 		/// <returns>True if one of our filters can be found in the given filter.</returns>
 		private bool ContainsOurFilter(RecordFilter filter, out RecordFilter matchingFilter)
 		{
