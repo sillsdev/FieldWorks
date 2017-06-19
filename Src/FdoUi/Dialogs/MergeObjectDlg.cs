@@ -133,7 +133,7 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 			// It's better just to use the default size until it's resizeable for some reason.
 			//PropertyTable.GetValue("msaCreatorDlgSize");
 			object szWnd = Size;
-			if (locWnd != null)
+			if (locWnd != null && szWnd != null)
 			{
 				Rectangle rect = new Rectangle((Point)locWnd, (Size)szWnd);
 				ScreenHelper.EnsureVisibleRect(ref rect);
@@ -162,6 +162,7 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 			{
 				StyleSheet = Common.Widgets.FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable)
 			};
+			m_bvMergeOptions.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 			m_bvMergeOptions.SelectedIndexChanged += m_bvMergeOptions_SelectedIndexChanged;
 			m_bvMergeOptions.Dock = DockStyle.Fill;
 			m_bvPanel.Controls.Add(m_bvMergeOptions);

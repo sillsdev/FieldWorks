@@ -848,6 +848,39 @@ namespace SIL.FieldWorks.FdoUi
 			{
 				CheckDisposed();
 
+				var poss = Object as ICmPossibility;
+				if (poss != null)
+				{
+#if RANDYTODO
+					// TODO: Figure out how to get ItemTypeName() for the ICmPossibility now that LCM Has moved away without it.
+					return poss.ItemTypeName();
+#else
+					// This is the code that method did for ICmPossibility.
+					var owningList = poss.OwningList;
+					if (owningList.OwningFlid == 0)
+						return StringTable.Table.GetString(GetType().Name, "ClassNames");
+					var owningFieldName = poss.Cache.DomainDataByFlid.MetaDataCache.GetFieldName(owningList.OwningFlid);
+#if RANDYTODO
+					// TODO: Figure out how to get ItemTypeName() of the ICmPossibilityList now that LCM Has moved away without it.
+					var itemsTypeName = owningList.ItemsTypeName();
+					return itemsTypeName != "*" + owningFieldName + "*"
+						? itemsTypeName
+						: StringTable.Table.GetString(GetType().Name, "ClassNames");
+#else
+					string listName;
+					if (owningList.Owner != null)
+						listName = owningList.Cache.DomainDataByFlid.MetaDataCache.GetFieldName(owningList.OwningFlid);
+					else
+						listName = owningList.Name.BestAnalysisVernacularAlternative.Text;
+					var itemsTypeName = StringTable.Table.GetString(listName, "PossibilityListItemTypeNames");
+					return itemsTypeName != "*" + listName + "*"
+						? itemsTypeName
+						: (owningList.PossibilitiesOS.Count > 0
+							? StringTable.Table.GetString(owningList.PossibilitiesOS[0].GetType().Name, "ClassNames")
+							: itemsTypeName);
+#endif
+#endif
+				}
 				string typeName = Object.GetType().Name;
 				string className = StringTable.Table.GetString(typeName, "ClassNames");
 				if (className == "*" + typeName + "*")
