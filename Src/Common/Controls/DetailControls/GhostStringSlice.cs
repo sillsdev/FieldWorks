@@ -443,7 +443,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 				// Save info we will need after MakeRealObject destroys this.
 				object[] parentKey = slice.Key;
-				int flidEmptyProp = m_flidEmptyProp;
 				int flidStringProp = m_flidStringProp;
 				int wsToCreate = m_wsToCreate;
 				var datatree = slice.ContainingDataTree;

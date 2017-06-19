@@ -1284,8 +1284,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 			String tempfieldName = XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "field");
 			String templabelName = XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "label");
-			String areaName = PropertyTable.GetValue<string>("areaChoice");
-			string toolName = PropertyTable.GetValue<string>("currentContentControl");
+			String areaChoice = PropertyTable.GetValue<string>("areaChoice");
+			string toolChoice = PropertyTable.GetValue<string>("toolChoice");
 			int parentHvo = Convert.ToInt32(XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "hvoDisplayParent"));
 
 			if (tempfieldName == "Targets" && parentHvo != 0)
@@ -1297,11 +1297,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 				if (lex != null) // It must be the entry level
 				{
-					generatedHelpTopicID = helpTopicPrefix + "-" + toolName + "-CrossReferenceSubitem";
+					generatedHelpTopicID = helpTopicPrefix + "-" + toolChoice + "-CrossReferenceSubitem";
 				}
 				else // It must be the sense level
 				{
-					generatedHelpTopicID = helpTopicPrefix + "-" + toolName + "-LexicalRelationSubitem";
+					generatedHelpTopicID = helpTopicPrefix + "-" + toolChoice + "-LexicalRelationSubitem";
 
 				}
 			}
@@ -1322,7 +1322,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					{
 						if (helpTopicPrefix.Equals("khtpChoose"))
 							generatedHelpTopicID = "khtpChoose-CmPossibility";
-						else if (areaName == "lists")
+						else if (areaChoice == "lists")
 						{
 							generatedHelpTopicID = "khtp-CustomListField"; // If the list isn't defined, use the generic list help topic
 
@@ -1346,20 +1346,20 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			className = (fieldName == "Example" && ownerClassName == "LexExtendedNote") ? "LexExtendedNote" : className;
 			// Distinguish the Translation (sense) field and the expanded example (LexExtendedNote) field
 			className = fieldName.StartsWith("Translation")&& (ownerClassName == "LexExtendedNote" || (Object.Owner != null && Object.Owner.ClassName == "LexExtendedNote")) ? "LexExtendedNote" : className;
-			var toolName = PropertyTable.GetValue<string>("currentContentControl");
+			var toolChoice = PropertyTable.GetValue<string>("toolChoice");
 
 			string generatedHelpTopicID;
 
-			generatedHelpTopicID = helpTopicPrefix + "-" + toolName + "-" + className + "-" + fieldName;
+			generatedHelpTopicID = helpTopicPrefix + "-" + toolChoice + "-" + className + "-" + fieldName;
 
 			if (!helpTopicIsValid(generatedHelpTopicID))
 			{
 				if (String.Equals(className, "CmPossibility"))
-					generatedHelpTopicID = helpTopicPrefix + "-" + toolName + "-" + Object.SortKey + "-" + fieldName;
+					generatedHelpTopicID = helpTopicPrefix + "-" + toolChoice + "-" + Object.SortKey + "-" + fieldName;
 
 				if (!helpTopicIsValid(generatedHelpTopicID))
 				{
-					generatedHelpTopicID = helpTopicPrefix + "-" + toolName + "-" + fieldName;
+					generatedHelpTopicID = helpTopicPrefix + "-" + toolChoice + "-" + fieldName;
 					if (!helpTopicIsValid(generatedHelpTopicID))
 					{
 						generatedHelpTopicID = helpTopicPrefix + "-" + className + "-" + fieldName;

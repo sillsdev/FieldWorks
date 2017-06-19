@@ -793,11 +793,11 @@ namespace SIL.FieldWorks.XWorks
 			m_currentObject = clerk.CurrentObject;
 			m_currentIndex = currentIndex;
 			//add our current state to the history system
-			string toolName = PropertyTable.GetValue("currentContentControl", "");
+			string toolChoice = PropertyTable.GetValue("toolChoice", "");
 			Guid guid = Guid.Empty;
 			if (clerk.CurrentObject != null)
 				guid = clerk.CurrentObject.Guid;
-			Publisher.Publish("AddContextToHistory", new FwLinkArgs(toolName, guid));
+			Publisher.Publish("AddContextToHistory", new FwLinkArgs(toolChoice, guid));
 
 			SelectAndScrollToCurrentRecord();
 			base.ShowRecord();
@@ -817,9 +817,9 @@ namespace SIL.FieldWorks.XWorks
 		public bool OnCheckJump(object argument)
 		{
 			var hvoTarget = (int)argument;
-			var currControl = PropertyTable.GetValue("currentContentControl", "");
+			var toolChoice = PropertyTable.GetValue("toolChoice", "");
 			// Currently this (LT-11447) only applies to Dictionary view
-			if (hvoTarget > 0 && currControl == ksLexDictionary)
+			if (hvoTarget > 0 && toolChoice == ksLexDictionary)
 			{
 				DictionaryConfigurationController.ExclusionReasonCode xrc;
 				// Make sure we explain to the user in case hvoTarget is not visible due to

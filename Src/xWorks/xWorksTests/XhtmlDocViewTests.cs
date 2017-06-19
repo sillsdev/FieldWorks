@@ -285,7 +285,7 @@ namespace SIL.FieldWorks.XWorks
 						docView.SetConfigObjectName("Dictionary");
 						docView.SetMediator(m_mediator);
 						docView.SetPropertyTable(m_propertyTable);
-						m_propertyTable.SetProperty("currentContentControl", "lexiconDictionary", false);
+						m_propertyTable.SetProperty("toolChoice", "lexiconDictionary", false);
 						m_propertyTable.SetProperty("DictionaryPublicationLayout", tempConfigFile.Path, true);
 						File.WriteAllText(tempConfigFile.Path, configWithTestPub);
 						// SUT
@@ -318,7 +318,7 @@ namespace SIL.FieldWorks.XWorks
 					docView.SetPropertyTable(m_propertyTable);
 					m_propertyTable.SetProperty("DictionaryPublicationLayout", tempConfigFile.Path, true);
 					// DictionaryConfigurationListener.GetCurrentConfiguration() needs to know the currentContentControl.
-					m_propertyTable.SetProperty("currentContentControl", "lexiconDictionary", true);
+					m_propertyTable.SetProperty("toolChoice", "lexiconDictionary", true);
 					File.WriteAllText(tempConfigFile.Path, configWithTestPub);
 					// SUT
 					Assert.That(docView.GetValidConfigurationForPublication(xWorksStrings.AllEntriesPublication),
@@ -408,7 +408,7 @@ namespace SIL.FieldWorks.XWorks
 					File.WriteAllText(nonMatchedConfigFile.Path, nonMatchingConfig);
 					File.WriteAllText(matchedConfigFile.Path, matchingConfig);
 					docView.SetConfigObjectName("Dictionary");
-					m_propertyTable.SetProperty("currentContentControl", "lexiconDictionary", false);
+					m_propertyTable.SetProperty("toolChoice", "lexiconDictionary", false);
 					m_propertyTable.SetProperty("DictionaryPublicationLayout", nonMatchedConfigFile.Path, true);
 					docView.SetMediator(m_mediator);
 					docView.SetPropertyTable(m_propertyTable);

@@ -578,7 +578,7 @@ namespace LanguageExplorer.Dumpster
 				}
 			}
 			PropertyTable.SetProperty("currentContentControlParameters", node.SelectSingleNode("control"), true, true);
-			PropertyTable.SetProperty("currentContentControl", toolName, true, true);
+			PropertyTable.SetProperty("toolChoice", toolName, true, true);
 			return true;
 		}
 

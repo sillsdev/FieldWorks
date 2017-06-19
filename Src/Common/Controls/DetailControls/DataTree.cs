@@ -893,9 +893,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			if (m_root == root && layoutName == m_rootLayoutName && layoutChoiceField == m_layoutChoiceField && m_descendant == descendant)
 				return;
 
-			string toolName = PropertyTable.GetValue<string>("currentContentControl");
+			string toolChoice = PropertyTable.GetValue<string>("toolChoice");
 			// Initialize our internal state with the state of the PropertyTable
-			m_fShowAllFields = PropertyTable.GetValue("ShowHiddenFields-" + toolName, SettingsGroup.LocalSettings, false);
+			m_fShowAllFields = PropertyTable.GetValue("ShowHiddenFields-" + toolChoice, SettingsGroup.LocalSettings, false);
 			PropertyTable.SetDefault("ShowHiddenFields", m_fShowAllFields, SettingsGroup.LocalSettings, true, false);
 			SetCurrentSlicePropertyNames();
 			m_currentSlicePartName = PropertyTable.GetValue<string>(m_sPartNameProperty, SettingsGroup.LocalSettings);
@@ -1000,12 +1000,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		private void SetCurrentSlicePropertyNames()
 		{
-			if (String.IsNullOrEmpty(m_sPartNameProperty) || String.IsNullOrEmpty(m_sObjGuidProperty))
+			if (string.IsNullOrEmpty(m_sPartNameProperty) || string.IsNullOrEmpty(m_sObjGuidProperty))
 			{
-				string sTool = PropertyTable.GetValue("currentContentControl", String.Empty);
-				string sArea = PropertyTable.GetValue("areaChoice", String.Empty);
-				m_sPartNameProperty = String.Format("{0}${1}$CurrentSlicePartName", sArea, sTool);
-				m_sObjGuidProperty = String.Format("{0}${1}$CurrentSliceObjectGuid", sArea, sTool);
+				var toolChoice = PropertyTable.GetValue("toolChoice", string.Empty);
+				var areaChoice = PropertyTable.GetValue("areaChoice", string.Empty);
+				m_sPartNameProperty = $"{areaChoice}${toolChoice}$CurrentSlicePartName";
+				m_sObjGuidProperty = $"{areaChoice}${toolChoice}$CurrentSliceObjectGuid";
 			}
 		}
 
@@ -2186,9 +2186,14 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 						break;
 
 					case "RecordChangeHandler":
+						// No, since it isn't owned by the data tree, even though it created it.
+						//if (m_rch != null && m_rch is IDisposable)
+						//	(m_rch as IDisposable).Dispose();
 						if (m_rch != null && !m_rch.HasRecordListUpdater)
 						{
-							// Nobody else 'owns' m_rch, so it is our responsibility to dispose it.
+							// The above version of the Dispose call was bad,
+							// when m_rlu 'owned' the m_rch.
+							// Now, we know there is no 'owning' m_rlu, so we have to do it.
 							m_rch.Dispose();
 							m_rch = null;
 						}
@@ -2227,7 +2232,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			// m_rch may not be the same RCH that was disposed, but if it was, unregister the event and clear out the data member.
 			if (!ReferenceEquals(sender, m_rch))
 				return;
-				m_rch.Disposed -= m_rch_Disposed;
+			m_rch.Disposed -= m_rch_Disposed;
 			m_rch = null;
 		}
 
@@ -3539,8 +3544,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			{
 				// The boolProperty of this menu item isn't the real one, so we control the checked status
 				// from here.  See the OnPropertyChanged method for how changes are handled.
-				string toolName = PropertyTable.GetValue<string>("currentContentControl");
-				display.Checked = PropertyTable.GetValue("ShowHiddenFields-" + toolName, SettingsGroup.LocalSettings, false);
+				string toolChoice = PropertyTable.GetValue<string>("toolChoice");
+				display.Checked = PropertyTable.GetValue("ShowHiddenFields-" + toolChoice, SettingsGroup.LocalSettings, false);
 			}
 
 			return true; //we've handled this
@@ -3844,8 +3849,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				// The only place this occurs is when the status is changed from the "View" menu.
 				// We'll have to translate this to the real property based on the current tool.
 
-				string toolName = PropertyTable.GetValue<string>("currentContentControl");
-				name = "ShowHiddenFields-" + toolName;
+				string toolChoice = PropertyTable.GetValue<string>("toolChoice");
+				name = "ShowHiddenFields-" + toolChoice;
 
 				// Invert the status of the real property
 				bool oldShowValue = PropertyTable.GetValue(name, SettingsGroup.LocalSettings, false);
@@ -4138,7 +4143,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			if (className != m_root.ClassName)
 				return display.Enabled = false;
 			string restrictToTool = XmlUtils.GetOptionalAttributeValue(command.Parameters[0], "restrictToTool");
-			if (restrictToTool != null && restrictToTool != m_propertyTable.GetValue("currentContentControl", string.Empty))
+			if (restrictToTool != null && restrictToTool != m_propertyTable.GetValue("toolChoice", string.Empty))
 				return display.Enabled = false;
 			return display.Enabled = true;
 		}
@@ -4156,7 +4161,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			if (className != m_root.ClassName)
 				return false;
 			string restrictToTool = XmlUtils.GetOptionalAttributeValue(command.Parameters[0], "restrictToTool");
-			if (restrictToTool != null && restrictToTool != m_propertyTable.GetValue("currentContentControl", string.Empty))
+			if (restrictToTool != null && restrictToTool != m_propertyTable.GetValue("toolChoice", string.Empty))
 				return false;
 			string fieldName = XmlUtils.GetOptionalAttributeValue(command.Parameters[0], "fieldName");
 			if (String.IsNullOrEmpty(fieldName))

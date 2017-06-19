@@ -82,7 +82,7 @@
 	<item id="CmdHistoryForward">Forward</item>
 	<!-- not sure how to hook these up -->
 	<item id="BasicEditView">Shows only the basic set of fields.</item>
-	<!--      <menu id="ViewChoices" list="ListViews" behavior="singlePropertyAtomicValue" property="currentContentControl" b4InsertMenu="true" inline="true" a10status="Called toolChoice in Fork" />
+	<!--      <menu id="ViewChoices" list="ListViews" behavior="singlePropertyAtomicValue" property="toolChoice" b4InsertMenu="true" inline="true" a10status="Called toolChoice in Fork" />
 	  <menu id="FilterChoices" label="Filters">
 	  <menu id="SortChoices" label="Sort Methods">
 	  -->

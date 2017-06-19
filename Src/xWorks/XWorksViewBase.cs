@@ -612,7 +612,7 @@ namespace SIL.FieldWorks.XWorks
 			// but in some contexts in switching tools in the Lexicon area, the config file was for the dictionary preview
 			// control, which was set to 'false'. That makes sense, since the view itself isn't editable.
 			// No: if (areaChoice == "lexicon" && fEditable && (m_vectorName == "entries" || m_vectorName == "AllSenses"))
-			string toolChoice = m_propertyTable.GetValue("currentContentControl", string.Empty);
+			string toolChoice = m_propertyTable.GetValue("toolChoice", string.Empty);
 			string areaChoice = m_propertyTable.GetValue("areaChoice", string.Empty);
 			bool inFriendlyTerritory = false;
 			switch (areaChoice)

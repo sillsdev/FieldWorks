@@ -1105,9 +1105,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			CheckDisposed();
 
-			string toolName = m_propertyTable.GetValue("currentContentControl", "");
+			string toolChoice = m_propertyTable.GetValue("toolChoice", "");
 			bool fVisible = m_rtPane != null && (m_tabCtrl.SelectedIndex == (int)TabPageSelection.RawText) && InFriendlyArea
-				&& toolName != "wordListConcordance";
+				&& toolChoice != "wordListConcordance";
 			display.Visible = fVisible;
 
 			if (fVisible && m_rtPane.RootBox != null)
@@ -1288,13 +1288,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			if (Clerk.IsControllingTheRecordTreeBar)
 			{
 				//add our current state to the history system
-				string toolName = PropertyTable.GetValue("currentContentControl", "");
+				string toolChoice = PropertyTable.GetValue("toolChoice", "");
 				Guid guid = Guid.Empty;
 				if (Clerk.CurrentObject != null)
 					guid = Clerk.CurrentObject.Guid;
 				FdoCache cache = Cache;
 				// Not sure what will happen with guid == Guid.Empty on the link...
-				FwLinkArgs link = new FwLinkArgs(toolName, guid, InterlinearTab.ToString());
+				FwLinkArgs link = new FwLinkArgs(toolChoice, guid, InterlinearTab.ToString());
 				link.PropertyTableEntries.Add(new Property("InterlinearTab",
 					InterlinearTab.ToString()));
 				Clerk.SelectedRecordChanged(true, true); // make sure we update the record count in the Status bar.

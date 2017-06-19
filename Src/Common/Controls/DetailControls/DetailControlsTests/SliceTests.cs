@@ -68,7 +68,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		}
 
 		/// <summary>Helper</summary>
-		public static XElement CreateXmlElementFromOuterXmlOf(string outerXml)
+		internal static XElement CreateXmlElementFromOuterXmlOf(string outerXml)
 		{
 			return XElement.Parse(outerXml);
 		}
@@ -134,12 +134,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			m_propertyTable = PropertyTableFactory.CreatePropertyTable(m_publisher);
 			var obj = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
 			m_DataTree = new DataTree();
-			var flexComponentParameterObject = new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber);
-			m_DataTree.InitializeFlexComponent(flexComponentParameterObject);
+			var flexComponentParameters = new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber);
+			m_DataTree.InitializeFlexComponent(flexComponentParameters);
 			m_Slice = GenerateSlice(Cache, m_DataTree);
 			m_Slice.Key = GeneratePath().ToArray();
 			m_Slice.Object = obj;
-			m_Slice.InitializeFlexComponent(flexComponentParameterObject);
+			m_Slice.InitializeFlexComponent(flexComponentParameters);
 			m_propertyTable.SetProperty("cache", Cache, true, false);
 
 			m_Slice.Expand();
@@ -157,12 +157,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			PubSubSystemFactory.CreatePubSubSystem(out m_publisher, out m_subscriber);
 			m_propertyTable = PropertyTableFactory.CreatePropertyTable(m_publisher);
 			m_DataTree = new DataTree();
-			var flexComponentParameterObject = new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber);
-			m_DataTree.InitializeFlexComponent(flexComponentParameterObject);
+			var flexComponentParameters = new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber);
+			m_DataTree.InitializeFlexComponent(flexComponentParameters);
 			m_Slice = GenerateSlice(Cache, m_DataTree);
 			m_Slice.Key = GeneratePath().ToArray();
 			m_Slice.Object = obj;
-			m_Slice.InitializeFlexComponent(flexComponentParameterObject);
+			m_Slice.InitializeFlexComponent(flexComponentParameters);
 			m_propertyTable.SetProperty("cache", Cache, true, false);
 
 			m_Slice.Collapse();

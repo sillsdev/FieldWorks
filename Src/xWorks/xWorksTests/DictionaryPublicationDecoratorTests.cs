@@ -295,7 +295,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GetEntriesToPublish_WorksWithFrenchUI()
 		{
-			PropertyTable.SetProperty("currentContentControl", "lexiconEdit", true);
+			PropertyTable.SetProperty("toolChoice", "lexiconEdit", true);
 
 			var englishEntries = m_decorator.GetEntriesToPublish(PropertyTable, ObjectListPublisher.OwningFlid);
 			Assert.That(englishEntries.Length, Is.GreaterThan(0));
@@ -313,7 +313,7 @@ namespace SIL.FieldWorks.XWorks
 		public void GetSortedAndFilteredReversalEntries_ExcludesSubentriesAndUnpublishable()
 		{
 			// This test relies on the objects set up during the test FixtureSetup
-			PropertyTable.SetProperty("currentContentControl", "reversalToolEditComplete", true);
+			PropertyTable.SetProperty("toolChoice", "reversalToolEditComplete", true);
 			PropertyTable.SetProperty("ReversalIndexGuid", m_revIndex.Guid.ToString(), true);
 
 			Assert.AreEqual(6, m_revDecorator.VecProp(m_revIndex.Hvo, ObjectListPublisher.OwningFlid).Length,
@@ -338,7 +338,7 @@ namespace SIL.FieldWorks.XWorks
 		public void GetSortedAndFilteredReversalEntries_IncludesSenselessReversalEntries()
 		{
 			// This test relies on the objects set up during the test FixtureSetup
-			PropertyTable.SetProperty("currentContentControl", "reversalToolEditComplete", false);
+			PropertyTable.SetProperty("toolChoice", "reversalToolEditComplete", false);
 			PropertyTable.SetProperty("ReversalIndexGuid", m_revIndex.Guid.ToString(), false);
 
 			Assert.AreEqual(6, m_revDecorator.VecProp(m_revIndex.Hvo, ObjectListPublisher.OwningFlid).Length,

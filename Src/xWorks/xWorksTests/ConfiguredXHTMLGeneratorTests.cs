@@ -81,7 +81,7 @@ namespace SIL.FieldWorks.XWorks
 			m_Clerk = CreateClerk();
 			m_propertyTable.SetProperty("ActiveClerk", m_Clerk, false);
 
-			m_propertyTable.SetProperty("currentContentControl", "lexiconDictionary", false);
+			m_propertyTable.SetProperty("toolChoice", "lexiconDictionary", false);
 			Cache.ProjectId.Path = Path.Combine(FwDirectoryFinder.SourceDirectory, "xWorks/xWorksTests/TestData/");
 			m_wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
 			m_wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
@@ -120,7 +120,7 @@ namespace SIL.FieldWorks.XWorks
 			Dispose();
 		}
 
-#region disposal
+	#region disposal
 		protected virtual void Dispose(bool disposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
@@ -148,7 +148,7 @@ namespace SIL.FieldWorks.XWorks
 			// from executing a second time.
 			GC.SuppressFinalize(this);
 		}
-#endregion disposal
+	#endregion disposal
 
 		[SetUp]
 		public void SetupExportVariables()

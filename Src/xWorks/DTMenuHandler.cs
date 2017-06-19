@@ -1157,7 +1157,7 @@ namespace SIL.FieldWorks.XWorks
 			if (className != m_dataEntryForm.Root.ClassName)
 				return false;
 			string restrictToTool = XmlUtils.GetOptionalAttributeValue(command.Parameters[0], "restrictToTool");
-			if (restrictToTool != null && restrictToTool != m_propertyTable.GetValue("currentContentControl", string.Empty))
+			if (restrictToTool != null && restrictToTool != m_propertyTable.GetValue("toolChoice", string.Empty))
 				return false;
 			return m_dataEntryForm.Root is ILexEntry;
 		}
@@ -1169,7 +1169,7 @@ namespace SIL.FieldWorks.XWorks
 			if (className != m_dataEntryForm.Root.ClassName)
 				return false;
 			string restrictToTool = XmlUtils.GetOptionalAttributeValue(command.Parameters[0], "restrictToTool");
-			if (restrictToTool != null && restrictToTool != m_propertyTable.GetValue("currentContentControl", string.Empty))
+			if (restrictToTool != null && restrictToTool != m_propertyTable.GetValue("toolChoice", string.Empty))
 				return false;
 
 			var ent = m_dataEntryForm.Root as ILexEntry;
@@ -1220,8 +1220,8 @@ namespace SIL.FieldWorks.XWorks
 			string className = XmlUtils.GetManditoryAttributeValue(command.Parameters[0], "className");
 			if (className == current.Object.ClassName)
 			{
-				string tool = XmlUtils.GetOptionalAttributeValue(command.Parameters[0], "tool");
-				if (tool == null || tool == m_propertyTable.GetValue("currentContentControl", string.Empty))
+				string toolChoice = XmlUtils.GetOptionalAttributeValue(command.Parameters[0], "tool");
+				if (toolChoice == null || toolChoice == m_propertyTable.GetValue("toolChoice", string.Empty))
 				{
 					int hvo = GetSelectedComponentHvo();
 					var ler = current.Object as ILexEntryRef;

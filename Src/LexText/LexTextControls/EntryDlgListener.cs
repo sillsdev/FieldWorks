@@ -142,7 +142,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				if (areaChoice == null) return false; // happens at start up
 				if ("lexicon" == areaChoice)
 				{
-					return PropertyTable.GetValue<string>("currentContentControl") == "lexiconEdit";
+					return PropertyTable.GetValue<string>("toolChoice") == "lexiconEdit";
 				}
 				return false; //we are not in an area that wants to see the merge command
 			}

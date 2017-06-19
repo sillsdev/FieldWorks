@@ -32,7 +32,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		internal static Inventory GenerateParts()
 		{
 			string partDirectory = Path.Combine(FwDirectoryFinder.SourceDirectory,
-				@"Common/Controls/DetailControls/DetailControlsTests");
+				"Common", "Controls", "DetailControls", "DetailControlsTests");
 
 			var keyAttrs = new Dictionary<string, string[]>();
 			keyAttrs["part"] = new[] {"id"};
@@ -46,7 +46,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		internal static Inventory GenerateLayouts()
 		{
 			string partDirectory = Path.Combine(FwDirectoryFinder.SourceDirectory,
-				@"Common/Controls/DetailControls/DetailControlsTests");
+				"Common", "Controls", "DetailControls", "DetailControlsTests");
 
 			Dictionary<string, string[]> keyAttrs = new Dictionary<string, string[]>();
 			keyAttrs["layout"] = new[] {"class", "type", "name" };

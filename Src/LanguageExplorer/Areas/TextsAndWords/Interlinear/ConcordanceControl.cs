@@ -1577,12 +1577,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			CheckDisposed();
 			// Check if we're the right tool, and that we have a valid object id.
-			string toolName = PropertyTable.GetValue<string>("currentContentControl");
-			string areaName = PropertyTable.GetValue<string>("areaChoice");
+			string toolChoice = PropertyTable.GetValue<string>("toolChoice");
+			string areaChoice = PropertyTable.GetValue<string>("areaChoice");
 			string concordOn = PropertyTable.GetValue<string>("ConcordOn");
 			PropertyTable.RemoveProperty("ConcordOn");
-			Debug.Assert(!String.IsNullOrEmpty(toolName) && !String.IsNullOrEmpty(areaName));
-			if (areaName != "textsWords" || toolName != "concordance")
+			Debug.Assert(!String.IsNullOrEmpty(toolChoice) && !String.IsNullOrEmpty(areaChoice));
+			if (areaChoice != "textsWords" || toolChoice != "concordance")
 				return false;
 			int hvoTarget = (int)argument;
 			if (!m_cache.ServiceLocator.IsValidObjectId(hvoTarget))

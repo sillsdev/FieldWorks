@@ -114,8 +114,8 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		internal static string GetDictionaryConfigurationBaseType(IPropertyTable propertyTable)
 		{
-			var toolName = propertyTable.GetValue<string>("currentContentControl");
-			switch (toolName)
+			var toolChoice = propertyTable.GetValue<string>("toolChoice");
+			switch (toolChoice)
 			{
 				case "reversalToolBulkEditReversalEntries":
 				case "reversalToolEditComplete":
@@ -188,7 +188,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		private static string GetInnermostConfigurationDirectory(IPropertyTable propertyTable)
 		{
-			switch(propertyTable.GetValue<string>("currentContentControl"))
+			switch(propertyTable.GetValue<string>("toolChoice"))
 			{
 				case "reversalBulkEditReversalEntries":
 				case "reversalEditComplete":

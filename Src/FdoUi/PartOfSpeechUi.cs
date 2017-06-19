@@ -72,7 +72,7 @@ namespace SIL.FieldWorks.FdoUi
 
 			Command command = (Command)commandObject;
 			string tool = Utils.XmlUtils.GetManditoryAttributeValue(command.Parameters[0], "tool");
-			string toolChoice = PropTable.GetValue<string>("currentContentControl");
+			string toolChoice = PropTable.GetValue<string>("toolChoice");
 
 			if (tool == "posEdit" && toolChoice == "reversalToolReversalIndexPOS")
 			{

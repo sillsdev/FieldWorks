@@ -206,8 +206,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 			ShowSketch();
 
 			//add our current state to the history system
-			var toolName = PropertyTable.GetValue("currentContentControl", "");
-			Publisher.Publish("AddContextToHistory", new FwLinkArgs(toolName, Guid.Empty));
+			Publisher.Publish("AddContextToHistory", new FwLinkArgs(PropertyTable.GetValue("toolChoice", ""), Guid.Empty));
 		}
 
 		#endregion

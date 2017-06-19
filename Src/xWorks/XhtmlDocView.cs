@@ -164,8 +164,8 @@ namespace SIL.FieldWorks.XWorks
 		public bool OnJumpToRecord(object argument)
 		{
 			var hvoTarget = (int)argument;
-			var currControl = PropertyTable.GetValue("currentContentControl", string.Empty);
-			if (hvoTarget > 0 && currControl == ksLexDictionary)
+			var toolChoice = PropertyTable.GetValue("toolChoice", string.Empty);
+			if (hvoTarget > 0 && toolChoice == ksLexDictionary)
 			{
 				DictionaryConfigurationController.ExclusionReasonCode xrc;
 				// Make sure we explain to the user in case hvoTarget is not visible due to

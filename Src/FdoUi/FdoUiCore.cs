@@ -576,7 +576,7 @@ namespace SIL.FieldWorks.FdoUi
 			//string areaChoice = m_propertyTable.GetValue<string>("areaChoice");
 			//string areaChoice = m_propertyTable.GetValue<string>("areaChoice");
 			//string toolChoice = m_propertyTable.GetValue<string>("ToolForAreaNamed_" + areaChoice);
-			string toolChoice = m_propertyTable.GetValue<string>("currentContentControl");
+			string toolChoice = m_propertyTable.GetValue<string>("toolChoice");
 			if (!IsAcceptableContextToJump(toolChoice, tool))
 			{
 				display.Visible = display.Enabled = false;

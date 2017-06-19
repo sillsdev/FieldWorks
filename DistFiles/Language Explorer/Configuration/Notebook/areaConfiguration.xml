@@ -148,7 +148,7 @@ EXTENSIONS NOT SUPPORTED (Notebook_Area) -->
 	<!-- ************************ sidebar *********************** -->
 	<!-- ********************************************************** -->
 	<sidebar>
-		<tab label="Notebook Tools" list="NotebookToolsList" behavior="singlePropertyAtomicValue" property="currentContentControl"/>
+		<tab label="Notebook Tools" list="NotebookToolsList" behavior="singlePropertyAtomicValue" property="toolChoice"/>
 <!-- EXTENSIONS NOT SUPPORTED (Notebook_Area)
 		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/sidebar/*"/>
 EXTENSIONS NOT SUPPORTED (Notebook_Area) -->

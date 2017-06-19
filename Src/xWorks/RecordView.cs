@@ -175,12 +175,12 @@ namespace SIL.FieldWorks.XWorks
 				&& string.IsNullOrEmpty(PropertyTable.GetValue<string>("SuspendLoadingRecordUntilOnJumpToRecord")))
 			{
 				//add our current state to the history system
-				string toolName = PropertyTable.GetValue("currentContentControl", "");
+				string toolChoice = PropertyTable.GetValue("toolChoice", "");
 				Guid guid = Guid.Empty;
 				if (Clerk.CurrentObject != null)
 					guid = Clerk.CurrentObject.Guid;
 				Clerk.SelectedRecordChanged(true, true); // make sure we update the record count in the Status bar.
-				Publisher.Publish("AddContextToHistory", new FwLinkArgs(toolName, guid));
+				Publisher.Publish("AddContextToHistory", new FwLinkArgs(toolChoice, guid));
 			}
 		}
 

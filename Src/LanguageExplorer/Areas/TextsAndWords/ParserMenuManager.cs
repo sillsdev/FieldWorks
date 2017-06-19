@@ -562,8 +562,8 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		{
 			get
 			{
-				var toolName = PropertyTable.GetValue("toolChoice", string.Empty);
-				return InTextsWordsArea && (toolName == "Analyses" || toolName == "wordListConcordance" || toolName == "bulkEditWordforms");
+				var toolChoice = PropertyTable.GetValue("toolChoice", string.Empty);
+				return InTextsWordsArea && (toolChoice == "Analyses" || toolChoice == "wordListConcordance" || toolChoice == "bulkEditWordforms");
 			}
 		}
 
@@ -571,9 +571,9 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		{
 			get
 			{
-				var toolName = PropertyTable.GetValue("toolChoice", string.Empty);
+				var toolChoice = PropertyTable.GetValue("toolChoice", string.Empty);
 				var tabName = PropertyTable.GetValue("InterlinearTab", string.Empty);
-				return InTextsWordsArea && toolName == "interlinearEdit" && (tabName == "RawText" || tabName == "Interlinearizer" || tabName == "Gloss");
+				return InTextsWordsArea && toolChoice == "interlinearEdit" && (tabName == "RawText" || tabName == "Interlinearizer" || tabName == "Gloss");
 			}
 		}
 

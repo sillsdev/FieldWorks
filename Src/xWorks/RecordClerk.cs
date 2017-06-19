@@ -823,7 +823,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <returns></returns>
 		protected bool InDesiredTool(string desiredTool)
 		{
-			string toolChoice = PropertyTable.GetValue<string>("currentContentControl");
+			string toolChoice = PropertyTable.GetValue<string>("toolChoice");
 			return toolChoice != null && toolChoice == desiredTool;
 		}
 
@@ -1930,8 +1930,8 @@ namespace SIL.FieldWorks.XWorks
 		{
 			get
 			{
-				var currentControlObject = PropertyTable.GetValue<string>("currentContentControl", null);
-				return !(currentControlObject == "lexiconDictionary" || currentControlObject == "reversalToolEditComplete");
+				var toolChoice = PropertyTable.GetValue<string>("toolChoice", null);
+				return !(toolChoice == "lexiconDictionary" || toolChoice == "reversalToolEditComplete");
 			}
 		}
 

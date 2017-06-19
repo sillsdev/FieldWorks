@@ -32,15 +32,15 @@ namespace SIL.FieldWorks.XWorks
 			{
 				string projectConfigDir;
 
-				m_propertyTable.SetProperty("currentContentControl", "lexiconEdit", true);
+				m_propertyTable.SetProperty("toolChoice", "lexiconEdit", true);
 				projectConfigDir = Path.Combine(FdoFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder), "Dictionary");
 			Assert.That(DictionaryConfigurationListener.GetProjectConfigurationDirectory(m_propertyTable), Is.EqualTo(projectConfigDir), "did not return expected directory");
 
-				m_propertyTable.SetProperty("currentContentControl", "reversalEditComplete", true);
+				m_propertyTable.SetProperty("toolChoice", "reversalEditComplete", true);
 			projectConfigDir = Path.Combine(FdoFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder), "ReversalIndex");
 			Assert.That(DictionaryConfigurationListener.GetProjectConfigurationDirectory(m_propertyTable), Is.EqualTo(projectConfigDir), "did not return expected directory");
 
-				m_propertyTable.SetProperty("currentContentControl", "somethingElse", true);
+				m_propertyTable.SetProperty("toolChoice", "somethingElse", true);
 			Assert.IsNull(DictionaryConfigurationListener.GetProjectConfigurationDirectory(m_propertyTable), "Other areas should cause null return");
 		}
 		}
@@ -48,19 +48,19 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GetDictionaryConfigurationBaseType_ReportsCorrectlyForDictionaryAndReversal()
 		{
-			m_propertyTable.SetProperty("currentContentControl", "lexiconEdit", true);
+			m_propertyTable.SetProperty("toolChoice", "lexiconEdit", true);
 			Assert.AreEqual("Dictionary", DictionaryConfigurationListener.GetDictionaryConfigurationBaseType(m_propertyTable), "did not return expected type");
-			m_propertyTable.SetProperty("currentContentControl", "lexiconBrowse", true);
+			m_propertyTable.SetProperty("toolChoice", "lexiconBrowse", true);
 			Assert.AreEqual("Dictionary", DictionaryConfigurationListener.GetDictionaryConfigurationBaseType(m_propertyTable), "did not return expected type");
-			m_propertyTable.SetProperty("currentContentControl", "lexiconDictionary", true);
+			m_propertyTable.SetProperty("toolChoice", "lexiconDictionary", true);
 			Assert.AreEqual("Dictionary", DictionaryConfigurationListener.GetDictionaryConfigurationBaseType(m_propertyTable), "did not return expected type");
 
-			m_propertyTable.SetProperty("currentContentControl", "reversalToolEditComplete", true);
+			m_propertyTable.SetProperty("toolChoice", "reversalToolEditComplete", true);
 			Assert.AreEqual("Reversal Index", DictionaryConfigurationListener.GetDictionaryConfigurationBaseType(m_propertyTable), "did not return expected type");
-			m_propertyTable.SetProperty("currentContentControl", "reversalToolBulkEditReversalEntries", true);
+			m_propertyTable.SetProperty("toolChoice", "reversalToolBulkEditReversalEntries", true);
 			Assert.AreEqual("Reversal Index", DictionaryConfigurationListener.GetDictionaryConfigurationBaseType(m_propertyTable), "did not return expected type");
 
-			m_propertyTable.SetProperty("currentContentControl", "somethingElse", true);
+			m_propertyTable.SetProperty("toolChoice", "somethingElse", true);
 			Assert.IsNull(DictionaryConfigurationListener.GetDictionaryConfigurationBaseType(m_propertyTable), "Other areas should return null");
 		}
 
@@ -69,15 +69,15 @@ namespace SIL.FieldWorks.XWorks
 		{
 			string configDir;
 
-			m_propertyTable.SetProperty("currentContentControl", "lexiconEdit", true);
+			m_propertyTable.SetProperty("toolChoice", "lexiconEdit", true);
 			configDir = Path.Combine(FwDirectoryFinder.DefaultConfigurations, "Dictionary");
 			Assert.That(DictionaryConfigurationListener.GetDefaultConfigurationDirectory(m_propertyTable), Is.EqualTo(configDir), "did not return expected directory");
 
-			m_propertyTable.SetProperty("currentContentControl", "reversalEditComplete", true);
+			m_propertyTable.SetProperty("toolChoice", "reversalEditComplete", true);
 			configDir = Path.Combine(FwDirectoryFinder.DefaultConfigurations, "ReversalIndex");
 			Assert.That(DictionaryConfigurationListener.GetDefaultConfigurationDirectory(m_propertyTable), Is.EqualTo(configDir), "did not return expected directory");
 
-			m_propertyTable.SetProperty("currentContentControl", "somethingElse", true);
+			m_propertyTable.SetProperty("toolChoice", "somethingElse", true);
 			Assert.IsNull(DictionaryConfigurationListener.GetDefaultConfigurationDirectory(m_propertyTable), "Other areas should cause null return");
 		}
 

@@ -529,7 +529,7 @@ EXTENSIONS NOT SUPPORTED (Words_Area) -->
 	<!-- ************************ sidebar *********************** -->
 	<!-- ********************************************************** -->
 	<sidebar>
-		<tab label="Word Tools" list="WordToolsList" behavior="singlePropertyAtomicValue" property="currentContentControl"/>
+		<tab label="Word Tools" list="WordToolsList" behavior="singlePropertyAtomicValue" property="toolChoice"/>
 		<!-- <tab label="Filters" list="WordsFiltersList" behavior="singlePropertyAtomicValue" property="words">
 	  <item id="all" label="All" boolProperty="foo" icon="NoFilter"/>
  see RecordClerk::OnDisplayWordsFiltersList

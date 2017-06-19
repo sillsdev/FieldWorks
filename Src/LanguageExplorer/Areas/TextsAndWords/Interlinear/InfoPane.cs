@@ -105,7 +105,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			if (xnControl == null)
 				return;
 			var activeClerk = PropertyTable.GetValue<RecordClerk>("ActiveClerk");
-			var toolChoice = PropertyTable.GetValue<string>("currentContentControl");
+			var toolChoice = PropertyTable.GetValue<string>("toolChoice");
 			if(m_xrev != null)
 			{
 				//when re-using the infoview we want to remove and dispose of the old recordeditview and

@@ -56,6 +56,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			this.Size = new System.Drawing.Size(208, 32);
 		}
 		#endregion
+
 		#region IDisposable override
 
 		/// <summary>
@@ -271,6 +272,16 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		}
 		#endregion
+
+		/// <summary>
+		/// Initialize a FLEx component with the basic interfaces.
+		/// </summary>
+		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
+		public override void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
+		{
+			base.InitializeFlexComponent(flexComponentParameters);
+			m_view.InitializeFlexComponent(flexComponentParameters);
+		}
 
 		/// <summary>
 		/// Clean up any resources being used.

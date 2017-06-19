@@ -2129,9 +2129,9 @@ namespace SIL.FieldWorks.Common.Controls
 
 		private string FormatColumnWidthPropertyName(int iCol)
 		{
-			string Id1 = PropertyTable.GetValue("currentContentControl", string.Empty);
+			string toolChoice = PropertyTable.GetValue("toolChoice", string.Empty);
 			string Id2 = BrowseView.GetCorrespondingPropertyName("Column");
-			string PropName = Id1 + "_" + Id2 + "_" + iCol + "_Width";
+			string PropName = toolChoice + "_" + Id2 + "_" + iCol + "_Width";
 			return PropName;
 		}
 

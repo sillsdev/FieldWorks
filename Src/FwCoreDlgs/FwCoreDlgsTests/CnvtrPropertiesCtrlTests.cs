@@ -605,6 +605,10 @@ namespace AddConverterDlgTests
 			if (!String.IsNullOrEmpty(filetype))
 			{
 				filename = Path.ChangeExtension(fileTmp, filetype);
+				if (File.Exists(filename))
+				{
+					File.Delete(filename);
+				}
 				File.Move(fileTmp, filename);
 	}
 			using (var file = new StreamWriter(filename, false, System.Text.Encoding.ASCII))

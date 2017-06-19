@@ -1456,7 +1456,7 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			string helpTopic = "";
 
-			switch (m_propertyTable.GetValue<string>("currentContentControl"))
+			switch (m_propertyTable.GetValue<string>("toolChoice"))
 			{
 				case "bulkEditEntriesOrSenses":
 					helpTopic = "khtpBulkEditBarEntriesOrSenses";

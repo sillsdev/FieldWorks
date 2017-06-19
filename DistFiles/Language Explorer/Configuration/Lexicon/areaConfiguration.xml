@@ -281,7 +281,7 @@ EXTENSIONS NOT SUPPORTED Lexicon Area -->
 	<!-- ************************ sidebar *********************** -->
 	<!-- ********************************************************** -->
 	<sidebar>
-		<tab label="Lexical Tools" list="LexicalToolsList" behavior="singlePropertyAtomicValue" property="currentContentControl"/>
+		<tab label="Lexical Tools" list="LexicalToolsList" behavior="singlePropertyAtomicValue" property="toolChoice"/>
 <!-- EXTENSIONS NOT SUPPORTED Lexicon Area
 		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/sidebar/*"/>
 EXTENSIONS NOT SUPPORTED Lexicon Area -->
@@ -296,7 +296,7 @@ EXTENSIONS NOT SUPPORTED Lexicon Area -->
 	<toolbarsAddOn>
 		<!--	Brings out bug where showing a list forces the list to set a current value which then propogates messages to a world that is not ready for them!
 
-		<toolbar id="BarViews" list="ListViews" behavior="singlePropertyAtomicValue" property="currentContentControl"/> -->
+		<toolbar id="BarViews" list="ListViews" behavior="singlePropertyAtomicValue" property="toolChoice"/> -->
 		<!--    <include query="window/toolbars/*"/> -->
 		<toolbar id="Insert">
 			<item command="CmdInsertLexEntry" defaultVisible="false"/>

@@ -600,11 +600,11 @@ InterlinMaster user:
 		<menu id="View" label="_View" b4InsertMenu="true" a10status="DONE" >
 			<item command="CmdRefresh" a10status="DONE" />
 			<item label="-" translate="do not translate" a10status="DONE" />
-			<menu label="_Lexicon" list="LexicalToolsList" behavior="singlePropertyAtomicValue" property="currentContentControl"/>
-			<menu label="_Texts &amp;&amp; Words" list="WordToolsList" behavior="singlePropertyAtomicValue" property="currentContentControl"/>
-			<menu label="_Grammar" list="GrammarToolsList" behavior="singlePropertyAtomicValue" property="currentContentControl"/>
-			<menu label="_Notebook" list="NotebookToolsList" behavior="singlePropertyAtomicValue" property="currentContentControl"/>
-			<menu label="Li_sts" list="ListsToolsList" behavior="singlePropertyAtomicValue" property="currentContentControl"/>
+			<menu label="_Lexicon" list="LexicalToolsList" behavior="singlePropertyAtomicValue" property="toolChoice"/>
+			<menu label="_Texts &amp;&amp; Words" list="WordToolsList" behavior="singlePropertyAtomicValue" property="toolChoice"/>
+			<menu label="_Grammar" list="GrammarToolsList" behavior="singlePropertyAtomicValue" property="toolChoice"/>
+			<menu label="_Notebook" list="NotebookToolsList" behavior="singlePropertyAtomicValue" property="toolChoice"/>
+			<menu label="Li_sts" list="ListsToolsList" behavior="singlePropertyAtomicValue" property="toolChoice"/>
 			<item label="Invisible Spaces" boolProperty="ShowInvisibleSpaces" defaultVisible="false" settingsGroup="local"/>
 <!-- START include: "Lexicon/areaConfiguration.xml" query="root/menuAddOn/menu[@id='View']/*" -->
 			<include path="Lexicon/areaConfiguration.xml" query="root/menuAddOn/menu[@id='View']/*"/>
@@ -628,7 +628,7 @@ InterlinMaster user:
 		<!--<menu id="Areas" label="_Areas" list="AreasList" behavior="singlePropertyAtomicValue"
 			property="areaChoice" />
 			<menu id="Tools" label="_Tools" list="ToolsList" behavior="singlePropertyAtomicValue"
-			property="currentContentControl" />
+			property="toolChoice" />
 		-->
 		<menu id="Data" label="_Data" a10status="DONE" >
 			<item command="CmdFirstRecord" a10status="DONE" />
@@ -1006,10 +1006,10 @@ EXTENSIONS NOT SUPPORTED -->
 EXTENSIONS NOT SUPPORTED -->
 
 		<tab label="Areas" list="AreasList" behavior="singlePropertyAtomicValue" property="areaChoice"/>
-		<tab label="Tools" list="ToolsList" behavior="singlePropertyAtomicValue" property="currentContentControl"/>
+		<tab label="Tools" list="ToolsList" behavior="singlePropertyAtomicValue" property="toolChoice"/>
 		<!-- The original WWBaseConfigurationInclude file had these, as well, but they don't yet have a place in LexText.
 I (RandyR) brought them into this file, just to keep track of them for the time they get dealt with.
-		<tab label="Views" list="ListViews" behavior="singlePropertyAtomicValue" property="currentContentControl" />
+		<tab label="Views" list="ListViews" behavior="singlePropertyAtomicValue" property="toolChoice" />
 		<tab label="Filters">
 			<item id="noFilter" label="No Filter" boolProperty="foo" icon="NoFilter" />
 		</tab>

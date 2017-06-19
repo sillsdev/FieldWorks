@@ -2072,7 +2072,7 @@ Old Mediator methods/commands
 				case "CmdImportInterlinearSfm": // Fall through
 				case "CmdImportWordsAndGlossesSfm": // Fall through
 				case "CmdImportInterlinearData":
-					if (wndActive.PropTable.GetValue<string>("currentContentControl") == "concordance" || wndActive.PropTable.GetValue<string>("currentContentControl") == "concordance")
+					if (wndActive.PropTable.GetValue<string>("toolChoice") == "concordance" || wndActive.PropTable.GetValue<string>("toolChoice") == "concordance")
 
 		{
 						fEnabled = false;

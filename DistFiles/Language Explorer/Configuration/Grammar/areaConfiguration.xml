@@ -358,7 +358,7 @@ EXTENSIONS NOT SUPPORTED Grammar Area -->
 	<!--  ************************ sidebar ***********************   -->
 	<!--  **********************************************************   -->
 	<sidebar>
-		<tab label="Grammar Tools" list="GrammarToolsList" behavior="singlePropertyAtomicValue" property="currentContentControl"/>
+		<tab label="Grammar Tools" list="GrammarToolsList" behavior="singlePropertyAtomicValue" property="toolChoice"/>
 <!-- EXTENSIONS NOT SUPPORTED Grammar Area
 		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/sidebar/*"/>
 EXTENSIONS NOT SUPPORTED Grammar Area -->

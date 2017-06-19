@@ -110,9 +110,9 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				string Id1 = m_xbv.m_bv.PropertyTable.GetValue("currentContentControl", "");
+				string toolChoice = m_xbv.m_bv.PropertyTable.GetValue("toolChoice", "");
 				string Id2 = m_xbv.GetCorrespondingPropertyName("ColumnList");
-				return String.Format("{0}_{1}", Id1, Id2);
+				return String.Format("{0}_{1}", toolChoice, Id2);
 			}
 		}
 

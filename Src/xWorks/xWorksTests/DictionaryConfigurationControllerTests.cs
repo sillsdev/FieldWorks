@@ -33,7 +33,7 @@ namespace SIL.FieldWorks.XWorks
 		private const string m_field = "LexEntry";
 		private const int AnalysisWsId = -5;
 
-		#region Setup and Teardown
+	#region Setup and Teardown
 		private DictionaryConfigurationModel m_model;
 		private FwXApp m_application;
 		private FwXWindow m_window;
@@ -81,7 +81,7 @@ namespace SIL.FieldWorks.XWorks
 			FwRegistrySettings.Release();
 			base.FixtureTeardown();
 		}
-		#endregion Setup and Teardown
+	#endregion Setup and Teardown
 
 		/// <summary>
 		/// This test verifies that PopulateTreeView builds a TreeView that has the same structure as the model it is based on
@@ -1432,7 +1432,7 @@ namespace SIL.FieldWorks.XWorks
 			return entryWithHeadword;
 		}
 
-		#region Context
+	#region Context
 		internal sealed class TestConfigurableDictionaryView : IDictionaryConfigurationView, IDisposable
 		{
 			private readonly DictionaryConfigurationTreeControl m_treeControl = new DictionaryConfigurationTreeControl();
@@ -1501,7 +1501,7 @@ namespace SIL.FieldWorks.XWorks
 
 #pragma warning restore 67
 		}
-		#endregion // Context
+	#endregion // Context
 
 		[Test]
 		public void PopulateTreeView_NewProjectDoesNotCrash_DoesNotGeneratesContent()
@@ -1583,7 +1583,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				var entryWithHeadword = CreateLexEntryWithHeadword();
 
-				m_propertyTable.SetProperty("currentContentControl", "lexiconDictionary", false);
+				m_propertyTable.SetProperty("toolChoice", "lexiconDictionary", false);
 				Cache.ProjectId.Path = Path.Combine(FwDirectoryFinder.SourceDirectory, "xWorks/xWorksTests/TestData/");
 
 				var dcc = new DictionaryConfigurationController(testView, m_propertyTable, null, entryWithHeadword);
@@ -1606,7 +1606,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				var entryWithHeadword = CreateLexEntryWithHeadword();
 
-				m_propertyTable.SetProperty("currentContentControl", "lexiconDictionary", false);
+				m_propertyTable.SetProperty("toolChoice", "lexiconDictionary", false);
 				Cache.ProjectId.Path = Path.Combine(FwDirectoryFinder.SourceDirectory, "xWorks/xWorksTests/TestData/");
 
 				var dcc = new DictionaryConfigurationController(testView, m_propertyTable, null, entryWithHeadword);
@@ -1628,7 +1628,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				var entryWithHeadword = CreateLexEntryWithHeadword();
 
-				m_propertyTable.SetProperty("currentContentControl", "lexiconDictionary", false);
+				m_propertyTable.SetProperty("toolChoice", "lexiconDictionary", false);
 				Cache.ProjectId.Path = Path.Combine(FwDirectoryFinder.SourceDirectory, "xWorks/xWorksTests/TestData/");
 
 				var dcc = new DictionaryConfigurationController(testView, m_propertyTable, null, entryWithHeadword);

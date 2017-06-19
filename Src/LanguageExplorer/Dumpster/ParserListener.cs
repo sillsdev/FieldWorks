@@ -520,8 +520,8 @@ namespace LanguageExplorer.Dumpster
 		{
 			get
 			{
-				string toolName = PropertyTable.GetValue("currentContentControl", string.Empty);
-				return InTextsWordsArea && (toolName == "Analyses" || toolName == "wordListConcordance" || toolName == "bulkEditWordforms");
+				string toolChoice = PropertyTable.GetValue("toolChoice", string.Empty);
+				return InTextsWordsArea && (toolChoice == "Analyses" || toolChoice == "wordListConcordance" || toolChoice == "bulkEditWordforms");
 			}
 		}
 
@@ -529,9 +529,9 @@ namespace LanguageExplorer.Dumpster
 		{
 			get
 			{
-				string toolName = PropertyTable.GetValue("currentContentControl", string.Empty);
+				string toolChoice = PropertyTable.GetValue("toolChoice", string.Empty);
 				string tabName = PropertyTable.GetValue("InterlinearTab", string.Empty);
-				return InTextsWordsArea && toolName == "interlinearEdit" && (tabName == "RawText" || tabName == "Interlinearizer" || tabName == "Gloss");
+				return InTextsWordsArea && toolChoice == "interlinearEdit" && (tabName == "RawText" || tabName == "Interlinearizer" || tabName == "Gloss");
 			}
 		}
 
