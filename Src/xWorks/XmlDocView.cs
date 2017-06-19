@@ -267,11 +267,11 @@ namespace SIL.FieldWorks.XWorks
 			if (IsDisposed)
 				return;
 
-			if( disposing )
+			if (disposing)
 			{
+				Subscriber.Unsubscribe("ClerkOwningObjChanged", ClerkOwningObjChanged_Message_Handler);
 				DisposeTooltip();
-				if(components != null)
-					components.Dispose();
+				components?.Dispose();
 			}
 			m_currentObject = null;
 
@@ -722,12 +722,10 @@ namespace SIL.FieldWorks.XWorks
 			return null;
 		}
 
-		public bool OnClerkOwningObjChanged(object sender)
+		private void ClerkOwningObjChanged_Message_Handler(object newValue)
 		{
-			CheckDisposed();
-
-			if (this.Clerk != sender || (m_mainView == null))
-				return false;
+			if (m_mainView == null)
+				return;
 
 			if (Clerk.OwningObject == null)
 			{
@@ -743,7 +741,6 @@ namespace SIL.FieldWorks.XWorks
 				m_mainView.ResetRoot(m_hvoOwner);
 				SetInfoBarText();
 			}
-			return false; //allow others clients of this clerk to know about it as well.
 		}
 
 		/// <summary>
@@ -1236,10 +1233,6 @@ namespace SIL.FieldWorks.XWorks
 
 			ReadParameters();
 
-#if RANDYTODO
-			PropertyTable.SetProperty("ShowRecordList", false, SettingsGroup.GlobalSettings, true, true);
-#endif
-
 			SetupDataContext();
 			ShowRecord();
 		}
@@ -1266,6 +1259,8 @@ namespace SIL.FieldWorks.XWorks
 			base.InitializeFlexComponent(flexComponentParameters);
 
 			InitBase();
+
+			Subscriber.Subscribe("ClerkOwningObjChanged", ClerkOwningObjChanged_Message_Handler);
 		}
 
 		#endregion

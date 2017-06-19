@@ -473,12 +473,6 @@ namespace LanguageExplorer.Impls
 		{
 			// This is the splitter distance for the sidebar/secondary splitter pair of controls.
 			PropertyTable.SetDefault("SidebarWidthGlobal", 140, SettingsGroup.GlobalSettings, true, false);
-#if RANDYTODO
-			// This property is driven by the needs of the current main control, not the user.
-			// <property name="ShowRecordList" bool="false" persist="true" />
-			// TODO: "ShowRecordList" may be able to go away altogether, if the individual tool controls its visibility, and it doesn't change for a given tool.
-			PropertyTable.SetDefault("ShowRecordList", false, SettingsGroup.GlobalSettings, true, true);
-#endif
 			// This is the splitter distance for the record list/main content pair of controls.
 			PropertyTable.SetDefault("RecordListWidthGlobal", 200, SettingsGroup.GlobalSettings, true, false);
 
@@ -507,12 +501,7 @@ namespace LanguageExplorer.Impls
 		private void RemoveObsoleteProperties()
 		{
 			// Get rid of obsolete properties, if they were restored.
-#if RANDYTODO
-// This property is driven by the needs of the current main control, not the user.
-// <property name="ShowRecordList" bool="false" persist="true" />
-// TODO: "ShowRecordList" may be able to go away altogether, if the individual tool controls its visibility, and it doesn't change for a given tool.
 			PropertyTable.RemoveProperty("ShowRecordList", SettingsGroup.GlobalSettings);
-#endif
 			PropertyTable.RemoveProperty("PreferredUILibrary");
 			PropertyTable.RemoveProperty("ShowSidebar", SettingsGroup.GlobalSettings);
 			PropertyTable.RemoveProperty("SidebarLabel", SettingsGroup.GlobalSettings);

@@ -66,7 +66,18 @@ namespace SIL.FieldWorks.XWorks
 			Init();
 		}
 
-		private void Init()
+		/// <summary>
+		/// Initialize a FLEx component with the basic interfaces.
+		/// </summary>
+		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
+		public override void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
+		{
+			base.InitializeFlexComponent(flexComponentParameters);
+
+			Subscriber.Subscribe("RecordNavigation", RecordNavigation_Message_Handler);
+		}
+
+	private void Init()
 		{
 			//it is up to the subclass to change this when it is finished Initializing.
 			m_fullyInitialized = false;
@@ -96,10 +107,8 @@ namespace SIL.FieldWorks.XWorks
 
 			if( disposing )
 			{
-				if(components != null)
-				{
-					components.Dispose();
-				}
+				Subscriber.Unsubscribe("RecordNavigation", RecordNavigation_Message_Handler);
+				components?.Dispose();
 			}
 
 			base.Dispose( disposing );
@@ -113,24 +122,22 @@ namespace SIL.FieldWorks.XWorks
 
 		#region Other methods
 
-		public virtual bool OnRecordNavigation(object argument)
+		public virtual void RecordNavigation_Message_Handler(object newValue)
 		{
 			CheckDisposed();
 
 			if(!m_fullyInitialized)
-				return false;
-			// If it's not from our clerk, we may be intercepting a message intended for another pane.
-			if (RecordNavigationInfo.GetSendingClerk(argument) != Clerk)
-				return false;
+				return;
 
-			var rni = argument as RecordNavigationInfo;
-			var options = new RecordClerk.ListUpdateHelper.ListUpdateHelperOptions();
-			options.SuppressSaveOnChangeRecord = rni.SuppressSaveOnChangeRecord;
+			var rni = (RecordNavigationInfo)newValue;
+			var options = new RecordClerk.ListUpdateHelper.ListUpdateHelperOptions
+			{
+				SuppressSaveOnChangeRecord = rni.SuppressSaveOnChangeRecord
+			};
 			using (new RecordClerk.ListUpdateHelper(Clerk, options))
 			{
 				ShowRecord(rni);
 			}
-			return true;	//we handled this.
 		}
 
 		/// <summary>
@@ -301,11 +308,9 @@ namespace SIL.FieldWorks.XWorks
 					default:
 						break;
 					case TreebarAvailability.NotAllowed:
-						PropertyTable.SetProperty("ShowRecordList", false, SettingsGroup.GlobalSettings, true, true);
 						break;
 
 					case TreebarAvailability.Required:
-						PropertyTable.SetProperty("ShowRecordList", true, SettingsGroup.GlobalSettings, true, true);
 						break;
 
 					case TreebarAvailability.Optional:

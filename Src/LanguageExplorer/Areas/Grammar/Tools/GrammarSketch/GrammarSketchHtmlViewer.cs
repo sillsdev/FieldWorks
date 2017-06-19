@@ -64,12 +64,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 		private const string m_skExtensionUri = "urn:xsltExtension-DateTime";
 
 		/// <summary>
-		/// since we are going to hide the tree bar, remember the state it was in so
-		/// that when we go way we can restore it to the state it was in.
-		/// </summary>
-		private bool m_previousShowTreeBarValue;
-
-		/// <summary>
 		/// Back/Forward counter to keep track of state and control enable/disable of back adn forward buttons
 		/// </summary>
 		private int m_iURLCounter;
@@ -191,9 +185,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 			Subscriber = flexComponentParameters.Subscriber;
 
 			Subscriber.Subscribe("SaveAsWebpage", SaveAsWebpage);
-			m_previousShowTreeBarValue = PropertyTable.GetValue<bool>("ShowRecordList");
-
-			PropertyTable.SetProperty("ShowRecordList", false, SettingsGroup.GlobalSettings, true, true);
 
 			PropertyTable.SetProperty("StatusPanelRecordNumber", "", false, true);
 
@@ -636,7 +627,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 		{
 			CheckDisposed();
 
-			PropertyTable.SetProperty("ShowRecordList", m_previousShowTreeBarValue, SettingsGroup.GlobalSettings, true, true);
 			return true;
 		}
 

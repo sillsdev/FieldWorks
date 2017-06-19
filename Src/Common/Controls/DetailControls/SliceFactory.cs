@@ -78,6 +78,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		public static Slice Create(FdoCache cache, string editor, int flid, XElement node, ICmObject obj,
 			IPersistenceProvider persistenceProvider, FlexComponentParameters flexComponentParameters, XElement caller, ObjSeqHashMap reuseMap)
 		{
+			var sliceWasRecyled = false;
 			Slice slice;
 			switch(editor)
 			{
@@ -107,6 +108,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 							slice = new MultiStringSlice(obj, flid, wsMagic, wsMagicOptional, forceIncludeEnglish, editable, spellCheck);
 						else
 						{
+							sliceWasRecyled = true;
 							slice = msSlice;
 							msSlice.Reuse(obj, flid, wsMagic, wsMagicOptional, forceIncludeEnglish, editable, spellCheck);
 						}
@@ -119,6 +121,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 							slice = new ReferenceVectorSlice(cache, obj, flid);
 						else
 						{
+							sliceWasRecyled = true;
 							slice = rvSlice;
 							rvSlice.Reuse(obj, flid);
 						}
@@ -128,9 +131,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					{
 						var prvSlice = reuseMap.GetSliceToReuse("PossibilityReferenceVectorSlice") as PossibilityReferenceVectorSlice;
 						if (prvSlice == null)
+						{
 							slice = new PossibilityReferenceVectorSlice(cache, obj, flid);
+						}
 						else
 						{
+							sliceWasRecyled = true;
 							slice = prvSlice;
 							prvSlice.Reuse(obj, flid);
 						}
@@ -140,9 +146,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					{
 						var prvSlice = reuseMap.GetSliceToReuse("SemanticDomainReferenceVectorSlice") as SemanticDomainReferenceVectorSlice;
 						if (prvSlice == null)
+						{
 							slice = new SemanticDomainReferenceVectorSlice(cache, obj, flid);
+						}
 						else
 						{
+							sliceWasRecyled = true;
 							slice = prvSlice;
 							prvSlice.Reuse(obj, flid);
 						}
@@ -353,9 +362,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					{
 						ReferenceVectorDisabledSlice rvSlice = reuseMap.GetSliceToReuse("ReferenceVectorDisabledSlice") as ReferenceVectorDisabledSlice;
 						if (rvSlice == null)
+						{
 							slice = new ReferenceVectorDisabledSlice(cache, obj, flid);
+						}
 						else
 						{
+							sliceWasRecyled = true;
 							slice = rvSlice;
 							rvSlice.Reuse(obj, flid);
 						}
@@ -375,7 +387,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					break;
 				}
 			}
-			slice.InitializeFlexComponent(flexComponentParameters);
+			if (!sliceWasRecyled)
+			{
+				// Calling this a second time will throw.
+				// So, only call it in slices that are new.
+				slice.InitializeFlexComponent(flexComponentParameters);
+			}
 			slice.AccessibleName = editor;
 
 			return slice;

@@ -19,6 +19,7 @@ namespace LanguageExplorer.Areas
 		private ListView m_listView;
 		private ColumnHeader m_columnHeader1;
 		private Control m_optionalHeaderControl;
+		private IPropertyTable _propertyTable;
 
 		/// <summary>
 		/// Required designer variable.
@@ -26,10 +27,12 @@ namespace LanguageExplorer.Areas
 		private System.ComponentModel.Container components = null;
 
 		/// <summary />
-		public RecordBar()
+		public RecordBar(IPropertyTable propertyTable)
 		{
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
+
+			_propertyTable = propertyTable;
 
 			TreeView.HideSelection = false;
 			m_listView.HideSelection = false;
@@ -38,6 +41,8 @@ namespace LanguageExplorer.Areas
 			m_listView.Dock = DockStyle.Fill;
 
 			IsFlatList = true;
+
+			Clear();
 		}
 
 		/// <summary>
@@ -140,8 +145,22 @@ namespace LanguageExplorer.Areas
 		{
 			CheckDisposed();
 
+			TreeView.AfterSelect -= OnTreeBarAfterSelect;
+			ListView.SelectedIndexChanged -= OnListBarSelect;
 			TreeView.Nodes.Clear();
-			m_listView.Items.Clear();
+			ListView.Items.Clear();
+			ListView.SelectedIndexChanged += OnListBarSelect;
+			TreeView.AfterSelect += OnTreeBarAfterSelect;
+		}
+
+		private void OnListBarSelect(object sender, EventArgs e)
+		{
+			_propertyTable.SetProperty("SelectedTreeBarNode", ListView.SelectedItems.Count == 0 ? null : ListView.SelectedItems[0], false, true);
+		}
+
+		private void OnTreeBarAfterSelect(object sender, TreeViewEventArgs e)
+		{
+			_propertyTable.SetProperty("SelectedTreeBarNode", e.Node, false, true);
 		}
 
 		/// <summary>

@@ -40,6 +40,7 @@ using SIL.CoreImpl.Cellar;
 using SIL.CoreImpl.Text;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
@@ -336,6 +337,16 @@ namespace SIL.FieldWorks.XWorks
 			m_list.AboutToReload += m_list_AboutToReload;
 			m_list.DoneReload += m_list_DoneReload;
 
+			var window = PropertyTable.GetValue<IFwMainWnd>("window");
+			if (window.TreeStyleRecordList != null)
+			{
+				Subscriber.Subscribe("SelectedTreeBarNode", SelectedTreeBarNode_Message_Handler);
+			}
+			if (window.ListStyleRecordList != null)
+			{
+				Subscriber.Subscribe("SelectedListBarNode", SelectedListBarNode_Message_Handler);
+			}
+
 			if (m_filterProvider != null)
 			{
 				Subscriber.Subscribe("FilterListChanged", FilterListChanged_Message_Handler);
@@ -393,6 +404,32 @@ namespace SIL.FieldWorks.XWorks
 #else
 			SetupDataContext(true);
 #endif
+		}
+
+		private void SelectedListBarNode_Message_Handler(object obj)
+		{
+			if (!IsControllingTheRecordTreeBar)
+				return;
+			var item = PropertyTable.GetValue<ListViewItem>("SelectedListBarNode");
+			if (item == null)
+				return;
+			if (!(item.Tag is int))
+				throw new ArgumentException(SelectedListBarNodeErrorMessage);
+			var hvo = (int)item.Tag;
+			if (CurrentObjectHvo == 0 || hvo != CurrentObjectHvo)
+				JumpToRecord(hvo);
+		}
+
+		private void SelectedTreeBarNode_Message_Handler(object obj)
+		{
+			if (!IsControllingTheRecordTreeBar)
+				return;
+			var node = PropertyTable.GetValue<TreeNode>("SelectedTreeBarNode");
+			if (node == null)
+				return;
+			var hvo = (int)node.Tag;
+			if (CurrentObjectHvo == 0 || hvo != CurrentObjectHvo)
+				JumpToRecord(hvo);
 		}
 
 		#endregion
@@ -503,15 +540,15 @@ namespace SIL.FieldWorks.XWorks
 			if (disposing)
 			{
 				// Dispose managed resources here.
+				Subscriber.Unsubscribe("SelectedTreeBarNode", SelectedTreeBarNode_Message_Handler);
+				Subscriber.Unsubscribe("SelectedListBarNode", SelectedListBarNode_Message_Handler);
 				m_list.ListChanged -= OnListChanged;
 				m_list.AboutToReload -= m_list_AboutToReload;
 				m_list.DoneReload -= m_list_DoneReload;
 				RemoveNotification(); // before disposing list, we need it to get to the Cache.
 				m_list.Dispose();
-				if (m_rch != null)
-					m_rch.Dispose();
-				if (m_recordBarHandler != null)
-					m_recordBarHandler.Dispose();
+				m_rch?.Dispose();
+				m_recordBarHandler?.Dispose();
 				if (m_filterProvider != null)
 				{
 					Subscriber.Unsubscribe("FilterListChanged", FilterListChanged_Message_Handler);
@@ -1321,33 +1358,6 @@ namespace SIL.FieldWorks.XWorks
 
 			switch(name)
 			{
-				case "ShowRecordList":
-					if (IsControllingTheRecordTreeBar)//m_treeBarHandler!= null)
-						m_recordBarHandler.PopulateRecordBar(m_list);
-					break;
-				case "SelectedTreeBarNode":
-					if (!IsControllingTheRecordTreeBar) //m_treeBarHandler== null)
-						break;
-					var node = PropertyTable.GetValue<TreeNode>(name);
-					if (node == null)
-						return;
-					var hvo = (int) node.Tag;
-					if (CurrentObjectHvo == 0 || hvo != CurrentObjectHvo)
-						JumpToRecord(hvo);
-					break;
-				case "SelectedListBarNode":
-					if (!IsControllingTheRecordTreeBar) //m_treeBarHandler== null)
-						break;
-					var item = PropertyTable.GetValue<ListViewItem>(name);
-					if (item == null)
-						return;
-					if (!(item.Tag is int))
-						throw new ArgumentException(SelectedListBarNodeErrorMessage);
-					hvo = (int)item.Tag;
-					if (CurrentObjectHvo == 0 || hvo != CurrentObjectHvo)
-						JumpToRecord(hvo);
-					break;
-
 				default:
 					//this happens when the user chooses a MenuItem or sidebar item that selects a filter
 					if(name == CurrentFilterPropertyTableId)

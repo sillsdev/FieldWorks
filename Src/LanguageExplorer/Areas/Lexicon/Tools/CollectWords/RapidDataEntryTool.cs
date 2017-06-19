@@ -59,6 +59,16 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 			PropertyTable = flexComponentParameters.PropertyTable;
 			Publisher = flexComponentParameters.Publisher;
 			Subscriber = flexComponentParameters.Subscriber;
+
+#if RANDYTODO
+			// TODO: Came from Fork commit: "Get all tree-based tools to switch to selected item." 2016-08-12 14:29:42
+			// TODO: Wait on other changes from fork that add all the guts to this method.
+			var recordBar = new RecordBar(PropertyTable)
+			{
+				IsFlatList = false,
+				Dock = DockStyle.Fill
+			};
+#endif
 		}
 
 		#endregion
@@ -120,9 +130,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 		{
 		}
 
-		#endregion
+#endregion
 
-		#region Implementation of IMajorFlexUiComponent
+#region Implementation of IMajorFlexUiComponent
 
 		/// <summary>
 		/// Get the internal name of the component.
@@ -134,9 +144,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 		/// User-visible localizable component name.
 		/// </summary>
 		public string UiName => "Collect Words";
-		#endregion
+#endregion
 
-		#region Implementation of ITool
+#region Implementation of ITool
 
 		/// <summary>
 		/// Get the area machine name the tool is for.
@@ -148,6 +158,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 		/// </summary>
 		public Image Icon => Images.BrowseView.SetBackgroundColor(Color.Magenta);
 
-		#endregion
+#endregion
 	}
 }

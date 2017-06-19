@@ -136,6 +136,8 @@ namespace SIL.FieldWorks.XWorks
 				m_browseViewer.BrowseView.RootBox.DestroySelection();
 			}
 
+			Subscriber.Subscribe("ClerkOwningObjChanged", ClerkOwningObjChanged_Message_Handler);
+
 			ShowRecord();
 		}
 
@@ -152,6 +154,7 @@ namespace SIL.FieldWorks.XWorks
 
 			if (disposing)
 			{
+				Subscriber.Unsubscribe("ClerkOwningObjChanged", ClerkOwningObjChanged_Message_Handler);
 				if (ExistingClerk != null) // ExistingClerk, *not* Clerk (see doc on ExistingClerk)
 				{
 					PersistSortSequence();
@@ -265,12 +268,10 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		public bool OnClerkOwningObjChanged(object sender)
+		private void ClerkOwningObjChanged_Message_Handler(object newValue)
 		{
-			CheckDisposed();
-
-			if (Clerk != sender || (m_browseViewer==null))
-				return false;
+			if (m_browseViewer == null)
+				return;
 
 			if (Clerk.OwningObject == null)
 			{
@@ -285,7 +286,6 @@ namespace SIL.FieldWorks.XWorks
 				m_browseViewer.RootObjectHvo = Clerk.OwningObject.Hvo;
 				SetInfoBarText();
 			}
-			return false; //allow others clients of this clerk to know about it as well.
 		}
 
 		/// <summary>
@@ -625,24 +625,22 @@ namespace SIL.FieldWorks.XWorks
 		/// another pane may show a more detailed view of the selected record. Therefore, RecordBrowseView
 		/// never claims to have 'handled' this event.
 		/// </summary>
-		/// <param name="argument"></param>
+		/// <param name="newValue"></param>
 		/// <returns>
 		/// false; we didn't fully handle it, even though we may have done something.
 		/// </returns>
-		public override bool OnRecordNavigation(object argument)
+		public override void RecordNavigation_Message_Handler(object newValue)
 		{
-			CheckDisposed();
-
 			// Can't do anything if it isn't fully initialized,
 			// and we don't want to do anything, if we are told not to.
 			if (!m_fullyInitialized || m_suppressRecordNavigation)
-				return false;
+				return;
 			Debug.Assert(m_browseViewer != null, "RecordBrowseView.SetupDataContext() has to be called before RecordBrowseView.OnRecordNavigation().");
 
 			if (m_browseViewer == null || m_browseViewer.BrowseView == null || m_browseViewer.BrowseView.RootBox == null)
-				return false; // can't do anything useful without a root box to select in.
+				return; // can't do anything useful without a root box to select in.
 
-			var rni = (RecordNavigationInfo)argument;
+			var rni = (RecordNavigationInfo)newValue;
 			m_suppressShowRecord = rni.SkipShowRecord;
 			m_suppressRecordNavigation = rni.SuppressSaveOnChangeRecord;
 			bool bvEnabled = m_browseViewer.Enabled;
@@ -651,19 +649,17 @@ namespace SIL.FieldWorks.XWorks
 			try
 			{
 				RecordClerk clerk = Clerk;
-				RecordClerk sendingClerk = RecordNavigationInfo.GetSendingClerk(argument);
 				// NOTE: If the clerk's current index is less than zero,
 				// or greater than the number of objects in the vector,
 				// SelectedIndex will assert in a debug build,
 				// and throw an exception in a release build.
-				if (clerk != null && sendingClerk == clerk && clerk.IsActiveInGui)
+				if (clerk != null && clerk.IsActiveInGui)
 				{
 					m_browseViewer.SelectedIndex = clerk.CurrentIndex;
 					// go ahead and SetInfoBarText even if we didn't change indices
 					// we may have changed objects or root object classes (from Entries to Senses)
 					SetInfoBarText();
 				}
-				//base.OnRecordNavigation(argument);
 			}
 			finally
 			{
@@ -672,8 +668,6 @@ namespace SIL.FieldWorks.XWorks
 				if (rni.SuppressFocusChange && bvEnabled)
 					m_browseViewer.Enabled = true;
 			}
-
-			return false;
 		}
 
 		#endregion // Other methods
