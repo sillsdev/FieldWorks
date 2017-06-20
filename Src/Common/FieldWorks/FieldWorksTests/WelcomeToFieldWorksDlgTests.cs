@@ -13,6 +13,17 @@ namespace SIL.FieldWorks
 	[TestFixture]
 	public class WelcomeToFieldWorksDlgTests
 	{
+		/// <summary/>
+		[Test]
+		public void CanCreateWelcomeToFieldWorksDlg()
+		{
+			using (var dlg = new WelcomeToFieldWorksDlg((IHelpTopicProvider)DynamicLoader.CreateNonPublicObject(FwDirectoryFinder.LanguageExplorerDll,
+						"LanguageExplorer.HelpTopics.FlexHelpTopicProvider"), null, false))
+			{
+				Assert.That(dlg, Is.Not.Null);
+			}
+		}
+
 		/// <summary>
 		/// Receive button should be enabled/disabled based on FlexBridge availability.
 		/// </summary>

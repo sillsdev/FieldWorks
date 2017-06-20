@@ -1158,7 +1158,7 @@ namespace SIL.FieldWorks
 			// even when the application is in a crashed state. For example, error reporting failed
 			// before I added the static registry keys, because getting App.SettingsKey failed somehow.
 			RegistryKey appKey = FwRegistryHelper.FieldWorksRegistryKey;
-			if (parent != null && s_flexApp != null && s_flexApp != null)
+			if (parent != null && s_flexApp != null)
 				appKey = s_flexAppKey;
 			return ErrorReporter.ReportException(error, appKey, SupportEmail,
 				parent as Form, isLethal);
@@ -2969,12 +2969,10 @@ namespace SIL.FieldWorks
 					if (!app.InitCacheForApp(progressDlg))
 						throw new StartupException(Properties.Resources.kstidCacheInitFailure);
 				}
-				catch (StartupException)
-				{
-					throw;
-				}
 				catch (Exception e)
 				{
+					if (e is StartupException)
+						throw;
 					throw new StartupException(Properties.Resources.kstidCacheInitFailure, e, true);
 				}
 				undoHelper.RollBack = false;
