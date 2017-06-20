@@ -42,7 +42,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		private ICmPossibilityList m_list;
 		private HvoTreeNode m_lastConfirmedNode = null;
 		/// <summary>
-		///  "<Not Sure>" node, or sometimes 'Any' node.
+		///  "Not Sure" node, or sometimes 'Any' node.
 		/// </summary>
 		protected HvoTreeNode m_kEmptyNode = null;
 		private int m_ws;
@@ -541,9 +541,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// Add a 'not sure' item to the menu. If the current target is zero, it will be selected.
 		/// It is saved as m_kEmptyNode. Also returns the new node.
 		/// </summary>
-		/// <param name="popupTree"></param>
-		/// <param name="hvoTarget"></param>
-		/// <returns></returns>
 		protected TreeNode AddNotSureItem(PopupTree popupTree)
 		{
 			HvoTreeNode empty = new HvoTreeNode(TsStringUtils.MakeString(LexTextControls.ks_NotSure_, Cache.WritingSystemFactory.UserWs), kEmpty);

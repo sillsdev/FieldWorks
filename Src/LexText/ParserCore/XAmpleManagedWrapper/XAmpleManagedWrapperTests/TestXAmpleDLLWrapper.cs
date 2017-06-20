@@ -5,6 +5,7 @@
 using System;
 using System.IO;
 using NUnit.Framework;
+using SIL.FieldWorks.Common.FwUtils;
 using XAmpleManagedWrapper;
 
 namespace XAmpleManagedWrapperTests
@@ -21,9 +22,8 @@ namespace XAmpleManagedWrapperTests
 
 		protected void LoadFilesHelper(XAmpleDLLWrapper wrapper)
 		{
-			string tempPath = "../../Src/LexText/ParserCore/ParserCoreTests/M3ToXAmpleTransformerTestsDataFiles";
-			// TODO: use DirectoryFinder.FWCodeDirectory
-			string xPath = "../../DistFiles/" + "/Language Explorer/Configuration/Grammar";
+			string tempPath = Path.Combine(FwDirectoryFinder.SourceDirectory, "LexText", "ParserCore", "ParserCoreTests", "M3ToXAmpleTransformerTestsDataFiles");
+			string xPath = Path.Combine(FwDirectoryFinder.CodeDirectory, "Language Explorer", "Configuration", "Grammar");
 			wrapper.LoadFiles(xPath, tempPath, "StemName3");
 		}
 

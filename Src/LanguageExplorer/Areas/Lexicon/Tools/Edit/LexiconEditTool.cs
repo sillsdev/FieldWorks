@@ -127,13 +127,12 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			_configurationDocument.Root.Add(columnsElement);
 
 			_recordClerk = LexiconArea.CreateBasicClerkForLexiconArea(PropertyTable.GetValue<FdoCache>("cache"));
-			var flexComponentParameters = new FlexComponentParameters(PropertyTable, Publisher, Subscriber);
-			_recordClerk.InitializeFlexComponent(flexComponentParameters);
+			_recordClerk.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
 
 			_recordBrowseView = new RecordBrowseView(_configurationDocument.Root, _recordClerk);
 
 			var dataTreeMenuHandler = new LexEntryMenuHandler();
-			dataTreeMenuHandler.InitializeFlexComponent(flexComponentParameters);
+			dataTreeMenuHandler.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
 #if RANDYTODO
 			// TODO: Set up 'dataTreeMenuHandler' to handle menu events.
 			// TODO: Install menus and connect them to event handlers. (See "CreateContextMenuStrip" method for where the menus are.)
@@ -179,11 +178,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				Dock = DockStyle.Right
 			};
 			paneBar.AddControls(new List<Control> { panelMenu, panelButton });
-			_multiPane = MultiPaneFactory.CreateMultiPaneWithTwoPaneBarContainersInMainCollapsingSplitContainer(flexComponentParameters,
+			_multiPane = MultiPaneFactory.CreateMultiPaneWithTwoPaneBarContainersInMainCollapsingSplitContainer(majorFlexComponentParameters.FlexComponentParameters,
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
 				mainMultiPaneParameters,
 				_recordBrowseView, "Browse", new PaneBar(),
-				_innerMultiPane = MultiPaneFactory.CreateNestedMultiPane(flexComponentParameters, nestedMultiPaneParameters), "Dictionary & Details", paneBar);
+				_innerMultiPane = MultiPaneFactory.CreateNestedMultiPane(majorFlexComponentParameters.FlexComponentParameters, nestedMultiPaneParameters), "Dictionary & Details", paneBar);
 			_innerMultiPane.Panel1Collapsed = !PropertyTable.GetValue<bool>(Show_DictionaryPubPreview);
 			panelButton.DatTree = recordEditView.DatTree;
 

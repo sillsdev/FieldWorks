@@ -72,7 +72,7 @@ namespace SIL.FieldWorks.Common.FXT
 		private string m_sOutputFilePath = null;
 
 		/// <summary>
-		/// When true, if and object *would* be output but is missing a matching <class>, an exception is thrown
+		/// When true, if and object *would* be output but is missing a matching "class", an exception is thrown
 		/// </summary>
 		protected bool m_requireClassTemplatesForEverything=false;
 
@@ -512,9 +512,6 @@ namespace SIL.FieldWorks.Common.FXT
 		/// <summary>
 		/// Conditionally process the children.
 		/// </summary>
-		/// <param name="contentsStream"></param>
-		/// <param name="currentObject"></param>
-		/// <param name="node"></param>
 		protected void DoIfElement(TextWriter contentsStream, ICmObject currentObject,
 			XmlNode node, bool fExpected)
 		{
@@ -2586,9 +2583,6 @@ namespace SIL.FieldWorks.Common.FXT
 		/// <summary>
 		/// Process a known virtual property for the given object.
 		/// </summary>
-		/// <param name="currentObject"></param>
-		/// <param name="property"></param>
-		/// <returns></returns>
 		protected void ProcessVirtualClassVector(TextWriter contentsStream,
 			ICmObject currentObject, string property, string virtClass)
 		{

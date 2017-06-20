@@ -39,7 +39,6 @@ namespace Sfm2Xml
 		/// <summary>
 		/// Constructor requires a file name
 		/// </summary>
-		/// <param name="filename"></param>
 		public ByteReader(string filename, ref ClsLog Log)
 		{
 			m_Log = Log;
@@ -58,7 +57,6 @@ namespace Sfm2Xml
 		/// <summary>
 		/// Constructor (used for tests) take spurious file name and pretends contents are the byte array
 		/// </summary>
-		/// <param name="filename"></param>
 		public ByteReader(string filename, byte[] contents)
 		{
 			Init(filename, contents);
@@ -255,9 +253,6 @@ namespace Sfm2Xml
 		/// <summary>
 		/// Return the next sfm marker and its data for view.
 		/// </summary>
-		/// <param name="sfmMarker"></param>
-		/// <param name="sfmData"></param>
-		/// <returns></returns>
 		public bool GetLookAheadSfmMarkerAndData(out string sfmMarker, out byte[] sfmData, out byte[] sfmBadBytes)
 		{
 			sfmMarker = m_sfmLookAheadMarker;
@@ -275,9 +270,6 @@ namespace Sfm2Xml
 		/// duplication of memory - the contents being stored twice.)  So, for now as it isn't
 		/// needed, we'll just read ahead one token.
 		/// </summary>
-		/// <param name="sfmMarker"></param>
-		/// <param name="sfmData"></param>
-		/// <returns></returns>
 		public bool GetNextSfmMarkerAndData(out string sfmMarker, out byte[] sfmData, out byte[] badSfmData)
 		{
 			// on the first time through, get the 'look ahead' sfm and data too.
@@ -322,8 +314,6 @@ namespace Sfm2Xml
 		/// Worker method that returns the sfm marker as a string and the data for
 		/// it as an array of bytes.
 		/// </summary>
-		/// <param name="sfmMarker"></param>
-		/// <param name="sfmData"></param>
 		/// <returns>false when there is no more data to process, else true</returns>
 		private bool getNextSfmMarkerAndData(out string sfmMarker, out byte[] sfmData, out byte[] badSfmBytes)
 		{

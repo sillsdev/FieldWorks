@@ -24,7 +24,7 @@ namespace XMLViewsTests
 	public class TestXmlViewsUtils : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
 		/// <summary>
-		/// Return true if the two nodes match. Corresponding children shoudl match, and
+		/// Return true if the two nodes match. Corresponding children should match, and
 		/// corresponding attributes (though not necessarily in the same order).
 		/// The nodes are expected to be actually XmlElements
 		/// </summary>

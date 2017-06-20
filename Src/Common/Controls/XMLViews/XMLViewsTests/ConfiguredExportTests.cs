@@ -82,7 +82,7 @@ namespace XMLViewsTests
 		}
 
 #if RANDYTODO
-		// TODO: Figure out wahy this is a new failure.
+		// TODO: Figure out why this is a new failure.
 #endif
 		[Test]
 		[Ignore("RANDYTODO: Figure out why it fails, since the long awaited merge.")]

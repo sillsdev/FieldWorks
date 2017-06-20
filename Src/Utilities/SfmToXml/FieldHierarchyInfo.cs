@@ -32,6 +32,7 @@ namespace Sfm2Xml
 		/// <param name="dest">fw dest</param>
 		/// <param name="lang">language</param>
 		/// <param name="begin">true if begin marker</param>
+		/// <param name="destClass"></param>
 		public FieldHierarchyInfo(string marker, string dest, string lang, bool begin, string destClass)
 		{
 			srcMarker = marker;

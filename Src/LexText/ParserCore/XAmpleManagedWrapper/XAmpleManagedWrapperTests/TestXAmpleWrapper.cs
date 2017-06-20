@@ -2,7 +2,9 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System.IO;
 using NUnit.Framework;
+using SIL.FieldWorks.Common.FwUtils;
 using XAmpleManagedWrapper;
 
 namespace XAmpleManagedWrapperTests
@@ -19,9 +21,8 @@ namespace XAmpleManagedWrapperTests
 
 		protected void LoadFilesHelper(XAmpleWrapper wrapper)
 		{
-			var tempPath = "../../Src/LexText/ParserCore/ParserCoreTests/M3ToXAmpleTransformerTestsDataFiles";
-			// TODO: use DirectoryFinder.FWCodeDirectory
-			var xPath = "../../DistFiles/" + "/Language Explorer/Configuration/Grammar";
+			var tempPath = Path.Combine(FwDirectoryFinder.SourceDirectory, "LexText", "ParserCore", "ParserCoreTests", "M3ToXAmpleTransformerTestsDataFiles");
+			var xPath = Path.Combine(FwDirectoryFinder.CodeDirectory, "Language Explorer", "Configuration", "Grammar");
 			wrapper.LoadFiles(xPath, tempPath, "StemName3");
 		}
 

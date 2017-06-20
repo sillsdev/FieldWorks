@@ -161,7 +161,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		public XmlBrowseViewBaseVc(XmlBrowseViewBase xbv)
 		{
-			MApp = xbv.m_bv.PropertyTable.GetValue<IApp>("FeedbackInfoProvider");
+			TheApp = xbv.m_bv.PropertyTable.GetValue<IApp>("FeedbackInfoProvider");
 			XmlBrowseViewBaseVcInit(xbv.Cache, xbv.DataAccess);
 
 		}
@@ -502,9 +502,9 @@ namespace SIL.FieldWorks.Common.Controls
 			if (m_fShowSelected)
 			{
 				// Only need these if showing the selected column.
-				m_UncheckedCheckPic = m_app.PictureHolder.GetPicture("UncheckedCheckBox", ResourceHelper.UncheckedCheckBox);
-				m_CheckedCheckPic = m_app.PictureHolder.GetPicture("CheckedCheckBox", ResourceHelper.CheckedCheckBox);
-				m_DisabledCheckPic = m_app.PictureHolder.GetPicture("DisabledCheckBox", ResourceHelper.DisabledCheckBox);
+				m_UncheckedCheckPic = TheApp.PictureHolder.GetPicture("UncheckedCheckBox", ResourceHelper.UncheckedCheckBox);
+				m_CheckedCheckPic = TheApp.PictureHolder.GetPicture("CheckedCheckBox", ResourceHelper.CheckedCheckBox);
+				m_DisabledCheckPic = TheApp.PictureHolder.GetPicture("DisabledCheckBox", ResourceHelper.DisabledCheckBox);
 				// We want a width in millipoints (72000/inch). Value we have is in 100/mm.
 				// There are 25.4 mm/inch.
 				m_dxmpCheckWidth = m_UncheckedCheckPic.Width * 72000 / 2540;
@@ -799,10 +799,10 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			set
 			{
-				m_PreviewArrowPic = m_app.PictureHolder.GetPicture("PreviewArrow", value);
+				m_PreviewArrowPic = TheApp.PictureHolder.GetPicture("PreviewArrow", value);
 				Image x = value;
 				x.RotateFlip(RotateFlipType.Rotate180FlipNone);
-				m_PreviewRTLArrowPic = m_app.PictureHolder.GetPicture("PreviewRTLArrow", x);
+				m_PreviewRTLArrowPic = TheApp.PictureHolder.GetPicture("PreviewRTLArrow", x);
 			}
 		}
 

@@ -41,9 +41,6 @@ namespace SIL.FieldWorks.Common.Framework
 
 		#endregion
 
-		#region Protected properties
-		#endregion
-
 		#region Abstract and Virtual methods
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -57,9 +54,6 @@ namespace SIL.FieldWorks.Common.Framework
 		{
 			return new Guid(baseNode.Attributes.GetNamedItem("version").Value);
 		}
-		#endregion
-
-		#region Static methods
 		#endregion
 
 		#region Protected methods

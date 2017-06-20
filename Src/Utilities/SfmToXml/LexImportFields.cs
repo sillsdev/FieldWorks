@@ -168,9 +168,6 @@ namespace Sfm2Xml
 		/// <summary>
 		/// add a field to the given class
 		/// </summary>
-		/// <param name="className"></param>
-		/// <param name="fieldName"></param>
-		/// <returns></returns>
 		public bool AddField(string className, string partOf, ILexImportField field)
 		{
 			Dictionary<string, ILexImportField> fields = null;
@@ -221,9 +218,6 @@ namespace Sfm2Xml
 		/// <summary>
 		/// add a field to the given class
 		/// </summary>
-		/// <param name="className"></param>
-		/// <param name="fieldName"></param>
-		/// <returns></returns>
 		public bool AddCustomField(int classID, ILexImportCustomField field)
 		{
 			string baseClassName = GetCustomFieldClassFromClassID(classID);

@@ -63,8 +63,6 @@ namespace Sfm2Xml
 		/// but is not the topmost and so the data can't be output at this time.  The data will be
 		/// flushed when the object is removed.
 		/// </summary>
-		/// <param name="marker"></param>
-		/// <param name="data"></param>
 		public void AddPendingSfmData(string marker, byte[] data, int line, bool unique)
 		{
 			m_pendingSfms.Add(new PendingSfmData(marker, data, line));
@@ -109,7 +107,6 @@ namespace Sfm2Xml
 		/// <summary>
 		/// Add a sfm to the list of inuse sfm's
 		/// </summary>
-		/// <param name="sfm"></param>
 		public void AddSfm(string sfm, bool unique)
 		{
 			// only add if it's not already in the list

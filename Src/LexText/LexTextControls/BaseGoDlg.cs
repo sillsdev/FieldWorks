@@ -482,6 +482,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="wp">Strings used for various items in this dialog.</param>
 		/// <param name="propertyTable"></param>
 		/// <param name="publisher"></param>
+		/// <param name="subscriber"></param>
 		/// <param name="form">Form to use in main text edit box.</param>
 		public virtual void SetDlgInfo(FdoCache cache, WindowParams wp, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, string form)
 		{
@@ -495,14 +496,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			Form = form;
 		}
 
-		///  <summary>
-		///
-		///  </summary>
-		///  <param name="cache"></param>
-		///  <param name="wp"></param>
-		/// <param name="propertyTable"></param>
-		/// <param name="publisher"></param>
-		/// <param name="tssform">establishes the ws of the dialog.</param>
+		///  <summary />
 		public void SetDlgInfo(FdoCache cache, WindowParams wp, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, ITsString tssform)
 		{
 			CheckDisposed();

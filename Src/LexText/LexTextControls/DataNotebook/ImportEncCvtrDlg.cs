@@ -94,8 +94,8 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 
 		private void LoadEncodingConverters()
 		{
-			/// Added to make the list of encoding converters match the list that is given when
-			/// the add new converter option is selected. (LT-2955)
+			// Added to make the list of encoding converters match the list that is given when
+			// the add new converter option is selected. (LT-2955)
 			EncConverters encConv = new EncConverters();
 			System.Collections.IDictionaryEnumerator de = encConv.GetEnumerator();
 			m_cbEC.BeginUpdate();

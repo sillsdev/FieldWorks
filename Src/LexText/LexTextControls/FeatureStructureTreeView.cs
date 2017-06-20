@@ -28,9 +28,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		public FeatureStructureTreeView(System.ComponentModel.IContainer container)
 		{
-			///
-			/// Required for Windows.Forms Class Composition Designer support
-			///
+			// Required for Windows.Forms Class Composition Designer support
 			container.Add(this);
 			Init();
 		}

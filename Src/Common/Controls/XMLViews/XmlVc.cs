@@ -126,7 +126,6 @@ namespace SIL.FieldWorks.Common.Controls
 		// when the layout name changes.
 		XElement m_conditionNode = null;
 		SimpleRootSite m_rootSite = null;
-		internal IApp m_app;
 
 		/// <summary>
 		/// This is used to interpret the "reversal" writing system.  This is needed to ensure
@@ -213,7 +212,7 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			m_rootLayoutName = rootLayoutName;
 			m_fEditable = fEditable;
-			MApp = app;
+			TheApp = app;
 			m_sda = sda; // BEFORE we make the root command, which uses it.
 			MakeRootCommand(rootSite, condition);
 		}
@@ -345,7 +344,7 @@ namespace SIL.FieldWorks.Common.Controls
 			m_idToDisplayCommand.Clear();
 			m_idToDisplayCommand[kRootFragId] = rootCommand;
 			m_displayCommandToId.Clear();
-			m_layouts = new LayoutCache(m_mdc, m_cache.ProjectId.Name, MApp,
+			m_layouts = new LayoutCache(m_mdc, m_cache.ProjectId.Name, TheApp,
 				m_cache.ProjectId.ProjectFolder);
 			// We could reset the next id, but that's arbitrary, so why bother?
 		}
@@ -1880,7 +1879,7 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			if (SuppressPictures)
 				return null;
-			return m_app.PictureHolder.GetComPicture(imagePath);
+			return TheApp.PictureHolder.GetComPicture(imagePath);
 		}
 
 		/// <summary>
@@ -3931,7 +3930,7 @@ namespace SIL.FieldWorks.Common.Controls
 				base.Cache = value;
 
 				DataAccess = m_cache.DomainDataByFlid;
-				m_layouts = new LayoutCache(m_mdc, m_cache.ProjectId.Name, MApp,
+				m_layouts = new LayoutCache(m_mdc, m_cache.ProjectId.Name, TheApp,
 					m_cache.ProjectId.ProjectFolder);
 			}
 		}
@@ -3960,11 +3959,7 @@ namespace SIL.FieldWorks.Common.Controls
 		}
 
 		/// <summary/>
-		protected IApp MApp
-		{
-			get { return m_app; }
-			set { m_app = value; }
-		}
+		protected IApp TheApp { get; set; }
 
 		/// <summary>
 		/// get an integer value, including from an FDO property if specified
