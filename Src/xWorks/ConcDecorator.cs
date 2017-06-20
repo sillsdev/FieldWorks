@@ -283,7 +283,6 @@ namespace SIL.FieldWorks.XWorks
 		/// not have a meaningful Index, but we are not using that here. We make a dummy HVO for the root
 		/// as well as the items, if we don't already have one.
 		/// </summary>
-		/// <param name="occurrences"></param>
 		public void SetOccurrences(int hvo, IEnumerable<IParaFragment> occurrences)
 		{
 			int oldCount = m_concValues.Length;

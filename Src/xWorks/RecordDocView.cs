@@ -138,9 +138,10 @@ namespace SIL.FieldWorks.XWorks
 
 		protected override void ShowRecord()
 		{
+#if RANDYTODO
 			Debug.Assert(Clerk.CurrentObject != null);
 			Debug.Assert(m_rootSite != null);
-#if !RANDYTODO
+#else
 			// TODO: I run release builds, so the above assert doesn't do anything.
 			// TODO: Remove this approach, when I'm satisfied all callers are well-behaved.
 			if (Clerk.CurrentObject == null)

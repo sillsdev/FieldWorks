@@ -285,7 +285,11 @@ namespace SIL.FieldWorks.XWorks
 			get
 			{
 				CheckDisposed();
-
+				// we only have a reference to the filter which means that it might have been
+				// disposed. In that case treat it as if we wouldn't have a filter.
+				var disposable = m_filter as IDisposable;
+				if (disposable != null)
+					m_filter = null;
 				return m_filter;
 			}
 			set
@@ -2555,7 +2559,6 @@ namespace SIL.FieldWorks.XWorks
 		/// In some cases thingToDelete is not actually the current object, but it should always
 		/// be related to it.
 		/// </summary>
-		/// <param name="state"></param>
 		public virtual void DeleteCurrentObject(ProgressState state, ICmObject thingToDelete)
 		{
 			CheckDisposed();

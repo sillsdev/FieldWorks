@@ -187,8 +187,10 @@ namespace SIL.FieldWorks.XWorks
 
 		#region Message Handlers
 
+		/// <summary />
 		public override void RecordNavigation_Message_Handler(object newValue)
 		{
+			// Do not call base.
 			if(!m_fullyInitialized)
 				return;
 
@@ -329,6 +331,8 @@ namespace SIL.FieldWorks.XWorks
 			try
 			{
 				m_dataEntryForm.Show();
+				using (new WaitCursor(this))
+				{
 				// Enhance: Maybe do something here to allow changing the templates without the starting the application.
 				ICmObject obj = Clerk.CurrentObject;
 
@@ -340,6 +344,7 @@ namespace SIL.FieldWorks.XWorks
 				}
 
 				m_dataEntryForm.ShowObject(obj, m_layoutName, m_layoutChoiceField, Clerk.CurrentObject, ShouldSuppressFocusChange(rni));
+			}
 			}
 			catch (Exception error)
 			{

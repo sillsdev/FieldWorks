@@ -31,7 +31,7 @@ namespace SIL.FieldWorks.XWorks
 	{
 		#region Enumerations
 
-		public enum TreebarAvailability {Required, Optional, NotAllowed, NotMyBusiness};
+		public enum TreebarAvailability {Required, NotAllowed, NotMyBusiness};
 
 		#endregion Enumerations
 
@@ -482,8 +482,20 @@ namespace SIL.FieldWorks.XWorks
 			string className = StringTable.Table.GetString("No Record", "Misc");
 			if (Clerk.CurrentObject != null)
 			{
-				using (var uiObj = CmObjectUi.MakeUi(Clerk.CurrentObject))
-					className = uiObj.DisplayNameOfClass;
+				string typeName = Clerk.CurrentObject.GetType().Name;
+				if (Clerk.CurrentObject is ICmPossibility)
+				{
+					var possibility = Clerk.CurrentObject as ICmPossibility;
+					className = possibility.ItemTypeName();
+			}
+			else
+			{
+					className = StringTable.Table.GetString(typeName, "ClassNames");
+				}
+				if (className == "*" + typeName + "*")
+				{
+					className = typeName;
+				}
 			}
 			else
 			{
@@ -502,7 +514,7 @@ namespace SIL.FieldWorks.XWorks
 			// First-chance exception at 0x4ed9b280 in Flex.exe: 0xC0000005: Access violation writing location 0x00f90004.
 			// The following code doesn't cause the exception, but neither one actually sets the Text to className,
 			// so something needs to be changed somewhere. It doesn't enter "override string Text" in PaneBar.cs
-			((IPaneBar) m_informationBar).Text = className;
+			((IPaneBar)m_informationBar).Text = className;
 		}
 
 		#endregion Other methods

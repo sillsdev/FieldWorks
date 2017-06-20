@@ -77,7 +77,7 @@ namespace SIL.FieldWorks.XWorks
 			m_fullyInitialized = true;
 			// These have to be done here, rather than in SetupDataContext(),
 			// or the record clerk resets its current object,
-			// when the root object gets set in the borwse view's MakeRoot,
+			// when the root object gets set in the browse view's MakeRoot,
 			// which, in  turn, resets its current index to zero,
 			// which fires events. By connecting them here,
 			// they won't be ready to hand off to clients.
@@ -625,7 +625,6 @@ namespace SIL.FieldWorks.XWorks
 		/// another pane may show a more detailed view of the selected record. Therefore, RecordBrowseView
 		/// never claims to have 'handled' this event.
 		/// </summary>
-		/// <param name="newValue"></param>
 		/// <returns>
 		/// false; we didn't fully handle it, even though we may have done something.
 		/// </returns>

@@ -38,7 +38,7 @@ namespace SIL.FieldWorks.XWorks
 		// suspend loading the property until given a class by RecordBrowseView via
 		// RecordClerk.OnChangeListItemsClass();
 		bool m_suspendReloadUntilOnChangeListItemsClass = true;
-		private XElement m_partOwnershipTreeSpec = new XElement("PartOwnershipTree",
+		private readonly XElement m_partOwnershipTreeSpec = new XElement("PartOwnershipTree",
 			/* the ClassOwnershipTree describes the relative relationship between the target classes in the possible source properties
 			   loaded by this list. This especially helps in maintaining the CurrentIndex when switching from one property to the next. */
 					new XElement("ClassOwnershipTree",

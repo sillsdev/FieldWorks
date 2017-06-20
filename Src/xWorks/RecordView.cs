@@ -50,11 +50,10 @@ namespace SIL.FieldWorks.XWorks
 		private System.ComponentModel.Container components = null;
 
 		#region Consruction and disposal
-		/// -----------------------------------------------------------------------------------
+
 		/// <summary>
 		/// Initializes a new instance of the <see cref="RecordView"/> class.
 		/// </summary>
-		/// -----------------------------------------------------------------------------------
 		public RecordView()
 		{
 			Init();
@@ -90,14 +89,12 @@ namespace SIL.FieldWorks.XWorks
 			AccNameDefault = "RecordView"; // default accessibility name
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
 		/// <param name="disposing"><c>true</c> to release both managed and unmanaged
 		/// resources; <c>false</c> to release only unmanaged resources.
 		/// </param>
-		/// -----------------------------------------------------------------------------------
 		protected override void Dispose( bool disposing )
 		{
 			//Debug.WriteLineIf(!disposing, "****************** " + GetType().Name + " 'disposing' is false. ******************");
@@ -122,6 +119,7 @@ namespace SIL.FieldWorks.XWorks
 
 		#region Other methods
 
+		/// <summary />
 		public virtual void RecordNavigation_Message_Handler(object newValue)
 		{
 			CheckDisposed();
@@ -287,36 +285,23 @@ namespace SIL.FieldWorks.XWorks
 
 		private void SetTreebarAvailability()
 		{
-			string a = XmlUtils.GetOptionalAttributeValue(m_configurationParametersElement, "treeBarAvailability", "");
-
-			if(a == "NotMyBusiness")
-				m_treebarAvailability = TreebarAvailability.NotMyBusiness;
-			else
+			var treeBarAvailability = XmlUtils.GetOptionalAttributeValue(m_configurationParametersElement, "treeBarAvailability", string.Empty);
+			switch (treeBarAvailability)
 			{
-				if(a != "")
-					m_treebarAvailability = (TreebarAvailability)Enum.Parse(typeof(TreebarAvailability), a, true);
-				else
+				case "":
 					m_treebarAvailability = DefaultTreeBarAvailability;
-
-				//m_previousShowTreeBarValue= PropertyTable.GetValue<bool>("ShowRecordList", SettingsGroup.GlobalSettings);
-
-				//				string e = XmlUtils.GetOptionalAttributeValue(m_configurationParametersElement, "treeBarAvailability", DefaultTreeBarAvailability);
-				//				m_treebarAvailability = (TreebarAvailability)Enum.Parse(typeof(TreebarAvailability), e, true);
-
-				switch (m_treebarAvailability)
-				{
-					default:
 						break;
-					case TreebarAvailability.NotAllowed:
+				case "Required":
+					m_treebarAvailability = TreebarAvailability.Required;
 						break;
-
-					case TreebarAvailability.Required:
+				case "NotAllowed":
+					m_treebarAvailability = TreebarAvailability.NotAllowed;
 						break;
-
-					case TreebarAvailability.Optional:
-						//Just use it however the last guy left it (see: PrepareToGoAway())
+				case "NotMyBusiness":
+					m_treebarAvailability = TreebarAvailability.NotMyBusiness;
 						break;
-				}
+				default:
+					throw new NotImplementedException(string.Format("TreebarAvailability '{0}' is not recognized.", treeBarAvailability));
 			}
 		}
 
@@ -336,12 +321,10 @@ namespace SIL.FieldWorks.XWorks
 
 		#region Component Designer generated code
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
 		/// </summary>
-		/// -----------------------------------------------------------------------------------
 		private void InitializeComponent()
 		{
 			//

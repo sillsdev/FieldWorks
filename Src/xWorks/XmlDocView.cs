@@ -57,7 +57,7 @@ namespace SIL.FieldWorks.XWorks
 		#region Consruction and disposal
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="ViewManager"/> class.
+		/// Initializes a new instance of the <see cref="XmlDocView"/> class.
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
 		public XmlDocView()
@@ -68,7 +68,7 @@ namespace SIL.FieldWorks.XWorks
 			InitializeComponent();
 
 
-			base.AccNameDefault = "XmlDocView";		// default accessibility name
+			AccNameDefault = "XmlDocView";		// default accessibility name
 		}
 
 		public XmlDocView(XElement configurationParametersElement, RecordClerk recordClerk)
@@ -374,6 +374,10 @@ namespace SIL.FieldWorks.XWorks
 
 		protected override void OnSizeChanged(EventArgs e)
 		{
+			if (!m_fullyInitialized)
+			{
+				return;
+			}
 			base.OnSizeChanged(e);
 			m_titleStr = null;
 			SetInfoBarText();

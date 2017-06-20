@@ -63,19 +63,19 @@ namespace SIL.FieldWorks.XWorks
 			return Icu.Normalize(styleSheet.ToString(true, 1), Icu.UNormalizationMode.UNORM_NFC);
 		}
 
-		private static void GenerateCssForDefaultStyles(IPropertyTable propertyTable, FwStyleSheet propStyleSheet,
+		private static void GenerateCssForDefaultStyles(IPropertyTable propertyTable, FwStyleSheet propertyTableStyleSheet,
 			StyleSheet styleSheet, DictionaryConfigurationModel model)
 		{
-			if (propStyleSheet == null)
+			if (propertyTableStyleSheet == null)
 				return;
 
-			if (propStyleSheet.Styles.Contains("Normal"))
+			if (propertyTableStyleSheet.Styles.Contains("Normal"))
 				GenerateCssForWsSpanWithNormalStyle(styleSheet, propertyTable);
 
-			if (propStyleSheet.Styles.Contains(DictionaryNormal))
+			if (propertyTableStyleSheet.Styles.Contains(DictionaryNormal))
 				GenerateDictionaryNormalParagraphCss(styleSheet, propertyTable);
 
-			if (propStyleSheet.Styles.Contains(LetterHeadingStyleName))
+			if (propertyTableStyleSheet.Styles.Contains(LetterHeadingStyleName))
 			{
 				GenerateCssForWritingSystems(".letter", LetterHeadingStyleName, styleSheet, propertyTable);
 			}

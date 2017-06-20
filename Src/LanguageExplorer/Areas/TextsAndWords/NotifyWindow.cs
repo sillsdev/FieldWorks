@@ -15,12 +15,15 @@ using System.Runtime.InteropServices;
 
 namespace LanguageExplorer.Areas.TextsAndWords
 {
+#if RANDYTODO
+	// TODO: See if NotifyWindow is really needed.
+#endif
 	/// <summary>
 	/// Display An MSN-Messenger-Style NotifyWindow.
 	/// </summary>
 	internal class NotifyWindow : Form
 	{
-		#region Public Variables
+#region Public Variables
 		/// <summary>
 		/// Gets or sets the title text to be displayed in the NotifyWindow.
 		/// </summary>
@@ -94,13 +97,13 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		public enum BackgroundStyles { BackwardDiagonalGradient, ForwardDiagonalGradient, HorizontalGradient, VerticalGradient, Solid };
 		public enum ClockStates { Opening, Closing, Showing, None };
 		public ClockStates ClockState;
-		#endregion
+#endregion
 
-		#region Protected Variables
+#region Protected Variables
 		protected bool closePressed = false, textPressed = false, titlePressed = false, closeHot = false, textHot = false, titleHot = false;
 		protected Rectangle rClose, rText, rTitle, rDisplay, rScreen, rGlobClose, rGlobText, rGlobTitle, rGlobDisplay;
 		protected System.Windows.Forms.Timer viewClock;
-		#endregion
+#endregion
 
 		/// <summary>
 		/// Check to see if the object has been disposed.
@@ -113,7 +116,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
 		}
 
-		#region Implementation of IDisposable
+#region Implementation of IDisposable
 
 		/// <summary>Disposes of the resources (other than memory) used by the <see cref="T:System.Windows.Forms.Form" />.</summary>
 		/// <param name="disposing">true to release both managed and unmanaged resources; false to release only unmanaged resources. </param>
@@ -126,9 +129,9 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 			base.Dispose(disposing);
 		}
-		#endregion
+#endregion
 
-		#region Constructor
+#region Constructor
 		/// <param name="title">Title text displayed in the NotifyWindow</param>
 		/// <param name="text">Main text displayedin the NotifyWindow</param>
 		public NotifyWindow(string title, string text) : this() { Title = title; Text = text; }
@@ -159,9 +162,9 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			ActualHeight = 110;
 			WaitTime = 11000;
 		}
-		#endregion
+#endregion
 
-		#region Public Methods
+#region Public Methods
 		/// <summary>
 		/// Sets the width and height of the NotifyWindow.
 		/// </summary>
@@ -250,9 +253,9 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 			ClockState = ClockStates.Opening;
 		}
-		#endregion
+#endregion
 
-		#region Drawing
+#region Drawing
 		protected override void OnPaint(System.Windows.Forms.PaintEventArgs e)
 		{
 			// Draw the close button and text.
@@ -415,9 +418,9 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				return false;
 			}
 		}
-		#endregion
+#endregion
 
-		#region Timers and EventHandlers
+#region Timers and EventHandlers
 		protected void viewTimer(object sender, System.EventArgs e)
 		{
 			switch (ClockState)
@@ -557,9 +560,9 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			}
 			base.OnMouseUp(e);
 		}
-		#endregion
+#endregion
 
-		#region P/Invoke
+#region P/Invoke
 		// DrawThemeBackground()
 		protected const Int32 WP_CLOSEBUTTON = 18;
 		protected const Int32 CBS_NORMAL = 1;
@@ -608,6 +611,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		protected static extern bool ShowWindow(IntPtr hWnd, Int32 flags);
 		[DllImport("user32.dll")]
 		protected static extern bool SetWindowPos(IntPtr hWnd, Int32 hWndInsertAfter, Int32 X, Int32 Y, Int32 cx, Int32 cy, uint uFlags);
-		#endregion
+#endregion
 	}
 }

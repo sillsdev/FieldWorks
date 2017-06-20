@@ -37,6 +37,12 @@ namespace SIL.FieldWorks.XWorks
 		internal const string CurrentSelectedEntryClass = "currentSelectedEntry";
 		private string m_currentConfigView; // used when this is a Dictionary view to store which view is active.
 
+		/// <summary />
+		internal XhtmlDocView(XElement configurationParametersElement, RecordClerk recordClerk)
+			: base(configurationParametersElement, recordClerk)
+		{
+		}
+
 		#region Overrides of XWorksViewBase
 
 		/// <summary>
@@ -47,12 +53,14 @@ namespace SIL.FieldWorks.XWorks
 		{
 			base.InitializeFlexComponent(flexComponentParameters);
 
+			SuspendLayout();
 			m_mainView = new XWebBrowser(XWebBrowser.BrowserType.GeckoFx)
 		{
 				Dock = DockStyle.Fill,
 				Location = new Point(0, 0),
 				IsWebBrowserContextMenuEnabled = false
 			};
+			m_mainView.SuspendLayout();
 			ReadParameters();
 			// Use update helper to help with optimizations and special cases for list loading
 			using (var luh = new RecordClerk.ListUpdateHelper(Clerk, Clerk.ListLoadingSuppressed))
@@ -73,6 +81,37 @@ namespace SIL.FieldWorks.XWorks
 					browser.DomMouseScroll += OnMouseWheel;
 				}
 			}
+			m_mainView.ResumeLayout();
+			ResumeLayout(false);
+		}
+
+		/// <summary>
+		/// About to show, so finish initializing.
+		/// </summary>
+		public void FinishInitialization()
+		{
+			// retrieve persisted clerk index and set it.
+			int idx = PropertyTable.GetValue(Clerk.PersistedIndexProperty, SettingsGroup.LocalSettings, -1);
+			int lim = Clerk.ListSize;
+			if (idx >= 0 && idx < lim)
+			{
+				int idxOld = Clerk.CurrentIndex;
+				try
+				{
+					Clerk.JumpToIndex(idx);
+				}
+				catch
+				{
+					if (lim > idxOld && lim > 0)
+						Clerk.JumpToIndex(idxOld >= 0 ? idxOld : 0);
+				}
+			}
+
+			ShowRecord();
+			m_fullyInitialized = true;
+
+			BringToFront();
+			m_mainView.BringToFront();
 		}
 
 		private void OnMouseWheel(object sender, DomMouseEventArgs domMouseEventArgs)
@@ -706,7 +745,7 @@ namespace SIL.FieldWorks.XWorks
 #endif
 
 		/// <summary>
-		/// Enable the 'File Print...' menu option for the Dictionary view
+		/// Read in the parameters to determine which sequence/collection we are editing.
 		/// </summary>
 		protected override void ReadParameters()
 		{
@@ -880,8 +919,9 @@ namespace SIL.FieldWorks.XWorks
 					var validPublication = GetValidPublicationForConfiguration(currentConfig) ?? xWorksStrings.AllEntriesPublication;
 					if (validPublication != currentPublication)
 					{
-						PropertyTable.SetProperty("SelectedPublication", validPublication, false, true);
+						PropertyTable.SetProperty("SelectedPublication", validPublication, true, true);
 					}
+					SetReversalIndexOnPropertyDlg();
 					UpdateContent(PublicationDecorator, currentConfig);
 					break;
 				case "ActiveClerkSelectedObject":
@@ -1216,9 +1256,13 @@ namespace SIL.FieldWorks.XWorks
 			curViewName = TrimToMaxPixelWidth(Math.Max(2, maxViewWidth), curViewName);
 			var isReversalIndex = DictionaryConfigurationListener.GetDictionaryConfigurationType(PropertyTable) == xWorksStrings.ReversalIndex;
 			if (!isReversalIndex)
-			ResetSpacer(maxViewWidth, curViewName);
+			{
+				ResetSpacer(maxViewWidth, curViewName);
+			}
 			else
-				((IPaneBar) m_informationBar).Text = curViewName;
+			{
+				((IPaneBar)m_informationBar).Text = curViewName;
+		}
 		}
 
 		/// <summary>
@@ -1259,6 +1303,8 @@ namespace SIL.FieldWorks.XWorks
 
 		protected override void OnSizeChanged(EventArgs e)
 		{
+			if (!m_fullyInitialized)
+				return;
 			base.OnSizeChanged(e);
 			SetInfoBarText();
 		}

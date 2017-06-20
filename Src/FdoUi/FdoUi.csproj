@@ -258,6 +258,7 @@
     <Compile Include="InflectionFeatureEditor.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="LcmExtensions.cs" />
     <Compile Include="LexEntryUi.cs">
       <SubType>Code</SubType>
     </Compile>

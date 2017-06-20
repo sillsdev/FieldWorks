@@ -68,13 +68,16 @@ namespace SIL.FieldWorks.XWorks
 		/// Display for required default sorter.
 		/// </summary>
 		public const string kDefault = "Default";
+
 		/// <summary>
 		/// All of the sorters for the clerk.
 		/// </summary>
 		protected Dictionary<string, PropertyRecordSorter> m_allSorters;
+
 		static protected RecordClerk s_lastClerkToLoadTreeBar;
 
 		protected readonly string m_id;
+
 		/// <summary>
 		/// this will be null if this clerk is dependent on another one. Only the top-level clerk
 		/// gets to be represented by and interact with the tree bar.
@@ -87,6 +90,7 @@ namespace SIL.FieldWorks.XWorks
 		/// The record list for the clerk.
 		/// </summary>
 		protected readonly RecordList m_list;
+
 		/// <summary>
 		/// when this is not null, that means there is another clerk managing a list,
 		/// and the selected item of that list provides the object that this
@@ -95,6 +99,7 @@ namespace SIL.FieldWorks.XWorks
 		/// be displaying the analyses of.
 		/// </summary>
 		protected RecordClerk m_clerkProvidingRootObject;
+
 		/// <summary>
 		/// When this is non-null, there may be another clerk which contains a similar list of objects,
 		/// for example, in Notebook most views use a record clerk that has AllRecords, but document
@@ -102,6 +107,7 @@ namespace SIL.FieldWorks.XWorks
 		/// other Clerk, if it exists.
 		/// </summary>
 		private readonly RecordClerk m_relatedClerk;
+
 		/// <summary>
 		/// When m_relatedClerk is not null, and this is also not null, it controls how we find the
 		/// related object which we should switch to when a view using this is activated.
@@ -114,16 +120,23 @@ namespace SIL.FieldWorks.XWorks
 		/// the base record clerk).
 		/// </summary>
 		private readonly string m_relationToRelatedClerk;
+
 		/// <summary>
 		/// this is an object which gives us the list of filters which we should offer to the user from the UI.
 		/// this does not include the filters they can get that by using the FilterBar.
 		/// </summary>
 		protected RecordFilterListProvider m_filterProvider;
+
 		private bool m_editable = true;
+
 		private bool m_suppressSaveOnChangeRecord = false; // true during delete and insert and ShowRecord calls caused by them.
+
 		private bool m_skipShowRecord = false; // skips navigations while a user is editing something.
+
 		private readonly bool m_shouldHandleDeletion = true; // false, if the dependent clerk is to handle deletion, as for reversals.
+
 		private bool m_allowDeletions = true;	// false if nothing is to be deleted for this record clerk.
+
 		/// <summary>
 		/// We need to store what filter we are responsible for setting, locally, so
 		/// that when the user says "no filter/all records",
@@ -132,8 +145,10 @@ namespace SIL.FieldWorks.XWorks
 		/// the FilterBar.
 		/// </summary>
 		protected RecordFilter m_activeMenuBarFilter;
+
 		/// <summary />
 		protected IRecordChangeHandler m_rch;
+
 		/// <summary>
 		/// The display name of what is currently being sorted. This variable is persisted as a user
 		/// setting. When the sort name is null it indicates that the items in the clerk are not
@@ -141,6 +156,7 @@ namespace SIL.FieldWorks.XWorks
 		/// is being sorted).
 		/// </summary>
 		private bool m_isDefaultSort;
+
 		public string SortName { get; internal set; }
 		private RecordSorter m_defaultSorter;
 		private string m_defaultSortLabel;
@@ -165,10 +181,14 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="shouldHandleDeletion"></param>
 		internal RecordClerk(string id, RecordList recordList, RecordSorter defaultSorter, string defaultSortLabel, RecordFilter defaultFilter, bool allowDeletions, bool shouldHandleDeletion)
 		{
-			if (string.IsNullOrWhiteSpace(id)) throw new ArgumentNullException("id");
-			if (recordList == null) throw new ArgumentNullException("recordList");
-			if (defaultSorter == null) throw new ArgumentNullException("defaultSorter");
-			if (string.IsNullOrWhiteSpace(defaultSortLabel)) throw new ArgumentNullException("defaultSortLabel");
+			if (string.IsNullOrWhiteSpace(id))
+				throw new ArgumentNullException("id");
+			if (recordList == null)
+				throw new ArgumentNullException("recordList");
+			if (defaultSorter == null)
+				throw new ArgumentNullException("defaultSorter");
+			if (string.IsNullOrWhiteSpace(defaultSortLabel))
+				throw new ArgumentNullException("defaultSortLabel");
 
 			m_id = id;
 			m_list = recordList;
@@ -178,6 +198,7 @@ namespace SIL.FieldWorks.XWorks
 			m_defaultFilter = defaultFilter; // Null is fine.
 			m_allowDeletions = allowDeletions;
 			m_shouldHandleDeletion = shouldHandleDeletion;
+			IgnoreStatusPanel = false;
 		}
 
 		/// <summary>
@@ -191,9 +212,12 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="shouldHandleDeletion"></param>
 		internal RecordClerk(string id, RecordList recordList, Dictionary<string, PropertyRecordSorter> sorters, RecordFilter defaultFilter, bool allowDeletions, bool shouldHandleDeletion)
 		{
-			if (string.IsNullOrWhiteSpace(id)) throw new ArgumentNullException("id");
-			if (recordList == null) throw new ArgumentNullException("recordList");
-			if (sorters == null) throw new ArgumentNullException("sorters");
+			if (string.IsNullOrWhiteSpace(id))
+				throw new ArgumentNullException("id");
+			if (recordList == null)
+				throw new ArgumentNullException("recordList");
+			if (sorters == null)
+				throw new ArgumentNullException("sorters");
 
 			m_id = id;
 			m_list = recordList;
@@ -220,7 +244,8 @@ namespace SIL.FieldWorks.XWorks
 		internal RecordClerk(string id, RecordList recordList, RecordSorter defaultSorter, string defaultSortLabel, RecordFilter defaultFilter, bool allowDeletions, bool shouldHandleDeletion, RecordFilterListProvider filterProvider)
 			: this(id, recordList, defaultSorter, defaultSortLabel, defaultFilter, allowDeletions, shouldHandleDeletion)
 		{
-			if (filterProvider == null) throw new ArgumentNullException("filterProvider");
+			if (filterProvider == null)
+				throw new ArgumentNullException("filterProvider");
 
 			m_filterProvider = filterProvider;
 		}
@@ -239,7 +264,8 @@ namespace SIL.FieldWorks.XWorks
 		internal RecordClerk(string id, RecordList recordList, RecordSorter defaultSorter, string defaultSortLabel, RecordFilter defaultFilter, bool allowDeletions, bool shouldHandleDeletion, RecordBarHandler recordBarHandler)
 			: this(id, recordList, defaultSorter, defaultSortLabel, defaultFilter, allowDeletions, shouldHandleDeletion)
 		{
-			if (recordBarHandler == null) throw new ArgumentNullException("recordBarHandler");
+			if (recordBarHandler == null)
+				throw new ArgumentNullException("recordBarHandler");
 
 			m_recordBarHandler = recordBarHandler;
 		}
@@ -258,7 +284,8 @@ namespace SIL.FieldWorks.XWorks
 		internal RecordClerk(string id, RecordList recordList, RecordSorter defaultSorter, string defaultSortLabel, RecordFilter defaultFilter, bool allowDeletions, bool shouldHandleDeletion, RecordClerk clerkProvidingRootObject)
 			: this(id, recordList, defaultSorter, defaultSortLabel, defaultFilter, allowDeletions, shouldHandleDeletion)
 		{
-			if (clerkProvidingRootObject == null) throw new ArgumentNullException("clerkProvidingRootObject");
+			if (clerkProvidingRootObject == null)
+				throw new ArgumentNullException("clerkProvidingRootObject");
 
 			m_clerkProvidingRootObject = clerkProvidingRootObject;
 		}
@@ -323,13 +350,15 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
 		public virtual void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
 		{
-			FlexComponentCheckingService.CheckInitializationValues(flexComponentParameters, new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
+			FlexComponentCheckingService.CheckInitializationValues(flexComponentParameters,
+				new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 
 			PropertyTable = flexComponentParameters.PropertyTable;
 			Publisher = flexComponentParameters.Publisher;
 			Subscriber = flexComponentParameters.Subscriber;
 
-			m_list.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
+			m_list.InitializeFlexComponent(
+				new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 
 			TryRestoreSorter();
 			TryRestoreFilter();
@@ -346,9 +375,11 @@ namespace SIL.FieldWorks.XWorks
 			{
 				Subscriber.Subscribe("SelectedListBarNode", SelectedListBarNode_Message_Handler);
 			}
-
+			var fSetFilterMenu = false;
 			if (m_filterProvider != null)
 			{
+				// There is only one clerk (concordanceWords) that sets m_filterProvider to a provider.
+				// That clerk is used in these tools: AnalysesTool, BulkEditWordformsTool, & WordListConcordanceTool
 				Subscriber.Subscribe("FilterListChanged", FilterListChanged_Message_Handler);
 			}
 #if RANDYTODO
@@ -359,28 +390,36 @@ namespace SIL.FieldWorks.XWorks
 				// TODO: There is only one concrete class (WfiRecordFilterListProvider) used in one RecordClerk,
 				// TODO: which is used by several tools.
 				m_filterProvider = RecordFilterListProvider.Create(PropertyTable, recordFilterListProviderNode);
-				if (m_filterProvider != null && m_list.Filter != null)
+#else
+			if (m_list.Filter != null)
+			{
+				// find any matching persisted menubar filter
+				// NOTE: for now assume we can only set/persist one such menubar filter at a time.
+				foreach (RecordFilter menuBarFilterOption in m_filterProvider.Filters)
 				{
-					// find any matching persisted menubar filter
-					// NOTE: for now assume we can only set/persist one such menubar filter at a time.
-					foreach (RecordFilter menuBarFilterOption in m_filterProvider.Filters)
+					if (!m_list.Filter.Contains(menuBarFilterOption))
 					{
-						if (m_list.Filter.Contains(menuBarFilterOption))
-						{
-							m_activeMenuBarFilter = menuBarFilterOption;
-							m_filterProvider.OnAdjustFilterSelection(m_activeMenuBarFilter);
-							PropertyTable.SetDefault(CurrentFilterPropertyTableId, m_activeMenuBarFilter.id, SettingsGroup.LocalSettings, false, false);
-							fSetFilterMenu = true;
-							break;
-						}
+						continue;
 					}
+					m_activeMenuBarFilter = menuBarFilterOption;
+					m_filterProvider.OnAdjustFilterSelection(m_activeMenuBarFilter);
+					PropertyTable.SetDefault(CurrentFilterPropertyTableId, m_activeMenuBarFilter.id,
+						SettingsGroup.LocalSettings, false, false);
+					fSetFilterMenu = true;
+					break;
 				}
 			}
+
+#if RANDYTODO
+			}
+#endif
+#endif
 			if (!fSetFilterMenu)
 			{
 				OnAdjustFilterSelection(null);
 			}
 
+#if RANDYTODO
 			//we handled the tree bar only if we are the root clerk
 			if (m_clerkProvidingRootObject == null)
 			{
@@ -542,6 +581,8 @@ namespace SIL.FieldWorks.XWorks
 				// Dispose managed resources here.
 				Subscriber.Unsubscribe("SelectedTreeBarNode", SelectedTreeBarNode_Message_Handler);
 				Subscriber.Unsubscribe("SelectedListBarNode", SelectedListBarNode_Message_Handler);
+				//ResetStatusBarPanel("StatusPanelRecordNumber", "");
+				//ResetStatusBarPanel("StatusPanelMessage", "");
 				m_list.ListChanged -= OnListChanged;
 				m_list.AboutToReload -= m_list_AboutToReload;
 				m_list.DoneReload -= m_list_DoneReload;
@@ -553,6 +594,11 @@ namespace SIL.FieldWorks.XWorks
 				{
 					Subscriber.Unsubscribe("FilterListChanged", FilterListChanged_Message_Handler);
 				}
+				if (IsControllingTheRecordTreeBar)
+				{
+					PropertyTable.RemoveProperty("ActiveClerkSelectedObject");
+				}
+				PropertyTable.RemoveProperty(ClerkSelectedObjectPropertyId(Id));
 			}
 
 			// Dispose unmanaged resources here, whether disposing is true or false.
@@ -735,35 +781,35 @@ namespace SIL.FieldWorks.XWorks
 				sorter = m_defaultSorter;
 				SortName = m_defaultSortLabel;
 			}
-			// If sorter is null, allow any sorter which may have been installed during
+			// If sorter is still null, allow any sorter which may have been installed during
 			// record list initialization to prevail.
-			if (sorter != null)
+			if (sorter == null)
 			{
-				// (LT-9515) restored sorters need to set some properties that could not be persisted.
-				var cache = PropertyTable.GetValue<FdoCache>("cache");
-				sorter.Cache = cache;
-				if (sorter is GenRecordSorter)
-				{
-					var comparer = ((GenRecordSorter)sorter).Comparer;
-					WritingSystemComparer subComparer = null;
-					if(comparer != null)
-						subComparer = ((StringFinderCompare)comparer).SubComparer as WritingSystemComparer;
-					if (subComparer != null)
-					{
-						var subComparerWsId = subComparer.WsId;
-						var wsId = cache.WritingSystemFactory.GetWsFromStr(subComparerWsId);
-						if (wsId == 0)
-							return false;
-					}
-				}
-				if (m_list.Sorter == sorter)
-					return false;
-				// (LT-9515) restored sorters need to set some properties that could not be persisted.
-				m_list.Sorter = sorter;
-				m_list.TransferOwnership(sorter as IDisposable);
-				return true;
+				return false; // we didn't change anything.
 			}
-			return false; // we didn't change anything.
+			// (LT-9515) restored sorters need to set some properties that could not be persisted.
+			var cache = PropertyTable.GetValue<FdoCache>("cache");
+			sorter.Cache = cache;
+			if (sorter is GenRecordSorter)
+			{
+				var comparer = ((GenRecordSorter)sorter).Comparer;
+				WritingSystemComparer subComparer = null;
+				if(comparer != null)
+					subComparer = ((StringFinderCompare)comparer).SubComparer as WritingSystemComparer;
+				if (subComparer != null)
+				{
+					var subComparerWsId = subComparer.WsId;
+					var wsId = cache.WritingSystemFactory.GetWsFromStr(subComparerWsId);
+					if (wsId == 0)
+						return false;
+				}
+			}
+			if (m_list.Sorter == sorter)
+				return false;
+			// (LT-9515) restored sorters need to set some properties that could not be persisted.
+			m_list.Sorter = sorter;
+			m_list.TransferOwnership(sorter as IDisposable);
+			return true;
 		}
 
 		/// <summary>
@@ -1103,6 +1149,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+#if RANDYTODO
 		public bool OnFirstRecord(object argument)
 		{
 			CheckDisposed();
@@ -1139,6 +1186,16 @@ namespace SIL.FieldWorks.XWorks
 			BroadcastChange(false);
 			return true;    //we handled this.
 		}
+
+		public bool OnLastRecord(object argument)
+		{
+			CheckDisposed();
+
+			m_list.CurrentIndex = m_list.LastItemIndex;
+			BroadcastChange(false);
+			return true;	//we handled this.
+		}
+#endif
 
 		internal void MoveToIndex(int newIndex)
 		{
@@ -1263,15 +1320,6 @@ namespace SIL.FieldWorks.XWorks
 				// drawn this whole session!
 				SuspendLoadingRecordUntilOnJumpToRecord = false;
 			}
-		}
-
-		public bool OnLastRecord(object argument)
-		{
-			CheckDisposed();
-
-			m_list.CurrentIndex = m_list.LastItemIndex;
-			BroadcastChange(false);
-			return true;	//we handled this.
 		}
 
 		public virtual bool OnRefresh(object argument)
@@ -1569,8 +1617,21 @@ namespace SIL.FieldWorks.XWorks
 
 		private string GetTypeNameForUi(ICmObject obj)
 		{
-			using (var uiObj = CmObjectUi.MakeUi(obj))
-				return uiObj.DisplayNameOfClass;
+			var poss = obj as ICmPossibility;
+			if (poss != null)
+			{
+				return poss.ItemTypeName();
+			}
+			IFsFeatureSystem featsys = obj.OwnerOfClass(FsFeatureSystemTags.kClassId) as IFsFeatureSystem;
+			if (featsys != null)
+			{
+				if (featsys.OwningFlid == LangProjectTags.kflidPhFeatureSystem)
+				{
+					string sClass = StringTable.Table.GetString(obj.ClassName, "ClassNames");
+					return StringTable.Table.GetString(sClass + "-Phonological", "AlternativeTypeNames");
+				}
+			}
+			return StringTable.Table.GetString(obj.ClassName, "ClassNames");
 		}
 
 		private bool ShouldNotHandleDeletionMessage
@@ -1611,13 +1672,18 @@ namespace SIL.FieldWorks.XWorks
 
 			using (var dlg = new ConfirmDeleteObjectDlg(PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
 			{
-				using (CmObjectUi uiObj = CmObjectUi.MakeUi(thingToDelete))
+				using (var uiObj = CmObjectUi.MakeUi(thingToDelete))
 				{
+					uiObj.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 					string cannotDeleteMsg;
 					if (uiObj.CanDelete(out cannotDeleteMsg))
+					{
 						dlg.SetDlgInfo(uiObj, Cache, PropertyTable);
+					}
 					else
+					{
 						dlg.SetDlgInfo(uiObj, Cache, PropertyTable, TsStringUtils.MakeString(cannotDeleteMsg, Cache.DefaultUserWs));
+					}
 				}
 				var window = PropertyTable.GetValue<Form>("window");
 				if (DialogResult.Yes == dlg.ShowDialog(window))
@@ -1875,25 +1941,18 @@ namespace SIL.FieldWorks.XWorks
 			{
 				m_list.ReloadList(); // clean everything up
 			}
-			bool fIgnore = PropertyTable.GetValue<bool>("IgnoreStatusPanel");
-			if (fIgnore)
+			if (IgnoreStatusPanel)
+			{
 				return;
-			// JohnT: if we're not controlling the record list, we probably have no business trying to
-			// control the status bar. But we may need a separate control over this.
-			// Note that it can be definitely wrong to update it; this Clerk may not have anything
-			// to do with the current window contents.
+			}
 			if (IsControllingTheRecordTreeBar)
 			{
-				if (WantStatusBarRecordNumber)
-				{
+				// JohnT: if we're not controlling the record list, we probably have no business trying to
+				// control the status bar. But we may need a separate control over this.
+				// Note that it can be definitely wrong to update it; this Clerk may not have anything
+				// to do with the current window contents.
 					UpdateStatusBarRecordNumber();
 				}
-				else
-				{
-					ResetStatusBarPanel(StatusBarRecordNumber, " ");
-					ResetStatusBarMessageForCurrentObject();
-				}
-			}
 
 #if RANDYTODO
 			// Work up non static test that can use IFwMainWnd
@@ -1926,15 +1985,6 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		private bool WantStatusBarRecordNumber
-		{
-			get
-			{
-				var toolChoice = PropertyTable.GetValue<string>("toolChoice", null);
-				return !(toolChoice == "lexiconDictionary" || toolChoice == "reversalToolEditComplete");
-			}
-		}
-
 		private void UpdateStatusBarRecordNumber()
 		{
 			var noRecordsDefaultText = StringTable.Table.GetString("No Records", "Misc");// FwXApp.XWorksResources.GetString("stidNoRecords");
@@ -1956,7 +2006,7 @@ namespace SIL.FieldWorks.XWorks
 				s = noRecordsText;
 			}
 
-			ResetStatusBarPanel(StatusBarRecordNumber, s);
+			ResetStatusBarPanel("StatusPanelRecordNumber", s);
 			ResetStatusBarMessageForCurrentObject();
 		}
 
@@ -2046,6 +2096,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				using (CmObjectUi uiObj = CmObjectUi.MakeUi(CurrentObject))
 				{
+					uiObj.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 					msg = uiObj.ToStatusBar();
 				}
 			}
@@ -2054,7 +2105,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private void ResetStatusBarPanel(string panel, string msg)
 		{
-			PropertyTable.SetProperty(panel, msg, false, true);
+			Publisher.Publish(panel, msg);
 		}
 
 		/// <summary>
@@ -2062,11 +2113,10 @@ namespace SIL.FieldWorks.XWorks
 		/// The "primary" clerk is the one that should respond to record navigation.
 		/// </summary>
 		/// <returns>true iff this clerk should respond to record navigation</returns>
-		public bool IsPrimaryClerk
+		private bool IsPrimaryClerk
 		{
 			get
 			{
-				CheckDisposed();
 				return (m_clerkProvidingRootObject == null);
 			}
 		}
@@ -2159,7 +2209,11 @@ namespace SIL.FieldWorks.XWorks
 			{
 				CheckDisposed();
 
+#if RANDYTODO
 				return (m_recordBarHandler != null) && PropertyTable.GetValue<RecordClerk>("ActiveClerk") == this && IsActiveInGui;
+#else
+				return (m_recordBarHandler != null) && IsPrimaryClerk;
+#endif
 			}
 		}
 
@@ -2185,8 +2239,12 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		virtual public void ActivateUI(bool useRecordTreeBar, bool updateStatusBar = true)
 		{
-			m_fIsActiveInGui = true;
 			CheckDisposed();
+			if (m_fIsActiveInGui)
+			{
+				return; // Only do it once.
+			}
+			m_fIsActiveInGui = true;
 
 			if (m_recordBarHandler != null)
 			{
@@ -2226,7 +2284,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			CheckDisposed();
 
-			if (IsControllingTheRecordTreeBar) // m_treeBarHandler!= null)
+			if (m_recordBarHandler != null) // m_treeBarHandler!= null)
 				m_recordBarHandler.PopulateRecordBarIfNeeded(m_list);
 		}
 
@@ -2266,7 +2324,7 @@ namespace SIL.FieldWorks.XWorks
 						m_recordBarHandler.ReloadItem(obj);
 					}
 				}
-				else
+				else if (m_recordBarHandler != null)
 				{
 					m_recordBarHandler.PopulateRecordBar(m_list);
 				}
@@ -2876,6 +2934,8 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		internal bool IgnoreStatusPanel { get; set; }
+
 		/// <summary>
 		/// Figure out what should show in the filter status panel and make it so.
 		/// </summary>
@@ -2883,27 +2943,8 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if (!IsControllingTheRecordTreeBar)
 				return; // none of our business!
-			bool fIgnore = PropertyTable.GetValue<bool>("IgnoreStatusPanel");
-			if (fIgnore)
-			{
-				// Set the value so that it can be picked up by the dialog (or whoever).
-				ResetStatusBarPanel("DialogFilterStatus", FilterStatusContents(m_list.Filter != null && m_list.Filter.IsUserVisible) ?? String.Empty);
-				return;
-			}
-			var b = PropertyTable.GetValue<StatusBarTextBox>("Filter");
-			if (b == null) //Other xworks apps may not have this panel
-				return;
-			string filterStatusText = FilterStatusContents(m_list.Filter != null && m_list.Filter.IsUserVisible);
-			if (string.IsNullOrEmpty(filterStatusText))
-			{
-				b.BackBrush = System.Drawing.Brushes.Transparent;
-				b.TextForReal = "";
-			}
-			else
-			{
-				b.BackBrush = System.Drawing.Brushes.Yellow;
-				b.TextForReal = filterStatusText;
-			}
+
+			ResetStatusBarPanel(IgnoreStatusPanel ? "DialogFilterStatus" : "StatusBarPanelFilter", FilterStatusContents(m_list.Filter != null && m_list.Filter.IsUserVisible) ?? string.Empty);
 		}
 
 		protected virtual string FilterStatusContents(bool listIsFiltered)
@@ -2915,25 +2956,11 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if (!IsControllingTheRecordTreeBar)
 				return; // none of our business!
-			bool fIgnore = PropertyTable.GetValue<bool>("IgnoreStatusPanel");
-			if (fIgnore)
+			if (IgnoreStatusPanel)
 				return;
 
-			var b = PropertyTable.GetValue<StatusBarTextBox>("Sort");
-			if (b == null) //Other xworks apps may not have this panel
-				return;
-
-			if (m_list.Sorter == null || SortName == null
-				|| (m_isDefaultSort && m_defaultSorter != null))
-			{
-				b.BackBrush = System.Drawing.Brushes.Transparent;
-				b.TextForReal = "";
-			}
-			else
-			{
-				b.BackBrush = System.Drawing.Brushes.Lime;
-				b.TextForReal = string.Format(xWorksStrings.SortedBy, SortName);
-			}
+			var newSortMessage = m_list.Sorter == null || SortName == null || (m_isDefaultSort && m_defaultSorter != null) ? string.Empty : string.Format(xWorksStrings.SortedBy, SortName);
+			Publisher.Publish("StatusBarPanelSort", newSortMessage);
 		}
 
 #if RANDYTODO

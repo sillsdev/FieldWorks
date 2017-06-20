@@ -78,7 +78,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <param name="languageProject"></param>
 		/// <param name="decorator"></param>
 		internal InterlinearTextsRecordClerk(ILangProject languageProject, ConcDecorator decorator)
-			: base("concordanceWords", new ConcordanceWordList(decorator, languageProject), new PropertyRecordSorter("ShortName"), "Default", new WordsUsedOnlyElsewhereFilter(), false, false, new WfiRecordFilterListProvider())
+			: base("concordanceWords", new ConcordanceWordList(decorator, languageProject), new PropertyRecordSorter("ShortName"), "Default", new WordsUsedOnlyElsewhereFilter(languageProject.Cache), false, false, new WfiRecordFilterListProvider())
 		{
 			/*
 			<clerk id="concordanceWords">
