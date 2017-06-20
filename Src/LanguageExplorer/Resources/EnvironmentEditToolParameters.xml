@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<root>
+	<browseview>
+		<parameters id="EnvironmentList" filterBar="true" editable="false" clerk="environments" altTitleId="PhEnvironment-Plural">
+			<columns>
+				<column label="Name" width="33%" layout="Name" ws="$ws=best analysis" field="Name"/>
+				<column label="Description" width="33%" layout="Description" ws="$ws=best analysis" field="Description"/>
+				<column label="Representation" width="34%" layout="StringRepresentation"/>
+			</columns>
+		</parameters>
+	</browseview>
+	<recordview>
+		<parameters clerk="environments" layout="Edit" treeBarAvailability="NotAllowed" emptyTitleId="No-PhEnvironments" />
+	</recordview>
+</root>

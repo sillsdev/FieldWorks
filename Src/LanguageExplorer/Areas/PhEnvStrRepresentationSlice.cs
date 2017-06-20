@@ -5,6 +5,7 @@
 using System;
 using System.Diagnostics;
 using System.Windows.Forms;
+using System.Xml.Linq;
 using SIL.CoreImpl.Phonology;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Framework.DetailControls;
@@ -31,15 +32,8 @@ namespace LanguageExplorer.Areas
 		/// We want the persistence provider, and the easiest way to get it is to get all
 		/// this other stuff we don't need or use.
 		/// </summary>
-		/// <param name="cache"></param>
-		/// <param name="editor"></param>
-		/// <param name="flid"></param>
-		/// <param name="node"></param>
-		/// <param name="obj"></param>
-		/// <param name="persistenceProvider"></param>
-		/// <param name="ws"></param>
 		public PhEnvStrRepresentationSlice(FdoCache cache, string editor, int flid,
-			System.Xml.XmlNode node, ICmObject obj,
+			XElement element, ICmObject obj,
 			IPersistenceProvider persistenceProvider, int ws)
 			: base(new StringRepSliceView(obj.Hvo), obj, StringRepSliceVc.Flid)
 		{

@@ -191,6 +191,7 @@ namespace LanguageExplorer.Areas
 			// but the Labels of each should be present.
 			concordanceContainerParameters.FirstControlParameters.Control = nestedLeftSideMultiPane;
 			// Set by caller, including PBC. concordanceContainerParameters.SecondControlParameters.Control;
+
 			var concordanceContainer = new ConcordanceContainer(concordanceContainerParameters);
 			var concordanceContainerAsControl = (Control)concordanceContainer;
 			concordanceContainerAsControl.SuspendLayout();

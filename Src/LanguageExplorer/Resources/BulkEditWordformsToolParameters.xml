@@ -1,0 +1,5 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<parameters toolId="bulkEditWordforms" clerk="concordanceWords" treeBarAvailability="NotAllowed" filterBar="true" bulkEdit="true" bulkEditListItemsClasses="WfiWordform" selectColumn="true" altTitleId="WfiWordform-Plural" bulkDeleteIfZero="FullConcordanceCount">
+	<enableBulkEditTabs enableBEListChoice="true" enableBEBulkCopy="true" enableBEClickCopy="true" enableBEProcess="true" enableBEFindReplace="true" enableBEOther="true"/>
+	<includeColumns />
+</parameters>

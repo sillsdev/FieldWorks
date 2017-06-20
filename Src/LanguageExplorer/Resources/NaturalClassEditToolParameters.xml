@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<root>
+	<browseview>
+		<parameters id="NaturalClassList" filterBar="true" editable="false" altTitleId="PhNCSegments-Plural">
+			<columns>
+				<column label="Name" width="25%" layout="Name" ws="$ws=best analysis" field="Name"/>
+				<column label="Abbreviation" width="15%" layout="Abbreviation" ws="$ws=best analysis" field="Abbreviation"/>
+				<column label="Description" width="40%" layout="Description" ws="$ws=best analysis" field="Description"/>
+				<column label="Phonemes/Features" width="20%" layout="Segments"/>
+			</columns>
+		</parameters>
+	</browseview>
+	<recordview>
+		<parameters layout="Edit" treeBarAvailability="NotAllowed" />
+	</recordview>
+</root>

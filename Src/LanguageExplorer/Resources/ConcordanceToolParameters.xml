@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<root>
+	<wordOccurrenceList>
+		<parameters id="wordOccurrenceList" editable="false" filterBar="true" altTitleId="Concordance-Matches">
+			<includeCordanceColumns />
+		</parameters>
+	</wordOccurrenceList>
+	<ITextControl>
+		<parameters id="ITextControl" editable="true" suppressAutoCreate="true" altTitleId="Concordance-Context" />
+	</ITextControl>
+</root>

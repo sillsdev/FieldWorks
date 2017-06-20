@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<root>
+	<parameters toolId="bulkEditEntriesOrSenses" filterBar="true" bulkEdit="true" selectColumn="true" bulkEditListItemsClasses="LexEntry,LexSense,LexEntryRef,LexPronunciation,MoForm,LexExampleSentence,CmTranslation" bulkEditListItemsGhostFields="LexDb.AllPossiblePronunciations,LexDb.AllPossibleAllomorphs,LexDb.AllExampleSentenceTargets,LexDb.AllExampleTranslationTargets,LexDb.AllComplexEntryRefPropertyTargets">
+		<includeColumns />
+	</parameters>
+	<overrides>
+		<column layout="EntryHeadwordForEntry" visibility="menu"/>
+		<column layout="MorphTypeForEntry" visibility="always"/>
+		<column layout="GrammaticalCategoryForSense" visibility="always"/>
+		<column layout="PublishAsHeadword" visibility="menu"/>
+		<column layout="GrammaticalInfoFullForSense" visibility="menu"/>
+		<column layout="GrammaticalInfoAbbrForSense" visibility="menu"/>
+		<column layout="InflectionClassForStem" visibility="menu"/>
+		<column layout="InflectionFeaturesForSense" visibility="menu"/>
+		<column layout="DomainsOfSensesForSense" visibility="menu"/>
+		<column layout="ReversalEntriesForSense" visibility="menu"/>
+	</overrides>
+</root>

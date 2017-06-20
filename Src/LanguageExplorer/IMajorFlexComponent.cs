@@ -15,7 +15,7 @@ namespace LanguageExplorer
 		/// Deactivate the component.
 		/// </summary>
 		/// <remarks>
-		/// This is called on the outgoing component, when the user switches to a component.
+		/// This is called on the outgoing component, when the user switches to another component.
 		/// </remarks>
 		void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters);
 

@@ -17,6 +17,7 @@ namespace LanguageExplorer.UtilityTools
 	/// SampleCitationFormTransducer can be used with the Tools:Utilities dialog
 	/// It was actually built for Dennis Walters, but could be useful for someone else.
 	/// </summary>
+	/// <remarks>NOT USED</remarks>
 	internal sealed class SampleCitationFormTransducer : IUtility
 	{
 		private UtilityDlg m_dlg;

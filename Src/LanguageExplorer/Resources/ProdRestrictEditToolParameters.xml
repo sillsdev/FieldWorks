@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<root>
+	<browseview>
+		<parameters id="ProdRestrictList" filterBar="true" editable="false" altTitleId="ProdRestrict-Plural">
+			<columns>
+				<column label="Name" width="20%" layout="Name" ws="$ws=best analysis" field="Name"/>
+				<column label="Abbreviation" width="20%" layout="Abbreviation" ws="$ws=best analysis" field="Abbreviation"/>
+				<column label="Description" width="60%" layout="Description" ws="$ws=best analysis" field="Description"/>
+			</columns>
+		</parameters>
+	</browseview>
+	<recordview>
+		<parameters persistContext="advancedEdit" layout="default" treeBarAvailability="NotAllowed" emptyTitleId="No-ProdRestricts" />
+	</recordview>
+</root>

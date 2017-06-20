@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<parameters toolId="bulkEditPhonemes" clerk="phonemes" treeBarAvailability="NotAllowed" filterBar="true" bulkEdit="true" bulkEditListItemsClasses="PhPhoneme" selectColumn="true" altTitleId="PhPhoneme-Plural">
+	<enableBulkEditTabs enableBEListChoice="true" enableBEBulkCopy="false" enableBEClickCopy="false" enableBEProcess="false" enableBEFindReplace="false" enableBEOther="false" bulkEditListItemsGhostFields="PhonFeats" bulkEditListItemsClasses="PhPhoneme"/>
+	<!-- NOTE Overrides syntax: override nodes that have children replace entire target (included) node -->
+	<columns generate="objectValuePartsForParentLayouts">
+		<column label="Phoneme" width="5%" layout="Name" ws="$ws=best vernacular" field="Name"/>
+		<!-- Phonological Feature Defns (generated)-->
+		<generate class="FsFeatureSystem" fieldType="vector" restrictions="featureDefns" objectPath="PhFeatureSystem.Features">
+			<column layout="CustomMultiStringForFeatureDefn_$fieldName" label="$label" bulkEdit="external" common="true" ws="$ws=best analysis"
+				cansortbylength="true" visibility="always" width="4%">
+				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.FdoUi.PhonologicalFeatureEditor">
+					<args>
+						<arg name="xpathToConfigurationNode" value="ancestor::column"/>
+					</args>
+				</dynamicloaderinfo>
+			</column>
+		</generate>
+		<column label="Description" width="33%" layout="Description" ws="$ws=best analysis" field="Description" visibility="menu"/>
+		<column label="Graphemes" width="34%" multipara="true" layout="Codes" visibility="menu"/>
+		<column label="IPA Symbol" width="33%" layout="BasicIPASymbol" visibility="menu"/>
+	</columns>
+</parameters>

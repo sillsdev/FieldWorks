@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<root>
+	<browseview>
+		<parameters id="PhonemeList" filterBar="true" editable="false" altTitleId="PhPhoneme-Plural">
+			<columns>
+				<column label="Refer to as" width="33%" layout="Name" ws="$ws=best vernacular" field="Name"/>
+				<column label="Description" width="33%" layout="Description" ws="$ws=best analysis" field="Description"/>
+				<column label="Graphemes" width="34%" multipara="true" layout="Codes"/>
+				<column label="IPA Symbol" width="33%" layout="BasicIPASymbol" visibility="menu"/>
+				<column label="Phonological Features" width="33%" visibility="menu">
+					<span>
+						<obj field="Features" layout="PhonFeats"/>
+					</span>
+				</column>
+			</columns>
+		</parameters>
+	</browseview>
+	<recordview>
+		<parameters persistContext="edit" layout="Edit" treeBarAvailability="NotAllowed" emptyTitleId="No-PhPhonemes" />
+	</recordview>
+</root>

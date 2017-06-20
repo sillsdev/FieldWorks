@@ -1,0 +1,55 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<root id="concordanceColumns">
+	<columns>
+		<column label="Ref" width="60000">
+			<span>
+				<properties>
+					<editable value="false"/>
+				</properties>
+				<string class="FakeOccurrence" field="Reference"/>
+			</span>
+		</column>
+		<column label="Occurrence" width="415000" multipara="true">
+			<concpara min="FakeOccurrence.BeginOffset" lim="FakeOccurrence.EndOffset" align="144000">
+				<properties>
+					<editable value="false"/>
+				</properties>
+				<obj class="FakeOccurrence" field="TextObject" layout="empty">
+					<choice>
+						<where is="StTxtPara">
+							<string class="StTxtPara" field="Contents"/>
+						</where>
+						<where is="CmPicture">
+							<string class="CmPicture" field="Caption" ws="vernacular"/>
+						</where>
+					</choice>
+				</obj>
+			</concpara>
+		</column>
+		<column label="Title" visibility="menu" width="144000">
+			<string class="FakeOccurrence" field="TextTitle" ws="$ws=best vernoranal"/>
+		</column>
+		<column label="Genres" visibility="menu" chooserFilter="complexListMultiple" field="CmBaseAnnotation.TextGenres" list="GenreList" width="115000">
+			<span>
+				<properties>
+					<editable value="false"/>
+				</properties>
+				<seq class="FakeOccurrence" field="TextGenres" layout="Name" sep=", "/>
+			</span>
+		</column>
+		<column label="Is Translation" visibility="menu" width="72000" blankPossible="false" sortType="YesNo">
+			<if class="FakeOccurrence" field="TextIsTranslation" boolequals="false">
+				<lit>no</lit>
+			</if>
+			<if class="FakeOccurrence" field="TextIsTranslation" boolequals="true">
+				<lit>yes</lit>
+			</if>
+		</column>
+		<column label="Source" visibility="menu" width="115000">
+			<string class="FakeOccurrence" field="TextSource" ws="$ws=best vernoranal"/>
+		</column>
+		<column label="Comment" visibility="menu" width="144000">
+			<string class="FakeOccurrence" field="TextComment" ws="$ws=best analorvern"/>
+		</column>
+	</columns>
+</root>

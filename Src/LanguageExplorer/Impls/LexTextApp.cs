@@ -476,8 +476,6 @@ Old Mediator methods/commands
 
 		#endregion Dispose support
 
-		#region IDisposable interface implementation
-
 		/// <summary>
 		/// Dispose the object.
 		/// </summary>
@@ -491,7 +489,6 @@ Old Mediator methods/commands
 			// from executing a second time.
 			GC.SuppressFinalize(this);
 		}
-		#endregion IDisposable interface implementation
 		#endregion IDisposable interface implementation
 
 		#region IApp interface implementation

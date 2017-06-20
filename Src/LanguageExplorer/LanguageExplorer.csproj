@@ -237,22 +237,53 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="images\MenuWidget.bmp" />
+    <Content Include="Resources\LexiconProblemsParameters.xml" />
+    <Content Include="Resources\NaturalClassEditToolParameters.xml" />
+    <Content Include="Resources\NotebookEditBrowseParameters.xml" />
+    <Content Include="Resources\NotebookEditRecordEditViewParameters.xml" />
+    <Content Include="Resources\PhonemeEditToolParameters.xml" />
+    <Content Include="Resources\PhonologicalFeaturesAdvancedEditToolParameters.xml" />
+    <Content Include="Resources\PhonologicalRuleEditToolParameters.xml" />
+    <Content Include="Resources\PosEditParameters.xml" />
+    <Content Include="Resources\ProdRestrictEditToolParameters.xml" />
+    <Content Include="Resources\RapidDataEntryToolParameters.xml" />
+    <Content Include="Resources\ReversalBulkEditReversalEntriesToolParameters.xml" />
+    <Content Include="Resources\ReversalEditCompleteToolParameters.xml" />
+    <Content Include="Resources\ReversalToolReversalIndexPOSBrowseViewParameters.xml" />
+    <Content Include="Resources\ReversalToolReversalIndexPOSRecordEditViewParameters.xml" />
+    <Content Include="Resources\WordListColumns.xml" />
+    <Content Include="Resources\WordListConcordanceToolParameters.xml" />
+    <Content Include="Resources\WordListParameters.xml" />
     <None Include="images\NavigationImages\FWFirstArrow.bmp" />
     <None Include="images\NavigationImages\FWLastArrow.bmp" />
     <None Include="images\NavigationImages\FWLeftArrow.bmp" />
     <None Include="images\NavigationImages\FWRightArrow.bmp" />
+    <Content Include="Resources\AdhocCoprohibitionRuleEditToolParameters.xml" />
+    <Content Include="Resources\AnalysesRecordEditViewParameters.xml" />
+    <Content Include="Resources\BasicFilter.xml" />
+    <Content Include="Resources\BasicPlusFilter.xml" />
+    <Content Include="Resources\BulkEditEntriesOrSensesToolParameters.xml" />
+    <Content Include="Resources\BulkEditPhonemesToolParameters.xml" />
+    <Content Include="Resources\BulkEditWordformsToolParameters.xml" />
     <Content Include="Resources\CompleteFilter.xml" />
-    <Content Include="Resources\LexiconEditRecordDocViewParameters.xml">
-      <SubType>Designer</SubType>
-    </Content>
+    <Content Include="Resources\ComplexConcordanceToolParameters.xml" />
+    <Content Include="Resources\CompoundRuleAdvancedEditToolParameters.xml" />
+    <Content Include="Resources\ConcordanceColumns.xml" />
+    <Content Include="Resources\ConcordanceToolParameters.xml" />
+    <Content Include="Resources\EntriesOrChildrenClerkPartOwnershipTree.xml" />
+    <Content Include="Resources\EnvironmentEditToolParameters.xml" />
+    <Content Include="Resources\FeaturesAdvancedEditToolParameters.xml" />
+    <Content Include="Resources\FeatureTypesAdvancedEditBrowseViewParameters.xml" />
+    <Content Include="Resources\FeatureTypesAdvancedEditRecordEditViewParameters.xml" />
+    <Content Include="Resources\InterlinearEditToolParameters.xml" />
+    <Content Include="Resources\LexiconClassifiedDictionaryParameters.xml" />
+    <Content Include="Resources\LexiconDictionaryConfigureLayouts.xml" />
+    <Content Include="Resources\LexiconDictionaryToolParameters.xml" />
+    <Content Include="Resources\LexiconEditRecordDocViewParameters.xml" />
     <Content Include="Resources\LexiconEditRecordEditViewParameters.xml" />
     <Content Include="Resources\MatchingEntriesParameters.xml" />
-    <Content Include="Resources\TimeOfDayEditParameters.xml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Resources\RecTypeEditParameters.xml">
-      <SubType>Designer</SubType>
-    </Content>
+    <Content Include="Resources\TimeOfDayEditParameters.xml" />
+    <Content Include="Resources\RecTypeEditParameters.xml" />
     <Content Include="Resources\VariantEntryTypeEditParameters.xml">
       <SubType>Designer</SubType>
     </Content>

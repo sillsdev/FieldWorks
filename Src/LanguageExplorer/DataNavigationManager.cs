@@ -32,9 +32,13 @@ namespace LanguageExplorer
 		internal DataNavigationManager(ISubscriber subscriber, Dictionary<string, Tuple<ToolStripMenuItem, ToolStripButton>>  menuItems)
 		{
 			if (subscriber == null)
+			{
 				throw new ArgumentNullException(nameof(subscriber));
+			}
 			if (menuItems == null)
+			{
 				throw new ArgumentNullException(nameof(menuItems));
+			}
 
 			_subscriber = subscriber;
 			_menuItems = menuItems;

@@ -1,0 +1,87 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<columns>
+	<column label="Form" width="30%" cansortbylength="true" ws="$ws=best vernacular" field="Form" chooserFilter="special" specialItemName="Choose Texts...">
+		<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.TextsAndWords.Interlinear.TextsFilterItem" />
+		<span>
+			<properties>
+				<bold value="off"/>
+			</properties>
+			<string field="Form" ws="best vernacular"/>
+		</span>
+	</column>
+	<column label="Word Glosses" width="30%">
+		<seq class="WfiWordform" field="HumanApprovedAnalyses" layout="empty" sep=", " checkForEmptyItems="true">
+			<seq class="WfiAnalysis" field="Meanings" layout="empty" sep=" / ">
+				<string class="WfiGloss" field="Form" ws="$ws=analysis"/>
+			</seq>
+		</seq>
+	</column>
+	<column label="Number in Corpus" width="75000" sortType="integer" blankPossible="false">
+		<int field="OccurrenceCount"/>
+	</column>
+	<column label="Genres" visibility="menu" chooserFilter="complexListMultiple" field="WfiWordform.TextGenres" list="GenreList" width="115000">
+		<span>
+			<properties>
+				<editable value="false"/>
+			</properties>
+			<seq field="TextGenres" layout="Name" sep=", "/>
+		</span>
+	</column>
+	<column label="User Analyses" visibility="menu" sortType="integer" blankPossible="false">
+		<int field="UserCount"/>
+	</column>
+	<column label="Predicted Analyses" visibility="menu" sortType="integer" blankPossible="false">
+		<int field="ParserCount"/>
+	</column>
+	<column label="Conflicting Opinions" visibility="menu" sortType="integer" blankPossible="false">
+		<int field="ConflictCount"/>
+	</column>
+	<column label="Needs Work" visibility="menu" blankPossible="false" sortType="YesNo">
+		<choice>
+			<where field="IsComplete" boolequals="true">
+				<span>
+					<properties>
+						<forecolor value="Green"/>
+					</properties>
+					<lit>No</lit>
+				</span>
+			</where>
+			<otherwise>
+				<span>
+					<properties>
+						<forecolor value="Red"/>
+					</properties>
+					<lit>Yes</lit>
+				</span>
+			</otherwise>
+		</choice>
+	</column>
+	<column label="Certified" visibility="menu" blankPossible="false" sortType="YesNo">
+		<choice>
+			<where field="Certified" boolequals="true">
+				<span>
+					<properties>
+						<forecolor value="Green"/>
+					</properties>
+					<lit>Yes</lit>
+				</span>
+			</where>
+			<otherwise>
+				<span>
+					<properties>
+						<forecolor value="Red"/>
+					</properties>
+					<lit>No</lit>
+				</span>
+			</otherwise>
+		</choice>
+	</column>
+	<column label="Category" visibility="menu">
+		<seq field="AttestedPos" layout="empty" sep=", ">
+			<string field="Name" ws="$ws=best analorvern"/>
+		</seq>
+	</column>
+	<column label="Spelling Status" visibility="menu" blankPossible="false" sortType="stringList" bulkEdit="integer" field="WfiWordform.SpellingStatus" defaultBulkEditChoice="1">
+		<stringList class="WfiWordform" field="SpellingStatus" group="Linguistics/WFI/SpellingStatus" ids="UndecidedSpellingStatus, CorrectSpellingStatus, IncorrectSpellingStatus" />
+	</column>
+</columns>

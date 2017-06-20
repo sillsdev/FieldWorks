@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<root>
+	<docview>
+		<parameters clerk="AllReversalEntries"  persistContext="Reversal" backColor="White" layout="" layoutProperty="ReversalIndexPublicationLayout" layoutSuffix="Preview" editable="false" configureObjectName="ReversalIndex" altTitleId="ReversalIndexEntry-Plural" >
+			<!-- The following configureLayouts node is required only to help migrate old configurations to the new format -->
+			<configureLayouts>
+				<layoutType label="All Reversal Indexes" layout="publishReversal">
+					<configure class="ReversalIndexEntry" label="Reversal Entry" layout="publishReversalIndexEntry" />
+				</layoutType>
+				<layoutType label="$wsName" layout="publishReversal-$ws">
+					<configure class="ReversalIndexEntry" label="Reversal Entry" layout="publishReversalIndexEntry-$ws" />
+				</layoutType>
+			</configureLayouts>
+		</parameters>
+	</docview>
+	<recordview>
+		<parameters layout="Normal" treeBarAvailability="NotAllowed" emptyTitleId="No-ReversalIndexEntries" />
+	</recordview>
+</root>

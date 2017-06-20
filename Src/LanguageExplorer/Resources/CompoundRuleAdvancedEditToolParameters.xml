@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<root>
+	<browseview>
+		<parameters id="CompoundRuleList" filterBar="true" editable="false" altTitleId="MoCompoundRule-Plural" selectColumn="true">
+			<columns>
+				<column label="Active" width="10%" layout="Active" editable="true" items="0:no;1:yes" blankPossible="false" sortType="YesNo"/>
+				<column label="Name" width="15%" layout="Name" ws="$ws=best analysis" field="Name"/>
+				<column label="Description" width="15%" layout="Description" ws="$ws=best analysis" field="Description"/>
+				<column label="Left Member" width="20%" layout="LeftMsa"/>
+				<column label="Right Member" width="20%" layout="RightMsa"/>
+				<column label="Headedness/Result" width="20%" layout="HeadednessOrResult"/>
+			</columns>
+		</parameters>
+	</browseview>
+	<recordview>
+		<parameters treeBarAvailability="NotAllowed" persistContext="advancedEdit" layout="Edit" emptyTitleId="No-MoCompoundRules" />
+	</recordview>
+</root>

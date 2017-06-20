@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<root>
+	<browseview>
+		<parameters id="FeaturesList" filterBar="true" editable="false" altTitleId="FsFeatDefn-Plural">
+			<columns>
+				<column label="Kind" width="10%" layout="Kind"/>
+				<column label="Name" width="13%" layout="Name" ws="$ws=best analysis" field="Name"/>
+				<column label="Abbreviation" width="10%" layout="Abbreviation" ws="$ws=best analysis" field="Abbreviation"/>
+				<column label="Description" width="43%" layout="Description" ws="$ws=best analysis" field="Description"/>
+				<column label="Type or Values" width="24%" multipara="true" layout="TypeOrValues"/>
+			</columns>
+		</parameters>
+	</browseview>
+	<recordview>
+		<parameters layout="Edit" treeBarAvailability="NotAllowed" emptyTitleId="No-FsFeatDefns" />
+	</recordview>
+</root>

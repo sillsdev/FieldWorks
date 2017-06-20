@@ -1,9 +1,13 @@
+// Copyright (c) 2015-2018 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System.Windows.Forms;
 
 namespace LanguageExplorer.Areas
 {
 	/// <summary>
-	/// Parameter class that holds thing need to create a MultiPane instance
+	/// Parameter class that holds things needed to create a MultiPane instance
 	/// </summary>
 	internal class MultiPaneParameters
 	{

@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<root>
+	<wordList>
+		<parameters id="wordList" convertDummiesSelected="true" filterBar="true" editable="false" defaultCursor="Arrow" hscroll="true" altTitleId="WfiWordform-Plural">
+			<includeColumns />
+		</parameters>
+	</wordList>
+	<wordOccurrenceListUpper>
+		<parameters id="wordOccurrenceList" editable="false" convertDummiesInView="false" filterBar="true" ShowOwnerShortname="true" altTitleId="WordListConcordance-Matches">
+			<includeColumns />
+		</parameters>
+	</wordOccurrenceListUpper>
+	<wordOccurrenceListLower>
+		<parameters id="wordOccurrenceList" editable="true" suppressAutoCreate="true" />
+	</wordOccurrenceListLower>
+</root>

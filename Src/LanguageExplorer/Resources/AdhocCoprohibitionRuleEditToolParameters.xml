@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<root>
+	<browseview>
+		<parameters id="AdhocCoprohibList" filterBar="true" editable="false" altTitleId="MoAdhocProhib-Plural">
+			<columns>
+				<column label="Active" width="10%" layout="Active" editable="true"/>
+				<column label="Type" width="10%" layout="Type"/>
+				<column label="Key Item" width="30%" layout="KeyItem"/>
+				<column label="Cannot Occur" width="20%" layout="CannotOccur"/>
+				<column label="Other Items" width="30%" multipara="true" layout="OtherItems"/>
+			</columns>
+		</parameters>
+	</browseview>
+	<recordview>
+		<parameters layout="Edit" treeBarAvailability="NotAllowed" emptyTitleId="No-MoAdhocProhibs" />
+	</recordview>
+</root>

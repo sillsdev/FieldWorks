@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<parameters filterBar="true" treeBarAvailability="NotAllowed" defaultCursor="Arrow" hscroll="true" altTitleId="PartOfSpeech-Plural" editable="false">
+	<columns>
+		<!-- explicit layout of these columns (rather than having a layout attribute) causes display problems in Mono/Linux -->
+		<column label="Name" ws="$ws=best analysis" width="50%" field="Name" layout="Name"/>
+		<column label="Abbreviation" width="50%" ws="$ws=best analysis" field="Abbreviation" layout="Abbreviation"/>
+	</columns>
+</parameters>

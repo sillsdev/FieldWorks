@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<root>
+	<browseview>
+		<parameters id="PhonologicalRuleList" filterBar="true" altTitleId="PhSegmentRule-Plural" selectColumn="true">
+			<columns>
+				<column label="Active" width="10%" layout="Active" editable="true" items="0:no;1:yes" blankPossible="false" sortType="YesNo"/>
+				<column label="Order" width="15%" layout="Order" editable="true" sortType="integer" blankPossible="false"/>
+				<column label="Name" width="35%" layout="Name" ws="$ws=best analysis" field="Name"/>
+				<column label="Description" width="40%" layout="Description" ws="$ws=best analysis" field="Description"/>
+			</columns>
+		</parameters>
+	</browseview>
+	<recordview>
+		<parameters layout="Edit" treeBarAvailability="NotAllowed" emptyTitleId="No-PhSegmentRules" />
+	</recordview>
+</root>

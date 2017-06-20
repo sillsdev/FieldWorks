@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<parameters toolId="reversalBulkEditReversalEntries" clerk="AllReversalEntries" filterBar="true" bulkEdit="true" bulkEditListItemsClasses="ReversalIndexEntry" selectColumn="true" altTitleId="ReversalIndexEntry-Plural" ShowOwnerShortname="true" >
+	<enableBulkEditTabs enableBEListChoice="true" enableBEBulkCopy="true" enableBEClickCopy="true" enableBEProcess="true" enableBEFindReplace="true" enableBEOther="true" />
+	<columns>
+		<!-- NB: If you add a new column and it is has a multi-lingual string you will need to review AreSortersCompatible in ReversalListener -->
+		<column label="Reversal Form" width="20%" ws="$ws=reversal" transduce="ReversalIndexEntry.ReversalForm" cansortbylength="true">
+			<span>
+				<properties>
+					<editable value="true"/>
+				</properties>
+				<string field="ReversalForm" ws="$ws=reversal"/>
+			</span>
+		</column>
+		<column label="Referenced Senses" width="33%" ws="vernacular" multipara="true">
+			<properties>
+				<editable value="false"/>
+			</properties>
+			<seq field="ReferringSenses" layout="empty">
+				<para>
+					<string field="FullReferenceName"/>
+				</para>
+			</seq>
+		</column>
+		<column label="Reversal Category" width="15%" bulkEdit="external">
+			<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.Tools.BulkEditReversalEntries.BulkReversalEntryPosEditor"/>
+			<properties>
+				<editable value="false"/>
+			</properties>
+			<span>
+				<properties>
+					<editable value="false"/>
+				</properties>
+				<obj class="ReversalIndexEntry" field="PartOfSpeech" layout="empty">
+					<string class="CmPossibility" field="Name" ws="best analysis"/>
+				</obj>
+			</span>
+		</column>
+	</columns>
+</parameters>

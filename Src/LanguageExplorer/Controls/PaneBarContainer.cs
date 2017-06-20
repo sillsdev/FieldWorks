@@ -33,7 +33,6 @@ namespace LanguageExplorer.Controls
 		private XmlNode m_configurationParameters;
 		private Control m_mainControl;
 		private Size m_parentSizeHint;
-		//private string m_defaultPrintPaneId = string.Empty;
 		private int instanceID;
 
 		#endregion Data Members
