@@ -61,6 +61,108 @@ namespace LanguageExplorer.Areas.TextsAndWords {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+        ///&lt;parameters persistContext=&quot;normalEdit&quot; suppressInfoBar=&quot;false&quot; layout=&quot;Normal&quot; treeBarAvailability=&quot;NotAllowed&quot; PaneBarGroupId=&quot;PaneBar-WordformDetail&quot; altTitleId=&quot;WfiWordform-Full&quot; defaultLabelWidth=&quot;100&quot; /&gt;.
+        /// </summary>
+        internal static string AnalysesRecordEditViewParameters {
+            get {
+                return ResourceManager.GetString("AnalysesRecordEditViewParameters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+        ///&lt;parameters toolId=&quot;bulkEditWordforms&quot; clerk=&quot;concordanceWords&quot; treeBarAvailability=&quot;NotAllowed&quot; filterBar=&quot;true&quot; bulkEdit=&quot;true&quot; bulkEditListItemsClasses=&quot;WfiWordform&quot; selectColumn=&quot;true&quot; altTitleId=&quot;WfiWordform-Plural&quot; bulkDeleteIfZero=&quot;FullConcordanceCount&quot;&gt;
+        ///	&lt;enableBulkEditTabs enableBEListChoice=&quot;true&quot; enableBEBulkCopy=&quot;true&quot; enableBEClickCopy=&quot;true&quot; enableBEProcess=&quot;true&quot; enableBEFindReplace=&quot;true&quot; enableBEOther=&quot;true&quot;/&gt;
+        ///	&lt;includeColumns /&gt;
+        ///&lt;/parameters&gt;.
+        /// </summary>
+        internal static string BulkEditWordformsToolParameters {
+            get {
+                return ResourceManager.GetString("BulkEditWordformsToolParameters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+        ///&lt;root&gt;
+        ///	&lt;wordOccurrenceList&gt;
+        ///		&lt;parameters id=&quot;wordOccurrenceList&quot; editable=&quot;false&quot; clerk=&quot;complexConcOccurrencesOfSelectedUnit&quot; filterBar=&quot;true&quot; altTitleId=&quot;Concordance-Matches&quot;&gt;
+        ///			&lt;includeColumns /&gt;
+        ///		&lt;/parameters&gt;
+        ///	&lt;/wordOccurrenceList&gt;
+        ///	&lt;includeITextControl /&gt;
+        ///&lt;/root&gt;.
+        /// </summary>
+        internal static string ComplexConcordanceToolParameters {
+            get {
+                return ResourceManager.GetString("ComplexConcordanceToolParameters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+        ///&lt;root id=&quot;concordanceColumns&quot;&gt;
+        ///	&lt;columns&gt;
+        ///		&lt;column label=&quot;Ref&quot; width=&quot;60000&quot;&gt;
+        ///			&lt;span&gt;
+        ///				&lt;properties&gt;
+        ///					&lt;editable value=&quot;false&quot;/&gt;
+        ///				&lt;/properties&gt;
+        ///				&lt;string class=&quot;FakeOccurrence&quot; field=&quot;Reference&quot;/&gt;
+        ///			&lt;/span&gt;
+        ///		&lt;/column&gt;
+        ///		&lt;column label=&quot;Occurrence&quot; width=&quot;415000&quot; multipara=&quot;true&quot;&gt;
+        ///			&lt;concpara min=&quot;FakeOccurrence.BeginOffset&quot; lim=&quot;FakeOccurrence.EndOffset&quot; align=&quot;144000&quot;&gt;
+        ///				&lt;properties&gt;
+        ///					&lt;editable value=&quot;false&quot;/&gt;
+        ///				&lt;/properties&gt;
+        ///		 [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string ConcordanceColumns {
+            get {
+                return ResourceManager.GetString("ConcordanceColumns", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+        ///&lt;root&gt;
+        ///	&lt;wordOccurrenceList&gt;
+        ///		&lt;parameters id=&quot;wordOccurrenceList&quot; editable=&quot;false&quot; filterBar=&quot;true&quot; altTitleId=&quot;Concordance-Matches&quot;&gt;
+        ///			&lt;includeCordanceColumns /&gt;
+        ///		&lt;/parameters&gt;
+        ///	&lt;/wordOccurrenceList&gt;
+        ///	&lt;ITextControl&gt;
+        ///		&lt;parameters id=&quot;ITextControl&quot; editable=&quot;true&quot; suppressAutoCreate=&quot;true&quot; altTitleId=&quot;Concordance-Context&quot; /&gt;
+        ///	&lt;/ITextControl&gt;
+        ///&lt;/root&gt;.
+        /// </summary>
+        internal static string ConcordanceToolParameters {
+            get {
+                return ResourceManager.GetString("ConcordanceToolParameters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+        ///&lt;root&gt;
+        ///	&lt;recordbrowseview&gt;
+        ///		&lt;parameters id=&quot;textsChooser&quot; filterBar=&quot;true&quot; defaultCursor=&quot;Arrow&quot; altTitleId=&quot;Text-Plural&quot; editable=&quot;false&quot;&gt;
+        ///			&lt;columns&gt;
+        ///				&lt;column label=&quot;Title&quot; width=&quot;144000&quot; chooserFilter=&quot;special&quot;&gt;
+        ///					&lt;dynamicloaderinfo assemblyPath=&quot;LanguageExplorer.dll&quot; class=&quot;LanguageExplorer.Areas.TextsAndWords.Interlinear.TextsFilterItem&quot;/&gt;
+        ///					&lt;string field=&quot;Title&quot; ws=&quot;$ws=best vernoranal&quot;/&gt;
+        ///				&lt;/column&gt;
+        ///				&lt;column label=&quot;Abbreviation&quot; visibil [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string InterlinearEditToolParameters {
+            get {
+                return ResourceManager.GetString("InterlinearEditToolParameters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &amp;Apply.
         /// </summary>
         internal static string ksApply {
@@ -282,6 +384,55 @@ namespace LanguageExplorer.Areas.TextsAndWords {
         internal static string ksUpdateMonoMorphemicLexicalEntries {
             get {
                 return ResourceManager.GetString("ksUpdateMonoMorphemicLexicalEntries", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+        ///&lt;columns&gt;
+        ///	&lt;column label=&quot;Form&quot; width=&quot;30%&quot; cansortbylength=&quot;true&quot; ws=&quot;$ws=best vernacular&quot; field=&quot;Form&quot; chooserFilter=&quot;special&quot; specialItemName=&quot;Choose Texts...&quot;&gt;
+        ///		&lt;dynamicloaderinfo assemblyPath=&quot;LanguageExplorer.dll&quot; class=&quot;LanguageExplorer.Areas.TextsAndWords.Interlinear.TextsFilterItem&quot; /&gt;
+        ///		&lt;span&gt;
+        ///			&lt;properties&gt;
+        ///				&lt;bold value=&quot;off&quot;/&gt;
+        ///			&lt;/properties&gt;
+        ///			&lt;string field=&quot;Form&quot; ws=&quot;best vernacular&quot;/&gt;
+        ///		&lt;/span&gt;
+        ///	&lt;/column&gt;
+        ///	&lt;column label=&quot;Word Glosses&quot;  [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string WordListColumns {
+            get {
+                return ResourceManager.GetString("WordListColumns", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+        ///&lt;root&gt;
+        ///	&lt;wordList&gt;
+        ///		&lt;parameters id=&quot;wordList&quot; clerk=&quot;concordanceWords&quot; convertDummiesSelected=&quot;true&quot; filterBar=&quot;true&quot; editable=&quot;false&quot; treeBarAvailability=&quot;NotAllowed&quot; defaultCursor=&quot;Arrow&quot; hscroll=&quot;true&quot; altTitleId=&quot;WfiWordform-Plural&quot;&gt;
+        ///			&lt;columns&gt;
+        ///				&lt;includeColumns /&gt;
+        ///			&lt;/columns&gt;
+        ///		&lt;/parameters&gt;
+        ///	&lt;/wordList&gt;
+        ///	&lt;wordOccurrenceListUpper&gt;
+        ///		&lt;parameters id=&quot;wordOccurrenceList&quot; editable=&quot;false&quot; clerk=&quot;OccurrencesOfSelectedWordform&quot; convertDummiesInView=&quot;fa [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string WordListConcordanceToolParameters {
+            get {
+                return ResourceManager.GetString("WordListConcordanceToolParameters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+        ///&lt;parameters id=&quot;wordList&quot; clerk=&quot;concordanceWords&quot; filterBar=&quot;true&quot; editable=&quot;false&quot; defaultCursor=&quot;Arrow&quot; hscroll=&quot;true&quot; altTitleId=&quot;WfiWordform-Plural&quot; /&gt;.
+        /// </summary>
+        internal static string WordListParameters {
+            get {
+                return ResourceManager.GetString("WordListParameters", resourceCulture);
             }
         }
     }

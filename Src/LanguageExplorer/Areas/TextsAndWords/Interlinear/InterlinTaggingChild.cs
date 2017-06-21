@@ -1,4 +1,4 @@
-// Copyright (c) 2009-2017 SIL International
+// Copyright (c) 2009-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -29,6 +29,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 	public partial class InterlinTaggingChild : InterlinDocRootSiteBase
 	{
 		ContextMenuStrip m_taggingContextMenu;
+		int m_hvoCurSegment; // hvo of segment currently containing the selection
 
 		// Helps determine if a rt-click is opening or closing the context menu.
 		long m_ticksWhenContextMenuClosed = 0;
@@ -51,6 +52,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			InitializeComponent();
 			BackColor = Color.FromKnownColor(KnownColor.Window);
+			m_hvoCurSegment = 0;
 		}
 
 		/// <summary>
@@ -103,6 +105,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				SelLevInfo[] endLevels;
 				if (TryGetAnalysisLevelsAndEndLevels(vwselNew, out analysisLevels, out endLevels))
 				{
+					m_hvoCurSegment = analysisLevels[1].hvo;
 					m_selectedWordforms = GetSelectedOccurrences(analysisLevels, endLevels[0].ihvo);
 					RootBox.MakeTextSelInObj(0, analysisLevels.Length, analysisLevels, endLevels.Length, endLevels, false, false,
 											 false, true, true);
@@ -198,6 +201,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					selectedWordforms.Add(point);
 			}
 
+			m_hvoCurSegment = hvoSegment;
 			return selectedWordforms;
 		}
 
@@ -543,7 +547,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// Just get it from SelectedWordforms.
 			// Delete ones that point at selected ones already
 			// (before we add the new one or it gets deleted too!)
-			ISet<ITextTag> objsToDelete = FindAllTagsReferencingOccurrenceList(SelectedWordforms);
+			var objsToDelete = FindAllTagsReferencingOccurrenceList(SelectedWordforms);
 
 			// Create and add the new one
 			var ttag = m_tagFact.Create();

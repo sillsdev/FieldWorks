@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -35,19 +35,21 @@ namespace LanguageExplorer.Areas.TextsAndWords
 	/// The browse view is to only show text instances from the selected source,
 	/// which will not include text instances form any of its child objects.
 	/// That is, for a selected wordform (top-most soruce object),
-	/// the displayed text instances will not include thsoe that have been assigned to
+	/// the displayed text instances will not include those that have been assigned to
 	/// an analysis or to a word gloss.
 	/// </summary>
 	internal sealed class ConcordanceDlg : Form, IFwGuiControl
 	{
 		#region Data Members
 
+		private string _filterMessage = string.Empty;
 		private IWfiWordform m_wordform;
 		private FdoCache m_cache;
 		private XmlNode m_configurationNode;
 		private RecordBrowseView m_currentBrowseView = null;
 		private readonly Dictionary<int, XmlNode> m_configurationNodes = new Dictionary<int, XmlNode>(3);
 		private readonly Dictionary<int, RecordClerk> m_recordClerks = new Dictionary<int, RecordClerk>(3);
+		private readonly Dictionary<string, bool> m_originalClerkIgnoreStatusPanelValues = new Dictionary<string, bool>(3);
 		private XMLViewsDataCache m_specialSda;
 		private int m_currentSourceMadeUpFieldIdentifier;
 
@@ -158,7 +160,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			helpProvider.SetHelpKeyword(this, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider").GetHelpString(s_helpTopic));
 			helpProvider.SetShowHelp(this, true);
 
-			PropertyTable.SetProperty("IgnoreStatusPanel", true, false, true);
 			m_progAdvInd = new ProgressReporting(m_toolStripProgressBar);
 
 #if RANDYTODO
@@ -169,6 +170,8 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			// And create the RecordClerks.
 			var clerk = RecordClerkFactory.CreateClerk(PropertyTable, Publisher, Subscriber, true);
 			clerk.ProgressReporter = m_progAdvInd;
+			m_originalClerkIgnoreStatusPanelValues[clerk.Id] = clerk.IgnoreStatusPanel;
+			clerk.IgnoreStatusPanel = true;
 			m_recordClerks[WfiWordformTags.kClassId] = clerk;
 			m_configurationNodes[WfiWordformTags.kClassId] = configNode;
 
@@ -176,6 +179,8 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			configNode = m_configurationNode.SelectSingleNode(xpath);
 			clerk = RecordClerkFactory.CreateClerk(PropertyTable, Publisher, Subscriber, true);
 			clerk.ProgressReporter = m_progAdvInd;
+			m_originalClerkIgnoreStatusPanelValues[clerk.Id] = clerk.IgnoreStatusPanel;
+			clerk.IgnoreStatusPanel = true;
 			m_recordClerks[WfiAnalysisTags.kClassId] = clerk;
 			m_configurationNodes[WfiAnalysisTags.kClassId] = configNode;
 
@@ -183,6 +188,8 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			configNode = m_configurationNode.SelectSingleNode(xpath);
 			clerk = RecordClerkFactory.CreateClerk(PropertyTable, Publisher, Subscriber, true);
 			clerk.ProgressReporter = m_progAdvInd;
+			m_originalClerkIgnoreStatusPanelValues[clerk.Id] = clerk.IgnoreStatusPanel;
+			clerk.IgnoreStatusPanel = true;
 			m_recordClerks[WfiGlossTags.kClassId] = clerk;
 			m_configurationNodes[WfiGlossTags.kClassId] = configNode;
 #endif
@@ -237,6 +244,13 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			tvSource.ExpandAll();
 			tvSource.SelectedNode.EnsureVisible();
 			tvTarget.ExpandAll();
+
+			Subscriber.Subscribe("DialogFilterStatus", DialogFilterStatus_Handler);
+		}
+
+		private void DialogFilterStatus_Handler(object newValue)
+		{
+			_filterMessage = ((string)newValue).Trim();
 		}
 
 		#endregion
@@ -249,7 +263,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
+				throw new ObjectDisposedException(string.Format("'{0}' in use after being disposed.", GetType().Name));
 		}
 
 		/// <summary>
@@ -263,21 +277,23 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 			if( disposing )
 			{
+				Subscriber.Unsubscribe("DialogFilterStatus", DialogFilterStatus_Handler);
+
+				foreach (RecordClerk clerk in m_recordClerks.Values)
+				{
+					// Take it out of the property table and Dispose it.
+					PropertyTable.RemoveProperty("RecordClerk-" + clerk.Id);
+					clerk.IgnoreStatusPanel = m_originalClerkIgnoreStatusPanelValues[clerk.Id];
+					clerk.Dispose();
+				}
 				if(components != null)
 				{
 					components.Dispose();
 				}
-				foreach (RecordClerk clerk in m_recordClerks.Values)
-				{
-					// Take it out of the Mediator and Dispose it.
-					PropertyTable.RemoveProperty("RecordClerk-" + clerk.Id);
-					clerk.Dispose();
-				}
-				PropertyTable.RemoveProperty("IgnoreStatusPanel");
 				m_recordClerks.Clear();
 				m_configurationNodes.Clear();
 			}
-			base.Dispose( disposing );
+			base.Dispose(disposing);
 
 			m_wordform = null;
 			m_cache = null;
@@ -575,14 +591,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 		#region Event Handlers
 
-		protected override void OnClosing(CancelEventArgs e)
-		{
-			if (!IsDisposed && PropertyTable != null)
-			{
-				PropertyTable.SetProperty("IgnoreStatusPanel", false, false, true);
-			}
-		}
-
 		private void tvSource_AfterSelect(object sender, TreeViewEventArgs e)
 		{
 			using (new WaitCursor(this, true))
@@ -656,10 +664,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 					m_specialSda.SetInt(concId, XMLViewsDataCache.ktagItemSelected, 1);
 
 				// Set the initial value for the filtering status.
-				var sFilterMsg = PropertyTable.GetValue("DialogFilterStatus", string.Empty);
-				if (sFilterMsg != null)
-					sFilterMsg = sFilterMsg.Trim();
-				SetFilterStatus(!String.IsNullOrEmpty(sFilterMsg));
+				SetFilterStatus(!string.IsNullOrWhiteSpace(_filterMessage));
 				CheckAssignBtnEnabling();
 			}
 		}
@@ -685,7 +690,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			else
 			{
 				m_toolStripFilterStatusLabel.BackColor = Color.FromKnownColor(KnownColor.Control);
-				m_toolStripFilterStatusLabel.Text = String.Empty;
+				m_toolStripFilterStatusLabel.Text = string.Empty;
 			}
 		}
 

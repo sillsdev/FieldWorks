@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -40,11 +40,22 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		public ConcordanceControl()
 		{
+			ConstructorSurrogate();
+		}
+
+		internal ConcordanceControl(OccurrencesOfSelectedUnit clerk)
+			:base(clerk)
+		{
+			ConstructorSurrogate();
+		}
+
+		private void ConstructorSurrogate()
+		{
 			InitializeComponent();
 
 			m_vwPattern = VwPatternClass.Create();
-			this.helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
-			this.helpProvider.SetShowHelp(this, true);
+			helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
+			helpProvider.SetShowHelp(this, true);
 			m_tbSearchText.SuppressEnter = true;
 		}
 
@@ -245,7 +256,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			get
 			{
 				CheckDisposed();
-				return "Common.Controls.ConcordanceControl";
+				return "LanguageExplorer.Areas.TextsAndWords.Interlinear.ConcordanceControl";
 			}
 		}
 
@@ -1650,18 +1661,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 	{
 		ConcordanceControlBase m_concordanceControl = null;
 
-		/// <summary>
-		/// Contructor.
-		/// </summary>
-		/// <param name="id">Clerk id/name.</param>
-		/// <param name="recordList">Record list for the clerk.</param>
-		/// <param name="defaultSorter">The default record sorter.</param>
-		/// <param name="defaultSortLabel"></param>
-		/// <param name="defaultFilter">The default filter to use.</param>
-		/// <param name="allowDeletions"></param>
-		/// <param name="shouldHandleDeletion"></param>
-		internal OccurrencesOfSelectedUnit(string id, MatchingConcordanceItems recordList, RecordSorter defaultSorter, string defaultSortLabel, RecordFilter defaultFilter, bool allowDeletions, bool shouldHandleDeletion)
-			: base(id, recordList, defaultSorter, defaultSortLabel, defaultFilter, allowDeletions, shouldHandleDeletion)
+		/// <summary />
+		internal OccurrencesOfSelectedUnit(string id, ConcDecorator decorator)
+			: base(id, decorator)
 		{
 		}
 
@@ -1696,7 +1698,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		protected override string GetStatusBarMsgForCurrentObject()
 		{
-			return "";
+			return string.Empty;
 		}
 	}
 
@@ -1710,9 +1712,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <summary>
 		/// Create bare-bones RecordList for made up owner and a property on it.
 		/// </summary>
-		public MatchingConcordanceItems(ISilDataAccessManaged domainDataByFlid, IFdoServiceLocator services)
-			: base(new ConcDecorator(domainDataByFlid, services))
+		public MatchingConcordanceItems(ConcDecorator decorator)
+			: base(decorator)
 		{
+			m_flid = decorator.MetaDataCache.GetFieldId2(LangProjectTags.kClassId, "ConcOccurrences", false);
 		}
 
 		internal ConcordanceControlBase OwningControl { get; set; }

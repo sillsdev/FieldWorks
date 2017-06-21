@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2017 SIL International
+﻿// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -38,64 +38,27 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <summary>
 		/// Constructor used by "OccurrencesOfSelectedUnit" subclass.
 		/// </summary>
-		/// <param name="id"></param>
-		/// <param name="recordList"></param>
-		/// <param name="defaultSorter"></param>
-		/// <param name="defaultSortLabel"></param>
-		/// <param name="defaultFilter"></param>
-		/// <param name="allowDeletions"></param>
-		/// <param name="shouldHandleDeletion"></param>
-		internal InterlinearTextsRecordClerk(string id, RecordList recordList, RecordSorter defaultSorter, string defaultSortLabel, RecordFilter defaultFilter, bool allowDeletions, bool shouldHandleDeletion)
-			: base(id, recordList, defaultSorter, defaultSortLabel, defaultFilter, allowDeletions, shouldHandleDeletion)
+		protected InterlinearTextsRecordClerk(string id, ConcDecorator decorator)
+			: base(id, new MatchingConcordanceItems(decorator), new PropertyRecordSorter("ShortName"), "Default", null, false, false)
 		{
 		}
 
 		/// <summary>
-		/// Constructor used to create one of the two variations of this class,
+		/// Constructor used to create one of the three variations of this class,
 		/// which variation is named "interlinearTexts"
 		/// </summary>
-		/// <param name="languageProject"></param>
-		/// <param name="decorator"></param>
 		internal InterlinearTextsRecordClerk(ILangProject languageProject, InterestingTextsDecorator decorator)
-			: base("interlinearTexts", new RecordList(decorator, false, InterestingTextsDecorator.kflidInterestingTexts, languageProject, "InterestingTexts"), new PropertyRecordSorter(), "Default", null, false, false)
+			: base("interlinearTexts", new RecordList(decorator, false, InterestingTextsDecorator.kflidInterestingTexts, languageProject, "InterestingTexts"), new PropertyRecordSorter("Title"), "Default", null, false, false)
 		{
-			/*
-			<clerk id="interlinearTexts">
-				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.TextsAndWords.Interlinear.InterlinearTextsRecordClerk" />
-				<recordList owner="LangProject" property="InterestingTexts">
-					<!-- We use a decorator here so it can override certain virtual properties and limit occurrences to interesting texts. -->
-					<decoratorClass assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.InterestingTextsDecorator" />
-				</recordList>
-				<filterMethods />
-				<sortMethods />
-			</clerk>
-			 */
 		}
 
 		/// <summary>
-		/// Contructor.
+		/// Constructor used to create one of the three variations of this class,
+		/// which variation is named "concordanceWords"
 		/// </summary>
-		/// <param name="languageProject"></param>
-		/// <param name="decorator"></param>
 		internal InterlinearTextsRecordClerk(ILangProject languageProject, ConcDecorator decorator)
 			: base("concordanceWords", new ConcordanceWordList(decorator, languageProject), new PropertyRecordSorter("ShortName"), "Default", new WordsUsedOnlyElsewhereFilter(languageProject.Cache), false, false, new WfiRecordFilterListProvider())
 		{
-			/*
-			<clerk id="concordanceWords">
-				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.TextsAndWords.Interlinear.InterlinearTextsRecordClerk" />
-				<recordList owner="LangProject" property="Wordforms">
-					<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.TextsAndWords.Interlinear.ConcordanceWordList" />
-					<decoratorClass assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.ConcDecorator" />
-				</recordList>
-				<filters>
-					<filter label="Default" assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.WordsUsedOnlyElsewhereFilter" />
-				</filters>
-				<sortMethods>
-					<sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName" />
-				</sortMethods>
-				<recordFilterListProvider assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.WfiRecordFilterListProvider" />
-			</clerk>
-			 */
 		}
 
 		/// <summary>
@@ -138,13 +101,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			if (CurrentObject is IWfiWordform)
 				return true;
-			return CurrentObject.Owner is SIL.FieldWorks.FDO.IText;
+			return CurrentObject.Owner is IText;
 		}
 
 		public override void ReloadIfNeeded()
 		{
-			// If m_id is "concordanceWords", then it will be a ConcordanceWordList record list,
-			// otherwise m_is will be "interlinearTexts" which uses a plain vanilla RecordList instance.
 			if (m_list as ConcordanceWordList != null)
 			{
 				((ConcordanceWordList)m_list).RequestRefresh();
@@ -154,8 +115,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		public override bool OnRefresh(object sender)
 		{
-			// If m_id is "concordanceWords", then it will be a ConcordanceWordList record list,
-			// otherwise m_is will be "interlinearTexts" which uses a plain vanilla RecordList instance.
 			if(m_list as ConcordanceWordList != null)
 			{
 				((ConcordanceWordList)m_list).RequestRefresh();
@@ -489,27 +448,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 			return wsText;
 		}
-
-		/// <summary>
-		/// This class creates text, it must delete it here when UNDO is commanded
-		/// so it can update InterestingTexts.
-		/// </summary>
-/*		public override void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
-		{
-			if (cvDel != 1)
-				return;
-			SaveOnChangeRecord();
-			SuppressSaveOnChangeRecord = true;
-			try
-			{
-				m_list.DeleteCurrentObject();
-			}
-			finally
-			{
-				SuppressSaveOnChangeRecord = false;
-			}
-			GetInterestingTextList().UpdateInterestingTexts();
-		} */
 
 		#region IBookImporter Members
 		/// ------------------------------------------------------------------------------------

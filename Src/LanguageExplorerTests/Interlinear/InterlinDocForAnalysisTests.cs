@@ -21,6 +21,7 @@ using SIL.WritingSystems;
 using SIL.CoreImpl.Text;
 using SIL.CoreImpl.WritingSystems;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace LanguageExplorerTests.Interlinear
 {
@@ -33,10 +34,12 @@ namespace LanguageExplorerTests.Interlinear
 		IText m_text0;
 		private IStText m_stText0;
 		private IStTxtPara m_para0_0;
-		//private TestableInterlinDocForAnalyis m_interlinDoc;
 		private TestableFocusBox m_focusBox;
 		private MockInterlinDocForAnalyis m_interlinDoc;
 		private IList<AnalysisTree> m_analysis_para0_0 = new List<AnalysisTree>();
+		private IPropertyTable m_propertyTable;
+		private IPublisher m_publisher;
+		private ISubscriber m_subscriber;
 
 		/// <summary>
 		///
@@ -62,7 +65,6 @@ namespace LanguageExplorerTests.Interlinear
 			var textFactory = Cache.ServiceLocator.GetInstance<ITextFactory>();
 			var stTextFactory = Cache.ServiceLocator.GetInstance<IStTextFactory>();
 			m_text0 = textFactory.Create();
-			//Cache.LangProject.TextsOC.Add(m_text0);
 			m_stText0 = stTextFactory.Create();
 			m_text0.ContentsOA = m_stText0;
 			m_para0_0 = m_stText0.AddNewTextPara(null);
@@ -80,7 +82,10 @@ namespace LanguageExplorerTests.Interlinear
 		{
 			base.TestSetup();
 
+			PubSubSystemFactory.CreatePubSubSystem(out m_publisher, out m_subscriber);
+			m_propertyTable = PropertyTableFactory.CreatePropertyTable(m_publisher);
 			m_interlinDoc = new MockInterlinDocForAnalyis(m_stText0);
+			m_interlinDoc.InitializeFlexComponent(new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber));
 			m_focusBox = m_interlinDoc.FocusBox as TestableFocusBox;
 		}
 
@@ -89,8 +94,14 @@ namespace LanguageExplorerTests.Interlinear
 			while (Cache.ActionHandlerAccessor.CanUndo())
 				Cache.ActionHandlerAccessor.Undo();
 
+			m_propertyTable?.Dispose();
 			m_interlinDoc.Dispose();
+
 			base.TestTearDown();
+
+			m_propertyTable = null;
+			m_publisher = null;
+			m_subscriber = null;
 		}
 
 		/// <summary>

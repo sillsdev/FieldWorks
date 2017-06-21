@@ -31,7 +31,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		private FdoCache m_cache;
 		private ParserMenuManager m_parserMenuManager;
 		private IPersistenceProvider m_persistProvider;
-		private readonly HelpProvider m_helpProvider;
+		private HelpProvider m_helpProvider;
 
 		private Label m_wordToTryLabel;
 		private IContainer components;
@@ -216,7 +216,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		private void SetWordToUse(string word)
 		{
 			m_wordformTextBox.Text = word;
-			m_tryItButton.Enabled = !String.IsNullOrEmpty(word);
+			m_tryItButton.Enabled = !string.IsNullOrEmpty(word);
 		}
 
 		/// <summary>
@@ -227,7 +227,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
+				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
 		}
 
 		/// <summary>
@@ -242,13 +242,17 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 			if (disposing)
 			{
-				if (components != null)
-					components.Dispose();
-				if (m_helpProvider != null)
-					m_helpProvider.Dispose();
-				m_webPageInteractor = null;
+				components?.Dispose();
+				m_helpProvider?.Dispose();
 			}
 			base.Dispose(disposing);
+
+			m_webPageInteractor = null;
+			m_cache = null;
+			m_parserMenuManager = null;
+			m_persistProvider = null;
+			m_helpProvider = null;
+			m_trace = null;
 		}
 
 		#region Windows Form Designer generated code

@@ -19,7 +19,7 @@ namespace LanguageExplorer.Areas
 		private ListView m_listView;
 		private ColumnHeader m_columnHeader1;
 		private Control m_optionalHeaderControl;
-		private IPropertyTable _propertyTable;
+		private IPropertyTable m_propertyTable;
 
 		/// <summary>
 		/// Required designer variable.
@@ -32,7 +32,7 @@ namespace LanguageExplorer.Areas
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
 
-			_propertyTable = propertyTable;
+			m_propertyTable = propertyTable;
 
 			TreeView.HideSelection = false;
 			m_listView.HideSelection = false;
@@ -155,12 +155,12 @@ namespace LanguageExplorer.Areas
 
 		private void OnListBarSelect(object sender, EventArgs e)
 		{
-			_propertyTable.SetProperty("SelectedTreeBarNode", ListView.SelectedItems.Count == 0 ? null : ListView.SelectedItems[0], false, true);
+			m_propertyTable.SetProperty("SelectedTreeBarNode", ListView.SelectedItems.Count == 0 ? null : ListView.SelectedItems[0], false, true);
 		}
 
 		private void OnTreeBarAfterSelect(object sender, TreeViewEventArgs e)
 		{
-			_propertyTable.SetProperty("SelectedTreeBarNode", e.Node, false, true);
+			m_propertyTable.SetProperty("SelectedTreeBarNode", e.Node, false, true);
 		}
 
 		/// <summary>

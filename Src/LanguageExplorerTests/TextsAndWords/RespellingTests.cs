@@ -20,6 +20,7 @@ using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.XWorks;
 using SIL.Utils;
+using SIL.WritingSystems;
 
 namespace LanguageExplorerTests.TextsAndWords
 {
@@ -30,6 +31,8 @@ namespace LanguageExplorerTests.TextsAndWords
 		private IPropertyTable m_propertyTable;
 		private IPublisher m_publisher;
 		private ISubscriber m_subscriber;
+
+		#region Overrides of FdoTestBase
 
 		public override void FixtureSetup()
 		{
@@ -42,8 +45,6 @@ namespace LanguageExplorerTests.TextsAndWords
 				Cache.LanguageProject.TranslatedScriptureOA = Cache.ServiceLocator.GetInstance<IScriptureFactory>().Create();
 			});
 		}
-
-		#region Overrides of FdoTestBase
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

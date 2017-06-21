@@ -466,6 +466,8 @@ namespace SIL.FieldWorks.XWorks
 			var node = PropertyTable.GetValue<TreeNode>("SelectedTreeBarNode");
 			if (node == null)
 				return;
+			if (!(node.Tag is int))
+				throw new ArgumentException(SelectedListBarNodeErrorMessage);
 			var hvo = (int)node.Tag;
 			if (CurrentObjectHvo == 0 || hvo != CurrentObjectHvo)
 				JumpToRecord(hvo);
@@ -1404,25 +1406,20 @@ namespace SIL.FieldWorks.XWorks
 		{
 			CheckDisposed();
 
-			switch(name)
+			//this happens when the user chooses a MenuItem or sidebar item that selects a filter
+			if (name == CurrentFilterPropertyTableId)
 			{
-				default:
-					//this happens when the user chooses a MenuItem or sidebar item that selects a filter
-					if(name == CurrentFilterPropertyTableId)
-					{
-						OnChangeFilterToCheckedListPropertyChoice();
-						break;
-					}
+				OnChangeFilterToCheckedListPropertyChoice();
+				return;
+			}
 
-					//if we are  "dependent" on another clerk to provide the owning object of our list:
-					if (m_clerkProvidingRootObject != null)
-					{
-						if (name == DependentPropertyName)
-						{
-							UpdateOwningObjectIfNeeded();
-						}
-					}
-					break;
+			//if we are  "dependent" on another clerk to provide the owning object of our list:
+			if (m_clerkProvidingRootObject != null)
+			{
+				if (name == DependentPropertyName)
+				{
+					UpdateOwningObjectIfNeeded();
+				}
 			}
 		}
 
@@ -2179,12 +2176,12 @@ namespace SIL.FieldWorks.XWorks
 		/// This property was added when we ran into the following problem: when a user added a new entry
 		/// from the interlinear text section, that generated a notification that a new entry had been added to
 		/// the list of entries. The RecordClerk that was responsible for that list then woke up, and tried
-		/// to update the tree bar to show this new item. But of course, the tree bottle was currently showing the list
+		/// to update the tree bar to show this new item. But of course, the tree bar was currently showing the list
 		/// of texts, so this was a *bad idea*. Hence this new property, which relies on a new
 		/// property in the property table to say which RecordClerk claims to be the current master
 		/// of the tree bar.
 		/// </remarks>
-		virtual public bool IsControllingTheRecordTreeBar
+		public virtual bool IsControllingTheRecordTreeBar
 		{
 			set
 			{
@@ -2237,7 +2234,7 @@ namespace SIL.FieldWorks.XWorks
 		/// Tell the RecordClerk that it may now be the new master of the tree bar, if it is not a dependent clerk.
 		/// Use DeactivatedGui to tell RecordClerk that it's not currently being used in a Gui.
 		/// </summary>
-		virtual public void ActivateUI(bool useRecordTreeBar, bool updateStatusBar = true)
+		public virtual void ActivateUI(bool useRecordTreeBar, bool updateStatusBar = true)
 		{
 			CheckDisposed();
 			if (m_fIsActiveInGui)
@@ -2265,7 +2262,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Tell RecordClerk that we're not currently being used in a Gui.
 		/// </summary>
-		virtual public void BecomeInactive()
+		public virtual void BecomeInactive()
 		{
 			m_fIsActiveInGui = false;
 			if (m_recordBarHandler != null)
@@ -2362,9 +2359,9 @@ namespace SIL.FieldWorks.XWorks
 		/// Update the contents of the filter list.
 		/// </summary>
 		private void FilterListChanged_Message_Handler(object newValue)
-			{
-				m_filterProvider.ReLoad();
-			}
+		{
+			m_filterProvider.ReLoad();
+		}
 
 		public ICmObject CurrentObject
 		{
@@ -2378,13 +2375,8 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <remarks>virtual for tests</remarks>
-		public virtual int CurrentObjectHvo
-		{
-			get
-			{
-				return m_list.CurrentObjectHvo;
-			}
-		}
+		public virtual int CurrentObjectHvo => m_list.CurrentObjectHvo;
+
 		public int CurrentIndex
 		{
 			get

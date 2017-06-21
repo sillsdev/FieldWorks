@@ -1,7 +1,8 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System.Xml.Linq;
 using SIL.FieldWorks.XWorks;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
@@ -14,6 +15,20 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 	{
 		internal InterlinMasterBase()
 		{
+		}
+
+		internal InterlinMasterBase(XElement configurationParametersElement, RecordClerk recordClerk)
+			:base(configurationParametersElement, recordClerk)
+		{
+		}
+
+		/// <summary>
+		/// if the XML configuration does not specify the availability of the treebar
+		/// (e.g. treeBarAvailability="Required"), then use this.
+		/// </summary>
+		protected override TreebarAvailability DefaultTreeBarAvailability
+		{
+			get { return TreebarAvailability.NotAllowed; }
 		}
 	}
 }

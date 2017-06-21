@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -823,10 +823,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			set
 			{
 				((InterlinDocForAnalysisVc)m_vc).FocusBoxOccurrence = value;
-				PropertyTable.SetProperty("TextSelectedWord",
-					value != null && value.HasWordform ? value.Analysis.Wordform : null,
-					false,
-					true);
+				Publisher.Publish("TextSelectedWord", value != null && value.HasWordform ? value.Analysis.Wordform : null);
 			}
 		}
 
@@ -1855,6 +1852,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		internal override void CreateFocusBox()
 		{
 			ExistingFocusBox = CreateFocusBoxInternal();
+			ExistingFocusBox.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 		}
 
 		protected virtual FocusBoxController CreateFocusBoxInternal()

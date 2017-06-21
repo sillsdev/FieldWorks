@@ -480,7 +480,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				{
 					_currentWordform = null;
 				}
-				return _currentWordform; // Will be null, if not in a freindly space.
+				return _currentWordform; // Will be null, if not in a friendly space.
 			}
 		}
 

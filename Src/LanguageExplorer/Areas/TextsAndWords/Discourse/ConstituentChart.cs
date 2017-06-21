@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2008-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -860,7 +860,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				return null;
 			if (myParent is InterlinMaster)
 			{
-				string tool = (myParent as InterlinMaster).CurrentTool;
+				string tool = (myParent as InterlinMaster).Clerk.Id;
 				return InterlinMaster.m_bookmarks[new Tuple<string, Guid>(tool, basedOnRa.Guid)];
 			}
 			return GetAncestorBookmark(myParent as Control, basedOnRa);

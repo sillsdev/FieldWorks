@@ -34,7 +34,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <param name="decorator"></param>
 		/// <param name="languageProject"></param>
 		internal ConcordanceWordList(ConcDecorator decorator, ILangProject languageProject)
-			: base(decorator, false, 0, languageProject, "InterestingTexts")
+			: base(decorator, false, ObjectListPublisher.OwningFlid, languageProject, "Wordforms")
 		{
 		}
 

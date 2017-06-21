@@ -1,4 +1,4 @@
-// Copyright (c) 2009-2017 SIL International
+// Copyright (c) 2009-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -633,7 +633,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		private bool AllWillChange(out bool someWillChange)
 		{
 			var checkedItems = new HashSet<int>(m_sourceSentences.CheckedItems);
-			int changeCount = checkedItems.Intersect(m_enabledItems).Count();
+			var changeCount = checkedItems.Intersect(m_enabledItems).Count();
 			someWillChange = changeCount > 0;
 			return changeCount == m_enabledItems.Count && !m_fOtherOccurrencesExist;
 		}
@@ -2092,6 +2092,8 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			ReplaceAnalysisOccurrences(hvo, values);
 		}
 
+		FdoCache Cache { get; }
+
 		/// <summary>
 		/// Make additional fake occurrences for where the wordform occurs in captions.
 		/// </summary>
@@ -2165,8 +2167,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				}
 			}
 		}
-
-		FdoCache Cache { set; get; }
 	}
 
 	internal class CaptionParaFragment : IParaFragment

@@ -1,13 +1,16 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Diagnostics;
+using System.Windows.Forms;
+using System.Xml.Linq;
+using SIL.FieldWorks.XWorks;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
 	/// <summary>
-	/// This class is like its superclass, except it reomves the superclass' top control and pane bar.
+	/// This class is like its superclass, except it removes the superclass' top control and pane bar.
 	/// </summary>
 	public class InterlinMasterNoTitleBar : InterlinMaster
 	{
@@ -17,8 +20,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			// This call is required by the Windows Form Designer.
 			InitializeComponent();
+		}
 
-			// TODO: Add any initialization after the InitializeComponent call
+		internal InterlinMasterNoTitleBar(XElement configurationParametersElement, RecordClerk recordClerk)
+			:base(configurationParametersElement, recordClerk, false)
+		{
+			// This call is required by the Windows.Forms Form Designer.
+			InitializeComponent();
+			Dock = DockStyle.Fill;
 		}
 
 		/// <summary>
@@ -59,11 +68,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			base.AddPaneBar();
 
+			var removedControls = false;
+			SuspendLayout();
 			if (m_informationBar != null)
 			{
 				Controls.Remove(m_informationBar);
 				m_informationBar.Dispose();
 				m_informationBar = null;
+				removedControls = true;
 			}
 
 			if (TitleContentsPane != null)
@@ -71,6 +83,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				Controls.Remove(TitleContentsPane);
 				TitleContentsPane.Dispose();
 				TitleContentsPane = null;
+				removedControls = true;
+			}
+			ResumeLayout(true);
+			if (removedControls)
+			{
+				BringToFront();
 			}
 		}
 	}

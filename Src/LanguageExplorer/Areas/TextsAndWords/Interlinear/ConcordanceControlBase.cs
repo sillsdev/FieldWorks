@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2017 SIL International
+﻿// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -22,6 +22,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		protected FdoCache m_cache;
 		protected OccurrencesOfSelectedUnit m_clerk;
 		protected IHelpTopicProvider m_helpTopicProvider;
+
+		public ConcordanceControlBase()
+		{}
+
+		internal ConcordanceControlBase(OccurrencesOfSelectedUnit clerk)
+		{
+			m_clerk = clerk;
+		}
 
 		#region Implementation of IPropertyTableProvider
 
@@ -117,7 +125,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			get
 			{
 				CheckDisposed();
-				return XmlUtils.GetOptionalAttributeValue(m_configurationParameters, "area", "unknown");
+				return "textAndWords";
 			}
 		}
 
@@ -127,9 +135,24 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
 		}
 
+		/// <summary>
+		/// Clean up any resources being used.
+		/// </summary>
+		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
 		protected override void Dispose(bool disposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
+			if (disposing)
+			{
+				if (m_clerk != null)
+					m_clerk.ConcordanceControl = null;
+
+				// Don't dispose of the clerk, since it can monitor relevant PropChanges
+				// that affect the NeedToReloadVirtualProperty.
+			}
+			m_clerk = null;
+			m_cache = null;
+
 			base.Dispose(disposing);
 		}
 

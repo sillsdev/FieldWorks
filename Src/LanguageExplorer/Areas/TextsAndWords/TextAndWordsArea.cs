@@ -93,6 +93,10 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		{
 		}
 
+		#endregion
+
+		#region Implementation of IMajorFlexComponent
+
 		/// <summary>
 		/// Activate the component.
 		/// </summary>

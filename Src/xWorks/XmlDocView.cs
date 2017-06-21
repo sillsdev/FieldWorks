@@ -262,7 +262,6 @@ namespace SIL.FieldWorks.XWorks
 		/// -----------------------------------------------------------------------------------
 		protected override void Dispose( bool disposing )
 		{
-			//Debug.WriteLineIf(!disposing, "****************** " + GetType().Name + " 'disposing' is false. ******************");
 			// Must not be run more than once.
 			if (IsDisposed)
 				return;

@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -493,7 +493,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			IWfiWordform wordform;
 			if (!GetSelectedWordform(vwselNew, out wordform))
 				wordform = null;
-			PropertyTable.SetProperty("TextSelectedWord", wordform, false, true);
+			Publisher.Publish("TextSelectedWord", wordform);
 
 			SelectionHelper helper = SelectionHelper.Create(vwselNew, this);
 			if (helper != null && helper.GetTextPropId(SelectionHelper.SelLimitType.Anchor) == RawTextVc.kTagUserPrompt)

@@ -203,4 +203,41 @@
   <data name="ksUpdateMonoMorphemicLexicalEntries" xml:space="preserve">
     <value>Update lexical entries of mono-morphemic analyses</value>
   </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="WordListColumns" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\WordListColumns.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+    <comment>Do Not Localize</comment>
+  </data>
+  <data name="WordListParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\WordListParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+    <comment>Do Not Localize</comment>
+  </data>
+  <data name="AnalysesRecordEditViewParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\AnalysesRecordEditViewParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+    <comment>Do Not Localize</comment>
+  </data>
+  <data name="BulkEditWordformsToolParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\BulkEditWordformsToolParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+    <comment>Do Not Localize</comment>
+  </data>
+  <data name="InterlinearEditToolParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\InterlinearEditToolParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+    <comment>Do Not Localize</comment>
+  </data>
+  <data name="ConcordanceColumns" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\ConcordanceColumns.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+    <comment>Do Not Localize</comment>
+  </data>
+  <data name="ConcordanceToolParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\ConcordanceToolParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+    <comment>Do Not Localize</comment>
+  </data>
+  <data name="WordListConcordanceToolParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\WordListConcordanceToolParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+    <comment>Do Not Localize</comment>
+  </data>
+  <data name="ComplexConcordanceToolParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\ComplexConcordanceToolParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+    <comment>Do Not Localize</comment>
+  </data>
 </root>

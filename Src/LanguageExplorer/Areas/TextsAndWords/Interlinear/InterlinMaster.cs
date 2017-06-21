@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -8,7 +8,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using System.Xml;
+using System.Xml.Linq;
 using LanguageExplorer.Areas.TextsAndWords.Discourse;
 using SIL.CoreImpl.Text;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
@@ -55,13 +55,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		// clerk has no current object.
 		protected bool m_fSuppressAutoCreate;
 
-		private string m_currentTool = "";
-
-		public string CurrentTool
-		{
-			get { return m_currentTool; }
-		}
-
 		/// <summary>
 		/// Numbers identifying the main tabs in the interlinear text.
 		/// </summary>
@@ -85,15 +78,24 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		const int ktpsPrint = (int)TabPageSelection.PrintView;
 		const int ktpsCChart = (int)TabPageSelection.ConstituentChart;
 
-		public InterlinMaster()
+		internal InterlinMaster()
 		{
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
 		}
 
+		internal InterlinMaster(XElement configurationParametersElement, RecordClerk recordClerk, bool showTitlePane = true)
+			:base(configurationParametersElement, recordClerk)
+		{
+			// This call is required by the Windows.Forms Form Designer.
+			InitializeComponent();
+			Dock = DockStyle.Top;
+			m_tcPane.Visible = showTitlePane;
+		}
+
 		internal string BookmarkId
 		{
-			get { return Clerk.Id ?? ""; }
+			get { return Clerk.Id ?? string.Empty; }
 		}
 
 		/// <summary>
@@ -156,9 +158,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				site.StyleSheet = m_styleSheet;
 		}
 
-		IInterlinearTabControl CurrentInterlinearTabControl { get; set; }
+		private IInterlinearTabControl CurrentInterlinearTabControl { get; set; }
 
-		void SetCurrentInterlinearTabControl(IInterlinearTabControl pane)
+		private void SetCurrentInterlinearTabControl(IInterlinearTabControl pane)
 		{
 			CurrentInterlinearTabControl = pane;
 			SetupInterlinearTabControlForStText(pane);
@@ -236,11 +238,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			if (m_informationBar != null && m_configurationParametersElement != null)
 			{
-				string sAltTitle = XmlUtils.GetOptionalAttributeValue(m_configurationParametersElement, "altTitleId");
-				if (!String.IsNullOrEmpty(sAltTitle))
+				var sAltTitle = XmlUtils.GetOptionalAttributeValue(m_configurationParametersElement, "altTitleId");
+				if (!string.IsNullOrEmpty(sAltTitle))
 				{
 					string sTitle = StringTable.Table.GetString(sAltTitle, "AlternativeTitles");
-					if (!String.IsNullOrEmpty(sTitle))
+					if (!string.IsNullOrEmpty(sTitle))
 					{
 						((IPaneBar)m_informationBar).Text = sTitle;
 						return;
@@ -253,15 +255,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <summary>
 		/// do any further tabpage related setup based upon the interlinMaster configurationParameters.
 		/// </summary>
-		/// <param name="configurationParameters">configuration for InterlinMaster</param>
-		private void FinishInitTabPages(XmlNode configurationParameters)
+		private void FinishInitTabPages()
 		{
-			//
-			//  Finish defining m_tpRawText.
-			//
-			bool fEditable = XmlUtils.GetOptionalBooleanAttributeValue(configurationParameters, "editable", true);
-			if (!fEditable)
-				m_tpRawText.ToolTipText = String.Format(ITextStrings.ksBaseLineNotEditable);
+			if (!XmlUtils.GetOptionalBooleanAttributeValue(m_configurationParametersElement, "editable", true))
+			{
+				//  Finish defining m_tpRawText.
+				m_tpRawText.ToolTipText = string.Format(ITextStrings.ksBaseLineNotEditable);
+			}
 		}
 
 		private void SetupStyleSheet()
@@ -334,16 +334,16 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			if (!fSaved)
 			{
 				InterAreaBookmark mark;
-				if(m_bookmarks.TryGetValue(new Tuple<string, Guid>(CurrentTool, RootStText.Guid), out mark))
+				if(m_bookmarks.TryGetValue(new Tuple<string, Guid>(Clerk.Id, RootStText.Guid), out mark))
 				{
 					//We only want to persist the save if we are in the interlinear edit, not the concordance view
-					mark.Save(curAnalysis, CurrentTool.Equals("interlinearTexts"), IndexOfTextRecord);
+					mark.Save(curAnalysis, Clerk.Id.Equals("interlinearTexts"), IndexOfTextRecord);
 				}
 				else
 				{
 					mark = new InterAreaBookmark(this, Cache, PropertyTable);
 					mark.Restore(IndexOfTextRecord);
-					m_bookmarks.Add(new Tuple<string, Guid>(CurrentTool, RootStText.Guid), mark);
+					m_bookmarks.Add(new Tuple<string, Guid>(Clerk.Id, RootStText.Guid), mark);
 				}
 			}
 		}
@@ -404,7 +404,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 			if (hvoParaAnchor != 0)
 			{
-				IStTxtPara para = null;
+				IStTxtPara para;
 				if (Cache.ServiceLocator.GetInstance<IStTxtParaRepository>().TryGetObject(hvoParaAnchor, out para))
 				{
 					iPara = para.IndexInOwner;
@@ -427,7 +427,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				//if there is a bookmark for this text with this tool, then save it, if not some logic error brought us here,
 				//but simply not saving a bookmark which doesn't exist seems better than crashing. naylor 3/2012
-				var key = new Tuple<string, Guid>(CurrentTool, RootStText.Guid);
+				var key = new Tuple<string, Guid>(Clerk.Id, RootStText.Guid);
 				if (m_bookmarks.ContainsKey(key))
 				{
 					m_bookmarks[key].Save(IndexOfTextRecord, iPara, Math.Min(ichAnchor, ichEnd), Math.Max(ichAnchor, ichEnd), true);
@@ -471,19 +471,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 
 			base.OnLayout(levent);
-		}
-
-		public void OnPropertyChanged(string name)
-		{
-			CheckDisposed();
-
-			switch (name)
-			{
-				case "InterlinearTab":
-					if (m_tabCtrl.SelectedIndex != (int)InterlinearTab)
-						ShowTabView();
-					break;
-			}
 		}
 
 #if RANDYTODO
@@ -657,9 +644,29 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			var parentAsPaneBarContainer = paneBarAsControl.Parent as IPaneBarContainer;
 			if (parentAsPaneBarContainer == null) return;
 #if RANDYTODO
-			// TODO: This is the only known caller of PaneBarContainer's public RefreshPaneBar method.
-			// TODO: That method has gone away, so the responsibility needs to shift here or its tool.
+			// TODO: This is the original code.
 			parentAsPaneBarContainer.RefreshPaneBar();
+// TODO: RefreshPaneBar no longer exists on IPaneBarContainer, so figure out how to replicate its behavior, which is:
+/// <summary>
+/// refresh (reload) the menu items on the PaneBar.
+/// </summary>
+public void RefreshPaneBar()
+{
+	if (m_paneBar != null)
+		ReloadPaneBar(m_paneBar);
+}
+
+private void ReloadPaneBar(IPaneBar paneBar)
+{
+	string groupId = XmlUtils.GetOptionalAttributeValue(m_configurationParameters, "PaneBarGroupId", null);
+	if (groupId != null)
+	{
+		XWindow window = (XWindow)m_mediator.PropertyTable.GetValue("window");
+		ChoiceGroup group = window.GetChoiceGroupForMenu(groupId);
+		group.PopulateNow();
+		paneBar.AddGroup(group);
+	}
+}
 #endif
 		}
 
@@ -704,7 +711,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			services.GenerateEntryGuesses(stText);
 		}
 
-		#region Overrides of XWorksViewBase
+#region Overrides of XWorksViewBase
 
 		/// <summary>
 		/// Initialize a FLEx component with the basic interfaces.
@@ -714,38 +721,36 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			base.InitializeFlexComponent(flexComponentParameters);
 
-#if RANDYTODO
+			m_infoPane.InitializeFlexComponent(flexComponentParameters);
+			m_idcGloss.InitializeFlexComponent(flexComponentParameters);
+			m_idcAnalyze.InitializeFlexComponent(flexComponentParameters);
+			m_printViewPane.InitializeFlexComponent(flexComponentParameters);
+			m_taggingPane.InitializeFlexComponent(flexComponentParameters);
+
 			// Do this BEFORE calling InitBase, which calls ShowRecord, whose correct behavior
 			// depends on the suppressAutoCreate flag.
-			bool fHideTitlePane = XmlUtils.GetBooleanAttributeValue(configurationParameters, "hideTitleContents");
-			if (fHideTitlePane)
-			{
-				// When used as the third pane of a concordance, we don't want the
-				// title/contents stuff.
-				m_tcPane.Visible = false;
-			}
-			m_fSuppressAutoCreate = XmlUtils.GetBooleanAttributeValue(configurationParameters,
-				"suppressAutoCreate");
-
-			// Making the tab control currently requires this first...
-			if (!fHideTitlePane)
-			{
-				m_tcPane.StyleSheet = m_styleSheet;
-				m_tcPane.Visible = true;
-			}
-			FinishInitTabPages(configurationParameters);
-			SetInitialTabPage();
-			m_currentTool = configurationParameters.Attributes["clerk"].Value;
-			// Do NOT do this, it raises an exception.
-			//base.Init (mediator, configurationParameters);
-			// Instead do this.
-			InitBase(propertyTable, configurationParameters);
-			m_fullyInitialized = true;
-			RefreshPaneBar();
-#endif
+			m_fSuppressAutoCreate = XmlUtils.GetOptionalBooleanAttributeValue(m_configurationParametersElement, "suppressAutoCreate", false);
 		}
 
-		#endregion
+#endregion
+
+		/// <summary>
+		/// About to show, so finish initializing.
+		/// </summary>
+		internal void FinishInitialization()
+		{
+			if (m_tcPane != null && m_tcPane.Visible)
+			{
+				// Making the tab control currently requires this first...
+				m_tcPane.StyleSheet = m_styleSheet;
+			}
+			FinishInitTabPages();
+			SetInitialTabPage();
+			InitBase();
+
+			ShowRecord();
+			m_fullyInitialized = true;
+		}
 
 		/// <summary>
 		/// Set the appropriate tab index BEFORE calling InitBase, since that calls
@@ -756,7 +761,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			// If the Record Clerk has remembered we're IsPersistedForAnInterlinearTabPage,
 			// and we haven't already switched to that tab page, do so now.
-			if (this.Visible && m_tabCtrl.SelectedIndex != (int)InterlinearTab)
+			if (Visible && m_tabCtrl.SelectedIndex != (int)InterlinearTab)
 			{
 				// Switch to the persisted tab page index.
 				m_tabCtrl.SelectedIndex = (int)InterlinearTab;
@@ -788,14 +793,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			return true;
 		}
 
-		public bool OnPrepareToRefresh(object args)
+		public void PrepareToRefresh()
 		{
 			CheckDisposed();
 
 			// flag that a refresh was triggered (unless we don't have a current record..see var comment).
 			if (RootStTextHvo != 0)
 				m_fRefreshOccurred = true;
-			return false; // other things may wish to prepare too.
 		}
 
 		protected override void SetupDataContext()
@@ -803,6 +807,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			base.SetupDataContext();
 			InitializeInterlinearTabControl(m_tcPane);
 			InitializeInterlinearTabControl(CurrentInterlinearTabControl);
+			m_fullyInitialized = true;
+			RefreshPaneBar();
 		}
 
 
@@ -811,11 +817,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			if (site == null)
 				return;
 
-				SetStyleSheetFor(site as IStyleSheet);
-				site.Cache = Cache;
-			if (site is IFlexComponent)
+			SetStyleSheetFor(site as IStyleSheet);
+			site.Cache = Cache;
+			var siteAsFlexComponent = site as IFlexComponent;
+			if (siteAsFlexComponent != null && siteAsFlexComponent.PropertyTable == null)
 			{
-				(site as IFlexComponent).InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
+				// Only do it one time.
+				siteAsFlexComponent.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 			}
 		}
 
@@ -1003,7 +1011,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private int SetConcordanceBookmarkAndReturnRoot(int hvoRoot)
 		{
-			if (!CurrentTool.Equals("interlinearTexts"))
+			if (!Clerk.Id.Equals("interlinearTexts"))
 			{
 				var occurrenceFromHvo = (Clerk as IAnalysisOccurrenceFromHvo).OccurrenceFromHvo(Clerk.CurrentObjectHvo);
 				var point = occurrenceFromHvo != null ? occurrenceFromHvo.BestOccurrence : null;
@@ -1017,10 +1025,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				if (!m_fRefreshOccurred && m_bookmarks != null && text != null)
 				{
 					InterAreaBookmark mark;
-					if (!m_bookmarks.TryGetValue(new Tuple<string, Guid>(CurrentTool, text.Guid), out mark))
+					if (!m_bookmarks.TryGetValue(new Tuple<string, Guid>(Clerk.Id, text.Guid), out mark))
 					{
 						mark = new InterAreaBookmark(this, Cache, PropertyTable);
-						m_bookmarks.Add(new Tuple<string, Guid>(CurrentTool, text.Guid), mark);
+						m_bookmarks.Add(new Tuple<string, Guid>(Clerk.Id, text.Guid), mark);
 					}
 
 					mark.Save(point, false, IndexOfTextRecord);
@@ -1038,13 +1046,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			if (stText != null)
 			{
 				InterAreaBookmark mark;
-				if (m_bookmarks.TryGetValue(new Tuple<string, Guid>(CurrentTool, stText.Guid), out mark))
+				if (m_bookmarks.TryGetValue(new Tuple<string, Guid>(Clerk.Id, stText.Guid), out mark))
 				{
 					mark.Restore(IndexOfTextRecord);
 				}
 				else
 				{
-					m_bookmarks.Add(new Tuple<string, Guid>(CurrentTool, stText.Guid), new InterAreaBookmark(this, Cache, PropertyTable));
+					m_bookmarks.Add(new Tuple<string, Guid>(Clerk.Id, stText.Guid), new InterAreaBookmark(this, Cache, PropertyTable));
 				}
 			}
 		}
@@ -1078,10 +1086,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			if (Clerk.CurrentObjectHvo == 0 || Clerk.SuspendLoadingRecordUntilOnJumpToRecord)
 				return;
 			// Use a bookmark, if we've set one.
-			if (RootStText != null && m_bookmarks.ContainsKey(new Tuple<string, Guid>(CurrentTool, RootStText.Guid)) &&
-				m_bookmarks[new Tuple<string, Guid>(CurrentTool, RootStText.Guid)].IndexOfParagraph >= 0 && CurrentInterlinearTabControl is IHandleBookmark)
+			if (RootStText != null && m_bookmarks.ContainsKey(new Tuple<string, Guid>(Clerk.Id, RootStText.Guid)) &&
+				m_bookmarks[new Tuple<string, Guid>(Clerk.Id, RootStText.Guid)].IndexOfParagraph >= 0 && CurrentInterlinearTabControl is IHandleBookmark)
 			{
-				(CurrentInterlinearTabControl as IHandleBookmark).SelectBookmark(m_bookmarks[new Tuple<string, Guid>(CurrentTool, RootStText.Guid)]);
+				(CurrentInterlinearTabControl as IHandleBookmark).SelectBookmark(m_bookmarks[new Tuple<string, Guid>(Clerk.Id, RootStText.Guid)]);
 			}
 		}
 
@@ -1200,9 +1208,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			get
 			{
+#if RANDYTODO
+				// TODO: How can it be null?
 				if (PropertyTable == null)
 					return TabPageSelection.RawText;
-				string val = PropertyTable.GetValue("InterlinearTab", TabPageSelection.RawText.ToString());
+#endif
+				var val = PropertyTable.GetValue("InterlinearTab", TabPageSelection.RawText.ToString());
 				TabPageSelection tabSelection;
 				if (string.IsNullOrEmpty(val))
 				{
@@ -1225,7 +1236,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 			set
 			{
-				PropertyTable.SetProperty("InterlinearTab", value.ToString(), true, true);
+				PropertyTable.SetProperty("InterlinearTab", value.ToString(), true, false);
+				if (m_tabCtrl.SelectedIndex != (int)InterlinearTab)
+					ShowTabView();
 			}
 		}
 
@@ -1298,8 +1311,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				link.PropertyTableEntries.Add(new Property("InterlinearTab",
 					InterlinearTab.ToString()));
 				Clerk.SelectedRecordChanged(true, true); // make sure we update the record count in the Status bar.
+#if RANDYTODO
 				var linkListener = PropertyTable.GetValue<LinkListener>("LinkListener");
 				linkListener.OnAddContextToHistory(link);
+#endif
 			}
 		}
 
@@ -1426,7 +1441,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				//At this point m_tabCtrl.SelectedIndex is set to the value of the tabPage
 				//we are leaving.
-				if (RootStText != null && m_bookmarks.ContainsKey(new Tuple<string, Guid>(CurrentTool, RootStText.Guid)))
+				if (RootStText != null && m_bookmarks.ContainsKey(new Tuple<string, Guid>(Clerk.Id, RootStText.Guid)))
 					SaveBookMark();
 			}
 		}
