@@ -107,7 +107,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			base.FinishInit();
 
 			var rl = (PhoneEnvReferenceLauncher)Control;
-			rl.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
+			// Don't even 'think' of calling "rl.InitializeFlexComponent" at this point.
+			// I (RBR) have done it, and long since repented.
 			rl.Initialize(m_cache, m_obj, m_flid, m_fieldName, m_persistenceProvider, null, null);
 			rl.ConfigurationNode = ConfigurationNode;
 			rl.ViewSizeChanged += OnViewSizeChanged;
