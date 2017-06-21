@@ -22,14 +22,17 @@ MONO_DEBUG=explicit-null-checks
 MONO_ENV_OPTIONS="-O=-gshared"
 
 # Directory settings
-PATH="${BASE}/Output_${ARCH}/${BUILD}:\
+if [ "$RUNMODE" != "PACKAGE" -a "$RUNMODE" != "INSTALLED" ]
+then
+	PATH="${BASE}/Output_${ARCH}/${BUILD}:\
 ${BASE}/Lib/src/icu/install${ARCH}/bin:${BASE}/Lib/src/icu/source/bin:\
 ${COM}/build${ARCH}/bin:\
 ${PATH}"
-LD_LIBRARY_PATH="${BASE}/Output_${ARCH}/${BUILD}:\
+	LD_LIBRARY_PATH="${BASE}/Output_${ARCH}/${BUILD}:\
 ${BASE}/Lib/src/icu/install${ARCH}/lib:\
 ${COM}/build${ARCH}/lib:\
 ${LD_LIBRARY_PATH}"
+fi
 # ensure we scan the default pkg-config directories (to pick up Geckofx for compiling)
 [ -z "$PKG_CONFIG_PATH" ] && PKG_CONFIG_PATH=/usr/lib/pkgconfig:/usr/share/pkgconfig
 
@@ -71,9 +74,10 @@ if [ "$RUNMODE" != "PACKAGE" -a "$RUNMODE" != "INSTALLED" ]
 then
 	FW_CommonAppData=${BASE}/Output_${ARCH}/VarLibFieldworks
 	[ ! -d $FW_CommonAppData ] && mkdir -p $FW_CommonAppData
+	MONO_PATH="${BASE}/DistFiles:${BASE}/Output_${ARCH}/${BUILD}"
 fi
 
-MONO_PATH="${BASE}/DistFiles:${BASE}/Output_${ARCH}/${BUILD}:${GDK_SHARP}:${ENC_CONVERTERS}:${GECKOFX}"
+MONO_PATH="${MONO_PATH}:${GDK_SHARP}:${ENC_CONVERTERS}:${GECKOFX}"
 MONO_TRACE_LISTENER="Console.Out"
 #MONO_IOMAP=case
 MONO_MWF_SCALING=disable
