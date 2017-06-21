@@ -90,7 +90,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CategoryBrowse
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
 			_configurationDocument = XDocument.Parse(GrammarResources.GrammarCategoryBrowserParameters);
-			_recordClerk = GrammarArea.CreateBrowseClerkForGrammarArea(PropertyTable, false);
+			_recordClerk = GrammarArea.CreateCategoriesClerkForGrammarArea(PropertyTable, false);
 			_recordClerk.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
 			_paneBarContainer = PaneBarContainerFactory.Create(
 				majorFlexComponentParameters.FlexComponentParameters,

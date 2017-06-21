@@ -28,7 +28,7 @@ namespace LanguageExplorer.Areas.Grammar
 			m_toolRepository = toolRepository;
 		}
 
-		internal static RecordClerk CreateBrowseClerkForGrammarArea(IPropertyTable propertyTable, bool includeTreeBarHandler)
+		internal static RecordClerk CreateCategoriesClerkForGrammarArea(IPropertyTable propertyTable, bool includeTreeBarHandler)
 		{
 			var cache = propertyTable.GetValue<FdoCache>("cache");
 			var recordList = new PossibilityRecordList(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), cache.LanguageProject.PartsOfSpeechOA);
