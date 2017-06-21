@@ -673,7 +673,7 @@
     <Compile Include="Areas\Notebook\Tools\NotebookEdit\RoledParticipantsSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\Notebook\Tools\NotebookResources.Designer.cs">
+    <Compile Include="Areas\Notebook\NotebookResources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>NotebookResources.resx</DependentUpon>
@@ -1282,7 +1282,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>ListResources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="Areas\Notebook\Tools\NotebookResources.resx">
+    <EmbeddedResource Include="Areas\Notebook\NotebookResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>NotebookResources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>

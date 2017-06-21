@@ -117,17 +117,34 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Demote_Record" xml:space="preserve">
+    <value>Demote Record...</value>
+  </data>
+  <data name="Insert_Subrecord" xml:space="preserve">
+    <value>Insert _Subrecord</value>
+  </data>
+  <data name="Insert_Subrecord_of_Subrecord" xml:space="preserve">
+    <value>Insert S_ubrecord of Subrecord</value>
+  </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="NotebookBrowseColumnDefinitions" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\..\..\Resources\NotebookBrowseColumnDefinitions.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\..\Resources\NotebookBrowseColumnDefinitions.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
     <comment>Do Not Localize</comment>
   </data>
   <data name="NotebookBrowseParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\..\..\Resources\NotebookBrowseParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+    <value>..\..\Resources\NotebookBrowseParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
     <comment>Do Not Localize</comment>
   </data>
   <data name="NotebookDocumentParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\..\..\Resources\NotebookDocumentParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\..\Resources\NotebookDocumentParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <comment>Do Not Localize</comment>
+  </data>
+  <data name="NotebookEditBrowseParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\NotebookEditBrowseParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+    <comment>Do Not Localize</comment>
+  </data>
+  <data name="NotebookEditRecordEditViewParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\NotebookEditRecordEditViewParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
     <comment>Do Not Localize</comment>
   </data>
 </root>

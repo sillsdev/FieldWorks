@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace LanguageExplorer.Areas.Notebook.Tools {
+namespace LanguageExplorer.Areas.Notebook {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("LanguageExplorer.Areas.Notebook.Tools.NotebookResources", typeof(NotebookResources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("LanguageExplorer.Areas.Notebook.NotebookResources", typeof(NotebookResources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -57,6 +57,33 @@ namespace LanguageExplorer.Areas.Notebook.Tools {
             }
             set {
                 resourceCulture = value;
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Demote Record....
+        /// </summary>
+        internal static string Demote_Record {
+            get {
+                return ResourceManager.GetString("Demote_Record", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Insert _Subrecord.
+        /// </summary>
+        internal static string Insert_Subrecord {
+            get {
+                return ResourceManager.GetString("Insert_Subrecord", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Insert S_ubrecord of Subrecord.
+        /// </summary>
+        internal static string Insert_Subrecord_of_Subrecord {
+            get {
+                return ResourceManager.GetString("Insert_Subrecord_of_Subrecord", resourceCulture);
             }
         }
         
@@ -97,6 +124,26 @@ namespace LanguageExplorer.Areas.Notebook.Tools {
         internal static string NotebookDocumentParameters {
             get {
                 return ResourceManager.GetString("NotebookDocumentParameters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+        ///&lt;parameters id=&quot;recordList&quot; clerk=&quot;records&quot; filterBar=&quot;true&quot; treeBarAvailability=&quot;NotAllowed&quot; defaultCursor=&quot;Arrow&quot; hscroll=&quot;true&quot; altTitleId=&quot;RnGenericRec-Plural&quot; /&gt;.
+        /// </summary>
+        internal static string NotebookEditBrowseParameters {
+            get {
+                return ResourceManager.GetString("NotebookEditBrowseParameters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+        ///&lt;parameters persistContext=&quot;normalEdit&quot; layout=&quot;Normal&quot; layoutChoiceField=&quot;Type&quot; treeBarAvailability=&quot;NotAllowed&quot; showDescendantInRoot=&quot;true&quot; emptyTitleId=&quot;No-RnGenericRecs&quot; printLayout=&quot;publishRecord&quot; /&gt;.
+        /// </summary>
+        internal static string NotebookEditRecordEditViewParameters {
+            get {
+                return ResourceManager.GetString("NotebookEditRecordEditViewParameters", resourceCulture);
             }
         }
     }

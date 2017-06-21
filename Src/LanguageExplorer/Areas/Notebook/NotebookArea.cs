@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+using System.Xml.Linq;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
@@ -35,6 +36,13 @@ namespace LanguageExplorer.Areas.Notebook
 			var nb = cache.LanguageProject.ResearchNotebookOA;
 			var recordList = new RecordList(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), false, mdc.GetFieldId2(nb.ClassID, "AllRecords", false), nb, "AllRecords");
 			return new RecordClerk("records", recordList, new PropertyRecordSorter("ShortName"), "Default", null, false, false);
+		}
+
+		internal static XDocument LoadDocument(string resourceName)
+		{
+			var configurationDocument = XDocument.Parse(resourceName);
+			configurationDocument.Root.Add(XElement.Parse(NotebookResources.NotebookBrowseColumnDefinitions));
+			return configurationDocument;
 		}
 
 		void FileExportMenu_Click(object sender, EventArgs e)
