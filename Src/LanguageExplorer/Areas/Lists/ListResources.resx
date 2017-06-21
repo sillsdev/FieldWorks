@@ -222,4 +222,24 @@
     <value>..\..\Resources\VariantEntryTypeEditParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
     <comment>Do Not Localize</comment>
   </data>
+  <data name="FeatureTypesAdvancedEditBrowseViewParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\FeatureTypesAdvancedEditBrowseViewParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+    <comment>Do Not Localize</comment>
+  </data>
+  <data name="FeatureTypesAdvancedEditRecordEditViewParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\FeatureTypesAdvancedEditRecordEditViewParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+    <comment>Do Not Localize</comment>
+  </data>
+  <data name="PosEditParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\PosEditParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+    <comment>Do Not Localize</comment>
+  </data>
+  <data name="ReversalToolReversalIndexPOSBrowseViewParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\ReversalToolReversalIndexPOSBrowseViewParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+    <comment>Do Not Localize</comment>
+  </data>
+  <data name="ReversalToolReversalIndexPOSRecordEditViewParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\ReversalToolReversalIndexPOSRecordEditViewParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+    <comment>Do Not Localize</comment>
+  </data>
 </root>

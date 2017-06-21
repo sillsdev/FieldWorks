@@ -132,6 +132,30 @@ namespace LanguageExplorer.Areas.Lists {
         
         /// <summary>
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+        ///&lt;parameters id=&quot;featureTypesList&quot; filterBar=&quot;true&quot; treeBarAvailability=&quot;NotAllowed&quot; defaultCursor=&quot;Arrow&quot; hscroll=&quot;true&quot; altTitleId=&quot;FsFeatStrucType-Plural&quot; editable=&quot;false&quot;&gt;
+        ///	&lt;columns&gt;
+        ///		&lt;!-- explicit layout of these columns (rather than having a layout attribute) causes display problems in Mono/Linux --&gt;
+        ///		&lt;column label=&quot;Name&quot; ws=&quot;$ws=best analysis&quot; width=&quot;50%&quot; field=&quot;Name&quot; layout=&quot;Name&quot;/&gt;
+        ///		&lt;column label=&quot;Abbreviation&quot; width=&quot;50%&quot; ws=&quot;$ws=best analysis&quot; field= [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string FeatureTypesAdvancedEditBrowseViewParameters {
+            get {
+                return ResourceManager.GetString("FeatureTypesAdvancedEditBrowseViewParameters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+        ///&lt;parameters treeBarAvailability=&quot;NotAllowed&quot; persistContext=&quot;advancedEdit&quot; layout=&quot;Edit&quot; emptyTitleId=&quot;No-FsFeatStrucTypes&quot; /&gt;.
+        /// </summary>
+        internal static string FeatureTypesAdvancedEditRecordEditViewParameters {
+            get {
+                return ResourceManager.GetString("FeatureTypesAdvancedEditRecordEditViewParameters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
         ///&lt;parameters persistContext=&quot;listsEdit&quot; layout=&quot;default&quot; emptyTitleId=&quot;No-Genres&quot; /&gt;.
         /// </summary>
         internal static string GenresEditParameters {
@@ -198,6 +222,16 @@ namespace LanguageExplorer.Areas.Lists {
         
         /// <summary>
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+        ///&lt;parameters persistContext=&quot;advancedEdit&quot; layout=&quot;default&quot; emptyTitleId=&quot;No-PartsOfSpeech&quot;/&gt;.
+        /// </summary>
+        internal static string PosEditParameters {
+            get {
+                return ResourceManager.GetString("PosEditParameters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
         ///&lt;parameters persistContext=&quot;listsEdit&quot; layout=&quot;default&quot; emptyTitleId=&quot;No-Positions&quot; /&gt;.
         /// </summary>
         internal static string PositionsEditParameters {
@@ -233,6 +267,30 @@ namespace LanguageExplorer.Areas.Lists {
         internal static string RestrictionsEditParameters {
             get {
                 return ResourceManager.GetString("RestrictionsEditParameters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+        ///&lt;parameters filterBar=&quot;true&quot; treeBarAvailability=&quot;NotAllowed&quot; defaultCursor=&quot;Arrow&quot; hscroll=&quot;true&quot; altTitleId=&quot;PartOfSpeech-Plural&quot; editable=&quot;false&quot;&gt;
+        ///	&lt;columns&gt;
+        ///		&lt;!-- explicit layout of these columns (rather than having a layout attribute) causes display problems in Mono/Linux --&gt;
+        ///		&lt;column label=&quot;Name&quot; ws=&quot;$ws=best analysis&quot; width=&quot;50%&quot; field=&quot;Name&quot; layout=&quot;Name&quot;/&gt;
+        ///		&lt;column label=&quot;Abbreviation&quot; width=&quot;50%&quot; ws=&quot;$ws=best analysis&quot; field=&quot;Abbreviation&quot; layout=&quot;Ab [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string ReversalToolReversalIndexPOSBrowseViewParameters {
+            get {
+                return ResourceManager.GetString("ReversalToolReversalIndexPOSBrowseViewParameters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+        ///&lt;parameters treeBarAvailability=&quot;NotAllowed&quot; persistContext=&quot;listsEdit&quot; layout=&quot;Reversal&quot; emptyTitleId=&quot;No-PartsOfSpeech&quot; /&gt;.
+        /// </summary>
+        internal static string ReversalToolReversalIndexPOSRecordEditViewParameters {
+            get {
+                return ResourceManager.GetString("ReversalToolReversalIndexPOSRecordEditViewParameters", resourceCulture);
             }
         }
         
