@@ -61,6 +61,35 @@ namespace LanguageExplorer.Areas.Lexicon {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+        ///&lt;!-- this file lists special instructions for XDE nodes. Currently, all that you are allowed to say is
+        ///that a node is not visible. You do that by listing the node here. the id of the node must match the XDE
+        ///node that would otherwise produce a slice which you want to hide. note that most XDE nodes
+        ///do not otherwise have an ID; you usually have to add 1 before you can reference it in this kind of document.--&gt;
+        ///&lt;SliceFilter&gt;
+        ///	&lt;node id=&quot;MoAffixAllomorphInflectionClass [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string BasicFilter {
+            get {
+                return ResourceManager.GetString("BasicFilter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+        ///&lt;root&gt;
+        ///	&lt;parameters toolId=&quot;bulkEditEntriesOrSenses&quot; filterBar=&quot;true&quot; bulkEdit=&quot;true&quot; selectColumn=&quot;true&quot; bulkEditListItemsClasses=&quot;LexEntry,LexSense,LexEntryRef,LexPronunciation,MoForm,LexExampleSentence,CmTranslation&quot; bulkEditListItemsGhostFields=&quot;LexDb.AllPossiblePronunciations,LexDb.AllPossibleAllomorphs,LexDb.AllExampleSentenceTargets,LexDb.AllExampleTranslationTargets,LexDb.AllComplexEntryRefPropertyTargets&quot;&gt;
+        ///		&lt;includeColumns /&gt;
+        ///	&lt;/parameters&gt;
+        ///	&lt;overrides&gt; [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string BulkEditEntriesOrSensesToolParameters {
+            get {
+                return ResourceManager.GetString("BulkEditEntriesOrSensesToolParameters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Insert A_llomorph.
         /// </summary>
         internal static string Insert_Allomorph {
@@ -306,6 +335,46 @@ namespace LanguageExplorer.Areas.Lexicon {
         
         /// <summary>
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+        ///&lt;parameters altTitleId=&quot;LexSense-Classified&quot; persistContext=&quot;ClassDict&quot; backColor=&quot;White&quot; layout=&quot;classifiedDict&quot; layoutProperty=&quot;ClassifiedDictionaryPublicationLayout&quot; editable=&quot;false&quot; allowInsertDeleteRecord=&quot;false&quot; msgBoxTrigger=&quot;ClassifiedDictionary-Intro&quot; configureObjectName=&quot;Classified Dictionary&quot;&gt;
+        ///	&lt;elementDisplayCondition field=&quot;ReferringSenses&quot; lengthatleast=&quot;1&quot;/&gt;
+        ///	&lt;configureLayouts&gt;
+        ///		&lt;layoutType label=&quot;Classified Dictionary&quot; layout=&quot;classifiedDict&quot;&gt;
+        ///		 [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string LexiconClassifiedDictionaryParameters {
+            get {
+                return ResourceManager.GetString("LexiconClassifiedDictionaryParameters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+        ///&lt;!-- The following configureLayouts node is only required to help migrate old configurations to the new format --&gt;
+        ///&lt;configureLayouts&gt;
+        ///	&lt;layoutType label=&quot;Stem-based (complex forms as main entries)&quot; layout=&quot;publishStem&quot;&gt;
+        ///		&lt;configure class=&quot;LexEntry&quot; label=&quot;Main Entry&quot; layout=&quot;publishStemEntry&quot;/&gt;
+        ///		&lt;configure class=&quot;LexEntry&quot; label=&quot;Minor Entry&quot; layout=&quot;publishStemMinorEntry&quot; hideConfig=&quot;true&quot;/&gt;
+        ///	&lt;/layoutType&gt;
+        ///	&lt;layoutType label=&quot;Root-based (complex forms as sub [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string LexiconDictionaryConfigureLayouts {
+            get {
+                return ResourceManager.GetString("LexiconDictionaryConfigureLayouts", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+        ///&lt;parameters clerk=&quot;entries&quot; altTitleId=&quot;LexEntry-Plural&quot; persistContext=&quot;Dict&quot; backColor=&quot;White&quot; layout=&quot;&quot; layoutProperty=&quot;DictionaryPublicationLayout&quot; layoutSuffix=&quot;Preview&quot; editable=&quot;false&quot; configureObjectName=&quot;Dictionary&quot; /&gt;.
+        /// </summary>
+        internal static string LexiconDictionaryToolParameters {
+            get {
+                return ResourceManager.GetString("LexiconDictionaryToolParameters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
         ///&lt;parameters id=&quot;DictionaryPubPreview&quot; layout=&quot;publishStem&quot; layoutProperty=&quot;DictionaryPublicationLayout&quot; layoutSuffix=&quot;Preview&quot; editable=&quot;false&quot; configureObjectName=&quot;Dictionary&quot; viewTypeLabelKey=&quot;ksDictionaryView&quot; emptyTitleId=&quot;No-LexEntries&quot;&gt;
         ///	&lt;configureLayouts&gt;
         ///		&lt;layoutType label=&quot;Stem-based (complex forms as main entries)&quot; layout=&quot;publishStem&quot;&gt;
@@ -361,6 +430,49 @@ namespace LanguageExplorer.Areas.Lexicon {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+        ///&lt;root&gt;
+        ///	&lt;recordeditview&gt;
+        ///		&lt;parameters treeBarAvailability=&quot;Required&quot; layout=&quot;RDE&quot; msgBoxTrigger=&quot;CategorizedEntry-Intro&quot; allowInsertDeleteRecord=&quot;false&quot; /&gt;
+        ///	&lt;/recordeditview&gt;
+        ///	&lt;recordbrowseview&gt;
+        ///		&lt;parameters id=&quot;wordList&quot; filterBar=&quot;false&quot; forceReloadListOnInitOrChangeRoot=&quot;true&quot; editRowModelClass=&quot;LexSense&quot; editRowAssembly=&quot;FDO.dll&quot; editRowClass=&quot;SIL.FieldWorks.FDO.ILexSense&quot; editRowSaveMethod=&quot;RDENewSense&quot; editRowMergeMethod=&quot;RDEMergeSense&quot; ShowOwnerShortnam [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string RapidDataEntryToolParameters {
+            get {
+                return ResourceManager.GetString("RapidDataEntryToolParameters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+        ///&lt;parameters toolId=&quot;reversalBulkEditReversalEntries&quot; clerk=&quot;AllReversalEntries&quot; filterBar=&quot;true&quot; bulkEdit=&quot;true&quot; bulkEditListItemsClasses=&quot;ReversalIndexEntry&quot; selectColumn=&quot;true&quot; altTitleId=&quot;ReversalIndexEntry-Plural&quot; ShowOwnerShortname=&quot;true&quot; &gt;
+        ///	&lt;enableBulkEditTabs enableBEListChoice=&quot;true&quot; enableBEBulkCopy=&quot;true&quot; enableBEClickCopy=&quot;true&quot; enableBEProcess=&quot;true&quot; enableBEFindReplace=&quot;true&quot; enableBEOther=&quot;true&quot; /&gt;
+        ///	&lt;columns&gt;
+        ///		&lt;!-- NB: If you add a new column and it [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string ReversalBulkEditReversalEntriesToolParameters {
+            get {
+                return ResourceManager.GetString("ReversalBulkEditReversalEntriesToolParameters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+        ///&lt;root&gt;
+        ///	&lt;docview&gt;
+        ///		&lt;parameters clerk=&quot;AllReversalEntries&quot;  persistContext=&quot;Reversal&quot; backColor=&quot;White&quot; layout=&quot;&quot; layoutProperty=&quot;ReversalIndexPublicationLayout&quot; layoutSuffix=&quot;Preview&quot; editable=&quot;false&quot; configureObjectName=&quot;ReversalIndex&quot; altTitleId=&quot;ReversalIndexEntry-Plural&quot; &gt;
+        ///			&lt;!-- The following configureLayouts node is required only to help migrate old configurations to the new format --&gt;
+        ///			&lt;configureLayouts&gt;
+        ///				&lt;layoutType label=&quot;All Reversal Indexes&quot; la [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string ReversalEditCompleteToolParameters {
+            get {
+                return ResourceManager.GetString("ReversalEditCompleteToolParameters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Show Dictionary Preview.
         /// </summary>
         internal static string Show_DictionaryPubPreview {
@@ -384,6 +496,15 @@ namespace LanguageExplorer.Areas.Lexicon {
         internal static string Show_Entry_In_Concordance {
             get {
                 return ResourceManager.GetString("Show_Entry_In_Concordance", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show Unused Items.
+        /// </summary>
+        internal static string Show_Unused_Items {
+            get {
+                return ResourceManager.GetString("Show_Unused_Items", resourceCulture);
             }
         }
     }

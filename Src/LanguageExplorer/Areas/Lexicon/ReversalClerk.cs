@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -70,7 +70,7 @@ namespace LanguageExplorer.Areas.Lexicon
 
 		#endregion
 
-		private void ChangeOwningObjectIfPossible()
+		internal void ChangeOwningObjectIfPossible()
 		{
 			var newGuid = ReversalIndexEntryUi.GetObjectGuidIfValid(PropertyTable, "ReversalIndexGuid");
 			try
@@ -125,17 +125,8 @@ namespace LanguageExplorer.Areas.Lexicon
 		{
 			get
 			{
-#if RANDYTODO
-	// TODO: This just won't work in the new world order!
-#endif
-				var path = Path.Combine(Path.Combine(Path.Combine(Path.Combine(FwDirectoryFinder.CodeDirectory,
-					FwDirectoryFinder.ksFlexFolderName),
-					@"Configuration"),
-					@"Lexicon"),
-					@"ReversalEntriesBulkEdit");
-				var doc = XDocument.Load(Path.Combine(path, @"toolConfiguration.xml"));
-				var columnNode = doc.XPathSelectElement(@"//column[@label='Reversal Form']");
-				return columnNode;
+				var doc = XDocument.Parse(LexiconResources.ReversalBulkEditReversalEntriesToolParameters);
+				return doc.Root.Element("columns").Elements("column").First(col => col.Attribute("label").Value == "Reversal Form");
 			}
 		}
 
@@ -427,7 +418,7 @@ namespace LanguageExplorer.Areas.Lexicon
 		{
 			if (Cache.ServiceLocator.GetObject(reversalIndexGuid) is IReversalIndex)
 			{
-				PropertyTable.SetProperty("ReversalIndexGuid", reversalIndexGuid.ToString(), true, true);
+				PropertyTable.SetProperty("ReversalIndexGuid", reversalIndexGuid.ToString(), SettingsGroup.LocalSettings, true, false);
 			}
 		}
 

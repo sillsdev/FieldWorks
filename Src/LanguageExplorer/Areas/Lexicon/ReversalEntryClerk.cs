@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -13,21 +13,6 @@ namespace LanguageExplorer.Areas.Lexicon
 	/// </summary>
 	internal sealed class ReversalEntryClerk : ReversalClerk
 	{
-#if RANDYTODO
-	// TODO: Only used in:
-/*
-<clerk id="AllReversalEntries">
-	<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Dumpster.ReversalEntryClerk" />
-	<recordList owner="ReversalIndex" property="AllEntries">
-		<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.AllReversalEntriesRecordList" />
-	</recordList>
-	<filters />
-	<sortMethods>
-		<sortMethod label="Form" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName" />
-	</sortMethods>
-</clerk>
-*/
-#endif
 		///// <summary>
 		///// Contructor.
 		///// </summary>

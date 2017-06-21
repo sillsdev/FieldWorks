@@ -30,17 +30,24 @@ namespace LanguageExplorer.Areas.Lexicon
 			m_toolRepository = toolRepository;
 		}
 
+		/// <summary />
 		internal static RecordClerk CreateBasicClerkForLexiconArea(FdoCache cache)
 		{
 			var mdc = cache.MetaDataCacheAccessor;
 			var lexDb = cache.LanguageProject.LexDbOA;
 			var recordList = new RecordList(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), false, mdc.GetFieldId2(lexDb.ClassID, "Entries", false), lexDb, "Entries");
+			return CreateClerkForLexiconArea("entries", recordList);
+		}
+
+		/// <summary />
+		internal static RecordClerk CreateClerkForLexiconArea(string clerkId, RecordList recordList)
+		{
 			var sorters = new Dictionary<string, PropertyRecordSorter>
 			{
 				{RecordClerk.kDefault, new PropertyRecordSorter("ShortName")},
 				{"PrimaryGloss", new PropertyRecordSorter("PrimaryGloss")}
 			};
-			return new RecordClerk("entries", recordList, sorters, null, false, false);
+			return new RecordClerk(clerkId, recordList, sorters, null, false, false);
 		}
 
 		#region Implementation of IPropertyTableProvider

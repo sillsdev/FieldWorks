@@ -226,4 +226,39 @@
   <data name="Show_Entry_In_Concordance" xml:space="preserve">
     <value>Show Entry in Concordance</value>
   </data>
+  <data name="BasicFilter" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\BasicFilter.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+    <comment>Do Not Localize</comment>
+  </data>
+  <data name="BulkEditEntriesOrSensesToolParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\BulkEditEntriesOrSensesToolParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+    <comment>Do Not Localize</comment>
+  </data>
+  <data name="LexiconClassifiedDictionaryParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\LexiconClassifiedDictionaryParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+    <comment>Do Not Localize</comment>
+  </data>
+  <data name="LexiconDictionaryConfigureLayouts" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\LexiconDictionaryConfigureLayouts.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+    <comment>Do Not Localize</comment>
+  </data>
+  <data name="LexiconDictionaryToolParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\LexiconDictionaryToolParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+    <comment>Do Not Localize</comment>
+  </data>
+  <data name="RapidDataEntryToolParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\RapidDataEntryToolParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+    <comment>Do Not Localize</comment>
+  </data>
+  <data name="ReversalBulkEditReversalEntriesToolParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\ReversalBulkEditReversalEntriesToolParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+    <comment>Do Not Localize</comment>
+  </data>
+  <data name="ReversalEditCompleteToolParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\ReversalEditCompleteToolParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+    <comment>Do Not Localize</comment>
+  </data>
+  <data name="Show_Unused_Items" xml:space="preserve">
+    <value>Show Unused Items</value>
+  </data>
 </root>
