@@ -3,8 +3,10 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Drawing;
+using System.Xml.Linq;
 using LanguageExplorer.Controls;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks;
@@ -17,6 +19,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditEntries
 	internal sealed class BulkEditEntriesOrSensesTool : ITool
 	{
 		private PaneBarContainer _paneBarContainer;
+		private RecordBrowseView _recordBrowseView;
 		private RecordClerk _recordClerk;
 
 		#region Implementation of IPropertyTableProvider
@@ -87,10 +90,24 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditEntries
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			// Crashes in RecordList "CheckExpectedListItemsClassInSync" with: for some reason BulkEditBar.ExpectedListItemsClassId({0}) does not match SortItemProvider.ListItemsClass({1}).
+			// BulkEditBar expected 5002, but
+			// SortItemProvider was: 5035
+			var root = XDocument.Parse(LexiconResources.BulkEditEntriesOrSensesToolParameters).Root;
+			var parametersElement = root.Element("parameters");
+			parametersElement.Element("includeColumns").ReplaceWith(XElement.Parse(LexiconResources.LexiconBrowseDialogColumnDefinitions));
+			OverrideServices.OverrideVisibiltyAttributes(parametersElement.Element("columns"), root.Element("overrides"));
+			var cache = PropertyTable.GetValue<FdoCache>("cache");
+			var flexComponentParameters = new FlexComponentParameters(PropertyTable, Publisher, Subscriber);
+			_recordClerk = LexiconArea.CreateClerkForLexiconArea("entriesOrChildren", new EntriesOrChildClassesRecordList(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), false, cache.LanguageProject.LexDbOA));
+			_recordClerk.InitializeFlexComponent(flexComponentParameters);
+			_recordBrowseView = new RecordBrowseView(parametersElement, _recordClerk);
+
 			_paneBarContainer = PaneBarContainerFactory.Create(
 				majorFlexComponentParameters.FlexComponentParameters,
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
-				TemporaryToolProviderHack.CreateNewLabel(this));
+				_recordBrowseView);
+			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
 		}
 
 		/// <summary>
@@ -98,9 +115,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditEntries
 		/// </summary>
 		public void PrepareToRefresh()
 		{
-#if RANDYTODO
-			// TODO: Call PrepareToRefresh on buried RecordBrowseView class (in PaneBarContainer control).
-#endif
+			_recordBrowseView.BrowseViewer.BrowseView.PrepareToRefresh();
 		}
 
 		/// <summary>
@@ -133,7 +148,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditEntries
 		/// <summary>
 		/// User-visible localizable component name.
 		/// </summary>
-		public string UiName => "Bulk Edit Entries";
+		public string UiName => "CRASHES: Bulk Edit Entries";
 		#endregion
 
 		#region Implementation of ITool

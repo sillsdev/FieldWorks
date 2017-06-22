@@ -65,6 +65,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 		{
 			get { return "ReversalEntryGo"; }
 		}
+
 		/// <summary />
 		protected override void InitializeMatchingObjects(FdoCache cache)
 		{

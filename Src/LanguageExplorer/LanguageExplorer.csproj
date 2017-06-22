@@ -270,7 +270,6 @@
     <Content Include="Resources\CompoundRuleAdvancedEditToolParameters.xml" />
     <Content Include="Resources\ConcordanceColumns.xml" />
     <Content Include="Resources\ConcordanceToolParameters.xml" />
-    <Content Include="Resources\EntriesOrChildrenClerkPartOwnershipTree.xml" />
     <Content Include="Resources\EnvironmentEditToolParameters.xml" />
     <Content Include="Resources\FeaturesAdvancedEditToolParameters.xml" />
     <Content Include="Resources\FeatureTypesAdvancedEditBrowseViewParameters.xml" />
@@ -629,6 +628,7 @@
     <Compile Include="Areas\Lexicon\Tools\Edit\LexReferenceSequenceVc.cs" />
     <Compile Include="Areas\Lexicon\Tools\Edit\LexReferenceTreeBranchesVc.cs" />
     <Compile Include="Areas\Lexicon\Tools\Edit\LexReferenceTreeRootVc.cs" />
+    <Compile Include="Areas\Lexicon\Tools\ReversalIndexes\ReversalIndexEntryChangeHandler.cs" />
     <Compile Include="Areas\Lists\ListResources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

@@ -1,14 +1,13 @@
-// Copyright (c) 2004-2015 SIL International
+// Copyright (c) 2004-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
-using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.DomainImpl;
@@ -38,37 +37,7 @@ namespace SIL.FieldWorks.XWorks
 		// suspend loading the property until given a class by RecordBrowseView via
 		// RecordClerk.OnChangeListItemsClass();
 		bool m_suspendReloadUntilOnChangeListItemsClass = true;
-		private readonly XElement m_partOwnershipTreeSpec = new XElement("PartOwnershipTree",
-			/* the ClassOwnershipTree describes the relative relationship between the target classes in the possible source properties
-			   loaded by this list. This especially helps in maintaining the CurrentIndex when switching from one property to the next. */
-					new XElement("ClassOwnershipTree",
-						new XElement("LexEntry", new XAttribute("sourceField", "Entries"),
-							new XElement("LexEntryRef", new XAttribute("sourceField", "AllEntryRefs"), new XAttribute("altSourceField", "ComplexEntryTypes:AllComplexEntryRefPropertyTargets;VariantEntryTypes:AllVariantEntryRefPropertyTargets")),
-							new XElement("LexPronunciation", new XAttribute("sourceField", "AllPossiblePronunciations")),
-							new XElement("MoForm", new XAttribute("sourceField", "AllPossibleAllomorphs")),
-							new XElement("LexSense", new XAttribute("sourceField", "AllSenses"),
-								new XElement("LexExampleSentence", new XAttribute("sourceField", "AllExampleSentenceTargets"),
-									new XElement("CmTranslation", new XAttribute("sourceField", "AllExampleTranslationTargets")))))),
-					/* ParentClassPathsToChildren describes how to get from the parent ListItemsClass to the destinationClass objects
-					of the list properties. */
-					new XElement("ParentClassPathsToChildren",
-						/* NOTE: AllPossiblePronunciations can also have LexEntry items, since it is a ghost field */
-						XElement.Parse("<part id='LexEntry-Jt-AllPossiblePronunciations' type='jtview'><seq class='LexEntry' field='Pronunciations' firstOnly='true' layout='empty'><int class='LexPronunciation' field='Self' /></seq></part>"),
-						/* NOTE: AllComplexEntryRefPropertyTargets can also have LexEntry items, since it is a ghost field */
-						XElement.Parse("<part id='LexEntry-Jt-AllComplexEntryRefPropertyTargets' type='jtview'><seq class='LexEntry' field='EntryRefs' firstOnly='true' layout='empty'><int class='LexEntryRef' field='Self'/></seq></part>"),
-						/* NOTE: AllVariantEntryRefPropertyTargets can also have LexEntry items, since it is a ghost field */
-						XElement.Parse("<part id='LexEntry-Jt-AllVariantEntryRefPropertyTargets' type='jtview'><seq class='LexEntry' field='EntryRefs' firstOnly='true' layout='empty'><int class='LexEntryRef' field='Self'/></seq></part>"),
-						/* NOTE: AllPossibleAllomorphs can also have LexEntry items, since it is a ghost field */
-						XElement.Parse("<part id='LexEntry-Jt-AllPossibleAllomorphs' type='jtview'><seq class='LexEntry' field='AlternateForms' firstOnly='true' layout='empty'><int class='MoForm' field='Self'/></seq></part>"),
-						XElement.Parse("<part id='LexEntry-Jt-AllEntryRefs' type='jtview'><seq class='LexEntry' field='EntryRefs' firstOnly='true' layout='empty'><int class='LexEntryRef' field='Self'/></seq></part>"),
-						XElement.Parse("<part id='LexEntry-Jt-AllSenses' type='jtview'><seq class='LexEntry' field='AllSenses' firstOnly='true' layout='empty'><int class='LexSense' field='Self' /></seq></part>"),
-						/* NOTE: The next item is needed to prevent a crash */
-						XElement.Parse("<part id='LexSense-Jt-AllSenses' type='jtview'><obj class='LexSense' field='Self' firstOnly='true' layout='empty' /></part>"),
-						XElement.Parse("<part id='LexEntry-Jt-AllExampleSentenceTargets' type='jtview'><seq class='LexEntry' field='AllSenses' firstOnly='true' layout='empty'><seq class='LexSense' field='Examples' firstOnly='true' layout='empty'><int class='LexExampleSentence' field='Self'/></seq></seq></part>"),
-						XElement.Parse("<part id='LexSense-Jt-AllExampleSentenceTargets' type='jtview'><seq class='LexSense' field='Examples' firstOnly='true' layout='empty'><int class='LexExampleSentence' field='Self'/></seq></part>"),
-						XElement.Parse("<part id='LexEntry-Jt-AllExampleTranslationTargets' type='jtview'><seq class='LexEntry' field='AllSenses' firstOnly='true' layout='empty'><seq class='LexSense' field='Examples' firstOnly='true' layout='empty'><seq class='LexExampleSentence' field='Translations' firstOnly='true' layout='empty'><int class='CmTranslation' field='Self'/></seq></seq></seq></part>"),
-						XElement.Parse("<part id='LexSense-Jt-AllExampleTranslationTargets' type='jtview'><seq class='LexSense' field='Examples' firstOnly='true' layout='empty'><seq class='LexExampleSentence' field='Translations' firstOnly='true' layout='empty><int class='CmTranslation' field='Self'/></seq></seq></part>"),
-						XElement.Parse("<part id='LexExampleSentence-Jt-AllExampleTranslationTargets' type='jtview'><seq class='LexExampleSentence' field='Translations' firstOnly='true' layout='empty'><int class='CmTranslation' field='Self'/></seq></part>")));
+		private readonly XElement m_partOwnershipTreeSpec = XElement.Parse(xWorksStrings.EntriesOrChildrenClerkPartOwnershipTree);
 
 		/// <summary>
 		/// Create RecordList for SDA-made up property on the given owner.
@@ -169,7 +138,7 @@ namespace SIL.FieldWorks.XWorks
 			get
 			{
 
-				return base.RequestedLoadWhileSuppressed || m_reloadNeededForProperty[m_flid];
+				return base.RequestedLoadWhileSuppressed || (m_reloadNeededForProperty.ContainsKey(m_flid) && m_reloadNeededForProperty[m_flid]);
 			}
 			set
 			{
@@ -256,7 +225,7 @@ namespace SIL.FieldWorks.XWorks
 				return -1;
 			}
 			// we've changed list items class, so find the corresponding new object.
-			HashSet<int> commonAncestors;
+			ISet<int> commonAncestors;
 			var relatives = m_pot.FindCorrespondingItemsInCurrentList(m_prevFlid,
 				new HashSet<int>(new[] { hvoCurrentBeforeGetObjectSet }),
 				m_flid,
@@ -282,9 +251,9 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		/// <param name="sorterOrFilter"></param>
 		/// <returns></returns>
-		internal protected override string PropertyTableId(string sorterOrFilter)
+		protected internal override string PropertyTableId(string sorterOrFilter)
 		{
-			return String.Format("{0}.{1}_{2}", "LexDb", "Entries", sorterOrFilter);
+			return $"{@"LexDb"}.{@"Entries"}_{sorterOrFilter}";
 		}
 
 		#region IMultiListSortItemProvider Members
@@ -352,7 +321,7 @@ namespace SIL.FieldWorks.XWorks
 			HashSet<int> relativesInCurrentList = new HashSet<int>();
 			foreach (KeyValuePair<int, HashSet<int>> sourceFlidToItems in sourceFlidsToItems)
 			{
-				HashSet<int> commonAncestors;
+				ISet<int> commonAncestors;
 				relativesInCurrentList.UnionWith(pot.FindCorrespondingItemsInCurrentList(sourceFlidToItems.Key,
 					sourceFlidToItems.Value, m_flid,
 					out commonAncestors));

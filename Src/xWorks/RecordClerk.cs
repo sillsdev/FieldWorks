@@ -809,7 +809,7 @@ namespace SIL.FieldWorks.XWorks
 		/// and re-establishes them from the property table if they have changed.
 		/// </summary>
 		/// <returns>true if we restored either a sorter or a filter.</returns>
-		internal protected bool UpdateFiltersAndSortersIfNeeded()
+		protected internal bool UpdateFiltersAndSortersIfNeeded()
 		{
 			bool fRestoredSorter = TryRestoreSorter();
 			bool fRestoredFilter = TryRestoreFilter();
@@ -834,7 +834,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// True if our clerk is the active clerk.
 		/// </summary>
-		internal protected bool IsActiveClerk
+		protected internal bool IsActiveClerk
 		{
 			get
 			{
@@ -849,7 +849,7 @@ namespace SIL.FieldWorks.XWorks
 		/// True if the Clerk is being used in a Gui.
 		/// </summary>
 		protected bool m_fIsActiveInGui = false;
-		internal protected bool IsActiveInGui
+		protected internal bool IsActiveInGui
 		{
 			get { return m_fIsActiveInGui; }
 		}
@@ -2181,8 +2181,7 @@ namespace SIL.FieldWorks.XWorks
 				var oldActiveClerk = PropertyTable.GetValue<RecordClerk>("ActiveClerk");
 				if (oldActiveClerk != this)
 				{
-					if (oldActiveClerk != null)
-						oldActiveClerk.BecomeInactive();
+					oldActiveClerk?.BecomeInactive();
 					PropertyTable.SetProperty("ActiveClerk", this, false, true);
 					// We are adding this property so that EntryDlgListener can get access to the owning object
 					// without first getting a RecordClerk, since getting a RecordClerk at that level causes a

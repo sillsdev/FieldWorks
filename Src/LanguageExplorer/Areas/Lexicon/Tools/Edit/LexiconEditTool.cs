@@ -27,7 +27,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 	internal sealed class LexiconEditTool : ITool
 	{
 		private const string Show_DictionaryPubPreview = "Show_DictionaryPubPreview";
-		private XDocument _configurationDocument;
 		private MultiPane _multiPane;
 		private RecordBrowseView _recordBrowseView;
 		private MultiPane _innerMultiPane;
@@ -100,8 +99,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
 				ref _multiPane,
 				ref _recordClerk);
-
-			_configurationDocument = null;
 			_recordBrowseView = null;
 			_innerMultiPane = null;
 		}
@@ -114,22 +111,22 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			_configurationDocument = XDocument.Parse(LexiconResources.LexiconBrowseParameters);
+			var root = XDocument.Parse(LexiconResources.LexiconBrowseParameters).Root;
 			// Modify the basic parameters for this tool.
-			_configurationDocument.Root.Attribute("id").Value = "lexentryList";
-			_configurationDocument.Root.Add(new XAttribute("defaultCursor", "Arrow"), new XAttribute("hscroll", "true"));
+			root.Attribute("id").Value = "lexentryList";
+			root.Add(new XAttribute("defaultCursor", "Arrow"), new XAttribute("hscroll", "true"));
 
 			var overrides = XElement.Parse(LexiconResources.LexiconBrowseOverrides);
 			// Add one more element to 'overrides'.
 			overrides.Add(new XElement("column", new XAttribute("layout", "DefinitionsForSense"), new XAttribute("visibility", "menu")));
 			var columnsElement = XElement.Parse(LexiconResources.LexiconBrowseDialogColumnDefinitions);
 			OverrideServices.OverrideVisibiltyAttributes(columnsElement, overrides);
-			_configurationDocument.Root.Add(columnsElement);
+			root.Add(columnsElement);
 
 			_recordClerk = LexiconArea.CreateBasicClerkForLexiconArea(PropertyTable.GetValue<FdoCache>("cache"));
 			_recordClerk.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
 
-			_recordBrowseView = new RecordBrowseView(_configurationDocument.Root, _recordClerk);
+			_recordBrowseView = new RecordBrowseView(root, _recordClerk);
 
 			var dataTreeMenuHandler = new LexEntryMenuHandler();
 			dataTreeMenuHandler.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);

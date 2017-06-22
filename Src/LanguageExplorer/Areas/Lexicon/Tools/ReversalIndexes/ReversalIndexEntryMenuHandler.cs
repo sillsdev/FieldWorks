@@ -107,6 +107,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 			return true; //we've handled this
 		}
 #endif
+
 		/// <summary />
 		public bool OnMoveReversalindexEntry(object cmd)
 		{

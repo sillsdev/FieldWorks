@@ -114,17 +114,17 @@ namespace LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			var doc = XDocument.Parse(GrammarResources.AdhocCoprohibitionRuleEditToolParameters);
+			var root = XDocument.Parse(GrammarResources.AdhocCoprohibitionRuleEditToolParameters).Root;
 			var cache = PropertyTable.GetValue<FdoCache>("cache");
 			var flexComponentParameters = new FlexComponentParameters(PropertyTable, Publisher, Subscriber);
 			_recordClerk = new RecordClerk("adhocCoprohibitions", new RecordList(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), true, MoMorphDataTags.kflidAdhocCoProhibitions, cache.LanguageProject.MorphologicalDataOA, "AdhocCoprohibitions"), new PropertyRecordSorter("ShortName"), "Default", null, false, false);
 			_recordClerk.InitializeFlexComponent(flexComponentParameters);
-			_recordBrowseView = new RecordBrowseView(doc.Root.Element("browseview").Element("parameters"), _recordClerk);
+			_recordBrowseView = new RecordBrowseView(root.Element("browseview").Element("parameters"), _recordClerk);
 #if RANDYTODO
 			// TODO: Set up 'dataTreeMenuHandler' to handle menu events.
 			// TODO: Install menus and connect them to event handlers. (See "CreateContextMenuStrip" method for where the menus are.)
 #endif
-			var recordEditView = new RecordEditView(doc.Root.Element("recordview").Element("parameters"), XDocument.Parse(AreaResources.CompleteFilter), _recordClerk);
+			var recordEditView = new RecordEditView(root.Element("recordview").Element("parameters"), XDocument.Parse(AreaResources.CompleteFilter), _recordClerk);
 			var mainMultiPaneParameters = new MultiPaneParameters
 			{
 				Orientation = Orientation.Vertical,

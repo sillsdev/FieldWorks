@@ -239,7 +239,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		internal protected virtual string PropertyTableId(string sorterOrFilter)
+		protected internal virtual string PropertyTableId(string sorterOrFilter)
 		{
 			// Dependent lists do not have owner/property set. Rather they have class/field.
 			var className = VirtualListPublisher.MetaDataCache.GetOwnClsName(m_flid);

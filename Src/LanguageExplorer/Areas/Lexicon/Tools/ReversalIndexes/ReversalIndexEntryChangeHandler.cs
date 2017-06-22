@@ -1,14 +1,13 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Diagnostics;
-using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.Framework;
+using SIL.FieldWorks.Common.FwUtils;
 
-namespace SIL.FieldWorks.XWorks.LexEd
+namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 {
 	/// <summary/>
 	public class ReversalIndexEntryChangeHandler : IRecordChangeHandler
@@ -23,6 +22,14 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		protected IRecordListUpdater m_rlu;
 
 		#endregion Data members
+
+		#region Construction
+
+		public ReversalIndexEntryChangeHandler()
+		{
+		}
+
+		#endregion Construction
 
 		#region IDisposable & Co. implementation
 		// Region last reviewed: never
@@ -53,6 +60,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			// The base class finalizer is called automatically.
 		}
 
+		/// <summary />
 		/// <remarks>Must not be virtual.</remarks>
 		public void Dispose()
 		{

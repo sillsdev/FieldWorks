@@ -257,6 +257,7 @@
     <Compile Include="DictionaryConfigurationImportDlg.Designer.cs">
       <DependentUpon>DictionaryConfigurationImportDlg.cs</DependentUpon>
     </Compile>
+    <Compile Include="EntriesOrChildClassesRecordList.cs" />
     <Compile Include="HeadWordNumbersController.cs" />
     <Compile Include="HeadWordNumbersDlg.cs">
       <SubType>Form</SubType>
@@ -608,6 +609,7 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Content Include="Resources\EntriesOrChildrenClerkPartOwnershipTree.xml" />
     <Content Include="Resources\FWFirstArrow.bmp" />
     <Content Include="Resources\FWLastArrow.bmp" />
     <Content Include="Resources\FWLeftArrow.bmp" />

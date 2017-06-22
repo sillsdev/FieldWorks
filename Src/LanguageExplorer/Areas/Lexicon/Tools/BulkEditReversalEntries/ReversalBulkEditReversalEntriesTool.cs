@@ -2,9 +2,16 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
+using System.Collections.Generic;
 using System.Drawing;
+using System.Windows.Forms;
+using System.Xml.Linq;
 using LanguageExplorer.Controls;
+using LanguageExplorer.Controls.PaneBar;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FdoUi;
+using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks;
@@ -17,7 +24,12 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditReversalEntries
 	internal sealed class ReversalBulkEditReversalEntriesTool : ITool
 	{
 		private PaneBarContainer _paneBarContainer;
+		private RecordBrowseView _recordBrowseView;
 		private RecordClerk _recordClerk;
+		private ContextMenuStrip _contextMenuStrip;
+		private IReversalIndexRepository _reversalIndexRepository;
+		private IReversalIndex _currentReversalIndex;
+		private readonly HashSet<Tuple<ToolStripMenuItem, EventHandler>> _newMenusAndHandlers = new HashSet<Tuple<ToolStripMenuItem, EventHandler>>();
 
 		#region Implementation of IPropertyTableProvider
 
@@ -73,10 +85,22 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditReversalEntries
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			_contextMenuStrip.Opening -= ContextMenuStrip_Opening;
+			_contextMenuStrip = null;
+
+			foreach (var menuTuple in _newMenusAndHandlers)
+			{
+				menuTuple.Item1.Click -= menuTuple.Item2;
+			}
+			_newMenusAndHandlers.Clear();
+
 			PaneBarContainerFactory.RemoveFromParentAndDispose(
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
 				ref _paneBarContainer,
 				ref _recordClerk);
+			_reversalIndexRepository = null;
+			_currentReversalIndex = null;
+			_recordBrowseView = null;
 		}
 
 		/// <summary>
@@ -87,10 +111,33 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditReversalEntries
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			var cache = PropertyTable.GetValue<FdoCache>("cache");
+			var currentGuid = ReversalIndexEntryUi.GetObjectGuidIfValid(PropertyTable, "ReversalIndexGuid");
+			if (currentGuid != Guid.Empty)
+			{
+				_currentReversalIndex = (IReversalIndex)cache.ServiceLocator.GetObject(currentGuid);
+			}
+			_recordClerk = new ReversalEntryClerk(cache.ServiceLocator, cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), _currentReversalIndex);
+			_recordClerk.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
+			_recordBrowseView = new RecordBrowseView(XDocument.Parse(LexiconResources.ReversalBulkEditReversalEntriesToolParameters).Root, _recordClerk);
+			var browseViewPaneBar = new PaneBar();
+			var img = LanguageExplorerResources.MenuWidget;
+			img.MakeTransparent(Color.Magenta);
+			var panelMenu = new PanelMenu
+			{
+				Dock = DockStyle.Left,
+				BackgroundImage = img,
+				BackgroundImageLayout = ImageLayout.Center,
+				ContextMenuStrip = CreateContextMenuStrip()
+			};
+			browseViewPaneBar.AddControls(new List<Control> { panelMenu });
+
 			_paneBarContainer = PaneBarContainerFactory.Create(
 				majorFlexComponentParameters.FlexComponentParameters,
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
-				TemporaryToolProviderHack.CreateNewLabel(this));
+				browseViewPaneBar,
+				_recordBrowseView);
+			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
 		}
 
 		/// <summary>
@@ -98,9 +145,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditReversalEntries
 		/// </summary>
 		public void PrepareToRefresh()
 		{
-#if RANDYTODO
-			// TODO: Call PrepareToRefresh on buried RecordBrowseView class (in PaneBarContainer control).
-#endif
+			_recordBrowseView.BrowseViewer.BrowseView.PrepareToRefresh();
 		}
 
 		/// <summary>
@@ -149,5 +194,83 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditReversalEntries
 		public Image Icon => Images.BrowseView.SetBackgroundColor(Color.Magenta);
 
 		#endregion
+
+		private ContextMenuStrip CreateContextMenuStrip()
+		{
+			_contextMenuStrip = new ContextMenuStrip();
+
+			_contextMenuStrip.Opening += ContextMenuStrip_Opening;
+
+			return _contextMenuStrip;
+		}
+
+		private void ContextMenuStrip_Opening(object sender, System.ComponentModel.CancelEventArgs e)
+		{
+			if (_reversalIndexRepository == null)
+			{
+				var cache = PropertyTable.GetValue<FdoCache>("cache");
+				_reversalIndexRepository = cache.ServiceLocator.GetInstance<IReversalIndexRepository>();
+			}
+			if (_contextMenuStrip.Items.Count > 0)
+			{
+				foreach (var menuTuple in _newMenusAndHandlers)
+				{
+					menuTuple.Item1.Click -= menuTuple.Item2;
+					_contextMenuStrip.Items.Remove(menuTuple.Item1);
+					menuTuple.Item1.Dispose();
+				}
+				_newMenusAndHandlers.Clear();
+				_contextMenuStrip.Items.Clear();
+			}
+
+			// If allInstancesinRepository has any remaining instances, then they are not in the menu. Add them.
+			foreach (var rei in _reversalIndexRepository.AllInstances())
+			{
+				var newMenuItem = PaneBarContextMenuFactory.CreateToolStripMenuItem(_contextMenuStrip, rei.ChooserNameTS.Text, null, ReversalIndex_Menu_Clicked, null);
+				newMenuItem.Tag = rei;
+				if (rei == _currentReversalIndex)
+				{
+					SetCheckedState(newMenuItem);
+				}
+				_newMenusAndHandlers.Add(new Tuple<ToolStripMenuItem, EventHandler>(newMenuItem, ReversalIndex_Menu_Clicked));
+			}
+
+			_contextMenuStrip.Items.Add(new ToolStripMenuItem("-"));
+			var currentToolStripMenuItem = PaneBarContextMenuFactory.CreateToolStripMenuItem(_contextMenuStrip, "Configure Dictionary", null, ConfigureDictionary_Clicked, null);
+			_newMenusAndHandlers.Add(new Tuple<ToolStripMenuItem, EventHandler>(currentToolStripMenuItem, ConfigureDictionary_Clicked));
+		}
+
+		private void ConfigureDictionary_Clicked(object sender, EventArgs e)
+		{
+			bool refreshNeeded;
+			using (var dlg = new DictionaryConfigurationDlg(PropertyTable))
+			{
+				var controller = new DictionaryConfigurationController(dlg, _recordClerk?.CurrentObject);
+				controller.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
+				dlg.Text = string.Format(xWorksStrings.ConfigureTitle, xWorksStrings.Dictionary);
+				dlg.HelpTopic = "khtpConfigureDictionary";
+				dlg.ShowDialog(PropertyTable.GetValue<IWin32Window>("window"));
+				refreshNeeded = controller.MasterRefreshRequired;
+			}
+			if (refreshNeeded)
+			{
+				Publisher.Publish("MasterRefresh", null);
+			}
+		}
+
+		private void ReversalIndex_Menu_Clicked(object sender, EventArgs e)
+		{
+			var contextMenuItem = (ToolStripMenuItem)sender;
+			_currentReversalIndex = (IReversalIndex)contextMenuItem.Tag;
+			PropertyTable.SetProperty("ReversalIndexGuid", _currentReversalIndex.Guid.ToString(), SettingsGroup.LocalSettings, true, false);
+			((ReversalClerk)_recordClerk).ChangeOwningObjectIfPossible();
+			SetCheckedState(contextMenuItem);
+		}
+
+		private void SetCheckedState(ToolStripMenuItem reversalToolStripMenuItem)
+		{
+			var currentTag = (IReversalIndex)reversalToolStripMenuItem.Tag;
+			reversalToolStripMenuItem.Checked = (currentTag.Guid.ToString() == PropertyTable.GetValue<string>("ReversalIndexGuid"));
+		}
 	}
 }

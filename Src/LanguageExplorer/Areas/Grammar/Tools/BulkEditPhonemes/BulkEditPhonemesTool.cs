@@ -93,7 +93,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.BulkEditPhonemes
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			var doc = XDocument.Parse(GrammarResources.BulkEditPhonemesToolParameters);
+			var root = XDocument.Parse(GrammarResources.BulkEditPhonemesToolParameters).Root;
 			var cache = PropertyTable.GetValue<FdoCache>("cache");
 			if (cache.LanguageProject.PhonologicalDataOA.PhonemeSetsOS.Count == 0)
 			{
@@ -105,7 +105,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.BulkEditPhonemes
 			}
 			_recordClerk = new RecordClerk("phonemes", new RecordList(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), true, PhPhonemeSetTags.kflidPhonemes, cache.LanguageProject.PhonologicalDataOA.PhonemeSetsOS[0], "Phonemes"), new PropertyRecordSorter("ShortName"), "Default", null, false, false);
 			_recordClerk.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
-			_assignFeaturesToPhonemesView = new AssignFeaturesToPhonemes(doc.Root, _recordClerk);
+			_assignFeaturesToPhonemesView = new AssignFeaturesToPhonemes(root, _recordClerk);
 
 			_paneBarContainer = PaneBarContainerFactory.Create(
 				majorFlexComponentParameters.FlexComponentParameters,

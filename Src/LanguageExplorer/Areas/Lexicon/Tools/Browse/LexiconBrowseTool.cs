@@ -18,8 +18,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Browse
 	/// </summary>
 	internal sealed class LexiconBrowseTool : ITool
 	{
-		private XDocument _configurationDocument;
 		private PaneBarContainer _paneBarContainer;
+		private RecordBrowseView _recordBrowseView;
 		private RecordClerk _recordClerk;
 
 		#region Implementation of IPropertyTableProvider
@@ -80,8 +80,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Browse
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
 				ref _paneBarContainer,
 				ref _recordClerk);
-
-			_configurationDocument = null;
+			_recordBrowseView = null;
 		}
 
 		/// <summary>
@@ -92,16 +91,18 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Browse
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			_configurationDocument = XDocument.Parse(LexiconResources.LexiconBrowseParameters);
+			var root = XDocument.Parse(LexiconResources.LexiconBrowseParameters).Root;
 			var columnsElement = XElement.Parse(LexiconResources.LexiconBrowseDialogColumnDefinitions);
 			OverrideServices.OverrideVisibiltyAttributes(columnsElement, XElement.Parse(LexiconResources.LexiconBrowseOverrides));
-			_configurationDocument.Root.Add(columnsElement);
+			root.Add(columnsElement);
 			_recordClerk = LexiconArea.CreateBasicClerkForLexiconArea(PropertyTable.GetValue<FdoCache>("cache"));
 			_recordClerk.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
+			_recordBrowseView = new RecordBrowseView(root, _recordClerk);
 			_paneBarContainer = PaneBarContainerFactory.Create(
 				majorFlexComponentParameters.FlexComponentParameters,
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
-				new RecordBrowseView(_configurationDocument.Root, _recordClerk));
+				_recordBrowseView);
+			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
 		}
 
 		/// <summary>
@@ -109,6 +110,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Browse
 		/// </summary>
 		public void PrepareToRefresh()
 		{
+			_recordBrowseView.BrowseViewer.BrowseView.PrepareToRefresh();
 		}
 
 		/// <summary>

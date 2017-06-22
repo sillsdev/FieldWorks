@@ -17,7 +17,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CategoryBrowse
 	/// </summary>
 	internal sealed class CategoryBrowseTool : ITool
 	{
-		private XDocument _configurationDocument;
 		private PaneBarContainer _paneBarContainer;
 		private RecordClerk _recordClerk;
 
@@ -89,13 +88,13 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CategoryBrowse
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			_configurationDocument = XDocument.Parse(GrammarResources.GrammarCategoryBrowserParameters);
+			var root = XDocument.Parse(GrammarResources.GrammarCategoryBrowserParameters).Root;
 			_recordClerk = GrammarArea.CreateCategoriesClerkForGrammarArea(PropertyTable, false);
 			_recordClerk.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
 			_paneBarContainer = PaneBarContainerFactory.Create(
 				majorFlexComponentParameters.FlexComponentParameters,
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
-				new RecordBrowseView(_configurationDocument.Root, _recordClerk));
+				new RecordBrowseView(root, _recordClerk));
 			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
 		}
 

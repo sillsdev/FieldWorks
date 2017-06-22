@@ -258,8 +258,8 @@ namespace SIL.FieldWorks.XWorks
 			var entryCount = entryHvos.Length;
 			var cssPath = Path.ChangeExtension(xhtmlPath, "css");
 			var configDir = Path.GetDirectoryName(configuration.FilePath);
-			var clerk = propertyTable.GetValue<RecordClerk>("ActiveClerk", null);
-			var cache = propertyTable.GetValue<FdoCache>("cache", null);
+			var clerk = propertyTable.GetValue<RecordClerk>("ActiveClerk");
+			var cache = propertyTable.GetValue<FdoCache>("cache");
 			// Don't display letter headers if we're showing a preview in the Edit tool or we're not sorting by headword
 			var wantLetterHeaders = (entryCount > 1 || !IsLexEditPreviewOnly(publicationDecorator)) && (IsClerkSortingByHeadword(clerk));
 			using (var xhtmlWriter = XmlWriter.Create(xhtmlPath))

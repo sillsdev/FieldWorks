@@ -2186,6 +2186,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 						break;
 
 					case "RecordChangeHandler":
+#if JASONTODO
+// TODO: RBR: This was Jason's code review comment:
+// TODO: Jason: "Hmm. This smells a bit. (not that you introduced this smell, you just made me sniff around it)
+// TODO: So the recordchangehandler can be owned either by the DataTree or by the RecordListUpdater.
+// TODO: I wonder if we can do better?""
+#endif
 						// No, since it isn't owned by the data tree, even though it created it.
 						//if (m_rch != null && m_rch is IDisposable)
 						//	(m_rch as IDisposable).Dispose();
@@ -3449,7 +3455,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			}
 		}
 
-		#region automated tree navigation
+#region automated tree navigation
 
 		/// <summary>
 		/// Moves the focus to the first visible slice in the tree
@@ -3523,9 +3529,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			return false;
 		}
 
-		#endregion automated tree navigation
+#endregion automated tree navigation
 
-		#region IxCoreColleague message handlers
+#region IxCoreColleague message handlers
 
 #if RANDYTODO
 		/// <summary>
@@ -4124,7 +4130,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			return false;
 		}
 
-		#endregion IxCoreColleague message handlers
+#endregion IxCoreColleague message handlers
 
 #if RANDYTODO
 		/// <summary>
@@ -4330,25 +4336,25 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			return true;
 		}
 
-		#region Implementation of IPropertyTableProvider
+#region Implementation of IPropertyTableProvider
 
 		/// <summary>
 		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
 		/// </summary>
 		public IPropertyTable PropertyTable { get; private set; }
 
-		#endregion
+#endregion
 
-		#region Implementation of IPublisherProvider
+#region Implementation of IPublisherProvider
 
 		/// <summary>
 		/// Get the IPublisher.
 		/// </summary>
 		public IPublisher Publisher { get; private set; }
 
-		#endregion
+#endregion
 
-		#region Implementation of ISubscriberProvider
+#region Implementation of ISubscriberProvider
 
 		/// <summary>
 		/// Get the ISubscriber.
@@ -4373,7 +4379,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			}
 		}
 
-		#endregion
+#endregion
 
 		public void ShowHiddenFields(bool showHiddenFields)
 		{
@@ -4419,7 +4425,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			m_caller = caller;
 		}
 
-		#region IDisposable override
+#region IDisposable override
 
 		/// <summary>
 		/// Executes in two distinct scenarios.
@@ -4464,7 +4470,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			base.Dispose(disposing);
 		}
 
-		#endregion IDisposable override
+#endregion IDisposable override
 
 		public override bool IsRealSlice
 		{

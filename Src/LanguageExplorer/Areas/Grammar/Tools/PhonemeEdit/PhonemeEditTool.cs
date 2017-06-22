@@ -96,7 +96,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			var doc = XDocument.Parse(GrammarResources.PhonemeEditToolParameters);
+			var root = XDocument.Parse(GrammarResources.PhonemeEditToolParameters).Root;
 			var cache = PropertyTable.GetValue<FdoCache>("cache");
 			if (cache.LanguageProject.PhonologicalDataOA.PhonemeSetsOS.Count == 0)
 			{
@@ -108,12 +108,12 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 			}
 			_recordClerk = new RecordClerk("phonemes", new RecordList(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), true, PhPhonemeSetTags.kflidPhonemes, cache.LanguageProject.PhonologicalDataOA.PhonemeSetsOS[0], "Phonemes"), new PropertyRecordSorter("ShortName"), "Default", null, false, false);
 			_recordClerk.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
-			_recordBrowseView = new RecordBrowseView(doc.Root.Element("browseview").Element("parameters"), _recordClerk);
+			_recordBrowseView = new RecordBrowseView(root.Element("browseview").Element("parameters"), _recordClerk);
 #if RANDYTODO
 			// TODO: Set up 'dataTreeMenuHandler' to handle menu events.
 			// TODO: Install menus and connect them to event handlers. (See "CreateContextMenuStrip" method for where the menus are.)
 #endif
-			var recordEditView = new RecordEditView(doc.Root.Element("recordview").Element("parameters"), XDocument.Parse(AreaResources.CompleteFilter), _recordClerk);
+			var recordEditView = new RecordEditView(root.Element("recordview").Element("parameters"), XDocument.Parse(AreaResources.CompleteFilter), _recordClerk);
 			var mainMultiPaneParameters = new MultiPaneParameters
 			{
 				Orientation = Orientation.Vertical,

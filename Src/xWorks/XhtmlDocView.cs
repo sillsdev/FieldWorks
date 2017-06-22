@@ -1190,14 +1190,14 @@ namespace SIL.FieldWorks.XWorks
 			return name.Replace('#', '-').Replace('?', '-').Replace(':', '-');
 		}
 
-		private string GetCurrentPublication()
+		public string GetCurrentPublication()
 		{
 			// Returns the current publication and use '$$all_entries$$' if none has yet been set
 			return PropertyTable.GetValue("SelectedPublication",
 			 xWorksStrings.AllEntriesPublication);
 		}
 
-		private string GetCurrentConfiguration(bool fUpdate)
+		internal string GetCurrentConfiguration(bool fUpdate)
 		{
 			return DictionaryConfigurationListener.GetCurrentConfiguration(PropertyTable, fUpdate);
 		}

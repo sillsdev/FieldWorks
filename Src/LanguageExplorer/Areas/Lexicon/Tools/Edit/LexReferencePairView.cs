@@ -16,6 +16,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		private ICmObject m_displayParent;
 
 		/// <summary />
+		public LexReferencePairView() : base()
+		{
+		}
+
+		/// <summary />
 		public override void SetReferenceVc()
 		{
 			CheckDisposed();

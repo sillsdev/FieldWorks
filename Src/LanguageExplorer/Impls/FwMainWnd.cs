@@ -464,6 +464,22 @@ namespace LanguageExplorer.Impls
 			PropertyTable.RestoreFromFile(PropertyTable.LocalSettingsId);
 		}
 
+		private void ConvertOldPropertiesToNewIfPresent()
+		{
+			const int currentPropertyTableVersion = 10;
+			if (PropertyTable.GetValue<int>("PropertyTableVersion") == currentPropertyTableVersion)
+			{
+				return;
+			}
+			string oldStringValue;
+			if (PropertyTable.TryGetValue("currentContentControl", out oldStringValue))
+			{
+				PropertyTable.RemoveProperty("currentContentControl");
+				PropertyTable.SetProperty("toolChoice", oldStringValue, true, false);
+			}
+			PropertyTable.SetProperty("PropertyTableVersion", currentPropertyTableVersion, SettingsGroup.GlobalSettings, true, false);
+		}
+
 		/// <summary>
 		/// Just in case some expected property hasn't been reloaded,
 		/// see that they are loaded. "SetDefault" doesn't mess with them if they are restored.
@@ -471,6 +487,8 @@ namespace LanguageExplorer.Impls
 		/// <remarks>NB: default properties of interest to areas/tools are handled by them.</remarks>
 		private void SetDefaultProperties()
 		{
+			// This "PropertyTableVersion" property will control the beahvior of the "ConvertOldPropertiesToNewIfPresent" method.
+			PropertyTable.SetDefault("PropertyTableVersion", int.MinValue, SettingsGroup.GlobalSettings, true, false);
 			// This is the splitter distance for the sidebar/secondary splitter pair of controls.
 			PropertyTable.SetDefault("SidebarWidthGlobal", 140, SettingsGroup.GlobalSettings, true, false);
 			// This is the splitter distance for the record list/main content pair of controls.
@@ -517,6 +535,8 @@ namespace LanguageExplorer.Impls
 			PropertyTable.RemoveProperty("DoLog");
 			PropertyTable.RemoveProperty("ShowBalloonHelp");
 			PropertyTable.RemoveProperty("ShowMorphBundles");
+
+			ConvertOldPropertiesToNewIfPresent();
 		}
 
 		private void SetTemporaryProperties()

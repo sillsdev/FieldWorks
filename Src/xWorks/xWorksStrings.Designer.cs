@@ -384,6 +384,21 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+        ///&lt;PartOwnershipTree&gt;
+        ///	&lt;!-- the ClassOwnershipTree describes the relative relationship between the target classes in the possible source properties
+        ///								 loaded by this list. This especially helps in maintaining the CurrentIndex when switching from one property to the next. --&gt;
+        ///	&lt;ClassOwnershipTree&gt;
+        ///		&lt;LexEntry sourceField=&quot;Entries&quot;&gt;
+        ///			&lt;LexEntryRef sourceField=&quot;AllEntryRefs&quot; altSourceField=&quot;ComplexEntryTypes:AllComplexEntryRefPropertyTargets;VariantEntryTypes: [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string EntriesOrChildrenClerkPartOwnershipTree {
+            get {
+                return ResourceManager.GetString("EntriesOrChildrenClerkPartOwnershipTree", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Entry.
         /// </summary>
         internal static string Entry {

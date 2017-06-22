@@ -172,7 +172,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Stringses the specified hvo.
+		/// Strings the specified hvo.
 		/// </summary>
 		/// <param name="hvo">The hvo.</param>
 		/// <returns></returns>
@@ -413,7 +413,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// ------------------------------------------------------------------------------------
 		public virtual void PersistAsXml(XElement node)
 		{
-			XmlUtils.SetAttribute(node, "layout", m_layoutName);
+			XmlUtils.SetAttribute(node, "layout", m_layoutName ?? string.Empty);
 			node.Add(m_colSpec);
 			}
 
