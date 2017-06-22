@@ -492,7 +492,6 @@ namespace SIL.FieldWorks.XWorks
 				FdoCache cache, Mediator mediator, IPropertyTable propertyTable, ISortItemProvider sortItemProvider, ISilDataAccessManaged sda)
 			{
 				var app = propertyTable.GetValue<MockFwXApp>("App");
-				propertyTable.SetProperty("FeedbackInfoProvider", app, false, true);
 				return new BrowseViewerForTests(nodeSpec, hvoRoot, madeUpFieldIdentifier, cache,
 					mediator, propertyTable,
 					sortItemProvider, sda);

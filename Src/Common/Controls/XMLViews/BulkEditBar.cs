@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -2846,19 +2846,10 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 
 
-			/// <summary>
-			///
-			/// </summary>
-			/// <param name="bulkEditBar"></param>
-			/// <returns></returns>
+			/// <summary />
 			internal static string GetBulkEditBarToolId(BulkEditBar bulkEditBar)
 			{
-				var configurationNode = bulkEditBar.m_configurationNode;
-#if RANDYTODO
-				return XWindow.GetToolIdFromControlConfiguration(configurationNode);
-#else
-				throw new NotImplementedException("BulkEditBar GetBulkEditBarToolId needs to be implemented.");
-#endif
+				return bulkEditBar.m_configurationNode.Attribute("toolId").Value;
 			}
 
 			/// <summary>

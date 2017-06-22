@@ -1,4 +1,4 @@
-// Copyright (c) 2012-2015 SIL International
+// Copyright (c) 2012-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -29,6 +29,12 @@ namespace LanguageExplorer.Areas.Grammar.Tools.BulkEditPhonemes
 			InitializeComponent();
 		}
 
+		public AssignFeaturesToPhonemes(XElement browseViewDefinitions, RecordClerk recordClerk)
+			: base(browseViewDefinitions, recordClerk)
+		{
+			InitializeComponent();
+		}
+
 		#region Overrides of RecordBrowseView
 
 		/// <summary>
@@ -52,11 +58,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.BulkEditPhonemes
 		protected override BrowseViewer CreateBrowseViewer(XElement nodeSpec, int hvoRoot, FdoCache cache,
 			ISortItemProvider sortItemProvider, ISilDataAccessManaged sda)
 		{
-			var viewer = new BrowseViewerPhonologicalFeatures(nodeSpec,
-						 hvoRoot,
-						 cache, sortItemProvider, sda);
-			viewer.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-			return viewer;
+			return new BrowseViewerPhonologicalFeatures(nodeSpec, hvoRoot, cache, sortItemProvider, sda);
 		}
 	}
 }

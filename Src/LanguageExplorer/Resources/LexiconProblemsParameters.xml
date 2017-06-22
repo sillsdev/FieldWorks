@@ -1,2 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<parameters persistContext="problems" layout="Edit" emptyTitleId="No-Problems"/>
+<root>
+	<parameters persistContext="problems" layout="Edit" emptyTitleId="No-Problems"/>
+	<filterElement targetClasses="LexEntry, LexSense, PhEnvironment" />
+</root>

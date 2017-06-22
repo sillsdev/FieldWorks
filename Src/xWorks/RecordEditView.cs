@@ -350,7 +350,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				//don't really need to make the program stop just because we could not show this record.
 				IApp app = PropertyTable.GetValue<IApp>("App");
-				ErrorReporter.ReportException(error, app.SettingsKey, PropertyTable.GetValue<IFeedbackInfoProvider>("FeedbackInfoProvider").SupportEmailAddress,
+				ErrorReporter.ReportException(error, app.SettingsKey, app.SupportEmailAddress,
 					null, false);
 			}
 #if DEBUG

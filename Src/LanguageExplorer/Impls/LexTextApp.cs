@@ -1,4 +1,4 @@
-// Copyright (c) 2002-2017 SIL International
+// Copyright (c) 2002-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -425,13 +425,11 @@ Old Mediator methods/commands
 						mainWnd.Dispose();
 					}
 				}
-				if (m_findReplaceDlg != null)
-					m_findReplaceDlg.Dispose();
+				m_findReplaceDlg?.Dispose();
 
 				ResourceHelper.ShutdownHelper();
 
-				if (RegistrySettings != null)
-					RegistrySettings.Dispose();
+				RegistrySettings?.Dispose();
 
 				Application.EnterThreadModal -= Application_EnterThreadModal;
 				Application.LeaveThreadModal -= Application_LeaveThreadModal;

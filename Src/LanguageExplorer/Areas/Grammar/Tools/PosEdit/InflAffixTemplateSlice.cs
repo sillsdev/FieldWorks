@@ -1,10 +1,11 @@
-// Copyright (c) 2003-2015 SIL International
+// Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Framework.DetailControls;
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 {
@@ -119,6 +120,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 			}
 			var ctrl = new InflAffixTemplateControl(PropertyTable.GetValue<FdoCache>("cache"),
 				Object.Hvo, ConfigurationNode);
+			ctrl.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 			Control = ctrl;
 			m_menuHandler = InflAffixTemplateMenuHandler.Create(ctrl, ConfigurationNode);
 #if RANDYTODO

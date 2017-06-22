@@ -184,11 +184,12 @@ namespace SIL.FieldWorks.XWorks
 				}
 				catch (Exception error)
 				{
-					using (var appSettingsKey = PropertyTable.GetValue<IFlexApp>("App").SettingsKey)
+					var app = PropertyTable.GetValue<IFlexApp>("App");
+					using (var appSettingsKey = app.SettingsKey)
 					{
 						//don't really need to make the program stop just because we could not show this record.
 						ErrorReporter.ReportException(error, appSettingsKey,
-							PropertyTable.GetValue<IFeedbackInfoProvider>("FeedbackInfoProvider").SupportEmailAddress, null, false);
+							app.SupportEmailAddress, null, false);
 					}
 				}
 			}

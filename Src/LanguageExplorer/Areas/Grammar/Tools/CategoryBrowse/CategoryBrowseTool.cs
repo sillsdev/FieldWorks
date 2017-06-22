@@ -96,6 +96,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CategoryBrowse
 				majorFlexComponentParameters.FlexComponentParameters,
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
 				new RecordBrowseView(_configurationDocument.Root, _recordClerk));
+			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
 		}
 
 		/// <summary>

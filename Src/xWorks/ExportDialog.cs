@@ -740,9 +740,9 @@ namespace SIL.FieldWorks.XWorks
 					{
 						// Show the pretty yellow semi-crash dialog box, with instructions for the
 						// user to report the bug.
-							var app = PropertyTable.GetValue<IApp>("App");
+						var app = PropertyTable.GetValue<IApp>("App");
 						ErrorReporter.ReportException(new Exception(xWorksStrings.ksLiftExportBugReport, e.InnerException),
-								app.SettingsKey, PropertyTable.GetValue<IFeedbackInfoProvider>("FeedbackInfoProvider").SupportEmailAddress, this, false);
+								app.SettingsKey, app.SupportEmailAddress, this, false);
 					}
 					else
 					{

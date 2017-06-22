@@ -31,8 +31,9 @@ namespace LanguageExplorer
 		internal SILErrorReportingAdapter(Form parentForm, IPropertyTable propertyTable)
 		{
 			m_parentForm = parentForm;
-			m_registryKey = propertyTable.GetValue<IFlexApp>("App").SettingsKey;
-			m_supportEmailAddress = propertyTable.GetValue<IFeedbackInfoProvider>("FeedbackInfoProvider").SupportEmailAddress;
+			var app = propertyTable.GetValue<IFlexApp>("App");
+			m_registryKey = app.SettingsKey;
+			m_supportEmailAddress = app.SupportEmailAddress;
 		}
 
 		#region IErrorReporter

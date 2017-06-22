@@ -74,9 +74,7 @@ namespace SIL.FieldWorks.LexicalProvider
 				PubSubSystemFactory.CreatePubSubSystem(out publisher, out subscriber);
 				using (var propertyTable = PropertyTableFactory.CreatePropertyTable(publisher))
 				{
-					propertyTable.SetProperty("HelpTopicProvider", FieldWorks.GetHelpTopicProvider(), false, true);
 					var flexApp = FieldWorks.GetOrCreateFlexApp();
-					propertyTable.SetProperty("FeedbackInfoProvider", flexApp, false, true);
 					propertyTable.SetProperty("App", flexApp, true, true);
 
 					var fdoUiAssembly = Assembly.LoadFrom("FdoUi.dll");
@@ -112,9 +110,7 @@ namespace SIL.FieldWorks.LexicalProvider
 				PubSubSystemFactory.CreatePubSubSystem(out publisher, out subscriber);
 				using (var propertyTable = PropertyTableFactory.CreatePropertyTable(publisher)) // Nobody is subscribed.
 				{
-					propertyTable.SetProperty("HelpTopicProvider", FieldWorks.GetHelpTopicProvider(), false, true);
 					var flexApp = FieldWorks.GetOrCreateFlexApp();
-					propertyTable.SetProperty("FeedbackInfoProvider", flexApp, false, true);
 					propertyTable.SetProperty("App", flexApp, true, true);
 
 					var fdoUiAssembly = Assembly.LoadFrom("FdoUi.dll");

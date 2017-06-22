@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -30,15 +30,8 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 		/// <summary>
 		/// Constructor invoked via the editor="customWithParams" slice XML configuration
 		/// </summary>
-		/// <param name="cache"></param>
-		/// <param name="editor"></param>
-		/// <param name="flid"></param>
-		/// <param name="node"></param>
-		/// <param name="obj"></param>
-		/// <param name="persistenceProvider"></param>
-		/// <param name="ws"></param>
 		public BasicIPASymbolSlice(FdoCache cache, string editor, int flid,
-						System.Xml.XmlNode node, ICmObject obj,
+						XElement node, ICmObject obj,
 						IPersistenceProvider persistenceProvider, int ws)
 			: base(obj, flid, ws)
 		{

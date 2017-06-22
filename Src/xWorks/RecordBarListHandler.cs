@@ -87,7 +87,7 @@ namespace SIL.FieldWorks.XWorks
 				{
 					IApp app = m_propertyTable.GetValue<IApp>("App");
 					ErrorReporter.ReportException(error, app.SettingsKey,
-						m_propertyTable.GetValue<IFeedbackInfoProvider>("FeedbackInfoProvider").SupportEmailAddress, null, false);
+						app.SupportEmailAddress, null, false);
 				}
 
 

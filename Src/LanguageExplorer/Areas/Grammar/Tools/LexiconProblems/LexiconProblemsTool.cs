@@ -3,9 +3,12 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Drawing;
+using System.Xml.Linq;
 using LanguageExplorer.Controls;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
+using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks;
 
@@ -16,7 +19,11 @@ namespace LanguageExplorer.Areas.Grammar.Tools.LexiconProblems
 	/// </summary>
 	internal sealed class LexiconProblemsTool : ITool
 	{
-		private PaneBarContainer _paneBarContainer;
+		/// <summary>
+		/// Main control to the right of the side bar control. This holds a RecordBar on the left and a PaneBarContainer on the right.
+		/// The RecordBar on the left has no top PaneBar for information, menus, etc.
+		/// </summary>
+		private CollapsingSplitContainer _collapsingSplitContainer;
 		private RecordClerk _recordClerk;
 
 		#region Implementation of IPropertyTableProvider
@@ -73,9 +80,9 @@ namespace LanguageExplorer.Areas.Grammar.Tools.LexiconProblems
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			PaneBarContainerFactory.RemoveFromParentAndDispose(
+			CollapsingSplitContainerFactory.RemoveFromParentAndDispose(
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
-				ref _paneBarContainer,
+				ref _collapsingSplitContainer,
 				ref _recordClerk);
 		}
 
@@ -87,10 +94,21 @@ namespace LanguageExplorer.Areas.Grammar.Tools.LexiconProblems
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			_paneBarContainer = PaneBarContainerFactory.Create(
-				majorFlexComponentParameters.FlexComponentParameters,
+			var root = XDocument.Parse(GrammarResources.LexiconProblemsParameters).Root;
+			var cache = PropertyTable.GetValue<FdoCache>("cache");
+			var recordList = new RecordList(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), true, LangProjectTags.kflidAnnotations, cache.LanguageProject, "Annotations");
+			var recordBarHandler = new RecordBarListHandler(PropertyTable, true, true, false, "best analorvern");
+			var probAnnFilter = new ProblemAnnotationFilter();
+			probAnnFilter.Init(cache, root.Element("filterElement"));
+			_recordClerk = new RecordClerk("lexProblems", recordList, new PropertyRecordSorter("ShortName"), "Default", probAnnFilter, true, true, recordBarHandler);
+			_collapsingSplitContainer = CollapsingSplitContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters,
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
-				TemporaryToolProviderHack.CreateNewLabel(this));
+				true,
+				root.Element("parameters"),
+				null,
+				MachineName,
+				_recordClerk);
+			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
 		}
 
 		/// <summary>

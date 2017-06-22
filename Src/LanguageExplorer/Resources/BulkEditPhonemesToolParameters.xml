@@ -8,7 +8,7 @@
 		<generate class="FsFeatureSystem" fieldType="vector" restrictions="featureDefns" objectPath="PhFeatureSystem.Features">
 			<column layout="CustomMultiStringForFeatureDefn_$fieldName" label="$label" bulkEdit="external" common="true" ws="$ws=best analysis"
 				cansortbylength="true" visibility="always" width="4%">
-				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.FdoUi.PhonologicalFeatureEditor">
+				<dynamicloaderinfo assemblyPath="FdoUi.dll" class="SIL.FieldWorks.FdoUi.PhonologicalFeatureEditor">
 					<args>
 						<arg name="xpathToConfigurationNode" value="ancestor::column"/>
 					</args>

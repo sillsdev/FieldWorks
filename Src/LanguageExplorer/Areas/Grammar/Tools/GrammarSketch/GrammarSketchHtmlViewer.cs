@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2015 SIL International
+// Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -28,7 +28,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 	/// <summary>
 	/// Summary description for GrammarSketchHtmlViewer.
 	/// </summary>
-	internal sealed class GrammarSketchHtmlViewer : UserControl, IMainContentControl, IDisposable
+	internal sealed class GrammarSketchHtmlViewer : UserControl, IMainContentControl
 	{
 		#region Data Members
 
@@ -186,7 +186,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 
 			Subscriber.Subscribe("SaveAsWebpage", SaveAsWebpage);
 
-			PropertyTable.SetProperty("StatusPanelRecordNumber", "", false, true);
+			PropertyTable.SetProperty("StatusPanelRecordNumber", string.Empty, false, true);
 
 			m_sHtmlFileName = null;
 			m_step1MainOutputFileName = string.Empty;
@@ -206,7 +206,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 			ShowSketch();
 
 			//add our current state to the history system
-			Publisher.Publish("AddContextToHistory", new FwLinkArgs(PropertyTable.GetValue("toolChoice", ""), Guid.Empty));
+			Publisher.Publish("AddContextToHistory", new FwLinkArgs(PropertyTable.GetValue("toolChoice", string.Empty), Guid.Empty));
 		}
 
 		#endregion
@@ -271,14 +271,8 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 
 			if (disposing)
 			{
-				if (Subscriber != null)
-				{
-					Subscriber.Unsubscribe("SaveAsWebpage", SaveAsWebpage);
-				}
-				if (components != null)
-				{
-					components.Dispose();
-				}
+				Subscriber?.Unsubscribe("SaveAsWebpage", SaveAsWebpage);
+				components?.Dispose();
 			}
 			m_sHtmlFileName = null;
 			m_step1MainOutputFileName = null;
@@ -298,7 +292,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
+				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
 		}
 
 		#endregion // Construction, Initialization, and disposal
@@ -686,7 +680,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 		public Control PopulateCtrlTabTargetCandidateList(List<Control> targetCandidates)
 		{
 			if (targetCandidates == null)
-				throw new ArgumentNullException("targetCandidates");
+				throw new ArgumentNullException(nameof(targetCandidates));
 
 			targetCandidates.Add(this);
 

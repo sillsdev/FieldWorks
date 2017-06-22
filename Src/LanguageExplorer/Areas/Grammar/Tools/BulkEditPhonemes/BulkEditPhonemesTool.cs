@@ -3,9 +3,13 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Drawing;
+using System.Xml.Linq;
 using LanguageExplorer.Controls;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
+using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks;
 
@@ -17,6 +21,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.BulkEditPhonemes
 	internal sealed class BulkEditPhonemesTool : ITool
 	{
 		private PaneBarContainer _paneBarContainer;
+		private AssignFeaturesToPhonemes _assignFeaturesToPhonemesView;
 		private RecordClerk _recordClerk;
 
 		#region Implementation of IPropertyTableProvider
@@ -77,6 +82,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.BulkEditPhonemes
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
 				ref _paneBarContainer,
 				ref _recordClerk);
+			_assignFeaturesToPhonemesView = null;
 		}
 
 		/// <summary>
@@ -87,10 +93,25 @@ namespace LanguageExplorer.Areas.Grammar.Tools.BulkEditPhonemes
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			var doc = XDocument.Parse(GrammarResources.BulkEditPhonemesToolParameters);
+			var cache = PropertyTable.GetValue<FdoCache>("cache");
+			if (cache.LanguageProject.PhonologicalDataOA.PhonemeSetsOS.Count == 0)
+			{
+				// Pathological...this helps the memory-only backend mainly, but makes others self-repairing.
+				NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(cache.ActionHandlerAccessor, () =>
+				{
+					cache.LanguageProject.PhonologicalDataOA.PhonemeSetsOS.Add(cache.ServiceLocator.GetInstance<IPhPhonemeSetFactory>().Create());
+				});
+			}
+			_recordClerk = new RecordClerk("phonemes", new RecordList(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), true, PhPhonemeSetTags.kflidPhonemes, cache.LanguageProject.PhonologicalDataOA.PhonemeSetsOS[0], "Phonemes"), new PropertyRecordSorter("ShortName"), "Default", null, false, false);
+			_recordClerk.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
+			_assignFeaturesToPhonemesView = new AssignFeaturesToPhonemes(doc.Root, _recordClerk);
+
 			_paneBarContainer = PaneBarContainerFactory.Create(
 				majorFlexComponentParameters.FlexComponentParameters,
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
-				TemporaryToolProviderHack.CreateNewLabel(this));
+				_assignFeaturesToPhonemesView);
+			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
 		}
 
 		/// <summary>
@@ -98,9 +119,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.BulkEditPhonemes
 		/// </summary>
 		public void PrepareToRefresh()
 		{
-#if RANDYTODO
-			// TODO: Call PrepareToRefresh on nested AssignFeaturesToPhonemes control (down in of PaneBarContainer control).
-#endif
+			_assignFeaturesToPhonemesView.BrowseViewer.BrowseView.PrepareToRefresh();
 		}
 
 		/// <summary>

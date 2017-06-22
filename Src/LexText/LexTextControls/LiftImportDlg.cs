@@ -321,7 +321,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				// user to report the bug.  Then ask the user whether to continue.
 				IApp app = m_propertyTable.GetValue<IApp>("App");
 				ErrorReporter.ReportException(new Exception(sMsg, lfe), app.SettingsKey,
-					m_propertyTable.GetValue<IFeedbackInfoProvider>("FeedbackInfoProvider").SupportEmailAddress, this, false);
+					app.SupportEmailAddress, this, false);
 				return MessageBox.Show(LexTextControls.ksContinueLiftImportQuestion,
 					LexTextControls.ksProblemImporting,
 					MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes;

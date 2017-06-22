@@ -161,7 +161,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		public XmlBrowseViewBaseVc(XmlBrowseViewBase xbv)
 		{
-			TheApp = xbv.m_bv.PropertyTable.GetValue<IApp>("FeedbackInfoProvider");
+			TheApp = xbv.m_bv.PropertyTable.GetValue<IApp>("App");
 			XmlBrowseViewBaseVcInit(xbv.Cache, xbv.DataAccess);
 
 		}

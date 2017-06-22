@@ -182,13 +182,13 @@ namespace SIL.FieldWorks.XWorks
 		internal RecordClerk(string id, RecordList recordList, RecordSorter defaultSorter, string defaultSortLabel, RecordFilter defaultFilter, bool allowDeletions, bool shouldHandleDeletion)
 		{
 			if (string.IsNullOrWhiteSpace(id))
-				throw new ArgumentNullException("id");
+				throw new ArgumentNullException(nameof(id));
 			if (recordList == null)
-				throw new ArgumentNullException("recordList");
+				throw new ArgumentNullException(nameof(recordList));
 			if (defaultSorter == null)
-				throw new ArgumentNullException("defaultSorter");
+				throw new ArgumentNullException(nameof(defaultSorter));
 			if (string.IsNullOrWhiteSpace(defaultSortLabel))
-				throw new ArgumentNullException("defaultSortLabel");
+				throw new ArgumentNullException(nameof(defaultSortLabel));
 
 			m_id = id;
 			m_list = recordList;
@@ -213,11 +213,11 @@ namespace SIL.FieldWorks.XWorks
 		internal RecordClerk(string id, RecordList recordList, Dictionary<string, PropertyRecordSorter> sorters, RecordFilter defaultFilter, bool allowDeletions, bool shouldHandleDeletion)
 		{
 			if (string.IsNullOrWhiteSpace(id))
-				throw new ArgumentNullException("id");
+				throw new ArgumentNullException(nameof(id));
 			if (recordList == null)
-				throw new ArgumentNullException("recordList");
+				throw new ArgumentNullException(nameof(recordList));
 			if (sorters == null)
-				throw new ArgumentNullException("sorters");
+				throw new ArgumentNullException(nameof(sorters));
 
 			m_id = id;
 			m_list = recordList;
@@ -245,7 +245,7 @@ namespace SIL.FieldWorks.XWorks
 			: this(id, recordList, defaultSorter, defaultSortLabel, defaultFilter, allowDeletions, shouldHandleDeletion)
 		{
 			if (filterProvider == null)
-				throw new ArgumentNullException("filterProvider");
+				throw new ArgumentNullException(nameof(filterProvider));
 
 			m_filterProvider = filterProvider;
 		}
@@ -265,7 +265,7 @@ namespace SIL.FieldWorks.XWorks
 			: this(id, recordList, defaultSorter, defaultSortLabel, defaultFilter, allowDeletions, shouldHandleDeletion)
 		{
 			if (recordBarHandler == null)
-				throw new ArgumentNullException("recordBarHandler");
+				throw new ArgumentNullException(nameof(recordBarHandler));
 
 			m_recordBarHandler = recordBarHandler;
 		}
@@ -285,7 +285,7 @@ namespace SIL.FieldWorks.XWorks
 			: this(id, recordList, defaultSorter, defaultSortLabel, defaultFilter, allowDeletions, shouldHandleDeletion)
 		{
 			if (clerkProvidingRootObject == null)
-				throw new ArgumentNullException("clerkProvidingRootObject");
+				throw new ArgumentNullException(nameof(clerkProvidingRootObject));
 
 			m_clerkProvidingRootObject = clerkProvidingRootObject;
 		}
@@ -379,41 +379,31 @@ namespace SIL.FieldWorks.XWorks
 			if (m_filterProvider != null)
 			{
 				// There is only one clerk (concordanceWords) that sets m_filterProvider to a provider.
+				// That provider is the class WfiRecordFilterListProvider.
 				// That clerk is used in these tools: AnalysesTool, BulkEditWordformsTool, & WordListConcordanceTool
+				// That WfiRecordFilterListProvider instance is (ok: "will be") provided in one of the RecordClerk contructor overloads.
 				Subscriber.Subscribe("FilterListChanged", FilterListChanged_Message_Handler);
-			}
-#if RANDYTODO
-			XmlNode recordFilterListProviderNode = ToolConfiguration.GetDefaultRecordFilterListProvider(m_clerkConfiguration);
-			bool fSetFilterMenu = false;
-			if (recordFilterListProviderNode != null)
-			{
-				// TODO: There is only one concrete class (WfiRecordFilterListProvider) used in one RecordClerk,
-				// TODO: which is used by several tools.
-				m_filterProvider = RecordFilterListProvider.Create(PropertyTable, recordFilterListProviderNode);
-#else
-			if (m_list.Filter != null)
-			{
-				// find any matching persisted menubar filter
-				// NOTE: for now assume we can only set/persist one such menubar filter at a time.
-				foreach (RecordFilter menuBarFilterOption in m_filterProvider.Filters)
+				if (m_list.Filter != null)
 				{
-					if (!m_list.Filter.Contains(menuBarFilterOption))
+					// There is only one clerk (concordanceWords) that sets m_filterProvider to a provider.
+					// That clerk is used in these tools: AnalysesTool, BulkEditWordformsTool, & WordListConcordanceTool
+					// find any matching persisted menubar filter
+					// NOTE: for now assume we can only set/persist one such menubar filter at a time.
+					foreach (RecordFilter menuBarFilterOption in m_filterProvider.Filters)
 					{
-						continue;
+						if (!m_list.Filter.Contains(menuBarFilterOption))
+						{
+							continue;
+						}
+						m_activeMenuBarFilter = menuBarFilterOption;
+						m_filterProvider.OnAdjustFilterSelection(m_activeMenuBarFilter);
+						PropertyTable.SetDefault(CurrentFilterPropertyTableId, m_activeMenuBarFilter.id, SettingsGroup.LocalSettings, false, false);
+						fSetFilterMenu = true;
+						break;
 					}
-					m_activeMenuBarFilter = menuBarFilterOption;
-					m_filterProvider.OnAdjustFilterSelection(m_activeMenuBarFilter);
-					PropertyTable.SetDefault(CurrentFilterPropertyTableId, m_activeMenuBarFilter.id,
-						SettingsGroup.LocalSettings, false, false);
-					fSetFilterMenu = true;
-					break;
 				}
 			}
 
-#if RANDYTODO
-			}
-#endif
-#endif
 			if (!fSetFilterMenu)
 			{
 				OnAdjustFilterSelection(null);
