@@ -18,7 +18,6 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookDocument
 	/// </summary>
 	internal sealed class NotebookDocumentTool : ITool
 	{
-		private XDocument _configurationDocument;
 		private PaneBarContainer _paneBarContainer;
 		private RecordClerk _recordClerk;
 
@@ -90,13 +89,13 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookDocument
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			_configurationDocument = XDocument.Parse(NotebookResources.NotebookDocumentParameters);
-			var recordClerk = NotebookArea.CreateRecordClerkForAllNotebookAreaTools(PropertyTable.GetValue<FdoCache>("cache"));
-			recordClerk.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
+			_recordClerk = NotebookArea.CreateRecordClerkForAllNotebookAreaTools(PropertyTable.GetValue<FdoCache>("cache"));
+			_recordClerk.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
 			_paneBarContainer = PaneBarContainerFactory.Create(
 				majorFlexComponentParameters.FlexComponentParameters,
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
-				new XmlDocView(_configurationDocument.Root, recordClerk));
+				new XmlDocView(XDocument.Parse(NotebookResources.NotebookDocumentParameters).Root, _recordClerk));
+			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
 		}
 
 		/// <summary>
@@ -131,19 +130,12 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookDocument
 		/// Get the internal name of the component.
 		/// </summary>
 		/// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
-		public string MachineName
-		{
-			get { return "notebookDocument"; }
-		}
+		public string MachineName => "notebookDocument";
 
 		/// <summary>
 		/// User-visible localizable component name.
 		/// </summary>
-		public string UiName
-		{
-			get { return "Document"; }
-		}
-
+		public string UiName => "Document";
 		#endregion
 
 		#region Implementation of ITool

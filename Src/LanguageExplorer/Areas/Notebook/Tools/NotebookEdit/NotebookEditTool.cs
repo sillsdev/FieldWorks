@@ -2,12 +2,20 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
+using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
+using System.Xml.Linq;
+using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.PaneBar;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks;
+using SIL.Utils;
 
 namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 {
@@ -17,7 +25,9 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 	internal sealed class NotebookEditTool : ITool
 	{
 		private MultiPane _multiPane;
+		private RecordBrowseView _recordBrowseView;
 		private RecordClerk _recordClerk;
+		private readonly HashSet<Tuple<ToolStripMenuItem, EventHandler>> _newMenusAndHandlers = new HashSet<Tuple<ToolStripMenuItem, EventHandler>>();
 
 		#region Implementation of IPropertyTableProvider
 
@@ -75,10 +85,17 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			foreach (var menuTuple in _newMenusAndHandlers)
+			{
+				menuTuple.Item1.Click -= menuTuple.Item2;
+			}
+			_newMenusAndHandlers.Clear();
+
 			MultiPaneFactory.RemoveFromParentAndDispose(
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
 				ref _multiPane,
 				ref _recordClerk);
+			_recordBrowseView = null;
 		}
 
 		/// <summary>
@@ -89,6 +106,15 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			_recordClerk = NotebookArea.CreateRecordClerkForAllNotebookAreaTools(PropertyTable.GetValue<FdoCache>("cache"));
+			_recordClerk.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
+
+			_recordBrowseView = new RecordBrowseView(NotebookArea.LoadDocument(NotebookResources.NotebookEditBrowseParameters).Root, _recordClerk);
+#if RANDYTODO
+			// TODO: Set up 'dataTreeMenuHandler' to handle menu events.
+			// TODO: Install menus and connect them to event handlers. (See "CreateContextMenuStrip" method for where the menus are.)
+#endif
+			var recordEditView = new RecordEditView(XElement.Parse(NotebookResources.NotebookEditRecordEditViewParameters), XDocument.Parse(AreaResources.CompleteFilter), _recordClerk);
 			var mainMultiPaneParameters = new MultiPaneParameters
 			{
 				Orientation = Orientation.Vertical,
@@ -97,12 +123,39 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 				ToolMachineName = MachineName,
 				DefaultPrintPane = "RecordDetailPane"
 			};
+			var paneBar = new PaneBar();
+			var img = LanguageExplorerResources.MenuWidget;
+			img.MakeTransparent(Color.Magenta);
+			var panelMenu = new PanelMenu
+			{
+				Dock = DockStyle.Left,
+				BackgroundImage = img,
+				BackgroundImageLayout = ImageLayout.Center,
+				ContextMenuStrip = CreateContextMenuStrip()
+			};
+			var panelButton = new PanelButton(PropertyTable, null, PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(MachineName), LanguageExplorerResources.ksHideFields, LanguageExplorerResources.ksShowHiddenFields)
+			{
+				Dock = DockStyle.Right
+			};
+			paneBar.AddControls(new List<Control> { panelMenu, panelButton });
+
 			_multiPane = MultiPaneFactory.CreateMultiPaneWithTwoPaneBarContainersInMainCollapsingSplitContainer(
 				majorFlexComponentParameters.FlexComponentParameters,
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
 				mainMultiPaneParameters,
-				TemporaryToolProviderHack.CreateNewLabel($"Browse view for tool: {MachineName}"), "Browse", new PaneBar(),
-				TemporaryToolProviderHack.CreateNewLabel($"Details view for tool: {MachineName}"), "Details", new PaneBar());
+				_recordBrowseView, "Browse", new PaneBar(),
+				recordEditView, "Details", paneBar);
+
+			using (var gr = _multiPane.CreateGraphics())
+			{
+				_multiPane.Panel2MinSize = Math.Max((int)(162000 * gr.DpiX) / MiscUtils.kdzmpInch,
+						CollapsingSplitContainer.kCollapseZone);
+			}
+
+			panelButton.DatTree = recordEditView.DatTree;
+			// Too early before now.
+			recordEditView.FinishInitialization();
+			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
 		}
 
 		/// <summary>
@@ -110,9 +163,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 		/// </summary>
 		public void PrepareToRefresh()
 		{
-#if RANDYTODO
-			// TODO: Call PrepareToRefresh on buried RecordBrowseView class (PaneBarContainer in left side of MultiPane control).
-#endif
+			_recordBrowseView.BrowseViewer.BrowseView.PrepareToRefresh();
 		}
 
 		/// <summary>
@@ -120,10 +171,8 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 		/// </summary>
 		public void FinishRefresh()
 		{
-#if RANDYTODO
-			// TODO: If tool uses a SDA decorator (DomainDataByFlidDecoratorBase), then call its "Refresh" method.
-#endif
 			_recordClerk.ReloadIfNeeded();
+			((DomainDataByFlidDecoratorBase)_recordClerk.VirtualListPublisher).Refresh();
 		}
 
 		/// <summary>
@@ -163,5 +212,74 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 		public Image Icon => Images.SideBySideView.SetBackgroundColor(Color.Magenta);
 
 		#endregion
+
+		private ContextMenuStrip CreateContextMenuStrip()
+		{
+			var contextMenuStrip = new ContextMenuStrip();
+
+			// Insert_Subrecord menu item.
+			/*
+<item label="Insert _Subrecord" command="CmdDataTree-Insert-Subrecord"/>
+<command id="CmdDataTree-Insert-Subrecord" label="Insert _Subrecord" message="InsertItemInVector">
+	<parameters className="RnGenericRec" subrecord="true"/>
+</command>
+			*/
+			var contextMenuItem = CreateToolStripMenuItem(contextMenuStrip, NotebookResources.Insert_Subrecord, null, Insert_Subrecord_Clicked);
+#if !RANDYTODO
+			// TODO: Enable it and have better event handler deal with it.
+			contextMenuItem.Enabled = false;
+#endif
+
+			// Insert Insert S_ubrecord of Subrecord menu item. (CmdInsertSubsense->msg: DataTreeInsert, also on Insert menu)
+			/*
+				<item label="Insert S_ubrecord of Subrecord" command="CmdDataTree-Insert-Subsubrecord" defaultVisible="false"/>
+<command id="CmdDataTree-Insert-Subsubrecord" label="Insert S_ubrecord of Subrecord" message="InsertItemInVector">
+	<parameters className="RnGenericRec" subrecord="true" subsubrecord="true"/>
+</command>
+			*/
+			contextMenuItem = CreateToolStripMenuItem(contextMenuStrip, NotebookResources.Insert_Subrecord_of_Subrecord, null, Insert_Subsubrecord_Clicked);
+#if !RANDYTODO
+			// TODO: Enable it and have better event handler deal with it.
+			contextMenuItem.Enabled = false;
+#endif
+			// Demote Record... menu item. (CmdDemoteRecord).
+			/*
+<item command="CmdDemoteRecord"/>
+<command id="CmdDemoteRecord" label="Demote Record..." message="DemoteItemInVector">
+	<parameters className="RnGenericRec"/>
+</command>
+			*/
+			contextMenuItem = CreateToolStripMenuItem(contextMenuStrip, NotebookResources.Demote_Record, null, Demote_Record_Clicked);
+#if !RANDYTODO
+			// TODO: Enable it and have better event handler deal with it.
+			contextMenuItem.Enabled = false;
+#endif
+
+			return contextMenuStrip;
+		}
+
+		private void Demote_Record_Clicked(object sender, EventArgs e)
+		{
+		}
+
+		private void Insert_Subsubrecord_Clicked(object sender, EventArgs e)
+		{
+		}
+
+		private void Insert_Subrecord_Clicked(object sender, EventArgs e)
+		{
+		}
+
+		private ToolStripMenuItem GetItemForItemText(string menuText)
+		{
+			return _newMenusAndHandlers.First(t => t.Item1.Text == FwUtils.ReplaceUnderlineWithAmpersand(menuText)).Item1;
+		}
+
+		private ToolStripMenuItem CreateToolStripMenuItem(ContextMenuStrip contextMenuStrip, string menuText, string menuTooltip, EventHandler eventHandler)
+		{
+			var toolStripMenuItem = PaneBarContextMenuFactory.CreateToolStripMenuItem(contextMenuStrip, menuText, null, eventHandler, menuTooltip);
+			_newMenusAndHandlers.Add(new Tuple<ToolStripMenuItem, EventHandler>(toolStripMenuItem, eventHandler));
+			return toolStripMenuItem;
+		}
 	}
 }

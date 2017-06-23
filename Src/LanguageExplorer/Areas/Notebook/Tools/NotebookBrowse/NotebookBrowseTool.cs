@@ -18,8 +18,8 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookBrowse
 	/// </summary>
 	internal sealed class NotebookBrowseTool : ITool
 	{
-		private XDocument _configurationDocument;
 		private PaneBarContainer _paneBarContainer;
+		private RecordBrowseView _recordBrowseView;
 		private RecordClerk _recordClerk;
 
 		#region Implementation of IPropertyTableProvider
@@ -80,6 +80,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookBrowse
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
 				ref _paneBarContainer,
 				ref _recordClerk);
+			_recordBrowseView = null;
 		}
 
 		/// <summary>
@@ -90,14 +91,14 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookBrowse
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			_configurationDocument = XDocument.Parse(NotebookResources.NotebookBrowseParameters);
-			_configurationDocument.Root.Add(XElement.Parse(NotebookResources.NotebookBrowseColumnDefinitions));
-			var recordClerk = NotebookArea.CreateRecordClerkForAllNotebookAreaTools(PropertyTable.GetValue<FdoCache>("cache"));
-			recordClerk.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
+			_recordClerk = NotebookArea.CreateRecordClerkForAllNotebookAreaTools(PropertyTable.GetValue<FdoCache>("cache"));
+			_recordClerk.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
+			_recordBrowseView = new RecordBrowseView(NotebookArea.LoadDocument(NotebookResources.NotebookBrowseParameters).Root, _recordClerk);
 			_paneBarContainer = PaneBarContainerFactory.Create(
 				majorFlexComponentParameters.FlexComponentParameters,
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
-				new RecordBrowseView(_configurationDocument.Root, recordClerk));
+				_recordBrowseView);
+			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
 		}
 
 		/// <summary>
@@ -105,6 +106,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookBrowse
 		/// </summary>
 		public void PrepareToRefresh()
 		{
+			_recordBrowseView.BrowseViewer.BrowseView.PrepareToRefresh();
 		}
 
 		/// <summary>
