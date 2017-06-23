@@ -3,8 +3,15 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Drawing;
+using System.Windows.Forms;
+using System.Xml.Linq;
+using LanguageExplorer.Areas.TextsAndWords.Interlinear;
+using LanguageExplorer.Controls;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.Resources;
+using SIL.FieldWorks.XWorks;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Tools.Concordance
 {
@@ -13,6 +20,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Concordance
 	/// </summary>
 	internal sealed class ConcordanceTool : ITool
 	{
+		private MultiPane _concordanceContainer;
+		private ConcordanceControl _concordanceControl;
+		private RecordBrowseView _recordBrowseView;
+		private RecordClerk _recordClerk;
+		private InterlinMasterNoTitleBar _interlinMasterNoTitleBar;
+
 		#region Implementation of IPropertyTableProvider
 
 		/// <summary>
@@ -67,7 +80,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Concordance
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			TemporaryToolProviderHack.RemoveToolDisplay(majorFlexComponentParameters.MainCollapsingSplitContainer);
+			MultiPaneFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _concordanceContainer, ref _recordClerk);
+
+			_concordanceControl = null;
+			_recordBrowseView = null;
+			_interlinMasterNoTitleBar = null;
 		}
 
 		/// <summary>
@@ -78,10 +95,49 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Concordance
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-#if RANDYTODO
-			// TODO: This tool need Itext's ConcordanceContainer main control and a gaggle of other stuff currently in IText.
-#endif
-			TemporaryToolProviderHack.SetupToolDisplay(majorFlexComponentParameters.MainCollapsingSplitContainer, this);
+			var root = XDocument.Parse(TextAndWordsResources.ConcordanceToolParameters).Root;
+			var columns = XElement.Parse(TextAndWordsResources.ConcordanceColumns).Element("columns");
+			root.Element("wordOccurrenceList").Element("parameters").Element("includeCordanceColumns").ReplaceWith(columns);
+			var cache = PropertyTable.GetValue<FdoCache>("cache");
+			var decorator = new ConcDecorator(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), cache.ServiceLocator);
+			_recordClerk = new OccurrencesOfSelectedUnit("OccurrencesOfSelectedUnit", decorator);
+			_recordClerk.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
+			var mainConcordanceContainerParameters = new MultiPaneParameters
+			{
+				Orientation = Orientation.Vertical,
+				AreaMachineName = AreaMachineName,
+				Id = "WordsAndOccurrencesMultiPane",
+				ToolMachineName = MachineName,
+				DefaultPrintPane = "wordOccurrenceList",
+				SecondCollapseZone = 144000,
+				FirstControlParameters = new SplitterChildControlParameters(), // Leave its Control as null. Will be a newly created MultiPane, the controls of which are in "nestedMultiPaneParameters"
+				SecondControlParameters = new SplitterChildControlParameters() // Control (PaneBarContainer+InterlinMasterNoTitleBar) added below. Leave Label null.
+			};
+			_interlinMasterNoTitleBar = new InterlinMasterNoTitleBar(root.Element("ITextControl").Element("parameters"), _recordClerk);
+			mainConcordanceContainerParameters.SecondControlParameters.Control = PaneBarContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, _interlinMasterNoTitleBar);
+
+			// This will be the nested MultiPane that goes into mainConcordanceContainerParameters.FirstControlParameters.Control
+			var nestedMultiPaneParameters = new MultiPaneParameters
+			{
+				Orientation = Orientation.Horizontal,
+				AreaMachineName = AreaMachineName,
+				Id = "LineAndTextMultiPane",
+				ToolMachineName = MachineName,
+				FirstCollapseZone = 110000,
+				SecondCollapseZone = 180000,
+				DefaultFixedPaneSizePoints = "200",
+				FirstControlParameters = new SplitterChildControlParameters(), // Control (PaneBarContainer+ConcordanceControl) added below. Leave Label null.
+				SecondControlParameters = new SplitterChildControlParameters() // Control (PaneBarContainer+RecordBrowseView) added below. Leave Label null.
+			};
+			_concordanceControl = new ConcordanceControl((OccurrencesOfSelectedUnit)_recordClerk);
+			nestedMultiPaneParameters.FirstControlParameters.Control = PaneBarContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, _concordanceControl);
+			_recordBrowseView = new RecordBrowseView(root.Element("wordOccurrenceList").Element("parameters"), _recordClerk);
+			nestedMultiPaneParameters.SecondControlParameters.Control = PaneBarContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, _recordBrowseView);
+			// Nested MP is created by call to MultiPaneFactory.CreateConcordanceContainer
+			_concordanceContainer = MultiPaneFactory.CreateConcordanceContainer(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer, mainConcordanceContainerParameters, nestedMultiPaneParameters);
+
+			_interlinMasterNoTitleBar.FinishInitialization();
+			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
 		}
 
 		/// <summary>
@@ -89,10 +145,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Concordance
 		/// </summary>
 		public void PrepareToRefresh()
 		{
-#if RANDYTODO
-			// TODO: Call PrepareToRefresh on nested RecordBrowseView control (left side of main ConcordanceContainer splitter control).
-			// TODO: Call PrepareToRefresh on nested InterlinMasterNoTitleBar control (right side of main ConcordanceContainer splitter control).
-#endif
+			_interlinMasterNoTitleBar.PrepareToRefresh();
+			_recordBrowseView.BrowseViewer.BrowseView.PrepareToRefresh();
 		}
 
 		/// <summary>
@@ -100,10 +154,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Concordance
 		/// </summary>
 		public void FinishRefresh()
 		{
-#if RANDYTODO
-			// TODO: If tool uses a SDA decorator (DomainDataByFlidDecoratorBase), then call its "Refresh" method.
-			// TODO: Call "ReloadIfNeeded" on Record clerk(s).
-#endif
+			_recordClerk.ReloadIfNeeded();
+			((DomainDataByFlidDecoratorBase)_recordClerk.VirtualListPublisher).Refresh();
 		}
 
 		/// <summary>
@@ -122,18 +174,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Concordance
 		/// Get the internal name of the component.
 		/// </summary>
 		/// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
-		public string MachineName
-		{
-			get { return "concordance"; }
-		}
+		public string MachineName => "concordance";
 
 		/// <summary>
 		/// User-visible localizable component name.
 		/// </summary>
-		public string UiName
-		{
-			get { return "Concordance"; }
-		}
+		public string UiName => "Concordance";
 
 		#endregion
 
@@ -142,23 +188,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Concordance
 		/// <summary>
 		/// Get the area machine name the tool is for.
 		/// </summary>
-		public string AreaMachineName
-		{
-			get { return "textsWords"; }
-		}
+		public string AreaMachineName => "textsWords";
 
 		/// <summary>
 		/// Get the image for the area.
 		/// </summary>
-		public Image Icon
-		{
-			get
-			{
-				var image = Images.SideBySideView;
-				image.MakeTransparent(Color.Magenta);
-				return image;
-			}
-		}
+		public Image Icon => Images.SideBySideView.SetBackgroundColor(Color.Magenta);
 
 		#endregion
 	}

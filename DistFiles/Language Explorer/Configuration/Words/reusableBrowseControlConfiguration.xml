@@ -15,7 +15,7 @@
 	</control>
 	<control id="wordListColumns">
 		<columns>
-			<column label="Form" width="30%" cansortbylength="true" ws="$ws=best vernacular" field="Form" chooserFilter="special" specialItemName="Choose Texts...">
+			<column label="Form" width="30%" cansortbylength="true" ws="$ws=best vernacular" field="Form" chooserFilter="textsFilterItem" specialItemName="Choose Texts...">
 				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.TextsAndWords.Interlinear.TextsFilterItem" />
 				<span>
 					<properties>

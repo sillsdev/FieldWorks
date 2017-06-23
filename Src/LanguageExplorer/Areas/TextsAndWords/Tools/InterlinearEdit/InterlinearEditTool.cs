@@ -4,8 +4,12 @@
 
 using System.Drawing;
 using System.Windows.Forms;
+using System.Xml.Linq;
+using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using LanguageExplorer.Controls.PaneBar;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks;
 
@@ -17,7 +21,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 	internal sealed class InterlinearEditTool : ITool
 	{
 		private MultiPane _multiPane;
+		private RecordBrowseView _recordBrowseView;
 		private RecordClerk _recordClerk;
+		private InterlinMaster _interlinMaster;
 
 		#region Implementation of IPropertyTableProvider
 
@@ -75,7 +81,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			MultiPaneFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _multiPane, ref _recordClerk);
+			MultiPaneFactory.RemoveFromParentAndDispose(
+				majorFlexComponentParameters.MainCollapsingSplitContainer,
+				ref _multiPane,
+				ref _recordClerk);
+			_recordBrowseView = null;
+			_interlinMaster = null;
 		}
 
 		/// <summary>
@@ -86,6 +97,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			var doc = XDocument.Parse(TextAndWordsResources.InterlinearEditToolParameters);
+			var cache = PropertyTable.GetValue<FdoCache>("cache");
+			var decorator = new InterestingTextsDecorator(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), cache.ServiceLocator, PropertyTable);
+			_recordClerk = new InterlinearTextsRecordClerk(cache.LanguageProject, decorator);
+			_recordClerk.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
 			var multiPaneParameters = new MultiPaneParameters
 			{
 				Orientation = Orientation.Vertical,
@@ -96,14 +112,21 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 				DefaultPrintPane = "ITextContent",
 				DefaultFocusControl = "InterlinMaster"
 			};
+			_recordBrowseView = new RecordBrowseView(doc.Root.Element("recordbrowseview").Element("parameters"), _recordClerk);
+			_interlinMaster = new InterlinMaster(doc.Root.Element("interlinearmaster").Element("parameters"), _recordClerk);
 			_multiPane = MultiPaneFactory.CreateMultiPaneWithTwoPaneBarContainersInMainCollapsingSplitContainer(
 				majorFlexComponentParameters.FlexComponentParameters,
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
 				multiPaneParameters,
-				TemporaryToolProviderHack.CreateNewLabel($"Browse view for tool: {MachineName}"), "Browse", new PaneBar(),
-				TemporaryToolProviderHack.CreateNewLabel($"Details view for tool: {MachineName}"), "Details", new PaneBar());
+				_recordBrowseView, "Texts", new PaneBar(),
+				_interlinMaster, "Text", new PaneBar());
 
 			_multiPane.FixedPanel = FixedPanel.Panel1;
+
+			// Too early before now.
+			_interlinMaster.FinishInitialization();
+			_interlinMaster.BringToFront();
+			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
 		}
 
 		/// <summary>
@@ -111,11 +134,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 		/// </summary>
 		public void PrepareToRefresh()
 		{
-#if RANDYTODO
-			// TODO: Call PrepareToRefresh on nested RecordBrowseView control (left side of main MultiPane splitter control).
 			_interlinMaster.PrepareToRefresh();
 			_recordBrowseView.BrowseViewer.BrowseView.PrepareToRefresh();
-#endif
+
 		}
 
 		/// <summary>
@@ -124,9 +145,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 		public void FinishRefresh()
 		{
 			_recordClerk.ReloadIfNeeded();
-#if RANDYTODO
 			((DomainDataByFlidDecoratorBase)_recordClerk.VirtualListPublisher).Refresh();
-#endif
 		}
 
 		/// <summary>

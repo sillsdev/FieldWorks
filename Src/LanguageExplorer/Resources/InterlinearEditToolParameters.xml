@@ -3,7 +3,7 @@
 	<recordbrowseview>
 		<parameters id="textsChooser" filterBar="true" defaultCursor="Arrow" altTitleId="Text-Plural" editable="false">
 			<columns>
-				<column label="Title" width="144000" chooserFilter="special">
+				<column label="Title" width="144000" chooserFilter="textsFilterItem">
 					<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.TextsAndWords.Interlinear.TextsFilterItem"/>
 					<string field="Title" ws="$ws=best vernoranal"/>
 				</column>

@@ -4,24 +4,30 @@
 
 using System.Drawing;
 using System.Windows.Forms;
+using System.Xml.Linq;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using LanguageExplorer.Controls.PaneBar;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FDO.Application;
+using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 {
-#if RANDYTODO
-	// TODO: treeBarAvailability="NotAllowed"
-#endif
 	/// <summary>
 	/// ITool implementation for the "wordListConcordance" tool in the "textsWords" area.
 	/// </summary>
 	internal sealed class WordListConcordanceTool : ITool
 	{
 		private MultiPane _outerMultiPane;
+		private RecordBrowseView _mainRecordBrowseView;
+		private MultiPane _nestedMultiPane;
+		private RecordBrowseView _nestedRecordBrowseView;
+		private RecordClerk _recordClerkProvidingOwner;
 		private RecordClerk _mainRecordClerk;
+		private InterlinMasterNoTitleBar _interlinMasterNoTitleBar;
 
 		#region Implementation of IPropertyTableProvider
 
@@ -77,7 +83,15 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			MultiPaneFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _outerMultiPane, ref _mainRecordClerk);
+			MultiPaneFactory.RemoveFromParentAndDispose(
+				majorFlexComponentParameters.MainCollapsingSplitContainer,
+				ref _outerMultiPane,
+				ref _mainRecordClerk);
+			_mainRecordBrowseView = null;
+			_nestedMultiPane = null;
+			_nestedRecordBrowseView = null;
+			_recordClerkProvidingOwner = null;
+			_interlinMasterNoTitleBar = null;
 		}
 
 		/// <summary>
@@ -88,6 +102,34 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			var root = XDocument.Parse(TextAndWordsResources.WordListConcordanceToolParameters).Root;
+			root.Element("wordList").Element("parameters").Element("includeColumns").ReplaceWith(XElement.Parse(TextAndWordsResources.WordListColumns));
+			root.Element("wordOccurrenceListUpper").Element("parameters").Element("includeColumns").ReplaceWith(XElement.Parse(TextAndWordsResources.ConcordanceColumns).Element("columns"));
+			var cache = PropertyTable.GetValue<FdoCache>("cache");
+			var flexComponentParameters = new FlexComponentParameters(PropertyTable, Publisher, Subscriber);
+			var decorator = new ConcDecorator(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), cache.ServiceLocator);
+			_recordClerkProvidingOwner = new InterlinearTextsRecordClerk(cache.LanguageProject, decorator);
+			_recordClerkProvidingOwner.InitializeFlexComponent(flexComponentParameters);
+			_mainRecordClerk = new RecordClerk("OccurrencesOfSelectedWordform", new RecordList(decorator, false, ConcDecorator.kflidWfOccurrences), new PropertyRecordSorter("ShortName"), "Default", null, true, true, _recordClerkProvidingOwner);
+			_mainRecordClerk.InitializeFlexComponent(flexComponentParameters);
+
+			var nestedMultiPaneParameters = new MultiPaneParameters
+			{
+				Orientation = Orientation.Horizontal,
+				AreaMachineName = AreaMachineName,
+				Id = "LineAndTextMultiPane",
+				ToolMachineName = MachineName,
+				DefaultFixedPaneSizePoints = "50%",
+				FirstControlParameters = new SplitterChildControlParameters(), // Control (RecordBrowseView) added below. Leave Label null.
+				SecondControlParameters = new SplitterChildControlParameters() // Control (InterlinMasterNoTitleBar) added below. Leave Label null.
+			};
+			_nestedRecordBrowseView = new RecordBrowseView(root.Element("wordOccurrenceListUpper").Element("parameters"), _mainRecordClerk);
+			nestedMultiPaneParameters.FirstControlParameters.Control = _nestedRecordBrowseView;
+			_interlinMasterNoTitleBar = new InterlinMasterNoTitleBar(root.Element("wordOccurrenceListLower").Element("parameters"), _mainRecordClerk);
+			nestedMultiPaneParameters.SecondControlParameters.Control = _interlinMasterNoTitleBar;
+			_nestedMultiPane = MultiPaneFactory.CreateNestedMultiPane(flexComponentParameters, nestedMultiPaneParameters);
+			_mainRecordBrowseView = new RecordBrowseView(root.Element("wordList").Element("parameters"), _recordClerkProvidingOwner);
+
 			var mainMultiPaneParameters = new MultiPaneParameters
 			{
 				Orientation = Orientation.Vertical,
@@ -97,12 +139,16 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 				DefaultPrintPane = "wordOccurrenceList",
 				SecondCollapseZone = 180000
 			};
+
 			_outerMultiPane = MultiPaneFactory.CreateMultiPaneWithTwoPaneBarContainersInMainCollapsingSplitContainer(
 				majorFlexComponentParameters.FlexComponentParameters,
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
 				mainMultiPaneParameters,
-				TemporaryToolProviderHack.CreateNewLabel($"Doc Reversals view for tool: {MachineName}"), "Doc Reversals", new PaneBar(),
-				TemporaryToolProviderHack.CreateNewLabel($"Browse Entries view for tool: {MachineName}"), "Browse Entries", new PaneBar());
+				_mainRecordBrowseView, "Concordance", new PaneBar(),
+				_nestedMultiPane, "Tabs", new PaneBar());
+
+			_interlinMasterNoTitleBar.FinishInitialization();
+			majorFlexComponentParameters.DataNavigationManager.Clerk = _mainRecordClerk;
 		}
 
 		/// <summary>
@@ -110,11 +156,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 		/// </summary>
 		public void PrepareToRefresh()
 		{
-#if RANDYTODO
-			// TODO: Call PrepareToRefresh on nested RecordBrowseView control (left side of main MultiPane splitter control).
-			// TODO: Call PrepareToRefresh on nested RecordBrowseView control (top side of nested MultiPane splitter control).
-			// TODO: Call PrepareToRefresh on nested InterlinMasterNoTitleBar control (bottom side of nested MultiPane splitter control).
-#endif
+			_mainRecordBrowseView.BrowseViewer.BrowseView.PrepareToRefresh();
+			_nestedRecordBrowseView.BrowseViewer.BrowseView.PrepareToRefresh();
+			_interlinMasterNoTitleBar.PrepareToRefresh();
 		}
 
 		/// <summary>
@@ -122,10 +166,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 		/// </summary>
 		public void FinishRefresh()
 		{
-#if RANDYTODO
-			// TODO: If tool uses a SDA decorator (DomainDataByFlidDecoratorBase), then call its "Refresh" method.
-#endif
 			_mainRecordClerk.ReloadIfNeeded();
+			((DomainDataByFlidDecoratorBase)_mainRecordClerk.VirtualListPublisher).Refresh();
+			_recordClerkProvidingOwner.ReloadIfNeeded();
+			((DomainDataByFlidDecoratorBase)_recordClerkProvidingOwner.VirtualListPublisher).Refresh();
 		}
 
 		/// <summary>
@@ -136,52 +180,35 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 		{
 		}
 
-#endregion
+		#endregion
 
-#region Implementation of IMajorFlexUiComponent
+		#region Implementation of IMajorFlexUiComponent
 
 		/// <summary>
 		/// Get the internal name of the component.
 		/// </summary>
 		/// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
-		public string MachineName
-		{
-			get { return "wordListConcordance"; }
-		}
+		public string MachineName => "wordListConcordance";
 
 		/// <summary>
 		/// User-visible localizable component name.
 		/// </summary>
-		public string UiName
-		{
-			get { return "Word List Concordance"; }
-		}
+		public string UiName => "Word List Concordance";
 
-#endregion
+		#endregion
 
-#region Implementation of ITool
+		#region Implementation of ITool
 
 		/// <summary>
 		/// Get the area machine name the tool is for.
 		/// </summary>
-		public string AreaMachineName
-		{
-			get { return "textsWords"; }
-		}
+		public string AreaMachineName => "textsWords";
 
 		/// <summary>
 		/// Get the image for the area.
 		/// </summary>
-		public Image Icon
-		{
-			get
-			{
-				var image = Images.SideBySideView;
-				image.MakeTransparent(Color.Magenta);
-				return image;
-			}
-		}
+		public Image Icon => Images.SideBySideView.SetBackgroundColor(Color.Magenta);
 
-#endregion
+		#endregion
 	}
 }

@@ -21,14 +21,20 @@ namespace SIL.FieldWorks.XWorks
 	public class InterestingTextsDecorator : DomainDataByFlidDecoratorBase, ISetRootHvo
 	{
 		private InterestingTextList m_interestingTexts;
+		private IFdoServiceLocator m_services;
+		private IPropertyTable m_propertyTable;
 		private int m_notifieeCount;
 		// The object our property belongs to. We consider any object for which we are asked our special
 		// property to be the root object.
 		private int m_rootHvo;
-		public InterestingTextsDecorator(ISilDataAccessManaged domainDataByFlid, IFdoServiceLocator services)
+		public InterestingTextsDecorator(ISilDataAccessManaged domainDataByFlid, IFdoServiceLocator services, IPropertyTable propertyTable)
 			: base(domainDataByFlid)
 		{
 			SetOverrideMdc(new InterestingTextsMdc(base.MetaDataCache as IFwMetaDataCacheManaged));
+			m_services = services;
+			m_propertyTable = propertyTable;
+			m_interestingTexts = GetInterestingTextList(m_propertyTable, m_services);
+			m_interestingTexts.InterestingTextsChanged += m_interestingTexts_InterestingTextsChanged;
 		}
 
 		// Override these methods to notice when we are disconnected and stop receiving notifications

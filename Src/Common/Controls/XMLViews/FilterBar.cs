@@ -1144,15 +1144,21 @@ namespace SIL.FieldWorks.Common.Controls
 							comboItem.LeafFlid = (int)piLeaf.GetValue(null, null);
 					}
 					break;
+				case "textsFilterItem":
+#if RANDYTODO
+					// TODO: If/When the filters assembly gets assimilated into LE, then just call the constructor on TextsFilterItem.
+#endif
+					var specialItemName1 = MakeLabel(XmlUtils.GetOptionalAttributeValue(item.Spec, "specialItemName", XMLViewsStrings.ksChoose_));
+					var specialFilter1 = DynamicLoader.CreateObject(XmlUtils.FindElement(item.Spec, "dynamicloaderinfo"), specialItemName1, m_bv.Publisher) as FilterComboItem;
+					combo.Items.Add(specialFilter1);
+					break;
 				case "special":
 					// Make any arbitrary special filter combo item we may want. The Spec has a <dynamicloaderinfo> child that specifies what.
 					// For now the only instance wants the label "Choose" so I've hard coded that; if need be we can make it configurable,
 					// or of course the constructor could ignore it. (But it should use MakeLabel if at all possible.)
-					var specialItemName =
-						MakeLabel(XmlUtils.GetOptionalAttributeValue(item.Spec, "specialItemName", XMLViewsStrings.ksChoose_));
-					var specialFilter = DynamicLoader.CreateObject(XmlUtils.FindElement(item.Spec, "dynamicloaderinfo"),
-						new object[] { specialItemName, m_cache }) as FilterComboItem;
-					combo.Items.Add(specialFilter);
+					var specialItemName2 = MakeLabel(XmlUtils.GetOptionalAttributeValue(item.Spec, "specialItemName", XMLViewsStrings.ksChoose_));
+					var specialFilter2 = DynamicLoader.CreateObject(XmlUtils.FindElement(item.Spec, "dynamicloaderinfo"), specialItemName2, m_cache) as FilterComboItem;
+					combo.Items.Add(specialFilter2);
 					break;
 
 				case "atomicFlatListItem": // Fall through
@@ -1162,7 +1168,7 @@ namespace SIL.FieldWorks.Common.Controls
 					break;
 				default:
 					// if we didn't find it, try "chooserFilter", if we haven't already.
-					string chooserFilter = XmlUtils.GetOptionalAttributeValue(item.Spec, "chooserFilter", "");
+					string chooserFilter = XmlUtils.GetOptionalAttributeValue(item.Spec, "chooserFilter", string.Empty);
 					if (!String.IsNullOrEmpty(chooserFilter) && chooserFilter != beSpec)
 						MakeListChoiceFilterItem(item, combo, chooserFilter, propertyTable);
 					return;
@@ -1354,7 +1360,7 @@ namespace SIL.FieldWorks.Common.Controls
 			m_fsi = fsi;
 		}
 
-		#region IDisposable & Co. implementation
+#region IDisposable & Co. implementation
 		// Region last reviewed: never
 
 		/// <summary>
@@ -1447,7 +1453,7 @@ namespace SIL.FieldWorks.Common.Controls
 			IsDisposed = true;
 		}
 
-		#endregion IDisposable & Co. implementation
+#endregion IDisposable & Co. implementation
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -1528,7 +1534,7 @@ namespace SIL.FieldWorks.Common.Controls
 				return null;
 		}
 
-		#region ITssValue implementation
+#region ITssValue implementation
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -1545,7 +1551,7 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-		#endregion ITssValue implementation
+#endregion ITssValue implementation
 	}
 
 	/// <summary>

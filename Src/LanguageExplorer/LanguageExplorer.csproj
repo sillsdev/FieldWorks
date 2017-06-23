@@ -690,7 +690,6 @@
     </Compile>
     <Compile Include="Areas\RuleFormulaVcBase.cs" />
     <Compile Include="Areas\SplitterChildControlParameters.cs" />
-    <Compile Include="Areas\TemporaryToolProviderHack.cs" />
     <Compile Include="Areas\TextsAndWords\ConcordanceDlg.cs">
       <SubType>Form</SubType>
     </Compile>

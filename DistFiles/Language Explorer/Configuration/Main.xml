@@ -79,17 +79,17 @@
 		</command>
 		<command id="CmdImportInterlinearSfm" label="Standard Format I_nterlinear..." message="LaunchConnectedDialog">
 			<parameters>
-				<dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.InterlinearSfmImportWizard"/>
+				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.TextsAndWords.Interlinear.InterlinearSfmImportWizard"/>
 			</parameters>
 		</command>
 	<command id="CmdImportWordsAndGlossesSfm" label="Standard Format W_ords and Glosses..." message="LaunchConnectedDialog">
 	  <parameters>
-		<dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.WordsSfmImportWizard"/>
+		<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.TextsAndWords.Interlinear.WordsSfmImportWizard"/>
 	  </parameters>
 	</command>
 		<command id="CmdImportInterlinearData" label="FLExText Interl_inear..." message="LaunchConnectedDialog">
 			<parameters>
-				<dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.InterlinearImportDlg"/>
+				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.TextsAndWords.Interlinear.InterlinearImportDlg"/>
 			</parameters>
 		</command>
 		<command id="CmdImportLiftData" label="L_IFT Lexicon..." message="LaunchConnectedDialog" a10status="LEXICONAREAONLY" >

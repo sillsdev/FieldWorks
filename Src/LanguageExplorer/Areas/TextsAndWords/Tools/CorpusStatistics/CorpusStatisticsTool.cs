@@ -119,19 +119,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 		/// Get the internal name of the component.
 		/// </summary>
 		/// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
-		public string MachineName
-		{
-			get { return "corpusStatistics"; }
-		}
+		public string MachineName => "corpusStatistics";
 
 		/// <summary>
 		/// User-visible localizable component name.
 		/// </summary>
-		public string UiName
-		{
-			get { return "Statistics"; }
-		}
-
+		public string UiName => "Statistics";
 		#endregion
 
 		#region Implementation of ITool
@@ -139,23 +132,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 		/// <summary>
 		/// Get the area machine name the tool is for.
 		/// </summary>
-		public string AreaMachineName
-		{
-			get { return "textsWords"; }
-		}
+		public string AreaMachineName => "textsWords";
 
 		/// <summary>
 		/// Get the image for the area.
 		/// </summary>
-		public Image Icon
-		{
-			get
-			{
-				var image = Images.DocumentView;
-				image.MakeTransparent(Color.Magenta);
-				return image;
-			}
-		}
+		public Image Icon => Images.DocumentView.SetBackgroundColor(Color.Magenta);
 
 		#endregion
 	}

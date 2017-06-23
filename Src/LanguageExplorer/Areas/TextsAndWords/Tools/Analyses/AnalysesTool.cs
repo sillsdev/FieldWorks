@@ -2,12 +2,20 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
+using System.Xml.Linq;
+using LanguageExplorer.Areas.TextsAndWords.Interlinear;
+using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.PaneBar;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks;
+using SIL.Utils;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 {
@@ -17,6 +25,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 	internal sealed class AnalysesTool : ITool
 	{
 		private MultiPane _multiPane;
+		private RecordBrowseView _recordBrowseView;
 		private RecordClerk _recordClerk;
 
 		#region Implementation of IPropertyTableProvider
@@ -73,7 +82,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			MultiPaneFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _multiPane, ref _recordClerk);
+			MultiPaneFactory.RemoveFromParentAndDispose(
+				majorFlexComponentParameters.MainCollapsingSplitContainer,
+				ref _multiPane,
+				ref _recordClerk);
+			_recordBrowseView = null;
 		}
 
 		/// <summary>
@@ -84,6 +97,33 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			var root = XDocument.Parse(TextAndWordsResources.WordListParameters).Root;
+			var columnsElement = XElement.Parse(TextAndWordsResources.WordListColumns);
+
+			var overriddenColumnElement = columnsElement.Elements("column").First(column => column.Attribute("label").Value == "Form");
+			overriddenColumnElement.Attribute("width").Value = "25%";
+			overriddenColumnElement = columnsElement.Elements("column").First(column => column.Attribute("label").Value == "Word Glosses");
+			overriddenColumnElement.Attribute("width").Value = "25%";
+			// LT-8373.The point of these overrides: By default, enable User Analyses for "Word Analyses"
+			overriddenColumnElement = columnsElement.Elements("column").First(column => column.Attribute("label").Value == "User Analyses");
+			overriddenColumnElement.Attribute("visibility").Value = "always";
+			overriddenColumnElement.Add(new XAttribute("width", "15%"));
+
+			root.Add(columnsElement);
+
+			var cache = PropertyTable.GetValue<FdoCache>("cache");
+			var decorator = new ConcDecorator(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), cache.ServiceLocator);
+			_recordClerk = new InterlinearTextsRecordClerk(cache.LanguageProject, decorator);
+
+			_recordClerk.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
+			_recordBrowseView = new RecordBrowseView(root, _recordClerk);
+			var dataTreeMenuHandler = new WordsEditToolMenuHandler();
+			dataTreeMenuHandler.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
+#if RANDYTODO
+			// TODO: Set up 'dataTreeMenuHandler' to handle menu events.
+			// TODO: Install menus and connect them to event handlers. (See "CreateContextMenuStrip" method for where the menus are.)
+#endif
+			var recordEditView = new RecordEditView(XElement.Parse(TextAndWordsResources.AnalysesRecordEditViewParameters), XDocument.Parse(AreaResources.CompleteFilter), _recordClerk, dataTreeMenuHandler);
 			_multiPane = MultiPaneFactory.CreateMultiPaneWithTwoPaneBarContainersInMainCollapsingSplitContainer(
 				majorFlexComponentParameters.FlexComponentParameters,
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
@@ -94,8 +134,18 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 					Id = "WordsAndAnalysesMultiPane",
 					ToolMachineName = MachineName
 				},
-				TemporaryToolProviderHack.CreateNewLabel($"WordList view for tool: {MachineName}"), "WordList", new PaneBar(),
-				TemporaryToolProviderHack.CreateNewLabel($"SingleWord view for tool: {MachineName}"), "SingleWord", new PaneBar());
+				_recordBrowseView, "WordList", new PaneBar(),
+				recordEditView, "SingleWord", new PaneBar());
+
+			using (var gr = _multiPane.CreateGraphics())
+			{
+				_multiPane.Panel2MinSize = Math.Max((int)(180000 * gr.DpiX) / MiscUtils.kdzmpInch,
+						CollapsingSplitContainer.kCollapseZone);
+			}
+
+			// Too early before now.
+			recordEditView.FinishInitialization();
+			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
 		}
 
 		/// <summary>
@@ -103,9 +153,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 		/// </summary>
 		public void PrepareToRefresh()
 		{
-#if RANDYTODO
-			// TODO: Call PrepareToRefresh on nested RecordBrowseView control (left side of main MultiPane splitter control).
-#endif
+			_recordBrowseView.BrowseViewer.BrowseView.PrepareToRefresh();
 		}
 
 		/// <summary>
@@ -113,10 +161,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 		/// </summary>
 		public void FinishRefresh()
 		{
-#if RANDYTODO
-			// TODO: If tool uses a SDA decorator (DomainDataByFlidDecoratorBase), then call its "Refresh" method.
-#endif
 			_recordClerk.ReloadIfNeeded();
+			((DomainDataByFlidDecoratorBase)_recordClerk.VirtualListPublisher).Refresh();
 		}
 
 		/// <summary>

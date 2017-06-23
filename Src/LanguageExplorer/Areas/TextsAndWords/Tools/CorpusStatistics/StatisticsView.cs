@@ -87,8 +87,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 			{
 				if (clerk is TemporaryRecordClerk)
 				{
-					_interlinearTextsRecordClerk = new InterlinearTextsRecordClerk(cache.LanguageProject, new InterestingTextsDecorator(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), cache.ServiceLocator));
-					_interlinearTextsRecordClerk.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
+					_interlinearTextsRecordClerk = new InterlinearTextsRecordClerk(cache.LanguageProject, new InterestingTextsDecorator(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), cache.ServiceLocator, PropertyTable));
+					_interlinearTextsRecordClerk.InitializeFlexComponent(flexComponentParameters);
 				}
 				else
 				{
@@ -97,8 +97,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 			}
 			else
 			{
-				_interlinearTextsRecordClerk = new InterlinearTextsRecordClerk(cache.LanguageProject, new InterestingTextsDecorator(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), cache.ServiceLocator));
-				_interlinearTextsRecordClerk.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
+				_interlinearTextsRecordClerk = new InterlinearTextsRecordClerk(cache.LanguageProject, new InterestingTextsDecorator(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), cache.ServiceLocator, PropertyTable));
+				_interlinearTextsRecordClerk.InitializeFlexComponent(flexComponentParameters);
 			}
 			// There's no record bar for it to control, but it should control the status bar (e.g., it should update if we change
 			// the set of selected texts).

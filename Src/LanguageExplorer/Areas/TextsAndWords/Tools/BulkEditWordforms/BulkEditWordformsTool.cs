@@ -3,8 +3,12 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Drawing;
+using System.Linq;
+using System.Xml.Linq;
+using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using LanguageExplorer.Controls;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks;
@@ -17,6 +21,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.BulkEditWordforms
 	internal sealed class BulkEditWordformsTool : ITool
 	{
 		private PaneBarContainer _paneBarContainer;
+		private RecordBrowseView _recordBrowseView;
 		private RecordClerk _recordClerk;
 
 		#region Implementation of IPropertyTableProvider
@@ -73,7 +78,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.BulkEditWordforms
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			PaneBarContainerFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _paneBarContainer, ref _recordClerk);
+			PaneBarContainerFactory.RemoveFromParentAndDispose(
+				majorFlexComponentParameters.MainCollapsingSplitContainer,
+				ref _paneBarContainer,
+				ref _recordClerk);
+			_recordBrowseView = null;
 		}
 
 		/// <summary>
@@ -84,10 +93,34 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.BulkEditWordforms
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			var root = XDocument.Parse(TextAndWordsResources.BulkEditWordformsToolParameters).Root;
+			root.Element("includeColumns").ReplaceWith(XElement.Parse(TextAndWordsResources.WordListColumns));
+			var columns = root.Element("columns");
+			var currentColumn = columns.Elements("column").First(col => col.Attribute("label").Value == "Form");
+			currentColumn.Attribute("width").Value = "80000";
+			currentColumn.Attribute("ws").Value = "$ws=vernacular";
+			currentColumn.Attribute("cansortbylength").Value = "true";
+			currentColumn.Add(new XAttribute("transduce", "WfiWordform.Form"));
+			currentColumn.Add(new XAttribute("editif", "!FormIsUsedWithWs"));
+			currentColumn.Element("span").Element("string").Attribute("ws").Value = "$ws=vernacular";
+
+			currentColumn = columns.Elements("column").First(col => col.Attribute("label").Value == "Word Glosses");
+			currentColumn.Attribute("width").Value = "80000";
+
+			currentColumn = columns.Elements("column").First(col => col.Attribute("label").Value == "Spelling Status");
+			currentColumn.Add(new XAttribute("width", "65000"));
+
+			var cache = PropertyTable.GetValue<FdoCache>("cache");
+			var decorator = new ConcDecorator(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), cache.ServiceLocator);
+			_recordClerk = new InterlinearTextsRecordClerk(cache.LanguageProject, decorator);
+			_recordClerk.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
+			_recordBrowseView = new RecordBrowseView(root, _recordClerk);
+
 			_paneBarContainer = PaneBarContainerFactory.Create(
 				majorFlexComponentParameters.FlexComponentParameters,
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
-				TemporaryToolProviderHack.CreateNewLabel(this));
+				_recordBrowseView);
+			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
 		}
 
 		/// <summary>
@@ -95,9 +128,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.BulkEditWordforms
 		/// </summary>
 		public void PrepareToRefresh()
 		{
-#if RANDYTODO
-			// TODO: Call PrepareToRefresh on buried RecordBrowseView class (in PaneBarContainer control).
-#endif
+			_recordBrowseView.BrowseViewer.BrowseView.PrepareToRefresh();
 		}
 
 		/// <summary>
@@ -125,19 +156,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.BulkEditWordforms
 		/// Get the internal name of the component.
 		/// </summary>
 		/// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
-		public string MachineName
-		{
-			get { return "bulkEditWordforms"; }
-		}
+		public string MachineName => "bulkEditWordforms";
 
 		/// <summary>
 		/// User-visible localizable component name.
 		/// </summary>
-		public string UiName
-		{
-			get { return "Bulk Edit Wordforms"; }
-		}
-
+		public string UiName => "Bulk Edit Wordforms";
 		#endregion
 
 		#region Implementation of ITool
@@ -145,23 +169,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.BulkEditWordforms
 		/// <summary>
 		/// Get the area machine name the tool is for.
 		/// </summary>
-		public string AreaMachineName
-		{
-			get { return "textsWords"; }
-		}
+		public string AreaMachineName => "textsWords";
 
 		/// <summary>
 		/// Get the image for the area.
 		/// </summary>
-		public Image Icon
-		{
-			get
-			{
-				var image = Images.BrowseView;
-				image.MakeTransparent(Color.Magenta);
-				return image;
-			}
-		}
+		public Image Icon => Images.BrowseView.SetBackgroundColor(Color.Magenta);
 
 		#endregion
 	}
