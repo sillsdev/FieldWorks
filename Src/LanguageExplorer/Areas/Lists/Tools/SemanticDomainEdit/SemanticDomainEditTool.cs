@@ -101,6 +101,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.SemanticDomainEdit
 				MachineName,
 				new PossibilityListClerkParameters("SemanticDomainList", PropertyTable.GetValue<FdoCache>("cache").LanguageProject.SemanticDomainListOA, false, true, true, "best analysis"),
 				out _recordClerk);
+			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
 		}
 
 		/// <summary>

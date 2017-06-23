@@ -101,6 +101,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.StatusEdit
 				MachineName,
 				new PossibilityListClerkParameters("StatusList", PropertyTable.GetValue<FdoCache>("cache").LanguageProject.StatusOA, false, true, false, "best analysis"),
 				out _recordClerk);
+			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
 		}
 
 		/// <summary>

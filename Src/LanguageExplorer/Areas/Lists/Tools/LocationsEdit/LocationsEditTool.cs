@@ -101,6 +101,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.LocationsEdit
 				MachineName,
 				new PossibilityListClerkParameters("LocationList", PropertyTable.GetValue<FdoCache>("cache").LanguageProject.LocationsOA, false, true, false, "best vernoranal"),
 				out _recordClerk);
+			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
 		}
 
 		/// <summary>

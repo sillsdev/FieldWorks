@@ -101,6 +101,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.TextMarkupTagsEdit
 				MachineName,
 				new PossibilityListClerkParameters("TextMarkupTagsList", PropertyTable.GetValue<FdoCache>("cache").LanguageProject.TextMarkupTagsOA, false, true, false, "best analysis"),
 				out _recordClerk);
+			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
 		}
 
 		/// <summary>

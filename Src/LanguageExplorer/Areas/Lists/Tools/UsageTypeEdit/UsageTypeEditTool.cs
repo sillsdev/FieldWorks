@@ -101,6 +101,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.UsageTypeEdit
 				MachineName,
 				new PossibilityListClerkParameters("UsageTypeList", PropertyTable.GetValue<FdoCache>("cache").LanguageProject.LexDbOA.UsageTypesOA, true, true, false, "best analysis"),
 				out _recordClerk);
+			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
 		}
 
 		/// <summary>

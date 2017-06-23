@@ -101,6 +101,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.TranslationTypeEdit
 				MachineName,
 				new PossibilityListClerkParameters("TranslationTypeList", PropertyTable.GetValue<FdoCache>("cache").LanguageProject.TranslationTagsOA, false, false, false, "best analysis"),
 				out _recordClerk);
+			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
 		}
 
 		/// <summary>

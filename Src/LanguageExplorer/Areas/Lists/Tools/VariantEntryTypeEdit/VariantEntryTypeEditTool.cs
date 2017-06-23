@@ -101,6 +101,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.VariantEntryTypeEdit
 				MachineName,
 				new PossibilityListClerkParameters("VariantEntryTypeList", PropertyTable.GetValue<FdoCache>("cache").LanguageProject.LexDbOA.VariantEntryTypesOA, false, true, false, "best analysis"),
 				out _recordClerk);
+			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
 		}
 
 		/// <summary>

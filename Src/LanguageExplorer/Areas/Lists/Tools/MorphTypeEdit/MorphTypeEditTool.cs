@@ -101,6 +101,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.MorphTypeEdit
 				MachineName,
 				new PossibilityListClerkParameters("MorphTypeList", PropertyTable.GetValue<FdoCache>("cache").LanguageProject.LexDbOA.MorphTypesOA, false, false, false, "best analysis"),
 				out _recordClerk);
+			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
 		}
 
 		/// <summary>

@@ -101,6 +101,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.RestrictionsEdit
 				MachineName,
 				new PossibilityListClerkParameters("RestrictionsList", PropertyTable.GetValue<FdoCache>("cache").LanguageProject.RestrictionsOA, false, true, false, "best analysis"),
 				out _recordClerk);
+			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
 		}
 
 		/// <summary>

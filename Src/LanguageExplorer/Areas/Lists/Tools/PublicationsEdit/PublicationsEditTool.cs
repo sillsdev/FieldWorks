@@ -101,7 +101,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.PublicationsEdit
 				MachineName,
 				new PossibilityListClerkParameters("PublicationsEditParameters", PropertyTable.GetValue<FdoCache>("cache").LanguageProject.LexDbOA.PublicationTypesOA, false, false, false, "best vernoranal"),
 				out _recordClerk);
-
+			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
 		}
 
 		/// <summary>

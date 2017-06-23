@@ -101,6 +101,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.EducationEdit
 				MachineName,
 				new PossibilityListClerkParameters("EducationList", PropertyTable.GetValue<FdoCache>("cache").LanguageProject.EducationOA, false, true, false, "best analysis"),
 				out _recordClerk);
+			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
 		}
 
 		/// <summary>

@@ -101,6 +101,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.RoleEdit
 				MachineName,
 				new PossibilityListClerkParameters("RoleList", PropertyTable.GetValue<FdoCache>("cache").LanguageProject.RolesOA, false, true, false, "best analysis"),
 				out _recordClerk);
+			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
 		}
 
 		/// <summary>

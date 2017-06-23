@@ -101,6 +101,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.SenseTypeEdit
 				MachineName,
 				new PossibilityListClerkParameters("SenseTypeList", PropertyTable.GetValue<FdoCache>("cache").LanguageProject.LexDbOA.SenseTypesOA, false, false, false, "best analysis"),
 				out _recordClerk);
+			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
 		}
 
 		/// <summary>

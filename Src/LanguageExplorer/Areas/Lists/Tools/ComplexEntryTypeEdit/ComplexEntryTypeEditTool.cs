@@ -100,6 +100,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ComplexEntryTypeEdit
 				MachineName,
 				new PossibilityListClerkParameters("ComplexEntryTypeList", PropertyTable.GetValue<FdoCache>("cache").LanguageProject.LexDbOA.ComplexEntryTypesOA, false, true, false, "best analysis"),
 				out _recordClerk);
+			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
 		}
 
 		/// <summary>

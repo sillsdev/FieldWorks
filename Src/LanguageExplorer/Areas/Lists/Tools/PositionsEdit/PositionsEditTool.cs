@@ -101,6 +101,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.PositionsEdit
 				MachineName,
 				new PossibilityListClerkParameters("PositionList", PropertyTable.GetValue<FdoCache>("cache").LanguageProject.PositionsOA, false, false, false, "best analysis"),
 				out _recordClerk);
+			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
 		}
 
 		/// <summary>

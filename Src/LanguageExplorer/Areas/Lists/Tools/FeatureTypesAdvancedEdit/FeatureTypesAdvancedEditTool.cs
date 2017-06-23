@@ -2,10 +2,16 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+using System.Xml.Linq;
+using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.PaneBar;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FDO.Application;
+using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks;
 
@@ -17,6 +23,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.FeatureTypesAdvancedEdit
 	internal sealed class FeatureTypesAdvancedEditTool : ITool
 	{
 		private MultiPane _multiPane;
+		private RecordBrowseView _recordBrowseView;
 		private RecordClerk _recordClerk;
 
 		#region Implementation of IPropertyTableProvider
@@ -77,6 +84,8 @@ namespace LanguageExplorer.Areas.Lists.Tools.FeatureTypesAdvancedEdit
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
 				ref _multiPane,
 				ref _recordClerk);
+
+			_recordBrowseView = null;
 		}
 
 		/// <summary>
@@ -87,9 +96,16 @@ namespace LanguageExplorer.Areas.Lists.Tools.FeatureTypesAdvancedEdit
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			var root = XDocument.Parse(ListResources.FeatureTypesAdvancedEditBrowseViewParameters).Root;
+			var cache = PropertyTable.GetValue<FdoCache>("cache");
+			_recordClerk = new RecordClerk("featureTypes", new RecordList(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), true, FsFeatureSystemTags.kflidFeatures, cache.LanguageProject.MsFeatureSystemOA, "FeatureTypes"), new PropertyRecordSorter("ShortName"), "Default", null, false, false);
+			_recordClerk.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
+			_recordBrowseView = new RecordBrowseView(root, _recordClerk);
 #if RANDYTODO
-			// TODO: Do not use generic list tool setup!
+			// TODO: Set up 'dataTreeMenuHandler' to handle menu events.
+			// TODO: Install menus and connect them to event handlers. (See "CreateContextMenuStrip" method for where the menus are.)
 #endif
+			var recordEditView = new RecordEditView(XElement.Parse(ListResources.FeatureTypesAdvancedEditRecordEditViewParameters), XDocument.Parse(AreaResources.BasicPlusFilter), _recordClerk);
 			var mainMultiPaneParameters = new MultiPaneParameters
 			{
 				Orientation = Orientation.Vertical,
@@ -97,12 +113,26 @@ namespace LanguageExplorer.Areas.Lists.Tools.FeatureTypesAdvancedEdit
 				Id = "FeatureTypesAndDetailMultiPane",
 				ToolMachineName = MachineName
 			};
+			var paneBar = new PaneBar();
+			var img = LanguageExplorerResources.MenuWidget;
+			img.MakeTransparent(Color.Magenta);
+			var panelButton = new PanelButton(PropertyTable, null, PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(MachineName), LanguageExplorerResources.ksHideFields, LanguageExplorerResources.ksShowHiddenFields)
+			{
+				Dock = DockStyle.Right
+			};
+			paneBar.AddControls(new List<Control> { panelButton });
+
 			_multiPane = MultiPaneFactory.CreateMultiPaneWithTwoPaneBarContainersInMainCollapsingSplitContainer(
 				majorFlexComponentParameters.FlexComponentParameters,
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
 				mainMultiPaneParameters,
-				TemporaryToolProviderHack.CreateNewLabel($"Browse view for tool: {MachineName}"), "Browse", new PaneBar(),
-				TemporaryToolProviderHack.CreateNewLabel($"Details view for tool: {MachineName}"), "Details", new PaneBar());
+				_recordBrowseView, "Browse", new PaneBar(),
+				recordEditView, "Details", paneBar);
+
+			panelButton.DatTree = recordEditView.DatTree;
+			// Too early before now.
+			recordEditView.FinishInitialization();
+			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
 		}
 
 		/// <summary>
@@ -113,9 +143,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.FeatureTypesAdvancedEdit
 		/// </remarks>
 		public void PrepareToRefresh()
 		{
-#if RANDYTODO
-			// TODO: Call PrepareToRefresh on buried RecordBrowseView class (left side of MultiPane control).
-#endif
+			_recordBrowseView.BrowseViewer.BrowseView.PrepareToRefresh();
 		}
 
 		/// <summary>
@@ -126,10 +154,8 @@ namespace LanguageExplorer.Areas.Lists.Tools.FeatureTypesAdvancedEdit
 		/// </remarks>
 		public void FinishRefresh()
 		{
-#if RANDYTODO
-			// TODO: If tool uses a SDA decorator (DomainDataByFlidDecoratorBase), then call its "Refresh" method.
-#endif
 			_recordClerk.ReloadIfNeeded();
+			((DomainDataByFlidDecoratorBase)_recordClerk.VirtualListPublisher).Refresh();
 		}
 
 		/// <summary>

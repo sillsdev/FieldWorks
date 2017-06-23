@@ -101,6 +101,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.AnthroEdit
 				MachineName,
 				new PossibilityListClerkParameters("AnthropologyList", PropertyTable.GetValue<FdoCache>("cache").LanguageProject.AnthroListOA, false, true, false, "best analysis"),
 				out _recordClerk);
+			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
 		}
 
 		/// <summary>

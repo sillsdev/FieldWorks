@@ -101,6 +101,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.PeopleEdit
 				MachineName,
 				new PossibilityListClerkParameters("PeopleList", PropertyTable.GetValue<FdoCache>("cache").LanguageProject.PeopleOA, false, true, false, "best vernoranal"),
 				out _recordClerk);
+			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
 		}
 
 		/// <summary>

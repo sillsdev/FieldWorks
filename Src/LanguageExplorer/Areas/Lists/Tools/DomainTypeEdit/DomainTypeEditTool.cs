@@ -103,6 +103,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.DomainTypeEdit
 				MachineName,
 				new PossibilityListClerkParameters("DomainTypeList", PropertyTable.GetValue<FdoCache>("cache").LanguageProject.LexDbOA.DomainTypesOA, false, true, false, "best analysis"),
 				out _recordClerk);
+			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
 		}
 
 		/// <summary>

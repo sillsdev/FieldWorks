@@ -101,6 +101,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.RecTypeEdit
 				MachineName,
 				new PossibilityListClerkParameters("RecTypeList", PropertyTable.GetValue<FdoCache>("cache").LanguageProject.ResearchNotebookOA.RecTypesOA, true, true, false, "best analysis"),
 				out _recordClerk);
+			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
 
 		}
 

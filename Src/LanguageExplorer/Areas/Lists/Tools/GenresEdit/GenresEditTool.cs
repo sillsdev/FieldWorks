@@ -101,6 +101,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.GenresEdit
 				MachineName,
 				new PossibilityListClerkParameters("GenreList", PropertyTable.GetValue<FdoCache>("cache").LanguageProject.GenreListOA, false, true, false, "best analysis"),
 				out _recordClerk);
+			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
 		}
 
 		/// <summary>

@@ -101,6 +101,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.LexRefEdit
 				MachineName,
 				new PossibilityListClerkParameters("LexRefTypeList", PropertyTable.GetValue<FdoCache>("cache").LanguageProject.LexDbOA.ReferencesOA, false, true, true, "best analysis"),
 				out _recordClerk);
+			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
 		}
 
 		/// <summary>

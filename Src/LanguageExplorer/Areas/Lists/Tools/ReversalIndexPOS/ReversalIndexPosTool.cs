@@ -2,11 +2,19 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
+using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
-using System.Windows.Forms.VisualStyles;
+using System.Xml.Linq;
+using LanguageExplorer.Areas.Lexicon;
+using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.PaneBar;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FdoUi;
+using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks;
 
@@ -19,6 +27,11 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 	{
 		private MultiPane _multiPane;
 		private RecordClerk _recordClerk;
+		private RecordBrowseView _recordBrowseView;
+		private ContextMenuStrip _contextMenuStrip;
+		private IReversalIndexRepository _reversalIndexRepository;
+		private IReversalIndex _currentReversalIndex;
+		private readonly HashSet<Tuple<ToolStripMenuItem, EventHandler>> _newMenusAndHandlers = new HashSet<Tuple<ToolStripMenuItem, EventHandler>>();
 
 		#region Implementation of IPropertyTableProvider
 
@@ -74,6 +87,17 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			_contextMenuStrip.Opening -= ContextMenuStrip_Opening;
+			_contextMenuStrip = null;
+			foreach (var menuTuple in _newMenusAndHandlers)
+			{
+				menuTuple.Item1.Click -= menuTuple.Item2;
+			}
+			_newMenusAndHandlers.Clear();
+			_recordBrowseView = null;
+			_reversalIndexRepository = null;
+			_currentReversalIndex = null;
+
 			MultiPaneFactory.RemoveFromParentAndDispose(
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
 				ref _multiPane,
@@ -88,9 +112,23 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			var browseViewConfigurationDocument = XDocument.Parse(ListResources.ReversalToolReversalIndexPOSBrowseViewParameters);
+			var recordEditViewConfigurationDocument = XDocument.Parse(ListResources.ReversalToolReversalIndexPOSRecordEditViewParameters);
+			var cache = PropertyTable.GetValue<FdoCache>("cache");
+			var currentGuid = ReversalIndexEntryUi.GetObjectGuidIfValid(PropertyTable, "ReversalIndexGuid");
+			if (currentGuid != Guid.Empty)
+			{
+				_currentReversalIndex = (IReversalIndex)cache.ServiceLocator.GetObject(currentGuid);
+			}
+
+			_recordClerk = new ReversalEntryPOSClerk(cache.ServiceLocator, cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), _currentReversalIndex);
+			_recordClerk.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
+			_recordBrowseView = new RecordBrowseView(browseViewConfigurationDocument.Root, _recordClerk);
 #if RANDYTODO
-			// TODO: Do not use generic list tool setup!
+			// TODO: Set up 'dataTreeMenuHandler' to handle menu events.
+			// TODO: Install menus and connect them to event handlers. (See "CreateContextMenuStrip" method for where the menus are.)
 #endif
+			var recordEditView = new RecordEditView(recordEditViewConfigurationDocument.Root, XDocument.Parse(AreaResources.BasicPlusFilter), _recordClerk);
 			var mainMultiPaneParameters = new MultiPaneParameters
 			{
 				Orientation = Orientation.Vertical,
@@ -98,12 +136,36 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 				Id = "RevEntryPOSesAndDetailMultiPane",
 				ToolMachineName = MachineName
 			};
+			var browseViewPaneBar = new PaneBar();
+			var img = LanguageExplorerResources.MenuWidget;
+			img.MakeTransparent(Color.Magenta);
+			var panelMenu = new PanelMenu
+			{
+				Dock = DockStyle.Left,
+				BackgroundImage = img,
+				BackgroundImageLayout = ImageLayout.Center,
+				ContextMenuStrip = CreateContextMenuStrip()
+			};
+			browseViewPaneBar.AddControls(new List<Control> { panelMenu });
+
+			var recordEditViewPaneBar = new PaneBar();
+			var panelButton = new PanelButton(PropertyTable, null, PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(MachineName), LanguageExplorerResources.ksHideFields, LanguageExplorerResources.ksShowHiddenFields)
+			{
+				Dock = DockStyle.Right
+			};
+			recordEditViewPaneBar.AddControls(new List<Control> { panelButton });
+
 			_multiPane = MultiPaneFactory.CreateMultiPaneWithTwoPaneBarContainersInMainCollapsingSplitContainer(
 				majorFlexComponentParameters.FlexComponentParameters,
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
 				mainMultiPaneParameters,
-				TemporaryToolProviderHack.CreateNewLabel($"Browse view for tool: {MachineName}"), "Browse", new PaneBar(),
-				TemporaryToolProviderHack.CreateNewLabel($"Details view for tool: {MachineName}"), "Details", new PaneBar());
+				_recordBrowseView, "Browse", browseViewPaneBar,
+				recordEditView, "Details", recordEditViewPaneBar);
+
+			panelButton.DatTree = recordEditView.DatTree;
+			// Too early before now.
+			recordEditView.FinishInitialization();
+			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
 		}
 
 		/// <summary>
@@ -114,9 +176,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 		/// </remarks>
 		public void PrepareToRefresh()
 		{
-#if RANDYTODO
-			// TODO: Call PrepareToRefresh on buried RecordBrowseView class (PaneBarContainer in left side of MultiPane control).
-#endif
+			_recordBrowseView.BrowseViewer.BrowseView.PrepareToRefresh();
 		}
 
 		/// <summary>
@@ -127,10 +187,8 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 		/// </remarks>
 		public void FinishRefresh()
 		{
-#if RANDYTODO
-			// TODO: If tool uses a SDA decorator (DomainDataByFlidDecoratorBase), then call its "Refresh" method.
-#endif
 			_recordClerk.ReloadIfNeeded();
+			((DomainDataByFlidDecoratorBase)_recordClerk.VirtualListPublisher).Refresh();
 		}
 
 		/// <summary>
@@ -170,5 +228,61 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 		public Image Icon => Images.SideBySideView.SetBackgroundColor(Color.Magenta);
 
 		#endregion
+
+		private ContextMenuStrip CreateContextMenuStrip()
+		{
+			_contextMenuStrip = new ContextMenuStrip();
+
+			_contextMenuStrip.Opening += ContextMenuStrip_Opening;
+
+			return _contextMenuStrip;
+		}
+
+		private void ContextMenuStrip_Opening(object sender, System.ComponentModel.CancelEventArgs e)
+		{
+			if (_reversalIndexRepository == null)
+			{
+				var cache = PropertyTable.GetValue<FdoCache>("cache");
+				_reversalIndexRepository = cache.ServiceLocator.GetInstance<IReversalIndexRepository>();
+			}
+			var allInstancesinRepository = _reversalIndexRepository.AllInstances().ToDictionary(rei => rei.Guid);
+			var allInstancesInMenu = _contextMenuStrip.Items.OfType<ToolStripMenuItem>().ToList();
+			foreach (var contextMenuItem in allInstancesInMenu)
+			{
+				var currentTag = (IReversalIndex)contextMenuItem.Tag;
+				SetCheckedState(contextMenuItem);
+				if (allInstancesinRepository.ContainsKey(currentTag.Guid))
+				{
+					allInstancesinRepository.Remove(currentTag.Guid);
+					continue;
+				}
+				// Seems a reversal was deleted, so remove it from the menu.
+				contextMenuItem.Click -= ReversalIndex_Menu_Clicked;
+				_contextMenuStrip.Items.Remove(contextMenuItem);
+				_newMenusAndHandlers.RemoveWhere(tuple => tuple.Item1 == contextMenuItem);
+			}
+			// If allInstancesinRepository has any remaining instances, then they are not in the menu. Add them.
+			foreach (var rei in allInstancesinRepository.Values)
+			{
+				var newMenuItem = PaneBarContextMenuFactory.CreateToolStripMenuItem(_contextMenuStrip, rei.ChooserNameTS.Text, null, ReversalIndex_Menu_Clicked, null);
+				newMenuItem.Tag = rei;
+				_newMenusAndHandlers.Add(new Tuple<ToolStripMenuItem, EventHandler>(newMenuItem, ReversalIndex_Menu_Clicked));
+			}
+		}
+
+		private void ReversalIndex_Menu_Clicked(object sender, EventArgs e)
+		{
+			var contextMenuItem = (ToolStripMenuItem)sender;
+			_currentReversalIndex = (IReversalIndex)contextMenuItem.Tag;
+			PropertyTable.SetProperty("ReversalIndexGuid", _currentReversalIndex.Guid.ToString(), SettingsGroup.LocalSettings, true, false);
+			((ReversalClerk)_recordClerk).ChangeOwningObjectIfPossible();
+			SetCheckedState(contextMenuItem);
+		}
+
+		private void SetCheckedState(ToolStripMenuItem reversalToolStripMenuItem)
+		{
+			var currentTag = (IReversalIndex)reversalToolStripMenuItem.Tag;
+			reversalToolStripMenuItem.Checked = (currentTag.Guid.ToString() == PropertyTable.GetValue<string>("ReversalIndexGuid"));
+		}
 	}
 }

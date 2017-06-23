@@ -99,8 +99,9 @@ namespace LanguageExplorer.Areas.Lists.Tools.TimeOfDayEdit
 				true,
 				XDocument.Parse(ListResources.TimeOfDayEditParameters).Root, XDocument.Parse(ListResources.ListToolsSliceFilters),
 				MachineName,
-				new PossibilityListClerkParameters("TimeOfDayList", PropertyTable.GetValue<FdoCache>("cache").LanguageProject.LexDbOA.DomainTypesOA, true, true, false, "best analysis"),
+				new PossibilityListClerkParameters("TimeOfDayList", PropertyTable.GetValue<FdoCache>("cache").LanguageProject.TimeOfDayOA, true, true, false, "best analysis"),
 				out _recordClerk);
+			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
 		}
 
 		/// <summary>

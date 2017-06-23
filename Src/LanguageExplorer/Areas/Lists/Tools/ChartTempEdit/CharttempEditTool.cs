@@ -3,11 +3,13 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Drawing;
+using System.Linq;
 using System.Xml.Linq;
 using LanguageExplorer.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
+using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks;
 
@@ -93,14 +95,22 @@ namespace LanguageExplorer.Areas.Lists.Tools.ChartTempEdit
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			var cache = PropertyTable.GetValue<FdoCache>("cache");
+			var template = cache.LanguageProject.DiscourseDataOA.ConstChartTemplOA;
+			if (template == null)
+			{
+				NonUndoableUnitOfWorkHelper.Do(cache.ActionHandlerAccessor, () => cache.LanguageProject.GetDefaultChartTemplate());
+				template = cache.LanguageProject.DiscourseDataOA.ConstChartTemplOA;
+			}
 			_collapsingSplitContainer = CollapsingSplitContainerFactory.Create(
 				majorFlexComponentParameters.FlexComponentParameters,
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
 				true,
 				XDocument.Parse(ListResources.CharttempEditParameters).Root, XDocument.Parse(ListResources.ListToolsSliceFilters),
 				MachineName,
-				new PossibilityListClerkParameters("DiscChartTemplateList", PropertyTable.GetValue<FdoCache>("cache").LanguageProject.DiscourseDataOA.ConstChartTemplOA, true, true, false, "best analysis"),
+				new PossibilityListClerkParameters("DiscChartTemplateList", template, true, true, false, "best analysis"),
 				out _recordClerk);
+			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
 		}
 
 		/// <summary>
@@ -133,9 +143,9 @@ namespace LanguageExplorer.Areas.Lists.Tools.ChartTempEdit
 		{
 		}
 
-		#endregion
+#endregion
 
-		#region Implementation of IMajorFlexUiComponent
+#region Implementation of IMajorFlexUiComponent
 
 		/// <summary>
 		/// Get the internal name of the component.
@@ -147,9 +157,9 @@ namespace LanguageExplorer.Areas.Lists.Tools.ChartTempEdit
 		/// User-visible localizable component name.
 		/// </summary>
 		public string UiName => "Text Constituent Chart Templates";
-		#endregion
+#endregion
 
-		#region Implementation of ITool
+#region Implementation of ITool
 
 		/// <summary>
 		/// Get the area machine name the tool is for.
@@ -161,6 +171,6 @@ namespace LanguageExplorer.Areas.Lists.Tools.ChartTempEdit
 		/// </summary>
 		public Image Icon => Images.SideBySideView.SetBackgroundColor(Color.Magenta);
 
-		#endregion
+#endregion
 	}
 }
