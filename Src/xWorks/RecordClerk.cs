@@ -357,8 +357,7 @@ namespace SIL.FieldWorks.XWorks
 			Publisher = flexComponentParameters.Publisher;
 			Subscriber = flexComponentParameters.Subscriber;
 
-			m_list.InitializeFlexComponent(
-				new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
+			m_list.InitializeFlexComponent(flexComponentParameters);
 
 			TryRestoreSorter();
 			TryRestoreFilter();
@@ -573,8 +572,12 @@ namespace SIL.FieldWorks.XWorks
 				// Dispose managed resources here.
 				Subscriber.Unsubscribe("SelectedTreeBarNode", SelectedTreeBarNode_Message_Handler);
 				Subscriber.Unsubscribe("SelectedListBarNode", SelectedListBarNode_Message_Handler);
-				//ResetStatusBarPanel("StatusPanelRecordNumber", "");
-				//ResetStatusBarPanel("StatusPanelMessage", "");
+
+				if (PropertyTable.GetValue<Form>("window").IsHandleCreated)
+				{
+					ResetStatusBarPanel("StatusPanelRecordNumber", string.Empty);
+					ResetStatusBarPanel("StatusPanelMessage", string.Empty);
+				}
 				m_list.ListChanged -= OnListChanged;
 				m_list.AboutToReload -= m_list_AboutToReload;
 				m_list.DoneReload -= m_list_DoneReload;
@@ -611,7 +614,7 @@ namespace SIL.FieldWorks.XWorks
 			m_isDisposed = true;
 		}
 
-		#endregion IDisposable & Co. implementation
+#endregion IDisposable & Co. implementation
 
 		/// <summary>
 		/// This is invoked by reflection when something might want to know about a change.
@@ -955,7 +958,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		#region IRecordListUpdater implementation
+#region IRecordListUpdater implementation
 
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
@@ -1027,7 +1030,7 @@ namespace SIL.FieldWorks.XWorks
 				m_list.ForceReloadList();
 		}
 
-		#endregion
+#endregion
 
 		public string Id
 		{
@@ -1091,7 +1094,7 @@ namespace SIL.FieldWorks.XWorks
 			UpdateOwningObject();
 		}
 
-		#region XCORE Message Handlers
+#region XCORE Message Handlers
 
 		internal virtual void ViewChangedSelectedRecord(FwObjectSelectionEventArgs e, IVwSelection sel)
 		{
@@ -1907,7 +1910,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 #endif
 
-		#endregion // XCORE Message Handlers
+#endregion // XCORE Message Handlers
 
 		/// <summary>
 		/// update the status bar, selected node of the tree bar, etc. and broadcast record navigation
@@ -2547,8 +2550,7 @@ namespace SIL.FieldWorks.XWorks
 				//RecordBrowseView line 483 and elsewhere that we rely on the re-broadcasting.
 				//in order to maintain the LT-11401 fix we directly use the mediator here and pass true in the
 				//second parameter so that we don't save the record and lose the undo history. -naylor 2011-11-03
-				var rni = new RecordNavigationInfo(this, true, SkipShowRecord, suppressFocusChange);
-				Publisher.Publish("RecordNavigation", rni);
+				Publisher.Publish("RecordNavigation", new RecordNavigationInfo(this, true, SkipShowRecord, suppressFocusChange));
 				return;
 			}
 			try
@@ -2563,7 +2565,7 @@ namespace SIL.FieldWorks.XWorks
 			BroadcastChange(suppressFocusChange);
 		}
 
-		#region Insertion
+#region Insertion
 
 #if RANDYTODO
 		/// <summary>
@@ -2710,7 +2712,7 @@ namespace SIL.FieldWorks.XWorks
 			return result;
 		}
 
-		#endregion
+#endregion
 
 #if RANDYTODO
 		/// <summary>
@@ -3298,7 +3300,7 @@ namespace SIL.FieldWorks.XWorks
 				m_fTriggerPendingReloadOnDispose = false;
 				m_fOriginalLoadRequestedWhileSuppressed = false;
 			}
-			#region DisposableBase Members
+#region DisposableBase Members
 
 			protected override void DisposeManagedResources()
 			{
@@ -3336,7 +3338,7 @@ namespace SIL.FieldWorks.XWorks
 				m_waitCursor = null;
 			}
 
-			#endregion DisposableBase
+#endregion DisposableBase
 		}
 
 		private ListUpdateHelper m_bulkEditUpdateHelper;

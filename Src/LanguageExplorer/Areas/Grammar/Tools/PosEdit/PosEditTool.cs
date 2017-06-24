@@ -99,7 +99,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 		{
 			_recordClerk = GrammarArea.CreateCategoriesClerkForGrammarArea(PropertyTable, true);
 			_collapsingSplitContainer = CollapsingSplitContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer, true,
-				XDocument.Parse(ListResources.PosEditParameters).Root, XDocument.Parse(AreaResources.BasicPlusFilter),
+				XDocument.Parse(ListResources.PosEditParameters).Root, XDocument.Parse(AreaResources.HideAdvancedListItemFields),
 				MachineName,
 				_recordClerk);
 			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;

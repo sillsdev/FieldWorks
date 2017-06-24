@@ -43,21 +43,21 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		#region Data Members
 
 		private string _filterMessage = string.Empty;
-		private IWfiWordform m_wordform;
-		private FdoCache m_cache;
-		private XmlNode m_configurationNode;
-		private RecordBrowseView m_currentBrowseView = null;
-		private readonly Dictionary<int, XmlNode> m_configurationNodes = new Dictionary<int, XmlNode>(3);
-		private readonly Dictionary<int, RecordClerk> m_recordClerks = new Dictionary<int, RecordClerk>(3);
-		private readonly Dictionary<string, bool> m_originalClerkIgnoreStatusPanelValues = new Dictionary<string, bool>(3);
-		private XMLViewsDataCache m_specialSda;
-		private int m_currentSourceMadeUpFieldIdentifier;
+		private IWfiWordform _wordform;
+		private FdoCache _cache;
+		private XmlNode _configurationNode;
+		private RecordBrowseView _currentBrowseView = null;
+		private readonly Dictionary<int, XmlNode> _configurationNodes = new Dictionary<int, XmlNode>(3);
+		private readonly Dictionary<int, RecordClerk> _recordClerks = new Dictionary<int, RecordClerk>(3);
+		private readonly Dictionary<string, bool> _originalClerkIgnoreStatusPanelValues = new Dictionary<string, bool>(3);
+		private XMLViewsDataCache _specialSda;
+		private int _currentSourceMadeUpFieldIdentifier;
 
 		private ConcDecorator ConcSda
 		{
 			get
 			{
-				return ((DomainDataByFlidDecoratorBase)m_specialSda.BaseSda).BaseSda as ConcDecorator;
+				return ((DomainDataByFlidDecoratorBase)_specialSda.BaseSda).BaseSda as ConcDecorator;
 			}
 		}
 
@@ -70,17 +70,17 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		private Button btnAssign;
 		private Label label3;
 		private Button btnClose;
-		private Panel m_pnlConcBrowseHolder;
+		private Panel _pnlConcBrowseHolder;
 		private Label label4;
 		private Label label5;
 		private Button btnHelp;
 		private const string s_helpTopic = "khtpAssignAnalysisUsage";
 
 		private HelpProvider helpProvider;
-		private StatusStrip m_statusStrip;
-		private ToolStripProgressBar m_toolStripProgressBar;
-		private ToolStripStatusLabel m_toolStripFilterStatusLabel;
-		private ToolStripStatusLabel m_toolStripRecordStatusLabel;
+		private StatusStrip _statusStrip;
+		private ToolStripProgressBar _toolStripProgressBar;
+		private ToolStripStatusLabel _toolStripFilterStatusLabel;
+		private ToolStripStatusLabel _toolStripRecordStatusLabel;
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
@@ -106,16 +106,16 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 			if (sourceObject is IWfiWordform)
 			{
-				m_wordform = (IWfiWordform)sourceObject;
+				_wordform = (IWfiWordform)sourceObject;
 			}
 			else
 			{
 				var anal = sourceObject is IWfiAnalysis
 										? (IWfiAnalysis)sourceObject
 										: sourceObject.OwnerOfClass<IWfiAnalysis>();
-				m_wordform = anal.OwnerOfClass<IWfiWordform>();
+				_wordform = anal.OwnerOfClass<IWfiWordform>();
 			}
-			m_cache = m_wordform.Cache;
+			_cache = _wordform.Cache;
 		}
 
 		#region Implementation of IPropertyTableProvider
@@ -160,7 +160,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			helpProvider.SetHelpKeyword(this, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider").GetHelpString(s_helpTopic));
 			helpProvider.SetShowHelp(this, true);
 
-			m_progAdvInd = new ProgressReporting(m_toolStripProgressBar);
+			_progAdvInd = new ProgressReporting(_toolStripProgressBar);
 
 #if RANDYTODO
 			// Gather up the nodes.
@@ -201,15 +201,15 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			var srcTnWf = new TreeNode();
 			var tarTnWf = new TreeNode();
 			tarTnWf.Text = srcTnWf.Text = TsStringUtils.NormalizeToNFC(LanguageExplorerResources.ksNoAnalysis);
-			tarTnWf.Tag = srcTnWf.Tag = m_wordform;
+			tarTnWf.Tag = srcTnWf.Tag = _wordform;
 			tvSource.Nodes.Add(srcTnWf);
 			tvTarget.Nodes.Add(tarTnWf);
-			if (srcTnWf.Tag == m_wordform)
+			if (srcTnWf.Tag == _wordform)
 				tvSource.SelectedNode = srcTnWf;
 			var cnt = 0;
 			// Note: the left side source tree only has human approved analyses,
 			// since only those can have instances from text-land pointing at them.
-			foreach (var anal in m_wordform.HumanApprovedAnalyses)
+			foreach (var anal in _wordform.HumanApprovedAnalyses)
 			{
 				var srcTnAnal = new TreeNode();
 				var tarTnAnal = new TreeNode
@@ -220,7 +220,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				};
 				srcTnWf.Nodes.Add(srcTnAnal);
 				tarTnWf.Nodes.Add(tarTnAnal);
-				if (srcTnAnal.Tag == m_wordform)
+				if (srcTnAnal.Tag == _wordform)
 					tvSource.SelectedNode = srcTnAnal;
 				foreach (var gloss in anal.MeaningsOC)
 				{
@@ -230,14 +230,14 @@ namespace LanguageExplorer.Areas.TextsAndWords
 					var props = tss.get_PropertiesAt(0);
 					int nVar;
 					var ws = props.GetIntPropValues((int)FwTextPropType.ktptWs, out nVar);
-					var fontname = m_wordform.Cache.ServiceLocator.WritingSystemManager.Get(ws).DefaultFontName;
+					var fontname = _wordform.Cache.ServiceLocator.WritingSystemManager.Get(ws).DefaultFontName;
 					tarTnGloss.NodeFont = new Font(fontname, 9);
 					srcTnGloss.NodeFont = new Font(fontname, 9);
 					tarTnGloss.Text = srcTnGloss.Text = TsStringUtils.NormalizeToNFC(tss.Text);
 					tarTnGloss.Tag = srcTnGloss.Tag = gloss;
 					srcTnAnal.Nodes.Add(srcTnGloss);
 					tarTnAnal.Nodes.Add(tarTnGloss);
-					if (srcTnGloss.Tag == m_wordform)
+					if (srcTnGloss.Tag == _wordform)
 						tvSource.SelectedNode = srcTnGloss;
 				}
 			}
@@ -279,27 +279,30 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			{
 				Subscriber.Unsubscribe("DialogFilterStatus", DialogFilterStatus_Handler);
 
-				foreach (RecordClerk clerk in m_recordClerks.Values)
+				foreach (RecordClerk clerk in _recordClerks.Values)
 				{
 					// Take it out of the property table and Dispose it.
 					PropertyTable.RemoveProperty("RecordClerk-" + clerk.Id);
+#if RANDYTODO
+					// TODO: Why reset it, since it is being disposed?
 					clerk.IgnoreStatusPanel = m_originalClerkIgnoreStatusPanelValues[clerk.Id];
+#endif
 					clerk.Dispose();
 				}
 				if(components != null)
 				{
 					components.Dispose();
 				}
-				m_recordClerks.Clear();
-				m_configurationNodes.Clear();
+				_recordClerks.Clear();
+				_configurationNodes.Clear();
 			}
 			base.Dispose(disposing);
 
-			m_wordform = null;
-			m_cache = null;
-			m_configurationNode = null;
-			m_currentBrowseView = null;
-			m_specialSda = null;
+			_wordform = null;
+			_cache = null;
+			_configurationNode = null;
+			_currentBrowseView = null;
+			_specialSda = null;
 			PropertyTable = null;
 			Publisher = null;
 			Subscriber = null;
@@ -318,30 +321,30 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				remove { throw new NotImplementedException(); }
 			}
 
-			private readonly ToolStripProgressBar m_progressBar;
+			private readonly ToolStripProgressBar _progressBar;
 
 			public ProgressReporting(ToolStripProgressBar bar)
 			{
-				m_progressBar = bar;
-				m_progressBar.Step = 1;
-				m_progressBar.Minimum = 0;
-				m_progressBar.Maximum = 100;
-				m_progressBar.Value = 0;
-				m_progressBar.Style = ProgressBarStyle.Continuous;
+				_progressBar = bar;
+				_progressBar.Step = 1;
+				_progressBar.Minimum = 0;
+				_progressBar.Maximum = 100;
+				_progressBar.Value = 0;
+				_progressBar.Style = ProgressBarStyle.Continuous;
 			}
 
 			#region IProgress Members
 
 			public int Minimum
 			{
-				get { return m_progressBar.Minimum; }
-				set { m_progressBar.Minimum = value; }
+				get { return _progressBar.Minimum; }
+				set { _progressBar.Minimum = value; }
 			}
 
 			public int Maximum
 			{
-				get { return m_progressBar.Maximum; }
-				set { m_progressBar.Maximum = value; }
+				get { return _progressBar.Maximum; }
+				set { _progressBar.Maximum = value; }
 			}
 
 			public bool Canceled
@@ -355,12 +358,12 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			/// </summary>
 			public ISynchronizeInvoke SynchronizeInvoke
 			{
-				get { return m_progressBar.Control; }
+				get { return _progressBar.Control; }
 			}
 
 			public Form Form
 			{
-				get { return m_progressBar.Control.FindForm(); }
+				get { return _progressBar.Control.FindForm(); }
 			}
 
 			public bool IsIndeterminate
@@ -377,25 +380,25 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 			public string Message
 			{
-				get { return m_progressBar.ToolTipText; }
-				set { m_progressBar.ToolTipText = value; }
+				get { return _progressBar.ToolTipText; }
+				set { _progressBar.ToolTipText = value; }
 			}
 
 			public int Position
 			{
-				get { return m_progressBar.Value; }
-				set { m_progressBar.Value = value; }
+				get { return _progressBar.Value; }
+				set { _progressBar.Value = value; }
 			}
 
 			public void Step(int nStepAmt)
 			{
-				m_progressBar.Increment(nStepAmt);
+				_progressBar.Increment(nStepAmt);
 			}
 
 			public int StepSize
 			{
-				get { return m_progressBar.Step; }
-				set { m_progressBar.Step = value; }
+				get { return _progressBar.Step; }
+				set { _progressBar.Step = value; }
 			}
 
 			public string Title
@@ -406,7 +409,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			#endregion
 		}
 
-		private ProgressReporting m_progAdvInd = null;
+		private ProgressReporting _progAdvInd = null;
 
 		#region IFwGuiControl implementation
 
@@ -437,15 +440,15 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			this.btnAssign = new System.Windows.Forms.Button();
 			this.label3 = new System.Windows.Forms.Label();
 			this.btnClose = new System.Windows.Forms.Button();
-			this.m_pnlConcBrowseHolder = new System.Windows.Forms.Panel();
+			this._pnlConcBrowseHolder = new System.Windows.Forms.Panel();
 			this.label4 = new System.Windows.Forms.Label();
 			this.label5 = new System.Windows.Forms.Label();
 			this.btnHelp = new System.Windows.Forms.Button();
-			this.m_statusStrip = new System.Windows.Forms.StatusStrip();
-			this.m_toolStripProgressBar = new System.Windows.Forms.ToolStripProgressBar();
-			this.m_toolStripFilterStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
-			this.m_toolStripRecordStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
-			this.m_statusStrip.SuspendLayout();
+			this._statusStrip = new System.Windows.Forms.StatusStrip();
+			this._toolStripProgressBar = new System.Windows.Forms.ToolStripProgressBar();
+			this._toolStripFilterStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
+			this._toolStripRecordStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
+			this._statusStrip.SuspendLayout();
 			this.SuspendLayout();
 			//
 			// tvSource
@@ -493,8 +496,8 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			//
 			// m_pnlConcBrowseHolder
 			//
-			resources.ApplyResources(this.m_pnlConcBrowseHolder, "m_pnlConcBrowseHolder");
-			this.m_pnlConcBrowseHolder.Name = "m_pnlConcBrowseHolder";
+			resources.ApplyResources(this._pnlConcBrowseHolder, "_pnlConcBrowseHolder");
+			this._pnlConcBrowseHolder.Name = "_pnlConcBrowseHolder";
 			//
 			// label4
 			//
@@ -514,51 +517,51 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			//
 			// m_statusStrip
 			//
-			resources.ApplyResources(this.m_statusStrip, "m_statusStrip");
-			this.m_statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-			this.m_toolStripProgressBar,
-			this.m_toolStripFilterStatusLabel,
-			this.m_toolStripRecordStatusLabel});
-			this.m_statusStrip.Name = "m_statusStrip";
-			this.m_statusStrip.SizingGrip = false;
-			this.m_statusStrip.Stretch = false;
+			resources.ApplyResources(this._statusStrip, "_statusStrip");
+			this._statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+			this._toolStripProgressBar,
+			this._toolStripFilterStatusLabel,
+			this._toolStripRecordStatusLabel});
+			this._statusStrip.Name = "_statusStrip";
+			this._statusStrip.SizingGrip = false;
+			this._statusStrip.Stretch = false;
 			//
 			// m_toolStripProgressBar
 			//
-			resources.ApplyResources(this.m_toolStripProgressBar, "m_toolStripProgressBar");
-			this.m_toolStripProgressBar.Margin = new System.Windows.Forms.Padding(2, 2, 1, 2);
-			this.m_toolStripProgressBar.Name = "m_toolStripProgressBar";
+			resources.ApplyResources(this._toolStripProgressBar, "_toolStripProgressBar");
+			this._toolStripProgressBar.Margin = new System.Windows.Forms.Padding(2, 2, 1, 2);
+			this._toolStripProgressBar.Name = "_toolStripProgressBar";
 			//
 			// m_toolStripFilterStatusLabel
 			//
-			resources.ApplyResources(this.m_toolStripFilterStatusLabel, "m_toolStripFilterStatusLabel");
-			this.m_toolStripFilterStatusLabel.BorderSides = ((System.Windows.Forms.ToolStripStatusLabelBorderSides)((((System.Windows.Forms.ToolStripStatusLabelBorderSides.Left | System.Windows.Forms.ToolStripStatusLabelBorderSides.Top)
+			resources.ApplyResources(this._toolStripFilterStatusLabel, "_toolStripFilterStatusLabel");
+			this._toolStripFilterStatusLabel.BorderSides = ((System.Windows.Forms.ToolStripStatusLabelBorderSides)((((System.Windows.Forms.ToolStripStatusLabelBorderSides.Left | System.Windows.Forms.ToolStripStatusLabelBorderSides.Top)
 						| System.Windows.Forms.ToolStripStatusLabelBorderSides.Right)
 						| System.Windows.Forms.ToolStripStatusLabelBorderSides.Bottom)));
-			this.m_toolStripFilterStatusLabel.BorderStyle = System.Windows.Forms.Border3DStyle.Sunken;
-			this.m_toolStripFilterStatusLabel.Margin = new System.Windows.Forms.Padding(1, 2, 1, 2);
-			this.m_toolStripFilterStatusLabel.Name = "m_toolStripFilterStatusLabel";
+			this._toolStripFilterStatusLabel.BorderStyle = System.Windows.Forms.Border3DStyle.Sunken;
+			this._toolStripFilterStatusLabel.Margin = new System.Windows.Forms.Padding(1, 2, 1, 2);
+			this._toolStripFilterStatusLabel.Name = "_toolStripFilterStatusLabel";
 			//
 			// m_toolStripRecordStatusLabel
 			//
-			resources.ApplyResources(this.m_toolStripRecordStatusLabel, "m_toolStripRecordStatusLabel");
-			this.m_toolStripRecordStatusLabel.BorderSides = ((System.Windows.Forms.ToolStripStatusLabelBorderSides)((((System.Windows.Forms.ToolStripStatusLabelBorderSides.Left | System.Windows.Forms.ToolStripStatusLabelBorderSides.Top)
+			resources.ApplyResources(this._toolStripRecordStatusLabel, "_toolStripRecordStatusLabel");
+			this._toolStripRecordStatusLabel.BorderSides = ((System.Windows.Forms.ToolStripStatusLabelBorderSides)((((System.Windows.Forms.ToolStripStatusLabelBorderSides.Left | System.Windows.Forms.ToolStripStatusLabelBorderSides.Top)
 						| System.Windows.Forms.ToolStripStatusLabelBorderSides.Right)
 						| System.Windows.Forms.ToolStripStatusLabelBorderSides.Bottom)));
-			this.m_toolStripRecordStatusLabel.BorderStyle = System.Windows.Forms.Border3DStyle.Sunken;
-			this.m_toolStripRecordStatusLabel.Margin = new System.Windows.Forms.Padding(1, 2, 2, 2);
-			this.m_toolStripRecordStatusLabel.Name = "m_toolStripRecordStatusLabel";
+			this._toolStripRecordStatusLabel.BorderStyle = System.Windows.Forms.Border3DStyle.Sunken;
+			this._toolStripRecordStatusLabel.Margin = new System.Windows.Forms.Padding(1, 2, 2, 2);
+			this._toolStripRecordStatusLabel.Name = "_toolStripRecordStatusLabel";
 			//
 			// ConcordanceDlg
 			//
 			this.AcceptButton = this.btnAssign;
 			resources.ApplyResources(this, "$this");
 			this.CancelButton = this.btnClose;
-			this.Controls.Add(this.m_statusStrip);
+			this.Controls.Add(this._statusStrip);
 			this.Controls.Add(this.btnHelp);
 			this.Controls.Add(this.label5);
 			this.Controls.Add(this.label4);
-			this.Controls.Add(this.m_pnlConcBrowseHolder);
+			this.Controls.Add(this._pnlConcBrowseHolder);
 			this.Controls.Add(this.btnClose);
 			this.Controls.Add(this.label3);
 			this.Controls.Add(this.btnAssign);
@@ -570,8 +573,8 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			this.MinimizeBox = false;
 			this.Name = "ConcordanceDlg";
 			this.ShowInTaskbar = false;
-			this.m_statusStrip.ResumeLayout(false);
-			this.m_statusStrip.PerformLayout();
+			this._statusStrip.ResumeLayout(false);
+			this._statusStrip.PerformLayout();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -584,7 +587,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		{
 			btnAssign.Enabled = (tvSource.SelectedNode != null && tvTarget.SelectedNode != null
 				&& (tvSource.SelectedNode.Tag != tvTarget.SelectedNode.Tag)
-				&& m_currentBrowseView.CheckedItems.Count > 0);
+				&& _currentBrowseView.CheckedItems.Count > 0);
 		}
 
 		#endregion Other methods
@@ -596,13 +599,13 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			using (new WaitCursor(this, true))
 			{
 				// Swap out the browse view.
-				if (m_currentBrowseView != null)
+				if (_currentBrowseView != null)
 				{
 					// Get rid of old one.
-					m_currentBrowseView.Hide();
-					m_pnlConcBrowseHolder.Controls.Remove(m_currentBrowseView);
-					m_currentBrowseView.Dispose();
-					m_currentBrowseView = null;
+					_currentBrowseView.Hide();
+					_pnlConcBrowseHolder.Controls.Remove(_currentBrowseView);
+					_currentBrowseView.Dispose();
+					_currentBrowseView = null;
 				}
 
 				XmlNode configurationNode;
@@ -613,55 +616,55 @@ namespace LanguageExplorer.Areas.TextsAndWords
 					default:
 						throw new InvalidOperationException("Class not recognized.");
 					case WfiWordformTags.kClassId:
-						configurationNode = m_configurationNodes[WfiWordformTags.kClassId];
-						clerk = m_recordClerks[WfiWordformTags.kClassId];
+						configurationNode = _configurationNodes[WfiWordformTags.kClassId];
+						clerk = _recordClerks[WfiWordformTags.kClassId];
 						break;
 					case WfiAnalysisTags.kClassId:
-						configurationNode = m_configurationNodes[WfiAnalysisTags.kClassId];
-						clerk = m_recordClerks[WfiAnalysisTags.kClassId];
+						configurationNode = _configurationNodes[WfiAnalysisTags.kClassId];
+						clerk = _recordClerks[WfiAnalysisTags.kClassId];
 						break;
 					case WfiGlossTags.kClassId:
-						configurationNode = m_configurationNodes[WfiGlossTags.kClassId];
-						clerk = m_recordClerks[WfiGlossTags.kClassId];
+						configurationNode = _configurationNodes[WfiGlossTags.kClassId];
+						clerk = _recordClerks[WfiGlossTags.kClassId];
 						break;
 				}
 				clerk.OwningObject = selObj;
 
-				m_currentBrowseView = new RecordBrowseView();
-				m_currentBrowseView.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
+				_currentBrowseView = new RecordBrowseView();
+				_currentBrowseView.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 				// Ensure that the list gets updated whenever it's reloaded.  See LT-8661.
 				var sPropName = clerk.Id + "_AlwaysRecomputeVirtualOnReloadList";
 				PropertyTable.SetProperty(sPropName, true, false, false);
-				m_currentBrowseView.Dock = DockStyle.Fill;
-				m_pnlConcBrowseHolder.Controls.Add(m_currentBrowseView);
-				m_currentBrowseView.CheckBoxChanged += m_currentBrowseView_CheckBoxChanged;
-				m_currentBrowseView.BrowseViewer.SelectionChanged += BrowseViewer_SelectionChanged;
-				m_currentBrowseView.BrowseViewer.FilterChanged += BrowseViewer_FilterChanged;
+				_currentBrowseView.Dock = DockStyle.Fill;
+				_pnlConcBrowseHolder.Controls.Add(_currentBrowseView);
+				_currentBrowseView.CheckBoxChanged += CurrentBrowseView_CheckBoxChanged;
+				_currentBrowseView.BrowseViewer.SelectionChanged += BrowseViewer_SelectionChanged;
+				_currentBrowseView.BrowseViewer.FilterChanged += BrowseViewer_FilterChanged;
 				SetRecordStatus();
 
-				m_specialSda = m_currentBrowseView.BrowseViewer.SpecialCache;
-				var specialMdc = m_specialSda.MetaDataCache;
+				_specialSda = _currentBrowseView.BrowseViewer.SpecialCache;
+				var specialMdc = _specialSda.MetaDataCache;
 				int[] concordanceItems;
 				switch (selObj.ClassID)
 				{
 					default:
 						throw new InvalidOperationException("Class not recognized.");
 					case WfiWordformTags.kClassId:
-						m_currentSourceMadeUpFieldIdentifier = specialMdc.GetFieldId2(WfiWordformTags.kClassId, "ExactOccurrences", false);
-						concordanceItems = m_specialSda.VecProp(selObj.Hvo, m_currentSourceMadeUpFieldIdentifier);
+						_currentSourceMadeUpFieldIdentifier = specialMdc.GetFieldId2(WfiWordformTags.kClassId, "ExactOccurrences", false);
+						concordanceItems = _specialSda.VecProp(selObj.Hvo, _currentSourceMadeUpFieldIdentifier);
 						break;
 					case WfiAnalysisTags.kClassId:
-						m_currentSourceMadeUpFieldIdentifier = specialMdc.GetFieldId2(WfiAnalysisTags.kClassId, "ExactOccurrences", false);
-						concordanceItems = m_specialSda.VecProp(selObj.Hvo, m_currentSourceMadeUpFieldIdentifier);
+						_currentSourceMadeUpFieldIdentifier = specialMdc.GetFieldId2(WfiAnalysisTags.kClassId, "ExactOccurrences", false);
+						concordanceItems = _specialSda.VecProp(selObj.Hvo, _currentSourceMadeUpFieldIdentifier);
 						break;
 					case WfiGlossTags.kClassId:
-						m_currentSourceMadeUpFieldIdentifier = specialMdc.GetFieldId2(WfiGlossTags.kClassId, "ExactOccurrences", false);
-						concordanceItems = m_specialSda.VecProp(selObj.Hvo, m_currentSourceMadeUpFieldIdentifier);
+						_currentSourceMadeUpFieldIdentifier = specialMdc.GetFieldId2(WfiGlossTags.kClassId, "ExactOccurrences", false);
+						concordanceItems = _specialSda.VecProp(selObj.Hvo, _currentSourceMadeUpFieldIdentifier);
 						break;
 				}
 				// (Re)set selected state in cache, so default behavior of checked is used.
 				foreach (var concId in concordanceItems)
-					m_specialSda.SetInt(concId, XMLViewsDataCache.ktagItemSelected, 1);
+					_specialSda.SetInt(concId, XMLViewsDataCache.ktagItemSelected, 1);
 
 				// Set the initial value for the filtering status.
 				SetFilterStatus(!string.IsNullOrWhiteSpace(_filterMessage));
@@ -684,26 +687,26 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		{
 			if (fIsFiltered)
 			{
-				m_toolStripFilterStatusLabel.BackColor = Color.Yellow;
-				m_toolStripFilterStatusLabel.Text = LanguageExplorerResources.ksFiltered;
+				_toolStripFilterStatusLabel.BackColor = Color.Yellow;
+				_toolStripFilterStatusLabel.Text = LanguageExplorerResources.ksFiltered;
 			}
 			else
 			{
-				m_toolStripFilterStatusLabel.BackColor = Color.FromKnownColor(KnownColor.Control);
-				m_toolStripFilterStatusLabel.Text = string.Empty;
+				_toolStripFilterStatusLabel.BackColor = Color.FromKnownColor(KnownColor.Control);
+				_toolStripFilterStatusLabel.Text = string.Empty;
 			}
 		}
 
 		private void SetRecordStatus()
 		{
-			var cobj = m_currentBrowseView.Clerk.ListSize;
-			var idx = m_currentBrowseView.BrowseViewer.SelectedIndex;
+			var cobj = _currentBrowseView.Clerk.ListSize;
+			var idx = _currentBrowseView.BrowseViewer.SelectedIndex;
 			var sMsg = cobj == 0 ? LanguageExplorerResources.ksNoRecords : String.Format("{0}/{1}", idx + 1, cobj);
-			m_toolStripRecordStatusLabel.Text = sMsg;
-			m_toolStripProgressBar.Value = m_toolStripProgressBar.Minimum;	// clear the progress bar
+			_toolStripRecordStatusLabel.Text = sMsg;
+			_toolStripProgressBar.Value = _toolStripProgressBar.Minimum;	// clear the progress bar
 		}
 
-		void m_currentBrowseView_CheckBoxChanged(object sender, CheckBoxChangedEventArgs e)
+		void CurrentBrowseView_CheckBoxChanged(object sender, CheckBoxChangedEventArgs e)
 		{
 			CheckAssignBtnEnabling();
 		}
@@ -713,40 +716,40 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			using (new WaitCursor(this, false))
 			{
 				var newTarget = (IAnalysis)(tvTarget.SelectedNode.Tag);
-				var checkedItems = m_currentBrowseView.CheckedItems;
+				var checkedItems = _currentBrowseView.CheckedItems;
 				var src = (IAnalysis)tvSource.SelectedNode.Tag;
 				if (checkedItems.Count > 0)
 				{
-					m_toolStripProgressBar.Minimum = 0;
-					m_toolStripProgressBar.Maximum = checkedItems.Count;
-					m_toolStripProgressBar.Step = 1;
-					m_toolStripProgressBar.Value = 0;
+					_toolStripProgressBar.Minimum = 0;
+					_toolStripProgressBar.Maximum = checkedItems.Count;
+					_toolStripProgressBar.Step = 1;
+					_toolStripProgressBar.Value = 0;
 				}
 
-				UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksUndoAssignAnalyses, LanguageExplorerResources.ksRedoAssignAnalyses, m_specialSda.GetActionHandler(), () =>
+				UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksUndoAssignAnalyses, LanguageExplorerResources.ksRedoAssignAnalyses, _specialSda.GetActionHandler(), () =>
 				{
 					var concSda = ConcSda;
 					var originalValues = new Dictionary<int, IParaFragment>();
-					foreach (var originalHvo in concSda.VecProp(src.Hvo, m_currentSourceMadeUpFieldIdentifier))
+					foreach (var originalHvo in concSda.VecProp(src.Hvo, _currentSourceMadeUpFieldIdentifier))
 						originalValues.Add(originalHvo, concSda.OccurrenceFromHvo(originalHvo));
 					foreach (var fakeHvo in checkedItems)
 					{
 						originalValues.Remove(fakeHvo);
 						var analysisOccurrence = concSda.OccurrenceFromHvo(fakeHvo);
 						((AnalysisOccurrence)analysisOccurrence).Analysis = newTarget;
-						m_specialSda.SetInt(fakeHvo, XMLViewsDataCache.ktagItemSelected, 0);
-						m_toolStripProgressBar.PerformStep();
+						_specialSda.SetInt(fakeHvo, XMLViewsDataCache.ktagItemSelected, 0);
+						_toolStripProgressBar.PerformStep();
 					}
 					// Make sure the correct updated occurrences will be computed when needed in Refresh of the
 					// occurrences pane and anywhere else.
 					concSda.UpdateExactAnalysisOccurrences(src);
-					var clerk = m_recordClerks[newTarget.ClassID];
+					var clerk = _recordClerks[newTarget.ClassID];
 					var clerkSda = (ConcDecorator)((DomainDataByFlidDecoratorBase) clerk.VirtualListPublisher).BaseSda;
 					clerkSda.UpdateExactAnalysisOccurrences(newTarget);
 				});
 
 				CheckAssignBtnEnabling();
-				m_toolStripProgressBar.Value = 0;
+				_toolStripProgressBar.Value = 0;
 				SetRecordStatus();
 			}
 		}

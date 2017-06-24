@@ -117,15 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="BasicPlusFilter" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\BasicPlusFilter.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
-    <comment>Do Not Localize</comment>
-  </data>
-  <data name="CompleteFilter" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\CompleteFilter.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
-    <comment>Do Not Localize</comment>
-  </data>
   <data name="ksAffixRuleIndex" xml:space="preserve">
     <value>Index</value>
   </data>
@@ -298,5 +289,12 @@
   </data>
   <data name="ksUndoRemovingSlot" xml:space="preserve">
     <value>Undo Removing the {0} Slot</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="VisibilityFilter_All" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\VisibilityFilter_All.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="HideAdvancedListItemFields" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\HideAdvancedListItemFields.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
 </root>

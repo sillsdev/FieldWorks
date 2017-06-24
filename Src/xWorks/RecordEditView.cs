@@ -190,8 +190,8 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary />
 		public override void RecordNavigation_Message_Handler(object newValue)
 		{
-			// Do not call base.
-			if(!m_fullyInitialized)
+			// Do not call base since we don't want the superclass behavior.
+			if (!m_fullyInitialized)
 				return;
 
 			// persist Clerk's CurrentIndex in a db specific way

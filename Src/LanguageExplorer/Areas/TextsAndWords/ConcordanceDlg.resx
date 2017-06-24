@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!--
 	Microsoft ResX Schema
@@ -285,28 +285,28 @@
   <data name="&gt;&gt;btnClose.ZOrder" xml:space="preserve">
 	<value>5</value>
   </data>
-  <data name="m_pnlConcBrowseHolder.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+  <data name="_pnlConcBrowseHolder.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
 	<value>Top, Bottom, Left, Right</value>
   </data>
-  <data name="m_pnlConcBrowseHolder.Location" type="System.Drawing.Point, System.Drawing">
+  <data name="_pnlConcBrowseHolder.Location" type="System.Drawing.Point, System.Drawing">
 	<value>8, 248</value>
   </data>
-  <data name="m_pnlConcBrowseHolder.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="_pnlConcBrowseHolder.Size" type="System.Drawing.Size, System.Drawing">
 	<value>616, 182</value>
   </data>
-  <data name="m_pnlConcBrowseHolder.TabIndex" type="System.Int32, mscorlib">
+  <data name="_pnlConcBrowseHolder.TabIndex" type="System.Int32, mscorlib">
 	<value>8</value>
   </data>
-  <data name="&gt;&gt;m_pnlConcBrowseHolder.Name" xml:space="preserve">
-	<value>m_pnlConcBrowseHolder</value>
+  <data name="&gt;&gt;_pnlConcBrowseHolder.Name" xml:space="preserve">
+	<value>_pnlConcBrowseHolder</value>
   </data>
-  <data name="&gt;&gt;m_pnlConcBrowseHolder.Type" xml:space="preserve">
+  <data name="&gt;&gt;_pnlConcBrowseHolder.Type" xml:space="preserve">
 	<value>System.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;m_pnlConcBrowseHolder.Parent" xml:space="preserve">
+  <data name="&gt;&gt;_pnlConcBrowseHolder.Parent" xml:space="preserve">
 	<value>$this</value>
   </data>
-  <data name="&gt;&gt;m_pnlConcBrowseHolder.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;_pnlConcBrowseHolder.ZOrder" xml:space="preserve">
 	<value>4</value>
   </data>
   <data name="label4.AutoSize" type="System.Boolean, mscorlib">
@@ -390,70 +390,70 @@
   <data name="&gt;&gt;btnHelp.ZOrder" xml:space="preserve">
 	<value>1</value>
   </data>
-  <metadata name="m_statusStrip.Locked" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <metadata name="_statusStrip.Locked" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
 	<value>True</value>
   </metadata>
-  <metadata name="m_statusStrip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+  <metadata name="_statusStrip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
 	<value>8, 436</value>
   </metadata>
-  <data name="m_statusStrip.AccessibleName" xml:space="preserve">
+  <data name="_statusStrip.AccessibleName" xml:space="preserve">
 	<value>StatusStrip</value>
   </data>
-  <data name="m_statusStrip.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+  <data name="_statusStrip.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
 	<value>Bottom, Left</value>
   </data>
-  <data name="m_statusStrip.AutoSize" type="System.Boolean, mscorlib">
+  <data name="_statusStrip.AutoSize" type="System.Boolean, mscorlib">
 	<value>False</value>
   </data>
-  <data name="m_statusStrip.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+  <data name="_statusStrip.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
 	<value>None</value>
   </data>
-  <data name="m_toolStripProgressBar.AccessibleName" xml:space="preserve">
+  <data name="_toolStripProgressBar.AccessibleName" xml:space="preserve">
 	<value>ProgressBar</value>
   </data>
-  <data name="m_toolStripProgressBar.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="_toolStripProgressBar.Size" type="System.Drawing.Size, System.Drawing">
 	<value>200, 19</value>
   </data>
-  <data name="m_toolStripFilterStatusLabel.AccessibleName" xml:space="preserve">
+  <data name="_toolStripFilterStatusLabel.AccessibleName" xml:space="preserve">
 	<value>FilterStatus</value>
   </data>
-  <data name="m_toolStripFilterStatusLabel.AutoSize" type="System.Boolean, mscorlib">
+  <data name="_toolStripFilterStatusLabel.AutoSize" type="System.Boolean, mscorlib">
 	<value>False</value>
   </data>
-  <data name="m_toolStripFilterStatusLabel.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="_toolStripFilterStatusLabel.Size" type="System.Drawing.Size, System.Drawing">
 	<value>96, 19</value>
   </data>
-  <data name="m_toolStripRecordStatusLabel.AccessibleName" xml:space="preserve">
+  <data name="_toolStripRecordStatusLabel.AccessibleName" xml:space="preserve">
 	<value>RecordStatus</value>
   </data>
-  <data name="m_toolStripRecordStatusLabel.AutoSize" type="System.Boolean, mscorlib">
+  <data name="_toolStripRecordStatusLabel.AutoSize" type="System.Boolean, mscorlib">
 	<value>False</value>
   </data>
-  <data name="m_toolStripRecordStatusLabel.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="_toolStripRecordStatusLabel.Size" type="System.Drawing.Size, System.Drawing">
 	<value>80, 19</value>
   </data>
-  <data name="m_statusStrip.Location" type="System.Drawing.Point, System.Drawing">
+  <data name="_statusStrip.Location" type="System.Drawing.Point, System.Drawing">
 	<value>8, 436</value>
   </data>
-  <data name="m_statusStrip.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="_statusStrip.Size" type="System.Drawing.Size, System.Drawing">
 	<value>400, 23</value>
   </data>
-  <data name="m_statusStrip.TabIndex" type="System.Int32, mscorlib">
+  <data name="_statusStrip.TabIndex" type="System.Int32, mscorlib">
 	<value>12</value>
   </data>
-  <data name="m_statusStrip.Text" xml:space="preserve">
+  <data name="_statusStrip.Text" xml:space="preserve">
 	<value>Status</value>
   </data>
-  <data name="&gt;&gt;m_statusStrip.Name" xml:space="preserve">
-	<value>m_statusStrip</value>
+  <data name="&gt;&gt;_statusStrip.Name" xml:space="preserve">
+	<value>_statusStrip</value>
   </data>
-  <data name="&gt;&gt;m_statusStrip.Type" xml:space="preserve">
+  <data name="&gt;&gt;_statusStrip.Type" xml:space="preserve">
 	<value>System.Windows.Forms.StatusStrip, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;m_statusStrip.Parent" xml:space="preserve">
+  <data name="&gt;&gt;_statusStrip.Parent" xml:space="preserve">
 	<value>$this</value>
   </data>
-  <data name="&gt;&gt;m_statusStrip.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;_statusStrip.ZOrder" xml:space="preserve">
 	<value>0</value>
   </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
@@ -474,22 +474,22 @@
   <data name="$this.Text" xml:space="preserve">
 	<value>Analysis Usage</value>
   </data>
-  <data name="&gt;&gt;m_toolStripProgressBar.Name" xml:space="preserve">
-	<value>m_toolStripProgressBar</value>
+  <data name="&gt;&gt;_toolStripProgressBar.Name" xml:space="preserve">
+	<value>_toolStripProgressBar</value>
   </data>
-  <data name="&gt;&gt;m_toolStripProgressBar.Type" xml:space="preserve">
+  <data name="&gt;&gt;_toolStripProgressBar.Type" xml:space="preserve">
 	<value>System.Windows.Forms.ToolStripProgressBar, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;m_toolStripFilterStatusLabel.Name" xml:space="preserve">
-	<value>m_toolStripFilterStatusLabel</value>
+  <data name="&gt;&gt;_toolStripFilterStatusLabel.Name" xml:space="preserve">
+	<value>_toolStripFilterStatusLabel</value>
   </data>
-  <data name="&gt;&gt;m_toolStripFilterStatusLabel.Type" xml:space="preserve">
+  <data name="&gt;&gt;_toolStripFilterStatusLabel.Type" xml:space="preserve">
 	<value>System.Windows.Forms.ToolStripStatusLabel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;m_toolStripRecordStatusLabel.Name" xml:space="preserve">
-	<value>m_toolStripRecordStatusLabel</value>
+  <data name="&gt;&gt;_toolStripRecordStatusLabel.Name" xml:space="preserve">
+	<value>_toolStripRecordStatusLabel</value>
   </data>
-  <data name="&gt;&gt;m_toolStripRecordStatusLabel.Type" xml:space="preserve">
+  <data name="&gt;&gt;_toolStripRecordStatusLabel.Type" xml:space="preserve">
 	<value>System.Windows.Forms.ToolStripStatusLabel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">

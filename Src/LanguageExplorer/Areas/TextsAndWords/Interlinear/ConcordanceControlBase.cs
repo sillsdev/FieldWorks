@@ -125,6 +125,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			get
 			{
 				CheckDisposed();
+#if RANDYTODO
+				// TODO: Do something to make the area name(s) be constants, here and for other cases.
+				// TODO: Do the same for tool names.
+#endif
 				return "textAndWords";
 			}
 		}
@@ -205,13 +209,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			return true;
 		}
 
-		#region Implementation of IMainUserControl
+#region Implementation of IMainUserControl
 
 		/// <summary>
 		/// Get or set the name to be used by the accessibility object.
 		/// </summary>
 		string IMainUserControl.AccName { get; set; }
 
-		#endregion
+#endregion
 	}
 }

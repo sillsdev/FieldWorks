@@ -62,21 +62,6 @@ namespace LanguageExplorer.Areas.Lexicon {
         
         /// <summary>
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
-        ///&lt;!-- this file lists special instructions for XDE nodes. Currently, all that you are allowed to say is
-        ///that a node is not visible. You do that by listing the node here. the id of the node must match the XDE
-        ///node that would otherwise produce a slice which you want to hide. note that most XDE nodes
-        ///do not otherwise have an ID; you usually have to add 1 before you can reference it in this kind of document.--&gt;
-        ///&lt;SliceFilter&gt;
-        ///	&lt;node id=&quot;MoAffixAllomorphInflectionClass [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string BasicFilter {
-            get {
-                return ResourceManager.GetString("BasicFilter", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
         ///&lt;root&gt;
         ///	&lt;parameters toolId=&quot;bulkEditEntriesOrSenses&quot; filterBar=&quot;true&quot; bulkEdit=&quot;true&quot; selectColumn=&quot;true&quot; bulkEditListItemsClasses=&quot;LexEntry,LexSense,LexEntryRef,LexPronunciation,MoForm,LexExampleSentence,CmTranslation&quot; bulkEditListItemsGhostFields=&quot;LexDb.AllPossiblePronunciations,LexDb.AllPossibleAllomorphs,LexDb.AllExampleSentenceTargets,LexDb.AllExampleTranslationTargets,LexDb.AllComplexEntryRefPropertyTargets&quot;&gt;
         ///		&lt;includeColumns /&gt;
@@ -505,6 +490,21 @@ namespace LanguageExplorer.Areas.Lexicon {
         internal static string Show_Unused_Items {
             get {
                 return ResourceManager.GetString("Show_Unused_Items", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+        ///&lt;!-- this file lists special instructions for XDE nodes. Currently, all that you are allowed to say is
+        ///that a node is not visible. You do that by listing the node here. the id of the node must match the XDE
+        ///node that would otherwise produce a slice which you want to hide. note that most XDE nodes
+        ///do not otherwise have an ID; you usually have to add 1 before you can reference it in this kind of document.--&gt;
+        ///&lt;SliceFilter&gt;
+        ///	&lt;node id=&quot;MoAffixAllomorphInflectionClass [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string HideAdvancedFeatureFields {
+            get {
+                return ResourceManager.GetString("HideAdvancedFeatureFields", resourceCulture);
             }
         }
     }

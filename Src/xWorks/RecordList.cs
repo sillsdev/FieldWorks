@@ -285,11 +285,7 @@ namespace SIL.FieldWorks.XWorks
 			get
 			{
 				CheckDisposed();
-				// we only have a reference to the filter which means that it might have been
-				// disposed. In that case treat it as if we wouldn't have a filter.
-				var disposable = m_filter as IDisposable;
-				if (disposable != null)
-					m_filter = null;
+
 				return m_filter;
 			}
 			set
@@ -618,9 +614,9 @@ namespace SIL.FieldWorks.XWorks
 				m_fEnableSendPropChanged = value;
 			}
 		}
-		#endregion Properties
+#endregion Properties
 
-		#region DisposableBase
+#region DisposableBase
 
 		protected override void DisposeManagedResources()
 		{
@@ -657,9 +653,9 @@ namespace SIL.FieldWorks.XWorks
 			Subscriber = null;
 		}
 
-		#endregion DisposableBase
+#endregion DisposableBase
 
-		#region IVwNotifyChange implementation
+#region IVwNotifyChange implementation
 
 		public virtual void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
 		{
@@ -858,9 +854,9 @@ namespace SIL.FieldWorks.XWorks
 			return false;
 		}
 
-		#endregion IVwNotifyChange implementation
+#endregion IVwNotifyChange implementation
 
-		#region ISortItemProvider implementation
+#region ISortItemProvider implementation
 
 		/// <summary>
 		/// Get the nth item in the main list.
@@ -940,7 +936,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 
-		#endregion ISortItemProvider implementation
+#endregion ISortItemProvider implementation
 
 		/// <summary>
 		/// Transfers ownership of obj to RecordList. RecordList is now responsible for
@@ -1067,7 +1063,7 @@ namespace SIL.FieldWorks.XWorks
 				ReloadList();
 		}
 
-		#region navigation
+#region navigation
 
 		/// <summary>
 		/// Return the index (in m_sortedObjects) of the first displayed object.
@@ -1141,7 +1137,7 @@ namespace SIL.FieldWorks.XWorks
 				return Math.Max(m_currentIndex - 1, 0);
 			}
 		}
-		#endregion
+#endregion
 
 		/// <summary>
 		/// This version of ReloadList assumes that there is a correct current list except that
@@ -2689,25 +2685,25 @@ namespace SIL.FieldWorks.XWorks
 			return persistedCurrentIndex;
 		}
 
-		#region Implementation of IPropertyTableProvider
+#region Implementation of IPropertyTableProvider
 
 		/// <summary>
 		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
 		/// </summary>
 		public IPropertyTable PropertyTable { get; private set; }
 
-		#endregion
+#endregion
 
-		#region Implementation of IPublisherProvider
+#region Implementation of IPublisherProvider
 
 		/// <summary>
 		/// Get the IPublisher.
 		/// </summary>
 		public IPublisher Publisher { get; private set; }
 
-		#endregion
+#endregion
 
-		#region Implementation of ISubscriberProvider
+#region Implementation of ISubscriberProvider
 
 		/// <summary>
 		/// Get the ISubscriber.
@@ -2740,7 +2736,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 	}
 
-		#endregion
+#endregion
 
 		private class CpiPathBasedCreateAndInsert : ICreateAndInsert<ICmObject>
 		{
@@ -2755,14 +2751,14 @@ namespace SIL.FieldWorks.XWorks
 			private readonly IList<ClassAndPropInfo> CpiPath;
 			private readonly RecordList List;
 
-			#region ICreateAndInsert<ICmObject> Members
+#region ICreateAndInsert<ICmObject> Members
 
 			public ICmObject Create()
 	{
 				return List.CreateNewObject(HvoOwner, CpiPath);
 			}
 
-			#endregion
+#endregion
 		}
 	}
 }

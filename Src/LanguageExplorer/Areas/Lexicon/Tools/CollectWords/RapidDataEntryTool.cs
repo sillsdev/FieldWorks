@@ -93,6 +93,22 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 		{
 			PropertyTable.SetProperty("RecordListWidthGlobal", _collapsingSplitContainer.SplitterDistance, SettingsGroup.GlobalSettings, true, false);
 
+#if RANDYTODO
+			// If these removals are more permanent, then move up to the "RemoveObsoleteProperties" method on the main window.
+			/*
+			Q: Jason: "This won't result in us loosing track of current entries when switching between tools will it?
+					I can't remember what this property is used for at the moment."
+			A: Randy: "One of the changes (not integration stuff like all of these ones) I plan is to get all record
+					clerk instances to come out of a repository like class, which creates them all and returns them, when requested.
+					A tool will then activate them, when the tool is activated, and the tool will deactivate them, when the tool changes.
+					That is something like what is done in 'develop' with the PropertyTable (sans creation).
+					But, I'd like to see use of PropertyTable reduced to actual properties that are persisted,
+					and not as yet another 'God-object' in the code that knows how to get anything (eg. LCMCache, service locator, etc).
+					I'm not there yet, but that is where I'd like to go.
+
+					So, I suspect those properties will eventually go away permanently, but I'm not there yet."
+			*/
+#endif
 			PropertyTable.RemoveProperty(RecordClerk.ClerkSelectedObjectPropertyId(_nestedRecordClerk.Id));
 			PropertyTable.RemoveProperty(RecordClerk.ClerkSelectedObjectPropertyId(_recordClerk.Id));
 
@@ -152,7 +168,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 
 			var dataTreeMenuHandler = new LexEntryMenuHandler();
 			dataTreeMenuHandler.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
-			var recordEditView = new RecordEditView(doc.Root.Element("recordeditview").Element("parameters"), XDocument.Parse(LexiconResources.BasicFilter), _recordClerk, dataTreeMenuHandler);
+			var recordEditView = new RecordEditView(doc.Root.Element("recordeditview").Element("parameters"), XDocument.Parse(LexiconResources.HideAdvancedFeatureFields), _recordClerk, dataTreeMenuHandler);
 			_nestedRecordClerk = new RecordClerk("RDEwords", new RecordList(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), true, cache.MetaDataCacheAccessor.GetFieldId2(CmSemanticDomainTags.kClassId, "ReferringSenses", false), cache.LanguageProject.SemanticDomainListOA, "ReferringSenses"), new PropertyRecordSorter("ShortName"), "Default", null, false, false, _recordClerk);
 			_nestedRecordClerk.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
 			_recordBrowseView = new RecordBrowseView(doc.Root.Element("recordbrowseview").Element("parameters"), _nestedRecordClerk);

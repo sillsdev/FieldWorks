@@ -226,10 +226,6 @@
   <data name="Show_Entry_In_Concordance" xml:space="preserve">
     <value>Show Entry in Concordance</value>
   </data>
-  <data name="BasicFilter" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\..\Resources\BasicFilter.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
-    <comment>Do Not Localize</comment>
-  </data>
   <data name="BulkEditEntriesOrSensesToolParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\..\Resources\BulkEditEntriesOrSensesToolParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
     <comment>Do Not Localize</comment>
@@ -260,5 +256,8 @@
   </data>
   <data name="Show_Unused_Items" xml:space="preserve">
     <value>Show Unused Items</value>
+  </data>
+  <data name="HideAdvancedFeatureFields" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\HideAdvancedFeatureFields.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
 </root>

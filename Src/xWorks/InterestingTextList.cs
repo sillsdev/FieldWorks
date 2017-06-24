@@ -35,6 +35,9 @@ namespace SIL.FieldWorks.XWorks
 		/// tested efficiently.
 		/// </summary>
 		private HashSet<IStText> m_interestingTests;
+#if RANDYTODO
+		// TODO: Pay attention to the comment and behavior of 'RelatedClerkIds'.
+#endif
 		/// <summary>
 		/// These two RecordClerks both need to respond to InterestingTextList changes EVEN when not loaded.
 		/// (LT-13217)

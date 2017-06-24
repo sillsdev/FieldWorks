@@ -251,6 +251,9 @@
     <Content Include="Resources\ReversalEditCompleteToolParameters.xml" />
     <Content Include="Resources\ReversalToolReversalIndexPOSBrowseViewParameters.xml" />
     <Content Include="Resources\ReversalToolReversalIndexPOSRecordEditViewParameters.xml" />
+    <Content Include="Resources\VisibilityFilter_All.xml" />
+    <Content Include="Resources\HideAdvancedListItemFields.xml" />
+    <Content Include="Resources\HideAdvancedFeatureFields.xml" />
     <Content Include="Resources\WordListColumns.xml" />
     <Content Include="Resources\WordListConcordanceToolParameters.xml" />
     <Content Include="Resources\WordListParameters.xml" />
@@ -260,12 +263,9 @@
     <None Include="images\NavigationImages\FWRightArrow.bmp" />
     <Content Include="Resources\AdhocCoprohibitionRuleEditToolParameters.xml" />
     <Content Include="Resources\AnalysesRecordEditViewParameters.xml" />
-    <Content Include="Resources\BasicFilter.xml" />
-    <Content Include="Resources\BasicPlusFilter.xml" />
     <Content Include="Resources\BulkEditEntriesOrSensesToolParameters.xml" />
     <Content Include="Resources\BulkEditPhonemesToolParameters.xml" />
     <Content Include="Resources\BulkEditWordformsToolParameters.xml" />
-    <Content Include="Resources\CompleteFilter.xml" />
     <Content Include="Resources\ComplexConcordanceToolParameters.xml" />
     <Content Include="Resources\CompoundRuleAdvancedEditToolParameters.xml" />
     <Content Include="Resources\ConcordanceColumns.xml" />

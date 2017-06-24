@@ -128,7 +128,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 			// TODO: Set up 'dataTreeMenuHandler' to handle menu events.
 			// TODO: Install menus and connect them to event handlers. (See "CreateContextMenuStrip" method for where the menus are.)
 #endif
-			var recordEditView = new RecordEditView(recordEditViewConfigurationDocument.Root, XDocument.Parse(AreaResources.BasicPlusFilter), _recordClerk);
+			var recordEditView = new RecordEditView(recordEditViewConfigurationDocument.Root, XDocument.Parse(AreaResources.HideAdvancedListItemFields), _recordClerk);
 			var mainMultiPaneParameters = new MultiPaneParameters
 			{
 				Orientation = Orientation.Vertical,
