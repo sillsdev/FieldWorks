@@ -94,8 +94,7 @@
       <Name>FwUtils</Name>
       <HintPath>..\..\..\..\Output\Debug\FwUtils.dll</HintPath>
     </Reference>
-    <Reference Include="FDOTests">
-      <Name>FDOTests</Name>
+    <Reference Include="SIL.LCModel.Tests">
       <HintPath>..\..\..\..\Output\Debug\SIL.LCModel.Tests.dll</HintPath>
     </Reference>
     <Reference Include="FixFwDataDll">

@@ -97,7 +97,7 @@
     <Reference Include="SIL.LCModel">
       <HintPath>..\..\..\..\Output\Debug\SIL.LCModel.dll</HintPath>
     </Reference>
-    <Reference Include="FDOTests">
+    <Reference Include="SIL.LCModel.Tests">
       <HintPath>..\..\..\..\Output\Debug\SIL.LCModel.Tests.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation">

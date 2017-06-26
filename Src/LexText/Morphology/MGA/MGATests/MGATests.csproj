@@ -137,8 +137,8 @@
       <Name>XMLUtils</Name>
       <HintPath>..\..\..\..\..\Output\Debug\XMLUtils.dll</HintPath>
     </Reference>
-    <Reference Include="FDOTests">
-      <Name>FDOTests</Name>
+    <Reference Include="SIL.LCModel.Tests">
+      <Name>SIL.LCModel.Tests</Name>
       <HintPath>..\..\..\..\..\Output\Debug\SIL.LCModel.Tests.dll</HintPath>
     </Reference>
     <Reference Include="FwUtilsTests">

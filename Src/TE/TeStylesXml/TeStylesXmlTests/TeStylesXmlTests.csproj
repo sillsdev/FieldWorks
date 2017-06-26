@@ -104,8 +104,7 @@
       <Name>SIL.LCModel</Name>
       <HintPath>..\..\..\..\Output\Debug\SIL.LCModel.dll</HintPath>
     </Reference>
-    <Reference Include="FDOTests">
-      <Name>FDOTests</Name>
+    <Reference Include="SIL.LCModel.Tests">
       <HintPath>..\..\..\..\Output\Debug\SIL.LCModel.Tests.dll</HintPath>
     </Reference>
     <Reference Include="Framework, Version=3.2.0.9, Culture=neutral, processorArchitecture=MSIL">
