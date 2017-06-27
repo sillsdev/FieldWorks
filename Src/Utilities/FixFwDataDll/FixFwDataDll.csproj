@@ -112,7 +112,6 @@
     <Compile Include="FixErrorsDlg.Designer.cs">
       <DependentUpon>FixErrorsDlg.cs</DependentUpon>
     </Compile>
-    <Compile Include="ErrorFixer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -122,7 +121,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Strings.resx</DependentUpon>
     </Compile>
-    <Compile Include="WriteAllObjectsUtility.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="FixErrorsDlg.resx">

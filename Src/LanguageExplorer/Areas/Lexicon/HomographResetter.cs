@@ -1,23 +1,34 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System.Diagnostics;
+using System;
 using System.Linq;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FdoUi;
-using SIL.FieldWorks.FwCoreDlgs;
 using System.Windows.Forms;
+using LanguageExplorer.UtilityTools;
 
 namespace LanguageExplorer.Areas.Lexicon
 {
 	/// <summary>
-	/// Summary description for HomographResetter.
+	/// What: This utility cleans up the homographs numbers of lexical entries. It preserves the current relative order of homographs, so you won't lose any ordering you have done.
+	/// When: Run this utility when the FieldWorks project has entries with duplicate or missing homograph numbers, or when there are gaps in the homograph number sequences.
 	/// </summary>
 	internal sealed class HomographResetter : IUtility
 	{
 		private UtilityDlg m_dlg;
+
+		/// <summary />
+		internal HomographResetter(UtilityDlg utilityDlg)
+		{
+			if (utilityDlg == null)
+			{
+				throw new ArgumentNullException(nameof(utilityDlg));
+			}
+			m_dlg = utilityDlg;
+		}
 
 		/// <summary>
 		/// Override method to return the Label property.
@@ -33,38 +44,13 @@ namespace LanguageExplorer.Areas.Lexicon
 		/// <summary>
 		/// Get the main label describing the utility.
 		/// </summary>
-		public string Label
-		{
-			get
-			{
-				Debug.Assert(m_dlg != null);
-				return LanguageExplorerResources.ksReassignHomographs;
-			}
-		}
-
-		/// <summary>
-		/// Set the UtilityDlg.
-		/// </summary>
-		/// <remarks>
-		/// This must be set, before calling any other property or method.
-		/// </remarks>
-		public UtilityDlg Dialog
-		{
-			set
-			{
-				Debug.Assert(value != null);
-				Debug.Assert(m_dlg == null);
-
-				m_dlg = value;
-			}
-		}
+		public string Label => LanguageExplorerResources.ksReassignHomographs;
 
 		/// <summary>
 		/// Notify the utility is has been selected in the dlg.
 		/// </summary>
 		public void OnSelection()
 		{
-			Debug.Assert(m_dlg != null);
 			m_dlg.WhenDescription = LanguageExplorerResources.ksWhenToReassignHomographs;
 			m_dlg.WhatDescription = LanguageExplorerResources.ksWhatIsReassignHomographs;
 			m_dlg.RedoDescription = LanguageExplorerResources.ksGenericUtilityCannotUndo;
@@ -75,7 +61,6 @@ namespace LanguageExplorer.Areas.Lexicon
 		/// </summary>
 		public void Process()
 		{
-			Debug.Assert(m_dlg != null);
 			var cache = m_dlg.PropertyTable.GetValue<FdoCache>("cache");
 			var homographWsId = cache.LanguageProject.HomographWs;
 			var homographWs = cache.ServiceLocator.WritingSystems.AllWritingSystems.Where(ws => ws.Id == homographWsId);
@@ -100,16 +85,6 @@ namespace LanguageExplorer.Areas.Lexicon
 					});
 			}
 			cache.LanguageProject.LexDbOA.ResetHomographNumbers(new ProgressBarWrapper(m_dlg.ProgressBar));
-		}
-
-		/// <summary>
-		/// Load 0 or more items in the list box.
-		/// </summary>
-		public void LoadUtilities()
-		{
-			Debug.Assert(m_dlg != null);
-			m_dlg.Utilities.Items.Add(this);
-
 		}
 
 		#endregion IUtility implementation

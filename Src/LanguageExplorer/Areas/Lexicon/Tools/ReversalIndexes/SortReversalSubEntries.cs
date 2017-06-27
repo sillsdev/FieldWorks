@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,19 +6,30 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
+using LanguageExplorer.UtilityTools;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.Language;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 {
 	internal class SortReversalSubEntries : IUtility
 	{
-		public UtilityDlg Dialog { set; private get; }
+		private UtilityDlg m_dlg;
 
-		public string Label { get { return LanguageExplorerResources.SortReversalSubentries_Label; } }
+		/// <summary />
+		internal SortReversalSubEntries(UtilityDlg utilityDlg)
+		{
+			if (utilityDlg == null)
+			{
+				throw new ArgumentNullException(nameof(utilityDlg));
+			}
+			m_dlg = utilityDlg;
+		}
+
+		/// <summary />
+		public string Label => LanguageExplorerResources.SortReversalSubentries_Label;
 
 		/// <summary>
 		/// This is what is actually shown in the dialog as the ID of the task.
@@ -28,28 +39,26 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 			return Label;
 		}
 
-		public void LoadUtilities()
-		{
-			Dialog.Utilities.Items.Add(this);
-		}
-
+		/// <summary />
 		public void OnSelection()
 		{
-			Dialog.WhenDescription = LanguageExplorerResources.ksWhenToSortReversalSubentries;
-			Dialog.WhatDescription = LanguageExplorerResources.ksWhatIsSortReversalSubentries;
-			Dialog.RedoDescription = LanguageExplorerResources.ksWarningSortReversalSubentries;
+			m_dlg.WhenDescription = LanguageExplorerResources.ksWhenToSortReversalSubentries;
+			m_dlg.WhatDescription = LanguageExplorerResources.ksWhatIsSortReversalSubentries;
+			m_dlg.RedoDescription = LanguageExplorerResources.ksWarningSortReversalSubentries;
 		}
 
+		/// <summary />
 		public void Process()
 		{
-			var cache = Dialog.PropertyTable.GetValue<FdoCache>("cache");
+			var cache = m_dlg.PropertyTable.GetValue<FdoCache>("cache");
 			NonUndoableUnitOfWorkHelper.DoSomehow(cache.ActionHandlerAccessor, () =>
 			{
 				SortReversalSubEntriesInPlace(cache);
-				MessageBox.Show(Dialog, LanguageExplorerResources.SortReversalSubEntries_CompletedContent, LanguageExplorerResources.SortReversalSubEntries_CompletedTitle, MessageBoxButtons.OK, MessageBoxIcon.Information);
+				MessageBox.Show(m_dlg, LanguageExplorerResources.SortReversalSubEntries_CompletedContent, LanguageExplorerResources.SortReversalSubEntries_CompletedTitle, MessageBoxButtons.OK, MessageBoxIcon.Information);
 			});
 		}
 
+		/// <summary />
 		internal static void SortReversalSubEntriesInPlace(FdoCache cache)
 		{
 			var allReversalIndexes = cache.ServiceLocator.GetInstance<IReversalIndexRepository>().AllInstances();
@@ -68,11 +77,13 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 			}
 		}
 
+		/// <summary />
 		internal class ReversalSubEntryIcuComparer : IComparer<IReversalIndexEntry>, IDisposable
 		{
 			private readonly int m_ws;
 			private readonly ManagedLgIcuCollator m_collator;
 
+			/// <summary />
 			public ReversalSubEntryIcuComparer(FdoCache cache, string ws)
 			{
 				m_collator = new ManagedLgIcuCollator();
@@ -80,6 +91,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 				m_collator.Open(ws);
 			}
 
+			/// <summary />
 			public int Compare(IReversalIndexEntry x, IReversalIndexEntry y)
 			{
 				var xString = x.ReversalForm.get_String(m_ws);
@@ -90,12 +102,14 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 #region disposal
 			~ReversalSubEntryIcuComparer() { Dispose(false); }
 
+			/// <summary />
 			public void Dispose()
 			{
 				Dispose(true);
 				GC.SuppressFinalize(this);
 			}
 
+			/// <summary />
 			protected virtual void Dispose(bool disposing)
 			{
 				System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014-15 SIL International
+﻿// Copyright (c) 2014-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -8,10 +8,10 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
+using LanguageExplorer.UtilityTools;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.FwCoreDlgs;
 
 namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 {
@@ -22,33 +22,32 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 	/// </summary>
 	internal sealed class GoldEticGuidFixer : IUtility
 	{
+		private UtilityDlg m_dlg;
+
+		/// <summary />
+		internal GoldEticGuidFixer(UtilityDlg utilityDlg)
+		{
+			if (utilityDlg == null)
+			{
+				throw new ArgumentNullException(nameof(utilityDlg));
+			}
+			m_dlg = utilityDlg;
+		}
+
 		#region IUtility implementation
 		/// <summary>
 		/// Get the main label describing the utility.
 		/// </summary>
-		public string Label { get { return LanguageExplorerResources.GoldEticGuidFixer_Label; } }
-
-		/// <summary>
-		/// Set the UtilityDlg.
-		/// </summary>
-		public UtilityDlg Dialog { set; private get; }
-
-		/// <summary>
-		/// Load any items in list box.
-		/// </summary>
-		public void LoadUtilities()
-		{
-			Dialog.Utilities.Items.Add(this);
-		}
+		public string Label => LanguageExplorerResources.GoldEticGuidFixer_Label;
 
 		/// <summary>
 		/// Notify the utility is has been selected in the dlg.
 		/// </summary>
 		public void OnSelection()
 		{
-			Dialog.WhenDescription = LanguageExplorerResources.ksWhenToSetPartOfSpeechGUIDsToGold;
-			Dialog.WhatDescription = LanguageExplorerResources.ksWhatIsSetPartOfSpeechGUIDsToGold;
-			Dialog.RedoDescription = LanguageExplorerResources.ksGenericUtilityCannotUndo;
+			m_dlg.WhenDescription = LanguageExplorerResources.ksWhenToSetPartOfSpeechGUIDsToGold;
+			m_dlg.WhatDescription = LanguageExplorerResources.ksWhatIsSetPartOfSpeechGUIDsToGold;
+			m_dlg.RedoDescription = LanguageExplorerResources.ksGenericUtilityCannotUndo;
 		}
 
 		/// <summary>
@@ -56,14 +55,14 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 		/// </summary>
 		public void Process()
 		{
-			var cache = Dialog.PropertyTable.GetValue<FdoCache>("cache");
+			var cache = m_dlg.PropertyTable.GetValue<FdoCache>("cache");
 			NonUndoableUnitOfWorkHelper.DoSomehow(cache.ActionHandlerAccessor, () =>
 			{
 				var fixedGuids = ReplacePOSGuidsWithGoldEticGuids(cache);
 				var caption = fixedGuids ? LanguageExplorerResources.GoldEticGuidFixer_Guids_changed_Title : LanguageExplorerResources.GoldEticGuidFixer_NoChangeTitle;
 				var content = fixedGuids ? LanguageExplorerResources.GoldEticGuidFixer_GuidsChangedContent
 												 : LanguageExplorerResources.GoldEticGuidFixer_NoChangeContent;
-				MessageBox.Show(Dialog, content, caption, MessageBoxButtons.OK, MessageBoxIcon.Information);
+				MessageBox.Show(m_dlg, content, caption, MessageBoxButtons.OK, MessageBoxIcon.Information);
 			});
 		}
 
@@ -125,9 +124,9 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 		{
 			if(!string.IsNullOrEmpty(pos.CatalogSourceId))
 			{
-				if(dom.SelectSingleNode(string.Format("//item[@id='{0}' and @guid='{1}']", pos.CatalogSourceId, pos.Guid.ToString())) == null)
+				if(dom.SelectSingleNode($"//item[@id='{pos.CatalogSourceId}' and @guid='{pos.Guid}']") == null)
 				{
-					var selectNodeWithoutGuid = dom.SelectSingleNode(string.Format("//item[@id='{0}']", pos.CatalogSourceId));
+					var selectNodeWithoutGuid = dom.SelectSingleNode($"//item[@id='{pos.CatalogSourceId}']");
 
 					itemsWithBadGuids[pos] = selectNodeWithoutGuid.Attributes["guid"].Value;
 				}

@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2017 SIL International
+// Copyright (c) 2014-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,16 +6,15 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
-using System.Xml;
-using System.Diagnostics;
-using System.IO;
-using System.Xml.Linq;
-using System.Xml.XPath;
-using SIL.Utils;
+using LanguageExplorer.Areas.Grammar.Tools.PosEdit;
+using LanguageExplorer.Areas.Lexicon;
+using LanguageExplorer.Areas.Lexicon.Tools.Edit;
+using LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes;
+using LanguageExplorer.Areas.TextsAndWords.Interlinear;
+using LanguageExplorer.Areas.TextsAndWords.Tools.Analyses;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.Xml;
 
-namespace SIL.FieldWorks.FwCoreDlgs
+namespace LanguageExplorer.UtilityTools
 {
 	/// <summary>
 	/// This dialog presents the users with the list of utilities defined in 'Language Explorer\Configuration\UtilityCatalogInclude.xml'
@@ -37,7 +36,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private System.ComponentModel.Container components = null;
 
 		private const string s_helpTopic = "khtpProjectUtilities";
-		private HelpProvider helpProvider;
+		private HelpProvider m_helpProvider;
 		private Button m_btnRunUtils;
 		private Label label1;
 		private Label label2;
@@ -60,19 +59,19 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			m_helpTopicProvider = helpTopicProvider;
 
-			helpProvider = new HelpProvider
+			m_helpProvider = new HelpProvider
 			{
 				HelpNamespace = FwDirectoryFinder.CodeDirectory + m_helpTopicProvider.GetHelpString("UserHelpFile")
 			};
-			helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(s_helpTopic));
-			helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
+			m_helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(s_helpTopic));
+			m_helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 
 			// The standard localization doesn't seem to be working, so do it explicitly here.
-			label1.Text = FwCoreDlgs.ksUtilities;
-			label2.Text = FwCoreDlgs.ksDescription;
-			m_btnHelp.Text = FwCoreDlgs.ksHelp;
-			m_btnClose.Text = FwCoreDlgs.ks_Close;
-			m_btnRunUtils.Text = FwCoreDlgs.ksRunUtilities;
+			label1.Text = LanguageExplorerResources.ksUtilities;
+			label2.Text = LanguageExplorerResources.ksDescription;
+			m_btnHelp.Text = LanguageExplorerResources.ksHelpForUtiltiesDlg;
+			m_btnClose.Text = LanguageExplorerResources.ks_Close;
+			m_btnRunUtils.Text = LanguageExplorerResources.ksRunUtilities;
 		}
 
 		#region Implementation of IPropertyTableProvider
@@ -111,6 +110,29 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			PropertyTable = flexComponentParameters.PropertyTable;
 			Publisher = flexComponentParameters.Publisher;
 			Subscriber = flexComponentParameters.Subscriber;
+
+			Text = StringTable.Table.LocalizeAttributeValue("FieldWorks Project Utilities");
+			SuspendLayout();
+			m_clbUtilities.Items.Clear();
+			m_clbUtilities.Sorted = false;
+
+			m_clbUtilities.Items.Add(new HomographResetter(this));
+			m_clbUtilities.Items.Add(new ParserAnalysisRemover(this));
+			m_clbUtilities.Items.Add(new ErrorFixer(this));
+			m_clbUtilities.Items.Add(new WriteAllObjectsUtility(this));
+			m_clbUtilities.Items.Add(new DuplicateWordformFixer(this));
+			m_clbUtilities.Items.Add(new DuplicateAnalysisFixer(this));
+			m_clbUtilities.Items.Add(new ParseIsCurrentFixer(this));
+			m_clbUtilities.Items.Add(new DeleteEntriesSensesWithoutInterlinearization(this));
+			m_clbUtilities.Items.Add(new LexEntryInflTypeConverter(this));
+			m_clbUtilities.Items.Add(new LexEntryTypeConverter(this));
+			m_clbUtilities.Items.Add(new GoldEticGuidFixer(this));
+			m_clbUtilities.Items.Add(new SortReversalSubEntries(this));
+			m_clbUtilities.Items.Add(new CircularRefBreaker(this));
+
+			ResumeLayout();
+			if (m_clbUtilities.Items.Count > 0)
+				m_clbUtilities.SelectedIndex = 0;
 		}
 
 		#endregion
@@ -186,7 +208,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
+				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
 		}
 
 		/// <summary>
@@ -201,59 +223,18 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			if( disposing )
 			{
-				if(components != null)
-				{
-					components.Dispose();
-				}
+				components?.Dispose();
+				m_helpProvider.ResetShowHelp(this);
+				m_helpProvider.Dispose();
 			}
 
 			PropertyTable = null;
 			Publisher = null;
 			Subscriber = null;
+			m_helpProvider = null;
+			m_helpTopicProvider = null;
 
 			base.Dispose( disposing );
-		}
-
-		/// <summary>
-		/// Setup the dlg with needed information.
-		/// </summary>
-		/// <param name="configurationParameters"></param>
-		public void SetDlgInfo(XmlNode configurationParameters)
-		{
-			CheckDisposed();
-
-			Debug.Assert(configurationParameters != null);
-
-			// <parameters title="FieldWorks Project Utilities" filename="Language Explorer\Configuration\UtilityCatalogInclude.xml"/>
-			Text = StringTable.Table.LocalizeAttributeValue(XmlUtils.GetOptionalAttributeValue(configurationParameters, "title", "FieldWorks Project Utilities"));
-			string utilsPathname = Path.Combine(FwDirectoryFinder.CodeDirectory,
-			XmlUtils.GetManditoryAttributeValue(configurationParameters, "filename"));
-			// Get the folder path:
-			string utilsFolderName = Path.GetDirectoryName(utilsPathname);
-			// Get the file name:
-			string utilsFileName = Path.GetFileName(utilsPathname);
-			// Insert an asterisk before the ".XML" so we can search for similar files:
-			string searchPattern = utilsFileName.Replace(".", "*.");
-
-			string[] files = Directory.GetFiles(utilsFolderName, searchPattern, SearchOption.TopDirectoryOnly);
-			foreach (string pathname in files)
-			{
-				var document = XDocument.Load(pathname);
-				foreach (var node in document.XPathSelectElements("utilityCatalog/utility"))
-				{
-					/*
-					<utilityCatalog>
-						<utility assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.HomographResetter"/>
-					</utilityCatalog>
-					*/
-					var util = DynamicLoader.CreateObject(node) as IUtility;
-					util.Dialog = this; // Must be set before adding it to the control.
-					util.LoadUtilities();
-				}
-			}
-			m_clbUtilities.Sorted = true;
-			if (m_clbUtilities.Items.Count > 0)
-				m_clbUtilities.SelectedIndex = 0;
 		}
 
 		#region Windows Form Designer generated code
@@ -372,33 +353,33 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				m_rtbDescription.Clear();
 				// What
 				m_rtbDescription.SelectionFont = boldFont;
-				m_rtbDescription.AppendText(FwCoreDlgs.ksWhatItDoes);
+				m_rtbDescription.AppendText(LanguageExplorerResources.ksWhatItDoes);
 				m_rtbDescription.AppendText(Environment.NewLine);
 				m_rtbDescription.SelectionFont = currentFont;
 				if (string.IsNullOrEmpty(m_whatDescription))
-					m_rtbDescription.AppendText(FwCoreDlgs.ksQuestions);
+					m_rtbDescription.AppendText(LanguageExplorerResources.ksQuestions);
 				else
 					m_rtbDescription.AppendText(m_whatDescription);
 				m_rtbDescription.AppendText(string.Format("{0}{0}", Environment.NewLine));
 
 				// When
 				m_rtbDescription.SelectionFont = boldFont;
-				m_rtbDescription.AppendText(FwCoreDlgs.ksWhenToUse);
+				m_rtbDescription.AppendText(LanguageExplorerResources.ksWhenToUse);
 				m_rtbDescription.AppendText(Environment.NewLine);
 				m_rtbDescription.SelectionFont = currentFont;
 				if (string.IsNullOrEmpty(m_whenDescription))
-					m_rtbDescription.AppendText(FwCoreDlgs.ksQuestions);
+					m_rtbDescription.AppendText(LanguageExplorerResources.ksQuestions);
 				else
 					m_rtbDescription.AppendText(m_whenDescription);
 				m_rtbDescription.AppendText(string.Format("{0}{0}", Environment.NewLine));
 
 				// Cautions
 				m_rtbDescription.SelectionFont = boldFont;
-				m_rtbDescription.AppendText(FwCoreDlgs.ksCautions);
+				m_rtbDescription.AppendText(LanguageExplorerResources.ksCautions);
 				m_rtbDescription.AppendText(Environment.NewLine);
 				m_rtbDescription.SelectionFont = currentFont;
 				if (string.IsNullOrEmpty(m_redoDescription))
-					m_rtbDescription.AppendText(FwCoreDlgs.ksQuestions);
+					m_rtbDescription.AppendText(LanguageExplorerResources.ksQuestions);
 				else
 					m_rtbDescription.AppendText(m_redoDescription);
 #if __MonoCS__

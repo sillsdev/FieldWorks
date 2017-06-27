@@ -1,13 +1,13 @@
-// Copyright (c) 2004-2017 SIL International
+// Copyright (c) 2004-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System.Diagnostics;
+using System;
 using System.Linq;
+using LanguageExplorer.UtilityTools;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.FwCoreDlgs;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 {
@@ -21,6 +21,16 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 
 		private UtilityDlg m_dlg;
 		const string kPath = "/group[@id='Linguistics']/group[@id='Morphology']/group[@id='RemoveParserAnalyses']/";
+
+		/// <summary />
+		internal ParserAnalysisRemover(UtilityDlg utilityDlg)
+		{
+			if (utilityDlg == null)
+			{
+				throw new ArgumentNullException(nameof(utilityDlg));
+			}
+			m_dlg = utilityDlg;
+		}
 
 		#endregion Data members
 
@@ -38,48 +48,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 		/// <summary>
 		/// Get the main label describing the utility.
 		/// </summary>
-		public string Label
-		{
-			get
-			{
-				Debug.Assert(m_dlg != null);
-				return StringTable.Table.GetStringWithXPath("Label", kPath);
-			}
-		}
-
-		/// <summary>
-		/// Set the UtilityDlg.
-		/// </summary>
-		/// <remarks>
-		/// This must be set, before calling any other property or method.
-		/// </remarks>
-		public UtilityDlg Dialog
-		{
-			set
-			{
-				Debug.Assert(value != null);
-				Debug.Assert(m_dlg == null);
-
-				m_dlg = value;
-			}
-		}
-
-		/// <summary>
-		/// Load 0 or more items in the list box.
-		/// </summary>
-		public void LoadUtilities()
-		{
-			Debug.Assert(m_dlg != null);
-			m_dlg.Utilities.Items.Add(this);
-
-		}
+		public string Label => StringTable.Table.GetStringWithXPath("Label", kPath);
 
 		/// <summary>
 		/// Notify the utility that has been selected in the dlg.
 		/// </summary>
 		public void OnSelection()
 		{
-			Debug.Assert(m_dlg != null);
 			m_dlg.WhenDescription = StringTable.Table.GetStringWithXPath("WhenDescription", kPath);
 			m_dlg.WhatDescription = StringTable.Table.GetStringWithXPath("WhatDescription", kPath);
 			m_dlg.RedoDescription = StringTable.Table.GetStringWithXPath("RedoDescription", kPath);
@@ -90,7 +65,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 		/// </summary>
 		public void Process()
 		{
-			Debug.Assert(m_dlg != null);
 			var cache = m_dlg.PropertyTable.GetValue<FdoCache>("cache");
 			IWfiAnalysis[] analyses = cache.ServiceLocator.GetInstance<IWfiAnalysisRepository>().AllInstances().ToArray();
 			if (analyses.Length == 0)

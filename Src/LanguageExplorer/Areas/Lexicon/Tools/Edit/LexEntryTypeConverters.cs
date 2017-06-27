@@ -1,11 +1,12 @@
-// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
+using LanguageExplorer.UtilityTools;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.Common.FwUtils;
@@ -15,15 +16,42 @@ using SIL.FieldWorks.FwCoreDlgs;
 namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 {
 	/// <summary>
-	/// Summary description for LexEntryTypeConverter.
+	/// Abstract base class for the two implementations: LexEntryTypeConverter & LexEntryInflTypeConverter.
+	///
+	/// LexEntryTypeConverter.
+	/// What: This utility allows you to select which irregularly inflected form variant types should be converted
+	///		to variant types (irregularly inflected form variant types are a special sub-kind of variant types).
+	/// When: Run this utility when you need to convert one or more of your existing irregularly inflected form
+	///		variant types to be variant types.  When a variant type is an irregularly inflected form variant type,
+	///		it has extra fields such as 'Append to Gloss', 'Inflection Features', and 'Slots.'
+	///
+	/// LexEntryInflTypeConverter.
+	/// What: This utility allows you to select which variant types should be converted
+	///		to irregularly inflected form variant types, which are a special sub-kind of variant types.
+	/// When: Run this utility when you need to convert one or more of your existing variant types to be irregularly inflected form variant types.
+	///		When a variant type is an irregularly inflected form variant type, it has extra fields such as 'Append to Gloss', 'Inflection Features', and 'Slots.'
 	/// </summary>
 	internal abstract class LexEntryTypeConverters : IUtility
 	{
+		/// <summary />
 		protected UtilityDlg m_dlg;
+		/// <summary />
 		protected FdoCache m_cache;
+		/// <summary />
 		protected int m_flid;
+		/// <summary />
 		protected ICmObject m_obj;
+		/// <summary />
 		protected const string s_helpTopic = "khtpToolsConvertVariants";
+
+		protected LexEntryTypeConverters(UtilityDlg utilityDlg)
+		{
+			if (utilityDlg == null)
+			{
+				throw new ArgumentNullException(nameof(utilityDlg));
+			}
+			m_dlg = utilityDlg;
+		}
 
 		/// <summary>
 		/// Override method to return the Label property.
@@ -56,52 +84,19 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		#region IUtility implementation
 
 		/// <summary>
-		/// Set the UtilityDlg.
-		/// </summary>
-		/// <remarks>
-		/// This must be set, before calling any other property or method.
-		/// </remarks>
-		public UtilityDlg Dialog
-		{
-			set
-			{
-				Debug.Assert(value != null);
-				Debug.Assert(m_dlg == null);
-
-				m_dlg = value;
-			}
-		}
-
-		/// <summary>
-		/// Have the utility do what it does.
-		/// </summary>
-		public abstract void Process();
-
-		/// <summary>
 		/// Get the main label describing the utility.
 		/// </summary>
-		public virtual string Label
-		{
-			get
-			{
-				Debug.Assert(m_dlg != null);
-				return "should never see";
-			}
-		}
-		/// <summary>
-		/// Load 0 or more items in the list box.
-		/// </summary>
-		public void LoadUtilities()
-		{
-			Debug.Assert(m_dlg != null);
-			m_dlg.Utilities.Items.Add(this);
-
-		}
+		public abstract string Label { get; }
 
 		/// <summary>
 		/// Notify the utility is has been selected in the dlg.
 		/// </summary>
 		public abstract void OnSelection();
+
+		/// <summary>
+		/// Have the utility do what it does.
+		/// </summary>
+		public abstract void Process();
 
 		#endregion IUtility implementation
 
@@ -122,6 +117,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				contents,
 				m_dlg.PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
 		}
+
 		/// <summary />
 		protected void ShowDialogAndConvert(int targetClassId)
 		{

@@ -45,6 +45,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\DistFiles\Aga.Controls.dll</HintPath>
     </Reference>
+    <Reference Include="FixFwDataDll, Version=10.0.0.15598, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Debug\FixFwDataDll.dll</HintPath>
+    </Reference>
     <Reference Include="FwKernelInterfaces, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\FwKernelInterfaces.dll</HintPath>
@@ -236,6 +240,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="UtilityTools\ErrorFixer.cs" />
+    <Compile Include="IUtility.cs" />
+    <Compile Include="UtilityTools\UtilityDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UtilityTools\WriteAllObjectsUtility.cs" />
     <Content Include="images\MenuWidget.bmp" />
     <Content Include="Resources\LexiconProblemsParameters.xml" />
     <Content Include="Resources\NaturalClassEditToolParameters.xml" />
@@ -251,6 +261,10 @@
     <Content Include="Resources\ReversalEditCompleteToolParameters.xml" />
     <Content Include="Resources\ReversalToolReversalIndexPOSBrowseViewParameters.xml" />
     <Content Include="Resources\ReversalToolReversalIndexPOSRecordEditViewParameters.xml" />
+    <EmbeddedResource Include="UtilityTools\UtilityDlg.resx">
+      <DependentUpon>UtilityDlg.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <Content Include="Resources\VisibilityFilter_All.xml" />
     <Content Include="Resources\HideAdvancedListItemFields.xml" />
     <Content Include="Resources\HideAdvancedFeatureFields.xml" />
@@ -364,10 +378,6 @@
       <SubType>Designer</SubType>
     </Content>
     <None Include="Resources\NotebookBrowseColumnDefinitions.xml" />
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\UtilityCatalogInclude.xml">
-      <Link>XML\UtilityCatalogInclude.xml</Link>
-      <SubType>Designer</SubType>
-    </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\Grammar\Edit\DataEntryFilters\basicFilter.xml">
       <Link>XML\Grammar\Edit\DataEntryFilters\basicFilter.xml</Link>
     </None>

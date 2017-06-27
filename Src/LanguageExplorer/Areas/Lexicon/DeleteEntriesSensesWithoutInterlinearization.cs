@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,12 +6,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
-using System.Diagnostics;
+using LanguageExplorer.UtilityTools;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.XWorks;
 
 namespace LanguageExplorer.Areas.Lexicon
@@ -23,39 +22,28 @@ namespace LanguageExplorer.Areas.Lexicon
 	{
 		private UtilityDlg m_dlg;
 
+		/// <summary />
+		internal DeleteEntriesSensesWithoutInterlinearization(UtilityDlg utilityDlg)
+		{
+			if (utilityDlg == null)
+			{
+				throw new ArgumentNullException(nameof(utilityDlg));
+			}
+			m_dlg = utilityDlg;
+		}
+
 		#region IUtility implementation
 
 		/// <summary>
 		/// Get the main label describing the utility.
 		/// </summary>
-		public string Label
-		{
-			get { return LanguageExplorerResources.ksDeleteEntriesSenses; }
-		}
-
-		/// <summary>
-		/// Set the UtilityDlg.
-		/// </summary>
-		public UtilityDlg Dialog
-		{
-			set { m_dlg = value; }
-		}
-
-		/// <summary>
-		/// Load any items in list box.
-		/// </summary>
-		public void LoadUtilities()
-		{
-			Debug.Assert(m_dlg != null);
-			m_dlg.Utilities.Items.Add(this);
-		}
+		public string Label => LanguageExplorerResources.ksDeleteEntriesSenses;
 
 		/// <summary>
 		/// Notify the utility is has been selected in the dlg.
 		/// </summary>
 		public void OnSelection()
 		{
-			Debug.Assert(m_dlg != null);
 			m_dlg.WhenDescription = LanguageExplorerResources.ksDeleteEntriesSensesWhen;
 			m_dlg.WhatDescription = LanguageExplorerResources.ksDeleteEntriesSensesDoes;
 			m_dlg.RedoDescription = LanguageExplorerResources.ksDeleteEntriesSensesWarning;
@@ -66,7 +54,6 @@ namespace LanguageExplorer.Areas.Lexicon
 		/// </summary>
 		public void Process()
 		{
-			Debug.Assert(m_dlg != null);
 			var cache = m_dlg.PropertyTable.GetValue<FdoCache>("cache");
 			NonUndoableUnitOfWorkHelper.Do(cache.ActionHandlerAccessor, () =>
 				{

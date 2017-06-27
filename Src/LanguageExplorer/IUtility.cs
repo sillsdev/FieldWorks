@@ -1,8 +1,8 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-namespace SIL.FieldWorks.FwCoreDlgs
+namespace LanguageExplorer
 {
 	/// <summary>
 	/// Interface for utilities.
@@ -13,19 +13,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// Get the main label describing the utility.
 		/// </summary>
 		string Label {get;}
-
-		/// <summary>
-		/// Set the UtilityDlg.
-		/// </summary>
-		/// <remarks>
-		/// This must be set, before calling any other property or method.
-		/// </remarks>
-		UtilityDlg Dialog {set;}
-
-		/// <summary>
-		/// Load any items in list box.
-		/// </summary>
-		void LoadUtilities();
 
 		/// <summary>
 		/// Notify the utility is has been selected in the dlg.

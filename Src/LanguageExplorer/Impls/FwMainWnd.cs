@@ -19,6 +19,7 @@ using LanguageExplorer.Areas.TextsAndWords;
 using LanguageExplorer.Controls;
 using SIL.Code;
 using LanguageExplorer.Controls.SilSidePane;
+using LanguageExplorer.UtilityTools;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.Framework;

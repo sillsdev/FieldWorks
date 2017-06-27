@@ -1,21 +1,29 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System.Diagnostics;
+using System;
 using System.Linq;
 using System.Windows.Forms;
+using LanguageExplorer.UtilityTools;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.FwCoreDlgs;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
-	public class ParseIsCurrentFixer : IUtility
+	/// <summary />
+	internal class ParseIsCurrentFixer : IUtility
 	{
-		public string Label
+		private UtilityDlg m_dlg;
+
+		/// <summary />
+		internal ParseIsCurrentFixer(UtilityDlg utilityDlg)
 		{
-			get { return ITextStrings.ksClearParseIsCurrent; }
+			if (utilityDlg == null)
+			{
+				throw new ArgumentNullException(nameof(utilityDlg));
+			}
+			m_dlg = utilityDlg;
 		}
 
 		/// <summary>
@@ -26,25 +34,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			return Label;
 		}
 
-		private UtilityDlg m_dlg;
+		/// <summary />
+		public string Label => ITextStrings.ksClearParseIsCurrent;
 
-		/// <summary>
-		/// Sets the utility dialog. NOTE: The caller is responsible for disposing the dialog!
-		/// </summary>
-		public UtilityDlg Dialog
-		{
-			set { m_dlg = value; }
-		}
-
-		public void LoadUtilities()
-		{
-			Debug.Assert(m_dlg != null);
-			m_dlg.Utilities.Items.Add(this);
-		}
-
+		/// <summary />
 		public void OnSelection()
 		{
-			Debug.Assert(m_dlg != null);
 			m_dlg.WhenDescription = ITextStrings.ksUseClearParseIsCurrentWhen;
 			m_dlg.WhatDescription = ITextStrings.ksClearParseIsCurrentDoes;
 			m_dlg.RedoDescription = ITextStrings.ksParseIsCurrentWarning;
@@ -55,7 +50,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		public void Process()
 		{
-			Debug.Assert(m_dlg != null);
 			var cache = m_dlg.PropertyTable.GetValue<FdoCache>("cache");
 			UndoableUnitOfWorkHelper.Do(ITextStrings.ksUndoMergeWordforms, ITextStrings.ksRedoMergeWordforms,
 				cache.ActionHandlerAccessor,
@@ -63,7 +57,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		}
 
-		void ClearFlags(FdoCache cache, ProgressBar progressBar)
+		private void ClearFlags(FdoCache cache, ProgressBar progressBar)
 		{
 			var paras = cache.ServiceLocator.GetInstance<IStTxtParaRepository>().AllInstances().ToArray();
 			progressBar.Minimum = 0;

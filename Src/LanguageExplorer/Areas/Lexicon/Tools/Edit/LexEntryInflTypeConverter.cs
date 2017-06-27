@@ -1,9 +1,9 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
-using System.Diagnostics;
+using LanguageExplorer.UtilityTools;
 using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
@@ -11,10 +11,18 @@ using SIL.FieldWorks.FDO.Infrastructure;
 namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 {
 	/// <summary>
-	/// Summary description for LexEntryInflTypeConverter.
+	/// What: This utility allows you to select which variant types should be converted to irregularly inflected form variant types, which are a special sub-kind of variant types.
+	/// When: Run this utility when you need to convert one or more of your existing variant types to be irregularly inflected form variant types.
+	///		When a variant type is an irregularly inflected form variant type, it has extra fields such as 'Append to Gloss', 'Inflection Features', and 'Slots.'
 	/// </summary>
 	internal sealed class LexEntryInflTypeConverter : LexEntryTypeConverters
 	{
+		/// <summary />
+		internal LexEntryInflTypeConverter(UtilityDlg utilityDlg)
+			: base(utilityDlg)
+		{
+		}
+
 		#region IUtility implementation
 
 		/// <summary>
@@ -24,7 +32,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		{
 			get
 			{
-				Debug.Assert(m_dlg != null);
 				return LanguageExplorerResources.ksConvertIrregularlyInflectedFormVariants;
 			}
 		}
@@ -34,7 +41,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// </summary>
 		public override void OnSelection()
 		{
-			Debug.Assert(m_dlg != null);
 			m_dlg.WhenDescription = LanguageExplorerResources.ksWhenToConvertIrregularlyInflectedFormVariants;
 			m_dlg.WhatDescription = LanguageExplorerResources.ksWhatIsConvertIrregularlyInflectedFormVariants;
 			m_dlg.RedoDescription = LanguageExplorerResources.ksCannotRedoConvertIrregularlyInflectedFormVariants;

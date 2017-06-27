@@ -214,7 +214,7 @@
   </data>
   <data name="kstidDeleteLabel" xml:space="preserve">
     <value>Delete User Configuration</value>
-		<comment>Not sure what kind of configuration this is referring to.</comment>
+    <comment>Not sure what kind of configuration this is referring to.</comment>
   </data>
   <data name="kstidAddPuaTitle" xml:space="preserve">
     <value>Add Custom Character</value>
@@ -352,9 +352,6 @@ your account write access to the appropriate directories, or else modify the wri
     <value>Cannot Use Processor</value>
     <comment>message box caption</comment>
   </data>
-  <data name="ksCautions" xml:space="preserve">
-    <value>Cautions:</value>
-  </data>
   <data name="ksCCTable" xml:space="preserve">
     <value>CC Table</value>
     <comment>file description for file chooser combo list</comment>
@@ -435,9 +432,6 @@ It cannot be used in Bulk Edit operations.</value>
   <data name="ksProcliticMenuCmd" xml:space="preserve">
     <value>{0} Proclitic</value>
     <comment>Menu Command: {0} is an example of a Proclitic</comment>
-  </data>
-  <data name="ksQuestions" xml:space="preserve">
-    <value>???</value>
   </data>
   <data name="ksREAlternation" xml:space="preserve">
     <value>{0} Alternation</value>
@@ -593,27 +587,6 @@ Do you want to remove English now?</value>
   </data>
   <data name="ksVernWsChangedMsg" xml:space="preserve">
     <value>The vernacular writing system list was changed in another program before you changed it here.  You need to shut down all FieldWorks programs and restart them.</value>
-  </data>
-  <data name="ksWhatItDoes" xml:space="preserve">
-    <value>What it does:</value>
-  </data>
-  <data name="ksWhenToUse" xml:space="preserve">
-    <value>When to use:</value>
-  </data>
-  <data name="ksUtilities" xml:space="preserve">
-    <value>Utilities</value>
-  </data>
-  <data name="ksDescription" xml:space="preserve">
-    <value>Description</value>
-  </data>
-  <data name="ksHelp" xml:space="preserve">
-    <value>Help</value>
-  </data>
-  <data name="ks_Close" xml:space="preserve">
-    <value>&amp;Close</value>
-  </data>
-  <data name="ksRunUtilities" xml:space="preserve">
-    <value>&amp;Run Checked Utilities Now</value>
   </data>
   <data name="ksFwProjectUtilities" xml:space="preserve">
     <value>FieldWorks Project Utilities</value>
@@ -799,7 +772,7 @@ Enter a shorter name.</value>
   </data>
   <data name="ksConfigurationSettingsRestoreDlg" xml:space="preserve">
     <value>Configuration settings</value>
-		<comment>Used in the Restore dialog to refer to all kinds of configuration in FieldWorks</comment>
+    <comment>Used in the Restore dialog to refer to all kinds of configuration in FieldWorks</comment>
   </data>
   <data name="ksMediaFilesRestoreDlg" xml:space="preserve">
     <value>Linked files</value>

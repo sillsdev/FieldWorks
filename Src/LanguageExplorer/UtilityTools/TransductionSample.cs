@@ -9,7 +9,6 @@ using System.Linq;
 using SIL.CoreImpl.Text;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FwCoreDlgs;
 
 namespace LanguageExplorer.UtilityTools
 {

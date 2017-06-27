@@ -292,6 +292,15 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &amp;Close.
+        /// </summary>
+        internal static string ks_Close {
+            get {
+                return ResourceManager.GetString("ks_Close", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &amp;Move Entry.
         /// </summary>
         internal static string ks_MoveEntry {
@@ -504,6 +513,15 @@ namespace LanguageExplorer {
         internal static string ksCategoryToMoveTo {
             get {
                 return ResourceManager.GetString("ksCategoryToMoveTo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cautions:.
+        /// </summary>
+        internal static string ksCautions {
+            get {
+                return ResourceManager.GetString("ksCautions", resourceCulture);
             }
         }
         
@@ -832,6 +850,15 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Description.
+        /// </summary>
+        internal static string ksDescription {
+            get {
+                return ResourceManager.GetString("ksDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Edit {0}.
         /// </summary>
         internal static string ksEditX {
@@ -850,11 +877,29 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This utility attempts to fix various errors in a FieldWorks project file.  The project must not be open, and must be in the fwdata (XML) format..
+        /// </summary>
+        internal static string ksErrorFixerUtilityAttemptsTo {
+            get {
+                return ResourceManager.GetString("ksErrorFixerUtilityAttemptsTo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Error loading resource strings: {0}.
         /// </summary>
         internal static string ksErrorLoadingResourceStrings {
             get {
                 return ResourceManager.GetString("ksErrorLoadingResourceStrings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Errors found or fixed.
+        /// </summary>
+        internal static string ksErrorsFoundOrFixed {
+            get {
+                return ResourceManager.GetString("ksErrorsFoundOrFixed", resourceCulture);
             }
         }
         
@@ -909,6 +954,15 @@ namespace LanguageExplorer {
         internal static string ksFiltered {
             get {
                 return ResourceManager.GetString("ksFiltered", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Find and fix errors in a FieldWorks data (XML) file..
+        /// </summary>
+        internal static string ksFindAndFixErrors {
+            get {
+                return ResourceManager.GetString("ksFindAndFixErrors", resourceCulture);
             }
         }
         
@@ -986,6 +1040,15 @@ namespace LanguageExplorer {
         internal static string ksHelp {
             get {
                 return ResourceManager.GetString("ksHelp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Help.
+        /// </summary>
+        internal static string ksHelpForUtiltiesDlg {
+            get {
+                return ResourceManager.GetString("ksHelpForUtiltiesDlg", resourceCulture);
             }
         }
         
@@ -1418,6 +1481,15 @@ namespace LanguageExplorer {
         internal static string ksPreviousClauseMenuItem {
             get {
                 return ResourceManager.GetString("ksPreviousClauseMenuItem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ???.
+        /// </summary>
+        internal static string ksQuestions {
+            get {
+                return ResourceManager.GetString("ksQuestions", resourceCulture);
             }
         }
         
@@ -1931,6 +2003,15 @@ namespace LanguageExplorer {
         internal static string ksRowEndsSentMenuItem {
             get {
                 return ResourceManager.GetString("ksRowEndsSentMenuItem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &amp;Run Checked Utilities Now.
+        /// </summary>
+        internal static string ksRunUtilities {
+            get {
+                return ResourceManager.GetString("ksRunUtilities", resourceCulture);
             }
         }
         
@@ -2581,6 +2662,24 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Use this when a project is throwing exceptions such as &quot;Key 62c22e20-8d8a-42bf-a54c-e21529284f2d not found in identity map...&quot;, and you suspect the data has been corrupted somehow..
+        /// </summary>
+        internal static string ksUseErrorFixerWhen {
+            get {
+                return ResourceManager.GetString("ksUseErrorFixerWhen", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Utilities.
+        /// </summary>
+        internal static string ksUtilities {
+            get {
+                return ResourceManager.GetString("ksUtilities", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Warning.
         /// </summary>
         internal static string ksWarning {
@@ -2653,6 +2752,24 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This utility writes all CmObjects out fresh, as if they had all been modified..
+        /// </summary>
+        internal static string ksWhatIsWriteAllObjects {
+            get {
+                return ResourceManager.GetString("ksWhatIsWriteAllObjects", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to What it does:.
+        /// </summary>
+        internal static string ksWhatItDoes {
+            get {
+                return ResourceManager.GetString("ksWhatItDoes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Run this utility when you need to convert one or more of your existing variant types to be irregularly inflected form variant types.  When a variant type is an irregularly inflected form variant type, it has extra fields such as &apos;Append to Gloss&apos;, &apos;Inflection Features&apos;, and &apos;Slots.&apos;.
         /// </summary>
         internal static string ksWhenToConvertIrregularlyInflectedFormVariants {
@@ -2694,6 +2811,33 @@ namespace LanguageExplorer {
         internal static string ksWhenToSortReversalSubentries {
             get {
                 return ResourceManager.GetString("ksWhenToSortReversalSubentries", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to When to use:.
+        /// </summary>
+        internal static string ksWhenToUse {
+            get {
+                return ResourceManager.GetString("ksWhenToUse", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Run this whenever you want to write out all CmObjects in the system. This will fix S/R failures if basic attributes were somehow lost in the fwdata file..
+        /// </summary>
+        internal static string ksWhenToWriteAllObjects {
+            get {
+                return ResourceManager.GetString("ksWhenToWriteAllObjects", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This operation cannot be undone, since it makes no changes..
+        /// </summary>
+        internal static string ksWriteAllObjectsUndo {
+            get {
+                return ResourceManager.GetString("ksWriteAllObjectsUndo", resourceCulture);
             }
         }
         

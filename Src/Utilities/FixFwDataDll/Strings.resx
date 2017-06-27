@@ -144,20 +144,8 @@
   <data name="ksRemovingMultipleOwnershipLink" xml:space="preserve">
     <value>Removing multiple ownership link '{0}' (class='{1}', guid='{2}', field='{3}').</value>
   </data>
-  <data name="ksFindAndFixErrors" xml:space="preserve">
-    <value>Find and fix errors in a FieldWorks data (XML) file.</value>
-  </data>
-  <data name="ksUseThisWhen" xml:space="preserve">
-    <value>Use this when a project is throwing exceptions such as "Key 62c22e20-8d8a-42bf-a54c-e21529284f2d not found in identity map...", and you suspect the data has been corrupted somehow.</value>
-  </data>
-  <data name="ksThisUtilityAttemptsTo" xml:space="preserve">
-    <value>This utility attempts to fix various errors in a FieldWorks project file.  The project must not be open, and must be in the fwdata (XML) format.</value>
-  </data>
   <data name="ksCannotUndo" xml:space="preserve">
     <value>If this utility fails, you will need to go back to a previously saved version of the chosen database.</value>
-  </data>
-  <data name="ksErrorsFoundOrFixed" xml:space="preserve">
-    <value>Errors found or fixed</value>
   </data>
   <data name="ksRemovingEditableAttribute" xml:space="preserve">
     <value>Removing 'editable' attribute from a string in a {0}</value>
