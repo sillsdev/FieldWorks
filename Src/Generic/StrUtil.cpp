@@ -59,7 +59,7 @@ void InitIcuDataDir()
 	{
 		// The ICU Data Directory is not yet set.  Get the root directory from the registry
 		// and set the ICU data directory based on that value.
-		DWORD dwSize = sizeof(rgchDataDirectory);
+		size_t dwSize = sizeof(rgchDataDirectory);
 		bool fRetrievedDir = GetIcuDir(HKEY_CURRENT_USER, rgchDataDirectory, dwSize);
 		if (!fRetrievedDir)
 			fRetrievedDir = GetIcuDir(HKEY_LOCAL_MACHINE, rgchDataDirectory, dwSize);

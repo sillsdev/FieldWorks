@@ -505,7 +505,7 @@ void GenericFactory::Unregister()
 
 	// Find the clsid that was originally stored in ProgID.
 	achar szClsid[100] = {0};
-	DWORD cchClsid = sizeof(szClsid);
+	size_t cchClsid = sizeof(szClsid);
 	StrAppBuf strbProgId = m_pszProgId;
 	strbProgId += _T("\\CLSID");
 	RegKey hkCuClassesRoot;
@@ -515,7 +515,7 @@ void GenericFactory::Unregister()
 		&hkMyOldProgId);
 	if (ERROR_SUCCESS == lnRes)
 	{
-		RegQueryValueEx(hkMyOldProgId, NULL, NULL, NULL, (BYTE *)szClsid, &cchClsid);
+		RegQueryValueEx(hkMyOldProgId, NULL, NULL, NULL, (BYTE *)szClsid, (LPDWORD)cchClsid);
 	}
 	else if (ERROR_FILE_NOT_FOUND != lnRes)
 		ThrowHr(WarnHr(E_FAIL));

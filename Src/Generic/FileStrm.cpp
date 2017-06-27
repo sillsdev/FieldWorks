@@ -284,7 +284,7 @@ bool FileStream::SetFilePosRaw()
 		DWORD dwLow;
 
 		dwLow = SetFilePointer(m_hfile, m_ibFilePos.LowPart, &dwHigh, FILE_BEGIN);
-		return !(dwLow == 0xFFFFFFFF && GetLastError() != NO_ERROR);
+		return !(dwLow == SIZE_MAX && GetLastError() != NO_ERROR);
 #else
 	// TODO-Linux: port
 	return true;
@@ -482,7 +482,7 @@ STDMETHODIMP FileStream::Seek(LARGE_INTEGER dlibMove, DWORD dwOrigin,
 		// Find out where EOF is by calling for a zero move of the file pointer
 		dwHigh = 0;
 		dwLow = SetFilePointer(m_hfile, 0, &dwHigh, FILE_END);
-		if (dwLow == 0xFFFFFFFF && GetLastError() != NO_ERROR)
+		if (dwLow == SIZE_MAX && GetLastError() != NO_ERROR)
 			ThrowHr(WarnHr(STG_E_SEEKERROR));
 
 		// Work out new attempted seek pointer value
@@ -565,7 +565,7 @@ STDMETHODIMP FileStream::SetSize(ULARGE_INTEGER libNewSize)
 	// doesn't really do any harm so we may as well let it go on and fail later if it is
 	// going to.
 	dwLow = SetFilePointer(m_hfile, libNewSize.LowPart, &dwHigh, FILE_BEGIN);
-	if (dwLow == 0xFFFFFFFF && GetLastError() != NO_ERROR)
+	if (dwLow == SIZE_MAX && GetLastError() != NO_ERROR)
 		ThrowHr(WarnHr(STG_E_SEEKERROR));
 	if (!SetEndOfFile(m_hfile))
 		ThrowHr(WarnHr(STG_E_ACCESSDENIED)); // probably the right error code
