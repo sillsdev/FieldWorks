@@ -347,7 +347,7 @@ namespace FwBuildTasks
 							if (m_mapProjFile.ContainsKey(dep))
 								bldr.AppendFormat(";{0}", dep);
 						}
-						writer.Write(" DependsOnTargets=\"{0}\"", bldr.ToString());
+						writer.Write(" DependsOnTargets=\"{0}\"", bldr);
 
 						if (project == "MigrateSqlDbs")
 						{
@@ -367,7 +367,7 @@ namespace FwBuildTasks
 						writer.WriteLine("\t\t\tToolsVersion=\"14.0\"/>");
 
 						// <Clouseau> verification task
-						writer.WriteLine("\t\t<Clouseau AssemblyPathname=\"$(dir-outputBase)/{0}\"/>", AssemblyName);
+						writer.WriteLine("\t\t<Clouseau Condition=\"'$(Configuration)' == 'Debug'\" AssemblyPathname=\"$(dir-outputBase)/{0}\"/>", AssemblyName);
 
 						if (isTestProject)
 						{
@@ -391,7 +391,7 @@ namespace FwBuildTasks
 							writer.WriteLine("\t\t<Message Text=\"Finished building {0}.\" Condition=\"'$(action)'!='test'\"/>", project);
 							writer.WriteLine("\t\t<Message Text=\"Finished building {0} and running tests.\" Condition=\"'$(action)'=='test'\"/>", project);
 							// Generate dotCover task
-							GenerateDotCoverTask(writer, new[] {project}, string.Format("{0}.coverage.xml", project));
+							GenerateDotCoverTask(writer, new[] {project}, $"{project}.coverage.xml");
 						}
 						else
 						{
