@@ -717,6 +717,7 @@ Fw-build:
 
 Fw-build-package:
 	cd $(BUILD_ROOT)/Build \
+		&& xbuild /t:refreshTargets \
 		&& xbuild '/t:remakefw;zipLocalizedLists;localize' /property:config=release /property:packaging=yes
 
 TE-run: ComponentsMap-nodep
