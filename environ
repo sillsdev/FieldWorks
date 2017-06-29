@@ -4,6 +4,10 @@
 #
 # Source this file in a shell and then run "mono FieldWorks.exe -app {Te,Flex}"
 
+# Possible values for RUNMODE:
+# - INSTALLED: when running an installed package
+# - PACKAGE: while building the package
+
 BASE=$(pwd)
 COM=$(dirname "${BASE}")/libcom/COM
 ARCH=$(uname -m)
@@ -22,7 +26,7 @@ MONO_DEBUG=explicit-null-checks
 MONO_ENV_OPTIONS="-O=-gshared"
 
 # Directory settings
-if [ "$RUNMODE" != "PACKAGE" -a "$RUNMODE" != "INSTALLED" ]
+if [ "$RUNMODE" != "INSTALLED" ]
 then
 	PATH="${BASE}/Output_${ARCH}/${BUILD}:\
 ${BASE}/Lib/src/icu/install${ARCH}/bin:${BASE}/Lib/src/icu/source/bin:\
