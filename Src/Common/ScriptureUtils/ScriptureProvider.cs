@@ -28,7 +28,7 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 		/// <summary>
 		/// The selected IScriptureProvider to use
 		/// </summary>
-		private static readonly IScriptureProvider _scriptureProvider;
+		internal static IScriptureProvider _scriptureProvider;
 
 		/// <summary>
 		/// Determine if Paratext8 is installed, if it is use it, otherwise fall back to Paratext7
