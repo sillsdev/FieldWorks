@@ -271,6 +271,7 @@
     <Compile Include="ImportTests\TeImportTestsBase.cs" />
     <Compile Include="ImportTests\TeXmlImportTests.cs" />
     <Compile Include="ExportTests\XmlNoteCategoryTests.cs" />
+    <Compile Include="MockScriptureProvider.cs" />
     <Compile Include="SCTextEnumTests.cs" />
     <Compile Include="SFFileListBuilderTests.cs" />
     <Compile Include="TeImportExportExtensionsTests.cs" />

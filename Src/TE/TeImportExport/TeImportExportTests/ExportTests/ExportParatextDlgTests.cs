@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2013 SIL International
+// Copyright (c) 2006-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -38,6 +38,7 @@ namespace SIL.FieldWorks.TE.ExportTests
 		private DummyParatextDialog m_dummyParaDlg;
 		private FilteredScrBooks m_bookFilter;
 		private IScrBook m_Genesis;
+		private ScriptureProvider.IScriptureProvider m_oldProvider;
 		#endregion
 
 		#region Initalization of tests
@@ -59,6 +60,8 @@ namespace SIL.FieldWorks.TE.ExportTests
 		public override void FixtureSetup()
 		{
 			base.FixtureSetup();
+			m_oldProvider = ScriptureProvider._scriptureProvider;
+			ScriptureProvider._scriptureProvider = new MockScriptureProvider();
 			m_ptHelper = new MockParatextHelper();
 			ParatextHelper.Manager.SetParatextHelperAdapter(m_ptHelper);
 		}
@@ -74,6 +77,7 @@ namespace SIL.FieldWorks.TE.ExportTests
 			m_ptHelper = null;
 			base.FixtureTeardown();
 			ParatextHelper.Manager.Reset();
+			ScriptureProvider._scriptureProvider = m_oldProvider;
 		}
 
 		/// ------------------------------------------------------------------------------------
