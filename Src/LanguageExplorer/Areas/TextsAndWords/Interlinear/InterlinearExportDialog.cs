@@ -32,13 +32,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		SIL.FieldWorks.FDO.IText m_text;
 		List<ICmObject> m_objs = new List<ICmObject>();
 		private event EventHandler OnLaunchFilterScrScriptureSectionsDialog;
-		private IBookImporter m_bookImporter;
 
-		public InterlinearExportDialog(ICmObject objRoot, InterlinVc vc, IBookImporter bookImporter)
+		public InterlinearExportDialog(ICmObject objRoot, InterlinVc vc)
 		{
 			m_objRoot = objRoot;
 			m_vc = vc;
-			m_bookImporter = bookImporter;
 		}
 
 		#region Overrides of ExportDialog
@@ -116,14 +114,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					textsToChooseFrom = textsToChooseFrom.Where(text => !ScriptureServices.ScriptureIsResponsibleFor(text)).ToList();
 				}
 				var interestingTexts = textsToChooseFrom.ToArray();
-				if (isOkToDisplayScripture)
-				{
-					dlg = new FilterTextsDialogTE(m_cache, interestingTexts, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_bookImporter);
-				}
-				else
-				{
-					dlg = new FilterTextsDialog(m_cache, interestingTexts, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
-				}
+				dlg = new FilterTextsDialog(PropertyTable, m_cache, interestingTexts, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
 				// LT-12181: Was 'PruneToSelectedTexts(text) and most others were deleted.
 				// We want 'PruneToInterestingTextsAndSelect(interestingTexts, selectedText)'
 				dlg.PruneToInterestingTextsAndSelect(interestingTexts, (IStText)m_objRoot);

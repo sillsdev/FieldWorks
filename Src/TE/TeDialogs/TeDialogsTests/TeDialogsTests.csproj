@@ -184,9 +184,6 @@
     <Compile Include="BookPropertiesTests.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FilterBookDialogTests.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="ImportedBooksTests.cs" />
     <Compile Include="ScripturePropertiesTests.cs">
     </Compile>

@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2015 SIL International
+// Copyright (c) 2004-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 using System;
@@ -11,14 +11,10 @@ using SIL.FieldWorks.FDO;
 namespace SIL.FieldWorks.Common.Controls
 {
 #if RANDYTODO
-	// TODO: Can this be moved now that TE is mostly gone?
+	// Can be moved to LE.
 #endif
 	/// <summary>
 	/// FilterTextsDialog bundles both texts and, when appropriate,
-	/// This file cannot be moved to the LanguageExplorer: ../Src/LanguageExplorer/Areas/TextsAndWords/Interlinear because that
-	/// dll is referenced by SIL.FieldWorks.TE and would create a circular reference.
-	/// It can't be moved to FwControls either for a similar reason - ScrControls uses FwControls!
-	/// This class uses TE to make sure the scriptures are properly initialized for use.
 	/// </summary>
 	public class FilterTextsDialog : FilterAllTextsDialog<IStText>, IFilterTextsDialog<IStText>
 	{
@@ -37,15 +33,14 @@ namespace SIL.FieldWorks.Common.Controls
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the ChooseScriptureDialog class.
-		/// WARNING: this constructor is called by reflection, at least in the Interlinear
-		/// Text DLL. If you change its parameters be SURE to find and fix those callers also.
 		/// </summary>
+		/// <param name="propertyTable"></param>
 		/// <param name="cache">The cache.</param>
 		/// <param name="objList">A list of texts and books to check as an array of hvos</param>
 		/// <param name="helpTopicProvider">The help topic provider.</param>
 		/// ------------------------------------------------------------------------------------
-		public FilterTextsDialog(FdoCache cache, IStText[] objList,
-			IHelpTopicProvider helpTopicProvider) : base(cache, objList, helpTopicProvider)
+		public FilterTextsDialog(IPropertyTable propertyTable, FdoCache cache, IStText[] objList,
+			IHelpTopicProvider helpTopicProvider) : base(propertyTable, cache, objList, helpTopicProvider)
 		{
 			m_helpTopicId = "khtpChooseTexts";
 			InitializeComponent();
@@ -58,7 +53,14 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		protected override void LoadTexts()
 		{
-			m_treeTexts.LoadGeneralTexts(m_cache);
+			if (m_cache.ServiceLocator.GetInstance<IScrBookRepository>().AllInstances().Any())
+			{
+				m_treeTexts.LoadScriptureAndOtherTexts(m_cache);
+			}
+			else
+			{
+				m_treeTexts.LoadGeneralTexts(m_cache);
+			}
 		}
 
 

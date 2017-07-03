@@ -191,17 +191,21 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>
 		/// Initializes a new instance of the FilterAllTextsDialog class.
 		/// </summary>
+		/// <param name="propertyTable"></param>
 		/// <param name="cache">The cache.</param>
 		/// <param name="objList">A list of objects (hvos) to check as an array</param>
 		/// <param name="helpTopicProvider">The help topic provider.</param>
 		/// ------------------------------------------------------------------------------------
-		public FilterAllTextsDialog(FdoCache cache, T[] objList, IHelpTopicProvider helpTopicProvider) : base()
+		public FilterAllTextsDialog(IPropertyTable propertyTable, FdoCache cache, T[] objList, IHelpTopicProvider helpTopicProvider) : base()
 		{
+			if (propertyTable == null)
+				throw new ArgumentNullException(nameof(propertyTable));
 			if (cache == null)
 				throw new ArgumentNullException("cache");
 			if (objList == null)
 				throw new ArgumentNullException("bookList");
 
+			m_treeTexts.PropertyTable = propertyTable;
 			m_cache = cache;
 			m_objList = objList;
 			m_helpTopicProvider = helpTopicProvider;

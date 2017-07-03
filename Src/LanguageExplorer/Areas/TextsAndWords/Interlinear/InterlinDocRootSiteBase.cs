@@ -115,10 +115,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			while (parent != null && !(parent is InterlinMaster))
 				parent = parent.Parent;
 			var master = parent as InterlinMaster;
-			IBookImporter bookImporter = null;
 			if (master != null)
 			{
-				bookImporter = master.Clerk as IBookImporter;
 				var clerk = master.Clerk as InterlinearTextsRecordClerk;
 				if (clerk != null)
 				{
@@ -127,7 +125,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 			bool fFocusBox = TryHideFocusBoxAndUninstall();
 			ICmObject objRoot = m_objRepo.GetObject(m_hvoRoot);
-			using (var dlg = new InterlinearExportDialog(objRoot, m_vc, bookImporter))
+			using (var dlg = new InterlinearExportDialog(objRoot, m_vc))
 			{
 				dlg.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 				dlg.ShowDialog(this);

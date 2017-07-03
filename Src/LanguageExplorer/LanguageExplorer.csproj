@@ -152,18 +152,6 @@
     <Reference Include="Microsoft.Practices.ServiceLocation">
       <HintPath>..\..\Output\Release\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
-    <Reference Include="ParatextShared, Version=7.4.100.114, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Release\ParatextShared.dll</HintPath>
-    </Reference>
-    <Reference Include="ScrControls, Version=9.0.0.39656, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Release\ScrControls.dll</HintPath>
-    </Reference>
-    <Reference Include="ScriptureUtils, Version=9.0.0.39648, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Release\ScriptureUtils.dll</HintPath>
-    </Reference>
     <Reference Include="Sfm2Xml, Version=9.0.0.39651, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Release\Sfm2Xml.dll</HintPath>

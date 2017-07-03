@@ -6,34 +6,24 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
-using Paratext;
-using SIL.CoreImpl.Scripture;
 using SIL.CoreImpl.Text;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.XWorks;
-using SIL.Utils;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
-	public class InterlinearTextsRecordClerk : RecordClerk, IBookImporter
+	public class InterlinearTextsRecordClerk : RecordClerk
 	{
 		private FwStyleSheet m_stylesheet;
 
 		// The following is used in the process of selecting the ws for a new text.  See LT-6692.
-		private int m_wsPrevText;
-		public int PrevTextWs
-		{
-			get { return m_wsPrevText; }
-			set { m_wsPrevText = value; }
-		}
+		public int PrevTextWs { get; set; }
 
 		/// <summary>
 		/// Constructor used by "OccurrencesOfSelectedUnit" subclass.
@@ -186,14 +176,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			IFilterTextsDialog<IStText> dlg = null;
 			try
 			{
-				if (Cache.ServiceLocator.GetInstance<IScrBookRepository>().AllInstances().Any())
-				{
-					dlg = new FilterTextsDialogTE(Cache, interestingTexts, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), this);
-				}
-				else
-				{
-					dlg = new FilterTextsDialog(Cache, interestingTexts, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
-				}
+				dlg = new FilterTextsDialog(PropertyTable, Cache, interestingTexts, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
 				if (dlg.ShowDialog(PropertyTable.GetValue<IApp>("App").ActiveMainWindow) == DialogResult.OK)
 				{
 					interestingTextsList.SetInterestingTexts(dlg.GetListOfIncludedTexts());
@@ -347,7 +330,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			protected FdoCache Cache;
 			protected IStText NewStText;
 
-			#region ICreateAndInsert<IStText> Members
+#region ICreateAndInsert<IStText> Members
 
 			public abstract IStText Create();
 
@@ -365,7 +348,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				InterlinMaster.LoadParagraphAnnotationsAndGenerateEntryGuessesIfNeeded(NewStText, false);
 			}
 
-			#endregion
+#endregion
 		}
 
 		internal class UndoableCreateAndInsertStText : CreateAndInsertStText
@@ -448,86 +431,5 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 			return wsText;
 		}
-
-		#region IBookImporter Members
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Imports the specified book.
-		/// </summary>
-		/// <param name="bookNum">The canonical book number.</param>
-		/// <param name="owningForm">Form that can be used as the owner of progress dialogs and
-		/// message boxes.</param>
-		/// <param name="importBt">True to import only the back translation, false to import
-		/// only the main translation</param>
-		/// <returns>
-		/// The ScrBook created to hold the imported data
-		/// </returns>
-		/// ------------------------------------------------------------------------------------
-		public IScrBook Import(int bookNum, Form owningForm, bool importBt)
-		{
-			IScripture scr = Cache.LangProject.TranslatedScriptureOA;
-			bool haveSomethingToImport = NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
-				{
-					IScrImportSet importSettings = scr.FindOrCreateDefaultImportSettings(TypeOfImport.Paratext6, ScriptureStylesheet,
-						FwDirectoryFinder.TeStylesPath);
-					ScrText paratextProj = ParatextHelper.GetAssociatedProject(Cache.ProjectId);
-					importSettings.ParatextScrProj = paratextProj.Name;
-					importSettings.StartRef = new BCVRef(bookNum, 0, 0);
-					int chapter = paratextProj.Versification.LastChapter(bookNum);
-					importSettings.EndRef = new BCVRef(bookNum, chapter, paratextProj.Versification.LastVerse(bookNum, chapter));
-					if (!importBt)
-					{
-						importSettings.ImportTranslation = true;
-						importSettings.ImportBackTranslation = false;
-					}
-					else
-					{
-						List<ScrText> btProjects = ParatextHelper.GetBtsForProject(paratextProj).ToList();
-						if (btProjects.Count > 0 && (string.IsNullOrEmpty(importSettings.ParatextBTProj) ||
-							!btProjects.Any(st => st.Name == importSettings.ParatextBTProj)))
-						{
-							importSettings.ParatextBTProj = btProjects[0].Name;
-						}
-						if (string.IsNullOrEmpty(importSettings.ParatextBTProj))
-							return false;
-						importSettings.ImportTranslation = false;
-						importSettings.ImportBackTranslation = true;
-					}
-					ParatextHelper.LoadProjectMappings(importSettings);
-					ScrMappingList importMap = importSettings.GetMappingListForDomain(ImportDomain.Main);
-					ImportMappingInfo figureInfo = importMap[@"\fig"];
-					if (figureInfo != null)
-						figureInfo.IsExcluded = true;
-					importSettings.SaveSettings();
-					return true;
-				});
-
-			if (haveSomethingToImport && ReflectionHelper.GetBoolResult(ReflectionHelper.GetType("TeImportExport.dll",
-				"SIL.FieldWorks.TE.TeImportManager"), "ImportParatext", owningForm, ScriptureStylesheet,
-				PropertyTable.GetValue<IFlexApp>("App")))
-			{
-				return scr.FindBook(bookNum);
-			}
-			return null;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the Scripture stylesheet.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		private FwStyleSheet ScriptureStylesheet
-		{
-			get
-			{
-				if (m_stylesheet == null)
-				{
-					m_stylesheet = new FwStyleSheet();
-					m_stylesheet.Init(Cache, Cache.LangProject.TranslatedScriptureOA.Hvo, ScriptureTags.kflidStyles);
-				}
-				return m_stylesheet;
-			}
-		}
-		#endregion
 	}
 }

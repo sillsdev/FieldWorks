@@ -98,12 +98,12 @@ namespace SIL.FieldWorks.TE
 		/// </summary>
 		/// <param name="mainWnd">The main window.</param>
 		/// <param name="stylesheet">The Scripture stylesheet.</param>
-		/// <param name="app">The app.</param>
+		/// <param name="app">The app. It is provided as an 'object', since the caller has to use Reflection and has no access to the 'IFlexApp' interface.</param>
 		/// <returns><c>true</c> if something got imported; <c>false</c> otherwise</returns>
 		/// ------------------------------------------------------------------------------------
-		public static bool ImportParatext(Form mainWnd, FwStyleSheet stylesheet, IFlexApp app)
+		public static bool ImportParatext(Form mainWnd, FwStyleSheet stylesheet, object app)
 		{
-			TeImportManager mgr = new TeImportManager(mainWnd, stylesheet, app, true);
+			TeImportManager mgr = new TeImportManager(mainWnd, stylesheet, (IFlexApp)app, true);
 			return mgr.ImportSf();
 		}
 		#endregion
