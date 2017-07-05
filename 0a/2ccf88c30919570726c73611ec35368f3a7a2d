@@ -1,0 +1,8 @@
+Code-Review+2: Hasso Pape <hasso_pape@sil.org>
+Verified+1: Jenkins CI <jenkins@sil.org>
+Verified-Linux+1: Jenkins CI <jenkins@sil.org>
+Submitted-by: Jason Naylor <jason_naylor@sil.org>
+Submitted-at: Wed, 05 Jul 2017 20:12:25 +0000
+Reviewed-on: https://gerrit.lsdev.sil.org/5367
+Project: FieldWorks
+Branch: refs/heads/feature/Paratext8
