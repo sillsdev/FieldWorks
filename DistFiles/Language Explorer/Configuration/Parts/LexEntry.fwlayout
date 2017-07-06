@@ -23,7 +23,7 @@
 		<part ref="CurrentLexReferences"   visibility="ifdata" />
 
 		<!-- Special part to indicate where custom fields should be inserted at.  Handled in Common.Framework.DetailControls.DataTree -->
-		<part customFields="here" />
+		<part ref="_CustomFieldPlaceholder" customFields="here" />
 
 		<part ref="ImportResidue" label="Import Residue" visibility="ifdata"/>
 		<part ref="DateCreatedAllA"  visibility="never"/>

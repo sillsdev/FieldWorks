@@ -7,7 +7,6 @@ using System.IO;
 using System.Windows.Forms;
 using System.Xml;
 using NUnit.Framework;
-
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
@@ -212,6 +211,17 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			Assert.AreEqual("Citation form", (m_dtree.Controls[1] as Slice).Label);
 			Assert.AreEqual("Bibliography", (m_dtree.Controls[2] as Slice).Label);
 			Assert.AreEqual(0, (m_dtree.Controls[1] as Slice).Indent); // was 1, but indent currently suppressed.
+		}
+
+		/// <summary>Remove duplicate custom field placeholder parts</summary>
+		[Test]
+		public void RemoveDuplicateCustomFields()
+		{
+			m_dtree.Initialize(Cache, false, m_layouts, m_parts);
+			m_dtree.ShowObject(m_entry, "Normal", null, m_entry, false);
+			XmlNode template = m_dtree.GetTemplateForObjLayout(m_entry, "Normal", null);
+			var expected = "<layout class=\"LexEntry\" type=\"detail\" name=\"Normal\"><part ref=\"_CustomFieldPlaceholder\" customFields=\"here\" /></layout>";
+			Assert.AreEqual(template.OuterXml, expected);
 		}
 
 		/// <summary></summary>
