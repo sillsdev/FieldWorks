@@ -30,4 +30,8 @@
 		<part ref="CitationForm" label="Citation Form"/>
 		<part ref="CitationForm" label="Citation Form" abbr="!?"/>
 	</layout>
+  <layout class="LexEntry" type="detail" name="Normal">
+  <part ref="_CustomFieldPlaceholder" customFields="here"/>
+  <part ref="_CustomFieldPlaceholder" customFields="here"/>
+  </layout>
 </LayoutInventory>
