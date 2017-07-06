@@ -6,7 +6,7 @@ using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -27,7 +27,7 @@ namespace SIL.FieldWorks.Common.Controls
 		///
 		/// </summary>
 		public System.Windows.Forms.Label InfoBarLabel;
-		private SIL.FieldWorks.Common.Drawing.BorderDrawing m_borderDrawing;
+		private SIL.FieldWorks.Common.Controls.BorderDrawing m_borderDrawing;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -61,7 +61,7 @@ namespace SIL.FieldWorks.Common.Controls
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
-			this.m_borderDrawing = new SIL.FieldWorks.Common.Drawing.BorderDrawing(this.components);
+			this.m_borderDrawing = new SIL.FieldWorks.Common.Controls.BorderDrawing(this.components);
 			this.InfoBarPanel = new System.Windows.Forms.Panel();
 			this.InfoBarLabel = new System.Windows.Forms.Label();
 			this.InfoBarPanel.SuspendLayout();
@@ -124,7 +124,7 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			base.OnPaint(e);
 			m_borderDrawing.Draw(e.Graphics, ClientRectangle,
-				SIL.FieldWorks.Common.Drawing.BorderTypes.Single);
+				SIL.FieldWorks.Common.Controls.BorderTypes.Single);
 		}
 
 		/// <summary>

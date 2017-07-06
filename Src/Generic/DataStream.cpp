@@ -222,7 +222,7 @@ void DataFile::WriteInc(int & ib, const void * pv, int cb)
 int DataFile::Append(const void * pv, int cb)
 {
 	int ib = SetFilePointer(m_hfile, 0, NULL, FILE_END);
-	if (ib == 0xFFFFFFFF)
+	if (ib == SIZE_MAX)
 		ThrowHr(WarnHr(STG_E_SEEKERROR));
 
 	if (!cb)

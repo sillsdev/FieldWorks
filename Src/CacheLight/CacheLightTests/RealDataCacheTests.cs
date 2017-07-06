@@ -7,11 +7,11 @@ using System.Collections.Generic; // Needed for KeyNotFoundException.
 using System.IO;
 using NUnit.Framework;
 using SIL.FieldWorks.CacheLight;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 using System.Text;
-using SIL.CoreImpl.Cellar;
-using SIL.CoreImpl.Text;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 
 namespace SIL.FieldWorks.CacheLightTests

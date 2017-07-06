@@ -3,21 +3,21 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Xml.Linq;
+using System.Xml.XPath;
 using System.Diagnostics;
 using System.Drawing.Printing;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.Framework.DetailControls;
-using SIL.FieldWorks.FDO;
-using SIL.Utils;
-using System.Collections.Generic;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using System.Xml.Linq;
-using System.Xml.XPath;
 using SIL.FieldWorks.Common.Framework;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.Utils;
 using SIL.Xml;
 
 namespace SIL.FieldWorks.XWorks

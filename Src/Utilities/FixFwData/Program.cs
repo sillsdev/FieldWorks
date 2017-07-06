@@ -10,7 +10,7 @@ using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using SIL.FieldWorks.FixData;
 using SIL.Reporting;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 using SIL.Windows.Forms.HotSpot;
 
 namespace FixFwData

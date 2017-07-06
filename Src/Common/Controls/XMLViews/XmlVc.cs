@@ -10,22 +10,22 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
-using SIL.CoreImpl.Cellar;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.WritingSystems;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.Application.ApplicationServices;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Application;
+using SIL.LCModel.Application.ApplicationServices;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.Resources;
 using SIL.ObjectModel;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 using SIL.Xml;
 
 namespace SIL.FieldWorks.Common.Controls
@@ -882,7 +882,7 @@ namespace SIL.FieldWorks.Common.Controls
 			Debug.Assert(s_cwsMulti == 0);
 			try
 			{
-				HashSet<int> wsIds = WritingSystemServices.GetAllWritingSystems(m_cache, frag, s_qwsCurrent, 0, 0);
+				HashSet<int> wsIds = WritingSystemServices.GetAllWritingSystems(m_cache, FwUtils.FwUtils.ConvertElement(frag), s_qwsCurrent, 0, 0);
 				s_cwsMulti = wsIds.Count;
 				if (s_cwsMulti > 1)
 					s_sMultiSep = XmlUtils.GetOptionalAttributeValue(frag, "sep");
@@ -903,7 +903,7 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-		internal static void DisplayWsLabel(CoreWritingSystemDefinition qws, IVwEnv vwenv, FdoCache cache)
+		internal static void DisplayWsLabel(CoreWritingSystemDefinition qws, IVwEnv vwenv, LcmCache cache)
 		{
 			if (qws == null)
 				return;
@@ -925,7 +925,7 @@ namespace SIL.FieldWorks.Common.Controls
 			vwenv.AddString(tisb.GetString());
 		}
 
-		internal static void DisplayMultiSep(XElement frag, IVwEnv vwenv, FdoCache cache)
+		internal static void DisplayMultiSep(XElement frag, IVwEnv vwenv, LcmCache cache)
 		{
 			string sWs = XmlUtils.GetOptionalAttributeValue(frag, "ws");
 			if (sWs != null && sWs == "current")
@@ -1282,7 +1282,7 @@ namespace SIL.FieldWorks.Common.Controls
 							}
 							else
 							{
-								wsIds = WritingSystemServices.GetAllWritingSystems(m_cache, caller, null, hvoTarget, flid);
+								wsIds = WritingSystemServices.GetAllWritingSystems(m_cache, FwUtils.FwUtils.ConvertElement(caller), null, hvoTarget, flid);
 							}
 							if (wsIds.Count == 1)
 							{
@@ -1463,7 +1463,7 @@ namespace SIL.FieldWorks.Common.Controls
 							break;
 						}
 					case "objectOfRowUsingViewConstructor": // display the current object using an external VC.
-						//notice this assumes that it wants a FdoCache as an argument
+						//notice this assumes that it wants a LcmCache as an argument
 						IVwViewConstructor vc =
 							(IVwViewConstructor)DynamicLoader.CreateObject(frag,
 							new Object[] { m_cache });
@@ -2084,7 +2084,7 @@ namespace SIL.FieldWorks.Common.Controls
 								}
 								if (wsid == 0 && sWs != null)
 								{
-									foreach (int ws in WritingSystemServices.GetWritingSystems(m_cache, frag))
+									foreach (int ws in WritingSystemServices.GetWritingSystems(m_cache, FwUtils.FwUtils.ConvertElement(frag)))
 										infoTarget.AddAtomicField(flid, ws);
 								}
 								else
@@ -2154,7 +2154,7 @@ namespace SIL.FieldWorks.Common.Controls
 								}
 								else
 								{
-									foreach (int wsid in WritingSystemServices.GetWritingSystems(m_cache, frag))
+									foreach (int wsid in WritingSystemServices.GetWritingSystems(m_cache, FwUtils.FwUtils.ConvertElement(frag)))
 										info.AddAtomicField(flid, wsid);
 								}
 							}
@@ -2197,7 +2197,7 @@ namespace SIL.FieldWorks.Common.Controls
 							}
 							else
 							{
-								foreach (int wsid in WritingSystemServices.GetWritingSystems(m_cache, caller))
+								foreach (int wsid in WritingSystemServices.GetWritingSystems(m_cache, FwUtils.FwUtils.ConvertElement(caller)))
 								info.AddAtomicField(flid, wsid);
 							}
 							break;
@@ -2326,7 +2326,7 @@ namespace SIL.FieldWorks.Common.Controls
 		}
 
 		/// <summary>
-		/// This combines some of the logic of GetFlid(hvo, frag) and FdoCache.GetFlid(hvo, class, field).
+		/// This combines some of the logic of GetFlid(hvo, frag) and LcmCache.GetFlid(hvo, class, field).
 		/// Where possible it determines a flid that should be preloaded, adds it to info, and
 		/// returns it.
 		/// </summary>
@@ -2390,7 +2390,7 @@ namespace SIL.FieldWorks.Common.Controls
 		private int GetWritingSystemForObject(XElement frag, int hvo, int flid, int wsDefault)
 		{
 			if (WsForce == 0)
-				return WritingSystemServices.GetWritingSystem(m_cache, m_sda, frag, s_qwsCurrent, hvo, flid, wsDefault).Handle;
+				return WritingSystemServices.GetWritingSystem(m_cache, m_sda, FwUtils.FwUtils.ConvertElement(frag), s_qwsCurrent, hvo, flid, wsDefault).Handle;
 			if (WsForce < 0) // magic.
 			{
 				// Forced magic ws. Find the corresponding actual WS.
@@ -2950,7 +2950,7 @@ namespace SIL.FieldWorks.Common.Controls
 					}
 				}
 				if (wsid == 0)
-					wsid = WritingSystemServices.GetWritingSystem(m_cache, frag, null, WritingSystemServices.kwsAnal).Handle;
+					wsid = WritingSystemServices.GetWritingSystem(m_cache, FwUtils.FwUtils.ConvertElement(frag), null, WritingSystemServices.kwsAnal).Handle;
 				DisplayOtherObjStringAlt(flid, wsid, vwenv, hvoTarget, caller);
 			}
 		}
@@ -3184,7 +3184,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="sda">The sda.</param>
 		/// <param name="caller">The caller.</param>
 		/// <returns></returns>
-		public static bool ConditionPasses(XElement frag, int hvo, FdoCache cache, ISilDataAccess sda, XElement caller)
+		public static bool ConditionPasses(XElement frag, int hvo, LcmCache cache, ISilDataAccess sda, XElement caller)
 		{
 			return ConditionPasses(null, frag, hvo, cache, sda, caller);
 		}
@@ -3197,7 +3197,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="cache">The cache.</param>
 		/// <param name="sda">The sda.</param>
 		/// <returns></returns>
-		public static bool ConditionPasses(XElement frag, int hvo, FdoCache cache, ISilDataAccess sda)
+		public static bool ConditionPasses(XElement frag, int hvo, LcmCache cache, ISilDataAccess sda)
 		{
 			return ConditionPasses(null, frag, hvo, cache, sda, null);
 		}
@@ -3209,7 +3209,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="hvo">The hvo.</param>
 		/// <param name="cache">The cache.</param>
 		/// <returns></returns>
-		public static bool ConditionPasses(XElement frag, int hvo, FdoCache cache)
+		public static bool ConditionPasses(XElement frag, int hvo, LcmCache cache)
 		{
 			return ConditionPasses(null, frag, hvo, cache, cache.DomainDataByFlid, null);
 		}
@@ -3261,7 +3261,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="sda">The sda.</param>
 		/// <param name="caller">the 'part ref' node that invoked the current part. May be null if XML does not use it.</param>
 		/// <returns></returns>
-		public static bool ConditionPasses(IVwEnv vwenv, XElement frag, int hvo, FdoCache cache, ISilDataAccess sda, XElement caller)
+		public static bool ConditionPasses(IVwEnv vwenv, XElement frag, int hvo, LcmCache cache, ISilDataAccess sda, XElement caller)
 		{
 			GetActualTarget(frag, ref hvo, sda);	// modify the hvo if needed
 
@@ -3284,7 +3284,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="frag"></param>
 		/// <param name="cache"></param>
 		/// <returns></returns>
-		private static bool BidiConditionPasses(XElement frag, FdoCache cache)
+		private static bool BidiConditionPasses(XElement frag, LcmCache cache)
 		{
 			string sBidi = XmlUtils.GetOptionalAttributeValue(frag, "bidi");
 			if (sBidi != null)
@@ -3310,7 +3310,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="sda">The sda.</param>
 		/// <param name="caller">The caller.</param>
 		/// <returns></returns>
-		static private bool ValueEqualityConditionsPass(IVwEnv vwenv, XElement frag, int hvo, FdoCache cache,
+		static private bool ValueEqualityConditionsPass(IVwEnv vwenv, XElement frag, int hvo, LcmCache cache,
 			ISilDataAccess sda, XElement caller)
 		{
 			if (!StringEqualsConditionPasses(vwenv, frag, hvo, sda))
@@ -3593,7 +3593,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="caller">The caller.</param>
 		/// <returns></returns>
 		static private bool StringAltEqualsConditionPasses(IVwEnv vwenv, XElement frag, int hvo,
-			FdoCache cache, ISilDataAccess sda, XElement caller)
+			LcmCache cache, ISilDataAccess sda, XElement caller)
 		{
 			string stringAltValue = XmlUtils.GetOptionalAttributeValue(frag, "stringaltequals");
 			if (stringAltValue != null)
@@ -3920,7 +3920,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// <value>The cache.</value>
 		/// ------------------------------------------------------------------------------------
-		public override FdoCache Cache
+		public override LcmCache Cache
 		{
 			set
 			{
@@ -3939,7 +3939,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// Test-only way to set cache without setting SDA and layouts.
 		/// Test code should set them some other way!
 		/// </summary>
-		internal void SetCache(FdoCache cache)
+		internal void SetCache(LcmCache cache)
 		{
 			base.Cache = cache;
 		}
@@ -5671,9 +5671,9 @@ namespace SIL.FieldWorks.Common.Controls
 	class CmObjectComparer : DisposableBase, IComparer<int>
 	{
 		private IntPtr m_col = IntPtr.Zero;
-		private readonly FdoCache m_cache;
+		private readonly LcmCache m_cache;
 
-		public CmObjectComparer(FdoCache cache)
+		public CmObjectComparer(LcmCache cache)
 		{
 			m_cache = cache;
 		}

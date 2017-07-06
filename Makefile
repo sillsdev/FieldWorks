@@ -224,7 +224,6 @@ manpage-clean:
 install-tree-fdo:
 	# Create directories
 	install -d $(DESTDIR)/usr/lib/fieldworks
-	install -d $(DESTDIR)/usr/lib/fieldworks/icu-bin
 	install -d $(DESTDIR)/usr/lib/fieldworks/Firefox
 	install -d $(DESTDIR)/usr/share/fieldworks
 	install -d $(DESTDIR)/var/lib/fieldworks
@@ -232,10 +231,7 @@ install-tree-fdo:
 	install -m 644 $(OUT_DIR)/*.{dll*,so} $(DESTDIR)/usr/lib/fieldworks
 	install -m 644 $(OUT_DIR)/Firefox/*.* $(DESTDIR)/usr/lib/fieldworks/Firefox
 	install -m 644 $(OUT_DIR)/{*.compmap,components.map} $(DESTDIR)/usr/lib/fieldworks
-	install -m 644 Lib/src/icu/install$(ARCH)/lib/lib* $(DESTDIR)/usr/lib/fieldworks
 	# Install executables and scripts
-	install Lib/src/icu/install$(ARCH)/bin/* $(DESTDIR)/usr/lib/fieldworks/icu-bin
-	install Lib/src/icu/source/bin/* $(DESTDIR)/usr/lib/fieldworks/icu-bin
 	install Lib/linux/setup-user $(DESTDIR)/usr/share/fieldworks/
 	# Install content and plug-ins
 	# For reasons I don't understand we need strings-en.txt otherwise the tests fail when run from xbuild
@@ -707,31 +703,6 @@ uninstall-between-DistFiles:
 	rm DistFiles/TeResources.dll
 
 # // TODO-Linux: delete all C# makefiles and replace with xbuild/msbuild calls
-BasicUtils-Nant-Build:
-	(cd $(BUILD_ROOT)/Build && xbuild /t:BasicUtils)
-
-Te-Nant-Build:
-	(cd $(BUILD_ROOT)/Build && xbuild /t:allTe)
-
-Te-Nant-Run:
-	(cd $(BUILD_ROOT)/Build && xbuild /t:allTe /property:action=test)
-
-Flex-Nant-Build:
-	(cd $(BUILD_ROOT)/Build && xbuild /t:LexTextExe)
-
-Flex-Nant-Run:
-	(cd $(BUILD_ROOT)/Build && xbuild /t:LexTextExe /property:action=test)
-
-TE: linktoOutputDebug tlbs-copy teckit externaltargets Te-Nant-Build install install-strings ComponentsMap-nodep Te-Nant-Run
-
-Flex: linktoOutputDebug tlbs-copy externaltargets Flex-Nant-Build install-strings ComponentsMap-nodep Flex-Nant-Run
-
-Fw:
-	(cd $(BUILD_ROOT)/Build && xbuild /t:remakefw /property:action=test)
-
-Fw-build:
-	(cd $(BUILD_ROOT)/Build && xbuild /t:remakefw)
-
 InstallCerts:
 	cd $$(mktemp -d) \
 		&& wget -q -O certdata.txt "http://mxr.mozilla.org/seamonkey/source/security/nss/lib/ckfw/builtins/certdata.txt?raw=1" \
@@ -740,7 +711,9 @@ InstallCerts:
 
 # As of 2017-03-27, localize is more likely to crash running on mono 3 than to actually have a real localization problem. So try it a few times so that a random crash doesn't fail a packaging job that has been running for over an hour.
 Fw-build-package: InstallCerts
+	. environ && \
 	cd $(BUILD_ROOT)/Build \
+		&& xbuild /t:refreshTargets \
 		&& xbuild '/t:remakefw;zipLocalizedLists' /property:config=release /property:packaging=yes \
 		&& ./multitry xbuild '/t:localize' /property:config=release /property:packaging=yes
 
@@ -748,9 +721,6 @@ Fw-build-package-fdo: InstallCerts
 	cd $(BUILD_ROOT)/Build \
 		&& xbuild /t:refreshTargets \
 		&& xbuild '/t:build4package-fdo' /property:config=release /property:packaging=yes
-
-TE-run: ComponentsMap-nodep
-	(. ./environ && cd $(OUT_DIR) && mono --debug TE.exe -db "$${TE_DATABASE}")
 
 # Begin localization section
 

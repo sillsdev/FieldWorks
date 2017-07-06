@@ -8,10 +8,10 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows.Forms;
 using System.Xml.Linq;
-using SIL.CoreImpl.WritingSystems;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 using SIL.WritingSystems;
 using SIL.Xml;
 
@@ -40,7 +40,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 		List<XElement> m_possibleColumns;
 		List<XElement> m_currentColumns;
-		readonly FdoCache m_cache;
+		readonly LcmCache m_cache;
 		private readonly IHelpTopicProvider m_helpTopicProvider;
 
 		bool m_fUpdatingWsCombo = false; // true during UpdateWsCombo
@@ -104,7 +104,7 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			m_possibleColumns = possibleColumns;
 			m_currentColumns = currentColumns;
-			m_cache = propertyTable.GetValue<FdoCache>("cache");
+			m_cache = propertyTable.GetValue<LcmCache>("cache");
 			//
 			// Required for Windows Form Designer support
 			//
@@ -316,7 +316,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>
 		/// Initialize the combo box for the standard set of writing systems.
 		/// </summary>
-		public static void AddWritingSystemsToCombo(FdoCache cache,
+		public static void AddWritingSystemsToCombo(LcmCache cache,
 			ComboBox.ObjectCollection items, WsComboContent contentToAdd)
 		{
 			AddWritingSystemsToCombo(cache, items, contentToAdd, false, false);
@@ -325,7 +325,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>
 		/// Initialize the combo box for the standard set of writing systems.
 		/// </summary>
-		public static void AddWritingSystemsToCombo(FdoCache cache,
+		public static void AddWritingSystemsToCombo(LcmCache cache,
 			ComboBox.ObjectCollection items, WsComboContent contentToAdd, bool skipDefaults)
 		{
 			AddWritingSystemsToCombo(cache, items, contentToAdd, skipDefaults, false);
@@ -344,7 +344,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// adds all reasonable single generic items not already included by skipDefaults.
 		/// Ignored if skipDefaults is true.</param>
 		/// <remarks>This is static because ConfigureInterlinDialog uses it</remarks>
-		public static void AddWritingSystemsToCombo(FdoCache cache,
+		public static void AddWritingSystemsToCombo(LcmCache cache,
 			ComboBox.ObjectCollection items, WsComboContent contentToAdd, bool skipDefaults,
 			bool allowMultiple)
 		{
@@ -535,7 +535,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="items">The items.</param>
 		/// <param name="wss">The ws array.</param>
 		/// ------------------------------------------------------------------------------------
-		public static void AddWritingSystemsToCombo(FdoCache cache, ComboBox.ObjectCollection items, IEnumerable<CoreWritingSystemDefinition> wss)
+		public static void AddWritingSystemsToCombo(LcmCache cache, ComboBox.ObjectCollection items, IEnumerable<CoreWritingSystemDefinition> wss)
 		{
 			foreach (CoreWritingSystemDefinition ws in wss)
 				items.Add(new WsComboItem(ws.DisplayLabel, ws.Id));
@@ -1354,7 +1354,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="wsForOptions"></param>
 		/// <param name="defaultMagicName"></param>
 		/// <returns></returns>
-		public static WsComboContent ChooseComboContent(FdoCache cache, int wsForOptions, string defaultMagicName)
+		public static WsComboContent ChooseComboContent(LcmCache cache, int wsForOptions, string defaultMagicName)
 		{
 			string magicName = "";
 			if (wsForOptions < 0)
@@ -1461,9 +1461,9 @@ namespace SIL.FieldWorks.Common.Controls
 		/// column already.
 		/// </summary>
 		/// <param name="colSpec">The XML node of the column specification</param>
-		/// <param name="cache">The FdoCache</param>
+		/// <param name="cache">The LcmCache</param>
 		/// ------------------------------------------------------------------------------------
-		static public void GenerateColumnLabel(XElement colSpec, FdoCache cache)
+		static public void GenerateColumnLabel(XElement colSpec, LcmCache cache)
 		{
 			string newWs = XmlViewsUtils.FindWsParam(colSpec);
 			string originalWs = XmlUtils.GetOptionalAttributeValue(colSpec, "originalWs");

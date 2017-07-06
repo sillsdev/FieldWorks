@@ -5,11 +5,11 @@
 using System.Collections.Generic;
 using System.Drawing;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.XWorks;
+using SIL.LCModel;
+using SIL.LCModel.Application;
+using SIL.LCModel.DomainImpl;
 
 namespace LanguageExplorer.Areas.Lexicon
 {
@@ -31,7 +31,7 @@ namespace LanguageExplorer.Areas.Lexicon
 		}
 
 		/// <summary />
-		internal static RecordClerk CreateBasicClerkForLexiconArea(FdoCache cache)
+		internal static RecordClerk CreateBasicClerkForLexiconArea(LcmCache cache)
 		{
 			var mdc = cache.MetaDataCacheAccessor;
 			var lexDb = cache.LanguageProject.LexDbOA;
@@ -100,7 +100,7 @@ namespace LanguageExplorer.Areas.Lexicon
 			string hcSettings;
 			if (!PropertyTable.TryGetValue(khomographconfiguration, out hcSettings)) return;
 
-			var serviceLocator = PropertyTable.GetValue<FdoCache>("cache").ServiceLocator;
+			var serviceLocator = PropertyTable.GetValue<LcmCache>("cache").ServiceLocator;
 			var hc = serviceLocator.GetInstance<HomographConfiguration>();
 			hc.PersistData = hcSettings;
 
@@ -168,7 +168,7 @@ namespace LanguageExplorer.Areas.Lexicon
 		{
 			PropertyTable.SetProperty("InitialArea", MachineName, SettingsGroup.LocalSettings, true, false);
 
-			var serviceLocator = PropertyTable.GetValue<FdoCache>("cache").ServiceLocator;
+			var serviceLocator = PropertyTable.GetValue<LcmCache>("cache").ServiceLocator;
 			var hc = serviceLocator.GetInstance<HomographConfiguration>();
 			PropertyTable.SetProperty(khomographconfiguration, hc.PersistData, true, false);
 

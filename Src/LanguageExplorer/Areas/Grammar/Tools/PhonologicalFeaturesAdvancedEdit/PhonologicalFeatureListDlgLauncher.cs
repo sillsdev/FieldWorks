@@ -6,8 +6,8 @@ using System;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.LexText.Controls;
+using SIL.LCModel;
 
 namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalFeaturesAdvancedEdit
 {
@@ -27,13 +27,13 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalFeaturesAdvancedEdit
 		/// <summary>
 		/// Initialize the launcher.
 		/// </summary>
-		public override void Initialize(FdoCache cache, ICmObject obj, int flid, string fieldName,
+		public override void Initialize(LcmCache cache, ICmObject obj, int flid, string fieldName,
 			IPersistenceProvider persistProvider, string displayNameProperty, string displayWs)
 		{
 			CheckDisposed();
 
 			base.Initialize(cache, obj, flid, fieldName, persistProvider, displayNameProperty, displayWs);
-			m_PhonologicalFeatureListDlgLauncherView.Init(PropertyTable.GetValue<FdoCache>("cache"), obj as IFsFeatStruc);
+			m_PhonologicalFeatureListDlgLauncherView.Init(PropertyTable.GetValue<LcmCache>("cache"), obj as IFsFeatStruc);
 			if (Slice.Object.ClassID == PhPhonemeTags.kClassId)
 				m_PhonologicalFeatureListDlgLauncherView.Phoneme = Slice.Object as IPhPhoneme;
 		}

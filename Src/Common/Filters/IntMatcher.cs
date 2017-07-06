@@ -1,10 +1,11 @@
 // Copyright (c) 2004-2013 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
 using System.Linq;
 using System.Xml.Linq;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.Xml;
 
 namespace  SIL.FieldWorks.Filters

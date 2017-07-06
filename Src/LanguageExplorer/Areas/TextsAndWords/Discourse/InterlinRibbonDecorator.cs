@@ -4,9 +4,9 @@
 
 using System.Collections.Generic;
 using System.Diagnostics;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel;
+using SIL.LCModel.Application;
+using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.XWorks;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Discourse
@@ -45,7 +45,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 
 		#endregion
 
-		public InterlinRibbonDecorator(FdoCache cache, object sourceObj, int flid)
+		public InterlinRibbonDecorator(LcmCache cache, object sourceObj, int flid)
 			: base(cache.DomainDataByFlid as ISilDataAccessManaged)
 		{
 			m_sourceObj = sourceObj;

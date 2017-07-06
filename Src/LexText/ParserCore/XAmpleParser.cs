@@ -11,9 +11,9 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using SIL.ObjectModel;
 using XAmpleManagedWrapper;
 
@@ -25,13 +25,13 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		private XAmpleWrapper m_xample;
 		private readonly string m_dataDir;
-		private readonly FdoCache m_cache;
+		private readonly LcmCache m_cache;
 		private ParserModelChangeListener m_changeListener;
 		private readonly M3ToXAmpleTransformer m_transformer;
 		private readonly string m_database;
 		private bool m_forceUpdate;
 
-		public XAmpleParser(FdoCache cache, string dataDir)
+		public XAmpleParser(LcmCache cache, string dataDir)
 		{
 			m_cache = cache;
 			m_xample = new XAmpleWrapper();
@@ -179,7 +179,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			return result;
 		}
 
-		private static bool TryCreateParseMorph(FdoCache cache, XElement morphElem, out ParseMorph morph)
+		private static bool TryCreateParseMorph(LcmCache cache, XElement morphElem, out ParseMorph morph)
 		{
 			XElement formElement = morphElem.Element("MoForm");
 			Debug.Assert(formElement != null);

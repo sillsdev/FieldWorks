@@ -9,7 +9,7 @@
 using System;
 using System.ServiceModel;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 
 namespace SIL.FieldWorks.LexicalProvider
 {
@@ -27,14 +27,14 @@ namespace SIL.FieldWorks.LexicalProvider
 		public const string kLexicalProviderType = "LexicalProvider";
 		private const int kSupportedLexicalProviderVersion = 3;
 
-		private FdoCache m_cache;
+		private LcmCache m_cache;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="LexicalServiceProvider"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public LexicalServiceProvider(FdoCache cache)
+		public LexicalServiceProvider(LcmCache cache)
 		{
 			m_cache = cache;
 		}

@@ -5,11 +5,11 @@
 using System.Collections.Generic;
 using System.Text;
 using NUnit.Framework;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using System.IO;
 using System.Xml;
 using LanguageExplorer.Areas.TextsAndWords.Discourse;
-using SIL.CoreImpl.Text;
+using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.FwUtils;
 
 namespace LanguageExplorerTests.Discourse

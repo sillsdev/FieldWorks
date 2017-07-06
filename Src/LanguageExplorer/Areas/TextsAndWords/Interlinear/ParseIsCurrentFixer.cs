@@ -6,8 +6,8 @@ using System;
 using System.Linq;
 using System.Windows.Forms;
 using LanguageExplorer.UtilityTools;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
@@ -50,14 +50,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		public void Process()
 		{
-			var cache = m_dlg.PropertyTable.GetValue<FdoCache>("cache");
+			var cache = m_dlg.PropertyTable.GetValue<LcmCache>("cache");
 			UndoableUnitOfWorkHelper.Do(ITextStrings.ksUndoMergeWordforms, ITextStrings.ksRedoMergeWordforms,
 				cache.ActionHandlerAccessor,
 				() => ClearFlags(cache, m_dlg.ProgressBar));
 
 		}
 
-		private void ClearFlags(FdoCache cache, ProgressBar progressBar)
+		void ClearFlags(LcmCache cache, ProgressBar progressBar)
 		{
 			var paras = cache.ServiceLocator.GetInstance<IStTxtParaRepository>().AllInstances().ToArray();
 			progressBar.Minimum = 0;

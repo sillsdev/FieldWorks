@@ -6,12 +6,12 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Xml;
-using SIL.CoreImpl.WritingSystems;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
@@ -22,7 +22,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 	public class InterlinearExporter : CollectorEnv
 	{
 		protected XmlWriter m_writer;
-		protected FdoCache m_cache;
+		protected LcmCache m_cache;
 		bool m_fItemIsOpen = false; // true while doing some <item> element (causes various things to output data)
 		bool m_fDoingHeadword = false; // true while displaying a headword (causes some special behaviors)
 		bool m_fDoingHomographNumber = false; // true after note dependency on homograph number, to end of headword.
@@ -49,7 +49,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		protected WritingSystemManager m_wsManager;
 		protected ICmObjectRepository m_repoObj;
 
-		public static InterlinearExporter Create(string mode, FdoCache cache, XmlWriter writer, ICmObject objRoot,
+		public static InterlinearExporter Create(string mode, LcmCache cache, XmlWriter writer, ICmObject objRoot,
 			InterlinLineChoices lineChoices, InterlinVc vc)
 		{
 			if (mode != null && mode.ToLowerInvariant() == "elan")
@@ -62,7 +62,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 		}
 
-		protected InterlinearExporter(FdoCache cache, XmlWriter writer, ICmObject objRoot,
+		protected InterlinearExporter(LcmCache cache, XmlWriter writer, ICmObject objRoot,
 			InterlinLineChoices lineChoices, InterlinVc vc)
 			: base(null, cache.MainCacheAccessor, objRoot.Hvo)
 		{
@@ -614,9 +614,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					}
 					m_writer.WriteEndElement();	// languages
 					//Media files section
-					if (text != null && text is SIL.FieldWorks.FDO.IText && ((SIL.FieldWorks.FDO.IText)text).MediaFilesOA != null)
+					if (text != null && text is IText && ((IText)text).MediaFilesOA != null)
 					{
-						SIL.FieldWorks.FDO.IText theText = (SIL.FieldWorks.FDO.IText) text;
+						IText theText = (IText) text;
 						m_writer.WriteStartElement("media-files");
 						m_writer.WriteAttributeString("offset-type", theText.MediaFilesOA.OffsetType);
 						foreach (var mediaFile in theText.MediaFilesOA.MediaURIsOC)
@@ -745,7 +745,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			if (txt == null)
 				return;
-			var text = txt.Owner as SIL.FieldWorks.FDO.IText;
+			var text = txt.Owner as IText;
 			if (text != null)
 			{
 				foreach (var writingSystemId in text.Name.AvailableWritingSystemIds)
@@ -782,7 +782,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 	public class InterlinearExporterForElan : InterlinearExporter
 	{
 		private const int kDocVersion = 2;
-		protected internal InterlinearExporterForElan(FdoCache cache, XmlWriter writer, ICmObject objRoot,
+		protected internal InterlinearExporterForElan(LcmCache cache, XmlWriter writer, ICmObject objRoot,
 			InterlinLineChoices lineChoices, InterlinVc vc)
 			: base(cache, writer, objRoot, lineChoices, vc)
 		{

@@ -8,18 +8,17 @@ using System.Windows.Forms;
 using System.Xml;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.XWorks;
-using SIL.Xml;
+using SIL.LCModel;
+using SIL.LCModel.Application;
+using SIL.LCModel.DomainServices;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
 	public class ConcordanceControlBase : UserControl, IMainContentControl
 	{
 		protected XmlNode m_configurationParameters;
-		protected FdoCache m_cache;
+		protected LcmCache m_cache;
 		protected OccurrencesOfSelectedUnit m_clerk;
 		protected IHelpTopicProvider m_helpTopicProvider;
 
@@ -72,7 +71,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 #if RANDYTODO
 			m_configurationParameters = configurationParameters;
 #endif
-			m_cache = PropertyTable.GetValue<FdoCache>("cache");
+			m_cache = PropertyTable.GetValue<LcmCache>("cache");
 #if RANDYTODO
 			var name = RecordClerk.GetCorrespondingPropertyName(XmlUtils.GetAttributeValue(configurationParameters, "clerk"));
 			m_clerk = PropertyTable.GetValue<OccurrencesOfSelectedUnit>(name) ?? (OccurrencesOfSelectedUnit)RecordClerkFactory.CreateClerk(PropertyTable, Publisher, Subscriber, true);

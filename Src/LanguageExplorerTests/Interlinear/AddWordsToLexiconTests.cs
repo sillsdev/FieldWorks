@@ -6,13 +6,12 @@ using System.Collections.Generic;
 using System.Linq;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using NUnit.Framework;
-using SIL.CoreImpl.Text;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.FDOTests;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using SIL.ObjectModel;
 
 namespace LanguageExplorerTests.Interlinear
@@ -108,7 +107,7 @@ namespace LanguageExplorerTests.Interlinear
 
 		internal class SandboxForTests : Sandbox
 		{
-			internal SandboxForTests(FdoCache cache, InterlinLineChoices lineChoices)
+			internal SandboxForTests(LcmCache cache, InterlinLineChoices lineChoices)
 				: base(cache, null, lineChoices)
 			{
 			}

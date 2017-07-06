@@ -5,7 +5,7 @@
 using System;
 using System.Windows.Forms;
 using Microsoft.Win32;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.Common.Controls
 {

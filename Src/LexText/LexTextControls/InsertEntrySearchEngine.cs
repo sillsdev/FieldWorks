@@ -5,11 +5,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using SIL.CoreImpl.Text;
+using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainImpl;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
+using SIL.LCModel.DomainImpl;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -20,7 +20,7 @@ namespace SIL.FieldWorks.LexText.Controls
 	{
 		private readonly Virtuals m_virtuals;
 
-		public InsertEntrySearchEngine(FdoCache cache)
+		public InsertEntrySearchEngine(LcmCache cache)
 			: base(cache, SearchType.Prefix)
 		{
 			m_virtuals = Cache.ServiceLocator.GetInstance<Virtuals>();

@@ -14,9 +14,9 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Security;
 using Microsoft.Win32;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.Resources;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
@@ -39,7 +39,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		private const string CompanyName = "SIL";
 
-		private static readonly IFdoDirectories s_fdoDirs = new FwFdoDirectories();
+		private static readonly ILcmDirectories s_lcmDirs = new FwLcmDirectories();
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -349,7 +349,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// found.</exception>
 		/// ------------------------------------------------------------------------------------
 		public static string DataDirectory => GetDirectory(ksRootDataDir,
-			Path.Combine(FdoFileHelper.CommonApplicationData, CompanyName, ksFieldWorks));
+			Path.Combine(LcmFileHelper.CommonApplicationData, CompanyName, ksFieldWorks));
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -360,7 +360,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// found.</exception>
 		/// ------------------------------------------------------------------------------------
 		public static string DataDirectoryLocalMachine => GetDirectoryLocalMachine(ksRootDataDir,
-			Path.Combine(FdoFileHelper.CommonApplicationData, CompanyName, ksFieldWorks));
+			Path.Combine(LcmFileHelper.CommonApplicationData, CompanyName, ksFieldWorks));
 
 		private static string m_srcdir;
 
@@ -557,7 +557,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// ------------------------------------------------------------------------------------
 		public static string CommonAppDataFolder(string appName)
 		{
-			return Path.Combine(Path.Combine(FdoFileHelper.CommonApplicationData, CompanyName), appName);
+			return Path.Combine(Path.Combine(LcmFileHelper.CommonApplicationData, CompanyName), appName);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -600,29 +600,24 @@ namespace SIL.FieldWorks.Common.FwUtils
 		}
 
 		/// <summary>
-		/// Gets the FDO directories service.
+		/// Gets the LCM directories service.
 		/// </summary>
-		public static IFdoDirectories FdoDirectories
+		public static ILcmDirectories LcmDirectories
 		{
-			get { return s_fdoDirs; }
+			get { return s_lcmDirs; }
 		}
 
-		private class FwFdoDirectories : IFdoDirectories
+		private class FwLcmDirectories : ILcmDirectories
 		{
 			/// <summary>
 			/// Gets the projects directory.
 			/// </summary>
-			string IFdoDirectories.ProjectsDirectory
+			string ILcmDirectories.ProjectsDirectory
 			{
 				get { return ProjectsDirectory; }
 			}
 
-			string IFdoDirectories.DefaultProjectsDirectory
-			{
-				get { return ProjectsDirectoryLocalMachine; }
-			}
-
-			string IFdoDirectories.TemplateDirectory
+			string ILcmDirectories.TemplateDirectory
 			{
 				get { return TemplateDirectory; }
 			}

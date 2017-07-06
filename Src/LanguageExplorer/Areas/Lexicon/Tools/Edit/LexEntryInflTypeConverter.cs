@@ -5,8 +5,8 @@
 using System.Collections.Generic;
 using LanguageExplorer.UtilityTools;
 using SIL.FieldWorks.FdoUi;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 {
@@ -51,7 +51,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// </summary>
 		public override void Process()
 		{
-			m_cache = m_dlg.PropertyTable.GetValue<FdoCache>("cache");
+			m_cache = m_dlg.PropertyTable.GetValue<LcmCache>("cache");
 			UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksUndoConvertIrregularlyInflectedFormVariants, LanguageExplorerResources.ksRedoConvertIrregularlyInflectedFormVariants,
 										m_cache.ActionHandlerAccessor,
 										() => ShowDialogAndConvert(LexEntryInflTypeTags.kClassId));

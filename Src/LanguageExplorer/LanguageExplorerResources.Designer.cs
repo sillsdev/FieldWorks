@@ -71,6 +71,26 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon Arrow_Down {
+            get {
+                object obj = ResourceManager.GetObject("Arrow_Down", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon Arrow_Up {
+            get {
+                object obj = ResourceManager.GetObject("Arrow_Up", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Could not locate the tool named &apos;{0}&apos;..
         /// </summary>
         internal static string CannotFindToolNamed0 {
@@ -94,6 +114,36 @@ namespace LanguageExplorer {
         internal static string chooseTextsToDisplayAndUse {
             get {
                 return ResourceManager.GetString("chooseTextsToDisplayAndUse", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon DefaultIcon {
+            get {
+                object obj = ResourceManager.GetObject("DefaultIcon", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon DropDown2003 {
+            get {
+                object obj = ResourceManager.GetObject("DropDown2003", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon DropDown2007 {
+            get {
+                object obj = ResourceManager.GetObject("DropDown2007", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
             }
         }
         
@@ -206,6 +256,26 @@ namespace LanguageExplorer {
         internal static System.Drawing.Icon Grammar {
             get {
                 object obj = ResourceManager.GetObject("Grammar", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon Grip2003 {
+            get {
+                object obj = ResourceManager.GetObject("Grip2003", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon Grip2007 {
+            get {
+                object obj = ResourceManager.GetObject("Grip2007", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
             }
         }

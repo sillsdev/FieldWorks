@@ -6,10 +6,10 @@ using System.Drawing;
 using System.Xml.Linq;
 using LanguageExplorer.Controls;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks;
+using SIL.LCModel;
+using SIL.LCModel.Application;
 
 namespace LanguageExplorer.Areas.Lists.Tools.RestrictionsEdit
 {
@@ -99,7 +99,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.RestrictionsEdit
 				true,
 				XDocument.Parse(ListResources.RestrictionsEditParameters).Root, XDocument.Parse(ListResources.ListToolsSliceFilters),
 				MachineName,
-				new PossibilityListClerkParameters("RestrictionsList", PropertyTable.GetValue<FdoCache>("cache").LanguageProject.RestrictionsOA, false, true, false, "best analysis"),
+				new PossibilityListClerkParameters("RestrictionsList", PropertyTable.GetValue<LcmCache>("cache").LanguageProject.RestrictionsOA, false, true, false, "best analysis"),
 				out _recordClerk);
 			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
 		}

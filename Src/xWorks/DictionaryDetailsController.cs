@@ -10,9 +10,9 @@ using System.Windows.Forms;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainImpl;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel;
+using SIL.LCModel.DomainImpl;
+using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.FwCoreDlgControls;
 using SIL.FieldWorks.XWorks.DictionaryDetailsView;
 
@@ -26,8 +26,8 @@ namespace SIL.FieldWorks.XWorks
 	public class DictionaryDetailsController
 	{
 		private readonly IPropertyTable m_propertyTable;
-		private readonly FdoCache m_cache;
-		private readonly FwStyleSheet m_styleSheet;
+		private readonly LcmCache m_cache;
+		private readonly LcmStyleSheet m_styleSheet;
 
 		private List<StyleComboItem> m_charStyles;
 		private List<StyleComboItem> m_paraStyles;
@@ -57,7 +57,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			// one-time setup
 			m_propertyTable = propertyTable;
-			m_cache = propertyTable.GetValue<FdoCache>("cache");
+			m_cache = propertyTable.GetValue<LcmCache>("cache");
 			m_styleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(propertyTable);
 			LoadStylesLists();
 			View = view;

@@ -5,8 +5,9 @@
 using System;
 using System.ComponentModel;
 using System.Windows.Forms;
+using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 
 namespace SIL.FieldWorks.TE
 {
@@ -60,7 +61,7 @@ namespace SIL.FieldWorks.TE
 		/// Initializes a new instance of the <see cref="EmptyScripture"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public EmptyScripture(FdoCache fdoCache, IHelpTopicProvider helpTopicProvider)
+		public EmptyScripture(LcmCache fdoCache, IHelpTopicProvider helpTopicProvider)
 		{
 			InitializeComponent();
 
@@ -359,8 +360,7 @@ namespace SIL.FieldWorks.TE
 		protected override void OnPaint(PaintEventArgs e)
 		{
 			base.OnPaint(e);
-			SIL.FieldWorks.Common.Drawing.LineDrawing.DrawDialogControlSeparator(
-				e.Graphics, ClientRectangle, lblTopLabel.Bottom + 5);
+			LineDrawing.DrawDialogControlSeparator(e.Graphics, ClientRectangle, lblTopLabel.Bottom + 5);
 		}
 
 		/// ------------------------------------------------------------------------------------

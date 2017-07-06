@@ -6,7 +6,7 @@ using System.Diagnostics;
 using System.Drawing;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 
 namespace LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit
 {

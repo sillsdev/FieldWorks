@@ -2,8 +2,8 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using SIL.FieldWorks.Common.FwKernelInterfaces;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FdoUi;
 
@@ -16,15 +16,15 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalFeaturesAdvancedEdit
 		private CmObjectUi.CmAnalObjectVc m_vc;
 
 		/// <summary />
-		public void Init(FdoCache cache, IFsFeatStruc fs)
+		public void Init(LcmCache cache, IFsFeatStruc fs)
 		{
 			CheckDisposed();
 
 			m_fs = fs;
-			m_fdoCache = cache;
+			m_cache = cache;
 
 			UpdateRootObject();
-			m_fdoCache.DomainDataByFlid.AddNotification(this);
+			m_cache.DomainDataByFlid.AddNotification(this);
 		}
 
 		/// <summary />
@@ -34,7 +34,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalFeaturesAdvancedEdit
 				return;
 
 			if (disposing)
-				m_fdoCache.DomainDataByFlid.RemoveNotification(this);
+				m_cache.DomainDataByFlid.RemoveNotification(this);
 
 			base.Dispose(disposing);
 		}
@@ -69,13 +69,13 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalFeaturesAdvancedEdit
 		{
 			CheckDisposed();
 
-			if (m_fdoCache == null || DesignMode)
+			if (m_cache == null || DesignMode)
 				return;
 
 			base.MakeRoot();
 
-			m_rootb.DataAccess = m_fdoCache.MainCacheAccessor;
-			m_vc = new CmObjectUi.CmAnalObjectVc(m_fdoCache);
+			m_rootb.DataAccess = m_cache.MainCacheAccessor;
+			m_vc = new CmObjectUi.CmAnalObjectVc(m_cache);
 
 			if (m_fs != null)
 			{
@@ -98,7 +98,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalFeaturesAdvancedEdit
 				return;
 			if (tag == FsFeatStrucTags.kflidFeatureSpecs)
 			{
-				IFsFeatStruc featStruc = m_fdoCache.ServiceLocator.GetInstance<IFsFeatStrucRepository>().GetObject(hvo);
+				IFsFeatStruc featStruc = m_cache.ServiceLocator.GetInstance<IFsFeatStrucRepository>().GetObject(hvo);
 				// only want to do something when the feature structure is part of a IPhPhoneme))
 				if (featStruc.OwningFlid != PhPhonemeTags.kflidFeatures)
 					return;

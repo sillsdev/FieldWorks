@@ -12,8 +12,8 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
-using SIL.Utils;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {

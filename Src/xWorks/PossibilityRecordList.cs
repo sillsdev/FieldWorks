@@ -6,9 +6,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.Filters;
+using SIL.LCModel;
+using SIL.LCModel.Application;
 
 namespace SIL.FieldWorks.XWorks
 {

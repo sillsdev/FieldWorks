@@ -7,7 +7,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 
 namespace SIL.FieldWorks.Common.Framework
 {
@@ -36,10 +36,10 @@ namespace SIL.FieldWorks.Common.Framework
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets the data object cache.
+		/// Gets the data objects cache.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		FdoCache Cache { get; }
+		LcmCache Cache { get; }
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

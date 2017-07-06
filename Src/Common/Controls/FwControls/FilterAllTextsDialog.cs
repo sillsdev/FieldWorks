@@ -7,7 +7,7 @@
 using System;
 using System.Linq;
 using System.Windows.Forms;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
 
@@ -180,7 +180,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>List of Scripture objects</summary>
 		protected T[] m_objList;
 		/// <summary>fdo cache</summary>
-		protected FdoCache m_cache;
+		protected LcmCache m_cache;
 		/// <summary>Help Topic Id</summary>
 		protected string m_helpTopicId = "";
 		private IHelpTopicProvider m_helpTopicProvider;
@@ -196,7 +196,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="objList">A list of objects (hvos) to check as an array</param>
 		/// <param name="helpTopicProvider">The help topic provider.</param>
 		/// ------------------------------------------------------------------------------------
-		public FilterAllTextsDialog(IPropertyTable propertyTable, FdoCache cache, T[] objList, IHelpTopicProvider helpTopicProvider) : base()
+		public FilterAllTextsDialog(IPropertyTable propertyTable, LcmCache cache, T[] objList, IHelpTopicProvider helpTopicProvider) : base()
 		{
 			if (propertyTable == null)
 				throw new ArgumentNullException(nameof(propertyTable));

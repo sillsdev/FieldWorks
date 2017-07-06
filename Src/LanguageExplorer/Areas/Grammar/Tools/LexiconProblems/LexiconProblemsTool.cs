@@ -6,11 +6,11 @@ using System.Drawing;
 using System.Xml.Linq;
 using LanguageExplorer.Controls;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks;
+using SIL.LCModel;
+using SIL.LCModel.Application;
 
 namespace LanguageExplorer.Areas.Grammar.Tools.LexiconProblems
 {
@@ -95,7 +95,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.LexiconProblems
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
 			var root = XDocument.Parse(GrammarResources.LexiconProblemsParameters).Root;
-			var cache = PropertyTable.GetValue<FdoCache>("cache");
+			var cache = PropertyTable.GetValue<LcmCache>("cache");
 			var recordList = new RecordList(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), true, LangProjectTags.kflidAnnotations, cache.LanguageProject, "Annotations");
 			var recordBarHandler = new RecordBarListHandler(PropertyTable, true, true, false, "best analorvern");
 			var probAnnFilter = new ProblemAnnotationFilter();

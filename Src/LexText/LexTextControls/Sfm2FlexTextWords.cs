@@ -11,7 +11,7 @@ using System.Xml;
 using System.Xml.Serialization;
 using Sfm2Xml;
 using SilEncConverters40;
-using SIL.CoreImpl.WritingSystems;
+using SIL.LCModel.Core.WritingSystems;
 
 namespace SIL.FieldWorks.LexText.Controls
 {

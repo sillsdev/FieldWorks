@@ -8,11 +8,11 @@ using System.IO;
 using System.Linq;
 using System.Xml;
 using NUnit.Framework;
-using SIL.CoreImpl.Text;
+using SIL.LCModel.Core.Text;
 using SIL.IO;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -345,7 +345,7 @@ namespace SIL.FieldWorks.XWorks
 					docView.SetConfigObjectName("Dictionary");
 					docView.SetMediator(m_mediator);
 					docView.SetPropertyTable(m_propertyTable);
-					var projConfigs = Path.Combine(FdoFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder),
+					var projConfigs = Path.Combine(LcmFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder),
 															 "Dictionary");
 					Directory.CreateDirectory(projConfigs);
 					// override every shipped config with a config that does not have the TestPub publication
@@ -398,7 +398,7 @@ namespace SIL.FieldWorks.XWorks
 				//Change the name for the matching config so that our two user configs don't conflict with each other
 				var matchingConfig = ConfigurationTemplate.Replace("</Publications>",
 																					"<Publication>TestPub</Publication></Publications>").Replace("AConfigPub", "AAConfigPub");
-				var dictionaryConfigPath = Path.Combine(FdoFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder), "Dictionary");
+				var dictionaryConfigPath = Path.Combine(LcmFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder), "Dictionary");
 				using(var docView = new TestXhtmlDocView())
 				using(var nonMatchedConfigFile = TempFile.WithFilename(Path.Combine(dictionaryConfigPath,
 																								  "NoMatch"+DictionaryConfigurationModel.FileExtension)))

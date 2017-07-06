@@ -10,8 +10,8 @@ using System.Windows.Forms;
 using System.Xml;
 using LanguageExplorer.UtilityTools;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 
 namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 {
@@ -55,7 +55,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 		/// </summary>
 		public void Process()
 		{
-			var cache = m_dlg.PropertyTable.GetValue<FdoCache>("cache");
+			var cache = m_dlg.PropertyTable.GetValue<LcmCache>("cache");
 			NonUndoableUnitOfWorkHelper.DoSomehow(cache.ActionHandlerAccessor, () =>
 			{
 				var fixedGuids = ReplacePOSGuidsWithGoldEticGuids(cache);
@@ -80,7 +80,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 		/// <summary />
 		/// <remarks>This is only internal, because a test uses it.</remarks>
 		/// <returns></returns>
-		internal static bool ReplacePOSGuidsWithGoldEticGuids(FdoCache cache)
+		internal static bool ReplacePOSGuidsWithGoldEticGuids(LcmCache cache)
 		{
 			var goldDocument = new XmlDocument();
 			goldDocument.Load(Path.Combine(FwDirectoryFinder.TemplateDirectory, "GOLDEtic.xml"));
@@ -98,7 +98,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 			return true;
 		}
 
-		private static void ReplacePosItemWithCloneWithNewGuid(FdoCache cache, KeyValuePair<IPartOfSpeech, string> badItem)
+		private static void ReplacePosItemWithCloneWithNewGuid(LcmCache cache, KeyValuePair<IPartOfSpeech, string> badItem)
 		{
 			IPartOfSpeech replacementPos;
 			var badPartOfSpeech = badItem.Key;

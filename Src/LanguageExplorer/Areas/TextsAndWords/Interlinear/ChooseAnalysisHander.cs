@@ -7,11 +7,11 @@ using System.Drawing;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FdoUi;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.Utils;
-using SIL.CoreImpl.Text;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Utils;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
 using Rect = SIL.FieldWorks.Common.ViewsInterfaces.Rect;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
@@ -25,7 +25,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		int m_hvoAnalysis; // The current 'analysis', may be wordform, analysis, gloss.
 		int m_hvoSrc; // the object (CmAnnotation? or SbWordform) we're analyzing.
 		bool m_fInitializing = false; // true to suppress AnalysisChosen while setting up combo.
-		FdoCache m_cache;
+		LcmCache m_cache;
 		IComboList m_combo;
 		SandboxBase m_owner;
 		const string ksMissingString = "---";
@@ -106,7 +106,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// Create one, typically from the Sandbox, using an existing combo box or list. The caller is responsible
 		/// to display it; the Show method should not be called, especially if comboList is actually not a combo box.
 		/// </summary>
-		public ChooseAnalysisHandler(FdoCache cache, int hvoSrc, int hvoAnalysis, IComboList comboList)
+		public ChooseAnalysisHandler(LcmCache cache, int hvoSrc, int hvoAnalysis, IComboList comboList)
 		{
 			m_combo = comboList;
 			m_cache = cache;
@@ -331,7 +331,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		// Generate a suitable string representation of a WfiGloss.
 		// Todo: finish implementing (add the gloss!)
-		static internal ITsString MakeGlossStringRep(IWfiGloss wg, FdoCache fdoCache, bool fUseStyleSheet)
+		static internal ITsString MakeGlossStringRep(IWfiGloss wg, LcmCache fdoCache, bool fUseStyleSheet)
 		{
 			ITsStrBldr tsb = TsStringUtils.MakeStrBldr();
 			var wa = wg.Owner as IWfiAnalysis;
@@ -359,7 +359,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		}
 
 		// Make a string representing a WfiAnalysis, suitable for use in a combo box item.
-		static internal ITsString MakeAnalysisStringRep(IWfiAnalysis wa, FdoCache fdoCache, bool fUseStyleSheet, int wsVern)
+		static internal ITsString MakeAnalysisStringRep(IWfiAnalysis wa, LcmCache fdoCache, bool fUseStyleSheet, int wsVern)
 		{
 			//			ITsTextProps boldItalicAnalysis = BoldItalicAnalysis(fdoCache);
 			//			ITsTextProps italicAnalysis = ItalicAnalysis(fdoCache, Sandbox.SandboxVc.krgbRed);
@@ -447,7 +447,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		}
 
 		/// <summary />
-		public static ITsTextProps FormTextProperties(FdoCache fdoCache, bool fUseStyleSheet, int wsVern)
+		public static ITsTextProps FormTextProperties(LcmCache fdoCache, bool fUseStyleSheet, int wsVern)
 		{
 			int color =(int) CmObjectUi.RGB(Color.DarkBlue);
 			ITsPropsBldr bldr = TsStringUtils.MakePropsBldr();
@@ -469,7 +469,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			return bldr.GetTextProps();
 		}
 
-		public static ITsTextProps GlossTextProperties(FdoCache fdoCache, bool inAnalysisLine, bool fUseStyleSheet)
+		public static ITsTextProps GlossTextProperties(LcmCache fdoCache, bool inAnalysisLine, bool fUseStyleSheet)
 		{
 			int color =(int) CmObjectUi.RGB(Color.DarkRed);
 			ITsPropsBldr bldr = TsStringUtils.MakePropsBldr();
@@ -494,7 +494,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		}
 
 		/// <summary />
-		public static ITsTextProps PartOfSpeechTextProperties(FdoCache fdoCache, bool inAnalysisLine, bool fUseStyleSheet)
+		public static ITsTextProps PartOfSpeechTextProperties(LcmCache fdoCache, bool inAnalysisLine, bool fUseStyleSheet)
 		{
 			int color =(int) CmObjectUi.RGB(Color.Green);
 			ITsPropsBldr bldr = TsStringUtils.MakePropsBldr();

@@ -10,7 +10,7 @@
 // </remarks>
 
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -24,7 +24,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary />
 		protected string m_sLabel;
 		/// <summary />
-		protected FdoCache m_cache;
+		protected LcmCache m_cache;
 		/// <summary />
 		protected IPropertyTable m_propertyTable;
 		/// <summary />
@@ -47,7 +47,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="publisher"></param>
 		/// <param name="subscriber"></param>
 		/// ------------------------------------------------------------------------------------
-		protected ChooserCommand(FdoCache cache, bool fCloseBeforeExecuting, string sLabel, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
+		protected ChooserCommand(LcmCache cache, bool fCloseBeforeExecuting, string sLabel, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
 		{
 			m_cache = cache;
 			m_fShouldCloseBeforeExecuting = fCloseBeforeExecuting;
@@ -61,7 +61,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>
 		/// Indicates whether or not the chooser dialog should close before executing the link command
 		/// </summary>
-		public FdoCache Cache
+		public LcmCache Cache
 		{
 			get
 			{

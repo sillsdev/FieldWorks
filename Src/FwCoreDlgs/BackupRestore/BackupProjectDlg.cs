@@ -1,19 +1,16 @@
-// Copyright (c) 2010-2013 SIL International
+// Copyright (c) 2010-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: BackupProjectDlg.cs
-// Responsibility: FW Team
+
 using System;
 using System.IO;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices.BackupRestore;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices.BackupRestore;
 using SIL.Reporting;
-
 namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 {
 	/// <summary>
@@ -24,7 +21,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 	public partial class BackupProjectDlg : Form, IBackupProjectView
 	{
 		#region Member variables
-		private readonly FdoCache m_cache;
+		private readonly LcmCache m_cache;
 		private readonly BackupProjectPresenter m_presenter;
 		private readonly IHelpTopicProvider m_helpTopicProvider;
 		#endregion
@@ -47,7 +44,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 		/// <param name="cache">The cache.</param>
 		/// <param name="helpTopicProvider">The help topic provider.</param>
 		/// ------------------------------------------------------------------------------------
-		public BackupProjectDlg(FdoCache cache,
+		public BackupProjectDlg(LcmCache cache,
 			IHelpTopicProvider helpTopicProvider) : this()
 		{
 			m_cache = cache;

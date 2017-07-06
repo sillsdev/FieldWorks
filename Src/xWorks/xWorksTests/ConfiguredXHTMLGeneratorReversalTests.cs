@@ -9,13 +9,12 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 using NUnit.Framework;
-using SIL.CoreImpl.Text;
+using SIL.LCModel.Core.Text;
 using SIL.TestUtilities;
 using SIL.FieldWorks.Common.Framework;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.FDOTests;
+using SIL.LCModel;
 using CXGTests = SIL.FieldWorks.XWorks.ConfiguredXHTMLGeneratorTests;
 
 namespace SIL.FieldWorks.XWorks
@@ -755,14 +754,14 @@ namespace SIL.FieldWorks.XWorks
 			return riEntry;
 		}
 
-		private static void AddSenseToReversaEntry(IReversalIndexEntry riEntry, string gloss, int wsId, FdoCache cache)
+		private static void AddSenseToReversaEntry(IReversalIndexEntry riEntry, string gloss, int wsId, LcmCache cache)
 		{
 			var entry = CXGTests.CreateInterestingLexEntry(cache);
 			entry.SensesOS.First().ReversalEntriesRC.Add(riEntry);
 			entry.SensesOS[0].Gloss.set_String(wsId, gloss);
 		}
 
-		private static void AddSingleSubSenseToSense(IReversalIndexEntry riEntry, string gloss, int wsId, FdoCache cache)
+		private static void AddSingleSubSenseToSense(IReversalIndexEntry riEntry, string gloss, int wsId, LcmCache cache)
 		{
 			CreateSubsenseModel();
 			var entry = CXGTests.CreateInterestingLexEntry(cache);

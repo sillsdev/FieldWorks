@@ -1,10 +1,6 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: XUpdater.cs
-// Responsibility:
-// Last reviewed:
 //
 // <remarks>
 // This updates a given FXT result file.
@@ -18,10 +14,11 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
-using SIL.CoreImpl.Cellar;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel;
+using SIL.LCModel.Application;
+using SIL.LCModel.Utils;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.Xml;
 
 namespace SIL.FieldWorks.Common.FXT
@@ -36,7 +33,7 @@ namespace SIL.FieldWorks.Common.FXT
 		private const string ksSimpleProperty = "simpleProperty";
 		IFwMetaDataCache m_mdc;
 
-		public XUpdater(FdoCache cache, string sFxtPath)
+		public XUpdater(LcmCache cache, string sFxtPath)
 		{
 			m_cache = cache;
 			FxtDocument = new XmlDocument();

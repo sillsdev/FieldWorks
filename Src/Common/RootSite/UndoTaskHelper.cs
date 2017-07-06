@@ -6,10 +6,10 @@
 // Responsibility: FW Team
 // --------------------------------------------------------------------------------------------
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Resources;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel.Infrastructure;
 
 namespace SIL.FieldWorks.Common.RootSites
 {

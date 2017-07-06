@@ -11,10 +11,10 @@ using System.Xml.Linq;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.PaneBar;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks;
+using SIL.LCModel;
+using SIL.LCModel.Application;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 {
@@ -111,7 +111,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			var cache = PropertyTable.GetValue<FdoCache>("cache");
+			var cache = PropertyTable.GetValue<LcmCache>("cache");
 			var root = XDocument.Parse(LexiconResources.LexiconDictionaryToolParameters).Root;
 			_configureObjectName = root.Attribute("configureObjectName").Value;
 			var flexComponentParameters = new FlexComponentParameters(PropertyTable, Publisher, Subscriber);
@@ -245,7 +245,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 			// 1. <menu list="Configurations" inline="true" emptyAllowed="true" behavior="singlePropertyAtomicValue" property="DictionaryPublicationLayout"/>
 			IDictionary<string, string> hasPub;
 			IDictionary<string, string> doesNotHavePub;
-			var allConfigurations = DictionaryConfigurationUtils.GatherBuiltInAndUserConfigurations(PropertyTable.GetValue<FdoCache>("cache"), _configureObjectName);
+			var allConfigurations = DictionaryConfigurationUtils.GatherBuiltInAndUserConfigurations(PropertyTable.GetValue<LcmCache>("cache"), _configureObjectName);
 			_xhtmlDocView.SplitConfigurationsByPublication(allConfigurations,
 														_xhtmlDocView.GetCurrentPublication(),
 														out hasPub, out doesNotHavePub);
@@ -345,7 +345,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 
 			_leftContextMenuStrip.Items.Add(new ToolStripMenuItem("-"));
 
-			var cache = PropertyTable.GetValue<FdoCache>("cache");
+			var cache = PropertyTable.GetValue<LcmCache>("cache");
 			List<string> inConfig;
 			List<string> notInConfig;
 			_xhtmlDocView.SplitPublicationsByConfiguration(cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS,

@@ -13,13 +13,13 @@ using System.Xml;
 using System.Xml.Xsl;
 using Gecko;
 using Sfm2Xml;
-using SIL.CoreImpl.Text;
+using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 using TreeView = System.Windows.Forms.TreeView;
 
 namespace SIL.FieldWorks.LexText.Controls
@@ -54,7 +54,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		private FwOverrideComboBox cbFunction;
 		private Label lblFunction;
 		private CheckBox chkbxAutoField;
-		private FdoCache m_cache;
+		private LcmCache m_cache;
 		private IHelpTopicProvider m_helpTopicProvider;
 		private IApp m_app;
 		private string m_refFuncString;
@@ -83,7 +83,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			blbLangDesc.Enabled = cbLangDesc.Enabled = btnAddLangDesc.Enabled = enable;
 		}
 
-		public void Init(MarkerPresenter.ContentMapping currentMarker, Hashtable uiLangsHT, FdoCache cache,
+		public void Init(MarkerPresenter.ContentMapping currentMarker, Hashtable uiLangsHT, LcmCache cache,
 			IHelpTopicProvider helpTopicProvider, IApp app)
 		{
 			CheckDisposed();
@@ -1131,7 +1131,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					{
 						var entryTypefactory = m_cache.ServiceLocator.GetInstance<ILexEntryTypeFactory>();
 						ICmPossibility newType;
-						IFdoOwningSequence<ICmPossibility> owningSeq;
+						ILcmOwningSequence<ICmPossibility> owningSeq;
 						string description;
 						switch (field.ID)
 						{

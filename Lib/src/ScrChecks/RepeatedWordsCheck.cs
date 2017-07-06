@@ -4,9 +4,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Diagnostics;
-using SIL.CoreImpl.Scripture;
 using SIL.FieldWorks.Common.FwUtils;
 
 // NOT Paratext dependendent
@@ -32,7 +29,7 @@ namespace SILUBS.ScriptureChecks
 		/// <summary>
 		/// Initializes a new instance of the <see cref="RepeatedWordsCheck"/> class.
 		/// </summary>
-		/// <param name="_checksDataSource">The checks data source.</param>
+		/// <param name="checksDataSource">The checks data source.</param>
 		/// ------------------------------------------------------------------------------------
 		public RepeatedWordsCheck(IChecksDataSource checksDataSource)
 		{
@@ -179,7 +176,7 @@ namespace SILUBS.ScriptureChecks
 		/// </summary>
 		/// <param name="tokens">The tokens (from the data source) to check for repeated words.
 		/// </param>
-		/// <param name="_desiredKey">If looking for occurrences of a specific repeated word,
+		/// <param name="desiredKey">If looking for occurrences of a specific repeated word,
 		/// set this to be that word; otherwise pass an empty string.</param>
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------

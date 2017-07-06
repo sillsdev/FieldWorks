@@ -6,7 +6,6 @@
 using System;
 using System.ComponentModel;
 using System.Drawing;
-using SIL.CoreImpl.Properties;
 
 namespace LanguageExplorer.Controls.SilSidePane
 {
@@ -179,7 +178,7 @@ namespace LanguageExplorer.Controls.SilSidePane
 			{
 				if (_Image == null)
 				{
-					_Image = Resources.DefaultIcon.ToBitmap();
+					_Image = LanguageExplorerResources.DefaultIcon.ToBitmap();
 					_disposeImage = true;
 				}
 				return _Image;

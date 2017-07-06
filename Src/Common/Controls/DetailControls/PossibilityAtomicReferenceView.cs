@@ -11,13 +11,13 @@
 // </remarks>
 
 using System;
-using SIL.CoreImpl.Cellar;
-using SIL.CoreImpl.Text;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
+using SIL.LCModel.Application;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
@@ -41,21 +41,21 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			if (m_rootObj != null && m_rootObj.IsValidObject)
 			{
-				int hvo = m_fdoCache.DomainDataByFlid.get_ObjectProp(m_rootObj.Hvo, m_rootFlid);
+				int hvo = m_cache.DomainDataByFlid.get_ObjectProp(m_rootObj.Hvo, m_rootFlid);
 				if (hvo != 0)
 				{
-					var obj = m_fdoCache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo);
-					ObjectLabel label = ObjectLabel.CreateObjectLabel(m_fdoCache, obj, m_displayNameProperty, m_displayWs);
+					var obj = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo);
+					ObjectLabel label = ObjectLabel.CreateObjectLabel(m_cache, obj, m_displayNameProperty, m_displayWs);
 					m_sda.Tss = label.AsTss;
 				}
 				else
 				{
 					var list = (ICmPossibilityList) m_rootObj.ReferenceTargetOwner(m_rootFlid);
-					int ws = list.IsVernacular ? m_fdoCache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle
-						: m_fdoCache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle;
+					int ws = list.IsVernacular ? m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle
+						: m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle;
 					if (list.PossibilitiesOS.Count > 0)
 					{
-						ObjectLabel label = ObjectLabel.CreateObjectLabel(m_fdoCache, list.PossibilitiesOS[0], m_displayNameProperty, m_displayWs);
+						ObjectLabel label = ObjectLabel.CreateObjectLabel(m_cache, list.PossibilitiesOS[0], m_displayNameProperty, m_displayWs);
 						ws = label.AsTss.get_WritingSystem(0);
 					}
 					m_sda.Tss = TsStringUtils.EmptyString(ws);
@@ -71,14 +71,14 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		protected override ISilDataAccess GetDataAccess()
 		{
-			m_sda = new SdaDecorator((ISilDataAccessManaged) m_fdoCache.DomainDataByFlid);
+			m_sda = new SdaDecorator((ISilDataAccessManaged) m_cache.DomainDataByFlid);
 			return m_sda;
 		}
 
 		public override void SetReferenceVc()
 		{
 			CheckDisposed();
-			m_atomicReferenceVc = new PossibilityAtomicReferenceVc(m_fdoCache, m_rootFlid, m_displayNameProperty);
+			m_atomicReferenceVc = new PossibilityAtomicReferenceVc(m_cache, m_rootFlid, m_displayNameProperty);
 		}
 
 		#endregion // RootSite required methods
@@ -129,7 +129,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			}
 		}
 
-		private class MdcDecorator : FdoMetaDataCacheDecoratorBase
+		private class MdcDecorator : LcmMetaDataCacheDecoratorBase
 		{
 			public MdcDecorator(IFwMetaDataCacheManaged mdc)
 				: base(mdc)
@@ -161,7 +161,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 	{
 		private string m_textStyle;
 
-		public PossibilityAtomicReferenceVc(FdoCache cache, int flid, string displayNameProperty)
+		public PossibilityAtomicReferenceVc(LcmCache cache, int flid, string displayNameProperty)
 			: base(cache, flid, displayNameProperty)
 		{
 		}

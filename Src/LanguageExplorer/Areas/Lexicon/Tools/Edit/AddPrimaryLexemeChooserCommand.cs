@@ -6,10 +6,10 @@ using System;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.LexText.Controls;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 {
@@ -20,7 +20,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		private readonly Form m_parentWindow;
 
 		/// <summary />
-		public AddPrimaryLexemeChooserCommand(FdoCache cache, bool fCloseBeforeExecuting,
+		public AddPrimaryLexemeChooserCommand(LcmCache cache, bool fCloseBeforeExecuting,
 			string sLabel, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, ICmObject lexEntryRef, /* Why ICmObject? */
 			Form parentWindow)
 			: base(cache, fCloseBeforeExecuting, sLabel, propertyTable, publisher, subscriber)

@@ -8,9 +8,9 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Linq;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.FwCoreDlgs.BackupRestore;
-using SIL.CoreImpl.WritingSystems;
+using SIL.LCModel.Core.WritingSystems;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
@@ -22,7 +22,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private const string HelpTopic = "khtpProjPropsMergeWS";
 
 		private readonly CoreWritingSystemDefinition m_ws;
-		private FdoCache m_cache;
+		private LcmCache m_cache;
 		private readonly IHelpTopicProvider m_helpTopicProvider;
 
 		private Label m_wsLabel;
@@ -39,7 +39,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MergeWritingSystemDlg"/> class.
 		/// </summary>
-		public MergeWritingSystemDlg(FdoCache cache, CoreWritingSystemDefinition ws, IEnumerable<CoreWritingSystemDefinition> wss, IHelpTopicProvider helpTopicProvider)
+		public MergeWritingSystemDlg(LcmCache cache, CoreWritingSystemDefinition ws, IEnumerable<CoreWritingSystemDefinition> wss, IHelpTopicProvider helpTopicProvider)
 		{
 			m_cache = cache;
 			m_ws = ws;

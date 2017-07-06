@@ -1,11 +1,12 @@
 // Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using SIL.FieldWorks.Common.Framework.DetailControls;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 {
@@ -117,10 +118,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 			if (m_selectedSenseHvo == 0)
 				return;		// must be selecting multiple objects!  (See LT-5724.)
 			int h1 = m_rootb.Height;
-			ILexSense sense = (ILexSense)m_fdoCache.ServiceLocator.GetObject(m_selectedSenseHvo);
-			IFdoReferenceCollection<IReversalIndexEntry> col = sense.ReversalEntriesRC;
+			ILexSense sense = (ILexSense)m_cache.ServiceLocator.GetObject(m_selectedSenseHvo);
+			ILcmReferenceCollection<IReversalIndexEntry> col = sense.ReversalEntriesRC;
 			using (UndoableUnitOfWorkHelper helper = new UndoableUnitOfWorkHelper(
-				m_fdoCache.ActionHandlerAccessor,
+				m_cache.ActionHandlerAccessor,
 				LanguageExplorerResources.ksUndoDeleteRevFromSense,
 				LanguageExplorerResources.ksRedoDeleteRevFromSense))
 			{

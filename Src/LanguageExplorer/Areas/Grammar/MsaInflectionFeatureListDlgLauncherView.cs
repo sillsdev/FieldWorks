@@ -2,7 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FdoUi;
 
@@ -24,12 +24,12 @@ namespace LanguageExplorer.Areas.Grammar
 		}
 
 		/// <summary />
-		public void Init(FdoCache cache, IFsFeatStruc fs)
+		public void Init(LcmCache cache, IFsFeatStruc fs)
 		{
 			CheckDisposed();
 
 			m_fs = fs;
-			m_fdoCache = cache;
+			m_cache = cache;
 
 			if (m_rootb == null)
 			{
@@ -71,13 +71,13 @@ namespace LanguageExplorer.Areas.Grammar
 		{
 			CheckDisposed();
 
-			if (m_fdoCache == null || DesignMode)
+			if (m_cache == null || DesignMode)
 				return;
 
 			base.MakeRoot();
 
-			m_rootb.DataAccess = m_fdoCache.DomainDataByFlid;
-			m_vc = new CmObjectUi.CmAnalObjectVc(m_fdoCache);
+			m_rootb.DataAccess = m_cache.DomainDataByFlid;
+			m_vc = new CmObjectUi.CmAnalObjectVc(m_cache);
 
 			if (m_fs != null)
 			{

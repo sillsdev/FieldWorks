@@ -5,10 +5,10 @@
 using System.Collections.Generic;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using NUnit.Framework;
-using SIL.CoreImpl.WritingSystems;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.FDOTests;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.WritingSystems;
 
 namespace LanguageExplorerTests.Interlinear
 {
@@ -18,15 +18,35 @@ namespace LanguageExplorerTests.Interlinear
 		private int kwsVernInPara;
 		private int kwsAnalysis;
 		private ILangProject m_lp;
+		private bool _didIInitSLDR;
+
+		#region Overrides of LcmTestBase
 
 		public override void FixtureSetup()
 		{
+			if (!Sldr.IsInitialized)
+			{
+				_didIInitSLDR = true;
+				Sldr.Initialize();
+			}
+
 			base.FixtureSetup();
 
 			kwsVernInPara = WritingSystemServices.kwsVernInParagraph;
 			kwsAnalysis = WritingSystemServices.kwsAnal;
 			m_lp = Cache.LangProject;
 		}
+
+		public override void FixtureTeardown()
+		{
+			if (_didIInitSLDR && Sldr.IsInitialized)
+			{
+				_didIInitSLDR = false;
+				Sldr.Cleanup();
+			}
+			base.FixtureTeardown();
+		}
+		#endregion
 
 		[Test]
 		public void AddFields()

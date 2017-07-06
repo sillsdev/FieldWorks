@@ -21,7 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
@@ -32,71 +32,71 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CoreImplTests, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\CoreImplTests.dll</HintPath>
-    </Reference>
-    <Reference Include="FwCoreDlgControls, Version=9.0.0.24567, Culture=neutral, processorArchitecture=x86">
+    <Reference Include="FwCoreDlgControls">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\FwCoreDlgControls.dll</HintPath>
     </Reference>
-    <Reference Include="FwKernelInterfaces, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\FwKernelInterfaces.dll</HintPath>
-    </Reference>
-    <Reference Include="ParserCore, Version=9.0.0.17030, Culture=neutral, processorArchitecture=x86">
+    <Reference Include="ParserCore">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\ParserCore.dll</HintPath>
     </Reference>
-    <Reference Include="SilUtilsTests, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="SIL.LCModel, Version=9.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\SilUtilsTests.dll</HintPath>
+      <HintPath>..\..\Output\Debug\SIL.LCModel.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.LCModel.Core, Version=9.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Debug\SIL.LCModel.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.LCModel.Core.Tests, Version=9.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Debug\SIL.LCModel.Core.Tests.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.LCModel.Tests, Version=9.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Debug\SIL.LCModel.Tests.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.LCModel.Utils, Version=9.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Debug\SIL.LCModel.Utils.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.LCModel.Utils.Tests, Version=9.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Debug\SIL.LCModel.Utils.Tests.dll</HintPath>
     </Reference>
     <Reference Include="ViewsInterfaces">
       <Name>ViewsInterfaces</Name>
       <HintPath>..\..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
     </Reference>
-    <Reference Include="CoreImpl, Version=9.0.0.11711, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Release\CoreImpl.dll</HintPath>
-    </Reference>
-    <Reference Include="DetailControls, Version=9.0.0.22999, Culture=neutral, processorArchitecture=x86">
+    <Reference Include="DetailControls">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Release\DetailControls.dll</HintPath>
     </Reference>
-    <Reference Include="FDO, Version=9.0.0.26689, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Release\FDO.dll</HintPath>
-    </Reference>
-    <Reference Include="FDOTests, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Release\FDOTests.dll</HintPath>
-    </Reference>
-    <Reference Include="FwControls, Version=9.0.0.39649, Culture=neutral, processorArchitecture=x86">
+    <Reference Include="FwControls">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Release\FwControls.dll</HintPath>
     </Reference>
-    <Reference Include="FwCoreDlgs, Version=9.0.0.22997, Culture=neutral, processorArchitecture=x86">
+    <Reference Include="FwCoreDlgs">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Release\FwCoreDlgs.dll</HintPath>
     </Reference>
-    <Reference Include="FwUtils, Version=9.0.0.22994, Culture=neutral, processorArchitecture=x86">
+    <Reference Include="FwUtils">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Release\FwUtils.dll</HintPath>
     </Reference>
-    <Reference Include="FwUtilsTests, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
+    <Reference Include="FwUtilsTests">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Release\FwUtilsTests.dll</HintPath>
     </Reference>
     <Reference Include="LanguageExplorer">
       <HintPath>..\..\Output\Release\LanguageExplorer.dll</HintPath>
     </Reference>
-    <Reference Include="LexTextControls, Version=9.0.0.39653, Culture=neutral, processorArchitecture=x86">
+    <Reference Include="LexTextControls">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Release\LexTextControls.dll</HintPath>
     </Reference>
@@ -111,31 +111,27 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Bin\Rhino\Rhino.Mocks.dll</HintPath>
     </Reference>
-    <Reference Include="RootSite, Version=9.0.0.26693, Culture=neutral, processorArchitecture=x86">
+    <Reference Include="RootSite">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Release\RootSite.dll</HintPath>
     </Reference>
-    <Reference Include="SIL.Core, Version=3.0.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=MSIL">
+    <Reference Include="SIL.Core">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Release\SIL.Core.dll</HintPath>
     </Reference>
-    <Reference Include="SIL.TestUtilities, Version=3.0.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=MSIL">
+    <Reference Include="SIL.TestUtilities">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Release\SIL.TestUtilities.dll</HintPath>
     </Reference>
-    <Reference Include="SIL.WritingSystems, Version=3.0.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
+    <Reference Include="SIL.WritingSystems">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Release\SIL.WritingSystems.dll</HintPath>
     </Reference>
-    <Reference Include="SilUtils, Version=8.1.2.24232, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Release\SilUtils.dll</HintPath>
-    </Reference>
-    <Reference Include="SimpleRootSite, Version=9.0.0.26683, Culture=neutral, processorArchitecture=x86">
+    <Reference Include="SimpleRootSite">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Release\SimpleRootSite.dll</HintPath>
     </Reference>
-    <Reference Include="ECInterfaces, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485, processorArchitecture=x86" Condition="'$(OS)'!='Unix'">
+    <Reference Include="ECInterfaces" Condition="'$(OS)'!='Unix'">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\ECInterfaces.dll</HintPath>
     </Reference>
@@ -143,7 +139,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>/usr/lib/fieldworks/ECInterfaces.dll</HintPath>
     </Reference>
-    <Reference Include="SilEncConverters40, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485, processorArchitecture=x86" Condition="'$(OS)'!='Unix'">
+    <Reference Include="SilEncConverters40" Condition="'$(OS)'!='Unix'">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\SilEncConverters40.dll</HintPath>
     </Reference>

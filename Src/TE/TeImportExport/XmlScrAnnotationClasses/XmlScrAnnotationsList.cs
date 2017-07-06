@@ -6,10 +6,10 @@ using System;
 using System.Collections.Generic;
 using System.Security.Principal;
 using System.Xml.Serialization;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 
 namespace SIL.FieldWorks.TE
 {
@@ -43,7 +43,7 @@ namespace SIL.FieldWorks.TE
 	public class XmlScrAnnotationsList
 	{
 		#region Data members
-		private FdoCache m_cache;
+		private LcmCache m_cache;
 		private ILgWritingSystemFactory m_lgwsf;
 		#endregion
 
@@ -109,7 +109,7 @@ namespace SIL.FieldWorks.TE
 		/// </summary>
 		/// <param name="cache">The cache.</param>
 		/// ------------------------------------------------------------------------------------
-		public XmlScrAnnotationsList(FdoCache cache)
+		public XmlScrAnnotationsList(LcmCache cache)
 		{
 			m_cache = cache;
 			m_lgwsf = m_cache.LanguageWritingSystemFactoryAccessor;
@@ -145,8 +145,8 @@ namespace SIL.FieldWorks.TE
 		/// <param name="styleSheet">The style sheet.</param>
 		/// <returns>A loaded ScrAnnotationsList</returns>
 		/// ------------------------------------------------------------------------------------
-		public static XmlScrAnnotationsList LoadFromFile(string filename, FdoCache cache,
-			FwStyleSheet styleSheet)
+		public static XmlScrAnnotationsList LoadFromFile(string filename, LcmCache cache,
+			LcmStyleSheet styleSheet)
 		{
 			Exception e;
 			return LoadFromFile(filename, cache, styleSheet, out e);
@@ -162,8 +162,8 @@ namespace SIL.FieldWorks.TE
 		/// <param name="e">Exception that was encountered or null</param>
 		/// <returns>A loaded ScrAnnotationsList</returns>
 		/// ------------------------------------------------------------------------------------
-		public static XmlScrAnnotationsList LoadFromFile(string filename, FdoCache cache,
-			FwStyleSheet styleSheet, out Exception e)
+		public static XmlScrAnnotationsList LoadFromFile(string filename, LcmCache cache,
+			LcmStyleSheet styleSheet, out Exception e)
 		{
 			XmlScrAnnotationsList list =
 				XmlSerializationHelper.DeserializeFromFile<XmlScrAnnotationsList>(filename, true, out e);
@@ -221,7 +221,7 @@ namespace SIL.FieldWorks.TE
 		/// <param name="cache">The cache.</param>
 		/// <param name="styleSheet">The style sheet.</param>
 		/// ------------------------------------------------------------------------------------
-		protected void WriteToCache(FdoCache cache, FwStyleSheet styleSheet)
+		protected void WriteToCache(LcmCache cache, LcmStyleSheet styleSheet)
 		{
 			IScripture scr = cache.LangProject.TranslatedScriptureOA;
 

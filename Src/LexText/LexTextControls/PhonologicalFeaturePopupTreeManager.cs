@@ -6,9 +6,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;
 using System.Linq;
-using SIL.CoreImpl.Text;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.Widgets;
 
 namespace SIL.FieldWorks.LexText.Controls
@@ -28,7 +28,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public PhonologicalFeaturePopupTreeManager(TreeCombo treeCombo, FdoCache cache, bool useAbbr, IPropertyTable propertyTable, IPublisher publisher, Form parent, int wsDisplay, IFsClosedFeature closedFeature)
+		public PhonologicalFeaturePopupTreeManager(TreeCombo treeCombo, LcmCache cache, bool useAbbr, IPropertyTable propertyTable, IPublisher publisher, Form parent, int wsDisplay, IFsClosedFeature closedFeature)
 			: base(treeCombo, cache, propertyTable, publisher, cache.LanguageProject.PartsOfSpeechOA, wsDisplay, useAbbr, parent)
 		{
 			m_closedFeature = closedFeature;

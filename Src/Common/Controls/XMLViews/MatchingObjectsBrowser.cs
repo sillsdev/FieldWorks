@@ -10,13 +10,13 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
+using SIL.LCModel;
+using SIL.LCModel.Application;
 using SIL.Xml;
 using SIL.FieldWorks.Filters;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.WritingSystems;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -53,7 +53,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 		private const int ListFlid = ObjectListPublisher.MinMadeUpFieldIdentifier + 1111;
 
-		private FdoCache m_cache;
+		private LcmCache m_cache;
 		private IVwStylesheet m_stylesheet; // used to figure font heights.
 		/// <summary />
 		protected IPropertyTable m_propertyTable;
@@ -165,7 +165,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="subscriber"></param>
 		/// <param name="configNode">The config node.</param>
 		/// <param name="searchEngine">The search engine.</param>
-		public void Initialize(FdoCache cache, IVwStylesheet stylesheet, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, XElement configNode, SearchEngine searchEngine)
+		public void Initialize(LcmCache cache, IVwStylesheet stylesheet, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, XElement configNode, SearchEngine searchEngine)
 		{
 			Initialize(cache, stylesheet, propertyTable, publisher, subscriber, configNode, searchEngine, null);
 		}
@@ -181,7 +181,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="configNode">The config node.</param>
 		/// <param name="searchEngine">The search engine.</param>
 		/// <param name="reversalWs">The reversal writing system.</param>
-		public void Initialize(FdoCache cache, IVwStylesheet stylesheet, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, XElement configNode, SearchEngine searchEngine, CoreWritingSystemDefinition reversalWs)
+		public void Initialize(LcmCache cache, IVwStylesheet stylesheet, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, XElement configNode, SearchEngine searchEngine, CoreWritingSystemDefinition reversalWs)
 		{
 			CheckDisposed();
 

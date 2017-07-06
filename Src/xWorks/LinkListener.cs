@@ -10,7 +10,7 @@ using System.Linq;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.FdoUi;
 
 namespace SIL.FieldWorks.XWorks
@@ -191,7 +191,7 @@ namespace SIL.FieldWorks.XWorks
 			try
 			{
 				var fwargs = new FwAppArgs(new[] {url});
-				FdoCache cache = PropertyTable.GetValue<FdoCache>("cache");
+				LcmCache cache = PropertyTable.GetValue<LcmCache>("cache");
 				if (SameDatabase(fwargs, cache))
 				{
 					OnFollowLink(fwargs);
@@ -205,7 +205,7 @@ namespace SIL.FieldWorks.XWorks
 			return true;
 		}
 
-		private bool SameDatabase(FwAppArgs fwargs, FdoCache cache)
+		private bool SameDatabase(FwAppArgs fwargs, LcmCache cache)
 		{
 			return fwargs.Database == "this$" ||
 				fwargs.Database.ToLowerInvariant() == cache.ProjectId.Name.ToLowerInvariant()
@@ -293,7 +293,7 @@ namespace SIL.FieldWorks.XWorks
 			CheckDisposed();
 			if (m_currentContext != null)
 			{
-				FdoCache cache = PropertyTable.GetValue<FdoCache>("cache");
+				LcmCache cache = PropertyTable.GetValue<LcmCache>("cache");
 				var args = new FwAppArgs(cache.ProjectId.Handle,
 					m_currentContext.ToolName, m_currentContext.TargetGuid);
 				ClipboardUtils.SetDataObject(args.ToString(), true);
@@ -372,7 +372,7 @@ namespace SIL.FieldWorks.XWorks
 		public bool OnTestFollowLink(object unused)
 		{
 			CheckDisposed();
-			FdoCache cache = PropertyTable.GetValue<FdoCache>("cache");
+			LcmCache cache = PropertyTable.GetValue<LcmCache>("cache");
 			Guid[] guids = (from entry in cache.LanguageProject.LexDbOA.Entries select entry.Guid).ToArray();
 			var commands = new List<string>
 									{
@@ -414,7 +414,7 @@ namespace SIL.FieldWorks.XWorks
 				{
 					// Need some smarts here. The link creator was not sure what tool to use.
 					// The object may also be a child we don't know how to jump to directly.
-					var cache = PropertyTable.GetValue<FdoCache>("cache");
+					var cache = PropertyTable.GetValue<LcmCache>("cache");
 					ICmObject target;
 					if (!cache.ServiceLocator.ObjectRepository.TryGetObject(m_lnkActive.TargetGuid, out target))
 						return false; // or message?
@@ -491,7 +491,7 @@ namespace SIL.FieldWorks.XWorks
 				// or more likely, when the HVO was set to -1.
 				if (m_lnkActive.TargetGuid != Guid.Empty)
 				{
-					FdoCache cache = PropertyTable.GetValue<FdoCache>("cache");
+					LcmCache cache = PropertyTable.GetValue<LcmCache>("cache");
 					ICmObject obj = cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(m_lnkActive.TargetGuid);
 					if (obj is IReversalIndexEntry && m_lnkActive.ToolName == "reversalEditComplete")
 					{

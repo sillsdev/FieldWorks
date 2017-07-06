@@ -10,10 +10,9 @@ using System.Linq;
 using System.Text;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.FDOTests;
-using SIL.FieldWorks.LexText.Controls;
+using SIL.LCModel;
 using Sfm2Xml;
+using SIL.FieldWorks.LexText.Controls;
 
 namespace LexTextControlsTests
 {

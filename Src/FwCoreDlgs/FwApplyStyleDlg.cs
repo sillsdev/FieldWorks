@@ -5,14 +5,14 @@
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using SIL.CoreImpl.Text;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FwCoreDlgControls;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel.DomainServices;
 using StyleInfo = SIL.FieldWorks.FwCoreDlgControls.StyleInfo;
 
 namespace SIL.FieldWorks.FwCoreDlgs
@@ -27,7 +27,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		#region Data Members
 		private StyleListBoxHelper m_styleListHelper;
 		private StyleInfoTable m_styleTable;
-		private FwStyleSheet m_styleSheet;
+		private LcmStyleSheet m_styleSheet;
 		private string m_paraStyleName;
 		private string m_charStyleName;
 
@@ -57,7 +57,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <param name="app">The application.</param>
 		/// <param name="helpTopicProvider">The help topic provider.</param>
 		/// ------------------------------------------------------------------------------------
-		public FwApplyStyleDlg(IVwRootSite rootSite, FdoCache cache, int hvoStylesOwner,
+		public FwApplyStyleDlg(IVwRootSite rootSite, LcmCache cache, int hvoStylesOwner,
 			int stylesTag, string normalStyleName, int customUserLevel, string paraStyleName,
 			string charStyleName, int hvoRootObject, IApp app,
 			IHelpTopicProvider helpTopicProvider)
@@ -78,7 +78,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// Load the style information
 			m_styleTable = new StyleInfoTable(normalStyleName,
 				cache.ServiceLocator.WritingSystemManager);
-			m_styleSheet = new FwStyleSheet();
+			m_styleSheet = new LcmStyleSheet();
 			m_styleSheet.Init(cache, hvoStylesOwner, stylesTag);
 			m_styleListHelper = new StyleListBoxHelper(m_lstStyles);
 			m_styleListHelper.ShowInternalStyles = false;

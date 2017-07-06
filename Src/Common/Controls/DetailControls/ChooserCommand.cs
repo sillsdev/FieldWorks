@@ -5,11 +5,11 @@
 using System;
 using System.Windows.Forms;
 using System.Linq;
-using SIL.CoreImpl.Text;
+using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
@@ -26,7 +26,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		protected bool m_fPrefix;
 		protected IMoInflAffixSlot m_slot;
 
-		public MakeInflAffixEntryChooserCommand(FdoCache cache, bool fCloseBeforeExecuting,
+		public MakeInflAffixEntryChooserCommand(LcmCache cache, bool fCloseBeforeExecuting,
 			string sLabel, bool fPrefix, IMoInflAffixSlot slot, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
 			: base(cache, fCloseBeforeExecuting, sLabel, propertyTable, publisher, subscriber)
 		{
@@ -106,7 +106,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		protected int m_posHvo;
 		protected bool m_fOptional;
 
-		public MakeInflAffixSlotChooserCommand(FdoCache cache, bool fCloseBeforeExecuting, string sLabel, int posHvo, bool fOptional, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
+		public MakeInflAffixSlotChooserCommand(LcmCache cache, bool fCloseBeforeExecuting, string sLabel, int posHvo, bool fOptional, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
 			: base(cache, fCloseBeforeExecuting, sLabel, propertyTable, publisher, subscriber)
 		{
 			m_posHvo = posHvo;

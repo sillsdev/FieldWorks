@@ -7,19 +7,19 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Xml;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.WritingSystems;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FdoUi;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Application;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.XWorks;
 using SIL.Xml;
 
@@ -148,7 +148,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				if (m_teStylesheet == null)
 				{
 					m_flexStylesheet = m_styleSheet; // remember the default.
-					var stylesheet = new FwStyleSheet();
+					var stylesheet = new LcmStyleSheet();
 					stylesheet.Init(Cache, Cache.LangProject.TranslatedScriptureOA.Hvo, ScriptureTags.kflidStyles);
 					m_teStylesheet = stylesheet;
 				}
@@ -348,7 +348,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 								if (tag != StTxtParaTags.kflidContents)
 									return;
 
-								var para = m_fdoCache.ServiceLocator.GetInstance<IStTxtParaRepository>().GetObject(hvo);
+								var para = m_cache.ServiceLocator.GetInstance<IStTxtParaRepository>().GetObject(hvo);
 								// force this paragraph to recognize it might need reparsing.
 								SetParaToReparse(para);
 							}
@@ -424,16 +424,16 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			CheckDisposed();
 
-			if (m_fdoCache == null || DesignMode || m_hvoRoot == 0)
+			if (m_cache == null || DesignMode || m_hvoRoot == 0)
 				return;
 
 			base.MakeRoot();
 
 			int wsFirstPara = GetWsOfFirstWordOfFirstTextPara();
-			m_vc = new RawTextVc(m_rootb, m_fdoCache, wsFirstPara);
+			m_vc = new RawTextVc(m_rootb, m_cache, wsFirstPara);
 			SetupVc();
 
-			m_showSpaceDa = new ShowSpaceDecorator((ISilDataAccessManaged)m_fdoCache.MainCacheAccessor);
+			m_showSpaceDa = new ShowSpaceDecorator((ISilDataAccessManaged)m_cache.MainCacheAccessor);
 			m_showSpaceDa.ShowSpaces = ShowInvisibleSpaces;
 			m_rootb.DataAccess = m_showSpaceDa;
 
@@ -720,7 +720,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			int ichMin, ichLim, hvo, tag, ws;
 			if (GetSelectedWordPos(m_rootb.Selection, out hvo, out tag, out ws, out ichMin, out ichLim))
 			{
-				LexEntryUi.DisplayOrCreateEntry(m_fdoCache, hvo, tag, ws, ichMin, ichLim, this,
+				LexEntryUi.DisplayOrCreateEntry(m_cache, hvo, tag, ws, ichMin, ichLim, this,
 					PropertyTable, Publisher, Subscriber, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), "UserHelpFile");
 			}
 			return true;
@@ -777,7 +777,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			if (tag != StTxtParaTags.kflidContents)
 				return false;
 
-			var para = m_fdoCache.ServiceLocator.GetInstance<IStTxtParaRepository>().GetObject(hvo);
+			var para = m_cache.ServiceLocator.GetInstance<IStTxtParaRepository>().GetObject(hvo);
 			if (!para.ParseIsCurrent)
 			{
 				ReparseParaInUowIfNeeded(para);
@@ -879,7 +879,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				Swap(ref ichMin, ref ichLim);
 				Swap(ref hvoStart, ref hvoEnd);
 			}
-			WordBreakGuesser guesser = new WordBreakGuesser(m_fdoCache, hvoStart);
+			WordBreakGuesser guesser = new WordBreakGuesser(m_cache, hvoStart);
 			if (hvoStart == hvoEnd)
 			{
 				if (ichMin == ichLim)
@@ -893,7 +893,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				guesser.Guess(ichMin, -1, hvoStart);
 				bool fProcessing = false;
-				ISilDataAccess sda = m_fdoCache.MainCacheAccessor;
+				ISilDataAccess sda = m_cache.MainCacheAccessor;
 				int hvoStText = m_hvoRoot;
 				int cpara = sda.get_VecSize(hvoStText, StTextTags.kflidParagraphs);
 				for (int i = 0; i < cpara; i++)
@@ -941,7 +941,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		IVwRootBox m_rootb;
 
-		public RawTextVc(IVwRootBox rootb, FdoCache cache, int wsFirstPara) : base("Normal", wsFirstPara)
+		public RawTextVc(IVwRootBox rootb, LcmCache cache, int wsFirstPara) : base("Normal", wsFirstPara)
 		{
 			m_rootb = rootb;
 			Cache = cache;

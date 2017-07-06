@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.LexText.Controls;
 
 namespace LanguageExplorer.Areas.Grammar
@@ -37,7 +37,7 @@ namespace LanguageExplorer.Areas.Grammar
 		/// <param name="persistProvider"></param>
 		/// <param name="displayNameProperty"></param>
 		/// <param name="displayWs"></param>
-		public override void Initialize(FdoCache cache, ICmObject obj, int flid, string fieldName,
+		public override void Initialize(LcmCache cache, ICmObject obj, int flid, string fieldName,
 			IPersistenceProvider persistProvider, string displayNameProperty, string displayWs)
 		{
 			CheckDisposed();

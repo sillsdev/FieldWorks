@@ -1,7 +1,6 @@
 ﻿using System.Windows.Forms;
 using NUnit.Framework;
 using SIL.FieldWorks.XWorks.DictionaryDetailsView;
-
 namespace SIL.FieldWorks.XWorks
 {
 	public class UnicodeCharacterEditingHelperTests

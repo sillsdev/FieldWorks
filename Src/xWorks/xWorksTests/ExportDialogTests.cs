@@ -6,13 +6,11 @@ using System;
 using System.IO;
 using System.Text;
 using NUnit.Framework;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.FDOTests;
-using SIL.FieldWorks.FDO.Application.ApplicationServices;
+using SIL.LCModel;
+using SIL.LCModel.Application.ApplicationServices;
 using System.Collections.Generic;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.Common.FwUtils;
-// ReSharper disable InconsistentNaming
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -454,7 +452,7 @@ namespace SIL.FieldWorks.XWorks
 			"</LangProject>" + Environment.NewLine;
 		#endregion SemanticDomainXml
 
-		private FdoCache m_cache;
+		private LcmCache m_cache;
 
 		#region Setup and Helper Methods
 
@@ -464,8 +462,9 @@ namespace SIL.FieldWorks.XWorks
 		[SetUp]
 		public void CreateMockCache()
 		{
-			m_cache = FdoCache.CreateCacheWithNewBlankLangProj(
-				new TestProjectId(FDOBackendProviderType.kMemoryOnly, null), "en", "fr", "en", new DummyFdoUI(), FwDirectoryFinder.FdoDirectories, new FdoSettings());
+			m_cache = LcmCache.CreateCacheWithNewBlankLangProj(
+				new TestProjectId(BackendProviderType.kMemoryOnly, null), "en", "fr", "en", new DummyLcmUI(),
+				FwDirectoryFinder.LcmDirectories, new LcmSettings());
 			var xl = new XmlList();
 			using (var reader = new StringReader(s_ksSemanticDomainsXml))
 				xl.ImportList(m_cache.LangProject, "SemanticDomainList", reader, null);

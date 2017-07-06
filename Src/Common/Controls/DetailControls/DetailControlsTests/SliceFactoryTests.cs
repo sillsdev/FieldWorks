@@ -1,20 +1,18 @@
 // Copyright (c) 2016 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// Original author: MarkS 2016-07-27 SliceFactoryTests.cs
 
 using NUnit.Framework;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Application;
+using SIL.LCModel.Infrastructure;
 using System;
 using SIL.TestUtilities;
 using System.Collections.Generic;
-using SIL.CoreImpl.Cellar;
-using SIL.CoreImpl.WritingSystems;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.XWorks;
 using SIL.Xml;
 
@@ -40,7 +38,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 			CreateTestData();
 			ICmPossibility cmPossibility = CreateCustomItemAddToList(m_testList, "itemname");
-			IFdoServiceLocator fdoServiceLocator = new FdoServiceLocatorStub(cmPossibility);
+			ILcmServiceLocator fdoServiceLocator = new FdoServiceLocatorStub(cmPossibility);
 
 			// SUT
 			SliceFactory.SetConfigurationDisplayPropertyIfNeeded(configurationNode, cmObject, cmObjectCustomFieldFlid, mainCacheAccessor, fdoServiceLocator, metadataCache);
@@ -48,7 +46,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			AssertThatXmlIn.String(configurationNode.GetOuterXml()).HasSpecifiedNumberOfMatchesForXpath("/slice/deParams[@displayProperty]", 1);
 		}
 
-		class FdoServiceLocatorStub : IFdoServiceLocator
+		class FdoServiceLocatorStub : ILcmServiceLocator
 		{
 			ICmPossibility m_returnObject;
 			public FdoServiceLocatorStub(ICmPossibility returnObject)
@@ -101,7 +99,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		}
 
-		class FwMetaDataCacheStub : FdoMetaDataCacheDecoratorBase
+		class FwMetaDataCacheStub : LcmMetaDataCacheDecoratorBase
 		{
 			public FwMetaDataCacheStub(IFwMetaDataCacheManaged metaDataCache) : base(metaDataCache)
 			{
@@ -168,7 +166,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				throw new NotImplementedException();
 			}
 
-			public IFdoServiceLocator Services
+			public ILcmServiceLocator Services
 			{
 				get { throw new NotImplementedException(); }
 			}
@@ -235,7 +233,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 			public bool IsValidObject { get; set; }
 
-			public FdoCache Cache
+			public LcmCache Cache
 			{
 				get { throw new NotImplementedException(); }
 			}

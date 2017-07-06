@@ -12,14 +12,12 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml.Serialization;
-using SIL.FieldWorks.FDO;
-using SIL.CoreImpl.Scripture;
+using SIL.LCModel;
+using SIL.LCModel.Core.Scripture;
 using System.Xml;
 using System.Diagnostics;
-using SIL.Utils;
-using SIL.FieldWorks.FDO.DomainServices;
-using System.Diagnostics.CodeAnalysis;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.TE
@@ -207,7 +205,7 @@ namespace SIL.FieldWorks.TE
 
 			try
 			{
-				FdoCache cache = ann.Cache;
+				LcmCache cache = ann.Cache;
 				ILgWritingSystemFactory lgwsf = cache.LanguageWritingSystemFactoryAccessor;
 				XmlScrNote xmlNote = new XmlScrNote(ann, cache.DefaultAnalWs, lgwsf);
 
@@ -237,7 +235,7 @@ namespace SIL.FieldWorks.TE
 		/// <param name="styleSheet">The style sheet.</param>
 		/// <returns>The deserialized annotation</returns>
 		/// ------------------------------------------------------------------------------------
-		public static IScrScriptureNote Deserialize(XmlNode node, IScripture scr, FwStyleSheet styleSheet)
+		public static IScrScriptureNote Deserialize(XmlNode node, IScripture scr, LcmStyleSheet styleSheet)
 		{
 			XmlScrNote xmlAnn = XmlSerializationHelper.DeserializeFromString<XmlScrNote>(node.OuterXml, true);
 			return xmlAnn.WriteToCache(scr, styleSheet);
@@ -753,7 +751,7 @@ namespace SIL.FieldWorks.TE
 		/// <param name="styleSheet">The style sheet.</param>
 		/// <returns>The created annotation</returns>
 		/// ------------------------------------------------------------------------------------
-		internal IScrScriptureNote WriteToCache(IScripture scr, FwStyleSheet styleSheet)
+		internal IScrScriptureNote WriteToCache(IScripture scr, LcmStyleSheet styleSheet)
 		{
 			if (AnnotationTypeGuid == Guid.Empty.ToString())
 				return null;
@@ -799,9 +797,9 @@ namespace SIL.FieldWorks.TE
 		/// information).
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private IScrScriptureNote FindOrCreateAnnotation(FwStyleSheet styleSheet)
+		private IScrScriptureNote FindOrCreateAnnotation(LcmStyleSheet styleSheet)
 		{
-			FdoCache cache = styleSheet.Cache;
+			LcmCache cache = styleSheet.Cache;
 
 			ParagraphCollection parasQuote = new ParagraphCollection(Quote, styleSheet, cache.DefaultVernWs);
 			ParagraphCollection parasDiscussion = new ParagraphCollection(Discussion, styleSheet);

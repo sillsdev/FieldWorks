@@ -6,11 +6,11 @@ using System;
 using System.IO;
 using System.Xml.Linq;
 using System.Xml.XPath;
-using SIL.CoreImpl.WritingSystems;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.Framework.DetailControls;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.Xml;
 
 namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
@@ -30,7 +30,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 		/// <summary>
 		/// Constructor invoked via the editor="customWithParams" slice XML configuration
 		/// </summary>
-		public BasicIPASymbolSlice(FdoCache cache, string editor, int flid,
+		public BasicIPASymbolSlice(LcmCache cache, string editor, int flid,
 						XElement node, ICmObject obj,
 						IPersistenceProvider persistenceProvider, int ws)
 			: base(obj, flid, ws)

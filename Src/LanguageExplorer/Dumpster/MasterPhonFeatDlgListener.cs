@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2015 SIL International
+// Copyright (c) 2005-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,11 +6,10 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
-using SIL.Utils;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel.Infrastructure;
 
 namespace LanguageExplorer.Dumpster
 {
@@ -78,7 +77,7 @@ namespace LanguageExplorer.Dumpster
 
 			using (MasterPhonologicalFeatureListDlg dlg = new MasterPhonologicalFeatureListDlg(className))
 			{
-				FdoCache cache = PropertyTable.GetValue<FdoCache>("cache");
+				LcmCache cache = PropertyTable.GetValue<LcmCache>("cache");
 				Debug.Assert(cache != null);
 				string sXmlFile = Path.Combine(FwDirectoryFinder.CodeDirectory, String.Format("Language Explorer{0}MGA{0}GlossLists{0}PhonFeatsEticGlossList.xml", Path.DirectorySeparatorChar));
 				if (cache.LanguageProject.PhFeatureSystemOA == null)

@@ -22,21 +22,22 @@ using LanguageExplorer.UtilityTools;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.Framework;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainImpl;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks;
 using SIL.IO;
+using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.DomainImpl;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
+using SIL.LCModel.Utils;
 using SIL.Reporting;
 using SIL.Utils;
 using File = System.IO.File;
-using FileUtils = SIL.Utils.FileUtils;
+using FileUtils = SIL.LCModel.Utils.FileUtils;
 using Win32 = SIL.FieldWorks.Common.FwUtils.Win32;
 
 namespace LanguageExplorer.Impls
@@ -68,7 +69,7 @@ namespace LanguageExplorer.Impls
 		private ActiveViewHelper _viewHelper;
 		private IArea _currentArea;
 		private ITool _currentTool;
-		private FwStyleSheet _stylesheet;
+		private LcmStyleSheet _stylesheet;
 		private IPublisher _publisher;
 		private ISubscriber _subscriber;
 		private readonly IFlexApp _flexApp;
@@ -191,7 +192,7 @@ namespace LanguageExplorer.Impls
 
 		private void SetupStylesheet()
 		{
-			_stylesheet = new FwStyleSheet();
+			_stylesheet = new LcmStyleSheet();
 			_stylesheet.Init(Cache, Cache.LanguageProject.Hvo, LangProjectTags.kflidStyles);
 		}
 
@@ -338,7 +339,7 @@ namespace LanguageExplorer.Impls
 		/// </summary>
 		private void DiscardProperties()
 		{
-			var tempDirectory = Path.Combine(Cache.ProjectId.ProjectFolder, FdoFileHelper.ksSortSequenceTempDir);
+			var tempDirectory = Path.Combine(Cache.ProjectId.ProjectFolder, LcmFileHelper.ksSortSequenceTempDir);
 			DirectoryUtilities.DeleteDirectoryRobust(tempDirectory);
 		}
 
@@ -444,7 +445,7 @@ namespace LanguageExplorer.Impls
 
 		private void LoadPropertyTable()
 		{
-			PropertyTable.UserSettingDirectory = FdoFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder);
+			PropertyTable.UserSettingDirectory = LcmFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder);
 			PropertyTable.LocalSettingsId = "local";
 
 			if (!Directory.Exists(PropertyTable.UserSettingDirectory))
@@ -712,7 +713,7 @@ namespace LanguageExplorer.Impls
 		/// Gets the data object cache.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public FdoCache Cache => _flexApp.Cache;
+		public LcmCache Cache => _flexApp.Cache;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -1443,7 +1444,7 @@ namespace LanguageExplorer.Impls
 							dlg.AllowCancel = true;
 							dlg.Maximum = 200;
 							dlg.Message = filename;
-							dlg.RunTask(true, FdoCache.ImportTranslatedLists, filename, Cache);
+							dlg.RunTask(true, LcmCache.ImportTranslatedLists, filename, Cache);
 						}
 					});
 			}
@@ -1566,7 +1567,7 @@ namespace LanguageExplorer.Impls
 		{
 			if (_stylesheet == null)
 			{
-				_stylesheet = new FwStyleSheet();
+				_stylesheet = new LcmStyleSheet();
 				_stylesheet.Init(Cache, Cache.LanguageProject.Hvo, LangProjectTags.kflidStyles);
 #if RANDYTODO
 				// TODO: I (RandyR) don't think there is a reason to do this now,

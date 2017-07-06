@@ -8,16 +8,17 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 using Paratext;
-using SIL.CoreImpl.Scripture;
-using SIL.CoreImpl.Text;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.ScriptureUtils;
+using SIL.LCModel.Core.Scripture;
+using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.FieldWorks.Common.ScriptureUtils;
+using SIL.LCModel;
 using SIL.FieldWorks.Language;
 using SIL.FieldWorks.Resources;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -26,9 +27,9 @@ namespace SIL.FieldWorks.Common.Controls
 	/// </summary>
 	public class TextsTriStateTreeView : TriStateTreeView
 	{
-		private FwStyleSheet m_scriptureStylesheet;
+		private LcmStyleSheet m_scriptureStylesheet;
 		private IScripture m_scr;
-		private FdoCache m_cache;
+		private LcmCache m_cache;
 		private ScrText m_associatedPtText;
 		internal const string ksDummyName = "dummy"; // used for Name of dummy nodes.
 
@@ -50,7 +51,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// <param name="cache">The cache.</param>
 		/// <param name="usebookImporter">'true' to use book importer system. Otherwise 'false'.</param>
-		private void LoadTextsAndBooks(FdoCache cache, bool usebookImporter = true)
+		private void LoadTextsAndBooks(LcmCache cache, bool usebookImporter = true)
 		{
 			if (m_cache == null)
 			{
@@ -68,7 +69,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// Loads the non-Scripture texts.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public void LoadGeneralTexts(FdoCache cache)
+		public void LoadGeneralTexts(LcmCache cache)
 		{
 			if (m_cache == null)
 			{
@@ -89,7 +90,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// <param name="cache">The cache.</param>
 		/// <param name="usebookImporter">'true' to use book importer system. Otherwise 'false'.</param>
-		public void LoadScriptureTexts(FdoCache cache, bool usebookImporter = true)
+		public void LoadScriptureTexts(LcmCache cache, bool usebookImporter = true)
 		{
 			if (m_cache == null)
 			{
@@ -158,7 +159,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="cache">The cache.</param>
 		/// <returns>A control tree of the Texts in the project</returns>
 		/// ------------------------------------------------------------------------------------
-		public TreeNode LoadTextsByGenreAndWithoutGenre(FdoCache cache)
+		public TreeNode LoadTextsByGenreAndWithoutGenre(LcmCache cache)
 		{
 			if (m_cache == null)
 			{
@@ -233,7 +234,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="parent">The parent to attach the genres to. If null, nothing is done.</param>
 		/// <param name="genreList">The owning sequence of genres - its a tree.</param>
 		/// <param name="allTexts">The flat list of all texts in the project.</param>
-		private void LoadTextsFromGenres(TreeNode parent, IFdoOwningSequence<ICmPossibility> genreList, IEnumerable<IText> allTexts)
+		private void LoadTextsFromGenres(TreeNode parent, ILcmOwningSequence<ICmPossibility> genreList, IEnumerable<IText> allTexts)
 		{
 			if (parent == null) return;
 			var sortedGenreList = new List<ICmPossibility>();
@@ -426,7 +427,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// <param name="cache">The cache.</param>
 		/// <param name="usebookImporter">'true' to use book importer system. Otherwise 'false'.</param>
-		public void LoadScriptureAndOtherTexts(FdoCache cache, bool usebookImporter = true)
+		public void LoadScriptureAndOtherTexts(LcmCache cache, bool usebookImporter = true)
 		{
 			// first load the book ids.
 			LoadTextsAndBooks(cache);
@@ -607,7 +608,7 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				if (m_scriptureStylesheet == null)
 				{
-					m_scriptureStylesheet = new FwStyleSheet();
+					m_scriptureStylesheet = new LcmStyleSheet();
 					m_scriptureStylesheet.Init(m_cache, m_cache.LangProject.TranslatedScriptureOA.Hvo, ScriptureTags.kflidStyles);
 				}
 				IScrImportSet importSettings = scr.FindOrCreateDefaultImportSettings(TypeOfImport.Paratext6, m_scriptureStylesheet,
@@ -644,8 +645,8 @@ namespace SIL.FieldWorks.Common.Controls
 				return true;
 			});
 
-			if (haveSomethingToImport && SIL.Utils.ReflectionHelper.GetBoolResult(
-				SIL.Utils.ReflectionHelper.GetType("TeImportExport.dll", "SIL.FieldWorks.TE.TeImportManager"),
+			if (haveSomethingToImport && ReflectionHelper.GetBoolResult(
+				ReflectionHelper.GetType("TeImportExport.dll", "SIL.FieldWorks.TE.TeImportManager"),
 				"ImportParatext",
 				owningForm,
 				m_scriptureStylesheet,

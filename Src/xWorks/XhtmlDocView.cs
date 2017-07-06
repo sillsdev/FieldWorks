@@ -15,11 +15,11 @@ using Gecko.DOM;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.FwCoreDlgControls;
 using SIL.FieldWorks.FwCoreDlgs;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 using SIL.Windows.Forms.HtmlBrowser;
 using SIL.Xml;
 
@@ -611,7 +611,7 @@ namespace SIL.FieldWorks.XWorks
 			bool refreshNeeded;
 			using (var dlg = new DictionaryConfigurationDlg(propertyTable))
 			{
-				var cache = propertyTable.GetValue<FdoCache>("cache");
+				var cache = propertyTable.GetValue<LcmCache>("cache");
 				var clerk = propertyTable.GetValue<RecordClerk>("ActiveClerk", null);
 				ICmObject current = null;
 				if (guid != Guid.Empty && cache != null)
@@ -819,7 +819,7 @@ namespace SIL.FieldWorks.XWorks
 		/// All publications which the given configuration apply to will be placed in the inConfig collection.
 		/// All publications which the configuration does not apply to will be placed in the notInConfig collection.
 		/// </summary>
-		internal void SplitPublicationsByConfiguration(IFdoOwningSequence<ICmPossibility> publications,
+		internal void SplitPublicationsByConfiguration(ILcmOwningSequence<ICmPossibility> publications,
 																	  string configurationPath,
 																	  out List<string> inConfig,
 																	  out List<string> notInConfig)

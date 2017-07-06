@@ -1,23 +1,9 @@
 // Copyright (c) 2002-2013 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: InformationBarButton.cs
-// Responsibility: ToddJ
-// Last reviewed:
-//
-// <remarks>Implementation of InformationBarButton</remarks>
-// ------------------------------------------------------------------------------
-//
-using System;
-using System.Collections;
-using System.ComponentModel;
-using System.Drawing;
-using System.Windows.Forms;
-using System.Diagnostics;
 
-using SIL.FieldWorks.Common.Controls;
-using SIL.Utils;
+using System.ComponentModel;
+using System.Windows.Forms;
 
 namespace SIL.FieldWorks.Common.Controls
 {

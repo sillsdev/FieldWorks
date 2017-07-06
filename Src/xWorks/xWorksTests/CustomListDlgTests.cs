@@ -1,22 +1,16 @@
 ﻿// Copyright (c) 2010-2013 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: CustomListDlgTests.cs
-// Responsibility: GordonM
-//
-// <remarks>
-// </remarks>
+
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.FDOTests;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.WritingSystems;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -417,7 +411,7 @@ namespace SIL.FieldWorks.XWorks
 			return GetUiWritingSystemAndEnglish();
 		}
 
-		internal void SetTestCache(FdoCache cache)
+		internal void SetTestCache(LcmCache cache)
 		{
 			Cache = cache;
 		}

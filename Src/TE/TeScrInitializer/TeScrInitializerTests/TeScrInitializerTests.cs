@@ -6,12 +6,11 @@ using System;
 using System.Collections.Generic;
 
 using NUnit.Framework;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
-using SIL.FieldWorks.FDO;
-using SIL.Utils;
-using SIL.FieldWorks.FDO.FDOTests;
-using SIL.CoreImpl.Scripture;
-using SIL.CoreImpl.Text;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
+using SIL.LCModel.Utils;
+using SIL.LCModel.Core.Scripture;
+using SIL.LCModel.Core.Text;
 
 namespace SIL.FieldWorks.TE
 {
@@ -29,7 +28,7 @@ namespace SIL.FieldWorks.TE
 		/// Init the base class TeScrInitializer for testing.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public TestTeScrInitializer(FdoCache cache) : base(cache)
+		public TestTeScrInitializer(LcmCache cache) : base(cache)
 		{
 		}
 	}
@@ -43,7 +42,7 @@ namespace SIL.FieldWorks.TE
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
-	public class TeScrInitializerTests : ScrInMemoryFdoTestBase
+	public class TeScrInitializerTests : ScrInMemoryLcmTestBase
 	{
 		private TestTeScrInitializer m_scrInitializer;
 
@@ -79,7 +78,7 @@ namespace SIL.FieldWorks.TE
 			ReflectionHelper.CallMethod(typeof(TeScrBookRefsInit), "SetNamesAndAbbreviations",
 				new DummyProgressDlg(), Cache);
 
-			IFdoOwningSequence<IScrBookRef> books =
+			ILcmOwningSequence<IScrBookRef> books =
 				Cache.ServiceLocator.GetInstance<IScrRefSystemRepository>().Singleton.BooksOS;
 
 			// Make sure the right number of books was generated.

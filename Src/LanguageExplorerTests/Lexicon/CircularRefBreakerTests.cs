@@ -3,15 +3,39 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using NUnit.Framework;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.FDOTests;
+using SIL.LCModel;
 using System.Collections.Generic;
 using LanguageExplorer.Areas.Lexicon;
+using SIL.WritingSystems;
 
 namespace LanguageExplorerTests.Lexicon
 {
 	public class CircularRefBreakerTests : MemoryOnlyBackendProviderTestBase
 	{
+		private bool _didIInitSLDR;
+
+		[TestFixtureSetUp]
+		public override void FixtureSetup()
+		{
+			if (!Sldr.IsInitialized)
+			{
+				_didIInitSLDR = true;
+				Sldr.Initialize();
+			}
+
+			base.FixtureSetup();
+		}
+
+		public override void FixtureTeardown()
+		{
+			if (_didIInitSLDR && Sldr.IsInitialized)
+			{
+				_didIInitSLDR = false;
+				Sldr.Cleanup();
+			}
+			base.FixtureTeardown();
+		}
+
 		[Test]
 		public void BreakCircularEntryRefs()
 		{

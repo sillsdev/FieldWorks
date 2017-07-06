@@ -8,14 +8,14 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
-using SIL.CoreImpl.Text;
+using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 using SIL.Xml;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
@@ -731,14 +731,14 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			CheckDisposed();
 
-			if (m_fdoCache == null || DesignMode)
+			if (m_cache == null || DesignMode)
 				return;
 
 			base.MakeRoot();
 
-			m_vc = new LiteralLabelVc(m_text, m_fdoCache.WritingSystemFactory.UserWs);
+			m_vc = new LiteralLabelVc(m_text, m_cache.WritingSystemFactory.UserWs);
 
-			m_rootb.DataAccess = m_fdoCache.DomainDataByFlid;
+			m_rootb.DataAccess = m_cache.DomainDataByFlid;
 
 			// Since the VC just displays a literal, both the root HVO and the root frag are arbitrary.
 			m_rootb.SetRootObject(1, m_vc, 2, StyleSheet);

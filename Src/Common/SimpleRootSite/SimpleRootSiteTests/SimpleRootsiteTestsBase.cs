@@ -8,12 +8,12 @@ using System.Drawing;
 using System.IO;
 using System.Text;
 using NUnit.Framework;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.WritingSystems;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.CacheLight;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Utils;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 {

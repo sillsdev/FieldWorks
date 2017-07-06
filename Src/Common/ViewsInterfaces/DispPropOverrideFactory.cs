@@ -6,7 +6,7 @@
 // Responsibility: TE Team
 // ---------------------------------------------------------------------------------------------
 
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 
 namespace SIL.FieldWorks.Common.ViewsInterfaces
 {

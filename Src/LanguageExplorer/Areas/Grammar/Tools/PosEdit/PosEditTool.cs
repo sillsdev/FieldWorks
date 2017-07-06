@@ -7,9 +7,9 @@ using System.Xml.Linq;
 using LanguageExplorer.Areas.Lists;
 using LanguageExplorer.Controls;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks;
+using SIL.LCModel.Application;
 
 namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 {

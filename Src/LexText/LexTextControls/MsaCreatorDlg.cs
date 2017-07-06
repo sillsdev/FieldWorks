@@ -6,13 +6,13 @@ using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.WritingSystems;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 using SIL.Windows.Forms;
 
 namespace SIL.FieldWorks.LexText.Controls
@@ -24,7 +24,7 @@ namespace SIL.FieldWorks.LexText.Controls
 	{
 		#region Data Members
 
-		private FdoCache m_cache;
+		private LcmCache m_cache;
 		private IPropertyTable m_propertyTable;
 		private IPublisher m_publisher;
 
@@ -78,16 +78,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <summary>
 		/// Initialize the dialog before showing it.
 		/// </summary>
-		/// <param name="cache"></param>
-		/// <param name="propertyTable"></param>
-		/// <param name="publisher"></param>
-		/// <param name="entry"></param>
-		/// <param name="useForEdit"></param>
-		/// <param name="titleForEdit">Edit title appropriate to the button's context.</param>
-		/// <param name="persistProvider"></param>
-		/// <param name="sandboxMsa"></param>
-		/// <param name="hvoOriginalMsa"></param>
-		public void SetDlgInfo(FdoCache cache, IPersistenceProvider persistProvider,
+		public void SetDlgInfo(LcmCache cache, IPersistenceProvider persistProvider,
 			IPropertyTable propertyTable, IPublisher publisher, ILexEntry entry, SandboxGenericMSA sandboxMsa, int hvoOriginalMsa,
 			bool useForEdit, string titleForEdit)
 		{
@@ -285,7 +276,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			// m_msaGroupBox
 			//
 			resources.ApplyResources(this.m_msaGroupBox, "m_msaGroupBox");
-			this.m_msaGroupBox.MSAType = SIL.FieldWorks.FDO.MsaType.kNotSet;
+			this.m_msaGroupBox.MSAType = MsaType.kNotSet;
 			this.m_msaGroupBox.Name = "m_msaGroupBox";
 			this.m_msaGroupBox.Slot = null;
 			//

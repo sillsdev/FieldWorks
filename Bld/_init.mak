@@ -6,6 +6,7 @@
 #
 # BUILD_ROOT: Typically "C:\FW-WW"
 # BUILD_TYPE: b, d, r, p
+# BUILD_ARCH: x86, x64
 # BUILD_CONFIG: Bounds, Debug, Release, Profile
 # BUILD_OUTPUT: Typically "C:\FW-WW\Output"
 # BUILD_EXTENSION: exe, dll, lib, ocx, (or empty indicating no main target)
@@ -38,6 +39,14 @@ OUT_DIR=$(BUILD_ROOT)\Output\$(BUILD_CONFIG)
 OUT_DIR=$(BUILD_OUTPUT)\$(BUILD_CONFIG)
 !ENDIF
 !ENDIF
+!ENDIF
+
+!IF "$(BUILD_ARCH)"=="" || "$(BUILD_ARCH)"=="x86"
+MIDL_ARCH=win32
+LINK_ARCH=x86
+!ELSE
+MIDL_ARCH=win64
+LINK_ARCH=x64
 !ENDIF
 
 !IF "$(OBJ_DIR)"==""
@@ -170,13 +179,13 @@ CL_OPTS=$(CL_OPTS) /W4 /WX /Fd"$(INT_DIR)/" /EHa /GR /GF /Zm400 /D_WIN32_WINNT=0
 PREPROCESS_OPTS=/E
 
 !IF "$(BUILD_CONFIG)"=="Bounds"
-LINK_OPTS=$(LINK_OPTS) /out:"$@" /machine:IX86 /incremental:no\
+LINK_OPTS=$(LINK_OPTS) /out:"$@" /machine:I$(LINK_ARCH) /incremental:no\
 	/map:$(INT_DIR)\$(@B).map /nod:dbguuid.lib /subsystem:windows\
 	/NODEFAULTLIB:LIBC /NODEFAULTLIB:MSVCRT\
 	/LIBPATH:"C:\Program Files\Common Files\Compuware\NMShared" \
 	/LIBPATH:"$(BUILD_ROOT)\Lib\$(BUILD_CONFIG)" /LIBPATH:"$(BUILD_ROOT)\Lib"
 !ELSE
-LINK_OPTS=$(LINK_OPTS) /out:"$@" /machine:IX86 /incremental:no\
+LINK_OPTS=$(LINK_OPTS) /out:"$@" /machine:I$(LINK_ARCH) /incremental:no\
 	/map:$(INT_DIR)\$(@B).map /nod:dbguuid.lib /subsystem:windows\
 	/NODEFAULTLIB:LIBC /NODEFAULTLIB:MSVCRT\
 	/LIBPATH:"$(BUILD_ROOT)\Lib\$(BUILD_CONFIG)" /LIBPATH:"$(BUILD_ROOT)\Lib"
@@ -190,7 +199,7 @@ LIBLINK_OPTS=$(LIBLINK_OPTS) /out:"$@" /subsystem:windows
 
 BSC_OPTS=/o"$@"
 
-MIDL_OPTS=$(MIDL_OPTS) /Oicf /env win32 /I"$(COM_OUT_DIR)" /error all /error allocation /error bounds_check /error enum /error ref /error stub_data /error stub_data
+MIDL_OPTS=$(MIDL_OPTS) /Oicf /env $(MIDL_ARCH) /I"$(COM_OUT_DIR)" /error all /error allocation /error bounds_check /error enum /error ref /error stub_data /error stub_data
 
 REGSVR_OPTS=/s $(REGSVR_OPTS)
 

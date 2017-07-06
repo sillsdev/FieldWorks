@@ -2,8 +2,8 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Framework.DetailControls;
+using SIL.LCModel;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 {
@@ -25,7 +25,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		{
 			CheckDisposed();
 
-			m_atomicReferenceVc = new LexReferencePairVc(m_fdoCache, m_rootFlid, m_displayNameProperty);
+			m_atomicReferenceVc = new LexReferencePairVc(m_cache, m_rootFlid, m_displayNameProperty);
 			if (m_displayParent != null)
 				(m_atomicReferenceVc as LexReferencePairVc).DisplayParent = m_displayParent;
 		}

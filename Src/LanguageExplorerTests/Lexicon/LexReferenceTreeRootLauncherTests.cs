@@ -3,11 +3,11 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using NUnit.Framework;
-using SIL.CoreImpl.Text;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.FDOTests;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 using LanguageExplorer.Areas.Lexicon.Tools.Edit;
+using SIL.WritingSystems;
 
 namespace LanguageExplorerTests.Lexicon
 {
@@ -17,6 +17,29 @@ namespace LanguageExplorerTests.Lexicon
 	[TestFixture]
 	public class LexReferenceTreeRootLauncherTests : MemoryOnlyBackendProviderTestBase
 	{
+		private bool _didIInitSLDR;
+
+		[TestFixtureSetUp]
+		public override void FixtureSetup()
+		{
+			if (!Sldr.IsInitialized)
+			{
+				_didIInitSLDR = true;
+				Sldr.Initialize();
+			}
+
+			base.FixtureSetup();
+		}
+
+		public override void FixtureTeardown()
+		{
+			if (_didIInitSLDR && Sldr.IsInitialized)
+			{
+				_didIInitSLDR = false;
+				Sldr.Cleanup();
+			}
+			base.FixtureTeardown();
+		}
 
 		/// <summary>
 		/// This is a regression test (LT-14926) to make sure we don't reintroduce a problem where replacing a 'whole' that has only one part

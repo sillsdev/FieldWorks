@@ -7,15 +7,15 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Xml.Linq;
-using SIL.CoreImpl.Text;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.FwCoreDlgControls;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 using SIL.Xml;
 
 namespace SIL.FieldWorks.Common.Controls
@@ -35,7 +35,7 @@ namespace SIL.FieldWorks.Common.Controls
 		private readonly int m_hvo;
 		private readonly int m_flid;
 		private readonly int m_frag;
-		private readonly FdoCache m_cache;
+		private readonly LcmCache m_cache;
 		private readonly ISilDataAccess m_sda;
 		private readonly ICmObjectRepository m_objRepo;
 		/// <summary>

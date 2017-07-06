@@ -4,9 +4,8 @@
 
 using LanguageExplorer.Areas.TextsAndWords.Discourse;
 using NUnit.Framework;
-using SIL.FieldWorks.FDO.FDOTests;
-using SIL.FieldWorks.FDO;
-using SIL.Utils;
+using SIL.LCModel;
+using SIL.LCModel.Utils;
 
 namespace LanguageExplorerTests.Discourse
 {
@@ -15,7 +14,7 @@ namespace LanguageExplorerTests.Discourse
 	public class FakeConstituentChart : ConstituentChart
 	{
 		/// <summary/>
-		public FakeConstituentChart(FdoCache cache) : base(cache)
+		public FakeConstituentChart(LcmCache cache) : base(cache)
 		{
 		}
 

@@ -2,10 +2,10 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using SIL.LCModel;
 using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Framework.DetailControls;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 {
@@ -17,8 +17,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// <summary />
 		private ICmObject m_displayParent;
 
-		/// <summary />
-		public LexReferencePairVc(FdoCache cache, int flid, string displayNameProperty)
+		public LexReferencePairVc(LcmCache cache, int flid, string displayNameProperty)
 			: base (cache, flid, displayNameProperty)
 		{
 		}

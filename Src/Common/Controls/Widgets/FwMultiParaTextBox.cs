@@ -9,12 +9,12 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
-using SIL.CoreImpl.Text;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.FieldWorks.FDO.Application;
+using SIL.LCModel.Application;
 
 namespace SIL.FieldWorks.Common.Widgets
 {
@@ -214,7 +214,7 @@ namespace SIL.FieldWorks.Common.Widgets
 	#region InternalFwMultiParaTextBox
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
-	/// Simple multi-paragraph rootsite that uses a data access that is not based on an FdoCache
+	/// Simple multi-paragraph rootsite that uses a data access that is not based on an LcmCache
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	internal class InternalFwMultiParaTextBox : SimpleRootSite

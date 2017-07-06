@@ -1,6 +1,7 @@
 // Copyright (c) 2003-2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -11,9 +12,9 @@ using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Application;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.Filters;
 using SIL.Xml;
@@ -454,7 +455,7 @@ namespace SIL.FieldWorks.XWorks
 			base.OnParentChanged(e);
 		}
 
-		protected virtual BrowseViewer CreateBrowseViewer(XElement nodeSpec, int hvoRoot, FdoCache cache,
+		protected virtual BrowseViewer CreateBrowseViewer(XElement nodeSpec, int hvoRoot, LcmCache cache,
 			ISortItemProvider sortItemProvider,ISilDataAccessManaged sda)
 		{
 			return new BrowseViewer(nodeSpec,
@@ -823,7 +824,7 @@ namespace SIL.FieldWorks.XWorks
 	public class RecordBrowseActiveView : RecordBrowseView
 	{
 
-		protected override BrowseViewer CreateBrowseViewer(XElement nodeSpec, int hvoRoot, FdoCache cache,
+		protected override BrowseViewer CreateBrowseViewer(XElement nodeSpec, int hvoRoot, LcmCache cache,
 			ISortItemProvider sortItemProvider, ISilDataAccessManaged sda)
 		{
 			var viewer = new BrowseActiveViewer(nodeSpec,
@@ -852,14 +853,14 @@ namespace SIL.FieldWorks.XWorks
 				ICmObject obj = Cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo);
 				switch (obj.ClassID)
 				{
-					case FDO.PhRegularRuleTags.kClassId: // fall through
-					case FDO.PhMetathesisRuleTags.kClassId:
-						var segmentRule = obj as FDO.IPhSegmentRule;
+					case PhRegularRuleTags.kClassId: // fall through
+					case PhMetathesisRuleTags.kClassId:
+						var segmentRule = obj as IPhSegmentRule;
 						segmentRule.Disabled = !segmentRule.Disabled;
 						break;
-					case FDO.MoEndoCompoundTags.kClassId: // fall through
-					case FDO.MoExoCompoundTags.kClassId:
-						var compoundRule = obj as FDO.IMoCompoundRule;
+					case MoEndoCompoundTags.kClassId: // fall through
+					case MoExoCompoundTags.kClassId:
+						var compoundRule = obj as IMoCompoundRule;
 						compoundRule.Disabled = !compoundRule.Disabled;
 						break;
 				}

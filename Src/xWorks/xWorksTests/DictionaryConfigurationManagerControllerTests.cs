@@ -11,16 +11,15 @@ using System.Text;
 using System.Windows.Forms;
 using Ionic.Zip;
 using NUnit.Framework;
-using SIL.CoreImpl.Cellar;
-using SIL.CoreImpl.Text;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.FDOTests;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 using SIL.TestUtilities;
-using SIL.Utils;
-using FileUtils = SIL.Utils.FileUtils;
+using SIL.LCModel.Utils;
+using FileUtils = SIL.LCModel.Utils.FileUtils;
 // ReSharper disable InconsistentNaming
 
 namespace SIL.FieldWorks.XWorks

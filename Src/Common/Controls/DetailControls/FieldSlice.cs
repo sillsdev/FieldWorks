@@ -9,9 +9,10 @@
 // <remarks>
 // </remarks>
 // --------------------------------------------------------------------------------------------
+
 using System.Windows.Forms;
 using System.Diagnostics;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.Xml;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
@@ -57,7 +58,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <param name="cache">The cache.</param>
 		/// <param name="obj">CmObject that is being displayed.</param>
 		/// <param name="flid">The field identifier for the attribute we are displaying.</param>
-		protected FieldSlice(Control control, FdoCache cache, ICmObject obj, int flid)
+		protected FieldSlice(Control control, LcmCache cache, ICmObject obj, int flid)
 			: base(control)
 		{
 			Debug.Assert(cache != null);

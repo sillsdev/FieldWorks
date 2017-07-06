@@ -5,13 +5,13 @@
 using System;
 using System.Diagnostics;
 using System.Xml;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using System.Collections.Generic;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
-using SIL.CoreImpl.Text;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 {
@@ -25,7 +25,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 	public class DiscourseExporter : CollectorEnv, IDisposable
 	{
 		private readonly XmlWriter m_writer;
-		private readonly FdoCache m_cache;
+		private readonly LcmCache m_cache;
 		private readonly IVwViewConstructor m_vc;
 		private readonly HashSet<int> m_usedWritingSystems = new HashSet<int>();
 		private int m_wsGloss;
@@ -48,7 +48,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 
 		private readonly int m_wsLineNumber; // ws to use for line numbers.
 
-		public DiscourseExporter(FdoCache cache, XmlWriter writer, int hvoRoot, IVwViewConstructor vc,
+		public DiscourseExporter(LcmCache cache, XmlWriter writer, int hvoRoot, IVwViewConstructor vc,
 			int wsLineNumber)
 			: base(null, cache.MainCacheAccessor, hvoRoot)
 		{

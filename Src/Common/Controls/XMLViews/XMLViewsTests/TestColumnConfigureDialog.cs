@@ -7,8 +7,7 @@ using System.Xml.Linq;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.FDOTests;
+using SIL.LCModel;
 
 namespace XMLViewsTests
 {
@@ -19,7 +18,7 @@ namespace XMLViewsTests
 		private IPublisher m_publisher;
 		private ISubscriber m_subscriber;
 		private IPropertyTable m_propertyTable;
-		private FdoCache m_cache;
+		private LcmCache m_cache;
 
 		[SetUp]
 		public void SetUp()
@@ -27,8 +26,8 @@ namespace XMLViewsTests
 			PubSubSystemFactory.CreatePubSubSystem(out m_publisher, out m_subscriber);
 			m_propertyTable = PropertyTableFactory.CreatePropertyTable(m_publisher);
 			var st = StringTable.Table; // Make sure it is loaded.
-			m_cache = FdoCache.CreateCacheWithNewBlankLangProj(
-				new TestProjectId(FDOBackendProviderType.kMemoryOnly, null), "en", "en", "en", new DummyFdoUI(), FwDirectoryFinder.FdoDirectories, new FdoSettings());
+			m_cache = LcmCache.CreateCacheWithNewBlankLangProj(
+				new TestProjectId(BackendProviderType.kMemoryOnly, null), "en", "en", "en", new DummyLcmUI(), FwDirectoryFinder.LcmDirectories, new LcmSettings());
 			m_propertyTable.SetProperty("cache", m_cache, true, true);
 		}
 

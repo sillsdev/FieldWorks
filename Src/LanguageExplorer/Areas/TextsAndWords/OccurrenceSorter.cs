@@ -5,16 +5,16 @@
 using System;
 using System.Collections;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.Filters;
+using SIL.LCModel;
+using SIL.LCModel.Application;
 
 namespace LanguageExplorer.Areas.TextsAndWords
 {
 	internal sealed class OccurrenceSorter : RecordSorter
 	{
-		private FdoCache m_cache;
-		public override FdoCache Cache
+		private LcmCache m_cache;
+		public override LcmCache Cache
 		{
 			set
 			{

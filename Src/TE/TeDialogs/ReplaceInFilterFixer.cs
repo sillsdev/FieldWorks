@@ -8,7 +8,7 @@
 // <remarks>
 // </remarks>
 
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 
 namespace SIL.FieldWorks.TE
 {

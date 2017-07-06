@@ -1,11 +1,11 @@
 ﻿using System;
 using System.IO;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel;
 using SIL.FieldWorks.WordWorks.Parser;
 using SIL.HermitCrab;
 using SIL.Machine.Annotations;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 using SIL.WritingSystems;
 
 namespace GenerateHCConfig
@@ -34,12 +34,12 @@ namespace GenerateHCConfig
 			var projectId = new ProjectIdentifier(args[0]);
 			var logger = new ConsoleLogger(synchronizeInvoke);
 			var dirs = new NullFdoDirectories();
-			var settings = new FdoSettings {DisableDataMigration = true};
+			var settings = new LcmSettings {DisableDataMigration = true};
 			var progress = new NullThreadedProgress(synchronizeInvoke);
 			Console.WriteLine("Loading FieldWorks project...");
 			try
 			{
-				using (FdoCache cache = FdoCache.CreateCacheFromExistingData(projectId, "en", logger, dirs, settings, progress))
+				using (LcmCache cache = LcmCache.CreateCacheFromExistingData(projectId, "en", logger, dirs, settings, progress))
 				{
 					Language language = HCLoader.Load(spanFactory, cache, logger);
 					Console.WriteLine("Loading completed.");
@@ -49,14 +49,14 @@ namespace GenerateHCConfig
 				}
 				return 0;
 			}
-			catch (FdoFileLockedException)
+			catch (LcmFileLockedException)
 			{
 				Console.WriteLine("Loading failed.");
 				Console.WriteLine("The FieldWorks project is currently open in another application.");
 				Console.WriteLine("Close the application and try to run this command again.");
 				return 1;
 			}
-			catch (FdoDataMigrationForbiddenException)
+			catch (LcmDataMigrationForbiddenException)
 			{
 				Console.WriteLine("Loading failed.");
 				Console.WriteLine("The FieldWorks project was created with an older version of FLEx.");

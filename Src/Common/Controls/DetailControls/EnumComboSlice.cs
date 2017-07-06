@@ -6,13 +6,13 @@ using System;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.Drawing;
-using SIL.FieldWorks.FDO;
+using System.Xml.Linq;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 using System.Reflection;
-using System.Xml.Linq;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.Xml;
 
@@ -33,7 +33,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <param name="obj">CmObject that is being displayed.</param>
 		/// <param name="flid">The field identifier for the attribute we are displaying.</param>
 		/// <param name="parameters"></param>
-		public EnumComboSlice(FdoCache cache, ICmObject obj, int flid, XElement parameters)
+		public EnumComboSlice(LcmCache cache, ICmObject obj, int flid, XElement parameters)
 			: base(new FwOverrideComboBox(), cache, obj, flid)
 		{
 			m_combo = (ComboBox)Control;

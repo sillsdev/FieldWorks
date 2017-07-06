@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2017 SIL International
+// Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -36,23 +36,24 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using System.Xml.XPath;
-using SIL.CoreImpl.Cellar;
-using SIL.CoreImpl.Text;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Application;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.FdoUi.Dialogs;
 using SIL.FieldWorks.Filters;
 using SIL.ObjectModel;
 using SIL.Reporting;
+using SIL.LCModel.Utils;
 using SIL.Utils;
 using SIL.Xml;
 using WaitCursor = SIL.FieldWorks.Common.FwUtils.WaitCursor;
@@ -783,7 +784,7 @@ namespace SIL.FieldWorks.XWorks
 				return false; // we didn't change anything.
 			}
 			// (LT-9515) restored sorters need to set some properties that could not be persisted.
-			var cache = PropertyTable.GetValue<FdoCache>("cache");
+			var cache = PropertyTable.GetValue<LcmCache>("cache");
 			sorter.Cache = cache;
 			if (sorter is GenRecordSorter)
 			{
@@ -934,11 +935,11 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// our list's FdoCache
+		/// our list's LcmCache
 		/// </summary>
-		protected FdoCache Cache
+		protected LcmCache Cache
 		{
-			get { return PropertyTable.GetValue<FdoCache>("cache"); }
+			get { return PropertyTable.GetValue<LcmCache>("cache"); }
 		}
 
 		/// <summary>
@@ -1209,7 +1210,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			int index = m_list.IndexOf(hvoTarget);
 			// Why not just use the Clerk's Cache?
-			//var cache = (FdoCache)m_mediator.PropertyTable.GetValue("cache");
+			//var cache = (LcmCache)m_mediator.PropertyTable.GetValue("cache");
 			if (index == -1)
 			{
 				// In case we can't find the argument in the list, see if it is an owner of anything

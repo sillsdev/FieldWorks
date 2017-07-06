@@ -13,8 +13,8 @@
 // </remarks>
 // --------------------------------------------------------------------------------------------
 using System.Collections.Generic;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
 
 namespace SIL.FieldWorks.LexText.Controls
 {

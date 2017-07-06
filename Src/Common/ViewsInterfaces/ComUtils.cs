@@ -1,20 +1,16 @@
-// Copyright (c) 2002-2013 SIL International
+// Copyright (c) 2002-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ComUtils.cs
-// Responsibility: Eberhard Beilharz
-// Last reviewed:
 //
 // <remarks>
 // Helper classes for use with COM interfaces. The structs are already defined in COM, but we
 // re-define them so that we can provide conversion operators to/from .NET native types.
 // </remarks>
-// --------------------------------------------------------------------------------------------
 
 using System;
 using System.Diagnostics;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.Common.ViewsInterfaces
 {

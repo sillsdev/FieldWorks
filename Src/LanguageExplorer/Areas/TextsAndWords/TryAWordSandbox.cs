@@ -3,8 +3,8 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
 
 namespace LanguageExplorer.Areas.TextsAndWords
 {
@@ -26,7 +26,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// <param name="ss"></param>
 		/// <param name="choices"></param>
 		/// <param name="analysis"></param>
-		public TryAWordSandbox(FdoCache cache, IVwStylesheet ss, InterlinLineChoices choices,
+		public TryAWordSandbox(LcmCache cache, IVwStylesheet ss, InterlinLineChoices choices,
 			IAnalysis analysis)
 			: base(cache, ss, choices)
 		{

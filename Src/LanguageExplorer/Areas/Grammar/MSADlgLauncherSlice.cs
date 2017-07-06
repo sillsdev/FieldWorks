@@ -7,7 +7,7 @@ using System.Drawing;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.Xml;
 
@@ -73,7 +73,7 @@ namespace LanguageExplorer.Areas.Grammar
 				ctrl.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 			}
 			Size = new Size(208, 32);
-			ctrl.Initialize(PropertyTable.GetValue<FdoCache>("cache"),
+			ctrl.Initialize(PropertyTable.GetValue<LcmCache>("cache"),
 				Object,
 				1, // Maybe need a real flid?
 				"InterlinearName",

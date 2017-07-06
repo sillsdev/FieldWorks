@@ -6,15 +6,15 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Xml.Linq;
 using System.Text;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
-using System.Xml.Linq;
+using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.Xml;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
@@ -37,7 +37,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		public ILexSense Sense { private get; set; }
 
-		public FdoCache Cache { private get; set; }
+		public LcmCache Cache { private get; set; }
 
 		public string DisplayWs { get; set; }
 

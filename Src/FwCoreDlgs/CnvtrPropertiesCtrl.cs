@@ -12,7 +12,7 @@ using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Resources;
 using SilEncConverters40;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.Text;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
@@ -471,7 +471,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 						{
 							// TODO: Why does bare "Icu.GetConverterIdsAndNames" not work in the next line?
 							// It picks up icu.net's Icu class instead of FwKernelInterfaces's Icu class. But why?
-							foreach (IcuIdAndName idAndName in Common.FwKernelInterfaces.Icu.GetConverterIdsAndNames())
+							foreach (IcuIdAndName idAndName in LCModel.Core.Text.Icu.GetConverterIdsAndNames())
 							{
 								if (!String.IsNullOrEmpty(idAndName.Name))
 									cboSpec.Items.Add(new CnvtrSpecComboItem(idAndName.Name, idAndName.Id));
@@ -494,7 +494,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 						// fill in combo items.
 						cboSpec.BeginUpdate();
 						cboSpec.Items.Clear();
-						foreach (IcuIdAndName idAndName in Common.FwKernelInterfaces.Icu.GetTransliteratorIdsAndNames())
+						foreach (IcuIdAndName idAndName in LCModel.Core.Text.Icu.GetTransliteratorIdsAndNames())
 						{
 							cboSpec.Items.Add(new CnvtrSpecComboItem(idAndName.Name, idAndName.Id));
 						}

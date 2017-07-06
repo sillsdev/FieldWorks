@@ -5,9 +5,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using SIL.CoreImpl.Cellar;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Application;
+using SIL.LCModel.Infrastructure;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
@@ -86,7 +86,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			return base.get_IsValidObject(hvo);
 		}
 
-		private class ComplexConcordancePatternMdc : FdoMetaDataCacheDecoratorBase
+		private class ComplexConcordancePatternMdc : LcmMetaDataCacheDecoratorBase
 		{
 			public ComplexConcordancePatternMdc(IFwMetaDataCacheManaged metaDataCache)
 				: base(metaDataCache)

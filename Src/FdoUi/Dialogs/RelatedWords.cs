@@ -9,12 +9,12 @@ using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using SIL.CoreImpl.Text;
+using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.Resources;
 
 namespace SIL.FieldWorks.FdoUi.Dialogs
@@ -34,7 +34,7 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 		private System.ComponentModel.Container components = null;
 
 		RelatedWordsView m_view;
-		FdoCache m_cache;
+		LcmCache m_cache;
 		IVwSelection m_sel;
 		IVwStylesheet m_styleSheet;
 		int m_hvoEntry;
@@ -65,7 +65,7 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 		/// <param name="cdaTemp"></param>
 		/// <param name="owner"></param>
 		/// <returns></returns>
-		static internal bool LoadDomainAndRelationInfo(FdoCache cache, int hvoEntry, out int[] domainsOut,
+		static internal bool LoadDomainAndRelationInfo(LcmCache cache, int hvoEntry, out int[] domainsOut,
 			out int[] lexrelsOut, out IVwCacheDa cdaTemp, IWin32Window owner)
 		{
 			bool fHaveSemDomains = LoadDomainInfo(cache, hvoEntry, out domainsOut, out cdaTemp);
@@ -96,7 +96,7 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 		/// <param name="hvoSemanticDomainsOut">A list of int IDs of the semantic domains of the lexical entry</param>
 		/// <param name="cdaTemp"></param>
 		/// <returns></returns>
-		static private bool LoadDomainInfo(FdoCache cache, int hvoEntry, out int[] hvoSemanticDomainsOut, out IVwCacheDa cdaTemp)
+		static private bool LoadDomainInfo(LcmCache cache, int hvoEntry, out int[] hvoSemanticDomainsOut, out IVwCacheDa cdaTemp)
 		{
 			// REVIEW (SteveMiller): The LINQ below runs slow the first time its run. We should try to
 			// optimize it if possible.
@@ -137,9 +137,8 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 		/// <param name="hvoEntry">ID of the lexical entry we're working with</param>
 		/// <param name="relsOut">an array of IDs (HVOs) for related objects</param>
 		/// <param name="cdaTemp"></param>
-		/// <returns>false if the entry has no associated lexical relations, or none of them are linked to any other entries.
-		/// </returns>
-		static private bool LoadLexicalRelationInfo(FdoCache cache, int hvoEntry, out int[] relsOut, IVwCacheDa cdaTemp)
+		/// <returns>false if the entry has no associated lexical relations, or none of them are linked to any other entries.</returns>
+		static private bool LoadLexicalRelationInfo(LcmCache cache, int hvoEntry, out int[] relsOut, IVwCacheDa cdaTemp)
 		{
 			var relatedObjectIds = new List<int>();
 			var entryRepository = cache.ServiceLocator.GetInstance<ILexEntryRepository>();
@@ -183,7 +182,7 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 		/// <summary>
 		/// Create a view with a single LexEntry object.
 		/// </summary>
-		public static XmlView MakeSummaryView(int hvoEntry, FdoCache cache, IVwStylesheet styleSheet)
+		public static XmlView MakeSummaryView(int hvoEntry, LcmCache cache, IVwStylesheet styleSheet)
 		{
 			XmlView xv = new XmlView(hvoEntry, "publishStem", false);
 			xv.Cache = cache;
@@ -191,7 +190,7 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 			return xv;
 		}
 
-		public RelatedWords(FdoCache cache, IVwSelection sel, int hvoEntry, int[] domains, int[] lexrels,
+		public RelatedWords(LcmCache cache, IVwSelection sel, int hvoEntry, int[] domains, int[] lexrels,
 			IVwCacheDa cdaTemp, IVwStylesheet styleSheet, bool hideInsertButton)
 		{
 			m_cache = cache;
@@ -544,7 +543,7 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 	{
 		int m_hvoRoot;
 		ISilDataAccess m_sda;
-		FdoCache m_cache;
+		LcmCache m_cache;
 		int m_wsUser;
 		RelatedWordsVc m_vc;
 		bool m_fInSelChange = false;
@@ -552,7 +551,7 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 
 		public event EventHandler SelChanged;
 
-		public RelatedWordsView(FdoCache cache, int hvoRoot, ITsString headword, ISilDataAccess sda, int wsUser)
+		public RelatedWordsView(LcmCache cache, int hvoRoot, ITsString headword, ISilDataAccess sda, int wsUser)
 		{
 			m_cache = cache;
 			m_hvoRoot = hvoRoot;

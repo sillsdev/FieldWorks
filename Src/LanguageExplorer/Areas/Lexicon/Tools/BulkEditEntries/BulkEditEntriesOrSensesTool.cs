@@ -6,10 +6,10 @@ using System.Drawing;
 using System.Xml.Linq;
 using LanguageExplorer.Controls;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks;
+using SIL.LCModel;
+using SIL.LCModel.Application;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditEntries
 {
@@ -97,7 +97,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditEntries
 			var parametersElement = root.Element("parameters");
 			parametersElement.Element("includeColumns").ReplaceWith(XElement.Parse(LexiconResources.LexiconBrowseDialogColumnDefinitions));
 			OverrideServices.OverrideVisibiltyAttributes(parametersElement.Element("columns"), root.Element("overrides"));
-			var cache = PropertyTable.GetValue<FdoCache>("cache");
+			var cache = PropertyTable.GetValue<LcmCache>("cache");
 			var flexComponentParameters = new FlexComponentParameters(PropertyTable, Publisher, Subscriber);
 			_recordClerk = LexiconArea.CreateClerkForLexiconArea("entriesOrChildren", new EntriesOrChildClassesRecordList(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), false, cache.LanguageProject.LexDbOA));
 			_recordClerk.InitializeFlexComponent(flexComponentParameters);

@@ -7,12 +7,12 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.WordWorks.Parser;
+using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Infrastructure;
 using SIL.Utils;
 
 namespace LanguageExplorer.Areas.TextsAndWords
@@ -23,7 +23,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 	/// </summary>
 	internal sealed class ParserMenuManager : IFlexComponent, IDisposable, IVwNotifyChange
 	{
-		private FdoCache m_cache; //a pointer to the one owned by from the form
+		private LcmCache m_cache; //a pointer to the one owned by from the form
 		/// <summary>
 		/// Use this to do the Add/RemoveNotifications, since it can be used in the unmanged section of Dispose.
 		/// (If m_sda is COM, that is.)
@@ -92,7 +92,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			Publisher = flexComponentParameters.Publisher;
 			Subscriber = flexComponentParameters.Subscriber;
 
-			m_cache = PropertyTable.GetValue<FdoCache>("cache");
+			m_cache = PropertyTable.GetValue<LcmCache>("cache");
 			m_sda = m_cache.MainCacheAccessor;
 
 			/*

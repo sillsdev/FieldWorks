@@ -1,18 +1,13 @@
-// ---------------------------------------------------------------------------------------------
-// Copyright (c) 2008-2015 SIL International
+// Copyright (c) 2008-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ChapterVerseCheck.cs
-// Responsibility: TE Team
-// ---------------------------------------------------------------------------------------------
+
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
-using SIL.CoreImpl.Scripture;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel.Core.Scripture;
 
 namespace SILUBS.ScriptureChecks
 {

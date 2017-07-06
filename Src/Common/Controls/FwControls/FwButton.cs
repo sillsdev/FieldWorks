@@ -6,8 +6,6 @@ using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
-using Fw = SIL.FieldWorks.Common;
-using SIL.FieldWorks.Common.Drawing;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -122,7 +120,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		protected bool m_behaveLikeOptionButton = false;
 		/// <summary></summary>
-		protected Fw.Drawing.BorderDrawing m_BorderDrawingObj = new Fw.Drawing.BorderDrawing();
+		protected BorderDrawing m_BorderDrawingObj = new BorderDrawing();
 
 		/// <summary>
 		/// Required designer variable.
@@ -713,28 +711,28 @@ namespace SIL.FieldWorks.Common.Controls
 			if (m_PaintState == ButtonStates.Flat && ButtonStyle == ButtonStyles.Popup)
 				return;
 
-			Fw.Drawing.BorderTypes brdrType;
+			BorderTypes brdrType;
 
 			// Determine what type of border to draw for the button.
 			if (ButtonStyle == ButtonStyles.Popup)
 			{
 				brdrType = (m_PaintState == ButtonStates.Up ?
-					Fw.Drawing.BorderTypes.SingleRaised :
-					Fw.Drawing.BorderTypes.SingleSunken);
+					BorderTypes.SingleRaised :
+					BorderTypes.SingleSunken);
 			}
 			else if (m_PaintState == ButtonStates.Up || m_PaintState == ButtonStates.Flat)
 			{
 				brdrType = (ButtonStyle == ButtonStyles.Raised ?
-					Fw.Drawing.BorderTypes.SingleRaised :
-					Fw.Drawing.BorderTypes.DoubleRaised);
+					BorderTypes.SingleRaised :
+					BorderTypes.DoubleRaised);
 			}
 			else
 			{
 				brdrType = (SunkenAppearance == SunkenAppearances.Deep ?
-					Fw.Drawing.BorderTypes.DoubleSunken :
+					BorderTypes.DoubleSunken :
 					(SunkenAppearance == SunkenAppearances.Sunken ?
-					Fw.Drawing.BorderTypes.SingleSunken :
-					Fw.Drawing.BorderTypes.Single));
+					BorderTypes.SingleSunken :
+					BorderTypes.Single));
 			}
 
 			// Finally, draw the border.

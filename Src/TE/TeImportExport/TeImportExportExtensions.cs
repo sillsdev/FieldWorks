@@ -9,9 +9,9 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using SIL.FieldWorks.Common.ScriptureUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.Utils;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.TE
 {

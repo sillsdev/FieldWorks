@@ -1,12 +1,13 @@
 // Copyright (c) 2004-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -39,7 +40,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="objList">A list of texts and books to check as an array of hvos</param>
 		/// <param name="helpTopicProvider">The help topic provider.</param>
 		/// ------------------------------------------------------------------------------------
-		public FilterTextsDialog(IPropertyTable propertyTable, FdoCache cache, IStText[] objList,
+		public FilterTextsDialog(IPropertyTable propertyTable, LcmCache cache, IStText[] objList,
 			IHelpTopicProvider helpTopicProvider) : base(propertyTable, cache, objList, helpTopicProvider)
 		{
 			m_helpTopicId = "khtpChooseTexts";

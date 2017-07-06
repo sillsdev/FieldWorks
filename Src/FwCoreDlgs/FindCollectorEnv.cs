@@ -5,7 +5,7 @@
 using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 

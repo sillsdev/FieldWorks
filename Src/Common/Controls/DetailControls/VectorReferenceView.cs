@@ -17,16 +17,16 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.Xml.Linq;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.FDO.Application;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
+using SIL.LCModel.Application;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
-using SIL.CoreImpl.Cellar;
-using SIL.CoreImpl.Text;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.Xml;
 
@@ -65,8 +65,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			InitializeComponent();
 		}
 
-		public void Initialize(ICmObject rootObj, int rootFlid, string rootFieldName, FdoCache cache, string displayNameProperty,
-			string displayWs)
+		public void Initialize(ICmObject rootObj, int rootFlid, string rootFieldName, LcmCache cache, string displayNameProperty, string displayWs)
 		{
 			CheckDisposed();
 			m_displayWs = displayWs;
@@ -137,7 +136,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			CheckDisposed();
 
-			if (m_fdoCache == null || DesignMode)
+			if (m_cache == null || DesignMode)
 				return;
 
 			m_VectorReferenceVc = CreateVectorReferenceVc();
@@ -154,12 +153,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		protected virtual VectorReferenceVc CreateVectorReferenceVc()
 		{
-			return new VectorReferenceVc(m_fdoCache, m_rootFlid, m_displayNameProperty, m_displayWs);
+			return new VectorReferenceVc(m_cache, m_rootFlid, m_displayNameProperty, m_displayWs);
 		}
 
 		protected virtual ISilDataAccess GetDataAccess()
 		{
-			return m_fdoCache.DomainDataByFlid;
+			return m_cache.DomainDataByFlid;
 		}
 
 		#endregion // RootSite required methods
@@ -486,7 +485,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				{
 					// We've selected the whole string for it, so remove the object from the
 					// vector.
-					var hvosOld = ((ISilDataAccessManaged)m_fdoCache.DomainDataByFlid).VecProp(m_rootObj.Hvo, m_rootFlid);
+					var hvosOld = ((ISilDataAccessManaged)m_cache.DomainDataByFlid).VecProp(m_rootObj.Hvo, m_rootFlid);
 					UpdateTimeStampsIfNeeded(hvosOld);
 					for (int i = 0; i < hvosOld.Length; ++i)
 					{
@@ -583,7 +582,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				startHeight = m_rootb.Height;
 
 			UndoableUnitOfWorkHelper.Do(undoText, redoText, m_rootObj,
-										() => m_fdoCache.DomainDataByFlid.Replace(
+										() => m_cache.DomainDataByFlid.Replace(
 											m_rootObj.Hvo, m_rootFlid, ihvo, ihvo + 1, new int[0], 0));
 			if (m_rootb != null)
 			{
@@ -653,8 +652,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				int hvoObj;
 				sel.TextSelInfo(false, out tss, out ichAnchor, out fAssocPrev, out hvoObj,
 					out tag, out ws);
-				if (m_fdoCache.ServiceLocator.IsValidObjectId(hvoObj))
-					return m_fdoCache.ServiceLocator.GetObject(hvoObj);
+				if (m_cache.ServiceLocator.IsValidObjectId(hvoObj))
+					return m_cache.ServiceLocator.GetObject(hvoObj);
 				return null;
 			}
 
@@ -666,11 +665,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				}
 				else
 				{
-					int count = m_fdoCache.DomainDataByFlid.get_VecSize(m_rootObj.Hvo, m_rootFlid);
+					int count = m_cache.DomainDataByFlid.get_VecSize(m_rootObj.Hvo, m_rootFlid);
 					int i;
 					for (i = 0; i < count; ++i)
 					{
-						int hvo = m_fdoCache.DomainDataByFlid.get_VecItem(m_rootObj.Hvo, m_rootFlid, i);
+						int hvo = m_cache.DomainDataByFlid.get_VecItem(m_rootObj.Hvo, m_rootFlid, i);
 						if (hvo == value.Hvo)
 							break;
 					}
@@ -698,7 +697,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <summary>
 		/// Constructor for the Vector Reference View Constructor Class.
 		/// </summary>
-		public VectorReferenceVc(FdoCache cache, int flid, string displayNameProperty, string displayWs)
+		public VectorReferenceVc(LcmCache cache, int flid, string displayNameProperty, string displayWs)
 		{
 			Debug.Assert(cache != null);
 			Cache = cache;

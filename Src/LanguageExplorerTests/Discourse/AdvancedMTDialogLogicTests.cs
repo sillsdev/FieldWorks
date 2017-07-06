@@ -5,7 +5,7 @@
 using System.Collections.Generic;
 using LanguageExplorer.Areas.TextsAndWords.Discourse;
 using NUnit.Framework;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 
 namespace LanguageExplorerTests.Discourse
 {

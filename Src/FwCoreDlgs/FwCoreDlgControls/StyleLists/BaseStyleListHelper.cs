@@ -16,11 +16,11 @@ using System.Collections;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
-using SIL.CoreImpl.Text;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
 using SIL.FieldWorks.Resources;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel.DomainServices;
 
 namespace SIL.FieldWorks.FwCoreDlgControls
 {
@@ -87,12 +87,12 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		protected bool m_ignoreListRefresh = false;
 
 		/// <summary>A stylesheet to get the styles from</summary>
-		private FwStyleSheet m_styleSheet = null;
+		private LcmStyleSheet m_styleSheet = null;
 
 		/// <summary>
 		/// The cache from which to create new StStyle objects used for the style list items.
 		/// </summary>
-		private FdoCache m_cache = null;
+		private LcmCache m_cache = null;
 
 		/// <summary>True to show internal styles, false otherwise</summary>
 		protected bool m_showInternalStyles = false;
@@ -348,7 +348,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Browsable(false)]
-		public FwStyleSheet StyleSheet
+		public LcmStyleSheet StyleSheet
 		{
 			get	{return m_styleSheet;}
 			set	{m_styleSheet = value;}
@@ -360,7 +360,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		/// created.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public FdoCache Cache
+		public LcmCache Cache
 		{
 			get {return m_cache;}
 			set	{m_cache = value;}
@@ -406,7 +406,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		/// <remarks>
 		/// (Note: for this property to have any effect, it must be set before
 		/// a call to the
-		/// <see cref="AddStyles(FwStyleSheet)"/>
+		/// <see cref="AddStyles(LcmStyleSheet)"/>
 		/// or <see cref="Refresh"/> methods.) This property is used in addition to the
 		/// <see cref="ShowOnlyStylesOfType"/> property.
 		/// When this property is set to something other than null, the
@@ -438,7 +438,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		/// </summary>
 		/// <remarks>(Note: for this property to have any effect, it must be set before
 		/// a call to the
-		/// <see cref="AddStyles(FwStyleSheet)"/>
+		/// <see cref="AddStyles(LcmStyleSheet)"/>
 		/// or <see cref="Refresh"/> methods.) This property is used in addition to the
 		/// <see cref="ShowOnlyStylesOfType"/> property.
 		/// </remarks>
@@ -464,7 +464,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		/// Gets or sets a List containing a list of ContextValues of styles to include in
 		/// the list. (Note: for this property to have any effect, it must be set before
 		/// a call to the
-		/// <see cref="AddStyles(FwStyleSheet)"/>
+		/// <see cref="AddStyles(LcmStyleSheet)"/>
 		/// or <see cref="Refresh"/> methods.) This property is used in addition to the
 		/// <see cref="ShowOnlyStylesOfType"/> property. When this property is set to something
 		/// other than null, the <see cref="ExcludeStylesWithContext"/> list is automatically
@@ -775,7 +775,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		/// </summary>
 		/// <param name="styleSheet">Stylesheet from which styles are read.</param>
 		/// ------------------------------------------------------------------------------------
-		public void AddStyles(FwStyleSheet styleSheet)
+		public void AddStyles(LcmStyleSheet styleSheet)
 		{
 			AddStyles(styleSheet, null);
 		}
@@ -788,7 +788,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		/// <param name="pseudoStyles">Array of strings representing pseudo-styles that can be
 		/// displayed for the purpose of mapping markers to data properties</param>
 		/// ------------------------------------------------------------------------------------
-		public void AddStyles(FwStyleSheet styleSheet, string[] pseudoStyles)
+		public void AddStyles(LcmStyleSheet styleSheet, string[] pseudoStyles)
 		{
 			Debug.Assert(styleSheet != null);
 			BuildStyleItemList(styleSheet.CStyles, styleSheet.Styles, pseudoStyles);

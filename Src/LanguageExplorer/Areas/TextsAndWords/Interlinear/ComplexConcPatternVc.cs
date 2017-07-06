@@ -7,11 +7,11 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
 using System.Linq;
-using SIL.CoreImpl.Text;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.LexText.Controls;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
@@ -44,7 +44,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private IDictionary<IFsFeatDefn, object> m_curInflFeatures;
 
-		public ComplexConcPatternVc(FdoCache cache, IPropertyTable propertyTable)
+		public ComplexConcPatternVc(LcmCache cache, IPropertyTable propertyTable)
 			: base(cache, propertyTable)
 		{
 			int userWs = m_cache.DefaultUserWs;

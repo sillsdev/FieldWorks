@@ -12,12 +12,12 @@ using System.Xml.Linq;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.PaneBar;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks;
+using SIL.LCModel;
+using SIL.LCModel.Application;
+using SIL.LCModel.Infrastructure;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 {
@@ -123,7 +123,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			OverrideServices.OverrideVisibiltyAttributes(columnsElement, overrides);
 			root.Add(columnsElement);
 
-			_recordClerk = LexiconArea.CreateBasicClerkForLexiconArea(PropertyTable.GetValue<FdoCache>("cache"));
+			_recordClerk = LexiconArea.CreateBasicClerkForLexiconArea(PropertyTable.GetValue<LcmCache>("cache"));
 			_recordClerk.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
 
 			_recordBrowseView = new RecordBrowseView(root, _recordClerk);
@@ -266,7 +266,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			// Original code that controlled: display.Enabled = display.Visible = InFriendlyArea;
 			// It is now only in a friendly area, so should always be visible and enabled, per the old code.
 			// Trouble is it makes no sense to enable it if the lexicon only has one entry in it, so I'll alter the behavior to be more sensible. ;-)
-			contextMenuItem.Enabled = PropertyTable.GetValue<FdoCache>("cache").LanguageProject.LexDbOA.Entries.Any();
+			contextMenuItem.Enabled = PropertyTable.GetValue<LcmCache>("cache").LanguageProject.LexDbOA.Entries.Any();
 
 			// Separator
 			contextMenuStrip.Items.Add(new ToolStripSeparator());
@@ -312,7 +312,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 			using (var dlg = new MergeEntryDlg())
 			{
-				var cache = PropertyTable.GetValue<FdoCache>("cache");
+				var cache = PropertyTable.GetValue<LcmCache>("cache");
 				// <parameters title="Merge Entry" formlabel="_Find:" okbuttonlabel="_Merge"/>
 				dlg.SetDlgInfo(cache, PropertyTable, Publisher, Subscriber, XElement.Parse(LexiconResources.MatchingEntriesParameters), currentEntry, LexiconResources.ksMergeEntry, FwUtils.ReplaceUnderlineWithAmpersand(LexiconResources.ks_Find), FwUtils.ReplaceUnderlineWithAmpersand(LexiconResources.ks_Merge));
 				if (dlg.ShowDialog() != DialogResult.OK)

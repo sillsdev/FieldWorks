@@ -5,11 +5,11 @@
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel.Infrastructure;
 
 namespace SIL.FieldWorks.TE
 {
@@ -23,7 +23,7 @@ namespace SIL.FieldWorks.TE
 	{
 		#region Member variables
 
-		private FdoCache m_cache;
+		private LcmCache m_cache;
 		private IScripture m_scr;
 		private IHelpTopicProvider m_helpTopicProvider;
 		private TriStateTreeView m_treeView;
@@ -50,7 +50,7 @@ namespace SIL.FieldWorks.TE
 		/// Initializes a new instance of the <see cref="SaveVersionDialog"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public SaveVersionDialog(FdoCache cache, IHelpTopicProvider helpTopicProvider)
+		public SaveVersionDialog(LcmCache cache, IHelpTopicProvider helpTopicProvider)
 		{
 			m_cache = cache;
 			m_scr = m_cache.LangProject.TranslatedScriptureOA;

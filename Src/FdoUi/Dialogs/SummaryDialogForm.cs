@@ -8,11 +8,11 @@ using System.Diagnostics;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
+using SIL.LCModel;
+using SIL.LCModel.Application;
 
 namespace SIL.FieldWorks.FdoUi.Dialogs
 {
@@ -40,7 +40,7 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 		private int m_hvoSelected;		// object selected in the view.
 		private ITsString m_tssWf;
 		private XmlView m_xv;
-		private FdoCache m_cache;
+		private LcmCache m_cache;
 		private IPropertyTable m_propertyTable;
 		private IHelpTopicProvider m_helpProvider;
 		private string m_helpFileKey;
@@ -92,7 +92,7 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 		/// <param name="styleSheet">The stylesheet.</param>
 		/// <param name="cache">The cache.</param>
 		internal SummaryDialogForm(List<int> rghvo, ITsString tssForm, IHelpTopicProvider helpProvider,
-			string helpFileKey, IVwStylesheet styleSheet, FdoCache cache)
+			string helpFileKey, IVwStylesheet styleSheet, LcmCache cache)
 		{
 			InitializeComponent();
 			AccessibleName = GetType().Name;
@@ -258,7 +258,7 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 		/// <param name="styleSheet"></param>
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
-		private XmlView CreateSummaryView(List<int> rghvoEntries, FdoCache cache, IVwStylesheet styleSheet)
+		private XmlView CreateSummaryView(List<int> rghvoEntries, LcmCache cache, IVwStylesheet styleSheet)
 		{
 			// Make a decorator to publish the list of entries as a fake property of the LexDb.
 			int kflidEntriesFound = 8999950; // some arbitrary number not conflicting with real flids.

@@ -6,7 +6,7 @@
 // Responsibility: TE Team
 
 using System;
-using SIL.CoreImpl.Scripture;
+using SIL.LCModel.Core.Scripture;
 
 namespace SIL.FieldWorks.Common.ScriptureUtils
 {

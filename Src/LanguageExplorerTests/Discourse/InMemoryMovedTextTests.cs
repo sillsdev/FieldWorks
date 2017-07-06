@@ -6,8 +6,8 @@ using System;
 using System.Collections.Generic;
 using LanguageExplorer.Areas.TextsAndWords.Discourse;
 using NUnit.Framework;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 
 namespace LanguageExplorerTests.Discourse
 {

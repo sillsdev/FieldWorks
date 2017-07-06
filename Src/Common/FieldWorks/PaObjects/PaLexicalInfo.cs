@@ -67,7 +67,7 @@ namespace SIL.FieldWorks.PaObjects
 		public bool ShowOpenProject(Form owner, ref Rectangle dialogBounds,
 			ref int dialogSplitterPos, out string name, out string server)
 		{
-			Common.FwKernelInterfaces.Icu.InitIcuDataDir();
+			LCModel.Core.Text.Icu.InitIcuDataDir();
 			FwRegistryHelper.Initialize(); // inorder to find correct Registry keys
 
 			using (var dlg = new ChooseLangProjectDialog(dialogBounds, dialogSplitterPos))

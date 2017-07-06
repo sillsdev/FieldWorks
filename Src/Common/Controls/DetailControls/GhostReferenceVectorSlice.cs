@@ -8,9 +8,9 @@ using System.Xml.Linq;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using SIL.Xml;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
@@ -22,7 +22,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 	/// </summary>
 	public class GhostReferenceVectorSlice : FieldSlice
 	{
-		public GhostReferenceVectorSlice(FdoCache cache, ICmObject obj, XElement configNode)
+		public GhostReferenceVectorSlice(LcmCache cache, ICmObject obj, XElement configNode)
 			: base(new GhostReferenceVectorLauncher(), cache, obj, GetFieldId(cache, configNode))
 		{
 		}
@@ -31,7 +31,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 		}
 
-		private static int GetFieldId(FdoCache cache, XElement configurationParameters)
+		private static int GetFieldId(LcmCache cache, XElement configurationParameters)
 		{
 			return cache.MetaDataCacheAccessor.GetFieldId(XmlUtils.GetManditoryAttributeValue(configurationParameters, "ghostClass"),
 				XmlUtils.GetManditoryAttributeValue(configurationParameters, "ghostField"), true);

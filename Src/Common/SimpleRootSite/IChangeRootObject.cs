@@ -4,8 +4,6 @@
 //
 // File: IChangeRootObject.cs
 
-using System;
-
 namespace SIL.FieldWorks.Common.RootSites
 {
 	/// <summary>

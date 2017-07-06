@@ -13,12 +13,13 @@ using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.FdoUi;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.CoreImpl.Cellar;
-using SIL.CoreImpl.Text;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Utils;
 using SIL.Utils;
 using Rect = SIL.FieldWorks.Common.ViewsInterfaces.Rect;
 
@@ -997,7 +998,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			AcceptsTab = true;
 		}
 
-		public SandboxBase(FdoCache cache, IVwStylesheet ss, InterlinLineChoices choices)
+		public SandboxBase(LcmCache cache, IVwStylesheet ss, InterlinLineChoices choices)
 			: this()
 		{
 			// Override things from InitializeComponent()
@@ -1016,7 +1017,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			m_editMonitor = new SandboxEditMonitor(this); // after creating sec cache.
 		}
 
-		public SandboxBase(FdoCache cache, IVwStylesheet ss, InterlinLineChoices choices, int hvoAnalysis)
+		public SandboxBase(LcmCache cache, IVwStylesheet ss, InterlinLineChoices choices, int hvoAnalysis)
 			: this(cache, ss, choices)
 		{
 			// finish setup with the WordBundleAnalysis
@@ -1478,7 +1479,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			return humanCount + machineCount > 1;
 		}
 
-		private static bool IsAnalysisHumanApproved(FdoCache cache, IWfiAnalysis analysis)
+		private static bool IsAnalysisHumanApproved(LcmCache cache, IWfiAnalysis analysis)
 		{
 			if (analysis == null)
 				return false; // non-existent analysis can't be approved.
@@ -2109,7 +2110,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// If this is being called to establish a default monomorphemic guess, skip over
 		/// any bound root or bound stem entries that hvoEntry may be a variant of.
 		/// </summary>
-		public ILexEntryRef GetVariantRef(FdoCache cache, int hvoEntry, bool fMonoMorphemic)
+		public ILexEntryRef GetVariantRef(LcmCache cache, int hvoEntry, bool fMonoMorphemic)
 		{
 			ISilDataAccess sda = cache.MainCacheAccessor;
 			int cRef = sda.get_VecSize(hvoEntry, LexEntryTags.kflidEntryRefs);
@@ -2161,7 +2162,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// root or a bound stem.  We don't want to use those as guesses for monomorphemic
 		/// words.  See LT-10323.
 		/// </summary>
-		private static bool IsEntryBound(FdoCache cache, int hvoComponent, int clid)
+		private static bool IsEntryBound(LcmCache cache, int hvoComponent, int clid)
 		{
 			int hvoTargetEntry;
 			if (clid == LexSenseTags.kClassId)
@@ -4526,7 +4527,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				int hvo = GetHvoForJumpToToolClass(className);
 				if (hvo != 0)
 				{
-					FdoCache cache = m_caches.MainCache;
+					LcmCache cache = m_caches.MainCache;
 					ICmObject co = cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo);
 					var fwLink = new FwLinkArgs(tool, co.Guid);
 					List<Property> additionalProps = fwLink.PropertyTableEntries;

@@ -12,23 +12,23 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Web;
 using Paratext.LexicalContracts;
-using SIL.CoreImpl.Text;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainImpl;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.WordWorks.Parser;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
+using SIL.LCModel.DomainImpl;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using SIL.Machine.Morphology;
 using SIL.ObjectModel;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.ParatextLexiconPlugin
 {
 	internal class FdoLexicon : DisposableBase, Lexicon, WordAnalyses, IVwNotifyChange
 	{
 		private IParser m_parser;
-		private readonly FdoCache m_cache;
+		private readonly LcmCache m_cache;
 		private readonly string m_scrTextName;
 		private readonly ConditionalWeakTable<ILexEntry, HomographNumber> m_homographNumbers;
 		private Dictionary<LexemeKey, SortedSet<ILexEntry>> m_entryIndex;
@@ -37,7 +37,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		private PoorMansStemmer<string, char> m_stemmer;
 		private readonly string m_projectId;
 
-		internal FdoLexicon(string scrTextName, string projectId, FdoCache cache, int defaultVernWs)
+		internal FdoLexicon(string scrTextName, string projectId, LcmCache cache, int defaultVernWs)
 		{
 			m_scrTextName = scrTextName;
 			m_projectId = projectId;
@@ -48,7 +48,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			m_defaultVernWs = defaultVernWs;
 		}
 
-		internal FdoCache Cache
+		internal LcmCache Cache
 		{
 			get { return m_cache; }
 		}

@@ -9,17 +9,17 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.WritingSystems;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FdoUi;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Application;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.ObjectModel;
 using Color = System.Drawing.Color;
@@ -952,7 +952,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						// Todo: figure implementation
 						//					int ihvoTwfic = m_rgvsli[m_iRoot].ihvo;
 						//					int [] itemsToInsert = new int[0];
-						//					m_fdoCache.ReplaceReferenceProperty(m_hvoSbWord,
+						//					m_cache.ReplaceReferenceProperty(m_hvoSbWord,
 						//						StTxtParaTags.kflidAnalyzedTextObjects,
 						//						ihvoTwfic, ihvoTwfic + 1, ref itemsToInsert);
 						// Enhance JohnT: consider removing the WfiWordform, if there are no
@@ -973,7 +973,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					return true;
 				}
 				// Todo JohnT: clean out old analysis, come up with new defaults.
-				//SetAnalysisTo(DbOps.FindOrCreateWordform(m_fdoCache, tssWord));
+				//SetAnalysisTo(DbOps.FindOrCreateWordform(m_cache, tssWord));
 				// Enhance JohnT: consider removing the old WfiWordform, if there are no
 				// analyses and no other references.
 				return true;
@@ -1444,7 +1444,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				/// </summary>
 				/// <param name="cache"></param>
 				/// <returns></returns>
-				public ILexEntry GetPrimaryOrOwningEntry(FdoCache cache)
+				public ILexEntry GetPrimaryOrOwningEntry(LcmCache cache)
 				{
 					var repository = cache.ServiceLocator.GetInstance<ICmObjectRepository>();
 					ILexEntry morphEntryReal = null;
@@ -2160,7 +2160,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				le = null;
 				allomorph = null;
 				sense = null;
-				FdoCache cache = m_caches.MainCache;
+				LcmCache cache = m_caches.MainCache;
 				int hvoMorph = m_caches.DataAccess.get_ObjectProp(m_hvoMorph, ktagSbMorphForm);
 				ITsString tssForm = m_caches.DataAccess.get_MultiStringAlt(hvoMorph,
 																		   ktagSbNamedObjName, m_sandbox.RawWordformWs);
@@ -2331,7 +2331,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 				using (AddAllomorphDlg dlg = new AddAllomorphDlg())
 				{
-					FdoCache cache = m_caches.MainCache;
+					LcmCache cache = m_caches.MainCache;
 					dlg.SetDlgInfo(cache, null, m_sandbox.PropertyTable, m_sandbox.Publisher, m_sandbox.Subscriber, tssForm, morphType.Hvo);
 					Form mainWnd = m_sandbox.FindForm();
 					// Making the form active fixes LT-2619.
@@ -2831,7 +2831,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 			/// <summary>
 			/// Update the sandbox cache to reflect a choice of the real MoForm and the
-			/// entry indicated by the FdoCache hvos passed.
+			/// entry indicated by the LcmCache hvos passed.
 			/// </summary>
 			internal void UpdateMorphEntry(IMoForm moFormReal, ILexEntry entryReal, ILexSense senseReal,
 				ILexEntryInflType inflType = null)
@@ -3394,7 +3394,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				if (m_pOSPopupTreeManager == null)
 				{
-					FdoCache cache = m_caches.MainCache;
+					LcmCache cache = m_caches.MainCache;
 					m_pOSPopupTreeManager = new POSPopupTreeManager(m_tree, cache, cache.LangProject.PartsOfSpeechOA, cache.DefaultAnalWs, false, m_sandbox.PropertyTable, m_sandbox.Publisher, m_sandbox.FindForm());
 					m_pOSPopupTreeManager.AfterSelect += new TreeViewEventHandler(m_pOSPopupTreeManager_AfterSelect);
 				}

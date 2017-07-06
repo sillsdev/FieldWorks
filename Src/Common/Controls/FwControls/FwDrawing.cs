@@ -6,7 +6,7 @@ using System;
 using System.Drawing;
 using System.ComponentModel;
 
-namespace SIL.FieldWorks.Common.Drawing
+namespace SIL.FieldWorks.Common.Controls
 {
 	//*******************************************************************************************
 	/// <summary>

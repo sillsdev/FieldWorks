@@ -1,18 +1,13 @@
-// Copyright (c) 2007-2013 SIL International
+// Copyright (c) 2007-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: DataLossDiffTests.cs
-// Responsibility: TE Team
 
 using System.Collections.Generic;
 using NUnit.Framework;
 using Rhino.Mocks;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using System.Diagnostics;
-using SIL.CoreImpl.Scripture;
-using SIL.FieldWorks.FDO.FDOTests;
-using SIL.FieldWorks.Common.ScriptureUtils;
+using SIL.LCModel.Core.Scripture;
 
 namespace SIL.FieldWorks.TE
 {
@@ -22,7 +17,7 @@ namespace SIL.FieldWorks.TE
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
-	public class DataLossDiffTests : ScrInMemoryFdoTestBase
+	public class DataLossDiffTests : ScrInMemoryLcmTestBase
 	{
 		#region Member variables
 		private IScrBook m_genesis = null;

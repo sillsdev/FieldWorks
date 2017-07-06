@@ -9,9 +9,7 @@
 // This interface allows us to deal with common features of IVwRootSite's and RootSiteGroup's.
 // </remarks>
 
-using System;
 using System.Collections.Generic;
-using System.Drawing;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 
 namespace SIL.FieldWorks.Common.RootSites

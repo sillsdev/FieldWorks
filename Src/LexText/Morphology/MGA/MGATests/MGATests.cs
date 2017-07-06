@@ -10,8 +10,8 @@ using System;
 using System.IO;
 using System.Xml;
 using NUnit.Framework;
-using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel;
 using SIL.Xml;
 
 namespace SIL.FieldWorks.LexText.Controls.MGA
@@ -42,9 +42,8 @@ namespace SIL.FieldWorks.LexText.Controls.MGA
 			GlossListBoxItem glbi = new GlossListBoxItem(Cache, node, ".", "", false);
 			m_LabelGlosses.Items.Add(glbi);
 		}
-		/// <summary>
-		///
-		/// </summary>
+
+		/// <summary />
 		/// <remarks>This method is called after each test </remarks>
 		[TearDown]
 		public virtual void TearDown()

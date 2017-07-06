@@ -8,7 +8,7 @@ using System.IO;
 using System.Threading;
 using System.Xml.Linq;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.WordWorks.Parser;
 using SIL.ObjectModel;
 
@@ -32,7 +32,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// Initializes a new instance of the <see cref="ParserConnection"/> class.
 		/// This will attempt to connect to an existing parser or start a new one if necessary.
 		/// </summary>
-		public ParserConnection(FdoCache cache, IdleQueue idleQueue)
+		public ParserConnection(LcmCache cache, IdleQueue idleQueue)
 		{
 			m_activity = string.Empty;
 			m_scheduler = new ParserScheduler(cache, idleQueue, Path.Combine(FwDirectoryFinder.CodeDirectory, FwDirectoryFinder.ksFlexFolderName));

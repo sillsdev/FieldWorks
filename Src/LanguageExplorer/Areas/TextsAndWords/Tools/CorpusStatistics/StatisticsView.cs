@@ -9,10 +9,10 @@ using System.Windows.Forms;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.XWorks;
+using SIL.LCModel;
+using SIL.LCModel.Application;
+using SIL.LCModel.DomainServices;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 {
@@ -79,7 +79,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 			Publisher = flexComponentParameters.Publisher;
 			Subscriber = flexComponentParameters.Subscriber;
 
-			var cache = PropertyTable.GetValue<FdoCache>("cache");
+			var cache = PropertyTable.GetValue<LcmCache>("cache");
 			const string clerkName = "interlinearTexts";
 			const string clerkPropertyTableName = "RecordClerk-" + clerkName;
 			RecordClerk clerk;
@@ -260,7 +260,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 			// TODO-Linux: SelectionTabs isn't implemented on Mono
 			statisticsBox.SelectionTabs = new[] { 10, 300};
 			//retrieve the default UI font.
-			var cache = PropertyTable.GetValue<FdoCache>("cache");
+			var cache = PropertyTable.GetValue<LcmCache>("cache");
 			var font = FontHeightAdjuster.GetFontForStyle(StyleServices.NormalStyleName,
 														  FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable),
 														  cache.DefaultUserWs, cache.WritingSystemFactory);

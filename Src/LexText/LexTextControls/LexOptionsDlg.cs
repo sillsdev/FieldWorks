@@ -1,14 +1,11 @@
-// Copyright (c) 2007-2016 SIL International
+// Copyright (c) 2007-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: LexOptionsDlg.cs
-// Responsibility: Steve McConnel
-// Last reviewed:
 //
 // <remarks>
 // This implements the "Tools/Options" command dialog for Language Explorer.
 // </remarks>
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -16,11 +13,11 @@ using System.Globalization;
 using System.Windows.Forms;
 using System.IO;
 using System.Xml;
-using SIL.CoreImpl.WritingSystems;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.Utils;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel.Utils;
+using SIL.LCModel;
 using SIL.Xml;
 
 namespace SIL.FieldWorks.LexText.Controls
@@ -29,7 +26,7 @@ namespace SIL.FieldWorks.LexText.Controls
 	{
 		private IPropertyTable m_propertyTable;
 		private IPublisher m_publisher;
-		private FdoCache m_cache = null;
+		private LcmCache m_cache = null;
 		private string m_sUserWs = null;
 		private string m_sNewUserWs = null;
 		private bool m_pluginsUpdated = false;
@@ -58,13 +55,14 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			base.OnLoad(e);
 			m_autoOpenCheckBox.Checked = AutoOpenLastProject;
-			m_okToPingCheckBox.Checked = CoreImpl.Properties.Settings.Default.Reporting.OkToPingBasicUsageData;
+			var appSettings = m_propertyTable.GetValue<FwApplicationSettingsBase>("AppSettings");
+			m_okToPingCheckBox.Checked = appSettings.Reporting.OkToPingBasicUsageData;
 		}
 
 		private void m_btnOK_Click(object sender, EventArgs e)
 		{
-			CoreImpl.Properties.Settings.Default.Reporting.OkToPingBasicUsageData = m_okToPingCheckBox.Checked;
-			CoreImpl.Properties.Settings.Default.Save();
+			var appSettings = m_propertyTable.GetValue<FwApplicationSettingsBase>("AppSettings");
+			appSettings.Reporting.OkToPingBasicUsageData = m_okToPingCheckBox.Checked;
 			m_sNewUserWs = m_userInterfaceChooser.NewUserWs;
 			if (m_sUserWs != m_sNewUserWs)
 			{
@@ -173,8 +171,8 @@ namespace SIL.FieldWorks.LexText.Controls
 					// Leave any dlls in place since they may be shared, or in use for the moment.
 				}
 			}
-			CoreImpl.Properties.Settings.Default.UpdateGlobalWSStore = !updateGlobalWS.Checked;
-			CoreImpl.Properties.Settings.Default.Save();
+			appSettings.UpdateGlobalWSStore = !updateGlobalWS.Checked;
+			appSettings.Save();
 			AutoOpenLastProject = m_autoOpenCheckBox.Checked;
 			DialogResult = DialogResult.OK;
 		}
@@ -209,15 +207,16 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		#region IFwExtension Members
 
-		void IFwExtension.Init(FdoCache cache, IPropertyTable propertyTable, IPublisher publisher)
+		void IFwExtension.Init(LcmCache cache, IPropertyTable propertyTable, IPublisher publisher)
 		{
-			updateGlobalWS.Checked = !CoreImpl.Properties.Settings.Default.UpdateGlobalWSStore;
 			m_propertyTable = propertyTable;
 			m_publisher = publisher;
 			m_cache = cache;
 			m_helpTopicProvider = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
 			m_sUserWs = m_cache.ServiceLocator.WritingSystemManager.UserWritingSystem.Id;
 			m_sNewUserWs = m_sUserWs;
+			var appSettings = m_propertyTable.GetValue<FwApplicationSettingsBase>("AppSettings");
+			updateGlobalWS.Checked = !appSettings.UpdateGlobalWSStore;
 			m_userInterfaceChooser.Init(m_sUserWs);
 
 			// Populate Plugins tab page list.

@@ -12,9 +12,9 @@ using System.Windows.Forms;
 using System.Xml.Linq;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO;
-using SIL.Utils;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.Utils;
 
 namespace LanguageExplorer.Areas.TextsAndWords
 {
@@ -28,7 +28,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		private const string HelpTopicID = "khtpTryAWord";
 
 		#region Data members
-		private FdoCache m_cache;
+		private LcmCache m_cache;
 		private ParserMenuManager m_parserMenuManager;
 		private IPersistenceProvider m_persistProvider;
 		private HelpProvider m_helpProvider;
@@ -121,7 +121,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		internal void SetDlgInfo(IWfiWordform wordform, ParserMenuManager parserMenuManager)
 		{
 			m_persistProvider = PersistenceProviderFactory.CreatePersistenceProvider(PropertyTable);
-			m_cache = PropertyTable.GetValue<FdoCache>("cache");
+			m_cache = PropertyTable.GetValue<LcmCache>("cache");
 			m_parserMenuManager = parserMenuManager;
 
 			Text = m_cache.ProjectId.UiName + " - " + Text;

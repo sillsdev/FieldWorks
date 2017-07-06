@@ -1,22 +1,11 @@
-﻿using SIL.FieldWorks.FDO;
+﻿using SIL.LCModel;
 
 namespace GenerateHCConfig
 {
-	internal class NullFdoDirectories : IFdoDirectories
+	internal class NullFdoDirectories : ILcmDirectories
 	{
-		public string ProjectsDirectory
-		{
-			get { return null; }
-		}
+		public string ProjectsDirectory => null;
 
-		public string DefaultProjectsDirectory
-		{
-			get { return null; }
-		}
-
-		public string TemplateDirectory
-		{
-			get { return null; }
-		}
+		public string TemplateDirectory => null;
 	}
 }

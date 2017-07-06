@@ -5,13 +5,12 @@
 // File: ImportDialogTests.cs
 // --------------------------------------------------------------------------------------------
 using NUnit.Framework;
-using SIL.CoreImpl.Scripture;
+using SIL.LCModel.Core.Scripture;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.FDOTests;
-using SIL.Utils;
+using SIL.LCModel;
+using SIL.LCModel.Utils;
 using SILUBS.SharedScrControls;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel.DomainServices;
 
 namespace SIL.FieldWorks.TE.ImportTests
 {
@@ -31,7 +30,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 		/// <param name="cache">The cache.</param>
 		/// <param name="settings">The settings.</param>
 		/// ------------------------------------------------------------------------------------
-		public DummyImportDialog(FwStyleSheet styleSheet, FdoCache cache,
+		public DummyImportDialog(LcmStyleSheet styleSheet, LcmCache cache,
 			IScrImportSet settings) : base(styleSheet, cache, settings, null, null)
 		{
 		}
@@ -72,7 +71,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
-	public class ImportDialogTests : ScrInMemoryFdoTestBase
+	public class ImportDialogTests : ScrInMemoryLcmTestBase
 	{
 		#region Member Data
 		private DummyImportDialog m_dlg;

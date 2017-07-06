@@ -9,15 +9,15 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
-using SIL.CoreImpl.Text;
+using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework.DetailControls;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 using SIL.Xml;
 
 namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
@@ -46,7 +46,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 
 		protected event InflAffixTemplateEventHandler ShowContextMenu;
 
-		public InflAffixTemplateControl(FdoCache cache, int hvoRoot, XElement xnSpec)
+		public InflAffixTemplateControl(LcmCache cache, int hvoRoot, XElement xnSpec)
 			: base(hvoRoot, XmlUtils.GetOptionalAttributeValue(xnSpec, "layout"), true)
 		{
 			m_xnSpec = xnSpec.Element("deParams");
@@ -249,7 +249,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 
 		private void HandleMove(Command cmd, bool bLeft)
 		{
-			IFdoReferenceSequence<IMoInflAffixSlot> seq;
+			ILcmReferenceSequence<IMoInflAffixSlot> seq;
 			int index;
 			var slot = m_obj as IMoInflAffixSlot;
 			GetAffixSequenceContainingSlot(slot, out seq, out index);
@@ -295,10 +295,10 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 		{
 			CheckDisposed();
 
-			IFdoReferenceSequence<IMoInflAffixSlot> seq;
+			ILcmReferenceSequence<IMoInflAffixSlot> seq;
 			int index;
 			GetAffixSequenceContainingSlot(m_obj as IMoInflAffixSlot, out seq, out index);
-			using (UndoableUnitOfWorkHelper helper = new UndoableUnitOfWorkHelper(m_fdoCache.ActionHandlerAccessor,
+			using (UndoableUnitOfWorkHelper helper = new UndoableUnitOfWorkHelper(m_cache.ActionHandlerAccessor,
 				String.Format(AreaResources.ksUndoRemovingSlot, seq[index].Name.BestAnalysisVernacularAlternative.Text),
 				String.Format(AreaResources.ksRedoRemovingSlot, seq[index].Name.BestAnalysisVernacularAlternative.Text)))
 			{
@@ -681,7 +681,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 
 		private void HandleInsertAroundSlot(bool fBefore, IMoInflAffixSlot chosenSlot, out int flid, out int ihvo)
 		{
-			IFdoReferenceSequence<IMoInflAffixSlot> seq;
+			ILcmReferenceSequence<IMoInflAffixSlot> seq;
 			int index;
 			flid = GetAffixSequenceContainingSlot(m_obj as IMoInflAffixSlot, out seq, out index);
 			int iOffset = (fBefore) ? 0 : 1;
@@ -719,7 +719,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 			}
 		}
 
-		private int GetAffixSequenceContainingSlot(IMoInflAffixSlot slot, out IFdoReferenceSequence<IMoInflAffixSlot> seq, out int index)
+		private int GetAffixSequenceContainingSlot(IMoInflAffixSlot slot, out ILcmReferenceSequence<IMoInflAffixSlot> seq, out int index)
 		{
 			index = m_template.PrefixSlotsRS.IndexOf(slot);
 			if (index >= 0)
@@ -1155,7 +1155,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 			return null;
 		}
 
-		private bool SetEnabledIfFindSlotInSequence(IFdoReferenceSequence<IMoInflAffixSlot> slots, out bool fEnabled, bool bIsLeft)
+		private bool SetEnabledIfFindSlotInSequence(ILcmReferenceSequence<IMoInflAffixSlot> slots, out bool fEnabled, bool bIsLeft)
 		{
 			var index = slots.IndexOf(m_obj as IMoInflAffixSlot);
 			if (index >= 0)

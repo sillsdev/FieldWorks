@@ -11,12 +11,11 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-
-using SIL.CoreImpl.SpellChecking;
-using SIL.CoreImpl.Text;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.SpellChecking;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 
 namespace SIL.FieldWorks.Common.RootSites
 {
@@ -28,14 +27,14 @@ namespace SIL.FieldWorks.Common.RootSites
 	public class SpellCheckHelper
 	{
 		/// <summary>The Cache</summary>
-		protected FdoCache m_cache;
+		protected LcmCache m_cache;
 
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
-		public SpellCheckHelper(FdoCache cache)
+		public SpellCheckHelper(LcmCache cache)
 		{
 			m_cache = cache;
 		}
@@ -572,7 +571,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		private readonly int m_tag;
 		private readonly int m_wsAlt; // 0 if not multilingual--not yet implemented.
 		private readonly int m_wsText; // ws of actual word
-		private readonly FdoCache m_cache;
+		private readonly LcmCache m_cache;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -580,7 +579,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		internal AddToDictMenuItem(ISpellEngine dict, string word, IVwRootBox rootb,
-			int hvoObj, int tag, int wsAlt, int wsText, string text, FdoCache cache)
+			int hvoObj, int tag, int wsAlt, int wsText, string text, LcmCache cache)
 			: base(text)
 		{
 			m_rootb = rootb;

@@ -35,7 +35,8 @@ set INSTALL_DIR=
 for /f "tokens=2,*" %%a in ('reg query %KEY_NAME% /v %VALUE_NAME% ^| findstr %VALUE_NAME%') do (
 	set PRODUCT_DIR=%%b
 )
-call "%PRODUCT_DIR%\VC\vcvarsall.bat" x86 8.1
+if "%arch%" == "" set arch=x86
+call "%PRODUCT_DIR%\VC\vcvarsall.bat" %arch% 8.1
 
 REM allow typelib registration in redirected registry key even with limited permissions
 set OAPERUSERTLIBREG=1

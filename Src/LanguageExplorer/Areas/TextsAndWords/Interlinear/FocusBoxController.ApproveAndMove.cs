@@ -5,11 +5,11 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.CoreImpl.Text;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.ObjectModel;
 
@@ -235,8 +235,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			ITsString tssBaselineCbaForm;
 			if (BaselineFormDiffersFromAnalysisWord(occurrence, out tssBaselineCbaForm))
 			{
-				//m_fdoCache.VwCacheDaAccessor.CacheStringProp(hvoAnnotation,
-				//									 InterlinVc.TwficRealFormTag(m_fdoCache),
+				//m_cache.VwCacheDaAccessor.CacheStringProp(hvoAnnotation,
+				//									 InterlinVc.TwficRealFormTag(m_cache),
 				//									 tssBaselineCbaForm);
 			}
 		}
@@ -255,7 +255,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				AddUndoRedoAction(OccurrenceBeforeApproveAndMove, null);
 			}
 
-			FdoCache Cache { get; set; }
+			LcmCache Cache { get; set; }
 			FocusBoxController FocusBox { get; set; }
 			AnalysisOccurrence OccurrenceBeforeApproveAndMove { get; set; }
 			AnalysisOccurrence OccurrenceAfterApproveAndMove { get; set; }
@@ -292,7 +292,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		internal class UndoRedoApproveAnalysis : UndoActionBase
 		{
-			readonly FdoCache m_cache;
+			readonly LcmCache m_cache;
 			readonly InterlinDocForAnalysis m_interlinDoc;
 			readonly AnalysisOccurrence m_oldOccurrence;
 			AnalysisOccurrence m_newOccurrence;

@@ -6,10 +6,10 @@ using System.Drawing;
 using System.Xml.Linq;
 using LanguageExplorer.Controls;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks;
+using SIL.LCModel;
+using SIL.LCModel.Application;
 
 namespace LanguageExplorer.Areas.Lists.Tools.PositionsEdit
 {
@@ -99,7 +99,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.PositionsEdit
 				true,
 				XDocument.Parse(ListResources.PositionsEditParameters).Root, XDocument.Parse(ListResources.ListToolsSliceFilters),
 				MachineName,
-				new PossibilityListClerkParameters("PositionList", PropertyTable.GetValue<FdoCache>("cache").LanguageProject.PositionsOA, false, false, false, "best analysis"),
+				new PossibilityListClerkParameters("PositionList", PropertyTable.GetValue<LcmCache>("cache").LanguageProject.PositionsOA, false, false, false, "best analysis"),
 				out _recordClerk);
 			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
 		}

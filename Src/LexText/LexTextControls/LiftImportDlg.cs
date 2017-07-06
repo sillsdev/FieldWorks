@@ -19,7 +19,7 @@ using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.FwCoreDlgs.BackupRestore;
 using SIL.FieldWorks.Resources;
 using SIL.Lift;
@@ -27,13 +27,14 @@ using SIL.Lift.Migration;
 using SIL.Lift.Parsing;
 using SIL.Lift.Validation;
 using SIL.Reporting;
+using SIL.LCModel.Utils;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
 	public partial class LiftImportDlg : Form, IFwExtension
 	{
-		private FdoCache m_cache;
+		private LcmCache m_cache;
 		private IPropertyTable m_propertyTable;
 		private IThreadedProgress m_progressDlg;
 		string m_sLogFile;		// name of HTML log file (if successful).
@@ -56,7 +57,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="cache"></param>
 		/// <param name="propertyTable"></param>
 		/// <param name="publisher"></param>
-		void IFwExtension.Init(FdoCache cache, IPropertyTable propertyTable, IPublisher publisher)
+		void IFwExtension.Init(LcmCache cache, IPropertyTable propertyTable, IPublisher publisher)
 		{
 			m_cache = cache;
 			m_propertyTable = propertyTable;

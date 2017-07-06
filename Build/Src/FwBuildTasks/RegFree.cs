@@ -21,7 +21,6 @@ using System.IO;
 using System.Linq;
 using System.Security.Principal;
 using System.Xml;
-using FwBuildTasks;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 
@@ -135,7 +134,7 @@ namespace SIL.FieldWorks.Build.Tasks
 			Log.LogMessage(MessageImportance.Normal, "RegFree processing {0}",
 				Path.GetFileName(Executable));
 
-			StringCollection dllPaths = IdlImp.GetFilesFrom(Dlls);
+			StringCollection dllPaths = GetFilesFrom(Dlls);
 			if (dllPaths.Count == 0)
 			{
 				string ext = Path.GetExtension(Executable);
@@ -204,19 +203,19 @@ namespace SIL.FieldWorks.Build.Tasks
 					}
 					creator.ProcessClasses(root);
 					creator.ProcessInterfaces(root);
-					foreach (string fragmentName in IdlImp.GetFilesFrom(Fragments))
+					foreach (string fragmentName in GetFilesFrom(Fragments))
 					{
 						Log.LogMessage(MessageImportance.Low, "\tAdding fragment {0}", Path.GetFileName(fragmentName));
 						creator.AddFragment(root, fragmentName);
 					}
 
-					foreach (string fragmentName in IdlImp.GetFilesFrom(AsIs))
+					foreach (string fragmentName in GetFilesFrom(AsIs))
 					{
 						Log.LogMessage(MessageImportance.Low, "\tAdding as-is fragment {0}", Path.GetFileName(fragmentName));
 						creator.AddAsIs(root, fragmentName);
 					}
 
-					foreach (string assemblyFileName in IdlImp.GetFilesFrom(DependentAssemblies))
+					foreach (string assemblyFileName in GetFilesFrom(DependentAssemblies))
 					{
 						Log.LogMessage(MessageImportance.Low, "\tAdding dependent assembly {0}", Path.GetFileName(assemblyFileName));
 						creator.AddDependentAssembly(root, assemblyFileName);
@@ -253,6 +252,16 @@ namespace SIL.FieldWorks.Build.Tasks
 				return false;
 			}
 			return true;
+		}
+
+		private static StringCollection GetFilesFrom(ITaskItem[] source)
+		{
+			var result = new StringCollection();
+			if (source == null)
+				return result;
+			foreach (var item in source)
+				result.Add(item.ItemSpec);
+			return result;
 		}
 	}
 }

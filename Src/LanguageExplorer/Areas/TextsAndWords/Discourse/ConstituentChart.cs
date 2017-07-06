@@ -11,11 +11,11 @@ using System.Text;
 using System.Windows.Forms;
 using System.Xml;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using SIL.Xml;
 using Win32 = SIL.FieldWorks.Common.FwUtils.Win32;
 
@@ -62,22 +62,22 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		// controls the popup help items for the Constituent Chart Form
 		private InterAreaBookmark m_bookmark;
 		// To keep track of where we are in the text between panes (and areas)
-		internal FdoCache m_cache;
-		private IFdoServiceLocator m_serviceLocator;
+		internal LcmCache m_cache;
+		private ILcmServiceLocator m_serviceLocator;
 		private XmlNode m_configurationParameters;
 		#endregion
 
 		/// <summary>
 		/// Make one. Usually called by reflection.
 		/// </summary>
-		public ConstituentChart(FdoCache cache) : this(cache, new ConstituentChartLogic(cache))
+		public ConstituentChart(LcmCache cache) : this(cache, new ConstituentChartLogic(cache))
 		{
 		}
 
 		/// <summary>
 		/// Make one. This variant is used in testing (to plug in a known logic class).
 		/// </summary>
-		internal ConstituentChart(FdoCache cache, ConstituentChartLogic logic)
+		internal ConstituentChart(LcmCache cache, ConstituentChartLogic logic)
 		{
 			m_cache = cache;
 			m_serviceLocator = m_cache.ServiceLocator;
@@ -191,7 +191,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			m_bottomStuff.ResumeLayout();
 		}
 
-		FdoCache IInterlinearTabControl.Cache
+		LcmCache IInterlinearTabControl.Cache
 		{
 			get { return m_cache; }
 			set { m_cache = value; }

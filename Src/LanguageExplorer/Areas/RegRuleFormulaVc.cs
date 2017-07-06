@@ -4,12 +4,12 @@
 
 using System;
 using System.Drawing;
-using SIL.CoreImpl.Text;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.FieldWorks.FDO;
-using SIL.Utils;
+using SIL.LCModel;
+using SIL.LCModel.Utils;
 
 namespace LanguageExplorer.Areas
 {
@@ -27,7 +27,7 @@ namespace LanguageExplorer.Areas
 
 		private IPhSegRuleRHS m_rhs;
 
-		public RegRuleFormulaVc(FdoCache cache, IPropertyTable propertyTable)
+		public RegRuleFormulaVc(LcmCache cache, IPropertyTable propertyTable)
 			: base(cache, propertyTable)
 		{
 			ITsPropsBldr tpb = TsStringUtils.MakePropsBldr();

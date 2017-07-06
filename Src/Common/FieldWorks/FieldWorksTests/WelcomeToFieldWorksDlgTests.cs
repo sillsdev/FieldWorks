@@ -3,7 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Windows.Forms;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 

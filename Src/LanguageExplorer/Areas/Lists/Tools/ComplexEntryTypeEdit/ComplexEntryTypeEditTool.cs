@@ -6,10 +6,10 @@ using System.Drawing;
 using System.Xml.Linq;
 using LanguageExplorer.Controls;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks;
+using SIL.LCModel;
+using SIL.LCModel.Application;
 
 namespace LanguageExplorer.Areas.Lists.Tools.ComplexEntryTypeEdit
 {
@@ -98,7 +98,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ComplexEntryTypeEdit
 				majorFlexComponentParameters.MainCollapsingSplitContainer, true,
 				XDocument.Parse(ListResources.ComplexEntryTypeEditParameters).Root, XDocument.Parse(ListResources.ListToolsSliceFilters),
 				MachineName,
-				new PossibilityListClerkParameters("ComplexEntryTypeList", PropertyTable.GetValue<FdoCache>("cache").LanguageProject.LexDbOA.ComplexEntryTypesOA, false, true, false, "best analysis"),
+				new PossibilityListClerkParameters("ComplexEntryTypeList", PropertyTable.GetValue<LcmCache>("cache").LanguageProject.LexDbOA.ComplexEntryTypesOA, false, true, false, "best analysis"),
 				out _recordClerk);
 			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
 		}

@@ -4,14 +4,14 @@
 
 using System;
 using System.Collections.Generic;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using System.Windows.Forms;
 using System.IO;
 using SIL.FieldWorks.Common.FwUtils;
 using System.Text;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.FixData;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 
 namespace LanguageExplorer.UtilityTools
 {
@@ -72,7 +72,7 @@ namespace LanguageExplorer.UtilityTools
 					{
 						string pathname = Path.Combine(
 							Path.Combine(FwDirectoryFinder.ProjectsDirectory, dlg.SelectedProject),
-							dlg.SelectedProject + FdoFileHelper.ksFwDataXmlFileExtension);
+							dlg.SelectedProject + LcmFileHelper.ksFwDataXmlFileExtension);
 						if (File.Exists(pathname))
 						{
 							using (new WaitCursor(m_dlg))
@@ -83,7 +83,7 @@ namespace LanguageExplorer.UtilityTools
 									if (fixes.Length > 0)
 									{
 										MessageBox.Show(fixes, LanguageExplorerResources.ksErrorsFoundOrFixed);
-										File.WriteAllText(pathname.Replace(FdoFileHelper.ksFwDataXmlFileExtension, "fixes"), fixes);
+										File.WriteAllText(pathname.Replace(LcmFileHelper.ksFwDataXmlFileExtension, "fixes"), fixes);
 									}
 								}
 							}

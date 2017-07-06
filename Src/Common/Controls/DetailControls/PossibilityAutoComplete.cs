@@ -6,20 +6,20 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
-using SIL.CoreImpl.Text;
+using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 using SIL.ObjectModel;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
 	public class PossibilityAutoComplete : DisposableBase
 	{
-		private readonly FdoCache m_cache;
+		private readonly LcmCache m_cache;
 		private readonly Control m_control;
 		private readonly string m_displayNameProperty;
 		private readonly string m_displayWs;
@@ -34,7 +34,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		public event EventHandler PossibilitySelected;
 
-		public PossibilityAutoComplete(FdoCache cache, IPropertyTable propertyTable, ICmPossibilityList list, Control control,
+		public PossibilityAutoComplete(LcmCache cache, IPropertyTable propertyTable, ICmPossibilityList list, Control control,
 			string displayNameProperty, string displayWs)
 		{
 			m_cache = cache;

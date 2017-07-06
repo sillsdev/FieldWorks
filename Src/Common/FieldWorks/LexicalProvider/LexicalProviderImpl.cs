@@ -1,27 +1,20 @@
-﻿// ---------------------------------------------------------------------------------------------
-// Copyright (c) 2011-2015 SIL International
+﻿// Copyright (c) 2011-2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: LexicalProviderImpl.cs
-// Responsibility: FW Team
-//
-// <remarks>
-// </remarks>
-// ---------------------------------------------------------------------------------------------
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.ServiceModel;
-using SIL.CoreImpl.Text;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using SIL.Reporting;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.LexicalProvider
 {
@@ -36,7 +29,7 @@ namespace SIL.FieldWorks.LexicalProvider
 	public sealed class LexicalProviderImpl : ILexicalProvider
 	{
 		private const string kAnalysisPrefix = "Analysis:";
-		private readonly FdoCache m_cache;
+		private readonly LcmCache m_cache;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -44,7 +37,7 @@ namespace SIL.FieldWorks.LexicalProvider
 		/// specified cache.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public LexicalProviderImpl(FdoCache cache)
+		public LexicalProviderImpl(LcmCache cache)
 		{
 			m_cache = cache;
 		}
@@ -115,7 +108,7 @@ namespace SIL.FieldWorks.LexicalProvider
 
 					var fdoUiAssembly = Assembly.LoadFrom("FdoUi.dll");
 					var lexEntryUiType = fdoUiAssembly.GetType("SIL.FieldWorks.FdoUi.LexEntryUi");
-					var methodInfo = lexEntryUiType.GetMethod("DisplayRelatedEntries", new[] { typeof(FdoCache), typeof(IPropertyTable), typeof(IHelpTopicProvider), typeof(string), typeof(ITsString) });
+					var methodInfo = lexEntryUiType.GetMethod("DisplayRelatedEntries", new[] { typeof(LcmCache), typeof(IPropertyTable), typeof(IHelpTopicProvider), typeof(string), typeof(ITsString) });
 					methodInfo.Invoke(null, new object[]{ FieldWorks.Cache, propertyTable, propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), "UserHelpFile", tss });
 				}
 			});

@@ -7,15 +7,15 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Diagnostics;
 using System.Linq;
+using System.Xml.Linq;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO;
-using SIL.Utils;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.WritingSystems;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
-using System.Xml.Linq;
+using SIL.LCModel;
+using SIL.LCModel.Utils;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.LexText.Controls
@@ -85,7 +85,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <summary>
 		/// Set up the dlg in preparation to showing it.
 		/// </summary>
-		public void SetDlgInfo(FdoCache cache, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, XElement parametersElement, ILexEntry startingEntry, string title, string formlabel, string okbuttonlabel)
+		public void SetDlgInfo(LcmCache cache, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, XElement parametersElement, ILexEntry startingEntry, string title, string formlabel, string okbuttonlabel)
 		{
 			CheckDisposed();
 
@@ -192,7 +192,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_fwTextBoxBottomMsg.Tss = tsb.GetString();
 		}
 
-		protected override void InitializeMatchingObjects(FdoCache cache)
+		protected override void InitializeMatchingObjects(LcmCache cache)
 		{
 			var searchEngine = (MergeEntrySearchEngine)SearchEngine.Get(m_propertyTable, "MergeEntrySearchEngine", () => new MergeEntrySearchEngine(cache));
 			searchEngine.CurrentEntryHvo = m_startingEntry.Hvo;
@@ -213,7 +213,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			public int CurrentEntryHvo { private get; set; }
 
-			public MergeEntrySearchEngine(FdoCache cache) : base(cache)
+			public MergeEntrySearchEngine(LcmCache cache) : base(cache)
 			{
 			}
 

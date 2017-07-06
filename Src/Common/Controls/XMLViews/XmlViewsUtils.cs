@@ -10,16 +10,16 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
-using System.Text; // StringBuilder
+using System.Text;
 using System.Xml.Linq;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.Utils;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Utils;
 using SIL.FieldWorks.Filters;
-using SIL.CoreImpl.Cellar;
-using SIL.CoreImpl.WritingSystems;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.Xml;
 
 namespace SIL.FieldWorks.Common.Controls
@@ -591,7 +591,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// Returns an array of string values (keys) for the objects under the layout child nodes.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		static internal string[] ChildKeys(FdoCache fdoCache, ISilDataAccess sda, XElement layout, int hvo,
+		static internal string[] ChildKeys(LcmCache fdoCache, ISilDataAccess sda, XElement layout, int hvo,
 			LayoutCache layoutCache, XElement caller, int wsForce)
 		{
 			string[] result = null;
@@ -614,7 +614,7 @@ namespace SIL.FieldWorks.Common.Controls
 		}
 
 
-		static private string[] AssembleChildKeys(FdoCache fdoCache, ISilDataAccess sda, XElement layout, int hvo,
+		static private string[] AssembleChildKeys(LcmCache fdoCache, ISilDataAccess sda, XElement layout, int hvo,
 			LayoutCache layoutCache, XElement caller, int wsForce)
 		{
 			return Assemble(ChildKeys(fdoCache, sda, layout, hvo, layoutCache, caller, wsForce));
@@ -651,7 +651,7 @@ namespace SIL.FieldWorks.Common.Controls
 			return items.Length;
 		}
 
-		internal static string DisplayWsLabel(CoreWritingSystemDefinition ws, FdoCache cache)
+		internal static string DisplayWsLabel(CoreWritingSystemDefinition ws, LcmCache cache)
 		{
 			if (ws == null)
 				return "";
@@ -664,7 +664,7 @@ namespace SIL.FieldWorks.Common.Controls
 			return sLabel + " ";
 		}
 
-		static string AddMultipleAlternatives(FdoCache cache, ISilDataAccess sda, IEnumerable<int> wsIds, int hvo, int flid, XElement frag)
+		static string AddMultipleAlternatives(LcmCache cache, ISilDataAccess sda, IEnumerable<int> wsIds, int hvo, int flid, XElement frag)
 		{
 			string sep = XmlUtils.GetOptionalAttributeValue(frag, "sep", null);
 			bool fLabel = XmlUtils.GetOptionalBooleanAttributeValue(frag, "showLabels", false); // true to 'separate' using multistring labels.
@@ -692,7 +692,7 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 			return result;
 		}
-		internal static string[] AddStringFromOtherObj(XElement frag, int hvoTarget, FdoCache cache, ISilDataAccess sda)
+		internal static string[] AddStringFromOtherObj(XElement frag, int hvoTarget, LcmCache cache, ISilDataAccess sda)
 		{
 			int flid = XmlVc.GetFlid(frag, hvoTarget, sda);
 			CellarPropertyType itype = (CellarPropertyType)sda.MetaDataCache.GetFieldType(flid);
@@ -720,7 +720,7 @@ namespace SIL.FieldWorks.Common.Controls
 				}
 				if (wsid == 0)
 					wsid = WritingSystemServices.GetWritingSystem(cache,
-						frag, null, WritingSystemServices.kwsAnal).Handle;
+						FwUtils.FwUtils.ConvertElement(frag), null, WritingSystemServices.kwsAnal).Handle;
 				if (itype == CellarPropertyType.MultiUnicode)
 				{
 					return new[] { sep, sda.get_MultiStringAlt(hvoTarget, flid, wsid).Text };
@@ -761,7 +761,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// is the 'part ref' that invoked it.</param>
 		/// <param name="wsForce">if non-zero, "string" elements are forced to use that writing system for multistrings.</param>
 		/// <returns></returns>
-		static public string[] StringsFor(FdoCache fdoCache, ISilDataAccess sda, XElement layout, int hvo,
+		static public string[] StringsFor(LcmCache fdoCache, ISilDataAccess sda, XElement layout, int hvo,
 			LayoutCache layoutCache, XElement caller, int wsForce)
 		{
 			// Some nodes are known to be uninteresting.
@@ -799,7 +799,7 @@ namespace SIL.FieldWorks.Common.Controls
 						}
 					}
 					bool fFoundType;
-					var strValue = fdoCache.GetText(hvo, flid, layout, out fFoundType);
+					var strValue = fdoCache.GetText(hvo, flid, FwUtils.FwUtils.ConvertElement(layout), out fFoundType);
 					if (fFoundType)
 						return new[] {strValue};
 
@@ -811,7 +811,7 @@ namespace SIL.FieldWorks.Common.Controls
 				{
 					int flid = GetFlid(sda, layout, hvo);
 					// The Ws info specified in the part ref node
-					HashSet<int> wsIds = WritingSystemServices.GetAllWritingSystems(fdoCache, caller, null, hvo, flid);
+					HashSet<int> wsIds = WritingSystemServices.GetAllWritingSystems(fdoCache, FwUtils.FwUtils.ConvertElement(caller), null, hvo, flid);
 					if (wsIds.Count == 1)
 					{
 						var strValue = sda.get_MultiStringAlt(hvo, flid, wsIds.First()).Text;
@@ -975,7 +975,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// Process a fragment's children against multiple writing systems.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		static private string[] ProcessMultiLingualChildren(FdoCache fdoCache, ISilDataAccess sda, XElement frag, int hvo,
+		static private string[] ProcessMultiLingualChildren(LcmCache fdoCache, ISilDataAccess sda, XElement frag, int hvo,
 			LayoutCache layoutCache, XElement caller, int wsForce)
 		{
 			string sWs = XmlUtils.GetOptionalAttributeValue(frag, "ws");
@@ -987,7 +987,7 @@ namespace SIL.FieldWorks.Common.Controls
 			string[] result = null;
 			try
 			{
-				var wsIds = WritingSystemServices.GetAllWritingSystems(fdoCache, frag, s_qwsCurrent, 0, 0);
+				var wsIds = WritingSystemServices.GetAllWritingSystems(fdoCache, FwUtils.FwUtils.ConvertElement(frag), s_qwsCurrent, 0, 0);
 				s_cwsMulti = wsIds.Count;
 				if (s_cwsMulti > 1)
 					s_sMultiSep = XmlUtils.GetOptionalAttributeValue(frag, "sep");
@@ -1195,7 +1195,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="wsParam"></param>
 		/// <param name="cache"></param>
 		/// <returns></returns>
-		public static int GetWsFromString(string wsParam, FdoCache cache)
+		public static int GetWsFromString(string wsParam, LcmCache cache)
 		{
 			if (wsParam == null)
 				return 0;

@@ -6,7 +6,7 @@ using System.Diagnostics;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 {

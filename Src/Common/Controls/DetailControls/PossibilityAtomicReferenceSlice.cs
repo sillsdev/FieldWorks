@@ -2,19 +2,19 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.Xml;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
 	public class PossibilityAtomicReferenceSlice : AtomicReferenceSlice
 	{
-		public PossibilityAtomicReferenceSlice(FdoCache cache, ICmObject obj, int flid)
+		public PossibilityAtomicReferenceSlice(LcmCache cache, ICmObject obj, int flid)
 			: this(new PossibilityAtomicReferenceLauncher(), cache, obj, flid)
 		{
 		}
 
-		protected PossibilityAtomicReferenceSlice(PossibilityAtomicReferenceLauncher launcher, FdoCache cache, ICmObject obj, int flid)
+		protected PossibilityAtomicReferenceSlice(PossibilityAtomicReferenceLauncher launcher, LcmCache cache, ICmObject obj, int flid)
 			: base(launcher, cache, obj, flid)
 		{
 		}

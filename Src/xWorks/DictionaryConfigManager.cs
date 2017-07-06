@@ -15,7 +15,7 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 using SIL.Xml;
 
 namespace SIL.FieldWorks.XWorks

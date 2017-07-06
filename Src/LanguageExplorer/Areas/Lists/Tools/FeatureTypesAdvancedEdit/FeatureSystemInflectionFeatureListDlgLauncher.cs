@@ -7,8 +7,8 @@ using System.Windows.Forms;
 using LanguageExplorer.Areas.Grammar;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.LexText.Controls;
+using SIL.LCModel;
 
 namespace LanguageExplorer.Areas.Lists.Tools.FeatureTypesAdvancedEdit
 {

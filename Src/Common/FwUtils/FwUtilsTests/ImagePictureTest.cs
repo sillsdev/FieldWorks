@@ -4,7 +4,6 @@
 
 using System.Drawing;
 using NUnit.Framework;
-
 namespace SIL.FieldWorks.Common.FwUtils
 {
 	/// ----------------------------------------------------------------------------------------

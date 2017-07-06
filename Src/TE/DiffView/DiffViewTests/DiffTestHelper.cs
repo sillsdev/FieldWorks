@@ -3,11 +3,10 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Linq;
-using SIL.FieldWorks.Common.ScriptureUtils;
-using SIL.CoreImpl.Scripture;
+using SIL.LCModel.Core.Scripture;
 using NUnit.Framework;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 
 namespace SIL.FieldWorks.TE
 {
@@ -727,7 +726,7 @@ namespace SIL.FieldWorks.TE
 		/// </summary>
 		/// <returns>An array of paras</returns>
 		/// ------------------------------------------------------------------------------------
-		public static IScrTxtPara[] CreateDummyParas(int count, FdoCache cache)
+		public static IScrTxtPara[] CreateDummyParas(int count, LcmCache cache)
 		{
 			IText text = cache.ServiceLocator.GetInstance<ITextFactory>().Create();
 			//cache.LangProject.TextsOC.Add(text);

@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using System.Linq;
 using SIL.FieldWorks.Common.FwUtils;
 
@@ -23,13 +23,13 @@ namespace SIL.FieldWorks.XWorks
 		/// User configuration files with the same name as a shipped configuration will trump the shipped
 		/// </summary>
 		/// <seealso cref="DictionaryConfigurationController.ListDictionaryConfigurationChoices()"/>
-		public static SortedDictionary<string, string> GatherBuiltInAndUserConfigurations(FdoCache cache, string configObjectName)
+		public static SortedDictionary<string, string> GatherBuiltInAndUserConfigurations(LcmCache cache, string configObjectName)
 		{
 			var configurations = new SortedDictionary<string, string>();
 			var defaultConfigs = Directory.EnumerateFiles(Path.Combine(FwDirectoryFinder.DefaultConfigurations, configObjectName), "*" + DictionaryConfigurationModel.FileExtension);
 			// for every configuration file in the DefaultConfigurations folder add an entry
 			AddOrOverrideConfiguration(defaultConfigs, configurations);
-			var projectConfigPath = Path.Combine(FdoFileHelper.GetConfigSettingsDir(cache.ProjectId.ProjectFolder), configObjectName);
+			var projectConfigPath = Path.Combine(LcmFileHelper.GetConfigSettingsDir(cache.ProjectId.ProjectFolder), configObjectName);
 			if (Directory.Exists(projectConfigPath))
 			{
 				var projectConfigs = Directory.EnumerateFiles(projectConfigPath, "*" + DictionaryConfigurationModel.FileExtension);
@@ -71,7 +71,7 @@ namespace SIL.FieldWorks.XWorks
 		/// set of reversal index entries should be shown in the XhtmlDocView.
 		/// Do that.
 		/// </summary>
-		public static void SetReversalIndexGuidBasedOnReversalIndexConfiguration(IPropertyTable propertyTable, FdoCache cache)
+		public static void SetReversalIndexGuidBasedOnReversalIndexConfiguration(IPropertyTable propertyTable, LcmCache cache)
 		{
 			var reversalIndexConfiguration = propertyTable.GetValue("ReversalIndexPublicationLayout", string.Empty);
 			if (string.IsNullOrEmpty(reversalIndexConfiguration))

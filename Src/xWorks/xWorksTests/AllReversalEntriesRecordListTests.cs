@@ -5,11 +5,8 @@
 using System.Collections.Generic;
 using System.Xml;
 using NUnit.Framework;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
-#if RANDYTODO
-using SIL.FieldWorks.XWorks.LexEd;
-#endif
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 
 namespace SIL.FieldWorks.XWorks
 {

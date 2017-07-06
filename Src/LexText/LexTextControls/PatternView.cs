@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
+
 namespace SIL.FieldWorks.LexText.Controls
 {
 	/// <summary>
@@ -31,7 +32,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// </summary>
 		private class PatternEditingHelper : RootSiteEditingHelper
 		{
-			public PatternEditingHelper(FdoCache cache, IEditingCallbacks callbacks)
+			public PatternEditingHelper(LcmCache cache, IEditingCallbacks callbacks)
 				: base(cache, callbacks)
 			{
 			}
@@ -71,7 +72,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			CheckDisposed();
 			m_patternControl = patternControl;
-			Cache = PropertyTable.GetValue<FdoCache>("cache");
+			Cache = PropertyTable.GetValue<LcmCache>("cache");
 			m_hvo = hvo;
 			m_vc = vc;
 			m_sda = sda;
@@ -91,7 +92,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			CheckDisposed();
 
-			if (m_fdoCache == null || DesignMode)
+			if (m_cache == null || DesignMode)
 				return;
 
 			base.MakeRoot();
@@ -104,7 +105,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			// several IgnorePropChanged wrappers in RuleFormulaControl. I don't know why we ever wanted to not see
 			// (some) PropChanged messages, but ignoring them all prevents us from removing inserted items from the
 			// view in Undo. (see FWR-3501)
-			//m_fdoCache.MainCacheAccessor.RemoveNotification(m_rootb);
+			//m_cache.MainCacheAccessor.RemoveNotification(m_rootb);
 			if (m_hvo != 0)
 				m_rootb.SetRootObject(m_hvo, m_vc, m_rootFrag, FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable));
 		}

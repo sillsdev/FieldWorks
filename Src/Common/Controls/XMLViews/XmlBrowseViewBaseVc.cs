@@ -12,16 +12,16 @@ using System.Reflection;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Resources; // for check-box icons.
 using SIL.FieldWorks.Common.RootSites;
-using SIL.CoreImpl.Cellar;
-using SIL.CoreImpl.WritingSystems;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.Xml;
 
 namespace SIL.FieldWorks.Common.Controls
@@ -171,7 +171,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// It will fail if asked to interpret decorator properties, since it doesn't have the decorator SDA.
 		/// Avoid using this constructor if possible.
 		/// </summary>
-		public XmlBrowseViewBaseVc(FdoCache cache)
+		public XmlBrowseViewBaseVc(LcmCache cache)
 			: base()
 		{
 			XmlBrowseViewBaseVcInit(cache, null);
@@ -179,7 +179,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>
 		/// This contructor is used by FilterBar and LayoutCache to make a partly braindead VC.
 		/// </summary>
-		public XmlBrowseViewBaseVc(FdoCache cache, ISilDataAccess sda)
+		public XmlBrowseViewBaseVc(LcmCache cache, ISilDataAccess sda)
 			: base()
 		{
 			XmlBrowseViewBaseVcInit(cache, sda);
@@ -476,7 +476,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>
 		/// This contructor is used by SortMethodFinder to make a braindead VC.
 		/// </summary>
-		private void XmlBrowseViewBaseVcInit(FdoCache cache, ISilDataAccess sda)
+		private void XmlBrowseViewBaseVcInit(LcmCache cache, ISilDataAccess sda)
 		{
 			Debug.Assert(cache != null);
 
@@ -675,7 +675,7 @@ namespace SIL.FieldWorks.Common.Controls
 			if (child != null &&
 				XmlUtils.GetOptionalAttributeValue(child, "field") == "ReversalEntriesText")
 			{
-				string sWs = StringServices.GetWsSpecWithoutPrefix(child);
+				string sWs = StringServices.GetWsSpecWithoutPrefix(XmlUtils.GetOptionalAttributeValue(child, "ws"));
 				if (sWs != null && sWs != "reversal")
 				{
 					if (!m_cache.ServiceLocator.WritingSystemManager.Exists(sWs))
@@ -1477,7 +1477,7 @@ namespace SIL.FieldWorks.Common.Controls
 						MethodInfo mi = co.GetType().GetMethod(sProperty);
 						if (mi != null)
 						{
-							string sWs = StringServices.GetWsSpecWithoutPrefix(node);
+							string sWs = StringServices.GetWsSpecWithoutPrefix(XmlUtils.GetOptionalAttributeValue(node, "ws"));
 							if (sWs != null)
 							{
 								int ws = (sWs == "reversal") ? m_wsReversal : XmlViewsUtils.GetWsFromString(sWs, m_cache);
@@ -1519,7 +1519,7 @@ namespace SIL.FieldWorks.Common.Controls
 				{
 					hvoBest = GetBestHvoAndFlid(hvo, xn, out flidBest);
 				}
-				if (StringServices.GetWsSpecWithoutPrefix(node) == "reversal")
+				if (StringServices.GetWsSpecWithoutPrefix(XmlUtils.GetOptionalAttributeValue(node, "ws")) == "reversal")
 				{
 					// This can happen, for instance, in the Merge Entry dialog's browse view.
 					// See FWR-2807.
@@ -1542,7 +1542,7 @@ namespace SIL.FieldWorks.Common.Controls
 					wsBest = m_cache.DefaultAnalWs; // we may need the object, but we don't have one!
 				else
 					wsBest = WritingSystemServices.GetWritingSystem(
-						m_cache, m_sda, xn, null, hvoBest, flidBest,
+						m_cache, m_sda, FwUtils.FwUtils.ConvertElement(xn), null, hvoBest, flidBest,
 						m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle).Handle;
 			}
 			return wsBest;
@@ -1758,7 +1758,7 @@ namespace SIL.FieldWorks.Common.Controls
 		public class ItemsCollectorEnv : CollectorEnv
 		{
 #pragma warning disable 414
-			FdoCache m_cache;
+			LcmCache m_cache;
 #pragma warning restore 414
 			private readonly HashSet<int> m_hvosInCell = new HashSet<int>();
 
@@ -1768,7 +1768,7 @@ namespace SIL.FieldWorks.Common.Controls
 			/// <param name="env"></param>
 			/// <param name="cache"></param>
 			/// <param name="hvoRoot"></param>
-			public ItemsCollectorEnv(IVwEnv env, FdoCache cache, int hvoRoot)
+			public ItemsCollectorEnv(IVwEnv env, LcmCache cache, int hvoRoot)
 				: base(env, cache.MainCacheAccessor, hvoRoot)
 			{
 				m_cache = cache;
@@ -1781,7 +1781,7 @@ namespace SIL.FieldWorks.Common.Controls
 			/// <param name="cache"></param>
 			/// <param name="sda">Data access object, decorator, to use for this ItemsCollectorEnv</param>
 			/// <param name="hvoRoot"></param>
-			public ItemsCollectorEnv(IVwEnv env, FdoCache cache, ISilDataAccess sda, int hvoRoot)
+			public ItemsCollectorEnv(IVwEnv env, LcmCache cache, ISilDataAccess sda, int hvoRoot)
 				: base(env, sda, hvoRoot)
 			{
 				m_cache = cache;

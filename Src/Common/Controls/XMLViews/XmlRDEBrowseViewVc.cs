@@ -5,10 +5,10 @@
 using System.Drawing;
 using System.Diagnostics;
 using System.Collections.Generic;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
 using System.Xml.Linq;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.Xml;
 
@@ -495,7 +495,7 @@ namespace SIL.FieldWorks.Common.Controls
 				vwenv.set_IntProperty((int)FwTextPropType.ktptBackColor, (int)FwTextPropVar.ktpvDefault, NoEditBackgroundColor);
 			vwenv.OpenTableCell(1, 1);
 			int flid = XMLViewsDataCache.ktagEditColumnBase + i;
-			int ws = WritingSystemServices.GetWritingSystem(m_cache, node, null,
+			int ws = WritingSystemServices.GetWritingSystem(m_cache, FwUtils.FwUtils.ConvertElement(node), null,
 				m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle).Handle;
 
 			// Paragraph directionality must be set before the paragraph is opened.

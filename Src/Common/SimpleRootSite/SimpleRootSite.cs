@@ -13,14 +13,14 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using Accessibility;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.WritingSystems;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO.Application;
+using SIL.LCModel.Application;
 using SIL.Keyboarding;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 using SIL.Windows.Forms.Keyboarding;
 using Win32 = SIL.FieldWorks.Common.FwUtils.Win32;
 
@@ -215,7 +215,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>
 		/// A writing system factory used to interpret data in the view. Subclasses of
 		/// SimpleRootSite should set this before doing much with the root site. The RootSite
-		/// subclass can obtain one automatically from its FdoCache.
+		/// subclass can obtain one automatically from its LcmCache.
 		/// </summary>
 		protected ILgWritingSystemFactory m_wsf;
 
@@ -4240,7 +4240,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Set/Get the writing system factory used by this root site. The main RootSite
-		/// subclass obtains this from the FdoCache if it has not been set.
+		/// subclass obtains this from the LcmCache if it has not been set.
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
 		public virtual ILgWritingSystemFactory WritingSystemFactory

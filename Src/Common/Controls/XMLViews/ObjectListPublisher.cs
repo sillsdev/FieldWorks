@@ -4,9 +4,9 @@
 
 using System;
 using System.Collections.Generic;
-using SIL.CoreImpl.Cellar;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Application;
+using SIL.LCModel.Infrastructure;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -211,7 +211,7 @@ namespace SIL.FieldWorks.Common.Controls
 			get { return m_flid; }
 		}
 
-		class ObjectListPublisherMdc : FdoMetaDataCacheDecoratorBase
+		class ObjectListPublisherMdc : LcmMetaDataCacheDecoratorBase
 		{
 			private ObjectListPublisher m_publisher;
 

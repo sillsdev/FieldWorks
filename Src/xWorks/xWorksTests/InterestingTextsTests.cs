@@ -6,10 +6,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.CoreImpl.Scripture;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Core.Scripture;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -377,7 +377,7 @@ namespace SIL.FieldWorks.XWorks
 			throw new NotImplementedException();
 		}
 
-		public IFdoServiceLocator Services
+		public ILcmServiceLocator Services
 		{
 			get { throw new NotImplementedException(); }
 		}
@@ -445,7 +445,7 @@ namespace SIL.FieldWorks.XWorks
 
 		public bool IsValidObject { get; set; }
 
-		public FdoCache Cache
+		public LcmCache Cache
 		{
 			get { throw new NotImplementedException(); }
 		}
@@ -905,7 +905,7 @@ namespace SIL.FieldWorks.XWorks
 					((MockCmObject)m_contents).Owner = this;
 			}
 		}
-		public IFdoReferenceCollection<ICmPossibility> GenresRC
+		public ILcmReferenceCollection<ICmPossibility> GenresRC
 		{
 			get { throw new NotImplementedException(); }
 		}
@@ -944,12 +944,12 @@ namespace SIL.FieldWorks.XWorks
 			get { throw new NotImplementedException(); }
 		}
 
-		public IFdoOwningCollection<IPublication> PublicationsOC
+		public ILcmOwningCollection<IPublication> PublicationsOC
 		{
 			get { throw new NotImplementedException(); }
 		}
 
-		public IFdoOwningCollection<IPubHFSet> HeaderFooterSetsOC
+		public ILcmOwningCollection<IPubHFSet> HeaderFooterSetsOC
 		{
 			get { throw new NotImplementedException(); }
 		}
@@ -966,7 +966,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 		}
 
-		public IFdoOwningSequence<IStPara> ParagraphsOS
+		public ILcmOwningSequence<IStPara> ParagraphsOS
 		{
 			get { throw new NotImplementedException(); }
 		}
@@ -977,7 +977,7 @@ namespace SIL.FieldWorks.XWorks
 			set { throw new NotImplementedException(); }
 		}
 
-		public IFdoOwningCollection<ITextTag> TagsOC
+		public ILcmOwningCollection<ITextTag> TagsOC
 		{
 			get { throw new NotImplementedException(); }
 		}
@@ -1088,7 +1088,7 @@ namespace SIL.FieldWorks.XWorks
 			set { throw new NotImplementedException(); }
 		}
 
-		public IFdoOwningSequence<IScrBook> BooksOS
+		public ILcmOwningSequence<IScrBook> BooksOS
 		{
 			get { throw new NotImplementedException(); }
 		}

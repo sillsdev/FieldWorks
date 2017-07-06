@@ -8,14 +8,13 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
 using LanguageExplorer.Controls.PaneBar;
-using SIL.CoreImpl.Text;
+using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.FdoUi;
-using SIL.Utils;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.XWorks;
 
@@ -45,7 +44,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 	/// <summary />
 	internal partial class FindExampleSentenceDlg : Form, IFwGuiControl
 	{
-		FdoCache m_cache;
+		LcmCache m_cache;
 		XmlNode m_configurationNode;
 		ILexExampleSentence m_les;
 		ILexSense m_owningSense;

@@ -7,8 +7,8 @@ using System.Windows.Forms;
 using LanguageExplorer.Areas.TextsAndWords;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 
 namespace LanguageExplorer.Dumpster
 {
@@ -166,7 +166,7 @@ namespace LanguageExplorer.Dumpster
 		{
 			CheckDisposed();
 
-			var cache = PropertyTable.GetValue<FdoCache>("cache");
+			var cache = PropertyTable.GetValue<LcmCache>("cache");
 			if (cache == null)
 				throw new ArgumentException("no cache!");
 

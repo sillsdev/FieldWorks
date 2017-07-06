@@ -6,15 +6,15 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using LanguageExplorer.Areas.TextsAndWords;
-using SIL.CoreImpl.SpellChecking;
-using SIL.CoreImpl.WritingSystems;
 using SIL.FieldWorks.Common.Framework;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.SpellChecking;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.DomainServices;
 
 namespace LanguageExplorer.Dumpster
 {
@@ -71,7 +71,7 @@ namespace LanguageExplorer.Dumpster
 			Publisher = flexComponentParameters.Publisher;
 			Subscriber = flexComponentParameters.Subscriber;
 
-			Cache = PropertyTable.GetValue<FdoCache>("cache");
+			Cache = PropertyTable.GetValue<LcmCache>("cache");
 			m_wordformRepos = Cache.ServiceLocator.GetInstance<IWfiWordformRepository>();
 			Cache.DomainDataByFlid.AddNotification(this);
 			if (IsVernacularSpellingEnabled())
@@ -298,7 +298,7 @@ namespace LanguageExplorer.Dumpster
 			return true; // handled
 		}
 
-		private FdoCache Cache { get; set; }
+		private LcmCache Cache { get; set; }
 
 		/// <summary>
 		/// Enable vernacular spelling.

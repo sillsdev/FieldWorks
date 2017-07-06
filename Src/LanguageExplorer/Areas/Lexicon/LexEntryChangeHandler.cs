@@ -6,8 +6,8 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 
 namespace LanguageExplorer.Areas.Lexicon
 {
@@ -19,7 +19,7 @@ namespace LanguageExplorer.Areas.Lexicon
 		/// <summary>entry being monitored for changes.</summary>
 		protected ILexEntry m_entry;
 		/// <remarks>needed to do UnitOfWork</remarks>
-		protected FdoCache m_cache;
+		protected LcmCache m_cache;
 
 		protected ICmObject m_obj;
 
@@ -89,7 +89,7 @@ namespace LanguageExplorer.Areas.Lexicon
 		public bool HasRecordListUpdater { get; private set; }
 
 		/// <summary/>
-		public void Setup(object record, IRecordListUpdater rlu, FdoCache cache)
+		public void Setup(object record, IRecordListUpdater rlu, LcmCache cache)
 		{
 			CheckDisposed();
 

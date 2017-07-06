@@ -9,9 +9,9 @@ using System.Windows.Forms;
 using Microsoft.Win32;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices.DataMigration;
-using SIL.Utils;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices.DataMigration;
+using SIL.LCModel.Utils;
 using SIL.WritingSystems.Migration;
 
 namespace SIL.FieldWorks.MigrateSqlDbs.MigrateProjects
@@ -62,7 +62,7 @@ namespace SIL.FieldWorks.MigrateSqlDbs.MigrateProjects
 			// TE-9422. If we had an older version of FW7 installed, ldml files are < verion 2, so will cause
 			// a crash if we don't migrate the files to version 2 before opening a project with the current version.
 			// TODO (WS_FIX): should we migrate all the way to version 3?
-			string globalWsFolder = FdoFileHelper.OldGlobalWritingSystemStoreDirectory;
+			string globalWsFolder = LcmFileHelper.OldGlobalWritingSystemStoreDirectory;
 			var globalMigrator = new LdmlInFolderWritingSystemRepositoryMigrator(globalWsFolder, NoteMigration, 2);
 			globalMigrator.Migrate();
 

@@ -5,10 +5,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
@@ -114,7 +114,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			/// <returns>HVO of analysis (WfiWordform, WfiAnalyis, or WfiGloss)</returns>
 			private IAnalysis FinishItOff()
 			{
-				FdoCache fdoCache = m_caches.MainCache;
+				LcmCache fdoCache = m_caches.MainCache;
 				var wfRepository = fdoCache.ServiceLocator.GetInstance<IWfiWordformRepository>();
 				if (m_wf == null)
 				{

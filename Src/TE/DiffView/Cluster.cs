@@ -13,12 +13,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using System.Diagnostics;
-using SIL.Utils;
-using SIL.CoreImpl.Scripture;
+using SIL.LCModel.Utils;
+using SIL.LCModel.Core.Scripture;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel.DomainServices;
 
 namespace SIL.FieldWorks.TE
 {
@@ -713,7 +713,7 @@ namespace SIL.FieldWorks.TE
 		private List<OverlapInfo> m_proxyListRev;
 
 		/// <summary>Database cache</summary>
-		private FdoCache m_cache;
+		private LcmCache m_cache;
 
 		/// <summary>The list of Clusters we will return</summary>
 		private List<Cluster> m_clusterList;
@@ -724,7 +724,7 @@ namespace SIL.FieldWorks.TE
 		/// </summary>
 		/// <param name="cache">The database cache.</param>
 		/// ------------------------------------------------------------------------------------
-		private ClusterListHelper(FdoCache cache)
+		private ClusterListHelper(LcmCache cache)
 		{
 			m_cache = cache;
 		}
@@ -742,7 +742,7 @@ namespace SIL.FieldWorks.TE
 		/// </returns>
 		/// ------------------------------------------------------------------------------------
 		public static List<Cluster> DetermineSectionOverlapClusters(IScrBook bookCurr,
-			IScrBook bookRev, FdoCache cache)
+			IScrBook bookRev, LcmCache cache)
 		{
 			return DetermineSectionOverlapClusters(bookCurr, bookRev, cache, null);
 		}
@@ -761,7 +761,7 @@ namespace SIL.FieldWorks.TE
 		/// </returns>
 		/// ------------------------------------------------------------------------------------
 		public static List<Cluster> DetermineSectionOverlapClusters(IScrBook bookCurr,
-			IScrBook bookRev, FdoCache cache, IProgress progressDlg)
+			IScrBook bookRev, LcmCache cache, IProgress progressDlg)
 		{
 			int nSectionsCurr = bookCurr.SectionsOS.Count;
 			int nSectionsRev = bookRev.SectionsOS.Count;
@@ -804,7 +804,7 @@ namespace SIL.FieldWorks.TE
 		/// </returns>
 		/// ------------------------------------------------------------------------------------
 		public static List<Cluster> DetermineScrVerseOverlapClusters(List<ScrVerse> scrVersesCurr,
-			List<ScrVerse> scrVersesRev, FdoCache cache)
+			List<ScrVerse> scrVersesRev, LcmCache cache)
 		{
 			int nScrVersesCurr = scrVersesCurr.Count;
 			int nScrVersesRev = scrVersesRev.Count;

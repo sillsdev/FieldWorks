@@ -12,11 +12,9 @@
 
 using System.Windows.Forms;
 using NUnit.Framework;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.FDOTests;
+using SIL.LCModel;
 using SIL.FieldWorks.FwCoreDlgControls;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.Resources;
+using SIL.LCModel.DomainServices;
 
 namespace SIL.FieldWorks.TE.ImportComponentsTests
 {
@@ -26,7 +24,7 @@ namespace SIL.FieldWorks.TE.ImportComponentsTests
 	/// </summary>
 	/// -----------------------------------------------------------------------------------------
 	[TestFixture]
-	public class CharacterMappingSettingsTest : ScrInMemoryFdoTestBase
+	public class CharacterMappingSettingsTest : ScrInMemoryLcmTestBase
 	{
 		#region DummyCharacterMappingSettings class
 		/// ----------------------------------------------------------------------------------------
@@ -44,8 +42,8 @@ namespace SIL.FieldWorks.TE.ImportComponentsTests
 			/// <param name="styleSheet">Provides the character styles user can pick from.</param>
 			/// <param name="cache">The DB cache</param>
 			/// -------------------------------------------------------------------------------------
-			public DummyCharacterMappingSettings(ImportMappingInfo mapping, FwStyleSheet styleSheet,
-				FdoCache cache) : base(mapping, styleSheet, cache, false, null, null)
+			public DummyCharacterMappingSettings(ImportMappingInfo mapping, LcmStyleSheet styleSheet,
+				LcmCache cache) : base(mapping, styleSheet, cache, false, null, null)
 			{
 				// No code needed so far.
 			}
@@ -136,7 +134,7 @@ namespace SIL.FieldWorks.TE.ImportComponentsTests
 
 		#region Member variables
 		private IScripture m_Scripture;
-		private FwStyleSheet m_styleSheet;
+		private LcmStyleSheet m_styleSheet;
 		private ImportMappingInfo m_mapping;
 		private DummyCharacterMappingSettings m_dialog;
 		#endregion
@@ -152,7 +150,7 @@ namespace SIL.FieldWorks.TE.ImportComponentsTests
 			base.TestSetup();
 			m_Scripture = Cache.LangProject.TranslatedScriptureOA;
 
-			m_styleSheet = new FwStyleSheet();
+			m_styleSheet = new LcmStyleSheet();
 			m_styleSheet.Init(Cache, m_Scripture.Hvo, ScriptureTags.kflidStyles);
 
 			m_mapping = new ImportMappingInfo("emph{", "}", "Emphasis");

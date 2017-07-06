@@ -9,12 +9,13 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using ExCSS;
 using SIL.FieldWorks.Common.Framework;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.XWorks.DictionaryDetailsView;
+using SIL.LCModel.Core.Text;
 using Property = ExCSS.Property;
 
 namespace SIL.FieldWorks.XWorks
@@ -47,7 +48,7 @@ namespace SIL.FieldWorks.XWorks
 				throw new ArgumentNullException("model");
 			var styleSheet = new StyleSheet();
 			var propStyleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(propertyTable);
-			var cache = propertyTable.GetValue<FdoCache>("cache");
+			var cache = propertyTable.GetValue<LcmCache>("cache");
 			LoadBulletUnicodes();
 			LoadNumberingStyles();
 			GenerateLetterHeaderCss(propertyTable, styleSheet);
@@ -63,7 +64,7 @@ namespace SIL.FieldWorks.XWorks
 			return Icu.Normalize(styleSheet.ToString(true, 1), Icu.UNormalizationMode.UNORM_NFC);
 		}
 
-		private static void GenerateCssForDefaultStyles(IPropertyTable propertyTable, FwStyleSheet propertyTableStyleSheet,
+		private static void GenerateCssForDefaultStyles(IPropertyTable propertyTable, LcmStyleSheet propertyTableStyleSheet,
 			StyleSheet styleSheet, DictionaryConfigurationModel model)
 		{
 			if (propertyTableStyleSheet == null)
@@ -112,7 +113,7 @@ namespace SIL.FieldWorks.XWorks
 		private static void GenerateCssForWsSpanWithNormalStyle(StyleSheet styleSheet, IPropertyTable propertyTable)
 		{
 			// Generate the rules for the programmatic default style info (
-			var defaultStyleProps = GetOnlyCharacterStyle(GenerateCssStyleFromFwStyleSheet("Normal", DefaultStyle, propertyTable));
+			var defaultStyleProps = GetOnlyCharacterStyle(GenerateCssStyleFromLcmStyleSheet("Normal", DefaultStyle, propertyTable));
 			if (!defaultStyleProps.Any(p => p.Name == "font-size"))
 			{
 				defaultStyleProps.Add(new Property("font-size") { Term = new PrimitiveTerm(UnitType.Point, FontInfo.kDefaultFontSize) });
@@ -127,7 +128,7 @@ namespace SIL.FieldWorks.XWorks
 		private static void GenerateDictionaryNormalParagraphCss(StyleSheet styleSheet, IPropertyTable propertyTable)
 		{
 			var dictNormalRule = new StyleRule { Value = "div.entry" };
-			var dictNormalStyle = GenerateCssStyleFromFwStyleSheet(DictionaryNormal, 0, propertyTable);
+			var dictNormalStyle = GenerateCssStyleFromLcmStyleSheet(DictionaryNormal, 0, propertyTable);
 			dictNormalRule.Declarations.Properties.AddRange(GetOnlyParagraphStyle(dictNormalStyle));
 			styleSheet.Rules.Add(dictNormalRule);
 			// Then generate the rules for all the writing system overrides
@@ -145,7 +146,7 @@ namespace SIL.FieldWorks.XWorks
 					var styleName = minorEntryNode.Style;
 					if (string.IsNullOrEmpty(styleName))
 						styleName = DictionaryMinor;
-					var dictionaryMinorStyle = GenerateCssStyleFromFwStyleSheet(styleName, 0, propertyTable);
+					var dictionaryMinorStyle = GenerateCssStyleFromLcmStyleSheet(styleName, 0, propertyTable);
 					var minorRule = new StyleRule { Value = string.Format("div.{0}", GetClassAttributeForConfig(minorEntryNode)) };
 					minorRule.Declarations.Properties.AddRange(GetOnlyParagraphStyle(dictionaryMinorStyle));
 					styleSheet.Rules.Add(minorRule);
@@ -157,20 +158,20 @@ namespace SIL.FieldWorks.XWorks
 
 		private static void GenerateCssForWritingSystems(string selector, string styleName, StyleSheet styleSheet, IPropertyTable propertyTable)
 		{
-			var cache = propertyTable.GetValue<FdoCache>("cache");
+			var cache = propertyTable.GetValue<LcmCache>("cache");
 			// Generate the rules for all the writing system overrides
 			foreach (var aws in cache.ServiceLocator.WritingSystems.AllWritingSystems)
 			{
 				// We want only the character type settings from the styleName style since we're applying them
 				// to a span.
 				var wsRule = new StyleRule { Value = selector + String.Format("[lang|=\"{0}\"]", aws.LanguageTag) };
-				var styleDecls = GenerateCssStyleFromFwStyleSheet(styleName, aws.Handle, propertyTable);
+				var styleDecls = GenerateCssStyleFromLcmStyleSheet(styleName, aws.Handle, propertyTable);
 				wsRule.Declarations.Properties.AddRange(GetOnlyCharacterStyle(styleDecls));
 				styleSheet.Rules.Add(wsRule);
 			}
 		}
 
-		private static void GenerateCssForAudioWs(StyleSheet styleSheet, FdoCache cache)
+		private static void GenerateCssForAudioWs(StyleSheet styleSheet, LcmCache cache)
 		{
 			foreach (var aws in cache.ServiceLocator.WritingSystems.AllWritingSystems)
 			{
@@ -198,7 +199,7 @@ namespace SIL.FieldWorks.XWorks
 		private static void GenerateCssFromConfigurationNode(ConfigurableDictionaryNode configNode, StyleSheet styleSheet,
 			string baseSelection, IPropertyTable propertyTable)
 		{
-			var cache = propertyTable.GetValue<FdoCache>("cache");
+			var cache = propertyTable.GetValue<LcmCache>("cache");
 			var rule = new StyleRule();
 			var senseOptions = configNode.DictionaryNodeOptions as DictionaryNodeSenseOptions;
 			var listAndParaOpts = configNode.DictionaryNodeOptions as IParaOption;
@@ -246,7 +247,7 @@ namespace SIL.FieldWorks.XWorks
 				if (!string.IsNullOrEmpty(configNode.Style))
 				{
 					//Generate the rules for the default font info
-					rule.Declarations.Properties.AddRange(GenerateCssStyleFromFwStyleSheet(configNode.Style, DefaultStyle, configNode,
+					rule.Declarations.Properties.AddRange(GenerateCssStyleFromLcmStyleSheet(configNode.Style, DefaultStyle, configNode,
 						propertyTable));
 					GenerateCssForWritingSystems(baseSelection + " span", configNode.Style, styleSheet, propertyTable);
 				}
@@ -287,7 +288,7 @@ namespace SIL.FieldWorks.XWorks
 		private static void GenerateCssForSenses(ConfigurableDictionaryNode configNode, DictionaryNodeSenseOptions senseOptions,
 														StyleSheet styleSheet, ref string baseSelection, IPropertyTable propertyTable)
 		{
-			var selectors = GenerateSelectorsFromNode(baseSelection, configNode, out baseSelection, propertyTable.GetValue<FdoCache>("cache"), propertyTable);
+			var selectors = GenerateSelectorsFromNode(baseSelection, configNode, out baseSelection, propertyTable.GetValue<LcmCache>("cache"), propertyTable);
 			// Insert '> .sensecontent' between '.*senses' and '.*sense' (where * could be 'referring', 'sub', or similar)
 			var senseContentSelector = string.Format("{0}> .sensecontent", baseSelection.Substring(0, baseSelection.LastIndexOf('.')));
 			var senseItemName = baseSelection.Substring(baseSelection.LastIndexOf('.'));
@@ -302,7 +303,7 @@ namespace SIL.FieldWorks.XWorks
 			senseNumberRule.Value = senseNumberSelector;
 			if(!String.IsNullOrEmpty(senseOptions.NumberStyle))
 			{
-				senseNumberRule.Declarations.Properties.AddRange(GenerateCssStyleFromFwStyleSheet(senseOptions.NumberStyle, DefaultStyle, propertyTable));
+				senseNumberRule.Declarations.Properties.AddRange(GenerateCssStyleFromLcmStyleSheet(senseOptions.NumberStyle, DefaultStyle, propertyTable));
 			}
 			if (!IsEmptyRule(senseNumberRule))
 			styleSheet.Rules.Add(senseNumberRule);
@@ -323,7 +324,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			// set the base selection to the sense level under the sense content
 			baseSelection = string.Format("{0} > {1}", senseContentSelector, senseItemName);
-			var styleDeclaration = string.IsNullOrEmpty(configNode.Style) ? new StyleDeclaration() : GenerateCssStyleFromFwStyleSheet(configNode.Style, 0, configNode, propertyTable);
+			var styleDeclaration = string.IsNullOrEmpty(configNode.Style) ? new StyleDeclaration() : GenerateCssStyleFromLcmStyleSheet(configNode.Style, 0, configNode, propertyTable);
 			if (senseOptions.DisplayEachSenseInAParagraph)
 			{
 				var sensCharDeclaration = GetOnlyCharacterStyle(styleDeclaration);
@@ -383,7 +384,7 @@ namespace SIL.FieldWorks.XWorks
 			if (configNode.Style != null)
 			{
 				if (styleDeclaration.Properties.Count == 0)
-					styleDeclaration = GenerateCssStyleFromFwStyleSheet(configNode.Style, DefaultStyle, propertyTable);
+					styleDeclaration = GenerateCssStyleFromLcmStyleSheet(configNode.Style, DefaultStyle, propertyTable);
 				GenerateCssForCounterReset(styleSheet, bulletSelector, styleDeclaration, false);
 				var senseOptions = configNode.DictionaryNodeOptions as DictionaryNodeSenseOptions;
 				var senseSufixRule = senseOptions != null && senseOptions.DisplayFirstSenseInline ? ":not(:first-child):before" : ":before";
@@ -406,7 +407,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		private static void GenerateCssFromListAndParaOptions(ConfigurableDictionaryNode configNode,
-			IParaOption listAndParaOpts, StyleSheet styleSheet, ref string baseSelection, FdoCache cache, IPropertyTable propertyTable)
+			IParaOption listAndParaOpts, StyleSheet styleSheet, ref string baseSelection, LcmCache cache, IPropertyTable propertyTable)
 		{
 			var selectors = GenerateSelectorsFromNode(baseSelection, configNode, out baseSelection, cache, propertyTable);
 			List<StyleDeclaration> blockDeclarations;
@@ -414,7 +415,7 @@ namespace SIL.FieldWorks.XWorks
 				blockDeclarations = new List<StyleDeclaration> {new StyleDeclaration()};
 			else
 			{
-				blockDeclarations = GenerateCssStyleFromFwStyleSheet(configNode.Style, 0, configNode, propertyTable, true);
+				blockDeclarations = GenerateCssStyleFromLcmStyleSheet(configNode.Style, 0, configNode, propertyTable, true);
 				GenerateCssForWritingSystems(baseSelection + " span", configNode.Style, styleSheet, propertyTable);
 			}
 			var styleRules = selectors as StyleRule[] ?? selectors.ToArray();
@@ -525,7 +526,7 @@ namespace SIL.FieldWorks.XWorks
 		private static void GenerateCssFromWsOptions(ConfigurableDictionaryNode configNode, DictionaryNodeWritingSystemOptions wsOptions,
 																	StyleSheet styleSheet, string baseSelection, IPropertyTable propertyTable)
 		{
-			var cache = propertyTable.GetValue<FdoCache>("cache");
+			var cache = propertyTable.GetValue<LcmCache>("cache");
 			foreach(var ws in wsOptions.Options.Where(opt => opt.IsEnabled))
 			{
 				var possiblyMagic = WritingSystemServices.GetMagicWsIdFromName(ws.Id);
@@ -534,7 +535,7 @@ namespace SIL.FieldWorks.XWorks
 				var wsId = cache.LanguageWritingSystemFactoryAccessor.GetWsFromStr(wsIdString);
 				var wsRule = new StyleRule {Value = baseSelection + String.Format("[lang|=\"{0}\"]", wsIdString)};
 				if (!String.IsNullOrEmpty(configNode.Style))
-					wsRule.Declarations.Properties.AddRange(GenerateCssStyleFromFwStyleSheet(configNode.Style, wsId, propertyTable));
+					wsRule.Declarations.Properties.AddRange(GenerateCssStyleFromLcmStyleSheet(configNode.Style, wsId, propertyTable));
 				if (!IsEmptyRule(wsRule))
 				styleSheet.Rules.Add(wsRule);
 			}
@@ -543,7 +544,7 @@ namespace SIL.FieldWorks.XWorks
 		private static void GenerateCssForWritingSystemPrefix(ConfigurableDictionaryNode configNode, StyleSheet styleSheet, string baseSelection, IPropertyTable propertyTable)
 		{
 			var wsRule1 = new StyleRule { Value = string.Format("{0}.{1}", baseSelection, WritingSystemPrefix)};
-			wsRule1.Declarations.Properties.AddRange(GetOnlyCharacterStyle(GenerateCssStyleFromFwStyleSheet(WritingSystemStyleName, 0, configNode, propertyTable)));
+			wsRule1.Declarations.Properties.AddRange(GetOnlyCharacterStyle(GenerateCssStyleFromLcmStyleSheet(WritingSystemStyleName, 0, configNode, propertyTable)));
 			styleSheet.Rules.Add(wsRule1);
 			var wsRule2 = new StyleRule { Value = string.Format("{0}.{1}:after", baseSelection, WritingSystemPrefix) };
 			wsRule2.Declarations.Properties.Add(new Property("content"){Term = new PrimitiveTerm(UnitType.String, " ")});
@@ -610,7 +611,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		private static IEnumerable<StyleRule> GenerateSelectorsFromNode(
 			string parentSelector, ConfigurableDictionaryNode configNode,
-			out string baseSelection, FdoCache cache, IPropertyTable propertyTable)
+			out string baseSelection, LcmCache cache, IPropertyTable propertyTable)
 			// REVIEW (Hasso) 2016.10: parentSelector and baseSelector could be combined into a single `ref` parameter
 		{
 			// TODO: REFACTOR this method to handle certain nodes more specifically. The options type should be used to branch into node specific code.
@@ -636,7 +637,7 @@ namespace SIL.FieldWorks.XWorks
 					var dec = new StyleDeclaration();
 					dec.Add(new Property("content") { Term = new PrimitiveTerm(UnitType.String, SpecialCharacterHandling.MakeSafeCss(configNode.Between)) });
 					if (fwStyles != null && fwStyles.Styles.Contains(BeforeAfterBetweenStyleName))
-						dec.Properties.AddRange(GenerateCssStyleFromFwStyleSheet(BeforeAfterBetweenStyleName, cache.DefaultAnalWs, propertyTable));
+						dec.Properties.AddRange(GenerateCssStyleFromLcmStyleSheet(BeforeAfterBetweenStyleName, cache.DefaultAnalWs, propertyTable));
 					var collectionSelector = "." + GetClassAttributeForConfig(configNode);
 					if (configNode.Parent.DictionaryNodeOptions is DictionaryNodePictureOptions)
 						collectionSelector = pictCaptionContent + "." + GetClassAttributeForConfig(configNode);
@@ -703,7 +704,7 @@ namespace SIL.FieldWorks.XWorks
 				var dec = new StyleDeclaration();
 				dec.Add(new Property("content") { Term = new PrimitiveTerm(UnitType.String, SpecialCharacterHandling.MakeSafeCss(configNode.Before)) });
 				if (fwStyles != null && fwStyles.Styles.Contains(BeforeAfterBetweenStyleName))
-					dec.Properties.AddRange(GenerateCssStyleFromFwStyleSheet(BeforeAfterBetweenStyleName, cache.DefaultAnalWs, propertyTable));
+					dec.Properties.AddRange(GenerateCssStyleFromLcmStyleSheet(BeforeAfterBetweenStyleName, cache.DefaultAnalWs, propertyTable));
 				var selectorBase = simpleSelector;
 				if (configNode.FieldDescription == "PicturesOfSenses")
 					selectorBase += "> div:first-child";
@@ -715,7 +716,7 @@ namespace SIL.FieldWorks.XWorks
 				var dec = new StyleDeclaration();
 				dec.Add(new Property("content") { Term = new PrimitiveTerm(UnitType.String, SpecialCharacterHandling.MakeSafeCss(configNode.After)) });
 				if (fwStyles != null && fwStyles.Styles.Contains(BeforeAfterBetweenStyleName))
-					dec.Properties.AddRange(GenerateCssStyleFromFwStyleSheet(BeforeAfterBetweenStyleName, cache.DefaultAnalWs, propertyTable));
+					dec.Properties.AddRange(GenerateCssStyleFromLcmStyleSheet(BeforeAfterBetweenStyleName, cache.DefaultAnalWs, propertyTable));
 				var selectorBase = simpleSelector;
 				if (configNode.FieldDescription == "PicturesOfSenses")
 					selectorBase += "> div:last-child";
@@ -777,7 +778,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="configNode"></param>
 		/// <param name="cache">defaults to null, necessary for generating correct css for custom field nodes</param>
 		/// <returns></returns>
-		private static string SelectClassName(ConfigurableDictionaryNode configNode, FdoCache cache = null)
+		private static string SelectClassName(ConfigurableDictionaryNode configNode, LcmCache cache = null)
 		{
 			var type = ConfiguredXHTMLGenerator.GetPropertyTypeForConfigurationNode(configNode, cache);
 			return SelectClassName(configNode, type);
@@ -844,7 +845,7 @@ namespace SIL.FieldWorks.XWorks
 		/// output of this method for :before and :after rules in the css is sufficient to fix the bug reported in
 		/// LT-17048.  A better name might be nice, but this one is fairly descriptive.
 		/// </remarks>
-		private static string SelectBareClassName(ConfigurableDictionaryNode configNode, FdoCache cache = null)
+		private static string SelectBareClassName(ConfigurableDictionaryNode configNode, LcmCache cache = null)
 		{
 			var type = ConfiguredXHTMLGenerator.GetPropertyTypeForConfigurationNode(configNode, cache);
 			if (type == ConfiguredXHTMLGenerator.PropertyType.CollectionType)
@@ -935,9 +936,9 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="wsId">writing system id</param>
 		/// <param name="propertyTable"></param>
 		/// <returns></returns>
-		internal static StyleDeclaration GenerateCssStyleFromFwStyleSheet(string styleName, int wsId, IPropertyTable propertyTable)
+		internal static StyleDeclaration GenerateCssStyleFromLcmStyleSheet(string styleName, int wsId, IPropertyTable propertyTable)
 		{
-			return GenerateCssStyleFromFwStyleSheet(styleName, wsId, null, propertyTable);
+			return GenerateCssStyleFromLcmStyleSheet(styleName, wsId, null, propertyTable);
 		}
 
 		/// <summary>
@@ -949,13 +950,13 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="node">The configuration node to use for generating paragraph margin in context</param>
 		/// <param name="propertyTable">To retrieve styles</param>
 		/// <returns></returns>
-		internal static StyleDeclaration GenerateCssStyleFromFwStyleSheet(string styleName, int wsId,
+		internal static StyleDeclaration GenerateCssStyleFromLcmStyleSheet(string styleName, int wsId,
 			ConfigurableDictionaryNode node, IPropertyTable propertyTable)
 		{
-			return GenerateCssStyleFromFwStyleSheet(styleName, wsId, node, propertyTable, false)[0];
+			return GenerateCssStyleFromLcmStyleSheet(styleName, wsId, node, propertyTable, false)[0];
 		}
 
-		internal static List<StyleDeclaration> GenerateCssStyleFromFwStyleSheet(string styleName, int wsId, ConfigurableDictionaryNode node, IPropertyTable propertyTable, bool calculateFirstSenseStyle)
+		internal static List<StyleDeclaration> GenerateCssStyleFromLcmStyleSheet(string styleName, int wsId, ConfigurableDictionaryNode node, IPropertyTable propertyTable, bool calculateFirstSenseStyle)
 		{
 			var declaration = new StyleDeclaration();
 			var styleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(propertyTable);
@@ -1062,7 +1063,7 @@ namespace SIL.FieldWorks.XWorks
 				declaration.Add(new Property(paddingDirection) { Term = new PrimitiveTerm(UnitType.Point, MilliPtToPt(exportStyleInfo.TrailingIndent)) });
 			}
 
-			AddFontInfoCss(projectStyle, declaration, wsId, propertyTable.GetValue<FdoCache>("cache"));
+			AddFontInfoCss(projectStyle, declaration, wsId, propertyTable.GetValue<LcmCache>("cache"));
 
 			if (exportStyleInfo.NumberScheme != 0)
 			{
@@ -1133,7 +1134,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		private static AncestorIndents CalculateParagraphIndentsFromAncestors(ConfigurableDictionaryNode currentNode,
-			FwStyleSheet styleSheet, AncestorIndents ancestorIndents)
+			LcmStyleSheet styleSheet, AncestorIndents ancestorIndents)
 		{
 			var parentNode = currentNode;
 			do
@@ -1161,7 +1162,7 @@ namespace SIL.FieldWorks.XWorks
 			return exportStyleInfo.HasLeadingIndent ? MilliPtToPt(exportStyleInfo.LeadingIndent) : 0.0f;
 		}
 
-		private static bool IsParagraphStyle(ConfigurableDictionaryNode node, FwStyleSheet styleSheet)
+		private static bool IsParagraphStyle(ConfigurableDictionaryNode node, LcmStyleSheet styleSheet)
 		{
 			if (node.StyleType == ConfigurableDictionaryNode.StyleTypes.Character)
 				return false;
@@ -1233,7 +1234,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Builds the css rules for font info properties using the writing system overrides
 		/// </summary>
-		private static void AddFontInfoCss(BaseStyleInfo projectStyle, StyleDeclaration declaration, int wsId, FdoCache cache)
+		private static void AddFontInfoCss(BaseStyleInfo projectStyle, StyleDeclaration declaration, int wsId, LcmCache cache)
 		{
 			var wsFontInfo = projectStyle.FontInfoForWs(wsId);
 			var defaultFontInfo = projectStyle.DefaultCharacterStyleInfo;
@@ -1487,7 +1488,7 @@ namespace SIL.FieldWorks.XWorks
 			letHeadRule.Declarations.Properties.Add(new Property("column-count") { Term = new PrimitiveTerm(UnitType.Number, 1) });
 			letHeadRule.Declarations.Properties.Add(new Property("clear") { Term = new PrimitiveTerm(UnitType.Ident, "both") });
 			letHeadRule.Declarations.Properties.Add(new Property("width") { Term = new PrimitiveTerm(UnitType.Percentage, 100) });
-			letHeadRule.Declarations.Properties.AddRange(GetOnlyParagraphStyle(GenerateCssStyleFromFwStyleSheet(LetterHeadingStyleName, 0, propertyTable)));
+			letHeadRule.Declarations.Properties.AddRange(GetOnlyParagraphStyle(GenerateCssStyleFromLcmStyleSheet(LetterHeadingStyleName, 0, propertyTable)));
 
 			styleSheet.Rules.Add(letHeadRule);
 		}

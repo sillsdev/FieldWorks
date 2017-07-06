@@ -8,7 +8,7 @@ using System.Xml.Linq;
 using System.Xml.XPath;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.XWorks;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
@@ -24,7 +24,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private System.ComponentModel.Container components = null;
 
 		// Local variables.
-		private FdoCache m_cache;
+		private LcmCache m_cache;
 		RecordEditView m_xrev;
 		int m_currentRoot = 0;		// Stores the root (IStText) Hvo.
 
@@ -37,7 +37,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			InitializeComponent();
 		}
 
-		public InfoPane(FdoCache cache, RecordClerk clerk)
+		public InfoPane(LcmCache cache, RecordClerk clerk)
 		{
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
@@ -88,7 +88,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <summary>
 		/// Initialize the pane with a Mediator and a RecordClerk.
 		/// </summary>
-		internal void Initialize(FdoCache cache, RecordClerk clerk)
+		internal void Initialize(LcmCache cache, RecordClerk clerk)
 		{
 			m_cache = cache;
 			InitializeInfoView(clerk);
@@ -271,7 +271,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		#region IInterlinearTabControl Members
 
-		public FdoCache Cache
+		public LcmCache Cache
 		{
 			get { return m_cache; }
 			set { m_cache = value; }

@@ -3,10 +3,10 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using NUnit.Framework;
-using SIL.CoreImpl.Text;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.FDOTests;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel;
 using LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes;
+using SIL.WritingSystems;
 
 namespace LanguageExplorerTests.Lexicon
 {
@@ -14,6 +14,29 @@ namespace LanguageExplorerTests.Lexicon
 	{
 		private IReversalIndexRepository m_revIndexRepo;
 		private IReversalIndexEntryFactory m_revIndexEntryFactory;
+		private bool _didIInitSLDR;
+
+		[TestFixtureSetUp]
+		public override void FixtureSetup()
+		{
+			if (!Sldr.IsInitialized)
+			{
+				_didIInitSLDR = true;
+				Sldr.Initialize();
+			}
+
+			base.FixtureSetup();
+		}
+
+		public override void FixtureTeardown()
+		{
+			if (_didIInitSLDR && Sldr.IsInitialized)
+			{
+				_didIInitSLDR = false;
+				Sldr.Cleanup();
+			}
+			base.FixtureTeardown();
+		}
 
 		[SetUp]
 		public void Setup()

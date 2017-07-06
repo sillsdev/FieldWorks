@@ -9,9 +9,9 @@ using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using SIL.CoreImpl.Text;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 
 namespace SIL.FieldWorks.Common.RootSites
@@ -41,7 +41,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			/// <param name="cache"></param>
 			/// <param name="callbacks"></param>
 			/// -----------------------------------------------------------------------------------
-			public DummyEditingHelper(FdoCache cache, IEditingCallbacks callbacks)
+			public DummyEditingHelper(LcmCache cache, IEditingCallbacks callbacks)
 				: base(cache, callbacks)
 			{
 			}
@@ -319,7 +319,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			CheckDisposed();
 
-			ILgWritingSystemFactory wsf = m_fdoCache.WritingSystemFactory;
+			ILgWritingSystemFactory wsf = m_cache.WritingSystemFactory;
 			int wsEng = wsf.GetWsFromStr("en");
 			AddParagraphsToLangProj(wsEng, kFirstParaEng, kSecondParaEng);
 		}
@@ -431,16 +431,16 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			CheckDisposed();
 
-			if (m_fdoCache == null || DesignMode)
+			if (m_cache == null || DesignMode)
 				return;
 
 			base.MakeRoot();
 
 			// Set up a new view constructor.
 			m_basicViewVc = CreateVc(flid);
-			m_basicViewVc.DefaultWs = m_fdoCache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle;
+			m_basicViewVc.DefaultWs = m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle;
 
-			m_rootb.DataAccess = m_fdoCache.DomainDataByFlid;
+			m_rootb.DataAccess = m_cache.DomainDataByFlid;
 			m_rootb.SetRootObject(hvoRoot, m_basicViewVc, frag, m_styleSheet);
 
 			m_fRootboxMade = true;
@@ -491,7 +491,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		protected override EditingHelper  CreateEditingHelper()
 		{
-			return new DummyEditingHelper(m_fdoCache, this);
+			return new DummyEditingHelper(m_cache, this);
 		}
 		#endregion
 

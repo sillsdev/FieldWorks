@@ -6,7 +6,7 @@ using System.IO;
 using System.Xml.Linq;
 using System.Xml.Xsl;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 
 namespace LanguageExplorer.Areas.TextsAndWords
 {
@@ -26,7 +26,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		public string CreateResultPage(IPropertyTable propertyTable, XDocument result, bool isTrace)
 		{
 			var args = new XsltArgumentList();
-			args.AddParam("prmHCTraceLoadErrorFile", "", Path.Combine(Path.GetTempPath(), propertyTable.GetValue<FdoCache>("cache").ProjectId.Name + "HCLoadErrors.xml"));
+			args.AddParam("prmHCTraceLoadErrorFile", "", Path.Combine(Path.GetTempPath(), propertyTable.GetValue<LcmCache>("cache").ProjectId.Name + "HCLoadErrors.xml"));
 			args.AddParam("prmShowTrace", "", isTrace.ToString().ToLowerInvariant());
 			return TraceTransform.Transform(propertyTable, result, isTrace ? "HCTrace" : "HCParse", args);
 		}

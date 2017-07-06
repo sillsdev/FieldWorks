@@ -8,12 +8,13 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
-using SIL.CoreImpl.Scripture;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.Scripture;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 
 namespace SIL.FieldWorks.TE
 {
@@ -24,7 +25,7 @@ namespace SIL.FieldWorks.TE
 	{
 		#region Member Variables
 		private const int kMaxMarkerLength = 3;
-		private FdoCache m_cache;
+		private LcmCache m_cache;
 		private IHelpTopicProvider m_helpTopicProvider;
 		private IVwStylesheet m_styleSheet;
 		private FootnotePropertiesSelector m_sibling;
@@ -114,7 +115,7 @@ namespace SIL.FieldWorks.TE
 		/// check associated check box.</param>
 		/// <param name="helpTopicProvider">The help topic provider.</param>
 		/// ------------------------------------------------------------------------------------
-		public void Initialize(FdoCache cache, IVwStylesheet styleSheet,
+		public void Initialize(LcmCache cache, IVwStylesheet styleSheet,
 			FootnoteMarkerTypes footnoteMarkerType, string footnoteMarkerSymbol,
 			bool displayReference, bool displayCusSymbol, IHelpTopicProvider helpTopicProvider)
 		{
@@ -125,7 +126,7 @@ namespace SIL.FieldWorks.TE
 			m_styleSheet = styleSheet;
 			m_fRestartSequence = cache.LangProject.TranslatedScriptureOA.RestartFootnoteSequence;
 
-			if (m_styleSheet is FwStyleSheet)
+			if (m_styleSheet is LcmStyleSheet)
 			{
 				using (var font = FontHeightAdjuster.GetFontForStyle(ScrStyleNames.FootnoteMarker, m_styleSheet,
 					cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle,

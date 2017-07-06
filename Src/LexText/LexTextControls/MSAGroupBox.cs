@@ -7,12 +7,12 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.Collections.Generic;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.WritingSystems;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Common.Widgets;
 
 namespace SIL.FieldWorks.LexText.Controls
@@ -28,7 +28,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		private IPropertyTable m_propertyTable;
 		private IPublisher m_publisher;
 		private Form m_parentForm;
-		private FdoCache m_cache;
+		private LcmCache m_cache;
 		private Control m_ctrlAssistant;
 		private POSPopupTreeManager m_mainPOSPopupTreeManager;
 		private POSPopupTreeManager m_secPOSPopupTreeManager;
@@ -489,12 +489,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <summary>
 		/// Initialize the control.
 		/// </summary>
-		/// <param name="cache"></param>
-		/// <param name="propertyTable"></param>
-		/// <param name="publisher"></param>
-		/// <param name="ctrlAssistant"></param>
-		/// <param name="parentForm"></param>
-		public void Initialize(FdoCache cache, IPropertyTable propertyTable, IPublisher publisher, Control ctrlAssistant, Form parentForm)
+		public void Initialize(LcmCache cache, IPropertyTable propertyTable, IPublisher publisher, Control ctrlAssistant, Form parentForm)
 		{
 			CheckDisposed();
 
@@ -506,12 +501,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <summary>
 		/// Initialize the control.
 		/// </summary>
-		/// <param name="cache"></param>
-		/// <param name="propertyTable"></param>
-		/// <param name="publisher"></param>
-		/// <param name="parentForm"></param>
-		/// <param name="sandboxMSA"></param>
-		public void Initialize(FdoCache cache, IPropertyTable propertyTable, IPublisher publisher, Form parentForm, SandboxGenericMSA sandboxMSA)
+		public void Initialize(LcmCache cache, IPropertyTable propertyTable, IPublisher publisher, Form parentForm, SandboxGenericMSA sandboxMSA)
 		{
 			CheckDisposed();
 

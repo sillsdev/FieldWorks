@@ -11,11 +11,11 @@ using System.Diagnostics;
 using System.IO;
 using System.Xml;
 using System.Xml.Schema;
-using SIL.CoreImpl.Text;
+using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.Utils;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.TE
 {
@@ -35,7 +35,7 @@ namespace SIL.FieldWorks.TE
 
 		private string m_wsId;
 		private int m_defUserWs;
-		private IFdoServiceLocator m_servLoc;
+		private ILcmServiceLocator m_servLoc;
 		private string m_fallbackUserWsId;
 
 		/// ------------------------------------------------------------------------------------

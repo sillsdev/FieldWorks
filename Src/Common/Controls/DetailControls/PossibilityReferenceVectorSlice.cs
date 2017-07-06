@@ -3,19 +3,19 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Windows.Forms;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.Xml;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
 	public class PossibilityReferenceVectorSlice : ReferenceVectorSlice
 	{
-		protected PossibilityReferenceVectorSlice(Control control, FdoCache cache, ICmObject obj, int flid)
+		protected PossibilityReferenceVectorSlice(Control control, LcmCache cache, ICmObject obj, int flid)
 			: base(control, cache, obj, flid)
 		{
 		}
 
-		public PossibilityReferenceVectorSlice(FdoCache cache, ICmObject obj, int flid)
+		public PossibilityReferenceVectorSlice(LcmCache cache, ICmObject obj, int flid)
 			: base(new PossibilityVectorReferenceLauncher(), cache, obj, flid)
 		{
 		}

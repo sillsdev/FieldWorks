@@ -3,9 +3,9 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Linq;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
@@ -37,12 +37,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <summary>
 		/// Create a new one.
 		/// </summary>
-		/// <param name="cache"></param>
-		/// <param name="ss"></param>
-		/// <param name="choices"></param>
-		/// <param name="selected"></param>
-		/// <param name="focusBox"></param>
-		public Sandbox(FdoCache cache, IVwStylesheet ss, InterlinLineChoices choices, AnalysisOccurrence selected, FocusBoxController focusBox)
+		public Sandbox(LcmCache cache, IVwStylesheet ss, InterlinLineChoices choices, AnalysisOccurrence selected, FocusBoxController focusBox)
 			: this(cache, ss, choices)
 		{
 			FocusBox = focusBox;
@@ -52,13 +47,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			LoadForWordBundleAnalysis(m_occurrenceSelected.Analysis.Hvo);
 		}
 
-		///  <summary>
-		///
-		///  </summary>
-		///  <param name="cache"></param>
-		/// <param name="ss"></param>
-		///  <param name="choices"></param>
-		public Sandbox(FdoCache cache, IVwStylesheet ss, InterlinLineChoices choices)
+		///  <summary />
+		public Sandbox(LcmCache cache, IVwStylesheet ss, InterlinLineChoices choices)
 			: base(cache, ss, choices)
 		{
 		}

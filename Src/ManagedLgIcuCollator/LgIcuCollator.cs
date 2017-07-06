@@ -5,8 +5,10 @@
 using System;
 using System.Runtime.InteropServices;
 
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.Language
 {

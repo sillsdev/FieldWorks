@@ -9,9 +9,9 @@
 // <remarks>
 // </remarks>
 // --------------------------------------------------------------------------------------------
-using System.Diagnostics;
 
-using SIL.FieldWorks.FDO;
+using System.Diagnostics;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
@@ -26,7 +26,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// Initializes a new instance of the <see cref="AtomicReferenceSlice"/> class.
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
-		public DerivMSAReferenceSlice(FdoCache cache, ICmObject obj, int flid)
+		public DerivMSAReferenceSlice(LcmCache cache, ICmObject obj, int flid)
 			: base(cache, obj, flid)
 		{
 		}

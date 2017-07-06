@@ -8,20 +8,19 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
-using System.Xml.XPath;
-using SIL.CoreImpl.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.FdoUi.Dialogs;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.XWorks;
-using SIL.Utils;
+using SIL.LCModel;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
+using SIL.LCModel.Utils;
 using WaitCursor = SIL.FieldWorks.Common.FwUtils.WaitCursor;
 
 namespace LanguageExplorer.Areas.Lexicon
@@ -103,7 +102,7 @@ namespace LanguageExplorer.Areas.Lexicon
 
 			// Generate and store the expected path to a configuration file specific to this reversal index.  If it doesn't
 			// exist, code elsewhere will make up for it.
-			var layoutName = Path.Combine(FdoFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder), "ReversalIndex",
+			var layoutName = Path.Combine(LcmFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder), "ReversalIndex",
 				ri.ShortName + DictionaryConfigurationModel.FileExtension);
 			PropertyTable.SetProperty("ReversalIndexPublicationLayout", layoutName, true, true);
 
@@ -392,7 +391,7 @@ namespace LanguageExplorer.Areas.Lexicon
 		}
 
 		/// <summary />
-		internal static IReversalIndex ReversalIndexAfterDeletion(FdoCache cache, out int cobjNew)
+		internal static IReversalIndex ReversalIndexAfterDeletion(LcmCache cache, out int cobjNew)
 		{
 			IReversalIndex newIdx;
 			cobjNew = cache.LanguageProject.LexDbOA.ReversalIndexesOC.Count;

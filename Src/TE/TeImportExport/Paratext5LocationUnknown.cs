@@ -5,7 +5,7 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.Drawing;
+using SIL.FieldWorks.Common.Controls;
 
 namespace SIL.FieldWorks.TE
 {

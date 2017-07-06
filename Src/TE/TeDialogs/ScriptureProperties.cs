@@ -8,14 +8,15 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.Text;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
-using SIL.Utils;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Utils;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.CoreImpl.Scripture;
+using SIL.LCModel.Infrastructure;
+using SIL.LCModel.Core.Scripture;
+using SIL.LCModel.Core.Text;
 
 namespace SIL.FieldWorks.TE
 {
@@ -32,7 +33,7 @@ namespace SIL.FieldWorks.TE
 		/// <summary>Index of the tab for normal footnotes</summary>
 		public const int kFootnotesTab = 1;
 
-		private FdoCache m_cache;
+		private LcmCache m_cache;
 		private IHelpTopicProvider m_helpTopicProvider;
 		private IScripture m_scr;
 		private IVwStylesheet m_styleSheet;
@@ -84,7 +85,7 @@ namespace SIL.FieldWorks.TE
 		/// footnote tab will be hidden.</param>
 		/// <param name="helpTopicProvider">The help topic provider.</param>
 		/// ------------------------------------------------------------------------------------
-		public ScriptureProperties(FdoCache cache, IVwStylesheet styleSheet, IRootSite rootSite,
+		public ScriptureProperties(LcmCache cache, IVwStylesheet styleSheet, IRootSite rootSite,
 			bool showFootnoteTab, IHelpTopicProvider helpTopicProvider)
 		{
 			m_cache = cache;

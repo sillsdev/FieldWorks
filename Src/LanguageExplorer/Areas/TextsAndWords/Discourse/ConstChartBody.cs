@@ -10,14 +10,14 @@ using System.IO;
 using System.Windows.Forms;
 using System.Xml;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
-using SIL.CoreImpl.Text;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.Resources;
 using SIL.Xml;
 using Rect = SIL.FieldWorks.Common.ViewsInterfaces.Rect;
@@ -1266,7 +1266,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		}
 
 
-		protected override void GetSegmentLevelTags(FdoCache cache)
+		protected override void GetSegmentLevelTags(LcmCache cache)
 		{
 			// do nothing (we don't need tags above bundle level).
 		}
@@ -1342,7 +1342,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		private readonly ChartRowEnvDecorator m_vwenv;
 		private readonly int m_hvoRow; // Hvo of the IConstChartRow representing a row in the chart.
 		private readonly IConstChartRow m_row;
-		private readonly FdoCache m_cache;
+		private readonly LcmCache m_cache;
 		private readonly ConstChartVc m_this; // original 'this' object of the refactored method.
 		private readonly ConstChartBody m_chart;
 		private int[] m_cellparts;
@@ -1390,7 +1390,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// <param name="cache"></param>
 		/// <param name="vwenv"></param>
 		/// <param name="hvo"></param>
-		public MakeCellsMethod(ConstChartVc baseObj, FdoCache cache, IVwEnv vwenv, int hvo)
+		public MakeCellsMethod(ConstChartVc baseObj, LcmCache cache, IVwEnv vwenv, int hvo)
 		{
 			m_this = baseObj;
 			m_cache = cache;

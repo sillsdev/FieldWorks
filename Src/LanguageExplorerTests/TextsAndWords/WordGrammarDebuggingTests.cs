@@ -11,7 +11,7 @@ using System.Xml.Xsl;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.WordWorks.Parser;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 
 namespace LanguageExplorerTests.TextsAndWords
 {

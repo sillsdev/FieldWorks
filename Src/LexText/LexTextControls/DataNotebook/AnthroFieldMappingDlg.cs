@@ -8,13 +8,13 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Reflection;
 using System.Windows.Forms;
-using SIL.CoreImpl.Cellar;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 
 namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 {
@@ -23,7 +23,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 	/// ----------------------------------------------------------------------------------------
 	public partial class AnthroFieldMappingDlg : Form
 	{
-		FdoCache m_cache;
+		LcmCache m_cache;
 		private IHelpTopicProvider m_helpTopicProvider;
 		private IApp m_app;
 		IFwMetaDataCacheManaged m_mdc;
@@ -104,7 +104,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 			//m_sOptionsGroupFmt = m_groupOptions.Text;
 		}
 
-		public void Initialize(FdoCache cache, IHelpTopicProvider helpTopicProvider, IApp app,
+		public void Initialize(LcmCache cache, IHelpTopicProvider helpTopicProvider, IApp app,
 			NotebookImportWiz.RnSfMarker rsf, Sfm2Xml.SfmFile sfmFile,
 			Dictionary<int, string> mapFlidName, IVwStylesheet stylesheet,
 			IPropertyTable propertyTable, IPublisher publisher)

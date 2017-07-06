@@ -12,12 +12,10 @@ using NUnit.Framework;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.FwCoreDlgControls;
 using SIL.FieldWorks.XWorks.DictionaryDetailsView;
-using SIL.Utils;
-
-// ReSharper disable InconsistentNaming
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -27,7 +25,7 @@ namespace SIL.FieldWorks.XWorks
 	{
 		private IPropertyTable m_propertyTable;
 		private Mediator m_mediator;
-		private FwStyleSheet m_styleSheet;
+		private LcmStyleSheet m_styleSheet;
 		private DictionaryDetailsController m_staticDDController; // for testing methods that would be static if not for m_propertyTable
 
 		#region IDisposable

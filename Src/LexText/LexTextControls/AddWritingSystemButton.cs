@@ -8,12 +8,12 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using SIL.CoreImpl.WritingSystems;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.FwCoreDlgs;
 
 namespace SIL.FieldWorks.LexText.Controls
@@ -25,7 +25,7 @@ namespace SIL.FieldWorks.LexText.Controls
 	/// ----------------------------------------------------------------------------------------
 	public partial class AddWritingSystemButton : Button
 	{
-		FdoCache m_cache;
+		LcmCache m_cache;
 		private HashSet<string> m_existingWsIds;
 		public event EventHandler WritingSystemAdded;
 		CoreWritingSystemDefinition m_wsNew;
@@ -71,7 +71,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="helpTopicProvider">The help topic provider.</param>
 		/// <param name="app">The app.</param>
 		/// <param name="wss">The writing systems already displayed.</param>
-		public void Initialize(FdoCache cache, IHelpTopicProvider helpTopicProvider, IApp app,
+		public void Initialize(LcmCache cache, IHelpTopicProvider helpTopicProvider, IApp app,
 			 IEnumerable<CoreWritingSystemDefinition> wss)
 		{
 			CheckDisposed();
@@ -84,7 +84,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <summary>
 		/// Initialize for adding new writing systems.
 		/// </summary>
-		internal void Initialize(FdoCache cache, IHelpTopicProvider helpTopicProvider, IApp app)
+		internal void Initialize(LcmCache cache, IHelpTopicProvider helpTopicProvider, IApp app)
 		{
 			Initialize(cache, helpTopicProvider, m_app, cache.ServiceLocator.WritingSystems.AllWritingSystems);
 		}

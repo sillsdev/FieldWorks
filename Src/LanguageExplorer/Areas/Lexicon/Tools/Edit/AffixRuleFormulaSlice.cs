@@ -4,7 +4,7 @@
 
 using System.Collections.Generic;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 {

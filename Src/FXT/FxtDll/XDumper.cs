@@ -9,18 +9,18 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Collections;
 using System.Collections.Generic;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.Application.ApplicationServices;
-using SIL.Utils;
+using SIL.LCModel;
+using SIL.LCModel.Application;
+using SIL.LCModel.Application.ApplicationServices;
+using SIL.LCModel.Utils;
 using System.Text;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel.Infrastructure;
+using SIL.LCModel.DomainServices;
 using System.Linq;
-using SIL.CoreImpl.Cellar;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.WritingSystems;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.Xml;
 
@@ -51,7 +51,7 @@ namespace SIL.FieldWorks.Common.FXT
 		public event EventHandler<ProgressMessageArgs> SetProgressMessage;
 
 		private XmlDocument m_fxtDocument;
-		protected FdoCache m_cache;
+		protected LcmCache m_cache;
 		private IFwMetaDataCacheManaged m_mdc;
 		protected string m_format; //"xml", "sf"
 		protected XmlNode m_templateRootNode;
@@ -148,7 +148,7 @@ namespace SIL.FieldWorks.Common.FXT
 		/// Initializes a new instance of the <see cref="XDumper"/> class.
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
-		public XDumper(FdoCache cache)
+		public XDumper(LcmCache cache)
 		{
 			m_cache = cache;
 			m_mdc = m_cache.ServiceLocator.GetInstance<IFwMetaDataCacheManaged>();

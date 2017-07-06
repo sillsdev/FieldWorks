@@ -1,10 +1,6 @@
-// Copyright (c) 2004-2013 SIL International
+// Copyright (c) 2004-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: .cs
-// History: John Hatton, created
-// Last reviewed:
 //
 // <remarks>
 //	At the moment (July 2004), the only instances of this class do filtering in memory.
@@ -39,18 +35,18 @@
 // is set, or there was an original filter defining the list, we further combine all the filters
 // using an AndFilter.
 // </remarks>
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Xml.Linq;
-using SIL.Utils;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.WritingSystems;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.WritingSystems;
 using SIL.Xml;
@@ -119,7 +115,7 @@ namespace SIL.FieldWorks.Filters
 	/// Summary description for RecordFilter.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public abstract class RecordFilter : IPersistAsXml, IStoresFdoCache, IStoresDataAccess
+	public abstract class RecordFilter : IPersistAsXml, IStoresLcmCache, IStoresDataAccess
 	{
 
 		/// <summary></summary>
@@ -145,9 +141,9 @@ namespace SIL.FieldWorks.Filters
 		/// <param name="obj">The obj.</param>
 		/// <param name="cache">The cache.</param>
 		/// ------------------------------------------------------------------------------------
-		internal void SetCache(object obj, FdoCache cache)
+		internal void SetCache(object obj, LcmCache cache)
 		{
-			var sfc = obj as IStoresFdoCache;
+			var sfc = obj as IStoresLcmCache;
 			if (sfc != null)
 				sfc.Cache = cache;
 		}
@@ -249,7 +245,7 @@ namespace SIL.FieldWorks.Filters
 		/// <param name="configuration">The configuration.</param>
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
-		static public RecordFilter Create(FdoCache cache, XElement configuration)
+		static public RecordFilter Create(LcmCache cache, XElement configuration)
 		{
 			var filter = (RecordFilter)DynamicLoader.CreateObject(configuration);
 			filter.Init(cache, configuration);
@@ -263,7 +259,7 @@ namespace SIL.FieldWorks.Filters
 		/// <param name="cache">The cache.</param>
 		/// <param name="filterNode">The filter node.</param>
 		/// ------------------------------------------------------------------------------------
-		public virtual void Init(FdoCache cache, XElement filterNode)
+		public virtual void Init(LcmCache cache, XElement filterNode)
 		{
 		}
 
@@ -327,14 +323,14 @@ namespace SIL.FieldWorks.Filters
 
 		#endregion
 
-		#region IStoresFdoCache
+		#region IStoresLcmCache
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Set the cache.
 		/// </summary>
 		/// <value></value>
 		/// ------------------------------------------------------------------------------------
-		public virtual FdoCache Cache
+		public virtual LcmCache Cache
 		{
 			set
 			{
@@ -363,7 +359,7 @@ namespace SIL.FieldWorks.Filters
 		/// <summary></summary>
 		protected List<int> m_classIds;
 
-		private FdoCache m_cache;
+		private LcmCache m_cache;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -412,7 +408,7 @@ namespace SIL.FieldWorks.Filters
 			get { return m_classIds; }
 		}
 
-		public override FdoCache Cache
+		public override LcmCache Cache
 		{
 			set
 			{
@@ -427,7 +423,7 @@ namespace SIL.FieldWorks.Filters
 		/// <param name="cache"></param>
 		/// <param name="filterNode"></param>
 		/// ------------------------------------------------------------------------------------
-		public override void Init(FdoCache cache, XElement filterNode)
+		public override void Init(LcmCache cache, XElement filterNode)
 		{
 			base.Init(cache, filterNode);
 			m_cache = cache;
@@ -506,7 +502,7 @@ namespace SIL.FieldWorks.Filters
 	/// <summary>
 	/// This is a base class for matchers; so far it just implements storing the label.
 	/// </summary>
-	public abstract class BaseMatcher : IMatcher, IPersistAsXml, IStoresFdoCache
+	public abstract class BaseMatcher : IMatcher, IPersistAsXml, IStoresLcmCache
 	{
 		private ITsString m_tssLabel;
 		// Todo: get this initialized somehow.
@@ -600,13 +596,13 @@ namespace SIL.FieldWorks.Filters
 
 		#endregion
 
-		#region Implementation of IStoresFdoCache
+		#region Implementation of IStoresLcmCache
 
 		/// <summary>
 		/// Set the cache. This may be used on initializers which only optionally pass
 		/// information on to a child object, so there is no getter.
 		/// </summary>
-		public virtual FdoCache Cache
+		public virtual LcmCache Cache
 		{
 			set
 			{
@@ -968,7 +964,7 @@ namespace SIL.FieldWorks.Filters
 		/// The Cache property finishes the initialization that was started with InitXML
 		/// We wait until here because the cache is needed to get the writing system
 		/// </summary>
-		public override FdoCache Cache
+		public override LcmCache Cache
 		{
 			set
 			{
@@ -999,7 +995,7 @@ namespace SIL.FieldWorks.Filters
 		/// After setting the Pattern (TsString) of the VwPattern, once we have a cache, we can figure out the locale
 		/// and sort rules to use based on the WS of the pattern string.
 		/// </summary>
-		public static void SetupPatternCollating(IVwPattern pattern, FdoCache cache)
+		public static void SetupPatternCollating(IVwPattern pattern, LcmCache cache)
 		{
 			pattern.IcuLocale = cache.ServiceLocator.WritingSystemFactory.GetStrFromWs(pattern.Pattern.get_WritingSystem(0));
 			CoreWritingSystemDefinition ws = cache.ServiceLocator.WritingSystemManager.Get(pattern.IcuLocale);
@@ -1193,7 +1189,7 @@ namespace SIL.FieldWorks.Filters
 		}
 
 		/// <summary />
-		public override FdoCache Cache
+		public override LcmCache Cache
 		{
 			set
 			{
@@ -1364,7 +1360,7 @@ namespace SIL.FieldWorks.Filters
 	/// <summary>
 	/// Matches if the embedded matcher fails.
 	/// </summary>
-	public class InvertMatcher : BaseMatcher, IStoresFdoCache, IStoresDataAccess
+	public class InvertMatcher : BaseMatcher, IStoresLcmCache, IStoresDataAccess
 	{
 		IMatcher m_matcher;
 
@@ -1436,14 +1432,14 @@ namespace SIL.FieldWorks.Filters
 			m_matcher = DynamicLoader.RestoreFromChild(node, "invertMatcher") as IMatcher;
 		}
 
-		#region IStoresFdoCache Members
+		#region IStoresLcmCache Members
 
-		FdoCache IStoresFdoCache.Cache
+		LcmCache IStoresLcmCache.Cache
 		{
 			set
 			{
-				if (m_matcher is IStoresFdoCache)
-					(m_matcher as IStoresFdoCache).Cache = value;
+				if (m_matcher is IStoresLcmCache)
+					(m_matcher as IStoresLcmCache).Cache = value;
 			}
 		}
 
@@ -1524,7 +1520,7 @@ namespace SIL.FieldWorks.Filters
 	///
 	/// </summary>
 	//------------------------------------------------------------------------------------------
-	public abstract class StringFinderBase : IStringFinder, IPersistAsXml, IStoresFdoCache
+	public abstract class StringFinderBase : IStringFinder, IPersistAsXml, IStoresLcmCache
 	{
 		/// <summary></summary>
 		protected ISilDataAccess m_sda;
@@ -1639,7 +1635,7 @@ namespace SIL.FieldWorks.Filters
 
 		#endregion
 
-		#region IStoresFdoCache
+		#region IStoresLcmCache
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Set the cache. This may be used on initializers which only optionally pass
@@ -1647,7 +1643,7 @@ namespace SIL.FieldWorks.Filters
 		/// </summary>
 		/// <value></value>
 		/// ------------------------------------------------------------------------------------
-		public FdoCache Cache
+		public LcmCache Cache
 		{
 			set
 			{
@@ -2456,7 +2452,7 @@ namespace SIL.FieldWorks.Filters
 		/// </summary>
 		/// <value></value>
 		/// ------------------------------------------------------------------------------------------
-		public override FdoCache Cache
+		public override LcmCache Cache
 		{
 			set
 			{
@@ -2609,7 +2605,7 @@ namespace SIL.FieldWorks.Filters
 		/// </summary>
 		/// <value></value>
 		/// ------------------------------------------------------------------------------------------
-		public override FdoCache Cache
+		public override LcmCache Cache
 		{
 			set
 			{

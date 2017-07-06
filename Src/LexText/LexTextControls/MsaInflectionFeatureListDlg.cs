@@ -9,11 +9,11 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using SIL.CoreImpl.Cellar;
+using SIL.LCModel.Core.Cellar;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using SIL.Windows.Forms;
 
 namespace SIL.FieldWorks.LexText.Controls
@@ -24,7 +24,7 @@ namespace SIL.FieldWorks.LexText.Controls
 	public class MsaInflectionFeatureListDlg : Form
 	{
 		private IPropertyTable m_propertyTable;
-		protected FdoCache m_cache;
+		protected LcmCache m_cache;
 		// The dialog can be initialized with an existing feature structure,
 		// or just with an owning object and flid in which to create one.
 		private IFsFeatStruc m_fs;
@@ -122,11 +122,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// might get deleted if it proves to be a duplicate. Retrieve the new FS after running it.
 		/// This constructor is used in MsaInflectionFeatureListDlgLauncher.HandleChooser.
 		/// </summary>
-		/// <param name="cache"></param>
-		/// <param name="propertyTable"></param>
-		/// <param name="fs"></param>
-		/// <param name="owningFlid"></param>
-		public void SetDlgInfo(FdoCache cache, IPropertyTable propertyTable, IFsFeatStruc fs, int owningFlid)
+		public void SetDlgInfo(LcmCache cache, IPropertyTable propertyTable, IFsFeatStruc fs, int owningFlid)
 		{
 			CheckDisposed();
 
@@ -165,11 +161,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <summary>
 		/// Init the dialog with an MSA and flid that does not yet contain a feature structure.
 		/// </summary>
-		/// <param name="cache"></param>
-		/// <param name="propertyTable"></param>
-		/// <param name="cobj"></param>
-		/// <param name="owningFlid"></param>
-		public void SetDlgInfo(FdoCache cache, IPropertyTable propertyTable, ICmObject cobj, int owningFlid)
+		public void SetDlgInfo(LcmCache cache, IPropertyTable propertyTable, ICmObject cobj, int owningFlid)
 		{
 			CheckDisposed();
 
@@ -189,10 +181,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// Eventually we want to make a new field for this purpose. (This is used by bulk edit
 		/// to store previously used feature structures.)
 		/// </summary>
-		/// <param name="cache"></param>
-		/// <param name="propertyTable"></param>
-		/// <param name="pos"></param>
-		public void SetDlgInfo(FdoCache cache, IPropertyTable propertyTable, IPartOfSpeech pos)
+		public void SetDlgInfo(LcmCache cache, IPropertyTable propertyTable, IPartOfSpeech pos)
 		{
 			SetDlgInfo(cache, propertyTable, pos, PartOfSpeechTags.kflidReferenceForms);
 		}

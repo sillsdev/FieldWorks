@@ -7,9 +7,9 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using Gecko;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.Windows.Forms.HtmlBrowser;
 using SIL.Xml;
 
@@ -169,7 +169,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if (IsDisposed)
 				return true; // no longer necessary to refresh the view
-			var ui = Cache.ServiceLocator.GetInstance<IFdoUI>();
+			var ui = Cache.ServiceLocator.GetInstance<ILcmUI>();
 			if (ui != null && DateTime.Now - ui.LastActivityTime < TimeSpan.FromMilliseconds(400))
 				return false; // Don't interrupt a user who is busy typing. Wait for a pause to refresh the view.
 			ShowRecord();

@@ -7,11 +7,11 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Diagnostics;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO;
-using SIL.Utils;
+using SIL.LCModel;
+using SIL.LCModel.Utils;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.CoreImpl.Text;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
 
 namespace LanguageExplorer.Areas.Lexicon
 {
@@ -21,7 +21,7 @@ namespace LanguageExplorer.Areas.Lexicon
 	internal sealed class SwapLexemeWithAllomorphDlg : Form
 	{
 		private FwTextBox m_fwTextBoxBottomMsg;
-		private FdoCache m_cache;
+		private LcmCache m_cache;
 		private ILexEntry m_entry;
 		private IMoForm m_allomorph;
 		private IPropertyTable m_propertyTable;
@@ -91,10 +91,7 @@ namespace LanguageExplorer.Areas.Lexicon
 		/// <summary>
 		/// Set up the dlg in preparation to showing it.
 		/// </summary>
-		/// <param name="cache">FDO cache.</param>
-		/// <param name="propertyTable"></param>
-		/// <param name="entry">LexEntry</param>
-		public void SetDlgInfo(FdoCache cache, IPropertyTable propertyTable, ILexEntry entry)
+		public void SetDlgInfo(LcmCache cache, IPropertyTable propertyTable, ILexEntry entry)
 		{
 			CheckDisposed();
 

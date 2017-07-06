@@ -13,14 +13,14 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Xml;
 using SIL.Lift.Parsing;
-using SIL.CoreImpl.Cellar;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.WritingSystems;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.Utils;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Utils;
 using SIL.WritingSystems;
 using SIL.Xml;
 
@@ -119,7 +119,7 @@ namespace SIL.FieldWorks.LexText.Controls
 										 m_dictLexRefTypes);
 		}
 
-		private void InitializePossibilityMap(IFdoOwningSequence<ICmPossibility> possibilities,
+		private void InitializePossibilityMap(ILcmOwningSequence<ICmPossibility> possibilities,
 			Dictionary<string, ICmPossibility> dict)
 		{
 			if (possibilities == null)
@@ -181,7 +181,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// </summary>
 		/// <param name="possibilities"></param>
 		/// <param name="dict"></param>
-		private void EnhancePossibilityMapForWeSay(IFdoOwningSequence<ICmPossibility> possibilities,
+		private void EnhancePossibilityMapForWeSay(ILcmOwningSequence<ICmPossibility> possibilities,
 			Dictionary<string, ICmPossibility> dict)
 		{
 			foreach (ICmPossibility poss in possibilities)
@@ -257,7 +257,7 @@ namespace SIL.FieldWorks.LexText.Controls
 						{
 							string sPath = Path.Combine(Path.GetDirectoryName(m_sLiftFile),
 								String.Format("audio{0}{1}", Path.DirectorySeparatorChar, form));
-							CopyFileToLinkedFiles(form, sPath, FdoFileHelper.ksMediaDir);
+							CopyFileToLinkedFiles(form, sPath, LcmFileHelper.ksMediaDir);
 						}
 						else
 						{
@@ -341,7 +341,7 @@ namespace SIL.FieldWorks.LexText.Controls
 						{
 							string sPath = Path.Combine(Path.GetDirectoryName(m_sLiftFile),
 								String.Format("audio{0}{1}", Path.DirectorySeparatorChar, tss.Text));
-							CopyFileToLinkedFiles(tss.Text, sPath, FdoFileHelper.ksMediaDir);
+							CopyFileToLinkedFiles(tss.Text, sPath, LcmFileHelper.ksMediaDir);
 						}
 					}
 				}
@@ -385,7 +385,7 @@ namespace SIL.FieldWorks.LexText.Controls
 						|| linkPath.StartsWith("others" + Path.DirectorySeparatorChar))
 					{
 						linkPath = CopyFileToLinkedFiles(linkPath.Substring("others/".Length), sPath,
-							FdoFileHelper.ksOtherLinkedFilesDir);
+							LcmFileHelper.ksOtherLinkedFilesDir);
 					}
 					char chOdt = Convert.ToChar((int)FwObjDataTypes.kodtExternalPathName);
 					string sRef = chOdt.ToString() + linkPath;
@@ -813,7 +813,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="tss">The string.</param>
 		/// <param name="cache">The cache.</param>
 		/// <returns></returns>
-		public string TsStringAsHtml(ITsString tss, FdoCache cache)
+		public string TsStringAsHtml(ITsString tss, LcmCache cache)
 		{
 			StringBuilder sb = new StringBuilder();
 			int crun = tss.RunCount;
@@ -938,7 +938,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// move it from ImportResidue to LiftResidue.
 		/// </summary>
 		/// <returns>string containing any LIFT import residue found in ImportResidue</returns>
-		private static string ExtractLIFTResidue(FdoCache cache, int hvo, int flidImportResidue,
+		private static string ExtractLIFTResidue(LcmCache cache, int hvo, int flidImportResidue,
 			int flidLiftResidue)
 		{
 			Debug.Assert(flidLiftResidue != 0);
@@ -2149,7 +2149,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="label">safe-XML</param>
 		/// <param name="abbrev">safe-XML</param>
 		/// <returns></returns>
-		ICmPossibility FindMatchingPossibility(IFdoOwningSequence<ICmPossibility> possibilities,
+		ICmPossibility FindMatchingPossibility(ILcmOwningSequence<ICmPossibility> possibilities,
 			LiftMultiText label, LiftMultiText abbrev)
 		{
 			IgnoreNewWs();
@@ -2343,7 +2343,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		}
 
 		private IMoInflClass FindMatchingInflectionClass(string parent,
-			IFdoOwningCollection<IMoInflClass> collection, Dictionary<string, IMoInflClass> dict)
+			ILcmOwningCollection<IMoInflClass> collection, Dictionary<string, IMoInflClass> dict)
 		{
 			foreach (IMoInflClass infl in collection)
 			{
@@ -2360,7 +2360,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		}
 
 		private ICmPossibility FindMatchingPossibility(string sVal,
-			IFdoOwningSequence<ICmPossibility> possibilities,
+			ILcmOwningSequence<ICmPossibility> possibilities,
 			Dictionary<string, ICmPossibility> dict)
 		{
 			foreach (ICmPossibility poss in possibilities)
@@ -2936,18 +2936,18 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="complexEntryTypes"></param>
 		/// <param name="referenceCollection"></param>
 		/// <param name="lexEntryRef"></param>
-		private void AdjustCollectionContents<T>(List<T> complexEntryTypes, IFdoReferenceSequence<T> referenceCollection, ILexEntryRef lexEntryRef) where T : class, ICmObject
+		private void AdjustCollectionContents<T>(List<T> complexEntryTypes, ILcmReferenceSequence<T> referenceCollection, ILexEntryRef lexEntryRef) where T : class, ICmObject
 		{
 			AdjustCollectionContents(complexEntryTypes, referenceCollection,
 									 lexEntryRef.VariantEntryTypesRS.Count == 0 ? LexTextControls.ksComplexFormType : LexTextControls.ksVariantType, lexEntryRef.Owner);
 		}
-		private void AdjustCollectionContents<T>(List<T> complexEntryTypes, IFdoReferenceSequence<T> referenceCollection, ILexReference lexEntryRef) where T : class, ICmObject
+		private void AdjustCollectionContents<T>(List<T> complexEntryTypes, ILcmReferenceSequence<T> referenceCollection, ILexReference lexEntryRef) where T : class, ICmObject
 		{
 			AdjustCollectionContents(complexEntryTypes, referenceCollection,
 									 lexEntryRef.TypeAbbreviation(m_cache.DefaultVernWs, lexEntryRef), referenceCollection.First());
 		}
 
-		private void AdjustCollectionContents<T>(List<T> complexEntryTypes, IFdoReferenceSequence<T> referenceCollection, string typeName, ICmObject owner) where T : class, ICmObject
+		private void AdjustCollectionContents<T>(List<T> complexEntryTypes, ILcmReferenceSequence<T> referenceCollection, string typeName, ICmObject owner) where T : class, ICmObject
 		{
 			if (referenceCollection.Count != complexEntryTypes.Count)
 			{
@@ -4519,10 +4519,10 @@ namespace SIL.FieldWorks.LexText.Controls
 			protected Guid m_guid;
 			protected int m_flid;
 			int m_ws;
-			protected FdoCache m_cache;
+			protected LcmCache m_cache;
 			private FlexLiftMerger m_merger;
 
-			internal PendingErrorReport(Guid guid, int flid, int ws, FdoCache cache, FlexLiftMerger merger)
+			internal PendingErrorReport(Guid guid, int flid, int ws, LcmCache cache, FlexLiftMerger merger)
 			{
 				m_guid = guid;
 				m_flid = flid;
@@ -4614,7 +4614,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			string m_sMsg;
 			string m_sValue;
 
-			public InvalidData(string sMsg, Guid guid, int flid, string val, int ws, FdoCache cache, FlexLiftMerger merger)
+			public InvalidData(string sMsg, Guid guid, int flid, string val, int ws, LcmCache cache, FlexLiftMerger merger)
 				: base(guid, flid, ws, cache, merger)
 			{
 				m_sMsg = sMsg;
@@ -4654,7 +4654,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			PendingLexEntryRef m_pendRef;
 
-			public InvalidRelation(PendingLexEntryRef pend, FdoCache cache, FlexLiftMerger merger)
+			public InvalidRelation(PendingLexEntryRef pend, LcmCache cache, FlexLiftMerger merger)
 				: base(pend.CmObject.Guid, 0, 0, cache, merger)
 			{
 				m_pendRef = pend;
@@ -4699,7 +4699,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 
 			private ICmObject _cmObject;
-			public CombinedCollection(ICmObject owner, FdoCache cache, FlexLiftMerger merger)
+			public CombinedCollection(ICmObject owner, LcmCache cache, FlexLiftMerger merger)
 				: base(owner.Guid, 0, 0, cache, merger)
 			{
 				_cmObject = owner;

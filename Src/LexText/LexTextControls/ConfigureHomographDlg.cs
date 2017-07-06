@@ -8,9 +8,9 @@ using System.Linq;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainImpl;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel;
+using SIL.LCModel.DomainImpl;
+using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.FwCoreDlgs;
 
 namespace SIL.FieldWorks.LexText.Controls
@@ -23,8 +23,8 @@ namespace SIL.FieldWorks.LexText.Controls
 		}
 
 		private HomographConfiguration m_homographConfiguration;
-		private FdoCache m_cache;
-		FwStyleSheet m_stylesheet;
+		private LcmCache m_cache;
+		LcmStyleSheet m_stylesheet;
 		private IFlexApp m_app;
 		private IHelpTopicProvider m_helpTopicProvider;
 		protected HelpProvider m_helpProvider;
@@ -33,7 +33,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private bool m_masterRefreshRequired;
 
-		public void SetupDialog(HomographConfiguration hc, FdoCache cache, FwStyleSheet stylesheet, IFlexApp app,
+		public void SetupDialog(HomographConfiguration hc, LcmCache cache, LcmStyleSheet stylesheet, IFlexApp app,
 			IHelpTopicProvider helpTopicProvider)
 		{
 			SetHelpTopic("khtpConfigureHeadwordNumbers"); // Default help topic ID
@@ -154,7 +154,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				if (dlg.ShowDialog(this) == DialogResult.OK && dlg.ChangeType != StyleChangeType.None)
 				{
 					m_app.Synchronize(SyncMsg.ksyncStyle);
-					FwStyleSheet stylesheet = new FwStyleSheet();
+					LcmStyleSheet stylesheet = new LcmStyleSheet();
 					stylesheet.Init(m_cache, m_cache.LangProject.Hvo, LangProjectTags.kflidStyles);
 					m_stylesheet = stylesheet;
 					m_masterRefreshRequired = true;

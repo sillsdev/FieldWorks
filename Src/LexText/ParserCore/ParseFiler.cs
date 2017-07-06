@@ -7,9 +7,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Application;
+using SIL.LCModel.Infrastructure;
 
 namespace SIL.FieldWorks.WordWorks.Parser
 {
@@ -47,7 +47,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		#region Data members
 
-		private readonly FdoCache m_cache;
+		private readonly LcmCache m_cache;
 		private readonly Action<TaskReport> m_taskUpdateHandler;
 		private readonly IdleQueue m_idleQueue;
 		private readonly ICmAgent m_parserAgent;
@@ -75,7 +75,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		/// <param name="taskUpdateHandler">The task update handler.</param>
 		/// <param name="idleQueue">The idle queue.</param>
 		/// <param name="parserAgent">The parser agent.</param>
-		public ParseFiler(FdoCache cache, Action<TaskReport> taskUpdateHandler, IdleQueue idleQueue, ICmAgent parserAgent)
+		public ParseFiler(LcmCache cache, Action<TaskReport> taskUpdateHandler, IdleQueue idleQueue, ICmAgent parserAgent)
 		{
 			Debug.Assert(cache != null);
 			Debug.Assert(taskUpdateHandler != null);
@@ -89,7 +89,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			m_workQueue = new Queue<WordformUpdateWork>();
 			m_syncRoot = new object();
 
-			IFdoServiceLocator servLoc = cache.ServiceLocator;
+			ILcmServiceLocator servLoc = cache.ServiceLocator;
 			m_analysisFactory = servLoc.GetInstance<IWfiAnalysisFactory>();
 			m_mbFactory = servLoc.GetInstance<IWfiMorphBundleFactory>();
 			m_baseAnnotationRepository = servLoc.GetInstance<ICmBaseAnnotationRepository>();

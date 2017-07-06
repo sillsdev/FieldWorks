@@ -8,13 +8,13 @@ using System.Diagnostics;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.FDO.Application;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
+using SIL.LCModel.Application;
 using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.CoreImpl.Cellar;
-using SIL.CoreImpl.Text;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
@@ -45,7 +45,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			int ws = 0;
 			if (m_rootObj != null && m_rootObj.IsValidObject)
 			{
-				ILgWritingSystemFactory wsf = m_fdoCache.WritingSystemFactory;
+				ILgWritingSystemFactory wsf = m_cache.WritingSystemFactory;
 				int count = m_sda.get_VecSize(m_rootObj.Hvo, m_rootFlid);
 				// This loop is mostly redundant now that the decorator will generate labels itself as needed.
 				// It still serves the purpose of figuring out the WS that should be used for the 'fake' item where the user
@@ -60,18 +60,18 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				if (ws == 0)
 				{
 					var list = (ICmPossibilityList) m_rootObj.ReferenceTargetOwner(m_rootFlid);
-					ws = list.IsVernacular ? m_fdoCache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle
-						 : m_fdoCache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle;
+					ws = list.IsVernacular ? m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle
+						 : m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle;
 					if (list.PossibilitiesOS.Count > 0)
 					{
-						ObjectLabel label = ObjectLabel.CreateObjectLabel(m_fdoCache, list.PossibilitiesOS[0], m_displayNameProperty, m_displayWs);
+						ObjectLabel label = ObjectLabel.CreateObjectLabel(m_cache, list.PossibilitiesOS[0], m_displayNameProperty, m_displayWs);
 						ws = label.AsTss.get_WritingSystem(0);
 					}
 				}
 			}
 
 			if (ws == 0)
-				ws = m_fdoCache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle;
+				ws = m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle;
 			m_sda.Strings[khvoFake] = TsStringUtils.EmptyString(ws);
 			base.ReloadVector();
 		}
@@ -82,15 +82,15 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		protected override VectorReferenceVc CreateVectorReferenceVc()
 		{
-			return new PossibilityVectorReferenceVc(m_fdoCache, m_rootFlid, m_displayNameProperty, m_displayWs);
+			return new PossibilityVectorReferenceVc(m_cache, m_rootFlid, m_displayNameProperty, m_displayWs);
 		}
 
 		protected override ISilDataAccess GetDataAccess()
 		{
 			if (m_sda == null)
 			{
-				m_sda = new SdaDecorator((ISilDataAccessManaged) m_fdoCache.DomainDataByFlid, m_fdoCache, m_displayNameProperty, m_displayWs);
-				m_sda.Empty = TsStringUtils.EmptyString(m_fdoCache.DefaultAnalWs);
+				m_sda = new SdaDecorator((ISilDataAccessManaged) m_cache.DomainDataByFlid, m_cache, m_displayNameProperty, m_displayWs);
+				m_sda.Empty = TsStringUtils.EmptyString(m_cache.DefaultAnalWs);
 			}
 			return m_sda;
 		}
@@ -182,7 +182,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// </summary>
 		internal class SdaDecorator : DomainDataByFlidDecoratorBase
 		{
-			private FdoCache Cache { get; set; }
+			private LcmCache Cache { get; set; }
 			private string DisplayNameProperty { get; set; }
 			private string DisplayWs { get; set; }
 			private readonly Dictionary<int, ITsString> m_strings;
@@ -191,7 +191,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			/// </summary>
 			public ITsString Empty;
 
-			public SdaDecorator(ISilDataAccessManaged domainDataByFlid, FdoCache cache, string displayNameProperty, string displayWs)
+			public SdaDecorator(ISilDataAccessManaged domainDataByFlid, LcmCache cache, string displayNameProperty, string displayWs)
 				: base(domainDataByFlid)
 			{
 				SetOverrideMdc(new MdcDecorator((IFwMetaDataCacheManaged) domainDataByFlid.MetaDataCache));
@@ -244,7 +244,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			}
 		}
 
-		private class MdcDecorator : FdoMetaDataCacheDecoratorBase
+		private class MdcDecorator : LcmMetaDataCacheDecoratorBase
 		{
 			public MdcDecorator(IFwMetaDataCacheManaged mdc)
 				: base(mdc)
@@ -274,7 +274,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 	/// </summary>
 	public class PossibilityVectorReferenceVc : VectorReferenceVc
 	{
-		public PossibilityVectorReferenceVc(FdoCache cache, int flid, string displayNameProperty, string displayWs)
+		public PossibilityVectorReferenceVc(LcmCache cache, int flid, string displayNameProperty, string displayWs)
 			: base(cache, flid, displayNameProperty, displayWs)
 		{
 		}

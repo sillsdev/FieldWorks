@@ -4,11 +4,11 @@
 
 using System.Xml.Linq;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.XWorks;
+using SIL.LCModel;
+using SIL.LCModel.Application;
 
 namespace LanguageExplorer.Areas.Grammar.Tools.BulkEditPhonemes
 {
@@ -55,7 +55,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.BulkEditPhonemes
 
 		#endregion
 
-		protected override BrowseViewer CreateBrowseViewer(XElement nodeSpec, int hvoRoot, FdoCache cache,
+		protected override BrowseViewer CreateBrowseViewer(XElement nodeSpec, int hvoRoot, LcmCache cache,
 			ISortItemProvider sortItemProvider, ISilDataAccessManaged sda)
 		{
 			return new BrowseViewerPhonologicalFeatures(nodeSpec, hvoRoot, cache, sortItemProvider, sda);

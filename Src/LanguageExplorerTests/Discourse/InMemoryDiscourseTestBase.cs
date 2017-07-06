@@ -3,8 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using LanguageExplorer.Areas.TextsAndWords.Discourse;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.FDOTests;
+using SIL.LCModel;
 
 namespace LanguageExplorerTests.Discourse
 {

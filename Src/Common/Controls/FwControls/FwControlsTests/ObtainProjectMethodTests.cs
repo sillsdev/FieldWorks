@@ -8,7 +8,7 @@ using System.Reflection;
 using System.Xml;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -159,7 +159,7 @@ namespace SIL.FieldWorks.Common.Controls
 															ObtainProjectMethod.ImportLexiconClass);
 			Assert.NotNull(type, "Class used for ImportObtainedLexicon moved.");
 			var method = type.GetMethod(ObtainProjectMethod.ImportLexiconMethod,
-												 new[] { typeof(FdoCache), typeof(string), typeof(System.Windows.Forms.Form) });
+												 new[] { typeof(LcmCache), typeof(string), typeof(System.Windows.Forms.Form) });
 			Assert.NotNull(method, "Method name changed, or parameters changed.");
 		}
 #endif

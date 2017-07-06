@@ -6,7 +6,7 @@ using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.CoreImpl.Text;
+using SIL.LCModel.Core.Text;
 
 namespace SIL.FieldWorks.Views
 {

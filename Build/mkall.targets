@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="14.0">
-
 	<!-- Make all of FieldWorks. -->
 	<Target Name="mkall" DependsOnTargets="CopyDlls;initLinux;initWindows;LinuxRegistry;allCpp;allCsharp;ensureTLBsUpToDate">
 		<Message Text="Finished mkall Target."/>
@@ -158,20 +157,22 @@
 		<Message Text="Finished building testViews and running tests." Condition="'$(action)'=='test'"/>
 	</Target>
 
+	<UsingTask TaskName="LcmGenerate" AssemblyFile="$(DownloadsDir)/LCM/SIL.LCModel.Build.Tasks.dll"/>
+
 	<ItemGroup>
-		<CellarConstantsInputs Include="$(fwrt)/Src/FDO/MasterFieldWorksModel.xml"/>
-		<CellarConstantsInputs Include="$(fwrt)/Src/FDO/FDOGenerate/CellarConstants.vm.h"/>
+		<CellarConstantsInputs Include="$(DownloadsDir)/LCM/MasterLCModel.xml"/>
+		<CellarConstantsInputs Include="$(fwrt)/Src/Kernel/CellarConstants.vm.h"/>
 		<CellarConstantsOutputs Include="$(fwrt)/Output/Common/CellarConstants.h"/>
 	</ItemGroup>
 
 	<Target Name="GenerateCellarConstants" DependsOnTargets="CopyCellarBaseConstants"
 			Inputs="@(CellarConstantsInputs)" Outputs="@(CellarConstantsOutputs)">
 		<MakeDir Directories="$(dir-fwoutputCommon)" Condition="'$(action)'!='clean'"/>
-		<FdoGenerate XmlFile="$(fwrt)/Src/FDO/MasterFieldWorksModel.xml"
+		<LcmGenerate XmlFile="$(DownloadsDir)/LCM/MasterLCModel.xml"
 					 OutputDir="$(dir-fwoutputCommon)"
 					 OutputFile="CellarConstants.h"
-					 TemplateFile="$(fwrt)/Src/FDO/FDOGenerate/CellarConstants.vm.h"
-					 WorkingDirectory="$(fwrt)/Src/FDO"
+					 TemplateFile="$(fwrt)/Src/Kernel/CellarConstants.vm.h"
+					 WorkingDirectory="$(DownloadsDir)/LCM/"
 					 Condition="'$(action)'!='clean'"/>
 	</Target>
 
@@ -212,7 +213,7 @@
 		<SetEnvVar Variable="ANAL_TYPE" Value="$(Original-ANAL_TYPE)" />
 	</Target>
 
-	<Target Name="remakefw-internal" DependsOnTargets="CleanAll;Initialize;setRegistryValues;ensureTLBsUpToDate;CopyDlls;IcuData;mkall"/>
+	<Target Name="remakefw-internal" DependsOnTargets="CleanAll;Initialize;setRegistryValues;CopyDlls;ensureTLBsUpToDate;mkall"/>
 
 	<Target Name="remakefw" DependsOnTargets="remakefw-internal">
 		<Error Condition="'@(FailedSuites)'!=''" Text="The following projects had failing tests: @(FailedSuites)" />
@@ -231,10 +232,7 @@
 		<GeneratedFiles Include="$(fwrt)/Build/packages.config"/>
 		<GeneratedFiles Include="$(fwrt)/Src/**/Collection.cpp"/>
 		<GeneratedFiles Include="$(fwrt)/Src/**/asserts.log"/>
-		<GeneratedFiles Include="$(fwrt)/Src/Common/FwKernelInterfaces/FwKernel.cs"/>
 		<GeneratedFiles Include="$(fwrt)/Src/Common/ViewsInterfaces/Views.cs"/>
-		<GeneratedFiles Include="$(fwrt)/Src/FDO/DomainImpl/GeneratedFactoryImplementations.cs"/>
-		<GeneratedFiles Include="$(fwrt)/Src/FDO/DomainImpl/FDOGenerated.cs"/>
 		<GeneratedFiles Include="$(fwrt)/Lib/debug/unit++.lib"/>
 	</ItemGroup>
 
@@ -247,10 +245,20 @@
 		<ForceDelete Files="$(dir-fwobj);$(dir-fwoutput)"/>
 		<ForceDelete Files="$(fwrt)/Output" Condition="'$(OS)'=='Unix'"/>
 		<!-- remove other directories and files created during the build process -->
-		<ForceDelete Files="@(IcuDataFiles)"/>
 		<ForceDelete Files="@(GeneratedFiles)"/>
-		<ForceDelete Files="$(fwrt)/DistFiles/Icu$(IcuVersion).zip"/>
-
+		<!-- remove LCM files -->
+		<ItemGroup>
+			<LcmFilesToDelete Include="$(fwrt)/Src/Kernel/*.idh" />
+			<LcmFilesToDelete Include="$(fwrt)/Src/Kernel/FwKernelTlb.idl" />
+			<LcmFilesToDelete Include="$(fwrt)/DistFiles/Styles.dtd" />
+			<LcmFilesToDelete Include="$(fwrt)/DistFiles/Templates/GOLDEtic.xml" />
+			<LcmFilesToDelete Include="$(fwrt)/DistFiles/Templates/NewLangProj.fwdata" />
+			<LcmFilesToDelete Include="$(fwrt)/DistFiles/Templates/POS.xml" />
+			<LcmFilesToDelete Include="$(fwrt)/DistFiles/Templates/SemDom.xml" />
+			<LcmFilesToDelete Include="$(dir-fwoutputCommon)/FwKernelTlb.iip" />
+		</ItemGroup>
+		<ForceDelete Files="@(LcmFilesToDelete)" />
+		<ForceDelete Files="$(fwrt)/DistFiles/Icu$(IcuVersion)" />
 		<Message Text="Finished deleting the output directories!"/>
 	</Target>
 
@@ -266,8 +274,8 @@
 		<ChorusBuildType Condition="'$(OS)'=='Windows_NT'">bt2</ChorusBuildType>
 		<!-- bt323 is the master branch (strong name) build of Chorus for Linux development. Update when appropriate. -->
 		<ChorusBuildType Condition="'$(OS)'=='Unix'">bt323</ChorusBuildType>
-		<!-- Libpalaso_PalasoAnyCPUMaster is the master branch build of Palaso for Windows development. Update when appropriate. -->
-		<PalasoBuildType Condition="'$(OS)'=='Windows_NT'">Libpalaso_PalasoAnyCPUMaster</PalasoBuildType>
+		<!-- Libpalaso_PalasoWinmasterContinuous is the master branch build of Palaso for Windows development. Update when appropriate. -->
+		<PalasoBuildType Condition="'$(OS)'=='Windows_NT'">Libpalaso_PalasoWinmasterContinuous</PalasoBuildType>
 		<!-- Libpalaso_PalasoLinux64masterContinuous is the master branch build of Palaso for Linux development. Update when appropriate. -->
 		<PalasoBuildType Condition="'$(OS)'=='Unix'">Libpalaso_PalasoLinux64masterContinuous</PalasoBuildType>
 		<!--Todo: use PalasoBuildType, when it refers to somewhere that has the IPCFramework.-->
@@ -281,20 +289,21 @@
 		<!-- bt395 is the master branch build of ExCss for Linux development. Update when appropriate. -->
 		<ExCssBuildType Condition="'$(OS)'=='Unix'">bt395</ExCssBuildType>
 		<ExCss Condition="'$(OS)'=='Unix'">ExCSS</ExCss>
-		<Icu4cBuildType Condition="'$(OS)'=='Windows_NT'">Libraries_Icu4cWin32FieldWorksContinuous</Icu4cBuildType>
+		<Icu4cBuildType Condition="'$(OS)'=='Windows_NT' AND '$(arch)'!='x86_64'">Libraries_Icu4cWin32FieldWorksContinuous</Icu4cBuildType>
+		<Icu4cBuildType Condition="'$(OS)'=='Windows_NT' AND '$(arch)'=='x86_64'">Libraries_Icu4cWin64FieldWorksContinuous</Icu4cBuildType>
 		<HermitCrabBuildType>bt410</HermitCrabBuildType>
 		<HermitCrabBuildTag>fw-8.3.tcbuildtag</HermitCrabBuildTag>
-		<ProtoBufNetDownloadUrl>https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/protobuf-net/protobuf-net%20r668.zip</ProtoBufNetDownloadUrl>
 		<DownloadsSilOrgDownloadUrl>http://downloads.sil.org/BuildDlls/FW8.1</DownloadsSilOrgDownloadUrl>
 		<DownloadsSilOrgOSDownloadUrl Condition="'$(OS)'=='Windows_NT'">$(DownloadsSilOrgDownloadUrl)/Windows</DownloadsSilOrgOSDownloadUrl>
 		<DownloadsSilOrgOSDownloadUrl Condition="'$(OS)'=='Unix'">$(DownloadsSilOrgDownloadUrl)/Linux</DownloadsSilOrgOSDownloadUrl>
 		<NUnitDownloadUrl>http://github.com/nunit/nunitv2/releases/download/2.6.4/NUnit-2.6.4.zip</NUnitDownloadUrl>
+		<LcmBuildType Condition="'$(OS)'=='Windows_NT'">Liblcm_LiblcmWin32masterContinuous</LcmBuildType>
+		<LcmBuildType Condition="'$(OS)'=='Unix'">Liblcm_LiblcmLinux64masterContinuous</LcmBuildType>
 		<!-- Windows/.Net and Linux/Mono use different extensions for debug information files. -->
 		<DebugInfo Condition="'$(OS)'=='Unix'">dll.mdb</DebugInfo>
 		<DebugInfo Condition="'$(OS)'=='Windows_NT'">pdb</DebugInfo>
 		<DownloadsDir>$(fwrt)/Downloads</DownloadsDir>
 	</PropertyGroup>
-
 
 	<Target Name="downloadDlls" DependsOnTargets="RestoreNuGetPackages" Condition="'$(disableDownloads)'!='true'">
 		<MakeDir Directories="$(DownloadsDir)"/>
@@ -366,14 +375,6 @@
 
 		<Message Text="Downloading artifacts for HermitCrab." />
 		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(HermitCrabBuildType)" Tag="$(HermitCrabBuildTag)" FlexBridgeBuildType="$(FLExBridgeBuildType)" ProjectId="HermitCrab" VersionInfo="$(MasterVersionInfo)" Artifacts="QuickGraph.dll;SIL.Machine.dll;SIL.Collections.dll;SIL.HermitCrab.dll" DownloadsDir="$(DownloadsDir)"/>
-		<Message Text="Downloading protobuf-net." />
-		<ForceDelete Files="$(DownloadsDir)/protobuf-net/" />
-		<DownloadFile Address="$(ProtoBufNetDownloadUrl)" DownloadsDir="$(DownloadsDir)" LocalFilename="protobuf-net.zip"/>
-		<Unzip ZipFilename="$(DownloadsDir)/protobuf-net.zip" ToDir="$(DownloadsDir)/protobuf-net/" />
-		<ForceDelete Files="$(DownloadsDir)/protobuf-net/CoreOnly/" />
-		<ForceDelete Files="$(DownloadsDir)/protobuf-net/ProtoGen/" />
-		<ForceDelete Files="$(DownloadsDir)/protobuf-net/Precompile/" />
-		<ForceDelete Files="$(DownloadsDir)/protobuf-net/*.txt" />
 
 		<Message Text="Downloading ParaTExt DLLs." />
 		<DownloadFile Address="$(DownloadsSilOrgDownloadUrl)/Paratext.LexicalContracts.dll" DownloadsDir="$(DownloadsDir)"/>
@@ -386,6 +387,9 @@
 
 		<Message Text="Downloading NUnit." />
 		<DownloadFile Address="$(NUnitDownloadUrl)" DownloadsDir="$(DownloadsDir)"/>
+
+		<Message Text="Downloading artifacts for LCM." />
+		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(LcmBuildType)" VersionInfo="$(MasterVersionInfo)" Artifacts="LCM.zip" DownloadsDir="$(DownloadsDir)"/>
 	</Target>
 
 	<!-- item group for downloads, to allow easy copying -->
@@ -486,9 +490,6 @@
 				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
 		<Copy SourceFiles="$(DownloadsDir)/icuuc.lib" DestinationFolder="$(fwrt)/Lib"
 				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
-		<!-- Hunspell dlls -->
-		<Copy SourceFiles="$(fwrt)/DistFiles/Windows/libhunspell.dll" DestinationFolder="$(dir-outputBase)"
-				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
 		<!-- NUnit dlls -->
 		<Unzip ZipFilename="$(DownloadsDir)/NUnit-2.6.4.zip" ToDir="$(DownloadsDir)/" />
 		<CreateItem Include="$(DownloadsDir)/NUnit-2.6.4/**/*">
@@ -497,6 +498,62 @@
 		<Copy SourceFiles="@(NUnitFiles)" DestinationFolder="$(fwrt)/Bin/NUnit/%(RecursiveDir)"
 				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
 		<ForceDelete Files="$(DownloadsDir)/NUnit-2.6.4/" />
+		<!-- LCM dlls -->
+		<ForceDelete Files="$(DownloadsDir)/LCM/" />
+		<Unzip ZipFilename="$(DownloadsDir)/LCM.zip" ToDir="$(DownloadsDir)/LCM/" />
+		<ItemGroup>
+			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/ICSharpCode.SharpZipLib.dll" />
+<!-- left out of artifacts.
+			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/libhunspell.dll" Condition="'$(OS)'=='Windows_NT'" />
+-->
+			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/Microsoft.Practices.ServiceLocation.dll" />
+			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/protobuf-net.dll" />
+			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/StructureMap.dll" />
+			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/Tools.dll" />
+			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/SIL.LCModel.Utils.dll" />
+			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/SIL.LCModel.Utils.$(DebugInfo)" />
+			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/SIL.LCModel.Utils.Tests.dll" />
+			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/SIL.LCModel.Utils.Tests.dll.config" />
+			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/SIL.LCModel.Utils.Tests.$(DebugInfo)" />
+			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/SIL.LCModel.Core.dll" />
+			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/SIL.LCModel.Core.dll.config" Condition="'$(OS)'=='Unix'" />
+			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/SIL.LCModel.Core.$(DebugInfo)" />
+			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/SIL.LCModel.Core.Tests.dll" />
+			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/SIL.LCModel.Core.Tests.dll.config" />
+			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/SIL.LCModel.Core.Tests.$(DebugInfo)" />
+			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/SIL.LCModel.dll" />
+			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/SIL.LCModel.$(DebugInfo)" />
+			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/SIL.LCModel.Tests.dll" />
+			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/SIL.LCModel.Tests.dll.config" />
+			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/SIL.LCModel.Tests.$(DebugInfo)" />
+
+			<LcmOutputCommonFiles Include="$(DownloadsDir)/LCM/KernelInterfaces/FwKernelTlb.iip" />
+
+			<LcmFwKernelFiles Include="$(DownloadsDir)/LCM/KernelInterfaces/common.idh" />
+			<LcmFwKernelFiles Include="$(DownloadsDir)/LCM/KernelInterfaces/FwKernel.idh" />
+			<LcmFwKernelFiles Include="$(DownloadsDir)/LCM/KernelInterfaces/Language.idh" />
+			<LcmFwKernelFiles Include="$(DownloadsDir)/LCM/KernelInterfaces/TextServ.idh" />
+			<LcmFwKernelFiles Include="$(DownloadsDir)/LCM/KernelInterfaces/FwKernelTlb.idl" />
+
+			<LcmDistFiles Include="$(DownloadsDir)/LCM/Styles.dtd" />
+
+			<LcmTemplatesFiles Include="$(DownloadsDir)/LCM/Templates/GOLDEtic.xml" />
+			<LcmTemplatesFiles Include="$(DownloadsDir)/LCM/Templates/NewLangProj.fwdata" />
+			<LcmTemplatesFiles Include="$(DownloadsDir)/LCM/Templates/POS.xml" />
+			<LcmTemplatesFiles Include="$(DownloadsDir)/LCM/Templates/SemDom.xml" />
+
+			<LcmIcuDataFiles Include="$(DownloadsDir)/LCM/IcuData/UnicodeDataOverrides.txt" />
+
+			<LcmIcuNrmFiles Include="$(DownloadsDir)/LCM/IcuData/icudt$(IcuVersion)l/nfc_fw.nrm" />
+			<LcmIcuNrmFiles Include="$(DownloadsDir)/LCM/IcuData/icudt$(IcuVersion)l/nfkc_fw.nrm" />
+		</ItemGroup>
+		<Copy SourceFiles="@(LcmOutputBaseFiles)" DestinationFolder="$(dir-outputBase)" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
+		<Copy SourceFiles="@(LcmOutputCommonFiles)" DestinationFolder="$(dir-fwoutputCommon)" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
+		<Copy SourceFiles="@(LcmFwKernelFiles)" DestinationFolder="$(fwrt)/Src/Kernel" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
+		<Copy SourceFiles="@(LcmDistFiles)" DestinationFolder="$(fwrt)/DistFiles" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
+		<Copy SourceFiles="@(LcmTemplatesFiles)" DestinationFolder="$(fwrt)/DistFiles/Templates" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
+		<Copy SourceFiles="@(LcmIcuDataFiles)" DestinationFolder="$(fwrt)/DistFiles/Icu$(IcuVersion)" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
+		<Copy SourceFiles="@(LcmIcuNrmFiles)" DestinationFolder="$(fwrt)/DistFiles/Icu$(IcuVersion)/icudt$(IcuVersion)l" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
 		<!-- Copy the downloaded artifacts -->
 		<Copy SourceFiles="@(DownloadedFiles)" DestinationFolder="$(dir-outputBase)"
 			SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
@@ -597,35 +654,5 @@
 		<DownloadFile Address="$(SldrUrl)tr" DownloadsDir="$(fwrt)/DistFiles/Templates" LocalFilename="tr.ldml"/>
 		<DownloadFile Address="$(SldrUrl)vi" DownloadsDir="$(fwrt)/DistFiles/Templates" LocalFilename="vi.ldml"/>
 		<DownloadFile Address="$(SldrUrl)zh-CN" DownloadsDir="$(fwrt)/DistFiles/Templates" LocalFilename="zh-CN.ldml"/>
-	</Target>
-
-	<ItemGroup>
-		<IcuDataSources Include="$(fwrt)/DistFiles/Icu$(IcuVersion)/data/*.*" />
-	</ItemGroup>
-	<ItemGroup>
-		<IcuDataZipFiles Include="$(fwrt)/DistFiles/Icu$(IcuVersion)/UnicodeDataOverrides.txt" />
-		<IcuDataZipFiles Include="$(fwrt)/DistFiles/Icu$(IcuVersion)/icudt$(IcuVersion)l/nfc_fw.nrm" />
-		<IcuDataZipFiles Include="$(fwrt)/DistFiles/Icu$(IcuVersion)/icudt$(IcuVersion)l/nfkc_fw.nrm" />
-	</ItemGroup>
-	<Target Name="GenerateIcuData" Inputs="@(IcuDataSources)" Outputs="$(fwrt)/DistFiles/Icu$(IcuVersion).zip" DependsOnTargets="CopyDlls">
-		<Copy SourceFiles="$(fwrt)/DistFiles/Icu$(IcuVersion)/data/UnicodeDataOverrides.txt" DestinationFolder="$(fwrt)/DistFiles/Icu$(IcuVersion)"
-				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
-		<MakeDir Directories="$(fwrt)/DistFiles/Icu$(IcuVersion)/icudt$(IcuVersion)l" />
-		<PropertyGroup>
-			<gennorm2 Condition="'$(OS)'=='Windows_NT'">$(dir-outputBase)\gennorm2.exe</gennorm2>
-			<gennorm2 Condition="'$(OS)'=='Unix'">$(fwrt)/Lib/src/icu/install$(arch)/sbin/gennorm2</gennorm2>
-		</PropertyGroup>
-		<Exec Command='"$(gennorm2)" -o "$(fwrt)/DistFiles/Icu$(IcuVersion)/icudt$(IcuVersion)l/nfc_fw.nrm" "$(fwrt)/DistFiles/Icu$(IcuVersion)/data/nfc.txt" "$(fwrt)/DistFiles/Icu$(IcuVersion)/data/nfcHebrew.txt" "$(fwrt)/DistFiles/Icu$(IcuVersion)/data/nfcOverrides.txt"' />
-		<Exec Command='"$(gennorm2)" -o "$(fwrt)/DistFiles/Icu$(IcuVersion)/icudt$(IcuVersion)l/nfkc_fw.nrm" "$(fwrt)/DistFiles/Icu$(IcuVersion)/data/nfc.txt" "$(fwrt)/DistFiles/Icu$(IcuVersion)/data/nfcHebrew.txt" "$(fwrt)/DistFiles/Icu$(IcuVersion)/data/nfkc.txt" "$(fwrt)/DistFiles/Icu$(IcuVersion)/data/nfcOverrides.txt" "$(fwrt)/DistFiles/Icu$(IcuVersion)/data/nfkcOverrides.txt"' />
-		<Zip Source="@(IcuDataZipFiles)" WorkingDirectory="$(fwrt)/DistFiles" Destination="$(fwrt)/DistFiles/Icu$(IcuVersion).zip" />
-	</Target>
-
-	<ItemGroup>
-		<IcuDataFiles Include="$(fwrt)/DistFiles/Icu$(IcuVersion)/*.*"/>
-		<IcuDataFiles Include="$(fwrt)/DistFiles/Icu$(IcuVersion)/icudt$(IcuVersion)l/*.*"/>
-	</ItemGroup>
-	<Target Name="IcuData" DependsOnTargets="GenerateIcuData">
-		<Delete Files="$(IcuDataFiles)" TreatErrorsAsWarnings="true"/>
-		<Unzip ZipFilename="$(fwrt)/DistFiles/Icu$(IcuVersion).zip" ToDir="$(fwrt)/DistFiles"/>
 	</Target>
 </Project>

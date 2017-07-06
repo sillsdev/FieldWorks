@@ -13,10 +13,10 @@ using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.PaneBar;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FdoUi;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks;
+using SIL.LCModel;
+using SIL.LCModel.Application;
 
 namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 {
@@ -114,7 +114,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 		{
 			var browseViewConfigurationDocument = XDocument.Parse(ListResources.ReversalToolReversalIndexPOSBrowseViewParameters);
 			var recordEditViewConfigurationDocument = XDocument.Parse(ListResources.ReversalToolReversalIndexPOSRecordEditViewParameters);
-			var cache = PropertyTable.GetValue<FdoCache>("cache");
+			var cache = PropertyTable.GetValue<LcmCache>("cache");
 			var currentGuid = ReversalIndexEntryUi.GetObjectGuidIfValid(PropertyTable, "ReversalIndexGuid");
 			if (currentGuid != Guid.Empty)
 			{
@@ -242,7 +242,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 		{
 			if (_reversalIndexRepository == null)
 			{
-				var cache = PropertyTable.GetValue<FdoCache>("cache");
+				var cache = PropertyTable.GetValue<LcmCache>("cache");
 				_reversalIndexRepository = cache.ServiceLocator.GetInstance<IReversalIndexRepository>();
 			}
 			var allInstancesinRepository = _reversalIndexRepository.AllInstances().ToDictionary(rei => rei.Guid);

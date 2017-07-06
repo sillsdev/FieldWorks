@@ -2,9 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-#if RANDYTODO
 using System;
-#endif
 using System.Windows.Forms;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using LanguageExplorer.Controls;
@@ -60,11 +58,7 @@ namespace LanguageExplorer.Areas
 			}
 			if (!(subControl is IMainUserControl))
 			{
-#if RANDYTODO
-				// TODO: We tolerate other controls, such as those Panel hacks, while the tool displays are being set up.
-				// TODO: Once those hacks are gone, then this can be enabled.
 				throw new ApplicationException($"FLEx can only handle controls which implement IMainUserControl. '{contentClassName}' does not.");
-#endif
 			}
 			subControl.Dock = DockStyle.Fill;
 

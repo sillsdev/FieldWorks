@@ -8,18 +8,18 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
-using SIL.CoreImpl.Text;
+using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.Resources;
 using SIL.Reporting;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
@@ -38,7 +38,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private string m_filePath;
 		private PictureBox m_picPreview;
 		private Label lblFilename;
-		private readonly FdoCache m_cache;
+		private readonly LcmCache m_cache;
 		private readonly ICmPicture m_initialPicture;
 		private readonly IHelpTopicProvider m_helpTopicProvider;
 		private readonly IApp m_app;
@@ -73,13 +73,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary>
 		/// Initializes a new instance of the <see cref="T:PicturePropertiesDialog"/> class.
 		/// </summary>
-		/// <param name="cache">The FdoCache to use</param>
+		/// <param name="cache">The LcmCache to use</param>
 		/// <param name="initialPicture">The CmPicture object to set all of the dialog
 		/// properties to, or null to edit a new picture</param>
 		/// <param name="helpTopicProvider">typically IHelpTopicProvider.App</param>
 		/// <param name="app">The application</param>
 		/// ------------------------------------------------------------------------------------
-		public PicturePropertiesDialog(FdoCache cache, ICmPicture initialPicture,
+		public PicturePropertiesDialog(LcmCache cache, ICmPicture initialPicture,
 			IHelpTopicProvider helpTopicProvider, IApp app)
 			: this(cache, initialPicture, helpTopicProvider, app, false)
 		{
@@ -89,19 +89,19 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary>
 		/// Initializes a new instance of the <see cref="T:PicturePropertiesDialog"/> class.
 		/// </summary>
-		/// <param name="cache">The FdoCache to use</param>
+		/// <param name="cache">The LcmCache to use</param>
 		/// <param name="initialPicture">The CmPicture object to set all of the dialog
 		/// properties to, or null to edit a new picture</param>
 		/// <param name="helpTopicProvider">typically IHelpTopicProvider.App</param>
 		/// <param name="app">The application</param>
 		/// <param name="fAnalysis">true to use analysis writign system for caption</param>
 		/// ------------------------------------------------------------------------------------
-		public PicturePropertiesDialog(FdoCache cache, ICmPicture initialPicture,
+		public PicturePropertiesDialog(LcmCache cache, ICmPicture initialPicture,
 			IHelpTopicProvider helpTopicProvider, IApp app, bool fAnalysis)
 		{
 			// ReSharper disable LocalizableElement
 			if (cache == null)
-				throw(new ArgumentNullException("cache", "The FdoCache cannot be null"));
+				throw(new ArgumentNullException("cache", "The LcmCache cannot be null"));
 			// ReSharper restore LocalizableElement
 
 			Logger.WriteEvent("Opening 'Picture Properties' dialog");
@@ -130,7 +130,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary>
 		/// Convert the text box for the caption to a multilingual string control.
 		/// </summary>
-		public void UseMultiStringCaption(FdoCache cache, int wsMagic, IVwStylesheet stylesheet)
+		public void UseMultiStringCaption(LcmCache cache, int wsMagic, IVwStylesheet stylesheet)
 		{
 			m_lmscCaption = new LabeledMultiStringControl(cache, wsMagic, stylesheet);
 			m_txtCaption.Hide();

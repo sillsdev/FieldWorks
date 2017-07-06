@@ -12,14 +12,13 @@ using System.Xml;
 using System.Xml.Schema;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using NUnit.Framework;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.WritingSystems;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.FDOTests;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.Utils;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
+using SIL.LCModel.Utils;
 
 namespace LanguageExplorerTests.Interlinear
 {
@@ -312,7 +311,7 @@ namespace LanguageExplorerTests.Interlinear
 			Assert.DoesNotThrow(() => ReadXmlForValidation(xmlReader));
 		}
 
-		bool DummyCheckAndAddLanguagesInternal(FdoCache cache, Interlineartext interlinText, ILgWritingSystemFactory wsFactory, IThreadedProgress progress)
+		bool DummyCheckAndAddLanguagesInternal(LcmCache cache, Interlineartext interlinText, ILgWritingSystemFactory wsFactory, IThreadedProgress progress)
 		{
 			return true;
 		}
@@ -343,7 +342,7 @@ namespace LanguageExplorerTests.Interlinear
 			using (var fileStream = new FileStream(file, FileMode.Open, FileAccess.Read))
 			{
 				LinguaLinksImport li = new LinguaLinksImport(Cache, null, null);
-				SIL.FieldWorks.FDO.IText text = null;
+				IText text = null;
 				var options = new LinguaLinksImport.ImportInterlinearOptions{Progress = new DummyProgressDlg(),
 					BirdData = fileStream, AllottedProgress = 0,
 					CheckAndAddLanguages = DummyCheckAndAddLanguagesInternal };
@@ -406,7 +405,7 @@ namespace LanguageExplorerTests.Interlinear
 					AllottedProgress = 0,
 					CheckAndAddLanguages = DummyCheckAndAddLanguagesInternal
 				};
-				SIL.FieldWorks.FDO.IText importedText = null;
+				IText importedText = null;
 				var li = new BIRDFormatImportTests.LLIMergeExtension(Cache, null, null);
 				var result = li.ImportInterlinear(options, ref importedText);
 				Assert.True(result, "ImportInterlinear was not successful.");
@@ -441,7 +440,7 @@ namespace LanguageExplorerTests.Interlinear
 									 "</interlinear-text></document>";
 
 			var li = new LinguaLinksImport(Cache, null, null);
-			SIL.FieldWorks.FDO.IText text = null;
+			IText text = null;
 			using(var stream = new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())))
 			{
 				Assert.DoesNotThrow(()=> li.ImportInterlinear(new DummyProgressDlg(), stream, 0, ref text));
@@ -472,7 +471,7 @@ namespace LanguageExplorerTests.Interlinear
 			"</words></phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
 
 			LinguaLinksImport li = new LinguaLinksImport(Cache, null, null);
-			SIL.FieldWorks.FDO.IText text = null;
+			IText text = null;
 			using (var stream = new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())))
 			{
 				li.ImportInterlinear(new DummyProgressDlg(), stream, 0, ref text);
@@ -515,7 +514,7 @@ namespace LanguageExplorerTests.Interlinear
 			// ---------------------
 
 			LinguaLinksImport li = new LinguaLinksImport(Cache, null, null);
-			SIL.FieldWorks.FDO.IText text = null;
+			IText text = null;
 			using (var stream = new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())))
 			{
 				li.ImportInterlinear(new DummyProgressDlg(), stream, 0, ref text);
@@ -569,7 +568,7 @@ namespace LanguageExplorerTests.Interlinear
 			// --------------------------
 
 			LinguaLinksImport li = new LinguaLinksImport(Cache, null, null);
-			SIL.FieldWorks.FDO.IText text = null;
+			IText text = null;
 			using (var stream = new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())))
 			{
 				li.ImportInterlinear(new DummyProgressDlg(), stream, 0, ref text);
@@ -609,7 +608,7 @@ namespace LanguageExplorerTests.Interlinear
 			"</words></phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
 
 			LinguaLinksImport li = new LinguaLinksImport(Cache, null, null);
-			SIL.FieldWorks.FDO.IText text = null;
+			IText text = null;
 			using (var stream = new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())))
 			{
 				li.ImportInterlinear(new DummyProgressDlg(), stream, 0, ref text);
@@ -646,7 +645,7 @@ namespace LanguageExplorerTests.Interlinear
 			"</words></phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
 
 			LinguaLinksImport li = new LinguaLinksImport(Cache, null, null);
-			SIL.FieldWorks.FDO.IText text = null;
+			IText text = null;
 			using (var stream = new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())))
 			{
 				li.ImportInterlinear(new DummyProgressDlg(), stream, 0, ref text);
@@ -669,7 +668,7 @@ namespace LanguageExplorerTests.Interlinear
 			"<paragraphs><paragraph/></paragraphs></interlinear-text></document>";
 
 			LinguaLinksImport li = new LinguaLinksImport(Cache, null, null);
-			SIL.FieldWorks.FDO.IText text = null;
+			IText text = null;
 			using (var stream = new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())))
 			{
 				li.ImportInterlinear(new DummyProgressDlg(), stream, 0, ref text);
@@ -697,7 +696,7 @@ namespace LanguageExplorerTests.Interlinear
 				@"<media-files offset-type=""milliseconds""><media guid=""FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF"" location=""file:\\test.wav""/></media-files></interlinear-text></document>";
 
 			LinguaLinksImport li = new LinguaLinksImport(Cache, null, null);
-			SIL.FieldWorks.FDO.IText text = null;
+			IText text = null;
 			using (var stream = new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())))
 			{
 				li.ImportInterlinear(new DummyProgressDlg(), stream, 0, ref text);
@@ -729,7 +728,7 @@ namespace LanguageExplorerTests.Interlinear
 				@"<media-files offset-type=""milliseconds""><media guid=""FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF"" location=""file:\\test.wav""/></media-files></interlinear-text></document>";
 
 			var li = new LLIMergeExtension(Cache, null, null);
-			SIL.FieldWorks.FDO.IText text = null;
+			IText text = null;
 			using (var firstStream = new MemoryStream(Encoding.ASCII.GetBytes(firstxml.ToCharArray())))
 			{
 				li.ImportInterlinear(new DummyProgressDlg(), firstStream, 0, ref text);
@@ -776,8 +775,8 @@ namespace LanguageExplorerTests.Interlinear
 				@"<media-files offset-type=""milliseconds""><media guid=""FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF"" location=""file:\\test.wav""/></media-files></interlinear-text></document>";
 
 			var li = new LLINomergeExtension(Cache, null, null);
-			SIL.FieldWorks.FDO.IText firstText = null;
-			SIL.FieldWorks.FDO.IText secondText = null;
+			IText firstText = null;
+			IText secondText = null;
 			using (var firstStream = new MemoryStream(Encoding.ASCII.GetBytes(importxml.ToCharArray())))
 			{
 				li.ImportInterlinear(new DummyProgressDlg(), firstStream, 0, ref firstText);
@@ -833,7 +832,7 @@ namespace LanguageExplorerTests.Interlinear
 			/// <param name="tempDir">The temp directory.</param>
 			/// <param name="rootDir">The root directory.</param>
 			/// ------------------------------------------------------------------------------------
-			public LLIMergeExtension(FdoCache cache, string tempDir, string rootDir) : base(cache, tempDir, rootDir)
+			public LLIMergeExtension(LcmCache cache, string tempDir, string rootDir) : base(cache, tempDir, rootDir)
 			{
 				NumTimesDlgShown = 0;
 			}
@@ -852,7 +851,7 @@ namespace LanguageExplorerTests.Interlinear
 			public int NumTimesDlgShown { get; private set; }
 
 			/// <summary/>
-			public LLINomergeExtension(FdoCache cache, string tempDir, string rootDir) : base(cache, tempDir, rootDir)
+			public LLINomergeExtension(LcmCache cache, string tempDir, string rootDir) : base(cache, tempDir, rootDir)
 			{
 				NumTimesDlgShown = 0;
 			}
@@ -876,7 +875,7 @@ namespace LanguageExplorerTests.Interlinear
 			"<media-files offset-type=\"milliseconds\"><media guid=\"FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF\" location=\"file:\\\\test.wav\"/></media-files></interlinear-text></document>";
 
 			LinguaLinksImport li = new LinguaLinksImport(Cache, null, null);
-			SIL.FieldWorks.FDO.IText text = null;
+			IText text = null;
 			using (var stream = new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())))
 			{
 				li.ImportInterlinear(new DummyProgressDlg(), stream, 0, ref text);
@@ -911,7 +910,7 @@ namespace LanguageExplorerTests.Interlinear
 			Assert.NotNull(newPerson);
 
 			LinguaLinksImport li = new LinguaLinksImport(Cache, null, null);
-			SIL.FieldWorks.FDO.IText text = null;
+			IText text = null;
 			using (var stream = new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())))
 			{
 				li.ImportInterlinear(new DummyProgressDlg(), stream, 0, ref text);
@@ -921,7 +920,7 @@ namespace LanguageExplorerTests.Interlinear
 			}
 		}
 
-		private static void VerifyMediaLink(SIL.FieldWorks.FDO.IText imported)
+		private static void VerifyMediaLink(IText imported)
 		{
 			var mediaFilesContainer = imported.MediaFilesOA;
 			var para = imported.ContentsOA[0];

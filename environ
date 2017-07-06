@@ -23,11 +23,11 @@ MONO_ENV_OPTIONS="-O=-gshared"
 
 # Directory settings
 PATH="${BASE}/Output_${ARCH}/${BUILD}:\
-${BASE}/Lib/src/icu/install${ARCH}/bin:${BASE}/Lib/src/icu/source/bin:\
+/usr/lib/fieldworks/icu-bin:\
 ${COM}/build${ARCH}/bin:\
 ${PATH}"
 LD_LIBRARY_PATH="${BASE}/Output_${ARCH}/${BUILD}:\
-${BASE}/Lib/src/icu/install${ARCH}/lib:\
+/usr/lib/fieldworks/lib:\
 ${COM}/build${ARCH}/lib:\
 ${LD_LIBRARY_PATH}"
 # ensure we scan the default pkg-config directories (to pick up Geckofx for compiling)
@@ -36,7 +36,7 @@ ${LD_LIBRARY_PATH}"
 # Add packaged mono items to paths
 PATH="${MONO_SILPKGDIR}/bin:${PATH}"
 LD_LIBRARY_PATH="${MONO_SILPKGDIR}/lib:${ENC_CONVERTERS}:${LD_LIBRARY_PATH}"
-PKG_CONFIG_PATH="${MONO_SILPKGDIR}/lib/pkgconfig:${PKG_CONFIG_PATH}"
+PKG_CONFIG_PATH="${MONO_SILPKGDIR}/lib/pkgconfig:/usr/lib/fieldworks/lib/pkgconfig:${PKG_CONFIG_PATH}"
 MONO_GAC_PREFIX="${MONO_SILPKGDIR}:${ENC_CONVERTERS}:/usr:${MONO_PREFIX}"
 
 if [ "$RUNMODE" != "PACKAGE" ]
@@ -56,7 +56,7 @@ then
 	FW_ROOTCODE="${BASE}/../../share/fieldworks"
 	ICU_DATA="${HOME}/.config/fieldworks/Icu54"
 	PATH="${BASE}/icu-bin:${PATH}"
-	LD_LIBRARY_PATH="${BASE}:${LD_LIBRARY_PATH}"
+	LD_LIBRARY_PATH="${BASE}:${BASE}/lib:${LD_LIBRARY_PATH}"
 	MONO_REGISTRY_PATH="${HOME}/.config/fieldworks/registry"
 else
 	COMPONENTS_MAP_PATH="${BASE}/Output_${ARCH}/${BUILD}"

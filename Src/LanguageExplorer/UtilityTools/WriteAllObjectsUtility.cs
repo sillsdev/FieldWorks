@@ -3,7 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 
 namespace LanguageExplorer.UtilityTools
 {
@@ -46,7 +46,7 @@ namespace LanguageExplorer.UtilityTools
 		/// <summary />
 		public void Process()
 		{
-			var cache = _utilityDlg.PropertyTable.GetValue<FdoCache>("cache");
+			var cache = _utilityDlg.PropertyTable.GetValue<LcmCache>("cache");
 			cache.ExportEverythingAsModified();
 		}
 

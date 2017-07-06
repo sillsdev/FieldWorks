@@ -9,12 +9,12 @@ using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.FDOTests;
-using SIL.CoreImpl.Text;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.ObjectModel;
+using SIL.WritingSystems;
 
 namespace LanguageExplorerTests.Interlinear
 {
@@ -27,6 +27,29 @@ namespace LanguageExplorerTests.Interlinear
 		private IPropertyTable m_propertyTable;
 		private IPublisher m_publisher;
 		private ISubscriber m_subscriber;
+		private bool _didIInitSLDR;
+
+		[TestFixtureSetUp]
+		public override void FixtureSetup()
+		{
+			if (!Sldr.IsInitialized)
+			{
+				_didIInitSLDR = true;
+				Sldr.Initialize();
+			}
+
+			base.FixtureSetup();
+		}
+
+		public override void FixtureTeardown()
+		{
+			if (_didIInitSLDR && Sldr.IsInitialized)
+			{
+				_didIInitSLDR = false;
+				Sldr.Cleanup();
+			}
+			base.FixtureTeardown();
+		}
 
 		#region Overrides of MemoryOnlyBackendProviderRestoredForEachTestTestBase
 
@@ -824,7 +847,7 @@ namespace LanguageExplorerTests.Interlinear
 			return new AnalysisOccurrence(seg, 0);
 		}
 
-		private SIL.FieldWorks.FDO.IText MakeText(string contents)
+		private IText MakeText(string contents)
 		{
 			var text = Cache.ServiceLocator.GetInstance<ITextFactory>().Create();
 			//Cache.LangProject.TextsOC.Add(text);

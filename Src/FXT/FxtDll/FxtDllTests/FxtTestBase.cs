@@ -10,9 +10,9 @@ using System.Xml.Xsl;
 
 using NUnit.Framework;
 
-using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.Utils;
+using SIL.LCModel;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.Common.FXT
 {

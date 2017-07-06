@@ -10,20 +10,19 @@ using System.Windows.Forms;
 using System.Diagnostics;
 using System.Xml.Linq;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
-using SIL.CoreImpl.Cellar;
-using SIL.CoreImpl.SpellChecking;
-using SIL.CoreImpl.Text;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.SpellChecking;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.Drawing;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Resources;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel.Application;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.XWorks;
 using WaitCursor = SIL.FieldWorks.Common.FwUtils.WaitCursor;
 
@@ -35,7 +34,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 	/// <summary />
 	public partial class RespellerDlg : Form, IFlexComponent
 	{
-		private FdoCache m_cache;
+		private LcmCache m_cache;
 		private XMLViewsDataCache m_specialSda;
 		private IWfiWordform m_srcwfiWordform;
 		private int m_vernWs;
@@ -124,7 +123,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			PropertyTable = flexComponentParameters.PropertyTable;
 			Publisher = flexComponentParameters.Publisher;
 			Subscriber = flexComponentParameters.Subscriber;
-			m_cache = PropertyTable.GetValue<FdoCache>("cache");
+			m_cache = PropertyTable.GetValue<LcmCache>("cache");
 		}
 
 		#endregion
@@ -194,7 +193,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				m_cbCopyAnalyses.Click += m_cbCopyAnalyses_Click;
 				m_cbMaintainCase.Checked = PropertyTable.GetValue<bool>("MaintainCaseOnChangeSpelling");
 				m_cbMaintainCase.Click += m_cbMaintainCase_Click;
-				m_cache = PropertyTable.GetValue<FdoCache>("cache");
+				m_cache = PropertyTable.GetValue<LcmCache>("cache");
 
 				// We need to use the 'best vern' ws,
 				// since that is what is showing in the Words-Analyses detail edit control.
@@ -905,7 +904,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// </summary>
 		readonly Dictionary<int, ParaChangeInfo> m_changedParas = new Dictionary<int, ParaChangeInfo>();
 		readonly XMLViewsDataCache m_specialSda;
-		readonly FdoCache m_cache;
+		readonly LcmCache m_cache;
 		IEnumerable<int> m_occurrences; // items requiring preview.
 		bool m_fPreserveCase;
 		bool m_fUpdateLexicalEntries;
@@ -955,7 +954,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// <summary>
 		/// Used in tests only at present, assumes default vernacular WS.
 		/// </summary>
-		internal RespellUndoAction(XMLViewsDataCache sda, FdoCache cache, string oldSpelling, string newSpelling)
+		internal RespellUndoAction(XMLViewsDataCache sda, LcmCache cache, string oldSpelling, string newSpelling)
 			:this(sda, cache, cache.DefaultVernWs, oldSpelling, newSpelling)
 		{
 		}
@@ -1053,7 +1052,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// <summary>
 		/// Normal constructor
 		/// </summary>
-		internal RespellUndoAction(XMLViewsDataCache sda, FdoCache cache, int vernWs,
+		internal RespellUndoAction(XMLViewsDataCache sda, LcmCache cache, int vernWs,
 			string oldSpelling, string newSpelling)
 		{
 			m_specialSda = sda;
@@ -1948,7 +1947,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 		Dictionary<int, RespellInfo> m_mapRespell = new Dictionary<int, RespellInfo>();
 
-		public RespellingSda(FdoCache cache, ISilDataAccessManaged domainDataByFlid, IFdoServiceLocator services)
+		public RespellingSda(LcmCache cache, ISilDataAccessManaged domainDataByFlid, ILcmServiceLocator services)
 			: base(domainDataByFlid, services)
 		{
 			Cache = cache;
@@ -2092,7 +2091,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			ReplaceAnalysisOccurrences(hvo, values);
 		}
 
-		FdoCache Cache { get; }
+		LcmCache Cache { get; }
 
 		/// <summary>
 		/// Make additional fake occurrences for where the wordform occurs in captions.

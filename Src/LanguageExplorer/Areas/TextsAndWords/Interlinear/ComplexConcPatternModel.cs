@@ -7,10 +7,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.CoreImpl.WritingSystems;
+using SIL.LCModel;
+using SIL.LCModel.Application;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.Collections;
 using SIL.Machine.Annotations;
 using SIL.Machine.FeatureModel;
@@ -24,15 +24,15 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private readonly ComplexConcPatternSda m_sda;
 		private readonly SpanFactory<ShapeNode> m_spanFactory;
 		private Matcher<ComplexConcParagraphData, ShapeNode> m_matcher;
-		private readonly FdoCache m_cache;
+		private readonly LcmCache m_cache;
 		private FeatureSystem m_featSys;
 
-		public ComplexConcPatternModel(FdoCache cache)
+		public ComplexConcPatternModel(LcmCache cache)
 			: this(cache, new ComplexConcGroupNode())
 		{
 		}
 
-		public ComplexConcPatternModel(FdoCache cache, ComplexConcPatternNode root)
+		public ComplexConcPatternModel(LcmCache cache, ComplexConcPatternNode root)
 		{
 			m_cache = cache;
 			m_root = root;

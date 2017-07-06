@@ -6,8 +6,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using SIL.Linq;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel.Infrastructure;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.XWorks;
@@ -54,7 +54,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 			Debug.Assert(slice != null, "No slice was current");
 			if (slice != null)
 			{
-				FdoCache cache = m_dataEntryForm.Cache;
+				LcmCache cache = m_dataEntryForm.Cache;
 				IReversalIndexEntry entry = slice.Object as IReversalIndexEntry;
 				ICmObject newOwner = entry.Owner.Owner;
 				UndoableUnitOfWorkHelper.Do(((Command)cmd).UndoText, ((Command)cmd).RedoText, newOwner,
@@ -122,7 +122,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 					dlg.FilteredReversalEntryHvos.Add(owningEntry.Hvo);
 				dlg.SetHelpTopic("khtpMoveReversalEntry");
 				var wp = new WindowParams { m_btnText = LanguageExplorerResources.ks_MoveEntry, m_title = LanguageExplorerResources.ksMoveRevEntry };
-				var cache = PropertyTable.GetValue<FdoCache>("cache");
+				var cache = PropertyTable.GetValue<LcmCache>("cache");
 				dlg.SetDlgInfo(cache, wp, PropertyTable, Publisher, Subscriber);
 				if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
 				{

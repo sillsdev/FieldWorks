@@ -8,15 +8,14 @@ using System.IO;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using NUnit.Framework;
-using SIL.CoreImpl.WritingSystems;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO.FDOTests;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 using SIL.TestUtilities;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 using RIS = SIL.FieldWorks.XWorks.ReversalIndexServices;
 
-// ReSharper disable InconsistentNaming (Justification: Test names have underscores)
 namespace SIL.FieldWorks.XWorks
 {
 	/// <summary/>

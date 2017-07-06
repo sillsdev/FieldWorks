@@ -5,7 +5,7 @@
 using System;
 using System.IO;
 using Microsoft.Win32;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.UnicodeCharEditor
 {

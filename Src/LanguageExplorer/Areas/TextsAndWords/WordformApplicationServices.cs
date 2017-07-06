@@ -2,9 +2,9 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using SIL.FieldWorks.Common.FwKernelInterfaces;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Infrastructure;
 
 namespace LanguageExplorer.Areas.TextsAndWords
 {
@@ -17,7 +17,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// Find an extant wordform,
 		/// or create one (with nonundoable UOW), if one does not exist.
 		/// </summary>
-		internal static IWfiWordform GetWordformForForm(FdoCache cache, ITsString form)
+		internal static IWfiWordform GetWordformForForm(LcmCache cache, ITsString form)
 		{
 			var servLoc = cache.ServiceLocator;
 			var wordformRepos = servLoc.GetInstance<IWfiWordformRepository>();

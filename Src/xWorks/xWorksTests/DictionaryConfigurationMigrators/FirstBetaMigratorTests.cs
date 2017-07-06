@@ -9,13 +9,10 @@ using NUnit.Framework;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.FDOTests;
+using SIL.LCModel;
 using SIL.IO;
 using SIL.TestUtilities;
-
 // ReSharper disable InconsistentNaming
-
 namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 {
 	public class FirstBetaMigratorTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
@@ -93,7 +90,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		{
 			using (var tempFolder = TemporaryFolder.TrackExisting(Path.GetDirectoryName(Cache.ProjectId.Path)))
 			{
-				var configLocations = FdoFileHelper.GetConfigSettingsDir(tempFolder.Path);
+				var configLocations = LcmFileHelper.GetConfigSettingsDir(tempFolder.Path);
 				configLocations = Path.Combine(configLocations, "Dictionary");
 				Directory.CreateDirectory(configLocations);
 				const string content =

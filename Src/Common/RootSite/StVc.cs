@@ -1,21 +1,14 @@
 // Copyright (c) 2002-2013 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: StVc.cs
-// Responsibility: TomB
-//
-// <remarks>
-// Implementation of StVc, a standard view constructor for displaying StText's
-// </remarks>
-// --------------------------------------------------------------------------------------------
+
 using System.Drawing;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.WritingSystems;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
 
 namespace SIL.FieldWorks.Common.RootSites
 {
@@ -273,7 +266,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// Gets or sets the FDO cache for the view constructor.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public override FdoCache Cache
+		public override LcmCache Cache
 		{
 #if __MonoCS__ // TODO-Linux: Work around Mono compiler bug.
 			get

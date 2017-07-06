@@ -5,12 +5,11 @@
 using System.Collections.Generic;
 using System.Xml.Linq;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.FDOTests;
+using SIL.LCModel.DomainServices;
 using NUnit.Framework;
-using SIL.CoreImpl.Cellar;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Infrastructure;
+using SIL.LCModel;
 using SIL.Xml;
 
 namespace XMLViewsTests

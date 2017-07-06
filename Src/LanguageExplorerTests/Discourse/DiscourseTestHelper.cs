@@ -7,10 +7,10 @@ using System.Collections.Generic;
 using System.Linq;
 using LanguageExplorer.Areas.TextsAndWords.Discourse;
 using NUnit.Framework;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using System.Xml;
-using SIL.CoreImpl.Text;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.DomainServices;
 using SIL.Xml;
 
 namespace LanguageExplorerTests.Discourse
@@ -24,7 +24,7 @@ namespace LanguageExplorerTests.Discourse
 
 		#region Factories/Repositories
 
-		private readonly IFdoServiceLocator m_servLoc;
+		private readonly ILcmServiceLocator m_servLoc;
 		private readonly IWfiAnalysisFactory m_wAnalysisFact;
 		private readonly IWfiGlossFactory m_wGlossFact;
 		private readonly IConstChartRowFactory m_rowFact;
@@ -37,13 +37,13 @@ namespace LanguageExplorerTests.Discourse
 
 		#endregion
 
-		private FdoCache m_cache;
+		private LcmCache m_cache;
 		private TestCCLogic m_logic;
 		private ICmPossibility m_template;
 		List<ICmPossibility> m_allColumns;
 		private IDsConstChart m_chart;
 
-		public DiscourseTestHelper(FdoCache cache)
+		public DiscourseTestHelper(LcmCache cache)
 		{
 			m_cache = cache;
 
@@ -70,7 +70,7 @@ namespace LanguageExplorerTests.Discourse
 
 		}
 
-		internal FdoCache Cache
+		internal LcmCache Cache
 		{
 			get { return m_cache; }
 		}

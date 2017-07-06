@@ -6,12 +6,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
-using SIL.CoreImpl.WritingSystems;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.Resources;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
@@ -197,7 +197,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		private class Fwr3660ValidCharactersDlg : ValidCharactersDlg
 		{
-			public Fwr3660ValidCharactersDlg(FdoCache cache, IWritingSystemContainer container,
+			public Fwr3660ValidCharactersDlg(LcmCache cache, IWritingSystemContainer container,
 				CoreWritingSystemDefinition ws)
 				: base(cache, container, null, null, ws, "dymmy")
 			{

@@ -11,7 +11,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 	/// This static class is just a holding-place for all the standard Check ID GUIDs.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	static public class StandardCheckIds
+	public static class StandardCheckIds
 	{
 		/// <summary>Check ID for Characters check</summary>
 		public static readonly Guid kguidCharacters = new Guid("6558A579-B9C4-4EFD-8728-F994D0561293");

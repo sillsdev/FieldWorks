@@ -9,7 +9,7 @@ using System.Windows.Forms;
 using LanguageExplorer;
 using LanguageExplorer.Areas.TextsAndWords.Discourse;
 using NUnit.Framework;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 
 namespace LanguageExplorerTests.Discourse
 {

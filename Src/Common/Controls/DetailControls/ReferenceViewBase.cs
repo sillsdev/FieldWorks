@@ -2,18 +2,11 @@
 // Copyright (c) 2003-2013 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ReferenceViewBase.cs
-// Responsibility: Eric Pyle
-// Last reviewed:
-//
-// <remarks>
-// For handling things common to ReferenceView classes.
-// </remarks>
+
 using System.Drawing;
 using System.Diagnostics;
 using System.Windows.Forms;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.FdoUi;
@@ -56,11 +49,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			}
 		}
 
-		public void Initialize(ICmObject rootObj, int rootFlid, string rootFieldName, FdoCache cache, string displayNameProperty)
+		public void Initialize(ICmObject rootObj, int rootFlid, string rootFieldName, LcmCache cache, string displayNameProperty)
 		{
 			CheckDisposed();
 			// We can reinitialize in some cases but should not reuse with a different cache.
-			Debug.Assert(cache != null && (m_fdoCache == null || m_fdoCache == cache));
+			Debug.Assert(cache != null && (m_cache == null || m_cache == cache));
 			m_displayNameProperty = displayNameProperty;
 			Cache = cache;		// Set cache on EditingHelper as well if needed.  (See FWR-1426.)
 			m_rootObj = rootObj;

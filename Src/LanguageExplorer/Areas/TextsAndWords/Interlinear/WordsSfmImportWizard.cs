@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using SIL.FieldWorks.LexText.Controls;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {

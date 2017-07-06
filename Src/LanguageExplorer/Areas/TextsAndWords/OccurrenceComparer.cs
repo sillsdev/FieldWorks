@@ -3,21 +3,21 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.XWorks;
+using SIL.LCModel;
+using SIL.LCModel.Application;
 
 namespace LanguageExplorer.Areas.TextsAndWords
 {
 	/// <summary />
 	internal sealed class OccurrenceComparer : IComparer
 	{
-		private readonly FdoCache m_cache;
+		private readonly LcmCache m_cache;
 		private ISilDataAccessManaged m_sda;
 
 		/// <summary />
-		public OccurrenceComparer(FdoCache cache, ISilDataAccessManaged sda)
+		public OccurrenceComparer(LcmCache cache, ISilDataAccessManaged sda)
 		{
 			m_cache = cache;
 			m_sda = sda;

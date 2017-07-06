@@ -3,9 +3,9 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using LanguageExplorer.Areas.Lexicon;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.Filters;
+using SIL.LCModel;
+using SIL.LCModel.Application;
 
 namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 {
@@ -15,7 +15,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 	internal sealed class ReversalEntryPOSClerk : ReversalClerk
 	{
 		/// <summary />
-		internal ReversalEntryPOSClerk(IFdoServiceLocator serviceLocator, ISilDataAccessManaged decorator, IReversalIndex reversalIndex)
+		internal ReversalEntryPOSClerk(ILcmServiceLocator serviceLocator, ISilDataAccessManaged decorator, IReversalIndex reversalIndex)
 			: base("ReversalEntriesPOS", new ReversalIndexPOSRecordList(serviceLocator, decorator, reversalIndex), new PropertyRecordSorter("ShortName"), "Default", null, true, true)
 		{
 		}

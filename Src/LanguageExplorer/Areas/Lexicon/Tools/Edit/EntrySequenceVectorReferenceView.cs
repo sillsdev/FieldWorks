@@ -8,9 +8,9 @@ using System.Linq;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Application;
+using SIL.LCModel.Infrastructure;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 {
@@ -65,9 +65,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				var rginfo = helper.LevelInfo;
 				var info = rginfo[clev - 1];
 				ICmObject cmo;
-				if (info.tag == m_rootFlid && m_fdoCache.ServiceLocator.ObjectRepository.TryGetObject(info.hvo, out cmo))
+				if (info.tag == m_rootFlid && m_cache.ServiceLocator.ObjectRepository.TryGetObject(info.hvo, out cmo))
 				{
-					var sda = m_fdoCache.DomainDataByFlid as ISilDataAccessManaged;
+					var sda = m_cache.DomainDataByFlid as ISilDataAccessManaged;
 					Debug.Assert(sda != null);
 					var rghvos = sda.VecProp(m_rootObj.Hvo, m_rootFlid);
 					var ihvo = -1;
@@ -84,7 +84,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 						var startHeight = m_rootb.Height;
 						if (Cache.MetaDataCacheAccessor.get_IsVirtual(m_rootFlid))
 						{
-							var obj = m_fdoCache.ServiceLocator.GetObject(rghvos[ihvo]);
+							var obj = m_cache.ServiceLocator.GetObject(rghvos[ihvo]);
 							ILexEntryRef ler = null;
 							if (obj is ILexEntry)
 							{
@@ -112,7 +112,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 							{
 								return VwDelProbResponse.kdprAbort; // we don't know how to delete it.
 							}
-							var fieldName = m_fdoCache.MetaDataCacheAccessor.GetFieldName(m_rootFlid);
+							var fieldName = m_cache.MetaDataCacheAccessor.GetFieldName(m_rootFlid);
 							if (fieldName == "Subentries")
 							{
 								ler.PrimaryLexemesRS.Remove(m_rootObj);

@@ -11,7 +11,7 @@ using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
-using SIL.Utils;
+using SIL.IO;
 using SIL.Xml;
 
 namespace SIL.FieldWorks.Common.FwUtils
@@ -205,7 +205,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		public static List<T> GetPlugins<T>(string pattern) where T: class
 		{
-			var codeBasePath = DirectoryUtils.DirectoryOfExecutingAssembly();
+			var codeBasePath = FileLocator.DirectoryOfTheApplicationExecutable;
 			return GetPlugins<T>(codeBasePath, pattern);
 		}
 		/// <summary>

@@ -9,11 +9,11 @@ using System.Resources;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.LexText.Controls.DataNotebook;
 using SilEncConverters40;
-using SIL.CoreImpl.WritingSystems;
+using SIL.LCModel.Core.WritingSystems;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -21,7 +21,7 @@ namespace SIL.FieldWorks.LexText.Controls
 	{
 		protected string m_helpTopicID;
 
-		private FdoCache m_cache;
+		private LcmCache m_cache;
 		private string m_orginalLabel;
 		private readonly string m_blankEC = Sfm2Xml.STATICS.AlreadyInUnicode;
 		private Sfm2FlexTextMappingBase m_mapping; // the object we are editing.
@@ -43,7 +43,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				NotebookImportWiz.InitializeWritingSystemCombo(ws.Id, m_cache, m_writingSystemCombo);
 		}
 
-		public void SetupDlg(IHelpTopicProvider helpTopicProvider, IApp app, FdoCache cache,  Sfm2FlexTextMappingBase mappingToModify, IEnumerable<InterlinDestination> destinationsToDisplay)
+		public void SetupDlg(IHelpTopicProvider helpTopicProvider, IApp app, LcmCache cache,  Sfm2FlexTextMappingBase mappingToModify, IEnumerable<InterlinDestination> destinationsToDisplay)
 		{
 			m_helpTopicProvider = helpTopicProvider;
 			m_app = app;

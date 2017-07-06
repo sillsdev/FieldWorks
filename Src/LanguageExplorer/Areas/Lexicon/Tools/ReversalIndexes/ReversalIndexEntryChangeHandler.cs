@@ -4,7 +4,7 @@
 
 using System;
 using System.Diagnostics;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.FwUtils;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
@@ -137,7 +137,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 		}
 
 		/// <summary></summary>
-		public void Setup(object record, IRecordListUpdater rlu, FdoCache cache)
+		public void Setup(object record, IRecordListUpdater rlu, LcmCache cache)
 		{
 			CheckDisposed();
 

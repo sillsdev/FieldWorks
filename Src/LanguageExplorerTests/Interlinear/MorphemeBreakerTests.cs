@@ -6,7 +6,8 @@ using System;
 using System.Collections.Generic;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using NUnit.Framework;
-using SIL.FieldWorks.FDO.FDOTests;
+using SIL.LCModel;
+using SIL.WritingSystems;
 
 namespace LanguageExplorerTests.Interlinear
 {
@@ -16,6 +17,30 @@ namespace LanguageExplorerTests.Interlinear
 	[TestFixture]
 	public class MorphemeBreakerTest : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
+		private bool _didIInitSLDR;
+
+		[TestFixtureSetUp]
+		public override void FixtureSetup()
+		{
+			if (!Sldr.IsInitialized)
+			{
+				_didIInitSLDR = true;
+				Sldr.Initialize();
+			}
+
+			base.FixtureSetup();
+		}
+
+		public override void FixtureTeardown()
+		{
+			if (_didIInitSLDR && Sldr.IsInitialized)
+			{
+				_didIInitSLDR = false;
+				Sldr.Cleanup();
+			}
+			base.FixtureTeardown();
+		}
+
 		[Test]
 		public void Phrase_BreakIntoMorphs()
 		{

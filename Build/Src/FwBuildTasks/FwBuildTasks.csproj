@@ -66,21 +66,14 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="IDLImporter">
-      <HintPath>lib\IDLImporter.dll</HintPath>
-    </Reference>
     <Reference Include="nunit.framework">
       <HintPath>..\..\..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
-    </Reference>
-    <Reference Include="NVelocity">
-      <HintPath>lib\NVelocity.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="Microsoft.Build.Framework" />
     <Reference Include="Microsoft.Build.Utilities.v4.0" />
-    <Reference Include="ICSharpCode.SharpZipLib.v0.86">
-      <HintPath>..\..\ICSharpCode.SharpZipLib.v0.86.dll</HintPath>
-    </Reference>
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
@@ -92,21 +85,9 @@
     <Compile Include="FwBuildTasksTests\ClouseauTests.cs" />
     <Compile Include="DownloadFile.cs" />
     <Compile Include="DownloadFilesFromTeamCity.cs" />
-    <Compile Include="FdoGenerate\Base.cs" />
-    <Compile Include="FdoGenerate\CellarModule.cs" />
-    <Compile Include="FdoGenerate\Class.cs" />
-    <Compile Include="FdoGenerate\DummyClass.cs" />
-    <Compile Include="FdoGenerate\FdoGenerateImpl.cs" />
-    <Compile Include="FdoGenerate\FdoGenerate.cs" />
-    <Compile Include="FdoGenerate\IClass.cs" />
-    <Compile Include="FdoGenerate\Model.cs" />
-    <Compile Include="FdoGenerate\Property.cs" />
-    <Compile Include="FdoGenerate\RelationalProperty.cs" />
-    <Compile Include="FdoGenerate\TypeInfo.cs" />
     <Compile Include="ExtractIIDsTask.cs" />
     <Compile Include="GenerateNUnitReports.cs" />
     <Compile Include="GenerateTestCoverageReport.cs" />
-    <Compile Include="IdlImp.cs" />
     <Compile Include="LocalizeFieldWorks.cs" />
     <Compile Include="FwBuildTasksTests\LocalizeFieldWorksTests.cs" />
     <Compile Include="Make.cs" />

@@ -6,8 +6,8 @@ using System.Drawing;
 using System.Xml.Linq;
 using LanguageExplorer.Controls;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
+using SIL.LCModel;
+using SIL.LCModel.Application;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks;
 
@@ -101,7 +101,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.DomainTypeEdit
 				true,
 				XDocument.Parse(ListResources.DomainTypeEditParameters).Root, XDocument.Parse(ListResources.ListToolsSliceFilters),
 				MachineName,
-				new PossibilityListClerkParameters("DomainTypeList", PropertyTable.GetValue<FdoCache>("cache").LanguageProject.LexDbOA.DomainTypesOA, false, true, false, "best analysis"),
+				new PossibilityListClerkParameters("DomainTypeList", PropertyTable.GetValue<LcmCache>("cache").LanguageProject.LexDbOA.DomainTypesOA, false, true, false, "best analysis"),
 				out _recordClerk);
 			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
 		}

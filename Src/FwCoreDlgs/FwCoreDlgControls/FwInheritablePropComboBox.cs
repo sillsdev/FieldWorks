@@ -9,7 +9,7 @@ using System.Windows.Forms;
 using System.Drawing;
 using System.Diagnostics;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel.DomainServices;
 
 namespace SIL.FieldWorks.FwCoreDlgControls
 {

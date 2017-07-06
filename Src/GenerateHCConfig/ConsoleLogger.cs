@@ -1,11 +1,11 @@
 ﻿using System;
 using System.ComponentModel;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.WordWorks.Parser;
 
 namespace GenerateHCConfig
 {
-	internal class ConsoleLogger : IFdoUI, IHCLoadErrorLogger
+	internal class ConsoleLogger : ILcmUI, IHCLoadErrorLogger
 	{
 		private readonly ISynchronizeInvoke m_synchronizeInvoke;
 
@@ -22,12 +22,6 @@ namespace GenerateHCConfig
 		public bool ConflictingSave()
 		{
 			throw new NotImplementedException();
-		}
-
-		public bool ConnectionLost()
-		{
-			Console.WriteLine("Connection lost.");
-			return false;
 		}
 
 		public DateTime LastActivityTime
@@ -78,11 +72,6 @@ namespace GenerateHCConfig
 		public bool OfferToRestore(string projectPath, string backupPath)
 		{
 			throw new NotImplementedException();
-		}
-
-		public void Exit()
-		{
-			Environment.Exit(1);
 		}
 
 		public void InvalidShape(string str, int errorPos, IMoMorphSynAnalysis msa)

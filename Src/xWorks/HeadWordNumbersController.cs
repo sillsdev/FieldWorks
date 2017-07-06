@@ -5,8 +5,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainImpl;
+using SIL.LCModel;
+using SIL.LCModel.DomainImpl;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -18,10 +18,10 @@ namespace SIL.FieldWorks.XWorks
 	{
 		private IHeadwordNumbersView _view;
 		private DictionaryConfigurationModel _model;
-		private FdoCache _cache;
+		private LcmCache _cache;
 		private DictionaryHomographConfiguration _homographConfig;
 
-		public HeadwordNumbersController(IHeadwordNumbersView view, DictionaryConfigurationModel model, FdoCache cache)
+		public HeadwordNumbersController(IHeadwordNumbersView view, DictionaryConfigurationModel model, LcmCache cache)
 		{
 			if(view == null || model == null || cache == null)
 				throw new ArgumentNullException();

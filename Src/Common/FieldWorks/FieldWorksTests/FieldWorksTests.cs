@@ -6,10 +6,10 @@ using System;
 using System.IO;
 using System.Reflection;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.Utils;
+using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks
 {
@@ -33,11 +33,11 @@ namespace SIL.FieldWorks
 			ReflectionHelper.SetField(typeof(FieldWorks), "s_fSingleProcessMode", false);
 			ReflectionHelper.SetField(typeof(FieldWorks), "s_fWaitingForUserOrOtherFw", false);
 			ReflectionHelper.SetField(typeof(FieldWorks), "s_projectId",
-				new ProjectId(FDOBackendProviderType.kXML, "monkey"));
+				new ProjectId(BackendProviderType.kXML, "monkey"));
 
 			Assert.AreEqual(ProjectMatch.ItsMyProject, ReflectionHelper.GetResult(
 				typeof(FieldWorks), "GetProjectMatchStatus",
-				new ProjectId(FDOBackendProviderType.kXML, "monkey")));
+				new ProjectId(BackendProviderType.kXML, "monkey")));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -51,11 +51,11 @@ namespace SIL.FieldWorks
 			ReflectionHelper.SetField(typeof(FieldWorks), "s_fSingleProcessMode", false);
 			ReflectionHelper.SetField(typeof(FieldWorks), "s_fWaitingForUserOrOtherFw", false);
 			ReflectionHelper.SetField(typeof(FieldWorks), "s_projectId",
-				new ProjectId(FDOBackendProviderType.kXML, "primate"));
+				new ProjectId(BackendProviderType.kXML, "primate"));
 
 			Assert.AreEqual(ProjectMatch.ItsNotMyProject, ReflectionHelper.GetResult(
 				typeof(FieldWorks), "GetProjectMatchStatus",
-				new ProjectId(FDOBackendProviderType.kXML, "monkey")));
+				new ProjectId(BackendProviderType.kXML, "monkey")));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -73,7 +73,7 @@ namespace SIL.FieldWorks
 
 			Assert.AreEqual(ProjectMatch.DontKnowYet, ReflectionHelper.GetResult(
 				typeof(FieldWorks), "GetProjectMatchStatus",
-				new ProjectId(FDOBackendProviderType.kXML, "monkey")));
+				new ProjectId(BackendProviderType.kXML, "monkey")));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -88,11 +88,11 @@ namespace SIL.FieldWorks
 			ReflectionHelper.SetField(typeof(FieldWorks), "s_fSingleProcessMode", false);
 			ReflectionHelper.SetField(typeof(FieldWorks), "s_fWaitingForUserOrOtherFw", true);
 			ReflectionHelper.SetField(typeof(FieldWorks), "s_projectId",
-				new ProjectId(FDOBackendProviderType.kXML, "monkey"));
+				new ProjectId(BackendProviderType.kXML, "monkey"));
 
 			Assert.AreEqual(ProjectMatch.WaitingForUserOrOtherFw, ReflectionHelper.GetResult(
 				typeof(FieldWorks), "GetProjectMatchStatus",
-				new ProjectId(FDOBackendProviderType.kXML, "monkey")));
+				new ProjectId(BackendProviderType.kXML, "monkey")));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -106,11 +106,11 @@ namespace SIL.FieldWorks
 			ReflectionHelper.SetField(typeof(FieldWorks), "s_fSingleProcessMode", true);
 			ReflectionHelper.SetField(typeof(FieldWorks), "s_fWaitingForUserOrOtherFw", true);
 			ReflectionHelper.SetField(typeof(FieldWorks), "s_projectId",
-				new ProjectId(FDOBackendProviderType.kXML, "monkey"));
+				new ProjectId(BackendProviderType.kXML, "monkey"));
 
 			Assert.AreEqual(ProjectMatch.SingleProcessMode, ReflectionHelper.GetResult(
 				typeof(FieldWorks), "GetProjectMatchStatus",
-				new ProjectId(FDOBackendProviderType.kXML, "monkey")));
+				new ProjectId(BackendProviderType.kXML, "monkey")));
 		}
 
 		#endregion
@@ -181,18 +181,18 @@ namespace SIL.FieldWorks
 		public void MakeSureIFdoUIImplementationHasNotMoved()
 		{
 			var pathname = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "FdoUi.dll");
-			var fdouiExists = File.Exists(pathname);
+			var fdoUiDllExists = File.Exists(pathname);
 			try
 			{
 				using (var threadHelper = new ThreadHelper())
 				{
-					var iFdoUIImpl = (IFdoUI)DynamicLoader.CreateObject("FdoUi.dll", "SIL.FieldWorks.FdoUi.FwFdoUI", FieldWorks.GetHelpTopicProvider(), threadHelper);
-					Assert.IsNotNull(iFdoUIImpl);
+					var iLcmUIImpl = (ILcmUI)DynamicLoader.CreateObject("FdoUi.dll", "SIL.FieldWorks.FdoUi.FwLcmUI", FieldWorks.GetHelpTopicProvider(), threadHelper);
+					Assert.IsNotNull(iLcmUIImpl);
 				}
 			}
 			catch (Exception err)
 			{
-				Assert.Fail($"Found it '{fdouiExists}'. Path: '{pathname}'. Somebody moved 'SIL.FieldWorks.FdoUi.FwFdoUI', or made it impossible to create via Reflection. Error mesage: {err.Message}: Stack trace: '{err.StackTrace}'");
+				Assert.Fail($"Found it '{fdoUiDllExists}'. Path: '{pathname}'. Somebody moved 'SIL.FieldWorks.FdoUi.FwLcmUI', or made it impossible to create via Reflection. Error mesage: {err.Message}: Stack trace: '{err.StackTrace}'");
 			}
 		}
 
@@ -207,7 +207,7 @@ namespace SIL.FieldWorks
 			Assert.IsNotNull(fdoUiAssembly, "Somebody deleted the 'FdoUi.dll'.");
 			var lexEntryUiType = fdoUiAssembly.GetType("SIL.FieldWorks.FdoUi.LexEntryUi");
 			Assert.IsNotNull(lexEntryUiType, "Somebody deleted the 'SIL.FieldWorks.FdoUi.LexEntryUi' class.");
-			var methodInfo = lexEntryUiType.GetMethod("DisplayRelatedEntries", new [] {typeof(FdoCache), typeof(IPropertyTable), typeof(IHelpTopicProvider), typeof(string), typeof(ITsString)});
+			var methodInfo = lexEntryUiType.GetMethod("DisplayRelatedEntries", new [] {typeof(LcmCache), typeof(IPropertyTable), typeof(IHelpTopicProvider), typeof(string), typeof(ITsString)});
 			Assert.IsNotNull(methodInfo, "Somebody deleted the 'DisplayRelatedEntries' from the 'SIL.FieldWorks.FdoUi.LexEntryUi' class.");
 		}
 
@@ -228,7 +228,7 @@ namespace SIL.FieldWorks
 
 		/// <summary>
 		/// Unit test helper to set up environment in which to test EnsureValidLinkedFilesFolderCore.
-		/// testToExecute takes (string defaultFolder, FdoCache cache).
+		/// testToExecute takes (string defaultFolder, LcmCache cache).
 		/// </summary>
 		public void EnsureValidLinkedFilesFolderCore_TestHelper(Action<string> testToExecute)
 		{

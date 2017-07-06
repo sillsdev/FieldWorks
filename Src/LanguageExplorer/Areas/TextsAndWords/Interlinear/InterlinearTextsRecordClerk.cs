@@ -6,21 +6,20 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
-using SIL.CoreImpl.Text;
+using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.XWorks;
-
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
 	public class InterlinearTextsRecordClerk : RecordClerk
 	{
-		private FwStyleSheet m_stylesheet;
+		private LcmStyleSheet m_stylesheet;
 
 		// The following is used in the process of selecting the ws for a new text.  See LT-6692.
 		public int PrevTextWs { get; set; }
@@ -282,7 +281,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// (when selected from the text list: ie a genre w/o a text was sellected)
 			string property = GetCorrespondingPropertyName("DelayedGenreAssignment");
 			var genreList = m_propertyTable.GetValue<List<TreeNode>>(property, null);
-			var ownerText = newText.Owner as FDO.IText;
+			var ownerText = newText.Owner as IText;
 			if (genreList != null && genreList.Count > 0 && ownerText != null)
 			{
 				foreach (var node in genreList)
@@ -320,14 +319,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		internal abstract class CreateAndInsertStText : ICreateAndInsert<IStText>
 		{
-			internal CreateAndInsertStText(FdoCache cache, InterlinearTextsRecordClerk clerk)
+			internal CreateAndInsertStText(LcmCache cache, InterlinearTextsRecordClerk clerk)
 			{
 				Cache = cache;
 				Clerk = clerk;
 			}
 
 			protected InterlinearTextsRecordClerk Clerk;
-			protected FdoCache Cache;
+			protected LcmCache Cache;
 			protected IStText NewStText;
 
 #region ICreateAndInsert<IStText> Members
@@ -353,7 +352,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		internal class UndoableCreateAndInsertStText : CreateAndInsertStText
 		{
-			internal UndoableCreateAndInsertStText(FdoCache cache, InterlinearTextsRecordClerk clerk)
+			internal UndoableCreateAndInsertStText(LcmCache cache, InterlinearTextsRecordClerk clerk)
 				: base(cache, clerk)
 			{
 #if RANDYTODO
@@ -379,7 +378,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		internal class NonUndoableCreateAndInsertStText : CreateAndInsertStText
 		{
-			internal NonUndoableCreateAndInsertStText(FdoCache cache, InterlinearTextsRecordClerk clerk)
+			internal NonUndoableCreateAndInsertStText(LcmCache cache, InterlinearTextsRecordClerk clerk)
 				: base(cache, clerk)
 			{
 			}

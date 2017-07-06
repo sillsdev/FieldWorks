@@ -13,7 +13,7 @@ using System.Xml.Linq;
 using System.Xml.XPath;
 using System.Xml.Xsl;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 
 namespace LanguageExplorer.Areas.TextsAndWords
 {
@@ -41,14 +41,14 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		private XDocument m_wordGrammarDebuggerXml;
 		private IPropertyTable m_propertyTable;
 		private readonly XslCompiledTransform m_intermediateTransform;
-		private readonly FdoCache m_cache;
+		private readonly LcmCache m_cache;
 		private readonly XDocument m_parseResult;
 
 		public XAmpleWordGrammarDebugger(IPropertyTable propertyTable, XDocument parseResult)
 		{
 			m_propertyTable = propertyTable;
 			m_parseResult = parseResult;
-			m_cache = m_propertyTable.GetValue<FdoCache>("cache");
+			m_cache = m_propertyTable.GetValue<LcmCache>("cache");
 			m_xmlHtmlStack = new Stack<Tuple<XDocument, string>>();
 			m_intermediateTransform = new XslCompiledTransform();
 			m_intermediateTransform.Load(Path.Combine(Path.GetTempPath(), m_cache.ProjectId.Name + "XAmpleWordGrammarDebugger.xsl"), new XsltSettings(true, false), new XmlUrlResolver());

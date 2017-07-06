@@ -5,13 +5,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
-using SIL.CoreImpl.Text;
+using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainImpl;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.FDOTests;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
+using SIL.LCModel.DomainImpl;
+using SIL.LCModel.DomainServices;
 
 namespace XMLViewsTests
 {
@@ -119,7 +118,7 @@ namespace XMLViewsTests
 
 		private class LexEntrySearchEngine : SearchEngine
 		{
-			public LexEntrySearchEngine(FdoCache cache)
+			public LexEntrySearchEngine(LcmCache cache)
 				: base(cache, SearchType.Prefix)
 			{
 			}

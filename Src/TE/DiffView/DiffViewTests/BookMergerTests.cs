@@ -6,14 +6,12 @@ using System;
 using System.Collections.Generic;
 using NUnit.Framework;
 
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.FDOTests;
-using SIL.FieldWorks.Common.ScriptureUtils;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.CoreImpl.Scripture;
-using SIL.CoreImpl.Text;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
-using SIL.Utils;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Core.Scripture;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.TE
 {
@@ -18347,7 +18345,7 @@ namespace SIL.FieldWorks.TE
 			AssertEx.RunIsCorrect(tssNewBtParaContents, 0, "BT", null, btWs);
 			// Run #1 is ORC for footnote, checked below...
 			AssertEx.RunIsCorrect(tssNewBtParaContents, 2, " of verse two", null, btWs);
-			FdoTestHelper.VerifyBtFootnote(footnoteNew, para2Curr, btWs, 2);
+			LcmTestHelper.VerifyBtFootnote(footnoteNew, para2Curr, btWs, 2);
 			// BT alternate must have the original status
 			Assert.AreEqual(BackTranslationStatus.Finished.ToString(),
 				newPara2trans.Status.get_String(btWs).Text);
@@ -20521,7 +20519,7 @@ namespace SIL.FieldWorks.TE
 			AssertEx.RunIsCorrect(tssTransParaHead, 0, "BT", null, btWs);
 			// Run #1 is ORC for footnote, checked below...
 			AssertEx.RunIsCorrect(tssTransParaHead, 2, " of section heading", null, btWs);
-			FdoTestHelper.VerifyBtFootnote(footnoteHeadNew, paraHead, btWs, 2);
+			LcmTestHelper.VerifyBtFootnote(footnoteHeadNew, paraHead, btWs, 2);
 
 			// BT alternate must have the original status
 			Assert.AreEqual(BackTranslationStatus.Checked.ToString(),
@@ -20537,7 +20535,7 @@ namespace SIL.FieldWorks.TE
 			AssertEx.RunIsCorrect(tssTransPara2, 0, "BT", null, btWs);
 			// Run #1 is ORC for footnote, checked below...
 			AssertEx.RunIsCorrect(tssTransPara2, 2, " of para two", null, btWs);
-			FdoTestHelper.VerifyBtFootnote(footnote2New, para2, btWs, 2);
+			LcmTestHelper.VerifyBtFootnote(footnote2New, para2, btWs, 2);
 			// BT alternate must have the original status
 			Assert.AreEqual(BackTranslationStatus.Finished.ToString(),
 				transPara2.Status.get_String(btWs).Text);
@@ -22804,8 +22802,8 @@ namespace SIL.FieldWorks.TE
 			ICmTranslation transPara1 = para1.GetBT();
 			ITsString tssTransPara1 = transPara1.Translation.get_String(btWs);
 			Assert.AreEqual("BT" + StringUtils.kChObject + " of verses 1-10" + StringUtils.kChObject, tssTransPara1.Text);
-			FdoTestHelper.VerifyBtFootnote(footnote1New, para1, btWs, 2);
-			FdoTestHelper.VerifyBtFootnote(footnote2New, para1, btWs, 18); // if we're able to split the BT someday, this footnote will move with the split
+			LcmTestHelper.VerifyBtFootnote(footnote1New, para1, btWs, 2);
+			LcmTestHelper.VerifyBtFootnote(footnote2New, para1, btWs, 18); // if we're able to split the BT someday, this footnote will move with the split
 			// but BT must have Unfinished status
 			Assert.AreEqual(BackTranslationStatus.Unfinished.ToString(),
 				transPara1.Status.get_String(btWs).Text);
@@ -22814,7 +22812,7 @@ namespace SIL.FieldWorks.TE
 			ICmTranslation transParaHead = paraHead.GetBT();
 			ITsString tssTransParaHead = transParaHead.Translation.get_String(btWs);
 			Assert.AreEqual("BT" + StringUtils.kChObject + " of Section Heading", tssTransParaHead.Text);
-			FdoTestHelper.VerifyBtFootnote(footnoteHeadNew, paraHead, btWs, 2);
+			LcmTestHelper.VerifyBtFootnote(footnoteHeadNew, paraHead, btWs, 2);
 			// BT status must be copied from the Revision
 			Assert.AreEqual(BackTranslationStatus.Finished.ToString(),
 				transParaHead.Status.get_String(btWs).Text);
@@ -24965,8 +24963,8 @@ namespace SIL.FieldWorks.TE
 		/// <param name="revParas">The rev paras.</param>
 		/// <param name="curParas">The cur paras.</param>
 		/// ------------------------------------------------------------------------------------
-		private void CompareParas(bool fIsHeading, int iSection, IFdoOwningSequence<IStPara> revParas,
-			IFdoOwningSequence<IStPara> curParas)
+		private void CompareParas(bool fIsHeading, int iSection, ILcmOwningSequence<IStPara> revParas,
+			ILcmOwningSequence<IStPara> curParas)
 		{
 			for (int iPara = 0; iPara < revParas.Count; iPara++)
 			{

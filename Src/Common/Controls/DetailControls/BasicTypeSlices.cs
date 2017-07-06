@@ -12,13 +12,13 @@
 using System;
 using System.Windows.Forms;
 using System.Xml.Linq;
-using SIL.CoreImpl.Cellar;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.Application.ApplicationServices;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel;
+using SIL.LCModel.Application;
+using SIL.LCModel.Application.ApplicationServices;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.Xml;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
@@ -44,7 +44,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		protected XElement m_node;
 		bool m_fToggleValue;
 
-		public CheckboxSlice(FdoCache cache, ICmObject obj, int flid, XElement node)
+		public CheckboxSlice(LcmCache cache, ICmObject obj, int flid, XElement node)
 			: base(new CheckBox(), cache, obj, flid)
 		{
 			m_cb = ((CheckBox)this.Control);
@@ -264,7 +264,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 	{
 
 
-		public CheckboxRefreshSlice(FdoCache cache, ICmObject obj, int flid, XElement node)
+		public CheckboxRefreshSlice(LcmCache cache, ICmObject obj, int flid, XElement node)
 			: base(cache, obj, flid, node)
 		{
 		}
@@ -308,7 +308,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// Initializes a new instance of the <see cref="DateSlice"/> class.
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
-		public DateSlice(FdoCache cache, ICmObject obj, int flid)
+		public DateSlice(LcmCache cache, ICmObject obj, int flid)
 			: base(new RichTextBox(), cache, obj, flid)
 		{
 			// JohnT: per comment at the end of LT-7073, we want the normal window color for this
@@ -417,7 +417,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		TextBox m_tb;
 		int m_previousValue;
 
-		public IntegerSlice(FdoCache cache, ICmObject obj, int flid)
+		public IntegerSlice(LcmCache cache, ICmObject obj, int flid)
 			: base(new TextBox(), cache, obj, flid)
 		{
 			m_tb = ((TextBox)this.Control);

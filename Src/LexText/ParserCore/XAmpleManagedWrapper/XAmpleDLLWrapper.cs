@@ -9,7 +9,6 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 
-
 namespace XAmpleManagedWrapper
 {
 	public delegate IntPtr SpecAmpleCreateSetup ();

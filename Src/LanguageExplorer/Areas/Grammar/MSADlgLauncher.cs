@@ -6,9 +6,9 @@ using System;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.LexText.Controls;
 
 namespace LanguageExplorer.Areas.Grammar
@@ -31,13 +31,13 @@ namespace LanguageExplorer.Areas.Grammar
 		/// <summary>
 		/// Initialize the launcher.
 		/// </summary>
-		public override void Initialize(FdoCache cache, ICmObject obj, int flid, string fieldName,
+		public override void Initialize(LcmCache cache, ICmObject obj, int flid, string fieldName,
 			IPersistenceProvider persistProvider, string displayNameProperty, string displayWs)
 		{
 			CheckDisposed();
 
 			base.Initialize(cache, obj, flid, fieldName, persistProvider, displayNameProperty, displayWs);
-			m_msaDlglauncherView.Init(PropertyTable.GetValue<FdoCache>("cache"), obj as IMoMorphSynAnalysis);
+			m_msaDlglauncherView.Init(PropertyTable.GetValue<LcmCache>("cache"), obj as IMoMorphSynAnalysis);
 		}
 
 		/// <summary>

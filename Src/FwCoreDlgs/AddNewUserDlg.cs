@@ -4,7 +4,7 @@
 
 using System;
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.Drawing;
+using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.FwCoreDlgs

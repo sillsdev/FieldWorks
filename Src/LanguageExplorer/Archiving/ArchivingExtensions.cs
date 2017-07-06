@@ -4,7 +4,7 @@
 
 using System;
 using System.Text;
-using SIL.CoreImpl.WritingSystems;
+using SIL.LCModel.Core.WritingSystems;
 
 namespace LanguageExplorer.Archiving
 {

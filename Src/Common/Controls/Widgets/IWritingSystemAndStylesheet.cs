@@ -2,9 +2,9 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
 
 namespace SIL.FieldWorks.Common.Widgets
 {
@@ -38,7 +38,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// <param name="cache"></param>
 		/// <param name="wsDefault">used to set WritingSytemCode and Font for the control</param>
 		public static void SetupWritingSystemAndStylesheetInfo(IPropertyTable propertyTable, IWritingSystemAndStylesheet control,
-			FdoCache cache, int wsDefault)
+			LcmCache cache, int wsDefault)
 		{
 			control.WritingSystemFactory = cache.WritingSystemFactory;
 			control.WritingSystemCode = wsDefault;

@@ -4,8 +4,8 @@
 
 using System;
 using System.Linq;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.FdoUi;
 using System.Windows.Forms;
 using LanguageExplorer.UtilityTools;
@@ -61,7 +61,7 @@ namespace LanguageExplorer.Areas.Lexicon
 		/// </summary>
 		public void Process()
 		{
-			var cache = m_dlg.PropertyTable.GetValue<FdoCache>("cache");
+			var cache = m_dlg.PropertyTable.GetValue<LcmCache>("cache");
 			var homographWsId = cache.LanguageProject.HomographWs;
 			var homographWs = cache.ServiceLocator.WritingSystems.AllWritingSystems.Where(ws => ws.Id == homographWsId);
 			var homographWsLabel = homographWs.First().DisplayLabel;

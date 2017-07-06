@@ -13,11 +13,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Filters;
-using SIL.CoreImpl.Text;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FwCoreDlgControls;
@@ -31,7 +31,7 @@ namespace SIL.FieldWorks.XWorks
 	public abstract class RecordBarHandler : IDisposable
 	{
 		protected IPropertyTable m_propertyTable;
-		protected FdoCache m_cache;
+		protected LcmCache m_cache;
 		protected bool m_expand;
 		protected bool m_hierarchical;
 		protected bool m_includeAbbr;
@@ -45,7 +45,7 @@ namespace SIL.FieldWorks.XWorks
 			if (propertyTable == null) throw new ArgumentNullException("propertyTable");
 
 			m_propertyTable = propertyTable;
-			m_cache = m_propertyTable.GetValue<FdoCache>("cache");
+			m_cache = m_propertyTable.GetValue<LcmCache>("cache");
 			m_expand = expand;
 			m_hierarchical = hierarchical;
 			m_includeAbbr = includeAbbr;
@@ -146,7 +146,6 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		#endregion IDisposable & Co. implementation
-
 		public void PopulateRecordBarIfNeeded(RecordList list)
 		{
 			CheckDisposed();
@@ -714,7 +713,7 @@ namespace SIL.FieldWorks.XWorks
 			var hvoMove = (int)sourceItem.Tag;
 			var hvoDest = 0;
 			int flidDest;
-			var cache = m_propertyTable.GetValue<FdoCache>("cache");
+			var cache = m_propertyTable.GetValue<LcmCache>("cache");
 			var move = cache.ServiceLocator.GetObject(hvoMove);
 			var moveLabel = sourceItem.Text;
 			TreeNodeCollection newSiblings;
@@ -761,7 +760,7 @@ namespace SIL.FieldWorks.XWorks
 					cache.ActionHandlerAccessor, () =>
 						cache.DomainDataByFlid.MoveOwnSeq(hvoOldOwner, flidSrc, srcIndex, srcIndex,
 														 hvoDest, flidDest, ihvoDest));
-				// Note: use MoveOwningSequence off FdoCache,
+				// Note: use MoveOwningSequence off LcmCache,
 				// so we get propchanges that can be picked up by SyncWatcher (CLE-76)
 				// (Hopefully the propchanges won't cause too much intermediant flicker,
 				// before ListUpdateHelper calls ReloadList())

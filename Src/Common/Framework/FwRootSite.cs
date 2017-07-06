@@ -3,7 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.ComponentModel;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.RootSites;
 
 namespace SIL.FieldWorks.Common.Framework
@@ -26,7 +26,7 @@ namespace SIL.FieldWorks.Common.Framework
 		/// </summary>
 		/// <param name="cache">The FDO Cache</param>
 		/// -----------------------------------------------------------------------------------
-		public FwRootSite(FdoCache cache) : base(cache)
+		public FwRootSite(LcmCache cache) : base(cache)
 		{
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
@@ -146,7 +146,7 @@ namespace SIL.FieldWorks.Common.Framework
 		/// ------------------------------------------------------------------------------------
 		protected override EditingHelper CreateEditingHelper()
 		{
-			return new FwEditingHelper(m_fdoCache, this);
+			return new FwEditingHelper(m_cache, this);
 		}
 		#endregion
 	}

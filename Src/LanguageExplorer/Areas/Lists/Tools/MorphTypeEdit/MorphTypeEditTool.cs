@@ -6,10 +6,10 @@ using System.Drawing;
 using System.Xml.Linq;
 using LanguageExplorer.Controls;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks;
+using SIL.LCModel;
+using SIL.LCModel.Application;
 
 namespace LanguageExplorer.Areas.Lists.Tools.MorphTypeEdit
 {
@@ -99,7 +99,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.MorphTypeEdit
 				true,
 				XDocument.Parse(ListResources.MorphTypeEditParameters).Root, XDocument.Parse(ListResources.ListToolsSliceFilters),
 				MachineName,
-				new PossibilityListClerkParameters("MorphTypeList", PropertyTable.GetValue<FdoCache>("cache").LanguageProject.LexDbOA.MorphTypesOA, false, false, false, "best analysis"),
+				new PossibilityListClerkParameters("MorphTypeList", PropertyTable.GetValue<LcmCache>("cache").LanguageProject.LexDbOA.MorphTypesOA, false, false, false, "best analysis"),
 				out _recordClerk);
 			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
 		}

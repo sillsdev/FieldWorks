@@ -12,17 +12,14 @@ using System.Text.RegularExpressions;
 using System.Xml;
 using Ionic.Zip;
 using NUnit.Framework;
-using SIL.CoreImpl.Text;
+using SIL.LCModel.Core.Text;
 using SIL.IO;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.FDOTests;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators;
-using XCore;
-// ReSharper disable InconsistentNaming
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -33,7 +30,7 @@ namespace SIL.FieldWorks.XWorks
 		private FwXWindow m_window;
 		private Mediator m_mediator;
 		private PropertyTable m_propertyTable;
-		private FwStyleSheet m_styleSheet;
+		private LcmStyleSheet m_styleSheet;
 		private StyleInfoTable m_owningTable;
 		private RecordClerk m_Clerk;
 
@@ -49,6 +46,8 @@ namespace SIL.FieldWorks.XWorks
 			m_window = new MockFwXWindow(m_application, configFilePath);
 			((MockFwXWindow)m_window).Init(Cache); // initializes Mediator values
 			m_propertyTable = m_window.PropTable;
+			m_propertyTable.SetProperty("AppSettings", new FwApplicationSettings(), false);
+			m_propertyTable.SetPropertyPersistence("AppSettings", false);
 			m_mediator = m_window.Mediator;
 			m_mediator.AddColleague(new StubContentControlProvider());
 			m_window.LoadUI(configFilePath);
@@ -91,7 +90,7 @@ namespace SIL.FieldWorks.XWorks
 		[TestFixtureTearDown]
 		public override void FixtureTeardown()
 		{
-			ConfiguredXHTMLGenerator.AssemblyFile = "FDO";
+			ConfiguredXHTMLGenerator.AssemblyFile = "SIL.LCModel";
 			base.FixtureTeardown();
 			Dispose();
 		}
@@ -149,7 +148,7 @@ namespace SIL.FieldWorks.XWorks
 				var testConfig = new Dictionary<string, DictionaryConfigurationModel>();
 				mockView.Model.Configurations = testConfig;
 				// Build model sufficient to generate xhtml and css
-				ConfiguredXHTMLGenerator.AssemblyFile = "FDO";
+				ConfiguredXHTMLGenerator.AssemblyFile = "SIL.LCModel";
 				var mainHeadwordNode = new ConfigurableDictionaryNode
 				{
 					FieldDescription = "HeadWord",
@@ -711,7 +710,7 @@ namespace SIL.FieldWorks.XWorks
 			/// <summary>
 			/// This constructor should be used in tests that will actually hit a server, and are marked [ByHand]
 			/// </summary>
-			public MockUploadToWebonaryController(FdoCache cache, IPropertyTable propertyTable, Mediator mediator)
+			public MockUploadToWebonaryController(LcmCache cache, IPropertyTable propertyTable, Mediator mediator)
 				: base(cache, propertyTable, mediator)
 			{
 			}
@@ -719,7 +718,7 @@ namespace SIL.FieldWorks.XWorks
 			/// <summary>
 			/// Tests using this constructor do not need to be marked [ByHand]; an exception, response, and response code can all be set.
 			/// </summary>
-			public MockUploadToWebonaryController(FdoCache cache, IPropertyTable propertyTable, Mediator mediator, WebonaryClient.WebonaryException exceptionResponse,
+			public MockUploadToWebonaryController(LcmCache cache, IPropertyTable propertyTable, Mediator mediator, WebonaryClient.WebonaryException exceptionResponse,
 				byte[] responseContents, HttpStatusCode responseStatus = HttpStatusCode.OK) : base(cache, propertyTable, mediator)
 			{
 				CreateWebClient = () => new MockWebonaryClient(exceptionResponse, responseContents, responseStatus);

@@ -9,7 +9,6 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
-using SIL.CoreImpl.Properties;
 using SIL.FieldWorks.Common.FwUtils;
 
 namespace LanguageExplorer.Controls.SilSidePane
@@ -188,7 +187,7 @@ namespace LanguageExplorer.Controls.SilSidePane
 		/// <summary></summary>
 		protected override void OnRenderOverflowButtonBackground(ToolStripItemRenderEventArgs e)
 		{
-			using (Image arrow = Resources.DropDown2003.ToBitmap())
+			using (Image arrow = LanguageExplorerResources.DropDown2003.ToBitmap())
 			{
 			Rectangle rc = Rectangle.Empty;
 			rc.Width = arrow.Width + 12;

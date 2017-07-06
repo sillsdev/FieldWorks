@@ -5,12 +5,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using SIL.CoreImpl.Cellar;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
+using SIL.LCModel.Application;
+using SIL.LCModel.Infrastructure;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -21,13 +21,13 @@ namespace SIL.FieldWorks.XWorks
 	public class InterestingTextsDecorator : DomainDataByFlidDecoratorBase, ISetRootHvo
 	{
 		private InterestingTextList m_interestingTexts;
-		private IFdoServiceLocator m_services;
+		private ILcmServiceLocator m_services;
 		private IPropertyTable m_propertyTable;
 		private int m_notifieeCount;
 		// The object our property belongs to. We consider any object for which we are asked our special
 		// property to be the root object.
 		private int m_rootHvo;
-		public InterestingTextsDecorator(ISilDataAccessManaged domainDataByFlid, IFdoServiceLocator services, IPropertyTable propertyTable)
+		public InterestingTextsDecorator(ISilDataAccessManaged domainDataByFlid, ILcmServiceLocator services, IPropertyTable propertyTable)
 			: base(domainDataByFlid)
 		{
 			SetOverrideMdc(new InterestingTextsMdc(base.MetaDataCache as IFwMetaDataCacheManaged));
@@ -62,7 +62,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		static string InterestingTextKey = "InterestingTexts";
-		static public InterestingTextList GetInterestingTextList(IPropertyTable propertyTable, IFdoServiceLocator services)
+		static public InterestingTextList GetInterestingTextList(IPropertyTable propertyTable, ILcmServiceLocator services)
 		{
 			InterestingTextList interestingTextList;
 			if (!propertyTable.TryGetValue(InterestingTextKey, out interestingTextList))
@@ -149,7 +149,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 	}
 
-	public class InterestingTextsMdc : FdoMetaDataCacheDecoratorBase
+	public class InterestingTextsMdc : LcmMetaDataCacheDecoratorBase
 	{
 		public InterestingTextsMdc(IFwMetaDataCacheManaged metaDataCache)
 			: base(metaDataCache)

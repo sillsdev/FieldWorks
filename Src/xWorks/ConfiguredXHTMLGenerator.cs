@@ -12,20 +12,20 @@ using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Xml;
-using SIL.CoreImpl.Cellar;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.WritingSystems;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.Common.Framework;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.Utils;
-using FileUtils = SIL.Utils.FileUtils;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
+using SIL.LCModel.Utils;
+using FileUtils = SIL.LCModel.Utils.FileUtils;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -69,11 +69,11 @@ namespace SIL.FieldWorks.XWorks
 		private const string ImagesFolder = "Images";
 
 		/// <summary>
-		/// Static initializer setting the AssemblyFile to the default Fieldworks model dll.
+		/// Static initializer setting the AssemblyFile to the default LCM dll.
 		/// </summary>
 		static ConfiguredXHTMLGenerator()
 		{
-			AssemblyFile = "FDO";
+			AssemblyFile = "SIL.LCModel";
 			EntriesToAddCount = 5;
 		}
 
@@ -102,7 +102,7 @@ namespace SIL.FieldWorks.XWorks
 			using (var writer = XmlWriter.Create(stringBuilder))
 			using (var cssWriter = new StreamWriter(previewCssPath, false, Encoding.UTF8))
 			{
-				var exportSettings = new GeneratorSettings(propertyTable.GetValue<FdoCache>("cache"), propertyTable, false, false, null,
+				var exportSettings = new GeneratorSettings(propertyTable.GetValue<LcmCache>("cache"), propertyTable, false, false, null,
 					IsNormalRtl(propertyTable));
 				GenerateOpeningHtml(previewCssPath, custCssPath, exportSettings, writer);
 				var content = GenerateXHTMLForEntry(entry, configuration, pubDecorator, exportSettings);
@@ -189,7 +189,7 @@ namespace SIL.FieldWorks.XWorks
 			xhtmlWriter.WriteEndElement(); //</html>
 		}
 
-		private static string GetPreferredPreviewPath(DictionaryConfigurationModel config, FdoCache cache, bool isSingleEntryPreview)
+		private static string GetPreferredPreviewPath(DictionaryConfigurationModel config, LcmCache cache, bool isSingleEntryPreview)
 		{
 			var basePath = Path.Combine(Path.GetTempPath(), "DictionaryPreview", cache.ProjectId.Name);
 			FileUtils.EnsureDirectoryExists(basePath);
@@ -206,7 +206,7 @@ namespace SIL.FieldWorks.XWorks
 		public static string SavePreviewHtmlWithStyles(int[] entryHvos, DictionaryPublicationDecorator publicationDecorator, DictionaryConfigurationModel configuration, IPropertyTable propertyTable,
 			IThreadedProgress progress = null, int entriesPerPage = EntriesPerPage)
 		{
-			var preferredPath = GetPreferredPreviewPath(configuration, propertyTable.GetValue<FdoCache>("cache"), entryHvos.Length == 1);
+			var preferredPath = GetPreferredPreviewPath(configuration, propertyTable.GetValue<LcmCache>("cache"), entryHvos.Length == 1);
 			var xhtmlPath = Path.ChangeExtension(preferredPath, "xhtml");
 			try
 			{
@@ -259,7 +259,7 @@ namespace SIL.FieldWorks.XWorks
 			var cssPath = Path.ChangeExtension(xhtmlPath, "css");
 			var configDir = Path.GetDirectoryName(configuration.FilePath);
 			var clerk = propertyTable.GetValue<RecordClerk>("ActiveClerk");
-			var cache = propertyTable.GetValue<FdoCache>("cache");
+			var cache = propertyTable.GetValue<LcmCache>("cache");
 			// Don't display letter headers if we're showing a preview in the Edit tool or we're not sorting by headword
 			var wantLetterHeaders = (entryCount > 1 || !IsLexEditPreviewOnly(publicationDecorator)) && (IsClerkSortingByHeadword(clerk));
 			using (var xhtmlWriter = XmlWriter.Create(xhtmlPath))
@@ -951,7 +951,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <returns>true if the custom field was valid and false otherwise</returns>
 		/// <remarks>propertyValue can be null if the custom field is valid but no value is stored for the owning object</remarks>
 		private static bool GetPropValueForCustomField(object fieldOwner, ConfigurableDictionaryNode config,
-			FdoCache cache, string customFieldOwnerClassName, string customFieldName, ref object propertyValue)
+			LcmCache cache, string customFieldOwnerClassName, string customFieldName, ref object propertyValue)
 		{
 			int customFieldFlid = GetCustomFieldFlid(config, cache, customFieldOwnerClassName, customFieldName);
 			if (customFieldFlid != 0)
@@ -1132,7 +1132,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary/>
 		/// <returns>Returns the flid of the custom field identified by the configuration nodes FieldDescription
 		/// in the class identified by <code>customFieldOwnerClassName</code></returns>
-		private static int GetCustomFieldFlid(ConfigurableDictionaryNode config, FdoCache cache,
+		private static int GetCustomFieldFlid(ConfigurableDictionaryNode config, LcmCache cache,
 														  string customFieldOwnerClassName, string customFieldName = null)
 		{
 			var fieldName = customFieldName ?? config.FieldDescription;
@@ -1155,7 +1155,7 @@ namespace SIL.FieldWorks.XWorks
 		/// This method will return the string representing the class name for the parent
 		/// node of a configuration item representing a custom field.
 		/// </summary>
-		private static string GetClassNameForCustomFieldParent(ConfigurableDictionaryNode customFieldNode, FdoCache cache)
+		private static string GetClassNameForCustomFieldParent(ConfigurableDictionaryNode customFieldNode, LcmCache cache)
 		{
 			Type unneeded;
 			// If the parent node of the custom field represents a collection, calling GetTypeForConfigurationNode
@@ -1354,7 +1354,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Get the property type for a configuration node, using a cache to help out if necessary.
 		/// </summary>
-		internal static PropertyType GetPropertyTypeForConfigurationNode(ConfigurableDictionaryNode config, FdoCache cache)
+		internal static PropertyType GetPropertyTypeForConfigurationNode(ConfigurableDictionaryNode config, LcmCache cache)
 		{
 			return GetPropertyTypeForConfigurationNode(config, null, cache);
 		}
@@ -1364,7 +1364,7 @@ namespace SIL.FieldWorks.XWorks
 		/// described by the ancestry and FieldDescription and SubField properties of each node in it.
 		/// </summary>
 		/// <returns></returns>
-		internal static PropertyType GetPropertyTypeForConfigurationNode(ConfigurableDictionaryNode config, Type fieldTypeFromData, FdoCache cache = null)
+		internal static PropertyType GetPropertyTypeForConfigurationNode(ConfigurableDictionaryNode config, Type fieldTypeFromData, LcmCache cache = null)
 		{
 			Type parentType;
 			var fieldType = GetTypeForConfigurationNode(config, cache, out parentType);
@@ -1417,7 +1417,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="cache">Used when dealing with custom field nodes</param>
 		/// <param name="parentType">This will be set to the type of the parent of config which is sometimes useful to the callers</param>
 		/// <returns></returns>
-		internal static Type GetTypeForConfigurationNode(ConfigurableDictionaryNode config, FdoCache cache, out Type parentType)
+		internal static Type GetTypeForConfigurationNode(ConfigurableDictionaryNode config, LcmCache cache, out Type parentType)
 		{
 			if (config == null)
 			{
@@ -1442,7 +1442,7 @@ namespace SIL.FieldWorks.XWorks
 			var lookupType = assembly.GetType(rootNode.FieldDescription);
 			if (lookupType == null) // If the FieldDescription didn't load prepend the default model namespace and try again
 			{
-				lookupType = assembly.GetType("SIL.FieldWorks.FDO.DomainImpl." + rootNode.FieldDescription);
+				lookupType = assembly.GetType("SIL.LCModel.DomainImpl." + rootNode.FieldDescription);
 			}
 			if (lookupType == null)
 			{
@@ -1485,7 +1485,7 @@ namespace SIL.FieldWorks.XWorks
 			return fieldType;
 		}
 
-		private static Type GetCustomFieldType(Type lookupType, ConfigurableDictionaryNode config, FdoCache cache)
+		private static Type GetCustomFieldType(Type lookupType, ConfigurableDictionaryNode config, LcmCache cache)
 		{
 			// FDO doesn't work with interfaces, just concrete classes so chop the I off any interface types
 			var customFieldOwnerClassName = lookupType.Name.TrimStart('I');
@@ -1499,7 +1499,7 @@ namespace SIL.FieldWorks.XWorks
 					case (int)CellarPropertyType.OwningSequence:
 					case (int)CellarPropertyType.ReferenceCollection:
 						{
-							return typeof(IFdoVector);
+							return typeof(ILcmVector);
 						}
 					case (int)CellarPropertyType.ReferenceAtomic:
 					case (int)CellarPropertyType.OwningAtomic:
@@ -1611,9 +1611,9 @@ namespace SIL.FieldWorks.XWorks
 			{
 				collection = (IEnumerable)collectionField;
 			}
-			else if (collectionField is IFdoVector)
+			else if (collectionField is ILcmVector)
 			{
-				collection = ((IFdoVector)collectionField).Objects;
+				collection = ((ILcmVector)collectionField).Objects;
 			}
 			else
 			{
@@ -2480,10 +2480,10 @@ namespace SIL.FieldWorks.XWorks
 		{
 			// The collections we test here are generic collection types (e.g. IEnumerable<T>). Note: This (and other code) does not work for arrays.
 			// We do have at least one collection type with at least two generic arguments; hence `> 0` instead of `== 1`
-			return entryType.GetGenericArguments().Length > 0 || typeof (IFdoVector).IsAssignableFrom(entryType);
+			return entryType.GetGenericArguments().Length > 0 || typeof (ILcmVector).IsAssignableFrom(entryType);
 		}
 
-		internal static bool IsCollectionNode(ConfigurableDictionaryNode configNode, FdoCache cache)
+		internal static bool IsCollectionNode(ConfigurableDictionaryNode configNode, LcmCache cache)
 		{
 			return GetPropertyTypeForConfigurationNode(configNode, cache) == PropertyType.CollectionType;
 		}
@@ -2622,9 +2622,9 @@ namespace SIL.FieldWorks.XWorks
 			{
 				return !(((IEnumerable)collection).Cast<object>().Any());
 			}
-			if (collection is IFdoVector)
+			if (collection is ILcmVector)
 			{
-				return ((IFdoVector)collection).ToHvoArray().Length == 0;
+				return ((ILcmVector)collection).ToHvoArray().Length == 0;
 			}
 			throw new ArgumentException(@"Cannot test something that isn't a collection", "collection");
 		}
@@ -2975,7 +2975,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			if (!String.IsNullOrEmpty(style))
 			{
-				var cssStyle = CssGenerator.GenerateCssStyleFromFwStyleSheet(style,
+				var cssStyle = CssGenerator.GenerateCssStyleFromLcmStyleSheet(style,
 					settings.Cache.WritingSystemFactory.GetWsFromStr(writingSystem), settings.PropertyTable);
 				var css = cssStyle.ToString();
 				if (!String.IsNullOrEmpty(css))
@@ -3081,7 +3081,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="wsOptions"></param>
 		/// <param name="cache"></param>
 		/// <returns></returns>
-		private static string GetLanguageFromFirstOption(DictionaryNodeWritingSystemOptions wsOptions, FdoCache cache)
+		private static string GetLanguageFromFirstOption(DictionaryNodeWritingSystemOptions wsOptions, LcmCache cache)
 		{
 			const string defaultLang = "en";
 			if (wsOptions == null)
@@ -3106,7 +3106,7 @@ namespace SIL.FieldWorks.XWorks
 
 		public static DictionaryPublicationDecorator GetPublicationDecoratorAndEntries(IPropertyTable propertyTable, out int[] entriesToSave, string dictionaryType)
 		{
-			var cache = propertyTable.GetValue<FdoCache>("cache");
+			var cache = propertyTable.GetValue<LcmCache>("cache");
 			if (cache == null)
 			{
 				throw new ArgumentException(@"PropertyTable had no cache", "propertyTable");
@@ -3137,13 +3137,13 @@ namespace SIL.FieldWorks.XWorks
 
 		public class GeneratorSettings
 		{
-			public FdoCache Cache { get; private set; }
+			public LcmCache Cache { get; private set; }
 			public IPropertyTable PropertyTable { get; private set; }
 			public bool UseRelativePaths { get; private set; }
 			public bool CopyFiles { get; private set; }
 			public string ExportPath { get; private set; }
 			public bool RightToLeft { get; private set; }
-			public GeneratorSettings(FdoCache cache, IPropertyTable propertyTable, bool relativePaths, bool copyFiles, string exportPath, bool rightToLeft = false)
+			public GeneratorSettings(LcmCache cache, IPropertyTable propertyTable, bool relativePaths, bool copyFiles, string exportPath, bool rightToLeft = false)
 			{
 				if (cache == null || propertyTable == null)
 				{

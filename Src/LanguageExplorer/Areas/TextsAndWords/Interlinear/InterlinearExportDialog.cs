@@ -12,10 +12,10 @@ using System.Xml.Xsl;
 using ICSharpCode.SharpZipLib.Zip;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Utils;
 using SIL.FieldWorks.XWorks;
-using SIL.Utils;
 using SIL.Xml;
 using WaitCursor = SIL.FieldWorks.Common.FwUtils.WaitCursor;
 
@@ -29,7 +29,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private List<XmlNode> m_ddNodes = new List<XmlNode>(8); // Saves XML nodes used to configure items.
 		ICmObject m_objRoot;
 		InterlinVc m_vc;
-		SIL.FieldWorks.FDO.IText m_text;
+		IText m_text;
 		List<ICmObject> m_objs = new List<ICmObject>();
 		private event EventHandler OnLaunchFilterScrScriptureSectionsDialog;
 

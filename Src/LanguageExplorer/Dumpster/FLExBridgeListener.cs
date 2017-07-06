@@ -19,16 +19,15 @@ using SIL.Lift.Parsing;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.FDO.Infrastructure.Impl;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.Resources;
 using SIL.IO;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 using WaitCursor = SIL.FieldWorks.Common.FwUtils.WaitCursor;
 
 namespace LanguageExplorer.Dumpster
@@ -44,7 +43,7 @@ namespace LanguageExplorer.Dumpster
 		private Form _parentForm;
 		private string _liftPathname;
 		private IProgress _progressDlg;
-		private FdoCache Cache { get; set; }
+		private LcmCache Cache { get; set; }
 
 		/// <summary>
 		/// On static initialization the OldLiftBridgeProjects is populated from the mapping file if it is present.
@@ -110,7 +109,7 @@ namespace LanguageExplorer.Dumpster
 			Publisher = flexComponentParameters.Publisher;
 			Subscriber = flexComponentParameters.Subscriber;
 
-			Cache = PropertyTable.GetValue<FdoCache>("cache");
+			Cache = PropertyTable.GetValue<LcmCache>("cache");
 			PropertyTable.SetProperty("FLExBridgeListener", this, false, true);
 			_parentForm = PropertyTable.GetValue<Form>("window");
 		}
@@ -265,7 +264,7 @@ namespace LanguageExplorer.Dumpster
 			StopParser();
 			bool dummy;
 			var success = FLExBridgeHelper.LaunchFieldworksBridge(Cache.ProjectId.ProjectFolder, null, FLExBridgeHelper.ObtainLift, null,
-				FDOBackendProvider.ModelVersion, "0.13", null,
+				LcmCache.ModelVersion, "0.13", null,
 				null, out dummy, out _liftPathname);
 
 			if (!success || string.IsNullOrEmpty(_liftPathname))
@@ -328,7 +327,7 @@ namespace LanguageExplorer.Dumpster
 						var sLinkedFilesRootDir = flexApp.Cache.LangProject.LinkedFilesRootDir;
 						NonUndoableUnitOfWorkHelper.Do(flexApp.Cache.ActionHandlerAccessor, () =>
 						{
-							flexApp.Cache.LangProject.LinkedFilesRootDir = FdoFileHelper.GetDefaultLinkedFilesDir(
+							flexApp.Cache.LangProject.LinkedFilesRootDir = LcmFileHelper.GetDefaultLinkedFilesDir(
 								flexApp.Cache.ProjectId.ProjectFolder);
 						});
 						flexApp.UpdateExternalLinks(sLinkedFilesRootDir);
@@ -355,20 +354,20 @@ namespace LanguageExplorer.Dumpster
 			var projectFolder = Cache.ProjectId.ProjectFolder;
 			var savedState = PrepareToDetectMainConflicts(projectFolder);
 			string dummy;
-			var fullProjectFileName = Path.Combine(projectFolder, Cache.ProjectId.Name + FdoFileHelper.ksFwDataXmlFileExtension);
+			var fullProjectFileName = Path.Combine(projectFolder, Cache.ProjectId.Name + LcmFileHelper.ksFwDataXmlFileExtension);
 			bool dataChanged;
 			using (CopyDictionaryConfigFileToTemp(projectFolder))
 			{
 				var success = FLExBridgeHelper.LaunchFieldworksBridge(fullProjectFileName, SendReceiveUser, FLExBridgeHelper.SendReceive,
-																  null, FDOBackendProvider.ModelVersion, "0.13",
-																  Cache.LangProject.DefaultVernacularWritingSystem.Id, null,
-																  out dataChanged, out dummy);
-			if (!success)
-			{
-				ReportDuplicateBridge();
-				ProjectLockingService.LockCurrentProject(Cache);
-				return true;
-			}
+					null, LcmCache.ModelVersion, "0.13",
+					Cache.LangProject.DefaultVernacularWritingSystem.Id, null,
+					out dataChanged, out dummy);
+				if (!success)
+				{
+					ReportDuplicateBridge();
+					ProjectLockingService.LockCurrentProject(Cache);
+					return true;
+				}
 			}
 			if (dataChanged)
 			{
@@ -390,7 +389,7 @@ namespace LanguageExplorer.Dumpster
 
 		private bool LinkedFilesLocationIsDefault()
 		{
-			var defaultLinkedFilesFolder = FdoFileHelper.GetDefaultLinkedFilesDir(Cache.ServiceLocator.DataSetup.ProjectId.ProjectFolder);
+			var defaultLinkedFilesFolder = LcmFileHelper.GetDefaultLinkedFilesDir(Cache.ServiceLocator.DataSetup.ProjectId.ProjectFolder);
 			return defaultLinkedFilesFolder.Equals(Cache.LanguageProject.LinkedFilesRootDir);
 		}
 
@@ -447,7 +446,7 @@ namespace LanguageExplorer.Dumpster
 
 		private static bool IsConfiguredForLiftSR(string folder)
 		{
-			var otherRepoPath = Path.Combine(folder, FdoFileHelper.OtherRepositories);
+			var otherRepoPath = Path.Combine(folder, LcmFileHelper.OtherRepositories);
 			if (!Directory.Exists(otherRepoPath))
 				return false;
 			var liftFolder = Directory.EnumerateDirectories(otherRepoPath, "*_LIFT").FirstOrDefault();
@@ -567,7 +566,7 @@ namespace LanguageExplorer.Dumpster
 
 		private string GetFullProjectFileName()
 		{
-			return Path.Combine(Cache.ProjectId.ProjectFolder, Cache.ProjectId.Name + FdoFileHelper.ksFwDataXmlFileExtension);
+			return Path.Combine(Cache.ProjectId.ProjectFolder, Cache.ProjectId.Name + LcmFileHelper.ksFwDataXmlFileExtension);
 		}
 
 		private void SaveAllDataToDisk()
@@ -620,7 +619,7 @@ namespace LanguageExplorer.Dumpster
 				GetFullProjectFileName(),
 				SendReceiveUser,
 				FLExBridgeHelper.CheckForUpdates,
-				null, FDOBackendProvider.ModelVersion, "0.13", null, null,
+				null, LcmCache.ModelVersion, "0.13", null, null,
 				out dummy1, out dummy2);
 
 			return true;
@@ -655,7 +654,7 @@ namespace LanguageExplorer.Dumpster
 				GetFullProjectFileName(),
 				SendReceiveUser,
 				FLExBridgeHelper.AboutFLExBridge,
-				null, FDOBackendProvider.ModelVersion, "0.13", null, null,
+				null, LcmCache.ModelVersion, "0.13", null, null,
 				out dummy1, out dummy2);
 
 			return true;
@@ -695,10 +694,10 @@ namespace LanguageExplorer.Dumpster
 			bool dummy1;
 			string dummy2;
 			FLExBridgeHelper.FLExJumpUrlChanged += JumpToFlexObject;
-			var success = FLExBridgeHelper.LaunchFieldworksBridge(Path.Combine(Cache.ProjectId.ProjectFolder, Cache.ProjectId.Name + FdoFileHelper.ksFwDataXmlFileExtension),
+			var success = FLExBridgeHelper.LaunchFieldworksBridge(Path.Combine(Cache.ProjectId.ProjectFolder, Cache.ProjectId.Name + LcmFileHelper.ksFwDataXmlFileExtension),
 								   SendReceiveUser,
 								   FLExBridgeHelper.ConflictViewer,
-								   null, FDOBackendProvider.ModelVersion, "0.13", null, BroadcastMasterRefresh,
+								   null, LcmCache.ModelVersion, "0.13", null, BroadcastMasterRefresh,
 								   out dummy1, out dummy2);
 			if (!success)
 			{
@@ -745,7 +744,7 @@ namespace LanguageExplorer.Dumpster
 				GetFullProjectFileName(),
 				SendReceiveUser,
 				FLExBridgeHelper.LiftConflictViewer,
-				null, FDOBackendProvider.ModelVersion, "0.13", null, BroadcastMasterRefresh,
+				null, LcmCache.ModelVersion, "0.13", null, BroadcastMasterRefresh,
 				out dummy1, out dummy2);
 			if (!success)
 			{
@@ -847,7 +846,7 @@ namespace LanguageExplorer.Dumpster
 				GetFullProjectFileName(),
 				SendReceiveUser,
 				FLExBridgeHelper.MoveLift,
-				Cache.LanguageProject.Guid.ToString().ToLowerInvariant(), FDOBackendProvider.ModelVersion, "0.13", null, null,
+				Cache.LanguageProject.Guid.ToString().ToLowerInvariant(), LcmCache.ModelVersion, "0.13", null, null,
 				out dummyDataChanged, out _liftPathname); // _liftPathname will be null, if no repo was moved.
 			if (!success)
 			{
@@ -962,7 +961,7 @@ namespace LanguageExplorer.Dumpster
 				fullProjectFileName,
 				SendReceiveUser,
 				FLExBridgeHelper.SendReceiveLift, // May create a new lift repo in the process of doing the S/R. Or, it may just use the extant lift repo.
-				null, FDOBackendProvider.ModelVersion, "0.13", Cache.LangProject.DefaultVernacularWritingSystem.Id, null,
+				null, LcmCache.ModelVersion, "0.13", Cache.LangProject.DefaultVernacularWritingSystem.Id, null,
 				out dataChanged, out dummy);
 			if (!success)
 			{
@@ -987,7 +986,7 @@ namespace LanguageExplorer.Dumpster
 		/// <returns></returns>
 		internal static string GetLiftRepositoryFolderFromFwProjectFolder(string projectFolder)
 		{
-			var otherDir = Path.Combine(projectFolder, FdoFileHelper.OtherRepositories);
+			var otherDir = Path.Combine(projectFolder, LcmFileHelper.OtherRepositories);
 			if (Directory.Exists(otherDir))
 			{
 				var extantOtherFolders = Directory.GetDirectories(otherDir);
@@ -997,7 +996,7 @@ namespace LanguageExplorer.Dumpster
 			}
 
 			var flexProjName = Path.GetFileName(projectFolder);
-			return Path.Combine(projectFolder, FdoFileHelper.OtherRepositories, flexProjName + '_' + FLExBridgeHelper.LIFT);
+			return Path.Combine(projectFolder, LcmFileHelper.OtherRepositories, flexProjName + '_' + FLExBridgeHelper.LIFT);
 		}
 
 		void OnDumperSetProgressMessage(object sender, ProgressMessageArgs e)
@@ -1051,7 +1050,7 @@ namespace LanguageExplorer.Dumpster
 		/// <param name="liftPath"></param>
 		/// <param name="parentForm"></param>
 		/// <returns></returns>
-		public static bool ImportObtainedLexicon(FdoCache cache, string liftPath, Form parentForm)
+		public static bool ImportObtainedLexicon(LcmCache cache, string liftPath, Form parentForm)
 		{
 			using (var importer = new FLExBridgeListener())
 			{
@@ -1410,7 +1409,7 @@ namespace LanguageExplorer.Dumpster
 			// Have FLEx Bridge do its 'undo'
 			// flexbridge -p <project folder name> #-u username -v undo_export_lift)
 			FLExBridgeHelper.LaunchFieldworksBridge(Cache.ProjectId.ProjectFolder, SendReceiveUser,
-				FLExBridgeHelper.UndoExportLift, null, FDOBackendProvider.ModelVersion, "0.13", null, null,
+				FLExBridgeHelper.UndoExportLift, null, LcmCache.ModelVersion, "0.13", null, null,
 				out dataChanged, out dummy);
 		}
 
@@ -1433,7 +1432,7 @@ namespace LanguageExplorer.Dumpster
 		/// When 'true', then skip any Flex notes, and only consider the Lift notes.
 		/// </param>
 		/// <returns>'true' if there are any Chorus Notes files at the given level. Otherwise, it returns 'false'.</returns>
-		private static bool NotesFileIsPresent(FdoCache cache, bool checkForLiftNotes)
+		private static bool NotesFileIsPresent(LcmCache cache, bool checkForLiftNotes)
 		{
 			// Default to look for notes in the main FW repo.
 			var folderToSearchIn = cache.ProjectId.ProjectFolder;
@@ -1485,7 +1484,7 @@ namespace LanguageExplorer.Dumpster
 
 		private static bool CheckForExistingFileName(string projectFolder, string revisedFileName)
 		{
-			if (File.Exists(Path.Combine(projectFolder, revisedFileName + FdoFileHelper.ksFwDataXmlFileExtension)))
+			if (File.Exists(Path.Combine(projectFolder, revisedFileName + LcmFileHelper.ksFwDataXmlFileExtension)))
 			{
 				MessageBox.Show(
 					LanguageExplorerResources.ksExistingProjectName, LanguageExplorerResources.ksWarning, MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -1534,7 +1533,7 @@ namespace LanguageExplorer.Dumpster
 			foreach (var file in Directory.GetFiles(path, "*.ChorusNotes", SearchOption.AllDirectories))
 			{
 				// TODO: Test to see if one conflict tool can do both FLEx and LIFT conflicts.
-				if (file.Contains(FdoFileHelper.OtherRepositories))
+				if (file.Contains(LcmFileHelper.OtherRepositories))
 					continue; // Skip them, since they are part of some other repository.
 
 				long oldLength;
@@ -1556,7 +1555,7 @@ namespace LanguageExplorer.Dumpster
 			var result = new Dictionary<string, long>();
 			foreach (var file in Directory.GetFiles(projectFolder, "*.ChorusNotes", SearchOption.AllDirectories))
 			{
-				if (file.Contains(FdoFileHelper.OtherRepositories))
+				if (file.Contains(LcmFileHelper.OtherRepositories))
 					continue; // Skip them, since they are part of some other repository.
 
 				result[file] = new FileInfo(file).Length;

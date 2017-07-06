@@ -4,7 +4,7 @@
 //
 
 using NUnit.Framework;
-using SIL.CoreImpl.Text;
+using SIL.LCModel.Core.Text;
 
 namespace SIL.FieldWorks.Filters
 {

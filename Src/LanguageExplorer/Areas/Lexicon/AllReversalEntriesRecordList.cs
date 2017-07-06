@@ -5,12 +5,12 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.XWorks;
+using SIL.LCModel;
+using SIL.LCModel.Application;
 
 namespace LanguageExplorer.Areas.Lexicon
 {
@@ -44,7 +44,7 @@ namespace LanguageExplorer.Areas.Lexicon
 	internal class AllReversalEntriesRecordList : RecordList
 	{
 		/// <summary />
-		internal AllReversalEntriesRecordList(IFdoServiceLocator serviceLocator, ISilDataAccessManaged decorator, IReversalIndex reversalIndex)
+		internal AllReversalEntriesRecordList(ILcmServiceLocator serviceLocator, ISilDataAccessManaged decorator, IReversalIndex reversalIndex)
 			: base(decorator, true, ReversalIndexTags.kflidEntries, reversalIndex, "AllEntries")
 		{
 			m_flid = ReversalIndexTags.kflidEntries; //LT-12577 a record list needs a real flid.

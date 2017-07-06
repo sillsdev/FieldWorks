@@ -5,7 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Xml;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.Xml;
@@ -176,7 +176,6 @@ namespace LanguageExplorer.Dumpster
 		}
 
 		#region Custom List Methods
-
 		/// <summary>
 		/// For each list, create an XmlNode (or several) to plug into the
 		/// windowConfiguration before it gets processed to display the lists

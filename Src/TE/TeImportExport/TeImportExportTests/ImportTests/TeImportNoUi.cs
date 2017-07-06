@@ -8,12 +8,8 @@
 // <remarks>
 // </remarks>
 
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Text;
-using SIL.CoreImpl.Scripture;
-using SIL.FieldWorks.Common.ScriptureUtils;
+using SIL.LCModel.Core.Scripture;
 
 namespace SIL.FieldWorks.TE.ImportTests
 {

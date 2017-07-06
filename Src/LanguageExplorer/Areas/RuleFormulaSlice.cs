@@ -6,9 +6,10 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.Common.RootSites;
+using SIL.LCModel.Utils;
 
 namespace LanguageExplorer.Areas
 {
@@ -70,7 +71,7 @@ namespace LanguageExplorer.Areas
 			RuleFormulaControl.InsertionControl.Show();
 			Height = DesiredHeight(RuleFormulaControl.RootSite);
 			// FWNX-753 called attention to misbehavior around here.
-			if (SIL.Utils.MiscUtils.IsMono &&
+			if (MiscUtils.IsMono &&
 				RuleFormulaControl.Height != Height &&
 				RuleFormulaControl.Height == oldHeight)
 			{
@@ -133,7 +134,7 @@ namespace LanguageExplorer.Areas
 			CheckDisposed();
 			base.Install(parent);
 
-			RuleFormulaControl.Initialize(PropertyTable.GetValue<FdoCache>("cache"), Object, -1, AreaResources.ksRuleEnvChooserName,
+			RuleFormulaControl.Initialize(PropertyTable.GetValue<LcmCache>("cache"), Object, -1, AreaResources.ksRuleEnvChooserName,
 				ContainingDataTree.PersistenceProvder, null, null);
 
 			RuleFormulaControl.InsertionControl.Hide();

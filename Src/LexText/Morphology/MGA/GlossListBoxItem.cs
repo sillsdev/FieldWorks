@@ -4,7 +4,7 @@
 
 using System;
 using System.Xml;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.Xml;
 
 namespace SIL.FieldWorks.LexText.Controls.MGA
@@ -21,12 +21,12 @@ namespace SIL.FieldWorks.LexText.Controls.MGA
 		private bool m_fComplexNameFirst;
 		private bool m_fIsComplex;
 		private bool m_fIsValue;
-		private readonly FdoCache m_cache;
+		private readonly LcmCache m_cache;
 		private XmlNode m_xmlNode;
 		private IMoGlossItem m_glossItem;
 
 		#region Construction
-		public GlossListBoxItem(FdoCache cache, XmlNode node, string sAfterSeparator, string sComplexNameSeparator, bool fComplexNameFirst)
+		public GlossListBoxItem(LcmCache cache, XmlNode node, string sAfterSeparator, string sComplexNameSeparator, bool fComplexNameFirst)
 		{
 			if (cache == null) throw new ArgumentNullException("cache");
 
@@ -209,7 +209,7 @@ namespace SIL.FieldWorks.LexText.Controls.MGA
 		/// Add the item to the language database
 		/// </summary>
 		/// <param name="cache">FDO cache to use</param>
-		public void AddToDataBase(FdoCache cache)
+		public void AddToDataBase(LcmCache cache)
 		{
 			ILangProject lp=cache.LangProject;
 			IMoMorphData md = lp.MorphologicalDataOA;
@@ -239,7 +239,7 @@ namespace SIL.FieldWorks.LexText.Controls.MGA
 		/// <param name="cache"></param>
 		/// <param name="node"></param>
 		/// <returns>The MoGlossItem object which is or is to be the parent of this item.</returns>
-		private IMoGlossItem GetMyParentGlossItem(FdoCache cache, XmlNode node)
+		private IMoGlossItem GetMyParentGlossItem(LcmCache cache, XmlNode node)
 		{
 			ILangProject lp=cache.LangProject;
 			IMoMorphData md = lp.MorphologicalDataOA;

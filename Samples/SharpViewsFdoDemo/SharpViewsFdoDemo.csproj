@@ -25,7 +25,7 @@
 	<DefineConstants>DEBUG;TRACE</DefineConstants>
 	<ErrorReport>prompt</ErrorReport>
 	<WarningLevel>4</WarningLevel>
-	<PlatformTarget>x86</PlatformTarget>
+	<PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
 	<DebugType>pdbonly</DebugType>
@@ -39,7 +39,7 @@
 	<Reference Include="ViewsInterfaces, Version=6.9.2.16182, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
 	</Reference>
-	<Reference Include="FDO, Version=7.1.0.19329, Culture=neutral, processorArchitecture=MSIL">
+	<Reference Include="SIL.LCModel, Version=9.0.0.0, Culture=neutral, processorArchitecture=x86">
 	  <SpecificVersion>False</SpecificVersion>
 	</Reference>
 	<Reference Include="SharpViews, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">

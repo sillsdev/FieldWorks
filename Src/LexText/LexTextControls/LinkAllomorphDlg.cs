@@ -6,7 +6,7 @@ using System;
 using System.Diagnostics;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -107,7 +107,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <summary>
 		/// Set up the dlg in preparation to showing it.
 		/// </summary>
-		public void SetDlgInfo(FdoCache cache, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, ILexEntry startingEntry)
+		public void SetDlgInfo(LcmCache cache, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, ILexEntry startingEntry)
 		{
 			CheckDisposed();
 
@@ -120,7 +120,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <summary>
 		/// Common init of the dialog, whether or not we have a starting lex entry.
 		/// </summary>
-		public override void SetDlgInfo(FdoCache cache, WindowParams wp, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
+		public override void SetDlgInfo(LcmCache cache, WindowParams wp, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
 		{
 			CheckDisposed();
 

@@ -6,11 +6,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
 using NUnit.Framework;
-using SIL.CoreImpl.Text;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.FDOTests;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {

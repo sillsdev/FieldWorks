@@ -9,11 +9,11 @@ using System.Xml.Linq;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.PaneBar;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks;
+using SIL.LCModel;
+using SIL.LCModel.Application;
 
 namespace LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit
 {
@@ -115,7 +115,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
 			var root = XDocument.Parse(GrammarResources.AdhocCoprohibitionRuleEditToolParameters).Root;
-			var cache = PropertyTable.GetValue<FdoCache>("cache");
+			var cache = PropertyTable.GetValue<LcmCache>("cache");
 			var flexComponentParameters = new FlexComponentParameters(PropertyTable, Publisher, Subscriber);
 			_recordClerk = new RecordClerk("adhocCoprohibitions", new RecordList(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), true, MoMorphDataTags.kflidAdhocCoProhibitions, cache.LanguageProject.MorphologicalDataOA, "AdhocCoprohibitions"), new PropertyRecordSorter("ShortName"), "Default", null, false, false);
 			_recordClerk.InitializeFlexComponent(flexComponentParameters);

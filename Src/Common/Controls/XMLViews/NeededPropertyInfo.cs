@@ -4,7 +4,7 @@
 // --------------------------------------------------------------------------------------------
 using System.Collections.Generic;
 using System.Diagnostics;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 
 namespace SIL.FieldWorks.Common.Controls
 {

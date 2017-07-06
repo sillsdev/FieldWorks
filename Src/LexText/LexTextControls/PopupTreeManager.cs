@@ -6,11 +6,11 @@ using System;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Diagnostics;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.CoreImpl.Text;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 
@@ -31,7 +31,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		private bool m_isTreeLoaded = false;
 		private TreeCombo m_treeCombo;
 		private PopupTree m_popupTree;
-		private FdoCache m_cache;
+		private LcmCache m_cache;
 		private bool m_useAbbr;
 		private Form m_parent;
 		protected IPropertyTable m_propertyTable;
@@ -59,7 +59,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public PopupTreeManager(TreeCombo treeCombo, FdoCache cache, IPropertyTable propertyTable, IPublisher publisher, ICmPossibilityList list, int ws, bool useAbbr, Form parent)
+		public PopupTreeManager(TreeCombo treeCombo, LcmCache cache, IPropertyTable propertyTable, IPublisher publisher, ICmPossibilityList list, int ws, bool useAbbr, Form parent)
 		{
 			m_treeCombo = treeCombo;
 			Init(cache, propertyTable, publisher, list, ws, useAbbr, parent);
@@ -71,7 +71,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public PopupTreeManager(PopupTree popupTree, FdoCache cache, IPropertyTable propertyTable, IPublisher publisher, ICmPossibilityList list, int ws, bool useAbbr, Form parent)
+		public PopupTreeManager(PopupTree popupTree, LcmCache cache, IPropertyTable propertyTable, IPublisher publisher, ICmPossibilityList list, int ws, bool useAbbr, Form parent)
 		{
 			m_popupTree = popupTree;
 			Init(cache, propertyTable, publisher, list, ws, useAbbr, parent);
@@ -80,7 +80,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			popupTree.PopupTreeClosed += popupTree_PopupTreeClosed;
 		}
 
-		private void Init(FdoCache cache, IPropertyTable propertyTable, IPublisher publisher, ICmPossibilityList list, int ws, bool useAbbr, Form parent)
+		private void Init(LcmCache cache, IPropertyTable propertyTable, IPublisher publisher, ICmPossibilityList list, int ws, bool useAbbr, Form parent)
 		{
 			m_propertyTable = propertyTable;
 			m_publisher = publisher;
@@ -289,7 +289,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <summary>
 		/// The data cache relevant for this list etc.
 		/// </summary>
-		protected FdoCache Cache
+		protected LcmCache Cache
 		{
 			get { return m_cache; }
 		}
@@ -499,7 +499,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			return result;
 		}
 
-		protected static ITsString GetTssLabel(FdoCache cache, int hvoItem, int flidName, int wsName)
+		protected static ITsString GetTssLabel(LcmCache cache, int hvoItem, int flidName, int wsName)
 		{
 			var multiProp = (IMultiStringAccessor)cache.DomainDataByFlid.get_MultiStringProp(hvoItem, flidName);
 			int wsActual;
@@ -694,7 +694,7 @@ namespace SIL.FieldWorks.LexText.Controls
 	/// </summary>
 	public class PossibilityListPopupTreeManager : PopupTreeManager
 	{
-		public PossibilityListPopupTreeManager(TreeCombo treeCombo, FdoCache cache,
+		public PossibilityListPopupTreeManager(TreeCombo treeCombo, LcmCache cache,
 			IPropertyTable propertyTable, IPublisher publisher, ICmPossibilityList list, int ws, bool useAbbr, Form parent)
 			: base(treeCombo, cache, propertyTable, publisher, list, ws, useAbbr, parent)
 		{

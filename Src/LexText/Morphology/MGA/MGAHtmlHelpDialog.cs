@@ -10,7 +10,7 @@ using System.Xml;
 using System.Xml.Xsl;
 using Gecko;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 
 namespace SIL.FieldWorks.LexText.Controls.MGA
 {
@@ -24,7 +24,7 @@ namespace SIL.FieldWorks.LexText.Controls.MGA
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public MGAHtmlHelpDialog(FdoCache cache, IHelpTopicProvider helpTopicProvider, string sMorphemeForm)
+		public MGAHtmlHelpDialog(LcmCache cache, IHelpTopicProvider helpTopicProvider, string sMorphemeForm)
 			: base(cache, helpTopicProvider, sMorphemeForm)
 		{
 			m_browser = new GeckoWebBrowser

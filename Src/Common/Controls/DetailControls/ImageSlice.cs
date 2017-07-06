@@ -4,7 +4,7 @@
 
 using System.Windows.Forms;
 using System.Drawing;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {

@@ -13,19 +13,16 @@ using System.Text.RegularExpressions;
 using System.Xml;
 using ExCSS;
 using NUnit.Framework;
-using SIL.CoreImpl.Cellar;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.WritingSystems;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.TestUtilities;
-using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Framework;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.FDOTests;
-using SIL.Utils;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 
 // ReSharper disable InconsistentNaming - Justification: Underscores are standard for test names but nowhere else in our code
 namespace SIL.FieldWorks.XWorks
@@ -34,7 +31,7 @@ namespace SIL.FieldWorks.XWorks
 	public class CssGeneratorTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
 		private IPropertyTable m_propertyTable;
-		private FwStyleSheet m_styleSheet;
+		private LcmStyleSheet m_styleSheet;
 		private MockFwXApp m_application;
 		private string m_configFilePath;
 		private MockFwXWindow m_window;
@@ -84,7 +81,7 @@ namespace SIL.FieldWorks.XWorks
 		[SetUp]
 		public void ResetAssemblyFile()
 		{
-			ConfiguredXHTMLGenerator.AssemblyFile = "FDO";
+			ConfiguredXHTMLGenerator.AssemblyFile = "SIL.LCModel";
 			if (!m_styleSheet.Styles.Contains("FooStyle"))
 			{
 				GenerateStyle("FooStyle");
@@ -508,7 +505,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			GenerateStyle("Dictionary-Vernacular");
 			//SUT
-			var styleDeclaration = CssGenerator.GenerateCssStyleFromFwStyleSheet("Dictionary-Vernacular", CssGenerator.DefaultStyle, m_propertyTable);
+			var styleDeclaration = CssGenerator.GenerateCssStyleFromLcmStyleSheet("Dictionary-Vernacular", CssGenerator.DefaultStyle, m_propertyTable);
 			VerifyFontInfoInCss(FontColor, FontBGColor, FontName, FontBold, FontItalic, FontSize, styleDeclaration.ToString());
 		}
 
@@ -517,7 +514,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			GenerateParagraphStyle("Dictionary-Paragraph");
 			//SUT
-			var styleDeclaration = CssGenerator.GenerateCssStyleFromFwStyleSheet("Dictionary-Paragraph", CssGenerator.DefaultStyle, m_propertyTable);
+			var styleDeclaration = CssGenerator.GenerateCssStyleFromLcmStyleSheet("Dictionary-Paragraph", CssGenerator.DefaultStyle, m_propertyTable);
 			//border leading omitted from paragraph style definition which should result in 0pt left width
 			VerifyParagraphBorderInCss(BorderColor, 0, BorderTrailing, BorderBottom, BorderTop, styleDeclaration.ToString());
 		}
@@ -619,7 +616,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			GenerateParagraphStyle("Dictionary-Paragraph-Padding");
 			//SUT
-			var styleDeclaration = CssGenerator.GenerateCssStyleFromFwStyleSheet("Dictionary-Paragraph-Padding", CssGenerator.DefaultStyle, null, m_propertyTable);
+			var styleDeclaration = CssGenerator.GenerateCssStyleFromLcmStyleSheet("Dictionary-Paragraph-Padding", CssGenerator.DefaultStyle, null, m_propertyTable);
 			// Indent values are converted into pt values on export
 			Assert.That(styleDeclaration.ToString(), Contains.Substring("margin-left:" + LeadingIndent / 1000 + "pt"));
 			Assert.That(styleDeclaration.ToString(), Contains.Substring("padding-right:" + TrailingIndent / 1000 + "pt"));
@@ -651,7 +648,7 @@ namespace SIL.FieldWorks.XWorks
 			};
 			PopulateFieldsForTesting(entry);
 			//SUT
-			var styleDeclaration = CssGenerator.GenerateCssStyleFromFwStyleSheet("ParagraphMarginAbsoluteParentOverrideChild", CssGenerator.DefaultStyle, senses, m_propertyTable);
+			var styleDeclaration = CssGenerator.GenerateCssStyleFromLcmStyleSheet("ParagraphMarginAbsoluteParentOverrideChild", CssGenerator.DefaultStyle, senses, m_propertyTable);
 			// Indent values are converted into pt values on export
 			// LeadingIndent is the value generated for the parent (24).
 			// In order for the child to have a correct indent (15) it must overcome the larger indent of the parent by a negative amount
@@ -683,7 +680,7 @@ namespace SIL.FieldWorks.XWorks
 			};
 			PopulateFieldsForTesting(entry);
 			//SUT
-			var styleDeclaration = CssGenerator.GenerateCssStyleFromFwStyleSheet("ParagraphMarginAbsoluteParentOverrideChild", CssGenerator.DefaultStyle, senses, m_propertyTable);
+			var styleDeclaration = CssGenerator.GenerateCssStyleFromLcmStyleSheet("ParagraphMarginAbsoluteParentOverrideChild", CssGenerator.DefaultStyle, senses, m_propertyTable);
 			// Indent values are converted into pt values on export
 			Assert.That(styleDeclaration.ToString(), Contains.Substring("margin-left:" + 0 + "pt"));
 			Assert.That(styleDeclaration.ToString(), Contains.Substring("padding-right:" + TrailingIndent / 1000 + "pt"));
@@ -726,11 +723,11 @@ namespace SIL.FieldWorks.XWorks
 			PopulateFieldsForTesting(entry);
 			// In order to generate the correct indentation at each level we should see 5pt margin for each style
 			//SUT
-			var gpDeclaration = CssGenerator.GenerateCssStyleFromFwStyleSheet(grandParentStyle.Name, CssGenerator.DefaultStyle, entry, m_propertyTable);
+			var gpDeclaration = CssGenerator.GenerateCssStyleFromLcmStyleSheet(grandParentStyle.Name, CssGenerator.DefaultStyle, entry, m_propertyTable);
 			Assert.That(gpDeclaration.ToString(), Contains.Substring("margin-left:5pt"), "Grandparent margin incorrectly generated");
-			var parentDeclaration = CssGenerator.GenerateCssStyleFromFwStyleSheet(parentStyle.Name, CssGenerator.DefaultStyle, senses, m_propertyTable);
+			var parentDeclaration = CssGenerator.GenerateCssStyleFromLcmStyleSheet(parentStyle.Name, CssGenerator.DefaultStyle, senses, m_propertyTable);
 			Assert.That(parentDeclaration.ToString(), Contains.Substring("margin-left:7pt"), "Parent margin incorrectly generated");
-			var childDeclaration = CssGenerator.GenerateCssStyleFromFwStyleSheet(childStyle.Name, CssGenerator.DefaultStyle, subSenses, m_propertyTable);
+			var childDeclaration = CssGenerator.GenerateCssStyleFromLcmStyleSheet(childStyle.Name, CssGenerator.DefaultStyle, subSenses, m_propertyTable);
 			Assert.That(childDeclaration.ToString(), Contains.Substring("margin-left:8pt"), "Child margin incorrectly generated");
 		}
 
@@ -741,7 +738,7 @@ namespace SIL.FieldWorks.XWorks
 			var testStyle = GenerateParagraphStyle("Dictionary-Paragraph-Padding-Hanging");
 			testStyle.SetExplicitParaIntProp((int)FwTextPropType.ktptFirstIndent, 0, hangingIndent);
 			//SUT
-			var styleDeclaration = CssGenerator.GenerateCssStyleFromFwStyleSheet("Dictionary-Paragraph-Padding-Hanging", CssGenerator.DefaultStyle, m_propertyTable);
+			var styleDeclaration = CssGenerator.GenerateCssStyleFromLcmStyleSheet("Dictionary-Paragraph-Padding-Hanging", CssGenerator.DefaultStyle, m_propertyTable);
 			// Indent values are converted into pt values on export
 			Assert.That(styleDeclaration.ToString(), Contains.Substring("margin-left:" + (LeadingIndent - hangingIndent) / 1000 + "pt"));
 			Assert.That(styleDeclaration.ToString(), Contains.Substring("text-indent:" + hangingIndent / 1000 + "pt"));
@@ -774,8 +771,8 @@ namespace SIL.FieldWorks.XWorks
 			parentStyle.SetExplicitParaIntProp((int)FwTextPropType.ktptFirstIndent, 0, parentHangingIndent);
 			childStyle.SetExplicitParaIntProp((int)FwTextPropType.ktptFirstIndent, 0, childHangingIndent);
 			//SUT
-			var parentDeclaration = CssGenerator.GenerateCssStyleFromFwStyleSheet(parentStyle.Name, CssGenerator.DefaultStyle, entry, m_propertyTable);
-			var childDeclaration = CssGenerator.GenerateCssStyleFromFwStyleSheet(childStyleName, CssGenerator.DefaultStyle, senses, m_propertyTable);
+			var parentDeclaration = CssGenerator.GenerateCssStyleFromLcmStyleSheet(parentStyle.Name, CssGenerator.DefaultStyle, entry, m_propertyTable);
+			var childDeclaration = CssGenerator.GenerateCssStyleFromLcmStyleSheet(childStyleName, CssGenerator.DefaultStyle, senses, m_propertyTable);
 			// Indent values are converted into pt values on export
 			Assert.That(parentDeclaration.ToString(), Contains.Substring("margin-left:" + (LeadingIndent - parentHangingIndent) / 1000 + "pt"));
 			Assert.That(parentDeclaration.ToString(), Contains.Substring("text-indent:" + parentHangingIndent / 1000 + "pt"));
@@ -825,7 +822,7 @@ namespace SIL.FieldWorks.XWorks
 			childStyle.SetExplicitParaIntProp((int)FwTextPropType.ktptFirstIndent, 0, childHangingIndent);
 			grandChildStyle.SetExplicitParaIntProp((int)FwTextPropType.ktptFirstIndent, 0, grandChildHangingIndent);
 
-			var grandChildDeclaration = CssGenerator.GenerateCssStyleFromFwStyleSheet(grandChildStyleName, CssGenerator.DefaultStyle, examples, m_propertyTable, true);
+			var grandChildDeclaration = CssGenerator.GenerateCssStyleFromLcmStyleSheet(grandChildStyleName, CssGenerator.DefaultStyle, examples, m_propertyTable, true);
 
 			Assert.AreEqual(2, grandChildDeclaration.Count);
 			// Indent values are converted into pt values on export
@@ -869,7 +866,7 @@ namespace SIL.FieldWorks.XWorks
 			};
 			PopulateFieldsForTesting(entry);
 			//SUT
-			var childDeclaration = CssGenerator.GenerateCssStyleFromFwStyleSheet(childStyle.Name, CssGenerator.DefaultStyle, headword, m_propertyTable);
+			var childDeclaration = CssGenerator.GenerateCssStyleFromLcmStyleSheet(childStyle.Name, CssGenerator.DefaultStyle, headword, m_propertyTable);
 			Assert.That(childDeclaration.ToString(), Is.Not.StringContaining("margin-left"));
 		}
 
@@ -880,7 +877,7 @@ namespace SIL.FieldWorks.XWorks
 			var testStyle = GenerateEmptyParagraphStyle("Dictionary-Paragraph-Hanging-No-Padding");
 			testStyle.SetExplicitParaIntProp((int)FwTextPropType.ktptFirstIndent, 0, hangingIndent);
 			//SUT
-			var styleDeclaration = CssGenerator.GenerateCssStyleFromFwStyleSheet("Dictionary-Paragraph-Hanging-No-Padding", CssGenerator.DefaultStyle, m_propertyTable);
+			var styleDeclaration = CssGenerator.GenerateCssStyleFromLcmStyleSheet("Dictionary-Paragraph-Hanging-No-Padding", CssGenerator.DefaultStyle, m_propertyTable);
 			// Indent values are converted into pt values on export
 			Assert.That(styleDeclaration.ToString(), Contains.Substring("margin-left:" + -hangingIndent / 1000 + "pt"));
 			Assert.That(styleDeclaration.ToString(), Contains.Substring("text-indent:" + hangingIndent / 1000 + "pt"));
@@ -891,7 +888,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			GenerateParagraphStyle("Dictionary-Paragraph-Justify");
 			//SUT
-			var styleDeclaration = CssGenerator.GenerateCssStyleFromFwStyleSheet("Dictionary-Paragraph-Justify", CssGenerator.DefaultStyle, m_propertyTable);
+			var styleDeclaration = CssGenerator.GenerateCssStyleFromLcmStyleSheet("Dictionary-Paragraph-Justify", CssGenerator.DefaultStyle, m_propertyTable);
 			Assert.That(styleDeclaration.ToString(), Contains.Substring("align:" + ParagraphAlignment.AsCssString()));
 		}
 
@@ -900,7 +897,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			GenerateParagraphStyle("Dictionary-Paragraph-RelativeLine");
 			//SUT
-			var styleDeclaration = CssGenerator.GenerateCssStyleFromFwStyleSheet("Dictionary-Paragraph-RelativeLine", CssGenerator.DefaultStyle, m_propertyTable);
+			var styleDeclaration = CssGenerator.GenerateCssStyleFromLcmStyleSheet("Dictionary-Paragraph-RelativeLine", CssGenerator.DefaultStyle, m_propertyTable);
 			Assert.That(styleDeclaration.ToString(), Contains.Substring("line-height:" + CssDoubleSpace + ";"));
 		}
 
@@ -910,7 +907,7 @@ namespace SIL.FieldWorks.XWorks
 			var style = GenerateParagraphStyle("Dictionary-Paragraph-Absolute");
 			style.SetExplicitParaIntProp((int)FwTextPropType.ktptLineHeight, (int)FwTextPropVar.ktpvMilliPoint, 9 * 1000);
 			//SUT
-			var styleDeclaration = CssGenerator.GenerateCssStyleFromFwStyleSheet("Dictionary-Paragraph-Absolute", CssGenerator.DefaultStyle, m_propertyTable);
+			var styleDeclaration = CssGenerator.GenerateCssStyleFromLcmStyleSheet("Dictionary-Paragraph-Absolute", CssGenerator.DefaultStyle, m_propertyTable);
 			Assert.That(styleDeclaration.ToString(), Contains.Substring("line-height:9pt;"));
 		}
 
@@ -921,7 +918,7 @@ namespace SIL.FieldWorks.XWorks
 			var style = GenerateParagraphStyle("Dictionary-Paragraph-LineSpacingExactly");
 			style.SetExplicitParaIntProp((int)FwTextPropType.ktptLineHeight, (int)FwTextPropVar.ktpvMilliPoint, exactly);
 			//SUT
-			var styleDeclaration = CssGenerator.GenerateCssStyleFromFwStyleSheet("Dictionary-Paragraph-LineSpacingExactly", CssGenerator.DefaultStyle, m_propertyTable);
+			var styleDeclaration = CssGenerator.GenerateCssStyleFromLcmStyleSheet("Dictionary-Paragraph-LineSpacingExactly", CssGenerator.DefaultStyle, m_propertyTable);
 			Assert.That(styleDeclaration.ToString(), Contains.Substring("line-height:12pt;"));
 		}
 
@@ -932,7 +929,7 @@ namespace SIL.FieldWorks.XWorks
 			var style = GenerateParagraphStyle("Dictionary-Paragraph-LineSpacingAtleast");
 			style.SetExplicitParaIntProp((int)FwTextPropType.ktptLineHeight, (int)FwTextPropVar.ktpvMilliPoint, atleast);
 			//SUT
-			var styleDeclaration = CssGenerator.GenerateCssStyleFromFwStyleSheet("Dictionary-Paragraph-LineSpacingAtleast", CssGenerator.DefaultStyle, m_propertyTable);
+			var styleDeclaration = CssGenerator.GenerateCssStyleFromLcmStyleSheet("Dictionary-Paragraph-LineSpacingAtleast", CssGenerator.DefaultStyle, m_propertyTable);
 			Assert.That(styleDeclaration.ToString(), Contains.Substring("flex-line-height:12pt;"));
 		}
 
@@ -1033,7 +1030,7 @@ namespace SIL.FieldWorks.XWorks
 			childStyle.SetBasedOnStyle(parentStyle);
 			childStyle.SetExplicitParaIntProp((int)FwTextPropType.ktptBorderColor, 0, (int)ColorUtil.ConvertColorToBGR(Color.HotPink));
 			//SUT - Generate using default font info
-			var cssResult = CssGenerator.GenerateCssStyleFromFwStyleSheet("Child", CssGenerator.DefaultStyle, m_propertyTable);
+			var cssResult = CssGenerator.GenerateCssStyleFromLcmStyleSheet("Child", CssGenerator.DefaultStyle, m_propertyTable);
 			// The css should have the overridden border color, but report all other values as the parent style
 			//border leading omitted from paragraph style definition which should result in 0pt left width
 			VerifyParagraphBorderInCss(Color.HotPink, 0, BorderTrailing, BorderBottom, BorderTop, cssResult.ToString());
@@ -1043,7 +1040,7 @@ namespace SIL.FieldWorks.XWorks
 		public void GenerateCssForStyleName_CharStyleUnsetValuesAreNotExported()
 		{
 			GenerateEmptyStyle("EmptyChar");
-			var cssResult = CssGenerator.GenerateCssStyleFromFwStyleSheet("EmptyChar", CssGenerator.DefaultStyle, m_propertyTable);
+			var cssResult = CssGenerator.GenerateCssStyleFromLcmStyleSheet("EmptyChar", CssGenerator.DefaultStyle, m_propertyTable);
 			Assert.AreEqual(cssResult.ToString().Trim(), String.Empty);
 		}
 
@@ -3737,7 +3734,7 @@ namespace SIL.FieldWorks.XWorks
 			return style;
 		}
 
-		private static TestStyle GenerateStyleFromFontInfo(FdoCache cache, string name, FontInfo fontInfo, bool isParagraphStyle = false)
+		private static TestStyle GenerateStyleFromFontInfo(LcmCache cache, string name, FontInfo fontInfo, bool isParagraphStyle = false)
 		{
 			return new TestStyle(fontInfo, cache) { Name = name, IsParagraphStyle = isParagraphStyle };
 		}
@@ -4060,13 +4057,13 @@ namespace SIL.FieldWorks.XWorks
 
 	internal class TestStyle : BaseStyleInfo
 	{
-		public TestStyle(FontInfo defaultFontInfo, FdoCache cache)
+		public TestStyle(FontInfo defaultFontInfo, LcmCache cache)
 			: base(cache)
 		{
 			m_defaultFontInfo = defaultFontInfo;
 		}
 
-		public TestStyle(InheritableStyleProp<BulletInfo> defaultBulletFontInfo, FdoCache cache)
+		public TestStyle(InheritableStyleProp<BulletInfo> defaultBulletFontInfo, LcmCache cache)
 			: base(cache)
 		{
 			m_bulletInfo = defaultBulletFontInfo;

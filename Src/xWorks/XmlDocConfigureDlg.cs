@@ -22,17 +22,18 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using System.Xml.XPath;
-using SIL.CoreImpl.Cellar;
-using SIL.CoreImpl.WritingSystems;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.FwCoreDlgControls;
 using SIL.FieldWorks.FwCoreDlgs;
+using SIL.LCModel.Infrastructure;
 using SIL.Windows.Forms;
 using SIL.Xml;
 
@@ -55,9 +56,9 @@ namespace SIL.FieldWorks.XWorks
 		XElement m_configurationParameters;
 		string m_defaultRootLayoutName;
 		const string sdefaultStemBasedLayout = "publishStem";
-		FdoCache m_cache;
+		LcmCache m_cache;
 		IFwMetaDataCache m_mdc;
-		FwStyleSheet m_styleSheet;
+		LcmStyleSheet m_styleSheet;
 		IFwMainWnd m_mainWindow;
 		private IPropertyTable m_propertyTable;
 		private IPublisher m_publisher;
@@ -237,8 +238,8 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Initialize the dialog after creating it.
 		/// </summary>
-		public void SetConfigDlgInfo(XElement configurationParameters, FdoCache cache,
-			FwStyleSheet styleSheet, IFwMainWnd mainWindow, IPropertyTable propertyTable, IPublisher publisher, string sLayoutPropertyName)
+		public void SetConfigDlgInfo(XElement configurationParameters, LcmCache cache,
+			LcmStyleSheet styleSheet, IFwMainWnd mainWindow, IPropertyTable propertyTable, IPublisher publisher, string sLayoutPropertyName)
 		{
 			CheckDisposed();
 			m_configurationParameters = configurationParameters;
@@ -983,7 +984,7 @@ namespace SIL.FieldWorks.XWorks
 				// Failure should be fairly unusual, but, for example, part MoForm-Jt-FormEnvPub attempts to display
 				// the property PhoneEnv inside an if that checks that the MoForm is one of the subclasses that has
 				// the PhoneEnv property. MoForm itself does not.
-				var mdc = (FDO.Infrastructure.IFwMetaDataCacheManaged)m_cache.DomainDataByFlid.MetaDataCache;
+				var mdc = (IFwMetaDataCacheManaged)m_cache.DomainDataByFlid.MetaDataCache;
 				if (!mdc.FieldExists(className, sField, true))
 					return;
 				var flid = m_cache.DomainDataByFlid.MetaDataCache.GetFieldId(className, sField, true);
@@ -2994,7 +2995,7 @@ namespace SIL.FieldWorks.XWorks
 					m_fContentVisible = m_sVisibility.ToLowerInvariant() != "never";
 					m_sParam = XmlUtils.GetOptionalAttributeValue(config, "param");
 
-					m_sWsLabel = StringServices.GetWsSpecWithoutPrefix(config);
+					m_sWsLabel = StringServices.GetWsSpecWithoutPrefix(XmlUtils.GetOptionalAttributeValue(config, "ws"));
 					m_sWsType = XmlUtils.GetOptionalAttributeValue(config, "wsType");
 					if (m_sWsLabel != null && String.IsNullOrEmpty(m_sWsType))
 					{
@@ -3639,7 +3640,7 @@ namespace SIL.FieldWorks.XWorks
 								return true;
 							}
 						}
-						string sWsLabel = StringServices.GetWsSpecWithoutPrefix(m_xnConfig);
+						string sWsLabel = StringServices.GetWsSpecWithoutPrefix(XmlUtils.GetOptionalAttributeValue(m_xnConfig, "ws"));
 						if (StringsDiffer(sWsLabel, m_sWsLabel))
 							return true;
 						if (m_fStyleFromHiddenChild)
@@ -4043,7 +4044,7 @@ namespace SIL.FieldWorks.XWorks
 				UpdateAttributeIfDirty(xn, "before", m_sBefore);
 				UpdateAttributeIfDirty(xn, "after", m_sAfter);
 				UpdateAttributeIfDirty(xn, "sep", m_sSep);
-				string sWsLabel = StringServices.GetWsSpecWithoutPrefix(xn);
+				string sWsLabel = StringServices.GetWsSpecWithoutPrefix(XmlUtils.GetOptionalAttributeValue(xn, "ws"));
 				if (StringsDiffer(sWsLabel, m_sWsLabel))
 					UpdateAttribute(xn, "ws", m_sWsLabel);
 				if (m_fStyleFromHiddenChild)
@@ -4543,7 +4544,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private void DeleteUnwantedConfigurations(IEnumerable<string> viewsToDelete)
 		{
-			var configDir = FdoFileHelper.GetConfigSettingsDir(m_cache.ProjectId.ProjectFolder);
+			var configDir = LcmFileHelper.GetConfigSettingsDir(m_cache.ProjectId.ProjectFolder);
 			// Load in existing combobox LayoutTypeComboItems
 			var layoutMap = LoadLayoutMapFromComboBox();
 
@@ -4594,7 +4595,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private void RenameConfigurations(IEnumerable<Tuple<string, string>> viewsToRename)
 		{
-			var configDir = FdoFileHelper.GetConfigSettingsDir(m_cache.ProjectId.ProjectFolder);
+			var configDir = LcmFileHelper.GetConfigSettingsDir(m_cache.ProjectId.ProjectFolder);
 			// Load in existing combobox LayoutTypeComboItems
 			var layoutMap = LoadLayoutMapFromComboBox();
 
@@ -4689,7 +4690,7 @@ namespace SIL.FieldWorks.XWorks
 			return m_layouts.GetLayoutTypes();
 		}
 
-		public FdoCache Cache { get { return m_cache; } }
+		public LcmCache Cache { get { return m_cache; } }
 
 		public bool UseStringTable { get { return true; } }
 

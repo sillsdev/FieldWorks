@@ -11,20 +11,19 @@ using System.Linq;
 using System.Windows.Forms;
 using Microsoft.Win32;
 using Paratext;
-using SIL.CoreImpl.Scripture;
-using SIL.CoreImpl.WritingSystems;
+using SIL.LCModel.Core.Scripture;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.Drawing;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ScriptureUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.FwCoreDlgControls;
 using SIL.FieldWorks.Resources;
 using SIL.Reporting;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.TE
 {
@@ -74,7 +73,7 @@ namespace SIL.FieldWorks.TE
 		protected bool m_fShowAllMappings = false;
 
 		/// <summary></summary>
-		protected FwStyleSheet m_StyleSheet;
+		protected LcmStyleSheet m_StyleSheet;
 		private IHelpTopicProvider m_helpTopicProvider;
 		private IApp m_app;
 		private IOverlappingFileResolver m_resolver;
@@ -95,7 +94,7 @@ namespace SIL.FieldWorks.TE
 		protected ISCScriptureText m_ScriptureText;
 
 		/// <summary></summary>
-		protected FdoCache m_cache;
+		protected LcmCache m_cache;
 		/// <summary></summary>
 		protected IScripture m_scr;
 
@@ -242,7 +241,7 @@ namespace SIL.FieldWorks.TE
 		/// <param name="helpTopicProvider">The help topic provider.</param>
 		/// <param name="app">The app.</param>
 		/// ------------------------------------------------------------------------------------
-		public ImportWizard(string langProjName, IScripture scr, FwStyleSheet styleSheet,
+		public ImportWizard(string langProjName, IScripture scr, LcmStyleSheet styleSheet,
 			IHelpTopicProvider helpTopicProvider, IApp app) : this()
 		{
 			m_LangProjName = langProjName;

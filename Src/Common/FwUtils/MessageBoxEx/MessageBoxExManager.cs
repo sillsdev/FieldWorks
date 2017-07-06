@@ -24,13 +24,13 @@ namespace SIL.FieldWorks.Common.FwUtils.MessageBoxEx
 		#region Static ctor
 		static MessageBoxExManager()
 		{
-			s_standardButtonsText[MessageBoxExButtons.OK.ToString()] = CoreImpl.Properties.Resources.Ok;
-			s_standardButtonsText[MessageBoxExButtons.Cancel.ToString()] = CoreImpl.Properties.Resources.Cancel;
-			s_standardButtonsText[MessageBoxExButtons.Yes.ToString()] = CoreImpl.Properties.Resources.Yes;
-			s_standardButtonsText[MessageBoxExButtons.No.ToString()] = CoreImpl.Properties.Resources.No;
-			s_standardButtonsText[MessageBoxExButtons.Abort.ToString()] = CoreImpl.Properties.Resources.Abort;
-			s_standardButtonsText[MessageBoxExButtons.Retry.ToString()] = CoreImpl.Properties.Resources.Retry;
-			s_standardButtonsText[MessageBoxExButtons.Ignore.ToString()] = CoreImpl.Properties.Resources.Ignore;
+			s_standardButtonsText[MessageBoxExButtons.OK.ToString()] = FwUtilsStrings.Ok;
+			s_standardButtonsText[MessageBoxExButtons.Cancel.ToString()] = FwUtilsStrings.Cancel;
+			s_standardButtonsText[MessageBoxExButtons.Yes.ToString()] = FwUtilsStrings.Yes;
+			s_standardButtonsText[MessageBoxExButtons.No.ToString()] = FwUtilsStrings.No;
+			s_standardButtonsText[MessageBoxExButtons.Abort.ToString()] = FwUtilsStrings.Abort;
+			s_standardButtonsText[MessageBoxExButtons.Retry.ToString()] = FwUtilsStrings.Retry;
+			s_standardButtonsText[MessageBoxExButtons.Ignore.ToString()] = FwUtilsStrings.Ignore;
 		}
 		#endregion
 
@@ -55,7 +55,7 @@ namespace SIL.FieldWorks.Common.FwUtils.MessageBoxEx
 
 			msgBox.Caption = caption;
 			msgBox.Text = text;
-			msgBox.SaveResponseText = CoreImpl.Properties.Resources.DonTShowThisAgain;
+			msgBox.SaveResponseText = FwUtilsStrings.DonTShowThisAgain;
 			msgBox.AllowSaveResponse = displayDontShowAgainButton;
 			msgBox.UseSavedResponse = displayDontShowAgainButton;
 			switch (iconName)
@@ -88,7 +88,7 @@ namespace SIL.FieldWorks.Common.FwUtils.MessageBoxEx
 
 			msgBox.Caption = caption;
 			msgBox.Text = text;
-			msgBox.SaveResponseText = CoreImpl.Properties.Resources.DonTShowThisAgain;
+			msgBox.SaveResponseText = FwUtilsStrings.DonTShowThisAgain;
 			msgBox.AllowSaveResponse = displayDontShowAgainButton;
 			msgBox.UseSavedResponse = displayDontShowAgainButton;
 			msgBox.CustomIcon = icon;
@@ -150,12 +150,12 @@ namespace SIL.FieldWorks.Common.FwUtils.MessageBoxEx
 				var activeForm = Form.ActiveForm;
 				if (activeForm == null)
 				{
-					MessageBoxUtils.Show(CoreImpl.Properties.Resources.CannotRestoreSavedResponses);
+					MessageBoxUtils.Show(FwUtilsStrings.CannotRestoreSavedResponses);
 				}
 				else
 				{
 					// Make sure as far as possible it comes up in front of any active window, including the splash screen.
-					activeForm.Invoke((Func<DialogResult>)(() => MessageBoxUtils.Show(activeForm, CoreImpl.Properties.Resources.CannotRestoreSavedResponses, string.Empty)));
+					activeForm.Invoke((Func<DialogResult>)(() => MessageBoxUtils.Show(activeForm, FwUtilsStrings.CannotRestoreSavedResponses, string.Empty)));
 				}
 			}
 			finally

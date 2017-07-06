@@ -10,24 +10,24 @@ using System.Reflection;
 using System.Windows.Forms;
 using System.Linq;
 using System.Xml.Linq;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application.ApplicationServices;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.DomainServices.SemanticDomainSearch;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Application.ApplicationServices;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.DomainServices.SemanticDomainSearch;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO.Application;
+using SIL.LCModel.Application;
 using SIL.FieldWorks.Common.RootSites;
 using SilEncConverters40;
-using SIL.CoreImpl.Cellar;
-using SIL.CoreImpl.SpellChecking;
-using SIL.CoreImpl.Text;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.SpellChecking;
 using SIL.Xml;
 
 namespace SIL.FieldWorks.Common.Controls
@@ -79,7 +79,7 @@ namespace SIL.FieldWorks.Common.Controls
 		protected BrowseViewer m_bv;
 		/// <summary/>
 		protected BulkEditItem[] m_beItems;
-		FdoCache m_cache;
+		LcmCache m_cache;
 		const int m_colOffset = 1;
 		// object selected in browse view and possibly being edited; we track this
 		// so we can commit changes to it when the current index changes.
@@ -190,7 +190,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="propertyTable"></param>
 		/// <param name="cache">The cache.</param>
 		/// ------------------------------------------------------------------------------------
-		public BulkEditBar(BrowseViewer bv, XElement spec, IPropertyTable propertyTable, FdoCache cache)
+		public BulkEditBar(BrowseViewer bv, XElement spec, IPropertyTable propertyTable, LcmCache cache)
 			: this()
 		{
 			m_propertyTable = propertyTable;
@@ -382,7 +382,7 @@ namespace SIL.FieldWorks.Common.Controls
 			base.Dispose( disposing );
 		}
 
-		internal static GhostParentHelper GetGhostHelper(IFdoServiceLocator locator, XElement colSpec)
+		internal static GhostParentHelper GetGhostHelper(ILcmServiceLocator locator, XElement colSpec)
 		{
 			string classDotField = XmlUtils.GetOptionalAttributeValue(colSpec, "ghostListField");
 			if (classDotField == null)
@@ -500,13 +500,13 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="node"></param>
 		/// <param name="attrName"></param>
 		/// <returns></returns>
-		internal static int GetFlidFromClassDotName(FdoCache cache, XElement node, string attrName)
+		internal static int GetFlidFromClassDotName(LcmCache cache, XElement node, string attrName)
 		{
 			string descriptor = XmlUtils.GetManditoryAttributeValue(node, attrName);
 			return GetFlidFromClassDotName(cache, descriptor);
 		}
 
-		private static int GetFlidFromClassDotName(FdoCache cache, string descriptor)
+		private static int GetFlidFromClassDotName(LcmCache cache, string descriptor)
 		{
 			string[] parts = descriptor.Trim().Split('.');
 			if (parts.Length != 2)
@@ -587,7 +587,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="node"></param>
 		/// <param name="attrName"></param>
 		/// <returns>Hvo or 0</returns>
-		internal static int GetNamedListHvo(FdoCache cache, XElement node, string attrName)
+		internal static int GetNamedListHvo(LcmCache cache, XElement node, string attrName)
 		{
 			ICmPossibilityList possList = GetNamedList(cache, node, attrName);
 			return (possList == null) ? (int)SpecialHVOValues.kHvoUninitializedObject : possList.Hvo;
@@ -604,7 +604,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="node"></param>
 		/// <param name="attrName"></param>
 		/// <returns>An ICmPossibilityList (which may be null).</returns>
-		internal static ICmPossibilityList GetNamedList(FdoCache cache, XElement node, string attrName)
+		internal static ICmPossibilityList GetNamedList(LcmCache cache, XElement node, string attrName)
 		{
 			string owningClass;
 			string property;
@@ -695,14 +695,14 @@ namespace SIL.FieldWorks.Common.Controls
 						besc = new ComplexListChooserBEditControl(m_cache, m_propertyTable, colSpec);
 						break;
 					}
-					ws = WritingSystemServices.GetWritingSystem(m_cache, colSpec, null, WritingSystemServices.kwsAnal).Handle;
+					ws = WritingSystemServices.GetWritingSystem(m_cache, FwUtils.FwUtils.ConvertElement(colSpec), null, WritingSystemServices.kwsAnal).Handle;
 					besc = new FlatListChooserBEditControl(flid, hvoList, ws, false);
 					break;
 				case "morphTypeListItem":
 					flid = GetFlidFromClassDotName(colSpec, "field");
 					flidSub = GetFlidFromClassDotName(colSpec, "subfield");
 					hvoList = GetNamedListHvo(colSpec, "list");
-					ws = WritingSystemServices.GetWritingSystem(m_cache, colSpec, null, WritingSystemServices.kwsAnal).Handle;
+					ws = WritingSystemServices.GetWritingSystem(m_cache, FwUtils.FwUtils.ConvertElement(colSpec), null, WritingSystemServices.kwsAnal).Handle;
 					besc = new MorphTypeChooserBEditControl(flid, flidSub, hvoList, ws, m_bv);
 					break;
 				case "variantConditionListItem":
@@ -4044,7 +4044,7 @@ namespace SIL.FieldWorks.Common.Controls
 						m_fClickEditIfNot = true;
 						m_sClickEditIf = m_sClickEditIf.Substring(1);
 					}
-					string sWs = StringServices.GetWsSpecWithoutPrefix(spec);
+					string sWs = StringServices.GetWsSpecWithoutPrefix(FwUtils.FwUtils.ConvertElement(spec));
 					if (sWs != null)
 						m_wsClickEditIf = XmlViewsUtils.GetWsFromString(sWs, m_cache);
 				}
@@ -4280,7 +4280,7 @@ namespace SIL.FieldWorks.Common.Controls
 		}
 
 		// Commit changes for the current hvo if it has a commit changes handler specified.
-		internal static void CommitChanges(int hvo, string commitChanges, FdoCache cache, int ws)
+		internal static void CommitChanges(int hvo, string commitChanges, LcmCache cache, int ws)
 		{
 			if (!string.IsNullOrEmpty(commitChanges) &&
 				cache.ActionHandlerAccessor != null && !cache.ActionHandlerAccessor.IsUndoOrRedoInProgress)
@@ -4446,7 +4446,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// <param name="cache"></param>
 		/// <param name="colSpec"></param>
-		void InitForGhostItems(FdoCache cache, XElement colSpec);
+		void InitForGhostItems(LcmCache cache, XElement colSpec);
 	}
 
 	/// <summary>
@@ -4460,7 +4460,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>Retrieve the control that does the work.</summary>
 		Control Control { get; }
 		/// <summary>Get or set the cache. Client promises to set this immediately after creation.</summary>
-		FdoCache Cache { get; set; }
+		LcmCache Cache { get; set; }
 		/// <summary>
 		/// The decorator cache that understands the special properties used to control the checkbox and preview.
 		/// Client promises to set this immediately after creation.
@@ -4707,7 +4707,7 @@ namespace SIL.FieldWorks.Common.Controls
 	{
 		protected FieldReadWriter m_accessor; // typically the destination accessor, sometimes also the source.
 		ISilDataAccess m_sda;
-		FdoCache m_cache;
+		LcmCache m_cache;
 		XElement m_nodeSpec; // specification node for the column
 
 		string m_sEditIf = null;
@@ -4716,7 +4716,7 @@ namespace SIL.FieldWorks.Common.Controls
 		int m_wsEditIf = 0;
 		Dictionary<int, int> m_replacedObjects = new Dictionary<int, int>();
 
-		public DoItMethod(FdoCache cache, ISilDataAccessManaged sda, FieldReadWriter accessor, XElement spec)
+		public DoItMethod(LcmCache cache, ISilDataAccessManaged sda, FieldReadWriter accessor, XElement spec)
 		{
 			m_cache = cache;
 			m_accessor = accessor;
@@ -4731,7 +4731,7 @@ namespace SIL.FieldWorks.Common.Controls
 					m_fEditIfNot = true;
 					m_sEditIf = m_sEditIf.Substring(1);
 				}
-				string sWs = StringServices.GetWsSpecWithoutPrefix(spec);
+				string sWs = StringServices.GetWsSpecWithoutPrefix(XmlUtils.GetOptionalAttributeValue(spec, "ws"));
 				if (sWs != null)
 					m_wsEditIf = XmlViewsUtils.GetWsFromString(sWs, m_cache);
 			}
@@ -4871,7 +4871,7 @@ namespace SIL.FieldWorks.Common.Controls
 		ITsString m_tssSep;
 		NonEmptyTargetOptions m_options;
 
-		public BulkCopyMethod(FdoCache cache, ISilDataAccessManaged sda, FieldReadWriter dstAccessor,
+		public BulkCopyMethod(LcmCache cache, ISilDataAccessManaged sda, FieldReadWriter dstAccessor,
 			XElement spec, FieldReadWriter srcAccessor, ITsString tssSep, NonEmptyTargetOptions options)
 			: base(cache, sda, dstAccessor, spec)
 		{
@@ -4943,7 +4943,7 @@ namespace SIL.FieldWorks.Common.Controls
 		ITsString m_tssSep;
 		NonEmptyTargetOptions m_options;
 
-		public TransduceMethod(FdoCache cache, ISilDataAccessManaged sda, FieldReadWriter dstAccessor, XElement spec, FieldReadWriter srcAccessor,
+		public TransduceMethod(LcmCache cache, ISilDataAccessManaged sda, FieldReadWriter dstAccessor, XElement spec, FieldReadWriter srcAccessor,
 			ECInterfaces.IEncConverter converter, ITsString tssSep, NonEmptyTargetOptions options)
 			: base(cache, sda, dstAccessor, spec)
 		{
@@ -5020,7 +5020,7 @@ namespace SIL.FieldWorks.Common.Controls
 		IVwTxtSrcInit m_textSourceInit;
 		IVwTextSource m_ts;
 
-		public ReplaceWithMethod(FdoCache cache, ISilDataAccessManaged sda, FieldReadWriter accessor, XElement spec, IVwPattern pattern, ITsString replacement)
+		public ReplaceWithMethod(LcmCache cache, ISilDataAccessManaged sda, FieldReadWriter accessor, XElement spec, IVwPattern pattern, ITsString replacement)
 			: base(cache, sda, accessor, spec)
 		{
 			m_pattern = pattern;
@@ -5117,7 +5117,7 @@ namespace SIL.FieldWorks.Common.Controls
 	internal class ClearMethod : DoItMethod
 	{
 		private readonly ITsString m_newValue;
-		public ClearMethod(FdoCache cache, ISilDataAccessManaged sda, FieldReadWriter accessor, XElement spec)
+		public ClearMethod(LcmCache cache, ISilDataAccessManaged sda, FieldReadWriter accessor, XElement spec)
 			: base(cache, sda, accessor, spec)
 		{
 			m_newValue = TsStringUtils.EmptyString(accessor.WritingSystem);
@@ -5660,7 +5660,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 	abstract class BulkEditSpecControl : IBulkEditSpecControl, IGhostable
 	{
-		protected FdoCache m_cache;
+		protected LcmCache m_cache;
 		protected XMLViewsDataCache m_sda;
 		protected GhostParentHelper m_ghostParentHelper;
 		public event FwSelectionChangedEventHandler ValueChanged;
@@ -5672,7 +5672,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		public IPropertyTable PropertyTable { get; set; }
 
-		public FdoCache Cache
+		public LcmCache Cache
 		{
 			get { return m_cache; }
 			set { m_cache = value; }
@@ -5750,7 +5750,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 		#region IGhostable Members
 
-		public virtual void InitForGhostItems(FdoCache cache, XElement colSpec)
+		public virtual void InitForGhostItems(LcmCache cache, XElement colSpec)
 		{
 			m_ghostParentHelper = BulkEditBar.GetGhostHelper(cache.ServiceLocator, colSpec);
 		}
@@ -5788,7 +5788,7 @@ namespace SIL.FieldWorks.Common.Controls
 	/// </summary>
 	class FlatListChooserBEditControl : IBulkEditSpecControl, IGhostable, IDisposable
 	{
-		protected FdoCache m_cache;
+		protected LcmCache m_cache;
 		protected XMLViewsDataCache m_sda;
 		protected FwComboBox m_combo;
 		protected int m_ws;
@@ -5830,7 +5830,7 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-		public FdoCache Cache
+		public LcmCache Cache
 		{
 			get
 			{
@@ -6157,7 +6157,7 @@ namespace SIL.FieldWorks.Common.Controls
 		#endregion
 			#region IGhostable Members
 
-		public void InitForGhostItems(FdoCache cache, XElement colSpec)
+		public void InitForGhostItems(LcmCache cache, XElement colSpec)
 		{
 			m_ghostParentHelper = BulkEditBar.GetGhostHelper(cache.ServiceLocator, colSpec);
 		}
@@ -6173,7 +6173,7 @@ namespace SIL.FieldWorks.Common.Controls
 	/// </summary>
 	class ComplexListChooserBEditControl : IBulkEditSpecControl
 	{
-		protected FdoCache m_cache;
+		protected LcmCache m_cache;
 		private XMLViewsDataCache m_sda;
 		protected Button m_launcher;
 		protected int m_hvoList;
@@ -6193,7 +6193,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 		public event FwSelectionChangedEventHandler ValueChanged;
 
-		public ComplexListChooserBEditControl(FdoCache cache, IPropertyTable propertyTable, XElement colSpec)
+		public ComplexListChooserBEditControl(LcmCache cache, IPropertyTable propertyTable, XElement colSpec)
 			: this(BulkEditBar.GetFlidFromClassDotName(cache, colSpec, "field"),
 			BulkEditBar.GetNamedListHvo(cache, colSpec, "list"),
 			XmlUtils.GetOptionalAttributeValue(colSpec, "displayNameProperty", "ShortNameTSS"),
@@ -6297,7 +6297,7 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-		public FdoCache Cache
+		public LcmCache Cache
 		{
 			get
 			{
@@ -6606,7 +6606,7 @@ namespace SIL.FieldWorks.Common.Controls
 		// Cache suggestions from FakeDoIt so DoIt is faster.
 		private Dictionary<int, List<ICmObject>> m_suggestionCache;
 
-		public SemanticDomainChooserBEditControl(FdoCache cache, IPropertyTable propertyTable, BulkEditBar bar, XElement colSpec) :
+		public SemanticDomainChooserBEditControl(LcmCache cache, IPropertyTable propertyTable, BulkEditBar bar, XElement colSpec) :
 			base(cache, propertyTable, colSpec)
 		{
 			m_suggestButton = new Button();
@@ -6761,7 +6761,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 	class VariantEntryTypesChooserBEditControl : ComplexListChooserBEditControl
 	{
-		internal VariantEntryTypesChooserBEditControl(FdoCache cache, IPropertyTable propertyTable, XElement colSpec)
+		internal VariantEntryTypesChooserBEditControl(LcmCache cache, IPropertyTable propertyTable, XElement colSpec)
 			: base(cache, propertyTable, colSpec)
 		{
 		}
@@ -6771,7 +6771,7 @@ namespace SIL.FieldWorks.Common.Controls
 	{
 		HashSet<int> m_complexEntryRefs = null;
 
-		internal ComplexEntryTypesChooserBEditControl(FdoCache cache, IPropertyTable propertyTable, XElement colSpec)
+		internal ComplexEntryTypesChooserBEditControl(LcmCache cache, IPropertyTable propertyTable, XElement colSpec)
 			: base(cache, propertyTable, colSpec)
 		{
 		}
@@ -7103,7 +7103,7 @@ namespace SIL.FieldWorks.Common.Controls
 		}
 
 		// If ws is zero, determine a ws for the specified string field.
-		static internal int GetWsFromMetaData(int wsIn, int flid, FdoCache cache)
+		static internal int GetWsFromMetaData(int wsIn, int flid, LcmCache cache)
 		{
 			if (wsIn != 0)
 				return wsIn;
@@ -7123,12 +7123,12 @@ namespace SIL.FieldWorks.Common.Controls
 			else return 0;
 		}
 
-		static public FieldReadWriter Create(XElement node, FdoCache cache)
+		static public FieldReadWriter Create(XElement node, LcmCache cache)
 		{
 			return Create(node, cache, 0);
 		}
 
-		static public FieldReadWriter Create(XElement node, FdoCache cache, int hvoRootObj)
+		static public FieldReadWriter Create(XElement node, LcmCache cache, int hvoRootObj)
 		{
 			string transduceField = XmlUtils.GetOptionalAttributeValue(node, "transduce");
 			if (string.IsNullOrEmpty(transduceField))
@@ -7144,7 +7144,7 @@ namespace SIL.FieldWorks.Common.Controls
 			if (clid == 0)
 				return null;
 			int flid = mdc.GetFieldId2(clid, fieldName, true);
-			int ws = WritingSystemServices.GetWritingSystem(cache, node, null, hvoRootObj, flid, 0).Handle;
+			int ws = WritingSystemServices.GetWritingSystem(cache, FwUtils.FwUtils.ConvertElement(node), null, hvoRootObj, flid, 0).Handle;
 			if (parts.Length == 2)
 			{
 				FieldReadWriter frw;
@@ -7196,7 +7196,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 		#region IGhostable Members
 
-		public void InitForGhostItems(FdoCache cache, XElement colSpec)
+		public void InitForGhostItems(LcmCache cache, XElement colSpec)
 		{
 			m_ghostParentHelper = BulkEditBar.GetGhostHelper(cache.ServiceLocator, colSpec);
 		}
@@ -7210,13 +7210,13 @@ namespace SIL.FieldWorks.Common.Controls
 	/// </summary>
 	internal class ManyOnePathSortItemReadWriter : FieldReadWriter, IDisposable
 	{
-		private FdoCache m_cache;
+		private LcmCache m_cache;
 		private XElement m_colSpec;
 		private BrowseViewer m_bv;
 		private IStringFinder m_finder;
 		private IApp m_app;
 
-		public ManyOnePathSortItemReadWriter(FdoCache cache, XElement colSpec, BrowseViewer bv, IApp app)
+		public ManyOnePathSortItemReadWriter(LcmCache cache, XElement colSpec, BrowseViewer bv, IApp app)
 			: base(cache.DomainDataByFlid)
 		{
 			m_cache = cache;
@@ -7313,9 +7313,9 @@ namespace SIL.FieldWorks.Common.Controls
 		protected int m_flid;
 		protected int m_flidType;
 		protected int m_ws;
-		protected FdoCache m_cache;
+		protected LcmCache m_cache;
 
-		public OwnStringPropReadWriter(FdoCache cache, int flid, int ws)
+		public OwnStringPropReadWriter(LcmCache cache, int flid, int ws)
 			: base(cache.MainCacheAccessor)
 		{
 			m_cache = cache;
@@ -7392,7 +7392,7 @@ namespace SIL.FieldWorks.Common.Controls
 		int m_flidObj;
 		int m_clid; // to create if missing
 
-		public OwnAtomicStringPropReadWriter(FdoCache cache, int flidString, int ws, int flidObj, int clid)
+		public OwnAtomicStringPropReadWriter(LcmCache cache, int flidString, int ws, int flidObj, int clid)
 			: base(cache, flidString, ws)
 		{
 			m_flidObj = flidObj;
@@ -7437,7 +7437,7 @@ namespace SIL.FieldWorks.Common.Controls
 		int m_flidObj;
 		int m_clid; // to create if missing
 
-		public OwnSeqStringPropReadWriter(FdoCache cache, int flidString, int ws, int flidObj, int clid)
+		public OwnSeqStringPropReadWriter(LcmCache cache, int flidString, int ws, int flidObj, int clid)
 			: base(cache, flidString, ws)
 		{
 			m_flidObj = flidObj;
@@ -7487,7 +7487,7 @@ namespace SIL.FieldWorks.Common.Controls
 	internal class OwnMlPropReadWriter : OwnStringPropReadWriter
 	{
 		private bool m_fFieldAllowsMultipleRuns;
-		public OwnMlPropReadWriter(FdoCache cache, int flid, int ws)
+		public OwnMlPropReadWriter(LcmCache cache, int flid, int ws)
 			: base(cache, flid, ws)
 		{
 
@@ -7537,7 +7537,7 @@ namespace SIL.FieldWorks.Common.Controls
 		int m_flidObj;
 		int m_clid; // to create if missing
 
-		public OwnAtomicMlPropReadWriter(FdoCache cache, int flidString, int ws, int flidObj, int clid)
+		public OwnAtomicMlPropReadWriter(LcmCache cache, int flidString, int ws, int flidObj, int clid)
 			: base(cache, flidString, ws)
 		{
 			m_flidObj = flidObj;
@@ -7581,7 +7581,7 @@ namespace SIL.FieldWorks.Common.Controls
 		int m_flidObj;
 		int m_clid; // to create if missing
 
-		public OwnSeqMlPropReadWriter(FdoCache cache, int flidString, int ws, int flidObj, int clid)
+		public OwnSeqMlPropReadWriter(LcmCache cache, int flidString, int ws, int flidObj, int clid)
 			: base(cache, flidString, ws)
 		{
 			m_flidObj = flidObj;

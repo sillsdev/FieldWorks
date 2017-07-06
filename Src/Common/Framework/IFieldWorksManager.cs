@@ -7,7 +7,7 @@
 
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using System;
 using System.Collections.Generic;
 
@@ -18,7 +18,7 @@ namespace SIL.FieldWorks.Common.Framework
 	/// Interface for handling FieldWorks-level (i.e. above the application level) stuff.
 	/// This includes:
 	/// - Handling/creating of projects
-	/// - Creating/managing the FdoCache
+	/// - Creating/managing the LcmCache
 	/// - Handling FieldWorks-level synchronization messages
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
@@ -29,7 +29,7 @@ namespace SIL.FieldWorks.Common.Framework
 		/// Gets the cache.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		FdoCache Cache { get; }
+		LcmCache Cache { get; }
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

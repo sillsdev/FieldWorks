@@ -9,11 +9,11 @@ using System.Xml.Linq;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.PaneBar;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks;
+using SIL.LCModel;
+using SIL.LCModel.Application;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 {
@@ -137,7 +137,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 
 			var doc = XDocument.Parse(LexiconResources.RapidDataEntryToolParameters);
 			// The RecordBar uses the "SemanticDomainList" clerk
-			var cache = PropertyTable.GetValue<FdoCache>("cache");
+			var cache = PropertyTable.GetValue<LcmCache>("cache");
 			var decorator = new DictionaryPublicationDecorator(cache, cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), CmPossibilityListTags.kflidPossibilities);
 			var recordList = new PossibilityRecordList(decorator, cache.LanguageProject.SemanticDomainListOA);
 			var semanticDomainRdeTreeBarHandler = new SemanticDomainRdeTreeBarHandler(PropertyTable, doc.Root.Element("treeBarHandler"), new PaneBar());

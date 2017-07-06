@@ -2,7 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using System.Collections.Generic;
 
@@ -23,7 +23,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// <summary />
 		protected override VectorReferenceVc CreateVectorReferenceVc()
 		{
-			return new LexReferenceTreeBranchesVc(m_fdoCache, m_rootFlid, m_displayNameProperty, m_displayWs);
+			return new LexReferenceTreeBranchesVc(m_cache, m_rootFlid, m_displayNameProperty, m_displayWs);
 		}
 
 		/// <summary />
@@ -38,7 +38,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 #if WANTPORTMULTI
 			for (int i = 0; i < hvos.Length; ++i)
 			{
-				ICmObject cmo = ICmObject.CreateFromDBObject(m_fdoCache, hvos[i]);
+				ICmObject cmo = ICmObject.CreateFromDBObject(m_cache, hvos[i]);
 				(cmo as ICmObject).UpdateTimestampForVirtualChange();
 			}
 #endif

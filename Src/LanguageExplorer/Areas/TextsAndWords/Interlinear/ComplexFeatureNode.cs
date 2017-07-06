@@ -4,7 +4,7 @@
 
 using System;
 using Aga.Controls.Tree;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {

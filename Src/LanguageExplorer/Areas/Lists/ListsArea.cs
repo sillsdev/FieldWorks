@@ -6,10 +6,10 @@ using System.Collections.Generic;
 using System.Drawing;
 using LanguageExplorer.Controls;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.XWorks;
+using SIL.LCModel;
+using SIL.LCModel.Application;
 
 namespace LanguageExplorer.Areas.Lists
 {
@@ -28,7 +28,7 @@ namespace LanguageExplorer.Areas.Lists
 
 		internal static RecordClerk CreateBasicClerkForListArea(IPropertyTable propertyTable, PossibilityListClerkParameters possibilityListClerkParameters)
 		{
-			var cache = propertyTable.GetValue<FdoCache>("cache");
+			var cache = propertyTable.GetValue<LcmCache>("cache");
 			var recordList = new PossibilityRecordList(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), possibilityListClerkParameters.OwningList);
 			var sorter = new PropertyRecordSorter("ShortName");
 			return new RecordClerk(possibilityListClerkParameters.ClerkIdentifier, recordList, sorter, "Default", null, true, true, new PossibilityTreeBarHandler(propertyTable, possibilityListClerkParameters.Expand, possibilityListClerkParameters.Hierarchical, possibilityListClerkParameters.IncludeAbbr, possibilityListClerkParameters.Ws));

@@ -6,9 +6,9 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using SIL.CoreImpl.Text;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
 
 namespace LanguageExplorer.UtilityTools
 {
@@ -99,7 +99,7 @@ namespace LanguageExplorer.UtilityTools
 		{
 			try
 			{
-				FdoCache cache = m_dlg.PropertyTable.GetValue<FdoCache>("cache");
+				LcmCache cache = m_dlg.PropertyTable.GetValue<LcmCache>("cache");
 				m_dlg.ProgressBar.Maximum = cache.LanguageProject.LexDbOA.Entries.Count();
 				m_dlg.ProgressBar.Step=1;
 				string locale = InvokePython("-icu"); //ask the python script for the icu local

@@ -7,13 +7,13 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using NUnit.Framework;
+using LanguageExplorer.Areas.TextsAndWords.Discourse;
 using SIL.FieldWorks.Common.FwUtils.Attributes;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
-using LanguageExplorer.Areas.TextsAndWords.Discourse;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 
 namespace LanguageExplorerTests.Discourse
 {
@@ -168,7 +168,7 @@ namespace LanguageExplorerTests.Discourse
 	/// </summary>
 	internal class TestInterlinRibbon : InterlinRibbon
 	{
-		public TestInterlinRibbon(FdoCache cache, int hvoStText)
+		public TestInterlinRibbon(LcmCache cache, int hvoStText)
 			: base(cache, hvoStText)
 		{
 		}

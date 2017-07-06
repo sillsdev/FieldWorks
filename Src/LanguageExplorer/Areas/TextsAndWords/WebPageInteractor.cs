@@ -6,11 +6,8 @@ using System;
 using System.Collections.Generic;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FdoUi;
-#if __MonoCS__
-using System.Windows.Forms;
-#endif
+using SIL.LCModel;
 using Gecko;
 
 namespace LanguageExplorer.Areas.TextsAndWords
@@ -19,10 +16,10 @@ namespace LanguageExplorer.Areas.TextsAndWords
 	{
 		private readonly HtmlControl m_htmlControl;
 		private readonly IPublisher m_publisher;
-		private readonly FdoCache m_cache;
+		private readonly LcmCache m_cache;
 		private readonly FwTextBox m_tbWordForm;
 
-		public WebPageInteractor(HtmlControl htmlControl, IPublisher publisher, FdoCache cache, FwTextBox tbWordForm)
+		public WebPageInteractor(HtmlControl htmlControl, IPublisher publisher, LcmCache cache, FwTextBox tbWordForm)
 		{
 			m_htmlControl = htmlControl;
 			m_publisher = publisher;

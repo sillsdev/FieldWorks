@@ -8,9 +8,7 @@
 // <remarks>
 // </remarks>
 
-using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Windows.Forms;
 
 namespace SIL.FieldWorks.Common.RootSites

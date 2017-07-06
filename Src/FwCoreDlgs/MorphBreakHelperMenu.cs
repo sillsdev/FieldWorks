@@ -5,7 +5,7 @@
 using System;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
@@ -14,7 +14,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	/// </summary>
 	public class MorphBreakHelperMenu : HelperMenu
 	{
-		private readonly FdoCache m_cache;
+		private readonly LcmCache m_cache;
 
 		/// <summary>
 		/// Constructor for Morph Break Helper Context Menu
@@ -22,7 +22,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <param name="textbox">the textbox to insert regex characters into</param>
 		/// <param name="helpTopicProvider">usually IHelpTopicProvider.App</param>
 		/// <param name="cache">cache</param>
-		public MorphBreakHelperMenu(FwTextBox textbox, IHelpTopicProvider helpTopicProvider, FdoCache cache)
+		public MorphBreakHelperMenu(FwTextBox textbox, IHelpTopicProvider helpTopicProvider, LcmCache cache)
 			: base(textbox, helpTopicProvider)
 		{
 			m_cache = cache;

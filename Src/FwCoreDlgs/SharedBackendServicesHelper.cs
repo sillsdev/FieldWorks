@@ -5,8 +5,8 @@
 using System;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
@@ -22,7 +22,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// false to cancel opening the dialog.
 		/// </summary>
 		/// <returns></returns>
-		public static bool WarnOnOpeningSingleUserDialog(FdoCache cache)
+		public static bool WarnOnOpeningSingleUserDialog(LcmCache cache)
 		{
 			if (!SharedBackendServices.AreMultipleApplicationsConnected(cache))
 				return true;
@@ -39,7 +39,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// which changes dangerous user settings.
 		/// </summary>
 		/// <returns></returns>
-		public static bool WarnOnConfirmingSingleUserChanges(FdoCache cache)
+		public static bool WarnOnConfirmingSingleUserChanges(LcmCache cache)
 		{
 			if (!SharedBackendServices.AreMultipleApplicationsConnected(cache))
 				return true;

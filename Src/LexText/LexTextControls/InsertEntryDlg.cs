@@ -13,16 +13,16 @@ using System.Xml.Linq;
 using System.Xml.XPath;
 using Microsoft.Win32;
 using SIL.Collections;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.WritingSystems;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.LexText.Controls.MGA;
 using SIL.FieldWorks.Resources;
 using SIL.Windows.Forms;
@@ -43,7 +43,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		#region Data members
 
-		private FdoCache m_cache;
+		private LcmCache m_cache;
 		private IPropertyTable m_propertyTable;
 		private IPublisher m_publisher;
 		private ISubscriber m_subscriber;
@@ -538,12 +538,12 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="cache">The FDO cache to use.</param>
 		/// <param name="morphType">The morpheme type</param>
 		/// <remarks>All other variations of SetDlgInfo should eventually call this one.</remarks>
-		protected void SetDlgInfo(FdoCache cache, IMoMorphType morphType)
+		protected void SetDlgInfo(LcmCache cache, IMoMorphType morphType)
 		{
 			SetDlgInfo(cache, morphType, 0, MorphTypeFilterType.Any);
 		}
 
-		protected void SetDlgInfo(FdoCache cache, IMoMorphType morphType, int wsVern, MorphTypeFilterType filter)
+		protected void SetDlgInfo(LcmCache cache, IMoMorphType morphType, int wsVern, MorphTypeFilterType filter)
 		{
 			try
 			{
@@ -756,7 +756,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="propertyTable"></param>
 		/// <param name="publisher">The publisher to use.</param>
 		/// <param name="subscriber"></param>
-		public void SetDlgInfo(FdoCache cache, ITsString tssForm, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
+		public void SetDlgInfo(LcmCache cache, ITsString tssForm, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
 		{
 			CheckDisposed();
 
@@ -806,7 +806,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="propertyTable"></param>
 		/// <param name="publisher">The publisher.</param>
 		/// <param name="persistProvider">The persistence provider to use.</param>
-		public void SetDlgInfo(FdoCache cache, IPropertyTable propertyTable, IPublisher publisher, IPersistenceProvider persistProvider)
+		public void SetDlgInfo(LcmCache cache, IPropertyTable propertyTable, IPublisher publisher, IPersistenceProvider persistProvider)
 		{
 			CheckDisposed();
 
@@ -827,7 +827,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="propertyTable"></param>
 		/// <param name="publisher">The publisher.</param>
 		/// <param name="filter">The filter.</param>
-		public void SetDlgInfo(FdoCache cache, IMoMorphType morphType,
+		public void SetDlgInfo(LcmCache cache, IMoMorphType morphType,
 			MsaType msaType, IMoInflAffixSlot slot, IPropertyTable propertyTable, IPublisher publisher, MorphTypeFilterType filter)
 		{
 			CheckDisposed();
@@ -854,7 +854,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// Initialize an InsertEntryDlg from something like an "Insert Major Entry menu".
 		/// </summary>
 		/// <param name="cache">The FDO cache to use.</param>
-		protected void SetDlgInfo(FdoCache cache)
+		protected void SetDlgInfo(LcmCache cache)
 		{
 			SetDlgInfo(cache, cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphStem));
 		}
@@ -1160,7 +1160,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			// m_msaGroupBox
 			//
 			resources.ApplyResources(this.m_msaGroupBox, "m_msaGroupBox");
-			this.m_msaGroupBox.MSAType = SIL.FieldWorks.FDO.MsaType.kNotSet;
+			this.m_msaGroupBox.MSAType = MsaType.kNotSet;
 			this.m_msaGroupBox.Name = "m_msaGroupBox";
 			this.m_msaGroupBox.Slot = null;
 			//

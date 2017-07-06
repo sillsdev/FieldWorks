@@ -9,13 +9,13 @@ using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 using System.Xml;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.WritingSystems;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.FwUtils.MessageBoxEx;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 using SIL.Windows.Forms;
 using SIL.Xml;
 
@@ -30,7 +30,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		private bool m_launchedFromInsertMenu = false;
 		private IPropertyTable m_propertyTable;
 		private IHelpTopicProvider m_helpTopicProvider;
-		private FdoCache m_cache;
+		private LcmCache m_cache;
 		private List<TreeNode> m_nodes = new List<TreeNode>();
 		private IPartOfSpeech m_selPOS;
 		private bool m_skipEvents = false;
@@ -192,13 +192,13 @@ namespace SIL.FieldWorks.LexText.Controls
 			} while ((node = node.NextNode) != null);
 		}
 
-		private void AddNodes(HashSet<IPartOfSpeech> posSet, XmlNodeList nodeList, TreeNodeCollection treeNodes, FdoCache cache)
+		private void AddNodes(HashSet<IPartOfSpeech> posSet, XmlNodeList nodeList, TreeNodeCollection treeNodes, LcmCache cache)
 		{
 			foreach (XmlNode node in nodeList)
 				AddNode(posSet, node, treeNodes, cache);
 		}
 
-		private void AddNode(HashSet<IPartOfSpeech> posSet, XmlNode node, TreeNodeCollection treeNodes, FdoCache cache)
+		private void AddNode(HashSet<IPartOfSpeech> posSet, XmlNode node, TreeNodeCollection treeNodes, LcmCache cache)
 		{
 			if (node.Attributes["id"].InnerText == "PartOfSpeechValue")
 			{
@@ -548,7 +548,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			private IPartOfSpeech m_pos;
 			private XmlNode m_node; // need to remember the node so can put info for *all* writing systems into databas
 
-			public static MasterCategory Create(ISet<IPartOfSpeech> posSet, XmlNode node, FdoCache cache)
+			public static MasterCategory Create(ISet<IPartOfSpeech> posSet, XmlNode node, LcmCache cache)
 			{
 				/*
 				<item type="category" id="Adjective" guid="30d07580-5052-4d91-bc24-469b8b2d7df9">
@@ -591,7 +591,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					mc.m_citations.Add(new MasterCategoryCitation(XmlUtils.GetManditoryAttributeValue(citNode, "ws"), citNode.InnerText));
 				return mc;
 			}
-			private static string GetBestWritingSystemForNamedNode(XmlNode node, string sNodeName, string sDefaultWS, FdoCache cache, out string sNodeContent)
+			private static string GetBestWritingSystemForNamedNode(XmlNode node, string sNodeName, string sDefaultWS, LcmCache cache, out string sNodeContent)
 			{
 				string sWS;
 				XmlNode nd = node.SelectSingleNode(sNodeName + "[@ws='" + sDefaultWS + "']");
@@ -620,7 +620,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				return sWS;
 			}
 
-			public void AddToDatabase(FdoCache cache, ICmPossibilityList posList, MasterCategory parent, IPartOfSpeech subItemOwner)
+			public void AddToDatabase(LcmCache cache, ICmPossibilityList posList, MasterCategory parent, IPartOfSpeech subItemOwner)
 			{
 				if (m_pos != null)
 					return; // It's already in the database, so nothing more can be done.
@@ -655,7 +655,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				});
 			}
 
-			private void SetContentFromNode(FdoCache cache, string sNodeName, bool fFixName, ITsMultiString item)
+			private void SetContentFromNode(LcmCache cache, string sNodeName, bool fFixName, ITsMultiString item)
 			{
 				ILgWritingSystemFactory wsf = cache.WritingSystemFactory;
 				int iWS;
@@ -683,7 +683,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				}
 			}
 
-			private int DeterminePOSLocationInfo(FdoCache cache, IPartOfSpeech subItemOwner, MasterCategory parent, ICmPossibilityList posList,
+			private int DeterminePOSLocationInfo(LcmCache cache, IPartOfSpeech subItemOwner, MasterCategory parent, ICmPossibilityList posList,
 				out int newOwningFlid, out int insertLocation)
 			{
 				int newOwner;

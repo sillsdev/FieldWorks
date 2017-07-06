@@ -6,10 +6,10 @@ using System.Drawing;
 using System.Xml.Linq;
 using LanguageExplorer.Controls;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks;
+using SIL.LCModel;
+using SIL.LCModel.Application;
 
 namespace LanguageExplorer.Areas.Lists.Tools.TextMarkupTagsEdit
 {
@@ -99,7 +99,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.TextMarkupTagsEdit
 				true,
 				XDocument.Parse(ListResources.TextMarkupTagsEditParameters).Root, XDocument.Parse(ListResources.ListToolsSliceFilters),
 				MachineName,
-				new PossibilityListClerkParameters("TextMarkupTagsList", PropertyTable.GetValue<FdoCache>("cache").LanguageProject.TextMarkupTagsOA, false, true, false, "best analysis"),
+				new PossibilityListClerkParameters("TextMarkupTagsList", PropertyTable.GetValue<LcmCache>("cache").LanguageProject.TextMarkupTagsOA, false, true, false, "best analysis"),
 				out _recordClerk);
 			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
 		}

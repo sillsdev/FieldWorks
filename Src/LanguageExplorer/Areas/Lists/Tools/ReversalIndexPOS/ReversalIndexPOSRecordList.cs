@@ -3,9 +3,9 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.XWorks;
+using SIL.LCModel;
+using SIL.LCModel.Application;
 
 namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 {
@@ -15,7 +15,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 	internal sealed class ReversalIndexPOSRecordList : RecordList
 	{
 		/// <summary />
-		internal ReversalIndexPOSRecordList(IFdoServiceLocator serviceLocator, ISilDataAccessManaged decorator, IReversalIndex reversalIndex)
+		internal ReversalIndexPOSRecordList(ILcmServiceLocator serviceLocator, ISilDataAccessManaged decorator, IReversalIndex reversalIndex)
 			: base(decorator, true, CmPossibilityListTags.kflidPossibilities, reversalIndex.PartsOfSpeechOA, "Possibilities")
 		{
 			m_flid = CmPossibilityListTags.kflidPossibilities;

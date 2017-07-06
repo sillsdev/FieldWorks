@@ -5,12 +5,11 @@
 using System;
 using System.Collections.Generic;
 using NUnit.Framework;
-using SIL.CoreImpl.Text;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.FDOTests;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
+using SIL.LCModel.Application;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.Filters;
 
 namespace SIL.FieldWorks.XWorks
@@ -120,7 +119,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 	}
 
-	class FakeMdc : FdoMetaDataCacheDecoratorBase
+	class FakeMdc : LcmMetaDataCacheDecoratorBase
 	{
 		public FakeMdc(IFwMetaDataCacheManaged metaDataCache) : base(metaDataCache)
 		{

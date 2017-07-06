@@ -9,9 +9,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using System.Windows.Forms;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks
 {
@@ -29,7 +29,7 @@ namespace SIL.FieldWorks
 		/// Gets the cache.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public FdoCache Cache
+		public LcmCache Cache
 		{
 			get { return FieldWorks.Cache; }
 		}

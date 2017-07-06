@@ -10,8 +10,7 @@ using LanguageExplorer.UtilityTools;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FwCoreDlgs;
+using SIL.LCModel;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 {
@@ -36,7 +35,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// <summary />
 		protected UtilityDlg m_dlg;
 		/// <summary />
-		protected FdoCache m_cache;
+		protected LcmCache m_cache;
 		/// <summary />
 		protected int m_flid;
 		/// <summary />

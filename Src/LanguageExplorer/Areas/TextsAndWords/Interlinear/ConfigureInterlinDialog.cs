@@ -10,10 +10,10 @@ using System.Drawing;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.WritingSystems;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
@@ -46,14 +46,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private IContainer components;
 
 		bool m_fUpdatingWsCombo = false; // true during UpdateWsCombo
-		private FdoCache m_cache;
+		private LcmCache m_cache;
 		private IHelpTopicProvider m_helpTopicProvider;
 		private ImageList imageList1;
 
 		InterlinLineChoices m_choices;
 
 
-		public ConfigureInterlinDialog(FdoCache cache, IHelpTopicProvider helpTopicProvider,
+		public ConfigureInterlinDialog(LcmCache cache, IHelpTopicProvider helpTopicProvider,
 			InterlinLineChoices choices)
 		{
 			//
@@ -370,7 +370,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <param name="cache"></param>
 		/// <param name="owner"></param>
 		/// <returns></returns>
-		internal static ComboBox.ObjectCollection WsComboItemsInternal(FdoCache cache, ComboBox owner,
+		internal static ComboBox.ObjectCollection WsComboItemsInternal(LcmCache cache, ComboBox owner,
 			Dictionary<ColumnConfigureDialog.WsComboContent, ComboBox.ObjectCollection> cachedBoxes,
 			ColumnConfigureDialog.WsComboContent comboContent)
 		{

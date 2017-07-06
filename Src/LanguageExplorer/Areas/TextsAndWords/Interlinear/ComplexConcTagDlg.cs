@@ -6,7 +6,7 @@ using System;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
@@ -20,7 +20,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private HelpProvider m_helpProvider;
 		private TreeCombo m_tagComboBox;
 
-		private FdoCache m_cache;
+		private LcmCache m_cache;
 		private IHelpTopicProvider m_helpTopicProvider;
 		private ComplexConcTagNode m_node;
 		private PossibilityComboController m_posPopupTreeManager;
@@ -38,7 +38,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			base.Dispose(disposing);
 		}
 
-		public void SetDlgInfo(FdoCache cache, IPropertyTable propertyTable, IPublisher publisher, ComplexConcTagNode node)
+		public void SetDlgInfo(LcmCache cache, IPropertyTable propertyTable, IPublisher publisher, ComplexConcTagNode node)
 		{
 			m_cache = cache;
 			m_node = node;

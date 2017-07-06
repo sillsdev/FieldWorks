@@ -6,12 +6,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
-using SIL.CoreImpl.WritingSystems;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO.DomainImpl;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel.DomainImpl;
+using SIL.LCModel.DomainServices;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -256,7 +256,7 @@ namespace SIL.FieldWorks.XWorks
 
 		public bool OkButtonEnabled { get { return m_btnOk.Enabled; } set { m_btnOk.Enabled = value; } }
 
-		public FwStyleSheet SetStyleSheet
+		public LcmStyleSheet SetStyleSheet
 		{
 			set
 			{

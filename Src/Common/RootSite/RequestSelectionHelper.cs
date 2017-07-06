@@ -1,15 +1,12 @@
 ﻿// Copyright (c) 2009-2013 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: RequestSelectionHelper.cs
-// Responsibility: TE Team
-// --------------------------------------------------------------------------------------------
+
 using System.Diagnostics;
 using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.FieldWorks.FDO.Application;
+using SIL.LCModel.Application;
 using System.Runtime.InteropServices;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 
 namespace SIL.FieldWorks.Common.RootSites
 {

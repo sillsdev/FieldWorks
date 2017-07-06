@@ -8,7 +8,7 @@ using System.Linq;
 using System.Windows.Forms;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using System.IO;
 
 namespace SIL.FieldWorks.FwCoreDlgs
@@ -285,22 +285,22 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					}
 					else
 					{
-						string path = Path.Combine(folder, info.DatabaseName + FdoFileHelper.ksFwDataXmlFileExtension);
+						string path = Path.Combine(folder, info.DatabaseName + LcmFileHelper.ksFwDataXmlFileExtension);
 						if (File.Exists(path))
 							File.Delete(path);
-						path = Path.ChangeExtension(path, FdoFileHelper.ksFwDataFallbackFileExtension);
+						path = Path.ChangeExtension(path, LcmFileHelper.ksFwDataFallbackFileExtension);
 						if (File.Exists(path))
 							File.Delete(path);
-						path = Path.Combine(folder, FdoFileHelper.ksWritingSystemsDir);
+						path = Path.Combine(folder, LcmFileHelper.ksWritingSystemsDir);
 						if (Directory.Exists(path))
 							Directory.Delete(path, true);
-						path = Path.Combine(folder, FdoFileHelper.ksBackupSettingsDir);
+						path = Path.Combine(folder, LcmFileHelper.ksBackupSettingsDir);
 						if (Directory.Exists(path))
 							Directory.Delete(path, true);
-						path = Path.Combine(folder, FdoFileHelper.ksConfigurationSettingsDir);
+						path = Path.Combine(folder, LcmFileHelper.ksConfigurationSettingsDir);
 						if (Directory.Exists(path))
 							Directory.Delete(path, true);
-						path = Path.Combine(folder, FdoFileHelper.ksSortSequenceTempDir);
+						path = Path.Combine(folder, LcmFileHelper.ksSortSequenceTempDir);
 						if (Directory.Exists(path))
 							Directory.Delete(path, true);
 						string[] folders = Directory.GetDirectories(folder);
@@ -328,10 +328,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			foreach (string dir in folders)
 			{
 				string name = Path.GetFileName(dir);
-				if (name == FdoFileHelper.ksWritingSystemsDir ||
-					name == FdoFileHelper.ksBackupSettingsDir ||
-					name == FdoFileHelper.ksConfigurationSettingsDir ||
-					name == FdoFileHelper.ksSortSequenceTempDir)
+				if (name == LcmFileHelper.ksWritingSystemsDir ||
+					name == LcmFileHelper.ksBackupSettingsDir ||
+					name == LcmFileHelper.ksConfigurationSettingsDir ||
+					name == LcmFileHelper.ksSortSequenceTempDir)
 				{
 					continue;
 				}
@@ -344,8 +344,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			foreach (string filepath in files)
 			{
 				string file = Path.GetFileName(filepath);
-				if (file != info.DatabaseName + FdoFileHelper.ksFwDataXmlFileExtension &&
-					file != info.DatabaseName + FdoFileHelper.ksFwDataFallbackFileExtension)
+				if (file != info.DatabaseName + LcmFileHelper.ksFwDataXmlFileExtension &&
+					file != info.DatabaseName + LcmFileHelper.ksFwDataFallbackFileExtension)
 				{
 					return true;
 				}

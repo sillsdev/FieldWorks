@@ -8,10 +8,10 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.XWorks;
+using SIL.LCModel;
+using SIL.LCModel.Application;
 
 namespace LanguageExplorer.Areas.Notebook
 {
@@ -30,7 +30,7 @@ namespace LanguageExplorer.Areas.Notebook
 			m_toolRepository = toolRepository;
 		}
 
-		internal static RecordClerk CreateRecordClerkForAllNotebookAreaTools(FdoCache cache)
+		internal static RecordClerk CreateRecordClerkForAllNotebookAreaTools(LcmCache cache)
 		{
 			var mdc = cache.MetaDataCacheAccessor;
 			var nb = cache.LanguageProject.ResearchNotebookOA;

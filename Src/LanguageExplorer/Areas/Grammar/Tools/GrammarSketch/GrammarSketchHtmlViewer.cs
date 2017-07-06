@@ -18,9 +18,9 @@ using Microsoft.Win32;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.WordWorks.Parser;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 using SIL.Xml;
 
 namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
@@ -32,7 +32,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 	{
 		#region Data Members
 
-		private FdoCache m_cache;
+		private LcmCache m_cache;
 		/// <summary>
 		/// The control that shows the HTML data.
 		/// </summary>
@@ -137,11 +137,11 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 		/// <summary>
 		/// FDO cache.
 		/// </summary>
-		private FdoCache Cache
+		private LcmCache Cache
 		{
 			get
 			{
-				return m_cache ?? (m_cache = PropertyTable.GetValue<FdoCache>("cache"));
+				return m_cache ?? (m_cache = PropertyTable.GetValue<LcmCache>("cache"));
 			}
 		}
 

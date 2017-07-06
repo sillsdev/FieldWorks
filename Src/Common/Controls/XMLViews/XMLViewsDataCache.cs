@@ -5,13 +5,14 @@
 using System;
 using System.Collections.Generic;
 using System.Xml.Linq;
-using SIL.CoreImpl.Cellar;
-using SIL.CoreImpl.Text;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Application;
+using SIL.LCModel.Infrastructure;
 using SIL.Xml;
+using HvoFlidKey = SIL.LCModel.Application.HvoFlidKey;
+using HvoFlidWSKey = SIL.LCModel.Application.HvoFlidWSKey;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -352,7 +353,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 	}
 
-	class XmlViewsMdc : FdoMetaDataCacheDecoratorBase
+	class XmlViewsMdc : LcmMetaDataCacheDecoratorBase
 	{
 		public XmlViewsMdc(IFwMetaDataCacheManaged metaDataCache) : base(metaDataCache)
 		{

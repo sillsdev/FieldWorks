@@ -9,10 +9,10 @@ using System.Diagnostics;
 using System.Linq;
 using System.Xml.Linq;
 using System.Xml.XPath;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
@@ -284,7 +284,7 @@ namespace SIL.FieldWorks.Common.Controls
 	/// </summary>
 	public class PartOwnershipTree : DisposableBase
 	{
-		FdoCache m_cache = null;
+		LcmCache m_cache = null;
 		XElement m_classOwnershipTree = null;
 		XElement m_parentToChildrenSpecs = null;
 
@@ -295,13 +295,13 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="sortItemProvider"></param>
 		/// <param name="fReturnFirstDecendentOnly"></param>
 		/// <returns></returns>
-		static public PartOwnershipTree Create(FdoCache cache, IMultiListSortItemProvider sortItemProvider, bool fReturnFirstDecendentOnly)
+		static public PartOwnershipTree Create(LcmCache cache, IMultiListSortItemProvider sortItemProvider, bool fReturnFirstDecendentOnly)
 		{
 			return new PartOwnershipTree(cache, sortItemProvider, fReturnFirstDecendentOnly);
 		}
 
 		/// <summary />
-		private PartOwnershipTree(FdoCache cache, IMultiListSortItemProvider sortItemProvider, bool fReturnFirstDecendentOnly)
+		private PartOwnershipTree(LcmCache cache, IMultiListSortItemProvider sortItemProvider, bool fReturnFirstDecendentOnly)
 		{
 			var partOwnershipTreeSpec = sortItemProvider.PartOwnershipTreeSpec;
 			m_cache = cache;
@@ -323,7 +323,7 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-		private FdoCache Cache
+		private LcmCache Cache
 		{
 			get { return m_cache; }
 		}

@@ -11,11 +11,11 @@ using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.PaneBar;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks;
-using SIL.Utils;
+using SIL.LCModel;
+using SIL.LCModel.Application;
+using SIL.LCModel.Utils;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 {
@@ -111,7 +111,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 
 			root.Add(columnsElement);
 
-			var cache = PropertyTable.GetValue<FdoCache>("cache");
+			var cache = PropertyTable.GetValue<LcmCache>("cache");
 			var decorator = new ConcDecorator(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), cache.ServiceLocator);
 			_recordClerk = new InterlinearTextsRecordClerk(cache.LanguageProject, decorator);
 

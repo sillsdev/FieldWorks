@@ -9,11 +9,11 @@ using System.Xml.Linq;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.PaneBar;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks;
+using SIL.LCModel;
+using SIL.LCModel.Application;
 
 namespace LanguageExplorer.Areas.Lists.Tools.FeatureTypesAdvancedEdit
 {
@@ -97,7 +97,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.FeatureTypesAdvancedEdit
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
 			var root = XDocument.Parse(ListResources.FeatureTypesAdvancedEditBrowseViewParameters).Root;
-			var cache = PropertyTable.GetValue<FdoCache>("cache");
+			var cache = PropertyTable.GetValue<LcmCache>("cache");
 			_recordClerk = new RecordClerk("featureTypes", new RecordList(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), true, FsFeatureSystemTags.kflidFeatures, cache.LanguageProject.MsFeatureSystemOA, "FeatureTypes"), new PropertyRecordSorter("ShortName"), "Default", null, false, false);
 			_recordClerk.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
 			_recordBrowseView = new RecordBrowseView(root, _recordClerk);

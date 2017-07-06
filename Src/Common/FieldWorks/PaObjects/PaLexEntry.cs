@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using SIL.PaToFdoInterfaces;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using System.Xml.Serialization;
 using SIL.FieldWorks.Common.FwUtils;
 
@@ -21,7 +21,7 @@ namespace SIL.FieldWorks.PaObjects
 		/// of PaLexEntry objects.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		internal static List<PaLexEntry> GetAll(IFdoServiceLocator svcloc)
+		internal static List<PaLexEntry> GetAll(ILcmServiceLocator svcloc)
 		{
 			return svcloc.GetInstance<ILexEntryRepository>().AllInstances()
 				.Where(lx => lx.LexemeFormOA != null && lx.LexemeFormOA.Form.StringCount > 0)
@@ -34,7 +34,7 @@ namespace SIL.FieldWorks.PaObjects
 		/// of PaLexEntry objects and returns the collection in a serialized list.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		internal static string GetAllAsXml(IFdoServiceLocator svcloc)
+		internal static string GetAllAsXml(ILcmServiceLocator svcloc)
 		{
 			try
 			{

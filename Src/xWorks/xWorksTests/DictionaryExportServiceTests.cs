@@ -4,9 +4,7 @@
 
 using System.Linq;
 using NUnit.Framework;
-using SIL.FieldWorks.FDO.FDOTests;
-
-// ReSharper disable InconsistentNaming
+using SIL.LCModel;
 
 namespace SIL.FieldWorks.XWorks
 {

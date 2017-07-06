@@ -2,10 +2,10 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Framework.DetailControls;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 {
@@ -18,7 +18,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		private readonly int m_hvoOwner;
 
 		/// <summary />
-		public LexReferenceTreeRootVc(FdoCache cache, int hvo, int flid, string displayNameProperty)
+		public LexReferenceTreeRootVc(LcmCache cache, int hvo, int flid, string displayNameProperty)
 			: base (cache, flid, displayNameProperty)
 		{
 			m_hvoOwner = hvo;

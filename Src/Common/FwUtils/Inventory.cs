@@ -11,8 +11,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
 using System.Xml.XPath;
-using SIL.FieldWorks.FDO;
-using SIL.Utils;
+using SIL.LCModel;
+using SIL.LCModel.Utils;
 using SIL.Xml;
 
 namespace SIL.FieldWorks.Common.FwUtils
@@ -505,7 +505,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		private string UserOverrideConfigurationSettingsPath
 		{
-			get { return FdoFileHelper.GetConfigSettingsDir(m_projectPath); }
+			get { return LcmFileHelper.GetConfigSettingsDir(m_projectPath); }
 		}
 
 		/// <summary>

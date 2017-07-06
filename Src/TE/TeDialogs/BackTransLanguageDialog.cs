@@ -4,8 +4,8 @@
 
 using System;
 using System.Windows.Forms;
-using SIL.CoreImpl.WritingSystems;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.TE
@@ -36,7 +36,7 @@ namespace SIL.FieldWorks.TE
 		/// Initializes a new instance of the <see cref="BackTransLanguageDialog"/> class.
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
-		public BackTransLanguageDialog(FdoCache cache, int defaultWs,
+		public BackTransLanguageDialog(LcmCache cache, int defaultWs,
 			IHelpTopicProvider helpProvider) : this()
 		{
 			m_helpProvider = helpProvider;

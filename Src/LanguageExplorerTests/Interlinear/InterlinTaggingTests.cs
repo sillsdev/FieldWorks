@@ -3,14 +3,15 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
+using System.IO;
 using System.Windows.Forms;
 using System.Xml;
 using NUnit.Framework;
-using SIL.CoreImpl.WritingSystems;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.FDOTests;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using SIL.WritingSystems;
 
 namespace LanguageExplorerTests.Interlinear
@@ -30,6 +31,7 @@ namespace LanguageExplorerTests.Interlinear
 		private TestTaggingChild m_tagChild;
 		private IStTxtPara m_para1;
 		private ITextTagRepository m_tagRepo;
+		private bool _didIInitSLDR;
 
 		// Store parsed test Occurrences in this array
 		private AnalysisOccurrence[] m_occurrences;
@@ -43,6 +45,12 @@ namespace LanguageExplorerTests.Interlinear
 		[TestFixtureSetUp]
 		public override void FixtureSetup()
 		{
+			if (!Sldr.IsInitialized)
+			{
+				_didIInitSLDR = true;
+				Sldr.Initialize();
+			}
+
 			base.FixtureSetup();
 
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor,
@@ -61,6 +69,11 @@ namespace LanguageExplorerTests.Interlinear
 				m_tagChild.Dispose();
 			m_tagChild = null;
 
+			if (_didIInitSLDR && Sldr.IsInitialized)
+			{
+				_didIInitSLDR = false;
+				Sldr.Cleanup();
+			}
 			base.FixtureTeardown();
 		}
 
@@ -99,8 +112,9 @@ namespace LanguageExplorerTests.Interlinear
 			Cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems.Insert(0, m_wsXkal);
 			m_textsDefn = new XmlDocument();
 			m_tagRepo = Cache.ServiceLocator.GetInstance<ITextTagRepository>();
-			ConfigurationFilePath("Language Explorer/Configuration/Words/AreaConfiguration.xml");
-			m_text1 = LoadTestText("FDO/FDOTests/TestData/ParagraphParserTestTexts.xml", 1, m_textsDefn);
+			string textDefinitionsPath = Path.Combine(FwDirectoryFinder.SourceDirectory, "LanguageExplorerTests", "Interlinear",
+				"ParagraphParserTestTexts.xml");
+			m_text1 = LoadTestText(textDefinitionsPath, 1, m_textsDefn);
 			m_para1 = m_text1.ContentsOA.ParagraphsOS[0] as IStTxtPara;
 			ParseTestText();
 

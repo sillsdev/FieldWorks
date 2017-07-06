@@ -13,7 +13,7 @@ using NUnit.Framework;
 using Sfm2Xml;
 using SIL.FieldWorks.LexText.Controls;
 using SilEncConverters40;
-using SIL.CoreImpl.WritingSystems;
+using SIL.LCModel.Core.WritingSystems;
 
 namespace LanguageExplorerTests.Interlinear
 {

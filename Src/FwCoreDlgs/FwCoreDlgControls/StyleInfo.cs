@@ -10,11 +10,11 @@ using System.Diagnostics;
 using System.Collections.Generic;
 using System.Text;
 using System.Drawing;
-using SIL.CoreImpl.Text;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 
 namespace SIL.FieldWorks.FwCoreDlgControls
 {
@@ -66,7 +66,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		/// <param name="cache">FDO cache</param>
 		/// ------------------------------------------------------------------------------------
 		public StyleInfo(string name, StyleInfo basedOnStyle, StyleType styleType,
-			FdoCache cache) : base(cache)
+			LcmCache cache) : base(cache)
 		{
 			Name = name;
 			m_styleType = styleType;

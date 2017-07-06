@@ -4,8 +4,8 @@
 
 using System.Diagnostics;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
@@ -27,7 +27,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 		}
 
-		internal InterAreaBookmark(InterlinMaster interlinMaster, FdoCache cache, IPropertyTable propertyTable)	// For restoring
+		internal InterAreaBookmark(InterlinMaster interlinMaster, LcmCache cache, IPropertyTable propertyTable)	// For restoring
 		{
 			// Note: resist any temptation to save mediator in a memer variable. Bookmarks are kept in a static dictionary
 			// and may well have a longer life than the mediator. There is danger of using if after it is disposed. See LT-12435.
@@ -35,7 +35,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			Restore(interlinMaster.IndexOfTextRecord);
 		}
 
-		internal void Init(InterlinMaster interlinMaster, FdoCache cache, IPropertyTable propertyTable)
+		internal void Init(InterlinMaster interlinMaster, LcmCache cache, IPropertyTable propertyTable)
 		{
 			Debug.Assert(interlinMaster != null);
 			Debug.Assert(cache != null);

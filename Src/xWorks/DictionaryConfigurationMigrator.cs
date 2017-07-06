@@ -8,7 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators;
 
 namespace SIL.FieldWorks.XWorks
@@ -24,7 +24,7 @@ namespace SIL.FieldWorks.XWorks
 		public const string HybridFileName = "Hybrid";
 		public const string LexemeFileName = "Lexeme";
 		public const string ReversalFileName = "AllReversalIndexes";
-		private FdoCache m_cache;
+		private LcmCache m_cache;
 		private Inventory m_layoutInventory;
 		private Inventory m_partInventory;
 		private SimpleLogger m_logger;
@@ -67,7 +67,7 @@ namespace SIL.FieldWorks.XWorks
 			Publisher = flexComponentParameters.Publisher;
 			Subscriber = flexComponentParameters.Subscriber;
 
-			m_cache = PropertyTable.GetValue<FdoCache>("cache");
+			m_cache = PropertyTable.GetValue<LcmCache>("cache");
 			m_layoutInventory = Inventory.GetInventory("layouts", m_cache.ProjectId.Name);
 			m_partInventory = Inventory.GetInventory("parts", m_cache.ProjectId.Name);
 			m_migrators = new List<IDictionaryConfigurationMigrator>
@@ -144,7 +144,7 @@ namespace SIL.FieldWorks.XWorks
 			return Directory.Exists(dir) ? Directory.EnumerateFiles(dir, "*" + DictionaryConfigurationModel.FileExtension) : new string[0];
 		}
 
-		internal static void SetWritingSystemForReversalModel(DictionaryConfigurationModel convertedModel, FdoCache cache)
+		internal static void SetWritingSystemForReversalModel(DictionaryConfigurationModel convertedModel, LcmCache cache)
 		{
 			if (!convertedModel.IsReversal || !string.IsNullOrEmpty(convertedModel.WritingSystem)) // don't change existing WS's
 				return;
@@ -176,9 +176,9 @@ namespace SIL.FieldWorks.XWorks
 			set { m_logger = value; }
 		}
 
-		internal static List<DictionaryConfigurationModel> GetConfigsNeedingMigration(FdoCache cache, int targetVersion)
+		internal static List<DictionaryConfigurationModel> GetConfigsNeedingMigration(LcmCache cache, int targetVersion)
 		{
-			var configSettingsDir = FdoFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(cache.ProjectId.Path));
+			var configSettingsDir = LcmFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(cache.ProjectId.Path));
 			var dictionaryConfigLoc = Path.Combine(configSettingsDir, DictionaryConfigurationListener.DictionaryConfigurationDirectoryName);
 			var reversalIndexConfigLoc = Path.Combine(configSettingsDir, DictionaryConfigurationListener.ReversalIndexConfigurationDirectoryName);
 			var projectConfigPaths = new List<string>(ConfigFilesInDir(dictionaryConfigLoc));
@@ -201,7 +201,7 @@ namespace SIL.FieldWorks.XWorks
 		/// This method will copy configuration node values from newDefaultModelPath over the matching nodes in oldDefaultModelPath.
 		/// </summary>
 		/// <remarks>Intended to be used only on defaults, not on data with user changes.</remarks>
-		internal static DictionaryConfigurationModel LoadConfigWithCurrentDefaults(string oldDefaultModelPath, FdoCache cache, string newDefaultPath)
+		internal static DictionaryConfigurationModel LoadConfigWithCurrentDefaults(string oldDefaultModelPath, LcmCache cache, string newDefaultPath)
 		{
 			var oldDefaultConfigs = new DictionaryConfigurationModel(oldDefaultModelPath, cache);
 			var newDefaultConfigs = new DictionaryConfigurationModel(newDefaultPath, cache);

@@ -7,7 +7,7 @@ using System.ComponentModel;
 using System.Threading;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.Common.Controls
 {

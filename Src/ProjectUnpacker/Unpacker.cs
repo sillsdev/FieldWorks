@@ -7,7 +7,7 @@ using System.Resources;
 using System.IO;
 using Microsoft.Win32;
 using ICSharpCode.SharpZipLib.Zip;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 

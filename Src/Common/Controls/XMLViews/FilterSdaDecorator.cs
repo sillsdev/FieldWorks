@@ -4,8 +4,9 @@
 
 using System;
 using System.Collections.Generic;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
-using SIL.FieldWorks.FDO.Application;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Application;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.Common.Controls
 {

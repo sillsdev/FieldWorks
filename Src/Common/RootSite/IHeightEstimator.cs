@@ -5,8 +5,6 @@
 // File: IHeightEstimator.cs
 // Responsibility:
 
-using System;
-
 namespace SIL.FieldWorks.Common.RootSites
 {
 	/// ----------------------------------------------------------------------------------------

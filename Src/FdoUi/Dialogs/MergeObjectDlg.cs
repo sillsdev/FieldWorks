@@ -10,15 +10,15 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using System.Xml.XPath;
-using SIL.CoreImpl.Text;
+using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
+using SIL.LCModel;
+using SIL.LCModel.Application;
 using SIL.FieldWorks.LexText.Controls;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 using SIL.Windows.Forms;
 
 namespace SIL.FieldWorks.FdoUi.Dialogs
@@ -29,7 +29,7 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 	public class MergeObjectDlg : Form, IFlexComponent
 	{
 		private SIL.FieldWorks.Common.Widgets.FwTextBox m_fwTextBoxBottomMsg;
-		private FdoCache m_cache;
+		private LcmCache m_cache;
 		private IHelpTopicProvider m_helpTopicProvider;
 		private DummyCmObject m_mainObj = null;
 		private DummyCmObject m_obj;
@@ -91,7 +91,7 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 		/// <param name="mergeCandidates"></param>
 		/// <param name="guiControl"></param>
 		/// <param name="helpTopic"></param>
-		public void SetDlgInfo(FdoCache cache, WindowParams wp, DummyCmObject mainObj, List<DummyCmObject> mergeCandidates,
+		public void SetDlgInfo(LcmCache cache, WindowParams wp, DummyCmObject mainObj, List<DummyCmObject> mergeCandidates,
 			string guiControl, string helpTopic)
 		{
 			CheckDisposed();

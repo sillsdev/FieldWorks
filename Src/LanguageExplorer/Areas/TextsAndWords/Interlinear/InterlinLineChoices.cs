@@ -9,15 +9,15 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Text;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.FdoUi;
-using SIL.Utils;
-using SIL.CoreImpl.Cellar;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.WritingSystems;
+using SIL.LCModel.Utils;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
@@ -34,7 +34,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		internal int m_wsDefVern; // The default vernacular writing system.
 		internal int m_wsDefAnal; // The default analysis writing system.
 		internal ILangProject m_proj;	// provides more ws info.
-		internal FdoCache m_cache;
+		internal LcmCache m_cache;
 		Dictionary<int, string> m_fieldNames = new Dictionary<int, string>();
 		InterlinMode m_mode = InterlinMode.Analyze;
 
@@ -43,12 +43,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 		}
 
-		public InterlinLineChoices(FdoCache cache, int defaultVernacularWs, int defaultAnalysisWs)
+		public InterlinLineChoices(LcmCache cache, int defaultVernacularWs, int defaultAnalysisWs)
 			: this(cache, defaultVernacularWs, defaultAnalysisWs, InterlinMode.Analyze)
 		{
 		}
 
-		public InterlinLineChoices(FdoCache cache, int defaultVernacularWs, int defaultAnalysisWs, InterlinMode mode)
+		public InterlinLineChoices(LcmCache cache, int defaultVernacularWs, int defaultAnalysisWs, InterlinMode mode)
 		{
 			this.Mode = mode;
 			InitFieldNames(mode);
@@ -786,7 +786,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <returns></returns>
 		private bool MatchingWritingSystem(int wsConfig, int ws, bool fExact)
 		{
-			FdoCache cache = m_cache;
+			LcmCache cache = m_cache;
 			if (wsConfig == ws)
 				return true;
 			if (fExact)
@@ -1223,7 +1223,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <param name="wsPreferred">the ws to prefer over the standard sequence in current writing systems list. also used as a default
 		/// if no alternative ws can be found.</param>
 		/// <returns></returns>
-		public int GetActualWs(FdoCache cache, int hvo, int wsPreferred)
+		public int GetActualWs(LcmCache cache, int hvo, int wsPreferred)
 		{
 			int wsActual = 0;
 			if (this.StringFlid == -1)
@@ -1270,7 +1270,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			return MemberwiseClone();
 		}
 
-		public ITsString WsLabel(FdoCache cache)
+		public ITsString WsLabel(LcmCache cache)
 		{
 			if (m_tssWsLabel == null)
 			{

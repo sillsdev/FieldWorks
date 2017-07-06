@@ -6,7 +6,7 @@ using System.Diagnostics;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -87,7 +87,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <summary>
 		/// Set up the dlg in preparation to showing it.
 		/// </summary>
-		public void SetDlgInfo(FdoCache cache, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, ILexEntry startingEntry)
+		public void SetDlgInfo(LcmCache cache, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, ILexEntry startingEntry)
 		{
 			CheckDisposed();
 
@@ -102,7 +102,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// Common and needed code for the setup of the dlg
 		/// </summary>
 		/// <param name="cache"></param>
-		private void SetComboWritingSystemFactory(FdoCache cache)
+		private void SetComboWritingSystemFactory(LcmCache cache)
 		{
 			m_fwcbFunctions.WritingSystemFactory = cache.WritingSystemFactory;
 			m_fwcbFunctions.WritingSystemCode = cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle;
@@ -111,7 +111,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <summary>
 		/// Set up the dlg in preparation to showing it.
 		/// </summary>
-		public override void SetDlgInfo(FdoCache cache, WindowParams wp, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
+		public override void SetDlgInfo(LcmCache cache, WindowParams wp, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
 		{
 			base.SetDlgInfo(cache, wp, propertyTable, publisher, subscriber);
 			// This is needed to make the replacement MatchingEntriesBrowser visible:

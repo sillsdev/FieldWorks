@@ -7,13 +7,13 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.ServiceModel;
 using System.Threading;
-using SIL.FieldWorks.FDO;
-using SIL.Utils;
-
+using SIL.LCModel;
+using SIL.LCModel.Utils;
 using IPCFramework;
+using SIL.IO;
+using FileUtils = SIL.LCModel.Utils.FileUtils;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
@@ -125,7 +125,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		/// <summary>
 		/// constant for locating the nested lift repository (within the "OtherRepositories" path of a project).
-		/// See also SIL.FieldWorks.FDO.FdoFileHelper.OtherRepositories
+		/// See also SIL.FieldWorks.FDO.LcmFileHelper.OtherRepositories
 		/// </summary>
 		public const string LIFT = @"LIFT";
 
@@ -203,7 +203,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 			// Add two paths: to FW projDir & FW apps folder. Then, FB won't have to look in a zillion registry entries
 			AddArg(ref args, "-projDir", FwDirectoryFinder.ProjectsDirectory);
-			AddArg(ref args, "-fwAppsDir", DirectoryUtils.DirectoryOfExecutingAssembly());
+			AddArg(ref args, "-fwAppsDir", FileLocator.DirectoryOfTheApplicationExecutable);
 			// Tell Flex Bridge which model version of data are expected by FLEx.
 			AddArg(ref args, "-fwmodel", fwmodelVersionNumber.ToString());
 			AddArg(ref args, "-liftmodel", liftModelVersionNumber);
@@ -393,7 +393,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <returns></returns>
 		public static bool DoesProjectHaveLiftRepo(IProjectIdentifier projectId)
 		{
-			string otherRepoPath = Path.Combine(projectId.ProjectFolder, FdoFileHelper.OtherRepositories);
+			string otherRepoPath = Path.Combine(projectId.ProjectFolder, LcmFileHelper.OtherRepositories);
 			if (!Directory.Exists(otherRepoPath))
 				return false;
 			string liftFolder = Directory.EnumerateDirectories(otherRepoPath, "*_LIFT").FirstOrDefault();
@@ -413,7 +413,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			get
 			{
-				return Path.Combine(DirectoryUtils.DirectoryOfExecutingAssembly(), "FixFwData.exe");
+				return Path.Combine(FileLocator.DirectoryOfTheApplicationExecutable, "FixFwData.exe");
 			}
 		}
 

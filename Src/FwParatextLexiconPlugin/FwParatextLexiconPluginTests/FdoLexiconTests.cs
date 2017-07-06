@@ -7,12 +7,11 @@ using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 using Paratext.LexicalContracts;
-using SIL.CoreImpl.Text;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 
 namespace SIL.FieldWorks.ParatextLexiconPlugin
 {
@@ -24,7 +23,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 	{
 		private ThreadHelper m_threadHelper;
 		private FdoLexicon m_lexicon;
-		private FdoCache m_cache;
+		private LcmCache m_cache;
 
 		/// <summary>
 		/// Set up the unit tests
@@ -34,9 +33,10 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		{
 			Icu.InitIcuDataDir();
 			m_threadHelper = new ThreadHelper();
-			var ui = new DummyFdoUI(m_threadHelper);
-			var projectId = new ParatextLexiconPluginProjectID(FDOBackendProviderType.kMemoryOnly, "Test.fwdata");
-			m_cache = FdoCache.CreateCacheWithNewBlankLangProj(projectId, "en", "fr", "en", ui, ParatextLexiconPluginDirectoryFinder.FdoDirectories, new FdoSettings());
+			var ui = new DummyLcmUI(m_threadHelper);
+			var projectId = new ParatextLexiconPluginProjectId(BackendProviderType.kMemoryOnly, "Test.fwdata");
+			m_cache = LcmCache.CreateCacheWithNewBlankLangProj(projectId, "en", "fr", "en", ui,
+				ParatextLexiconPluginDirectoryFinder.LcmDirectories, new LcmSettings());
 			NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
 				{
 					m_cache.ServiceLocator.WritingSystems.AddToCurrentAnalysisWritingSystems(m_cache.ServiceLocator.WritingSystemManager.Get("fr"));

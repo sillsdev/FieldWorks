@@ -9,14 +9,13 @@ using System.Windows.Forms;
 using NUnit.Framework;
 using Paratext;
 using Rhino.Mocks;
-using SIL.CoreImpl.Scripture;
+using SIL.LCModel.Core.Scripture;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.ScriptureUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.FDOTests;
-using SIL.Utils;
+using SIL.LCModel;
+using SIL.LCModel.Utils;
 using SIL.FieldWorks.Test.ProjectUnpacker;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.TE.ImportComponentsTests
@@ -47,8 +46,8 @@ namespace SIL.FieldWorks.TE.ImportComponentsTests
 			/// <param name="styleSheet">Provides the character styles user can pick from.</param>
 			/// <param name="cache">The DB cache</param>
 			/// -------------------------------------------------------------------------------------
-			public DummyCharacterMappingSettings(ImportMappingInfo mapping, FwStyleSheet styleSheet,
-				FdoCache cache) : base(mapping, styleSheet, cache, false, null, null)
+			public DummyCharacterMappingSettings(ImportMappingInfo mapping, LcmStyleSheet styleSheet,
+				LcmCache cache) : base(mapping, styleSheet, cache, false, null, null)
 			{
 				// No code needed so far.
 			}
@@ -154,7 +153,7 @@ namespace SIL.FieldWorks.TE.ImportComponentsTests
 		/// <param name="scr">The Scripture object.</param>
 		/// <param name="styleSheet">The styleSheet</param>
 		/// ------------------------------------------------------------------------------------
-		public ImportWizardWrapper(IScripture scr, FwStyleSheet styleSheet) :
+		public ImportWizardWrapper(IScripture scr, LcmStyleSheet styleSheet) :
 			base("Test", scr, styleSheet, null, null)
 		{
 			m_lvCurrentMappingList = lvScrMappings;
@@ -424,14 +423,14 @@ namespace SIL.FieldWorks.TE.ImportComponentsTests
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
-	public class ImportWizardTests: ScrInMemoryFdoTestBase
+	public class ImportWizardTests: ScrInMemoryLcmTestBase
 	{
 		#region Data members
 		private MockParatextHelper m_ptHelper;
 		private IParatextHelper m_mockParatextHelper;
 		private IScrImportSet m_settings;
 		private ImportWizardWrapper m_importWizard;
-		private FwStyleSheet m_styleSheet;
+		private LcmStyleSheet m_styleSheet;
 
 		private RegistryData m_regData;
 		#endregion
@@ -469,7 +468,7 @@ namespace SIL.FieldWorks.TE.ImportComponentsTests
 		/// ------------------------------------------------------------------------------------
 		protected override void CreateTestData()
 		{
-			m_styleSheet = new FwStyleSheet();
+			m_styleSheet = new LcmStyleSheet();
 			m_styleSheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles);
 			m_scr.FindOrCreateDefaultImportSettings(TypeOfImport.Other, m_styleSheet, FwDirectoryFinder.TeStylesPath);
 		}

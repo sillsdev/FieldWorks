@@ -8,12 +8,12 @@ using System.Linq;
 using System.Windows.Forms;
 using Aga.Controls.Tree;
 using Aga.Controls.Tree.NodeControls;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.WritingSystems;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
@@ -47,7 +47,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private System.ComponentModel.IContainer components;
 
-		private FdoCache m_cache;
+		private LcmCache m_cache;
 		private IHelpTopicProvider m_helpTopicProvider;
 		private ComplexConcWordNode m_node;
 		private PossibilityComboController m_catPopupTreeManager;
@@ -59,7 +59,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			AccessibleName = GetType().Name;
 		}
 
-		public void SetDlgInfo(FdoCache cache, IPropertyTable propertyTable, IPublisher publisher, ComplexConcWordNode node)
+		public void SetDlgInfo(LcmCache cache, IPropertyTable propertyTable, IPublisher publisher, ComplexConcWordNode node)
 		{
 			m_cache = cache;
 			m_node = node;

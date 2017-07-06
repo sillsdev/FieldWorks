@@ -1,20 +1,15 @@
-// Copyright (c) 2004-2013 SIL International
+// Copyright (c) 2004-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: AutoMergeTests.cs
-// Responsibility: TE Team
 
 using System.Collections.Generic;
 using System.Diagnostics;
 
 using NUnit.Framework;
-using SIL.CoreImpl.Scripture;
-using SIL.CoreImpl.Text;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.FDOTests;
-using SIL.FieldWorks.Common.ScriptureUtils;
-using SIL.Utils;
+using SIL.LCModel.Core.Scripture;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.TE
 {
@@ -51,7 +46,7 @@ namespace SIL.FieldWorks.TE
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
-	public class AutoMergeTests : ScrInMemoryFdoTestBase
+	public class AutoMergeTests : ScrInMemoryLcmTestBase
 	{
 		#region Member variables
 		private IScrBook m_genesis;

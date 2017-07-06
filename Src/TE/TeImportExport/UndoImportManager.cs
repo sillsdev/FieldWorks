@@ -8,12 +8,12 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using SIL.Reporting;
-using SIL.CoreImpl.Scripture;
+using SIL.LCModel.Core.Scripture;
 
 namespace SIL.FieldWorks.TE
 {
@@ -29,7 +29,7 @@ namespace SIL.FieldWorks.TE
 		private IScrDraft m_backupVersion;
 		// saved version into which to put selected imported books.
 		private IScrDraft m_importedVersion;
-		private readonly FdoCache m_cache;
+		private readonly LcmCache m_cache;
 		private int m_lastBookAddedToImportedBooks;
 		private int m_hMark = 0;
 		private readonly IScripture m_scr;
@@ -46,7 +46,7 @@ namespace SIL.FieldWorks.TE
 		/// </summary>
 		/// <param name="cache">The cache.</param>
 		/// ------------------------------------------------------------------------------------
-		public UndoImportManager(FdoCache cache)
+		public UndoImportManager(LcmCache cache)
 		{
 			m_cache = cache;
 			m_scr = m_cache.LanguageProject.TranslatedScriptureOA;
@@ -270,7 +270,7 @@ namespace SIL.FieldWorks.TE
 		/// Gets the cache.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		protected FdoCache Cache
+		protected LcmCache Cache
 		{
 			get { return m_cache; }
 		}
@@ -315,7 +315,7 @@ namespace SIL.FieldWorks.TE
 		/// somewhere in the UI some day.</remarks>
 		/// <value>An FdoOwningSequence containing the books to restore.</value>
 		/// ------------------------------------------------------------------------------------
-		public IFdoOwningSequence<IScrBook> BooksToRestore
+		public ILcmOwningSequence<IScrBook> BooksToRestore
 		{
 			get { return (m_backupVersion == null) ? null : m_backupVersion.BooksOS; }
 		}

@@ -15,9 +15,9 @@ using System.Windows.Forms;
 using SIL.FieldWorks.FwCoreDlgControls;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.CoreImpl.Text;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
@@ -83,7 +83,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// button even when a Graphite font is selected.</param>
 		/// ------------------------------------------------------------------------------------
 		void IFontDialog.Initialize(FontInfo fontInfo, bool fAllowSubscript, int ws,
-			ILgWritingSystemFactory wsf, FwStyleSheet styleSheet, bool fAlwaysDisableFontFeatures)
+			ILgWritingSystemFactory wsf, LcmStyleSheet styleSheet, bool fAlwaysDisableFontFeatures)
 		{
 			m_DefaultWs = ws;
 

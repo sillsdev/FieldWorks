@@ -8,13 +8,13 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
-using SIL.CoreImpl.Text;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Application;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.FwCoreDlgControls;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Discourse
@@ -73,7 +73,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 
 		public event EventHandler Ribbon_Changed;
 
-		public ConstituentChartLogic(FdoCache cache, IDsConstChart chart, int hvoStText)
+		public ConstituentChartLogic(LcmCache cache, IDsConstChart chart, int hvoStText)
 			: this(cache)
 		{
 			m_hvoStText = hvoStText;
@@ -84,7 +84,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// Make one and set the other stuff later.
 		/// </summary>
 		/// <param name="cache"></param>
-		public ConstituentChartLogic(FdoCache cache)
+		public ConstituentChartLogic(LcmCache cache)
 		{
 			Cache = cache;
 			// Setup Factories and Repositories
@@ -109,7 +109,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			m_helpTopicProvider = helpTopicProvider;
 		}
 
-		protected internal FdoCache Cache { get; protected set; }
+		protected internal LcmCache Cache { get; protected set; }
 
 		protected internal virtual bool ChartIsRtL
 		{
@@ -4511,7 +4511,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			m_mtmRepo = Cache.ServiceLocator.GetInstance<IConstChartMovedTextMarkerRepository>();
 		}
 
-		FdoCache Cache
+		LcmCache Cache
 		{
 			get { return m_logic.Cache; }
 		}
@@ -4932,7 +4932,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 
 		#region PropertiesAndConstants
 
-		FdoCache Cache
+		LcmCache Cache
 		{
 			get { return m_logic.Cache; }
 		}

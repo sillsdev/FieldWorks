@@ -8,16 +8,14 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
-
 using Rhino.Mocks;
 using NUnit.Framework;
-
 using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using System;
-using SIL.CoreImpl.Text;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
-using SIL.Utils;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.Common.RootSites
 {
@@ -41,7 +39,7 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			// Because these tests use ScrFootnotes with multiple paragraphs, we need to allow
 			// the use.
-			ReflectionHelper.SetField(Type.GetType("SIL.FieldWorks.FDO.DomainImpl.ScrFootnote,FDO", true),
+			ReflectionHelper.SetField(Type.GetType("SIL.LCModel.DomainImpl.ScrFootnote, SIL.LCModel", true),
 				"s_maxAllowedParagraphs", 5);
 		}
 

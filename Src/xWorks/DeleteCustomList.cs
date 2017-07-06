@@ -11,8 +11,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
+using SIL.LCModel;
+using SIL.LCModel.Application;
 using System.Windows.Forms;
 
 namespace SIL.FieldWorks.XWorks
@@ -26,7 +26,7 @@ namespace SIL.FieldWorks.XWorks
 	{
 		#region Member Variables
 
-		private readonly FdoCache m_cache;
+		private readonly LcmCache m_cache;
 		private List<FieldDescription> m_customFields;
 		private readonly ISilDataAccessManaged m_ddbf;
 
@@ -36,7 +36,7 @@ namespace SIL.FieldWorks.XWorks
 
 		#region Constructor
 
-		public DeleteCustomList(FdoCache cache)
+		public DeleteCustomList(LcmCache cache)
 		{
 			m_cache = cache;
 			m_ddbf = (ISilDataAccessManaged)m_cache.DomainDataByFlid;

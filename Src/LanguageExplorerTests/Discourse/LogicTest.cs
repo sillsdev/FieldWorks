@@ -5,10 +5,10 @@
 using System.Collections.Generic;
 using LanguageExplorer.Areas.TextsAndWords.Discourse;
 using NUnit.Framework;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel;
+using SIL.LCModel.Application;
+using SIL.LCModel.Infrastructure;
+using SIL.LCModel.DomainServices;
 
 namespace LanguageExplorerTests.Discourse
 {
@@ -768,7 +768,7 @@ namespace LanguageExplorerTests.Discourse
 
 	class MockRibbon : IInterlinRibbon
 	{
-		readonly FdoCache m_cache;
+		readonly LcmCache m_cache;
 		readonly int m_hvoStText;
 		const int m_occurenceListId = -2011; // flid for charting ribbon
 		int m_cSelected = 1;
@@ -779,7 +779,7 @@ namespace LanguageExplorerTests.Discourse
 
 		private readonly InterlinRibbonDecorator m_sda;
 
-		public MockRibbon(FdoCache cache, int hvoStText)
+		public MockRibbon(LcmCache cache, int hvoStText)
 		{
 			m_cache = cache;
 			m_hvoStText = hvoStText;

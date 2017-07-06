@@ -9,9 +9,9 @@ using System.Linq;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 using WeifenLuo.WinFormsUI.Docking;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.CoreImpl.Cellar;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
+using SIL.LCModel.Core.Cellar;
 
 namespace FDOBrowser
 {
@@ -26,7 +26,7 @@ namespace FDOBrowser
 		private readonly Stack<ICmObject> m_forwardFDO = new Stack<ICmObject>();
 		//private ICmObject m_currentFDO;
 		private ToolStripStatusLabel m_statuslabel = null;
-		private FdoCache m_cache;
+		private LcmCache m_cache;
 		private readonly IFwMetaDataCacheManaged m_mdc;
 		private int m_sortCol = 0;
 
@@ -43,7 +43,8 @@ namespace FDOBrowser
 			m_lvModel.Font = SystemFonts.MenuFont;
 
 			// Add model browsing cache (no data, just model browsing).
-			m_cache = FdoCache.CreateCacheWithNoLangProj(new BrowserProjectId(FDOBackendProviderType.kMemoryOnly, null), "en", new SilentFdoUI(this), FwDirectoryFinder.FdoDirectories, new FdoSettings());
+			m_cache = LcmCache.CreateCacheWithNoLangProj(new BrowserProjectId(BackendProviderType.kMemoryOnly, null), "en",
+				new SilentLcmUI(this), FwDirectoryFinder.LcmDirectories, new LcmSettings());
 			m_mdc = (IFwMetaDataCacheManaged)m_cache.MainCacheAccessor.MetaDataCache;
 			PopulateModelTree();
 

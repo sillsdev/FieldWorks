@@ -6,15 +6,15 @@
 
 using System.Diagnostics;
 using System.Windows.Forms;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.CoreImpl.Scripture;
+using SIL.LCModel.Core.Scripture;
 using System.Collections.Generic;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel.Infrastructure;
 using System;
-using SIL.CoreImpl.Text;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
-using SIL.Utils;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.TE
 {
@@ -27,8 +27,8 @@ namespace SIL.FieldWorks.TE
 	public class TeScrInitializer
 	{
 		#region Member variables
-		/// <summary>FdoCache of the language project we are working on</summary>
-		protected readonly FdoCache m_cache;
+		/// <summary>LcmCache of the language project we are working on</summary>
+		protected readonly LcmCache m_cache;
 		/// <summary>Scripture of the language project we are working on</summary>
 		protected IScripture m_scr;
 		#endregion
@@ -39,7 +39,7 @@ namespace SIL.FieldWorks.TE
 		/// Constructor
 		/// </summary>
 		/// -------------------------------------------------------------------------------------
-		protected TeScrInitializer(FdoCache cache)
+		protected TeScrInitializer(LcmCache cache)
 		{
 			m_cache = cache;
 			m_scr = cache.LangProject.TranslatedScriptureOA;
@@ -56,7 +56,7 @@ namespace SIL.FieldWorks.TE
 		/// <param name="helpTopicProvider">The Help topic provider.</param>
 		/// <param name="existingProgressDlg">The existing progress dialog, if any.</param>
 		/// ------------------------------------------------------------------------------------
-		public static void EnsureProjectValid(FdoCache cache, IHelpTopicProvider helpTopicProvider,
+		public static void EnsureProjectValid(LcmCache cache, IHelpTopicProvider helpTopicProvider,
 			IProgress existingProgressDlg)
 		{
 			TeScrInitializer scrInitializer = new TeScrInitializer(cache);
@@ -79,7 +79,7 @@ namespace SIL.FieldWorks.TE
 		/// Paratext.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public static void EnsureMinimalScriptureInitialization(FdoCache cache, IThreadedProgress progressDlg,
+		public static void EnsureMinimalScriptureInitialization(LcmCache cache, IThreadedProgress progressDlg,
 			IHelpTopicProvider helpTopicProvider)
 		{
 			TeScrInitializer scrInitializer = new TeScrInitializer(cache);
@@ -100,7 +100,7 @@ namespace SIL.FieldWorks.TE
 		/// Ensures all of the project components are valid.
 		/// </summary>
 		/// --------------------------------------------------------------------------------
-		public static void EnsureProjectComponentsValid(FdoCache cache, IHelpTopicProvider helpTopicProvider,
+		public static void EnsureProjectComponentsValid(LcmCache cache, IHelpTopicProvider helpTopicProvider,
 			IThreadedProgress existingProgressDlg)
 		{
 			EnsureProjectValid(cache, helpTopicProvider, existingProgressDlg);

@@ -8,14 +8,13 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using NUnit.Framework;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.WritingSystems;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.Utils;
-using XCore;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -38,7 +37,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Creates a DictionaryConfigurationModel with one Main and one of each neeeded Minor Entry nodes, all with enabled HeadWord children
 		/// </summary>
-		internal static DictionaryConfigurationModel CreateInterestingConfigurationModel(FdoCache cache, IPropertyTable propertyTable = null,
+		internal static DictionaryConfigurationModel CreateInterestingConfigurationModel(LcmCache cache, IPropertyTable propertyTable = null,
 			DictionaryConfigurationModel.ConfigType configType = DictionaryConfigurationModel.ConfigType.Root)
 		{
 			var mainHeadwordNode = new ConfigurableDictionaryNode
@@ -119,7 +118,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="headword">Optional: defaults to 'Citation'</param>
 		/// <param name="gloss">Optional: defaults to 'gloss'</param>
 		/// <returns></returns>
-		internal static ILexEntry CreateInterestingLexEntry(FdoCache cache, string headword = "Citation", string gloss = "gloss")
+		internal static ILexEntry CreateInterestingLexEntry(LcmCache cache, string headword = "Citation", string gloss = "gloss")
 		{
 			var entryFactory = cache.ServiceLocator.GetInstance<ILexEntryFactory>();
 			var entry = entryFactory.Create();
@@ -131,7 +130,7 @@ namespace SIL.FieldWorks.XWorks
 			return entry;
 		}
 
-		private static int EnsureWritingSystemSetup(FdoCache cache, string wsStr, bool isVernacular)
+		private static int EnsureWritingSystemSetup(LcmCache cache, string wsStr, bool isVernacular)
 		{
 			var wsFact = cache.WritingSystemFactory;
 			var result = wsFact.GetWsFromStr(wsStr);
@@ -156,7 +155,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="headword">Optional: defaults to 'Citation'</param>
 		/// <param name="gloss">Optional: defaults to 'gloss'</param>
 		/// <returns></returns>
-		internal static ILexEntry CreateInterestingSuffix(FdoCache cache, string headword = "ba", string gloss = "gloss")
+		internal static ILexEntry CreateInterestingSuffix(LcmCache cache, string headword = "ba", string gloss = "gloss")
 		{
 			var entry = CreateInterestingLexEntry(cache, headword, gloss);
 			var wsEn = cache.WritingSystemFactory.GetWsFromStr("en");
@@ -206,7 +205,7 @@ namespace SIL.FieldWorks.XWorks
 		/// Use reflection to set the guid on a variant form. May not work for all kinds of tests or appropriately be editing the database.
 		/// Because changing the Guid causes teardown problem, it must be reset prior to teardown (hence the Disposable <returns/>)
 		/// </summary>
-		internal static TempGuidOn<ILexEntryRef> CreateVariantForm(FdoCache cache, IVariantComponentLexeme main, ILexEntry variantForm, Guid guid,
+		internal static TempGuidOn<ILexEntryRef> CreateVariantForm(LcmCache cache, IVariantComponentLexeme main, ILexEntry variantForm, Guid guid,
 			string type = TestVariantName)
 		{
 			return new TempGuidOn<ILexEntryRef>(CreateVariantForm(cache, main, variantForm, type), guid);
@@ -215,7 +214,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// 'internal static' so Reversal tests can use it
 		/// </summary>
-		internal static ILexEntryRef CreateVariantForm(FdoCache cache, IVariantComponentLexeme main, ILexEntry variantForm, string type = TestVariantName)
+		internal static ILexEntryRef CreateVariantForm(LcmCache cache, IVariantComponentLexeme main, ILexEntry variantForm, string type = TestVariantName)
 		{
 			var owningList = cache.LangProject.LexDbOA.VariantEntryTypesOA;
 			Assert.IsNotNull(owningList, "No VariantEntryTypes property on Lexicon object.");
@@ -237,25 +236,25 @@ namespace SIL.FieldWorks.XWorks
 		/// Use reflection to set the guid on a complex form. May not work for all kinds of tests or appropriately be editing the database.
 		/// Because changing the Guid causes teardown problem, it must be reset prior to teardown (hence the Disposable <returns/>)
 		/// </summary>
-		internal static TempGuidOn<ILexEntryRef> CreateComplexForm(FdoCache cache, IVariantComponentLexeme main, ILexEntry complexForm, Guid guid,
+		internal static TempGuidOn<ILexEntryRef> CreateComplexForm(LcmCache cache, IVariantComponentLexeme main, ILexEntry complexForm, Guid guid,
 			bool subentry)
 		{
 			return new TempGuidOn<ILexEntryRef>(CreateComplexForm(cache, main, complexForm, subentry), guid);
 		}
 
-		internal static ILexEntryRef CreateComplexForm(FdoCache cache, ICmObject main, ILexEntry complexForm, bool subentry, byte complexFormTypeIndex = 1)
+		internal static ILexEntryRef CreateComplexForm(LcmCache cache, ICmObject main, ILexEntry complexForm, bool subentry, byte complexFormTypeIndex = 1)
 		{
 			return CreateComplexForm(cache, main, complexForm, subentry,
 				(ILexEntryType)cache.LangProject.LexDbOA.ComplexEntryTypesOA.PossibilitiesOS[complexFormTypeIndex]);
 		}
 
-		private static ILexEntryRef CreateComplexForm(FdoCache cache, ICmObject main, ILexEntry complexForm, bool subentry, Guid typeGuid)
+		private static ILexEntryRef CreateComplexForm(LcmCache cache, ICmObject main, ILexEntry complexForm, bool subentry, Guid typeGuid)
 		{
 			return CreateComplexForm(cache, main, complexForm, subentry,
 				(ILexEntryType)cache.LangProject.LexDbOA.ComplexEntryTypesOA.PossibilitiesOS.First(x => x.Guid == typeGuid));
 		}
 
-		private static ILexEntryRef CreateComplexForm(FdoCache cache, ICmObject main, ILexEntry complexForm, bool subentry, ILexEntryType complexEntryType)
+		private static ILexEntryRef CreateComplexForm(LcmCache cache, ICmObject main, ILexEntry complexForm, bool subentry, ILexEntryType complexEntryType)
 		{
 			var complexEntryRef = cache.ServiceLocator.GetInstance<ILexEntryRefFactory>().Create();
 			complexForm.EntryRefsOS.Add(complexEntryRef);
@@ -346,7 +345,7 @@ namespace SIL.FieldWorks.XWorks
 			entry.CitationForm.set_String(wsId, TsStringUtils.MakeString(headword, wsId));
 		}
 
-		private static ILexPronunciation AddPronunciationToEntry(ILexEntry entry, string content, int wsId, FdoCache cache)
+		private static ILexPronunciation AddPronunciationToEntry(ILexEntry entry, string content, int wsId, LcmCache cache)
 		{
 			var pronunciation = cache.ServiceLocator.GetInstance<ILexPronunciationFactory>().Create();
 			entry.PronunciationsOS.Add(pronunciation);
@@ -354,7 +353,7 @@ namespace SIL.FieldWorks.XWorks
 			return pronunciation;
 		}
 
-		private static void AddSenseToEntry(ILexEntry entry, string gloss, int wsId, FdoCache cache)
+		private static void AddSenseToEntry(ILexEntry entry, string gloss, int wsId, LcmCache cache)
 		{
 			var senseFactory = cache.ServiceLocator.GetInstance<ILexSenseFactory>();
 			var sense = senseFactory.Create();
@@ -426,7 +425,7 @@ namespace SIL.FieldWorks.XWorks
 			return morph;
 		}
 
-		private static IStText CreateMultiParaText(string content, FdoCache cache)
+		private static IStText CreateMultiParaText(string content, LcmCache cache)
 		{
 			var text = cache.ServiceLocator.GetInstance<ITextFactory>().Create();
 			//cache.LangProject.
@@ -442,7 +441,7 @@ namespace SIL.FieldWorks.XWorks
 			return text.ContentsOA;
 		}
 
-		private static ITsString MakeVernTss(string content, FdoCache cache)
+		private static ITsString MakeVernTss(string content, LcmCache cache)
 		{
 			return TsStringUtils.MakeString(content, cache.DefaultVernWs);
 		}
@@ -553,7 +552,7 @@ namespace SIL.FieldWorks.XWorks
 			return GetFullyEnabledListOptions(Cache, listName);
 		}
 
-		public static DictionaryNodeOptions GetFullyEnabledListOptions(FdoCache cache, DictionaryNodeListOptions.ListIds listName)
+		public static DictionaryNodeOptions GetFullyEnabledListOptions(LcmCache cache, DictionaryNodeListOptions.ListIds listName)
 		{
 			List<DictionaryNodeListOptions.DictionaryNodeOption> dnoList;
 			var useParaOptions = false;
@@ -663,7 +662,7 @@ namespace SIL.FieldWorks.XWorks
 
 	internal class TestPictureClass
 	{
-		public IFdoList<ICmPicture> Pictures { get; set; }
+		public ILcmList<ICmPicture> Pictures { get; set; }
 	}
 #endregion
 }

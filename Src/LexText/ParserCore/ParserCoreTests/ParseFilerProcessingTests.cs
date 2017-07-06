@@ -9,13 +9,12 @@
 using System;
 using System.Linq;
 using NUnit.Framework;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.WritingSystems;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.FDOTests;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 
 namespace SIL.FieldWorks.WordWorks.Parser
 {
@@ -61,7 +60,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		protected IWfiWordform CheckAnnotationSize(string form, int expectedSize, bool isStarting)
 		{
-			IFdoServiceLocator servLoc = Cache.ServiceLocator;
+			ILcmServiceLocator servLoc = Cache.ServiceLocator;
 			IWfiWordform wf = FindOrCreateWordform(form);
 			int actualSize =
 				(from ann in servLoc.GetInstance<ICmBaseAnnotationRepository>().AllInstances()
@@ -75,7 +74,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		private IWfiWordform FindOrCreateWordform(string form)
 		{
-			IFdoServiceLocator servLoc = Cache.ServiceLocator;
+			ILcmServiceLocator servLoc = Cache.ServiceLocator;
 			IWfiWordform wf = servLoc.GetInstance<IWfiWordformRepository>().GetMatchingWordform(m_vernacularWS.Handle, form);
 			if (wf == null)
 			{

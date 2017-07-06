@@ -1,12 +1,12 @@
 using System;
 using System.Drawing;
 using System.Linq;
-using SIL.CoreImpl.Text;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.FieldWorks.FDO;
-using SIL.Utils;
+using SIL.LCModel;
+using SIL.LCModel.Utils;
 
 namespace LanguageExplorer.Areas
 {
@@ -36,7 +36,7 @@ namespace LanguageExplorer.Areas
 		private readonly ITsString m_doubleArrow;
 		private readonly ITsString m_space;
 
-		public AffixRuleFormulaVc(FdoCache cache, IPropertyTable propertyTable)
+		public AffixRuleFormulaVc(LcmCache cache, IPropertyTable propertyTable)
 			: base(cache, propertyTable)
 		{
 			ITsPropsBldr tpb = TsStringUtils.MakePropsBldr();

@@ -7,8 +7,8 @@
 using System;
 using System.Diagnostics;
 using System.Windows.Forms;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -72,7 +72,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			using (InsertEntryDlg dlg = new InsertEntryDlg())
 			{
-				FdoCache cache = m_propertyTable.GetValue<FdoCache>("cache");
+				LcmCache cache = m_propertyTable.GetValue<LcmCache>("cache");
 				Debug.Assert(cache != null);
 				dlg.SetDlgInfo(cache, m_mediator, m_propertyTable, m_persistProvider);
 				if (dlg.ShowDialog(Form.ActiveForm) == DialogResult.OK)
@@ -202,7 +202,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			using (var dlg = new EntryGoDlg())
 			{
-				var cache = PropertyTable.GetValue<FdoCache>("cache");
+				var cache = PropertyTable.GetValue<LcmCache>("cache");
 				dlg.SetDlgInfo(cache, null, PropertyTable, Publisher);
 				dlg.SetHelpTopic("khtpFindLexicalEntry");
 				if (dlg.ShowDialog() == DialogResult.OK)

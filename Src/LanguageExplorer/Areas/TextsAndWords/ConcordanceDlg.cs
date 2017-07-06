@@ -8,19 +8,19 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Forms;
 using System.Xml;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.Utils;
+using SIL.LCModel;
+using SIL.LCModel.Application;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
+using SIL.LCModel.Utils;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.XWorks;
-using WaitCursor = SIL.FieldWorks.Common.FwUtils.WaitCursor;
-using SIL.CoreImpl.Text;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
+using WaitCursor = SIL.FieldWorks.Common.FwUtils.WaitCursor;
 
 namespace LanguageExplorer.Areas.TextsAndWords
 {
@@ -44,7 +44,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 		private string _filterMessage = string.Empty;
 		private IWfiWordform _wordform;
-		private FdoCache _cache;
+		private LcmCache _cache;
 		private XmlNode _configurationNode;
 		private RecordBrowseView _currentBrowseView = null;
 		private readonly Dictionary<int, XmlNode> _configurationNodes = new Dictionary<int, XmlNode>(3);

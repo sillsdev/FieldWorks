@@ -14,16 +14,16 @@ using System.Text;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using System.Xml.XPath;
-using SIL.CoreImpl.Cellar;
-using SIL.CoreImpl.WritingSystems;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.Utils;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
+using SIL.LCModel.Utils;
 using SIL.Xml;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
@@ -68,7 +68,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// </summary>
 		private ISilDataAccess m_sda;
 		/// <summary></summary>
-		protected FdoCache m_cache;
+		protected LcmCache m_cache;
 		/// <summary>use SetContextMenuHandler() to subscribe to this event (if you want to provide a Context menu for this DataTree)</summary>
 		protected event SliceShowMenuRequestHandler ShowContextMenuEvent;
 		/// <summary>the descendent object that is being displayed</summary>
@@ -114,7 +114,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		// Number of times DeepSuspendLayout has been called without matching DeepResumeLayout.
 		protected int m_cDeepSuspendLayoutCount;
 		protected IPersistenceProvider m_persistenceProvider = null;
-		protected FwStyleSheet m_styleSheet;
+		protected LcmStyleSheet m_styleSheet;
 		protected bool m_fShowAllFields = false;
 		protected ToolTip m_tooltip; // used for slice tree nodes. All tooltips are cleared when we switch records!
 		protected LayoutStates m_layoutState = LayoutStates.klsNormal;
@@ -489,14 +489,14 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// Otherwise, the datatree will automatically load it when first requested
 		/// (provided it has a cache by that time).
 		/// </summary>
-		public FwStyleSheet StyleSheet
+		public LcmStyleSheet StyleSheet
 		{
 			get
 			{
 				CheckDisposed();
 				if (m_styleSheet == null && m_cache != null)
 				{
-					m_styleSheet = new FwStyleSheet();
+					m_styleSheet = new LcmStyleSheet();
 					m_styleSheet.Init(m_cache, m_cache.LanguageProject.Hvo,
 						LangProjectTags.kflidStyles);
 				}
@@ -1094,7 +1094,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// initialization for when you don't actually know what you want to show yet
 		/// (and aren't going to use XML)
 		/// </summary>
-		protected void InitializeBasic(FdoCache cache, bool fHasSplitter)
+		protected void InitializeBasic(LcmCache cache, bool fHasSplitter)
 		{
 			// This has to be created before we start adding slices, so they can be put into it.
 			// (Otherwise we would normally do this in initializeComponent.)
@@ -1110,7 +1110,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <param name="fHasSplitter">if set to <c>true</c> [f has splitter].</param>
 		/// <param name="layouts">The layouts.</param>
 		/// <param name="parts">The parts.</param>
-		public void Initialize(FdoCache cache, bool fHasSplitter, Inventory layouts, Inventory parts)
+		public void Initialize(LcmCache cache, bool fHasSplitter, Inventory layouts, Inventory parts)
 		{
 			CheckDisposed();
 			m_layoutInventory = layouts;
@@ -1650,7 +1650,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		}
 
 		/// <summary></summary>
-		public FdoCache Cache
+		public LcmCache Cache
 		{
 			get
 			{

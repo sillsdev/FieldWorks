@@ -5,25 +5,25 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;		// controls and etc...
-using SIL.CoreImpl.WritingSystems;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel.DomainServices;
 
 namespace SIL.FieldWorks.Common.Widgets
 {
 	internal class InnerLabeledMultiStringControl : SimpleRootSite
 	{
 		LabeledMultiStringVc m_vc;
-		FdoCache m_realCache; // real one we get writing system info from
+		LcmCache m_realCache; // real one we get writing system info from
 		ISilDataAccess m_sda; // one actually used in the view.
 		List<CoreWritingSystemDefinition> m_rgws;
 
 		internal const int khvoRoot = -3045; // arbitrary but recognizeable numbers for debugging.
 		internal const int kflid = 4554;
 
-		public InnerLabeledMultiStringControl(FdoCache cache, int wsMagic)
+		public InnerLabeledMultiStringControl(LcmCache cache, int wsMagic)
 		{
 			m_realCache = cache;
 			m_sda = new TextBoxDataAccess { WritingSystemFactory = cache.WritingSystemFactory };
@@ -33,7 +33,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			IsTextBox = true;	// range selection not shown when not in focus
 		}
 
-		public InnerLabeledMultiStringControl(FdoCache cache, List<CoreWritingSystemDefinition> wsList)
+		public InnerLabeledMultiStringControl(LcmCache cache, List<CoreWritingSystemDefinition> wsList)
 		{
 			// Ctor for use with a non-standard list of wss (like available UI languages)
 			m_realCache = cache;

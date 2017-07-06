@@ -1,11 +1,11 @@
 ﻿using System;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 
 namespace GenerateHCConfig
 {
 	internal class ProjectIdentifier : IProjectIdentifier
 	{
-		private readonly FDOBackendProviderType m_backendProviderType;
+		private readonly BackendProviderType m_backendProviderType;
 
 		public ProjectIdentifier(string projectPath)
 		{
@@ -13,8 +13,8 @@ namespace GenerateHCConfig
 			string ext = System.IO.Path.GetExtension(Path);
 			switch (ext.ToLowerInvariant())
 			{
-				case FdoFileHelper.ksFwDataXmlFileExtension:
-					m_backendProviderType = FDOBackendProviderType.kXML;
+				case LcmFileHelper.ksFwDataXmlFileExtension:
+					m_backendProviderType = BackendProviderType.kXML;
 					break;
 			}
 		}
@@ -56,7 +56,7 @@ namespace GenerateHCConfig
 			get { return System.IO.Path.GetFileNameWithoutExtension(Path); }
 		}
 
-		public FDOBackendProviderType Type
+		public BackendProviderType Type
 		{
 			get { return m_backendProviderType; }
 		}

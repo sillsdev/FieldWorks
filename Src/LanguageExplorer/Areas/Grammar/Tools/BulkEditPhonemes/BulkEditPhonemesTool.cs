@@ -6,12 +6,12 @@ using System.Drawing;
 using System.Xml.Linq;
 using LanguageExplorer.Controls;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks;
+using SIL.LCModel;
+using SIL.LCModel.Application;
+using SIL.LCModel.Infrastructure;
 
 namespace LanguageExplorer.Areas.Grammar.Tools.BulkEditPhonemes
 {
@@ -94,7 +94,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.BulkEditPhonemes
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
 			var root = XDocument.Parse(GrammarResources.BulkEditPhonemesToolParameters).Root;
-			var cache = PropertyTable.GetValue<FdoCache>("cache");
+			var cache = PropertyTable.GetValue<LcmCache>("cache");
 			if (cache.LanguageProject.PhonologicalDataOA.PhonemeSetsOS.Count == 0)
 			{
 				// Pathological...this helps the memory-only backend mainly, but makes others self-repairing.

@@ -5,10 +5,10 @@
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using SIL.CoreImpl.WritingSystems;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FdoUi;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
+using SIL.LCModel.Core.WritingSystems;
 
 namespace LanguageExplorer.Dumpster
 {
@@ -176,7 +176,7 @@ namespace LanguageExplorer.Dumpster
 			Publisher = flexComponentParameters.Publisher;
 			Subscriber = flexComponentParameters.Subscriber;
 
-			var cache = PropertyTable.GetValue<FdoCache>("cache");
+			var cache = PropertyTable.GetValue<LcmCache>("cache");
 			var wsMgr = cache.ServiceLocator.WritingSystemManager;
 			cache.DomainDataByFlid.BeginNonUndoableTask();
 			var usedWses = new List<CoreWritingSystemDefinition>();

@@ -9,11 +9,11 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using System.Xml.XPath;
-using SIL.CoreImpl.Cellar;
+using SIL.LCModel.Core.Cellar;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
+using SIL.LCModel;
 using SIL.Xml;
 
 namespace SIL.FieldWorks.XWorks
@@ -62,7 +62,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private FDWrapper m_fdwCurrentField;
 
-		private readonly FdoCache m_cache;
+		private readonly LcmCache m_cache;
 		private TextBox m_nameTextBox;
 		private readonly List<FDWrapper> m_customFields;
 		private Button m_helpButton;	// list of current custom fields [db and mem]
@@ -98,7 +98,7 @@ namespace SIL.FieldWorks.XWorks
 			// create member variables
 			m_propertyTable = propertyTable;
 			m_publisher = publisher;
-			m_cache = m_propertyTable.GetValue<FdoCache>("cache");
+			m_cache = m_propertyTable.GetValue<LcmCache>("cache");
 			m_layouts = Inventory.GetInventory("layouts", m_cache.ProjectId.Name);
 
 			InitializeComponent();		// form required method
@@ -210,7 +210,7 @@ namespace SIL.FieldWorks.XWorks
 			m_wsComboBox.SelectedIndex = 0;
 		}
 
-		public static List<IdAndString<Guid>> GetListsComboItems(FdoCache cache, XElement windowConfiguration)
+		public static List<IdAndString<Guid>> GetListsComboItems(LcmCache cache, XElement windowConfiguration)
 		{
 			var result = new List<IdAndString<Guid>>();
 			var clerks = new Dictionary<string, XElement>();
@@ -514,7 +514,7 @@ namespace SIL.FieldWorks.XWorks
 			return didUpdate;
 		}
 
-		public static bool UpdateCachedObjects(FdoCache cache, FieldDescription fd)
+		public static bool UpdateCachedObjects(LcmCache cache, FieldDescription fd)
 		{
 			// We need to find every instance of a reference from this flid to that custom list and delete it!
 			// I can't figure out any other way of ensuring that EnsureCompleteIncomingRefs doesn't try to refer
@@ -566,7 +566,7 @@ namespace SIL.FieldWorks.XWorks
 					NonUndoableUnitOfWorkHelper.Do(cache.ActionHandlerAccessor, () =>
 					{
 						foreach (var hvo in objsWithDataThisFlid)
-							ddbf.SetObjProp(hvo, flid, FdoCache.kNullHvo);
+							ddbf.SetObjProp(hvo, flid, LcmCache.kNullHvo);
 					});
 
 					fchanged = objsWithDataThisFlid.Any();
@@ -578,7 +578,7 @@ namespace SIL.FieldWorks.XWorks
 			return fchanged;
 		}
 
-		private static bool IsCustomList(FdoCache cache, Guid owningListGuid)
+		private static bool IsCustomList(LcmCache cache, Guid owningListGuid)
 		{
 			// Custom lists are unowned.
 			var list = cache.ServiceLocator.GetInstance<ICmPossibilityListRepository>().GetObject(owningListGuid);
@@ -691,7 +691,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				var flid = m_cache.MetaDataCacheAccessor.GetFieldId2(fdw.Fd.Class, fdw.Fd.Userlabel, true);
 			}
-			catch (FDOInvalidFieldException e)
+			catch (LcmInvalidFieldException e)
 			{
 				return false; // this is actually the 'good' case.
 			}
@@ -1312,7 +1312,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		private class ModifiedLabel
 		{
-			public ModifiedLabel(FieldDescription fd, string sNewLabel, FdoCache cache)
+			public ModifiedLabel(FieldDescription fd, string sNewLabel, LcmCache cache)
 			{
 				OldLabel = fd.Userlabel;
 				NewLabel = sNewLabel;

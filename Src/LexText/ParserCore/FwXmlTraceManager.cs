@@ -5,7 +5,7 @@
 using System.Diagnostics;
 using System.Linq;
 using System.Xml.Linq;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.HermitCrab;
 using SIL.HermitCrab.MorphologicalRules;
 using SIL.HermitCrab.PhonologicalRules;
@@ -15,9 +15,9 @@ namespace SIL.FieldWorks.WordWorks.Parser
 {
 	internal class FwXmlTraceManager : ITraceManager
 	{
-		private readonly FdoCache m_cache;
+		private readonly LcmCache m_cache;
 
-		public FwXmlTraceManager(FdoCache fdoCache)
+		public FwXmlTraceManager(LcmCache fdoCache)
 		{
 			m_cache = fdoCache;
 		}

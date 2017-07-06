@@ -5,8 +5,8 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
-using SIL.Utils;
+using SIL.LCModel;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.Common.Framework
 {
@@ -75,7 +75,7 @@ namespace SIL.FieldWorks.Common.Framework
 		/// <summary>
 		/// Get the FDO cache.
 		/// </summary>
-		FdoCache Cache { get; }
+		LcmCache Cache { get; }
 
 		/// <summary>
 		/// Gets the FieldWorks manager for this application.

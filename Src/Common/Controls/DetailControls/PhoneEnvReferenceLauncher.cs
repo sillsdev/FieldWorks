@@ -17,9 +17,9 @@ using System.Windows.Forms;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Application;
+using SIL.LCModel.Infrastructure;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
@@ -67,7 +67,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			base.Dispose( disposing );
 		}
 
-		public override void Initialize(FdoCache cache, ICmObject obj, int flid,
+		public override void Initialize(LcmCache cache, ICmObject obj, int flid,
 			string fieldName, IPersistenceProvider persistProvider, string displayNameProperty, string displayWs)
 		{
 			CheckDisposed();

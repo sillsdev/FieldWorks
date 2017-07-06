@@ -10,14 +10,14 @@ using System.Xml.Schema;
 using System.Xml.Xsl;
 using NUnit.Framework;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.WritingSystems;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.FDOTests;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 using SIL.TestUtilities;
+using SIL.WritingSystems;
 
 namespace LanguageExplorerTests.Interlinear
 {
@@ -26,21 +26,37 @@ namespace LanguageExplorerTests.Interlinear
 	[TestFixture]
 	public class InterlinearExporterTestsBase : InterlinearTestBase
 	{
-		protected SIL.FieldWorks.FDO.IText m_text1;
+		protected IText m_text1;
 		protected InterlinLineChoices m_choices;
 		private XmlDocument m_textsDefn;
-
+		private bool _didIInitSLDR;
 
 		[TestFixtureSetUp]
 		public override void FixtureSetup()
 		{
+			if (!Sldr.IsInitialized)
+			{
+				_didIInitSLDR = true;
+				Sldr.Initialize();
+			}
+
 			base.FixtureSetup();
 			m_textsDefn = new XmlDocument();
 		}
 
+		public override void FixtureTeardown()
+		{
+			if (_didIInitSLDR && Sldr.IsInitialized)
+			{
+				_didIInitSLDR = false;
+				Sldr.Cleanup();
+			}
+			base.FixtureTeardown();
+		}
+
 		protected virtual IText SetupDataForText1()
 		{
-			return LoadTestText(Path.Combine("LanguageExplorerTests", "Interlinear", "InterlinearExporterTests.xml"), 1, m_textsDefn);
+			return LoadTestText(Path.Combine(FwDirectoryFinder.SourceDirectory, "LanguageExplorerTests", "Interlinear", "InterlinearExporterTests.xml"), 1, m_textsDefn);
 		}
 
 		[TearDown]
@@ -962,7 +978,7 @@ namespace LanguageExplorerTests.Interlinear
 		{
 			private string recGuid;
 
-			protected override SIL.FieldWorks.FDO.IText SetupDataForText1()
+			protected override IText SetupDataForText1()
 			{
 				Cache.LanguageProject.PeopleOA = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
 
@@ -971,7 +987,7 @@ namespace LanguageExplorerTests.Interlinear
 				Cache.LanguageProject.PeopleOA.PossibilitiesOS.Add(newPerson);
 				newPerson.Name.set_String(Cache.DefaultVernWs, "Hiro Protaganist");
 
-				SIL.FieldWorks.FDO.IText text = Cache.ServiceLocator.GetInstance<ITextFactory>().Create();
+				IText text = Cache.ServiceLocator.GetInstance<ITextFactory>().Create();
 				//Cache.LangProject.TextsOC.Add(text);
 				text.ContentsOA = Cache.ServiceLocator.GetInstance<IStTextFactory>().Create();
 				text.MediaFilesOA = Cache.ServiceLocator.GetInstance<ICmMediaContainerFactory>().Create();

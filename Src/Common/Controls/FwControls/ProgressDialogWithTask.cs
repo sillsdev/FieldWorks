@@ -8,9 +8,9 @@ using System.Diagnostics;
 using System.Threading;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.Utils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application.ApplicationServices;
+using SIL.LCModel.Utils;
+using SIL.LCModel;
+using SIL.LCModel.Application.ApplicationServices;
 using System.IO;
 
 namespace SIL.FieldWorks.Common.Controls
@@ -686,7 +686,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="cache"> </param>
 		/// <param name="ws"></param>
 		/// <param name="parentWindow"> </param>
-		public static void ImportTranslatedListsForWs(Form parentWindow, FdoCache cache, string ws)
+		public static void ImportTranslatedListsForWs(Form parentWindow, LcmCache cache, string ws)
 		{
 			string path = XmlTranslatedLists.TranslatedListsPathForWs(ws, FwDirectoryFinder.TemplateDirectory);
 			if (!File.Exists(path))
@@ -704,7 +704,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>
 		/// Method with required signature for ProgressDialogWithTask.RunTask, to invoke XmlTranslatedLists.ImportTranslatedListsForWs.
 		/// Should only be called by the other overload of ImportTranslatedListsForWs.
-		/// args must be a writing system identifier string and an FdoCache.
+		/// args must be a writing system identifier string and an LcmCache.
 		/// </summary>
 		/// <param name="dlg"></param>
 		/// <param name="args"></param>
@@ -712,7 +712,7 @@ namespace SIL.FieldWorks.Common.Controls
 		private static object ImportTranslatedListsForWs(IThreadedProgress dlg, object[] args)
 		{
 			var ws = (string)args[0];
-			var cache = (FdoCache) args[1];
+			var cache = (LcmCache) args[1];
 			XmlTranslatedLists.ImportTranslatedListsForWs(ws, cache, FwDirectoryFinder.TemplateDirectory, dlg);
 			return null;
 		}

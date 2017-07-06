@@ -6,7 +6,7 @@
 // Responsibility: TE Team
 // ---------------------------------------------------------------------------------------------
 using System;
-using SIL.FieldWorks.FDO.DomainServices.BackupRestore;
+using SIL.LCModel.DomainServices.BackupRestore;
 
 namespace SIL.FieldWorks
 {

@@ -9,15 +9,9 @@
 // <remarks>
 // </remarks>
 
-using System;
 using System.Drawing;
 using System.Windows.Forms;
-using System.Diagnostics;
 using System.Runtime.InteropServices;
-using System.Collections;
-using System.Drawing.Text;
-
-using SIL.FieldWorks.Common.ViewsInterfaces;
 
 namespace SIL.FieldWorks.Common.RootSites
 {

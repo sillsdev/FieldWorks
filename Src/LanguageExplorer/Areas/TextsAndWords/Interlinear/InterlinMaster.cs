@@ -10,16 +10,16 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using LanguageExplorer.Areas.TextsAndWords.Discourse;
-using SIL.CoreImpl.Text;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.FwUtils.MessageBoxEx;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.XWorks;
 using SIL.Xml;
 
@@ -857,7 +857,7 @@ private void ReloadPaneBar(IPaneBar paneBar)
 					var rootObj = Clerk.CurrentObject;
 					if (rootObj.ClassID == TextTags.kClassId)
 					{
-						var text = rootObj as SIL.FieldWorks.FDO.IText;
+						var text = rootObj as IText;
 						return text.Name.AnalysisDefaultWritingSystem.Text;
 					}
 				}
@@ -1305,7 +1305,7 @@ private void ReloadPaneBar(IPaneBar paneBar)
 				Guid guid = Guid.Empty;
 				if (Clerk.CurrentObject != null)
 					guid = Clerk.CurrentObject.Guid;
-				FdoCache cache = Cache;
+				LcmCache cache = Cache;
 				// Not sure what will happen with guid == Guid.Empty on the link...
 				FwLinkArgs link = new FwLinkArgs(toolChoice, guid, InterlinearTab.ToString());
 				link.PropertyTableEntries.Add(new Property("InterlinearTab",

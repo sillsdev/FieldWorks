@@ -5,7 +5,7 @@
 using System;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.Filters;
 
 namespace SIL.FieldWorks.XWorks

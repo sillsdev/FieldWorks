@@ -12,14 +12,14 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
 using System.Xml;
-using SIL.CoreImpl.Text;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.FwCoreDlgControls;
 using SIL.FieldWorks.Resources;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.Utils;
+using SIL.LCModel.Infrastructure;
+using SIL.LCModel.Utils;
 using SIL.Xml;
 
 namespace SIL.FieldWorks.Common.Framework
@@ -37,7 +37,7 @@ namespace SIL.FieldWorks.Common.Framework
 	{
 		#region Data members
 		/// <summary>The FDO cache (must not be null)</summary>
-		protected readonly FdoCache m_cache;
+		protected readonly LcmCache m_cache;
 		/// <summary>The progress dialog (may be null)</summary>
 		protected IProgress m_progressDlg;
 		/// <summary>The XmlNode from which to get the style info</summary>
@@ -47,7 +47,7 @@ namespace SIL.FieldWorks.Common.Framework
 		/// <summary>Array of styles that the user has modified</summary>
 		protected List<string> m_userModifiedStyles = new List<string>();
 		/// <summary>Collection of styles in the DB</summary>
-		protected IFdoOwningCollection<IStStyle> m_databaseStyles;
+		protected ILcmOwningCollection<IStStyle> m_databaseStyles;
 		Dictionary<IStStyle, IStStyle> m_replacedStyles = new Dictionary<IStStyle, IStStyle>();
 
 		/// <summary>Dictionary of style names to StStyle objects representing the initial
@@ -113,7 +113,7 @@ namespace SIL.FieldWorks.Common.Framework
 		/// Constructor is protected so only derived classes can create an instance
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		protected StylesXmlAccessor(FdoCache cache)
+		protected StylesXmlAccessor(LcmCache cache)
 		{
 			if (cache == null) throw new ArgumentNullException("cache");
 
@@ -126,7 +126,7 @@ namespace SIL.FieldWorks.Common.Framework
 		/// <summary>
 		/// The collection that owns the styles; for example, Scripture.StylesOC.
 		/// </summary>
-		protected abstract IFdoOwningCollection<IStStyle> StyleCollection { get; }
+		protected abstract ILcmOwningCollection<IStStyle> StyleCollection { get; }
 
 		#endregion
 
@@ -225,7 +225,7 @@ namespace SIL.FieldWorks.Common.Framework
 		protected object CreateStyles(IProgress progressDlg, params object[] parameters)
 		{
 			Debug.Assert(parameters.Length == 3);
-			m_databaseStyles = (IFdoOwningCollection<IStStyle>)parameters[0];
+			m_databaseStyles = (ILcmOwningCollection<IStStyle>)parameters[0];
 			m_sourceStyles = (XmlNode)parameters[1];
 			m_deleteMissingStyles = (bool)parameters[2];
 			m_progressDlg = progressDlg;

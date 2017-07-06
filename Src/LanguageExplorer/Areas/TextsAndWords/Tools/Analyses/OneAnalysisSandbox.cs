@@ -4,10 +4,10 @@
 
 using System.Diagnostics;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
-using SIL.CoreImpl.WritingSystems;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 {
@@ -28,7 +28,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 		/// <param name="ss">The stylesheet.</param>
 		/// <param name="choices">The choices.</param>
 		/// <param name="hvoAnalysis">The hvo analysis.</param>
-		public OneAnalysisSandbox(FdoCache cache, IVwStylesheet ss, InterlinLineChoices choices, int hvoAnalysis)
+		public OneAnalysisSandbox(LcmCache cache, IVwStylesheet ss, InterlinLineChoices choices, int hvoAnalysis)
 			: base(cache, ss, choices, hvoAnalysis)
 		{
 			SizeToContent = true;

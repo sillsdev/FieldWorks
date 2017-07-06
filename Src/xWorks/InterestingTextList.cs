@@ -6,11 +6,11 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainImpl;
-using SIL.Utils;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
+using SIL.LCModel.DomainImpl;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -48,7 +48,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Used by InvalidateRelatedSortSequences()
 		/// </summary>
-		public FdoCache Cache { get; set; }
+		public LcmCache Cache { get; set; }
 
 		public InterestingTextList(IPropertyTable propertyTable, ITextRepository repo, IStTextRepository stTextRepo)
 			: this(propertyTable, repo, stTextRepo, true)
@@ -69,7 +69,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private void GetCache()
 		{
-			Cache = m_propertyTable.GetValue<FdoCache>("cache");
+			Cache = m_propertyTable.GetValue<LcmCache>("cache");
 		}
 
 		private List<IStText> m_coreTexts;

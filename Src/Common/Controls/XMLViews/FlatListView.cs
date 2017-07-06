@@ -8,10 +8,10 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Linq;
 using System.Xml.Linq;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
+using SIL.LCModel;
+using SIL.LCModel.Application;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -33,7 +33,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 		private const int ObjectListFlid = 89999943;
 
-		private FdoCache m_cache;
+		private LcmCache m_cache;
 		private IVwStylesheet m_stylesheet; // used to figure font heights.
 		private IPropertyTable m_propertyTable;
 		private XElement m_configNode;
@@ -63,7 +63,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="propertyTable"></param>
 		/// <param name="xnConfig">The config node.</param>
 		/// <param name="objs">The objs.</param>
-		public void Initialize(FdoCache cache, IVwStylesheet stylesheet, IPropertyTable propertyTable,
+		public void Initialize(LcmCache cache, IVwStylesheet stylesheet, IPropertyTable propertyTable,
 			XElement xnConfig, IEnumerable<ICmObject> objs)
 		{
 			CheckDisposed();

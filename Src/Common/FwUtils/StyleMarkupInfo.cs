@@ -4,7 +4,6 @@
 
 using System.Collections.Generic;
 using System.Xml.Serialization;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {

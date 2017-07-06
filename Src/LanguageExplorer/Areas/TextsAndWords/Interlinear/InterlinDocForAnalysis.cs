@@ -9,16 +9,16 @@ using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using SIL.CoreImpl.Text;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.Utils;
+using SIL.LCModel;
+using SIL.LCModel.Application;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
+using SIL.LCModel.Utils;
 using Rect = SIL.FieldWorks.Common.ViewsInterfaces.Rect;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
@@ -220,7 +220,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		protected override void MakeVc()
 		{
-			m_vc = new InterlinDocForAnalysisVc(m_fdoCache);
+			m_vc = new InterlinDocForAnalysisVc(m_cache);
 		}
 
 		#region Overrides of RootSite
@@ -2353,7 +2353,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 	public class InterlinDocForAnalysisVc : InterlinVc
 	{
-		public InterlinDocForAnalysisVc(FdoCache cache)
+		public InterlinDocForAnalysisVc(LcmCache cache)
 			: base(cache)
 		{
 			FocusBoxSize = new Size(100000, 50000); // If FocusBoxAnnotation is set, this gives the size of box to make. (millipoints)

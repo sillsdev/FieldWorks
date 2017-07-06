@@ -11,12 +11,12 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Xml.Xsl;
-using SIL.CoreImpl.Text;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.FieldWorks.FDO.Application;
-using SIL.Utils;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel.Application;
+using SIL.LCModel.Utils;
+using SIL.LCModel;
 
 namespace SIL.FieldWorks.Common.RootSites
 {

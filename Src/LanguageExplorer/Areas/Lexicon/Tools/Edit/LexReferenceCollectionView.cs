@@ -5,9 +5,9 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.Framework.DetailControls;
-using SIL.FieldWorks.FDO.Application;
+using SIL.LCModel.Application;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 {
@@ -29,7 +29,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// <summary />
 		protected override VectorReferenceVc CreateVectorReferenceVc()
 		{
-			LexReferenceCollectionVc vc = new LexReferenceCollectionVc(m_fdoCache, m_rootFlid, m_displayNameProperty, m_displayWs);
+			LexReferenceCollectionVc vc = new LexReferenceCollectionVc(m_cache, m_rootFlid, m_displayNameProperty, m_displayWs);
 			if (m_displayParent != null)
 				vc.DisplayParent = m_displayParent;
 			return vc;
@@ -90,7 +90,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 #if WANTPORTMULTI
 			for (int i = 0; i < hvos.Length; ++i)
 			{
-				ICmObject cmo = ICmObject.CreateFromDBObject(m_fdoCache, hvos[i]);
+				ICmObject cmo = ICmObject.CreateFromDBObject(m_cache, hvos[i]);
 				(cmo as ICmObject).UpdateTimestampForVirtualChange();
 			}
 #endif

@@ -5,12 +5,11 @@
 using System;
 using System.Diagnostics;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.FDOTests;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 
 namespace SIL.FieldWorks.Common.RootSites
 {
@@ -213,7 +212,7 @@ namespace SIL.FieldWorks.Common.RootSites
 	/// Base class for tests that use <see cref="DummyBasicView"/>
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public class RootsiteDummyViewTestsBase : ScrInMemoryFdoTestBase
+	public class RootsiteDummyViewTestsBase : ScrInMemoryLcmTestBase
 	{
 		/// <summary>The draft form</summary>
 		protected DummyBasicView m_basicView;
@@ -249,7 +248,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			base.TestSetup();
 
-			var styleSheet = new FwStyleSheet();
+			var styleSheet = new LcmStyleSheet();
 
 			styleSheet.Init(Cache, m_scr.Hvo,
 				ScriptureTags.kflidStyles);

@@ -1,19 +1,9 @@
-// ---------------------------------------------------------------------------------------------
-// Copyright (c) 2009-2015 SIL International
+// Copyright (c) 2009-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: TextTokenSkipChapVerse.cs
-// Responsibility: TE Team
-//
-// <remarks>
-// </remarks>
-// ---------------------------------------------------------------------------------------------
-using System;
-using System.Collections.Generic;
-using System.Text;
-using SIL.CoreImpl.Scripture;
+
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel.Core.Scripture;
 
 namespace SILUBS.ScriptureChecks
 {

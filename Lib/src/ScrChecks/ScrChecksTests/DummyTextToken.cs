@@ -2,11 +2,8 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-using SIL.CoreImpl.Scripture;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel.Core.Scripture;
 
 namespace SILUBS.ScriptureChecks
 {

@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2017 SIL International
+// Copyright (c) 2004-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -9,20 +9,20 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using SIL.CoreImpl.Cellar;
+using SIL.LCModel.Core.Cellar;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.DomainImpl;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel;
+using SIL.LCModel.Application;
+using SIL.LCModel.DomainImpl;
+using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.Filters;
 using SIL.ObjectModel;
 using SIL.Reporting;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -52,7 +52,7 @@ namespace SIL.FieldWorks.XWorks
 		/// getting removed from the PropertyTable before it's been disposed.
 		/// </summary>
 		Form m_windowPendingOnActivated;
-		protected FdoCache m_cache;
+		protected LcmCache m_cache;
 		/// <summary>
 		/// Use this to do the Add/RemoveNotifications, since it can be used in the unmanged section of Dispose.
 		/// (If m_sda is COM, that is.)
@@ -157,7 +157,6 @@ namespace SIL.FieldWorks.XWorks
 		/// Create bare-bones RecordList for made up owner and a property on it.
 		/// </summary>
 		internal RecordList(ISilDataAccessManaged decorator)
-			: this(decorator, false)
 		{
 		}
 
@@ -199,12 +198,38 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="analysisWs">pass in 'true' for the DefaultAnalysisWritingSystem
 		/// pass in 'false' for the DefaultVernacularWritingSystem</param>
 		/// <returns>return Font size from stylesheet</returns>
-		protected static int GetFontHeightFromStylesheet(FdoCache cache, IPropertyTable propertyTable, bool analysisWs)
+		static protected int GetFontHeightFromStylesheet(LcmCache cache, IPropertyTable propertyTable, bool analysisWs)
 		{
 			int fontHeight;
-			var stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(propertyTable);
-			var wsContainer = cache.ServiceLocator.WritingSystems;
-			if (analysisWs)
+			IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(propertyTable);
+				IWritingSystemContainer wsContainer = cache.ServiceLocator.WritingSystems;
+				if (analysisWs)
+				{
+					fontHeight = FontHeightAdjuster.GetFontHeightForStyle(
+					"Normal", stylesheet,
+					wsContainer.DefaultAnalysisWritingSystem.Handle,
+					cache.WritingSystemFactory) / 1000; //fontHeight is probably pixels
+				}
+				else
+				{
+					fontHeight = FontHeightAdjuster.GetFontHeightForStyle(
+					"Normal", stylesheet,
+					wsContainer.DefaultVernacularWritingSystem.Handle,
+					cache.WritingSystemFactory) / 1000; //fontHeight is probably pixels
+				}
+			return fontHeight;
+		}
+
+#if RANDYTODO
+		// TODO: I think this may be a bad merge.
+		public virtual void Init(FdoCache cache, Mediator mediator, PropertyTable propertyTable, XmlNode recordListNode)
+		{
+			CheckDisposed();
+
+			BaseInit(cache, mediator, propertyTable, recordListNode);
+			string owner = XmlUtils.GetOptionalAttributeValue(recordListNode, "owner");
+			bool analysis = XmlUtils.GetOptionalBooleanAttributeValue(recordListNode, "analysisWs", false);
+			if (!string.IsNullOrEmpty(m_propertyName))
 			{
 				fontHeight = FontHeightAdjuster.GetFontHeightForStyle(
 				"Normal", stylesheet,
@@ -221,7 +246,22 @@ namespace SIL.FieldWorks.XWorks
 			return fontHeight;
 		}
 
-		#region Properties
+		protected void BaseInit(FdoCache cache, Mediator mediator, PropertyTable propertyTable, XmlNode recordListNode)
+		{
+			Debug.Assert(mediator != null);
+
+			m_recordListNode = recordListNode;
+			m_mediator = mediator;
+			m_propertyTable = propertyTable;
+			m_propertyName = XmlUtils.GetOptionalAttributeValue(recordListNode, "property", "");
+			m_cache = cache;
+			CurrentIndex = -1;
+			m_hvoCurrent = 0;
+			m_oldLength = 0;
+		}
+#endif
+
+#region Properties
 
 		/// <summary>
 		/// This property provides a decorator for the ISilDataAccess in the cache, which provides
@@ -595,6 +635,15 @@ namespace SIL.FieldWorks.XWorks
 			{
 				CheckDisposed();
 				return m_deletingObject;
+			}
+		}
+
+		public LcmCache Cache
+		{
+			get
+			{
+				CheckDisposed();
+				return m_cache;
 			}
 		}
 
@@ -1703,13 +1752,13 @@ namespace SIL.FieldWorks.XWorks
 				{
 					newSortedObjects = GetFilteredSortedList();
 				}
-				catch (FDOInvalidFieldException)
+				catch (LcmInvalidFieldException)
 				{
 					newSortedObjects = HandleInvalidFilterSortField();
 				}
 				catch(FwConfigurationException ce)
 				{
-					if (ce.InnerException is FDOInvalidFieldException)
+					if (ce.InnerException is LcmInvalidFieldException)
 						newSortedObjects = HandleInvalidFilterSortField();
 					else
 						throw;
@@ -2501,7 +2550,6 @@ namespace SIL.FieldWorks.XWorks
 			return realFlid;
 		}
 #endif
-
 		protected virtual ClassAndPropInfo GetMatchingClass(string className)
 		{
 			foreach(ClassAndPropInfo cpi in m_insertableClasses)
@@ -2566,7 +2614,7 @@ namespace SIL.FieldWorks.XWorks
 				if (!IsCurrentObjectValid() || !thingToDelete.IsValidObject)
 					return;
 				m_deletingObject = true;
-				FdoCache cache = m_cache;
+				LcmCache cache = m_cache;
 				var currentObject = CurrentObject;
 				// This looks plausible; but for example IndexOf may reload the list, if a reload is pending;
 				// and the current object may no longer match the current filter, so it may be gone.
@@ -2722,7 +2770,7 @@ namespace SIL.FieldWorks.XWorks
 			Publisher = flexComponentParameters.Publisher;
 			Subscriber = flexComponentParameters.Subscriber;
 
-			m_cache = PropertyTable.GetValue<FdoCache>("cache");
+			m_cache = PropertyTable.GetValue<LcmCache>("cache");
 			CurrentIndex = -1;
 			m_hvoCurrent = 0;
 			m_oldLength = 0;

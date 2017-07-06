@@ -14,7 +14,7 @@ import "oaidl.idl";
 import "ocidl.idl";
 import "objidl.idl";
 
-#line 1 "C:\\develop\\fwrepo\\fw\\src\\Generic\\common.idh"
+#line 1 "c:\\develop\\fwrepo\\fw\\src\\kernel\\common.idh"
 
 
 
@@ -1629,8 +1629,6 @@ typedef [v1_enum] enum PropChangeType
 
 
 
-
-
 typedef [v1_enum] enum CrtReportType
 {
 	Warn    = 0x0,	
@@ -1705,8 +1703,6 @@ cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IDebugReport") cpp_
 	HRESULT ClearSink();
 };
 
-#line 1585 "c:\\develop\\fwrepo\\fw\\src\\kernel\\FwKernel.idh"
-
 
 
 
@@ -1726,7 +1722,7 @@ cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IComDisposable") cp
 
 
 
-#line 1606 "c:\\develop\\fwrepo\\fw\\src\\kernel\\FwKernel.idh"
+#line 1602 "c:\\develop\\fwrepo\\fw\\src\\kernel\\FwKernel.idh"
 
 #line 21 "C:\\develop\\fwrepo\\fw\\src\\Kernel\\FwKernelTlb.idl"
 	#line 1 "c:\\develop\\fwrepo\\fw\\src\\kernel\\TextServ.idh"

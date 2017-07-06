@@ -9,21 +9,22 @@ using System.Reflection;
 using LanguageExplorer.Areas.TextsAndWords;
 using NUnit.Framework;
 using Rhino.Mocks;
-using SIL.CoreImpl.Text;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.FDOTests;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel;
+using SIL.LCModel.Application;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Utils;
 using SIL.FieldWorks.XWorks;
-using SIL.Utils;
 using SIL.WritingSystems;
 
 namespace LanguageExplorerTests.TextsAndWords
 {
+#if RANDYTODO
+	// TODO: Re-enable, whenever we can find that hunspell dll that used to be in the LCM build artifacts.
 	[TestFixture]
 	public class RespellingTests : MemoryOnlyBackendProviderTestBase
 	{
@@ -31,11 +32,18 @@ namespace LanguageExplorerTests.TextsAndWords
 		private IPropertyTable m_propertyTable;
 		private IPublisher m_publisher;
 		private ISubscriber m_subscriber;
+		private bool _didIInitSLDR;
 
-		#region Overrides of FdoTestBase
+	#region Overrides of FdoTestBase
 
 		public override void FixtureSetup()
 		{
+			if (!Sldr.IsInitialized)
+			{
+				_didIInitSLDR = true;
+				Sldr.Initialize();
+			}
+
 			base.FixtureSetup();
 			NonUndoableUnitOfWorkHelper.Do(m_actionHandler, () =>
 			{
@@ -44,6 +52,16 @@ namespace LanguageExplorerTests.TextsAndWords
 #endif
 				Cache.LanguageProject.TranslatedScriptureOA = Cache.ServiceLocator.GetInstance<IScriptureFactory>().Create();
 			});
+		}
+
+		public override void FixtureTeardown()
+		{
+			if (_didIInitSLDR && Sldr.IsInitialized)
+			{
+				_didIInitSLDR = false;
+				Sldr.Cleanup();
+			}
+			base.FixtureTeardown();
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -90,7 +108,7 @@ namespace LanguageExplorerTests.TextsAndWords
 			base.TestTearDown();
 		}
 
-		#endregion
+	#endregion
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -362,7 +380,7 @@ namespace LanguageExplorerTests.TextsAndWords
 					IScrBook book = Cache.ServiceLocator.GetInstance<IScrBookFactory>().Create(1, out stText);
 					paraT = Cache.ServiceLocator.GetInstance<IScrTxtParaFactory>().CreateWithStyle(stText, "Monkey");
 					paraT.Contents = TsStringUtils.MakeString(sParaText, Cache.DefaultVernWs);
-					object owner = ReflectionHelper.CreateObject("FDO.dll", "SIL.FieldWorks.FDO.Infrastructure.Impl.CmObjectId", BindingFlags.NonPublic,
+					object owner = ReflectionHelper.CreateObject("SIL.LCModel.dll", "SIL.LCModel.Infrastructure.Impl.CmObjectId", BindingFlags.NonPublic,
 						new object[] { book.Guid });
 					ReflectionHelper.SetField(stText, "m_owner", owner);
 				}
@@ -378,7 +396,7 @@ namespace LanguageExplorerTests.TextsAndWords
 				}
 				foreach (ISegment seg in paraT.SegmentsOS)
 				{
-					FdoTestHelper.CreateAnalyses(seg, paraT.Contents, seg.BeginOffset, seg.EndOffset, fCreateGlosses);
+					LcmTestHelper.CreateAnalyses(seg, paraT.Contents, seg.BeginOffset, seg.EndOffset, fCreateGlosses);
 					paraFrags.AddRange(GetParaFragmentsInSegmentForWord(seg, sWordToReplace));
 				}
 			});
@@ -444,7 +462,7 @@ namespace LanguageExplorerTests.TextsAndWords
 					IScrBook book = Cache.ServiceLocator.GetInstance<IScrBookFactory>().Create(1, out stText);
 					paraT = Cache.ServiceLocator.GetInstance<IScrTxtParaFactory>().CreateWithStyle(stText, "Monkey");
 					paraT.Contents = TsStringUtils.MakeString(sParaText, Cache.DefaultVernWs);
-					object owner = ReflectionHelper.CreateObject("FDO.dll", "SIL.FieldWorks.FDO.Infrastructure.Impl.CmObjectId", BindingFlags.NonPublic,
+					object owner = ReflectionHelper.CreateObject("SIL.LCModel.dll", "SIL.LCModel.Infrastructure.Impl.CmObjectId", BindingFlags.NonPublic,
 						new object[] { book.Guid });
 					ReflectionHelper.SetField(stText, "m_owner", owner);
 				}
@@ -460,7 +478,7 @@ namespace LanguageExplorerTests.TextsAndWords
 				}
 				foreach (ISegment seg in paraT.SegmentsOS)
 				{
-					FdoTestHelper.CreateAnalyses(seg, paraT.Contents, seg.BeginOffset, seg.EndOffset, true);
+					LcmTestHelper.CreateAnalyses(seg, paraT.Contents, seg.BeginOffset, seg.EndOffset, true);
 					var thisSegParaFrags = GetParaFragmentsInSegmentForWord(seg, sWordToReplace);
 					SetMultimorphemicAnalyses(thisSegParaFrags, morphsToCreate);
 					paraFrags.AddRange(thisSegParaFrags);
@@ -848,11 +866,11 @@ namespace LanguageExplorerTests.TextsAndWords
 			action.AddOccurrence(m_para2Occurrences[2]);
 			action.DoIt();
 			VerifyDoneStateApplyTwo();
-			Assert.IsTrue(m_fdoCache.CanUndo, "undo should be possible after respelling");
+			Assert.IsTrue(m_cache.CanUndo, "undo should be possible after respelling");
 			UndoResult ures;
-			m_fdoCache.Undo(out ures);
+			m_cache.Undo(out ures);
 			VerifyStartingState();
-			m_fdoCache.Redo(out ures);
+			m_cache.Redo(out ures);
 			VerifyDoneStateApplyTwo();
 		}
 
@@ -930,8 +948,8 @@ namespace LanguageExplorerTests.TextsAndWords
 
 		private void VerifyTwfic(int cba, int begin, int end, string message)
 		{
-			Assert.AreEqual(begin, m_fdoCache.GetIntProperty(cba, kflidBeginOffset), message + " beginOffset");
-			Assert.AreEqual(end, m_fdoCache.GetIntProperty(cba, kflidEndOffset), message + " endOffset");
+			Assert.AreEqual(begin, m_cache.GetIntProperty(cba, kflidBeginOffset), message + " beginOffset");
+			Assert.AreEqual(end, m_cache.GetIntProperty(cba, kflidEndOffset), message + " endOffset");
 		}
 
 		/// <summary>
@@ -952,11 +970,11 @@ namespace LanguageExplorerTests.TextsAndWords
 			action.CopyAnalyses = true;
 			action.DoIt();
 			VerifyDoneStateApplyTwoAndCopyAnalyses();
-			Assert.IsTrue(m_fdoCache.CanUndo, "undo should be possible after respelling");
+			Assert.IsTrue(m_cache.CanUndo, "undo should be possible after respelling");
 			UndoResult ures;
-			m_fdoCache.Undo(out ures);
+			m_cache.Undo(out ures);
 			VerifyStartingState();
-			m_fdoCache.Redo(out ures);
+			m_cache.Redo(out ures);
 			VerifyDoneStateApplyTwoAndCopyAnalyses();
 		}
 
@@ -1027,7 +1045,7 @@ namespace LanguageExplorerTests.TextsAndWords
 			m_wgChopper = new WfiGloss();
 			m_wfaAxe.MeaningsOC.Add(m_wgChopper);
 			m_wgChopper.Form.AnalysisDefaultWritingSystem = "chopper";
-			m_wfaAxe.SetAgentOpinion(m_fdoCache.LangProject.DefaultUserAgent, Opinions.approves);
+			m_wfaAxe.SetAgentOpinion(m_cache.LangProject.DefaultUserAgent, Opinions.approves);
 
 			ILexEntry entryCut = LexEntry.CreateEntry(Cache,
 					MoMorphType.FindMorphType(Cache, new MoMorphTypeCollection(Cache), ref formLexEntry, out clsidForm), tssLexEntryForm,
@@ -1041,7 +1059,7 @@ namespace LanguageExplorerTests.TextsAndWords
 			m_wgCut = new WfiGloss();
 			m_wfaCut.MeaningsOC.Add(m_wgCut);
 			m_wgCut.Form.AnalysisDefaultWritingSystem = "cut";
-			m_wfaCut.SetAgentOpinion(m_fdoCache.LangProject.DefaultUserAgent, Opinions.approves);
+			m_wfaCut.SetAgentOpinion(m_cache.LangProject.DefaultUserAgent, Opinions.approves);
 
 			m_cAnalyses += 2;
 		}
@@ -1072,7 +1090,7 @@ namespace LanguageExplorerTests.TextsAndWords
 			WfiGloss gloss = new WfiGloss();
 			result.MeaningsOC.Add(gloss);
 			gloss.Form.AnalysisDefaultWritingSystem = gloss1 + "." + gloss2;
-			result.SetAgentOpinion(m_fdoCache.LangProject.DefaultUserAgent, Opinions.approves);
+			result.SetAgentOpinion(m_cache.LangProject.DefaultUserAgent, Opinions.approves);
 
 			m_cAnalyses++;
 
@@ -1114,11 +1132,11 @@ namespace LanguageExplorerTests.TextsAndWords
 			action.PreserveCase = true;
 			action.DoIt();
 			VerifyDoneStateApplyAllAndUpdateLexicon();
-			Assert.IsTrue(m_fdoCache.CanUndo, "undo should be possible after respelling");
+			Assert.IsTrue(m_cache.CanUndo, "undo should be possible after respelling");
 			UndoResult ures;
-			m_fdoCache.Undo(out ures);
+			m_cache.Undo(out ures);
 			VerifyStartingState();
-			m_fdoCache.Redo(out ures);
+			m_cache.Redo(out ures);
 			VerifyDoneStateApplyAllAndUpdateLexicon();
 		}
 
@@ -1178,11 +1196,11 @@ namespace LanguageExplorerTests.TextsAndWords
 			action.KeepAnalyses = true;
 			action.DoIt();
 			VerifyDoneStateApplyAllAndKeepAnalyses();
-			Assert.IsTrue(m_fdoCache.CanUndo, "undo should be possible after respelling");
+			Assert.IsTrue(m_cache.CanUndo, "undo should be possible after respelling");
 			UndoResult ures;
-			m_fdoCache.Undo(out ures);
+			m_cache.Undo(out ures);
 			VerifyStartingState();
-			m_fdoCache.Redo(out ures);
+			m_cache.Redo(out ures);
 			VerifyDoneStateApplyAllAndKeepAnalyses();
 		}
 
@@ -1223,5 +1241,6 @@ namespace LanguageExplorerTests.TextsAndWords
 			Assert.AreEqual(4, wf.AnalysesOC.Count, "all analyses survived");
 		}
 	}
+#endif
 #endif
 }

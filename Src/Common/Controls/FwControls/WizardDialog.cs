@@ -7,8 +7,6 @@ using System.Resources;
 using System.Drawing;
 using System.ComponentModel;
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.Drawing;
-
 
 namespace SIL.FieldWorks.Common.Controls
 {

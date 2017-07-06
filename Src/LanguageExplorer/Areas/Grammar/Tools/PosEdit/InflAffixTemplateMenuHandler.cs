@@ -9,10 +9,10 @@ using System.Diagnostics;
 using System.Linq;
 using System.Xml.Linq;
 using System.Xml.XPath;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.Widgets;
+using SIL.LCModel;
 using SIL.Xml;
 
 namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
@@ -249,7 +249,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 		}
 #endif
 
-		protected FdoCache Cache
+		protected LcmCache Cache
 		{
 			get
 			{

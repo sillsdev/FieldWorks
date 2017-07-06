@@ -9,15 +9,15 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Xml.Linq;
-using SIL.CoreImpl.Text;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.Utils;
+using SIL.LCModel.Application;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
+using SIL.LCModel.Utils;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.Xml;
 
@@ -97,7 +97,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="bv">The bv.</param>
 		/// ------------------------------------------------------------------------------------
 		public override void Init(XElement nodeSpec, int hvoRoot, int madeUpFieldIdentifier,
-			FdoCache cache, BrowseViewer bv)
+			LcmCache cache, BrowseViewer bv)
 		{
 			CheckDisposed();
 
@@ -325,8 +325,8 @@ namespace SIL.FieldWorks.Common.Controls
 			for (var i = 1; i <= columns.Count; ++i)
 			{
 				var kflid = XMLViewsDataCache.ktagEditColumnBase + i;
-				var wsCol = WritingSystemServices.GetWritingSystem(m_fdoCache, columns[i - 1], null,
-					m_fdoCache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle).Handle;
+				int wsCol = WritingSystemServices.GetWritingSystem(m_cache, FwUtils.FwUtils.ConvertElement(columns[i - 1]), null,
+					m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle).Handle;
 				// Get the string for each column.
 				rgtss[i - 1] = sda.get_MultiStringAlt(XmlRDEBrowseViewVc.khvoNewItem,
 					kflid, wsCol);
@@ -347,8 +347,8 @@ namespace SIL.FieldWorks.Common.Controls
 			for (var i = 1; i <= columns.Count; ++i)
 			{
 				var kflid = XMLViewsDataCache.ktagEditColumnBase + i;
-				var wsCol = WritingSystemServices.GetWritingSystem(m_fdoCache, columns[i - 1], null,
-					m_fdoCache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle).Handle;
+				int wsCol = WritingSystemServices.GetWritingSystem(m_cache, FwUtils.FwUtils.ConvertElement(columns[i - 1]), null,
+					m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle).Handle;
 				sda.SetMultiStringAlt(XmlRDEBrowseViewVc.khvoNewItem, kflid, wsCol, TsStringUtils.EmptyString(wsCol));
 			}
 			// Set the selection to the first column.
@@ -568,8 +568,8 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			var columns = m_xbvvc.ColumnSpecs;
 			var flidNew = XMLViewsDataCache.ktagEditColumnBase + 1;
-			var wsNew = WritingSystemServices.GetWritingSystem(m_fdoCache, columns[0], null,
-				m_fdoCache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle).Handle;
+			var wsNew = WritingSystemServices.GetWritingSystem(m_cache, FwUtils.FwUtils.ConvertElement(columns[0]), null,
+				m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle).Handle;
 			try
 			{
 				var rgvsli = new SelLevInfo[1];
@@ -953,7 +953,7 @@ namespace SIL.FieldWorks.Common.Controls
 		//			base.OnGotFocus(e);
 		////-			if (m_hmark == 0)
 		////-			{
-		////-				IActionHandler ah = m_fdoCache.ActionHandlerAccessor;
+		////-				IActionHandler ah = m_cache.ActionHandlerAccessor;
 		////-				if (ah != null)
 		////-					m_hmark = ah.Mark();
 		////-			}
@@ -963,7 +963,7 @@ namespace SIL.FieldWorks.Common.Controls
 		//		protected override void OnLostFocus(EventArgs e)
 		//		{
 		//			this.DoMerges();
-		////-			IActionHandler ah = m_fdoCache.ActionHandlerAccessor;
+		////-			IActionHandler ah = m_cache.ActionHandlerAccessor;
 		////-			if (ah != null && m_hmark != 0)
 		////-			{
 		////-				if (ah.get_TasksSinceMark(true))
@@ -1127,13 +1127,13 @@ namespace SIL.FieldWorks.Common.Controls
 				// Therefore the last thing in rgvsli is always the information identifying the sense we
 				// want to process.
 				int hvoSense = tsi.ContainingObject(cvsli - 1);
-				int hvoEntry = m_fdoCache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoSense).Owner.Hvo;
+				int hvoEntry = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoSense).Owner.Hvo;
 #endif
 				// If this was an editable object, it no longer is, because it's about to no longer exist.
 				RDEVc.EditableObjectsRemove(hvoSense);
 
-				var le = m_fdoCache.ServiceLocator.GetInstance<ILexEntryRepository>().GetObject(hvoEntry);
-				var ls = m_fdoCache.ServiceLocator.GetInstance<ILexSenseRepository>().GetObject(hvoSense);
+				var le = m_cache.ServiceLocator.GetInstance<ILexEntryRepository>().GetObject(hvoEntry);
+				var ls = m_cache.ServiceLocator.GetInstance<ILexSenseRepository>().GetObject(hvoSense);
 				string sUndo = XMLViewsStrings.ksUndoDeleteRecord;
 				string sRedo = XMLViewsStrings.ksRedoDeleteRecord;
 				UndoableUnitOfWorkHelper.Do(sUndo, sRedo, Cache.ActionHandlerAccessor, () =>

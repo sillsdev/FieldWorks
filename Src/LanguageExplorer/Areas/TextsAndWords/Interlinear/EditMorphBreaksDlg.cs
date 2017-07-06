@@ -6,9 +6,9 @@ using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FwCoreDlgs;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
@@ -86,7 +86,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// This sets the original wordform and morph-broken word into the dialog.
 		/// </summary>
 		public void Initialize(ITsString tssWord, string sMorphs, ILgWritingSystemFactory wsf,
-			FdoCache cache, IVwStylesheet stylesheet)
+			LcmCache cache, IVwStylesheet stylesheet)
 		{
 			CheckDisposed();
 

@@ -3,10 +3,10 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using NUnit.Framework;
-using SIL.CoreImpl.Attributes;
+using SIL.LCModel.Core.Attributes;
 using SIL.FieldWorks.Common.FwUtils.Attributes;
+using SIL.LCModel.Utils.Attributes;
 using SIL.TestUtilities;
-using SIL.Utils.Attributes;
 
 // This file is for test fixtures for UI related projects, i.e. projects that do
 // reference System.Windows.Forms et al.
@@ -27,7 +27,7 @@ using SIL.Utils.Attributes;
 [assembly: InitializeFwRegistryHelper]
 
 // Initialize ICU
-[assembly: InitIcuForTests]
+[assembly: InitializeIcu]
 
 // Redirect HKCU if environment variable BUILDAGENT_SUBKEY is set
 [assembly: RedirectHKCU]

@@ -7,10 +7,10 @@ using System.Xml;
 using System.IO;
 using NUnit.Framework;
 using SIL.FieldWorks.CacheLight;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 using System.Text;
-using SIL.CoreImpl.Cellar;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.KernelInterfaces;
 
 namespace SIL.FieldWorks.CacheLightTests
 {

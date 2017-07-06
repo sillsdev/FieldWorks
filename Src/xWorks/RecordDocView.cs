@@ -1,13 +1,7 @@
 // Copyright (c) 2003-2013 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: RecordDocView.cs
-// Responsibility: John Thomson
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
+
 using System;
 using System.Diagnostics;
 using System.Drawing;
@@ -16,11 +10,11 @@ using System.Xml.Linq;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.DomainServices;
 using SIL.Utils;
 using SIL.Xml;
 
@@ -328,7 +322,7 @@ namespace SIL.FieldWorks.XWorks
 				// it messes up our Dictionary when we make something else configurable (like Classified Dictionary).
 				var sProp = XmlUtils.GetOptionalAttributeValue(m_xnSpec, "layoutProperty");
 				Debug.Assert(sProp != null, "When making a view configurable you need to put a 'layoutProperty' in the XML configuration.");
-				dlg.SetConfigDlgInfo(m_xnSpec, Cache, (FwStyleSheet)StyleSheet,
+				dlg.SetConfigDlgInfo(m_xnSpec, Cache, (LcmStyleSheet)StyleSheet,
 					FindForm() as IFwMainWnd, PropertyTable, Publisher, sProp);
 				if (nodePath != null)
 					dlg.SetActiveNode(nodePath);

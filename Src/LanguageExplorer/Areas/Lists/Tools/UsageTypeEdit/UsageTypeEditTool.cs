@@ -6,10 +6,10 @@ using System.Drawing;
 using System.Xml.Linq;
 using LanguageExplorer.Controls;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks;
+using SIL.LCModel;
+using SIL.LCModel.Application;
 
 namespace LanguageExplorer.Areas.Lists.Tools.UsageTypeEdit
 {
@@ -99,7 +99,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.UsageTypeEdit
 				true,
 				XDocument.Parse(ListResources.UsageTypeEditParameters).Root, XDocument.Parse(ListResources.ListToolsSliceFilters),
 				MachineName,
-				new PossibilityListClerkParameters("UsageTypeList", PropertyTable.GetValue<FdoCache>("cache").LanguageProject.LexDbOA.UsageTypesOA, true, true, false, "best analysis"),
+				new PossibilityListClerkParameters("UsageTypeList", PropertyTable.GetValue<LcmCache>("cache").LanguageProject.LexDbOA.UsageTypesOA, true, true, false, "best analysis"),
 				out _recordClerk);
 			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
 		}

@@ -4,8 +4,7 @@
 
 using System.Xml.Linq;
 using NUnit.Framework;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.FDOTests;
+using SIL.LCModel;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -22,7 +21,7 @@ namespace SIL.FieldWorks.XWorks
 		/// Test the code that populates the Lists combo.
 		/// </summary>
 		[Test]
-		[Ignore("Moving away form all that xml.")]
+		[Ignore("Moving away from all that xml.")]
 		public void PopulateListsCombo()
 		{
 			string source =

@@ -6,9 +6,8 @@ using System;
 using System.IO;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.FDOTests;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -33,12 +32,12 @@ namespace SIL.FieldWorks.XWorks
 				string projectConfigDir;
 
 				m_propertyTable.SetProperty("toolChoice", "lexiconEdit", true);
-				projectConfigDir = Path.Combine(FdoFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder), "Dictionary");
-			Assert.That(DictionaryConfigurationListener.GetProjectConfigurationDirectory(m_propertyTable), Is.EqualTo(projectConfigDir), "did not return expected directory");
+				projectConfigDir = Path.Combine(LcmFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder), "Dictionary");
+				Assert.That(DictionaryConfigurationListener.GetProjectConfigurationDirectory(m_propertyTable), Is.EqualTo(projectConfigDir), "did not return expected directory");
 
 				m_propertyTable.SetProperty("toolChoice", "reversalEditComplete", true);
-			projectConfigDir = Path.Combine(FdoFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder), "ReversalIndex");
-			Assert.That(DictionaryConfigurationListener.GetProjectConfigurationDirectory(m_propertyTable), Is.EqualTo(projectConfigDir), "did not return expected directory");
+				projectConfigDir = Path.Combine(LcmFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder), "ReversalIndex");
+				Assert.That(DictionaryConfigurationListener.GetProjectConfigurationDirectory(m_propertyTable), Is.EqualTo(projectConfigDir), "did not return expected directory");
 
 				m_propertyTable.SetProperty("toolChoice", "somethingElse", true);
 			Assert.IsNull(DictionaryConfigurationListener.GetProjectConfigurationDirectory(m_propertyTable), "Other areas should cause null return");
@@ -84,8 +83,8 @@ namespace SIL.FieldWorks.XWorks
 		#region Context
 		protected override void Init()
 		{
-			BootstrapSystem(new TestProjectId(FDOBackendProviderType.kMemoryOnly, "TestProject"),
-				BackendBulkLoadDomain.Lexicon, new FdoSettings());
+			BootstrapSystem(new TestProjectId(BackendProviderType.kMemoryOnly, "TestProject"),
+				BackendBulkLoadDomain.Lexicon, new LcmSettings());
 			m_application = new MockFwXApp(new MockFwManager { Cache = Cache }, null, null);
 			m_configFilePath = Path.Combine(FwDirectoryFinder.CodeDirectory, m_application.DefaultConfigurationPathname);
 			m_window = new MockFwXWindow(m_application, m_configFilePath);

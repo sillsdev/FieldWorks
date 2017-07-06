@@ -3,9 +3,9 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using SIL.FieldWorks.Common.Framework.DetailControls;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 {
@@ -17,7 +17,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// <summary>
 		/// Constructor for the Vector Reference View Constructor Class.
 		/// </summary>
-		public LexReferenceTreeBranchesVc(FdoCache cache, int flid, string displayNameProperty, string displayWs)
+		public LexReferenceTreeBranchesVc(LcmCache cache, int flid, string displayNameProperty, string displayWs)
 			: base (cache, flid, displayNameProperty, displayWs)
 		{
 		}

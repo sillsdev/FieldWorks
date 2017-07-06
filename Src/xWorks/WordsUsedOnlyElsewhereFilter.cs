@@ -3,8 +3,8 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
 using SIL.FieldWorks.Filters;
 
 namespace SIL.FieldWorks.XWorks
@@ -12,10 +12,10 @@ namespace SIL.FieldWorks.XWorks
 	/// <summary />
 	public class WordsUsedOnlyElsewhereFilter : RecordFilter
 	{
-		private FdoCache m_cache;
+		private LcmCache m_cache;
 
 		/// <summary />
-		internal WordsUsedOnlyElsewhereFilter(FdoCache cache)
+		internal WordsUsedOnlyElsewhereFilter(LcmCache cache)
 		{
 			if (cache == null)
 				throw new ArgumentNullException(nameof(cache));
@@ -26,7 +26,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Allows the cache to be reset when restoring from persistence.
 		/// </summary>
-		public override FdoCache Cache
+		public override LcmCache Cache
 		{
 			set
 			{

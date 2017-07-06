@@ -8,13 +8,13 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.WritingSystems;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.Resources;
 using SIL.Windows.Forms;
 
@@ -25,7 +25,7 @@ namespace SIL.FieldWorks.LexText.Controls
 	{
 		#region	Data members
 
-		protected FdoCache m_cache;
+		protected LcmCache m_cache;
 		protected IHelpTopicProvider m_helpTopicProvider;
 		protected ICmObject m_selObject;
 		protected HashSet<int> m_vernHvos;
@@ -214,17 +214,17 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <summary>
 		/// Set up the dlg in preparation to showing it.
 		/// </summary>
-		/// <param name="cache">FDO cache.</param>
+		/// <param name="cache">LCM cache.</param>
 		/// <param name="wp">Strings used for various items in this dialog.</param>
 		/// <param name="propertyTable"></param>
 		/// <param name="publisher"></param>
 		/// <param name="subscriber"></param>
-		public virtual void SetDlgInfo(FdoCache cache, WindowParams wp, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
+		public virtual void SetDlgInfo(LcmCache cache, WindowParams wp, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
 		{
 			SetDlgInfo(cache, wp, propertyTable, publisher, subscriber, cache.DefaultVernWs);
 		}
 
-		protected virtual void SetDlgInfo(FdoCache cache, WindowParams wp, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, int ws)
+		protected virtual void SetDlgInfo(LcmCache cache, WindowParams wp, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, int ws)
 		{
 			CheckDisposed();
 
@@ -433,7 +433,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
-		protected virtual void InitializeMatchingObjects(FdoCache cache)
+		protected virtual void InitializeMatchingObjects(LcmCache cache)
 		{
 			// override.
 		}
@@ -478,26 +478,26 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <summary>
 		/// Set up the dlg in preparation to showing it.
 		/// </summary>
-		/// <param name="cache">FDO cache.</param>
+		/// <param name="cache">LCM cache.</param>
 		/// <param name="wp">Strings used for various items in this dialog.</param>
 		/// <param name="propertyTable"></param>
 		/// <param name="publisher"></param>
 		/// <param name="subscriber"></param>
 		/// <param name="form">Form to use in main text edit box.</param>
-		public virtual void SetDlgInfo(FdoCache cache, WindowParams wp, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, string form)
+		public virtual void SetDlgInfo(LcmCache cache, WindowParams wp, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, string form)
 		{
 			CheckDisposed();
 			SetDlgInfo(cache, wp, propertyTable, publisher, subscriber, form, cache.DefaultVernWs);
 		}
 
-		protected void SetDlgInfo(FdoCache cache, WindowParams wp, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, string form, int ws)
+		protected void SetDlgInfo(LcmCache cache, WindowParams wp, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, string form, int ws)
 		{
 			SetDlgInfo(cache, wp, propertyTable, publisher, subscriber, ws);
 			Form = form;
 		}
 
 		///  <summary />
-		public void SetDlgInfo(FdoCache cache, WindowParams wp, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, ITsString tssform)
+		public void SetDlgInfo(LcmCache cache, WindowParams wp, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, ITsString tssform)
 		{
 			CheckDisposed();
 			SetDlgInfo(cache, wp, propertyTable, publisher, subscriber, tssform.Text, TsStringUtils.GetWsAtOffset(tssform, 0));

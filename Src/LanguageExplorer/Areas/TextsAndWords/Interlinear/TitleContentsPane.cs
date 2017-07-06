@@ -5,13 +5,13 @@
 using System;
 using System.Diagnostics;
 using System.Drawing;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.WritingSystems;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel.DomainServices;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
@@ -129,15 +129,15 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			CheckDisposed();
 
-			if (m_fdoCache == null || DesignMode /*|| m_hvoRoot == 0*/)
+			if (m_cache == null || DesignMode /*|| m_hvoRoot == 0*/)
 				return;
 
 			base.MakeRoot();
 
-			m_vc = new TitleContentsVc(m_fdoCache);
+			m_vc = new TitleContentsVc(m_cache);
 			SetupVc();
 
-			m_rootb.DataAccess = m_fdoCache.MainCacheAccessor;
+			m_rootb.DataAccess = m_cache.MainCacheAccessor;
 
 			m_rootb.SetRootObject(m_hvoRoot, m_vc, TitleContentsVc.kfragRoot, m_styleSheet);
 
@@ -157,8 +157,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		public override bool RefreshDisplay()
 		{
-			if (m_fdoCache != null && m_vc != null)
-				m_vc.SetupWritingSystemsForTitle(m_fdoCache);
+			if (m_cache != null && m_vc != null)
+				m_vc.SetupWritingSystemsForTitle(m_cache);
 			return base.RefreshDisplay();
 		}
 
@@ -219,7 +219,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		ITsTextProps m_ttpWsLabel;
 		int m_editBackColor = (int)ColorUtil.ConvertColorToBGR(Color.FromKnownColor(KnownColor.Window));
 
-		public TitleContentsVc(FdoCache cache)
+		public TitleContentsVc(LcmCache cache)
 		{
 			int wsUser = cache.DefaultUserWs;
 			m_tssTitle = TsStringUtils.MakeString(ITextStrings.ksTitle, wsUser);
@@ -248,7 +248,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			SetupWritingSystemsForTitle(cache);
 		}
 
-		internal void SetupWritingSystemsForTitle(FdoCache cache)
+		internal void SetupWritingSystemsForTitle(LcmCache cache)
 		{
 			m_ttpWsLabel = WritingSystemServices.AbbreviationTextProperties;
 			m_writingSystems = new CoreWritingSystemDefinition[2];

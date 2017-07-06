@@ -5,8 +5,8 @@
 using System;
 using System.Windows.Forms;
 using System.Diagnostics;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
@@ -31,7 +31,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <param name="obj">CmObject that is being displayed.</param>
 		/// <param name="flid">The field identifier for the attribute we are displaying.</param>
 		/// <param name="persistenceProvider"></param>
-		public ReferenceComboBoxSlice(FdoCache cache, ICmObject obj, int flid,
+		public ReferenceComboBoxSlice(LcmCache cache, ICmObject obj, int flid,
 			IPersistenceProvider persistenceProvider)
 			: base(new UserControl(), cache, obj, flid)
 		{

@@ -8,11 +8,11 @@ using System.Drawing;
 using System.Runtime.Serialization;
 using System.Windows.Forms;
 using System.Linq;
-using SIL.CoreImpl.Cellar;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.Resources;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
@@ -149,7 +149,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			if (drgevent.Effect == DragDropEffects.None)
 				return;
 			// Todo JohnT: verify that m_slice is the last slice in the representation of flid.
-			FdoCache cache = Slice.ContainingDataTree.Cache;
+			LcmCache cache = Slice.ContainingDataTree.Cache;
 			UndoableUnitOfWorkHelper.Do("Undo Move Item", "Redo Move Item",
 				cache.ActionHandlerAccessor, () =>
 				{
@@ -223,7 +223,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			CheckDisposed();
 
-			FDO.FdoCache cache = Slice.ContainingDataTree.Cache;
+			LcmCache cache = Slice.ContainingDataTree.Cache;
 			ICmObjectRepository repo = cache.ServiceLocator.GetInstance<ICmObjectRepository>();
 			if (flidDst == odi.FlidSrc)
 			{

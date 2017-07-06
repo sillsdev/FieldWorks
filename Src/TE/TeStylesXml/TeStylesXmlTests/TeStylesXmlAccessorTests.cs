@@ -10,15 +10,14 @@ using System.Globalization;
 using System.Threading;
 using System.Linq;
 using NUnit.Framework;
-using SIL.CoreImpl.Scripture;
-using SIL.CoreImpl.Text;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.FDOTests;
+using SIL.LCModel.Core.Scripture;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.Framework;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.TE
 {
@@ -431,7 +430,7 @@ namespace SIL.FieldWorks.TE
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
-	public class TeStylesXmlAccessorTests_InMemoryCache: ScrInMemoryFdoTestBase
+	public class TeStylesXmlAccessorTests_InMemoryCache: ScrInMemoryLcmTestBase
 	{
 		#region data members
 		private IStStyle m_styleOrig;
@@ -560,7 +559,7 @@ namespace SIL.FieldWorks.TE
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
-	public class TeStylesXmlAccessorTests_WithCache : ScrInMemoryFdoTestBase
+	public class TeStylesXmlAccessorTests_WithCache : ScrInMemoryLcmTestBase
 	{
 		private int m_wsEs;
 
@@ -1120,7 +1119,7 @@ namespace SIL.FieldWorks.TE
 		[Test]
 		public void TestEnsureCompatibleFactoryStyle_FactoryStyleToInternal()
 		{
-			IFdoOwningCollection<IStStyle> styles = m_scr.StylesOC;
+			ILcmOwningCollection<IStStyle> styles = m_scr.StylesOC;
 			int countOfStylesOrig = styles.Count;
 			IStStyle origStyle = m_scr.FindStyle("Normal");
 			origStyle.Context = ContextValues.Text;
@@ -1143,7 +1142,7 @@ namespace SIL.FieldWorks.TE
 		[Test]
 		public void TestEnsureCompatibleFactoryStyle_RedefineUserStyle()
 		{
-			IFdoOwningCollection<IStStyle> styles = m_scr.StylesOC;
+			ILcmOwningCollection<IStStyle> styles = m_scr.StylesOC;
 			int countOfStylesOrig = styles.Count;
 			// For this test, make Paragraph be a user-defined style
 			IStStyle userDefStyle = m_scr.FindStyle("Paragraph");
@@ -1211,10 +1210,10 @@ namespace SIL.FieldWorks.TE
 			IStTxtPara cPara0 = (IStTxtPara)sect.ContentOA.ParagraphsOS[0];
 			IStTxtPara tPara0 = (IStTxtPara)book.TitleOA.ParagraphsOS[0];
 			book = m_scr.ScriptureBooksOS[1];
-			IFdoOwningSequence<IScrSection> sections = book.SectionsOS;
+			ILcmOwningSequence<IScrSection> sections = book.SectionsOS;
 			sect = sections[sections.Count - 1];
 			IStTxtPara hPara1 = (IStTxtPara)sect.HeadingOA.ParagraphsOS[0];
-			IFdoOwningSequence<IStPara> paras = sect.ContentOA.ParagraphsOS;
+			ILcmOwningSequence<IStPara> paras = sect.ContentOA.ParagraphsOS;
 			IStTxtPara cPara1 = (IStTxtPara)paras[paras.Count - 1];
 			IStTxtPara tPara1 = (IStTxtPara)book.TitleOA.ParagraphsOS[0];
 

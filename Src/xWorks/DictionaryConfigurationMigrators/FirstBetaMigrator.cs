@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.Linq;
 using DCM = SIL.FieldWorks.XWorks.DictionaryConfigurationMigrator;
 
@@ -23,21 +23,21 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		{
 		}
 
-		public FirstBetaMigrator(FdoCache cache, SimpleLogger logger)
+		public FirstBetaMigrator(LcmCache cache, SimpleLogger logger)
 		{
 			Cache = cache;
 			m_logger = logger;
 		}
 
-		public FdoCache Cache { get; set; }
+		public LcmCache Cache { get; set; }
 
 		public void MigrateIfNeeded(SimpleLogger logger, IPropertyTable propertyTable, string appVersion)
 		{
 			m_logger = logger;
-			Cache = propertyTable.GetValue<FdoCache>("cache");
+			Cache = propertyTable.GetValue<LcmCache>("cache");
 			var foundOne = string.Format("{0}: Configuration was found in need of migration. - {1}",
 				appVersion, DateTime.Now.ToString("yyyy MMM d h:mm:ss"));
-			var configSettingsDir = FdoFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path));
+			var configSettingsDir = LcmFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path));
 			var dictionaryConfigLoc = Path.Combine(configSettingsDir, DictionaryConfigurationListener.DictionaryConfigurationDirectoryName);
 			var stemPath = Path.Combine(dictionaryConfigLoc, "Stem" + DictionaryConfigurationModel.FileExtension);
 			var lexemePath = Path.Combine(dictionaryConfigLoc, "Lexeme" + DictionaryConfigurationModel.FileExtension);

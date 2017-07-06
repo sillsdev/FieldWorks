@@ -6,7 +6,7 @@ using System;
 using System.IO;
 using System.Text;
 using NUnit.Framework;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {

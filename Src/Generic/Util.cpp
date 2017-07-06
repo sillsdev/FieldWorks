@@ -678,7 +678,7 @@ void FillInts(void * pv, int n, int cn)
 {
 	AssertPtrSize(pv, cn * isizeof(int));
 
-#ifdef NO_ASM
+#if defined(NO_ASM) || defined(WIN64)
 
 	int * pn = (int *)pv;
 	int * pnLim = pn + cn;
@@ -686,7 +686,7 @@ void FillInts(void * pv, int n, int cn)
 	while (pn < pnLim)
 		*pn++ = n;
 
-#else // !NO_ASM
+#else // IF ASM supported (includes WIN32) - When NO_ASM not defined
 
 	__asm
 		{
@@ -703,7 +703,7 @@ void FillInts(void * pv, int n, int cn)
 		rep		stosd
 		}
 
-#endif //!NO_ASM
+#endif
 }
 
 
@@ -714,7 +714,7 @@ void FillShorts(void * pv, short sn, int csn)
 {
 	AssertPtrSize(pv, csn * isizeof(short));
 
-#ifdef NO_ASM
+#if defined(NO_ASM) || defined(WIN64)
 
 	short * psn = (short *)pv;
 	short * psnLim = psn + csn;
@@ -722,7 +722,7 @@ void FillShorts(void * pv, short sn, int csn)
 	while (psn < psnLim)
 		*psn++ = sn;
 
-#else // !NO_ASM
+#else // IF ASM supported (includes WIN32) - When NO_ASM not defined
 
 	__asm
 		{
@@ -756,7 +756,7 @@ LInts:
 LDone:
 		}
 
-#endif //!NO_ASM
+#endif
 }
 
 
@@ -767,7 +767,7 @@ void ReverseBytes(void * pv, int cb)
 {
 	AssertPtrSize(pv, cb);
 
-#ifdef NO_ASM
+#if defined(NO_ASM) || defined(WIN64)
 
 	byte * pb1 = (byte *)pv;
 	byte * pb2 = (byte *)pv + cb - 1;
@@ -780,7 +780,7 @@ void ReverseBytes(void * pv, int cb)
 		*pb2-- = b;
 	}
 
-#else // !NO_ASM
+#else // IF ASM supported (includes WIN32) - When NO_ASM not defined
 
 	__asm
 		{
@@ -808,7 +808,7 @@ LLoop:
 LDone:
 		}
 
-#endif //!NO_ASM
+#endif
 }
 
 
@@ -819,7 +819,7 @@ void ReverseInts(void * pv, int cn)
 {
 	AssertPtrSize(pv, cn * isizeof(int));
 
-#ifdef NO_ASM
+#if defined(NO_ASM) || defined(WIN64)
 
 	int * pn1 = (int *)pv;
 	int * pn2 = (int *)pv + cn - 1;
@@ -832,7 +832,7 @@ void ReverseInts(void * pv, int cn)
 		*pn2-- = n;
 	}
 
-#else // !NO_ASM
+#else // IF ASM supported (includes WIN32) - When NO_ASM not defined
 
 	__asm
 		{
@@ -860,7 +860,7 @@ LLoop:
 LDone:
 		}
 
-#endif //!NO_ASM
+#endif
 }
 
 
@@ -888,7 +888,7 @@ void SwapBytes(void * pv1, void * pv2, int cb)
 	AssertPtrSize(pv1, cb);
 	AssertPtrSize(pv2, cb);
 
-#ifdef NO_ASM
+#if defined(NO_ASM) || defined(WIN64)
 
 	byte *pb1 = (byte *)pv1;
 	byte *pb2 = (byte *)pv2;
@@ -901,7 +901,7 @@ void SwapBytes(void * pv1, void * pv2, int cb)
 		*pb2++ = b;
 	}
 
-#else // !NO_ASM
+#else // IF ASM supported (includes WIN32) - When NO_ASM not defined
 
 	__asm
 		{
@@ -944,7 +944,7 @@ LByteLoop:
 LDone:
 		}
 
-#endif //!NO_ASM
+#endif
 }
 
 

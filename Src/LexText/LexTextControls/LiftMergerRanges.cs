@@ -12,10 +12,10 @@ using System.Xml.Linq;
 using System.Xml.XPath;
 using SIL.Lift;
 using SIL.Lift.Parsing;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.WritingSystems;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 using SIL.WritingSystems.Migration;
 using SIL.Xml;
 

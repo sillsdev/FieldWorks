@@ -5,8 +5,8 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 
 namespace LanguageExplorerTests.Interlinear
 {
@@ -15,7 +15,7 @@ namespace LanguageExplorerTests.Interlinear
 	/// </summary>
 	class TestTaggingChild: InterlinTaggingChild
 	{
-		public TestTaggingChild(FdoCache cache)
+		public TestTaggingChild(LcmCache cache)
 		{
 			Cache = cache;
 			m_tagFact = cache.ServiceLocator.GetInstance<ITextTagFactory>();

@@ -7,15 +7,13 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using NUnit.Framework;
-using SIL.CoreImpl.Scripture;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.WritingSystems;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
-using SIL.FieldWorks.Common.ScriptureUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.FDO.FDOTests;
-using SIL.Utils;
+using SIL.LCModel.Core.Scripture;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.TE
 {
@@ -25,7 +23,7 @@ namespace SIL.FieldWorks.TE
 	/// routine does nothing on an InMemory test.
 	/// </summary>
 	[TestFixture]
-	public class SegmentedBtMergeTests : ScrInMemoryFdoTestBase
+	public class SegmentedBtMergeTests : ScrInMemoryLcmTestBase
 	{
 		private IScrBook m_genesis;
 		private IScrBook m_genesisRevision;
@@ -205,7 +203,7 @@ namespace SIL.FieldWorks.TE
 			}
 
 			// Add analyses
-			FdoTestHelper.CreateAnalyses(foundSegment, para.Contents, foundSegment.BeginOffset, foundSegment.EndOffset);
+			LcmTestHelper.CreateAnalyses(foundSegment, para.Contents, foundSegment.BeginOffset, foundSegment.EndOffset);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -286,7 +284,7 @@ namespace SIL.FieldWorks.TE
 				for (int i = 0; i < translations.Count; i++)
 				{
 					ISegment seg = para.SegmentsOS[i];
-					FdoTestHelper.VerifyAnalysis(seg, i, new int[0], expectedWordforms);
+					LcmTestHelper.VerifyAnalysis(seg, i, new int[0], expectedWordforms);
 					int numberOfWordformsInSegment = seg.AnalysesRS.Count;
 					for (int iExp = 0; iExp < expectedWordforms.Count; iExp++)
 					{

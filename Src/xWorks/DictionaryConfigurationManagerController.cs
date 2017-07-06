@@ -8,15 +8,14 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.FdoUi.Dialogs;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 using SIL.Linq;
 using SIL.FieldWorks.Common.Framework;
 using SIL.WritingSystems;
 using Ionic.Zip;
-using SIL.CoreImpl.WritingSystems;
-using SIL.FieldWorks.Common.Controls.FileDialog;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.LexText.Controls;
 
@@ -29,7 +28,7 @@ namespace SIL.FieldWorks.XWorks
 	class DictionaryConfigurationManagerController : IFlexComponent
 	{
 		private readonly DictionaryConfigurationManagerDlg _view;
-		private FdoCache _cache;
+		private LcmCache _cache;
 		internal readonly string _projectConfigDir;
 		private readonly string _defaultConfigDir;
 
@@ -518,7 +517,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var disallowedCharacters = MiscUtils.GetInvalidProjectNameChars(MiscUtils.FilenameFilterStrength.kFilterBackup) + " $%";
 			string outputPath;
-			using (var saveDialog = new SaveFileDialogAdapter())
+			using (var saveDialog = new DialogAdapters.SaveFileDialogAdapter())
 			{
 				saveDialog.Title = xWorksStrings.kstidChooseExportFile;
 				saveDialog.FileName = StringUtils.FilterForFileName(SelectedConfiguration + "_FLEx-Dictionary-Configuration_" + DateTime.Now.ToString("yyyy-MM-dd"), disallowedCharacters);
@@ -542,7 +541,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Create a zip file containing a dictionary configuration for the user to share, into destinationZipPath. LT-17397.
 		/// </summary>
-		internal static void ExportConfiguration(DictionaryConfigurationModel configurationToExport, string destinationZipPath, FdoCache cache)
+		internal static void ExportConfiguration(DictionaryConfigurationModel configurationToExport, string destinationZipPath, LcmCache cache)
 		{
 			if (configurationToExport == null)
 				throw new ArgumentNullException("configurationToExport");
@@ -566,7 +565,7 @@ namespace SIL.FieldWorks.XWorks
 		/// Prepare custom fields to be included in dictionary configuration export. LT-17397.
 		/// Returns paths to files to be included in a zipped export.
 		/// </summary>
-		internal static IEnumerable<string> PrepareCustomFieldsExport(FdoCache cache)
+		internal static IEnumerable<string> PrepareCustomFieldsExport(LcmCache cache)
 		{
 			var exporter = new LiftExporter(cache);
 			var liftFile = Path.Combine(Path.GetTempPath(), "DictExportCustomLift", "CustomFields.lift");
@@ -589,7 +588,7 @@ namespace SIL.FieldWorks.XWorks
 		/// Prepare stylesheet to be included in dictionary configuration export. LT-17397.
 		/// Returns paths to files to be included in a zipped export.
 		/// </summary>
-		internal static string PrepareStylesheetExport(FdoCache cache)
+		internal static string PrepareStylesheetExport(LcmCache cache)
 		{
 #if RANDYTODO
 			var projectStyles = new FlexStylesXmlAccessor(cache.LangProject.LexDbOA, true);
@@ -644,7 +643,7 @@ namespace SIL.FieldWorks.XWorks
 			return IsConfigurationACustomizedOriginal(configuration, _defaultConfigDir, _cache);
 		}
 
-		public static bool IsConfigurationACustomizedOriginal(DictionaryConfigurationModel config, string defaultConfigDir, FdoCache cache)
+		public static bool IsConfigurationACustomizedOriginal(DictionaryConfigurationModel config, string defaultConfigDir, LcmCache cache)
 		{
 			return IsConfigurationACustomizedShippedDefault(config, defaultConfigDir) || IsConfigurationAnOriginalReversal(config, cache);
 		}
@@ -667,7 +666,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Whether a configuration represents a Reversal.
 		/// </summary>
-		public static bool IsConfigurationAnOriginalReversal(DictionaryConfigurationModel configuration, FdoCache cache)
+		public static bool IsConfigurationAnOriginalReversal(DictionaryConfigurationModel configuration, LcmCache cache)
 		{
 			if (configuration.FilePath == null)
 				return false;
@@ -713,7 +712,7 @@ namespace SIL.FieldWorks.XWorks
 			Publisher = flexComponentParameters.Publisher;
 			Subscriber = flexComponentParameters.Subscriber;
 
-			_cache = PropertyTable.GetValue<FdoCache>("cache");
+			_cache = PropertyTable.GetValue<LcmCache>("cache");
 
 			// Populate lists of configurations and publications
 			ReLoadConfigurations();

@@ -9,12 +9,11 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml;
-using SIL.CoreImpl.WritingSystems;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure.Impl;
-using SIL.Utils;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -34,7 +33,7 @@ namespace SIL.FieldWorks.Common.Controls
 			bool dummy;
 			string fwdataFileFullPathname;
 			var success = FLExBridgeHelper.LaunchFieldworksBridge(FwDirectoryFinder.ProjectsDirectory, null, FLExBridgeHelper.Obtain, null,
-				FDOBackendProvider.ModelVersion, "0.13", null, null, out dummy, out fwdataFileFullPathname);
+				LcmCache.ModelVersion, "0.13", null, null, out dummy, out fwdataFileFullPathname);
 			if (!success)
 			{
 				ReportDuplicateBridge();
@@ -89,14 +88,14 @@ namespace SIL.FieldWorks.Common.Controls
 		private static string CreateProjectFromLift(Form parent, IHelpTopicProvider helpTopicProvider, string liftPath)
 		{
 			string projectPath;
-			FdoCache cache;
+			LcmCache cache;
 
 			var anthroListFile = CallPickAnthroList(helpTopicProvider);
 
 			using (var progressDlg = new ProgressDialogWithTask(parent))
 			{
 				progressDlg.Title = FwControls.ksCreatingLiftProject;
-				var cacheReceiver = new FdoCache[1]; // a clumsy way of handling an out parameter, consistent with RunTask
+				var cacheReceiver = new LcmCache[1]; // a clumsy way of handling an out parameter, consistent with RunTask
 				projectPath = (string)progressDlg.RunTask(true, CreateProjectTask,
 					new object[] { liftPath, parent, anthroListFile, cacheReceiver });
 				cache = cacheReceiver[0];
@@ -130,7 +129,7 @@ namespace SIL.FieldWorks.Common.Controls
 		internal const string ImportLexiconClass = @"LanguageExplorer.Dumpster.FLExBridgeListener";
 		internal const string ImportLexiconMethod = @"ImportObtainedLexicon";
 
-		internal static void CallImportObtainedLexicon(FdoCache cache, string liftPath, Form parent)
+		internal static void CallImportObtainedLexicon(LcmCache cache, string liftPath, Form parent)
 		{
 			// this is a horrible way to invoke this, but the current project organization does not allow us to reference
 			// the LanguageExplorer project, nor is there any straightforward way to move the code we need into some project we can
@@ -156,18 +155,19 @@ namespace SIL.FieldWorks.Common.Controls
 			var liftPathname = (string) parameters[0];
 			var synchronizeInvoke = (ISynchronizeInvoke) parameters[1];
 			var anthroFile = (string) parameters[2];
-			var cacheReceiver = (FdoCache[]) parameters[3];
+			var cacheReceiver = (LcmCache[]) parameters[3];
 
 			CoreWritingSystemDefinition wsVern, wsAnalysis;
 			RetrieveDefaultWritingSystemsFromLift(liftPathname, out wsVern, out wsAnalysis);
 
-			string projectPath = FdoCache.CreateNewLangProj(progress,
+			string projectPath = LcmCache.CreateNewLangProj(progress,
 				Directory.GetParent(Path.GetDirectoryName(liftPathname)).Parent.Name, // Get the new Flex project name from the Lift pathname.
-				FwDirectoryFinder.FdoDirectories, synchronizeInvoke, wsAnalysis, wsVern, null, null, null, anthroFile);
+				FwDirectoryFinder.LcmDirectories, synchronizeInvoke, wsAnalysis, wsVern, null, null, null, anthroFile);
 
 			// This is a temporary cache, just to do the import, and AFAIK we have no access to the current
 			// user WS. So create it as "English". Put it in the array to return to the caller.
-			cacheReceiver[0] = FdoCache.CreateCacheFromLocalProjectFile(projectPath, "en", new SilentFdoUI(synchronizeInvoke), FwDirectoryFinder.FdoDirectories, new FdoSettings(), progress);
+			cacheReceiver[0] = LcmCache.CreateCacheFromLocalProjectFile(projectPath, "en", new SilentLcmUI(synchronizeInvoke),
+				FwDirectoryFinder.LcmDirectories, new LcmSettings(), progress);
 			return projectPath;
 		}
 

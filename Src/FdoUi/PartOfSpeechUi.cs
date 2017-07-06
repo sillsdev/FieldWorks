@@ -5,7 +5,7 @@
 using System.Diagnostics;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.LexText.Controls;
 
 namespace SIL.FieldWorks.FdoUi
@@ -43,7 +43,7 @@ namespace SIL.FieldWorks.FdoUi
 			PartOfSpeechUi posUi = null;
 			using (MasterCategoryListDlg dlg = new MasterCategoryListDlg())
 			{
-				FdoCache cache = propertyTable.GetValue<FdoCache>("cache");
+				LcmCache cache = propertyTable.GetValue<LcmCache>("cache");
 				Debug.Assert(cache != null);
 				var newOwner = cache.ServiceLocator.GetInstance<IPartOfSpeechRepository>().GetObject(hvoOwner);
 				dlg.SetDlginfo(newOwner.OwningList, propertyTable, true, newOwner);

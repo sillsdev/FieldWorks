@@ -1,18 +1,12 @@
 // Copyright (c) 2003-2013 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: PhoneEnvReferenceSlice.cs
-// Responsibility: RandyR
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
+
 using System;
 using System.Diagnostics;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.Xml;
@@ -26,7 +20,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 	{
 		private int m_dxLastWidth; // width last time OnSizeChanged was called.
 
-		public PhoneEnvReferenceSlice(FdoCache cache, ICmObject obj, int flid)
+		public PhoneEnvReferenceSlice(LcmCache cache, ICmObject obj, int flid)
 			: base(new PhoneEnvReferenceLauncher(), cache, obj, flid)
 		{
 			Debug.Assert(obj is IMoAffixAllomorph || obj is IMoStemAllomorph);

@@ -10,9 +10,9 @@
 
 using System;
 using System.Collections.Generic;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
-using HvoFlidKey=SIL.FieldWorks.FDO.HvoFlidKey;
+using SIL.LCModel;
+using SIL.LCModel.Application;
+using HvoFlidKey=SIL.LCModel.HvoFlidKey;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
@@ -29,7 +29,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private readonly IDictionary<HvoFlidKey, int> m_guessCache = new Dictionary<HvoFlidKey, int>();
 		private readonly IDictionary<HvoFlidKey, int> m_humanApproved = new Dictionary<HvoFlidKey, int>();
 
-		public InterlinViewDataCache(FdoCache cache) : base(cache.DomainDataByFlid as ISilDataAccessManaged)
+		public InterlinViewDataCache(LcmCache cache) : base(cache.DomainDataByFlid as ISilDataAccessManaged)
 		{
 		}
 

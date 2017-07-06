@@ -5,7 +5,7 @@
 using System.Windows.Forms;
 using System.Linq;
 using SIL.FieldWorks.Common.Framework.DetailControls;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.LexText.Controls;
 
 namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit

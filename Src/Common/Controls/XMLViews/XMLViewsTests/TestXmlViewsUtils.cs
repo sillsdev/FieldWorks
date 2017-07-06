@@ -8,11 +8,10 @@ using System.Xml.Linq;
 using System.Xml.XPath;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.FDOTests;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.Filters;
-using SIL.CoreImpl.Text;
+using SIL.LCModel.Core.Text;
 using SIL.Xml;
 
 namespace XMLViewsTests

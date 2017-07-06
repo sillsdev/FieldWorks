@@ -9,10 +9,12 @@ using System.Drawing;
 using System.Globalization;
 using System.Media;
 using System.Runtime.InteropServices;
-#if __MonoCS__
 using System.Collections.Generic;
-#endif
-using SIL.CoreImpl.WritingSystems;
+using System.Xml;
+using System.Xml.Linq;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Utils;
+using SIL.Xml;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
@@ -51,7 +53,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 				handle.Replace('/', ':').Replace('\\', ':');
 		}
 
-#if __MonoCS__
 		// On Linux, the default string output does not choose a font based on the characters in
 		// the string, but on the current user interface locale.  At times, we want to display,
 		// for example, Korean when the user interface locale is English.  By default, this
@@ -104,7 +105,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <returns>Name of the font, or <c>null</c> if not found.</returns>
 		public static string GetFontNameForLanguage(string lang)
 		{
-			string fontName = null;
+			if (MiscUtils.IsWindows)
+				throw new PlatformNotSupportedException();
+
+			string fontName;
 			if (m_mapLangToFont.TryGetValue(lang, out fontName))
 				return fontName;
 			IntPtr pattern = FcPatternCreate();
@@ -140,7 +144,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 			FcPatternDestroy(fullPattern);
 			return fontName;
 		}
-#endif
 
 		/// <summary>
 		/// Return true if the application is in the process of shutting down after a crash.
@@ -328,6 +331,17 @@ namespace SIL.FieldWorks.Common.FwUtils
 		}
 
 		/// <summary>
+		/// WritingSystemServices.GetWritingSystem got divested without knowing about XElement,
+		/// so support such a conversion here, until it does.
+		/// </summary>
+		public static XmlNode ConvertElement(XElement element)
+		{
+			var doc = new XmlDocument();
+			doc.LoadXml(element.GetOuterXml());
+			return doc.FirstChild;
+		}
+
+		/// <summary>
 		/// Unit tests can set this to true to suppress error beeps
 		/// </summary>
 		public static bool SuppressErrorBeep { get; set; }
@@ -385,7 +399,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 			public int Attributes;
 		}
 
-#if !__MonoCS__
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// The OpenProcessToken function opens the access token associated with a process.
@@ -470,11 +483,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 		private static extern bool ConvertSidToStringSid(
 			IntPtr sid,
 			[MarshalAs(UnmanagedType.LPTStr)] out string stringSid);
-#endif
+
 		#endregion
 
 		#region Helper methods
-#if !__MonoCS__
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the user SID for the given process token.
@@ -512,7 +525,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 				Marshal.FreeHGlobal(buffer);
 			}
 		}
-#endif
+
 		#endregion
 
 		/// ------------------------------------------------------------------------------------
@@ -526,21 +539,22 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			try
 			{
-#if !__MonoCS__
-				IntPtr procToken;
-				string sidString = null;
-				if (OpenProcessToken(process.Handle, TOKEN_QUERY, out procToken))
+				if (MiscUtils.IsDotNet)
 				{
-					IntPtr sid = GetSidForProcessToken(procToken);
-					if (sid != IntPtr.Zero)
-						ConvertSidToStringSid(sid, out sidString);
+					IntPtr procToken;
+					string sidString = null;
+					if (OpenProcessToken(process.Handle, TOKEN_QUERY, out procToken))
+					{
+						IntPtr sid = GetSidForProcessToken(procToken);
+						if (sid != IntPtr.Zero)
+							ConvertSidToStringSid(sid, out sidString);
 
-					CloseHandle(procToken);
+						CloseHandle(procToken);
+					}
+					return sidString;
 				}
-				return sidString;
-#else
+
 				return process.StartInfo.UserName;
-#endif
 			}
 			catch (Exception ex)
 			{

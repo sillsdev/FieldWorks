@@ -8,19 +8,18 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using NUnit.Framework;
-using SIL.CoreImpl.Cellar;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.WritingSystems;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.FDOTests;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.Utils;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
+using SIL.LCModel.Utils;
 
 // ReSharper disable InconsistentNaming
 
@@ -731,7 +730,7 @@ namespace SIL.FieldWorks.XWorks
 			using (var mockWindow = new MockWindowSetup(Cache))
 			{
 				var projectPath = string.Concat(Path.Combine(Path.Combine(
-					FdoFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder), "Test"), "test"), DictionaryConfigurationModel.FileExtension);
+					LcmFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder), "Test"), "test"), DictionaryConfigurationModel.FileExtension);
 				//SUT
 				var controller = new DictionaryConfigurationController { _propertyTable = mockWindow.PropertyTable };
 				var result = controller.GetProjectConfigLocationForPath(projectPath);
@@ -748,9 +747,9 @@ namespace SIL.FieldWorks.XWorks
 			{
 				//SUT
 				var controller = new DictionaryConfigurationController { _propertyTable = mockWindow.PropertyTable };
-				Assert.IsFalse(defaultPath.StartsWith(FdoFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder)));
+				Assert.IsFalse(defaultPath.StartsWith(LcmFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder)));
 				var result = controller.GetProjectConfigLocationForPath(defaultPath);
-				Assert.IsTrue(result.StartsWith(FdoFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder)));
+				Assert.IsTrue(result.StartsWith(LcmFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder)));
 				Assert.IsTrue(result.EndsWith(string.Concat(Path.Combine("Test", "test"), DictionaryConfigurationModel.FileExtension)));
 			}
 		}
@@ -891,7 +890,7 @@ namespace SIL.FieldWorks.XWorks
 
 			public IPropertyTable PropertyTable { get; set; }
 
-			public MockWindowSetup(FdoCache cache)
+			public MockWindowSetup(LcmCache cache)
 			{
 				var manager = new MockFwManager { Cache = cache };
 				FwRegistrySettings.Init(); // Sets up fake static registry values for the MockFwXApp to use
@@ -1410,8 +1409,8 @@ namespace SIL.FieldWorks.XWorks
 
 				// SUT
 				controller.SaveModel();
-				var savedPath = mockWindow.PropertyTable.GetValue<string>("DictionaryPublicationLayout");
-				var projectConfigsPath = FdoFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder);
+				var savedPath = mockWindow.PropertyTable.GetStringProperty("DictionaryPublicationLayout", null);
+				var projectConfigsPath = LcmFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder);
 				Assert.AreEqual(controller._model.FilePath, savedPath, "Should have saved the path to the selected Configuration Model");
 				StringAssert.StartsWith(projectConfigsPath, savedPath, "Path should be in the project's folder");
 				StringAssert.EndsWith("SomeConfigurationFileName", savedPath, "Incorrect configuration saved");
@@ -1448,7 +1447,7 @@ namespace SIL.FieldWorks.XWorks
 			public void Redraw()
 			{ }
 
-			public void HighlightContent(ConfigurableDictionaryNode configNode, FdoCache cache)
+			public void HighlightContent(ConfigurableDictionaryNode configNode, LcmCache cache)
 			{ }
 
 			public void SetChoices(IEnumerable<DictionaryConfigurationModel> choices)
@@ -1559,7 +1558,7 @@ namespace SIL.FieldWorks.XWorks
 			riRepo.FindOrCreateIndexForWs(aWs);
 		}
 
-		private void CreateALexEntry(FdoCache cache)
+		private void CreateALexEntry(LcmCache cache)
 		{
 			var factory = cache.ServiceLocator.GetInstance<ILexEntryFactory>();
 			var entry = factory.Create();

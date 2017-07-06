@@ -8,8 +8,7 @@ using System.Xml;
 using NUnit.Framework;
 using SIL.IO;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.FDOTests;
+using SIL.LCModel;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -42,7 +41,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var configObjectName = "Dictionary";
 			var projectDictionaryConfigs =
-				Path.Combine(FdoFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder),
+				Path.Combine(LcmFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder),
 					"Dictionary");
 			Directory.CreateDirectory(projectDictionaryConfigs);
 			using (var tempConfigFile = TempFile.WithFilename(Path.Combine(projectDictionaryConfigs, "NotAShippingConfig" + DictionaryConfigurationModel.FileExtension)))
@@ -65,7 +64,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var configObjectName = "Dictionary";
 			var projectDictionaryConfigs =
-				Path.Combine(FdoFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder),
+				Path.Combine(LcmFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder),
 					"Dictionary");
 			Directory.CreateDirectory(projectDictionaryConfigs);
 			using (var tempConfigFile = TempFile.WithFilename(Path.Combine(projectDictionaryConfigs, "Override" + DictionaryConfigurationModel.FileExtension)))

@@ -10,11 +10,11 @@
 // </remarks>
 // --------------------------------------------------------------------------------------------
 using System.Diagnostics;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.CoreImpl.Scripture;
-using SIL.CoreImpl.Text;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Core.Scripture;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
 
 namespace SIL.FieldWorks.TE
 {
@@ -41,7 +41,7 @@ namespace SIL.FieldWorks.TE
 		#region Member Variables
 		/// <summary>reference to the TE stylesheet</summary>
 		/// <remarks>This shouldn't be static because it's different between databases</remarks>
-		private FwStyleSheet m_FwStyleSheet;
+		private LcmStyleSheet m_LcmStyleSheet;
 		/// <summary>
 		/// style proxy name (real or potential style name)</summary>
 		protected string m_sStyleName;
@@ -115,7 +115,7 @@ namespace SIL.FieldWorks.TE
 		/// <param name="styleSheet">The style sheet</param>
 		/// ------------------------------------------------------------------------------------
 		public ImportStyleProxy(string sStyleName, StyleType styleType, int ws,
-			FwStyleSheet styleSheet) :
+			LcmStyleSheet styleSheet) :
 			this (sStyleName, styleType, ws, ContextValues.Text, MarkerDomain.Default, styleSheet)
 		{
 		}
@@ -132,7 +132,7 @@ namespace SIL.FieldWorks.TE
 		/// <param name="styleSheet">The style sheet</param>
 		/// ------------------------------------------------------------------------------------
 		public ImportStyleProxy(string sStyleName, StyleType styleType, int ws,
-			ContextValues context, FwStyleSheet styleSheet)
+			ContextValues context, LcmStyleSheet styleSheet)
 			: this(sStyleName, styleType, ws, context, MarkerDomain.Default, styleSheet)
 		{
 		}
@@ -145,7 +145,7 @@ namespace SIL.FieldWorks.TE
 		/// <param name="ws">character or paragraph writing system</param>
 		/// <param name="styleSheet">The style sheet</param>
 		/// ------------------------------------------------------------------------------------
-		public ImportStyleProxy(ImportMappingInfo mapping, int ws, FwStyleSheet styleSheet) :
+		public ImportStyleProxy(ImportMappingInfo mapping, int ws, LcmStyleSheet styleSheet) :
 			this(mapping.StyleName,	mapping.IsInline ? StyleType.kstCharacter : StyleType.kstParagraph,
 				ws, ContextValues.General, mapping.Domain, styleSheet)
 		{
@@ -167,11 +167,11 @@ namespace SIL.FieldWorks.TE
 		/// <param name="styleSheet">The style sheet</param>
 		/// ------------------------------------------------------------------------------------
 		public ImportStyleProxy(string sStyleName, StyleType styleType, int ws,
-			ContextValues context, MarkerDomain domain, FwStyleSheet styleSheet)
+			ContextValues context, MarkerDomain domain, LcmStyleSheet styleSheet)
 		{
-			m_FwStyleSheet = styleSheet;
+			m_LcmStyleSheet = styleSheet;
 			m_domain = domain;
-			Debug.Assert(m_FwStyleSheet != null);
+			Debug.Assert(m_LcmStyleSheet != null);
 
 			m_ttpFormattingProps = null;
 			m_fIsScriptureStyle = true; //default
@@ -186,7 +186,7 @@ namespace SIL.FieldWorks.TE
 			{
 				// Determine whether style exists in the StyleSheet
 				Debug.Assert(ws != 0);
-				m_style = m_FwStyleSheet.FindStyle(sStyleName);
+				m_style = m_LcmStyleSheet.FindStyle(sStyleName);
 				if (m_style != null)
 				{
 					// If this is an existing style, the actual type, context, structure, and
@@ -435,18 +435,18 @@ namespace SIL.FieldWorks.TE
 			}
 
 			// Get an hvo for the new style
-			int hvoStyle = m_FwStyleSheet.MakeNewStyle();
-			m_style = m_FwStyleSheet.Cache.ServiceLocator.GetInstance<IStStyleRepository>().GetObject(hvoStyle);
+			int hvoStyle = m_LcmStyleSheet.MakeNewStyle();
+			m_style = m_LcmStyleSheet.Cache.ServiceLocator.GetInstance<IStStyleRepository>().GetObject(hvoStyle);
 
 			// PutStyle() adds the style to the stylesheet. we'll give it the properties we
 			// are aware of.
-			m_FwStyleSheet.PutStyle(m_sStyleName, string.Empty, hvoStyle, 0,
+			m_LcmStyleSheet.PutStyle(m_sStyleName, string.Empty, hvoStyle, 0,
 				m_StyleType == StyleType.kstParagraph ? hvoStyle : 0, (int)m_StyleType, false, false, m_ttpFormattingProps);
 
 			// base the new style on "Paragraph"
 			if (m_StyleType == StyleType.kstParagraph)
 			{
-				m_style.BasedOnRA = m_FwStyleSheet.FindStyle(ScrStyleNames.NormalParagraph);
+				m_style.BasedOnRA = m_LcmStyleSheet.FindStyle(ScrStyleNames.NormalParagraph);
 				m_style.Context = m_style.BasedOnRA.Context;
 				m_style.Structure = m_style.BasedOnRA.Structure;
 				m_style.Function = m_style.BasedOnRA.Function;

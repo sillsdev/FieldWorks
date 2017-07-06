@@ -3,7 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Xml.Serialization;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.PaToFdoInterfaces;
 
 namespace SIL.FieldWorks.PaObjects

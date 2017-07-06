@@ -9,17 +9,16 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
-using SIL.CoreImpl.Cellar;
-using SIL.CoreImpl.Text;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Application;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Utils;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Reporting;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.Widgets
 {
@@ -1661,7 +1660,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		const int khvoRoot = 7003; // likewise.
 		internal const string LineBreak = "\u2028";
 
-		// Neither of these caches are used by FdoCache.
+		// Neither of these caches are used by LcmCache.
 		// They are only used here.
 		internal ISilDataAccess m_DataAccess; // Another interface on m_CacheDa.
 		TextBoxVc m_vc;

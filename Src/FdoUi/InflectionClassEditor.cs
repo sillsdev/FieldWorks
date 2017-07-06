@@ -8,14 +8,13 @@ using System.Windows.Forms;
 using System.Linq;
 using System.Xml.Linq;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.LexText.Controls;
-using SIL.Utils;
-using SIL.CoreImpl.Text;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.Xml;
 
 namespace SIL.FieldWorks.FdoUi
@@ -33,7 +32,7 @@ namespace SIL.FieldWorks.FdoUi
 	public class InflectionClassEditor : IBulkEditSpecControl, IDisposable
 	{
 		TreeCombo m_tree;
-		FdoCache m_cache;
+		LcmCache m_cache;
 		private IPublisher m_publisher;
 		protected XMLViewsDataCache m_sda;
 		InflectionClassPopupTreeManager m_InflectionClassTreeManager;
@@ -176,7 +175,7 @@ namespace SIL.FieldWorks.FdoUi
 		/// <summary>
 		/// Get or set the cache. Must be set before the tree values need to load.
 		/// </summary>
-		public FdoCache Cache
+		public LcmCache Cache
 		{
 			get
 			{
@@ -549,7 +548,7 @@ namespace SIL.FieldWorks.FdoUi
 		/// Default constructor for persistence.
 		/// </summary>
 		public InflectionClassFilter() { }
-		public InflectionClassFilter(FdoCache cache, ListMatchOptions mode, int[] targets, XElement colSpec)
+		public InflectionClassFilter(LcmCache cache, ListMatchOptions mode, int[] targets, XElement colSpec)
 			: base(cache, mode, targets, colSpec)
 		{
 		}
@@ -571,7 +570,7 @@ namespace SIL.FieldWorks.FdoUi
 		/// Critical TODO JohnT: this isn't right; need to get the simple list chooser populated with the
 		/// items we put in the chooser; but how??
 		/// </summary>
-		static public int List(FdoCache cache)
+		static public int List(LcmCache cache)
 		{
 			return cache.LanguageProject.PartsOfSpeechOA.Hvo;
 		}

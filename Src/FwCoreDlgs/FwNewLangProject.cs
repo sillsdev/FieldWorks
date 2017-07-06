@@ -9,16 +9,15 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using SIL.CoreImpl.WritingSystems;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.Drawing;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.Resources;
 using SIL.Reporting;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
@@ -529,7 +528,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					{
 						case DialogResult.OK:
 							m_fCreateNew = false;
-							m_dbFile = Path.Combine(FwDirectoryFinder.FdoDirectories.ProjectsDirectory, ProjectName + FdoFileHelper.ksFwDataXmlFileExtension);
+							m_dbFile = Path.Combine(FwDirectoryFinder.ProjectsDirectory,
+								ProjectName + LcmFileHelper.ksFwDataXmlFileExtension);
 							break;
 						case DialogResult.Cancel:
 							Enabled = true;
@@ -661,8 +661,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 						using (var threadHelper = new ThreadHelper())
 						{
 
-							m_dbFile = (string)progressDlg.RunTask(DisplayUi, FdoCache.CreateNewLangProj,
-																	ProjectName, FwDirectoryFinder.FdoDirectories, threadHelper, m_cbAnalWrtSys.SelectedItem,
+							m_dbFile = (string)progressDlg.RunTask(DisplayUi, LcmCache.CreateNewLangProj,
+																	ProjectName, FwDirectoryFinder.LcmDirectories, threadHelper, m_cbAnalWrtSys.SelectedItem,
 																	m_cbVernWrtSys.SelectedItem,
 																	m_wsManager.UserWritingSystem.Id,
 																	m_newAnalysisWss, m_newVernWss, anthroFile, m_useMemoryWSManager);
@@ -703,7 +703,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					m_fIgnoreClose = true;
 					DialogResult = DialogResult.Cancel;
 				}
-				else if (e is FdoInitializationException)
+				else if (e is LcmInitializationException)
 				{
 					MessageBox.Show(string.Format(FwCoreDlgs.kstidErrorNewDb, e.Message),
 						FwUtils.ksSuiteName);

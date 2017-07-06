@@ -7,7 +7,7 @@ using System.Collections;
 using System.Linq;
 using System.Xml.Linq;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.Xml;
 
 namespace SIL.FieldWorks.Filters
@@ -19,7 +19,7 @@ namespace SIL.FieldWorks.Filters
 	{
 		//protected IWfiWordSet m_wordSet;
 		//protected FdoReferenceCollection m_cases;
-		//protected FdoCache m_cache;
+		//protected LcmCache m_cache;
 		/// <summary></summary>
 		protected int[] m_hvos;
 
@@ -49,7 +49,7 @@ namespace SIL.FieldWorks.Filters
 		/// the ids are valid.
 		/// </summary>
 		/// <param name="cache"></param>
-		internal void ReloadWordSet(FdoCache cache)
+		internal void ReloadWordSet(LcmCache cache)
 		{
 			int hvo = Int32.Parse(m_id);
 			IWfiWordSet wordSet = cache.ServiceLocator.GetObject(hvo) as IWfiWordSet;
@@ -105,7 +105,7 @@ namespace SIL.FieldWorks.Filters
 		///// </summary>
 		///// <param name="cache"></param>
 		///// <param name="configuration"></param>
-//		public override void Init(FdoCache cache,XmlNode filterNode)
+//		public override void Init(LcmCache cache,XmlNode filterNode)
 //		{
 ////			m_cache = cache;
 ////			int hvo = m_cache.LangProject.MorphologicalDataOA.TestSetsOC.HvoArray[0];
@@ -160,7 +160,7 @@ namespace SIL.FieldWorks.Filters
 	public  class WfiRecordFilterListProvider : RecordFilterListProvider
 	{
 		/// <summary></summary>
-		protected FdoCache m_cache;
+		protected LcmCache m_cache;
 		// Collection of WordSetFilter objects.
 		/// <summary></summary>
 		protected ArrayList m_filters;
@@ -188,7 +188,7 @@ namespace SIL.FieldWorks.Filters
 		{
 			base.InitializeFlexComponent(flexComponentParameters);
 
-			m_cache = PropertyTable.GetValue<FdoCache>("cache");
+			m_cache = PropertyTable.GetValue<LcmCache>("cache");
 			ReLoad();
 		}
 

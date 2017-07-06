@@ -8,9 +8,9 @@ using System.Linq;
 using System.Windows.Forms;
 using LanguageExplorer.UtilityTools;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Application;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.XWorks;
 
 namespace LanguageExplorer.Areas.Lexicon
@@ -54,7 +54,7 @@ namespace LanguageExplorer.Areas.Lexicon
 		/// </summary>
 		public void Process()
 		{
-			var cache = m_dlg.PropertyTable.GetValue<FdoCache>("cache");
+			var cache = m_dlg.PropertyTable.GetValue<LcmCache>("cache");
 			NonUndoableUnitOfWorkHelper.Do(cache.ActionHandlerAccessor, () =>
 				{
 					DeleteUnusedEntriesAndSenses(cache, m_dlg.ProgressBar);
@@ -71,7 +71,7 @@ namespace LanguageExplorer.Areas.Lexicon
 			return Label;
 		}
 
-		private void DeleteUnusedEntriesAndSenses(FdoCache cache, ProgressBar progressBar)
+		private void DeleteUnusedEntriesAndSenses(LcmCache cache, ProgressBar progressBar)
 		{
 			ConcDecorator cd = new ConcDecorator(cache.DomainDataByFlid as ISilDataAccessManaged, cache.ServiceLocator);
 			cd.InitializeFlexComponent(new FlexComponentParameters(m_dlg.PropertyTable, m_dlg.Publisher, m_dlg.Subscriber));

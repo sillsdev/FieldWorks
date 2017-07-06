@@ -8,10 +8,10 @@
 
 using System;
 using NUnit.Framework;
-using SIL.FieldWorks.FDO.FDOTests;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 using System.Collections.Generic;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {

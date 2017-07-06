@@ -1,18 +1,14 @@
-// ---------------------------------------------------------------------------------------------
 // Copyright (c) 2011-2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: LexicalProviderManager.cs
-// Responsibility: FW Team
-// ---------------------------------------------------------------------------------------------
+
 using System;
 using System.Collections.Generic;
 using System.ServiceModel;
 using System.Threading;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.Reporting;
 using Timer = System.Threading.Timer;
 
@@ -63,7 +59,7 @@ namespace SIL.FieldWorks.LexicalProvider
 		/// Creates a LexicalServiceProvider listener for the specified project.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		internal static void StartLexicalServiceProvider(ProjectId projectId, FdoCache cache)
+		internal static void StartLexicalServiceProvider(ProjectId projectId, LcmCache cache)
 		{
 			if (projectId == null)
 				throw new InvalidOperationException("Project identity must be known before creating the lexical provider listener");

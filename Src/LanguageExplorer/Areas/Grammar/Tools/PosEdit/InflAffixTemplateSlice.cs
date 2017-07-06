@@ -3,7 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.Common.FwUtils;
 
@@ -118,7 +118,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 					xa.Value = xa.Value.Substring(0, xa.Value.Length - 3);
 				// both vern and anal are LTR (unmarked case)
 			}
-			var ctrl = new InflAffixTemplateControl(PropertyTable.GetValue<FdoCache>("cache"),
+			var ctrl = new InflAffixTemplateControl(PropertyTable.GetValue<LcmCache>("cache"),
 				Object.Hvo, ConfigurationNode);
 			ctrl.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 			Control = ctrl;

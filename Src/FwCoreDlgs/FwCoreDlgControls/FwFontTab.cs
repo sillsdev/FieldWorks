@@ -9,11 +9,11 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
-using SIL.CoreImpl.WritingSystems;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.Resources;
 
 namespace SIL.FieldWorks.FwCoreDlgControls
@@ -234,7 +234,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		/// Fills the font info controls
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public void FillFontInfo(FdoCache cache)
+		public void FillFontInfo(LcmCache cache)
 		{
 			CheckDisposed();
 

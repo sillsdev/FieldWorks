@@ -9,16 +9,13 @@
 // <remarks>Implementation of strongly-typed collection InformationBarButtonCollection</remarks>
 // ------------------------------------------------------------------------------
 //
+
+using System;
+using System.Collections;
+using System.ComponentModel;
+
 namespace SIL.FieldWorks.Common.Controls
 {
-	using System;
-	using System.Collections;
-	using System.ComponentModel;
-	using System.ComponentModel.Design;
-	using System.Drawing.Design;
-	using System.Windows.Forms;
-
-
 	/// <summary>
 	///     <para>
 	///       A collection that stores <see cref='T:SIL.FieldWorks.Common.Controls.InformationBarButton'/> objects.

@@ -9,17 +9,17 @@ using System.Windows.Forms;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.Resources;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 using WaitCursor = SIL.FieldWorks.Common.FwUtils.WaitCursor;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
 	public partial class InterlinearImportDlg : Form, IFwExtension
 	{
-		private FdoCache m_cache;
+		private LcmCache m_cache;
 		private IPublisher m_publisher;
 		private readonly StringBuilder m_messages = new StringBuilder();
 
@@ -114,7 +114,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		#region IFwExtension Members
 
-		public void Init(FdoCache cache, IPropertyTable propertyTable, IPublisher publisher)
+		public void Init(LcmCache cache, IPropertyTable propertyTable, IPublisher publisher)
 		{
 			m_cache = cache;
 			m_publisher = publisher;

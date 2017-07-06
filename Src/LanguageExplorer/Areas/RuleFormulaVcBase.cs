@@ -4,12 +4,12 @@
 
 using System;
 using System.Collections.Generic;
-using SIL.CoreImpl.Text;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.LexText.Controls;
 
 namespace LanguageExplorer.Areas
@@ -50,7 +50,7 @@ namespace LanguageExplorer.Areas
 		protected ITsString m_infinity;
 		protected ITsString m_x;
 
-		protected RuleFormulaVcBase(FdoCache cache, IPropertyTable propertyTable)
+		protected RuleFormulaVcBase(LcmCache cache, IPropertyTable propertyTable)
 			: base(cache, propertyTable)
 		{
 			int userWs = m_cache.DefaultUserWs;
@@ -651,7 +651,7 @@ namespace LanguageExplorer.Areas
 
 		int GetVariablesWidth(IPhSimpleContextNC ctxt, IVwEnv vwenv, bool polarity)
 		{
-			IFdoReferenceSequence<IPhFeatureConstraint> vars = polarity ? ctxt.PlusConstrRS : ctxt.MinusConstrRS;
+			ILcmReferenceSequence<IPhFeatureConstraint> vars = polarity ? ctxt.PlusConstrRS : ctxt.MinusConstrRS;
 			int maxLen = 0;
 			foreach (IPhFeatureConstraint var in vars)
 			{

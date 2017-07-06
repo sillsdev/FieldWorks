@@ -7,11 +7,11 @@ using System.Text;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using System.Xml.Xsl;
-using SIL.CoreImpl.WritingSystems;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.WordWorks.Parser;
 
 namespace LanguageExplorer.Areas.TextsAndWords
@@ -32,7 +32,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 		public string Transform(IPropertyTable propertyTable, XDocument doc, string baseName, XsltArgumentList args)
 		{
-			var cache = propertyTable.GetValue<FdoCache>("cache");
+			var cache = propertyTable.GetValue<LcmCache>("cache");
 			SetWritingSystemBasedArguments(cache, propertyTable, args);
 			args.AddParam("prmIconPath", "", IconPath);
 			string filePath = Path.Combine(Path.GetTempPath(), cache.ProjectId.Name + baseName + ".htm");
@@ -41,7 +41,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			return filePath;
 		}
 
-		private void SetWritingSystemBasedArguments(FdoCache cache, IPropertyTable propertyTable, XsltArgumentList argumentList)
+		private void SetWritingSystemBasedArguments(LcmCache cache, IPropertyTable propertyTable, XsltArgumentList argumentList)
 		{
 			ILgWritingSystemFactory wsf = cache.WritingSystemFactory;
 			IWritingSystemContainer wsContainer = cache.ServiceLocator.WritingSystems;

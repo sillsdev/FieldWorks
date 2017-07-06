@@ -11,24 +11,24 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Serialization;
 using Sfm2Xml;
-using SIL.CoreImpl.WritingSystems;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
 	public partial class InterlinearSfmImportWizard : WizardDialog, IFwExtension
 	{
 //		private const string kSfmImportSettingsRegistryKeyName = "SFM import settings";
-		protected FdoCache m_cache;
+		protected LcmCache m_cache;
 		private IPropertyTable m_propertyTable;
 		private IPublisher m_publisher;
 		private IHelpTopicProvider m_helpTopicProvider;
@@ -53,7 +53,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			Text = String.Format(Text, ITextStrings.ksInterlinearTexts);
 		}
 
-		public void Init(FdoCache cache, IPropertyTable propertyTable, IPublisher publisher)
+		public void Init(LcmCache cache, IPropertyTable propertyTable, IPublisher publisher)
 		{
 			m_cache = cache;
 			m_propertyTable = propertyTable;
@@ -594,7 +594,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					clerk.JumpToRecord(m_firstNewText.ContentsOA.Hvo);
 			}
 		}
-		SIL.FieldWorks.FDO.IText m_firstNewText;
+		IText m_firstNewText;
 		private List<InterlinearMapping> m_oldMappings;
 
 		/// <summary>

@@ -11,7 +11,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using SIL.CoreImpl.Scripture;
+using SIL.LCModel.Core.Scripture;
 using System.Collections;
 
 namespace SIL.FieldWorks.Common.ScriptureUtils

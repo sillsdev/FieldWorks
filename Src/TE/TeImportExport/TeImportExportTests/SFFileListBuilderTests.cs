@@ -9,12 +9,11 @@ using System.Windows.Forms;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.FDOTests;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.CoreImpl.Scripture;
-using SIL.CoreImpl.WritingSystems;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
+using SIL.LCModel.Core.Scripture;
+using SIL.LCModel.Core.WritingSystems;
 
 namespace SIL.FieldWorks.TE
 {
@@ -282,7 +281,7 @@ namespace SIL.FieldWorks.TE
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
-	public class SFFileListBuilderTests : ScrInMemoryFdoTestBase
+	public class SFFileListBuilderTests : ScrInMemoryLcmTestBase
 	{
 		#region data members
 		private DummySFFileListBuilder m_builder;

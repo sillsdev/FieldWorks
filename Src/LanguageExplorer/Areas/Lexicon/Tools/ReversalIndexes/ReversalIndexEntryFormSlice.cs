@@ -5,8 +5,8 @@
 using System.Xml.Linq;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 {
@@ -21,7 +21,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 #pragma warning restore 0414
 
 		/// <summary />
-		public ReversalIndexEntryFormSlice(FdoCache cache, string editor, int flid, XElement node,
+		public ReversalIndexEntryFormSlice(LcmCache cache, string editor, int flid, XElement node,
 			ICmObject obj, IPersistenceProvider persistenceProvider, int ws)
 			: base(obj, flid, WritingSystemServices.kwsAllReversalIndex, 0, false, true, true)
 		{

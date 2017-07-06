@@ -8,8 +8,8 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Diagnostics;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 {
@@ -22,7 +22,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		private AdvancedMTDialogLogic m_AMTDLogic;
 		private HelpProvider helpProvider;
 
-		internal AdvancedMTDialog(FdoCache cache, bool fPrepose, CChartSentenceElements ccSentElem, IHelpTopicProvider helpTopicProvidor)
+		internal AdvancedMTDialog(LcmCache cache, bool fPrepose, CChartSentenceElements ccSentElem, IHelpTopicProvider helpTopicProvidor)
 		{
 			InitializeComponent();
 
@@ -181,11 +181,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 	{
 		private readonly CChartSentenceElements m_ccSentElem;
 		private readonly DialogInterlinRibbon m_ribbon;
-		private readonly FdoCache m_cache;
+		private readonly LcmCache m_cache;
 		private readonly bool m_fPrepose;
 		private IConstChartWordGroup m_wordGroup;
 
-		public AdvancedMTDialogLogic(FdoCache cache, bool fPrepose, CChartSentenceElements ccSentElem)
+		public AdvancedMTDialogLogic(LcmCache cache, bool fPrepose, CChartSentenceElements ccSentElem)
 		{
 			m_cache = cache;
 			m_fPrepose = fPrepose;
@@ -236,7 +236,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// <summary>
 		/// Gets the FDO cache.
 		/// </summary>
-		public FdoCache Cache
+		public LcmCache Cache
 		{
 			get { return m_cache; }
 		}

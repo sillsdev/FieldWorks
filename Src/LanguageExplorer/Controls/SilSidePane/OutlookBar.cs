@@ -10,7 +10,6 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Windows.Forms;
-using SIL.CoreImpl.Properties;
 using SIL.FieldWorks.Common.FwUtils;
 
 namespace LanguageExplorer.Controls.SilSidePane
@@ -1027,9 +1026,9 @@ namespace LanguageExplorer.Controls.SilSidePane
 			{
 				switch (Renderer)
 				{
-					case Renderer.Outlook2003: return Resources.Grip2003;
-					case Renderer.Outlook2007: return Resources.Grip2007;
-					case Renderer.Custom: return Resources.Grip2007;
+					case Renderer.Outlook2003: return LanguageExplorerResources.Grip2003;
+					case Renderer.Outlook2007: return LanguageExplorerResources.Grip2007;
+					case Renderer.Custom: return LanguageExplorerResources.Grip2007;
 				}
 
 				return null;
@@ -1055,9 +1054,9 @@ namespace LanguageExplorer.Controls.SilSidePane
 			{
 				switch (Renderer)
 				{
-					case Renderer.Outlook2003: return Resources.DropDown2003;
-					case Renderer.Outlook2007: return Resources.DropDown2007;
-					case Renderer.Custom: return Resources.DropDown2007;
+					case Renderer.Outlook2003: return LanguageExplorerResources.DropDown2003;
+					case Renderer.Outlook2007: return LanguageExplorerResources.DropDown2007;
+					case Renderer.Custom: return LanguageExplorerResources.DropDown2007;
 				}
 
 				return null;
@@ -1072,10 +1071,10 @@ namespace LanguageExplorer.Controls.SilSidePane
 		{
 			var contextMenuStrip = components.ContextMenuStrip("contextMenu");
 			contextMenuStrip.Items.Add(SilSidePane.ShowMoreButtons,
-					Resources.Arrow_Up.ToBitmap(), ShowMoreButtons);
+				LanguageExplorerResources.Arrow_Up.ToBitmap(), ShowMoreButtons);
 
 			contextMenuStrip.Items.Add(SilSidePane.ShowFeWerButtons,
-					Resources.Arrow_Down.ToBitmap(), ShowFewerButtons);
+				LanguageExplorerResources.Arrow_Down.ToBitmap(), ShowFewerButtons);
 
 				if (m_maxLargeButtonCount >= Buttons.VisibleCount)
 				contextMenuStrip.Items[0].Enabled = false;

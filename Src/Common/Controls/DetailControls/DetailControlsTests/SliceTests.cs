@@ -1,15 +1,13 @@
 // Copyright (c) 2010-2013 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// Original author: MarkS 2010-08-03 SliceTests.cs
+
 using System.Collections;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.FDOTests;
+using SIL.LCModel;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
@@ -74,7 +72,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		}
 
 		/// <summary>Helper</summary>
-		private static Slice GenerateSlice(FdoCache cache, DataTree datatree)
+		private static Slice GenerateSlice(LcmCache cache, DataTree datatree)
 		{
 			var slice = new Slice();
 			var parts = DataTreeTests.GenerateParts();

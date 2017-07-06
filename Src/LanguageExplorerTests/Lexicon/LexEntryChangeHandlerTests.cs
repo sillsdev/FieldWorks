@@ -6,14 +6,38 @@ using System.Collections.Generic;
 using System.Linq;
 using LanguageExplorer.Areas.Lexicon;
 using NUnit.Framework;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.FDOTests;
+using SIL.LCModel;
+using SIL.WritingSystems;
 
 namespace LanguageExplorerTests.Lexicon
 {
 	[TestFixture]
 	public class LexEntryChangeHandlerTests : MemoryOnlyBackendProviderTestBase
 	{
+		private bool _didIInitSLDR;
+
+		[TestFixtureSetUp]
+		public override void FixtureSetup()
+		{
+			if (!Sldr.IsInitialized)
+			{
+				_didIInitSLDR = true;
+				Sldr.Initialize();
+			}
+
+			base.FixtureSetup();
+		}
+
+		public override void FixtureTeardown()
+		{
+			if (_didIInitSLDR && Sldr.IsInitialized)
+			{
+				_didIInitSLDR = false;
+				Sldr.Cleanup();
+			}
+			base.FixtureTeardown();
+		}
+
 		[Test]
 		public void FixupKeepDanglingLexEntryRefsWhenComplexEntryTypeExists()
 		{

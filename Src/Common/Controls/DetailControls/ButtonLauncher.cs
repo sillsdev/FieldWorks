@@ -5,10 +5,10 @@
 using System;
 using System.ComponentModel;
 using System.Windows.Forms;
-using System.Diagnostics;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
 using System.Xml.Linq;
+using System.Diagnostics;
+using SIL.LCModel;
+using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
 using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
@@ -23,7 +23,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		#region Data Members
 
-		protected FdoCache m_cache;
+		protected LcmCache m_cache;
 		protected ICmObject m_obj;
 		protected int m_flid;
 		protected string m_fieldName;
@@ -130,7 +130,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <param name="persistProvider"></param>
 		/// <param name="displayNameProperty"></param>
 		/// <param name="displayWs"></param>
-		public virtual void Initialize(FdoCache cache, ICmObject obj, int flid, string fieldName,
+		public virtual void Initialize(LcmCache cache, ICmObject obj, int flid, string fieldName,
 			IPersistenceProvider persistProvider, string displayNameProperty, string displayWs)
 		{
 			Debug.Assert(cache != null);

@@ -1,11 +1,10 @@
-// Copyright (c) 2005-2015 SIL International
+// Copyright (c) 2005-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Diagnostics;
 using System.Windows.Forms;
-using SIL.Utils;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.LexText.Controls;
 
 namespace LanguageExplorer.Dumpster
@@ -77,7 +76,7 @@ namespace LanguageExplorer.Dumpster
 
 			using (MasterInflectionFeatureListDlg dlg = new MasterInflectionFeatureListDlg(className))
 			{
-				FdoCache cache = PropertyTable.GetValue<FdoCache>("cache");
+				LcmCache cache = PropertyTable.GetValue<LcmCache>("cache");
 				Debug.Assert(cache != null);
 				dlg.SetDlginfo(cache.LangProject.MsFeatureSystemOA, PropertyTable, true);
 				switch (dlg.ShowDialog(PropertyTable.GetValue<Form>("window")))

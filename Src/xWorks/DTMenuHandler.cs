@@ -8,16 +8,16 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
-using SIL.CoreImpl.Cellar;
+using SIL.LCModel.Core.Cellar;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.Resources;
@@ -591,7 +591,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="parentObj">The object where the item would be inserted, if possible.</param>
 		/// <param name="index">index (0-based) where it will be inserted. -1 if atomic or returns false</param>
 		/// <returns>true if we can insert into the given object</returns>
-		protected bool CanInsertFieldIntoObj(FdoCache fdoCache, string fieldName, ICmObject parentObj, out int index)
+		protected bool CanInsertFieldIntoObj(LcmCache fdoCache, string fieldName, ICmObject parentObj, out int index)
 		{
 			index = -1; // atomic or not possible
 			if (fdoCache == null || parentObj == null || (!parentObj.IsValidObject) || String.IsNullOrEmpty(fieldName))
@@ -1063,7 +1063,7 @@ namespace SIL.FieldWorks.XWorks
 				display.Visible = false;
 				return true;
 			}
-			FdoCache cache = m_dataEntryForm.Cache;
+			LcmCache cache = m_dataEntryForm.Cache;
 			IFwMetaDataCache mdc = cache.DomainDataByFlid.MetaDataCache;
 			// FWR-2742 Handle a slice Object (like LexEntry) being unowned (and OwningFlid = 0)
 			var type = CellarPropertyType.ReferenceAtomic;
@@ -1446,7 +1446,7 @@ namespace SIL.FieldWorks.XWorks
 			return 0; // no selection found
 		}
 
-		protected FdoCache Cache
+		protected LcmCache Cache
 		{
 			get
 			{

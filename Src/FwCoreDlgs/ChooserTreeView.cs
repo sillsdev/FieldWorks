@@ -5,9 +5,9 @@
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using SIL.CoreImpl.Text;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
+using SIL.LCModel.Core.Text;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {

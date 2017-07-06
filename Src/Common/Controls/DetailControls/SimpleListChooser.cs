@@ -8,9 +8,9 @@ using System.Windows.Forms;
 using System.Xml.Linq;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.Xml;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
@@ -43,7 +43,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <param name="fieldName">the user-readable name of the field that is being edited</param>
 		/// <param name="nullLabel">The null label.</param>
 		/// ------------------------------------------------------------------------------------
-		public SimpleListChooser(FdoCache cache, IPersistenceProvider persistProvider,
+		public SimpleListChooser(LcmCache cache, IPersistenceProvider persistProvider,
 			IHelpTopicProvider helpTopicProvider, IEnumerable<ObjectLabel> labels,
 			ICmObject currentObj, string fieldName, string nullLabel)
 			: base(cache, helpTopicProvider, persistProvider, labels, currentObj, fieldName, nullLabel)
@@ -64,7 +64,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <param name="nullLabel">The null label.</param>
 		/// <param name="stylesheet">The stylesheet.</param>
 		/// ------------------------------------------------------------------------------------
-		public SimpleListChooser(FdoCache cache, IPersistenceProvider persistProvider,
+		public SimpleListChooser(LcmCache cache, IPersistenceProvider persistProvider,
 			IHelpTopicProvider helpTopicProvider, IEnumerable<ObjectLabel> labels,
 			ICmObject currentObj, string fieldName, string nullLabel, IVwStylesheet stylesheet)
 			: base(cache, helpTopicProvider, persistProvider, labels, currentObj, fieldName, nullLabel, stylesheet)
@@ -82,7 +82,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <param name="currentObj">use null if emtpy.</param>
 		/// <param name="fieldName">the user-readable name of the field that is being edited</param>
 		/// ------------------------------------------------------------------------------------
-		public SimpleListChooser(FdoCache cache, IPersistenceProvider persistProvider,
+		public SimpleListChooser(LcmCache cache, IPersistenceProvider persistProvider,
 			IHelpTopicProvider helpTopicProvider, IEnumerable<ObjectLabel> labels,
 			ICmObject currentObj, string fieldName)
 			: base(cache, helpTopicProvider, persistProvider, labels, currentObj, fieldName)
@@ -134,7 +134,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <param name="helpTopicProvider">The help topic provider.</param>
 		/// ------------------------------------------------------------------------------------
 		public SimpleListChooser(IPersistenceProvider persistProvider,
-			IEnumerable<ObjectLabel> labels, string fieldName, FdoCache cache,
+			IEnumerable<ObjectLabel> labels, string fieldName, LcmCache cache,
 			IEnumerable<ICmObject> chosenObjs, IHelpTopicProvider helpTopicProvider)
 			: base(persistProvider, labels, fieldName, cache, chosenObjs, helpTopicProvider)
 		{

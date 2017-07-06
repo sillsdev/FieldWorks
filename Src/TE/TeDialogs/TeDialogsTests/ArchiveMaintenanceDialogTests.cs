@@ -5,11 +5,10 @@
 using System.Windows.Forms;
 using System.Collections.Generic;
 using NUnit.Framework;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.FDOTests;
-using SIL.CoreImpl.Scripture;
-using SIL.CoreImpl.Text;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel;
+using SIL.LCModel.Core.Scripture;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
 
 namespace SIL.FieldWorks.TE
 {
@@ -22,7 +21,7 @@ namespace SIL.FieldWorks.TE
 	class DummySavedVersionsDialog : SavedVersionsDialog
 	{
 		/// <summary>constructor</summary>
-		public DummySavedVersionsDialog(FdoCache cache) : base(cache, null, 1.0f, 1.0f, null, null)
+		public DummySavedVersionsDialog(LcmCache cache) : base(cache, null, 1.0f, 1.0f, null, null)
 		{
 		}
 
@@ -77,7 +76,7 @@ namespace SIL.FieldWorks.TE
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
-	public class SavedVersionsDialogTests : ScrInMemoryFdoTestBase
+	public class SavedVersionsDialogTests : ScrInMemoryLcmTestBase
 	{
 		#region Member vars
 		// these book name match those in the ScrRefSystem in TestLangProj

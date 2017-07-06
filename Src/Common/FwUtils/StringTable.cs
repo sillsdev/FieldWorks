@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2017 SIL International
+// Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -8,7 +8,6 @@ using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 using System.Xml.XPath;
-using SIL.Utils;
 using SIL.Xml;
 
 namespace SIL.FieldWorks.Common.FwUtils
@@ -33,32 +32,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary>
 		/// Return the singleton StringTable instance.
 		/// </summary>
-		public static StringTable Table
-		{
-			get
-			{
-				if (s_singletonStringTable == null)
-				{
-					// Half my kingdom to be able to get at FwDirectoryFinder.FlexFolder from here!
-					var parentOfLanguageExplorerFolder = DirectoryUtils.DirectoryOfExecutingAssembly();
-					while (parentOfLanguageExplorerFolder.ToLowerInvariant().LastIndexOf("output") > -1)
-					{
-						// If a dev machine, move up to parent of 'output' folder.
-						parentOfLanguageExplorerFolder = Path.GetDirectoryName(parentOfLanguageExplorerFolder);
-					}
-					if (Directory.Exists(Path.Combine(parentOfLanguageExplorerFolder, "DistFiles")))
-					{
-						// If a dev machine, move down to "Distfiles" folder.
-						parentOfLanguageExplorerFolder = Path.Combine(parentOfLanguageExplorerFolder, "DistFiles");
-					}
-					// Finally, "parentOfLanguageExplorerFolder" should have the child folder named "Language Explorer" for devs or users.
-					// I suppose I could throw if that is not the case, as StringTable can't load if it isn't.
-					// Naw, just let it crash and someone will make a new JIRA issue for the crash. ;-)
-					s_singletonStringTable = new StringTable(Path.Combine(parentOfLanguageExplorerFolder, "Language Explorer", "Configuration"));
-				}
-				return s_singletonStringTable;
-			}
-		}
+		public static StringTable Table => s_singletonStringTable ?? (s_singletonStringTable = new StringTable(Path.Combine(FwDirectoryFinder.FlexFolder, "Configuration")));
 
 		/// <summary>
 		/// Create an instance of the StringTable.

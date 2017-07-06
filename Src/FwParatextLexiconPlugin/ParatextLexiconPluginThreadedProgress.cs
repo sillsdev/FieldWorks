@@ -4,7 +4,7 @@
 
 using System;
 using System.ComponentModel;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.ParatextLexiconPlugin
 {

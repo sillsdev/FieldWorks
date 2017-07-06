@@ -83,13 +83,12 @@
 	  <Name>ViewsInterfaces</Name>
 	  <HintPath>..\..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
 	</Reference>
-	<Reference Include="FDO">
-	  <Name>FDO</Name>
-	  <HintPath>..\..\..\Output\Debug\FDO.dll</HintPath>
+	<Reference Include="SIL.LCModel">
+	  <Name>SIL.LCModel</Name>
+	  <HintPath>..\..\..\Output\Debug\SIL.LCModel.dll</HintPath>
 	</Reference>
-	<Reference Include="FDOTests">
-	  <Name>FDOTests</Name>
-	  <HintPath>..\..\..\Output\Debug\FDOTests.dll</HintPath>
+	<Reference Include="SIL.LCModel.Tests">
+	  <HintPath>..\..\..\Output\Debug\SIL.LCModel.Tests.dll</HintPath>
 	</Reference>
 	<Reference Include="FootnoteView">
 	  <Name>FootnoteView</Name>
@@ -136,7 +135,7 @@
 	</Reference>
 	<Reference Include="ScrFDO">
 	  <Name>ScrFDO</Name>
-	  <HintPath>..\..\..\Output\Debug\ScrFDO.dll</HintPath>
+	  <HintPath>..\..\..\Output\Debug\ScrSIL.LCModel.dll</HintPath>
 	</Reference>
 	<Reference Include="ScrFDOTests, Version=4.1.0.9, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>

@@ -14,7 +14,7 @@ using System.Windows.Forms;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.Resources;
 
 namespace LanguageExplorer.Areas.TextsAndWords
@@ -27,9 +27,8 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		#region Data members
 		private IPublisher m_publisher;
 		private IHelpTopicProvider m_helpTopicProvider;
-		private FdoCache m_cache;
+		private LcmCache m_cache;
 		private string[] m_paths;
-
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Button btnCancel;
 		/// <summary>
@@ -63,7 +62,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		{
 			//InitializeComponent();
 			m_publisher = publisher;
-			m_cache = propertyTable.GetValue<FdoCache>("cache");
+			m_cache = propertyTable.GetValue<LcmCache>("cache");
 
 			m_helpTopicProvider = propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
 			helpProvider = new HelpProvider

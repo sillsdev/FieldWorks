@@ -61,8 +61,20 @@ Elements to ignore or are handled elsewhere
 															<xsl:value-of select="normalize-space(.)"/>
 														</xsl:when>
 														<xsl:when test="../preceding-sibling::word[1][item/@type='punct']">
-															<!-- there are other punct items before it; assume only the last one is preceding punct -->
-															<xsl:value-of select="normalize-space(.)"/>
+															<!-- there are other punct items before it -->
+															<xsl:variable name="iPreviousTextItem" select="count(../preceding-sibling::word[item/@type='txt'])"/>
+															<xsl:choose>
+															<xsl:when test="$iPreviousTextItem=0">
+																<!-- everything before is punctuation; prepend them all -->
+																<xsl:for-each select="../preceding-sibling::word[item/@type='punct']">
+																	<xsl:value-of select="normalize-space(.)"/>
+																</xsl:for-each>
+															</xsl:when>
+																<xsl:otherwise>
+																	<!-- assume only the last one is preceding punct -->
+																	<xsl:value-of select="normalize-space(.)"/>
+																</xsl:otherwise>
+															</xsl:choose>
 														</xsl:when>
 														<xsl:when test="contains(.,'(') or contains(.,'[') or contains(.,'{') or contains(.,'“') or contains(.,'‘')">
 															<!-- there are other preceding word items; look for preceding punctuation N.B. may well need to look for characters, too -->
@@ -75,20 +87,31 @@ Elements to ignore or are handled elsewhere
 											<xsl:value-of select="normalize-space(.)"/>
 											<xsl:if test="$iBaselineSiblingsCount=0">
 												<!-- append any following punctuation only to the first line -->
-												<xsl:for-each select="../following-sibling::word[1]/item[@type='punct']">
-													<xsl:if test="not(contains(.,'(') or contains(.,'[') or contains(.,'{') or contains(.,'“') or contains(.,'‘'))">
-														<!-- skip any preceding punctuation N.B. may well need to look for characters, too -->
-														<xsl:value-of select="normalize-space(translate(.,'§',''))"/>
-													</xsl:if>
-												</xsl:for-each>
 												<xsl:if test="../following-sibling::word[1]/item[@type='punct']">
-													<!-- check for a second consecutive punctuation item -->
-													<xsl:for-each select="../following-sibling::word[2]/item[@type='punct']">
-														<xsl:if test="not(contains(.,'(') or contains(.,'[') or contains(.,'{') or contains(.,'“') or contains(.,'‘'))">
-															<!-- skip any preceding punctuation N.B. may well need to look for characters, too -->
-															<xsl:value-of select="normalize-space(translate(.,'§',''))"/>
-														</xsl:if>
-													</xsl:for-each>
+													<xsl:variable name="iFollowingTextItem" select="count(../following-sibling::word[item/@type='txt'])"/>
+													<xsl:choose>
+														<xsl:when test="$iFollowingTextItem=0">
+															<!-- everything after is punctuation; append them all -->
+															<xsl:for-each select="../following-sibling::word[item/@type='punct']">
+																<xsl:value-of select="normalize-space(translate(.,'§',''))"/>
+															</xsl:for-each>
+														</xsl:when>
+														<xsl:otherwise>
+															<xsl:for-each select="../following-sibling::word[1]/item[@type='punct']">
+																<xsl:if test="not(contains(.,'(') or contains(.,'[') or contains(.,'{') or contains(.,'“') or contains(.,'‘'))">
+																	<!-- skip any preceding punctuation N.B. may well need to look for characters, too -->
+																	<xsl:value-of select="normalize-space(translate(.,'§',''))"/>
+																</xsl:if>
+															</xsl:for-each>
+															<!-- check for a second consecutive punctuation item -->
+															<xsl:for-each select="../following-sibling::word[2]/item[@type='punct']">
+																<xsl:if test="not(contains(.,'(') or contains(.,'[') or contains(.,'{') or contains(.,'“') or contains(.,'‘'))">
+																	<!-- skip any preceding punctuation N.B. may well need to look for characters, too -->
+																	<xsl:value-of select="normalize-space(translate(.,'§',''))"/>
+																</xsl:if>
+															</xsl:for-each>
+														</xsl:otherwise>
+													</xsl:choose>
 												</xsl:if>
 											</xsl:if>
 										</langData>

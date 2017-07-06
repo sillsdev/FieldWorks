@@ -7,13 +7,10 @@
 // Responsibility: TE Team
 // ---------------------------------------------------------------------------------------------
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using NUnit.Framework;
-using System.Runtime.InteropServices;
-using SIL.CoreImpl.Scripture;
 using System.Reflection;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel.Core.Scripture;
 
 namespace SILUBS.ScriptureChecks
 {

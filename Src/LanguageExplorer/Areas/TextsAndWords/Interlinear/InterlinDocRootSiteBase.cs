@@ -10,12 +10,12 @@ using System.Linq;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.FwCoreDlgControls;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
@@ -62,7 +62,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		public override void MakeRoot()
 		{
-			if (m_fdoCache == null || DesignMode)
+			if (m_cache == null || DesignMode)
 				return;
 
 			base.MakeRoot();
@@ -83,16 +83,16 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			EnsureVc();
 
 			// We want to get notified when anything changes.
-			m_sda = m_fdoCache.MainCacheAccessor;
+			m_sda = m_cache.MainCacheAccessor;
 			m_sda.AddNotification(this);
 
 			m_vc.ShowMorphBundles = true;
 			m_vc.LineChoices = LineChoices;
 			m_vc.ShowDefaultSense = true;
 
-			m_rootb.DataAccess = m_fdoCache.MainCacheAccessor;
+			m_rootb.DataAccess = m_cache.MainCacheAccessor;
 			m_rootb.SetRootObject(m_hvoRoot, m_vc, InterlinVc.kfragStText, m_styleSheet);
-			m_objRepo = m_fdoCache.ServiceLocator.GetInstance<ICmObjectRepository>();
+			m_objRepo = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>();
 		}
 
 #if RANDYTODO
@@ -766,7 +766,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				if (ForEditing)
 				{
-					lineChoices = EditableInterlinLineChoices.DefaultChoices(m_fdoCache.LangProject,
+					lineChoices = EditableInterlinLineChoices.DefaultChoices(m_cache.LangProject,
 						WritingSystemServices.kwsVernInParagraph, WritingSystemServices.kwsAnal);
 					lineChoices.Mode = mode;
 					if (mode == InterlinLineChoices.InterlinMode.Gloss ||
@@ -777,7 +777,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				}
 				else
 				{
-					lineChoices = InterlinLineChoices.DefaultChoices(m_fdoCache.LangProject,
+					lineChoices = InterlinLineChoices.DefaultChoices(m_cache.LangProject,
 						WritingSystemServices.kwsVernInParagraph, WritingSystemServices.kwsAnal, mode);
 				}
 			}
@@ -806,8 +806,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			var persist = PropertyTable.GetValue<string>(ConfigPropName, SettingsGroup.LocalSettings);
 			if (persist != null)
 			{
-				lineChoices = InterlinLineChoices.Restore(persist, m_fdoCache.LanguageWritingSystemFactoryAccessor,
-					m_fdoCache.LangProject, WritingSystemServices.kwsVernInParagraph, m_fdoCache.DefaultAnalWs);
+				lineChoices = InterlinLineChoices.Restore(persist, m_cache.LanguageWritingSystemFactoryAccessor,
+					m_cache.LangProject, WritingSystemServices.kwsVernInParagraph, m_cache.DefaultAnalWs);
 			}
 			return persist != null && lineChoices != null;
 		}
@@ -818,7 +818,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <param name="argument"></param>
 		public bool OnConfigureInterlinear(object argument)
 		{
-			using (var dlg = new ConfigureInterlinDialog(m_fdoCache, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"),
+			using (var dlg = new ConfigureInterlinDialog(m_cache, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"),
 				m_vc.LineChoices.Clone() as InterlinLineChoices))
 			{
 				if (dlg.ShowDialog(this) == DialogResult.OK)
@@ -846,7 +846,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		internal void PersistAndDisplayChangedLineChoices()
 		{
 			PropertyTable.SetProperty(ConfigPropName,
-				m_vc.LineChoices.Persist(m_fdoCache.LanguageWritingSystemFactoryAccessor),
+				m_vc.LineChoices.Persist(m_cache.LanguageWritingSystemFactoryAccessor),
 				SettingsGroup.LocalSettings, true, true);
 			UpdateDisplayForNewLineChoices();
 		}
@@ -998,7 +998,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			switch (tag)
 			{
 				case WfiAnalysisTags.kflidEvaluations:
-					IWfiAnalysis analysis = m_fdoCache.ServiceLocator.GetInstance<IWfiAnalysisRepository>().GetObject(hvo);
+					IWfiAnalysis analysis = m_cache.ServiceLocator.GetInstance<IWfiAnalysisRepository>().GetObject(hvo);
 					if (analysis.HasWordform && RootStText.UniqueWordforms().Contains(analysis.Wordform))
 					{
 						m_wordformsToUpdate.Add(analysis.Wordform);
@@ -1008,7 +1008,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					}
 					break;
 				case WfiWordformTags.kflidAnalyses:
-					IWfiWordform wordform = m_fdoCache.ServiceLocator.GetInstance<IWfiWordformRepository>().GetObject(hvo);
+					IWfiWordform wordform = m_cache.ServiceLocator.GetInstance<IWfiWordformRepository>().GetObject(hvo);
 					if (RootStText.UniqueWordforms().Contains(wordform))
 					{
 						m_wordformsToUpdate.Add(wordform);
@@ -1201,7 +1201,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 	/// </summary>
 	public interface IInterlinearTabControl : IChangeRootObject
 	{
-		FdoCache Cache { get; set; }
+		LcmCache Cache { get; set; }
 	}
 
 	public interface IStyleSheet

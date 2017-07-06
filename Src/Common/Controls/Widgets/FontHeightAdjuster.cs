@@ -13,11 +13,11 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using SIL.CoreImpl.Text;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 using SIL.Reporting;
 using SIL.FieldWorks.Common.FwUtils;
 
@@ -254,7 +254,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// </param>
 		/// ------------------------------------------------------------------------------------
 		public static Font GetFontForNormalStyle(int hvoWs,
-			IVwStylesheet styleSheet, FdoCache cache)
+			IVwStylesheet styleSheet, LcmCache cache)
 		{
 			return GetFontForNormalStyle(hvoWs, styleSheet,
 				cache.WritingSystemFactory);
@@ -290,7 +290,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// </summary>
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
-		public static FwStyleSheet StyleSheetFromPropertyTable(IPropertyTable propertyTable)
+		public static LcmStyleSheet StyleSheetFromPropertyTable(IPropertyTable propertyTable)
 		{
 #if RANDYTODO
 			// TODO: Is there any reason for all of this, if we can jsuty get the only one from the property table?
@@ -305,9 +305,9 @@ namespace SIL.FieldWorks.Common.Widgets
 					pi = mainWindow.GetType().GetProperty("StyleSheet");
 			}
 			if (pi != null)
-				return pi.GetValue(mainWindow, null) as FwStyleSheet;
+				return pi.GetValue(mainWindow, null) as LcmStyleSheet;
 #endif
-			return propertyTable.GetValue<FwStyleSheet>("FwStyleSheet");
+			return propertyTable.GetValue<LcmStyleSheet>("LcmStyleSheet");
 		}
 
 		/// ------------------------------------------------------------------------------------

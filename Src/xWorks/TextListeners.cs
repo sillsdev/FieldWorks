@@ -3,16 +3,8 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Xml;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.WritingSystems;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -62,7 +54,7 @@ namespace SIL.FieldWorks.XWorks
 			Publisher = flexComponentParameters.Publisher;
 			Subscriber = flexComponentParameters.Subscriber;
 
-			var cache = PropertyTable.GetValue<FdoCache>("cache");
+			var cache = PropertyTable.GetValue<LcmCache>("cache");
 			//don't know just what good having this default is, but it's at least safer
 			PropertyTable.SetProperty("WritingSystemHvo",
 				cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle.ToString(),
@@ -237,7 +229,7 @@ namespace SIL.FieldWorks.XWorks
 			CheckDisposed();
 
 			display.List.Clear();
-			FdoCache cache = m_propertyTable.GetValue<FdoCache>("cache");
+			LcmCache cache = m_propertyTable.GetValue<LcmCache>("cache");
 			string wsSet = parameter as string;
 			WritingSystemSet setToUse = m_currentSet;
 			if (wsSet != null)

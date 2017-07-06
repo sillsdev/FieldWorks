@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Xml;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.Xml;
 
 namespace SIL.FieldWorks.LexText.Controls.MGA
@@ -67,7 +67,7 @@ namespace SIL.FieldWorks.LexText.Controls.MGA
 		/// figure out if the feature represented by the node is already in the database
 		/// </summary>
 		/// <param name="cache">database cache</param>
-		public virtual void DetermineInDatabase(FdoCache cache)
+		public virtual void DetermineInDatabase(LcmCache cache)
 		{
 		}
 		public virtual bool KindCanBeInDatabase()
@@ -80,7 +80,7 @@ namespace SIL.FieldWorks.LexText.Controls.MGA
 				m_eKind == GlossListTreeView.ImageKind.complex);
 		}
 
-		public virtual void AddToDatabase(FdoCache cache)
+		public virtual void AddToDatabase(LcmCache cache)
 		{
 		}
 

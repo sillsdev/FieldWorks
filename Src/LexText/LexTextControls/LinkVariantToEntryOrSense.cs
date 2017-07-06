@@ -6,13 +6,13 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.FwCoreDlgs;
-using SIL.Utils;
-using SIL.CoreImpl.Text;
-using SIL.CoreImpl.WritingSystems;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Utils;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.LexText.Controls
@@ -63,7 +63,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="publisher"></param>
 		/// <param name="subscriber"></param>
 		/// <param name="tssVariantLexemeForm">The variant lexeme form.</param>
-		public void SetDlgInfo(FdoCache cache, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, ITsString tssVariantLexemeForm)
+		public void SetDlgInfo(LcmCache cache, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, ITsString tssVariantLexemeForm)
 		{
 			m_tssVariantLexemeForm = tssVariantLexemeForm;
 			base.SetDlgInfo(cache, propertyTable, publisher, subscriber, null);
@@ -80,7 +80,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="publisher"></param>
 		/// <param name="subscriber"></param>
 		/// <param name="componentLexeme">the entry we wish to find or create a variant for.</param>
-		protected void SetDlgInfoForComponentLexeme(FdoCache cache, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, IVariantComponentLexeme componentLexeme)
+		protected void SetDlgInfoForComponentLexeme(LcmCache cache, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, IVariantComponentLexeme componentLexeme)
 		{
 			m_fBackRefToVariant = true;
 			ILexEntry startingEntry;
@@ -111,7 +111,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		}
 
 
-		protected override void SetDlgInfo(FdoCache cache, WindowParams wp, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, int ws)
+		protected override void SetDlgInfo(LcmCache cache, WindowParams wp, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, int ws)
 		{
 			WritingSystemAndStylesheetHelper.SetupWritingSystemAndStylesheetInfo(propertyTable, tcVariantTypes,
 				cache, cache.DefaultUserWs);
@@ -507,7 +507,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		}
 
 		/// <summary />
-		public void SetDlgInfo(FdoCache cache, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, IVariantComponentLexeme componentLexeme)
+		public void SetDlgInfo(LcmCache cache, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, IVariantComponentLexeme componentLexeme)
 		{
 			SetDlgInfoForComponentLexeme(cache, propertyTable, publisher, subscriber, componentLexeme);
 		}

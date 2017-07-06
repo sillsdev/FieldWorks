@@ -7,13 +7,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using NUnit.Framework;
-using SIL.CoreImpl.Text;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Framework;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.Utils;
-using SIL.FieldWorks.FDO.FDOTests;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Utils;
 using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.XWorks
@@ -27,7 +26,6 @@ namespace SIL.FieldWorks.XWorks
 		public string m_newAssembly;
 		public string m_newControlClass;
 	}
-
 	public class MockFwManager : IFieldWorksManager
 	{
 
@@ -36,7 +34,7 @@ namespace SIL.FieldWorks.XWorks
 		/// Gets the cache.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public FdoCache Cache { get; set; }
+		public LcmCache Cache { get; set; }
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

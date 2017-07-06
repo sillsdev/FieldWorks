@@ -9,11 +9,11 @@ using System.Xml.Linq;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.PaneBar;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks;
+using SIL.LCModel;
+using SIL.LCModel.Application;
 
 namespace LanguageExplorer.Areas.Grammar.Tools.ProdRestrictEdit
 {
@@ -96,7 +96,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.ProdRestrictEdit
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
 			var doc = XDocument.Parse(GrammarResources.ProdRestrictEditToolParameters);
-			var cache = PropertyTable.GetValue<FdoCache>("cache");
+			var cache = PropertyTable.GetValue<LcmCache>("cache");
 			_recordClerk = new RecordClerk("ProdRestrict", new PossibilityRecordList(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), cache.LanguageProject.MorphologicalDataOA.ProdRestrictOA), new PropertyRecordSorter("ShortName"), "Default", null, false, false); // , new PossibilityTreeBarHandler(PropertyTable, false, false, false, "best analorvern")
 			_recordClerk.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
 			_recordBrowseView = new RecordBrowseView(doc.Root.Element("browseview").Element("parameters"), _recordClerk);

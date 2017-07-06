@@ -15,9 +15,9 @@ using System.Windows.Forms;
 using System.IO;
 using System.Diagnostics;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel.DomainServices;
 
 namespace SIL.FieldWorks.TE
 {

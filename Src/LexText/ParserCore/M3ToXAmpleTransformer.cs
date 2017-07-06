@@ -1,10 +1,6 @@
-//#define DumpCleanedMode
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: M3ToXAmpleTransformer.cs
-// Responsibility: John Hatton
 
 using System;
 using System.Diagnostics;
@@ -15,7 +11,7 @@ using System.Xml.Xsl;
 using System.Linq;
 using System.Reflection;
 using System.Xml;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 using SIL.WordWorks.GAFAWS.PositionAnalysis;
 
 namespace SIL.FieldWorks.WordWorks.Parser

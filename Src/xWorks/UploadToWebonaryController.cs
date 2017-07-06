@@ -7,12 +7,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Ionic.Zip;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using System.Net;
 using System.Reflection;
 using System.Text;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -21,7 +21,7 @@ namespace SIL.FieldWorks.XWorks
 	/// </summary>
 	public class UploadToWebonaryController : IDisposable
 	{
-		private readonly FdoCache m_cache;
+		private readonly LcmCache m_cache;
 		private readonly IPropertyTable m_propertyTable;
 		private readonly DictionaryExportService m_exportService;
 		private DictionaryExportService.PublicationActivator m_publicationActivator;
@@ -32,7 +32,7 @@ namespace SIL.FieldWorks.XWorks
 
 		public IPropertyTable PropertyTable { private get; set; }
 
-		public UploadToWebonaryController(FdoCache cache, IPropertyTable propertyTable, IPublisher publisher)
+		public UploadToWebonaryController(LcmCache cache, IPropertyTable propertyTable, IPublisher publisher)
 		{
 			m_cache = cache;
 			m_propertyTable = propertyTable;

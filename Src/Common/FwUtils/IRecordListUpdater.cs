@@ -3,7 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
@@ -59,7 +59,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 	{
 		/// <summary>Initialize the object with the record and the list to which it belongs.
 		/// </summary>
-		void Setup(object /*"record"*/ o, IRecordListUpdater rlu, FdoCache cache);
+		void Setup(object /*"record"*/ o, IRecordListUpdater rlu, LcmCache cache);
 		/// <summary>Fix the record for any changes, possibly refreshing the list to which it
 		/// belongs.</summary>
 		void Fixup(bool fRefreshList);

@@ -35,6 +35,11 @@ namespace FwBuildTasks
 		public string BuildRoot { get; set; }
 
 		/// <summary>
+		/// The build architecture (x86 or x64)
+		/// </summary>
+		public string BuildArch { get; set; }
+
+		/// <summary>
 		/// Gets or sets the target inside the Makefile.
 		/// </summary>
 		public string Target { get; set; }
@@ -127,6 +132,7 @@ namespace FwBuildTasks
 				bldr.AppendSwitchIfNotNull("BUILD_CONFIG=", Configuration);
 				bldr.AppendSwitchIfNotNull("BUILD_TYPE=", BuildType);
 				bldr.AppendSwitchIfNotNull("BUILD_ROOT=", BuildRoot);
+				bldr.AppendSwitchIfNotNull("BUILD_ARCH=", BuildArch);
 				bldr.AppendSwitchIfNotNull("-C", Path.GetDirectoryName(Makefile));
 				if (String.IsNullOrEmpty(Target))
 					bldr.AppendSwitch("all");
@@ -139,6 +145,7 @@ namespace FwBuildTasks
 				bldr.AppendSwitchIfNotNull("BUILD_CONFIG=", Configuration);
 				bldr.AppendSwitchIfNotNull("BUILD_TYPE=", BuildType);
 				bldr.AppendSwitchIfNotNull("BUILD_ROOT=", BuildRoot);
+				bldr.AppendSwitchIfNotNull("BUILD_ARCH=", BuildArch);
 				bldr.AppendSwitchIfNotNull("/f ", Makefile);
 				if (!String.IsNullOrEmpty(Target))
 					bldr.AppendSwitch(Target);

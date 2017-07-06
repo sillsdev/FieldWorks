@@ -5,7 +5,6 @@
 using System;
 using System.Xml;
 using NUnit.Framework;
-using XCore;
 
 namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 {

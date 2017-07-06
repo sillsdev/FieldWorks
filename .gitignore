@@ -1,4 +1,4 @@
-# Generated files
+# Generated or Downloaded (as part of the build process)
 FW_develop.ndproj
 FWXml.xpr
 GeneratedAssemblyInfo.cs
@@ -9,13 +9,8 @@ Build/NuGet.exe
 Build/nunit.framework.dll
 Build/packages.config
 Build/*.pdb
-Src/Common/FwKernelInterfaces/FwKernel.cs
 Src/Common/ViewsInterfaces/Views.cs
-Src/Common/CoreImpl/CellarPropertyType.cs
 DistFiles/Data/
-DistFiles/Icu40/data/
-DistFiles/Icu40/icudt40l/
-DistFiles/Icu50/
 DistFiles/Languages/
 DistFiles/Installers/
 DistFiles/Helps/
@@ -65,7 +60,6 @@ _user.mak.lnx
 *.sdf
 *.opensdf
 .project
-app.config
 *.VC.db
 *.VC.opendb
 
@@ -107,11 +101,6 @@ DistFiles/TeResources.dll
 DistFiles/Parts/GeneratedLayouts.xml
 DistFiles/Parts/GeneratedParts.xml
 DistFiles/Projects/
-Src/FDO/Infrastructure/Impl/Generated*.cs
-Src/FDO/Generated*.cs
-Src/FDO/DomainImpl/FDOGenerated.cs
-Src/FDO/DomainImpl/Generated*.cs
-Src/FDO/IOC/Generated*.cs
 DistFiles/Db4objects.Db4o.dll
 DistFiles/FirebirdSql.Data.FirebirdClient.dll
 DistFiles/Editorial\ Checks/ScrChecks.dll*
@@ -143,9 +132,16 @@ Lib/linux/Debug/libgraphite2.a
 Lib/linux/Release/libgraphite2.a
 
 Lib/icu*.lib
-DistFiles/Icu*.zip
 DistFiles/Icu*/icudt*l
 DistFiles/Icu*/*.*
 Bin/NUnit/
 .vs/
 .idea/
+DistFiles/Styles.dtd
+DistFiles/Templates/GOLDEtic.xml
+DistFiles/Templates/NewLangProj.fwdata
+DistFiles/Templates/POS.xml
+DistFiles/Templates/SemDom.xml
+
+Src/Kernel/FwKernelTlb.idl
+Src/Kernel/*.idh

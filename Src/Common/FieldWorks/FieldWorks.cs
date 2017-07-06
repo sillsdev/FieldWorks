@@ -22,35 +22,30 @@ using System.Threading;
 using System.Windows.Forms;
 using Gecko;
 using Microsoft.Win32;
-using SIL.CoreImpl.WritingSystems;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.Framework;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ScriptureUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices.BackupRestore;
-using SIL.FieldWorks.FDO.DomainServices.DataMigration;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices.BackupRestore;
+using SIL.LCModel.DomainServices.DataMigration;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.FwCoreDlgs.BackupRestore;
 using SIL.FieldWorks.LexicalProvider;
 using SIL.FieldWorks.PaObjects;
 using SIL.FieldWorks.Resources;
+using SIL.Keyboarding;
 using SIL.Reporting;
+using SIL.LCModel.Utils;
 using SIL.Utils;
 using SIL.Windows.Forms.HtmlBrowser;
 using SIL.Windows.Forms.Keyboarding;
 using SIL.WritingSystems;
-using FileUtils = SIL.Utils.FileUtils;
-
-#if __MonoCS__
-using SIL.Keyboarding;
-#else
-
-#endif
 
 namespace SIL.FieldWorks
 {
@@ -100,7 +95,7 @@ namespace SIL.FieldWorks
 		private static IFlexApp s_flexApp;
 		private static IHelpTopicProvider s_helpTopicProvider;
 		private static IFieldWorksManager s_fwManager;
-		private static FdoCache s_cache;
+		private static LcmCache s_cache;
 		private static string s_sWsUser;
 		private static FwRegistrySettings s_settingsForLastClosedWindow;
 		private static RegistryKey s_flexAppKey;
@@ -109,24 +104,21 @@ namespace SIL.FieldWorks
 		private static bool s_noUserInterface;
 		private static bool s_appServerMode;
 		private static string s_LinkDirChangedTo;
-		private static TcpChannel s_serviceChannel = null;
+		private static TcpChannel s_serviceChannel;
 		private static int s_servicePort;
 		// true if we have no previous reporting settings, typically the first time a version of FLEx that
 		// supports usage reporting has been run.
 		private static bool s_noPreviousReportingSettings;
-		private static IFdoUI s_ui;
+		private static ILcmUI s_ui;
+		private static FwApplicationSettings s_appSettings;
 		#endregion
 
 		#region Main Method and Initialization Methods
 #if !__MonoCS__
 		/// <summary></summary>
 		[DllImport("kernel32.dll")]
-		public extern static IntPtr LoadLibrary(string fileName);
+		public static extern IntPtr LoadLibrary(string fileName);
 #endif
-
-		[DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
-		[return: MarshalAs(UnmanagedType.Bool)]
-		static extern bool SetDllDirectory(string lpPathName);
 
 		/// <summary>
 		/// Sets the ICU_DATA environment variable.
@@ -139,7 +131,7 @@ namespace SIL.FieldWorks
 			// We read the registry value and set an environment variable ICU_DATA here so that
 			// FwKernelInterfaces.dll is independent of WinForms.
 			string icuDirValueName = string.Format("Icu{0}DataDir",
-				SIL.FieldWorks.Common.FwKernelInterfaces.Icu.Version);
+				LCModel.Core.Text.Icu.Version);
 			using(var userKey = RegistryHelper.CompanyKey)
 			using(var machineKey = RegistryHelper.CompanyKeyLocalMachine)
 			{
@@ -170,10 +162,7 @@ namespace SIL.FieldWorks
 			FwUtils.InCrashedState = false;
 			Thread.CurrentThread.Name = "Main thread";
 			Logger.Init(FwUtils.ksSuiteName);
-
-			Icu.Wrapper.ConfineIcuVersions(54);
-
-			FdoCache.NewerWritingSystemFound += ComplainToUserAboutNewWs;
+			LcmCache.NewerWritingSystemFound += ComplainToUserAboutNewWs;
 			// Note to developers: Uncomment this line to be able to attach the debugger to a process for a project
 			// other than the initial one that gets started up in VS:
 			//MessageBox.Show("Attach debugger now");
@@ -197,11 +186,10 @@ namespace SIL.FieldWorks
 				// Invoke does nothing directly, but causes BroadcastEventWindow to be initialized
 				// on this thread to prevent race conditions on shutdown.See TE-975
 				// See http://forums.microsoft.com/MSDN/ShowPost.aspx?PostID=911603&SiteID=1
-#if !__MonoCS__
-				SystemEvents.InvokeOnEventsThread(new Action(DoNothing));
-#else
 				// TODO-Linux: uses mono feature that is not implemented. What are the implications of this? Review.
-#endif
+				if (MiscUtils.IsDotNet)
+					SystemEvents.InvokeOnEventsThread(new Action(DoNothing));
+
 				s_threadHelper = new ThreadHelper();
 
 				// ENHANCE (TimS): Another idea for ensuring that we have only one process started for
@@ -242,7 +230,7 @@ namespace SIL.FieldWorks
 				SetIcuDataDirEnvironmentVariable();
 
 				// initialize ICU
-				SIL.FieldWorks.Common.FwKernelInterfaces.Icu.InitIcuDataDir();
+				LCModel.Core.Text.Icu.InitIcuDataDir();
 
 				// initialize the SLDR
 				Sldr.Initialize();
@@ -254,14 +242,12 @@ namespace SIL.FieldWorks
 				s_noUserInterface = appArgs.NoUserInterface;
 				s_appServerMode = appArgs.AppServerMode;
 
-				s_ui = (IFdoUI)DynamicLoader.CreateObject("FdoUi.dll", "SIL.FieldWorks.FdoUi.FwFdoUI", GetHelpTopicProvider(), s_threadHelper);
+				s_ui = (ILcmUI)DynamicLoader.CreateObject("FdoUi.dll", "SIL.FieldWorks.FdoUi.FwLcmUI", GetHelpTopicProvider(), s_threadHelper);
 
-				if (CoreImpl.Properties.Settings.Default.CallUpgrade)
-				{
-					CoreImpl.Properties.Settings.Default.Upgrade();
-					CoreImpl.Properties.Settings.Default.CallUpgrade = false;
-				}
-				var reportingSettings = CoreImpl.Properties.Settings.Default.Reporting;
+				s_appSettings = new FwApplicationSettings();
+				s_appSettings.UpgradeIfNecessary();
+
+				ReportingSettings reportingSettings = s_appSettings.Reporting;
 				if (reportingSettings == null)
 				{
 					// Note: to simulate this, currently it works to delete all subfolders of
@@ -269,11 +255,11 @@ namespace SIL.FieldWorks
 					// That guid may depend on version or something similar; it's some artifact of how the Settings persists.
 					s_noPreviousReportingSettings = true;
 					reportingSettings = new ReportingSettings();
-					CoreImpl.Properties.Settings.Default.Reporting = reportingSettings; //to avoid a defect in Settings rely on the Save in the code below
+					s_appSettings.Reporting = reportingSettings; //to avoid a defect in Settings rely on the Save in the code below
 				}
 
 				// Allow develpers and testers to avoid cluttering our analytics by setting an environment variable (FEEDBACK = false)
-				var feedbackEnvVar = Environment.GetEnvironmentVariable("FEEDBACK");
+				string feedbackEnvVar = Environment.GetEnvironmentVariable("FEEDBACK");
 				if (feedbackEnvVar != null)
 				{
 					reportingSettings.OkToPingBasicUsageData = feedbackEnvVar.ToLower().Equals("true") || feedbackEnvVar.ToLower().Equals("yes");
@@ -299,7 +285,7 @@ namespace SIL.FieldWorks
 						);
 					// Init updates various things in the ReportingSettings, such as the number of times
 					// the application has been launched and the 'previous' version.
-					CoreImpl.Properties.Settings.Default.Save();
+					s_appSettings.Save();
 				}
 
 				// e.g. the first time the user runs FW9, we need to copy a bunch of registry keys
@@ -351,7 +337,7 @@ namespace SIL.FieldWorks
 					LaunchRestoreFromCommandLine(appArgs);
 					if (s_flexApp == null)
 						return 0; // Restore was cancelled or failed, or another process took care of it.
-					if (!String.IsNullOrEmpty(s_LinkDirChangedTo))
+					if (!string.IsNullOrEmpty(s_LinkDirChangedTo))
 					{
 						NonUndoableUnitOfWorkHelper.Do(s_cache.ActionHandlerAccessor,
 							() => s_cache.LangProject.LinkedFilesRootDir = s_LinkDirChangedTo);
@@ -363,9 +349,8 @@ namespace SIL.FieldWorks
 				// Create a listener for this project for applications using FLEx as a LexicalProvider.
 				LexicalProviderManager.StartLexicalServiceProvider(s_projectId, s_cache);
 
-#if __MonoCS__
-				UglyHackForXkbIndicator();
-#endif
+				if (MiscUtils.IsMono)
+					UglyHackForXkbIndicator();
 
 				// Application was started successfully, so start the message loop
 				Application.Run();
@@ -398,7 +383,6 @@ namespace SIL.FieldWorks
 			return 0;
 		}
 
-#if __MonoCS__
 		/// <summary>
 		/// For some reason, setting an Xkb keyboard for the first time doesn't work well inside
 		/// FieldWorks.  The keyboard is actually set (although it may take effect only after the
@@ -425,7 +409,6 @@ namespace SIL.FieldWorks
 			if (wsObj != null && wsObj.LocalKeyboard != null)
 				wsObj.LocalKeyboard.Activate();
 		}
-#endif
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -442,7 +425,7 @@ namespace SIL.FieldWorks
 			// Get the project the user wants to open and attempt to launch it.
 			ProjectId projectId = DetermineProject(appArgs);
 			if (projectId != null && IsSharedXmlBackendNeeded(projectId))
-				projectId.Type = FDOBackendProviderType.kSharedXML;
+				projectId.Type = BackendProviderType.kSharedXML;
 
 			// s_projectId can be non-null if the user decided to restore a project from
 			// the Welcome to Fieldworks dialog. (FWR-2146)
@@ -481,7 +464,7 @@ namespace SIL.FieldWorks
 
 		private static bool IsSharedXmlBackendNeeded(ProjectId projectId)
 		{
-			return projectId.Type == FDOBackendProviderType.kXML && ParatextHelper.GetAssociatedProject(projectId) != null;
+			return projectId.Type == BackendProviderType.kXML && ParatextHelper.GetAssociatedProject(projectId) != null;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -689,7 +672,7 @@ namespace SIL.FieldWorks
 		/// Gets the cache used by this FieldWorks instance.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		internal static FdoCache Cache
+		internal static LcmCache Cache
 		{
 			get { return s_cache; }
 		}
@@ -820,11 +803,11 @@ namespace SIL.FieldWorks
 		/// </summary>
 		/// <param name="projectId">The project id.</param>
 		/// <returns>
-		/// A new FdoCache used for accessing the specified project, or null, if a
+		/// A new LcmCache used for accessing the specified project, or null, if a
 		/// cache could not be created.
 		/// </returns>
 		/// ------------------------------------------------------------------------------------
-		private static FdoCache CreateCache(ProjectId projectId)
+		private static LcmCache CreateCache(ProjectId projectId)
 		{
 			Debug.Assert(projectId.IsValid);
 
@@ -832,7 +815,8 @@ namespace SIL.FieldWorks
 			Form owner = s_splashScreen != null ? s_splashScreen.Form : Form.ActiveForm;
 			using (var progressDlg = new ProgressDialogWithTask(owner))
 			{
-				FdoCache cache = FdoCache.CreateCacheFromExistingData(projectId, s_sWsUser, s_ui, FwDirectoryFinder.FdoDirectories, CreateFdoSettings(), progressDlg);
+				LcmCache cache = LcmCache.CreateCacheFromExistingData(projectId, s_sWsUser, s_ui, FwDirectoryFinder.LcmDirectories,
+					CreateLcmSettings(), progressDlg);
 				EnsureValidLinkedFilesFolder(cache);
 				// Make sure every project has one of these. (Getting it has a side effect if it does not exist.)
 				// Crashes have been caused by trying to create it at an unsafe time (LT-15695).
@@ -851,7 +835,7 @@ namespace SIL.FieldWorks
 		/// for an example of the havoc than can ensue.
 		/// </summary>
 		/// <remarks>This method gets called when we open the FDO cache.</remarks>
-		private static void EnsureValidLinkedFilesFolder(FdoCache cache)
+		private static void EnsureValidLinkedFilesFolder(LcmCache cache)
 		{
 			// If the location of the LinkedFilesRootDir was changed when this project was restored just now;
 			// overwrite the location that was restored from the fwdata file.
@@ -865,7 +849,7 @@ namespace SIL.FieldWorks
 				return;
 
 			var linkedFilesFolder = cache.LangProject.LinkedFilesRootDir;
-			var defaultFolder = FdoFileHelper.GetDefaultLinkedFilesDir(cache.ProjectId.ProjectFolder);
+			var defaultFolder = LcmFileHelper.GetDefaultLinkedFilesDir(cache.ProjectId.ProjectFolder);
 			EnsureValidLinkedFilesFolderCore(linkedFilesFolder, defaultFolder);
 
 			if (!Directory.Exists(linkedFilesFolder))
@@ -925,7 +909,7 @@ namespace SIL.FieldWorks
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Commits the and disposes the FdoCache. This is usually called on a separate thread.
+		/// Commits the and disposes the LcmCache. This is usually called on a separate thread.
 		/// </summary>
 		/// <param name="progressDlg">The progress dialog.</param>
 		/// <param name="parameters">The parameters passed in to the caller.</param>
@@ -1523,7 +1507,7 @@ namespace SIL.FieldWorks
 		/// </summary>
 		/// <param name="sender">The FDO cache (should be the same as our static one).</param>
 		/// ------------------------------------------------------------------------------------
-		private static void ProjectNameChanged(FdoCache sender)
+		private static void ProjectNameChanged(LcmCache sender)
 		{
 			Debug.Assert(sender == s_cache);
 			// The ProjectId should have already been updated (as a result of the rename deep
@@ -1671,7 +1655,7 @@ namespace SIL.FieldWorks
 								helpTopicProvider, out obtainedProjectType);
 							if (!string.IsNullOrEmpty(projectDataPathname))
 							{
-								projectToTry = new ProjectId(FDOBackendProviderType.kXML, projectDataPathname);
+								projectToTry = new ProjectId(BackendProviderType.kXML, projectDataPathname);
 								var activeWindow = startingApp.ActiveMainWindow;
 								if (activeWindow != null)
 								{
@@ -1760,7 +1744,7 @@ namespace SIL.FieldWorks
 				{
 					var projId = new ProjectId(dlg.Project);
 					if (IsSharedXmlBackendNeeded(projId))
-						projId.Type = FDOBackendProviderType.kSharedXML;
+						projId.Type = BackendProviderType.kSharedXML;
 					return projId;
 			}
 
@@ -2195,7 +2179,7 @@ namespace SIL.FieldWorks
 		{
 			var projectName = Path.GetFileName(projectFolder);
 			// If it contains a matching fwdata file it is a project folder.
-			var projectFileName = Path.ChangeExtension(Path.Combine(projectFolder, projectName), FdoFileHelper.ksFwDataXmlFileExtension);
+			var projectFileName = Path.ChangeExtension(Path.Combine(projectFolder, projectName), LcmFileHelper.ksFwDataXmlFileExtension);
 			if(File.Exists(projectFileName))
 				return true;
 			return false;
@@ -2203,7 +2187,7 @@ namespace SIL.FieldWorks
 
 		private static bool IsFieldWorksSettingsFolder(string projectFolder)
 		{
-			var settingsDir = Path.Combine(projectFolder, FdoFileHelper.ksConfigurationSettingsDir);
+			var settingsDir = Path.Combine(projectFolder, LcmFileHelper.ksConfigurationSettingsDir);
 			if (Directory.Exists(settingsDir))
 				return true;
 			return false;
@@ -2444,13 +2428,13 @@ namespace SIL.FieldWorks
 		/// tears.</returns>
 		/// ------------------------------------------------------------------------------------
 		private static bool BackupProjectForRestore(FwRestoreProjectSettings restoreSettings,
-			FdoCache existingCache, Form dialogOwner)
+			LcmCache existingCache, Form dialogOwner)
 		{
 			using (var progressDlg = new ProgressDialogWithTask(dialogOwner))
 			{
-				FdoCache cache = existingCache ?? FdoCache.CreateCacheFromExistingData(
+				LcmCache cache = existingCache ?? LcmCache.CreateCacheFromExistingData(
 					new ProjectId(restoreSettings.Settings.FullProjectPath),
-					s_sWsUser, s_ui, FwDirectoryFinder.FdoDirectories, CreateFdoSettings(), progressDlg);
+					s_sWsUser, s_ui, FwDirectoryFinder.LcmDirectories, CreateLcmSettings(), progressDlg);
 
 				try
 				{
@@ -2489,10 +2473,9 @@ namespace SIL.FieldWorks
 			return true;
 		}
 
-		private static FdoSettings CreateFdoSettings()
+		private static LcmSettings CreateLcmSettings()
 		{
-			var settings = new FdoSettings();
-
+			var settings = new LcmSettings();
 			int sharedXmlBackendCommitLogSize = 0;
 			if (FwRegistryHelper.FieldWorksRegistryKey != null)
 				sharedXmlBackendCommitLogSize = (int) FwRegistryHelper.FieldWorksRegistryKey.GetValue("SharedXMLBackendCommitLogSize", 0);
@@ -2500,6 +2483,7 @@ namespace SIL.FieldWorks
 				sharedXmlBackendCommitLogSize = (int) FwRegistryHelper.FieldWorksRegistryKeyLocalMachine.GetValue("SharedXMLBackendCommitLogSize", 0);
 			if (sharedXmlBackendCommitLogSize > 0)
 				settings.SharedXMLBackendCommitLogSize = sharedXmlBackendCommitLogSize;
+			settings.UpdateGlobalWSStore = s_appSettings.UpdateGlobalWSStore;
 			return settings;
 		}
 
@@ -2538,7 +2522,7 @@ namespace SIL.FieldWorks
 				Debug.Assert(s_projectId != null, "We shouldn't try to handle a link request until an application is started");
 				ProjectId linkedProject = new ProjectId(link.DatabaseType, link.Database);
 				if (IsSharedXmlBackendNeeded(linkedProject))
-					linkedProject.Type = FDOBackendProviderType.kSharedXML;
+					linkedProject.Type = BackendProviderType.kSharedXML;
 				if (linkedProject.Equals(s_projectId))
 					FollowLink(link);
 				else if (!TryFindLinkHandler(link))
@@ -2668,7 +2652,7 @@ namespace SIL.FieldWorks
 			var sLinkedFilesRootDir = app.Cache.LangProject.LinkedFilesRootDir;
 			NonUndoableUnitOfWorkHelper.Do(app.Cache.ActionHandlerAccessor, () =>
 			{
-				app.Cache.LangProject.LinkedFilesRootDir = FdoFileHelper.GetDefaultLinkedFilesDir(
+				app.Cache.LangProject.LinkedFilesRootDir = LcmFileHelper.GetDefaultLinkedFilesDir(
 					app.Cache.ProjectId.ProjectFolder);
 			});
 			app.UpdateExternalLinks(sLinkedFilesRootDir);
@@ -2738,8 +2722,8 @@ namespace SIL.FieldWorks
 				}
 				// It seems to get activated before we connect the Activate event. But it IS active by now;
 				// so just record it now as the active one.
-				s_activeMainWnd = (IFwMainWnd)fwMainWindow;
-				using(new DataUpdateMonitor(fwMainWindow, "Migrating Dictionary Configuration Settings"))
+				s_activeMainWnd = (IFwMainWnd) fwMainWindow;
+				using (new DataUpdateMonitor(fwMainWindow, "Migrating Dictionary Configuration Settings"))
 				{
 					s_activeMainWnd.Publisher.Publish("MigrateOldConfigurations", null);
 				}
@@ -2764,7 +2748,7 @@ namespace SIL.FieldWorks
 			return true;
 		}
 
-		private static void EnsureValidReversalIndexConfigFile(FdoCache cache)
+		private static void EnsureValidReversalIndexConfigFile(LcmCache cache)
 		{
 			var wsMgr = cache.ServiceLocator.WritingSystemManager;
 			cache.DomainDataByFlid.BeginNonUndoableTask();
@@ -2895,7 +2879,7 @@ namespace SIL.FieldWorks
 			{
 				app.RegistrySettings.LoadingProcessId = process.Id;
 			}
-			if (String.IsNullOrEmpty(app.RegistrySettings.LatestProject))
+			if (string.IsNullOrEmpty(app.RegistrySettings.LatestProject))
 			{
 				// Until something gets saved, we will keep track of the first project opened.
 				app.RegistrySettings.LatestProject = projectId.Handle;
@@ -2926,13 +2910,13 @@ namespace SIL.FieldWorks
 				}
 				throw;
 			}
-			catch (FdoDataMigrationForbiddenException)
+			catch (LcmDataMigrationForbiddenException)
 			{
 				// tell the user to close all other applications using this project
 				MessageBox.Show(ResourceHelper.GetResourceString("kstidDataMigrationProhibitedText"),
 					ResourceHelper.GetResourceString("kstidDataMigrationProhibitedCaption"), MessageBoxButtons.OK, MessageBoxIcon.Error);
 			}
-			catch (FdoInitializationException fie)
+			catch (LcmInitializationException fie)
 			{
 				throw new StartupException(fie.Message, fie);
 			}
@@ -3077,7 +3061,7 @@ namespace SIL.FieldWorks
 			if (s_flexApp != null)
 				return; // this isn't the last one to shut down, not time to record.
 
-			var settingsFolder = Path.Combine(Cache.ProjectId.ProjectFolder, FdoFileHelper.ksConfigurationSettingsDir);
+			var settingsFolder = Path.Combine(Cache.ProjectId.ProjectFolder, LcmFileHelper.ksConfigurationSettingsDir);
 			try
 			{
 				Directory.CreateDirectory(settingsFolder); // make sure
@@ -3465,7 +3449,7 @@ namespace SIL.FieldWorks
 		/// be reported with a crash.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private static void SetupErrorPropertiesNeedingCache(FdoCache cache)
+		private static void SetupErrorPropertiesNeedingCache(LcmCache cache)
 		{
 			ErrorReporter.AddProperty("ProjectName", cache.ProjectId.Name);
 			ErrorReporter.AddProperty("ProjectHandle", cache.ProjectId.Handle);
@@ -3529,19 +3513,19 @@ namespace SIL.FieldWorks
 		/// <returns></returns>
 		internal static IFlexApp ReopenProject(string project, FwAppArgs appArgs)
 		{
-			ExecuteWithAppsShutDown(()=>
-												{
-													try
-													{
-														HandleLinkRequest(appArgs);
-														return s_projectId;
-													}
-													catch (Exception e)
-													{
-														//This is not good.
-													}
-													return null;
-												});
+			ExecuteWithAppsShutDown(() =>
+				{
+					try
+					{
+						HandleLinkRequest(appArgs);
+						return s_projectId;
+					}
+					catch (Exception e)
+					{
+						//This is not good.
+					}
+					return null;
+				});
 			return s_flexApp;
 		}
 
@@ -3797,7 +3781,7 @@ namespace SIL.FieldWorks
 	///<summary>
 	/// Class to find out some details about the current FW installation.
 	///</summary>
-	static public class WindowsInstallerQuery
+	public static class WindowsInstallerQuery
 	{
 		private const string InstallerProductCode = "{8E80F1ED-826A-46d5-A59A-D8A203F2F0D9}";
 		private const string InstalledProductNameProperty = "InstalledProductName";

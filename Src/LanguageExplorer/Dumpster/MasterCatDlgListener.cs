@@ -4,7 +4,7 @@
 
 using System.Diagnostics;
 using System.Windows.Forms;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.LexText.Controls;
 
 namespace LanguageExplorer.Dumpster
@@ -74,7 +74,7 @@ namespace LanguageExplorer.Dumpster
 
 			using (var dlg = new MasterCategoryListDlg())
 			{
-				FdoCache cache = PropertyTable.GetValue<FdoCache>("cache");
+				LcmCache cache = PropertyTable.GetValue<LcmCache>("cache");
 				Debug.Assert(cache != null);
 				var owningObj = PropertyTable.GetValue<ICmObject>("ActiveClerkOwningObject");
 				dlg.SetDlginfo((owningObj is ICmPossibilityList) ? owningObj as ICmPossibilityList : cache.LangProject.PartsOfSpeechOA, PropertyTable, true, null);
