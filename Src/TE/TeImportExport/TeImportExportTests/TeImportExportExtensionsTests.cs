@@ -69,6 +69,8 @@ namespace SIL.FieldWorks.TE
 
 			var fileOs = new MockFileOS();
 			MockParatextHelper ptHelper = null;
+			var saveScriptureProvider = ScriptureProvider._scriptureProvider;
+			ScriptureProvider._scriptureProvider = new MockScriptureProvider();
 			try
 			{
 				FileUtils.Manager.SetFileAdapter(fileOs);
@@ -98,6 +100,7 @@ namespace SIL.FieldWorks.TE
 				if (ptHelper != null)
 					ptHelper.Dispose();
 				FileUtils.Manager.Reset();
+				ScriptureProvider._scriptureProvider = saveScriptureProvider;
 			}
 		}
 
