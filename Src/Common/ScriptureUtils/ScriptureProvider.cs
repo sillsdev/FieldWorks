@@ -156,6 +156,9 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 			private class PT7ParserStateWrapper : IScriptureProviderParserState
 			{
 				private ScrParserState pt7ParserState;
+				private List<IUsfmToken> wrappedTokenList;
+
+				private List<UsfmToken> rawPtTokenList;
 
 				public PT7ParserStateWrapper(ScrParserState scrParserState)
 				{
@@ -166,7 +169,13 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 
 				public void UpdateState(List<IUsfmToken> ptBookTokens, int ptCurrentToken)
 				{
-					pt7ParserState.UpdateState(new List<UsfmToken>(ptBookTokens.Select(t => (UsfmToken)t.CoreToken)), ptCurrentToken);
+					if (wrappedTokenList != ptBookTokens)
+					{
+						wrappedTokenList = ptBookTokens;
+						rawPtTokenList = new List<UsfmToken>(ptBookTokens.Select(t => (UsfmToken)t.CoreToken));
+					}
+
+					pt7ParserState.UpdateState(rawPtTokenList, ptCurrentToken);
 				}
 			}
 		}
