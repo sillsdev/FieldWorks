@@ -49,7 +49,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			keyAttrs["part"] = new string[] {"id"};
 
 			var parts = new Inventory(new string[] {partDirectory},
-				"*Parts.xml", "/PartInventory/bin/*", keyAttrs, "DetailTreeTests", "ProjectPath");
+				"*Parts.xml", "/PartInventory/bin/*", keyAttrs, "DetailTreeTests", Path.GetTempPath());
 
 			return parts;
 		}
@@ -65,7 +65,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			keyAttrs["part"] = new string[] {"ref"};
 
 			var layouts = new Inventory(new string[] {partDirectory},
-				"*.fwlayout", "/LayoutInventory/*", keyAttrs, "DetailTreeTests", "ProjectPath");
+				"*.fwlayout", "/LayoutInventory/*", keyAttrs, "DetailTreeTests", Path.GetTempPath());
 
 			return layouts;
 		}
