@@ -425,7 +425,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 						new XAttribute("Id", afxAllo.Hvo),
 						CreateAttribute("MorphType", afxAllo.MorphTypeRA),
 						new XAttribute("IsAbstract", afxAllo.IsAbstract ? 1 : 0),
-						ExportBestVernacular(afxAllo.Form, "Form", mode),
+						ExportBestVernacular(afxAllo.Form, "Form", mode), //TODO Homograph number should display here
 						from env in afxAllo.PhoneEnvRC
 						select ExportItemAsReference(env, "PhoneEnv"),
 						from position in afxAllo.PositionRS
