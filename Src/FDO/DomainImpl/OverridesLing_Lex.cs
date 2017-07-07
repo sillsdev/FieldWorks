@@ -2851,10 +2851,13 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			}
 			// The following code for setting Ws and FontFamily are to fix LT-6238.
 			IWritingSystem defVernWs = Services.WritingSystems.DefaultVernacularWritingSystem;
+			var entry = form.Owner as ILexEntry;
+			var hc = entry.Services.GetInstance<HomographConfiguration>();
 			if (!String.IsNullOrEmpty(prefix))
 			{
 				tsb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, defVernWs.Handle);
 				tsb.SetStrPropValue((int)FwTextPropType.ktptFontFamily, "Doulos SIL");
+				StringServices.InsertHomographNumber(tsb, entry.HomographNumber, hc, HomographConfiguration.HeadwordVariant.Main, Cache);
 				tsb.Append(prefix);
 			}
 			StringServices.ShortName1Static(this, tsb);
@@ -2863,6 +2866,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				tsb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, defVernWs.Handle);
 				tsb.SetStrPropValue((int)FwTextPropType.ktptFontFamily, "Doulos SIL");
 				tsb.Append(postfix);
+				StringServices.InsertHomographNumber(tsb, entry.HomographNumber, hc, HomographConfiguration.HeadwordVariant.Main, Cache);
 			}
 		}
 

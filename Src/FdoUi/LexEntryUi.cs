@@ -26,6 +26,7 @@ using SIL.FieldWorks.LexText.Controls;
 using XCore;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.CoreImpl;
+using SIL.FieldWorks.FDO.DomainImpl;
 
 namespace SIL.FieldWorks.FdoUi
 {
@@ -880,15 +881,16 @@ namespace SIL.FieldWorks.FdoUi
 						// ideally, TsStringCollectorEnv could be made smarter to handle SetIntPropValues
 						// since AppendTss treats the given Tss as atomic.
 						ITsIncStrBldr tsBldr = TsIncStrBldrClass.Create();
-						tsBldr.SetIntPropValues((int)FwTextPropType.ktptSuperscript,
-							(int)FwTextPropVar.ktpvEnum,
-							(int)FwSuperscriptVal.kssvSub);
-						tsBldr.SetIntPropValues((int)FwTextPropType.ktptBold,
-							(int)FwTextPropVar.ktpvEnum,
-							(int)FwTextToggleVal.kttvForceOn);
-						tsBldr.SetIntPropValues((int)FwTextPropType.ktptWs,
-							(int)FwTextPropVar.ktpvDefault, defUserWs);
-						tsBldr.Append(nHomograph.ToString());
+						tsBldr.SetIntPropValues((int) FwTextPropType.ktptSuperscript,
+							(int) FwTextPropVar.ktpvEnum,
+							(int) FwSuperscriptVal.kssvSub);
+						tsBldr.SetIntPropValues((int) FwTextPropType.ktptBold,
+							(int) FwTextPropVar.ktpvEnum,
+							(int) FwTextToggleVal.kttvForceOn);
+						tsBldr.SetIntPropValues((int) FwTextPropType.ktptWs,
+							(int) FwTextPropVar.ktpvDefault, defUserWs);
+						var hc = m_cache.ServiceLocator.GetInstance<HomographConfiguration>();
+						StringServices.InsertHomographNumber(tsBldr, nHomograph, hc, HomographConfiguration.HeadwordVariant.Main, m_cache);
 						vwenv.AddString(tsBldr.GetString());
 					}
 		}
