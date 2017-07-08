@@ -293,7 +293,7 @@ namespace SIL.FieldWorks.XWorks
 				return;
 
 			// We won't keep track of the clerk between calls since it could change from time to time.
-			var clerk = m_propertyTable.GetValue<RecordClerk>("ActiveClerk", null);
+			var clerk = RecordClerk.RecordClerkRepository.ActiveRecordClerk;
 			if (clerk == null)
 				return;
 

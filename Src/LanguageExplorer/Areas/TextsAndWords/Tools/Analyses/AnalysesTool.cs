@@ -13,7 +13,6 @@ using LanguageExplorer.Controls.PaneBar;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks;
-using SIL.LCModel;
 using SIL.LCModel.Application;
 using SIL.LCModel.Utils;
 
@@ -84,8 +83,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 		{
 			MultiPaneFactory.RemoveFromParentAndDispose(
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
-				ref _multiPane,
-				ref _recordClerk);
+				majorFlexComponentParameters.DataNavigationManager,
+				majorFlexComponentParameters.RecordClerkRepository,
+				ref _multiPane);
 			_recordBrowseView = null;
 		}
 
@@ -97,9 +97,16 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			if (_recordClerk == null)
+			{
+				var decorator = new ConcDecorator( majorFlexComponentParameters.LcmCache.ServiceLocator);
+				_recordClerk = new InterlinearTextsRecordClerk(majorFlexComponentParameters.LcmCache.LanguageProject, decorator);
+				_recordClerk.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
+				majorFlexComponentParameters.RecordClerkRepository.AddRecordClerk(_recordClerk);
+			}
+
 			var root = XDocument.Parse(TextAndWordsResources.WordListParameters).Root;
 			var columnsElement = XElement.Parse(TextAndWordsResources.WordListColumns);
-
 			var overriddenColumnElement = columnsElement.Elements("column").First(column => column.Attribute("label").Value == "Form");
 			overriddenColumnElement.Attribute("width").Value = "25%";
 			overriddenColumnElement = columnsElement.Elements("column").First(column => column.Attribute("label").Value == "Word Glosses");
@@ -108,22 +115,15 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 			overriddenColumnElement = columnsElement.Elements("column").First(column => column.Attribute("label").Value == "User Analyses");
 			overriddenColumnElement.Attribute("visibility").Value = "always";
 			overriddenColumnElement.Add(new XAttribute("width", "15%"));
-
 			root.Add(columnsElement);
-
-			var cache = PropertyTable.GetValue<LcmCache>("cache");
-			var decorator = new ConcDecorator(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), cache.ServiceLocator);
-			_recordClerk = new InterlinearTextsRecordClerk(cache.LanguageProject, decorator);
-
-			_recordClerk.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
-			_recordBrowseView = new RecordBrowseView(root, _recordClerk);
+			_recordBrowseView = new RecordBrowseView(root, majorFlexComponentParameters.LcmCache, _recordClerk);
 			var dataTreeMenuHandler = new WordsEditToolMenuHandler();
 			dataTreeMenuHandler.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
 #if RANDYTODO
 			// TODO: Set up 'dataTreeMenuHandler' to handle menu events.
 			// TODO: Install menus and connect them to event handlers. (See "CreateContextMenuStrip" method for where the menus are.)
 #endif
-			var recordEditView = new RecordEditView(XElement.Parse(TextAndWordsResources.AnalysesRecordEditViewParameters), XDocument.Parse(AreaResources.VisibilityFilter_All), _recordClerk, dataTreeMenuHandler);
+			var recordEditView = new RecordEditView(XElement.Parse(TextAndWordsResources.AnalysesRecordEditViewParameters), XDocument.Parse(AreaResources.VisibilityFilter_All), majorFlexComponentParameters.LcmCache, _recordClerk, dataTreeMenuHandler);
 			_multiPane = MultiPaneFactory.CreateMultiPaneWithTwoPaneBarContainersInMainCollapsingSplitContainer(
 				majorFlexComponentParameters.FlexComponentParameters,
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
@@ -146,6 +146,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 			// Too early before now.
 			recordEditView.FinishInitialization();
 			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
+			majorFlexComponentParameters.RecordClerkRepository.ActiveRecordClerk = _recordClerk;
 		}
 
 		/// <summary>

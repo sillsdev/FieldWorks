@@ -81,8 +81,9 @@ namespace LanguageExplorer.Areas.Lists.Tools.SenseTypeEdit
 		{
 			CollapsingSplitContainerFactory.RemoveFromParentAndDispose(
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
-				ref _collapsingSplitContainer,
-				ref _recordClerk);
+				majorFlexComponentParameters.DataNavigationManager,
+				majorFlexComponentParameters.RecordClerkRepository,
+				ref _collapsingSplitContainer);
 		}
 
 		/// <summary>
@@ -95,13 +96,15 @@ namespace LanguageExplorer.Areas.Lists.Tools.SenseTypeEdit
 		{
 			_collapsingSplitContainer = CollapsingSplitContainerFactory.Create(
 				majorFlexComponentParameters.FlexComponentParameters,
+				majorFlexComponentParameters.DataNavigationManager,
+				majorFlexComponentParameters.RecordClerkRepository,
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
 				true,
 				XDocument.Parse(ListResources.SenseTypeEditParameters).Root, XDocument.Parse(ListResources.ListToolsSliceFilters),
 				MachineName,
-				new PossibilityListClerkParameters("SenseTypeList", PropertyTable.GetValue<LcmCache>("cache").LanguageProject.LexDbOA.SenseTypesOA, false, false, false, "best analysis"),
-				out _recordClerk);
-			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
+				new PossibilityListClerkParameters("SenseTypeList", majorFlexComponentParameters.LcmCache.LanguageProject.LexDbOA.SenseTypesOA, false, false, false, "best analysis"),
+				majorFlexComponentParameters.LcmCache,
+				ref _recordClerk);
 		}
 
 		/// <summary>

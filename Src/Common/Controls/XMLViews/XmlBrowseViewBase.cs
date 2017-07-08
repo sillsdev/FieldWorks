@@ -1010,6 +1010,11 @@ namespace SIL.FieldWorks.Common.Controls
 					int hvo = m_sda.get_VecItem(m_hvoRoot, m_madeUpFieldIdentifier, 0);
 					if (hvo == (int) SpecialHVOValues.kHvoObjectDeleted)
 					{
+#if RANDYTODO
+						// TODO: Can't reference xWorks, so removing this case of "ActiveClerk" will have to wait, until these are all assimilated (ordered list):
+						// TODO: xWorks, DetailControls, FdoUi, LexTextControls, XMLViews.
+						// TODO: But, 'x' will always be null soon, since nobody will be setting "ActiveClerk".
+#endif
 						// Deleting everything in one view doesn't seem to fix the RecordList in
 						// related views.  See LT-9711.
 						IRecordListUpdater x = PropertyTable.GetValue<IRecordListUpdater>("ActiveClerk");
@@ -1047,9 +1052,9 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-		#endregion Properties
+#endregion Properties
 
-		#region Construction, Initialization and disposal
+#region Construction, Initialization and disposal
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -1174,9 +1179,9 @@ namespace SIL.FieldWorks.Common.Controls
 			m_bv = null;
 		}
 
-		#endregion Construction, Initialization and disposal
+#endregion Construction, Initialization and disposal
 
-		#region Other methods
+#region Other methods
 
 		/// <summary>
 		/// Get from the specified node a list of strings, as used in filter bar and bulk edit bar,
@@ -1886,9 +1891,9 @@ namespace SIL.FieldWorks.Common.Controls
 			base.OnMouseWheel(e);
 		}
 
-		#endregion Other methods
+#endregion Other methods
 
-		#region Overrides of RootSite
+#region Overrides of RootSite
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Make the root box.
@@ -2060,7 +2065,7 @@ namespace SIL.FieldWorks.Common.Controls
 				return new Size(base.Width, desiredMaxScrollbarHeight);
 			}
 		}
-		#endregion
+#endregion
 
 #if RANDYTODO
 		/// <summary>
@@ -2092,7 +2097,7 @@ namespace SIL.FieldWorks.Common.Controls
 			return false;
 		}
 
-		#region Overrides of SimpleRootSite
+#region Overrides of SimpleRootSite
 
 		/// <summary>
 		/// Initialize a FLEx component with the basic interfaces.
@@ -2108,9 +2113,9 @@ namespace SIL.FieldWorks.Common.Controls
 			SetSelectedRowHighlighting();//read the property table
 		}
 
-		#endregion
+#endregion
 
-		#region Designer generated code
+#region Designer generated code
 		/// <summary>
 		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
@@ -2119,7 +2124,7 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			components = new System.ComponentModel.Container();
 		}
-		#endregion
+#endregion
 
 		/// <summary>
 		/// Save the location information for the current selection being made visible.
@@ -2135,7 +2140,7 @@ namespace SIL.FieldWorks.Common.Controls
 			m_ydSelScrollPos = ydTop;
 		}
 
-		#region IVwNotifyChange Members
+#region IVwNotifyChange Members
 
 		ICmObjectRepository m_repo;
 		/// <summary>
@@ -2220,7 +2225,7 @@ namespace SIL.FieldWorks.Common.Controls
 			return true; // we did it.
 		}
 
-		#endregion
+#endregion
 
 		/// <summary>
 		/// After we have our true size, make sure the interesting row is visible.

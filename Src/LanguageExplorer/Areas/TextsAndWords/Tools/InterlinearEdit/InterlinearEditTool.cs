@@ -10,7 +10,6 @@ using LanguageExplorer.Controls.PaneBar;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks;
-using SIL.LCModel;
 using SIL.LCModel.Application;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
@@ -83,8 +82,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 		{
 			MultiPaneFactory.RemoveFromParentAndDispose(
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
-				ref _multiPane,
-				ref _recordClerk);
+				majorFlexComponentParameters.DataNavigationManager,
+				majorFlexComponentParameters.RecordClerkRepository,
+				ref _multiPane);
 			_recordBrowseView = null;
 			_interlinMaster = null;
 		}
@@ -97,11 +97,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			var doc = XDocument.Parse(TextAndWordsResources.InterlinearEditToolParameters);
-			var cache = PropertyTable.GetValue<LcmCache>("cache");
-			var decorator = new InterestingTextsDecorator(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), cache.ServiceLocator, PropertyTable);
-			_recordClerk = new InterlinearTextsRecordClerk(cache.LanguageProject, decorator);
-			_recordClerk.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
+			if (_recordClerk == null)
+			{
+				var decorator = new InterestingTextsDecorator(majorFlexComponentParameters.LcmCache.ServiceLocator, PropertyTable);
+				_recordClerk = new InterlinearTextsRecordClerk(majorFlexComponentParameters.LcmCache.LanguageProject, decorator);
+				_recordClerk.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
+				majorFlexComponentParameters.RecordClerkRepository.AddRecordClerk(_recordClerk);
+			}
 			var multiPaneParameters = new MultiPaneParameters
 			{
 				Orientation = Orientation.Vertical,
@@ -112,8 +114,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 				DefaultPrintPane = "ITextContent",
 				DefaultFocusControl = "InterlinMaster"
 			};
-			_recordBrowseView = new RecordBrowseView(doc.Root.Element("recordbrowseview").Element("parameters"), _recordClerk);
-			_interlinMaster = new InterlinMaster(doc.Root.Element("interlinearmaster").Element("parameters"), _recordClerk);
+			var root = XDocument.Parse(TextAndWordsResources.InterlinearEditToolParameters).Root;
+			_recordBrowseView = new RecordBrowseView(root.Element("recordbrowseview").Element("parameters"), majorFlexComponentParameters.LcmCache, _recordClerk);
+			_interlinMaster = new InterlinMaster(root.Element("interlinearmaster").Element("parameters"), majorFlexComponentParameters.LcmCache, _recordClerk);
 			_multiPane = MultiPaneFactory.CreateMultiPaneWithTwoPaneBarContainersInMainCollapsingSplitContainer(
 				majorFlexComponentParameters.FlexComponentParameters,
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
@@ -127,6 +130,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 			_interlinMaster.FinishInitialization();
 			_interlinMaster.BringToFront();
 			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
+			majorFlexComponentParameters.RecordClerkRepository.ActiveRecordClerk = _recordClerk;
 		}
 
 		/// <summary>

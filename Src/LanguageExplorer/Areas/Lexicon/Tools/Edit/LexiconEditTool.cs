@@ -97,8 +97,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 			MultiPaneFactory.RemoveFromParentAndDispose(
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
-				ref _multiPane,
-				ref _recordClerk);
+				majorFlexComponentParameters.DataNavigationManager,
+				majorFlexComponentParameters.RecordClerkRepository,
+				ref _multiPane);
 			_recordBrowseView = null;
 			_innerMultiPane = null;
 		}
@@ -111,6 +112,13 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			if (_recordClerk == null)
+			{
+				_recordClerk = LexiconArea.CreateBasicClerkForLexiconArea(majorFlexComponentParameters.LcmCache);
+				_recordClerk.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
+				majorFlexComponentParameters.RecordClerkRepository.AddRecordClerk(_recordClerk);
+			}
+
 			var root = XDocument.Parse(LexiconResources.LexiconBrowseParameters).Root;
 			// Modify the basic parameters for this tool.
 			root.Attribute("id").Value = "lexentryList";
@@ -123,10 +131,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			OverrideServices.OverrideVisibiltyAttributes(columnsElement, overrides);
 			root.Add(columnsElement);
 
-			_recordClerk = LexiconArea.CreateBasicClerkForLexiconArea(PropertyTable.GetValue<LcmCache>("cache"));
-			_recordClerk.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
-
-			_recordBrowseView = new RecordBrowseView(root, _recordClerk);
+			_recordBrowseView = new RecordBrowseView(root, majorFlexComponentParameters.LcmCache, _recordClerk);
 
 			var dataTreeMenuHandler = new LexEntryMenuHandler();
 			dataTreeMenuHandler.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
@@ -134,7 +139,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			// TODO: Set up 'dataTreeMenuHandler' to handle menu events.
 			// TODO: Install menus and connect them to event handlers. (See "CreateContextMenuStrip" method for where the menus are.)
 #endif
-			var recordEditView = new RecordEditView(XElement.Parse(LexiconResources.LexiconEditRecordEditViewParameters), XDocument.Parse(AreaResources.VisibilityFilter_All), _recordClerk, dataTreeMenuHandler);
+			var recordEditView = new RecordEditView(XElement.Parse(LexiconResources.LexiconEditRecordEditViewParameters), XDocument.Parse(AreaResources.VisibilityFilter_All), majorFlexComponentParameters.LcmCache, _recordClerk, dataTreeMenuHandler);
 			var nestedMultiPaneParameters = new MultiPaneParameters
 			{
 				Orientation = Orientation.Horizontal,
@@ -144,7 +149,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				ToolMachineName = MachineName,
 				FirstControlParameters = new SplitterChildControlParameters
 				{
-					Control = new RecordDocXmlView(XDocument.Parse(LexiconResources.LexiconEditRecordDocViewParameters).Root, _recordClerk), Label = "Dictionary"
+					Control = new RecordDocXmlView(XDocument.Parse(LexiconResources.LexiconEditRecordDocViewParameters).Root, majorFlexComponentParameters.LcmCache, _recordClerk), Label = "Dictionary"
 				},
 				SecondControlParameters = new SplitterChildControlParameters
 				{
@@ -187,6 +192,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			recordEditView.FinishInitialization();
 			((RecordDocXmlView)nestedMultiPaneParameters.FirstControlParameters.Control).ReallyShowRecordNow();
 			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
+			majorFlexComponentParameters.RecordClerkRepository.ActiveRecordClerk = _recordClerk;
 		}
 
 		private ContextMenuStrip CreateContextMenuStrip()

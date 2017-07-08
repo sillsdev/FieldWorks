@@ -76,21 +76,21 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Initializes a new instance of the <see cref="RecordEditView"/> class.
 		/// </summary>
-		public RecordEditView(XElement configurationParametersElement, XDocument sliceFilterDocument, RecordClerk recordClerk, DTMenuHandler dataTreeMenuHandler)
-			: this(configurationParametersElement, sliceFilterDocument, recordClerk, dataTreeMenuHandler, new DataTree())
+		public RecordEditView(XElement configurationParametersElement, XDocument sliceFilterDocument, LcmCache cache, RecordClerk recordClerk, DTMenuHandler dataTreeMenuHandler)
+			: this(configurationParametersElement, sliceFilterDocument, cache, recordClerk, dataTreeMenuHandler, new DataTree())
 		{
 		}
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="RecordEditView"/> class.
 		/// </summary>
-		public RecordEditView(XElement configurationParametersElement, XDocument sliceFilterDocument, RecordClerk recordClerk)
-			: this(configurationParametersElement, sliceFilterDocument, recordClerk, new DTMenuHandler(), new DataTree())
+		public RecordEditView(XElement configurationParametersElement, XDocument sliceFilterDocument, LcmCache cache, RecordClerk recordClerk)
+			: this(configurationParametersElement, sliceFilterDocument, cache, recordClerk, new DTMenuHandler(), new DataTree())
 		{
 		}
 
-		protected RecordEditView(XElement configurationParametersElement, XDocument sliceFilterDocument, RecordClerk recordClerk, DTMenuHandler dataTreeMenuHandler, DataTree dataEntryForm)
-			: base(configurationParametersElement, recordClerk)
+		protected RecordEditView(XElement configurationParametersElement, XDocument sliceFilterDocument, LcmCache cache, RecordClerk recordClerk, DTMenuHandler dataTreeMenuHandler, DataTree dataEntryForm)
+			: base(configurationParametersElement, cache, recordClerk)
 		{
 			m_menuHandler = dataTreeMenuHandler;
 			m_sliceFilterDocument = sliceFilterDocument;

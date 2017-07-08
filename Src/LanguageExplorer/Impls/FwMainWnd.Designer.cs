@@ -517,7 +517,7 @@ namespace LanguageExplorer.Impls
 			this._data_First.Image = global::LanguageExplorer.LanguageExplorerResources.FWFirstArrow;
 			this._data_First.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this._data_First.Name = "_data_First";
-			this._data_First.Size = new System.Drawing.Size(160, 26);
+			this._data_First.Size = new System.Drawing.Size(156, 22);
 			this._data_First.Text = "&First";
 			this._data_First.ToolTipText = "Show the first item.";
 			// 
@@ -527,7 +527,7 @@ namespace LanguageExplorer.Impls
 			this._data_Previous.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this._data_Previous.Name = "_data_Previous";
 			this._data_Previous.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.P)));
-			this._data_Previous.Size = new System.Drawing.Size(160, 26);
+			this._data_Previous.Size = new System.Drawing.Size(156, 22);
 			this._data_Previous.Text = "&Previous";
 			this._data_Previous.ToolTipText = "Show the previous item.";
 			// 
@@ -537,7 +537,7 @@ namespace LanguageExplorer.Impls
 			this._data_Next.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this._data_Next.Name = "_data_Next";
 			this._data_Next.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.N)));
-			this._data_Next.Size = new System.Drawing.Size(160, 26);
+			this._data_Next.Size = new System.Drawing.Size(156, 22);
 			this._data_Next.Text = "&Next";
 			this._data_Next.ToolTipText = "Show the next item.";
 			// 
@@ -546,7 +546,7 @@ namespace LanguageExplorer.Impls
 			this._data_Last.Image = global::LanguageExplorer.LanguageExplorerResources.FWLastArrow;
 			this._data_Last.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this._data_Last.Name = "_data_Last";
-			this._data_Last.Size = new System.Drawing.Size(160, 26);
+			this._data_Last.Size = new System.Drawing.Size(156, 22);
 			this._data_Last.Text = "&Last";
 			this._data_Last.ToolTipText = "Show the last item.";
 			// 
@@ -1081,6 +1081,8 @@ namespace LanguageExplorer.Impls
 			this.MainMenuStrip = this._menuStrip;
 			this.Name = "FwMainWnd";
 			this.Text = "FieldWorks Language Explorer";
+			this.Activated += new System.EventHandler(this.FwMainWnd_Activated);
+			this.Deactivate += new System.EventHandler(this.FwMainWnd_Deactivate);
 			this._menuStrip.ResumeLayout(false);
 			this._menuStrip.PerformLayout();
 			this.toolStripStandard.ResumeLayout(false);

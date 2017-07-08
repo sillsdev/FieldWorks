@@ -100,8 +100,9 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 
 			MultiPaneFactory.RemoveFromParentAndDispose(
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
-				ref _multiPane,
-				ref _recordClerk);
+				majorFlexComponentParameters.DataNavigationManager,
+				majorFlexComponentParameters.RecordClerkRepository,
+				ref _multiPane);
 		}
 
 		/// <summary>
@@ -112,23 +113,24 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			var browseViewConfigurationDocument = XDocument.Parse(ListResources.ReversalToolReversalIndexPOSBrowseViewParameters);
-			var recordEditViewConfigurationDocument = XDocument.Parse(ListResources.ReversalToolReversalIndexPOSRecordEditViewParameters);
-			var cache = PropertyTable.GetValue<LcmCache>("cache");
 			var currentGuid = ReversalIndexEntryUi.GetObjectGuidIfValid(PropertyTable, "ReversalIndexGuid");
 			if (currentGuid != Guid.Empty)
 			{
-				_currentReversalIndex = (IReversalIndex)cache.ServiceLocator.GetObject(currentGuid);
+				_currentReversalIndex = (IReversalIndex)majorFlexComponentParameters.LcmCache.ServiceLocator.GetObject(currentGuid);
 			}
 
-			_recordClerk = new ReversalEntryPOSClerk(cache.ServiceLocator, cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), _currentReversalIndex);
-			_recordClerk.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
-			_recordBrowseView = new RecordBrowseView(browseViewConfigurationDocument.Root, _recordClerk);
+			if (_recordClerk == null)
+			{
+				_recordClerk = new ReversalEntryPOSClerk(majorFlexComponentParameters.LcmCache.ServiceLocator, majorFlexComponentParameters.LcmCache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), _currentReversalIndex);
+				_recordClerk.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
+				majorFlexComponentParameters.RecordClerkRepository.AddRecordClerk(_recordClerk);
+			}
+			_recordBrowseView = new RecordBrowseView(XDocument.Parse(ListResources.ReversalToolReversalIndexPOSBrowseViewParameters).Root, majorFlexComponentParameters.LcmCache, _recordClerk);
 #if RANDYTODO
 			// TODO: Set up 'dataTreeMenuHandler' to handle menu events.
 			// TODO: Install menus and connect them to event handlers. (See "CreateContextMenuStrip" method for where the menus are.)
 #endif
-			var recordEditView = new RecordEditView(recordEditViewConfigurationDocument.Root, XDocument.Parse(AreaResources.HideAdvancedListItemFields), _recordClerk);
+			var recordEditView = new RecordEditView(XDocument.Parse(ListResources.ReversalToolReversalIndexPOSRecordEditViewParameters).Root, XDocument.Parse(AreaResources.HideAdvancedListItemFields), majorFlexComponentParameters.LcmCache, _recordClerk);
 			var mainMultiPaneParameters = new MultiPaneParameters
 			{
 				Orientation = Orientation.Vertical,
@@ -166,6 +168,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 			// Too early before now.
 			recordEditView.FinishInitialization();
 			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
+			majorFlexComponentParameters.RecordClerkRepository.ActiveRecordClerk = _recordClerk;
 		}
 
 		/// <summary>

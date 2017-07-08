@@ -328,7 +328,7 @@ namespace LanguageExplorer.Dumpster
 
 			if (InFriendlyArea && m_mediator != null)
 			{
-				var clrk = m_propertyTable.GetValue<RecordClerk>("ActiveClerk");
+				var clrk = RecordClerk.RecordClerkRepository.ActiveRecordClerk;
 				if (clrk != null && !clrk.IsDisposed && clrk.Id == "concordanceWords")
 				{
 					display.Visible = true;

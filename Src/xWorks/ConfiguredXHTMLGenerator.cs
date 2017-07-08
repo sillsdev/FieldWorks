@@ -82,7 +82,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		/// <returns>The HTML as a string</returns>
 		public static string GenerateEntryHtmlWithStyles(ICmObject entry, DictionaryConfigurationModel configuration,
-																		 DictionaryPublicationDecorator pubDecorator, IPropertyTable propertyTable)
+																		 DictionaryPublicationDecorator pubDecorator, IPropertyTable propertyTable, LcmCache cache)
 		{
 			if (entry == null)
 			{
@@ -102,14 +102,14 @@ namespace SIL.FieldWorks.XWorks
 			using (var writer = XmlWriter.Create(stringBuilder))
 			using (var cssWriter = new StreamWriter(previewCssPath, false, Encoding.UTF8))
 			{
-				var exportSettings = new GeneratorSettings(propertyTable.GetValue<LcmCache>("cache"), propertyTable, false, false, null,
+				var exportSettings = new GeneratorSettings(cache, propertyTable, false, false, null,
 					IsNormalRtl(propertyTable));
 				GenerateOpeningHtml(previewCssPath, custCssPath, exportSettings, writer);
 				var content = GenerateXHTMLForEntry(entry, configuration, pubDecorator, exportSettings);
 				writer.WriteRaw(content);
 				GenerateClosingHtml(writer);
 				writer.Flush();
-				cssWriter.Write(CssGenerator.GenerateCssFromConfiguration(configuration, propertyTable));
+				cssWriter.Write(CssGenerator.GenerateCssFromConfiguration(configuration, propertyTable, cache));
 				cssWriter.Flush();
 			}
 
@@ -204,13 +204,15 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		/// <returns>The path to the XHTML file</returns>
 		public static string SavePreviewHtmlWithStyles(int[] entryHvos, DictionaryPublicationDecorator publicationDecorator, DictionaryConfigurationModel configuration, IPropertyTable propertyTable,
+			LcmCache cache,
+			RecordClerk activeClerk,
 			IThreadedProgress progress = null, int entriesPerPage = EntriesPerPage)
 		{
-			var preferredPath = GetPreferredPreviewPath(configuration, propertyTable.GetValue<LcmCache>("cache"), entryHvos.Length == 1);
+			var preferredPath = GetPreferredPreviewPath(configuration, cache, entryHvos.Length == 1);
 			var xhtmlPath = Path.ChangeExtension(preferredPath, "xhtml");
 			try
 			{
-				SavePublishedHtmlWithStyles(entryHvos, publicationDecorator, entriesPerPage, configuration, propertyTable, xhtmlPath, progress);
+				SavePublishedHtmlWithStyles(entryHvos, publicationDecorator, entriesPerPage, configuration, propertyTable, cache, activeClerk, xhtmlPath, progress);
 			}
 			catch (IOException ioEx)
 			{
@@ -222,7 +224,7 @@ namespace SIL.FieldWorks.XWorks
 					xhtmlPath = Path.ChangeExtension(preferredPath + i, "xhtml");
 					try
 					{
-						SavePublishedHtmlWithStyles(entryHvos, publicationDecorator, entriesPerPage, configuration, propertyTable, xhtmlPath, progress);
+						SavePublishedHtmlWithStyles(entryHvos, publicationDecorator, entriesPerPage, configuration, propertyTable, cache, activeClerk, xhtmlPath, progress);
 					}
 					catch (IOException e)
 					{
@@ -253,15 +255,16 @@ namespace SIL.FieldWorks.XWorks
 		/// the given collection.
 		/// </summary>
 		public static void SavePublishedHtmlWithStyles(int[] entryHvos, DictionaryPublicationDecorator publicationDecorator, int entriesPerPage,
-			DictionaryConfigurationModel configuration, IPropertyTable propertyTable, string xhtmlPath, IThreadedProgress progress = null)
+			DictionaryConfigurationModel configuration, IPropertyTable propertyTable,
+			LcmCache cache,
+			RecordClerk activeClerk,
+			string xhtmlPath, IThreadedProgress progress = null)
 		{
 			var entryCount = entryHvos.Length;
 			var cssPath = Path.ChangeExtension(xhtmlPath, "css");
 			var configDir = Path.GetDirectoryName(configuration.FilePath);
-			var clerk = propertyTable.GetValue<RecordClerk>("ActiveClerk");
-			var cache = propertyTable.GetValue<LcmCache>("cache");
 			// Don't display letter headers if we're showing a preview in the Edit tool or we're not sorting by headword
-			var wantLetterHeaders = (entryCount > 1 || !IsLexEditPreviewOnly(publicationDecorator)) && (IsClerkSortingByHeadword(clerk));
+			var wantLetterHeaders = (entryCount > 1 || !IsLexEditPreviewOnly(publicationDecorator)) && (IsClerkSortingByHeadword(activeClerk));
 			using (var xhtmlWriter = XmlWriter.Create(xhtmlPath))
 			using (var cssWriter = new StreamWriter(cssPath, false, Encoding.UTF8))
 			{
@@ -274,7 +277,7 @@ namespace SIL.FieldWorks.XWorks
 				}
 				var settings = new GeneratorSettings(cache, propertyTable, true, true, Path.GetDirectoryName(xhtmlPath), IsNormalRtl(propertyTable));
 				GenerateOpeningHtml(cssPath, custCssPath, settings, xhtmlWriter);
-				Tuple<int, int> currentPageBounds = GetPageForCurrentEntry(settings, entryHvos, entriesPerPage);
+				Tuple<int, int> currentPageBounds = GetPageForCurrentEntry(settings, entryHvos, entriesPerPage, activeClerk);
 				GenerateTopOfPageButtonsIfNeeded(settings, entryHvos, entriesPerPage, currentPageBounds, xhtmlWriter, cssWriter);
 				string lastHeader = null;
 				var itemsOnPage = currentPageBounds.Item2 - currentPageBounds.Item1;
@@ -322,7 +325,7 @@ namespace SIL.FieldWorks.XWorks
 					cssWriter.Write(CssGenerator.GenerateCssForSelectedEntry(settings.RightToLeft));
 					CopyFileSafely(settings, Path.Combine(FwDirectoryFinder.FlexFolder, ImagesFolder, CurrentEntryMarker), CurrentEntryMarker);
 				}
-				cssWriter.Write(CssGenerator.GenerateCssFromConfiguration(configuration, propertyTable));
+				cssWriter.Write(CssGenerator.GenerateCssFromConfiguration(configuration, propertyTable, cache));
 				cssWriter.Flush();
 			}
 		}
@@ -492,13 +495,12 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Get the page for the current entry, represented by the range of entries on the page containing the current entry
 		/// </summary>
-		private static Tuple<int, int> GetPageForCurrentEntry(GeneratorSettings settings, int[] entryHvos, int entriesPerPage)
+		private static Tuple<int, int> GetPageForCurrentEntry(GeneratorSettings settings, int[] entryHvos, int entriesPerPage, RecordClerk activeClerk)
 		{
 			var currentEntryHvo = 0;
-			var clerk = settings.PropertyTable.GetValue<RecordClerk>("ActiveClerk");
-			if (clerk != null)
+			if (activeClerk != null)
 			{
-				currentEntryHvo = clerk.CurrentObjectHvo;
+				currentEntryHvo = activeClerk.CurrentObjectHvo;
 			}
 			var pages = GetPageRanges(entryHvos, entriesPerPage);
 			if (currentEntryHvo != 0)
@@ -3104,17 +3106,15 @@ namespace SIL.FieldWorks.XWorks
 			return wsOptions.Options[0].Id;
 		}
 
-		public static DictionaryPublicationDecorator GetPublicationDecoratorAndEntries(IPropertyTable propertyTable, out int[] entriesToSave, string dictionaryType)
+		public static DictionaryPublicationDecorator GetPublicationDecoratorAndEntries(IPropertyTable propertyTable, out int[] entriesToSave, string dictionaryType, LcmCache cache, RecordClerk activeClerk)
 		{
-			var cache = propertyTable.GetValue<LcmCache>("cache");
 			if (cache == null)
 			{
-				throw new ArgumentException(@"PropertyTable had no cache", "propertyTable");
+				throw new ArgumentException(@"No cache", nameof(cache));
 			}
-			var clerk = propertyTable.GetValue<RecordClerk>("ActiveClerk", null);
-			if (clerk == null)
+			if (activeClerk == null)
 			{
-				throw new ArgumentException(@"PropertyTable had no clerk", "propertyTable");
+				throw new ArgumentException(@"No clerk", nameof(activeClerk));
 			}
 
 			ICmPossibility currentPublication;
@@ -3130,8 +3130,8 @@ namespace SIL.FieldWorks.XWorks
 					 where item.Name.UserDefaultWritingSystem.Text == currentPublicationString
 					 select item).FirstOrDefault();
 			}
-			var decorator = new DictionaryPublicationDecorator(cache, clerk.VirtualListPublisher, clerk.VirtualFlid, currentPublication);
-			entriesToSave = decorator.GetEntriesToPublish(propertyTable, clerk.VirtualFlid, dictionaryType);
+			var decorator = new DictionaryPublicationDecorator(cache, activeClerk.VirtualListPublisher, activeClerk.VirtualFlid, currentPublication);
+			entriesToSave = decorator.GetEntriesToPublish(propertyTable, activeClerk.VirtualFlid, dictionaryType);
 			return decorator;
 		}
 

@@ -96,8 +96,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditReversalEntries
 
 			PaneBarContainerFactory.RemoveFromParentAndDispose(
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
-				ref _paneBarContainer,
-				ref _recordClerk);
+				majorFlexComponentParameters.DataNavigationManager,
+				majorFlexComponentParameters.RecordClerkRepository,
+				ref _paneBarContainer);
 			_reversalIndexRepository = null;
 			_currentReversalIndex = null;
 			_recordBrowseView = null;
@@ -111,15 +112,18 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditReversalEntries
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			var cache = PropertyTable.GetValue<LcmCache>("cache");
 			var currentGuid = ReversalIndexEntryUi.GetObjectGuidIfValid(PropertyTable, "ReversalIndexGuid");
 			if (currentGuid != Guid.Empty)
 			{
-				_currentReversalIndex = (IReversalIndex)cache.ServiceLocator.GetObject(currentGuid);
+				_currentReversalIndex = (IReversalIndex)majorFlexComponentParameters.LcmCache.ServiceLocator.GetObject(currentGuid);
 			}
-			_recordClerk = new ReversalEntryClerk(cache.ServiceLocator, cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), _currentReversalIndex);
-			_recordClerk.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
-			_recordBrowseView = new RecordBrowseView(XDocument.Parse(LexiconResources.ReversalBulkEditReversalEntriesToolParameters).Root, _recordClerk);
+			if (_recordClerk == null)
+			{
+				_recordClerk = new ReversalEntryClerk(majorFlexComponentParameters.LcmCache.ServiceLocator, majorFlexComponentParameters.LcmCache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), _currentReversalIndex);
+				_recordClerk.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
+				majorFlexComponentParameters.RecordClerkRepository.AddRecordClerk(_recordClerk);
+			}
+			_recordBrowseView = new RecordBrowseView(XDocument.Parse(LexiconResources.ReversalBulkEditReversalEntriesToolParameters).Root, majorFlexComponentParameters.LcmCache, _recordClerk);
 			var browseViewPaneBar = new PaneBar();
 			var img = LanguageExplorerResources.MenuWidget;
 			img.MakeTransparent(Color.Magenta);
@@ -138,6 +142,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditReversalEntries
 				browseViewPaneBar,
 				_recordBrowseView);
 			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
+			majorFlexComponentParameters.RecordClerkRepository.ActiveRecordClerk = _recordClerk;
 		}
 
 		/// <summary>

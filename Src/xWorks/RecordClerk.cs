@@ -54,7 +54,6 @@ using SIL.FieldWorks.Filters;
 using SIL.ObjectModel;
 using SIL.Reporting;
 using SIL.LCModel.Utils;
-using SIL.Utils;
 using SIL.Xml;
 using WaitCursor = SIL.FieldWorks.Common.FwUtils.WaitCursor;
 
@@ -70,12 +69,29 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		public const string kDefault = "Default";
 
+#if RANDYTODO
+		// TODO: Think about not using the static, but also not adding IRecordClerkRepository to the property table.
+		// TODO: A new intance is included in MajorFlexComponentParameters,
+		// TODO: which is then passed to the Activate/Deactivate of IMajorFlexComponent implementations.
+		// TODO: Perhaps some other interface can be created that would allow IRecordClerkRepository to be passed
+		// TODO: further down the chain to clients who try to fetch a record clerk from the property table.
+		// TODO: They would then get it from the repository, and not the property table.
+		// TODO: At that point this static can be removed.
+		// TODO: The risk of using the static is that there can be multiple windows,
+		// TODO: each of which has its own repository, property table, etc.
+		// TODO: That means each window has to reset the static, when it becomes active (which now happens).
+#endif
+		/// <summary>
+		/// Holder of the repository (for now, at least).
+		/// </summary>
+		internal static IRecordClerkRepository RecordClerkRepository { get; set; }
+
 		/// <summary>
 		/// All of the sorters for the clerk.
 		/// </summary>
 		protected Dictionary<string, PropertyRecordSorter> m_allSorters;
 
-		static protected RecordClerk s_lastClerkToLoadTreeBar;
+		protected static RecordClerk s_lastClerkToLoadTreeBar;
 
 		protected readonly string m_id;
 
@@ -163,12 +179,12 @@ namespace SIL.FieldWorks.XWorks
 		private string m_defaultSortLabel;
 		private RecordFilter m_defaultFilter;
 
-		#region Event Handling
+#region Event Handling
 		public event EventHandler SorterChangedByClerk;
 		public event FilterChangeHandler FilterChangedByClerk;
-		#endregion Event Handling
+#endregion Event Handling
 
-		#region Constructors
+#region Constructors
 
 		/// <summary>
 		/// Contructor.
@@ -318,27 +334,27 @@ namespace SIL.FieldWorks.XWorks
 		}
 #endif
 
-		#endregion Constructors
+#endregion Constructors
 
-		#region Implementation of IPropertyTableProvider
+#region Implementation of IPropertyTableProvider
 
 		/// <summary>
 		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
 		/// </summary>
 		public IPropertyTable PropertyTable { get; private set; }
 
-		#endregion
+#endregion
 
-		#region Implementation of IPublisherProvider
+#region Implementation of IPublisherProvider
 
 		/// <summary>
 		/// Get the IPublisher.
 		/// </summary>
 		public IPublisher Publisher { get; private set; }
 
-		#endregion
+#endregion
 
-		#region Implementation of ISubscriberProvider
+#region Implementation of ISubscriberProvider
 
 		/// <summary>
 		/// Get the ISubscriber.
@@ -424,10 +440,6 @@ namespace SIL.FieldWorks.XWorks
 #endif
 
 #if RANDYTODO
-			// TODO: This may need to be restored, if we end up not being able to create a clerk each time it is used.
-			// TODO: It may prove too costly to collect, sort and filter the items each time a clerk is created.
-			StoreClerkInPropertyTable();
-
 			// TODO: In original, optimized, version, we don't load the data until the clerk is used in a newly activated window.
 			SetupDataContext(false);
 #else
@@ -463,7 +475,7 @@ namespace SIL.FieldWorks.XWorks
 				JumpToRecord(hvo);
 		}
 
-		#endregion
+#endregion
 
 		/// <summary>
 		/// The record list might need access to this just to check membership of an object quickly.
@@ -484,7 +496,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		#region IDisposable & Co. implementation
+#region IDisposable & Co. implementation
 		// Region last reviewed: never
 
 		/// <summary>
@@ -495,21 +507,18 @@ namespace SIL.FieldWorks.XWorks
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
+				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
 		}
 
 		/// <summary>
 		/// True, if the object has been disposed.
 		/// </summary>
-		private bool m_isDisposed = false;
+		private bool m_isDisposed;
 
 		/// <summary>
 		/// See if the object has been disposed.
 		/// </summary>
-		public bool IsDisposed
-		{
-			get { return m_isDisposed; }
-		}
+		public bool IsDisposed => m_isDisposed;
 
 		/// <summary>
 		/// Finalizer, in case client doesn't dispose it.
@@ -576,8 +585,8 @@ namespace SIL.FieldWorks.XWorks
 
 				if (PropertyTable.GetValue<Form>("window").IsHandleCreated)
 				{
-					ResetStatusBarPanel("StatusPanelRecordNumber", string.Empty);
-					ResetStatusBarPanel("StatusPanelMessage", string.Empty);
+					Publisher.Publish("StatusPanelRecordNumber", string.Empty);
+					Publisher.Publish("StatusPanelMessage", string.Empty);
 				}
 				m_list.ListChanged -= OnListChanged;
 				m_list.AboutToReload -= m_list_AboutToReload;
@@ -675,29 +684,11 @@ namespace SIL.FieldWorks.XWorks
 			return m_list.RestoreFrom(pathname);
 		}
 
-		private string SortNamePropertyTableId
-		{
-			get
-			{
-				return m_list.PropertyTableId("sortName");
-			}
-		}
+		private string SortNamePropertyTableId => m_list.PropertyTableId("sortName");
 
-		private string FilterPropertyTableId
-		{
-			get
-			{
-				return m_list.PropertyTableId("filter");
-			}
-		}
+		private string FilterPropertyTableId => m_list.PropertyTableId("filter");
 
-		private string SorterPropertyTableId
-		{
-			get
-			{
-				return m_list.PropertyTableId("sorter");
-			}
-		}
+		private string SorterPropertyTableId => m_list.PropertyTableId("sorter");
 
 		/// <summary>
 		///
@@ -822,19 +813,6 @@ namespace SIL.FieldWorks.XWorks
 			return fRestoredSorter || fRestoredFilter;
 		}
 
-#if RANDYTODO
-		// TODO: The original system reused a record clerk instance when switching from one tool to another and back.
-		// TODO: So, the clerks were all stuffed into the property table, which then Disposed them all.
-		// TODO: Let's see how far we can go with creating them fresh for each use, and not putting them in the table.
-		// TODO: Not re-using them may end up being an unhappy performance loss for clerks and lists that were sorted and filtered.
-		protected virtual void StoreClerkInPropertyTable()
-		{
-			var property = GetCorrespondingPropertyName(m_id);
-			PropertyTable.SetProperty(property, this, false, false);
-			PropertyTable.SetPropertyDispose(property, true);
-		}
-#endif
-
 		/// <summary>
 		/// True if our clerk is the active clerk.
 		/// </summary>
@@ -844,7 +822,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				if (PropertyTable == null)
 					return false;
-				var activeClerk = PropertyTable.GetValue<RecordClerk>("ActiveClerk");
+				var activeClerk = RecordClerkRepository.ActiveRecordClerk;
 				return activeClerk != null && activeClerk.Id == Id;
 			}
 		}
@@ -852,11 +830,8 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// True if the Clerk is being used in a Gui.
 		/// </summary>
-		protected bool m_fIsActiveInGui = false;
-		protected internal bool IsActiveInGui
-		{
-			get { return m_fIsActiveInGui; }
-		}
+		protected bool m_fIsActiveInGui;
+		protected internal bool IsActiveInGui => m_fIsActiveInGui;
 
 		/// <summary>
 		/// determine if we're in the (given) tool
@@ -937,10 +912,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// our list's LcmCache
 		/// </summary>
-		protected LcmCache Cache
-		{
-			get { return PropertyTable.GetValue<LcmCache>("cache"); }
-		}
+		protected LcmCache Cache => PropertyTable.GetValue<LcmCache>("cache");
 
 		/// <summary>
 		/// Prevents the user from adding or removing records (e.g. semantic domain list in the rapid data entry view)
@@ -1002,12 +974,9 @@ namespace SIL.FieldWorks.XWorks
 			UpdateList(fRefreshRecord, false);
 		}
 
-		internal protected bool RequestedLoadWhileSuppressed
-		{
-			get { return m_list.RequestedLoadWhileSuppressed; }
-		}
+		protected internal bool RequestedLoadWhileSuppressed => m_list.RequestedLoadWhileSuppressed;
 
-		internal protected bool ListLoadingSuppressedNoSideEffects
+		protected internal bool ListLoadingSuppressedNoSideEffects
 		{
 			get { return m_list.ListLoadingSuppressed; }
 			set { m_list.SetSuppressingLoadList(value); }
@@ -1043,11 +1012,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		public ISilDataAccessManaged VirtualListPublisher
-		{
-			get { return m_list.VirtualListPublisher; }
-		}
-
+		public ISilDataAccessManaged VirtualListPublisher => m_list.VirtualListPublisher;
 
 		/// <summary>
 		/// Fabricate a name for storing the list index of the currently edited object based on
@@ -1059,7 +1024,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				CheckDisposed();
 
-				return String.Format("{0}-Index", m_id);
+				return $"{m_id}-Index";
 			}
 		}
 
@@ -1997,7 +1962,7 @@ namespace SIL.FieldWorks.XWorks
 				s = noRecordsText;
 			}
 
-			ResetStatusBarPanel("StatusPanelRecordNumber", s);
+			Publisher.Publish("StatusPanelRecordNumber", s);
 			ResetStatusBarMessageForCurrentObject();
 		}
 
@@ -2073,7 +2038,7 @@ namespace SIL.FieldWorks.XWorks
 				// deleted objects don't have a cache (and other properties) so it was crashing.  LT-3160, LT-3121,...
 				msg = GetStatusBarMsgForCurrentObject();
 			}
-			ResetStatusBarPanel("StatusPanelMessage", msg);
+			Publisher.Publish("StatusPanelMessage", msg);
 		}
 
 		protected virtual string GetStatusBarMsgForCurrentObject()
@@ -2092,11 +2057,6 @@ namespace SIL.FieldWorks.XWorks
 				}
 			}
 			return msg;
-		}
-
-		private void ResetStatusBarPanel(string panel, string msg)
-		{
-			Publisher.Publish(panel, msg);
 		}
 
 		/// <summary>
@@ -2124,14 +2084,28 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// finds an existing RecordClerk by the given id.
 		/// </summary>
-		/// <param name="propertyTable"></param>
 		/// <param name="id"></param>
 		/// <returns>null if couldn't find an existing clerk.</returns>
-		public static RecordClerk FindClerk(IPropertyTable propertyTable, string id)
+		public static RecordClerk FindClerk(string id)
 		{
-			string name = GetCorrespondingPropertyName(id);
-			var clerk = propertyTable.GetValue<RecordClerk>(name);
-			return clerk;
+#if RANDYTODO
+			// TODO: Have clients add those clerks to the RecordClerkRepository using GetCorrespondingPropertyName(id),
+			// TODO: which is: "RecordClerk-" + clerkId.
+			// Q: Why is anyone bothering to prepend "RecordClerk-" to the clerk id? It seems like the very same clerk can be fetched using the clerk id.
+#endif
+			return RecordClerkRepository.GetRecordClerk(GetCorrespondingPropertyName(id));
+		}
+
+
+		/// <summary>
+		/// Stop notifications of prop changes
+		/// </summary>
+		void AddNotification()
+		{
+			// We need the list to get the cache.
+			if (m_list == null || m_list.IsDisposed || Cache == null || Cache.IsDisposed || Cache.DomainDataByFlid == null)
+				return;
+			Cache.DomainDataByFlid.AddNotification(this);
 		}
 
 
@@ -2182,11 +2156,11 @@ namespace SIL.FieldWorks.XWorks
 				CheckDisposed();
 
 				Debug.Assert(value);
-				var oldActiveClerk = PropertyTable.GetValue<RecordClerk>("ActiveClerk");
+				var oldActiveClerk = RecordClerkRepository.ActiveRecordClerk;
 				if (oldActiveClerk != this)
 				{
 					oldActiveClerk?.BecomeInactive();
-					PropertyTable.SetProperty("ActiveClerk", this, false, true);
+					RecordClerkRepository.ActiveRecordClerk = this;
 					// We are adding this property so that EntryDlgListener can get access to the owning object
 					// without first getting a RecordClerk, since getting a RecordClerk at that level causes a
 					// circular dependency in compilation.
@@ -2200,7 +2174,7 @@ namespace SIL.FieldWorks.XWorks
 				CheckDisposed();
 
 #if RANDYTODO
-				return (m_recordBarHandler != null) && PropertyTable.GetValue<RecordClerk>("ActiveClerk") == this && IsActiveInGui;
+				return (m_recordBarHandler != null) && RecordClerkRepository.ActiveRecordClerk == this && IsActiveInGui;
 #else
 				return (m_recordBarHandler != null) && IsPrimaryClerk;
 #endif
@@ -2236,6 +2210,8 @@ namespace SIL.FieldWorks.XWorks
 			}
 			m_fIsActiveInGui = true;
 
+			AddNotification();
+
 			if (m_recordBarHandler != null)
 			{
 				IsControllingTheRecordTreeBar = true;
@@ -2258,8 +2234,7 @@ namespace SIL.FieldWorks.XWorks
 		public virtual void BecomeInactive()
 		{
 			m_fIsActiveInGui = false;
-			if (m_recordBarHandler != null)
-				m_recordBarHandler.ReleaseRecordBar();
+			m_recordBarHandler?.ReleaseRecordBar();
 			RemoveNotification();
 			// If list loading was suppressed by this view (e.g., bulk edit to prevent changed items
 			// disappearing from filter), stop that now, so it won't affect any future use of the list.
@@ -2274,8 +2249,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			CheckDisposed();
 
-			if (m_recordBarHandler != null) // m_treeBarHandler!= null)
-				m_recordBarHandler.PopulateRecordBarIfNeeded(m_list);
+			m_recordBarHandler?.PopulateRecordBarIfNeeded(m_list);
 		}
 
 		/// <summary>
@@ -2928,7 +2902,7 @@ namespace SIL.FieldWorks.XWorks
 			if (!IsControllingTheRecordTreeBar)
 				return; // none of our business!
 
-			ResetStatusBarPanel(IgnoreStatusPanel ? "DialogFilterStatus" : "StatusBarPanelFilter", FilterStatusContents(m_list.Filter != null && m_list.Filter.IsUserVisible) ?? string.Empty);
+			Publisher.Publish(IgnoreStatusPanel ? "DialogFilterStatus" : "StatusBarPanelFilter", FilterStatusContents(m_list.Filter != null && m_list.Filter.IsUserVisible) ?? string.Empty);
 		}
 
 		protected virtual string FilterStatusContents(bool listIsFiltered)
@@ -3481,7 +3455,7 @@ namespace SIL.FieldWorks.XWorks
 			var node = GetClerkNodeFromToolParamsNode(parameterNode);
 			// Set the clerk id if the parent control hasn't already set it.
 			string vectorName = GetIdOfTool(node);
-			return RecordClerk.FindClerk(propertyTable, vectorName);
+			return RecordClerk.FindClerk(vectorName);
 		}
 
 		static public XElement GetDefaultFilter(XElement node)

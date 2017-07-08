@@ -11,7 +11,6 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks;
-using SIL.LCModel;
 using SIL.LCModel.Application;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
@@ -85,8 +84,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 		{
 			MultiPaneFactory.RemoveFromParentAndDispose(
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
-				ref _outerMultiPane,
-				ref _mainRecordClerk);
+				majorFlexComponentParameters.DataNavigationManager,
+				majorFlexComponentParameters.RecordClerkRepository,
+				ref _outerMultiPane);
 			_mainRecordBrowseView = null;
 			_nestedMultiPane = null;
 			_nestedRecordBrowseView = null;
@@ -102,16 +102,15 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			var root = XDocument.Parse(TextAndWordsResources.WordListConcordanceToolParameters).Root;
-			root.Element("wordList").Element("parameters").Element("includeColumns").ReplaceWith(XElement.Parse(TextAndWordsResources.WordListColumns));
-			root.Element("wordOccurrenceListUpper").Element("parameters").Element("includeColumns").ReplaceWith(XElement.Parse(TextAndWordsResources.ConcordanceColumns).Element("columns"));
-			var cache = PropertyTable.GetValue<LcmCache>("cache");
-			var flexComponentParameters = new FlexComponentParameters(PropertyTable, Publisher, Subscriber);
-			var decorator = new ConcDecorator(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), cache.ServiceLocator);
-			_recordClerkProvidingOwner = new InterlinearTextsRecordClerk(cache.LanguageProject, decorator);
-			_recordClerkProvidingOwner.InitializeFlexComponent(flexComponentParameters);
-			_mainRecordClerk = new RecordClerk("OccurrencesOfSelectedWordform", new RecordList(decorator, false, ConcDecorator.kflidWfOccurrences), new PropertyRecordSorter("ShortName"), "Default", null, true, true, _recordClerkProvidingOwner);
-			_mainRecordClerk.InitializeFlexComponent(flexComponentParameters);
+			if (_mainRecordClerk == null)
+			{
+				var decorator = new ConcDecorator(majorFlexComponentParameters.LcmCache.ServiceLocator);
+				_recordClerkProvidingOwner = new InterlinearTextsRecordClerk(majorFlexComponentParameters.LcmCache.LanguageProject, decorator);
+				_recordClerkProvidingOwner.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
+				_mainRecordClerk = new RecordClerk("OccurrencesOfSelectedWordform", new RecordList(decorator, false, ConcDecorator.kflidWfOccurrences), new PropertyRecordSorter("ShortName"), "Default", null, true, true, _recordClerkProvidingOwner);
+				_mainRecordClerk.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
+				majorFlexComponentParameters.RecordClerkRepository.AddRecordClerk(_mainRecordClerk);
+			}
 
 			var nestedMultiPaneParameters = new MultiPaneParameters
 			{
@@ -123,12 +122,15 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 				FirstControlParameters = new SplitterChildControlParameters(), // Control (RecordBrowseView) added below. Leave Label null.
 				SecondControlParameters = new SplitterChildControlParameters() // Control (InterlinMasterNoTitleBar) added below. Leave Label null.
 			};
-			_nestedRecordBrowseView = new RecordBrowseView(root.Element("wordOccurrenceListUpper").Element("parameters"), _mainRecordClerk);
+			var root = XDocument.Parse(TextAndWordsResources.WordListConcordanceToolParameters).Root;
+			root.Element("wordList").Element("parameters").Element("includeColumns").ReplaceWith(XElement.Parse(TextAndWordsResources.WordListColumns));
+			root.Element("wordOccurrenceListUpper").Element("parameters").Element("includeColumns").ReplaceWith(XElement.Parse(TextAndWordsResources.ConcordanceColumns).Element("columns"));
+			_nestedRecordBrowseView = new RecordBrowseView(root.Element("wordOccurrenceListUpper").Element("parameters"), majorFlexComponentParameters.LcmCache, _mainRecordClerk);
 			nestedMultiPaneParameters.FirstControlParameters.Control = _nestedRecordBrowseView;
-			_interlinMasterNoTitleBar = new InterlinMasterNoTitleBar(root.Element("wordOccurrenceListLower").Element("parameters"), _mainRecordClerk);
+			_interlinMasterNoTitleBar = new InterlinMasterNoTitleBar(root.Element("wordOccurrenceListLower").Element("parameters"), majorFlexComponentParameters.LcmCache, _mainRecordClerk);
 			nestedMultiPaneParameters.SecondControlParameters.Control = _interlinMasterNoTitleBar;
-			_nestedMultiPane = MultiPaneFactory.CreateNestedMultiPane(flexComponentParameters, nestedMultiPaneParameters);
-			_mainRecordBrowseView = new RecordBrowseView(root.Element("wordList").Element("parameters"), _recordClerkProvidingOwner);
+			_nestedMultiPane = MultiPaneFactory.CreateNestedMultiPane(majorFlexComponentParameters.FlexComponentParameters, nestedMultiPaneParameters);
+			_mainRecordBrowseView = new RecordBrowseView(root.Element("wordList").Element("parameters"), majorFlexComponentParameters.LcmCache, _recordClerkProvidingOwner);
 
 			var mainMultiPaneParameters = new MultiPaneParameters
 			{
@@ -149,6 +151,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 
 			_interlinMasterNoTitleBar.FinishInitialization();
 			majorFlexComponentParameters.DataNavigationManager.Clerk = _mainRecordClerk;
+			majorFlexComponentParameters.RecordClerkRepository.ActiveRecordClerk = _mainRecordClerk;
 		}
 
 		/// <summary>

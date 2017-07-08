@@ -9,7 +9,7 @@ namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
 	/// This is a record clerk that can be used in a disposable context such as in a
-	/// guicontrol in a dialog. For example, a normal RecordClerk will publish that it has become the "ActiveClerk"
+	/// guicontrol in a dialog. For example, a normal RecordClerk will publish that it has become the "RecordClerk.RecordClerkRepository.ActiveRecordClerk"
 	/// whenever ActivateUI is called. We don't want this to happen for record clerks that will only be used in a dialog,
 	/// because the "ActiveClerk" will then become disposed after the dialog closes.
 	/// </summary>
@@ -32,7 +32,7 @@ namespace SIL.FieldWorks.XWorks
 
 		public override void ActivateUI(bool useRecordTreeBar, bool updateStatusBar = true)
 		{
-			// by default, we won't publish that we're the "ActiveClerk" or other usual effects.
+			// by default, we won't publish that we're the "RecordClerk.RecordClerkRepository.ActiveRecordClerk" or other usual effects.
 			// but we do want to say that we're being actively used in a gui.
 			m_fIsActiveInGui = true;
 		}
@@ -45,7 +45,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			set
 			{
-				// do not do anything here, unless you want to manage the "ActiveClerk" property.
+				// do not do anything here, unless you want to manage the "RecordClerk.RecordClerkRepository.ActiveRecordClerk" property.
 			}
 		}
 

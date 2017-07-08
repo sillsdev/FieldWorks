@@ -51,8 +51,8 @@ namespace SIL.FieldWorks.XWorks
 			Init();
 		}
 
-		public RecordBrowseView(XElement browseViewDefinitions, RecordClerk recordClerk)
-			: base(browseViewDefinitions, recordClerk)
+		public RecordBrowseView(XElement browseViewDefinitions, LcmCache cache, RecordClerk recordClerk)
+			: base(browseViewDefinitions, cache, recordClerk)
 		{
 			Init();
 		}

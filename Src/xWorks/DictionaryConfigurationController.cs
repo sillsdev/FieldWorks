@@ -217,7 +217,7 @@ namespace SIL.FieldWorks.XWorks
 				m_isDirty = true;
 			else
 				MasterRefreshRequired = true;
-			View.PreviewData = ConfiguredXHTMLGenerator.GenerateEntryHtmlWithStyles(_previewEntry, _model, _allEntriesPublicationDecorator, PropertyTable);
+			View.PreviewData = ConfiguredXHTMLGenerator.GenerateEntryHtmlWithStyles(_previewEntry, _model, _allEntriesPublicationDecorator, PropertyTable, Cache);
 			if(_isHighlighted)
 				View.HighlightContent(View.TreeControl.Tree.SelectedNode.Tag as ConfigurableDictionaryNode, Cache);
 		}

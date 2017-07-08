@@ -11,7 +11,6 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.XWorks;
 using SIL.LCModel;
-using SIL.LCModel.Application;
 using SIL.LCModel.DomainServices;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
@@ -87,7 +86,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 			{
 				if (clerk is TemporaryRecordClerk)
 				{
-					_interlinearTextsRecordClerk = new InterlinearTextsRecordClerk(cache.LanguageProject, new InterestingTextsDecorator(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), cache.ServiceLocator, PropertyTable));
+					_interlinearTextsRecordClerk = new InterlinearTextsRecordClerk(cache.LanguageProject, new InterestingTextsDecorator(cache.ServiceLocator, PropertyTable));
 					_interlinearTextsRecordClerk.InitializeFlexComponent(flexComponentParameters);
 				}
 				else
@@ -97,7 +96,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 			}
 			else
 			{
-				_interlinearTextsRecordClerk = new InterlinearTextsRecordClerk(cache.LanguageProject, new InterestingTextsDecorator(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), cache.ServiceLocator, PropertyTable));
+				_interlinearTextsRecordClerk = new InterlinearTextsRecordClerk(cache.LanguageProject, new InterestingTextsDecorator(cache.ServiceLocator, PropertyTable));
 				_interlinearTextsRecordClerk.InitializeFlexComponent(flexComponentParameters);
 			}
 			// There's no record bar for it to control, but it should control the status bar (e.g., it should update if we change

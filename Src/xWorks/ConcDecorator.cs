@@ -45,8 +45,8 @@ namespace SIL.FieldWorks.XWorks
 		private InterestingTextList m_interestingTexts;
 		private bool m_fRefreshSuspended;
 
-		public ConcDecorator(ISilDataAccessManaged domainDataByFlid, ILcmServiceLocator services)
-			: base(domainDataByFlid)
+		public ConcDecorator(ILcmServiceLocator services)
+			: base(services.GetInstance<ISilDataAccessManaged>())
 		{
 			m_services = services;
 			SetOverrideMdc(new ConcMdc(MetaDataCache as IFwMetaDataCacheManaged));

@@ -9,7 +9,6 @@ using System.Windows.Forms;
 using LanguageExplorer.UtilityTools;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
-using SIL.LCModel.Application;
 using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.XWorks;
 
@@ -73,7 +72,7 @@ namespace LanguageExplorer.Areas.Lexicon
 
 		private void DeleteUnusedEntriesAndSenses(LcmCache cache, ProgressBar progressBar)
 		{
-			ConcDecorator cd = new ConcDecorator(cache.DomainDataByFlid as ISilDataAccessManaged, cache.ServiceLocator);
+			ConcDecorator cd = new ConcDecorator(cache.ServiceLocator);
 			cd.InitializeFlexComponent(new FlexComponentParameters(m_dlg.PropertyTable, m_dlg.Publisher, m_dlg.Subscriber));
 			var entries = cache.ServiceLocator.GetInstance<ILexEntryRepository>().AllInstances().ToArray();
 			progressBar.Minimum = 0;

@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using SIL.FieldWorks.XWorks;
+using SIL.LCModel;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
@@ -22,8 +23,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			InitializeComponent();
 		}
 
-		internal InterlinMasterNoTitleBar(XElement configurationParametersElement, RecordClerk recordClerk)
-			:base(configurationParametersElement, recordClerk, false)
+		internal InterlinMasterNoTitleBar(XElement configurationParametersElement, LcmCache cache, RecordClerk recordClerk)
+			:base(configurationParametersElement, cache, recordClerk, false)
 		{
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();

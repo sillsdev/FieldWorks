@@ -213,7 +213,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				return true; // or should we just say, we don't know? But this command definitely should only be possible when this IS active.
 			}
 
-			RecordClerk clrk = m_propertyTable.GetValue<RecordClerk>("ActiveClerk");
+			RecordClerk clrk = RecordClerk.RecordClerkRepository.ActiveRecordClerk;
 			if (clrk != null && clrk.Id == "interlinearTexts")
 			{
 				display.Enabled = true;

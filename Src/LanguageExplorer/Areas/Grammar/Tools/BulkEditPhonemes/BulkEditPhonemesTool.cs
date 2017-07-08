@@ -80,8 +80,9 @@ namespace LanguageExplorer.Areas.Grammar.Tools.BulkEditPhonemes
 		{
 			PaneBarContainerFactory.RemoveFromParentAndDispose(
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
-				ref _paneBarContainer,
-				ref _recordClerk);
+				majorFlexComponentParameters.DataNavigationManager,
+				majorFlexComponentParameters.RecordClerkRepository,
+				ref _paneBarContainer);
 			_assignFeaturesToPhonemesView = null;
 		}
 
@@ -93,25 +94,28 @@ namespace LanguageExplorer.Areas.Grammar.Tools.BulkEditPhonemes
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			var root = XDocument.Parse(GrammarResources.BulkEditPhonemesToolParameters).Root;
-			var cache = PropertyTable.GetValue<LcmCache>("cache");
-			if (cache.LanguageProject.PhonologicalDataOA.PhonemeSetsOS.Count == 0)
+			if (majorFlexComponentParameters.LcmCache.LanguageProject.PhonologicalDataOA.PhonemeSetsOS.Count == 0)
 			{
 				// Pathological...this helps the memory-only backend mainly, but makes others self-repairing.
-				NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(cache.ActionHandlerAccessor, () =>
+				NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(majorFlexComponentParameters.LcmCache.ActionHandlerAccessor, () =>
 				{
-					cache.LanguageProject.PhonologicalDataOA.PhonemeSetsOS.Add(cache.ServiceLocator.GetInstance<IPhPhonemeSetFactory>().Create());
+					majorFlexComponentParameters.LcmCache.LanguageProject.PhonologicalDataOA.PhonemeSetsOS.Add(majorFlexComponentParameters.LcmCache.ServiceLocator.GetInstance<IPhPhonemeSetFactory>().Create());
 				});
 			}
-			_recordClerk = new RecordClerk("phonemes", new RecordList(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), true, PhPhonemeSetTags.kflidPhonemes, cache.LanguageProject.PhonologicalDataOA.PhonemeSetsOS[0], "Phonemes"), new PropertyRecordSorter("ShortName"), "Default", null, false, false);
-			_recordClerk.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
-			_assignFeaturesToPhonemesView = new AssignFeaturesToPhonemes(root, _recordClerk);
+			if (_recordClerk == null)
+			{
+				_recordClerk = new RecordClerk("phonemes", new RecordList(majorFlexComponentParameters.LcmCache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), true, PhPhonemeSetTags.kflidPhonemes, majorFlexComponentParameters.LcmCache.LanguageProject.PhonologicalDataOA.PhonemeSetsOS[0], "Phonemes"), new PropertyRecordSorter("ShortName"), "Default", null, false, false);
+				_recordClerk.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
+				majorFlexComponentParameters.RecordClerkRepository.AddRecordClerk(_recordClerk);
+			}
+			_assignFeaturesToPhonemesView = new AssignFeaturesToPhonemes(XDocument.Parse(GrammarResources.BulkEditPhonemesToolParameters).Root, majorFlexComponentParameters.LcmCache, _recordClerk);
 
 			_paneBarContainer = PaneBarContainerFactory.Create(
 				majorFlexComponentParameters.FlexComponentParameters,
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
 				_assignFeaturesToPhonemesView);
 			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
+			majorFlexComponentParameters.RecordClerkRepository.ActiveRecordClerk = _recordClerk;
 		}
 
 		/// <summary>

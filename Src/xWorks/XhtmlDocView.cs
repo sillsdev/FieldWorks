@@ -38,8 +38,8 @@ namespace SIL.FieldWorks.XWorks
 		private string m_currentConfigView; // used when this is a Dictionary view to store which view is active.
 
 		/// <summary />
-		internal XhtmlDocView(XElement configurationParametersElement, RecordClerk recordClerk)
-			: base(configurationParametersElement, recordClerk)
+		internal XhtmlDocView(XElement configurationParametersElement, LcmCache cache, RecordClerk recordClerk)
+			: base(configurationParametersElement, cache, recordClerk)
 		{
 		}
 
@@ -319,7 +319,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			else if (e.Button == GeckoMouseButton.Right)
 			{
-				HandleDomRightClick(browser, e, element, new FlexComponentParameters(PropertyTable, Publisher, Subscriber), m_configObjectName);
+				HandleDomRightClick(browser, e, element, new FlexComponentParameters(PropertyTable, Publisher, Subscriber), m_configObjectName, Cache, Clerk);
 			}
 		}
 
@@ -499,7 +499,8 @@ namespace SIL.FieldWorks.XWorks
 		/// This is static so that the method can be shared with XhtmlRecordDocView.
 		/// </remarks>
 		internal static void HandleDomRightClick(GeckoWebBrowser browser, DomMouseEventArgs e,
-			GeckoElement element, FlexComponentParameters flexComponentParameters, string configObjectName)
+			GeckoElement element, FlexComponentParameters flexComponentParameters, string configObjectName,
+			LcmCache cache, RecordClerk activeClerk)
 		{
 			Guid topLevelGuid;
 			GeckoElement entryElement;
@@ -510,7 +511,7 @@ namespace SIL.FieldWorks.XWorks
 			var item = new DisposableToolStripMenuItem(label);
 			s_contextMenu.Items.Add(item);
 			item.Click += RunConfigureDialogAt;
-			item.Tag = new object[] { flexComponentParameters.PropertyTable, flexComponentParameters.Publisher, classList, topLevelGuid, flexComponentParameters.Subscriber };
+			item.Tag = new object[] { flexComponentParameters.PropertyTable, flexComponentParameters.Publisher, classList, topLevelGuid, flexComponentParameters.Subscriber, cache, activeClerk };
 			if (e.CtrlKey) // show hidden menu item for tech support
 			{
 				item = new DisposableToolStripMenuItem(xWorksStrings.ksInspect);
@@ -608,16 +609,17 @@ namespace SIL.FieldWorks.XWorks
 			var publisher = (IPublisher)tagObjects[1];
 			var classList = tagObjects[2] as List<string>;
 			var guid = (Guid)tagObjects[3];
+			// 4 is used further down
+			var cache = (LcmCache)tagObjects[5];
+			var activeClerk = (RecordClerk)tagObjects[6];
 			bool refreshNeeded;
 			using (var dlg = new DictionaryConfigurationDlg(propertyTable))
 			{
-				var cache = propertyTable.GetValue<LcmCache>("cache");
-				var clerk = propertyTable.GetValue<RecordClerk>("ActiveClerk", null);
 				ICmObject current = null;
 				if (guid != Guid.Empty && cache != null)
 					current = cache.ServiceLocator.GetObject(guid);
-				else if (clerk != null)
-					current = clerk.CurrentObject;
+				else if (activeClerk != null)
+					current = activeClerk.CurrentObject;
 				var controller = new DictionaryConfigurationController(dlg, current);
 				controller.InitializeFlexComponent(new FlexComponentParameters(propertyTable, publisher, (ISubscriber)tagObjects[4]));
 				controller.SetStartingNode(classList);
@@ -1147,7 +1149,7 @@ namespace SIL.FieldWorks.XWorks
 						}
 					}
 				}
-			m_mainView.DocumentText = String.Format("<html><body>{0}</body></html>", htmlErrorMessage);
+			m_mainView.DocumentText = $"<html><body>{htmlErrorMessage}</body></html>";
 		}
 
 		private object SaveConfiguredXhtmlAndDisplay(IThreadedProgress progress, object[] args)
@@ -1171,10 +1173,10 @@ namespace SIL.FieldWorks.XWorks
 				progress.Maximum = entryCount + 1 + entryCount / 100;
 				progress.Position++;
 			}
-			var xhtmlPath = ConfiguredXHTMLGenerator.SavePreviewHtmlWithStyles(entriesToPublish, publicationDecorator, configuration, PropertyTable, progress);
+			var xhtmlPath = ConfiguredXHTMLGenerator.SavePreviewHtmlWithStyles(entriesToPublish, publicationDecorator, configuration, PropertyTable, Cache, Clerk, progress);
 #if DEBUG
 			var end = DateTime.Now;
-			System.Diagnostics.Debug.WriteLine(string.Format("saving xhtml/css took {0}", end - start));
+			System.Diagnostics.Debug.WriteLine($"saving xhtml/css took {end - start}");
 #endif
 			return xhtmlPath;
 		}

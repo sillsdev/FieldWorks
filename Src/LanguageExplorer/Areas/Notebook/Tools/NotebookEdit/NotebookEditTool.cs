@@ -13,7 +13,6 @@ using LanguageExplorer.Controls.PaneBar;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks;
-using SIL.LCModel;
 using SIL.LCModel.Application;
 using SIL.LCModel.Utils;
 
@@ -93,8 +92,9 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 
 			MultiPaneFactory.RemoveFromParentAndDispose(
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
-				ref _multiPane,
-				ref _recordClerk);
+				majorFlexComponentParameters.DataNavigationManager,
+				majorFlexComponentParameters.RecordClerkRepository,
+				ref _multiPane);
 			_recordBrowseView = null;
 		}
 
@@ -106,15 +106,19 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			_recordClerk = NotebookArea.CreateRecordClerkForAllNotebookAreaTools(PropertyTable.GetValue<LcmCache>("cache"));
-			_recordClerk.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
+			if (_recordClerk == null)
+			{
+				_recordClerk = NotebookArea.CreateRecordClerkForAllNotebookAreaTools(majorFlexComponentParameters.LcmCache);
+				_recordClerk.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
+				majorFlexComponentParameters.RecordClerkRepository.AddRecordClerk(_recordClerk);
+			}
 
-			_recordBrowseView = new RecordBrowseView(NotebookArea.LoadDocument(NotebookResources.NotebookEditBrowseParameters).Root, _recordClerk);
+			_recordBrowseView = new RecordBrowseView(NotebookArea.LoadDocument(NotebookResources.NotebookEditBrowseParameters).Root, majorFlexComponentParameters.LcmCache, _recordClerk);
 #if RANDYTODO
 			// TODO: Set up 'dataTreeMenuHandler' to handle menu events.
 			// TODO: Install menus and connect them to event handlers. (See "CreateContextMenuStrip" method for where the menus are.)
 #endif
-			var recordEditView = new RecordEditView(XElement.Parse(NotebookResources.NotebookEditRecordEditViewParameters), XDocument.Parse(AreaResources.VisibilityFilter_All), _recordClerk);
+			var recordEditView = new RecordEditView(XElement.Parse(NotebookResources.NotebookEditRecordEditViewParameters), XDocument.Parse(AreaResources.VisibilityFilter_All), majorFlexComponentParameters.LcmCache, _recordClerk);
 			var mainMultiPaneParameters = new MultiPaneParameters
 			{
 				Orientation = Orientation.Vertical,
@@ -156,6 +160,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			// Too early before now.
 			recordEditView.FinishInitialization();
 			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
+			majorFlexComponentParameters.RecordClerkRepository.ActiveRecordClerk = _recordClerk;
 		}
 
 		/// <summary>

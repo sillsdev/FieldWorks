@@ -8,7 +8,6 @@ using LanguageExplorer.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks;
-using SIL.LCModel;
 using SIL.LCModel.Application;
 
 namespace LanguageExplorer.Areas.Lists.Tools.PositionsEdit
@@ -81,8 +80,9 @@ namespace LanguageExplorer.Areas.Lists.Tools.PositionsEdit
 		{
 			CollapsingSplitContainerFactory.RemoveFromParentAndDispose(
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
-				ref _collapsingSplitContainer,
-				ref _recordClerk);
+				majorFlexComponentParameters.DataNavigationManager,
+				majorFlexComponentParameters.RecordClerkRepository,
+				ref _collapsingSplitContainer);
 		}
 
 		/// <summary>
@@ -95,13 +95,15 @@ namespace LanguageExplorer.Areas.Lists.Tools.PositionsEdit
 		{
 			_collapsingSplitContainer = CollapsingSplitContainerFactory.Create(
 				majorFlexComponentParameters.FlexComponentParameters,
+				majorFlexComponentParameters.DataNavigationManager,
+				majorFlexComponentParameters.RecordClerkRepository,
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
 				true,
 				XDocument.Parse(ListResources.PositionsEditParameters).Root, XDocument.Parse(ListResources.ListToolsSliceFilters),
 				MachineName,
-				new PossibilityListClerkParameters("PositionList", PropertyTable.GetValue<LcmCache>("cache").LanguageProject.PositionsOA, false, false, false, "best analysis"),
-				out _recordClerk);
-			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
+				new PossibilityListClerkParameters("PositionList", majorFlexComponentParameters.LcmCache.LanguageProject.PositionsOA, false, false, false, "best analysis"),
+				majorFlexComponentParameters.LcmCache,
+				ref _recordClerk);
 		}
 
 		/// <summary>

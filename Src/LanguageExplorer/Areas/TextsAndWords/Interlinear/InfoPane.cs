@@ -86,7 +86,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		#endregion
 
 		/// <summary>
-		/// Initialize the pane with a Mediator and a RecordClerk.
+		/// Initialize the pane with a cache and a record clerk.
 		/// </summary>
 		internal void Initialize(LcmCache cache, RecordClerk clerk)
 		{
@@ -96,15 +96,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private void InitializeInfoView(RecordClerk clerk)
 		{
-			if (PropertyTable == null)
-				return;
-			var xnWindow = PropertyTable.GetValue<XElement>("WindowConfiguration");
-			if (xnWindow == null)
-				return;
-			var xnControl = xnWindow.XPathSelectElement("controls/parameters/guicontrol[@id=\"TextInformationPane\"]/control/parameters");
+			var xnWindow = PropertyTable?.GetValue<XElement>("WindowConfiguration");
+			var xnControl = xnWindow?.XPathSelectElement("controls/parameters/guicontrol[@id=\"TextInformationPane\"]/control/parameters");
 			if (xnControl == null)
 				return;
-			var activeClerk = PropertyTable.GetValue<RecordClerk>("ActiveClerk");
+
+			var activeClerkAtStart = RecordClerk.RecordClerkRepository.ActiveRecordClerk;
 			var toolChoice = PropertyTable.GetValue<string>("toolChoice");
 			if(m_xrev != null)
 			{
@@ -131,11 +128,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			Controls.Add(m_xrev);
 			// There are times when moving to the InfoPane causes the wrong ActiveClerk to be set.
 			// See FWR-3390 (and InterlinearTextsRecordClerk.OnDisplayInsertInterlinText).
-			var activeClerkNew = PropertyTable.GetValue<RecordClerk>("ActiveClerk");
-			if (toolChoice != "interlinearEdit" && activeClerk != null && activeClerk != activeClerkNew)
+			var resetCurrentActiveClerk = RecordClerk.RecordClerkRepository.ActiveRecordClerk;
+			if (toolChoice != "interlinearEdit" && activeClerkAtStart != null && activeClerkAtStart != resetCurrentActiveClerk)
 			{
-				PropertyTable.SetProperty("ActiveClerk", activeClerk, true, true);
-				activeClerk.ActivateUI(true);
+				// Restore active clerk from start of method.
+				RecordClerk.RecordClerkRepository.ActiveRecordClerk = activeClerkAtStart;
+				activeClerkAtStart.ActivateUI(true);
 			}
 		}
 
@@ -216,7 +214,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// TODO: maybe replace "new DTMenuHandler()" with whatever the tool(s) might want.
 #endif
 			public InterlinearTextsRecordEditView(InfoPane info, XElement xnControl)
-				: base(null, null, null, new DTMenuHandler(), new StTextDataTree())
+				: base(null, null, null, null, new DTMenuHandler(), new StTextDataTree())
 			{
 				(m_dataEntryForm as StTextDataTree).InfoPane = info;
 				m_configurationParametersElement = xnControl;

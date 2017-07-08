@@ -5,6 +5,8 @@
 using System.Windows.Forms;
 using LanguageExplorer.Areas.TextsAndWords;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.XWorks;
+using SIL.LCModel;
 
 namespace LanguageExplorer
 {
@@ -27,9 +29,12 @@ namespace LanguageExplorer
 		internal DataNavigationManager DataNavigationManager { get; private set; }
 		/// <summary />
 		internal FlexComponentParameters FlexComponentParameters { get; private set; }
-
 		/// <summary />
-		internal MajorFlexComponentParameters(ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip, ToolStripContainer toolStripContainer, StatusBar statusbar, ParserMenuManager parserMenuManager, DataNavigationManager dataNavigationManager, FlexComponentParameters flexComponentParameters)
+		internal IRecordClerkRepository RecordClerkRepository { get; private set; }
+		/// <summary />
+		internal LcmCache LcmCache { get; private set; }
+
+		internal MajorFlexComponentParameters(ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip, ToolStripContainer toolStripContainer, StatusBar statusbar, ParserMenuManager parserMenuManager, DataNavigationManager dataNavigationManager, IRecordClerkRepository recordClerkRepository, FlexComponentParameters flexComponentParameters, LcmCache lcmCache)
 		{
 			MainCollapsingSplitContainer = mainCollapsingSplitContainer;
 			MenuStrip = menuStrip;
@@ -37,7 +42,9 @@ namespace LanguageExplorer
 			Statusbar = statusbar;
 			ParserMenuManager = parserMenuManager;
 			DataNavigationManager = dataNavigationManager;
+			RecordClerkRepository = recordClerkRepository;
 			FlexComponentParameters = flexComponentParameters;
+			LcmCache = lcmCache;
 		}
 	}
 }

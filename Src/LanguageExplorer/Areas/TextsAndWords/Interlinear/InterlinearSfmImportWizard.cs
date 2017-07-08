@@ -589,9 +589,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			if (m_firstNewText != null)
 			{
 				// try to select it.
-				var clerk = RecordClerk.FindClerk(m_propertyTable, "interlinearTexts");
-				if (clerk != null)
-					clerk.JumpToRecord(m_firstNewText.ContentsOA.Hvo);
+				var clerk = RecordClerk.RecordClerkRepository.GetRecordClerk("interlinearTexts");
+				clerk?.JumpToRecord(m_firstNewText.ContentsOA.Hvo);
 			}
 		}
 		IText m_firstNewText;

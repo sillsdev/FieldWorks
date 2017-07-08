@@ -155,10 +155,11 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Initializes a new instance of the <see cref="XWorksViewBase"/> class.
 		/// </summary>
-		protected XWorksViewBase(XElement configurationParametersElement, RecordClerk recordClerk)
+		protected XWorksViewBase(XElement configurationParametersElement, LcmCache cache, RecordClerk recordClerk)
 			: this()
 		{
 			m_configurationParametersElement = configurationParametersElement;
+			Cache = cache;
 			Clerk = recordClerk;
 		}
 
@@ -218,26 +219,14 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// FDO cache.
 		/// </summary>
-		protected LcmCache Cache
-		{
-			get
-			{
-				return PropertyTable.GetValue<LcmCache>("cache");
-			}
-		}
+		protected LcmCache Cache { get; }
 
 		/// <summary>
 		/// This is used in at least one place to determine if we have an existing
 		/// clerk without creating one if there isn't. This is used in logic to prevent
 		/// loading and sorting the record list twice.
 		/// </summary>
-		protected internal RecordClerk ExistingClerk
-		{
-			get
-			{
-				return m_clerk;
-			}
-		}
+		protected internal RecordClerk ExistingClerk => m_clerk;
 
 		/// <summary>
 		/// Get/Set the Clerk used by the view.

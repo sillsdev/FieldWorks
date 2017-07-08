@@ -13,6 +13,7 @@ using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
+using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.DomainServices;
 using SIL.Utils;
@@ -44,8 +45,8 @@ namespace SIL.FieldWorks.XWorks
 
 		#region Construction and Removal
 
-		public RecordDocView(XElement configurationParametersElement, RecordClerk recordClerk)
-			: base(configurationParametersElement, recordClerk)
+		public RecordDocView(XElement configurationParametersElement, LcmCache cache, RecordClerk recordClerk)
+			: base(configurationParametersElement, cache, recordClerk)
 		{
 		}
 
@@ -380,8 +381,8 @@ namespace SIL.FieldWorks.XWorks
 		XElement m_jtSpecs; // node required by XmlView.
 		protected string m_configObjectName; // name to display in Configure dialog.
 
-		public RecordDocXmlView(XElement configurationParametersElement, RecordClerk recordClerk)
-			: base(configurationParametersElement, recordClerk)
+		public RecordDocXmlView(XElement configurationParametersElement, LcmCache cache, RecordClerk recordClerk)
+			: base(configurationParametersElement, cache, recordClerk)
 		{
 		}
 

@@ -72,8 +72,8 @@ namespace SIL.FieldWorks.XWorks
 			AccNameDefault = "XmlDocView";		// default accessibility name
 		}
 
-		public XmlDocView(XElement configurationParametersElement, RecordClerk recordClerk)
-			: base(configurationParametersElement, recordClerk)
+		public XmlDocView(XElement configurationParametersElement, LcmCache cache, RecordClerk recordClerk)
+			: base(configurationParametersElement, cache, recordClerk)
 		{
 		}
 

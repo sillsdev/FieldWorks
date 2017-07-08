@@ -59,8 +59,8 @@ namespace SIL.FieldWorks.XWorks
 			Init();
 		}
 
-		public RecordView(XElement configurationParametersElement, RecordClerk recordClerk)
-			: base(configurationParametersElement, recordClerk)
+		public RecordView(XElement configurationParametersElement, LcmCache cache, RecordClerk recordClerk)
+			: base(configurationParametersElement, cache, recordClerk)
 		{
 			Init();
 		}

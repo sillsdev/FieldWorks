@@ -78,7 +78,7 @@ namespace SIL.FieldWorks.XWorks
 				styles.Add(new BaseStyleInfo { Name = DictionaryNormal });
 
 			m_Clerk = CreateClerk();
-			m_propertyTable.SetProperty("ActiveClerk", m_Clerk, false);
+			RecordClerk.RecordClerkRepository.ActiveRecordClerk = m_Clerk;
 
 			m_propertyTable.SetProperty("toolChoice", "lexiconDictionary", false);
 			Cache.ProjectId.Path = Path.Combine(FwDirectoryFinder.SourceDirectory, "xWorks/xWorksTests/TestData/");
@@ -256,7 +256,7 @@ namespace SIL.FieldWorks.XWorks
 			const string letterHeadingXPath = "//div[@class='letHead']";
 			try
 			{
-				var clerk = m_propertyTable.GetValue<RecordClerk>("ActiveClerk", null);
+				var clerk = RecordClerk.RecordClerkRepository.ActiveRecordClerk;
 				clerk.SortName = "Headword (fr)";
 				xhtmlPath = ConfiguredXHTMLGenerator.SavePreviewHtmlWithStyles(new[] { firstAEntry.Hvo }, pubEverything, model, m_propertyTable);
 				AssertThatXmlIn.File(xhtmlPath).HasSpecifiedNumberOfMatchesForXpath(letterHeadingXPath, 1);
@@ -7655,7 +7655,7 @@ namespace SIL.FieldWorks.XWorks
 			const string letterHeaderXPath = "//div[@class='letHead']";
 			try
 			{
-				var clerk = m_propertyTable.GetValue<RecordClerk>("ActiveClerk", null);
+				var clerk = RecordClerk.RecordClerkRepository.ActiveRecordClerk;
 				clerk.SortName = "Glosses";
 				xhtmlPath = ConfiguredXHTMLGenerator.SavePreviewHtmlWithStyles(new[] { firstAEntry.Hvo }, pubEverything, model, m_propertyTable);
 				var xhtml = File.ReadAllText(xhtmlPath);

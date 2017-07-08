@@ -117,8 +117,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 
 			CollapsingSplitContainerFactory.RemoveFromParentAndDispose(
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
-				ref _collapsingSplitContainer,
-				ref _recordClerk);
+				majorFlexComponentParameters.DataNavigationManager,
+				majorFlexComponentParameters.RecordClerkRepository,
+				ref _collapsingSplitContainer);
 
 			_recordBrowseView = null;
 			_nestedRecordClerk = null;
@@ -135,15 +136,18 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 			var mainCollapsingSplitContainerAsControl = (Control)majorFlexComponentParameters.MainCollapsingSplitContainer;
 			mainCollapsingSplitContainerAsControl.SuspendLayout();
 
-			var doc = XDocument.Parse(LexiconResources.RapidDataEntryToolParameters);
+			var root = XDocument.Parse(LexiconResources.RapidDataEntryToolParameters).Root;
 			// The RecordBar uses the "SemanticDomainList" clerk
-			var cache = PropertyTable.GetValue<LcmCache>("cache");
-			var decorator = new DictionaryPublicationDecorator(cache, cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), CmPossibilityListTags.kflidPossibilities);
-			var recordList = new PossibilityRecordList(decorator, cache.LanguageProject.SemanticDomainListOA);
-			var semanticDomainRdeTreeBarHandler = new SemanticDomainRdeTreeBarHandler(PropertyTable, doc.Root.Element("treeBarHandler"), new PaneBar());
-			_recordClerk = new RecordClerk("SemanticDomainList", recordList, new PropertyRecordSorter("ShortName"), "Default", null, false, false, semanticDomainRdeTreeBarHandler);
-			// The browse view a clerk called "RDEwords" that depends on the main "SemanticDomainList" clerk.
-			_recordClerk.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
+			var semanticDomainRdeTreeBarHandler = new SemanticDomainRdeTreeBarHandler(PropertyTable, root.Element("treeBarHandler"), new PaneBar());
+			if (_recordClerk == null)
+			{
+				var decorator = new DictionaryPublicationDecorator(majorFlexComponentParameters.LcmCache, majorFlexComponentParameters.LcmCache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), CmPossibilityListTags.kflidPossibilities);
+				var recordList = new PossibilityRecordList(decorator, majorFlexComponentParameters.LcmCache.LanguageProject.SemanticDomainListOA);
+				_recordClerk = new RecordClerk("SemanticDomainList", recordList, new PropertyRecordSorter("ShortName"), "Default", null, false, false, semanticDomainRdeTreeBarHandler);
+				// The browse view a clerk called "RDEwords" that depends on the main "SemanticDomainList" clerk.
+				_recordClerk.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
+				majorFlexComponentParameters.RecordClerkRepository.AddRecordClerk(_recordClerk);
+			}
 			var recordBar = new RecordBar(PropertyTable)
 			{
 				IsFlatList = false,
@@ -168,10 +172,14 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 
 			var dataTreeMenuHandler = new LexEntryMenuHandler();
 			dataTreeMenuHandler.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
-			var recordEditView = new RecordEditView(doc.Root.Element("recordeditview").Element("parameters"), XDocument.Parse(LexiconResources.HideAdvancedFeatureFields), _recordClerk, dataTreeMenuHandler);
-			_nestedRecordClerk = new RecordClerk("RDEwords", new RecordList(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), true, cache.MetaDataCacheAccessor.GetFieldId2(CmSemanticDomainTags.kClassId, "ReferringSenses", false), cache.LanguageProject.SemanticDomainListOA, "ReferringSenses"), new PropertyRecordSorter("ShortName"), "Default", null, false, false, _recordClerk);
-			_nestedRecordClerk.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
-			_recordBrowseView = new RecordBrowseView(doc.Root.Element("recordbrowseview").Element("parameters"), _nestedRecordClerk);
+			var recordEditView = new RecordEditView(root.Element("recordeditview").Element("parameters"), XDocument.Parse(LexiconResources.HideAdvancedFeatureFields), majorFlexComponentParameters.LcmCache, _recordClerk, dataTreeMenuHandler);
+			if (_nestedRecordClerk == null)
+			{
+				_nestedRecordClerk = new RecordClerk("RDEwords", new RecordList(majorFlexComponentParameters.LcmCache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), true, majorFlexComponentParameters.LcmCache.MetaDataCacheAccessor.GetFieldId2(CmSemanticDomainTags.kClassId, "ReferringSenses", false), majorFlexComponentParameters.LcmCache.LanguageProject.SemanticDomainListOA, "ReferringSenses"), new PropertyRecordSorter("ShortName"), "Default", null, false, false, _recordClerk);
+				_nestedRecordClerk.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
+				majorFlexComponentParameters.RecordClerkRepository.AddRecordClerk(_nestedRecordClerk);
+			}
+			_recordBrowseView = new RecordBrowseView(root.Element("recordbrowseview").Element("parameters"), majorFlexComponentParameters.LcmCache, _nestedRecordClerk);
 			var mainMultiPaneParameters = new MultiPaneParameters
 			{
 				Orientation = Orientation.Horizontal,
@@ -183,7 +191,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 				SecondControlParameters = new SplitterChildControlParameters { Control = _recordBrowseView, Label = "Details" }
 			};
 			var nestedMultiPane = MultiPaneFactory.CreateNestedMultiPane(majorFlexComponentParameters.FlexComponentParameters, mainMultiPaneParameters);
-			nestedMultiPane.SplitterDistance = PropertyTable.GetValue<int>(string.Format("MultiPaneSplitterDistance_{0}_{1}_{2}", AreaMachineName, MachineName, mainMultiPaneParameters.Id));
+			nestedMultiPane.SplitterDistance = PropertyTable.GetValue<int>($"MultiPaneSplitterDistance_{AreaMachineName}_{MachineName}_{mainMultiPaneParameters.Id}");
 			_collapsingSplitContainer.SecondControl = PaneBarContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, recordEditViewPaneBar, nestedMultiPane);
 			majorFlexComponentParameters.MainCollapsingSplitContainer.SecondControl = _collapsingSplitContainer;
 			_collapsingSplitContainer.ResumeLayout();
@@ -197,6 +205,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 			semanticDomainRdeTreeBarHandler.FinishInitialization();
 			recordEditView.FinishInitialization();
 			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
+			majorFlexComponentParameters.RecordClerkRepository.ActiveRecordClerk = _recordClerk;
 		}
 
 		/// <summary>

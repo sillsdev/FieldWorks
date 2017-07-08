@@ -81,8 +81,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ClassifiedDictionary
 		{
 			PaneBarContainerFactory.RemoveFromParentAndDispose(
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
-				ref _paneBarContainer,
-				ref _recordClerk);
+				majorFlexComponentParameters.DataNavigationManager,
+				majorFlexComponentParameters.RecordClerkRepository,
+				ref _paneBarContainer);
 		}
 
 		/// <summary>
@@ -93,29 +94,32 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ClassifiedDictionary
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			var cache = PropertyTable.GetValue<LcmCache>("cache");
-			var decorator = new DictionaryPublicationDecorator(cache, cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), CmPossibilityListTags.kflidPossibilities);
 			var xmlDocViewPaneBar = new PaneBar();
+			var semanticDomainRdeTreeBarHandler = new SemanticDomainRdeTreeBarHandler(PropertyTable, XDocument.Parse(LexiconResources.RapidDataEntryToolParameters).Root.Element("treeBarHandler"), xmlDocViewPaneBar);
+			if (_recordClerk == null)
+			{
+				var decorator = new DictionaryPublicationDecorator(majorFlexComponentParameters.LcmCache, majorFlexComponentParameters.LcmCache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), CmPossibilityListTags.kflidPossibilities);
+				var recordList = new PossibilityRecordList(decorator, majorFlexComponentParameters.LcmCache.LanguageProject.SemanticDomainListOA);
+				_recordClerk = new RecordClerk("SemanticDomainList", recordList, new PropertyRecordSorter("ShortName"), "Default", null, false, false, semanticDomainRdeTreeBarHandler);
+				_recordClerk.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
+				majorFlexComponentParameters.RecordClerkRepository.AddRecordClerk(_recordClerk);
+			}
+
 			var panelButton = new PanelButton(PropertyTable, null, "ShowFailingItems-lexiconClassifiedDictionary", LexiconResources.Show_Unused_Items, LexiconResources.Show_Unused_Items)
 			{
 				Dock = DockStyle.Right
 			};
 			xmlDocViewPaneBar.AddControls(new List<Control> { panelButton });
-			var recordList = new PossibilityRecordList(decorator, cache.LanguageProject.SemanticDomainListOA);
-			var semanticDomainRdeTreeBarHandler = new SemanticDomainRdeTreeBarHandler(PropertyTable, XDocument.Parse(LexiconResources.RapidDataEntryToolParameters).Root.Element("treeBarHandler"), xmlDocViewPaneBar);
-			_recordClerk = new RecordClerk("SemanticDomainList", recordList, new PropertyRecordSorter("ShortName"), "Default", null, false, false, semanticDomainRdeTreeBarHandler);
-			_recordClerk.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
-
-
 			_paneBarContainer = PaneBarContainerFactory.Create(
 				majorFlexComponentParameters.FlexComponentParameters,
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
 				xmlDocViewPaneBar,
-				new XmlDocView(XDocument.Parse(LexiconResources.LexiconClassifiedDictionaryParameters).Root, _recordClerk));
+				new XmlDocView(XDocument.Parse(LexiconResources.LexiconClassifiedDictionaryParameters).Root, majorFlexComponentParameters.LcmCache, _recordClerk));
 
 			// Too early before now.
 			semanticDomainRdeTreeBarHandler.FinishInitialization();
 			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
+			majorFlexComponentParameters.RecordClerkRepository.ActiveRecordClerk = _recordClerk;
 		}
 
 		/// <summary>

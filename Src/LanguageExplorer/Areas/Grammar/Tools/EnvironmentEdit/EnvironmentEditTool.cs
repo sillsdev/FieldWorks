@@ -82,8 +82,9 @@ namespace LanguageExplorer.Areas.Grammar.Tools.EnvironmentEdit
 		{
 			MultiPaneFactory.RemoveFromParentAndDispose(
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
-				ref _multiPane,
-				ref _recordClerk);
+				majorFlexComponentParameters.DataNavigationManager,
+				majorFlexComponentParameters.RecordClerkRepository,
+				ref _multiPane);
 			_recordBrowseView = null;
 		}
 
@@ -95,16 +96,21 @@ namespace LanguageExplorer.Areas.Grammar.Tools.EnvironmentEdit
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			var root = XDocument.Parse(GrammarResources.EnvironmentEditToolParameters).Root;
 			var cache = PropertyTable.GetValue<LcmCache>("cache");
-			_recordClerk = new RecordClerk("environments", new RecordList(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), true, PhPhonDataTags.kflidEnvironments, cache.LanguageProject.PhonologicalDataOA, "Environments"), new PropertyRecordSorter("ShortName"), "Default", null, false, false);
-			_recordClerk.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
-			_recordBrowseView = new RecordBrowseView(root.Element("browseview").Element("parameters"), _recordClerk);
+			if (_recordClerk == null)
+			{
+				_recordClerk = new RecordClerk("environments", new RecordList(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), true, PhPhonDataTags.kflidEnvironments, cache.LanguageProject.PhonologicalDataOA, "Environments"), new PropertyRecordSorter("ShortName"), "Default", null, false, false);
+				_recordClerk.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
+				majorFlexComponentParameters.RecordClerkRepository.AddRecordClerk(_recordClerk);
+			}
+
+			var root = XDocument.Parse(GrammarResources.EnvironmentEditToolParameters).Root;
+			_recordBrowseView = new RecordBrowseView(root.Element("browseview").Element("parameters"), cache, _recordClerk);
 #if RANDYTODO
 			// TODO: Set up 'dataTreeMenuHandler' to handle menu events.
 			// TODO: Install menus and connect them to event handlers. (See "CreateContextMenuStrip" method for where the menus are.)
 #endif
-			var recordEditView = new RecordEditView(root.Element("recordview").Element("parameters"), XDocument.Parse(AreaResources.VisibilityFilter_All), _recordClerk);
+			var recordEditView = new RecordEditView(root.Element("recordview").Element("parameters"), XDocument.Parse(AreaResources.VisibilityFilter_All), cache, _recordClerk);
 			var mainMultiPaneParameters = new MultiPaneParameters
 			{
 				Orientation = Orientation.Vertical,
@@ -131,6 +137,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.EnvironmentEdit
 			// Too early before now.
 			recordEditView.FinishInitialization();
 			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
+			majorFlexComponentParameters.RecordClerkRepository.ActiveRecordClerk = _recordClerk;
 		}
 
 		/// <summary>

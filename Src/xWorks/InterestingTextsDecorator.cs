@@ -27,10 +27,10 @@ namespace SIL.FieldWorks.XWorks
 		// The object our property belongs to. We consider any object for which we are asked our special
 		// property to be the root object.
 		private int m_rootHvo;
-		public InterestingTextsDecorator(ISilDataAccessManaged domainDataByFlid, ILcmServiceLocator services, IPropertyTable propertyTable)
-			: base(domainDataByFlid)
+		public InterestingTextsDecorator(ILcmServiceLocator services, IPropertyTable propertyTable)
+			: base(services.GetInstance<ISilDataAccessManaged>())
 		{
-			SetOverrideMdc(new InterestingTextsMdc(base.MetaDataCache as IFwMetaDataCacheManaged));
+			SetOverrideMdc(new InterestingTextsMdc(MetaDataCache as IFwMetaDataCacheManaged));
 			m_services = services;
 			m_propertyTable = propertyTable;
 			m_interestingTexts = GetInterestingTextList(m_propertyTable, m_services);

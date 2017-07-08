@@ -224,13 +224,6 @@ namespace LanguageExplorer.Areas.Lexicon
 					JumpToIndex(rootIndex);
 					base.OnPropertyChanged(name);
 					break;
-				case "ActiveClerk":
-					RecordClerk activeClerk = PropertyTable.GetValue<RecordClerk>("ActiveClerk");
-					if (activeClerk == this)
-						ChangeOwningObjectIfPossible();
-					else
-						base.OnPropertyChanged(name);
-					break;
 			}
 		}
 

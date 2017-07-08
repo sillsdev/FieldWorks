@@ -349,6 +349,7 @@
     <Compile Include="IDictionaryGroupingOptionsView.cs" />
     <Compile Include="IHeadwordNumbersView.cs" />
     <Compile Include="ILayoutConverter.cs" />
+    <Compile Include="IRecordClerkRepository.cs" />
     <Compile Include="ISetRootHvo.cs" />
     <Compile Include="IWebonaryClient.cs" />
     <Compile Include="LegacyConfigurationUtils.cs" />
@@ -414,6 +415,7 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="PossibilityRecordList.cs" />
+    <Compile Include="RecordClerkRepository.cs" />
     <Compile Include="RecordDocView.cs">
       <SubType>UserControl</SubType>
     </Compile>

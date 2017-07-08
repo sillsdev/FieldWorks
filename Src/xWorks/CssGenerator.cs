@@ -41,14 +41,14 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		/// <param name="model"></param>
 		/// <param name="propertyTable">Necessary to access the styles as configured in FLEx</param>
+		/// <param name="cache"></param>
 		/// <returns></returns>
-		public static string GenerateCssFromConfiguration(DictionaryConfigurationModel model, IPropertyTable propertyTable)
+		public static string GenerateCssFromConfiguration(DictionaryConfigurationModel model, IPropertyTable propertyTable, LcmCache cache)
 		{
 			if(model == null)
 				throw new ArgumentNullException("model");
 			var styleSheet = new StyleSheet();
 			var propStyleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(propertyTable);
-			var cache = propertyTable.GetValue<LcmCache>("cache");
 			LoadBulletUnicodes();
 			LoadNumberingStyles();
 			GenerateLetterHeaderCss(propertyTable, styleSheet);
@@ -58,7 +58,7 @@ namespace SIL.FieldWorks.XWorks
 			GenerateCssForAudioWs(styleSheet, cache);
 			foreach(var configNode in model.Parts.Where(x => x.IsEnabled).Concat(model.SharedItems.Where(x => x.Parent != null)))
 			{
-				GenerateCssFromConfigurationNode(configNode, styleSheet, null, propertyTable);
+				GenerateCssFromConfigurationNode(configNode, styleSheet, null, propertyTable, cache);
 			}
 			// Pretty-print the stylesheet
 			return Icu.Normalize(styleSheet.ToString(true, 1), Icu.UNormalizationMode.UNORM_NFC);
@@ -197,9 +197,8 @@ namespace SIL.FieldWorks.XWorks
 		/// Generates css rules for a configuration node and adds them to the given stylesheet (recursive).
 		/// </summary>
 		private static void GenerateCssFromConfigurationNode(ConfigurableDictionaryNode configNode, StyleSheet styleSheet,
-			string baseSelection, IPropertyTable propertyTable)
+			string baseSelection, IPropertyTable propertyTable, LcmCache cache)
 		{
-			var cache = propertyTable.GetValue<LcmCache>("cache");
 			var rule = new StyleRule();
 			var senseOptions = configNode.DictionaryNodeOptions as DictionaryNodeSenseOptions;
 			var listAndParaOpts = configNode.DictionaryNodeOptions as IParaOption;
@@ -208,7 +207,7 @@ namespace SIL.FieldWorks.XWorks
 				// Try to generate the css for the sense number before the baseSelection is updated because
 				// the sense number is a sibling of the sense element and we are normally applying styles to the
 				// children of collections. Also set display:block on span
-				GenerateCssForSenses(configNode, senseOptions, styleSheet, ref baseSelection, propertyTable);
+				GenerateCssForSenses(configNode, senseOptions, styleSheet, ref baseSelection, propertyTable, cache);
 			}
 			else if (listAndParaOpts != null)
 			{
@@ -260,7 +259,7 @@ namespace SIL.FieldWorks.XWorks
 			//Recurse into each child
 			foreach(var child in configNode.Children.Where(x => x.IsEnabled))
 			{
-				GenerateCssFromConfigurationNode(child, styleSheet, baseSelection, propertyTable);
+				GenerateCssFromConfigurationNode(child, styleSheet, baseSelection, propertyTable, cache);
 			}
 		}
 
@@ -286,9 +285,9 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		private static void GenerateCssForSenses(ConfigurableDictionaryNode configNode, DictionaryNodeSenseOptions senseOptions,
-														StyleSheet styleSheet, ref string baseSelection, IPropertyTable propertyTable)
+														StyleSheet styleSheet, ref string baseSelection, IPropertyTable propertyTable, LcmCache cache)
 		{
-			var selectors = GenerateSelectorsFromNode(baseSelection, configNode, out baseSelection, propertyTable.GetValue<LcmCache>("cache"), propertyTable);
+			var selectors = GenerateSelectorsFromNode(baseSelection, configNode, out baseSelection, cache, propertyTable);
 			// Insert '> .sensecontent' between '.*senses' and '.*sense' (where * could be 'referring', 'sub', or similar)
 			var senseContentSelector = string.Format("{0}> .sensecontent", baseSelection.Substring(0, baseSelection.LastIndexOf('.')));
 			var senseItemName = baseSelection.Substring(baseSelection.LastIndexOf('.'));
@@ -366,7 +365,7 @@ namespace SIL.FieldWorks.XWorks
 				var collectionSelector = senseContentSelector.Substring(0, senseContentSelector.LastIndexOf(" .", StringComparison.Ordinal));
 				foreach (var gramInfoNode in configNode.Children.Where(node => node.FieldDescription == "MorphoSyntaxAnalysisRA" && node.IsEnabled))
 				{
-					GenerateCssFromConfigurationNode(gramInfoNode, styleSheet, collectionSelector + " .sharedgrammaticalinfo", propertyTable);
+					GenerateCssFromConfigurationNode(gramInfoNode, styleSheet, collectionSelector + " .sharedgrammaticalinfo", propertyTable, cache);
 				}
 			}
 		}

@@ -8,7 +8,6 @@ using LanguageExplorer.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks;
-using SIL.LCModel;
 using SIL.LCModel.Application;
 
 namespace LanguageExplorer.Areas.Lists.Tools.PublicationsEdit
@@ -81,8 +80,9 @@ namespace LanguageExplorer.Areas.Lists.Tools.PublicationsEdit
 		{
 			CollapsingSplitContainerFactory.RemoveFromParentAndDispose(
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
-				ref _collapsingSplitContainer,
-				ref _recordClerk);
+				majorFlexComponentParameters.DataNavigationManager,
+				majorFlexComponentParameters.RecordClerkRepository,
+				ref _collapsingSplitContainer);
 		}
 
 		/// <summary>
@@ -95,13 +95,15 @@ namespace LanguageExplorer.Areas.Lists.Tools.PublicationsEdit
 		{
 			_collapsingSplitContainer = CollapsingSplitContainerFactory.Create(
 				majorFlexComponentParameters.FlexComponentParameters,
+				majorFlexComponentParameters.DataNavigationManager,
+				majorFlexComponentParameters.RecordClerkRepository,
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
 				true,
 				XDocument.Parse(ListResources.PublicationsEditParameters).Root, XDocument.Parse(ListResources.ListToolsSliceFilters),
 				MachineName,
-				new PossibilityListClerkParameters("PublicationsEditParameters", PropertyTable.GetValue<LcmCache>("cache").LanguageProject.LexDbOA.PublicationTypesOA, false, false, false, "best vernoranal"),
-				out _recordClerk);
-			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
+				new PossibilityListClerkParameters("PublicationsEditParameters", majorFlexComponentParameters.LcmCache.LanguageProject.LexDbOA.PublicationTypesOA, false, false, false, "best vernoranal"),
+				majorFlexComponentParameters.LcmCache,
+				ref _recordClerk);
 		}
 
 		/// <summary>

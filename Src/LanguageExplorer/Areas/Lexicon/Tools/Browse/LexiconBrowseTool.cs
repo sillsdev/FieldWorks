@@ -8,7 +8,6 @@ using LanguageExplorer.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks;
-using SIL.LCModel;
 using SIL.LCModel.Application;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.Browse
@@ -78,8 +77,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Browse
 		{
 			PaneBarContainerFactory.RemoveFromParentAndDispose(
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
-				ref _paneBarContainer,
-				ref _recordClerk);
+				majorFlexComponentParameters.DataNavigationManager,
+				majorFlexComponentParameters.RecordClerkRepository,
+				ref _paneBarContainer);
 			_recordBrowseView = null;
 		}
 
@@ -91,18 +91,23 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Browse
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			if (_recordClerk == null)
+			{
+				_recordClerk = LexiconArea.CreateBasicClerkForLexiconArea(majorFlexComponentParameters.LcmCache);
+				_recordClerk.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
+				majorFlexComponentParameters.RecordClerkRepository.AddRecordClerk(_recordClerk);
+			}
 			var root = XDocument.Parse(LexiconResources.LexiconBrowseParameters).Root;
 			var columnsElement = XElement.Parse(LexiconResources.LexiconBrowseDialogColumnDefinitions);
 			OverrideServices.OverrideVisibiltyAttributes(columnsElement, XElement.Parse(LexiconResources.LexiconBrowseOverrides));
 			root.Add(columnsElement);
-			_recordClerk = LexiconArea.CreateBasicClerkForLexiconArea(PropertyTable.GetValue<LcmCache>("cache"));
-			_recordClerk.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
-			_recordBrowseView = new RecordBrowseView(root, _recordClerk);
+			_recordBrowseView = new RecordBrowseView(root, majorFlexComponentParameters.LcmCache, _recordClerk);
 			_paneBarContainer = PaneBarContainerFactory.Create(
 				majorFlexComponentParameters.FlexComponentParameters,
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
 				_recordBrowseView);
 			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
+			majorFlexComponentParameters.RecordClerkRepository.ActiveRecordClerk = _recordClerk;
 		}
 
 		/// <summary>

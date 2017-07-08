@@ -76,8 +76,9 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CategoryBrowse
 		{
 			PaneBarContainerFactory.RemoveFromParentAndDispose(
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
-				ref _paneBarContainer,
-				ref _recordClerk);
+				majorFlexComponentParameters.DataNavigationManager,
+				majorFlexComponentParameters.RecordClerkRepository,
+				ref _paneBarContainer);
 		}
 
 		/// <summary>
@@ -88,14 +89,18 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CategoryBrowse
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			var root = XDocument.Parse(GrammarResources.GrammarCategoryBrowserParameters).Root;
-			_recordClerk = GrammarArea.CreateCategoriesClerkForGrammarArea(PropertyTable, false);
-			_recordClerk.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
+			if (_recordClerk == null)
+			{
+				_recordClerk = GrammarArea.CreateCategoriesClerkForGrammarArea(PropertyTable, majorFlexComponentParameters.LcmCache, false);
+				_recordClerk.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
+				majorFlexComponentParameters.RecordClerkRepository.AddRecordClerk(_recordClerk);
+			}
 			_paneBarContainer = PaneBarContainerFactory.Create(
 				majorFlexComponentParameters.FlexComponentParameters,
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
-				new RecordBrowseView(root, _recordClerk));
+				new RecordBrowseView(XDocument.Parse(GrammarResources.GrammarCategoryBrowserParameters).Root, majorFlexComponentParameters.LcmCache, _recordClerk));
 			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
+			majorFlexComponentParameters.RecordClerkRepository.ActiveRecordClerk = _recordClerk;
 		}
 
 		/// <summary>

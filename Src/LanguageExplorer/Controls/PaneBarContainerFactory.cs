@@ -119,22 +119,15 @@ namespace LanguageExplorer.Controls
 		}
 
 		/// <summary>
-		/// Remove <paramref name="paneBarContainer"/> from parent control and dispose it.
+		/// Remove <paramref name="paneBarContainer"/> from parent control and dispose it and set clerk to null.
 		/// </summary>
-		/// <param name="mainCollapsingSplitContainer"></param>
-		/// <param name="paneBarContainer">The PaneBarContainer to remove and dispose.</param>
-		/// <param name="recordClerk">The RecordClerk data member to set to null.</param>
-		internal static void RemoveFromParentAndDispose(ICollapsingSplitContainer mainCollapsingSplitContainer, ref PaneBarContainer paneBarContainer, ref RecordClerk recordClerk)
+		internal static void RemoveFromParentAndDispose(ICollapsingSplitContainer mainCollapsingSplitContainer, DataNavigationManager dataNavigationManager, IRecordClerkRepository recordClerkRepository, ref PaneBarContainer paneBarContainer)
 		{
 			// Re-setting SecondControl, will dispose paneBarContainer.
 			mainCollapsingSplitContainer.SecondControl = null;
-
+			dataNavigationManager.Clerk = null;
+			recordClerkRepository.ActiveRecordClerk = null;
 			paneBarContainer = null;
-
-			// recordClerk is disposed by XWorksViewBase in the call "paneBarContainer.Dispose()", but just set the variable to null here.
-			// "recordClerk" is a data member of the caller. Rather than have every caller set its own data member to null,
-			// we do it here for all of them.
-			recordClerk = null;
 		}
 
 		internal static string CreateShowHiddenFieldsPropertyName(string toolMachineName)

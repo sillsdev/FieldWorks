@@ -62,7 +62,7 @@ namespace LanguageExplorer.Dumpster
 				// we should be able to get our info from the current record clerk.
 				// but return null if we can't get the info, otherwise we allow the user to
 				// bring up the change spelling dialog and crash because no wordform can be found (LT-8766).
-				var clerk = PropertyTable.GetValue<RecordClerk>("ActiveClerk");
+				var clerk = RecordClerk.RecordClerkRepository.ActiveRecordClerk;
 				if (clerk == null || clerk.CurrentObject == null)
 					return null;
 				var wfiWordform = clerk.CurrentObject as IWfiWordform;
@@ -130,7 +130,7 @@ namespace LanguageExplorer.Dumpster
 				LaunchRespellerDlgOnWord(ActiveWord());
 				return true;
 			}
-			var clerk = PropertyTable.GetValue<RecordClerk>("ActiveClerk");
+			var clerk = RecordClerk.RecordClerkRepository.ActiveRecordClerk;
 			using (var luh = new RecordClerk.ListUpdateHelper(clerk))
 			{
 				var changesWereMade = false;
@@ -181,7 +181,7 @@ namespace LanguageExplorer.Dumpster
 
 			var cache = PropertyTable.GetValue<FdoCache>("cache");
 			var wordform = WordformApplicationServices.GetWordformForForm(cache, tss);
-			using (var luh = new RecordClerk.ListUpdateHelper(PropertyTable.GetValue<RecordClerk>("ActiveClerk")))
+			using (var luh = new RecordClerk.ListUpdateHelper(RecordClerk.RecordClerkRepository.ActiveRecordClerk))
 			{
 				// Launch the Respeller Dlg.
 				using (var dlg = new RespellerDlg())

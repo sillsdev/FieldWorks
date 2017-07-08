@@ -87,7 +87,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			PropertyTable.RemoveProperty("ActiveClerk");
 			_leftContextMenuStrip.Opening -= LeftContextMenuStrip_Opening;
 			_leftContextMenuStrip.Dispose();
 			_leftContextMenuStrip = null;
@@ -98,8 +97,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 
 			PaneBarContainerFactory.RemoveFromParentAndDispose(
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
-				ref _paneBarContainer,
-				ref _recordClerk);
+				majorFlexComponentParameters.DataNavigationManager,
+				majorFlexComponentParameters.RecordClerkRepository,
+				ref _paneBarContainer);
 			_xhtmlDocView = null;
 		}
 
@@ -111,14 +111,16 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			var cache = PropertyTable.GetValue<LcmCache>("cache");
+			if (_recordClerk == null)
+			{
+				_recordClerk = LexiconArea.CreateBasicClerkForLexiconArea(majorFlexComponentParameters.LcmCache);
+				_recordClerk.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
+				majorFlexComponentParameters.RecordClerkRepository.AddRecordClerk(_recordClerk);
+			}
+
 			var root = XDocument.Parse(LexiconResources.LexiconDictionaryToolParameters).Root;
 			_configureObjectName = root.Attribute("configureObjectName").Value;
-			var flexComponentParameters = new FlexComponentParameters(PropertyTable, Publisher, Subscriber);
-			_recordClerk = LexiconArea.CreateBasicClerkForLexiconArea(cache);
-			PropertyTable.SetProperty("ActiveClerk", _recordClerk, false, false);
-			_recordClerk.InitializeFlexComponent(flexComponentParameters);
-			_xhtmlDocView = new XhtmlDocView(root, _recordClerk);
+			_xhtmlDocView = new XhtmlDocView(root, majorFlexComponentParameters.LcmCache, _recordClerk);
 			var docViewPaneBar = new PaneBar();
 			var img = LanguageExplorerResources.MenuWidget;
 			img.MakeTransparent(Color.Magenta);
@@ -160,6 +162,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 			_xhtmlDocView.OnPropertyChanged("DictionaryPublicationLayout");
 			_paneBarContainer.PostLayoutInit();
 			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
+			majorFlexComponentParameters.RecordClerkRepository.ActiveRecordClerk = _recordClerk;
 		}
 
 		/// <summary>
@@ -187,9 +190,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 		{
 		}
 
-		#endregion
+#endregion
 
-		#region Implementation of IMajorFlexUiComponent
+#region Implementation of IMajorFlexUiComponent
 
 		/// <summary>
 		/// Get the internal name of the component.
@@ -201,9 +204,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 		/// User-visible localizable component name.
 		/// </summary>
 		public string UiName => "Dictionary";
-		#endregion
+#endregion
 
-		#region Implementation of ITool
+#region Implementation of ITool
 
 		/// <summary>
 		/// Get the area machine name the tool is for.
@@ -215,7 +218,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 		/// </summary>
 		public Image Icon => Images.DocumentView.SetBackgroundColor(Color.Magenta);
 
-		#endregion
+#endregion
 
 		private ContextMenuStrip CreateRightContextMenuStrip()
 		{

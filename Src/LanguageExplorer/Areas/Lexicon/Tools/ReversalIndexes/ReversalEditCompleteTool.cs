@@ -86,7 +86,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			PropertyTable.RemoveProperty("ActiveClerk");
 			_contextMenuStrip.Opening -= ContextMenuStrip_Opening;
 			_contextMenuStrip = null;
 
@@ -98,8 +97,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 
 			MultiPaneFactory.RemoveFromParentAndDispose(
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
-				ref _multiPane,
-				ref _recordClerk);
+				majorFlexComponentParameters.DataNavigationManager,
+				majorFlexComponentParameters.RecordClerkRepository,
+				ref _multiPane);
 
 			_reversalIndexRepository = null;
 			_currentReversalIndex = null;
@@ -114,22 +114,25 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			var cache = PropertyTable.GetValue<LcmCache>("cache");
-			var root = XDocument.Parse(LexiconResources.ReversalEditCompleteToolParameters).Root;
 			var currentGuid = ReversalIndexEntryUi.GetObjectGuidIfValid(PropertyTable, "ReversalIndexGuid");
 			if (currentGuid != Guid.Empty)
 			{
-				_currentReversalIndex = (IReversalIndex)cache.ServiceLocator.GetObject(currentGuid);
+				_currentReversalIndex = (IReversalIndex)majorFlexComponentParameters.LcmCache.ServiceLocator.GetObject(currentGuid);
 			}
-			_recordClerk = new ReversalEntryClerk(cache.ServiceLocator, cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), _currentReversalIndex);
-			_recordClerk.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
-			PropertyTable.SetProperty("ActiveClerk", _recordClerk, false, false);
-			_xhtmlDocView = new XhtmlDocView(root.Element("docview").Element("parameters"), _recordClerk);
+			if (_recordClerk == null)
+			{
+				_recordClerk = new ReversalEntryClerk(majorFlexComponentParameters.LcmCache.ServiceLocator, majorFlexComponentParameters.LcmCache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), _currentReversalIndex);
+				_recordClerk.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
+				majorFlexComponentParameters.RecordClerkRepository.AddRecordClerk(_recordClerk);
+			}
+
+			var root = XDocument.Parse(LexiconResources.ReversalEditCompleteToolParameters).Root;
+			_xhtmlDocView = new XhtmlDocView(root.Element("docview").Element("parameters"), majorFlexComponentParameters.LcmCache, _recordClerk);
 #if RANDYTODO
 			// TODO: Set up 'dataTreeMenuHandler' to handle menu events.
 			// TODO: Install menus and connect them to event handlers. (See "CreateContextMenuStrip" method for where the menus are.)
 #endif
-			var recordEditView = new RecordEditView(root.Element("recordview").Element("parameters"), XDocument.Parse(AreaResources.HideAdvancedListItemFields), _recordClerk);
+			var recordEditView = new RecordEditView(root.Element("recordview").Element("parameters"), XDocument.Parse(AreaResources.HideAdvancedListItemFields), majorFlexComponentParameters.LcmCache, _recordClerk);
 			var mainMultiPaneParameters = new MultiPaneParameters
 			{
 				Orientation = Orientation.Vertical,
@@ -169,6 +172,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 			_xhtmlDocView.OnPropertyChanged("ReversalIndexPublicationLayout");
 			((IPostLayoutInit)_multiPane).PostLayoutInit();
 			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
+			majorFlexComponentParameters.RecordClerkRepository.ActiveRecordClerk = _recordClerk;
 		}
 
 		/// <summary>

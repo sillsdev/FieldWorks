@@ -36,7 +36,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			m_cache = cache;
 			m_propertyTable = propertyTable;
-			m_exportService = new DictionaryExportService(propertyTable, publisher);
+			m_exportService = new DictionaryExportService(cache, RecordClerk.RecordClerkRepository.ActiveRecordClerk, propertyTable, publisher);
 			m_publicationActivator = new DictionaryExportService.PublicationActivator(propertyTable);
 		}
 

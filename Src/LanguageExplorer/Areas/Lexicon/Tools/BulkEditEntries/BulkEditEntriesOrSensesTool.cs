@@ -8,7 +8,6 @@ using LanguageExplorer.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks;
-using SIL.LCModel;
 using SIL.LCModel.Application;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditEntries
@@ -78,8 +77,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditEntries
 		{
 			PaneBarContainerFactory.RemoveFromParentAndDispose(
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
-				ref _paneBarContainer,
-				ref _recordClerk);
+				majorFlexComponentParameters.DataNavigationManager,
+				majorFlexComponentParameters.RecordClerkRepository,
+				ref _paneBarContainer);
 		}
 
 		/// <summary>
@@ -93,21 +93,25 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditEntries
 			// Crashes in RecordList "CheckExpectedListItemsClassInSync" with: for some reason BulkEditBar.ExpectedListItemsClassId({0}) does not match SortItemProvider.ListItemsClass({1}).
 			// BulkEditBar expected 5002, but
 			// SortItemProvider was: 5035
+			if (_recordClerk == null)
+			{
+				_recordClerk = LexiconArea.CreateClerkForLexiconArea("entriesOrChildren", new EntriesOrChildClassesRecordList(majorFlexComponentParameters.LcmCache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), false, majorFlexComponentParameters.LcmCache.LanguageProject.LexDbOA));
+				_recordClerk.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
+				majorFlexComponentParameters.RecordClerkRepository.AddRecordClerk(_recordClerk);
+			}
+
 			var root = XDocument.Parse(LexiconResources.BulkEditEntriesOrSensesToolParameters).Root;
 			var parametersElement = root.Element("parameters");
 			parametersElement.Element("includeColumns").ReplaceWith(XElement.Parse(LexiconResources.LexiconBrowseDialogColumnDefinitions));
 			OverrideServices.OverrideVisibiltyAttributes(parametersElement.Element("columns"), root.Element("overrides"));
-			var cache = PropertyTable.GetValue<LcmCache>("cache");
-			var flexComponentParameters = new FlexComponentParameters(PropertyTable, Publisher, Subscriber);
-			_recordClerk = LexiconArea.CreateClerkForLexiconArea("entriesOrChildren", new EntriesOrChildClassesRecordList(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), false, cache.LanguageProject.LexDbOA));
-			_recordClerk.InitializeFlexComponent(flexComponentParameters);
-			_recordBrowseView = new RecordBrowseView(parametersElement, _recordClerk);
+			_recordBrowseView = new RecordBrowseView(parametersElement, majorFlexComponentParameters.LcmCache, _recordClerk);
 
 			_paneBarContainer = PaneBarContainerFactory.Create(
 				majorFlexComponentParameters.FlexComponentParameters,
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
 				_recordBrowseView);
 			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
+			majorFlexComponentParameters.RecordClerkRepository.ActiveRecordClerk = _recordClerk;
 		}
 
 		/// <summary>

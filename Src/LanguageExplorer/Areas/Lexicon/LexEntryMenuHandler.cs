@@ -42,7 +42,7 @@ namespace LanguageExplorer.Areas.Lexicon
 			if (slice == null && m_dataEntryForm.Slices.Count > 0)
 				slice = m_dataEntryForm.FieldAt(0);
 			if (slice == null || slice.IsDisposed
-				|| (PropertyTable.GetValue<RecordClerk>("ActiveClerk")).ListSize == 0)
+				|| (RecordClerk.RecordClerkRepository.ActiveRecordClerk.ListSize == 0)
 			{
 				// don't display the datatree menu/toolbar items when we don't have a data tree slice.
 				// (If the slice is disposed, we're in a weird state, possibly trying to update the toolbar during OnIdle though we haven't
@@ -114,7 +114,7 @@ namespace LanguageExplorer.Areas.Lexicon
 			if (slice == null && m_dataEntryForm.Slices.Count > 0)
 				slice = m_dataEntryForm.FieldAt(0);
 			if (slice == null
-				|| (PropertyTable.GetValue<RecordClerk>("ActiveClerk")).ListSize == 0)
+				|| (RecordClerk.RecordClerkRepository.ActiveRecordClerk.ListSize == 0)
 			{
 				// don't display the datatree menu/toolbar items when we don't have a data tree slice.
 				display.Visible = false;

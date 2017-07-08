@@ -84,8 +84,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			InitializeComponent();
 		}
 
-		internal InterlinMaster(XElement configurationParametersElement, RecordClerk recordClerk, bool showTitlePane = true)
-			:base(configurationParametersElement, recordClerk)
+		internal InterlinMaster(XElement configurationParametersElement, LcmCache cache, RecordClerk recordClerk, bool showTitlePane = true)
+			:base(configurationParametersElement, cache, recordClerk)
 		{
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();

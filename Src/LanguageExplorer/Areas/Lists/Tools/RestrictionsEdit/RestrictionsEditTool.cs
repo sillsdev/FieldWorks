@@ -8,7 +8,6 @@ using LanguageExplorer.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks;
-using SIL.LCModel;
 using SIL.LCModel.Application;
 
 namespace LanguageExplorer.Areas.Lists.Tools.RestrictionsEdit
@@ -81,8 +80,9 @@ namespace LanguageExplorer.Areas.Lists.Tools.RestrictionsEdit
 		{
 			CollapsingSplitContainerFactory.RemoveFromParentAndDispose(
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
-				ref _collapsingSplitContainer,
-				ref _recordClerk);
+				majorFlexComponentParameters.DataNavigationManager,
+				majorFlexComponentParameters.RecordClerkRepository,
+				ref _collapsingSplitContainer);
 		}
 
 		/// <summary>
@@ -95,13 +95,15 @@ namespace LanguageExplorer.Areas.Lists.Tools.RestrictionsEdit
 		{
 			_collapsingSplitContainer = CollapsingSplitContainerFactory.Create(
 				majorFlexComponentParameters.FlexComponentParameters,
+				majorFlexComponentParameters.DataNavigationManager,
+				majorFlexComponentParameters.RecordClerkRepository,
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
 				true,
 				XDocument.Parse(ListResources.RestrictionsEditParameters).Root, XDocument.Parse(ListResources.ListToolsSliceFilters),
 				MachineName,
-				new PossibilityListClerkParameters("RestrictionsList", PropertyTable.GetValue<LcmCache>("cache").LanguageProject.RestrictionsOA, false, true, false, "best analysis"),
-				out _recordClerk);
-			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
+				new PossibilityListClerkParameters("RestrictionsList", majorFlexComponentParameters.LcmCache.LanguageProject.RestrictionsOA, false, true, false, "best analysis"),
+				majorFlexComponentParameters.LcmCache,
+				ref _recordClerk);
 		}
 
 		/// <summary>

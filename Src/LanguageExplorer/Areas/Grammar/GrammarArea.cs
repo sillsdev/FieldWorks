@@ -28,9 +28,8 @@ namespace LanguageExplorer.Areas.Grammar
 			m_toolRepository = toolRepository;
 		}
 
-		internal static RecordClerk CreateCategoriesClerkForGrammarArea(IPropertyTable propertyTable, bool includeTreeBarHandler)
+		internal static RecordClerk CreateCategoriesClerkForGrammarArea(IPropertyTable propertyTable, LcmCache cache, bool includeTreeBarHandler)
 		{
-			var cache = propertyTable.GetValue<LcmCache>("cache");
 			var recordList = new PossibilityRecordList(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), cache.LanguageProject.PartsOfSpeechOA);
 			return includeTreeBarHandler
 				? new RecordClerk("categories", recordList, new PropertyRecordSorter("ShortName"), "Default", null, false, false, new PossibilityTreeBarHandler(propertyTable, true, true, false, "best analorvern"))

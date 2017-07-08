@@ -10,7 +10,6 @@ using LanguageExplorer.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks;
-using SIL.LCModel;
 using SIL.LCModel.Application;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Tools.BulkEditWordforms
@@ -80,8 +79,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.BulkEditWordforms
 		{
 			PaneBarContainerFactory.RemoveFromParentAndDispose(
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
-				ref _paneBarContainer,
-				ref _recordClerk);
+				majorFlexComponentParameters.DataNavigationManager,
+				majorFlexComponentParameters.RecordClerkRepository,
+				ref _paneBarContainer);
 			_recordBrowseView = null;
 		}
 
@@ -93,6 +93,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.BulkEditWordforms
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			if (_recordClerk == null)
+			{
+				var decorator = new ConcDecorator(majorFlexComponentParameters.LcmCache.ServiceLocator);
+				_recordClerk = new InterlinearTextsRecordClerk(majorFlexComponentParameters.LcmCache.LanguageProject, decorator);
+				_recordClerk.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
+				majorFlexComponentParameters.RecordClerkRepository.AddRecordClerk(_recordClerk);
+			}
+
 			var root = XDocument.Parse(TextAndWordsResources.BulkEditWordformsToolParameters).Root;
 			root.Element("includeColumns").ReplaceWith(XElement.Parse(TextAndWordsResources.WordListColumns));
 			var columns = root.Element("columns");
@@ -103,24 +111,18 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.BulkEditWordforms
 			currentColumn.Add(new XAttribute("transduce", "WfiWordform.Form"));
 			currentColumn.Add(new XAttribute("editif", "!FormIsUsedWithWs"));
 			currentColumn.Element("span").Element("string").Attribute("ws").Value = "$ws=vernacular";
-
 			currentColumn = columns.Elements("column").First(col => col.Attribute("label").Value == "Word Glosses");
 			currentColumn.Attribute("width").Value = "80000";
-
 			currentColumn = columns.Elements("column").First(col => col.Attribute("label").Value == "Spelling Status");
 			currentColumn.Add(new XAttribute("width", "65000"));
-
-			var cache = PropertyTable.GetValue<LcmCache>("cache");
-			var decorator = new ConcDecorator(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), cache.ServiceLocator);
-			_recordClerk = new InterlinearTextsRecordClerk(cache.LanguageProject, decorator);
-			_recordClerk.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
-			_recordBrowseView = new RecordBrowseView(root, _recordClerk);
+			_recordBrowseView = new RecordBrowseView(root, majorFlexComponentParameters.LcmCache, _recordClerk);
 
 			_paneBarContainer = PaneBarContainerFactory.Create(
 				majorFlexComponentParameters.FlexComponentParameters,
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
 				_recordBrowseView);
 			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
+			majorFlexComponentParameters.RecordClerkRepository.ActiveRecordClerk = _recordClerk;
 		}
 
 		/// <summary>

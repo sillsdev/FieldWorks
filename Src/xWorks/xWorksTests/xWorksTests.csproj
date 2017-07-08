@@ -221,6 +221,9 @@
     <Compile Include="CustomListDlgTests.cs" />
     <Compile Include="DeleteCustomListTests.cs" />
     <Compile Include="DictionaryConfigManagerTests.cs" />
+    <Compile Include="DummyFwMainWnd.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="HeadwordNumbersControllerTests.cs" />
     <Compile Include="DictionaryConfigurationControllerTests.cs" />
     <Compile Include="DictionaryConfigurationImportControllerTests.cs" />
@@ -240,6 +243,7 @@
     <Compile Include="InterestingTextsTests.cs" />
     <Compile Include="ItemClickedTests.cs" />
     <Compile Include="MacroListenerTests.cs" />
+    <Compile Include="RecordClerkRepositoryTests.cs" />
     <Compile Include="ReveralIndexServicesTests.cs" />
     <Compile Include="UploadToWebonaryControllerTests.cs" />
     <Compile Include="UploadToWebonaryModelTests.cs" />

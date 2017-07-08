@@ -1,4 +1,4 @@
-// Copyright (c) 2016 SIL International
+// Copyright (c) 2016-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -10,6 +10,7 @@ using LanguageExplorer.Areas.Lists;
 using LanguageExplorer.Controls.PaneBar;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.XWorks;
+using SIL.LCModel;
 
 namespace LanguageExplorer.Controls
 {
@@ -24,22 +25,40 @@ namespace LanguageExplorer.Controls
 		/// Create an instance of a CollapsingSplitContainer for use by tools that are for CmPossibilities.
 		/// </summary>
 		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
+		/// <param name="dataNavigationManager"></param>
+		/// <param name="recordClerkRepository"></param>
 		/// <param name="mainCollapsingSplitContainer">The window's main CollapsingSplitContainer</param>
 		/// <param name="verticalSplitter">'true' to have a vertical splitter or 'false' to have a horizontal splitter.</param>
 		/// <param name="configurationParametersElement">Main parameters element.</param>
 		/// <param name="sliceFilterDocument">Document that has Slice filtering information.</param>
 		/// <param name="toolMachineName">Name of the tool being set up.</param>
 		/// <param name="possibilityListClerkParameters">parameter object of data needed to create the clerk and its record list.</param>
+		/// <param name="cache">The LCM cache.</param>
 		/// <param name="recordClerk">Output the RecordClerk, so caller can use it more easily.</param>
 		/// <returns>A new instance of CollapsingSplitContainer, which has been placed into "SecondControl/Panel2" of <paramref name="mainCollapsingSplitContainer"/>.</returns>
 		internal static CollapsingSplitContainer Create(FlexComponentParameters flexComponentParameters,
+			DataNavigationManager dataNavigationManager, IRecordClerkRepository recordClerkRepository,
 			ICollapsingSplitContainer mainCollapsingSplitContainer, bool verticalSplitter, XElement configurationParametersElement, XDocument sliceFilterDocument,
 			string toolMachineName,
 			PossibilityListClerkParameters possibilityListClerkParameters,
-			out RecordClerk recordClerk)
+			LcmCache cache,
+			ref RecordClerk recordClerk)
 		{
-			recordClerk = ListsArea.CreateBasicClerkForListArea(flexComponentParameters.PropertyTable, possibilityListClerkParameters);
-			return Create(flexComponentParameters, mainCollapsingSplitContainer, verticalSplitter, configurationParametersElement, sliceFilterDocument, toolMachineName, recordClerk);
+			if (recordClerk == null)
+			{
+				recordClerk = ListsArea.CreateBasicClerkForListArea(flexComponentParameters.PropertyTable,
+					possibilityListClerkParameters);
+				// It is initialized in the following "Create" method.
+				recordClerkRepository.AddRecordClerk(recordClerk);
+			}
+			else
+			{
+				recordClerk = recordClerkRepository.GetRecordClerk(possibilityListClerkParameters.ClerkIdentifier);
+			}
+			var retVal = Create(flexComponentParameters, mainCollapsingSplitContainer, verticalSplitter, configurationParametersElement, sliceFilterDocument, toolMachineName, cache, ref recordClerk);
+			dataNavigationManager.Clerk = recordClerk;
+			recordClerkRepository.ActiveRecordClerk = recordClerk;
+			return retVal;
 		}
 
 		/// <summary>
@@ -51,12 +70,14 @@ namespace LanguageExplorer.Controls
 		/// <param name="configurationParametersElement">Main parameters element.</param>
 		/// <param name="sliceFilterDocument">Document that has Slice filtering information.</param>
 		/// <param name="toolMachineName">Name of the tool being set up.</param>
+		/// <param name="cache">The LCM cache.</param>
 		/// <param name="recordClerk">RecordClerk to use with the container.</param>
 		/// <returns>A new instance of CollapsingSplitContainer, which has been placed into "SecondControl/Panel2" of <paramref name="mainCollapsingSplitContainer"/>.</returns>
 		internal static CollapsingSplitContainer Create(FlexComponentParameters flexComponentParameters,
 			ICollapsingSplitContainer mainCollapsingSplitContainer, bool verticalSplitter, XElement configurationParametersElement, XDocument sliceFilterDocument,
 			string toolMachineName,
-			RecordClerk recordClerk)
+			LcmCache cache,
+			ref RecordClerk recordClerk)
 		{
 			var panelButton = new PanelButton(flexComponentParameters.PropertyTable, null, PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(toolMachineName), LanguageExplorerResources.ksHideFields, LanguageExplorerResources.ksShowHiddenFields)
 			{
@@ -76,7 +97,7 @@ namespace LanguageExplorer.Controls
 			{
 				IsFlatList = false
 			};
-			var recordEditView = new RecordEditView(configurationParametersElement, sliceFilterDocument, recordClerk);
+			var recordEditView = new RecordEditView(configurationParametersElement, sliceFilterDocument, cache, recordClerk);
 			recordEditView.InitializeFlexComponent(flexComponentParameters);
 			var paneBar = new PaneBar.PaneBar();
 			paneBar.AddControls(new List<Control> { panelButton });
@@ -114,22 +135,15 @@ namespace LanguageExplorer.Controls
 		}
 
 		/// <summary>
-		/// Remove <paramref name="collapsingSplitContainer"/> from parent control and dispose it.
+		/// Remove <paramref name="collapsingSplitContainer"/> from parent control and dispose it and set clerk to null.
 		/// </summary>
-		/// <param name="mainCollapsingSplitContainer"></param>
-		/// <param name="collapsingSplitContainer">The CollapsingSplitContainer to remove and dispose.</param>
-		/// <param name="recordClerk">The RecordClerk data member to set to null.</param>
-		internal static void RemoveFromParentAndDispose(ICollapsingSplitContainer mainCollapsingSplitContainer, ref CollapsingSplitContainer collapsingSplitContainer, ref RecordClerk recordClerk)
+		internal static void RemoveFromParentAndDispose(ICollapsingSplitContainer mainCollapsingSplitContainer, DataNavigationManager dataNavigationManager, IRecordClerkRepository recordClerkRepository, ref CollapsingSplitContainer collapsingSplitContainer)
 		{
 			// Re-setting SecondControl, will dispose the child collapsingSplitContainer control.
 			mainCollapsingSplitContainer.SecondControl = null;
-
+			dataNavigationManager.Clerk = null;
+			recordClerkRepository.ActiveRecordClerk = null;
 			collapsingSplitContainer = null;
-
-			// recordClerk is disposed by XWorksViewBase in the call "collapsingSplitContainer.Dispose()", but just set the variable to null here.
-			// "recordClerk" is a data member of the caller. Rather than have every caller set its own data member to null,
-			// we do it here for all of them.
-			recordClerk = null;
 		}
 	}
 }

@@ -85,8 +85,9 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 		{
 			CollapsingSplitContainerFactory.RemoveFromParentAndDispose(
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
-				ref _collapsingSplitContainer,
-				ref _recordClerk);
+				majorFlexComponentParameters.DataNavigationManager,
+				majorFlexComponentParameters.RecordClerkRepository,
+				ref _collapsingSplitContainer);
 		}
 
 		/// <summary>
@@ -97,12 +98,18 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			_recordClerk = GrammarArea.CreateCategoriesClerkForGrammarArea(PropertyTable, true);
+			if (_recordClerk == null)
+			{
+				_recordClerk = GrammarArea.CreateCategoriesClerkForGrammarArea(PropertyTable, majorFlexComponentParameters.LcmCache, true);
+				majorFlexComponentParameters.RecordClerkRepository.AddRecordClerk(_recordClerk);
+			}
 			_collapsingSplitContainer = CollapsingSplitContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer, true,
 				XDocument.Parse(ListResources.PosEditParameters).Root, XDocument.Parse(AreaResources.HideAdvancedListItemFields),
 				MachineName,
-				_recordClerk);
+				majorFlexComponentParameters.LcmCache,
+				ref _recordClerk);
 			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
+			majorFlexComponentParameters.RecordClerkRepository.ActiveRecordClerk = _recordClerk;
 		}
 
 		/// <summary>

@@ -4,6 +4,7 @@
 
 using System.Xml.Linq;
 using SIL.FieldWorks.XWorks;
+using SIL.LCModel;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
@@ -17,8 +18,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 		}
 
-		internal InterlinMasterBase(XElement configurationParametersElement, RecordClerk recordClerk)
-			:base(configurationParametersElement, recordClerk)
+		internal InterlinMasterBase(XElement configurationParametersElement, LcmCache cache, RecordClerk recordClerk)
+			:base(configurationParametersElement, cache, recordClerk)
 		{
 		}
 

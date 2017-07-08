@@ -24,8 +24,8 @@ namespace SIL.FieldWorks.XWorks
 		private XWebBrowser m_mainView;
 		internal string m_configObjectName;
 
-		public XhtmlRecordDocView(XElement configurationParameters, RecordClerk recordClerk)
-			: base(configurationParameters, recordClerk)
+		public XhtmlRecordDocView(XElement configurationParameters, LcmCache cache, RecordClerk recordClerk)
+			: base(configurationParameters, cache, recordClerk)
 		{
 		}
 
@@ -83,7 +83,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			else if (e.Button == GeckoMouseButton.Right)
 			{
-				XhtmlDocView.HandleDomRightClick(browser, e, element, new FlexComponentParameters(PropertyTable, Publisher, Subscriber), m_configObjectName);
+				XhtmlDocView.HandleDomRightClick(browser, e, element, new FlexComponentParameters(PropertyTable, Publisher, Subscriber), m_configObjectName, Cache, Clerk);
 			}
 		}
 
@@ -128,7 +128,7 @@ namespace SIL.FieldWorks.XWorks
 					return;
 				}
 				var configuration = new DictionaryConfigurationModel(configurationFile, Cache);
-				var xhtmlPath = ConfiguredXHTMLGenerator.SavePreviewHtmlWithStyles(new [] { cmo.Hvo }, null, configuration, PropertyTable);
+				var xhtmlPath = ConfiguredXHTMLGenerator.SavePreviewHtmlWithStyles(new [] { cmo.Hvo }, null, configuration, PropertyTable, Cache, Clerk);
 				m_mainView.Url = new Uri(xhtmlPath);
 				m_mainView.Refresh(WebBrowserRefreshOption.Completely);
 			}

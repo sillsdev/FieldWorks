@@ -10,7 +10,6 @@ using LanguageExplorer.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks;
-using SIL.LCModel;
 using SIL.LCModel.Application;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
@@ -82,8 +81,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 		{
 			MultiPaneFactory.RemoveFromParentAndDispose(
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
-				ref _concordanceContainer,
-				ref _recordClerk);
+				majorFlexComponentParameters.DataNavigationManager,
+				majorFlexComponentParameters.RecordClerkRepository,
+				ref _concordanceContainer);
 
 			_complexConcControl = null;
 			_recordBrowseView = null;
@@ -98,13 +98,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			var doc = XDocument.Parse(TextAndWordsResources.ComplexConcordanceToolParameters);
-			var columns = XElement.Parse(TextAndWordsResources.ConcordanceColumns).Element("columns");
-			doc.Root.Element("wordOccurrenceList").Element("parameters").Element("includeCordanceColumns").ReplaceWith(columns);
-			var cache = PropertyTable.GetValue<LcmCache>("cache");
-			var decorator = new ConcDecorator(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), cache.ServiceLocator);
-			_recordClerk = new OccurrencesOfSelectedUnit("complexConcOccurrencesOfSelectedUnit", decorator);
-			_recordClerk.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
+			if (_recordClerk == null)
+			{
+				var decorator = new ConcDecorator(majorFlexComponentParameters.LcmCache.ServiceLocator);
+				_recordClerk = new OccurrencesOfSelectedUnit("complexConcOccurrencesOfSelectedUnit", decorator);
+				_recordClerk.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
+				majorFlexComponentParameters.RecordClerkRepository.AddRecordClerk(_recordClerk);
+			}
 			var mainConcordanceContainerParameters = new MultiPaneParameters
 			{
 				Orientation = Orientation.Vertical,
@@ -117,7 +117,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 				FirstControlParameters = new SplitterChildControlParameters(), // Leave its Control as null. Will be a newly created MultiPane, the controls of which are in "nestedMultiPaneParameters"
 				SecondControlParameters = new SplitterChildControlParameters() // Control (PaneBarContainer+InterlinMasterNoTitleBar) added below. Leave Label null.
 			};
-			_interlinMasterNoTitleBar = new InterlinMasterNoTitleBar(doc.Root.Element("ITextControl").Element("parameters"), _recordClerk);
+			var root = XDocument.Parse(TextAndWordsResources.ComplexConcordanceToolParameters).Root;
+			var columns = XElement.Parse(TextAndWordsResources.ConcordanceColumns).Element("columns");
+			root.Element("wordOccurrenceList").Element("parameters").Element("includeCordanceColumns").ReplaceWith(columns);
+			_interlinMasterNoTitleBar = new InterlinMasterNoTitleBar(root.Element("ITextControl").Element("parameters"), majorFlexComponentParameters.LcmCache, _recordClerk);
 			mainConcordanceContainerParameters.SecondControlParameters.Control = PaneBarContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, _interlinMasterNoTitleBar);
 
 			// This will be the nested MultiPane that goes into mainConcordanceContainerParameters.FirstControlParameters.Control
@@ -138,13 +141,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 				Dock = DockStyle.Fill
 			};
 			nestedMultiPaneParameters.FirstControlParameters.Control = PaneBarContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, _complexConcControl);
-			_recordBrowseView = new RecordBrowseView(doc.Root.Element("wordOccurrenceList").Element("parameters"), _recordClerk);
+			_recordBrowseView = new RecordBrowseView(root.Element("wordOccurrenceList").Element("parameters"), majorFlexComponentParameters.LcmCache, _recordClerk);
 			nestedMultiPaneParameters.SecondControlParameters.Control = PaneBarContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, _recordBrowseView);
 			// Nested MP is created by call to MultiPaneFactory.CreateConcordanceContainer
 			_concordanceContainer = MultiPaneFactory.CreateConcordanceContainer(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer, mainConcordanceContainerParameters, nestedMultiPaneParameters);
 
 			_interlinMasterNoTitleBar.FinishInitialization();
 			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
+			majorFlexComponentParameters.RecordClerkRepository.ActiveRecordClerk = _recordClerk;
 		}
 
 		/// <summary>

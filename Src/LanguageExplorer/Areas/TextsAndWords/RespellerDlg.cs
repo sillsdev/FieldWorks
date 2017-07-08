@@ -1947,8 +1947,8 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 		Dictionary<int, RespellInfo> m_mapRespell = new Dictionary<int, RespellInfo>();
 
-		public RespellingSda(LcmCache cache, ISilDataAccessManaged domainDataByFlid, ILcmServiceLocator services)
-			: base(domainDataByFlid, services)
+		public RespellingSda(LcmCache cache, ILcmServiceLocator services)
+			: base(services)
 		{
 			Cache = cache;
 			SetOverrideMdc(new RespellingMdc(MetaDataCache as IFwMetaDataCacheManaged));

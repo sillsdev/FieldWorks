@@ -32,6 +32,9 @@ using SIL.Xml;
 
 namespace SIL.FieldWorks.Common.Controls
 {
+#if JASONTODO
+	// TODO: Break this file up.
+#endif
 	/// <summary>
 	/// Summary description for BulkEditBar.
 	/// </summary>
@@ -809,7 +812,7 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-		#region Component Designer generated code
+#region Component Designer generated code
 		/// <summary>
 		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
@@ -1236,7 +1239,7 @@ namespace SIL.FieldWorks.Common.Controls
 			this.ResumeLayout(false);
 
 		}
-		#endregion
+#endregion
 
 		bool DeleteRowsItemSelected
 		{
@@ -2577,14 +2580,14 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		public class BulkEditTabPageSettings
 		{
-			#region Member variables
+#region Member variables
 			/// <summary> the bulkEditBar we're getting or settings our values</summary>
 			protected BulkEditBar m_bulkEditBar = null;
 
 			string m_bulkEditBarTabName = "";
 			string m_targetFieldName = "";
 
-			#endregion Member variables
+#endregion Member variables
 
 			/// <summary>
 			///
@@ -2632,7 +2635,7 @@ namespace SIL.FieldWorks.Common.Controls
 				}
 			}
 
-			#region BulkEditBar helper methods
+#region BulkEditBar helper methods
 
 			/// <summary>
 			/// Create BulkEditBarTabPage settings for the current tab,
@@ -2934,10 +2937,10 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 
 
-			#endregion BulkEditBar helper methods
+#endregion BulkEditBar helper methods
 
 
-			#region Tab properties to serialize
+#region Tab properties to serialize
 
 			/// <summary>
 			/// The current tab page. Typically this is used to set the bulk edit bar into the current
@@ -2998,7 +3001,7 @@ namespace SIL.FieldWorks.Common.Controls
 				}
 			}
 
-			#endregion Tab properties to serialize
+#endregion Tab properties to serialize
 
 		}   //END of class BulkEditTabPageSettings
 
@@ -3542,7 +3545,7 @@ namespace SIL.FieldWorks.Common.Controls
 				return keyFindPattern;
 			}
 
-			#region NonSerializable properties
+#region NonSerializable properties
 			IVwPattern m_pattern = null;
 			internal IVwPattern Pattern
 			{
@@ -3570,7 +3573,7 @@ namespace SIL.FieldWorks.Common.Controls
 				}
 			}
 
-			#endregion NonSerializable properties
+#endregion NonSerializable properties
 
 
 		}
@@ -4562,7 +4565,7 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-		#region IDisposable & Co. implementation
+#region IDisposable & Co. implementation
 		// Region last reviewed: RandyR: Oct. 16, 2005.
 
 		/// <summary>
@@ -4659,7 +4662,7 @@ namespace SIL.FieldWorks.Common.Controls
 			m_isDisposed = true;
 		}
 
-		#endregion IDisposable & Co. implementation
+#endregion IDisposable & Co. implementation
 	}
 
 	internal class TargetFieldItem : FieldComboItem
@@ -4855,14 +4858,14 @@ namespace SIL.FieldWorks.Common.Controls
 
 		protected abstract ITsString NewValue(int hvo);
 
-		#region IGetReplacedObjects Members
+#region IGetReplacedObjects Members
 
 		public Dictionary<int, int> ReplacedObjects
 		{
 			get { return m_replacedObjects; }
 		}
 
-		#endregion
+#endregion
 	}
 
 	internal class BulkCopyMethod : DoItMethod
@@ -5161,7 +5164,7 @@ namespace SIL.FieldWorks.Common.Controls
 			Accessor = accessor;
 		}
 
-		#region Disposable stuff
+#region Disposable stuff
 #if DEBUG
 		/// <summary/>
 		~FieldComboItem()
@@ -5193,7 +5196,7 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 			IsDisposed = true;
 		}
-		#endregion
+#endregion
 
 		public override string ToString()
 		{
@@ -5213,7 +5216,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 	class IntChooserBEditControl : BulkEditSpecControl, IGetReplacedObjects
 	{
-		#region IBulkEditSpecControl Members
+#region IBulkEditSpecControl Members
 		protected int m_flid;
 		protected ComboBox m_combo;
 		Dictionary<int, int> m_replacedObjects = new Dictionary<int, int>();
@@ -5433,9 +5436,9 @@ namespace SIL.FieldWorks.Common.Controls
 			get { return new List<int>(new int[] { m_flid }); }
 		}
 
-		#endregion
+#endregion
 
-		#region IGetReplacedObjects Members
+#region IGetReplacedObjects Members
 
 		/// <summary>
 		/// Objects get replaced here when dummies are changed to real.
@@ -5445,7 +5448,7 @@ namespace SIL.FieldWorks.Common.Controls
 			get { return m_replacedObjects; }
 		}
 
-		#endregion
+#endregion
 	}
 
 	class BooleanChooserBEditControl : IntChooserBEditControl
@@ -5665,7 +5668,7 @@ namespace SIL.FieldWorks.Common.Controls
 		protected GhostParentHelper m_ghostParentHelper;
 		public event FwSelectionChangedEventHandler ValueChanged;
 
-		#region IBulkEditSpecControl Members
+#region IBulkEditSpecControl Members
 
 		/// <summary>
 		/// Get/Set the property table.
@@ -5746,9 +5749,9 @@ namespace SIL.FieldWorks.Common.Controls
 			throw new Exception("The method or operation is not implemented.");
 		}
 
-		#endregion
+#endregion
 
-		#region IGhostable Members
+#region IGhostable Members
 
 		public virtual void InitForGhostItems(LcmCache cache, XElement colSpec)
 		{
@@ -5773,13 +5776,13 @@ namespace SIL.FieldWorks.Common.Controls
 			return; // override
 		}
 
-		#endregion
+#endregion
 
-		#region IBulkEditSpecControl Members
+#region IBulkEditSpecControl Members
 
 
 
-		#endregion
+#endregion
 	}
 
 	/// <summary>
@@ -5813,7 +5816,7 @@ namespace SIL.FieldWorks.Common.Controls
 			m_flidAtomicProp = flidAtomicProp;
 		}
 
-		#region IBulkEditSpecControl Members
+#region IBulkEditSpecControl Members
 
 		/// <summary>
 		/// Get/Set the property table'
@@ -5999,7 +6002,7 @@ namespace SIL.FieldWorks.Common.Controls
 			throw new Exception("The method or operation is not implemented.");
 		}
 
-		#endregion
+#endregion
 
 		protected virtual void FillComboBox()
 		{
@@ -6122,14 +6125,14 @@ namespace SIL.FieldWorks.Common.Controls
 			get { return new List<int>(new int[] { m_flidAtomicProp }); }
 		}
 
-		#region Disposable stuff
-		#if DEBUG
+#region Disposable stuff
+#if DEBUG
 		/// <summary/>
 		~FlatListChooserBEditControl()
 		{
 			Dispose(false);
 		}
-		#endif
+#endif
 
 		/// <summary/>
 		public bool IsDisposed { get; private set; }
@@ -6154,15 +6157,15 @@ namespace SIL.FieldWorks.Common.Controls
 			m_combo = null;
 			IsDisposed = true;
 		}
-		#endregion
-			#region IGhostable Members
+#endregion
+#region IGhostable Members
 
 		public void InitForGhostItems(LcmCache cache, XElement colSpec)
 		{
 			m_ghostParentHelper = BulkEditBar.GetGhostHelper(cache.ServiceLocator, colSpec);
 		}
 
-		#endregion
+#endregion
 	}
 
 
@@ -6282,7 +6285,7 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-		#region IBulkEditSpecControl Members
+#region IBulkEditSpecControl Members
 
 		/// <summary>
 		/// Get/Set the property table'
@@ -6567,7 +6570,7 @@ namespace SIL.FieldWorks.Common.Controls
 				TsStringUtils.MakeString("", m_cache.ServiceLocator.WritingSystemManager.UserWs);
 			return tssVal;
 		}
-		#endregion
+#endregion
 
 		/// <summary>
 		/// This type of editor can always select null.
@@ -6839,7 +6842,7 @@ namespace SIL.FieldWorks.Common.Controls
 			return m_sortString;
 		}
 
-		#region IComparable Members
+#region IComparable Members
 
 		public int CompareTo(object obj)
 		{
@@ -6849,7 +6852,7 @@ namespace SIL.FieldWorks.Common.Controls
 				return String.Empty.CompareTo(obj.ToString());
 		}
 
-		#endregion
+#endregion
 	}
 	/// <summary>
 	/// This class implements setting the MorphType of the MoForm belonging to the LexemeForm
@@ -6868,7 +6871,7 @@ namespace SIL.FieldWorks.Common.Controls
 			m_containingViewer = viewer;
 		}
 
-		#region IBulkEditSpecControl Members (overrides)
+#region IBulkEditSpecControl Members (overrides)
 
 		public override List<int> FieldPath
 		{
@@ -7071,7 +7074,7 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-		#endregion
+#endregion
 	}
 
 	/// <summary>
@@ -7194,14 +7197,14 @@ namespace SIL.FieldWorks.Common.Controls
 			get { return null; }
 		}
 
-		#region IGhostable Members
+#region IGhostable Members
 
 		public void InitForGhostItems(LcmCache cache, XElement colSpec)
 		{
 			m_ghostParentHelper = BulkEditBar.GetGhostHelper(cache.ServiceLocator, colSpec);
 		}
 
-		#endregion
+#endregion
 	}
 
 	/// <summary>
@@ -7226,7 +7229,7 @@ namespace SIL.FieldWorks.Common.Controls
 			EnsureFinder();
 		}
 
-		#region Disposable stuff
+#region Disposable stuff
 #if DEBUG
 		/// <summary/>
 		~ManyOnePathSortItemReadWriter()
@@ -7263,7 +7266,7 @@ namespace SIL.FieldWorks.Common.Controls
 			m_app = null;
 			IsDisposed = true;
 		}
-		#endregion
+#endregion
 
 		private IManyOnePathSortItem GetManyOnePathSortItem(int hvo)
 		{

@@ -793,6 +793,11 @@ namespace SIL.FieldWorks.FdoUi
 				// See e.g. LT-5156, 6534, 7160.
 				// Indeed, since CmBaseAnnotation presents itself as a 'Problem Report', we don't want
 				// to do it for any kind of annotation that couldn't be one!
+#if RANDYTODO
+				// TODO: I never have liked circular references. FDO UI cannot referencce RecordClerk, so it 'cheats' here.
+				// TODO: Pretty soon now, nobody will set "ActiveClerk", so this call will always return null,
+				// TODO: which means the type test will always be "", so it will never bail out with 'true'.
+#endif
 				object clrk = PropertyTable.GetValue<object>("ActiveClerk");
 				string sClerkType = clrk != null ? clrk.GetType().Name : "";
 				if (sClerkType == "OccurrencesOfSelectedUnit")
@@ -814,9 +819,9 @@ namespace SIL.FieldWorks.FdoUi
 
 			return true;
 		}
-		#endregion
+#endregion
 
-		#region Other methods
+#region Other methods
 
 
 #if RANDYTODO
@@ -1209,9 +1214,9 @@ namespace SIL.FieldWorks.FdoUi
 			return hvos;
 		}
 
-		#endregion Other methods
+#endregion Other methods
 
-		#region Embedded View Constructor classes
+#region Embedded View Constructor classes
 
 		public class CmObjectVc : FwBaseVc
 		{
@@ -1385,27 +1390,27 @@ namespace SIL.FieldWorks.FdoUi
 			}
 		}
 
-		#endregion Embedded View Constructor classes
+#endregion Embedded View Constructor classes
 
-		#region Implementation of IPropertyTableProvider
+#region Implementation of IPropertyTableProvider
 
 		/// <summary>
 		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
 		/// </summary>
 		public IPropertyTable PropertyTable { get; set; }
 
-		#endregion
+#endregion
 
-		#region Implementation of IPublisherProvider
+#region Implementation of IPublisherProvider
 
 		/// <summary>
 		/// Get the IPublisher.
 		/// </summary>
 		public IPublisher Publisher { get; private set; }
 
-		#endregion
+#endregion
 
-		#region Implementation of ISubscriberProvider
+#region Implementation of ISubscriberProvider
 
 		/// <summary>
 		/// Get the ISubscriber.
@@ -1425,7 +1430,7 @@ namespace SIL.FieldWorks.FdoUi
 			Subscriber = flexComponentParameters.Subscriber;
 		}
 
-		#endregion
+#endregion
 	}
 
 	/// <summary>

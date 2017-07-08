@@ -82,8 +82,9 @@ namespace LanguageExplorer.Areas.Grammar.Tools.LexiconProblems
 		{
 			CollapsingSplitContainerFactory.RemoveFromParentAndDispose(
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
-				ref _collapsingSplitContainer,
-				ref _recordClerk);
+				majorFlexComponentParameters.DataNavigationManager,
+				majorFlexComponentParameters.RecordClerkRepository,
+				ref _collapsingSplitContainer);
 		}
 
 		/// <summary>
@@ -95,20 +96,25 @@ namespace LanguageExplorer.Areas.Grammar.Tools.LexiconProblems
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
 			var root = XDocument.Parse(GrammarResources.LexiconProblemsParameters).Root;
-			var cache = PropertyTable.GetValue<LcmCache>("cache");
-			var recordList = new RecordList(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), true, LangProjectTags.kflidAnnotations, cache.LanguageProject, "Annotations");
-			var recordBarHandler = new RecordBarListHandler(PropertyTable, true, true, false, "best analorvern");
-			var probAnnFilter = new ProblemAnnotationFilter();
-			probAnnFilter.Init(cache, root.Element("filterElement"));
-			_recordClerk = new RecordClerk("lexProblems", recordList, new PropertyRecordSorter("ShortName"), "Default", probAnnFilter, true, true, recordBarHandler);
+			if (_recordClerk == null)
+			{
+				var recordList = new RecordList(majorFlexComponentParameters.LcmCache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), true, LangProjectTags.kflidAnnotations, majorFlexComponentParameters.LcmCache.LanguageProject, "Annotations");
+				var recordBarHandler = new RecordBarListHandler(PropertyTable, true, true, false, "best analorvern");
+				var probAnnFilter = new ProblemAnnotationFilter();
+				probAnnFilter.Init(majorFlexComponentParameters.LcmCache, root.Element("filterElement"));
+				_recordClerk = new RecordClerk("lexProblems", recordList, new PropertyRecordSorter("ShortName"), "Default", probAnnFilter, true, true, recordBarHandler);
+				majorFlexComponentParameters.RecordClerkRepository.AddRecordClerk(_recordClerk);
+			}
 			_collapsingSplitContainer = CollapsingSplitContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters,
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
 				true,
 				root.Element("parameters"),
 				null,
 				MachineName,
-				_recordClerk);
+				majorFlexComponentParameters.LcmCache,
+				ref _recordClerk);
 			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
+			majorFlexComponentParameters.RecordClerkRepository.ActiveRecordClerk = _recordClerk;
 		}
 
 		/// <summary>

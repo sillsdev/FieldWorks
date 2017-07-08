@@ -330,6 +330,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 			return null;
 		}
 
+#if RANDYTODO
+		// TODO: Add an overload in WritingSystemServices.GetWritingSystem (LCM) that takes an XElement.
+		// TODO: Then dump this hack.
+#endif
 		/// <summary>
 		/// WritingSystemServices.GetWritingSystem got divested without knowing about XElement,
 		/// so support such a conversion here, until it does.
@@ -353,7 +357,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 				SystemSounds.Beep.Play();
 		}
 
-		#region Advapi32.dll
+#region Advapi32.dll
 		// Requires Windows NT 3.1 or later
 		// From http://www.codeproject.com/useritems/processownersid.asp
 
@@ -484,9 +488,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 			IntPtr sid,
 			[MarshalAs(UnmanagedType.LPTStr)] out string stringSid);
 
-		#endregion
+#endregion
 
-		#region Helper methods
+#region Helper methods
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -526,7 +530,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			}
 		}
 
-		#endregion
+#endregion
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

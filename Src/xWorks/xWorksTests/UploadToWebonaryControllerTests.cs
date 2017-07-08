@@ -34,7 +34,7 @@ namespace SIL.FieldWorks.XWorks
 		private StyleInfoTable m_owningTable;
 		private RecordClerk m_Clerk;
 
-#region Environment
+	#region Environment
 		[TestFixtureSetUp]
 		public override void FixtureSetup()
 		{
@@ -72,7 +72,7 @@ namespace SIL.FieldWorks.XWorks
 			doc.LoadXml(reversalIndexClerk);
 			XmlNode clerkNode = doc.SelectSingleNode("//tools/tool[@label='Dictionary']//parameters[@area='lexicon']");
 			m_Clerk = RecordClerkFactory.CreateClerk(m_mediator, m_propertyTable, clerkNode, false);
-			m_propertyTable.SetProperty("ActiveClerk", m_Clerk, false);
+			RecordClerk.RecordClerkRepository.ActiveRecordClerk = m_Clerk;
 			m_propertyTable.SetProperty("ToolForAreaNamed_lexicon", "lexiconDictionary", false);
 			Cache.ProjectId.Path = Path.Combine(FwDirectoryFinder.SourceDirectory, "xWorks/xWorksTests/TestData/");
 			// setup style sheet and style to allow the css to generate during the UploadToWebonaryController driven export
@@ -95,7 +95,7 @@ namespace SIL.FieldWorks.XWorks
 			Dispose();
 		}
 
-#region disposal
+	#region disposal
 		protected virtual void Dispose(bool disposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
@@ -124,8 +124,8 @@ namespace SIL.FieldWorks.XWorks
 			// from executing a second time.
 			GC.SuppressFinalize(this);
 		}
-#endregion disposal
-#endregion Environment
+	#endregion disposal
+	#endregion Environment
 
 		[Test]
 		public void UploadToWebonaryUsesViewConfigAndPub()
@@ -226,7 +226,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-#region Test connection to local Webonary instance
+	#region Test connection to local Webonary instance
 		[Test]
 		[Category("ByHand")]
 		[Ignore("Used for manual testing against a real Webonary instance")]
@@ -327,7 +327,7 @@ namespace SIL.FieldWorks.XWorks
 			var responseText = Encoding.ASCII.GetString(response);
 			return responseText;
 		}
-#endregion
+	#endregion
 
 		[Test]
 		public void UploadToWebonaryThrowsOnNullInput()
@@ -629,7 +629,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.AreEqual("Main Dictionary", m_propertyTable.GetStringProperty("SelectedPublication", null), "Didn't reset publication");
 		}
 
-#region Helpers
+	#region Helpers
 		/// <summary/>
 		private MockWebonaryDlg SetUpView()
 		{
@@ -772,7 +772,7 @@ namespace SIL.FieldWorks.XWorks
 				return UploadURI ?? "http://192.168.33.10/test/wp-json/webonary/import";
 			}
 		}
-#endregion
+	#endregion
 	}
 #endif
 }

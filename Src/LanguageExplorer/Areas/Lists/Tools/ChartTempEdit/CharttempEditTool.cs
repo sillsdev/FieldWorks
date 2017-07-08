@@ -8,7 +8,6 @@ using LanguageExplorer.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks;
-using SIL.LCModel;
 using SIL.LCModel.Application;
 using SIL.LCModel.Infrastructure;
 
@@ -82,8 +81,9 @@ namespace LanguageExplorer.Areas.Lists.Tools.ChartTempEdit
 		{
 			CollapsingSplitContainerFactory.RemoveFromParentAndDispose(
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
-				ref _collapsingSplitContainer,
-				ref _recordClerk);
+				majorFlexComponentParameters.DataNavigationManager,
+				majorFlexComponentParameters.RecordClerkRepository,
+				ref _collapsingSplitContainer);
 		}
 
 		/// <summary>
@@ -94,22 +94,23 @@ namespace LanguageExplorer.Areas.Lists.Tools.ChartTempEdit
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			var cache = PropertyTable.GetValue<LcmCache>("cache");
-			var template = cache.LanguageProject.DiscourseDataOA.ConstChartTemplOA;
+			var template = majorFlexComponentParameters.LcmCache.LanguageProject.DiscourseDataOA.ConstChartTemplOA;
 			if (template == null)
 			{
-				NonUndoableUnitOfWorkHelper.Do(cache.ActionHandlerAccessor, () => cache.LanguageProject.GetDefaultChartTemplate());
-				template = cache.LanguageProject.DiscourseDataOA.ConstChartTemplOA;
+				NonUndoableUnitOfWorkHelper.Do(majorFlexComponentParameters.LcmCache.ActionHandlerAccessor, () => majorFlexComponentParameters.LcmCache.LanguageProject.GetDefaultChartTemplate());
+				template = majorFlexComponentParameters.LcmCache.LanguageProject.DiscourseDataOA.ConstChartTemplOA;
 			}
 			_collapsingSplitContainer = CollapsingSplitContainerFactory.Create(
 				majorFlexComponentParameters.FlexComponentParameters,
+				majorFlexComponentParameters.DataNavigationManager,
+				majorFlexComponentParameters.RecordClerkRepository,
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
 				true,
 				XDocument.Parse(ListResources.CharttempEditParameters).Root, XDocument.Parse(ListResources.ListToolsSliceFilters),
 				MachineName,
 				new PossibilityListClerkParameters("DiscChartTemplateList", template, true, true, false, "best analysis"),
-				out _recordClerk);
-			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
+				majorFlexComponentParameters.LcmCache,
+				ref _recordClerk);
 		}
 
 		/// <summary>

@@ -64,6 +64,7 @@ namespace LanguageExplorer.Impls
 		///  Web browser to use in Linux
 		/// </summary>
 		private string _webBrowserProgramLinux = "firefox";
+		private IRecordClerkRepository _recordClerkRepository;
 		private IAreaRepository _areaRepository;
 		private IToolRepository _toolRepository;
 		private ActiveViewHelper _viewHelper;
@@ -125,6 +126,8 @@ namespace LanguageExplorer.Impls
 			RestoreWindowSettings(wasCrashDuringPreviousStartup);
 			var restoreSize = Size;
 
+			_recordClerkRepository = new RecordClerkRepository();
+
 			_majorFlexComponentParameters = new MajorFlexComponentParameters(
 				mainContainer,
 				_menuStrip,
@@ -132,7 +135,9 @@ namespace LanguageExplorer.Impls
 				_statusbar,
 				_parserMenuManager,
 				_dataNavigationManager,
-				new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
+				_recordClerkRepository,
+				new FlexComponentParameters(PropertyTable, Publisher, Subscriber),
+				Cache);
 
 			SetupRepositories();
 
@@ -527,6 +532,7 @@ namespace LanguageExplorer.Impls
 			PropertyTable.RemoveProperty("DoLog");
 			PropertyTable.RemoveProperty("ShowBalloonHelp");
 			PropertyTable.RemoveProperty("ShowMorphBundles");
+			PropertyTable.RemoveProperty("ActiveClerk");
 
 			ConvertOldPropertiesToNewIfPresent();
 		}
@@ -538,7 +544,7 @@ namespace LanguageExplorer.Impls
 			PropertyTable.SetProperty("App", _flexApp, SettingsGroup.BestSettings, false, false);
 			PropertyTable.SetProperty("cache", Cache, SettingsGroup.BestSettings, false, false);
 			PropertyTable.SetProperty("HelpTopicProvider", _flexApp, false, false);
-			PropertyTable.SetProperty("FwStyleSheet", _stylesheet, false, false);
+			PropertyTable.SetProperty("LcmStyleSheet", _stylesheet, false, false);
 		}
 
 		private void RegisterSubscriptions()
@@ -960,6 +966,7 @@ namespace LanguageExplorer.Impls
 
 			if (disposing)
 			{
+				_recordClerkRepository.Dispose();
 				_parserMenuManager.Dispose();
 				_dataNavigationManager.Dispose();
 				IdleQueue.Dispose();
@@ -979,11 +986,12 @@ namespace LanguageExplorer.Impls
 				// message loop.
 				_flexApp.FwManager.ExecuteAsync(_flexApp.RemoveWindow, this);
 
-				_dataNavigationManager?.Dispose();
-				_sidePane?.Dispose();
-				_viewHelper?.Dispose();
+				_dataNavigationManager.Dispose();
+				_sidePane.Dispose();
+				_viewHelper.Dispose();
 			}
 
+			_recordClerkRepository = null;
 			_parserMenuManager = null;
 			_dataNavigationManager = null;
 			_sidePane = null;
@@ -1641,6 +1649,32 @@ very simple minor adjustments. ;)"
 			_sidePane.SelectItem(_sidePane.GetTabByName(currentArea.MachineName), currentTool.MachineName);
 		}
 
-#endregion
+		#endregion
+
+		#region Handle clerk repository and last known active clerk
+
+		/// <summary>Stores the last active clerk, if any, when the window becomes inactive.</summary>
+		private RecordClerk _activeClerkIfAnyWhenWindowWasDeactivated;
+		/// <summary>
+		/// This window is being activated, so (re)-set static stuff to what we want.
+		/// </summary>
+		private void FwMainWnd_Activated(object sender, EventArgs e)
+		{
+			RecordClerk.RecordClerkRepository = _recordClerkRepository;
+			RecordClerk.RecordClerkRepository.ActiveRecordClerk = _activeClerkIfAnyWhenWindowWasDeactivated; // May be null, which is fine.
+		}
+
+		/// <summary>
+		/// This window is being deactivated, so clear out the static stuff,
+		/// to let another FLEx window set it to what it wants.
+		/// </summary>
+		private void FwMainWnd_Deactivate(object sender, EventArgs e)
+		{
+			_activeClerkIfAnyWhenWindowWasDeactivated = RecordClerk.RecordClerkRepository.ActiveRecordClerk; // May be null, which is fine.
+			RecordClerk.RecordClerkRepository.ActiveRecordClerk = null;
+			RecordClerk.RecordClerkRepository = null;
+		}
+
+		#endregion
 	}
 }
