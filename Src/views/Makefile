@@ -29,7 +29,7 @@ GR2_INC = $(BUILD_ROOT)/Lib/src/graphite2/include
 INCLUDES := $(DEBUG_INCLUDES)
 
 INCLUDES := \
-	$(shell icu-config --detect-prefix --cppflags) \
+	$(shell icu-config --cppflags) \
 	-I. -Ilib \
 	-I$(GENERIC_SRC) -I$(APPCORE_SRC) -I$(DEBUGPROCS_SRC) \
 	-I$(GR2_INC) \
@@ -47,7 +47,7 @@ LDLIBS := \
 	-L$(COM_LIB) -lcom \
 	-L$(WIN32BASE_LIB) -lWin32Base \
 	$(shell pkg-config --libs $(PACKAGES)) \
-	$(shell icu-config --detect-prefix --ldflags) \
+	$(shell icu-config --ldflags) \
 	-lpthread -ldl \
 
 

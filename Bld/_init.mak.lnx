@@ -78,11 +78,11 @@ VIEWS_SRC = $(SRC)/$(VIEWS_NAME)
 # Include user specific settings
 -include $(BUILD_ROOT)/Bld/_user.mak.lnx
 
-ICU_INSTALL_DIR ?= $(BUILD_ROOT)/Lib/src/icu/install$(ARCH)
-ICU_BIN_DIR = $(ICU_INSTALL_DIR)/bin
-ICU_LIB_DIR = $(ICU_INSTALL_DIR)/lib
+ICU_INSTALL_DIR ?= $(shell icu-config --prefix)
+# ENHANCE: have the icu54-bin-fw package install in bin instead of icu-bin and use `icu-config --bindir`
+ICU_BIN_DIR = $(ICU_INSTALL_DIR)/icu-bin
 
 # Use our own icu-config by putting it first in the path
-PATH := $(shell $(BUILD_ROOT)/Bin/abs.py $(ICU_BIN_DIR)):$(PATH):$(shell $(BUILD_ROOT)/Bin/abs.py $(BUILD_ROOT)/Bin)
+PATH := $(ICU_BIN_DIR):$(PATH):$(shell $(BUILD_ROOT)/Bin/abs.py $(BUILD_ROOT)/Bin)
 
 export PATH

@@ -25,7 +25,7 @@ endif
 
 INCLUDES := -I$(KERNEL_SRC) -I$(GENERIC_SRC) $(DEBUG_INCLUDES)
 
-INCLUDES := $(shell icu-config --detect-prefix --cppflags) \
+INCLUDES := $(shell icu-config --cppflags) \
 	$(INCLUDES) \
 	-I$(FWINCLUDE) \
 	-I$(COM_OUT_DIR) \
@@ -37,7 +37,7 @@ LDLIBS := $(LDLIBS) \
 	-L$(WIN32MORE_LIB) -lWin32More \
 	-L$(COM_LIB) -lcom \
 	-L$(WIN32BASE_LIB) -lWin32Base \
-	$(shell icu-config --detect-prefix --ldflags) \
+	$(shell icu-config --ldflags) \
 	-ldl
 
 CPPFLAGS = $(DEFINES) $(INCLUDES) -MMD
