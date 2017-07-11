@@ -1179,6 +1179,22 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 		}
 
 		[Test]
+		public void MigrateFrom83Alpha_RemoveReferencedHeadwordSubField() // LT-18470
+		{
+			//Populate a reversal configuration based on the current defaults
+			var reversalBetaModel = new DictionaryConfigurationModel { WritingSystem = "en"};
+			var betaModel = m_migrator.LoadBetaDefaultForAlphaConfig(reversalBetaModel); // SUT
+			Assert.IsTrue(betaModel.IsReversal);
+			var alphaModel = betaModel.DeepClone();
+			//Set the SubField on the ReversalName Node for our 'old' configuration
+			alphaModel.SharedItems[0].Children[2].Children[0].SubField = "MLHeadWord";
+			alphaModel.Version = 18;
+			m_migrator.MigrateFrom83Alpha(m_logger, alphaModel, betaModel); // SUT
+			Assert.AreNotEqual("MLHeadWord", betaModel.SharedItems[0].Children[2].Children[0].SubField);
+			Assert.Null(betaModel.SharedItems[0].Children[2].Children[0].SubField);
+		}
+
+		[Test]
 		public void MigrateFrom83Alpha_AddsOptionsToRefdComplexForms()
 		{
 			var userModel = new DictionaryConfigurationModel

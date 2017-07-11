@@ -185,6 +185,9 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 					goto case VersionRC2;
 				case VersionRC2:
 					ChangeReferenceSenseHeadwordFieldName(oldConfigPart);
+					goto case 18;
+				case 18:
+					RemoveReferencedHeadwordSubField(oldConfigPart);
 					break;
 				default:
 					logger.WriteLine(string.Format(
@@ -254,6 +257,18 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			}
 			// Etymology changed too much to be matched in the PreHistoricMigration and was marked as custom
 			DCM.PerformActionOnNodes(etymNodes, n => {n.IsCustomField = false;});
+		}
+
+		private static void RemoveReferencedHeadwordSubField(ConfigurableDictionaryNode part)
+		{
+			DCM.PerformActionOnNodes(part.Children, node =>
+			{
+				// AllReversalSubentries under Referenced Headword field is ReversalName
+				if (node.FieldDescription == "ReversalName" && node.SubField == "MLHeadWord")
+				{
+					node.SubField = null;
+				}
+			});
 		}
 
 		private static void RemoveMostOfGramInfoUnderRefdComplexForms(ConfigurableDictionaryNode part)
