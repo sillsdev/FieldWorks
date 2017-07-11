@@ -98,7 +98,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 			MultiPaneFactory.RemoveFromParentAndDispose(
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
 				majorFlexComponentParameters.DataNavigationManager,
-				majorFlexComponentParameters.RecordClerkRepository,
+				majorFlexComponentParameters.RecordClerkRepositoryForTools,
 				ref _multiPane);
 
 			_reversalIndexRepository = null;
@@ -121,9 +121,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 			}
 			if (_recordClerk == null)
 			{
-				_recordClerk = new ReversalEntryClerk(majorFlexComponentParameters.LcmCache.ServiceLocator, majorFlexComponentParameters.LcmCache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), _currentReversalIndex);
-				_recordClerk.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
-				majorFlexComponentParameters.RecordClerkRepository.AddRecordClerk(_recordClerk);
+				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(LexiconArea.AllReversalEntries, LexiconArea.AllReversalEntriesFactoryMethod);
 			}
 
 			var root = XDocument.Parse(LexiconResources.ReversalEditCompleteToolParameters).Root;
@@ -172,7 +170,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 			_xhtmlDocView.OnPropertyChanged("ReversalIndexPublicationLayout");
 			((IPostLayoutInit)_multiPane).PostLayoutInit();
 			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
-			majorFlexComponentParameters.RecordClerkRepository.ActiveRecordClerk = _recordClerk;
+			majorFlexComponentParameters.RecordClerkRepositoryForTools.ActiveRecordClerk = _recordClerk;
 		}
 
 		/// <summary>

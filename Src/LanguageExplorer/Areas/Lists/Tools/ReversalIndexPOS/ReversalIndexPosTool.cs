@@ -11,6 +11,7 @@ using System.Xml.Linq;
 using LanguageExplorer.Areas.Lexicon;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.PaneBar;
+using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.Resources;
@@ -25,6 +26,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 	/// </summary>
 	internal sealed class ReversalIndexPosTool : ITool
 	{
+		private const string ReversalEntriesPOS = "ReversalEntriesPOS";
 		private MultiPane _multiPane;
 		private RecordClerk _recordClerk;
 		private RecordBrowseView _recordBrowseView;
@@ -101,7 +103,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 			MultiPaneFactory.RemoveFromParentAndDispose(
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
 				majorFlexComponentParameters.DataNavigationManager,
-				majorFlexComponentParameters.RecordClerkRepository,
+				majorFlexComponentParameters.RecordClerkRepositoryForTools,
 				ref _multiPane);
 		}
 
@@ -121,9 +123,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 
 			if (_recordClerk == null)
 			{
-				_recordClerk = new ReversalEntryPOSClerk(majorFlexComponentParameters.LcmCache.ServiceLocator, majorFlexComponentParameters.LcmCache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), _currentReversalIndex);
-				_recordClerk.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
-				majorFlexComponentParameters.RecordClerkRepository.AddRecordClerk(_recordClerk);
+				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(ReversalEntriesPOS, FactoryMethod);
 			}
 			_recordBrowseView = new RecordBrowseView(XDocument.Parse(ListResources.ReversalToolReversalIndexPOSBrowseViewParameters).Root, majorFlexComponentParameters.LcmCache, _recordClerk);
 #if RANDYTODO
@@ -168,7 +168,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 			// Too early before now.
 			recordEditView.FinishInitialization();
 			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
-			majorFlexComponentParameters.RecordClerkRepository.ActiveRecordClerk = _recordClerk;
+			majorFlexComponentParameters.RecordClerkRepositoryForTools.ActiveRecordClerk = _recordClerk;
 		}
 
 		/// <summary>
@@ -286,6 +286,22 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 		{
 			var currentTag = (IReversalIndex)reversalToolStripMenuItem.Tag;
 			reversalToolStripMenuItem.Checked = (currentTag.Guid.ToString() == PropertyTable.GetValue<string>("ReversalIndexGuid"));
+		}
+
+		private static RecordClerk FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId)
+		{
+			Guard.AssertThat(clerkId == ReversalEntriesPOS, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{ReversalEntriesPOS}'.");
+
+			IReversalIndex currentReversalIndex = null;
+			var currentReversalIndexGuid = ReversalIndexEntryUi.GetObjectGuidIfValid(flexComponentParameters.PropertyTable, "ReversalIndexGuid");
+			if (currentReversalIndexGuid != Guid.Empty)
+			{
+				currentReversalIndex = (IReversalIndex)cache.ServiceLocator.GetObject(currentReversalIndexGuid);
+			}
+
+			return new ReversalEntryPOSClerk(cache.ServiceLocator,
+				cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(),
+				currentReversalIndex);
 		}
 	}
 }

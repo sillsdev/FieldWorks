@@ -5,7 +5,9 @@
 using System.Drawing;
 using System.Xml.Linq;
 using LanguageExplorer.Controls;
+using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks;
 using SIL.LCModel;
@@ -18,11 +20,14 @@ namespace LanguageExplorer.Areas.Lists.Tools.TextMarkupTagsEdit
 	/// </summary>
 	internal sealed class TextMarkupTagsEditTool : ITool
 	{
+		private const string TextMarkupTagsList = "TextMarkupTagsList";
+
 		/// <summary>
 		/// Main control to the right of the side bar control. This holds a RecordBar on the left and a PaneBarContainer on the right.
 		/// The RecordBar has no top PaneBar for information, menus, etc.
 		/// </summary>
 		private CollapsingSplitContainer _collapsingSplitContainer;
+
 		private RecordClerk _recordClerk;
 
 		#region Implementation of IPropertyTableProvider
@@ -60,7 +65,8 @@ namespace LanguageExplorer.Areas.Lists.Tools.TextMarkupTagsEdit
 		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
 		public void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
 		{
-			FlexComponentCheckingService.CheckInitializationValues(flexComponentParameters, new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
+			FlexComponentCheckingService.CheckInitializationValues(flexComponentParameters,
+				new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 
 			PropertyTable = flexComponentParameters.PropertyTable;
 			Publisher = flexComponentParameters.Publisher;
@@ -82,7 +88,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.TextMarkupTagsEdit
 			CollapsingSplitContainerFactory.RemoveFromParentAndDispose(
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
 				majorFlexComponentParameters.DataNavigationManager,
-				majorFlexComponentParameters.RecordClerkRepository,
+				majorFlexComponentParameters.RecordClerkRepositoryForTools,
 				ref _collapsingSplitContainer);
 		}
 
@@ -94,17 +100,22 @@ namespace LanguageExplorer.Areas.Lists.Tools.TextMarkupTagsEdit
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			if (_recordClerk == null)
+			{
+				_recordClerk =
+					majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(TextMarkupTagsList, FactoryMethod);
+			}
 			_collapsingSplitContainer = CollapsingSplitContainerFactory.Create(
 				majorFlexComponentParameters.FlexComponentParameters,
-				majorFlexComponentParameters.DataNavigationManager,
-				majorFlexComponentParameters.RecordClerkRepository,
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
 				true,
-				XDocument.Parse(ListResources.TextMarkupTagsEditParameters).Root, XDocument.Parse(ListResources.ListToolsSliceFilters),
+				XDocument.Parse(ListResources.TextMarkupTagsEditParameters).Root,
+				XDocument.Parse(ListResources.ListToolsSliceFilters),
 				MachineName,
-				new PossibilityListClerkParameters("TextMarkupTagsList", majorFlexComponentParameters.LcmCache.LanguageProject.TextMarkupTagsOA, false, true, false, "best analysis"),
 				majorFlexComponentParameters.LcmCache,
-				ref _recordClerk);
+				_recordClerk);
+			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
+			majorFlexComponentParameters.RecordClerkRepositoryForTools.ActiveRecordClerk = _recordClerk;
 		}
 
 		/// <summary>
@@ -166,5 +177,20 @@ namespace LanguageExplorer.Areas.Lists.Tools.TextMarkupTagsEdit
 		public Image Icon => Images.SideBySideView.SetBackgroundColor(Color.Magenta);
 
 		#endregion
+
+		private static RecordClerk FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId)
+		{
+			Guard.AssertThat(clerkId == TextMarkupTagsList, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{TextMarkupTagsList}'.");
+
+			return new RecordClerk(clerkId,
+				new PossibilityRecordList(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), cache.LanguageProject.TextMarkupTagsOA),
+				new PropertyRecordSorter("ShortName"),
+				"Default",
+				null,
+				true,
+				true,
+				new PossibilityTreeBarHandler(flexComponentParameters.PropertyTable, false, true, false, "best analysis"));
+
+		}
 	}
 }

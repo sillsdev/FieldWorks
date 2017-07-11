@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using System.Xml.Linq;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.PaneBar;
+using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.Resources;
@@ -22,6 +23,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.NaturalClassEdit
 	/// </summary>
 	internal sealed class NaturalClassEditTool : ITool
 	{
+		private const string NaturalClasses = "naturalClasses";
 		private MultiPane _multiPane;
 		private RecordBrowseView _recordBrowseView;
 		private RecordClerk _recordClerk;
@@ -83,7 +85,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.NaturalClassEdit
 			MultiPaneFactory.RemoveFromParentAndDispose(
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
 				majorFlexComponentParameters.DataNavigationManager,
-				majorFlexComponentParameters.RecordClerkRepository,
+				majorFlexComponentParameters.RecordClerkRepositoryForTools,
 				ref _multiPane);
 			_recordBrowseView = null;
 		}
@@ -98,9 +100,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.NaturalClassEdit
 		{
 			if (_recordClerk == null)
 			{
-				_recordClerk = new RecordClerk("naturalClasses", new RecordList(majorFlexComponentParameters.LcmCache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), true, PhPhonDataTags.kflidNaturalClasses, majorFlexComponentParameters.LcmCache.LanguageProject.PhonologicalDataOA, "NaturalClasses"), new PropertyRecordSorter("ShortName"), "Default", null, false, false);
-				_recordClerk.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
-				majorFlexComponentParameters.RecordClerkRepository.AddRecordClerk(_recordClerk);
+				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(NaturalClasses, FactoryMethod);
 			}
 
 			var root = XDocument.Parse(GrammarResources.NaturalClassEditToolParameters).Root;
@@ -136,7 +136,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.NaturalClassEdit
 			// Too early before now.
 			recordEditView.FinishInitialization();
 			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
-			majorFlexComponentParameters.RecordClerkRepository.ActiveRecordClerk = _recordClerk;
+			majorFlexComponentParameters.RecordClerkRepositoryForTools.ActiveRecordClerk = _recordClerk;
 		}
 
 		/// <summary>
@@ -194,5 +194,18 @@ namespace LanguageExplorer.Areas.Grammar.Tools.NaturalClassEdit
 		public Image Icon => Images.SideBySideView.SetBackgroundColor(Color.Magenta);
 
 		#endregion
+
+		private static RecordClerk FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId)
+		{
+			Guard.AssertThat(clerkId == NaturalClasses, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{NaturalClasses}'.");
+
+			return new RecordClerk(clerkId,
+				new RecordList(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), true, PhPhonDataTags.kflidNaturalClasses, cache.LanguageProject.PhonologicalDataOA, "NaturalClasses"),
+				new PropertyRecordSorter("ShortName"),
+				"Default",
+				null,
+				false,
+				false);
+		}
 	}
 }

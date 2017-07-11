@@ -8,10 +8,12 @@ using System.Windows.Forms;
 using System.Xml.Linq;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.PaneBar;
+using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks;
+using SIL.LCModel;
 using SIL.LCModel.Application;
 
 namespace LanguageExplorer.Areas.Grammar.Tools.ProdRestrictEdit
@@ -21,6 +23,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.ProdRestrictEdit
 	/// </summary>
 	internal sealed class ProdRestrictEditTool : ITool
 	{
+		private const string ProdRestrict = "ProdRestrict";
 		private MultiPane _multiPane;
 		private RecordBrowseView _recordBrowseView;
 		private RecordClerk _recordClerk;
@@ -82,7 +85,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.ProdRestrictEdit
 			MultiPaneFactory.RemoveFromParentAndDispose(
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
 				majorFlexComponentParameters.DataNavigationManager,
-				majorFlexComponentParameters.RecordClerkRepository,
+				majorFlexComponentParameters.RecordClerkRepositoryForTools,
 				ref _multiPane);
 			_recordBrowseView = null;
 		}
@@ -97,9 +100,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.ProdRestrictEdit
 		{
 			if (_recordClerk == null)
 			{
-				_recordClerk = new RecordClerk("ProdRestrict", new PossibilityRecordList(majorFlexComponentParameters.LcmCache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), majorFlexComponentParameters.LcmCache.LanguageProject.MorphologicalDataOA.ProdRestrictOA), new PropertyRecordSorter("ShortName"), "Default", null, false, false); // , new PossibilityTreeBarHandler(PropertyTable, false, false, false, "best analorvern")
-				_recordClerk.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
-				majorFlexComponentParameters.RecordClerkRepository.AddRecordClerk(_recordClerk);
+				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(ProdRestrict, FactoryMethod);
 			}
 
 			var root = XDocument.Parse(GrammarResources.ProdRestrictEditToolParameters).Root;
@@ -135,7 +136,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.ProdRestrictEdit
 			// Too early before now.
 			recordEditView.FinishInitialization();
 			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
-			majorFlexComponentParameters.RecordClerkRepository.ActiveRecordClerk = _recordClerk;
+			majorFlexComponentParameters.RecordClerkRepositoryForTools.ActiveRecordClerk = _recordClerk;
 		}
 
 		/// <summary>
@@ -193,5 +194,18 @@ namespace LanguageExplorer.Areas.Grammar.Tools.ProdRestrictEdit
 		public Image Icon => Images.SideBySideView.SetBackgroundColor(Color.Magenta);
 
 		#endregion
+
+		private static RecordClerk FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId)
+		{
+			Guard.AssertThat(clerkId == ProdRestrict, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{ProdRestrict}'.");
+
+			return new RecordClerk(clerkId,
+				new PossibilityRecordList(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), cache.LanguageProject.MorphologicalDataOA.ProdRestrictOA),
+				new PropertyRecordSorter("ShortName"),
+				"Default",
+				null,
+				false,
+				false);
+		}
 	}
 }

@@ -503,9 +503,8 @@
 		<Unzip ZipFilename="$(DownloadsDir)/LCM.zip" ToDir="$(DownloadsDir)/LCM/" />
 		<ItemGroup>
 			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/ICSharpCode.SharpZipLib.dll" />
-<!-- left out of artifacts.
-			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/libhunspell.dll" Condition="'$(OS)'=='Windows_NT'" />
--->
+			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/Hunspellx86.dll" Condition="'$(OS)'=='Windows_NT'" />
+			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/NHunspell.dll" Condition="'$(OS)'=='Windows_NT'" />
 			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/Microsoft.Practices.ServiceLocation.dll" />
 			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/protobuf-net.dll" />
 			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/StructureMap.dll" />

@@ -64,7 +64,7 @@ namespace LanguageExplorer.Impls
 		///  Web browser to use in Linux
 		/// </summary>
 		private string _webBrowserProgramLinux = "firefox";
-		private IRecordClerkRepository _recordClerkRepository;
+		private IRecordClerkRepositoryForTools _recordClerkRepositoryForTools;
 		private IAreaRepository _areaRepository;
 		private IToolRepository _toolRepository;
 		private ActiveViewHelper _viewHelper;
@@ -126,7 +126,8 @@ namespace LanguageExplorer.Impls
 			RestoreWindowSettings(wasCrashDuringPreviousStartup);
 			var restoreSize = Size;
 
-			_recordClerkRepository = new RecordClerkRepository();
+			var flexComponentParameters = new FlexComponentParameters(PropertyTable, Publisher, Subscriber);
+			_recordClerkRepositoryForTools = new RecordClerkRepository(Cache, flexComponentParameters);
 
 			_majorFlexComponentParameters = new MajorFlexComponentParameters(
 				mainContainer,
@@ -135,8 +136,8 @@ namespace LanguageExplorer.Impls
 				_statusbar,
 				_parserMenuManager,
 				_dataNavigationManager,
-				_recordClerkRepository,
-				new FlexComponentParameters(PropertyTable, Publisher, Subscriber),
+				_recordClerkRepositoryForTools,
+				flexComponentParameters,
 				Cache);
 
 			SetupRepositories();
@@ -966,7 +967,7 @@ namespace LanguageExplorer.Impls
 
 			if (disposing)
 			{
-				_recordClerkRepository.Dispose();
+				_recordClerkRepositoryForTools.Dispose();
 				_parserMenuManager.Dispose();
 				_dataNavigationManager.Dispose();
 				IdleQueue.Dispose();
@@ -991,7 +992,7 @@ namespace LanguageExplorer.Impls
 				_viewHelper.Dispose();
 			}
 
-			_recordClerkRepository = null;
+			_recordClerkRepositoryForTools = null;
 			_parserMenuManager = null;
 			_dataNavigationManager = null;
 			_sidePane = null;
@@ -1639,6 +1640,11 @@ very simple minor adjustments. ;)"
 		/// <param name="e">An <see cref="T:System.EventArgs"/> that contains the event data. </param>
 		protected override void OnLoad(EventArgs e)
 		{
+			if (_recordClerkRepositoryForTools != RecordClerk.ActiveRecordClerkRepository)
+			{
+				RecordClerk.ActiveRecordClerkRepository = _recordClerkRepositoryForTools;
+			}
+
 			base.OnLoad(e);
 
 			var currentArea = _areaRepository.GetPersistedOrDefaultArea();
@@ -1660,19 +1666,10 @@ very simple minor adjustments. ;)"
 		/// </summary>
 		private void FwMainWnd_Activated(object sender, EventArgs e)
 		{
-			RecordClerk.RecordClerkRepository = _recordClerkRepository;
-			RecordClerk.RecordClerkRepository.ActiveRecordClerk = _activeClerkIfAnyWhenWindowWasDeactivated; // May be null, which is fine.
-		}
-
-		/// <summary>
-		/// This window is being deactivated, so clear out the static stuff,
-		/// to let another FLEx window set it to what it wants.
-		/// </summary>
-		private void FwMainWnd_Deactivate(object sender, EventArgs e)
-		{
-			_activeClerkIfAnyWhenWindowWasDeactivated = RecordClerk.RecordClerkRepository.ActiveRecordClerk; // May be null, which is fine.
-			RecordClerk.RecordClerkRepository.ActiveRecordClerk = null;
-			RecordClerk.RecordClerkRepository = null;
+			if (_recordClerkRepositoryForTools != RecordClerk.ActiveRecordClerkRepository)
+			{
+				RecordClerk.ActiveRecordClerkRepository = _recordClerkRepositoryForTools;
+			}
 		}
 
 		#endregion

@@ -77,7 +77,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookBrowse
 			PaneBarContainerFactory.RemoveFromParentAndDispose(
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
 				majorFlexComponentParameters.DataNavigationManager,
-				majorFlexComponentParameters.RecordClerkRepository,
+				majorFlexComponentParameters.RecordClerkRepositoryForTools,
 				ref _paneBarContainer);
 			_recordBrowseView = null;
 		}
@@ -92,9 +92,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookBrowse
 		{
 			if (_recordClerk == null)
 			{
-				_recordClerk = NotebookArea.CreateRecordClerkForAllNotebookAreaTools(majorFlexComponentParameters.LcmCache);
-				_recordClerk.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
-				majorFlexComponentParameters.RecordClerkRepository.AddRecordClerk(_recordClerk);
+				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(NotebookArea.Records, NotebookArea.NotebookFactoryMethod);
 			}
 			_recordBrowseView = new RecordBrowseView(NotebookArea.LoadDocument(NotebookResources.NotebookBrowseParameters).Root, majorFlexComponentParameters.LcmCache, _recordClerk);
 			_paneBarContainer = PaneBarContainerFactory.Create(
@@ -102,7 +100,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookBrowse
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
 				_recordBrowseView);
 			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
-			majorFlexComponentParameters.RecordClerkRepository.ActiveRecordClerk = _recordClerk;
+			majorFlexComponentParameters.RecordClerkRepositoryForTools.ActiveRecordClerk = _recordClerk;
 		}
 
 		/// <summary>

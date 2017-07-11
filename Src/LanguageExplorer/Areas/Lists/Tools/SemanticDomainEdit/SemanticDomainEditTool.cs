@@ -5,9 +5,12 @@
 using System.Drawing;
 using System.Xml.Linq;
 using LanguageExplorer.Controls;
+using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks;
+using SIL.LCModel;
 using SIL.LCModel.Application;
 
 namespace LanguageExplorer.Areas.Lists.Tools.SemanticDomainEdit
@@ -17,6 +20,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.SemanticDomainEdit
 	/// </summary>
 	internal sealed class SemanticDomainEditTool : ITool
 	{
+		private const string SemanticDomainList_ListArea = "SemanticDomainList_ListArea";
 		/// <summary>
 		/// Main control to the right of the side bar control. This holds a RecordBar on the left and a PaneBarContainer on the right.
 		/// The RecordBar has no top PaneBar for information, menus, etc.
@@ -81,7 +85,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.SemanticDomainEdit
 			CollapsingSplitContainerFactory.RemoveFromParentAndDispose(
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
 				majorFlexComponentParameters.DataNavigationManager,
-				majorFlexComponentParameters.RecordClerkRepository,
+				majorFlexComponentParameters.RecordClerkRepositoryForTools,
 				ref _collapsingSplitContainer);
 		}
 
@@ -93,17 +97,20 @@ namespace LanguageExplorer.Areas.Lists.Tools.SemanticDomainEdit
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			if (_recordClerk == null)
+			{
+				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(SemanticDomainList_ListArea, FactoryMethod);
+			}
 			_collapsingSplitContainer = CollapsingSplitContainerFactory.Create(
 				majorFlexComponentParameters.FlexComponentParameters,
-				majorFlexComponentParameters.DataNavigationManager,
-				majorFlexComponentParameters.RecordClerkRepository,
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
 				true,
 				XDocument.Parse(ListResources.SemanticDomainEditParameters).Root, XDocument.Parse(ListResources.ListToolsSliceFilters),
 				MachineName,
-				new PossibilityListClerkParameters("SemanticDomainList", majorFlexComponentParameters.LcmCache.LanguageProject.SemanticDomainListOA, false, true, true, "best analysis"),
 				majorFlexComponentParameters.LcmCache,
-				ref _recordClerk);
+				_recordClerk);
+			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
+			majorFlexComponentParameters.RecordClerkRepositoryForTools.ActiveRecordClerk = _recordClerk;
 		}
 
 		/// <summary>
@@ -165,5 +172,19 @@ namespace LanguageExplorer.Areas.Lists.Tools.SemanticDomainEdit
 		public Image Icon => Images.SideBySideView.SetBackgroundColor(Color.Magenta);
 
 		#endregion
+
+		private static RecordClerk FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId)
+		{
+			Guard.AssertThat(clerkId == SemanticDomainList_ListArea, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{SemanticDomainList_ListArea}'.");
+
+			return new RecordClerk(clerkId,
+				new PossibilityRecordList(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), cache.LanguageProject.SemanticDomainListOA),
+				new PropertyRecordSorter("ShortName"),
+				"Default",
+				null,
+				true,
+				true,
+				new PossibilityTreeBarHandler(flexComponentParameters.PropertyTable, false, true, true, "best analysis"));
+		}
 	}
 }

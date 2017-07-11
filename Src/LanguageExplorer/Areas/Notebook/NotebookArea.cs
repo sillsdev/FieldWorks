@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Xml.Linq;
+using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.XWorks;
@@ -17,7 +18,8 @@ namespace LanguageExplorer.Areas.Notebook
 {
 	internal sealed class NotebookArea : IArea
 	{
-		private readonly IToolRepository m_toolRepository;
+		internal const string Records = "records";
+		private readonly IToolRepository _toolRepository;
 		private ToolStripItem _fileExportMenu;
 		private bool _fileExportOriginalValue;
 
@@ -27,15 +29,7 @@ namespace LanguageExplorer.Areas.Notebook
 		/// <param name="toolRepository"></param>
 		internal NotebookArea(IToolRepository toolRepository)
 		{
-			m_toolRepository = toolRepository;
-		}
-
-		internal static RecordClerk CreateRecordClerkForAllNotebookAreaTools(LcmCache cache)
-		{
-			var mdc = cache.MetaDataCacheAccessor;
-			var nb = cache.LanguageProject.ResearchNotebookOA;
-			var recordList = new RecordList(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), false, mdc.GetFieldId2(nb.ClassID, "AllRecords", false), nb, "AllRecords");
-			return new RecordClerk("records", recordList, new PropertyRecordSorter("ShortName"), "Default", null, false, false);
+			_toolRepository = toolRepository;
 		}
 
 		internal static XDocument LoadDocument(string resourceName)
@@ -145,7 +139,7 @@ namespace LanguageExplorer.Areas.Notebook
 		/// </summary>
 		public void PrepareToRefresh()
 		{
-			m_toolRepository.GetPersistedOrDefaultToolForArea(this).PrepareToRefresh();
+			_toolRepository.GetPersistedOrDefaultToolForArea(this).PrepareToRefresh();
 		}
 
 		/// <summary>
@@ -153,7 +147,7 @@ namespace LanguageExplorer.Areas.Notebook
 		/// </summary>
 		public void FinishRefresh()
 		{
-			m_toolRepository.GetPersistedOrDefaultToolForArea(this).FinishRefresh();
+			_toolRepository.GetPersistedOrDefaultToolForArea(this).FinishRefresh();
 		}
 
 		/// <summary>
@@ -164,7 +158,7 @@ namespace LanguageExplorer.Areas.Notebook
 		{
 			PropertyTable.SetProperty("InitialArea", MachineName, SettingsGroup.LocalSettings, true, false);
 
-			var myCurrentTool = m_toolRepository.GetPersistedOrDefaultToolForArea(this);
+			var myCurrentTool = _toolRepository.GetPersistedOrDefaultToolForArea(this);
 			myCurrentTool.EnsurePropertiesAreCurrent();
 		}
 
@@ -193,7 +187,7 @@ namespace LanguageExplorer.Areas.Notebook
 		/// <returns>The last persisted tool or the default tool for the area.</returns>
 		public ITool GetPersistedOrDefaultToolForArea()
 		{
-			return m_toolRepository.GetPersistedOrDefaultToolForArea(this);
+			return _toolRepository.GetPersistedOrDefaultToolForArea(this);
 		}
 
 		/// <summary>
@@ -214,7 +208,7 @@ namespace LanguageExplorer.Areas.Notebook
 					"notebookBrowse",
 					"notebookDocument"
 				};
-				return m_toolRepository.AllToolsForAreaInOrder(myToolsInOrder, MachineName);
+				return _toolRepository.AllToolsForAreaInOrder(myToolsInOrder, MachineName);
 			}
 		}
 
@@ -224,5 +218,18 @@ namespace LanguageExplorer.Areas.Notebook
 		public Image Icon => LanguageExplorerResources.Notebook.ToBitmap();
 
 		#endregion
+
+		internal static RecordClerk NotebookFactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId)
+		{
+			Guard.AssertThat(clerkId == Records, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{Records}'.");
+
+			return new RecordClerk(clerkId,
+					new RecordList(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), false, cache.MetaDataCacheAccessor.GetFieldId2(cache.LanguageProject.ResearchNotebookOA.ClassID, "AllRecords", false), cache.LanguageProject.ResearchNotebookOA, "AllRecords"),
+					new PropertyRecordSorter("ShortName"),
+					"Default",
+					null,
+					false,
+					false);
+		}
 	}
 }

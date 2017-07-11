@@ -4,18 +4,13 @@
 
 using System.Collections.Generic;
 using System.Drawing;
-using LanguageExplorer.Controls;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Filters;
-using SIL.FieldWorks.XWorks;
-using SIL.LCModel;
-using SIL.LCModel.Application;
 
 namespace LanguageExplorer.Areas.Lists
 {
 	internal sealed class ListsArea : IArea
 	{
-		private readonly IToolRepository m_toolRepository;
+		private readonly IToolRepository _toolRepository;
 
 		/// <summary>
 		/// Contructor used by Reflection to feed the tool repository to the area.
@@ -23,15 +18,7 @@ namespace LanguageExplorer.Areas.Lists
 		/// <param name="toolRepository"></param>
 		internal ListsArea(IToolRepository toolRepository)
 		{
-			m_toolRepository = toolRepository;
-		}
-
-		internal static RecordClerk CreateBasicClerkForListArea(IPropertyTable propertyTable, PossibilityListClerkParameters possibilityListClerkParameters)
-		{
-			var cache = propertyTable.GetValue<LcmCache>("cache");
-			var recordList = new PossibilityRecordList(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), possibilityListClerkParameters.OwningList);
-			var sorter = new PropertyRecordSorter("ShortName");
-			return new RecordClerk(possibilityListClerkParameters.ClerkIdentifier, recordList, sorter, "Default", null, true, true, new PossibilityTreeBarHandler(propertyTable, possibilityListClerkParameters.Expand, possibilityListClerkParameters.Hierarchical, possibilityListClerkParameters.IncludeAbbr, possibilityListClerkParameters.Ws));
+			_toolRepository = toolRepository;
 		}
 
 		#region Implementation of IPropertyTableProvider
@@ -105,7 +92,7 @@ namespace LanguageExplorer.Areas.Lists
 		/// </summary>
 		public void PrepareToRefresh()
 		{
-			m_toolRepository.GetPersistedOrDefaultToolForArea(this).PrepareToRefresh();
+			_toolRepository.GetPersistedOrDefaultToolForArea(this).PrepareToRefresh();
 		}
 
 		/// <summary>
@@ -113,7 +100,7 @@ namespace LanguageExplorer.Areas.Lists
 		/// </summary>
 		public void FinishRefresh()
 		{
-			m_toolRepository.GetPersistedOrDefaultToolForArea(this).FinishRefresh();
+			_toolRepository.GetPersistedOrDefaultToolForArea(this).FinishRefresh();
 		}
 
 		/// <summary>
@@ -124,7 +111,7 @@ namespace LanguageExplorer.Areas.Lists
 		{
 			PropertyTable.SetProperty("InitialArea", MachineName, SettingsGroup.LocalSettings, true, false);
 
-			var myCurrentTool = m_toolRepository.GetPersistedOrDefaultToolForArea(this);
+			var myCurrentTool = _toolRepository.GetPersistedOrDefaultToolForArea(this);
 			myCurrentTool.EnsurePropertiesAreCurrent();
 		}
 
@@ -153,7 +140,7 @@ namespace LanguageExplorer.Areas.Lists
 		/// <returns>The last persisted tool or the default tool for the area.</returns>
 		public ITool GetPersistedOrDefaultToolForArea()
 		{
-			return m_toolRepository.GetPersistedOrDefaultToolForArea(this);
+			return _toolRepository.GetPersistedOrDefaultToolForArea(this);
 		}
 
 		/// <summary>
@@ -208,7 +195,7 @@ namespace LanguageExplorer.Areas.Lists
 				// TODO: A1: Probably, since the tool repository really only needs to be create once per project, but...
 				// TODO:	In that case, then creation of the area and tool repository needs to be rethought. Work for another day....
 #endif
-				return m_toolRepository.AllToolsForAreaInOrder(myToolsInOrder, MachineName);
+				return _toolRepository.AllToolsForAreaInOrder(myToolsInOrder, MachineName);
 			}
 		}
 

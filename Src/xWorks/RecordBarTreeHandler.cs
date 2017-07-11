@@ -42,7 +42,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary />
 		protected RecordBarHandler(IPropertyTable propertyTable, bool expand, bool hierarchical, bool includeAbbr, string bestWS)
 		{
-			if (propertyTable == null) throw new ArgumentNullException("propertyTable");
+			if (propertyTable == null) throw new ArgumentNullException(nameof(propertyTable));
 
 			m_propertyTable = propertyTable;
 			m_cache = m_propertyTable.GetValue<LcmCache>("cache");

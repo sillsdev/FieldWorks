@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Windows.Forms;
+using LanguageExplorer.Areas;
 using LanguageExplorer.Areas.TextsAndWords;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.XWorks;
@@ -30,11 +31,14 @@ namespace LanguageExplorer
 		/// <summary />
 		internal FlexComponentParameters FlexComponentParameters { get; private set; }
 		/// <summary />
-		internal IRecordClerkRepository RecordClerkRepository { get; private set; }
+		internal IRecordClerkRepositoryForTools RecordClerkRepositoryForTools { get; private set; }
 		/// <summary />
 		internal LcmCache LcmCache { get; private set; }
 
-		internal MajorFlexComponentParameters(ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip, ToolStripContainer toolStripContainer, StatusBar statusbar, ParserMenuManager parserMenuManager, DataNavigationManager dataNavigationManager, IRecordClerkRepository recordClerkRepository, FlexComponentParameters flexComponentParameters, LcmCache lcmCache)
+		internal MajorFlexComponentParameters(ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip, ToolStripContainer toolStripContainer, StatusBar statusbar,
+			ParserMenuManager parserMenuManager, DataNavigationManager dataNavigationManager,
+			IRecordClerkRepositoryForTools recordClerkRepositoryForTools,
+			FlexComponentParameters flexComponentParameters, LcmCache lcmCache)
 		{
 			MainCollapsingSplitContainer = mainCollapsingSplitContainer;
 			MenuStrip = menuStrip;
@@ -42,7 +46,7 @@ namespace LanguageExplorer
 			Statusbar = statusbar;
 			ParserMenuManager = parserMenuManager;
 			DataNavigationManager = dataNavigationManager;
-			RecordClerkRepository = recordClerkRepository;
+			RecordClerkRepositoryForTools = recordClerkRepositoryForTools;
 			FlexComponentParameters = flexComponentParameters;
 			LcmCache = lcmCache;
 		}

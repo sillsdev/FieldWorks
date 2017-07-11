@@ -9,7 +9,6 @@ using System.Xml.Linq;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.PaneBar;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks;
 using SIL.LCModel;
@@ -84,7 +83,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 			MultiPaneFactory.RemoveFromParentAndDispose(
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
 				majorFlexComponentParameters.DataNavigationManager,
-				majorFlexComponentParameters.RecordClerkRepository,
+				majorFlexComponentParameters.RecordClerkRepositoryForTools,
 				ref _multiPane);
 			_recordBrowseView = null;
 		}
@@ -107,9 +106,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 			}
 			if (_recordClerk == null)
 			{
-				_recordClerk = new RecordClerk("phonemes", new RecordList(majorFlexComponentParameters.LcmCache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), true, PhPhonemeSetTags.kflidPhonemes, majorFlexComponentParameters.LcmCache.LanguageProject.PhonologicalDataOA.PhonemeSetsOS[0], "Phonemes"), new PropertyRecordSorter("ShortName"), "Default", null, false, false);
-				_recordClerk.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
-				majorFlexComponentParameters.RecordClerkRepository.AddRecordClerk(_recordClerk);
+				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(GrammarArea.Phonemes, GrammarArea.PhonemesFactoryMethod);
 			}
 
 			var root = XDocument.Parse(GrammarResources.PhonemeEditToolParameters).Root;
@@ -145,7 +142,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 			// Too early before now.
 			recordEditView.FinishInitialization();
 			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
-			majorFlexComponentParameters.RecordClerkRepository.ActiveRecordClerk = _recordClerk;
+			majorFlexComponentParameters.RecordClerkRepositoryForTools.ActiveRecordClerk = _recordClerk;
 		}
 
 		/// <summary>

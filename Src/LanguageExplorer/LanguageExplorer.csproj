@@ -911,7 +911,6 @@
     <Compile Include="Areas\TextsAndWords\ParserMenuManager.cs" />
     <Compile Include="BitmapExtensions.cs" />
     <Compile Include="Controls\PaneBarContextMenuFactory.cs" />
-    <Compile Include="Controls\PossibilityListClerkParameters.cs" />
     <Compile Include="Controls\CollapsingSplitContainerFactory.cs" />
     <Compile Include="DataNavigationManager.cs" />
     <Compile Include="Dumpster\ImportWordSetListener.cs" />

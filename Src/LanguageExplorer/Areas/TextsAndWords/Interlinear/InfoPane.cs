@@ -101,7 +101,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			if (xnControl == null)
 				return;
 
-			var activeClerkAtStart = RecordClerk.RecordClerkRepository.ActiveRecordClerk;
+			var activeClerkAtStart = RecordClerk.ActiveRecordClerkRepository.ActiveRecordClerk;
 			var toolChoice = PropertyTable.GetValue<string>("toolChoice");
 			if(m_xrev != null)
 			{
@@ -128,11 +128,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			Controls.Add(m_xrev);
 			// There are times when moving to the InfoPane causes the wrong ActiveClerk to be set.
 			// See FWR-3390 (and InterlinearTextsRecordClerk.OnDisplayInsertInterlinText).
-			var resetCurrentActiveClerk = RecordClerk.RecordClerkRepository.ActiveRecordClerk;
+			var resetCurrentActiveClerk = RecordClerk.ActiveRecordClerkRepository.ActiveRecordClerk;
 			if (toolChoice != "interlinearEdit" && activeClerkAtStart != null && activeClerkAtStart != resetCurrentActiveClerk)
 			{
 				// Restore active clerk from start of method.
-				RecordClerk.RecordClerkRepository.ActiveRecordClerk = activeClerkAtStart;
+				RecordClerk.ActiveRecordClerkRepository.ActiveRecordClerk = activeClerkAtStart;
 				activeClerkAtStart.ActivateUI(true);
 			}
 		}

@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using LanguageExplorer.Areas;
-using LanguageExplorer.Areas.Lists;
 using LanguageExplorer.Controls.PaneBar;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.XWorks;
@@ -20,46 +19,6 @@ namespace LanguageExplorer.Controls
 	internal static class CollapsingSplitContainerFactory
 	{
 		internal const int BasicSecondCollapseZoneWidth = 144000;
-
-		/// <summary>
-		/// Create an instance of a CollapsingSplitContainer for use by tools that are for CmPossibilities.
-		/// </summary>
-		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
-		/// <param name="dataNavigationManager"></param>
-		/// <param name="recordClerkRepository"></param>
-		/// <param name="mainCollapsingSplitContainer">The window's main CollapsingSplitContainer</param>
-		/// <param name="verticalSplitter">'true' to have a vertical splitter or 'false' to have a horizontal splitter.</param>
-		/// <param name="configurationParametersElement">Main parameters element.</param>
-		/// <param name="sliceFilterDocument">Document that has Slice filtering information.</param>
-		/// <param name="toolMachineName">Name of the tool being set up.</param>
-		/// <param name="possibilityListClerkParameters">parameter object of data needed to create the clerk and its record list.</param>
-		/// <param name="cache">The LCM cache.</param>
-		/// <param name="recordClerk">Output the RecordClerk, so caller can use it more easily.</param>
-		/// <returns>A new instance of CollapsingSplitContainer, which has been placed into "SecondControl/Panel2" of <paramref name="mainCollapsingSplitContainer"/>.</returns>
-		internal static CollapsingSplitContainer Create(FlexComponentParameters flexComponentParameters,
-			DataNavigationManager dataNavigationManager, IRecordClerkRepository recordClerkRepository,
-			ICollapsingSplitContainer mainCollapsingSplitContainer, bool verticalSplitter, XElement configurationParametersElement, XDocument sliceFilterDocument,
-			string toolMachineName,
-			PossibilityListClerkParameters possibilityListClerkParameters,
-			LcmCache cache,
-			ref RecordClerk recordClerk)
-		{
-			if (recordClerk == null)
-			{
-				recordClerk = ListsArea.CreateBasicClerkForListArea(flexComponentParameters.PropertyTable,
-					possibilityListClerkParameters);
-				// It is initialized in the following "Create" method.
-				recordClerkRepository.AddRecordClerk(recordClerk);
-			}
-			else
-			{
-				recordClerk = recordClerkRepository.GetRecordClerk(possibilityListClerkParameters.ClerkIdentifier);
-			}
-			var retVal = Create(flexComponentParameters, mainCollapsingSplitContainer, verticalSplitter, configurationParametersElement, sliceFilterDocument, toolMachineName, cache, ref recordClerk);
-			dataNavigationManager.Clerk = recordClerk;
-			recordClerkRepository.ActiveRecordClerk = recordClerk;
-			return retVal;
-		}
 
 		/// <summary>
 		/// Create an instance of a CollapsingSplitContainer.
@@ -77,7 +36,7 @@ namespace LanguageExplorer.Controls
 			ICollapsingSplitContainer mainCollapsingSplitContainer, bool verticalSplitter, XElement configurationParametersElement, XDocument sliceFilterDocument,
 			string toolMachineName,
 			LcmCache cache,
-			ref RecordClerk recordClerk)
+			RecordClerk recordClerk)
 		{
 			var panelButton = new PanelButton(flexComponentParameters.PropertyTable, null, PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(toolMachineName), LanguageExplorerResources.ksHideFields, LanguageExplorerResources.ksShowHiddenFields)
 			{
@@ -92,7 +51,6 @@ namespace LanguageExplorer.Controls
 			}
 			parentSplitterPanelControl.Controls.Clear();
 
-			recordClerk.InitializeFlexComponent(flexComponentParameters);
 			var recordBar = new RecordBar(flexComponentParameters.PropertyTable)
 			{
 				IsFlatList = false

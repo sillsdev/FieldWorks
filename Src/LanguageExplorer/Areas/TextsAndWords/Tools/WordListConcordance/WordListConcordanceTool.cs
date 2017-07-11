@@ -7,10 +7,12 @@ using System.Windows.Forms;
 using System.Xml.Linq;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using LanguageExplorer.Controls.PaneBar;
+using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks;
+using SIL.LCModel;
 using SIL.LCModel.Application;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
@@ -20,6 +22,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 	/// </summary>
 	internal sealed class WordListConcordanceTool : ITool
 	{
+		private const string OccurrencesOfSelectedWordform = "OccurrencesOfSelectedWordform";
+		private IRecordClerkRepositoryForTools _clerkRepositoryForTools;
 		private MultiPane _outerMultiPane;
 		private RecordBrowseView _mainRecordBrowseView;
 		private MultiPane _nestedMultiPane;
@@ -85,12 +89,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 			MultiPaneFactory.RemoveFromParentAndDispose(
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
 				majorFlexComponentParameters.DataNavigationManager,
-				majorFlexComponentParameters.RecordClerkRepository,
+				majorFlexComponentParameters.RecordClerkRepositoryForTools,
 				ref _outerMultiPane);
 			_mainRecordBrowseView = null;
 			_nestedMultiPane = null;
 			_nestedRecordBrowseView = null;
-			_recordClerkProvidingOwner = null;
 			_interlinMasterNoTitleBar = null;
 		}
 
@@ -102,14 +105,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			_clerkRepositoryForTools = majorFlexComponentParameters.RecordClerkRepositoryForTools;
+			if (_recordClerkProvidingOwner == null)
+			{
+				_recordClerkProvidingOwner = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(TextAndWordsArea.ConcordanceWords, TextAndWordsArea.ConcordanceWordsFactoryMethod);
+			}
 			if (_mainRecordClerk == null)
 			{
-				var decorator = new ConcDecorator(majorFlexComponentParameters.LcmCache.ServiceLocator);
-				_recordClerkProvidingOwner = new InterlinearTextsRecordClerk(majorFlexComponentParameters.LcmCache.LanguageProject, decorator);
-				_recordClerkProvidingOwner.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
-				_mainRecordClerk = new RecordClerk("OccurrencesOfSelectedWordform", new RecordList(decorator, false, ConcDecorator.kflidWfOccurrences), new PropertyRecordSorter("ShortName"), "Default", null, true, true, _recordClerkProvidingOwner);
-				_mainRecordClerk.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
-				majorFlexComponentParameters.RecordClerkRepository.AddRecordClerk(_mainRecordClerk);
+				_mainRecordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(OccurrencesOfSelectedWordform, FactoryMethod);
 			}
 
 			var nestedMultiPaneParameters = new MultiPaneParameters
@@ -151,7 +154,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 
 			_interlinMasterNoTitleBar.FinishInitialization();
 			majorFlexComponentParameters.DataNavigationManager.Clerk = _mainRecordClerk;
-			majorFlexComponentParameters.RecordClerkRepository.ActiveRecordClerk = _mainRecordClerk;
+			majorFlexComponentParameters.RecordClerkRepositoryForTools.ActiveRecordClerk = _mainRecordClerk;
 		}
 
 		/// <summary>
@@ -213,5 +216,19 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 		public Image Icon => Images.SideBySideView.SetBackgroundColor(Color.Magenta);
 
 		#endregion
+
+		private static RecordClerk FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId)
+		{
+			Guard.AssertThat(clerkId == OccurrencesOfSelectedWordform, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{OccurrencesOfSelectedWordform}'.");
+
+			return new RecordClerk(clerkId,
+				new RecordList(new ConcDecorator(cache.ServiceLocator), false, ConcDecorator.kflidWfOccurrences),
+				new PropertyRecordSorter("ShortName"),
+				"Default",
+				null,
+				true,
+				true,
+				((IRecordClerkRepositoryForTools)RecordClerk.ActiveRecordClerkRepository).GetRecordClerk(TextAndWordsArea.ConcordanceWords, TextAndWordsArea.ConcordanceWordsFactoryMethod));
+		}
 	}
 }

@@ -160,7 +160,7 @@ namespace SIL.FieldWorks.XWorks
 				var parameter = new Tuple<string, string, XmlNode[]>(area, tool, collector);
 				publisher.Publish("GetContentControlParameters", parameter);
 				var parameters = collector[0].SelectSingleNode(".//parameters[@clerk]");
-				var currentClerk = RecordClerk.RecordClerkRepository.ActiveRecordClerk;
+				var currentClerk = RecordClerk.ActiveRecordClerkRepository.ActiveRecordClerk;
 				if (DoesClerkMatchParams(currentClerk, parameters))
 					return null; // No need to juggle clerks if the one we want is already active
 

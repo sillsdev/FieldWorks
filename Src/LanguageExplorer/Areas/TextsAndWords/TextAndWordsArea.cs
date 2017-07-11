@@ -4,7 +4,11 @@
 
 using System.Collections.Generic;
 using System.Drawing;
+using LanguageExplorer.Areas.TextsAndWords.Interlinear;
+using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.XWorks;
+using SIL.LCModel;
 
 namespace LanguageExplorer.Areas.TextsAndWords
 {
@@ -13,7 +17,8 @@ namespace LanguageExplorer.Areas.TextsAndWords
 	/// </summary>
 	internal sealed class TextAndWordsArea : IArea
 	{
-		private readonly IToolRepository m_toolRepository;
+		internal const string ConcordanceWords = "concordanceWords";
+		private readonly IToolRepository _toolRepository;
 
 		/// <summary>
 		/// Contructor used by Reflection to feed the tool repository to the area.
@@ -21,7 +26,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// <param name="toolRepository"></param>
 		internal TextAndWordsArea(IToolRepository toolRepository)
 		{
-			m_toolRepository = toolRepository;
+			_toolRepository = toolRepository;
 		}
 
 		#region Implementation of IPropertyTableProvider
@@ -112,7 +117,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// </summary>
 		public void PrepareToRefresh()
 		{
-			m_toolRepository.GetPersistedOrDefaultToolForArea(this).PrepareToRefresh();
+			_toolRepository.GetPersistedOrDefaultToolForArea(this).PrepareToRefresh();
 		}
 
 		/// <summary>
@@ -120,7 +125,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// </summary>
 		public void FinishRefresh()
 		{
-			m_toolRepository.GetPersistedOrDefaultToolForArea(this).FinishRefresh();
+			_toolRepository.GetPersistedOrDefaultToolForArea(this).FinishRefresh();
 		}
 
 		/// <summary>
@@ -131,7 +136,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		{
 			PropertyTable.SetProperty("InitialArea", MachineName, SettingsGroup.LocalSettings, true, false);
 
-			var myCurrentTool = m_toolRepository.GetPersistedOrDefaultToolForArea(this);
+			var myCurrentTool = _toolRepository.GetPersistedOrDefaultToolForArea(this);
 			myCurrentTool.EnsurePropertiesAreCurrent();
 		}
 
@@ -143,19 +148,12 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// Get the internal name of the component.
 		/// </summary>
 		/// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
-		public string MachineName
-		{
-			get { return "textAndWords"; }
-		}
+		public string MachineName => "textAndWords";
 
 		/// <summary>
 		/// User-visible localizable component name.
 		/// </summary>
-		public string UiName
-		{
-			get { return "Texts & Words"; }
-		}
-
+		public string UiName => "Texts & Words";
 		#endregion
 
 		#region Implementation of IArea
@@ -167,7 +165,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// <returns>The last persisted tool or the default tool for the area.</returns>
 		public ITool GetPersistedOrDefaultToolForArea()
 		{
-			return m_toolRepository.GetPersistedOrDefaultToolForArea(this);
+			return _toolRepository.GetPersistedOrDefaultToolForArea(this);
 		}
 
 		/// <summary>
@@ -195,7 +193,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 					"bulkEditWordforms",
 					"corpusStatistics"
 				};
-				return m_toolRepository.AllToolsForAreaInOrder(myToolsInOrder, MachineName);
+				return _toolRepository.AllToolsForAreaInOrder(myToolsInOrder, MachineName);
 			}
 		}
 
@@ -208,5 +206,12 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		}
 
 		#endregion
+
+		internal static RecordClerk ConcordanceWordsFactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId)
+		{
+			Guard.AssertThat(clerkId == ConcordanceWords, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{ConcordanceWords}'.");
+
+			return new InterlinearTextsRecordClerk(cache.LanguageProject, new ConcDecorator(cache.ServiceLocator));
+		}
 	}
 }

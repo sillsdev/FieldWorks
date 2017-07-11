@@ -6,9 +6,12 @@ using System.Drawing;
 using System.Xml.Linq;
 using LanguageExplorer.Areas.Lists;
 using LanguageExplorer.Controls;
+using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks;
+using SIL.LCModel;
 using SIL.LCModel.Application;
 
 namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
@@ -18,6 +21,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 	/// </summary>
 	internal sealed class PosEditTool : ITool
 	{
+		private const string Categories_withTreeBarHandler = "categories_withTreeBarHandler";
 		/// <summary>
 		/// Main control to the right of the side bar control. This holds a RecordBar on the left and a PaneBarContainer on the right.
 		/// The RecordBar has no top PaneBar for information, menus, etc.
@@ -86,7 +90,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 			CollapsingSplitContainerFactory.RemoveFromParentAndDispose(
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
 				majorFlexComponentParameters.DataNavigationManager,
-				majorFlexComponentParameters.RecordClerkRepository,
+				majorFlexComponentParameters.RecordClerkRepositoryForTools,
 				ref _collapsingSplitContainer);
 		}
 
@@ -100,16 +104,15 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 		{
 			if (_recordClerk == null)
 			{
-				_recordClerk = GrammarArea.CreateCategoriesClerkForGrammarArea(PropertyTable, majorFlexComponentParameters.LcmCache, true);
-				majorFlexComponentParameters.RecordClerkRepository.AddRecordClerk(_recordClerk);
+				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(Categories_withTreeBarHandler, FactoryMethod);
 			}
 			_collapsingSplitContainer = CollapsingSplitContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer, true,
 				XDocument.Parse(ListResources.PosEditParameters).Root, XDocument.Parse(AreaResources.HideAdvancedListItemFields),
 				MachineName,
 				majorFlexComponentParameters.LcmCache,
-				ref _recordClerk);
+				_recordClerk);
 			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
-			majorFlexComponentParameters.RecordClerkRepository.ActiveRecordClerk = _recordClerk;
+			majorFlexComponentParameters.RecordClerkRepositoryForTools.ActiveRecordClerk = _recordClerk;
 		}
 
 		/// <summary>
@@ -166,5 +169,19 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 		public Image Icon => Images.EditView.SetBackgroundColor(Color.Magenta);
 
 		#endregion
+
+		private static RecordClerk FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId)
+		{
+			Guard.AssertThat(clerkId == Categories_withTreeBarHandler, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{Categories_withTreeBarHandler}'.");
+
+			return new RecordClerk(clerkId,
+				new PossibilityRecordList(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), cache.LanguageProject.PartsOfSpeechOA),
+				new PropertyRecordSorter("ShortName"),
+				"Default",
+				null,
+				false,
+				false,
+				new PossibilityTreeBarHandler(flexComponentParameters.PropertyTable, true, true, false, "best analorvern"));
+		}
 	}
 }

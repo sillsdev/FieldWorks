@@ -6,7 +6,6 @@ using System.Drawing;
 using System.Xml.Linq;
 using LanguageExplorer.Controls;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks;
 using SIL.LCModel;
@@ -81,7 +80,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.BulkEditPhonemes
 			PaneBarContainerFactory.RemoveFromParentAndDispose(
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
 				majorFlexComponentParameters.DataNavigationManager,
-				majorFlexComponentParameters.RecordClerkRepository,
+				majorFlexComponentParameters.RecordClerkRepositoryForTools,
 				ref _paneBarContainer);
 			_assignFeaturesToPhonemesView = null;
 		}
@@ -104,9 +103,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.BulkEditPhonemes
 			}
 			if (_recordClerk == null)
 			{
-				_recordClerk = new RecordClerk("phonemes", new RecordList(majorFlexComponentParameters.LcmCache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), true, PhPhonemeSetTags.kflidPhonemes, majorFlexComponentParameters.LcmCache.LanguageProject.PhonologicalDataOA.PhonemeSetsOS[0], "Phonemes"), new PropertyRecordSorter("ShortName"), "Default", null, false, false);
-				_recordClerk.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
-				majorFlexComponentParameters.RecordClerkRepository.AddRecordClerk(_recordClerk);
+				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(GrammarArea.Phonemes, GrammarArea.PhonemesFactoryMethod);
 			}
 			_assignFeaturesToPhonemesView = new AssignFeaturesToPhonemes(XDocument.Parse(GrammarResources.BulkEditPhonemesToolParameters).Root, majorFlexComponentParameters.LcmCache, _recordClerk);
 
@@ -115,7 +112,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.BulkEditPhonemes
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
 				_assignFeaturesToPhonemesView);
 			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
-			majorFlexComponentParameters.RecordClerkRepository.ActiveRecordClerk = _recordClerk;
+			majorFlexComponentParameters.RecordClerkRepositoryForTools.ActiveRecordClerk = _recordClerk;
 		}
 
 		/// <summary>

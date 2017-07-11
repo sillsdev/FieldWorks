@@ -78,7 +78,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Browse
 			PaneBarContainerFactory.RemoveFromParentAndDispose(
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
 				majorFlexComponentParameters.DataNavigationManager,
-				majorFlexComponentParameters.RecordClerkRepository,
+				majorFlexComponentParameters.RecordClerkRepositoryForTools,
 				ref _paneBarContainer);
 			_recordBrowseView = null;
 		}
@@ -93,9 +93,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Browse
 		{
 			if (_recordClerk == null)
 			{
-				_recordClerk = LexiconArea.CreateBasicClerkForLexiconArea(majorFlexComponentParameters.LcmCache);
-				_recordClerk.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
-				majorFlexComponentParameters.RecordClerkRepository.AddRecordClerk(_recordClerk);
+				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(LexiconArea.Entries, LexiconArea.EntriesFactoryMethod);
 			}
 			var root = XDocument.Parse(LexiconResources.LexiconBrowseParameters).Root;
 			var columnsElement = XElement.Parse(LexiconResources.LexiconBrowseDialogColumnDefinitions);
@@ -107,7 +105,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Browse
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
 				_recordBrowseView);
 			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
-			majorFlexComponentParameters.RecordClerkRepository.ActiveRecordClerk = _recordClerk;
+			majorFlexComponentParameters.RecordClerkRepositoryForTools.ActiveRecordClerk = _recordClerk;
 		}
 
 		/// <summary>

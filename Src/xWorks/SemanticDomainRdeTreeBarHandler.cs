@@ -37,18 +37,18 @@ namespace SIL.FieldWorks.XWorks
 		private XElement m_configurationParametersElement;
 
 		/// <summary />
-		public SemanticDomainRdeTreeBarHandler(IPropertyTable propertyTable, XElement configurationParametersElement, IPaneBar paneBar)
+		public SemanticDomainRdeTreeBarHandler(IPropertyTable propertyTable, XElement configurationParametersElement)
 			: base(propertyTable, bool.Parse(configurationParametersElement.Attribute("expand").Value), bool.Parse(configurationParametersElement.Attribute("hierarchical").Value), bool.Parse(configurationParametersElement.Attribute("includeAbbr").Value), configurationParametersElement.Attribute("ws").Value)
 		{
 			m_configurationParametersElement = configurationParametersElement;
-			m_titleBar = paneBar;
 
 			m_semDomRepo = m_cache.ServiceLocator.GetInstance<ICmSemanticDomainRepository>();
 			m_stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
 		}
 
-		internal void FinishInitialization()
+		internal void FinishInitialization(IPaneBar paneBar)
 		{
+			m_titleBar = paneBar;
 			var treeBarControl = GetTreeBarControl();
 			if (treeBarControl == null)
 				return;

@@ -4,6 +4,7 @@
 
 using System.Collections.Generic;
 using System.Drawing;
+using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.XWorks;
@@ -17,7 +18,8 @@ namespace LanguageExplorer.Areas.Grammar
 	/// </summary>
 	internal sealed class GrammarArea : IArea
 	{
-		private readonly IToolRepository m_toolRepository;
+		internal const string Phonemes = "phonemes";
+		private readonly IToolRepository _toolRepository;
 
 		/// <summary>
 		/// Contructor used by Reflection to feed the tool repository to the area.
@@ -25,15 +27,7 @@ namespace LanguageExplorer.Areas.Grammar
 		/// <param name="toolRepository"></param>
 		internal GrammarArea(IToolRepository toolRepository)
 		{
-			m_toolRepository = toolRepository;
-		}
-
-		internal static RecordClerk CreateCategoriesClerkForGrammarArea(IPropertyTable propertyTable, LcmCache cache, bool includeTreeBarHandler)
-		{
-			var recordList = new PossibilityRecordList(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), cache.LanguageProject.PartsOfSpeechOA);
-			return includeTreeBarHandler
-				? new RecordClerk("categories", recordList, new PropertyRecordSorter("ShortName"), "Default", null, false, false, new PossibilityTreeBarHandler(propertyTable, true, true, false, "best analorvern"))
-				: new RecordClerk("categories", recordList, new PropertyRecordSorter("ShortName"), "Default", null, false, false);
+			_toolRepository = toolRepository;
 		}
 
 		#region Implementation of IPropertyTableProvider
@@ -107,7 +101,7 @@ namespace LanguageExplorer.Areas.Grammar
 		/// </summary>
 		public void PrepareToRefresh()
 		{
-			m_toolRepository.GetPersistedOrDefaultToolForArea(this).PrepareToRefresh();
+			_toolRepository.GetPersistedOrDefaultToolForArea(this).PrepareToRefresh();
 		}
 
 		/// <summary>
@@ -115,7 +109,7 @@ namespace LanguageExplorer.Areas.Grammar
 		/// </summary>
 		public void FinishRefresh()
 		{
-			m_toolRepository.GetPersistedOrDefaultToolForArea(this).FinishRefresh();
+			_toolRepository.GetPersistedOrDefaultToolForArea(this).FinishRefresh();
 		}
 
 		/// <summary>
@@ -126,7 +120,7 @@ namespace LanguageExplorer.Areas.Grammar
 		{
 			PropertyTable.SetProperty("InitialArea", MachineName, SettingsGroup.LocalSettings, true, false);
 
-			var myCurrentTool = m_toolRepository.GetPersistedOrDefaultToolForArea(this);
+			var myCurrentTool = _toolRepository.GetPersistedOrDefaultToolForArea(this);
 			myCurrentTool.EnsurePropertiesAreCurrent();
 		}
 
@@ -156,7 +150,7 @@ namespace LanguageExplorer.Areas.Grammar
 		/// <returns>The last persisted tool or the default tool for the area.</returns>
 		public ITool GetPersistedOrDefaultToolForArea()
 		{
-			return m_toolRepository.GetPersistedOrDefaultToolForArea(this);
+			return _toolRepository.GetPersistedOrDefaultToolForArea(this);
 		}
 
 		/// <summary>
@@ -188,7 +182,7 @@ namespace LanguageExplorer.Areas.Grammar
 					"grammarSketch",
 					"lexiconProblems"
 				};
-				return m_toolRepository.AllToolsForAreaInOrder(myToolsInOrder, MachineName);
+				return _toolRepository.AllToolsForAreaInOrder(myToolsInOrder, MachineName);
 			}
 		}
 
@@ -198,5 +192,18 @@ namespace LanguageExplorer.Areas.Grammar
 		public Image Icon => LanguageExplorerResources.Grammar.ToBitmap();
 
 		#endregion
+
+		internal static RecordClerk PhonemesFactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId)
+		{
+			Guard.AssertThat(clerkId == Phonemes, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{Phonemes}'.");
+
+			return new RecordClerk(clerkId,
+				new RecordList(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), true, PhPhonemeSetTags.kflidPhonemes, cache.LanguageProject.PhonologicalDataOA.PhonemeSetsOS[0], "Phonemes"),
+				new PropertyRecordSorter("ShortName"),
+				"Default",
+				null,
+				false,
+				false);
+		}
 	}
 }

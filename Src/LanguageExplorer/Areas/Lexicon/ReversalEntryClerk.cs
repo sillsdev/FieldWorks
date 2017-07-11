@@ -13,16 +13,7 @@ namespace LanguageExplorer.Areas.Lexicon
 	/// </summary>
 	internal sealed class ReversalEntryClerk : ReversalClerk
 	{
-		///// <summary>
-		///// Contructor.
-		///// </summary>
-		///// <param name="id">Clerk id/name.</param>
-		///// <param name="recordList">Record list for the clerk.</param>
-		///// <param name="defaultSorter">The default record sorter.</param>
-		///// <param name="defaultSortLabel"></param>
-		///// <param name="defaultFilter">The default filter to use.</param>
-		///// <param name="allowDeletions"></param>
-		///// <param name="shouldHandleDeletion"></param>
+		/// <summary />
 		internal ReversalEntryClerk(ILcmServiceLocator serviceLocator, ISilDataAccessManaged decorator, IReversalIndex reversalIndex)
 			: base("AllReversalEntries", new AllReversalEntriesRecordList(serviceLocator, decorator, reversalIndex), new PropertyRecordSorter("ShortName"), "Default", null, true, true)
 		{

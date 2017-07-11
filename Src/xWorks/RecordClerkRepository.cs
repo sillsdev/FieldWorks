@@ -4,6 +4,8 @@
 
 using System;
 using System.Collections.Generic;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -15,11 +17,19 @@ namespace SIL.FieldWorks.XWorks
 	///		Eventually, it may be added to the IFlexComponent InitializeFlexComponent method.
 	/// 2. When the implementation is disposed, then so are all of its remaining clerks.
 	/// </remarks>
-	internal sealed class RecordClerkRepository : IRecordClerkRepository
+	internal sealed class RecordClerkRepository : IRecordClerkRepositoryForTools
 	{
+		private readonly FlexComponentParameters _flexComponentParameters;
+		private readonly LcmCache _cache;
 		private readonly Dictionary<string, RecordClerk> _clerks = new Dictionary<string, RecordClerk>();
 		private RecordClerk _activeRecordClerk;
 		private IRecordClerkRepository AsRecordClerkRepository => this;
+
+		internal RecordClerkRepository(LcmCache cache, FlexComponentParameters flexComponentParameters)
+		{
+			_cache = cache;
+			_flexComponentParameters = flexComponentParameters;
+		}
 
 		#region Implementation of IRecordClerkRepository
 		/// <summary>
@@ -40,7 +50,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			if (_clerks.ContainsKey(recordClerk.Id))
 			{
-				throw new InvalidOperationException($"The clerk with an '{recordClerk.Id}' is alredy in the repository.");
+				throw new InvalidOperationException($"The clerk with an '{recordClerk.Id}' is already in the repository.");
 			}
 			_clerks.Add(recordClerk.Id, recordClerk);
 		}
@@ -89,17 +99,15 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		/// <param name="clerkId">The Id of the clerk to return.</param>
 		/// <returns>The clerk with the given <paramref name="clerkId"/>, or null if not found.</returns>
-		/// <exception cref="ArgumentNullException">
-		/// Thrown if <paramref name="clerkId"/> is null, an empty string, or a whitespace only string.
-		/// </exception>
 		RecordClerk IRecordClerkRepository.GetRecordClerk(string clerkId)
 		{
 			if (string.IsNullOrWhiteSpace(clerkId))
 				throw new ArgumentNullException(nameof(clerkId));
 
-			RecordClerk retVal;
-			_clerks.TryGetValue(clerkId, out retVal);
-			return retVal;
+			RecordClerk clerkToGet;
+			_clerks.TryGetValue(clerkId, out clerkToGet);
+
+			return clerkToGet;
 		}
 
 		/// <summary>
@@ -121,6 +129,28 @@ namespace SIL.FieldWorks.XWorks
 			{
 				return _activeRecordClerk;
 			}
+		}
+
+		/// <summary>
+		/// Get a clerk with the given <paramref name="clerkId"/>, creating one, if needed using <paramref name="clerkFactoryMethod"/>.
+		/// </summary>
+		/// <param name="clerkId">The clerl Id to return.</param>
+		/// <param name="clerkFactoryMethod">The method called to create the clerk, if not found in the repository.</param>
+		/// <returns>A RecordClerk instance with the specified Id.</returns>
+		/// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="clerkFactoryMethod"/> doesn't know how to make a clerk with the given Id.</exception>
+		RecordClerk IRecordClerkRepositoryForTools.GetRecordClerk(string clerkId, Func<LcmCache, FlexComponentParameters, string, RecordClerk> clerkFactoryMethod)
+		{
+			RecordClerk retVal;
+			if (_clerks.TryGetValue(clerkId, out retVal))
+			{
+				return retVal;
+			}
+
+			retVal = clerkFactoryMethod(_cache, _flexComponentParameters, clerkId);
+			retVal.InitializeFlexComponent(_flexComponentParameters);
+			AsRecordClerkRepository.AddRecordClerk(retVal);
+
+			return retVal;
 		}
 		#endregion
 

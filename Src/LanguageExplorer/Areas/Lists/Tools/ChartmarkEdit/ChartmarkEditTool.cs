@@ -5,9 +5,12 @@
 using System.Drawing;
 using System.Xml.Linq;
 using LanguageExplorer.Controls;
+using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks;
+using SIL.LCModel;
 using SIL.LCModel.Application;
 
 namespace LanguageExplorer.Areas.Lists.Tools.ChartmarkEdit
@@ -17,6 +20,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ChartmarkEdit
 	/// </summary>
 	internal sealed class ChartmarkEditTool : ITool
 	{
+		private const string DiscChartMarkerList = "DiscChartMarkerList";
 		/// <summary>
 		/// Main control to the right of the side bar control. This holds a RecordBar on the left and a PaneBarContainer on the right.
 		/// The RecordBar has no top PaneBar for information, menus, etc.
@@ -81,7 +85,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ChartmarkEdit
 			CollapsingSplitContainerFactory.RemoveFromParentAndDispose(
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
 				majorFlexComponentParameters.DataNavigationManager,
-				majorFlexComponentParameters.RecordClerkRepository,
+				majorFlexComponentParameters.RecordClerkRepositoryForTools,
 				ref _collapsingSplitContainer);
 		}
 
@@ -93,17 +97,21 @@ namespace LanguageExplorer.Areas.Lists.Tools.ChartmarkEdit
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			if (_recordClerk == null)
+			{
+				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(DiscChartMarkerList, FactoryMethod);
+			}
 			_collapsingSplitContainer = CollapsingSplitContainerFactory.Create(
 				majorFlexComponentParameters.FlexComponentParameters,
-				majorFlexComponentParameters.DataNavigationManager,
-				majorFlexComponentParameters.RecordClerkRepository,
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
 				true,
-				XDocument.Parse(ListResources.ChartmarkEditParameters).Root, XDocument.Parse(ListResources.ListToolsSliceFilters),
+				XDocument.Parse(ListResources.ChartmarkEditParameters).Root,
+				XDocument.Parse(ListResources.ListToolsSliceFilters),
 				MachineName,
-				new PossibilityListClerkParameters("DiscChartMarkerList", majorFlexComponentParameters.LcmCache.LanguageProject.DiscourseDataOA.ChartMarkersOA, false, true, false, "best analysis"),
 				majorFlexComponentParameters.LcmCache,
-				ref _recordClerk);
+				_recordClerk);
+			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
+			majorFlexComponentParameters.RecordClerkRepositoryForTools.ActiveRecordClerk = _recordClerk;
 		}
 
 		/// <summary>
@@ -165,5 +173,19 @@ namespace LanguageExplorer.Areas.Lists.Tools.ChartmarkEdit
 		public Image Icon => Images.SideBySideView.SetBackgroundColor(Color.Magenta);
 
 		#endregion
+
+		private static RecordClerk FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId)
+		{
+			Guard.AssertThat(clerkId == DiscChartMarkerList, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{DiscChartMarkerList}'.");
+
+			return new RecordClerk(clerkId,
+				new PossibilityRecordList(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), cache.LanguageProject.DiscourseDataOA.ChartMarkersOA),
+				new PropertyRecordSorter("ShortName"),
+				"Default",
+				null,
+				true,
+				true,
+				new PossibilityTreeBarHandler(flexComponentParameters.PropertyTable, false, true, false, "best analysis"));
+		}
 	}
 }

@@ -7,9 +7,11 @@ using System.Windows.Forms;
 using System.Xml.Linq;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using LanguageExplorer.Controls;
+using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks;
+using SIL.LCModel;
 using SIL.LCModel.Application;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
@@ -19,6 +21,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 	/// </summary>
 	internal sealed class ComplexConcordanceTool : ITool
 	{
+		private const string ComplexConcOccurrencesOfSelectedUnit = "complexConcOccurrencesOfSelectedUnit";
 		private MultiPane _concordanceContainer;
 		private ComplexConcControl _complexConcControl;
 		private RecordBrowseView _recordBrowseView;
@@ -82,7 +85,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 			MultiPaneFactory.RemoveFromParentAndDispose(
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
 				majorFlexComponentParameters.DataNavigationManager,
-				majorFlexComponentParameters.RecordClerkRepository,
+				majorFlexComponentParameters.RecordClerkRepositoryForTools,
 				ref _concordanceContainer);
 
 			_complexConcControl = null;
@@ -100,10 +103,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 		{
 			if (_recordClerk == null)
 			{
-				var decorator = new ConcDecorator(majorFlexComponentParameters.LcmCache.ServiceLocator);
-				_recordClerk = new OccurrencesOfSelectedUnit("complexConcOccurrencesOfSelectedUnit", decorator);
-				_recordClerk.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
-				majorFlexComponentParameters.RecordClerkRepository.AddRecordClerk(_recordClerk);
+				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(ComplexConcOccurrencesOfSelectedUnit, FactoryMethod);
 			}
 			var mainConcordanceContainerParameters = new MultiPaneParameters
 			{
@@ -148,7 +148,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 
 			_interlinMasterNoTitleBar.FinishInitialization();
 			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
-			majorFlexComponentParameters.RecordClerkRepository.ActiveRecordClerk = _recordClerk;
+			majorFlexComponentParameters.RecordClerkRepositoryForTools.ActiveRecordClerk = _recordClerk;
 		}
 
 		/// <summary>
@@ -206,5 +206,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 		public Image Icon => Images.SideBySideView.SetBackgroundColor(Color.Magenta);
 
 		#endregion
+
+		private static RecordClerk FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId)
+		{
+			Guard.AssertThat(clerkId == ComplexConcOccurrencesOfSelectedUnit, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{ComplexConcOccurrencesOfSelectedUnit}'.");
+
+			return new OccurrencesOfSelectedUnit(clerkId, new ConcDecorator(cache.ServiceLocator));
+		}
 	}
 }

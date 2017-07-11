@@ -157,6 +157,7 @@ namespace SIL.FieldWorks.XWorks
 		/// Create bare-bones RecordList for made up owner and a property on it.
 		/// </summary>
 		internal RecordList(ISilDataAccessManaged decorator)
+			: this(decorator, false)
 		{
 		}
 
@@ -198,7 +199,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="analysisWs">pass in 'true' for the DefaultAnalysisWritingSystem
 		/// pass in 'false' for the DefaultVernacularWritingSystem</param>
 		/// <returns>return Font size from stylesheet</returns>
-		static protected int GetFontHeightFromStylesheet(LcmCache cache, IPropertyTable propertyTable, bool analysisWs)
+		protected static int GetFontHeightFromStylesheet(LcmCache cache, IPropertyTable propertyTable, bool analysisWs)
 		{
 			int fontHeight;
 			IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(propertyTable);

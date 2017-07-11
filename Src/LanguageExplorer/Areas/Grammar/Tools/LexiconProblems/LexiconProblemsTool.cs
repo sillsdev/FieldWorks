@@ -5,6 +5,7 @@
 using System.Drawing;
 using System.Xml.Linq;
 using LanguageExplorer.Controls;
+using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.Resources;
@@ -19,6 +20,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.LexiconProblems
 	/// </summary>
 	internal sealed class LexiconProblemsTool : ITool
 	{
+		private const string LexProblems = "lexProblems";
 		/// <summary>
 		/// Main control to the right of the side bar control. This holds a RecordBar on the left and a PaneBarContainer on the right.
 		/// The RecordBar on the left has no top PaneBar for information, menus, etc.
@@ -83,7 +85,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.LexiconProblems
 			CollapsingSplitContainerFactory.RemoveFromParentAndDispose(
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
 				majorFlexComponentParameters.DataNavigationManager,
-				majorFlexComponentParameters.RecordClerkRepository,
+				majorFlexComponentParameters.RecordClerkRepositoryForTools,
 				ref _collapsingSplitContainer);
 		}
 
@@ -98,12 +100,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.LexiconProblems
 			var root = XDocument.Parse(GrammarResources.LexiconProblemsParameters).Root;
 			if (_recordClerk == null)
 			{
-				var recordList = new RecordList(majorFlexComponentParameters.LcmCache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), true, LangProjectTags.kflidAnnotations, majorFlexComponentParameters.LcmCache.LanguageProject, "Annotations");
-				var recordBarHandler = new RecordBarListHandler(PropertyTable, true, true, false, "best analorvern");
-				var probAnnFilter = new ProblemAnnotationFilter();
-				probAnnFilter.Init(majorFlexComponentParameters.LcmCache, root.Element("filterElement"));
-				_recordClerk = new RecordClerk("lexProblems", recordList, new PropertyRecordSorter("ShortName"), "Default", probAnnFilter, true, true, recordBarHandler);
-				majorFlexComponentParameters.RecordClerkRepository.AddRecordClerk(_recordClerk);
+				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(LexProblems, FactoryMethod);
 			}
 			_collapsingSplitContainer = CollapsingSplitContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters,
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
@@ -112,9 +109,9 @@ namespace LanguageExplorer.Areas.Grammar.Tools.LexiconProblems
 				null,
 				MachineName,
 				majorFlexComponentParameters.LcmCache,
-				ref _recordClerk);
+				_recordClerk);
 			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
-			majorFlexComponentParameters.RecordClerkRepository.ActiveRecordClerk = _recordClerk;
+			majorFlexComponentParameters.RecordClerkRepositoryForTools.ActiveRecordClerk = _recordClerk;
 		}
 
 		/// <summary>
@@ -171,5 +168,21 @@ namespace LanguageExplorer.Areas.Grammar.Tools.LexiconProblems
 		public Image Icon => Images.SideBySideView.SetBackgroundColor(Color.Magenta);
 
 		#endregion
+
+		private static RecordClerk FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId)
+		{
+			Guard.AssertThat(clerkId == LexProblems, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{LexProblems}'.");
+
+			var probAnnFilter = new ProblemAnnotationFilter();
+			probAnnFilter.Init(cache, XDocument.Parse(GrammarResources.LexiconProblemsParameters).Root.Element("filterElement"));
+			return new RecordClerk(clerkId,
+				new RecordList(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), true, LangProjectTags.kflidAnnotations, cache.LanguageProject, "Annotations"),
+				new PropertyRecordSorter("ShortName"),
+				"Default",
+				probAnnFilter,
+				true,
+				true,
+				new RecordBarListHandler(flexComponentParameters.PropertyTable, true, true, false, "best analorvern"));
+		}
 	}
 }

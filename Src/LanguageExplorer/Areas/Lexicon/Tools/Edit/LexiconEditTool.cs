@@ -98,7 +98,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			MultiPaneFactory.RemoveFromParentAndDispose(
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
 				majorFlexComponentParameters.DataNavigationManager,
-				majorFlexComponentParameters.RecordClerkRepository,
+				majorFlexComponentParameters.RecordClerkRepositoryForTools,
 				ref _multiPane);
 			_recordBrowseView = null;
 			_innerMultiPane = null;
@@ -114,9 +114,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		{
 			if (_recordClerk == null)
 			{
-				_recordClerk = LexiconArea.CreateBasicClerkForLexiconArea(majorFlexComponentParameters.LcmCache);
-				_recordClerk.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
-				majorFlexComponentParameters.RecordClerkRepository.AddRecordClerk(_recordClerk);
+				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(LexiconArea.Entries, LexiconArea.EntriesFactoryMethod);
 			}
 
 			var root = XDocument.Parse(LexiconResources.LexiconBrowseParameters).Root;
@@ -192,7 +190,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			recordEditView.FinishInitialization();
 			((RecordDocXmlView)nestedMultiPaneParameters.FirstControlParameters.Control).ReallyShowRecordNow();
 			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
-			majorFlexComponentParameters.RecordClerkRepository.ActiveRecordClerk = _recordClerk;
+			majorFlexComponentParameters.RecordClerkRepositoryForTools.ActiveRecordClerk = _recordClerk;
 		}
 
 		private ContextMenuStrip CreateContextMenuStrip()

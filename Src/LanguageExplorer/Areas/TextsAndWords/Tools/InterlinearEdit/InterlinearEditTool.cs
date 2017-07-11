@@ -7,9 +7,11 @@ using System.Windows.Forms;
 using System.Xml.Linq;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using LanguageExplorer.Controls.PaneBar;
+using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks;
+using SIL.LCModel;
 using SIL.LCModel.Application;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
@@ -19,6 +21,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 	/// </summary>
 	internal sealed class InterlinearEditTool : ITool
 	{
+		private const string InterlinearTexts = "interlinearTexts";
 		private MultiPane _multiPane;
 		private RecordBrowseView _recordBrowseView;
 		private RecordClerk _recordClerk;
@@ -83,7 +86,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 			MultiPaneFactory.RemoveFromParentAndDispose(
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
 				majorFlexComponentParameters.DataNavigationManager,
-				majorFlexComponentParameters.RecordClerkRepository,
+				majorFlexComponentParameters.RecordClerkRepositoryForTools,
 				ref _multiPane);
 			_recordBrowseView = null;
 			_interlinMaster = null;
@@ -99,10 +102,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 		{
 			if (_recordClerk == null)
 			{
-				var decorator = new InterestingTextsDecorator(majorFlexComponentParameters.LcmCache.ServiceLocator, PropertyTable);
-				_recordClerk = new InterlinearTextsRecordClerk(majorFlexComponentParameters.LcmCache.LanguageProject, decorator);
-				_recordClerk.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
-				majorFlexComponentParameters.RecordClerkRepository.AddRecordClerk(_recordClerk);
+				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(InterlinearTexts, FactoryMethod);
 			}
 			var multiPaneParameters = new MultiPaneParameters
 			{
@@ -130,7 +130,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 			_interlinMaster.FinishInitialization();
 			_interlinMaster.BringToFront();
 			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
-			majorFlexComponentParameters.RecordClerkRepository.ActiveRecordClerk = _recordClerk;
+			majorFlexComponentParameters.RecordClerkRepositoryForTools.ActiveRecordClerk = _recordClerk;
 		}
 
 		/// <summary>
@@ -190,5 +190,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 		public Image Icon => Images.EditView.SetBackgroundColor(Color.Magenta);
 
 		#endregion
+
+		private static RecordClerk FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId)
+		{
+			Guard.AssertThat(clerkId == InterlinearTexts, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{InterlinearTexts}'.");
+
+			return new OccurrencesOfSelectedUnit(clerkId, new ConcDecorator(cache.ServiceLocator));
+		}
 	}
 }

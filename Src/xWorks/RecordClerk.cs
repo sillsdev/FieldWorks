@@ -34,8 +34,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using System.Xml.Linq;
-using System.Xml.XPath;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.ViewsInterfaces;
@@ -84,7 +82,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Holder of the repository (for now, at least).
 		/// </summary>
-		internal static IRecordClerkRepository RecordClerkRepository { get; set; }
+		internal static IRecordClerkRepository ActiveRecordClerkRepository { get; set; }
 
 		/// <summary>
 		/// All of the sorters for the clerk.
@@ -480,21 +478,12 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// The record list might need access to this just to check membership of an object quickly.
 		/// </summary>
-		internal RecordBarHandler BarHandler
-		{
-			get { return m_recordBarHandler; }
-		}
+		internal RecordBarHandler BarHandler => m_recordBarHandler;
 
 		/// <summary>
 		/// get the class of the items in this list.
 		/// </summary>
-		public int ListItemsClass
-		{
-			get
-			{
-				return m_list.ListItemsClass;
-			}
-		}
+		public int ListItemsClass => m_list.ListItemsClass;
 
 #region IDisposable & Co. implementation
 		// Region last reviewed: never
@@ -822,7 +811,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				if (PropertyTable == null)
 					return false;
-				var activeClerk = RecordClerkRepository.ActiveRecordClerk;
+				var activeClerk = ActiveRecordClerkRepository.ActiveRecordClerk;
 				return activeClerk != null && activeClerk.Id == Id;
 			}
 		}
@@ -1925,8 +1914,7 @@ namespace SIL.FieldWorks.XWorks
 
 			if (IsControllingTheRecordTreeBar)
 			{
-				if (m_recordBarHandler != null)
-					m_recordBarHandler.UpdateSelection(CurrentObject);
+				m_recordBarHandler?.UpdateSelection(CurrentObject);
 				//used to enable certain dialogs, such as the "change entry type dialog"
 				PropertyTable.SetProperty("ActiveClerkSelectedObject", CurrentObject, false, true);
 			}
@@ -2093,7 +2081,7 @@ namespace SIL.FieldWorks.XWorks
 			// TODO: which is: "RecordClerk-" + clerkId.
 			// Q: Why is anyone bothering to prepend "RecordClerk-" to the clerk id? It seems like the very same clerk can be fetched using the clerk id.
 #endif
-			return RecordClerkRepository.GetRecordClerk(GetCorrespondingPropertyName(id));
+			return ActiveRecordClerkRepository.GetRecordClerk(GetCorrespondingPropertyName(id));
 		}
 
 
@@ -2156,11 +2144,11 @@ namespace SIL.FieldWorks.XWorks
 				CheckDisposed();
 
 				Debug.Assert(value);
-				var oldActiveClerk = RecordClerkRepository.ActiveRecordClerk;
+				var oldActiveClerk = ActiveRecordClerkRepository?.ActiveRecordClerk;
 				if (oldActiveClerk != this)
 				{
 					oldActiveClerk?.BecomeInactive();
-					RecordClerkRepository.ActiveRecordClerk = this;
+					ActiveRecordClerkRepository.ActiveRecordClerk = this;
 					// We are adding this property so that EntryDlgListener can get access to the owning object
 					// without first getting a RecordClerk, since getting a RecordClerk at that level causes a
 					// circular dependency in compilation.
@@ -3342,144 +3330,6 @@ namespace SIL.FieldWorks.XWorks
 			{
 				m_bulkEditUpdateHelper.Dispose();
 				m_bulkEditUpdateHelper = null;
-			}
-		}
-	}
-
-#if RANDYTODO
-	// TODO: The RecordClerkFactory class will go away.
-	// TODO: It could go away now, but it is useful to know what the old xml config node is supposed to contain.
-	/// <summary>
-	/// This class creates a RecordClerk, or one of its subclasses, based on what is declared in the main clerk element.
-	/// </summary>
-	public class RecordClerkFactory
-	{
-		static public RecordClerk CreateClerk(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, bool loadList)
-		{
-			/*
-				<dynamicloaderinfo/>
-			*/
-			RecordClerk newClerk;
-			XmlNode clerkNode = ToolConfiguration.GetClerkNodeFromToolParamsNode(configurationNode);
-			Debug.Assert(clerkNode != null, "Could not find clerk.");
-			XmlNode customClerkNode = clerkNode.SelectSingleNode("dynamicloaderinfo");
-			if (customClerkNode == null)
-			{
-				newClerk = new RecordClerk();
-			}
-			else
-			{
-				newClerk = (RecordClerk) DynamicLoader.CreateObject(customClerkNode);
-			}
-			newClerk.InitializeFlexComponent(propertyTable, publisher, subscriber);
-			if (loadList)
-			{
-				// The clerk will have been created with list loading suppressed, but now we
-				// want to really load it, all else being well. At least, stop suppressing it.
-				newClerk.ListLoadingSuppressedNoSideEffects = false;
-				newClerk.ReloadIfNeeded();
-			}
-
-			return newClerk;
-		}
-	}
-#endif
-
-#if RANDYTODO
-	// TODO: The ToolConfiguration class will go away.
-	// TODO: It could go away now, as it always expects the now defunct xml config node.
-	// TODO: But, it can stay for now, to keep the compiler happier.
-#endif
-	public static class ToolConfiguration
-	{
-		static public string GetIdOfTool(XElement node)
-		{
-			return XmlUtils.GetManditoryAttributeValue(node,"id");
-		}
-
-		/// <summary>
-		/// from the context of a sibling (tool (formerly view)) node, find the specified clerk definition.
-		/// </summary>
-		/// <param name="parameterNode"></param>
-		/// <returns></returns>
-		static public XElement GetClerkNodeFromToolParamsNode(XElement parameterNode)
-		{
-			string clerk = XmlUtils.GetManditoryAttributeValue(parameterNode, "clerk");
-			// REVIEW (Hasso) 2014.02: while //clerks is probably an improvement over ancestors::parameters/clerks, this XPath should be
-			// either thorouhly reviewed or reverted before merging with our main codebase.
-			string xpath = String.Format("//clerks/clerk[@id='{0}']",
-				XmlUtils.MakeSafeXmlAttribute(clerk));
-			var clerkNode = parameterNode.XPathSelectElement(xpath);
-			if (clerkNode == null)
-				clerkNode = FindClerkNode(parameterNode, clerk);
-			if (clerkNode == null)
-				throw new FwConfigurationException("Could not find <clerk id=" + clerk + ">.");
-			return clerkNode;
-		}
-
-		/// <summary>
-		/// Make up for weakness of XmlNode.SelectSingleNode.
-		/// </summary>
-		private static XElement FindClerkNode(XElement parameterNode, string clerk)
-		{
-			foreach (var node in parameterNode.XPathSelectElements("ancestor::parameters/clerks/clerk"))
-			{
-				string id = XmlUtils.GetOptionalAttributeValue(node, "id");
-				if (id == clerk)
-					return node;
-			}
-			return null;
-		}
-
-		static public XElement GetDefaultRecordFilterListProvider(XElement node)
-		{
-			try
-			{
-				//just define the first one to be the default, for now
-				return node.Element(@"recordFilterListProvider");
-			}
-			catch(Exception)
-			{
-				return null;//no filters defined
-			}
-		}
-
-		/// <summary>
-		/// get the clerk associated with a tool's configuration parameters.
-		/// </summary>
-		/// <param name="propertyTable"></param>
-		/// <param name="parameterNode">The parameter node.</param>
-		/// <returns></returns>
-		static public RecordClerk FindClerk(IPropertyTable propertyTable, XElement parameterNode)
-		{
-			var node = GetClerkNodeFromToolParamsNode(parameterNode);
-			// Set the clerk id if the parent control hasn't already set it.
-			string vectorName = GetIdOfTool(node);
-			return RecordClerk.FindClerk(vectorName);
-		}
-
-		static public XElement GetDefaultFilter(XElement node)
-		{
-			try
-			{
-				//just define the first one to be the default, for now
-				return node.XPathSelectElement(@"filters/filter");
-			}
-			catch(Exception)
-			{
-				return null;//no filters defined
-			}
-		}
-		static public XElement GetDefaultSorter(XElement node)
-		{
-			try
-			{
-				//just define the first one to be the default, for now
-				return node.XPathSelectElement(@"sortMethods/sortMethod");
-			}
-			catch(Exception)
-			{
-				return null;//no sorter defined
 			}
 		}
 	}

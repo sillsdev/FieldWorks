@@ -180,12 +180,9 @@ namespace SIL.FieldWorks.XWorks
 
 			if( disposing )
 			{
-				if(components != null)
-					components.Dispose();
+				components?.Dispose();
 				if (m_clerk != null && !m_haveActiveClerk)
 				{
-					m_clerk.BecomeInactive();
-					m_clerk.Dispose();
 					m_haveActiveClerk = false;
 				}
 #if RANDYTODO

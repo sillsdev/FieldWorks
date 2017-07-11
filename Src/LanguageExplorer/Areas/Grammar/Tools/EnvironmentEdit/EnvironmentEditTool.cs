@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using System.Xml.Linq;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.PaneBar;
+using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.Resources;
@@ -22,6 +23,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.EnvironmentEdit
 	/// </summary>
 	internal sealed class EnvironmentEditTool : ITool
 	{
+		private const string Environments = "environments";
 		private MultiPane _multiPane;
 		private RecordBrowseView _recordBrowseView;
 		private RecordClerk _recordClerk;
@@ -83,7 +85,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.EnvironmentEdit
 			MultiPaneFactory.RemoveFromParentAndDispose(
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
 				majorFlexComponentParameters.DataNavigationManager,
-				majorFlexComponentParameters.RecordClerkRepository,
+				majorFlexComponentParameters.RecordClerkRepositoryForTools,
 				ref _multiPane);
 			_recordBrowseView = null;
 		}
@@ -96,21 +98,18 @@ namespace LanguageExplorer.Areas.Grammar.Tools.EnvironmentEdit
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			var cache = PropertyTable.GetValue<LcmCache>("cache");
 			if (_recordClerk == null)
 			{
-				_recordClerk = new RecordClerk("environments", new RecordList(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), true, PhPhonDataTags.kflidEnvironments, cache.LanguageProject.PhonologicalDataOA, "Environments"), new PropertyRecordSorter("ShortName"), "Default", null, false, false);
-				_recordClerk.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
-				majorFlexComponentParameters.RecordClerkRepository.AddRecordClerk(_recordClerk);
+				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(Environments, FactoryMethod);
 			}
 
 			var root = XDocument.Parse(GrammarResources.EnvironmentEditToolParameters).Root;
-			_recordBrowseView = new RecordBrowseView(root.Element("browseview").Element("parameters"), cache, _recordClerk);
+			_recordBrowseView = new RecordBrowseView(root.Element("browseview").Element("parameters"), majorFlexComponentParameters.LcmCache, _recordClerk);
 #if RANDYTODO
 			// TODO: Set up 'dataTreeMenuHandler' to handle menu events.
 			// TODO: Install menus and connect them to event handlers. (See "CreateContextMenuStrip" method for where the menus are.)
 #endif
-			var recordEditView = new RecordEditView(root.Element("recordview").Element("parameters"), XDocument.Parse(AreaResources.VisibilityFilter_All), cache, _recordClerk);
+			var recordEditView = new RecordEditView(root.Element("recordview").Element("parameters"), XDocument.Parse(AreaResources.VisibilityFilter_All), majorFlexComponentParameters.LcmCache, _recordClerk);
 			var mainMultiPaneParameters = new MultiPaneParameters
 			{
 				Orientation = Orientation.Vertical,
@@ -137,7 +136,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.EnvironmentEdit
 			// Too early before now.
 			recordEditView.FinishInitialization();
 			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
-			majorFlexComponentParameters.RecordClerkRepository.ActiveRecordClerk = _recordClerk;
+			majorFlexComponentParameters.RecordClerkRepositoryForTools.ActiveRecordClerk = _recordClerk;
 		}
 
 		/// <summary>
@@ -194,5 +193,18 @@ namespace LanguageExplorer.Areas.Grammar.Tools.EnvironmentEdit
 		public Image Icon => Images.SideBySideView.SetBackgroundColor(Color.Magenta);
 
 		#endregion
+
+		private static RecordClerk FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId)
+		{
+			Guard.AssertThat(clerkId == Environments, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{Environments}'.");
+
+			return new RecordClerk(clerkId,
+				new RecordList(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), true, PhPhonDataTags.kflidEnvironments, cache.LanguageProject.PhonologicalDataOA, "Environments"),
+				new PropertyRecordSorter("ShortName"),
+				"Default",
+				null,
+				false,
+				false);
+		}
 	}
 }

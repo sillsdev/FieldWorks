@@ -13,6 +13,9 @@ namespace SIL.FieldWorks.XWorks
 	/// 1. For now, the implementation will live in a static property of the RecordClerk class.
 	///		Eventually, it may be added to the IFlexComponent InitializeFlexComponent method.
 	/// 2. When the implementation is disposed, then so are all of its remaining clerks.
+	///
+	/// NB: Tools should never use the <see cref="GetRecordClerk"/> method of this interface,
+	/// but they should use the similar one from the <see cref="IRecordClerkRepositoryForTools"/>.
 	/// </remarks>
 	internal interface IRecordClerkRepository : IDisposable
 	{

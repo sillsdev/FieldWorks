@@ -1082,7 +1082,6 @@ namespace LanguageExplorer.Impls
 			this.Name = "FwMainWnd";
 			this.Text = "FieldWorks Language Explorer";
 			this.Activated += new System.EventHandler(this.FwMainWnd_Activated);
-			this.Deactivate += new System.EventHandler(this.FwMainWnd_Deactivate);
 			this._menuStrip.ResumeLayout(false);
 			this._menuStrip.PerformLayout();
 			this.toolStripStandard.ResumeLayout(false);

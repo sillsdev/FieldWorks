@@ -17,26 +17,26 @@ namespace SIL.FieldWorks.XWorks
 		public void ClerkRepository_CompleteWorkout_IsHappyAsAClamInTheMud()
 		{
 			// Setup
-			IRecordClerkRepository recordClerkRepository = new RecordClerkRepository();
 			IPublisher publisher;
 			ISubscriber subscriber;
 			PubSubSystemFactory.CreatePubSubSystem(out publisher, out subscriber);
 			var propertyTable = PropertyTableFactory.CreatePropertyTable(publisher);
 			propertyTable.SetProperty("cache", Cache, SettingsGroup.BestSettings, false, false);
 			propertyTable.SetProperty("window", new DummyFwMainWnd(), SettingsGroup.BestSettings, false, false);
+			IRecordClerkRepository recordClerkRepository = new RecordClerkRepository(Cache, new FlexComponentParameters(propertyTable, publisher, subscriber));
 
 			try
 			{
-				var recordList = new RecordList(Cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), false, Cache.MetaDataCacheAccessor.GetFieldId2(Cache.LanguageProject.ResearchNotebookOA.ClassID, "AllRecords", false), Cache.LanguageProject.ResearchNotebookOA, "AllRecords");
-				var clerk = new RecordClerk("records", recordList, new PropertyRecordSorter("ShortName"), "Default", null, false, false);
-				clerk.InitializeFlexComponent(new FlexComponentParameters(propertyTable, publisher, subscriber));
-
-				// Test 1. Make sure the clerk isn't in the repository.
-				Assert.IsNull(recordClerkRepository.GetRecordClerk("records"));
+				// Test 1. Make sure a bogus clerk isn't in the repository.
+				Assert.IsNull(recordClerkRepository.GetRecordClerk("bogusClerkId"));
 				// Test 2. Make sure there is no active clerk.
 				Assert.IsNull(recordClerkRepository.ActiveRecordClerk);
 
 				// Test 3. New clerk is added.
+				var recordList = new RecordList(Cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), false, Cache.MetaDataCacheAccessor.GetFieldId2(Cache.LanguageProject.ResearchNotebookOA.ClassID, "AllRecords", false), Cache.LanguageProject.ResearchNotebookOA, "AllRecords");
+				var clerk = new RecordClerk("records", recordList, new PropertyRecordSorter("ShortName"), "Default", null, false, false);
+				clerk.InitializeFlexComponent(new FlexComponentParameters(propertyTable, publisher, subscriber));
+
 				recordClerkRepository.AddRecordClerk(clerk);
 				Assert.AreSame(clerk, recordClerkRepository.GetRecordClerk("records"));
 				Assert.IsNull(recordClerkRepository.ActiveRecordClerk);
@@ -48,7 +48,6 @@ namespace SIL.FieldWorks.XWorks
 
 				// Test 5. Remove clerk.
 				recordClerkRepository.RemoveRecordClerk(clerk);
-				Assert.IsNull(recordClerkRepository.GetRecordClerk("records"));
 				Assert.IsNull(recordClerkRepository.ActiveRecordClerk);
 			}
 			finally

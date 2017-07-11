@@ -211,7 +211,10 @@ namespace SIL.FieldWorks.XWorks
 			ReadParameters();
 
 			RecordClerk clerk = ExistingClerk;
-			Debug.Assert(clerk != null);
+			if (clerk == null)
+			{
+				Debug.Assert(clerk != null);
+			}
 			bool fClerkAlreadySuppressed = false;
 			bool fClerkWasCreated = false;
 			fClerkAlreadySuppressed = clerk.ListLoadingSuppressed; // If we didn't create the clerk, someone else might have suppressed it.

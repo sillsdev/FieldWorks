@@ -350,6 +350,7 @@
     <Compile Include="IHeadwordNumbersView.cs" />
     <Compile Include="ILayoutConverter.cs" />
     <Compile Include="IRecordClerkRepository.cs" />
+    <Compile Include="IRecordClerkRepositoryForTools.cs" />
     <Compile Include="ISetRootHvo.cs" />
     <Compile Include="IWebonaryClient.cs" />
     <Compile Include="LegacyConfigurationUtils.cs" />

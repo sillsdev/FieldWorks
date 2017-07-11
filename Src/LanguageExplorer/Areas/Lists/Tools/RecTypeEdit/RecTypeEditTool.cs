@@ -2,12 +2,16 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
 using System.Drawing;
 using System.Xml.Linq;
 using LanguageExplorer.Controls;
+using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks;
+using SIL.LCModel;
 using SIL.LCModel.Application;
 
 namespace LanguageExplorer.Areas.Lists.Tools.RecTypeEdit
@@ -17,6 +21,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.RecTypeEdit
 	/// </summary>
 	internal sealed class RecTypeEditTool : ITool
 	{
+		private const string RecTypeList = "RecTypeList";
 		/// <summary>
 		/// Main control to the right of the side bar control. This holds a RecordBar on the left and a PaneBarContainer on the right.
 		/// The RecordBar has no top PaneBar for information, menus, etc.
@@ -81,7 +86,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.RecTypeEdit
 			CollapsingSplitContainerFactory.RemoveFromParentAndDispose(
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
 				majorFlexComponentParameters.DataNavigationManager,
-				majorFlexComponentParameters.RecordClerkRepository,
+				majorFlexComponentParameters.RecordClerkRepositoryForTools,
 				ref _collapsingSplitContainer);
 		}
 
@@ -93,17 +98,20 @@ namespace LanguageExplorer.Areas.Lists.Tools.RecTypeEdit
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			if (_recordClerk == null)
+			{
+				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(RecTypeList, FactoryMethod);
+			}
 			_collapsingSplitContainer = CollapsingSplitContainerFactory.Create(
 				majorFlexComponentParameters.FlexComponentParameters,
-				majorFlexComponentParameters.DataNavigationManager,
-				majorFlexComponentParameters.RecordClerkRepository,
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
 				true,
 				XDocument.Parse(ListResources.RecTypeEditParameters).Root, XDocument.Parse(ListResources.ListToolsSliceFilters),
 				MachineName,
-				new PossibilityListClerkParameters("RecTypeList", majorFlexComponentParameters.LcmCache.LanguageProject.ResearchNotebookOA.RecTypesOA, true, true, false, "best analysis"),
 				majorFlexComponentParameters.LcmCache,
-				ref _recordClerk);
+				_recordClerk);
+			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
+			majorFlexComponentParameters.RecordClerkRepositoryForTools.ActiveRecordClerk = _recordClerk;
 
 		}
 
@@ -166,5 +174,19 @@ namespace LanguageExplorer.Areas.Lists.Tools.RecTypeEdit
 		public Image Icon => Images.SideBySideView.SetBackgroundColor(Color.Magenta);
 
 		#endregion
+
+		private static RecordClerk FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId)
+		{
+			Guard.AssertThat(clerkId == RecTypeList, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{RecTypeList}'.");
+
+			return new RecordClerk(clerkId,
+				new PossibilityRecordList(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), cache.LanguageProject.ResearchNotebookOA.RecTypesOA),
+				new PropertyRecordSorter("ShortName"),
+				"Default",
+				null,
+				true,
+				true,
+				new PossibilityTreeBarHandler(flexComponentParameters.PropertyTable, true, true, false, "best analysis"));
+		}
 	}
 }

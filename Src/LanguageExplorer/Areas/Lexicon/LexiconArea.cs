@@ -2,9 +2,13 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Xml.Linq;
+using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.XWorks;
 using SIL.LCModel;
@@ -18,8 +22,11 @@ namespace LanguageExplorer.Areas.Lexicon
 	/// </summary>
 	internal sealed class LexiconArea : IArea
 	{
+		internal const string Entries = "entries";
+		internal const string AllReversalEntries = "AllReversalEntries";
+		internal const string SemanticDomainList_LexiconArea = "SemanticDomainList_LexiconArea";
 		private const string khomographconfiguration = "HomographConfiguration";
-		private readonly IToolRepository m_toolRepository;
+		private readonly IToolRepository _toolRepository;
 
 		/// <summary>
 		/// Contructor used by Reflection to feed the tool repository to the area.
@@ -27,27 +34,7 @@ namespace LanguageExplorer.Areas.Lexicon
 		/// <param name="toolRepository"></param>
 		internal LexiconArea(IToolRepository toolRepository)
 		{
-			m_toolRepository = toolRepository;
-		}
-
-		/// <summary />
-		internal static RecordClerk CreateBasicClerkForLexiconArea(LcmCache cache)
-		{
-			var mdc = cache.MetaDataCacheAccessor;
-			var lexDb = cache.LanguageProject.LexDbOA;
-			var recordList = new RecordList(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), false, mdc.GetFieldId2(lexDb.ClassID, "Entries", false), lexDb, "Entries");
-			return CreateClerkForLexiconArea("entries", recordList);
-		}
-
-		/// <summary />
-		internal static RecordClerk CreateClerkForLexiconArea(string clerkId, RecordList recordList)
-		{
-			var sorters = new Dictionary<string, PropertyRecordSorter>
-			{
-				{RecordClerk.kDefault, new PropertyRecordSorter("ShortName")},
-				{"PrimaryGloss", new PropertyRecordSorter("PrimaryGloss")}
-			};
-			return new RecordClerk(clerkId, recordList, sorters, null, false, false);
+			_toolRepository = toolRepository;
 		}
 
 		#region Implementation of IPropertyTableProvider
@@ -91,9 +78,9 @@ namespace LanguageExplorer.Areas.Lexicon
 			Publisher = flexComponentParameters.Publisher;
 			Subscriber = flexComponentParameters.Subscriber;
 
-			if (m_toolRepository.Publisher == null)
+			if (_toolRepository.Publisher == null)
 			{
-				m_toolRepository.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
+				_toolRepository.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 			}
 
 			// Restore HomographConfiguration settings.
@@ -149,7 +136,7 @@ namespace LanguageExplorer.Areas.Lexicon
 		/// </summary>
 		public void PrepareToRefresh()
 		{
-			m_toolRepository.GetPersistedOrDefaultToolForArea(this).PrepareToRefresh();
+			_toolRepository.GetPersistedOrDefaultToolForArea(this).PrepareToRefresh();
 		}
 
 		/// <summary>
@@ -157,7 +144,7 @@ namespace LanguageExplorer.Areas.Lexicon
 		/// </summary>
 		public void FinishRefresh()
 		{
-			m_toolRepository.GetPersistedOrDefaultToolForArea(this).FinishRefresh();
+			_toolRepository.GetPersistedOrDefaultToolForArea(this).FinishRefresh();
 		}
 
 		/// <summary>
@@ -172,7 +159,7 @@ namespace LanguageExplorer.Areas.Lexicon
 			var hc = serviceLocator.GetInstance<HomographConfiguration>();
 			PropertyTable.SetProperty(khomographconfiguration, hc.PersistData, true, false);
 
-			var myCurrentTool = m_toolRepository.GetPersistedOrDefaultToolForArea(this);
+			var myCurrentTool = _toolRepository.GetPersistedOrDefaultToolForArea(this);
 			myCurrentTool.EnsurePropertiesAreCurrent();
 		}
 
@@ -187,7 +174,7 @@ namespace LanguageExplorer.Areas.Lexicon
 		/// <returns>The last persisted tool or the default tool for the area.</returns>
 		public ITool GetPersistedOrDefaultToolForArea()
 		{
-			return m_toolRepository.GetPersistedOrDefaultToolForArea(this);
+			return _toolRepository.GetPersistedOrDefaultToolForArea(this);
 		}
 
 		/// <summary>
@@ -213,7 +200,7 @@ namespace LanguageExplorer.Areas.Lexicon
 					"reversalEditComplete",
 					"reversalBulkEditReversalEntries"
 				};
-				return m_toolRepository.AllToolsForAreaInOrder(myToolsInOrder, MachineName);
+				return _toolRepository.AllToolsForAreaInOrder(myToolsInOrder, MachineName);
 			}
 		}
 
@@ -223,5 +210,48 @@ namespace LanguageExplorer.Areas.Lexicon
 		public Image Icon => LanguageExplorerResources.Lexicon32.ToBitmap();
 
 		#endregion
+
+		internal static RecordClerk EntriesFactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId)
+		{
+			Guard.AssertThat(clerkId == Entries, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{Entries}'.");
+
+			return new RecordClerk(clerkId,
+				new RecordList(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), false, cache.MetaDataCacheAccessor.GetFieldId2(cache.LanguageProject.LexDbOA.ClassID, "Entries", false), cache.LanguageProject.LexDbOA, "Entries"),
+				new Dictionary<string, PropertyRecordSorter>
+				{
+					{ RecordClerk.kDefault, new PropertyRecordSorter("ShortName") },
+					{ "PrimaryGloss", new PropertyRecordSorter("PrimaryGloss") }
+				},
+				null,
+				false,
+				false);
+		}
+
+		internal static RecordClerk SemanticDomainList_LexiconAreaFactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId)
+		{
+			Guard.AssertThat(clerkId == SemanticDomainList_LexiconArea, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{SemanticDomainList_LexiconArea}'.");
+
+			return new RecordClerk(clerkId,
+				new PossibilityRecordList(new DictionaryPublicationDecorator(cache, cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), CmPossibilityListTags.kflidPossibilities), cache.LanguageProject.SemanticDomainListOA),
+				new PropertyRecordSorter("ShortName"),
+				"Default",
+				null,
+				false,
+				false,
+				new SemanticDomainRdeTreeBarHandler(flexComponentParameters.PropertyTable, XDocument.Parse(LexiconResources.RapidDataEntryToolParameters).Root.Element("treeBarHandler")));
+		}
+
+		internal static RecordClerk AllReversalEntriesFactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId)
+		{
+			Guard.AssertThat(clerkId == AllReversalEntries, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{AllReversalEntries}'.");
+
+			var currentGuid = ReversalIndexEntryUi.GetObjectGuidIfValid(flexComponentParameters.PropertyTable, "ReversalIndexGuid");
+			IReversalIndex revIdx = null;
+			if (currentGuid != Guid.Empty)
+			{
+				revIdx = (IReversalIndex)cache.ServiceLocator.GetObject(currentGuid);
+			}
+			return new ReversalEntryClerk(cache.ServiceLocator, cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), revIdx);
+		}
 	}
 }
