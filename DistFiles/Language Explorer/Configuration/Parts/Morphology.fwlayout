@@ -66,7 +66,7 @@
 				<part ref="PhoneEnv"/>
 				<part ref="StemName" visibility="ifdata"/>
 				<!-- Special part to indicate where custom fields should be inserted at.  Handled in Common.Framework.DetailControls.DataTree -->
-				<part customFields="here" />
+				<part ref="_CustomFieldPlaceholder" customFields="here" />
 			</indent>
 		</part>
 	</layout>
@@ -81,7 +81,7 @@
 				<part ref="InflectionClasses" visibility="ifdata"/>
 				<part ref="MsEnvFeatures" visibility="ifdata"/>
 				<!-- Special part to indicate where custom fields should be inserted at.  Handled in Common.Framework.DetailControls.DataTree -->
-				<part customFields="here" />
+				<part ref="_CustomFieldPlaceholder" customFields="here" />
 			</indent>
 		</part>
 	</layout>
