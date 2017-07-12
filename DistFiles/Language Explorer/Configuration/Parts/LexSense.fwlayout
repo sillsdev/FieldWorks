@@ -39,7 +39,7 @@
 			<part ref="Status"   visibility="ifdata" />
 			<part ref="CurrentLexReferences"/>
 	  <!-- Special part to indicate where custom fields should be inserted at.  Handled in Common.Framework.DetailControls.DataTree -->
-			<part customFields="here" />
+			<part ref="_CustomFieldPlaceholder" customFields="here" />
 			<part ref="ImportResidue" label="Import Residue" visibility="ifdata"/>
 			<part ref="PublishIn"   visibility="ifdata" />
 			<part ref="Pictures" param="Normal"/>
@@ -53,7 +53,7 @@
 			<indent>
 				<part ref="TranslationsAllA" expansion="expanded" param="TranslationAndType"/>
 				<part ref="Reference"/>
-				<part customFields="here" />
+				<part ref="_CustomFieldPlaceholder" customFields="here" />
 			</indent>
 		</part>
 		<part ref="PublishIn"   visibility="ifdata" />
