@@ -275,9 +275,9 @@
 		<!-- bt323 is the master branch (strong name) build of Chorus for Linux development. Update when appropriate. -->
 		<ChorusBuildType Condition="'$(OS)'=='Unix'">bt323</ChorusBuildType>
 		<!-- bt223 is the master branch build of Palaso for Windows development. Update when appropriate. -->
-		<PalasoBuildType Condition="'$(OS)'=='Windows_NT'">bt223</PalasoBuildType>
+		<PalasoBuildType Condition="'$(OS)'=='Windows_NT'">Libpalaso_PalasoWin32masterContinuous</PalasoBuildType>
 		<!-- bt322 is the master branch build of Palaso for Linux development. Update when appropriate. -->
-		<PalasoBuildType Condition="'$(OS)'=='Unix'">bt322</PalasoBuildType>
+		<PalasoBuildType Condition="'$(OS)'=='Unix'">Libpalaso_PalasoLinux64masterContinuous</PalasoBuildType>
 		<!--Todo: use PalasoBuildType, when it refers to somewhere that has the IPCFramework.-->
 		<!-- bt278 is the develop branch build of IPCFramework for Windows development. Update when appropriate. -->
 		<IPCFrameworkBuildType Condition="'$(OS)'=='Windows_NT'">bt278</IPCFrameworkBuildType>
@@ -311,6 +311,8 @@
 		<ItemGroup>
 			<PalasoFiles Include="SIL.Core.dll"/>
 			<PalasoFiles Include="SIL.Core.$(DebugInfo)"/>
+			<PalasoFiles Include="SIL.Core.Desktop.dll"/>
+			<PalasoFiles Include="SIL.Core.Desktop.$(DebugInfo)"/>
 			<PalasoFiles Include="SIL.Lift.dll"/>
 			<PalasoFiles Include="SIL.Lift.$(DebugInfo)"/>
 			<PalasoFiles Include="SIL.Media.dll"/>
@@ -324,8 +326,8 @@
 			<PalasoFiles Include="SIL.Archiving.dll.config" Condition="'$(OS)'=='Unix'"/>
 			<PalasoFiles Include="SIL.Archiving.$(DebugInfo)"/>
 			<PalasoFiles Include="Ionic.Zip.dll"/>
-			<PalasoFiles Include="Keyman7Interop.dll" Condition="'$(OS)'=='Windows_NT'"/>
-			<PalasoFiles Include="KeymanLink.dll" Condition="'$(OS)'=='Windows_NT'"/>
+			<PalasoFiles Include="Keyman7Interop.dll"/>
+			<PalasoFiles Include="KeymanLink.dll"/>
 			<PalasoFiles Include="SIL.WritingSystems.dll"/>
 			<PalasoFiles Include="SIL.WritingSystems.$(DebugInfo)"/>
 			<PalasoFiles Include="SIL.Windows.Forms.WritingSystems.dll"/>
@@ -402,6 +404,8 @@
 		if they don't exist by the time this ItemGroup is read -->
 		<DownloadedFiles Include="$(DownloadsDir)/SIL.Core.dll"/>
 		<DownloadedFiles Include="$(DownloadsDir)/SIL.Core.$(DebugInfo)"/>
+		<DownloadedFiles Include="$(DownloadsDir)/SIL.Core.Desktop.dll"/>
+		<DownloadedFiles Include="$(DownloadsDir)/SIL.Core.Desktop.$(DebugInfo)"/>
 		<DownloadedFiles Include="$(DownloadsDir)/SIL.Lift.dll"/>
 		<DownloadedFiles Include="$(DownloadsDir)/SIL.Lift.$(DebugInfo)"/>
 		<DownloadedFiles Include="$(DownloadsDir)/SIL.Media.dll"/>
@@ -425,8 +429,8 @@
 		<DownloadedFiles Include="$(DownloadsDir)/SIL.Lexicon.$(DebugInfo)"/>
 		<DownloadedFiles Include="$(DownloadsDir)/SIL.TestUtilities.dll"/>
 		<DownloadedFiles Include="$(DownloadsDir)/icu.net.dll"/>
-		<DownloadedFiles Include="$(DownloadsDir)/Keyman7Interop.dll" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadedFiles Include="$(DownloadsDir)/KeymanLink.dll" Condition="'$(OS)'=='Windows_NT'"/>
+		<DownloadedFiles Include="$(DownloadsDir)/Keyman7Interop.dll"/>
+		<DownloadedFiles Include="$(DownloadsDir)/KeymanLink.dll"/>
 		<DownloadedFiles Include="$(DownloadsDir)/L10NSharp.dll"/>
 		<DownloadedFiles Include="$(DownloadsDir)/Commons.Xml.Relaxng.dll"/>
 		<DownloadedFiles Include="$(DownloadsDir)/irrKlang.NET4.dll" Condition="'$(OS)'=='Windows_NT'"/>
@@ -499,7 +503,8 @@
 		<Unzip ZipFilename="$(DownloadsDir)/LCM.zip" ToDir="$(DownloadsDir)/LCM/" />
 		<ItemGroup>
 			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/ICSharpCode.SharpZipLib.dll" />
-			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/libhunspell.dll" Condition="'$(OS)'=='Windows_NT'" />
+			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/Hunspellx86.dll" Condition="'$(OS)'=='Windows_NT'" />
+			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/NHunspell.dll" Condition="'$(OS)'=='Windows_NT'" />
 			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/Microsoft.Practices.ServiceLocation.dll" />
 			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/protobuf-net.dll" />
 			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/StructureMap.dll" />

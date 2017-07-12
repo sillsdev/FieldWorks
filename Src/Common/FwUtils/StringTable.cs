@@ -173,7 +173,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 							// The 'txt' attribute is optional, but it will be added as a cpoy of the 'id' here, if needed.
 							string srcTxt = XmlUtils.GetOptionalAttributeValue(srcMatchingStringNode, "txt");
 							if (srcTxt == null)
-								XmlUtils.AppendAttribute(srcMatchingStringNode, "txt", customTxt);
+								XmlUtils.SetAttribute(srcMatchingStringNode, "txt", customTxt);
 							else
 								srcMatchingStringNode.Attributes["txt"].Value = customTxt;
 						}
