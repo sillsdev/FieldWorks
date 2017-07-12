@@ -83,7 +83,7 @@ namespace SIL.FieldWorks.TE
 		public void InitLoading(IProgress progressDlg, IScripture scr, XmlNode teStyles)
 		{
 			m_scr = scr;
-			CreateStyles(progressDlg, scr.StylesOC, teStyles);
+			CreateStyles(progressDlg, scr.StylesOC, teStyles, true);
 			s_reservedStyleCount = m_htReservedStyles.Count;
 		}
 
@@ -609,7 +609,7 @@ namespace SIL.FieldWorks.TE
 				"<sfm>\\d</sfm>" + Environment.NewLine +
 				"<usage wsId=\"es\">Título hebreo</usage>" + Environment.NewLine +
 				"<font size=\"10 pt\" bold=\"false\" italic=\"false\" color=\"black\" superscript=\"false\" dropCap=\"false\"/>" + Environment.NewLine +
-				"<paragraph basedOn=\"Paragraph\" next=\"Paragraph\" lineSpacing=\"12 pt\" alignment=\"center\" background=\"white\" indentLeft=\"0\" indentRight=\"0\" firstLine=\"8 pt\" spaceBefore=\"0\" spaceAfter=\"0\" border=\"top\"/>" + Environment.NewLine +
+				"<paragraph basedOn=\"Paragraph\" next=\"Paragraph\" lineSpacing=\"12 pt\" lineSpacingType=\"atleast\" alignment=\"center\" background=\"white\" indentLeft=\"0\" indentRight=\"0\" firstLine=\"8 pt\" spaceBefore=\"0\" spaceAfter=\"0\" border=\"top\"/>" + Environment.NewLine +
 				"</tag>" + Environment.NewLine +
 				// Paragraph (must have non-real context, structure, use, etc. to test the
 				// creation of internal styles)
@@ -1044,6 +1044,7 @@ namespace SIL.FieldWorks.TE
 		}
 
 		#region EnsureCompatibleFactoryStyle tests
+		// REVIEW (Hasso) 2017.04: this #region rightly belongs in StylesXmlAccessorTests
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Test EnsureCompatibleFactoryStyle method when
@@ -1053,17 +1054,17 @@ namespace SIL.FieldWorks.TE
 		[Test]
 		public void TestEnsureCompatibleFactoryStyle_Easy()
 		{
-			IStStyle paraStyle = m_scr.FindStyle("Paragraph");
+			var paraStyle = m_scr.FindStyle("Paragraph");
 
-			int hvoParaStyle = paraStyle.Hvo;
-			DummyTeStylesXmlAccessor acc = new DummyTeStylesXmlAccessor(m_scr, null);
-			IStStyle style = acc.EnsureCompatibleFactoryStyle(paraStyle,
+			var hvoParaStyle = paraStyle.Hvo;
+			var acc = new DummyTeStylesXmlAccessor(m_scr, null);
+			Assert.That(acc.EnsureCompatibleFactoryStyle(paraStyle,
 				StyleType.kstParagraph, ContextValues.Text, StructureValues.Body,
-				FunctionValues.Prose);
-			Assert.AreEqual(hvoParaStyle, style.Hvo);
-			Assert.AreEqual(ContextValues.Text, (ContextValues)style.Context);
-			Assert.AreEqual(StructureValues.Body, (StructureValues)style.Structure);
-			Assert.AreEqual(FunctionValues.Prose, (FunctionValues)style.Function);
+				FunctionValues.Prose));
+			Assert.AreEqual(hvoParaStyle, paraStyle.Hvo);
+			Assert.AreEqual(ContextValues.Text, paraStyle.Context);
+			Assert.AreEqual(StructureValues.Body, paraStyle.Structure);
+			Assert.AreEqual(FunctionValues.Prose, paraStyle.Function);
 			Assert.AreEqual(0, acc.StyleReplacements.Count);
 		}
 
@@ -1127,11 +1128,10 @@ namespace SIL.FieldWorks.TE
 			IStStyle origStyle = m_scr.FindStyle("Normal");
 			origStyle.Context = ContextValues.Text;
 
-			DummyTeStylesXmlAccessor acc = new DummyTeStylesXmlAccessor(m_scr, null);
-			IStStyle newFactoryStyle = acc.EnsureCompatibleFactoryStyle(origStyle,
+			var acc = new DummyTeStylesXmlAccessor(m_scr, null);
+			Assert.True(acc.EnsureCompatibleFactoryStyle(origStyle,
 				StyleType.kstParagraph, ContextValues.Internal, StructureValues.Undefined,
-				FunctionValues.Prose);
-			Assert.AreEqual(origStyle, newFactoryStyle);
+				FunctionValues.Prose));
 			Assert.AreEqual("Normal", origStyle.Name);
 			Assert.AreEqual(countOfStylesOrig, styles.Count);
 			Assert.IsTrue(origStyle.IsBuiltIn);
@@ -1153,22 +1153,21 @@ namespace SIL.FieldWorks.TE
 			userDefStyle.IsBuiltIn = false;
 
 			DummyTeStylesXmlAccessor acc = new DummyTeStylesXmlAccessor(m_scr, null);
-			acc.EnsureCompatibleFactoryStyle(userDefStyle,
-				StyleType.kstParagraph, ContextValues.Title, StructureValues.Undefined,
-				FunctionValues.Prose);
-			Assert.IsNull(m_scr.FindStyle("Paragraph"),
-				"New factory style should be created but not yet named. Old Paragraph style should be renamed.");
-			Assert.AreEqual(countOfStylesOrig + 1, m_scr.StylesOC.Count, "A new style should have been created");
+			Assert.False(acc.EnsureCompatibleFactoryStyle(userDefStyle,
+				StyleType.kstParagraph, ContextValues.Title, StructureValues.Undefined,FunctionValues.Prose),
+				"The user and factory styles are incompatible");
+			Assert.IsNull(m_scr.FindStyle("Paragraph"), "User Paragraph style should be renamed.");
+			Assert.AreEqual(countOfStylesOrig, m_scr.StylesOC.Count, "No styles should have been created or deleted");
 			Assert.AreEqual("Paragraph_User", userDefStyle.Name);
-			Assert.AreEqual(ContextValues.Text, (ContextValues)userDefStyle.Context);
-			Assert.AreEqual(StructureValues.Body, (StructureValues)userDefStyle.Structure);
-			Assert.AreEqual(FunctionValues.Prose, (FunctionValues)userDefStyle.Function);
-			Assert.IsFalse(userDefStyle.IsBuiltIn);
+			Assert.AreEqual(ContextValues.Text, userDefStyle.Context);
+			Assert.AreEqual(StructureValues.Body, userDefStyle.Structure);
+			Assert.AreEqual(FunctionValues.Prose, userDefStyle.Function);
+			Assert.IsFalse(userDefStyle.IsBuiltIn, "Incompatible style should not have been marked built-in");
 
 			Assert.AreEqual(1, acc.StyleReplacements.Count);
 			Assert.AreEqual("Paragraph_User", acc.StyleReplacements["Paragraph"]);
 		}
-		#endregion
+		#endregion EnsureCompatibleFactoryStyle tests
 
 		#region ReplaceFormerStyles test
 		/// ------------------------------------------------------------------------------------

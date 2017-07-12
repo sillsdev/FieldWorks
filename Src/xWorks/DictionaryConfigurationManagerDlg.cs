@@ -25,11 +25,11 @@ namespace SIL.FieldWorks.XWorks
 			InitializeComponent();
 
 			m_toolTip = new ToolTip();
-			m_toolTip.SetToolTip(copyButton, xWorksStrings.Duplicate);
-			m_toolTip.SetToolTip(removeButton, xWorksStrings.Delete);
-			m_toolTip.SetToolTip(resetButton, xWorksStrings.Reset);
-			m_toolTip.SetToolTip(exportButton, "Export selected configuration");
-			m_toolTip.SetToolTip(importButton, "Import configuration");
+			m_toolTip.SetToolTip(copyButton, xWorksStrings.DuplicateViewToolTip);
+			m_toolTip.SetToolTip(removeButton, xWorksStrings.DeleteViewTooltip);
+			m_toolTip.SetToolTip(resetButton, xWorksStrings.ResetViewTooltip);
+			m_toolTip.SetToolTip(exportButton, xWorksStrings.ExportSelected);
+			m_toolTip.SetToolTip(importButton, xWorksStrings.ImportView);
 
 			m_helpTopicProvider = helpTopicProvider;
 

@@ -33,7 +33,11 @@
 			this.button_Help = new System.Windows.Forms.Button();
 			this.button_Cancel = new System.Windows.Forms.Button();
 			this.button_OK = new System.Windows.Forms.Button();
+			this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
+			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
 			this.htmlControl_Instructions = new XCore.HtmlControl();
+			this.flowLayoutPanel1.SuspendLayout();
+			this.tableLayoutPanel1.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// button_Help
@@ -57,8 +61,23 @@
 			this.button_OK.Name = "button_OK";
 			this.button_OK.UseVisualStyleBackColor = true;
 			// 
+			// flowLayoutPanel1
+			// 
+			this.flowLayoutPanel1.Controls.Add(this.button_OK);
+			this.flowLayoutPanel1.Controls.Add(this.button_Help);
+			this.flowLayoutPanel1.Controls.Add(this.button_Cancel);
+			resources.ApplyResources(this.flowLayoutPanel1, "flowLayoutPanel1");
+			this.flowLayoutPanel1.Name = "flowLayoutPanel1";
+			// 
+			// tableLayoutPanel1
+			// 
+			resources.ApplyResources(this.tableLayoutPanel1, "tableLayoutPanel1");
+			this.tableLayoutPanel1.Controls.Add(this.htmlControl_Instructions, 0, 0);
+			this.tableLayoutPanel1.Controls.Add(this.flowLayoutPanel1, 0, 1);
+			this.tableLayoutPanel1.GrowStyle = System.Windows.Forms.TableLayoutPanelGrowStyle.FixedSize;
+			this.tableLayoutPanel1.Name = "tableLayoutPanel1";
+			// 
 			// htmlControl_Instructions
-			// Instructions to future editors: *do not* check in if the URL is set to about:blank (or anything else).
 			// 
 			resources.ApplyResources(this.htmlControl_Instructions, "htmlControl_Instructions");
 			this.htmlControl_Instructions.Name = "htmlControl_Instructions";
@@ -70,13 +89,13 @@
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.SystemColors.Window;
 			this.CancelButton = this.button_Cancel;
-			this.Controls.Add(this.htmlControl_Instructions);
-			this.Controls.Add(this.button_OK);
-			this.Controls.Add(this.button_Cancel);
-			this.Controls.Add(this.button_Help);
+			this.Controls.Add(this.tableLayoutPanel1);
+			this.MinimizeBox = false;
 			this.Name = "FLExBridgeFirstSendReceiveInstructionsDlg";
 			this.ShowIcon = false;
 			this.ShowInTaskbar = false;
+			this.flowLayoutPanel1.ResumeLayout(false);
+			this.tableLayoutPanel1.ResumeLayout(false);
 			this.ResumeLayout(false);
 
 		}
@@ -86,6 +105,8 @@
 		private System.Windows.Forms.Button button_Help;
 		private System.Windows.Forms.Button button_Cancel;
 		private System.Windows.Forms.Button button_OK;
+		private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
+		private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
 		private XCore.HtmlControl htmlControl_Instructions;
 	}
 }

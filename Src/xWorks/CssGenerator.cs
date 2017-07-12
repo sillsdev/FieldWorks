@@ -50,6 +50,7 @@ namespace SIL.FieldWorks.XWorks
 			var cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
 			LoadBulletUnicodes();
 			LoadNumberingStyles();
+			GenerateLetterHeaderCss(mediator, mediatorstyleSheet, styleSheet);
 			GenerateCssForDefaultStyles(mediator, mediatorstyleSheet, styleSheet, model);
 			MakeLinksLookLikePlainText(styleSheet);
 			GenerateBidirectionalCssShim(styleSheet);
@@ -59,7 +60,7 @@ namespace SIL.FieldWorks.XWorks
 				GenerateCssFromConfigurationNode(configNode, styleSheet, null, mediator);
 			}
 			// Pretty-print the stylesheet
-			return styleSheet.ToString(true, 1);
+			return Icu.Normalize(styleSheet.ToString(true, 1), Icu.UNormalizationMode.UNORM_NFC);
 		}
 
 		private static void GenerateCssForDefaultStyles(Mediator mediator, FwStyleSheet mediatorstyleSheet,
@@ -73,6 +74,11 @@ namespace SIL.FieldWorks.XWorks
 
 			if (mediatorstyleSheet.Styles.Contains(DictionaryNormal))
 				GenerateDictionaryNormalParagraphCss(styleSheet, mediator);
+
+			if (mediatorstyleSheet.Styles.Contains(LetterHeadingStyleName))
+			{
+				GenerateCssForWritingSystems(".letter", LetterHeadingStyleName, styleSheet, mediator);
+			}
 
 			GenerateDictionaryMinorParagraphCss(styleSheet, mediator, model);
 		}
@@ -173,7 +179,7 @@ namespace SIL.FieldWorks.XWorks
 					var wsaudioRule = new StyleRule {Value = String.Format("a.{0}:after", aws.RFC5646)};
 					wsaudioRule.Declarations.Properties.Add(new Property("content")
 					{
-						Term = new PrimitiveTerm(UnitType.String, "\uD83D\uDD0A")
+						Term = new PrimitiveTerm(UnitType.String, ConfiguredXHTMLGenerator.LoudSpeaker)
 					});
 					styleSheet.Rules.Add(wsaudioRule);
 					wsaudioRule = new StyleRule {Value = String.Format("a.{0}", aws.RFC5646)};
@@ -614,7 +620,8 @@ namespace SIL.FieldWorks.XWorks
 			// simpleSelector is used for nodes that use before and after.  Collection type nodes produce wrong
 			// results if we use baseSelection in handling before and after content.  See LT-17048.
 			string simpleSelector;
-			if(parentSelector == null)
+			string pictCaptionContent = ".captionContent ";
+			if (parentSelector == null)
 			{
 				baseSelection = SelectClassName(configNode);
 				simpleSelector = SelectBareClassName(configNode);
@@ -631,6 +638,8 @@ namespace SIL.FieldWorks.XWorks
 					if (fwStyles != null && fwStyles.Styles.Contains(BeforeAfterBetweenStyleName))
 						dec.Properties.AddRange(GenerateCssStyleFromFwStyleSheet(BeforeAfterBetweenStyleName, cache.DefaultAnalWs, mediator));
 					var collectionSelector = "." + GetClassAttributeForConfig(configNode);
+					if (configNode.Parent.DictionaryNodeOptions is DictionaryNodePictureOptions)
+						collectionSelector = pictCaptionContent + "." + GetClassAttributeForConfig(configNode);
 					var itemSelector = " ." + GetClassAttributeForCollectionItem(configNode);
 					var betweenSelector = String.Format("{0}> {1}>{2}+{2}:before", parentSelector, collectionSelector, itemSelector);
 					ConfigurableDictionaryNode dummy;
@@ -680,8 +689,8 @@ namespace SIL.FieldWorks.XWorks
 				// Headword, Gloss, and Caption are contained in a captionContent area.
 				if (configNode.Parent.DictionaryNodeOptions is DictionaryNodePictureOptions)
 				{
-					baseSelection = parentSelector + "> " + ".captionContent " + SelectClassName(configNode, cache);
-					simpleSelector = parentSelector + "> " + ".captionContent " + SelectBareClassName(configNode, cache);
+					baseSelection = parentSelector + "> " + pictCaptionContent + SelectClassName(configNode, cache);
+					simpleSelector = parentSelector + "> " + pictCaptionContent + SelectBareClassName(configNode, cache);
 				}
 				else
 				{
@@ -823,7 +832,7 @@ namespace SIL.FieldWorks.XWorks
 				singularBase = classNameBase.Remove(classNameBase.Length - 2);
 			else
 				singularBase = classNameBase.Remove(classNameBase.Length - 1);
-			return singularBase + GetClassAttributeDupSuffix(configNode).ToLower();
+			return Icu.Normalize(singularBase + GetClassAttributeDupSuffix(configNode).ToLower(), Icu.UNormalizationMode.UNORM_NFC);
 		}
 
 		/// <summary>
@@ -849,7 +858,11 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		internal static string GetClassAttributeForConfig(ConfigurableDictionaryNode configNode)
 		{
-			return (GetClassAttributeBase(configNode) + GetClassAttributeDupSuffix(configNode)).ToLower();
+			string classAtt = Icu.Normalize((GetClassAttributeBase(configNode) + GetClassAttributeDupSuffix(configNode)).ToLower(),
+				Icu.UNormalizationMode.UNORM_NFC);
+			// Custom field names might begin with a digit which would cause invalid css, so we prepend 'cf' to those class names.
+			classAtt = Char.IsDigit(Convert.ToChar(classAtt.Substring(0, 1))) ? "cf" + classAtt : classAtt;
+			return classAtt;
 		}
 
 		private static string GetClassAttributeBase(ConfigurableDictionaryNode configNode)
@@ -1116,7 +1129,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var ancestorMargin = ancestorIndents.Margin - ancestorIndents.TextIndent;
 			leadingIndent -= ancestorMargin + hangingIndent;
-			return leadingIndent;
+			return (float)Math.Round(leadingIndent, 3);
 		}
 
 		private static AncestorIndents CalculateParagraphIndentsFromAncestors(ConfigurableDictionaryNode currentNode,
@@ -1214,7 +1227,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		private static float MilliPtToPt(int millipoints)
 		{
-			return (float)millipoints / 1000;
+			return (float)Math.Round((float)millipoints / 1000, 3);
 		}
 
 		/// <summary>
@@ -1466,20 +1479,17 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		public static string GenerateLetterHeaderCss(Mediator mediator)
+		public static void GenerateLetterHeaderCss(Mediator mediator, FwStyleSheet mediatorStyleSheet, StyleSheet styleSheet)
 		{
 			var letHeadRule = new StyleRule { Value = ".letHead" };
 			letHeadRule.Declarations.Properties.Add(new Property("-moz-column-count") { Term = new PrimitiveTerm(UnitType.Number, 1) });
 			letHeadRule.Declarations.Properties.Add(new Property("-webkit-column-count") { Term = new PrimitiveTerm(UnitType.Number, 1) });
 			letHeadRule.Declarations.Properties.Add(new Property("column-count") { Term = new PrimitiveTerm(UnitType.Number, 1) });
 			letHeadRule.Declarations.Properties.Add(new Property("clear") { Term = new PrimitiveTerm(UnitType.Ident, "both") });
-			letHeadRule.Declarations.Properties.Add(new Property("text-align") { Term = new PrimitiveTerm(UnitType.Ident, "center") });
 			letHeadRule.Declarations.Properties.Add(new Property("width") { Term = new PrimitiveTerm(UnitType.Percentage, 100) });
+			letHeadRule.Declarations.Properties.AddRange(GetOnlyParagraphStyle(GenerateCssStyleFromFwStyleSheet(LetterHeadingStyleName, 0, mediator)));
 
-			var letterRule = new StyleRule { Value = ".letter" };
-			var cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
-			letterRule.Declarations.Properties.AddRange(GenerateCssStyleFromFwStyleSheet(LetterHeadingStyleName, cache.DefaultVernWs, mediator));
-			return letHeadRule.ToString(true) + Environment.NewLine + letterRule.ToString(true) + Environment.NewLine;
+			styleSheet.Rules.Add(letHeadRule);
 		}
 
 		public static string GenerateCssForPageButtons()
@@ -1521,6 +1531,37 @@ namespace SIL.FieldWorks.XWorks
 
 			return string.Format("{1}{0}{2}{0}{3}{0}{4}{0}{5}{0}{6}{0}", Environment.NewLine, screen.ToString(true), print.ToString(true),
 				pageButton.ToString(true), pageButtonHover.ToString(true), pageButtonActive.ToString(true), currentButtonRule.ToString(true));
+		}
+
+		/// <summary>
+		/// Generates css that will apply to the current entry in our preview and highlight it for the user
+		/// </summary>
+		internal static string GenerateCssForSelectedEntry(bool isRtl)
+		{
+			// Draw a blue gradient behind the entry to highlight it
+			var selectedEntryBefore = new StyleRule { Value = "." + XhtmlDocView.CurrentSelectedEntryClass + ":before" };
+			var directionOfRule = !isRtl ? "right" : "left";
+			selectedEntryBefore.Declarations.Properties.Add(new Property("background")
+			{
+				Term = new PrimitiveTerm(UnitType.Ident,
+				"linear-gradient(to " + directionOfRule + ", rgb(100,200,245), rgb(200,238,252) 2em, rgb(200,238,252), transparent, transparent)")
+			});
+			selectedEntryBefore.Declarations.Properties.Add(new Property("background-position")
+			{
+				Term = new TermList(new PrimitiveTerm(UnitType.Pixel, 0), new PrimitiveTerm(UnitType.Pixel, 3))
+			});
+			selectedEntryBefore.Declarations.Properties.Add(new Property("content") { Term = new PrimitiveTerm(UnitType.Ident, "''") });
+			selectedEntryBefore.Declarations.Properties.Add(new Property("position") { Term = new PrimitiveTerm(UnitType.Ident, "absolute") });
+			selectedEntryBefore.Declarations.Properties.Add(new Property("z-index") { Term = new PrimitiveTerm(UnitType.Number, -10) });
+			selectedEntryBefore.Declarations.Properties.Add(new Property("width") { Term = new PrimitiveTerm(UnitType.Percentage, 75) });
+			var selectedEntry = new StyleRule { Value = "." + XhtmlDocView.CurrentSelectedEntryClass };
+			selectedEntry.Declarations.Properties.Add(new Property("background")
+			{
+				Term = new PrimitiveTerm(UnitType.Ident,
+					"linear-gradient(to bottom " + directionOfRule + ", transparent, rgb(200,238,252) 1em, rgb(200,238,252), rgb(200,238,252), transparent)")
+			});
+			var screenRule = new MediaRule { Condition = "screen", RuleSets = { selectedEntryBefore, selectedEntry } };
+			return screenRule.ToString(true) + Environment.NewLine;
 		}
 
 		/// <summary>

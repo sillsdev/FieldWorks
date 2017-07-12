@@ -100,13 +100,18 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		public void GenerateCssForConfiguration_SimpleConfigurationGeneratesLetHead()
+		public void GenerateLetterHeaderCss_CssUsesDefinedStyleInfo()
 		{
+			var letHeadStyle = GenerateParagraphStyle(CssGenerator.LetterHeadingStyleName);
+			letHeadStyle.SetExplicitParaIntProp((int)FwTextPropType.ktptAlign, (int)FwTextPropVar.ktpvEnum,
+				(int)FwTextAlign.ktalCenter);
+			var mediatorStyles = FontHeightAdjuster.StyleSheetFromMediator(m_mediator);
+			var styleSheet = new StyleSheet();
 			//SUT
-			var cssResult = CssGenerator.GenerateLetterHeaderCss(m_mediator);
-			// verify that the css result contains .letHead similar to: .letHead {-moz-column-count:1;-webkit-column-count:1;column-count:1;clear:both;text-align:center;width:100%;}
-			Assert.IsTrue(Regex.Match(cssResult, @"\.letHead\s*{\s*-moz-column-count:1;\s*-webkit-column-count:1;\s*column-count:1;\s*clear:both;\s*text-align:center;\s*width:100%;").Success,
-							  "Css did not generate LetHead rules match");
+			CssGenerator.GenerateLetterHeaderCss(m_mediator, mediatorStyles, styleSheet);
+			// verify that the css result contains boilerplate rules and the text-align center expected from the letHeadStyle test style
+			Assert.IsTrue(Regex.Match(styleSheet.ToString(), @"\.letHead\s*{\s*-moz-column-count:1;\s*-webkit-column-count:1;\s*column-count:1;\s*clear:both;\s*width:100%;.*text-align:center").Success,
+							  "GenerateLetterHeaderCss did not generate the expected css rules");
 		}
 
 		[Test]
@@ -2614,7 +2619,7 @@ namespace SIL.FieldWorks.XWorks
 			var senseNumberAfter = @".entry> .pictures .picture> .captionContent .sensenumbertss:after\{\s*content:'\]';";
 			Assert.IsTrue(Regex.Match(cssResult, senseNumberAfter, RegexOptions.Singleline).Success, "expected Sense Number after rule is generated");
 
-			var senseNumberBetween = @".entry> .pictures .picture> .sensenumbertss> .sensenumberts\+ .sensenumberts:before\{\s*content:', ';";
+			var senseNumberBetween = @".entry> .pictures .picture> .captionContent .sensenumbertss> .sensenumberts\+ .sensenumberts:before\{\s*content:', ';";
 			Assert.IsTrue(Regex.Match(cssResult, senseNumberBetween, RegexOptions.Singleline).Success, "expected Sense Number between rule is generated");
 
 			var captionBefore = @".entry> .pictures .picture> .captionContent .caption:before\{\s*content:'\{';";
@@ -2623,7 +2628,7 @@ namespace SIL.FieldWorks.XWorks
 			var captionAfter = @".entry> .pictures .picture> .captionContent .caption:after\{\s*content:'\}';";
 			Assert.IsTrue(Regex.Match(cssResult, captionAfter, RegexOptions.Singleline).Success, "expected Caption after rule is generated");
 
-			var captionBetween = @".entry> .pictures .picture> .caption> .captio\+ .captio:before\{\s*content:' ';";
+			var captionBetween = @".entry> .pictures .picture> .captionContent .caption> .captio\+ .captio:before\{\s*content:' ';";
 			Assert.IsTrue(Regex.Match(cssResult, captionBetween, RegexOptions.Singleline).Success, "expected Caption between rule is generated");
 		}
 
@@ -3327,6 +3332,32 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void GenerateCssForCustomFieldStartsWithNumber()
+		{
+			var customConfig = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "12Costume",
+				DictionaryNodeOptions = new DictionaryNodeListOptions(),
+				Style = "FooStyle",
+				IsCustomField = true
+			};
+			var entryConfig = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { customConfig }
+			};
+			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { entryConfig } };
+			PopulateFieldsForTesting(model);
+			using (new CustomFieldForTest(Cache, "Costume", Cache.MetaDataCacheAccessor.GetClassId("LexEntry"), 0, CellarPropertyType.Nil, Guid.Empty))
+			{
+				// SUT
+				var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+				const string regexExpected1 = @"\.lexentry>\s.cf12costume{[^}]*}";
+				Assert.IsTrue(Regex.Match(cssResult, regexExpected1, RegexOptions.Singleline).Success, "Class name started with number");
+			}
+		}
+
+		[Test]
 		public void GenerateCssForCustomFieldWithSpaces()
 		{
 			var nameConfig = new ConfigurableDictionaryNode
@@ -3596,6 +3627,36 @@ namespace SIL.FieldWorks.XWorks
 			const string regexSpecific = @"^\.lexentry> \.extendednotecontents span\[lang|='fr']\{\s*color:#00F";
 			Assert.IsTrue(Regex.IsMatch(result, regexPrimary, RegexOptions.Multiline), "The css for the default color should be there.");
 			Assert.IsTrue(Regex.IsMatch(result, regexSpecific, RegexOptions.Multiline), "The css for the specific language color should be there.");
+		}
+
+		[Test]
+		public void GenerateCssForConfiguration_ContentNormalizedComposed()
+		{
+			var model = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode>
+				{
+					new ConfigurableDictionaryNode
+					{
+						FieldDescription = "LexEntry",
+						CSSClassNameOverride = Icu.Normalize("자ㄱㄴ시", Icu.UNormalizationMode.UNORM_NFD),
+						Children = new List<ConfigurableDictionaryNode>
+						{
+							new ConfigurableDictionaryNode
+							{
+								FieldDescription = "MLHeadWord",
+								Before = Icu.Normalize("garçon", Icu.UNormalizationMode.UNORM_NFD),
+								Between = Icu.Normalize("자ㄱㄴ시", Icu.UNormalizationMode.UNORM_NFD),
+								After = Icu.Normalize("Brötchen", Icu.UNormalizationMode.UNORM_NFD)
+							}
+						}
+					}
+				}
+			};
+			PopulateFieldsForTesting(model);
+			var result = CssGenerator.GenerateCssFromConfiguration(model, m_mediator); // SUT
+			Assert.IsNotNullOrEmpty(result);
+			Assert.That(Cache.TsStrFactory.MakeString(result, 1).get_IsNormalizedForm(FwNormalizationMode.knmNFC));
 		}
 
 		#region Test Helper Methods

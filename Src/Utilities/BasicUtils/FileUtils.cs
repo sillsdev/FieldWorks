@@ -203,7 +203,7 @@ namespace SIL.Utils
 					{
 						fRetVal = stream.CanRead && stream.CanWrite;
 						stream.Close();
-		}
+					}
 				}
 				catch
 				{

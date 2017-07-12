@@ -32,28 +32,19 @@ namespace SIL.FieldWorks.XWorks
 			int[] entries;
 			using(ClerkActivator.ActivateClerkMatchingExportType(DictionaryType, m_mediator))
 				ConfiguredXHTMLGenerator.GetPublicationDecoratorAndEntries(m_mediator, out entries, DictionaryType);
-			return entries.Sum(e => CountTimesGenerated(m_cache, config, e));
+			return entries.Count(e => IsGenerated(m_cache, config, e));
 		}
 
 		/// <summary>
 		/// Determines how many times the entry with the given HVO is generated for the given config (usually 0 or 1,
 		/// but can be more if the entry matches more than one Minor Entry node)
 		/// </summary>
-		internal static int CountTimesGenerated(FdoCache cache, DictionaryConfigurationModel config, int hvo)
+		internal static bool IsGenerated(FdoCache cache, DictionaryConfigurationModel config, int hvo)
 		{
 			var entry = (ILexEntry)cache.ServiceLocator.GetObject(hvo);
 			if (ConfiguredXHTMLGenerator.IsMainEntry(entry, config))
-				return (config.Parts[0].IsEnabled && (!entry.ComplexFormEntryRefs.Any() || ConfiguredXHTMLGenerator.IsListItemSelectedForExport(config.Parts[0], entry, null))) ? 1 : 0;
-			if (!entry.PublishAsMinorEntry)
-				return 0;
-			var matchingMinorParts = 0;
-			for (var i = 1; i < config.Parts.Count; i++)
-			{
-				var part = config.Parts[i];
-				if (part.IsEnabled && ConfiguredXHTMLGenerator.IsListItemSelectedForExport(part, entry, null))
-					matchingMinorParts++;
-			}
-			return matchingMinorParts;
+				return config.Parts[0].IsEnabled && (!entry.ComplexFormEntryRefs.Any() || ConfiguredXHTMLGenerator.IsListItemSelectedForExport(config.Parts[0], entry));
+			return entry.PublishAsMinorEntry && config.Parts.Skip(1).Any(part => ConfiguredXHTMLGenerator.IsListItemSelectedForExport(part, entry));
 		}
 
 		/// <summary>

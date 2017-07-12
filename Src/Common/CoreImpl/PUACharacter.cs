@@ -763,23 +763,28 @@ namespace SIL.CoreImpl
 		{
 			try
 			{
-				if(codepoint.Length > 0)
+				if (!string.IsNullOrEmpty(codepoint))
 					return Surrogates.StringFromCodePoint(ConvertToIntegerCodepoint(codepoint));
-				else
-					return " ";
+			}
+			catch (ArgumentOutOfRangeException)
+			{
+				// codepoint is > 10FFFF or in the range >= D800 <= DFFF
+				// fall through
 			}
 			catch (FormatException)
 			{
-				return " ";
+				// fall through
 			}
 			catch (OverflowException)
 			{
-				return " ";
+				// fall through
 			}
 			catch (Exception e)
 			{
 				return e.Message;
 			}
+
+			return " ";
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -803,7 +808,7 @@ namespace SIL.CoreImpl
 		/// ------------------------------------------------------------------------------------
 		private static string ConvertToHexString(int codepoint)
 		{
-			return codepoint.ToString("x4").ToUpper();
+			return codepoint.ToString("X4");
 		}
 
 		/// ------------------------------------------------------------------------------------

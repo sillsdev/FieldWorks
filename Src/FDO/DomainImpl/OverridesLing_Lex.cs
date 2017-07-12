@@ -9697,16 +9697,16 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			}
 		}
 
-		public ITsString HeadWordRef
+		public IMultiAccessorBase HeadWordRef
 		{
 			get
 			{
 				var entry = Item as ILexEntry;
 				if (entry != null)
 				{
-					return entry.HeadWordRef.BestVernacularAlternative;
+					return entry.HeadWordRef;
 				}
-				return ((LexSense)Item).OwnerOutlineName;
+				return ((LexSense)Item).MLOwnerOutlineName;
 			}
 		}
 

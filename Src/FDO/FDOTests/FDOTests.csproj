@@ -390,6 +390,7 @@
     <Compile Include="ScrSfFileListTests.cs" />
     <Compile Include="ScrTxtParaTests.cs" />
     <Compile Include="ScrVerseTests.cs" />
+    <Compile Include="SenseOrEntryTests.cs" />
     <Compile Include="SharedBackendServicesTests.cs" />
     <Compile Include="StFootnoteTests.cs" />
     <Compile Include="StringServicesTests.cs" />
@@ -421,6 +422,7 @@
     <Compile Include="XmlListTests.cs" />
     <Compile Include="XmlTranslatedListsTests.cs" />
     <Compile Include="FdoInvertSetTests.cs" />
+    <Compile Include="ReadWriteServicesTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="BuildInclude.targets">

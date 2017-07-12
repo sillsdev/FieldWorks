@@ -19,6 +19,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 	{
 		private ISimpleLogger m_logger;
 		internal const int VersionBeta5 = 14;
+		internal const int VersionRC2 = 17; // 8.3.7
 
 		public FirstBetaMigrator() : this(null, null)
 		{
@@ -77,7 +78,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			{
 				configPath = Path.Combine(dictionaryFolder, DCM.RootFileName + DictionaryConfigurationModel.FileExtension);
 			}
-			else if(ConfigHasSubentriesNode(config)) // Hybrid configs have subentries
+			else if (config.IsHybrid) // Hybrid configs have subentries
 			{
 				configPath = Path.Combine(dictionaryFolder, DCM.HybridFileName + DictionaryConfigurationModel.FileExtension);
 			}
@@ -86,22 +87,6 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				configPath = Path.Combine(dictionaryFolder, DCM.LexemeFileName + DictionaryConfigurationModel.FileExtension);
 			}
 			return new DictionaryConfigurationModel(configPath, Cache);
-		}
-
-		private static bool ConfigHasSubentriesNode(DictionaryConfigurationModel config)
-		{
-			// Perform a breadth first search for Subentries nodes
-			var nodesToCompare = new List<ConfigurableDictionaryNode>(config.PartsAndSharedItems);
-			while (nodesToCompare.Count > 0)
-			{
-				var currentNode = nodesToCompare[0];
-				nodesToCompare.RemoveAt(0);
-				if (currentNode.FieldDescription == "Subentries")
-					return true;
-				if (currentNode.Children != null)
-					nodesToCompare.AddRange(currentNode.Children);
-			}
-			return false;
 		}
 
 		internal void MigrateFrom83Alpha(ISimpleLogger logger, DictionaryConfigurationModel oldConfig, DictionaryConfigurationModel currentDefaultModel)
@@ -126,7 +111,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		/// </summary>
 		private static void ChooseAppropriateComplexForms(DictionaryConfigurationModel migratingModel)
 		{
-			if (!IsHybrid(migratingModel))
+			if (!migratingModel.IsHybrid)
 				return;
 			DCM.PerformActionOnNodes(migratingModel.Parts, parentNode =>
 			{
@@ -183,7 +168,16 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				case 12:
 				case 13:
 					RemoveMostOfGramInfoUnderRefdComplexForms(oldConfigPart);
+					goto case VersionBeta5;
+				case VersionBeta5:
+				case 15:
 					MigrateNewChildNodesAndOptionsInto(oldConfigPart, currentDefaultConfigPart);
+					goto case 16;
+				case 16:
+					RemoveHiddenChildren(oldConfigPart, logger);
+					goto case VersionRC2;
+				case VersionRC2:
+					ChangeReferenceSenseHeadwordFieldName(oldConfigPart);
 					break;
 				default:
 					logger.WriteLine(string.Format(
@@ -227,7 +221,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				else
 				{
 					node.FieldDescription = etymSequence;
-					node.IsEnabled = !IsHybrid(oldConfig);
+					node.IsEnabled = !oldConfig.IsHybrid;
 				}
 				node.CSSClassNameOverride = "etymologies";
 				node.Before = "(";
@@ -255,11 +249,6 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			DCM.PerformActionOnNodes(etymNodes, n => {n.IsCustomField = false;});
 		}
 
-		private static bool IsHybrid(DictionaryConfigurationModel model)
-		{
-			return !model.IsRootBased && ConfigHasSubentriesNode(model);
-		}
-
 		private static void RemoveMostOfGramInfoUnderRefdComplexForms(ConfigurableDictionaryNode part)
 		{
 			DCM.PerformActionOnNodes(part.Children, node =>
@@ -272,7 +261,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		}
 
 		/// <summary>
-		/// This recursive method will migrate new nodes from default node to old config node
+		/// This recursive method will migrate new nodes from sourceNode into destinationNode node
 		/// </summary>
 		private static void MigrateNewChildNodesAndOptionsInto(ConfigurableDictionaryNode destinationNode, ConfigurableDictionaryNode sourceNode)
 		{
@@ -280,7 +269,9 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			if ((destinationNode.DictionaryNodeOptions == null || DictionaryConfigurationModel.NoteInParaStyles.Contains(sourceNode.FieldDescription)) &&
 				sourceNode.DictionaryNodeOptions != null)
 				destinationNode.DictionaryNodeOptions = sourceNode.DictionaryNodeOptions;
-			if (destinationNode.Children == null || sourceNode.Children == null)
+			EnsureCssOverrideAndStylesAreUpdated(destinationNode, sourceNode);
+			// LT-18286: don't merge direct children into sharing parents.
+			if (destinationNode.ReferencedNode != null || destinationNode.Children == null || sourceNode.Children == null)
 				return;
 			// First recurse into each matching child node
 			foreach (var newChild in sourceNode.Children)
@@ -295,6 +286,31 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 					var indexOfNewChild = sourceNode.Children.FindIndex(n => n.Label == newChild.Label);
 					InsertNewNodeIntoOldConfig(destinationNode, newChild.DeepCloneUnderParent(destinationNode, true), sourceNode, indexOfNewChild);
 				}
+			}
+		}
+
+		private static void EnsureCssOverrideAndStylesAreUpdated(ConfigurableDictionaryNode destinationNode, ConfigurableDictionaryNode sourceNode)
+		{
+			if (sourceNode.StyleType != ConfigurableDictionaryNode.StyleTypes.Default && destinationNode.StyleType == ConfigurableDictionaryNode.StyleTypes.Default)
+			{
+				var nodeStyleType = sourceNode.StyleType;
+				var nodeParaOpts = destinationNode.DictionaryNodeOptions as IParaOption;
+				if (nodeParaOpts != null)
+				{
+					nodeStyleType = nodeParaOpts.DisplayEachInAParagraph
+						? ConfigurableDictionaryNode.StyleTypes.Paragraph
+						: ConfigurableDictionaryNode.StyleTypes.Character;
+				}
+				destinationNode.StyleType = nodeStyleType;
+			}
+			if (sourceNode.StyleType == destinationNode.StyleType && // in case the user changed, for example, from Paragraph to Character style
+				!string.IsNullOrEmpty(sourceNode.Style) && string.IsNullOrEmpty(destinationNode.Style))
+			{
+				destinationNode.Style = sourceNode.Style;
+			}
+			if (!string.IsNullOrEmpty(sourceNode.CSSClassNameOverride) && string.IsNullOrEmpty(destinationNode.CSSClassNameOverride))
+			{
+				destinationNode.CSSClassNameOverride = sourceNode.CSSClassNameOverride;
 			}
 		}
 
@@ -331,7 +347,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 						oldConfigNode.Children.RemoveAt(i);
 					}
 				}
-				InsertNewNodeIntoOldConfig(oldConfigNode, groupNode, defaultNode, defaultNode.ReferencedOrDirectChildren.IndexOf(group));
+				InsertNewNodeIntoOldConfig(oldConfigNode, groupNode, defaultNode, defaultNode.Children.IndexOf(group));
 			}
 		}
 
@@ -366,6 +382,29 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				else
 					destinationParentNode.Children.Add(newChildNode);
 			}
+		}
+
+		/// <summary>LT-18286: One Sharing Parent in Hybrid erroneously got direct children (from a migration step). Remove them.</summary>
+		private static void RemoveHiddenChildren(ConfigurableDictionaryNode parent, ISimpleLogger logger)
+		{
+			DCM.PerformActionOnNodes(parent.Children, p =>
+			{
+				if (p.ReferencedNode != null && p.Children != null && p.Children.Any())
+				{
+					logger.WriteLine(DCM.BuildPathStringFromNode(p) + " contains both Referenced And Direct Children. Removing Direct Children.");
+					p.Children = new List<ConfigurableDictionaryNode>();
+				}
+			});
+		}
+
+		/// <summary>LT-18288: Change Headword to HeadwordRef for All "Referenced Sense Headword" to allow users to select WS</summary>
+		private static void ChangeReferenceSenseHeadwordFieldName(ConfigurableDictionaryNode oldConfigPart)
+		{
+			DCM.PerformActionOnNodes(oldConfigPart.Children, node =>
+			{
+				if (node.Label == "Referenced Sense Headword")
+					node.FieldDescription = "HeadWordRef";
+			});
 		}
 	}
 }

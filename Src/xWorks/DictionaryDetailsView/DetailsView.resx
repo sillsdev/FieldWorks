@@ -346,7 +346,7 @@
     <value>3</value>
   </data>
   <data name="buttonStyles.Text" xml:space="preserve">
-    <value>Styles...</value>
+    <value>&amp;Styles...</value>
   </data>
   <data name="&gt;&gt;buttonStyles.Name" xml:space="preserve">
     <value>buttonStyles</value>

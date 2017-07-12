@@ -246,13 +246,9 @@ namespace SIL.FieldWorks.XWorks
 																		 ref UIItemDisplayProperties display)
 		{
 			// If we are in 'Dictionary' or 'Reversal Index' hide this menu item
-			if (GetDictionaryConfigurationType(m_mediator) != null)
-			{
-				display.Enabled = false;
-				display.Visible = false;
-				return true; // we handled it
-			}
-			return false; //let the other code handle it
+			display.Enabled = false;
+			display.Visible = false;
+			return true; // we handled it
 		}
 
 		/// <summary>

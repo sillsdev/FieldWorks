@@ -829,7 +829,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			// process the rules if they exist
 			ITsTextProps styleProps = style.Rules;
 			SetPropertiesFromRules(styleProps);
-			}
+		}
 
 		private void SetPropertiesFromRules(ITsTextProps styleProps)
 		{
@@ -1421,8 +1421,21 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		{
 			var basedOn = m_basedOnStyle ?? this;
 			m_defaultFontInfo.InheritAllProperties(basedOn.m_defaultFontInfo);
-			foreach (FontInfo fontInfoOverride in m_fontInfoOverrides.Values)
-				fontInfoOverride.InheritAllProperties(basedOn.m_defaultFontInfo);
+			// Set each writing system override to inherit from the basedOn override for that writing system
+			// or to the defaultFontInfo for the based on style if no ws specific override exists
+			foreach (var fontInfoOverride in m_fontInfoOverrides)
+			{
+				FontInfo inheritPropsFrom;
+				if (!basedOn.m_fontInfoOverrides.TryGetValue(fontInfoOverride.Key, out inheritPropsFrom))
+				{
+					inheritPropsFrom = basedOn.m_defaultFontInfo;
+				}
+				fontInfoOverride.Value.InheritAllProperties(inheritPropsFrom);
+				if (m_defaultFontInfo.IsAnyExplicit)
+				{
+					fontInfoOverride.Value.InheritAllProperties(m_defaultFontInfo);
+				}
+			}
 			m_rtl.InheritValue(basedOn.m_rtl);
 			m_keepWithNext.InheritValue(basedOn.m_keepWithNext);
 			m_keepTogether.InheritValue(basedOn.m_keepTogether);

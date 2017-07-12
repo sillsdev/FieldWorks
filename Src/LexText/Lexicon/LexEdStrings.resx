@@ -625,31 +625,48 @@
   <data name="SortReversalSubentries_Label" xml:space="preserve">
     <value>Sort Reversal Subentries</value>
   </data>
-	<data name="SortReversalSubEntries_CompletedContent" xml:space="preserve">
+  <data name="SortReversalSubEntries_CompletedContent" xml:space="preserve">
     <value>All reversal subentries are now sorted.</value>
   </data>
-	<data name="SortReversalSubEntries_CompletedTitle" xml:space="preserve">
+  <data name="SortReversalSubEntries_CompletedTitle" xml:space="preserve">
     <value>Reversal subentry sorting is completed</value>
   </data>
-	<data name="ksBreakCircularRefs" xml:space="preserve">
+  <data name="ksBreakCircularRefs" xml:space="preserve">
     <value>Remove circular references to complex forms</value>
   </data>
-	<data name="ksTryIfProgramGoesPoof" xml:space="preserve">
+  <data name="ksTryIfProgramGoesPoof" xml:space="preserve">
     <value>Try this tool if Language Explorer disappears or produces a "FieldWorks has stopped working" dialog when you try to view the Dictionary.</value>
   </data>
-	<data name="ksWhatAreCircularRefs" xml:space="preserve">
+  <data name="ksWhatAreCircularRefs" xml:space="preserve">
     <value>Older versions of Language Explorer allowed the user to make two complex form entries claim each other as components.  This is no longer allowed, but older projects can be in this bad state.</value>
   </data>
-	<data name="ksRemovingCircularComponentLexeme" xml:space="preserve">
+  <data name="ksRemovingCircularComponentLexeme" xml:space="preserve">
     <value>Removing {0} as component lexeme for {1}</value>
   </data>
-	<data name="ksFoundNCircularReferences" xml:space="preserve">
+  <data name="ksFoundNCircularReferences" xml:space="preserve">
     <value>Found {0} circular references in {1} entry references</value>
   </data>
-	<data name="ksCircularRefsFixed" xml:space="preserve">
+  <data name="ksCircularRefsFixed" xml:space="preserve">
     <value>Circular Reference Fixed</value>
   </data>
-	<data name="ksAlsoEmptyComplexFormInfo" xml:space="preserve">
+  <data name="ksAlsoEmptyComplexFormInfo" xml:space="preserve">
     <value>Also removing empty Complex Form Info from {0}</value>
+  </data>
+  <data name="SendReceiveForTheFirstTimeContent" xml:space="preserve">
+    <value>&amp;lt;!DOCTYPE html&amp;gt;&amp;lt;html&amp;gt;&amp;lt;body style='font-family:"Microsoft Sans Serif","sans-serif";font-size:9.5pt'&amp;gt;
+&amp;lt;p style='font-size:11pt;margin-bottom:0in'&amp;gt;Getting Started&amp;lt;/p&amp;gt;
+&amp;lt;p style='margin:0in;text-indent:10.5pt'&amp;gt;When you begin to share data for the first time, the computer with the most authoritative copy &amp;lt;b&amp;gt;must&amp;lt;/b&amp;gt; be the first to send/receive, and all other computers must have the project &amp;lt;b&amp;gt;removed&amp;lt;/b&amp;gt; from that computer before proceeding.&amp;lt;/p&amp;gt;
+&amp;lt;p style='margin:0in;text-indent:10pt'&amp;gt;If your project is spread across two or more computers, and neither contains a more complete or up-to-date work, it is recommended to merge the databases into one project before sharing the project. If you need help with this process, please contact &amp;lt;a href='mailto:FLEx_Errors@sil.org'&amp;gt;FLEx_Errors@sil.org&amp;lt;/a&amp;gt; for advice.&amp;lt;/p&amp;gt;
+&amp;lt;p style='margin:0in;text-indent:10pt'&amp;gt;All other computers/users in the project will receive this project through the command &amp;amp;quot;Get Project from Colleague&amp;amp;quot;. After that, they can continue to work on the new shared project.&amp;lt;/p&amp;gt;
+&amp;lt;p style='margin:0in;text-indent:10pt'&amp;gt;For step-by-step instructions on project sharing, please search for &amp;amp;quot;Get started with Send/Receive&amp;amp;quot; in the Helps or click the Help button below.&amp;lt;/p&amp;gt;
+&amp;lt;p style='font-size:11pt;margin-bottom:0in'&amp;gt;Best Practices&amp;lt;/p&amp;gt;
+&amp;lt;p style='margin:0in;text-indent:10pt'&amp;gt;When working, it is recommended for each user to complete a send/receive before starting the day's work (to receive the most current data) and when ending the day's work (to share your new changes with other users). Users who work at the same time, or who are making major changes to the database are encouraged to send/receive more often to prevent conflicts.&amp;lt;/p&amp;gt;
+&amp;lt;ul&amp;gt;&amp;lt;p style='margin:0in;margin-left:-30pt;text-indent:10pt'&amp;gt;As with any Send/Receive process, there are recommendations about which areas to avoid editing at the same time:&amp;lt;/p&amp;gt;
+&amp;lt;li style='list-style-type:bullet;margin-left:-10pt'&amp;gt;If you will be doing a Bulk Edit, please do a Send/Receive immediately before and after, and ask other teammates to refrain from working while you do this.&amp;lt;/li&amp;gt;
+&amp;lt;li style='list-style-type:bullet;margin-left:-10pt'&amp;gt;Try to avoid having two users work on the same interlinear text during the same send/receive cycle. This includes the Text Chart.&amp;lt;/li&amp;gt;
+&amp;lt;li style='list-style-type:bullet;margin-left:-10pt'&amp;gt;If two users adjust lexical relations in the same entry in the same Send/Receive cycle, the results may not be what you expect.&amp;lt;/li&amp;gt;
+&amp;lt;li style='list-style-type:bullet;margin-left:-10pt'&amp;gt;Once you have done Send/Receive with this project, you will not be able to restore a backup over it.&amp;lt;/li&amp;gt;
+&amp;lt;/ul&amp;gt;&amp;lt;/body&amp;gt;&amp;lt;/html&amp;gt;</value>
+    <comment>HTML used to display instructions for users when the Send/Receive for the first time menu item is used</comment>
   </data>
 </root>

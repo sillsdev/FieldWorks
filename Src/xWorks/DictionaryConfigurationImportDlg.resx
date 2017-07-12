@@ -117,77 +117,20 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="mainTableLayoutPanel.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="mainTableLayoutPanel.ColumnCount" type="System.Int32, mscorlib">
-    <value>3</value>
-  </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="explanationLabel.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>Top, Bottom, Left, Right</value>
+  <data name="browseButton.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Right</value>
   </data>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="explanationLabel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>6, 106</value>
-  </data>
-  <data name="explanationLabel.Multiline" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="explanationLabel.ScrollBars" type="System.Windows.Forms.ScrollBars, System.Windows.Forms">
-    <value>Vertical</value>
-  </data>
-  <data name="explanationLabel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>442, 52</value>
-  </data>
-  <data name="explanationLabel.TabIndex" type="System.Int32, mscorlib">
-    <value>7</value>
-  </data>
-  <data name="&gt;&gt;explanationLabel.Name" xml:space="preserve">
-    <value>explanationLabel</value>
-  </data>
-  <data name="&gt;&gt;explanationLabel.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;explanationLabel.Parent" xml:space="preserve">
-    <value>mainTableLayoutPanel</value>
-  </data>
-  <data name="&gt;&gt;explanationLabel.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="importPathTextBox.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Fill</value>
-  </data>
-  <data name="importPathTextBox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>168, 6</value>
-  </data>
-  <data name="importPathTextBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>199, 20</value>
-  </data>
-  <data name="importPathTextBox.TabIndex" type="System.Int32, mscorlib">
-    <value>6</value>
-  </data>
-  <data name="&gt;&gt;importPathTextBox.Name" xml:space="preserve">
-    <value>importPathTextBox</value>
-  </data>
-  <data name="&gt;&gt;importPathTextBox.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;importPathTextBox.Parent" xml:space="preserve">
-    <value>mainTableLayoutPanel</value>
-  </data>
-  <data name="&gt;&gt;importPathTextBox.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
+  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="browseButton.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="browseButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>373, 6</value>
+    <value>344, 3</value>
   </data>
   <data name="browseButton.Size" type="System.Drawing.Size, System.Drawing">
-    <value>75, 23</value>
+    <value>75, 24</value>
   </data>
   <data name="browseButton.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -202,31 +145,133 @@
     <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;browseButton.Parent" xml:space="preserve">
-    <value>mainTableLayoutPanel</value>
+    <value>fileBrowseHorizFlow</value>
   </data>
   <data name="&gt;&gt;browseButton.ZOrder" xml:space="preserve">
     <value>2</value>
   </data>
-  <data name="overwriteGroupBox.AutoSize" type="System.Boolean, mscorlib">
+  <data name="mainVerticalFlow.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
+  </data>
+  <data name="mainVerticalFlow.AutoSizeMode" type="System.Windows.Forms.AutoSizeMode, System.Windows.Forms">
+    <value>GrowAndShrink</value>
+  </data>
+  <data name="fileBrowseHorizFlow.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Left, Right</value>
+  </data>
+  <data name="fileBrowseHorizFlow.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="fileBrowseHorizFlow.AutoSizeMode" type="System.Windows.Forms.AutoSizeMode, System.Windows.Forms">
+    <value>GrowAndShrink</value>
+  </data>
+  <data name="fileImportLabel.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Left</value>
+  </data>
+  <data name="fileImportLabel.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="fileImportLabel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 8</value>
+  </data>
+  <data name="fileImportLabel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>66, 13</value>
+  </data>
+  <data name="fileImportLabel.TabIndex" type="System.Int32, mscorlib">
+    <value>9</value>
+  </data>
+  <data name="fileImportLabel.Text" xml:space="preserve">
+    <value>File to import</value>
+  </data>
+  <data name="&gt;&gt;fileImportLabel.Name" xml:space="preserve">
+    <value>fileImportLabel</value>
+  </data>
+  <data name="&gt;&gt;fileImportLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;fileImportLabel.Parent" xml:space="preserve">
+    <value>fileBrowseHorizFlow</value>
+  </data>
+  <data name="&gt;&gt;fileImportLabel.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="importPathTextBox.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Left</value>
+  </data>
+  <data name="importPathTextBox.Location" type="System.Drawing.Point, System.Drawing">
+    <value>75, 5</value>
+  </data>
+  <data name="importPathTextBox.Size" type="System.Drawing.Size, System.Drawing">
+    <value>263, 20</value>
+  </data>
+  <data name="importPathTextBox.TabIndex" type="System.Int32, mscorlib">
+    <value>8</value>
+  </data>
+  <data name="&gt;&gt;importPathTextBox.Name" xml:space="preserve">
+    <value>importPathTextBox</value>
+  </data>
+  <data name="&gt;&gt;importPathTextBox.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;importPathTextBox.Parent" xml:space="preserve">
+    <value>fileBrowseHorizFlow</value>
+  </data>
+  <data name="&gt;&gt;importPathTextBox.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="fileBrowseHorizFlow.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 3</value>
+  </data>
+  <data name="fileBrowseHorizFlow.Size" type="System.Drawing.Size, System.Drawing">
+    <value>487, 30</value>
+  </data>
+  <data name="fileBrowseHorizFlow.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;fileBrowseHorizFlow.Name" xml:space="preserve">
+    <value>fileBrowseHorizFlow</value>
+  </data>
+  <data name="&gt;&gt;fileBrowseHorizFlow.Type" xml:space="preserve">
+    <value>System.Windows.Forms.FlowLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;fileBrowseHorizFlow.Parent" xml:space="preserve">
+    <value>mainVerticalFlow</value>
+  </data>
+  <data name="&gt;&gt;fileBrowseHorizFlow.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="overwriteHorizFlow.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="overwriteHorizFlow.AutoSizeMode" type="System.Windows.Forms.AutoSizeMode, System.Windows.Forms">
+    <value>GrowAndShrink</value>
+  </data>
+  <data name="overwriteGroupBox.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Left, Right</value>
   </data>
   <data name="overwriteOptionFlowLayoutPanel.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
+  <data name="overwriteOptionFlowLayoutPanel.AutoSizeMode" type="System.Windows.Forms.AutoSizeMode, System.Windows.Forms">
+    <value>GrowAndShrink</value>
+  </data>
   <data name="doOverwriteRadioOption.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
+  </data>
+  <data name="doOverwriteRadioOption.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
   </data>
   <data name="doOverwriteRadioOption.Location" type="System.Drawing.Point, System.Drawing">
     <value>3, 3</value>
   </data>
   <data name="doOverwriteRadioOption.Size" type="System.Drawing.Size, System.Drawing">
-    <value>307, 17</value>
+    <value>102, 17</value>
   </data>
   <data name="doOverwriteRadioOption.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
   </data>
   <data name="doOverwriteRadioOption.Text" xml:space="preserve">
-    <value>Overwrite existing configuration named FOO FOO FOO FOO</value>
+    <value>Overwrite option</value>
   </data>
   <data name="&gt;&gt;doOverwriteRadioOption.Name" xml:space="preserve">
     <value>doOverwriteRadioOption</value>
@@ -243,17 +288,20 @@
   <data name="notOverwriteRadioOption.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
+  <data name="notOverwriteRadioOption.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
   <data name="notOverwriteRadioOption.Location" type="System.Drawing.Point, System.Drawing">
     <value>3, 26</value>
   </data>
   <data name="notOverwriteRadioOption.Size" type="System.Drawing.Size, System.Drawing">
-    <value>260, 17</value>
+    <value>120, 17</value>
   </data>
   <data name="notOverwriteRadioOption.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
   </data>
   <data name="notOverwriteRadioOption.Text" xml:space="preserve">
-    <value>Use new configuration name FOO FOO FOO FOO</value>
+    <value>Not overwrite option</value>
   </data>
   <data name="&gt;&gt;notOverwriteRadioOption.Name" xml:space="preserve">
     <value>notOverwriteRadioOption</value>
@@ -276,11 +324,8 @@
   <data name="overwriteOptionFlowLayoutPanel.Location" type="System.Drawing.Point, System.Drawing">
     <value>3, 16</value>
   </data>
-  <data name="overwriteOptionFlowLayoutPanel.MinimumSize" type="System.Drawing.Size, System.Drawing">
-    <value>0, 46</value>
-  </data>
   <data name="overwriteOptionFlowLayoutPanel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>436, 46</value>
+    <value>475, 53</value>
   </data>
   <data name="overwriteOptionFlowLayoutPanel.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -297,17 +342,14 @@
   <data name="&gt;&gt;overwriteOptionFlowLayoutPanel.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
-  <data name="overwriteGroupBox.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Fill</value>
-  </data>
   <data name="overwriteGroupBox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>6, 35</value>
+    <value>3, 3</value>
   </data>
   <data name="overwriteGroupBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>442, 65</value>
+    <value>481, 72</value>
   </data>
   <data name="overwriteGroupBox.TabIndex" type="System.Int32, mscorlib">
-    <value>8</value>
+    <value>9</value>
   </data>
   <data name="&gt;&gt;overwriteGroupBox.Name" xml:space="preserve">
     <value>overwriteGroupBox</value>
@@ -316,55 +358,98 @@
     <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;overwriteGroupBox.Parent" xml:space="preserve">
-    <value>mainTableLayoutPanel</value>
+    <value>overwriteHorizFlow</value>
   </data>
   <data name="&gt;&gt;overwriteGroupBox.ZOrder" xml:space="preserve">
-    <value>3</value>
+    <value>0</value>
   </data>
-  <data name="fileImportLabel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>6, 6</value>
+  <data name="overwriteHorizFlow.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 39</value>
   </data>
-  <data name="fileImportLabel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>156, 13</value>
+  <data name="overwriteHorizFlow.Size" type="System.Drawing.Size, System.Drawing">
+    <value>487, 78</value>
   </data>
-  <data name="fileImportLabel.TabIndex" type="System.Int32, mscorlib">
-    <value>5</value>
+  <data name="overwriteHorizFlow.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
   </data>
-  <data name="fileImportLabel.Text" xml:space="preserve">
-    <value>Configuration file to import</value>
+  <data name="&gt;&gt;overwriteHorizFlow.Name" xml:space="preserve">
+    <value>overwriteHorizFlow</value>
   </data>
-  <data name="&gt;&gt;fileImportLabel.Name" xml:space="preserve">
-    <value>fileImportLabel</value>
+  <data name="&gt;&gt;overwriteHorizFlow.Type" xml:space="preserve">
+    <value>System.Windows.Forms.FlowLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;fileImportLabel.Type" xml:space="preserve">
+  <data name="&gt;&gt;overwriteHorizFlow.Parent" xml:space="preserve">
+    <value>mainVerticalFlow</value>
+  </data>
+  <data name="&gt;&gt;overwriteHorizFlow.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="explanationLabel.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Left, Right</value>
+  </data>
+  <data name="explanationLabel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 123</value>
+  </data>
+  <data name="explanationLabel.Multiline" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="explanationLabel.ScrollBars" type="System.Windows.Forms.ScrollBars, System.Windows.Forms">
+    <value>Vertical</value>
+  </data>
+  <data name="explanationLabel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>487, 130</value>
+  </data>
+  <data name="explanationLabel.TabIndex" type="System.Int32, mscorlib">
+    <value>12</value>
+  </data>
+  <data name="explanationLabel.Text" xml:space="preserve">
+    <value>Explanation box
+
+More explanation
+
+Even more explanation Even more explanation Even more explanation Even more explanation Still long explanation.
+
+Yet more explanation!
+
+Yet even more explanation.
+
+Even more explanation still. 
+
+Lots of explanation here, to be sure.
+</value>
+  </data>
+  <data name="&gt;&gt;explanationLabel.Name" xml:space="preserve">
+    <value>explanationLabel</value>
+  </data>
+  <data name="&gt;&gt;explanationLabel.Type" xml:space="preserve">
     <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;fileImportLabel.Parent" xml:space="preserve">
-    <value>mainTableLayoutPanel</value>
+  <data name="&gt;&gt;explanationLabel.Parent" xml:space="preserve">
+    <value>mainVerticalFlow</value>
   </data>
-  <data name="&gt;&gt;fileImportLabel.ZOrder" xml:space="preserve">
-    <value>4</value>
+  <data name="&gt;&gt;explanationLabel.ZOrder" xml:space="preserve">
+    <value>2</value>
   </data>
   <data name="buttonLayoutPanel.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>Bottom, Right</value>
+    <value>Bottom, Left, Right</value>
   </data>
-  <data name="helpButton.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Right</value>
+  <data name="buttonLayoutPanel.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
   </data>
   <data name="helpButton.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
   <data name="helpButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>361, 3</value>
+    <value>409, 3</value>
   </data>
   <data name="helpButton.Size" type="System.Drawing.Size, System.Drawing">
     <value>75, 24</value>
   </data>
   <data name="helpButton.TabIndex" type="System.Int32, mscorlib">
-    <value>6</value>
+    <value>0</value>
   </data>
   <data name="helpButton.Text" xml:space="preserve">
-    <value>Help</value>
+    <value>&amp;Help</value>
   </data>
   <data name="&gt;&gt;helpButton.Name" xml:space="preserve">
     <value>helpButton</value>
@@ -388,13 +473,13 @@
     <value>NoControl</value>
   </data>
   <data name="cancelButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>273, 3</value>
+    <value>328, 3</value>
   </data>
   <data name="cancelButton.MinimumSize" type="System.Drawing.Size, System.Drawing">
     <value>75, 23</value>
   </data>
   <data name="cancelButton.Size" type="System.Drawing.Size, System.Drawing">
-    <value>82, 24</value>
+    <value>75, 24</value>
   </data>
   <data name="cancelButton.TabIndex" type="System.Int32, mscorlib">
     <value>2</value>
@@ -424,7 +509,7 @@
     <value>NoControl</value>
   </data>
   <data name="importButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>192, 3</value>
+    <value>247, 3</value>
   </data>
   <data name="importButton.Size" type="System.Drawing.Size, System.Drawing">
     <value>75, 24</value>
@@ -451,13 +536,13 @@
     <value>RightToLeft</value>
   </data>
   <data name="buttonLayoutPanel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>9, 164</value>
+    <value>3, 259</value>
   </data>
   <data name="buttonLayoutPanel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>439, 31</value>
+    <value>487, 30</value>
   </data>
   <data name="buttonLayoutPanel.TabIndex" type="System.Int32, mscorlib">
-    <value>9</value>
+    <value>10</value>
   </data>
   <data name="&gt;&gt;buttonLayoutPanel.Name" xml:space="preserve">
     <value>buttonLayoutPanel</value>
@@ -466,43 +551,37 @@
     <value>System.Windows.Forms.FlowLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;buttonLayoutPanel.Parent" xml:space="preserve">
-    <value>mainTableLayoutPanel</value>
+    <value>mainVerticalFlow</value>
   </data>
   <data name="&gt;&gt;buttonLayoutPanel.ZOrder" xml:space="preserve">
-    <value>5</value>
+    <value>3</value>
   </data>
-  <data name="mainTableLayoutPanel.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+  <data name="mainVerticalFlow.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
   </data>
-  <data name="mainTableLayoutPanel.Location" type="System.Drawing.Point, System.Drawing">
+  <data name="mainVerticalFlow.FlowDirection" type="System.Windows.Forms.FlowDirection, System.Windows.Forms">
+    <value>TopDown</value>
+  </data>
+  <data name="mainVerticalFlow.Location" type="System.Drawing.Point, System.Drawing">
     <value>0, 0</value>
   </data>
-  <data name="mainTableLayoutPanel.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>3, 3, 0, 0</value>
+  <data name="mainVerticalFlow.Size" type="System.Drawing.Size, System.Drawing">
+    <value>498, 301</value>
   </data>
-  <data name="mainTableLayoutPanel.RowCount" type="System.Int32, mscorlib">
-    <value>4</value>
+  <data name="mainVerticalFlow.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
   </data>
-  <data name="mainTableLayoutPanel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>451, 198</value>
+  <data name="&gt;&gt;mainVerticalFlow.Name" xml:space="preserve">
+    <value>mainVerticalFlow</value>
   </data>
-  <data name="mainTableLayoutPanel.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
+  <data name="&gt;&gt;mainVerticalFlow.Type" xml:space="preserve">
+    <value>System.Windows.Forms.FlowLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;mainTableLayoutPanel.Name" xml:space="preserve">
-    <value>mainTableLayoutPanel</value>
-  </data>
-  <data name="&gt;&gt;mainTableLayoutPanel.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TableLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;mainTableLayoutPanel.Parent" xml:space="preserve">
+  <data name="&gt;&gt;mainVerticalFlow.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
-  <data name="&gt;&gt;mainTableLayoutPanel.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;mainVerticalFlow.ZOrder" xml:space="preserve">
     <value>0</value>
-  </data>
-  <data name="mainTableLayoutPanel.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
-    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="explanationLabel" Row="2" RowSpan="1" Column="0" ColumnSpan="3" /&gt;&lt;Control Name="importPathTextBox" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="browseButton" Row="0" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;Control Name="overwriteGroupBox" Row="1" RowSpan="1" Column="1" ColumnSpan="3" /&gt;&lt;Control Name="fileImportLabel" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="buttonLayoutPanel" Row="4" RowSpan="1" Column="0" ColumnSpan="3" /&gt;&lt;/Controls&gt;&lt;Columns Styles="AutoSize,0,Percent,100,AutoSize,0" /&gt;&lt;Rows Styles="AutoSize,0,AutoSize,0,AutoSize,0,Percent,100,AutoSize,0" /&gt;&lt;/TableLayoutSettings&gt;</value>
   </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
@@ -511,16 +590,13 @@
     <value>6, 13</value>
   </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
-    <value>451, 198</value>
-  </data>
-  <data name="$this.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
+    <value>498, 301</value>
   </data>
   <data name="$this.MinimumSize" type="System.Drawing.Size, System.Drawing">
-    <value>16, 218</value>
+    <value>514, 340</value>
   </data>
   <data name="$this.Text" xml:space="preserve">
-    <value>Import Dictionary Configuration</value>
+    <value>Import a View</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>DictionaryConfigurationImportDlg</value>

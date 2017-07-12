@@ -3180,7 +3180,14 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 				if (m_factCmFolder == null)
 					m_factCmFolder = m_cache.ServiceLocator.GetInstance<ICmFolderFactory>();
 				folder = m_factCmFolder.Create();
-				m_cache.LangProject.PicturesOC.Add(folder);
+				if (sFolderName == "Local Media")
+				{
+					m_cache.LangProject.MediaOC.Add(folder);
+				}
+				else
+				{
+					m_cache.LangProject.PicturesOC.Add(folder);
+				}
 				folder.Name.set_String(wsEn, sFolderName);
 				IncrementCreatedClidCount(CmFolderTags.kClassId);
 			}

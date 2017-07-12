@@ -50,6 +50,33 @@ namespace XMLViewsTests
 		}
 
 		[Test]
+		public void XHTMLExportGetDigraphMapsFromICUSortRules_TestSecondaryTertiaryShouldNotGenerateHeader()
+		{
+			var ws = Cache.LangProject.DefaultVernacularWritingSystem;
+			ws.SortRules = "&b << az / c <<< AZ / C" + Environment.NewLine + "&f << gz";
+			ws.SortUsing = WritingSystemDefinition.SortRulesType.CustomICU;
+
+			var exporter = new ConfiguredExport(null, null, 0);
+			string output;
+			using (var stream = new MemoryStream())
+			{
+				using (var writer = new StreamWriter(stream))
+				{
+					exporter.Initialize(Cache, null, writer, null, "xhtml", null, "dicBody");
+					Dictionary<string, string> mapChars;
+					Set<string> ignoreSet;
+					var data = exporter.GetDigraphs(ws.Id, out mapChars, out ignoreSet);
+					Assert.AreEqual(data.Count, 0, "Header created for two wedges");
+					Assert.AreEqual(mapChars.Count, 3, "Too many characters found equivalents");
+					Assert.AreEqual(mapChars["az"], "b");
+					Assert.AreEqual(mapChars["AZ"], "b");
+					// Rules following the '/' rule should not be skipped LT-18309
+					Assert.AreEqual(mapChars["gz"], "f");
+				}
+			}
+		}
+
+		[Test]
 		public void XHTMLExportGetDigraphMapsFromICUSortRules_TertiaryIgnorableDoesNotCrash()
 		{
 			var ws = Cache.LangProject.DefaultVernacularWritingSystem;

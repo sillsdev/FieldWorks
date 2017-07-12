@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="all" InitialTargets="Setup" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
-	<Import Project="NuGet.targets"/>
-
 	<UsingTask TaskName="Script" AssemblyFile="MSBuild.Community.Tasks.dll"/>
 	<UsingTask TaskName="ExtractIIDs" AssemblyFile="FwBuildTasks.dll"/>
 

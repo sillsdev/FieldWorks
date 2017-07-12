@@ -285,7 +285,10 @@ namespace SIL.FieldWorks.FDO
 			kmtEntryOrSenseUnidirectional = 17
 		};
 
-		/// <returns>True if the MappingType is directional (asymmetric); false if it is the same in any direction (symmetric).</returns>
+		/// <returns>
+		/// True if the MappingType is directional (asymmetric; like part-whole);
+		/// False if it is the same in any direction (symmetric; like antonym).
+		/// </returns>
 		public static bool IsAsymmetric(MappingTypes type)
 		{
 			return type == MappingTypes.kmtEntryAsymmetricPair
@@ -299,12 +302,20 @@ namespace SIL.FieldWorks.FDO
 				|| type == MappingTypes.kmtEntryOrSenseUnidirectional;
 		}
 
-		/// <returns>True if the MappingType is unidirectional; false if it is bidirectional.</returns>
+		/// <returns>True if the MappingType is unidirectional (targets are unaware of their owner); false if it is bidirectional.</returns>
 		public static bool IsUnidirectional(MappingTypes type)
 		{
 			return type == MappingTypes.kmtSenseUnidirectional
 				|| type == MappingTypes.kmtEntryUnidirectional
 				|| type == MappingTypes.kmtEntryOrSenseUnidirectional;
+		}
+
+		/// <returns>True if the MappingType is a sequence (like days of the week); false otherwise.</returns>
+		public static bool IsSequence(MappingTypes type)
+		{
+			return type == MappingTypes.kmtSenseSequence
+				|| type == MappingTypes.kmtEntryOrSenseSequence
+				|| type == MappingTypes.kmtEntrySequence;
 		}
 	}
 

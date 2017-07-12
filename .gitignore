@@ -133,3 +133,4 @@ Lib/icu*.lib
 DistFiles/Icu*.zip
 DistFiles/Icu*/icudt*l
 DistFiles/Icu*/*.*
+.idea/
