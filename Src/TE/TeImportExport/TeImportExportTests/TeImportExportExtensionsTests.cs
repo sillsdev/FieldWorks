@@ -76,8 +76,8 @@ namespace SIL.FieldWorks.TE
 				FileUtils.Manager.SetFileAdapter(fileOs);
 				ptHelper = new MockParatextHelper();
 				ParatextHelper.Manager.SetParatextHelperAdapter(ptHelper);
-				string paratextDir = ParatextHelper.ProjectsDirectory;
-
+				string paratextDir = ScriptureProvider.SettingsDirectory;
+				Assert.NotNull(paratextDir, "Setup problem - ProjectsDirectory should not be null.");
 				ptHelper.AddProject("TEV", null, null, true, false, "100001");
 
 				fileOs.AddExistingFile(Path.Combine(paratextDir, "TEV.ssf"));

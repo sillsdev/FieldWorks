@@ -898,14 +898,6 @@ namespace SIL.FieldWorks.XWorks
 
 		#endregion
 
-		/// <summary>
-		/// Method which set the current writing system when selected in ConfigureReversalIndexDialog
-		/// </summary>
-		private void SetReversalIndexOnPropertyDlg() // REVIEW (Hasso) 2016.01: this seems to sabotage whatever is selected in the Config dialog
-		{
-			DictionaryConfigurationUtils.SetReversalIndexGuidBasedOnReversalIndexConfiguration(m_mediator, Cache);
-		}
-
 		public void OnMasterRefresh(object sender)
 		{
 			var currentConfig = GetCurrentConfiguration(false);

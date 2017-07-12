@@ -30,6 +30,8 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 		/// </summary>
 		internal static IScriptureProvider _scriptureProvider;
 
+		private static bool _isInitialized;
+
 		/// <summary>
 		/// Determine if Paratext8 is installed, if it is use it, otherwise fall back to Paratext7
 		/// </summary>
@@ -48,26 +50,37 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 			container.SatisfyImportsOnce(scriptureProvider);
 
 			// Choose the ScriptureProvider that reports the newest version
-			// If both Paratext 7 and 8 are installed the plugin handling 8 will be used
-			Version maximumSupportedVersion = null;
-			foreach (Lazy<IScriptureProvider, IScriptureProviderMetadata> provider in scriptureProvider._potentialScriptureProviders)
+			// (If both Paratext 7 and 8 are installed, the plugin handling 8 will be used)
+			foreach (var provider in scriptureProvider._potentialScriptureProviders)
 			{
-				if (maximumSupportedVersion == null || provider.Value.MaximumSupportedVersion > maximumSupportedVersion)
+				if (_scriptureProvider == null || provider.Value.MaximumSupportedVersion > _scriptureProvider.MaximumSupportedVersion)
 				{
 					_scriptureProvider = provider.Value;
-					maximumSupportedVersion = _scriptureProvider.MaximumSupportedVersion;
 				}
 			}
+#if DEBUG
 			if (_scriptureProvider == null)
 			{
 				throw new ApplicationException("No scripture providers discovered by MEF");
 			}
+#endif // DEBUG
+			InitializeIfNeeded();
 		}
 
-		/// <summary>
-		/// Returns the maximum supported version of the active IScriptureProvider
-		/// </summary>
-		public static Version VersionInUse { get { return _scriptureProvider != null ? _scriptureProvider.MaximumSupportedVersion : new Version(); } }
+		private static void InitializeIfNeeded()
+		{
+			if (!_isInitialized && IsInstalled)
+			{
+				Initialize();
+				_isInitialized = true; // save ourselves a few milliseconds next time around (perhaps)
+			}
+		}
+
+		/// <summary/>
+		internal static Version VersionInUse { get { return _scriptureProvider.MaximumSupportedVersion; } }
+
+		/// <returns>true if and only if Paratext is installed and its settings (projects) directory exists (e.g. USB drive plugged or unplugged</returns>
+		public static bool IsInstalled { get { return _scriptureProvider != null && _scriptureProvider.IsInstalled; } }
 
 		/// <summary/>
 		public interface IScriptureProviderMetadata
@@ -86,7 +99,7 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 			/// <summary/>
 			IEnumerable<string> ScrTextNames { get; }
 			/// <summary/>
-			void Initialize(string paratextSettingsDirectory, bool overrideProjDirs);
+			void Initialize();
 			/// <summary/>
 			void RefreshScrTexts();
 			/// <summary/>
@@ -104,80 +117,8 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 			/// </summary>
 			/// <remarks>This should return only an installed version</remarks>
 			Version MaximumSupportedVersion { get; }
-		}
-
-		[Export(typeof(IScriptureProvider))]
-		[ExportMetadata("Version", "7")]
-		private class Paratext7Provider : IScriptureProvider
-		{
-			public string SettingsDirectory { get { return ScrTextCollection.SettingsDirectory; } }
-			public IEnumerable<string> NonEditableTexts { get { return ScrTextCollection.SLTTexts; } }
-			public IEnumerable<string> ScrTextNames { get { return ScrTextCollection.ScrTextNames; } }
-			public void Initialize(string paratextSettingsDirectory, bool overrideProjDirs)
-			{
-				ScrTextCollection.Initialize(paratextSettingsDirectory, overrideProjDirs);
-			}
-
-			public void RefreshScrTexts()
-			{
-				ScrTextCollection.RefreshScrTexts();
-			}
-			public IEnumerable<IScrText> ScrTexts()
-			{
-				return WrapPtCollection(ScrTextCollection.ScrTexts(true, true),
-					new Func<ScrText, IScrText>(ptText => new PT7ScrTextWrapper(ptText)));
-			}
-
-			public IVerseRef MakeVerseRef(int bookNum, int i, int i1)
-			{
-				return new PT7VerseRefWrapper(new VerseRef(bookNum, i, i1));
-			}
-
-			public IScrText Get(string project)
-			{
-				return new PT7ScrTextWrapper(ScrTextCollection.Get(project));
-			}
-
-			public IScrText MakeScrText(string projectName)
-			{
-				return string.IsNullOrEmpty(projectName) ? new PT7ScrTextWrapper(new ScrText()) : new PT7ScrTextWrapper(new ScrText(projectName));
-			}
-
-			public IScriptureProviderParserState GetParserState(IScrText ptProjectText, IVerseRef ptCurrBook)
-			{
-				return new PT7ParserStateWrapper(new ScrParserState((ScrText)ptProjectText.CoreScrText, (VerseRef)ptCurrBook.CoreVerseRef));
-			}
-
-			public Version MaximumSupportedVersion
-			{
-				get { return FwRegistryHelper.Paratext7orLaterInstalled() ? new Version(7, 0) : new Version(); }
-			}
-
-			private class PT7ParserStateWrapper : IScriptureProviderParserState
-			{
-				private ScrParserState pt7ParserState;
-				private List<IUsfmToken> wrappedTokenList;
-
-				private List<UsfmToken> rawPtTokenList;
-
-				public PT7ParserStateWrapper(ScrParserState scrParserState)
-				{
-					pt7ParserState = scrParserState;
-				}
-
-				public IVerseRef VerseRef { get { return new PT7VerseRefWrapper(pt7ParserState.VerseRef); } }
-
-				public void UpdateState(List<IUsfmToken> ptBookTokens, int ptCurrentToken)
-				{
-					if (wrappedTokenList != ptBookTokens)
-					{
-						wrappedTokenList = ptBookTokens;
-						rawPtTokenList = new List<UsfmToken>(ptBookTokens.Select(t => (UsfmToken)t.CoreToken));
-					}
-
-					pt7ParserState.UpdateState(rawPtTokenList, ptCurrentToken);
-				}
-			}
+			/// <summary/>
+			bool IsInstalled { get; }
 		}
 
 		/// <summary/>
@@ -197,6 +138,7 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 		{
 			get
 			{
+				InitializeIfNeeded();
 				return _scriptureProvider.SettingsDirectory;
 			}
 		}
@@ -217,9 +159,10 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 		}
 
 		/// <summary/>
-		public static void Initialize(string paratextSettingsDirectory, bool b)
+		public static void Initialize()
 		{
-			_scriptureProvider.Initialize(paratextSettingsDirectory, b);
+			// REVIEW (Hasso) 2017.07: is it our job or the client's not to initialize it's not OK?
+			_scriptureProvider.Initialize();
 		}
 
 		/// <summary/>

@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -19,26 +19,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		#region IFwRegistryHelper implementation
 
-		/// <summary>
-		///
-		/// </summary>
-		/// <returns></returns>
-		public bool Paratext7orLaterInstalled()
-		{
-			throw new NotImplementedException();
-		}
-
-		/// <summary>
-		///
-		/// </summary>
-		/// <returns></returns>
-		public bool ParatextSettingsDirectoryExists()
-		{
-			throw new NotImplementedException();
-		}
-
-		/// <summary></summary>
-		public string ParatextSettingsDirectory()
+		/// <summary/>
+		public bool Paratext7Installed()
 		{
 			throw new NotImplementedException();
 		}

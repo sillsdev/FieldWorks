@@ -1,4 +1,4 @@
-// Copyright (c) 2002-2013 SIL International
+// Copyright (c) 2002-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -16,7 +16,6 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using System.Media;
 using System.Windows.Forms;
 using Microsoft.Win32;
 using Palaso.WritingSystems;
@@ -1583,11 +1582,9 @@ namespace SIL.FieldWorks.TE
 
 		private void EnsureEnglishLdsExists()
 		{
-			string paratextProjectDir = ParatextHelper.ProjectsDirectory;
-
-			if (!String.IsNullOrEmpty(paratextProjectDir))
+			if (ScriptureProvider.IsInstalled)
 			{
-				string englishLdsPathname = Path.Combine(paratextProjectDir, "English.lds");
+				string englishLdsPathname = Path.Combine(ScriptureProvider.SettingsDirectory, "English.lds");
 				if (!File.Exists(englishLdsPathname))
 				{
 					IStStyle normalStyle = m_StyleSheet.FindStyle(ScrStyleNames.Normal);
@@ -1600,10 +1597,7 @@ namespace SIL.FieldWorks.TE
 					styleTable.ConnectStyles();
 					ldsAccessor.WriteParatextLdsFile(englishLdsPathname,
 						Cache.LanguageWritingSystemFactoryAccessor.GetWsFromStr("en"), normalUsfmStyle);
-					// We pass the directory (rather than passing no arguments, and letting the paratext dll figure
-					// it out) because the figuring out goes wrong on Linux, where both programs are simulating
-					// the registry.
-					ScrTextCollection.Initialize(ParatextHelper.ProjectsDirectory, false);
+					ScriptureProvider.Initialize();
 				}
 			}
 		}

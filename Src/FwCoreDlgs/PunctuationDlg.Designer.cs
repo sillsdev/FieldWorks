@@ -445,7 +445,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			//
 			this.contextCtrl.DisplayedListName = "punctuation patterns";
 			resources.ApplyResources(this.contextCtrl, "contextCtrl");
-			this.contextCtrl.InitialDirectoryForFileScan = global::SIL.FieldWorks.FwCoreDlgs.FwCoreDlgs.kstidOpen;
 			this.contextCtrl.Name = "contextCtrl";
 			this.contextCtrl.ScanMsgLabelText = "To see occurrences, click Scan.";
 			this.contextCtrl.GetContextInfo += new SIL.FieldWorks.FwCoreDlgs.CharContextCtrl.GetContextInfoHandler(this.contextCtrl_GetContextInfo);
