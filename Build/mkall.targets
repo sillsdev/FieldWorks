@@ -397,7 +397,7 @@
 		<Message Text="Downloading protobuf-net." />
 		<DownloadFile Address="$(ProtoBufNetDownloadUrl)" LocalFilename="$(fwrt)/Downloads/protobuf-net.zip" />
 
-		<Message Text="Downloading ParaTExt DLLs." />
+		<Message Text="Downloading Paratext DLLs." />
 		<DownloadFile Address="$(DownloadsSilOrgDownloadUrl)Paratext.LexicalContracts.dll" LocalFilename="$(fwrt)/Downloads/Paratext.LexicalContracts.dll"/>
 		<!-- Windows downloads -->
 		<DownloadFile Address="$(DownloadsSilOrgDownloadUrl)Windows/FormattedEditor.dll" LocalFilename="$(fwrt)/Downloads/FormattedEditor.dll" Condition="'$(OS)'=='Windows_NT'"/>
@@ -431,8 +431,11 @@
 		<DownloadFile Address="$(Icu4cDownloadUrl)/icuuc.lib" LocalFilename="$(fwrt)/Downloads/icuuc.lib" Condition="'$(OS)'=='Windows_NT'"/>
 
 
-		<Message Text="Downloading pinned artifact for SIL.Scripture for PT8 support" />
+		<Message Text="Downloading pinned artifacts from Palaso for Paratext 8 support" />
+		<DownloadFile Address="$(SILScriptureDownloadUrl)/Newtonsoft.Json.dll" LocalFilename="$(fwrt)/Downloads/Newtonsoft.Json.dll"/>
+		<DownloadFile Address="$(SILScriptureDownloadUrl)/SIL.Core.dll" LocalFilename="$(fwrt)/Downloads/SIL.Core.dll"/>
 		<DownloadFile Address="$(SILScriptureDownloadUrl)/SIL.Scripture.dll" LocalFilename="$(fwrt)/Downloads/SIL.Scripture.dll"/>
+		<DownloadFile Address="$(SILScriptureDownloadUrl)/SIL.WritingSystems.dll" LocalFilename="$(fwrt)/Downloads/SIL.WritingSystems.dll"/>
 	</Target>
 
 	<!-- item group for downloads, to allow easy copying -->
@@ -468,8 +471,11 @@
 		<DownloadedFiles Include="$(fwrt)/Downloads/PalasoUIWindowsForms.GeckoBrowserAdapter.pdb" Condition="'$(OS)'=='Windows_NT'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Archiving.dll"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Archiving.dll.config" Condition="'$(OS)'=='Unix'"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Archiving.dll.mdb" Condition="'$(OS)'=='Unix'"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Archiving.pdb" Condition="'$(OS)'=='Windows_NT'"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Archiving.$(DebugInfo)"/>
+		<!-- newer SIL (Palaso) libraries needed for Paratext 8 support -->
+		<DownloadedFiles Include="$(fwrt)/Downloads/Newtonsoft.Json.dll"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Core.dll"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.WritingSystems.dll"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/icu.net.dll"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/Keyman7Interop.dll" Condition="'$(OS)'=='Windows_NT'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/KeymanLink.dll" Condition="'$(OS)'=='Windows_NT'"/>

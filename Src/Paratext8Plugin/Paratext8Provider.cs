@@ -21,9 +21,10 @@ namespace Paratext8Plugin
 	public class Paratext8Provider : ScriptureProvider.IScriptureProvider
 	{
 		public string SettingsDirectory { get { return ScrTextCollection.SettingsDirectory; } }
+
 		public IEnumerable<string> NonEditableTexts { get { return ScrTextCollection.ScrTexts(IncludeProjects.Resources | IncludeProjects.Inaccessible).Select(scrTxt => scrTxt.Name.ToLowerInvariant()); } }
 		public IEnumerable<string> ScrTextNames { get { return ScrTextCollection.ScrTexts(IncludeProjects.AllAccessible).Select(scrText => scrText.Name.ToLowerInvariant()); } }
-		public void Initialize(string paratextSettingsDirectory, bool ignoredFor8)
+		public void Initialize()
 		{
 			ParatextData.Initialize();
 		}
@@ -63,8 +64,10 @@ namespace Paratext8Plugin
 		/// <summary/>
 		public Version MaximumSupportedVersion
 		{
-			get { return ParatextInfo.IsParatextInstalled ? ParatextInfo.ParatextVersion : new Version(); }
+			get { return IsInstalled ? ParatextInfo.ParatextVersion : new Version(); }
 		}
+
+		public bool IsInstalled { get { return ParatextInfo.IsParatextInstalled; } }
 	}
 
 	public class PT8ParserStateWrapper : ScriptureProvider.IScriptureProviderParserState

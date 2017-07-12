@@ -9,14 +9,16 @@ using SIL.Utils;
 
 namespace SIL.FieldWorks.TE
 {
-	class MockScriptureProvider : ScriptureProvider.IScriptureProvider
+	internal class MockScriptureProvider : ScriptureProvider.IScriptureProvider
 	{
-		public string SettingsDirectory { get; set; }
-		public string ProjectsDirectory
+		public MockScriptureProvider()
+		{
+			NonEditableTexts = new List<string>();
+		}
+		public string SettingsDirectory
 		{
 			get { return MiscUtils.IsUnix ? "~/MyParatextProjects/" : @"c:\My Paratext Projects\"; }
 		}
-		public bool IsOkToInitialize { get; set; }
 		public IEnumerable<string> NonEditableTexts { get; set; }
 		public IEnumerable<string> ScrTextNames { get; set; }
 		public void Initialize()
@@ -55,9 +57,6 @@ namespace SIL.FieldWorks.TE
 		}
 
 		public Version MaximumSupportedVersion { get; set; }
-		public void Initialize(string paratextSettingsDirectory, bool overrideProjDirs)
-		{
-			throw new NotImplementedException();
-		}
+		public bool IsInstalled { get; set; }
 	}
 }

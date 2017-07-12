@@ -7,8 +7,6 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
-using Microsoft.Win32;
-using Paratext;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Utils;
@@ -24,12 +22,6 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 	/// ----------------------------------------------------------------------------------------
 	public interface IParatextHelper
 	{
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the Paratext project directory or null if unable to get the project directory
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		string ProjectsDirectory { get; }
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -241,6 +233,8 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 	/// <summary>
 	/// Helper methods used to access Paratext stuff. Tests can poke in a different
 	/// implementation of IParatextHelper by using the internal Manager class.
+	/// </summary>
+	/// <remarks>
 	/// ENHANCE (TimS): This class should somehow make it's way into FwUtils or similar.
 	/// The only reason it hasn't been moved already is because LoadProjecMappings depends
 	/// on ScrMappingList and ImportDomain which are currently defined in FDO. Those classes
@@ -254,7 +248,9 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 	/// just get this information directly from the ParatextHelper instead and ParatextProxy could cease to exist.
 	/// Enhance (response, Hasso, 2013.09): too much effort and risk for now, given we want a stable release this month;
 	/// however, combining Paratext functionality into one class so initialization is in one place (LT-14887)
-	/// </summary>
+	/// REVIEW (Haso, 2017.07): once again, we're pushing for stable soon. We recently implemented a new ScriptureProvider class which does some
+	/// (and could possibly do all) of what PTHelper[Adapter] did.
+	/// </remarks>
 	/// ----------------------------------------------------------------------------------------
 	public static class ParatextHelper
 	{
@@ -304,60 +300,9 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 			/// <summary/>
 			public ParatextHelperAdapter()
 			{
-				RefreshProjects();
+				RefreshProjects(); // REVIEW (Hasso) 2017.07: I don't think we need to do this; it is called before each time it is needed.
 			}
 
-			/// <summary>
-			/// LT-14787 Database displays error about inaccessible Paratext projects
-			/// If there is a registry value for this but the folder is not there we need to return false because
-			/// paratext is not installed correctly. Also if there is no registry entry for this then return false.
-			/// </summary>
-			private bool ParatextSettingsDirectoryExists()
-			{
-				var regValue = ParatextSettingsDirectory();
-				return !string.IsNullOrEmpty(regValue) && Directory.Exists(regValue);
-			}
-
-			/// <summary>
-			/// Returns the path to the Paratext settings (projects) directory as specified in the registry
-			/// ENHANCE (Hasso) 2013.09: added this to expose the directory for Unix users, because trying to get it from ScrTextCollections
-			/// always returns null on Unix.  This is really a Paratext problem, and this method may have no benefit.
-			/// </summary>
-			private string ParatextSettingsDirectory()
-			{
-				using (var paratextKey = Registry.LocalMachine.OpenSubKey("Software\\ScrChecks\\1.0\\Settings_Directory"))
-				{
-					if (paratextKey != null)
-					{
-						var keyName = paratextKey.ToString();
-						return Registry.GetValue(keyName, "", "") as string;
-					}
-				}
-				return null;
-			}
-
-			/// ------------------------------------------------------------------------------------
-			/// <summary>
-			/// Gets the Paratext projects directory (null if none)
-			/// </summary>
-			/// ------------------------------------------------------------------------------------
-			public string ProjectsDirectory
-			{
-				get
-				{
-					if (m_IsParatextInitialized)
-					{
-						if (MiscUtils.IsUnix)
-						{
-							// TODO FWNX-1235: Why does SrcTextCollection.SettingsDirectory not work in Unix?
-							// Does ScrTextCollection work at all in Unix?
-							return ParatextSettingsDirectory();
-						}
-						return ScriptureProvider.SettingsDirectory;
-					}
-					return null;
-				}
-			}
 
 			/// --------------------------------------------------------------------------------
 			/// <summary>
@@ -368,7 +313,7 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 			{
 				try
 				{
-					if (ParatextSettingsDirectoryExists())
+					if (ScriptureProvider.IsInstalled)
 					{
 						if (!m_IsParatextInitialized)
 						{
@@ -377,8 +322,8 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 							// again. ScrTextCollection.Initialize is safe to call multiple times and also refreshes texts.
 							// We pass the directory (rather than passing no arguments, and letting the paratext dll figure
 							// it out) because the figuring out goes wrong on Linux, where both programs are simulating
-							// the registry.
-							ScriptureProvider.Initialize(ParatextSettingsDirectory(), false);
+							// the registry in different places. TODO NOT (Hasso) 2017.07
+							ScriptureProvider.Initialize();
 							m_IsParatextInitialized = true;
 						}
 						else
@@ -550,15 +495,6 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 		#endregion
 
 		#region Public methods
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the Paratext projects directory.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public static string ProjectsDirectory
-		{
-			get { return s_ptHelper.ProjectsDirectory; }
-		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -656,7 +592,7 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 		/// <remark>The returned list will be empty if there is a problem with the Paratext
 		/// installation or the specified project could not be found.</remark>
 		/// ------------------------------------------------------------------------------------
-		public static IEnumerable<int> GetProjectBooks(string projShortName)
+		public static IEnumerable<int> GetProjectBooks(string projShortName) // REVIEW (Hasso) 2017.06: is this (and everything else) obsoleted by ScrProvider?
 		{
 			try
 			{
