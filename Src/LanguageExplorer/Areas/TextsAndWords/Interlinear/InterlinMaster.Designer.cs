@@ -147,7 +147,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			//
 			// m_infoPane
 			//
-			this.m_infoPane.Cache = null;
 			resources.ApplyResources(this.m_infoPane, "m_infoPane");
 			this.m_infoPane.Name = "m_infoPane";
 			//

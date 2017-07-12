@@ -485,7 +485,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		public int ListItemsClass => m_list.ListItemsClass;
 
-#region IDisposable & Co. implementation
+		#region IDisposable & Co. implementation
 		// Region last reviewed: never
 
 		/// <summary>

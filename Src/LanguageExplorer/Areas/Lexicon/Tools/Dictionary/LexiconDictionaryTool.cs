@@ -201,7 +201,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 		/// <summary>
 		/// User-visible localizable component name.
 		/// </summary>
-		public string UiName => "Dictionary";
+		public string UiName => "BUGGY: Dictionary";
 #endregion
 
 #region Implementation of ITool

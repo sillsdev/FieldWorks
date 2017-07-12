@@ -28,7 +28,7 @@ namespace LanguageExplorerTests.Interlinear
 		private Mediator m_mediator;
 		private IPropertyTable m_propertyTable;
 
-		#region disposal
+	#region disposal
 		protected virtual void Dispose(bool disposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
@@ -60,7 +60,7 @@ namespace LanguageExplorerTests.Interlinear
 			// from executing a second time.
 			GC.SuppressFinalize(this);
 		}
-		#endregion disposal
+	#endregion disposal
 
 		[TestFixtureSetUp]
 		public override void FixtureSetup()
@@ -123,20 +123,20 @@ namespace LanguageExplorerTests.Interlinear
 			Assert.AreEqual(m_wsOtherVern.Handle, m_sttEmptyButWithWs.MainWritingSystem, "The WS for the text should still be the other vernacular");
 		}
 
-		#region Test Classes
+	#region Test Classes
 		private class TestInterlinMaster : InterlinMaster
 		{
 			public TestInterlinMaster(Mediator mediator, IPropertyTable propertyTable, IStText stText)
 			{
 				m_mediator = mediator;
 				m_propertyTable = propertyTable;
-				if(ExistingClerk != null)
+				if(Clerk != null)
 				{
 					System.Diagnostics.Debug.WriteLine("****** Disposing a {0} whose current StText's WS is {1}; replacing with {2}. ******",
-						ExistingClerk.GetType().Name,
-						Cache.ServiceLocator.WritingSystemManager.Get(((IStText)ExistingClerk.CurrentObject).MainWritingSystem).Id,
+						Clerk.GetType().Name,
+						Cache.ServiceLocator.WritingSystemManager.Get(((IStText)Clerk.CurrentObject).MainWritingSystem).Id,
 						Cache.ServiceLocator.WritingSystemManager.Get(stText.MainWritingSystem).Id);
-					ExistingClerk.Dispose();
+					Clerk.Dispose();
 				}
 				Clerk = new TestClerk(mediator, propertyTable, stText);
 			}
@@ -173,7 +173,7 @@ namespace LanguageExplorerTests.Interlinear
 
 			public override int CurrentObjectHvo { get { return m_stText.Hvo; } }
 		}
-		#endregion Test Classes
+	#endregion Test Classes
 	}
 #endif
 }

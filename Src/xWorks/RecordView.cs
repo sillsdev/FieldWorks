@@ -113,10 +113,6 @@ namespace SIL.FieldWorks.XWorks
 
 		#endregion // Consruction and disposal
 
-		#region Properties
-
-		#endregion Properties
-
 		#region Other methods
 
 		/// <summary />
@@ -210,21 +206,20 @@ namespace SIL.FieldWorks.XWorks
 
 			ReadParameters();
 
-			RecordClerk clerk = ExistingClerk;
-			if (clerk == null)
+			if (Clerk == null)
 			{
-				Debug.Assert(clerk != null);
+				Debug.Assert(Clerk != null);
 			}
 			bool fClerkAlreadySuppressed = false;
 			bool fClerkWasCreated = false;
-			fClerkAlreadySuppressed = clerk.ListLoadingSuppressed; // If we didn't create the clerk, someone else might have suppressed it.
+			fClerkAlreadySuppressed = Clerk.ListLoadingSuppressed; // If we didn't create the clerk, someone else might have suppressed it.
 			// suspend any loading of the Clerk's list items until after a
 			// subclass (possibly) initializes sorters/filters
 			// in SetupDataContext()
-			using (var luh = new RecordClerk.ListUpdateHelper(clerk, fClerkAlreadySuppressed))
+			using (var luh = new RecordClerk.ListUpdateHelper(Clerk, fClerkAlreadySuppressed))
 			{
 				luh.ClearBrowseListUntilReload = true;
-				clerk.UpdateOwningObjectIfNeeded();
+				Clerk.UpdateOwningObjectIfNeeded();
 				SetTreebarAvailability();
 				AddPaneBar();
 

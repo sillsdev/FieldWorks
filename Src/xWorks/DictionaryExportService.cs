@@ -128,8 +128,13 @@ namespace SIL.FieldWorks.XWorks
 			private void Dispose(bool disposing)
 			{
 				System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
-				if (disposing && m_currentClerk != null && !m_currentClerk.IsDisposed)
-					m_currentClerk.ActivateUI(true);
+
+				if (disposing)
+				{
+					s_dictionaryClerk?.BecomeInactive();
+					s_reversalIndexClerk?.BecomeInactive();
+					m_currentClerk?.ActivateUI(true);
+				}
 			}
 
 			~ClerkActivator()
@@ -167,18 +172,13 @@ namespace SIL.FieldWorks.XWorks
 				var tempClerk = isDictionary ? s_dictionaryClerk : s_reversalIndexClerk;
 				if (tempClerk == null || tempClerk.IsDisposed)
 				{
-					tempClerk = RecordClerk.FindClerk(isDictionary ? "entries" : "AllReversalEntries");
-#if RANDYTODO
-					// TODO: Jason, how is it that a temporary clerk is being created, but never disposed?
-					if (tempClerk == null || tempClerk.IsDisposed)
-						tempClerk = RecordClerkFactory.CreateClerk(mediator, propertyTable, parameters, true);
-#endif
+					tempClerk = RecordClerk.ActiveRecordClerkRepository.GetRecordClerk(isDictionary ? "entries" : "AllReversalEntries");
 					CacheClerk(exportType, tempClerk);
 				}
 #if RANDYTODO
 				// TODO: Jason, Does Flex support having multiple main clerks be active at the same time?
 				// TODO: Making this temp clerk active, means it and 'currentClerk' are both active at the same time.
-				// TODO: It also seems like tempClerk is never deactivated.
+				// TODO: It also seems like tempClerk is never deactivated. A: I set the Dispose call on ClerkActivator to deactivate both of those static clerks, if present.
 #endif
 				tempClerk.ActivateUI(true, false);
 				tempClerk.UpdateList(true, true);

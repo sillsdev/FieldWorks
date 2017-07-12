@@ -1669,7 +1669,7 @@ very simple minor adjustments. ;)"
 			if (_recordClerkRepositoryForTools != RecordClerk.ActiveRecordClerkRepository)
 			{
 				RecordClerk.ActiveRecordClerkRepository = _recordClerkRepositoryForTools;
-			}
+		}
 		}
 
 		#endregion

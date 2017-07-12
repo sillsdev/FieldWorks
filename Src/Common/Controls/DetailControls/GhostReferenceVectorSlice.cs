@@ -41,7 +41,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			base.FinishInit();
 
-			((GhostReferenceVectorLauncher)Control).InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
+			// I (RBR) used to call InitializeFlexComponent here, but that was a second call for the slice, so it failed the checks that don't like repeat calls.
 			((GhostReferenceVectorLauncher)Control).Initialize(m_cache, m_obj, m_flid, m_fieldName, m_persistenceProvider, DisplayNameProperty, BestWsName);
 		}
 

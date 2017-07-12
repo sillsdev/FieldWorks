@@ -219,13 +219,6 @@ namespace SIL.FieldWorks.XWorks
 		protected LcmCache Cache { get; }
 
 		/// <summary>
-		/// This is used in at least one place to determine if we have an existing
-		/// clerk without creating one if there isn't. This is used in logic to prevent
-		/// loading and sorting the record list twice.
-		/// </summary>
-		protected internal RecordClerk ExistingClerk => m_clerk;
-
-		/// <summary>
 		/// Get/Set the Clerk used by the view.
 		/// </summary>
 		[Browsable(false)]

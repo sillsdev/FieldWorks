@@ -123,8 +123,10 @@ namespace LanguageExplorer.Areas
 
 			newMultiPane.InitializeFlexComponent(flexComponentParameters);
 			mainCollapsingSplitContainer.SecondControl = newMultiPane;
-			firstControl.BringToFront();
-			secondControl.BringToFront();
+			// I (RBR) used to do "BringToFront()" for "firstControl" and "secondControl", but proved to be in the wrong place.
+			// I now do that in other locations, and it works better.
+			// The problem I was trying to solve was the controls were clipped by the pane bar.
+			// It works *much* better in the new locations in "PaneBarContainerFactory".
 
 			return newMultiPane;
 		}
@@ -164,8 +166,8 @@ namespace LanguageExplorer.Areas
 				var aspbUser = (IPaneBarUser)secondControl;
 				if (aspbUser.MainPaneBar == null)
 				{
-				((IPaneBarUser)secondControl).MainPaneBar = ((IPaneBarContainer)multiPane.SecondControl).PaneBar;
-			}
+					((IPaneBarUser)secondControl).MainPaneBar = ((IPaneBarContainer)multiPane.SecondControl).PaneBar;
+				}
 			}
 
 			mainCollapsingSplitContainerAsControl.ResumeLayout();

@@ -156,11 +156,11 @@ namespace SIL.FieldWorks.XWorks
 			if (disposing)
 			{
 				Subscriber.Unsubscribe("ClerkOwningObjChanged", ClerkOwningObjChanged_Message_Handler);
-				if (ExistingClerk != null) // ExistingClerk, *not* Clerk (see doc on ExistingClerk)
+				if (Clerk != null)
 				{
 					PersistSortSequence();
-					ExistingClerk.FilterChangedByClerk -= Clerk_FilterChangedByClerk;
-					ExistingClerk.SorterChangedByClerk -= Clerk_SorterChangedByClerk;
+					Clerk.FilterChangedByClerk -= Clerk_FilterChangedByClerk;
+					Clerk.SorterChangedByClerk -= Clerk_SorterChangedByClerk;
 				}
 				if (m_browseViewer != null)
 				{
@@ -253,12 +253,12 @@ namespace SIL.FieldWorks.XWorks
 				// use ListUpdateHelper to suspend reloading the list until we've changed the class
 				// and recomputed the columns. Otherwise, we'll try to reload the list and redraw the display
 				// with columns that may not have all their parts in place (e.g. for generated custom fields)
-				using (new RecordClerk.ListUpdateHelper(ExistingClerk))
+				using (new RecordClerk.ListUpdateHelper(Clerk))
 				{
 					// change the list items class, but don't do the reload && refresh display
 					// until after we've recomputed our columns to allow regenerating custom field parts
 					// for that new class.
-					ExistingClerk.OnChangeListItemsClass(e.ExpectedListItemsClass, e.TargetFlid, e.ForceReload);
+					Clerk.OnChangeListItemsClass(e.ExpectedListItemsClass, e.TargetFlid, e.ForceReload);
 					CheckExpectedListItemsClassInSync();
 					// Recompute the possible columns, so the layout/parts system
 					// can generate parts for custom fields based upon a new root object class.

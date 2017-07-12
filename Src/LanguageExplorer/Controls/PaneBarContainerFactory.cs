@@ -84,6 +84,7 @@ namespace LanguageExplorer.Controls
 					((IPaneBarUser)mainChildControlAsMultiPane.FirstControl).MainPaneBar = newPaneBarContainer.PaneBar;
 				}
 			}
+			mainChildControl.BringToFront();
 
 			return newPaneBarContainer;
 		}
@@ -114,6 +115,7 @@ namespace LanguageExplorer.Controls
 					((IPaneBarUser)mainChildControlAsMultiPane.FirstControl).MainPaneBar = newPaneBarContainer.PaneBar;
 				}
 			}
+			mainChildControl.BringToFront();
 
 			return newPaneBarContainer;
 		}

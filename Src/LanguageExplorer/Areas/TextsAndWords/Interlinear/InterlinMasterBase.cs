@@ -27,9 +27,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// if the XML configuration does not specify the availability of the treebar
 		/// (e.g. treeBarAvailability="Required"), then use this.
 		/// </summary>
-		protected override TreebarAvailability DefaultTreeBarAvailability
-		{
-			get { return TreebarAvailability.NotAllowed; }
-		}
+		protected override TreebarAvailability DefaultTreeBarAvailability => TreebarAvailability.NotAllowed;
 	}
 }

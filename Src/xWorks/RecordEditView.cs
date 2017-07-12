@@ -404,16 +404,6 @@ namespace SIL.FieldWorks.XWorks
 
 			base.SetupDataContext();
 
-			//this will normally be the same name as the view, e.g. "basicEdit". This plus the name of the vector
-			//should give us a unique context for the dataTree control parameters.
-
-			string persistContext = XmlUtils.GetOptionalAttributeValue(m_configurationParametersElement, "persistContext");
-
-			if (persistContext !="")
-				persistContext=Clerk.Id+"."+persistContext+".DataTree";
-			else
-				persistContext=Clerk.Id+".DataTree";
-
 			m_dataEntryForm.PersistenceProvder = PersistenceProviderFactory.CreatePersistenceProvider(PropertyTable);
 
 			Clerk.UpdateRecordTreeBarIfNeeded();

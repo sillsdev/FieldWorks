@@ -91,12 +91,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			InitializeComponent();
 			Dock = DockStyle.Top;
 			m_tcPane.Visible = showTitlePane;
+			m_rtPane.Clerk = recordClerk;
 		}
 
-		internal string BookmarkId
-		{
-			get { return Clerk.Id ?? string.Empty; }
-		}
+		internal string BookmarkId => Clerk.Id ?? string.Empty;
 
 		/// <summary>
 		/// Something sometimes insists on giving the tab control focus when switching tabs.
@@ -107,8 +105,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			if (m_tabCtrl.SelectedTab == null)
 				return;
 			var child = (from Control c in m_tabCtrl.SelectedTab.Controls select c).FirstOrDefault();
-			if (child != null)
-				child.Focus();
+			child?.Focus();
 		}
 
 		/// <summary>
@@ -576,9 +573,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 							m_constChartPane.Focus();
 						break;
 					case ktpsInfo:
-						//We may already be initialized, but this is not very expensive and sometimes
-						//the infoPane was initialized with no data and should be re-initialized here
-						m_infoPane.Initialize(Cache, Clerk);
+						// It may already be initialized, but this is not very expensive and sometimes
+						// the infoPane was initialized with no data and should be re-initialized here
+						m_infoPane.Initialize(Clerk);
 						m_infoPane.Dock = DockStyle.Fill;
 
 						m_infoPane.Enabled = m_infoPane.CurrentRootHvo != 0;

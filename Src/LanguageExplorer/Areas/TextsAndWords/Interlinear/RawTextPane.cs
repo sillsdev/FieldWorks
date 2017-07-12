@@ -37,10 +37,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private int m_lastFoundAnnotationHvo = 0;
 		private ShowSpaceDecorator m_showSpaceDa;
 		private bool m_fClickInsertsZws; // true for the special mode where click inserts a zero-width space
-		/// <summary>
-		/// this is the clerk, if any, that determines the text for our control.
-		/// </summary>
-		RecordClerk m_clerk;
 
 		private IVwStylesheet m_flexStylesheet;
 		private IVwStylesheet m_teStylesheet;
@@ -90,7 +86,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 
 			// Dispose unmanaged resources here, whether disposing is true or false.
-			m_clerk = null;
+			Clerk = null;
 			m_vc = null;
 			m_configurationParameters = null;
 		}
@@ -171,12 +167,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <summary>
 		/// this is the clerk, if any, that determines the text for our control.
 		/// </summary>
-		internal RecordClerk Clerk
-		{
-			get { return m_clerk; }
-		}
+		internal RecordClerk Clerk { get; set; }
 
-		IStText m_rootObj = null;
+		IStText m_rootObj;
 		public IStText RootObject
 		{
 			get
@@ -916,12 +909,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		public override void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
 		{
 			base.InitializeFlexComponent(flexComponentParameters);
-
-#if RANDYTODO
-			m_clerk = ToolConfiguration.FindClerk(PropertyTable, configurationParameters);
-#else
-			m_clerk = null; // TODO: need alternate way to get clerk.
-#endif
 			m_styleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable);
 		}
 

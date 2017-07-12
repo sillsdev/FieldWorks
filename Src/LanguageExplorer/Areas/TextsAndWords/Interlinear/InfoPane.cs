@@ -3,9 +3,10 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.ComponentModel;
 using System.Windows.Forms;
 using System.Xml.Linq;
-using System.Xml.XPath;
+using LanguageExplorer.Areas.Lexicon;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
@@ -35,14 +36,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
-		}
-
-		public InfoPane(LcmCache cache, RecordClerk clerk)
-		{
-			// This call is required by the Windows.Forms Form Designer.
-			InitializeComponent();
-
-			Initialize(cache, clerk);
 		}
 
 		#region Implementation of IPropertyTableProvider
@@ -86,64 +79,26 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		#endregion
 
 		/// <summary>
-		/// Initialize the pane with a cache and a record clerk.
+		/// Initialize the pane with a record clerk. (It already has the cache.)
 		/// </summary>
-		internal void Initialize(LcmCache cache, RecordClerk clerk)
+		internal void Initialize(RecordClerk clerk)
 		{
-			m_cache = cache;
-			InitializeInfoView(clerk);
-		}
-
-		private void InitializeInfoView(RecordClerk clerk)
+			if (m_xrev != null)
 		{
-			var xnWindow = PropertyTable?.GetValue<XElement>("WindowConfiguration");
-			var xnControl = xnWindow?.XPathSelectElement("controls/parameters/guicontrol[@id=\"TextInformationPane\"]/control/parameters");
-			if (xnControl == null)
+				// Already done
 				return;
-
-			var activeClerkAtStart = RecordClerk.ActiveRecordClerkRepository.ActiveRecordClerk;
-			var toolChoice = PropertyTable.GetValue<string>("toolChoice");
-			if(m_xrev != null)
-			{
-				//when re-using the infoview we want to remove and dispose of the old recordeditview and
-				//associated datatree. (LT-13216)
-				Controls.Remove(m_xrev);
-				m_xrev.Dispose();
 			}
-			m_xrev = new InterlinearTextsRecordEditView(this, xnControl);
+			m_xrev = new InterlinearTextsRecordEditView(this, new XElement("parameters", new XAttribute("layout", "FullInformation")), m_cache, clerk);
 			m_xrev.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-			if (clerk.GetType().Name == "InterlinearTextsRecordClerk")
-			{
-				m_xrev.Clerk = clerk;
-			}
-			else
-			{
-				//We want to make sure that the following initialization line will initialize this
-				//clerk if we haven't already set it. Without this assignment to null, the InfoPane
-				//misbehaves in the Concordance view (it uses the filter from the InterlinearTexts view)
-				m_xrev.Clerk = null;
-			}
-			DisplayCurrentRoot();
 			m_xrev.Dock = DockStyle.Fill;
 			Controls.Add(m_xrev);
-			// There are times when moving to the InfoPane causes the wrong ActiveClerk to be set.
-			// See FWR-3390 (and InterlinearTextsRecordClerk.OnDisplayInsertInterlinText).
-			var resetCurrentActiveClerk = RecordClerk.ActiveRecordClerkRepository.ActiveRecordClerk;
-			if (toolChoice != "interlinearEdit" && activeClerkAtStart != null && activeClerkAtStart != resetCurrentActiveClerk)
-			{
-				// Restore active clerk from start of method.
-				RecordClerk.ActiveRecordClerkRepository.ActiveRecordClerk = activeClerkAtStart;
-				activeClerkAtStart.ActivateUI(true);
-			}
+			DisplayCurrentRoot();
 		}
 
 		/// <summary>
 		/// Check whether the pane has been initialized.
 		/// </summary>
-		internal bool IsInitialized
-		{
-			get { return PropertyTable != null; }
-		}
+		internal bool IsInitialized => PropertyTable != null;
 
 		/// <summary>
 		/// Check to see if the object has been disposed.
@@ -153,7 +108,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
+				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
 		}
 
 		/// <summary>
@@ -168,10 +123,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 			if( disposing )
 			{
-				if(components != null)
-				{
-					components.Dispose();
-				}
+				components?.Dispose();
 			}
 			PropertyTable = null;
 			Publisher = null;
@@ -209,24 +161,41 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		internal class InterlinearTextsRecordEditView : RecordEditView
 		{
-#if RANDYTODO
-			// TODO: Replace four null values with real values.
-			// TODO: maybe replace "new DTMenuHandler()" with whatever the tool(s) might want.
-#endif
-			public InterlinearTextsRecordEditView(InfoPane info, XElement xnControl)
-				: base(null, null, null, null, new DTMenuHandler(), new StTextDataTree())
+			public InterlinearTextsRecordEditView(InfoPane infoPane, XElement configurationParametersElement, LcmCache cache, RecordClerk clerk)
+				: base(configurationParametersElement, XDocument.Parse(AreaResources.VisibilityFilter_All), cache, clerk, new LexEntryMenuHandler(), new StTextDataTree(cache))
 			{
-				(m_dataEntryForm as StTextDataTree).InfoPane = info;
-				m_configurationParametersElement = xnControl;
+				(m_dataEntryForm as StTextDataTree).InfoPane = infoPane;
 			}
+
+			#region Overrides of RecordEditView
+			/// <summary>
+			/// Initialize a FLEx component with the basic interfaces.
+			/// </summary>
+			/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
+			public override void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
+			{
+				base.InitializeFlexComponent(flexComponentParameters);
+
+				ReadParameters();
+				SetupDataContext();
+				ShowRecord();
+			}
+			#endregion
 
 			private class StTextDataTree : DataTree
 			{
-				private InfoPane m_info;
+				private InfoPane m_infoPane;
 
 				internal InfoPane InfoPane
 				{
-					set { m_info = value; }
+					set { m_infoPane = value; }
+				}
+
+				internal StTextDataTree(LcmCache cache)
+				{
+					m_cache = cache;
+					InitializeBasic(cache, false);
+					InitializeComponent();
 				}
 
 				protected override void SetDefaultCurrentSlice(bool suppressFocusChange)
@@ -240,7 +209,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 				public override void ShowObject(ICmObject root, string layoutName, string layoutChoiceField, ICmObject descendant, bool suppressFocusChange)
 				{
-					if (m_info != null && m_info.CurrentRootHvo == 0)
+					if (m_infoPane != null && m_infoPane.CurrentRootHvo == 0)
 						return;
 					//Debug.Assert(m_info.CurrentRootHvo == root.Hvo);
 					ICmObject showObj = root;
@@ -269,6 +238,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		#region IInterlinearTabControl Members
 
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public LcmCache Cache
 		{
 			get { return m_cache; }
@@ -309,9 +280,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 		}
 
-		internal int CurrentRootHvo
-		{
-			get { return m_currentRoot; }
-		}
+		internal int CurrentRootHvo => m_currentRoot;
 	}
 }
