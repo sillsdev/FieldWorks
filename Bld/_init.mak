@@ -41,12 +41,12 @@ OUT_DIR=$(BUILD_OUTPUT)\$(BUILD_CONFIG)
 !ENDIF
 !ENDIF
 
-!IF "$(BUILD_ARCH)"=="" || "$(BUILD_ARCH)"=="x86"
-MIDL_ARCH=win32
-LINK_ARCH=x86
-!ELSE
+!IF "$(BUILD_ARCH)"=="x64"
 MIDL_ARCH=win64
 LINK_ARCH=x64
+!ELSE
+MIDL_ARCH=win32
+LINK_ARCH=x86
 !ENDIF
 
 !IF "$(OBJ_DIR)"==""
@@ -179,13 +179,13 @@ CL_OPTS=$(CL_OPTS) /W4 /WX /Fd"$(INT_DIR)/" /EHa /GR /GF /Zm400 /D_WIN32_WINNT=0
 PREPROCESS_OPTS=/E
 
 !IF "$(BUILD_CONFIG)"=="Bounds"
-LINK_OPTS=$(LINK_OPTS) /out:"$@" /machine:I$(LINK_ARCH) /incremental:no\
+LINK_OPTS=$(LINK_OPTS) /out:"$@" /machine:$(LINK_ARCH) /incremental:no\
 	/map:$(INT_DIR)\$(@B).map /nod:dbguuid.lib /subsystem:windows\
 	/NODEFAULTLIB:LIBC /NODEFAULTLIB:MSVCRT\
 	/LIBPATH:"C:\Program Files\Common Files\Compuware\NMShared" \
 	/LIBPATH:"$(BUILD_ROOT)\Lib\$(BUILD_CONFIG)" /LIBPATH:"$(BUILD_ROOT)\Lib"
 !ELSE
-LINK_OPTS=$(LINK_OPTS) /out:"$@" /machine:I$(LINK_ARCH) /incremental:no\
+LINK_OPTS=$(LINK_OPTS) /out:"$@" /machine:$(LINK_ARCH) /incremental:no\
 	/map:$(INT_DIR)\$(@B).map /nod:dbguuid.lib /subsystem:windows\
 	/NODEFAULTLIB:LIBC /NODEFAULTLIB:MSVCRT\
 	/LIBPATH:"$(BUILD_ROOT)\Lib\$(BUILD_CONFIG)" /LIBPATH:"$(BUILD_ROOT)\Lib"
