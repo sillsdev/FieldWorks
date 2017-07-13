@@ -2125,10 +2125,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// Append to the part refs of template a suitable one for each custom field of
 		/// the class of obj.
 		/// </summary>
-		/// <param name="obj">The obj.</param>
-		/// <param name="template">The template.</param>
-		/// <param name="insertAfter">The insert after.</param>
-		private void EnsureCustomFields(ICmObject obj, XmlNode template, XmlNode insertAfter)
+		private void EnsureCustomFields(ICmObject obj, XmlNode parent, XmlNode insertAfter)
 		{
 			var interestingClasses = new Set<int>();
 			int clsid = obj.ClassID;
@@ -2148,8 +2145,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					XmlNode refAttr = insertAfter.Attributes["ref"];
 					if (refAttr == null)
 					{
+						var persistableParent = FindPersistableParent(parent, parent.OuterXml);
 						AddAttribute(insertAfter, "ref", "_CustomFieldPlaceholder");
-						m_layoutInventory.PersistOverrideElement(template);
+						m_layoutInventory.PersistOverrideElement(persistableParent);
 					}
 					// We could do this search with an XPath but they are excruciatingly slow.
 					// Check all of the siblings, first going forward, then backward
@@ -2167,12 +2165,27 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					if (exists)
 						continue;
 
-					XmlNode part = template.OwnerDocument.CreateElement("part");
+					XmlNode part = parent.OwnerDocument.CreateElement("part");
 					AddAttribute(part, "ref", "Custom");
 					AddAttribute(part, "param", target);
-					template.InsertAfter(part, insertAfter);
+					parent.InsertAfter(part, insertAfter);
 				}
 			}
+		}
+
+		private static XmlNode FindPersistableParent(XmlNode parent, string originalParentXml)
+		{
+			XmlNode refAttr = parent.Attributes["ref"];
+			if(refAttr != null)
+			{
+				return parent;
+			}
+			if (parent.ParentNode == null)
+			{
+				throw new ApplicationException(string.Format("Invalid configuration file. No parent with a ref attribute was found.{0}{1}",
+					Environment.NewLine, originalParentXml));
+			}
+			return FindPersistableParent(parent.ParentNode, originalParentXml);
 		}
 
 		private static bool CheckCustomFieldsSibling(XmlNode sibling, string target)
