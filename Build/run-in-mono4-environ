@@ -1,9 +1,0 @@
-#!/bin/bash
-
-# Run command in environment
-
-set -e -o pipefail
-cd "$(dirname "$0")"/..
-. mono4environ
-cd - >/dev/null
-"$@"

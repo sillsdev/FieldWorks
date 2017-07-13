@@ -1,4 +1,0 @@
-#!/bin/bash
-
-"$(dirname "$0")"/run-in-environ xbuild "$@"
-"$(dirname "$0")"/run-in-mono4-environ xbuild "../Src/Paratext8Plugin/Paratext8Plugin.csproj"

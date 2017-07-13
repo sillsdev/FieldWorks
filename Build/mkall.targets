@@ -236,8 +236,9 @@
 			Targets="$(msbuild-target)"
 			Properties="$(msbuild-props);IntermediateOutputPath=$(dir-fwobj)\Paratext8Plugin\;DefineConstants=$(Paratext8PluginDefines);$(warningsAsErrors);WarningLevel=4"
 			ToolsVersion="4.0" Condition="'$(OS)'!='Unix'"/>
-		<!-- Paratext8Plugin must be built in a different environment on Unix. -->
-		<Message Text="Finished building Paratext8Plugin (on Windows)."/>
+		<!-- Paratext8Plugin must be built against a newer version of Mono that FLEx 8 does not support. -->
+		<Message Text="Finished building Paratext8Plugin." Condition="'$(OS)'!='Unix'"/>
+		<Message Text="Skipped building Paratext8Plugin." Condition="'$(OS)'=='Unix'"/>
 	</Target>
 
 	<Target Name="CopyCellarBaseConstants" Inputs="$(fwrt)/Src/Kernel/CellarBaseConstants.h" Outputs="$(fwrt)/Output/Common/CellarBaseConstants.h">
