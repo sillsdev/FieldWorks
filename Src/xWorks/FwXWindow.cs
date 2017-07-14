@@ -908,7 +908,7 @@ namespace SIL.FieldWorks.XWorks
 			// If we can find the CharMap program, then enable the menu command
 			string sysStr = Environment.GetFolderPath(Environment.SpecialFolder.System);
 			string charmapPath = sysStr + "\\charmap.exe";
-			display.Enabled = System.IO.File.Exists(charmapPath);
+			display.Enabled = File.Exists(charmapPath);
 			return true;
 		}
 
