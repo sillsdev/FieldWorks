@@ -271,11 +271,11 @@
 
 	<PropertyGroup>
 		<MasterVersionInfo>$(fwrt)/Src/MasterVersionInfo.txt</MasterVersionInfo>
-		<TeamCityUrl>http://build.palaso.org/</TeamCityUrl>
+		<TeamCityUrl>https://build.palaso.org/</TeamCityUrl>
 		<!-- Update when appropriate. -->
 		<FLExBridgeBuildType Condition="'$(OS)'=='Windows_NT'">FLExBridge_FLExBridgeDevelopWin32Continuous</FLExBridgeBuildType>
-		<!-- Precise builds are used for all Linux development. Update when appropriate. -->
-		<FLExBridgeBuildType Condition="'$(OS)'=='Unix'">FLExBridge_FLExBridgeDevelopPrecise64Continuous</FLExBridgeBuildType>
+		<!-- Update when appropriate. -->
+		<FLExBridgeBuildType Condition="'$(OS)'=='Unix'">FLExBridge_FLExBridgeDevelopLinux64Continuous</FLExBridgeBuildType>
 
 		<!-- bt2 is the master branch build of Chorus for Windows development. Update when appropriate. -->
 		<ChorusBuildType Condition="'$(OS)'=='Windows_NT'">bt2</ChorusBuildType>
