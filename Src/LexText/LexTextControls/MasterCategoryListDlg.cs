@@ -705,7 +705,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				//// a conflict report created for when this happens is something we can live with.
 				Guid guid;
 				if (posList.Owner is IReversalIndex)
-					guid = new Guid();
+					guid = Guid.NewGuid();
 				else
 					guid = new Guid(XmlUtils.GetAttributeValue(m_node, "guid"));
 				var posFactory = cache.ServiceLocator.GetInstance<IPartOfSpeechFactory>();
