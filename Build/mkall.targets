@@ -333,8 +333,8 @@
 			<PalasoFiles Include="SIL.Archiving.dll.config" Condition="'$(OS)'=='Unix'"/>
 			<PalasoFiles Include="SIL.Archiving.$(DebugInfo)"/>
 			<PalasoFiles Include="Ionic.Zip.dll"/>
-			<PalasoFiles Include="Keyman7Interop.dll"/>
-			<PalasoFiles Include="KeymanLink.dll"/>
+			<PalasoFiles Include="Keyman7Interop.dll" Condition="'$(OS)'=='Windows_NT'"/>
+			<PalasoFiles Include="KeymanLink.dll" Condition="'$(OS)'=='Windows_NT'"/>
 			<PalasoFiles Include="SIL.WritingSystems.dll"/>
 			<PalasoFiles Include="SIL.WritingSystems.$(DebugInfo)"/>
 			<PalasoFiles Include="SIL.Windows.Forms.WritingSystems.dll"/>
@@ -436,8 +436,8 @@
 		<DownloadedFiles Include="$(DownloadsDir)/SIL.Lexicon.$(DebugInfo)"/>
 		<DownloadedFiles Include="$(DownloadsDir)/SIL.TestUtilities.dll"/>
 		<DownloadedFiles Include="$(DownloadsDir)/icu.net.dll"/>
-		<DownloadedFiles Include="$(DownloadsDir)/Keyman7Interop.dll"/>
-		<DownloadedFiles Include="$(DownloadsDir)/KeymanLink.dll"/>
+		<DownloadedFiles Include="$(DownloadsDir)/Keyman7Interop.dll" Condition="'$(OS)'=='Windows_NT'"/>
+		<DownloadedFiles Include="$(DownloadsDir)/KeymanLink.dll" Condition="'$(OS)'=='Windows_NT'"/>
 		<DownloadedFiles Include="$(DownloadsDir)/L10NSharp.dll"/>
 		<DownloadedFiles Include="$(DownloadsDir)/Commons.Xml.Relaxng.dll"/>
 		<DownloadedFiles Include="$(DownloadsDir)/irrKlang.NET4.dll" Condition="'$(OS)'=='Windows_NT'"/>
