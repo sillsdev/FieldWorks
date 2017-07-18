@@ -1,0 +1,8 @@
+Verified+1: Jenkins CI <jenkins@sil.org>
+Verified-Linux+1: Jenkins CI <jenkins@sil.org>
+Code-Review+2: Katherine Jensen <katherine_jensen@sil.org>
+Submitted-by: Jason Naylor <jason_naylor@sil.org>
+Submitted-at: Tue, 18 Jul 2017 21:16:14 +0000
+Reviewed-on: https://gerrit.lsdev.sil.org/5397
+Project: FieldWorks
+Branch: refs/heads/release/8.3
