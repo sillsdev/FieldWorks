@@ -2175,8 +2175,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		private static XmlNode FindPersistableParent(XmlNode parent, string originalParentXml)
 		{
-			XmlNode refAttr = parent.Attributes["ref"];
-			if(refAttr != null)
+			if(string.Equals("part", parent.Name) || string.Equals("layout", parent.Name))
 			{
 				return parent;
 			}
