@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
@@ -28,14 +29,15 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		private DataTree m_dtree;
 		private Form m_parent;
 
-		private SIL.Utils.StringTable m_stringTable;  // for "LabelAbbreviations"
+		private StringTable m_stringTable;  // for "LabelAbbreviations"
+		private CustomFieldForTest m_customField;
 
 		#region Fixture Setup and Teardown
 		internal static StringTable GenerateStringTable()
 		{
 			string configurationDir = Path.Combine(FwDirectoryFinder.CodeDirectory,
 				@"Language Explorer/Configuration");
-			var stringTable = new SIL.Utils.StringTable(configurationDir);
+			var stringTable = new StringTable(configurationDir);
 
 			return stringTable;
 		}
@@ -82,8 +84,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			m_layouts = GenerateLayouts();
 			m_parts = GenerateParts();
 			m_stringTable = GenerateStringTable();
+			m_customField = new CustomFieldForTest(Cache, "testField", "testField", LexEntryTags.kClassId, CellarPropertyType.String, Guid.Empty);
 
-			NonUndoableUnitOfWorkHelper.Do(m_actionHandler, () =>
+
+				NonUndoableUnitOfWorkHelper.Do(m_actionHandler, () =>
 			{
 				m_entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
 				m_entry.CitationForm.VernacularDefaultWritingSystem = TsStringUtils.MakeTss("rubbish", Cache.DefaultVernWs);
@@ -117,13 +121,19 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		public override void TestTearDown()
 		{
 			// m_dtree gets disposed from m_parent because it's part of its Controls
-
 			if (m_parent != null)
 			{
 				m_parent.Close();
 				m_parent.Dispose();
 			}
 			base.TestTearDown();
+		}
+
+		public override void FixtureTeardown()
+		{
+			base.FixtureTeardown();
+			if(Cache != null && Cache.MainCacheAccessor.MetaDataCache != null)
+				m_customField.Dispose();
 		}
 		#endregion
 
@@ -219,9 +229,19 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			m_dtree.Initialize(Cache, false, m_layouts, m_parts);
 			m_dtree.ShowObject(m_entry, "Normal", null, m_entry, false);
-			XmlNode template = m_dtree.GetTemplateForObjLayout(m_entry, "Normal", null);
-			var expected = "<layout class=\"LexEntry\" type=\"detail\" name=\"Normal\"><part ref=\"_CustomFieldPlaceholder\" customFields=\"here\" /></layout>";
-			Assert.AreEqual(template.OuterXml, expected);
+			var template = m_dtree.GetTemplateForObjLayout(m_entry, "Normal", null);
+			var expected = "<layout class=\"LexEntry\" type=\"detail\" name=\"Normal\"><part ref=\"_CustomFieldPlaceholder\" customFields=\"here\" /><part ref=\"Custom\" param=\"testField\" /></layout>";
+			Assert.AreEqual(template.OuterXml, expected, "Exactly one part with a _CustomFieldPlaceholder ref attribute should exist.");
+		}
+
+		[Test]
+		public void BadCustomFieldPlaceHoldersAreCorrected()
+		{
+			m_dtree.Initialize(Cache, false, m_layouts, m_parts);
+			m_dtree.ShowObject(m_entry, "NoRef", null, m_entry, false);
+			var template = m_dtree.GetTemplateForObjLayout(m_entry, "NoRef", null);
+			var expected = "<layout class=\"LexEntry\" type=\"detail\" name=\"NoRef\"><part customFields=\"here\" ref=\"_CustomFieldPlaceholder\" /><part ref=\"Custom\" param=\"testField\" /></layout>";
+			Assert.AreEqual(template.OuterXml, expected, "The previously empty ref on the customFields=\"here\" part should be _CustomFieldPlaceholder.");
 		}
 
 		/// <summary></summary>

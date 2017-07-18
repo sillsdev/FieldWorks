@@ -31,7 +31,16 @@
 		<part ref="CitationForm" label="Citation Form" abbr="!?"/>
 	</layout>
   <layout class="LexEntry" type="detail" name="Normal">
-  <part ref="_CustomFieldPlaceholder" customFields="here"/>
-  <part ref="_CustomFieldPlaceholder" customFields="here"/>
+		<part ref="_CustomFieldPlaceholder" customFields="here"/>
+		<part ref="_CustomFieldPlaceholder" customFields="here"/>
   </layout>
+	<layout class="LexSense" type="detail" name="Indented" expansion="expanded">
+		<indent>
+			<part ref="Gloss"/>
+			<part customFields="here"/>
+		</indent>
+	</layout>
+	<layout class="LexEntry" type="detail" name="NoRef">
+		<part customFields="here"/>
+	</layout>
 </LayoutInventory>
