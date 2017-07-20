@@ -17,8 +17,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// This is one new pub/sub set of interfaces for each call to this factory,
 		/// which is not shared with a previous or future call to this method.
 		/// </summary>
-		/// <param name="publisher"></param>
-		/// <param name="subscriber"></param>
 		public static void CreatePubSubSystem(out IPublisher publisher, out ISubscriber subscriber)
 		{
 			var pubSubSystem = new PubSubSystem();
@@ -31,8 +29,17 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// to not confuse clients, who will only see the interfaces
 		/// (other than the factory that creates this class).
 		/// </summary>
+		/// <remarks>
+		/// At the moment, re-entrant publishing (publish again during a publish)
+		/// is not allowed. The old mediator based system did allow this,
+		/// but for now, we'll see how far we can get with not allowing it.
+		/// It may prove to not work, at which time this can be revised to use a
+		/// queue (i.e., "first in, first out") to process messages.
+		/// </remarks>
 		private sealed class PubSubSystem : IPublisher, ISubscriber
 		{
+			private bool _publishInProcess;
+			private bool _multiplePublishInProcess;
 			private readonly Dictionary<string, HashSet<Action<object>>> _subscriptions = new Dictionary<string, HashSet<Action<object>>>();
 
 			#region Implementation of IPublisher
@@ -49,13 +56,27 @@ namespace SIL.FieldWorks.Common.FwUtils
 				{
 					return;
 				}
-				foreach (var subscriberAction in subscribers)
+
+				if (_publishInProcess)
 				{
-					// NB: It is possible that the action's object is disposed,
-					// but we'll not fret about making sure it isn't disposed,
-					// but we will expect the subscribers to be well-behaved and unsubscribe,
-					// when they get disposed.
-					subscriberAction(newValue);
+					throw new InvalidOperationException("Re-entrant call to single Publish method.");
+				}
+
+				try
+				{
+					_publishInProcess = true;
+					foreach (var subscriberAction in subscribers)
+					{
+						// NB: It is possible that the action's object is disposed,
+						// but we'll not fret about making sure it isn't disposed,
+						// but we will expect the subscribers to be well-behaved and unsubscribe,
+						// when they get disposed.
+						subscriberAction(newValue);
+					}
+				}
+				finally
+				{
+					_publishInProcess = false;
 				}
 			}
 
@@ -68,16 +89,27 @@ namespace SIL.FieldWorks.Common.FwUtils
 			/// <exception cref="InvalidOperationException">Thrown if the <paramref name="messages"/> and <paramref name="newValues"/> lists are not the same size.</exception>
 			public void Publish(IList<string> messages, IList<object> newValues)
 			{
-				if (messages == null) throw new ArgumentNullException("messages");
-				if (newValues == null) throw new ArgumentNullException("newValues");
+				if (messages == null) throw new ArgumentNullException(nameof(messages));
+				if (newValues == null) throw new ArgumentNullException(nameof(newValues));
 				if (messages.Count != newValues.Count) throw new ArgumentException("'messages' and 'newValues' counts are not the same.");
 
-				int idx;
-				for (idx = 0; idx < messages.Count; ++idx)
+				if (_multiplePublishInProcess)
 				{
-					var currentMessage = messages[idx];
-					var currentNewValue = newValues[idx];
-					Publish(currentMessage, currentNewValue);
+					throw new InvalidOperationException("Re-entrant call to multiple Publish method.");
+				}
+
+				try
+				{
+					_multiplePublishInProcess = true;
+					int idx;
+					for (idx = 0; idx < messages.Count; ++idx)
+					{
+						Publish(messages[idx], newValues[idx]);
+					}
+				}
+				finally
+				{
+					_multiplePublishInProcess = false;
 				}
 			}
 

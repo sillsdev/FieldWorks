@@ -588,6 +588,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			m_publisher.Publish("MasterRefresh", ActiveForm);
 			if (m_firstNewText != null)
 			{
+#if RANDYTODO
+				// Theory has it that the clerk is already in the repository.
+#endif
 				// try to select it.
 				var clerk = RecordClerk.ActiveRecordClerkRepository.GetRecordClerk("interlinearTexts");
 				clerk?.JumpToRecord(m_firstNewText.ContentsOA.Hvo);

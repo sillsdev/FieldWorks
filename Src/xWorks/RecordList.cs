@@ -272,13 +272,7 @@ namespace SIL.FieldWorks.XWorks
 		/// which wraps the main SDA and is wrapped by our ObjectListPublisher.
 		/// Otherwise, our ObjectListPublisher wraps the main SDA directly.
 		/// </summary>
-		public ISilDataAccessManaged VirtualListPublisher
-		{
-			get
-			{
-				return m_objectListPublisher;
-			}
-		}
+		public ISilDataAccessManaged VirtualListPublisher => m_objectListPublisher;
 
 		protected internal virtual string PropertyTableId(string sorterOrFilter)
 		{
@@ -287,10 +281,10 @@ namespace SIL.FieldWorks.XWorks
 			var fieldName = VirtualListPublisher.MetaDataCache.GetFieldName(m_flid);
 			if (string.IsNullOrEmpty(PropertyName) || PropertyName == fieldName)
 			{
-				return string.Format("{0}.{1}_{2}", className, fieldName, sorterOrFilter);
+				return $"{className}.{fieldName}_{sorterOrFilter}";
 			}
 
-			return string.Format("{0}.{1}_{2}", className, PropertyName, sorterOrFilter);
+			return $"{className}.{PropertyName}_{sorterOrFilter}";
 		}
 
 		public string PropertyName
@@ -423,9 +417,7 @@ namespace SIL.FieldWorks.XWorks
 			get
 			{
 				CheckDisposed();
-				if (m_sortedObjects == null)
-					m_sortedObjects = new ArrayList();
-				return m_sortedObjects;
+				return m_sortedObjects ?? (m_sortedObjects = new ArrayList());
 			}
 			set
 			{
@@ -475,7 +467,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Our owning record clerk.
 		/// </summary>
-		internal protected RecordClerk Clerk
+		protected internal RecordClerk Clerk
 		{
 			get { return m_clerk; }
 			set { m_clerk = value; }
@@ -486,7 +478,7 @@ namespace SIL.FieldWorks.XWorks
 		/// does not need to be sorted further.
 		/// </summary>
 		/// <value>true if the list was loaded in order and doesn't need further sorting.</value>
-		virtual protected bool ListAlreadySorted
+		protected virtual bool ListAlreadySorted
 		{
 			get
 			{
@@ -1348,7 +1340,7 @@ namespace SIL.FieldWorks.XWorks
 		/// replace any matching items in our sort list. and do normal navigation prop change.
 		/// </summary>
 		/// <param name="hvoReplaced"></param>
-		internal protected void ReplaceListItem(int hvoReplaced)
+		protected internal void ReplaceListItem(int hvoReplaced)
 		{
 			ReplaceListItem(hvoReplaced, ListChangedEventArgs.ListChangedActions.Normal);
 		}
@@ -1620,7 +1612,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Indicates whether we tried to reload the list while we were suppressing the reload.
 		/// </summary>
-		internal protected virtual bool RequestedLoadWhileSuppressed
+		protected internal virtual bool RequestedLoadWhileSuppressed
 		{
 			get { return m_requestedLoadWhileSuppressed; }
 			set { m_requestedLoadWhileSuppressed = value; }
@@ -1815,8 +1807,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private ArrayList GetFilteredSortedList()
 		{
-			ArrayList newSortedObjects;
-			newSortedObjects = new ArrayList();
+			var newSortedObjects = new ArrayList();
 			if (m_filter != null)
 				m_filter.Preload(OwningObject);
 				// Preload the sorter (if any) only if we do NOT have a filter.
@@ -1987,8 +1978,7 @@ namespace SIL.FieldWorks.XWorks
 				CurrentIndex = hvos.Length - 1;
 			if (m_currentIndex < 0)
 				CurrentIndex = (hvos.Length>0)? 0: -1;
-			if (DoneReload != null)
-				DoneReload(this, new EventArgs());
+			DoneReload?.Invoke(this, new EventArgs());
 
 			// Notify any delegates that the selection of the main object in the vector has changed.
 			if (ListChanged != null && m_fEnableSendPropChanged)
@@ -2082,10 +2072,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		internal bool IsVirtualPublisherCreated
-		{
-			get { return m_objectListPublisher != null; }
-		}
+		internal bool IsVirtualPublisherCreated => m_objectListPublisher != null;
 
 		protected virtual IEnumerable<int> GetObjectSet()
 		{
@@ -2195,7 +2182,7 @@ namespace SIL.FieldWorks.XWorks
 #endif
 				var createAndInsertMethodObj = new CpiPathBasedCreateAndInsert(m_owningObject.Hvo, cpiPath, this);
 				var newObj = DoCreateAndInsert(createAndInsertMethodObj);
-				int hvoNew = newObj != null ? newObj.Hvo : 0;
+				int hvoNew = newObj?.Hvo ?? 0;
 				return hvoNew != 0; // If we get zero, we couldn't do it for some reason.
 			}
 			return false;

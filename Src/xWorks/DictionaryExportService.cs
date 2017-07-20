@@ -172,6 +172,10 @@ namespace SIL.FieldWorks.XWorks
 				var tempClerk = isDictionary ? s_dictionaryClerk : s_reversalIndexClerk;
 				if (tempClerk == null || tempClerk.IsDisposed)
 				{
+#if RANDYTODO
+					// TODO: "GetRecordClerk" will only work if one or both clerks are now in the repository.
+					// TODO: When xWorks is assimilated into Language Explorer, then this call can use the factory method overload of the method.
+#endif
 					tempClerk = RecordClerk.ActiveRecordClerkRepository.GetRecordClerk(isDictionary ? "entries" : "AllReversalEntries");
 					CacheClerk(exportType, tempClerk);
 				}

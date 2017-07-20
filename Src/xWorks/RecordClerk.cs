@@ -2069,21 +2069,6 @@ namespace SIL.FieldWorks.XWorks
 			return clerkProvidingRootObject != null;
 		}
 
-		/// <summary>
-		/// finds an existing RecordClerk by the given id.
-		/// </summary>
-		/// <param name="id"></param>
-		/// <returns>null if couldn't find an existing clerk.</returns>
-		public static RecordClerk FindClerk(string id)
-		{
-#if RANDYTODO
-			// TODO: Have clients add those clerks to the RecordClerkRepository using GetCorrespondingPropertyName(id),
-			// TODO: which is: "RecordClerk-" + clerkId.
-			// Q: Why is anyone bothering to prepend "RecordClerk-" to the clerk id? It seems like the very same clerk can be fetched using the clerk id.
-#endif
-			return ActiveRecordClerkRepository.GetRecordClerk(GetCorrespondingPropertyName(id));
-		}
-
 
 		/// <summary>
 		/// Stop notifications of prop changes
@@ -2768,11 +2753,6 @@ namespace SIL.FieldWorks.XWorks
 				CheckDisposed();
 				return m_list.Flid;
 			}
-		}
-
-		public static string GetCorrespondingPropertyName(string clerkId)
-		{
-			return "RecordClerk-" + clerkId;
 		}
 
 		public void OnChangeSorter()

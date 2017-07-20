@@ -2,6 +2,8 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
+using System.Collections.Generic;
 using NUnit.Framework;
 
 namespace SIL.FieldWorks.Common.FwUtils
@@ -25,6 +27,21 @@ namespace SIL.FieldWorks.Common.FwUtils
 			internal static void PublishMessageTwo(IPublisher pubSystem)
 			{
 				pubSystem.Publish("MessageTwo", 2);
+			}
+
+			internal static void PublishBothMessages(IPublisher pubSystem)
+			{
+				var commands = new List<string>
+				{
+					"MessageOne",
+					"MessageTwo"
+				};
+				var parms = new List<object>
+				{
+					false,
+					int.MaxValue
+				};
+				pubSystem.Publish(commands, parms);
 			}
 		}
 
@@ -85,6 +102,111 @@ namespace SIL.FieldWorks.Common.FwUtils
 			}
 		}
 
+		private class ReentrantSubscriber
+		{
+			internal IPublisher Publisher { get; set; }
+			internal bool One { get; set; }
+
+			internal void DoSubscriptions(ISubscriber subscriber)
+			{
+				subscriber.Subscribe("MessageOne", ReentrantMessageOneHandler);
+			}
+
+			internal void DoUnsubscriptions(ISubscriber subscriber)
+			{
+				subscriber.Unsubscribe("MessageOne", ReentrantMessageOneHandler);
+			}
+
+			/// <summary>
+			/// This is the subscribed message handler for "MessageOne" message.
+			/// </summary>
+			private void ReentrantMessageOneHandler(object newValue)
+			{
+				One = (bool)newValue;
+				Publisher.Publish("MessageOne", !One);
+			}
+		}
+
+		private class ReentrantSubscriber2
+		{
+			internal IPublisher Publisher { get; set; }
+			internal bool One { get; set; }
+			internal int Two { get; set; }
+
+			internal void DoSubscriptions(ISubscriber subscriber)
+			{
+				subscriber.Subscribe("MessageOne", ReentrantMessageOneHandler);
+				subscriber.Subscribe("MessageTwo", OrdinaryMessageTwoHandler);
+			}
+
+			internal void DoUnsubscriptions(ISubscriber subscriber)
+			{
+				subscriber.Unsubscribe("MessageOne", ReentrantMessageOneHandler);
+				subscriber.Unsubscribe("MessageTwo", OrdinaryMessageTwoHandler);
+			}
+
+			/// <summary>
+			/// This is the subscribed message handler for "MessageOne" message.
+			/// </summary>
+			private void ReentrantMessageOneHandler(object newValue)
+			{
+				One = (bool)newValue;
+				var commands = new List<string>
+				{
+					"MessageOne",
+					"MessageTwo"
+				};
+				var parms = new List<object>
+				{
+					false,
+					int.MaxValue
+				};
+				Publisher.Publish(commands, parms);
+			}
+
+			/// <summary>
+			/// This is the subscribed message handler for "MessageOne" message.
+			/// </summary>
+			private void OrdinaryMessageTwoHandler(object newValue)
+			{
+				Two = (int)newValue;
+			}
+		}
+
+		private class MultipleSubscriber
+		{
+			internal bool One { get; set; }
+			internal int Two { get; set; }
+
+			internal void DoSubscriptions(ISubscriber subscriber)
+			{
+				subscriber.Subscribe("MessageOne", MessageOneHandler);
+				subscriber.Subscribe("MessageTwo", MessageTwoHandler);
+			}
+
+			internal void DoUnsubscriptions(ISubscriber subscriber)
+			{
+				subscriber.Unsubscribe("MessageOne", MessageOneHandler);
+				subscriber.Unsubscribe("MessageTwo", MessageTwoHandler);
+			}
+
+			/// <summary>
+			/// This is the subscribed message handler for "MessageOne" message.
+			/// </summary>
+			private void MessageOneHandler(object newValue)
+			{
+				One = (bool)newValue;
+			}
+
+			/// <summary>
+			/// This is the subscribed message handler for "MessageOne" message.
+			/// </summary>
+			private void MessageTwoHandler(object newValue)
+			{
+				Two = (int)newValue;
+			}
+		}
+
 		/// <summary>
 		/// Set up for each test.
 		/// </summary>
@@ -102,6 +224,78 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			_publisher = null;
 			_subscriber = null;
+		}
+
+		/// <summary>
+		/// Test "MessageOne" handler of ReentrantSubscriber.
+		/// </summary>
+		[Test]
+		public void Ordinary_Rentry_Throws()
+		{
+			// Set up.
+			var subscriber = new ReentrantSubscriber
+			{
+				One = true,
+				Publisher = _publisher
+			};
+			subscriber.DoSubscriptions(_subscriber);
+
+			// Run test.
+			Assert.IsTrue(subscriber.One);
+			Assert.Throws<InvalidOperationException>(() => Publisher.PublishMessageOne(_publisher));
+			subscriber.DoUnsubscriptions(_subscriber);
+		}
+
+		/// <summary>
+		/// Test "MessageOne" handler of ReentrantSubscriber.
+		/// </summary>
+		[Test]
+		public void Multiple_Rentry_Throws()
+		{
+			// Set up.
+			var subscriber = new ReentrantSubscriber2
+			{
+				One = true,
+				Two = int.MinValue,
+				Publisher = _publisher
+			};
+			subscriber.DoSubscriptions(_subscriber);
+
+			// Run test.
+			Assert.IsTrue(subscriber.One);
+			Assert.IsTrue(subscriber.One);
+			Assert.AreEqual(int.MinValue, subscriber.Two);
+			Assert.Throws<InvalidOperationException>(() => Publisher.PublishBothMessages(_publisher));
+			subscriber.DoUnsubscriptions(_subscriber);
+		}
+
+		/// <summary>
+		/// Test "MessageOne" handler of ReentrantSubscriber.
+		/// </summary>
+		[Test]
+		public void Multiple_Publishing()
+		{
+			// Set up.
+			var subscriber = new MultipleSubscriber
+			{
+				One = true,
+				Two = int.MinValue
+			};
+			subscriber.DoSubscriptions(_subscriber);
+
+			// Run test.
+			Assert.IsTrue(subscriber.One);
+			Assert.AreEqual(int.MinValue, subscriber.Two);
+			Publisher.PublishBothMessages(_publisher);
+			Assert.IsFalse(subscriber.One);
+			Assert.AreEqual(int.MaxValue, subscriber.Two);
+			subscriber.DoUnsubscriptions(_subscriber);
+
+			subscriber.One = true;
+			subscriber.Two = int.MinValue;
+			Publisher.PublishBothMessages(_publisher);
+			Assert.IsTrue(subscriber.One);
+			Assert.AreEqual(int.MinValue, subscriber.Two);
 		}
 
 		/// <summary>
