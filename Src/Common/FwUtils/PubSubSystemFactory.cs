@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using SIL.Code;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
@@ -38,8 +39,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </remarks>
 		private sealed class PubSubSystem : IPublisher, ISubscriber
 		{
-			private bool _publishInProcess;
-			private bool _multiplePublishInProcess;
 			private readonly Dictionary<string, HashSet<Action<object>>> _subscriptions = new Dictionary<string, HashSet<Action<object>>>();
 
 			#region Implementation of IPublisher
@@ -51,33 +50,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			/// <param name="newValue">The new value to send to subscribers. This may be null.</param>
 			public void Publish(string message, object newValue)
 			{
-				HashSet<Action<object>> subscribers;
-				if (!_subscriptions.TryGetValue(message, out subscribers))
-				{
-					return;
-				}
-
-				if (_publishInProcess)
-				{
-					throw new InvalidOperationException("Re-entrant call to single Publish method.");
-				}
-
-				try
-				{
-					_publishInProcess = true;
-					foreach (var subscriberAction in subscribers)
-					{
-						// NB: It is possible that the action's object is disposed,
-						// but we'll not fret about making sure it isn't disposed,
-						// but we will expect the subscribers to be well-behaved and unsubscribe,
-						// when they get disposed.
-						subscriberAction(newValue);
-					}
-				}
-				finally
-				{
-					_publishInProcess = false;
-				}
+				PublishMessage(message, newValue);
 			}
 
 			/// <summary>
@@ -89,27 +62,41 @@ namespace SIL.FieldWorks.Common.FwUtils
 			/// <exception cref="InvalidOperationException">Thrown if the <paramref name="messages"/> and <paramref name="newValues"/> lists are not the same size.</exception>
 			public void Publish(IList<string> messages, IList<object> newValues)
 			{
-				if (messages == null) throw new ArgumentNullException(nameof(messages));
-				if (newValues == null) throw new ArgumentNullException(nameof(newValues));
-				if (messages.Count != newValues.Count) throw new ArgumentException("'messages' and 'newValues' counts are not the same.");
+				Guard.AgainstNull(messages, nameof(messages));
+				Guard.AgainstNull(newValues, nameof(newValues));
+				Require.That(messages.Count == newValues.Count, "'messages' and 'newValues' counts are not the same.");
 
-				if (_multiplePublishInProcess)
+				for (var idx = 0; idx < messages.Count; ++idx)
 				{
-					throw new InvalidOperationException("Re-entrant call to multiple Publish method.");
+					PublishMessage(messages[idx], newValues[idx]);
 				}
+			}
 
-				try
+			/// <summary>
+			/// Publish the message using the new value.
+			/// </summary>
+			/// <param name="message">The message to publish.</param>
+			/// <param name="newValue">The new value to send to subscribers. This may be null.</param>
+			private void PublishMessage(string message, object newValue)
+			{
+				Guard.AgainstNullOrEmptyString(message, nameof(message));
+
+				using (Detect.Reentry(this, "Publish").AndThrow())
 				{
-					_multiplePublishInProcess = true;
-					int idx;
-					for (idx = 0; idx < messages.Count; ++idx)
+					HashSet<Action<object>> subscribers;
+					if (!_subscriptions.TryGetValue(message, out subscribers))
 					{
-						Publish(messages[idx], newValues[idx]);
+						return;
 					}
-				}
-				finally
-				{
-					_multiplePublishInProcess = false;
+
+					foreach (var subscriberAction in subscribers)
+					{
+						// NB: It is possible that the action's object is disposed,
+						// but we'll not fret about making sure it isn't disposed,
+						// but we will expect the subscribers to be well-behaved and unsubscribe,
+						// when they get disposed.
+						subscriberAction(newValue);
+					}
 				}
 			}
 

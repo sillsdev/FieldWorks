@@ -1173,7 +1173,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			if (index == -1)
 			{
-				// Still no luck. See if one of the argument's owners is in the list (e.g., may be a subrecord
+				// Still no luck. See if the argument's owner is in the list (e.g., may be a subrecord
 				// in DN, and only parent currently showing).
 				index = m_list.IndexOfParentOf(hvoTarget);
 			}

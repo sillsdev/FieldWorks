@@ -2632,7 +2632,7 @@ namespace SIL.FieldWorks.XWorks
 		internal void PersistOn(string pathname)
 		{
 			// Ensure that all the items in the sorted list are valid ICmObject references before
-			// actually persisting anything.  Some lists store dummy objects.
+			// actually persisting anything.
 			if (m_sortedObjects == null || m_sortedObjects.Count == 0)
 				return;
 			var repo = m_cache.ServiceLocator.ObjectRepository;
@@ -2707,7 +2707,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// LT-12780:  On reloading FLEX there were situtaions where it reloaded on the first element of a list instead of
+		/// LT-12780:  On reloading FLEX there were situations where it reloaded on the first element of a list instead of
 		/// the last item the user was working on before closing Flex. The CurrentIndex was being set to zero. This method
 		/// will access the prersisted index but also make sure it does not use an index which is out of range.
 		/// </summary>

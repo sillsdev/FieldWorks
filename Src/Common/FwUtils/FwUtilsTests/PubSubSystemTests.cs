@@ -45,7 +45,28 @@ namespace SIL.FieldWorks.Common.FwUtils
 			}
 		}
 
-		private class Subscriber
+		private class SomeRandomMessageSubscriber
+		{
+			/// <summary>
+			/// This is the subscribed message handler for "SomeRandomMessage" message.
+			/// This is used in testing re-entrant calls.
+			/// </summary>
+			private void SomeRandomMessageOneHandler(object newValue)
+			{
+			}
+
+			internal void DoSubscriptions(ISubscriber subscriber)
+			{
+				subscriber.Subscribe("SomeRandomMessage", SomeRandomMessageOneHandler);
+			}
+
+			internal void DoUnsubscriptions(ISubscriber subscriber)
+			{
+				subscriber.Unsubscribe("SomeRandomMessage", SomeRandomMessageOneHandler);
+			}
+		}
+
+		private class SingleMessageSubscriber
 		{
 			internal bool One { get; set; }
 			internal int Two { get; set; }
@@ -79,7 +100,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			}
 		}
 
-		private class Subscriber2
+		private class DoubleMessageSubscriber
 		{
 			internal bool One { get; set; }
 
@@ -102,10 +123,25 @@ namespace SIL.FieldWorks.Common.FwUtils
 			}
 		}
 
-		private class ReentrantSubscriber
+		private class ReentrantSubscriber_SingleCall
 		{
+			private bool _one;
 			internal IPublisher Publisher { get; set; }
-			internal bool One { get; set; }
+			internal bool ShouldDoReentrantPublish { get; set; }
+
+			internal bool One
+			{
+				get { return _one; }
+				set
+				{
+					_one = value;
+					if (ShouldDoReentrantPublish)
+					{
+						// Bad boy! Re-entrant test should fail on this.
+						Publisher.Publish("SomeRandomMessage", "Whatever");
+					}
+				}
+			}
 
 			internal void DoSubscriptions(ISubscriber subscriber)
 			{
@@ -122,16 +158,90 @@ namespace SIL.FieldWorks.Common.FwUtils
 			/// </summary>
 			private void ReentrantMessageOneHandler(object newValue)
 			{
-				One = (bool)newValue;
-				Publisher.Publish("MessageOne", !One);
+				One = (bool)newValue; // NB: The bad part is in the setter, which fires off more Publish calls.
 			}
 		}
 
-		private class ReentrantSubscriber2
+		private class ReentrantSubscriber_Single_CallsMultiple
 		{
+			private bool _one;
 			internal IPublisher Publisher { get; set; }
-			internal bool One { get; set; }
+			internal bool ShouldDoReentrantPublish { get; set; }
+
+			internal bool One
+			{
+				get { return _one; }
+				set
+				{
+					_one = value;
+					if (ShouldDoReentrantPublish)
+					{
+						// Bad boy! Re-entrant test should fail on this.
+						var commands = new List<string>
+						{
+							"MessageOne",
+							"SomeRandomMessage"
+						};
+						var parms = new List<object>
+						{
+							false,
+							"Whatever"
+						};
+						Publisher.Publish(commands, parms);
+					}
+				}
+			}
+
+			internal void DoSubscriptions(ISubscriber subscriber)
+			{
+				subscriber.Subscribe("BadBoy", ReentrantBadBoyHandler);
+			}
+
+			internal void DoUnsubscriptions(ISubscriber subscriber)
+			{
+				subscriber.Unsubscribe("BadBoy", ReentrantBadBoyHandler);
+			}
+
+			/// <summary>
+			/// This is the subscribed message handler for "MessageOne" message.
+			/// </summary>
+			private void ReentrantBadBoyHandler(object newValue)
+			{
+				One = (bool)newValue; // NB: The bad part is in the setter, which fires off more Publish calls.
+			}
+		}
+
+		private class ReentrantSubscriber_MultipleCalls
+		{
+			private bool _one;
+			internal IPublisher Publisher { get; set; }
+
+			internal bool One
+			{
+				get { return _one; }
+				set
+				{
+					_one = value;
+					if (ShouldDoReentrantPublish)
+					{
+						// Bad boy! Re-entrant test should fail on this.
+						var commands = new List<string>
+						{
+							"MessageOne",
+							"SomeRandomMessage"
+						};
+						var parms = new List<object>
+						{
+							false,
+							"Whatever"
+						};
+						Publisher.Publish(commands, parms);
+					}
+				}
+			}
+
 			internal int Two { get; set; }
+			internal bool ShouldDoReentrantPublish { get; set; }
 
 			internal void DoSubscriptions(ISubscriber subscriber)
 			{
@@ -150,18 +260,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			/// </summary>
 			private void ReentrantMessageOneHandler(object newValue)
 			{
-				One = (bool)newValue;
-				var commands = new List<string>
-				{
-					"MessageOne",
-					"MessageTwo"
-				};
-				var parms = new List<object>
-				{
-					false,
-					int.MaxValue
-				};
-				Publisher.Publish(commands, parms);
+				One = (bool)newValue; // NB: The bad part is in the setter, which fires off more Publish calls.
 			}
 
 			/// <summary>
@@ -173,7 +272,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			}
 		}
 
-		private class MultipleSubscriber
+		private class NiceGuy_MultipleSubscriber
 		{
 			internal bool One { get; set; }
 			internal int Two { get; set; }
@@ -227,56 +326,88 @@ namespace SIL.FieldWorks.Common.FwUtils
 		}
 
 		/// <summary>
-		/// Test "MessageOne" handler of ReentrantSubscriber.
+		/// This tests the code path of: Single pub call throws on next single pub call.
 		/// </summary>
 		[Test]
 		public void Ordinary_Rentry_Throws()
 		{
 			// Set up.
-			var subscriber = new ReentrantSubscriber
+			var subscriber = new ReentrantSubscriber_SingleCall
 			{
 				One = true,
 				Publisher = _publisher
 			};
 			subscriber.DoSubscriptions(_subscriber);
+			subscriber.ShouldDoReentrantPublish = true;
+			var someRandomSubscriber = new SomeRandomMessageSubscriber();
+			someRandomSubscriber.DoSubscriptions(_subscriber);
 
 			// Run test.
 			Assert.IsTrue(subscriber.One);
-			Assert.Throws<InvalidOperationException>(() => Publisher.PublishMessageOne(_publisher));
+			Assert.Throws<ApplicationException>(() => Publisher.PublishMessageOne(_publisher));
 			subscriber.DoUnsubscriptions(_subscriber);
+			someRandomSubscriber.DoUnsubscriptions(_subscriber);
 		}
 
 		/// <summary>
-		/// Test "MessageOne" handler of ReentrantSubscriber.
+		/// This tests the code path of: Single publisher handler then calls a multiple publisher.
+		/// </summary>
+		[Test]
+		public void Single_Publisher_Handler_Calls_Multiple_Publisher_on_Rentry_Which_Throws()
+		{
+			// Set up.
+			var subscriber = new ReentrantSubscriber_Single_CallsMultiple
+			{
+				One = true,
+				Publisher = _publisher
+			};
+			subscriber.DoSubscriptions(_subscriber);
+			subscriber.ShouldDoReentrantPublish = true;
+			var someRandomSubscriber = new SomeRandomMessageSubscriber();
+			someRandomSubscriber.DoSubscriptions(_subscriber);
+			var niceGuyMultipleSubscriber = new NiceGuy_MultipleSubscriber();
+			niceGuyMultipleSubscriber.DoSubscriptions(_subscriber);
+
+			// Run test.
+			Assert.IsTrue(subscriber.One);
+			Assert.Throws<ApplicationException>(() => _publisher.Publish("BadBoy", false));
+			subscriber.DoUnsubscriptions(_subscriber);
+			someRandomSubscriber.DoUnsubscriptions(_subscriber);
+			niceGuyMultipleSubscriber.DoUnsubscriptions(_subscriber);
+		}
+
+		/// <summary>
+		/// This tests the code path of: Multi pub call throws on next multi pub call.
 		/// </summary>
 		[Test]
 		public void Multiple_Rentry_Throws()
 		{
 			// Set up.
-			var subscriber = new ReentrantSubscriber2
+			var subscriber = new ReentrantSubscriber_MultipleCalls
 			{
 				One = true,
 				Two = int.MinValue,
 				Publisher = _publisher
 			};
 			subscriber.DoSubscriptions(_subscriber);
+			subscriber.ShouldDoReentrantPublish = true;
 
 			// Run test.
 			Assert.IsTrue(subscriber.One);
 			Assert.IsTrue(subscriber.One);
 			Assert.AreEqual(int.MinValue, subscriber.Two);
-			Assert.Throws<InvalidOperationException>(() => Publisher.PublishBothMessages(_publisher));
+			Assert.Throws<ApplicationException>(() => Publisher.PublishBothMessages(_publisher));
 			subscriber.DoUnsubscriptions(_subscriber);
 		}
 
 		/// <summary>
-		/// Test "MessageOne" handler of ReentrantSubscriber.
+		/// Ordinary multiple publish method call, but not re-entrant.
 		/// </summary>
 		[Test]
 		public void Multiple_Publishing()
 		{
 			// Set up.
-			var subscriber = new MultipleSubscriber
+			var subscriber = new NiceGuy_MultipleSubscriber
 			{
 				One = true,
 				Two = int.MinValue
@@ -299,13 +430,13 @@ namespace SIL.FieldWorks.Common.FwUtils
 		}
 
 		/// <summary>
-		/// Test MessageOneHandler of Subscriber.
+		/// Ordinary single call for MessageOneHandler of Subscriber.
 		/// </summary>
 		[Test]
 		public void Test_Subscriber_MessageOneHandling()
 		{
 			// Set up.
-			var subscriber = new Subscriber
+			var subscriber = new SingleMessageSubscriber
 			{
 				One = true,
 				Two = 1
@@ -328,13 +459,13 @@ namespace SIL.FieldWorks.Common.FwUtils
 		}
 
 		/// <summary>
-		/// Test MessageTwoHandler of Subscriber.
+		/// Ordinary single call for MessageTwoHandler of Subscriber.
 		/// </summary>
 		[Test]
 		public void Test_Subscriber_MessageTwoHandling()
 		{
 			// Set up.
-			var subscriber = new Subscriber
+			var subscriber = new SingleMessageSubscriber
 			{
 				One = true,
 				Two = 1
@@ -358,18 +489,18 @@ namespace SIL.FieldWorks.Common.FwUtils
 		}
 
 		/// <summary>
-		/// Test MessageOneHandler on two subscribers.
+		/// Ordinary single message call for MessageOneHandler, but on two subscribers.
 		/// </summary>
 		[Test]
 		public void Test_Two_Subscribers_For_MessageOneHandling()
 		{
 			// Set up.
-			var subscriber = new Subscriber
+			var subscriber = new SingleMessageSubscriber
 			{
 				One = true
 			};
 			subscriber.DoSubscriptions(_subscriber);
-			var subscriber2 = new Subscriber2
+			var subscriber2 = new DoubleMessageSubscriber
 			{
 				One = true
 			};
