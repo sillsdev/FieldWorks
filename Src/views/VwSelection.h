@@ -40,7 +40,7 @@ Most of its methods are stubs. A few MUST be implemented by any subclass.
 Hungarian: vwsel
 ----------------------------------------------------------------------------------------------*/
 class VwSelection :
-#ifdef WIN32
+#if defined(WIN32) || defined(WIN64)
 	public SilDispatchImpl<IVwSelection, &IID_IVwSelection, &LIBID_Views>
 #else
 	public IVwSelection

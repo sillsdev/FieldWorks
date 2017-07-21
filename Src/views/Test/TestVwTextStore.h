@@ -25,7 +25,7 @@ Last reviewed:
 
 #include "testViews.h"
 
-#ifdef WIN32
+#if defined(_WIN32) || defined(_M_X64)
 #undef ENABLE_TSF
 #define ENABLE_TSF
 
@@ -405,7 +405,7 @@ namespace TestViews
 		STDMETHOD(OnLockGranted)(DWORD dwLockFlags)
 		{
 			HRESULT hr;
-			IgnoreHr(hr = m_qtsa->SetText(0, m_ichStart, m_ichEnd, m_pszText, wcslen(m_pszText),
+			IgnoreHr(hr = m_qtsa->SetText(0, m_ichStart, m_ichEnd, m_pszText, (int)wcslen(m_pszText),
 				m_pttc));
 			return hr;
 		}
@@ -440,7 +440,7 @@ namespace TestViews
 		STDMETHOD(OnLockGranted)(DWORD dwLockFlags)
 		{
 			HRESULT hr;
-			IgnoreHr(hr = m_qtsa->InsertTextAtSelection(m_dwFlags, m_pszText, wcslen(m_pszText),
+			IgnoreHr(hr = m_qtsa->InsertTextAtSelection(m_dwFlags, m_pszText, (int)wcslen(m_pszText),
 				m_pichStart, m_pichEnd, m_pChange));
 			return hr;
 		}
@@ -1201,7 +1201,7 @@ namespace TestViews
 			IVwSelectionPtr qselTemp;
 			CheckHr(m_qrootb->MakeSimpleSel(true, true, false, true, &qselTemp));
 
-			cch = wcslen(s_rgpsz1[0]);
+			cch = (ULONG)wcslen(s_rgpsz1[0]);
 			LockGetText lgt2(m_qtxs, 0, -1, rgch2, kcch2, &tri, 1);
 			unitpp::assert_eq("Should succeed", S_OK, lgt2.m_hrLock);
 			unitpp::assert_eq("GetText(0,-1) ichNext", (LONG)cch, lgt2.m_ichNext);
@@ -1286,7 +1286,7 @@ namespace TestViews
 			// Need some selection to start with as it determines which paragraph.
 			IVwSelectionPtr qselTemp;
 			CheckHr(m_qrootb->MakeSimpleSel(true, true, false, true, &qselTemp));
-			ULONG cchDocLen =  wcslen(s_rgpsz1[0]);
+			ULONG cchDocLen =  (ULONG)wcslen(s_rgpsz1[0]);
 			cch = 0;
 			LockGetText lgt5(m_qtxs, cchDocLen, cchDocLen, rgch2, kcch2, &tri, 1);
 			unitpp::assert_eq("Should succeed", S_OK, lgt5.m_hrLock);
@@ -1488,8 +1488,8 @@ namespace TestViews
 			IVwSelectionPtr qselTemp;
 			CheckHr(m_qrootb->MakeSimpleSel(true, true, false, true, &qselTemp));
 
-			cchNfd = wcslen(s_rgpsz3[0]);
-			ULONG cchNfc = wcslen(s_rgpszExpected3);
+			cchNfd = (ULONG)wcslen(s_rgpsz3[0]);
+			ULONG cchNfc = (ULONG)wcslen(s_rgpszExpected3);
 			LockGetText lgt(m_qtxs, 0, -1, rgch2, kcch2, tri, 10);
 			unitpp::assert_eq("Should succeed", S_OK, lgt.m_hrLock);
 			unitpp::assert_eq("GetText(0,-1) ichNext", (LONG)cchNfc, lgt.m_ichNext);
@@ -1520,8 +1520,8 @@ namespace TestViews
 			IVwSelectionPtr qselTemp;
 			CheckHr(m_qrootb->MakeSimpleSel(true, true, false, true, &qselTemp));
 
-			cchNfd = wcslen(s_rgpsz3[0]);
-			ULONG cchNfc = wcslen(s_rgpszExpected3);
+			cchNfd = (ULONG)wcslen(s_rgpsz3[0]);
+			ULONG cchNfc = (ULONG)wcslen(s_rgpszExpected3);
 			LockGetText lgt(m_qtxs, 0, -1, rgch2, kcch2, NULL, 0);
 			unitpp::assert_eq("Should succeed", S_OK, lgt.m_hrLock);
 			unitpp::assert_eq("GetText(0,-1) ichNext", (LONG)cchNfc, lgt.m_ichNext);
@@ -1553,8 +1553,8 @@ namespace TestViews
 			CheckHr(m_qrootb->MakeSimpleSel(true, true, false, true, &qselTemp));
 
 			const OLECHAR * pszText1 = L"This is a test.";
-			int cchText1 = wcslen(pszText1);
-			int cchPara1 = wcslen(s_rgpsz1[0]);
+			int cchText1 = (int)wcslen(pszText1);
+			int cchPara1 = (int)wcslen(s_rgpsz1[0]);
 			LockSetText xlst1(m_qtxs, 0, cchPara1, pszText1, &ttc1);
 			unitpp::assert_eq("SetText(0, lim) acpStart", 0, ttc1.acpStart);
 			unitpp::assert_eq("SetText(0, lim) acpOldEnd", cchPara1, ttc1.acpOldEnd);
@@ -1563,7 +1563,7 @@ namespace TestViews
 			VerifyParaContents(0, pszText1, "SetText(0, lim)");
 
 			const OLECHAR * pszText2 = L"abcde";
-			int cchText2 = wcslen(pszText2);
+			int cchText2 = (int)wcslen(pszText2);
 			StrUni stuContents(pszText2);
 			stuContents.Append(pszText1);
 			LockSetText xlst2(m_qtxs, 0, 0, pszText2, &ttc1);
@@ -1574,7 +1574,7 @@ namespace TestViews
 			VerifyParaContents(0, stuContents.Chars(), "SetText(0, 0)");
 
 			const OLECHAR * pszText3 = L" xyz ";
-			int cchText3 = wcslen(pszText3);
+			int cchText3 = (int)wcslen(pszText3);
 			stuContents.Replace(cchText2, cchText2, pszText3, cchText3);
 			LockSetText xlst3(m_qtxs, cchText2, -1, pszText3, &ttc1);
 			unitpp::assert_eq("SetText(5, -1) acpStart", cchText2, ttc1.acpStart);
@@ -1592,7 +1592,7 @@ namespace TestViews
 			VerifyParaContents(0, stuContents.Chars(), "SetText(5,10)");
 
 			const OLECHAR * pszText5 = L"Hello World";
-			int cchText5 = wcslen(pszText5);
+			int cchText5 = (int)wcslen(pszText5);
 			int cchPara = stuContents.Length();
 			stuContents.Replace(cchPara, cchPara, pszText5, cchText5);
 			LockSetText xlst5(m_qtxs, cchPara, cchPara, pszText5, &ttc1);
@@ -1800,7 +1800,7 @@ namespace TestViews
 				(LONG)-1, ttc.acpNewEnd);
 
 			OLECHAR * pszText2 = L"This is a test.";
-			LONG cchText2 = wcslen(pszText2);
+			LONG cchText2 = (LONG)wcslen(pszText2);
 			ichStart = -1;
 			ichEnd = -1;
 			LockInsertTextAtSelection litas2(m_qtxs, TS_IAS_NOQUERY, pszText2,
@@ -1820,7 +1820,7 @@ namespace TestViews
 			VerifyParaContents(0, stu.Chars(), "InsertTextAtSelection(TS_IAS_NOQUERY) text");
 
 			OLECHAR * pszText3 = L"This is still a test.";
-			LONG cchText3 = wcslen(pszText3);
+			LONG cchText3 = (LONG)wcslen(pszText3);
 			ichStart = -1;
 			ichEnd = -1;
 			ttc.acpStart = -1;
@@ -2138,7 +2138,7 @@ namespace TestViews
 			LockGetTextExt lgte1(m_qtxs, tvc, 5, 6, &rc, &fClipped);
 			VerifyEqualRects(rcSel, rc, "GetTextExt 5, 6");
 
-			int cchPara1 = wcslen(s_rgpsz1[0]);
+			int cchPara1 = (int)wcslen(s_rgpsz1[0]);
 			LockGetTextExt lgte2(m_qtxs, tvc, 0, cchPara1, &rc, &fClipped);
 			MakeSelection(0, 0, cchPara1, false, false, &qsel);
 			CheckHr(qsel->Location(hg.m_qvg, hg.m_rcSrcRoot, hg.m_rcDstRoot, &rcSel,
@@ -2195,7 +2195,7 @@ namespace TestViews
 			CheckHr(hr = m_qtxs->GetActiveView(&tvc));
 
 			VwTextSelectionPtr qsel;
-			int cchPara1 = wcslen(s_rgpsz1[0]);
+			int cchPara1 = (int)wcslen(s_rgpsz1[0]);
 			// First select all the first paragraph, then get its bounds.
 			MakeSelection(0, 0, cchPara1, false, true, &qsel);
 			HoldGraphics hg(m_qrootb);
@@ -2232,7 +2232,7 @@ namespace TestViews
 			RECT rc;
 
 			// Make a selection that covers the entire text.
-			Make2ParaSel(0, 0, 4, wcslen(s_rgpsz2[4]));
+			Make2ParaSel(0, 0, 4, (int)wcslen(s_rgpsz2[4]));
 			CheckHr(m_qrootb->Selection()->Location(hg.m_qvg, hg.m_rcSrcRoot, hg.m_rcDstRoot,
 				&rcSel, &rcSecondary, &fSplit, &fEndBeforeAnchor));
 			ClientRectToScreen(rcSel);
@@ -2278,7 +2278,7 @@ namespace TestViews
 			CheckHr(m_qrootb->MakeSimpleSel(true, true, false, true, &qselTemp));
 
 			unitpp::assert_true("Got wrong index for out-of-bounds condition",
-				(unsigned)ptxs->CallAcpToLog(99) > wcslen(s_rgpsz3[0]));
+				(unsigned)ptxs->CallAcpToLog(99) > (int)wcslen(s_rgpsz3[0]));
 		}
 
 		/*--------------------------------------------------------------------------------------
@@ -2338,7 +2338,7 @@ namespace TestViews
 			CheckHr(m_qrootb->MakeSimpleSel(true, true, false, true, &qselTemp));
 
 			unitpp::assert_true("Got wrong index for out-of-bounds condition",
-				(unsigned)ptxs->CallLogToAcp(99) > wcslen(s_rgpszExpected3));
+				(unsigned)ptxs->CallLogToAcp(99) > (int)wcslen(s_rgpszExpected3));
 		}
 
 		/*--------------------------------------------------------------------------------------
@@ -2701,11 +2701,11 @@ namespace TestViews
 			m_qdrs->SetGraphics(m_qvg32);
 			s_stuParaBreak.Format(L"%n");
 			s_cchParaBreak = s_stuParaBreak.Length();
-			s_cchPara1 = wcslen(s_rgpsz1[0]);
-			s_cchPara2 = wcslen(s_rgpsz1[1]);
-			s_cchPara3 = wcslen(s_rgpsz2[2]);
-			s_cchPara4 = wcslen(s_rgpsz2[3]);
-			s_cchPara5 = wcslen(s_rgpsz2[4]);
+			s_cchPara1 = (LONG)wcslen(s_rgpsz1[0]);
+			s_cchPara2 = (LONG)wcslen(s_rgpsz1[1]);
+			s_cchPara3 = (LONG)wcslen(s_rgpsz2[2]);
+			s_cchPara4 = (LONG)wcslen(s_rgpsz2[3]);
+			s_cchPara5 = (LONG)wcslen(s_rgpsz2[4]);
 		}
 
 		/*--------------------------------------------------------------------------------------

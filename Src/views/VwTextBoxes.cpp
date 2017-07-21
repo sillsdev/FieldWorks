@@ -702,7 +702,7 @@ void VwStringBox::GetExtendedClickOffset(
 ----------------------------------------------------------------------------------------------*/
 OLECHAR * VwStringBox::DebugStr()
 {
-#if WIN32
+#if defined(WIN32) || defined(WIN64)
 	if (!::_CrtIsValidPointer(this, isizeof(this), TRUE))
 	{
 		static OleStringLiteral str(L"A bad string box pointer");
@@ -3145,7 +3145,7 @@ public:  // we can make anything public since the whole class is private to this
 			{
 				int cchSeg;
 				CheckHr(psbox->Segment()->get_Lim(0, &cchSeg));
-#if WIN32
+#if defined(WIN32) || defined(WIN64)
 				int nAscentSeg = (psbox->Ascent() * 100) / psbox->Height();
 #else
 				// TODO-Linux: psbox->Height() should NOT return 0 - FIXME.
@@ -6979,7 +6979,7 @@ public:
 				// We will draw an ellipsis. Find the physically right-most box on the line.
 				// TODO: deal with right-to-left
 				VwBox * pboxLastOnLine = *(plinePrevious->vbox).Top();
-#if WIN32
+#if defined(WIN32) || defined(WIN64)
 				OLECHAR rgchEllipsis[] = L"..."; // Review JohnT: use Unicode one-char ellipsis?
 #else // !WIN32
 				static const OleStringLiteral literalEllipsis = L"...";

@@ -282,7 +282,8 @@
 		<!-- bt323 is the master branch (strong name) build of Chorus for Linux development. Update when appropriate. -->
 		<ChorusBuildType Condition="'$(OS)'=='Unix'">bt323</ChorusBuildType>
 		<!-- bt223 is the master branch build of Palaso for Windows development. Update when appropriate. -->
-		<PalasoBuildType Condition="'$(OS)'=='Windows_NT'">Libpalaso_PalasoWin32masterContinuous</PalasoBuildType>
+		<PalasoBuildType Condition="'$(OS)'=='Windows_NT' AND '$(arch)'!='x64'">Libpalaso_PalasoWin32masterContinuous</PalasoBuildType>
+		<PalasoBuildType Condition="'$(OS)'=='Windows_NT' AND '$(arch)'=='x64'">Libpalaso_PalasoWinmasterContinuous</PalasoBuildType>
 		<!-- bt322 is the master branch build of Palaso for Linux development. Update when appropriate. -->
 		<PalasoBuildType Condition="'$(OS)'=='Unix'">Libpalaso_PalasoLinux64masterContinuous</PalasoBuildType>
 		<!--Todo: use PalasoBuildType, when it refers to somewhere that has the IPCFramework.-->
@@ -304,8 +305,9 @@
 		<DownloadsSilOrgOSDownloadUrl Condition="'$(OS)'=='Windows_NT'">$(DownloadsSilOrgDownloadUrl)/Windows</DownloadsSilOrgOSDownloadUrl>
 		<DownloadsSilOrgOSDownloadUrl Condition="'$(OS)'=='Unix'">$(DownloadsSilOrgDownloadUrl)/Linux</DownloadsSilOrgOSDownloadUrl>
 		<NUnitDownloadUrl>http://github.com/nunit/nunitv2/releases/download/2.6.4/NUnit-2.6.4.zip</NUnitDownloadUrl>
-		<LcmBuildType Condition="'$(OS)'=='Windows_NT'">Liblcm_LiblcmWin32masterContinuous</LcmBuildType>
-		<LcmBuildType Condition="'$(OS)'=='Unix'">Liblcm_LiblcmLinux64masterContinuous</LcmBuildType>
+		<LcmBuildType Condition="'$(OS)'=='Windows_NT' AND '$(arch)'!='x64'">Liblcm_LiblcmWin32masterContinuous</LcmBuildType>
+		<LcmBuildType Condition="'$(OS)'=='Windows_NT' AND '$(arch)'=='x64'">Lcm_LiblcmWin64masterContinuous</LcmBuildType>
+		<LcmBuildType Condition="'$(OS)'=='Unix'">Liblcm_Liblcmlinux64masterContinuous</LcmBuildType>
 		<!-- Windows/.Net and Linux/Mono use different extensions for debug information files. -->
 		<DebugInfo Condition="'$(OS)'=='Unix'">dll.mdb</DebugInfo>
 		<DebugInfo Condition="'$(OS)'=='Windows_NT'">pdb</DebugInfo>
@@ -510,7 +512,8 @@
 		<Unzip ZipFilename="$(DownloadsDir)/LCM.zip" ToDir="$(DownloadsDir)/LCM/" />
 		<ItemGroup>
 			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/ICSharpCode.SharpZipLib.dll" />
-			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/Hunspellx86.dll" Condition="'$(OS)'=='Windows_NT'" />
+			<LcmOutputBaseFiles Condition="'$(OS)'=='Windows_NT' AND '$(Platform)'!='x64'" Include="$(DownloadsDir)/LCM/Hunspellx86.dll"  />
+			<LcmOutputBaseFiles Condition="'$(OS)'=='Windows_NT' AND '$(Platform)'=='x64'" Include="$(DownloadsDir)/LCM/Hunspellx64.dll" />
 			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/NHunspell.dll" Condition="'$(OS)'=='Windows_NT'" />
 			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/Microsoft.Practices.ServiceLocation.dll" />
 			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/protobuf-net.dll" />
@@ -565,8 +568,8 @@
 			SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
 		<!-- NuGet packages. Property- and ItemGroups are inside the target so $(arch) and *'s are read properly -->
 		<PropertyGroup>
-			<Architecture Condition="'$(arch)'=='x86_64'">64</Architecture>
-			<Architecture Condition="'$(arch)'!='x86_64'">32</Architecture>
+			<Architecture Condition="'$(arch)'=='x64'">64</Architecture>
+			<Architecture Condition="'$(arch)'=='x86'">32</Architecture>
 			<GeckoDir Condition="'$(OS)'=='Windows_NT'">$(fwrt)/packages/Geckofx45.45.0.20</GeckoDir><!--yes, this version is missing the terminal .0-->
 			<GeckoDir Condition="'$(OS)'!='Windows_NT'">$(fwrt)/packages/Geckofx45.$(Architecture).Linux.45.0.21.0</GeckoDir>
 		</PropertyGroup>

@@ -11,13 +11,13 @@ This software is licensed under the LGPL, version 2.1 or later
 #pragma hdrstop
 // any other headers (not precompiled)
 #include <limits.h>
-#ifdef WIN32
+#if defined(WIN32) || defined(WIN64)
 #include <io.h>
 #endif
 #undef THIS_FILE
 DEFINE_THIS_FILE
 
-#ifndef WIN32
+#if !defined(_WIN32) && !defined(_M_X64)
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -442,14 +442,14 @@ STDMETHODIMP LgLineBreaker::GetLineBreakInfo(const OLECHAR * prgchIn, int cchIn,
 			// If current character is a TAB, set *pichBreak. This will stop the loop next time.
 			// Note that we want the TAB to be processed "normally" for its line breaking
 			// properties, so we continue through this iteration.
-			*pichBreak = prglbp - prglbpBuf;
+			*pichBreak = (int)(prglbp - prglbpBuf);
 		}
 		lbpNext = *(prglbp + 1) & 0x3f;	// Clear high bits if set.
 		if (lbpCurrent == klbpBK || lbpCurrent == klbpLF)
 		{
 			// Mark hard breaks as break allowed and stop looking for more properties.
 			*plbsOut++ = kflbsBrk;
-			*pichBreak = prglbp - prglbpBuf;
+			*pichBreak = (int)(prglbp - prglbpBuf);
 			break;
 		}
 		if (lbpCurrent == klbpCR)
@@ -458,7 +458,7 @@ STDMETHODIMP LgLineBreaker::GetLineBreakInfo(const OLECHAR * prgchIn, int cchIn,
 			*plbsOut++ = (lbpNext == klbpLF) ? klbsN : (byte)kflbsBrk;
 			if (lbpNext == klbpLF)
 			{
-				*pichBreak = prglbp - prglbpBuf;
+				*pichBreak = (int)(prglbp - prglbpBuf);
 				break;
 			}
 			// If next line begins with CM or SP we make as if they follow an AL.

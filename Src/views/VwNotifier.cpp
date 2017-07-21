@@ -334,14 +334,16 @@ VwNotifier::~VwNotifier()
 	{
 		VwPropertyStore * pzvps = *ppzvps;
 		if (pzvps)
-			((VwPropertyStore *)((long) pzvps & ~1))->Release();
-
+			((VwPropertyStore *)((uintptr_t) pzvps & ~1))->Release();
 		IVwViewConstructor * pvvc = *ppvvc;
 		if (pvvc)
-			((IVwViewConstructor *)((long) pvvc & ~1))->Release();
+			((IVwViewConstructor *)((uintptr_t) pvvc & ~1))->Release();
 	}
-}
 
+}
+#if __MonoCS__
+
+#endif
 /*----------------------------------------------------------------------------------------------
 	Common bit of code executed to clean up both normal and error code.
 	fError is true if already in error state. If so, ignore any new errors.
@@ -3679,7 +3681,7 @@ VwNotifier * VwNotifier::FindChild(PropTag tag, int ipropTag, int ihvoTarget, in
 		{
 			if (cpropTag == ipropTag)
 			{
-				iprop = ptag - Tags();
+				iprop = (int)(ptag - Tags());
 				break;
 			}
 			cpropTag++;

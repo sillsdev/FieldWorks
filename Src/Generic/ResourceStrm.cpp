@@ -73,13 +73,19 @@ void ResourceStream::Init(HMODULE hmod, const achar * pszType, int rid)
 {
 	Assert(hmod);
 	// int value assumed for pszType if high 16-bit word is zero
-	Assert(((int)pszType > 0 && (int)pszType < 0x10000) || ValidPsz(pszType));
+	//Assert(((int)pszType > 0 && (int)pszType < 0x10000) || ValidPsz(pszType));
+	Assert((_wtoi(pszType) > 0 && _wtoi(pszType) < 0x10000) || ValidPsz(pszType));
 	Assert(rid > 0 && rid < 0x10000); // high 16-bit word must be zero
 	// 1. find the resource
 	// 2. get the resource size
 	// 3. load the resource data
 	// 4. lock the resource data into memory, getting a pointer to the data
-	HRSRC hResInfo = FindResource(hmod, reinterpret_cast<const achar *>(rid), pszType);
+
+	wchar_t istr[32];
+	_itow_s(rid, istr, 10);
+
+	HRSRC hResInfo = FindResource(hmod, istr, pszType);
+
 	if (hResInfo == NULL)
 		ThrowHr(WarnHr(E_FAIL));
 	m_cbData = SizeofResource(hmod, hResInfo);
@@ -160,7 +166,7 @@ STDMETHODIMP ResourceStream::Read(void * pv, UCOMINT32 cb, UCOMINT32 * pcbRead)
 
 	//Avoid reading past end of resource data.
 	if (m_pbCur + cb > m_prgbData + m_cbData)
-		cbRead = m_cbData - (m_pbCur - m_prgbData);
+		cbRead = m_cbData - (ULONG)(m_pbCur - m_prgbData);
 	else
 		cbRead = cb;
 	if (cbRead != 0)
@@ -209,17 +215,17 @@ STDMETHODIMP ResourceStream::Seek(LARGE_INTEGER dlibMove, DWORD dwOrigin,
 	switch (dwOrigin)
 	{
 	case STREAM_SEEK_SET:
-		if (cbLow < 0 || (uint)(cbLow + m_prgbData) > 0x7fffffff)
+		if (cbLow < 0 || PtrToUlong((cbLow + m_prgbData)) > (ulong)0x7fffffff)
 			ThrowHr(WarnHr(STG_E_INVALIDPARAMETER));
 		pbNew = m_prgbData + cbLow;
 		break;
 	case STREAM_SEEK_CUR:
-		if (m_pbCur + cbLow < m_prgbData || (uint)(cbLow + m_pbCur) > 0x7fffffff)
+		if (m_pbCur + cbLow < m_prgbData || PtrToUlong(cbLow + m_pbCur) >(ulong)0x7fffffff)
 			ThrowHr(WarnHr(STG_E_INVALIDPARAMETER));
 		pbNew = m_pbCur + cbLow;
 		break;
 	case STREAM_SEEK_END:
-		if (m_cbData + cbLow < 0 || (uint)(cbLow + m_prgbData + m_cbData) > 0x7fffffff)
+		if (m_cbData + cbLow < 0 || PtrToUlong(cbLow + m_prgbData + m_cbData) >(ulong)0x7fffffff)
 			ThrowHr(WarnHr(STG_E_INVALIDPARAMETER));
 		pbNew = m_prgbData + m_cbData + cbLow;
 		break;
@@ -231,7 +237,7 @@ STDMETHODIMP ResourceStream::Seek(LARGE_INTEGER dlibMove, DWORD dwOrigin,
 	if (plibNewPosition) // Note: NULL is a valid value for caller to pass.
 	{
 		plibNewPosition->HighPart = 0;
-		plibNewPosition->LowPart = m_pbCur - m_prgbData;
+		plibNewPosition->LowPart = (DWORD)(m_pbCur - m_prgbData);
 	}
 	END_COM_METHOD(g_fact, IID_IStream);
 }

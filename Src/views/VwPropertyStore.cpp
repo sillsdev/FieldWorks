@@ -76,7 +76,7 @@ void VwPropertyStore::CommonInit()
 	m_chrp.dympHeight = knDefaultFontSize;
 	m_chrp.m_unt = kuntNone;
 	m_chrp.m_clrUnder = (unsigned long) kclrTransparent; // cheat: means same as foreground
-#if WIN32
+#if defined(WIN32) || defined(WIN64)
 	m_chrp.clrFore = m_clrBorderColor = ::GetSysColor(COLOR_WINDOWTEXT);
 #else //WIN32
 	// set to default black RGB color
@@ -167,7 +167,7 @@ VwPropertyStore::~VwPropertyStore()
 		ithmipkzvps.GetValue()->DisconnectParent();
 	}
 
-#if !WIN32
+#if !defined(_WIN32) && !defined(_M_X64)
 	// work around TeDllTests hang on exit
 	if (m_qwsf)
 		m_qwsf.Detach();
@@ -307,7 +307,7 @@ int VwPropertyStore::AdjustedLineHeight(VwPropertyStore * pzvpsLeaf, int * pdymp
 	qzvpsWithWsAndFont->m_chrp.ws = pzvpsLeaf->m_chrp.ws;
 	qzvpsWithWsAndFont->Lock();
 
-#if WIN32
+#if defined(WIN32) || defined(WIN64)
 	// We want to make some measurements on the font. They don't have to be super precise,
 	// so we'll just use a current screen DC.
 	HDC hdc = AfGdi::GetDC(NULL);
@@ -476,7 +476,7 @@ void VwPropertyStore::InitChrp()
 		}
 		// If we get here we have either a valid, installed font name, or a
 		// standard magic name. In either case, just use it.
-		int cchCopy = pch - pchStartName;
+		int cchCopy = (int)(pch - pchStartName);
 		if (cchCopy > 31)
 			cchCopy = 31;
 		wcsncpy_s(m_chrp.szFaceName, 32, pchStartName, cchCopy);
@@ -534,14 +534,14 @@ void VwPropertyStore::InitChrp()
 			// First, we observe that some fonts don't return a physical font having the requested logical size, so
 			// we calculate a factor that takes this into account.
 			// Second, we use a universal fudge factor that makes everything right...
-#if WIN32
+#if defined(WIN32) || defined(WIN64)
 			HDC hdc = AfGdi::GetDC(NULL);
 			int dpiY = ::GetDeviceCaps(hdc, LOGPIXELSY);
 #else
 			int dpiY = GetDpiY(NULL);
 #endif
 			double requestedToReceivedRatio = m_pzvpsParent->m_chrp.dympHeight * kdzmpInch / (dpiY * 1000.0 * (dympDescent + dympEmHeight));
-#if WIN32
+#if defined(WIN32) || defined(WIN64)
 			AfGdi::ReleaseDC(NULL, hdc);
 #endif
 			double fudgeFactor = 1.125;

@@ -41,8 +41,8 @@ OUT_DIR=$(BUILD_OUTPUT)\$(BUILD_CONFIG)
 !ENDIF
 !ENDIF
 
-!IF "$(BUILD_ARCH)"=="x64"
-MIDL_ARCH=win64
+!IF "$(ARCH)"=="x64" || "$(BUILD_ARCH)"=="x64"
+MIDL_ARCH=x64
 LINK_ARCH=x64
 !ELSE
 MIDL_ARCH=win32
@@ -153,7 +153,7 @@ PATH=$(PATH);$(COM_OUT_DIR)
 
 !ELSE
 
-DEFS=$(DEFS) /DWIN32=1
+DEFS=$(DEFS) /DWIN64=1
 
 !ENDIF
 
@@ -174,7 +174,7 @@ CL_OPTS=$(CL_OPTS) /MT
 # JohnT: /EHa is required so that our code that converts C exceptions (access violation, div by zero)
 # into C++ ThrowableSd exceptions, and catches them at interface boundaries, can work
 # reliably. The October 1999 edition of Bugslayer in MSDN has a fuller explanation.
-CL_OPTS=$(CL_OPTS) /W4 /WX /Fd"$(INT_DIR)/" /EHa /GR /GF /Zm400 /D_WIN32_WINNT=0x0500
+CL_OPTS=$(CL_OPTS) /W4 /WX /Fd"$(INT_DIR)/" /EHa /GR /GF /Zm400 /D_WIN64_WINNT=0x0500
 
 PREPROCESS_OPTS=/E
 
