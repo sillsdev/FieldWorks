@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="14.0">
 	<!-- Make all of FieldWorks. -->
-	<Target Name="mkall" DependsOnTargets="CopyDlls;initLinux;initWindows;LinuxRegistry;allCpp;allCsharp;ensureTLBsUpToDate">
+	<Target Name="mkall" DependsOnTargets="initLinux;initWindows;LinuxRegistry;allCpp;allCsharp;ensureTLBsUpToDate">
 		<Message Text="Finished mkall Target."/>
 		<CreateItem Condition="'$(action)'=='test'" Include="$(dir-outputBase)/*-nunit-output.xml">
 			<Output TaskParameter="Include" ItemName="NUnitReportFiles"/>
@@ -223,12 +223,12 @@
 	<Target Name="remakefw-internal" DependsOnTargets="CleanAll;Initialize;setRegistryValues;CopyDlls;ensureTLBsUpToDate;mkall"/>
 
 	<Target Name="remakefw" DependsOnTargets="remakefw-internal">
+		<!-- If tests were run on a developer machine, fail to alert the developer of any failures -->
 		<Error Condition="'@(FailedSuites)'!=''" Text="The following projects had failing tests: @(FailedSuites)" />
 	</Target>
 
 	<Target Name="remakefw-jenkins" DependsOnTargets="remakefw-internal">
-		<!-- Jenkins looks at the test output files to see if tests failed, so we don't have to
-			fail on failed tests -->
+		<!-- Jenkins looks at the test output files to see if tests failed, so we don't have to fail on failed tests -->
 		<Warning Condition="'@(FailedSuites)'!=''" Text="The following projects had failing tests: @(FailedSuites)" />
 	</Target>
 
@@ -312,62 +312,106 @@
 		<DownloadsDir>$(fwrt)/Downloads</DownloadsDir>
 	</PropertyGroup>
 
+	<ItemGroup>
+		<PalasoFiles Include="SIL.Core.dll"/>
+		<PalasoFiles Include="SIL.Core.$(DebugInfo)"/>
+		<PalasoFiles Include="SIL.Core.Desktop.dll"/>
+		<PalasoFiles Include="SIL.Core.Desktop.$(DebugInfo)"/>
+		<PalasoFiles Include="SIL.Lift.dll"/>
+		<PalasoFiles Include="SIL.Lift.$(DebugInfo)"/>
+		<PalasoFiles Include="SIL.Media.dll"/>
+		<PalasoFiles Include="SIL.Media.dll.config" Condition="'$(OS)'=='Unix'"/>
+		<PalasoFiles Include="SIL.Media.$(DebugInfo)"/>
+		<PalasoFiles Include="SIL.Windows.Forms.dll"/>
+		<PalasoFiles Include="SIL.Windows.Forms.$(DebugInfo)"/>
+		<PalasoFiles Include="SIL.Windows.Forms.GeckoBrowserAdapter.dll"/>
+		<PalasoFiles Include="SIL.Windows.Forms.GeckoBrowserAdapter.$(DebugInfo)"/>
+		<PalasoFiles Include="SIL.Archiving.dll"/>
+		<PalasoFiles Include="SIL.Archiving.dll.config" Condition="'$(OS)'=='Unix'"/>
+		<PalasoFiles Include="SIL.Archiving.$(DebugInfo)"/>
+		<PalasoFiles Include="Ionic.Zip.dll"/>
+		<PalasoFiles Include="Keyman7Interop.dll" Condition="'$(OS)'=='Windows_NT'"/>
+		<PalasoFiles Include="KeymanLink.dll" Condition="'$(OS)'=='Windows_NT'"/>
+		<PalasoFiles Include="SIL.WritingSystems.dll"/>
+		<PalasoFiles Include="SIL.WritingSystems.$(DebugInfo)"/>
+		<PalasoFiles Include="SIL.Windows.Forms.WritingSystems.dll"/>
+		<PalasoFiles Include="SIL.Windows.Forms.WritingSystems.$(DebugInfo)"/>
+		<PalasoFiles Include="SIL.Windows.Forms.Keyboarding.dll"/>
+		<PalasoFiles Include="SIL.Windows.Forms.Keyboarding.dll.config" Condition="'$(OS)'=='Unix'"/>
+		<PalasoFiles Include="SIL.Windows.Forms.Keyboarding.$(DebugInfo)"/>
+		<PalasoFiles Include="SIL.Lexicon.dll"/>
+		<PalasoFiles Include="SIL.Lexicon.$(DebugInfo)"/>
+		<PalasoFiles Include="SIL.TestUtilities.dll"/>
+		<PalasoFiles Include="L10NSharp.dll"/>
+		<PalasoFiles Include="Commons.Xml.Relaxng.dll"/>
+		<PalasoFiles Include="irrKlang.NET4.dll" Condition="'$(OS)'=='Windows_NT'"/>
+		<PalasoFiles Include="Enchant.Net.dll"/>
+		<PalasoFiles Include="Enchant.Net.dll.config" Condition="'$(OS)'=='Unix'"/>
+		<PalasoFiles Include="ibusdotnet.dll" Condition="'$(OS)'=='Unix'"/>
+		<PalasoFiles Include="NDesk.DBus.dll" Condition="'$(OS)'=='Unix'"/>
+		<PalasoFiles Include="NDesk.DBus.dll.config" Condition="'$(OS)'=='Unix'"/>
+		<PalasoFiles Include="taglib-sharp.dll"/>
+		<PalasoFiles Include="Spart.dll"/>
+		<PalasoFiles Include="Newtonsoft.Json.dll"/>
+		<PalasoFiles Include="icu.net.dll"/>
+
+		<ChorusFiles Include="Autofac.dll"/>
+		<ChorusFiles Include="Chorus.exe"/>
+		<ChorusFiles Include="ChorusHub.exe" Condition="'$(OS)'=='Unix'"/>
+		<ChorusFiles Include="LibChorus.dll"/>
+		<ChorusFiles Include="Vulcan.Uczniowie.HelpProvider.dll"/>
+
+		<LcmOutputBaseFiles Include="ICSharpCode.SharpZipLib.dll" />
+		<LcmOutputBaseFiles Include="Hunspellx86.dll" Condition="'$(OS)'=='Windows_NT'" />
+		<LcmOutputBaseFiles Include="NHunspell.dll" Condition="'$(OS)'=='Windows_NT'" />
+		<LcmOutputBaseFiles Include="Microsoft.Practices.ServiceLocation.dll" />
+		<LcmOutputBaseFiles Include="protobuf-net.dll" />
+		<LcmOutputBaseFiles Include="StructureMap.dll" />
+		<LcmOutputBaseFiles Include="Tools.dll" />
+		<LcmOutputBaseFiles Include="SIL.LCModel.Utils.dll" />
+		<LcmOutputBaseFiles Include="SIL.LCModel.Utils.$(DebugInfo)" />
+		<LcmOutputBaseFiles Include="SIL.LCModel.Utils.Tests.dll" />
+		<LcmOutputBaseFiles Include="SIL.LCModel.Utils.Tests.dll.config" />
+		<LcmOutputBaseFiles Include="SIL.LCModel.Utils.Tests.$(DebugInfo)" />
+		<LcmOutputBaseFiles Include="SIL.LCModel.Core.dll" />
+		<LcmOutputBaseFiles Include="SIL.LCModel.Core.dll.config" Condition="'$(OS)'=='Unix'" />
+		<LcmOutputBaseFiles Include="SIL.LCModel.Core.$(DebugInfo)" />
+		<LcmOutputBaseFiles Include="SIL.LCModel.Core.Tests.dll" />
+		<LcmOutputBaseFiles Include="SIL.LCModel.Core.Tests.dll.config" />
+		<LcmOutputBaseFiles Include="SIL.LCModel.Core.Tests.$(DebugInfo)" />
+		<LcmOutputBaseFiles Include="SIL.LCModel.dll" />
+		<LcmOutputBaseFiles Include="SIL.LCModel.$(DebugInfo)" />
+		<LcmOutputBaseFiles Include="SIL.LCModel.Tests.dll" />
+		<LcmOutputBaseFiles Include="SIL.LCModel.Tests.dll.config" />
+		<LcmOutputBaseFiles Include="SIL.LCModel.Tests.$(DebugInfo)" />
+
+		<LcmOutputCommonFiles Include="KernelInterfaces/FwKernelTlb.iip" />
+
+		<LcmFwKernelFiles Include="KernelInterfaces/common.idh" />
+		<LcmFwKernelFiles Include="KernelInterfaces/FwKernel.idh" />
+		<LcmFwKernelFiles Include="KernelInterfaces/Language.idh" />
+		<LcmFwKernelFiles Include="KernelInterfaces/TextServ.idh" />
+		<LcmFwKernelFiles Include="KernelInterfaces/FwKernelTlb.idl" />
+
+		<LcmDistFiles Include="Styles.dtd" />
+
+		<LcmTemplatesFiles Include="Templates/GOLDEtic.xml" />
+		<LcmTemplatesFiles Include="Templates/NewLangProj.fwdata" />
+		<LcmTemplatesFiles Include="Templates/POS.xml" />
+		<LcmTemplatesFiles Include="Templates/SemDom.xml" />
+
+		<LcmIcuDataFiles Include="IcuData/UnicodeDataOverrides.txt" />
+
+		<LcmIcuNrmFiles Include="IcuData/icudt$(IcuVersion)l/nfc_fw.nrm" />
+		<LcmIcuNrmFiles Include="IcuData/icudt$(IcuVersion)l/nfkc_fw.nrm" />
+	</ItemGroup>
+
 	<Target Name="downloadDlls" DependsOnTargets="RestoreNuGetPackages" Condition="'$(disableDownloads)'!='true'">
 		<MakeDir Directories="$(DownloadsDir)"/>
 		<Message Text="Downloading artifacts for Palaso, including  L10NSharp, Enchant.Net, ibusdotnet, NDesk.DBus, Spart, and Newtonsoft.Json."/>
-		<ItemGroup>
-			<PalasoFiles Include="SIL.Core.dll"/>
-			<PalasoFiles Include="SIL.Core.$(DebugInfo)"/>
-			<PalasoFiles Include="SIL.Core.Desktop.dll"/>
-			<PalasoFiles Include="SIL.Core.Desktop.$(DebugInfo)"/>
-			<PalasoFiles Include="SIL.Lift.dll"/>
-			<PalasoFiles Include="SIL.Lift.$(DebugInfo)"/>
-			<PalasoFiles Include="SIL.Media.dll"/>
-			<PalasoFiles Include="SIL.Media.dll.config" Condition="'$(OS)'=='Unix'"/>
-			<PalasoFiles Include="SIL.Media.$(DebugInfo)"/>
-			<PalasoFiles Include="SIL.Windows.Forms.dll"/>
-			<PalasoFiles Include="SIL.Windows.Forms.$(DebugInfo)"/>
-			<PalasoFiles Include="SIL.Windows.Forms.GeckoBrowserAdapter.dll"/>
-			<PalasoFiles Include="SIL.Windows.Forms.GeckoBrowserAdapter.$(DebugInfo)"/>
-			<PalasoFiles Include="SIL.Archiving.dll"/>
-			<PalasoFiles Include="SIL.Archiving.dll.config" Condition="'$(OS)'=='Unix'"/>
-			<PalasoFiles Include="SIL.Archiving.$(DebugInfo)"/>
-			<PalasoFiles Include="Ionic.Zip.dll"/>
-			<PalasoFiles Include="Keyman7Interop.dll" Condition="'$(OS)'=='Windows_NT'"/>
-			<PalasoFiles Include="KeymanLink.dll" Condition="'$(OS)'=='Windows_NT'"/>
-			<PalasoFiles Include="SIL.WritingSystems.dll"/>
-			<PalasoFiles Include="SIL.WritingSystems.$(DebugInfo)"/>
-			<PalasoFiles Include="SIL.Windows.Forms.WritingSystems.dll"/>
-			<PalasoFiles Include="SIL.Windows.Forms.WritingSystems.$(DebugInfo)"/>
-			<PalasoFiles Include="SIL.Windows.Forms.Keyboarding.dll"/>
-			<PalasoFiles Include="SIL.Windows.Forms.Keyboarding.dll.config" Condition="'$(OS)'=='Unix'"/>
-			<PalasoFiles Include="SIL.Windows.Forms.Keyboarding.$(DebugInfo)"/>
-			<PalasoFiles Include="SIL.Lexicon.dll"/>
-			<PalasoFiles Include="SIL.Lexicon.$(DebugInfo)"/>
-			<PalasoFiles Include="SIL.TestUtilities.dll"/>
-			<PalasoFiles Include="L10NSharp.dll"/>
-			<PalasoFiles Include="Commons.Xml.Relaxng.dll"/>
-			<PalasoFiles Include="irrKlang.NET4.dll" Condition="'$(OS)'=='Windows_NT'"/>
-			<PalasoFiles Include="Enchant.Net.dll"/>
-			<PalasoFiles Include="Enchant.Net.dll.config" Condition="'$(OS)'=='Unix'"/>
-			<PalasoFiles Include="ibusdotnet.dll" Condition="'$(OS)'=='Unix'"/>
-			<PalasoFiles Include="NDesk.DBus.dll" Condition="'$(OS)'=='Unix'"/>
-			<PalasoFiles Include="NDesk.DBus.dll.config" Condition="'$(OS)'=='Unix'"/>
-			<PalasoFiles Include="taglib-sharp.dll"/>
-			<PalasoFiles Include="Spart.dll"/>
-			<PalasoFiles Include="Newtonsoft.Json.dll"/>
-			<PalasoFiles Include="icu.net.dll"/>
-		</ItemGroup>
 		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(PalasoBuildType)" FlexBridgeBuildType="$(FLExBridgeBuildType)" VersionInfo="$(MasterVersionInfo)" Artifacts="@(PalasoFiles)" DownloadsDir="$(DownloadsDir)"/>
 
 		<Message Text="Downloading artifacts for Chorus."/>
-		<ItemGroup>
-			<ChorusFiles Include="Autofac.dll"/>
-			<ChorusFiles Include="Chorus.exe"/>
-			<ChorusFiles Include="ChorusHub.exe" Condition="'$(OS)'=='Unix'"/>
-			<ChorusFiles Include="LibChorus.dll"/>
-			<ChorusFiles Include="Vulcan.Uczniowie.HelpProvider.dll"/>
-		</ItemGroup>
 		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(ChorusBuildType)" FlexBridgeBuildType="$(FLExBridgeBuildType)" VersionInfo="$(MasterVersionInfo)" Artifacts="@(ChorusFiles)" DownloadsDir="$(DownloadsDir)"/>
 
 		<Message Text="Downloading an artifact for IPCFramework."/>
@@ -399,61 +443,21 @@
 		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(LcmBuildType)" VersionInfo="$(MasterVersionInfo)" Artifacts="LCM.zip" DownloadsDir="$(DownloadsDir)"/>
 	</Target>
 
+	<PropertyGroup>
+		<PalasoArtifactsDir Condition="'$(PalasoArtifactsDir)'==''">$(DownloadsDir)</PalasoArtifactsDir>
+		<ChorusArtifactsDir Condition="'$(ChorusArtifactsDir)'==''">$(DownloadsDir)</ChorusArtifactsDir>
+		<LcmArtifactsDir Condition="'$(LcmArtifactsDir)'==''">$(DownloadsDir)/LCM</LcmArtifactsDir>
+	</PropertyGroup>
+
 	<!-- item group for downloads, to allow easy copying -->
 	<!-- wildcards don't work unless the files have already been downloaded once -->
 	<ItemGroup>
-		<DownloadedFiles Include="$(DownloadsDir)/Autofac.dll"/>
-		<DownloadedFiles Include="$(DownloadsDir)/Chorus.exe"/>
-		<DownloadedFiles Include="$(DownloadsDir)/ChorusHub.exe" Condition="'$(OS)'=='Unix'"/>
-		<DownloadedFiles Include="$(DownloadsDir)/LibChorus.dll"/>
-		<DownloadedFiles Include="$(DownloadsDir)/Vulcan.Uczniowie.HelpProvider.dll"/>
 		<!-- we need to explicitly specify the important files, otherwise they'll be ignored
 		if they don't exist by the time this ItemGroup is read -->
-		<DownloadedFiles Include="$(DownloadsDir)/SIL.Core.dll"/>
-		<DownloadedFiles Include="$(DownloadsDir)/SIL.Core.$(DebugInfo)"/>
-		<DownloadedFiles Include="$(DownloadsDir)/SIL.Core.Desktop.dll"/>
-		<DownloadedFiles Include="$(DownloadsDir)/SIL.Core.Desktop.$(DebugInfo)"/>
-		<DownloadedFiles Include="$(DownloadsDir)/SIL.Lift.dll"/>
-		<DownloadedFiles Include="$(DownloadsDir)/SIL.Lift.$(DebugInfo)"/>
-		<DownloadedFiles Include="$(DownloadsDir)/SIL.Media.dll"/>
-		<DownloadedFiles Include="$(DownloadsDir)/SIL.Media.dll.config" Condition="'$(OS)'=='Unix'"/>
-		<DownloadedFiles Include="$(DownloadsDir)/SIL.Media.$(DebugInfo)"/>
-		<DownloadedFiles Include="$(DownloadsDir)/SIL.Windows.Forms.dll"/>
-		<DownloadedFiles Include="$(DownloadsDir)/SIL.Windows.Forms.$(DebugInfo)"/>
-		<DownloadedFiles Include="$(DownloadsDir)/SIL.Windows.Forms.GeckoBrowserAdapter.dll"/>
-		<DownloadedFiles Include="$(DownloadsDir)/SIL.Windows.Forms.GeckoBrowserAdapter.$(DebugInfo)"/>
-		<DownloadedFiles Include="$(DownloadsDir)/SIL.Archiving.dll"/>
-		<DownloadedFiles Include="$(DownloadsDir)/SIL.Archiving.dll.config" Condition="'$(OS)'=='Unix'"/>
-		<DownloadedFiles Include="$(DownloadsDir)/SIL.Archiving.$(DebugInfo)"/>
-		<DownloadedFiles Include="$(DownloadsDir)/SIL.WritingSystems.dll"/>
-		<DownloadedFiles Include="$(DownloadsDir)/SIL.WritingSystems.$(DebugInfo)"/>
-		<DownloadedFiles Include="$(DownloadsDir)/SIL.Windows.Forms.WritingSystems.dll"/>
-		<DownloadedFiles Include="$(DownloadsDir)/SIL.Windows.Forms.WritingSystems.$(DebugInfo)"/>
-		<DownloadedFiles Include="$(DownloadsDir)/SIL.Windows.Forms.Keyboarding.dll"/>
-		<DownloadedFiles Include="$(DownloadsDir)/SIL.Windows.Forms.Keyboarding.dll.config" Condition="'$(OS)'=='Unix'"/>
-		<DownloadedFiles Include="$(DownloadsDir)/SIL.Windows.Forms.Keyboarding.$(DebugInfo)"/>
-		<DownloadedFiles Include="$(DownloadsDir)/SIL.Lexicon.dll"/>
-		<DownloadedFiles Include="$(DownloadsDir)/SIL.Lexicon.$(DebugInfo)"/>
-		<DownloadedFiles Include="$(DownloadsDir)/SIL.TestUtilities.dll"/>
-		<DownloadedFiles Include="$(DownloadsDir)/icu.net.dll"/>
-		<DownloadedFiles Include="$(DownloadsDir)/Keyman7Interop.dll" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadedFiles Include="$(DownloadsDir)/KeymanLink.dll" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadedFiles Include="$(DownloadsDir)/L10NSharp.dll"/>
-		<DownloadedFiles Include="$(DownloadsDir)/Commons.Xml.Relaxng.dll"/>
-		<DownloadedFiles Include="$(DownloadsDir)/irrKlang.NET4.dll" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadedFiles Include="$(DownloadsDir)/Enchant.Net.dll"/>
-		<DownloadedFiles Include="$(DownloadsDir)/Enchant.Net.dll.config" Condition="'$(OS)'=='Unix'"/>
 		<DownloadedFiles Include="$(DownloadsDir)/IPCFramework.dll"/>
 		<!-- xBuild and MsBuild generate different case artifacts off the same solution file. (sigh) -->
 		<DownloadedFiles Include="$(DownloadsDir)/$(ExCss).dll"/>
 		<DownloadedFiles Include="$(DownloadsDir)/$(ExCss).$(DebugInfo)"/>
-		<DownloadedFiles Include="$(DownloadsDir)/ibusdotnet.dll" Condition="'$(OS)'=='Unix'"/>
-		<DownloadedFiles Include="$(DownloadsDir)/NDesk.DBus.dll" Condition="'$(OS)'=='Unix'"/>
-		<DownloadedFiles Include="$(DownloadsDir)/NDesk.DBus.dll.config" Condition="'$(OS)'=='Unix'"/>
-		<DownloadedFiles Include="$(DownloadsDir)/Ionic.Zip.dll"/>
-		<DownloadedFiles Include="$(DownloadsDir)/taglib-sharp.dll"/>
-		<DownloadedFiles Include="$(DownloadsDir)/Spart.dll"/>
-		<DownloadedFiles Include="$(DownloadsDir)/Newtonsoft.Json.dll"/>
 		<DownloadedFiles Include="$(DownloadsDir)/FormattedEditor.dll"/>
 		<DownloadedFiles Include="$(DownloadsDir)/HelpSystem.dll"/>
 		<DownloadedFiles Include="$(DownloadsDir)/HtmlEditor.dll"/>
@@ -508,59 +512,16 @@
 		<!-- LCM dlls -->
 		<ForceDelete Files="$(DownloadsDir)/LCM/" />
 		<Unzip ZipFilename="$(DownloadsDir)/LCM.zip" ToDir="$(DownloadsDir)/LCM/" />
-		<ItemGroup>
-			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/ICSharpCode.SharpZipLib.dll" />
-			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/Hunspellx86.dll" Condition="'$(OS)'=='Windows_NT'" />
-			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/NHunspell.dll" Condition="'$(OS)'=='Windows_NT'" />
-			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/Microsoft.Practices.ServiceLocation.dll" />
-			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/protobuf-net.dll" />
-			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/StructureMap.dll" />
-			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/Tools.dll" />
-			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/SIL.LCModel.Utils.dll" />
-			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/SIL.LCModel.Utils.$(DebugInfo)" />
-			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/SIL.LCModel.Utils.Tests.dll" />
-			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/SIL.LCModel.Utils.Tests.dll.config" />
-			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/SIL.LCModel.Utils.Tests.$(DebugInfo)" />
-			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/SIL.LCModel.Core.dll" />
-			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/SIL.LCModel.Core.dll.config" Condition="'$(OS)'=='Unix'" />
-			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/SIL.LCModel.Core.$(DebugInfo)" />
-			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/SIL.LCModel.Core.Tests.dll" />
-			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/SIL.LCModel.Core.Tests.dll.config" />
-			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/SIL.LCModel.Core.Tests.$(DebugInfo)" />
-			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/SIL.LCModel.dll" />
-			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/SIL.LCModel.$(DebugInfo)" />
-			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/SIL.LCModel.Tests.dll" />
-			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/SIL.LCModel.Tests.dll.config" />
-			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/SIL.LCModel.Tests.$(DebugInfo)" />
-
-			<LcmOutputCommonFiles Include="$(DownloadsDir)/LCM/KernelInterfaces/FwKernelTlb.iip" />
-
-			<LcmFwKernelFiles Include="$(DownloadsDir)/LCM/KernelInterfaces/common.idh" />
-			<LcmFwKernelFiles Include="$(DownloadsDir)/LCM/KernelInterfaces/FwKernel.idh" />
-			<LcmFwKernelFiles Include="$(DownloadsDir)/LCM/KernelInterfaces/Language.idh" />
-			<LcmFwKernelFiles Include="$(DownloadsDir)/LCM/KernelInterfaces/TextServ.idh" />
-			<LcmFwKernelFiles Include="$(DownloadsDir)/LCM/KernelInterfaces/FwKernelTlb.idl" />
-
-			<LcmDistFiles Include="$(DownloadsDir)/LCM/Styles.dtd" />
-
-			<LcmTemplatesFiles Include="$(DownloadsDir)/LCM/Templates/GOLDEtic.xml" />
-			<LcmTemplatesFiles Include="$(DownloadsDir)/LCM/Templates/NewLangProj.fwdata" />
-			<LcmTemplatesFiles Include="$(DownloadsDir)/LCM/Templates/POS.xml" />
-			<LcmTemplatesFiles Include="$(DownloadsDir)/LCM/Templates/SemDom.xml" />
-
-			<LcmIcuDataFiles Include="$(DownloadsDir)/LCM/IcuData/UnicodeDataOverrides.txt" />
-
-			<LcmIcuNrmFiles Include="$(DownloadsDir)/LCM/IcuData/icudt$(IcuVersion)l/nfc_fw.nrm" />
-			<LcmIcuNrmFiles Include="$(DownloadsDir)/LCM/IcuData/icudt$(IcuVersion)l/nfkc_fw.nrm" />
-		</ItemGroup>
-		<Copy SourceFiles="@(LcmOutputBaseFiles)" DestinationFolder="$(dir-outputBase)" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
-		<Copy SourceFiles="@(LcmOutputCommonFiles)" DestinationFolder="$(dir-fwoutputCommon)" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
-		<Copy SourceFiles="@(LcmFwKernelFiles)" DestinationFolder="$(fwrt)/Src/Kernel" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
-		<Copy SourceFiles="@(LcmDistFiles)" DestinationFolder="$(fwrt)/DistFiles" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
-		<Copy SourceFiles="@(LcmTemplatesFiles)" DestinationFolder="$(fwrt)/DistFiles/Templates" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
-		<Copy SourceFiles="@(LcmIcuDataFiles)" DestinationFolder="$(fwrt)/DistFiles/Icu$(IcuVersion)" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
-		<Copy SourceFiles="@(LcmIcuNrmFiles)" DestinationFolder="$(fwrt)/DistFiles/Icu$(IcuVersion)/icudt$(IcuVersion)l" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
+		<Copy SourceFiles="@(LcmOutputBaseFiles -> '$(LcmArtifactsDir)/%(Identity)')" DestinationFolder="$(dir-outputBase)" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
+		<Copy SourceFiles="@(LcmOutputCommonFiles -> '$(LcmArtifactsDir)/%(Identity)')" DestinationFolder="$(dir-fwoutputCommon)" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
+		<Copy SourceFiles="@(LcmFwKernelFiles -> '$(LcmArtifactsDir)/%(Identity)')" DestinationFolder="$(fwrt)/Src/Kernel" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
+		<Copy SourceFiles="@(LcmDistFiles -> '$(LcmArtifactsDir)/%(Identity)')" DestinationFolder="$(fwrt)/DistFiles" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
+		<Copy SourceFiles="@(LcmTemplatesFiles -> '$(LcmArtifactsDir)/%(Identity)')" DestinationFolder="$(fwrt)/DistFiles/Templates" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
+		<Copy SourceFiles="@(LcmIcuDataFiles -> '$(LcmArtifactsDir)/%(Identity)')" DestinationFolder="$(fwrt)/DistFiles/Icu$(IcuVersion)" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
+		<Copy SourceFiles="@(LcmIcuNrmFiles -> '$(LcmArtifactsDir)/%(Identity)')" DestinationFolder="$(fwrt)/DistFiles/Icu$(IcuVersion)/icudt$(IcuVersion)l" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
 		<!-- Copy the downloaded artifacts -->
+		<Copy SourceFiles="@(PalasoFiles -> '$(DownloadsDir)/%(Identity)')" DestinationFolder="$(dir-outputBase)" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
+		<Copy SourceFiles="@(ChorusFiles -> '$(DownloadsDir)/%(Identity)')" DestinationFolder="$(dir-outputBase)" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
 		<Copy SourceFiles="@(DownloadedFiles)" DestinationFolder="$(dir-outputBase)"
 			SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
 		<!-- NuGet packages. Property- and ItemGroups are inside the target so $(arch) and *'s are read properly -->
