@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Drawing;
+using System.Windows.Forms;
 using System.Xml.Linq;
 using LanguageExplorer.Controls;
 using SIL.Code;
@@ -82,11 +83,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.GenresEdit
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			CollapsingSplitContainerFactory.RemoveFromParentAndDispose(
-				majorFlexComponentParameters.MainCollapsingSplitContainer,
-				majorFlexComponentParameters.DataNavigationManager,
-				majorFlexComponentParameters.RecordClerkRepositoryForTools,
-				ref _collapsingSplitContainer);
+			CollapsingSplitContainerFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _collapsingSplitContainer);
 		}
 
 		/// <summary>
@@ -99,7 +96,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.GenresEdit
 		{
 			if (_recordClerk == null)
 			{
-				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(GenreList, FactoryMethod);
+				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(GenreList, majorFlexComponentParameters.Statusbar, FactoryMethod);
 			}
 			_collapsingSplitContainer = CollapsingSplitContainerFactory.Create(
 				majorFlexComponentParameters.FlexComponentParameters,
@@ -109,8 +106,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.GenresEdit
 				MachineName,
 				majorFlexComponentParameters.LcmCache,
 				_recordClerk);
-			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
-			majorFlexComponentParameters.RecordClerkRepositoryForTools.ActiveRecordClerk = _recordClerk;
+			RecordClerkServices.SetClerk(majorFlexComponentParameters.DataNavigationManager, majorFlexComponentParameters.RecordClerkRepositoryForTools, _recordClerk);
 		}
 
 		/// <summary>
@@ -173,11 +169,12 @@ namespace LanguageExplorer.Areas.Lists.Tools.GenresEdit
 
 		#endregion
 
-		private static RecordClerk FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId)
+		private static RecordClerk FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId, StatusBar statusBar)
 		{
-			Guard.AssertThat(clerkId == GenreList, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{GenreList}'.");
+			Require.That(clerkId == GenreList, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{GenreList}'.");
 
 			return new RecordClerk(clerkId,
+				statusBar,
 				new PossibilityRecordList(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), cache.LanguageProject.GenreListOA),
 				new PropertyRecordSorter("ShortName"),
 				"Default",

@@ -83,11 +83,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			MultiPaneFactory.RemoveFromParentAndDispose(
-				majorFlexComponentParameters.MainCollapsingSplitContainer,
-				majorFlexComponentParameters.DataNavigationManager,
-				majorFlexComponentParameters.RecordClerkRepositoryForTools,
-				ref _multiPane);
+			MultiPaneFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _multiPane);
 			_recordBrowseView = null;
 			_interlinMaster = null;
 		}
@@ -102,7 +98,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 		{
 			if (_recordClerk == null)
 			{
-				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(InterlinearTexts, FactoryMethod);
+				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(InterlinearTexts, majorFlexComponentParameters.Statusbar, FactoryMethod);
 			}
 			var multiPaneParameters = new MultiPaneParameters
 			{
@@ -129,8 +125,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 			// Too early before now.
 			_interlinMaster.FinishInitialization();
 			_interlinMaster.BringToFront();
-			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
-			majorFlexComponentParameters.RecordClerkRepositoryForTools.ActiveRecordClerk = _recordClerk;
+			RecordClerkServices.SetClerk(majorFlexComponentParameters.DataNavigationManager, majorFlexComponentParameters.RecordClerkRepositoryForTools, _recordClerk);
 		}
 
 		/// <summary>
@@ -191,11 +186,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 
 		#endregion
 
-		private static RecordClerk FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId)
+		private static RecordClerk FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId, StatusBar statusBar)
 		{
-			Guard.AssertThat(clerkId == InterlinearTexts, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{InterlinearTexts}'.");
+			Require.That(clerkId == InterlinearTexts, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{InterlinearTexts}'.");
 
-			return new OccurrencesOfSelectedUnit(clerkId, new ConcDecorator(cache.ServiceLocator));
+			return new InterlinearTextsRecordClerk(statusBar, cache.LanguageProject, new InterestingTextsDecorator(cache.ServiceLocator, flexComponentParameters.PropertyTable));
 		}
 	}
 }

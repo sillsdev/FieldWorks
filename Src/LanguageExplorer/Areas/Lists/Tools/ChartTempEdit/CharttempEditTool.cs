@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Drawing;
+using System.Windows.Forms;
 using System.Xml.Linq;
 using LanguageExplorer.Controls;
 using SIL.Code;
@@ -83,11 +84,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ChartTempEdit
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			CollapsingSplitContainerFactory.RemoveFromParentAndDispose(
-				majorFlexComponentParameters.MainCollapsingSplitContainer,
-				majorFlexComponentParameters.DataNavigationManager,
-				majorFlexComponentParameters.RecordClerkRepositoryForTools,
-				ref _collapsingSplitContainer);
+			CollapsingSplitContainerFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _collapsingSplitContainer);
 		}
 
 		/// <summary>
@@ -100,7 +97,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ChartTempEdit
 		{
 			if (_recordClerk == null)
 			{
-				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(DiscChartTemplateList, FactoryMethod);
+				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(DiscChartTemplateList, majorFlexComponentParameters.Statusbar, FactoryMethod);
 			}
 			_collapsingSplitContainer = CollapsingSplitContainerFactory.Create(
 				majorFlexComponentParameters.FlexComponentParameters,
@@ -110,8 +107,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ChartTempEdit
 				MachineName,
 				majorFlexComponentParameters.LcmCache,
 				_recordClerk);
-			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
-			majorFlexComponentParameters.RecordClerkRepositoryForTools.ActiveRecordClerk = _recordClerk;
+			RecordClerkServices.SetClerk(majorFlexComponentParameters.DataNavigationManager, majorFlexComponentParameters.RecordClerkRepositoryForTools, _recordClerk);
 		}
 
 		/// <summary>
@@ -174,9 +170,9 @@ namespace LanguageExplorer.Areas.Lists.Tools.ChartTempEdit
 
 		#endregion
 
-		private static RecordClerk FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId)
+		private static RecordClerk FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId, StatusBar statusBar)
 		{
-			Guard.AssertThat(clerkId == DiscChartTemplateList, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{DiscChartTemplateList}'.");
+			Require.That(clerkId == DiscChartTemplateList, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{DiscChartTemplateList}'.");
 
 			var template = cache.LanguageProject.DiscourseDataOA.ConstChartTemplOA;
 			if (template == null)
@@ -185,6 +181,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ChartTempEdit
 				template = cache.LanguageProject.DiscourseDataOA.ConstChartTemplOA;
 			}
 			return new RecordClerk(clerkId,
+				statusBar,
 				new PossibilityRecordList(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), template),
 				new PropertyRecordSorter("ShortName"),
 				"Default",

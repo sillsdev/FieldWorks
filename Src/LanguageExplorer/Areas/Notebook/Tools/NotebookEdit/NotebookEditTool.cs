@@ -90,11 +90,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			}
 			_newMenusAndHandlers.Clear();
 
-			MultiPaneFactory.RemoveFromParentAndDispose(
-				majorFlexComponentParameters.MainCollapsingSplitContainer,
-				majorFlexComponentParameters.DataNavigationManager,
-				majorFlexComponentParameters.RecordClerkRepositoryForTools,
-				ref _multiPane);
+			MultiPaneFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _multiPane);
 			_recordBrowseView = null;
 		}
 
@@ -108,7 +104,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 		{
 			if (_recordClerk == null)
 			{
-				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(NotebookArea.Records, NotebookArea.NotebookFactoryMethod);
+				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(NotebookArea.Records, majorFlexComponentParameters.Statusbar, NotebookArea.NotebookFactoryMethod);
 			}
 
 			_recordBrowseView = new RecordBrowseView(NotebookArea.LoadDocument(NotebookResources.NotebookEditBrowseParameters).Root, majorFlexComponentParameters.LcmCache, _recordClerk);
@@ -157,8 +153,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			panelButton.DatTree = recordEditView.DatTree;
 			// Too early before now.
 			recordEditView.FinishInitialization();
-			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
-			majorFlexComponentParameters.RecordClerkRepositoryForTools.ActiveRecordClerk = _recordClerk;
+			RecordClerkServices.SetClerk(majorFlexComponentParameters.DataNavigationManager, majorFlexComponentParameters.RecordClerkRepositoryForTools, _recordClerk);
 		}
 
 		/// <summary>

@@ -1661,8 +1661,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		ConcordanceControlBase m_concordanceControl = null;
 
 		/// <summary />
-		internal OccurrencesOfSelectedUnit(string id, ConcDecorator decorator)
-			: base(id, decorator)
+		internal OccurrencesOfSelectedUnit(string id, StatusBar statusBar, ConcDecorator decorator)
+			: base(id, statusBar, decorator)
 		{
 		}
 

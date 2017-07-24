@@ -420,6 +420,7 @@
     <Compile Include="RecordDocView.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="RecordNavigationEventArgs.cs" />
     <Compile Include="RecordNavigationInfo.cs" />
     <Compile Include="TemporaryRecordClerk.cs" />
     <Compile Include="UploadToWebonaryController.cs" />

@@ -11,6 +11,7 @@ using System.Windows.Forms;
 using System.Xml.Linq;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.PaneBar;
+using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.Resources;
@@ -95,11 +96,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			}
 			_newMenusAndHandlers.Clear();
 
-			MultiPaneFactory.RemoveFromParentAndDispose(
-				majorFlexComponentParameters.MainCollapsingSplitContainer,
-				majorFlexComponentParameters.DataNavigationManager,
-				majorFlexComponentParameters.RecordClerkRepositoryForTools,
-				ref _multiPane);
+			MultiPaneFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _multiPane);
 			_recordBrowseView = null;
 			_innerMultiPane = null;
 		}
@@ -114,7 +111,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		{
 			if (_recordClerk == null)
 			{
-				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(LexiconArea.Entries, LexiconArea.EntriesFactoryMethod);
+				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(LexiconArea.Entries, majorFlexComponentParameters.Statusbar, LexiconArea.EntriesFactoryMethod);
 			}
 
 			var root = XDocument.Parse(LexiconResources.LexiconBrowseParameters).Root;
@@ -147,7 +144,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				ToolMachineName = MachineName,
 				FirstControlParameters = new SplitterChildControlParameters
 				{
-					Control = new RecordDocXmlView(XDocument.Parse(LexiconResources.LexiconEditRecordDocViewParameters).Root, majorFlexComponentParameters.LcmCache, _recordClerk), Label = "Dictionary"
+					Control = new RecordDocXmlView(XDocument.Parse(LexiconResources.LexiconEditRecordDocViewParameters).Root, majorFlexComponentParameters.LcmCache, _recordClerk, (StatusBarProgressPanel)majorFlexComponentParameters.Statusbar.Panels[LanguageExplorerConstants.StatusBarPanelProgressBar]), Label = "Dictionary"
 				},
 				SecondControlParameters = new SplitterChildControlParameters
 				{
@@ -189,8 +186,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			// Too early before now.
 			recordEditView.FinishInitialization();
 			((RecordDocXmlView)nestedMultiPaneParameters.FirstControlParameters.Control).ReallyShowRecordNow();
-			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
-			majorFlexComponentParameters.RecordClerkRepositoryForTools.ActiveRecordClerk = _recordClerk;
+			RecordClerkServices.SetClerk(majorFlexComponentParameters.DataNavigationManager, majorFlexComponentParameters.RecordClerkRepositoryForTools, _recordClerk);
 		}
 
 		private ContextMenuStrip CreateContextMenuStrip()

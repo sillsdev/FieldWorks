@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Windows.Forms;
 using System.Xml.Linq;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
@@ -211,11 +212,12 @@ namespace LanguageExplorer.Areas.Lexicon
 
 		#endregion
 
-		internal static RecordClerk EntriesFactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId)
+		internal static RecordClerk EntriesFactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId, StatusBar statusBar)
 		{
-			Guard.AssertThat(clerkId == Entries, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{Entries}'.");
+			Require.That(clerkId == Entries, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{Entries}'.");
 
 			return new RecordClerk(clerkId,
+				statusBar,
 				new RecordList(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), false, cache.MetaDataCacheAccessor.GetFieldId2(cache.LanguageProject.LexDbOA.ClassID, "Entries", false), cache.LanguageProject.LexDbOA, "Entries"),
 				new Dictionary<string, PropertyRecordSorter>
 				{
@@ -227,11 +229,12 @@ namespace LanguageExplorer.Areas.Lexicon
 				false);
 		}
 
-		internal static RecordClerk SemanticDomainList_LexiconAreaFactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId)
+		internal static RecordClerk SemanticDomainList_LexiconAreaFactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId, StatusBar statusBar)
 		{
-			Guard.AssertThat(clerkId == SemanticDomainList_LexiconArea, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{SemanticDomainList_LexiconArea}'.");
+			Require.That(clerkId == SemanticDomainList_LexiconArea, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{SemanticDomainList_LexiconArea}'.");
 
 			return new RecordClerk(clerkId,
+				statusBar,
 				new PossibilityRecordList(new DictionaryPublicationDecorator(cache, cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), CmPossibilityListTags.kflidPossibilities), cache.LanguageProject.SemanticDomainListOA),
 				new PropertyRecordSorter("ShortName"),
 				"Default",
@@ -241,9 +244,9 @@ namespace LanguageExplorer.Areas.Lexicon
 				new SemanticDomainRdeTreeBarHandler(flexComponentParameters.PropertyTable, XDocument.Parse(LexiconResources.RapidDataEntryToolParameters).Root.Element("treeBarHandler")));
 		}
 
-		internal static RecordClerk AllReversalEntriesFactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId)
+		internal static RecordClerk AllReversalEntriesFactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId, StatusBar statusBar)
 		{
-			Guard.AssertThat(clerkId == AllReversalEntries, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{AllReversalEntries}'.");
+			Require.That(clerkId == AllReversalEntries, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{AllReversalEntries}'.");
 
 			var currentGuid = ReversalIndexEntryUi.GetObjectGuidIfValid(flexComponentParameters.PropertyTable, "ReversalIndexGuid");
 			IReversalIndex revIdx = null;
@@ -251,7 +254,7 @@ namespace LanguageExplorer.Areas.Lexicon
 			{
 				revIdx = (IReversalIndex)cache.ServiceLocator.GetObject(currentGuid);
 			}
-			return new ReversalEntryClerk(cache.ServiceLocator, cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), revIdx);
+			return new ReversalEntryClerk(statusBar, cache.ServiceLocator, cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), revIdx);
 		}
 	}
 }

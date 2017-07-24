@@ -81,11 +81,13 @@ namespace SIL.FieldWorks.Common.FwUtils
 			{
 				Guard.AgainstNullOrEmptyString(message, nameof(message));
 
+				Console.WriteLine($"About to publish: '{message}'.");
 				using (Detect.Reentry(this, "Publish").AndThrow())
 				{
 					HashSet<Action<object>> subscribers;
 					if (!_subscriptions.TryGetValue(message, out subscribers))
 					{
+						Console.WriteLine($"Nobody likes me ({message}), everybody hates me, guess I'll go eat some worms....");
 						return;
 					}
 
@@ -98,6 +100,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 						subscriberAction(newValue);
 					}
 				}
+				Console.WriteLine($"Finished publishing: '{message}'.");
 			}
 
 			#endregion

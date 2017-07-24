@@ -82,11 +82,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalRuleEdit
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			MultiPaneFactory.RemoveFromParentAndDispose(
-				majorFlexComponentParameters.MainCollapsingSplitContainer,
-				majorFlexComponentParameters.DataNavigationManager,
-				majorFlexComponentParameters.RecordClerkRepositoryForTools,
-				ref _multiPane);
+			MultiPaneFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _multiPane);
 			_recordBrowseView = null;
 		}
 
@@ -100,7 +96,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalRuleEdit
 		{
 			if (_recordClerk == null)
 			{
-				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(Phonologicalrules, FactoryMethod);
+				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(Phonologicalrules, majorFlexComponentParameters.Statusbar, FactoryMethod);
 			}
 
 			var root = XDocument.Parse(GrammarResources.PhonologicalRuleEditToolParameters).Root;
@@ -135,8 +131,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalRuleEdit
 			panelButton.DatTree = recordEditView.DatTree;
 			// Too early before now.
 			recordEditView.FinishInitialization();
-			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
-			majorFlexComponentParameters.RecordClerkRepositoryForTools.ActiveRecordClerk = _recordClerk;
+			RecordClerkServices.SetClerk(majorFlexComponentParameters.DataNavigationManager, majorFlexComponentParameters.RecordClerkRepositoryForTools, _recordClerk);
 		}
 
 		/// <summary>
@@ -194,11 +189,12 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalRuleEdit
 
 		#endregion
 
-		private static RecordClerk FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId)
+		private static RecordClerk FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId, StatusBar statusBar)
 		{
-			Guard.AssertThat(clerkId == Phonologicalrules, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{Phonologicalrules}'.");
+			Require.That(clerkId == Phonologicalrules, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{Phonologicalrules}'.");
 
 			return new RecordClerk(clerkId,
+				statusBar,
 				new RecordList(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), true, PhPhonDataTags.kflidPhonRules, cache.LanguageProject.PhonologicalDataOA, "PhonologicalRules"),
 				new PropertyRecordSorter("ShortName"),
 				"Default",

@@ -1692,8 +1692,10 @@ namespace SIL.FieldWorks.XWorks
 						// is greater than 0.
 						// so, try to force to restore the current index to what we persist.
 						CurrentIndex = -1;
-						PropertyTable.SetProperty(Clerk.PersistedIndexProperty, m_indexToRestoreDuringReload,
-							SettingsGroup.LocalSettings, true, true);
+#if RANDYTODO
+// As of 21JUL17 nobody cares about that 'Clerk.PersistedIndexProperty' changing, so skip the broadcast.
+#endif
+						PropertyTable.SetProperty(Clerk.PersistedIndexProperty, m_indexToRestoreDuringReload, SettingsGroup.LocalSettings, true, false);
 						m_indexToRestoreDuringReload = -1;
 					}
 					Clerk.UpdateHelper.ClearBrowseListUntilReload = false;

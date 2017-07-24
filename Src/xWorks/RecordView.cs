@@ -54,29 +54,18 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Initializes a new instance of the <see cref="RecordView"/> class.
 		/// </summary>
-		public RecordView()
+		protected RecordView()
 		{
 			Init();
 		}
 
-		public RecordView(XElement configurationParametersElement, LcmCache cache, RecordClerk recordClerk)
+		protected RecordView(XElement configurationParametersElement, LcmCache cache, RecordClerk recordClerk)
 			: base(configurationParametersElement, cache, recordClerk)
 		{
 			Init();
 		}
 
-		/// <summary>
-		/// Initialize a FLEx component with the basic interfaces.
-		/// </summary>
-		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
-		public override void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
-		{
-			base.InitializeFlexComponent(flexComponentParameters);
-
-			Subscriber.Subscribe("RecordNavigation", RecordNavigation_Message_Handler);
-		}
-
-	private void Init()
+		private void Init()
 		{
 			//it is up to the subclass to change this when it is finished Initializing.
 			m_fullyInitialized = false;
@@ -87,6 +76,23 @@ namespace SIL.FieldWorks.XWorks
 			//MakePaneBar();
 
 			AccNameDefault = "RecordView"; // default accessibility name
+
+			Clerk.RecordChanged += Clerk_RecordChanged;
+		}
+
+		protected virtual void Clerk_RecordChanged(object sender, RecordNavigationEventArgs e)
+		{
+			if (!m_fullyInitialized)
+				return;
+
+			var options = new RecordClerk.ListUpdateHelper.ListUpdateHelperOptions
+			{
+				SuppressSaveOnChangeRecord = e.RecordNavigationInfo.SuppressSaveOnChangeRecord
+			};
+			using (new RecordClerk.ListUpdateHelper(Clerk, options))
+			{
+				ShowRecord(e.RecordNavigationInfo);
+			}
 		}
 
 		/// <summary>
@@ -104,7 +110,7 @@ namespace SIL.FieldWorks.XWorks
 
 			if( disposing )
 			{
-				Subscriber.Unsubscribe("RecordNavigation", RecordNavigation_Message_Handler);
+				Clerk.RecordChanged -= Clerk_RecordChanged;
 				components?.Dispose();
 			}
 
@@ -114,25 +120,6 @@ namespace SIL.FieldWorks.XWorks
 		#endregion // Consruction and disposal
 
 		#region Other methods
-
-		/// <summary />
-		public virtual void RecordNavigation_Message_Handler(object newValue)
-		{
-			CheckDisposed();
-
-			if(!m_fullyInitialized)
-				return;
-
-			var rni = (RecordNavigationInfo)newValue;
-			var options = new RecordClerk.ListUpdateHelper.ListUpdateHelperOptions
-			{
-				SuppressSaveOnChangeRecord = rni.SuppressSaveOnChangeRecord
-			};
-			using (new RecordClerk.ListUpdateHelper(Clerk, options))
-			{
-				ShowRecord(rni);
-			}
-		}
 
 		/// <summary>
 		/// Shows the record.
@@ -174,7 +161,10 @@ namespace SIL.FieldWorks.XWorks
 				if (Clerk.CurrentObject != null)
 					guid = Clerk.CurrentObject.Guid;
 				Clerk.SelectedRecordChanged(true, true); // make sure we update the record count in the Status bar.
+#if RANDYTODO
+				// TODO: Not supported yet, plus it is reentrant into Publisher, since "RecordNavigation" was called by RecordClerk.
 				Publisher.Publish("AddContextToHistory", new FwLinkArgs(toolChoice, guid));
+#endif
 			}
 		}
 
@@ -315,9 +305,9 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		#endregion // Other methods
+#endregion // Other methods
 
-		#region Component Designer generated code
+#region Component Designer generated code
 
 		/// <summary>
 		/// Required method for Designer support - do not modify
@@ -332,6 +322,6 @@ namespace SIL.FieldWorks.XWorks
 			this.Size = new System.Drawing.Size(752, 150);
 
 		}
-		#endregion
+#endregion
 	}
 }

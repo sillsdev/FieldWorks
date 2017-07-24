@@ -109,7 +109,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			CheckDisposed();
 			if (Control != null)//grouping nodes do not have a control
 			{
+#if RANDYTODO
+				// TODO: Skip it for now, and figure out what to do with those context menus
 				Publisher.Publish("RegisterHelpTargetWithId", new object[]{Control, ConfigurationNode.Attribute("label").Value, HelpId});
+#endif
 			}
 		}
 

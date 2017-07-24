@@ -156,12 +156,11 @@ namespace SIL.FieldWorks.XWorks
 			if (disposing)
 			{
 				Subscriber.Unsubscribe("ClerkOwningObjChanged", ClerkOwningObjChanged_Message_Handler);
-				if (Clerk != null)
-				{
-					PersistSortSequence();
-					Clerk.FilterChangedByClerk -= Clerk_FilterChangedByClerk;
-					Clerk.SorterChangedByClerk -= Clerk_SorterChangedByClerk;
-				}
+				// Next 3 calls assume Clerk is not null. I (RBR) wonder if the assumption is good?
+				PersistSortSequence();
+				Clerk.FilterChangedByClerk -= Clerk_FilterChangedByClerk;
+				Clerk.SorterChangedByClerk -= Clerk_SorterChangedByClerk;
+
 				if (m_browseViewer != null)
 				{
 					m_browseViewer.SelectionChanged -= OnSelectionChanged;
@@ -176,8 +175,7 @@ namespace SIL.FieldWorks.XWorks
 					m_browseViewer.CheckBoxChanged -= OnCheckBoxChanged;
 					m_browseViewer.SortersCompatible -= Clerk.AreSortersCompatible;
 				}
-				if (components != null)
-					components.Dispose();
+				components?.Dispose();
 			}
 			m_browseViewer = null;
 			// m_mediator = null; // No, or the superclass call will crash.
@@ -626,25 +624,23 @@ namespace SIL.FieldWorks.XWorks
 		/// another pane may show a more detailed view of the selected record. Therefore, RecordBrowseView
 		/// never claims to have 'handled' this event.
 		/// </summary>
-		/// <returns>
-		/// false; we didn't fully handle it, even though we may have done something.
-		/// </returns>
-		public override void RecordNavigation_Message_Handler(object newValue)
+		protected override void Clerk_RecordChanged(object sender, RecordNavigationEventArgs e)
 		{
+			// Don't call base, since we don't want that behavior.
 			// Can't do anything if it isn't fully initialized,
 			// and we don't want to do anything, if we are told not to.
 			if (!m_fullyInitialized || m_suppressRecordNavigation)
 				return;
+
 			Debug.Assert(m_browseViewer != null, "RecordBrowseView.SetupDataContext() has to be called before RecordBrowseView.OnRecordNavigation().");
 
 			if (m_browseViewer == null || m_browseViewer.BrowseView == null || m_browseViewer.BrowseView.RootBox == null)
 				return; // can't do anything useful without a root box to select in.
 
-			var rni = (RecordNavigationInfo)newValue;
-			m_suppressShowRecord = rni.SkipShowRecord;
-			m_suppressRecordNavigation = rni.SuppressSaveOnChangeRecord;
+			m_suppressShowRecord = e.RecordNavigationInfo.SkipShowRecord;
+			m_suppressRecordNavigation = e.RecordNavigationInfo.SuppressSaveOnChangeRecord;
 			bool bvEnabled = m_browseViewer.Enabled;
-			if (rni.SuppressFocusChange && bvEnabled)
+			if (e.RecordNavigationInfo.SuppressFocusChange && bvEnabled)
 				m_browseViewer.Enabled = false;
 			try
 			{
@@ -665,7 +661,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				m_suppressShowRecord = false;
 				m_suppressRecordNavigation = false;
-				if (rni.SuppressFocusChange && bvEnabled)
+				if (e.RecordNavigationInfo.SuppressFocusChange && bvEnabled)
 					m_browseViewer.Enabled = true;
 			}
 		}

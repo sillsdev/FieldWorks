@@ -4,6 +4,7 @@
 
 using System.Collections.Generic;
 using System.Drawing;
+using System.Windows.Forms;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Filters;
@@ -193,11 +194,12 @@ namespace LanguageExplorer.Areas.Grammar
 
 		#endregion
 
-		internal static RecordClerk PhonemesFactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId)
+		internal static RecordClerk PhonemesFactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId, StatusBar statusBar)
 		{
-			Guard.AssertThat(clerkId == Phonemes, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{Phonemes}'.");
+			Require.That(clerkId == Phonemes, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{Phonemes}'.");
 
 			return new RecordClerk(clerkId,
+				statusBar,
 				new RecordList(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), true, PhPhonemeSetTags.kflidPhonemes, cache.LanguageProject.PhonologicalDataOA.PhonemeSetsOS[0], "Phonemes"),
 				new PropertyRecordSorter("ShortName"),
 				"Default",

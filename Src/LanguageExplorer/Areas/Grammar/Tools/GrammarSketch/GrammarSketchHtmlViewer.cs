@@ -186,8 +186,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 
 			Subscriber.Subscribe("SaveAsWebpage", SaveAsWebpage);
 
-			PropertyTable.SetProperty("StatusPanelRecordNumber", string.Empty, false, true);
-
 			m_sHtmlFileName = null;
 			m_step1MainOutputFileName = string.Empty;
 			var regkey = RegistryKey;

@@ -40,14 +40,16 @@ namespace SIL.FieldWorks.XWorks
 		/// The RootSite that displays the current object.
 		/// </summary>
 		protected RootSite m_rootSite;
+		private StatusBarProgressPanel m_statusBarProgressPanel;
 
 		#endregion // Data members
 
 		#region Construction and Removal
 
-		public RecordDocView(XElement configurationParametersElement, LcmCache cache, RecordClerk recordClerk)
+		public RecordDocView(XElement configurationParametersElement, LcmCache cache, RecordClerk recordClerk, StatusBarProgressPanel progressPanel)
 			: base(configurationParametersElement, cache, recordClerk)
 		{
+			m_statusBarProgressPanel = progressPanel;
 		}
 
 		#region Overrides of XWorksViewBase
@@ -88,7 +90,7 @@ namespace SIL.FieldWorks.XWorks
 					m_rootSite.Dispose();
 			}
 			m_rootSite = null;
-			// m_mediator = null; // Bad idea, since superclass still needs it.
+			m_statusBarProgressPanel = null;
 
 			base.Dispose(disposing);
 		}
@@ -149,7 +151,7 @@ namespace SIL.FieldWorks.XWorks
 			//todo: fast machine, this doesn't really seem to do any good. I think maybe the parts that
 			//are taking a long time are not getting Breath().
 			//todo: test on a machine that is slow enough to see if this is helpful or not!
-			using (var progress = ProgressState.CreatePredictiveProgressState(PropertyTable, ((RecordList)Clerk.SortItemProvider).PropertyName))
+			using (var progress = ProgressState.CreatePredictiveProgressState(m_statusBarProgressPanel, ((RecordList)Clerk.SortItemProvider).PropertyName))
 			{
 
 				progress.Breath();
@@ -381,8 +383,8 @@ namespace SIL.FieldWorks.XWorks
 		XElement m_jtSpecs; // node required by XmlView.
 		protected string m_configObjectName; // name to display in Configure dialog.
 
-		public RecordDocXmlView(XElement configurationParametersElement, LcmCache cache, RecordClerk recordClerk)
-			: base(configurationParametersElement, cache, recordClerk)
+		public RecordDocXmlView(XElement configurationParametersElement, LcmCache cache, RecordClerk recordClerk, StatusBarProgressPanel progressPanel)
+			: base(configurationParametersElement, cache, recordClerk, progressPanel)
 		{
 		}
 

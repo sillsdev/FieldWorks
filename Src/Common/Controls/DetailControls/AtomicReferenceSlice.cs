@@ -211,11 +211,14 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 			string caption = StringTable.Table.LocalizeAttributeValue(XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "label", ""));
 			var launcher = (AtomicReferenceLauncher)Control;
+#if RANDYTODO
+			// TODO: Skip it for now, and figure out what to do with those context menus
 			Publisher.Publish("RegisterHelpTargetWithId", new object[]{launcher.AtomicRefViewControl, caption, HelpId});
 			Publisher.Publish("RegisterHelpTargetWithId", new object[]{launcher.PanelControl, caption, HelpId, "Button"});
+#endif
 		}
 
-		#region IVwNotifyChange Members
+#region IVwNotifyChange Members
 		/// <summary>
 		/// This PropChanged detects a needed UI update.  See LT-9002.
 		/// </summary>
@@ -232,7 +235,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			}
 		}
 
-		#endregion
+#endregion
 	}
 
 	/// <summary>

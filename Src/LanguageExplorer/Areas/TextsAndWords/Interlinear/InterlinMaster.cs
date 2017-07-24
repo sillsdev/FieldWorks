@@ -870,7 +870,9 @@ private void ReloadPaneBar(IPaneBar paneBar)
 			// we still want to try to put the focus in our control.
 			// (but only if we're in the active window -- see FWR-1795)
 			if (ParentForm == Form.ActiveForm)
-				this.Focus();
+			{
+				Focus();
+			}
 		}
 
 		/// <summary>

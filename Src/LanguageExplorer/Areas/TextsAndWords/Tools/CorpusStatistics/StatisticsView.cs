@@ -20,6 +20,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 	/// </summary>
 	internal sealed partial class StatisticsView : UserControl, IMajorFlexComponent, IMainContentControl
 	{
+		private StatusBar _statusBar;
 		private InterlinearTextsRecordClerk _interlinearTextsRecordClerk;
 		private ToolStrip _toolStripView;
 		private bool _toolStripViewCreatedLocally;
@@ -30,10 +31,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		public StatisticsView()
+		public StatisticsView(StatusBar statusBar)
 		{
 			InitializeComponent();
 
+			_statusBar = statusBar;
 			var cm = new ContextMenu();
 			var mi = new MenuItem("Copy");
 			mi.Click += Copy_Menu_Item_Click;
@@ -79,14 +81,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 			Subscriber = flexComponentParameters.Subscriber;
 
 			var cache = PropertyTable.GetValue<LcmCache>("cache");
-			const string clerkName = "interlinearTexts";
-			const string clerkPropertyTableName = "RecordClerk-" + clerkName;
-			RecordClerk clerk;
-			if (PropertyTable.TryGetValue(clerkPropertyTableName, out clerk))
+			RecordClerk clerk = RecordClerk.ActiveRecordClerkRepository.GetRecordClerk("interlinearTexts");
+			if (clerk != null)
 			{
 				if (clerk is TemporaryRecordClerk)
 				{
-					_interlinearTextsRecordClerk = new InterlinearTextsRecordClerk(cache.LanguageProject, new InterestingTextsDecorator(cache.ServiceLocator, PropertyTable));
+					_interlinearTextsRecordClerk = new InterlinearTextsRecordClerk(_statusBar, cache.LanguageProject, new InterestingTextsDecorator(cache.ServiceLocator, PropertyTable));
+					RecordClerk.ActiveRecordClerkRepository.AddRecordClerk(_interlinearTextsRecordClerk);
 					_interlinearTextsRecordClerk.InitializeFlexComponent(flexComponentParameters);
 				}
 				else
@@ -96,11 +97,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 			}
 			else
 			{
-				_interlinearTextsRecordClerk = new InterlinearTextsRecordClerk(cache.LanguageProject, new InterestingTextsDecorator(cache.ServiceLocator, PropertyTable));
+				_interlinearTextsRecordClerk = new InterlinearTextsRecordClerk(_statusBar, cache.LanguageProject, new InterestingTextsDecorator(cache.ServiceLocator, PropertyTable));
+				RecordClerk.ActiveRecordClerkRepository.AddRecordClerk(_interlinearTextsRecordClerk);
 				_interlinearTextsRecordClerk.InitializeFlexComponent(flexComponentParameters);
 			}
 			// There's no record bar for it to control, but it should control the status bar (e.g., it should update if we change
 			// the set of selected texts).
+			RecordClerk.ActiveRecordClerkRepository.ActiveRecordClerk = _interlinearTextsRecordClerk;
 			_interlinearTextsRecordClerk.ActivateUI(true);
 			RebuildStatisticsTable();
 			//add our current state to the history system

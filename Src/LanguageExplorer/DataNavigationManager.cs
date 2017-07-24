@@ -6,8 +6,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.XWorks;
+using SIL.ObjectModel;
 
 namespace LanguageExplorer
 {
@@ -18,32 +18,24 @@ namespace LanguageExplorer
 	/// The idea is that individual tools that care about such record navigation
 	/// can manage the enabled state of the four navigation buttons.
 	/// </remarks>
-	internal sealed class DataNavigationManager : IDisposable
+	internal sealed class DataNavigationManager : DisposableBase
 	{
 		internal const string First = "First";
 		internal const string Previous = "Previous";
 		internal const string Next = "Next";
 		internal const string Last = "Last";
-		private readonly ISubscriber _subscriber;
 		private readonly Dictionary<string, Tuple<ToolStripMenuItem, ToolStripButton>> _menuItems;
 		private RecordClerk _clerk;
 
 		/// <summary />
-		internal DataNavigationManager(ISubscriber subscriber, Dictionary<string, Tuple<ToolStripMenuItem, ToolStripButton>>  menuItems)
+		internal DataNavigationManager(Dictionary<string, Tuple<ToolStripMenuItem, ToolStripButton>>  menuItems)
 		{
-			if (subscriber == null)
-			{
-				throw new ArgumentNullException(nameof(subscriber));
-			}
 			if (menuItems == null)
 			{
 				throw new ArgumentNullException(nameof(menuItems));
 			}
 
-			_subscriber = subscriber;
 			_menuItems = menuItems;
-
-			_subscriber.Subscribe("RecordNavigation", RecordNavigation_Message_Handler);
 
 			var currentTuple = _menuItems[First];
 			currentTuple.Item1.Click += First_Click;
@@ -60,11 +52,6 @@ namespace LanguageExplorer
 			currentTuple = _menuItems[Last];
 			currentTuple.Item1.Click += Last_Click;
 			currentTuple.Item2.Click += Last_Click;
-		}
-
-		private void RecordNavigation_Message_Handler(object obj)
-		{
-			SetEnabledStateForWidgets();
 		}
 
 		private void First_Click(object sender, EventArgs e)
@@ -91,10 +78,25 @@ namespace LanguageExplorer
 		{
 			set
 			{
+				if (_clerk != null)
+				{
+					// Unwire from older clerk
+					_clerk.RecordChanged -= Clerk_RecordChanged;
+				}
 				_clerk = value;
+				if (_clerk != null)
+				{
+					// Wire up to new clerk.
+					_clerk.RecordChanged += Clerk_RecordChanged;
+				}
 
 				SetEnabledStateForWidgets();
 			}
+		}
+
+		private void Clerk_RecordChanged(object sender, RecordNavigationEventArgs recordNavigationEventArgs)
+		{
+			SetEnabledStateForWidgets();
 		}
 
 		private void MoveToIndex(int newIndex)
@@ -127,34 +129,7 @@ namespace LanguageExplorer
 			}
 		}
 
-#region Implementation of IDisposable
-
-		/// <summary>
-		/// Finalizer, in case client doesn't dispose it.
-		/// Force Dispose(false) if not already called (i.e. m_isDisposed is true)
-		/// </summary>
-		/// <remarks>
-		/// In case some clients forget to dispose it directly.
-		/// </remarks>
-		~DataNavigationManager()
-		{
-			Dispose(false);
-			// The base class finalizer is called automatically.
-		}
-
-		/// <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
-		public void Dispose()
-		{
-			Dispose(true);
-			// This object will be cleaned up by the Dispose method.
-			// Therefore, you should call GC.SupressFinalize to
-			// take this object off the finalization queue
-			// and prevent finalization code for this object
-			// from executing a second time.
-			GC.SuppressFinalize(this);
-		}
-
-		private void Dispose(bool disposing)
+		protected override void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 
@@ -163,8 +138,10 @@ namespace LanguageExplorer
 
 			if (disposing)
 			{
-				_subscriber.Unsubscribe("RecordNavigation", RecordNavigation_Message_Handler);
-
+				if (_clerk != null)
+				{
+					_clerk.RecordChanged -= Clerk_RecordChanged;
+				}
 				var currentTuple = _menuItems[First];
 				currentTuple.Item1.Click -= First_Click;
 				currentTuple.Item2.Click -= First_Click;
@@ -182,28 +159,7 @@ namespace LanguageExplorer
 				currentTuple.Item2.Click -= Last_Click;
 			}
 
-			IsDisposed = true;
+			base.Dispose(disposing);
 		}
-
-		/// <summary>
-		/// Add the public property for knowing if the object has been disposed of yet
-		/// </summary>
-		public bool IsDisposed { get; private set; }
-
-		/// <summary>
-		/// This method throws an ObjectDisposedException if IsDisposed returns
-		/// true.  This is the case where a method or property in an object is being
-		/// used but the object itself is no longer valid.
-		///
-		/// This method should be added to all public properties and methods of this
-		/// object and all other objects derived from it (extensive).
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
-		}
-
-#endregion
 	}
 }

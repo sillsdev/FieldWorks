@@ -293,7 +293,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		public static LcmStyleSheet StyleSheetFromPropertyTable(IPropertyTable propertyTable)
 		{
 #if RANDYTODO
-			// TODO: Is there any reason for all of this, if we can jsuty get the only one from the property table?
+			// TODO: Is there any reason for all of this, if we can just get the only one from the property table?
 			Form mainWindow = propertyTable.GetValue<Form>("window");
 			PropertyInfo pi = null;
 			if (mainWindow != null)

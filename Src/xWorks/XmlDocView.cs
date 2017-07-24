@@ -494,8 +494,11 @@ namespace SIL.FieldWorks.XWorks
 				return false;
 
 			// persist Clerk's CurrentIndex in a db specific way
+#if RANDYTODO
+// As of 21JUL17 nobody cares about that 'propName' changing, so skip the broadcast.
+#endif
 			string propName = Clerk.PersistedIndexProperty;
-			PropertyTable.SetProperty(propName, Clerk.CurrentIndex, SettingsGroup.LocalSettings, true, true);
+			PropertyTable.SetProperty(propName, Clerk.CurrentIndex, SettingsGroup.LocalSettings, true, false);
 
 			Clerk.SuppressSaveOnChangeRecord = (argument as RecordNavigationInfo).SuppressSaveOnChangeRecord;
 			using (WaitCursor wc = new WaitCursor(this))

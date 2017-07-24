@@ -4,6 +4,7 @@
 
 using System.Collections.Generic;
 using System.Drawing;
+using System.Windows.Forms;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
@@ -207,11 +208,11 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 		#endregion
 
-		internal static RecordClerk ConcordanceWordsFactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId)
+		internal static RecordClerk ConcordanceWordsFactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId, StatusBar statusBar)
 		{
-			Guard.AssertThat(clerkId == ConcordanceWords, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{ConcordanceWords}'.");
+			Require.That(clerkId == ConcordanceWords, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{ConcordanceWords}'.");
 
-			return new InterlinearTextsRecordClerk(cache.LanguageProject, new ConcDecorator(cache.ServiceLocator));
+			return new InterlinearTextsRecordClerk(statusBar, cache.LanguageProject, new ConcDecorator(cache.ServiceLocator));
 		}
 	}
 }

@@ -227,6 +227,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="LanguageExplorerConstants.cs" />
+    <Compile Include="RecordClerkServices.cs" />
+    <Compile Include="StatusBarPanelServices.cs" />
     <Compile Include="UtilityTools\ErrorFixer.cs" />
     <Compile Include="IUtility.cs" />
     <Compile Include="UtilityTools\UtilityDlg.cs">

@@ -95,11 +95,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 			}
 			_newMenusAndHandlers.Clear();
 
-			MultiPaneFactory.RemoveFromParentAndDispose(
-				majorFlexComponentParameters.MainCollapsingSplitContainer,
-				majorFlexComponentParameters.DataNavigationManager,
-				majorFlexComponentParameters.RecordClerkRepositoryForTools,
-				ref _multiPane);
+			MultiPaneFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _multiPane);
 
 			_reversalIndexRepository = null;
 			_currentReversalIndex = null;
@@ -121,7 +117,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 			}
 			if (_recordClerk == null)
 			{
-				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(LexiconArea.AllReversalEntries, LexiconArea.AllReversalEntriesFactoryMethod);
+				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(LexiconArea.AllReversalEntries, majorFlexComponentParameters.Statusbar, LexiconArea.AllReversalEntriesFactoryMethod);
 			}
 
 			var root = XDocument.Parse(LexiconResources.ReversalEditCompleteToolParameters).Root;
@@ -169,8 +165,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 			recordEditView.FinishInitialization();
 			_xhtmlDocView.OnPropertyChanged("ReversalIndexPublicationLayout");
 			((IPostLayoutInit)_multiPane).PostLayoutInit();
-			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
-			majorFlexComponentParameters.RecordClerkRepositoryForTools.ActiveRecordClerk = _recordClerk;
+			RecordClerkServices.SetClerk(majorFlexComponentParameters.DataNavigationManager, majorFlexComponentParameters.RecordClerkRepositoryForTools, _recordClerk);
 		}
 
 		/// <summary>
@@ -211,7 +206,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 		/// <summary>
 		/// User-visible localizable component name.
 		/// </summary>
-		public string UiName => "Reversal Indexes";
+		public string UiName => "BUGGY: Reversal Indexes";
 		#endregion
 
 		#region Implementation of ITool

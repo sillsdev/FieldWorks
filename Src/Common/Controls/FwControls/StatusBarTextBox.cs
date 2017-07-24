@@ -8,7 +8,9 @@ using System.Windows.Forms;
 
 namespace SIL.FieldWorks.Common.Controls
 {
-
+#if RANDYTODO
+	// TODO: Move StatusBarTextBox into LE after xworks is assimilated.
+#endif
 	/// <summary>
 	/// Allows having a colored background, as for the "filtered" panel.
 	/// </summary>

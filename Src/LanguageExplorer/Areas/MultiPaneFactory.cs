@@ -8,7 +8,6 @@ using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.PaneBar;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.XWorks;
 
 namespace LanguageExplorer.Areas
 {
@@ -218,12 +217,10 @@ namespace LanguageExplorer.Areas
 		/// <summary>
 		/// Remove <paramref name="multiPane"/> from parent control and dispose it and set clerk to null.
 		/// </summary>
-		internal static void RemoveFromParentAndDispose(ICollapsingSplitContainer mainCollapsingSplitContainer, DataNavigationManager dataNavigationManager, IRecordClerkRepository recordClerkRepository, ref MultiPane multiPane)
+		internal static void RemoveFromParentAndDispose(ICollapsingSplitContainer mainCollapsingSplitContainer, ref MultiPane multiPane)
 		{
 			// Re-setting SecondControl, will dispose its multiPane.
 			mainCollapsingSplitContainer.SecondControl = null;
-			dataNavigationManager.Clerk = null;
-			recordClerkRepository.ActiveRecordClerk = null;
 			multiPane = null;
 		}
 	}

@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Drawing;
+using System.Windows.Forms;
 using System.Xml.Linq;
 using LanguageExplorer.Controls;
 using SIL.Code;
@@ -82,11 +83,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.LexiconProblems
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			CollapsingSplitContainerFactory.RemoveFromParentAndDispose(
-				majorFlexComponentParameters.MainCollapsingSplitContainer,
-				majorFlexComponentParameters.DataNavigationManager,
-				majorFlexComponentParameters.RecordClerkRepositoryForTools,
-				ref _collapsingSplitContainer);
+			CollapsingSplitContainerFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _collapsingSplitContainer);
 		}
 
 		/// <summary>
@@ -100,7 +97,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.LexiconProblems
 			var root = XDocument.Parse(GrammarResources.LexiconProblemsParameters).Root;
 			if (_recordClerk == null)
 			{
-				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(LexProblems, FactoryMethod);
+				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(LexProblems, majorFlexComponentParameters.Statusbar, FactoryMethod);
 			}
 			_collapsingSplitContainer = CollapsingSplitContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters,
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
@@ -110,8 +107,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.LexiconProblems
 				MachineName,
 				majorFlexComponentParameters.LcmCache,
 				_recordClerk);
-			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
-			majorFlexComponentParameters.RecordClerkRepositoryForTools.ActiveRecordClerk = _recordClerk;
+			RecordClerkServices.SetClerk(majorFlexComponentParameters.DataNavigationManager, majorFlexComponentParameters.RecordClerkRepositoryForTools, _recordClerk);
 		}
 
 		/// <summary>
@@ -169,13 +165,14 @@ namespace LanguageExplorer.Areas.Grammar.Tools.LexiconProblems
 
 		#endregion
 
-		private static RecordClerk FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId)
+		private static RecordClerk FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId, StatusBar statusBar)
 		{
-			Guard.AssertThat(clerkId == LexProblems, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{LexProblems}'.");
+			Require.That(clerkId == LexProblems, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{LexProblems}'.");
 
 			var probAnnFilter = new ProblemAnnotationFilter();
 			probAnnFilter.Init(cache, XDocument.Parse(GrammarResources.LexiconProblemsParameters).Root.Element("filterElement"));
 			return new RecordClerk(clerkId,
+				statusBar,
 				new RecordList(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), true, LangProjectTags.kflidAnnotations, cache.LanguageProject, "Annotations"),
 				new PropertyRecordSorter("ShortName"),
 				"Default",

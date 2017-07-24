@@ -115,7 +115,7 @@ namespace LanguageExplorer.Impls
 			SetupPropertyTable();
 			RegisterSubscriptions();
 
-			_dataNavigationManager = new DataNavigationManager(Subscriber, new Dictionary<string, Tuple<ToolStripMenuItem, ToolStripButton>>
+			_dataNavigationManager = new DataNavigationManager(new Dictionary<string, Tuple<ToolStripMenuItem, ToolStripButton>>
 			{
 				{DataNavigationManager.First, new Tuple<ToolStripMenuItem, ToolStripButton>(_data_First, _tsbFirst)},
 				{DataNavigationManager.Previous, new Tuple<ToolStripMenuItem, ToolStripButton>(_data_Previous, _tsbPrevious)},
@@ -219,7 +219,7 @@ namespace LanguageExplorer.Impls
 				{"phonologicalRulebasedParserHermitCrab", _phonologicalRulebasedParserHermitCrabNETToolStripMenuItem},
 				{"editParserParameters", _editParserParametersToolStripMenuItem}
 			};
-			_parserMenuManager = new ParserMenuManager(_statusbar.Panels["statusBarPanelProgress"], parserMenuItems);
+			_parserMenuManager = new ParserMenuManager(_statusbar.Panels[LanguageExplorerConstants.StatusBarPanelProgress], parserMenuItems);
 			_parserMenuManager.InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);
 		}
 
@@ -401,7 +401,13 @@ namespace LanguageExplorer.Impls
 			{
 				return;  // Nothing to do.
 			}
-			_dataNavigationManager.Clerk = null;
+
+			// NB: If you are ever tempted to not set the Clerk to null, then be prepared to have each area/tool clear it.
+			RecordClerkServices.ClearClerk(_dataNavigationManager, _recordClerkRepositoryForTools);
+			StatusBarPanelServices.ClearBasicStatusBars(_statusbar);
+
+			ClearDuringTransition();
+
 			_currentTool?.Deactivate(_majorFlexComponentParameters);
 			_currentTool = clickedTool;
 			var areaName = _currentArea.MachineName;
@@ -434,10 +440,20 @@ namespace LanguageExplorer.Impls
 			{
 				return; // Nothing to do.
 			}
+
+			ClearDuringTransition();
+
 			_currentArea?.Deactivate(_majorFlexComponentParameters);
 			_currentArea = clickedArea;
 			PropertyTable.SetProperty("areaChoice", _currentArea.MachineName, SettingsGroup.LocalSettings, true, false);
 			_currentArea.Activate(_majorFlexComponentParameters);
+		}
+
+		private void ClearDuringTransition()
+		{
+			// NB: If you are ever tempted to not set the Clerk to null, then be prepared to have each area/tool clear it.
+			RecordClerkServices.ClearClerk(_dataNavigationManager, _recordClerkRepositoryForTools);
+			StatusBarPanelServices.ClearBasicStatusBars(_statusbar);
 		}
 
 		private void SetupPropertyTable()
@@ -551,10 +567,6 @@ namespace LanguageExplorer.Impls
 		private void RegisterSubscriptions()
 		{
 			Subscriber.Subscribe("MigrateOldConfigurations", MigrateOldConfigurations);
-			Subscriber.Subscribe("StatusPanelRecordNumber", StatusPanelRecordNumber);
-			Subscriber.Subscribe("StatusPanelMessage", StatusPanelMessage);
-			Subscriber.Subscribe("StatusBarPanelFilter", StatusBarPanelFilter);
-			Subscriber.Subscribe("StatusBarPanelSort", StatusBarPanelSort);
 		}
 
 		private void MigrateOldConfigurations(object newValue)
@@ -564,32 +576,6 @@ namespace LanguageExplorer.Impls
 			configMigrator.MigrateOldConfigurationsIfNeeded();
 		}
 
-		private void StatusBarPanelFilter(object newValue)
-		{
-			var newTextMsg = (string)newValue;
-			var statusBarPanelFilter = (StatusBarTextBox)_statusbar.Panels["statusBarPanelFilter"];
-			statusBarPanelFilter.TextForReal = newTextMsg;
-			statusBarPanelFilter.BackBrush = string.IsNullOrEmpty(newTextMsg) ? Brushes.Transparent : Brushes.Yellow;
-		}
-
-		private void StatusBarPanelSort(object newValue)
-		{
-			var newTextMsg = (string)newValue;
-			var statusBarPanelSort = (StatusBarTextBox)_statusbar.Panels["statusBarPanelSort"];
-			statusBarPanelSort.TextForReal = newTextMsg;
-			statusBarPanelSort.BackBrush = string.IsNullOrEmpty(newTextMsg) ? Brushes.Transparent : Brushes.Lime;
-		}
-
-		private void StatusPanelMessage(object newValue)
-		{
-			_statusbar.Panels["statusBarPanelMessage"].Text = (string)newValue;
-		}
-
-		private void StatusPanelRecordNumber(object newValue)
-		{
-			_statusbar.Panels["statusBarPanelRecordNumber"].Text = (string)newValue;
-		}
-
 		private void SetupCustomStatusBarPanels()
 		{
 			_statusbar.SuspendLayout();
@@ -597,7 +583,7 @@ namespace LanguageExplorer.Impls
 			_statusbar.Panels.Insert(3, new StatusBarTextBox(_statusbar)
 			{
 				TextForReal = "Filter",
-				Name = "statusBarPanelFilter",
+				Name = LanguageExplorerConstants.StatusBarPanelFilter,
 				MinWidth = 40,
 				AutoSize = StatusBarPanelAutoSize.Contents
 			});
@@ -606,7 +592,7 @@ namespace LanguageExplorer.Impls
 			_statusbar.Panels.Insert(3, new StatusBarTextBox(_statusbar)
 			{
 				TextForReal = "Sort",
-				Name = "statusBarPanelSort",
+				Name = LanguageExplorerConstants.StatusBarPanelSort,
 				MinWidth = 40,
 				AutoSize = StatusBarPanelAutoSize.Contents
 			});
@@ -614,7 +600,7 @@ namespace LanguageExplorer.Impls
 			// Insert last, so it ends up first in the three that are inserted.
 			_statusbar.Panels.Insert(3, new StatusBarProgressPanel(_statusbar)
 			{
-				Name = "statusBarPanelProgressBar",
+				Name = LanguageExplorerConstants.StatusBarPanelProgressBar,
 				MinWidth = 150,
 				AutoSize = StatusBarPanelAutoSize.Contents
 			});
@@ -967,16 +953,12 @@ namespace LanguageExplorer.Impls
 
 			if (disposing)
 			{
-				_recordClerkRepositoryForTools.Dispose();
+				// Quit responding to messages early on.
+				Subscriber.Unsubscribe("MigrateOldConfigurations", MigrateOldConfigurations);
+
 				_parserMenuManager.Dispose();
 				_dataNavigationManager.Dispose();
 				IdleQueue.Dispose();
-
-				Subscriber.Unsubscribe("MigrateOldConfigurations", MigrateOldConfigurations);
-				Subscriber.Unsubscribe("StatusPanelRecordNumber", StatusPanelRecordNumber);
-				Subscriber.Unsubscribe("StatusPanelMessage", StatusPanelRecordNumber);
-				Subscriber.Unsubscribe("StatusBarPanelFilter", StatusBarPanelFilter);
-				Subscriber.Unsubscribe("StatusBarPanelSort", StatusBarPanelSort);
 
 				components?.Dispose();
 
@@ -992,7 +974,6 @@ namespace LanguageExplorer.Impls
 				_viewHelper.Dispose();
 			}
 
-			_recordClerkRepositoryForTools = null;
 			_parserMenuManager = null;
 			_dataNavigationManager = null;
 			_sidePane = null;
@@ -1005,6 +986,12 @@ namespace LanguageExplorer.Impls
 			IdleQueue = null;
 
 			base.Dispose(disposing);
+
+			if (disposing && _recordClerkRepositoryForTools != null)
+			{
+				_recordClerkRepositoryForTools.Dispose();
+				_recordClerkRepositoryForTools = null;
+			}
 
 			if (disposing && PropertyTable != null)
 			{
@@ -1658,9 +1645,6 @@ very simple minor adjustments. ;)"
 		#endregion
 
 		#region Handle clerk repository and last known active clerk
-
-		/// <summary>Stores the last active clerk, if any, when the window becomes inactive.</summary>
-		private RecordClerk _activeClerkIfAnyWhenWindowWasDeactivated;
 		/// <summary>
 		/// This window is being activated, so (re)-set static stuff to what we want.
 		/// </summary>

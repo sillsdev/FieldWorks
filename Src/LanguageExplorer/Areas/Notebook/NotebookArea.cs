@@ -219,17 +219,18 @@ namespace LanguageExplorer.Areas.Notebook
 
 		#endregion
 
-		internal static RecordClerk NotebookFactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId)
+		internal static RecordClerk NotebookFactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId, StatusBar statusBar)
 		{
-			Guard.AssertThat(clerkId == Records, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{Records}'.");
+			Require.That(clerkId == Records, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{Records}'.");
 
 			return new RecordClerk(clerkId,
-					new RecordList(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), false, cache.MetaDataCacheAccessor.GetFieldId2(cache.LanguageProject.ResearchNotebookOA.ClassID, "AllRecords", false), cache.LanguageProject.ResearchNotebookOA, "AllRecords"),
-					new PropertyRecordSorter("ShortName"),
-					"Default",
-					null,
-					false,
-					false);
+				statusBar,
+				new RecordList(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), false, cache.MetaDataCacheAccessor.GetFieldId2(cache.LanguageProject.ResearchNotebookOA.ClassID, "AllRecords", false), cache.LanguageProject.ResearchNotebookOA, "AllRecords"),
+				new PropertyRecordSorter("ShortName"),
+				"Default",
+				null,
+				false,
+				false);
 		}
 	}
 }

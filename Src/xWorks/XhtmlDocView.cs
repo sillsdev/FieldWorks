@@ -53,14 +53,12 @@ namespace SIL.FieldWorks.XWorks
 		{
 			base.InitializeFlexComponent(flexComponentParameters);
 
-			SuspendLayout();
 			m_mainView = new XWebBrowser(XWebBrowser.BrowserType.GeckoFx)
-		{
+			{
 				Dock = DockStyle.Fill,
 				Location = new Point(0, 0),
 				IsWebBrowserContextMenuEnabled = false
 			};
-			m_mainView.SuspendLayout();
 			ReadParameters();
 			// Use update helper to help with optimizations and special cases for list loading
 			using (var luh = new RecordClerk.ListUpdateHelper(Clerk, Clerk.ListLoadingSuppressed))
@@ -81,8 +79,6 @@ namespace SIL.FieldWorks.XWorks
 					browser.DomMouseScroll += OnMouseWheel;
 				}
 			}
-			m_mainView.ResumeLayout();
-			ResumeLayout(false);
 		}
 
 		/// <summary>
@@ -109,9 +105,6 @@ namespace SIL.FieldWorks.XWorks
 
 			ShowRecord();
 			m_fullyInitialized = true;
-
-			BringToFront();
-			m_mainView.BringToFront();
 		}
 
 		private void OnMouseWheel(object sender, DomMouseEventArgs domMouseEventArgs)

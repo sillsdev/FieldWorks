@@ -85,7 +85,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
 			// Get the StatisticsView into right panel of 'mainCollapsingSplitContainer'.
-			_statisticsView = new StatisticsView();
+			_statisticsView = new StatisticsView(majorFlexComponentParameters.Statusbar);
 			majorFlexComponentParameters.MainCollapsingSplitContainer.SecondControl = _statisticsView;
 			_statisticsView.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
 			_statisticsView.Activate(majorFlexComponentParameters);

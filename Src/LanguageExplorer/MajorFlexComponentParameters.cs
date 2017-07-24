@@ -3,7 +3,6 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Windows.Forms;
-using LanguageExplorer.Areas;
 using LanguageExplorer.Areas.TextsAndWords;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.XWorks;

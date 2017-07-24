@@ -56,9 +56,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var cache = PropertyTable.GetValue<LcmCache>("cache");
 			//don't know just what good having this default is, but it's at least safer
-			PropertyTable.SetProperty("WritingSystemHvo",
-				cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle.ToString(),
-				false, true);
+			PropertyTable.SetProperty("WritingSystemHvo", cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle.ToString(), false, true);
 		}
 
 		#endregion

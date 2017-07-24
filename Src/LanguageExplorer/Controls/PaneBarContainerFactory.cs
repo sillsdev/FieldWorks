@@ -123,12 +123,10 @@ namespace LanguageExplorer.Controls
 		/// <summary>
 		/// Remove <paramref name="paneBarContainer"/> from parent control and dispose it and set clerk to null.
 		/// </summary>
-		internal static void RemoveFromParentAndDispose(ICollapsingSplitContainer mainCollapsingSplitContainer, DataNavigationManager dataNavigationManager, IRecordClerkRepository recordClerkRepository, ref PaneBarContainer paneBarContainer)
+		internal static void RemoveFromParentAndDispose(ICollapsingSplitContainer mainCollapsingSplitContainer, ref PaneBarContainer paneBarContainer)
 		{
 			// Re-setting SecondControl, will dispose paneBarContainer.
 			mainCollapsingSplitContainer.SecondControl = null;
-			dataNavigationManager.Clerk = null;
-			recordClerkRepository.ActiveRecordClerk = null;
 			paneBarContainer = null;
 		}
 

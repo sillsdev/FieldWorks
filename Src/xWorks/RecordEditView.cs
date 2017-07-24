@@ -168,15 +168,16 @@ namespace SIL.FieldWorks.XWorks
 
 			if (disposing)
 			{
-				if (components != null)
-					components.Dispose();
+				components?.Dispose();
 				if (m_dataEntryForm != null)
 				{
 					m_dataEntryForm.CurrentSliceChanged -= m_dataEntryForm_CurrentSliceChanged;
 					m_dataEntryForm.Dispose();
 				}
 				if (!string.IsNullOrEmpty(m_titleField))
+				{
 					Cache.DomainDataByFlid.RemoveNotification(this);
+				}
 			}
 			m_dataEntryForm = null;
 
@@ -186,23 +187,24 @@ namespace SIL.FieldWorks.XWorks
 		#endregion // Construction and Removal
 
 		#region Message Handlers
-
-		/// <summary />
-		public override void RecordNavigation_Message_Handler(object newValue)
+		protected override void Clerk_RecordChanged(object sender, RecordNavigationEventArgs e)
 		{
-			// Do not call base since we don't want the superclass behavior.
+			// Don't call base, since we don't want that behavior.
 			if (!m_fullyInitialized)
 				return;
 
+#if RANDYTODO
+// As of 21JUL17 nobody cares about that 'propName' changing, so skip the broadcast.
+#endif
 			// persist Clerk's CurrentIndex in a db specific way
 			string propName = Clerk.PersistedIndexProperty;
-			PropertyTable.SetProperty(propName, Clerk.CurrentIndex, SettingsGroup.LocalSettings, true, true);
+			PropertyTable.SetProperty(propName, Clerk.CurrentIndex, SettingsGroup.LocalSettings, true, false);
 			var window = PropertyTable.GetValue<IFwMainWnd>("window");
 
 			try
 			{
 				window.SuspendIdleProcessing();
-				ShowRecord(newValue as RecordNavigationInfo);
+				ShowRecord(e.RecordNavigationInfo);
 			}
 			finally
 			{

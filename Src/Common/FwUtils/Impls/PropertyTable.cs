@@ -13,11 +13,19 @@ using System.Threading;		// for Monitor (dlh)
 
 namespace SIL.FieldWorks.Common.FwUtils.Impls
 {
+#if RANDYTODO
+	// TODO: The dictionary world has tried to make this class work in a multi-threaded environment.
+	// TODO: But, I (RBR) am not sure that is a good idea, since this class can publish messages that would expect to
+	// TODO: be run on the main UI thread.
+	// TODO: Option 1: Feed all expected stuff from the PropertyTable into the threaded context, but not the table itself.
+	// TODO:	This could be a Dictionary<string, object> parameter, and the client would need to cast the value to the expected type.
+	// TODO: Option 2: Create a read only clone of the table to feed to the other threads.
+#endif
 	/// <summary>
 	/// Table of properties, some of which are persisted, and some that are not.
 	/// </summary>
 	[Serializable]
-	internal sealed class PropertyTable : IPropertyTable, IDisposable
+	internal sealed class PropertyTable : IPropertyTable
 	{
 		private IPublisher Publisher { get; set; }
 
@@ -25,9 +33,9 @@ namespace SIL.FieldWorks.Common.FwUtils.Impls
 		/// <summary>
 		/// Control how much output we send to the application's listeners (e.g. visual studio output window)
 		/// </summary>
-		private TraceSwitch m_traceSwitch = new TraceSwitch("PropertyTable", "");
-		private string m_localSettingsId = null;
-		private string m_userSettingDirectory = "";
+		private TraceSwitch m_traceSwitch = new TraceSwitch("PropertyTable", string.Empty);
+		private string m_localSettingsId;
+		private string m_userSettingDirectory = string.Empty;
 
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
@@ -51,21 +59,13 @@ namespace SIL.FieldWorks.Common.FwUtils.Impls
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
+				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
 		}
-
-		/// <summary>
-		/// True, if the object has been disposed.
-		/// </summary>
-		private bool m_isDisposed = false;
 
 		/// <summary>
 		/// See if the object has been disposed.
 		/// </summary>
-		public bool IsDisposed
-		{
-			get { return m_isDisposed; }
-		}
+		public bool IsDisposed { get; private set; }
 
 		/// <summary>
 		/// Finalizer, in case client doesn't dispose it.
@@ -120,7 +120,7 @@ namespace SIL.FieldWorks.Common.FwUtils.Impls
 		{
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
-			if (m_isDisposed)
+			if (IsDisposed)
 				return;
 
 			if (disposing)
@@ -151,7 +151,7 @@ namespace SIL.FieldWorks.Common.FwUtils.Impls
 			m_traceSwitch = null;
 			Publisher = null;
 
-			m_isDisposed = true;
+			IsDisposed = true;
 		}
 
 		#endregion IDisposable & Co. implementation
@@ -204,7 +204,7 @@ namespace SIL.FieldWorks.Common.FwUtils.Impls
 			switch (settingsGroup)
 		{
 				default:
-					throw new NotImplementedException(string.Format("{0} is not yet supported. Developers need to add support for it.", settingsGroup));
+					throw new NotImplementedException($"{settingsGroup} is not yet supported. Developers need to add support for it.");
 				case SettingsGroup.BestSettings:
 			{
 				var key = FormatPropertyNameForLocalSettings(name);
@@ -275,12 +275,12 @@ namespace SIL.FieldWorks.Common.FwUtils.Impls
 			{
 				return false;
 			}
-			if (basicValue is T)
+			if (!(basicValue is T))
 			{
-				propertyValue = (T)basicValue;
-				return true;
+				throw new ArgumentException($"Mismatched data type. Looking for '{typeof(T)}', but was {basicValue.GetType()}.");
 			}
-			throw new ArgumentException($"Mismatched data type. Looking for '{typeof(T)}', but was {basicValue.GetType()}.");
+			propertyValue = (T)basicValue;
+			return true;
 		}
 
 		private Property GetProperty(string key)
@@ -767,7 +767,7 @@ namespace SIL.FieldWorks.Common.FwUtils.Impls
 			get
 			{
 				CheckDisposed();
-				Debug.Assert(!String.IsNullOrEmpty(m_userSettingDirectory));
+				Debug.Assert(!string.IsNullOrEmpty(m_userSettingDirectory));
 				return m_userSettingDirectory;
 			}
 			set
@@ -790,9 +790,9 @@ namespace SIL.FieldWorks.Common.FwUtils.Impls
 		public void RestoreFromFile(string settingsId)
 		{
 			CheckDisposed();
-			string path = SettingsPath(settingsId);
+			var path = SettingsPath(settingsId);
 
-			if (!System.IO.File.Exists(path))
+			if (!File.Exists(path))
 				return;
 
 			try

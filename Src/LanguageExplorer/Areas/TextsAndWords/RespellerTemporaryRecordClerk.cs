@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System.Windows.Forms;
 using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.XWorks;
 
@@ -14,14 +15,15 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// Contructor.
 		/// </summary>
 		/// <param name="id">Clerk id/name.</param>
+		/// <param name="statusBar"></param>
 		/// <param name="recordList">Record list for the clerk.</param>
 		/// <param name="defaultSorter">The default record sorter.</param>
 		/// <param name="defaultSortLabel"></param>
 		/// <param name="defaultFilter">The default filter to use.</param>
 		/// <param name="allowDeletions"></param>
 		/// <param name="shouldHandleDeletion"></param>
-		internal RespellerTemporaryRecordClerk(string id, RecordList recordList, RecordSorter defaultSorter, string defaultSortLabel, RecordFilter defaultFilter, bool allowDeletions, bool shouldHandleDeletion)
-			: base(id, recordList, defaultSorter, defaultSortLabel, defaultFilter, allowDeletions, shouldHandleDeletion)
+		internal RespellerTemporaryRecordClerk(string id, StatusBar statusBar, RecordList recordList, RecordSorter defaultSorter, string defaultSortLabel, RecordFilter defaultFilter, bool allowDeletions, bool shouldHandleDeletion)
+			: base(id, statusBar, recordList, defaultSorter, defaultSortLabel, defaultFilter, allowDeletions, shouldHandleDeletion)
 		{
 		}
 

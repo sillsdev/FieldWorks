@@ -27,8 +27,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <summary>
 		/// Constructor used by "OccurrencesOfSelectedUnit" subclass.
 		/// </summary>
-		protected InterlinearTextsRecordClerk(string id, ConcDecorator decorator)
-			: base(id, new MatchingConcordanceItems(decorator), new PropertyRecordSorter("ShortName"), "Default", null, false, false)
+		protected InterlinearTextsRecordClerk(string id, StatusBar statusBar, ConcDecorator decorator)
+			: base(id, statusBar, new MatchingConcordanceItems(decorator), new PropertyRecordSorter("ShortName"), "Default", null, false, false)
 		{
 		}
 
@@ -36,8 +36,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// Constructor used to create one of the three variations of this class,
 		/// which variation is named "interlinearTexts"
 		/// </summary>
-		internal InterlinearTextsRecordClerk(ILangProject languageProject, InterestingTextsDecorator decorator)
-			: base("interlinearTexts", new RecordList(decorator, false, InterestingTextsDecorator.kflidInterestingTexts, languageProject, "InterestingTexts"), new PropertyRecordSorter("Title"), "Default", null, false, false)
+		internal InterlinearTextsRecordClerk(StatusBar statusBar, ILangProject languageProject, InterestingTextsDecorator decorator)
+			: base("interlinearTexts", statusBar, new RecordList(decorator, false, InterestingTextsDecorator.kflidInterestingTexts, languageProject, "InterestingTexts"), new PropertyRecordSorter("Title"), "Default", null, false, false)
 		{
 		}
 
@@ -45,8 +45,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// Constructor used to create one of the three variations of this class,
 		/// which variation is named "concordanceWords"
 		/// </summary>
-		internal InterlinearTextsRecordClerk(ILangProject languageProject, ConcDecorator decorator)
-			: base("concordanceWords", new ConcordanceWordList(decorator, languageProject), new PropertyRecordSorter("ShortName"), "Default", new WordsUsedOnlyElsewhereFilter(languageProject.Cache), false, false, new WfiRecordFilterListProvider())
+		internal InterlinearTextsRecordClerk(StatusBar statusBar, ILangProject languageProject, ConcDecorator decorator)
+			: base("concordanceWords", statusBar, new ConcordanceWordList(decorator, languageProject), new PropertyRecordSorter("ShortName"), "Default", new WordsUsedOnlyElsewhereFilter(languageProject.Cache), false, false, new WfiRecordFilterListProvider())
 		{
 		}
 

@@ -2815,7 +2815,18 @@ namespace SIL.FieldWorks.Common.RootSites
 				int oldWritingSystemHvo = int.Parse(s);
 				if (oldWritingSystemHvo != ws)
 				{
-					rs.PropertyTable.SetProperty("WritingSystemHvo", ws.ToString(), false, true);
+#if RANDYTODO
+					// The only (as of 21JUL17) registered subscriber of the "WritingSystemHvo" message
+					// was/is SimpleRootSite. That handler then called "EditingHelper.WritingSystemHvoChanged()",
+					// which just happens to be this class. So, I (RBR) changed the last parm to 'false'
+					// to not do the broadcast, but to simply call WritingSystemHvoChanged directly from here.
+					// I note, in passing, that having the property table do the broadcast ran into that new
+					// prohibition on reentrant calls to the publisher. Calling WritingSystemHvoChanged directly will avoid that,
+					// plus I can't see any good reason to do the publish.
+					// We'll see how that goes.
+#endif
+					rs.PropertyTable.SetProperty("WritingSystemHvo", ws.ToString(), false, false);
+					WritingSystemHvoChanged();
 					m_fSuppressNextWritingSystemHvoChanged = true;
 				}
 			}
@@ -3032,9 +3043,9 @@ namespace SIL.FieldWorks.Common.RootSites
 		internal void GotFocus()
 		{
 		}
-		#endregion
+#endregion
 
-		#region Cut/copy/paste handling methods
+#region Cut/copy/paste handling methods
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Useful in stand-alone RootSites such as FwTextBox and LabeledMultiStringView to
@@ -3712,8 +3723,8 @@ namespace SIL.FieldWorks.Common.RootSites
 			destWs = -1;
 			return PasteStatus.PreserveWs;
 		}
-		#endregion
+#endregion
 	}
-	#endregion
+#endregion
 
 }

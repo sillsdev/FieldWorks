@@ -145,8 +145,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			string caption = StringTable.Table.LocalizeAttributeValue(XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "label", ""));
 
 			PhoneEnvReferenceLauncher launcher = (PhoneEnvReferenceLauncher)this.Control;
+#if RANDYTODO
+			// TODO: Skip it for now, and figure out what to do with those context menus
 			Publisher.Publish("RegisterHelpTargetWithId", new object[]{launcher.Controls[1], caption, HelpId});
 			Publisher.Publish("RegisterHelpTargetWithId", new object[]{launcher.Controls[0], caption, HelpId, "Button"});
+#endif
 		}
 
 		/// <summary>
@@ -188,7 +191,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			base.OnLeave(e);
 		}
 
-		#region Special menu item methods
+#region Special menu item methods
 #if RANDYTODO
 		/// <summary>
 		/// This menu item is turned off if an underscore already exists in the environment
@@ -387,6 +390,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			view.RootBox.OnChar((int)'#');
 			return true;
 		}
-		#endregion
+#endregion
 	}
 }

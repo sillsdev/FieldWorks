@@ -195,11 +195,14 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 			if (Control != null)
 			{
+#if RANDYTODO
+				// TODO: Skip it for now, and figure out what to do with those context menus
 				string caption = StringTable.Table.LocalizeAttributeValue(XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "label", ""));
 				Publisher.Publish("RegisterHelpTargetWithId", new object[]{m_combo.Controls[0], caption, HelpId});
 				//balloon was making it hard to actually click this
 				//Mediator.SendMessage("RegisterHelpTargetWithId",
 				//	new object[]{launcher.Controls[1], caption, HelpId, "Button"}, false);
+#endif
 			}
 		}
 	}

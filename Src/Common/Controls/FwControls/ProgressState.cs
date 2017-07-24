@@ -8,7 +8,6 @@
 // </remarks>
 
 using System;
-using System.Linq;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 
@@ -34,19 +33,14 @@ namespace SIL.FieldWorks.Common.Controls
 
 			m_percentDone = 0;
 			m_progressBar = progressBar;
-			if (m_progressBar != null)
-				m_progressBar.SetStateProvider(this);
+			m_progressBar?.SetStateProvider(this);
 		}
 
 		/// <summary>
 		/// factory method for getting a progress state which is already hooked up to the correct progress panel
 		/// </summary>
-		public static ProgressState CreatePredictiveProgressState(IPropertyTable propertyTable, string taskLabel)
+		public static ProgressState CreatePredictiveProgressState(StatusBarProgressPanel panel, string taskLabel)
 		{
-			var wnd = propertyTable.GetValue<Form>("window");
-			var statusBar = wnd.Controls.OfType<StatusBar>().First();
-			var panel = statusBar.Panels["statusBarPanelProgressBar"] as StatusBarProgressPanel;
-
 			if (panel == null)
 				return new NullProgressState();//not ready to be doing progress bars
 
@@ -64,7 +58,7 @@ namespace SIL.FieldWorks.Common.Controls
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
+				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
 		}
 
 		/// <summary>
@@ -75,10 +69,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>
 		/// See if the object has been disposed.
 		/// </summary>
-		public bool IsDisposed
-		{
-			get { return m_isDisposed; }
-		}
+		public bool IsDisposed => m_isDisposed;
 
 		/// <summary>
 		/// Finalizer, in case client doesn't dispose it.

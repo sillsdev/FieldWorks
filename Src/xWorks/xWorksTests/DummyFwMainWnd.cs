@@ -23,9 +23,7 @@ namespace SIL.FieldWorks.XWorks
 		#region Implementation of IDisposable
 		/// <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
 		void IDisposable.Dispose()
-		{
-			throw new NotImplementedException();
-		}
+		{}
 		#endregion
 
 		#region Implementation of IPropertyTableProvider

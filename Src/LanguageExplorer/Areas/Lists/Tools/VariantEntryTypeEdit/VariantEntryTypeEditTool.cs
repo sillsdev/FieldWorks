@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Drawing;
+using System.Windows.Forms;
 using System.Xml.Linq;
 using LanguageExplorer.Controls;
 using SIL.Code;
@@ -82,11 +83,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.VariantEntryTypeEdit
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			CollapsingSplitContainerFactory.RemoveFromParentAndDispose(
-				majorFlexComponentParameters.MainCollapsingSplitContainer,
-				majorFlexComponentParameters.DataNavigationManager,
-				majorFlexComponentParameters.RecordClerkRepositoryForTools,
-				ref _collapsingSplitContainer);
+			CollapsingSplitContainerFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _collapsingSplitContainer);
 		}
 
 		/// <summary>
@@ -99,7 +96,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.VariantEntryTypeEdit
 		{
 			if (_recordClerk == null)
 			{
-				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(VariantEntryTypeList, FactoryMethod);
+				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(VariantEntryTypeList, majorFlexComponentParameters.Statusbar, FactoryMethod);
 			}
 			_collapsingSplitContainer = CollapsingSplitContainerFactory.Create(
 				majorFlexComponentParameters.FlexComponentParameters,
@@ -109,8 +106,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.VariantEntryTypeEdit
 				MachineName,
 				majorFlexComponentParameters.LcmCache,
 				_recordClerk);
-			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
-			majorFlexComponentParameters.RecordClerkRepositoryForTools.ActiveRecordClerk = _recordClerk;
+			RecordClerkServices.SetClerk(majorFlexComponentParameters.DataNavigationManager, majorFlexComponentParameters.RecordClerkRepositoryForTools, _recordClerk);
 		}
 
 		/// <summary>
@@ -174,11 +170,12 @@ namespace LanguageExplorer.Areas.Lists.Tools.VariantEntryTypeEdit
 
 		#endregion
 
-		private static RecordClerk FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId)
+		private static RecordClerk FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId, StatusBar statusBar)
 		{
-			Guard.AssertThat(clerkId == VariantEntryTypeList, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{VariantEntryTypeList}'.");
+			Require.That(clerkId == VariantEntryTypeList, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{VariantEntryTypeList}'.");
 
 			return new RecordClerk(clerkId,
+				statusBar,
 				new PossibilityRecordList(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), cache.LanguageProject.LexDbOA.VariantEntryTypesOA),
 				new PropertyRecordSorter("ShortName"),
 				"Default",

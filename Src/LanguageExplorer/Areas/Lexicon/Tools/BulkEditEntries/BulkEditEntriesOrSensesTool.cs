@@ -4,6 +4,7 @@
 
 using System.Collections.Generic;
 using System.Drawing;
+using System.Windows.Forms;
 using System.Xml.Linq;
 using LanguageExplorer.Controls;
 using SIL.Code;
@@ -80,11 +81,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditEntries
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			PaneBarContainerFactory.RemoveFromParentAndDispose(
-				majorFlexComponentParameters.MainCollapsingSplitContainer,
-				majorFlexComponentParameters.DataNavigationManager,
-				majorFlexComponentParameters.RecordClerkRepositoryForTools,
-				ref _paneBarContainer);
+			PaneBarContainerFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _paneBarContainer);
 		}
 
 		/// <summary>
@@ -100,7 +97,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditEntries
 			// SortItemProvider was: 5035
 			if (_recordClerk == null)
 			{
-				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(EntriesOrChildren, FactoryMethod);
+				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(EntriesOrChildren, majorFlexComponentParameters.Statusbar, FactoryMethod);
 			}
 
 			var root = XDocument.Parse(LexiconResources.BulkEditEntriesOrSensesToolParameters).Root;
@@ -113,8 +110,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditEntries
 				majorFlexComponentParameters.FlexComponentParameters,
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
 				_recordBrowseView);
-			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
-			majorFlexComponentParameters.RecordClerkRepositoryForTools.ActiveRecordClerk = _recordClerk;
+			RecordClerkServices.SetClerk(majorFlexComponentParameters.DataNavigationManager, majorFlexComponentParameters.RecordClerkRepositoryForTools, _recordClerk);
 		}
 
 		/// <summary>
@@ -172,11 +168,12 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditEntries
 
 		#endregion
 
-		internal static RecordClerk FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId)
+		internal static RecordClerk FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId, StatusBar statusBar)
 		{
 			Guard.AssertThat(clerkId == EntriesOrChildren, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{EntriesOrChildren}'.");
 
 			return new RecordClerk(clerkId,
+				statusBar,
 				new EntriesOrChildClassesRecordList(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), false, cache.LanguageProject.LexDbOA),
 				new Dictionary<string, PropertyRecordSorter>
 				{

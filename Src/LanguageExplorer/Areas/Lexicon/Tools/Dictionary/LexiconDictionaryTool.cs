@@ -95,11 +95,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 			_rightContextMenuStrip.Dispose();
 			_rightContextMenuStrip = null;
 
-			PaneBarContainerFactory.RemoveFromParentAndDispose(
-				majorFlexComponentParameters.MainCollapsingSplitContainer,
-				majorFlexComponentParameters.DataNavigationManager,
-				majorFlexComponentParameters.RecordClerkRepositoryForTools,
-				ref _paneBarContainer);
+			PaneBarContainerFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _paneBarContainer);
 			_xhtmlDocView = null;
 		}
 
@@ -113,9 +109,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 		{
 			if (_recordClerk == null)
 			{
-				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(LexiconArea.Entries, LexiconArea.EntriesFactoryMethod);
+				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(LexiconArea.Entries, majorFlexComponentParameters.Statusbar, LexiconArea.EntriesFactoryMethod);
 			}
-
 			var root = XDocument.Parse(LexiconResources.LexiconDictionaryToolParameters).Root;
 			_configureObjectName = root.Attribute("configureObjectName").Value;
 			_xhtmlDocView = new XhtmlDocView(root, majorFlexComponentParameters.LcmCache, _recordClerk);
@@ -156,11 +151,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 				docViewPaneBar,
 				_xhtmlDocView);
 
+			_paneBarContainer.ResumeLayout(true);
 			_xhtmlDocView.FinishInitialization();
 			_xhtmlDocView.OnPropertyChanged("DictionaryPublicationLayout");
 			_paneBarContainer.PostLayoutInit();
-			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
-			majorFlexComponentParameters.RecordClerkRepositoryForTools.ActiveRecordClerk = _recordClerk;
+			RecordClerkServices.SetClerk(majorFlexComponentParameters.DataNavigationManager, majorFlexComponentParameters.RecordClerkRepositoryForTools, _recordClerk);
 		}
 
 		/// <summary>
@@ -198,6 +193,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 		/// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
 		public string MachineName => "lexiconDictionary";
 
+#if RANDYTODO
+		// TODO: It displays fine the first time it is selected, but the second time PropertyTable is upset in a multi-thread context.
+		// TODO: Feed all expected stuff from the PropertyTable into the threaded context, but not the table itself.
+#endif
 		/// <summary>
 		/// User-visible localizable component name.
 		/// </summary>

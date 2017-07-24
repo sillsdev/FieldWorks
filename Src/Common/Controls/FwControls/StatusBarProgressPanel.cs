@@ -11,6 +11,9 @@ using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.Common.Controls
 {
+#if RANDYTODO
+// TODO: Move StatusBarProgressPanel into LE after xworks, and friends, are assimilated.
+#endif
 	/// <summary>
 	/// Status Bar Panel that Displays Progress
 	/// </summary>

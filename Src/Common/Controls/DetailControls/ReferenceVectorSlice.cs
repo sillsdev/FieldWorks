@@ -278,10 +278,13 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			{
 				if (Publisher != null)
 				{
+#if RANDYTODO
+					// TODO: Skip it for now, and figure out what to do with those context menus
 					string caption = StringTable.Table.LocalizeAttributeValue(XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "label", ""));
 					var vrl = (VectorReferenceLauncher)Control;
 					Publisher.Publish("RegisterHelpTargetWithId", new object[]{vrl.Controls[1], caption, HelpId});
 					Publisher.Publish("RegisterHelpTargetWithId", new object[]{vrl.Controls[0], caption, HelpId, "Button"});
+#endif
 				}
 			}
 		}

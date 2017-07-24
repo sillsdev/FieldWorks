@@ -82,11 +82,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.ProdRestrictEdit
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			MultiPaneFactory.RemoveFromParentAndDispose(
-				majorFlexComponentParameters.MainCollapsingSplitContainer,
-				majorFlexComponentParameters.DataNavigationManager,
-				majorFlexComponentParameters.RecordClerkRepositoryForTools,
-				ref _multiPane);
+			MultiPaneFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _multiPane);
 			_recordBrowseView = null;
 		}
 
@@ -100,7 +96,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.ProdRestrictEdit
 		{
 			if (_recordClerk == null)
 			{
-				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(ProdRestrict, FactoryMethod);
+				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(ProdRestrict, majorFlexComponentParameters.Statusbar, FactoryMethod);
 			}
 
 			var root = XDocument.Parse(GrammarResources.ProdRestrictEditToolParameters).Root;
@@ -135,8 +131,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.ProdRestrictEdit
 			panelButton.DatTree = recordEditView.DatTree;
 			// Too early before now.
 			recordEditView.FinishInitialization();
-			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
-			majorFlexComponentParameters.RecordClerkRepositoryForTools.ActiveRecordClerk = _recordClerk;
+			RecordClerkServices.SetClerk(majorFlexComponentParameters.DataNavigationManager, majorFlexComponentParameters.RecordClerkRepositoryForTools, _recordClerk);
 		}
 
 		/// <summary>
@@ -195,11 +190,12 @@ namespace LanguageExplorer.Areas.Grammar.Tools.ProdRestrictEdit
 
 		#endregion
 
-		private static RecordClerk FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId)
+		private static RecordClerk FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId, StatusBar statusBar)
 		{
-			Guard.AssertThat(clerkId == ProdRestrict, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{ProdRestrict}'.");
+			Require.That(clerkId == ProdRestrict, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{ProdRestrict}'.");
 
 			return new RecordClerk(clerkId,
+				statusBar,
 				new PossibilityRecordList(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), cache.LanguageProject.MorphologicalDataOA.ProdRestrictOA),
 				new PropertyRecordSorter("ShortName"),
 				"Default",

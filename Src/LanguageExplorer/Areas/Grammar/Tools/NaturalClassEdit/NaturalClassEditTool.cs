@@ -82,11 +82,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.NaturalClassEdit
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			MultiPaneFactory.RemoveFromParentAndDispose(
-				majorFlexComponentParameters.MainCollapsingSplitContainer,
-				majorFlexComponentParameters.DataNavigationManager,
-				majorFlexComponentParameters.RecordClerkRepositoryForTools,
-				ref _multiPane);
+			MultiPaneFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _multiPane);
 			_recordBrowseView = null;
 		}
 
@@ -100,7 +96,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.NaturalClassEdit
 		{
 			if (_recordClerk == null)
 			{
-				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(NaturalClasses, FactoryMethod);
+				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(NaturalClasses, majorFlexComponentParameters.Statusbar, FactoryMethod);
 			}
 
 			var root = XDocument.Parse(GrammarResources.NaturalClassEditToolParameters).Root;
@@ -135,8 +131,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.NaturalClassEdit
 			panelButton.DatTree = recordEditView.DatTree;
 			// Too early before now.
 			recordEditView.FinishInitialization();
-			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
-			majorFlexComponentParameters.RecordClerkRepositoryForTools.ActiveRecordClerk = _recordClerk;
+			RecordClerkServices.SetClerk(majorFlexComponentParameters.DataNavigationManager, majorFlexComponentParameters.RecordClerkRepositoryForTools, _recordClerk);
 		}
 
 		/// <summary>
@@ -195,11 +190,12 @@ namespace LanguageExplorer.Areas.Grammar.Tools.NaturalClassEdit
 
 		#endregion
 
-		private static RecordClerk FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId)
+		private static RecordClerk FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId, StatusBar statusBar)
 		{
-			Guard.AssertThat(clerkId == NaturalClasses, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{NaturalClasses}'.");
+			Require.That(clerkId == NaturalClasses, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{NaturalClasses}'.");
 
 			return new RecordClerk(clerkId,
+				statusBar,
 				new RecordList(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), true, PhPhonDataTags.kflidNaturalClasses, cache.LanguageProject.PhonologicalDataOA, "NaturalClasses"),
 				new PropertyRecordSorter("ShortName"),
 				"Default",

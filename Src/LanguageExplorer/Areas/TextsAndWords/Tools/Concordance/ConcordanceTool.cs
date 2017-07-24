@@ -82,11 +82,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Concordance
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			MultiPaneFactory.RemoveFromParentAndDispose(
-				majorFlexComponentParameters.MainCollapsingSplitContainer,
-				majorFlexComponentParameters.DataNavigationManager,
-				majorFlexComponentParameters.RecordClerkRepositoryForTools,
-				ref _concordanceContainer);
+			MultiPaneFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _concordanceContainer);
 
 			_concordanceControl = null;
 			_recordBrowseView = null;
@@ -103,7 +99,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Concordance
 		{
 			if (_recordClerk == null)
 			{
-				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(OccurrencesOfSelectedUnit, FactoryMethod);
+				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(OccurrencesOfSelectedUnit, majorFlexComponentParameters.Statusbar, FactoryMethod);
 			}
 			var mainConcordanceContainerParameters = new MultiPaneParameters
 			{
@@ -144,8 +140,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Concordance
 			_concordanceContainer = MultiPaneFactory.CreateConcordanceContainer(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer, mainConcordanceContainerParameters, nestedMultiPaneParameters);
 
 			_interlinMasterNoTitleBar.FinishInitialization();
-			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerk;
-			majorFlexComponentParameters.RecordClerkRepositoryForTools.ActiveRecordClerk = _recordClerk;
+			RecordClerkServices.SetClerk(majorFlexComponentParameters.DataNavigationManager, majorFlexComponentParameters.RecordClerkRepositoryForTools, _recordClerk);
 		}
 
 		/// <summary>
@@ -205,11 +200,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Concordance
 
 		#endregion
 
-		private static RecordClerk FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId)
+		private static RecordClerk FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId, StatusBar statusBar)
 		{
-			Guard.AssertThat(clerkId == OccurrencesOfSelectedUnit, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{OccurrencesOfSelectedUnit}'.");
+			Require.That(clerkId == OccurrencesOfSelectedUnit, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{OccurrencesOfSelectedUnit}'.");
 
-			return new OccurrencesOfSelectedUnit(clerkId, new ConcDecorator(cache.ServiceLocator));
+			return new OccurrencesOfSelectedUnit(clerkId, statusBar, new ConcDecorator(cache.ServiceLocator));
 		}
 	}
 }

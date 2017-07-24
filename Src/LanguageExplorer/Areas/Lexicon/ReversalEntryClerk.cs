@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System.Windows.Forms;
 using SIL.FieldWorks.Filters;
 using SIL.LCModel;
 using SIL.LCModel.Application;
@@ -14,8 +15,8 @@ namespace LanguageExplorer.Areas.Lexicon
 	internal sealed class ReversalEntryClerk : ReversalClerk
 	{
 		/// <summary />
-		internal ReversalEntryClerk(ILcmServiceLocator serviceLocator, ISilDataAccessManaged decorator, IReversalIndex reversalIndex)
-			: base("AllReversalEntries", new AllReversalEntriesRecordList(serviceLocator, decorator, reversalIndex), new PropertyRecordSorter("ShortName"), "Default", null, true, true)
+		internal ReversalEntryClerk(StatusBar statusBar, ILcmServiceLocator serviceLocator, ISilDataAccessManaged decorator, IReversalIndex reversalIndex)
+			: base("AllReversalEntries", statusBar, new AllReversalEntriesRecordList(serviceLocator, decorator, reversalIndex), new PropertyRecordSorter("ShortName"), "Default", null, true, true)
 		{
 		}
 

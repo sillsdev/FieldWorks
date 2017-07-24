@@ -114,6 +114,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 			{
 				Dock = DockStyle.Fill
 			};
+			StatusBarPanelServices.SetStatusPanelRecordNumber(majorFlexComponentParameters.Statusbar, string.Empty);
 			_grammarSketchHtmlViewer.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
 			majorFlexComponentParameters.MainCollapsingSplitContainer.SecondControl = _grammarSketchHtmlViewer;
 

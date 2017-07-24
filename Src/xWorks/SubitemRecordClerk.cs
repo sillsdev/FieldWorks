@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Windows.Forms;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
@@ -34,6 +35,7 @@ namespace SIL.FieldWorks.XWorks
 		/// Contructor.
 		/// </summary>
 		/// <param name="id">Clerk id/name.</param>
+		/// <param name="statusBar"></param>
 		/// <param name="recordList">Record list for the clerk.</param>
 		/// <param name="defaultSorter">The default record sorter.</param>
 		/// <param name="defaultSortLabel"></param>
@@ -42,8 +44,8 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="shouldHandleDeletion"></param>
 		/// <param name="className"></param>
 		/// <param name="fieldName"></param>
-		internal SubitemRecordClerk(string id, RecordList recordList, RecordSorter defaultSorter, string defaultSortLabel, RecordFilter defaultFilter, bool allowDeletions, bool shouldHandleDeletion, string className, string fieldName)
-			: base(id, recordList, defaultSorter, defaultSortLabel, defaultFilter, allowDeletions, shouldHandleDeletion)
+		internal SubitemRecordClerk(string id, StatusBar statusBar, RecordList recordList, RecordSorter defaultSorter, string defaultSortLabel, RecordFilter defaultFilter, bool allowDeletions, bool shouldHandleDeletion, string className, string fieldName)
+			: base(id, statusBar, recordList, defaultSorter, defaultSortLabel, defaultFilter, allowDeletions, shouldHandleDeletion)
 		{
 			if (string.IsNullOrWhiteSpace(className))
 			{
