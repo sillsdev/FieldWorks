@@ -65,6 +65,9 @@ namespace LanguageExplorer.Impls
 			this._data_Next = new System.Windows.Forms.ToolStripMenuItem();
 			this._data_Last = new System.Windows.Forms.ToolStripMenuItem();
 			this._insertToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.insertMenuLastGlobalSeparator = new System.Windows.Forms.ToolStripSeparator();
+			this.pHToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.pHLinkToFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this._formatToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.setUpWritingSystemsToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
 			this._toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -552,9 +555,32 @@ namespace LanguageExplorer.Impls
 			// 
 			// _insertToolStripMenuItem
 			// 
+			this._insertToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.insertMenuLastGlobalSeparator,
+            this.pHToolStripMenuItem,
+            this.pHLinkToFileToolStripMenuItem});
 			this._insertToolStripMenuItem.Name = "_insertToolStripMenuItem";
 			this._insertToolStripMenuItem.Size = new System.Drawing.Size(48, 20);
 			this._insertToolStripMenuItem.Text = "&Insert";
+			// 
+			// insertMenuLastGlobalSeparator
+			// 
+			this.insertMenuLastGlobalSeparator.Name = "insertMenuLastGlobalSeparator";
+			this.insertMenuLastGlobalSeparator.Size = new System.Drawing.Size(191, 6);
+			// 
+			// pHToolStripMenuItem
+			// 
+			this.pHToolStripMenuItem.Enabled = false;
+			this.pHToolStripMenuItem.Name = "pHToolStripMenuItem";
+			this.pHToolStripMenuItem.Size = new System.Drawing.Size(194, 22);
+			this.pHToolStripMenuItem.Text = "PH: Special &character...";
+			// 
+			// pHLinkToFileToolStripMenuItem
+			// 
+			this.pHLinkToFileToolStripMenuItem.Enabled = false;
+			this.pHLinkToFileToolStripMenuItem.Name = "pHLinkToFileToolStripMenuItem";
+			this.pHLinkToFileToolStripMenuItem.Size = new System.Drawing.Size(194, 22);
+			this.pHLinkToFileToolStripMenuItem.Text = "PH: L&ink to File...";
 			// 
 			// _formatToolStripMenuItem
 			// 
@@ -1211,5 +1237,8 @@ namespace LanguageExplorer.Impls
 		private ToolStripButton _tsbPrevious;
 		private ToolStripButton _tsbNext;
 		private ToolStripButton _tsbLast;
+		private ToolStripSeparator insertMenuLastGlobalSeparator;
+		private ToolStripMenuItem pHToolStripMenuItem;
+		private ToolStripMenuItem pHLinkToFileToolStripMenuItem;
 	}
 }

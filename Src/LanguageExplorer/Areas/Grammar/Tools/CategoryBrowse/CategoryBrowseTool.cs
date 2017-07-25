@@ -98,7 +98,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CategoryBrowse
 				majorFlexComponentParameters.FlexComponentParameters,
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
 				new RecordBrowseView(XDocument.Parse(GrammarResources.GrammarCategoryBrowserParameters).Root, majorFlexComponentParameters.LcmCache, _recordClerk));
-			RecordClerkServices.SetClerk(majorFlexComponentParameters.DataNavigationManager, majorFlexComponentParameters.RecordClerkRepositoryForTools, _recordClerk);
+			RecordClerkServices.SetClerk(majorFlexComponentParameters, _recordClerk);
 		}
 
 		/// <summary>

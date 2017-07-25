@@ -108,7 +108,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ClassifiedDictionary
 
 			// Too early before now.
 			semanticDomainRdeTreeBarHandler.FinishInitialization(xmlDocViewPaneBar);
-			RecordClerkServices.SetClerk(majorFlexComponentParameters.DataNavigationManager, majorFlexComponentParameters.RecordClerkRepositoryForTools, _recordClerk);
+			RecordClerkServices.SetClerk(majorFlexComponentParameters, _recordClerk);
 		}
 
 		/// <summary>

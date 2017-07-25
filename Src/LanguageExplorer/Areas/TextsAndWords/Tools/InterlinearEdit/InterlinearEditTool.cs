@@ -125,7 +125,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 			// Too early before now.
 			_interlinMaster.FinishInitialization();
 			_interlinMaster.BringToFront();
-			RecordClerkServices.SetClerk(majorFlexComponentParameters.DataNavigationManager, majorFlexComponentParameters.RecordClerkRepositoryForTools, _recordClerk);
+			RecordClerkServices.SetClerk(majorFlexComponentParameters, _recordClerk);
 		}
 
 		/// <summary>

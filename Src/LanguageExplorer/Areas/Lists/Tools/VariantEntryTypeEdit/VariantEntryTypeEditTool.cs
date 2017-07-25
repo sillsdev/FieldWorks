@@ -106,7 +106,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.VariantEntryTypeEdit
 				MachineName,
 				majorFlexComponentParameters.LcmCache,
 				_recordClerk);
-			RecordClerkServices.SetClerk(majorFlexComponentParameters.DataNavigationManager, majorFlexComponentParameters.RecordClerkRepositoryForTools, _recordClerk);
+			RecordClerkServices.SetClerk(majorFlexComponentParameters, _recordClerk);
 		}
 
 		/// <summary>

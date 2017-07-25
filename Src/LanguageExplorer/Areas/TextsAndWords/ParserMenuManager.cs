@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.WordWorks.Parser;
+using SIL.FieldWorks.XWorks;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Infrastructure;
@@ -43,6 +44,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		private Dictionary<string, ToolStripMenuItem> _parserToolStripMenuItems;
 		private IStText _currentStText;
 		private IWfiWordform _currentWordform;
+		private RecordClerk _clerk;
 
 		/// <summary />
 		internal ParserMenuManager(StatusBarPanel statusPanelProgress, Dictionary<string, ToolStripMenuItem> parserMenuItems)
@@ -122,10 +124,27 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			_parserToolStripMenuItems["phonologicalRulebasedParserHermitCrab"].Click += ChooseParser_Click;
 			_parserToolStripMenuItems["editParserParameters"].Click += EditParserParameters_Click;
 
-			Subscriber.Subscribe("ActiveClerkSelectedObject", ActiveClerkSelectedObject_Handler);
 			Subscriber.Subscribe("TextSelectedWord", TextSelectedWord_Handler);
 
 			UpdateStatusPanelProgress();
+		}
+
+		public RecordClerk Clerk
+		{
+			set
+			{
+				if (_clerk != null)
+				{
+					// Unwire from older clerk
+					_clerk.SelectedObjectChanged -= Clerk_SelectedObjectChanged;
+				}
+				_clerk = value;
+				if (_clerk != null)
+				{
+					// Wire up to new clerk.
+					_clerk.SelectedObjectChanged += Clerk_SelectedObjectChanged;
+				}
+			}
 		}
 
 		private void TextSelectedWord_Handler(object newValue)
@@ -134,24 +153,22 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			_currentWordform = newValue as IWfiWordform;
 		}
 
-		private void ActiveClerkSelectedObject_Handler(object newValue)
+		private void Clerk_SelectedObjectChanged(object sender, SelectObjectEventArgs recordNavigationEventArgs)
 		{
-			if (newValue is IStText)
+			var currentObject = recordNavigationEventArgs.CurrentObject;
+			if (currentObject is IStText)
 			{
-				_currentStText = (IStText)newValue;
+				_currentStText = (IStText)currentObject;
 				return;
 			}
 
-			if (!(newValue is IWfiWordform))
+			if (!(currentObject is IWfiWordform))
 			{
 				return;
 			}
 
-			_currentWordform = (IWfiWordform)newValue;
-			if (m_parserConnection != null)
-			{
-				m_parserConnection.UpdateWordform(_currentWordform, ParserPriority.High);
-			}
+			_currentWordform = (IWfiWordform)currentObject;
+			m_parserConnection?.UpdateWordform(_currentWordform, ParserPriority.High);
 		}
 
 		private void ParserMenuManager_DropDownOpening(object sender, EventArgs e)
@@ -428,6 +445,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 			if (disposing)
 			{
+				_clerk.SelectedObjectChanged -= Clerk_SelectedObjectChanged;
 				_parserToolStripMenuItems["parser"].DropDownOpening -= ParserMenuManager_DropDownOpening;
 				_parserToolStripMenuItems["parseAllWords"].Click -= ParseAllWords_Click;
 				_parserToolStripMenuItems["reparseAllWords"].Click -= ReparseAllWords_Click;
@@ -440,7 +458,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				_parserToolStripMenuItems["defaultParserXAmple"].Click -= ChooseParser_Click;
 				_parserToolStripMenuItems["phonologicalRulebasedParserHermitCrab"].Click -= ChooseParser_Click;
 				_parserToolStripMenuItems["editParserParameters"].Click -= EditParserParameters_Click;
-				Subscriber.Unsubscribe("ActiveClerkSelectedObject", ActiveClerkSelectedObject_Handler);
 				Subscriber.Unsubscribe("TextSelectedWord", TextSelectedWord_Handler);
 
 				// Dispose managed resources here.
@@ -464,6 +481,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			PropertyTable = null;
 			Publisher = null;
 			Subscriber = null;
+			_clerk = null;
 
 			m_isDisposed = true;
 		}

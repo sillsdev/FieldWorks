@@ -170,6 +170,7 @@ EXTENSIONS NOT SUPPORTED (Notebook_Area) -->
 		</toolbar>
 <!-- EXTENSIONS NOT SUPPORTED (Notebook_Area)
 		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/toolbarsAddOn/*"/>
+EXTENSIONS NOT SUPPORTED (Notebook_Area) -->
 	</toolbarsAddOn>
 	<!-- ********************************************************** -->
 	<!-- ************************ resources ********************* -->

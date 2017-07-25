@@ -182,6 +182,10 @@ namespace SIL.FieldWorks.XWorks
 		/// Let interested parties know about a change in the current record.
 		/// </summary>
 		public event RecordNavigationInfoEventHandler RecordChanged;
+		/// <summary>
+		/// Let interested parties know about a change in the currently selected object.
+		/// </summary>
+		public event SelectObjectEventHandler SelectedObjectChanged;
 		#endregion Event Handling
 
 		#region Constructors
@@ -1087,58 +1091,53 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-#if RANDYTODO
-		public bool OnFirstRecord(object argument)
+		internal bool CanMoveTo(Navigation navigateTo)
 		{
-			CheckDisposed();
-
-			m_list.CurrentIndex = m_list.FirstItemIndex;
-			BroadcastChange(false);
-			return true;	//we handled this.
+			bool canMoveTo;
+			switch (navigateTo)
+			{
+				case Navigation.First:
+					canMoveTo = m_list.FirstItemIndex != -1 && m_list.FirstItemIndex != m_list.CurrentIndex;
+					break;
+				case Navigation.Next:
+					canMoveTo = m_list.NextItemIndex != -1 && m_list.NextItemIndex != m_list.CurrentIndex;
+					break;
+				case Navigation.Previous:
+					canMoveTo = m_list.PrevItemIndex != -1 && m_list.PrevItemIndex != m_list.CurrentIndex;
+					break;
+				case Navigation.Last:
+					canMoveTo = m_list.LastItemIndex != -1 && m_list.LastItemIndex != m_list.CurrentIndex;
+					break;
+				default:
+					throw new IndexOutOfRangeException($"I don't know if one can move to '{navigateTo}'.");
+			}
+			return canMoveTo;
 		}
 
-		/// <summary>
-		/// move to the next or last record in the current set of records
-		/// </summary>
-		/// <param name="argument"></param>
-		/// <returns></returns>
-		public bool OnNextRecord(object argument)
+		internal void MoveToIndex(Navigation navigateTo)
 		{
 			CheckDisposed();
 
-			//nb: this may be used in situations where there is no next record, as
-			//when the current record has been deleted but it was the last record.
-
-			/*m_list.CurrentIndex = m_list.CurrentIndex >= m_list.LastItemIndex ? m_list.LastItemIndex : m_list.CurrentIndex + 1;*/
-			m_list.CurrentIndex = m_list.NextItemIndex;
-			BroadcastChange(false);
-			return true;	//we handled this.
-		}
-
-		public bool OnPreviousRecord(object argument)
-		{
-			CheckDisposed();
-
-			/*m_list.CurrentIndex = m_list.CurrentIndex <= m_list.FirstItemIndex ? m_list.FirstItemIndex : m_list.CurrentIndex - 1;*/
-			m_list.CurrentIndex = m_list.PrevItemIndex;
-			BroadcastChange(false);
-			return true;    //we handled this.
-		}
-
-		public bool OnLastRecord(object argument)
-		{
-			CheckDisposed();
-
-			m_list.CurrentIndex = m_list.LastItemIndex;
-			BroadcastChange(false);
-			return true;	//we handled this.
-		}
-#endif
-
-		internal void MoveToIndex(int newIndex)
-		{
-			CheckDisposed();
-
+			int newIndex;
+			switch (navigateTo)
+			{
+				case Navigation.First:
+					newIndex = m_list.FirstItemIndex;
+					break;
+				case Navigation.Next:
+					//nb: this may be used in situations where there is no next record, as
+					//when the current record has been deleted but it was the last record.
+					newIndex = m_list.NextItemIndex;
+					break;
+				case Navigation.Previous:
+					newIndex = m_list.PrevItemIndex;
+					break;
+				case Navigation.Last:
+					newIndex = m_list.LastItemIndex;
+					break;
+				default:
+					throw new IndexOutOfRangeException($"I don't know how to move to '{navigateTo}'.");
+			}
 			m_list.CurrentIndex = newIndex;
 			BroadcastChange(false);
 		}
@@ -1906,8 +1905,7 @@ namespace SIL.FieldWorks.XWorks
 			if (IsControllingTheRecordTreeBar)
 			{
 				m_recordBarHandler?.UpdateSelection(CurrentObject);
-				//used to enable certain dialogs, such as the "change entry type dialog"
-				PropertyTable.SetProperty("ActiveClerkSelectedObject", CurrentObject, false, true);
+				OnSelectedObjectChanged(new SelectObjectEventArgs(CurrentObject));
 			}
 
 			// We want an auto-save when we process the change record UNLESS we are deleting or inserting an object,
@@ -2213,10 +2211,6 @@ namespace SIL.FieldWorks.XWorks
 		{
 			Subscriber.Unsubscribe("SelectedTreeBarNode", SelectedTreeBarNode_Message_Handler);
 			Subscriber.Unsubscribe("SelectedListBarNode", SelectedListBarNode_Message_Handler);
-			if (m_filterProvider != null)
-			{
-				Subscriber.Unsubscribe("FilterListChanged", FilterListChanged_Message_Handler);
-			}
 		}
 
 		private void RegisterMessageHandlers()
@@ -2229,10 +2223,6 @@ namespace SIL.FieldWorks.XWorks
 			if (window.ListStyleRecordList != null)
 			{
 				Subscriber.Subscribe("SelectedListBarNode", SelectedListBarNode_Message_Handler);
-			}
-			if (m_filterProvider != null)
-			{
-				Subscriber.Subscribe("FilterListChanged", FilterListChanged_Message_Handler);
 			}
 		}
 
@@ -2316,12 +2306,9 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		/// <summary>
-		/// Update the contents of the filter list.
-		/// </summary>
-		private void FilterListChanged_Message_Handler(object newValue)
+		public void ReloadFilterProvider()
 		{
-			m_filterProvider.ReLoad();
+			m_filterProvider?.ReLoad();
 		}
 
 		public ICmObject CurrentObject
@@ -2683,70 +2670,6 @@ namespace SIL.FieldWorks.XWorks
 
 #endregion
 
-#if RANDYTODO
-		/// <summary>
-		///	see if it makes sense to provide the "next record" command now
-		/// </summary>
-		/// <param name="commandObject"></param>
-		/// <param name="display"></param>
-		/// <returns></returns>
-		public bool OnDisplayNextRecord(object commandObject, ref UIItemDisplayProperties display)
-		{
-			CheckDisposed();
-
-			/*int nextIndex = m_list.CurrentIndex >= m_list.LastItemIndex ? m_list.LastItemIndex : m_list.CurrentIndex + 1;*/
-			int nextIndex = m_list.NextItemIndex;
-			display.Enabled = nextIndex != -1 && nextIndex != m_list.CurrentIndex;
-			return true;//we handled this, no need to ask anyone else.
-		}
-
-		/// <summary>
-		///	see if it makes sense to provide the "previous record" command now
-		/// </summary>
-		/// <param name="commandObject"></param>
-		/// <param name="display"></param>
-		/// <returns></returns>
-		public bool OnDisplayPreviousRecord(object commandObject, ref UIItemDisplayProperties display)
-		{
-			CheckDisposed();
-
-			/*int prevIndex = m_list.CurrentIndex <= m_list.FirstItemIndex ? m_list.FirstItemIndex : m_list.CurrentIndex - 1;*/
-			int prevIndex = m_list.PrevItemIndex;
-			display.Enabled = prevIndex != -1 && prevIndex != m_list.CurrentIndex;
-			return true;//we handled this, no need to ask anyone else.
-		}
-
-		/// <summary>
-		///	see if it makes sense to provide the "next record" command now
-		/// </summary>
-		/// <param name="commandObject"></param>
-		/// <param name="display"></param>
-		/// <returns></returns>
-		public bool OnDisplayLastRecord(object commandObject, ref UIItemDisplayProperties display)
-		{
-			CheckDisposed();
-
-			int lastIndex = m_list.LastItemIndex;
-			display.Enabled =  lastIndex != -1 && lastIndex != m_list.CurrentIndex;
-			return true;//we handled this, no need to ask anyone else.
-		}
-
-		/// <summary>
-		///	see if it makes sense to provide the "previous record" command now
-		/// </summary>
-		/// <param name="commandObject"></param>
-		/// <param name="display"></param>
-		/// <returns></returns>
-		public bool OnDisplayFirstRecord(object commandObject, ref UIItemDisplayProperties display)
-		{
-			CheckDisposed();
-
-			int firstIndex = m_list.FirstItemIndex;
-			display.Enabled = firstIndex != -1 && firstIndex != m_list.CurrentIndex;
-			return true;//we handled this, no need to ask anyone else.
-		}
-#endif
-
 		/// <summary>
 		/// the object which owns the elements which make up this list
 		/// </summary>
@@ -2796,6 +2719,14 @@ namespace SIL.FieldWorks.XWorks
 		internal void ResetFilterToDefault()
 		{
 			OnChangeFilter(new FilterChangeEventArgs(m_defaultFilter, m_list.Filter));
+		}
+
+		protected virtual void OnSelectedObjectChanged(SelectObjectEventArgs e)
+		{
+			if (SelectedObjectChanged != null)
+			{
+				SelectedObjectChanged(this, e);
+			}
 		}
 
 		protected virtual void OnRecordChanged(RecordNavigationEventArgs e)

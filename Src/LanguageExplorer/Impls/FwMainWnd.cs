@@ -115,12 +115,12 @@ namespace LanguageExplorer.Impls
 			SetupPropertyTable();
 			RegisterSubscriptions();
 
-			_dataNavigationManager = new DataNavigationManager(new Dictionary<string, Tuple<ToolStripMenuItem, ToolStripButton>>
+			_dataNavigationManager = new DataNavigationManager(new Dictionary<Navigation, Tuple<ToolStripMenuItem, ToolStripButton>>
 			{
-				{DataNavigationManager.First, new Tuple<ToolStripMenuItem, ToolStripButton>(_data_First, _tsbFirst)},
-				{DataNavigationManager.Previous, new Tuple<ToolStripMenuItem, ToolStripButton>(_data_Previous, _tsbPrevious)},
-				{DataNavigationManager.Next, new Tuple<ToolStripMenuItem, ToolStripButton>(_data_Next, _tsbNext)},
-				{DataNavigationManager.Last, new Tuple<ToolStripMenuItem, ToolStripButton>(_data_Last, _tsbLast)}
+				{Navigation.First, new Tuple<ToolStripMenuItem, ToolStripButton>(_data_First, _tsbFirst)},
+				{Navigation.Previous, new Tuple<ToolStripMenuItem, ToolStripButton>(_data_Previous, _tsbPrevious)},
+				{Navigation.Next, new Tuple<ToolStripMenuItem, ToolStripButton>(_data_Next, _tsbNext)},
+				{Navigation.Last, new Tuple<ToolStripMenuItem, ToolStripButton>(_data_Last, _tsbLast)}
 			});
 
 			RestoreWindowSettings(wasCrashDuringPreviousStartup);
@@ -128,6 +128,8 @@ namespace LanguageExplorer.Impls
 
 			var flexComponentParameters = new FlexComponentParameters(PropertyTable, Publisher, Subscriber);
 			_recordClerkRepositoryForTools = new RecordClerkRepository(Cache, flexComponentParameters);
+
+			SetupParserMenuItems();
 
 			_majorFlexComponentParameters = new MajorFlexComponentParameters(
 				mainContainer,
@@ -138,11 +140,13 @@ namespace LanguageExplorer.Impls
 				_dataNavigationManager,
 				_recordClerkRepositoryForTools,
 				flexComponentParameters,
-				Cache);
+				Cache,
+				_flexApp,
+				this);
+
+			_parserMenuManager.InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);
 
 			SetupRepositories();
-
-			SetupParserMenuItems();
 
 			SetupOutlookBar();
 
@@ -220,7 +224,6 @@ namespace LanguageExplorer.Impls
 				{"editParserParameters", _editParserParametersToolStripMenuItem}
 			};
 			_parserMenuManager = new ParserMenuManager(_statusbar.Panels[LanguageExplorerConstants.StatusBarPanelProgress], parserMenuItems);
-			_parserMenuManager.InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);
 		}
 
 		/// <summary>
@@ -402,10 +405,6 @@ namespace LanguageExplorer.Impls
 				return;  // Nothing to do.
 			}
 
-			// NB: If you are ever tempted to not set the Clerk to null, then be prepared to have each area/tool clear it.
-			RecordClerkServices.ClearClerk(_dataNavigationManager, _recordClerkRepositoryForTools);
-			StatusBarPanelServices.ClearBasicStatusBars(_statusbar);
-
 			ClearDuringTransition();
 
 			_currentTool?.Deactivate(_majorFlexComponentParameters);
@@ -452,7 +451,7 @@ namespace LanguageExplorer.Impls
 		private void ClearDuringTransition()
 		{
 			// NB: If you are ever tempted to not set the Clerk to null, then be prepared to have each area/tool clear it.
-			RecordClerkServices.ClearClerk(_dataNavigationManager, _recordClerkRepositoryForTools);
+			RecordClerkServices.ClearClerk(_majorFlexComponentParameters);
 			StatusBarPanelServices.ClearBasicStatusBars(_statusbar);
 		}
 

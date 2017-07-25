@@ -87,11 +87,13 @@ namespace LanguageExplorer.Areas.TextsAndWords {
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
         ///&lt;root&gt;
         ///	&lt;wordOccurrenceList&gt;
-        ///		&lt;parameters id=&quot;wordOccurrenceList&quot; editable=&quot;false&quot; clerk=&quot;complexConcOccurrencesOfSelectedUnit&quot; filterBar=&quot;true&quot; altTitleId=&quot;Concordance-Matches&quot;&gt;
-        ///			&lt;includeColumns /&gt;
+        ///		&lt;parameters id=&quot;wordOccurrenceList&quot; editable=&quot;false&quot; filterBar=&quot;true&quot; altTitleId=&quot;Concordance-Matches&quot;&gt;
+        ///			&lt;includeCordanceColumns /&gt;
         ///		&lt;/parameters&gt;
         ///	&lt;/wordOccurrenceList&gt;
-        ///	&lt;includeITextControl /&gt;
+        ///	&lt;ITextControl&gt;
+        ///		&lt;parameters id=&quot;ITextControl&quot; editable=&quot;true&quot; suppressAutoCreate=&quot;true&quot; altTitleId=&quot;Concordance-Context&quot; /&gt;
+        ///	&lt;/ITextControl&gt;
         ///&lt;/root&gt;.
         /// </summary>
         internal static string ComplexConcordanceToolParameters {
@@ -150,15 +152,24 @@ namespace LanguageExplorer.Areas.TextsAndWords {
         ///	&lt;recordbrowseview&gt;
         ///		&lt;parameters id=&quot;textsChooser&quot; filterBar=&quot;true&quot; defaultCursor=&quot;Arrow&quot; altTitleId=&quot;Text-Plural&quot; editable=&quot;false&quot;&gt;
         ///			&lt;columns&gt;
-        ///				&lt;column label=&quot;Title&quot; width=&quot;144000&quot; chooserFilter=&quot;special&quot;&gt;
+        ///				&lt;column label=&quot;Title&quot; width=&quot;144000&quot; chooserFilter=&quot;textsFilterItem&quot;&gt;
         ///					&lt;dynamicloaderinfo assemblyPath=&quot;LanguageExplorer.dll&quot; class=&quot;LanguageExplorer.Areas.TextsAndWords.Interlinear.TextsFilterItem&quot;/&gt;
         ///					&lt;string field=&quot;Title&quot; ws=&quot;$ws=best vernoranal&quot;/&gt;
         ///				&lt;/column&gt;
-        ///				&lt;column label=&quot;Abbreviation&quot; visibil [rest of string was truncated]&quot;;.
+        ///				&lt;column label=&quot;Abbreviation&quot; [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string InterlinearEditToolParameters {
             get {
                 return ResourceManager.GetString("InterlinearEditToolParameters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add Approved Analysis....
+        /// </summary>
+        internal static string ksAddApprovedAnalysis {
+            get {
+                return ResourceManager.GetString("ksAddApprovedAnalysis", resourceCulture);
             }
         }
         
@@ -249,6 +260,15 @@ namespace LanguageExplorer.Areas.TextsAndWords {
         internal static string ksFindingOccurrences {
             get {
                 return ResourceManager.GetString("ksFindingOccurrences", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to _Import Word Set....
+        /// </summary>
+        internal static string ksImportWordSet {
+            get {
+                return ResourceManager.GetString("ksImportWordSet", resourceCulture);
             }
         }
         
@@ -390,7 +410,7 @@ namespace LanguageExplorer.Areas.TextsAndWords {
         /// <summary>
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
         ///&lt;columns&gt;
-        ///	&lt;column label=&quot;Form&quot; width=&quot;30%&quot; cansortbylength=&quot;true&quot; ws=&quot;$ws=best vernacular&quot; field=&quot;Form&quot; chooserFilter=&quot;special&quot; specialItemName=&quot;Choose Texts...&quot;&gt;
+        ///	&lt;column label=&quot;Form&quot; width=&quot;30%&quot; cansortbylength=&quot;true&quot; ws=&quot;$ws=best vernacular&quot; field=&quot;Form&quot; chooserFilter=&quot;textsFilterItem&quot; specialItemName=&quot;Choose Texts...&quot;&gt;
         ///		&lt;dynamicloaderinfo assemblyPath=&quot;LanguageExplorer.dll&quot; class=&quot;LanguageExplorer.Areas.TextsAndWords.Interlinear.TextsFilterItem&quot; /&gt;
         ///		&lt;span&gt;
         ///			&lt;properties&gt;
@@ -399,7 +419,7 @@ namespace LanguageExplorer.Areas.TextsAndWords {
         ///			&lt;string field=&quot;Form&quot; ws=&quot;best vernacular&quot;/&gt;
         ///		&lt;/span&gt;
         ///	&lt;/column&gt;
-        ///	&lt;column label=&quot;Word Glosses&quot;  [rest of string was truncated]&quot;;.
+        ///	&lt;column label=&quot;Word G [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string WordListColumns {
             get {
@@ -411,14 +431,14 @@ namespace LanguageExplorer.Areas.TextsAndWords {
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
         ///&lt;root&gt;
         ///	&lt;wordList&gt;
-        ///		&lt;parameters id=&quot;wordList&quot; clerk=&quot;concordanceWords&quot; convertDummiesSelected=&quot;true&quot; filterBar=&quot;true&quot; editable=&quot;false&quot; treeBarAvailability=&quot;NotAllowed&quot; defaultCursor=&quot;Arrow&quot; hscroll=&quot;true&quot; altTitleId=&quot;WfiWordform-Plural&quot;&gt;
-        ///			&lt;columns&gt;
-        ///				&lt;includeColumns /&gt;
-        ///			&lt;/columns&gt;
+        ///		&lt;parameters id=&quot;wordList&quot; convertDummiesSelected=&quot;true&quot; filterBar=&quot;true&quot; editable=&quot;false&quot; defaultCursor=&quot;Arrow&quot; hscroll=&quot;true&quot; altTitleId=&quot;WfiWordform-Plural&quot;&gt;
+        ///			&lt;includeColumns /&gt;
         ///		&lt;/parameters&gt;
         ///	&lt;/wordList&gt;
         ///	&lt;wordOccurrenceListUpper&gt;
-        ///		&lt;parameters id=&quot;wordOccurrenceList&quot; editable=&quot;false&quot; clerk=&quot;OccurrencesOfSelectedWordform&quot; convertDummiesInView=&quot;fa [rest of string was truncated]&quot;;.
+        ///		&lt;parameters id=&quot;wordOccurrenceList&quot; editable=&quot;false&quot; convertDummiesInView=&quot;false&quot; filterBar=&quot;true&quot; ShowOwnerShortname=&quot;true&quot; altTitleId=&quot;WordListConcordance-Matches&quot;&gt;
+        ///			&lt;includeColumns /&gt;
+        ///		&lt;/paramete [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string WordListConcordanceToolParameters {
             get {

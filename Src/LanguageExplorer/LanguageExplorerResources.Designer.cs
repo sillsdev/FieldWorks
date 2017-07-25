@@ -63,6 +63,16 @@ namespace LanguageExplorer {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
+        internal static System.Drawing.Icon Add_New_Analysis {
+            get {
+                object obj = ResourceManager.GetObject("Add_New_Analysis", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
         internal static System.Drawing.Icon AddScripture {
             get {
                 object obj = ResourceManager.GetObject("AddScripture", resourceCulture);

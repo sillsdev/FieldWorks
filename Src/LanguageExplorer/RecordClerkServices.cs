@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using LanguageExplorer.Areas.TextsAndWords;
 using SIL.FieldWorks.XWorks;
 
 namespace LanguageExplorer
@@ -11,16 +12,18 @@ namespace LanguageExplorer
 	/// </summary>
 	internal static class RecordClerkServices
 	{
-		internal static void SetClerk(DataNavigationManager dataNavigationManager, IRecordClerkRepository recordClerkRepository, RecordClerk clerk)
+		internal static void SetClerk(MajorFlexComponentParameters majorFlexComponentParameters, RecordClerk clerk)
 		{
-			dataNavigationManager.Clerk = clerk;
-			recordClerkRepository.ActiveRecordClerk = clerk;
+			majorFlexComponentParameters.DataNavigationManager.Clerk = clerk;
+			majorFlexComponentParameters.ParserMenuManager.Clerk = clerk;
+			majorFlexComponentParameters.RecordClerkRepositoryForTools.ActiveRecordClerk = clerk;
 		}
 
-		internal static void ClearClerk(DataNavigationManager dataNavigationManager, IRecordClerkRepository recordClerkRepository)
+		internal static void ClearClerk(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			dataNavigationManager.Clerk = null;
-			recordClerkRepository.ActiveRecordClerk = null;
+			majorFlexComponentParameters.DataNavigationManager.Clerk = null;
+			majorFlexComponentParameters.ParserMenuManager.Clerk = null;
+			majorFlexComponentParameters.RecordClerkRepositoryForTools.ActiveRecordClerk = null;
 		}
 	}
 }

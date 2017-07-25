@@ -20,15 +20,11 @@ namespace LanguageExplorer
 	/// </remarks>
 	internal sealed class DataNavigationManager : DisposableBase
 	{
-		internal const string First = "First";
-		internal const string Previous = "Previous";
-		internal const string Next = "Next";
-		internal const string Last = "Last";
-		private readonly Dictionary<string, Tuple<ToolStripMenuItem, ToolStripButton>> _menuItems;
+		private readonly Dictionary<Navigation, Tuple<ToolStripMenuItem, ToolStripButton>> _menuItems;
 		private RecordClerk _clerk;
 
 		/// <summary />
-		internal DataNavigationManager(Dictionary<string, Tuple<ToolStripMenuItem, ToolStripButton>>  menuItems)
+		internal DataNavigationManager(Dictionary<Navigation, Tuple<ToolStripMenuItem, ToolStripButton>>  menuItems)
 		{
 			if (menuItems == null)
 			{
@@ -37,41 +33,41 @@ namespace LanguageExplorer
 
 			_menuItems = menuItems;
 
-			var currentTuple = _menuItems[First];
+			var currentTuple = _menuItems[Navigation.First];
 			currentTuple.Item1.Click += First_Click;
 			currentTuple.Item2.Click += First_Click;
 
-			currentTuple = _menuItems[Previous];
+			currentTuple = _menuItems[Navigation.Previous];
 			currentTuple.Item1.Click += Previous_Click;
 			currentTuple.Item2.Click += Previous_Click;
 
-			currentTuple = _menuItems[Next];
+			currentTuple = _menuItems[Navigation.Next];
 			currentTuple.Item1.Click += Next_Click;
 			currentTuple.Item2.Click += Next_Click;
 
-			currentTuple = _menuItems[Last];
+			currentTuple = _menuItems[Navigation.Last];
 			currentTuple.Item1.Click += Last_Click;
 			currentTuple.Item2.Click += Last_Click;
 		}
 
 		private void First_Click(object sender, EventArgs e)
 		{
-			MoveToIndex(0);
+			MoveToIndex(Navigation.First);
 		}
 
 		private void Previous_Click(object sender, EventArgs e)
 		{
-			MoveToIndex(_clerk.CurrentIndex - 1);
+			MoveToIndex(Navigation.Previous);
 		}
 
 		private void Next_Click(object sender, EventArgs e)
 		{
-			MoveToIndex(_clerk.CurrentIndex + 1);
+			MoveToIndex(Navigation.Next);
 		}
 
 		private void Last_Click(object sender, EventArgs e)
 		{
-			MoveToIndex(_clerk.ListSize - 1);
+			MoveToIndex(Navigation.Last);
 		}
 
 		internal RecordClerk Clerk
@@ -99,9 +95,9 @@ namespace LanguageExplorer
 			SetEnabledStateForWidgets();
 		}
 
-		private void MoveToIndex(int newIndex)
+		private void MoveToIndex(Navigation navigateTo)
 		{
-			_clerk.MoveToIndex(newIndex);
+			_clerk.MoveToIndex(navigateTo);
 			SetEnabledStateForWidgets();
 		}
 
@@ -118,14 +114,14 @@ namespace LanguageExplorer
 			}
 			else
 			{
-				var currentTuple = _menuItems[First];
-				currentTuple.Item1.Enabled = currentTuple.Item2.Enabled = _clerk.CurrentIndex > 0;
-				currentTuple = _menuItems[Previous];
-				currentTuple.Item1.Enabled = currentTuple.Item2.Enabled = _clerk.CurrentIndex > 0;
-				currentTuple = _menuItems[Next];
-				currentTuple.Item1.Enabled = currentTuple.Item2.Enabled = _clerk.CurrentIndex < _clerk.ListSize - 1;
-				currentTuple = _menuItems[Last];
-				currentTuple.Item1.Enabled = currentTuple.Item2.Enabled = _clerk.CurrentIndex < _clerk.ListSize - 1;
+				var currentTuple = _menuItems[Navigation.First];
+				currentTuple.Item1.Enabled = currentTuple.Item2.Enabled = _clerk.CanMoveTo(Navigation.First);
+				currentTuple = _menuItems[Navigation.Previous];
+				currentTuple.Item1.Enabled = currentTuple.Item2.Enabled = _clerk.CanMoveTo(Navigation.Previous);
+				currentTuple = _menuItems[Navigation.Next];
+				currentTuple.Item1.Enabled = currentTuple.Item2.Enabled = _clerk.CanMoveTo(Navigation.Next);
+				currentTuple = _menuItems[Navigation.Last];
+				currentTuple.Item1.Enabled = currentTuple.Item2.Enabled = _clerk.CanMoveTo(Navigation.Last);
 			}
 		}
 
@@ -142,19 +138,19 @@ namespace LanguageExplorer
 				{
 					_clerk.RecordChanged -= Clerk_RecordChanged;
 				}
-				var currentTuple = _menuItems[First];
+				var currentTuple = _menuItems[Navigation.First];
 				currentTuple.Item1.Click -= First_Click;
 				currentTuple.Item2.Click -= First_Click;
 
-				currentTuple = _menuItems[Previous];
+				currentTuple = _menuItems[Navigation.Previous];
 				currentTuple.Item1.Click -= Previous_Click;
 				currentTuple.Item2.Click -= Previous_Click;
 
-				currentTuple = _menuItems[Next];
+				currentTuple = _menuItems[Navigation.Next];
 				currentTuple.Item1.Click -= Next_Click;
 				currentTuple.Item2.Click -= Next_Click;
 
-				currentTuple = _menuItems[Last];
+				currentTuple = _menuItems[Navigation.Last];
 				currentTuple.Item1.Click -= Last_Click;
 				currentTuple.Item2.Click -= Last_Click;
 			}

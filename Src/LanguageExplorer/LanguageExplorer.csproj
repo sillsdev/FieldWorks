@@ -239,6 +239,7 @@
     <None Include="images\Arrow_Down.ico" />
     <None Include="images\Arrow_Up.ico" />
     <None Include="images\DefaultIcon.ico" />
+    <Content Include="images\Add New Analysis.ico" />
     <Content Include="images\DropDown2003.ico" />
     <Content Include="images\DropDown2007.ico" />
     <Content Include="images\Grip2003.ico" />
@@ -916,7 +917,6 @@
     <Compile Include="Controls\PaneBarContextMenuFactory.cs" />
     <Compile Include="Controls\CollapsingSplitContainerFactory.cs" />
     <Compile Include="DataNavigationManager.cs" />
-    <Compile Include="Dumpster\ImportWordSetListener.cs" />
     <Compile Include="Areas\TextsAndWords\IParserTrace.cs" />
     <Compile Include="Areas\TextsAndWords\ParserConnection.cs" />
     <Compile Include="Areas\TextsAndWords\ParserParametersDlg.cs">

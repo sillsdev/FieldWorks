@@ -194,7 +194,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 			// Too early before now.
 			semanticDomainRdeTreeBarHandler.FinishInitialization(new PaneBar());
 			recordEditView.FinishInitialization();
-			RecordClerkServices.SetClerk(majorFlexComponentParameters.DataNavigationManager, majorFlexComponentParameters.RecordClerkRepositoryForTools, _recordClerk);
+			RecordClerkServices.SetClerk(majorFlexComponentParameters, _recordClerk);
 		}
 
 		/// <summary>

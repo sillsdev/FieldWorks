@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using System.Xml.Linq;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.PaneBar;
+using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks;
@@ -24,6 +25,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 	internal sealed class LexiconDictionaryTool : ITool
 	{
 		private string _configureObjectName;
+		private IFwMainWnd _fwMainWnd;
 		private PaneBarContainer _paneBarContainer;
 		private RecordClerk _recordClerk;
 		private XhtmlDocView _xhtmlDocView;
@@ -97,6 +99,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 
 			PaneBarContainerFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _paneBarContainer);
 			_xhtmlDocView = null;
+			_fwMainWnd = null;
 		}
 
 		/// <summary>
@@ -107,6 +110,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			_fwMainWnd = majorFlexComponentParameters.MainWindow;
 			if (_recordClerk == null)
 			{
 				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(LexiconArea.Entries, majorFlexComponentParameters.Statusbar, LexiconArea.EntriesFactoryMethod);
@@ -155,7 +159,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 			_xhtmlDocView.FinishInitialization();
 			_xhtmlDocView.OnPropertyChanged("DictionaryPublicationLayout");
 			_paneBarContainer.PostLayoutInit();
-			RecordClerkServices.SetClerk(majorFlexComponentParameters.DataNavigationManager, majorFlexComponentParameters.RecordClerkRepositoryForTools, _recordClerk);
+			RecordClerkServices.SetClerk(majorFlexComponentParameters, _recordClerk);
 		}
 
 		/// <summary>
@@ -303,7 +307,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 				controller.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 				dlg.Text = string.Format(xWorksStrings.ConfigureTitle, xWorksStrings.Dictionary);
 				dlg.HelpTopic = "khtpConfigureDictionary";
-				dlg.ShowDialog(PropertyTable.GetValue<IWin32Window>("window"));
+				dlg.ShowDialog((IWin32Window)_fwMainWnd);
 				refreshNeeded = controller.MasterRefreshRequired;
 			}
 			if (refreshNeeded)
@@ -382,7 +386,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 			<parameters tool="publicationsEdit" className="ICmPossibility" ownerClass="LangProject" ownerField="PublicationTypes" />
 		</command>
 			 */
-			MessageBox.Show(PropertyTable.GetValue<Form>("window"), "Stay tuned for jump to: 'publicationsEdit' in list 'LangProject->PublicationTypes'");
+			MessageBox.Show((Form)_fwMainWnd, "Stay tuned for jump to: 'publicationsEdit' in list 'LangProject->PublicationTypes'");
 		}
 
 		private void Publication_Clicked(object sender, EventArgs e)

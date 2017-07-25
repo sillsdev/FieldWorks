@@ -412,6 +412,7 @@
     <Compile Include="ListChangedEventArgs.cs" />
     <Compile Include="ListChangedEventHandler.cs" />
     <Compile Include="MacroListener.cs" />
+    <Compile Include="Navigation.cs" />
     <Compile Include="NotebookExportDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -422,6 +423,7 @@
     </Compile>
     <Compile Include="RecordNavigationEventArgs.cs" />
     <Compile Include="RecordNavigationInfo.cs" />
+    <Compile Include="SelectObjectEventArgs.cs" />
     <Compile Include="TemporaryRecordClerk.cs" />
     <Compile Include="UploadToWebonaryController.cs" />
     <Compile Include="UploadToWebonaryDlg.cs">

@@ -1023,24 +1023,24 @@ I (RandyR) brought them into this file, just to keep track of them for the time 
 	<!-- ********************************************************** -->
 	<!--This sections defines the various toolbars and the commands in them.-->
 	<toolbars>
-<!-- START include: "" -->
+<!-- START include: "Lexicon/areaConfiguration.xml" query="root/toolbars/*" -->
 		<include path="Lexicon/areaConfiguration.xml" query="root/toolbars/*"/>
-<!-- END include: "" -->
-<!-- START include: "" -->
+<!-- END include: "Lexicon/areaConfiguration.xml" query="root/toolbars/*" -->
+<!-- START include: "Words/areaConfiguration.xml" query="root/toolbars/*" -->
 		<include path="Words/areaConfiguration.xml" query="root/toolbars/*"/>
-<!-- END include: "" -->
-<!-- START include: "" -->
+<!-- END include: "Words/areaConfiguration.xml" query="root/toolbars/*" -->
+<!-- START include: "Notebook/areaConfiguration.xml" query="root/toolbars/*" -->
 		<include path="Notebook/areaConfiguration.xml" query="root/toolbars/*"/>
-<!-- END include: "" -->
-<!-- START include: "" -->
+<!-- END include: "Notebook/areaConfiguration.xml" query="root/toolbars/*" -->
+<!-- START include: "Lists/areaConfiguration.xml" query="root/toolbars/*" -->
 		<include path="Lists/areaConfiguration.xml" query="root/toolbars/*"/>
-<!-- END include: "" -->
-<!-- START include: "" -->
+<!-- END include: "Lists/areaConfiguration.xml" query="root/toolbars/*" -->
+<!-- START include: "Grammar/areaConfiguration.xml" query="root/toolbars/*" -->
 		<include path="Grammar/areaConfiguration.xml" query="root/toolbars/*"/>
-<!-- END include: "" -->
-<!-- START include: "" -->
+<!-- END include: "Grammar/areaConfiguration.xml" query="root/toolbars/*" -->
+<!-- EXTENSIONS NOT SUPPORTED
 		<include path="Extensions/*/MainConfigurationExtension.xml" query="root/toolbars/*"/>
-<!-- END include: "" -->
+EXTENSIONS NOT SUPPORTED -->
 		<toolbar id="Format">
 			<menu id="WritingSystemCombo" label="Writing System" list="WritingSystemList" behavior="singlePropertyAtomicValue" property="WritingSystemHvo" width="150" />
 			<menu id="CombinedStylesCombo" label="Styles" list="CombinedStylesList" behavior="singlePropertyAtomicValue" property="BestStyleName" width="250" />

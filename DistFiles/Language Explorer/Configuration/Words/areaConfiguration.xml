@@ -19,7 +19,7 @@ EXTENSIONS NOT SUPPORTED (Words_Area) -->
 		<command id="CmdParseWordsInCurrentText" label="Parse Words in Te_xt" message="ParseWordsInCurrentText"/>
 		<command id="CmdClearSelectedWordParserAnalyses" label="Clear Current Parser _Analyses" message="ClearSelectedWordParserAnalyses"/>
 		<command id="CmdReInitializeParser" label="Re_load Grammar / Lexicon" message="ReInitParser" tooltip="Reloads data from the Grammar and Lexicon, so the parser uses your latest changes."/>
-		<command id="CmdImportWordSet" label="_Import Word Set..." message="ImportWordSet"/>
+		<command id="CmdImportWordSet" label="_Import Word Set..." message="ImportWordSet" a10status="DONE" />
 		<command id="CmdChooseXAmpleParser" label="Default Parser (XAmple)" message="ChooseParser">
 			<parameters parser="XAmple"/>
 		</command>
@@ -120,7 +120,7 @@ EXTENSIONS NOT SUPPORTED (Words_Area) -->
 		<command id="CmdDataTree-Insert-WordGloss" label="Add Word Gloss" message="DataTreeInsert">
 			<parameters field="Meanings" className="WfiGloss"/>
 		</command>
-		<command id="CmdInsertHumanApprovedAnalysis" label="Add Approved Analysis..." message="AddApprovedAnalysis" icon="addNewAnalysis">
+		<command id="CmdInsertHumanApprovedAnalysis" label="Add Approved Analysis..." message="AddApprovedAnalysis" icon="addNewAnalysis" a10status="PLACEHOLDER" >
 			<parameters field="Analyses" className="WfiAnalysis"/>
 		</command>
 		<command id="CmdRespeller" label="Change Spelling..." message="LaunchRespellerDlg"/>
@@ -349,9 +349,9 @@ EXTENSIONS NOT SUPPORTED (Words_Area) -->
 			<item command="CmdAddWordGlossesToFreeTrans" defaultVisible="false"/>
 			<item label="Click Inserts Invisible Space" boolProperty="ClickInvisibleSpace" defaultVisible="false" settingsGroup="local" icon="zeroWidth"/>
 			<item command="CmdGuessWordBreaks" defaultVisible="false"/>
-			<item label="-" translate="do not translate"/>
-			<item command="CmdImportWordSet" defaultVisible="false"/>
-			<item command="CmdInsertHumanApprovedAnalysis" defaultVisible="false"/>
+			<item label="-" translate="do not translate" a10status="DONE" />
+			<item command="CmdImportWordSet" defaultVisible="false" a10status="DONE" />
+			<item command="CmdInsertHumanApprovedAnalysis" defaultVisible="false" a10status="PLACEHOLDER" />
 		</menu>
 
 		<menu id="Tools">
@@ -591,7 +591,7 @@ EXTENSIONS NOT SUPPORTED (Words_Area) -->
 		</listener>
 		<listener assemblyPath="ParserUI.dll" class="SIL.FieldWorks.LexText.Controls.ParserListener"/>
 		<listener assemblyPath="ParserUI.dll" class="SIL.FieldWorks.LexText.Controls.ParserParametersListener"/>
-		<listener assemblyPath="ParserUI.dll" class="SIL.FieldWorks.LexText.Controls.ImportWordSetListener"/>
+		<listener assemblyPath="ParserUI.dll" class="SIL.FieldWorks.LexText.Controls.ImportWordSetListener" a10status="DONE_Removed" />
 		<listener assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Dumpster.RespellerDlgListener">
 			<parameters>
 				<clerks>
