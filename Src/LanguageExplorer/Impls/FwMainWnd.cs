@@ -1618,7 +1618,7 @@ very simple minor adjustments. ;)"
 			}
 		}
 
-#region Overrides of Form
+		#region Overrides of Form
 
 		/// <summary>
 		/// Raises the <see cref="E:System.Windows.Forms.Form.Load"/> event.

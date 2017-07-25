@@ -219,7 +219,6 @@
     <Content Include="Images\FWSelParagraphStyle-Small.bmp" />
     <Content Include="Images\InterlinPopupArrow.bmp" />
     <Content Include="Images\minus.bmp" />
-    <Content Include="Images\PictureNotFound_256x226.bmp" />
     <Content Include="Images\plus.bmp" />
     <Content Include="Images\UncheckedCheckbox.bmp" />
     <Compile Include="ResourceHelper.cs" />

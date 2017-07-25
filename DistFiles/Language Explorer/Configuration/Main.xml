@@ -44,11 +44,11 @@
 		<command id="CmdFLExLiftBridge" label="Send/Receive..." icon="syncSendReceive" message="FLExLiftBridge" shortcut="Ctrl+R" />
 
 		<command id="CmdClose" label="_Close" message="CloseWindow" a10status="DONE" />
-		<command id="CmdFirstRecord" label="_First" icon="firstRecord" message="FirstRecord"/>
+		<command id="CmdFirstRecord" label="_First" icon="firstRecord" message="FirstRecord" a10status="DONE" />
 		<command id="CmdDeleteRecord" label="_Delete {0}..." message="DeleteRecord" icon="Delete" shortcut="Ctrl+Del"/>
-		<command id="CmdLastRecord" label="_Last" icon="lastRecord" message="LastRecord"/>
-		<command id="CmdPreviousRecord" label="_Previous" icon="previousRecord" message="PreviousRecord" shortcut="Alt+P"/>
-		<command id="CmdNextRecord" label="_Next" icon="nextRecord" message="NextRecord" shortcut="Alt+N"/>
+		<command id="CmdLastRecord" label="_Last" icon="lastRecord" message="LastRecord" a10status="DONE" />
+		<command id="CmdPreviousRecord" label="_Previous" icon="previousRecord" message="PreviousRecord" shortcut="Alt+P" a10status="DONE" />
+		<command id="CmdNextRecord" label="_Next" icon="nextRecord" message="NextRecord" shortcut="Alt+N" a10status="DONE" />
 		<command id="CmdListPropertiesTable" label="_List Properties Table" message="ListPropertiesTable" a10status="DONE" />
 		<command id="CmdListColleagues" label="List _Colleagues" message="ListColleagues"/>
 		<command id="CmdNewWindow" label="_New Window" message="NewWindow" a10status="DONE" />
@@ -1024,28 +1024,28 @@ I (RandyR) brought them into this file, just to keep track of them for the time 
 	<!--This sections defines the various toolbars and the commands in them.-->
 	<toolbars>
 <!-- START include: "Lexicon/areaConfiguration.xml" query="root/toolbars/*" -->
-		<include path="Lexicon/areaConfiguration.xml" query="root/toolbars/*"/>
+		<include path="Lexicon/areaConfiguration.xml" query="root/toolbars/*" a10status="DONE: Includes nothing" />
 <!-- END include: "Lexicon/areaConfiguration.xml" query="root/toolbars/*" -->
 <!-- START include: "Words/areaConfiguration.xml" query="root/toolbars/*" -->
-		<include path="Words/areaConfiguration.xml" query="root/toolbars/*"/>
+		<include path="Words/areaConfiguration.xml" query="root/toolbars/*" a10status="DONE: Includes nothing" />
 <!-- END include: "Words/areaConfiguration.xml" query="root/toolbars/*" -->
 <!-- START include: "Notebook/areaConfiguration.xml" query="root/toolbars/*" -->
-		<include path="Notebook/areaConfiguration.xml" query="root/toolbars/*"/>
+		<include path="Notebook/areaConfiguration.xml" query="root/toolbars/*" a10status="DONE: Includes nothing" />
 <!-- END include: "Notebook/areaConfiguration.xml" query="root/toolbars/*" -->
 <!-- START include: "Lists/areaConfiguration.xml" query="root/toolbars/*" -->
-		<include path="Lists/areaConfiguration.xml" query="root/toolbars/*"/>
+		<include path="Lists/areaConfiguration.xml" query="root/toolbars/*" a10status="DONE: Includes nothing" />
 <!-- END include: "Lists/areaConfiguration.xml" query="root/toolbars/*" -->
 <!-- START include: "Grammar/areaConfiguration.xml" query="root/toolbars/*" -->
-		<include path="Grammar/areaConfiguration.xml" query="root/toolbars/*"/>
+		<include path="Grammar/areaConfiguration.xml" query="root/toolbars/*" a10status="DONE: Includes nothing" />
 <!-- END include: "Grammar/areaConfiguration.xml" query="root/toolbars/*" -->
 <!-- EXTENSIONS NOT SUPPORTED
 		<include path="Extensions/*/MainConfigurationExtension.xml" query="root/toolbars/*"/>
 EXTENSIONS NOT SUPPORTED -->
-		<toolbar id="Format">
-			<menu id="WritingSystemCombo" label="Writing System" list="WritingSystemList" behavior="singlePropertyAtomicValue" property="WritingSystemHvo" width="150" />
-			<menu id="CombinedStylesCombo" label="Styles" list="CombinedStylesList" behavior="singlePropertyAtomicValue" property="BestStyleName" width="250" />
+		<toolbar id="Format" a10status="DONE" >
+			<menu id="WritingSystemCombo" label="Writing System" list="WritingSystemList" behavior="singlePropertyAtomicValue" property="WritingSystemHvo" width="150"  a10status="PARTIALLY_DONE" />
+			<menu id="CombinedStylesCombo" label="Styles" list="CombinedStylesList" behavior="singlePropertyAtomicValue" property="BestStyleName" width="250"  a10status="PARTIALLY_DONE" />
 		</toolbar>
-		<toolbar id="Insert">
+		<toolbar id="Insert" a10status="DONE" >
 <!-- START include: "Lexicon/areaConfiguration.xml" query="root/toolbarsAddOn/toolbar[@id='Insert']/item" -->
 			<include path="Lexicon/areaConfiguration.xml" query="root/toolbarsAddOn/toolbar[@id='Insert']/item"/>
 <!-- END include: "Lexicon/areaConfiguration.xml" query="root/toolbarsAddOn/toolbar[@id='Insert']/item" -->
@@ -1068,18 +1068,18 @@ EXTENSIONS NOT SUPPORTED -->
 		<!--<toolbar id="Edit">
 			<include path="Words/areaConfiguration.xml" query="root/toolbarsAddOn/toolbar[@id='Edit']/item"/>
 		</toolbar>-->
-		<toolbar id="View">
+		<toolbar id="View" a10status="DONE" >
 <!-- START include: "Words/areaConfiguration.xml" query="root/toolbarsAddOn/toolbar[@id='View']/item" -->
 			<include path="Words/areaConfiguration.xml" query="root/toolbarsAddOn/toolbar[@id='View']/item"/>
 <!-- END include: "Words/areaConfiguration.xml" query="root/toolbarsAddOn/toolbar[@id='View']/item" -->
-			<item command="CmdChangeFilterClearAll"/>
+			<item command="CmdChangeFilterClearAll" a10status="PARTIALLY_DONE" />
 		</toolbar>
 		<toolbar id="Standard" a10status="DONE" >
-			<item command="CmdHistoryBack"/>
-			<item command="CmdHistoryForward"/>
-			<item label="-" translate="do not translate"/>
-			<item command="CmdDeleteRecord"/>
-			<item label="-" translate="do not translate"/>
+			<item command="CmdHistoryBack" a10status="PARTIALLY_DONE" />
+			<item command="CmdHistoryForward" a10status="PARTIALLY_DONE" />
+			<item label="-" translate="do not translate" a10status="DONE" />
+			<item command="CmdDeleteRecord" a10status="PARTIALLY_DONE" />
+			<item label="-" translate="do not translate" a10status="DONE" />
 			<item command="CmdUndo" a10status="PARTIALLY_DONE" />
 			<item command="CmdRedo" a10status="PARTIALLY_DONE" />
 			<item command="CmdRefresh" a10status="DONE" />
@@ -1088,7 +1088,7 @@ EXTENSIONS NOT SUPPORTED -->
 			<item command="CmdPreviousRecord" a10status="DONE" />
 			<item command="CmdNextRecord" a10status="DONE" />
 			<item command="CmdLastRecord" a10status="DONE" />
-			<item command="CmdFLExLiftBridge"/>
+			<item command="CmdFLExLiftBridge" a10status="PARTIALLY_DONE" />
 		</toolbar>
 	</toolbars>
 	<!-- ********************************************************** -->

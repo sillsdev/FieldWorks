@@ -138,6 +138,15 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to _Delete {0}....
+        /// </summary>
+        internal static string DeleteMenu {
+            get {
+                return ResourceManager.GetString("DeleteMenu", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
         internal static System.Drawing.Icon DropDown2003 {
