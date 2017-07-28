@@ -35,7 +35,7 @@ INCLUDES := -I$(VIEWS_SRC) -I$(VIEWS_SRC)/lib -I$(VIEWS_SRC)/Test \
 		-I$(GR2_INC) -I$(DEBUGPROCS_SRC) \
 
 INCLUDES := \
-	$(shell icu-config --detect-prefix --cppflags) \
+	$(shell icu-config --cppflags) \
 	$(INCLUDES) \
 	-I$(FWINCLUDE) \
 	-I$(UNIT) -I$(LIB_UNIT) \
@@ -47,7 +47,7 @@ INCLUDES := \
 
 
 LDLIBS := \
-	$(shell icu-config --detect-prefix --ldflags) \
+	$(shell icu-config --ldflags) \
 	-L$(FWINCLUDE) \
 	-L$(WIN32MORE_LIB) -lWin32More \
 	-L$(COM_LIB) -lcom \

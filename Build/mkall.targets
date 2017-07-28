@@ -37,6 +37,7 @@
 				Makefile="$(fwrt)\Src\DebugProcs\DebugProcs.mak"
 				Configuration="$(config-capital)"
 				BuildRoot="$(fwrt)"
+				BuildArch="'$(Platform)'"
 				WorkingDirectory="$(fwrt)\Src\DebugProcs"/>
 		<Make Condition="'$(OS)'=='Unix'" ToolPath="/usr/bin"
 				Makefile="$(fwrt)/Src/DebugProcs/Makefile"
@@ -51,6 +52,7 @@
 				Makefile="$(fwrt)\Src\Generic\GenericLib.mak"
 				Configuration="$(config-capital)"
 				BuildRoot="$(fwrt)"
+				BuildArch="'$(Platform)'"
 				WorkingDirectory="$(fwrt)\Src\Generic"/>
 		<Make Condition="'$(OS)'=='Unix'" ToolPath="/usr/bin"
 				Makefile="$(fwrt)/Src/Generic/Makefile"
@@ -65,6 +67,7 @@
 				Makefile="$(fwrt)\Src\Generic\Test\testGenericLib.mak"
 				Configuration="$(config-capital)"
 				BuildRoot="$(fwrt)"
+				BuildArch="'$(Platform)'"
 				WorkingDirectory="$(fwrt)\Bin"/>
 		<Make Condition="'$(OS)'=='Unix'" ToolPath="/usr/bin"
 				Makefile="$(fwrt)/Src/Generic/Test/Makefile"
@@ -92,6 +95,7 @@
 			Makefile="$(fwrt)\Src\Kernel\FwKernel.mak"
 			Configuration="$(config-capital)"
 			BuildRoot="$(fwrt)"
+			BuildArch="'$(Platform)'"
 			WorkingDirectory="$(fwrt)\Src\Kernel"/>
 		<Make Condition="'$(OS)'=='Unix'" ToolPath="/usr/bin"
 			Makefile="$(fwrt)/Src/Kernel/Makefile"
@@ -117,6 +121,7 @@
 			Makefile="$(fwrt)\Src\views\Views.mak"
 			Configuration="$(config-capital)"
 			BuildRoot="$(fwrt)"
+			BuildArch="'$(Platform)'"
 			WorkingDirectory="$(fwrt)\Src\views"/>
 		<Make Condition="'$(OS)'=='Unix'" ToolPath="/usr/bin"
 			Makefile="$(fwrt)/Src/views/Makefile"
@@ -132,6 +137,7 @@
 				Makefile="$(fwrt)\Src\views\Test\testViews.mak"
 				Configuration="$(config-capital)"
 				BuildRoot="$(fwrt)"
+				BuildArch="'$(Platform)'"
 				WorkingDirectory="$(fwrt)\Bin"/>
 		<Make Condition="'$(OS)'=='Unix'" ToolPath="/usr/bin"
 				Makefile="$(fwrt)/Src/views/Test/Makefile"
@@ -200,6 +206,7 @@
 				Configuration="$(config-capital)"
 				Target="dirs $(dir-fwoutputCommon)\FwKernelTlb.tlb"
 				BuildRoot="$(fwrt)"
+				BuildArch="'$(PLATFORM)'"
 				WorkingDirectory="$(fwrt)"/>
 		<Make Condition="'$(OS)'=='Windows_NT'"
 				Makefile="$(fwrt)\Src\views\Views.mak"
@@ -264,18 +271,18 @@
 
 	<PropertyGroup>
 		<MasterVersionInfo>$(fwrt)/Src/MasterVersionInfo.txt</MasterVersionInfo>
-		<TeamCityUrl>http://build.palaso.org/</TeamCityUrl>
+		<TeamCityUrl>https://build.palaso.org/</TeamCityUrl>
 		<!-- Update when appropriate. -->
 		<FLExBridgeBuildType Condition="'$(OS)'=='Windows_NT'">FLExBridge_FLExBridgeDevelopWin32Continuous</FLExBridgeBuildType>
-		<!-- Precise builds are used for all Linux development. Update when appropriate. -->
-		<FLExBridgeBuildType Condition="'$(OS)'=='Unix'">FLExBridge_FLExBridgeDevelopPrecise64Continuous</FLExBridgeBuildType>
+		<!-- Update when appropriate. -->
+		<FLExBridgeBuildType Condition="'$(OS)'=='Unix'">FLExBridge_FLExBridgeDevelopLinux64Continuous</FLExBridgeBuildType>
 
 		<!-- bt2 is the master branch build of Chorus for Windows development. Update when appropriate. -->
 		<ChorusBuildType Condition="'$(OS)'=='Windows_NT'">bt2</ChorusBuildType>
 		<!-- bt323 is the master branch (strong name) build of Chorus for Linux development. Update when appropriate. -->
 		<ChorusBuildType Condition="'$(OS)'=='Unix'">bt323</ChorusBuildType>
 		<!-- Libpalaso_PalasoWinmasterContinuous is the master branch build of Palaso for Windows development. Update when appropriate. -->
-		<PalasoBuildType Condition="'$(OS)'=='Windows_NT'">Libpalaso_PalasoWinmasterContinuous</PalasoBuildType>
+		<PalasoBuildType Condition="'$(OS)'=='Windows_NT'">Libpalaso_PalasoWin32masterContinuous</PalasoBuildType>
 		<!-- Libpalaso_PalasoLinux64masterContinuous is the master branch build of Palaso for Linux development. Update when appropriate. -->
 		<PalasoBuildType Condition="'$(OS)'=='Unix'">Libpalaso_PalasoLinux64masterContinuous</PalasoBuildType>
 		<!--Todo: use PalasoBuildType, when it refers to somewhere that has the IPCFramework.-->
@@ -289,8 +296,8 @@
 		<!-- bt395 is the master branch build of ExCss for Linux development. Update when appropriate. -->
 		<ExCssBuildType Condition="'$(OS)'=='Unix'">bt395</ExCssBuildType>
 		<ExCss Condition="'$(OS)'=='Unix'">ExCSS</ExCss>
-		<Icu4cBuildType Condition="'$(OS)'=='Windows_NT' AND '$(arch)'!='x86_64'">Libraries_Icu4cWin32FieldWorksContinuous</Icu4cBuildType>
-		<Icu4cBuildType Condition="'$(OS)'=='Windows_NT' AND '$(arch)'=='x86_64'">Libraries_Icu4cWin64FieldWorksContinuous</Icu4cBuildType>
+		<Icu4cBuildType Condition="'$(OS)'=='Windows_NT' AND '$(arch)'!='x64'">Libraries_Icu4cWin32FieldWorksContinuous</Icu4cBuildType>
+		<Icu4cBuildType Condition="'$(OS)'=='Windows_NT' AND '$(arch)'=='x64'">Libraries_Icu4cWin64FieldWorksContinuous</Icu4cBuildType>
 		<HermitCrabBuildType>bt410</HermitCrabBuildType>
 		<HermitCrabBuildTag>fw-8.3.tcbuildtag</HermitCrabBuildTag>
 		<DownloadsSilOrgDownloadUrl>http://downloads.sil.org/BuildDlls/FW8.1</DownloadsSilOrgDownloadUrl>

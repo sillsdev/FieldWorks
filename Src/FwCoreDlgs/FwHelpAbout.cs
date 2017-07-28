@@ -9,6 +9,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Windows.Forms;
+using SIL.Acknowledgements;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Utils;
 
@@ -31,13 +32,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private string m_sAvailableDiskSpaceFmt;
 		private string m_sProdDate = string.Empty;
 		private Label lblName;
-		private Label lblCopyright;
 		private Label edtAvailableDiskSpace;
 		private Label edtAvailableMemory;
 		private Label lblAppVersion;
 		private Label lblAvailableDiskSpace;
 		private Label lblAvailableMemory;
 		private Label lblFwVersion;
+		private TextBox txtCopyright;
 		private LinkLabel m_systemMonitorLink;
 
 		/// <summary>The assembly of the product-specific EXE (e.g., TE.exe or FLEx.exe).
@@ -77,7 +78,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				lblAvailableDiskSpace.Visible = false;
 				edtAvailableDiskSpace.Visible = false;
 
-				m_systemMonitorLink = new LinkLabel {
+				m_systemMonitorLink = new LinkLabel
+				{
 					Text = FwCoreDlgs.kstidMemoryDiskUsageInformation,
 					Visible = true,
 					Name = "systemMonitorLink",
@@ -94,16 +96,19 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				int oldHeight = this.Height;
 				this.Height += 200;
 				var packageVersionLabel = new Label { Text = "Package versions:", Top = oldHeight - 20, Width = this.Width - 10 };
-				var versionInformation = new TextBox { 	Height = 200 - 30,
-														Top = oldHeight,
-														Multiline = true,
-														ReadOnly = true,
-														Width = this.Width - 10,
-														ScrollBars = ScrollBars.Vertical };
+				var versionInformation = new TextBox
+				{
+					Height = 200 - 30,
+					Top = oldHeight,
+					Multiline = true,
+					ReadOnly = true,
+					Width = this.Width - 10,
+					ScrollBars = ScrollBars.Vertical
+				};
 				this.Controls.Add(packageVersionLabel);
 				this.Controls.Add(versionInformation);
 
-				foreach(var info in LinuxPackageUtils.FindInstalledPackages("fieldworks")
+				foreach (var info in LinuxPackageUtils.FindInstalledPackages("fieldworks")
 					.Concat<KeyValuePair<string, string>>(LinuxPackageUtils.FindInstalledPackages("fieldworks-applications"))
 					.Concat<KeyValuePair<string, string>>(LinuxPackageUtils.FindInstalledPackages("fieldworks-enc-converters"))
 					.Concat<KeyValuePair<string, string>>(LinuxPackageUtils.FindInstalledPackages("flexbridge"))
@@ -136,21 +141,21 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// Clean up any resources being used.
 		/// </summary>
 		/// ----------------------------------------------------------------------------------------
-		protected override void Dispose( bool disposing )
+		protected override void Dispose(bool disposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
 				return;
 
-			if( disposing )
+			if (disposing)
 			{
-				if(components != null)
+				if (components != null)
 				{
 					components.Dispose();
 				}
 			}
-			base.Dispose( disposing );
+			base.Dispose(disposing);
 		}
 		#endregion
 
@@ -170,95 +175,99 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.lblAvailableDiskSpace = new System.Windows.Forms.Label();
 			this.lblAvailableMemory = new System.Windows.Forms.Label();
 			this.lblName = new System.Windows.Forms.Label();
-			this.lblCopyright = new System.Windows.Forms.Label();
 			this.edtAvailableDiskSpace = new System.Windows.Forms.Label();
 			this.edtAvailableMemory = new System.Windows.Forms.Label();
 			this.lblAppVersion = new System.Windows.Forms.Label();
 			this.lblFwVersion = new System.Windows.Forms.Label();
+			this.txtCopyright = new System.Windows.Forms.TextBox();
 			buttonOk = new System.Windows.Forms.Button();
 			lblSILFieldWorks1 = new System.Windows.Forms.Label();
 			fieldWorksIcon = new System.Windows.Forms.PictureBox();
 			m_toolTip = new System.Windows.Forms.ToolTip(this.components);
 			((System.ComponentModel.ISupportInitialize)(fieldWorksIcon)).BeginInit();
 			this.SuspendLayout();
-			//
+			// 
 			// buttonOk
-			//
+			// 
 			buttonOk.BackColor = System.Drawing.SystemColors.Control;
 			buttonOk.DialogResult = System.Windows.Forms.DialogResult.OK;
 			resources.ApplyResources(buttonOk, "buttonOk");
 			buttonOk.Name = "buttonOk";
 			m_toolTip.SetToolTip(buttonOk, resources.GetString("buttonOk.ToolTip"));
 			buttonOk.UseVisualStyleBackColor = true;
-			//
+			// 
 			// lblSILFieldWorks1
-			//
+			// 
 			resources.ApplyResources(lblSILFieldWorks1, "lblSILFieldWorks1");
 			lblSILFieldWorks1.Name = "lblSILFieldWorks1";
-			//
+			// 
 			// fieldWorksIcon
-			//
+			// 
 			resources.ApplyResources(fieldWorksIcon, "fieldWorksIcon");
 			fieldWorksIcon.Name = "fieldWorksIcon";
 			fieldWorksIcon.TabStop = false;
-			//
+			// 
 			// m_toolTip
-			//
+			// 
 			m_toolTip.AutomaticDelay = 100;
 			m_toolTip.AutoPopDelay = 1000;
 			m_toolTip.InitialDelay = 100;
 			m_toolTip.ReshowDelay = 100;
-			//
+			// 
 			// lblAvailableDiskSpace
-			//
+			// 
 			resources.ApplyResources(this.lblAvailableDiskSpace, "lblAvailableDiskSpace");
 			this.lblAvailableDiskSpace.Name = "lblAvailableDiskSpace";
-			//
+			// 
 			// lblAvailableMemory
-			//
+			// 
 			resources.ApplyResources(this.lblAvailableMemory, "lblAvailableMemory");
 			this.lblAvailableMemory.Name = "lblAvailableMemory";
-			//
+			// 
 			// lblName
-			//
+			// 
 			resources.ApplyResources(this.lblName, "lblName");
 			this.lblName.Name = "lblName";
-			//
-			// lblCopyright
-			//
-			resources.ApplyResources(this.lblCopyright, "lblCopyright");
-			this.lblCopyright.Name = "lblCopyright";
-			//
+			// 
 			// edtAvailableDiskSpace
-			//
+			// 
 			this.edtAvailableDiskSpace.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
 			resources.ApplyResources(this.edtAvailableDiskSpace, "edtAvailableDiskSpace");
 			this.edtAvailableDiskSpace.Name = "edtAvailableDiskSpace";
-			//
+			// 
 			// edtAvailableMemory
-			//
+			// 
 			this.edtAvailableMemory.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
 			resources.ApplyResources(this.edtAvailableMemory, "edtAvailableMemory");
 			this.edtAvailableMemory.Name = "edtAvailableMemory";
-			//
+			// 
 			// lblAppVersion
-			//
+			// 
 			resources.ApplyResources(this.lblAppVersion, "lblAppVersion");
 			this.lblAppVersion.Name = "lblAppVersion";
-			//
+			// 
 			// lblFwVersion
-			//
+			// 
 			resources.ApplyResources(this.lblFwVersion, "lblFwVersion");
 			this.lblFwVersion.Name = "lblFwVersion";
-			//
+			// 
+			// txtCopyright
+			// 
+			this.txtCopyright.BackColor = System.Drawing.Color.White;
+			this.txtCopyright.Cursor = System.Windows.Forms.Cursors.SizeAll;
+			resources.ApplyResources(this.txtCopyright, "txtCopyright");
+			this.txtCopyright.Name = "txtCopyright";
+			this.txtCopyright.ReadOnly = true;
+			this.txtCopyright.TabStop = false;
+			// 
 			// FwHelpAbout
-			//
+			// 
 			this.AcceptButton = buttonOk;
 			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.SystemColors.Window;
 			this.CancelButton = buttonOk;
-			this.Controls.Add(this.lblCopyright);
+			this.Controls.Add(this.txtCopyright);
 			this.Controls.Add(this.lblFwVersion);
 			this.Controls.Add(this.lblAppVersion);
 			this.Controls.Add(this.edtAvailableMemory);
@@ -276,6 +285,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.ShowInTaskbar = false;
 			((System.ComponentModel.ISupportInitialize)(fieldWorksIcon)).EndInit();
 			this.ResumeLayout(false);
+			this.PerformLayout();
 
 		}
 		#endregion
@@ -298,7 +308,17 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				lblName.Text = viProvider.ProductName;
 				lblAppVersion.Text = viProvider.ApplicationVersion;
 				lblFwVersion.Text = viProvider.MajorVersion;
-				lblCopyright.Text = viProvider.CopyrightString + Environment.NewLine + viProvider.LicenseString + Environment.NewLine + viProvider.LicenseURL;
+
+				// List the copyright information
+				Dictionary<string, AcknowledgementAttribute> acknowlegements = AcknowledgementsProvider.CollectAcknowledgements();
+				var list = acknowlegements.Keys.ToList();
+				list.Sort();
+				string text = viProvider.CopyrightString + Environment.NewLine + viProvider.LicenseString + Environment.NewLine + viProvider.LicenseURL;
+				foreach (var key in list)
+				{
+					text += "\r\n" + "\r\n" + key + "\r\n" + acknowlegements[key].Copyright + " " + acknowlegements[key].Url + " " + acknowlegements[key].LicenseUrl;
+				}
+				txtCopyright.Text = text;
 
 				// Set the title bar text
 				Text = string.Format(m_sTitleFmt, viProvider.ProductName);
