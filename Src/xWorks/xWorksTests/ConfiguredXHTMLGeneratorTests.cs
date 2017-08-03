@@ -5703,7 +5703,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateXHTMLForEntry_MultiStringDefinition_GeneratesMultilingualSpans()
 		{
-			var definitionNode	 = new ConfigurableDictionaryNode
+			var definitionNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "Definition",
 				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "analysis" })
@@ -5993,6 +5993,278 @@ namespace SIL.FieldWorks.XWorks
 				"//span[@class='lexemeformoa']/span/a[@class='en-Zxxx-x-audio' and contains(@onclick,'play()')]";
 			AssertThatXmlIn.String(result)
 				.HasSpecifiedNumberOfMatchesForXpath(linkTagwithOnClick, 1);
+		}
+
+		/// <summary>
+		/// Tests that during a web export the .wav file is automatically converted into an .mp3 file
+		/// and saved in the destination file if the file does not already exist.
+		/// </summary>
+		/// <param name="isWebExport"> bool indicating if a web export is in progress </param>
+		[Test]
+		[TestCase(true)] //Is WebExport so the copied .wav file should be converted to an .mp3 file
+		[TestCase(false)] //Is not a WebExport so the copied .wav file should remain a .wav file
+		public void GenerateXHTMLForEntry_AudioConversionDestinationDoesNotExist(bool isWebExport)
+		{
+			var pronunciationsNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "PronunciationsOS",
+				CSSClassNameOverride = "pronunciations",
+				Children = new List<ConfigurableDictionaryNode> { CreateMediaNode() }
+			};
+			var variantPronunciationsNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "OwningEntry",
+				SubField = "PronunciationsOS",
+				CSSClassNameOverride = "variantpronunciations",
+				Children = new List<ConfigurableDictionaryNode> { CreateMediaNode() }
+			};
+			var variantFormTypeNameNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Name",
+				IsEnabled = true,
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "analysis" })
+			};
+			var variantFormTypeNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "VariantEntryTypesRS",
+				CSSClassNameOverride = "variantentrytypes",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { variantFormTypeNameNode },
+			};
+			var variantFormsNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "VariantFormEntryBackRefs",
+				DictionaryNodeOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Variant),
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { variantFormTypeNode, variantPronunciationsNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { pronunciationsNode, variantFormsNode },
+				FieldDescription = "LexEntry"
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+			var entry = CreateInterestingLexEntry(Cache);
+			var variant = CreateInterestingLexEntry(Cache);
+			CreateVariantForm(Cache, entry, variant, "Spelling Variant"); // we need a real Variant Type to pass the list options test
+																		  // Create a folder in the project to hold the media files
+			var folder = Cache.ServiceLocator.GetInstance<ICmFolderFactory>().Create();
+			Cache.LangProject.MediaOC.Add(folder);
+			// Create and fill in the media files
+			var pron1 = Cache.ServiceLocator.GetInstance<ILexPronunciationFactory>().Create();
+			entry.PronunciationsOS.Add(pron1);
+			var fileName1 = "abu2.wav";
+			CreateTestMediaFile(Cache, fileName1, folder, pron1);
+
+			// Use directories in using block so that they will be deleted even if the test fails
+			using (var expectedMediaFolder = new TemporaryFolder(Path.GetRandomFileName()))
+			{
+				string expectedMediaFolderPath = expectedMediaFolder.Path;
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_propertyTable, true, true, expectedMediaFolderPath, false, isWebExport);
+				settings.Cache.LangProject.LinkedFilesRootDir = expectedMediaFolderPath;
+
+				// create a temp directory and copy a .wav file into it
+				string destination = Path.Combine(expectedMediaFolderPath, "AudioVisual");
+				Directory.CreateDirectory(destination);
+				string path = Path.Combine(FwDirectoryFinder.SourceDirectory, "xWorks/xWorksTests/TestData/AudioFiles/abu2.wav");
+				File.Copy(path, Path.Combine(destination, Path.GetFileName(path)), true);
+
+				//SUT
+				var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, settings);
+				if (isWebExport)
+				{
+					Assert.That(result, Contains.Substring("abu2.mp3"), "The automatic audio conversion in the CopyFileSafely method failed");
+				}
+				else
+				{
+					Assert.That(result, Contains.Substring("abu2.wav"), "ConfiguredXHTMLGenerator.GenerateXHTMLForEntry returned a string that did not include abu2.wav");
+				}
+			}
+		}
+
+		/// <summary>
+		/// Tests that If an mp3 file with the same name as the destination exists and it has the contents the converted form
+		/// of the .wav file should have the wav file is not converted or copied. This would only happen during a web export.
+		/// </summary>
+		/// <param name="isWebExport"> bool indicating if a web export is in progress </param>
+		[Test]
+		[TestCase(true)] //Is WebExport so the copied .wav file should be converted to an .mp3 file
+		[TestCase(false)] //Is not a WebExport so the copied .wav file should remain a .wav file
+		public void GenerateXHTMLForEntry_AudioConversionIdenticalFileExists(bool isWebExport)
+		{
+			var pronunciationsNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "PronunciationsOS",
+				CSSClassNameOverride = "pronunciations",
+				Children = new List<ConfigurableDictionaryNode> { CreateMediaNode() }
+			};
+			var variantPronunciationsNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "OwningEntry",
+				SubField = "PronunciationsOS",
+				CSSClassNameOverride = "variantpronunciations",
+				Children = new List<ConfigurableDictionaryNode> { CreateMediaNode() }
+			};
+			var variantFormTypeNameNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Name",
+				IsEnabled = true,
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "analysis" })
+			};
+			var variantFormTypeNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "VariantEntryTypesRS",
+				CSSClassNameOverride = "variantentrytypes",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { variantFormTypeNameNode },
+			};
+			var variantFormsNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "VariantFormEntryBackRefs",
+				DictionaryNodeOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Variant),
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { variantFormTypeNode, variantPronunciationsNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { pronunciationsNode, variantFormsNode },
+				FieldDescription = "LexEntry"
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+			var entry = CreateInterestingLexEntry(Cache);
+			var variant = CreateInterestingLexEntry(Cache);
+			CreateVariantForm(Cache, entry, variant, "Spelling Variant"); // we need a real Variant Type to pass the list options test
+			// Create a folder in the project to hold the media files
+			var folder = Cache.ServiceLocator.GetInstance<ICmFolderFactory>().Create();
+			Cache.LangProject.MediaOC.Add(folder);
+			// Create and fill in the media files
+			var pron1 = Cache.ServiceLocator.GetInstance<ILexPronunciationFactory>().Create();
+			entry.PronunciationsOS.Add(pron1);
+			var fileName1 = "abu2.wav";
+			CreateTestMediaFile(Cache, fileName1, folder, pron1);
+
+			// Use directories in using block so that they will be deleted even if the test fails
+			using (var expectedMediaFolder = new TemporaryFolder(Path.GetRandomFileName()))
+			{
+				string expectedMediaFolderPath = expectedMediaFolder.Path;
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_propertyTable, true, true, expectedMediaFolderPath, false, isWebExport);
+				settings.Cache.LangProject.LinkedFilesRootDir = expectedMediaFolderPath;
+				string destination = Path.Combine(expectedMediaFolderPath, "AudioVisual");
+
+				// create a temp directory and copy a .wav file into it
+				Directory.CreateDirectory(destination);
+				string path = Path.Combine(FwDirectoryFinder.SourceDirectory, "xWorks/xWorksTests/TestData/AudioFiles/abu2.wav");
+				if (isWebExport)
+					WavConverter.WavToMp3(path, Path.Combine(destination, "abu2.mp3"));
+				File.Copy(path, Path.Combine(destination, Path.GetFileName(path)), true);
+
+				//SUT
+				var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, settings);
+				if (isWebExport)
+				{
+					Assert.That(result, Contains.Substring("abu2.mp3"), "The automatic audio conversion in the CopyFileSafely method failed");
+				}
+				else
+				{
+					Assert.That(result, Contains.Substring("abu2.wav"), "ConfiguredXHTMLGenerator.GenerateXHTMLForEntry returned a string that did not include abu2.wav");
+				}
+			}
+		}
+
+		/// <summary>
+		/// Tests that If an mp3 file with the same name as the destination file exists, but has different contents than the converted
+		/// form of the .wav file should have, then the wav file is converted and saved under a different name. This would only happen
+		/// during a web export.
+		/// </summary>
+		/// <param name="isWebExport"> bool indicating if a web export is in progress </param>
+		[Test]
+		[TestCase(true)] //Is WebExport so the copied .wav file should be converted to an .mp3 file
+		[TestCase(false)] //Is not a WebExport so the copied .wav file should remain a .wav file
+		public void GenerateXHTMLForEntry_AudioConversionNonIdenticalFileExists(bool isWebExport)
+		{
+			var pronunciationsNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "PronunciationsOS",
+				CSSClassNameOverride = "pronunciations",
+				Children = new List<ConfigurableDictionaryNode> { CreateMediaNode() }
+			};
+			var variantPronunciationsNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "OwningEntry",
+				SubField = "PronunciationsOS",
+				CSSClassNameOverride = "variantpronunciations",
+				Children = new List<ConfigurableDictionaryNode> { CreateMediaNode() }
+			};
+			var variantFormTypeNameNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Name",
+				IsEnabled = true,
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "analysis" })
+			};
+			var variantFormTypeNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "VariantEntryTypesRS",
+				CSSClassNameOverride = "variantentrytypes",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { variantFormTypeNameNode },
+			};
+			var variantFormsNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "VariantFormEntryBackRefs",
+				DictionaryNodeOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Variant),
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { variantFormTypeNode, variantPronunciationsNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { pronunciationsNode, variantFormsNode },
+				FieldDescription = "LexEntry"
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+			var entry = CreateInterestingLexEntry(Cache);
+			var variant = CreateInterestingLexEntry(Cache);
+			CreateVariantForm(Cache, entry, variant, "Spelling Variant"); // we need a real Variant Type to pass the list options test
+			// Create a folder in the project to hold the media files
+			var folder = Cache.ServiceLocator.GetInstance<ICmFolderFactory>().Create();
+			Cache.LangProject.MediaOC.Add(folder);
+			// Create and fill in the media files
+			var pron1 = Cache.ServiceLocator.GetInstance<ILexPronunciationFactory>().Create();
+			entry.PronunciationsOS.Add(pron1);
+			var fileName1 = "abu2.wav";
+			CreateTestMediaFile(Cache, fileName1, folder, pron1);
+
+			// Use directories in using block so that they will be deleted even if the test fails
+			using (var expectedMediaFolder = new TemporaryFolder(Path.GetRandomFileName()))
+			{
+				string expectedMediaFolderPath = expectedMediaFolder.Path;
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_propertyTable, true, true, expectedMediaFolderPath, false, isWebExport);
+				settings.Cache.LangProject.LinkedFilesRootDir = expectedMediaFolderPath;
+				string destination = Path.Combine(expectedMediaFolderPath, "AudioVisual");
+
+				// create a temp directory and copy a .wav file into it
+				Directory.CreateDirectory(destination);
+				string path = Path.Combine(FwDirectoryFinder.SourceDirectory, "xWorks/xWorksTests/TestData/AudioFiles/abu2.wav");
+				File.Copy(path, Path.Combine(destination, Path.GetFileName(path)), true);
+
+				// create a fake file with the same name as the destination file but different content than the destination file should have after a conversion
+				if (isWebExport)
+				{
+					string fakePath = Path.Combine(destination, "abu2.mp3");
+					byte[] bytes = { 177, 209, 137, 61, 204, 127, 103, 88 };
+					File.WriteAllBytes(fakePath, bytes);
+				}
+
+				//SUT
+				var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, settings);
+				if (isWebExport)
+				{
+					Assert.That(result, Contains.Substring("abu21.mp3"), "The automatic audio conversion code in the CopyFileSafely method did not change the file name as it should have since a file with the same name but different contents already exists");
+				}
+				else
+				{
+					Assert.That(result, Contains.Substring("abu2.wav"), "ConfiguredXHTMLGenerator.GenerateXHTMLForEntry returned a string that did not include abu2.wav");
+				}
+			}
 		}
 
 		[Test]

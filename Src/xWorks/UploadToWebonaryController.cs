@@ -330,7 +330,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var supportedFileExtensions = new List<string>
 			{
-				".xhtml", ".css", ".html", ".htm", ".json", ".xml",
+				".xhtml", ".css", ".html", ".htm", ".json", ".xml", ".wav",
 				".jpg", ".jpeg", ".gif", ".png", ".mp3", ".mp4", ".3gp"
 			};
 			return supportedFileExtensions.Any(path.ToLowerInvariant().EndsWith);
