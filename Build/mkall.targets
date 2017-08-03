@@ -281,7 +281,7 @@
 		<ChorusBuildType Condition="'$(OS)'=='Windows_NT'">bt2</ChorusBuildType>
 		<!-- bt323 is the master branch (strong name) build of Chorus for Linux development. Update when appropriate. -->
 		<ChorusBuildType Condition="'$(OS)'=='Unix'">bt323</ChorusBuildType>
-		<!-- bt223 is the master branch build of Palaso for Windows development. Update when appropriate. -->
+		<!-- Libpalaso_PalasoWinmasterContinuous is the master branch build of Palaso for Windows development. Update when appropriate. -->
 		<PalasoBuildType Condition="'$(OS)'=='Windows_NT'">Libpalaso_PalasoWin32masterContinuous</PalasoBuildType>
 		<!-- bt322 is the master branch build of Palaso for Linux development. Update when appropriate. -->
 		<PalasoBuildType Condition="'$(OS)'=='Unix'">Libpalaso_PalasoLinux64masterContinuous</PalasoBuildType>
@@ -580,6 +580,9 @@
 			<NuGottenFiles Include="$(GeckoDir)/build/Geckofx-Core.dll.config" Condition="'$(OS)'!='Windows_NT'"/>
 			<NuGottenFiles Include="$(GeckoDir)/content/**/*.*"/>
 			<NuGottenFiles Include="$(fwrt)/packages/DotNetZip.1.10.1/lib/net20/*.*"/>
+			<NuGottenFiles Include="$(fwrt)/packages/NAudio.1.7.3/lib/net35/NAudio.dll"/>
+			<NuGottenFiles Include="$(fwrt)/packages/NAudio.Lame.1.0.4/lib/net20/NAudio.Lame.dll"/>
+			<NuGottenFiles Include="$(fwrt)/packages/NAudio.Lame.1.0.4/content/libmp3lame.$(Architecture).dll"/>
 		</ItemGroup>
 		<Copy SourceFiles="@(NuGottenFiles)" DestinationFolder="$(dir-outputBase)/%(RecursiveDir)"
 			SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
