@@ -50,7 +50,7 @@ template<class T, class H, class Eq>
 	m_ihsndFirstFree = FreeListIdx(-1);
 	m_chsndFree = 0;
 
-#if defined(_WIN32) || defined(_M_X64)
+#if WIN32
 	Set<T,H,Eq>::iterator it;
 #else // !WIN32
 	iterator it;

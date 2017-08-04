@@ -243,7 +243,7 @@ STDMETHODIMP VwPrintContext::GetMargins(int * pdxpLeft, int * pdxpRight, int * p
 STDMETHODIMP VwPrintContext::OpenPage()
 {
 	BEGIN_COM_METHOD;
-#if defined(WIN32) || defined(WIN64)
+#if WIN32
 	// Inform the driver that the application is about to begin
 	// sending data.
 	if (!m_qzvg)
@@ -271,7 +271,7 @@ STDMETHODIMP VwPrintContext::OpenPage()
 STDMETHODIMP VwPrintContext::ClosePage()
 {
 	BEGIN_COM_METHOD;
-#if defined(WIN32) || defined(WIN64)
+#if WIN32
 	if (!m_qzvg)
 		return E_UNEXPECTED;
 
@@ -298,7 +298,7 @@ STDMETHODIMP VwPrintContext::ClosePage()
 STDMETHODIMP VwPrintContext::OpenDoc()
 {
 	BEGIN_COM_METHOD;
-#if defined(WIN32) || defined(WIN64)
+#if WIN32
 	// Begin a print job by calling the StartDoc function.
 	if (!m_qzvg)
 		return E_UNEXPECTED;
@@ -337,7 +337,7 @@ STDMETHODIMP VwPrintContext::OpenDoc()
 STDMETHODIMP VwPrintContext::CloseDoc()
 {
 	BEGIN_COM_METHOD;
-#if defined(WIN32) || defined(WIN64)
+#if WIN32
 	if (!m_qzvg)
 		return E_UNEXPECTED;
 
@@ -492,7 +492,7 @@ STDMETHODIMP VwPrintContext::RequestAbort()
 STDMETHODIMP VwPrintContext::AbortDoc()
 {
 	BEGIN_COM_METHOD;
-#if defined(WIN32) || defined(WIN64)
+#if WIN32
 	if (!m_qzvg)
 		return E_UNEXPECTED;
 

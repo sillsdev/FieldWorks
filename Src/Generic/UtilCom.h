@@ -46,12 +46,12 @@ inline bool operator >= (REFGUID guid1, REFGUID guid2)
 	Smart pointers.
 ***********************************************************************************************/
 
-#if defined(_WIN32) || defined(_M_X64)
+#ifdef WIN32
 #include <comutil.h>
 #endif
 // This is our replacement for <comip.h>
 #include "ComSmartPtr.h"
-#if defined(_WIN32) || defined(_M_X64)
+#ifdef WIN32
 #include <comdef.h>
 #else
 #include "COMPointers.h"
@@ -261,7 +261,7 @@ inline BSTR AsciiToBstr(const char * pch)
 {
 	if (pch == NULL)
 		return NULL;
-	int cch = (int)strlen(pch);
+	int cch = strlen(pch);
 	BSTR bstr = ::SysAllocStringLen(NULL, cch);
 	if (!bstr)
 		ThrowHr(WarnHr(E_OUTOFMEMORY), L"AsciiToBstr");
@@ -292,7 +292,7 @@ public:
 	ComBool(void)
 	{
 		AssertPtr(this);
-#if defined(_WIN32) || defined(_M_X64)
+#if WIN32
 		Debug(m_f = (VARIANT_BOOL)0xCCCC);
 #else
 		m_f = 0;
@@ -428,7 +428,7 @@ const wchar * UnicodeHresult(HRESULT hr);
 #define ChkComBstrArgN(bstr) \
 	AssertBstrN(bstr); \
 
-#if defined(_WIN32) || defined(_M_X64)
+#if WIN32
 
 /*----------------------------------------------------------------------------------------------
 	This class provides an IDataObject wrapper around a simple string.  This facilitates

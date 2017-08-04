@@ -17,7 +17,7 @@ Description:
 
 #include "OleStringLiteral.h"
 
-#if !defined(_WIN32) && !defined(_M_X64)
+#ifndef WIN32
 // TODO Review - Assuming the MSVC++ compiler adds a forward declare ref when "friend class ParaBuilder;" is used. Gcc doesn't do this.
 class ParaBuilder;
 #endif

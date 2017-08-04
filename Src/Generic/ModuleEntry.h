@@ -126,7 +126,7 @@ protected:
 	static ModuleEntry * s_pmeFirst;
 
 	// Cached value of the module pathname.
-#if defined(_WIN32) || defined(_M_X64)
+#if WIN32
 	static StrAppBufPath ModuleEntry::s_strbpPath;
 #else
 	static TCHAR s_strbpPath[MAX_PATH];

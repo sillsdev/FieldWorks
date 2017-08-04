@@ -131,7 +131,7 @@ namespace SIL.FieldWorks.Build.Tasks
 				XmlElement assemblyIdentity = _doc.CreateElement("assemblyIdentity", UrnAsmv1);
 				assemblyIdentity.SetAttribute("name", assemblyName);
 				assemblyIdentity.SetAttribute("version", assemblyVersion);
-				assemblyIdentity.SetAttribute("type", "Win64");
+				assemblyIdentity.SetAttribute("type", "win32");
 
 				oldChild = elem.SelectSingleNode("asmv1:assemblyIdentity", _nsManager);
 				if (oldChild != null)

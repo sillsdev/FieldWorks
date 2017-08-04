@@ -148,7 +148,7 @@ HRESULT HandleDefaultException(REFGUID iid, DummyFactory * pfact);
 // Call this to report detecting an internal error. It may be an error in the module where
 // the call is made (E_UNEXPECTED) or the calling module (E_POINTER, E_INVALIDARG).
 // Implementations of these are in StackDumper.cpp
-#if defined(_WIN32) || defined(_M_X64)
+#ifdef WIN32
 void ThrowInternalError(HRESULT hr, const wchar* pszMsg = NULL, int hHelpId = 0, IErrorInfo* pErrInfo = NULL);
 #else // WIN32
 void ThrowInternalError(HRESULT hr, const wchar_t* pszMsg, int hHelpId = 0, IErrorInfo* pErrInfo = NULL);
@@ -161,7 +161,7 @@ void ThrowBuiltInError(const char * pchFnName);
 // Throw an HRESULT; message text is in resource hid, which also serves as help file ID.
 void ThrowNice(HRESULT hr, int hid);
 
-#if defined(_WIN32) || defined(_M_X64)
+#ifdef WIN32
 void ThrowHr(HRESULT hr, const wchar * pszMsg = NULL, int hHelpId = 0, IErrorInfo* pErrInfo = NULL); // now in StackDumper.h
 #else
 template<class ZChar>
@@ -182,7 +182,7 @@ void ThrowHrEx(HRESULT hr, int hHelpId = 0);
 // NOTE: If this gets called inside of a COM method (surrounded by BEGIN/END_COM_METHOD),
 // the END_COM_METHOD will catch the exception we throw here. Because we already added a
 // "call stack" it will just set up the error info and return the hr value.
-#if defined(_WIN32) || defined(_M_X64)
+#if WIN32
 #define ReturnHr(hr) {WarnHr(hr); throw ThrowableSd((hr), NULL, 0, " ");}
 #else
 #define ReturnHr(hr) {WarnHr(hr); throw ThrowableSd((hr), static_cast<const char*>(NULL), 0, " ");}

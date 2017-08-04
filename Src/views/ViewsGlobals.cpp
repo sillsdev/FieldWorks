@@ -18,7 +18,7 @@ static ViewsGlobals g_views;
 
 ViewsGlobals::ViewsGlobals()
 {
-#if defined(WIN32) || defined(WIN64)
+#ifdef WIN32
 	m_hmboxacc = NewObj BoxAccessorMap;
 #endif
 
@@ -33,7 +33,7 @@ ViewsGlobals::ViewsGlobals()
 
 ViewsGlobals::~ViewsGlobals()
 {
-#if defined(WIN32) || defined(WIN64)
+#ifdef WIN32
 	delete m_hmboxacc;
 #endif
 
@@ -50,7 +50,7 @@ ViewsGlobals::~ViewsGlobals()
 	g_tph = NULL;
 }
 
-#if defined(WIN32) || defined(WIN64)
+#ifdef WIN32
 // Storage for static members
 BoxAccessorMap *ViewsGlobals::m_hmboxacc;
 #endif

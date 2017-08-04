@@ -13,7 +13,7 @@ This software is licensed under the LGPL, version 2.1 or later
 void RedirectRegistry()
 {
 	// nothing to do on Linux
-#if defined(_WIN32) || defined(_M_X64)
+#if WIN32
 	wchar_t* subkey;
 	size_t requiredSize;
 

@@ -1052,7 +1052,7 @@ STDMETHODIMP VwTextStore::RequestSupportedAttrs(DWORD dwFlags, ULONG cFilterAttr
 	// some Japanese text, then clicking in text in another language (or another window
 	// or application) and back in the Japanese, the Language bar is in Japanese characters
 	// and does not work; nor does the IME.
-#if defined(WIN32) || defined(WIN64)
+#if WIN32
 	static const GUID Guid_Japanese_Bug =
 		{ 0x372e0716, 0x974f, 0x40ac, { 0xa0, 0x88, 0x08, 0xcd, 0xc9, 0x2e, 0xbf, 0xbc } };
 #else
@@ -1170,7 +1170,7 @@ STDMETHODIMP VwTextStore::GetActiveView(TsViewCookie * pvcView)
 	if (!s_qttmThreadMgr)
 		ThrowHr(WarnHr(E_UNEXPECTED));
 	Assert(sizeof(TsViewCookie) >= sizeof(VwTextStore *));
-	*pvcView = (TsViewCookie)(uintptr_t)(this);
+	*pvcView = reinterpret_cast<TsViewCookie>(this);
 
 #ifdef TRACING_TSF
 	StrAnsi sta;
@@ -1251,7 +1251,7 @@ STDMETHODIMP VwTextStore::GetTextExt(TsViewCookie vcView, LONG acpStart, LONG ac
 	HDC hdc;
 	CheckHr(qvg32->GetDeviceContext(&hdc));
 	HWND hwnd = ::WindowFromDC(hdc);
-	if ((TsViewCookie)(uintptr_t)(this) != vcView)
+	if (reinterpret_cast<TsViewCookie>(this) != vcView)
 		ThrowHr(WarnHr(E_NOTIMPL)); // Probably another view, but we only support the current.
 
 	Rect rcSel(0,0,0,0); // default if no selection: top left of window.
@@ -1263,7 +1263,7 @@ STDMETHODIMP VwTextStore::GetTextExt(TsViewCookie vcView, LONG acpStart, LONG ac
 		CheckHr(qsel->Location(hg.m_qvg, hg.m_rcSrcRoot, hg.m_rcDstRoot, &rcSel,
 			&rcSecondary, &fSplit, &fEBAIgnored));
 	}
-#if defined(WIN32) || defined(WIN64)
+#if WIN32
 	rcSel.ClientToScreen(hwnd);
 #else
 	// TODO-Linux: Awaiting VwTextStore rewrite for Linux
@@ -1312,7 +1312,7 @@ STDMETHODIMP VwTextStore::GetWnd(TsViewCookie vcView, HWND * phwnd)
 		ThrowHr(WarnHr(E_UNEXPECTED));
 
 	Assert(sizeof(TsViewCookie) >= sizeof(VwTextStore *));
-	if ((TsViewCookie)(uintptr_t)(this) != vcView)
+	if (reinterpret_cast<TsViewCookie>(this) != vcView)
 		ThrowHr(WarnHr(E_INVALIDARG));
 	HoldScreenGraphics hg(m_qrootb);
 	IVwGraphicsWin32Ptr qvg32;
@@ -2224,7 +2224,7 @@ COLORREF InterpretTfDaColor(TF_DA_COLOR tdc, COLORREF current)
 {
 	if (tdc.type == TF_CT_SYSCOLOR)
 	{
-#if defined(WIN32) || defined(WIN64)
+#if WIN32
 		return GetSysColor(tdc.nIndex);
 #else //WIN32
 		if(tdc.nIndex == COLOR_3DFACE)

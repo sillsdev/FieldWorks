@@ -29,7 +29,7 @@ DEFINE_THIS_FILE
 #undef Tracing_KeybdSelection
 //#define Tracing_KeybdSelection
 
-#if !defined(_WIN32) && !defined(_M_X64)
+#ifndef WIN32
 const CLSID CLSID_ViewInputManager = {0x830BAF1F, 0x6F84, 0x46EF, {0xB6, 0x3E, 0x3C, 0x1B, 0xFD, 0xF9, 0xE8, 0x3E}};
 #endif
 
@@ -72,7 +72,7 @@ void VwRootBox::Init()
 	m_ptDpiSrc.y = 96;
 
 #ifdef ENABLE_TSF
-#if defined(WIN32) || defined(WIN64)
+#ifdef WIN32
 	VwTextStorePtr qtxs;
 	qtxs.Attach(NewObj VwTextStore(this));
 	CheckHr(qtxs->QueryInterface(IID_IViewInputMgr, (void**)&m_qvim));
@@ -1316,7 +1316,7 @@ STDMETHODIMP VwRootBox::DeleteRangeIfComplex(IVwGraphics *pvg, ComBool * pfWasCo
 		int cactionsBefore;
 		CheckHr(qah->get_UndoableActionCount(&cactionsBefore));
 		int dummy = -1;
-#if defined(WIN32) || defined(WIN64)
+#if WIN32
 		m_qvwsel->OnTyping(pvg, L"\x7F", 1, kfssNone, &dummy);
 #else
 		static OleStringLiteral str(L"\x7F");
@@ -1364,7 +1364,7 @@ STDMETHODIMP VwRootBox::OnSysChar(int chw)
 // Return true if the registry setting for suppressing clumping is true.
 bool RegistrySuppressClumping()
 {
-#if defined(WIN32) || defined(WIN64)
+#ifdef WIN32
 	RegKey hkey;
 	if(::RegOpenKeyEx(HKEY_CURRENT_USER, L"Software\\SIL\\FieldWorks", 0, KEY_READ, &hkey) != ERROR_SUCCESS)
 		return false;
@@ -2961,7 +2961,7 @@ void VwRootBox::ProcessHeaderSpecials(ITsString * ptss, ITsString ** pptssRet, i
 		do
 		{
 			fMatch = false; // reset each iteration. We only repeat if it is true.
-#if !defined(_WIN32) && !defined(_M_X64)
+#ifndef WIN32
 			static OleStringLiteral page(L"&[page]");
 			const OLECHAR * pchSpecial = u_strstr(pchString, page);
 #else
@@ -2983,7 +2983,7 @@ void VwRootBox::ProcessHeaderSpecials(ITsString * ptss, ITsString ** pptssRet, i
 				{
 					fMatch = true;
 					// ENHANCE (Mac portability): get the date string some portable way...
-#if defined(WIN32) || defined(WIN64)
+#if WIN32
 					TCHAR buf2[200];
 					SYSTEMTIME stim;
 					::GetSystemTime(&stim);
@@ -3011,7 +3011,7 @@ void VwRootBox::ProcessHeaderSpecials(ITsString * ptss, ITsString ** pptssRet, i
 					{
 						fMatch = true;
 						// ENHANCE (Mac portability): get the time string some portable way...
-#if defined(WIN32) || defined(WIN64)
+#if WIN32
 						TCHAR buf2[200];
 						SYSTEMTIME stim;
 						::GetLocalTime(&stim);
@@ -3049,8 +3049,8 @@ void VwRootBox::ProcessHeaderSpecials(ITsString * ptss, ITsString ** pptssRet, i
 				int cchBuf = u_strlen(buf);
 				ITsTextPropsPtr qttp;
 				TsRunInfo tri;
-				int ichSpecial = (int)(pchSpecial - pchString);
-				CheckHr(qtss->FetchRunInfoAt((int)(pchSpecial - pchString), &tri, &qttp));
+				int ichSpecial = pchSpecial - pchString;
+				CheckHr(qtss->FetchRunInfoAt(pchSpecial - pchString, &tri, &qttp));
 				CheckHr(qtsb->ReplaceRgch(ichSpecial, ichSpecial + cchSpecial, buf, cchBuf, qttp));
 				qtss->UnlockText(pchString);
 				pchString = NULL;
@@ -3280,7 +3280,7 @@ STDMETHODIMP VwRootBox::InitializePrinting(IVwPrintContext * pvpc)
 		stu.Format(L"No room to print: left = %d, right = %d, top = %d, bottom = %d "
 			L"width = %d", vpi.m_rcDoc.left, vpi.m_rcDoc.right, vpi.m_rcDoc.top,
 			vpi.m_rcDoc.bottom, dxsAvailWidth);
-#if defined(WIN32) || defined(WIN64)
+#if WIN32
 		::MessageBox(NULL, stu.Chars(), L"Initializing Printing", MB_OK);
 #else
 		// TODO-Linux: I don't think this is even used on Linux.
@@ -3365,7 +3365,7 @@ void VwRootBox::CreatePrintInfo(IVwPrintContext * pvpc, VwPrintInfo & vpi)
 	vpi.m_rcPage.right = right;
 	vpi.m_rcPage.top = top;
 	vpi.m_rcPage.bottom = bottom;
-#if !defined(_WIN32) && !defined(_M_X64)
+#if !WIN32
 	qvg->put_XUnitsPerInch(72);
 	qvg->put_YUnitsPerInch(72);
 #endif
@@ -4717,7 +4717,7 @@ void VwRootBox::Unlock()
 		InvalidateRect(&invalid);
 }
 
-#if defined(WIN32) || defined(WIN64) // In Linux we use a managed implementation
+#ifdef WIN32 // In Linux we use a managed implementation
 //:>********************************************************************************************
 //:>	VwDrawRootBuffered
 //:>********************************************************************************************
@@ -5200,7 +5200,7 @@ STDMETHODIMP VwRootBox::QueryService(REFGUID guidService, REFIID riid, void ** p
 {
 	BEGIN_COM_METHOD;
 	ChkComOutPtr(ppv);
-#if defined(WIN32) || defined(WIN64) // IAccessible not implemented
+#if WIN32 // IAccessible not implemented
 	if (riid == IID_IAccessible)
 	{
 		IDispatchPtr qacc;

@@ -113,7 +113,7 @@ STDMETHODIMP VwSynchronizer::AddRoot(IVwRootBox * prootb)
 	VwRootBoxPtr qrootb;
 
 	// if we have expanded stuff then you can't add another rootbox
-#if defined(WIN32) || defined(WIN64)
+#if WIN32
 	if (m_fStartedExpanding)
 	{
 		ThrowHr(E_UNEXPECTED);

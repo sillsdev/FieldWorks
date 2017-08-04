@@ -52,7 +52,7 @@ public:
 	static bool GetBool(const achar * pszRootKey, const achar * pszSubKey, const achar * pszValue,
 		bool * pfValue);
 
-#if defined(_WIN32) || defined(_M_X64)
+#ifdef WIN32
 	typedef enum
 	{
 		katRead = KEY_READ,

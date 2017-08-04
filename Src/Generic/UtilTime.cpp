@@ -111,7 +111,7 @@ const char * g_rgchsDateBlank[] = { g_rgchBlankFull[0], g_rgchBlankFull[1],
 										   g_rgchBlankFull[2] };
 
 // Global flag to tell if strings have been loaded in from resources:
-#if defined(_WIN32) || defined(_M_X64)
+#if WIN32
 extern bool g_fDoneDateQual = false;
 #else
 bool g_fDoneDateQual = false;
@@ -201,7 +201,7 @@ inline int YearFromDayInPeriod(int day, int * pyday)
 }
 
 
-#if defined(_WIN32) || defined(_M_X64)
+#ifdef WIN32
 /*----------------------------------------------------------------------------------------------
 	This class handles mapping between UTC and local time.
 ----------------------------------------------------------------------------------------------*/
@@ -451,7 +451,7 @@ void SilTime::GetTimeInfo(SilTimeInfo * psti, bool fUtc) const
 	int yday;
 	int64 msec = m_msec;
 
-#if defined(_WIN32) || defined(_M_X64)
+#if WIN32
 	if (!fUtc)
 		msec = g_tmm.ToLcl(msec);
 #else // WIN32
@@ -544,7 +544,7 @@ void SilTime::SetTimeInfo(const SilTimeInfo & sti, bool fUtc)
 		sti.hour * (int64)kmsecPerHour + sti.min * (int64)kmsecPerMin +
 		sti.sec * (int64)kmsecPerSec + sti.msec;
 
-#if defined(_WIN32) || defined(_M_X64)
+#if WIN32
 	if (!fUtc)
 		m_msec = g_tmm.ToUtc(m_msec);
 #else // WIN32
@@ -573,7 +573,7 @@ void SilTime::SetTimeInfo(const SilTimeInfo & sti, bool fUtc)
 ----------------------------------------------------------------------------------------------*/
 int SilTime::TimeZoneOffset(void) const
 {
-#if defined(_WIN32) || defined(_M_X64)
+#if WIN32
 		return (int)((g_tmm.ToLcl(m_msec) - m_msec) / kmsecPerMin);
 #else
 	time_t t;
@@ -596,7 +596,7 @@ double SilTime::VarTime(void) const
 	int64 msec;
 
 	// Convert to local time.
-#if defined(_WIN32) || defined(_M_X64)
+#if WIN32
 	msec = g_tmm.ToLcl(m_msec);
 #else // WIN32
 	msec = 0;
@@ -635,7 +635,7 @@ void SilTime::SetToVarTime(double vtim)
 	// Get the local time value.
 	dbl = (dbl - kvtimJanuary1st1601) * kmsecPerDay;
 
-#if defined(_WIN32) || defined(_M_X64)
+#if WIN32
 	m_msec = g_tmm.ToUtc((int64)dbl);
 #else // WIN32
 	// TODO-Linux: not called by views

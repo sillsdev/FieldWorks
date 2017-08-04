@@ -27,7 +27,7 @@ namespace TestViews
 		void testFirst()
 		{
 			TsTextProps * pzttp = dynamic_cast<TsTextProps *>(m_pttp1);
-			unitpp::assert_eq("m_pzttp1", pzttp, m_pzttp1);
+			unitpp::assert_eq("m_pzttp1", (long)pzttp,(long)m_pzttp1);
 		}
 		void testEmpty()
 		{

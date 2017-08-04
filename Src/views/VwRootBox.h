@@ -647,7 +647,7 @@ protected:
 	VwRootBox * m_prootb;
 };
 
-#if defined(WIN32) || defined(WIN64) // In Linux we use a managed implementation
+#if WIN32 // In Linux we use a managed implementation
 class VwDrawRootBuffered : IVwDrawRootBuffered
 {
 protected:

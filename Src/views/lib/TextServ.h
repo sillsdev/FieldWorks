@@ -13,7 +13,7 @@ Last reviewed: 8/25/99
 #ifndef TextServ_H
 #define TextServ_H 1
 
-#if !defined(_WIN32) && !defined(_M_X64)
+#ifndef WIN32
 #include <pthread.h>
 #endif
 
@@ -37,7 +37,7 @@ public:
 	TsPropsHolder * m_ptph;
 
 	// This manages the critical section for accessing the vector of allocated TSGs
-#if defined(WIN32) || defined(WIN64)
+#ifdef WIN32
 	static CRITICAL_SECTION g_crs;
 #else
 	static pthread_mutex_t g_crs;
@@ -56,7 +56,7 @@ protected:
 	friend class TextServEntry;
 
 	static class TextServEntry s_tse;
-#if defined(WIN32) || defined(WIN64)
+#ifdef WIN32
 	static ulong s_luTls;  // Thread local storage value.
 #else
 	static pthread_key_t s_luTls;  // Key for the thread-specific buffer

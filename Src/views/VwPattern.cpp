@@ -2263,8 +2263,8 @@ STDMETHODIMP VwSearchKiller::put_Window(int hwnd)
 {
 	BEGIN_COM_METHOD;
 
-#if defined(WIN32) || defined(WIN64)
-	m_hwnd = (HWND)IntToPtr(hwnd);
+#if WIN32
+	m_hwnd = (HWND)hwnd;
 #else
 	// TODO-Linux: Handle this if neccessary - problem on 64bit
 	Assert(!"VwSearchKiller::put_Window shouldn't be called on Linux");
@@ -2281,7 +2281,7 @@ STDMETHODIMP VwSearchKiller::FlushMessages()
 {
 	BEGIN_COM_METHOD;
 
-#if defined(WIN32) || defined(WIN64)
+#if WIN32
 	if (m_hwnd)
 	{
 		MSG msg;

@@ -223,7 +223,7 @@ public:
 	{
 		AssertPtr(pszClsid);
 
-#if defined(_WIN32) || defined(_M_X64)
+#if WIN32
 		StrUni stu;
 		stu.Assign(pszClsid);
 
@@ -269,7 +269,7 @@ public:
 	{
 		AssertPtr(pszClsid);
 
-#if defined(_WIN32) || defined(_M_X64)
+#if WIN32
 		StrUni stu;
 		stu.Assign(pszClsid);
 

@@ -15,7 +15,7 @@ Last reviewed:
 #pragma once
 
 #include "testViews.h"
-#if defined(_WIN32) || defined(_M_X64)
+#if WIN32
 #include "guiddef.h"
 #endif
 
@@ -114,7 +114,7 @@ namespace TestViews
 			qtsf.CreateInstance(CLSID_TsStrFactory);
 			SmartBstr bstr(bstrGuid);
 			// {D10C12E2-BF77-4f1d-84EA-79BC983FAB0C}
-#if defined(_WIN32) || defined(_M_X64)
+#if WIN32
 			const GUID ZeroLengthOrc =
 #else
 			const PlainGUID ZeroLengthOrc =

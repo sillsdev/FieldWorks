@@ -48,7 +48,7 @@ public:
 	// Return a bstr representation of the data. Caller gains ownership.
 	BSTR GetBstr()
 	{
-		int currentPos = (int)(m_ptr - m_buffer);
+		int currentPos = m_ptr - m_buffer;
 		m_buffer[currentPos] = 0;
 
 		StrUni stu;
@@ -65,7 +65,7 @@ public:
 	virtual HRESULT STDMETHODCALLTYPE Read( void *pv, UCOMINT32 cb, UCOMINT32 *pcbRead) {	return E_NOTIMPL; }
 	virtual HRESULT STDMETHODCALLTYPE Write( const void *pv, UCOMINT32 cb, UCOMINT32 *pcbWritten)
 	{
-		unsigned int currentPos = (int)(m_ptr - m_buffer);
+		unsigned int currentPos = m_ptr - m_buffer;
 
 		// - 1 to ensure we have space for null term.
 		while (currentPos + cb > m_bufferSize - 1)
@@ -76,7 +76,7 @@ public:
 			if (currentPos > 0)
 				memcpy(m_buffer, oldBuffer, currentPos);
 			m_ptr = m_buffer + currentPos;
-			currentPos = (int)(m_ptr - m_buffer);
+			currentPos = m_ptr - m_buffer;
 			delete[] oldBuffer;
 		}
 
@@ -1586,7 +1586,7 @@ STDMETHODIMP TsStrSingle::QueryInterface(REFIID iid, void ** ppv)
 //		*ppv = NewObj CSupportErrorInfo(this, IID_ITsStringRaw);
 		return S_OK;
 	}
-#if defined(WIN32) || defined(WIN64)
+#if WIN32
 	else if (iid == IID_IMarshal)
 		return m_qunkMarshaler->QueryInterface(iid, ppv);
 #endif
@@ -1697,7 +1697,7 @@ STDMETHODIMP TsStrMulti::QueryInterface(REFIID iid, void ** ppv)
 //		*ppv = NewObj CSupportErrorInfo(this, IID_ITsStringRaw);
 		return S_OK;
 	}
-#if defined(WIN32) || defined(WIN64)
+#ifdef WIN32
 	else if (iid == IID_IMarshal)
 		return m_qunkMarshaler->QueryInterface(iid, ppv);
 #endif

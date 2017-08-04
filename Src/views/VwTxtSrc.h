@@ -160,7 +160,7 @@ public:
 
 	// Constructors/destructors/etc.
 	VwSimpleTxtSrc();
-#if !defined(_WIN32) && !defined(_M_X64)
+#if !WIN32
 	~VwSimpleTxtSrc()
 	{
 		// work around TeDllTests hang on exit

@@ -181,7 +181,7 @@ STDMETHODIMP RomRenderSegment::DrawText(int ichBase, IVwGraphics * pvg,
 STDMETHODIMP RomRenderSegment::DrawTextNoBackground(int ichBase, IVwGraphics * pvg,
 	RECT rcSrc1, RECT rcDst1, int * pdxdWidth)
 {
-#if defined(WIN32) || defined(WIN64)
+#if WIN32
 	return E_NOTIMPL;
 #else
 	// TODO-Linux: This is a really dumb implementation; we should not be using the Roman Renderer.

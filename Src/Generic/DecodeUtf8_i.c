@@ -211,7 +211,7 @@ int Utf8NumberToInt(const char * pch, int cch)
 	const char * pchEnd = pch + cch;
 	while (pch < pchEnd)
 	{
-		LONG ch = DecodeUtf8(pch, int(pchEnd - pch), cchUsed);
+		UChar32 ch = DecodeUtf8(pch, pchEnd - pch, cchUsed);
 		pch += cchUsed;
 		int32_t nDigit = u_charDigitValue(ch);
 		if (nDigit < 0 || nDigit > 9)
@@ -287,7 +287,7 @@ int Utf16NumberToInt(const wchar_t * pch, int cch)
 	const wchar_t * pchEnd = pch + cch;
 	while (pch < pchEnd)
 	{
-		LONG ch = DecodeUtf16(pch, (int)(pchEnd - pch), cchUsed);
+		UChar32 ch = DecodeUtf16(pch, pchEnd - pch, cchUsed);
 		pch += cchUsed;
 		int32_t nDigit = u_charDigitValue(ch);
 		if (nDigit < 0 || nDigit > 9)

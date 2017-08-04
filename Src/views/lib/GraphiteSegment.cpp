@@ -142,11 +142,11 @@ STDMETHODIMP GraphiteSegment::DrawTextNoBackground(int ichBase, IVwGraphics* pvg
 			chrp.clrFore = kclrWhite;
 		chrp.clrBack = (COLORREF) kclrTransparent;
 		CheckHr(pvg->SetupGraphics(&chrp));
-		CheckHr(pvg->DrawGlyphs(x, y, (int)m_glyphs.size(), &m_glyphs[0]));
+		CheckHr(pvg->DrawGlyphs(x, y, m_glyphs.size(), &m_glyphs[0]));
 
 		chrp.clrFore = temp;
 		CheckHr(pvg->SetupGraphics(&chrp));
-		CheckHr(pvg->DrawGlyphs(x, y, (int)m_glyphs.size(), &m_glyphs[0]));
+		CheckHr(pvg->DrawGlyphs(x, y, m_glyphs.size(), &m_glyphs[0]));
 	}
 
 	*pdxdWidth = m_width;
@@ -183,7 +183,7 @@ STDMETHODIMP GraphiteSegment::DrawText(int ichBase, IVwGraphics* pvg,
 		int y = srcRect.MapYTo(0, dstRect) - MulDiv(chrp.dympOffset, dstRect.Height(), kdzmpInch);
 
 		CheckHr(pvg->SetupGraphics(&chrp));
-		CheckHr(pvg->DrawGlyphs(x, y, (int)m_glyphs.size(), &m_glyphs[0]));
+		CheckHr(pvg->DrawGlyphs(x, y, m_glyphs.size(), &m_glyphs[0]));
 	}
 
 	*pdxdWidth = m_width;
@@ -1137,7 +1137,7 @@ void GraphiteSegment::InitializeGlyphs(gr_segment* segment, gr_font* font)
 	int beforeX;
 	if (IsRtl())
 	{
-		gi = (int)m_glyphs.size() - 1;
+		gi = m_glyphs.size() - 1;
 		beforeX = m_width;
 	}
 	else
@@ -1148,8 +1148,8 @@ void GraphiteSegment::InitializeGlyphs(gr_segment* segment, gr_font* font)
 	m_clusters.push_back(Cluster(m_ichMin, 0, gi, 0, beforeX));
 	for (s = gr_seg_first_slot(segment); s != NULL; s = gr_slot_next_in_segment(s))
 	{
-		int before = m_ichMin + (int)gr_cinfo_base(gr_seg_cinfo(segment, gr_slot_before(s)));
-		int after = m_ichMin + (int)gr_cinfo_base(gr_seg_cinfo(segment, gr_slot_after(s)));
+		int before = m_ichMin + gr_cinfo_base(gr_seg_cinfo(segment, gr_slot_before(s)));
+		int after = m_ichMin + gr_cinfo_base(gr_seg_cinfo(segment, gr_slot_after(s)));
 
 		while (m_clusters.size() > 1 && m_clusters.back().ichBase > before)
 		{

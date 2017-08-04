@@ -24,7 +24,7 @@ namespace TestGenericLib
 		// Tests getting and setting a DWORD with subkey specified
 		void testStaticDwordWithSubkey()
 		{
-#if defined(WIN32) || defined(WIN64)
+#ifdef WIN32
 			m_CompleteRoot = _T("GenericTests\\SetDword");
 			FwSettings::SetDword(_T("Software\\SIL\\Fieldworks\\GenericTests"),
 				_T("SetDword"), _T("DwordValue"), 4711);
@@ -42,7 +42,7 @@ namespace TestGenericLib
 		// Tests getting and setting a DWORD with no subkey specified
 		void testStaticDwordNoSubkey()
 		{
-#if defined(WIN32) || defined(WIN64)
+#ifdef WIN32
 			FwSettings settings;
 			m_CompleteRoot = _T("GenericTests");
 			settings.SetRoot(_T("GenericTests"));
@@ -62,7 +62,7 @@ namespace TestGenericLib
 		// Tests getting and setting a string with subkey specified
 		void testStaticStringWithSubkey()
 		{
-#if defined(WIN32) || defined(WIN64)
+#ifdef WIN32
 			m_CompleteRoot = _T("GenericTests\\SetString");
 			StrApp origValue(_T("bla"));
 			FwSettings::SetString(_T("Software\\SIL\\Fieldworks\\GenericTests"),
@@ -81,7 +81,7 @@ namespace TestGenericLib
 		// Tests getting and setting a Bool value with subkey specified
 		void testStaticBoolWithSubkey()
 		{
-#if defined(WIN32) || defined(WIN64)
+#ifdef WIN32
 			m_CompleteRoot = _T("GenericTests\\SetBool");
 
 			// Test setting true
@@ -112,7 +112,7 @@ namespace TestGenericLib
 
 		virtual void Teardown()
 		{
-#if defined(WIN32) || defined(WIN64)
+#ifdef WIN32
 			// TODO-Linux: enable when above tests are ported
 			FwSettings settings;
 			settings.SetRoot(m_CompleteRoot);

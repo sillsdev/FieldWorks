@@ -349,7 +349,7 @@ template<typename XChar>
 }
 
 
-#if defined(_WIN32) || defined(_M_X64)
+#if WIN32
 /*----------------------------------------------------------------------------------------------
 	Take a string and resolve it to a full path name.
 	Example: d:\work\src\test\test.exe\..\..\test.kb is output as d:\work\src\test.kb
@@ -457,14 +457,14 @@ void TypeInfoHolder::GetTI(ITypeInfo ** ppti)
 /*************************************************************************************
 	Hook the dll entry points to register and unregister the type libraries.
 *************************************************************************************/
-static void RegisterAllTypeLibraries(ENUMRESNAMEPROCW fRegister);
+static void RegisterAllTypeLibraries(BOOL fRegister);
 
 
 class TypeLibraryModuleEntry : public ModuleEntry
 {
 public:
 	virtual void RegisterServer(void)
-		{  ::RegisterAllTypeLibraries(0); }
+		{  ::RegisterAllTypeLibraries(true); }
 	virtual void UnregisterServer(void)
 		{ ::RegisterAllTypeLibraries(false); }
 };
@@ -575,21 +575,17 @@ static void RegisterTypeLibrary(int rid, BOOL fRegister)
 static BOOL CALLBACK RegisterTypeLibProc(HMODULE hmod, LPCTSTR pszType,
 	LPTSTR pszName, LONG lParam)
 {
-	LPTSTR ln = pszName;
-	if (_wtol(ln) >= 0x10000)
+	long ln = (long)pszName;
+	if (ln >= 0x10000)
 		return true;
 
 	try
 	{
-		RegisterTypeLibrary(_wtol(ln), true);
+		RegisterTypeLibrary(ln, true);
 	}
 	catch (Throwable & thr)
 	{
-		#ifndef _M_X64
 		*(HRESULT *)lParam = thr.Error();
-		#else
-		lParam = thr.Error();
-		#endif
 	}
 
 	return true;
@@ -599,32 +595,31 @@ static BOOL CALLBACK RegisterTypeLibProc(HMODULE hmod, LPCTSTR pszType,
 static BOOL CALLBACK UnregisterTypeLibProc(HMODULE hmod, LPCTSTR pszType,
 	LPTSTR pszName, LONG lParam)
 {
-	LPTSTR ln = pszName;
-	if (_wtol(ln) >= 0x10000)
+	long ln = (long)pszName;
+	if (ln >= 0x10000)
 		return true;
 
 
 	try
 	{
-		RegisterTypeLibrary(_wtol(ln), false);
+		RegisterTypeLibrary(ln, false);
 	}
 	catch (Throwable & thr)
 	{
-#ifndef _M_X64
 		*(HRESULT *)lParam = thr.Error();
-#else
-		lParam = thr.Error();
-#endif
 	}
 
 	return true;
 }
 
-static void RegisterAllTypeLibraries(ENUMRESNAMEPROCW fRegister)
+
+static void RegisterAllTypeLibraries(BOOL fRegister)
 {
 	long l=0;
 
-	if (!EnumResourceNames(ModuleEntry::GetModuleHandle(), _T("TYPELIB"), fRegister, l))
+	if (!EnumResourceNames(ModuleEntry::GetModuleHandle(), _T("TYPELIB"),
+			fRegister ? &RegisterTypeLibProc : &UnregisterTypeLibProc,
+			l))
 	{
 		DWORD dw = GetLastError();
 
@@ -643,6 +638,7 @@ static void RegisterAllTypeLibraries(ENUMRESNAMEPROCW fRegister)
 		}
 	}
 }
+
 
 /*************************************************************************************
 	Load the type library.
@@ -682,7 +678,7 @@ void FillInts(void * pv, int n, int cn)
 {
 	AssertPtrSize(pv, cn * isizeof(int));
 
-#if defined(NO_ASM) || defined(_WIN64)
+#if defined(NO_ASM) || defined(WIN64)
 
 	int * pn = (int *)pv;
 	int * pnLim = pn + cn;
@@ -718,7 +714,7 @@ void FillShorts(void * pv, short sn, int csn)
 {
 	AssertPtrSize(pv, csn * isizeof(short));
 
-#if defined(NO_ASM) || defined(_WIN64)
+#if defined(NO_ASM) || defined(WIN64)
 
 	short * psn = (short *)pv;
 	short * psnLim = psn + csn;
@@ -771,7 +767,7 @@ void ReverseBytes(void * pv, int cb)
 {
 	AssertPtrSize(pv, cb);
 
-#if defined(NO_ASM) || defined(_WIN64)
+#if defined(NO_ASM) || defined(WIN64)
 
 	byte * pb1 = (byte *)pv;
 	byte * pb2 = (byte *)pv + cb - 1;
@@ -823,7 +819,7 @@ void ReverseInts(void * pv, int cn)
 {
 	AssertPtrSize(pv, cn * isizeof(int));
 
-#if defined(NO_ASM) || defined(_WIN64)
+#if defined(NO_ASM) || defined(WIN64)
 
 	int * pn1 = (int *)pv;
 	int * pn2 = (int *)pv + cn - 1;
@@ -892,7 +888,7 @@ void SwapBytes(void * pv1, void * pv2, int cb)
 	AssertPtrSize(pv1, cb);
 	AssertPtrSize(pv2, cb);
 
-#if defined(NO_ASM) || defined(_WIN64)
+#if defined(NO_ASM) || defined(WIN64)
 
 	byte *pb1 = (byte *)pv1;
 	byte *pb2 = (byte *)pv2;
@@ -1387,7 +1383,7 @@ void SmartVariant::GetObjectOrNull(REFIID iid, void ** ppv)
 }
 
 
-#if defined(_WIN32) || defined(_M_X64)
+#if WIN32
 /*----------------------------------------------------------------------------------------------
 	Convert a pathname to its long form.
 ----------------------------------------------------------------------------------------------*/
@@ -1449,7 +1445,7 @@ const char * AsciiHresult(HRESULT hr)
 	CASE_HRESULT(STG_E_SEEKERROR)
 	CASE_HRESULT(STG_E_READFAULT)
 	CASE_HRESULT(STG_E_WRITEFAULT)
-#if defined(_WIN32) || defined(_M_X64)
+#ifdef WIN32
 	CASE_HRESULT(CO_E_INIT_TLS)
 	CASE_HRESULT(CO_E_INIT_SHARED_ALLOCATOR)
 	CASE_HRESULT(CO_E_INIT_MEMORY_ALLOCATOR)
@@ -2016,7 +2012,7 @@ const wchar_t* __UnicodeHresult(HRESULT hr)
 	CASE_HRESULT(STG_E_SEEKERROR)
 	CASE_HRESULT(STG_E_READFAULT)
 	CASE_HRESULT(STG_E_WRITEFAULT)
-#if defined(_WIN32) || defined(_M_X64)
+#ifdef WIN32
 	CASE_HRESULT(CO_E_INIT_TLS)
 	CASE_HRESULT(CO_E_INIT_SHARED_ALLOCATOR)
 	CASE_HRESULT(CO_E_INIT_MEMORY_ALLOCATOR)
@@ -2554,7 +2550,7 @@ const wchar* UnicodeHresult(HRESULT hr)
 	return stub.Chars();
 }
 
-#if defined(_WIN32) || defined(_M_X64)
+#if WIN32
 const wchar_t kchDirSep[] = L"\\";
 #else//WIN32
 const wchar_t kchDirSep[] = L"/";
@@ -2565,7 +2561,7 @@ const wchar_t kchDirSep[] = L"/";
 ----------------------------------------------------------------------------------------------*/
 StrUni DirectoryFinder::FwRootDataDir()
 {
-#if defined(_WIN32) || defined(_M_X64)
+#ifdef WIN32
 	RegKey rk;
 	StrUni stuResult;
 	if (rk.InitCu(REGISTRYPATHWITHVERSION) ||
@@ -2610,7 +2606,7 @@ StrUni DirectoryFinder::FwRootDataDir()
 ----------------------------------------------------------------------------------------------*/
 StrUni DirectoryFinder::FwRootCodeDir()
 {
-#if defined(_WIN32) || defined(_M_X64)
+#ifdef WIN32
 	RegKey rk;
 	StrUni stuResult;
 	if (rk.InitCu(REGISTRYPATHWITHVERSION) ||

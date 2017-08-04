@@ -13,7 +13,7 @@ Description:
 
 1 TYPELIB ViewsTlb.tlb
 
-#if defined(WIN32) || defined(WIN64)
+#if WIN32
 #include "winresrc.h"
 #endif
 
@@ -22,7 +22,7 @@ Description:
 // Version: bldinc.h holds the current version number and it is created by executing
 // bin\mkverrsc.exe from within the bin\mk*.bat file. The major and minor version
 // numbers are hard-coded in mk*.bat.
-#if defined(WIN32) || defined(WIN64)
+#if WIN32
 #include "..\..\Output\Common\bldinc.h"
 #include "..\..\Src\AppCore\Res\AfApp.rc"
 #include "..\Generic\Generic.rc"

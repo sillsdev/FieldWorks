@@ -567,7 +567,7 @@ STDMETHODIMP GraphiteEngine::FindBreakPoint(
 		}
 		while (s != NULL)
 		{
-			int ich = (int)gr_cinfo_base(gr_seg_cinfo(segment, gr_slot_before(s)));
+			int ich = gr_cinfo_base(gr_seg_cinfo(segment, gr_slot_before(s)));
 			UCharDirection dir = u_charDirection(segStr[ich]);
 			if (dir != U_WHITE_SPACE_NEUTRAL)
 				break;
@@ -608,7 +608,7 @@ STDMETHODIMP GraphiteEngine::FindBreakPoint(
 	{
 		// if we had to break somewhere before the end, then recalculate segment length
 		if (breakSlot != NULL)
-			segmentLen = (int)gr_cinfo_base(gr_seg_cinfo(segment, gr_slot_before(breakSlot)));
+			segmentLen = gr_cinfo_base(gr_seg_cinfo(segment, gr_slot_before(breakSlot)));
 		bool wsOnly = segmentLen > 0;
 		if (twsh != ktwshOnlyWs)
 		{

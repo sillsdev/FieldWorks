@@ -16,7 +16,7 @@ namespace unitpp
 {
 	void GlobalSetup(bool verbose)
 	{
-#if defined(WIN32) || defined(WIN64)
+#ifdef WIN32
 		ModuleEntry::DllMain(0, DLL_PROCESS_ATTACH);
 #endif
 		::OleInitialize(NULL);
@@ -25,7 +25,7 @@ namespace unitpp
 	}
 	void GlobalTeardown()
 	{
-#if defined(WIN32) || defined(WIN64)
+#ifdef WIN32
 		ModuleEntry::DllMain(0, DLL_PROCESS_DETACH);
 #endif
 		::OleUninitialize();

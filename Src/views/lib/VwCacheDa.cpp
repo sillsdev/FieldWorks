@@ -2815,7 +2815,7 @@ STDMETHODIMP VwCacheDa::PropChanged(IVwNotifyChange * pnchng, int pct, HVO hvo, 
 #ifdef DEBUG
 		else
 		{
-#if defined(WIN32) || defined(WIN64)
+#if WIN32
 			OLECHAR buff2[64];
 			wsprintf(buff2,L"DDD PropChanged client no longer active\n");
 			OutputDebugString(buff2);
@@ -2831,7 +2831,7 @@ STDMETHODIMP VwCacheDa::PropChanged(IVwNotifyChange * pnchng, int pct, HVO hvo, 
 #ifdef DEBUG
 		else
 		{
-#if defined(WIN32) || defined(WIN64)
+#if WIN32
 			OLECHAR buff2[64];
 			wsprintf(buff2,L"DDD PropChanged client no longer active\n");
 			OutputDebugString(buff2);
@@ -3694,7 +3694,7 @@ WriteVirtualResult VwCacheDa::TryVirtualAtomic(HVO hvo, PropTag tag, HVO newVal)
 #include "MultiMap_i.cpp"
 
 template class HashMap<ObjPropRec, int>; // ObjPropIntMap; // Hungarian hmoprn
-#if defined(WIN32) || defined(WIN64)
+#ifdef WIN32
 template class HashMap<ObjPropRec, HVO>; // ObjPropObjMap; // Hungarian hmoprobj - same as HashMap<ObjPropRec, int>
 #endif
 template class ComHashMap<ObjPropRec, ITsString>; // ObjPropTssMap; // Hungarian hmoprtss

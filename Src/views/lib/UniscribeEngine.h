@@ -24,7 +24,7 @@ class DisableMultiscribe
 public:
 	DisableMultiscribe() : m_run(true)
 	{
-#if defined(WIN32) || defined(WIN64)
+#if WIN32
 		if (!s_multiscribeHandleRetrieved)
 		{
 			HMODULE handle = GetModuleHandle(L"multiscribe.dll");
@@ -50,7 +50,7 @@ public:
 
 	~DisableMultiscribe()
 	{
-#if defined(WIN32) || defined(WIN64)
+#if WIN32
 		if (s_setMultiscribeEnabled != NULL)
 			s_setMultiscribeEnabled(true);
 #endif

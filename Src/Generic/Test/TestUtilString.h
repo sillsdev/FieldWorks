@@ -53,7 +53,7 @@ namespace TestGenericLib
 #define BREVE L"\x02D8" // compatibility decomposition to 0020 0306
 #define a_WITH_DIAERESIS L"\x00E4" // decomposes to 0061 0308.
 #define a_WITH_DIAERESIS_AND_MACRON L"\x01DF"
-#if defined(WIN32) || defined(WIN64)
+#ifdef WIN32
 #define MUSICAL_SYMBOL_MINIMA L"\xD834\xDDBB" // 1D1BB decomposes to 1D1B9 1D165
 #define MUSICAL_SYMBOL_SEMIBREVIS_WHITE L"\xD834\xDDB9" // 1D1B9
 #define MUSICAL_SYMBOL_COMBINING_STEM L"\xD834\xDD65" // 1D165

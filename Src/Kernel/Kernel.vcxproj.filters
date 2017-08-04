@@ -20,9 +20,6 @@
     <None Include="TextServ.idh" />
     <None Include="Language.idh" />
     <None Include="Makefile" />
-    <None Include="FwKernel.def">
-      <Filter>Source Files</Filter>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <Midl Include="FwKernelPs.idl">
@@ -31,10 +28,5 @@
     <Midl Include="FwKernelTlb.idl">
       <Filter>Source Files</Filter>
     </Midl>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="dlldatax.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
 </Project>

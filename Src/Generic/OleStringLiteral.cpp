@@ -15,7 +15,7 @@ Last reviewed:
 
 const OleStringLiteral::uchar_t* OleStringLiteral::convert(const wchar_t* w)
 {
-#if defined(_WIN32) || defined(_M_X64)
+#if WIN32
 	return w;
 #else
 	uchar_t* u = 0;

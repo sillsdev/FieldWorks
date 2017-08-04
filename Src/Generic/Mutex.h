@@ -44,7 +44,7 @@ class Mutex
 public:
 	Mutex()
 	{
-#if defined(_WIN32) || defined(_M_X64)
+#ifdef WIN32
 #ifdef MSG_PUMP_MUTEX
 		m_mutex = CreateMutex(NULL, FALSE, NULL);
 #else
@@ -58,7 +58,7 @@ public:
 
 	~Mutex()
 	{
-#if defined(_WIN32) || defined(_M_X64)
+#ifdef WIN32
 #ifdef MSG_PUMP_MUTEX
 		CloseHandle(m_mutex);
 #else
@@ -78,7 +78,7 @@ public:
 
 	void Lock()
 	{
-#if defined(_WIN32) || defined(_M_X64)
+#ifdef WIN32
 #ifdef MSG_PUMP_MUTEX
 		DWORD index;
 		CoWaitForMultipleHandles(0, INFINITE, 1, &m_mutex, &index);
@@ -102,7 +102,7 @@ public:
 
 	bool TryLock()
 	{
-#if defined(_WIN32) || defined(_M_X64)
+#ifdef WIN32
 #ifdef MSG_PUMP_MUTEX
 		DWORD index;
 		return CoWaitForMultipleHandles(0, 0, 1, &m_mutex, &index) == S_OK;
@@ -116,7 +116,7 @@ public:
 
 	void Unlock()
 	{
-#if defined(_WIN32) || defined(_M_X64)
+#ifdef WIN32
 #ifdef MSG_PUMP_MUTEX
 		ReleaseMutex(m_mutex);
 #else
@@ -135,7 +135,7 @@ public:
 	}
 
 protected:
-#if defined(_WIN32) || defined(_M_X64)
+#ifdef WIN32
 #ifdef MSG_PUMP_MUTEX
 	HANDLE m_mutex;
 #else

@@ -46,7 +46,7 @@ StrApp FwSettings::GetRoot()
 void FwSettings::RemoveAll()
 {
 	Assert(m_strRoot.Length()); // Make sure SetRoot was called at one point.
-#if defined(_WIN32) || defined(_M_X64)
+#ifdef WIN32
 	DeleteSubKey(HKEY_CURRENT_USER, m_strRoot.Chars());
 #else
 	// TODO-Linux: port
@@ -65,7 +65,7 @@ void FwSettings::RemoveAll()
 ----------------------------------------------------------------------------------------------*/
 bool FwSettings::OpenKey(const achar * pszSubKey, int at, HKEY * phkey)
 {
-#if defined(_WIN32) || defined(_M_X64)
+#ifdef WIN32
 	AssertPszN(pszSubKey);
 	AssertPtr(phkey);
 	Assert(m_strRoot.Length()); // Make sure SetRoot was called at one point.
@@ -88,7 +88,7 @@ bool FwSettings::OpenKey(const achar * pszSubKey, int at, HKEY * phkey)
 ----------------------------------------------------------------------------------------------*/
 bool FwSettings::GetString(const achar * pszSubKey, const achar * pszValue, StrApp & str)
 {
-#if defined(_WIN32) || defined(_M_X64)
+#ifdef WIN32
 	AssertPszN(pszSubKey);
 	AssertPtr(pszValue);
 	Assert(m_strRoot.Length()); // Make sure SetRoot was called at one point.
@@ -111,7 +111,7 @@ bool FwSettings::GetString(const achar * pszSubKey, const achar * pszValue, StrA
 ----------------------------------------------------------------------------------------------*/
 bool FwSettings::SetString(const achar * pszSubKey, const achar * pszValue, StrApp & str)
 {
-#if defined(_WIN32) || defined(_M_X64)
+#ifdef WIN32
 	AssertPszN(pszSubKey);
 	AssertPsz(pszValue);
 	Assert(m_strRoot.Length()); // Make sure SetRoot was called at one point.
@@ -138,7 +138,7 @@ bool FwSettings::GetDword(const achar * pszSubKey, const achar * pszValue, DWORD
 	AssertPsz(pszValue);
 	AssertPtr(pdwT);
 
-#if defined(_WIN32) || defined(_M_X64)
+#ifdef WIN32
 	RegKey hkey;
 	if (OpenKey(pszSubKey, katRead, &hkey))
 	{
@@ -170,7 +170,7 @@ bool FwSettings::SetDword(const achar * pszSubKey, const achar * pszValue, DWORD
 	AssertPszN(pszSubKey);
 	AssertPsz(pszValue);
 
-#if defined(_WIN32) || defined(_M_X64)
+#ifdef WIN32
 	RegKey hkey;
 	if (OpenKey(pszSubKey, katWrite, &hkey))
 	{
@@ -199,7 +199,7 @@ bool FwSettings::GetBinary(const achar * pszSubKey, const achar * pszValue, BYTE
 	AssertPsz(pszValue);
 	AssertArray(pv, cb);
 
-#if defined(_WIN32) || defined(_M_X64)
+#ifdef WIN32
 	RegKey hkey;
 	if (OpenKey(pszSubKey, katRead, &hkey))
 	{
@@ -234,7 +234,7 @@ bool FwSettings::GetBinary(const achar * pszSubKey, const achar * pszValue, BYTE
 ----------------------------------------------------------------------------------------------*/
 bool FwSettings::SetBinary(const achar * pszSubKey, const achar * pszValue, BYTE * pv, DWORD cb)
 {
-#if defined(_WIN32) || defined(_M_X64)
+#ifdef WIN32
 	AssertPszN(pszSubKey);
 	AssertPsz(pszValue);
 	AssertArray(pv, cb);
@@ -269,7 +269,7 @@ bool FwSettings::OpenKey(const achar * pszRootKey, const achar * pszSubKey,
 	AssertPszN(pszSubKey);
 	AssertPtr(phkey);
 	AssertPtr(pszRootKey);
-#if defined(_WIN32) || defined(_M_X64)
+#ifdef WIN32
 	StrApp str(pszRootKey);
 	if (pszSubKey)
 		str.FormatAppend(_T("\\%s"), pszSubKey);
@@ -300,7 +300,7 @@ bool FwSettings::SetString(const achar * pszRootKey, const achar * pszSubKey,
 	AssertPsz(pszRootKey);
 	AssertPszN(pszSubKey);
 	AssertPszN(pszValue);
-#if defined(_WIN32) || defined(_M_X64)
+#ifdef WIN32
 	RegKey hkey;
 	if (OpenKey(pszRootKey, pszSubKey, katWrite, &hkey))
 	{
@@ -330,7 +330,7 @@ bool FwSettings::GetString(const achar * pszRootKey, const achar * pszSubKey,
 	AssertPsz(pszRootKey);
 	AssertPszN(pszSubKey);
 	AssertPszN(pszValue);
-#if defined(_WIN32) || defined(_M_X64)
+#ifdef WIN32
 	RegKey hkey;
 	if (OpenKey(pszRootKey, pszSubKey, katRead, &hkey))
 	{
@@ -380,7 +380,7 @@ bool FwSettings::SetDword(const achar * pszRootKey, const achar * pszSubKey, con
 	AssertPsz(pszRootKey);
 	AssertPszN(pszSubKey);
 	AssertPsz(pszValue);
-#if defined(_WIN32) || defined(_M_X64)
+#ifdef WIN32
 	RegKey hkey;
 	if (OpenKey(pszRootKey, pszSubKey, katWrite, &hkey))
 	{
@@ -410,7 +410,7 @@ bool FwSettings::GetDword(const achar * pszRootKey, const achar * pszSubKey, con
 	AssertPszN(pszSubKey);
 	AssertPsz(pszValue);
 	AssertPtr(pdwT);
-#if defined(_WIN32) || defined(_M_X64)
+#ifdef WIN32
 	// NOTE: RegKey calls ::RegCloseKey in the d'tor
 	RegKey hkey;
 	if (OpenKey(pszRootKey, pszSubKey, katRead, &hkey))
@@ -442,7 +442,7 @@ bool FwSettings::GetDword(const achar * pszRootKey, const achar * pszSubKey, con
 bool FwSettings::SetBool(const achar * pszRootKey, const achar * pszSubKey, const achar * pszValue,
 						  bool fValue)
 {
-#if defined(_WIN32) || defined(_M_X64)
+#ifdef WIN32
 	AssertPsz(pszRootKey);
 	AssertPszN(pszSubKey);
 	AssertPsz(pszValue);

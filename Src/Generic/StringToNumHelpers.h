@@ -23,7 +23,7 @@ Last reviewed:
 ----------------------------------------------------------------------------------------------*/
 inline unsigned long Utf16StrToUL(const OLECHAR * string, const OLECHAR ** result, int base)
 {
-#if defined(WIN32) || defined(WIN64)
+#if WIN32
 	return wcstoul(string, const_cast<OLECHAR **>(result), base);
 #else
 	// TODO-Linux: Improve - Convert psz to UTF32 and use wcstoul
@@ -62,7 +62,7 @@ inline unsigned long Utf16StrToUL(const OLECHAR * string,  int base)
 ----------------------------------------------------------------------------------------------*/
 inline long Utf16StrToL(const OLECHAR * string, const OLECHAR ** result, int base)
 {
-#if defined(WIN32) || defined(WIN64)
+#if WIN32
 	return wcstol(string, const_cast<OLECHAR **>(result), base);
 #else
 	return Utf16StrToUL(string, result, base);

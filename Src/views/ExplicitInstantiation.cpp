@@ -37,7 +37,7 @@ template class Set<VwBox *>; // BoxSet (Main.h)
 template class Vector<BuildRec>; // BuildVec (Main.h)
 template class Vector<VwEnv::NotifierStackItem *>; //NotifierDataVec (VwEnv.h)
 template class Vector<VwEnv::NotifierRec *>; // NotifierRecVec (VwEnv.h)
-#if defined(WIN32) || defined(WIN64)
+#ifdef WIN32
 template class Vector<HVO>; // HvoVec (main.h) - same as Vector<int>
 #endif
 template class Vector<long>; // LongVec (VwLazyBox.h)
@@ -58,7 +58,7 @@ template class HashMap<int, int>;
 template class Vector<VwSelection *>; // SelVec;
 template class Vector<LgEndSegmentType>;
 template class Vector<char>;
-#if defined(WIN32) || defined(WIN64)
+#ifdef WIN32
 template class Vector<byte>;
 #endif
 template class Vector<wchar>;

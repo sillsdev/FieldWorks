@@ -19,7 +19,7 @@ Last reviewed:
 
 DEFINE_COM_PTR(IAccessible);
 
-#if defined(_WIN32) || defined(_M_X64)
+#if WIN32
 static const GUID s_rgguid[] = {
 #else
 static const PlainGUID s_rgguid[] = {
@@ -940,7 +940,7 @@ namespace TestViews
 		}
 
 		void AttachGuidToChar(ITsString * ptss, int ich,
-#if defined(_WIN32) || defined(_M_X64)
+#if WIN32
 			const GUID * pguid,
 #else
 			const PlainGUID * pguid,

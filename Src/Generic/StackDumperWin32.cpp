@@ -5,7 +5,8 @@
 //
 // Contains the Windows specific methods of the StackDumper class
 // --------------------------------------------------------------------------------------------
-#if defined(_WIN32) || defined(_M_X64)
+#ifdef WIN32
+
 //:>********************************************************************************************
 //:> Include files
 //:>********************************************************************************************
@@ -64,7 +65,7 @@ bool EnumAndLoadModuleSymbols(HANDLE hProcess, DWORD pid )
 //		SymLoadModule( hProcess, 0, me.szExePath, me.szModule, (DWORD) me.modBaseAddr,
 //			me.modBaseSize);
 		::SymLoadModule( hProcess, 0, const_cast<char *>(staExePath.Chars()),
-			const_cast<char *>(staModule.Chars()), PtrToUint(me.modBaseAddr), me.modBaseSize);
+			const_cast<char *>(staModule.Chars()), (DWORD)me.modBaseAddr, me.modBaseSize);
 		keepGoing = Module32Next( hSnapShot, &me );
 	}
 
@@ -120,7 +121,7 @@ void StackDumper::ShowStackCore( HANDLE hThread, CONTEXT& c )
 				++ pch;
 			if (strSearchPath.Length())
 				strSearchPath.Append(";");
-			strSearchPath.Append(pchPath, (int)(pch - pchPath));
+			strSearchPath.Append(pchPath, (pch - pchPath));
 		}
 	}
 	// environment variable _NT_SYMBOL_PATH
@@ -154,9 +155,9 @@ void StackDumper::ShowStackCore( HANDLE hThread, CONTEXT& c )
 	// Notes: AddrModeFlat is just an assumption. I hate VDM debugging.
 	// Notes: will have to be #ifdef-ed for Alphas; MIPSes are dead anyway,
 	// and good riddance.
-	s.AddrPC.Offset = c.Rip;
+	s.AddrPC.Offset = c.Eip;
 	s.AddrPC.Mode = AddrModeFlat;
-	s.AddrFrame.Offset = c.Rbp;
+	s.AddrFrame.Offset = c.Ebp;
 	s.AddrFrame.Mode = AddrModeFlat;
 
 	memset( pSym, '\0', IMGSYMLEN + MAXNAMELEN );
@@ -217,8 +218,7 @@ void StackDumper::ShowStackCore( HANDLE hThread, CONTEXT& c )
 			char undName[MAXNAMELEN]; // undecorated name
 			//char undFullName[MAXNAMELEN]; // undecorated name with all shenanigans
 			// show procedure info (SymGetSymFromAddr())
-			if ( ! SymGetSymFromAddr( hProcess, s.AddrPC.Offset, (PDWORD64)(&offsetFromSymbol), pSym ) )
-			//if (!SymGetSymFromAddr(hProcess, s.AddrPC.Offset, &offsetFromSymbol, pSym))
+			if ( ! SymGetSymFromAddr( hProcess, s.AddrPC.Offset, &offsetFromSymbol, pSym ) )
 			{
 				if ( gle != 487 )
 					m_pstaDump->FormatAppend( "SymGetSymFromAddr(): gle = %u\r\n", gle );
@@ -243,7 +243,7 @@ void StackDumper::ShowStackCore( HANDLE hThread, CONTEXT& c )
 					GetModuleHandle(staModName.Chars()), "SymGetLineFromAddr");
 			}
 			if (! g_pfnSymGetLineFromAddr ||
-				!g_pfnSymGetLineFromAddr( hProcess, (DWORD)s.AddrPC.Offset, (PDWORD)(&offsetFromSymbol), &Line ) )
+				! g_pfnSymGetLineFromAddr( hProcess, s.AddrPC.Offset, &offsetFromSymbol, &Line ) )
 			{
 				if ( g_pfnSymGetLineFromAddr && gle != 487 ) // apparently a magic number indicating not in symbol file.
 					m_pstaDump->FormatAppend( "SymGetLineFromAddr(): gle = %u\r\n", gle );
@@ -310,7 +310,7 @@ void StackDumper::ShowStackCore( HANDLE hThread, CONTEXT& c )
 				{
 					static char * pszGap =
 						"\r\n\r\n\r\n******************Frames skipped here***************\r\n\r\n\r\n";
-					int cchGap = (int)strlen(pszGap);
+					int cchGap = strlen(pszGap);
 					ichEndLowHalf = FindStartOfFrame(MAXDUMPLEN / 2);
 					// Overwrite some of what's there with the gap marker. The incomplete
 					// frame will be part of what gets deleted.

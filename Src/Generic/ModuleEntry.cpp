@@ -33,7 +33,7 @@ Description:
 DEFINE_THIS_FILE
 
 
-#if defined(_WIN32) || defined(_M_X64)
+#if WIN32
 #define DLLEXPORT__
 #else
 #define DLLEXPORT__ DLLEXPORT
@@ -45,14 +45,14 @@ DEFINE_THIS_FILE
 HMODULE ModuleEntry::s_hmod;
 long ModuleEntry::s_crefModule;
 ModuleEntry * ModuleEntry::s_pmeFirst;
-#if defined(_WIN32) || defined(_M_X64)
+#if WIN32
 StrAppBufPath ModuleEntry::s_strbpPath;
 #else
 TCHAR ModuleEntry::s_strbpPath[MAX_PATH];
 #endif
 ulong ModuleEntry::s_tid;			// Stays zero for non-EXE modules.
 
-#if defined(_WIN32) || defined(_M_X64) // TODO-Linux
+#if WIN32 // TODO-Linux
 bool ModuleEntry::s_fPerUserRegistration = false;
 #endif // WIN32
 
@@ -402,7 +402,7 @@ BOOL ModuleEntry::DllMain(HMODULE hmod, DWORD dwReason)
 
 	switch (dwReason)
 	{
-#if defined(_WIN32) || defined(_M_X64)
+#ifdef WIN32
 	case DLL_PROCESS_ATTACH:
 		s_hmod = hmod;
 		hr = ModuleProcessAttach();
@@ -551,7 +551,7 @@ STDAPI DLLEXPORT__ DllInstall(BOOL fInstall, LPCWSTR pszCmdLine)
 {
 	ENTER_DLL();
 	HRESULT hr = E_FAIL;
-#if defined(_WIN32) || defined(_M_X64) // TODO-Linux
+#if WIN32 // TODO-Linux
 	static const wchar_t szUserSwitch[] = _T("user");
 
 	if (pszCmdLine != NULL)
@@ -857,7 +857,7 @@ HRESULT ModuleEntry::ModuleCanUnloadNow(void)
 ----------------------------------------------------------------------------------------------*/
 LPCTSTR ModuleEntry::GetModulePathName()
 {
-#if defined(_WIN32) || defined(_M_X64)
+#if WIN32
 	if (s_strbpPath.Length() == 0)
 	{
 		ULONG cchMod;

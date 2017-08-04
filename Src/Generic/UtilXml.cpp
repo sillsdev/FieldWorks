@@ -332,7 +332,7 @@ int SetUtf16FromUtf8(wchar * pszwDst, int cchwDst, const char * pszSrc)
 	int cbUtf8;
 	const char * p;
 	int cchw = 0;
-	int cchSrc = (int)(strlen(pszSrc));
+	int cchSrc = strlen(pszSrc);
 	for (p = pszSrc; *p; p += cbUtf8, cchSrc -= cbUtf8)
 	{
 		long lnUnicode = DecodeUtf8(p, cchSrc, cbUtf8);
@@ -424,7 +424,7 @@ int CountUtf16FromUtf8(const char * pszUtf8)
 	int cbUtf8 = 0;
 	const char*	p;
 	int cchw = 0;
-	int cchSrc = (int)(strlen(pszUtf8));
+	int cchSrc = strlen(pszUtf8);
 	for (p = pszUtf8; *p; p += cbUtf8, cchSrc -= cbUtf8)
 	{
 		long lnUnicode = DecodeUtf8(p, cchSrc, cbUtf8);
@@ -839,7 +839,7 @@ STDMETHODIMP XmlStringStream::Read(void * pv, UCOMINT32 cb, UCOMINT32 * pcbRead)
 		*pb++ = (byte)(n << 4 | nT);
 		--cb;
 	}
-	cb = (ULONG)(pb - (byte *)pv);
+	cb = pb - (byte *)pv;
 
 	// Nuke the part of the string we wrote out.
 	m_sta.Replace(0, cb << 1, (const char *)NULL);

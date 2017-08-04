@@ -110,7 +110,7 @@ int StackDumper::FindStartOfFrame(int ichStart)
 ----------------------------------------------------------------------------------------------*/
 DWORD Filter( EXCEPTION_POINTERS *ep )
 {
-#if defined(_WIN32) || defined(_M_X64)
+#ifdef WIN32
 	HANDLE hThread;
 
 	DuplicateHandle( GetCurrentProcess(), GetCurrentThread(),
@@ -131,7 +131,7 @@ DWORD Filter( EXCEPTION_POINTERS *ep )
 ----------------------------------------------------------------------------------------------*/
 DWORD FilterContinue( EXCEPTION_POINTERS *ep )
 {
-#if defined(_WIN32) || defined(_M_X64)
+#ifdef WIN32
 	HANDLE hThread;
 
 	DuplicateHandle( GetCurrentProcess(), GetCurrentThread(),
@@ -170,7 +170,7 @@ DWORD FilterContinue( EXCEPTION_POINTERS *ep )
 ----------------------------------------------------------------------------------------------*/
 void TransFuncDump( unsigned int u, EXCEPTION_POINTERS * pExp)
 {
-#if defined(_WIN32) || defined(_M_X64)
+#ifdef WIN32
 	HANDLE hThread;
 	DWORD dwCode = pExp->ExceptionRecord->ExceptionCode;
 	StrUni stuException = ConvertException(dwCode);
@@ -190,7 +190,7 @@ void TransFuncDump( unsigned int u, EXCEPTION_POINTERS * pExp)
 ----------------------------------------------------------------------------------------------*/
 void DumpStackHere(SDCHAR * pszMsg)
 {
-#if defined(_WIN32) || defined(_M_X64)
+#ifdef WIN32
 		StackDumper::InitDump(pszMsg);
 	__try
 	{
@@ -223,7 +223,7 @@ void ThrowInternalError(HRESULT hr, const wchar_t * pszMsg, int hHelpId, IErrorI
 	throw ThrowableSd(hr, pszMsg, hHelpId, StackDumper::GetDump(), pErrInfo);
 }
 
-#if !defined(_WIN32) && !defined(_M_X64)
+#if !WIN32
 /*----------------------------------------------------------------------------------------------
 	Throw an exception of type ThrowableSd, with a stack dump. This may eventually replace
 	ThrowHr in many or most places.
@@ -343,7 +343,7 @@ void CheckHrCore(HRESULT hrErr)
 StrUni GetModuleVersion(const OLECHAR * pchPathName)
 {
 	StrUni stuRet;
-#if defined(_WIN32) || defined(_M_X64)
+#ifdef WIN32
 	StrApp staPathName = pchPathName;
 	achar * pchaPathName = const_cast<achar *>(staPathName.Chars());
 

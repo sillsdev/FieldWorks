@@ -1198,7 +1198,7 @@ STDMETHODIMP VwGraphics::SetupGraphics(LgCharRenderProps * pchrp)
 	BEGIN_COM_METHOD;
 	ChkComArgPtr(pchrp);
 
-	const int cbFontOffset = (int)offsetof(LgCharRenderProps, ttvBold);
+	const int cbFontOffset = offsetof(LgCharRenderProps, ttvBold);
 	// if the info related to choosing HFONT is different, make a new HFONT
 	if (!m_hfont || memcmp(((byte *)pchrp) + cbFontOffset, ((byte *)&m_chrp) + cbFontOffset,
 		isizeof(m_chrp) - cbFontOffset))

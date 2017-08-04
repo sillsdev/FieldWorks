@@ -213,7 +213,7 @@ TsTextProps::TsTextProps(void)
 {
 	ModuleEntry::ModuleAddRef();
 	m_cref = 1;
-#if defined(WIN32) || defined(WIN64)
+#ifdef WIN32
 #ifdef DEBUG
 	m_dbw1.m_pzttp = this;
 	m_dbw2.m_pzttp = this;
@@ -253,7 +253,7 @@ STDMETHODIMP TsTextProps::QueryInterface(REFIID iid, void ** ppv)
 //		*ppv = NewObj CSupportErrorInfo(this, IID_ITsTextPropsRaw);
 		return S_OK;
 	}
-#if defined(WIN32) || defined(WIN64)
+#ifdef WIN32
 	else if (iid == IID_IMarshal)
 		return m_qunkMarshaler->QueryInterface(iid, ppv);
 #endif
@@ -780,7 +780,7 @@ void TsTextProps::BuildDebugInfo()
 	}
 }
 
-#if defined(WIN32) || defined(WIN64) // TODO-Linux: port to get debugging information.
+#if WIN32 // TODO-Linux: port to get debugging information.
 OLECHAR * TsTextProps::Dbw1::Watch()
 {
 	static wchar wcsTmp[161];
@@ -826,7 +826,7 @@ Full:
 	This is meant for use in the debugger.
 ----------------------------------------------------------------------------------------------*/
 #ifdef DEBUG
-#if defined(WIN32) || defined(WIN64) // TODO-Linux: port to get debugging information.
+#if WIN32 // TODO-Linux: port to get debugging information.
 OLECHAR * TsTextProps::Dbw2::Watch()
 {
 	int cv, iv, tpt, nVar, nVal;
@@ -984,7 +984,9 @@ TsPropsHolder * TsPropsHolder::GetPropsHolder(void)
 ----------------------------------------------------------------------------------------------*/
 TsPropsHolder::TsPropsHolder(void)
 {
-
+	Assert(!m_prgpzttpHash);
+	Assert(!m_cpzttpHash);
+	Assert(!m_cpzttp);
 }
 
 

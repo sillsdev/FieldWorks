@@ -6,7 +6,7 @@ See the file copying.txt for copying permission.
 #ifndef XmlParse_h_includedir_INCLUDED
 #define XmlParse_h_includedir_INCLUDED 1
 
-#if defined(WIN32) || defined(WIN64)
+#if WIN32
 #ifdef __cplusplus
 extern "C" {
 #endif

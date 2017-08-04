@@ -24,9 +24,9 @@ public:
 #ifdef DEBUG
 	bool AssertValid(void) const
 	{
-		if (_wtoi(m_bstr) == (int)1)
+		if ((ulong)m_bstr == (ulong)1)
 			return true;
-		Assert(!(_wtoi(m_bstr) & 1));
+		Assert(!((ulong)m_bstr & 1));
 		AssertBstrN(m_bstr);
 		return true;
 	}
@@ -47,7 +47,7 @@ public:
 	}
 
 	#ifdef DEBUG
-#if defined(_WIN32) || defined(_M_X64)
+#if WIN32
 	#define INIT_DBW() { m_dbw1.m_pbstr = this; }
 #else
 	#define INIT_DBW()
@@ -144,7 +144,7 @@ public:
 		m_bstr = bstr;
 	}
 
-#if !defined(_WIN32) && !defined(_M_X64)
+#if !WIN32
 	SmartBstr(const wchar_t* psz)
 	{
 		AssertPszN(psz);
@@ -262,7 +262,7 @@ public:
 	{
 		AssertObj(this);
 		BSTR bstr = m_bstr;
-		if (_wtoi(bstr) == 1)
+		if ((ulong)bstr == 1)
 			bstr = NULL;
 		m_bstr = NULL;
 		return bstr;
@@ -430,7 +430,7 @@ public:
 protected:
 	BSTR m_bstr;
 
-#if defined(_WIN32) || defined(_M_X64)
+#if WIN32
 #ifdef DEBUG
 	class Dbw1 : public DebugWatch
 	{
@@ -452,7 +452,7 @@ protected:
 
 	bool _Null(void) const
 	{
-		return _wtoi(m_bstr) <= (int)1;
+		return (ulong)m_bstr <= (ulong)1;
 	}
 
 	void AppendCore(const OLECHAR * prgch, int cch)

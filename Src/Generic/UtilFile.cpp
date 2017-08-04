@@ -10,7 +10,7 @@ Last reviewed: Never
 	File utilities implementation.
 ----------------------------------------------------------------------------------------------*/
 
-#if defined(_WIN32) || defined(_M_X64)
+#ifdef WIN32
 #include "UtilFile.h"
 #include <direct.h>
 
@@ -77,7 +77,7 @@ bool FolderSelectDlg::ChooseFolder(HWND hwndParent, StrAppBuf & strbPath, StrApp
 		ofn.lpstrFile = rgchFile;
 		ofn.nMaxFile = MAX_PATH + 1;	// number of chars.
 		// Register our customized hook function:
-		ofn.lpfnHook = (LPOFNHOOKPROC)BrowseFolderHookProc;
+		ofn.lpfnHook = BrowseFolderHookProc;
 		if (IDOK == ::GetOpenFileName(&ofn))
 		{
 			fResult = true;

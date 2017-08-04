@@ -141,7 +141,7 @@ Description:
 #define AssertArrayN(pv, cv) Assert((cv) >= 0 && (!(pv) || ValidReadPtrSize((pv), isizeof(*(pv)) * (cv))))
 #define AssertPtrSize(pv, cb) Assert((cb) >= 0 && ValidReadPtrSize((pv), cb))
 
-#if defined(_WIN32) || defined(_M_X64)
+#if WIN32
 #define AssertPfn(pfn) Assert(!IsBadCodePtr((FARPROC)(pfn)))
 #define AssertPfnN(pfn) Assert(!(pfn) || !IsBadCodePtr((FARPROC)(pfn)))
 #else
@@ -181,7 +181,7 @@ Description:
 	   If you must have more, then call _CrtDbgReport() directly.  Note also that
 	   _CrtDbgReport() is not implemented for wide characters, so neither is Output().
 ----------------------------------------------------------------------------------------------*/
-#if defined(_WIN32) || defined(_M_X64)
+#if WIN32
 #ifdef DEBUG
 class DebugWatch
 {

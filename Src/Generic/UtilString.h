@@ -268,7 +268,7 @@ template<typename XChar>
 	const XChar * pch;
 	for (pch = psz; *pch; pch++)
 		;
-	return (int)(pch - psz);
+	return pch - psz;
 }
 
 
@@ -665,7 +665,7 @@ public:
 		AssertObj(m_pbuf);
 		return true;
 	}
-#if defined(_WIN32) || defined(_M_X64)
+#if WIN32
 	#define DBWINIT() m_dbw1.m_pstrbase = this; // so DebugWatch can find string
 #else
 	#define DBWINIT()
@@ -2307,7 +2307,7 @@ protected:
 		AssertObj(this);
 	}
 
-#if defined(_WIN32) || defined(_M_X64)
+#ifdef WIN32
 	void _Replace(int ichMin, int ichLim, const XChar * prgchIns, XChar chIns, int cchIns)
 	{
 		_Replace(ichMin, ichLim, prgchIns, chIns, cchIns, CP_ACP);
@@ -2345,7 +2345,7 @@ protected:
 	------------------------------------------------------------------------------------------*/
 	static void FormatCallback(void * pv, const XChar * prgch, int cch);
 
-#if defined(_WIN32) || defined(_M_X64)
+#if WIN32
 #ifdef DEBUG
 	class Dbw1 : public DebugWatch
 	{
@@ -3364,7 +3364,7 @@ public:
 	{
 		AssertPtr(this);
 		Assert(kcchMax >= 0);
-#if defined(_WIN32) || defined(_M_X64)
+#if WIN32
 		Assert(m_cb <= kcchMax * isizeof(XChar));
 #endif
 		StrBaseBufCore<XChar>::AssertValid();
@@ -3903,7 +3903,7 @@ public:
 	------------------------------------------------------------------------------------------*/
 	bool FormatCore(const XChar * prgchFmt, int cchFmt, va_list vaArgList);
 
-#if defined(_WIN32) || defined(_M_X64)
+#ifdef WIN32
 	/*------------------------------------------------------------------------------------------
 		Replace the buffer for this StrBaseBuf<> with a new string constructed by formatting the
 		string template (prgchFmt, cchFmt) of the other character type. Set m_fOverflow to true

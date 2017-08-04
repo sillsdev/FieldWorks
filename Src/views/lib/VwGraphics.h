@@ -23,7 +23,7 @@ Description:
 #ifndef VWGRAPHICS_INCLUDED
 #define VWGRAPHICS_INCLUDED
 
-#if !defined(_WIN32) && !defined(_M_X64)
+#if !WIN32
 #include "VwGraphicsCairo.h"
 #else
 

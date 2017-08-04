@@ -714,7 +714,7 @@ void RomRenderEngine::GetAvailChars(IVwTextSource * pts,int ws,
 			if (*pch == '\n' || *pch == '\t' || *pch == '\r' || *pch == 0xfffc || *pch == 0x2028)
 			{
 				*peat = keatBreak;
-				*pichLimSegCur = (int)(ichMin + pch - prgch);
+				*pichLimSegCur = ichMin + pch - prgch;
 				goto LReturn;
 			}
 			if (twsh == ktwshOnlyWs)
@@ -725,7 +725,7 @@ void RomRenderEngine::GetAvailChars(IVwTextSource * pts,int ws,
 				if (dir != U_WHITE_SPACE_NEUTRAL)
 				{
 					*peat = keatOnlyWs;
-					*pichLimSegCur = (int)(ichMin + pch - prgch);
+					*pichLimSegCur = ichMin + pch - prgch;
 					goto LReturn;
 				}
 			}
@@ -835,7 +835,7 @@ void RomRenderEngine::FindLineBreak(
 			ichBreak = ichLim - 1;
 		break;
 	default:
-#if !defined(_WIN32) && !defined(_M_X64)
+#if !WIN32
 		// as the enums are not numbered sequencialy. given how this method is called
 		// we will receive invalid enum vals.
 		// possibly because of the use of RomRender

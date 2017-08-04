@@ -67,7 +67,7 @@ STDMETHODIMP TsPropsFact::QueryInterface(REFIID iid, void ** ppv)
 		*ppv = NewObj CSupportErrorInfo(this, IID_ITsPropsFactory);
 		return S_OK;
 	}
-#if defined(WIN32) || defined(WIN64)
+#ifdef WIN32
 	else if (iid == IID_IMarshal)
 		return m_qunkMarshaler->QueryInterface(iid, ppv);
 #endif

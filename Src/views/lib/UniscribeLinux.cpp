@@ -11,7 +11,7 @@ Description: A minimal implementation of Uniscribe functions used by the FW unis
 
 -------------------------------------------------------------------------------*//*:End Ignore*/
 
-#if defined(WIN32) || defined(WIN64)
+#if WIN32
 #error "UniscribeLinux.cpp should not be compiled on Windows"
 #endif
 

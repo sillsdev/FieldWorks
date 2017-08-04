@@ -616,7 +616,7 @@ void VwSelection::DoCtrlPageUpDown(IVwGraphics * pvg, Rect rcDocumentCoord, Rect
 
 
 	Rect rcRootSite;
-#if defined(WIN32) || defined(WIN64)
+#ifdef WIN32
 	if(!GetClientRect(hwndRootSite, &rcRootSite)){
 		Assert(false); // we better have a valid HWND at this point! That's the only reason GetClientRect should fail that we could think of.
 		return;
@@ -681,7 +681,7 @@ COMINT32 VwSelection::VisiblePageHeight(IVwGraphics * pvg, Rect rcDocumentCoord,
 	Assert(hwndRootSite);
 
 	Rect rcRootSite;
-#if defined(WIN32) || defined(WIN64)
+#ifdef WIN32
 	if(!GetClientRect(hwndRootSite, &rcRootSite)){
 		Assert(false); // we better have a valid HWND at this point! That's the only reason GetClientRect should fail that we could think of.
 		return 0;
@@ -961,7 +961,7 @@ void VwSelection::InvalidateSel()
 	// Fudge a little, since PositionsOfIP is not guaranteed to give an exact result.
 	// Note: these fudge values cause clipping rectangle to be too large for lineheight
 	// causing FWNX-456, and extra width not needed for linux either
-#if defined(WIN32) || defined(WIN64)
+#if WIN32
 	rdPrimary.left -= 3;
 	rdPrimary.right += 3;
 	rdPrimary.top -= 3;
@@ -971,7 +971,7 @@ void VwSelection::InvalidateSel()
 		rdPrimary.Height()));
 	if (fSplit && !rdSecondary.IsEmpty())
 	{
-#if defined(WIN32) || defined(WIN64)
+#if WIN32
 		rdSecondary.left -= 3;
 		rdSecondary.right += 3;
 		rdSecondary.top -= 3;
@@ -1735,7 +1735,7 @@ STDMETHODIMP VwTextSelection::GetParaProps(int cttpMax, IVwPropertyStore ** prgp
 		for (ppvps = prgpvps; ppvps < ppvpsLim; ppvps++)
 			(*ppvps)->AddRef();
 	}
-	*pcttp = (int)(ppvps - prgpvps);
+	*pcttp = ppvps - prgpvps;
 	END_COM_METHOD(g_fact, IID_IVwSelection);
 }
 
@@ -4472,7 +4472,7 @@ public:
 			// data, allow them to be inserted as ordinary data.
 			for (pch = m_pchInput; pch < m_pchInput + m_cchInput && *pch >= 32; pch++)
 				;
-			int cchIns = (int)(pch - m_pchInput);
+			int cchIns = pch - m_pchInput;
 			if (cchIns)
 			{
 				CheckHr(m_qsel->m_qtsbProp->ReplaceRgch(
@@ -4486,7 +4486,7 @@ public:
 			}
 			for (; pch < m_pchInput + m_cchInput && *pch == '\r'; pch++)
 				;
-			cchIns = (int)(pch - m_pchInput);
+			cchIns = pch - m_pchInput;
 			// If we got cr's and if we have a property where we can edit at para level,
 			// insert paragraphs. Otherwise just ignore them.
 			if (cchIns)
@@ -4589,7 +4589,7 @@ public:
 			// something with them.)
 			for (; pch < m_pchInput + m_cchInput && *pch < 32 && *pch != '\r'; pch++)
 				;
-			cchIns = (int)(pch - m_pchInput);
+			cchIns = pch - m_pchInput;
 			m_cchInput -= cchIns;
 			m_pchInput += cchIns;
 		}
@@ -4701,7 +4701,7 @@ public:
 			// Ignore any problems; we can't recover cleanly in this situation, and there
 			// should be no need; we don't have cases of parsing multi-paragraph texts.
 			m_prootb->DestroySelection();
-#if defined(WIN32) || defined(WIN64)
+#ifdef WIN32
 			::MessageBeep(MB_OK); // ENHANCE JohnT (Mac portability).
 #else
 			// TODO-Linux: implement MessageBeep method to remove this ifndef
@@ -5758,7 +5758,7 @@ STDMETHODIMP VwTextSelection::ReplaceWithTsString(ITsString * ptss)
 				bool fOk;
 				UnprotectedCommit(&fOk);
 // See FWNX-447 - mono doesn't currently support arrays of COM objects native -> managed.
-#if !defined(_WIN32) && !defined(_M_X64)
+#ifndef WIN32
 				if (vpttpPara.Size() == 1)
 				{
 					CheckHr(prootb->Site()->OnInsertDiffPara(prootb, qttpOrig,
@@ -7401,7 +7401,7 @@ void VwTextSelection::DoUpdateProp(VwRootBox * prootb, HVO hvo, PropTag tag, VwN
 				CheckHr(qsda->get_UnicodeProp(hvo, tag, &sbstrOld));
 				SmartBstr sbstrNew;
 				CheckHr(qtssNewSub->get_Text(&sbstrNew));
-#if defined(WIN32) || defined(WIN64)
+#ifdef WIN32
 				if (wcscmp(sbstrOld.Chars(), sbstrNew.Chars()) != 0)
 #else
 				if (u_strcmp(sbstrOld.Chars(), sbstrNew.Chars()) != 0)
@@ -7433,7 +7433,7 @@ void VwTextSelection::DoUpdateProp(VwRootBox * prootb, HVO hvo, PropTag tag, VwN
 				wcsncpy_s(buf, 50, pch, cch);
 
 				buf[49] = 0; // in case there really were 50 + chars
-#if defined(WIN32) || defined(WIN64)
+#ifdef WIN32
 				nVal = _wtoi(buf);
 #else
 				{
