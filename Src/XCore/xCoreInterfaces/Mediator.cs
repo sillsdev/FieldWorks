@@ -1281,7 +1281,7 @@ namespace XCore
 			}
 
 			IxCoreColleague[] targets = colleague.GetMessageTargets();
-			targets = targets.OrderBy(x => x.Priority).ToArray();
+			targets = targets.Where(x => x != null).OrderBy(y => y.Priority).ToArray();
 			// Try following the 'Code Performance' guidelines which says that
 			// .."foreach introduces both managed heap and virtual function overhead..
 			// This can be a significant factor in performance-sensitive regions of your application."
