@@ -277,8 +277,8 @@
 		<!-- Update when appropriate. -->
 		<FLExBridgeBuildType Condition="'$(OS)'=='Unix'">FLExBridge_FLExBridgeDevelopLinux64Continuous</FLExBridgeBuildType>
 
-		<!-- bt2 is the master branch build of Chorus for Windows development. Update when appropriate. -->
-		<ChorusBuildType Condition="'$(OS)'=='Windows_NT'">bt2</ChorusBuildType>
+		<!-- Chorus_Win32masterContinuous is the master branch build of Chorus for Windows development. Update when appropriate. -->
+		<ChorusBuildType Condition="'$(OS)'=='Windows_NT'">Chorus_Win32masterContinuous</ChorusBuildType>
 		<!-- bt323 is the master branch (strong name) build of Chorus for Linux development. Update when appropriate. -->
 		<ChorusBuildType Condition="'$(OS)'=='Unix'">bt323</ChorusBuildType>
 		<!-- Libpalaso_PalasoWinmasterContinuous is the master branch build of Palaso for Windows development. Update when appropriate. -->
