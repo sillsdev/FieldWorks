@@ -2375,7 +2375,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			return NodeTestResult.kntrNothing;
 		}
 
-		void MakeGhostSlice(ArrayList path, XmlNode node, ObjSeqHashMap reuseMap, ICmObject obj, Slice parentSlice,
+		internal void MakeGhostSlice(ArrayList path, XmlNode node, ObjSeqHashMap reuseMap, ICmObject obj, Slice parentSlice,
 			int flidEmptyProp, XmlNode caller, int indent, ref int insertPosition)
 		{
 			// It's a really bad idea to add it to the path, since it kills
@@ -2398,7 +2398,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				slice.Object = obj;
 				slice.Cache = m_cache;
 				slice.Mediator = m_mediator;
-
+				slice.PropTable = parentSlice?.PropTable;
 
 				// We need a copy since we continue to modify path, so make it as compact as possible.
 				slice.Key = path.ToArray();

@@ -460,12 +460,16 @@ namespace SIL.FieldWorks.Common.RootSites
 						}
 					}
 				}
-				string oldBest = m_propertyTable.GetStringProperty("BestStyleName", null);
-				if (oldBest != bestStyle)
+				// Handles the case where m_propertyTable is null because the parent slice is null
+				if (m_propertyTable != null)
 				{
-					EditingHelper.SuppressNextBestStyleNameChanged = true;
-					m_propertyTable.SetProperty("BestStyleName", bestStyle, true);
-					m_propertyTable.SetPropertyPersistence("BestStyleName", false);
+					string oldBest = m_propertyTable.GetStringProperty("BestStyleName", null);
+					if (oldBest != bestStyle)
+					{
+						EditingHelper.SuppressNextBestStyleNameChanged = true;
+						m_propertyTable.SetProperty("BestStyleName", bestStyle, true);
+						m_propertyTable.SetPropertyPersistence("BestStyleName", false);
+					}
 				}
 				return bestStyle;
 			}

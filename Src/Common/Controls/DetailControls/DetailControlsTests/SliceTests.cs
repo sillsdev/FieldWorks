@@ -171,5 +171,29 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 			m_Slice.Collapse();
 		}
+		/// <summary>
+		/// Create a DataTree with a GhostStringSlice object. Test to ensure that the PropTable is not null.
+		/// </summary>
+		[Test]
+		public void CreateGhostStringSlice_ParentSliceNotNull()
+		{
+			var path = GeneratePath();
+			var reuseMap = new ObjSeqHashMap();
+			var obj = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
+			m_DataTree = new DataTree();
+			m_Slice = GenerateSlice(Cache, m_DataTree);
+			m_Mediator = new Mediator();
+			m_Slice.Mediator = m_Mediator;
+			m_propertyTable = new PropertyTable(m_Mediator);
+			m_Slice.PropTable = m_propertyTable;
+			var node = CreateXmlElementFromOuterXmlOf("<seq field=\"Pronunciations\" layout=\"Normal\" ghost=\"Form\" ghostWs=\"pronunciation\" ghostLabel=\"Pronunciation\" menu=\"mnuDataTree-Pronunciation\" />");
+			int indent = 0;
+			int insertPosition = 0;
+			int flidEmptyProp = 5002031;    // runtime flid of ghost field
+			m_DataTree.MakeGhostSlice(path, node, reuseMap, obj, m_Slice, flidEmptyProp, null, indent, ref insertPosition);
+			var ghostSlice = m_DataTree.Slices[0];
+			Assert.NotNull(ghostSlice);
+			Assert.AreEqual(ghostSlice.PropTable, m_Slice.PropTable);
+		}
 	}
 }
