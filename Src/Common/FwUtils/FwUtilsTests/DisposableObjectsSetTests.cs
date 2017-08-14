@@ -21,7 +21,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		}
 
 		#region Simple class that we can use for our tests
-		private sealed class A: IDisposable
+		private sealed class A : IDisposable
 		{
 			public A(string name)
 			{

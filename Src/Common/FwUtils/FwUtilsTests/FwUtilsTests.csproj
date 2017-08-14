@@ -45,6 +45,8 @@
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
     <TargetFrameworkProfile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <OutputPath>..\..\..\..\Output\Debug\</OutputPath>
@@ -166,6 +168,7 @@
     <Compile Include="TestFwApplicationSettings.cs" />
     <Compile Include="TestFwStylesheet.cs" />
     <Compile Include="TestFwStylesheetTests.cs" />
+    <Compile Include="WavConverterTests.cs" />
     <Compile Include="XmlHelper.cs" />
     <None Include="App.config" />
     <Compile Include="FwDirectoryFinderTests.cs" />

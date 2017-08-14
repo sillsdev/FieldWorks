@@ -103,9 +103,14 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\NHunspell.dll</HintPath>
     </Reference>
-    <Reference Include="SIL.Core.Desktop, Version=4.0.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\SIL.Core.Desktop.dll</HintPath>
+    <Reference Include="NAudio">
+      <HintPath>..\..\..\packages\NAudio.1.7.3\lib\net35\NAudio.dll</HintPath>
+    </Reference>
+    <Reference Include="NAudio.Lame">
+      <HintPath>..\..\..\packages\NAudio.Lame.1.0.4\lib\net20\NAudio.Lame.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.Core.Desktop">
+      <HintPath>..\..\..\Downloads\SIL.Core.Desktop.dll</HintPath>
     </Reference>
     <Reference Include="SIL.Windows.Forms, Version=3.1.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
@@ -276,6 +281,7 @@
     <Compile Include="StartupException.cs" />
     <Compile Include="StringTable.cs" />
     <Compile Include="VersionInfoProvider.cs" />
+    <Compile Include="WavConverter.cs" />
     <Compile Include="XmlSerializationHelper.cs" />
     <EmbeddedResource Include="FwUtilsStrings.resx">
       <SubType>Designer</SubType>

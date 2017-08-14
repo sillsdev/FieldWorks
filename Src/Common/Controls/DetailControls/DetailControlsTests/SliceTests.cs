@@ -165,5 +165,29 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 			m_Slice.Collapse();
 		}
+		/// <summary>
+		/// Create a DataTree with a GhostStringSlice object. Test to ensure that the PropTable is not null.
+		/// </summary>
+		[Test]
+		public void CreateGhostStringSlice_ParentSliceNotNull()
+		{
+			var path = GeneratePath();
+			var reuseMap = new ObjSeqHashMap();
+			var obj = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
+			PubSubSystemFactory.CreatePubSubSystem(out m_publisher, out m_subscriber);
+			m_propertyTable = PropertyTableFactory.CreatePropertyTable(m_publisher);
+			m_DataTree = new DataTree();
+			var flexComponentParameters = new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber);
+			m_DataTree.InitializeFlexComponent(flexComponentParameters);
+			m_Slice = GenerateSlice(Cache, m_DataTree);
+			m_Slice.InitializeFlexComponent(flexComponentParameters);
+			var node = CreateXmlElementFromOuterXmlOf("<seq field=\"Pronunciations\" layout=\"Normal\" ghost=\"Form\" ghostWs=\"pronunciation\" ghostLabel=\"Pronunciation\" menu=\"mnuDataTree-Pronunciation\" />");
+			int indent = 0;
+			int insertPosition = 0;
+			int flidEmptyProp = 5002031;    // runtime flid of ghost field
+			m_DataTree.MakeGhostSlice(path, node, reuseMap, obj, m_Slice, flidEmptyProp, null, indent, ref insertPosition);
+			var ghostSlice = m_DataTree.Slices[0];
+			Assert.NotNull(ghostSlice);
+		}
 	}
 }

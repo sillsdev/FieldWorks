@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
  xmlns:msxslt="urn:schemas-microsoft-com:xslt"
  xmlns:saxon="http://icl.com/saxon"
@@ -167,9 +167,9 @@ Main template
 			<xsl:text>/XLingPap1.xsl"</xsl:text>
 		</xsl:processing-instruction>
 		<!-- output dtd path -->
-		<xsl:text disable-output-escaping="yes">&#xa;&#x3c;!DOCTYPE lingPaper SYSTEM "file://</xsl:text>
+		<xsl:text disable-output-escaping="yes">&#xa;<![CDATA[<!DOCTYPE lingPaper SYSTEM "file://]]></xsl:text>
 		<xsl:value-of select="$sWordWorksTransformPath"/>
-		<xsl:text disable-output-escaping="yes">/XLingPap.dtd"&#x3e;&#xa;</xsl:text>
+		<xsl:text disable-output-escaping="yes"><![CDATA[/XLingPap.dtd"[<!ENTITY nbsp "#00a0;">]>]]>&#xa;</xsl:text>
 		<lingPaper version="1.12.0">
 			<frontMatter>
 				<title>

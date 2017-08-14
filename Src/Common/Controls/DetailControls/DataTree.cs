@@ -2063,8 +2063,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 						new XAttribute("ref", "Custom"),
 						new XAttribute("param", target));
 					insertAfter.AddAfterSelf(part);
-		}
-		}
+				}
+			}
 		}
 
 		/// <summary>
@@ -2309,7 +2309,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			return NodeTestResult.kntrNothing;
 		}
 
-		void MakeGhostSlice(ArrayList path, XElement node, ObjSeqHashMap reuseMap, ICmObject obj, Slice parentSlice,
+		internal void MakeGhostSlice(ArrayList path, XElement node, ObjSeqHashMap reuseMap, ICmObject obj, Slice parentSlice,
 			int flidEmptyProp, XElement caller, int indent, ref int insertPosition)
 		{
 			// It's a really bad idea to add it to the path, since it kills
@@ -2317,7 +2317,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			//path.Add(node);
 			if (parentSlice != null)
 				Debug.Assert(!parentSlice.IsDisposed, "AddSimpleNode parameter 'parentSlice' is Disposed!");
-			var slice = GetMatchingSlice(path, reuseMap);
+			Slice slice = GetMatchingSlice(path, reuseMap);
 			if (slice == null)
 			{
 				slice = new GhostStringSlice(obj, flidEmptyProp, node, m_cache);
@@ -2832,7 +2832,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <param name="obj"></param>
 		/// <param name="attr"></param>
 		private string GetLabel(XElement caller, XElement node, ICmObject obj, string attr)
-			{
+		{
 			var label = StringTable.Table.LocalizeAttributeValue(XmlUtils.GetOptionalAttributeValue(caller, attr, null)
 				?? XmlUtils.GetOptionalAttributeValue(node, attr, null)
 				?? XmlUtils.GetOptionalAttributeValue(caller, attr)

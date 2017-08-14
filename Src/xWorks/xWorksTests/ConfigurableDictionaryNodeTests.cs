@@ -172,8 +172,8 @@ namespace SIL.FieldWorks.XWorks
 			var inGroupDup = dupUnderGroup.DuplicateAmongSiblings();
 			Assert.That(duplicate.Label, Is.EqualTo(nodeToDuplicateLabel), "should not have changed original node label");
 			Assert.That(nodeToDuplicate.LabelSuffix, Is.Null, "should not have changed original node label suffix");
-			Assert.That(duplicate.LabelSuffix, Is.EqualTo("2"), "(1) was used in the group, so the suffix should be 2");
-			Assert.That(inGroupDup.LabelSuffix, Is.EqualTo("3"), "(2) was used in the group parent, so the suffix should be 3");
+			Assert.IsTrue(duplicate.LabelSuffix.EndsWith("2"), "(1) was used in the group, so the suffix should be 2 but is: " + duplicate.LabelSuffix);
+			Assert.IsTrue(inGroupDup.LabelSuffix.EndsWith("3"), "(2) was used in the group parent, so the suffix should be 3 but is: " + inGroupDup.LabelSuffix);
 #endif
 		}
 
@@ -199,8 +199,8 @@ namespace SIL.FieldWorks.XWorks
 			var inGroupDup = dupUnderShardGroup.DuplicateAmongSiblings();
 			Assert.That(duplicate.Label, Is.EqualTo(nodeToDuplicateLabel), "should not have changed original node label");
 			Assert.That(nodeToDuplicate.LabelSuffix, Is.Null, "should not have changed original node label suffix");
-			Assert.That(duplicate.LabelSuffix, Is.EqualTo("2"), "(1) was used in the group, so the suffix should be 2");
-			Assert.That(inGroupDup.LabelSuffix, Is.EqualTo("3"), "(2) was used in the group parent, so the suffix should be 3");
+			Assert.IsTrue(duplicate.LabelSuffix.EndsWith("2"), "(1) was used in the group, so the suffix should be 2 but is: " + duplicate.LabelSuffix);
+			Assert.IsTrue(inGroupDup.LabelSuffix.EndsWith("3"), "(2) was used in the group parent, so the suffix should be 3 but is: " + inGroupDup.LabelSuffix);
 #endif
 		}
 

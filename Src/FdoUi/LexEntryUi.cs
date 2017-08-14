@@ -13,13 +13,14 @@ using System.Linq;
 using System.Windows.Forms;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.KernelInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.FdoUi.Dialogs;
 using SIL.FieldWorks.LexText.Controls;
+using SIL.LCModel.DomainImpl;
 
 namespace SIL.FieldWorks.FdoUi
 {
@@ -683,6 +684,14 @@ namespace SIL.FieldWorks.FdoUi
 						sPrefix = sda.get_UnicodeProp(hvoType, MoMorphTypeTags.kflidPrefix);
 					}
 
+					// Show homograph number if non-zero.
+					int defUserWs = m_cache.WritingSystemFactory.UserWs;
+					int nHomograph = sda.get_IntProp(hvo, LexEntryTags.kflidHomographNumber);
+					var hc = m_cache.ServiceLocator.GetInstance<HomographConfiguration>();
+					//Insert HomographNumber when position is Before
+					if (hc.HomographNumberBefore)
+						InsertHomographNumber(vwenv, hc, nHomograph, defUserWs);
+
 					// LexEntry.ShortName1; basically tries for form of the lexeme form, then the citation form.
 					bool fGotLabel = false;
 					int wsActual = 0;
@@ -710,7 +719,7 @@ namespace SIL.FieldWorks.FdoUi
 							fGotLabel = true;
 						}
 					}
-					int defUserWs = m_cache.WritingSystemFactory.UserWs;
+
 					if (!fGotLabel)
 					{
 						// If that fails just show two questions marks.
@@ -726,29 +735,37 @@ namespace SIL.FieldWorks.FdoUi
 							sda.get_UnicodeProp(hvoType, MoMorphTypeTags.kflidPostfix), wsActual));
 					}
 
-					// Show homograph number if non-zero.
-					int nHomograph = sda.get_IntProp(hvo,
-						LexEntryTags.kflidHomographNumber);
-					vwenv.NoteDependency(new[] { hvo }, new[] { LexEntryTags.kflidHomographNumber }, 1);
-					if (nHomograph > 0)
+					vwenv.NoteDependency(new[] {hvo}, new[] {LexEntryTags.kflidHomographNumber}, 1);
+					//Insert HomographNumber when position is After
+					if (!hc.HomographNumberBefore)
+						InsertHomographNumber(vwenv, hc, nHomograph, defUserWs);
+		}
+
+		/// <summary>
+		/// Method to insert the homograph number with settings into the Text
+		/// </summary>
+		private void InsertHomographNumber(IVwEnv vwenv, HomographConfiguration hc, int nHomograph, int defUserWs)
 					{
+			if (nHomograph <= 0)
+				return;
+
 						// Use a string builder to embed the properties in with the TsString.
 						// this allows our TsStringCollectorEnv to properly encode the superscript.
 						// ideally, TsStringCollectorEnv could be made smarter to handle SetIntPropValues
 						// since AppendTss treats the given Tss as atomic.
 						ITsIncStrBldr tsBldr = TsStringUtils.MakeIncStrBldr();
-						tsBldr.SetIntPropValues((int)FwTextPropType.ktptSuperscript,
-							(int)FwTextPropVar.ktpvEnum,
-							(int)FwSuperscriptVal.kssvSub);
-						tsBldr.SetIntPropValues((int)FwTextPropType.ktptBold,
-							(int)FwTextPropVar.ktpvEnum,
-							(int)FwTextToggleVal.kttvForceOn);
-						tsBldr.SetIntPropValues((int)FwTextPropType.ktptWs,
-							(int)FwTextPropVar.ktpvDefault, defUserWs);
-						tsBldr.Append(nHomograph.ToString());
+			tsBldr.SetIntPropValues((int) FwTextPropType.ktptSuperscript,
+				(int) FwTextPropVar.ktpvEnum,
+				(int) FwSuperscriptVal.kssvSub);
+			tsBldr.SetIntPropValues((int) FwTextPropType.ktptBold,
+				(int) FwTextPropVar.ktpvEnum,
+				(int) FwTextToggleVal.kttvForceOn);
+			tsBldr.SetIntPropValues((int) FwTextPropType.ktptWs,
+				(int) FwTextPropVar.ktpvDefault, defUserWs);
+			StringServices.InsertHomographNumber(tsBldr, nHomograph, hc, HomographConfiguration.HeadwordVariant.Main,
+				m_cache);
 						vwenv.AddString(tsBldr.GetString());
 					}
-		}
 
 		/// <summary>
 		///

@@ -460,11 +460,15 @@ namespace SIL.FieldWorks.Common.RootSites
 						}
 					}
 				}
+				// Handles the case where m_propertyTable is null because the parent slice is null
+				if (PropertyTable != null)
+				{
 				string oldBest = PropertyTable.GetValue<string>("BestStyleName");
 				if (oldBest != bestStyle)
 				{
 					EditingHelper.SuppressNextBestStyleNameChanged = true;
 					PropertyTable.SetProperty("BestStyleName", bestStyle, false, true);
+				}
 				}
 				return bestStyle;
 			}

@@ -275,7 +275,7 @@ namespace SIL.FieldWorks.XWorks
 					var cssName = projType == "Dictionary" ? "ProjectDictionaryOverrides.css" : "ProjectReversalOverrides.css";
 					custCssPath = CopyCustomCssToTempFolder(configDir, xhtmlPath, cssName);
 				}
-				var settings = new GeneratorSettings(cache, propertyTable, true, true, Path.GetDirectoryName(xhtmlPath), IsNormalRtl(propertyTable));
+				var settings = new GeneratorSettings(cache, propertyTable, true, true, Path.GetDirectoryName(xhtmlPath), IsNormalRtl(propertyTable), Path.GetFileName(cssPath) == "configured.css");
 				GenerateOpeningHtml(cssPath, custCssPath, settings, xhtmlWriter);
 				Tuple<int, int> currentPageBounds = GetPageForCurrentEntry(settings, entryHvos, entriesPerPage, activeClerk);
 				GenerateTopOfPageButtonsIfNeeded(settings, entryHvos, entriesPerPage, currentPageBounds, xhtmlWriter, cssWriter);
@@ -538,14 +538,14 @@ namespace SIL.FieldWorks.XWorks
 			// Rather than complicate the logic below, handle the special cases of no entries and single entry first
 			if (entryHvos.Length <= 1)
 			{
-				return new List<Tuple<int, int>>() { new Tuple<int, int>(0, entryHvos.Length - 1)};
+				return new List<Tuple<int, int>>() { new Tuple<int, int>(0, entryHvos.Length - 1) };
 			}
 
 			var pageRanges = new List<Tuple<int, int>>();
-			if (entryHvos.Length%entriesPerPage != 0) // If we didn't luck out and have exactly full pages
+			if (entryHvos.Length % entriesPerPage != 0) // If we didn't luck out and have exactly full pages
 			{
 				// If the last page is less than 10% of the max entries per page just add them to the last page
-				if (entryHvos.Length%entriesPerPage <= entriesPerPage/10)
+				if (entryHvos.Length % entriesPerPage <= entriesPerPage / 10)
 				{
 					// Generate a last page including the 10% or less overflow entries
 					pageRanges.Add(new Tuple<int, int>(Math.Max(entryHvos.Length - entryHvos.Length % entriesPerPage - entriesPerPage, 0), entryHvos.Length - 1));
@@ -837,7 +837,7 @@ namespace SIL.FieldWorks.XWorks
 				if (config.IsCustomField)
 				{
 					// Get the custom field value (in SubField) using the property which came from the field object
-					if (!GetPropValueForCustomField(propertyValue, config, cache, ((ICmObject) propertyValue).ClassName,
+					if (!GetPropValueForCustomField(propertyValue, config, cache, ((ICmObject)propertyValue).ClassName,
 						config.SubField, ref propertyValue))
 					{
 						return string.Empty;
@@ -893,9 +893,15 @@ namespace SIL.FieldWorks.XWorks
 
 				case PropertyType.CmFileType:
 					fileProperty = propertyValue as ICmFile;
-					if(fileProperty != null && !string.IsNullOrEmpty(fileProperty.InternalPath))
+					var internalPath = fileProperty.InternalPath;
+					// fileProperty.InternalPath can have a backward slash so that gets replaced with a forward slash in Linux
+#if __MonoCS__
+					if(!string.IsNullOrEmpty(internalPath))
+						internalPath = fileProperty.InternalPath.Replace('\\', '/');
+#endif
+					if (fileProperty != null && !string.IsNullOrEmpty(internalPath))
 					{
-						var srcAttr = GenerateSrcAttributeForMediaFromFilePath(fileProperty.InternalPath, "AudioVisual", settings);
+						var srcAttr = GenerateSrcAttributeForMediaFromFilePath(internalPath, "AudioVisual", settings);
 						if (IsVideo(fileProperty.InternalPath))
 							return GenerateXHTMLForVideoFile(fileProperty.ClassName, srcAttr, MovieCamera);
 						fileOwner = field as ICmObject;
@@ -903,7 +909,7 @@ namespace SIL.FieldWorks.XWorks
 						{
 							// the XHTML id attribute must be unique. The owning ICmMedia has a unique guid.
 							// The ICmFile is used for all references to the same file within the project, so its guid is not unique.
-							return GenerateXHTMLForAudioFile(fileProperty.ClassName, fileOwner.Guid.ToString(), srcAttr, LoudSpeaker);
+							return GenerateXHTMLForAudioFile(fileProperty.ClassName, fileOwner.Guid.ToString(), srcAttr, LoudSpeaker, settings);
 						}
 					}
 					return string.Empty;
@@ -925,7 +931,7 @@ namespace SIL.FieldWorks.XWorks
 			if (config.ReferencedOrDirectChildren != null && config.ReferencedOrDirectChildren.Any(child => child.IsEnabled))
 			{
 				var bldr = new StringBuilder();
-				using (var xw = XmlWriter.Create(bldr, new XmlWriterSettings {ConformanceLevel = ConformanceLevel.Fragment}))
+				using (var xw = XmlWriter.Create(bldr, new XmlWriterSettings { ConformanceLevel = ConformanceLevel.Fragment }))
 				{
 					xw.WriteStartElement("span");
 					xw.WriteAttributeString("class", CssGenerator.GetClassAttributeForConfig(config));
@@ -962,25 +968,25 @@ namespace SIL.FieldWorks.XWorks
 				ICmObject specificObject;
 				if (fieldOwner is ISenseOrEntry)
 				{
-					specificObject = ((ISenseOrEntry) fieldOwner).Item;
-					if (!((IFwMetaDataCacheManaged) cache.MetaDataCacheAccessor).GetFields(specificObject.ClassID,
-						true, (int) CellarPropertyTypeFilter.All).Contains(customFieldFlid))
+					specificObject = ((ISenseOrEntry)fieldOwner).Item;
+					if (!((IFwMetaDataCacheManaged)cache.MetaDataCacheAccessor).GetFields(specificObject.ClassID,
+						true, (int)CellarPropertyTypeFilter.All).Contains(customFieldFlid))
 					{
 						return false;
 					}
 				}
 				else
 				{
-					specificObject = (ICmObject) fieldOwner;
+					specificObject = (ICmObject)fieldOwner;
 				}
 
 				switch (customFieldType)
 				{
-					case (int) CellarPropertyType.ReferenceCollection:
-					case (int) CellarPropertyType.OwningCollection:
+					case (int)CellarPropertyType.ReferenceCollection:
+					case (int)CellarPropertyType.OwningCollection:
 					// Collections are stored essentially the same as sequences.
-					case (int) CellarPropertyType.ReferenceSequence:
-					case (int) CellarPropertyType.OwningSequence:
+					case (int)CellarPropertyType.ReferenceSequence:
+					case (int)CellarPropertyType.OwningSequence:
 					{
 						var sda = cache.MainCacheAccessor;
 						// This method returns the hvo of the object pointed to
@@ -995,38 +1001,38 @@ namespace SIL.FieldWorks.XWorks
 						propertyValue = contents.Select(id => cache.LangProject.Services.GetObject(id));
 						break;
 					}
-					case (int) CellarPropertyType.ReferenceAtomic:
-					case (int) CellarPropertyType.OwningAtomic:
+					case (int)CellarPropertyType.ReferenceAtomic:
+					case (int)CellarPropertyType.OwningAtomic:
 					{
 						// This method returns the hvo of the object pointed to
 						propertyValue = cache.MainCacheAccessor.get_ObjectProp(specificObject.Hvo, customFieldFlid);
 						// if the hvo is invalid set propertyValue to null otherwise get the object
-						propertyValue = (int) propertyValue > 0 ? cache.LangProject.Services.GetObject((int) propertyValue) : null;
+							propertyValue = (int)propertyValue > 0 ? cache.LangProject.Services.GetObject((int)propertyValue) : null;
 						break;
 					}
-					case (int) CellarPropertyType.GenDate:
+					case (int)CellarPropertyType.GenDate:
 					{
 						propertyValue = new GenDate(cache.MainCacheAccessor.get_IntProp(specificObject.Hvo, customFieldFlid));
 						break;
 					}
 
-					case (int) CellarPropertyType.Time:
+					case (int)CellarPropertyType.Time:
 					{
 						propertyValue = SilTime.ConvertFromSilTime(cache.MainCacheAccessor.get_TimeProp(specificObject.Hvo, customFieldFlid));
 						break;
 					}
-					case (int) CellarPropertyType.MultiUnicode:
-					case (int) CellarPropertyType.MultiString:
+					case (int)CellarPropertyType.MultiUnicode:
+					case (int)CellarPropertyType.MultiString:
 					{
 						propertyValue = cache.MainCacheAccessor.get_MultiStringProp(specificObject.Hvo, customFieldFlid);
 						break;
 					}
-					case (int) CellarPropertyType.String:
+					case (int)CellarPropertyType.String:
 					{
 						propertyValue = cache.MainCacheAccessor.get_StringProp(specificObject.Hvo, customFieldFlid);
 						break;
 					}
-					case (int) CellarPropertyType.Integer:
+					case (int)CellarPropertyType.Integer:
 					{
 						propertyValue = cache.MainCacheAccessor.get_IntProp(specificObject.Hvo, customFieldFlid);
 						break;
@@ -1080,20 +1086,20 @@ namespace SIL.FieldWorks.XWorks
 		private static HashSet<ConfigurableDictionaryNode> s_reportedNodes = new HashSet<ConfigurableDictionaryNode>();
 
 		private static void ShowConfigDebugInfo(string msg, ConfigurableDictionaryNode config)
-					{
+		{
 			lock (s_reportedNodes)
-						{
+			{
 				Debug.WriteLine(msg);
 				if (s_reportedNodes.Contains(config))
-						return;
+					return;
 				s_reportedNodes.Add(config);
 				while (config != null)
 				{
 					Debug.WriteLine("    Label={0}, FieldDescription={1}, SubField={2}", config.Label, config.FieldDescription, config.SubField ?? "");
 					config = config.Parent;
-					}
-					}
+				}
 			}
+		}
 #endif
 
 		private static void GetSortedReferencePropertyValue(ConfigurableDictionaryNode config, ref object propertyValue, object parent)
@@ -1278,6 +1284,11 @@ namespace SIL.FieldWorks.XWorks
 
 		private static string CopyFileSafely(GeneratorSettings settings, string source, string relativeDestination)
 		{
+			if (!File.Exists(source))
+				return relativeDestination;
+			bool isWavExport = settings.IsWebExport && Path.GetExtension(relativeDestination).Equals(".wav");
+			if (isWavExport)
+				relativeDestination = Path.ChangeExtension(relativeDestination, ".mp3");
 			var destination = Path.Combine(settings.ExportPath, relativeDestination);
 			var subFolder = Path.GetDirectoryName(relativeDestination);
 			FileUtils.EnsureDirectoryExists(Path.GetDirectoryName(destination));
@@ -1287,12 +1298,13 @@ namespace SIL.FieldWorks.XWorks
 			{
 				if (!File.Exists(destination))
 				{
-					if (File.Exists(source))
-					{
+					// converts audio files to correct format during Webonary export
+					if (isWavExport)
+						WavConverter.WavToMp3(source, destination);
+					else
 						FileUtils.Copy(source, destination);
 					}
-				}
-				else if (!FileUtils.AreFilesIdentical(source, destination))
+				else if (!AreFilesIdentical(source, destination, isWavExport))
 				{
 					var fileWithoutExtension = Path.GetFileNameWithoutExtension(relativeDestination);
 					var fileExtension = Path.GetExtension(relativeDestination);
@@ -1302,19 +1314,30 @@ namespace SIL.FieldWorks.XWorks
 					{
 						++copyNumber;
 						newFileName = string.Format("{0}{1}{2}", fileWithoutExtension, copyNumber, fileExtension);
-						destination = string.IsNullOrEmpty(subFolder) ? Path.Combine(settings.ExportPath, newFileName) :
-								Path.Combine(settings.ExportPath, subFolder, newFileName);
-					}
-					while (File.Exists(destination));
-					if (File.Exists(source))
-					{
+						destination = string.IsNullOrEmpty(subFolder)
+							? Path.Combine(settings.ExportPath, newFileName)
+							: Path.Combine(settings.ExportPath, subFolder, newFileName);
+					} while (File.Exists(destination) && !AreFilesIdentical(source, destination, isWavExport));
+					// converts audio files to correct format if necessary during Webonary export
+					if (!isWavExport)
 						FileUtils.Copy(source, destination);
-					}
+					else
+						WavConverter.WavToMp3(source, destination);
 					// Change the filepath to point to the copied file
 					relativeDestination = string.IsNullOrEmpty(subFolder) ? newFileName : Path.Combine(subFolder, newFileName);
 				}
 			}
 			return relativeDestination;
+		}
+
+		private static bool AreFilesIdentical(string source, string destination, bool isWavExport)
+		{
+			if (!isWavExport)
+				return FileUtils.AreFilesIdentical(source, destination);
+			SaveFile exists = WavConverter.AlreadyExists(source, destination);
+			if (exists == SaveFile.IdenticalExists)
+				return true;
+			return false;
 		}
 
 		private static string MakeSafeFilePath(string filePath)
@@ -1324,7 +1347,7 @@ namespace SIL.FieldWorks.XWorks
 				// Flex keeps the filename as NFD in memory because it is unicode. We need NFC to actually link to the file
 				filePath = Icu.Normalize(filePath, Icu.UNormalizationMode.UNORM_NFC);
 			}
-			if(!FileUtils.IsFilePathValid(filePath))
+			if (!FileUtils.IsFilePathValid(filePath))
 			{
 				return "__INVALID_FILE_NAME__";
 			}
@@ -1435,7 +1458,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				next = next.Parent;
 				// Grouping nodes are skipped because they do not represent properties of the model and break type finding
-				if(!(next.DictionaryNodeOptions is DictionaryNodeGroupingOptions))
+				if (!(next.DictionaryNodeOptions is DictionaryNodeGroupingOptions))
 					lineage.Push(next);
 			}
 			// pop off the root configuration and read the FieldDescription property to get our starting point
@@ -1505,14 +1528,14 @@ namespace SIL.FieldWorks.XWorks
 						}
 					case (int)CellarPropertyType.ReferenceAtomic:
 					case (int)CellarPropertyType.OwningAtomic:
+					{
+						var destClassId = cache.MetaDataCacheAccessor.GetDstClsId(customFieldFlid);
+						if (destClassId == StTextTags.kClassId)
 						{
-							var destClassId = cache.MetaDataCacheAccessor.GetDstClsId(customFieldFlid);
-							if (destClassId == StTextTags.kClassId)
-							{
 								return typeof(IStText);
-							}
-							return typeof(ICmObject);
 						}
+						return typeof(ICmObject);
+					}
 					case (int)CellarPropertyType.Time:
 						{
 							return typeof(DateTime);
@@ -1868,7 +1891,7 @@ namespace SIL.FieldWorks.XWorks
 			if (collection is IEnumerable<ICmObject>)
 			{
 				var cmCollection = collection.Cast<ICmObject>();
-				if(decorator != null)
+				if (decorator != null)
 					cmCollection = cmCollection.Where(item => !decorator.IsExcludedObject(item));
 				if (IsCollectionInNeedOfSorting(fieldDescr))
 					cmCollection = cmCollection.OrderBy(x => x.SortKey2);
@@ -1877,7 +1900,7 @@ namespace SIL.FieldWorks.XWorks
 			else if (collection is IEnumerable<ISenseOrEntry>)
 			{
 				var seCollection = collection.Cast<ISenseOrEntry>();
-				if(decorator != null)
+				if (decorator != null)
 					seCollection = seCollection.Where(item => !decorator.IsExcludedObject(item.Item));
 				if (IsCollectionInNeedOfSorting(fieldDescr))
 					seCollection = seCollection.OrderBy(x => x.Item.SortKey2);
@@ -1982,7 +2005,7 @@ namespace SIL.FieldWorks.XWorks
 			return senseNode.Children.Any(child =>
 				child.DictionaryNodeOptions is DictionaryNodeSenseOptions &&
 				child.IsEnabled &&
-				!string.IsNullOrEmpty(((DictionaryNodeSenseOptions) child.DictionaryNodeOptions).NumberingStyle));
+				!string.IsNullOrEmpty(((DictionaryNodeSenseOptions)child.DictionaryNodeOptions).NumberingStyle));
 		}
 
 		private static string InsertGramInfoBeforeSenses(ILexSense item, ConfigurableDictionaryNode gramInfoNode,
@@ -2077,7 +2100,7 @@ namespace SIL.FieldWorks.XWorks
 					lastGrammaticalInfo = requestedString;
 					isSameGrammaticalInfo = true;
 				}
-				else if(requestedString != lastGrammaticalInfo)
+				else if (requestedString != lastGrammaticalInfo)
 				{
 					return false;
 				}
@@ -2300,7 +2323,7 @@ namespace SIL.FieldWorks.XWorks
 				xw.WriteStartElement(GetElementNameForProperty(config));
 				WriteCollectionItemClassAttribute(config, xw);
 				var targetInfo = referenceList.FirstOrDefault();
-				if(targetInfo == null)
+				if (targetInfo == null)
 					return string.Empty;
 				var reference = targetInfo.Item2;
 				if (LexRefTypeTags.IsUnidirectional((LexRefTypeTags.MappingTypes)reference.OwnerType.MappingType) &&
@@ -2435,7 +2458,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var asciiBytes = 64; // char 'A'
 			asciiBytes = asciiBytes + senseNumber;
-			var nextNumber = ((char) (asciiBytes)).ToString();
+			var nextNumber = ((char)(asciiBytes)).ToString();
 			if (numberingStyle == "%a")
 				nextNumber = nextNumber.ToLower();
 			return nextNumber;
@@ -2482,7 +2505,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			// The collections we test here are generic collection types (e.g. IEnumerable<T>). Note: This (and other code) does not work for arrays.
 			// We do have at least one collection type with at least two generic arguments; hence `> 0` instead of `== 1`
-			return entryType.GetGenericArguments().Length > 0 || typeof (ILcmVector).IsAssignableFrom(entryType);
+			return entryType.GetGenericArguments().Length > 0 || typeof(ILcmVector).IsAssignableFrom(entryType);
 		}
 
 		internal static bool IsCollectionNode(ConfigurableDictionaryNode configNode, LcmCache cache)
@@ -2917,7 +2940,7 @@ namespace SIL.FieldWorks.XWorks
 				{
 					var audioId = fieldText.Substring(0, fieldText.IndexOf(".", StringComparison.Ordinal));
 					var srcAttr = GenerateSrcAttributeForMediaFromFilePath(fieldText, "AudioVisual", settings);
-					var content = GenerateXHTMLForAudioFile(writingSystem, audioId, srcAttr, string.Empty);
+					var content = GenerateXHTMLForAudioFile(writingSystem, audioId, srcAttr, string.Empty, settings);
 					if (!string.IsNullOrEmpty(content))
 						return WriteRawElementContents("span", content, null);
 				}
@@ -3026,7 +3049,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="caption">Innertext for hyperlink</param>
 		/// <returns></returns>
 		private static string GenerateXHTMLForAudioFile(string classname,
-			string audioId, string srcAttribute, string caption)
+			string audioId, string srcAttribute, string caption, GeneratorSettings settings)
 		{
 			if (String.IsNullOrEmpty(audioId) && String.IsNullOrEmpty(srcAttribute) && String.IsNullOrEmpty(caption))
 				return String.Empty;
@@ -3143,7 +3166,8 @@ namespace SIL.FieldWorks.XWorks
 			public bool CopyFiles { get; private set; }
 			public string ExportPath { get; private set; }
 			public bool RightToLeft { get; private set; }
-			public GeneratorSettings(LcmCache cache, IPropertyTable propertyTable, bool relativePaths, bool copyFiles, string exportPath, bool rightToLeft = false)
+			public bool IsWebExport { get; private set; }
+			public GeneratorSettings(LcmCache cache, IPropertyTable propertyTable, bool relativePaths, bool copyFiles, string exportPath, bool rightToLeft = false, bool isWebExport = false)
 			{
 				if (cache == null || propertyTable == null)
 				{
@@ -3155,6 +3179,7 @@ namespace SIL.FieldWorks.XWorks
 				CopyFiles = copyFiles;
 				ExportPath = exportPath;
 				RightToLeft = rightToLeft;
+				IsWebExport = isWebExport;
 			}
 		}
 
