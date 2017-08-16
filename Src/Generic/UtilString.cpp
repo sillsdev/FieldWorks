@@ -1639,7 +1639,7 @@ template<typename XChar>
 	AssertArrayN(prgchIns, cchIns);
 
 	int cchCur = m_pbuf->Cch();
-	Assert((uint)ichMin <= (uint)ichLim && (uint)ichLim <= (uint)cchCur);
+	Assert(ichMin <= ichLim && ichLim <= cchCur);
 
 	if (!cchIns)
 	{

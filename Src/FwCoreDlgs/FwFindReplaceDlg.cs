@@ -3062,7 +3062,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// Set the window handle for the search operation - ignored in this case
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public int Window
+		public uint Window
 		{
 			set { }
 		}

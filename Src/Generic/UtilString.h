@@ -1549,7 +1549,7 @@ public:
 		void Replace(int ichMin, int ichLim, const AnyChar * prgch, int cch)
 	{
 		AssertObj(this);
-		Assert((uint)ichMin <= (uint)ichLim && (uint)ichLim <= (uint)m_pbuf->Cch());
+		Assert(ichMin <= ichLim && ichLim <= m_pbuf->Cch());
 		AssertArray(prgch, cch);
 		_Replace(ichMin, ichLim, prgch, 0, cch);
 	}

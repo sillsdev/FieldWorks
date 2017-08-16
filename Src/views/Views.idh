@@ -4357,12 +4357,8 @@ Last reviewed:
 
 		@h3{Hungarian: xserkl}
 	*******************************************************************************************/
-	DeclareInterface(VwSearchKiller, Unknown, FF1B39DE-20D3-4cdd-A134-DCBE3BE23F3E)
+	DeclareInterface(VwSearchKiller, Unknown, D83E25D9-C2E9-42E4-A822-2E97A11D0B91)
 	{
-		// Tells object which window to filter messages for
-		// @param hwnd Handle of window.
-		[propput] HRESULT Window([in] int hwnd);
-
 		// Processes waiting Windows messages, and removes them from the queue.
 		HRESULT FlushMessages();
 
