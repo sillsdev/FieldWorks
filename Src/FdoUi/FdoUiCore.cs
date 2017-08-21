@@ -794,12 +794,16 @@ namespace SIL.FieldWorks.FdoUi
 				// Indeed, since CmBaseAnnotation presents itself as a 'Problem Report', we don't want
 				// to do it for any kind of annotation that couldn't be one!
 #if RANDYTODO
-				// TODO: I never have liked circular references. FDO UI cannot referencce RecordClerk, so it 'cheats' here.
-				// TODO: Pretty soon now, nobody will set "ActiveClerk", so this call will always return null,
+				// TODO: I never have liked circular references. FDO UI cannot reference RecordClerk (in xWorks), so it 'cheats' here.
+				// TODO: Nobody sets "ActiveClerk" these days, so this call will always return null,
 				// TODO: which means the type test will always be "", so it will never bail out with 'true'.
+				// TODO: It's time to continue the assimilation job, in this order:
+				// TODO: xWorks, DetailControls, FdoUi, LexTextControls, XMLViews/MGA (these last two are unordered).
+				// TODO: When completed, this code can get the active clerk from IRecordClerkRepository's ActiveRecordClerk property,
+				// TODO: which is now in xWorks.
 #endif
 				object clrk = PropertyTable.GetValue<object>("ActiveClerk");
-				string sClerkType = clrk != null ? clrk.GetType().Name : "";
+				string sClerkType = clrk != null ? clrk.GetType().Name : string.Empty;
 				if (sClerkType == "OccurrencesOfSelectedUnit")
 					return true;		// We don't want this either.  See LT-6101.
 			}

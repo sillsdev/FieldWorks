@@ -245,13 +245,18 @@ namespace SIL.FieldWorks.XWorks
 			return base.GetNewCurrentIndex(newSortedObjects, newHvoRoot);
 		}
 
+#if RANDYTODO
+// TODO: Make PropertyTableId 'internal' again, after xWorks gets assimilated into LT.
+// TODO: 'internal' and the original of 'internal protected' both work just fine in Windows, but Linux fails on either.
+// TODO: So, ReversalEntryBulkEditTests had to create a test only subclass of AllReversalEntriesRecordList to get Linux to compile. Yuck!
+#endif
 		/// <summary>
 		/// these bulk edit column filters/sorters can be considered Entries based, so that they can possibly
 		/// be reusable in other Entries clerks (e.g. the one used by Lexicon Edit, Browse, Dictionary).
 		/// </summary>
 		/// <param name="sorterOrFilter"></param>
 		/// <returns></returns>
-		protected internal override string PropertyTableId(string sorterOrFilter)
+		public override string PropertyTableId(string sorterOrFilter)
 		{
 			return $"{@"LexDb"}.{@"Entries"}_{sorterOrFilter}";
 		}

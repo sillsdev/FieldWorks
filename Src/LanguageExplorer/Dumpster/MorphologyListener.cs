@@ -320,31 +320,6 @@ namespace LanguageExplorer.Dumpster
 			OnAddWordsToSpellDict(null);
 		}
 
-#if RANDYTODO
-		public virtual bool OnDisplayGotoWfiWordform(object commandObject,
-			ref UIItemDisplayProperties display)
-		{
-			CheckDisposed();
-
-			if (InFriendlyArea && m_mediator != null)
-			{
-				var clrk = RecordClerk.RecordClerkRepository.ActiveRecordClerk;
-				if (clrk != null && !clrk.IsDisposed && clrk.Id == "concordanceWords")
-				{
-					display.Visible = true;
-
-					// we only want to enable if we have more than one, because there's no point in finding
-					// the one we've already selected.
-					display.Enabled = m_wordformRepos.Count > 1;
-					return true;
-				}
-			}
-			// Unless everything lines up to make the command workable disable it.
-			display.Enabled = display.Visible = false;
-			return true; //we've handled this
-		}
-#endif
-
 		/// <summary>
 		/// Try to find a WfiWordform object corresponding the the focus selection.
 		/// If successful return its guid, otherwise, return Guid.Empty.
@@ -441,6 +416,31 @@ namespace LanguageExplorer.Dumpster
 			Publisher.Publish(commands, parms);
 			return true;
 		}
+
+#if RANDYTODO
+		public virtual bool OnDisplayGotoWfiWordform(object commandObject,
+			ref UIItemDisplayProperties display)
+		{
+			CheckDisposed();
+
+			if (InFriendlyArea && m_mediator != null)
+			{
+				var clrk = RecordClerk.RecordClerkRepository.ActiveRecordClerk;
+				if (clrk != null && !clrk.IsDisposed && clrk.Id == "concordanceWords")
+				{
+					display.Visible = true;
+
+					// we only want to enable if we have more than one, because there's no point in finding
+					// the one we've already selected.
+					display.Enabled = m_wordformRepos.Count > 1;
+					return true;
+				}
+			}
+			// Unless everything lines up to make the command workable disable it.
+			display.Enabled = display.Visible = false;
+			return true; //we've handled this
+		}
+#endif
 
 		/// <summary>
 		/// Handles the xCore message to go to a wordform.

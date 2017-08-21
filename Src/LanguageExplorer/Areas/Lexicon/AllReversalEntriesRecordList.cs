@@ -129,8 +129,13 @@ namespace LanguageExplorer.Areas.Lexicon
 			ReloadList();
 		}
 
+#if RANDYTODO
+// TODO: Make PropertyTableId 'internal' again, after xWorks gets assimilated into LT.
+// TODO: 'internal' and the original of 'internal protected' both work just fine in Windows, but Linux fails on either.
+// TODO: So, ReversalEntryBulkEditTests had to create a test only subclass of AllReversalEntriesRecordList to get Linux to compile. Yuck!
+#endif
 		/// <summary />
-		internal protected override string PropertyTableId(string sorterOrFilter)
+		public override string PropertyTableId(string sorterOrFilter)
 		{
 			var reversalPub = PropertyTable.GetValue<string>("ReversalIndexPublicationLayout");
 			if (reversalPub == null)

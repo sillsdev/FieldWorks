@@ -416,6 +416,8 @@
     <Compile Include="ListChangedEventArgs.cs" />
     <Compile Include="ListChangedEventHandler.cs" />
     <Compile Include="MacroListener.cs" />
+    <Compile Include="MatchingItemsRecordClerk.cs" />
+    <Compile Include="MatchingItemsRecordList.cs" />
     <Compile Include="Navigation.cs" />
     <Compile Include="NotebookExportDialog.cs">
       <SubType>Form</SubType>

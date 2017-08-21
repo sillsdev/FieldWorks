@@ -57,29 +57,16 @@ namespace LanguageExplorerTests.Lexicon
 					// Create one.
 					reversalIndex = reversalIndexRepository.FindOrCreateIndexForWs(cache.DefaultAnalWs);
 				}
-				using (var recordList = new TestReversalRecordList(cache.ServiceLocator, cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), reversalIndex))
+				using (var recordList = new AllReversalEntriesRecordList(cache.ServiceLocator, cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), reversalIndex))
 				{
 					propertyTable.SetProperty("cache", cache, SettingsGroup.LocalSettings, false, false);
 					recordList.InitializeFlexComponent(new FlexComponentParameters(propertyTable, publisher, subscriber));
 					propertyTable.SetProperty("ReversalIndexPublicationLayout", "publishReversal" + wsId, true, false);
 
-					var propTableId = recordList.GetPropertyTableId(FieldName);
+					var propTableId = recordList.PropertyTableId(FieldName);
 					StringAssert.Contains(FieldName, propTableId);
 					StringAssert.Contains(wsId, propTableId);
 				}
-			}
-		}
-
-		class TestReversalRecordList : AllReversalEntriesRecordList
-		{
-			internal TestReversalRecordList(ILcmServiceLocator serviceLocator, ISilDataAccessManaged decorator, IReversalIndex reversalIndex)
-				: base(serviceLocator, decorator, reversalIndex)
-			{
-			}
-
-			public string GetPropertyTableId(string fieldName)
-			{
-				return PropertyTableId(fieldName);
 			}
 		}
 	}

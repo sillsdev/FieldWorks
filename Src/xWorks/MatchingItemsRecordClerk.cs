@@ -4,8 +4,9 @@
 
 using System;
 using System.Collections.Generic;
-using SIL.FieldWorks.FDO.Application;
+using System.Windows.Forms;
 using SIL.FieldWorks.Filters;
+using SIL.LCModel.Application;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -21,8 +22,8 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Contructor.
 		/// </summary>
-		internal MatchingItemsRecordClerk(ISilDataAccessManaged decorator)
-			: base("matchingWords", new MatchingItemsRecordList(decorator), new PropertyRecordSorter(), "Default", null, false, false)
+		internal MatchingItemsRecordClerk(ISilDataAccessManaged decorator, StatusBar statusBar)
+			: base("matchingWords", statusBar, new MatchingItemsRecordList(decorator), new PropertyRecordSorter(), "Default", null, false, false)
 		{
 		}
 
@@ -30,12 +31,6 @@ namespace SIL.FieldWorks.XWorks
 		{
 			((MatchingItemsRecordList) m_list).UpdateList(objs);
 		}
-
-
-		//protected override void StoreClerkInPropertyTable()
-		//{
-		//	// Don't bother storing in the property table.
-		//}
 
 		/// <summary>
 		/// Set the specified index in the list.

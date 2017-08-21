@@ -1012,8 +1012,8 @@ namespace SIL.FieldWorks.Common.Controls
 					{
 #if RANDYTODO
 						// TODO: Can't reference xWorks, so removing this case of "ActiveClerk" will have to wait, until these are all assimilated (ordered list):
-						// TODO: xWorks, DetailControls, FdoUi, LexTextControls, XMLViews.
-						// TODO: But, 'x' will always be null soon, since nobody will be setting "ActiveClerk".
+						// TODO: xWorks, DetailControls, FdoUi, LexTextControls, XMLViews/MGA (these last two are unordered).
+						// TODO: 'x' will always be null, since nobody is setting "ActiveClerk".
 #endif
 						// Deleting everything in one view doesn't seem to fix the RecordList in
 						// related views.  See LT-9711.

@@ -3,8 +3,8 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
-using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.Filters;
+using SIL.LCModel.Application;
 
 namespace SIL.FieldWorks.XWorks
 {
