@@ -2398,7 +2398,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				slice.Object = obj;
 				slice.Cache = m_cache;
 				slice.Mediator = m_mediator;
-				slice.PropTable = parentSlice?.PropTable;
+				slice.PropTable = parentSlice != null ? parentSlice?.PropTable : this.Slices[0].PropTable;
 
 				// We need a copy since we continue to modify path, so make it as compact as possible.
 				slice.Key = path.ToArray();
