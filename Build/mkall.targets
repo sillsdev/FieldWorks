@@ -28,7 +28,7 @@
 	<Target Name="regFreeCpp" DependsOnTargets="FwKernel;Views"
 		AfterTargets="FwKernel;Views" Condition="'$(OS)'=='Windows_NT'">
 		<RegFree Executable="$(dir-outputBase)/FwKernel.dll" Output="$(dir-outputBase)/FieldWorks.Tests.manifest"
-			Dlls="$(dir-outputBase)/FwKernel.dll;$(dir-outputBase)/Views.dll"
+			Dlls="$(dir-outputBase)\FwKernel.dll;$(dir-outputBase)\Views.dll"
 			Fragments="@(Fragments)"/>
 	</Target>
 
@@ -282,7 +282,8 @@
 		<!-- bt323 is the master branch (strong name) build of Chorus for Linux development. Update when appropriate. -->
 		<ChorusBuildType Condition="'$(OS)'=='Unix'">bt323</ChorusBuildType>
 		<!-- Libpalaso_PalasoWinmasterContinuous is the master branch build of Palaso for Windows development. Update when appropriate. -->
-		<PalasoBuildType Condition="'$(OS)'=='Windows_NT'">Libpalaso_PalasoWin32masterContinuous</PalasoBuildType>
+		<PalasoBuildType Condition="'$(OS)'=='Windows_NT' AND '$(arch)'!='x64'">Libpalaso_PalasoWin32masterContinuous</PalasoBuildType>
+		<PalasoBuildType Condition="'$(OS)'=='Windows_NT' AND '$(arch)'=='x64'">Libpalaso_PalasoWinmasterContinuous</PalasoBuildType>
 		<!-- bt322 is the master branch build of Palaso for Linux development. Update when appropriate. -->
 		<PalasoBuildType Condition="'$(OS)'=='Unix'">Libpalaso_PalasoLinux64masterContinuous</PalasoBuildType>
 		<!--Todo: use PalasoBuildType, when it refers to somewhere that has the IPCFramework.-->
@@ -528,24 +529,22 @@
 			SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
 		<!-- NuGet packages. Property- and ItemGroups are inside the target so $(arch) and *'s are read properly -->
 		<PropertyGroup>
-			<Architecture Condition="'$(arch)'=='x86_64'">64</Architecture>
-			<Architecture Condition="'$(arch)'!='x86_64'">32</Architecture>
-			<GeckoDir Condition="'$(OS)'=='Windows_NT'">$(fwrt)/packages/Geckofx45.45.0.20</GeckoDir><!--yes, this version is missing the terminal .0-->
-			<GeckoDir Condition="'$(OS)'!='Windows_NT'">$(fwrt)/packages/Geckofx45.$(Architecture).Linux.45.0.21.0</GeckoDir>
+			<!-- Yes, the Windows version is missing the the OS and the 32-bit architecture. -->
+			<GeckoDir Condition="'$(OS)'=='Windows_NT' AND '$(arch)'!='x64'">$(fwrt)/packages/Geckofx45.45.0.32</GeckoDir>
+			<GeckoDir Condition="'$(OS)'=='Windows_NT' AND '$(arch)'=='x64'">$(fwrt)/packages/Geckofx45.64.45.0.32</GeckoDir>
+			<GeckoDir Condition="'$(OS)'!='Windows_NT' AND '$(arch)'!='x86_64'">$(fwrt)/packages/Geckofx45.32.Linux.45.0.21.0</GeckoDir>
+			<GeckoDir Condition="'$(OS)'!='Windows_NT' AND '$(arch)'=='x86_64'">$(fwrt)/packages/Geckofx45.64.Linux.45.0.21.0</GeckoDir>
 		</PropertyGroup>
 		<ItemGroup>
-			<NuGottenFiles Include="$(GeckoDir)/lib/net40/Geckofx-Core.dll"/>
-			<NuGottenFiles Include="$(GeckoDir)/lib/net40/Geckofx-Core.pdb" Condition="'$(OS)'=='Windows_NT'"/>
-			<NuGottenFiles Include="$(GeckoDir)/lib/net40/Geckofx-Core.dll.mdb" Condition="'$(OS)'!='Windows_NT'"/>
-			<NuGottenFiles Include="$(GeckoDir)/lib/net40/Geckofx-Winforms.dll"/>
-			<NuGottenFiles Include="$(GeckoDir)/lib/net40/Geckofx-Winforms.pdb" Condition="'$(OS)'=='Windows_NT'"/>
-			<NuGottenFiles Include="$(GeckoDir)/lib/net40/Geckofx-Winforms.dll.mdb" Condition="'$(OS)'!='Windows_NT'"/>
+			<NuGottenFiles Include="$(GeckoDir)/lib/net45/*.*" Condition="'$(OS)'=='Windows_NT'"/>
+			<NuGottenFiles Include="$(GeckoDir)/lib/net40/*.*" Condition="'$(OS)'!='Windows_NT'"/>
 			<NuGottenFiles Include="$(GeckoDir)/build/Geckofx-Core.dll.config" Condition="'$(OS)'!='Windows_NT'"/>
 			<NuGottenFiles Include="$(GeckoDir)/content/**/*.*"/>
 			<NuGottenFiles Include="$(fwrt)/packages/DotNetZip.1.10.1/lib/net20/*.*"/>
 			<NuGottenFiles Include="$(fwrt)/packages/NAudio.1.7.3/lib/net35/NAudio.dll"/>
 			<NuGottenFiles Include="$(fwrt)/packages/NAudio.Lame.1.0.4/lib/net20/NAudio.Lame.dll"/>
-			<NuGottenFiles Include="$(fwrt)/packages/NAudio.Lame.1.0.4/content/libmp3lame.$(Architecture).dll"/>
+			<NuGottenFiles Condition="'$(OS)'=='Windows_NT' AND '$(arch)'!='x64'" Include="$(fwrt)/packages/NAudio.Lame.1.0.4/content/libmp3lame.32.dll"/>
+			<NuGottenFiles Condition="'$(OS)'=='Windows_NT' AND '$(arch)'=='x64'" Include="$(fwrt)/packages/NAudio.Lame.1.0.4/content/libmp3lame.64.dll"/>
 		</ItemGroup>
 		<Copy SourceFiles="@(NuGottenFiles)" DestinationFolder="$(dir-outputBase)/%(RecursiveDir)"
 			SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>

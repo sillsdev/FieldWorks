@@ -52,8 +52,8 @@ namespace FwBuildTasks
 			}
 			else
 			{
-				// left as an exercise for later...
-				Value = "";
+				var arch = Environment.GetEnvironmentVariable("arch");
+				Value = !string.IsNullOrEmpty(arch) && (arch.ToLower() == "x64" || arch.ToLower() == "win64") ? "x64" : "x86";
 			}
 			return true;
 		}

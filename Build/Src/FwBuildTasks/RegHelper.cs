@@ -8,6 +8,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.ComTypes;
 using System.Text;
+using FwBuildTasks;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 using Microsoft.Win32;
@@ -22,13 +23,21 @@ namespace SIL.FieldWorks.Build.Tasks
 		private bool IsDisposed { get; set; }
 		public static string TmpRegistryKeyHKCR { get; private set; }
 		public static string TmpRegistryKeyHKLM { get; private set; }
-		private static readonly UIntPtr HKEY_CLASSES_ROOT = new UIntPtr(0xFFFFFFFF80000000UL);
-		private static readonly UIntPtr HKEY_CURRENT_USER = new UIntPtr(0xFFFFFFFF80000001UL);
-		private static readonly UIntPtr HKEY_LOCAL_MACHINE = new UIntPtr(0xFFFFFFFF80000002UL);
+		private static UIntPtr _hkeyClassesRoot = new UIntPtr(0x80000000UL);
+		private static UIntPtr _hkeyCurrentUser = new UIntPtr(0x80000001UL);
+		private static UIntPtr _hkeyLocalMachine = new UIntPtr(0x80000002UL);
 
 		/// <summary/>
 		public RegHelper(TaskLoggingHelper log)
 		{
+			var archTask = new CpuArchitecture();
+			var arch = archTask.Execute() ? archTask.Value : "x86";
+			if (arch.Contains("64"))
+			{
+				_hkeyClassesRoot = new UIntPtr(0xFFFFFFFF80000000UL);
+				_hkeyCurrentUser = new UIntPtr(0xFFFFFFFF80000001UL);
+				_hkeyLocalMachine = new UIntPtr(0xFFFFFFFF80000002UL);
+			}
 			m_Log = log;
 		}
 
@@ -127,8 +136,8 @@ namespace SIL.FieldWorks.Build.Tasks
 				}
 				m_Log.LogMessage(MessageImportance.Low, "Redirecting HKCR to {0}", TmpRegistryKeyHKCR);
 				UIntPtr hKey;
-				RegCreateKey(HKEY_CURRENT_USER, TmpRegistryKeyHKCR, out hKey);
-				int ret = RegOverridePredefKey(HKEY_CLASSES_ROOT, hKey);
+				RegCreateKey(_hkeyCurrentUser, TmpRegistryKeyHKCR, out hKey);
+				int ret = RegOverridePredefKey(_hkeyClassesRoot, hKey);
 				if (ret != 0)
 					m_Log.LogError("Redirecting HKCR failed with {0}", ret);
 				RegCloseKey(hKey);
@@ -139,8 +148,8 @@ namespace SIL.FieldWorks.Build.Tasks
 				if (redirectLocalMachine)
 				{
 					m_Log.LogMessage(MessageImportance.Low, "Redirecting HKLM to {0}", TmpRegistryKeyHKLM);
-					RegCreateKey(HKEY_CURRENT_USER, TmpRegistryKeyHKLM, out hKey);
-					ret = RegOverridePredefKey(HKEY_LOCAL_MACHINE, hKey);
+					RegCreateKey(_hkeyCurrentUser, TmpRegistryKeyHKLM, out hKey);
+					ret = RegOverridePredefKey(_hkeyLocalMachine, hKey);
 					if (ret != 0)
 						m_Log.LogError("Redirecting HKLM failed with {0}", ret);
 					RegCloseKey(hKey);
@@ -162,8 +171,8 @@ namespace SIL.FieldWorks.Build.Tasks
 		{
 			m_Log.LogMessage(MessageImportance.Low, "Ending registry redirection");
 			SetDllDirectory(null);
-			RegOverridePredefKey(HKEY_CLASSES_ROOT, UIntPtr.Zero);
-			RegOverridePredefKey(HKEY_LOCAL_MACHINE, UIntPtr.Zero);
+			RegOverridePredefKey(_hkeyClassesRoot, UIntPtr.Zero);
+			RegOverridePredefKey(_hkeyLocalMachine, UIntPtr.Zero);
 		}
 
 		/// ------------------------------------------------------------------------------------
