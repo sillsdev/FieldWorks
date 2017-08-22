@@ -337,9 +337,9 @@ EXTENSIONS NOT SUPPORTED (Lists_Area) -->
 <!-- DONE
 				<clerk id="SemanticDomainList">
 					<recordList owner="LangProject" property="SemanticDomainList">
-						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.PossibilityRecordList"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.PossibilityRecordList"/>
 					</recordList>
-					<treeBarHandler assemblyPath="xWorks.dll" expand="false" hierarchical="true" includeAbbr="true" ws="best analysis" class="SIL.FieldWorks.XWorks.SemanticDomainRdeTreeBarHandler" altTitleId="SemanticDomain-Plural"/>
+					<treeBarHandler assemblyPath="LanguageExplorer.dll" expand="false" hierarchical="true" includeAbbr="true" ws="best analysis" class="LanguageExplorer.Works.SemanticDomainRdeTreeBarHandler" altTitleId="SemanticDomain-Plural"/>
 					<filters/>
 					<sortMethods>
 						<sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName"/>
@@ -347,9 +347,9 @@ EXTENSIONS NOT SUPPORTED (Lists_Area) -->
 				</clerk>
 				<clerk id="GenreList">
 					<recordList owner="LangProject" property="GenreList">
-						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.PossibilityRecordList"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.PossibilityRecordList"/>
 					</recordList>
-					<treeBarHandler assemblyPath="xWorks.dll" expand="false" hierarchical="true" includeAbbr="false" ws="best analysis" class="SIL.FieldWorks.XWorks.PossibilityTreeBarHandler"/>
+					<treeBarHandler assemblyPath="LanguageExplorer.dll" expand="false" hierarchical="true" includeAbbr="false" ws="best analysis" class="LanguageExplorer.Works.PossibilityTreeBarHandler"/>
 					<filters/>
 					<sortMethods>
 						<sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName"/>
@@ -357,9 +357,9 @@ EXTENSIONS NOT SUPPORTED (Lists_Area) -->
 				</clerk>
 				<clerk id="AnnotationDefList">
 					<recordList owner="LangProject" property="AnnotationDefs">
-						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.PossibilityRecordList"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.PossibilityRecordList"/>
 					</recordList>
-					<treeBarHandler assemblyPath="xWorks.dll" expand="true" hierarchical="true" includeAbbr="false" ws="best analysis" class="SIL.FieldWorks.XWorks.PossibilityTreeBarHandler"/>
+					<treeBarHandler assemblyPath="LanguageExplorer.dll" expand="true" hierarchical="true" includeAbbr="false" ws="best analysis" class="LanguageExplorer.Works.PossibilityTreeBarHandler"/>
 					<filters/>
 					<sortMethods>
 						<sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName"/>
@@ -367,9 +367,9 @@ EXTENSIONS NOT SUPPORTED (Lists_Area) -->
 				</clerk>
 				<clerk id="DomainTypeList">
 					<recordList owner="LexDb" property="DomainTypes">
-						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.PossibilityRecordList"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.PossibilityRecordList"/>
 					</recordList>
-					<treeBarHandler assemblyPath="xWorks.dll" expand="false" hierarchical="true" includeAbbr="false" ws="best analysis" class="SIL.FieldWorks.XWorks.PossibilityTreeBarHandler"/>
+					<treeBarHandler assemblyPath="LanguageExplorer.dll" expand="false" hierarchical="true" includeAbbr="false" ws="best analysis" class="LanguageExplorer.Works.PossibilityTreeBarHandler"/>
 					<filters/>
 					<sortMethods>
 						<sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName"/>
@@ -377,9 +377,9 @@ EXTENSIONS NOT SUPPORTED (Lists_Area) -->
 				</clerk>
 				<clerk id="SenseTypeList">
 					<recordList owner="LexDb" property="SenseTypes">
-						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.PossibilityRecordList"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.PossibilityRecordList"/>
 					</recordList>
-					<treeBarHandler assemblyPath="xWorks.dll" includeAbbr="false" ws="best analysis" class="SIL.FieldWorks.XWorks.PossibilityTreeBarHandler"/>
+					<treeBarHandler assemblyPath="LanguageExplorer.dll" includeAbbr="false" ws="best analysis" class="LanguageExplorer.Works.PossibilityTreeBarHandler"/>
 					<filters/>
 					<sortMethods>
 						<sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName"/>
@@ -387,9 +387,9 @@ EXTENSIONS NOT SUPPORTED (Lists_Area) -->
 				</clerk>
 				<clerk id="MorphTypeList">
 					<recordList owner="LexDb" property="MorphTypes">
-						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.PossibilityRecordList"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.PossibilityRecordList"/>
 					</recordList>
-					<treeBarHandler assemblyPath="xWorks.dll" includeAbbr="false" ws="best analysis" class="SIL.FieldWorks.XWorks.PossibilityTreeBarHandler"/>
+					<treeBarHandler assemblyPath="LanguageExplorer.dll" includeAbbr="false" ws="best analysis" class="LanguageExplorer.Works.PossibilityTreeBarHandler"/>
 					<filters/>
 					<sortMethods>
 						<sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName"/>
@@ -397,9 +397,9 @@ EXTENSIONS NOT SUPPORTED (Lists_Area) -->
 				</clerk>
 				<clerk id="UsageTypeList">
 					<recordList owner="LexDb" property="UsageTypes">
-						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.PossibilityRecordList"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.PossibilityRecordList"/>
 					</recordList>
-					<treeBarHandler assemblyPath="xWorks.dll" expand="true" hierarchical="true" includeAbbr="false" ws="best analysis" class="SIL.FieldWorks.XWorks.PossibilityTreeBarHandler"/>
+					<treeBarHandler assemblyPath="LanguageExplorer.dll" expand="true" hierarchical="true" includeAbbr="false" ws="best analysis" class="LanguageExplorer.Works.PossibilityTreeBarHandler"/>
 					<filters/>
 					<sortMethods>
 						<sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName"/>
@@ -409,9 +409,9 @@ DONE -->
 				<!--
 				<clerk id="SenseStatusList">
 					<recordList owner="LexDb" property="Status">
-						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.PossibilityRecordList"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.PossibilityRecordList"/>
 					</recordList>
-					<treeBarHandler assemblyPath="xWorks.dll" includeAbbr="false" ws="best analysis" class="SIL.FieldWorks.XWorks.PossibilityTreeBarHandler"/>
+					<treeBarHandler assemblyPath="LanguageExplorer.dll" includeAbbr="false" ws="best analysis" class="LanguageExplorer.Works.PossibilityTreeBarHandler"/>
 					<filters/>
 					<sortMethods>
 						<sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName"/>
@@ -421,9 +421,9 @@ DONE -->
 <!-- DONE
 				<clerk id="ComplexEntryTypeList">
 					<recordList owner="LexDb" property="ComplexEntryTypes">
-						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.PossibilityRecordList"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.PossibilityRecordList"/>
 					</recordList>
-					<treeBarHandler assemblyPath="xWorks.dll" expand="false" hierarchical="true" includeAbbr="false" ws="best analysis" class="SIL.FieldWorks.XWorks.PossibilityTreeBarHandler"/>
+					<treeBarHandler assemblyPath="LanguageExplorer.dll" expand="false" hierarchical="true" includeAbbr="false" ws="best analysis" class="LanguageExplorer.Works.PossibilityTreeBarHandler"/>
 					<filters/>
 					<sortMethods>
 						<sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName"/>
@@ -431,9 +431,9 @@ DONE -->
 				</clerk>
 				<clerk id="VariantEntryTypeList">
 					<recordList owner="LexDb" property="VariantEntryTypes">
-						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.PossibilityRecordList"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.PossibilityRecordList"/>
 					</recordList>
-					<treeBarHandler assemblyPath="xWorks.dll" expand="false" hierarchical="true" includeAbbr="false" ws="best analysis" class="SIL.FieldWorks.XWorks.PossibilityTreeBarHandler"/>
+					<treeBarHandler assemblyPath="LanguageExplorer.dll" expand="false" hierarchical="true" includeAbbr="false" ws="best analysis" class="LanguageExplorer.Works.PossibilityTreeBarHandler"/>
 					<filters/>
 					<sortMethods>
 						<sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName"/>
@@ -441,9 +441,9 @@ DONE -->
 				</clerk>
 				<clerk id="TextMarkupTagsList">
 					<recordList owner="LangProject" property="TextMarkupTags">
-						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.PossibilityRecordList"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.PossibilityRecordList"/>
 					</recordList>
-					<treeBarHandler assemblyPath="xWorks.dll" expand="false" hierarchical="true" includeAbbr="false" ws="best analysis" class="SIL.FieldWorks.XWorks.PossibilityTreeBarHandler"/>
+					<treeBarHandler assemblyPath="LanguageExplorer.dll" expand="false" hierarchical="true" includeAbbr="false" ws="best analysis" class="LanguageExplorer.Works.PossibilityTreeBarHandler"/>
 					<filters/>
 					<sortMethods>
 						<sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName"/>
@@ -451,9 +451,9 @@ DONE -->
 				</clerk>
 				<clerk id="TranslationTypeList">
 					<recordList owner="LangProject" property="TranslationTags">
-						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.PossibilityRecordList"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.PossibilityRecordList"/>
 					</recordList>
-					<treeBarHandler assemblyPath="xWorks.dll" includeAbbr="false" ws="best analysis" class="SIL.FieldWorks.XWorks.PossibilityTreeBarHandler"/>
+					<treeBarHandler assemblyPath="LanguageExplorer.dll" includeAbbr="false" ws="best analysis" class="LanguageExplorer.Works.PossibilityTreeBarHandler"/>
 					<filters/>
 					<sortMethods>
 						<sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName"/>
@@ -461,9 +461,9 @@ DONE -->
 				</clerk>
 				<clerk id="EducationList">
 					<recordList owner="LangProject" property="Education">
-						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.PossibilityRecordList"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.PossibilityRecordList"/>
 					</recordList>
-					<treeBarHandler assemblyPath="xWorks.dll" expand="false" hierarchical="true" includeAbbr="false" ws="best analysis" class="SIL.FieldWorks.XWorks.PossibilityTreeBarHandler"/>
+					<treeBarHandler assemblyPath="LanguageExplorer.dll" expand="false" hierarchical="true" includeAbbr="false" ws="best analysis" class="LanguageExplorer.Works.PossibilityTreeBarHandler"/>
 					<filters/>
 					<sortMethods>
 						<sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName"/>
@@ -471,9 +471,9 @@ DONE -->
 				</clerk>
 				<clerk id="DialectsList">
 					<recordList owner="LexDb" property="DialectLabels">
-						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.PossibilityRecordList"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.PossibilityRecordList"/>
 					</recordList>
-					<treeBarHandler assemblyPath="xWorks.dll" expand="false" hierarchical="true" includeAbbr="false" ws="best vernoranal" class="SIL.FieldWorks.XWorks.PossibilityTreeBarHandler"/>
+					<treeBarHandler assemblyPath="LanguageExplorer.dll" expand="false" hierarchical="true" includeAbbr="false" ws="best vernoranal" class="LanguageExplorer.Works.PossibilityTreeBarHandler"/>
 					<filters/>
 					<sortMethods>
 						<sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName"/>
@@ -481,9 +481,9 @@ DONE -->
 				</clerk>
 				<clerk id="ExtNoteTypeList">
 					<recordList owner="LexDb" property="ExtendedNoteTypes">
-						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.PossibilityRecordList"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.PossibilityRecordList"/>
 					</recordList>
-					<treeBarHandler assemblyPath="xWorks.dll" expand="false" hierarchical="true" includeAbbr="false" ws="best analysis" class="SIL.FieldWorks.XWorks.PossibilityTreeBarHandler"/>
+					<treeBarHandler assemblyPath="LanguageExplorer.dll" expand="false" hierarchical="true" includeAbbr="false" ws="best analysis" class="LanguageExplorer.Works.PossibilityTreeBarHandler"/>
 					<filters/>
 					<sortMethods>
 						<sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName"/>
@@ -491,9 +491,9 @@ DONE -->
 				</clerk>
 				<clerk id="RoleList">
 					<recordList owner="LangProject" property="Roles">
-						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.PossibilityRecordList"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.PossibilityRecordList"/>
 					</recordList>
-					<treeBarHandler assemblyPath="xWorks.dll" expand="false" hierarchical="true" includeAbbr="false" ws="best analysis" class="SIL.FieldWorks.XWorks.PossibilityTreeBarHandler"/>
+					<treeBarHandler assemblyPath="LanguageExplorer.dll" expand="false" hierarchical="true" includeAbbr="false" ws="best analysis" class="LanguageExplorer.Works.PossibilityTreeBarHandler"/>
 					<filters/>
 					<sortMethods>
 						<sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName"/>
@@ -501,9 +501,9 @@ DONE -->
 				</clerk>
 				<clerk id="LanguagesList">
 					<recordList owner="LexDb" property="Languages">
-						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.PossibilityRecordList"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.PossibilityRecordList"/>
 					</recordList>
-					<treeBarHandler assemblyPath="xWorks.dll" expand="false" hierarchical="false" includeAbbr="false" ws="best analysis" class="SIL.FieldWorks.XWorks.PossibilityTreeBarHandler"/>
+					<treeBarHandler assemblyPath="LanguageExplorer.dll" expand="false" hierarchical="false" includeAbbr="false" ws="best analysis" class="LanguageExplorer.Works.PossibilityTreeBarHandler"/>
 					<filters/>
 					<sortMethods>
 						<sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName"/>
@@ -511,9 +511,9 @@ DONE -->
 				</clerk>
 				<clerk id="LocationList">
 					<recordList owner="LangProject" property="Locations">
-						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.PossibilityRecordList"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.PossibilityRecordList"/>
 					</recordList>
-					<treeBarHandler assemblyPath="xWorks.dll" expand="false" hierarchical="true" includeAbbr="false" ws="best vernoranal" class="SIL.FieldWorks.XWorks.PossibilityTreeBarHandler"/>
+					<treeBarHandler assemblyPath="LanguageExplorer.dll" expand="false" hierarchical="true" includeAbbr="false" ws="best vernoranal" class="LanguageExplorer.Works.PossibilityTreeBarHandler"/>
 					<filters/>
 					<sortMethods>
 						<sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName"/>
@@ -521,9 +521,9 @@ DONE -->
 				</clerk>
 				<clerk id="PublicationList">
 					<recordList owner="LexDb" property="PublicationTypes">
-						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.PossibilityRecordList"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.PossibilityRecordList"/>
 					</recordList>
-					<treeBarHandler assemblyPath="xWorks.dll" expand="false" hierarchical="false" includeAbbr="false" ws="best vernoranal" class="SIL.FieldWorks.XWorks.PossibilityTreeBarHandler"/>
+					<treeBarHandler assemblyPath="LanguageExplorer.dll" expand="false" hierarchical="false" includeAbbr="false" ws="best vernoranal" class="LanguageExplorer.Works.PossibilityTreeBarHandler"/>
 					<filters/>
 					<sortMethods>
 						<sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName"/>
@@ -531,9 +531,9 @@ DONE -->
 				</clerk>
 				<clerk id="PositionList">
 					<recordList owner="LangProject" property="Positions">
-						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.PossibilityRecordList"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.PossibilityRecordList"/>
 					</recordList>
-					<treeBarHandler assemblyPath="xWorks.dll" includeAbbr="false" ws="best analysis" class="SIL.FieldWorks.XWorks.PossibilityTreeBarHandler"/>
+					<treeBarHandler assemblyPath="LanguageExplorer.dll" includeAbbr="false" ws="best analysis" class="LanguageExplorer.Works.PossibilityTreeBarHandler"/>
 					<filters/>
 					<sortMethods>
 						<sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName"/>
@@ -541,9 +541,9 @@ DONE -->
 				</clerk>
 				<clerk id="AffixCategoryList">
 					<recordList owner="LangProject" property="AffixCategories">
-						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.PossibilityRecordList"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.PossibilityRecordList"/>
 					</recordList>
-					<treeBarHandler assemblyPath="xWorks.dll" expand="false" hierarchical="true" includeAbbr="false" ws="best analysis" class="SIL.FieldWorks.XWorks.PossibilityTreeBarHandler"/>
+					<treeBarHandler assemblyPath="LanguageExplorer.dll" expand="false" hierarchical="true" includeAbbr="false" ws="best analysis" class="LanguageExplorer.Works.PossibilityTreeBarHandler"/>
 					<filters/>
 					<sortMethods>
 						<sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName"/>
@@ -551,9 +551,9 @@ DONE -->
 				</clerk>
 				<clerk id="AnthropologyList">
 					<recordList owner="LangProject" property="AnthroList">
-						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.PossibilityRecordList"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.PossibilityRecordList"/>
 					</recordList>
-					<treeBarHandler assemblyPath="xWorks.dll" expand="false" hierarchical="true" includeAbbr="true" ws="best analysis" class="SIL.FieldWorks.XWorks.PossibilityTreeBarHandler"/>
+					<treeBarHandler assemblyPath="LanguageExplorer.dll" expand="false" hierarchical="true" includeAbbr="true" ws="best analysis" class="LanguageExplorer.Works.PossibilityTreeBarHandler"/>
 					<filters/>
 					<sortMethods>
 						<sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName"/>
@@ -561,9 +561,9 @@ DONE -->
 				</clerk>
 				<clerk id="PeopleList">
 					<recordList owner="LangProject" property="People">
-						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.PossibilityRecordList"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.PossibilityRecordList"/>
 					</recordList>
-					<treeBarHandler assemblyPath="xWorks.dll" expand="false" hierarchical="true" includeAbbr="false" ws="best vernoranal" class="SIL.FieldWorks.XWorks.PossibilityTreeBarHandler"/>
+					<treeBarHandler assemblyPath="LanguageExplorer.dll" expand="false" hierarchical="true" includeAbbr="false" ws="best vernoranal" class="LanguageExplorer.Works.PossibilityTreeBarHandler"/>
 					<filters/>
 					<sortMethods>
 						<sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName"/>
@@ -572,9 +572,9 @@ DONE -->
 
 				<clerk id="StatusList">
 					<recordList owner="LangProject" property="Status">
-						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.PossibilityRecordList"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.PossibilityRecordList"/>
 					</recordList>
-					<treeBarHandler assemblyPath="xWorks.dll" expand="false" hierarchical="true" includeAbbr="false" ws="best analysis" class="SIL.FieldWorks.XWorks.PossibilityTreeBarHandler"/>
+					<treeBarHandler assemblyPath="LanguageExplorer.dll" expand="false" hierarchical="true" includeAbbr="false" ws="best analysis" class="LanguageExplorer.Works.PossibilityTreeBarHandler"/>
 					<filters/>
 					<sortMethods>
 						<sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName"/>
@@ -582,9 +582,9 @@ DONE -->
 				</clerk>
 				<clerk id="ConfidenceList">
 					<recordList owner="LangProject" property="ConfidenceLevels">
-						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.PossibilityRecordList"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.PossibilityRecordList"/>
 					</recordList>
-					<treeBarHandler assemblyPath="xWorks.dll" expand="false" hierarchical="true" includeAbbr="false" ws="best analysis" class="SIL.FieldWorks.XWorks.PossibilityTreeBarHandler"/>
+					<treeBarHandler assemblyPath="LanguageExplorer.dll" expand="false" hierarchical="true" includeAbbr="false" ws="best analysis" class="LanguageExplorer.Works.PossibilityTreeBarHandler"/>
 					<filters/>
 					<sortMethods>
 						<sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName"/>
@@ -592,9 +592,9 @@ DONE -->
 				</clerk>
 				<clerk id="DiscChartMarkerList">
 					<recordList owner="DsDiscourseData" property="ChartMarkers">
-						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.PossibilityRecordList"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.PossibilityRecordList"/>
 					</recordList>
-					<treeBarHandler assemblyPath="xWorks.dll" expand="false" hierarchical="true" includeAbbr="false" ws="best analysis" class="SIL.FieldWorks.XWorks.PossibilityTreeBarHandler"/>
+					<treeBarHandler assemblyPath="LanguageExplorer.dll" expand="false" hierarchical="true" includeAbbr="false" ws="best analysis" class="LanguageExplorer.Works.PossibilityTreeBarHandler"/>
 					<filters/>
 					<sortMethods>
 						<sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName"/>
@@ -602,9 +602,9 @@ DONE -->
 				</clerk>
 				<clerk id="DiscChartTemplateList">
 					<recordList owner="DsDiscourseData" property="ConstChartTempl">
-						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.PossibilityRecordList"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.PossibilityRecordList"/>
 					</recordList>
-					<treeBarHandler assemblyPath="xWorks.dll" expand="true" hierarchical="true" includeAbbr="false" ws="best analysis" class="SIL.FieldWorks.XWorks.PossibilityTreeBarHandler"/>
+					<treeBarHandler assemblyPath="LanguageExplorer.dll" expand="true" hierarchical="true" includeAbbr="false" ws="best analysis" class="LanguageExplorer.Works.PossibilityTreeBarHandler"/>
 					<filters/>
 					<sortMethods>
 						<sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName"/>
@@ -612,9 +612,9 @@ DONE -->
 				</clerk>
 				<clerk id="RestrictionsList">
 					<recordList owner="LangProject" property="Restrictions">
-						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.PossibilityRecordList"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.PossibilityRecordList"/>
 					</recordList>
-					<treeBarHandler assemblyPath="xWorks.dll" expand="false" hierarchical="true" includeAbbr="false" ws="best analysis" class="SIL.FieldWorks.XWorks.PossibilityTreeBarHandler"/>
+					<treeBarHandler assemblyPath="LanguageExplorer.dll" expand="false" hierarchical="true" includeAbbr="false" ws="best analysis" class="LanguageExplorer.Works.PossibilityTreeBarHandler"/>
 					<filters/>
 					<sortMethods>
 						<sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName"/>
@@ -622,9 +622,9 @@ DONE -->
 				</clerk>
 				<clerk id="LexRefTypeList">
 					<recordList owner="LexDb" property="References">
-						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.PossibilityRecordList"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.PossibilityRecordList"/>
 					</recordList>
-					<treeBarHandler assemblyPath="xWorks.dll" expand="false" hierarchical="true" includeAbbr="true" ws="best analysis" class="SIL.FieldWorks.XWorks.PossibilityTreeBarHandler"/>
+					<treeBarHandler assemblyPath="LanguageExplorer.dll" expand="false" hierarchical="true" includeAbbr="true" ws="best analysis" class="LanguageExplorer.Works.PossibilityTreeBarHandler"/>
 					<filters/>
 					<sortMethods>
 						<sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName"/>
@@ -637,9 +637,9 @@ DONE -->
 <!-- DONE
 				<clerk id="RecTypeList">
 					<recordList owner="RnResearchNbk" property="RecTypes">
-						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.PossibilityRecordList"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.PossibilityRecordList"/>
 					</recordList>
-					<treeBarHandler assemblyPath="xWorks.dll" expand="true" hierarchical="true" includeAbbr="false" ws="best analysis" class="SIL.FieldWorks.XWorks.PossibilityTreeBarHandler"/>
+					<treeBarHandler assemblyPath="LanguageExplorer.dll" expand="true" hierarchical="true" includeAbbr="false" ws="best analysis" class="LanguageExplorer.Works.PossibilityTreeBarHandler"/>
 					<filters/>
 					<sortMethods>
 						<sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName"/>
@@ -647,9 +647,9 @@ DONE -->
 				</clerk>
 				<clerk id="ScrNoteTypesList">
 					<recordList owner="Scripture" property="NoteCategories">
-						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.PossibilityRecordList"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.PossibilityRecordList"/>
 					</recordList>
-					<treeBarHandler assemblyPath="xWorks.dll" expand="true" hierarchical="true" includeAbbr="false" ws="best analysis" class="SIL.FieldWorks.XWorks.PossibilityTreeBarHandler"/>
+					<treeBarHandler assemblyPath="LanguageExplorer.dll" expand="true" hierarchical="true" includeAbbr="false" ws="best analysis" class="LanguageExplorer.Works.PossibilityTreeBarHandler"/>
 					<filters/>
 					<sortMethods>
 						<sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName"/>
@@ -657,9 +657,9 @@ DONE -->
 				</clerk>
 				<clerk id="TimeOfDayList">
 					<recordList owner="LangProject" property="TimeOfDay">
-						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.PossibilityRecordList"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.PossibilityRecordList"/>
 					</recordList>
-					<treeBarHandler assemblyPath="xWorks.dll" expand="true" hierarchical="true" includeAbbr="false" ws="best analysis" class="SIL.FieldWorks.XWorks.PossibilityTreeBarHandler"/>
+					<treeBarHandler assemblyPath="LanguageExplorer.dll" expand="true" hierarchical="true" includeAbbr="false" ws="best analysis" class="LanguageExplorer.Works.PossibilityTreeBarHandler"/>
 					<filters/>
 					<sortMethods>
 						<sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName"/>

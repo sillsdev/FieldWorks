@@ -8,6 +8,7 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
 using LanguageExplorer.Controls.PaneBar;
+using LanguageExplorer.Works;
 using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.Controls;
 using SIL.LCModel.Core.KernelInterfaces;
@@ -16,7 +17,6 @@ using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.FdoUi;
 using SIL.LCModel;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.XWorks;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 {
@@ -34,7 +34,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			</parameters>
 		</control>
 		<control id="SegmentPreviewControl">
-			<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordDocXmlView"/>
+			<dynamicloaderinfo assemblyPath="xWorks.dll" class="LanguageExplorer.Works.RecordDocXmlView"/>
 			<parameters id="SegmentPreviewControl" clerk="OccurrencesOfSense" treeBarAvailability="NotMyBusiness" layout="publicationNew" editable="false"/>
 		</control>
 	</parameters>

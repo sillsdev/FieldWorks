@@ -283,7 +283,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 			//    dlg.ShowDialog();
 			System.Type typeFound;
 			MethodInfo mi = XmlViewsUtils.GetStaticMethod("xWorks.dll",
-				"SIL.FieldWorks.XWorks.AddCustomFieldDlg",
+				"LanguageExplorer.Works.AddCustomFieldDlg",
 				"ShowNotebookCustomFieldDlg",
 				"AnthroFieldMappingDlg.m_btnAddCustom_Click()", out typeFound);
 			if (mi != null)

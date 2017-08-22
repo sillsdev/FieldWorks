@@ -21,7 +21,7 @@
 						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 						<parameters id="EntriesList" collapse="180000">
 							<control>
-								<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
+								<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.RecordEditView"/>
 								<parameters area="textsWords" clerk="concordanceWords" persistContext="normalEdit" suppressInfoBar="false" layout="Normal" treeBarAvailability="NotAllowed" PaneBarGroupId="PaneBar-WordformDetail" altTitleId="WfiWordform-Full" defaultLabelWidth="100">
 									<menuHandler>
 										<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.TextsAndWords.Tools.Analyses.WordsEditToolMenuHandler" />

@@ -15,7 +15,7 @@ using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.FdoUi.Dialogs;
 using SIL.FieldWorks.Filters;
-using SIL.FieldWorks.XWorks;
+using LanguageExplorer.Works;
 using SIL.LCModel;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.DomainServices;

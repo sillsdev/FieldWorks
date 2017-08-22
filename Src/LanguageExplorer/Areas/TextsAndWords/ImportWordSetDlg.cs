@@ -11,7 +11,7 @@ using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.FieldWorks.Resources;
-using SIL.FieldWorks.XWorks;
+using LanguageExplorer.Works;
 
 namespace LanguageExplorer.Areas.TextsAndWords
 {

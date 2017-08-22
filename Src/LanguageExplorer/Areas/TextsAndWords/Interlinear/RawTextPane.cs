@@ -20,7 +20,7 @@ using SIL.LCModel;
 using SIL.LCModel.Application;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
-using SIL.FieldWorks.XWorks;
+using LanguageExplorer.Works;
 using SIL.Xml;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear

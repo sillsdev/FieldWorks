@@ -8,7 +8,7 @@ using System.Xml.Linq;
 using LanguageExplorer.Areas;
 using LanguageExplorer.Controls.PaneBar;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.XWorks;
+using LanguageExplorer.Works;
 using SIL.LCModel;
 
 namespace LanguageExplorer.Controls

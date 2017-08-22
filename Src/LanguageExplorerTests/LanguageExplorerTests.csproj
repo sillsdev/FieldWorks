@@ -37,6 +37,26 @@
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="DotNetZip, Version=1.10.1.0, Culture=neutral, PublicKeyToken=6583c7c814667745, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Debug\DotNetZip.dll</HintPath>
+    </Reference>
+    <Reference Include="ExCss, Version=2.0.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Downloads\ExCSS.dll</HintPath>
+    </Reference>
+    <Reference Include="FieldWorks, Version=10.0.0.22024, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Debug\FieldWorks.exe</HintPath>
+    </Reference>
+    <Reference Include="Filters, Version=10.0.0.14010, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Debug\Filters.dll</HintPath>
+    </Reference>
+    <Reference Include="Framework, Version=10.0.0.14012, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Debug\Framework.dll</HintPath>
+    </Reference>
     <Reference Include="FwCoreDlgControls">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\FwCoreDlgControls.dll</HintPath>
@@ -165,10 +185,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Release\XMLViews.dll</HintPath>
     </Reference>
-    <Reference Include="xWorks, Version=9.0.0.26702, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Release\xWorks.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\AssemblyInfoForTests.cs">
@@ -231,12 +247,56 @@
     <Compile Include="TextsAndWords\RespellingTests.cs" />
     <Compile Include="TextsAndWords\WordGrammarDebuggingTests.cs" />
     <Compile Include="ToolRepositoryTests.cs" />
+    <Compile Include="Works\AddCustomFieldDialogTests.cs" />
+    <Compile Include="Works\AllReversalEntriesRecordListTests.cs" />
+    <Compile Include="Works\BulkEditBarTests.cs" />
+    <Compile Include="Works\ConfigurableDictionaryNodeTests.cs" />
+    <Compile Include="Works\ConfiguredXHTMLGeneratorReversalTests.cs" />
+    <Compile Include="Works\ConfiguredXHTMLGeneratorTestHelpers.cs" />
+    <Compile Include="Works\ConfiguredXHTMLGeneratorTests.cs" />
+    <Compile Include="Works\CssGeneratorTests.cs" />
+    <Compile Include="Works\CustomListDlgTests.cs" />
+    <Compile Include="Works\DeleteCustomListTests.cs" />
+    <Compile Include="Works\DictionaryConfigManagerTests.cs" />
+    <Compile Include="Works\DictionaryConfigurationControllerTests.cs" />
+    <Compile Include="Works\DictionaryConfigurationImportControllerTests.cs" />
+    <Compile Include="Works\DictionaryConfigurationListenerTests.cs" />
+    <Compile Include="Works\DictionaryConfigurationManagerControllerTests.cs" />
+    <Compile Include="Works\DictionaryConfigurationModelTests.cs" />
+    <Compile Include="Works\DictionaryConfigurationUtilsTests.cs" />
+    <Compile Include="Works\DictionaryConfigViewerStub.cs" />
+    <Compile Include="Works\DictionaryDetailsControllerTests.cs" />
+    <Compile Include="Works\DictionaryExportServiceTests.cs" />
+    <Compile Include="Works\DictionaryNodeOptionsTests.cs" />
+    <Compile Include="Works\DictionaryPublicationDecoratorTests.cs" />
+    <Compile Include="Works\DummyFwMainWnd.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Works\ExportDialogTests.cs" />
+    <Compile Include="Works\HeadwordNumbersControllerTests.cs" />
+    <Compile Include="Works\InterestingTextsTests.cs" />
+    <Compile Include="Works\ItemClickedTests.cs" />
+    <Compile Include="Works\MacroListenerTests.cs" />
+    <Compile Include="Works\RecordClerkRepositoryTests.cs" />
+    <Compile Include="Works\ReveralIndexServicesTests.cs" />
+    <Compile Include="Works\UnicodeCharacterEditingHelperTests.cs" />
+    <Compile Include="Works\UploadToWebonaryControllerTests.cs" />
+    <Compile Include="Works\UploadToWebonaryModelTests.cs" />
+    <Compile Include="Works\WordsUsedOnlyElsewhereFilterTests.cs" />
+    <Compile Include="Works\XhtmlDocViewTests.cs" />
+    <Compile Include="Works\XWorksAppTestBase.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="BuildInclude.targets" />
     <None Include="Interlinear\FlexTextImport\FlexTextExportOutput.flextext" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Works\strings-en.xml" />
+    <Content Include="Works\strings-es-MX.xml" />
+    <Content Include="Works\strings-fr.xml" />
+    <None Include="Works\TestData\AudioFiles\abu2.wav" />
+    <None Include="Works\TestData\ConfigurationSettings\Dictionary\ProjectDictionaryOverrides.css" />
+    <None Include="Works\TestData\ConfigurationSettings\ReversalIndex\ProjectReversalOverrides.css" />
     <None Include="Interlinear\ExportTestFiles\Phase1-KalabaTest.xml" />
     <None Include="Interlinear\ExportTestFiles\Phase1-KalabaTestPunctuation.xml" />
     <None Include="Interlinear\ExportTestFiles\Phase1-KalabaTestPunctuationWordAlignedXLingPap.xml" />

@@ -4,7 +4,7 @@
 		<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 		<parameters id="textsChooser">
 			<control>
-				<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordBrowseView"/>
+				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.RecordBrowseView"/>
 				<!-- this clerk is explicitly known to InterlinearSfmImportWizard.OnFinishButton-->
 				<parameters id="textsChooser" clerk="interlinearTexts" filterBar="true" treeBarAvailability="NotAllowed" defaultCursor="Arrow" altTitleId="Text-Plural" editable="false">
 					<columns>

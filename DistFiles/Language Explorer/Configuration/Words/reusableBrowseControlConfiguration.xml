@@ -4,7 +4,7 @@
 		<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 		<parameters id="wordList">
 			<control id="WordformBrowseControl">
-				<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordBrowseView"/>
+				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.RecordBrowseView"/>
 				<parameters id="wordList" clerk="concordanceWords" convertDummiesSelected="true" filterBar="true" editable="false" treeBarAvailability="NotAllowed" defaultCursor="Arrow" hscroll="true" altTitleId="WfiWordform-Plural">
 					<columns>
 						<include path="$this" query="reusableControls/control[@id='wordListColumns']/columns/column"/>

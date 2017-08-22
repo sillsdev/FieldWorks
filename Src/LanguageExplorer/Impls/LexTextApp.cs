@@ -482,7 +482,7 @@ Old Mediator methods/commands
 				// No need to allocate a different ResourceManager than the one the generated code
 				// produces, and it should be more reliable (I hope).
 				//s_stringResources = new System.Resources.ResourceManager(
-				//    "SIL.FieldWorks.XWorks.LexText.LexTextStrings", Assembly.GetExecutingAssembly());
+				//    "LanguageExplorer.Works.LexText.LexTextStrings", Assembly.GetExecutingAssembly());
 				return (stid == null ? "NullStringID" : LanguageExplorerResources.ResourceManager.GetString(stid));
 			}
 			catch (Exception e)

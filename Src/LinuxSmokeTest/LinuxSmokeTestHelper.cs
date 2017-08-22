@@ -44,7 +44,7 @@ namespace LinuxSmokeTest
 			if (mainForm == null)
 				return false;
 
-			if (mainForm.GetType().ToString() == "SIL.FieldWorks.XWorks.FwXWindow")
+			if (mainForm.GetType().ToString() == "LanguageExplorer.Works.FwXWindow")
 			{
 				// REVIEW: possibly use mediator to invoke ExitApplication event
 				MethodInfo method = mainForm.GetType().GetMethod("OnExitApplication");

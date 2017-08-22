@@ -4,9 +4,9 @@
 	<clerks>
 		<clerk id="SemanticDomainList">
 			<recordList owner="LangProject" property="SemanticDomainList">
-				<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.PossibilityRecordList"/>
+				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.PossibilityRecordList"/>
 			</recordList>
-			<treeBarHandler assemblyPath="xWorks.dll" expand="false" hierarchical="true" includeAbbr="true" ws="best analorvern" class="SIL.FieldWorks.XWorks.SemanticDomainRdeTreeBarHandler" altTitleId="SemanticDomain-Plural"/>
+			<treeBarHandler assemblyPath="LanguageExplorer.dll" expand="false" hierarchical="true" includeAbbr="true" ws="best analorvern" class="LanguageExplorer.Works.SemanticDomainRdeTreeBarHandler" altTitleId="SemanticDomain-Plural"/>
 			<filters/>
 			<sortMethods>
 				<sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName"/>
@@ -26,7 +26,7 @@
 						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.MultiPane"/>
 						<parameters area="lexicon" id="SemanticCategoryAndItems" splitterBarOrientation="horizontal" defaultFocusControl="RecordBrowseView">
 							<control>
-								<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
+								<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.RecordEditView"/>
 								<parameters clerk="SemanticDomainList" id="SemanticDomainList" filterPath="Language Explorer\Configuration\Lexicon\Edit\DataEntryFilters\basicFilter.xml" treeBarAvailability="Required" layout="RDE" msgBoxTrigger="CategorizedEntry-Intro" allowInsertDeleteRecord="false">
 									<menuHandler>
 										<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.LexEntryMenuHandler"/>
@@ -34,7 +34,7 @@
 								</parameters>
 							</control>
 							<control>
-								<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordBrowseView"/>
+								<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.RecordBrowseView"/>
 								<parameters id="wordList" clerk="RDEwords" filterBar="false" forceReloadListOnInitOrChangeRoot="true" editRowModelClass="LexSense" editRowAssembly="SIL.LCModel.dll" editRowClass="SIL.LCModel.ILexSense" editRowSaveMethod="RDENewSense" editRowMergeMethod="RDEMergeSense" ShowOwnerShortname="true" TitleFormat="Words for {0}" treeBarAvailability="Required">
 									<!-- Note that currently the labels of these columns are known to LexSenseFactory.RDENewSense-->
 									<columns generate="childPartsForParentLayouts" leadingUnsortedColumns="4">
@@ -210,7 +210,7 @@
 		<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 		<parameters PaneBarGroupId="PaneBar-ShowFailingItems-Classified">
 		  <control>
-			<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.XmlDocView"/>
+			<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.XmlDocView"/>
 			<parameters area="lexicon" clerk="SemanticDomainList" altTitleId="LexSense-Classified" persistContext="ClassDict" backColor="White" layout="classifiedDict" layoutProperty="ClassifiedDictionaryPublicationLayout" editable="false" allowInsertDeleteRecord="false" msgBoxTrigger="ClassifiedDictionary-Intro" configureObjectName="Classified Dictionary">
 				<elementDisplayCondition field="ReferringSenses" lengthatleast="1"/>
 				<configureLayouts>
@@ -218,7 +218,7 @@
 						<configure class="CmSemanticDomain" label="Domain" layout="classifiedDict"/>
 					</layoutType>
 				</configureLayouts>
-				<decoratorClass assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.DictionaryPublicationDecorator"/>
+				<decoratorClass assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.DictionaryPublicationDecorator"/>
 			</parameters>
 		  </control>
 		</parameters>
@@ -229,7 +229,7 @@
 		<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 		<parameters id="EntryOrSenseBulkEdit">
 		  <control>
-			<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordBrowseView"/>
+			<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.RecordBrowseView"/>
 			<parameters area="lexicon" id="EntryOrSenseBulkEdit" clerk="entriesOrChildren" filterBar="true" bulkEdit="true" selectColumn="true"
 							bulkEditListItemsClasses="LexEntry,LexSense,LexEntryRef,LexPronunciation,LexEtymology,MoForm,LexExampleSentence,CmTranslation,LexExtendedNote"
 							bulkEditListItemsGhostFields="LexDb.AllPossiblePronunciations,LexDb.AllPossibleEtymologies,LexDb.AllPossibleAllomorphs,LexDb.AllExampleSentenceTargets,LexDb.AllExampleTranslationTargets,LexDb.AllComplexEntryRefPropertyTargets,LexDb.AllExtendedNoteTargets">

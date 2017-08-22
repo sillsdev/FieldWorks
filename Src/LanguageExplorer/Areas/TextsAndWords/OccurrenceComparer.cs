@@ -3,8 +3,8 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections;
+using LanguageExplorer.Works;
 using SIL.FieldWorks.Filters;
-using SIL.FieldWorks.XWorks;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 

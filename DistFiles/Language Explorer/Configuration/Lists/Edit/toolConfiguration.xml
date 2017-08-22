@@ -5,10 +5,10 @@
 		<!-- Don't show these two for now.
 		<tool label="Affix Categories" value="affixCategoryEdit" icon="EditView">
 			<control>
-				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 				<parameters collapse="144000">
 					<control>
-						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.RecordEditView"/>
 						<parameters area="lists" clerk="AffixCategoryList" filterPath="Language Explorer\Configuration\Lists\Edit\DataEntryFilters\completeFilter.xml" persistContext="listsEdit" layout="default" a10status="DONE" />
 					</control>
 				</parameters>
@@ -16,10 +16,10 @@
 		</tool>
 		<tool label="Annotation Definitions" value="annotationDefEdit" icon="EditView">
 			<control>
-				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 				<parameters collapse="144000">
 					<control>
-						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.RecordEditView"/>
 						<parameters area="lists" clerk="AnnotationDefList" filterPath="Language Explorer\Configuration\Lists\Edit\DataEntryFilters\completeFilter.xml" persistContext="listsEdit" layout="default" a10status="DONE" />
 					</control>
 				</parameters>
@@ -29,10 +29,10 @@
 <!-- a10status="PARTIALLY_DONE"
 		<tool label="Academic Domains" value="domainTypeEdit" icon="SideBySideView">
 			<control>
-				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 				<parameters PaneBarGroupId="PaneBar-ShowHiddenFields-domainTypeEdit" collapse="144000">
 					<control>
-						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.RecordEditView"/>
 						<parameters area="lists" clerk="DomainTypeList" filterPath="Language Explorer\Configuration\Lists\Edit\DataEntryFilters\completeFilter.xml" persistContext="listsEdit" layout="default" emptyTitleId="No-AcademicDomains" a10status="DONE" />
 					</control>
 				</parameters>
@@ -40,10 +40,10 @@
 		</tool>
 		<tool label="Anthropology Categories" value="anthroEdit" icon="SideBySideView">
 			<control>
-				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 				<parameters PaneBarGroupId="PaneBar-ShowHiddenFields-anthroEdit" collapse="144000">
 					<control>
-						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.RecordEditView"/>
 						<parameters area="lists" clerk="AnthropologyList" filterPath="Language Explorer\Configuration\Lists\Edit\DataEntryFilters\completeFilter.xml" persistContext="listsEdit" layout="default" emptyTitleId="No-AnthroItems" a10status="DONE" />
 					</control>
 				</parameters>
@@ -51,10 +51,10 @@
 		</tool>
 		<tool label="Complex Form Types" value="complexEntryTypeEdit" icon="SideBySideView">
 			<control>
-				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 				<parameters PaneBarGroupId="PaneBar-ShowHiddenFields-complexEntryTypeEdit" collapse="144000">
 					<control>
-						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.RecordEditView"/>
 						<parameters area="lists" clerk="ComplexEntryTypeList" filterPath="Language Explorer\Configuration\Lists\Edit\DataEntryFilters\completeFilter.xml" persistContext="listsEdit" layout="EditComplex" altTitleId="complexEntryType" a10status="DONE" />
 					</control>
 				</parameters>
@@ -62,10 +62,10 @@
 		</tool>
 		<tool label="Confidence Levels" value="confidenceEdit" icon="SideBySideView">
 			<control>
-				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 				<parameters PaneBarGroupId="PaneBar-ShowHiddenFields-confidenceEdit" collapse="144000">
 					<control>
-						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.RecordEditView"/>
 						<parameters area="lists" clerk="ConfidenceList" filterPath="Language Explorer\Configuration\Lists\Edit\DataEntryFilters\completeFilter.xml" persistContext="listsEdit" layout="default" emptyTitleId="No-ConfidenceLevels" a10status="DONE" />
 					</control>
 				</parameters>
@@ -73,10 +73,10 @@
 		</tool>
 		<tool label="Dialect Labels" value="dialectsListEdit" icon="SideBySideView">
 			<control>
-				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 				<parameters PaneBarGroupId="PaneBar-ShowHiddenFields-dialectsListEdit" collapse="144000">
 					<control>
-						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.RecordEditView"/>
 						<parameters area="lists" clerk="DialectsList" filterPath="Language Explorer\Configuration\Lists\Edit\DataEntryFilters\completeFilter.xml" persistContext="listsEdit" layout="DialectEdit" a10status="DONE" />
 					</control>
 				</parameters>
@@ -84,10 +84,10 @@
 		</tool>
 		<tool label="Text Chart Markers" value="chartmarkEdit" icon="SideBySideView">
 			<control>
-				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 				<parameters PaneBarGroupId="PaneBar-ShowHiddenFields-chartmarkEdit" collapse="144000">
 					<control>
-						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.RecordEditView"/>
 						<parameters area="lists" clerk="DiscChartMarkerList" filterPath="Language Explorer\Configuration\Lists\Edit\DataEntryFilters\completeFilter.xml" persistContext="listsEdit" layout="default" emptyTitleId="No-ChartMarkers" a10status="DONE" />
 					</control>
 				</parameters>
@@ -95,10 +95,10 @@
 		</tool>
 		<tool label="Text Constituent Chart Templates" value="charttempEdit" icon="SideBySideView">
 			<control>
-				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 				<parameters PaneBarGroupId="PaneBar-ShowHiddenFields-charttempEdit" collapse="144000">
 					<control>
-						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.RecordEditView"/>
 						<parameters area="lists" clerk="DiscChartTemplateList" filterPath="Language Explorer\Configuration\Lists\Edit\DataEntryFilters\completeFilter.xml" persistContext="listsEdit" layout="default" emptyTitleId="No-ConstChartTempl" a10status="DONE" />
 					</control>
 				</parameters>
@@ -106,10 +106,10 @@
 		</tool>
 		<tool label="Education Levels" value="educationEdit" icon="SideBySideView">
 			<control>
-				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 				<parameters PaneBarGroupId="PaneBar-ShowHiddenFields-educationEdit" collapse="144000">
 					<control>
-						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.RecordEditView"/>
 						<parameters area="lists" clerk="EducationList" filterPath="Language Explorer\Configuration\Lists\Edit\DataEntryFilters\completeFilter.xml" persistContext="listsEdit" layout="default" emptyTitleId="No-EducationLevels" a10status="DONE" />
 					</control>
 				</parameters>
@@ -117,10 +117,10 @@
 		</tool>
 		<tool label="Roles" value="roleEdit" icon="SideBySideView">
 			<control>
-				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 				<parameters PaneBarGroupId="PaneBar-ShowHiddenFields-roleEdit" collapse="144000">
 					<control>
-						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.RecordEditView"/>
 						<parameters area="lists" clerk="RoleList" filterPath="Language Explorer\Configuration\Lists\Edit\DataEntryFilters\completeFilter.xml" persistContext="listsEdit" layout="default" emptyTitleId="No-Roles" a10status="DONE" />
 					</control>
 				</parameters>
@@ -128,10 +128,10 @@
 		</tool>
 		<tool label="Extended Note Types" value="extNoteTypeEdit" icon="SideBySideView">
 			<control>
-				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 				<parameters PaneBarGroupId="PaneBar-ShowHiddenFields-extNoteTypeEdit" collapse="144000">
 					<control>
-						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.RecordEditView"/>
 						<parameters area="lists" clerk="ExtNoteTypeList" filterPath="Language Explorer\Configuration\Lists\Edit\DataEntryFilters\completeFilter.xml" persistContext="listsEdit" layout="default" a10status="DONE" />
 					</control>
 				</parameters>
@@ -147,7 +147,7 @@ DONE a10status="PARTIALLY_DONE" -->
 						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer" a10status="DONE" />
 						<parameters id="featureTypesList" collapse="144000">
 							<control>
-								<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordBrowseView"/>
+								<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.RecordBrowseView"/>
 								<parameters area="lists" id="featureTypesList" clerk="featureTypes" filterBar="true" treeBarAvailability="NotAllowed"
 									defaultCursor="Arrow" hscroll="true" altTitleId="FsFeatStrucType-Plural" editable="false">
 									<columns>
@@ -164,7 +164,7 @@ DONE a10status="PARTIALLY_DONE" -->
 						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer" a10status="DONE" />
 						<parameters PaneBarGroupId="PaneBar-ShowHiddenFields-featureTypesAdvancedEdit" collapse="144000">
 							<control>
-								<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
+								<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.RecordEditView"/>
 								<parameters area="lists" clerk="featureTypes" treeBarAvailability="NotAllowed" filterPath="Language Explorer\Configuration\Grammar\Edit\DataEntryFilters\basicPlusFilter.xml" persistContext="advancedEdit" layout="Edit" emptyTitleId="No-FsFeatStrucTypes"/>
 							</control>
 						</parameters>
@@ -175,10 +175,10 @@ DONE a10status="PARTIALLY_DONE" -->
 <!-- a10status="PARTIALLY_DONE"
 		<tool label="Genres" value="genresEdit" icon="SideBySideView">
 			<control>
-				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 				<parameters PaneBarGroupId="PaneBar-ShowHiddenFields-genresEdit" collapse="144000">
 					<control>
-						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.RecordEditView"/>
 						<parameters area="lists" clerk="GenreList" filterPath="Language Explorer\Configuration\Lists\Edit\DataEntryFilters\completeFilter.xml" persistContext="listsEdit" layout="default" emptyTitleId="No-Genres" a10status="DONE" />
 					</control>
 				</parameters>
@@ -186,10 +186,10 @@ DONE a10status="PARTIALLY_DONE" -->
 		</tool>
 		<tool label="Languages" value="languagesListEdit" icon="SideBySideView">
 			<control>
-				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 				<parameters PaneBarGroupId="PaneBar-ShowHiddenFields-languagesListEdit" collapse="144000">
 					<control>
-						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.RecordEditView"/>
 						<parameters area="lists" clerk="LanguagesList" filterPath="Language Explorer\Configuration\Lists\Edit\DataEntryFilters\completeFilter.xml" persistContext="listsEdit" layout="default" emptyTitleId="No-Languages" a10status="DONE" />
 					</control>
 				</parameters>
@@ -197,10 +197,10 @@ DONE a10status="PARTIALLY_DONE" -->
 		</tool>
 		<tool label="Lexical Relations" value="lexRefEdit" icon="SideBySideView">
 			<control>
-				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 				<parameters PaneBarGroupId="PaneBar-ShowHiddenFields-lexRefEdit" collapse="144000">
 					<control>
-						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.RecordEditView"/>
 						<parameters area="lists" clerk="LexRefTypeList" filterPath="Language Explorer\Configuration\Lists\Edit\DataEntryFilters\completeFilter.xml" persistContext="listsEdit" layout="default" emptyTitleId="No-LexicalRelations" a10status="DONE" />
 					</control>
 				</parameters>
@@ -208,10 +208,10 @@ DONE a10status="PARTIALLY_DONE" -->
 		</tool>
 		<tool label="Locations" value="locationsEdit" icon="SideBySideView">
 			<control>
-				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 				<parameters PaneBarGroupId="PaneBar-ShowHiddenFields-locationsEdit" collapse="144000">
 					<control>
-						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.RecordEditView"/>
 						<parameters area="lists" clerk="LocationList" filterPath="Language Explorer\Configuration\Lists\Edit\DataEntryFilters\completeFilter.xml" persistContext="listsEdit" layout="default" emptyTitleId="No-Locations" a10status="DONE" />
 					</control>
 				</parameters>
@@ -219,10 +219,10 @@ DONE a10status="PARTIALLY_DONE" -->
 		</tool>
 		<tool label="Publications" value="publicationsEdit" icon="SideBySideView">
 			<control>
-				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 				<parameters PaneBarGroupId="PaneBar-ShowHiddenFields-publicationsEdit" collapse="144000">
 					<control>
-						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.RecordEditView"/>
 						<parameters area="lists" clerk="PublicationList" filterPath="Language Explorer\Configuration\Lists\Edit\DataEntryFilters\completeFilter.xml" persistContext="listsEdit" layout="default" emptyTitleId="No-PublicationTypes" a10status="DONE" />
 					</control>
 				</parameters>
@@ -230,10 +230,10 @@ DONE a10status="PARTIALLY_DONE" -->
 		</tool>
 		<tool label="Morpheme Types" value="morphTypeEdit" icon="SideBySideView">
 			<control>
-				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 				<parameters PaneBarGroupId="PaneBar-ShowHiddenFields-morphTypeEdit" collapse="144000">
 					<control>
-						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.RecordEditView"/>
 						<parameters area="lists" clerk="MorphTypeList" filterPath="Language Explorer\Configuration\Lists\Edit\DataEntryFilters\completeFilter.xml" persistContext="listsEdit" layout="default" emptyTitleId="No-MorphemeTypes" a10status="DONE" />
 					</control>
 				</parameters>
@@ -241,10 +241,10 @@ DONE a10status="PARTIALLY_DONE" -->
 		</tool>
 		<tool label="People" value="peopleEdit" icon="SideBySideView">
 			<control>
-				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 				<parameters PaneBarGroupId="PaneBar-ShowHiddenFields-peopleEdit" collapse="144000">
 					<control>
-						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.RecordEditView"/>
 						<parameters area="lists" clerk="PeopleList" filterPath="Language Explorer\Configuration\Lists\Edit\DataEntryFilters\completeFilter.xml" persistContext="listsEdit" layout="default" a10status="DONE" />
 					</control>
 				</parameters>
@@ -252,10 +252,10 @@ DONE a10status="PARTIALLY_DONE" -->
 		</tool>
 		<tool label="Positions" value="positionsEdit" icon="SideBySideView">
 			<control>
-				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 				<parameters PaneBarGroupId="PaneBar-ShowHiddenFields-positionsEdit" collapse="144000">
 					<control>
-						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.RecordEditView"/>
 						<parameters area="lists" clerk="PositionList" filterPath="Language Explorer\Configuration\Lists\Edit\DataEntryFilters\completeFilter.xml" persistContext="listsEdit" layout="default" emptyTitleId="No-Positions" a10status="DONE" />
 					</control>
 				</parameters>
@@ -263,10 +263,10 @@ DONE a10status="PARTIALLY_DONE" -->
 		</tool>
 		<tool label="Restrictions" value="restrictionsEdit" icon="SideBySideView">
 			<control>
-				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 				<parameters PaneBarGroupId="PaneBar-ShowHiddenFields-restrictionsEdit" collapse="144000">
 					<control>
-						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.RecordEditView"/>
 						<parameters area="lists" clerk="RestrictionsList" filterPath="Language Explorer\Configuration\Lists\Edit\DataEntryFilters\completeFilter.xml" persistContext="listsEdit" layout="default" emptyTitleId="No-Restrictions" a10status="DONE" />
 					</control>
 				</parameters>
@@ -274,10 +274,10 @@ DONE a10status="PARTIALLY_DONE" -->
 		</tool>
 		<tool label="Semantic Domains" value="semanticDomainEdit" icon="SideBySideView">
 			<control>
-				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 				<parameters PaneBarGroupId="PaneBar-ShowHiddenFields-semanticDomainEdit" collapse="144000">
 					<control>
-						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.RecordEditView"/>
 						<parameters area="lists" clerk="SemanticDomainList" filterPath="Language Explorer\Configuration\Lists\Edit\DataEntryFilters\completeFilter.xml" persistContext="listsEdit" layout="default" emptyTitleId="No-SemanticDomains" a10status="DONE" />
 					</control>
 				</parameters>
@@ -287,10 +287,10 @@ DONE a10status="PARTIALLY_DONE" -->
 		<!--
 		<tool label="Sense Status" value="senseStatusEdit" icon="SideBySideView">
 			<control>
-				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 				<parameters PaneBarGroupId="PaneBar-ShowHiddenFields-senseStatusEdit" collapse="144000">
 					<control>
-						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.RecordEditView"/>
 						<parameters area="lists" clerk="SenseStatusList" filterPath="Language Explorer\Configuration\Lists\Edit\DataEntryFilters\completeFilter.xml" persistContext="listsEdit" layout="default" emptyTitleId="No-SenseStatus" a10status="DONE" />
 					</control>
 				</parameters>
@@ -300,10 +300,10 @@ DONE a10status="PARTIALLY_DONE" -->
 <!-- a10status="PARTIALLY_DONE"
 		<tool label="Sense Types" value="senseTypeEdit" icon="SideBySideView">
 			<control>
-				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 				<parameters PaneBarGroupId="PaneBar-ShowHiddenFields-senseTypeEdit" collapse="144000">
 					<control>
-						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.RecordEditView"/>
 						<parameters area="lists" clerk="SenseTypeList" filterPath="Language Explorer\Configuration\Lists\Edit\DataEntryFilters\completeFilter.xml" persistContext="listsEdit" layout="default" emptyTitleId="No-SenseTypes" a10status="DONE" />
 					</control>
 				</parameters>
@@ -311,10 +311,10 @@ DONE a10status="PARTIALLY_DONE" -->
 		</tool>
 		<tool label="Status" value="statusEdit" icon="SideBySideView">
 			<control>
-				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 				<parameters PaneBarGroupId="PaneBar-ShowHiddenFields-statusEdit" collapse="144000">
 					<control>
-						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.RecordEditView"/>
 						<parameters area="lists" clerk="StatusList" filterPath="Language Explorer\Configuration\Lists\Edit\DataEntryFilters\completeFilter.xml" persistContext="listsEdit" layout="default" emptyTitleId="No-Status" a10status="DONE" />
 					</control>
 				</parameters>
@@ -323,10 +323,10 @@ DONE a10status="PARTIALLY_DONE" -->
 
 		<tool label="Text Markup Tags" value="textMarkupTagsEdit" icon="SideBySideView">
 			<control>
-				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 				<parameters PaneBarGroupId="PaneBar-ShowHiddenFields-textMarkupTagsEdit" collapse="144000">
 					<control>
-						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.RecordEditView"/>
 						<parameters area="lists" clerk="TextMarkupTagsList" filterPath="Language Explorer\Configuration\Lists\Edit\DataEntryFilters\completeFilter.xml" persistContext="listsEdit" layout="default" emptyTitleId="No-TextMarkupTags" a10status="DONE" />
 					</control>
 				</parameters>
@@ -335,10 +335,10 @@ DONE a10status="PARTIALLY_DONE" -->
 
 	<tool label="Translation Types" value="translationTypeEdit" icon="SideBySideView">
 			<control>
-				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 				<parameters PaneBarGroupId="PaneBar-ShowHiddenFields-translationTypeEdit" collapse="144000">
 					<control>
-						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.RecordEditView"/>
 						<parameters area="lists" clerk="TranslationTypeList" filterPath="Language Explorer\Configuration\Lists\Edit\DataEntryFilters\completeFilter.xml" persistContext="listsEdit" layout="default" a10status="DONE" />
 					</control>
 				</parameters>
@@ -346,10 +346,10 @@ DONE a10status="PARTIALLY_DONE" -->
 		</tool>
 		<tool label="Usages" value="usageTypeEdit" icon="SideBySideView">
 			<control>
-				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 				<parameters PaneBarGroupId="PaneBar-ShowHiddenFields-usageTypeEdit" collapse="144000">
 					<control>
-						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.RecordEditView"/>
 						<parameters area="lists" clerk="UsageTypeList" filterPath="Language Explorer\Configuration\Lists\Edit\DataEntryFilters\completeFilter.xml" persistContext="listsEdit" layout="default" emptyTitleId="No-Usages" a10status="DONE" />
 					</control>
 				</parameters>
@@ -357,10 +357,10 @@ DONE a10status="PARTIALLY_DONE" -->
 		</tool>
 		<tool label="Variant Types" value="variantEntryTypeEdit" icon="SideBySideView">
 			<control>
-				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 				<parameters PaneBarGroupId="PaneBar-ShowHiddenFields-variantEntryTypeEdit" collapse="144000">
 					<control>
-						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.RecordEditView"/>
 						<parameters area="lists" clerk="VariantEntryTypeList" filterPath="Language Explorer\Configuration\Lists\Edit\DataEntryFilters\completeFilter.xml" persistContext="listsEdit" layout="EditVariant" altTitleId="variantType" a10status="DONE" />
 					</control>
 				</parameters>
@@ -368,10 +368,10 @@ DONE a10status="PARTIALLY_DONE" -->
 		</tool>
 		<tool label="Notebook Record Types" value="recTypeEdit" icon="SideBySideView">
 			<control>
-				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 				<parameters PaneBarGroupId="PaneBar-ShowHiddenFields-recTypeEdit" collapse="144000">
 					<control>
-						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.RecordEditView"/>
 						<parameters area="lists" clerk="RecTypeList" filterPath="Language Explorer\Configuration\Lists\Edit\DataEntryFilters\completeFilter.xml" persistContext="listsEdit" layout="default" emptyTitleId="No-RecTypes" a10status="DONE" />
 					</control>
 				</parameters>
@@ -379,10 +379,10 @@ DONE a10status="PARTIALLY_DONE" -->
 		</tool>
 		<tool label="Time Of Day" value="timeOfDayEdit" icon="SideBySideView">
 			<control>
-				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 				<parameters PaneBarGroupId="PaneBar-ShowHiddenFields-timeOfDayEdit" collapse="144000">
 					<control>
-						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.RecordEditView"/>
 						<parameters area="lists" clerk="TimeOfDayList" filterPath="Language Explorer\Configuration\Lists\Edit\DataEntryFilters\completeFilter.xml" persistContext="listsEdit" layout="default" emptyTitleId="No-TimesOfDay" a10status="DONE" />
 					</control>
 				</parameters>

@@ -3,7 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
-using SIL.FieldWorks.XWorks;
+using LanguageExplorer.Works;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 

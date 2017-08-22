@@ -381,12 +381,12 @@ namespace LanguageExplorer.Dumpster
 			var xmlString =
 				"<clerk id=\"" + XmlUtils.MakeSafeXmlAttribute(clerk) + "\">"
 				+ "<recordList owner=\"unowned\" property=\"" + curList.Guid + "\">"
-				+ "<dynamicloaderinfo assemblyPath=\"xWorks.dll\" class=\"SIL.FieldWorks.XWorks.PossibilityRecordList\"/>"
+				+ "<dynamicloaderinfo assemblyPath=\"xWorks.dll\" class=\"LanguageExplorer.Works.PossibilityRecordList\"/>"
 				+ "</recordList>";
 			xmlString +=
 				"<treeBarHandler assemblyPath=\"xWorks.dll\" expand=\"false\" hierarchical=\"" + hierarchy
 				+ "\" includeAbbr=\"" + includeAbbr + "\" ws=\"" + ws + "\" "
-				+ "class=\"SIL.FieldWorks.XWorks.PossibilityTreeBarHandler\"/>"
+				+ "class=\"LanguageExplorer.Works.PossibilityTreeBarHandler\"/>"
 				+ "<filters/>";
 			if (curList.IsSorted)
 				xmlString +=
@@ -412,7 +412,7 @@ namespace LanguageExplorer.Dumpster
 				+ "<dynamicloaderinfo assemblyPath=\"LanguageExplorer.dll\" class=\"LanguageExplorer.Controls.PaneBarContainer\"/>"
 				+ "<parameters PaneBarGroupId=\"PaneBar-ShowHiddenFields-"+ toolName + "\" collapse=\"144000\">"
 				+   "<control>"
-				+     "<dynamicloaderinfo assemblyPath=\"xWorks.dll\" class=\"SIL.FieldWorks.XWorks.RecordEditView\"/>"
+				+     "<dynamicloaderinfo assemblyPath=\"xWorks.dll\" class=\"LanguageExplorer.Works.RecordEditView\"/>"
 				+     "<parameters area=\"lists\" clerk=\"" + clerk + "\""
 				+      " filterPath=\"Language Explorer\\Configuration\\Lists\\Edit\\DataEntryFilters\\completeFilter.xml\""
 				+	   " persistContext=\"listsEdit\" layout=\"CmPossibility\" emptyTitleId=\"No-ListItems\"/>"

@@ -213,7 +213,7 @@ EXTENSIONS NOT SUPPORTED (Notebook_Area) -->
 				<!-- Only put clerks here if they are shared by various tools. Put clerks for specific tool usage in the tool definition file. -->
 				<clerk id="records">
 					<recordList owner="RnResearchNbk" property="AllRecords">
-						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordList"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.RecordList"/>
 					</recordList>
 					<filters/>
 					<sortMethods>

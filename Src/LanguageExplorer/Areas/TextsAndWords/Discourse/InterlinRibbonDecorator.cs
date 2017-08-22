@@ -7,7 +7,7 @@ using System.Diagnostics;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 using SIL.LCModel.DomainServices;
-using SIL.FieldWorks.XWorks;
+using LanguageExplorer.Works;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 {

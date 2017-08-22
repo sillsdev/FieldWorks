@@ -7,7 +7,7 @@ using System.Windows.Forms;
 using System.Xml.Linq;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.LCModel;
-using SIL.FieldWorks.XWorks;
+using LanguageExplorer.Works;
 using SIL.FieldWorks.Common.FwUtils;
 
 namespace LanguageExplorer.Areas.Lexicon

@@ -103,6 +103,14 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="LanguageExplorer">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Output\Debug\LanguageExplorer.dll</HintPath>
+    </Reference>
+    <Reference Include="LanguageExplorerTests">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Output\Debug\LanguageExplorerTests.dll</HintPath>
+    </Reference>
     <Reference Include="SIL.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Output\Debug\SIL.Core.dll</HintPath>
@@ -171,9 +179,6 @@
     </Reference>
     <Reference Include="FwUtilsTests">
       <HintPath>..\..\..\..\..\Output\Debug\FwUtilsTests.dll</HintPath>
-    </Reference>
-    <Reference Include="xWorksTests">
-      <HintPath>..\..\..\..\..\Output\Debug\xWorksTests.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

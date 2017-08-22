@@ -570,13 +570,13 @@ EXTENSIONS NOT SUPPORTED -->
 <!-- These are the places that handle "CmdFindAndReplaceText" & "CmdReplaceText":
 XmlDocView users:
   C:\Dev\fwrepo\fw\DistFiles\Language Explorer\Configuration\Lexicon\Dictionary\toolConfiguration.xml(28):
-  		<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.XmlDocView"/>
+  		<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.XmlDocView"/>
   C:\Dev\fwrepo\fw\DistFiles\Language Explorer\Configuration\Lexicon\RDE\toolConfiguration.xml(283):
-  		<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.XmlDocView"/>
+  		<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.XmlDocView"/>
   C:\Dev\fwrepo\fw\DistFiles\Language Explorer\Configuration\Lexicon\ReversalIndices\toolConfiguration.xml(13):
-  		<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.XmlDocView"/>
+  		<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.XmlDocView"/>
   C:\Dev\fwrepo\fw\DistFiles\Language Explorer\Configuration\Notebook\Document\toolConfiguration.xml(10):
-  		<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.XmlDocView"/>
+  		<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.XmlDocView"/>
 InterlinMaster user:
   C:\Dev\fwrepo\fw\DistFiles\Language Explorer\Configuration\Words\Texts\toolConfiguration.xml(16):
   		<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.TextsAndWords.Interlinear.InterlinMaster"/> -->
@@ -1119,14 +1119,14 @@ By 'DONE', I (RBR) mean that the status bar exists and has its chunks. It is the
 	This is the only place a particular image is associated with a particular name.-->
 	<resources>
 		<imageList assemblyPath="xCore.dll" class="XCore.IconHolder" field="largeImages" size="large" labels="Ticker" a10status="REMOVED" />
-		<imageList assemblyPath="xWorks.dll" class=" SIL.FieldWorks.XWorks.ImageHolder" field="largeImages" size="large" labels="BrowseView, EditView, DocumentView, NoFilter, DefaultSort, GenericTool, GenericTool2, folder-lexicon, folder-lists, folder-texts, folder-words, folder-grammar" a10status="MOVE_TO-LanguageExplorer.Works.ImageHolder" />
-		<imageList assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.ImageHolder" field="smallImages" size="small" labels="BrowseView, EditView, DocumentView, NoFilter, SimpleFilter, DefaultSort, GenericTool, Delete, SpecialCharacter, ExternalLink, SideBySideView" a10status="MOVE_TO-LanguageExplorer.Works.ImageHolder" />
-		<imageList assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.ImageHolder" field="smallCommandImages" size="small" labels="NewProject, OpenProject, SaveProject, historyBack, historyForward, Refresh, MenuWidget, Undo, Redo, Cut, Copy, Paste, MoveUp, MoveRight, MoveDown, MoveLeft, columnChooser, ArchiveWithRamp" a10status="MOVE_TO-LanguageExplorer.Works.ImageHolder" />
+		<imageList assemblyPath="LanguageExplorer.dll" class=" LanguageExplorer.Works.ImageHolder" field="largeImages" size="large" labels="BrowseView, EditView, DocumentView, NoFilter, DefaultSort, GenericTool, GenericTool2, folder-lexicon, folder-lists, folder-texts, folder-words, folder-grammar" a10status="MOVE_TO-LanguageExplorer.Works.ImageHolder" />
+		<imageList assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.ImageHolder" field="smallImages" size="small" labels="BrowseView, EditView, DocumentView, NoFilter, SimpleFilter, DefaultSort, GenericTool, Delete, SpecialCharacter, ExternalLink, SideBySideView" a10status="MOVE_TO-LanguageExplorer.Works.ImageHolder" />
+		<imageList assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.ImageHolder" field="smallCommandImages" size="small" labels="NewProject, OpenProject, SaveProject, historyBack, historyForward, Refresh, MenuWidget, Undo, Redo, Cut, Copy, Paste, MoveUp, MoveRight, MoveDown, MoveLeft, columnChooser, ArchiveWithRamp" a10status="MOVE_TO-LanguageExplorer.Works.ImageHolder" />
 		<imageList assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.LexEntryImages" field="buttonImages" size="small" labels="majorEntry, minorEntry, subentry, goToEntry, reversalEntry, gotoReversalEntry" a10status="DONE" />
-		<imageList assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordClerkImages" field="buttonImages" size="small" labels="firstRecord, lastRecord, previousRecord, nextRecord, syncSendReceive, syncObtain, chorus, syncSendReceiveFirst" a10status="MOVE_TO-LanguageExplorer.Works.RecordClerkImages" />
+		<imageList assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.RecordClerkImages" field="buttonImages" size="small" labels="firstRecord, lastRecord, previousRecord, nextRecord, syncSendReceive, syncObtain, chorus, syncSendReceiveFirst" a10status="MOVE_TO-LanguageExplorer.Works.RecordClerkImages" />
 		<imageList assemblyPath="DetailControls.dll" class="SIL.FieldWorks.Common.Framework.DetailControls.DataTreeImages" field="nodeImages" size="small" labels="sequence, collection, atomic" a10status="DUNNO" />
-		<imageList assemblyPath="LexTextDll.dll" class="SIL.FieldWorks.XWorks.LexText.ImageHolder" field="smallImages" size="small" labels="Pie, Circle, TwoHalfs, Help, Delete, Remove, Left, Right" a10status="MOVE_TO-LanguageExplorer.Works.LexText.ImageHolder" />
-		<imageList assemblyPath="LexTextDll.dll" class="SIL.FieldWorks.XWorks.LexText.ImageHolder" field="smallCommandImages" size="small" labels="findWordform, addNewAnalysis" a10status="MOVE_TO-LanguageExplorer.Works.LexText.ImageHolder" />
+		<imageList assemblyPath="LexTextDll.dll" class="LanguageExplorer.Works.LexText.ImageHolder" field="smallImages" size="small" labels="Pie, Circle, TwoHalfs, Help, Delete, Remove, Left, Right" a10status="MOVE_TO-LanguageExplorer.Works.LexText.ImageHolder" />
+		<imageList assemblyPath="LexTextDll.dll" class="LanguageExplorer.Works.LexText.ImageHolder" field="smallCommandImages" size="small" labels="findWordform, addNewAnalysis" a10status="MOVE_TO-LanguageExplorer.Works.LexText.ImageHolder" />
 <!-- START include: "Lexicon/areaConfiguration.xml" query="root/resources/*" -->
 		<include path="Lexicon/areaConfiguration.xml" query="root/resources/*"/>
 <!-- END include: "Lexicon/areaConfiguration.xml" query="root/resources/*" -->
@@ -1152,7 +1152,7 @@ EXTENSIONS NOT SUPPORTED -->
 	<!--Listeners are classes that are instantiated and added to the mediator's list of colleagues (message handlers)
   to handle messages that are not specific to one particular tool.-->
 	<listeners>
-		<listener assemblyPath="xCore.dll" class="XCore.MockupDialogLauncher"/>
+		<listener assemblyPath="xCore.dll" class="XCore.MockupDialogLauncher" a10status="REMOVED" />
 <!-- START include: "Lexicon/areaConfiguration.xml" query="root/listeners/*" -->
 		<include path="Lexicon/areaConfiguration.xml" query="root/listeners/*"/>
 <!-- END include: "Lexicon/areaConfiguration.xml" query="root/listeners/*" -->
@@ -1176,16 +1176,16 @@ EXTENSIONS NOT SUPPORTED -->
 		<listener assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Dumpster.AreaListener"/>
 		<listener assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Dumpster.FLExBridgeListener"/>
 		<!-- take care of the writing system combo box -->
-		<listener assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.WritingSystemListHandler"/>
-		<listener assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.CombinedStylesListHandler"/>
-		<listener assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.LinkListener"/>
+		<listener assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.WritingSystemListHandler"/>
+		<listener assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.CombinedStylesListHandler"/>
+		<listener assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.LinkListener"/>
 <!-- NOT USED
 		<listener assemblyPath="FlexUIAdapter.dll" class="XCore.ContextHelper">
 			<parameters contextHelpPath="ContextHelp.xml"/>
 		</listener>
 NOT USED -->
-		<listener assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.MacroListener"/>
-		<listener assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.DictionaryConfigurationListener"/>
+		<listener assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.MacroListener"/>
+		<listener assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.DictionaryConfigurationListener"/>
 <!-- NOT USED
 		<listener assemblyPath="xCore.dll" class="XCore.ProgressListener" />
 NOT USED -->
@@ -1265,7 +1265,7 @@ EXTENSIONS NOT SUPPORTED -->
 	</defaultProperties>
 	<!-- The class which will  fill up the window (minus the sidebar, toolbars, and menubar).
 	this path is relative to be executing application.-->
-	<!-- contentClass assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView">
+	<!-- contentClass assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.RecordEditView">
 		<parameters field="PartsOfSpeech" templatePath="MorphologyEditor/XDEs"/>
 	</contentClass-->
 	<contexthelpstrings>

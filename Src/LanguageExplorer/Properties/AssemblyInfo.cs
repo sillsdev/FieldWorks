@@ -14,7 +14,3 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 [assembly: InternalsVisibleTo("LanguageExplorerTests")]
-#if RANDYTODO
-	// TODO: Remove InternalsVisibleTo("xWorksTests")], when xworks is assimilated.
-#endif
-[assembly: InternalsVisibleTo("xWorksTests")]

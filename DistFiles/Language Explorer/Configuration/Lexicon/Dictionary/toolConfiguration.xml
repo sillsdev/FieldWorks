@@ -2,7 +2,7 @@
 <root>
 	<reusableControls>
 		<control id="DictionaryPubPreviewControl">
-			<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.XhtmlRecordDocView"/>
+			<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.XhtmlRecordDocView"/>
 			<parameters id="DictionaryPubPreview" area="lexicon" clerk="entries" treeBarAvailability="NotMyBusiness" layout="publishStem" layoutProperty="DictionaryPublicationLayout" layoutSuffix="Preview" editable="false" configureObjectName="Dictionary" viewTypeLabelKey="ksDictionaryView" emptyTitleId="No-LexEntries">
 				<configureLayouts>
 					<layoutType label="Lexeme-based (complex forms as main entries)" layout="publishStem">
@@ -24,9 +24,9 @@
 				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 				<parameters PaneBarGroupId="PaneBar-Dictionary">
 					<control>
-						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.XhtmlDocView"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.XhtmlDocView"/>
 						<parameters area="lexicon" clerk="entries" altTitleId="LexEntry-Plural" persistContext="Dict" backColor="White" layout="" layoutProperty="DictionaryPublicationLayout" layoutSuffix="Preview" editable="false" configureObjectName="Dictionary">
-							<decoratorClass assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.DictionaryPublicationDecorator"/>
+							<decoratorClass assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.DictionaryPublicationDecorator"/>
 							<filterProps>LexEntry.VisibleComplexFormBackRefs:LexEntryRef.OwningEntry;LexEntry.AllSubentries:LexEntryRef.OwningEntry</filterProps>
 						</parameters>
 					</control>

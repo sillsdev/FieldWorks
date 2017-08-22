@@ -4,7 +4,7 @@
 
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.XWorks;
+using LanguageExplorer.Works;
 using SIL.LCModel.Core.KernelInterfaces;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.Edit

@@ -4,7 +4,7 @@
 
 using System.Windows.Forms;
 using SIL.FieldWorks.Filters;
-using SIL.FieldWorks.XWorks;
+using LanguageExplorer.Works;
 
 namespace LanguageExplorer.Areas.TextsAndWords
 {

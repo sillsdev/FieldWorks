@@ -10,7 +10,7 @@ using SIL.FieldWorks.Common.Controls;
 using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Infrastructure.Impl;
 
-namespace SIL.FieldWorks.XWorks
+namespace LanguageExplorer.Works
 {
 	[TestFixture]
 	public class TestObjectListPublisher : MemoryOnlyBackendProviderTestBase

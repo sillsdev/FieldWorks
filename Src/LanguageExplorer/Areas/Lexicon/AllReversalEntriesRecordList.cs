@@ -8,7 +8,7 @@ using System.Diagnostics;
 using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.XWorks;
+using LanguageExplorer.Works;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 

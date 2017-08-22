@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
+using LanguageExplorer.Works;
 using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
@@ -14,7 +15,7 @@ using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.Filters;
-using SIL.FieldWorks.XWorks;
+
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
 	public class InterlinearTextsRecordClerk : RecordClerk

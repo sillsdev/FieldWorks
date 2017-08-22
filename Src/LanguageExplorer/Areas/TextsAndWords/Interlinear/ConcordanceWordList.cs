@@ -4,12 +4,12 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using LanguageExplorer.Works;
 using SIL.FieldWorks.Common.Controls;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.Filters;
-using SIL.FieldWorks.XWorks;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {

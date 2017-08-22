@@ -13,7 +13,7 @@ using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.DomainServices;
-using SIL.FieldWorks.XWorks;
+using LanguageExplorerTests.Works;
 using SIL.Xml;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls

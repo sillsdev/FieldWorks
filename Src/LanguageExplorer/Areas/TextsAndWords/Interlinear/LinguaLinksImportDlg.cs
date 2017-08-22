@@ -17,7 +17,7 @@ using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.Resources;
-using SIL.FieldWorks.XWorks;
+using LanguageExplorer.Works;
 using SIL.LCModel.Utils;
 using WaitCursor = SIL.FieldWorks.Common.FwUtils.WaitCursor;
 

@@ -8,7 +8,7 @@ using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.Utils;
-using SIL.FieldWorks.XWorks;
+using LanguageExplorer.Works;
 
 namespace LanguageExplorer.Dumpster
 {

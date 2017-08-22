@@ -16,7 +16,7 @@ using SIL.LCModel;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Utils;
 using SIL.LCModel.DomainServices;
-using SIL.FieldWorks.XWorks;
+using LanguageExplorer.Works;
 using SIL.LCModel.Core.KernelInterfaces;
 using StyleInfo = SIL.FieldWorks.FwCoreDlgControls.StyleInfo;
 

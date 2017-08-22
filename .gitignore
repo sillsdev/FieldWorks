@@ -1,5 +1,6 @@
 # Generated or Downloaded (as part of the build process)
-FW_develop.ndproj
+FW.ndproj
+NDependOut/
 FWXml.xpr
 GeneratedAssemblyInfo.cs
 Collection.cpp

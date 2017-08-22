@@ -41,9 +41,21 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Accessibility" />
+    <Reference Include="FxtDll, Version=10.0.0.14010, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Debug\FxtDll.dll</HintPath>
+    </Reference>
+    <Reference Include="NAudio, Version=1.7.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\NAudio.1.7.3\lib\net35\NAudio.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Aga.Controls, Version=1.7.0.0, Culture=neutral, PublicKeyToken=fcc90fbf924463a3, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\DistFiles\Aga.Controls.dll</HintPath>
+    </Reference>
+    <Reference Include="ExCss, Version=2.0.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Downloads\ExCSS.dll</HintPath>
     </Reference>
     <Reference Include="FixFwDataDll">
       <SpecificVersion>False</SpecificVersion>
@@ -61,6 +73,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\SIL.LCModel.Utils.dll</HintPath>
     </Reference>
+    <Reference Include="System.Security" />
     <Reference Include="ViewsInterfaces">
       <Name>ViewsInterfaces</Name>
       <HintPath>..\..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
@@ -109,6 +122,9 @@
     <Reference Include="Geckofx-Winforms">
       <Package>Geckofx-WinForms</Package>
       <HintPath>..\..\Downloads\Geckofx-Winforms.dll</HintPath>
+    </Reference>
+    <Reference Include="DotNetZip">
+      <HintPath>..\..\Output\Debug\DotNetZip.dll</HintPath>
     </Reference>
     <Reference Include="ICSharpCode.SharpZipLib, Version=0.85.5.452, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -221,9 +237,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Release\XMLViews.dll</HintPath>
     </Reference>
-    <Reference Include="xWorks">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Release\xWorks.dll</HintPath>
+    <Reference Include="DialogAdapters">
+      <HintPath>..\..\packages\DialogAdapters.0.1.0.32308\lib\net45\DialogAdapters.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -236,9 +251,366 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="UtilityTools\WriteAllObjectsUtility.cs" />
-    <None Include="images\Arrow_Down.ico" />
-    <None Include="images\Arrow_Up.ico" />
-    <None Include="images\DefaultIcon.ico" />
+    <Compile Include="Works\AddCustomFieldDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Works\ConcDecorator.cs" />
+    <Compile Include="Works\ConcRecordClerk.cs" />
+    <Compile Include="Works\ConfigurableDictionaryNode.cs" />
+    <Compile Include="Works\ConfiguredXHTMLGenerator.cs" />
+    <Compile Include="Works\CssGenerator.cs" />
+    <Compile Include="Works\CustomListDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Works\CustomListDlg.Designer.cs">
+      <DependentUpon>CustomListDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Works\DataTreeImages.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Works\DeleteCustomList.cs" />
+    <Compile Include="Works\DictionaryConfigManager.cs" />
+    <Compile Include="Works\DictionaryConfigMgrDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Works\DictionaryConfigMgrDlg.Designer.cs">
+      <DependentUpon>DictionaryConfigMgrDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Works\DictionaryConfigurationController.cs" />
+    <Compile Include="Works\DictionaryConfigurationDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Works\DictionaryConfigurationDlg.Designer.cs">
+      <DependentUpon>DictionaryConfigurationDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Works\DictionaryConfigurationImportController.cs" />
+    <Compile Include="Works\DictionaryConfigurationImportDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Works\DictionaryConfigurationImportDlg.Designer.cs">
+      <DependentUpon>DictionaryConfigurationImportDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Works\DictionaryConfigurationListener.cs" />
+    <Compile Include="Works\DictionaryConfigurationManagerController.cs" />
+    <Compile Include="Works\DictionaryConfigurationManagerDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Works\DictionaryConfigurationManagerDlg.Designer.cs">
+      <DependentUpon>DictionaryConfigurationManagerDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Works\DictionaryConfigurationMigrator.cs" />
+    <Compile Include="Works\DictionaryConfigurationMigrators\FirstAlphaMigrator.cs" />
+    <Compile Include="Works\DictionaryConfigurationMigrators\FirstBetaMigrator.cs" />
+    <Compile Include="Works\DictionaryConfigurationMigrators\IDictionaryConfigurationMigrator.cs" />
+    <Compile Include="Works\DictionaryConfigurationMigrators\PreHistoricMigrator.cs" />
+    <Compile Include="Works\DictionaryConfigurationModel.cs" />
+    <Compile Include="Works\DictionaryConfigurationNodeRenameDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Works\DictionaryConfigurationNodeRenameDlg.Designer.cs">
+      <DependentUpon>DictionaryConfigurationNodeRenameDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Works\DictionaryConfigurationTreeControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Works\DictionaryConfigurationTreeControl.Designer.cs">
+      <DependentUpon>DictionaryConfigurationTreeControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Works\DictionaryConfigurationUtils.cs" />
+    <Compile Include="Works\DictionaryDetailsController.cs" />
+    <Compile Include="Works\DictionaryDetailsView\ButtonOverPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Works\DictionaryDetailsView\ButtonOverPanel.Designer.cs">
+      <DependentUpon>ButtonOverPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Works\DictionaryDetailsView\DetailsView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Works\DictionaryDetailsView\DetailsView.Designer.cs">
+      <DependentUpon>DetailsView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Works\DictionaryDetailsView\GroupingOptionsView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Works\DictionaryDetailsView\GroupingOptionsView.Designer.cs">
+      <DependentUpon>GroupingOptionsView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Works\DictionaryDetailsView\LabelOverPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Works\DictionaryDetailsView\LabelOverPanel.Designer.cs">
+      <DependentUpon>LabelOverPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Works\DictionaryDetailsView\ListOptionsView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Works\DictionaryDetailsView\ListOptionsView.Designer.cs">
+      <DependentUpon>ListOptionsView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Works\DictionaryDetailsView\SenseOptionsView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Works\DictionaryDetailsView\SenseOptionsView.Designer.cs">
+      <DependentUpon>SenseOptionsView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Works\DictionaryDetailsView\SpecialCharacterHandling.cs" />
+    <Compile Include="Works\DictionaryExportService.cs" />
+    <Compile Include="Works\DictionaryNodeOptions.cs" />
+    <Compile Include="Works\DictionaryPublicationDecorator.cs" />
+    <Compile Include="Works\DTMenuHandler.cs" />
+    <Compile Include="Works\EntriesOrChildClassesRecordList.cs" />
+    <Compile Include="Works\ExportDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Works\ExportSemanticDomainsDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Works\ExportSemanticDomainsDlg.Designer.cs">
+      <DependentUpon>ExportSemanticDomainsDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Works\ExportTranslatedListsDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Works\ExportTranslatedListsDlg.Designer.cs">
+      <DependentUpon>ExportTranslatedListsDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Works\FileStreamXmlResolver.cs" />
+    <Compile Include="Works\HeadWordNumbersController.cs" />
+    <Compile Include="Works\HeadWordNumbersDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Works\HeadWordNumbersDlg.designer.cs">
+      <DependentUpon>HeadWordNumbersDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Works\IAnalysisOccurrenceFromHvo.cs" />
+    <Compile Include="Works\ICreateAndInsert.cs" />
+    <Compile Include="Works\IDictConfigPresenter.cs" />
+    <Compile Include="Works\IDictConfigViewer.cs" />
+    <Compile Include="Works\IDictionaryConfigurationView.cs" />
+    <Compile Include="Works\IDictionaryDetailsView.cs" />
+    <Compile Include="Works\IDictionaryGroupingOptionsView.cs" />
+    <Compile Include="Works\IDictionaryListOptionsView.cs" />
+    <Compile Include="Works\IDictionarySenseOptionsView.cs" />
+    <Compile Include="Works\IFlexMacro.cs" />
+    <Compile Include="Works\IHeadwordNumbersView.cs" />
+    <Compile Include="Works\ILayoutConverter.cs" />
+    <Compile Include="Works\ImageHolder.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Works\InterestingTextList.cs" />
+    <Compile Include="Works\InterestingTextsDecorator.cs" />
+    <Compile Include="Works\IRecordClerkRepository.cs" />
+    <Compile Include="Works\IRecordClerkRepositoryForTools.cs" />
+    <Compile Include="Works\ISetRootHvo.cs" />
+    <Compile Include="Works\IWebonaryClient.cs" />
+    <Compile Include="Works\LegacyConfigurationUtils.cs" />
+    <Compile Include="Works\LiftExportMessageDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Works\LiftExportMessageDlg.Designer.cs">
+      <DependentUpon>LiftExportMessageDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Works\LinkListener.cs" />
+    <Compile Include="Works\ListChangedEventArgs.cs" />
+    <Compile Include="Works\ListChangedEventHandler.cs" />
+    <Compile Include="Works\MacroListener.cs" />
+    <Compile Include="Works\MatchingItemsRecordClerk.cs" />
+    <Compile Include="Works\MatchingItemsRecordList.cs" />
+    <Compile Include="Works\Navigation.cs" />
+    <Compile Include="Works\NotebookExportDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Works\PossibilityRecordList.cs" />
+    <Compile Include="Works\RecordBarListHandler.cs" />
+    <Compile Include="Works\RecordBarTreeHandler.cs" />
+    <Compile Include="Works\RecordBrowseView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Works\RecordClerk.cs" />
+    <Compile Include="Works\RecordClerkImages.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Works\RecordClerkRepository.cs" />
+    <Compile Include="Works\RecordDocView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Works\RecordEditView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Works\RecordList.cs" />
+    <Compile Include="Works\RecordNavigationEventArgs.cs" />
+    <Compile Include="Works\RecordNavigationInfo.cs" />
+    <Compile Include="Works\RecordView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Works\SelectObjectEventArgs.cs" />
+    <Compile Include="Works\SemanticDomainRdeTreeBarHandler.cs" />
+    <Compile Include="Works\SubitemRecordClerk.cs" />
+    <Compile Include="Works\TemporaryRecordClerk.cs" />
+    <Compile Include="Works\TextListeners.cs" />
+    <Compile Include="Works\UnicodeCharacterEditingHelper.cs" />
+    <Compile Include="Works\UploadToWebonaryController.cs" />
+    <Compile Include="Works\UploadToWebonaryDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Works\UploadToWebonaryDlg.Designer.cs">
+      <DependentUpon>UploadToWebonaryDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Works\UploadToWebonaryModel.cs" />
+    <Compile Include="Works\WebonaryClient.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Works\WordsUsedOnlyElsewhereFilter.cs" />
+    <Compile Include="Works\XhtmlDocView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Works\XhtmlRecordDocView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Works\XmlDiagnosticsDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Works\XmlDiagnosticsDlg.Designer.cs">
+      <DependentUpon>XmlDiagnosticsDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Works\XmlDocConfigureDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Works\XmlDocConfigureDlg.Designer.cs">
+      <DependentUpon>XmlDocConfigureDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Works\XmlDocView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Works\xWorksStrings.Designer.cs">
+      <DependentUpon>xWorksStrings.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Works\XWorksViewBase.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Content Include="Works\Resources\ArrowDown.png" />
+    <Content Include="Works\Resources\ArrowUp.png" />
+    <EmbeddedResource Include="Works\AddCustomFieldDlg.resx">
+      <DependentUpon>AddCustomFieldDlg.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Works\CustomListDlg.resx">
+      <DependentUpon>CustomListDlg.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Works\DataTreeImages.resx">
+      <DependentUpon>DataTreeImages.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Works\DictionaryConfigMgrDlg.resx">
+      <DependentUpon>DictionaryConfigMgrDlg.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Works\DictionaryConfigurationDlg.resx">
+      <DependentUpon>DictionaryConfigurationDlg.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Works\DictionaryConfigurationImportDlg.resx">
+      <DependentUpon>DictionaryConfigurationImportDlg.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Works\DictionaryConfigurationManagerDlg.resx">
+      <DependentUpon>DictionaryConfigurationManagerDlg.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Works\DictionaryConfigurationNodeRenameDlg.resx">
+      <DependentUpon>DictionaryConfigurationNodeRenameDlg.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Works\DictionaryConfigurationTreeControl.resx">
+      <DependentUpon>DictionaryConfigurationTreeControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Works\DictionaryDetailsView\ButtonOverPanel.resx">
+      <DependentUpon>ButtonOverPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Works\DictionaryDetailsView\DetailsView.resx">
+      <DependentUpon>DetailsView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Works\DictionaryDetailsView\GroupingOptionsView.resx">
+      <DependentUpon>GroupingOptionsView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Works\DictionaryDetailsView\LabelOverPanel.resx">
+      <DependentUpon>LabelOverPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Works\DictionaryDetailsView\ListOptionsView.resx">
+      <DependentUpon>ListOptionsView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Works\DictionaryDetailsView\SenseOptionsView.resx">
+      <DependentUpon>SenseOptionsView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Works\ExportDialog.resx">
+      <DependentUpon>ExportDialog.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Works\ExportSemanticDomainsDlg.resx">
+      <DependentUpon>ExportSemanticDomainsDlg.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Works\ExportTranslatedListsDlg.resx">
+      <DependentUpon>ExportTranslatedListsDlg.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Works\HeadWordNumbersDlg.resx">
+      <DependentUpon>HeadWordNumbersDlg.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Works\ImageHolder.resx">
+      <DependentUpon>ImageHolder.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Works\LiftExportMessageDlg.resx">
+      <DependentUpon>LiftExportMessageDlg.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Works\RecordBrowseView.resx">
+      <DependentUpon>RecordBrowseView.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Works\RecordClerkImages.resx">
+      <DependentUpon>RecordClerkImages.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Works\RecordEditView.resx">
+      <DependentUpon>RecordEditView.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Works\RecordView.resx">
+      <DependentUpon>RecordView.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Works\UploadToWebonaryDlg.resx">
+      <DependentUpon>UploadToWebonaryDlg.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Works\XmlDiagnosticsDlg.resx">
+      <DependentUpon>XmlDiagnosticsDlg.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Works\XmlDocConfigureDlg.resx">
+      <DependentUpon>XmlDocConfigureDlg.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Works\XmlDocView.resx">
+      <DependentUpon>XmlDocView.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Works\xWorksStrings.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>xWorksStrings.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Works\XWorksViewBase.resx">
+      <DependentUpon>XWorksViewBase.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Content Include="Works\Resources\EntriesOrChildrenClerkPartOwnershipTree.xml" />
+    <Content Include="images\Arrow_Down.ico" />
+    <Content Include="images\Arrow_Up.ico" />
+    <Content Include="images\DefaultIcon.ico" />
     <Content Include="images\Add New Analysis.ico" />
     <Content Include="images\DropDown2003.ico" />
     <Content Include="images\DropDown2007.ico" />

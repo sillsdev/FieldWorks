@@ -3,9 +3,6 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-
-using SIL.FieldWorks.XWorks;
-using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Controls;
 
 namespace LanguageExplorer.Areas.TextsAndWords
@@ -77,7 +74,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(RespellerDlg));
 			this.m_cbUpdateLexicon = new System.Windows.Forms.CheckBox();
-			this.m_sourceSentences = new SIL.FieldWorks.XWorks.RecordBrowseView();
+			this.m_sourceSentences = new LanguageExplorer.Works.RecordBrowseView();
 			this.m_btnClose = new System.Windows.Forms.Button();
 			this.m_buttonImages = new System.Windows.Forms.ImageList(this.components);
 			this.label2 = new System.Windows.Forms.Label();
@@ -332,7 +329,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		#endregion
 
 		private System.Windows.Forms.CheckBox m_cbUpdateLexicon;
-		private SIL.FieldWorks.XWorks.RecordBrowseView m_sourceSentences;
+		private LanguageExplorer.Works.RecordBrowseView m_sourceSentences;
 		private System.Windows.Forms.Button m_btnClose;
 		private System.Windows.Forms.ImageList m_buttonImages;
 		private System.Windows.Forms.Label label2;

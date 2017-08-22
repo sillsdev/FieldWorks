@@ -82,7 +82,7 @@ EXTENSIONS NOT SUPPORTED Lexicon Area -->
 						</parameters>
 					</control>
 					<control id="SegmentPreviewControl">
-						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordDocXmlView" a10status="Fork moved to: LanguageExplorer.Works.RecordDocXmlView" />
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.RecordDocXmlView" a10status="Fork moved to: LanguageExplorer.Works.RecordDocXmlView" />
 						<parameters id="SegmentPreviewControl" clerk="OccurrencesOfSense" treeBarAvailability="NotMyBusiness" layout="publicationNew" editable="false"/>
 					</control>
 				</parameters>
@@ -167,9 +167,9 @@ EXTENSIONS NOT SUPPORTED Lexicon Area -->
 EXTENSIONS NOT SUPPORTED Lexicon Area -->
 			<clerks>
 				<clerk id="OccurrencesOfSense" shouldHandleDeletion="false">
-					<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.ConcRecordClerk" a10status="Fork: LanguageExplorer.Works.ConcDecorator" />
+					<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.ConcRecordClerk" a10status="Fork: LanguageExplorer.Works.ConcDecorator" />
 					<recordList class="LexSense" field="Occurrences">
-						<decoratorClass assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.ConcDecorator" a10status="Fork: LanguageExplorer.Works.ConcDecorator" />
+						<decoratorClass assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.ConcDecorator" a10status="Fork: LanguageExplorer.Works.ConcDecorator" />
 					</recordList>
 					<filters/>
 					<sortMethods/>
@@ -374,7 +374,7 @@ EXTENSIONS NOT SUPPORTED Lexicon Area -->
 				</clerk>
 				<clerk id="entriesOrChildren">
 					<recordList owner="LexDb" property="Entries"> <!-- by default load for Entries but can be for AllSenses too -->
-						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.EntriesOrChildClassesRecordList"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.EntriesOrChildClassesRecordList"/>
 						<PartOwnershipTree>
 							<!-- the ClassOwnershipTree describes the relative relationship between the target classes in the possible source properties
 								 loaded by this list. This especially helps in maintaining the CurrentIndex when switching from one property to the next. -->

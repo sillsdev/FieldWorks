@@ -154,7 +154,7 @@ EXTENSIONS NOT SUPPORTED (Words_Area) -->
 		<parameters id="guicontrols">
 			<guicontrol id="TextInformationPane">
 				<control>
-					<!-- dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/ -->
+					<!-- dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.RecordEditView"/ -->
 					<parameters area="textsWords" clerk="interlinearTexts" relatedClerk="OccurrencesOfSelectedUnit" layout="FullInformation" treeBarAvailability="NotAllowed">
 						<menuHandler>
 							<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.LexEntryMenuHandler"/>
@@ -225,41 +225,41 @@ EXTENSIONS NOT SUPPORTED (Words_Area) -->
 			<clerks>
 				<!-- this clerk is explicitly known to InterlinearSfmImportWizard.OnFinishButton-->
 				<clerk id="interlinearTexts" shouldHandleDeletion="false">
-					<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.TemporaryRecordClerk"/>
+					<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.TemporaryRecordClerk"/>
 					<recordList owner="LangProject" property="InterestingTexts">
-						<decoratorClass assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.InterestingTextsDecorator"/>
+						<decoratorClass assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.InterestingTextsDecorator"/>
 					</recordList>
 					<filters/>
 					<sortMethods/>
 				</clerk>
 				<clerk id="segmentOccurrencesOfWfiWordform" shouldHandleDeletion="false">
-					<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.TemporaryRecordClerk"/>
+					<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.TemporaryRecordClerk"/>
 					<recordList class="WfiWordform" field="ExactOccurrences">
-						<decoratorClass assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.ConcDecorator"/>
+						<decoratorClass assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.ConcDecorator"/>
 					</recordList>
 					<filters/>
 					<sortMethods/>
 				</clerk>
 				<clerk id="segmentOccurrencesOfWfiAnalysis" shouldHandleDeletion="false">
-					<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.TemporaryRecordClerk"/>
+					<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.TemporaryRecordClerk"/>
 					<recordList class="WfiAnalysis" field="ExactOccurrences">
-						<decoratorClass assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.ConcDecorator"/>
+						<decoratorClass assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.ConcDecorator"/>
 					</recordList>
 					<filters/>
 					<sortMethods/>
 				</clerk>
 				<clerk id="segmentOccurrencesOfWfiGloss" shouldHandleDeletion="false">
-					<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.TemporaryRecordClerk"/>
+					<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.TemporaryRecordClerk"/>
 					<recordList class="WfiGloss" field="ExactOccurrences">
-						<decoratorClass assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.ConcDecorator"/>
+						<decoratorClass assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.ConcDecorator"/>
 					</recordList>
 					<filters/>
 					<sortMethods/>
 				</clerk>
 				<clerk id="matchingWords" shouldHandleDeletion="false">
-					<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.MatchingItemsRecordClerk"/>
+					<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.MatchingItemsRecordClerk"/>
 					<recordList owner="WordformInventory" property="Wordforms">
-						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.MatchingItemsRecordList"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.MatchingItemsRecordList"/>
 					</recordList>
 					<filters/>
 					<sortMethods/>
@@ -654,7 +654,7 @@ EXTENSIONS NOT SUPPORTED (Words_Area) -->
 					<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.TextsAndWords.Interlinear.InterlinearTextsRecordClerk"/>
 					<recordList owner="LangProject" property="InterestingTexts">
 						<!-- We use a decorator here so it can override certain virtual properties and limit occurrences to interesting texts. -->
-						<decoratorClass assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.InterestingTextsDecorator"/>
+						<decoratorClass assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.InterestingTextsDecorator"/>
 					</recordList>
 					<filterMethods/>
 					<sortMethods/>
@@ -663,10 +663,10 @@ EXTENSIONS NOT SUPPORTED (Words_Area) -->
 					<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.TextsAndWords.Interlinear.InterlinearTextsRecordClerk"/>
 					<recordList owner="LangProject" property="Wordforms">
 						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.TextsAndWords.Interlinear.ConcordanceWordList"/>
-						<decoratorClass assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.ConcDecorator"/>
+						<decoratorClass assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.ConcDecorator"/>
 					</recordList>
 					<filters>
-						<filter label="Default" assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.WordsUsedOnlyElsewhereFilter"/>
+						<filter label="Default" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.WordsUsedOnlyElsewhereFilter"/>
 					</filters>
 					<sortMethods>
 						<sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName"/>

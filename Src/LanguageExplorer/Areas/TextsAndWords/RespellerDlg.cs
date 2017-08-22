@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using System.Diagnostics;
 using System.Xml.Linq;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
+using LanguageExplorer.Works;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.SpellChecking;
 using SIL.LCModel.Core.Text;
@@ -23,7 +24,6 @@ using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Resources;
 using SIL.LCModel.Application;
 using SIL.LCModel.Infrastructure;
-using SIL.FieldWorks.XWorks;
 using WaitCursor = SIL.FieldWorks.Common.FwUtils.WaitCursor;
 
 namespace LanguageExplorer.Areas.TextsAndWords

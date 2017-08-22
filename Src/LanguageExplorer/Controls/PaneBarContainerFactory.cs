@@ -5,7 +5,6 @@
 using System.Windows.Forms;
 using LanguageExplorer.Areas;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.XWorks;
 
 namespace LanguageExplorer.Controls
 {

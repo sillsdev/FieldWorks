@@ -5,7 +5,7 @@
 			<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.TextsAndWords.Interlinear.OccurrencesOfSelectedUnit"/>
 			<recordList class="LangProject" field="ConcOccurrences">
 				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.TextsAndWords.Interlinear.MatchingConcordanceItems"/>
-				<decoratorClass assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.ConcDecorator"/>
+				<decoratorClass assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.ConcDecorator"/>
 			</recordList>
 			<sortMethods/>
 		</clerk>
@@ -13,13 +13,13 @@
 			<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.TextsAndWords.Interlinear.OccurrencesOfSelectedUnit"/>
 			<recordList class="LangProject" field="ConcOccurrences">
 				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.TextsAndWords.Interlinear.MatchingConcordanceItems"/>
-				<decoratorClass assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.ConcDecorator"/>
+				<decoratorClass assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.ConcDecorator"/>
 			</recordList>
 			<sortMethods/>
 		</clerk>
 		<clerk id="OccurrencesOfSelectedWordform" clerkProvidingOwner="concordanceWords">
 			<recordList class="WfiWordform" field="Occurrences">
-				<decoratorClass assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.ConcDecorator" key="WordformOccurrences"/>
+				<decoratorClass assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.ConcDecorator" key="WordformOccurrences"/>
 			</recordList>
 			<sortMethods/>
 		</clerk>
@@ -49,7 +49,7 @@
 								<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 								<parameters id="wordOccurrenceList" collapse="180000">
 									<control>
-										<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordBrowseView"/>
+										<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.RecordBrowseView"/>
 										<parameters id="wordOccurrenceList" editable="false" clerk="OccurrencesOfSelectedUnit" filterBar="true" altTitleId="Concordance-Matches">
 											<include path="../reusableBrowseControlConfiguration.xml" query="reusableControls/control[@id='concordanceColumns']/columns"/>
 										</parameters>
@@ -94,7 +94,7 @@
 								<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 								<parameters id="wordOccurrenceList" collapse="180000">
 									<control>
-										<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordBrowseView"/>
+										<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.RecordBrowseView"/>
 										<parameters id="wordOccurrenceList" editable="false" clerk="complexConcOccurrencesOfSelectedUnit" filterBar="true" altTitleId="Concordance-Matches">
 <!-- START include (Words_Area): "./reusableBrowseControlConfiguration.xml" query="reusableControls/control[@id='concordanceColumns']/columns"" -->
 											<include path="../reusableBrowseControlConfiguration.xml" query="reusableControls/control[@id='concordanceColumns']/columns"/>
@@ -133,7 +133,7 @@
 								<parameters area="textsWords" id="LineAndTextMultiPane" splitterBarOrientation="horizontal" defaultFixedPaneSizePoints="50%">
 									<!-- this will fill the top of the right side -->
 									<control>
-										<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordBrowseView"/>
+										<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.RecordBrowseView"/>
 										<parameters id="wordOccurrenceList" editable="false" clerk="OccurrencesOfSelectedWordform" convertDummiesInView="false" convertDummiesSelected="true" filterBar="true" ShowOwnerShortname="true" altTitleId="WordListConcordance-Matches">
 											<include path="../reusableBrowseControlConfiguration.xml" query="reusableControls/control[@id='concordanceColumns']/columns"/>
 										</parameters>

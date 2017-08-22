@@ -10,7 +10,7 @@ using SIL.LCModel.Infrastructure;
 using SIL.LCModel;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.LexText.Controls;
-using SIL.FieldWorks.XWorks;
+using LanguageExplorer.Works;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 {

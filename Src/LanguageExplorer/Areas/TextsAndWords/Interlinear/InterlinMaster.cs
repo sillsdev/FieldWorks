@@ -10,6 +10,7 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using LanguageExplorer.Areas.TextsAndWords.Discourse;
+using LanguageExplorer.Works;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel;
@@ -20,7 +21,6 @@ using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel.Infrastructure;
-using SIL.FieldWorks.XWorks;
 using SIL.Xml;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
