@@ -10,7 +10,7 @@ using System.Xml;
 using Chorus;
 using Chorus.UI.Notes.Bar;
 using LanguageExplorer.Dumpster;
-using SIL.FieldWorks.Common.Framework.DetailControls;
+using LanguageExplorer.Controls.DetailControls;
 using SIL.LCModel;
 using SIL.Progress;
 

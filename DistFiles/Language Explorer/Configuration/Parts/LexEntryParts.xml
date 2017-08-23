@@ -1343,7 +1343,7 @@
 
 	<bin class="CmMedia">
 		<part id="CmMedia-Detail-MediaFile" type="Detail">
-			<slice label="Media File" field="MediaFile" editor="custom" assemblyPath="DetailControls.dll" class="SIL.FieldWorks.Common.Framework.DetailControls.AudioVisualSlice" menu="mnuDataTree-CmMedia" sameObject="true"/><!-- assume same object as preceding field for formatting lines on display -->
+			<slice label="Media File" field="MediaFile" editor="custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.DetailControls.AudioVisualSlice" menu="mnuDataTree-CmMedia" sameObject="true"/><!-- assume same object as preceding field for formatting lines on display -->
 		</part>
 		<part id="CmMedia-Detail-Label" type="Detail">
 			<slice label="Label" field="Label" editor="multistring" ws="all analysis" menu="mnuDataTree-CmMedia" sameObject="true"/><!-- assume same object as preceding field for formatting lines on display -->

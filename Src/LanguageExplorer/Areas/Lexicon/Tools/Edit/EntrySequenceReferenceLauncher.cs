@@ -8,7 +8,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.Framework.DetailControls;
+using LanguageExplorer.Controls.DetailControls;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;

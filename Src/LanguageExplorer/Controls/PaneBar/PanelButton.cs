@@ -5,7 +5,7 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.Framework.DetailControls;
+using LanguageExplorer.Controls.DetailControls;
 using SIL.FieldWorks.Common.FwUtils;
 
 namespace LanguageExplorer.Controls.PaneBar

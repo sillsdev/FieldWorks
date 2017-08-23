@@ -4,7 +4,7 @@
 
 using System;
 using System.Xml.Linq;
-using SIL.FieldWorks.Common.Framework.DetailControls;
+using LanguageExplorer.Controls.DetailControls;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;

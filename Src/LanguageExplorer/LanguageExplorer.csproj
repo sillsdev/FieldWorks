@@ -82,10 +82,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Release\Chorus.exe</HintPath>
     </Reference>
-    <Reference Include="DetailControls">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Release\DetailControls.dll</HintPath>
-    </Reference>
     <Reference Include="FdoUi">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Release\FdoUi.dll</HintPath>
@@ -242,6 +238,198 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controls\DetailControls\AtomicReferenceLauncher.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\DetailControls\AtomicReferencePOSSlice.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\DetailControls\AtomicReferenceSlice.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\DetailControls\AtomicReferenceView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\DetailControls\AtomicRefTypeAheadSlice.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\DetailControls\AudioVisualSlice.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\DetailControls\BasicTypeSlices.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\DetailControls\ButtonLauncher.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\DetailControls\ChooserCommand.cs" />
+    <Compile Include="Controls\DetailControls\CommandSlice.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\DetailControls\ConfigureWritingSystemsDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Controls\DetailControls\DataTree.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\DetailControls\DerivMSAReferenceSlice.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\DetailControls\EnumComboSlice.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\DetailControls\FieldSlice.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\DetailControls\FwCancelSearchButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\DetailControls\GenDateChooserDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Controls\DetailControls\GenDateLauncher.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\DetailControls\GenDateSlice.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\DetailControls\GhostReferenceVectorSlice.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\DetailControls\GhostStringSlice.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\DetailControls\ImageSlice.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\DetailControls\InflMSAReferenceSlice.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\DetailControls\LiteralMessageSlice.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\DetailControls\MorphTypeAtomicLauncher.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\DetailControls\MorphTypeAtomicReferenceSlice.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\DetailControls\MorphTypeChooser.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Controls\DetailControls\MSAReferenceComboBoxSlice.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\DetailControls\MultiLevelConc.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\DetailControls\MultiStringSlice.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\DetailControls\ObjSeqHashMap.cs" />
+    <Compile Include="Controls\DetailControls\PhoneEnvReferenceLauncher.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\DetailControls\PhoneEnvReferenceSlice.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\DetailControls\PhoneEnvReferenceView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\DetailControls\PictureSlice.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\DetailControls\PossibilityAtomicReferenceLauncher.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\DetailControls\PossibilityAtomicReferenceSlice.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\DetailControls\PossibilityAtomicReferenceView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\DetailControls\PossibilityAutoComplete.cs" />
+    <Compile Include="Controls\DetailControls\PossibilityReferenceVectorSlice.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\DetailControls\PossibilityVectorReferenceLauncher.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\DetailControls\PossibilityVectorReferenceView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\DetailControls\ReferenceComboBoxSlice.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\DetailControls\ReferenceLauncher.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\DetailControls\ReferenceSlice.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\DetailControls\ReferenceVectorSlice.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\DetailControls\ReferenceViewBase.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\DetailControls\Resources\DetailControlsStrings.Designer.cs">
+      <DependentUpon>DetailControlsStrings.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Controls\DetailControls\SemanticDomainReferenceLauncher.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\DetailControls\SemanticDomainReferenceVectorSlice.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\DetailControls\SemanticDomainsChooser.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Controls\DetailControls\SemanticDomainsChooser.Designer.cs">
+      <DependentUpon>SemanticDomainsChooser.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\DetailControls\SimpleComparer.cs" />
+    <Compile Include="Controls\DetailControls\SimpleListChooser.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Controls\DetailControls\Slice.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\DetailControls\SliceFactory.cs" />
+    <Compile Include="Controls\DetailControls\SliceFilter.cs" />
+    <Compile Include="Controls\DetailControls\SliceTreeNode.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\DetailControls\StringSlice.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\DetailControls\StTextSlice.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\DetailControls\SummaryCommandControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\DetailControls\SummarySlice.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\DetailControls\TreeEvents.cs" />
+    <Compile Include="Controls\DetailControls\TwoLevelConc.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\DetailControls\VectorReferenceLauncher.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\DetailControls\VectorReferenceView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\DetailControls\ViewPropertySlice.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\DetailControls\ViewSlice.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="LanguageExplorerConstants.cs" />
     <Compile Include="RecordClerkServices.cs" />
     <Compile Include="StatusBarPanelServices.cs" />
@@ -491,8 +679,95 @@
     <Compile Include="Works\XWorksViewBase.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <None Include="Controls\DetailControls\atomicNode.bmp" />
+    <None Include="Controls\DetailControls\CollectionNode.bmp" />
+    <None Include="Controls\DetailControls\SequenceSmall.bmp" />
+    <None Include="Controls\DetailControls\Resources\gotoLinkPic.png" />
+    <None Include="Controls\DetailControls\PartGenerator\LayoutGenerate.xslt" />
+    <None Include="Controls\DetailControls\PartGenerator\PartGenerate.xslt" />
     <Content Include="Works\Resources\ArrowDown.png" />
     <Content Include="Works\Resources\ArrowUp.png" />
+    <EmbeddedResource Include="Controls\DetailControls\AtomicReferenceLauncher.resx">
+      <DependentUpon>AtomicReferenceLauncher.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\DetailControls\AtomicReferenceView.resx">
+      <DependentUpon>AtomicReferenceView.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\DetailControls\ButtonLauncher.resx">
+      <DependentUpon>ButtonLauncher.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\DetailControls\ConfigureWritingSystemsDlg.resx">
+      <DependentUpon>ConfigureWritingSystemsDlg.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\DetailControls\DataTree.resx">
+      <DependentUpon>DataTree.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\DetailControls\GenDateChooserDlg.resx">
+      <DependentUpon>GenDateChooserDlg.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\DetailControls\GenDateLauncher.resx">
+      <DependentUpon>GenDateLauncher.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\DetailControls\MorphTypeAtomicLauncher.resx">
+      <DependentUpon>MorphTypeAtomicLauncher.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\DetailControls\MorphTypeChooser.resx">
+      <DependentUpon>MorphTypeChooser.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\DetailControls\MultiLevelConc.resx">
+      <DependentUpon>MultiLevelConc.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\DetailControls\PhoneEnvReferenceLauncher.resx">
+      <DependentUpon>PhoneEnvReferenceLauncher.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\DetailControls\PhoneEnvReferenceView.resx">
+      <DependentUpon>PhoneEnvReferenceView.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\DetailControls\ReferenceLauncher.resx">
+      <DependentUpon>ReferenceLauncher.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\DetailControls\Resources\DetailControlsStrings.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>DetailControlsStrings.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\DetailControls\SemanticDomainsChooser.resx">
+      <DependentUpon>SemanticDomainsChooser.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\DetailControls\SimpleListChooser.resx">
+      <DependentUpon>SimpleListChooser.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\DetailControls\SliceTreeNode.resx">
+      <DependentUpon>SliceTreeNode.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\DetailControls\SummaryCommandControl.resx">
+      <DependentUpon>SummaryCommandControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\DetailControls\VectorReferenceLauncher.resx">
+      <DependentUpon>VectorReferenceLauncher.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\DetailControls\VectorReferenceView.resx">
+      <DependentUpon>VectorReferenceView.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Works\AddCustomFieldDlg.resx">
       <DependentUpon>AddCustomFieldDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -641,6 +916,7 @@
     <Content Include="Resources\WordListColumns.xml" />
     <Content Include="Resources\WordListConcordanceToolParameters.xml" />
     <Content Include="Resources\WordListParameters.xml" />
+    <None Include="BuildInclude.targets" />
     <None Include="images\NavigationImages\FWFirstArrow.bmp" />
     <None Include="images\NavigationImages\FWLastArrow.bmp" />
     <None Include="images\NavigationImages\FWLeftArrow.bmp" />
@@ -2116,11 +2392,11 @@
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+  <Import Project="BuildInclude.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
 </Project>

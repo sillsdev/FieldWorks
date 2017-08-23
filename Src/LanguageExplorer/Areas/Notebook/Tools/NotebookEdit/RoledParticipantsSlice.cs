@@ -10,7 +10,7 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.Framework.DetailControls;
+using LanguageExplorer.Controls.DetailControls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
@@ -341,7 +341,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 		/// <param name="hvo"></param>
 		/// <param name="tag"></param>
 		/// <returns>true, if it the slice updated its display</returns>
-		protected override bool UpdateDisplayIfNeeded(int hvo, int tag)
+		protected internal override bool UpdateDisplayIfNeeded(int hvo, int tag)
 		{
 			CheckDisposed();
 

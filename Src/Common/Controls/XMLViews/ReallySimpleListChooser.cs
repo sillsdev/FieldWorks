@@ -2567,7 +2567,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>
 		/// Bring up a chooser for selecting a natural class, and insert it into the string
 		/// representation stored in the rootbox.  This static method is used by
-		/// SIL.FieldWorks.Common.Framework.DetailControls.PhoneEnvReferenceSlice and
+		/// LanguageExplorer.Controls.DetailControls.PhoneEnvReferenceSlice and
 		/// LanguageExplorer.Areas.PhEnvStrRepresentationSlice.
 		/// </summary>
 		/// <param name="rootb"></param>

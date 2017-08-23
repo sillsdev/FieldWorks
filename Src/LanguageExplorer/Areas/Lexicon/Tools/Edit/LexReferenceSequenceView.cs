@@ -4,7 +4,7 @@
 
 using SIL.LCModel;
 using SIL.FieldWorks.FdoUi;
-using SIL.FieldWorks.Common.Framework.DetailControls;
+using LanguageExplorer.Controls.DetailControls;
 using SIL.FieldWorks.Common.FwUtils;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.Edit

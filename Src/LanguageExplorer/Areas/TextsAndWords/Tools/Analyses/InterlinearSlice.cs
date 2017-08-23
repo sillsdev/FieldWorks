@@ -4,7 +4,7 @@
 
 using System.Diagnostics;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.Common.Framework.DetailControls;
+using LanguageExplorer.Controls.DetailControls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 
@@ -84,7 +84,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 			return ((AnalysisInterlinearRs)rs).DesiredSize.Height;
 		}
 
-		protected override void SetWidthForDataTreeLayout(int width)
+		protected internal override void SetWidthForDataTreeLayout(int width)
 		{
 			var minWidth = ((AnalysisInterlinearRs)Control).DesiredSize.Width + SplitCont.SplitterDistance + SplitCont.SplitterWidth;
 			if (width < minWidth)

@@ -5,7 +5,7 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Xml.Linq;
-using SIL.FieldWorks.Common.Framework.DetailControls;
+using LanguageExplorer.Controls.DetailControls;
 using SIL.LCModel;
 using LanguageExplorer.Works;
 using SIL.FieldWorks.Common.FwUtils;

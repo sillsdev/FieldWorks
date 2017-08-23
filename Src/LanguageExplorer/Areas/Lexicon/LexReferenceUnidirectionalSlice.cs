@@ -3,7 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using SIL.LCModel;
-using SIL.FieldWorks.Common.Framework.DetailControls;
+using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.Areas.Lexicon.Tools.Edit;
 
 namespace LanguageExplorer.Areas.Lexicon

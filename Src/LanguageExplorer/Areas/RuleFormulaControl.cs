@@ -12,7 +12,7 @@ using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.FieldWorks.Common.Framework.DetailControls;
+using LanguageExplorer.Controls.DetailControls;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.FdoUi;

@@ -6,7 +6,7 @@ using System;
 using System.Windows.Forms;
 using SIL.LCModel;
 using SIL.FieldWorks.LexText.Controls;
-using SIL.FieldWorks.Common.Framework.DetailControls;
+using LanguageExplorer.Controls.DetailControls;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 {

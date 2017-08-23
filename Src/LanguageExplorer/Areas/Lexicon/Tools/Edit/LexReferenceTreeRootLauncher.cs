@@ -5,7 +5,7 @@
 using System.Windows.Forms;
 using System.Diagnostics;
 using SIL.LCModel;
-using SIL.FieldWorks.Common.Framework.DetailControls;
+using LanguageExplorer.Controls.DetailControls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.LexText.Controls;
 
@@ -27,7 +27,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		}
 
 		/// <summary />
-		protected override ICmObject Target
+		protected internal override ICmObject Target
 		{
 			get
 			{

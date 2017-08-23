@@ -93,10 +93,6 @@
       <Name>ViewsInterfaces</Name>
       <HintPath>..\..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
     </Reference>
-    <Reference Include="DetailControls">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Release\DetailControls.dll</HintPath>
-    </Reference>
     <Reference Include="FwControls">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Release\FwControls.dll</HintPath>
@@ -195,6 +191,12 @@
     </Compile>
     <Compile Include="ArchivingTests.cs" />
     <Compile Include="AreaRepositoryTests.cs" />
+    <Compile Include="DetailControls\AtomicReferenceLauncherTests.cs" />
+    <Compile Include="DetailControls\DataTreeTests.cs" />
+    <Compile Include="DetailControls\PhoneEnvReferenceViewTests.cs" />
+    <Compile Include="DetailControls\SliceFactoryTests.cs" />
+    <Compile Include="DetailControls\SliceTests.cs" />
+    <Compile Include="DetailControls\VectorReferenceLauncherTests.cs" />
     <Compile Include="Discourse\AdvancedMTDialogLogicTests.cs" />
     <Compile Include="Discourse\ConstChartRowDecoratorTests.cs" />
     <Compile Include="Discourse\ConstituentChartDatabaseTests.cs" />
@@ -288,9 +290,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="BuildInclude.targets" />
+    <None Include="DetailControls\Test.fwlayout" />
     <None Include="Interlinear\FlexTextImport\FlexTextExportOutput.flextext" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="DetailControls\TestParts.xml" />
     <Content Include="Works\strings-en.xml" />
     <Content Include="Works\strings-es-MX.xml" />
     <Content Include="Works\strings-fr.xml" />

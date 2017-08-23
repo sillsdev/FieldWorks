@@ -17,7 +17,7 @@ using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.FdoUi.Dialogs;
 using SIL.LCModel.Utils;
-using SIL.FieldWorks.Common.Framework.DetailControls;
+using LanguageExplorer.Controls.DetailControls;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.FwUtils.MessageBoxEx;
@@ -532,7 +532,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// <param name="hvo"></param>
 		/// <param name="tag"></param>
 		/// <returns>true, if it the slice updated its display</returns>
-		protected override bool UpdateDisplayIfNeeded(int hvo, int tag)
+		protected internal override bool UpdateDisplayIfNeeded(int hvo, int tag)
 		{
 			CheckDisposed();
 

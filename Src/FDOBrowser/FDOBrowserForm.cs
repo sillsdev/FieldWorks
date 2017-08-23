@@ -13,7 +13,7 @@ using System.Resources;
 using System.Windows.Forms;
 using SIL.LCModel.Core.Cellar;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.Framework.DetailControls;
+using LanguageExplorer.Controls.DetailControls;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;

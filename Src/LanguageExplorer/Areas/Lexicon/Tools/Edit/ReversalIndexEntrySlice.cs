@@ -10,7 +10,7 @@ using System.Text;
 using SIL.LCModel;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.Common.Framework.DetailControls;
+using LanguageExplorer.Controls.DetailControls;
 using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Application;
