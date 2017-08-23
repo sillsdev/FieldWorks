@@ -2,9 +2,9 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using SIL.LCModel;
-using SIL.FieldWorks.FdoUi;
 using LanguageExplorer.Controls.DetailControls;
+using LanguageExplorer.LcmUi;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.FwUtils;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.Edit

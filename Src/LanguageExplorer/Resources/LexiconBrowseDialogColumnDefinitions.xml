@@ -16,14 +16,14 @@
 			transduce="LexSense.Gloss" cansortbylength="true" visibility="always"/>
 	<column layout="DefinitionsForSense" label="Definition" multipara="true" ws="$ws=analysis" transduce="LexSense.Definition" cansortbylength="true" visibility="always" width="96000"/>
 	<column layout="GrammaticalInfoFullForSense" headerlabel="Grammatical Info." chooserFilter="external" label="Grammatical Info. (Full)" multipara="true" width="72000" visibility="always">
-		<dynamicloaderinfo assemblyPath="FdoUi.dll" class="SIL.FieldWorks.FdoUi.PosFilter"/>
+		<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.LcmUi.PosFilter"/>
 	</column>
 	<column layout="GrammaticalInfoAbbrForSense" headerlabel="Grammatical Info." chooserFilter="external" label="Grammatical Info. (Abbr.)" multipara="true"  width="72000" visibility="dialog">
-		<dynamicloaderinfo assemblyPath="FdoUi.dll" class="SIL.FieldWorks.FdoUi.PosFilter"/>
+		<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.LcmUi.PosFilter"/>
 	</column>
 	<column layout="GrammaticalCategoryForSense" label="Grammatical Category" multipara="true" visibility="dialog" width="72000"
 		bulkEdit="external">
-		<dynamicloaderinfo assemblyPath="FdoUi.dll" class="SIL.FieldWorks.FdoUi.BulkPosEditor"/>
+		<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.LcmUi.BulkPosEditor"/>
 	</column>
 	<column layout="OutlineForSense" label="Sense Number" multipara="true" ws="$ws=analysis" field="LexEntry.Senses" visibility="dialog" />
 	<column layout="ReversalEntriesForSense" editLayout ="ReversalEntriesForSenseEdit" label="Reversals" multipara="true" transduce="LexSense.ReversalEntriesBulkText"
@@ -32,7 +32,7 @@
 			bulkEdit="booleanOnSubfield" bulkDelete="false" field="LexEntry.LexemeForm" subfield="MoForm.IsAbstract" items="0:no;1:yes" blankPossible="false" sortType="YesNo"/>
 	<column layout="InflectionClassForStem" label="Inflection Classes (Stem)" multipara="true" editable="false"
 		bulkEdit="external" field="LexEntry.Senses" subfield="LexSense.MorphoSyntaxAnalysis" visibility="dialog" displayWs="best analysis">
-		<dynamicloaderinfo assemblyPath="FdoUi.dll" class="SIL.FieldWorks.FdoUi.InflectionClassEditor">
+		<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.LcmUi.InflectionClassEditor">
 		  <args>
 			<arg name="xpathToConfigurationNode" value="ancestor::column"/>
 		  </args>
@@ -40,7 +40,7 @@
 	</column>
 	<column layout="InflectionFeaturesForSense" label="Inflection Features" multipara="true" width="25%"
 		bulkEdit="external" editable="false" visibility="dialog" displayWs="best analysis">
-	<dynamicloaderinfo assemblyPath="FdoUi.dll" class="SIL.FieldWorks.FdoUi.InflectionFeatureEditor">
+	<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.LcmUi.InflectionFeatureEditor">
 	  <args>
 		<arg name="xpathToConfigurationNode" value="ancestor::column"/>
 	  </args>
@@ -140,7 +140,7 @@
 			width="72000" bulkEdit="complexListMultiple" field="CmPicture.PublishIn" list="LexDb.PublicationTypes" ghostListField="LexDb.AllPossiblePictures" displayNameProperty="ShortNameTSS" displayWs="best analysis" visibility="dialog"/>
 	<column layout="InflectionClassForAffix" label="Inflection Classes (Affix)" multipara="true" editable="false"
 			chooserFilter="external" visibility="dialog" displayWs="best analysis">
-		<dynamicloaderinfo assemblyPath="FdoUi.dll" class="SIL.FieldWorks.FdoUi.InflectionClassEditor">
+		<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.LcmUi.InflectionClassEditor">
 			<args>
 				<arg name="xpathToConfigurationNode" value="ancestor::column"/>
 			</args>

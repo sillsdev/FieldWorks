@@ -6,13 +6,13 @@ using System;
 using System.Diagnostics;
 using System.Windows.Forms;
 using System.Xml.Linq;
+using LanguageExplorer.Controls.DetailControls;
+using LanguageExplorer.LcmUi;
 using SIL.LCModel.Core.Phonology;
 using SIL.FieldWorks.Common.ViewsInterfaces;
-using LanguageExplorer.Controls.DetailControls;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FdoUi;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 

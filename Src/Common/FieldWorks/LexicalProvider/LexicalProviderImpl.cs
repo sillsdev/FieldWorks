@@ -70,9 +70,7 @@ namespace SIL.FieldWorks.LexicalProvider
 					var flexApp = FieldWorks.GetOrCreateFlexApp();
 					propertyTable.SetProperty("App", flexApp, true, true);
 
-					var fdoUiAssembly = Assembly.LoadFrom("FdoUi.dll");
-					var lexEntryUiType = fdoUiAssembly.GetType("SIL.FieldWorks.FdoUi.LexEntryUi");
-					var methodInfo = lexEntryUiType.GetMethod("DisplayEntry", BindingFlags.Static | BindingFlags.Public);
+					var methodInfo = GetLexEntryUiType.GetMethod("DisplayEntry", BindingFlags.Static | BindingFlags.Public);
 					methodInfo.Invoke(null, new object[]{ FieldWorks.Cache, propertyTable, publisher, propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), "UserHelpFile", tss, null });
 				}
 			});
@@ -106,13 +104,13 @@ namespace SIL.FieldWorks.LexicalProvider
 					var flexApp = FieldWorks.GetOrCreateFlexApp();
 					propertyTable.SetProperty("App", flexApp, true, true);
 
-					var fdoUiAssembly = Assembly.LoadFrom("FdoUi.dll");
-					var lexEntryUiType = fdoUiAssembly.GetType("SIL.FieldWorks.FdoUi.LexEntryUi");
-					var methodInfo = lexEntryUiType.GetMethod("DisplayRelatedEntries", new[] { typeof(LcmCache), typeof(IPropertyTable), typeof(IHelpTopicProvider), typeof(string), typeof(ITsString) });
+					var methodInfo = GetLexEntryUiType.GetMethod("DisplayRelatedEntries", new[] { typeof(LcmCache), typeof(IPropertyTable), typeof(IHelpTopicProvider), typeof(string), typeof(ITsString) });
 					methodInfo.Invoke(null, new object[]{ FieldWorks.Cache, propertyTable, propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), "UserHelpFile", tss });
 				}
 			});
 		}
+
+		private static Type GetLexEntryUiType => Assembly.LoadFrom("LanguageExplorer.dll").GetType("LanguageExplorer.LcmUi.LexEntryUi");
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

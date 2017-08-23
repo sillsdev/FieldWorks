@@ -233,6 +233,7 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Interlinear\WordBreakGuesserTests.cs" />
+    <Compile Include="LcmUi\LcmUiTests.cs" />
     <Compile Include="Lexicon\LexEntryChangeHandlerTests.cs" />
     <Compile Include="Lexicon\LexReferenceTreeRootLauncherTests.cs" />
     <Compile Include="Lexicon\CircularRefBreakerTests.cs" />
@@ -289,6 +290,7 @@
     <Compile Include="Works\XWorksAppTestBase.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="App.config" />
     <None Include="BuildInclude.targets" />
     <None Include="DetailControls\Test.fwlayout" />
     <None Include="Interlinear\FlexTextImport\FlexTextExportOutput.flextext" />

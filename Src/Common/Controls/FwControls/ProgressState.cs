@@ -402,6 +402,11 @@ namespace SIL.FieldWorks.Common.Controls
 		void ClearStateProvider();
 	}
 
+#if RANDYTODO
+	// TODO: Why are there two ProgressBarWrapper classes in the Flex repo?
+	// TODO: SIL.FieldWorks.Common.Controls.ProgressBarWrapper : IProgressDisplayer
+	// TODO: LanguageExplorer.LcmUi.ProgressBarWrapper : IProgress
+#endif
 	/// <summary>
 	/// Wrapper class to allow a ProgressBar to function as the progress displayer of a ProgressState.
 	/// The progress Bar's minimum and maximum will be set (to 0 and 100)

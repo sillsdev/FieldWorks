@@ -6,10 +6,10 @@
 using System.Drawing;
 using System.Diagnostics;
 using System.Windows.Forms;
+using LanguageExplorer.LcmUi;
 using SIL.LCModel;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.FieldWorks.FdoUi;
 
 namespace LanguageExplorer.Controls.DetailControls
 {

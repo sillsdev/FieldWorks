@@ -160,7 +160,7 @@
 								<!-- Phonological Feature Defns (generated)-->
 								<generate class="FsFeatureSystem" fieldType="vector" restrictions="featureDefns" objectPath="PhFeatureSystem.Features">
 									<column layout="CustomMultiStringForFeatureDefn_$fieldName" label="$label" bulkEdit="external" common="true" ws="$ws=best analysis" cansortbylength="true" visibility="always" width="4%">
-										<dynamicloaderinfo assemblyPath="FdoUi.dll" class="SIL.FieldWorks.FdoUi.PhonologicalFeatureEditor">
+										<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.LcmUi.PhonologicalFeatureEditor">
 											<args>
 												<arg name="xpathToConfigurationNode" value="ancestor::column"/>
 											</args>
@@ -168,7 +168,7 @@
 									</column>
 								</generate>
 <!--								<column label="Phonological Features" multipara="true" width="67%" bulkEdit="external" editable="false" visibility="dialog" displayWs="best analysis" layout="PhonologicalFeaturesForPhonemes">
-									<dynamicloaderinfo assemblyPath="FdoUi.dll" class="SIL.FieldWorks.FdoUi.PhonologicalFeatureEditor">
+									<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.LcmUi.PhonologicalFeatureEditor">
 										<args>
 											<arg name="xpathToConfigurationNode" value="ancestor::column"/>
 										</args>

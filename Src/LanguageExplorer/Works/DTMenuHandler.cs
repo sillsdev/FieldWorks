@@ -12,13 +12,13 @@ using SIL.LCModel.Core.Cellar;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.Framework;
 using LanguageExplorer.Controls.DetailControls;
+using LanguageExplorer.LcmUi;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
-using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.Resources;
 using SIL.Xml;
@@ -909,11 +909,11 @@ namespace LanguageExplorer.Works
 		public virtual bool OnLaunchGuiControl(object commandObject)
 		{
 			Command command = (Command)commandObject;
-			using (CmObjectUi fdoUi = CmObjectUi.MakeUi(m_dataEntryForm.CurrentSlice.Object))
+			using (CmObjectUi lcmUi = CmObjectUi.MakeUi(m_dataEntryForm.CurrentSlice.Object))
 			{
-				fdoUi.Mediator = m_mediator;
-				fdoUi.PropTable = m_propertyTable;
-				fdoUi.LaunchGuiControl(command);
+				lcmUi.Mediator = m_mediator;
+				lcmUi.PropTable = m_propertyTable;
+				lcmUi.LaunchGuiControl(command);
 			}
 			return true;
 		}

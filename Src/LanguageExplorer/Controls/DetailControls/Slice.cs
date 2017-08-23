@@ -14,12 +14,12 @@ using System.Xml.Linq;
 using SIL.LCModel.Core.Cellar;
 using SIL.FieldWorks.Common.Controls;
 using LanguageExplorer.Controls.DetailControls.Resources;
+using LanguageExplorer.LcmUi;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
-using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.LCModel.Utils;
 using SIL.Xml;
@@ -2076,6 +2076,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				}
 				using (CmObjectUi uiObj = CmObjectUi.CreateNewUiObject(PropertyTable, Publisher, newObjectClassId, hvoOwner, flid, insertionPosition))
 				{
+					uiObj.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 					// If uiObj is null, typically CreateNewUiObject displayed a dialog and the user cancelled.
 					// We return -1 to make the caller give up trying to insert, so we don't get another dialog if
 					// there is another slice that could insert this kind of object.

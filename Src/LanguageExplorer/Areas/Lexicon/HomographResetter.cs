@@ -3,12 +3,12 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Windows.Forms;
 using System.Linq;
+using LanguageExplorer.LcmUi;
+using LanguageExplorer.UtilityTools;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
-using SIL.FieldWorks.FdoUi;
-using System.Windows.Forms;
-using LanguageExplorer.UtilityTools;
 
 namespace LanguageExplorer.Areas.Lexicon
 {

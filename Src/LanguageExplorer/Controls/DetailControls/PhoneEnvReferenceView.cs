@@ -14,6 +14,7 @@ using SIL.LCModel.Core.Phonology;
 using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using LanguageExplorer.Controls.DetailControls.Resources;
+using LanguageExplorer.LcmUi;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
@@ -21,7 +22,6 @@ using SIL.LCModel;
 using SIL.LCModel.Application;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
-using SIL.FieldWorks.FdoUi;
 using SIL.LCModel.Utils;
 
 namespace LanguageExplorer.Controls.DetailControls

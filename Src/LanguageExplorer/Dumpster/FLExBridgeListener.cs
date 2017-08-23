@@ -220,9 +220,9 @@ namespace LanguageExplorer.Dumpster
 			PropertyTable.SetProperty("LastBridgeUsed", obtainedProjectType == ObtainedProjectType.Lift ? "LiftBridge" : "FLExBridge",
 				SettingsGroup.LocalSettings, true, true);
 
-			var fdoUiAssembly = Assembly.Load("FieldWorks.exe");
-			var lexEntryUiType = fdoUiAssembly.GetType("SIL.FieldWorks.FieldWorks");
-			var methodInfo = lexEntryUiType.GetMethod("OpenNewProject", BindingFlags.Static | BindingFlags.Public);
+			var fieldWorksAssembly = Assembly.Load("FieldWorks.exe");
+			var fieldWorksType = fieldWorksAssembly.GetType("SIL.FieldWorks.FieldWorks");
+			var methodInfo = fieldWorksType.GetMethod("OpenNewProject", BindingFlags.Static | BindingFlags.Public);
 			methodInfo.Invoke(null, new object[] { new ProjectId(newprojectPathname) });
 
 			return true;

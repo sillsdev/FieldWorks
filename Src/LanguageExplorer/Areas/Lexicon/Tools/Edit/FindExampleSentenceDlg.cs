@@ -8,13 +8,13 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
 using LanguageExplorer.Controls.PaneBar;
+using LanguageExplorer.LcmUi;
 using LanguageExplorer.Works;
-using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.Controls;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Infrastructure;
-using SIL.FieldWorks.FdoUi;
 using SIL.LCModel;
 using SIL.FieldWorks.Common.Widgets;
 

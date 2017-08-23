@@ -8,11 +8,11 @@
 // </remarks>
 
 using System;
-using SIL.FieldWorks.FdoUi;
 using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+using LanguageExplorer.LcmUi;
 using SIL.LCModel;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Filters;

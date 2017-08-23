@@ -5,8 +5,8 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
+using LanguageExplorer.LcmUi;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FdoUi;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Utils;

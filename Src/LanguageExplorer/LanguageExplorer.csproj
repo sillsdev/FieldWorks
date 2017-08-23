@@ -82,10 +82,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Release\Chorus.exe</HintPath>
     </Reference>
-    <Reference Include="FdoUi">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Release\FdoUi.dll</HintPath>
-    </Reference>
     <Reference Include="Filters">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Release\Filters.dll</HintPath>
@@ -431,6 +427,68 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="LanguageExplorerConstants.cs" />
+    <Compile Include="LcmUi\BulkPosEditor.cs" />
+    <Compile Include="LcmUi\Dialogs\CantRestoreLinkedFilesToOriginalLocation.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="LcmUi\Dialogs\CantRestoreLinkedFilesToOriginalLocation.Designer.cs">
+      <DependentUpon>CantRestoreLinkedFilesToOriginalLocation.cs</DependentUpon>
+    </Compile>
+    <Compile Include="LcmUi\Dialogs\ConfirmDeleteObjectDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="LcmUi\Dialogs\ConflictingSaveDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="LcmUi\Dialogs\ConflictingSaveDlg.Designer.cs">
+      <DependentUpon>ConflictingSaveDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="LcmUi\Dialogs\FilesToRestoreAreOlder.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="LcmUi\Dialogs\FilesToRestoreAreOlder.Designer.cs">
+      <DependentUpon>FilesToRestoreAreOlder.cs</DependentUpon>
+    </Compile>
+    <Compile Include="LcmUi\Dialogs\MergeObjectDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="LcmUi\Dialogs\RelatedWords.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="LcmUi\Dialogs\RestoreLinkedFilesToProjectsFolder.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="LcmUi\Dialogs\RestoreLinkedFilesToProjectsFolder.Designer.cs">
+      <DependentUpon>RestoreLinkedFilesToProjectsFolder.cs</DependentUpon>
+    </Compile>
+    <Compile Include="LcmUi\Dialogs\SummaryDialogForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="LcmUi\DummyCmObject.cs" />
+    <Compile Include="LcmUi\LcmUiCore.cs" />
+    <Compile Include="LcmUi\LcmUiStrings.Designer.cs">
+      <DependentUpon>LcmUiStrings.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="LcmUi\FsFeatDefnUi.cs" />
+    <Compile Include="LcmUi\FwLcmUI.cs" />
+    <Compile Include="LcmUi\InflectionClassEditor.cs" />
+    <Compile Include="LcmUi\InflectionFeatureEditor.cs" />
+    <Compile Include="LcmUi\LcmExtensions.cs" />
+    <Compile Include="LcmUi\LexEntryUi.cs" />
+    <Compile Include="LcmUi\LexPronunciationUi.cs" />
+    <Compile Include="LcmUi\PartOfSpeechUi.cs" />
+    <Compile Include="LcmUi\PhonologicalFeatureEditor.cs" />
+    <Compile Include="LcmUi\ProgressBarWrapper.cs" />
+    <Compile Include="LcmUi\Resources.Designer.cs">
+      <DependentUpon>Resources.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="LcmUi\ReversalIndexEntryUi.cs" />
+    <Compile Include="LcmUi\TypeAheadSupportVc.cs" />
+    <Compile Include="LcmUi\WfiWordformUi.cs" />
     <Compile Include="RecordClerkServices.cs" />
     <Compile Include="StatusBarPanelServices.cs" />
     <Compile Include="UtilityTools\ErrorFixer.cs" />
@@ -685,6 +743,8 @@
     <None Include="Controls\DetailControls\Resources\gotoLinkPic.png" />
     <None Include="Controls\DetailControls\PartGenerator\LayoutGenerate.xslt" />
     <None Include="Controls\DetailControls\PartGenerator\PartGenerate.xslt" />
+    <Content Include="LcmUi\Resources\EXCLEM.ICO" />
+    <Content Include="LcmUi\Resources\question.ico" />
     <Content Include="Works\Resources\ArrowDown.png" />
     <Content Include="Works\Resources\ArrowUp.png" />
     <EmbeddedResource Include="Controls\DetailControls\AtomicReferenceLauncher.resx">
@@ -766,6 +826,48 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\DetailControls\VectorReferenceView.resx">
       <DependentUpon>VectorReferenceView.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LcmUi\Dialogs\CantRestoreLinkedFilesToOriginalLocation.resx">
+      <DependentUpon>CantRestoreLinkedFilesToOriginalLocation.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LcmUi\Dialogs\ConfirmDeleteObjectDlg.resx">
+      <DependentUpon>ConfirmDeleteObjectDlg.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LcmUi\Dialogs\ConflictingSaveDlg.resx">
+      <DependentUpon>ConflictingSaveDlg.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LcmUi\Dialogs\FilesToRestoreAreOlder.resx">
+      <DependentUpon>FilesToRestoreAreOlder.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LcmUi\Dialogs\MergeObjectDlg.resx">
+      <DependentUpon>MergeObjectDlg.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LcmUi\Dialogs\RelatedWords.resx">
+      <DependentUpon>RelatedWords.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LcmUi\Dialogs\RestoreLinkedFilesToProjectsFolder.resx">
+      <DependentUpon>RestoreLinkedFilesToProjectsFolder.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LcmUi\Dialogs\SummaryDialogForm.resx">
+      <DependentUpon>SummaryDialogForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LcmUi\LcmUiStrings.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>LcmUiStrings.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LcmUi\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Works\AddCustomFieldDlg.resx">

@@ -242,7 +242,7 @@ namespace SIL.FieldWorks
 				s_noUserInterface = appArgs.NoUserInterface;
 				s_appServerMode = appArgs.AppServerMode;
 
-				s_ui = (ILcmUI)DynamicLoader.CreateObject("FdoUi.dll", "SIL.FieldWorks.FdoUi.FwLcmUI", GetHelpTopicProvider(), s_threadHelper);
+				s_ui = (ILcmUI)DynamicLoader.CreateObject("LanguageExplorer.dll", "LanguageExplorer.LcmUi.FwLcmUI", GetHelpTopicProvider(), s_threadHelper);
 
 				s_appSettings = new FwApplicationSettings();
 				s_appSettings.UpgradeIfNecessary();

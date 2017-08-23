@@ -4,8 +4,8 @@
 
 using System;
 using System.Windows.Forms;
+using LanguageExplorer.LcmUi;
 using LanguageExplorer.UtilityTools;
-using SIL.FieldWorks.FdoUi;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;

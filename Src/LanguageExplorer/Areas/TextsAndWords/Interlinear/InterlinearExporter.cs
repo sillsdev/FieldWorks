@@ -330,7 +330,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		public override void AddObj(int hvoItem, IVwViewConstructor vc, int frag)
 		{
-			if (frag == (int)SIL.FieldWorks.FdoUi.VcFrags.kfragHeadWord)
+			if (frag == (int)LcmUi.VcFrags.kfragHeadWord)
 			{
 				// In the course of this AddObj, typically we get AddString calls for
 				// morpheme separators, AddObjProp for kflidLexemeForm,
@@ -342,7 +342,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				m_fAwaitingHeadwordForm = true;
 			}
 			// (LT-9374) Export Variant Type information for variants
-			if (frag == (int)SIL.FieldWorks.FdoUi.LexEntryVc.kfragVariantTypes)
+			if (frag == LcmUi.LexEntryVc.kfragVariantTypes)
 			{
 				m_fDoingVariantTypes = true;
 				OpenItem("variantTypes");
@@ -358,14 +358,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				}
 			}
 			base.AddObj (hvoItem, vc, frag);
-			if (frag == (int)SIL.FieldWorks.FdoUi.VcFrags.kfragHeadWord)
+			if (frag == (int)LcmUi.VcFrags.kfragHeadWord)
 			{
 				CloseItem();
 				m_fDoingHeadword = false;
 				m_fDoingHomographNumber = false;
 				WritePendingItem("hn", ref m_tssPendingHomographNumber);
 			}
-			if (frag == (int)SIL.FieldWorks.FdoUi.LexEntryVc.kfragVariantTypes)
+			if (frag == LcmUi.LexEntryVc.kfragVariantTypes)
 			{
 				CloseItem();
 				m_fDoingVariantTypes = false;

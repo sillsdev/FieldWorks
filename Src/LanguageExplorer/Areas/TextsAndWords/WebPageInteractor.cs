@@ -6,9 +6,9 @@ using System;
 using System.Collections.Generic;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FdoUi;
 using SIL.LCModel;
 using Gecko;
+using LanguageExplorer.LcmUi;
 
 namespace LanguageExplorer.Areas.TextsAndWords
 {

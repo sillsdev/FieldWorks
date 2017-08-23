@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;
 using System.Xml.Linq;
+using LanguageExplorer.LcmUi;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
@@ -15,7 +16,6 @@ using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 using SIL.LCModel.Infrastructure;
-using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.Filters;
 using SIL.Xml;
 using WaitCursor = SIL.FieldWorks.Common.FwUtils.WaitCursor;
@@ -322,9 +322,9 @@ namespace LanguageExplorer.Works
 					{
 						ui.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 						e.EventHandled = ui.HandleRightClick(sender, true, "mnuBrowseView");
+					}
 				}
 			}
-		}
 		}
 
 		#endregion // Message Handlers

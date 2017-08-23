@@ -99,10 +99,10 @@ EXTENSIONS NOT SUPPORTED Lexicon Area -->
 						<column label="Reversals" visibility="menu" width="68000" editable="false" ws="$ws=best analorvern" layout="ReversalsForFindEntry"/>
 						<column label="Definitions" visibility="menu" editable="false" width="68000" ws="$ws=best analorvern" layout="DefinitionsForFindEntry"/>
 						<column headerlabel="Grammatical Info." label="Grammatical Info. (Full)" visibility="menu" multipara="true" layout="MsasOfSenses" chooserFilter="external" editable="false">
-							<dynamicloaderinfo assemblyPath="FdoUi.dll" class="SIL.FieldWorks.FdoUi.EntryPosFilter"/>
+							<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.LcmUi.EntryPosFilter"/>
 						</column>
 						<column headerlabel="Grammatical Info." label="Grammatical Info. (Abbr.)" visibility="menu" multipara="true" layout="MsasOfSensesAbbr" chooserFilter="external" editable="false">
-							<dynamicloaderinfo assemblyPath="FdoUi.dll" class="SIL.FieldWorks.FdoUi.EntryPosFilter"/>
+							<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.LcmUi.EntryPosFilter"/>
 						</column>
 					</columns>
 				</parameters>
