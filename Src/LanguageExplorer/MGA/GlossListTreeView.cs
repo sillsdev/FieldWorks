@@ -13,7 +13,7 @@ using SIL.LCModel.DomainServices;
 using SIL.LCModel.Core.Text;
 using SIL.Xml;
 
-namespace SIL.FieldWorks.LexText.Controls.MGA
+namespace LanguageExplorer.MGA
 {
 	/// <summary>
 	/// Summary description for GlossListTreeView.

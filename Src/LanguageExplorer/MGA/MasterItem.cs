@@ -10,7 +10,7 @@ using System.Xml;
 using SIL.LCModel;
 using SIL.Xml;
 
-namespace SIL.FieldWorks.LexText.Controls.MGA
+namespace LanguageExplorer.MGA
 {
 	public class MasterItem
 	{

@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace SIL.FieldWorks.LexText.Controls.MGA {
+namespace LanguageExplorer.MGA {
 	using System;
 
 
@@ -39,7 +39,7 @@ namespace SIL.FieldWorks.LexText.Controls.MGA {
 		internal static global::System.Resources.ResourceManager ResourceManager {
 			get {
 				if (object.ReferenceEquals(resourceMan, null)) {
-					global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("SIL.FieldWorks.LexText.Controls.MGA.MGAStrings", typeof(MGAStrings).Assembly);
+					global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("LanguageExplorer.MGA.MGAStrings", typeof(MGAStrings).Assembly);
 					resourceMan = temp;
 				}
 				return resourceMan;

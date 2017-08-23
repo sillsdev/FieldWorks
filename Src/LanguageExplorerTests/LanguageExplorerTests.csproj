@@ -247,6 +247,7 @@
     <Compile Include="LexTextControls\MasterCategoryTests.cs" />
     <Compile Include="LexTextControls\MsaInflectionFeatureListDlgTests.cs" />
     <Compile Include="LexTextControls\WordsSfmImportTests.cs" />
+    <Compile Include="MGA\MGATests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SilSidePaneTests\ItemTests.cs" />
     <Compile Include="SilSidePaneTests\NavPaneOptionsDlgTests.cs" />

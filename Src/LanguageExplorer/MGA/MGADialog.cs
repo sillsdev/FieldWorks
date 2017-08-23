@@ -13,7 +13,7 @@ using SIL.LCModel;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Controls;
 
-namespace  SIL.FieldWorks.LexText.Controls.MGA
+namespace LanguageExplorer.MGA
 {
 	/// <summary>
 	/// Base class for MGAHtmlHelpDialog. Can be used standalone to show dialog without html help.
@@ -399,8 +399,8 @@ namespace  SIL.FieldWorks.LexText.Controls.MGA
 			this.labelAllomorph = new System.Windows.Forms.Label();
 			this.textBoxResult = new System.Windows.Forms.TextBox();
 			this.splitContainerHorizontal = new System.Windows.Forms.SplitContainer();
-			this.treeViewGlossListItem = new SIL.FieldWorks.LexText.Controls.MGA.GlossListTreeView();
-			this.glossListBoxGloss = new SIL.FieldWorks.LexText.Controls.MGA.GlossListBox();
+			this.treeViewGlossListItem = new LanguageExplorer.MGA.GlossListTreeView();
+			this.glossListBoxGloss = new LanguageExplorer.MGA.GlossListBox();
 			panelGlossComponents = new System.Windows.Forms.TableLayoutPanel();
 			tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
 			panel1 = new System.Windows.Forms.Panel();

@@ -7,7 +7,7 @@ using System.Xml;
 using System.Windows.Forms;
 using SIL.LCModel.Core.Text;
 
-namespace SIL.FieldWorks.LexText.Controls.MGA
+namespace LanguageExplorer.MGA
 {
 	/// <summary>
 	/// Summary description for PhonologicalFeaturesTreeView.

@@ -8,7 +8,7 @@ using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
 using SIL.Xml;
 
-namespace SIL.FieldWorks.LexText.Controls.MGA
+namespace LanguageExplorer.MGA
 {
 	public class MasterInflectionFeature : MasterItem
 	{

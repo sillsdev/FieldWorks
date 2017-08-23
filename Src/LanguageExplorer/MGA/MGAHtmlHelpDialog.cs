@@ -12,7 +12,7 @@ using Gecko;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 
-namespace SIL.FieldWorks.LexText.Controls.MGA
+namespace LanguageExplorer.MGA
 {
 	public class MGAHtmlHelpDialog : MGADialog
 	{

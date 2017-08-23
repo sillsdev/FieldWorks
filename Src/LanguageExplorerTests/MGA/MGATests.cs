@@ -9,12 +9,13 @@
 using System;
 using System.IO;
 using System.Xml;
+using LanguageExplorer.MGA;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.Xml;
 
-namespace SIL.FieldWorks.LexText.Controls.MGA
+namespace LanguageExplorerTests.MGA
 {
 	/// <summary>
 	/// Test sets for the GlossListBox class.

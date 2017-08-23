@@ -11,6 +11,7 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using System.Xml.XPath;
+using LanguageExplorer.MGA;
 using Microsoft.Win32;
 using SIL.Collections;
 using SIL.LCModel.Core.Text;
@@ -23,7 +24,6 @@ using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
-using SIL.FieldWorks.LexText.Controls.MGA;
 using SIL.FieldWorks.Resources;
 using SIL.Windows.Forms;
 

@@ -292,7 +292,7 @@
 	<value>treeViewGlossListItem</value>
   </data>
   <data name="&gt;&gt;treeViewGlossListItem.Type" xml:space="preserve">
-	<value>SIL.FieldWorks.LexText.Controls.MGA.GlossListTreeView, MGA, Version=7.0.6.16065, Culture=neutral, PublicKeyToken=null</value>
+	<value>LanguageExplorer.MGA.GlossListTreeView, LanguageExplorer, Version=7.0.6.16065, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;treeViewGlossListItem.Parent" xml:space="preserve">
 	<value>tableLayoutPanel1</value>
@@ -547,7 +547,7 @@
 	<value>glossListBoxGloss</value>
   </data>
   <data name="&gt;&gt;glossListBoxGloss.Type" xml:space="preserve">
-	<value>SIL.FieldWorks.LexText.Controls.MGA.GlossListBox, MGA, Version=7.0.6.16065, Culture=neutral, PublicKeyToken=null</value>
+	<value>LanguageExplorer.MGA.GlossListBox, LanguageExplorer, Version=7.0.6.16065, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;glossListBoxGloss.Parent" xml:space="preserve">
 	<value>tableLayoutPanelSelectedGloss</value>

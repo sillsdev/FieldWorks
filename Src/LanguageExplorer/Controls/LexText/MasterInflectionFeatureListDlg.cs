@@ -10,9 +10,9 @@
 
 using System;
 using System.Windows.Forms;
+using LanguageExplorer.MGA;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
-using SIL.FieldWorks.LexText.Controls.MGA;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.Core.KernelInterfaces;

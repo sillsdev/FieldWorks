@@ -12,7 +12,7 @@ using System;
 using System.Windows.Forms;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
-using SIL.FieldWorks.LexText.Controls.MGA;
+using LanguageExplorer.MGA;
 
 namespace LanguageExplorer.Controls.LexText
 {

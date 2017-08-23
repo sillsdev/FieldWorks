@@ -5,7 +5,7 @@
 using System;
 using System.Windows.Forms;
 
-namespace SIL.FieldWorks.LexText.Controls.MGA
+namespace LanguageExplorer.MGA
 {
 	/// <summary>
 	/// Summary description for GlossListBox.

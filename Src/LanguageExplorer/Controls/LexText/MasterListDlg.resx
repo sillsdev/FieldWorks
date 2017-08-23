@@ -193,7 +193,7 @@
 	<value>m_tvMasterList</value>
   </data>
   <data name="&gt;&gt;m_tvMasterList.Type" xml:space="preserve">
-	<value>SIL.FieldWorks.LexText.Controls.MGA.PhonologicalFeaturesTreeView, MGA, Version=5.5.0.26328, Culture=neutral, PublicKeyToken=null</value>
+	<value>LanguageExplorer.MGA.PhonologicalFeaturesTreeView, LanguageExplorer, Version=5.5.0.26328, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;m_tvMasterList.Parent" xml:space="preserve">
 	<value>$this</value>

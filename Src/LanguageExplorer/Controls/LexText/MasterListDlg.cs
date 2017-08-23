@@ -6,9 +6,9 @@ using System;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
+using LanguageExplorer.MGA;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
-using SIL.FieldWorks.LexText.Controls.MGA;
 using SIL.Windows.Forms;
 
 namespace LanguageExplorer.Controls.LexText
@@ -265,7 +265,7 @@ namespace LanguageExplorer.Controls.LexText
 			this.label1 = new System.Windows.Forms.Label();
 			this.label2 = new System.Windows.Forms.Label();
 			// seems to be crucial that the following is commented off
-			//this.m_tvMasterList = new SIL.FieldWorks.LexText.Controls.MGA.GlossListTreeView();
+			//this.m_tvMasterList = new LanguageExplorer.MGA.GlossListTreeView();
 			this.m_imageList = new System.Windows.Forms.ImageList(this.components);
 			this.m_rtbDescription = new System.Windows.Forms.RichTextBox();
 			this.label3 = new System.Windows.Forms.Label();

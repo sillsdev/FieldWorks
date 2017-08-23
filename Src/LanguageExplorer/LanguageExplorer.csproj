@@ -49,10 +49,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\FxtDll.dll</HintPath>
     </Reference>
-    <Reference Include="MGA, Version=10.0.0.18661, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\MGA.dll</HintPath>
-    </Reference>
     <Reference Include="NAudio, Version=1.7.3.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\NAudio.1.7.3\lib\net35\NAudio.dll</HintPath>
       <Private>True</Private>
@@ -714,6 +710,31 @@
     <Compile Include="LcmUi\ReversalIndexEntryUi.cs" />
     <Compile Include="LcmUi\TypeAheadSupportVc.cs" />
     <Compile Include="LcmUi\WfiWordformUi.cs" />
+    <Compile Include="MGA\GlossListBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="MGA\GlossListBoxItem.cs" />
+    <Compile Include="MGA\GlossListEventArgs.cs" />
+    <Compile Include="MGA\GlossListTreeView.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="MGA\MasterInflectionFeature.cs" />
+    <Compile Include="MGA\MasterItem.cs" />
+    <Compile Include="MGA\MasterPhonologicalFeature.cs" />
+    <Compile Include="MGA\MGADialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MGA\MGAHtmlHelpDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MGA\MGAStrings.Designer.cs">
+      <DependentUpon>MGAStrings.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="MGA\PhonologicalFeaturesTreeView.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="RecordClerkServices.cs" />
     <Compile Include="StatusBarPanelServices.cs" />
     <Compile Include="UtilityTools\ErrorFixer.cs" />
@@ -975,6 +996,15 @@
     <Content Include="Controls\LexText\Resources\Find Lexical Entry.ico" />
     <Content Include="LcmUi\Resources\EXCLEM.ICO" />
     <Content Include="LcmUi\Resources\question.ico" />
+    <EmbeddedResource Include="MGA\CheckBox.bmp" />
+    <EmbeddedResource Include="MGA\CheckedBox.bmp" />
+    <EmbeddedResource Include="MGA\CLSDFOLD.BMP" />
+    <EmbeddedResource Include="MGA\Complex.bmp" />
+    <EmbeddedResource Include="MGA\FSType.bmp" />
+    <EmbeddedResource Include="MGA\OPENFOLD.BMP" />
+    <EmbeddedResource Include="MGA\Radio.bmp" />
+    <EmbeddedResource Include="MGA\RadioSelected.bmp" />
+    <EmbeddedResource Include="MGA\UserChoice.bmp" />
     <Content Include="Works\Resources\ArrowDown.png" />
     <Content Include="Works\Resources\ArrowUp.png" />
     <EmbeddedResource Include="Controls\DetailControls\AtomicReferenceLauncher.resx">
@@ -1271,6 +1301,19 @@
     <EmbeddedResource Include="LcmUi\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MGA\GlossListBox.resx">
+      <DependentUpon>GlossListBox.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MGA\MGADialog.resx">
+      <DependentUpon>MGADialog.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MGA\MGAStrings.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>MGAStrings.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Works\AddCustomFieldDlg.resx">

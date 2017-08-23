@@ -13,7 +13,7 @@ using System;
 using System.Xml;
 using SIL.LCModel;
 
-namespace SIL.FieldWorks.LexText.Controls.MGA
+namespace LanguageExplorer.MGA
 {
 	public delegate void GlossListEventHandler(object sender, GlossListEventArgs e);
 
