@@ -8,6 +8,8 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
+using LanguageExplorer.Controls.LexText;
+using LanguageExplorer.Works;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
@@ -15,9 +17,7 @@ using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel;
-using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.Resources;
-using LanguageExplorer.Works;
 using SIL.LCModel.Utils;
 using WaitCursor = SIL.FieldWorks.Common.FwUtils.WaitCursor;
 

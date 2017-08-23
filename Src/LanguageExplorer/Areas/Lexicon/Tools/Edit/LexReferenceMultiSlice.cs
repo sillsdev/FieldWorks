@@ -16,12 +16,12 @@ using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.Common.Controls;
 using SIL.LCModel.Utils;
 using LanguageExplorer.Controls.DetailControls;
+using LanguageExplorer.Controls.LexText;
 using LanguageExplorer.LcmUi;
 using LanguageExplorer.LcmUi.Dialogs;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.FwUtils.MessageBoxEx;
-using SIL.FieldWorks.LexText.Controls;
 using SIL.Xml;
 using WaitCursor = SIL.FieldWorks.Common.FwUtils.WaitCursor;
 

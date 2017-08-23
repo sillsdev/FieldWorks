@@ -69,7 +69,7 @@
 		<command id="CmdImportSFMLexicon" label="_Standard Format Lexicon..." message="SFMImport" a10status="LEXICONAREAONLY" />
 		<command id="CmdImportSFMNotebook" label="Standard Format _Notebook data..." message="LaunchConnectedDialog">
 			<parameters>
-				<dynamicloaderinfo assemblyPath="LexTextControls.dll" class="SIL.FieldWorks.LexText.Controls.DataNotebook.NotebookImportWiz"/>
+				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.LexText.DataNotebook.NotebookImportWiz"/>
 			</parameters>
 		</command>
 		<command id="CmdImportLinguaLinksData" label="_LinguaLinks Data..." message="LaunchConnectedDialog">
@@ -94,7 +94,7 @@
 		</command>
 		<command id="CmdImportLiftData" label="L_IFT Lexicon..." message="LaunchConnectedDialog" a10status="LEXICONAREAONLY" >
 			<parameters>
-				<dynamicloaderinfo assemblyPath="LexTextControls.dll" class="SIL.FieldWorks.LexText.Controls.LiftImportDlg"/>
+				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.LexText.LiftImportDlg"/>
 			</parameters>
 		</command>
 		<command id="CmdImportTranslatedLists" label="_Translated List Content" message="ImportTranslatedLists"/>
@@ -110,7 +110,7 @@
 		<command id="CmdRestoreDefaults" label="Restore Defaults..." message="RestoreDefaultLayouts"/>
 		<command id="CmdToolsOptions" label="_Options..." message="LaunchConnectedDialog">
 			<parameters>
-				<dynamicloaderinfo assemblyPath="LexTextControls.dll" class="SIL.FieldWorks.LexText.Controls.LexOptionsDlg"/>
+				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.LexText.LexOptionsDlg"/>
 			</parameters>
 		</command>
 		<command id="CmdShowCharMap" label="Special _character..." message="ShowCharMap" icon="SpecialCharacter"/>

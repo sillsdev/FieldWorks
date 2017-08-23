@@ -323,9 +323,9 @@ EXTENSIONS NOT SUPPORTED Lexicon Area -->
 <!-- EXTENSIONS NOT SUPPORTED Lexicon Area
 		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/listeners/*"/>
 EXTENSIONS NOT SUPPORTED Lexicon Area -->
-		<listener assemblyPath="LexTextControls.dll" class="SIL.FieldWorks.LexText.Controls.InsertEntryDlgListener" a10status="Fork moved to: LanguageExplorer.Dumpster.xxx" />
-		<listener assemblyPath="LexTextControls.dll" class="SIL.FieldWorks.LexText.Controls.GoLinkEntryDlgListener" a10status="Fork moved to: LanguageExplorer.Dumpster.xxx" />
-		<listener assemblyPath="LexTextControls.dll" class="SIL.FieldWorks.LexText.Controls.MergeEntryDlgListener" a10status="Fork moved to: LanguageExplorer.Dumpster.xxx" />
+		<listener assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.LexText.InsertEntryDlgListener" a10status="Fork moved to: LanguageExplorer.Dumpster.xxx" />
+		<listener assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.LexText.GoLinkEntryDlgListener" a10status="Fork moved to: LanguageExplorer.Dumpster.xxx" />
+		<listener assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.LexText.MergeEntryDlgListener" a10status="Fork moved to: LanguageExplorer.Dumpster.xxx" />
 		<listener assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Dumpster.ReversalListener">
 			<parameters clerk="AllReversalEntries"/>
 		</listener>

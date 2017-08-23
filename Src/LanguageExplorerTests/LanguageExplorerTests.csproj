@@ -89,6 +89,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\SIL.LCModel.Utils.Tests.dll</HintPath>
     </Reference>
+    <Reference Include="SIL.Lift, Version=4.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Debug\SIL.Lift.dll</HintPath>
+    </Reference>
     <Reference Include="ViewsInterfaces">
       <Name>ViewsInterfaces</Name>
       <HintPath>..\..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
@@ -111,10 +115,6 @@
     </Reference>
     <Reference Include="LanguageExplorer">
       <HintPath>..\..\Output\Release\LanguageExplorer.dll</HintPath>
-    </Reference>
-    <Reference Include="LexTextControls">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Release\LexTextControls.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -240,6 +240,13 @@
     <Compile Include="Lexicon\ReversalEntryBulkEditTests.cs" />
     <Compile Include="Lexicon\SortReversalSubEntriesTests.cs" />
     <Compile Include="Lexicon\TestUtils.cs" />
+    <Compile Include="LexTextControls\LexImportTests.cs" />
+    <Compile Include="LexTextControls\LiftExportTests.cs" />
+    <Compile Include="LexTextControls\LiftMergerRelationTests.cs" />
+    <Compile Include="LexTextControls\LiftMergerTests.cs" />
+    <Compile Include="LexTextControls\MasterCategoryTests.cs" />
+    <Compile Include="LexTextControls\MsaInflectionFeatureListDlgTests.cs" />
+    <Compile Include="LexTextControls\WordsSfmImportTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SilSidePaneTests\ItemTests.cs" />
     <Compile Include="SilSidePaneTests\NavPaneOptionsDlgTests.cs" />
@@ -297,6 +304,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="DetailControls\TestParts.xml" />
+    <Content Include="LexTextControls\FeatureSystem2.xml" />
+    <Content Include="LexTextControls\FeatureSystem3.xml" />
     <Content Include="Works\strings-en.xml" />
     <Content Include="Works\strings-es-MX.xml" />
     <Content Include="Works\strings-fr.xml" />

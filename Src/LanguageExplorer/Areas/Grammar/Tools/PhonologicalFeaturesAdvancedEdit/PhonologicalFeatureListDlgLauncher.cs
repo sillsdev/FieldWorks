@@ -5,8 +5,8 @@
 using System;
 using System.Windows.Forms;
 using LanguageExplorer.Controls.DetailControls;
+using LanguageExplorer.Controls.LexText;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.LexText.Controls;
 using SIL.LCModel;
 
 namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalFeaturesAdvancedEdit

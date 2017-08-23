@@ -7,12 +7,12 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
 using System.Linq;
+using LanguageExplorer.Controls.LexText;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
-using SIL.FieldWorks.LexText.Controls;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {

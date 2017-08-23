@@ -163,7 +163,7 @@
     <value>m_insertControl</value>
   </data>
   <data name="&gt;&gt;m_insertControl.Type" xml:space="preserve">
-    <value>SIL.FieldWorks.LexText.Controls.InsertionControl, LexTextControls, Version=7.3.2.17035, Culture=neutral, PublicKeyToken=null</value>
+    <value>LanguageExplorer.Controls.LexText.InsertionControl, LanguageExplorer, Version=7.3.2.17035, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;m_insertControl.Parent" xml:space="preserve">
     <value>m_panel</value>

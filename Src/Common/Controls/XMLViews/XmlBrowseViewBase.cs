@@ -1011,8 +1011,7 @@ namespace SIL.FieldWorks.Common.Controls
 					if (hvo == (int) SpecialHVOValues.kHvoObjectDeleted)
 					{
 #if RANDYTODO
-						// TODO: Can't reference LanguageExplorer, so removing this case of "ActiveClerk" will have to wait, until these are assimilated (ordered list):
-						// TODO: LexTextControls, XMLViews/MGA (these last two are unordered).
+						// TODO: Can't reference LanguageExplorer, so removing this case of "ActiveClerk" will have to wait, until XMLViews is assimilated.
 						// TODO: 'x' will always be null, since nobody is setting "ActiveClerk".
 #endif
 						// Deleting everything in one view doesn't seem to fix the RecordList in

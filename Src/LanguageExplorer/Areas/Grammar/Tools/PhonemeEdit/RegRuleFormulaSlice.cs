@@ -4,8 +4,8 @@
 
 using System;
 using System.Windows.Forms;
+using LanguageExplorer.Controls.LexText;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.LexText.Controls;
 using SIL.Utils;
 
 namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit

@@ -14,13 +14,13 @@ using System.Xml.Linq;
 using SIL.LCModel.Core.Cellar;
 using SIL.FieldWorks.Common.Controls;
 using LanguageExplorer.Controls.DetailControls.Resources;
+using LanguageExplorer.Controls.LexText;
 using LanguageExplorer.LcmUi;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
-using SIL.FieldWorks.LexText.Controls;
 using SIL.LCModel.Utils;
 using SIL.Xml;
 

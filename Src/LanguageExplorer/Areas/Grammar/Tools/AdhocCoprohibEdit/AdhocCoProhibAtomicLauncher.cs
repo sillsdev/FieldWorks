@@ -5,8 +5,8 @@
 using System.Diagnostics;
 using System.Windows.Forms;
 using LanguageExplorer.Controls.DetailControls;
+using LanguageExplorer.Controls.LexText;
 using SIL.LCModel;
-using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 
 namespace LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit

@@ -5,8 +5,8 @@
 using System;
 using System.Windows.Forms;
 using SIL.LCModel;
-using SIL.FieldWorks.LexText.Controls;
 using LanguageExplorer.Controls.DetailControls;
+using LanguageExplorer.Controls.LexText;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 {

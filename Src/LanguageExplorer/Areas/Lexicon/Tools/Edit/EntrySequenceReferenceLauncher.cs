@@ -9,13 +9,13 @@ using System.Linq;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.Controls;
 using LanguageExplorer.Controls.DetailControls;
+using LanguageExplorer.Controls.LexText;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.FwCoreDlgs;
-using SIL.FieldWorks.LexText.Controls;
 using SIL.Xml;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.Edit

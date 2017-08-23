@@ -6,6 +6,7 @@ using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
+using LanguageExplorer.Controls.LexText;
 using LanguageExplorer.LcmUi;
 using SIL.FieldWorks.Common.Framework;
 using SIL.LCModel.Core.Text;
@@ -16,7 +17,6 @@ using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
-using SIL.FieldWorks.LexText.Controls;
 
 namespace LanguageExplorer.Controls.DetailControls
 {

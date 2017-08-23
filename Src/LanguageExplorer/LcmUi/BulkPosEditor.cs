@@ -11,9 +11,9 @@ using SIL.LCModel;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.Common.Controls;
 using SIL.LCModel.Infrastructure;
-using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.Filters;
 using System.Xml.Linq;
+using LanguageExplorer.Controls.LexText;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.KernelInterfaces;
 

@@ -310,6 +310,6 @@
 	<value>WordformGoDlg</value>
   </data>
   <data name="&gt;&gt;$this.Type" xml:space="preserve">
-	<value>SIL.FieldWorks.LexText.Controls.BaseGoDlg, LexTextControls, Version=6.1.1.32021, Culture=neutral, PublicKeyToken=null</value>
+	<value>LanguageExplorer.Controls.LexText.BaseGoDlg, LanguageExplorer, Version=6.1.1.32021, Culture=neutral, PublicKeyToken=null</value>
   </data>
 </root>

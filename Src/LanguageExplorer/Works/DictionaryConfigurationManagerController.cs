@@ -8,16 +8,16 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using LanguageExplorer.Controls.LexText;
+using LanguageExplorer.LcmUi.Dialogs;
 using SIL.LCModel;
 using SIL.LCModel.Utils;
 using SIL.Linq;
 using SIL.FieldWorks.Common.Framework;
 using SIL.WritingSystems;
 using Ionic.Zip;
-using LanguageExplorer.LcmUi.Dialogs;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.LexText.Controls;
 
 namespace LanguageExplorer.Works
 {

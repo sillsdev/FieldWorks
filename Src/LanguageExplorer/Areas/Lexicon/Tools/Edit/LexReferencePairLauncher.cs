@@ -8,7 +8,7 @@ using System.Windows.Forms;
 using System.Diagnostics;
 using SIL.LCModel;
 using LanguageExplorer.Controls.DetailControls;
-using SIL.FieldWorks.LexText.Controls;
+using LanguageExplorer.Controls.LexText;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 {

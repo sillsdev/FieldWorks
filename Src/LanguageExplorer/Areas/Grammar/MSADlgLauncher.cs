@@ -5,11 +5,11 @@
 using System;
 using System.Windows.Forms;
 using LanguageExplorer.Controls.DetailControls;
+using LanguageExplorer.Controls.LexText;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
-using SIL.FieldWorks.LexText.Controls;
 
 namespace LanguageExplorer.Areas.Grammar
 {

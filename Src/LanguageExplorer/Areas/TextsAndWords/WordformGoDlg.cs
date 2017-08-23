@@ -4,11 +4,11 @@
 
 using System.Xml.Linq;
 using System.Xml.XPath;
+using LanguageExplorer.Controls.LexText;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.Common.Controls;
 using SIL.LCModel.Core.KernelInterfaces;
 

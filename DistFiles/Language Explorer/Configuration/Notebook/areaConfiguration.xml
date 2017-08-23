@@ -185,8 +185,8 @@ EXTENSIONS NOT SUPPORTED (Notebook_Area) -->
 	<!-- ************************ listeners *********************** -->
 	<!-- ********************************************************** -->
 	<listeners>
-		<listener assemblyPath="LexTextControls.dll" class="SIL.FieldWorks.LexText.Controls.GoLinkRecordDlgListener"/>
-		<listener assemblyPath="LexTextControls.dll" class="SIL.FieldWorks.LexText.Controls.InsertRecordDlgListener"/>
+		<listener assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.LexText.GoLinkRecordDlgListener"/>
+		<listener assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.LexText.InsertRecordDlgListener"/>
 <!-- EXTENSIONS NOT SUPPORTED (Notebook_Area)
 		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/listeners/*"/>
 EXTENSIONS NOT SUPPORTED (Notebook_Area) -->

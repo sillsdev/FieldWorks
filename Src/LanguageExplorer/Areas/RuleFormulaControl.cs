@@ -8,6 +8,7 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using LanguageExplorer.Controls.DetailControls;
+using LanguageExplorer.Controls.LexText;
 using LanguageExplorer.LcmUi;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
@@ -15,7 +16,6 @@ using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.LexText.Controls;
 using SIL.LCModel.DomainServices;
 using SIL.Xml;
 
@@ -1062,7 +1062,7 @@ namespace LanguageExplorer.Areas
 
 		private void InitializeComponent()
 		{
-			this.m_view = new SIL.FieldWorks.LexText.Controls.PatternView();
+			this.m_view = new LanguageExplorer.Controls.LexText.PatternView();
 			this.m_insertionControl = new InsertionControl();
 			this.m_panel.SuspendLayout();
 			this.SuspendLayout();

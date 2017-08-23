@@ -4,13 +4,13 @@
 
 using System;
 using System.Collections.Generic;
+using LanguageExplorer.Controls.LexText;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
-using SIL.FieldWorks.LexText.Controls;
 
 namespace LanguageExplorer.Areas
 {

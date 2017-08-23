@@ -6,8 +6,8 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
+using LanguageExplorer.Controls.LexText;
 using SIL.LCModel;
-using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Infrastructure;
 

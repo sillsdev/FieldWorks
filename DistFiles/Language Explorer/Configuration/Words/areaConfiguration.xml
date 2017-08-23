@@ -589,9 +589,9 @@ EXTENSIONS NOT SUPPORTED (Words_Area) -->
 		<listener assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Dumpster.MorphologyListener">
 			<parameters clerk="concordanceWords"/>
 		</listener>
-		<listener assemblyPath="ParserUI.dll" class="SIL.FieldWorks.LexText.Controls.ParserListener"/>
-		<listener assemblyPath="ParserUI.dll" class="SIL.FieldWorks.LexText.Controls.ParserParametersListener"/>
-		<listener assemblyPath="ParserUI.dll" class="SIL.FieldWorks.LexText.Controls.ImportWordSetListener" a10status="DONE_Removed" />
+		<listener assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Dumpster.ParserListener"/>
+		<listener assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Dumpster.ParserParametersListener"/>
+		<listener assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Dumpster.ImportWordSetListener" a10status="DONE_Removed" />
 		<listener assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Dumpster.RespellerDlgListener">
 			<parameters>
 				<clerks>

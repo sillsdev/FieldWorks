@@ -5,8 +5,8 @@
 using System.Windows.Forms;
 using System.Linq;
 using LanguageExplorer.Controls.DetailControls;
+using LanguageExplorer.Controls.LexText;
 using SIL.LCModel;
-using SIL.FieldWorks.LexText.Controls;
 
 namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 {

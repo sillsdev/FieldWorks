@@ -14,13 +14,13 @@ using System;
 using System.Windows.Forms;
 using SIL.LCModel.Core.WritingSystems;
 using LanguageExplorer.Controls.DetailControls.Resources;
+using LanguageExplorer.Controls.LexText;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
-using SIL.FieldWorks.LexText.Controls;
 
 namespace LanguageExplorer.Controls.DetailControls
 {

@@ -2,7 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using SIL.FieldWorks.LexText.Controls;
+using LanguageExplorer.Controls.LexText;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
@@ -35,8 +35,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ComplexConcControl));
-			this.m_view = new SIL.FieldWorks.LexText.Controls.PatternView();
-			this.m_insertControl = new SIL.FieldWorks.LexText.Controls.InsertionControl();
+			this.m_view = new LanguageExplorer.Controls.LexText.PatternView();
+			this.m_insertControl = new LanguageExplorer.Controls.LexText.InsertionControl();
 			this.m_searchButton = new System.Windows.Forms.Button();
 			this.m_panel = new System.Windows.Forms.TableLayoutPanel();
 			this.m_panel.SuspendLayout();
@@ -68,7 +68,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			resources.ApplyResources(this.m_insertControl, "m_insertControl");
 			this.m_insertControl.Name = "m_insertControl";
 			this.m_insertControl.NoOptionsMessage = null;
-			this.m_insertControl.Insert += new System.EventHandler<SIL.FieldWorks.LexText.Controls.InsertEventArgs>(this.m_insertControl_Insert);
+			this.m_insertControl.Insert += new System.EventHandler<LanguageExplorer.Controls.LexText.InsertEventArgs>(this.m_insertControl_Insert);
 			// 
 			// m_searchButton
 			// 

@@ -3,9 +3,9 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Windows.Forms;
-using SIL.LCModel;
-using SIL.FieldWorks.LexText.Controls;
 using LanguageExplorer.Controls.DetailControls;
+using LanguageExplorer.Controls.LexText;
+using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes

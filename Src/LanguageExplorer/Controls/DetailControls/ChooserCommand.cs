@@ -7,10 +7,10 @@ using System.Windows.Forms;
 using System.Linq;
 using SIL.LCModel.Core.Text;
 using LanguageExplorer.Controls.DetailControls.Resources;
+using LanguageExplorer.Controls.LexText;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
-using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 

@@ -5,12 +5,12 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using LanguageExplorer.Controls.DetailControls;
+using LanguageExplorer.Controls.LexText;
+using LanguageExplorer.Works;
 using SIL.Linq;
 using SIL.LCModel.Infrastructure;
 using SIL.LCModel;
-using LanguageExplorer.Controls.DetailControls;
-using SIL.FieldWorks.LexText.Controls;
-using LanguageExplorer.Works;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 {

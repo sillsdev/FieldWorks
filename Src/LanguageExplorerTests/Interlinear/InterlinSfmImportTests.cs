@@ -9,9 +9,9 @@ using System.Text;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
+using LanguageExplorer.Controls.LexText;
 using NUnit.Framework;
 using Sfm2Xml;
-using SIL.FieldWorks.LexText.Controls;
 using SilEncConverters40;
 using SIL.LCModel.Core.WritingSystems;
 
