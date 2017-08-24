@@ -354,7 +354,7 @@ namespace SIL.FieldWorks.XWorks
 				// show the Configuration Manager dialog
 				using (var dialog = new DictionaryConfigurationManagerDlg(_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
 				{
-					var configurationManagerController = new DictionaryConfigurationManagerController(dialog, _propertyTable,
+					var configurationManagerController = new DictionaryConfigurationManagerController(dialog, _propertyTable, mediator,
 						_dictionaryConfigurations, GetAllPublications(cache), _projectConfigDir, _defaultConfigDir, _model);
 					configurationManagerController.Finished += SelectModelFromManager;
 					configurationManagerController.ConfigurationViewImported += () =>

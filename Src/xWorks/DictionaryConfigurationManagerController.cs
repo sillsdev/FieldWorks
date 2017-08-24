@@ -112,19 +112,20 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// For unit tests.
 		/// </summary>
-		internal DictionaryConfigurationManagerController(LcmCache cache,
+		internal DictionaryConfigurationManagerController(LcmCache cache, Mediator mediator,
 			List<DictionaryConfigurationModel> configurations, List<string> publications, string projectConfigDir, string defaultConfigDir)
 		{
 			_cache = cache;
+			_mediator = mediator;
 			_configurations = configurations;
 			_publications = publications;
 			_projectConfigDir = projectConfigDir;
 			_defaultConfigDir = defaultConfigDir;
 		}
 
-		public DictionaryConfigurationManagerController(DictionaryConfigurationManagerDlg view, PropertyTable propertyTable,
+		public DictionaryConfigurationManagerController(DictionaryConfigurationManagerDlg view, PropertyTable propertyTable, Mediator mediator,
 			List<DictionaryConfigurationModel> configurations, List<string> publications, string projectConfigDir, string defaultConfigDir, DictionaryConfigurationModel currentConfig) :
-			this(propertyTable.GetValue<LcmCache>("cache"), configurations, publications, projectConfigDir, defaultConfigDir)
+			this(propertyTable.GetValue<LcmCache>("cache"), mediator, configurations, publications, projectConfigDir, defaultConfigDir)
 		{
 			_view = view;
 			_propertyTable = propertyTable;
