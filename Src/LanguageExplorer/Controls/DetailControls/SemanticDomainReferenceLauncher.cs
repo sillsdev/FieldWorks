@@ -10,7 +10,7 @@
 using System.Diagnostics;
 using System.Windows.Forms;
 using System.Xml.XPath;
-using SIL.FieldWorks.Common.Controls;
+using LanguageExplorer.Controls.XMLViews;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;

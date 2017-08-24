@@ -4,7 +4,7 @@
 
 using System.Diagnostics;
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.Controls;
+using LanguageExplorer.Controls.XMLViews;
 using SIL.FieldWorks.Common.RootSites;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear

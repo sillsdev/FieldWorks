@@ -11,6 +11,7 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using System.Xml.XPath;
+using LanguageExplorer.Controls.XMLViews;
 using LanguageExplorer.MGA;
 using Microsoft.Win32;
 using SIL.Collections;
@@ -1029,7 +1030,7 @@ namespace LanguageExplorer.Controls.LexText
 			this.m_labelArrow = new System.Windows.Forms.Label();
 			this.m_imageList = new System.Windows.Forms.ImageList(this.components);
 			this.m_linkSimilarEntry = new System.Windows.Forms.LinkLabel();
-			this.m_matchingObjectsBrowser = new SIL.FieldWorks.Common.Controls.MatchingObjectsBrowser();
+			this.m_matchingObjectsBrowser = new LanguageExplorer.Controls.XMLViews.MatchingObjectsBrowser();
 			this.m_toolTipSlotCombo = new System.Windows.Forms.ToolTip(this.components);
 			this.m_msaGroupBox = new LanguageExplorer.Controls.LexText.MSAGroupBox();
 			this.m_propsGroupBox = new System.Windows.Forms.GroupBox();

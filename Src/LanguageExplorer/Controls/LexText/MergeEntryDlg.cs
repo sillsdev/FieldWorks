@@ -9,7 +9,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Xml.Linq;
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.Controls;
+using LanguageExplorer.Controls.XMLViews;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
 using SIL.LCModel.Utils;

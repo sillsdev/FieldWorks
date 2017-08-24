@@ -9,9 +9,9 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using LanguageExplorer.Controls.XMLViews;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.WritingSystems;
-using SIL.FieldWorks.Common.Controls;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
@@ -104,9 +104,6 @@ namespace LanguageExplorer.Works
 		/// Loads a List of configuration choices from default and projcet folders.
 		/// Project-specific configurations override default configurations of the same (file)name.
 		/// </summary>
-		/// <param name="defaultPath"></param>
-		/// <param name="projectPath"></param>
-		/// <seealso cref="XhtmlDocView.GatherBuiltInAndUserConfigurations()"/>
 		/// <returns>List of paths to configurations</returns>
 		internal static List<string> ListDictionaryConfigurationChoices(string defaultPath, string projectPath)
 		{

@@ -213,7 +213,7 @@ namespace LanguageExplorerTests.Works
 #endif
 		}
 
-		#endregion Setup and Teardown
+	#endregion Setup and Teardown
 
 		protected void MasterRefresh()
 		{
@@ -312,7 +312,7 @@ namespace LanguageExplorerTests.Works
 			/// JetBrains.ReSharper.TaskRunnerFramework.dll!JetBrains.ReSharper.TaskRunnerFramework.AssemblyLoader.ResolveAssemblyFileByName(string name = "XMLViews.XmlSerializers, Version=1.0.3443.22565, Culture=neutral, PublicKeyToken=null", bool isFullName = true) Line 173 + 0x8 bytes	C#
 			/// JetBrains.ReSharper.TaskRunnerFramework.dll!JetBrains.ReSharper.TaskRunnerFramework.AssemblyLoader.ResolveAssembly(object sender = {System.AppDomain}, System.ResolveEventArgs args = {System.ResolveEventArgs}) Line 107 + 0xd bytes	C#
 			/// XMLUtils.DLL!SIL.Utils.XmlUtils.SerializeObjectToXmlString(object objToSerialize = {SIL.FieldWorks.Common.Controls.BulkEditBar.ListChoiceTabPageSettings}) Line 592 + 0x26 bytes	C#
-			/// XMLViews.DLL!SIL.FieldWorks.Common.Controls.BulkEditBar.BulkEditTabPageSettings.SerializeSettings() Line 2566 + 0x8 bytes	C#
+			/// LanguageExplorer.DLL!LanguageExplorer.Controls.XMLViews.BulkEditBar.BulkEditTabPageSettings.SerializeSettings() Line 2566 + 0x8 bytes	C#
 			/// </summary>
 			internal bool PersistSettings
 			{

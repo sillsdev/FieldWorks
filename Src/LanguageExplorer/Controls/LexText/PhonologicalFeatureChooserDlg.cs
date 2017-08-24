@@ -11,9 +11,9 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using System.Xml.XPath;
+using LanguageExplorer.Controls.XMLViews;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.Text;
-using SIL.FieldWorks.Common.Controls;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
@@ -28,7 +28,7 @@ namespace LanguageExplorer.Controls.LexText
 	/// This dialog shows the list of all defined phonological features.
 	/// It allows a user to select values for one or more phonological features.
 	/// It can be given a feature structure indicating current feature/value pairs.
-	/// A user may choose the "<n/a>" option to remove a feature/value pair from an existing feature structure.
+	/// A user may choose the "n/a" option to remove a feature/value pair from an existing feature structure.
 	/// If returns a feature structure with the selected feature/value pairs.
 	/// </summary>
 	public class PhonologicalFeatureChooserDlg : Form

@@ -1636,9 +1636,8 @@ namespace LanguageExplorer.Controls.LexText
 		/// </summary>
 		private void SaveNewMapFile()
 		{
-			/// This where the code will go to compile all the information from the Wizard
-			/// and produce the map file to use for importing...
-			///
+			// This where the code will go to compile all the information from the Wizard
+			// and produce the map file to use for importing...
 			string nl = System.Environment.NewLine;
 			System.Text.StringBuilder XMLText = new System.Text.StringBuilder(1024);
 			m_FeasabilityReportGenerated = true;
@@ -3209,9 +3208,8 @@ namespace LanguageExplorer.Controls.LexText
 		/// <summary>
 		/// read and process the conversion log output data.
 		/// </summary>
-		/// <param name="fShow">show a messagebox with brief stats</param>
 		/// <returns>true if there is a log file to show</returns>
-		private bool ProcessPhase1Errors(string filename, string m_sCheckedMapFileName, int m_cEntries, bool fShow)
+		private bool ProcessPhase1Errors(string filename, string checkedMapFileName, int entries, bool show)
 		{
 			m_sPhase1HtmlReport = string.Empty;
 			System.Xml.XmlDocument xmlMap = new System.Xml.XmlDocument();
@@ -3234,8 +3232,8 @@ namespace LanguageExplorer.Controls.LexText
 			}
 
 			string sNewLine = System.Environment.NewLine;
-			string sMapFileMsg = String.Format(LexTextControls.ksMapFileWasX, m_sCheckedMapFileName);
-			string sEntriesImportedMsg = String.Format(LexTextControls.ksXEntriesImported, m_cEntries);
+			string sMapFileMsg = String.Format(LexTextControls.ksMapFileWasX, checkedMapFileName);
+			string sEntriesImportedMsg = String.Format(LexTextControls.ksXEntriesImported, entries);
 			m_sPhase1HtmlReport = String.Format("<p>{0}{1}<h3>{2}</h3>{1}",
 				sMapFileMsg, sNewLine, sEntriesImportedMsg);
 
@@ -3246,13 +3244,13 @@ namespace LanguageExplorer.Controls.LexText
 
 //			if (true)	// warningCount + errorCount > 0)
 //			{
-				if (fShow)
+				if (show)
 				{
 					System.Text.StringBuilder bldr = new System.Text.StringBuilder();
-					if (m_cEntries == 1)
+					if (entries == 1)
 						bldr.Append(LexTextControls.ks1EntryImported);
 					else
-						bldr.AppendFormat(LexTextControls.ksXEntriesImported, m_cEntries);
+						bldr.AppendFormat(LexTextControls.ksXEntriesImported, entries);
 					bldr.Append(sNewLine);
 					if (errorCount > 0 && warningCount > 0)
 					{
@@ -3834,14 +3832,13 @@ namespace LanguageExplorer.Controls.LexText
 		protected override void OnSizeChanged(EventArgs e)
 		{
 			base.OnSizeChanged(e);
-			/// The following code is added to handle the adjustment that the framework
-			/// makes 'at some point' in the start up process of this dialog to handle
-			/// cases where the dpi is > 96.
-			/// This code captures the initial size of the dlg when one of the controls
-			/// that is to be adjusted has been created.  From there the differences are
-			/// added to the controls until the sizing stops.  At that point it looks
-			/// good / normal again.
-			///
+			// The following code is added to handle the adjustment that the framework
+			// makes 'at some point' in the start up process of this dialog to handle
+			// cases where the dpi is > 96.
+			// This code captures the initial size of the dlg when one of the controls
+			// that is to be adjusted has been created.  From there the differences are
+			// added to the controls until the sizing stops.  At that point it looks
+			// good / normal again.
 			if (m_origWidth == 0 && listViewContentMapping != null)	// have size info
 			{
 				// capture the original size information of the dialog

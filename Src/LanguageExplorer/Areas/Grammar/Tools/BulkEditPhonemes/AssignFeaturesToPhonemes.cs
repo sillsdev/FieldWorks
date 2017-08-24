@@ -3,9 +3,9 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Xml.Linq;
+using LanguageExplorer.Controls.XMLViews;
 using LanguageExplorer.LcmUi;
 using LanguageExplorer.Works;
-using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Application;

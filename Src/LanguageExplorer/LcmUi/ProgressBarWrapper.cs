@@ -10,8 +10,8 @@ namespace LanguageExplorer.LcmUi
 {
 #if RANDYTODO
 // TODO: Why are there two ProgressBarWrapper classes in the Flex repo?
-// TODO: SIL.FieldWorks.Common.Controls.ProgressBarWrapper : IProgressDisplayer
-// TODO: LanguageExplorer.LcmUi.ProgressBarWrapper : IProgress
+// TODO: SIL.FieldWorks.Common.Controls.ProgressBarWrapper : IProgressDisplayer (FwControls)
+// TODO: LanguageExplorer.LcmUi.ProgressBarWrapper : IProgress (LanguageExplorer)
 #endif
 	/// <summary>
 	/// Wrapper class to allow a ProgressBar to function as an IProgress

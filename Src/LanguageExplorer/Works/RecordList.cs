@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using LanguageExplorer.Controls.XMLViews;
 using SIL.LCModel.Core.Cellar;
 using SIL.FieldWorks.Common.Controls;
 using SIL.LCModel.Core.KernelInterfaces;
@@ -274,12 +275,7 @@ namespace LanguageExplorer.Works
 		/// </summary>
 		public ISilDataAccessManaged VirtualListPublisher => m_objectListPublisher;
 
-#if RANDYTODO
-// TODO: Make PropertyTableId 'internal' again, after xWorks gets assimilated into LT.
-// TODO: 'internal' and the original of 'internal protected' both work just fine in Windows, but Linux fails on either.
-// TODO: So, ReversalEntryBulkEditTests had to create a test only subclass of AllReversalEntriesRecordList to get Linux to compile. Yuck!
-#endif
-		public virtual string PropertyTableId(string sorterOrFilter)
+		internal virtual string PropertyTableId(string sorterOrFilter)
 		{
 			// Dependent lists do not have owner/property set. Rather they have class/field.
 			var className = VirtualListPublisher.MetaDataCache.GetOwnClsName(m_flid);

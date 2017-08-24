@@ -4,8 +4,8 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using LanguageExplorer.Controls.XMLViews;
 using LanguageExplorer.Works;
-using SIL.FieldWorks.Common.Controls;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 using SIL.LCModel.Infrastructure;

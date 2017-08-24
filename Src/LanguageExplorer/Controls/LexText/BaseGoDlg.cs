@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using LanguageExplorer.Controls.XMLViews;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
@@ -622,7 +623,7 @@ namespace LanguageExplorer.Controls.LexText
 			this.m_wsLabel = new System.Windows.Forms.Label();
 			this.m_fwTextBoxBottomMsg = new SIL.FieldWorks.Common.Widgets.FwTextBox();
 			this.m_objectsLabel = new System.Windows.Forms.Label();
-			this.m_matchingObjectsBrowser = new SIL.FieldWorks.Common.Controls.MatchingObjectsBrowser();
+			this.m_matchingObjectsBrowser = new LanguageExplorer.Controls.XMLViews.MatchingObjectsBrowser();
 			this.m_panel1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.m_tbForm)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.m_fwTextBoxBottomMsg)).BeginInit();

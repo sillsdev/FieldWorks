@@ -15,6 +15,7 @@ using System.Xml.Linq;
 using System.Xml;
 using System.Xml.Xsl;
 using LanguageExplorer.Controls.LexText;
+using LanguageExplorer.Controls.XMLViews;
 using LanguageExplorer.LcmUi;
 using Microsoft.Win32;
 using SIL.LCModel.Core.Text;

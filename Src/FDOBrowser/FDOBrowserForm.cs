@@ -14,6 +14,7 @@ using System.Windows.Forms;
 using SIL.LCModel.Core.Cellar;
 using SIL.FieldWorks.Common.Controls;
 using LanguageExplorer.Controls.DetailControls;
+using LanguageExplorer.Controls.XMLViews;
 using LanguageExplorer.LcmUi;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;

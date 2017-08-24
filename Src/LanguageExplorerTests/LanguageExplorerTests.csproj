@@ -37,6 +37,14 @@
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="CacheLight, Version=10.0.0.25441, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Debug\CacheLight.dll</HintPath>
+    </Reference>
+    <Reference Include="CacheLightTests, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Debug\CacheLightTests.dll</HintPath>
+    </Reference>
     <Reference Include="DotNetZip, Version=1.10.1.0, Culture=neutral, PublicKeyToken=6583c7c814667745, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\DotNetZip.dll</HintPath>
@@ -177,10 +185,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Release\Widgets.dll</HintPath>
     </Reference>
-    <Reference Include="XMLViews, Version=9.0.0.22998, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Release\XMLViews.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\AssemblyInfoForTests.cs">
@@ -296,12 +300,40 @@
     <Compile Include="Works\WordsUsedOnlyElsewhereFilterTests.cs" />
     <Compile Include="Works\XhtmlDocViewTests.cs" />
     <Compile Include="Works\XWorksAppTestBase.cs" />
+    <Compile Include="XMLViews\BulkEditBarTests.cs" />
+    <Compile Include="XMLViews\ConfiguredExportTests.cs" />
+    <Compile Include="XMLViews\DhListViewTests.cs" />
+    <Compile Include="XMLViews\LayoutMergerTests.cs" />
+    <Compile Include="XMLViews\Resources.Designer.cs">
+      <DependentUpon>Resources.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="XMLViews\SearchEngineTests.cs" />
+    <Compile Include="XMLViews\SimpleDataParser.cs" />
+    <Compile Include="XMLViews\TestColumnConfigureDialog.cs" />
+    <Compile Include="XMLViews\TestLayoutMerge.cs" />
+    <Compile Include="XMLViews\TestManyOneBrowse.cs" />
+    <Compile Include="XMLViews\TestNeededPropertyInfo.cs" />
+    <Compile Include="XMLViews\TestObjectListPublisher.cs" />
+    <Compile Include="XMLViews\TestPartGenerate.cs" />
+    <Compile Include="XMLViews\TestXmlBrowseView.cs" />
+    <Compile Include="XMLViews\TestXmlViewsDataCache.cs" />
+    <Compile Include="XMLViews\TestXmlViewsUtils.cs" />
+    <Compile Include="XMLViews\XmlBrowseViewBaseTests.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="XMLViews\XmlBrowseViewBaseVcTests.cs" />
+    <Compile Include="XMLViews\XmlVcTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="BuildInclude.targets" />
     <None Include="DetailControls\Test.fwlayout" />
     <None Include="Interlinear\FlexTextImport\FlexTextExportOutput.flextext" />
+    <None Include="XMLViews\LayoutMergerTestData\LexEntry.fwlayout" />
+    <None Include="XMLViews\LayoutMergerTestData\LexSense.fwlayout" />
+    <None Include="XMLViews\LayoutMergerTestData\Morphology.fwlayout" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="DetailControls\TestParts.xml" />
@@ -310,6 +342,16 @@
     <Content Include="Works\strings-en.xml" />
     <Content Include="Works\strings-es-MX.xml" />
     <Content Include="Works\strings-fr.xml" />
+    <Content Include="XMLViews\LayoutMergerTestData\LexEntryParts.xml" />
+    <Content Include="XMLViews\LayoutMergerTestData\LexSenseParts.xml" />
+    <None Include="XMLViews\LayoutMergerTestData\LexSensePartsOutput.xml" />
+    <Content Include="XMLViews\LayoutMergerTestData\MorphologyParts.xml" />
+    <Content Include="XMLViews\LayoutMergerTestData\My_Stem-based_LexEntry_Layouts.xml" />
+    <None Include="XMLViews\LayoutMergerTestData\NewMaster.xml" />
+    <None Include="XMLViews\LayoutMergerTestData\User.xml" />
+    <Content Include="XMLViews\Resources\Layouts.xml" />
+    <Content Include="XMLViews\Resources\Parts.xml" />
+    <None Include="XMLViews\Resources\TextCacheModel.xml" />
     <None Include="Works\TestData\AudioFiles\abu2.wav" />
     <None Include="Works\TestData\ConfigurationSettings\Dictionary\ProjectDictionaryOverrides.css" />
     <None Include="Works\TestData\ConfigurationSettings\ReversalIndex\ProjectReversalOverrides.css" />
@@ -325,7 +367,13 @@
     <Content Include="Interlinear\InterlinearExporterTests.xml" />
     <Content Include="Interlinear\ParagraphParserTestTexts.xml" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="XMLViews\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="BuildInclude.targets" />
 </Project>

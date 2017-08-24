@@ -8,10 +8,9 @@ using System.Diagnostics;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
 using LanguageExplorer.Controls.DetailControls.Resources;
-using SIL.FieldWorks.Common.Controls;
+using LanguageExplorer.Controls.XMLViews;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.Xml;
 
 namespace LanguageExplorer.Controls.DetailControls
 {

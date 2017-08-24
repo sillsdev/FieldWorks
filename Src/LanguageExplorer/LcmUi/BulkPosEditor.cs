@@ -14,6 +14,7 @@ using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.Filters;
 using System.Xml.Linq;
 using LanguageExplorer.Controls.LexText;
+using LanguageExplorer.Controls.XMLViews;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.KernelInterfaces;
 

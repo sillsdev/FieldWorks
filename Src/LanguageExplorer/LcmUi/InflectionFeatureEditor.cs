@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using System.Linq;
 using System.Xml;
 using LanguageExplorer.Controls.LexText;
+using LanguageExplorer.Controls.XMLViews;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.FieldWorks.Common.Widgets;

@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
 using LanguageExplorer.Controls.DetailControls.Resources;
-using SIL.FieldWorks.Common.Controls;
+using LanguageExplorer.Controls.XMLViews;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.Xml;
 

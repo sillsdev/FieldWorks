@@ -5,7 +5,7 @@
 using System;
 using System.Windows.Forms;
 using LanguageExplorer.Controls.LexText;
-using SIL.FieldWorks.Common.Controls;
+using LanguageExplorer.Controls.XMLViews;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.LCModel;

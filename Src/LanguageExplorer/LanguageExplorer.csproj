@@ -225,10 +225,6 @@
     <Reference Include="Widgets">
       <HintPath>..\..\Output\Release\Widgets.dll</HintPath>
     </Reference>
-    <Reference Include="XMLViews">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Release\XMLViews.dll</HintPath>
-    </Reference>
     <Reference Include="DialogAdapters">
       <HintPath>..\..\packages\DialogAdapters.0.1.0.32308\lib\net45\DialogAdapters.dll</HintPath>
     </Reference>
@@ -647,6 +643,86 @@
     <Compile Include="Controls\LexText\SfmToTextsAndWordsMappingBaseDlg.Designer.cs">
       <DependentUpon>SfmToTextsAndWordsMappingBaseDlg.cs</DependentUpon>
     </Compile>
+    <Compile Include="Controls\XMLViews\BrowseViewer.cs" />
+    <Compile Include="Controls\XMLViews\BulkEditBar.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\XMLViews\ChooserCommandBase.cs" />
+    <Compile Include="Controls\XMLViews\ColumnConfigureDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Controls\XMLViews\ConfiguredExport.cs" />
+    <Compile Include="Controls\XMLViews\DhListView.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\XMLViews\FilterBar.cs" />
+    <Compile Include="Controls\XMLViews\FilterSdaDecorator.cs" />
+    <Compile Include="Controls\XMLViews\FlatListView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\XMLViews\FlatListView.Designer.cs">
+      <DependentUpon>FlatListView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\XMLViews\GhostParentHelper.cs" />
+    <Compile Include="Controls\XMLViews\LabelNode.cs" />
+    <Compile Include="Controls\XMLViews\LayoutCache.cs" />
+    <Compile Include="Controls\XMLViews\LayoutFinder.cs" />
+    <Compile Include="Controls\XMLViews\LayoutMerger.cs" />
+    <Compile Include="Controls\XMLViews\MatchingObjectsBrowser.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\XMLViews\NeededPropertyInfo.cs" />
+    <Compile Include="Controls\XMLViews\NonEmptyTargetControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\XMLViews\ObjectLabels.cs" />
+    <Compile Include="Controls\XMLViews\ObjectListPublisher.cs" />
+    <Compile Include="Controls\XMLViews\PartGenerator.cs" />
+    <Compile Include="Controls\XMLViews\ReallySimpleListChooser.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Controls\XMLViews\SearchCompletedEventArgs.cs" />
+    <Compile Include="Controls\XMLViews\SearchEngine.cs" />
+    <Compile Include="Controls\XMLViews\SimpleDateMatchDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Controls\XMLViews\SimpleDateMatchDlg.Designer.cs">
+      <DependentUpon>SimpleDateMatchDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\XMLViews\SimpleIntegerMatchDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Controls\XMLViews\SimpleMatchDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Controls\XMLViews\XmlBrowseRDEView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\XMLViews\XmlBrowseView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\XMLViews\XmlBrowseViewBase.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\XMLViews\XmlBrowseViewBaseVc.cs" />
+    <Compile Include="Controls\XMLViews\XmlBrowseViewSelectionRestorer.cs" />
+    <Compile Include="Controls\XMLViews\XmlBrowseViewVc.cs" />
+    <Compile Include="Controls\XMLViews\XmlRDEBrowseViewVc.cs" />
+    <Compile Include="Controls\XMLViews\XmlSeqView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\XMLViews\XmlVc.cs" />
+    <Compile Include="Controls\XMLViews\XmlVcDisplayVec.cs" />
+    <Compile Include="Controls\XMLViews\XmlView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\XMLViews\XMLViewsDataCache.cs" />
+    <Compile Include="Controls\XMLViews\XMLViewsStrings.Designer.cs">
+      <DependentUpon>XMLViewsStrings.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Controls\XMLViews\XmlViewsUtils.cs" />
     <Compile Include="LanguageExplorerConstants.cs" />
     <Compile Include="LcmUi\BulkPosEditor.cs" />
     <Compile Include="LcmUi\Dialogs\CantRestoreLinkedFilesToOriginalLocation.cs">
@@ -996,6 +1072,67 @@
     <Content Include="Controls\LexText\Resources\Find Lexical Entry.ico" />
     <Content Include="LcmUi\Resources\EXCLEM.ICO" />
     <Content Include="LcmUi\Resources\question.ico" />
+    <EmbeddedResource Include="Controls\XMLViews\BrowseViewer.resx">
+      <DependentUpon>BrowseViewer.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\XMLViews\BulkEditBar.resx">
+      <DependentUpon>BulkEditBar.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\XMLViews\ColumnConfigureDialog.resx">
+      <DependentUpon>ColumnConfigureDialog.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\XMLViews\DhListView.resx">
+      <DependentUpon>DhListView.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\XMLViews\NonEmptyTargetControl.resx">
+      <DependentUpon>NonEmptyTargetControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\XMLViews\ReallySimpleListChooser.resx">
+      <DependentUpon>ReallySimpleListChooser.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\XMLViews\SimpleDateMatchDlg.resx">
+      <DependentUpon>SimpleDateMatchDlg.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\XMLViews\SimpleIntegerMatchDlg.resx">
+      <DependentUpon>SimpleIntegerMatchDlg.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\XMLViews\SimpleMatchDlg.resx">
+      <DependentUpon>SimpleMatchDlg.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\XMLViews\XmlBrowseRDEView.resx">
+      <DependentUpon>XmlBrowseRDEView.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\XMLViews\XmlBrowseView.resx">
+      <DependentUpon>XmlBrowseView.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\XMLViews\XmlBrowseViewBase.resx">
+      <DependentUpon>XmlBrowseViewBase.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\XMLViews\XmlSeqView.resx">
+      <DependentUpon>XmlSeqView.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\XMLViews\XmlView.resx">
+      <DependentUpon>XmlView.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\XMLViews\XMLViewsStrings.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>XMLViewsStrings.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="MGA\CheckBox.bmp" />
     <EmbeddedResource Include="MGA\CheckedBox.bmp" />
     <EmbeddedResource Include="MGA\CLSDFOLD.BMP" />
