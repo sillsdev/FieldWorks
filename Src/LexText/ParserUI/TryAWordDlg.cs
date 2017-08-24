@@ -368,7 +368,10 @@ namespace SIL.FieldWorks.LexText.Controls
 			PropTable.SetPropertyPersistence("TryAWordDlg-lastWordToTry", true, PropertyTable.SettingsGroup.LocalSettings);
 			m_persistProvider.PersistWindowSettings(PersistProviderID, this);
 			if (m_parserListener.Connection != null)
+			{
 				m_parserListener.Connection.TryAWordDialogIsRunning = false;
+				m_parserListener.DisconnectFromParser();
+			}
 		}
 
 		private void m_wordformTextBox_TextChanged(object sender, EventArgs e)
