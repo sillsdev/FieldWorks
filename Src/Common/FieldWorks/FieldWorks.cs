@@ -165,9 +165,7 @@ namespace SIL.FieldWorks
 			Thread.CurrentThread.Name = "Main thread";
 			Logger.Init(FwUtils.ksSuiteName);
 			LcmCache.NewerWritingSystemFound += ComplainToUserAboutNewWs;
-			// Note to developers: Uncomment this line to be able to attach the debugger to a process for a project
-			// other than the initial one that gets started up in VS:
-			//MessageBox.Show("Attach debugger now");
+			FwRegistryHelper.Initialize();
 			try
 			{
 #region Initialize XULRunner - required to use the geckofx WebBrowser Control (GeckoWebBrowser).
@@ -182,8 +180,6 @@ namespace SIL.FieldWorks
 				Logger.WriteEvent("Starting app");
 				SetGlobalExceptionHandler();
 				SetupErrorReportInformation();
-
-				FwRegistryHelper.Initialize();
 
 				// Invoke does nothing directly, but causes BroadcastEventWindow to be initialized
 				// on this thread to prevent race conditions on shutdown.See TE-975
