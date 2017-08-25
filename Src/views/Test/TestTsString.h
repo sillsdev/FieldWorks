@@ -18,7 +18,7 @@ Last reviewed:
 //#include "LanguageTlb.h"
 #include <stdio.h>
 
-#ifndef WIN32 // TODO-Linux FWNX-198: thread callback for testThreadedMakeString
+#if !defined(_WIN32) && !defined(_M_X64) // TODO-Linux FWNX-198: thread callback for testThreadedMakeString
 void * TestThreadedMakeString( void *arg )
 {
 	int wsEng = *(int*)arg;
@@ -565,7 +565,7 @@ namespace TestViews
 #define BREVE L"\x02D8" // compatibility decomposition to 0020 0306
 #define a_WITH_DIAERESIS L"\x00E4" // decomposes to 0061 0308.
 #define a_WITH_DIAERESIS_AND_MACRON L"\x01DF"
-#if WIN32
+#if defined(_WIN32) || defined(_M_X64)
 #define MUSICAL_SYMBOL_MINIMA L"\xD834\xDDBB" // 1D1BB decomposes to 1D1B9 1D165
 #define MUSICAL_SYMBOL_SEMIBREVIS_WHITE L"\xD834\xDDB9" // 1D1B9
 #define MUSICAL_SYMBOL_COMBINING_STEM L"\xD834\xDD65" // 1D165
@@ -1297,7 +1297,7 @@ namespace TestViews
 			ITsStringPtr qtssMulti;
 			OleStringLiteral oleTestMulti = L"This is a longer string for more complex tests";
 			const OLECHAR * prgchTestMulti = oleTestMulti;
-			int cchMulti = wcslen(prgchTestMulti);
+			int cchMulti = (int)wcslen(prgchTestMulti);
 			m_qtsf->MakeStringRgch(prgchTestMulti, cchMulti, m_wsEng, &qtssMulti);
 			ITsStrBldrPtr qtsb;
 			CheckHr(qtssMulti->GetBldr(&qtsb));
@@ -1330,7 +1330,7 @@ namespace TestViews
 		--------------------------------------------------------------------------------------*/
 		void testThreadedMakeString()
 		{
-#if !WIN32 // TODO-Linux FWNX-198: possibly port this test to windows?
+#if !defined(_WIN32) && !defined(_M_X64) // TODO-Linux FWNX-198: possibly port this test to windows?
 			int		n;
 			pthread_t	htid, wtid;
 

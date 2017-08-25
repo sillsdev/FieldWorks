@@ -13,7 +13,7 @@ Last reviewed:
 #ifndef STACK_DUMP_H
 #define STACK_DUMP_H 1
 
-#ifdef WIN32
+#if defined(_WIN32) || defined(_M_X64)
 typedef char SDCHAR;
 #else
 typedef const char SDCHAR;
@@ -70,7 +70,7 @@ class Throwable
 {
 public:
 	// Constructors and Destructor.
-#ifdef WIN32
+#if defined(_WIN32) || defined(_M_X64)
 	Throwable(HRESULT hr = S_OK, const wchar * pszMsg = NULL, int hHelpId = 0,
 		IErrorInfo* pErrInfo = NULL)
 #else
@@ -85,7 +85,7 @@ public:
 		m_qErrInfo = pErrInfo;
 	}
 
-#ifndef WIN32
+#if !defined(_WIN32) && !defined(_M_X64)
 	Throwable(HRESULT hr, const OLECHAR * pszMsg, int hHelpId = 0,
 		IErrorInfo* pErrInfo = NULL)
 	{
@@ -123,7 +123,7 @@ public:
 		return WarnHr(E_FAIL);
 	}
 
-#ifdef WIN32
+#if defined(_WIN32) || defined(_M_X64)
 	const wchar * Message() const
 #else
 	const OLECHAR* Message() const
@@ -156,13 +156,13 @@ public:
 	// the FieldWorks error handler of an error message that contains information the
 	// average user should not see. It should be displayed if "details" is clicked, and copied
 	// to the clipboard.
-#ifdef WIN32
+#if defined(_WIN32) || defined(_M_X64)
 	static const OLECHAR * MoreSep() {return (OLECHAR*)L"\n---***More***---\n";}
 #else
 	static const wchar_t * MoreSep() {return L"\n---***More***---\n";}
 #endif
 
-#ifdef WIN32
+#if defined(_WIN32) || defined(_M_X64)
 	ThrowableSd(HRESULT hr = S_OK, const wchar * pszMsg = NULL, int hHelpId = 0,
 		const char * pszDump = NULL, IErrorInfo* pErrInfo = NULL)
 		:Throwable(hr, pszMsg, hHelpId, pErrInfo), m_staDump(pszDump)
@@ -173,7 +173,7 @@ public:
 #endif
 	{}
 
-#ifndef WIN32
+#if !defined(_WIN32) && !defined(_M_X64)
 	ThrowableSd(HRESULT hr, const OLECHAR * pszMsg, int hHelpId = 0,
 		const char * pszDump = NULL, IErrorInfo* pErrInfo = NULL)
 		:Throwable(hr, pszMsg, hHelpId, pErrInfo), m_staDump(pszDump)
@@ -193,7 +193,7 @@ protected:
 /*----------------------------------------------------------------------------------------------
 	Function to throw an HRESULT as a Throwable object.
 ----------------------------------------------------------------------------------------------*/
-#ifdef WIN32
+#if defined(_WIN32) || defined(_M_X64)
 inline void ThrowHr(HRESULT hr, const wchar * pszMsg, int hHelpId, IErrorInfo* pErrInfo)
 #else
 template<class ZChar>
@@ -207,7 +207,7 @@ inline void ThrowHr(HRESULT hr, const ZChar* pszMsg, int hHelpId, IErrorInfo* pE
 	else // E_INVALIDARG || E_POINTER || E_UNEXPECTED
 		ThrowInternalError(hr, pszMsg, hHelpId, pErrInfo);
 }
-#ifndef WIN32
+#if !defined(_WIN32) && !defined(_M_X64)
 inline void ThrowHr(HRESULT hr)
 {
 	throw Throwable(hr, (OLECHAR*)0, 0);

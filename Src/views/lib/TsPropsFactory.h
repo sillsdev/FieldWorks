@@ -38,7 +38,7 @@ public:
 private:
 	static TsPropsFact g_tpf;
 
-#ifdef WIN32
+#if defined(WIN32) || defined(WIN64)
 	IUnknownPtr m_qunkMarshaler;
 #endif
 
@@ -46,7 +46,7 @@ private:
 	{
 		// Don't call ModuleAddRef since there is a global singleton TsPropsFact. Its
 		// AddRef and Release call ModuleAddRef and ModuleRelease.
-#ifdef WIN32
+#if defined(WIN32) || defined(WIN64)
 		CoCreateFreeThreadedMarshaler(this, &m_qunkMarshaler);
 #endif
 	}

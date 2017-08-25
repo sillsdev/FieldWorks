@@ -117,7 +117,7 @@ UniscribeRunInfo::~UniscribeRunInfo()
 	free(prgAdvance);
 	free(prgcst);
 	free(prgJustAdv);
-#if !WIN32
+#if !defined(_WIN32) && !defined(_M_X64)
 	FreeGlyphs(prgGlyph, cglyph);
 #endif
 	free(prgGlyph);
@@ -167,7 +167,7 @@ void UniscribeRunInfo::UpdateGlyphSize(int cglyphMax)
 	prgAdvance = (int*)realloc(prgAdvance, cglyphMax * isizeof(int));
 	prgcst = (int*)realloc(prgcst, cglyphMax * isizeof(int));
 	prgJustAdv = (int*)realloc(prgJustAdv, cglyphMax * isizeof(int));
-#if WIN32
+#if defined(WIN32) || defined(WIN64)
 	prgGlyph = (WORD*)realloc(prgGlyph, cglyphMax * isizeof(WORD));
 #else
 	prgGlyph = (WORD*)realloc(prgGlyph, cglyphMax * isizeof(void*));
@@ -299,7 +299,7 @@ void UniscribeSegment::ShapePlaceRun(UniscribeRunInfo& uri, bool fCreatingSeg)
 	}
 	SCRIPT_CACHE sc = uri.sc = g_fsc.FindScriptCache(/**uri.pchrp*/uri);
 
-#if !WIN32
+#if !defined(_WIN32) && !defined(_M_X64)
 		// Associate VwGraphics with the cache as Linux uniscribe implementation needs it.
 		IVwGraphicsWin32Ptr qvg32;
 		CheckHr(uri.pvg->QueryInterface(IID_IVwGraphicsWin32, (void **)&qvg32));
@@ -337,7 +337,7 @@ void UniscribeSegment::ShapePlaceRun(UniscribeRunInfo& uri, bool fCreatingSeg)
 		}
 		if (FAILED(hr))
 		{
-#if WIN32
+#if defined(WIN32) || defined(WIN64)
 			StrUni stuErr;
 			OLECHAR rgchErr[201];
 			wcsncpy_s(rgchErr, uri.prgch, min(200, uri.cch));
@@ -483,7 +483,7 @@ public:
 
 			DISABLE_MULTISCRIBE
 			{
-#if WIN32
+#if defined(WIN32) || defined(WIN64)
 				CheckHr(::ScriptTextOut(
 					uri.hdc,
 					&uri.sc,
@@ -3054,7 +3054,7 @@ int UniscribeSegment::StretchGlyphs(UniscribeRunInfo & uri,
 
 #include "Vector_i.cpp"
 template class Vector<OLECHAR>;
-#if WIN32
+#if defined(WIN32) || defined(WIN64)
 template class Vector<WORD>;
 #endif
 template class Vector<SCRIPT_VISATTR>;

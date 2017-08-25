@@ -833,7 +833,7 @@ void VwMappedTxtSrc::AddString(ITsMutString * ptms, VwPropertyStore * pzvps,
 			// See if it has a replacement string
 			TsRunInfo tri;
 			ITsTextPropsPtr qttp;
-			CheckHr(ptms->FetchRunInfoAt(pch - prgch, &tri, &qttp));
+			CheckHr(ptms->FetchRunInfoAt((int)(pch - prgch), &tri, &qttp));
 			SmartBstr sbstr;
 			CheckHr(qttp->GetStrPropValue(ktptObjData, &sbstr));
 			if (!sbstr.Length())
@@ -869,7 +869,7 @@ void VwMappedTxtSrc::AddString(ITsMutString * ptms, VwPropertyStore * pzvps,
 			}
 			CheckHr(qtss->get_Length(&cchSubs));
 			TextMapItem tmi;
-			tmi.ichlog = Cch() - cch + pch - prgch + 1; // index in whole source
+			tmi.ichlog = Cch() - cch + (int)(pch - prgch) + 1; // index in whole source
 			tmi.ichren = tmi.ichlog + cchSubs - 1; // initially just allow for this subs
 			tmi.qtss = qtss;
 			TmiVec & vtmi = Mapper();
@@ -1316,7 +1316,7 @@ public:
 					// (If it does not all fit, ichlog may have been advanced too far,
 					// but it does not matter because if we fill the buffer all loops exit.)
 					if (ichLimSource - ichMinSource > pchLim - pch)
-						ichLimSource = ichMinSource + (pchLim - pch);
+						ichLimSource = ichMinSource + (int)(pchLim - pch);
 					// See if there is anything to actually copy from this section of source.
 					if (ichLimSource > ichMinSource)
 					{

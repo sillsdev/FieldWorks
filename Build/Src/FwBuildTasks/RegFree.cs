@@ -20,6 +20,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Security.Principal;
+using System.Windows.Forms;
 using System.Xml;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
@@ -64,6 +65,13 @@ namespace SIL.FieldWorks.Build.Tasks
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public string Output { get; set; }
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets or sets the Platform win32 or win64/x64.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public string Platform { get; set; }
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -154,7 +162,7 @@ namespace SIL.FieldWorks.Build.Tasks
 				}
 
 				// Register all DLLs temporarily
-				using (var regHelper = new RegHelper(Log))
+				using (var regHelper = new RegHelper(Log, Platform))
 				{
 					regHelper.RedirectRegistry(!UserIsAdmin);
 					var creator = new RegFreeCreator(doc, Log);
@@ -192,7 +200,7 @@ namespace SIL.FieldWorks.Build.Tasks
 					}
 					if (string.IsNullOrEmpty(assemblyVersion))
 						assemblyVersion = "1.0.0.0";
-					XmlElement root = creator.CreateExeInfo(assemblyName, assemblyVersion);
+					XmlElement root = creator.CreateExeInfo(assemblyName, assemblyVersion, Platform);
 					foreach (string fileName in dllPaths)
 					{
 						if (NoTypeLib.Count(f => f.ItemSpec == fileName) != 0)

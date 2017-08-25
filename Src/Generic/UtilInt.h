@@ -27,7 +27,7 @@ const int knMax = 0x7FFFFFFF;
 inline int MulDiv(int n, int nMul, int nDiv)
 {
 	Assert(nDiv != 0);
-
+#ifndef _M_X64
 	__asm
 	{
 		mov		eax,n
@@ -35,6 +35,7 @@ inline int MulDiv(int n, int nMul, int nDiv)
 		idiv	nDiv
 		mov		n,eax
 	}
+#endif
 	return n;
 }
 
@@ -43,7 +44,7 @@ inline int MulDivMod(int n, int nMul, int nDiv, int *pnRem)
 {
 	Assert(nDiv != 0);
 	AssertPtr(pnRem);
-
+#ifndef _M_X64
 	__asm
 	{
 		mov		eax,n
@@ -53,6 +54,7 @@ inline int MulDivMod(int n, int nMul, int nDiv, int *pnRem)
 		mov		DWORD PTR[ecx],edx
 		mov		n,eax
 	}
+#endif
 	return n;
 }
 

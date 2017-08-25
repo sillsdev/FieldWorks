@@ -15,7 +15,7 @@ Description:
 
 #include "BinTree_i.cpp"
 
-#if !WIN32
+#if !defined(_WIN32) && !defined(_M_X64)
 #include <iostream>
 #include "COMLibrary.h"
 #endif
@@ -273,7 +273,7 @@ void GenericFactory::UnregisterFactoryNode(GenericFactory * pfact)
 	UnregisterFactoryNode(pfact->m_rgpobj[1]);
 }
 
-#ifdef WIN32
+#if defined(_WIN32) || defined(_M_X64)
 /*----------------------------------------------------------------------------------------------
 	Returns the registry key used for registering classes. This is normally HKEY_CLASSES_ROOT,
 	unless we register on a per user basis in which case it is
@@ -335,7 +335,7 @@ HKEY GenericFactory::GetClassesRoot(RegKey& hkCuClassesRoot)
 ----------------------------------------------------------------------------------------------*/
 void GenericFactory::Register()
 {
-#if WIN32
+#if defined(_WIN32) || defined(_M_X64)
 
 	// Register server info
 	DWORD dwT;
@@ -424,7 +424,7 @@ void GenericFactory::Register()
 	// Review JohnT: is there any other strategy that might be more reliable?
 	// Do e.g. Korean Windows also use .EXE?
 
-	int cchPath = _tcslen(pszPath);
+	int cchPath = (int)_tcslen(pszPath);
 	if (cchPath < 4)
 		ThrowHr(WarnHr(E_FAIL)); // neither exe nor dll!
 
@@ -498,7 +498,7 @@ void GenericFactory::Register()
 ----------------------------------------------------------------------------------------------*/
 void GenericFactory::Unregister()
 {
-#if WIN32
+#if defined(_WIN32) || defined(_M_X64)
 
 	RegKey hkMyOldProgId;
 	RegKey hkClsid;

@@ -537,7 +537,7 @@ STDMETHODIMP VwEnv::AddProp(int tag, IVwViewConstructor * pvvc, int frag)
 	BEGIN_COM_METHOD;
 	ChkComArgPtr(pvvc);
 
-#if WIN32
+#if defined(WIN32) || defined(WIN64)
 	SmartVariant v;
 #else
 	// TODO-Linux: Why don't we use the SmartVariant?
@@ -1101,7 +1101,7 @@ void VwEnv::TimeToTsString(int64 nTime, DWORD flags, ITsStrFactory * ptsf, ISilD
 	StrUni stuBuf;
 	if (nTime)
 	{
-#ifdef WIN32
+#if defined(WIN32) || defined(WIN64)
 		SYSTEMTIME stim;
 		stim.wYear = (unsigned short) tim.Year();
 		stim.wMonth = (unsigned short) tim.Month();

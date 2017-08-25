@@ -217,7 +217,7 @@ struct SilTime
 	{
 		int64 ftt;
 
-#if WIN32
+#if defined(_WIN32) || defined(_M_X64)
 		::GetSystemTimeAsFileTime((FILETIME *)&ftt);
 		return SilTime(ftt / kfttPerMsec);
 
@@ -353,7 +353,7 @@ struct SilTime
 	{
 		int64 ftt;
 
-#if WIN32
+#if defined(_WIN32) || defined(_M_X64)
 		::GetSystemTimeAsFileTime((FILETIME *)&ftt);
 		m_msec = ftt / kfttPerMsec;
 

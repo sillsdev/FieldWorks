@@ -29,7 +29,7 @@
 		AfterTargets="FwKernel;Views" Condition="'$(OS)'=='Windows_NT'">
 		<RegFree Executable="$(dir-outputBase)/FwKernel.dll" Output="$(dir-outputBase)/FieldWorks.Tests.manifest"
 			Dlls="$(dir-outputBase)\FwKernel.dll;$(dir-outputBase)\Views.dll"
-			Fragments="@(Fragments)"/>
+			Fragments="@(Fragments)" Platform="$(Platform)"/>
 	</Target>
 
 	<Target Name="DebugProcs" DependsOnTargets="initLinux;initWindows">
@@ -76,7 +76,7 @@
 				WorkingDirectory="$(fwrt)/Src/Generic/Test" ContinueOnError="true"/>
 		<RegFree Executable="$(dir-outputBase)\testGenericLib.exe"
 				DependentAssemblies="$(dir-outputBase)\FwKernel.X.manifest;$(dir-outputBase)\Views.X.manifest"
-				Condition="'$(OS)'=='Windows_NT'"/>
+				Condition="'$(OS)'=='Windows_NT'" Platform="$(Platform)"/>
 		<Exec Command="mt.exe -outputresource:$(dir-outputBase)\testGenericLib.exe -manifest $(dir-outputBase)\testGenericLib.exe.manifest"
 				Condition="'$(OS)'=='Windows_NT'"/>
 		<Unitpp Condition="'$(action)'=='test'"
@@ -102,7 +102,7 @@
 			Configuration="$(config-capital)" Target="$(make-target)"
 			BuildRoot="$(fwrt)"
 			WorkingDirectory="$(fwrt)/Src/Kernel"/>
-		<RegFree Executable="$(dir-outputBase)\FwKernel.dll" Output="$(dir-outputBase)\FwKernel.X.manifest" Condition="'$(OS)'=='Windows_NT'" />
+		<RegFree Executable="$(dir-outputBase)\FwKernel.dll" Output="$(dir-outputBase)\FwKernel.X.manifest" Condition="'$(OS)'=='Windows_NT'" Platform="$(Platform)"/>
 		<Message Text="Finished building FwKernel."/>
 	</Target>
 
@@ -128,7 +128,7 @@
 			Configuration="$(config-capital)" Target="$(make-target)"
 			BuildRoot="$(fwrt)"
 			WorkingDirectory="$(fwrt)/Src/views"/>
-		<RegFree Executable="$(dir-outputBase)\Views.dll" Output="$(dir-outputBase)\Views.X.manifest" Condition="'$(OS)'=='Windows_NT'" />
+		<RegFree Executable="$(dir-outputBase)\Views.dll" Output="$(dir-outputBase)\Views.X.manifest" Condition="'$(OS)'=='Windows_NT'" Platform="$(Platform)" />
 		<Message Text="Finished building Views."/>
 	</Target>
 
@@ -146,7 +146,7 @@
 				WorkingDirectory="$(fwrt)/Src/views/Test" ContinueOnError="true"/>
 		<RegFree Executable="$(dir-outputBase)\testViews.exe"
 				DependentAssemblies="$(dir-outputBase)\FwKernel.X.manifest;$(dir-outputBase)\Views.X.manifest"
-				Condition="'$(OS)'=='Windows_NT'"/>
+				Condition="'$(OS)'=='Windows_NT'" Platform="$(Platform)"/>
 		<Exec Command="mt.exe -outputresource:$(dir-outputBase)\testViews.exe -manifest $(dir-outputBase)\testViews.exe.manifest"
 				Condition="'$(OS)'=='Windows_NT'"/>
 		<CreateItem Include="$(dir-outputBase)/*.compmap">
@@ -306,8 +306,8 @@
 		<DownloadsSilOrgOSDownloadUrl Condition="'$(OS)'=='Unix'">$(DownloadsSilOrgDownloadUrl)/Linux</DownloadsSilOrgOSDownloadUrl>
 		<NUnitDownloadUrl>http://github.com/nunit/nunitv2/releases/download/2.6.4/NUnit-2.6.4.zip</NUnitDownloadUrl>
 		<LcmBuildType Condition="'$(OS)'=='Windows_NT' AND '$(arch)'!='x64'">Liblcm_LiblcmWin32masterContinuous</LcmBuildType>
-		<LcmBuildType Condition="'$(OS)'=='Windows_NT' AND '$(arch)'=='x64'">Liblcm_LiblcmWin64masterContinuous</LcmBuildType>
-		<LcmBuildType Condition="'$(OS)'=='Unix'">Liblcm_LiblcmLinux64masterContinuous</LcmBuildType>
+		<LcmBuildType Condition="'$(OS)'=='Windows_NT' AND '$(arch)'=='x64'">Lcm_LiblcmWin64masterContinuous</LcmBuildType>
+		<LcmBuildType Condition="'$(OS)'=='Unix'">Liblcm_Liblcmlinux64masterContinuous</LcmBuildType>
 		<!-- Windows/.Net and Linux/Mono use different extensions for debug information files. -->
 		<DebugInfo Condition="'$(OS)'=='Unix'">dll.mdb</DebugInfo>
 		<DebugInfo Condition="'$(OS)'=='Windows_NT'">pdb</DebugInfo>
@@ -364,8 +364,8 @@
 		<ChorusFiles Include="Vulcan.Uczniowie.HelpProvider.dll"/>
 
 		<LcmOutputBaseFiles Include="ICSharpCode.SharpZipLib.dll" />
-		<LcmOutputBaseFiles Include="Hunspellx86.dll" Condition="'$(OS)'=='Windows_NT' AND '$(arch)'!='x64'" />
-		<LcmOutputBaseFiles Include="Hunspellx64.dll" Condition="'$(OS)'=='Windows_NT' AND '$(arch)'=='x64'" />
+		<LcmOutputBaseFiles Include="Hunspellx86.dll" Condition="'$(OS)'=='Windows_NT' AND '$(Platform)'!='x64'"/>
+		<LcmOutputBaseFiles Include="Hunspellx64.dll" Condition="'$(OS)'=='Windows_NT' AND '$(Platform)'=='x64'"/>
 		<LcmOutputBaseFiles Include="NHunspell.dll" Condition="'$(OS)'=='Windows_NT'" />
 		<LcmOutputBaseFiles Include="Microsoft.Practices.ServiceLocation.dll" />
 		<LcmOutputBaseFiles Include="protobuf-net.dll" />
@@ -522,11 +522,60 @@
 		<Copy SourceFiles="@(LcmTemplatesFiles -> '$(LcmArtifactsDir)/%(Identity)')" DestinationFolder="$(fwrt)/DistFiles/Templates" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
 		<Copy SourceFiles="@(LcmIcuDataFiles -> '$(LcmArtifactsDir)/%(Identity)')" DestinationFolder="$(fwrt)/DistFiles/Icu$(IcuVersion)" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
 		<Copy SourceFiles="@(LcmIcuNrmFiles -> '$(LcmArtifactsDir)/%(Identity)')" DestinationFolder="$(fwrt)/DistFiles/Icu$(IcuVersion)/icudt$(IcuVersion)l" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
+
 		<!-- Copy the downloaded artifacts -->
 		<Copy SourceFiles="@(PalasoFiles -> '$(DownloadsDir)/%(Identity)')" DestinationFolder="$(dir-outputBase)" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
 		<Copy SourceFiles="@(ChorusFiles -> '$(DownloadsDir)/%(Identity)')" DestinationFolder="$(dir-outputBase)" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
 		<Copy SourceFiles="@(DownloadedFiles)" DestinationFolder="$(dir-outputBase)"
 			SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
+
+		<ItemGroup>
+			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/ICSharpCode.SharpZipLib.dll" />
+			<LcmOutputBaseFiles Condition="'$(OS)'=='Windows_NT' AND '$(Platform)'!='x64'" Include="$(DownloadsDir)/LCM/Hunspellx86.dll"  />
+			<LcmOutputBaseFiles Condition="'$(OS)'=='Windows_NT' AND '$(Platform)'=='x64'" Include="$(DownloadsDir)/LCM/Hunspellx64.dll" />
+			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/NHunspell.dll" Condition="'$(OS)'=='Windows_NT'" />
+			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/Microsoft.Practices.ServiceLocation.dll" />
+			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/protobuf-net.dll" />
+			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/StructureMap.dll" />
+			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/Tools.dll" />
+			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/SIL.LCModel.Utils.dll" />
+			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/SIL.LCModel.Utils.$(DebugInfo)" />
+			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/SIL.LCModel.Utils.Tests.dll" />
+			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/SIL.LCModel.Utils.Tests.dll.config" />
+			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/SIL.LCModel.Utils.Tests.$(DebugInfo)" />
+			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/SIL.LCModel.Core.dll" />
+			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/SIL.LCModel.Core.dll.config" Condition="'$(OS)'=='Unix'" />
+			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/SIL.LCModel.Core.$(DebugInfo)" />
+			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/SIL.LCModel.Core.Tests.dll" />
+			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/SIL.LCModel.Core.Tests.dll.config" />
+			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/SIL.LCModel.Core.Tests.$(DebugInfo)" />
+			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/SIL.LCModel.dll" />
+			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/SIL.LCModel.$(DebugInfo)" />
+			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/SIL.LCModel.Tests.dll" />
+			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/SIL.LCModel.Tests.dll.config" />
+			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/SIL.LCModel.Tests.$(DebugInfo)" />
+
+			<LcmOutputCommonFiles Include="$(DownloadsDir)/LCM/KernelInterfaces/FwKernelTlb.iip" />
+
+			<LcmFwKernelFiles Include="$(DownloadsDir)/LCM/KernelInterfaces/common.idh" />
+			<LcmFwKernelFiles Include="$(DownloadsDir)/LCM/KernelInterfaces/FwKernel.idh" />
+			<LcmFwKernelFiles Include="$(DownloadsDir)/LCM/KernelInterfaces/Language.idh" />
+			<LcmFwKernelFiles Include="$(DownloadsDir)/LCM/KernelInterfaces/TextServ.idh" />
+			<LcmFwKernelFiles Include="$(DownloadsDir)/LCM/KernelInterfaces/FwKernelTlb.idl" />
+
+			<LcmDistFiles Include="$(DownloadsDir)/LCM/Styles.dtd" />
+
+			<LcmTemplatesFiles Include="$(DownloadsDir)/LCM/Templates/GOLDEtic.xml" />
+			<LcmTemplatesFiles Include="$(DownloadsDir)/LCM/Templates/NewLangProj.fwdata" />
+			<LcmTemplatesFiles Include="$(DownloadsDir)/LCM/Templates/POS.xml" />
+			<LcmTemplatesFiles Include="$(DownloadsDir)/LCM/Templates/SemDom.xml" />
+
+			<LcmIcuDataFiles Include="$(DownloadsDir)/LCM/IcuData/UnicodeDataOverrides.txt" />
+
+			<LcmIcuNrmFiles Include="$(DownloadsDir)/LCM/IcuData/icudt$(IcuVersion)l/nfc_fw.nrm" />
+			<LcmIcuNrmFiles Include="$(DownloadsDir)/LCM/IcuData/icudt$(IcuVersion)l/nfkc_fw.nrm" />
+		</ItemGroup>
+
 		<!-- NuGet packages. Property- and ItemGroups are inside the target so $(arch) and *'s are read properly -->
 		<PropertyGroup>
 			<!-- Yes, the Windows version is missing the the OS and the 32-bit architecture. -->

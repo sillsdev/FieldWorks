@@ -174,7 +174,7 @@ public:
 		x = MulDiv(x, nNum, nDen);
 		y = MulDiv(y, nNum, nDen);
 	}
-#ifdef WIN32
+#if defined(_WIN32) || defined(_M_X64)
 	void ClientToScreen(HWND hwnd)
 	{
 		::ClientToScreen(hwnd, this);
@@ -598,7 +598,7 @@ public:
 		return true;
 	}
 
-#ifdef WIN32
+#if defined(_WIN32) || defined(_M_X64)
 	void ClientToScreen(HWND hwnd)
 	{
 		POINT topLeft = {left, top};

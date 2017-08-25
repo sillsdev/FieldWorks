@@ -203,7 +203,7 @@ void MoveElement(void * pv, int cbElement, int ivSrc, int ivTarget);
 	New operators.
 ***********************************************************************************************/
 #ifdef DEBUG
-#if WIN32
+#if defined(_WIN32) || defined(_M_X64)
 	__declspec(dllimport) bool WINAPI CanAllocate();
 #else
 	inline bool CanAllocate() { return true; }
@@ -214,22 +214,25 @@ void MoveElement(void * pv, int cbElement, int ivSrc, int ivTarget);
 	inline void * __cdecl operator new(size_t cb, bool fClear, int cbExtra,
 		const char * pszFile, int nLine)
 	{
-#if WIN32
+#if defined(_WIN32) || defined(_M_X64)
 		if (!CanAllocate() || cb + cbExtra < cb)
 			return NULL;
 #endif // in gcc - 'operator new' must not return NULL unless it is declared throw()
-#if WIN32
+#if defined(_WIN32) || defined(_M_X64)
 		void * pv = ::operator new(cb + cbExtra, _NORMAL_BLOCK, pszFile, nLine);
 #else
 		void * pv = ::operator new(cb + cbExtra);
 #endif
 		if (!pv)
 			ThrowHr(WarnHr(E_OUTOFMEMORY));
+#ifndef _M_X64
 		if (fClear)
 			ClearBytes(pv, cb + cbExtra);
+#endif
+
 		return pv;
 	}
-#ifndef WIN32
+#if !defined(_WIN32) && !defined(_M_X64)
 	inline void * __cdecl operator new[](size_t cb, bool fClear, int cbExtra,
 		const char * pszFile, int nLine)
 	{
@@ -241,7 +244,7 @@ void MoveElement(void * pv, int cbElement, int ivSrc, int ivTarget);
 	{
 		::operator delete(pv);
 	}
-#ifndef WIN32
+#if !defined(_WIN32) && !defined(_M_X64)
 	inline void __cdecl operator delete[](void * pv, bool fClear, int cbExtra,
 		const char * pszFile, int nLine)
 	{
@@ -250,7 +253,7 @@ void MoveElement(void * pv, int cbElement, int ivSrc, int ivTarget);
 #endif
 	inline void * __cdecl operator new(size_t cb, bool fClear, const char * pszFile, int nLine)
 	{
-#if WIN32
+#if defined(_WIN32) || defined(_M_X64)
 		if (!CanAllocate())
 			return NULL;
 		void * pv = ::operator new(cb, _NORMAL_BLOCK, pszFile, nLine);
@@ -259,14 +262,16 @@ void MoveElement(void * pv, int cbElement, int ivSrc, int ivTarget);
 #endif
 		if (!pv)
 			ThrowHr(WarnHr(E_OUTOFMEMORY));
+#ifndef _M_X64
 		if (fClear)
 			ClearBytes(pv, cb);
+#endif
 		return pv;
 	}
-#ifndef WIN32
+#if !defined(_WIN32) && !defined(_M_X64)
 	inline void * __cdecl operator new[](size_t cb, bool fClear, const char * pszFile, int nLine)
 	{
-#if WIN32
+#if defined(_WIN32) || defined(_M_X64)
 		return operator new[](cb, fClear, pszFile, nLine);
 #else
 		return operator new(cb, fClear, pszFile, nLine);
@@ -277,7 +282,7 @@ void MoveElement(void * pv, int cbElement, int ivSrc, int ivTarget);
 	{
 		::operator delete(pv);
 	}
-#ifndef WIN32
+#if !defined(_WIN32) && !defined(_M_X64)
 	inline void __cdecl operator delete[](void * pv, bool fClear, const char * pszFile, int nLine)
 	{
 		operator delete(pv, fClear, pszFile, nLine);
@@ -309,11 +314,11 @@ void MoveElement(void * pv, int cbElement, int ivSrc, int ivTarget);
 	}
 	inline BSTR __cdecl DebugSysAllocStringLen(const OLECHAR * prgwch, size_t cch)
 	{
-		return CanAllocate() ? SysAllocStringLen(prgwch, cch) : NULL;
+		return CanAllocate() ? SysAllocStringLen(prgwch, (int)cch) : NULL;
 	}
 	inline BSTR __cdecl DebugSysAllocStringByteLen(const char * prgch, size_t cb)
 	{
-		return CanAllocate() ? SysAllocStringByteLen(prgch, cb) : NULL;
+		return CanAllocate() ? SysAllocStringByteLen(prgch, (int)cb) : NULL;
 	}
 	inline int __cdecl DebugSysReAllocString(BSTR * pbstr, const OLECHAR * pwsz)
 	{
@@ -322,7 +327,7 @@ void MoveElement(void * pv, int cbElement, int ivSrc, int ivTarget);
 	inline int __cdecl DebugSysReAllocStringLen(BSTR * pbstr, const OLECHAR * prgwch,
 		size_t cch)
 	{
-		return CanAllocate() ? SysReAllocStringLen(pbstr, prgwch, cch) : FALSE;
+		return CanAllocate() ? SysReAllocStringLen(pbstr, prgwch, (int)cch) : FALSE;
 	}
 
 	#define NewObj new(true, THIS_FILE, __LINE__)
@@ -360,7 +365,7 @@ void MoveElement(void * pv, int cbElement, int ivSrc, int ivTarget);
 	inline void * __cdecl operator new(size_t cb, bool fClear, int cbExtra)
 	{
 		if (cb + cbExtra < cb)
-#if WIN32
+#if defined(_WIN32) || defined(_M_X64)
 			return NULL;
 #else
 			ThrowHr(WarnHr(E_INVALIDARG), L"::new");
@@ -372,7 +377,7 @@ void MoveElement(void * pv, int cbElement, int ivSrc, int ivTarget);
 			ClearBytes(pv, cb + cbExtra);
 		return pv;
 	}
-#ifndef WIN32
+#if !defined(_WIN32) && !defined(_M_X64)
 	inline void * __cdecl operator new[](size_t cb, bool fClear, int cbExtra)
 	{
 		return operator new(cb, fClear, cbExtra);
@@ -382,7 +387,7 @@ void MoveElement(void * pv, int cbElement, int ivSrc, int ivTarget);
 	{
 		::operator delete(pv);
 	}
-#ifndef WIN32
+#if !defined(_WIN32) && !defined(_M_X64)
 	inline void __cdecl operator delete[](void * pv, bool fClear, int cbExtra)
 	{
 		operator delete(pv, fClear, cbExtra);
@@ -397,7 +402,7 @@ void MoveElement(void * pv, int cbElement, int ivSrc, int ivTarget);
 			ClearBytes(pv, cb);
 		return pv;
 	}
-#ifndef WIN32
+#if !defined(_WIN32) && !defined(_M_X64)
 	inline void * __cdecl operator new[](size_t cb, bool fClear)
 	{
 		return operator new(cb, fClear);
@@ -407,7 +412,7 @@ void MoveElement(void * pv, int cbElement, int ivSrc, int ivTarget);
 	{
 		::operator delete(pv);
 	}
-#ifndef WIN32
+#if !defined(_WIN32) && !defined(_M_X64)
 	inline void __cdecl operator delete[](void * pv, bool fClear)
 	{
 		operator delete(pv, fClear);

@@ -49,7 +49,7 @@ namespace SIL.FieldWorks.Build.Tasks
 
 			if (File.Exists(Dll))
 			{
-				using (var regHelper = new RegHelper(Log))
+				using (var regHelper = new RegHelper(Log, "win32"))
 				{
 					return regHelper.Register(Dll, false, RegisterTypeLibrary);
 				}

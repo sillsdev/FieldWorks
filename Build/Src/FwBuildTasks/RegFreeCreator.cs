@@ -109,7 +109,7 @@ namespace SIL.FieldWorks.Build.Tasks
 		///  This method also adds the root element with all necessary namespaces.
 		///  </summary>
 		/// ------------------------------------------------------------------------------------
-		public XmlElement CreateExeInfo(string assemblyName, string assemblyVersion)
+		public XmlElement CreateExeInfo(string assemblyName, string assemblyVersion, string Platform)
 		{
 			XmlElement elem = _doc.CreateElement("assembly", UrnAsmv1);
 			elem.SetAttribute("manifestVersion", "1.0");
@@ -131,7 +131,7 @@ namespace SIL.FieldWorks.Build.Tasks
 				XmlElement assemblyIdentity = _doc.CreateElement("assemblyIdentity", UrnAsmv1);
 				assemblyIdentity.SetAttribute("name", assemblyName);
 				assemblyIdentity.SetAttribute("version", assemblyVersion);
-				assemblyIdentity.SetAttribute("type", "win32");
+				assemblyIdentity.SetAttribute("type", Platform);
 
 				oldChild = elem.SelectSingleNode("asmv1:assemblyIdentity", _nsManager);
 				if (oldChild != null)

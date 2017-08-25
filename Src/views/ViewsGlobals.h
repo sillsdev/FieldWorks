@@ -26,7 +26,7 @@ Last reviewed:
 #include "lib/DebugReport.h"
 #endif
 
-#ifdef WIN32
+#if defined(WIN32) || defined(WIN64)
 #include "VwAccessRoot.h"
 #endif
 
@@ -36,7 +36,7 @@ public:
 	ViewsGlobals();
 	~ViewsGlobals();
 
-#ifdef WIN32
+#if defined(WIN32) || defined(WIN64)
 	// Originally from VwAccessRoot.h
 	static BoxAccessorMap *m_hmboxacc;
 #endif

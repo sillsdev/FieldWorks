@@ -359,7 +359,7 @@ LEmptySeg:
 			wchar ch = *pch;
 			if (ch == '\n' || ch == '\t' || ch == '\r' || ch == 0xfffc || ch == 0x2028)
 			{
-				ichLimText = ichMinSeg + pch - prgchBuf;
+				ichLimText = (int)(ichMinSeg + pch - prgchBuf);
 				if (ichLimBacktrack > ichLimText)
 					ichLimBacktrack = ichLimText;
 				fGotHardBreak = true;

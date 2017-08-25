@@ -8,7 +8,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Security.Principal;
 using System.Threading;
-
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 

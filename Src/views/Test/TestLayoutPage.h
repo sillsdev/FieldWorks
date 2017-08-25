@@ -48,7 +48,7 @@ namespace TestViews
 		ComBool fAllowFail;
 		int dysAvailHeight;
 	};
-#if WIN32
+#if defined(_WIN32) || defined(_M_X64)
 	template Vector<AddDependentObjectsArgs>;
 #endif
 
@@ -1111,7 +1111,7 @@ namespace TestViews
 
 		void testTwoColumns()
 		{
-#ifdef WIN32 // TODO-Linux: FWNX-453
+#if defined(_WIN32) || defined(_M_X64) // TODO-Linux: FWNX-453
 			CreateBoringStrings();
 			CreateTestStTexts(2);
 			SetupRootWithoutMargins();
@@ -1170,7 +1170,7 @@ namespace TestViews
 
 		void testTwoColumns_OneLineFitOnEachColumn()
 		{
-#ifdef WIN32 // TODO-Linux: FWNX-453
+#if defined(_WIN32) || defined(_M_X64) // TODO-Linux: FWNX-453
 			CreateBoringStrings();
 			CreateTestStTexts(2);
 			SetupRootWithoutMargins();
