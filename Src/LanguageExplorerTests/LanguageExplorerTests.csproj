@@ -53,10 +53,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Downloads\ExCSS.dll</HintPath>
     </Reference>
-    <Reference Include="FieldWorks, Version=10.0.0.22024, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\FieldWorks.exe</HintPath>
-    </Reference>
     <Reference Include="Filters, Version=10.0.0.14010, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\Filters.dll</HintPath>

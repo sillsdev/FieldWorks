@@ -7,10 +7,11 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using SIL.FieldWorks.Common.Framework;
+using LanguageExplorer;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using System.Windows.Forms;
+using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks
@@ -111,12 +112,12 @@ namespace SIL.FieldWorks
 		/// <summary>
 		/// Lets the user delete any FW databases that are not currently open
 		/// </summary>
-		/// <param name="app">The application.</param>
+		/// <param name="helpTopicProvider">The application's help provider.</param>
 		/// <param name="dialogOwner">The owner of the dialog</param>
 		/// ------------------------------------------------------------------------------------
-		public void DeleteProject(IFlexApp app, Form dialogOwner)
+		public void DeleteProject(IHelpTopicProvider helpTopicProvider, Form dialogOwner)
 		{
-			FieldWorks.DeleteProject(dialogOwner, app);
+			FieldWorks.DeleteProject(dialogOwner, helpTopicProvider);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -136,38 +137,38 @@ namespace SIL.FieldWorks
 		/// <summary>
 		/// Restore a project.
 		/// </summary>
-		/// <param name="fwApp">The FieldWorks application.</param>
+		/// <param name="helpTopicProvider">The FieldWorks application's help topic provider.</param>
 		/// <param name="dialogOwner">The dialog owner.</param>
 		/// ------------------------------------------------------------------------------------
-		public void RestoreProject(IFlexApp fwApp, Form dialogOwner)
+		public void RestoreProject(IHelpTopicProvider helpTopicProvider, Form dialogOwner)
 		{
-			FieldWorks.RestoreProject(dialogOwner, fwApp);
+			FieldWorks.RestoreProject(dialogOwner, helpTopicProvider);
 		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Archive selected project files using RAMP
 		/// </summary>
-		/// <param name="fwApp">The FieldWorks application</param>
+		/// <param name="helpTopicProvider">The FieldWorks application's help topic provider.</param>
 		/// <param name="dialogOwner">The owner of the dialog</param>
 		/// <returns>The list of the files to archive, or <c>null</c> if the user cancels the
 		/// archive dialog</returns>
 		/// ------------------------------------------------------------------------------------
-		public List<string> ArchiveProjectWithRamp(IFlexApp fwApp, Form dialogOwner)
+		public List<string> ArchiveProjectWithRamp(IHelpTopicProvider helpTopicProvider, Form dialogOwner)
 		{
-			return FieldWorks.ArchiveProjectWithRamp(dialogOwner, fwApp);
+			return FieldWorks.ArchiveProjectWithRamp(dialogOwner, helpTopicProvider);
 		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Restore a project.
 		/// </summary>
-		/// <param name="fwApp">The FieldWorks application.</param>
+		/// <param name="app">The FieldWorks application.</param>
 		/// <param name="dialogOwner">The dialog owner.</param>
 		/// ------------------------------------------------------------------------------------
-		public void FileProjectLocation(IFlexApp fwApp, Form dialogOwner)
+		public void FileProjectLocation(IApp app, Form dialogOwner)
 		{
-			FieldWorks.FileProjectLocation(dialogOwner, fwApp);
+			FieldWorks.FileProjectLocation(dialogOwner, app, Cache);
 		}
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

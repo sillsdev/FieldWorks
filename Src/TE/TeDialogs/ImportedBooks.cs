@@ -11,9 +11,9 @@ using System.Windows.Forms;
 using SIL.LCModel.Core.Scripture;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.Framework;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
@@ -37,7 +37,7 @@ namespace SIL.FieldWorks.TE
 		/// <summary>The FDO Cache</summary>
 		protected readonly LcmCache m_cache;
 
-		private readonly IFlexApp m_app;
+		private readonly IApp m_app;
 		private readonly IHelpTopicProvider m_helpTopicProvider;
 		/// <summary>The saved version containing the imported books.</summary>
 		protected readonly IScrDraft m_importVersion;
@@ -78,7 +78,7 @@ namespace SIL.FieldWorks.TE
 		/// <param name="app">The app.</param>
 		/// --------------------------------------------------------------------------------
 		protected ImportedBooks(LcmCache cache, IScrDraft importVersion, IScrDraft backupVersion,
-			IHelpTopicProvider helpTopicProvider, IFlexApp app)
+			IHelpTopicProvider helpTopicProvider, IApp app)
 		{
 			InitializeComponent();
 
@@ -105,7 +105,7 @@ namespace SIL.FieldWorks.TE
 		/// --------------------------------------------------------------------------------
 		public ImportedBooks(LcmCache cache, LcmStyleSheet styleSheet,
 			IScrDraft importVersion, IScrDraft backupVersion, IEnumerable<int> booksImported,
-			IHelpTopicProvider helpTopicProvider, IFlexApp app) :
+			IHelpTopicProvider helpTopicProvider, IApp app) :
 			this(cache, importVersion, backupVersion, helpTopicProvider, app)
 		{
 			foreach (int bookId in booksImported)

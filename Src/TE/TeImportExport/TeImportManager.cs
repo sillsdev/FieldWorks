@@ -13,7 +13,6 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.Framework;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
@@ -40,7 +39,7 @@ namespace SIL.FieldWorks.TE
 		private readonly Form m_mainWnd;
 		private readonly LcmStyleSheet m_styleSheet;
 		private readonly IHelpTopicProvider m_helpTopicProvider;
-		private readonly IFlexApp m_app;
+		private readonly IApp m_app;
 		private readonly bool m_fParatextStreamlinedImport;
 		private string m_sOXESFile;
 
@@ -61,7 +60,7 @@ namespace SIL.FieldWorks.TE
 		/// <param name="fParatextStreamlinedImport">if set to <c>true</c> do a Paratext
 		/// streamlined import (minimal UI).</param>
 		/// ------------------------------------------------------------------------------------
-		internal TeImportManager(Form mainWnd, LcmStyleSheet styleSheet, IFlexApp app,
+		internal TeImportManager(Form mainWnd, LcmStyleSheet styleSheet, IApp app,
 			bool fParatextStreamlinedImport)
 			: this(app.Cache, styleSheet, app, fParatextStreamlinedImport)
 		{
@@ -79,7 +78,7 @@ namespace SIL.FieldWorks.TE
 		/// streamlined import (minimal UI).</param>
 		/// <remarks>This version is for testing only</remarks>
 		/// ------------------------------------------------------------------------------------
-		protected TeImportManager(LcmCache cache, LcmStyleSheet styleSheet, IFlexApp app,
+		protected TeImportManager(LcmCache cache, LcmStyleSheet styleSheet, IApp app,
 			bool fParatextStreamlinedImport)
 		{
 			m_cache = cache;
@@ -91,19 +90,18 @@ namespace SIL.FieldWorks.TE
 		#endregion
 
 		#region Public Static methods
-
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Perform a Paratext streamlined import
 		/// </summary>
 		/// <param name="mainWnd">The main window.</param>
 		/// <param name="stylesheet">The Scripture stylesheet.</param>
-		/// <param name="app">The app. It is provided as an 'object', since the caller has to use Reflection and has no access to the 'IFlexApp' interface.</param>
+		/// <param name="app">The app. It is provided as an 'object', since the caller has to use Reflection and has no access to the 'IApp' interface.</param>
 		/// <returns><c>true</c> if something got imported; <c>false</c> otherwise</returns>
 		/// ------------------------------------------------------------------------------------
 		public static bool ImportParatext(Form mainWnd, LcmStyleSheet stylesheet, object app)
 		{
-			TeImportManager mgr = new TeImportManager(mainWnd, stylesheet, (IFlexApp)app, true);
+			TeImportManager mgr = new TeImportManager(mainWnd, stylesheet, (IApp)app, true);
 			return mgr.ImportSf();
 		}
 		#endregion

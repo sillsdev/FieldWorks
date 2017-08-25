@@ -4,11 +4,11 @@
 
 using System.Collections.Generic;
 using System.Windows.Forms;
+using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.LCModel;
 using SIL.LCModel.Utils;
 
-namespace SIL.FieldWorks.Common.Framework
+namespace LanguageExplorer
 {
 	/// <summary>
 	/// Interface for a Flex Application, which builds on IApp
@@ -71,11 +71,6 @@ namespace SIL.FieldWorks.Common.Framework
 		/// <param name="progressDlg">The progress dialog.</param>
 		/// <returns>True if the initialization was successful, false otherwise</returns>
 		bool InitCacheForApp(IThreadedProgress progressDlg);
-
-		/// <summary>
-		/// Get the FDO cache.
-		/// </summary>
-		LcmCache Cache { get; }
 
 		/// <summary>
 		/// Gets the FieldWorks manager for this application.

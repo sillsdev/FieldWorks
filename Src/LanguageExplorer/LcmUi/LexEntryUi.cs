@@ -223,30 +223,23 @@ namespace LanguageExplorer.LcmUi
 			}
 		}
 
-		// Currently only called from WCF (11/21/2013 - AP)
-		public static void DisplayEntry(LcmCache cache, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber,
-			IHelpTopicProvider helpProvider, string helpFileKey, ITsString tssWfIn, IWfiAnalysis wfa)
-		{
-			DisplayEntries(cache, null, propertyTable, publisher, subscriber, helpProvider, helpFileKey, tssWfIn, wfa);
-		}
-
-		internal static void DisplayEntries(LcmCache cache, IWin32Window owner, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber,
+		public static void DisplayEntries(LcmCache cache, IWin32Window owner, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber,
 			IHelpTopicProvider helpProvider, string helpFileKey, ITsString tssWfIn, IWfiAnalysis wfa)
 		{
 			ITsString tssWf = tssWfIn;
 			var entries = FindEntriesForWordformUI(cache, tssWf, wfa);
 
 			IVwStylesheet styleSheet = GetStyleSheet(cache, propertyTable);
-				if (entries == null || entries.Count == 0)
-				{
+			if (entries == null || entries.Count == 0)
+			{
 				ILexEntry entry = ShowFindEntryDialog(cache, propertyTable, publisher, subscriber, tssWf, owner);
-					if (entry == null)
-						return;
-					entries = new List<ILexEntry>(1);
-					entries.Add(entry);
-				}
-			DisplayEntriesRecursive(cache, owner, propertyTable, publisher, subscriber, styleSheet, helpProvider, helpFileKey, entries, tssWf);
+				if (entry == null)
+					return;
+				entries = new List<ILexEntry>(1);
+				entries.Add(entry);
 			}
+			DisplayEntriesRecursive(cache, owner, propertyTable, publisher, subscriber, styleSheet, helpProvider, helpFileKey, entries, tssWf);
+		}
 
 		private static void DisplayEntriesRecursive(LcmCache cache, IWin32Window owner,
 			IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, IVwStylesheet stylesheet,
@@ -339,7 +332,7 @@ namespace LanguageExplorer.LcmUi
 			// Get a style sheet for the Language Explorer, and store it in the property table.
 			LcmStyleSheet styleSheet = new LcmStyleSheet();
 			styleSheet.Init(cache, cache.LanguageProject.Hvo, LangProjectTags.kflidStyles);
-			propertyTable.SetProperty("LcmStyleSheet", styleSheet, false, true);
+			propertyTable.SetProperty("LcmStyleSheet", styleSheet, false, false);
 			return styleSheet;
 		}
 
@@ -359,11 +352,48 @@ namespace LanguageExplorer.LcmUi
 #endif
 		}
 
+		/// ------------------------------------------------------------
+		/// <summary>
+		/// Assuming the selection can be expanded to a word and a corresponding LexEntry can
+		/// be found, show the related words dialog with the words related to the selected one.
+		/// </summary>
+		/// <param name="cache">The cache.</param>
+		/// <param name="owner">The owning window.</param>
+		/// <param name="styleSheet"></param>
+		/// <param name="helpProvider">The help provider.</param>
+		/// <param name="helpFileKey">The help file key.</param>
+		/// <param name="tssWf">The ITsString for the word form.</param>
+		/// <param name="hideInsertButton"></param>
+		/// <param name="sel"></param>
+		/// ------------------------------------------------------------
 		// Currently only called from WCF (11/21/2013 - AP)
-		public static void DisplayRelatedEntries(LcmCache cache, IPropertyTable propertyTable,
-			IHelpTopicProvider helpProvider, string helpFileKey, ITsString tss)
+		public static void DisplayRelatedEntries(LcmCache cache, IWin32Window owner,
+			IVwStylesheet styleSheet, IHelpTopicProvider helpProvider, string helpFileKey, ITsString tssWf,
+			bool hideInsertButton, IVwSelection sel = null)
 		{
-			DisplayRelatedEntries(cache, null, propertyTable, helpProvider, helpFileKey, tss, true);
+			if (tssWf == null || tssWf.Length == 0)
+				return;
+
+			using (var leui = FindEntryForWordform(cache, tssWf))
+			{
+				if (leui == null)
+				{
+					RelatedWords.ShowNotInDictMessage(owner);
+					return;
+				}
+				int hvoEntry = leui.Object.Hvo;
+				int[] domains;
+				int[] lexrels;
+				IVwCacheDa cdaTemp;
+				if (!RelatedWords.LoadDomainAndRelationInfo(cache, hvoEntry, out domains, out lexrels, out cdaTemp, owner))
+				{
+					return;
+				}
+				using (var rw = new RelatedWords(cache, sel, hvoEntry, domains, lexrels, cdaTemp, styleSheet, hideInsertButton))
+				{
+					rw.ShowDialog(owner);
+				}
+			}
 		}
 
 		/// ------------------------------------------------------------
@@ -384,31 +414,7 @@ namespace LanguageExplorer.LcmUi
 			IPropertyTable propertyTable, IHelpTopicProvider helpProvider, string helpFileKey, ITsString tssWf,
 			bool hideInsertButton)
 		{
-			if (tssWf == null || tssWf.Length == 0)
-				return;
-
-			using (LexEntryUi leui = FindEntryForWordform(cache, tssWf))
-			{
-				// This doesn't work as well (unless we do a commit) because it may not see current typing.
-				//LexEntryUi leui = LexEntryUi.FindEntryForWordform(cache, hvo, tag, ichMin, ichLim);
-				if (leui == null)
-				{
-					RelatedWords.ShowNotInDictMessage(owner);
-					return;
-				}
-				int hvoEntry = leui.Object.Hvo;
-				int[] domains;
-				int[] lexrels;
-				IVwCacheDa cdaTemp;
-				if (!RelatedWords.LoadDomainAndRelationInfo(cache, hvoEntry, out domains, out lexrels, out cdaTemp, owner))
-					return;
-				IVwStylesheet styleSheet = GetStyleSheet(cache, propertyTable);
-				using (RelatedWords rw = new RelatedWords(cache, null, hvoEntry, domains, lexrels, cdaTemp, styleSheet,
-					hideInsertButton))
-				{
-					rw.ShowDialog(owner);
-				}
-			}
+			DisplayRelatedEntries(cache, owner, GetStyleSheet(cache, propertyTable), helpProvider, helpFileKey, tssWf, hideInsertButton);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -441,29 +447,7 @@ namespace LanguageExplorer.LcmUi
 			sel3.TextSelInfo(true, out tss, out ichLim, out fAssocPrev, out hvo, out tag, out ws);
 			if (tss.Text == null)
 				return;
-			ITsString tssWf = tss.GetSubstring(ichMin, ichLim);
-			using (LexEntryUi leui = FindEntryForWordform(cache, tssWf))
-			{
-				// This doesn't work as well (unless we do a commit) because it may not see current typing.
-				//LexEntryUi leui = LexEntryUi.FindEntryForWordform(cache, hvo, tag, ichMin, ichLim);
-				if (leui == null)
-				{
-					if (tssWf != null && tssWf.Length > 0)
-						RelatedWords.ShowNotInDictMessage(owner);
-					return;
-				}
-				int hvoEntry = leui.Object.Hvo;
-				int[] domains;
-				int[] lexrels;
-				IVwCacheDa cdaTemp;
-				if (!RelatedWords.LoadDomainAndRelationInfo(cache, hvoEntry, out domains, out lexrels, out cdaTemp, owner))
-					return;
-				IVwStylesheet styleSheet = GetStyleSheet(cache, propertyTable);
-				using (RelatedWords rw = new RelatedWords(cache, sel3, hvoEntry, domains, lexrels, cdaTemp, styleSheet, false))
-				{
-					rw.ShowDialog(owner);
-				}
-			}
+			DisplayRelatedEntries(cache, owner, GetStyleSheet(cache, propertyTable), helpProvider, helpFileKey, tss.GetSubstring(ichMin, ichLim), false, sel);
 		}
 
 		/// ------------------------------------------------------------------------------------

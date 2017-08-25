@@ -723,6 +723,9 @@
       <DesignTime>True</DesignTime>
     </Compile>
     <Compile Include="Controls\XMLViews\XmlViewsUtils.cs" />
+    <Compile Include="IFieldWorksManager.cs" />
+    <Compile Include="IFlexApp.cs" />
+    <Compile Include="IFwMainWnd.cs" />
     <Compile Include="LanguageExplorerConstants.cs" />
     <Compile Include="LcmUi\BulkPosEditor.cs" />
     <Compile Include="LcmUi\Dialogs\CantRestoreLinkedFilesToOriginalLocation.cs">

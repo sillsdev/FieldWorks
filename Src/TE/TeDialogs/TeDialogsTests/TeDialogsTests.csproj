@@ -140,10 +140,6 @@
     <Reference Include="SIL.LCModel.Tests">
       <HintPath>..\..\..\..\Output\Debug\SIL.LCModel.Tests.dll</HintPath>
     </Reference>
-    <Reference Include="Framework">
-      <Name>Framework</Name>
-      <HintPath>..\..\..\..\Output\Debug\Framework.dll</HintPath>
-    </Reference>
     <Reference Include="FwControls">
       <Name>FwControls</Name>
       <HintPath>..\..\..\..\Output\Debug\FwControls.dll</HintPath>

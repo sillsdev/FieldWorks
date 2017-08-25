@@ -5,8 +5,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.ServiceModel;
+using LanguageExplorer.HelpTopics;
+using LanguageExplorer.LcmUi;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
@@ -67,11 +68,11 @@ namespace SIL.FieldWorks.LexicalProvider
 				PubSubSystemFactory.CreatePubSubSystem(out publisher, out subscriber);
 				using (var propertyTable = PropertyTableFactory.CreatePropertyTable(publisher))
 				{
-					var flexApp = FieldWorks.GetOrCreateFlexApp();
-					propertyTable.SetProperty("App", flexApp, true, true);
-
-					var methodInfo = GetLexEntryUiType.GetMethod("DisplayEntry", BindingFlags.Static | BindingFlags.Public);
-					methodInfo.Invoke(null, new object[]{ FieldWorks.Cache, propertyTable, publisher, propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), "UserHelpFile", tss, null });
+					var styleSheet = new LcmStyleSheet();
+					styleSheet.Init(FieldWorks.Cache, FieldWorks.Cache.LanguageProject.Hvo, LangProjectTags.kflidStyles);
+					propertyTable.SetProperty("LcmStyleSheet", styleSheet, false, false);
+					LexEntryUi.DisplayEntries(FieldWorks.Cache, null, propertyTable, publisher, subscriber, new FlexHelpTopicProvider(), "UserHelpFile", tss, null);
+					propertyTable.RemoveProperty("LcmStyleSheet");
 				}
 			});
 		}
@@ -95,22 +96,11 @@ namespace SIL.FieldWorks.LexicalProvider
 			// WCF server to not be OneWay. (Otherwise, time-out exceptions occur.)
 			FieldWorks.ThreadHelper.InvokeAsync(() =>
 			{
-				ITsString tss = TsStringUtils.MakeString(entry, FieldWorks.Cache.DefaultVernWs);
-				IPublisher publisher;
-				ISubscriber subscriber;
-				PubSubSystemFactory.CreatePubSubSystem(out publisher, out subscriber);
-				using (var propertyTable = PropertyTableFactory.CreatePropertyTable(publisher)) // Nobody is subscribed.
-				{
-					var flexApp = FieldWorks.GetOrCreateFlexApp();
-					propertyTable.SetProperty("App", flexApp, true, true);
-
-					var methodInfo = GetLexEntryUiType.GetMethod("DisplayRelatedEntries", new[] { typeof(LcmCache), typeof(IPropertyTable), typeof(IHelpTopicProvider), typeof(string), typeof(ITsString) });
-					methodInfo.Invoke(null, new object[]{ FieldWorks.Cache, propertyTable, propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), "UserHelpFile", tss });
-				}
+				var styleSheet = new LcmStyleSheet();
+				styleSheet.Init(FieldWorks.Cache, FieldWorks.Cache.LanguageProject.Hvo, LangProjectTags.kflidStyles);
+				LexEntryUi.DisplayRelatedEntries(FieldWorks.Cache, null, styleSheet, new FlexHelpTopicProvider(), "UserHelpFile", TsStringUtils.MakeString(entry, FieldWorks.Cache.DefaultVernWs), true);
 			});
 		}
-
-		private static Type GetLexEntryUiType => Assembly.LoadFrom("LanguageExplorer.dll").GetType("LanguageExplorer.LcmUi.LexEntryUi");
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

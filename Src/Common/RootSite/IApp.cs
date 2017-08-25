@@ -57,6 +57,11 @@ namespace SIL.FieldWorks.Common.RootSites
 		string ApplicationName { get; }
 
 		/// <summary>
+		/// Get the FDO cache.
+		/// </summary>
+		LcmCache Cache { get; }
+
+		/// <summary>
 		/// A place to get various pictures.
 		/// </summary>
 		PictureHolder PictureHolder { get; }

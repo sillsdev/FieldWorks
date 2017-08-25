@@ -22,6 +22,9 @@ using System.Threading;
 using System.Windows.Forms;
 using Gecko;
 using Microsoft.Win32;
+using LanguageExplorer;
+using LanguageExplorer.HelpTopics;
+using LanguageExplorer.LcmUi;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
@@ -242,7 +245,7 @@ namespace SIL.FieldWorks
 				s_noUserInterface = appArgs.NoUserInterface;
 				s_appServerMode = appArgs.AppServerMode;
 
-				s_ui = (ILcmUI)DynamicLoader.CreateObject("LanguageExplorer.dll", "LanguageExplorer.LcmUi.FwLcmUI", GetHelpTopicProvider(), s_threadHelper);
+				s_ui = new FwLcmUI(GetHelpTopicProvider(), s_threadHelper);
 
 				s_appSettings = new FwApplicationSettings();
 				s_appSettings.UpgradeIfNecessary();
@@ -1862,12 +1865,12 @@ namespace SIL.FieldWorks
 		/// Restore a project.
 		/// </summary>
 		/// <param name="dialogOwner">The dialog owner.</param>
-		/// <param name="fwApp">The FieldWorks application.</param>
+		/// <param name="helpTopicProvider">The FieldWorks application's help topic provider.</param>
 		/// ------------------------------------------------------------------------------------
-		internal static void RestoreProject(Form dialogOwner, IFlexApp fwApp)
+		internal static void RestoreProject(Form dialogOwner, IHelpTopicProvider helpTopicProvider)
 		{
 			string databaseName = (Cache != null) ? Cache.ProjectId.Name : string.Empty;
-			using (RestoreProjectDlg dlg = new RestoreProjectDlg(databaseName, fwApp))
+			using (RestoreProjectDlg dlg = new RestoreProjectDlg(databaseName, helpTopicProvider))
 			{
 				if (dlg.ShowDialog(dialogOwner) != DialogResult.OK)
 					return;
@@ -1880,13 +1883,11 @@ namespace SIL.FieldWorks
 		/// <summary>
 		/// Archive selected project files using RAMP
 		/// </summary>
-		/// <param name="fwApp"></param>
-		/// <param name="dialogOwner"></param>
 		/// <returns>The list of files to archive</returns>
 		/// ------------------------------------------------------------------------------------
-		internal static List<string> ArchiveProjectWithRamp(Form dialogOwner, IFlexApp fwApp)
+		internal static List<string> ArchiveProjectWithRamp(Form dialogOwner, IHelpTopicProvider helpTopicProvider)
 		{
-			using (var dlg = new ArchiveWithRamp(Cache, fwApp))
+			using (var dlg = new ArchiveWithRamp(Cache, helpTopicProvider))
 			{
 				if (dlg.ShowDialog(dialogOwner) == DialogResult.OK)
 				{
@@ -1903,17 +1904,18 @@ namespace SIL.FieldWorks
 		/// Displays the Project Location dialog box
 		/// </summary>
 		/// <param name="dialogOwner">The form that should be used as the dialog owner.</param>
-		/// <param name="fwApp">The FieldWorks application from with this command was initiated.
+		/// <param name="app">The FieldWorks application from with this command was initiated.
 		/// </param>
+		/// <param name="cache"></param>
 		/// ------------------------------------------------------------------------------------
-		internal static void FileProjectLocation(Form dialogOwner, IFlexApp fwApp)
+		internal static void FileProjectLocation(Form dialogOwner, IApp app, LcmCache cache)
 		{
-			using (ProjectLocationDlg dlg = new ProjectLocationDlg(fwApp, fwApp.Cache))
+			using (ProjectLocationDlg dlg = new ProjectLocationDlg(app, cache))
 			{
 			if (dlg.ShowDialog(dialogOwner) != DialogResult.OK)
 				return;
-			string projectPath = fwApp.Cache.ProjectId.Path;
-			string parentDirectory = Path.GetDirectoryName(fwApp.Cache.ProjectId.ProjectFolder);
+			string projectPath = cache.ProjectId.Path;
+			string parentDirectory = Path.GetDirectoryName(cache.ProjectId.ProjectFolder);
 			string projectsDirectory = FwDirectoryFinder.ProjectsDirectory;
 			if (!MiscUtils.IsUnix)
 			{
@@ -1921,7 +1923,7 @@ namespace SIL.FieldWorks
 				projectsDirectory = projectsDirectory.ToLowerInvariant();
 			}
 
-			UpdateProjectsLocation(dlg.ProjectsFolder, fwApp, projectPath);
+			UpdateProjectsLocation(dlg.ProjectsFolder, app, projectPath);
 		}
 		}
 
@@ -1930,10 +1932,10 @@ namespace SIL.FieldWorks
 		/// Updates the projects default directory.
 		/// </summary>
 		/// <param name="newFolderForProjects">The new folder for projects.</param>
-		/// <param name="fwApp">used to get parent window of dialog</param>
+		/// <param name="app">used to get parent window of dialog</param>
 		/// <param name="projectPath">path to the current project</param>
 		/// ------------------------------------------------------------------------------------
-		private static void UpdateProjectsLocation(string newFolderForProjects, IFlexApp fwApp,
+		private static void UpdateProjectsLocation(string newFolderForProjects, IApp app,
 			string projectPath)
 		{
 			if (newFolderForProjects == null || newFolderForProjects == FwDirectoryFinder.ProjectsDirectory ||
@@ -1941,9 +1943,9 @@ namespace SIL.FieldWorks
 				return;
 
 			bool fMoveFiles;
-			using (var dlg = new MoveProjectsDlg(fwApp))
+			using (var dlg = new MoveProjectsDlg(app))
 			{
-				fMoveFiles = dlg.ShowDialog(fwApp.ActiveMainWindow) == DialogResult.Yes;
+				fMoveFiles = dlg.ShowDialog(app.ActiveMainWindow) == DialogResult.Yes;
 			}
 			string oldFolderForProjects = FwDirectoryFinder.ProjectsDirectory;
 			try
@@ -3368,8 +3370,7 @@ namespace SIL.FieldWorks
 			{
 				return s_flexApp;
 			}
-			return s_helpTopicProvider ?? (s_helpTopicProvider = (IHelpTopicProvider) DynamicLoader.CreateNonPublicObject(FwDirectoryFinder.LanguageExplorerDll,
-						"LanguageExplorer.HelpTopics.FlexHelpTopicProvider"));
+			return s_helpTopicProvider ?? (s_helpTopicProvider = new FlexHelpTopicProvider());
 		}
 
 		/// ------------------------------------------------------------------------------------

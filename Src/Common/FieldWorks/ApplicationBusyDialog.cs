@@ -7,7 +7,7 @@
 using System;
 using System.Threading;
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.Framework;
+using LanguageExplorer;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.FwUtils;
 

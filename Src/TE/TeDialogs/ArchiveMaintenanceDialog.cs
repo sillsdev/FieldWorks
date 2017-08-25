@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel.Utils;
@@ -40,7 +39,7 @@ namespace SIL.FieldWorks.TE
 		/// <summary></summary>
 		protected readonly LcmCache m_cache;
 		private readonly IHelpTopicProvider m_helpTopicProvider;
-		private readonly IFlexApp m_app;
+		private readonly IApp m_app;
 		private readonly IVwStylesheet m_styleSheet;
 		private readonly float m_zoomDraft;
 		private readonly float m_zoomFootnote;
@@ -63,7 +62,7 @@ namespace SIL.FieldWorks.TE
 		/// ------------------------------------------------------------------------------------
 		public SavedVersionsDialog(LcmCache cache, IVwStylesheet styleSheet,
 			float zoomFactorDraft, float zoomFactorFootnote, IHelpTopicProvider helpTopicProvider,
-			IFlexApp app)
+			IApp app)
 		{
 			InitializeComponent();
 

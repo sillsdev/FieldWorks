@@ -3,12 +3,9 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.IO;
-using System.Reflection;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks
@@ -171,59 +168,6 @@ namespace SIL.FieldWorks
 				// Not crash or anything
 				FieldWorks.EnsureValidLinkedFilesFolderCore(configuredFolder, defaultFolder);
 			});
-		}
-
-		/// <summary>
-		/// FieldWorks creates in instance of ILcmUI (FwLcmUI). This test makes sure it still resides in LanguageExplorer.dll,
-		/// since if it ever moves, the test will fail.
-		/// </summary>
-		[Test]
-		public void MakeSureILcmUIImplementationHasNotMoved()
-		{
-			var pathname = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "LanguageExplorer.dll");
-			var languageExplorerDllExists = File.Exists(pathname);
-			try
-			{
-				using (var threadHelper = new ThreadHelper())
-				{
-					var iLcmUIImpl = (ILcmUI)DynamicLoader.CreateObject("LanguageExplorer.dll", "LanguageExplorer.LcmUi.FwLcmUI", FieldWorks.GetHelpTopicProvider(), threadHelper);
-					Assert.IsNotNull(iLcmUIImpl);
-				}
-			}
-			catch (Exception err)
-			{
-				Assert.Fail($"Found it '{languageExplorerDllExists}'. Path: '{pathname}'. Somebody moved 'LanguageExplorer.LcmUi.FwLcmUI', or made it impossible to create via Reflection. Error mesage: {err.Message}: Stack trace: '{err.StackTrace}'");
-			}
-		}
-
-		/// <summary>
-		/// LexicalProviderImpl in FieldWorks creates in instance of LexEntryUi. This test makes sure it still resides in LanguageExplorer.dll,
-		/// since if it (or the sought after method) ever moves, the test will fail.
-		/// </summary>
-		[Test]
-		public void MakeSureDisplayRelatedEntriesOfLexEntryUiImplementationHasNotMoved()
-		{
-			var languageExplorerAssembly = Assembly.LoadFrom("LanguageExplorer.dll");
-			Assert.IsNotNull(languageExplorerAssembly, "Somebody deleted the 'LanguageExplorer.dll'.");
-			var lexEntryUiType = languageExplorerAssembly.GetType("LanguageExplorer.LcmUi.LexEntryUi");
-			Assert.IsNotNull(lexEntryUiType, "Somebody deleted the 'LanguageExplorer.LcmUi.LexEntryUi' class.");
-			var methodInfo = lexEntryUiType.GetMethod("DisplayRelatedEntries", new [] {typeof(LcmCache), typeof(IPropertyTable), typeof(IHelpTopicProvider), typeof(string), typeof(ITsString)});
-			Assert.IsNotNull(methodInfo, "Somebody deleted the 'DisplayRelatedEntries' from the 'LanguageExplorer.LcmUi.LexEntryUi' class.");
-		}
-
-		/// <summary>
-		/// LexicalProviderImpl in FieldWorks creates in instance of LexEntryUi. This test makes sure it still resides in LanguageExplorer.dll,
-		/// since if it (or the sought after method) ever moves, the test will fail.
-		/// </summary>
-		[Test]
-		public void MakeSureDisplayEntryOfLexEntryUiImplementationHasNotMoved()
-		{
-			var languageExplorerAssembly = Assembly.LoadFrom("LanguageExplorer.dll");
-			Assert.IsNotNull(languageExplorerAssembly, "Somebody deleted the 'LanguageExplorer.dll'.");
-			var lexEntryUiType = languageExplorerAssembly.GetType("LanguageExplorer.LcmUi.LexEntryUi");
-			Assert.IsNotNull(lexEntryUiType, "Somebody deleted the 'LanguageExplorer.LcmUi.LexEntryUi' class.");
-			var methodInfo = lexEntryUiType.GetMethod("DisplayEntry", BindingFlags.Static | BindingFlags.Public);
-			Assert.IsNotNull(methodInfo, "Somebody deleted the 'DisplayEntry' from the 'LanguageExplorer.LcmUi.LexEntryUi' class.");
 		}
 
 		/// <summary>

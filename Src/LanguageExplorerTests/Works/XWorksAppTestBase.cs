@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using LanguageExplorer;
 using NUnit.Framework;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel;
@@ -14,6 +15,7 @@ using SIL.FieldWorks.Common.Framework;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Utils;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.RootSites;
 
 namespace LanguageExplorerTests.Works
 {
@@ -110,10 +112,10 @@ namespace LanguageExplorerTests.Works
 		/// <summary>
 		/// Lets the user delete any FW databases that are not currently open
 		/// </summary>
-		/// <param name="app">The application.</param>
+		/// <param name="helpTopicProvider">The application's help provider.</param>
 		/// <param name="dialogOwner">The owner of the dialog</param>
 		/// ------------------------------------------------------------------------------------
-		public void DeleteProject(IFlexApp app, Form dialogOwner)
+		public void DeleteProject(IHelpTopicProvider helpTopicProvider, Form dialogOwner)
 		{
 			throw new NotImplementedException();
 		}
@@ -133,10 +135,10 @@ namespace LanguageExplorerTests.Works
 		/// <summary>
 		/// Restore a project.
 		/// </summary>
-		/// <param name="fwApp">The FieldWorks application.</param>
+		/// <param name="helpTopicProvider">The application's help provider.</param>
 		/// <param name="dialogOwner">The dialog owner.</param>
 		/// ------------------------------------------------------------------------------------
-		public void RestoreProject(IFlexApp fwApp, Form dialogOwner)
+		public void RestoreProject(IHelpTopicProvider helpTopicProvider, Form dialogOwner)
 		{
 			throw new NotImplementedException();
 		}
@@ -152,10 +154,8 @@ namespace LanguageExplorerTests.Works
 			throw new NotImplementedException();
 		}
 
-		/// <summary>
-		///
-		/// </summary>
-		public void FileProjectLocation(IFlexApp fwApp, Form dialogOwner)
+		/// <summary />
+		public void FileProjectLocation(IApp app, Form dialogOwner)
 		{
 			throw new NotImplementedException();
 		}
@@ -189,12 +189,12 @@ namespace LanguageExplorerTests.Works
 		/// <summary>
 		/// Archive selected project files using RAMP
 		/// </summary>
-		/// <param name="fwApp">The FieldWorks application</param>
+		/// <param name="helpTopicProvider">The FieldWorks application's help topic provider.</param>
 		/// <param name="dialogOwner">The owner of the dialog</param>
 		/// <returns>The list of the files to archive, or <c>null</c> if the user cancels the
 		/// archive dialog</returns>
 		/// ------------------------------------------------------------------------------------
-		public List<string> ArchiveProjectWithRamp(IFlexApp fwApp, Form dialogOwner)
+		public List<string> ArchiveProjectWithRamp(IHelpTopicProvider helpTopicProvider, Form dialogOwner)
 		{
 			throw new NotImplementedException();
 		}

@@ -9,7 +9,7 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel;
 
-namespace SIL.FieldWorks.Common.Framework
+namespace LanguageExplorer
 {
 	/// ------------------------------------------------------------------------------------
 	/// <summary>
