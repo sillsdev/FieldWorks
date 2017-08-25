@@ -29,9 +29,9 @@ public:
 			return true;
 		Assert(!((ulong)m_bstr & 1));
 #else
-		if (_wtoi(m_bstr) == (int)1)
+		if ((ULONGLONG)m_bstr == (ULONGLONG)1)
 			return true;
-		Assert(!(_wtoi(m_bstr) & 1));
+		Assert(!((ULONGLONG)m_bstr & 1));
 #endif // __MonoCS__ || !defined(_M_X64)
 		AssertBstrN(m_bstr);
 		return true;
@@ -272,7 +272,7 @@ public:
 		if ((ulong)bstr == 1)
 			bstr = NULL;
 #else
-		if (_wtoi(bstr) == 1)
+		if ((ULONGLONG)bstr == 1)
 			bstr = NULL;
 #endif
 
@@ -467,7 +467,7 @@ protected:
 #if __MonoCS__ || !defined(_M_X64)
 		return (ulong)m_bstr <= (ulong)1;
 #else
-		return _wtoi(m_bstr) <= (int)1;
+		return (ULONGLONG)m_bstr <= (ULONGLONG)1;
 #endif
 	}
 
