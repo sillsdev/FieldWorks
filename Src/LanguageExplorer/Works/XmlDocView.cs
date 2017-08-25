@@ -15,7 +15,6 @@ using SIL.FieldWorks.FwCoreDlgs;
 using SIL.LCModel;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.Common.FwUtils;

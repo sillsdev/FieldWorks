@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using LanguageExplorer.Areas.TextsAndWords;
-using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ViewsInterfaces;

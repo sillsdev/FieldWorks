@@ -8,13 +8,13 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using LanguageExplorer;
 using LanguageExplorer.Controls.XMLViews;
 using NUnit.Framework;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.CacheLight;
 using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel;
 using SIL.LCModel.Application;
@@ -280,7 +280,6 @@ namespace LanguageExplorerTests.XMLViews
 		///              <c>ISilDataAccess.get_VecItem</c>) and the frag specied here, to the view
 		///              constructor specified here (usually the caller of the method).
 		/// </summary>
-		/// <param name="tag"/><param name="_vwvc"/><param name="frag"/>
 		public void AddObjVecItems(int tag, IVwViewConstructor vc, int frag)
 		{
 			//OpenProp(tag);

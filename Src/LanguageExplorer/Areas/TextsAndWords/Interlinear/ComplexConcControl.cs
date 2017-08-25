@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Linq;
 using LanguageExplorer.Controls.LexText;
-using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;

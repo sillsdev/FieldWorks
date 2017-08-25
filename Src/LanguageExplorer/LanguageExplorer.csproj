@@ -49,9 +49,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\FxtDll.dll</HintPath>
     </Reference>
-    <Reference Include="NAudio, Version=1.7.3.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\NAudio.1.7.3\lib\net35\NAudio.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="MsHtmHstInterop, Version=0.0.0.0, Culture=neutral">
+      <SpecificVersion>False</SpecificVersion>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+      <HintPath>..\..\Bin\MsHtmHstInterop.dll</HintPath>
     </Reference>
     <Reference Include="Aga.Controls, Version=1.7.0.0, Culture=neutral, PublicKeyToken=fcc90fbf924463a3, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -64,6 +65,14 @@
     <Reference Include="FixFwDataDll">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\FixFwDataDll.dll</HintPath>
+    </Reference>
+    <Reference Include="NAudio, Version=1.7.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\NAudio.1.7.3\lib\net35\NAudio.dll</HintPath>
+    </Reference>
+    <Reference Include="NAudio.Lame, Version=1.0.3.3048, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\NAudio.Lame.1.0.4\lib\net20\NAudio.Lame.dll</HintPath>
     </Reference>
     <Reference Include="SIL.LCModel, Version=9.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -230,6 +239,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AccessibleNameCreator.cs" />
+    <Compile Include="Areas\TextsAndWords\CachePair.cs" />
+    <Compile Include="ConsoleProgress.cs" />
     <Compile Include="Controls\DetailControls\AtomicReferenceLauncher.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -420,6 +432,10 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Controls\DetailControls\ViewSlice.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\FwAccessibleObject.cs" />
+    <Compile Include="Controls\HtmlControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Controls\LexText\AddAllomorphDlg.cs">
@@ -643,6 +659,10 @@
     <Compile Include="Controls\LexText\SfmToTextsAndWordsMappingBaseDlg.Designer.cs">
       <DependentUpon>SfmToTextsAndWordsMappingBaseDlg.cs</DependentUpon>
     </Compile>
+    <Compile Include="Controls\MainUserControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\SearchTimer.cs" />
     <Compile Include="Controls\XMLViews\BrowseViewer.cs" />
     <Compile Include="Controls\XMLViews\BulkEditBar.cs">
       <SubType>UserControl</SubType>
@@ -695,6 +715,7 @@
     <Compile Include="Controls\XMLViews\SimpleMatchDlg.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Controls\XMLViews\XhtmlHelper.cs" />
     <Compile Include="Controls\XMLViews\XmlBrowseRDEView.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -723,10 +744,27 @@
       <DesignTime>True</DesignTime>
     </Compile>
     <Compile Include="Controls\XMLViews\XmlViewsUtils.cs" />
+    <Compile Include="Folders.cs" />
+    <Compile Include="HelpTopics\HelpTopicProviderBase.cs" />
+    <Compile Include="ICtrlTabProvider.cs" />
     <Compile Include="IFieldWorksManager.cs" />
     <Compile Include="IFlexApp.cs" />
+    <Compile Include="IFocusablePanePortion.cs" />
     <Compile Include="IFwMainWnd.cs" />
+    <Compile Include="IIdleQueueProvider.cs" />
+    <Compile Include="IMainContentControl.cs" />
+    <Compile Include="IMainUserControl.cs" />
+    <Compile Include="Inventory.cs" />
+    <Compile Include="IPaneBar.cs" />
+    <Compile Include="IPaneBarContainer.cs" />
+    <Compile Include="IPaneBarUser.cs" />
+    <Compile Include="IPersistenceProvider.cs" />
+    <Compile Include="IPostLayoutInit.cs" />
+    <Compile Include="IRecordBar.cs" />
+    <Compile Include="IRecordListUpdater.cs" />
+    <Compile Include="ISnapSplitPosition.cs" />
     <Compile Include="LanguageExplorerConstants.cs" />
+    <Compile Include="LayoutKeyUtils.cs" />
     <Compile Include="LcmUi\BulkPosEditor.cs" />
     <Compile Include="LcmUi\Dialogs\CantRestoreLinkedFilesToOriginalLocation.cs">
       <SubType>Form</SubType>
@@ -814,14 +852,18 @@
     <Compile Include="MGA\PhonologicalFeaturesTreeView.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="PersistenceProviderFactory.cs" />
     <Compile Include="RecordClerkServices.cs" />
+    <Compile Include="SimpleLogger.cs" />
     <Compile Include="StatusBarPanelServices.cs" />
+    <Compile Include="Unicode.cs" />
     <Compile Include="UtilityTools\ErrorFixer.cs" />
     <Compile Include="IUtility.cs" />
     <Compile Include="UtilityTools\UtilityDlg.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="UtilityTools\WriteAllObjectsUtility.cs" />
+    <Compile Include="ViewSizeEvents.cs" />
     <Compile Include="Works\AddCustomFieldDlg.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -1029,6 +1071,7 @@
       <DependentUpon>UploadToWebonaryDlg.cs</DependentUpon>
     </Compile>
     <Compile Include="Works\UploadToWebonaryModel.cs" />
+    <Compile Include="Works\WavConverter.cs" />
     <Compile Include="Works\WebonaryClient.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -1075,6 +1118,9 @@
     <Content Include="Controls\LexText\Resources\Find Lexical Entry.ico" />
     <Content Include="LcmUi\Resources\EXCLEM.ICO" />
     <Content Include="LcmUi\Resources\question.ico" />
+    <EmbeddedResource Include="Controls\HtmlControl.resx">
+      <DependentUpon>HtmlControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Controls\XMLViews\BrowseViewer.resx">
       <DependentUpon>BrowseViewer.cs</DependentUpon>
       <SubType>Designer</SubType>

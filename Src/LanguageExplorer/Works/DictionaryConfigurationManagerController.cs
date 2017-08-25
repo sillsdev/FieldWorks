@@ -13,7 +13,6 @@ using LanguageExplorer.LcmUi.Dialogs;
 using SIL.LCModel;
 using SIL.LCModel.Utils;
 using SIL.Linq;
-using SIL.FieldWorks.Common.Framework;
 using SIL.WritingSystems;
 using Ionic.Zip;
 using SIL.LCModel.Core.WritingSystems;

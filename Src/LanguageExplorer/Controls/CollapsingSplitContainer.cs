@@ -6,7 +6,6 @@ using System;
 using System.Drawing;
 using System.Windows.Forms;
 using SIL.LCModel.Utils;
-using SIL.FieldWorks.Common.FwUtils;
 
 namespace LanguageExplorer.Controls
 {

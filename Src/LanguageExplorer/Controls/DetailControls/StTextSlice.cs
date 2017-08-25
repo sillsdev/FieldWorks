@@ -8,7 +8,6 @@ using System.Drawing;
 using System.Windows.Forms;
 using LanguageExplorer.Controls.LexText;
 using LanguageExplorer.LcmUi;
-using SIL.FieldWorks.Common.Framework;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;

@@ -7,7 +7,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using SIL.LCModel.Core.Text;
-using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel;

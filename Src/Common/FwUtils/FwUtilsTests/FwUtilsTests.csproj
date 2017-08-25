@@ -153,14 +153,12 @@
     <Compile Include="InterfacesTests.cs" />
     <Compile Include="DisposableObjectsSetTests.cs" />
     <Compile Include="IVwCacheDaTests.cs" />
-    <Compile Include="LayoutKeyUtilsTests.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="PubSubSystemTests.cs" />
-    <Compile Include="SimpleLoggerTests.cs" />
     <Compile Include="StringTableTests.cs" />
     <Compile Include="TempSFFileMaker.cs" />
     <Compile Include="TempSFFileMakerTests.cs" />
@@ -168,7 +166,6 @@
     <Compile Include="TestFwApplicationSettings.cs" />
     <Compile Include="TestFwStylesheet.cs" />
     <Compile Include="TestFwStylesheetTests.cs" />
-    <Compile Include="WavConverterTests.cs" />
     <Compile Include="XmlHelper.cs" />
     <None Include="App.config" />
     <Compile Include="FwDirectoryFinderTests.cs" />

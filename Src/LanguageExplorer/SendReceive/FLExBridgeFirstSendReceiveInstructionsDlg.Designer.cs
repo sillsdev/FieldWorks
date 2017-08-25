@@ -2,8 +2,6 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using SIL.FieldWorks.Common.FwUtils;
-
 namespace LanguageExplorer.SendReceive
 {
 	partial class FLExBridgeFirstSendReceiveInstructionsDlg
@@ -41,7 +39,7 @@ namespace LanguageExplorer.SendReceive
 			this.button_OK = new System.Windows.Forms.Button();
 			this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
 			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-			this.htmlControl_Instructions = new HtmlControl();
+			this.htmlControl_Instructions = new LanguageExplorer.Controls.HtmlControl();
 			this.flowLayoutPanel1.SuspendLayout();
 			this.tableLayoutPanel1.SuspendLayout();
 			this.SuspendLayout();
@@ -113,6 +111,6 @@ namespace LanguageExplorer.SendReceive
 		private System.Windows.Forms.Button button_OK;
 		private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
 		private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
-		private HtmlControl htmlControl_Instructions;
+		private LanguageExplorer.Controls.HtmlControl htmlControl_Instructions;
 	}
 }

@@ -20,7 +20,6 @@ using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel.Utils;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
-using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel.Core.KernelInterfaces;

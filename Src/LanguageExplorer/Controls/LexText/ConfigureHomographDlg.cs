@@ -6,7 +6,6 @@ using System;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.DomainImpl;

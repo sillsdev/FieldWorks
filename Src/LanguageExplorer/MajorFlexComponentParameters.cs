@@ -4,7 +4,6 @@
 
 using System.Windows.Forms;
 using LanguageExplorer.Areas.TextsAndWords;
-using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using LanguageExplorer.Works;
 using SIL.LCModel;

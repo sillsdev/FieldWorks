@@ -15,7 +15,6 @@
 using System;
 using System.Diagnostics;
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 
 namespace LanguageExplorer.Controls.DetailControls

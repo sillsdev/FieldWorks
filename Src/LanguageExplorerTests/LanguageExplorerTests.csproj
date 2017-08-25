@@ -233,6 +233,7 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Interlinear\WordBreakGuesserTests.cs" />
+    <Compile Include="LayoutKeyUtilsTests.cs" />
     <Compile Include="LcmUi\LcmUiTests.cs" />
     <Compile Include="Lexicon\LexEntryChangeHandlerTests.cs" />
     <Compile Include="Lexicon\LexReferenceTreeRootLauncherTests.cs" />
@@ -255,6 +256,7 @@
     <Compile Include="SilSidePaneTests\SidePaneTests.cs" />
     <Compile Include="SilSidePaneTests\TabTests.cs" />
     <Compile Include="SilSidePaneTests\TestUtilities.cs" />
+    <Compile Include="SimpleLoggerTests.cs" />
     <Compile Include="TextsAndWords\RespellingTests.cs" />
     <Compile Include="TextsAndWords\WordGrammarDebuggingTests.cs" />
     <Compile Include="ToolRepositoryTests.cs" />
@@ -293,6 +295,7 @@
     <Compile Include="Works\UnicodeCharacterEditingHelperTests.cs" />
     <Compile Include="Works\UploadToWebonaryControllerTests.cs" />
     <Compile Include="Works\UploadToWebonaryModelTests.cs" />
+    <Compile Include="Works\WavConverterTests.cs" />
     <Compile Include="Works\WordsUsedOnlyElsewhereFilterTests.cs" />
     <Compile Include="Works\XhtmlDocViewTests.cs" />
     <Compile Include="Works\XWorksAppTestBase.cs" />
@@ -316,6 +319,7 @@
     <Compile Include="XMLViews\TestXmlBrowseView.cs" />
     <Compile Include="XMLViews\TestXmlViewsDataCache.cs" />
     <Compile Include="XMLViews\TestXmlViewsUtils.cs" />
+    <Compile Include="XMLViews\XhtmlHelperTests.cs" />
     <Compile Include="XMLViews\XmlBrowseViewBaseTests.cs">
       <SubType>UserControl</SubType>
     </Compile>

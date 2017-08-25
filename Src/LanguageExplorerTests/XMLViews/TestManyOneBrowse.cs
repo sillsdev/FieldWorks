@@ -1,12 +1,14 @@
 // Copyright (c) 2010-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Xml.Linq;
+using LanguageExplorer;
 using LanguageExplorer.Controls.XMLViews;
 using NUnit.Framework;
 using SIL.LCModel.Core.Text;

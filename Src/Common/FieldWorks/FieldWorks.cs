@@ -24,6 +24,7 @@ using Gecko;
 using Microsoft.Win32;
 using LanguageExplorer;
 using LanguageExplorer.HelpTopics;
+using LanguageExplorer.Impls;
 using LanguageExplorer.LcmUi;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
@@ -2841,8 +2842,7 @@ namespace SIL.FieldWorks
 				{
 					GetHelpTopicProvider();
 				}
-				s_flexApp = (IFlexApp)DynamicLoader.CreateNonPublicObject(FwDirectoryFinder.LanguageExplorerDll,
-					FwUtils.ksFullFlexAppObjectName, s_fwManager, s_helpTopicProvider, args);
+				s_flexApp = new LexTextApp(s_fwManager, s_helpTopicProvider, args);
 				s_helpTopicProvider = null;
 				s_flexAppKey = s_flexApp.SettingsKey;
 			}

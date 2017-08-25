@@ -4,20 +4,22 @@
 
 using System.Reflection;
 using System.Resources;
-using SIL.FieldWorks.Common.Framework;
 
 namespace LanguageExplorer.HelpTopics
 {
+#if RANDYTODO
+	// TODO: Merge HelpTopicProviderBase and FlexHelpTopicProvider.
+#endif
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// FLEx-specific HelpTopicProvider
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public sealed class FlexHelpTopicProvider : HelpTopicProviderBase
+	internal sealed class FlexHelpTopicProvider : HelpTopicProviderBase
 	{
 		private static ResourceManager s_helpResources = null;
 
-		public FlexHelpTopicProvider() {}
+		internal FlexHelpTopicProvider() {}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

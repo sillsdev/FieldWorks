@@ -13,7 +13,6 @@ using System.Xml.Schema;
 using System.Xml.Serialization;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Utils;
 using SIL.LCModel.DomainServices;
 using LanguageExplorer.Works;

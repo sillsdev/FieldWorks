@@ -103,12 +103,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\NHunspell.dll</HintPath>
     </Reference>
-    <Reference Include="NAudio">
-      <HintPath>..\..\..\packages\NAudio.1.7.3\lib\net35\NAudio.dll</HintPath>
-    </Reference>
-    <Reference Include="NAudio.Lame">
-      <HintPath>..\..\..\packages\NAudio.Lame.1.0.4\lib\net20\NAudio.Lame.dll</HintPath>
-    </Reference>
     <Reference Include="SIL.Core.Desktop">
       <HintPath>..\..\..\Downloads\SIL.Core.Desktop.dll</HintPath>
     </Reference>
@@ -152,10 +146,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\SIL.LCModel.Utils.dll</HintPath>
     </Reference>
-    <Reference Include="MsHtmHstInterop">
-      <Name>MsHtmHstInterop</Name>
-      <HintPath>..\..\..\Bin\MsHtmHstInterop.dll</HintPath>
-    </Reference>
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
@@ -188,10 +178,8 @@
     <Compile Include="FwApplicationSettingsBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Benchmark.cs" />
-    <Compile Include="CachePair.cs" />
     <Compile Include="CharacterCategorizer.cs" />
     <Compile Include="CharEnumeratorForByteArray.cs" />
-    <Compile Include="ConsoleProgress.cs" />
     <Compile Include="DebugProcs.cs" />
     <Compile Include="DisposableObjectsSet.cs" />
     <Compile Include="DriveUtil.cs" />
@@ -199,18 +187,12 @@
     <Compile Include="FLExBridgeHelper.cs" />
     <Compile Include="FlexComponentCheckingService.cs" />
     <Compile Include="FlexComponentParameters.cs" />
-    <Compile Include="FwAccessibleObject.cs" />
     <Compile Include="GeneratedFwUtils.cs" />
     <Compile Include="IChecksDataSource.cs" />
     <Compile Include="HiMetric.cs" />
-    <Compile Include="HtmlControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="ICtrlTabProvider.cs" />
     <Compile Include="IdleQueue.cs" />
     <Compile Include="IFeedbackInfoProvider.cs" />
     <Compile Include="IFlexComponent.cs" />
-    <Compile Include="IFocusablePanePortion.cs" />
     <Compile Include="FwDirectoryFinder.cs" />
     <Compile Include="FwLinkArgs.cs" />
     <Compile Include="FwRegistryHelper.cs" />
@@ -222,37 +204,20 @@
       <DependentUpon>FwUtilsStrings.resx</DependentUpon>
     </Compile>
     <Compile Include="IHelpTopicProvider.cs" />
-    <Compile Include="IIdleQueueProvider.cs" />
-    <Compile Include="IMainContentControl.cs" />
-    <Compile Include="IMainUserControl.cs" />
     <Compile Include="InstallationException.cs" />
-    <Compile Include="Inventory.cs" />
-    <Compile Include="IPaneBar.cs" />
-    <Compile Include="IPaneBarContainer.cs" />
-    <Compile Include="IPaneBarUser.cs" />
-    <Compile Include="IPersistenceProvider.cs" />
-    <Compile Include="IPostLayoutInit.cs" />
     <Compile Include="IProjectSpecificSettingsKeyProvider.cs" />
     <Compile Include="IPropertyTable.cs" />
     <Compile Include="IPropertyTableProvider.cs" />
     <Compile Include="IPublisher.cs" />
     <Compile Include="IPublisherProvider.cs" />
-    <Compile Include="IRecordListUpdater.cs" />
     <Compile Include="IScriptureCheck.cs" />
     <Compile Include="ISubscriber.cs" />
     <Compile Include="ISubscriberProvider.cs" />
     <Compile Include="ITextToken.cs" />
     <Compile Include="IReceiveSequentialMessages.cs" />
-    <Compile Include="IRecordBar.cs" />
-    <Compile Include="ISnapSplitPosition.cs" />
-    <Compile Include="LayoutKeyUtils.cs" />
-    <Compile Include="MainUserControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Include="MatchedPairs.cs" />
     <Compile Include="LinuxPackageUtils.cs" />
     <Compile Include="MeasurementUtils.cs" />
-    <Compile Include="Folders.cs" />
     <Compile Include="MessageSequencer.cs" />
     <Compile Include="MergeSort.cs" />
     <Compile Include="ParagraphCorrelation.cs" />
@@ -270,7 +235,6 @@
     <Compile Include="RecordErrorEventArgs.cs" />
     <Compile Include="RecordFilterListProvider.cs" />
     <Compile Include="ReversalIndexServices.cs" />
-    <Compile Include="SearchTimer.cs" />
     <Compile Include="SelectionEvents.cs" />
     <Compile Include="Properties\Settings.cs" />
     <Compile Include="SettingsGroup.cs" />
@@ -281,7 +245,6 @@
     <Compile Include="StartupException.cs" />
     <Compile Include="StringTable.cs" />
     <Compile Include="VersionInfoProvider.cs" />
-    <Compile Include="WavConverter.cs" />
     <Compile Include="XmlSerializationHelper.cs" />
     <EmbeddedResource Include="FwUtilsStrings.resx">
       <SubType>Designer</SubType>
@@ -295,14 +258,10 @@
     <Compile Include="StandardCheckIds.cs" />
     <Compile Include="StyleMarkupInfo.cs" />
     <Compile Include="TextFileDataSource.cs" />
-    <Compile Include="SimpleLogger.cs" />
-    <Compile Include="Unicode.cs" />
-    <Compile Include="ViewSizeEvents.cs" />
     <Compile Include="TextTokenSubstring.cs" />
     <Compile Include="Win32Wrappers.cs" />
     <Compile Include="UserActivityMonitor.cs" />
     <Compile Include="MessageBoxUtils.cs" />
-    <Compile Include="AccessibleNameCreator.cs" />
     <Compile Include="ClipboardUtils.cs" />
     <Compile Include="ThreadHelper.cs" />
     <Compile Include="ImagePicture.cs" />
@@ -314,13 +273,8 @@
     <Compile Include="Property.cs" />
     <Compile Include="WaitCursor.cs" />
     <Compile Include="RegistryGroup.cs" />
-    <Compile Include="PersistenceProviderFactory.cs" />
     <Compile Include="PropertyTableFactory.cs" />
-    <Compile Include="Impls\PersistenceProvider.cs" />
     <Compile Include="Impls\PropertyTable.cs" />
-    <EmbeddedResource Include="HtmlControl.resx">
-      <DependentUpon>HtmlControl.cs</DependentUpon>
-    </EmbeddedResource>
     <Compile Include="MessageBoxEx\MessageBoxEx.cs" />
     <Compile Include="MessageBoxEx\MessageBoxExButton.cs" />
     <Compile Include="MessageBoxEx\MessageBoxExButtons.cs" />

@@ -4,7 +4,6 @@
 
 using System.Xml.Linq;
 using LanguageExplorer.Controls.DetailControls;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 

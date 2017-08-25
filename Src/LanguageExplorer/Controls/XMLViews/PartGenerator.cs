@@ -13,7 +13,6 @@ using SIL.LCModel.Utils;
 using SIL.LCModel;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.KernelInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.Xml;
 
 namespace LanguageExplorer.Controls.XMLViews

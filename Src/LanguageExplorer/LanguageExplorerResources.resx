@@ -1185,4 +1185,7 @@ you expect.</value>
   <data name="DeleteMenu" xml:space="preserve">
     <value>_Delete {0}...</value>
   </data>
+  <data name="ErrorReadingXMLFile0" xml:space="preserve">
+    <value>There was an error while reading in the XML file: {0}.</value>
+  </data>
 </root>

@@ -14,7 +14,6 @@ using System.Windows.Forms;
 using System.IO;
 using System.Xml;
 using SIL.LCModel.Core.WritingSystems;
-using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Utils;
 using SIL.LCModel;

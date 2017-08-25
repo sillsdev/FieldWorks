@@ -8,7 +8,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
-	/// Class of object to be passed to the RecodError delegate, containing information about
+	/// Class of object to be passed to the RecordError delegate, containing information about
 	/// the location and nature of the checking inconsistency.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------

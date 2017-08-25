@@ -223,7 +223,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ExportStyleInfo.cs" />
-    <Compile Include="HelpTopicProviderBase.cs" />
     <Compile Include="ExternalSettingsAccessorBase.cs" />
     <Compile Include="FrameworkStrings.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -245,7 +244,6 @@
     <Compile Include="UndoRedoDropDown.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="XhtmlHelper.cs" />
     <EmbeddedResource Include="FrameworkStrings.resx">
       <SubType>Designer</SubType>
       <Generator>PublicResXFileCodeGenerator</Generator>

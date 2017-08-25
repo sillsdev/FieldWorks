@@ -9,6 +9,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using LanguageExplorer.Areas;
+using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.XMLViews;
 using LanguageExplorer.LcmUi;
 using SIL.FieldWorks.Common.FwUtils;

@@ -167,6 +167,15 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to There was an error while reading in the XML file: {0}..
+        /// </summary>
+        internal static string ErrorReadingXMLFile0 {
+            get {
+                return ResourceManager.GetString("ErrorReadingXMLFile0", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Error exporting LIFT data; could not complete Send/Receive.
         /// </summary>
         internal static string FLExBridgeListener_UndoExport_Error_exporting_LIFT {

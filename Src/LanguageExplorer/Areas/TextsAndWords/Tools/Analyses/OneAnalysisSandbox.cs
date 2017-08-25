@@ -6,7 +6,6 @@ using System.Diagnostics;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.Core.KernelInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses

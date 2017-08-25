@@ -12,7 +12,6 @@ using LanguageExplorer.Controls.XMLViews;
 using LanguageExplorer.LcmUi;
 using LanguageExplorer.LcmUi.Dialogs;
 using LanguageExplorer.Works;
-using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Filters;

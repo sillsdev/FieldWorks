@@ -9,6 +9,9 @@ using SIL.LCModel.Infrastructure;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
+#if RANDYTODO
+	// TODO: Only user is FieldWorks.cs, so move this file into the FieldWorks assembly.
+#endif
 	/// <summary>
 	/// Utility services relating to Reversal Indexes
 	/// </summary>

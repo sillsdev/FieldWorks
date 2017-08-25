@@ -27,7 +27,6 @@ using LanguageExplorer.Controls.DetailControls.Resources;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.KernelInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.Xml;
 
 namespace LanguageExplorer.Controls.DetailControls

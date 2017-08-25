@@ -5,7 +5,6 @@
 using System;
 using System.Diagnostics;
 using SIL.LCModel;
-using SIL.FieldWorks.Common.FwUtils;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 {

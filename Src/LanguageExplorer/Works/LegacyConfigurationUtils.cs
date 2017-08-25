@@ -9,7 +9,6 @@ using System.Linq;
 using System.Xml.Linq;
 using LanguageExplorer.Controls.XMLViews;
 using SIL.LCModel.Core.Cellar;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
 using SIL.Xml;

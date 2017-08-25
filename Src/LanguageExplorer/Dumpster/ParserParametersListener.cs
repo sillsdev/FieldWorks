@@ -5,7 +5,6 @@
 using System;
 using System.Windows.Forms;
 using LanguageExplorer.Areas.TextsAndWords;
-using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;

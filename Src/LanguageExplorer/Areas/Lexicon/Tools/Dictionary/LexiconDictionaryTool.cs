@@ -10,7 +10,6 @@ using System.Windows.Forms;
 using System.Xml.Linq;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.PaneBar;
-using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
 using LanguageExplorer.Works;

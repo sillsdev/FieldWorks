@@ -5,6 +5,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
+using LanguageExplorer;
 using LanguageExplorer.Controls.DetailControls;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;

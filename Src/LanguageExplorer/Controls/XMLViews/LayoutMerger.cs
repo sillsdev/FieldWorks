@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
 using System.Text.RegularExpressions;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.Xml;
 
 namespace LanguageExplorer.Controls.XMLViews

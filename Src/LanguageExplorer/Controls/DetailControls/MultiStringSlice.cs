@@ -10,7 +10,6 @@ using System.Xml.Linq;
 using SIL.LCModel.Core.WritingSystems;
 using LanguageExplorer.Controls.DetailControls.Resources;
 using LanguageExplorer.Controls.XMLViews;
-using SIL.FieldWorks.Common.Framework;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;

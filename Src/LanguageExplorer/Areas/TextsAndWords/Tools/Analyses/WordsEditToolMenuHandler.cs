@@ -8,7 +8,6 @@ using System.Diagnostics;
 using System.Windows.Forms;
 using System.Xml;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
-using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using LanguageExplorer.Works;
 using SIL.LCModel;

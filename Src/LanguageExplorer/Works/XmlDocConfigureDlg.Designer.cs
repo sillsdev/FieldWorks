@@ -50,6 +50,7 @@ namespace LanguageExplorer.Works
 			this.panel1 = new System.Windows.Forms.Panel();
 			this.m_linkConfigureHomograph = new System.Windows.Forms.LinkLabel();
 			this.m_cfgSenses = new SIL.FieldWorks.FwCoreDlgControls.ConfigSenseLayout();
+			m_cfgSenses.SizeChanged += new System.EventHandler(m_cfgSenses_SizeChanged);
 			this.m_cfgParentNode = new SIL.FieldWorks.FwCoreDlgControls.ConfigParentNode();
 			this.m_btnBeforeStyles = new System.Windows.Forms.Button();
 			this.m_lblBeforeStyle = new System.Windows.Forms.Label();
@@ -60,7 +61,7 @@ namespace LanguageExplorer.Works
 			this.m_btnMoveItemDown = new System.Windows.Forms.Button();
 			this.m_btnMoveItemUp = new System.Windows.Forms.Button();
 			this.m_lvItems = new System.Windows.Forms.ListView();
-			this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
 			this.m_lblItemsList = new System.Windows.Forms.Label();
 			this.m_btnStyles = new System.Windows.Forms.Button();
 			this.m_lblCharStyle = new System.Windows.Forms.Label();
@@ -106,6 +107,7 @@ namespace LanguageExplorer.Works
 			// 
 			resources.ApplyResources(this.m_btnMoveUp, "m_btnMoveUp");
 			this.m_btnMoveUp.Name = "m_btnMoveUp";
+			this.m_btnMoveItemDown.Image = SIL.FieldWorks.Resources.Images.arrowup;
 			this.m_btnMoveUp.UseVisualStyleBackColor = true;
 			this.m_btnMoveUp.Click += new System.EventHandler(this.m_btnMoveUp_Click);
 			// 
@@ -113,6 +115,7 @@ namespace LanguageExplorer.Works
 			// 
 			resources.ApplyResources(this.m_btnMoveDown, "m_btnMoveDown");
 			this.m_btnMoveDown.Name = "m_btnMoveDown";
+			this.m_btnMoveItemDown.Image = SIL.FieldWorks.Resources.Images.arrowdown;
 			this.m_btnMoveDown.UseVisualStyleBackColor = true;
 			this.m_btnMoveDown.Click += new System.EventHandler(this.m_btnMoveDown_Click);
 			// 
@@ -188,6 +191,8 @@ namespace LanguageExplorer.Works
 			this.panel1.Controls.Add(this.m_chkDisplayWsAbbrs);
 			this.panel1.Controls.Add(this.m_chkDisplayData);
 			this.panel1.Controls.Add(this.m_lblPanel);
+			this.panel1.MaximumSize = new System.Drawing.Size(362, 1009);
+			this.panel1.MinimumSize = new System.Drawing.Size(362, 440);
 			this.panel1.Name = "panel1";
 			// 
 			// m_linkConfigureHomograph
@@ -203,12 +208,10 @@ namespace LanguageExplorer.Works
 			this.m_cfgSenses.AfterNumber = "";
 			this.m_cfgSenses.BeforeNumber = "";
 			this.m_cfgSenses.BoldSenseNumber = System.Windows.Forms.CheckState.Indeterminate;
-			this.m_cfgSenses.DisplaySenseInPara = false;
 			this.m_cfgSenses.ItalicSenseNumber = System.Windows.Forms.CheckState.Indeterminate;
 			this.m_cfgSenses.Name = "m_cfgSenses";
 			this.m_cfgSenses.NumberSingleSense = false;
 			this.m_cfgSenses.SenseParaStyle = null;
-			this.m_cfgSenses.SizeChanged += new System.EventHandler(this.m_cfgSenses_SizeChanged);
 			// 
 			// m_cfgParentNode
 			// 
@@ -260,12 +263,14 @@ namespace LanguageExplorer.Works
 			// 
 			resources.ApplyResources(this.m_btnMoveItemDown, "m_btnMoveItemDown");
 			this.m_btnMoveItemDown.Name = "m_btnMoveItemDown";
+			this.m_btnMoveItemDown.Image = SIL.FieldWorks.Resources.Images.arrowdown;
 			this.m_btnMoveItemDown.UseVisualStyleBackColor = true;
 			// 
 			// m_btnMoveItemUp
 			// 
 			resources.ApplyResources(this.m_btnMoveItemUp, "m_btnMoveItemUp");
 			this.m_btnMoveItemUp.Name = "m_btnMoveItemUp";
+			this.m_btnMoveItemDown.Image = SIL.FieldWorks.Resources.Images.arrowup;
 			this.m_btnMoveItemUp.UseVisualStyleBackColor = true;
 			// 
 			// m_lvItems

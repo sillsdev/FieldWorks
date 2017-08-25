@@ -8,7 +8,6 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Collections.Generic;
 using System.Xml.Linq;
-using SIL.FieldWorks.Common.Framework;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;

@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
+using LanguageExplorer;
 using LanguageExplorer.Controls.XMLViews;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;

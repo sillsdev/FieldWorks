@@ -15,7 +15,6 @@ using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel.Infrastructure;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
-using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using Rect = SIL.FieldWorks.Common.ViewsInterfaces.Rect;
 

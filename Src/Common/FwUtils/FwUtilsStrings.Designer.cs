@@ -97,15 +97,6 @@ namespace SIL.FieldWorks.Common.FwUtils {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to There was an error while reading in the XML file: {0}..
-        /// </summary>
-        internal static string ErrorReadingXMLFile0 {
-            get {
-                return ResourceManager.GetString("ErrorReadingXMLFile0", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Ignore.
         /// </summary>
         internal static string Ignore {

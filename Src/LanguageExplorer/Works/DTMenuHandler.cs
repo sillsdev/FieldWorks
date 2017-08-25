@@ -10,7 +10,6 @@ using System.Windows.Forms;
 using System.Xml.Linq;
 using SIL.LCModel.Core.Cellar;
 using SIL.FieldWorks.Common.Controls.FileDialog;
-using SIL.FieldWorks.Common.Framework;
 using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.LcmUi;
 using SIL.FieldWorks.Common.FwUtils;

@@ -13,7 +13,6 @@ using SIL.LCModel;
 using SIL.FieldWorks.Filters;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Infrastructure;
-using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FwCoreDlgControls;
 

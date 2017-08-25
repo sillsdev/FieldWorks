@@ -10,7 +10,6 @@ using System.Text;
 using SIL.Archiving;
 using SIL.FieldWorks.Common.FwUtils;
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.Framework;
 using L10NSharp;
 using System.Collections.Generic;
 using System;

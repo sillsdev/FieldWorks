@@ -556,8 +556,6 @@ namespace LanguageExplorer.Controls.LexText
 		/// <summary>
 		/// Fill in any missing alternatives from the LIFT data.
 		/// </summary>
-		/// <param name="contents"></param>
-		/// <param name="destination"></param>
 		private void MergeStringsFromLiftContents(LiftMultiText contents, ITsMultiString destination, string attr, ICmObject obj)
 		{
 			if (contents != null && !contents.IsEmpty)
@@ -1834,18 +1832,7 @@ namespace LanguageExplorer.Controls.LexText
 			}
 		}
 
-		/// <summary>
-		///
-		/// </summary>
-		/// <param name="id"></param>
-		/// <param name="guidAttr"></param>
-		/// <param name="parent"></param>
-		/// <param name="description">safe-XML</param>
-		/// <param name="label">safe-XML</param>
-		/// <param name="abbrev">safe-XML</param>
-		/// <param name="dict"></param>
-		/// <param name="rgNew"></param>
-		/// <param name="list"></param>
+		/// <summary />
 		private void ProcessPossibility(string id, string guidAttr, string parent,
 			LiftMultiText description, LiftMultiText label, LiftMultiText abbrev,
 			Dictionary<string, ICmPossibility> dict, List<ICmPossibility> rgNew, ICmPossibilityList list, bool isCustom = false)
@@ -1865,18 +1852,7 @@ namespace LanguageExplorer.Controls.LexText
 			}
 		}
 
-		/// <summary>
-		///
-		/// </summary>
-		/// <param name="id"></param>
-		/// <param name="guidAttr"></param>
-		/// <param name="parent"></param>
-		/// <param name="description">safe-XML</param>
-		/// <param name="label">safe-XML</param>
-		/// <param name="abbrev">safe-XML</param>
-		/// <param name="dict"></param>
-		/// <param name="rgNew"></param>
-		/// <param name="list"></param>
+		/// <summary />
 		private void ProcessLocation(string id, string guidAttr, string parent,
 			LiftMultiText description, LiftMultiText label, LiftMultiText abbrev)
 		{
@@ -2390,8 +2366,6 @@ namespace LanguageExplorer.Controls.LexText
 		/// See LT-8840 for what happens if we depend of the Guid value provided by
 		/// the parser.
 		/// </summary>
-		/// <param name="info"></param>
-		/// <returns></returns>
 		private CmLiftSense CreateLiftSenseFromInfo(Extensible info, LiftObject owner)
 		{
 			Guid guidInfo = info.Guid;
