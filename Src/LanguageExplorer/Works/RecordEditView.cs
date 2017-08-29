@@ -55,7 +55,7 @@ namespace LanguageExplorer.Works
 		private bool m_showDescendantInRoot;
 		private ImageList buttonImages;
 		protected Panel m_panel;
-		protected DataTree m_dataEntryForm;
+		protected DataTree m_dataTree;
 		private IContainer components;
 		private string m_layoutName;
 		private string m_layoutChoiceField;
@@ -88,14 +88,14 @@ namespace LanguageExplorer.Works
 		{
 		}
 
-		protected RecordEditView(XElement configurationParametersElement, XDocument sliceFilterDocument, LcmCache cache, RecordClerk recordClerk, DTMenuHandler dataTreeMenuHandler, DataTree dataEntryForm)
+		protected RecordEditView(XElement configurationParametersElement, XDocument sliceFilterDocument, LcmCache cache, RecordClerk recordClerk, DTMenuHandler dataTreeMenuHandler, DataTree dataTree)
 			: base(configurationParametersElement, cache, recordClerk)
 		{
 			m_menuHandler = dataTreeMenuHandler;
 			m_sliceFilterDocument = sliceFilterDocument;
 			// This must be called before InitializeComponent()
-			m_dataEntryForm = dataEntryForm;
-			m_dataEntryForm.CurrentSliceChanged += m_dataEntryForm_CurrentSliceChanged;
+			m_dataTree = dataTree;
+			m_dataTree.CurrentSliceChanged += DataTreeCurrentSliceChanged;
 
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
@@ -113,7 +113,7 @@ namespace LanguageExplorer.Works
 		{
 			base.InitializeFlexComponent(flexComponentParameters);
 
-			m_dataEntryForm.InitializeFlexComponent(flexComponentParameters);
+			m_dataTree.InitializeFlexComponent(flexComponentParameters);
 		}
 
 		#endregion
@@ -145,7 +145,7 @@ namespace LanguageExplorer.Works
 			}
 
 			// If possible make it use the style sheet appropriate for its main window.
-			m_dataEntryForm.StyleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable);
+			m_dataTree.StyleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable);
 			ShowRecord();
 			m_fullyInitialized = true;
 		}
@@ -168,17 +168,17 @@ namespace LanguageExplorer.Works
 			if (disposing)
 			{
 				components?.Dispose();
-				if (m_dataEntryForm != null)
+				if (m_dataTree != null)
 				{
-					m_dataEntryForm.CurrentSliceChanged -= m_dataEntryForm_CurrentSliceChanged;
-					m_dataEntryForm.Dispose();
+					m_dataTree.CurrentSliceChanged -= DataTreeCurrentSliceChanged;
+					m_dataTree.Dispose();
 				}
 				if (!string.IsNullOrEmpty(m_titleField))
 				{
 					Cache.DomainDataByFlid.RemoveNotification(this);
 				}
 			}
-			m_dataEntryForm = null;
+			m_dataTree = null;
 
 			base.Dispose(disposing);
 		}
@@ -227,21 +227,21 @@ namespace LanguageExplorer.Works
 		{
 			CheckDisposed();
 
-			if (m_dataEntryForm != null)
-				m_dataEntryForm.PrepareToGoAway();
+			if (m_dataTree != null)
+				m_dataTree.PrepareToGoAway();
 			return base.PrepareToGoAway();
 		}
 
-		private void m_dataEntryForm_CurrentSliceChanged(object sender, EventArgs e)
+		private void DataTreeCurrentSliceChanged(object sender, EventArgs e)
 		{
 			if (!m_showDescendantInRoot)
 				return;
 
-			if (m_dataEntryForm.Descendant != null && Clerk.CurrentObject != m_dataEntryForm.Descendant)
+			if (m_dataTree.Descendant != null && Clerk.CurrentObject != m_dataTree.Descendant)
 				// if the user has clicked on a different descendant's slice, update the currently
 				// selected record (we want to keep the browse view in sync), but do not change the
 				// focus
-				Clerk.JumpToRecord(m_dataEntryForm.Descendant.Hvo, true);
+				Clerk.JumpToRecord(m_dataTree.Descendant.Hvo, true);
 		}
 
 		#endregion // Message Handlers
@@ -315,7 +315,7 @@ namespace LanguageExplorer.Works
 			base.ShowRecord();
 #if DEBUG
 			int msStart = Environment.TickCount;
-			Debug.Assert(m_dataEntryForm != null);
+			Debug.Assert(m_dataTree != null);
 #endif
 
 			bool oldSuppressSaveOnChangeRecord = Clerk.SuppressSaveOnChangeRecord;
@@ -325,13 +325,13 @@ namespace LanguageExplorer.Works
 
 			if (Clerk.CurrentObject == null || Clerk.SuspendLoadingRecordUntilOnJumpToRecord)
 			{
-				m_dataEntryForm.Hide();
-				m_dataEntryForm.Reset();	// in case user deleted the object it was based upon.
+				m_dataTree.Hide();
+				m_dataTree.Reset();	// in case user deleted the object it was based upon.
 				return;
 			}
 			try
 			{
-				m_dataEntryForm.Show();
+				m_dataTree.Show();
 				using (new WaitCursor(this))
 				{
 				// Enhance: Maybe do something here to allow changing the templates without the starting the application.
@@ -344,7 +344,7 @@ namespace LanguageExplorer.Works
 						obj = obj.Owner;
 				}
 
-				m_dataEntryForm.ShowObject(obj, m_layoutName, m_layoutChoiceField, Clerk.CurrentObject, ShouldSuppressFocusChange(rni));
+				m_dataTree.ShowObject(obj, m_layoutName, m_layoutChoiceField, Clerk.CurrentObject, ShouldSuppressFocusChange(rni));
 			}
 			}
 			catch (Exception error)
@@ -405,29 +405,29 @@ namespace LanguageExplorer.Works
 
 			base.SetupDataContext();
 
-			m_dataEntryForm.PersistenceProvder = PersistenceProviderFactory.CreatePersistenceProvider(PropertyTable);
+			m_dataTree.PersistenceProvder = PersistenceProviderFactory.CreatePersistenceProvider(PropertyTable);
 
 			Clerk.UpdateRecordTreeBarIfNeeded();
-			m_dataEntryForm.SliceFilter = m_sliceFilterDocument != null ? new SliceFilter(m_sliceFilterDocument) : new SliceFilter();
+			m_dataTree.SliceFilter = m_sliceFilterDocument != null ? new SliceFilter(m_sliceFilterDocument) : new SliceFilter();
 			// Already done: m_dataEntryForm.Dock = DockStyle.Fill;
 #if RANDYTODO
 			m_dataEntryForm.SmallImages = PropertyTable.GetValue<ImageList.ImageCollection>("smallImages");
 #endif
 			string sDatabase = Cache.ProjectId.Name;
-			m_dataEntryForm.Initialize(Cache, true, Inventory.GetInventory("layouts", sDatabase),
+			m_dataTree.Initialize(Cache, true, Inventory.GetInventory("layouts", sDatabase),
 				Inventory.GetInventory("parts", sDatabase));
 			// Already done. m_dataEntryForm.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
-			if (m_dataEntryForm.AccessibilityObject != null)
-				m_dataEntryForm.AccessibilityObject.Name = "RecordEditView.DataTree";
+			if (m_dataTree.AccessibilityObject != null)
+				m_dataTree.AccessibilityObject.Name = "RecordEditView.DataTree";
 
 			// set up the context menu, overriding the automatic menu creator/handler
-			m_dataEntryForm.SetContextMenuHandler(m_menuHandler.ShowSliceContextMenu);
+			m_dataTree.SetContextMenuHandler(m_menuHandler.ShowSliceContextMenu);
 
 			Controls.Clear();
 			Controls.Add(m_informationBar);
-			Controls.Add(m_dataEntryForm);
+			Controls.Add(m_dataTree);
 			SetInfoBarText();
-			m_dataEntryForm.BringToFront();
+			m_dataTree.BringToFront();
 		}
 
 		#endregion // Other methods
@@ -441,7 +441,7 @@ namespace LanguageExplorer.Works
 			{
 				CheckDisposed();
 
-				return m_dataEntryForm;
+				return m_dataTree;
 			}
 		}
 
@@ -453,10 +453,10 @@ namespace LanguageExplorer.Works
 				throw new ArgumentNullException("targetCandidates");
 
 			// when switching panes, we want to give the focus to the CurrentSlice(if any)
-			if (m_dataEntryForm != null && m_dataEntryForm.CurrentSlice != null)
+			if (m_dataTree != null && m_dataTree.CurrentSlice != null)
 			{
-				targetCandidates.Add(m_dataEntryForm.CurrentSlice);
-				return m_dataEntryForm.CurrentSlice.ContainsFocus ? m_dataEntryForm.CurrentSlice : null;
+				targetCandidates.Add(m_dataTree.CurrentSlice);
+				return m_dataTree.CurrentSlice.ContainsFocus ? m_dataTree.CurrentSlice : null;
 			}
 
 			return base.PopulateCtrlTabTargetCandidateList(targetCandidates);
@@ -477,7 +477,7 @@ namespace LanguageExplorer.Works
 			System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(RecordEditView));
 			this.buttonImages = new System.Windows.Forms.ImageList(this.components);
 			this.m_panel = new System.Windows.Forms.Panel();
-			this.m_dataEntryForm.AccessibilityObject.Name = "RecordEditView.DataTree";
+			this.m_dataTree.AccessibilityObject.Name = "RecordEditView.DataTree";
 			this.SuspendLayout();
 			//
 			// m_informationBar
@@ -493,7 +493,7 @@ namespace LanguageExplorer.Works
 			//
 			// m_panel
 			//
-			this.m_panel.Controls.Add(this.m_dataEntryForm);
+			this.m_panel.Controls.Add(this.m_dataTree);
 			this.m_panel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.m_panel.Location = new System.Drawing.Point(0, 0);
 			this.m_panel.Name = "m_panel";
@@ -503,14 +503,14 @@ namespace LanguageExplorer.Works
 			//
 			// m_dataEntryForm
 			//
-			this.m_dataEntryForm.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.m_dataEntryForm.Location = new System.Drawing.Point(0, 0);
-			this.m_dataEntryForm.Name = "m_dataEntryForm";
-			this.m_dataEntryForm.PersistenceProvder = null;
-			this.m_dataEntryForm.Size = new System.Drawing.Size(752, 150);
-			this.m_dataEntryForm.SliceFilter = null;
-			this.m_dataEntryForm.StyleSheet = null;
-			this.m_dataEntryForm.TabIndex = 3;
+			this.m_dataTree.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.m_dataTree.Location = new System.Drawing.Point(0, 0);
+			this.m_dataTree.Name = "m_dataTree";
+			this.m_dataTree.PersistenceProvder = null;
+			this.m_dataTree.Size = new System.Drawing.Size(752, 150);
+			this.m_dataTree.SliceFilter = null;
+			this.m_dataTree.StyleSheet = null;
+			this.m_dataTree.TabIndex = 3;
 			//
 			// RecordEditView
 			//

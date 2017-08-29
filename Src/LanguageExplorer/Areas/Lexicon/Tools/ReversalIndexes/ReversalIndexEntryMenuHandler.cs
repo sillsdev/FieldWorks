@@ -50,11 +50,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 		public bool OnPromoteReversalindexEntry(object cmd)
 		{
 			//Command command = (Command) cmd;
-			Slice slice = m_dataEntryForm.CurrentSlice;
+			Slice slice = m_dataTree.CurrentSlice;
 			Debug.Assert(slice != null, "No slice was current");
 			if (slice != null)
 			{
-				LcmCache cache = m_dataEntryForm.Cache;
+				LcmCache cache = m_dataTree.Cache;
 				IReversalIndexEntry entry = slice.Object as IReversalIndexEntry;
 				ICmObject newOwner = entry.Owner.Owner;
 				UndoableUnitOfWorkHelper.Do(((Command)cmd).UndoText, ((Command)cmd).RedoText, newOwner,
@@ -93,7 +93,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 		public virtual bool OnDisplayPromoteReversalindexEntry(object commandObject,
 			ref UIItemDisplayProperties display)
 		{
-			Slice slice = m_dataEntryForm.CurrentSlice;
+			Slice slice = m_dataTree.CurrentSlice;
 			if (slice == null
 				|| slice.Object == null
 				|| slice.Object.OwningFlid == ReversalIndexTags.kflidEntries) // Can't promote a top-level entry.
@@ -113,7 +113,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 		{
 			using (var dlg = new ReversalEntryGoDlg())
 			{
-				Slice slice = m_dataEntryForm.CurrentSlice;
+				Slice slice = m_dataTree.CurrentSlice;
 				var currentEntry = (IReversalIndexEntry) slice.Object;
 				dlg.ReversalIndex = currentEntry.ReversalIndex;
 				AddEntryAndChildrenRecursively(dlg.FilteredReversalEntryHvos, currentEntry);
@@ -160,7 +160,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 		public virtual bool OnDisplayMoveReversalindexEntry(object commandObject,
 			ref UIItemDisplayProperties display)
 		{
-			Slice slice = m_dataEntryForm.CurrentSlice;
+			Slice slice = m_dataTree.CurrentSlice;
 			if (slice == null || slice.Object == null)
 			{
 				display.Enabled = false;
@@ -178,17 +178,17 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 		{
 			get
 			{
-				Debug.Assert(m_dataEntryForm != null && m_dataEntryForm.CurrentSlice != null, "Current slice information is null, how can this menu be drawing?");
+				Debug.Assert(m_dataTree != null && m_dataTree.CurrentSlice != null, "Current slice information is null, how can this menu be drawing?");
 				// ReSharper disable HeuristicUnreachableCode
 				// ReSharper disable ConditionIsAlwaysTrueOrFalse
 				//ReSharper lies.
-				if (m_dataEntryForm == null || m_dataEntryForm.CurrentSlice == null)
+				if (m_dataTree == null || m_dataTree.CurrentSlice == null)
 				{
 					return false; //merge is not possible if all is not right with the world
 				}
 				// ReSharper restore ConditionIsAlwaysTrueOrFalse
 				// ReSharper restore HeuristicUnreachableCode
-				IReversalIndexEntry rie = m_dataEntryForm.CurrentSlice.Object as IReversalIndexEntry;
+				IReversalIndexEntry rie = m_dataTree.CurrentSlice.Object as IReversalIndexEntry;
 				if(rie == null)
 					return false;
 				// Merge and move are possible if we have more than one entry.

@@ -1,3 +1,4 @@
+//#define RANDYTEMP
 // Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
@@ -70,61 +71,62 @@ namespace LanguageExplorer
 	/// The current client has two instances of inventory, accessed by Inventories["parts"]
 	/// and Inventories["layouts"].
 	/// </summary>
-	public class Inventory
+	public sealed class Inventory
 	{
 		#region Member data
 		/// <summary>
 		/// This does not represent any physical file on the disk,
 		/// it is an in memory only document.
 		/// </summary>
-		protected XDocument m_mainDoc;
+		private XDocument m_mainDoc;
 		/// <summary />
-		protected XDocument m_baseDoc; // doc used to store replaced base elements
+		private XDocument m_baseDoc; // doc used to store replaced base elements
 		/// <summary>
 		/// doc used to store alteration elements. (This is not the OUTPUT of the derivation/
 		/// unification process: that is stored in m_mainDoc. This is the node we read from
 		/// the file containing the specifications for the alteration.
 		/// </summary>
-		protected XDocument m_alterationsDoc;
+		private XDocument m_alterationsDoc;
 		/// <summary>
 		/// Set of template paths.
 		/// </summary>
-		protected HashSet<string> m_inventoryPaths;
+		private HashSet<string> m_inventoryPaths;
 		/// <summary>
 		/// The pattern used to find files to load into the inventory in a directory.
 		/// PersistOverrideElement assumes that it can strip off one character to get a useful
 		/// suffix for a file name (e.g., '*.fwlayout' is a typical pattern).
 		/// </summary>
-		protected string m_filePattern;
+		private string m_filePattern;
 		/// <summary />
-		protected string m_sDatabase = null;
+		private string m_sDatabase = null;
 		/// <summary />
-		protected string m_projectPath;
+		private string m_projectPath;
 		/// <summary>
 		/// An xpath defining the elements we want to load from the files.
 		/// PersistOverrideElement assumes that it follows the pattern /element1/element2/.../elementn/*
 		/// for example, '/LayoutInventory/*' or '/Parts/bin/*'.
 		/// </summary>
-		protected string m_xpathElementsWanted;
+		private string m_xpathElementsWanted;
 		/// <summary>
 		/// List of attribute names that must match for a node to be considered a replacement
 		/// of an existing node, keyed by element name.
 		/// </summary>
-		protected Dictionary<string, string[]> m_keyAttrs;
+		private Dictionary<string, string[]> m_keyAttrs;
 		/// <summary>
 		/// This table is used to implement the GetUnified method, which finds or creates
 		/// an element produced by unifying the children of two nodes. The key is a 'KeyValuePair'
 		/// in which the items are the two source XML nodes. The value is the unified XML node.
 		/// </summary>
-		protected Dictionary<Tuple<XElement, XElement>, XElement> m_unifiedNodes = new Dictionary<Tuple<XElement, XElement>, XElement>();
-		Dictionary<GetElementKey, XElement> m_getElementTable = new Dictionary<GetElementKey, XElement>();
-		static Dictionary<string, Inventory> s_inventories = new Dictionary<string, Inventory>();
-		List<KeyValuePair<string, DateTime>> m_fileInfo;
-		int m_version = 0; // Version number passed to LoadUserOverrides.
-		// This is used to store layout nodes that have an attribute tagForWs="true".  These are
-		// used in displaying Reversal Indexes, and need have separate versions generated for each
-		// reversal index writing system.
-		List<XElement> m_wsTaggedNodes = new List<XElement>();
+		private Dictionary<Tuple<XElement, XElement>, XElement> m_unifiedNodes = new Dictionary<Tuple<XElement, XElement>, XElement>();
+
+		private readonly Dictionary<GetElementKey, XElement> m_getElementTable = new Dictionary<GetElementKey, XElement>();
+		private static readonly Dictionary<string, Inventory> s_inventories = new Dictionary<string, Inventory>();
+		private List<KeyValuePair<string, DateTime>> m_fileInfo;
+		private int m_version = 0; // Version number passed to LoadUserOverrides.
+								   // This is used to store layout nodes that have an attribute tagForWs="true".  These are
+								   // used in displaying Reversal Indexes, and need have separate versions generated for each
+								   // reversal index writing system.
+		private List<XElement> m_wsTaggedNodes = new List<XElement>();
 
 		// Tracing variable - used to control when and what is output to the debug and trace listeners
 		private TraceSwitch xmlInventorySwitch = new TraceSwitch("XML_Inventory", "", "Off");
@@ -134,42 +136,17 @@ namespace LanguageExplorer
 		#endregion
 
 		/// <summary>
-		/// This marks the beginning of a tag added to layout names (and param values) when a
-		/// node in the tree is copied and has subnodes.
-		/// </summary>
-		public const char kcMarkNodeCopy = '%';
-		/// <summary>
 		/// This marks the beginning of a tag added to layout names (and param values) when an
 		/// entire top-level layout type is copied.
 		/// </summary>
-		public const char kcMarkLayoutCopy = '#';
+		internal const char kcMarkLayoutCopy = '#';
 
 		/// <summary>
 		/// Layout filename divider. In the case of user-created dictionary views there will
 		/// be two of these; otherwise only one.
 		/// </summary>
-		public const string ksUnderscore = "_";
+		private const string ksUnderscore = "_";
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Initializes a new instance of the <see cref="Inventory"/> class.
-		/// </summary>
-		/// <param name="customInventoryPath">A path to custom inventory files,
-		/// or null, if defaults are fine.</param>
-		/// <param name="filePattern">The pattern to select files from each directory</param>
-		/// <param name="xpath">Identifies the elements we want to load.</param>
-		/// <param name="keyAttrs">Initialize the KeyAttributes property</param>
-		/// <param name="appName">Name of the application.</param>
-		/// <param name="projectPath">Path of the project folder</param>
-		/// ------------------------------------------------------------------------------------
-		public Inventory(string customInventoryPath, string filePattern, string xpath,
-			Dictionary<string, string[]> keyAttrs, string appName, string projectPath) :
-			this(customInventoryPath != null ? new[] { customInventoryPath } : null,
-			filePattern, xpath, keyAttrs, appName, projectPath)
-		{
-		}
-
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="Inventory"/> class, giving a list
 		/// of directories to search after the default one.
@@ -181,9 +158,7 @@ namespace LanguageExplorer
 		/// <param name="xpath">Identifies the elements we want to load.</param>
 		/// <param name="appName"></param>
 		/// <param name="projectPath"></param>
-		/// -----------------------------------------------------------------------------------
-		public Inventory(string[] customInventoryPaths, string filePattern, string xpath,
-			Dictionary<string, string[]> keyAttrs, string appName, string projectPath)
+		internal Inventory(string[] customInventoryPaths, string filePattern, string xpath, Dictionary<string, string[]> keyAttrs, string appName, string projectPath)
 			:this (filePattern, xpath, keyAttrs, appName, projectPath)
 		{
 			int msStart = Environment.TickCount;
@@ -213,8 +188,7 @@ namespace LanguageExplorer
 		/// <param name="appName"></param>
 		/// <param name="projectPath"></param>
 		/// -----------------------------------------------------------------------------------
-		public Inventory(string filePattern, string xpath,
-			Dictionary<string, string[]> keyAttrs, string appName, String projectPath)
+		internal Inventory(string filePattern, string xpath, Dictionary<string, string[]> keyAttrs, string appName, string projectPath)
 		{
 			m_inventoryPaths = new HashSet<string>();
 			m_filePattern = filePattern;
@@ -228,7 +202,7 @@ namespace LanguageExplorer
 		/// Provides a merge tool for safely creating valid current versions of user overrides
 		/// belonging to an older version.
 		/// </summary>
-		public IOldVersionMerger Merger
+		internal IOldVersionMerger Merger
 		{
 			get { return m_merger; }
 			set { m_merger = value; }
@@ -236,7 +210,7 @@ namespace LanguageExplorer
 		/// <summary>
 		/// Load overrides from the user's private directory. If version number does not match, ignore.
 		/// </summary>
-		public void LoadUserOverrides(int version, string sDatabase)
+		internal void LoadUserOverrides(int version, string sDatabase)
 		{
 			Debug.Assert(m_version == version || m_version == 0);
 			m_version = version; // remember for reloads; currently we only support one version.
@@ -258,7 +232,7 @@ namespace LanguageExplorer
 		/// <summary>
 		/// Delete override files from the user's private directory.  Ignore version numbers.
 		/// </summary>
-		public void DeleteUserOverrides(string sDatabase)
+		internal void DeleteUserOverrides(string sDatabase)
 		{
 			Debug.Assert(m_sDatabase == null || m_sDatabase == sDatabase);
 			m_sDatabase = sDatabase;
@@ -286,7 +260,7 @@ namespace LanguageExplorer
 		/// <summary>
 		/// Get/set the name of the database associated with this Inventory.
 		/// </summary>
-		public string DatabaseName
+		internal string DatabaseName
 		{
 			get { return m_sDatabase; }
 			set { m_sDatabase = value; }
@@ -312,7 +286,7 @@ namespace LanguageExplorer
 		///   However, if the name looks like "Full#Foo", the filename comes from the
 		///   corresponding layoutType node with a layout name that ends with "#Foo".
 		/// </summary>
-		public void PersistOverrideElement(XElement element)
+		internal void PersistOverrideElement(XElement element)
 		{
 			string[] keyAttrs = m_keyAttrs[element.Name.LocalName];
 			if (element.Name == "layout")
@@ -453,7 +427,7 @@ namespace LanguageExplorer
 		/// <summary>
 		/// Add (or replace) the given layout type in the inventory.
 		/// </summary>
-		public void AddLayoutTypeToInventory(XElement layoutType)
+		internal void AddLayoutTypeToInventory(XElement layoutType)
 		{
 			Debug.Assert(m_mainDoc != null);
 			var root = m_mainDoc.Root;
@@ -476,7 +450,7 @@ namespace LanguageExplorer
 		/// <summary>
 		/// Return the list of layout types that the inventory knows about.
 		/// </summary>
-		public List<XElement> GetLayoutTypes()
+		internal List<XElement> GetLayoutTypes()
 		{
 			Debug.Assert(m_mainDoc != null);
 			var root = m_mainDoc.Root;
@@ -489,7 +463,7 @@ namespace LanguageExplorer
 		/// Take the given node and add it to the parts/layouts inventory
 		/// </summary>
 		/// <param name="element"></param>
-		public void AddNodeToInventory(XElement element)
+		internal void AddNodeToInventory(XElement element)
 		{
 			AddNode(element, m_mainDoc.Root);
 		}
@@ -512,7 +486,7 @@ namespace LanguageExplorer
 		/// <summary>
 		/// Used to retrieve a shared inventory by name.
 		/// </summary>
-		static public Inventory GetInventory(string key, string sDatabase)
+		internal static Inventory GetInventory(string key, string sDatabase)
 		{
 			string sKey;
 			if (!String.IsNullOrEmpty(sDatabase))
@@ -533,7 +507,7 @@ namespace LanguageExplorer
 		/// </summary>
 		/// <param name="key"></param>
 		/// <param name="sDatabase"></param>
-		static public void RemoveInventory(string key, string sDatabase)
+		internal static void RemoveInventory(string key, string sDatabase)
 		{
 			string sKey;
 			if (!String.IsNullOrEmpty(sDatabase))
@@ -552,7 +526,7 @@ namespace LanguageExplorer
 		/// <param name="key">The key.</param>
 		/// <param name="sDatabase">The database.</param>
 		/// <param name="val">The val.</param>
-		static public void SetInventory(string key, string sDatabase, Inventory val)
+		internal static void SetInventory(string key, string sDatabase, Inventory val)
 		{
 			if (string.IsNullOrEmpty(key))
 				throw new ArgumentException("Invalid key argument.");
@@ -567,12 +541,26 @@ namespace LanguageExplorer
 			else
 				sKey = key;
 			s_inventories[sKey] = val;
+#if RANDTTODO
+			// TODO: Remove RANDYTEMP code and defn.
+#endif
+#if RANDYTEMP
+			// Write out all three files: m_mainDoc, m_baseDoc, m_alterationsDoc
+			var basePath = Path.Combine("C:\\", "Dev", "Inventories");
+			if (!Directory.Exists(basePath))
+			{
+				Directory.CreateDirectory(basePath);
+			}
+			val.m_mainDoc.Save(Path.Combine(basePath, $"Main_{key}_{sDatabase}.{key}"));
+			val.m_baseDoc.Save(Path.Combine(basePath, $"Base_{key}_{sDatabase}.{key}"));
+			val.m_alterationsDoc.Save(Path.Combine(basePath, $"Alterations_{key}_{sDatabase}.{key}"));
+#endif
 		}
 
 		/// <summary>
 		/// Get the root node that has the collected elements as direct children.
 		/// </summary>
-		public XElement Root
+		internal XElement Root
 		{
 			get
 			{
@@ -584,7 +572,7 @@ namespace LanguageExplorer
 		/// <summary>
 		/// List of attribute names that must match for a node to be considered a replacement
 		/// of an existing node.		/// </summary>
-		public Dictionary<string, string[]> KeyAttributes
+		internal Dictionary<string, string[]> KeyAttributes
 		{
 			get { return m_keyAttrs;}
 		}
@@ -601,7 +589,7 @@ namespace LanguageExplorer
 		/// <param name="elementName"></param>
 		/// <param name="attrvals"></param>
 		/// <returns></returns>
-		public XElement GetElement(string elementName, string[] attrvals)
+		internal XElement GetElement(string elementName, string[] attrvals)
 		{
 			XElement node = GetEltFromDoc(elementName, attrvals, m_mainDoc);
 			if (node != null)
@@ -758,7 +746,7 @@ namespace LanguageExplorer
 		/// </summary>
 		/// <param name="xpath">xpath string</param>
 		/// <returns></returns>
-		public IEnumerable<XElement> GetElements(string xpath)
+		internal IEnumerable<XElement> GetElements(string xpath)
 		{
 			return m_mainDoc.Root.XPathSelectElements(xpath);
 		}
@@ -771,7 +759,7 @@ namespace LanguageExplorer
 		/// <param name="elementName"></param>
 		/// <param name="attrvals"></param>
 		/// <returns></returns>
-		public IEnumerable<XElement> GetElements(string elementName, string[] attrvals)
+		internal IEnumerable<XElement> GetElements(string elementName, string[] attrvals)
 		{
 			// Create an xpath that will select a node with the same name and key attributes
 			// (if any) as newNode. If some attributes are missing from newNode, they
@@ -814,7 +802,7 @@ namespace LanguageExplorer
 		}
 
 		/// <summary />
-		protected XElement GetEltFromDoc(string elementName, string[] attrvals, XDocument doc)
+		private XElement GetEltFromDoc(string elementName, string[] attrvals, XDocument doc)
 		{
 			var key = new GetElementKey(elementName, attrvals, doc);
 			XElement result = null;
@@ -832,7 +820,7 @@ namespace LanguageExplorer
 		}
 
 		/// <summary />
-		protected XElement GetEltFromDoc1(string elementName, string[] attrvals, XDocument doc)
+		private XElement GetEltFromDoc1(string elementName, string[] attrvals, XDocument doc)
 		{
 			// Create an xpath that will select a node with the same name and key attributes
 			// (if any) as newNode. If some attributes are missing from newNode, they
@@ -897,7 +885,7 @@ namespace LanguageExplorer
 		/// <param name="elementName"></param>
 		/// <param name="attrvals"></param>
 		/// <returns></returns>
-		public XElement GetAlteration(string elementName, string[] attrvals)
+		internal XElement GetAlteration(string elementName, string[] attrvals)
 		{
 			return GetEltFromDoc(elementName, attrvals, m_alterationsDoc);
 		}
@@ -910,7 +898,7 @@ namespace LanguageExplorer
 		///
 		/// Exactly the keys that produce a value in GetDerived will produce one here.
 		/// </summary>
-		public XElement GetBase(string elementName, string[] attrvals)
+		internal XElement GetBase(string elementName, string[] attrvals)
 		{
 			var alteration = GetAlteration(elementName, attrvals);
 			if (alteration == null)
@@ -936,7 +924,7 @@ namespace LanguageExplorer
 		/// Load the templates again. Useful when you are working on template writing,
 		/// and don't want to have to restart the application to test something you have done.
 		/// </summary>
-		public void Reload()
+		internal void Reload()
 		{
 			LoadElements();
 		}
@@ -956,7 +944,7 @@ namespace LanguageExplorer
 		/// </summary>
 		/// <param name="inventoryFilePath">Path to one inventory file.</param>
 		/// <returns>A list of elements which should be inventory elements.</returns>
-		protected IEnumerable<XElement> LoadOneInventoryFile(string inventoryFilePath)
+		private IEnumerable<XElement> LoadOneInventoryFile(string inventoryFilePath)
 		{
 			m_fileInfo.Add(new KeyValuePair<string, DateTime>(inventoryFilePath, File.GetLastWriteTime(inventoryFilePath)));
 
@@ -978,7 +966,7 @@ namespace LanguageExplorer
 		/// This method will save the given Nodes into the requested path, first it will remove all the existing nodes which match
 		/// the type that this inventory is representing. Then it will add the new data to the parent node of the first match.
 		/// </summary>
-		protected void RefreshOneInventoryFile(string inventoryFilePath, List<XElement> newData)
+		private void RefreshOneInventoryFile(string inventoryFilePath, List<XElement> newData)
 		{
 			XDocument xdoc;
 			try
@@ -1017,7 +1005,7 @@ namespace LanguageExplorer
 		/// Add custom files after the main loading.
 		/// </summary>
 		/// <param name="filePaths"></param>
-		public void AddCustomFiles(string[] filePaths)
+		internal void AddCustomFiles(string[] filePaths)
 		{
 			for(var i = 0; i < filePaths.Length; ++i)
 			{
@@ -1037,7 +1025,7 @@ namespace LanguageExplorer
 		}
 
 		/// <summary />
-		protected void AddElementsFromFiles(string[] filePaths)
+		private void AddElementsFromFiles(string[] filePaths)
 		{
 			AddElementsFromFiles(filePaths, m_version, false);
 		}
@@ -1051,7 +1039,7 @@ namespace LanguageExplorer
 		/// <remarks>
 		/// tests over in XMLVIews need access to this method.
 		/// </remarks>
-		public void AddElementsFromFiles(IEnumerable<string> filePaths, int version, bool loadUserOverRides)
+		internal void AddElementsFromFiles(IEnumerable<string> filePaths, int version, bool loadUserOverRides)
 		{
 			Debug.Assert(filePaths != null);
 			Debug.Assert(m_mainDoc != null);
@@ -1070,20 +1058,6 @@ namespace LanguageExplorer
 					RefreshOneInventoryFile(path, cleanedNodes);
 				}
 			}
-		}
-
-		/// <summary>
-		/// Collect all of the elements up from a string input (used in testing).
-		/// </summary>
-		protected void AddElementsFromString(string input, int version)
-		{
-			Debug.Assert(m_mainDoc != null);
-			var root = m_mainDoc.Root;
-			var xdoc = XDocument.Parse(input);
-			var elementList = xdoc.XPathSelectElements(m_xpathElementsWanted);
-			bool wasMerged;
-			var cleanedNodes = MergeAndUpdateNodes(elementList, version, out wasMerged, false);
-			LoadElementList(cleanedNodes, version, root);
 		}
 
 		/// <summary>
@@ -1133,7 +1107,7 @@ namespace LanguageExplorer
 		/// This comparison class allows us to simplify getting only unique elements
 		/// in the MergeAndUpdateNodes method below.
 		/// </summary>
-		class XElementCompare : IEqualityComparer<XElement>
+		private sealed class XElementCompare : IEqualityComparer<XElement>
 		{
 			/// <summary></summary>
 			public bool Equals(XElement first, XElement second)
@@ -1264,7 +1238,7 @@ namespace LanguageExplorer
 		/// system specific layouts.  This method does that.
 		/// </summary>
 		/// <param name="sWsTag"></param>
-		public void ExpandWsTaggedNodes(string sWsTag)
+		internal void ExpandWsTaggedNodes(string sWsTag)
 		{
 			Debug.Assert(sWsTag != null && sWsTag.Length > 0);
 			Debug.Assert(m_mainDoc != null);
@@ -1405,7 +1379,7 @@ namespace LanguageExplorer
 		/// <summary>
 		/// Collect all of the elements from wherever they come from.
 		/// </summary>
-		protected void LoadElements()
+		private void LoadElements()
 		{
 			BasicInit();
 
@@ -1422,11 +1396,17 @@ namespace LanguageExplorer
 		/// <summary>
 		/// Collect all of the elements from a specific input string (only). Used in tests.
 		/// </summary>
-		public void LoadElements(string input, int version)
+		internal void LoadElements(string input, int version)
 		{
 			BasicInit();
 
-			AddElementsFromString(input, version);
+			Debug.Assert(m_mainDoc != null);
+			var root = m_mainDoc.Root;
+			var xdoc = XDocument.Parse(input);
+			var elementList = xdoc.XPathSelectElements(m_xpathElementsWanted);
+			bool wasMerged;
+			var cleanedNodes = MergeAndUpdateNodes(elementList, version, out wasMerged, false);
+			LoadElementList(cleanedNodes, version, root);
 		}
 
 		private void BasicInit()
@@ -1434,12 +1414,9 @@ namespace LanguageExplorer
 			// If this is called more than once,
 			// it will throw away the old xml document here.
 			m_fileInfo = new List<KeyValuePair<string, DateTime>>();
-			m_mainDoc = new XDocument();
-			m_mainDoc.Add(new XElement("Main"));
-			m_alterationsDoc = new XDocument();
-			m_alterationsDoc.Add(new XElement("Main"));
-			m_baseDoc = new XDocument();
-			m_baseDoc.Add(new XElement("Main"));
+			m_mainDoc = new XDocument(new XElement("Main"));
+			m_alterationsDoc = new XDocument(new XElement("Main"));
+			m_baseDoc = new XDocument(new XElement("Main"));
 			m_getElementTable.Clear();
 		}
 
@@ -1447,7 +1424,7 @@ namespace LanguageExplorer
 		/// Answer true if no files we load changed since last load.
 		/// </summary>
 		/// <returns></returns>
-		bool NoFilesChanged()
+		private bool NoFilesChanged()
 		{
 			int ifile = 0;
 			foreach(string inventoryPath in m_inventoryPaths)
@@ -1477,7 +1454,7 @@ namespace LanguageExplorer
 		/// overriding. It saves the result and will reuse it if a unification
 		/// of the same two elements is requested again.
 		/// </summary>
-		public XElement GetUnified(XElement main, XElement alteration)
+		internal XElement GetUnified(XElement main, XElement alteration)
 		{
 			XElement result;
 			var key = new Tuple<XElement, XElement>(main, alteration);
@@ -1561,7 +1538,7 @@ namespace LanguageExplorer
 			}
 		}
 
-		public ISet<string> ExistingDuplicateKeys()
+		internal ISet<string> ExistingDuplicateKeys()
 		{
 			var set = new HashSet<string>();
 			foreach (var dupKey in
@@ -1587,7 +1564,7 @@ namespace LanguageExplorer
 		/// <param name="version">The version.</param>
 		/// <param name="newPartRef">The new part ref.</param>
 		/// <returns></returns>
-		static public XElement MakeOverride(object[] path, string attrName, string value, int version, out XElement newPartRef)
+		internal static XElement MakeOverride(object[] path, string attrName, string value, int version, out XElement newPartRef)
 		{
 			// if we are overriding an attribute in a part ref that is in a sublayout, we want to treat the sublayout as the
 			// root layout, so we search starting from the end of the path for the last sublayout and if it exists we make it

@@ -129,10 +129,9 @@ namespace LanguageExplorer.Areas
 			return height;
 		}
 
-		public override void Install(DataTree parent)
+		public override void Install(DataTree parentDataTree)
 		{
-			CheckDisposed();
-			base.Install(parent);
+			base.Install(parentDataTree);
 
 			RuleFormulaControl.Initialize(PropertyTable.GetValue<LcmCache>("cache"), Object, -1, AreaResources.ksRuleEnvChooserName,
 				ContainingDataTree.PersistenceProvder, null, null);

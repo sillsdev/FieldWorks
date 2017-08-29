@@ -38,9 +38,9 @@ namespace LanguageExplorer.Areas.Lexicon
 		/// <returns></returns>
 		public override bool OnDisplayDataTreeInsert(object commandObject, ref UIItemDisplayProperties display)
 		{
-			Slice slice = m_dataEntryForm.CurrentSlice;
-			if (slice == null && m_dataEntryForm.Slices.Count > 0)
-				slice = m_dataEntryForm.FieldAt(0);
+			Slice slice = m_dataTree.CurrentSlice;
+			if (slice == null && m_dataTree.Slices.Count > 0)
+				slice = m_dataTree.FieldAt(0);
 			if (slice == null || slice.IsDisposed
 				|| (RecordClerk.RecordClerkRepository.ActiveRecordClerk.ListSize == 0)
 			{
@@ -110,9 +110,9 @@ namespace LanguageExplorer.Areas.Lexicon
 		public override bool OnDisplayInsertMediaFile(object commandObject,
 			ref UIItemDisplayProperties display)
 		{
-			Slice slice = m_dataEntryForm.CurrentSlice;
-			if (slice == null && m_dataEntryForm.Slices.Count > 0)
-				slice = m_dataEntryForm.FieldAt(0);
+			Slice slice = m_dataTree.CurrentSlice;
+			if (slice == null && m_dataTree.Slices.Count > 0)
+				slice = m_dataTree.FieldAt(0);
 			if (slice == null
 				|| (RecordClerk.RecordClerkRepository.ActiveRecordClerk.ListSize == 0)
 			{
@@ -145,7 +145,7 @@ namespace LanguageExplorer.Areas.Lexicon
 		public bool OnDataTreeDeleteSense(object cmd)
 		{
 			Command command = (Command)cmd;
-			Slice slice = m_dataEntryForm.CurrentSlice;
+			Slice slice = m_dataTree.CurrentSlice;
 			Debug.Assert(slice != null, "No slice was current");
 			Debug.Assert(!slice.IsDisposed, "The current slice is already disposed??");
 			if (slice != null)
@@ -158,11 +158,11 @@ namespace LanguageExplorer.Areas.Lexicon
 		public bool OnDemoteSense(object cmd)
 		{
 			Command command = (Command) cmd;
-			Slice slice = m_dataEntryForm.CurrentSlice;
+			Slice slice = m_dataTree.CurrentSlice;
 			Debug.Assert(slice != null, "No slice was current");
 			if (slice != null)
 			{
-				LcmCache cache = m_dataEntryForm.Cache;
+				LcmCache cache = m_dataTree.Cache;
 				int hvoOwner = slice.Object.Owner.Hvo;
 				int flid = slice.Object.OwningFlid;
 				int chvo = cache.DomainDataByFlid.get_VecSize(hvoOwner, flid);
@@ -227,7 +227,7 @@ namespace LanguageExplorer.Areas.Lexicon
 		public virtual bool OnDisplayDemoteSense(object commandObject,
 			ref UIItemDisplayProperties display)
 		{
-			Slice slice = m_dataEntryForm.CurrentSlice;
+			Slice slice = m_dataTree.CurrentSlice;
 			if (slice == null || slice.Object == null ||
 				(slice.Object.OwningFlid != LexSenseTags.kflidSenses) &&
 				(slice.Object.OwningFlid != LexEntryTags.kflidSenses))
@@ -236,7 +236,7 @@ namespace LanguageExplorer.Areas.Lexicon
 			}
 			else
 			{
-				int chvo = m_dataEntryForm.Cache.DomainDataByFlid.get_VecSize(slice.Object.Owner.Hvo,
+				int chvo = m_dataTree.Cache.DomainDataByFlid.get_VecSize(slice.Object.Owner.Hvo,
 					(int)slice.Object.OwningFlid);
 				display.Enabled = chvo > 1;
 			}
@@ -246,7 +246,7 @@ namespace LanguageExplorer.Areas.Lexicon
 		public bool OnPromoteSense(object cmd)
 		{
 			Command command = (Command) cmd;
-			Slice slice = m_dataEntryForm.CurrentSlice;
+			Slice slice = m_dataTree.CurrentSlice;
 			Debug.Assert(slice != null, "No slice was current");
 			if (slice != null)
 			{
@@ -283,7 +283,7 @@ namespace LanguageExplorer.Areas.Lexicon
 		public virtual bool OnDisplayPromoteSense(object commandObject,
 			ref UIItemDisplayProperties display)
 		{
-			Slice slice = m_dataEntryForm.CurrentSlice;
+			Slice slice = m_dataTree.CurrentSlice;
 			if (slice == null || slice.Object == null ||
 				slice.Object.OwningFlid != LexSenseTags.kflidSenses)
 			{
@@ -299,7 +299,7 @@ namespace LanguageExplorer.Areas.Lexicon
 
 		public bool OnPictureProperties(object cmd)
 		{
-			Slice slice = m_dataEntryForm.CurrentSlice;
+			Slice slice = m_dataTree.CurrentSlice;
 			if (slice != null)
 			{
 				List<PictureSlice> slices = new List<PictureSlice>();
@@ -354,8 +354,8 @@ namespace LanguageExplorer.Areas.Lexicon
 
 		public virtual bool OnSwapAllomorphWithLexeme(object cmd)
 		{
-			Slice slice = m_dataEntryForm.CurrentSlice;
-			ILexEntry entry = m_dataEntryForm.Root as ILexEntry;
+			Slice slice = m_dataTree.CurrentSlice;
+			ILexEntry entry = m_dataTree.Root as ILexEntry;
 			IMoForm allomorph = slice.Object as IMoForm;
 			if (entry != null && allomorph != null)
 			{
@@ -375,8 +375,8 @@ namespace LanguageExplorer.Areas.Lexicon
 		/// <summary />
 		public bool OnSwapLexemeWithAllomorph(object cmd)
 		{
-			ILexEntry entry = m_dataEntryForm.Root as ILexEntry;
-			LcmCache cache = m_dataEntryForm.Cache;
+			ILexEntry entry = m_dataTree.Root as ILexEntry;
+			LcmCache cache = m_dataTree.Cache;
 			if (entry != null)
 			{
 				Form mainWindow = PropertyTable.GetValue<Form>("window");
@@ -400,7 +400,7 @@ namespace LanguageExplorer.Areas.Lexicon
 #if RANDYTODO
 		public virtual bool OnDisplaySwapLexemeWithAllomorph(object commandObject, ref UIItemDisplayProperties display)
 		{
-			ILexEntry entry = m_dataEntryForm.Root as ILexEntry;
+			ILexEntry entry = m_dataTree.Root as ILexEntry;
 			bool enable = entry != null && entry.AlternateFormsOS.Count > 0;
 			display.Visible = enable;
 			display.Enabled = enable;
@@ -410,8 +410,8 @@ namespace LanguageExplorer.Areas.Lexicon
 		public virtual bool OnDisplayConvertLexemeForm(object commandObject, ref UIItemDisplayProperties display)
 		{
 			Command cmd = commandObject as Command;
-			int fromClsid = m_dataEntryForm.Cache.MetaDataCacheAccessor.GetClassId(cmd.GetParameter("fromClassName"));
-			ILexEntry entry = m_dataEntryForm.Root as ILexEntry;
+			int fromClsid = m_dataTree.Cache.MetaDataCacheAccessor.GetClassId(cmd.GetParameter("fromClassName"));
+			ILexEntry entry = m_dataTree.Root as ILexEntry;
 			bool enable = entry != null && fromClsid != 0 && entry.LexemeFormOA.ClassID == fromClsid;
 			display.Visible = enable;
 			display.Enabled = enable;
@@ -421,8 +421,8 @@ namespace LanguageExplorer.Areas.Lexicon
 		public bool OnConvertLexemeForm(object cmd)
 		{
 			var command = cmd as Command;
-			var toClsid = m_dataEntryForm.Cache.MetaDataCacheAccessor.GetClassId(command.GetParameter("toClassName"));
-			var entry = m_dataEntryForm.Root as ILexEntry;
+			var toClsid = m_dataTree.Cache.MetaDataCacheAccessor.GetClassId(command.GetParameter("toClassName"));
+			var entry = m_dataTree.Root as ILexEntry;
 			if (entry != null)
 			{
 				if (CheckForFormDataLoss(entry.LexemeFormOA, toClsid))
@@ -436,7 +436,7 @@ namespace LanguageExplorer.Areas.Lexicon
 							newForm = CreateNewForm(entry, toClsid);
 							entry.ReplaceMoForm(entry.LexemeFormOA, newForm);
 						});
-						m_dataEntryForm.RefreshList(false);
+						m_dataTree.RefreshList(false);
 					}
 					SelectNewFormSlice(newForm);
 				}
@@ -447,8 +447,8 @@ namespace LanguageExplorer.Areas.Lexicon
 		public virtual bool OnDisplayConvertAllomorph(object commandObject, ref UIItemDisplayProperties display)
 		{
 			Command cmd = commandObject as Command;
-			int fromClsid = m_dataEntryForm.Cache.MetaDataCacheAccessor.GetClassId(cmd.GetParameter("fromClassName"));
-			Slice slice = m_dataEntryForm.CurrentSlice;
+			int fromClsid = m_dataTree.Cache.MetaDataCacheAccessor.GetClassId(cmd.GetParameter("fromClassName"));
+			Slice slice = m_dataTree.CurrentSlice;
 			IMoForm allomorph = slice.Object as IMoForm;
 			bool enable = allomorph != null && fromClsid != 0 && allomorph.ClassID == fromClsid;
 			display.Visible = enable;
@@ -459,9 +459,9 @@ namespace LanguageExplorer.Areas.Lexicon
 		public bool OnConvertAllomorph(object cmd)
 		{
 			var command = cmd as Command;
-			int toClsid = (int)m_dataEntryForm.Cache.MetaDataCacheAccessor.GetClassId(command.GetParameter("toClassName"));
-			var entry = m_dataEntryForm.Root as ILexEntry;
-			var slice = m_dataEntryForm.CurrentSlice;
+			int toClsid = (int)m_dataTree.Cache.MetaDataCacheAccessor.GetClassId(command.GetParameter("toClassName"));
+			var entry = m_dataTree.Root as ILexEntry;
+			var slice = m_dataTree.CurrentSlice;
 			var allomorph = slice.Object as IMoForm;
 			if (entry != null && allomorph != null && toClsid != 0)
 			{
@@ -476,7 +476,7 @@ namespace LanguageExplorer.Areas.Lexicon
 							newForm = CreateNewForm(entry, toClsid);
 							entry.ReplaceMoForm(allomorph, newForm);
 						});
-						m_dataEntryForm.RefreshList(false);
+						m_dataTree.RefreshList(false);
 					}
 					SelectNewFormSlice(newForm);
 				}
@@ -503,11 +503,11 @@ namespace LanguageExplorer.Areas.Lexicon
 
 		void SelectNewFormSlice(IMoForm newForm)
 		{
-			foreach (Slice slice in m_dataEntryForm.Slices)
+			foreach (Slice slice in m_dataTree.Slices)
 			{
 				if (slice.Object.Hvo == newForm.Hvo)
 				{
-					m_dataEntryForm.ActiveControl = slice;
+					m_dataTree.ActiveControl = slice;
 					break;
 				}
 			}

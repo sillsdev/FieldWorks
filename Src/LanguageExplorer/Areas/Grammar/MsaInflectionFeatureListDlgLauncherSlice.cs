@@ -73,11 +73,9 @@ namespace LanguageExplorer.Areas.Grammar
 		#endregion
 
 		/// <summary />
-		public override void Install(DataTree parent)
+		public override void Install(DataTree parentDataTree)
 		{
-			CheckDisposed();
-
-			base.Install(parent);
+			base.Install(parentDataTree);
 
 			MsaInflectionFeatureListDlgLauncher ctrl = (MsaInflectionFeatureListDlgLauncher)Control;
 

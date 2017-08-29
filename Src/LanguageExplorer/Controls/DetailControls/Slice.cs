@@ -95,7 +95,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		protected IPersistenceProvider m_persistenceProvider;
 
 		protected Slice m_parentSlice;
-		private SplitContainer m_splitter;
+		private SplitContainer m_splitContainer;
 
 #endregion Data members
 
@@ -180,7 +180,7 @@ namespace LanguageExplorer.Controls.DetailControls
 #if SLICE_IS_SPLITCONTAINER
 				return this;
 #else
-				return Controls[0] as SplitContainer;
+				return m_splitContainer;
 #endif
 			}
 		}
@@ -192,7 +192,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				CheckDisposed();
 
-				return SplitCont.Panel1.Controls[0] as SliceTreeNode;
+				return m_splitContainer.Panel1.Controls[0] as SliceTreeNode;
 			}
 		}
 
@@ -276,22 +276,22 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				CheckDisposed();
 
-				Debug.Assert(SplitCont.Panel2.Controls.Count == 0 || SplitCont.Panel2.Controls.Count == 1);
+				Debug.Assert(m_splitContainer.Panel2.Controls.Count == 0 || m_splitContainer.Panel2.Controls.Count == 1);
 
-				return SplitCont.Panel2.Controls.Count == 1 ? SplitCont.Panel2.Controls[0] : null;
+				return m_splitContainer.Panel2.Controls.Count == 1 ? m_splitContainer.Panel2.Controls[0] : null;
 			}
 			set
 			{
 				CheckDisposed();
 
-				Debug.Assert(SplitCont.Panel2.Controls.Count == 0);
+				Debug.Assert(m_splitContainer.Panel2.Controls.Count == 0);
 
 				if (value == null)
 				{
 					return;
 				}
 
-					SplitCont.Panel2.Controls.Add(value);
+				m_splitContainer.Panel2.Controls.Add(value);
 			}
 		}
 
@@ -406,12 +406,12 @@ namespace LanguageExplorer.Controls.DetailControls
 			TabStop = false;
 #else
 			// Create a SplitContainer to hold the two (or one control.
-			m_splitter = new SplitContainer {TabStop = false, AccessibleName = "Slice.SplitContainer"};
+			m_splitContainer = new SplitContainer {TabStop = false, AccessibleName = "Slice.SplitContainer"};
 			// Do this once right away, mainly so child controls like check box that don't control
 			// their own height will get it right; then  after the controls get added to it, don't do it again
 			// until our own size is definitely established by SetWidthForDataTreeLayout.
-			m_splitter.Size = Size;
-			Controls.Add(m_splitter);
+			m_splitContainer.Size = Size;
+			Controls.Add(m_splitContainer);
 #endif
 			// This is really important. Since some slices are invisible, all must be,
 			// or Show() will reorder them.
@@ -698,26 +698,25 @@ namespace LanguageExplorer.Controls.DetailControls
 		}
 
 		/// <summary></summary>
-		public virtual void Install(DataTree parent)
+		public virtual void Install(DataTree parentDataTree)
 		{
 			CheckDisposed();
 
-			if (parent == null) // Parent == null ||
+			if (parentDataTree == null)
 				throw new InvalidOperationException("The slice '" + GetType().Name + "' must be placed in the Parent.Controls property before installing it.");
 
-			SplitContainer sc = SplitCont;
-
+			m_splitContainer.SuspendLayout();
 			// prevents the controls of the new 'SplitContainer' being NAMELESS
-			if (sc.Panel1.AccessibleName == null)
-				sc.Panel1.AccessibleName = "Panel1";
-			if (sc.Panel2.AccessibleName == null)
-				sc.Panel2.AccessibleName = "Panel2";
+			if (m_splitContainer.Panel1.AccessibleName == null)
+				m_splitContainer.Panel1.AccessibleName = "Panel1";
+			if (m_splitContainer.Panel2.AccessibleName == null)
+				m_splitContainer.Panel2.AccessibleName = "Panel2";
 
 			SliceTreeNode treeNode;
-			bool isBeingReused = sc.Panel1.Controls.Count > 0;
+			bool isBeingReused = m_splitContainer.Panel1.Controls.Count > 0;
 			if (isBeingReused)
 			{
-				treeNode = (SliceTreeNode)sc.Panel1.Controls[0];
+				treeNode = (SliceTreeNode)m_splitContainer.Panel1.Controls[0];
 			}
 			else
 			{
@@ -725,8 +724,8 @@ namespace LanguageExplorer.Controls.DetailControls
 				treeNode = new SliceTreeNode(this);
 				treeNode.SuspendLayout();
 				treeNode.Dock = DockStyle.Fill;
-				sc.Panel1.Controls.Add(treeNode);
-				sc.AccessibleName = "SplitContainer";
+				m_splitContainer.Panel1.Controls.Add(treeNode);
+				m_splitContainer.AccessibleName = "SplitContainer";
 			}
 
 			if (!string.IsNullOrEmpty(Label))
@@ -739,14 +738,14 @@ namespace LanguageExplorer.Controls.DetailControls
 				// manually draw a thin line to give the user a que as to where the splitter bar is.
 				// Then, if it gets to be visible, we will probably need to add a bit of padding between
 				// the line and the main slice content, or its text will be connected to the line.
-				sc.SplitterWidth = 5;
+				m_splitContainer.SplitterWidth = 5;
 
 				// It was hard-coded to 40, but it isn't right for indented slices,
 				// as they then can be shrunk so narrow as to completely cover up their label.
-				sc.Panel1MinSize = (20 * (Indent + 1)) + 20;
-				sc.Panel2MinSize = 0; // min size of right pane
-				// This makes the splitter essentially invisible.
-				sc.BackColor = Color.FromKnownColor(KnownColor.Window); //to make it invisible
+				m_splitContainer.Panel1MinSize = (20 * (Indent + 1)) + 20;
+				m_splitContainer.Panel2MinSize = 0; // min size of right pane
+													// This makes the splitter essentially invisible.
+				m_splitContainer.BackColor = Color.FromKnownColor(KnownColor.Window); //to make it invisible
 				treeNode.MouseEnter += treeNode_MouseEnter;
 				treeNode.MouseLeave += treeNode_MouseLeave;
 				treeNode.MouseHover += treeNode_MouseEnter;
@@ -755,10 +754,10 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				// SummarySlice is one of these kinds of Slices.
 				//Debug.WriteLine("Slice gets no usable splitter: " + GetType().Name);
-				sc.SplitterWidth = 1;
-				sc.Panel1MinSize = LabelIndent();
-				sc.SplitterDistance = LabelIndent();
-				sc.IsSplitterFixed = true;
+				m_splitContainer.SplitterWidth = 1;
+				m_splitContainer.Panel1MinSize = LabelIndent();
+				m_splitContainer.SplitterDistance = LabelIndent();
+				m_splitContainer.IsSplitterFixed = true;
 				// Just in case it was previously installed with a different label.
 				treeNode.MouseEnter -= treeNode_MouseEnter;
 				treeNode.MouseLeave -= treeNode_MouseLeave;
@@ -772,7 +771,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				// Has SliceTreeNode and Control.
 
 				// Set stylesheet on every view-based child control that doesn't already have one.
-				SetViewStylesheet(mainControl, parent);
+				SetViewStylesheet(mainControl, parentDataTree);
 				mainControl.AccessibleName = string.IsNullOrEmpty(Label) ? "Slice_unknown" : Label;
 				// By default the height of the slice comes from the height of the embedded
 				// control.
@@ -781,7 +780,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				//this.Height = Math.Max(Control.Height, LabelHeight);
 				newHeight = Math.Max(mainControl.Height, LabelHeight);
 				mainControl.Dock = DockStyle.Fill;
-				sc.FixedPanel = FixedPanel.Panel1;
+				m_splitContainer.FixedPanel = FixedPanel.Panel1;
 			}
 			else
 			{
@@ -789,14 +788,14 @@ namespace LanguageExplorer.Controls.DetailControls
 
 				// LexReferenceMultiSlice has no control, as of 12/30/2006.
 				newHeight = LabelHeight;
-				sc.Panel2Collapsed = true;
-				sc.FixedPanel = FixedPanel.Panel2;
+				m_splitContainer.Panel2Collapsed = true;
+				m_splitContainer.FixedPanel = FixedPanel.Panel2;
 			}
 
 			if (!isBeingReused)
 			{
-				parent.Controls.Add(this); // Parent will have to move it into the right place.
-				parent.Slices.Add(this);
+				parentDataTree.Controls.Add(this); // Parent will have to move it into the right place.
+				parentDataTree.Slices.Add(this);
 			}
 #if __MonoCS__ // FWNX-266
 			if (mainControl != null && mainControl.Visible == false)
@@ -811,6 +810,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			if (Height != newHeight)
 				Height = newHeight;
 			treeNode.ResumeLayout(false);
+			m_splitContainer.ResumeLayout();
 		}
 
 		void treeNode_MouseLeave(object sender, EventArgs e)
@@ -832,16 +832,15 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		internal void SetSplitPosition()
 		{
-			SplitContainer sc = SplitCont;
-			Debug.Assert(sc != null, "LT-13912 -- Need to determine why the SplitContainer is null here.");
-			if (sc == null || sc.IsSplitterFixed) // LT-13912 apparently sc comes out null sometimes.
+			Debug.Assert(m_splitContainer != null, "LT-13912 -- Need to determine why the SplitContainer is null here.");
+			if (m_splitContainer == null || m_splitContainer.IsSplitterFixed) // LT-13912 apparently sc comes out null sometimes.
 				return;
 
 			int valueSansLabelindent = ContainingDataTree.SliceSplitPositionBase;
 			int correctSplitPosition = valueSansLabelindent + LabelIndent();
-			if (sc.SplitterDistance != correctSplitPosition)
+			if (m_splitContainer.SplitterDistance != correctSplitPosition)
 			{
-				sc.SplitterDistance = correctSplitPosition;
+				m_splitContainer.SplitterDistance = correctSplitPosition;
 
 				//if ((sc.SplitterDistance > MaxAbbrevWidth && valueSansLabelindent <= MaxAbbrevWidth)
 				//	|| (sc.SplitterDistance <= MaxAbbrevWidth && valueSansLabelindent > MaxAbbrevWidth))
@@ -864,7 +863,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 			// This should be done by setting DockStyle to Fill but that somehow doesn't always fix the
 			// height of the splitter's panels.
-			m_splitter.Size = Size;
+			m_splitContainer.Size = Size;
 			// This definitely seems as if it shouldn't be necessary at all. And if it were necessary,
 			// it should be fine to just call PerformLayout at once. But it doesn't work. Dragging the splitter
 			// of a multi-line view in a way that changes its height somehow leaves the panels of the splitter
@@ -874,7 +873,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			// (since this can get called from OnSizeChanged of a child window, I think) and it only
 			// works to layout the splitter afterwards? Anyway this seems to work...test carefully if you
 			// think of taking it out.
-			if (m_splitter.Panel2.Height != this.Height)
+			if (m_splitContainer.Panel2.Height != this.Height)
 			{
 				Application.Idle += LayoutSplitter;
 			}
@@ -883,8 +882,8 @@ namespace LanguageExplorer.Controls.DetailControls
 		void LayoutSplitter(object sender, EventArgs e)
 		{
 			Application.Idle -= LayoutSplitter;
-			if (m_splitter != null && !IsDisposed)
-				m_splitter.PerformLayout();
+			if (m_splitContainer != null && !IsDisposed)
+				m_splitContainer.PerformLayout();
 		}
 
 		/// <summary>
@@ -896,7 +895,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			CheckDisposed();
 
-			if (SplitCont.Panel2Collapsed)
+			if (m_splitContainer.Panel2Collapsed)
 				TreeNode.Width = LabelIndent();
 
 			base.OnLayout(levent);
@@ -963,19 +962,17 @@ namespace LanguageExplorer.Controls.DetailControls
 			if (disposing)
 			{
 				var parent = Parent as DataTree;
-				if (parent != null)
-					parent.RemoveDisposedSlice(this);
+				parent?.RemoveDisposedSlice(this);
 
 				// Dispose managed resources here.
-				SplitCont.SplitterMoved -= mySplitterMoved;
+				m_splitContainer.SplitterMoved -= mySplitterMoved;
 				// If anyone but the owning DataTree called this to be disposed,
 				// then it will still hold a referecne to this slice in an event handler.
 				// We could take care of it here by asking the DT to remove it,
 				// but I (RandyR) am inclined to not do that, since
 				// only the DT is really authorized to dispose its slices.
 
-				if (m_fontLabel != null)
-					m_fontLabel.Dispose();
+				m_fontLabel?.Dispose();
 			}
 
 			// Dispose unmanaged resources here, whether disposing is true or false.
@@ -1102,12 +1099,12 @@ namespace LanguageExplorer.Controls.DetailControls
 			if (indentNode != null)
 			{
 				DataTree.NodeTestResult ntr;
-				insPos = ContainingDataTree.ApplyLayout(obj, this, indentNode, indent + ExtraIndent(indentNode),
-					insPos, path, reuseMap, false, out ntr);
+				insPos = ContainingDataTree.ApplyLayout(obj, this, indentNode, indent + ExtraIndent(indentNode), insPos, path, reuseMap, false, out ntr);
 			}
 			else
-				ContainingDataTree.ProcessPartChildren(node, path, reuseMap, obj, this, indent + ExtraIndent(node), ref insPos,
-					false, parameter, false, caller);
+			{
+				ContainingDataTree.ProcessPartChildren(node, path, reuseMap, obj, this, indent + ExtraIndent(node), ref insPos, false, parameter, false, caller);
+			}
 		}
 
 #endregion Tree management
@@ -1448,7 +1445,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				//			if (ContainingDataTree.CurrentSlice == this)
 				//				brush = new SolidBrush(Color.Blue);
 				string label = Label;
-				if (SplitCont.SplitterDistance <= MaxAbbrevWidth)
+				if (m_splitContainer.SplitterDistance <= MaxAbbrevWidth)
 					label = Abbreviation;
 				gr.DrawString(label, m_fontLabel, brush, p);
 				//			if(m_menuController != null)
@@ -1533,6 +1530,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			finally
 			{
 				ContainingDataTree.DeepResumeLayout();
+				ContainingDataTree.EnsureDefaultCursorForSlices();
 			}
 		}
 
@@ -1564,8 +1562,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			CheckDisposed();
 
 			int iNextSliceNotChild = iSlice + 1;
-			while (iNextSliceNotChild < ContainingDataTree.Slices.Count
-				&& IsDescendant(ContainingDataTree.FieldOrDummyAt(iNextSliceNotChild)))
+			while (iNextSliceNotChild < ContainingDataTree.Slices.Count && IsDescendant(ContainingDataTree.FieldOrDummyAt(iNextSliceNotChild)))
 			{
 				iNextSliceNotChild++;
 			}
@@ -1808,17 +1805,6 @@ namespace LanguageExplorer.Controls.DetailControls
 #region Menu Command Handlers
 
 		/// <summary>
-		/// do an insertion
-		/// </summary>
-		/// <remarks>called by the containing environment in response to a user command.</remarks>
-		public virtual void HandleInsertCommand(string fieldName, string className)
-		{
-			CheckDisposed();
-
-			HandleInsertCommand(fieldName, className, null, null);
-		}
-
-		/// <summary>
 		/// Answer whether clidTest is, or is a subclass of, clidSig.
 		/// That is, either clidTest is the same as clidSig, or one of the base classes of clidTest is clidSig.
 		/// As a special case, if clidSig is 0, all classes are considered to match
@@ -1830,10 +1816,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			return Cache.ClassIsOrInheritsFrom(clidTest, clidSig);
 		}
 
-		protected virtual bool ShouldHide
-		{
-			get { return true; }
-		}
+		protected virtual bool ShouldHide => true;
 
 		/// <summary>
 		/// do an insertion
@@ -1845,7 +1828,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// this class (or a subclass), look for a containing object that is.</param>
 		/// <param name="recomputeVirtual">if non-null, this is a virtual property that should be updated for all
 		/// moved objects and their descendents of the specified class (string has form class.property)</param>
-		public virtual void HandleInsertCommand(string fieldName, string className, string ownerClassName, string recomputeVirtual)
+		internal void HandleInsertCommand(string fieldName, string className, string ownerClassName, string recomputeVirtual)
 		{
 			CheckDisposed();
 
@@ -2023,6 +2006,10 @@ namespace LanguageExplorer.Controls.DetailControls
 			int type = GetFieldType(flid);
 			if (type == (int)CellarPropertyType.OwningSequence)
 			{
+#if RANDYTODO
+				// TODO: Using try/catch for normal program flow is not good design.
+				// TODO: Find another way to do this without using try/catch.
+#endif
 				try
 				{
 					// We might not be on the right slice to insert this item.  See FWR-898.
@@ -2032,6 +2019,9 @@ namespace LanguageExplorer.Controls.DetailControls
 				{
 					return -1;
 				}
+#if RANDYTODO
+				// TODO: Ok, I give up. How can a slice that is processing this method *not* have its "ContainingDataTree" property set?
+#endif
 				if (ContainingDataTree != null && ContainingDataTree.CurrentSlice != null)
 				{
 					ISilDataAccess sda = m_cache.DomainDataByFlid;
@@ -2076,10 +2066,13 @@ namespace LanguageExplorer.Controls.DetailControls
 				}
 				using (CmObjectUi uiObj = CmObjectUi.CreateNewUiObject(PropertyTable, Publisher, newObjectClassId, hvoOwner, flid, insertionPosition))
 				{
-					uiObj.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 					// If uiObj is null, typically CreateNewUiObject displayed a dialog and the user cancelled.
 					// We return -1 to make the caller give up trying to insert, so we don't get another dialog if
 					// there is another slice that could insert this kind of object.
+					if (uiObj == null)
+					{
+						return -2; // Nothing created.
+					}
 					// If 'this' isDisposed, typically the inserted object occupies a place in the record list for
 					// this view, and inserting an object caused the list to be refreshed and all slices for this
 					// record to be disposed. In that case, we won't be able to find a child of this to activate,
@@ -2089,9 +2082,11 @@ namespace LanguageExplorer.Controls.DetailControls
 					// after an insert which disposes 'this'. Or perhaps we could improve the refresh list process
 					// so that it more successfully restores the current item without disposing of all the slices.
 					if (IsDisposed)
+					{
 						return -1;
-					if (uiObj == null)
-						return -2; // Nothing created.
+					}
+
+					uiObj.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 
 					switch (fieldType)
 					{
@@ -2122,7 +2117,9 @@ namespace LanguageExplorer.Controls.DetailControls
 					}
 					Slice child = ExpandSubItem(uiObj.Object.Hvo);
 					if (child != null)
+					{
 						child.FocusSliceOrChild();
+					}
 					else
 					{
 #if RANDYTODO
@@ -2846,11 +2843,10 @@ only be sent to the subscribers one at a time and considered done as soon as som
 				Width = width;
 
 			m_widthHasBeenSetByDataTree = true;
-			m_splitter.Size = Size;
-			SplitContainer sc = SplitCont;
-			sc.SplitterMoved -= mySplitterMoved;
-			if (!sc.IsSplitterFixed)
-				sc.SplitterMoved += mySplitterMoved;
+			m_splitContainer.Size = Size;
+			m_splitContainer.SplitterMoved -= mySplitterMoved;
+			if (!m_splitContainer.IsSplitterFixed)
+				m_splitContainer.SplitterMoved += mySplitterMoved;
 		}
 
 		/// <summary>
@@ -2860,8 +2856,7 @@ only be sent to the subscribers one at a time and considered done as soon as som
 		/// </summary>
 		void mySplitterMoved(object sender, SplitterEventArgs e)
 		{
-			SplitContainer sc = SplitCont;
-			if (!sc.Panel1Collapsed)
+			if (!m_splitContainer.Panel1Collapsed)
 			{
 				//if ((sc.SplitterDistance > MaxAbbrevWidth && valueSansLabelindent <= MaxAbbrevWidth)
 				//	|| (sc.SplitterDistance <= MaxAbbrevWidth && valueSansLabelindent > MaxAbbrevWidth))

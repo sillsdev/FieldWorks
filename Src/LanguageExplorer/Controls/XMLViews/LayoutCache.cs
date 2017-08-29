@@ -31,14 +31,13 @@ namespace LanguageExplorer.Controls.XMLViews
 		readonly Inventory m_partInventory;
 		readonly Dictionary<Tuple<int, string, bool>, XElement> m_map = new Dictionary<Tuple<int, string, bool>, XElement>();
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="LayoutCache"/> class.
 		/// </summary>
 		/// <param name="mdc">The MDC.</param>
 		/// <param name="layouts">The layouts.</param>
 		/// <param name="parts">The parts.</param>
-		/// ------------------------------------------------------------------------------------
+		/// <remarks>TESTS ONLY.</remarks>
 		public LayoutCache(IFwMetaDataCache mdc, Inventory layouts, Inventory parts)
 		{
 			m_mdc = mdc;

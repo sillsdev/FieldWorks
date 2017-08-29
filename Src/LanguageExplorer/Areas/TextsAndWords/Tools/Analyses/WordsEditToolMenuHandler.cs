@@ -49,13 +49,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 		{
 			get
 			{
-				if (m_dataEntryForm == null)
+				if (m_dataTree == null)
 					return null;
-				if (m_dataEntryForm.CurrentSlice != null)
-					return m_dataEntryForm.CurrentSlice.Object;
-				if (m_dataEntryForm.Slices.Count == 0)
+				if (m_dataTree.CurrentSlice != null)
+					return m_dataTree.CurrentSlice.Object;
+				if (m_dataTree.Slices.Count == 0)
 					return null;
-				return m_dataEntryForm.FieldAt(0).Object;
+				return m_dataTree.FieldAt(0).Object;
 			}
 		}
 
@@ -163,7 +163,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 
 			// Wipe all of the old slices out, so we get new numbers and newly placed objects.
 			// This fixes LT-5935. Also removes the need to somehow make the virtual properties like HumanApprovedAnalyses update.
-			m_dataEntryForm.RefreshList(true);
+			m_dataTree.RefreshList(true);
 		}
 
 		private void ShowConcDlg(ICmObject concordOnObject)
@@ -281,7 +281,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 
 				if (specifiedClsid == WfiGlossTags.kClassId)
 				{
-					if (m_dataEntryForm != null && m_dataEntryForm.CurrentSlice != null &&
+					if (m_dataTree != null && m_dataTree.CurrentSlice != null &&
 						CurrentSliceObject != null && CurrentSliceObject.ClassID == specifiedClsid)
 					{
 						display.Enabled = display.Visible = true;
@@ -310,7 +310,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 						guid = anal.Guid;
 					break;
 				case "WfiGloss":
-					if (m_dataEntryForm != null && m_dataEntryForm.CurrentSlice != null &&
+					if (m_dataTree != null && m_dataTree.CurrentSlice != null &&
 						CurrentSliceObject != null && CurrentSliceObject.ClassID == WfiGlossTags.kClassId)
 					{
 						guid = CurrentSliceObject.Guid;
@@ -487,7 +487,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 				// Wipe all of the old slices out,
 				// so we get new numbers, where needed.
 				// This fixes LT-5974.
-				m_dataEntryForm.RefreshList(true);
+				m_dataTree.RefreshList(true);
 				return true;
 			}
 			return false;
@@ -543,7 +543,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 			ref UIItemDisplayProperties display)
 		{
 			// The null test covers cases where there is no current object because the list (as filtered) is empty.
-			if (InFriendlyArea && m_mediator != null && m_dataEntryForm.Root != null)
+			if (InFriendlyArea && m_mediator != null && m_dataTree.Root != null)
 			{
 #pragma warning disable 0219
 				display.Visible = true;
@@ -565,7 +565,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 		/// <returns>true</returns>
 		public bool OnAddApprovedAnalysis(object argument)
 		{
-			var mainWnd = (IFwMainWnd)m_dataEntryForm.FindForm();
+			var mainWnd = (IFwMainWnd)m_dataTree.FindForm();
 			using (EditMorphBreaksDlg dlg = new EditMorphBreaksDlg(PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
 			{
 				IWfiWordform wf = Wordform;
@@ -575,7 +575,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 				string morphs = tssWord.Text;
 				var cache = Cache;
 				dlg.Initialize(tssWord, morphs, cache.MainCacheAccessor.WritingSystemFactory,
-					cache, m_dataEntryForm.StyleSheet);
+					cache, m_dataTree.StyleSheet);
 				// Making the form active fixes problems like LT-2619.
 				// I'm (RandyR) not sure what adverse impact might show up by doing this.
 				((Form)mainWnd).Activate();

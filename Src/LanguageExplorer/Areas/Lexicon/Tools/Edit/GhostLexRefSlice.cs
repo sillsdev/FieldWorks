@@ -24,24 +24,23 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// <summary />
 		public override void FinishInit()
 		{
-			Control = new GhostLexRefLauncher(m_obj, m_configurationNode);
+			var btnLauncher = new GhostLexRefLauncher(m_obj, m_configurationNode);
+			btnLauncher.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
+			Control = btnLauncher;
+
 		}
 
 		/// <summary />
-		public override void Install(DataTree parent)
+		public override void Install(DataTree parentDataTree)
 		{
 			// JohnT: This is an awful way to make the button fit neatly, but I can't find a better one.
 			Control.Height = Height;
 			// It doesn't need most of the usual info, but the Mediator is important if the user
 			// asks to Create a new lex entry from inside the first dialog (LT-9679).
 			// We'd pass 0 and null for flid and fieldname, but there are Asserts to prevent this.
-			var btnLauncher = (ButtonLauncher) Control;
-			if (btnLauncher.PropertyTable == null)
-			{
-				btnLauncher.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-			}
+			var btnLauncher = (ButtonLauncher)Control;
 			btnLauncher.Initialize(m_cache, m_obj, 1, "nonsence", null, null, null);
-			base.Install(parent);
+			base.Install(parentDataTree);
 		}
 	}
 }

@@ -164,9 +164,9 @@ namespace LanguageExplorer.Controls.DetailControls
 #endif
 		}
 
-		public override void Install(DataTree parent)
+		public override void Install(DataTree parentDataTree)
 		{
-			base.Install(parent);
+			base.Install(parentDataTree);
 			// setup the visible writing systems for our control
 			// (We should have called MakeRoot on our control by now)
 			SetupWssToDisplay();

@@ -41,7 +41,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		#endregion
 
 		protected bool m_inMenuButton = false;
-
+		private Slice m_myParentSlice;
 		private bool m_fShowPlusMinus = false;
 		/// <summary>
 		/// Required designer variable.
@@ -55,19 +55,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				CheckDisposed();
 
-				// Depending on compile switch for SLICE_IS_SPLITCONTAINER,
-				// grandParent will be both a Slice and a SplitContainer
-				// (Slice is a subclass of SplitContainer),
-				// or just a SplitContainer (SplitContainer is the only child Control of a Slice).
-				// If grandParent is not a Slice, then we have to move up to the great-grandparent
-				// to find the Slice.
-				Control parent = Parent;
-				while (!(parent is Slice))
-					parent = parent.Parent;
-
-				Debug.Assert(parent is Slice);
-
-				return parent as Slice;
+				return m_myParentSlice;
 			}
 		}
 
@@ -87,10 +75,15 @@ namespace LanguageExplorer.Controls.DetailControls
 		}
 
 		/// <summary></summary>
-		public SliceTreeNode(Slice slice)
+		public SliceTreeNode(Slice myParentSlice)
 		{
+			if (myParentSlice == null)
+				throw new ArgumentNullException(nameof(myParentSlice));
+
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
+
+			m_myParentSlice = myParentSlice;
 
 			SuspendLayout();
 			this.Paint += new PaintEventHandler(this.HandlePaint);
@@ -105,8 +98,8 @@ namespace LanguageExplorer.Controls.DetailControls
 			this.SetStyle(ControlStyles.UserPaint, true);
 			this.TabStop = false;
 
-			if (slice.Label != null)
-				this.AccessibleName = slice.Label;
+			if (myParentSlice.Label != null)
+				this.AccessibleName = myParentSlice.Label;
 			else
 				this.AccessibleName = "SliceTreeNode";
 			ResumeLayout(false);
@@ -317,6 +310,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					components.Dispose();
 				}
 			}
+			m_myParentSlice = null;
 
 			base.Dispose( disposing );
 		}

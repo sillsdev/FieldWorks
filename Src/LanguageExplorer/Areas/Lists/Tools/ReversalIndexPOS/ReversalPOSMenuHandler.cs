@@ -32,7 +32,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 		public virtual bool OnDisplayMoveReversalPOS(object commandObject,
 			ref UIItemDisplayProperties display)
 		{
-			Slice slice = m_dataEntryForm.CurrentSlice;
+			Slice slice = m_dataTree.CurrentSlice;
 			if (slice == null || slice.Object == null)
 			{
 				display.Enabled = false;
@@ -114,7 +114,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 		public virtual bool OnDisplayMergeReversalPOS(object commandObject,
 			ref UIItemDisplayProperties display)
 		{
-			Slice slice = m_dataEntryForm.CurrentSlice;
+			Slice slice = m_dataTree.CurrentSlice;
 			if (slice == null || slice.Object == null)
 			{
 				display.Enabled = false;
@@ -165,7 +165,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 		public virtual bool OnDisplayPromoteReversalSubPOS(object commandObject,
 			ref UIItemDisplayProperties display)
 		{
-			Slice slice = m_dataEntryForm.CurrentSlice;
+			Slice slice = m_dataTree.CurrentSlice;
 			if (slice == null || slice.Object == null)
 				display.Enabled = false;
 			else
@@ -178,11 +178,11 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 		/// <summary />
 		public bool OnPromoteReversalSubPOS(object cmd)
 		{
-			Slice slice = m_dataEntryForm.CurrentSlice;
+			Slice slice = m_dataTree.CurrentSlice;
 			Debug.Assert(slice != null, "No slice was current");
 			if (slice != null)
 			{
-				LcmCache cache = m_dataEntryForm.Cache;
+				LcmCache cache = m_dataTree.Cache;
 				var sliceObj = slice.Object as ICmPossibility;
 				var newOwner = sliceObj.Owner.Owner;
 				switch (newOwner.ClassID)
@@ -233,7 +233,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 		{
 			get
 			{
-				return m_dataEntryForm.CurrentSlice.Object as IPartOfSpeech;
+				return m_dataTree.CurrentSlice.Object as IPartOfSpeech;
 			}
 		}
 

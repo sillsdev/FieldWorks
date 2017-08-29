@@ -38,7 +38,7 @@ namespace LanguageExplorer.Works
 		/// <summary>
 		/// Tree form.
 		/// </summary>
-		protected DataTree m_dataEntryForm;
+		protected DataTree m_dataTree;
 
 		/// <summary />
 		public DTMenuHandler()
@@ -95,7 +95,7 @@ namespace LanguageExplorer.Works
 			int flid;
 			if (!CanInsertPictureOrMediaFile(cmd, out flid))
 				return false; // should not happen, but play safe
-			var obj = m_dataEntryForm.CurrentSlice.Object;
+			var obj = m_dataTree.CurrentSlice.Object;
 			int chvo = obj.Cache.DomainDataByFlid.get_VecSize(obj.Hvo, flid);
 			IApp app = PropertyTable.GetValue<IApp>("App");
 			using (PicturePropertiesDialog dlg = new PicturePropertiesDialog(obj.Cache, null,
@@ -127,7 +127,7 @@ namespace LanguageExplorer.Works
 			Command command = (Command) cmd;
 			string field = command.GetParameter("field");
 			string className = command.GetParameter("className");
-			Slice current = m_dataEntryForm.CurrentSlice;
+			Slice current = m_dataTree.CurrentSlice;
 			if (current == null || current.IsDisposed)	// LT-3347: there are no slices in this empty data set
 			{
 				flid = 0;
@@ -191,13 +191,13 @@ namespace LanguageExplorer.Works
 			bool fOnPronunciationSlice = CanInsertPictureOrMediaFile(cmd, out flid);
 			if (fOnPronunciationSlice)
 			{
-				obj = m_dataEntryForm.CurrentSlice.Object;
+				obj = m_dataTree.CurrentSlice.Object;
 			}
 			else
 			{
 				// Find the first pronunciation object on the current entry, creating it if
 				// necessary.
-				var le = m_dataEntryForm.Root as ILexEntry;
+				var le = m_dataTree.Root as ILexEntry;
 				if (le == null)
 					return false;
 				if (le.PronunciationsOS.Count == 0)
@@ -290,7 +290,7 @@ namespace LanguageExplorer.Works
 
 		public bool OnDeleteMediaFile(object cmd)
 		{
-			var obj = m_dataEntryForm.CurrentSlice.Object;
+			var obj = m_dataTree.CurrentSlice.Object;
 			var media = obj as ICmMedia;
 			if (media != null)
 			{
@@ -325,8 +325,8 @@ namespace LanguageExplorer.Works
 		public bool OnDataTreeHelp(object cmd)
 		{
 			string helpTopicID = null;
-			if (m_dataEntryForm.CurrentSlice != null)
-				helpTopicID = m_dataEntryForm.CurrentSlice.GetSliceHelpTopicID();
+			if (m_dataTree.CurrentSlice != null)
+				helpTopicID = m_dataTree.CurrentSlice.GetSliceHelpTopicID();
 			ShowHelp.ShowHelpTopic(PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), helpTopicID);
 
 			return true;
@@ -337,8 +337,8 @@ namespace LanguageExplorer.Works
 		{
 			// Only display help if there's a topic linked to the generated ID in the resource file
 			string helpTopicID = null;
-			if (m_dataEntryForm.CurrentSlice != null)
-				helpTopicID = m_dataEntryForm.CurrentSlice.GetSliceHelpTopicID();
+			if (m_dataTree.CurrentSlice != null)
+				helpTopicID = m_dataTree.CurrentSlice.GetSliceHelpTopicID();
 			display.Visible = display.Enabled = (m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider").GetHelpString(helpTopicID) != null);
 
 			return true;
@@ -355,7 +355,7 @@ namespace LanguageExplorer.Works
 			string field = command.GetParameter("field");
 			string className = command.GetParameter("className");
 			string ownerClassName = command.GetParameter("ownerClass", "");
-			Slice current = m_dataEntryForm.CurrentSlice;
+			Slice current = m_dataTree.CurrentSlice;
 			if (current != null)
 			{
 				current.Validate();
@@ -363,8 +363,8 @@ namespace LanguageExplorer.Works
 					((ContainerControl)current.Control).Validate();
 
 			}
-			if (current == null && m_dataEntryForm.Slices.Count > 0)
-				current = m_dataEntryForm.FieldAt(0);
+			if (current == null && m_dataTree.Slices.Count > 0)
+				current = m_dataTree.FieldAt(0);
 			string sliceName = command.GetParameter("slice", "");
 			if (String.IsNullOrEmpty(ownerClassName) && current != null && current.Object != null)
 			{
@@ -389,8 +389,8 @@ namespace LanguageExplorer.Works
 					}
 				}
 			}
-			if (current == null && m_dataEntryForm.Slices.Count > 0)
-				current = m_dataEntryForm.Slices[0] as Slice;
+			if (current == null && m_dataTree.Slices.Count > 0)
+				current = m_dataTree.Slices[0] as Slice;
 			if (current == null || !current.Object.IsValidObject)
 				return false;
 			// If we're trying to replace a ghost slice, there could be trouble...
@@ -451,7 +451,7 @@ namespace LanguageExplorer.Works
 		/// <returns></returns>
 		public bool OnDataTreeCopy(object cmd)
 		{
-			Slice originalSlice = m_dataEntryForm.CurrentSlice;
+			Slice originalSlice = m_dataTree.CurrentSlice;
 			ICmObject obj = originalSlice.Object;
 			object[] key = originalSlice.Key;
 			Type type = originalSlice.GetType();
@@ -463,11 +463,11 @@ namespace LanguageExplorer.Works
 					label = (cmd as Command).Label;
 				else
 					label = "Copy";
-				Slice newSlice = m_dataEntryForm.CurrentSlice;
+				Slice newSlice = m_dataTree.CurrentSlice;
 				if (newSlice != null && !originalSlice.IsDisposed)
 				{
 					//Slice newCopy;
-					//Slice newOriginal = m_dataEntryForm.FindMatchingSlices(obj, key, type, out newCopy);
+					//Slice newOriginal = m_dataTree.FindMatchingSlices(obj, key, type, out newCopy);
 					//Debug.Assert(newOriginal == originalSlice);
 					//Debug.Assert(newCopy == newSlice);
 					originalSlice.HandleCopyCommand(newSlice, label);
@@ -475,7 +475,7 @@ namespace LanguageExplorer.Works
 				else
 				{
 					Slice newCopy;
-					Slice newOriginal = m_dataEntryForm.FindMatchingSlices(obj, key, type, out newCopy);
+					Slice newOriginal = m_dataTree.FindMatchingSlices(obj, key, type, out newCopy);
 					if (newOriginal != null && newCopy != null)
 					{
 						newOriginal.HandleCopyCommand(newCopy, label);
@@ -647,13 +647,13 @@ namespace LanguageExplorer.Works
 			ref UIItemDisplayProperties display)
 		{
 			XCore.Command command = commandObject as XCore.Command;
-			Slice slice = m_dataEntryForm.CurrentSlice;
-			if (slice == null && m_dataEntryForm.Slices.Count > 0)
-				slice = m_dataEntryForm.FieldAt(0);
+			Slice slice = m_dataTree.CurrentSlice;
+			if (slice == null && m_dataTree.Slices.Count > 0)
+				slice = m_dataTree.FieldAt(0);
 
 			int index = -1;
 			if (command != null && slice != null && !slice.IsDisposed &&
-				m_dataEntryForm.Visible && this.CanInsert(command, slice, out index))
+				m_dataTree.Visible && this.CanInsert(command, slice, out index))
 			{
 				display.Enabled = true;
 				string toolTipInsert = display.Text.Replace("_", string.Empty);	// strip any menu keyboard accelerator marker;
@@ -677,9 +677,9 @@ namespace LanguageExplorer.Works
 			ref UIItemDisplayProperties display)
 		{
 			XCore.Command command = commandObject as XCore.Command;
-			Slice slice = m_dataEntryForm.CurrentSlice;
-			if (slice == null && m_dataEntryForm.Slices.Count > 0)
-				slice = m_dataEntryForm.FieldAt(0);
+			Slice slice = m_dataTree.CurrentSlice;
+			if (slice == null && m_dataTree.Slices.Count > 0)
+				slice = m_dataTree.FieldAt(0);
 
 			int index = -1;
 			if (command != null && slice != null && !slice.IsDisposed && this.CanInsert(command, slice, out index))
@@ -711,7 +711,7 @@ namespace LanguageExplorer.Works
 
 		protected virtual bool DeleteObject(Command command)
 		{
-			Slice current = m_dataEntryForm.CurrentSlice;
+			Slice current = m_dataTree.CurrentSlice;
 			Debug.Assert(current != null, "No slice was current");
 			if (current != null && current.Object.IsValidObject)
 				return current.HandleDeleteCommand(command);
@@ -727,7 +727,7 @@ namespace LanguageExplorer.Works
 		public virtual bool OnDisplayDataTreeDelete(object commandObject,
 			ref UIItemDisplayProperties display)
 		{
-			Slice current = m_dataEntryForm.CurrentSlice;
+			Slice current = m_dataTree.CurrentSlice;
 			if (current == null || current.Object == null || current.IsGhostSlice)
 			{
 				display.Enabled = false;
@@ -739,7 +739,7 @@ namespace LanguageExplorer.Works
 			// deleting the existing object of type X in order to replace it with one of type Y.
 			display.Enabled = current != null && current.GetCanDeleteNow();
 
-			//			if(current.GetObjectHvoForMenusToOperateOn() == m_dataEntryForm.Root.Hvo && !current.WrapsAtomic)
+			//			if(current.GetObjectHvoForMenusToOperateOn() == m_dataTree.Root.Hvo && !current.WrapsAtomic)
 			//			{
 			//				display.Enabled = false;
 			//				display.Text += Table.GetString("(Programming error: would delete this record.)");
@@ -770,7 +770,7 @@ namespace LanguageExplorer.Works
 		public virtual bool OnDataTreeDeleteReference(object cmd)
 		{
 			Command command = (Command)cmd;
-			Slice current = m_dataEntryForm.CurrentSlice;
+			Slice current = m_dataTree.CurrentSlice;
 			Debug.Assert(current != null, "No slice was current");
 			if (current != null)
 				current.HandleDeleteReferenceCommand(command);
@@ -786,7 +786,7 @@ namespace LanguageExplorer.Works
 		public virtual bool OnDisplayDataTreeDeleteReference(object commandObject,
 			ref UIItemDisplayProperties display)
 		{
-			Slice current = m_dataEntryForm.CurrentSlice;
+			Slice current = m_dataTree.CurrentSlice;
 			if (current == null || current.Object == null || current.IsGhostSlice)
 			{
 				display.Enabled = false;
@@ -803,7 +803,7 @@ namespace LanguageExplorer.Works
 
 		public bool OnDataTreeMerge(object cmd)
 		{
-			Slice current = m_dataEntryForm.CurrentSlice;
+			Slice current = m_dataTree.CurrentSlice;
 			Debug.Assert(current != null, "No slice was current");
 			if (current != null)
 				current.HandleMergeCommand(true);
@@ -819,7 +819,7 @@ namespace LanguageExplorer.Works
 		/// <returns></returns>
 		public virtual bool OnDisplayDataTreeMerge(object commandObject, ref UIItemDisplayProperties display)
 		{
-			Slice current = m_dataEntryForm.CurrentSlice;
+			Slice current = m_dataTree.CurrentSlice;
 			display.Enabled = current != null && current.GetCanMergeNow();
 			if(!display.Enabled)
 				display.Text += StringTable.Table.GetString("(cannot merge this)");
@@ -830,7 +830,7 @@ namespace LanguageExplorer.Works
 
 		public bool OnDataTreeSplit(object cmd)
 		{
-			Slice current = m_dataEntryForm.CurrentSlice;
+			Slice current = m_dataTree.CurrentSlice;
 			Debug.Assert(current != null, "No slice was current");
 			if (current != null)
 				current.HandleSplitCommand();
@@ -847,7 +847,7 @@ namespace LanguageExplorer.Works
 		public virtual bool OnDisplayDataTreeSplit(object commandObject,
 			ref UIItemDisplayProperties display)
 		{
-			Slice current = m_dataEntryForm.CurrentSlice;
+			Slice current = m_dataTree.CurrentSlice;
 			display.Enabled = current != null && current.GetCanSplitNow();
 			return true;	//we handled this, no need to ask anyone else.
 		}
@@ -861,7 +861,7 @@ namespace LanguageExplorer.Works
 		/// <returns></returns>
 		public bool OnDataTreeEdit(object cmd)
 		{
-			Slice current = m_dataEntryForm.CurrentSlice;
+			Slice current = m_dataTree.CurrentSlice;
 			Debug.Assert(current != null, "No slice was current");
 			if (current != null)
 				current.HandleEditCommand();
@@ -877,7 +877,7 @@ namespace LanguageExplorer.Works
 		/// <returns></returns>
 		public bool OnDataTreeAddReference(object cmd)
 		{
-			Slice current = m_dataEntryForm.CurrentSlice;
+			Slice current = m_dataTree.CurrentSlice;
 			Debug.Assert(current != null, "No slice was current");
 			if (current != null)
 				current.HandleLaunchChooser();
@@ -893,7 +893,7 @@ namespace LanguageExplorer.Works
 		/// <returns></returns>
 		public virtual bool OnDisplayDataTreeEdit(object commandObject, ref UIItemDisplayProperties display)
 		{
-			Slice current = m_dataEntryForm.CurrentSlice;
+			Slice current = m_dataTree.CurrentSlice;
 			display.Enabled = current != null && current.GetCanEditNow();
 
 			return true;//we handled this, no need to ask anyone else.
@@ -908,7 +908,7 @@ namespace LanguageExplorer.Works
 		public virtual bool OnLaunchGuiControl(object commandObject)
 		{
 			Command command = (Command)commandObject;
-			using (CmObjectUi lcmUi = CmObjectUi.MakeUi(m_dataEntryForm.CurrentSlice.Object))
+			using (CmObjectUi lcmUi = CmObjectUi.MakeUi(m_dataTree.CurrentSlice.Object))
 			{
 				lcmUi.Mediator = m_mediator;
 				lcmUi.PropTable = m_propertyTable;
@@ -925,12 +925,12 @@ namespace LanguageExplorer.Works
 		/// <returns>true to indicate the message was handled</returns>
 		public bool OnMoveUpObjectInSequence(object cmd)
 		{
-			Slice slice = m_dataEntryForm.CurrentSlice;
+			Slice slice = m_dataTree.CurrentSlice;
 			Debug.Assert(slice != null, "No slice was current");
 			Debug.Assert(!slice.IsDisposed, "The current slice is already disposed??");
 			if (slice != null)
 			{
-				var cache = m_dataEntryForm.Cache;
+				var cache = m_dataTree.Cache;
 				var obj = slice.Object.Owner;
 				int flid = slice.Object.OwningFlid;
 				int ihvo = cache.DomainDataByFlid.GetObjIndex(obj.Hvo, (int)flid, slice.Object.Hvo);
@@ -961,7 +961,7 @@ namespace LanguageExplorer.Works
 		public virtual bool OnDisplayMoveUpObjectInSequence(object commandObject,
 			ref UIItemDisplayProperties display)
 		{
-			Slice slice = m_dataEntryForm.CurrentSlice;
+			Slice slice = m_dataTree.CurrentSlice;
 			Debug.Assert(slice == null || !slice.IsDisposed, "The current slice is already disposed??");
 			if (slice == null || slice.Object == null)
 			{
@@ -969,7 +969,7 @@ namespace LanguageExplorer.Works
 				display.Visible = false;
 				return true;
 			}
-			var cache = m_dataEntryForm.Cache;
+			var cache = m_dataTree.Cache;
 			// FWR-2742 Handle a slice Object (like LexEntry) being unowned (and OwningFlid = 0)
 			var type = CellarPropertyType.ReferenceAtomic;
 			if (slice.Object.OwningFlid > 0)
@@ -1014,12 +1014,12 @@ namespace LanguageExplorer.Works
 		/// <returns>true to indicate the message was handled</returns>
 		public virtual bool OnMoveDownObjectInSequence(object cmd)
 		{
-			Slice slice = m_dataEntryForm.CurrentSlice;
+			Slice slice = m_dataTree.CurrentSlice;
 			Debug.Assert(slice != null, "No slice was current");
 			Debug.Assert(!slice.IsDisposed, "The current slice is already disposed??");
 			if (slice != null)
 			{
-				var cache = m_dataEntryForm.Cache;
+				var cache = m_dataTree.Cache;
 				int hvoOwner = slice.Object.Owner.Hvo;
 				int flid = slice.Object.OwningFlid;
 				int chvo = cache.DomainDataByFlid.get_VecSize(hvoOwner, (int)flid);
@@ -1054,7 +1054,7 @@ namespace LanguageExplorer.Works
 		public virtual bool OnDisplayMoveDownObjectInSequence(object commandObject,
 			ref UIItemDisplayProperties display)
 		{
-			Slice slice = m_dataEntryForm.CurrentSlice;
+			Slice slice = m_dataTree.CurrentSlice;
 			Debug.Assert(slice == null || !slice.IsDisposed, "The current slice is already disposed??");
 			if (slice == null || slice.Object == null)
 			{
@@ -1062,7 +1062,7 @@ namespace LanguageExplorer.Works
 				display.Visible = false;
 				return true;
 			}
-			LcmCache cache = m_dataEntryForm.Cache;
+			LcmCache cache = m_dataTree.Cache;
 			IFwMetaDataCache mdc = cache.DomainDataByFlid.MetaDataCache;
 			// FWR-2742 Handle a slice Object (like LexEntry) being unowned (and OwningFlid = 0)
 			var type = CellarPropertyType.ReferenceAtomic;
@@ -1122,9 +1122,9 @@ namespace LanguageExplorer.Works
 			bool fDisplay = DisplayConvertLexEntry(commandObject);
 			if (fDisplay)
 			{
-				if (!m_dataEntryForm.Root.IsValidObject)
+				if (!m_dataTree.Root.IsValidObject)
 					return true;
-				foreach (var ler in (m_dataEntryForm.Root as ILexEntry).EntryRefsOS)
+				foreach (var ler in (m_dataTree.Root as ILexEntry).EntryRefsOS)
 				{
 					if (ler.ComplexEntryTypesRS.Count == 0)
 						continue;
@@ -1149,29 +1149,29 @@ namespace LanguageExplorer.Works
 		private bool DisplayConvertLexEntry(object commandObject)
 		{
 			// We may not have any data set up yet.  See LT-9712.
-			if (Cache == null || m_dataEntryForm == null || m_dataEntryForm.Root == null)
+			if (Cache == null || m_dataTree == null || m_dataTree.Root == null)
 				return false;
 			Command command = (Command)commandObject;
 			string className = XmlUtils.GetManditoryAttributeValue(command.Parameters[0], "className");
-			if (className != m_dataEntryForm.Root.ClassName)
+			if (className != m_dataTree.Root.ClassName)
 				return false;
 			string restrictToTool = XmlUtils.GetOptionalAttributeValue(command.Parameters[0], "restrictToTool");
 			if (restrictToTool != null && restrictToTool != m_propertyTable.GetValue("toolChoice", string.Empty))
 				return false;
-			return m_dataEntryForm.Root is ILexEntry;
+			return m_dataTree.Root is ILexEntry;
 		}
 
 		private bool AddNewLexEntryRef(object argument, int flidTypes)
 		{
 			Command command = (Command)argument;
 			string className = XmlUtils.GetManditoryAttributeValue(command.Parameters[0], "className");
-			if (className != m_dataEntryForm.Root.ClassName)
+			if (className != m_dataTree.Root.ClassName)
 				return false;
 			string restrictToTool = XmlUtils.GetOptionalAttributeValue(command.Parameters[0], "restrictToTool");
 			if (restrictToTool != null && restrictToTool != m_propertyTable.GetValue("toolChoice", string.Empty))
 				return false;
 
-			var ent = m_dataEntryForm.Root as ILexEntry;
+			var ent = m_dataTree.Root as ILexEntry;
 			if (ent != null)
 			{
 				UndoableUnitOfWorkHelper.Do(command.UndoText, command.RedoText, ent,
@@ -1210,7 +1210,7 @@ namespace LanguageExplorer.Works
 
 		public bool OnDisplayAddComponentToPrimary(object commandObject, ref UIItemDisplayProperties display)
 		{
-			Slice current = m_dataEntryForm.CurrentSlice;
+			Slice current = m_dataTree.CurrentSlice;
 			if (current == null || current.Object == null || current.Flid == 0)
 				return true; // already handled - nothing else should be responding to this message
 			bool fEnable = false;
@@ -1244,7 +1244,7 @@ namespace LanguageExplorer.Works
 
 		public bool OnAddComponentToPrimary(object argument)
 		{
-			Slice current = m_dataEntryForm.CurrentSlice;
+			Slice current = m_dataTree.CurrentSlice;
 			if (current == null || current.Object == null || current.Flid == 0)
 				return true; // already handled - nothing else should be responding to this message
 			int hvo = GetSelectedComponentHvo();
@@ -1301,7 +1301,7 @@ namespace LanguageExplorer.Works
 		public bool OnDisplayVisibleComplexForm(object commandObject, ref UIItemDisplayProperties display)
 		{
 			display.Visible = display.Enabled = false; // item shows on some wrong slice menus if not false
-			Slice complexFormsSlice = m_dataEntryForm.CurrentSlice;
+			Slice complexFormsSlice = m_dataTree.CurrentSlice;
 			if (complexFormsSlice == null || complexFormsSlice.Object == null || complexFormsSlice.Flid == 0)
 				return true; // already handled - nothing else should be responding to this message
 			bool fEnable = false;
@@ -1333,7 +1333,7 @@ namespace LanguageExplorer.Works
 
 		public bool OnVisibleComplexForm(object argument)
 		{
-			Slice current = m_dataEntryForm.CurrentSlice;
+			Slice current = m_dataTree.CurrentSlice;
 			if (current == null || current.Object == null || current.Flid == 0)
 				return true; // already handled - nothing else should be responding to this message
 			int hvo = GetSelectedComplexFormHvo(current);
@@ -1416,7 +1416,7 @@ namespace LanguageExplorer.Works
 		/// <returns>The HVO of the selected component or 0 if there is none.</returns>
 		private int GetSelectedComponentHvo()
 		{
-			Slice current = m_dataEntryForm.CurrentSlice;
+			Slice current = m_dataTree.CurrentSlice;
 			if (current.Flid != LexEntryRefTags.kflidComponentLexemes ||
 				!(current.Object is ILexEntryRef)) return 0;
 			return GetSelectionHvoFromControls(current);
@@ -1449,7 +1449,7 @@ namespace LanguageExplorer.Works
 		{
 			get
 			{
-				return m_dataEntryForm.Cache;
+				return m_dataTree.Cache;
 			}
 		}
 
@@ -1525,7 +1525,7 @@ namespace LanguageExplorer.Works
 							}
 							else //we could not figure out a default menu for this item, so fall back on the auto menu
 							{	//todo: this must not be used in the final product!
-								// return m_dataEntryForm.GetAutoMenu(sender, e);
+								// return m_dataTree.GetAutoMenu(sender, e);
 								return null;
 							}
 						}

@@ -38,12 +38,10 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		///
 		/// </summary>
-		/// <param name="parent"></param>
-		public override void Install(DataTree parent)
+		/// <param name="parentDataTree"></param>
+		public override void Install(DataTree parentDataTree)
 		{
-			CheckDisposed();
-
-			base.Install(parent);
+			base.Install(parentDataTree);
 
 			if (this.Control != null)
 			{

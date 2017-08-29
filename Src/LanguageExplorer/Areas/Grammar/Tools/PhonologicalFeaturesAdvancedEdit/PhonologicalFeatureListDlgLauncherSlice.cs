@@ -77,11 +77,9 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalFeaturesAdvancedEdit
 		}
 
 		/// <summary />
-		public override void Install(DataTree parent)
+		public override void Install(DataTree parentDataTree)
 		{
-			CheckDisposed();
-
-			base.Install(parent);
+			base.Install(parentDataTree);
 
 			var ctrl = (PhonologicalFeatureListDlgLauncher)Control;
 

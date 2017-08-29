@@ -2640,7 +2640,7 @@ namespace LanguageExplorer.Works
 			}
 
 			if (!m_list.CanInsertClass(className))
-				return false;RANDYTODO
+				return false;
 #endif
 
 			bool result = false;

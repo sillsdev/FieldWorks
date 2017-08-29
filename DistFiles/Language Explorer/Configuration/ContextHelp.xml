@@ -24,7 +24,7 @@
 	<item id="CmdInsertHumanApprovedAnalysis">Create new approved analysis</item>
 	<item id="CmdGoToWfiWordform">Find a wordform.</item>
 	<!--
-		  Rerversal items
+		  Reversal items
 		  -->
 	<item id="CmdInsertReversalEntry">Create a new reversal entry.</item>
 	<item id="CmdGoToReversalEntry">Find a reversal entry.</item>

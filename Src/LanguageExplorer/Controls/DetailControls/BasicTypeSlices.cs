@@ -66,12 +66,10 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// Called when the slice is first created, but also when it is
 		/// "reused" (e.g. refresh or new target object)
 		/// </summary>
-		/// <param name="parent"></param>
-		public override void Install(DataTree parent)
+		/// <param name="parentDataTree"></param>
+		public override void Install(DataTree parentDataTree)
 		{
-			CheckDisposed();
-
-			base.Install(parent);
+			base.Install(parentDataTree);
 
 			if (m_cb.Dock != DockStyle.Left)
 				m_cb.Dock = System.Windows.Forms.DockStyle.Left;

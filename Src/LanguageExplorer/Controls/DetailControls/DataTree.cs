@@ -461,8 +461,6 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		public DataTree()
 		{
-//			string objName = ToString() + GetHashCode().ToString();
-//			Debug.WriteLine("Creating object:" + objName);
 			Slices = new List<Slice>();
 		}
 
@@ -964,6 +962,22 @@ namespace LanguageExplorer.Controls.DetailControls
 				DeepResumeLayout();
 
 				MonoResumeUpdates();
+				EnsureDefaultCursorForSlices();
+			}
+		}
+
+		internal void EnsureDefaultCursorForSlices()
+		{
+#if RANDYTODO
+			// NB: This seems to be a hack, but it does get select slices to not have the wait cursor, when the mouse enters,
+			// such as the slices that contain Button launchers, or the left column in the slice's splitter.
+#endif
+			foreach (var slice in Slices)
+			{
+				if (slice.Cursor == Cursors.WaitCursor)
+				{
+					slice.Cursor = Cursors.Default;
+				}
 			}
 		}
 
@@ -1009,18 +1023,18 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 		}
 
-		#region Sequential message processing enforcement
+#region Sequential message processing enforcement
 
-		public IFwMainWnd ContainingWindow()
+		private IFwMainWnd ContainingWindow
 		{
-			CheckDisposed();
+			get
+			{
+				CheckDisposed();
 
-			Form form = FindForm();
+				Form form = FindForm();
 
-			if (form is IFwMainWnd)
 				return form as IFwMainWnd;
-
-			return null;
+			}
 		}
 
 		/// <summary>
@@ -1031,34 +1045,32 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// of the block that needs protection.
 		/// </summary>
 		/// <returns></returns>
-		public void BeginSequentialBlock()
+		private void BeginSequentialBlock()
 		{
 			CheckDisposed();
 
-			IFwMainWnd mainWindow = ContainingWindow();
-			if (mainWindow != null)
-				mainWindow.SuspendIdleProcessing();
+			IFwMainWnd mainWindow = ContainingWindow;
+			mainWindow?.SuspendIdleProcessing();
 		}
 
 		/// <summary>
 		/// See BeginSequentialBlock.
 		/// </summary>
-		public void EndSequentialBlock()
+		private void EndSequentialBlock()
 		{
 			CheckDisposed();
 
-			IFwMainWnd mainWindow = ContainingWindow();
-			if (mainWindow != null)
-				mainWindow.ResumeIdleProcessing();
+			IFwMainWnd mainWindow = ContainingWindow;
+			mainWindow?.ResumeIdleProcessing();
 		}
-		#endregion
+#endregion
 
 		/// <summary>
 		/// Suspend the layout of this window and its immediate children.
 		/// This version also maintains a count, and does not resume until the number of
 		/// resume calls balances the number of suspend calls.
 		/// </summary>
-		public void DeepSuspendLayout()
+		internal void DeepSuspendLayout()
 		{
 			CheckDisposed();
 
@@ -1076,7 +1088,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// This version also maintains a count, and does not resume until the number of
 		/// resume calls balances the number of suspend calls.
 		/// </summary>
-		public void DeepResumeLayout()
+		internal void DeepResumeLayout()
 		{
 			CheckDisposed();
 

@@ -123,9 +123,9 @@ namespace LanguageExplorer.Controls.DetailControls
 			this.Height = Math.Max(this.Height, m_tree.PreferredHeight);
 		}
 
-		public override void Install(DataTree parent)
+		public override void Install(DataTree parentDataTree)
 		{
-			base.Install(parent);
+			base.Install(parentDataTree);
 			SplitCont.Panel2.SizeChanged += new EventHandler(SplitContPanel2_SizeChanged);
 		}
 

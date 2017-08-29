@@ -99,13 +99,13 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// Set the Editable property on the launcher, which is created before installation, and
 		/// then finish installing this slice.
 		/// </summary>
-		/// <param name="parent"></param>
-		public override void Install(DataTree parent)
+		/// <param name="parentDataTree"></param>
+		public override void Install(DataTree parentDataTree)
 		{
 			var launcher = Control as ReferenceLauncher;
 			if (launcher != null)
 				launcher.Editable = XmlUtils.GetOptionalBooleanAttributeValue(m_configurationNode, "editable", true);
-			base.Install(parent);
+			base.Install(parentDataTree);
 		}
 	}
 }

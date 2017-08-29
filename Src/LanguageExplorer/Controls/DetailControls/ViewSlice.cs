@@ -98,12 +98,10 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			get
 			{
-				CheckDisposed();
 				return base.Control;
 			}
 			set
 			{
-				CheckDisposed();
 				base.Control = value;
 				SimpleRootSite rs = RootSite;
 				// Don't allow it to lay out until we have a realistic size, while the DataTree is
@@ -168,8 +166,8 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		///
 		/// </summary>
-		/// <param name="parent"></param>
-		public override void Install(DataTree parent)
+		/// <param name="parentDataTree"></param>
+		public override void Install(DataTree parentDataTree)
 		{
 			CheckDisposed();
 			// Sometimes we get a spurious "out of memory" error while trying to create a handle for the
@@ -177,10 +175,10 @@ namespace LanguageExplorer.Controls.DetailControls
 			RootSite rs = RootSite;
 			rs.Cache = Cache;
 			// JT: seems to actually cause a problem if we replace it with itself. RootSite probably needs a fix.
-			if (rs.StyleSheet != parent.StyleSheet)
-				rs.StyleSheet = parent.StyleSheet;
+			if (rs.StyleSheet != parentDataTree.StyleSheet)
+				rs.StyleSheet = parentDataTree.StyleSheet;
 
-			base.Install(parent);
+			base.Install(parentDataTree);
 
 			rs.SetAccessibleName(this.Label);
 		}

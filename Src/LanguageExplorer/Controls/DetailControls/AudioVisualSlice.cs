@@ -126,12 +126,10 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		///
 		/// </summary>
-		/// <param name="parent"></param>
-		public override void Install(DataTree parent)
+		/// <param name="parentDataTree"></param>
+		public override void Install(DataTree parentDataTree)
 		{
-			CheckDisposed();
-
-			base.Install(parent);
+			base.Install(parentDataTree);
 
 			AudioVisualLauncher ctrl = Control as AudioVisualLauncher;
 			ctrl.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
@@ -164,12 +162,10 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			get
 			{
-				CheckDisposed();
 				return base.Control;
 			}
 			set
 			{
-				CheckDisposed();
 				base.Control = value;
 				SimpleRootSite rs = RootSite;
 				// Don't allow it to lay out until we have a realistic size, while the DataTree is

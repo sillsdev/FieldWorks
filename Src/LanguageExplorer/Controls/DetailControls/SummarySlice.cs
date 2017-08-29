@@ -63,7 +63,6 @@ namespace LanguageExplorer.Controls.DetailControls
 				m_collapsedLayout = XmlUtils.GetOptionalAttributeValue(m_callerNode, "collapsedLayout")
 					?? XmlUtils.GetOptionalAttributeValue(m_configurationNode, "collapsedLayout");
 				m_view = new SummaryXmlView(m_obj.Hvo, m_layout, this);
-				m_view.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 			}
 
 			var panel = new Panel { Dock = DockStyle.Fill };
@@ -72,6 +71,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			m_view.Dock = DockStyle.Left;
 			m_view.LayoutSizeChanged += m_view_LayoutSizeChanged;
 			panel.Controls.Add(m_view);
+			m_view.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 
 			m_button = new ExpandCollapseButton { Dock = DockStyle.Left };
 			m_button.Click += m_button_Click;

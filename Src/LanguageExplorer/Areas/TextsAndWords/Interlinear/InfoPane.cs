@@ -164,7 +164,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			public InterlinearTextsRecordEditView(InfoPane infoPane, XElement configurationParametersElement, LcmCache cache, RecordClerk clerk)
 				: base(configurationParametersElement, XDocument.Parse(AreaResources.VisibilityFilter_All), cache, clerk, new LexEntryMenuHandler(), new StTextDataTree(cache))
 			{
-				(m_dataEntryForm as StTextDataTree).InfoPane = infoPane;
+				(m_dataTree as StTextDataTree).InfoPane = infoPane;
 			}
 
 			#region Overrides of RecordEditView

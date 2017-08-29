@@ -60,9 +60,9 @@ namespace LanguageExplorer.Controls.DetailControls
 				m_combo.ForeColor = Color.FromName(node.GetInnerText());
 			}
 		}
-		public override void Install(DataTree parent)
+		public override void Install(DataTree parentDataTree)
 		{
-			base.Install(parent);
+			base.Install(parentDataTree);
 			m_combo.Dock = DockStyle.Left;
 		}
 
