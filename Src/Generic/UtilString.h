@@ -452,7 +452,7 @@ inline int ConvertText(const schar * prgchsSrc, int cchsSrc, wchar * prgchwDst, 
 	return MultiByteToWideChar(nCodePage, 0, prgchsSrc, cchsSrc, prgchwDst, cchwDst);
 }
 
-#ifndef WIN32
+#if !defined(WIN32) && !defined(_M_X64)
 /*----------------------------------------------------------------------------------------------
 	Convert from UTF-32 to UTF-16.
 
@@ -676,7 +676,7 @@ public:
 
 	// The other character type.
 	typedef typename CharDefns<XChar>::OtherChar1 YChar;
-#ifndef WIN32
+#if !defined(WIN32) && !defined(_M_X64)
 	typedef typename CharDefns<XChar>::OtherChar2 ZChar;
 #endif
 
@@ -1632,7 +1632,7 @@ public:
 		va_end(argList);
 	}
 
-#ifndef WIN32
+#if !defined(WIN32) && !defined(_M_X64)
 	/*------------------------------------------------------------------------------------------
 		Replace the buffer for this StrBase<> with a new string constructed by formatting the
 		zero-terminated string template pszFmt of the third character type. See FormatText.
@@ -1678,7 +1678,7 @@ public:
 		va_end(argList);
 	}
 
-#ifndef WIN32
+#if !defined(WIN32) && !defined(_M_X64)
 	/*------------------------------------------------------------------------------------------
 		Replace the buffer for this StrBase<> with a new string constructed by formatting the
 		string template (prgchFmt, cchFmt), of the third character type. See FormatText.
@@ -1739,7 +1739,7 @@ public:
 	------------------------------------------------------------------------------------------*/
 	void FormatCore(const YChar * prgchFmt, int cchFmt, va_list vaArgList);
 
-#ifndef WIN32
+#if !defined(WIN32) && !defined(_M_X64)
 	/*------------------------------------------------------------------------------------------
 		Replace the buffer for this StrBase<> with a new string constructed by formatting the
 		string template (prgchFmt, cchFmt), of the third character type. See FormatText.
@@ -1846,7 +1846,7 @@ public:
 	------------------------------------------------------------------------------------------*/
 	void FormatAppendCore(const YChar * prgchFmt, int cchFmt, va_list vaArgList);
 
-#ifndef WIN32
+#if !defined(WIN32) && !defined(_M_X64)
 	/*------------------------------------------------------------------------------------------
 		Append, to the buffer of this StrBase<>, a new string constructed by formatting the
 		string template (prgchFmt, cchFmt) of the third character type. See FormatText.
@@ -2443,7 +2443,7 @@ public:
 
 	// The other character type.
 	typedef typename CharDefns<XChar>::OtherChar1 YChar;
-#ifndef WIN32
+#if !defined(WIN32) && !defined(_M_X64)
 	typedef typename CharDefns<XChar>::OtherChar2 ZChar;
 #endif
 
@@ -3349,7 +3349,7 @@ template<typename XChar, int kcchMax = kcchMaxBufDef>
 {
 public:
 	typedef typename StrBaseBufCore<XChar>::YChar YChar;
-#ifndef WIN32
+#if !defined(WIN32) && !defined(_M_X64)
 	typedef typename StrBaseBufCore<XChar>::ZChar ZChar;
 #endif
 	using StrBaseBufCore<XChar>::Length;
@@ -3503,7 +3503,7 @@ public:
 	------------------------------------------------------------------------------------------*/
 	bool Assign(const YChar * prgch, int cch);
 
-#ifndef WIN32
+#if !defined(WIN32) && !defined(_M_X64)
 	/*------------------------------------------------------------------------------------------
 		Assign the characters from the given string (prgch, cch) of the third character type to
 		be the value of this StrBaseBuf<>. If there is an overflow, copy the characters that
@@ -3610,7 +3610,7 @@ public:
 	------------------------------------------------------------------------------------------*/
 	bool Append(const YChar * prgch, int cch);
 
-#ifndef WIN32
+#if !defined(WIN32) && !defined(_M_X64)
 	/*------------------------------------------------------------------------------------------
 		Append a copy of the characters from the given string (prgch, cch) of the third
 		character type to the value of this StrBaseBuf<>. If there is an overflow, copy the
@@ -3817,7 +3817,7 @@ public:
 	------------------------------------------------------------------------------------------*/
 	bool Replace(int ichMin, int ichLim, const YChar * prgch, int cch);
 
-#ifndef WIN32
+#if !defined(WIN32) && !defined(_M_X64)
 	/*------------------------------------------------------------------------------------------
 		Replace the range of characters [ichMin, ichLim) with the characters from the
 		string (prgch, cch) of the third type of character. If there is an overflow, copy the
@@ -4033,7 +4033,7 @@ public:
 	------------------------------------------------------------------------------------------*/
 	bool FormatAppendCore(const YChar * prgchFmt, int cchFmt, va_list vaArgList);
 
-#ifndef WIN32
+#if !defined(WIN32) && !defined(_M_X64)
 	/*------------------------------------------------------------------------------------------
 		Append, to the buffer of this StrBaseBuf<>, a new string constructed by formatting the
 		string template (prgchFmt, cchFmt) of the third character type. Set m_fOverflow to true

@@ -23,7 +23,7 @@ Description:
 #ifdef _MERGE_PROXYSTUB
 #include "proxystub.h"
 #endif
-#ifndef WIN32
+#if !defined(WIN32) && !defined(_M_X64)
 #include <sys/prctl.h>
 #include <sys/types.h>
 #include <unistd.h>
@@ -390,7 +390,7 @@ BOOL ModuleEntry::DllMain(HMODULE hmod, DWORD dwReason)
 	ModuleAddRef();
 	HRESULT hr;
 
-#ifndef WIN32
+#if !defined(WIN32) && !defined(_M_X64)
 #ifdef PR_SET_PTRACER
 	// PR_SET_PTRACER might not be defined on all versions
 	// Since Ubuntu 10.10 a normal user usually isn't allowed to use PTRACE anymore which

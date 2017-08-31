@@ -74,7 +74,7 @@ protected:
 
 	// The other character type.
 	typedef typename CharDefns<XChar>::OtherChar1 YChar;
-#ifndef WIN32
+#if !defined(WIN32) && !defined(_M_X64)
 	typedef typename CharDefns<XChar>::OtherChar2 ZChar;
 #endif
 
@@ -1363,7 +1363,7 @@ template<typename XChar>
 	AssertPtr(pstrm);
 	AssertPsz(pszFmt);
 
-#ifndef WIN32
+#if !defined(WIN32) && !defined(_M_X64)
 	va_list argList;
 	va_start(argList, pszFmt);
 	FormatText(FormatCallbackStream<XChar>, pstrm,
@@ -1388,7 +1388,7 @@ template<typename XChar>
 	AssertPtr(pstrm);
 	AssertArray(prgchFmt, cchFmt);
 
-#ifndef WIN32
+#if !defined(WIN32) && !defined(_M_X64)
 	va_list argList;
 	va_start(argList, cchFmt);
 	FormatText(FormatCallbackStream<XChar>, pstrm,
@@ -1789,7 +1789,7 @@ template<typename XChar>
 	AssertObj(this);
 }
 
-#ifndef WIN32
+#if !defined(WIN32) && !defined(_M_X64)
 /*----------------------------------------------------------------------------------------------
 	Replace the range [ichMin, ichLim) with the given characters of the third type. Use the given
 	codepage to convert between Unicode and 8-bit data.
@@ -1952,7 +1952,7 @@ template<typename XChar>
 	AssertObj(this);
 }
 
-#ifndef WIN32
+#if !defined(WIN32) && !defined(_M_X64)
 /*----------------------------------------------------------------------------------------------
 	Replace the buffer for this StrBase<> with a new string constructed by formatting the
 	string template (prgchFmt, cchFmt). See FormatText.
@@ -2042,7 +2042,7 @@ template<typename XChar>
 	AssertObj(this);
 }
 
-#ifndef WIN32
+#if !defined(WIN32) && !defined(_M_X64)
 /*----------------------------------------------------------------------------------------------
 	Append, to the buffer of this StrBase<>, a new string constructed by formatting the
 	string template (prgchFmt, cchFmt). See FormatText.
@@ -2259,7 +2259,7 @@ template<typename XChar, int kcchMax>
 	return !m_fOverflow;
 }
 
-#ifndef WIN32
+#if !defined(WIN32) && !defined(_M_X64)
 /*----------------------------------------------------------------------------------------------
 	Assign the characters from the given string (prgch, cch) of the third character type to be
 	the value of this StrBaseBuf<>. If there is an overflow, copy the characters that fit and
@@ -2410,7 +2410,7 @@ template<typename XChar, int kcchMax>
 	return !m_fOverflow;
 }
 
-#ifndef WIN32
+#if !defined(WIN32) && !defined(_M_X64)
 /*----------------------------------------------------------------------------------------------
 	Append a copy of the characters from the given string (prgch, cch) of the third character
 	type to the value of this StrBaseBuf<>. If there is an overflow, copy the characters that
