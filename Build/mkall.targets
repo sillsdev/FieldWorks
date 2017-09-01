@@ -163,10 +163,10 @@
 		<Message Text="Finished building testViews and running tests." Condition="'$(action)'=='test'"/>
 	</Target>
 
-	<UsingTask TaskName="LcmGenerate" AssemblyFile="$(DownloadsDir)/LCM/SIL.LCModel.Build.Tasks.dll"/>
+	<UsingTask TaskName="LcmGenerate" AssemblyFile="$(LcmArtifactsDir)/SIL.LCModel.Build.Tasks.dll"/>
 
 	<ItemGroup>
-		<CellarConstantsInputs Include="$(DownloadsDir)/LCM/MasterLCModel.xml"/>
+		<CellarConstantsInputs Include="$(LcmArtifactsDir)/MasterLCModel.xml"/>
 		<CellarConstantsInputs Include="$(fwrt)/Src/Kernel/CellarConstants.vm.h"/>
 		<CellarConstantsOutputs Include="$(fwrt)/Output/Common/CellarConstants.h"/>
 	</ItemGroup>
@@ -174,11 +174,11 @@
 	<Target Name="GenerateCellarConstants" DependsOnTargets="CopyCellarBaseConstants"
 			Inputs="@(CellarConstantsInputs)" Outputs="@(CellarConstantsOutputs)">
 		<MakeDir Directories="$(dir-fwoutputCommon)" Condition="'$(action)'!='clean'"/>
-		<LcmGenerate XmlFile="$(DownloadsDir)/LCM/MasterLCModel.xml"
+		<LcmGenerate XmlFile="$(LcmArtifactsDir)/MasterLCModel.xml"
 					 OutputDir="$(dir-fwoutputCommon)"
 					 OutputFile="CellarConstants.h"
 					 TemplateFile="$(fwrt)/Src/Kernel/CellarConstants.vm.h"
-					 WorkingDirectory="$(DownloadsDir)/LCM/"
+					 WorkingDirectory="$(LcmArtifactsDir)/"
 					 Condition="'$(action)'!='clean'"/>
 	</Target>
 
@@ -412,10 +412,12 @@
 	<Target Name="downloadDlls" DependsOnTargets="RestoreNuGetPackages" Condition="'$(disableDownloads)'!='true'">
 		<MakeDir Directories="$(DownloadsDir)"/>
 		<Message Text="Downloading artifacts for Palaso, including  L10NSharp, Enchant.Net, ibusdotnet, NDesk.DBus, Spart, and Newtonsoft.Json."/>
-		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(PalasoBuildType)" FlexBridgeBuildType="$(FLExBridgeBuildType)" VersionInfo="$(MasterVersionInfo)" Artifacts="@(PalasoFiles)" DownloadsDir="$(DownloadsDir)"/>
+		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(PalasoBuildType)" FlexBridgeBuildType="$(FLExBridgeBuildType)" VersionInfo="$(MasterVersionInfo)"
+			Artifacts="@(PalasoFiles)" DownloadsDir="$(DownloadsDir)" Condition="'$(UseLocalPalaso)'!='Y'"/>
 
 		<Message Text="Downloading artifacts for Chorus."/>
-		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(ChorusBuildType)" FlexBridgeBuildType="$(FLExBridgeBuildType)" VersionInfo="$(MasterVersionInfo)" Artifacts="@(ChorusFiles)" DownloadsDir="$(DownloadsDir)"/>
+		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(ChorusBuildType)" FlexBridgeBuildType="$(FLExBridgeBuildType)" VersionInfo="$(MasterVersionInfo)"
+			Artifacts="@(ChorusFiles)" DownloadsDir="$(DownloadsDir)" Condition="'$(UseLocalChorus)'!='Y'"/>
 
 		<Message Text="Downloading an artifact for IPCFramework."/>
 		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(IPCFrameworkBuildType)" FlexBridgeBuildType="$(FLExBridgeBuildType)" ProjectId="IpcLibrary" VersionInfo="$(MasterVersionInfo)" Artifacts="IPCFramework.dll" DownloadsDir="$(DownloadsDir)"/>
@@ -443,9 +445,10 @@
 		<DownloadFile Address="$(NUnitDownloadUrl)" DownloadsDir="$(DownloadsDir)"/>
 
 		<Message Text="Downloading artifacts for LCM." />
-		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(LcmBuildType)" VersionInfo="$(MasterVersionInfo)" Artifacts="LCM.zip" DownloadsDir="$(DownloadsDir)"/>
+		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(LcmBuildType)" VersionInfo="$(MasterVersionInfo)" Artifacts="LCM.zip" DownloadsDir="$(DownloadsDir)" Condition="'$(UseLocalLiblcm)'!='Y'"/>
 	</Target>
 
+	<!-- Setup source variables (to enable local development in libpalaso, chorus, and liblcm) -->
 	<PropertyGroup>
 		<PalasoArtifactsDir Condition="'$(PalasoArtifactsDir)'==''">$(DownloadsDir)</PalasoArtifactsDir>
 		<ChorusArtifactsDir Condition="'$(ChorusArtifactsDir)'==''">$(DownloadsDir)</ChorusArtifactsDir>
@@ -514,7 +517,7 @@
 		<ForceDelete Files="$(DownloadsDir)/NUnit-2.6.4/" />
 		<!-- LCM dlls -->
 		<ForceDelete Files="$(DownloadsDir)/LCM/" />
-		<Unzip ZipFilename="$(DownloadsDir)/LCM.zip" ToDir="$(DownloadsDir)/LCM/" />
+		<Unzip ZipFilename="$(DownloadsDir)/LCM.zip" ToDir="$(DownloadsDir)/LCM/" Condition="'$(UseLocalLiblcm)'!='Y'"/>
 		<Copy SourceFiles="@(LcmOutputBaseFiles -> '$(LcmArtifactsDir)/%(Identity)')" DestinationFolder="$(dir-outputBase)" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
 		<Copy SourceFiles="@(LcmOutputCommonFiles -> '$(LcmArtifactsDir)/%(Identity)')" DestinationFolder="$(dir-fwoutputCommon)" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
 		<Copy SourceFiles="@(LcmFwKernelFiles -> '$(LcmArtifactsDir)/%(Identity)')" DestinationFolder="$(fwrt)/Src/Kernel" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
@@ -524,57 +527,10 @@
 		<Copy SourceFiles="@(LcmIcuNrmFiles -> '$(LcmArtifactsDir)/%(Identity)')" DestinationFolder="$(fwrt)/DistFiles/Icu$(IcuVersion)/icudt$(IcuVersion)l" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
 
 		<!-- Copy the downloaded artifacts -->
-		<Copy SourceFiles="@(PalasoFiles -> '$(DownloadsDir)/%(Identity)')" DestinationFolder="$(dir-outputBase)" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
-		<Copy SourceFiles="@(ChorusFiles -> '$(DownloadsDir)/%(Identity)')" DestinationFolder="$(dir-outputBase)" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
+		<Copy SourceFiles="@(PalasoFiles -> '$(PalasoArtifactsDir)/%(Identity)')" DestinationFolder="$(dir-outputBase)" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
+		<Copy SourceFiles="@(ChorusFiles -> '$(ChorusArtifactsDir)/%(Identity)')" DestinationFolder="$(dir-outputBase)" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
 		<Copy SourceFiles="@(DownloadedFiles)" DestinationFolder="$(dir-outputBase)"
 			SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
-
-		<ItemGroup>
-			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/ICSharpCode.SharpZipLib.dll" />
-			<LcmOutputBaseFiles Condition="'$(OS)'=='Windows_NT' AND '$(Platform)'!='x64'" Include="$(DownloadsDir)/LCM/Hunspellx86.dll"  />
-			<LcmOutputBaseFiles Condition="'$(OS)'=='Windows_NT' AND '$(Platform)'=='x64'" Include="$(DownloadsDir)/LCM/Hunspellx64.dll" />
-			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/NHunspell.dll" Condition="'$(OS)'=='Windows_NT'" />
-			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/Microsoft.Practices.ServiceLocation.dll" />
-			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/protobuf-net.dll" />
-			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/StructureMap.dll" />
-			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/Tools.dll" />
-			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/SIL.LCModel.Utils.dll" />
-			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/SIL.LCModel.Utils.$(DebugInfo)" />
-			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/SIL.LCModel.Utils.Tests.dll" />
-			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/SIL.LCModel.Utils.Tests.dll.config" />
-			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/SIL.LCModel.Utils.Tests.$(DebugInfo)" />
-			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/SIL.LCModel.Core.dll" />
-			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/SIL.LCModel.Core.dll.config" Condition="'$(OS)'=='Unix'" />
-			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/SIL.LCModel.Core.$(DebugInfo)" />
-			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/SIL.LCModel.Core.Tests.dll" />
-			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/SIL.LCModel.Core.Tests.dll.config" />
-			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/SIL.LCModel.Core.Tests.$(DebugInfo)" />
-			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/SIL.LCModel.dll" />
-			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/SIL.LCModel.$(DebugInfo)" />
-			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/SIL.LCModel.Tests.dll" />
-			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/SIL.LCModel.Tests.dll.config" />
-			<LcmOutputBaseFiles Include="$(DownloadsDir)/LCM/SIL.LCModel.Tests.$(DebugInfo)" />
-
-			<LcmOutputCommonFiles Include="$(DownloadsDir)/LCM/KernelInterfaces/FwKernelTlb.iip" />
-
-			<LcmFwKernelFiles Include="$(DownloadsDir)/LCM/KernelInterfaces/common.idh" />
-			<LcmFwKernelFiles Include="$(DownloadsDir)/LCM/KernelInterfaces/FwKernel.idh" />
-			<LcmFwKernelFiles Include="$(DownloadsDir)/LCM/KernelInterfaces/Language.idh" />
-			<LcmFwKernelFiles Include="$(DownloadsDir)/LCM/KernelInterfaces/TextServ.idh" />
-			<LcmFwKernelFiles Include="$(DownloadsDir)/LCM/KernelInterfaces/FwKernelTlb.idl" />
-
-			<LcmDistFiles Include="$(DownloadsDir)/LCM/Styles.dtd" />
-
-			<LcmTemplatesFiles Include="$(DownloadsDir)/LCM/Templates/GOLDEtic.xml" />
-			<LcmTemplatesFiles Include="$(DownloadsDir)/LCM/Templates/NewLangProj.fwdata" />
-			<LcmTemplatesFiles Include="$(DownloadsDir)/LCM/Templates/POS.xml" />
-			<LcmTemplatesFiles Include="$(DownloadsDir)/LCM/Templates/SemDom.xml" />
-
-			<LcmIcuDataFiles Include="$(DownloadsDir)/LCM/IcuData/UnicodeDataOverrides.txt" />
-
-			<LcmIcuNrmFiles Include="$(DownloadsDir)/LCM/IcuData/icudt$(IcuVersion)l/nfc_fw.nrm" />
-			<LcmIcuNrmFiles Include="$(DownloadsDir)/LCM/IcuData/icudt$(IcuVersion)l/nfkc_fw.nrm" />
-		</ItemGroup>
 
 		<!-- NuGet packages. Property- and ItemGroups are inside the target so $(arch) and *'s are read properly -->
 		<PropertyGroup>

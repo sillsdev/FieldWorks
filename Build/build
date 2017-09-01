@@ -1,3 +1,5 @@
 #!/bin/bash
 
+"$(dirname "$0")"/run-in-environ xbuild "/t:refreshTargets"
+"$(dirname "$0")"/run-in-environ xbuild "/t:CheckDevelopmentPropertiesFile"
 "$(dirname "$0")"/run-in-environ xbuild "$@"

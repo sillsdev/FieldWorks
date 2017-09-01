@@ -145,7 +145,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\DistFiles\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
-    <Reference Include="NHunspell, Version=1.2.5554.16953, Culture=neutral, PublicKeyToken=1ac793ea843b4366, processorArchitecture=MSIL">
+    <Reference Include="NHunspell, Version=1.2.5554.16953, Culture=neutral, PublicKeyToken=1ac793ea843b4366, processorArchitecture=MSIL" Condition="'$(OS)'=='Windows_NT'">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\NHunspell.dll</HintPath>
     </Reference>
