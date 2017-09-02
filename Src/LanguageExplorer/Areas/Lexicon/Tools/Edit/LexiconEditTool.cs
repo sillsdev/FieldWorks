@@ -10,6 +10,7 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using LanguageExplorer.Controls;
+using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.Controls.LexText;
 using LanguageExplorer.Controls.PaneBar;
 using SIL.FieldWorks.Common.Controls;
@@ -32,7 +33,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		private RecordBrowseView _recordBrowseView;
 		private MultiPane _innerMultiPane;
 		private RecordClerk _recordClerk;
-		private readonly HashSet<Tuple<ToolStripMenuItem, EventHandler>> _newMenusAndHandlers = new HashSet<Tuple<ToolStripMenuItem, EventHandler>>();
+		private ToolStripMenuItem _insertMenu;
+		private readonly HashSet<Tuple<ToolStripMenuItem, EventHandler>> _newInsertMenusAndHandlers = new HashSet<Tuple<ToolStripMenuItem, EventHandler>>();
+		private readonly HashSet<Tuple<ToolStripMenuItem, EventHandler>> _newContextMenusAndHandlers = new HashSet<Tuple<ToolStripMenuItem, EventHandler>>();
 
 		#region Implementation of IPropertyTableProvider
 
@@ -90,11 +93,18 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			foreach (var menuTuple in _newMenusAndHandlers)
+			foreach (var menuTuple in _newInsertMenusAndHandlers)
+			{
+				menuTuple.Item1.Click -= menuTuple.Item2;
+				_insertMenu.DropDownItems.Remove(menuTuple.Item1);
+			}
+			_newInsertMenusAndHandlers.Clear();
+
+			foreach (var menuTuple in _newContextMenusAndHandlers)
 			{
 				menuTuple.Item1.Click -= menuTuple.Item2;
 			}
-			_newMenusAndHandlers.Clear();
+			_newContextMenusAndHandlers.Clear();
 
 			MultiPaneFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _multiPane);
 			_recordBrowseView = null;
@@ -128,8 +138,85 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 			_recordBrowseView = new RecordBrowseView(root, majorFlexComponentParameters.LcmCache, _recordClerk);
 
-			var dataTreeMenuHandler = new LexEntryMenuHandler();
-			dataTreeMenuHandler.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
+			/*
+			*/
+			Image majorEntryImage;
+			using (var images = new LexEntryImages())
+			{
+				majorEntryImage = images.buttonImages.Images["majorEntry"];
+			}
+			_insertMenu = (ToolStripMenuItem)majorFlexComponentParameters.MenuStrip.Items["_insertToolStripMenuItem"];
+#if RANDYTODO
+			/*
+<command id="CmdInsertLexEntry" label="_Entry..." message="InsertItemInVector" shortcut="Ctrl+E" icon="majorEntry" a10status="DONE">
+	<parameters className="LexEntry" />
+</command>
+			<item command="CmdInsertLexEntry" defaultVisible="false" a10status="DONE" />
+<command id="CmdInsertSense" label="_Sense" message="DataTreeInsert">
+	<parameters field="Senses" className="LexSense" ownerClass="LexEntry" recomputeVirtual="LexSense.LexSenseOutline" />
+</command>
+			<item command="CmdInsertSense" defaultVisible="false" />
+<command id="CmdInsertVariant" label="_Variant" message="InsertItemViaBackrefVector">
+	<parameters className="LexEntry" fieldName="VariantFormEntryBackRefs" restrictToTool="lexiconEdit" />
+</command>
+			<item command="CmdInsertVariant" defaultVisible="false" />
+<command id="CmdDataTree-Insert-AlternateForm" label="Insert Allomorph" message="DataTreeInsert">
+	<parameters field="AlternateForms" className="MoForm" />
+</command>
+			<item command="CmdDataTree-Insert-AlternateForm" label="A_llomorph" defaultVisible="false" />
+<command id="CmdInsertReversalEntry" label="Reversal Entry" message="InsertItemInVector" icon="reversalEntry">
+	<parameters className="ReversalIndexEntry" />
+	</command>
+			<item command="CmdInsertReversalEntry" defaultVisible="false" />
+<command id="CmdDataTree-Insert-Pronunciation" label="_Pronunciation" message="DataTreeInsert">
+	<parameters field="Pronunciations" className="LexPronunciation" ownerClass="LexEntry" />
+	</command>
+			<item command="CmdDataTree-Insert-Pronunciation" defaultVisible="false" />
+<command id="CmdInsertMediaFile" label="_Sound or Movie" message="InsertMediaFile">
+	<parameters field="MediaFiles" className="LexPronunciation" />
+</command>
+			<item command="CmdInsertMediaFile" defaultVisible="false" />
+<command id="CmdDataTree-Insert-Etymology" label="_Etymology" message="DataTreeInsert">
+	<parameters field="Etymology" className="LexEtymology" ownerClass="LexEntry" />
+</command>
+			<item command="CmdDataTree-Insert-Etymology" defaultVisible="false" />
+			<item label="-" translate="do not translate" />
+<command id="CmdInsertSubsense" label="Subsense (in sense)" message="DataTreeInsert">
+	<parameters field="Senses" className="LexSense" ownerClass="LexSense" recomputeVirtual="LexSense.LexSenseOutline" />
+</command>
+			<item command="CmdInsertSubsense" defaultVisible="false" />
+<command id="CmdInsertPicture" label="_Picture" message="InsertPicture">
+	<parameters field="Pictures" className="LexSense" />
+</command>
+			<item command="CmdInsertPicture" defaultVisible="false" />
+<command id="CmdInsertExtNote" label="_Extended Note" message="DataTreeInsert">
+	<parameters field="ExtendedNote" className="LexExtendedNote" ownerClass="LexSense" />
+</command>
+			<item command="CmdInsertExtNote" defaultVisible="false" />
+			*/
+#endif
+			PaneBarContextMenuFactory.CreateToolStripMenuItem(_insertMenu, 0, LexiconResources.Entry, majorEntryImage, Keys.Control | Keys.E, Insert_Entry_Clicked, LexiconResources.Entry_Tooltip);
+
+#if RANDYTODO
+			// TODO: create new "Insert" toolbar and add it and its buttons. (We don't have that otherwise empty "Insert" toolbar built into the main window.
+			// TODO: Then remove the toolbar and its btns on deactivate.
+			/*
+(See above command.)
+			<item command="CmdInsertLexEntry" defaultVisible="false" a10status="DONE" />
+<command id="CmdGoToEntry" label="_Find lexical entry..." message="GotoLexEntry" icon="goToEntry" shortcut="Ctrl+F" a10status="Derfined here, but used in Main.xml.">
+	<parameters title="Go To Entry" formlabel="Go _To..." okbuttonlabel="_Go" />
+</command>
+			<item command="CmdGoToEntry" defaultVisible="false" />
+(See above command.)
+			<item command="CmdInsertReversalEntry" defaultVisible="false" />
+<command id="CmdGoToReversalEntry" label="_Find reversal entry..." message="GotoReversalEntry" icon="gotoReversalEntry" shortcut="Ctrl+F">
+	<parameters title="Go To Entry" formlabel="Go _To..." okbuttonlabel="_Go" />
+</command>
+			<item command="CmdGoToReversalEntry" defaultVisible="false" />
+			*/
+#endif
+
+			var dataTreeMenuHandler = new DataTreeMenuHandler(_recordClerk, new DataTree());
 #if RANDYTODO
 			// TODO: Set up 'dataTreeMenuHandler' to handle menu events.
 			// TODO: Install menus and connect them to event handlers. (See "CreateContextMenuStrip" method for where the menus are.)
@@ -283,13 +370,13 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		private ToolStripMenuItem GetItemForItemText(string menuText)
 		{
-			return _newMenusAndHandlers.First(t => t.Item1.Text == FwUtils.ReplaceUnderlineWithAmpersand(menuText)).Item1;
+			return _newContextMenusAndHandlers.First(t => t.Item1.Text == FwUtils.ReplaceUnderlineWithAmpersand(menuText)).Item1;
 		}
 
 		private ToolStripMenuItem CreateToolStripMenuItem(ContextMenuStrip contextMenuStrip, string menuText, string menuTooltip, EventHandler eventHandler)
 		{
 			var toolStripMenuItem = PaneBarContextMenuFactory.CreateToolStripMenuItem(contextMenuStrip, menuText, null, eventHandler, menuTooltip);
-			_newMenusAndHandlers.Add(new Tuple<ToolStripMenuItem, EventHandler>(toolStripMenuItem, eventHandler));
+			_newContextMenusAndHandlers.Add(new Tuple<ToolStripMenuItem, EventHandler>(toolStripMenuItem, eventHandler));
 			return toolStripMenuItem;
 		}
 
@@ -401,6 +488,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 #endif
 		}
 
+		private void Insert_Entry_Clicked(object sender, EventArgs e)
+		{
+			MessageBox.Show(_multiPane.FindForm(), "Inserting entry...");
+		}
+
 		private void Show_Dictionary_Preview_Clicked(object sender, EventArgs e)
 		{
 			var menuItem = GetItemForItemText(LexiconResources.Show_DictionaryPubPreview);
@@ -434,9 +526,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		{
 		}
 
-		#endregion
+#endregion
 
-		#region Implementation of IMajorFlexUiComponent
+#region Implementation of IMajorFlexUiComponent
 
 		/// <summary>
 		/// Get the internal name of the component.
@@ -448,9 +540,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// User-visible localizable component name.
 		/// </summary>
 		public string UiName => "Lexicon Edit";
-		#endregion
+#endregion
 
-		#region Implementation of ITool
+#region Implementation of ITool
 
 		/// <summary>
 		/// Get the area machine name the tool is for.
@@ -462,6 +554,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// </summary>
 		public Image Icon => Images.SideBySideView.SetBackgroundColor(Color.Magenta);
 
-		#endregion
+#endregion
 	}
 }

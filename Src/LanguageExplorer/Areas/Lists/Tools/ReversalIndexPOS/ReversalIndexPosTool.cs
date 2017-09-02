@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using System.Xml.Linq;
 using LanguageExplorer.Areas.Lexicon;
 using LanguageExplorer.Controls;
+using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.Controls.PaneBar;
 using LanguageExplorer.LcmUi;
 using SIL.Code;
@@ -122,11 +123,11 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(ReversalEntriesPOS, majorFlexComponentParameters.Statusbar, FactoryMethod);
 			}
 			_recordBrowseView = new RecordBrowseView(XDocument.Parse(ListResources.ReversalToolReversalIndexPOSBrowseViewParameters).Root, majorFlexComponentParameters.LcmCache, _recordClerk);
+			var dataTreeMenuHandler = new DataTreeMenuHandler(_recordClerk, new DataTree());
 #if RANDYTODO
-			// TODO: Set up 'dataTreeMenuHandler' to handle menu events.
-			// TODO: Install menus and connect them to event handlers. (See "CreateContextMenuStrip" method for where the menus are.)
+			// TODO: See LexiconEditTool for how to set up all manner of menus and toolbars.
 #endif
-			var recordEditView = new RecordEditView(XDocument.Parse(ListResources.ReversalToolReversalIndexPOSRecordEditViewParameters).Root, XDocument.Parse(AreaResources.HideAdvancedListItemFields), majorFlexComponentParameters.LcmCache, _recordClerk);
+			var recordEditView = new RecordEditView(XDocument.Parse(ListResources.ReversalToolReversalIndexPOSRecordEditViewParameters).Root, XDocument.Parse(AreaResources.HideAdvancedListItemFields), majorFlexComponentParameters.LcmCache, _recordClerk, dataTreeMenuHandler);
 			var mainMultiPaneParameters = new MultiPaneParameters
 			{
 				Orientation = Orientation.Vertical,

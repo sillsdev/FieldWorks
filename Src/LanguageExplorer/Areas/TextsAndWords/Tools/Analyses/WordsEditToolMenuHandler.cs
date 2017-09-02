@@ -17,19 +17,16 @@ using SIL.LCModel.Infrastructure;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 {
+#if RANDYTODO
+	// TODO: I don't think subclassing DataTreeMenuHandler will be needed/supported in the new world order.
 	/// <summary>
-	/// WordsEditToolMenuHandler inherits from DTMenuHandler and adds some special smarts.
-	/// this class would normally be constructed by the factory method on DTMenuHandler,
-	/// when the XML configuration of the RecordEditView specifies this class.
-	///
-	/// This is an IFlexComponent, so it gets a chance to modify
-	/// the display characteristics of the menu just before the menu is displayed.
+	/// WordsEditToolMenuHandler inherits from DataTreeMenuHandler and adds some special smarts.
 	/// </summary>
-	internal sealed class WordsEditToolMenuHandler : DTMenuHandler
+	internal sealed class WordsEditToolMenuHandler : DataTreeMenuHandler
 	{
 		private XmlNode m_mainWindowNode;
 
-		#region Properties
+	#region Properties
 
 		private XmlNode MainWindowNode
 		{
@@ -122,18 +119,18 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 			}
 		}
 
-		#endregion Properties
+	#endregion Properties
 
-		#region Construction
+	#region Construction
 
 		//need a default constructor for dynamic loading
 		public WordsEditToolMenuHandler()
 		{
 		}
 
-		#endregion Construction
+	#endregion Construction
 
-		#region Other methods
+	#region Other methods
 
 		private void SetNewStatus(IWfiAnalysis anal, int newStatus)
 		{
@@ -175,11 +172,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 			}
 		}
 
-		#endregion Other methods
+	#endregion Other methods
 
-		#region XCore Message handlers
+	#region XCore Message handlers
 
-		#region Concordance Message handlers
+	#region Concordance Message handlers
 
 #if RANDYTODO
 		public virtual bool OnDisplayShowWordformConc(object commandObject,
@@ -336,9 +333,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 			return false;
 		}
 #endif
-		#endregion Concordance Message handlers
+	#endregion Concordance Message handlers
 
-		#region Approval Status Message handlers
+	#region Approval Status Message handlers
 
 #if RANDYTODO
 		public virtual bool OnDisplayAnalysisApprove(object commandObject,
@@ -412,10 +409,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 			return true;
 		}
 
-		#endregion Approval Status Message handlers
+	#endregion Approval Status Message handlers
 
 #if NOTYET
-		#region SpellingStatus Message handlers
+	#region SpellingStatus Message handlers
 
 		public virtual bool OnDisplaySpellingStatusUnknown(object commandObject,
 			ref UIItemDisplayProperties display)
@@ -474,10 +471,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 			return true;
 		}
 
-		#endregion SpellingStatus Message handlers
+	#endregion SpellingStatus Message handlers
 #endif
 
-		#region Wordform edit Message handlers
+	#region Wordform edit Message handlers
 
 #if RANDYTODO
 		protected override bool DeleteObject(Command command)
@@ -534,9 +531,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 			return true;
 		}
 
-		#endregion Wordform edit Message handlers
+	#endregion Wordform edit Message handlers
 
-		#region New analysis message handler
+	#region New analysis message handler
 
 #if RANDYTODO
 		public virtual bool OnDisplayAddApprovedAnalysis(object commandObject,
@@ -632,8 +629,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 			return true;
 		}
 
-		#endregion New analysis message handler
+	#endregion New analysis message handler
 
-		#endregion XCore Message handlers
+	#endregion XCore Message handlers
 	}
+#endif
 }

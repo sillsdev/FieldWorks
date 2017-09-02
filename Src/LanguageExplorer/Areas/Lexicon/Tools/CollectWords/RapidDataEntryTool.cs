@@ -7,6 +7,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using LanguageExplorer.Controls;
+using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.Controls.PaneBar;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
@@ -161,9 +162,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 				Dock = DockStyle.Right
 			};
 			recordEditViewPaneBar.AddControls(new List<Control> { panelButton });
-
-			var dataTreeMenuHandler = new LexEntryMenuHandler();
-			dataTreeMenuHandler.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
+			var dataTreeMenuHandler = new DataTreeMenuHandler(_recordClerk, new DataTree());
+#if RANDYTODO
+			// TODO: See LexiconEditTool for how to set up all manner of menus and toolbars.
+#endif
 			var recordEditView = new RecordEditView(root.Element("recordeditview").Element("parameters"), XDocument.Parse(LexiconResources.HideAdvancedFeatureFields), majorFlexComponentParameters.LcmCache, _recordClerk, dataTreeMenuHandler);
 			if (_nestedRecordClerk == null)
 			{

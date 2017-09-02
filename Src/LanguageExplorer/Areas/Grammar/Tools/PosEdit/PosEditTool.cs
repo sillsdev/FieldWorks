@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using System.Xml.Linq;
 using LanguageExplorer.Areas.Lists;
 using LanguageExplorer.Controls;
+using LanguageExplorer.Controls.DetailControls;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Filters;
@@ -103,11 +104,16 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 			{
 				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(Categories_withTreeBarHandler, majorFlexComponentParameters.Statusbar, FactoryMethod);
 			}
+			var dataTreeMenuHandler = new DataTreeMenuHandler(_recordClerk, new DataTree());
+#if RANDYTODO
+			// TODO: See LexiconEditTool for how to set up all manner of menus and toolbars.
+#endif
 			_collapsingSplitContainer = CollapsingSplitContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer, true,
 				XDocument.Parse(ListResources.PosEditParameters).Root, XDocument.Parse(AreaResources.HideAdvancedListItemFields),
 				MachineName,
 				majorFlexComponentParameters.LcmCache,
-				_recordClerk);
+				_recordClerk,
+				dataTreeMenuHandler);
 			RecordClerkServices.SetClerk(majorFlexComponentParameters, _recordClerk);
 		}
 

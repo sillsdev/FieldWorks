@@ -6,7 +6,6 @@ using System;
 using System.ComponentModel;
 using System.Windows.Forms;
 using System.Xml.Linq;
-using LanguageExplorer.Areas.Lexicon;
 using LanguageExplorer.Controls.DetailControls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
@@ -84,11 +83,15 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		internal void Initialize(RecordClerk clerk)
 		{
 			if (m_xrev != null)
-		{
+			{
 				// Already done
 				return;
 			}
-			m_xrev = new InterlinearTextsRecordEditView(this, new XElement("parameters", new XAttribute("layout", "FullInformation")), m_cache, clerk);
+			var dataTreeMenuHandler = new DataTreeMenuHandler(clerk, new InterlinearTextsRecordEditView.StTextDataTree(m_cache));
+#if RANDYTODO
+			// TODO: See LexiconEditTool for how to set up all manner of menus and toolbars.
+#endif
+			m_xrev = new InterlinearTextsRecordEditView(this, new XElement("parameters", new XAttribute("layout", "FullInformation")), m_cache, clerk, dataTreeMenuHandler);
 			m_xrev.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 			m_xrev.Dock = DockStyle.Fill;
 			Controls.Add(m_xrev);
@@ -159,10 +162,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		}
 
-		internal class InterlinearTextsRecordEditView : RecordEditView
+		internal sealed class InterlinearTextsRecordEditView : RecordEditView
 		{
-			public InterlinearTextsRecordEditView(InfoPane infoPane, XElement configurationParametersElement, LcmCache cache, RecordClerk clerk)
-				: base(configurationParametersElement, XDocument.Parse(AreaResources.VisibilityFilter_All), cache, clerk, new LexEntryMenuHandler(), new StTextDataTree(cache))
+			public InterlinearTextsRecordEditView(InfoPane infoPane, XElement configurationParametersElement, LcmCache cache, RecordClerk clerk, DataTreeMenuHandler dataTreeMenuHandler)
+				: base(configurationParametersElement, XDocument.Parse(AreaResources.VisibilityFilter_All), cache, clerk, dataTreeMenuHandler)
 			{
 				(m_dataTree as StTextDataTree).InfoPane = infoPane;
 			}
@@ -182,7 +185,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 			#endregion
 
-			private class StTextDataTree : DataTree
+			internal sealed class StTextDataTree : DataTree
 			{
 				private InfoPane m_infoPane;
 
@@ -214,12 +217,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					//Debug.Assert(m_info.CurrentRootHvo == root.Hvo);
 					ICmObject showObj = root;
 					ICmObject stText;
-					if (root.ClassID == CmBaseAnnotationTags.kClassId)	// RecordClerk is tracking the annotation
+					if (root.ClassID == CmBaseAnnotationTags.kClassId)  // RecordClerk is tracking the annotation
 					{
 						// This pane, as well as knowing how to work with a record list of Texts, knows
 						// how to work with one of CmBaseAnnotations, that is, a list of occurrences of
 						// a word.
-						var cba = (ICmBaseAnnotation) root;
+						var cba = (ICmBaseAnnotation)root;
 						ICmObject cmoPara = cba.BeginObjectRA;
 						stText = cmoPara.Owner;
 						showObj = stText;

@@ -9,6 +9,7 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using LanguageExplorer.Controls;
+using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.Controls.PaneBar;
 using LanguageExplorer.LcmUi;
 using SIL.FieldWorks.Common.FwUtils;
@@ -122,11 +123,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 
 			var root = XDocument.Parse(LexiconResources.ReversalEditCompleteToolParameters).Root;
 			_xhtmlDocView = new XhtmlDocView(root.Element("docview").Element("parameters"), majorFlexComponentParameters.LcmCache, _recordClerk);
+			var dataTreeMenuHandler = new DataTreeMenuHandler(_recordClerk, new DataTree());
 #if RANDYTODO
-			// TODO: Set up 'dataTreeMenuHandler' to handle menu events.
-			// TODO: Install menus and connect them to event handlers. (See "CreateContextMenuStrip" method for where the menus are.)
+			// TODO: See LexiconEditTool for how to set up all manner of menus and toolbars.
 #endif
-			var recordEditView = new RecordEditView(root.Element("recordview").Element("parameters"), XDocument.Parse(AreaResources.HideAdvancedListItemFields), majorFlexComponentParameters.LcmCache, _recordClerk);
+			var recordEditView = new RecordEditView(root.Element("recordview").Element("parameters"), XDocument.Parse(AreaResources.HideAdvancedListItemFields), majorFlexComponentParameters.LcmCache, _recordClerk, dataTreeMenuHandler);
 			var mainMultiPaneParameters = new MultiPaneParameters
 			{
 				Orientation = Orientation.Vertical,

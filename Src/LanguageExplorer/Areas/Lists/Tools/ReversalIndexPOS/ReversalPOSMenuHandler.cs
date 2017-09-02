@@ -15,13 +15,10 @@ using LanguageExplorer.Works;
 
 namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 {
+#if RANDYTODO
+	// TODO: I don't think subclassing DTMenuHandler will be needed/supported in the new world order.
 	/// <summary>
 	/// ReversalPOSMenuHandler inherits from DTMenuHandler and adds some special smarts.
-	/// this class would normally be constructed by the factory method on DTMenuHandler,
-	/// when the XML configuration of the RecordEditView specifies this class.
-	///
-	/// This is an IxCoreColleague, so it gets a chance to modify
-	/// the display characteristics of the menu just before the menu is displayed.
 	/// </summary>
 	internal sealed class ReversalPOSMenuHandler : DTMenuHandler
 	{
@@ -254,4 +251,5 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 			}
 		}
 	}
+#endif
 }

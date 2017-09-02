@@ -75,6 +75,39 @@ namespace LanguageExplorer.Areas.Lexicon {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to _Entry....
+        /// </summary>
+        internal static string Entry {
+            get {
+                return ResourceManager.GetString("Entry", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Create a new lexical entry..
+        /// </summary>
+        internal static string Entry_Tooltip {
+            get {
+                return ResourceManager.GetString("Entry_Tooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+        ///&lt;!-- this file lists special instructions for XDE nodes. Currently, all that you are allowed to say is
+        ///that a node is not visible. You do that by listing the node here. the id of the node must match the XDE
+        ///node that would otherwise produce a slice which you want to hide. note that most XDE nodes
+        ///do not otherwise have an ID; you usually have to add 1 before you can reference it in this kind of document.--&gt;
+        ///&lt;SliceFilter&gt;
+        ///	&lt;node id=&quot;MoAffixAllomorphInflectionClass [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string HideAdvancedFeatureFields {
+            get {
+                return ResourceManager.GetString("HideAdvancedFeatureFields", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Insert A_llomorph.
         /// </summary>
         internal static string Insert_Allomorph {
@@ -421,7 +454,7 @@ namespace LanguageExplorer.Areas.Lexicon {
         ///		&lt;parameters treeBarAvailability=&quot;Required&quot; layout=&quot;RDE&quot; msgBoxTrigger=&quot;CategorizedEntry-Intro&quot; allowInsertDeleteRecord=&quot;false&quot; /&gt;
         ///	&lt;/recordeditview&gt;
         ///	&lt;recordbrowseview&gt;
-        ///		&lt;parameters id=&quot;wordList&quot; filterBar=&quot;false&quot; forceReloadListOnInitOrChangeRoot=&quot;true&quot; editRowModelClass=&quot;LexSense&quot; editRowAssembly=&quot;FDO.dll&quot; editRowClass=&quot;SIL.FieldWorks.FDO.ILexSense&quot; editRowSaveMethod=&quot;RDENewSense&quot; editRowMergeMethod=&quot;RDEMergeSense&quot; ShowOwnerShortnam [rest of string was truncated]&quot;;.
+        ///		&lt;parameters id=&quot;wordList&quot; filterBar=&quot;false&quot; forceReloadListOnInitOrChangeRoot=&quot;true&quot; editRowModelClass=&quot;LexSense&quot; editRowAssembly=&quot;SIL.LCModel.dll&quot; editRowClass=&quot;SIL.LCModel.ILexSense&quot; editRowSaveMethod=&quot;RDENewSense&quot; editRowMergeMethod=&quot;RDEMergeSense&quot; ShowOwnerShortna [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string RapidDataEntryToolParameters {
             get {
@@ -490,21 +523,6 @@ namespace LanguageExplorer.Areas.Lexicon {
         internal static string Show_Unused_Items {
             get {
                 return ResourceManager.GetString("Show_Unused_Items", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
-        ///&lt;!-- this file lists special instructions for XDE nodes. Currently, all that you are allowed to say is
-        ///that a node is not visible. You do that by listing the node here. the id of the node must match the XDE
-        ///node that would otherwise produce a slice which you want to hide. note that most XDE nodes
-        ///do not otherwise have an ID; you usually have to add 1 before you can reference it in this kind of document.--&gt;
-        ///&lt;SliceFilter&gt;
-        ///	&lt;node id=&quot;MoAffixAllomorphInflectionClass [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string HideAdvancedFeatureFields {
-            get {
-                return ResourceManager.GetString("HideAdvancedFeatureFields", resourceCulture);
             }
         }
     }

@@ -5,6 +5,7 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
+using Gecko;
 using SIL.FieldWorks.Common.FwUtils;
 
 namespace LanguageExplorer.Controls
@@ -24,6 +25,20 @@ namespace LanguageExplorer.Controls
 				ToolTipText = menuTooltip
 			};
 			contextMenuStrip.Items.Add(toolStripMenuItem);
+
+			return toolStripMenuItem;
+		}
+		/// <summary>
+		/// Create a new ToolStripMenuItem and place it in the menu strip.
+		/// </summary>
+		internal static ToolStripMenuItem CreateToolStripMenuItem(ToolStripMenuItem mainMenuStrip, int insertIndex, string menuText, Image image, Keys shortcutKeys, EventHandler eventHandler, string menuTooltip)
+		{
+			var toolStripMenuItem = new ToolStripMenuItem(FwUtils.ReplaceUnderlineWithAmpersand(menuText), image, eventHandler)
+			{
+				ToolTipText = menuTooltip,
+				ShortcutKeys = shortcutKeys
+			};
+			mainMenuStrip.DropDownItems.Insert(insertIndex, toolStripMenuItem);
 
 			return toolStripMenuItem;
 		}

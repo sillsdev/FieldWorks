@@ -14,15 +14,12 @@ using SIL.LCModel;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 {
+#if RANDYTODO
+	// TODO: I don't think subclassing DataTreeMenuHandler will be needed/supported in the new world order.
 	/// <summary>
-	/// LexEntryMenuHandler inherits from DTMenuHandler and adds some special smarts.
-	/// this class would normally be constructed by the factory method on DTMenuHandler,
-	/// when the XML configuration of the RecordEditView specifies this class.
-	///
-	/// This is an IxCoreColleague, so it gets a chance to modify
-	/// the display characteristics of the menu just before the menu is displayed.
+	/// LexEntryMenuHandler inherits from DataTreeMenuHandler and adds some special smarts.
 	/// </summary>
-	internal sealed class ReversalIndexEntryMenuHandler : DTMenuHandler
+	internal sealed class ReversalIndexEntryMenuHandler : DataTreeMenuHandler
 	{
 		/// <summary>
 		/// Need a default constructor for dynamic loading
@@ -209,4 +206,5 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 		/// </remarks>
 		private bool InFriendlyArea => (PropertyTable.GetValue<string>("areaChoice") == "lexicon" && PropertyTable.GetValue<string>("ToolForAreaNamed_lexicon") == "reversalEditComplete");
 	}
+#endif
 }

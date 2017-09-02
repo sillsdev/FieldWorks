@@ -70,7 +70,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary></summary>
 		protected LcmCache m_cache;
 		/// <summary>use SetContextMenuHandler() to subscribe to this event (if you want to provide a Context menu for this DataTree)</summary>
-		protected event SliceShowMenuRequestHandler ShowContextMenuEvent;
+		internal event SliceShowMenuRequestHandler ShowContextMenuEvent;
 		/// <summary>the descendent object that is being displayed</summary>
 		protected ICmObject m_descendant;
 		/// <summary></summary>

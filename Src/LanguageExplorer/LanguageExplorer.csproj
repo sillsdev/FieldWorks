@@ -972,6 +972,7 @@
     <Compile Include="Works\DictionaryNodeOptions.cs" />
     <Compile Include="Works\DictionaryPublicationDecorator.cs" />
     <Compile Include="Works\DTMenuHandler.cs" />
+    <Compile Include="Works\DataTreeMenuHandler.cs" />
     <Compile Include="Works\EntriesOrChildClassesRecordList.cs" />
     <Compile Include="Works\ExportDialog.cs">
       <SubType>Form</SubType>

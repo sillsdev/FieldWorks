@@ -24,6 +24,10 @@ using SIL.Xml;
 
 namespace LanguageExplorer.Works
 {
+#if RANDYTODO
+	// TODO: Remove this class and its former subclasses.
+	// TODO: I'm trying to use a new class "DataTreeMenuHandler" instead, but that new class is quite different in behavior.
+	// So, leave this one here for now, to make merges easier.
 	/// <summary>
 	/// DTMenuHandler provides context menus to the data tree.  When the user (or test code)
 	/// selects issues commands, this class also invokes the corresponding methods on the data tree.
@@ -45,25 +49,25 @@ namespace LanguageExplorer.Works
 		{
 		}
 
-		#region Implementation of IPropertyTableProvider
+	#region Implementation of IPropertyTableProvider
 
 		/// <summary>
 		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
 		/// </summary>
 		public IPropertyTable PropertyTable { get; private set; }
 
-		#endregion
+	#endregion
 
-		#region Implementation of IPublisherProvider
+	#region Implementation of IPublisherProvider
 
 		/// <summary>
 		/// Get the IPublisher.
 		/// </summary>
 		public IPublisher Publisher { get; private set; }
 
-		#endregion
+	#endregion
 
-		#region Implementation of ISubscriberProvider
+	#region Implementation of ISubscriberProvider
 
 		/// <summary>
 		/// Get the ISubscriber.
@@ -83,7 +87,7 @@ namespace LanguageExplorer.Works
 			Subscriber = flexComponentParameters.Subscriber;
 		}
 
-		#endregion
+	#endregion
 
 		/// <summary>
 		/// Called by reflection based on menu item InsertPicture.
@@ -1570,4 +1574,5 @@ namespace LanguageExplorer.Works
 			return XmlUtils.GetOptionalAttributeValue(caller, "menu");
 		}
 	}
+#endif
 }

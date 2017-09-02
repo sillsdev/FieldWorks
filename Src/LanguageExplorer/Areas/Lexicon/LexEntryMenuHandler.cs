@@ -12,13 +12,10 @@ using SIL.FieldWorks.Common.FwUtils;
 
 namespace LanguageExplorer.Areas.Lexicon
 {
+#if RANDYTODO
+	// TODO: I don't think subclassing DTMenuHandler will be needed/supported in the new world order.
 	/// <summary>
 	/// LexEntryMenuHandler inherits from DTMenuHandler and adds some special smarts.
-	/// this class would normally be constructed by the factory method on DTMenuHandler,
-	/// when the XML configuration of the RecordEditView specifies this class.
-	///
-	/// This is an IxCoreColleague, so it gets a chance to modify
-	/// the display characteristics of the menu just before the menu is displayed.
 	/// </summary>
 	internal sealed class LexEntryMenuHandler : DTMenuHandler
 	{
@@ -558,4 +555,5 @@ namespace LanguageExplorer.Areas.Lexicon
 			return true;
 		}
 	}
+#endif
 }

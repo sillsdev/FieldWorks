@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using LanguageExplorer.Controls;
+using LanguageExplorer.Controls.DetailControls;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Filters;
@@ -99,6 +100,10 @@ namespace LanguageExplorer.Areas.Grammar.Tools.LexiconProblems
 			{
 				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(LexProblems, majorFlexComponentParameters.Statusbar, FactoryMethod);
 			}
+			var dataTreeMenuHandler = new DataTreeMenuHandler(_recordClerk, new DataTree());
+#if RANDYTODO
+			// TODO: See LexiconEditTool for how to set up all manner of menus and toolbars.
+#endif
 			_collapsingSplitContainer = CollapsingSplitContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters,
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
 				true,
@@ -106,7 +111,8 @@ namespace LanguageExplorer.Areas.Grammar.Tools.LexiconProblems
 				null,
 				MachineName,
 				majorFlexComponentParameters.LcmCache,
-				_recordClerk);
+				_recordClerk,
+				dataTreeMenuHandler);
 			RecordClerkServices.SetClerk(majorFlexComponentParameters, _recordClerk);
 		}
 
