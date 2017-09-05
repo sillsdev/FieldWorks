@@ -206,7 +206,8 @@ namespace LanguageExplorer.Controls.DetailControls
 				ITsString tssForm = tsb.GetString();
 				using (var dlg = new InsertEntryDlg())
 				{
-					dlg.SetDlgInfo(m_cache, tssForm, PropertyTable, Publisher, Subscriber);
+					dlg.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
+					dlg.SetDlgInfo(m_cache, tssForm);
 					if (dlg.ShowDialog(this) == DialogResult.OK)
 					{
 						// is there anything special we want to do?

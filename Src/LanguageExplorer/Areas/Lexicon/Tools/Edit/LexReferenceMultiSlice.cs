@@ -654,6 +654,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 						Debug.Assert(lrt.MappingType == (int)LexRefTypeTags.MappingTypes.kmtSenseAsymmetricPair || lrt.MappingType == (int)LexRefTypeTags.MappingTypes.kmtSenseTree);
 						return null;
 				}
+				dlg.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 				Debug.Assert(dlg != null);
 				var wp = new WindowParams
 				{
@@ -661,7 +662,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					lrt.ReverseName.BestAnalysisAlternative.Text),
 					m_btnText = LanguageExplorerResources.ks_Add
 				};
-				dlg.SetDlgInfo(m_cache, wp, PropertyTable, Publisher, Subscriber);
+				dlg.SetDlgInfo(m_cache, wp);
 				dlg.SetHelpTopic("khtpChooseLexicalRelationAdd");
 				if (dlg.ShowDialog(FindForm()) == DialogResult.OK)
 					first = dlg.SelectedObject;
@@ -732,6 +733,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 						Debug.Assert(lrt.MappingType == (int)LexRefTypeTags.MappingTypes.kmtSenseAsymmetricPair || lrt.MappingType == (int)LexRefTypeTags.MappingTypes.kmtSenseTree);
 						return null;
 				}
+				dlg.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 				Debug.Assert(dlg != null);
 				var wp = new WindowParams
 				{
@@ -746,7 +748,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				Debug.Assert(objEntry.ClassID == LexEntryTags.kClassId);
 				dlg.StartingEntry = objEntry as ILexEntry;
 
-				dlg.SetDlgInfo(m_cache, wp, PropertyTable, Publisher, Subscriber);
+				dlg.SetDlgInfo(m_cache, wp);
 				dlg.SetHelpTopic("khtpChooseLexicalRelationAdd");
 				if (dlg.ShowDialog(FindForm()) == DialogResult.OK)
 					first = dlg.SelectedObject;

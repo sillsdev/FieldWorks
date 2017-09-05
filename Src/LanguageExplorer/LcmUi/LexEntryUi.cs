@@ -465,10 +465,11 @@ namespace LanguageExplorer.LcmUi
 		internal static ILexEntry ShowFindEntryDialog(LcmCache cache, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, ITsString tssForm, IWin32Window owner)
 		{
 				using (EntryGoDlg entryGoDlg = new EntryGoDlg())
-				{
-					// Temporarily set TopMost to true so it will launch above any calling app (e.g. Paratext)
-					// but reset after activated.
-					SetCurrentModalForm(entryGoDlg);
+			{
+				entryGoDlg.InitializeFlexComponent(new FlexComponentParameters(propertyTable, publisher, subscriber));
+				// Temporarily set TopMost to true so it will launch above any calling app (e.g. Paratext)
+				// but reset after activated.
+				SetCurrentModalForm(entryGoDlg);
 					var wp = new WindowParams
 								 {
 									 m_btnText = LcmUiStrings.ksShow,
@@ -478,7 +479,7 @@ namespace LanguageExplorer.LcmUi
 					if (owner == null)
 						entryGoDlg.StartPosition = FormStartPosition.CenterScreen;
 					entryGoDlg.Owner = owner as Form;
-				entryGoDlg.SetDlgInfo(cache, wp, propertyTable, publisher, subscriber, tssForm);
+				entryGoDlg.SetDlgInfo(cache, wp, tssForm);
 					entryGoDlg.SetHelpTopic("khtpFindInDictionary");
 					if (entryGoDlg.ShowDialog() == DialogResult.OK)
 					{

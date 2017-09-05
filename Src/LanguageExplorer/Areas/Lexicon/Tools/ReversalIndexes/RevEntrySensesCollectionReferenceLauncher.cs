@@ -5,6 +5,7 @@
 using System.Windows.Forms;
 using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.Controls.LexText;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
 
@@ -57,12 +58,13 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 		{
 			using (var dlg = new LinkEntryOrSenseDlg())
 			{
+				dlg.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 				var wp = new WindowParams
 				{
 					m_title = LanguageExplorerResources.ksIdentifySense,
 					m_btnText = LanguageExplorerResources.ksSetReversal
 				};
-				dlg.SetDlgInfo(m_cache, wp, PropertyTable, Publisher, Subscriber);
+				dlg.SetDlgInfo(m_cache, wp);
 				dlg.SelectSensesOnly = true;
 				if (dlg.ShowDialog(FindForm()) == DialogResult.OK && dlg.SelectedObject != null)
 					AddItem(dlg.SelectedObject);

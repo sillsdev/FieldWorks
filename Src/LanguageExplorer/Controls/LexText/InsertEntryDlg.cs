@@ -10,7 +10,6 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
-using System.Xml.XPath;
 using LanguageExplorer.Controls.XMLViews;
 using LanguageExplorer.MGA;
 using Microsoft.Win32;
@@ -33,7 +32,7 @@ namespace LanguageExplorer.Controls.LexText
 	/// <summary>
 	/// Summary description for InsertEntryDlg.
 	/// </summary>
-	public class InsertEntryDlg : Form
+	public class InsertEntryDlg : Form, IFlexComponent
 	{
 		public enum MorphTypeFilterType
 		{
@@ -45,9 +44,6 @@ namespace LanguageExplorer.Controls.LexText
 		#region Data members
 
 		private LcmCache m_cache;
-		private IPropertyTable m_propertyTable;
-		private IPublisher m_publisher;
-		private ISubscriber m_subscriber;
 		private ILexEntry m_entry;
 		private IMoMorphType m_morphType;
 		private ILexEntryType m_complexType;
@@ -548,18 +544,17 @@ namespace LanguageExplorer.Controls.LexText
 		{
 			try
 			{
-				IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
-				var xnWindow = m_propertyTable.GetValue<XElement>("WindowConfiguration");
-				var configNode = xnWindow.XPathSelectElement("controls/parameters/guicontrol[@id=\"matchingEntries\"]/parameters");
+				IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable);
+				var configNode = XDocument.Parse(LexTextControls.MatchingEntriesGuiControlParameters).Root;
 
-				SearchEngine searchEngine = SearchEngine.Get(m_propertyTable, "InsertEntrySearchEngine", () => new InsertEntrySearchEngine(cache));
+				SearchEngine searchEngine = SearchEngine.Get(PropertyTable, "InsertEntrySearchEngine", () => new InsertEntrySearchEngine(cache));
 
-				m_matchingObjectsBrowser.Initialize(cache, stylesheet, m_propertyTable, m_publisher, m_subscriber, configNode, searchEngine);
+				m_matchingObjectsBrowser.Initialize(cache, stylesheet, configNode, searchEngine);
 
 				m_cache = cache;
 
 				m_fNewlyCreated = false;
-				m_oldForm = "";
+				m_oldForm = string.Empty;
 
 				// Set fonts for the two edit boxes.
 				if (stylesheet != null)
@@ -626,7 +621,7 @@ namespace LanguageExplorer.Controls.LexText
 					AdjustTextBoxAndDialogHeight(m_tbGloss);
 				}
 
-				m_msaGroupBox.Initialize(cache, m_propertyTable, m_publisher, m_lnkAssistant, this);
+				m_msaGroupBox.Initialize(cache, PropertyTable, Publisher, m_lnkAssistant, this);
 				// See if we need to adjust the height of the MSA group box.
 				int oldHeight = m_msaGroupBox.Height;
 				int newHeight = Math.Max(m_msaGroupBox.PreferredHeight, oldHeight);
@@ -754,17 +749,11 @@ namespace LanguageExplorer.Controls.LexText
 		/// </summary>
 		/// <param name="cache">The FDO cache to use.</param>
 		/// <param name="tssForm">The initial form to use.</param>
-		/// <param name="propertyTable"></param>
-		/// <param name="publisher">The publisher to use.</param>
-		/// <param name="subscriber"></param>
-		public void SetDlgInfo(LcmCache cache, ITsString tssForm, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
+		public void SetDlgInfo(LcmCache cache, ITsString tssForm)
 		{
 			CheckDisposed();
 
-			m_propertyTable = propertyTable; // Must do be fore setting the Mediator prop.
-			m_publisher = publisher;
-			m_subscriber = subscriber;
-			var helpTopicProvider = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
+			var helpTopicProvider = PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
 			if (helpTopicProvider != null)
 			{
 				m_helpProvider.HelpNamespace = helpTopicProvider.HelpFile;
@@ -804,16 +793,12 @@ namespace LanguageExplorer.Controls.LexText
 		/// Initialize an InsertEntryDlg from something like an "Insert Major Entry menu".
 		/// </summary>
 		/// <param name="cache">The FDO cache to use.</param>
-		/// <param name="propertyTable"></param>
-		/// <param name="publisher">The publisher.</param>
 		/// <param name="persistProvider">The persistence provider to use.</param>
-		public void SetDlgInfo(LcmCache cache, IPropertyTable propertyTable, IPublisher publisher, IPersistenceProvider persistProvider)
+		public void SetDlgInfo(LcmCache cache, IPersistenceProvider persistProvider)
 		{
 			CheckDisposed();
 
 			Debug.Assert(persistProvider != null);
-			m_propertyTable = propertyTable;
-			m_publisher = publisher;
 
 			SetDlgInfo(cache);
 		}
@@ -825,20 +810,23 @@ namespace LanguageExplorer.Controls.LexText
 		/// <param name="morphType">The morpheme type</param>
 		/// <param name="msaType">The type of msa</param>
 		/// <param name="slot">The default slot of the inflectional affix msa to</param>
-		/// <param name="propertyTable"></param>
-		/// <param name="publisher">The publisher.</param>
 		/// <param name="filter">The filter.</param>
-		public void SetDlgInfo(LcmCache cache, IMoMorphType morphType,
-			MsaType msaType, IMoInflAffixSlot slot, IPropertyTable propertyTable, IPublisher publisher, MorphTypeFilterType filter)
+		public void SetDlgInfo(LcmCache cache, IMoMorphType morphType, MsaType msaType, IMoInflAffixSlot slot, MorphTypeFilterType filter)
 		{
 			CheckDisposed();
-
-			m_propertyTable = propertyTable;
-			m_publisher = publisher;
 
 			SetDlgInfo(cache, morphType, 0, filter);
 			m_msaGroupBox.MSAType = msaType;
 			Slot = slot;
+		}
+
+		/// <summary>
+		/// Initialize an InsertEntryDlg from something like an "Insert Major Entry menu".
+		/// </summary>
+		/// <param name="cache">The FDO cache to use.</param>
+		protected void SetDlgInfo(LcmCache cache)
+		{
+			SetDlgInfo(cache, cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphStem));
 		}
 
 		/// <summary>
@@ -849,15 +837,6 @@ namespace LanguageExplorer.Controls.LexText
 			CheckDisposed();
 
 			m_msaGroupBox.DisableAffixTypeMainPosAndSlot();
-		}
-
-		/// <summary>
-		/// Initialize an InsertEntryDlg from something like an "Insert Major Entry menu".
-		/// </summary>
-		/// <param name="cache">The FDO cache to use.</param>
-		protected void SetDlgInfo(LcmCache cache)
-		{
-			SetDlgInfo(cache, cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphStem));
 		}
 
 		/// <summary>
@@ -998,7 +977,7 @@ namespace LanguageExplorer.Controls.LexText
 			CheckDisposed();
 
 			s_helpTopic = helpTopic;
-			var helpTopicProvider = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
+			var helpTopicProvider = PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
 			if (helpTopicProvider != null)
 			{
 				m_helpProvider.SetHelpKeyword(this, helpTopicProvider.GetHelpString(s_helpTopic));
@@ -1693,7 +1672,7 @@ namespace LanguageExplorer.Controls.LexText
 				// Get a wait cursor by setting the LinkLabel to use a wait cursor. See FWNX-700.
 				// Need to use a wait cursor while creating dialog, but not when showing it.
 				using (new WaitCursor(m_lnkAssistant))
-					dlg = new MGAHtmlHelpDialog(m_cache, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_tbLexicalForm.Text);
+					dlg = new MGAHtmlHelpDialog(m_cache, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_tbLexicalForm.Text);
 
 				using (dlg)
 				{
@@ -1714,9 +1693,45 @@ namespace LanguageExplorer.Controls.LexText
 
 		private void btnHelp_Click(object sender, EventArgs e)
 		{
-			ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), "FLExHelpFile", s_helpTopic);
+			ShowHelp.ShowHelpTopic(PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), "FLExHelpFile", s_helpTopic);
 		}
 
 		#endregion Event Handlers
+
+		#region Implementation of IPropertyTableProvider
+		/// <summary>
+		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
+		/// </summary>
+		public IPropertyTable PropertyTable { get; private set; }
+		#endregion
+
+		#region Implementation of IPublisherProvider
+		/// <summary>
+		/// Get the IPublisher.
+		/// </summary>
+		public IPublisher Publisher { get; private set; }
+		#endregion
+
+		#region Implementation of ISubscriberProvider
+		/// <summary>
+		/// Get the ISubscriber.
+		/// </summary>
+		public ISubscriber Subscriber { get; private set; }
+
+		/// <summary>
+		/// Initialize a FLEx component with the basic interfaces.
+		/// </summary>
+		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
+		public void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
+		{
+			FlexComponentCheckingService.CheckInitializationValues(flexComponentParameters, new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
+
+			PropertyTable = flexComponentParameters.PropertyTable;
+			Publisher = flexComponentParameters.Publisher;
+			Subscriber = flexComponentParameters.Subscriber;
+
+			m_matchingObjectsBrowser.InitializeFlexComponent(flexComponentParameters);
+		}
+		#endregion
 	}
 }

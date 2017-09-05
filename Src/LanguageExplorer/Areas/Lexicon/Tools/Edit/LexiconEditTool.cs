@@ -29,11 +29,15 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 	internal sealed class LexiconEditTool : ITool
 	{
 		private const string Show_DictionaryPubPreview = "Show_DictionaryPubPreview";
+		private IFwMainWnd _mainWindow;
+		private IFlexApp _flexApp;
+		private LcmCache _cache;
 		private MultiPane _multiPane;
 		private RecordBrowseView _recordBrowseView;
 		private MultiPane _innerMultiPane;
 		private RecordClerk _recordClerk;
 		private ToolStripMenuItem _insertMenu;
+		private ToolStripButton _insertEntryToolStripButton;
 		private readonly HashSet<Tuple<ToolStripMenuItem, EventHandler>> _newInsertMenusAndHandlers = new HashSet<Tuple<ToolStripMenuItem, EventHandler>>();
 		private readonly HashSet<Tuple<ToolStripMenuItem, EventHandler>> _newContextMenusAndHandlers = new HashSet<Tuple<ToolStripMenuItem, EventHandler>>();
 
@@ -106,9 +110,17 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			}
 			_newContextMenusAndHandlers.Clear();
 
+			_insertEntryToolStripButton.Click -= Insert_Entry_Clicked;
+			InsertToolbarManager.DeactivateInsertToolbar(majorFlexComponentParameters);
+			_insertEntryToolStripButton.Dispose();
+
 			MultiPaneFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _multiPane);
 			_recordBrowseView = null;
 			_innerMultiPane = null;
+			_insertEntryToolStripButton = null;
+			_cache = null;
+			_mainWindow = null;
+			_flexApp = null;
 		}
 
 		/// <summary>
@@ -119,6 +131,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			_cache = majorFlexComponentParameters.LcmCache;
+			_mainWindow = majorFlexComponentParameters.MainWindow;
+			_flexApp = majorFlexComponentParameters.FlexApp;
+
 			if (_recordClerk == null)
 			{
 				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(LexiconArea.Entries, majorFlexComponentParameters.Statusbar, LexiconArea.EntriesFactoryMethod);
@@ -138,88 +154,23 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 			_recordBrowseView = new RecordBrowseView(root, majorFlexComponentParameters.LcmCache, _recordClerk);
 
-			/*
-			*/
 			Image majorEntryImage;
 			using (var images = new LexEntryImages())
 			{
 				majorEntryImage = images.buttonImages.Images["majorEntry"];
 			}
-			_insertMenu = (ToolStripMenuItem)majorFlexComponentParameters.MenuStrip.Items["_insertToolStripMenuItem"];
-#if RANDYTODO
-			/*
-<command id="CmdInsertLexEntry" label="_Entry..." message="InsertItemInVector" shortcut="Ctrl+E" icon="majorEntry" a10status="DONE">
-	<parameters className="LexEntry" />
-</command>
-			<item command="CmdInsertLexEntry" defaultVisible="false" a10status="DONE" />
-<command id="CmdInsertSense" label="_Sense" message="DataTreeInsert">
-	<parameters field="Senses" className="LexSense" ownerClass="LexEntry" recomputeVirtual="LexSense.LexSenseOutline" />
-</command>
-			<item command="CmdInsertSense" defaultVisible="false" />
-<command id="CmdInsertVariant" label="_Variant" message="InsertItemViaBackrefVector">
-	<parameters className="LexEntry" fieldName="VariantFormEntryBackRefs" restrictToTool="lexiconEdit" />
-</command>
-			<item command="CmdInsertVariant" defaultVisible="false" />
-<command id="CmdDataTree-Insert-AlternateForm" label="Insert Allomorph" message="DataTreeInsert">
-	<parameters field="AlternateForms" className="MoForm" />
-</command>
-			<item command="CmdDataTree-Insert-AlternateForm" label="A_llomorph" defaultVisible="false" />
-<command id="CmdInsertReversalEntry" label="Reversal Entry" message="InsertItemInVector" icon="reversalEntry">
-	<parameters className="ReversalIndexEntry" />
-	</command>
-			<item command="CmdInsertReversalEntry" defaultVisible="false" />
-<command id="CmdDataTree-Insert-Pronunciation" label="_Pronunciation" message="DataTreeInsert">
-	<parameters field="Pronunciations" className="LexPronunciation" ownerClass="LexEntry" />
-	</command>
-			<item command="CmdDataTree-Insert-Pronunciation" defaultVisible="false" />
-<command id="CmdInsertMediaFile" label="_Sound or Movie" message="InsertMediaFile">
-	<parameters field="MediaFiles" className="LexPronunciation" />
-</command>
-			<item command="CmdInsertMediaFile" defaultVisible="false" />
-<command id="CmdDataTree-Insert-Etymology" label="_Etymology" message="DataTreeInsert">
-	<parameters field="Etymology" className="LexEtymology" ownerClass="LexEntry" />
-</command>
-			<item command="CmdDataTree-Insert-Etymology" defaultVisible="false" />
-			<item label="-" translate="do not translate" />
-<command id="CmdInsertSubsense" label="Subsense (in sense)" message="DataTreeInsert">
-	<parameters field="Senses" className="LexSense" ownerClass="LexSense" recomputeVirtual="LexSense.LexSenseOutline" />
-</command>
-			<item command="CmdInsertSubsense" defaultVisible="false" />
-<command id="CmdInsertPicture" label="_Picture" message="InsertPicture">
-	<parameters field="Pictures" className="LexSense" />
-</command>
-			<item command="CmdInsertPicture" defaultVisible="false" />
-<command id="CmdInsertExtNote" label="_Extended Note" message="DataTreeInsert">
-	<parameters field="ExtendedNote" className="LexExtendedNote" ownerClass="LexSense" />
-</command>
-			<item command="CmdInsertExtNote" defaultVisible="false" />
-			*/
-#endif
-			PaneBarContextMenuFactory.CreateToolStripMenuItem(_insertMenu, 0, LexiconResources.Entry, majorEntryImage, Keys.Control | Keys.E, Insert_Entry_Clicked, LexiconResources.Entry_Tooltip);
+			AddToolbarItems(majorFlexComponentParameters, majorEntryImage);
 
-#if RANDYTODO
-			// TODO: create new "Insert" toolbar and add it and its buttons. (We don't have that otherwise empty "Insert" toolbar built into the main window.
-			// TODO: Then remove the toolbar and its btns on deactivate.
-			/*
-(See above command.)
-			<item command="CmdInsertLexEntry" defaultVisible="false" a10status="DONE" />
-<command id="CmdGoToEntry" label="_Find lexical entry..." message="GotoLexEntry" icon="goToEntry" shortcut="Ctrl+F" a10status="Derfined here, but used in Main.xml.">
-	<parameters title="Go To Entry" formlabel="Go _To..." okbuttonlabel="_Go" />
-</command>
-			<item command="CmdGoToEntry" defaultVisible="false" />
-(See above command.)
-			<item command="CmdInsertReversalEntry" defaultVisible="false" />
-<command id="CmdGoToReversalEntry" label="_Find reversal entry..." message="GotoReversalEntry" icon="gotoReversalEntry" shortcut="Ctrl+F">
-	<parameters title="Go To Entry" formlabel="Go _To..." okbuttonlabel="_Go" />
-</command>
-			<item command="CmdGoToReversalEntry" defaultVisible="false" />
-			*/
-#endif
+			AddInsertMenuItems(majorFlexComponentParameters, majorEntryImage);
 
 			var dataTreeMenuHandler = new DataTreeMenuHandler(_recordClerk, new DataTree());
 #if RANDYTODO
 			// TODO: Set up 'dataTreeMenuHandler' to handle menu events.
-			// TODO: Install menus and connect them to event handlers. (See "CreateContextMenuStrip" method for where the menus are.)
+			// TODO: Install menus and connect them to event handlers. (See "CreateMainPanelContextMenuStrip" method for where the menus are.)
+			// NB: "CreateMainPanelContextMenuStrip" adds the context menu for the top left main panel up top in the pane bar.
+			// Other menus are needed for individual slices. The theory (for now) is that a slice can fetch context menus via a dictionary
+			// on DataTreeMenuHandler, the key of which (if any) is known to a given slice from those xml layout/part elements.
+			// This spike is to see if the theory works, or not.
 #endif
 			var recordEditView = new RecordEditView(XElement.Parse(LexiconResources.LexiconEditRecordEditViewParameters), XDocument.Parse(AreaResources.VisibilityFilter_All), majorFlexComponentParameters.LcmCache, _recordClerk, dataTreeMenuHandler);
 			var nestedMultiPaneParameters = new MultiPaneParameters
@@ -255,7 +206,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				Dock = DockStyle.Left,
 				BackgroundImage = img,
 				BackgroundImageLayout = ImageLayout.Center,
-				ContextMenuStrip = CreateContextMenuStrip()
+				ContextMenuStrip = CreateMainPanelContextMenuStrip()
 			};
 			var panelButton = new PanelButton(PropertyTable, null, PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(MachineName), LanguageExplorerResources.ksHideFields, LanguageExplorerResources.ksShowHiddenFields)
 			{
@@ -276,7 +227,62 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			RecordClerkServices.SetClerk(majorFlexComponentParameters, _recordClerk);
 		}
 
-		private ContextMenuStrip CreateContextMenuStrip()
+		/// <summary>
+		/// Do whatever might be needed to get ready for a refresh.
+		/// </summary>
+		public void PrepareToRefresh()
+		{
+			_recordBrowseView.BrowseViewer.BrowseView.PrepareToRefresh();
+		}
+
+		/// <summary>
+		/// Finish the refresh.
+		/// </summary>
+		public void FinishRefresh()
+		{
+			_recordClerk.ReloadIfNeeded();
+			((DomainDataByFlidDecoratorBase)_recordClerk.VirtualListPublisher).Refresh();
+		}
+
+		/// <summary>
+		/// The properties are about to be saved, so make sure they are all current.
+		/// Add new ones, as needed.
+		/// </summary>
+		public void EnsurePropertiesAreCurrent()
+		{
+		}
+
+#endregion
+
+#region Implementation of IMajorFlexUiComponent
+
+		/// <summary>
+		/// Get the internal name of the component.
+		/// </summary>
+		/// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
+		public string MachineName => "lexiconEdit";
+
+		/// <summary>
+		/// User-visible localizable component name.
+		/// </summary>
+		public string UiName => "Lexicon Edit";
+#endregion
+
+#region Implementation of ITool
+
+		/// <summary>
+		/// Get the area machine name the tool is for.
+		/// </summary>
+		public string AreaMachineName => "lexicon";
+
+		/// <summary>
+		/// Get the image for the area.
+		/// </summary>
+		public Image Icon => Images.SideBySideView.SetBackgroundColor(Color.Magenta);
+
+		#endregion
+
+		private ContextMenuStrip CreateMainPanelContextMenuStrip()
 		{
 			var contextMenuStrip = new ContextMenuStrip();
 
@@ -289,10 +295,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 			// Insert_Sense menu item. (CmdInsertSense->msg: DataTreeInsert, also on Insert menu)
 			contextMenuItem = CreateToolStripMenuItem(contextMenuStrip, LexiconResources.Insert_Sense, LexiconResources.InsertSenseToolTip, Insert_Sense_Clicked);
-#if !RANDYTODO
-			// TODO: Enable it and have better event handler deal with it.
-			contextMenuItem.Enabled = false;
-#endif
+			contextMenuItem.Enabled = true;
 
 			// Insert Subsense (in sense) menu item. (CmdInsertSubsense->msg: DataTreeInsert, also on Insert menu)
 			contextMenuItem = CreateToolStripMenuItem(contextMenuStrip, LexiconResources.Insert_Subsense, LexiconResources.Insert_Subsense_Tooltip, Insert_Subsense_Clicked);
@@ -391,7 +394,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		{
 			var currentObject = _recordClerk.CurrentObject;
 			if (currentObject == null)
-				return;		// should never happen, but nothing we can do if it does!
+				return;	// should never happen, but nothing we can do if it does!
 
 			var currentEntry = currentObject as ILexEntry ?? currentObject.OwnerOfClass(LexEntryTags.kClassId) as ILexEntry;
 			if (currentEntry == null)
@@ -399,17 +402,16 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 			using (var dlg = new MergeEntryDlg())
 			{
+				dlg.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 				var cache = PropertyTable.GetValue<LcmCache>("cache");
 				// <parameters title="Merge Entry" formlabel="_Find:" okbuttonlabel="_Merge"/>
-				dlg.SetDlgInfo(cache, PropertyTable, Publisher, Subscriber, XElement.Parse(LexiconResources.MatchingEntriesParameters), currentEntry, LexiconResources.ksMergeEntry, FwUtils.ReplaceUnderlineWithAmpersand(LexiconResources.ks_Find), FwUtils.ReplaceUnderlineWithAmpersand(LexiconResources.ks_Merge));
+				dlg.SetDlgInfo(cache, XElement.Parse(LexiconResources.MatchingEntriesParameters), currentEntry, LexiconResources.ksMergeEntry, FwUtils.ReplaceUnderlineWithAmpersand(LexiconResources.ks_Find), FwUtils.ReplaceUnderlineWithAmpersand(LexiconResources.ks_Merge));
 				if (dlg.ShowDialog() != DialogResult.OK)
 					return;
 
 				var survivor = (ILexEntry)dlg.SelectedObject;
 				Debug.Assert(survivor != currentEntry);
-				UndoableUnitOfWorkHelper.Do(LexiconResources.ksUndoMergeEntry,
-					LexiconResources.ksRedoMergeEntry, cache.ActionHandlerAccessor,
-					() =>
+				UndoableUnitOfWorkHelper.Do(LexiconResources.ksUndoMergeEntry, LexiconResources.ksRedoMergeEntry, cache.ActionHandlerAccessor, () =>
 					{
 						survivor.MergeObject(currentEntry, true);
 						survivor.DateModified = DateTime.Now;
@@ -483,14 +485,24 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		private void Insert_Sense_Clicked(object sender, EventArgs e)
 		{
-#if RANDYTODO
-			// TODO: Move to LexEntryMenuHandler?
-#endif
+			MessageBox.Show(_multiPane.FindForm(), "Inserting sense...");
 		}
 
 		private void Insert_Entry_Clicked(object sender, EventArgs e)
 		{
-			MessageBox.Show(_multiPane.FindForm(), "Inserting entry...");
+			using (InsertEntryDlg dlg = new InsertEntryDlg())
+			{
+				dlg.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
+				dlg.SetDlgInfo(_cache, PersistenceProviderFactory.CreatePersistenceProvider(PropertyTable));
+				if (dlg.ShowDialog(Form.ActiveForm) == DialogResult.OK)
+				{
+					ILexEntry entry;
+					bool newby;
+					dlg.GetDialogInfo(out entry, out newby);
+					// No need for a PropChanged here because InsertEntryDlg takes care of that. (LT-3608)
+					_recordClerk.JumpToRecord(entry.Hvo);
+				}
+			}
 		}
 
 		private void Show_Dictionary_Preview_Clicked(object sender, EventArgs e)
@@ -501,59 +513,91 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			_innerMultiPane.Panel1Collapsed = !PropertyTable.GetValue<bool>(Show_DictionaryPubPreview);
 		}
 
-		/// <summary>
-		/// Do whatever might be needed to get ready for a refresh.
-		/// </summary>
-		public void PrepareToRefresh()
+		private void AddToolbarItems(MajorFlexComponentParameters majorFlexComponentParameters, Image majorEntryImage)
 		{
-			_recordBrowseView.BrowseViewer.BrowseView.PrepareToRefresh();
+			/*
+<command id="CmdInsertLexEntry" label="_Entry..." message="InsertItemInVector" shortcut="Ctrl+E" icon="majorEntry">
+	<parameters className="LexEntry" />
+</command>
+<item command="CmdInsertLexEntry" defaultVisible="false" />
+			 */
+			_insertEntryToolStripButton = new ToolStripButton("toolStripButtonInsertEntry", majorEntryImage,
+				Insert_Entry_Clicked)
+			{
+				DisplayStyle = ToolStripItemDisplayStyle.Image,
+				ToolTipText = LexiconResources.Entry_Tooltip
+			};
+			InsertToolbarManager.AddInsertToolbarItems(majorFlexComponentParameters, new List<ToolStripButton> { _insertEntryToolStripButton });
+#if RANDYTODO
+			// TODO: Add new "Insert" toolbar item.
+/*
+<command id="CmdGoToEntry" label="_Find lexical entry..." message="GotoLexEntry" icon="goToEntry" shortcut="Ctrl+F" a10status="Derfined here, but used in Main.xml.">
+<parameters title="Go To Entry" formlabel="Go _To..." okbuttonlabel="_Go" />
+</command>
+<item command="CmdGoToEntry" defaultVisible="false" />
+*/
+#endif
 		}
 
-		/// <summary>
-		/// Finish the refresh.
-		/// </summary>
-		public void FinishRefresh()
+		private void AddInsertMenuItems(MajorFlexComponentParameters majorFlexComponentParameters, Image majorEntryImage)
 		{
-			_recordClerk.ReloadIfNeeded();
-			((DomainDataByFlidDecoratorBase)_recordClerk.VirtualListPublisher).Refresh();
+			_insertMenu = (ToolStripMenuItem)majorFlexComponentParameters.MenuStrip.Items["_insertToolStripMenuItem"];
+			/*
+<command id="CmdInsertLexEntry" label="_Entry..." message="InsertItemInVector" shortcut="Ctrl+E" icon="majorEntry">
+	<parameters className="LexEntry" />
+</command>
+<item command="CmdInsertLexEntry" defaultVisible="false" />
+			 */
+			PaneBarContextMenuFactory.CreateToolStripMenuItem(_insertMenu, 0, LexiconResources.Entry, majorEntryImage, Keys.Control | Keys.E, Insert_Entry_Clicked, LexiconResources.Entry_Tooltip);
+			/*
+<command id="CmdInsertSense" label="_Sense" message="DataTreeInsert">
+	<parameters field="Senses" className="LexSense" ownerClass="LexEntry" recomputeVirtual="LexSense.LexSenseOutline" />
+</command>
+<item command="CmdInsertSense" defaultVisible="false" />
+			 */
+			PaneBarContextMenuFactory.CreateToolStripMenuItem(_insertMenu, 1, LexiconResources.Insert_Sense, null, Keys.None, Insert_Sense_Clicked, LexiconResources.InsertSenseToolTip);
+#if RANDYTODO
+			// TODO: Add these to the main Insert menu.
+/*
+<command id="CmdInsertVariant" label="_Variant" message="InsertItemViaBackrefVector">
+	<parameters className="LexEntry" fieldName="VariantFormEntryBackRefs" restrictToTool="lexiconEdit" />
+</command>
+			<item command="CmdInsertVariant" defaultVisible="false" />
+<command id="CmdDataTree-Insert-AlternateForm" label="Insert Allomorph" message="DataTreeInsert">
+	<parameters field="AlternateForms" className="MoForm" />
+</command>
+			<item command="CmdDataTree-Insert-AlternateForm" label="A_llomorph" defaultVisible="false" />
+<command id="CmdInsertReversalEntry" label="Reversal Entry" message="InsertItemInVector" icon="reversalEntry">
+	<parameters className="ReversalIndexEntry" />
+	</command>
+			<item command="CmdInsertReversalEntry" defaultVisible="false" />
+<command id="CmdDataTree-Insert-Pronunciation" label="_Pronunciation" message="DataTreeInsert">
+	<parameters field="Pronunciations" className="LexPronunciation" ownerClass="LexEntry" />
+	</command>
+			<item command="CmdDataTree-Insert-Pronunciation" defaultVisible="false" />
+<command id="CmdInsertMediaFile" label="_Sound or Movie" message="InsertMediaFile">
+	<parameters field="MediaFiles" className="LexPronunciation" />
+</command>
+			<item command="CmdInsertMediaFile" defaultVisible="false" />
+<command id="CmdDataTree-Insert-Etymology" label="_Etymology" message="DataTreeInsert">
+	<parameters field="Etymology" className="LexEtymology" ownerClass="LexEntry" />
+</command>
+			<item command="CmdDataTree-Insert-Etymology" defaultVisible="false" />
+			<item label="-" translate="do not translate" />
+<command id="CmdInsertSubsense" label="Subsense (in sense)" message="DataTreeInsert">
+	<parameters field="Senses" className="LexSense" ownerClass="LexSense" recomputeVirtual="LexSense.LexSenseOutline" />
+</command>
+			<item command="CmdInsertSubsense" defaultVisible="false" />
+<command id="CmdInsertPicture" label="_Picture" message="InsertPicture">
+	<parameters field="Pictures" className="LexSense" />
+</command>
+			<item command="CmdInsertPicture" defaultVisible="false" />
+<command id="CmdInsertExtNote" label="_Extended Note" message="DataTreeInsert">
+	<parameters field="ExtendedNote" className="LexExtendedNote" ownerClass="LexSense" />
+</command>
+			<item command="CmdInsertExtNote" defaultVisible="false" />
+			*/
+#endif
 		}
-
-		/// <summary>
-		/// The properties are about to be saved, so make sure they are all current.
-		/// Add new ones, as needed.
-		/// </summary>
-		public void EnsurePropertiesAreCurrent()
-		{
-		}
-
-#endregion
-
-#region Implementation of IMajorFlexUiComponent
-
-		/// <summary>
-		/// Get the internal name of the component.
-		/// </summary>
-		/// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
-		public string MachineName => "lexiconEdit";
-
-		/// <summary>
-		/// User-visible localizable component name.
-		/// </summary>
-		public string UiName => "Lexicon Edit";
-#endregion
-
-#region Implementation of ITool
-
-		/// <summary>
-		/// Get the area machine name the tool is for.
-		/// </summary>
-		public string AreaMachineName => "lexicon";
-
-		/// <summary>
-		/// Get the image for the area.
-		/// </summary>
-		public Image Icon => Images.SideBySideView.SetBackgroundColor(Color.Magenta);
-
-#endregion
 	}
 }

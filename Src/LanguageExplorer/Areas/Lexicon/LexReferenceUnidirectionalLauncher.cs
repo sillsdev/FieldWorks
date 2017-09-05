@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Windows.Forms;
 using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.Controls.LexText;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 
 namespace LanguageExplorer.Areas.Lexicon
@@ -55,9 +56,10 @@ namespace LanguageExplorer.Areas.Lexicon
 						dlg = new LinkEntryOrSenseDlg();
 						break;
 				}
+				dlg.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 				Debug.Assert(dlg != null);
 				var wp = new WindowParams { m_title = String.Format(LanguageExplorerResources.ksIdentifyXEntry, lrt.Name.BestAnalysisAlternative.Text), m_btnText = LanguageExplorerResources.ks_Add };
-				dlg.SetDlgInfo(m_cache, wp, PropertyTable, Publisher, Subscriber);
+				dlg.SetDlgInfo(m_cache, wp);
 				dlg.SetHelpTopic("khtpChooseLexicalRelationAdd");
 				if (dlg.ShowDialog(FindForm()) == DialogResult.OK)
 				{

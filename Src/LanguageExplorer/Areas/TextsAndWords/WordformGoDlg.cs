@@ -48,12 +48,12 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 		protected override void InitializeMatchingObjects(LcmCache cache)
 		{
-			var xnWindow = m_propertyTable.GetValue<XElement>("WindowConfiguration");
+			var xnWindow = PropertyTable.GetValue<XElement>("WindowConfiguration");
 			var configNode = xnWindow.XPathSelectElement("controls/parameters/guicontrol[@id=\"WordformsBrowseView\"]/parameters");
 
-			SearchEngine searchEngine = SearchEngine.Get(m_propertyTable, "WordformGoSearchEngine", () => new WordformGoSearchEngine(cache));
+			SearchEngine searchEngine = SearchEngine.Get(PropertyTable, "WordformGoSearchEngine", () => new WordformGoSearchEngine(cache));
 
-			m_matchingObjectsBrowser.Initialize(cache, FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable), m_propertyTable, m_publisher, m_subscriber, configNode,
+			m_matchingObjectsBrowser.Initialize(cache, FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable), configNode,
 				searchEngine);
 
 			// start building index

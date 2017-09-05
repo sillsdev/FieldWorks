@@ -29,24 +29,24 @@ namespace LanguageExplorer.Controls.LexText
 			get { return "RecordGo"; }
 		}
 
-		public override void SetDlgInfo(LcmCache cache, WindowParams wp, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
+		public override void SetDlgInfo(LcmCache cache, WindowParams wp)
 		{
-			SetDlgInfo(cache, wp, propertyTable, publisher, subscriber, cache.DefaultAnalWs);
+			SetDlgInfo(cache, wp, cache.DefaultAnalWs);
 		}
 
-		public override void SetDlgInfo(LcmCache cache, WindowParams wp, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, string form)
+		public override void SetDlgInfo(LcmCache cache, WindowParams wp, string form)
 		{
-			SetDlgInfo(cache, wp, propertyTable, publisher, subscriber, form, cache.DefaultAnalWs);
+			SetDlgInfo(cache, wp, form, cache.DefaultAnalWs);
 		}
 
 		protected override void InitializeMatchingObjects(LcmCache cache)
 		{
-			var xnWindow = m_propertyTable.GetValue<XElement>("WindowConfiguration");
+			var xnWindow = PropertyTable.GetValue<XElement>("WindowConfiguration");
 			var configNode = xnWindow.XPathSelectElement("controls/parameters/guicontrol[@id=\"matchingRecords\"]/parameters");
 
-			SearchEngine searchEngine = SearchEngine.Get(m_propertyTable, "RecordGoSearchEngine", () => new RecordGoSearchEngine(cache));
+			SearchEngine searchEngine = SearchEngine.Get(PropertyTable, "RecordGoSearchEngine", () => new RecordGoSearchEngine(cache));
 
-			m_matchingObjectsBrowser.Initialize(cache, FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable), m_propertyTable, m_publisher, m_subscriber, configNode,
+			m_matchingObjectsBrowser.Initialize(cache, FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable), configNode,
 				searchEngine);
 
 			// start building index
@@ -89,9 +89,10 @@ namespace LanguageExplorer.Controls.LexText
 		{
 			using (var dlg = new InsertRecordDlg())
 			{
+				dlg.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 				string title = m_tbForm.Text.Trim();
 				ITsString titleTrimmed = TsStringUtils.MakeString(title, TsStringUtils.GetWsAtOffset(m_tbForm.Tss, 0));
-				dlg.SetDlgInfo(m_cache, m_propertyTable, m_publisher, m_cache.LanguageProject.ResearchNotebookOA, titleTrimmed);
+				dlg.SetDlgInfo(m_cache, m_cache.LanguageProject.ResearchNotebookOA, titleTrimmed);
 				if (dlg.ShowDialog() == DialogResult.OK)
 				{
 					m_selObject = dlg.NewRecord;

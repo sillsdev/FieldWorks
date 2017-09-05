@@ -85,6 +85,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			{
 				using (LinkEntryOrSenseDlg dlg = new LinkEntryOrSenseDlg())
 				{
+					dlg.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 					ILexEntry le = null;
 					if (m_obj.ClassID == LexEntryTags.kClassId)
 					{
@@ -96,7 +97,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 						// assume the owner is the entry (e.g. owner of LexEntryRef)
 						le = m_obj.OwnerOfClass<ILexEntry>();
 					}
-					dlg.SetDlgInfo(m_cache, PropertyTable, Publisher, Subscriber, le);
+					dlg.SetDlgInfo(m_cache, le);
 					String str = ShowHelp.RemoveSpaces(this.Slice.Label);
 					dlg.SetHelpTopic("khtpChooseLexicalEntryOrSense-" + str);
 					if (dlg.ShowDialog(FindForm()) == DialogResult.OK)
@@ -143,8 +144,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					case "ComplexFormEntries":
 						using (var dlg = new EntryGoDlg())
 						{
+							dlg.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 							dlg.StartingEntry = m_obj as ILexEntry ?? (m_obj as ILexSense).Entry;
-							dlg.SetDlgInfo(m_cache, null, PropertyTable, Publisher, Subscriber);
+							dlg.SetDlgInfo(m_cache, null);
 							String str = ShowHelp.RemoveSpaces(Slice.Label);
 							dlg.SetHelpTopic("khtpChooseComplexFormEntryOrSense-" + str);
 							dlg.SetOkButtonText(LanguageExplorerResources.ksMakeComponentOf);

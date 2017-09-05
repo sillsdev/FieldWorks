@@ -1631,6 +1631,9 @@ very simple minor adjustments. ;)"
 				RecordClerk.ActiveRecordClerkRepository = _recordClerkRepositoryForTools;
 			}
 
+			// Insert toolbar is not visible at the start. Tools make it visible as needed.
+			InsertToolbarManager.DeactivateInsertToolbar(_majorFlexComponentParameters);
+
 			base.OnLoad(e);
 
 			var currentArea = _areaRepository.GetPersistedOrDefaultArea();

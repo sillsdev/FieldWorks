@@ -452,7 +452,8 @@ namespace LanguageExplorer.Dumpster
 
 			using (var dlg = new WordformGoDlg())
 			{
-				dlg.SetDlgInfo(Cache, null, PropertyTable, Publisher, Subscriber);
+				dlg.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
+				dlg.SetDlgInfo(Cache, null);
 				if (dlg.ShowDialog() == DialogResult.OK)
 					Publisher.Publish("JumpToRecord", dlg.SelectedObject.Hvo);
 			}

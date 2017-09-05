@@ -14,7 +14,6 @@ using SIL.LCModel.Utils;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.Core.KernelInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
 
 namespace LanguageExplorer.Controls.LexText
 {
@@ -60,14 +59,11 @@ namespace LanguageExplorer.Controls.LexText
 		/// Sets the DLG info.
 		/// </summary>
 		/// <param name="cache">The cache.</param>
-		/// <param name="propertyTable"></param>
-		/// <param name="publisher"></param>
-		/// <param name="subscriber"></param>
 		/// <param name="tssVariantLexemeForm">The variant lexeme form.</param>
-		public void SetDlgInfo(LcmCache cache, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, ITsString tssVariantLexemeForm)
+		public void SetDlgInfo(LcmCache cache, ITsString tssVariantLexemeForm)
 		{
 			m_tssVariantLexemeForm = tssVariantLexemeForm;
-			base.SetDlgInfo(cache, propertyTable, publisher, subscriber, null);
+			base.SetDlgInfo(cache, null);
 		}
 
 
@@ -77,11 +73,8 @@ namespace LanguageExplorer.Controls.LexText
 		/// rather than the variant
 		/// </summary>
 		/// <param name="cache"></param>
-		/// <param name="propertyTable"></param>
-		/// <param name="publisher"></param>
-		/// <param name="subscriber"></param>
 		/// <param name="componentLexeme">the entry we wish to find or create a variant for.</param>
-		protected void SetDlgInfoForComponentLexeme(LcmCache cache, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, IVariantComponentLexeme componentLexeme)
+		protected void SetDlgInfoForComponentLexeme(LcmCache cache, IVariantComponentLexeme componentLexeme)
 		{
 			m_fBackRefToVariant = true;
 			ILexEntry startingEntry;
@@ -93,7 +86,7 @@ namespace LanguageExplorer.Controls.LexText
 			{
 				startingEntry = componentLexeme.Owner as ILexEntry;
 			}
-			SetDlgInfo(cache, propertyTable, publisher, subscriber, startingEntry);
+			SetDlgInfo(cache, startingEntry);
 			// we are looking for an existing variant form
 			// so hide the Entry/Sense radio group box.
 			grplbl.Visible = false;
@@ -112,11 +105,11 @@ namespace LanguageExplorer.Controls.LexText
 		}
 
 
-		protected override void SetDlgInfo(LcmCache cache, WindowParams wp, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, int ws)
+		protected override void SetDlgInfo(LcmCache cache, WindowParams wp, int ws)
 		{
-			WritingSystemAndStylesheetHelper.SetupWritingSystemAndStylesheetInfo(propertyTable, tcVariantTypes,
+			WritingSystemAndStylesheetHelper.SetupWritingSystemAndStylesheetInfo(PropertyTable, tcVariantTypes,
 				cache, cache.DefaultUserWs);
-			base.SetDlgInfo(cache, wp, propertyTable, publisher, subscriber, ws);
+			base.SetDlgInfo(cache, wp, ws);
 			// load the variant type possibilities.
 			LoadVariantTypes();
 		}
@@ -146,7 +139,7 @@ namespace LanguageExplorer.Controls.LexText
 			if (m_tcManager == null)
 			{
 				m_tcManager = new PossibilityListPopupTreeManager(tcVariantTypes, m_cache,
-					m_propertyTable, m_publisher, m_cache.LangProject.LexDbOA.VariantEntryTypesOA, m_cache.DefaultUserWs,
+					PropertyTable, Publisher, m_cache.LangProject.LexDbOA.VariantEntryTypesOA, m_cache.DefaultUserWs,
 					false, this);
 			}
 			m_tcManager.LoadPopupTree(hvoTarget);
@@ -508,9 +501,9 @@ namespace LanguageExplorer.Controls.LexText
 		}
 
 		/// <summary />
-		public void SetDlgInfo(LcmCache cache, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, IVariantComponentLexeme componentLexeme)
+		public void SetDlgInfo(LcmCache cache, IVariantComponentLexeme componentLexeme)
 		{
-			SetDlgInfoForComponentLexeme(cache, propertyTable, publisher, subscriber, componentLexeme);
+			SetDlgInfoForComponentLexeme(cache, componentLexeme);
 		}
 	}
 }

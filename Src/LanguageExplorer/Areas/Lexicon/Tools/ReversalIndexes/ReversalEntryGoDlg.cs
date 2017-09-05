@@ -12,7 +12,6 @@ using LanguageExplorer.Controls.XMLViews;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.Core.KernelInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
 
@@ -69,15 +68,14 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 		/// <summary />
 		protected override void InitializeMatchingObjects(LcmCache cache)
 		{
-			var xnWindow = m_propertyTable.GetValue<XElement>("WindowConfiguration");
+			var xnWindow = PropertyTable.GetValue<XElement>("WindowConfiguration");
 			var configNode = xnWindow.XPathSelectElement("controls/parameters/guicontrol[@id=\"matchingReversalEntries\"]/parameters");
 
-			var searchEngine = (ReversalEntrySearchEngine)SearchEngine.Get(m_propertyTable, "ReversalEntrySearchEngine-" + m_reveralIndex.Hvo,
+			var searchEngine = (ReversalEntrySearchEngine)SearchEngine.Get(PropertyTable, "ReversalEntrySearchEngine-" + m_reveralIndex.Hvo,
 				() => new ReversalEntrySearchEngine(cache, m_reveralIndex));
 			searchEngine.FilteredEntryHvos = m_FilteredReversalEntryHvos;
 
-			m_matchingObjectsBrowser.Initialize(cache, FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable), m_propertyTable, m_publisher, m_subscriber, configNode,
-				searchEngine, m_cache.ServiceLocator.WritingSystemManager.Get(m_reveralIndex.WritingSystem));
+			m_matchingObjectsBrowser.Initialize(cache, FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable), configNode, searchEngine, m_cache.ServiceLocator.WritingSystemManager.Get(m_reveralIndex.WritingSystem));
 
 			// start building index
 			var wsObj = (CoreWritingSystemDefinition) m_cbWritingSystems.SelectedItem;
@@ -96,15 +94,15 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 		}
 
 		/// <summary />
-		public override void SetDlgInfo(LcmCache cache, WindowParams wp, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
+		public override void SetDlgInfo(LcmCache cache, WindowParams wp)
 		{
-			SetDlgInfo(cache, wp, propertyTable, publisher, subscriber, cache.ServiceLocator.WritingSystemManager.GetWsFromStr(m_reveralIndex.WritingSystem));
+			SetDlgInfo(cache, wp, cache.ServiceLocator.WritingSystemManager.GetWsFromStr(m_reveralIndex.WritingSystem));
 		}
 
 		/// <summary />
-		public override void SetDlgInfo(LcmCache cache, WindowParams wp, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, string form)
+		public override void SetDlgInfo(LcmCache cache, WindowParams wp, string form)
 		{
-			SetDlgInfo(cache, wp, propertyTable, publisher, subscriber, form, cache.ServiceLocator.WritingSystemManager.GetWsFromStr(m_reveralIndex.WritingSystem));
+			SetDlgInfo(cache, wp, form, cache.ServiceLocator.WritingSystemManager.GetWsFromStr(m_reveralIndex.WritingSystem));
 		}
 
 		/// <summary />

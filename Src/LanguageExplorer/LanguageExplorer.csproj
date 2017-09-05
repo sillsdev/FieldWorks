@@ -131,9 +131,9 @@
     <Reference Include="DotNetZip">
       <HintPath>..\..\Output\Debug\DotNetZip.dll</HintPath>
     </Reference>
-    <Reference Include="ICSharpCode.SharpZipLib, Version=0.85.5.452, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="ICSharpCode.SharpZipLib">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Release\ICSharpCode.SharpZipLib.dll</HintPath>
+      <HintPath>..\..\Output\Debug\ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>
     <Reference Include="ECInterfaces" Condition="'$(OS)'!='Unix'">
       <SpecificVersion>False</SpecificVersion>
@@ -240,6 +240,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AccessibleNameCreator.cs" />
+    <Compile Include="InsertToolbarManager.cs" />
     <Compile Include="Areas\TextsAndWords\CachePair.cs" />
     <Compile Include="ConsoleProgress.cs" />
     <Compile Include="Controls\DetailControls\AtomicReferenceLauncher.cs">

@@ -42,9 +42,9 @@ namespace LanguageExplorer.Controls.DetailControls
 			ObjectLabel result = null;
 			using (InsertEntryDlg dlg = new InsertEntryDlg())
 			{
+				dlg.InitializeFlexComponent(new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber));
 				var morphType = GetMorphType();
-				dlg.SetDlgInfo(m_cache, morphType, MsaType.kInfl, m_slot, m_propertyTable, m_publisher,
-					m_fPrefix ? InsertEntryDlg.MorphTypeFilterType.Prefix : InsertEntryDlg.MorphTypeFilterType.Suffix);
+				dlg.SetDlgInfo(m_cache, morphType, MsaType.kInfl, m_slot, m_fPrefix ? InsertEntryDlg.MorphTypeFilterType.Prefix : InsertEntryDlg.MorphTypeFilterType.Suffix);
 				dlg.DisableAffixTypeMainPosAndSlot();
 				if (dlg.ShowDialog() == DialogResult.OK)
 				{

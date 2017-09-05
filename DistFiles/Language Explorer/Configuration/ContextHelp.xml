@@ -123,7 +123,7 @@
 		 Insert menu
 		 -->
 	<item id="CmdInsertGenericMajorEntry">Create a new entry and add it to the lexicon.</item>
-	<item id="CmdInsertLexEntry">Create a new lexical entry.</item>
+	<item id="CmdInsertLexEntry" a10status="DONE" >Create a new lexical entry.</item>
 	<item id="CmdInsertPOS">Add a new category.</item>
 	<item id="CmdInsertAnnotationDef">Create a new annotation definition.</item>
 	<item id="CmdInsertSemDom">Create a new semantic domain.</item>

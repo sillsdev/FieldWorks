@@ -70,8 +70,9 @@ namespace LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit
 					Debug.Assert(m_obj is IMoMorphAdhocProhib);
 					dlg = new LinkMSADlg();
 				}
+				dlg.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 				Debug.Assert(dlg != null);
-				dlg.SetDlgInfo(m_cache, null, PropertyTable, Publisher, Subscriber);
+				dlg.SetDlgInfo(m_cache, null);
 				if (dlg.ShowDialog(frm) == DialogResult.OK)
 					AddItem(dlg.SelectedObject);
 			}

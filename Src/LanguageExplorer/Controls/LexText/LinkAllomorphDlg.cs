@@ -4,7 +4,6 @@
 
 using System;
 using System.Diagnostics;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
 
@@ -107,24 +106,24 @@ namespace LanguageExplorer.Controls.LexText
 		/// <summary>
 		/// Set up the dlg in preparation to showing it.
 		/// </summary>
-		public void SetDlgInfo(LcmCache cache, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, ILexEntry startingEntry)
+		public void SetDlgInfo(LcmCache cache, ILexEntry startingEntry)
 		{
 			CheckDisposed();
 
 			Debug.Assert(startingEntry != null);
 			m_startingEntry = startingEntry;
 
-			SetDlgInfo(cache, null, propertyTable, publisher, subscriber);
+			SetDlgInfo(cache, null);
 		}
 
 		/// <summary>
 		/// Common init of the dialog, whether or not we have a starting lex entry.
 		/// </summary>
-		public override void SetDlgInfo(LcmCache cache, WindowParams wp, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
+		public override void SetDlgInfo(LcmCache cache, WindowParams wp)
 		{
 			CheckDisposed();
 
-			base.SetDlgInfo(cache, wp, propertyTable, publisher, subscriber);
+			base.SetDlgInfo(cache, wp);
 			// This is needed to make the replacement MatchingEntriesBrowser visible:
 			Controls.SetChildIndex(m_matchingObjectsBrowser, 0);
 
@@ -133,7 +132,7 @@ namespace LanguageExplorer.Controls.LexText
 			// For a resizeable dialog, we don't want AdjustForStylesheet to really change its size,
 			// because then it ends up growing every time it launches!
 			int oldHeight = Height;
-			m_fwcbAllomorphs.AdjustForStyleSheet(this, grplbl, propertyTable);
+			m_fwcbAllomorphs.AdjustForStyleSheet(this, grplbl, PropertyTable);
 			Height = oldHeight;
 		}
 
@@ -169,7 +168,7 @@ namespace LanguageExplorer.Controls.LexText
 			// For a resizeable dialog, we don't want AdjustForStylesheet to really change its size,
 			// because then it ends up growing every time it launches!
 			int oldHeight = Height;
-			m_fwcbAllomorphs.AdjustForStyleSheet(this, grplbl, m_propertyTable);
+			m_fwcbAllomorphs.AdjustForStyleSheet(this, grplbl, PropertyTable);
 			Height = oldHeight;
 		}
 

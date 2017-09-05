@@ -4,7 +4,6 @@
 
 using System.Diagnostics;
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
 
@@ -87,14 +86,14 @@ namespace LanguageExplorer.Controls.LexText
 		/// <summary>
 		/// Set up the dlg in preparation to showing it.
 		/// </summary>
-		public void SetDlgInfo(LcmCache cache, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, ILexEntry startingEntry)
+		public void SetDlgInfo(LcmCache cache, ILexEntry startingEntry)
 		{
 			CheckDisposed();
 
 			Debug.Assert(startingEntry != null);
 			m_startingEntry = startingEntry;
 
-			SetDlgInfo(cache, null, propertyTable, publisher, subscriber);
+			SetDlgInfo(cache, null);
 			SetComboWritingSystemFactory(cache);
 		}
 
@@ -111,9 +110,9 @@ namespace LanguageExplorer.Controls.LexText
 		/// <summary>
 		/// Set up the dlg in preparation to showing it.
 		/// </summary>
-		public override void SetDlgInfo(LcmCache cache, WindowParams wp, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
+		public override void SetDlgInfo(LcmCache cache, WindowParams wp)
 		{
-			base.SetDlgInfo(cache, wp, propertyTable, publisher, subscriber);
+			base.SetDlgInfo(cache, wp);
 			// This is needed to make the replacement MatchingEntriesBrowser visible:
 			Controls.SetChildIndex(m_matchingObjectsBrowser, 0);
 			// LT-6325 fix...

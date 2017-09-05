@@ -22,7 +22,7 @@ using SIL.Windows.Forms;
 namespace LanguageExplorer.Controls.LexText
 {
 	/// <summary/>
-	public class BaseGoDlg : Form
+	public class BaseGoDlg : Form, IFlexComponent
 	{
 		#region	Data members
 
@@ -31,12 +31,6 @@ namespace LanguageExplorer.Controls.LexText
 		protected ICmObject m_selObject;
 		protected HashSet<int> m_vernHvos;
 		protected HashSet<int> m_analHvos;
-		/// <summary />
-		protected IPropertyTable m_propertyTable;
-		/// <summary />
-		protected IPublisher m_publisher;
-		/// <summary />
-		protected ISubscriber m_subscriber;
 		protected bool m_skipCheck;
 		protected bool m_hasBeenActivated;
 		protected string m_oldSearchKey;
@@ -217,60 +211,49 @@ namespace LanguageExplorer.Controls.LexText
 		/// </summary>
 		/// <param name="cache">LCM cache.</param>
 		/// <param name="wp">Strings used for various items in this dialog.</param>
-		/// <param name="propertyTable"></param>
-		/// <param name="publisher"></param>
-		/// <param name="subscriber"></param>
-		public virtual void SetDlgInfo(LcmCache cache, WindowParams wp, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
+		public virtual void SetDlgInfo(LcmCache cache, WindowParams wp)
 		{
-			SetDlgInfo(cache, wp, propertyTable, publisher, subscriber, cache.DefaultVernWs);
+			SetDlgInfo(cache, wp, cache.DefaultVernWs);
 		}
 
-		protected virtual void SetDlgInfo(LcmCache cache, WindowParams wp, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, int ws)
+		protected virtual void SetDlgInfo(LcmCache cache, WindowParams wp, int ws)
 		{
 			CheckDisposed();
 
 			Debug.Assert(cache != null);
 			m_cache = cache;
 
-			m_propertyTable = propertyTable;
-			m_publisher = publisher;
-			m_subscriber = subscriber;
-
-			if (m_propertyTable != null)
+			// Reset window location.
+			// Get location to the stored values, if any.
+			Point dlgLocation;
+			Size dlgSize;
+			if (PropertyTable.TryGetValue(PersistenceLabel + "DlgLocation", out dlgLocation)
+			    && PropertyTable.TryGetValue(PersistenceLabel + "DlgSize", out dlgSize))
 			{
-				// Reset window location.
-				// Get location to the stored values, if any.
-				Point dlgLocation;
-				Size dlgSize;
-				if (m_propertyTable.TryGetValue(PersistenceLabel + "DlgLocation", out dlgLocation)
-					&& m_propertyTable.TryGetValue(PersistenceLabel + "DlgSize", out dlgSize))
-				{
-					var rect = new Rectangle(dlgLocation, dlgSize);
+				var rect = new Rectangle(dlgLocation, dlgSize);
 
-					//grow it if it's too small.  This will happen when we add new controls to the dialog box.
-					if (rect.Width < m_btnHelp.Left + m_btnHelp.Width + 30)
-						rect.Width = m_btnHelp.Left + m_btnHelp.Width + 30;
+				//grow it if it's too small.  This will happen when we add new controls to the dialog box.
+				if (rect.Width < m_btnHelp.Left + m_btnHelp.Width + 30)
+					rect.Width = m_btnHelp.Left + m_btnHelp.Width + 30;
 
-					if (rect.Height < m_btnHelp.Top + m_btnHelp.Height + 50)
-						rect.Height = m_btnHelp.Top + m_btnHelp.Height + 50;
+				if (rect.Height < m_btnHelp.Top + m_btnHelp.Height + 50)
+					rect.Height = m_btnHelp.Top + m_btnHelp.Height + 50;
 
-					ScreenHelper.EnsureVisibleRect(ref rect);
-					DesktopBounds = rect;
-					StartPosition = FormStartPosition.Manual;
-				}
+				ScreenHelper.EnsureVisibleRect(ref rect);
+				DesktopBounds = rect;
+				StartPosition = FormStartPosition.Manual;
+			}
 
-				m_helpTopicProvider = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
-				if (m_helpTopicProvider != null)
-				{
-					m_helpProvider.HelpNamespace = m_helpTopicProvider.HelpFile;
-					SetHelpButtonEnabled();
-				}
-
+			m_helpTopicProvider = PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
+			if (m_helpTopicProvider != null)
+			{
+				m_helpProvider.HelpNamespace = m_helpTopicProvider.HelpFile;
+				SetHelpButtonEnabled();
 			}
 
 			SetupBasicTextProperties(wp);
 
-			IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
+			IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable);
 			// Set font, writing system factory, and writing system code for the Lexical Form
 			// edit box.  Also set an empty string with the proper writing system.
 			m_tbForm.Font = new Font(cache.ServiceLocator.WritingSystemManager.Get(ws).DefaultFontName, 10);
@@ -481,27 +464,24 @@ namespace LanguageExplorer.Controls.LexText
 		/// </summary>
 		/// <param name="cache">LCM cache.</param>
 		/// <param name="wp">Strings used for various items in this dialog.</param>
-		/// <param name="propertyTable"></param>
-		/// <param name="publisher"></param>
-		/// <param name="subscriber"></param>
 		/// <param name="form">Form to use in main text edit box.</param>
-		public virtual void SetDlgInfo(LcmCache cache, WindowParams wp, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, string form)
+		public virtual void SetDlgInfo(LcmCache cache, WindowParams wp, string form)
 		{
 			CheckDisposed();
-			SetDlgInfo(cache, wp, propertyTable, publisher, subscriber, form, cache.DefaultVernWs);
+			SetDlgInfo(cache, wp, cache.DefaultVernWs);
 		}
 
-		protected void SetDlgInfo(LcmCache cache, WindowParams wp, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, string form, int ws)
+		protected void SetDlgInfo(LcmCache cache, WindowParams wp, string form, int ws)
 		{
-			SetDlgInfo(cache, wp, propertyTable, publisher, subscriber, ws);
+			SetDlgInfo(cache, wp, ws);
 			Form = form;
 		}
 
 		///  <summary />
-		public void SetDlgInfo(LcmCache cache, WindowParams wp, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, ITsString tssform)
+		public void SetDlgInfo(LcmCache cache, WindowParams wp, ITsString tssform)
 		{
 			CheckDisposed();
-			SetDlgInfo(cache, wp, propertyTable, publisher, subscriber, tssform.Text, TsStringUtils.GetWsAtOffset(tssform, 0));
+			SetDlgInfo(cache, wp, tssform.Text, TsStringUtils.GetWsAtOffset(tssform, 0));
 		}
 
 		#endregion Construction and Destruction
@@ -823,13 +803,13 @@ namespace LanguageExplorer.Controls.LexText
 		private void BaseGoDlg_Closed(object sender, EventArgs e)
 		{
 			// Save location.
-			if (m_propertyTable != null)
+			if (PropertyTable != null)
 			{
 				var propName = PersistenceLabel + "DlgLocation";
-				m_propertyTable.SetProperty(propName, Location, true, true);
+				PropertyTable.SetProperty(propName, Location, true, true);
 				var sz = new Size(0, m_delta);
 				propName = PersistenceLabel + "DlgSize";
-				m_propertyTable.SetProperty(propName, Size - sz, true, true);
+				PropertyTable.SetProperty(propName, Size - sz, true, true);
 			}
 		}
 
@@ -911,5 +891,41 @@ namespace LanguageExplorer.Controls.LexText
 		}
 
 		#endregion	// Event handlers
+
+		#region Implementation of IPropertyTableProvider
+		/// <summary>
+		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
+		/// </summary>
+		public IPropertyTable PropertyTable { get; private set; }
+		#endregion
+
+		#region Implementation of IPublisherProvider
+		/// <summary>
+		/// Get the IPublisher.
+		/// </summary>
+		public IPublisher Publisher { get; private set; }
+		#endregion
+
+		#region Implementation of ISubscriberProvider
+		/// <summary>
+		/// Get the ISubscriber.
+		/// </summary>
+		public ISubscriber Subscriber { get; private set; }
+
+		/// <summary>
+		/// Initialize a FLEx component with the basic interfaces.
+		/// </summary>
+		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
+		public void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
+		{
+			FlexComponentCheckingService.CheckInitializationValues(flexComponentParameters, new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
+
+			PropertyTable = flexComponentParameters.PropertyTable;
+			Publisher = flexComponentParameters.Publisher;
+			Subscriber = flexComponentParameters.Subscriber;
+
+			m_matchingObjectsBrowser.InitializeFlexComponent(flexComponentParameters);
+		}
+		#endregion
 	}
 }

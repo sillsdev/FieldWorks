@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using LanguageExplorer.Controls.XMLViews;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.Core.KernelInterfaces;
@@ -83,13 +84,12 @@ namespace LanguageExplorer.Controls.LexText
 
 		protected override void InitializeMatchingObjects(LcmCache cache)
 		{
-			var xnWindow = m_propertyTable.GetValue<XElement>("WindowConfiguration");
+			var xnWindow = PropertyTable.GetValue<XElement>("WindowConfiguration");
 			var configNode = xnWindow.XPathSelectElement("controls/parameters/guicontrol[@id=\"matchingEntries\"]/parameters");
 
-			SearchEngine searchEngine = SearchEngine.Get(m_propertyTable, "EntryGoSearchEngine", () => new EntryGoSearchEngine(cache));
+			SearchEngine searchEngine = SearchEngine.Get(PropertyTable, "EntryGoSearchEngine", () => new EntryGoSearchEngine(cache));
 
-			m_matchingObjectsBrowser.Initialize(cache, FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable), m_propertyTable, m_publisher, m_subscriber, configNode,
-				searchEngine);
+			m_matchingObjectsBrowser.Initialize(cache, FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable), configNode, searchEngine);
 
 			m_matchingObjectsBrowser.ColumnsChanged += m_matchingObjectsBrowser_ColumnsChanged;
 
@@ -225,9 +225,10 @@ namespace LanguageExplorer.Controls.LexText
 		{
 			using (var dlg = new InsertEntryDlg())
 			{
+				dlg.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 				string form = m_tbForm.Text.Trim();
 				ITsString tssFormTrimmed = TsStringUtils.MakeString(form, TsStringUtils.GetWsAtOffset(m_tbForm.Tss, 0));
-				dlg.SetDlgInfo(m_cache, tssFormTrimmed, m_propertyTable, m_publisher, m_subscriber);
+				dlg.SetDlgInfo(m_cache, tssFormTrimmed);
 				if (dlg.ShowDialog(this) == DialogResult.OK)
 				{
 					ILexEntry entry;

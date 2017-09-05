@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using System.Linq;
 using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.Controls.LexText;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 
 namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
@@ -18,12 +19,13 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 		{
 			using (var dlg = new RecordGoDlg())
 			{
+				dlg.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 				var wp = new WindowParams
 				{
 					m_title = LanguageExplorerResources.ksIdentifyRecord,
 					m_btnText = LanguageExplorerResources.ks_Add
 				};
-				dlg.SetDlgInfo(m_cache, wp, PropertyTable, Publisher, Subscriber);
+				dlg.SetDlgInfo(m_cache, wp);
 				dlg.SetHelpTopic(Slice.GetChooserHelpTopicID());
 				if (dlg.ShowDialog(FindForm()) == DialogResult.OK)
 					AddItem(dlg.SelectedObject);

@@ -153,6 +153,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 						dlg = new LinkEntryOrSenseDlg();
 						break;
 				}
+				dlg.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 				var wp = new WindowParams
 				{
 					m_title = string.Format(LanguageExplorerResources.ksReplaceXEntry),
@@ -160,7 +161,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				};
 				//This method is only called when we are Replacing the
 				//tree root of a Whole/Part lexical relation
-				dlg.SetDlgInfo(m_cache, wp, PropertyTable, Publisher, Subscriber);
+				dlg.SetDlgInfo(m_cache, wp);
 				dlg.SetHelpTopic("khtpChooseLexicalRelationAdd");
 				if (dlg.ShowDialog(FindForm()) == DialogResult.OK)
 				{

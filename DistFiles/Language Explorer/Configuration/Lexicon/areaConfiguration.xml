@@ -11,10 +11,10 @@ EXTENSIONS NOT SUPPORTED Lexicon Area -->
 <!-- START include (Lexicon_Area): "DataTreeInclude.xml" query="window/commands/*" -->
 		<include path="DataTreeInclude.xml" query="window/commands/*"/>
 <!-- END include (Lexicon_Area): "DataTreeInclude.xml" query="window/commands/*" -->
-		<command id="CmdGoToEntry" label="_Find lexical entry..." message="GotoLexEntry" icon="goToEntry" shortcut="Ctrl+F" a10status="Derfined here, but used in Main.xml." >
+		<command id="CmdGoToEntry" label="_Find lexical entry..." message="GotoLexEntry" icon="goToEntry" shortcut="Ctrl+F" a10status="Defined here, but used in Main.xml." >
 			<parameters title="Go To Entry" formlabel="Go _To..." okbuttonlabel="_Go"/>
 		</command>
-		<command id="CmdInsertLexEntry" label="_Entry..." message="InsertItemInVector" shortcut="Ctrl+E" icon="majorEntry">
+		<command id="CmdInsertLexEntry" label="_Entry..." message="InsertItemInVector" shortcut="Ctrl+E" icon="majorEntry" a10status="DONE" >
 			<parameters className="LexEntry"/>
 		</command>
 		<command id="CmdShowAllPublications" label="All Entries" message="ShowAllEntries"/>
@@ -87,7 +87,7 @@ EXTENSIONS NOT SUPPORTED Lexicon Area -->
 					</control>
 				</parameters>
 			</guicontrol>
-			<guicontrol id="matchingEntries">
+			<guicontrol id="matchingEntries" a10status="The xml is now in Resources\MatchingEntriesGuiControlParameters.xml and it is a resource (MatchingEntriesGuiControlParameters) in LexTextControls.resx." >
 				<parameters id="lexentryMatchList" listItemsClass="LexEntry" filterBar="false" treeBarAvailability="NotAllowed" defaultCursor="Arrow" hscroll="true" altTitleId="LexEntry-Plural" editable="false">
 					<columns>
 						<column label="Headword" sortmethod="FullSortKey" ws="$ws=best vernoranal" editable="false" width="68000" layout="EntryHeadwordForFindEntry"/>
@@ -193,7 +193,7 @@ EXTENSIONS NOT SUPPORTED Lexicon Area -->
 	<!-- ********************************************************** -->
 	<menuAddOn>
 		<menu id="Insert">
-			<item command="CmdInsertLexEntry" defaultVisible="false"/>
+			<item command="CmdInsertLexEntry" defaultVisible="false" a10status="DONE" />
 			<item command="CmdInsertSense" defaultVisible="false"/>
 			<item command="CmdInsertVariant" defaultVisible="false"/>
 			<item command="CmdDataTree-Insert-AlternateForm" label="A_llomorph" defaultVisible="false"/>
@@ -299,7 +299,7 @@ EXTENSIONS NOT SUPPORTED Lexicon Area -->
 		<toolbar id="BarViews" list="ListViews" behavior="singlePropertyAtomicValue" property="toolChoice"/> -->
 		<!--    <include query="window/toolbars/*"/> -->
 		<toolbar id="Insert">
-			<item command="CmdInsertLexEntry" defaultVisible="false"/>
+			<item command="CmdInsertLexEntry" defaultVisible="false" a10status="DONE" />
 			<item command="CmdGoToEntry" defaultVisible="false"/>
 			<item command="CmdInsertReversalEntry" defaultVisible="false"/>
 			<item command="CmdGoToReversalEntry" defaultVisible="false"/>

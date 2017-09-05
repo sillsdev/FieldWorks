@@ -2183,7 +2183,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				{
 					using (InsertEntryDlg dlg = InsertEntryNow.CreateInsertEntryDlg(fCreateNow))
 					{
-						dlg.SetDlgInfo(cache, m_sandbox.GetFullMorphForm(m_hvoMorph), m_sandbox.PropertyTable, m_sandbox.Publisher, m_sandbox.Subscriber);
+						dlg.InitializeFlexComponent(new FlexComponentParameters(m_sandbox.PropertyTable, m_sandbox.Publisher, m_sandbox.Subscriber));
+						dlg.SetDlgInfo(cache, m_sandbox.GetFullMorphForm(m_hvoMorph));
 						dlg.TssGloss = entryComponents.GlossAlternatives.FirstOrDefault();
 						foreach (ITsString tss in entryComponents.GlossAlternatives.Skip(1))
 							dlg.SetInitialGloss(TsStringUtils.GetWsAtOffset(tss, 0), tss);
@@ -2331,8 +2332,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 				using (AddAllomorphDlg dlg = new AddAllomorphDlg())
 				{
+					dlg.InitializeFlexComponent(new FlexComponentParameters(m_sandbox.PropertyTable, m_sandbox.Publisher, m_sandbox.Subscriber));
 					LcmCache cache = m_caches.MainCache;
-					dlg.SetDlgInfo(cache, null, m_sandbox.PropertyTable, m_sandbox.Publisher, m_sandbox.Subscriber, tssForm, morphType.Hvo);
+					dlg.SetDlgInfo(cache, null, tssForm, morphType.Hvo);
 					Form mainWnd = m_sandbox.FindForm();
 					// Making the form active fixes LT-2619.
 					// I'm (RandyR) not sure what adverse impact might show up by doing this.
@@ -2770,6 +2772,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				{
 					using (LinkVariantToEntryOrSense dlg = new LinkVariantToEntryOrSense())
 					{
+						dlg.InitializeFlexComponent(new FlexComponentParameters(m_sandbox.PropertyTable, m_sandbox.Publisher, m_sandbox.Subscriber));
 						ILexEntry variantEntry = null;
 						// if no previous variant relationship has been defined,
 						// then don't try to fill initial information,
@@ -2781,13 +2784,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						if (morphReal != null && morphReal.IsValidObject)
 						{
 							variantEntry = morphReal.Owner as ILexEntry;
-							dlg.SetDlgInfo(m_sandbox.Cache, m_sandbox.PropertyTable, m_sandbox.Publisher, m_sandbox.Subscriber, variantEntry);
+							dlg.SetDlgInfo(m_sandbox.Cache, variantEntry);
 						}
 						else
 						{
 							// since we didn't start with an entry,
 							// set up the dialog using the form of the variant
-							dlg.SetDlgInfo(m_sandbox.Cache, m_sandbox.PropertyTable, m_sandbox.Publisher, m_sandbox.Subscriber, tssForm);
+							dlg.SetDlgInfo(m_sandbox.Cache, tssForm);
 						}
 						dlg.SetHelpTopic("khtpAddVariantFromInterlinear");
 						Form mainWnd = m_sandbox.FindForm();

@@ -24,7 +24,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			// have chooser title use the same text as the label
 			m_fieldName = StringTable.Table.LocalizeAttributeValue(XmlUtils.GetOptionalAttributeValue(m_configurationNode, "label", m_fieldName));
 
-			((GenDateLauncher)Control).InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 			((GenDateLauncher)Control).Initialize(m_cache, m_obj, m_flid, m_fieldName, m_persistenceProvider,
 				"", "analysis");
 		}

@@ -12,7 +12,7 @@ using SIL.LCModel.Infrastructure;
 
 namespace LanguageExplorer.Controls.LexText
 {
-	public class InsertRecordDlg : Form
+	public class InsertRecordDlg : Form, IFlexComponent
 	{
 		private FwTextBox m_titleTextBox;
 		private Label m_titleLabel;
@@ -92,7 +92,7 @@ namespace LanguageExplorer.Controls.LexText
 		}
 		#endregion Dispose
 
-		public void SetDlgInfo(LcmCache cache, IPropertyTable propertyTable, IPublisher publisher, ICmObject owner)
+		public void SetDlgInfo(LcmCache cache, ICmObject owner)
 		{
 			CheckDisposed();
 
@@ -101,7 +101,7 @@ namespace LanguageExplorer.Controls.LexText
 
 			m_helpTopic = "khtpDataNotebook-InsertRecordDlg";
 
-			m_helpTopicProvider = propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
+			m_helpTopicProvider = PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
 			if (m_helpTopicProvider != null) // Will be null when running tests
 			{
 				m_helpProvider.HelpNamespace = m_helpTopicProvider.HelpFile;
@@ -109,7 +109,7 @@ namespace LanguageExplorer.Controls.LexText
 				m_helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 			}
 
-			IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(propertyTable);
+			IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable);
 			m_titleTextBox.StyleSheet = stylesheet;
 			m_titleTextBox.WritingSystemFactory = m_cache.WritingSystemFactory;
 			m_titleTextBox.WritingSystemCode = m_cache.DefaultAnalWs;
@@ -121,16 +121,16 @@ namespace LanguageExplorer.Controls.LexText
 			AdjustControlAndDialogHeight(m_typeCombo, m_typeCombo.PreferredHeight);
 
 			ICmPossibilityList recTypes = m_cache.LanguageProject.ResearchNotebookOA.RecTypesOA;
-			m_typePopupTreeManager = new PossibilityListPopupTreeManager(m_typeCombo, m_cache, propertyTable, publisher,
+			m_typePopupTreeManager = new PossibilityListPopupTreeManager(m_typeCombo, m_cache, PropertyTable, Publisher,
 				recTypes, cache.DefaultAnalWs, false, this);
 			m_typePopupTreeManager.LoadPopupTree(m_cache.ServiceLocator.GetObject(RnResearchNbkTags.kguidRecObservation).Hvo);
 			// Ensure that we start out focused in the Title text box.  See FWR-2731.
 			m_titleTextBox.Select();
 		}
 
-		public void SetDlgInfo(LcmCache cache, IPropertyTable propertyTable, IPublisher publisher, ICmObject owner, ITsString tssTitle)
+		public void SetDlgInfo(LcmCache cache, ICmObject owner, ITsString tssTitle)
 		{
-			SetDlgInfo(cache, propertyTable, publisher, owner);
+			SetDlgInfo(cache, owner);
 			m_titleTextBox.Tss = tssTitle;
 		}
 
@@ -264,6 +264,40 @@ namespace LanguageExplorer.Controls.LexText
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
+		}
+		#endregion
+
+		#region Implementation of IPropertyTableProvider
+		/// <summary>
+		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
+		/// </summary>
+		public IPropertyTable PropertyTable { get; private set; }
+		#endregion
+
+		#region Implementation of IPublisherProvider
+		/// <summary>
+		/// Get the IPublisher.
+		/// </summary>
+		public IPublisher Publisher { get; private set; }
+		#endregion
+
+		#region Implementation of ISubscriberProvider
+		/// <summary>
+		/// Get the ISubscriber.
+		/// </summary>
+		public ISubscriber Subscriber { get; private set; }
+
+		/// <summary>
+		/// Initialize a FLEx component with the basic interfaces.
+		/// </summary>
+		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
+		public void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
+		{
+			FlexComponentCheckingService.CheckInitializationValues(flexComponentParameters, new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
+
+			PropertyTable = flexComponentParameters.PropertyTable;
+			Publisher = flexComponentParameters.Publisher;
+			Subscriber = flexComponentParameters.Subscriber;
 		}
 		#endregion
 	}

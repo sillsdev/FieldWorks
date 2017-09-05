@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using SIL.LCModel;
 using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.Controls.LexText;
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 {
@@ -65,8 +66,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 							lrt.Name.BestAnalysisAlternative.Text);
 						break;
 				}
+				dlg.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 				var wp = new WindowParams { m_title = sTitle, m_btnText = LanguageExplorerResources.ks_Add };
-				dlg.SetDlgInfo(m_cache, wp, PropertyTable, Publisher, Subscriber);
+				dlg.SetDlgInfo(m_cache, wp);
 				dlg.SetHelpTopic("khtpChooseLexicalRelationAdd");
 				if (dlg.ShowDialog(FindForm()) == DialogResult.OK && dlg.SelectedObject != null)
 				{

@@ -23,7 +23,7 @@ namespace LanguageExplorer.Controls.XMLViews
 	/// <summary>
 	/// A browse view that displays the results of a search.
 	/// </summary>
-	public class MatchingObjectsBrowser : UserControl
+	public class MatchingObjectsBrowser : UserControl, IFlexComponent
 	{
 		#region Events
 
@@ -55,12 +55,6 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		private LcmCache m_cache;
 		private IVwStylesheet m_stylesheet; // used to figure font heights.
-		/// <summary />
-		protected IPropertyTable m_propertyTable;
-		/// <summary />
-		protected IPublisher m_publisher;
-		/// <summary />
-		protected ISubscriber m_subscriber;
 
 		private BrowseViewer m_bvMatches;
 		private ObjectListPublisher m_listPublisher;
@@ -160,14 +154,11 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		/// <param name="cache">The cache.</param>
 		/// <param name="stylesheet">The stylesheet.</param>
-		/// <param name="propertyTable"></param>
-		/// <param name="publisher"></param>
-		/// <param name="subscriber"></param>
 		/// <param name="configNode">The config node.</param>
 		/// <param name="searchEngine">The search engine.</param>
-		public void Initialize(LcmCache cache, IVwStylesheet stylesheet, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, XElement configNode, SearchEngine searchEngine)
+		public void Initialize(LcmCache cache, IVwStylesheet stylesheet, XElement configNode, SearchEngine searchEngine)
 		{
-			Initialize(cache, stylesheet, propertyTable, publisher, subscriber, configNode, searchEngine, null);
+			Initialize(cache, stylesheet, configNode, searchEngine, null);
 		}
 
 		/// <summary>
@@ -175,21 +166,15 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		/// <param name="cache">The cache.</param>
 		/// <param name="stylesheet">The stylesheet.</param>
-		/// <param name="propertyTable"></param>
-		/// <param name="publisher"></param>
-		/// <param name="subscriber"></param>
 		/// <param name="configNode">The config node.</param>
 		/// <param name="searchEngine">The search engine.</param>
 		/// <param name="reversalWs">The reversal writing system.</param>
-		public void Initialize(LcmCache cache, IVwStylesheet stylesheet, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, XElement configNode, SearchEngine searchEngine, CoreWritingSystemDefinition reversalWs)
+		public void Initialize(LcmCache cache, IVwStylesheet stylesheet, XElement configNode, SearchEngine searchEngine, CoreWritingSystemDefinition reversalWs)
 		{
 			CheckDisposed();
 
 			m_cache = cache;
 			m_stylesheet = stylesheet;
-			m_propertyTable = propertyTable;
-			m_publisher = publisher;
-			m_subscriber = subscriber;
 			m_searchEngine = searchEngine;
 			m_searchEngine.SearchCompleted += m_searchEngine_SearchCompleted;
 
@@ -328,7 +313,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			m_listPublisher = new ObjectListPublisher(m_cache.DomainDataByFlid as ISilDataAccessManaged, ListFlid);
 			m_bvMatches = new BrowseViewer(configNode, m_cache.LanguageProject.LexDbOA.Hvo, m_cache,
 				null, m_listPublisher);
-			m_bvMatches.InitializeFlexComponent(new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber));
+			m_bvMatches.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 			m_bvMatches.FinishInitialization(m_cache.LanguageProject.LexDbOA.Hvo, m_listPublisher.MadeUpFieldIdentifier);
 			m_bvMatches.SuspendLayout();
 			m_bvMatches.Location = new Point(0, 0);
@@ -454,5 +439,39 @@ namespace LanguageExplorer.Controls.XMLViews
 		}
 
 		#endregion Other methods
+
+		#region Implementation of IPropertyTableProvider
+		/// <summary>
+		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
+		/// </summary>
+		public IPropertyTable PropertyTable { get; private set; }
+		#endregion
+
+		#region Implementation of IPublisherProvider
+		/// <summary>
+		/// Get the IPublisher.
+		/// </summary>
+		public IPublisher Publisher { get; private set; }
+		#endregion
+
+		#region Implementation of ISubscriberProvider
+		/// <summary>
+		/// Get the ISubscriber.
+		/// </summary>
+		public ISubscriber Subscriber { get; private set; }
+
+		/// <summary>
+		/// Initialize a FLEx component with the basic interfaces.
+		/// </summary>
+		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
+		public void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
+		{
+			FlexComponentCheckingService.CheckInitializationValues(flexComponentParameters, new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
+
+			PropertyTable = flexComponentParameters.PropertyTable;
+			Publisher = flexComponentParameters.Publisher;
+			Subscriber = flexComponentParameters.Subscriber;
+		}
+		#endregion
 	}
 }

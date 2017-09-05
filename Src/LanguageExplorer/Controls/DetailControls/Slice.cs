@@ -1940,9 +1940,10 @@ namespace LanguageExplorer.Controls.DetailControls
 					{
 						using (var dlg = new InsertVariantDlg())
 						{
+							dlg.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 							var entOld = (ILexEntry) sliceObj;
 							dlg.SetHelpTopic("khtpInsertVariantDlg");
-							dlg.SetDlgInfo(cache, PropertyTable, Publisher, Subscriber, entOld);
+							dlg.SetDlgInfo(cache, entOld);
 							if (dlg.ShowDialog() == DialogResult.OK && dlg.NewlyCreatedVariantEntryRefResult)
 							{
 								return entOld.VariantFormEntryBackRefs.Count();

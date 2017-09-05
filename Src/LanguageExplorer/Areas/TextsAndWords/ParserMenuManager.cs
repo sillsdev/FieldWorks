@@ -26,7 +26,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 	{
 		private LcmCache m_cache; //a pointer to the one owned by from the form
 		/// <summary>
-		/// Use this to do the Add/RemoveNotifications, since it can be used in the unmanged section of Dispose.
+		/// Use this to do the Add/RemoveNotifications, since it can be used in the unmanaged section of Dispose.
 		/// (If m_sda is COM, that is.)
 		/// Doing it there will be safer, since there was a risk of it not being removed
 		/// in the mananged section, as when disposing was done by the Finalizer.
@@ -265,6 +265,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				var window = PropertyTable.GetValue<IIdleQueueProvider>("window");
 				m_parserConnection = new ParserConnection(m_cache, window.IdleQueue);
 			}
+			m_sda?.AddNotification(this);
 			StartProgressUpdateTimer();
 			return true;
 		}
@@ -274,8 +275,12 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			CheckDisposed();
 
 			StopUpdateProgressTimer();
-			m_parserConnection?.Dispose();
-			m_parserConnection = null;
+			if (m_parserConnection != null)
+			{
+				m_sda?.RemoveNotification(this);
+				m_parserConnection.Dispose();
+				m_parserConnection = null;
+			}
 		}
 
 		public bool OnIdle(object argument)
@@ -466,13 +471,18 @@ namespace LanguageExplorer.Areas.TextsAndWords
 					m_timer.Stop();
 					m_timer.Tick -= m_timer_Tick;
 				}
-				m_sda?.RemoveNotification(this);
+				if (m_sda != null)
+				{
+					m_sda.RemoveNotification(this);
+					m_sda = null;
+				}
 				m_parserConnection?.Dispose();
 			}
 
 			// Dispose unmanaged resources here, whether disposing is true or false.
-			m_timer = null;
+			m_sda?.RemoveNotification(this); // See note about doing this in unmanaged section. It is now attempted in both sections to ensure it gets done.
 			m_sda = null;
+			m_timer = null;
 			m_cache = null;
 			m_traceSwitch = null;
 			m_parserConnection = null;

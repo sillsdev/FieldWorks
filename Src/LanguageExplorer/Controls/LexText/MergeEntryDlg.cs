@@ -16,12 +16,11 @@ using SIL.LCModel.Utils;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.Core.KernelInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
 
 namespace LanguageExplorer.Controls.LexText
 {
 #if RANDYTODO
-	// TODO: Move this class into Lexicon Area in Lang Exp.
+	// TODO: Move this class into LanguageExplorer.Areas.Lexicon.Tools.Edit namespace, since its only user is LexiconEditTool.
 #endif
 	public class MergeEntryDlg : EntryGoDlg
 	{
@@ -85,7 +84,7 @@ namespace LanguageExplorer.Controls.LexText
 		/// <summary>
 		/// Set up the dlg in preparation to showing it.
 		/// </summary>
-		public void SetDlgInfo(LcmCache cache, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, XElement parametersElement, ILexEntry startingEntry, string title, string formlabel, string okbuttonlabel)
+		public void SetDlgInfo(LcmCache cache, XElement parametersElement, ILexEntry startingEntry, string title, string formlabel, string okbuttonlabel)
 		{
 			CheckDisposed();
 
@@ -93,7 +92,7 @@ namespace LanguageExplorer.Controls.LexText
 			m_startingEntry = startingEntry;
 			m_parametersElement = parametersElement;
 
-			SetDlgInfo(cache, null, propertyTable, publisher, subscriber);
+			SetDlgInfo(cache, null);
 
 			Text = title;
 			m_formLabel.Text = formlabel;
@@ -194,10 +193,10 @@ namespace LanguageExplorer.Controls.LexText
 
 		protected override void InitializeMatchingObjects(LcmCache cache)
 		{
-			var searchEngine = (MergeEntrySearchEngine)SearchEngine.Get(m_propertyTable, "MergeEntrySearchEngine", () => new MergeEntrySearchEngine(cache));
+			var searchEngine = (MergeEntrySearchEngine)SearchEngine.Get(PropertyTable, "MergeEntrySearchEngine", () => new MergeEntrySearchEngine(cache));
 			searchEngine.CurrentEntryHvo = m_startingEntry.Hvo;
 
-			m_matchingObjectsBrowser.Initialize(cache, FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable), m_propertyTable, m_publisher, m_subscriber, m_parametersElement,
+			m_matchingObjectsBrowser.Initialize(cache, FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable), m_parametersElement,
 				searchEngine);
 
 			// start building index

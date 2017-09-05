@@ -3388,6 +3388,19 @@ namespace LanguageExplorer.Controls.LexText {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+        ///&lt;parameters id=&quot;lexentryMatchList&quot; listItemsClass=&quot;LexEntry&quot; filterBar=&quot;false&quot; treeBarAvailability=&quot;NotAllowed&quot; defaultCursor=&quot;Arrow&quot; hscroll=&quot;true&quot; altTitleId=&quot;LexEntry-Plural&quot; editable=&quot;false&quot;&gt;
+        ///  &lt;columns&gt;
+        ///    &lt;column label=&quot;Headword&quot; sortmethod=&quot;FullSortKey&quot; ws=&quot;$ws=best vernoranal&quot; editable=&quot;false&quot; width=&quot;68000&quot; layout=&quot;EntryHeadwordForFindEntry&quot;/&gt;
+        ///    &lt;column label=&quot;Lexeme Form&quot; visibility=&quot;menu&quot; common=&quot;true&quot; sortmethod=&quot;MorphSortKey&quot; ws=&quot;$ws=best vernoranal [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string MatchingEntriesGuiControlParameters {
+            get {
+                return ResourceManager.GetString("MatchingEntriesGuiControlParameters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to LIFT files|*.lift|XML files|*.xml|All files|*.*.
         /// </summary>
         internal static string openFileDialog1_Filter {

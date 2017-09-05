@@ -1338,4 +1338,8 @@ Sorry, in this browser, opening the file via hyperlink presents a security risk.
   <data name="ksDialectsAdded" xml:space="preserve">
     <value>The following Dialect labels were added to the language project:</value>
   </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="MatchingEntriesGuiControlParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\MatchingEntriesGuiControlParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
 </root>

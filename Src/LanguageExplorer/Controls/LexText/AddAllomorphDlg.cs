@@ -2,7 +2,6 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel;
 
@@ -107,16 +106,13 @@ namespace LanguageExplorer.Controls.LexText
 		/// </summary>
 		/// <param name="cache">FDO cache.</param>
 		/// <param name="wp">Strings used for various items in this dialog.</param>
-		/// <param name="propertyTable"></param>
-		/// <param name="publisher"></param>
-		/// <param name="subscriber"></param>
 		/// <param name="tssform">The form.</param>
 		/// <param name="hvoType">The HVO of the type.</param>
-		public void SetDlgInfo(LcmCache cache, WindowParams wp, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, ITsString tssform, int hvoType)
+		public void SetDlgInfo(LcmCache cache, WindowParams wp, ITsString tssform, int hvoType)
 		{
 			CheckDisposed();
 
-			SetDlgInfo(cache, wp, propertyTable, publisher, subscriber, tssform);
+			SetDlgInfo(cache, wp, tssform);
 
 			m_formOrig = m_tbForm.Text;
 			m_hvoType = hvoType;

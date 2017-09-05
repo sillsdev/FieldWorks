@@ -9,6 +9,7 @@ using System.Diagnostics;
 using SIL.LCModel;
 using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.Controls.LexText;
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 {
@@ -95,6 +96,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 						(dlg as LinkEntryOrSenseDlg).SelectSensesOnly = false;
 						break;
 				}
+				dlg.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 				Debug.Assert(dlg != null);
 				var wp = new WindowParams();
 				//on creating Pair Lexical Relation have an Add button and Add in the title bar
@@ -109,7 +111,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					wp.m_btnText = LanguageExplorerResources.ks_Replace;
 				}
 
-				dlg.SetDlgInfo(m_cache, wp, PropertyTable, Publisher, Subscriber);
+				dlg.SetDlgInfo(m_cache, wp);
 				dlg.SetHelpTopic("khtpChooseLexicalRelationAdd");
 				if (dlg.ShowDialog(FindForm()) == DialogResult.OK)
 				{
