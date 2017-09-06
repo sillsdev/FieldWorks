@@ -120,8 +120,8 @@ namespace SIL.FieldWorks.XWorks
 			CheckDisposed();
 
 			BaseInit(cache, mediator, propertyTable, recordListNode);
-			string owner = XmlUtils.GetManditoryAttributeValue(recordListNode, "owner");
-			string property = XmlUtils.GetManditoryAttributeValue(recordListNode, "property");
+			string owner = XmlUtils.GetMandatoryAttributeValue(recordListNode, "owner");
+			string property = XmlUtils.GetMandatoryAttributeValue(recordListNode, "property");
 			m_owningObject = GetListFromOwnerAndProperty(cache, owner, property);
 			Debug.Assert(m_owningObject != null, "Illegal owner or other problem in spec for possibility list.");
 			m_oldLength = 0;
@@ -1141,8 +1141,8 @@ namespace SIL.FieldWorks.XWorks
 				m_fontName = MiscUtils.StandardSansSerif;
 				// Only other current option is to specify an ordinary property (or a virtual one).
 				m_flid = VirtualListPublisher.MetaDataCache.GetFieldId(
-					XmlUtils.GetManditoryAttributeValue(recordListNode, "class"),
-					XmlUtils.GetManditoryAttributeValue(recordListNode, "field"), true);
+					XmlUtils.GetMandatoryAttributeValue(recordListNode, "class"),
+					XmlUtils.GetMandatoryAttributeValue(recordListNode, "field"), true);
 				// Review JohnH(JohnT): This is only useful for dependent clerks, but I don't know how to check this is one.
 				m_owningObject = null;
 			}

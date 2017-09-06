@@ -23,7 +23,7 @@ namespace SIL.FieldWorks.LexText.Controls.MGA
 
 		private bool IsAGroup()
 		{
-			string sId = XmlUtils.GetManditoryAttributeValue(m_node, "id");
+			string sId = XmlUtils.GetMandatoryAttributeValue(m_node, "id");
 			if (sId.StartsWith("g"))
 				return true;
 			return false;
@@ -47,7 +47,7 @@ namespace SIL.FieldWorks.LexText.Controls.MGA
 			if (m_fInDatabase)
 				return; // It's already in the database, so nothing more can be done.
 
-			string sType = XmlUtils.GetManditoryAttributeValue(m_node, "type");
+			string sType = XmlUtils.GetMandatoryAttributeValue(m_node, "type");
 			if (sType == "value")
 			{
 				UndoableUnitOfWorkHelper.Do(MGAStrings.ksUndoCreatePhonologicalFeature, MGAStrings.ksRedoCreatePhonologicalFeature,

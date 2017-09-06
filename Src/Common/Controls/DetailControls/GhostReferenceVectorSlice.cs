@@ -33,8 +33,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		private static int GetFieldId(LcmCache cache, XmlNode configurationParameters)
 		{
-			return cache.MetaDataCacheAccessor.GetFieldId(XmlUtils.GetManditoryAttributeValue(configurationParameters, "ghostClass"),
-				XmlUtils.GetManditoryAttributeValue(configurationParameters, "ghostField"), true);
+			return cache.MetaDataCacheAccessor.GetFieldId(XmlUtils.GetMandatoryAttributeValue(configurationParameters, "ghostClass"),
+				XmlUtils.GetMandatoryAttributeValue(configurationParameters, "ghostField"), true);
 		}
 
 		public override void FinishInit()

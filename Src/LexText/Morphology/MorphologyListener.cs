@@ -470,7 +470,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			var command = (Command)commandObject;
 			if (command.TargetId != Guid.Empty)
 			{
-				var tool = XmlUtils.GetManditoryAttributeValue(command.Parameters[0], "tool");
+				var tool = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "tool");
 				m_mediator.PostMessage("FollowLink", new FwLinkArgs(tool, command.TargetId));
 				command.TargetId = Guid.Empty;	// clear the target for future use.
 				return true;
@@ -723,7 +723,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		public virtual bool OnDisplayJumpToTool(object commandObject, ref UIItemDisplayProperties display)
 		{
 			var cmd = (Command)commandObject;
-			var className = XmlUtils.GetManditoryAttributeValue(cmd.Parameters[0], "className");
+			var className = XmlUtils.GetMandatoryAttributeValue(cmd.Parameters[0], "className");
 			var specifiedClsid = 0;
 			if ((Cache.MetaDataCacheAccessor as IFwMetaDataCacheManaged).ClassExists(className))
 				specifiedClsid = Cache.MetaDataCacheAccessor.GetClassId(className);
@@ -757,7 +757,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		public virtual bool OnJumpToTool(object commandObject)
 		{
 			var cmd = (Command)commandObject;
-			var className = XmlUtils.GetManditoryAttributeValue(cmd.Parameters[0], "className");
+			var className = XmlUtils.GetMandatoryAttributeValue(cmd.Parameters[0], "className");
 			var guid = Guid.Empty;
 			switch (className)
 			{
@@ -776,7 +776,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			}
 			if (guid != Guid.Empty)
 			{
-				var tool = XmlUtils.GetManditoryAttributeValue(cmd.Parameters[0], "tool");
+				var tool = XmlUtils.GetMandatoryAttributeValue(cmd.Parameters[0], "tool");
 				m_mediator.PostMessage("FollowLink", new FwLinkArgs(tool, guid));
 				return true;
 			}

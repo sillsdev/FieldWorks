@@ -353,10 +353,10 @@ namespace SIL.FieldWorks.Common.Controls
 			List<XmlNode> result = new List<XmlNode>(selectNodes.Count);
 			foreach(XmlNode node in selectNodes)
 			{
-				string attVal = XmlUtils.GetManditoryAttributeValue(node, attName);
+				string attVal = XmlUtils.GetMandatoryAttributeValue(node, attName);
 				foreach(XmlNode node1 in sourceNodes)
 				{
-					if (XmlUtils.GetManditoryAttributeValue(node1, attName) == attVal)
+					if (XmlUtils.GetMandatoryAttributeValue(node1, attName) == attVal)
 					{
 						result.Add(node1);
 						break;
@@ -410,7 +410,7 @@ namespace SIL.FieldWorks.Common.Controls
 			case "obj":
 			{
 				int clsid = sda.get_IntProp(hvo, CmObjectTags.kflidClass);
-				int flid = mdc.GetFieldId2(clsid, XmlUtils.GetManditoryAttributeValue(node, "field"), true);
+				int flid = mdc.GetFieldId2(clsid, XmlUtils.GetMandatoryAttributeValue(node, "field"), true);
 				int hvoDst = sda.get_ObjectProp(hvo, flid);
 				if (hvoDst == 0)
 				{
@@ -435,7 +435,7 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				// very like "obj" except for the loop. How could we capture this?
 				int clsid = sda.get_IntProp(hvo, CmObjectTags.kflidClass);
-				int flid = mdc.GetFieldId2(clsid, XmlUtils.GetManditoryAttributeValue(node, "field"), true);
+				int flid = mdc.GetFieldId2(clsid, XmlUtils.GetMandatoryAttributeValue(node, "field"), true);
 				int chvo = sda.get_VecSize(hvo, flid);
 				if (chvo == 0)
 				{
@@ -634,7 +634,7 @@ namespace SIL.FieldWorks.Common.Controls
 		static int GetFlid(ISilDataAccess sda, XmlNode frag, int hvo)
 		{
 			string stClassName = XmlUtils.GetOptionalAttributeValue(frag,"class");
-			string stFieldName = XmlUtils.GetManditoryAttributeValue(frag,"field");
+			string stFieldName = XmlUtils.GetMandatoryAttributeValue(frag,"field");
 			if (String.IsNullOrEmpty(stClassName))
 			{
 				int clid = sda.get_IntProp(hvo, CmObjectTags.kflidClass);
@@ -959,7 +959,7 @@ namespace SIL.FieldWorks.Common.Controls
 					}
 					else
 					{
-						string stFieldName = XmlUtils.GetManditoryAttributeValue(layout, "field");
+						string stFieldName = XmlUtils.GetMandatoryAttributeValue(layout, "field");
 						throw new Exception("Bad field type (" + stFieldName + " for hvo " + hvo + " found for " +
 							layout.Name + "  property "	+ flid + " in " + layout.OuterXml);
 					}
@@ -1122,7 +1122,7 @@ namespace SIL.FieldWorks.Common.Controls
 				}
 
 				int clsid = sda.get_IntProp(bvi.PathObject(depth), CmObjectTags.kflidClass);
-				int flid = mdc.GetFieldId2(clsid, XmlUtils.GetManditoryAttributeValue(node, "field"), true);
+				int flid = mdc.GetFieldId2(clsid, XmlUtils.GetMandatoryAttributeValue(node, "field"), true);
 				if (flid != bvi.PathFlid(depth))
 					return new NodeDisplayCommand(node); // different field, can't dig deeper.
 				int hvoDst = bvi.PathObject(depth + 1);

@@ -209,7 +209,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// <parameters title="FieldWorks Project Utilities" filename="Language Explorer\Configuration\UtilityCatalogInclude.xml"/>
 			this.Text = XmlUtils.GetLocalizedAttributeValue(configurationParameters, "title", "FieldWorks Project Utilities");
 			string utilsPathname = Path.Combine(FwDirectoryFinder.CodeDirectory,
-			XmlUtils.GetManditoryAttributeValue(configurationParameters, "filename"));
+			XmlUtils.GetMandatoryAttributeValue(configurationParameters, "filename"));
 			// Get the folder path:
 			string utilsFolderName = Path.GetDirectoryName(utilsPathname);
 			// Get the file name:

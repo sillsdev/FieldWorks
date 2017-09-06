@@ -101,7 +101,7 @@ namespace XMLViewsTests
 
 		int GetProp(int hvo, XmlNode elt)
 		{
-			string propName = XmlUtils.GetManditoryAttributeValue(elt, "prop");
+			string propName = XmlUtils.GetMandatoryAttributeValue(elt, "prop");
 			int clsid = m_sda.get_IntProp(hvo, (int)CmObjectFields.kflidCmObject_Class);
 			return (int)m_mdc.GetFieldId2(clsid, propName, true);
 		}
@@ -156,13 +156,13 @@ namespace XMLViewsTests
 
 		ITsString MakeString(int ws, XmlNode elt)
 		{
-			string val = XmlUtils.GetManditoryAttributeValue(elt, "val");
+			string val = XmlUtils.GetMandatoryAttributeValue(elt, "val");
 			return TsStringUtils.MakeString(val, ws);
 		}
 
 		int GetWritingSystem(XmlNode elt)
 		{
-			string wsId = XmlUtils.GetManditoryAttributeValue(elt, "ws");
+			string wsId = XmlUtils.GetMandatoryAttributeValue(elt, "ws");
 			int ws = m_wsf.get_Engine(wsId).Handle;
 			if (ws == 0)
 				throw new Exception("writing system " + wsId + " not recognized");

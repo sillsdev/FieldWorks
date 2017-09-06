@@ -47,7 +47,7 @@ namespace XCore
 			CheckDisposed();
 
 			m_configurationParameters = configurationParameters;	// save for acc info
-			string path = XmlUtils.GetManditoryAttributeValue(configurationParameters, "imagePath");
+			string path = XmlUtils.GetMandatoryAttributeValue(configurationParameters, "imagePath");
 			 path = mediator.GetRealPath(path);
 			if (File.Exists(path))
 			{

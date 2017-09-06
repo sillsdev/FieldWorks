@@ -326,7 +326,7 @@ namespace SIL.FieldWorks.Common.Controls
 				// based upon either LexemeForm.Form or LexSense.Definition. We could probably
 				// do this as part of the solution to handling duplicate columns in LT-3763.
 				XmlNode column = columns[i - 1];
-				string columnLabel = XmlUtils.GetManditoryAttributeValue(column, "label");
+				string columnLabel = XmlUtils.GetMandatoryAttributeValue(column, "label");
 				string[] columnLabelComponents = columnLabel.Split(new char[] { ' ', ':' });
 				// get column label without writing system or extraneous information.
 				string columnBasicLabel = LocalizeIfPossible(columnLabelComponents[0]);

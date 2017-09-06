@@ -177,7 +177,7 @@ namespace XCore
 
 			//we use the  directory of the file which held are parameters as the starting point
 			//of the path we were given.
-			string path = XmlUtils.GetManditoryAttributeValue(configurationParameters,
+			string path = XmlUtils.GetMandatoryAttributeValue(configurationParameters,
 				"contextHelpPath");
 			var configParamatersBasePath = FileUtils.StripFilePrefix(configurationParameters.BaseURI);
 			path = Path.Combine(Path.GetDirectoryName(configParamatersBasePath), path);

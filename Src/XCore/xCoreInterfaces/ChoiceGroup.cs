@@ -642,7 +642,7 @@ namespace XCore
 
 		private string CommandMessage
 		{
-			get { return XmlUtils.GetManditoryAttributeValue(m_configurationNode, "message"); }
+			get { return XmlUtils.GetMandatoryAttributeValue(m_configurationNode, "message"); }
 		}
 
 		/// <summary>

@@ -335,7 +335,7 @@ namespace SIL.FieldWorks.Discourse
 		private void InitItem(XmlNode item, ICmPossibility poss)
 		{
 			poss.Name.AnalysisDefaultWritingSystem = TsStringUtils.MakeString(
-				XmlUtils.GetManditoryAttributeValue(item, "name"), Cache.DefaultAnalWs);
+				XmlUtils.GetMandatoryAttributeValue(item, "name"), Cache.DefaultAnalWs);
 			string abbr = XmlUtils.GetOptionalAttributeValue(item, "abbr");
 			if (String.IsNullOrEmpty(abbr))
 				abbr = poss.Name.AnalysisDefaultWritingSystem.Text;

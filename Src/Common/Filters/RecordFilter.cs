@@ -317,7 +317,7 @@ namespace SIL.FieldWorks.Filters
 		/// ------------------------------------------------------------------------------------
 		public virtual void InitXml(XmlNode node)
 		{
-			m_name = XmlUtils.GetManditoryAttributeValue(node, "name");
+			m_name = XmlUtils.GetMandatoryAttributeValue(node, "name");
 		}
 
 		#endregion
@@ -426,7 +426,7 @@ namespace SIL.FieldWorks.Filters
 		{
 			base.Init(cache, filterNode);
 			m_cache = cache;
-			string classList =XmlUtils.GetManditoryAttributeValue(filterNode, "targetClasses");
+			string classList =XmlUtils.GetMandatoryAttributeValue(filterNode, "targetClasses");
 			string[] classes= classList.Split(',');
 
 			//enhance: currently, this will require that we name every subclass as well.
@@ -978,7 +978,7 @@ namespace SIL.FieldWorks.Filters
 					int ws = XmlUtils.GetOptionalIntegerValue(m_persistNode,
 						"ws",
 						value.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle);
-					ITsString tss = TsStringUtils.MakeString(XmlUtils.GetManditoryAttributeValue(m_persistNode, "pattern"), ws);
+					ITsString tss = TsStringUtils.MakeString(XmlUtils.GetMandatoryAttributeValue(m_persistNode, "pattern"), ws);
 					m_pattern.Pattern = tss;
 
 					m_pattern.MatchCase = XmlUtils.GetOptionalBooleanAttributeValue(m_persistNode, "matchCase", false);

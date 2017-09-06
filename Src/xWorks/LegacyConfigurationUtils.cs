@@ -30,11 +30,11 @@ namespace SIL.FieldWorks.XWorks
 			Debug.Assert(layoutTypes.Count > 0);
 			var xnConfig = layoutTypes[0].SelectSingleNode("configure");
 			Debug.Assert(xnConfig != null);
-			var configClass = XmlUtils.GetManditoryAttributeValue(xnConfig, "class");
+			var configClass = XmlUtils.GetMandatoryAttributeValue(xnConfig, "class");
 			foreach (var xn in converter.GetLayoutTypes())
 			{
 				var xnConfigure = xn.SelectSingleNode("configure");
-				if (XmlUtils.GetManditoryAttributeValue(xnConfigure, "class") == configClass)
+				if (XmlUtils.GetMandatoryAttributeValue(xnConfigure, "class") == configClass)
 					layoutTypes.Add(xn);
 			}
 			foreach (var xnLayoutType in layoutTypes)
@@ -150,7 +150,7 @@ namespace SIL.FieldWorks.XWorks
 		internal static void AddChildNodes(XmlNode layout, XmlDocConfigureDlg.LayoutTreeNode ltnParent, int iStart, ILayoutConverter converter)
 		{
 			bool fMerging = iStart < ltnParent.Nodes.Count;
-			string className = XmlUtils.GetManditoryAttributeValue(layout, "class");
+			string className = XmlUtils.GetMandatoryAttributeValue(layout, "class");
 			List<XmlNode> nodes = PartGenerator.GetGeneratedChildren(layout, converter.Cache,
 																						new[] { "ref", "label" });
 			foreach (XmlNode node in nodes)
@@ -178,7 +178,7 @@ namespace SIL.FieldWorks.XWorks
 					XmlDocConfigureDlg.LayoutTreeNode ltnOld = FindMatchingNode(ltnParent, node);
 					if (ltnOld != null)
 						continue;
-					string sRef = XmlUtils.GetManditoryAttributeValue(node, "ref");
+					string sRef = XmlUtils.GetMandatoryAttributeValue(node, "ref");
 					XmlNode part = converter.GetPartElement(className, sRef);
 					if (part == null && sRef != "$child")
 						continue;
@@ -264,7 +264,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private static void StoreChildNodeInfo(XmlNode xn, string className, XmlDocConfigureDlg.LayoutTreeNode ltn, ILayoutConverter converter)
 		{
-			string sField = XmlUtils.GetManditoryAttributeValue(xn, "field");
+			string sField = XmlUtils.GetMandatoryAttributeValue(xn, "field");
 			XmlNode xnCaller = converter.LayoutLevels.PartRef;
 			if (xnCaller == null)
 				xnCaller = ltn.Configuration;

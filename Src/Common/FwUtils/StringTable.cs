@@ -147,7 +147,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 			foreach (XmlNode customGroupNode in customGroupNodeList)
 			{
-				string customGroupId = XmlUtils.GetManditoryAttributeValue(customGroupNode, "id");
+				string customGroupId = XmlUtils.GetMandatoryAttributeValue(customGroupNode, "id");
 				XmlNode srcMatchingGroupNode = parentNode.SelectSingleNode("group[@id='" + customGroupId + "']");
 				if (srcMatchingGroupNode == null)
 				{
@@ -159,7 +159,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 					// 1. Import new strings, or override extant strings with custom strings.
 					foreach (XmlNode customStringNode in customGroupNode.SelectNodes("string"))
 					{
-						string customId = XmlUtils.GetManditoryAttributeValue(customStringNode, "id");
+						string customId = XmlUtils.GetMandatoryAttributeValue(customStringNode, "id");
 						string customTxt = GetTxtAtributeValue(customStringNode);
 						XmlNode srcMatchingStringNode = srcMatchingGroupNode.SelectSingleNode("string[@id='" + customId + "']");
 						if (srcMatchingStringNode == null)
@@ -190,7 +190,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			return XmlUtils.GetOptionalAttributeValue(
 				node,
 				"txt",
-				XmlUtils.GetManditoryAttributeValue(node, "id")); // 'id' is default, if no 'txt' attribute is present.
+				XmlUtils.GetMandatoryAttributeValue(node, "id")); // 'id' is default, if no 'txt' attribute is present.
 		}
 
 		/// <summary>
@@ -374,7 +374,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <returns></returns>
 		public string[] GetStringsFromStringListNode(XmlNode node)
 		{
-			string ids=XmlUtils.GetManditoryAttributeValue(node, "ids");
+			string ids=XmlUtils.GetMandatoryAttributeValue(node, "ids");
 			string[] idList = ids.Split(',');
 			string[] strings = new string[idList.Length];
 			string groupPath = "";

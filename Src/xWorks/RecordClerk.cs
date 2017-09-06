@@ -2410,7 +2410,7 @@ namespace SIL.FieldWorks.XWorks
 			CheckDisposed();
 
 			var command = (Command)commandObject;
-			string className = XmlUtils.GetManditoryAttributeValue(command.Parameters[0], "className");
+			string className = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "className");
 
 			string restrictToClerkID = XmlUtils.GetOptionalAttributeValue(command.Parameters[0], "restrictToClerkID");
 			if (restrictToClerkID != null && restrictToClerkID != Id)
@@ -2502,7 +2502,7 @@ namespace SIL.FieldWorks.XWorks
 			string className;
 			try
 			{
-				className = XmlUtils.GetManditoryAttributeValue(command.Parameters[0], "className");
+				className = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "className");
 			}
 			catch (ApplicationException e)
 			{
@@ -3375,7 +3375,7 @@ namespace SIL.FieldWorks.XWorks
 	{
 		static public string GetIdOfTool(XmlNode node)
 		{
-			return XmlUtils.GetManditoryAttributeValue(node,"id");
+			return XmlUtils.GetMandatoryAttributeValue(node,"id");
 		}
 
 		/// <summary>
@@ -3385,7 +3385,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <returns></returns>
 		static public XmlNode GetClerkNodeFromToolParamsNode(XmlNode parameterNode)
 		{
-			string clerk = XmlUtils.GetManditoryAttributeValue(parameterNode, "clerk");
+			string clerk = XmlUtils.GetMandatoryAttributeValue(parameterNode, "clerk");
 			// REVIEW (Hasso) 2014.02: while //clerks is probably an improvement over ancestors::parameters/clerks, this XPath should be
 			// either thorouhly reviewed or reverted before merging with our main codebase.
 			string xpath = String.Format("//clerks/clerk[@id='{0}']",

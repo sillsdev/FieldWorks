@@ -357,7 +357,7 @@ namespace SIL.FieldWorks.Common.Controls
 			string flidName;
 			string targetClassName = m_cache.DomainDataByFlid.MetaDataCache.GetClassName(targetClsId);
 			XmlNode classNode = m_classOwnershipTree.SelectSingleNode(".//" + targetClassName);
-			flidName = XmlUtils.GetManditoryAttributeValue(classNode, "sourceField");
+			flidName = XmlUtils.GetMandatoryAttributeValue(classNode, "sourceField");
 			if (targetFieldId != 0)
 			{
 				var altSourceField = XmlUtils.GetOptionalAttributeValue(classNode, "altSourceField");

@@ -107,7 +107,7 @@ namespace XCore
 			m_propertyTable = propertyTable;
 			m_configurationParameters = configurationParameters;
 			mediator.AddColleague(this);
-			string urlAttr = XmlUtils.GetManditoryAttributeValue(m_configurationParameters, "URL");
+			string urlAttr = XmlUtils.GetMandatoryAttributeValue(m_configurationParameters, "URL");
 			var uri = new Uri(GetInstallSubDirectory(urlAttr));
 			m_htmlControl.URL = uri.AbsoluteUri;
 

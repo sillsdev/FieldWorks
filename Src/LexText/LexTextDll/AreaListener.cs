@@ -372,7 +372,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 			var windowConfiguration = m_propertyTable.GetValue<XmlNode>("WindowConfiguration");
 			foreach (XmlNode tool in windowConfiguration.SelectSingleNode(GetListToolsXPath()).ChildNodes)
 			{
-				var toolName = XmlUtils.GetManditoryAttributeValue(tool, "value");
+				var toolName = XmlUtils.GetMandatoryAttributeValue(tool, "value");
 				var paramsNode = tool.SelectSingleNode(".//control/parameters[@clerk]");
 				if (paramsNode == null)
 					continue;

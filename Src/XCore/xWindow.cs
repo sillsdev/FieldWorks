@@ -492,7 +492,7 @@ namespace XCore
 
 			foreach(XmlNode node in configurationNode.SelectNodes("property"))
 			{
-				string name = XmlUtils.GetManditoryAttributeValue(node, "name");
+				string name = XmlUtils.GetMandatoryAttributeValue(node, "name");
 				string listId = XmlUtils.GetOptionalAttributeValue(node, "list");
 				// get the settingsGroup for this property.
 				PropertyTable.SettingsGroup settingsGroup = ChoiceGroup.GetSettingsGroup(node, PropertyTable.SettingsGroup.Undecided);
@@ -506,7 +506,7 @@ namespace XCore
 				 */
 				if (!string.IsNullOrEmpty(listId))
 				{
-					string listItemValue = XmlUtils.GetManditoryAttributeValue(node, "listItemValue");
+					string listItemValue = XmlUtils.GetMandatoryAttributeValue(node, "listItemValue");
 					XmlNode listNode = configurationNode.SelectSingleNode("//lists/list[@id='" + listId + "']");
 					if (listNode == null)
 						throw new ConfigurationException("List not found", node);
@@ -552,7 +552,7 @@ namespace XCore
 					{
 						m_propertyTable.SetDefault(
 							name,
-							XmlUtils.GetManditoryAttributeValue(node, "value"),
+							XmlUtils.GetMandatoryAttributeValue(node, "value"),
 							settingsGroup,
 							true);
 					}
@@ -1015,7 +1015,7 @@ namespace XCore
 				foreach(XmlNode part in configuration.SelectNodes("panel"))
 				{
 					StatusBarPanel panel;
-					string id = XmlUtils.GetManditoryAttributeValue(part, "id");
+					string id = XmlUtils.GetMandatoryAttributeValue(part, "id");
 
 					if (part.Attributes.GetNamedItem("assemblyPath") != null)
 					{
@@ -2204,7 +2204,7 @@ namespace XCore
 		public static string GetToolIdFromControlConfiguration(XmlNode configurationNode)
 		{
 			XmlNode parentToolNode = configurationNode.SelectSingleNode(@"ancestor::tool");
-			string toolId = XmlUtils.GetManditoryAttributeValue(parentToolNode, "value");
+			string toolId = XmlUtils.GetMandatoryAttributeValue(parentToolNode, "value");
 			return toolId;
 		}
 

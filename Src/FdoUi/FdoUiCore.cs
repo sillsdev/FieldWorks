@@ -632,7 +632,7 @@ namespace SIL.FieldWorks.FdoUi
 			CheckDisposed();
 
 			var command = (Command) commandObject;
-			string tool = XmlUtils.GetManditoryAttributeValue(command.Parameters[0], "tool");
+			string tool = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "tool");
 			var guid = GuidForJumping(commandObject);
 			m_mediator.PostMessage("FollowLink", new FwLinkArgs(tool, guid));
 			return true;
@@ -649,7 +649,7 @@ namespace SIL.FieldWorks.FdoUi
 			CheckDisposed();
 
 			var command = (Command) commandObject;
-			string tool = XmlUtils.GetManditoryAttributeValue(command.Parameters[0], "tool");
+			string tool = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "tool");
 			//string areaChoice = m_mediator.PropertyTable.GetStringProperty("areaChoice", null);
 			//string toolChoice = m_mediator.PropertyTable.GetStringProperty("ToolForAreaNamed_" + areaChoice, null);
 			string toolChoice = m_propertyTable.GetStringProperty("currentContentControl", null);
@@ -658,7 +658,7 @@ namespace SIL.FieldWorks.FdoUi
 				display.Visible = display.Enabled = false;
 				return true;
 			}
-			string className = XmlUtils.GetManditoryAttributeValue(command.Parameters[0], "className");
+			string className = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "className");
 
 
 			int specifiedClsid = 0;
@@ -1519,7 +1519,7 @@ namespace SIL.FieldWorks.FdoUi
 			CheckDisposed();
 
 			var command = (Command)commandObject;
-			string className = XmlUtils.GetManditoryAttributeValue(command.Parameters[0], "className");
+			string className = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "className");
 
 			int specifiedClsid = 0;
 			// There are some special commands with dummy class names (WordPartOfSpeech is one).
@@ -1540,8 +1540,8 @@ namespace SIL.FieldWorks.FdoUi
 				int owningFlid = owningList.OwningFlid;
 				string owningFieldName = owningFlid == 0 ? "" : mdc.GetFieldName(owningFlid);
 				string owningClassName = owningFlid == 0 ? "" : mdc.GetOwnClsName(owningFlid);
-				string commandListOwnerName = XmlUtils.GetManditoryAttributeValue(command.Parameters[0], "ownerClass");
-				string commandListFieldName = XmlUtils.GetManditoryAttributeValue(command.Parameters[0], "ownerField");
+				string commandListOwnerName = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "ownerClass");
+				string commandListFieldName = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "ownerField");
 				display.Visible = display.Enabled = (commandListFieldName == owningFieldName && commandListOwnerName == owningClassName);
 			}
 			else
@@ -2003,7 +2003,7 @@ namespace SIL.FieldWorks.FdoUi
 		public override Guid GuidForJumping(object commandObject)
 		{
 			var command = (Command) commandObject;
-			string className = XmlUtils.GetManditoryAttributeValue(command.Parameters[0], "className");
+			string className = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "className");
 			if (className == "LexSense")
 				return Object.Guid;
 			ICmObject cmo = GetSelfOrParentOfClass(Object, LexEntryTags.kClassId);
@@ -2558,7 +2558,7 @@ namespace SIL.FieldWorks.FdoUi
 		public override Guid GuidForJumping(object commandObject)
 		{
 			var cmd = (Command) commandObject;
-			string className = XmlUtils.GetManditoryAttributeValue(cmd.Parameters[0], "className");
+			string className = XmlUtils.GetMandatoryAttributeValue(cmd.Parameters[0], "className");
 			if (className == "LexEntry")
 			{
 				ICmObject cmo = GetSelfOrParentOfClass(Object, LexEntryTags.kClassId);

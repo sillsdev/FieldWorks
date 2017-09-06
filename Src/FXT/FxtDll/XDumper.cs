@@ -484,7 +484,7 @@ namespace SIL.FieldWorks.Common.FXT
 		protected void CollectCallElementAttributes(List<string> rgsAttrs,
 			ICmObject currentObject, XmlNode node)
 		{
-			string name = XmlUtils.GetManditoryAttributeValue(node, "name").Trim();
+			string name = XmlUtils.GetMandatoryAttributeValue(node, "name").Trim();
 			XmlNode classNode = GetClassTemplateNode(name);
 			if (classNode == null)
 				return;//	throw new RuntimeConfigurationException("Did not find a <class> element matching the root object type of "+className+".");
@@ -500,7 +500,7 @@ namespace SIL.FieldWorks.Common.FXT
 		/// <param name="node"></param>
 		protected void DoCallElement(TextWriter contentsStream, ICmObject currentObject, XmlNode node)
 		{
-			string name = XmlUtils.GetManditoryAttributeValue(node, "name").Trim();
+			string name = XmlUtils.GetMandatoryAttributeValue(node, "name").Trim();
 			XmlNode classNode = GetClassTemplateNode(name);
 			if ( classNode ==null)
 				return;//	throw new RuntimeConfigurationException("Did not find a <class> element matching the root object type of "+className+".");
@@ -889,7 +889,7 @@ namespace SIL.FieldWorks.Common.FXT
 
 		protected void DoCustomElements(TextWriter contentsStream, ICmObject currentObject, XmlNode node)
 		{
-			string sClass = XmlUtils.GetManditoryAttributeValue(node, "class");
+			string sClass = XmlUtils.GetMandatoryAttributeValue(node, "class");
 			string sType = XmlUtils.GetOptionalAttributeValue(node, "fieldType", "");
 			int[] flids;
 			if (!m_customFlids.TryGetValue(sClass + sType, out flids))
@@ -1066,8 +1066,8 @@ namespace SIL.FieldWorks.Common.FXT
 		protected void DoMultilingualStringElement(TextWriter contentsStream,
 			ICmObject currentObject, XmlNode node, string flags)
 		{
-			string name = XmlUtils.GetManditoryAttributeValue(node, "name");
-			string propertyName = XmlUtils.GetManditoryAttributeValue(node, "simpleProperty");
+			string name = XmlUtils.GetMandatoryAttributeValue(node, "name");
+			string propertyName = XmlUtils.GetMandatoryAttributeValue(node, "simpleProperty");
 			string methodName = XmlUtils.GetOptionalAttributeValue(node, "method");
 			string writingSystems = XmlUtils.GetOptionalAttributeValue(node, "ws", "all");
 			object propertyObject = GetProperty(currentObject, propertyName);
@@ -1206,7 +1206,7 @@ namespace SIL.FieldWorks.Common.FXT
 		protected void doCustomMultilingualStringElementSFM(TextWriter contentsStream,
 			ICmObject currentObject, XmlNode node, string flags)
 		{
-			string name = XmlUtils.GetManditoryAttributeValue(node, "name");
+			string name = XmlUtils.GetMandatoryAttributeValue(node, "name");
 			int flid = GetCustomFlid(node, currentObject.ClassID);
 
 			string writingSystems = XmlUtils.GetOptionalAttributeValue(node, "ws", "all");
@@ -1262,7 +1262,7 @@ namespace SIL.FieldWorks.Common.FXT
 		protected void DoCustomStringElement(TextWriter contentsStream, ICmObject currentObject,
 			XmlNode node, string flags)
 		{
-			string name = XmlUtils.GetManditoryAttributeValue(node, "name");
+			string name = XmlUtils.GetMandatoryAttributeValue(node, "name");
 			int flid = GetCustomFlid(node, currentObject.ClassID);
 
 			string s = null;
@@ -1437,8 +1437,8 @@ namespace SIL.FieldWorks.Common.FXT
 		protected void DoNumberElement(TextWriter contentsStream, ICmObject currentObject,
 			XmlNode node)
 		{
-			string name = XmlUtils.GetManditoryAttributeValue(node, "name");
-			string propertyName = XmlUtils.GetManditoryAttributeValue(node, "simpleProperty");
+			string name = XmlUtils.GetMandatoryAttributeValue(node, "name");
+			string propertyName = XmlUtils.GetMandatoryAttributeValue(node, "simpleProperty");
 			object val = GetProperty(currentObject, propertyName);
 			Debug.Assert(val is int);
 			int nVal = (int)val;
@@ -1482,8 +1482,8 @@ namespace SIL.FieldWorks.Common.FXT
 		protected void DoBooleanElement(TextWriter contentsStream, ICmObject currentObject,
 			XmlNode node)
 		{
-			string name = XmlUtils.GetManditoryAttributeValue(node, "name");
-			string propertyName = XmlUtils.GetManditoryAttributeValue(node, "simpleProperty");
+			string name = XmlUtils.GetMandatoryAttributeValue(node, "name");
+			string propertyName = XmlUtils.GetMandatoryAttributeValue(node, "simpleProperty");
 			object val = GetProperty(currentObject, propertyName);
 			Debug.Assert(val is bool);
 			bool fVal = (bool)val;
@@ -1515,7 +1515,7 @@ namespace SIL.FieldWorks.Common.FXT
 		protected void DoStringElement(TextWriter contentsStream, ICmObject currentObject,
 			XmlNode node)
 		{
-			string name = XmlUtils.GetManditoryAttributeValue(node, "name");
+			string name = XmlUtils.GetMandatoryAttributeValue(node, "name");
 			string sVal = null;
 			ITsString tssVal = null;
 			if (m_eStringFormatOutput == StringFormatOutputStyle.None)
@@ -1735,7 +1735,7 @@ namespace SIL.FieldWorks.Common.FXT
 			XmlNode node, string flags)
 		{
 			string hideFlag = XmlUtils.GetOptionalAttributeValue(node, "hideFlag");
-			string name = XmlUtils.GetManditoryAttributeValue(node, "name");
+			string name = XmlUtils.GetMandatoryAttributeValue(node, "name");
 			// If no hideflag was specified, or it was specified but is not in the list of flags
 			// we were called with
 			if (flags == null || hideFlag == null || flags.IndexOf(hideFlag) < 0)
@@ -1844,7 +1844,7 @@ namespace SIL.FieldWorks.Common.FXT
 		protected void DoRefAtomicElement(TextWriter contentsStream, ICmObject currentObject,
 			XmlNode node, string flags)
 		{
-			string property = XmlUtils.GetManditoryAttributeValue(node, "simpleProperty");
+			string property = XmlUtils.GetMandatoryAttributeValue(node, "simpleProperty");
 			//fix up the property name (should be fooOA.Hvo or fooRA.Hvo)
 			if (property != "Owner" && property.LastIndexOf(".Hvo") < 0)
 				property = String.Format("{0}.Hvo", property);
@@ -1858,7 +1858,7 @@ namespace SIL.FieldWorks.Common.FXT
 			Type t = obj.GetType();
 			if (t.FullName == "System.String")
 			{
-				string name = XmlUtils.GetManditoryAttributeValue(node, "name");
+				string name = XmlUtils.GetMandatoryAttributeValue(node, "name");
 				if (m_format == "xml")
 				{
 					contentsStream.Write("<{0} dst=\"{1}\"/>", name, obj);
@@ -1915,7 +1915,7 @@ namespace SIL.FieldWorks.Common.FXT
 		protected void DoAttributeIndirectElement(List<string> rgsAttrs, ICmObject currentObject, XmlNode node)
 		{
 
-			string targetProperty = XmlUtils.GetManditoryAttributeValue(node, "target");
+			string targetProperty = XmlUtils.GetMandatoryAttributeValue(node, "target");
 			var target = GetProperty(currentObject, targetProperty) as ICmObject;
 			if (target != null)
 			{
@@ -1948,7 +1948,7 @@ namespace SIL.FieldWorks.Common.FXT
 		protected void DoAttributeElement(List<string> rgsAttrs, ICmObject currentObject, XmlNode node)
 		{
 			Debug.Assert(m_format == "xml");
-			string propertyName = XmlUtils.GetManditoryAttributeValue(node, "simpleProperty");
+			string propertyName = XmlUtils.GetMandatoryAttributeValue(node, "simpleProperty");
 			string attrName = XmlUtils.GetOptionalAttributeValue(node, "name");
 			bool fOptional = XmlUtils.GetOptionalBooleanAttributeValue(node, "optional", false);
 			string x = null;
@@ -2074,7 +2074,7 @@ namespace SIL.FieldWorks.Common.FXT
 
 		protected string GetSimplePropertyString(XmlNode node, ICmObject currentObject)
 		{
-			string propertyName = XmlUtils.GetManditoryAttributeValue(node,"simpleProperty");
+			string propertyName = XmlUtils.GetMandatoryAttributeValue(node,"simpleProperty");
 			string x;
 			if (PropertyIsVirtual(currentObject, propertyName))
 			{
@@ -2089,7 +2089,7 @@ namespace SIL.FieldWorks.Common.FXT
 
 		private ITsString GetSimplePropertyTsString(XmlNode node, ICmObject currentObject)
 		{
-			string propertyName = XmlUtils.GetManditoryAttributeValue(node, "simpleProperty");
+			string propertyName = XmlUtils.GetMandatoryAttributeValue(node, "simpleProperty");
 			ITsString x;
 			if (PropertyIsVirtual(currentObject, propertyName))
 			{
@@ -2187,9 +2187,9 @@ namespace SIL.FieldWorks.Common.FXT
 		{
 			Debug.Assert(m_format == "xml");
 
-			string attrName = XmlUtils.GetManditoryAttributeValue(node, "name");
-			string format = XmlUtils.GetManditoryAttributeValue(node, "format");
-			string propertyName = XmlUtils.GetManditoryAttributeValue(node, "property");
+			string attrName = XmlUtils.GetMandatoryAttributeValue(node, "name");
+			string format = XmlUtils.GetMandatoryAttributeValue(node, "format");
+			string propertyName = XmlUtils.GetMandatoryAttributeValue(node, "property");
 			DateTime t = (DateTime)GetProperty(currentObject, propertyName);
 			rgsAttrs.Add(String.Format(" {0}=\"{1}\"", attrName.Trim(), t.ToString(format)));
 		}
@@ -2228,7 +2228,7 @@ namespace SIL.FieldWorks.Common.FXT
 			string label = XmlUtils.GetOptionalAttributeValue(node, "itemLabel");
 			if (label == null)
 				label = "subobject";
-			string field = XmlUtils.GetManditoryAttributeValue(node, "field");
+			string field = XmlUtils.GetMandatoryAttributeValue(node, "field");
 			string sVirtual = XmlUtils.GetOptionalAttributeValue(node, "virtual");
 			bool fVirtual = false;
 			if (sVirtual != null)
@@ -2320,7 +2320,7 @@ namespace SIL.FieldWorks.Common.FXT
 			string label = XmlUtils.GetOptionalAttributeValue(node, "itemLabel");
 			if (label == null)
 				label ="object";
-			string field = XmlUtils.GetManditoryAttributeValue(node, "field");
+			string field = XmlUtils.GetMandatoryAttributeValue(node, "field");
 			bool fXmlVirtual = XmlUtils.GetOptionalBooleanAttributeValue(node, "virtual", false);
 			bool fWriteAsRelation = XmlUtils.GetOptionalBooleanAttributeValue(node, "writeAsRelation", false);
 			//Debug.WriteLine ("<refVector field ="+field+">");
@@ -2633,7 +2633,7 @@ namespace SIL.FieldWorks.Common.FXT
 		protected void DoObjectVectorElement(TextWriter contentsStream, ICmObject currentObject,
 			XmlNode node)
 		{
-			string property = XmlUtils.GetManditoryAttributeValue(node, "objProperty");
+			string property = XmlUtils.GetMandatoryAttributeValue(node, "objProperty");
 			string virtClass = XmlUtils.GetOptionalAttributeValue(node, "virtualclass");
 			int count = XmlUtils.GetOptionalIntegerValue(node, "count", -1);
 			string sField = XmlUtils.GetOptionalAttributeValue(node, "field");
@@ -2801,7 +2801,7 @@ namespace SIL.FieldWorks.Common.FXT
 		protected void DoObjectAtomicElement (TextWriter contentsStream, ICmObject currentObject, XmlNode node)
 		{
 			//string mode = XmlUtils.GetOptionalAttributeValue(node, "mode");
-			string property =XmlUtils.GetManditoryAttributeValue(node, "objProperty");
+			string property =XmlUtils.GetMandatoryAttributeValue(node, "objProperty");
 			string sClassTag = XmlUtils.GetOptionalAttributeValue(node, "classtag");
 			//Debug.WriteLine ("<objAtomic property ="+property+">");
 			currentObject = GetObjectFromProperty(currentObject, property);
@@ -2814,7 +2814,7 @@ namespace SIL.FieldWorks.Common.FXT
 
 		protected void DoGroupElement (TextWriter contentsStream, ICmObject currentObject, XmlNode node)
 		{
-			string property =XmlUtils.GetManditoryAttributeValue(node, "objProperty");
+			string property =XmlUtils.GetMandatoryAttributeValue(node, "objProperty");
 			//Debug.WriteLine ("<group "+" "+property+">");
 			var ownedObject = GetObjectFromProperty(currentObject, property);
 
@@ -2992,7 +2992,7 @@ namespace SIL.FieldWorks.Common.FXT
 		/// <returns></returns>
 		protected int GetSingleWritingSystemDescriptor(XmlNode node)
 		{
-			string wsSpec = XmlUtils.GetManditoryAttributeValue(node, "ws");
+			string wsSpec = XmlUtils.GetMandatoryAttributeValue(node, "ws");
 			switch (wsSpec)
 			{
 				case "vernacular":

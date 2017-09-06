@@ -218,10 +218,10 @@ namespace SIL.FieldWorks.XWorks
 
 		private void ReadParameters()
 		{
-			m_sRegKeyName = XmlUtils.GetManditoryAttributeValue(m_configurationParameters, "regKeyName");
-			m_sProgressDialogTitle = XmlUtils.GetManditoryAttributeValue(m_configurationParameters, "dialogTitle");
-			m_sFileNameKey = XmlUtils.GetManditoryAttributeValue(m_configurationParameters, "fileNameKey");
-			m_sStringsPath = XmlUtils.GetManditoryAttributeValue(m_configurationParameters, "stringsPath");
+			m_sRegKeyName = XmlUtils.GetMandatoryAttributeValue(m_configurationParameters, "regKeyName");
+			m_sProgressDialogTitle = XmlUtils.GetMandatoryAttributeValue(m_configurationParameters, "dialogTitle");
+			m_sFileNameKey = XmlUtils.GetMandatoryAttributeValue(m_configurationParameters, "fileNameKey");
+			m_sStringsPath = XmlUtils.GetMandatoryAttributeValue(m_configurationParameters, "stringsPath");
 
 			foreach (XmlNode rNode in m_configurationParameters.ChildNodes)
 			{
@@ -606,10 +606,10 @@ namespace SIL.FieldWorks.XWorks
 
 		private string ApplyTransform(string inputFile, XmlNode node, ProgressDialogWorkingOn dlg)
 		{
-			string progressPrompt = XmlUtils.GetManditoryAttributeValue(node, "progressPrompt");
+			string progressPrompt = XmlUtils.GetMandatoryAttributeValue(node, "progressPrompt");
 			UpdateProgress(progressPrompt, dlg);
-			string stylesheetName = XmlUtils.GetManditoryAttributeValue(node, "stylesheetName");
-			string stylesheetAssembly = XmlUtils.GetManditoryAttributeValue(node, "stylesheetAssembly");
+			string stylesheetName = XmlUtils.GetMandatoryAttributeValue(node, "stylesheetName");
+			string stylesheetAssembly = XmlUtils.GetMandatoryAttributeValue(node, "stylesheetAssembly");
 			string outputFile = Path.Combine(m_outputDirectory, Cache.ProjectId.Name + stylesheetName + "Result." + GetExtensionFromNode(node));
 
 			XsltArgumentList argumentList = CreateParameterList(node);
@@ -693,8 +693,8 @@ namespace SIL.FieldWorks.XWorks
 			{
 				if (rParamNode.Name == "param")
 				{
-					string name = XmlUtils.GetManditoryAttributeValue(rParamNode, "name");
-					string value = XmlUtils.GetManditoryAttributeValue(rParamNode, "value");
+					string name = XmlUtils.GetMandatoryAttributeValue(rParamNode, "name");
+					string value = XmlUtils.GetMandatoryAttributeValue(rParamNode, "value");
 					if (value == "TransformDirectory")
 					{
 						value = TransformPath.Replace("\\", "/");
@@ -712,7 +712,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private static string GetExtensionFromNode(XmlNode node)
 		{
-			return XmlUtils.GetManditoryAttributeValue(node, "ext");
+			return XmlUtils.GetMandatoryAttributeValue(node, "ext");
 		}
 
 		private static void UpdateProgress(string sMessage, ProgressDialogWorkingOn dlg)

@@ -75,7 +75,7 @@ namespace XCore
 			XmlNode baseNode = dom.SelectSingleNode("//includeBase");
 			if (baseNode != null)
 			{
-				baseFile = XmlUtils.GetManditoryAttributeValue(baseNode,"path");
+				baseFile = XmlUtils.GetMandatoryAttributeValue(baseNode,"path");
 				//now that we have read it, remove it, so that it does not violate the schema of
 				//the output file.
 				baseNode.ParentNode.RemoveChild(baseNode);
@@ -264,7 +264,7 @@ namespace XCore
 				/* Any fragments (extensions or standard) will be added before the <include>
 				 * element. Aftwerwards, the <include> element will be removed.
 				 */
-				string query = XmlUtils.GetManditoryAttributeValue(includeNode, "query");
+				string query = XmlUtils.GetMandatoryAttributeValue(includeNode, "query");
 				foreach (string innerPath in paths)
 				{
 					XmlDocumentFragment fragment;
@@ -431,7 +431,7 @@ namespace XCore
 		/// <param name="targetNode"></param>
 		protected void CopyElement(XmlDocument dom, XmlNode copyInstructionNode)
 		{
-			string id = XmlUtils.GetManditoryAttributeValue(copyInstructionNode, "idref");
+			string id = XmlUtils.GetMandatoryAttributeValue(copyInstructionNode, "idref");
 			XmlNode node =	copyInstructionNode.OwnerDocument.SelectSingleNode("//*[@id='" + id + "']");
 			if (node == null)
 				throw new ApplicationException ("Could not find an element in this file with the id of '" + id + "', in order to do the <copyElement> .");

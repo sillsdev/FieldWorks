@@ -310,7 +310,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			CheckDisposed();
 
 			Command command = (XCore.Command)commandObject;
-			string tool = XmlUtils.GetManditoryAttributeValue(command.Parameters[0], "tool");
+			string tool = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "tool");
 			var inflMsa = m_obj as IMoInflAffMsa;
 			m_mediator.PostMessage("FollowLink", new FwLinkArgs(tool, inflMsa.Owner.Guid));
 			return true; // handled this

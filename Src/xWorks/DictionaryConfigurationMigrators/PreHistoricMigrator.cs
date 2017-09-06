@@ -166,8 +166,8 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			//<configure class="LexEntry" label="Main Entry" layout="publishStemEntry" />
 			//<configure class="LexEntry" label="Minor Entry" layout="publishStemMinorEntry" hideConfig="true" />
 			//</layoutType>
-			var label = XmlUtils.GetManditoryAttributeValue(layoutNode, "label");
-			var layout = XmlUtils.GetManditoryAttributeValue(layoutNode, "layout");
+			var label = XmlUtils.GetMandatoryAttributeValue(layoutNode, "label");
+			var layout = XmlUtils.GetMandatoryAttributeValue(layoutNode, "layout");
 			m_logger.WriteLine(string.Format("Migrating old fwlayout and parts config: '{0}' - {1}.", label, layout));
 			m_logger.IncreaseIndent();
 			var configNodeList = oldNodes.Select(ConvertLayoutTreeNodeToConfigNode).ToList();

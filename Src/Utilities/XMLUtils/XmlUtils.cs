@@ -55,7 +55,7 @@ namespace SIL.Utils
 		/// <returns>The value, or 0 if attr is missing.</returns>
 		public static int GetMandatoryIntegerAttributeValue(XmlNode node, string attrName)
 		{
-			return Int32.Parse(GetManditoryAttributeValue(node, attrName), CultureInfo.InvariantCulture);
+			return Int32.Parse(GetMandatoryAttributeValue(node, attrName), CultureInfo.InvariantCulture);
 		}
 
 		/// <summary>
@@ -81,7 +81,7 @@ namespace SIL.Utils
 		/// <returns></returns>
 		public static int[] GetMandatoryIntegerListAttributeValue(XmlNode node, string attrName)
 		{
-			string input = GetManditoryAttributeValue(node, attrName);
+			string input = GetMandatoryAttributeValue(node, attrName);
 			string[] vals = input.Split(',');
 			var result = new int[vals.Length];
 			for (int i = 0; i < vals.Length; i++)
@@ -97,7 +97,7 @@ namespace SIL.Utils
 		/// <returns></returns>
 		public static uint[] GetMandatoryUIntegerListAttributeValue(XmlNode node, string attrName)
 		{
-			string input = GetManditoryAttributeValue(node, attrName);
+			string input = GetMandatoryAttributeValue(node, attrName);
 			string[] vals = input.Split(',');
 			var result = new uint[vals.Length];
 			for (int i = 0; i < vals.Length; i++)
@@ -282,7 +282,7 @@ namespace SIL.Utils
 		/// <exception cref="ApplicationException">
 		/// Thrown when the value is not found in the node.
 		/// </exception>
-		public static string GetManditoryAttributeValue(XmlNode node, string attrName)
+		public static string GetMandatoryAttributeValue(XmlNode node, string attrName)
 		{
 			string retval = GetOptionalAttributeValue(node, attrName, null);
 			if (retval == null)

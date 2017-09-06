@@ -2423,7 +2423,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				XmlNodeList nodes = m_configurationNode.SelectNodes("atomic");
 				if (nodes == null || nodes.Count != 1)
 					throw new ConfigurationException("Expected to find a single <atomic> element in here", m_configurationNode);
-				string field = XmlUtils.GetManditoryAttributeValue(nodes[0], "field");
+				string field = XmlUtils.GetMandatoryAttributeValue(nodes[0], "field");
 				int flid = GetFlid(field);
 				Debug.Assert(flid != 0);
 				var hvo = m_cache.DomainDataByFlid.get_ObjectProp(m_obj.Hvo, flid);

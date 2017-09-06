@@ -53,14 +53,14 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			{
 				// Instead of the parameter being a layout name, it is literal text which will be
 				// the whole contents of the slice, with standard properties.
-				string text = XmlUtils.GetManditoryAttributeValue(m_callerNode, "label");
+				string text = XmlUtils.GetMandatoryAttributeValue(m_callerNode, "label");
 				text = StringTable.Table.LocalizeAttributeValue(text);
 				m_view = new LiteralLabelView(text, this);
 			}
 			else
 			{
 				m_layout = XmlUtils.GetOptionalAttributeValue(m_callerNode, "param")
-					?? XmlUtils.GetManditoryAttributeValue(m_configurationNode, "layout");
+					?? XmlUtils.GetMandatoryAttributeValue(m_configurationNode, "layout");
 				m_collapsedLayout = XmlUtils.GetOptionalAttributeValue(m_callerNode, "collapsedLayout")
 					?? XmlUtils.GetOptionalAttributeValue(m_configurationNode, "collapsedLayout");
 				m_view = new SummaryXmlView(m_obj.Hvo, m_layout, this);
@@ -294,7 +294,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			CheckDisposed();
 
 			var command = (Command)commandObject;
-			string className = XmlUtils.GetManditoryAttributeValue(command.Parameters[0], "className");
+			string className = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "className");
 			bool fIsValid = false;
 			if (className == "RnGenericRec")
 			{
@@ -344,7 +344,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			CheckDisposed();
 
 			var command = (Command)commandObject;
-			string className = XmlUtils.GetManditoryAttributeValue(command.Parameters[0], "className");
+			string className = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "className");
 			bool fIsValid = false;
 			if (className == "RnGenericRec")
 			{
@@ -398,7 +398,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			CheckDisposed();
 
 			var command = (Command)commandObject;
-			string className = XmlUtils.GetManditoryAttributeValue(command.Parameters[0], "className");
+			string className = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "className");
 			bool fIsValid = false;
 			if (className == "RnGenericRec")
 			{
@@ -460,7 +460,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			CheckDisposed();
 
 			var command = (Command)commandObject;
-			string className = XmlUtils.GetManditoryAttributeValue(command.Parameters[0], "className");
+			string className = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "className");
 			bool fIsValid = false;
 			if (className == "RnGenericRec")
 			{

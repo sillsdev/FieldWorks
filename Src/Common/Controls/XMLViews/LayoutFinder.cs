@@ -358,8 +358,8 @@ namespace SIL.FieldWorks.Common.Controls
 			// lose the sort arrow when switching between tools sharing common columns (LT-2858).
 			// For now, just assume that columns with the same label will display the same value.
 			// If this proves too loose for a particular column, try implementing a sortmethod instead.
-			string colSpecLabel = XmlUtils.GetManditoryAttributeValue(m_colSpec, "label");
-			string otherLfLabel = XmlUtils.GetManditoryAttributeValue(otherLf.m_colSpec, "label");
+			string colSpecLabel = XmlUtils.GetMandatoryAttributeValue(m_colSpec, "label");
+			string otherLfLabel = XmlUtils.GetMandatoryAttributeValue(otherLf.m_colSpec, "label");
 			string colSpecLabel2 = XmlUtils.GetOptionalAttributeValue(m_colSpec, "headerlabel");
 			string otherLfLabel2 = XmlUtils.GetOptionalAttributeValue(otherLf.m_colSpec, "headerlabel");
 			return (colSpecLabel == otherLfLabel ||
@@ -423,7 +423,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// ------------------------------------------------------------------------------------
 		public virtual void InitXml(XmlNode node)
 		{
-			m_layoutName = XmlUtils.GetManditoryAttributeValue(node, "layout");
+			m_layoutName = XmlUtils.GetMandatoryAttributeValue(node, "layout");
 			m_colSpec = node.SelectSingleNode("column");
 		}
 
@@ -635,7 +635,7 @@ namespace SIL.FieldWorks.Common.Controls
 		private int GetFlid(XmlNode frag, int hvo)
 		{
 			string stClassName = XmlUtils.GetOptionalAttributeValue(frag, "class");
-			string stFieldName = XmlUtils.GetManditoryAttributeValue(frag, "field");
+			string stFieldName = XmlUtils.GetMandatoryAttributeValue(frag, "field");
 			if (string.IsNullOrEmpty(stClassName))
 			{
 				int classId = m_sda.get_IntProp(hvo,
@@ -774,7 +774,7 @@ namespace SIL.FieldWorks.Common.Controls
 		public override void InitXml(XmlNode node)
 		{
 			base.InitXml(node);
-			SortMethod = XmlUtils.GetManditoryAttributeValue(node, "sortmethod");
+			SortMethod = XmlUtils.GetMandatoryAttributeValue(node, "sortmethod");
 			WritingSystemName = XmlUtils.GetOptionalAttributeValue(node, "ws", null);
 			// Enhance JohnT: if we start using string tables for browse views,
 			// we will need a better way to provide one to the Vc we make here.

@@ -1286,7 +1286,7 @@ namespace SIL.FieldWorks.Common.Controls
 						sb.Append("-");
 						sb.Append(XmlUtils.GetOptionalAttributeValue(frag.ParentNode, "name", String.Empty));
 						sb.Append("-");
-						string sRef = XmlUtils.GetManditoryAttributeValue(frag, "ref");
+						string sRef = XmlUtils.GetMandatoryAttributeValue(frag, "ref");
 						if (sRef == "$child")
 							sb.Append(XmlUtils.GetOptionalAttributeValue(frag, "label", String.Empty));
 						else

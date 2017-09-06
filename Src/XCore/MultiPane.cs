@@ -178,7 +178,7 @@ namespace XCore
 			{
 				CheckDisposed();
 
-				return XmlUtils.GetManditoryAttributeValue( m_configurationParameters, "area");
+				return XmlUtils.GetMandatoryAttributeValue( m_configurationParameters, "area");
 			}
 		}
 
@@ -359,8 +359,8 @@ namespace XCore
 			if (dynLoaderNode == null)
 				throw new ArgumentException("Required 'dynamicloaderinfo' XML node not found, while trying to make control for MultiPane.", "configuration");
 
-			string contentAssemblyPath = XmlUtils.GetManditoryAttributeValue(dynLoaderNode, "assemblyPath");
-			string contentClass = XmlUtils.GetManditoryAttributeValue(dynLoaderNode, "class");
+			string contentAssemblyPath = XmlUtils.GetMandatoryAttributeValue(dynLoaderNode, "assemblyPath");
+			string contentClass = XmlUtils.GetMandatoryAttributeValue(dynLoaderNode, "class");
 			try
 			{
 				Control subControl = (Control)DynamicLoader.CreateObject(contentAssemblyPath, contentClass);

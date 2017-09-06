@@ -67,15 +67,15 @@ namespace SIL.FieldWorks.XWorks
 			// put them in configList and feed them into the Manager's dictionary.
 			foreach (var xnView in m_originalViewConfigNodes)
 			{
-				var sLabel = XmlUtils.GetManditoryAttributeValue(xnView, "label");
-				var sLayout = XmlUtils.GetManditoryAttributeValue(xnView, "layout");
+				var sLabel = XmlUtils.GetMandatoryAttributeValue(xnView, "label");
+				var sLayout = XmlUtils.GetMandatoryAttributeValue(xnView, "layout");
 				var fProtected = !sLayout.Contains(Inventory.kcMarkLayoutCopy);
 				configList.Add(new Tuple<string, string, bool>(sLayout, sLabel, fProtected));
 			}
 
 			LoadInternalDictionary(configList);
 
-			var sLayoutCurrent = XmlUtils.GetManditoryAttributeValue(current, "layout");
+			var sLayoutCurrent = XmlUtils.GetMandatoryAttributeValue(current, "layout");
 			m_originalView = sLayoutCurrent;
 			m_currentView = m_originalView;
 

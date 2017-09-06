@@ -326,7 +326,7 @@ namespace SIL.FieldWorks.Common.Controls
 			if (!String.IsNullOrEmpty(sProp))
 				sLayout = m_propertyTable.GetStringProperty(sProp, null);
 			if (String.IsNullOrEmpty(sLayout))
-				sLayout = XmlUtils.GetManditoryAttributeValue(m_xnSpec, "layout");
+				sLayout = XmlUtils.GetMandatoryAttributeValue(m_xnSpec, "layout");
 			ISilDataAccess sda = GetSda();
 			m_xmlVc = new XmlVc(sLayout, fEditable, this, m_app,
 				m_fShowFailingItems ? null : ItemDisplayCondition, sda) {IdentifySource = true};

@@ -170,7 +170,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				{
 					string layout = XmlUtils.GetOptionalAttributeValue(caller, "param");
 					if (layout == null)
-						layout = XmlUtils.GetManditoryAttributeValue(node, "layout");
+						layout = XmlUtils.GetMandatoryAttributeValue(node, "layout");
 					// Editable if BOTH the caller (part ref) AND the node itself (the slice) say so...or at least if neither says not.
 					bool editable = XmlUtils.GetOptionalBooleanAttributeValue(caller, "editable", true)
 						&& XmlUtils.GetOptionalBooleanAttributeValue(node, "editable", true);
@@ -204,7 +204,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				}
 				case "lit": // was "message"
 				{
-					string message = XmlUtils.GetManditoryAttributeValue(node, "message");
+					string message = XmlUtils.GetMandatoryAttributeValue(node, "message");
 					string sTranslate = XmlUtils.GetOptionalAttributeValue(node, "translate", "");
 					if (sTranslate.Trim().ToLower() != "do not translate")
 						message = StringTable.Table.LocalizeLiteralValue(message);
@@ -220,7 +220,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				{
 					try
 					{
-						slice = new ImageSlice(FwDirectoryFinder.CodeDirectory, XmlUtils.GetManditoryAttributeValue(node, "param1"));
+						slice = new ImageSlice(FwDirectoryFinder.CodeDirectory, XmlUtils.GetMandatoryAttributeValue(node, "param1"));
 					}
 					catch (Exception error)
 					{
@@ -542,7 +542,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		static internal int GetCustomFieldFlid(XmlNode caller, IFwMetaDataCache mdc, ICmObject obj)
 		{
-			string fieldName = XmlUtils.GetManditoryAttributeValue(caller, "param");
+			string fieldName = XmlUtils.GetMandatoryAttributeValue(caller, "param");
 			// It would be nice to avoid all the possible throws for invalid fields, but hard
 			// to achieve in a static method.
 			try

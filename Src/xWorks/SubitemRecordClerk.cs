@@ -25,7 +25,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			base.Init(mediator, propertyTable, viewConfiguration);
 			XmlNode clerkConfiguration = ToolConfiguration.GetClerkNodeFromToolParamsNode(viewConfiguration);
-			var subitemNames = XmlUtils.GetManditoryAttributeValue(clerkConfiguration, "field").Split('.');
+			var subitemNames = XmlUtils.GetMandatoryAttributeValue(clerkConfiguration, "field").Split('.');
 			SubitemFlid = Cache.MetaDataCacheAccessor.GetFieldId(subitemNames[0].Trim(), subitemNames[1].Trim(), true);
 		}
 

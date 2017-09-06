@@ -1184,7 +1184,7 @@ namespace SIL.FieldWorks.XWorks
 			if (Cache == null || m_dataEntryForm == null || m_dataEntryForm.Root == null)
 				return false;
 			Command command = (Command)commandObject;
-			string className = XmlUtils.GetManditoryAttributeValue(command.Parameters[0], "className");
+			string className = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "className");
 			if (className != m_dataEntryForm.Root.ClassName)
 				return false;
 			string restrictToTool = XmlUtils.GetOptionalAttributeValue(command.Parameters[0], "restrictToTool");
@@ -1196,7 +1196,7 @@ namespace SIL.FieldWorks.XWorks
 		private bool AddNewLexEntryRef(object argument, int flidTypes)
 		{
 			Command command = (Command)argument;
-			string className = XmlUtils.GetManditoryAttributeValue(command.Parameters[0], "className");
+			string className = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "className");
 			if (className != m_dataEntryForm.Root.ClassName)
 				return false;
 			string restrictToTool = XmlUtils.GetOptionalAttributeValue(command.Parameters[0], "restrictToTool");
@@ -1248,7 +1248,7 @@ namespace SIL.FieldWorks.XWorks
 			bool fEnable = false;
 			bool fChecked = false;
 			Command command = (Command)commandObject;
-			string className = XmlUtils.GetManditoryAttributeValue(command.Parameters[0], "className");
+			string className = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "className");
 			if (className == current.Object.ClassName)
 			{
 				string tool = XmlUtils.GetOptionalAttributeValue(command.Parameters[0], "tool");
@@ -1338,7 +1338,7 @@ namespace SIL.FieldWorks.XWorks
 			bool fChecked = false;
 			// Is this the right slice to handle this command?
 			var command = (Command)commandObject;
-			string className = XmlUtils.GetManditoryAttributeValue(command.Parameters[0], "className");
+			string className = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "className");
 			if (("LexEntry" != complexFormsSlice.Object.ClassName &&
 				 "LexSense" != complexFormsSlice.Object.ClassName ) || className != "LexEntryOrLexSense")
 				return false; // not the right message target

@@ -567,7 +567,7 @@ namespace SIL.FieldWorks.Common.Controls
 			var cols = new string[2];
 			var label = XmlUtils.GetLocalizedAttributeValue(node, "label", null);
 			if (label == null)
-				label = XmlUtils.GetManditoryAttributeValue(node, "label");
+				label = XmlUtils.GetMandatoryAttributeValue(node, "label");
 			cols[0] = label;
 			var wsParam = XmlViewsUtils.FindWsParam(node);
 			var dispCategory = TranslateWsParamToLocalizedDisplayCategory(wsParam);
@@ -1122,7 +1122,7 @@ namespace SIL.FieldWorks.Common.Controls
 				label = XmlUtils.GetLocalizedAttributeValue(CurrentSpecs[columnIndex],
 															"label", null);
 			if (label == null)
-				label = XmlUtils.GetManditoryAttributeValue(CurrentSpecs[columnIndex], "label");
+				label = XmlUtils.GetMandatoryAttributeValue(CurrentSpecs[columnIndex], "label");
 			return label;
 		}
 
@@ -1439,7 +1439,7 @@ namespace SIL.FieldWorks.Common.Controls
 			GenerateColumnLabel(replacement, m_cache);
 
 			XmlAttribute xa = replacement.Attributes["label"];
-			xa.Value = XmlUtils.GetManditoryAttributeValue(replacement, "label");
+			xa.Value = XmlUtils.GetMandatoryAttributeValue(replacement, "label");
 			var listItem = MakeCurrentItem(replacement);
 			if (listItem == null) // The user deleted this ws and there was already one with the default ws.
 			{
@@ -1477,7 +1477,7 @@ namespace SIL.FieldWorks.Common.Controls
 				// generate a label if it is changed again: we know both the original label
 				// (to possibly append an abbreviation to) and the original writing system (so
 				// we know whether to mark it at all).
-				originalLabel = XmlUtils.GetManditoryAttributeValue(colSpec, "label");
+				originalLabel = XmlUtils.GetMandatoryAttributeValue(colSpec, "label");
 				XmlUtils.AppendAttribute(colSpec, "originalLabel", originalLabel);
 			}
 
@@ -1529,10 +1529,10 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				string xVal = XmlUtils.GetLocalizedAttributeValue(x, "label", null);
 				if (xVal == null)
-					xVal = XmlUtils.GetManditoryAttributeValue(x, "label");
+					xVal = XmlUtils.GetMandatoryAttributeValue(x, "label");
 				string yVal = XmlUtils.GetLocalizedAttributeValue(y, "label", null);
 				if (yVal == null)
-					yVal = XmlUtils.GetManditoryAttributeValue((XmlNode)y, "label");
+					yVal = XmlUtils.GetMandatoryAttributeValue((XmlNode)y, "label");
 				return xVal.CompareTo(yVal);
 			}
 
@@ -1558,7 +1558,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 		public override string ToString()
 		{
-			return XmlUtils.GetManditoryAttributeValue(m_item, "label");
+			return XmlUtils.GetMandatoryAttributeValue(m_item, "label");
 		}
 
 	}

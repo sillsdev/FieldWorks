@@ -70,7 +70,7 @@ namespace SIL.FieldWorks.FdoUi
 			CheckDisposed();
 
 			Command command = (Command)commandObject;
-			string tool = Utils.XmlUtils.GetManditoryAttributeValue(command.Parameters[0], "tool");
+			string tool = Utils.XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "tool");
 			string toolChoice = PropTable.GetStringProperty("currentContentControl", null);
 
 			if (tool == "posEdit" && toolChoice == "reversalToolReversalIndexPOS")

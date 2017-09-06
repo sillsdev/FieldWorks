@@ -270,7 +270,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			get
 			{
 				IReversalIndexEntry rie = null;
-				string clerkId = XmlUtils.GetManditoryAttributeValue(m_configurationParameters, "clerk");
+				string clerkId = XmlUtils.GetMandatoryAttributeValue(m_configurationParameters, "clerk");
 				string propertyName = RecordClerk.GetCorrespondingPropertyName(clerkId);
 				RecordClerk clerk = m_propertyTable.GetValue<RecordClerk>(propertyName);
 				if (clerk != null)

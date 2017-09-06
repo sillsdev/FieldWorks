@@ -567,7 +567,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 				MasterCategory mc = new MasterCategory();
 				mc.m_isGroup = node.SelectNodes("item") != null;
-				mc.m_id = XmlUtils.GetManditoryAttributeValue(node, "id");
+				mc.m_id = XmlUtils.GetMandatoryAttributeValue(node, "id");
 
 				foreach (var pos in posSet)
 				{
@@ -592,7 +592,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				mc.m_def = sContent;
 
 				foreach (XmlNode citNode in node.SelectNodes("citation"))
-					mc.m_citations.Add(new MasterCategoryCitation(XmlUtils.GetManditoryAttributeValue(citNode, "ws"), citNode.InnerText));
+					mc.m_citations.Add(new MasterCategoryCitation(XmlUtils.GetMandatoryAttributeValue(citNode, "ws"), citNode.InnerText));
 				return mc;
 			}
 			private static string GetBestWritingSystemForNamedNode(XmlNode node, string sNodeName, string sDefaultWS, LcmCache cache, out string sNodeContent)
@@ -619,7 +619,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				else
 				{
 					sNodeContent = nd.InnerText;
-					sWS = XmlUtils.GetManditoryAttributeValue(nd, "ws");
+					sWS = XmlUtils.GetMandatoryAttributeValue(nd, "ws");
 				}
 				return sWS;
 			}

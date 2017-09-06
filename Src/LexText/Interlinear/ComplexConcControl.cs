@@ -621,8 +621,8 @@ namespace SIL.FieldWorks.IText
 			var cmd = (Command) args;
 			if (cmd.Parameters.Count > 0)
 			{
-				string minStr = XmlUtils.GetManditoryAttributeValue(cmd.Parameters[0], "min");
-				string maxStr = XmlUtils.GetManditoryAttributeValue(cmd.Parameters[0], "max");
+				string minStr = XmlUtils.GetMandatoryAttributeValue(cmd.Parameters[0], "min");
+				string maxStr = XmlUtils.GetMandatoryAttributeValue(cmd.Parameters[0], "max");
 				min = Int32.Parse(minStr);
 				max = Int32.Parse(maxStr);
 			}

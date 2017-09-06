@@ -72,9 +72,9 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="input"></param>
 		protected virtual void InitMemberVariablesFromInput(IFwMetaDataCache mdc, XmlNode input)
 		{
-			m_className = XmlUtils.GetManditoryAttributeValue(input, "class");
+			m_className = XmlUtils.GetMandatoryAttributeValue(input, "class");
 			m_clsid = mdc.GetClassId(m_className);
-			m_fieldType = XmlUtils.GetManditoryAttributeValue(input, "fieldType");
+			m_fieldType = XmlUtils.GetMandatoryAttributeValue(input, "fieldType");
 			m_restrictions = XmlUtils.GetOptionalAttributeValue(input, "restrictions", "none");
 			m_source = XmlUtils.GetFirstNonCommentChild(input);
 			string destClass = XmlUtils.GetOptionalAttributeValue(input, "destClass");
@@ -410,7 +410,7 @@ namespace SIL.FieldWorks.Common.Controls
 				if (nextLayoutNode != null)
 				{
 					// now build the new node from its layouts
-					string fieldName = XmlUtils.GetManditoryAttributeValue(nextLayoutNode, "field");
+					string fieldName = XmlUtils.GetMandatoryAttributeValue(nextLayoutNode, "field");
 					int field = m_vc.Cache.DomainDataByFlid.MetaDataCache.GetFieldId(className, fieldName, true);
 					int nextLayoutClass = m_vc.Cache.GetDestinationClass(field);
 					List<XmlNode> furtherGeneratedParts = GeneratePartsFromLayouts(nextLayoutClass, fieldNameForReplace, fieldIdForWs,

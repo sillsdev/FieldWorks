@@ -284,8 +284,8 @@ namespace SIL.FieldWorks.Filters
 		public override void InitXml(System.Xml.XmlNode node)
 		{
 			base.InitXml(node);
-			m_start = DateTime.Parse(XmlUtils.GetManditoryAttributeValue(node, "start"), DateTimeFormatInfo.InvariantInfo);
-			m_end = DateTime.Parse(XmlUtils.GetManditoryAttributeValue(node, "end"), DateTimeFormatInfo.InvariantInfo);
+			m_start = DateTime.Parse(XmlUtils.GetMandatoryAttributeValue(node, "start"), DateTimeFormatInfo.InvariantInfo);
+			m_end = DateTime.Parse(XmlUtils.GetMandatoryAttributeValue(node, "end"), DateTimeFormatInfo.InvariantInfo);
 			m_type = (DateMatchType)XmlUtils.GetMandatoryIntegerAttributeValue(node, "type");
 			HandleGenDate = XmlUtils.GetOptionalBooleanAttributeValue(node, "genDate", false);
 			IsStartAD = XmlUtils.GetOptionalBooleanAttributeValue(node, "startAD", true);
