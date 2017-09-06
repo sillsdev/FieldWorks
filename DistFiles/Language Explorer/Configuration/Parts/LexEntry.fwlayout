@@ -72,14 +72,14 @@
 	<layout class="LexEtymology" type="detail" name="Normal">
 		<part ref="NormalSummary" param="Summary" collapsedLayout="SummaryCollapsed" expansion="expanded" menu="mnuDataTree-Etymology" hotlinks="mnuDataTree-Etymology-Hotlinks">
 			<indent>
-				<part ref="PrecComment" label="Preceding Annotation"/>
-				<part ref="Language" label="Source Language"/>
-				<part ref="LanguageNotes" label="Source Language Notes"/>
-				<part ref="Form" label="Source Form"/>
-				<part ref="Gloss" label="Gloss"/>
-				<part ref="Comment" label="Following Comment"/>
-				<part ref="Bibliography" label="Bibliographic Source"/>
-				<part ref="Note" label="Etymology Note"/>
+				<part ref="PrecComment" label="Preceding Annotation" visibility="ifdata"/>
+				<part ref="Language" label="Source Language" visibility="ifdata"/>
+				<part ref="LanguageNotes" label="Source Language Notes" visibility="ifdata"/>
+				<part ref="Form" label="Source Form" visibility="ifdata"/>
+				<part ref="Gloss" label="Gloss" visibility="ifdata"/>
+				<part ref="Comment" label="Following Comment" visibility="ifdata"/>
+				<part ref="Bibliography" label="Bibliographic Source" visibility="ifdata"/>
+				<part ref="Note" label="Etymology Note" visibility="ifdata"/>
 			</indent>
 		</part>
 	</layout>

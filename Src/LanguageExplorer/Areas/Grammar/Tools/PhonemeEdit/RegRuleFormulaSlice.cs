@@ -46,8 +46,8 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 			var cmd = (XCore.Command) args;
 			if (cmd.Parameters.Count > 0)
 			{
-				string minStr = XmlUtils.GetManditoryAttributeValue(cmd.Parameters[0], "min");
-				string maxStr = XmlUtils.GetManditoryAttributeValue(cmd.Parameters[0], "max");
+				string minStr = XmlUtils.GetMandatoryAttributeValue(cmd.Parameters[0], "min");
+				string maxStr = XmlUtils.GetMandatoryAttributeValue(cmd.Parameters[0], "max");
 				int min = Int32.Parse(minStr);
 				int max = Int32.Parse(maxStr);
 				RegRuleFormulaControl.SetContextOccurrence(min, max);

@@ -20,7 +20,7 @@
 		<Fragments Include="$(DistFilesDir)/*.fragment.manifest"/>
 	</ItemGroup>
 	<Target Name="CreateManifest" Condition="'$(OS)'=='Windows_NT'" Inputs="@(DependentAssemblies)" Outputs="$(Executable).manifest">
-		<RegFree Executable="$(Executable)" DependentAssemblies="@(DependentAssemblies)" Fragments="@(Fragments)" />
+		<RegFree Executable="$(Executable)" DependentAssemblies="@(DependentAssemblies)" Fragments="@(Fragments)" Platform="$(Platform)" />
 	</Target>
 	<Target Name="AttachManifest" Condition="'$(OS)'=='Windows_NT'" DependsOnTargets="CreateManifest">
 		<Exec Command="mt.exe -outputresource:$(Executable) -manifest $(Executable).manifest"/>

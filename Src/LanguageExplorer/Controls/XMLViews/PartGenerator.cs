@@ -72,9 +72,9 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <param name="input"></param>
 		protected virtual void InitMemberVariablesFromInput(IFwMetaDataCache mdc, XElement input)
 		{
-			m_className = XmlUtils.GetManditoryAttributeValue(input, "class");
+			m_className = XmlUtils.GetMandatoryAttributeValue(input, "class");
 			m_clsid = mdc.GetClassId(m_className);
-			m_fieldType = XmlUtils.GetManditoryAttributeValue(input, "fieldType");
+			m_fieldType = XmlUtils.GetMandatoryAttributeValue(input, "fieldType");
 			m_restrictions = XmlUtils.GetOptionalAttributeValue(input, "restrictions", "none");
 			m_source = XmlUtils.GetFirstNonCommentChild(input);
 			string destClass = XmlUtils.GetOptionalAttributeValue(input, "destClass");
@@ -410,7 +410,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				if (nextLayoutNode != null)
 				{
 					// now build the new node from its layouts
-					var fieldName = XmlUtils.GetManditoryAttributeValue(nextLayoutNode, "field");
+					var fieldName = XmlUtils.GetMandatoryAttributeValue(nextLayoutNode, "field");
 					var field = m_vc.Cache.DomainDataByFlid.MetaDataCache.GetFieldId(className, fieldName, true);
 					var nextLayoutClass = m_vc.Cache.GetDestinationClass(field);
 					var furtherGeneratedParts = GeneratePartsFromLayouts(nextLayoutClass, fieldNameForReplace, fieldIdForWs,

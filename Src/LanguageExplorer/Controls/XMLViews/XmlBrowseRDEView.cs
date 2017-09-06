@@ -298,7 +298,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				// based upon either LexemeForm.Form or LexSense.Definition. We could probably
 				// do this as part of the solution to handling duplicate columns in LT-3763.
 				var column = columns[i - 1];
-				var columnLabel = XmlUtils.GetManditoryAttributeValue(column, "label");
+				var columnLabel = XmlUtils.GetMandatoryAttributeValue(column, "label");
 				var columnLabelComponents = columnLabel.Split(new char[] { ' ', ':' });
 				// get column label without writing system or extraneous information.
 				var columnBasicLabel = LocalizeIfPossible(columnLabelComponents[0]);

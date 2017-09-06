@@ -15,7 +15,7 @@ Description:
 #undef THIS_FILE
 DEFINE_THIS_FILE
 
-#if !WIN32
+#if !defined(_WIN32) && !defined(_M_X64)
 #include <netdb.h>
 #include <unistd.h>
 #include <sys/wait.h>
@@ -30,7 +30,7 @@ const wchar * SilUtil::LocalServerName()
 	static StrUni s_stuLocalServer;
 	if (!s_stuLocalServer.Length())
 	{
-#if WIN32
+#if defined(_WIN32) || defined(_M_X64)
 		wchar rgchComputer[MAX_COMPUTERNAME_LENGTH + 1];
 		DWORD cch = MAX_COMPUTERNAME_LENGTH + 1;
 		::GetComputerNameW(rgchComputer, &cch);
@@ -68,7 +68,7 @@ const wchar * SilUtil::LocalServerName()
 ----------------------------------------------------------------------------------------------*/
 bool SilUtil::ExecCmd(LPCOLESTR pszCmd, bool fInvisible, bool fWaitTillExit, DWORD * pdwExitCode)
 {
-#if WIN32
+#if defined(_WIN32) || defined(_M_X64)
 	// Set up data for creating new process:
 	if (pdwExitCode)
 		*pdwExitCode = (DWORD)-1;
@@ -169,7 +169,7 @@ bool SilUtil::ExecCmd(LPCOLESTR pszCmd, bool fInvisible, bool fWaitTillExit, DWO
 ----------------------------------------------------------------------------------------------*/
 bool SilUtil::CompareTimesWithinXXSeconds(SYSTEMTIME stA, SYSTEMTIME stB, int XXseconds)
 {
-#if WIN32
+#if defined(_WIN32) || defined(_M_X64)
 #define _SECOND ((int64) 10000000)
 
 	FILETIME ftA, ftB;
@@ -227,7 +227,7 @@ bool SilUtil::CompareTimesWithinXXSeconds(SYSTEMTIME stA, SYSTEMTIME stB, int XX
 ----------------------------------------------------------------------------------------------*/
 bool SilUtil::IsAdminUser()
 {
-#ifdef WIN32
+#if defined(_WIN32) || defined(_M_X64)
 	BOOL b;
 	SID_IDENTIFIER_AUTHORITY NtAuthority = SECURITY_NT_AUTHORITY;
 	PSID AdministratorsGroup;
@@ -262,7 +262,7 @@ bool SilUtil::IsAdminUser()
 ----------------------------------------------------------------------------------------------*/
 bool SilUtil::IsPowerUser()
 {
-#ifdef WIN32
+#if defined(_WIN32) || defined(_M_X64)
 	BOOL b;
 	SID_IDENTIFIER_AUTHORITY NtAuthority = SECURITY_NT_AUTHORITY;
 	PSID AdministratorsGroup;
@@ -297,7 +297,7 @@ bool SilUtil::IsPathRooted(const wchar * pszPath)
 		return false;
 	if (pszPath[0] == '\\' || pszPath[0] == '/')
 		return true;
-#ifdef WIN32
+#if defined(_WIN32) || defined(_M_X64)
 	size_t cchPath = wcslen(pszPath);
 	if (cchPath >= 3 && iswalpha(pszPath[0]) && pszPath[1] == ':' &&
 		(pszPath[2] == '\\' || pszPath[2] == '/'))
@@ -325,7 +325,7 @@ const wchar * SilUtil::PathCombine(const wchar * pszRootDir, const wchar * pszFi
 	if (cchLast > 4000)
 		cchLast = 3998;
 	if (rgchCombined[cchLast] != '\\' && rgchCombined[cchLast] != '/')
-#ifdef WIN32
+#if defined(_WIN32) || defined(_M_X64)
 		wcscat_s(rgchCombined, 4000, L"\\");
 #else
 	{
@@ -346,7 +346,7 @@ bool SilUtil::FileExists(const wchar * pszPath)
 	DWORD dwAtts = ::GetFileAttributesW(pszPath);
 	if (dwAtts == INVALID_FILE_ATTRIBUTES)
 	{
-#ifdef WIN32 // TODO-Linux: ::GetLastError not implemented
+#if defined(_WIN32) || defined(_M_X64) // TODO-Linux: ::GetLastError not implemented
 		dwAtts = ::GetLastError();	// flush this from the system.
 #endif
 		return false;

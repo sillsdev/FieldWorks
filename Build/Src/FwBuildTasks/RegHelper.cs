@@ -22,13 +22,19 @@ namespace SIL.FieldWorks.Build.Tasks
 		private bool IsDisposed { get; set; }
 		public static string TmpRegistryKeyHKCR { get; private set; }
 		public static string TmpRegistryKeyHKLM { get; private set; }
-		private static readonly UIntPtr HKEY_CLASSES_ROOT = new UIntPtr(0xFFFFFFFF80000000UL);
-		private static readonly UIntPtr HKEY_CURRENT_USER = new UIntPtr(0xFFFFFFFF80000001UL);
-		private static readonly UIntPtr HKEY_LOCAL_MACHINE = new UIntPtr(0xFFFFFFFF80000002UL);
+		private static UIntPtr HKEY_CLASSES_ROOT = new UIntPtr(0x80000000);
+		private static UIntPtr HKEY_CURRENT_USER = new UIntPtr(0x80000001);
+		private static UIntPtr HKEY_LOCAL_MACHINE = new UIntPtr(0x80000002);
 
 		/// <summary/>
-		public RegHelper(TaskLoggingHelper log)
+		public RegHelper(TaskLoggingHelper log, string platform)
 		{
+			if (platform.Contains("64"))
+			{
+				HKEY_CLASSES_ROOT = new UIntPtr(0xFFFFFFFF80000000UL);
+				HKEY_CURRENT_USER = new UIntPtr(0xFFFFFFFF80000001UL);
+				HKEY_LOCAL_MACHINE = new UIntPtr(0xFFFFFFFF80000002UL);
+			}
 			m_Log = log;
 		}
 

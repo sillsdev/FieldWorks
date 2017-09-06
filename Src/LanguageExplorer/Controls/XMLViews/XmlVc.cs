@@ -850,7 +850,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <returns></returns>
 		private int GetIntFromNamedProp(string attrName, XElement frag, int hvo)
 		{
-			string propName = XmlUtils.GetManditoryAttributeValue(frag, attrName);
+			string propName = XmlUtils.GetMandatoryAttributeValue(frag, attrName);
 			var parts = propName.Split('.');
 			int flid;
 			if (parts.Length == 2)
@@ -1467,7 +1467,7 @@ namespace LanguageExplorer.Controls.XMLViews
 							(IVwViewConstructor)DynamicLoader.CreateObject(frag,
 							new Object[] { m_cache });
 						int selectorId =
-							Convert.ToInt32(XmlUtils.GetManditoryAttributeValue(frag, "selector"));
+							Convert.ToInt32(XmlUtils.GetMandatoryAttributeValue(frag, "selector"));
 						// Note this is AddObj, not AddObjProp, and it explicitly adds the current object using the new vc and fragId
 						vwenv.AddObj(hvo, vc, selectorId);
 						break;
@@ -1579,7 +1579,7 @@ namespace LanguageExplorer.Controls.XMLViews
 							}
 							else
 							{
-								string stFieldName = XmlUtils.GetManditoryAttributeValue(frag, "field");
+								string stFieldName = XmlUtils.GetMandatoryAttributeValue(frag, "field");
 								throw new Exception("Bad field type (" + stFieldName + " for hvo " + hvo + " found for " +
 									frag.Name + "  property " + flid + " in " + frag);
 							}
@@ -1594,7 +1594,7 @@ namespace LanguageExplorer.Controls.XMLViews
 								return; // something badly wrong.
 							//temp
 							int min = Int32.Parse(XmlUtils.GetOptionalAttributeValue(frag, "min", "0"));
-							int max = Int32.Parse(XmlUtils.GetManditoryAttributeValue(frag, "max"));
+							int max = Int32.Parse(XmlUtils.GetMandatoryAttributeValue(frag, "max"));
 							// Get an ID that simply identifies the pictureValues child. This is used in DisplayPicture.
 							int fragId = GetId(frag.SelectSingleNode("picturevalues"), m_idToDisplayCommand, m_displayCommandToId);
 							vwenv.AddIntPropPic(flid, this, fragId, min, max);
@@ -2076,7 +2076,7 @@ namespace LanguageExplorer.Controls.XMLViews
 										// If ws is 'configure' then we must have a caller to inherit the configured value from.
 										if (sWs == "configure")
 										{
-											sWs = XmlUtils.GetManditoryAttributeValue(caller, "ws");
+											sWs = XmlUtils.GetMandatoryAttributeValue(caller, "ws");
 										}
 										wsid = m_cache.WritingSystemFactory.GetWsFromStr(sWs);
 									}
@@ -2415,7 +2415,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		// Process a 'part ref' node (frag) for the specified object an env.
 		internal void ProcessPartRef(XElement frag, int hvo, IVwEnv vwenv)
 		{
-			string layoutName = XmlUtils.GetManditoryAttributeValue(frag, "ref");
+			string layoutName = XmlUtils.GetMandatoryAttributeValue(frag, "ref");
 			XElement node;
 			if (layoutName == "$child")
 			{
@@ -2633,7 +2633,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					var sVisibility = XmlUtils.GetOptionalAttributeValue(gramInfoPartRef, "visibility", "always");
 					if (sVisibility == "never")
 						return true; // user has configured gram info first, but turned off gram info.
-					string morphLayoutName = XmlUtils.GetManditoryAttributeValue(gramInfoPartRef, "ref");
+					string morphLayoutName = XmlUtils.GetMandatoryAttributeValue(gramInfoPartRef, "ref");
 					var part = GetNodeForPart(firstChildHvo, morphLayoutName, false);
 					if (part == null)
 						throw new ArgumentException("Attempt to display gram info of first child, but part for " + morphLayoutName +
@@ -2725,7 +2725,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			string visibility = XmlUtils.GetOptionalAttributeValue(frag, "visibility", "always");
 			if (visibility == "never")
 				return;
-			string layoutName = XmlUtils.GetManditoryAttributeValue(frag, "ref");
+			string layoutName = XmlUtils.GetMandatoryAttributeValue(frag, "ref");
 			XElement node;
 			if (layoutName == "$child")
 			{
@@ -2837,8 +2837,8 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 			Debug.Assert(layout.Name == "layout");
 			var label = XmlUtils.GetOptionalAttributeValue(partRef, "label", partRefId);
-			return XmlUtils.GetManditoryAttributeValue(layout, "class") + ":" +
-				XmlUtils.GetManditoryAttributeValue(layout, "name") + ":" + partRefId + ":" + label;
+			return XmlUtils.GetMandatoryAttributeValue(layout, "class") + ":" +
+				XmlUtils.GetMandatoryAttributeValue(layout, "name") + ":" + partRefId + ":" + label;
 		}
 
 
@@ -3470,7 +3470,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			int flidVal = 0;
 			if (Int32.TryParse(sFlid, out flidVal))
 			{
-				string fieldName = XmlUtils.GetManditoryAttributeValue(frag, "field");
+				string fieldName = XmlUtils.GetMandatoryAttributeValue(frag, "field");
 				int flid = GetFlid(frag, hvo, sda);
 				return flid == flidVal;
 			}
@@ -3621,7 +3621,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					// If ws is 'configure' then we must have a caller to inherit the configured value from.
 					if (wsId == "configure")
 					{
-						wsId = XmlUtils.GetManditoryAttributeValue(caller, "ws");
+						wsId = XmlUtils.GetMandatoryAttributeValue(caller, "ws");
 					}
 					foreach (int ws in WritingSystemServices.GetAllWritingSystems(cache, wsId, null, hvo, flid))
 					{

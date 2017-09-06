@@ -9,7 +9,7 @@ Last reviewed: Never
 
 	Header file for the file utilities.
 ----------------------------------------------------------------------------------------------*/
-#ifdef WIN32
+#if defined(_WIN32) || defined(_M_X64)
 #pragma once
 #ifndef __UTILFILE_H
 #define __UTILFILE_H

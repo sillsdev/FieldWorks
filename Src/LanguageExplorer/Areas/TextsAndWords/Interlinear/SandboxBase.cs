@@ -4357,8 +4357,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			if (!m_fHandlingRightClickMenu)
 				return false;
 			XCore.Command cmd = (XCore.Command)commandObject;
-			string tool = SIL.Utils.XmlUtils.GetManditoryAttributeValue(cmd.Parameters[0], "tool");
-			string className = SIL.Utils.XmlUtils.GetManditoryAttributeValue(cmd.Parameters[0], "className");
+			string tool = SIL.Utils.XmlUtils.GetMandatoryAttributeValue(cmd.Parameters[0], "tool");
+			string className = SIL.Utils.XmlUtils.GetMandatoryAttributeValue(cmd.Parameters[0], "className");
 
 			// The menu item CmdPOSJumpToDefault is used in the Sandbox for jumping to morpheme POS,
 			// and we don't want it to show up if we don't have a morpheme. But, although we don't
@@ -4508,8 +4508,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 #if RANDYTODO
 			XCore.Command cmd = (XCore.Command)commandObject;
-			string tool = SIL.Utils.XmlUtils.GetManditoryAttributeValue(cmd.Parameters[0], "tool");
-			string className = SIL.Utils.XmlUtils.GetManditoryAttributeValue(cmd.Parameters[0], "className");
+			string tool = SIL.Utils.XmlUtils.GetMandatoryAttributeValue(cmd.Parameters[0], "tool");
+			string className = SIL.Utils.XmlUtils.GetMandatoryAttributeValue(cmd.Parameters[0], "className");
 			string concordOn = SIL.Utils.XmlUtils.GetOptionalAttributeValue(cmd.Parameters[0], "concordOn", "");
 
 			if (CurrentAnalysisTree.Analysis != null)

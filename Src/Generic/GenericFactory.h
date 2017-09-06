@@ -138,7 +138,7 @@ protected:
 	static void UnregisterFactoryNode(GenericFactory * pfact);
 
 private:
-#if WIN32
+#if defined(_WIN32) || defined(_M_X64)
 	HKEY GetClassesRoot(RegKey& baseKey);
 #endif
 

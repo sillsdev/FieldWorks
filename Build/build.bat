@@ -42,4 +42,5 @@ REM allow typelib registration in redirected registry key even with limited perm
 set OAPERUSERTLIBREG=1
 
 msbuild /t:refreshTargets
+msbuild /t:CheckDevelopmentPropertiesFile
 msbuild %*

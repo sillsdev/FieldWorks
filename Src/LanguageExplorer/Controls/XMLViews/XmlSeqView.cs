@@ -320,7 +320,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			if (!String.IsNullOrEmpty(sProp))
 				sLayout = PropertyTable.GetValue<string>(sProp);
 			if (String.IsNullOrEmpty(sLayout))
-				sLayout = XmlUtils.GetManditoryAttributeValue(m_specElement, "layout");
+				sLayout = XmlUtils.GetMandatoryAttributeValue(m_specElement, "layout");
 			ISilDataAccess sda = GetSda();
 			m_xmlVc = new XmlVc(sLayout, fEditable, this, m_app,
 				m_fShowFailingItems ? null : ItemDisplayCondition, sda) {IdentifySource = true};

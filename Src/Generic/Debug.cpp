@@ -32,10 +32,10 @@ void WINAPI WarnProcLocal(const char * pszExp, const char * pszFile, int nLine,
 
 void WINAPI WarnHrProc(HRESULT hr, const char * pszFile, int nLine, bool fCritical)
 {
-#if WIN32
+#if defined(_WIN32) || defined(_M_X64)
 	char szBuffer[MAX_PATH + 25];
 	sprintf_s(szBuffer, sizeof(szBuffer), "HRESULT[0x%08x]--", hr);
-	int cch = strlen(szBuffer);
+	int cch = (int)strlen(szBuffer);
 	FormatMessageA(FORMAT_MESSAGE_FROM_SYSTEM, NULL, hr, 0, szBuffer + cch,
 		sizeof(szBuffer) - cch, NULL);
 	szBuffer[max(strlen(szBuffer) - 2, 0)] = 0;
@@ -43,7 +43,7 @@ void WINAPI WarnHrProc(HRESULT hr, const char * pszFile, int nLine, bool fCritic
 #endif
 }
 
-#if WIN32
+#if defined(_WIN32) || defined(_M_X64)
 OLECHAR * DebugWatch::WatchNV()
 {
 	// JT: we need this, otherwise if dealing with a deleted object or null pointer

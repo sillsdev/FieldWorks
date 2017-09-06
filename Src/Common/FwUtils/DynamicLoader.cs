@@ -42,10 +42,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 			var configuration = parentConfigNode.Element("dynamicloaderinfo");
 			if (configuration == null)
 				return null;
-			string assemblyPath = XmlUtils.GetManditoryAttributeValue(configuration, "assemblyPath");
+			string assemblyPath = XmlUtils.GetMandatoryAttributeValue(configuration, "assemblyPath");
 			if (assemblyPath == "null")
 				return null;
-			string className = XmlUtils.GetManditoryAttributeValue(configuration, "class");
+			string className = XmlUtils.GetMandatoryAttributeValue(configuration, "class");
 			Assembly assembly;
 			GetAssembly(assemblyPath, out assembly);
 			return assembly.GetType(className.Trim());
@@ -78,8 +78,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 					Dictionary<string, string> argDict = new Dictionary<string, string>();
 					foreach (XmlNode argNode in argNodes)
 					{
-						string argName = XmlUtils.GetManditoryAttributeValue(argNode, "name");
-						string argVal = XmlUtils.GetManditoryAttributeValue(argNode, "value");
+						string argName = XmlUtils.GetMandatoryAttributeValue(argNode, "name");
+						string argVal = XmlUtils.GetMandatoryAttributeValue(argNode, "value");
 						argDict.Add(argName, argVal);
 					}
 					string argValue;
@@ -105,12 +105,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <returns></returns>
 		public static object CreateObject(XElement configuration, params object[] args)
 		{
-			var assemblyPath = XmlUtils.GetManditoryAttributeValue(configuration, "assemblyPath");
+			var assemblyPath = XmlUtils.GetMandatoryAttributeValue(configuration, "assemblyPath");
 			// JohnT: see AddAssemblyPathInfo. We use this when the object we're trying to persist
 			// as a child of another object is null.
 			if (assemblyPath == "null")
 				return null;
-			var className = XmlUtils.GetManditoryAttributeValue(configuration, "class");
+			var className = XmlUtils.GetMandatoryAttributeValue(configuration, "class");
 			return CreateObject(assemblyPath, className, args);
 		}
 
@@ -122,12 +122,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <returns></returns>
 		public static object CreateObject(XmlNode configuration, params object[] args)
 		{
-			string  assemblyPath = XmlUtils.GetManditoryAttributeValue(configuration, "assemblyPath");
+			string  assemblyPath = XmlUtils.GetMandatoryAttributeValue(configuration, "assemblyPath");
 			// JohnT: see AddAssemblyPathInfo. We use this when the object we're trying to persist
 			// as a child of another object is null.
 			if (assemblyPath == "null")
 				return null;
-			string className = XmlUtils.GetManditoryAttributeValue(configuration, "class");
+			string className = XmlUtils.GetMandatoryAttributeValue(configuration, "class");
 			return CreateObject(assemblyPath, className, args);
 		}
 		/// <summary>

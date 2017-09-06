@@ -40,17 +40,17 @@ namespace LanguageExplorer.MGA
 			m_citations = new List<MasterItemCitation>();
 
 			XmlNode nd = node.SelectSingleNode("abbrev");
-			m_abbrevWs = XmlUtils.GetManditoryAttributeValue(nd, "ws");
+			m_abbrevWs = XmlUtils.GetMandatoryAttributeValue(nd, "ws");
 			m_abbrev = nd.InnerText;
 
 			nd = node.SelectSingleNode("term");
-			m_termWs = XmlUtils.GetManditoryAttributeValue(nd, "ws");
+			m_termWs = XmlUtils.GetMandatoryAttributeValue(nd, "ws");
 			m_term = nd.InnerText;
 
 			nd = node.SelectSingleNode("def");
 			if (nd != null)
 			{
-				m_defWs = XmlUtils.GetManditoryAttributeValue(nd, "ws");
+				m_defWs = XmlUtils.GetMandatoryAttributeValue(nd, "ws");
 				m_def = nd.InnerText;
 			}
 

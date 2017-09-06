@@ -14,7 +14,7 @@ Description:
 #ifndef ROMRENDERSEGMENT_INCLUDED
 #define ROMRENDERSEGMENT_INCLUDED
 
-#ifdef WIN32
+#if defined(WIN32) || defined(WIN64)
 ATTACH_GUID_TO_CLASS(class, A124E0C1-DD4B-11d2-8078-0000C0FB81B5, RomRenderSegment);
 #endif
 

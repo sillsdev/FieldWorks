@@ -113,7 +113,7 @@ namespace LanguageExplorerTests.Works
 				"publicationB"
 			};
 
-			_controller = new DictionaryConfigurationManagerController(Cache, _configurations, publications, _projectConfigPath, _defaultConfigPath);
+			_controller = new DictionaryConfigurationManagerController(Cache, null, _configurations, publications, _projectConfigPath, _defaultConfigPath);
 		}
 
 		[TearDown]
@@ -439,7 +439,7 @@ namespace LanguageExplorerTests.Works
 		{
 			var defaultReversalPath = Path.Combine(FwDirectoryFinder.DefaultConfigurations, "ReversalIndex");
 			// construct a controller to work in the default reversal directory
-			_controller = new DictionaryConfigurationManagerController(Cache, _configurations, new List<string>(), _projectConfigPath, defaultReversalPath);
+			_controller = new DictionaryConfigurationManagerController(Cache, null, _configurations, new List<string>(), _projectConfigPath, defaultReversalPath);
 			var allRevFileName = DictionaryConfigurationModel.AllReversalIndexesFilenameBase + DictionaryConfigurationModel.FileExtension;
 			var shippedRootDefaultConfigurationPath = Path.Combine(defaultReversalPath, allRevFileName);
 			FileUtils.WriteStringtoFile(shippedRootDefaultConfigurationPath, "bogus data that is unread, the file is read from the real defaults", Encoding.UTF8);

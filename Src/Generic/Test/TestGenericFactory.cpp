@@ -114,7 +114,7 @@ int main(int argc, char** argv)
 {
 	try
 	{
-#ifdef WIN32
+#if defined(WIN32) || defined(WIN64)
 		DllMain(0, DLL_PROCESS_ATTACH, 0);
 #endif
 
@@ -127,7 +127,7 @@ int main(int argc, char** argv)
 		pFact->Release();
 		pTest->Release();
 
-#ifdef WIN32
+#if defined(WIN32) || defined(WIN64)
 		return DllMain(0, DLL_PROCESS_DETACH, 0) ? 0 : 1;
 #else
 		return 0;

@@ -355,10 +355,10 @@ namespace LanguageExplorer.Controls.XMLViews
 			var result = new List<XElement>(selectNodes.Count);
 			foreach(var node in selectNodes)
 			{
-				var attVal = XmlUtils.GetManditoryAttributeValue(node, attName);
+				var attVal = XmlUtils.GetMandatoryAttributeValue(node, attName);
 				foreach(var node1 in sourceNodes)
 				{
-					if (XmlUtils.GetManditoryAttributeValue(node1, attName) == attVal)
+					if (XmlUtils.GetMandatoryAttributeValue(node1, attName) == attVal)
 					{
 						result.Add(node1);
 						break;
@@ -412,7 +412,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			case "obj":
 			{
 				var clsid = sda.get_IntProp(hvo, CmObjectTags.kflidClass);
-				var flid = mdc.GetFieldId2(clsid, XmlUtils.GetManditoryAttributeValue(node, "field"), true);
+				var flid = mdc.GetFieldId2(clsid, XmlUtils.GetMandatoryAttributeValue(node, "field"), true);
 				var hvoDst = sda.get_ObjectProp(hvo, flid);
 				if (hvoDst == 0)
 				{
@@ -437,7 +437,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				// very like "obj" except for the loop. How could we capture this?
 				int clsid = sda.get_IntProp(hvo, CmObjectTags.kflidClass);
-				int flid = mdc.GetFieldId2(clsid, XmlUtils.GetManditoryAttributeValue(node, "field"), true);
+				int flid = mdc.GetFieldId2(clsid, XmlUtils.GetMandatoryAttributeValue(node, "field"), true);
 				int chvo = sda.get_VecSize(hvo, flid);
 				if (chvo == 0)
 				{
@@ -634,7 +634,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		static int GetFlid(ISilDataAccess sda, XElement frag, int hvo)
 		{
 			string stClassName = XmlUtils.GetOptionalAttributeValue(frag,"class");
-			string stFieldName = XmlUtils.GetManditoryAttributeValue(frag,"field");
+			string stFieldName = XmlUtils.GetMandatoryAttributeValue(frag,"field");
 			if (string.IsNullOrEmpty(stClassName))
 			{
 				int clid = sda.get_IntProp(hvo, CmObjectTags.kflidClass);
@@ -956,7 +956,7 @@ namespace LanguageExplorer.Controls.XMLViews
 						DateTime dt = SilTime.GetTimeProperty(sda, hvo, flid);
 						return new[] {DateTimeCompString(dt)};
 					}
-					var stFieldName = XmlUtils.GetManditoryAttributeValue(layout, "field");
+					var stFieldName = XmlUtils.GetMandatoryAttributeValue(layout, "field");
 						throw new Exception("Bad field type (" + stFieldName + " for hvo " + hvo + " found for " +
 						layout.Name + "  property " + flid + " in " + layout);
 				}
@@ -1118,7 +1118,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				}
 
 				int clsid = sda.get_IntProp(bvi.PathObject(depth), CmObjectTags.kflidClass);
-				int flid = mdc.GetFieldId2(clsid, XmlUtils.GetManditoryAttributeValue(node, "field"), true);
+				int flid = mdc.GetFieldId2(clsid, XmlUtils.GetMandatoryAttributeValue(node, "field"), true);
 				if (flid != bvi.PathFlid(depth))
 					return new NodeDisplayCommand(node); // different field, can't dig deeper.
 				int hvoDst = bvi.PathObject(depth + 1);

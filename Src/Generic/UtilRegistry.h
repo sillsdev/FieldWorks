@@ -15,7 +15,7 @@ Description:
 #define UTILREGISTRY_H 1
 
 
-#if WIN32
+#if defined(_WIN32) || defined(_M_X64)
 int DeleteSubKey(HKEY hk, const achar *psz);
 
 

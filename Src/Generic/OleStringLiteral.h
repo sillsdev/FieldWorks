@@ -52,7 +52,7 @@ Last reviewed:
 class OleStringLiteral
 {
 public:
-#if WIN32
+#if defined(_WIN32) || defined(_M_X64)
 	typedef wchar_t uchar_t;
 #else
 	typedef unsigned short uchar_t;
@@ -78,7 +78,7 @@ public:
 	{
 		return original();
 	}
-#if !WIN32
+#if !defined(_WIN32) && !defined(_M_X64)
 	operator const uchar_t* () const
 	{
 		return copy();

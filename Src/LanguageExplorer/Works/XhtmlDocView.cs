@@ -789,7 +789,7 @@ namespace LanguageExplorer.Works
 			var coreCommand = commandObject as Command;
 			if(coreCommand != null)
 			{
-				var tool = XmlUtils.GetManditoryAttributeValue(coreCommand.Parameters[0], "tool");
+				var tool = XmlUtils.GetMandatoryAttributeValue(coreCommand.Parameters[0], "tool");
 				if(tool != "publicationsEdit")
 					return false;
 

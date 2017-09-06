@@ -334,12 +334,12 @@ VwNotifier::~VwNotifier()
 	{
 		VwPropertyStore * pzvps = *ppzvps;
 		if (pzvps)
-			((VwPropertyStore *)((long) pzvps & ~1))->Release();
-
+			((VwPropertyStore *)((uintptr_t) pzvps & ~1))->Release();
 		IVwViewConstructor * pvvc = *ppvvc;
 		if (pvvc)
-			((IVwViewConstructor *)((long) pvvc & ~1))->Release();
+			((IVwViewConstructor *)((uintptr_t) pvvc & ~1))->Release();
 	}
+
 }
 
 /*----------------------------------------------------------------------------------------------
@@ -3679,7 +3679,7 @@ VwNotifier * VwNotifier::FindChild(PropTag tag, int ipropTag, int ihvoTarget, in
 		{
 			if (cpropTag == ipropTag)
 			{
-				iprop = ptag - Tags();
+				iprop = (int)(ptag - Tags());
 				break;
 			}
 			cpropTag++;

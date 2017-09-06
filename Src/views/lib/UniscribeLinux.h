@@ -12,7 +12,7 @@ Description: A minimal implementation of Uniscribe functions used by the FW unis
 
 #pragma once
 
-#if WIN32
+#if defined(WIN32) || defined(WIN64)
 #error "UniscribeLinux.h should not be included on Windows"
 #endif
 

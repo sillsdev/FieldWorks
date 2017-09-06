@@ -5,7 +5,7 @@
 //
 // Contains the Windows specific methods of the StackDumper class
 // --------------------------------------------------------------------------------------------
-#if defined(WIN32)
+#if defined(_M_X64)
 //:>********************************************************************************************
 //:> Include files
 //:>********************************************************************************************
@@ -80,7 +80,7 @@ void StackDumper::ShowStackCore( HANDLE hThread, CONTEXT& c )
 
 	HANDLE hProcess = GetCurrentProcess();
 	int frameNum; // counts walked frames
-	DWORD offsetFromSymbol; // tells us how far from the symbol we were
+	PDWORD64 offsetFromSymbol; // tells us how far from the symbol we were
 	DWORD symOptions; // symbol handler settings
 	IMAGEHLP_SYMBOL *pSym = (IMAGEHLP_SYMBOL *) malloc( IMGSYMLEN + MAXNAMELEN );
 	IMAGEHLP_MODULE Module;
@@ -154,9 +154,9 @@ void StackDumper::ShowStackCore( HANDLE hThread, CONTEXT& c )
 	// Notes: AddrModeFlat is just an assumption. I hate VDM debugging.
 	// Notes: will have to be #ifdef-ed for Alphas; MIPSes are dead anyway,
 	// and good riddance.
-	s.AddrPC.Offset = c.Eip;
+	s.AddrPC.Offset = c.Rip;
 	s.AddrPC.Mode = AddrModeFlat;
-	s.AddrFrame.Offset = c.Ebp;
+	s.AddrFrame.Offset = c.Rbp;
 	s.AddrFrame.Mode = AddrModeFlat;
 	memset( pSym, '\0', IMGSYMLEN + MAXNAMELEN );
 	pSym->SizeOfStruct = IMGSYMLEN;
@@ -217,7 +217,7 @@ void StackDumper::ShowStackCore( HANDLE hThread, CONTEXT& c )
 			//char undFullName[MAXNAMELEN]; // undecorated name with all shenanigans
 			// show procedure info (SymGetSymFromAddr())
 
-			if (!SymGetSymFromAddr(hProcess, s.AddrPC.Offset, &offsetFromSymbol, pSym))
+			if ( ! SymGetSymFromAddr( hProcess, s.AddrPC.Offset, (PDWORD64)(&offsetFromSymbol), pSym ) )
 			{
 				if ( gle != 487 )
 					m_pstaDump->FormatAppend( "SymGetSymFromAddr(): gle = %u\r\n", gle );

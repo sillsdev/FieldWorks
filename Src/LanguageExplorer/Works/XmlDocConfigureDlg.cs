@@ -965,7 +965,7 @@ namespace LanguageExplorer.Works
 		private void ProcessPartChildForDuplication(string className, XElement xnCaller,
 			XElement xnField, string suffixCode, List<XElement> duplicates)
 		{
-			var sLayoutName = XmlUtils.GetManditoryAttributeValue(xnCaller, "param");
+			var sLayoutName = XmlUtils.GetMandatoryAttributeValue(xnCaller, "param");
 			var fRecurse = XmlUtils.GetOptionalBooleanAttributeValue(xnCaller, "recurseConfig", true);
 			if (!fRecurse)
 			{
@@ -974,7 +974,7 @@ namespace LanguageExplorer.Works
 				// Or because entries have subentries (in root type layouts)...
 				return;
 			}
-			var sField = XmlUtils.GetManditoryAttributeValue(xnField, "field");
+			var sField = XmlUtils.GetMandatoryAttributeValue(xnField, "field");
 			var clidDst = 0;
 			string sClass = null;
 			string sTargetClasses = null;
@@ -1062,7 +1062,7 @@ namespace LanguageExplorer.Works
 			// It is important for at least one caller that the FIRST node added to duplicates is the copy of xnLayout.
 			duplicates.Add(xnLayout);
 			AdjustAttributeValue(xnLayout, "name", suffixCode);
-			var className = XmlUtils.GetManditoryAttributeValue(xnLayout, "class");
+			var className = XmlUtils.GetMandatoryAttributeValue(xnLayout, "class");
 
 			foreach (var partref in xnLayout.Elements())
 			{
@@ -1071,7 +1071,7 @@ namespace LanguageExplorer.Works
 					var param = XmlUtils.GetOptionalAttributeValue(partref, "param");
 					if (!String.IsNullOrEmpty(param))
 					{
-						var sRef = XmlUtils.GetManditoryAttributeValue(partref, "ref");
+						var sRef = XmlUtils.GetMandatoryAttributeValue(partref, "ref");
 						var xnPart = m_parts.GetElement("part", new[] {String.Format("{0}-Jt-{1}", className, sRef)});
 						if (xnPart == null)
 						{
@@ -1088,7 +1088,7 @@ namespace LanguageExplorer.Works
 				}
 				else if (partref.Name == "sublayout")
 				{
-					var sublayout = XmlUtils.GetManditoryAttributeValue(partref, "name");
+					var sublayout = XmlUtils.GetMandatoryAttributeValue(partref, "name");
 					var xnSublayout = m_layouts.GetElement("layout", new[] {className, "jtview", sublayout, null});
 					DuplicateLayout(xnSublayout.Clone(), suffixCode, duplicates);
 					AdjustAttributeValue(partref, "name", suffixCode);
@@ -2974,19 +2974,19 @@ namespace LanguageExplorer.Works
 				m_sLabel = StringTable.Table.LocalizeAttributeValue(XmlUtils.GetOptionalAttributeValue(config, "label", null));
 				if (config.Name == "configure")
 				{
-					m_sClassName = XmlUtils.GetManditoryAttributeValue(config, "class");
-					m_sLayoutName = XmlUtils.GetManditoryAttributeValue(config, "layout");
+					m_sClassName = XmlUtils.GetMandatoryAttributeValue(config, "class");
+					m_sLayoutName = XmlUtils.GetMandatoryAttributeValue(config, "layout");
 					m_sPartName = String.Empty;
 					m_sVisibility = "required";
 				}
 				else if (config.Name == "part")
 				{
 					m_sClassName = classParent;
-					string sRef = XmlUtils.GetManditoryAttributeValue(config, "ref");
+					string sRef = XmlUtils.GetMandatoryAttributeValue(config, "ref");
 					if(m_sLabel == null && converter.UseStringTable)
 						m_sLabel = StringTable.Table.LocalizeAttributeValue(sRef);
 					if (config.Parent != null && config.Parent.Name.LocalName == "layout")
-						m_sLayoutName = XmlUtils.GetManditoryAttributeValue(config.Parent, "name");
+						m_sLayoutName = XmlUtils.GetMandatoryAttributeValue(config.Parent, "name");
 					else
 						m_sLayoutName = String.Empty;
 					m_sPartName = String.Format("{0}-Jt-{1}", classParent, sRef);
@@ -3994,10 +3994,10 @@ namespace LanguageExplorer.Works
 					if (m_xnHiddenNode != null)
 					{
 						string sNewName = String.Format("{0}_{1}",
-														XmlUtils.GetManditoryAttributeValue(m_xnParentLayout, "name"),
+														XmlUtils.GetMandatoryAttributeValue(m_xnParentLayout, "name"),
 														m_sDup);
 						string sNewParam = String.Format("{0}_{1}",
-														XmlUtils.GetManditoryAttributeValue(m_xnHiddenNode, "param"),
+														XmlUtils.GetMandatoryAttributeValue(m_xnHiddenNode, "param"),
 														m_sDup);
 						m_xnHiddenNode = m_xnHiddenNode.Clone();
 						UpdateAttribute(m_xnHiddenNode, "dup", m_sDup);
@@ -4286,8 +4286,8 @@ namespace LanguageExplorer.Works
 
 			public LayoutTypeComboItem(XElement xnLayoutType, List<LayoutTreeNode> rgltn)
 			{
-				m_sLabel = XmlUtils.GetManditoryAttributeValue(xnLayoutType, "label");
-				m_sLayout = XmlUtils.GetManditoryAttributeValue(xnLayoutType, "layout");
+				m_sLabel = XmlUtils.GetMandatoryAttributeValue(xnLayoutType, "label");
+				m_sLayout = XmlUtils.GetMandatoryAttributeValue(xnLayoutType, "layout");
 				LayoutTypeNode = xnLayoutType;
 				m_rgltn = rgltn;
 			}
@@ -4412,7 +4412,7 @@ namespace LanguageExplorer.Works
 			{
 				if (xn == null)
 					continue;
-				var sLayout = XmlUtils.GetManditoryAttributeValue(xn, "layout");
+				var sLayout = XmlUtils.GetMandatoryAttributeValue(xn, "layout");
 				mapLayoutToConfigBase.Add(sLayout, xn);
 			}
 			foreach ( var viewSpec in newViewsToCreate)
@@ -4448,9 +4448,9 @@ namespace LanguageExplorer.Works
 			UpdateLayoutName(xnNewConfig, "layout", code);
 			// make sure we copy the top-level node if it isn't directly involved in configuration.
 			var firstChildElement = xnBaseConfig.Elements().First();
-			var className = XmlUtils.GetManditoryAttributeValue(firstChildElement, "class");
-			var layoutNameChild = XmlUtils.GetManditoryAttributeValue(firstChildElement, "layout");
-			var layoutName = XmlUtils.GetManditoryAttributeValue(xnBaseConfig, "layout");
+			var className = XmlUtils.GetMandatoryAttributeValue(firstChildElement, "class");
+			var layoutNameChild = XmlUtils.GetMandatoryAttributeValue(firstChildElement, "layout");
+			var layoutName = XmlUtils.GetMandatoryAttributeValue(xnBaseConfig, "layout");
 			if (layoutName != layoutNameChild)
 			{
 				var xnBaseLayout = m_layouts.GetElement("layout", new[] {className, "jtview", layoutName, null});
@@ -4467,8 +4467,8 @@ namespace LanguageExplorer.Works
 			MakeSuffixLayout(code, layoutName, className);
 			foreach (var xn in xnNewConfig.Elements())
 			{
-				className = XmlUtils.GetManditoryAttributeValue(xn, "class");
-				layoutName = XmlUtils.GetManditoryAttributeValue(xn, "layout");
+				className = XmlUtils.GetMandatoryAttributeValue(xn, "class");
+				layoutName = XmlUtils.GetMandatoryAttributeValue(xn, "layout");
 				CopyAndRenameLayout(className, layoutName, "#" + code);
 				UpdateLayoutName(xn, "layout", code);
 				MakeSuffixLayout(code, layoutName, className);
@@ -4566,8 +4566,8 @@ namespace LanguageExplorer.Works
 
 		private static string GetConfigFilePath(XElement xnConfig, string configDir)
 		{
-			var label = XmlUtils.GetManditoryAttributeValue(xnConfig, "label");
-			var className = XmlUtils.GetManditoryAttributeValue(xnConfig.Elements().First(), "class");
+			var label = XmlUtils.GetMandatoryAttributeValue(xnConfig, "label");
+			var className = XmlUtils.GetMandatoryAttributeValue(xnConfig.Elements().First(), "class");
 			var name = String.Format("{0}_{1}.fwlayout", label, className);
 			return Path.Combine(configDir, name);
 		}
@@ -4656,7 +4656,7 @@ namespace LanguageExplorer.Works
 			{
 				if (ltn == null)
 					continue;
-				var sLayout = XmlUtils.GetManditoryAttributeValue(ltn.LayoutTypeNode, "layout");
+				var sLayout = XmlUtils.GetMandatoryAttributeValue(ltn.LayoutTypeNode, "layout");
 				mapLayoutToConfigBase.Add(sLayout, ltn);
 			}
 			return mapLayoutToConfigBase;

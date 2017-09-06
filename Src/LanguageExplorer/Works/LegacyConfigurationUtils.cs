@@ -29,11 +29,11 @@ namespace LanguageExplorer.Works
 			Debug.Assert(layoutTypes.Count > 0);
 			var xnConfig = layoutTypes[0].Element("configure");
 			Debug.Assert(xnConfig != null);
-			var configClass = XmlUtils.GetManditoryAttributeValue(xnConfig, "class");
+			var configClass = XmlUtils.GetMandatoryAttributeValue(xnConfig, "class");
 			foreach (var xn in converter.GetLayoutTypes())
 			{
 				var xnConfigure = xn.Element("configure");
-				if (XmlUtils.GetManditoryAttributeValue(xnConfigure, "class") == configClass)
+				if (XmlUtils.GetMandatoryAttributeValue(xnConfigure, "class") == configClass)
 				{
 					layoutTypes.Add(xn);
 				}
@@ -152,7 +152,7 @@ namespace LanguageExplorer.Works
 		internal static void AddChildNodes(XElement layout, XmlDocConfigureDlg.LayoutTreeNode ltnParent, int iStart, ILayoutConverter converter)
 		{
 			bool fMerging = iStart < ltnParent.Nodes.Count;
-			string className = XmlUtils.GetManditoryAttributeValue(layout, "class");
+			string className = XmlUtils.GetMandatoryAttributeValue(layout, "class");
 			var nodes = PartGenerator.GetGeneratedChildren(layout, converter.Cache,
 																						new[] { "ref", "label" });
 			foreach (var node in nodes)
@@ -180,7 +180,7 @@ namespace LanguageExplorer.Works
 					var ltnOld = FindMatchingNode(ltnParent, node);
 					if (ltnOld != null)
 						continue;
-					var sRef = XmlUtils.GetManditoryAttributeValue(node, "ref");
+					var sRef = XmlUtils.GetMandatoryAttributeValue(node, "ref");
 					var part = converter.GetPartElement(className, sRef);
 					if (part == null && sRef != "$child")
 						continue;
@@ -264,7 +264,7 @@ namespace LanguageExplorer.Works
 
 		private static void StoreChildNodeInfo(XElement xn, string className, XmlDocConfigureDlg.LayoutTreeNode ltn, ILayoutConverter converter)
 		{
-			var sField = XmlUtils.GetManditoryAttributeValue(xn, "field");
+			var sField = XmlUtils.GetMandatoryAttributeValue(xn, "field");
 			var xnCaller = converter.LayoutLevels.PartRef;
 			if (xnCaller == null)
 				xnCaller = ltn.Configuration;

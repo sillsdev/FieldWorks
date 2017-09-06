@@ -60,7 +60,7 @@ public:
 	STDMETHOD(Stat)(STATSTG * pstatstg, DWORD grfStatFlag);
 	STDMETHOD(Clone)(IStream ** ppstm);
 
-#if !WIN32
+#if !defined(_WIN32) && !defined(_M_X64)
 	void time_tToFiletime(time_t intime, FILETIME* outtime);
 #endif
 
@@ -69,7 +69,7 @@ public:
 protected:
 	//:> Member variables.
 	int m_cref;
-#if WIN32
+#if defined(_WIN32) || defined(_M_X64)
 	ULARGE_INTEGER m_ibFilePos;
 	HANDLE m_hfile;
 	// Smart pointer to the original (base) IStream object. This member is NULL in

@@ -466,7 +466,7 @@ namespace LanguageExplorer.Works
 			if (!String.IsNullOrEmpty(sProp))
 				sLayout = propertyTable.GetValue<string>(sProp);
 			if (String.IsNullOrEmpty(sLayout))
-				sLayout = XmlUtils.GetManditoryAttributeValue(xnSpec, "layout");
+				sLayout = XmlUtils.GetMandatoryAttributeValue(xnSpec, "layout");
 			var parts = sLayout.Split('#');
 			parts[0] += XmlUtils.GetOptionalAttributeValue(xnSpec, "layoutSuffix", "");
 			return string.Join("#", parts);

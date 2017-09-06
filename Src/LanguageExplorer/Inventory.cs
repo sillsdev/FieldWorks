@@ -313,7 +313,7 @@ namespace LanguageExplorer
 				{
 					foreach (var node in nodes.OfType<XElement>())
 					{
-						var layoutNode = XmlUtils.GetManditoryAttributeValue(node, "layout");
+						var layoutNode = XmlUtils.GetMandatoryAttributeValue(node, "layout");
 						if (layoutNode.EndsWith(tag))
 						{
 							layoutType = node;
@@ -322,14 +322,14 @@ namespace LanguageExplorer
 					}
 					if (layoutType != null)
 					{
-						var label = XmlUtils.GetManditoryAttributeValue(layoutType, "label");
+						var label = XmlUtils.GetMandatoryAttributeValue(layoutType, "label");
 						var className = XmlUtils.GetOptionalAttributeValue(layoutType.Elements().First(), "class");
 						name = String.Format("{0}_{1}", label, className);
 					}
 				}
 			}
 			if (String.IsNullOrEmpty(name))
-				name = XmlUtils.GetManditoryAttributeValue(element, keyAttrs[0]);
+				name = XmlUtils.GetMandatoryAttributeValue(element, keyAttrs[0]);
 			string sDatabase = String.IsNullOrEmpty(m_sDatabase) ? "default$$" : "";
 			string fileName = sDatabase + name + m_filePattern.Substring(1); // strip off leading *
 			string path = Path.Combine(UserOverrideConfigurationSettingsPath, fileName);
@@ -380,7 +380,7 @@ namespace LanguageExplorer
 					// Remove any matching layoutType
 					if (layoutType != null)
 					{
-						var layout = XmlUtils.GetManditoryAttributeValue(layoutType, "layout");
+						var layout = XmlUtils.GetMandatoryAttributeValue(layoutType, "layout");
 						foreach (var child in parent.Elements())
 						{
 							if (child.Name != layoutType.Name)
@@ -433,11 +433,11 @@ namespace LanguageExplorer
 			var root = m_mainDoc.Root;
 			Debug.Assert(root != null);
 
-			var layoutName = XmlUtils.GetManditoryAttributeValue(layoutType, "layout");
+			var layoutName = XmlUtils.GetMandatoryAttributeValue(layoutType, "layout");
 			var nodes = root.Elements("layoutType");
 			foreach (var xn in nodes)
 				{
-					var layoutOld = XmlUtils.GetManditoryAttributeValue(xn, "layout");
+					var layoutOld = XmlUtils.GetMandatoryAttributeValue(xn, "layout");
 					if (layoutOld == layoutName)
 					{
 					xn.ReplaceWith(layoutType);
@@ -612,7 +612,7 @@ namespace LanguageExplorer
 		/// </summary>
 		private XElement ApplyAlteration(string elementName, string[] attrvals, XElement alteration)
 		{
-			string baseName = XmlUtils.GetManditoryAttributeValue(alteration, "base");
+			string baseName = XmlUtils.GetMandatoryAttributeValue(alteration, "base");
 			string[] baseKey = (string[])attrvals.Clone();
 			int cKeys = baseKey.Length;
 			baseKey[cKeys - 1] = baseName;
@@ -904,7 +904,7 @@ namespace LanguageExplorer
 			if (alteration == null)
 				return null;
 			var keyBase = (string[])attrvals.Clone();
-			keyBase[keyBase.Length - 1] = XmlUtils.GetManditoryAttributeValue(alteration, "base");
+			keyBase[keyBase.Length - 1] = XmlUtils.GetMandatoryAttributeValue(alteration, "base");
 			// if the alteration is an override (key = id), the base node is saved in m_baseDoc,
 			// otherwise it is just in the normal main document.
 			var keyAttrs = m_keyAttrs[elementName];
@@ -1226,7 +1226,7 @@ namespace LanguageExplorer
 		private void NoteIfNodeWsTagged(XElement node)
 		{
 			if (node.Name == "layout" &&
-				XmlUtils.GetManditoryAttributeValue(node, "type") == "jtview" &&
+				XmlUtils.GetMandatoryAttributeValue(node, "type") == "jtview" &&
 				XmlUtils.GetOptionalBooleanAttributeValue(node, "tagForWs", false))
 			{
 				m_wsTaggedNodes.Add(node);
@@ -1246,10 +1246,10 @@ namespace LanguageExplorer
 
 			foreach (var xn in m_wsTaggedNodes)
 			{
-				var sName = XmlUtils.GetManditoryAttributeValue(xn, "name");
+				var sName = XmlUtils.GetMandatoryAttributeValue(xn, "name");
 				var sWsName = String.Format("{0}-{1}", sName, sWsTag);
-				var sClass = XmlUtils.GetManditoryAttributeValue(xn, "class");
-				var sType = XmlUtils.GetManditoryAttributeValue(xn, "type");
+				var sClass = XmlUtils.GetMandatoryAttributeValue(xn, "class");
+				var sType = XmlUtils.GetMandatoryAttributeValue(xn, "type");
 				Debug.Assert(xn.Name == "layout" && sType == "jtview" &&
 					XmlUtils.GetOptionalBooleanAttributeValue(xn, "tagForWs", false));
 				var layout = GetElement("layout", new[] { sClass, sType, sWsName, null });
@@ -1261,7 +1261,7 @@ namespace LanguageExplorer
 				{
 					if (xnChild.Name == "sublayout")
 					{
-						var sSubName = XmlUtils.GetManditoryAttributeValue(xnChild, "name");
+						var sSubName = XmlUtils.GetMandatoryAttributeValue(xnChild, "name");
 						xnChild.Attribute("name").Value = string.Format("{0}-{1}", sSubName, sWsTag);
 					}
 					else if (xnChild.Name == "part")
@@ -1290,7 +1290,7 @@ namespace LanguageExplorer
 			string baseName = XmlUtils.GetOptionalAttributeValue(node, "base");
 			if (baseName != null)
 			{
-				string id = XmlUtils.GetManditoryAttributeValue(node, keyAttrs[keyAttrs.Length - 1]);
+				string id = XmlUtils.GetMandatoryAttributeValue(node, keyAttrs[keyAttrs.Length - 1]);
 				if (id == baseName)
 				{
 					// it is an override.

@@ -567,7 +567,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			var cols = new string[2];
 			var label = StringTable.Table.LocalizeAttributeValue(XmlUtils.GetOptionalAttributeValue(node, "label", null));
 			if (label == null)
-				label = XmlUtils.GetManditoryAttributeValue(node, "label");
+				label = XmlUtils.GetMandatoryAttributeValue(node, "label");
 			cols[0] = label;
 			var wsParam = XmlViewsUtils.FindWsParam(node);
 			var dispCategory = TranslateWsParamToLocalizedDisplayCategory(wsParam);
@@ -1122,7 +1122,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			if (label == null)
 				label = StringTable.Table.LocalizeAttributeValue(XmlUtils.GetOptionalAttributeValue(CurrentSpecs[columnIndex], "label", null));
 			if (label == null)
-				label = XmlUtils.GetManditoryAttributeValue(CurrentSpecs[columnIndex], "label");
+				label = XmlUtils.GetMandatoryAttributeValue(CurrentSpecs[columnIndex], "label");
 			return label;
 		}
 
@@ -1439,7 +1439,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			GenerateColumnLabel(replacement, m_cache);
 
 			var xa = replacement.Attribute("label");
-			xa.Value = XmlUtils.GetManditoryAttributeValue(replacement, "label");
+			xa.Value = XmlUtils.GetMandatoryAttributeValue(replacement, "label");
 			var listItem = MakeCurrentItem(replacement);
 			if (listItem == null) // The user deleted this ws and there was already one with the default ws.
 			{
@@ -1477,7 +1477,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				// generate a label if it is changed again: we know both the original label
 				// (to possibly append an abbreviation to) and the original writing system (so
 				// we know whether to mark it at all).
-				originalLabel = XmlUtils.GetManditoryAttributeValue(colSpec, "label");
+				originalLabel = XmlUtils.GetMandatoryAttributeValue(colSpec, "label");
 				XmlUtils.SetAttribute(colSpec, "originalLabel", originalLabel);
 			}
 
@@ -1529,10 +1529,10 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				string xVal = StringTable.Table.LocalizeAttributeValue(XmlUtils.GetOptionalAttributeValue(x, "label", null));
 				if (xVal == null)
-					xVal = XmlUtils.GetManditoryAttributeValue(x, "label");
+					xVal = XmlUtils.GetMandatoryAttributeValue(x, "label");
 				string yVal = StringTable.Table.LocalizeAttributeValue(XmlUtils.GetOptionalAttributeValue(y, "label", null));
 				if (yVal == null)
-					yVal = XmlUtils.GetManditoryAttributeValue(y, "label");
+					yVal = XmlUtils.GetMandatoryAttributeValue(y, "label");
 				return xVal.CompareTo(yVal);
 			}
 
@@ -1558,7 +1558,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		public override string ToString()
 		{
-			return XmlUtils.GetManditoryAttributeValue(m_item, "label");
+			return XmlUtils.GetMandatoryAttributeValue(m_item, "label");
 		}
 
 	}

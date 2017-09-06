@@ -314,7 +314,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 			CheckDisposed();
 
 			Command command = (XCore.Command)commandObject;
-			string tool = XmlUtils.GetManditoryAttributeValue(command.Parameters[0], "tool");
+			string tool = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "tool");
 			var inflMsa = m_obj as IMoInflAffMsa;
 			var commands = new List<string>
 										{

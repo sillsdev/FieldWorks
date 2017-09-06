@@ -100,7 +100,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		void SetRefs()
 		{
-			var fieldName = XmlUtils.GetManditoryAttributeValue(m_configurationNode, "field");
+			var fieldName = XmlUtils.GetMandatoryAttributeValue(m_configurationNode, "field");
 			var refs = ReflectionHelper.GetProperty(m_obj, fieldName);
 			var refsInts = refs as IEnumerable<int>;
 			if (refsInts != null)

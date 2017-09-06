@@ -494,10 +494,10 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 
 		private string ApplyTransform(string inputFile, XElement transformElement, ProgressDialogWorkingOn dlg)
 		{
-			var progressPrompt = XmlUtils.GetManditoryAttributeValue(transformElement, "progressPrompt");
+			var progressPrompt = XmlUtils.GetMandatoryAttributeValue(transformElement, "progressPrompt");
 			UpdateProgress(progressPrompt, dlg);
-			var stylesheetName = XmlUtils.GetManditoryAttributeValue(transformElement, "stylesheetName");
-			var stylesheetAssembly = XmlUtils.GetManditoryAttributeValue(transformElement, "stylesheetAssembly");
+			var stylesheetName = XmlUtils.GetMandatoryAttributeValue(transformElement, "stylesheetName");
+			var stylesheetAssembly = XmlUtils.GetMandatoryAttributeValue(transformElement, "stylesheetAssembly");
 			var outputFile = Path.Combine(m_outputDirectory, Cache.ProjectId.Name + stylesheetName + "Result." + GetExtensionFromNode(transformElement));
 
 			var argumentList = CreateParameterList(transformElement);
@@ -580,8 +580,8 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 			var parameterList = new XsltArgumentList();
 			foreach (var paramElement in element.Elements("param"))
 			{
-				var name = XmlUtils.GetManditoryAttributeValue(paramElement, "name");
-				var value = XmlUtils.GetManditoryAttributeValue(paramElement, "value");
+				var name = XmlUtils.GetMandatoryAttributeValue(paramElement, "name");
+				var value = XmlUtils.GetMandatoryAttributeValue(paramElement, "value");
 				if (value == "TransformDirectory")
 				{
 					value = TransformPath.Replace("\\", "/");
@@ -598,7 +598,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 
 		private static string GetExtensionFromNode(XElement element)
 		{
-			return XmlUtils.GetManditoryAttributeValue(element, "ext");
+			return XmlUtils.GetMandatoryAttributeValue(element, "ext");
 		}
 
 		private static void UpdateProgress(string sMessage, ProgressDialogWorkingOn dlg)

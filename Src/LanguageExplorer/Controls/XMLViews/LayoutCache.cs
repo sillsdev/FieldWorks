@@ -349,7 +349,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			var targetClassName = m_cache.DomainDataByFlid.MetaDataCache.GetClassName(targetClsId);
 			var classNode = m_classOwnershipTree.Descendants(targetClassName).First();
-			var flidName = XmlUtils.GetManditoryAttributeValue(classNode, "sourceField");
+			var flidName = XmlUtils.GetMandatoryAttributeValue(classNode, "sourceField");
 			if (targetFieldId != 0)
 			{
 				var altSourceField = XmlUtils.GetOptionalAttributeValue(classNode, "altSourceField");

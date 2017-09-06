@@ -111,7 +111,7 @@ namespace LanguageExplorer.Controls
 			}
 			set
 			{
-				m_browser.LoadHtml(value);
+				m_browser.LoadHtml(value, null);
 			}
 		}
 

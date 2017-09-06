@@ -560,7 +560,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					else
 					{
 						// we still need to know what listItemsClass to expect this list to be based on.
-						string listItemsClass = XmlUtils.GetManditoryAttributeValue(m_xnSpec, "listItemsClass");
+						string listItemsClass = XmlUtils.GetMandatoryAttributeValue(m_xnSpec, "listItemsClass");
 						m_listItemsClass = m_cache.MetaDataCacheAccessor.GetClassId(listItemsClass);
 
 					}

@@ -18,7 +18,7 @@ Description:
 
 #define NO_EXCEPTIONS 1
 #include "common.h"
-#ifdef WIN32
+#if defined(WIN32) || defined(WIN64)
 #include <shlobj.h> // for one call to SHGetSpecialFolderPath
 #endif
 
@@ -39,7 +39,7 @@ If you want to show colored boxes around the boxes uncomment the following defin
 #define kchwHardLineBreak (wchar)0x2028
 
 #include "VwResources.h"
-#ifdef WIN32
+#if defined(WIN32) || defined(WIN64)
 #include "..\..\..\Src\AppCore\Res\AfAppRes.h"
 #else
 #include <Res/AfAppRes.h> // from AppCore
@@ -73,7 +73,7 @@ class VwTextSelection;
 class VwTableRowBox;
 class VwTableCellBox;
 class SilDataAccess;
-#ifdef WIN32
+#if defined(WIN32) || defined(WIN64)
 class VwAccessRoot;
 #endif
 class VwSynchronizer;
@@ -156,7 +156,7 @@ typedef ComMultiMap<HVO, VwAbstractNotifier> ObjNoteMap; // Hungarian mmhvoqnote
 // for interfacing with Graphite:
 namespace gr {
 typedef unsigned char utf8;
-#ifdef WIN32
+#if defined(WIN32) || defined(WIN64)
 typedef wchar_t utf16;
 #else
 typedef wchar utf16;
@@ -175,7 +175,7 @@ class GraphiteEngine;
 DEFINE_COM_PTR(GraphiteEngine);
 #include "RomRenderSegment.h"
 #include "RomRenderEngine.h"
-#ifndef WIN32
+#if !defined(_WIN32) && !defined(_M_X64)
 #include "UniscribeLinux.h"
 #endif
 #include "UniscribeSegment.h"
@@ -202,7 +202,7 @@ DEFINE_COM_PTR(GraphiteEngine);
 #include "VwTableBox.h"
 #include "VwLazyBox.h"
 #include "StringToNumHelpers.h"
-#ifdef WIN32
+#if defined(WIN32) || defined(WIN64)
 #include "AfDef.h"
 #include "AfColorTable.h"
 #include "AfGfx.h"
@@ -217,7 +217,7 @@ DEFINE_COM_PTR(GraphiteEngine);
 #include "VwLayoutStream.h"
 #include "VwUndo.h"
 #include "VwInvertedViews.h"
-#ifndef WIN32
+#if !defined(_WIN32) && !defined(_M_X64)
 #include "DisplayCapsInfo.h"
 #endif
 #include "TsString.h"
@@ -227,7 +227,7 @@ DEFINE_COM_PTR(GraphiteEngine);
 #include "TextServ.h"
 #include "StringToNumHelpers.h"
 #include "FwStyledText.h"
-#ifdef WIN32
+#if defined(WIN32) || defined(WIN64)
 // for parsing XML files; in this DLL, we want the parser to work with wide characters,
 // since we always parse BSTRs.
 #define XML_UNICODE_WCHAR_T

@@ -6,6 +6,7 @@ GeneratedAssemblyInfo.cs
 Collection.cpp
 Build/FieldWorks.targets
 Build/GlobalInclude.properties
+Build/LibraryDevelopment.properties
 Build/NuGet.exe
 Build/nunit.framework.dll
 Build/packages.config

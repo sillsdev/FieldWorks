@@ -93,7 +93,7 @@ namespace TestViews
 		void AddString(IVwEnv* pvwenv, OLECHAR * pszText)
 		{
 			ITsStringPtr qtss;
-			m_qtsf->MakeStringRgch(pszText, wcslen(pszText), g_wsEng, &qtss);
+			m_qtsf->MakeStringRgch(pszText, (int)wcslen(pszText), g_wsEng, &qtss);
 			pvwenv->AddString(qtss);
 		}
 		void AddCell(IVwEnv* pvwenv, OLECHAR * pszText)
@@ -417,7 +417,7 @@ namespace TestViews
 		void VerifyOrcData(ITsString * ptss, int ich, const OLECHAR * pszText,
 			const OLECHAR * pszData, OLECHAR chType)
 		{
-			int cchText = wcslen(pszText);
+			int cchText = (int)wcslen(pszText);
 			ITsTextPropsPtr qttpOrc;
 			TsRunInfo tri;
 			ptss->FetchRunInfoAt(ich, &tri, &qttpOrc);
@@ -438,7 +438,7 @@ namespace TestViews
 		void VerifyStyleName(ITsString * ptss, int ich, const OLECHAR * pszText,
 			const OLECHAR * pszExpectedStyleName)
 		{
-			int cchText = wcslen(pszText);
+			int cchText = (int)wcslen(pszText);
 			ITsTextPropsPtr qttpRun;
 			TsRunInfo tri;
 			ptss->FetchRunInfoAt(ich, &tri, &qttpRun);
@@ -458,7 +458,7 @@ namespace TestViews
 		void VerifyExtLink(ITsString * ptss, int ich, const OLECHAR * pszText,
 			const OLECHAR * pszData, const OLECHAR * pszExpectedStyleName)
 		{
-			int cchText = wcslen(pszText);
+			int cchText = (int)wcslen(pszText);
 			ITsTextPropsPtr qttpRun;
 			TsRunInfo tri;
 			ptss->FetchRunInfoAt(ich, &tri, &qttpRun);
@@ -722,47 +722,47 @@ namespace TestViews
 			// Start, mid, end, with crlf at end of input.
 			DoPasteTest(pszInput, pszPaste1, 0, OleStringLiteral(L"This is the pasted TextThis is the input text"));
 			DoPasteTest(pszInput, pszPaste1, 4, OleStringLiteral(L"ThisThis is the pasted Text is the input text"));
-			DoPasteTest(pszInput, pszPaste1, wcslen(pszInput), OleStringLiteral(L"This is the input textThis is the pasted Text"));
+			DoPasteTest(pszInput, pszPaste1, (int)wcslen(pszInput), OleStringLiteral(L"This is the input textThis is the pasted Text"));
 
 			// Same with just cr
 			OLECHAR * pszPaste2 = OleStringLiteral(L"This is the pasted Text\r");
 			DoPasteTest(pszInput, pszPaste2, 0, OleStringLiteral(L"This is the pasted TextThis is the input text"));
 			DoPasteTest(pszInput, pszPaste2, 4, OleStringLiteral(L"ThisThis is the pasted Text is the input text"));
-			DoPasteTest(pszInput, pszPaste2, wcslen(pszInput), OleStringLiteral(L"This is the input textThis is the pasted Text"));
+			DoPasteTest(pszInput, pszPaste2, (int)wcslen(pszInput), OleStringLiteral(L"This is the input textThis is the pasted Text"));
 
 			// And with linefeed
 			OLECHAR * pszPaste3 = OleStringLiteral(L"This is the pasted Text\n");
 			DoPasteTest(pszInput, pszPaste3, 0, OleStringLiteral(L"This is the pasted TextThis is the input text"));
 			DoPasteTest(pszInput, pszPaste3, 4, OleStringLiteral(L"ThisThis is the pasted Text is the input text"));
-			DoPasteTest(pszInput, pszPaste3, wcslen(pszInput), OleStringLiteral(L"This is the input textThis is the pasted Text"));
+			DoPasteTest(pszInput, pszPaste3, (int)wcslen(pszInput), OleStringLiteral(L"This is the input textThis is the pasted Text"));
 
 			// Similar sequence, with newline in middle of pasted text. It gets turned into a space, so we get the exact same answers.
 			OLECHAR * pszPaste4 = OleStringLiteral(L"This is the\r\npasted Text");
 			DoPasteTest(pszInput, pszPaste4, 0, OleStringLiteral(L"This is the pasted TextThis is the input text"));
 			DoPasteTest(pszInput, pszPaste4, 4, OleStringLiteral(L"ThisThis is the pasted Text is the input text"));
-			DoPasteTest(pszInput, pszPaste4, wcslen(pszInput), OleStringLiteral(L"This is the input textThis is the pasted Text"));
+			DoPasteTest(pszInput, pszPaste4, (int)wcslen(pszInput), OleStringLiteral(L"This is the input textThis is the pasted Text"));
 			OLECHAR * pszPaste5 = OleStringLiteral(L"This is the\rpasted Text");
 			DoPasteTest(pszInput, pszPaste5, 0, OleStringLiteral(L"This is the pasted TextThis is the input text"));
 			DoPasteTest(pszInput, pszPaste5, 4, OleStringLiteral(L"ThisThis is the pasted Text is the input text"));
-			DoPasteTest(pszInput, pszPaste5, wcslen(pszInput), OleStringLiteral(L"This is the input textThis is the pasted Text"));
+			DoPasteTest(pszInput, pszPaste5, (int)wcslen(pszInput), OleStringLiteral(L"This is the input textThis is the pasted Text"));
 			OLECHAR * pszPaste6 = OleStringLiteral(L"This is the\npasted Text");
 			DoPasteTest(pszInput, pszPaste6, 0, OleStringLiteral(L"This is the pasted TextThis is the input text"));
 			DoPasteTest(pszInput, pszPaste6, 4, OleStringLiteral(L"ThisThis is the pasted Text is the input text"));
-			DoPasteTest(pszInput, pszPaste6, wcslen(pszInput), OleStringLiteral(L"This is the input textThis is the pasted Text"));
+			DoPasteTest(pszInput, pszPaste6, (int)wcslen(pszInput), OleStringLiteral(L"This is the input textThis is the pasted Text"));
 
 			// Similar sequence, with newline at start of pasted text. It gets turned into a space, so we get an extra space.
 			OLECHAR * pszPaste7 = OleStringLiteral(L"\r\nThis is the pasted Text");
 			DoPasteTest(pszInput, pszPaste7, 0, OleStringLiteral(L" This is the pasted TextThis is the input text"));
 			DoPasteTest(pszInput, pszPaste7, 4, OleStringLiteral(L"This This is the pasted Text is the input text"));
-			DoPasteTest(pszInput, pszPaste7, wcslen(pszInput), OleStringLiteral(L"This is the input text This is the pasted Text"));
+			DoPasteTest(pszInput, pszPaste7, (int)wcslen(pszInput), OleStringLiteral(L"This is the input text This is the pasted Text"));
 			OLECHAR * pszPaste8 = OleStringLiteral(L"\rThis is the pasted Text");
 			DoPasteTest(pszInput, pszPaste8, 0, OleStringLiteral(L" This is the pasted TextThis is the input text"));
 			DoPasteTest(pszInput, pszPaste8, 4, OleStringLiteral(L"This This is the pasted Text is the input text"));
-			DoPasteTest(pszInput, pszPaste8, wcslen(pszInput), OleStringLiteral(L"This is the input text This is the pasted Text"));
+			DoPasteTest(pszInput, pszPaste8, (int)wcslen(pszInput), OleStringLiteral(L"This is the input text This is the pasted Text"));
 			OLECHAR * pszPaste9 = OleStringLiteral(L"\nThis is the pasted Text");
 			DoPasteTest(pszInput, pszPaste9, 0, OleStringLiteral(L" This is the pasted TextThis is the input text"));
 			DoPasteTest(pszInput, pszPaste9, 4, OleStringLiteral(L"This This is the pasted Text is the input text"));
-			DoPasteTest(pszInput, pszPaste9, wcslen(pszInput), OleStringLiteral(L"This is the input text This is the pasted Text"));
+			DoPasteTest(pszInput, pszPaste9, (int)wcslen(pszInput), OleStringLiteral(L"This is the input text This is the pasted Text"));
 
 			// Try a few special cases with multiple newlines.
 			OLECHAR * pszPaste10 = OleStringLiteral(L"This\r\nis\rthe\npasted Text\r\n\n\n\r\r\r\n");
@@ -1146,7 +1146,7 @@ namespace TestViews
 		// space without a following character.
 		void testTypeCtrlBackspace_AtEnd()
 		{
-			int len = strlen("This is a test. test two");
+			int len = (int)strlen("This is a test. test two");
 			TypeCtrlBackspaceWorker(len, len - 4, "This is a test. test", true);
 		}
 
@@ -2496,7 +2496,7 @@ namespace TestViews
 			{
 				HVO hvo = hvoFirst + i;
 				rghvoItem[i] = hvo;
-				m_qtsf->MakeStringRgch(prgpszStrings[i], wcslen(prgpszStrings[i]), g_wsEng, &qtss);
+				m_qtsf->MakeStringRgch(prgpszStrings[i], (int)wcslen(prgpszStrings[i]), g_wsEng, &qtss);
 				m_qcda->CacheStringProp(hvo, kflidStrings, qtss);
 			}
 			m_qcda->CacheVecProp(hvoParent, kflidItems, rghvoItem, citem);
@@ -2522,7 +2522,7 @@ namespace TestViews
 			m_qcda->CacheVecProp(khvoBook, kflidStText_Paragraphs, rghvoPara, 2);
 
 			OLECHAR * pszFt = OleStringLiteral(L"I see my green mat");
-			m_qtsf->MakeStringRgch(pszFt, wcslen(pszFt), g_wsEng, &qtss);
+			m_qtsf->MakeStringRgch(pszFt, (int)wcslen(pszFt), g_wsEng, &qtss);
 			m_qcda->CacheStringProp(khvoParaMin, kflidFt, qtss);
 
 			OLECHAR * rgpszWords[] = {OleStringLiteral(L"yalola"), OleStringLiteral(L"nihimbilira")};
@@ -2539,9 +2539,9 @@ namespace TestViews
 			{
 				HVO hvoWfic = khvoWficMin + iwfic;
 				rghvoWfic[iwfic] = hvoWfic;
-				m_qtsf->MakeStringRgch(rgpszWords[iwfic], wcslen(rgpszWords[iwfic]), g_wsEng, &qtss);
+				m_qtsf->MakeStringRgch(rgpszWords[iwfic], (int)wcslen(rgpszWords[iwfic]), g_wsEng, &qtss);
 				m_qcda->CacheStringProp(hvoWfic, kflidWficForm, qtss);
-				m_qtsf->MakeStringRgch(rgpszWordGlosses[iwfic],wcslen(rgpszWordGlosses[iwfic]), g_wsEng, &qtss);
+				m_qtsf->MakeStringRgch(rgpszWordGlosses[iwfic], (int)wcslen(rgpszWordGlosses[iwfic]), g_wsEng, &qtss);
 				m_qcda->CacheStringProp(hvoWfic, kflidWficGloss, qtss);
 			}
 			m_qcda->CacheVecProp(khvoParaMin, kflidWfics, rghvoWfic, 2);

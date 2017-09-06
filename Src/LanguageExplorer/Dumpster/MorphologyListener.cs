@@ -490,7 +490,7 @@ namespace LanguageExplorer.Dumpster
 			var command = (Command)commandObject;
 			if (command.TargetId != Guid.Empty)
 			{
-				var tool = XmlUtils.GetManditoryAttributeValue(command.Parameters[0], "tool");
+				var tool = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "tool");
 				var commands = new List<string>
 											{
 												"AboutToFollowLink",

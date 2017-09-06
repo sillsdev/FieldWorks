@@ -434,7 +434,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 			/// Constructor using an XmlNode from the settings file.
 			/// </summary>
 			public EncConverterChoice(XmlNode xnConverter, WritingSystemManager wsManager)
-				: this(XmlUtils.GetManditoryAttributeValue(xnConverter, "ws"),
+				: this(XmlUtils.GetMandatoryAttributeValue(xnConverter, "ws"),
 				XmlUtils.GetOptionalAttributeValue(xnConverter, "converter", null), wsManager)
 			{
 			}
@@ -623,8 +623,8 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 
 			public CharMapping(XmlNode xn)
 			{
-				m_sBeginMkr = XmlUtils.GetManditoryAttributeValue(xn, "begin");
-				m_sEndMkr = XmlUtils.GetManditoryAttributeValue(xn, "end");
+				m_sBeginMkr = XmlUtils.GetMandatoryAttributeValue(xn, "begin");
+				m_sEndMkr = XmlUtils.GetMandatoryAttributeValue(xn, "end");
 				m_fEndWithWord = XmlUtils.GetOptionalBooleanAttributeValue(xn, "endWithWord", false);
 				m_fIgnoreMarker = XmlUtils.GetOptionalBooleanAttributeValue(xn, "ignore", false);
 				m_sDestStyle = XmlUtils.GetOptionalAttributeValue(xn, "style", null);
@@ -2088,7 +2088,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 			try
 			{
 				RnSfMarker sfm = new RnSfMarker();
-				sfm.m_sMkr = XmlUtils.GetManditoryAttributeValue(xnMarker, "tag");
+				sfm.m_sMkr = XmlUtils.GetMandatoryAttributeValue(xnMarker, "tag");
 				sfm.m_flid = XmlUtils.GetMandatoryIntegerAttributeValue(xnMarker, "flid");
 				sfm.m_sMkrOverThis = XmlUtils.GetOptionalAttributeValue(xnMarker, "owner");
 				if (sfm.m_flid == 0)
@@ -2105,7 +2105,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 						case CellarPropertyType.GenDate:
 							foreach (XmlNode xn in xnMarker.SelectNodes("./DateFormat"))
 							{
-								string sFormat = XmlUtils.GetManditoryAttributeValue(xn, "value");
+								string sFormat = XmlUtils.GetMandatoryAttributeValue(xn, "value");
 								sfm.m_dto.m_rgsFmt.Add(sFormat);
 							}
 							break;
@@ -2157,7 +2157,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 						case CellarPropertyType.String:
 							foreach (XmlNode xn in xnMarker.SelectNodes("./StringWrtSys"))
 							{
-								sfm.m_sto.m_wsId = XmlUtils.GetManditoryAttributeValue(xn, "ws");
+								sfm.m_sto.m_wsId = XmlUtils.GetMandatoryAttributeValue(xn, "ws");
 							}
 							break;
 						// The following types do not occur in RnGenericRec fields.
@@ -2195,7 +2195,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 				switch (xn.Name)
 				{
 					case "Match":
-						string sMatch = XmlUtils.GetManditoryAttributeValue(xn, "value");
+						string sMatch = XmlUtils.GetMandatoryAttributeValue(xn, "value");
 						switch (sMatch)
 						{
 							case "abbr":
@@ -2216,35 +2216,35 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 							cpt == CellarPropertyType.OwningSequence)
 						{
 							sfm.m_tlo.m_fHaveMulti = true;
-							sfm.m_tlo.m_sDelimMulti = XmlUtils.GetManditoryAttributeValue(xn, "sep");
+							sfm.m_tlo.m_sDelimMulti = XmlUtils.GetMandatoryAttributeValue(xn, "sep");
 						}
 						break;
 					case "Subchoice":
 						sfm.m_tlo.m_fHaveSub = true;
-						sfm.m_tlo.m_sDelimSub = XmlUtils.GetManditoryAttributeValue(xn, "sep");
+						sfm.m_tlo.m_sDelimSub = XmlUtils.GetMandatoryAttributeValue(xn, "sep");
 						break;
 					case "Default":
-						sfm.m_tlo.m_sEmptyDefault = XmlUtils.GetManditoryAttributeValue(xn, "value");
+						sfm.m_tlo.m_sEmptyDefault = XmlUtils.GetMandatoryAttributeValue(xn, "value");
 						sfm.m_tlo.m_default = null;
 						break;
 					case "DelimitChoice":
 						sfm.m_tlo.m_fHaveBetween = true;
-						sfm.m_tlo.m_sMarkStart = XmlUtils.GetManditoryAttributeValue(xn, "start");
-						sfm.m_tlo.m_sMarkEnd = XmlUtils.GetManditoryAttributeValue(xn, "end");
+						sfm.m_tlo.m_sMarkStart = XmlUtils.GetMandatoryAttributeValue(xn, "start");
+						sfm.m_tlo.m_sMarkEnd = XmlUtils.GetMandatoryAttributeValue(xn, "end");
 						break;
 					case "StopChoices":
 						sfm.m_tlo.m_fHaveBefore = true;
-						sfm.m_tlo.m_sBefore = XmlUtils.GetManditoryAttributeValue(xn, "value");
+						sfm.m_tlo.m_sBefore = XmlUtils.GetMandatoryAttributeValue(xn, "value");
 						break;
 					case "IgnoreNewChoices":
 						sfm.m_tlo.m_fIgnoreNewStuff = XmlUtils.GetBooleanAttributeValue(xn, "value");
 						break;
 					case "MatchReplaceChoice":
-						sfm.m_tlo.m_rgsMatch.Add(XmlUtils.GetManditoryAttributeValue(xn, "match"));
+						sfm.m_tlo.m_rgsMatch.Add(XmlUtils.GetMandatoryAttributeValue(xn, "match"));
 						sfm.m_tlo.m_rgsReplace.Add(XmlUtils.GetOptionalAttributeValue(xn, "replace", String.Empty));
 						break;
 					case "ItemWrtSys":
-						sfm.m_tlo.m_wsId = XmlUtils.GetManditoryAttributeValue(xn, "ws");
+						sfm.m_tlo.m_wsId = XmlUtils.GetMandatoryAttributeValue(xn, "ws");
 						break;
 				}
 			}
@@ -2257,7 +2257,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 				switch (xn.Name)
 				{
 					case "TextStyle":
-						sfm.m_txo.m_sStyle = XmlUtils.GetManditoryAttributeValue(xn, "value");
+						sfm.m_txo.m_sStyle = XmlUtils.GetMandatoryAttributeValue(xn, "value");
 						break;
 					case "StartPara":
 						sfm.m_txo.m_fStartParaBlankLine = XmlUtils.GetOptionalBooleanAttributeValue(xn, "afterBlankLine", false);
@@ -2270,7 +2270,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 							Int32.TryParse(sLim, out sfm.m_txo.m_cchShortLim);
 						break;
 					case "DefaultParaWrtSys":
-						sfm.m_txo.m_wsId = XmlUtils.GetManditoryAttributeValue(xn, "ws");
+						sfm.m_txo.m_wsId = XmlUtils.GetMandatoryAttributeValue(xn, "ws");
 						break;
 				}
 			}

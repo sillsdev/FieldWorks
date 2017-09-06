@@ -12,7 +12,7 @@ Description:
 	See FileStrm.h for a description of the FileStream class.
 ----------------------------------------------------------------------------------------------*/
 #include "main.h"
-#if !WIN32
+#if !defined(_WIN32) && !defined(_M_X64)
 #include "COMInterfaces.h"
 #endif
 #pragma hdrstop
@@ -20,7 +20,7 @@ Description:
 #undef THIS_FILE
 DEFINE_THIS_FILE
 
-#if !WIN32
+#if !defined(_WIN32) && !defined(_M_X64)
 // Unix file API
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -43,7 +43,7 @@ FileStream::FileStream()
 {
 	ModuleEntry::ModuleAddRef();
 	m_cref = 1;
-#if WIN32
+#if defined(_WIN32) || defined(_M_X64)
 	m_ibFilePos.QuadPart = 0;
 	m_hfile = NULL;
 #else
@@ -59,7 +59,7 @@ FileStream::~FileStream()
 {
 	// If this is not a clone the file must be closed before the destructor is called.
 	// If this is a clone the file can still be open.
-#if WIN32
+#if defined(_WIN32) || defined(_M_X64)
 	Assert(!m_hfile || m_qstrmBase);
 #else
 	Assert(m_file == -1);
@@ -122,7 +122,7 @@ void FileStream::Init(LPCOLESTR pszFile, int grfstgm)
 	 */
 	AssertPsz(pszFile);
 	Assert(*pszFile);
-#if WIN32
+#if defined(_WIN32) || defined(_M_X64)
 	Assert(!m_hfile);
 
 	HANDLE hfile = 0;
@@ -232,7 +232,7 @@ int FileStream::ErrorStringId(HRESULT hr)
 	switch (hr)
 	{
 		case ERROR_OPEN_FAILED: 			return kstidFileErrOpenFailed;
-#ifdef WIN32
+#if defined(_WIN32) || defined(_M_X64)
 		case ERROR_FILE_NOT_FOUND:			return kstidFileErrNotFound;
 		case ERROR_PATH_NOT_FOUND:			return kstidFileErrPathNotFound;
 		case ERROR_TOO_MANY_OPEN_FILES:		return kstidFileErrTooManyFiles;
@@ -279,7 +279,7 @@ int FileStream::ErrorStringId(HRESULT hr)
 ----------------------------------------------------------------------------------------------*/
 bool FileStream::SetFilePosRaw()
 {
-#ifdef WIN32
+#if defined(_WIN32) || defined(_M_X64)
 		long dwHigh = (long)m_ibFilePos.HighPart;
 		DWORD dwLow;
 
@@ -340,7 +340,7 @@ STDMETHODIMP_(UCOMINT32) FileStream::Release(void)
 		return m_cref;
 	m_cref = 1;
 
-#if WIN32
+#if defined(_WIN32) || defined(_M_X64)
 		if (m_hfile && !m_qstrmBase)
 	{
 		// Close the file if this is not a clone.
@@ -370,7 +370,7 @@ STDMETHODIMP FileStream::Read(void * pv, UCOMINT32 cb, UCOMINT32 * pcbRead)
 	ChkComArrayArg((byte *)pv, cb);
 	ChkComArgPtrN(pcbRead);
 
-#if WIN32
+#if defined(_WIN32) || defined(_M_X64)
 	if (m_hfile == NULL)
 		ThrowHr(WarnHr(E_UNEXPECTED));
 #else
@@ -390,7 +390,7 @@ STDMETHODIMP FileStream::Read(void * pv, UCOMINT32 cb, UCOMINT32 * pcbRead)
 		ThrowHr(WarnHr(STG_E_SEEKERROR));
 
 	DWORD cbRead = 0;
-#if WIN32
+#if defined(_WIN32) || defined(_M_X64)
 	if (!ReadFile(m_hfile, pv, cb, &cbRead, NULL))
 		ThrowHr(WarnHr(STG_E_READFAULT));
 	m_ibFilePos.QuadPart += cbRead;
@@ -416,7 +416,7 @@ STDMETHODIMP FileStream::Write(const void * pv, UCOMINT32 cb, UCOMINT32 * pcbWri
 	ChkComArrayArg((byte *)pv, cb);
 	ChkComArgPtrN(pcbWritten);
 
-#if WIN32
+#if defined(_WIN32) || defined(_M_X64)
 	if (m_hfile == NULL)
 		ThrowHr(WarnHr(E_UNEXPECTED));
 #else
@@ -430,7 +430,7 @@ STDMETHODIMP FileStream::Write(const void * pv, UCOMINT32 cb, UCOMINT32 * pcbWri
 		return S_OK;
 	}
 
-#if WIN32
+#if defined(_WIN32) || defined(_M_X64)
 	if (!SetFilePosRaw())
 		ThrowHr(WarnHr(STG_E_SEEKERROR));
 	DWORD cbWritten = 0;
@@ -462,7 +462,7 @@ STDMETHODIMP FileStream::Seek(LARGE_INTEGER dlibMove, DWORD dwOrigin,
 	BEGIN_COM_METHOD;
 	ChkComArgPtrN(plibNewPosition);
 
-#if WIN32
+#if defined(_WIN32) || defined(_M_X64)
 	if (m_hfile == NULL)
 		ThrowHr(WarnHr(E_UNEXPECTED));
 
@@ -555,7 +555,7 @@ STDMETHODIMP FileStream::Seek(LARGE_INTEGER dlibMove, DWORD dwOrigin,
 STDMETHODIMP FileStream::SetSize(ULARGE_INTEGER libNewSize)
 {
 	BEGIN_COM_METHOD;
-#if WIN32
+#if defined(_WIN32) || defined(_M_X64)
 	if (libNewSize.QuadPart < 0)
 		ThrowHr(WarnHr(STG_E_INVALIDPARAMETER));
 
@@ -641,7 +641,7 @@ STDMETHODIMP FileStream::CopyTo(IStream * pstm, ULARGE_INTEGER cb, ULARGE_INTEGE
 STDMETHODIMP FileStream::Commit(DWORD grfCommitFlags)
 {
 	BEGIN_COM_METHOD;
-#if WIN32
+#if defined(_WIN32) || defined(_M_X64)
 		// FlushFileBuffers may return an error if m_hfile doesn't have GENERIC_WRITE access.
 	if (!(m_grfstgm & (kfstgmReadWrite | kfstgmWrite)))
 		ThrowHr(WarnHr(STG_E_INVALIDFUNCTION));
@@ -719,7 +719,7 @@ STDMETHODIMP FileStream::Stat(STATSTG * pstatstg, DWORD grfStatFlag)
 	BEGIN_COM_METHOD;
 	ChkComArgPtr(pstatstg);
 
-#if WIN32
+#if defined(_WIN32) || defined(_M_X64)
 		if (m_hfile == NULL)
 		ThrowHr(WarnHr(E_UNEXPECTED));
 
@@ -770,7 +770,7 @@ STDMETHODIMP FileStream::Stat(STATSTG * pstatstg, DWORD grfStatFlag)
 			// and free memory for the string value for the name and the method can save an Alloc
 			// and the caller a Free operation.
 			pstatstg->type = STGTY_STREAM;
-#if WIN32
+#if defined(_WIN32) || defined(_M_X64)
 			pstatstg->cbSize.HighPart = bhfi.nFileSizeHigh;
 			pstatstg->cbSize.LowPart = bhfi.nFileSizeLow;
 			pstatstg->mtime = bhfi.ftLastWriteTime;
@@ -795,7 +795,7 @@ STDMETHODIMP FileStream::Stat(STATSTG * pstatstg, DWORD grfStatFlag)
 	END_COM_METHOD(g_fact, IID_IStream);
 }
 
-#if !WIN32
+#if !defined(_WIN32) && !defined(_M_X64)
 /*----------------------------------------------------------------------------------------------
 Utility function to convert time_t to FILETIME.
 ----------------------------------------------------------------------------------------------*/
@@ -827,7 +827,7 @@ STDMETHODIMP FileStream::Clone(IStream ** ppstm)
 	if (!pfist)
 		ThrowHr(WarnHr(STG_E_INSUFFICIENTMEMORY));
 
-#if WIN32
+#if defined(_WIN32) || defined(_M_X64)
 	// If this is the first clone, a pointer to the current object is fine. Otherwise (if we
 	// are making a clone from a clone) copy the current pointer.
 	if (!m_qstrmBase)

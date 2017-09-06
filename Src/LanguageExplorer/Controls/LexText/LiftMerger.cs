@@ -805,7 +805,7 @@ namespace LanguageExplorer.Controls.LexText
 		/// <returns>lift field with contents safe-XML</returns>
 		private static LiftField CreateLiftFieldFromXml(XmlNode node)
 		{
-			string fieldType = XmlUtils.GetManditoryAttributeValue(node, "type");
+			string fieldType = XmlUtils.GetMandatoryAttributeValue(node, "type");
 			string priorFieldWithSameTag = String.Format("preceding-sibling::field[@type='{0}']", fieldType);
 			if (node.SelectSingleNode(priorFieldWithSameTag) != null)
 			{
@@ -1322,7 +1322,7 @@ namespace LanguageExplorer.Controls.LexText
 			string val = null;
 			foreach (XmlNode xn in xnField.SelectNodes("form"))
 			{
-				string sLang = XmlUtils.GetManditoryAttributeValue(xn, "lang");
+				string sLang = XmlUtils.GetMandatoryAttributeValue(xn, "lang");
 				ws = GetWsFromLiftLang(sLang);
 				XmlNode xnText = xnField.SelectSingleNode("text");
 				if (xnText != null)
@@ -1433,10 +1433,10 @@ namespace LanguageExplorer.Controls.LexText
 				switch (name)
 				{
 					case "catalog-source-id":
-						sCatalogId = XmlUtils.GetManditoryAttributeValue(xn, "value");
+						sCatalogId = XmlUtils.GetMandatoryAttributeValue(xn, "value");
 						break;
 					case "feature":
-						rgsFeatures.Add(XmlUtils.GetManditoryAttributeValue(xn, "value"));
+						rgsFeatures.Add(XmlUtils.GetMandatoryAttributeValue(xn, "value"));
 						break;
 				}
 			}

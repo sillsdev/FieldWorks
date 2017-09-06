@@ -351,7 +351,7 @@ namespace FwBuildTasks
 						// <MsBuild> task
 						writer.WriteLine("\t\t<MSBuild Projects=\"{0}\"", m_mapProjFile[project].Replace(m_fwroot, "$(fwrt)"));
 						writer.WriteLine("\t\t\tTargets=\"$(msbuild-target)\"");
-						writer.WriteLine("\t\t\tProperties=\"$(msbuild-props);IntermediateOutputPath=$(dir-fwobj){0}{1}{0};DefineConstants=$({2}Defines);$(warningsAsErrors);WarningLevel=4\"",
+						writer.WriteLine("\t\t\tProperties=\"$(msbuild-props);IntermediateOutputPath=$(dir-fwobj){0}{1}{0};DefineConstants=$({2}Defines);$(warningsAsErrors);WarningLevel=4;LcmArtifactsDir=$(LcmArtifactsDir)\"",
 							Path.DirectorySeparatorChar, GetProjectSubDir(project), project);
 						writer.WriteLine("\t\t\tToolsVersion=\"14.0\"/>");
 

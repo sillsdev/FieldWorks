@@ -98,7 +98,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					m_clidDst = cache.DomainDataByFlid.MetaDataCache.GetClassId(dstClass);
 
 				// And the one property of that imaginary object we are displaying.
-				string stringProp = XmlUtils.GetManditoryAttributeValue(nodeObjProp, "ghost");
+				string stringProp = XmlUtils.GetMandatoryAttributeValue(nodeObjProp, "ghost");
 				// Special case for making a Text
 				if (m_flidEmptyProp == RnGenericRecTags.kflidText)
 				{
@@ -111,7 +111,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 				// And what writing system should typing in the field employ?
 				IWritingSystemContainer wsContainer = cache.ServiceLocator.WritingSystems;
-				string stringWs = XmlUtils.GetManditoryAttributeValue(nodeObjProp, "ghostWs");
+				string stringWs = XmlUtils.GetMandatoryAttributeValue(nodeObjProp, "ghostWs");
 				switch (stringWs)
 				{
 					case "vernacular":

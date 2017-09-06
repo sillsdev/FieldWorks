@@ -175,7 +175,7 @@ namespace SIL.FieldWorks.CacheLight
 					clid = XmlUtils.GetMandatoryIntegerAttributeValue(newClassNode, "num");
 					if (clid > 0) // Basic initialization has already happened for the base class.
 					{
-						var newClassName = XmlUtils.GetManditoryAttributeValue(newClassNode, "id");
+						var newClassName = XmlUtils.GetMandatoryAttributeValue(newClassNode, "id");
 						// Check to see if the class already exists.
 						if (m_nameToClid.ContainsKey(newClassName))
 							throw new ArgumentException("Duplicate Cellar Class named; " + newClassName);
@@ -195,9 +195,9 @@ namespace SIL.FieldWorks.CacheLight
 						flid = flidBase + XmlUtils.GetMandatoryIntegerAttributeValue(fieldNode, "num");
 						mfr = new MetaFieldRec
 						{
-							m_fieldName = XmlUtils.GetManditoryAttributeValue(fieldNode, "id"),
+							m_fieldName = XmlUtils.GetMandatoryAttributeValue(fieldNode, "id"),
 							m_ownClsid = clid,
-							m_sig = XmlUtils.GetManditoryAttributeValue(fieldNode, "sig")
+							m_sig = XmlUtils.GetMandatoryAttributeValue(fieldNode, "sig")
 						};
 
 						if (m_nameToClid.ContainsKey(mfr.m_sig))
@@ -260,7 +260,7 @@ namespace SIL.FieldWorks.CacheLight
 								mfr.m_sig = null;
 								break;
 							case "owning":
-								switch (XmlUtils.GetManditoryAttributeValue(fieldNode, "card"))
+								switch (XmlUtils.GetMandatoryAttributeValue(fieldNode, "card"))
 								{
 									case "atomic":
 										mfr.m_fieldType = CellarPropertyType.OwningAtomic;
@@ -274,7 +274,7 @@ namespace SIL.FieldWorks.CacheLight
 								}
 								break;
 							case "rel":
-								switch (XmlUtils.GetManditoryAttributeValue(fieldNode, "card"))
+								switch (XmlUtils.GetMandatoryAttributeValue(fieldNode, "card"))
 								{
 									case "atomic":
 										mfr.m_fieldType = CellarPropertyType.ReferenceAtomic;
@@ -344,7 +344,7 @@ namespace SIL.FieldWorks.CacheLight
 				XmlNode baseClassNode = doc.DocumentElement.SelectSingleNode("class[@num='0']");
 				// Add CmObject properties.
 				string baseClassName = (baseClassNode == null) ? "BaseClass" :
-					XmlUtils.GetManditoryAttributeValue(baseClassNode, "id");
+					XmlUtils.GetMandatoryAttributeValue(baseClassNode, "id");
 				mcr = new MetaClassRec(baseClassName, true, baseClassName);
 				flid = (int)CmObjectFields.kflidCmObject_Guid;
 				mfr = new MetaFieldRec

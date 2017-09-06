@@ -1156,7 +1156,7 @@ namespace LanguageExplorer.Works
 			if (Cache == null || m_dataTree == null || m_dataTree.Root == null)
 				return false;
 			Command command = (Command)commandObject;
-			string className = XmlUtils.GetManditoryAttributeValue(command.Parameters[0], "className");
+			string className = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "className");
 			if (className != m_dataTree.Root.ClassName)
 				return false;
 			string restrictToTool = XmlUtils.GetOptionalAttributeValue(command.Parameters[0], "restrictToTool");
@@ -1168,7 +1168,7 @@ namespace LanguageExplorer.Works
 		private bool AddNewLexEntryRef(object argument, int flidTypes)
 		{
 			Command command = (Command)argument;
-			string className = XmlUtils.GetManditoryAttributeValue(command.Parameters[0], "className");
+			string className = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "className");
 			if (className != m_dataTree.Root.ClassName)
 				return false;
 			string restrictToTool = XmlUtils.GetOptionalAttributeValue(command.Parameters[0], "restrictToTool");
@@ -1220,7 +1220,7 @@ namespace LanguageExplorer.Works
 			bool fEnable = false;
 			bool fChecked = false;
 			Command command = (Command)commandObject;
-			string className = XmlUtils.GetManditoryAttributeValue(command.Parameters[0], "className");
+			string className = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "className");
 			if (className == current.Object.ClassName)
 			{
 				string toolChoice = XmlUtils.GetOptionalAttributeValue(command.Parameters[0], "tool");
@@ -1312,7 +1312,7 @@ namespace LanguageExplorer.Works
 			bool fChecked = false;
 			// Is this the right slice to handle this command?
 			var command = (Command)commandObject;
-			string className = XmlUtils.GetManditoryAttributeValue(command.Parameters[0], "className");
+			string className = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "className");
 			if (("LexEntry" != complexFormsSlice.Object.ClassName &&
 				 "LexSense" != complexFormsSlice.Object.ClassName ) || className != "LexEntryOrLexSense")
 				return false; // not the right message target

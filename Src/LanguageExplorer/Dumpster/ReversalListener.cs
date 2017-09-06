@@ -273,7 +273,7 @@ namespace LanguageExplorer.Dumpster
 #if RANDYTODO
 				// TODO: Use another mechanism to get the clerk in whatever replaces this listener.
 				// TODO: It will be an instance of "ReversalEntryClerk" (see above for details)
-				string clerkId = XmlUtils.GetManditoryAttributeValue(m_configurationParameters, "clerk");
+				string clerkId = XmlUtils.GetMandatoryAttributeValue(m_configurationParameters, "clerk");
 				string propertyName = RecordClerk.GetCorrespondingPropertyName(clerkId);
 				RecordClerk clerk = PropertyTable.GetValue<RecordClerk>(propertyName);
 				if (clerk != null)

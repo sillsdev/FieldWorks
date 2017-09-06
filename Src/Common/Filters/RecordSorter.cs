@@ -128,7 +128,7 @@ namespace SIL.FieldWorks.Filters
 		/// ------------------------------------------------------------------------------------
 		protected void Init(XElement configuration)
 		{
-			m_propertyName = XmlUtils.GetManditoryAttributeValue(configuration, "sortProperty");
+			m_propertyName = XmlUtils.GetMandatoryAttributeValue(configuration, "sortProperty");
 		}
 
 		/// <summary>
@@ -410,7 +410,7 @@ namespace SIL.FieldWorks.Filters
 			/// <param name="node"></param>
 			public void InitXml(XElement node)
 			{
-				m_propertyName = XmlUtils.GetManditoryAttributeValue(node, "property");
+				m_propertyName = XmlUtils.GetMandatoryAttributeValue(node, "property");
 			}
 
 			/// --------------------------------------------------------------------------------
@@ -2077,7 +2077,7 @@ namespace SIL.FieldWorks.Filters
 		/// ------------------------------------------------------------------------------------------
 		public void InitXml(XElement node)
 		{
-			m_sWs = XmlUtils.GetManditoryAttributeValue(node, "ws");
+			m_sWs = XmlUtils.GetMandatoryAttributeValue(node, "ws");
 		}
 
 		#endregion
@@ -2213,7 +2213,7 @@ namespace SIL.FieldWorks.Filters
 		/// <param name="node">The node.</param>
 		public void InitXml(XElement node)
 		{
-			m_wsId = XmlUtils.GetManditoryAttributeValue(node, "ws");
+			m_wsId = XmlUtils.GetMandatoryAttributeValue(node, "ws");
 		}
 
 		#endregion

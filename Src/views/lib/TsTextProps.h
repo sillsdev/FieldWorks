@@ -136,7 +136,7 @@ protected:
 #ifdef DEBUG
 	const OLECHAR * StrPropValue(int tpt);
 
-#if WIN32 // TODO-Linux: port to get debugging information.
+#if defined(WIN32) || defined(WIN64) // TODO-Linux: port to get debugging information.
 	class Dbw1 : public DebugWatch
 	{
 		virtual OLECHAR * Watch();

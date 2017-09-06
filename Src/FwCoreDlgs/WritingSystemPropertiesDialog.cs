@@ -1889,13 +1889,17 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			CoreWritingSystemDefinition tempWs = m_wsManager.Create(CurrentWritingSystem.Language, null, CurrentWritingSystem.Region, Enumerable.Empty<VariantSubtag>());
 
 			foreach (CharacterSetDefinition charSet in CurrentWritingSystem.CharacterSets)
-				tempWs.CharacterSets.Add(charSet.Clone());
+				if (!tempWs.CharacterSets.ToList().Any(e=> e.ValueEquals(charSet)))
+					tempWs.CharacterSets.Add(charSet.Clone());
 			foreach (MatchedPair mp in CurrentWritingSystem.MatchedPairs)
-				tempWs.MatchedPairs.Add(mp);
+				if (!tempWs.MatchedPairs.Contains(mp))
+					tempWs.MatchedPairs.Add(mp);
 			foreach (PunctuationPattern pp in CurrentWritingSystem.PunctuationPatterns)
-				tempWs.PunctuationPatterns.Add(pp);
+				if (!tempWs.PunctuationPatterns.Contains(pp))
+					tempWs.PunctuationPatterns.Add(pp);
 			foreach (QuotationMark qm in CurrentWritingSystem.QuotationMarks)
-				tempWs.QuotationMarks.Add(qm);
+				if (!tempWs.QuotationMarks.Contains(qm))
+					tempWs.QuotationMarks.Add(qm);
 			AddWritingSystem(tempWs, null, true);
 		}
 

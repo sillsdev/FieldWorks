@@ -407,7 +407,10 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			PropertyTable.SetProperty("TryAWordDlg-lastWordToTry", m_wordformTextBox.Text.Trim(), SettingsGroup.LocalSettings, true, false);
 			m_persistProvider.PersistWindowSettings(PersistProviderID, this);
 			if (m_parserMenuManager.Connection != null)
+			{
 				m_parserMenuManager.Connection.TryAWordDialogIsRunning = false;
+				m_parserMenuManager.DisconnectFromParser();
+			}
 		}
 
 		private void m_wordformTextBox_TextChanged(object sender, EventArgs e)

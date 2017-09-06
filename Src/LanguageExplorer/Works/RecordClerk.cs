@@ -2537,7 +2537,7 @@ namespace LanguageExplorer.Works
 			CheckDisposed();
 
 			var command = (Command)commandObject;
-			string className = XmlUtils.GetManditoryAttributeValue(command.Parameters[0], "className");
+			string className = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "className");
 
 			string restrictToClerkID = XmlUtils.GetOptionalAttributeValue(command.Parameters[0], "restrictToClerkID");
 			if (restrictToClerkID != null && restrictToClerkID != Id)
@@ -2631,7 +2631,7 @@ namespace LanguageExplorer.Works
 			string className;
 			try
 			{
-				className = XmlUtils.GetManditoryAttributeValue(command.Parameters[0], "className");
+				className = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "className");
 			}
 			catch (ApplicationException e)
 			{

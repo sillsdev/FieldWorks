@@ -1310,7 +1310,7 @@ namespace LanguageExplorer.Controls.XMLViews
 						sb.Append("-");
 						sb.Append(XmlUtils.GetOptionalAttributeValue(frag.Parent, "name", String.Empty));
 						sb.Append("-");
-						string sRef = XmlUtils.GetManditoryAttributeValue(frag, "ref");
+						string sRef = XmlUtils.GetMandatoryAttributeValue(frag, "ref");
 						if (sRef == "$child")
 							sb.Append(XmlUtils.GetOptionalAttributeValue(frag, "label", String.Empty));
 						else

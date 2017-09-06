@@ -1964,7 +1964,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				case "part":
 					// If the previously selected slice doesn't display in this refresh, we try for the next
 					// visible slice instead.  So m_fSetCurrentSliceNew might still be set.  See LT-9010.
-					var partName = XmlUtils.GetManditoryAttributeValue(partRef, "ref");
+					var partName = XmlUtils.GetMandatoryAttributeValue(partRef, "ref");
 					if (!m_fSetCurrentSliceNew && m_currentSlicePartName != null && obj.Guid == m_currentSliceObjGuid)
 					{
 						for (var clid = obj.ClassID; clid != 0; clid = m_mdc.GetBaseClsId(clid))
@@ -2344,7 +2344,6 @@ namespace LanguageExplorer.Controls.DetailControls
 				slice.Indent = indent;
 				slice.Object = obj;
 				slice.Cache = m_cache;
-
 
 				// We need a copy since we continue to modify path, so make it as compact as possible.
 				slice.Key = path.ToArray();
@@ -3734,8 +3733,8 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		internal Guid GetGuidForJumpToTool(Command cmd, bool forEnableOnly, out string tool)
 		{
-			tool = XmlUtils.GetManditoryAttributeValue(cmd.Parameters[0], "tool");
-			string className = XmlUtils.GetManditoryAttributeValue(cmd.Parameters[0], "className");
+			tool = XmlUtils.GetMandatoryAttributeValue(cmd.Parameters[0], "tool");
+			string className = XmlUtils.GetMandatoryAttributeValue(cmd.Parameters[0], "className");
 			ICmObject targetObject;
 			if (CurrentSlice == null)
 				targetObject = Root;
@@ -4157,7 +4156,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			if (m_cache == null || m_root == null)
 				return display.Enabled = false;
 			var command = (Command)commandObject;
-			string className = XmlUtils.GetManditoryAttributeValue(command.Parameters[0], "className");
+			string className = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "className");
 			if (className != m_root.ClassName)
 				return display.Enabled = false;
 			string restrictToTool = XmlUtils.GetOptionalAttributeValue(command.Parameters[0], "restrictToTool");
@@ -4175,7 +4174,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			CheckDisposed();
 
 			var command = (Command)argument;
-			string className = XmlUtils.GetManditoryAttributeValue(command.Parameters[0], "className");
+			string className = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "className");
 			if (className != m_root.ClassName)
 				return false;
 			string restrictToTool = XmlUtils.GetOptionalAttributeValue(command.Parameters[0], "restrictToTool");
@@ -4198,7 +4197,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			CheckDisposed();
 
 			var command = (Command)commandObject;
-			string className = XmlUtils.GetManditoryAttributeValue(command.Parameters[0], "className");
+			string className = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "className");
 			bool fIsValid = false;
 			if (className == "RnGenericRec")
 			{

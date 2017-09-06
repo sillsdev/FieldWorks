@@ -546,7 +546,7 @@ namespace LanguageExplorer.LcmUi
 			CheckDisposed();
 
 			var command = (Command) commandObject;
-			string tool = XmlUtils.GetManditoryAttributeValue(command.Parameters[0], "tool");
+			string tool = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "tool");
 			var guid = GuidForJumping(commandObject);
 			var commands = new List<string>
 									{
@@ -573,7 +573,7 @@ namespace LanguageExplorer.LcmUi
 			CheckDisposed();
 
 			var command = (Command) commandObject;
-			string tool = XmlUtils.GetManditoryAttributeValue(command.Parameters[0], "tool");
+			string tool = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "tool");
 			//string areaChoice = m_propertyTable.GetValue<string>("areaChoice");
 			//string areaChoice = m_propertyTable.GetValue<string>("areaChoice");
 			//string toolChoice = m_propertyTable.GetValue<string>("ToolForAreaNamed_" + areaChoice);
@@ -583,7 +583,7 @@ namespace LanguageExplorer.LcmUi
 				display.Visible = display.Enabled = false;
 				return true;
 			}
-			string className = XmlUtils.GetManditoryAttributeValue(command.Parameters[0], "className");
+			string className = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "className");
 
 
 			int specifiedClsid = 0;
@@ -1501,7 +1501,7 @@ namespace LanguageExplorer.LcmUi
 			CheckDisposed();
 
 			var command = (Command)commandObject;
-			string className = XmlUtils.GetManditoryAttributeValue(command.Parameters[0], "className");
+			string className = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "className");
 
 			int specifiedClsid = 0;
 			// There are some special commands with dummy class names (WordPartOfSpeech is one).
@@ -1522,8 +1522,8 @@ namespace LanguageExplorer.LcmUi
 				int owningFlid = owningList.OwningFlid;
 				string owningFieldName = owningFlid == 0 ? "" : mdc.GetFieldName(owningFlid);
 				string owningClassName = owningFlid == 0 ? "" : mdc.GetOwnClsName(owningFlid);
-				string commandListOwnerName = XmlUtils.GetManditoryAttributeValue(command.Parameters[0], "ownerClass");
-				string commandListFieldName = XmlUtils.GetManditoryAttributeValue(command.Parameters[0], "ownerField");
+				string commandListOwnerName = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "ownerClass");
+				string commandListFieldName = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "ownerField");
 				display.Visible = display.Enabled = (commandListFieldName == owningFieldName && commandListOwnerName == owningClassName);
 			}
 			else
@@ -1967,7 +1967,7 @@ namespace LanguageExplorer.LcmUi
 		{
 #if RANDYTODO
 			var command = (Command) commandObject;
-			string className = XmlUtils.GetManditoryAttributeValue(command.Parameters[0], "className");
+			string className = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "className");
 			if (className == "LexSense")
 				return Object.Guid;
 #endif
@@ -2511,7 +2511,7 @@ namespace LanguageExplorer.LcmUi
 		{
 #if RANDYTODO
 			var cmd = (Command) commandObject;
-			string className = XmlUtils.GetManditoryAttributeValue(cmd.Parameters[0], "className");
+			string className = XmlUtils.GetMandatoryAttributeValue(cmd.Parameters[0], "className");
 			if (className == "LexEntry")
 			{
 				ICmObject cmo = GetSelfOrParentOfClass(Object, LexEntryTags.kClassId);

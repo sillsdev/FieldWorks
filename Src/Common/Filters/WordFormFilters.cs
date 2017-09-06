@@ -85,7 +85,7 @@ namespace SIL.FieldWorks.Filters
 		public override void InitXml(XElement node)
 		{
 			base.InitXml (node);
-			m_id = XmlUtils.GetManditoryAttributeValue(node, "id");
+			m_id = XmlUtils.GetMandatoryAttributeValue(node, "id");
 			m_hvos = XmlUtils.GetMandatoryIntegerListAttributeValue(node, "wordlist");
 		}
 

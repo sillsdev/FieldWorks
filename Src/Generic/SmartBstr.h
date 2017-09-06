@@ -24,9 +24,15 @@ public:
 #ifdef DEBUG
 	bool AssertValid(void) const
 	{
+#if __MonoCS__ || !defined(_M_X64)
 		if ((ulong)m_bstr == (ulong)1)
 			return true;
 		Assert(!((ulong)m_bstr & 1));
+#else
+		if ((ULONGLONG)m_bstr == (ULONGLONG)1)
+			return true;
+		Assert(!((ULONGLONG)m_bstr & 1));
+#endif // __MonoCS__ || !defined(_M_X64)
 		AssertBstrN(m_bstr);
 		return true;
 	}
@@ -47,7 +53,7 @@ public:
 	}
 
 	#ifdef DEBUG
-#if WIN32
+#if defined(_WIN32) || defined(_M_X64)
 	#define INIT_DBW() { m_dbw1.m_pbstr = this; }
 #else
 	#define INIT_DBW()
@@ -144,7 +150,7 @@ public:
 		m_bstr = bstr;
 	}
 
-#if !WIN32
+#if !defined(_WIN32) && !defined(_M_X64)
 	SmartBstr(const wchar_t* psz)
 	{
 		AssertPszN(psz);
@@ -262,8 +268,14 @@ public:
 	{
 		AssertObj(this);
 		BSTR bstr = m_bstr;
+#if __MonoCS__ || !defined(_M_X64)
 		if ((ulong)bstr == 1)
 			bstr = NULL;
+#else
+		if ((ULONGLONG)bstr == 1)
+			bstr = NULL;
+#endif
+
 		m_bstr = NULL;
 		return bstr;
 	}
@@ -430,7 +442,7 @@ public:
 protected:
 	BSTR m_bstr;
 
-#if WIN32
+#if defined(_WIN32) || defined(_M_X64)
 #ifdef DEBUG
 	class Dbw1 : public DebugWatch
 	{
@@ -452,7 +464,11 @@ protected:
 
 	bool _Null(void) const
 	{
+#if __MonoCS__ || !defined(_M_X64)
 		return (ulong)m_bstr <= (ulong)1;
+#else
+		return (ULONGLONG)m_bstr <= (ULONGLONG)1;
+#endif
 	}
 
 	void AppendCore(const OLECHAR * prgch, int cch)

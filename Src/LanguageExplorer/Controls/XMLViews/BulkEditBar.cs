@@ -205,7 +205,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			m_cache = cache;
 			m_configurationNode = spec;
 			// (EricP) we should probably try find someway to get these classes from the RecordClerk/List
-			string bulkEditListItemsClassesValue = XmlUtils.GetManditoryAttributeValue(spec, "bulkEditListItemsClasses");
+			string bulkEditListItemsClassesValue = XmlUtils.GetMandatoryAttributeValue(spec, "bulkEditListItemsClasses");
 			string[] bulkEditListItemsClasses = bulkEditListItemsClassesValue.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
 			foreach (string className in bulkEditListItemsClasses)
 			{
@@ -459,7 +459,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				{
 					string label = StringTable.Table.LocalizeAttributeValue(XmlUtils.GetOptionalAttributeValue(colSpec, "label", null));
 					if (label == null)
-						label = XmlUtils.GetManditoryAttributeValue(colSpec, "label");
+						label = XmlUtils.GetMandatoryAttributeValue(colSpec, "label");
 					m_listChoiceTargetCombo.Items.Add(new TargetFieldItem(label, icol));
 				}
 			}
@@ -507,7 +507,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <returns></returns>
 		internal static int GetFlidFromClassDotName(LcmCache cache, XElement node, string attrName)
 		{
-			string descriptor = XmlUtils.GetManditoryAttributeValue(node, attrName);
+			string descriptor = XmlUtils.GetMandatoryAttributeValue(node, attrName);
 			return GetFlidFromClassDotName(cache, descriptor);
 		}
 
@@ -550,7 +550,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		private static void GetPathInfoFromColumnSpec(XElement node, string attrName, string defaultOwningClass,
 			out string owningClass, out string property)
 		{
-			string listpath = XmlUtils.GetManditoryAttributeValue(node, attrName);
+			string listpath = XmlUtils.GetMandatoryAttributeValue(node, attrName);
 			string[] parts = listpath.Trim().Split('.');
 			if (parts.Length > 1)
 			{
@@ -658,7 +658,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			string colName = StringTable.Table.LocalizeAttributeValue(XmlUtils.GetOptionalAttributeValue(colSpec, "label", null));
 			if (colName == null)
-				colName = XmlUtils.GetManditoryAttributeValue(colSpec, "label");
+				colName = XmlUtils.GetMandatoryAttributeValue(colSpec, "label");
 			return colName;
 		}
 		/// <summary>
@@ -721,25 +721,25 @@ namespace LanguageExplorer.Controls.XMLViews
 							XmlUtils.GetOptionalIntegerValue(colSpec, "defaultBulkEditChoice", 0));
 					else
 					{
-						items = XmlUtils.GetManditoryAttributeValue(colSpec, "items");
+						items = XmlUtils.GetMandatoryAttributeValue(colSpec, "items");
 						besc = new IntChooserBEditControl(items, flid);
 					}
 					break;
 				case "integerOnSubfield":
 					flid = GetFlidFromClassDotName(colSpec, "field");
 					flidSub = GetFlidFromClassDotName(colSpec, "subfield");
-					items = XmlUtils.GetManditoryAttributeValue(colSpec, "items");
+					items = XmlUtils.GetMandatoryAttributeValue(colSpec, "items");
 					besc = new IntOnSubfieldChooserBEditControl(items, flid, flidSub);
 					break;
 				case "booleanOnSubfield":
 					flid = GetFlidFromClassDotName(colSpec, "field");
 					flidSub = GetFlidFromClassDotName(colSpec, "subfield");
-					items = XmlUtils.GetManditoryAttributeValue(colSpec, "items");
+					items = XmlUtils.GetMandatoryAttributeValue(colSpec, "items");
 					besc = new BoolOnSubfieldChooserBEditControl(items, flid, flidSub);
 					break;
 				case "boolean":
 					flid = GetFlidFromClassDotName(colSpec, "field");
-					items = XmlUtils.GetManditoryAttributeValue(colSpec, "items");
+					items = XmlUtils.GetMandatoryAttributeValue(colSpec, "items");
 					besc = new BooleanChooserBEditControl(items, flid);
 					break;
 				case "complexListMultiple":

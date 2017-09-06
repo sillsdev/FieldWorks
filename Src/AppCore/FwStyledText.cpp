@@ -680,7 +680,7 @@ void FwStyledText::ComputeWsStyleInheritance(BSTR bstrBase, BSTR bstrOver,
 			*pcpropCombined = cpropCombined;
 		}
 	}
-	sbstrComp.Assign(rgch, pch - rgch);
+	sbstrComp.Assign(rgch, (int)(pch - rgch));
 }
 
 
@@ -774,7 +774,7 @@ void FwStyledText::ZapWsStyle(StrUni & stuWsStyle, int tpt, int nVar, int nVal)
 		// Font family.
 		const OLECHAR * pchFF = pchOld + 1;
 		pchOld = pchFF + *pchOld;
-		StrUni stuFF(pchFF, pchOld - pchFF);
+		StrUni stuFF(pchFF, (int)(pchOld - pchFF));
 		if (pchOld >= pchLimOld)
 			ThrowHr(WarnHr(E_FAIL));
 		if (tpt == ktptFontFamily)
@@ -870,7 +870,7 @@ void FwStyledText::ZapWsStyle(StrUni & stuWsStyle, int tpt, int nVar, int nVal)
 		*pchCpropNew = (OLECHAR)cpropNew;
 	}
 	// DON'T count on null termination! May have 0's in it.
-	StrUni stuNew(rgchNew, pchNew - rgchNew);
+	StrUni stuNew(rgchNew, (int)(pchNew - rgchNew));
 	stuWsStyle = stuNew;
 }
 
@@ -930,7 +930,7 @@ void FwStyledText::DecodeFontPropsString(BSTR bstr, bool fExplicit,
 		if (pch >= pchLim)
 			ThrowHr(WarnHr(E_FAIL));
 		StrUni stuMarkup;
-		stuMarkup.Assign(pchFF, pch - pchFF);
+		stuMarkup.Assign(pchFF, (int)(pch - pchFF));
 		esi.m_stuFontFamily.Assign(FontStringMarkupToUi(false, stuMarkup));
 		ConvertDefaultFontInput(esi.m_stuFontFamily);
 		if (pch > pchFF)
@@ -1178,7 +1178,7 @@ StrUni FwStyledText::EncodeFontPropsString(Vector<WsStyleInfo> & vesi, bool fFor
 		}
 		*pchCount = (OLECHAR) cprop;
 	}
-	StrUni stuRet(rgch, pch - rgch); // DON'T count on null termination! May have 0's in it.
+	StrUni stuRet(rgch, (int)(pch - rgch)); // DON'T count on null termination! May have 0's in it.
 	return stuRet;
 }
 

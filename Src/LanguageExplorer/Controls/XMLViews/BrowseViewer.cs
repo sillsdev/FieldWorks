@@ -1095,7 +1095,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			if (m_modifiedColumn != null)
 			{
 				XmlUtils.SetAttribute(m_modifiedColumn, "layout",
-									  XmlUtils.GetManditoryAttributeValue(m_modifiedColumn, "normalLayout"));
+									  XmlUtils.GetMandatoryAttributeValue(m_modifiedColumn, "normalLayout"));
 				m_modifiedColumn = null;
 				e.ForceReload = true;
 			}
@@ -2441,7 +2441,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					continue;
 
 				string label = StringTable.Table.LocalizeAttributeValue(XmlUtils.GetOptionalAttributeValue( node, "label", null)) ??
-							   XmlUtils.GetManditoryAttributeValue(node, "label");
+							   XmlUtils.GetMandatoryAttributeValue(node, "label");
 				MenuItem mi = new MenuItem(label, ConfigItemClicked);
 
 				// tick the checkbox for items that match something in current visible list.
