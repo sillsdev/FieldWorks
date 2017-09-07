@@ -1802,6 +1802,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				{
 					if (ws.Handle == 0)
 						m_cache.ServiceLocator.WritingSystemManager.Replace(ws);
+					else if (!m_cache.ServiceLocator.WritingSystemManager.WritingSystemStore.AllWritingSystems.Contains(ws))
+						m_cache.ServiceLocator.WritingSystemManager.Set(ws);
 					allSet.Add(ws);
 				}
 				m_fWsChanged = true;
