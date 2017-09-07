@@ -1,8 +1,7 @@
-﻿// Copyright (c) 2016 SIL International
+﻿// Copyright (c) 2016-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -14,14 +13,18 @@ using Microsoft.Build.Framework;
 namespace FwBuildTasks
 {
 	/// <summary>
+	/// Downloads artifacts from TeamCity for the given BuildType. Select in the following order:
+	///  - If Tag or Query is specified, use them
+	///  - If VersionInfo is specified, look for a matching tag (fw-9.0.0 before fw-9.0)
+	///  - Otherwise, download .lastSuccessful
+	///
+	/// Usage:
 	///	<DownloadFilesFromTeamCity
 	///   Address="http://build.palaso.org/"
-	///   FlexBridgeBuildType="$(FLExBridgeBuildType)"
-	///   ProjectId="Chorus"
-	///   VersionInfo="$(MasterVersionInfo)"
 	///   BuildType="bt2"
 	///   Tag=".lastSuccessful"
 	///   Query="?branch=%3Cdefault%3E"
+	///   VersionInfo="$(fwrt)/Src/MasterVersionInfo.txt"
 	///   DownloadsDir="$(fwrt)/Downloads"
 	///   Artifacts="@(ChorusFiles)"/>
 	/// </summary>
@@ -38,6 +41,7 @@ namespace FwBuildTasks
 		/// TeamCity BuildType that contains the Artifacts.
 		/// Used with a specified Tag or if it is not possible to determine the correct BuildType from FlexBridgeBuildType and ProjectId alone.
 		/// </summary>
+		[Required]
 		public string BuildType { get; set; }
 
 		/// <summary>Build Tag. Default is '.lastSuccessful'.</summary>
@@ -45,16 +49,6 @@ namespace FwBuildTasks
 
 		/// <summary>URL Query (e.g. ?branch=%3Cdefault%3E). Used only if FlexBridgeBuildType has no matching dependency.</summary>
 		public string Query { get; set; }
-
-		/// <summary>
-		/// The TeamCity "Build Type" of the FLExBridge build associated with this FLEx build.
-		/// Its dependencies are used to determine relevant Build Types etc. from which to download Artifacts.
-		/// Used only if BuildType and Tag are not both specified.
-		/// </summary>
-		public string FlexBridgeBuildType { get; set; }
-
-		/// <summary>The Artifacts' ProjectID on TeamCity. Used to determine which of the FLExBridge build's dependencies to use.</summary>
-		public string ProjectId { get; set; }
 
 		/// <summary>Path to FLEx's MasterVersionInfo.txt. Used to guess a build tag if unavailable through the FLExBridge BT configuration.</summary>
 		public string VersionInfo { get; set; }
@@ -66,7 +60,7 @@ namespace FwBuildTasks
 		public override bool Execute()
 		{
 			// If the user specified a tag or query, it overrides whatever we might find by querying TeamCity
-			if (!string.IsNullOrEmpty(Tag) || string.IsNullOrEmpty(Query))
+			if (!string.IsNullOrEmpty(Tag) || !string.IsNullOrEmpty(Query))
 			{
 				if (string.IsNullOrEmpty(Tag))
 					Tag = DefaultTag;
@@ -79,18 +73,10 @@ namespace FwBuildTasks
 			switch (QueryTeamCity())
 			{
 				case TeamCityQueryResult.Found:
+				case TeamCityQueryResult.FellThrough:
 					return DownloadAllFiles();
 				case TeamCityQueryResult.Failed:
 					return false;
-				case TeamCityQueryResult.FellThrough:
-					if (string.IsNullOrEmpty(BuildType))
-					{
-						Log.LogError("Insufficient information to identify a build:{0}FlexBridgeBuildType: {1}{0}ProjectId: {2}{0}BuildType: {3}"
-							+ "{0}Please specify a BuildType or verify that FBBT {1} has a dependency on Project {2}",
-							Environment.NewLine, FlexBridgeBuildType, ProjectId, BuildType);
-						return false;
-					}
-					return DownloadAllFiles();
 				default:
 					Log.LogError("Unknown TeamCity Query Result. This is not necessarily bad, but this FwBuildTask doesn't know that.");
 					return false;
@@ -108,69 +94,6 @@ namespace FwBuildTasks
 
 		protected TeamCityQueryResult QueryTeamCity()
 		{
-			// First, look for a relevant dependency in FlexBridgeBuildType, if any
-			if (!string.IsNullOrEmpty(FlexBridgeBuildType))
-			{
-				if (string.IsNullOrEmpty(ProjectId) && string.IsNullOrEmpty(BuildType))
-				{
-					Log.LogError("FlexBridgeBuildType given, but no dependency ProjectId or build type."
-						+ " What am I supposed to do; download all dependencies for this FlexBridgeBuildType?");
-					return TeamCityQueryResult.Failed;
-				}
-
-				// Read dependencies from the FlexBridgeBuildType in TeamCity
-				var relevantDeps = GetDependenciesFromFlexBridgeBuildType();
-				if (relevantDeps == null)
-				{
-					Log.LogError("Unable to retrieve dependencies for BuildType {0}. Check your connection and whether the BuildType exists",
-						FlexBridgeBuildType);
-					return TeamCityQueryResult.Failed;
-				}
-				switch (relevantDeps.Length)
-				{
-					case 0:
-						Log.LogMessage("FlexBridgeBuildType {0} has no dependencies on {1}.", FlexBridgeBuildType, ProjectId ?? BuildType);
-						break;
-					case 1:
-						BuildType = relevantDeps[0].BuildTypeId;
-						Tag = relevantDeps[0].RevisionValue;
-						Query = string.IsNullOrEmpty(relevantDeps[0].RevisionBranch) ? null : string.Format(QueryFormat, relevantDeps[0].RevisionBranch);
-						// REVIEW pH 2016.10: would it be a good idea to read the files list here? Override specified list, subordinate to, or Union?
-						Log.LogMessage("Found matching dependency in FLExBridge: BuildType {0}, Tag {1}{2}",
-							relevantDeps[0].BuildTypeName, Tag, Query == null ? null : string.Format(", Branch: {0}", relevantDeps[0].RevisionBranch));
-						return TeamCityQueryResult.Found;
-					default:
-						// There is more than one artifact dependency on the specified ProjectId.
-						// Select one(s) that matches the specified buildType, if any.
-						var depsOfHardcodedBt = relevantDeps.Where(tcd => tcd.BuildTypeId == BuildType).ToArray();
-						if (depsOfHardcodedBt.Any())
-							relevantDeps = depsOfHardcodedBt;
-						if (relevantDeps.Length == 1)
-							goto case 1; // we found a unique dependency; use it
-						// Filter out, e.g., Chorus-Documentation
-						relevantDeps = relevantDeps.Where(tcd => tcd.BuildTypeName == null || !tcd.BuildTypeName.Contains("Documentation")).ToArray();
-						if (relevantDeps.Length == 1)
-							goto case 1; // we found a unique dependency; use it
-						// If we still have multiple dependencies, give up. (TeamCity should never depend on two different tags of the same build)
-						Log.LogError("FLExBridge :: {0} has multiple possibly-relevant dependencies on {1}: {2}."
-							+ " Try making this FwBuildTask smarter or specifying a BuildType.",
-							FlexBridgeBuildType, ProjectId ?? BuildType, string.Join(", ", relevantDeps));
-						return TeamCityQueryResult.Failed;
-				}
-			}
-
-			if (string.IsNullOrEmpty(BuildType))
-			{
-				if(string.IsNullOrEmpty(FlexBridgeBuildType))
-					Log.LogError("Insufficient information to identify a build."
-						+ " Please specify a Build Type or a FLExBridge Build Type and a Project ID");
-				else
-					Log.LogError("Insufficient information to identify a build."
-						+ " FLExBridge Build Type {0} has no dependencies on {1}, and no Build Type was specified.",
-						FlexBridgeBuildType, ProjectId);
-				return TeamCityQueryResult.Failed;
-			}
-
 			// Didn't find a matching dependency in FLExBridge; check for the most-specific version-tagged build, if any (e.g. fw-8.2.8~beta2~nightly)
 			var availableTags = GetTagsFromBuildType();
 			if (availableTags == null)
@@ -181,7 +104,7 @@ namespace FwBuildTasks
 			if (availableTags.Any())
 			{
 				Dictionary<string, string> versionParts;
-				if (Substitute.ParseSymbolFile(VersionInfo, Log, out versionParts))
+				if (!string.IsNullOrEmpty(VersionInfo) && Substitute.ParseSymbolFile(VersionInfo, Log, out versionParts))
 				{
 					var tempTag = string.Format("fw-{0}.{1}.{2}~{3}",
 						versionParts["FWMAJOR"], versionParts["FWMINOR"], versionParts["FWREVISION"], versionParts["FWBETAVERSION"]);
@@ -211,79 +134,6 @@ namespace FwBuildTasks
 			// If all else fails, use the default "tag" .lastSuccessful
 			Tag = DefaultTag;
 			return TeamCityQueryResult.FellThrough;
-		}
-
-		/// <returns>an array of FlexBridgeBuildType's TcDependencies, filtered by ProjectId (or BuildType); null on any error</returns>
-		protected TcDependency[] GetDependenciesFromFlexBridgeBuildType()
-		{
-			string fbbtXml;
-			if (!MakeWebRequest(string.Format(CombineUrl(Address, BuildTypeUrlPart), FlexBridgeBuildType), out fbbtXml))
-				return null;
-			var fbbtXDocRoot = XDocument.Load(new StringReader(fbbtXml)).Root;
-			if (fbbtXDocRoot == null)
-				return null;
-			var dependenciesElt = fbbtXDocRoot.Element("artifact-dependencies");
-			if (dependenciesElt == null)
-				return null;
-			return string.IsNullOrEmpty(ProjectId)
-				? dependenciesElt.Elements("artifact-dependency").Where(XEltMatchesBuildType).Select(TcDependencyFromXml).Distinct().ToArray()
-				: dependenciesElt.Elements("artifact-dependency").Where(XEltMatchesProjectId).Select(TcDependencyFromXml).Distinct().ToArray();
-		}
-
-		protected bool XEltMatchesProjectId(XElement artifactDependency)
-		{
-			var typeElt = artifactDependency.Element("source-buildType");
-			if (typeElt == null)
-				return false;
-			var xAtt = typeElt.Attribute("projectId");
-			return xAtt != null && xAtt.Value == ProjectId;
-		}
-
-		protected bool XEltMatchesBuildType(XElement artifactDependency)
-		{
-			var typeElt = artifactDependency.Element("source-buildType");
-			if (typeElt == null)
-				return false;
-			var xAtt = typeElt.Attribute("id"); // the BuildType ID
-			return xAtt != null && xAtt.Value == BuildType;
-		}
-
-		protected TcDependency TcDependencyFromXml(XElement artifactDependency)
-		{
-			var tcd = new TcDependency();
-			var typeElt = artifactDependency.Element("source-buildType");
-			if (typeElt != null)
-			{
-				var xAtt = typeElt.Attribute("id");
-				if (xAtt != null)
-					tcd.BuildTypeId = xAtt.Value;
-				xAtt = typeElt.Attribute("name");
-				if (xAtt != null)
-					tcd.BuildTypeName = xAtt.Value;
-			}
-			var propsElt = artifactDependency.Element("properties");
-			if (propsElt == null)
-				return tcd;
-			foreach (var propElt in propsElt.Elements())
-			{
-				var nameAtt = propElt.Attribute("name");
-				var valueAtt = propElt.Attribute("value");
-				if (nameAtt == null || valueAtt == null)
-					continue;
-				switch (nameAtt.Value)
-				{
-					case "revisionValue":
-						tcd.RevisionValue = valueAtt.Value;
-						break;
-					case "revisionBranch":
-						tcd.RevisionBranch = valueAtt.Value;
-						break;
-				}
-			}
-			// strip leading "latest" from, e.g., latest.LastSuccessful or latest.lastPinned
-			if (tcd.RevisionValue.StartsWith("latest."))
-				tcd.RevisionValue = tcd.RevisionValue.Substring("latest".Length);
-			return tcd;
 		}
 
 		/// <returns>an array of tags on BuildType's pinned builds; null on any error</returns>

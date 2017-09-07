@@ -272,10 +272,6 @@
 	<PropertyGroup>
 		<MasterVersionInfo>$(fwrt)/Src/MasterVersionInfo.txt</MasterVersionInfo>
 		<TeamCityUrl>https://build.palaso.org/</TeamCityUrl>
-		<!-- Update when appropriate. -->
-		<FLExBridgeBuildType Condition="'$(OS)'=='Windows_NT'">FLExBridge_FLExBridgeDevelopWin32Continuous</FLExBridgeBuildType>
-		<!-- Update when appropriate. -->
-		<FLExBridgeBuildType Condition="'$(OS)'=='Unix'">FLExBridge_FLExBridgeDevelopLinux64Continuous</FLExBridgeBuildType>
 
 		<!-- Chorus_Win32masterContinuous is the master branch build of Chorus for Windows development. Update when appropriate. -->
 		<ChorusBuildType Condition="'$(OS)'=='Windows_NT'">Chorus_Win32masterContinuous</ChorusBuildType>
@@ -414,25 +410,25 @@
 	<Target Name="downloadDlls" DependsOnTargets="RestoreNuGetPackages" Condition="'$(disableDownloads)'!='true'">
 		<MakeDir Directories="$(DownloadsDir)"/>
 		<Message Text="Downloading artifacts for Palaso, including  L10NSharp, Enchant.Net, ibusdotnet, NDesk.DBus, Spart, and Newtonsoft.Json."/>
-		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(PalasoBuildType)" FlexBridgeBuildType="$(FLExBridgeBuildType)" VersionInfo="$(MasterVersionInfo)"
+		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(PalasoBuildType)" VersionInfo="$(MasterVersionInfo)"
 			Artifacts="@(PalasoFiles)" DownloadsDir="$(DownloadsDir)" Condition="'$(UseLocalPalaso)'!='Y'"/>
 
 		<Message Text="Downloading artifacts for Chorus."/>
-		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(ChorusBuildType)" FlexBridgeBuildType="$(FLExBridgeBuildType)" VersionInfo="$(MasterVersionInfo)"
+		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(ChorusBuildType)" VersionInfo="$(MasterVersionInfo)"
 			Artifacts="@(ChorusFiles)" DownloadsDir="$(DownloadsDir)" Condition="'$(UseLocalChorus)'!='Y'"/>
 
 		<Message Text="Downloading an artifact for IPCFramework."/>
-		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(IPCFrameworkBuildType)" FlexBridgeBuildType="$(FLExBridgeBuildType)" ProjectId="IpcLibrary" VersionInfo="$(MasterVersionInfo)" Artifacts="IPCFramework.dll" DownloadsDir="$(DownloadsDir)"/>
+		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(IPCFrameworkBuildType)" VersionInfo="$(MasterVersionInfo)" Artifacts="IPCFramework.dll" DownloadsDir="$(DownloadsDir)"/>
 
 		<!-- Due to platform-specific casing, ExCSS or ExCss is included in a variable -->
 		<Message Text="Downloading artifacts for ExCss."/>
-		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(ExCssBuildType)" FlexBridgeBuildType="$(FLExBridgeBuildType)" VersionInfo="$(MasterVersionInfo)" Artifacts="$(ExCss).dll;$(ExCss).$(DebugInfo)" DownloadsDir="$(DownloadsDir)"/>
+		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(ExCssBuildType)" VersionInfo="$(MasterVersionInfo)" Artifacts="$(ExCss).dll;$(ExCss).$(DebugInfo)" DownloadsDir="$(DownloadsDir)"/>
 
 		<Message Text="Downloading artifacts for icu4c." Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(Icu4cBuildType)" FlexBridgeBuildType="$(FLExBridgeBuildType)" VersionInfo="$(MasterVersionInfo)" Artifacts="gennorm2.exe;icudt$(IcuVersion).dll;icuin$(IcuVersion).dll;icutu$(IcuVersion).dll;icuuc$(IcuVersion).dll;icudt.lib;icuin.lib;icuuc.lib" DownloadsDir="$(DownloadsDir)" Condition="'$(OS)'=='Windows_NT'"/>
+		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(Icu4cBuildType)" VersionInfo="$(MasterVersionInfo)" Artifacts="gennorm2.exe;icudt$(IcuVersion).dll;icuin$(IcuVersion).dll;icutu$(IcuVersion).dll;icuuc$(IcuVersion).dll;icudt.lib;icuin.lib;icuuc.lib" DownloadsDir="$(DownloadsDir)" Condition="'$(OS)'=='Windows_NT'"/>
 
 		<Message Text="Downloading artifacts for HermitCrab." />
-		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(HermitCrabBuildType)" Tag="$(HermitCrabBuildTag)" FlexBridgeBuildType="$(FLExBridgeBuildType)" ProjectId="HermitCrab" VersionInfo="$(MasterVersionInfo)" Artifacts="QuickGraph.dll;SIL.Machine.dll;SIL.Collections.dll;SIL.HermitCrab.dll" DownloadsDir="$(DownloadsDir)"/>
+		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(HermitCrabBuildType)" Tag="$(HermitCrabBuildTag)" VersionInfo="$(MasterVersionInfo)" Artifacts="QuickGraph.dll;SIL.Machine.dll;SIL.Collections.dll;SIL.HermitCrab.dll" DownloadsDir="$(DownloadsDir)"/>
 
 		<Message Text="Downloading ParaTExt DLLs." />
 		<DownloadFile Address="$(DownloadsSilOrgDownloadUrl)/Paratext.LexicalContracts.dll" DownloadsDir="$(DownloadsDir)"/>
