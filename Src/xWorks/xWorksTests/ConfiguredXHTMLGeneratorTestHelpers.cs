@@ -184,7 +184,6 @@ namespace SIL.FieldWorks.XWorks
 
 			public void Dispose()
 			{
-				SetGuidOn(Item, m_OriginalGuid);
 				Dispose(true);
 				GC.SuppressFinalize(this);
 			}
@@ -192,6 +191,9 @@ namespace SIL.FieldWorks.XWorks
 			private void Dispose(bool disposing)
 			{
 				System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + " ******");
+
+				if (disposing)
+					SetGuidOn(Item, m_OriginalGuid);
 			}
 
 			private static void SetGuidOn(ICmObject item, Guid newGuid)
