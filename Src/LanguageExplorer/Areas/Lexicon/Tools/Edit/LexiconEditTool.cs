@@ -13,6 +13,7 @@ using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.Controls.LexText;
 using LanguageExplorer.Controls.PaneBar;
+using LanguageExplorer.LcmUi;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
@@ -294,8 +295,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			contextMenuStrip.Items.Add(new ToolStripSeparator());
 
 			// Insert_Sense menu item. (CmdInsertSense->msg: DataTreeInsert, also on Insert menu)
-			contextMenuItem = CreateToolStripMenuItem(contextMenuStrip, LexiconResources.Insert_Sense, LexiconResources.InsertSenseToolTip, Insert_Sense_Clicked);
-			contextMenuItem.Enabled = true;
+			CreateToolStripMenuItem(contextMenuStrip, LexiconResources.Insert_Sense, LexiconResources.InsertSenseToolTip, Insert_Sense_Clicked);
 
 			// Insert Subsense (in sense) menu item. (CmdInsertSubsense->msg: DataTreeInsert, also on Insert menu)
 			contextMenuItem = CreateToolStripMenuItem(contextMenuStrip, LexiconResources.Insert_Subsense, LexiconResources.Insert_Subsense_Tooltip, Insert_Subsense_Clicked);
@@ -479,13 +479,13 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		private void Insert_Subsense_Clicked(object sender, EventArgs e)
 		{
 #if RANDYTODO
-			// TODO: Move to LexEntryMenuHandler?
+			// TODO: Needs the sense slice to know which sense gets the subsense.
 #endif
 		}
 
 		private void Insert_Sense_Clicked(object sender, EventArgs e)
 		{
-			MessageBox.Show(_multiPane.FindForm(), "Inserting sense...");
+			LexSenseUi.CreateNewLexSense(_cache, (ILexEntry)_recordClerk.CurrentObject);
 		}
 
 		private void Insert_Entry_Clicked(object sender, EventArgs e)
@@ -551,7 +551,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			PaneBarContextMenuFactory.CreateToolStripMenuItem(_insertMenu, 0, LexiconResources.Entry, majorEntryImage, Keys.Control | Keys.E, Insert_Entry_Clicked, LexiconResources.Entry_Tooltip);
 			/*
 <command id="CmdInsertSense" label="_Sense" message="DataTreeInsert">
-	<parameters field="Senses" className="LexSense" ownerClass="LexEntry" recomputeVirtual="LexSense.LexSenseOutline" />
+	<parameters field="Senses" className="LexSense" ownerClass="LexEntry" />
 </command>
 <item command="CmdInsertSense" defaultVisible="false" />
 			 */
@@ -585,7 +585,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			<item command="CmdDataTree-Insert-Etymology" defaultVisible="false" />
 			<item label="-" translate="do not translate" />
 <command id="CmdInsertSubsense" label="Subsense (in sense)" message="DataTreeInsert">
-	<parameters field="Senses" className="LexSense" ownerClass="LexSense" recomputeVirtual="LexSense.LexSenseOutline" />
+	<parameters field="Senses" className="LexSense" ownerClass="LexSense" />
 </command>
 			<item command="CmdInsertSubsense" defaultVisible="false" />
 <command id="CmdInsertPicture" label="_Picture" message="InsertPicture">

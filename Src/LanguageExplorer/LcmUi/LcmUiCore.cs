@@ -351,15 +351,15 @@ namespace LanguageExplorer.LcmUi
 				default:
 					return DefaultCreateNewUiObject(classId, hvoOwner, flid, insertionPosition, cache);
 				case CmPossibilityTags.kClassId:
-					return CmPossibilityUi.CreateNewUiObject(propertyTable, classId, hvoOwner, flid, insertionPosition);
+					return CmPossibilityUi.CreateNewUiObject(cache, classId, hvoOwner, flid, insertionPosition);
 				case PartOfSpeechTags.kClassId:
-					return PartOfSpeechUi.CreateNewUiObject(propertyTable, publisher, classId, hvoOwner, flid, insertionPosition);
+					return PartOfSpeechUi.CreateNewUiObject(cache, propertyTable, publisher, classId, hvoOwner, flid, insertionPosition);
 				case FsFeatDefnTags.kClassId:
-					return FsFeatDefnUi.CreateNewUiObject(propertyTable, publisher, classId, hvoOwner, flid, insertionPosition);
+					return FsFeatDefnUi.CreateNewUiObject(cache, propertyTable, publisher, classId, hvoOwner, flid, insertionPosition);
 				case LexSenseTags.kClassId:
-					return LexSenseUi.CreateNewUiObject(propertyTable, classId, hvoOwner, flid, insertionPosition);
+					return LexSenseUi.CreateNewUiObject(cache, hvoOwner, insertionPosition);
 				case LexPronunciationTags.kClassId:
-					return LexPronunciationUi.CreateNewUiObject(propertyTable, classId, hvoOwner, flid, insertionPosition);
+					return LexPronunciationUi.CreateNewUiObject(cache, classId, hvoOwner, flid, insertionPosition);
 			}
 		}
 
@@ -1655,10 +1655,9 @@ namespace LanguageExplorer.LcmUi
 			return false;
 		}
 
-		public static CmObjectUi CreateNewUiObject(IPropertyTable propertyTable, int classId, int hvoOwner,
+		public static CmObjectUi CreateNewUiObject(LcmCache cache, int classId, int hvoOwner,
 			int flid, int insertionPosition)
 		{
-			var cache = propertyTable.GetValue<LcmCache>("cache");
 			if (CheckAndReportProblemAddingSubitem(cache, hvoOwner))
 				return null;
 			return DefaultCreateNewUiObject(classId, hvoOwner, flid, insertionPosition, cache);
@@ -2050,64 +2049,181 @@ namespace LanguageExplorer.LcmUi
 		/// first one.  If this is the first one, we may need to create an MSA if the owning entry
 		/// does not have an appropriate one.
 		/// </summary>
-		/// <param name="propertyTable"></param>
-		/// <param name="classId"></param>
-		/// <param name="hvoOwner"></param>
-		/// <param name="flid"></param>
-		/// <param name="insertionPosition"></param>
-		/// <returns></returns>
-		public static LexSenseUi CreateNewUiObject(IPropertyTable propertyTable, int classId, int hvoOwner, int flid, int insertionPosition)
+		public static LexSenseUi CreateNewUiObject(LcmCache cache, int hvoOwner, int insertionPosition = int.MaxValue)
 		{
-			LexSenseUi result = null;
-			var cache = propertyTable.GetValue<LcmCache>("cache");
-			UndoableUnitOfWorkHelper.Do(LcmUiStrings.ksUndoInsertSense, LcmUiStrings.ksRedoInsertSense,
-				cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
-				{
-					ICmObject owner;
-					int hvoMsa = 0;
-					int chvo = cache.DomainDataByFlid.get_VecSize(hvoOwner, flid);
-					if (chvo == 0)
-					{
-						// See if we're inserting a subsense. If so copy from parent.
-						owner = cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoOwner);
-						if (owner is ILexSense)
-						{
-							var ls = owner as ILexSense;
-							hvoMsa = GetSafeHvoMsa(cache, ls);
-						}
-						else if (owner is ILexEntry)
-						{
-							// If we don't get the MSA here, trouble ensues.  See LT-5411.
-							hvoMsa = (owner as ILexEntry).FindOrCreateDefaultMsa().Hvo;
-						}
-					}
-					else
-					{
-						int copyFrom = insertionPosition - 1;
-						if (copyFrom < 0)
-							copyFrom = 0;
-						if (copyFrom < chvo)
-						{
-							var ls = cache.ServiceLocator.GetInstance<ILexSenseRepository>().GetObject(cache.DomainDataByFlid.get_VecItem(hvoOwner, flid, copyFrom));
-							hvoMsa = GetSafeHvoMsa(cache, ls);
-						}
-					}
-					owner = cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoOwner);
-					var newSense = cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
-					if (owner is ILexSense)
-					{
-						(owner as ILexSense).SensesOS.Insert(insertionPosition, newSense);
-					}
-					else
-					{
-						((ILexEntry)owner).SensesOS.Insert(insertionPosition, newSense);
-					}
+			var owner = cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoOwner);
+			if (owner is ILexEntry)
+			{
+				return CreateNewLexSenseUiObject(cache, owner as ILexEntry, insertionPosition);
+			}
+			if (owner is ILexSense)
+			{
+				return CreateNewLexSenseUiObject(cache, owner as ILexSense, insertionPosition);
+			}
+			throw new ArgumentOutOfRangeException(nameof(hvoOwner), $"Owner must be an ILexEntry or an ILexSense, but it was: '{owner.ClassName}'.");
+		}
 
-					if (hvoMsa != 0)
-						newSense.MorphoSyntaxAnalysisRA = cache.ServiceLocator.GetInstance<IMoMorphSynAnalysisRepository>().GetObject(hvoMsa);
-					result = new LexSenseUi(newSense);
-				});
-			return result;
+		/// <summary>
+		/// Create a new LexSenseUi in the given entry.
+		/// </summary>
+		internal static LexSenseUi CreateNewLexSenseUiObject(LcmCache cache, ILexEntry ownerEntry, int insertionPosition)
+		{
+			return new LexSenseUi(CreateNewLexSense(cache, ownerEntry, insertionPosition));
+		}
+
+		/// <summary>
+		/// Create a new LexSenseUi in the given sense.
+		/// </summary>
+		internal static LexSenseUi CreateNewLexSenseUiObject(LcmCache cache, ILexSense ownerSense, int insertionPosition = int.MaxValue)
+		{
+			return new LexSenseUi(CreateNewLexSense(cache, ownerSense, insertionPosition));
+		}
+
+		/// <summary>
+		/// Create a new LexSense in the given entry.
+		/// </summary>
+		internal static ILexSense CreateNewLexSense(LcmCache cache, ILexEntry ownerEntry, int insertionPosition = int.MaxValue)
+		{
+			ILexSense newSense = null;
+			UndoableUnitOfWorkHelper.Do(LcmUiStrings.ksUndoInsertSense, LcmUiStrings.ksRedoInsertSense, cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
+			{
+				IMoMorphSynAnalysis msa;
+				var entrySenseCount = ownerEntry.SensesOS.Count;
+				var appendNewSense = (insertionPosition == int.MaxValue) || (insertionPosition >= entrySenseCount); ;
+				if (entrySenseCount == 0)
+				{
+					// No senses at all.
+					// If we don't get the MSA here, trouble ensues.  See LT-5411.
+					msa = ownerEntry.FindOrCreateDefaultMsa();
+				}
+				else
+				{
+					// Use the MSA from the sense right before the location we want the new one to go into.
+					ILexSense senseToGetMsaFrom;
+					if (insertionPosition == 0)
+					{
+						// Use first sense.
+						senseToGetMsaFrom = ownerEntry.SensesOS.First();
+					}
+					else if (appendNewSense)
+					{
+						// Use last sense.
+						senseToGetMsaFrom = ownerEntry.SensesOS.Last();
+					}
+					else
+					{
+						// Use the one before the insertion point.
+						senseToGetMsaFrom = ownerEntry.SensesOS[insertionPosition - 1];
+					}
+					msa = GetSafeMsa(cache, senseToGetMsaFrom);
+				}
+				newSense = cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
+				if (appendNewSense)
+				{
+					ownerEntry.SensesOS.Add(newSense);
+				}
+				else
+				{
+					ownerEntry.SensesOS.Insert(insertionPosition, newSense);
+				}
+				newSense.MorphoSyntaxAnalysisRA = msa;
+			});
+			return newSense;
+		}
+
+		/// <summary>
+		/// Create a new LexSense in the given sense.
+		/// </summary>
+		internal static ILexSense CreateNewLexSense(LcmCache cache, ILexSense ownerSense, int insertionPosition = int.MaxValue)
+		{
+			ILexSense newSense = null;
+			UndoableUnitOfWorkHelper.Do(LcmUiStrings.ksUndoInsertSense, LcmUiStrings.ksRedoInsertSense, cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
+			{
+				IMoMorphSynAnalysis msa;
+				var senseSubsenseCount = ownerSense.SensesOS.Count;
+				var appendNewSense = (insertionPosition == int.MaxValue) || (insertionPosition >= senseSubsenseCount);
+				if (senseSubsenseCount == 0)
+				{
+					// No senses at all.
+					// If we don't get the MSA here, trouble ensues.  See LT-5411.
+					msa = ownerSense.Entry.FindOrCreateDefaultMsa();
+				}
+				else
+				{
+					// Use the MSA from the sense right before the location we want the new one to go into.
+					ILexSense senseToGetMsaFrom;
+					if (insertionPosition == 0)
+					{
+						// Use first sense.
+						senseToGetMsaFrom = ownerSense.SensesOS.First();
+					}
+					else if (appendNewSense)
+					{
+						// Use last sense.
+						senseToGetMsaFrom = ownerSense.SensesOS.Last();
+					}
+					else
+					{
+						// Use the one before the insertion point.
+						senseToGetMsaFrom = ownerSense.SensesOS[insertionPosition - 1];
+					}
+					msa = GetSafeMsa(cache, senseToGetMsaFrom);
+				}
+				newSense = cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
+				if (appendNewSense)
+				{
+					ownerSense.SensesOS.Add(newSense);
+				}
+				else
+				{
+					ownerSense.SensesOS.Insert(insertionPosition, newSense);
+				}
+				newSense.MorphoSyntaxAnalysisRA = msa;
+			});
+			return newSense;
+		}
+
+		/// <summary>
+		/// This method will get an MSA which the senses MorphoSyntaxAnalysisRA points to.
+		/// If it is null it will try and find an appropriate one in the owning Entries list, if that fails it will make one and put it there.
+		/// </summary>
+		/// <param name="cache"></param>
+		/// <param name="sense">LexSense whose MSA we will use/change</param>
+		/// <returns></returns>
+		private static IMoMorphSynAnalysis GetSafeMsa(LcmCache cache, ILexSense sense)
+		{
+			if (sense.MorphoSyntaxAnalysisRA != null)
+			{
+				//situation normal, return
+				return sense.MorphoSyntaxAnalysisRA;
+			}
+
+			//Situation not normal.
+			var entryPrimaryMorphType = sense.Entry.PrimaryMorphType; // Guard against corrupted data. Every entry should have a PrimaryMorphType
+			var isAffixType = entryPrimaryMorphType?.IsAffixType ?? false;
+			foreach (var msa in sense.Entry.MorphoSyntaxAnalysesOC) //go through each MSA in the Entry list looking for one with an unknown category
+			{
+				if (!isAffixType && msa is IMoStemMsa && (msa as IMoStemMsa).PartOfSpeechRA == null)
+				{
+					sense.MorphoSyntaxAnalysisRA = msa;
+					return msa;
+				}
+				if (msa is IMoUnclassifiedAffixMsa && (msa as IMoUnclassifiedAffixMsa).PartOfSpeechRA == null)
+				{
+					sense.MorphoSyntaxAnalysisRA = msa;
+					return msa;
+				}
+			}
+			if (sense.MorphoSyntaxAnalysisRA != null)
+			{
+				return sense.MorphoSyntaxAnalysisRA;
+			}
+			var safeMsa = isAffixType
+				? (IMoMorphSynAnalysis)cache.ServiceLocator.GetInstance<IMoUnclassifiedAffixMsaFactory>().Create()
+				: (IMoMorphSynAnalysis)cache.ServiceLocator.GetInstance<IMoStemMsaFactory>().Create();
+			sense.Entry.MorphoSyntaxAnalysesOC.Add(safeMsa);
+			sense.MorphoSyntaxAnalysisRA = safeMsa;
+			return sense.MorphoSyntaxAnalysisRA;
 		}
 
 		/// <summary>

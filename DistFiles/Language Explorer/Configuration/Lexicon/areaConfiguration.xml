@@ -21,11 +21,11 @@ EXTENSIONS NOT SUPPORTED Lexicon Area -->
 		<command id="CmdMergeEntry" label="_Merge with entry..." message="MergeEntry">
 			<parameters title="Merge Entry" formlabel="_Find:" okbuttonlabel="_Merge"/>
 		</command>
-		<command id="CmdInsertSense" label="_Sense" message="DataTreeInsert">
-			<parameters field="Senses" className="LexSense" ownerClass="LexEntry" recomputeVirtual="LexSense.LexSenseOutline"/>
+		<command id="CmdInsertSense" label="_Sense" message="DataTreeInsert" a10status="DONE" >
+			<parameters field="Senses" className="LexSense" ownerClass="LexEntry" />
 		</command>
 		<command id="CmdInsertSubsense" label="Subsense (in sense)" message="DataTreeInsert">
-			<parameters field="Senses" className="LexSense" ownerClass="LexSense" recomputeVirtual="LexSense.LexSenseOutline"/>
+			<parameters field="Senses" className="LexSense" ownerClass="LexSense" />
 		</command>
 		<command id="CmdInsertPicture" label="_Picture" message="InsertPicture">
 			<parameters field="Pictures" className="LexSense"/>
@@ -194,7 +194,7 @@ EXTENSIONS NOT SUPPORTED Lexicon Area -->
 	<menuAddOn>
 		<menu id="Insert">
 			<item command="CmdInsertLexEntry" defaultVisible="false" a10status="DONE" />
-			<item command="CmdInsertSense" defaultVisible="false"/>
+			<item command="CmdInsertSense" defaultVisible="false" a10status="DONE" />
 			<item command="CmdInsertVariant" defaultVisible="false"/>
 			<item command="CmdDataTree-Insert-AlternateForm" label="A_llomorph" defaultVisible="false"/>
 			<item command="CmdInsertReversalEntry" defaultVisible="false"/>
@@ -232,7 +232,7 @@ EXTENSIONS NOT SUPPORTED Lexicon Area -->
 			<menu id="LexEntryPaneMenu" icon="MenuWidget">
 				<item label="Show Dictionary Preview" boolProperty="Show_DictionaryPubPreview"/>
 				<item label="-" translate="do not translate"/>
-				<item label="Insert _Sense" command="CmdInsertSense"/>
+				<item label="Insert _Sense" command="CmdInsertSense" a10status="DONE" />
 				<item label="Insert Subsense (in sense)" command="CmdInsertSubsense"/>
 				<item label="Insert _Variant" command="CmdInsertVariant"/>
 				<item label="Insert A_llomorph" command="CmdDataTree-Insert-AlternateForm"/>

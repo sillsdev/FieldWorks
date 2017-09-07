@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
 using System.Diagnostics;
 using System.Windows.Forms;
 using LanguageExplorer.Controls.LexText;
@@ -31,20 +32,14 @@ namespace LanguageExplorer.LcmUi
 		/// <summary>
 		/// Handle the context menu for inserting a POS.
 		/// </summary>
-		/// <param name="propertyTable"></param>
-		/// <param name="publisher"></param>
-		/// <param name="classId"></param>
-		/// <param name="hvoOwner"></param>
-		/// <param name="flid"></param>
-		/// <param name="insertionPosition"></param>
-		/// <returns></returns>
-		public new static PartOfSpeechUi CreateNewUiObject(IPropertyTable propertyTable, IPublisher publisher, int classId, int hvoOwner, int flid, int insertionPosition)
+		public static PartOfSpeechUi CreateNewUiObject(LcmCache cache, IPropertyTable propertyTable, IPublisher publisher, int classId, int hvoOwner, int flid, int insertionPosition)
 		{
+			if (cache == null)
+				throw new ArgumentNullException(nameof(cache));
+
 			PartOfSpeechUi posUi = null;
 			using (MasterCategoryListDlg dlg = new MasterCategoryListDlg())
 			{
-				LcmCache cache = propertyTable.GetValue<LcmCache>("cache");
-				Debug.Assert(cache != null);
 				var newOwner = cache.ServiceLocator.GetInstance<IPartOfSpeechRepository>().GetObject(hvoOwner);
 				dlg.SetDlginfo(newOwner.OwningList, propertyTable, true, newOwner);
 				switch (dlg.ShowDialog(propertyTable.GetValue<Form>("window")))

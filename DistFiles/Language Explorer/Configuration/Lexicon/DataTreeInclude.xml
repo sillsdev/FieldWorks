@@ -25,7 +25,7 @@
 			<parameters field="LexemeForm" className="MoForm"/>
 		</command>
 		<command id="CmdDataTree-Insert-VariantForm" label="Insert Variant" message="DataTreeInsert">
-			<parameters field="VariantFormEntryBackRefs" className="LexEntry" recomputeVirtual="LexEntry.VariantFormEntryBackRefs"/>
+			<parameters field="VariantFormEntryBackRefs" className="LexEntry" />
 		</command>
 		<command id="CmdDataTree-Convert-LexemeForm-AffixProcess" label="Convert to Affix Process" message="ConvertLexemeForm">
 			<parameters fromClassName="MoAffixAllomorph" toClassName="MoAffixProcess"/>
@@ -130,13 +130,13 @@
 	Senses
 	-->
 		<command id="CmdDataTree-Insert-SubSense" label="Insert Su_bsense" message="DataTreeInsert">
-			<parameters field="Senses" className="LexSense" ownerClass="LexSense" recomputeVirtual="LexSense.LexSenseOutline"/>
+			<parameters field="Senses" className="LexSense" ownerClass="LexSense" />
 		</command>
 		<command id="CmdDataTree-Insert-SenseBelow" label="Insert _Sense" message="DataTreeInsert">
-			<parameters field="Senses" className="LexSense" slice="owner" recomputeVirtual="LexSense.LexSenseOutline"/>
+			<parameters field="Senses" className="LexSense" slice="owner" />
 		</command>
 		<command id="CmdDataTree-Insert-Entry-Sense" label="Insert _Top-Level Sense" message="DataTreeInsert">
-			<parameters field="Senses" className="LexSense" ownerClass="LexEntry" recomputeVirtual="LexSense.LexSenseOutline"/>
+			<parameters field="Senses" className="LexSense" ownerClass="LexEntry" />
 		</command>
 		<command id="CmdDataTree-Delete-Sense" label="Delete this Sense and any Subsenses" message="DataTreeDeleteSense" icon="Delete">
 			<parameters field="Senses" className="LexSense"/>
@@ -316,7 +316,7 @@
 		<command id="CmdDataTree-MoveUp-VariantSpec" label="Move Variant Info Up" message="MoveUpObjectInSequence" icon="MoveUp"/>
 		<command id="CmdDataTree-MoveDown-VariantSpec" label="Move Variant Info Down" message="MoveDownObjectInSequence" icon="MoveDown"/>
 		<command id="CmdDataTree-Insert-VariantSpec" label="Add another Variant Info section" message="DataTreeInsert">
-			<parameters field="EntryRefs" className="LexEntryRef" ownerClass="LexEntry" recomputeVirtual="LexEntry.VariantEntryRefs"/>
+			<parameters field="EntryRefs" className="LexEntryRef" ownerClass="LexEntry" />
 		</command>
 		<command id="CmdDataTree-Delete-VariantSpec" label="Delete Variant Info" message="DataTreeDelete" icon="Delete"/>
 		<!--command id="CmdDataTree-MoveUp-ComplexFormSpec" label="Move Complex Form Info Up" message="MoveUpObjectInSequence" icon="MoveUp"/-->

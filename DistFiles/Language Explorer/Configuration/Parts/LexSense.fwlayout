@@ -3,7 +3,7 @@
 <LayoutInventory xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:noNamespaceSchemaLocation='ViewsLayout.xsd'>
   <layout class="LexSense" type="detail" name="Normal">
-	<part ref="HeavySummary" param="Summary" collapsedLayout="SummaryCollapsed" expansion="expanded" menu="mnuDataTree-Sense" hotlinks="mnuDataTree-Sense-Hotlinks" notifyVirtual="LexSenseOutline">
+	<part ref="HeavySummary" param="Summary" collapsedLayout="SummaryCollapsed" expansion="expanded" menu="mnuDataTree-Sense" hotlinks="mnuDataTree-Sense-Hotlinks" >
 		<indent>
 			<part ref="GlossAllA"/>
 			<part ref="ReversalEntries"   visibility="ifdata" />

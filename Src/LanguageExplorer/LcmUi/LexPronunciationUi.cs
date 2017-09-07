@@ -30,16 +30,9 @@ namespace LanguageExplorer.LcmUi
 		/// <summary>
 		/// Handle the context menu for inserting a LexPronunciation.
 		/// </summary>
-		/// <param name="propertyTable"></param>
-		/// <param name="classId"></param>
-		/// <param name="hvoOwner"></param>
-		/// <param name="flid"></param>
-		/// <param name="insertionPosition"></param>
-		/// <returns></returns>
-		public static LexPronunciationUi CreateNewUiObject(IPropertyTable propertyTable, int classId, int hvoOwner, int flid, int insertionPosition)
+		public static LexPronunciationUi CreateNewUiObject(LcmCache cache, int classId, int hvoOwner, int flid, int insertionPosition)
 		{
 			LexPronunciationUi result = null;
-			LcmCache cache = propertyTable.GetValue<LcmCache>("cache");
 			UndoableUnitOfWorkHelper.Do(LcmUiStrings.ksUndoInsert, LcmUiStrings.ksRedoInsert, cache.ActionHandlerAccessor,
 				() =>
 			{

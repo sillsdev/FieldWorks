@@ -31,14 +31,7 @@ namespace LanguageExplorer.LcmUi
 		/// <summary>
 		/// Handle the context menu for inserting an FsFeatDefn.
 		/// </summary>
-		/// <param name="propertyTable"></param>
-		/// <param name="publisher"></param>
-		/// <param name="classId"></param>
-		/// <param name="hvoOwner"></param>
-		/// <param name="flid"></param>
-		/// <param name="insertionPosition"></param>
-		/// <returns></returns>
-		public new static FsFeatDefnUi CreateNewUiObject(IPropertyTable propertyTable, IPublisher publisher, int classId, int hvoOwner, int flid, int insertionPosition)
+		public static FsFeatDefnUi CreateNewUiObject(LcmCache cache, IPropertyTable propertyTable, IPublisher publisher, int classId, int hvoOwner, int flid, int insertionPosition)
 		{
 			FsFeatDefnUi ffdUi = null;
 			string className = "FsClosedFeature";
@@ -46,7 +39,6 @@ namespace LanguageExplorer.LcmUi
 				className = "FsComplexFeature";
 			using (MasterInflectionFeatureListDlg dlg = new MasterInflectionFeatureListDlg(className))
 			{
-				LcmCache cache = propertyTable.GetValue<LcmCache>("cache");
 				dlg.SetDlginfo(cache.LanguageProject.MsFeatureSystemOA, propertyTable, true);
 				switch (dlg.ShowDialog(propertyTable.GetValue<Form>("window")))
 				{

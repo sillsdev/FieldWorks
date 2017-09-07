@@ -441,8 +441,7 @@ namespace LanguageExplorer.Works
 			}
 			Logger.WriteEvent(String.Format("Inserting class {1} into field {0} of a {2}.",
 				field, className, ownerClassName ?? "nullOwner"));
-			current.HandleInsertCommand(field, className, ownerClassName,
-				command.GetParameter("recomputeVirtual", null));
+			current.HandleInsertCommand(field, className, ownerClassName));
 
 			Logger.WriteEvent("Done Inserting.");
 			return true;	//we handled this.

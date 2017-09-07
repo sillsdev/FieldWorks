@@ -192,28 +192,6 @@ namespace LanguageExplorer.Areas.Lexicon
 		}
 #endif
 
-		/// <summary>
-		/// Extract information from the slice which will be needed to call NotifyVirtualChanged
-		/// after the slice has been disposed.
-		/// </summary>
-		/// <param name="slice"></param>
-		/// <param name="propName"></param>
-		/// <param name="clid"></param>
-		/// <param name="parent"></param>
-		private static void GetNotifyVirtChgInfo(Slice slice, out string propName, out int clid,
-			out Control parent)
-		{
-			XAttribute xa = null;
-			var caller = slice.CallerNode;
-			if (caller != null)
-				xa = caller.Attribute("notifyVirtual");
-			if (xa == null)
-				xa = slice.ConfigurationNode.Attribute("notifyVirtual");
-			propName = (xa != null) ? xa.Value : "";
-			clid = slice.Object.ClassID;
-			parent = slice.Parent;
-		}
-
 #if RANDYTODO
 		/// <summary>
 		/// handle the message to see if the menu item should be enabled

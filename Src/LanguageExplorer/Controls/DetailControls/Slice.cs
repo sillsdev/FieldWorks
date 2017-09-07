@@ -1826,9 +1826,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <param name="className">class of object to create</param>
 		/// <param name="ownerClassName">class of expected owner. If the current slice's object is not
 		/// this class (or a subclass), look for a containing object that is.</param>
-		/// <param name="recomputeVirtual">if non-null, this is a virtual property that should be updated for all
-		/// moved objects and their descendents of the specified class (string has form class.property)</param>
-		internal void HandleInsertCommand(string fieldName, string className, string ownerClassName, string recomputeVirtual)
+		internal void HandleInsertCommand(string fieldName, string className, string ownerClassName)
 		{
 			CheckDisposed();
 
@@ -1851,7 +1849,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				Hide();
 			// First see whether THIS slice can do it. This helps us insert in the right position for things like
 			// subsenses.
-			if (InsertObjectIfPossible(newObjectClassId, ownerClassId, fieldName, this, recomputeVirtual))
+			if (InsertObjectIfPossible(newObjectClassId, ownerClassId, fieldName, this))
 				return;
 			// The previous call may have done the insert, but failed to recognize it due to disposing of the slice
 			// during a PropChanged operation.  See LT-9005.
@@ -1862,7 +1860,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			int index = IndexInContainer;
 			for (int i = index - 1; i >= 0; i--)
 			{
-				if (InsertObjectIfPossible(newObjectClassId, ownerClassId, fieldName, ContainingDataTree.Slices[i], recomputeVirtual))
+				if (InsertObjectIfPossible(newObjectClassId, ownerClassId, fieldName, ContainingDataTree.Slices[i]))
 					return;
 			}
 
@@ -1870,9 +1868,8 @@ namespace LanguageExplorer.Controls.DetailControls
 			// and that has the specified field.
 			foreach (Slice slice in ContainingDataTree.Slices)
 			{
-				Debug.WriteLine(String.Format("HandleInsertCommand({0}, {1}, {2}, {3}) -- slice = {4}",
-					fieldName, className, ownerClassName ?? "nullOwner", recomputeVirtual, slice));
-				if (InsertObjectIfPossible(newObjectClassId, ownerClassId, fieldName, slice, recomputeVirtual))
+				Debug.WriteLine($"HandleInsertCommand({fieldName}, {className}, {ownerClassName ?? "nullOwner"}) -- slice = {slice}");
+				if (InsertObjectIfPossible(newObjectClassId, ownerClassId, fieldName, slice))
 					break;
 			}
 		}
@@ -1882,7 +1879,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// not that it was actually inserted. It may, or may not, have been inserted in this case.
 		/// 'false' means no suitable place was found, so the calling code can try other locations.
 		/// </returns>
-		private bool InsertObjectIfPossible(int newObjectClassId, int ownerClassId, string fieldName, Slice slice, string recomputeVirtual)
+		private bool InsertObjectIfPossible(int newObjectClassId, int ownerClassId, string fieldName, Slice slice)
 		{
 			if ((ownerClassId > 0 && IsOrInheritsFrom((slice.Object.ClassID), ownerClassId)) // For adding senses using the simple edit mode, no matter where the cursor is.
 				|| slice.Object == Object
@@ -1910,15 +1907,8 @@ namespace LanguageExplorer.Controls.DetailControls
 					insertionPosition = slice.InsertObject(flid, newObjectClassId);
 				}
 				if (insertionPosition < 0)
-					return insertionPosition == -2;		// -2 keeps dlg for adding subPOSes from firing for each slice when cancelled.
-				if (String.IsNullOrEmpty(recomputeVirtual))
-					return true;
-				// Figure the things to recompute.
-				string[] parts = recomputeVirtual.Split('.');
-				if (parts.Length != 2)
 				{
-					Debug.Assert(parts.Length == 2);
-					return true; // but fairly harmless to ignore
+					return insertionPosition == -2;		// -2 keeps dlg for adding subPOSes from firing for each slice when cancelled.
 				}
 
 				return true;
