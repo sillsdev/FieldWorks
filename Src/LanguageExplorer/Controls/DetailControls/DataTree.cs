@@ -2911,7 +2911,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <param name="slice">The slice.</param>
 		/// <param name="fHotLinkOnly">if set to <c>true</c> [f hot link only].</param>
 		/// <returns></returns>
-		public ContextMenu GetSliceContextMenu(Slice slice, bool fHotLinkOnly)
+		public ContextMenuStrip GetSliceContextMenu(Slice slice, bool fHotLinkOnly)
 		{
 			CheckDisposed();
 			Debug.Assert(ShowContextMenuEvent!= null, "this should always be set to something");
@@ -3990,12 +3990,10 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// Invoked by a slice when the user does something to bring up a context menu
 		/// </summary>
-		public void OnShowContextMenu(object sender, TreeNodeEventArgs e)
+		private void OnShowContextMenu(object sender, TreeNodeEventArgs e)
 		{
 			CheckDisposed();
-			//just pass this onto, for example, the XWorks View that owns us,
-			//assuming that it has subscribed to this event on this object.
-			//If it has not, then this will still point to the "auto menu handler"
+			// Just pass this on to, for example, the XWorks View that owns us.
 			Debug.Assert(ShowContextMenuEvent != null, "this should always be set to something");
 			CurrentSlice = e.Slice;
 			var args = new SliceMenuRequestArgs(e.Slice, false);
@@ -4005,8 +4003,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			// on. However, it is unlikely that not disposing this context menu will cause any
 			// problems, so we leave it as is for now.
 			ShowContextMenuEvent(sender, args);
-			//			ContextMenu menu = ShowContextMenuEvent(sender, args);
-			//			menu.Show(e.Context, e.Location);
 		}
 
 		/// <summary>

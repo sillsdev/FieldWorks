@@ -50,6 +50,7 @@
 																<xs:attribute name="menu" type="xs:string" use="optional" />
 																<xs:attribute name="expansion" type="xs:string" use="optional" />
 																<xs:attribute name="abbr" type="xs:string" use="optional" />
+																<xs:attribute name="a10status" type="xs:string" use="optional" />
 															</xs:complexType>
 														</xs:element>
 													</xs:sequence>
@@ -82,6 +83,7 @@
 										<xs:attribute name="numstyle" type="xs:string" use="optional" />
 										<xs:attribute name="numsingle" type="xs:string" use="optional" />
 										<xs:attribute name="autoexp" type="xs:string" use="optional" >
+										<xs:attribute name="a10status" type="xs:string" use="optional" />
 											<xs:annotation>
 												<xs:documentation>
 													If this attribute is set to true then when this element becomes visible in a configuration
@@ -131,6 +133,7 @@
 										<xs:attribute name="commandVisible" type="xs:boolean" use="optional" />
 										<xs:attribute name="beforeStyle" type="xs:string" use="optional" />
 										<xs:attribute name="abbr" type="xs:string" use="optional" />
+										<xs:attribute name="a10status" type="xs:string" use="optional" />
 									</xs:complexType>
 								</xs:element>
 								<xs:element maxOccurs="unbounded" name="generate">
@@ -215,6 +218,7 @@
 													<xs:attribute name="hideConfig" type="xs:boolean" use="optional" />
 													<xs:attribute name="param" type="xs:string" use="optional" />
 													<xs:attribute name="beforeStyle" type="xs:string" use="optional" />
+													<xs:attribute name="a10status" type="xs:string" use="optional" />
 												</xs:complexType>
 											</xs:element>
 										</xs:sequence>
@@ -222,6 +226,7 @@
 										<xs:attribute name="fieldType" type="xs:string" use="required" />
 										<xs:attribute name="restrictions" type="xs:string" use="required" />
 										<xs:attribute name="destClass" type="xs:string" use="optional" />
+										<xs:attribute name="a10status" type="xs:string" use="optional" />
 									</xs:complexType>
 								</xs:element>
 								<xs:element name="span">
@@ -230,6 +235,7 @@
 											<xs:element name="string">
 												<xs:complexType>
 													<xs:attribute name="field" type="xs:string" use="required" />
+													<xs:attribute name="a10status" type="xs:string" use="optional" />
 												</xs:complexType>
 											</xs:element>
 										</xs:sequence>
@@ -244,6 +250,7 @@
 						<xs:attribute name="css" type="xs:string" use="optional" />
 						<xs:attribute name="tagForWs" type="xs:boolean" use="optional" />
 						<xs:attribute name="choiceGuid" type="xs:string" use="optional" />
+						<xs:attribute name="a10status" type="xs:string" use="optional" />
 					</xs:complexType>
 				</xs:element>
 			</xs:sequence>

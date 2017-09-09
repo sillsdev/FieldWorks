@@ -1154,6 +1154,12 @@
     <None Include="Controls\DetailControls\Resources\gotoLinkPic.png" />
     <None Include="Controls\DetailControls\PartGenerator\LayoutGenerate.xslt" />
     <None Include="Controls\DetailControls\PartGenerator\PartGenerate.xslt" />
+    <Content Include="..\..\..\..\Users\Randy Regnier\Desktop\DevWork\NewDevWork\05_Remove use of main xml config files\Configuration\CombinedConfig_BleedingEdge.xml">
+      <Link>XML\CombinedConfig_BleedingEdge.xml</Link>
+    </Content>
+    <Content Include="..\..\..\..\Users\Randy Regnier\Desktop\DevWork\NewDevWork\05_Remove use of main xml config files\Configuration\CombinedConfig_Develop.xml">
+      <Link>XML\CombinedConfig_Develop.xml</Link>
+    </Content>
     <Content Include="Controls\LexText\Resources\Bullet.bmp" />
     <Content Include="Controls\LexText\Resources\CheckBox.bmp" />
     <Content Include="Controls\LexText\Resources\CheckedBox.bmp" />
@@ -1813,6 +1819,7 @@
     </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\Lexicon\DataTreeInclude.xml">
       <Link>XML\Lexicon\DataTreeInclude.xml</Link>
+      <SubType>Designer</SubType>
     </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\Lexicon\Dictionary\toolConfiguration.xml">
       <Link>XML\Lexicon\Dictionary\toolConfiguration.xml</Link>
@@ -1882,6 +1889,7 @@
     </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\Parts\LexSenseParts.xml">
       <Link>XML\Parts\LexSenseParts.xml</Link>
+      <SubType>Designer</SubType>
     </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\Parts\MorphologyParts.xml">
       <Link>XML\Parts\MorphologyParts.xml</Link>
@@ -1907,9 +1915,11 @@
     </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\Parts\LexEntry.fwlayout">
       <Link>XML\Parts\LexEntry.fwlayout</Link>
+      <SubType>Designer</SubType>
     </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\Parts\LexSense.fwlayout">
       <Link>XML\Parts\LexSense.fwlayout</Link>
+      <SubType>Designer</SubType>
     </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\Parts\Morphology.fwlayout">
       <Link>XML\Parts\Morphology.fwlayout</Link>

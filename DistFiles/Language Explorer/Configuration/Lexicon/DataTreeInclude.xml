@@ -459,11 +459,8 @@
 			<item command="CmdDataTree-Delete-Sense"/>
 		</menu>
 		<menu id="mnuDataTree-Sense-Hotlinks">
-			<!--       <item command="CmdDataTree-MoveDown-Sense-Symbol"/>
-	  <item command="CmdDataTree-MoveUp-Sense-Symbol"/>
--->
 			<item command="CmdDataTree-Insert-Example"/>
-			<item command="CmdDataTree-Insert-SenseBelow"/>
+			<item command="CmdDataTree-Insert-SenseBelow" a10status="DONE" />
 		</menu>
 		<menu id="mnuDataTree-Examples">
 			<item command="CmdDataTree-Insert-Example"/>

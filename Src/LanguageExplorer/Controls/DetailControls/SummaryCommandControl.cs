@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+using LanguageExplorer.Controls.DetailControls.Resources;
 using SIL.LCModel.Utils;
 
 namespace LanguageExplorer.Controls.DetailControls
@@ -20,16 +21,16 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// and which are displayed in buttons as space permits.
 		/// </summary>
 		SummarySlice m_slice;
-		bool m_fInLayout = false;
+		bool m_fInLayout;
 		Font m_hotLinkFont;
 		// list of menu items we are displaying as buttons.
-		List<MenuItem> m_buttonMenuItems = new List<MenuItem>();
-		bool[] m_buttonDrawnEnabled = null;
+		List<ToolStripItem> m_buttonMenuItems = new List<ToolStripItem>();
+		bool[] m_buttonDrawnEnabled;
 		// x coord of left of first button.
 		int m_firstButtonOffset = 0;
 		int m_lastWidth = 0;
-		ContextMenu m_menu = null; // Menu last created by OnLayout. Need consistent one for OnClick.
-		System.Windows.Forms.Timer m_timer;
+		ContextMenuStrip m_menu = null; // Menu last created by OnLayout. Need consistent one for OnClick.
+		Timer m_timer;
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
@@ -42,9 +43,12 @@ namespace LanguageExplorer.Controls.DetailControls
 
 			m_slice = slice;
 			m_hotLinkFont = new Font(MiscUtils.StandardSansSerif, (float)10.0, FontStyle.Underline);
-			m_timer = new System.Windows.Forms.Timer();
-			m_timer.Interval = 400; // ms
-			m_timer.Tick += new EventHandler(m_timer_Tick);
+			m_timer = new Timer
+			{
+				Interval = 400 // ms
+			};
+
+			m_timer.Tick += m_timer_Tick;
 		}
 
 		/// <summary>
@@ -55,7 +59,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
+				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
 		}
 
 		/// <summary>
@@ -73,15 +77,11 @@ namespace LanguageExplorer.Controls.DetailControls
 				if (m_timer != null)
 				{
 					m_timer.Stop();
-					m_timer.Tick -= new EventHandler(m_timer_Tick);
+					m_timer.Tick -= m_timer_Tick;
 					m_timer.Dispose();
 				}
-				if(components != null)
-				{
-					components.Dispose();
-				}
-				if (m_hotLinkFont != null)
-					m_hotLinkFont.Dispose();
+				components?.Dispose();
+				m_hotLinkFont?.Dispose();
 			}
 			m_hotLinkFont = null;
 			m_timer = null;
@@ -119,13 +119,17 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			// Too early for layout.
 			if (m_slice.ContainingDataTree == null)
+			{
 				return;
+			}
 
 			base.OnLayout (levent);
 			if (m_fInLayout)
+			{
 				return;
+			}
 
-			Graphics g = this.CreateGraphics();
+			var graphics = CreateGraphics();
 			try
 			{
 				m_fInLayout = true;
@@ -136,14 +140,16 @@ namespace LanguageExplorer.Controls.DetailControls
 				if (m_menu == null)
 					return;
 
-				int availButtonWidth = this.Width - 2;
-				for (int i = 0; i < m_menu.MenuItems.Count; i++)
+				var availButtonWidth = Width - 2;
+				for (var i = 0; i < m_menu.Items.Count; i++)
 				{
-					MenuItem item = m_menu.MenuItems[i];
-					string label = item.Text.Replace("_","");
-					int width = (int)(g.MeasureString(label, m_hotLinkFont).Width);
+					var item = m_menu.Items[i];
+					var label = item.Text;
+					var width = (int)graphics.MeasureString(label, m_hotLinkFont).Width;
 					if (width + kGapInBetweenButtons > availButtonWidth)
+					{
 						break;
+					}
 					m_buttonMenuItems.Add(item);
 					availButtonWidth -= width + kGapInBetweenButtons;
 				}
@@ -153,7 +159,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			finally
 			{
 				m_fInLayout = false;
-				g.Dispose();
+				graphics.Dispose();
 			}
 
 		}
@@ -162,37 +168,43 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			base.OnPaint(e);
 
-			int xPos = m_firstButtonOffset;
-			using (Graphics g = e.Graphics)
+			var xPos = m_firstButtonOffset;
+			using (var graphics = e.Graphics)
 			using (Brush brush = new SolidBrush(Color.Blue))
 			using (Brush disabledBrush = new SolidBrush(Color.Gray))
 			{
-				int i = 0;
-				foreach (MenuItem item in m_buttonMenuItems)
+				var i = 0;
+				foreach (var item in m_buttonMenuItems)
 				{
-					string label = item.Text.Replace("_","");
+					var label = item.Text.Replace("_",string.Empty);
 					m_buttonDrawnEnabled[i] = item.Enabled;
-					g.DrawString(label, m_hotLinkFont, (item.Enabled ? brush : disabledBrush), (float) xPos, (float)0);
-					xPos += (int)g.MeasureString(label, m_hotLinkFont).Width + kGapInBetweenButtons;
+					graphics.DrawString(label, m_hotLinkFont, (item.Enabled ? brush : disabledBrush), xPos, 0);
+					xPos += (int)graphics.MeasureString(label, m_hotLinkFont).Width + kGapInBetweenButtons;
 					i++;
 				}
 			}
 			if (m_buttonMenuItems.Count > 0)
+			{
 				m_timer.Start(); // keep them up to date.
+			}
 		}
 
 		protected override void OnVisibleChanged(EventArgs e)
 		{
 			base.OnVisibleChanged (e);
-			if (!this.Visible)
+			if (!Visible)
+			{
 				m_timer.Stop();  // no point invalidating while hidden!
+			}
 		}
 
 		protected override void OnSizeChanged(EventArgs e)
 		{
 			base.OnSizeChanged (e);
 			if (Width == m_lastWidth)
+			{
 				return;
+			}
 			m_lastWidth = Width;
 			PerformLayout();
 			Invalidate();
@@ -201,60 +213,46 @@ namespace LanguageExplorer.Controls.DetailControls
 		protected override void OnMouseUp(MouseEventArgs e)
 		{
 			base.OnMouseUp(e); // invoke any delegates.
-			using (Graphics g = this.CreateGraphics())
+			using (var graphics = CreateGraphics())
 			{
 				if (m_menu == null)
-					return;
-				int targetPos = e.X;
-				int xPos = m_firstButtonOffset;
-				foreach (MenuItem item in m_buttonMenuItems)
 				{
-#if RANDYTODO // TODO: Make it work without XCore.AdapterMenuItem
-					if (item is XCore.AdapterMenuItem)
+					return;
+				}
+				var targetPos = e.X;
+				var xPos = m_firstButtonOffset;
+				foreach (var item in m_buttonMenuItems)
+				{
+					var label = item.Text;
+					var width = (int)graphics.MeasureString(label, m_hotLinkFont).Width;
+					if (targetPos > xPos && targetPos < xPos + width)
 					{
-						XCore.AdapterMenuItem xcoreMenuItem = (item as XCore.AdapterMenuItem);
-						string label = xcoreMenuItem.Text;
-						int width = (int)g.MeasureString(label, m_hotLinkFont).Width;
-						if (targetPos > xPos && targetPos < xPos + width)
+						// some menu commands use the current slice to decide what to act on.
+						// It had better be the one the command is expecting it to be.
+						m_slice.ContainingDataTree.CurrentSlice = m_slice;
+						if (item.Enabled)
 						{
-							// some menu commands use the current slice to decide what to act on.
-							// It had better be the one the command is expecting it to be.
-							m_slice.ContainingDataTree.CurrentSlice = m_slice;
-							if (xcoreMenuItem.Enabled)
-							{
-								ItemClicked(xcoreMenuItem);
-							}
-							else
-							{
-								MessageBox.Show(this, DetailControlsStrings.ksCmdUnavailable,
-									DetailControlsStrings.ksCmdDisabled);
-								this.Invalidate(); // Make sure command enabling is correct.
-							}
-							break;
+							item.PerformClick();
 						}
 						else
-							xPos += width + kGapInBetweenButtons;
+						{
+							MessageBox.Show(this, DetailControlsStrings.ksCmdUnavailable, DetailControlsStrings.ksCmdDisabled);
+							Invalidate(); // Make sure command enabling is correct.
+						}
+						break;
 					}
-#endif
+					xPos += width + kGapInBetweenButtons;
 				}
 			}
 		}
 
-#if RANDYTODO // TODO: Make it work without XCore.AdapterMenuItem
-		private void ItemClicked(XCore.AdapterMenuItem item)
-		{
-			XCore.ChoiceBase c = (XCore.ChoiceBase) item.Tag;
-			c.OnClick(item, null);
-		}
-#endif
-
 		private void m_timer_Tick(object sender, EventArgs e)
 		{
-			for (int i = 0; i < m_buttonDrawnEnabled.Length; i++)
+			for (var i = 0; i < m_buttonDrawnEnabled.Length; i++)
 			{
-				if (m_buttonDrawnEnabled[i] != (m_buttonMenuItems[i] as MenuItem).Enabled)
+				if (m_buttonDrawnEnabled[i] != (m_buttonMenuItems[i]).Enabled)
 				{
-					this.Invalidate();
+					Invalidate();
 					break;
 				}
 			}

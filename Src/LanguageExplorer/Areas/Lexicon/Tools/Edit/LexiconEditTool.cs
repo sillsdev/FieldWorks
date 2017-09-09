@@ -30,13 +30,12 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 	internal sealed class LexiconEditTool : ITool
 	{
 		private const string Show_DictionaryPubPreview = "Show_DictionaryPubPreview";
-		private IFwMainWnd _mainWindow;
-		private IFlexApp _flexApp;
 		private LcmCache _cache;
 		private MultiPane _multiPane;
 		private RecordBrowseView _recordBrowseView;
 		private MultiPane _innerMultiPane;
 		private RecordClerk _recordClerk;
+		private DataTreeMenuHandler _dataTreeMenuHandler;
 		private ToolStripMenuItem _insertMenu;
 		private ToolStripButton _insertEntryToolStripButton;
 		private readonly HashSet<Tuple<ToolStripMenuItem, EventHandler>> _newInsertMenusAndHandlers = new HashSet<Tuple<ToolStripMenuItem, EventHandler>>();
@@ -102,14 +101,18 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			{
 				menuTuple.Item1.Click -= menuTuple.Item2;
 				_insertMenu.DropDownItems.Remove(menuTuple.Item1);
+				menuTuple.Item1.Dispose();
 			}
 			_newInsertMenusAndHandlers.Clear();
 
 			foreach (var menuTuple in _newContextMenusAndHandlers)
 			{
 				menuTuple.Item1.Click -= menuTuple.Item2;
+				menuTuple.Item1.Dispose();
 			}
 			_newContextMenusAndHandlers.Clear();
+
+			_dataTreeMenuHandler.Dispose();
 
 			_insertEntryToolStripButton.Click -= Insert_Entry_Clicked;
 			InsertToolbarManager.DeactivateInsertToolbar(majorFlexComponentParameters);
@@ -120,8 +123,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			_innerMultiPane = null;
 			_insertEntryToolStripButton = null;
 			_cache = null;
-			_mainWindow = null;
-			_flexApp = null;
+			_dataTreeMenuHandler = null;
 		}
 
 		/// <summary>
@@ -133,8 +135,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
 			_cache = majorFlexComponentParameters.LcmCache;
-			_mainWindow = majorFlexComponentParameters.MainWindow;
-			_flexApp = majorFlexComponentParameters.FlexApp;
 
 			if (_recordClerk == null)
 			{
@@ -164,7 +164,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 			AddInsertMenuItems(majorFlexComponentParameters, majorEntryImage);
 
-			var dataTreeMenuHandler = new DataTreeMenuHandler(_recordClerk, new DataTree());
+			_dataTreeMenuHandler = new DataTreeMenuHandler(_recordClerk, new DataTree());
 #if RANDYTODO
 			// TODO: Set up 'dataTreeMenuHandler' to handle menu events.
 			// TODO: Install menus and connect them to event handlers. (See "CreateMainPanelContextMenuStrip" method for where the menus are.)
@@ -173,7 +173,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			// on DataTreeMenuHandler, the key of which (if any) is known to a given slice from those xml layout/part elements.
 			// This spike is to see if the theory works, or not.
 #endif
-			var recordEditView = new RecordEditView(XElement.Parse(LexiconResources.LexiconEditRecordEditViewParameters), XDocument.Parse(AreaResources.VisibilityFilter_All), majorFlexComponentParameters.LcmCache, _recordClerk, dataTreeMenuHandler);
+			AddHotLinkContextMenus();
+
+			var recordEditView = new RecordEditView(XElement.Parse(LexiconResources.LexiconEditRecordEditViewParameters), XDocument.Parse(AreaResources.VisibilityFilter_All), majorFlexComponentParameters.LcmCache, _recordClerk, _dataTreeMenuHandler);
 			var nestedMultiPaneParameters = new MultiPaneParameters
 			{
 				Orientation = Orientation.Horizontal,
@@ -282,6 +284,26 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		public Image Icon => Images.SideBySideView.SetBackgroundColor(Color.Magenta);
 
 		#endregion
+
+		private void AddHotLinkContextMenus()
+		{
+			const string mnuDataTree_Sense_Hotlinks = "mnuDataTree-Sense-Hotlinks";
+			// Start: <menu id="mnuDataTree-Sense-Hotlinks">
+#if RANDYTODO
+			// TODO: Add "CmdDataTree-Insert-Example" to "mnuDataTree-Sense-Hotlinks"
+			// <item command="CmdDataTree-Insert-Example"/>
+#endif
+
+			// <item command="CmdDataTree-Insert-SenseBelow"/>
+			var contextMenuStrip = new ContextMenuStrip
+			{
+				Name = mnuDataTree_Sense_Hotlinks
+			};
+			var newToolStripItem = CreateToolStripMenuItem(contextMenuStrip, LexiconResources.Insert_Sense, LexiconResources.InsertSenseToolTip, Insert_SenseBelow_Clicked);
+			newToolStripItem.Text = newToolStripItem.Text.Replace("&", string.Empty);
+			_dataTreeMenuHandler.ContextMenus.Add(mnuDataTree_Sense_Hotlinks, new Tuple<ContextMenuStrip, EventHandler>(contextMenuStrip, Insert_SenseBelow_Clicked));
+			// End: <menu id="mnuDataTree-Sense-Hotlinks">
+		}
 
 		private ContextMenuStrip CreateMainPanelContextMenuStrip()
 		{
@@ -486,6 +508,35 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		private void Insert_Sense_Clicked(object sender, EventArgs e)
 		{
 			LexSenseUi.CreateNewLexSense(_cache, (ILexEntry)_recordClerk.CurrentObject);
+		}
+
+		private void Insert_SenseBelow_Clicked(object sender, EventArgs e)
+		{
+			// Get slice and see what sense is currently selected, so we can add the new sense after (read: 'below") it.
+			var currentSlice = _dataTreeMenuHandler.DataTree.CurrentSlice;
+			ILexSense currentSense;
+			while (true)
+			{
+				var currentObject = currentSlice.Object;
+				if (currentObject is ILexSense)
+				{
+					currentSense = (ILexSense)currentObject;
+					break;
+				}
+				currentSlice = currentSlice.ParentSlice;
+			}
+			var indexInOwningSensesProperty = 0;
+			if (currentSense.Owner is ILexSense)
+			{
+				var owningSense = (ILexSense)currentSense.Owner;
+				indexInOwningSensesProperty = owningSense.SensesOS.IndexOf(currentSense);
+			}
+			else
+			{
+				var owningEntry = (ILexEntry)currentSense.Owner;
+				indexInOwningSensesProperty = owningEntry.SensesOS.IndexOf(currentSense);
+			}
+			LexSenseUi.CreateNewLexSense(_cache, (ILexEntry)_recordClerk.CurrentObject, indexInOwningSensesProperty + 1);
 		}
 
 		private void Insert_Entry_Clicked(object sender, EventArgs e)

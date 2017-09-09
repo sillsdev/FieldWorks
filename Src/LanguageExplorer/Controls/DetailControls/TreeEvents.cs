@@ -79,5 +79,5 @@ namespace LanguageExplorer.Controls.DetailControls
 		}
 	}
 
-	public delegate ContextMenu SliceShowMenuRequestHandler (object sender, SliceMenuRequestArgs e);
+	public delegate ContextMenuStrip SliceShowMenuRequestHandler (object sender, SliceMenuRequestArgs e);
 }

@@ -3,8 +3,8 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
-using System.Xml.Linq;
 using LanguageExplorer.Controls.DetailControls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.Xml;
@@ -35,7 +35,7 @@ namespace LanguageExplorer.Works
 	/// selects issues commands, this class also invokes the corresponding methods on the data tree.
 	/// You may create subclasses to do smart things with menus.
 	/// </summary>
-	internal sealed class DataTreeMenuHandler : IFlexComponent
+	internal sealed class DataTreeMenuHandler : IFlexComponent, IDisposable
 	{
 		/// <summary />
 		internal DataTreeMenuHandler(RecordClerk recordClerk, DataTree dataTree)
@@ -45,9 +45,12 @@ namespace LanguageExplorer.Works
 
 			RecordClerk = recordClerk;
 			DataTree = dataTree;
+			IsDisposed = false;
 		}
 
-#region Implementation of IFlexComponent
+		internal Dictionary<string, Tuple<ContextMenuStrip, EventHandler>> ContextMenus { get; } = new Dictionary<string, Tuple<ContextMenuStrip, EventHandler>>();
+
+		#region Implementation of IFlexComponent
 
 		/// <summary>
 		/// Initialize a FLEx component with the basic interfaces.
@@ -105,86 +108,55 @@ namespace LanguageExplorer.Works
 		/// Invoked by a DataTree (which is in turn invoked by the slice)
 		/// when the context menu for a slice is needed.
 		/// </summary>
-		public ContextMenu ShowSliceContextMenu(object sender, SliceMenuRequestArgs e)
+		public ContextMenuStrip ShowSliceContextMenu(object sender, SliceMenuRequestArgs e)
 		{
-			Slice slice = e.Slice;
-			return MakeSliceContextMenu(slice, e.HotLinksOnly);
-		}
+			var elementToSearchIn = e.Slice.CallerNode ?? e.Slice.ConfigurationNode;
+			var menuId = XmlUtils.GetOptionalAttributeValue(elementToSearchIn, e.HotLinksOnly ? "hotlinks" : "menu", string.Empty);
 
-		private ContextMenu MakeSliceContextMenu(Slice slice, bool fHotLinkOnly)//, bool retrieveDoNotShow)
-		{
-			var configuration = slice.ConfigurationNode;
-			var caller = slice.CallerNode;
-			string menuId = null;
-			if (caller != null)
-				menuId = ShowContextMenu2Id(caller, fHotLinkOnly);
-			if (string.IsNullOrEmpty(menuId))
-				menuId = ShowContextMenu2Id(configuration, fHotLinkOnly);
-
-			var window = PropertyTable.GetValue<IFwMainWnd>("window");
-
-			//an empty menu attribute means no menu
-			if (menuId != null && menuId.Length == 0)
-				return null;
-
-			/*			//a missing menu attribute means "figure out a default"
-						if (menuId == null)
-						{
-							//todo: this is probably too simplistic
-							//we are trying to select out just atomic objects
-							//of this will currently also select "place keeping" nodes
-							if(slice.IsObjectNode)
-								//					configuration.HasChildNodes /*<-- that's dumb
-								//					&& configuration.SelectSingleNode("seq")== null
-								//					&& !(e.Slice.Object.Hvo == slice.Container.RootObjectHvo))
-							{
-								menuId="mnuDataTree-Object";
-							}
-							else //we could not figure out a default menu for this item, so fall back on the auto menu
-							{	//todo: this must not be used in the final product!
-								// return m_dataTree.GetAutoMenu(sender, e);
-								return null;
-							}
-						}
-						if (menuId == "")
-							return null;	//explicitly stated that there should not be a menu
-
-			*/
-#if RANDYTODO
-			//ChoiceGroup group;
-			if(fHotLinkOnly)
+			//an empty/missing hotlinks/menu attribute means no menu
+			if (string.IsNullOrWhiteSpace(menuId))
 			{
-				return	window.GetWindowsFormsContextMenu(menuId);
-			}
-			else
-			{
-				//string[] menus = new string[2];
-				List<string> menus = new List<string>();
-				menus.Add(menuId);
-				if (slice is MultiStringSlice)
-					menus.Add("mnuDataTree-MultiStringSlice");
-				else
-					menus.Add("mnuDataTree-Object");
-				window.ShowContextMenu(menus.ToArray(),
-					new Point(Cursor.Position.X, Cursor.Position.Y),
-					null, // Don't care about a temporary colleague
-					null); // or MessageSequencer
 				return null;
 			}
-#else
-			return null; // TODO: Fix this.
-#endif
+
+			Tuple<ContextMenuStrip, EventHandler> menuAndEventHandler;
+			return ContextMenus.TryGetValue(menuId, out menuAndEventHandler) ? menuAndEventHandler.Item1 : null;
 		}
 
-		private string ShowContextMenu2Id(XElement caller, bool fHotLinkOnly)
+#region IDisposable
+		~DataTreeMenuHandler()
 		{
-			if (fHotLinkOnly)
-			{
-				string result = XmlUtils.GetOptionalAttributeValue(caller, "hotlinks");
-				if (!string.IsNullOrEmpty(result))
-					return result;
-			}
-			return XmlUtils.GetOptionalAttributeValue(caller, "menu");
+			Dispose(false);
 		}
+		/// <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
+		public void Dispose()
+		{
+			Dispose(true);
+			GC.SuppressFinalize(this);
+		}
+
+		/// <summary/>
+		private bool IsDisposed { get; set; }
+
+		private void Dispose(bool disposing)
+		{
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " *******");
+			if (IsDisposed)
+			{
+				return; // No need to do it twice.
+			}
+			if (disposing)
+			{
+				// Disconnect all event handlers from menus and dispose the menus.
+				foreach (var menuTuple in ContextMenus.Values)
+				{
+					menuTuple.Item1.Click -= menuTuple.Item2;
+					menuTuple.Item1.Dispose();
+				}
+				ContextMenus.Clear();
+			}
+			IsDisposed = true;
+		}
+#endregion
 	}
 }

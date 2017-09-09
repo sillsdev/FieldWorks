@@ -121,7 +121,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		}
 
 		/// <summary></summary>
-		public ContextMenu RetrieveContextMenuForHotlinks()
+		public ContextMenuStrip RetrieveContextMenuForHotlinks()
 		{
 			CheckDisposed();
 
