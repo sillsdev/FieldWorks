@@ -948,9 +948,13 @@ namespace LanguageExplorer.LcmUi
 					{
 						string cannotDeleteMsg;
 						if (CanDelete(out cannotDeleteMsg))
+						{
 							dlg.SetDlgInfo(this, m_cache, PropertyTable);
+						}
 						else
+						{
 							dlg.SetDlgInfo(this, m_cache, PropertyTable, TsStringUtils.MakeString(cannotDeleteMsg, m_cache.DefaultUserWs));
+						}
 						if (DialogResult.Yes == dlg.ShowDialog(mainWindow))
 						{
 							ReallyDeleteUnderlyingObject();
@@ -1043,12 +1047,11 @@ namespace LanguageExplorer.LcmUi
 		protected virtual void ReallyDeleteUnderlyingObject()
 		{
 			Logger.WriteEvent("Deleting '" + Object.ShortName + "'...");
-			UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(LcmUiStrings.ksUndoDelete, LcmUiStrings.ksRedoDelete,
-				m_cache.ActionHandlerAccessor, () =>
-				{
-					DoRelatedCleanupForDeleteObject();
-					Object.Cache.DomainDataByFlid.DeleteObj(Object.Hvo);
-				});
+			UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(LcmUiStrings.ksUndoDelete, LcmUiStrings.ksRedoDelete, m_cache.ActionHandlerAccessor, () =>
+			{
+				DoRelatedCleanupForDeleteObject();
+				Object.Cache.DomainDataByFlid.DeleteObj(Object.Hvo);
+			});
 			Logger.WriteEvent("Done Deleting.");
 			m_obj = null;
 		}
@@ -2224,57 +2227,6 @@ namespace LanguageExplorer.LcmUi
 			sense.Entry.MorphoSyntaxAnalysesOC.Add(safeMsa);
 			sense.MorphoSyntaxAnalysisRA = safeMsa;
 			return sense.MorphoSyntaxAnalysisRA;
-		}
-
-		/// <summary>
-		/// This method will get an hvo for the MSA which the senses MorphoSyntaxAnalysisRA points to.
-		/// If it is null it will try and find an appropriate one in the owning Entries list, if that fails it will make one and put it there.
-		/// </summary>
-		/// <param name="cache"></param>
-		/// <param name="ls">LexSense whose MSA we will use/change</param>
-		/// <returns></returns>
-		private static int GetSafeHvoMsa(LcmCache cache, ILexSense ls)
-		{
-			if (ls.MorphoSyntaxAnalysisRA != null)
-				return ls.MorphoSyntaxAnalysisRA.Hvo; //situation normal, return
-
-			//Situation not normal.
-			int hvoMsa;
-			var entryPrimaryMorphType = ls.Entry.PrimaryMorphType; // Guard against corrupted data. Every entry should have a PrimaryMorphType
-			var isAffixType = entryPrimaryMorphType == null ? false : entryPrimaryMorphType.IsAffixType;
-			foreach(var msa in ls.Entry.MorphoSyntaxAnalysesOC) //go through each MSA in the Entry list looking for one with an unknown category
-			{
-				if(!isAffixType && msa is IMoStemMsa && (msa as IMoStemMsa).PartOfSpeechRA == null)
-				{
-					ls.MorphoSyntaxAnalysisRA = msa;
-				}
-				else if (msa is IMoUnclassifiedAffixMsa && (msa as IMoUnclassifiedAffixMsa).PartOfSpeechRA == null)
-				{
-					ls.MorphoSyntaxAnalysisRA = msa;
-				}
-			}
-			if(ls.MorphoSyntaxAnalysisRA == null) //if we didn't find an appropriately unspecific MSA in the list add one
-			{
-				IMoMorphSynAnalysis item;
-				if(isAffixType)
-				{
-					var factory = cache.ServiceLocator.GetInstance<IMoUnclassifiedAffixMsaFactory>();
-					item = factory.Create();
-				}
-				else
-				{
-					var factory = cache.ServiceLocator.GetInstance<IMoStemMsaFactory>();
-					item = factory.Create();
-				}
-				ls.Entry.MorphoSyntaxAnalysesOC.Add(item);
-				ls.MorphoSyntaxAnalysisRA = item;
-				hvoMsa = item.Hvo;
-			}
-			else
-			{
-				hvoMsa = ls.MorphoSyntaxAnalysisRA.Hvo;
-			}
-			return hvoMsa;
 		}
 	}
 

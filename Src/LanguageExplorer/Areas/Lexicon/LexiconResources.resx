@@ -266,4 +266,7 @@
   <data name="Entry_Tooltip" xml:space="preserve">
     <value>Create a new lexical entry.</value>
   </data>
+  <data name="DeleteSenseAndSubsenses" xml:space="preserve">
+    <value>Delete this Sense and any Subsenses</value>
+  </data>
 </root>

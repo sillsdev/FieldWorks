@@ -3915,7 +3915,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 				try
 				{
-					var closeSlices = CurrentSlice == null ? null : CurrentSlice.GetCloseSlices();
+					var closeSlices = CurrentSlice == null ? null : CurrentSlice.GetNearbySlices();
 					m_fShowAllFields = newShowValue;
 					RefreshList(false);
 					if (closeSlices != null)
@@ -4002,7 +4002,8 @@ namespace LanguageExplorer.Controls.DetailControls
 			// Ideally we would store the context menu in a member variable and dispose this later
 			// on. However, it is unlikely that not disposing this context menu will cause any
 			// problems, so we leave it as is for now.
-			ShowContextMenuEvent(sender, args);
+			var menuToDisplay = ShowContextMenuEvent(sender, args);
+			menuToDisplay?.Show((Control)sender, e.Location);
 		}
 
 		/// <summary>

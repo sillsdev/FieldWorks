@@ -7,6 +7,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Drawing.Text;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
@@ -1262,15 +1263,17 @@ namespace LanguageExplorer.Controls.DetailControls
 			return GetHelpTopicID(ChooserDlgHelpTopicID, "khtpChoose");
 		}
 
-		private String GetHelpTopicID(String xmlHelpTopicID, String generatedIDPrefix)
+		private string GetHelpTopicID(string xmlHelpTopicID, string generatedIDPrefix)
 		{
 			String helpTopicID;
 
 			if (xmlHelpTopicID == "khtpField-PhRegularRule-RuleFormula")
 				xmlHelpTopicID = "khtpChoose-Environment";
 
-			if (!String.IsNullOrEmpty(xmlHelpTopicID))
+			if (!string.IsNullOrEmpty(xmlHelpTopicID))
+			{
 				helpTopicID = xmlHelpTopicID;
+			}
 			else
 			{
 				helpTopicID = GenerateHelpTopicId(generatedIDPrefix);
@@ -1416,29 +1419,29 @@ namespace LanguageExplorer.Controls.DetailControls
 		}
 
 		/// <summary></summary>
-		public virtual void DrawLabel(int x, int y, Graphics gr, int clipWidth)
+		private void DrawLabel(int x, int y, Graphics gr, int clipWidth)
 		{
 			CheckDisposed();
 
-				Image image = null;
-				if (IsSequenceNode)
-				{
+			Image image = null;
+			if (IsSequenceNode)
+			{
 				image = DetailControlsStrings.SequenceSmall;
-				}
-				else if (IsCollectionNode)
-				{
+			}
+			else if (IsCollectionNode)
+			{
 				image = DetailControlsStrings.CollectionNode;
-				}
-				else if (IsObjectNode || WrapsAtomic)
-				{
+			}
+			else if (IsObjectNode || WrapsAtomic)
+			{
 				image = DetailControlsStrings.atomicNode;
-				}
-				if (image != null)
-				{
-					((Bitmap)image).MakeTransparent(Color.Fuchsia);
-					gr.DrawImage(image, x, y);
-					x += image.Width;
-				}
+			}
+			if (image != null)
+			{
+				((Bitmap)image).MakeTransparent(Color.Fuchsia);
+				gr.DrawImage(image, x, y);
+				x += image.Width;
+			}
 			var p = new PointF(x, y);
 			using (Brush brush = new SolidBrush(Color.FromKnownColor(KnownColor.ControlDarkDark)))
 			{
@@ -1613,13 +1616,12 @@ namespace LanguageExplorer.Controls.DetailControls
 			CheckDisposed();
 
 			ContainingDataTree.CurrentSlice = this;
-			if (ShowContextMenu != null)// m_btnRectangle.Contains(p))
+			if (ShowContextMenu != null)
 			{
 				ShowContextMenu(this, new TreeNodeEventArgs(TreeNode, this, p));
 				return true;
 			}
-			else
-				return false;
+			return false;
 		}
 
 		/// <summary></summary>
@@ -1636,7 +1638,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// Override if you have a more complex type of label, e.g., if the field contains interlinear
 		/// data and you want to label each line.
 		/// </summary>
-		public virtual void DrawLabel(int y, Graphics gr, int clipWidth)
+		internal void DrawLabel(int y, Graphics gr, int clipWidth)
 		{
 			CheckDisposed();
 
@@ -2249,7 +2251,7 @@ only be sent to the subscribers one at a time and considered done as soon as som
 		/// <summary>
 		/// Main work of deleting an object; answer true if it was actually deleted.
 		/// </summary>
-		public virtual bool HandleDeleteCommand()
+		internal bool HandleDeleteCommand()
 		{
 			CheckDisposed();
 
@@ -2257,30 +2259,33 @@ only be sent to the subscribers one at a time and considered done as soon as som
 			// Build a list of neighboring slices, ordered by proximity (max of 40 either way...don't want to build too much
 			// of a lazy view).
 			var dataTree = ContainingDataTree;
-			List<Slice> closeSlices = GetCloseSlices();
+			List<Slice> nearbySlices = GetNearbySlices();
 			bool result = false;
 			if (obj == null)
 			{
 				throw new FwConfigurationException("Slice:GetObjectHvoForMenusToOperateOn is either messed up or should not have been called, because it could not find the object to be deleted.", m_configurationNode);
 			}
-				DataTree dt = ContainingDataTree;
-				try
+			try
+			{
+				dataTree.SetCurrentObjectFlids(obj.Hvo, 0);
+				using (CmObjectUi ui = CmObjectUi.MakeUi(m_cache, obj.Hvo))
 				{
-					dt.SetCurrentObjectFlids(obj.Hvo, 0);
-					using (CmObjectUi ui = CmObjectUi.MakeUi(m_cache, obj.Hvo))
-					{
-						ui.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-						result = ui.DeleteUnderlyingObject();
-					}
+					ui.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
+					result = ui.DeleteUnderlyingObject();
 				}
-				finally
-				{
-					dt.ClearCurrentObjectFlids();
-				}
+			}
+			finally
+			{
+				dataTree.ClearCurrentObjectFlids();
+			}
+			dataTree.SelectFirstPossibleSlice(nearbySlices);
 			// The slice will likely be disposed in the DeleteUnderlyingObject call,
 			// so make sure we aren't collected until we leave this method, at least.
+			// MSDN docs: "This method (GC.KeepAlive) references the obj parameter, making that object ineligible for
+			//	garbage collection from the start of the routine to the point, in execution order,
+			//	where this method is called. Code this method at the end, not the beginning,
+			//	of the range of instructions where obj must be available."
 			GC.KeepAlive(this);
-			dataTree.SelectFirstPossibleSlice(closeSlices);
 			return result;
 		}
 
@@ -2289,7 +2294,7 @@ only be sent to the subscribers one at a time and considered done as soon as som
 		/// starting with the slice itself. An arbitrary maximum distance (currently 40) is imposed,
 		/// to minimize the time spent getting and using these; usually one of the first few is used.
 		/// </summary>
-		internal List<Slice> GetCloseSlices()
+		internal List<Slice> GetNearbySlices()
 		{
 			int index = IndexInContainer;
 			var closeSlices = new List<Slice> {this};
@@ -2341,9 +2346,9 @@ only be sent to the subscribers one at a time and considered done as soon as som
 #endif
 
 		/// <summary>
-		/// gives the object hvo hat should be the target of Delete, copy, etc. for menus operating on this slice label.
+		/// Gives the object that should be the target of Delete, copy, etc. for menus operating on this slice label.
 		/// </summary>
-		/// <returns>return 0 if this slice is supposed to operate on an atomic field which is currently empty.</returns>
+		/// <returns>Return null if this slice is supposed to operate on an atomic field which is currently empty.</returns>
 		public ICmObject GetObjectForMenusToOperateOn()
 		{
 			CheckDisposed();
@@ -2359,12 +2364,11 @@ only be sent to the subscribers one at a time and considered done as soon as som
 				var hvo = m_cache.DomainDataByFlid.get_ObjectProp(m_obj.Hvo, flid);
 				return hvo != 0 ? m_cache.ServiceLocator.GetObject(hvo) : null;
 			}
-			else if (FromVariantBackRefField)
+			if (FromVariantBackRefField)
 			{
 				return BackRefObject;
 			}
-			else
-				return m_obj;
+			return m_obj;
 		}
 
 		/// <summary>

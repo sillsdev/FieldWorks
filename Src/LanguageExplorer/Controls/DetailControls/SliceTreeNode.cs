@@ -333,105 +333,105 @@ namespace LanguageExplorer.Controls.DetailControls
 			Color lineColor = Color.FromKnownColor(KnownColor.ControlDark);
 			using (Pen linePen = new Pen(lineColor, 1))
 			{
-			linePen.DashStyle = System.Drawing.Drawing2D.DashStyle.Dot;
+				linePen.DashStyle = System.Drawing.Drawing2D.DashStyle.Dot;
 				using (Pen boxLinePen = new Pen(lineColor, 1))
 				using (Brush backgroundBrush = new SolidBrush(Slice.ContainingDataTree.BackColor))
 				using (Brush lineBrush = new SolidBrush(lineColor))
 				{
-			int nIndent = Slice.Indent;
-			DataTree.TreeItemState tis = Slice.Expansion;
-			// Drawing within a control that covers the tree node portion of this slice, we always
-			// draw relative to a top-of-slice that is 0. I'm keeping the variable just in case
-			// we ever go back to drawing in the parent window.
-			int ypTopOfSlice = 0;
-			// int ypTopOfNextSlice = this.Height; // CS2019
-			int iSlice = Slice.ContainingDataTree.Slices.IndexOf(Slice);
-			// Go through the indents. This used to draw the correct tree structure at each level.
-			// Now we leave out the structue, but this figures out some stuff we need if we end up
-			// drawing a box. This could be optimized if we really never want the tree diagram.
-			for (int nInd = 0; nInd <= nIndent; ++nInd)
-			{
-				// int ypTreeTop = ypTopOfSlice; // CS2019
-				int xpBoxLeft = kdxpLeftMargin + nInd * kdxpIndDist;
-				int xpBoxCtr = xpBoxLeft + kdxpBoxCtr;
-				// Enhance JohnT: 2nd argument of max should be label height.
-				int dypBranchHeight = Slice.GetBranchHeight();
-				int dypLeftOver = Math.Max(kdypBoxHeight / 2, dypBranchHeight) - kdypBoxHeight / 2;
-				int ypBoxTop = ypTopOfSlice + dypLeftOver;
-				int ypBoxCtr = ypBoxTop + kdypBoxHeight / 2;
-				// int xpRtLineEnd = xpBoxCtr + kdxpLongLineLen; // CS2019
-
-				// There are two possible locations for the start and stop points for the
-				// vertical line. That will produce three different results which I have
-				// attempted to illustrate below. In case that's unclear they are:
-				// an L - shaped right angle, a T - shape rotated counter-clockwise by
-				// 90 degrees and an inverted L shape (i.e. flipped vertically).
-				//
-				// |_  > ypStart = top of field, ypStop = center point of +/- box.
-				// |-  > ypStart = top of field, ypStop = bottom of field.
-				// |  > ypStart = center point of +/- box, ypStop = bottom of field.
-				//
-				// Draw the vertical line.
-				bool fMoreFieldsAtLevel = (Slice.ContainingDataTree.NextFieldAtIndent(nInd, iSlice) != 0);
-
-				// Process a terminal level with a box.
-				if (ShowPlusMinus && nInd == nIndent && tis != DataTree.TreeItemState.ktisFixed)
-				{
-					// Draw the box.
-					Rectangle rcBox = new Rectangle(xpBoxLeft, ypBoxTop, kdxpBoxWid, kdypBoxHeight);
-					gr.FillRectangle(lineBrush, rcBox);
-					// Erase the inside of the box as we may have drawn dotted lines there.
-					rcBox.Inflate(-1, -1);
-					gr.FillRectangle(backgroundBrush, rcBox);
-
-					if (tis != DataTree.TreeItemState.ktisCollapsedEmpty)
+					int nIndent = Slice.Indent;
+					DataTree.TreeItemState tis = Slice.Expansion;
+					// Drawing within a control that covers the tree node portion of this slice, we always
+					// draw relative to a top-of-slice that is 0. I'm keeping the variable just in case
+					// we ever go back to drawing in the parent window.
+					int ypTopOfSlice = 0;
+					// int ypTopOfNextSlice = this.Height; // CS2019
+					int iSlice = Slice.ContainingDataTree.Slices.IndexOf(Slice);
+					// Go through the indents. This used to draw the correct tree structure at each level.
+					// Now we leave out the structue, but this figures out some stuff we need if we end up
+					// drawing a box. This could be optimized if we really never want the tree diagram.
+					for (int nInd = 0; nInd <= nIndent; ++nInd)
 					{
-						// Draw the minus sign.
-						int xpLeftMinus = xpBoxLeft + 1 + kdzpIconGap;
-						gr.DrawLine(boxLinePen, xpLeftMinus, ypBoxCtr, xpLeftMinus + kdxpIconWid - 1, ypBoxCtr);
+						// int ypTreeTop = ypTopOfSlice; // CS2019
+						int xpBoxLeft = kdxpLeftMargin + nInd * kdxpIndDist;
+						int xpBoxCtr = xpBoxLeft + kdxpBoxCtr;
+						// Enhance JohnT: 2nd argument of max should be label height.
+						int dypBranchHeight = Slice.GetBranchHeight();
+						int dypLeftOver = Math.Max(kdypBoxHeight / 2, dypBranchHeight) - kdypBoxHeight / 2;
+						int ypBoxTop = ypTopOfSlice + dypLeftOver;
+						int ypBoxCtr = ypBoxTop + kdypBoxHeight / 2;
+						// int xpRtLineEnd = xpBoxCtr + kdxpLongLineLen; // CS2019
 
-						if (tis == DataTree.TreeItemState.ktisCollapsed)
+						// There are two possible locations for the start and stop points for the
+						// vertical line. That will produce three different results which I have
+						// attempted to illustrate below. In case that's unclear they are:
+						// an L - shaped right angle, a T - shape rotated counter-clockwise by
+						// 90 degrees and an inverted L shape (i.e. flipped vertically).
+						//
+						// |_  > ypStart = top of field, ypStop = center point of +/- box.
+						// |-  > ypStart = top of field, ypStop = bottom of field.
+						// |  > ypStart = center point of +/- box, ypStop = bottom of field.
+						//
+						// Draw the vertical line.
+						bool fMoreFieldsAtLevel = (Slice.ContainingDataTree.NextFieldAtIndent(nInd, iSlice) != 0);
+
+						// Process a terminal level with a box.
+						if (ShowPlusMinus && nInd == nIndent && tis != DataTree.TreeItemState.ktisFixed)
 						{
-							// Draw the vertical part of the plus, if we are collapsed.
-							int ypTopPlus = ypBoxTop + 1 + kdzpIconGap;
-							gr.DrawLine(boxLinePen, xpBoxCtr, ypTopPlus, xpBoxCtr, ypTopPlus + kdypIconHeight - 1);
+							// Draw the box.
+							Rectangle rcBox = new Rectangle(xpBoxLeft, ypBoxTop, kdxpBoxWid, kdypBoxHeight);
+							gr.FillRectangle(lineBrush, rcBox);
+							// Erase the inside of the box as we may have drawn dotted lines there.
+							rcBox.Inflate(-1, -1);
+							gr.FillRectangle(backgroundBrush, rcBox);
+
+							if (tis != DataTree.TreeItemState.ktisCollapsedEmpty)
+							{
+								// Draw the minus sign.
+								int xpLeftMinus = xpBoxLeft + 1 + kdzpIconGap;
+								gr.DrawLine(boxLinePen, xpLeftMinus, ypBoxCtr, xpLeftMinus + kdxpIconWid - 1, ypBoxCtr);
+
+								if (tis == DataTree.TreeItemState.ktisCollapsed)
+								{
+									// Draw the vertical part of the plus, if we are collapsed.
+									int ypTopPlus = ypBoxTop + 1 + kdzpIconGap;
+									gr.DrawLine(boxLinePen, xpBoxCtr, ypTopPlus, xpBoxCtr, ypTopPlus + kdypIconHeight - 1);
+								}
+							}
 						}
 					}
+
+					//			// If the height of the slice is greater then one line (1.5 * LabelHeight) and
+					//			// the slice has a child, then we need to draw a line to that child. (fixes a
+					//			// gap that appears otherwise)
+					//			int left = kdxpLeftMargin + (nIndent + 1) * kdxpIndDist;
+					//			int center = left + kdxpBoxCtr;
+					//			bool fHasChildren = (m_slice.Diagram.NextFieldAtIndent(nIndent + 1, iSlice) != 0);
+					//			if (fHasChildren && Height > m_slice.LabelHeight * 1.5)
+					//			{
+					//				gr.DrawLine(linePen, center, ypTopOfSlice + m_slice.LabelHeight,
+					//					center, ypTopOfNextSlice);
+					//			}
+
+					if (ShowingContextIcon)
+					{
+						// Show context menu icon
+						gr.DrawImage(ResourceHelper.BlueCircleDownArrow, 2, 1);
+					}
+
+					//			int xIndent = m_slice.LabelIndent();
+					//			int lineWidth = 1;
+					//			Slice nextSlice = m_slice.ContainingDataTree.Slices[m_slice.IndexInContainer + 1] as Slice;
+					//			int yPos = this.Height - 1;
+					//			if (nextSlice.Weight == ObjectWeight.heavy)
+					//			{
+					//				lineWidth += DataTree.HeavyweightObjectExtra;
+					//				//yPos -= DataTree.HeavyweightObjectExtra / 2;
+					//			}
+					//			Pen borderPen = new Pen(Color.LightGray, lineWidth);
+					//			gr.DrawLine(borderPen, xIndent, yPos, this.Width, yPos);
+
+					Slice.DrawLabel(ypTopOfSlice, gr, pea.ClipRectangle.Width);
 				}
-			}
-
-			//			// If the height of the slice is greater then one line (1.5 * LabelHeight) and
-			//			// the slice has a child, then we need to draw a line to that child. (fixes a
-			//			// gap that appears otherwise)
-			//			int left = kdxpLeftMargin + (nIndent + 1) * kdxpIndDist;
-			//			int center = left + kdxpBoxCtr;
-			//			bool fHasChildren = (m_slice.Diagram.NextFieldAtIndent(nIndent + 1, iSlice) != 0);
-			//			if (fHasChildren && Height > m_slice.LabelHeight * 1.5)
-			//			{
-			//				gr.DrawLine(linePen, center, ypTopOfSlice + m_slice.LabelHeight,
-			//					center, ypTopOfNextSlice);
-			//			}
-
-			if (ShowingContextIcon)
-			{
-				// Show context menu icon
-				gr.DrawImage(ResourceHelper.BlueCircleDownArrow, 2, 1);
-			}
-
-			//			int xIndent = m_slice.LabelIndent();
-			//			int lineWidth = 1;
-			//			Slice nextSlice = m_slice.ContainingDataTree.Slices[m_slice.IndexInContainer + 1] as Slice;
-			//			int yPos = this.Height - 1;
-			//			if (nextSlice.Weight == ObjectWeight.heavy)
-			//			{
-			//				lineWidth += DataTree.HeavyweightObjectExtra;
-			//				//yPos -= DataTree.HeavyweightObjectExtra / 2;
-			//			}
-			//			Pen borderPen = new Pen(Color.LightGray, lineWidth);
-			//			gr.DrawLine(borderPen, xIndent, yPos, this.Width, yPos);
-
-			Slice.DrawLabel(ypTopOfSlice, gr, pea.ClipRectangle.Width);
-		}
 			}
 		}
 

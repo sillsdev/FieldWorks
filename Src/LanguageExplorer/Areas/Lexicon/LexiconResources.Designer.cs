@@ -75,6 +75,15 @@ namespace LanguageExplorer.Areas.Lexicon {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Delete this Sense and any Subsenses.
+        /// </summary>
+        internal static string DeleteSenseAndSubsenses {
+            get {
+                return ResourceManager.GetString("DeleteSenseAndSubsenses", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to _Entry....
         /// </summary>
         internal static string Entry {

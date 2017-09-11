@@ -48,7 +48,9 @@ namespace LanguageExplorer.Works
 			IsDisposed = false;
 		}
 
-		internal Dictionary<string, Tuple<ContextMenuStrip, EventHandler>> ContextMenus { get; } = new Dictionary<string, Tuple<ContextMenuStrip, EventHandler>>();
+		internal Dictionary<string, ContextMenuStrip> ContextMenus { get; } = new Dictionary<string, ContextMenuStrip>();
+
+		private Dictionary<string, Dictionary<string, Tuple<ToolStripMenuItem, EventHandler>>> MenuItems { get; } = new Dictionary<string, Dictionary<string, Tuple<ToolStripMenuItem, EventHandler>>>();
 
 		#region Implementation of IFlexComponent
 
@@ -105,6 +107,23 @@ namespace LanguageExplorer.Works
 		internal RecordClerk RecordClerk { get; }
 
 		/// <summary>
+		/// Register an individual item, which should also have its main ContextMenuStrip registered at some point.
+		/// </summary>
+		/// <param name="contextmenuId">Id of the context menu the ToolStripMenuItem belongs to.</param>
+		/// <param name="id">Command identifier. This will be one of the old style command ids.</param>
+		/// <param name="toolStripMenuItem">The tuple that holds the ToolStripMenuItem and its 'Click' event handler.</param>
+		internal void RegisterMenu(string contextmenuId, string id, Tuple<ToolStripMenuItem, EventHandler> toolStripMenuItem)
+		{
+			Dictionary<string, Tuple<ToolStripMenuItem, EventHandler>> contextMenuItems;
+			if (!MenuItems.TryGetValue(contextmenuId, out contextMenuItems))
+			{
+				contextMenuItems = new Dictionary<string, Tuple<ToolStripMenuItem, EventHandler>>();
+				MenuItems.Add(contextmenuId, contextMenuItems);
+			}
+			contextMenuItems.Add(id, toolStripMenuItem);
+		}
+
+		/// <summary>
 		/// Invoked by a DataTree (which is in turn invoked by the slice)
 		/// when the context menu for a slice is needed.
 		/// </summary>
@@ -119,8 +138,8 @@ namespace LanguageExplorer.Works
 				return null;
 			}
 
-			Tuple<ContextMenuStrip, EventHandler> menuAndEventHandler;
-			return ContextMenus.TryGetValue(menuId, out menuAndEventHandler) ? menuAndEventHandler.Item1 : null;
+			ContextMenuStrip contextMenuStrip;
+			return ContextMenus.TryGetValue(menuId, out contextMenuStrip) ? contextMenuStrip : null;
 		}
 
 #region IDisposable
@@ -148,10 +167,20 @@ namespace LanguageExplorer.Works
 			if (disposing)
 			{
 				// Disconnect all event handlers from menus and dispose the menus.
-				foreach (var menuTuple in ContextMenus.Values)
+				foreach (var menuDictionary in MenuItems.Values)
 				{
-					menuTuple.Item1.Click -= menuTuple.Item2;
-					menuTuple.Item1.Dispose();
+					foreach (var menuTuple in menuDictionary.Values)
+					{
+						menuTuple.Item1.Click -= menuTuple.Item2;
+						menuTuple.Item1.Dispose();
+					}
+					menuDictionary.Clear();
+				}
+				MenuItems.Clear();
+
+				foreach (var contextMenuStrip in ContextMenus.Values)
+				{
+					contextMenuStrip.Dispose();
 				}
 				ContextMenus.Clear();
 			}
