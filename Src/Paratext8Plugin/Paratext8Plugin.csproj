@@ -1,0 +1,97 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{B661C6AE-999D-4BA8-80C1-EA853F6D6A30}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Paratext8Plugin</RootNamespace>
+    <AssemblyName>Paratext8Plugin</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\Output\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+    <PlatformTarget>x86</PlatformTarget>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\..\Output\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+    <PlatformTarget>x86</PlatformTarget>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="icu.net, Version=2.1.0.0, Culture=neutral, PublicKeyToken=416fdd914afa6b66, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Debug\icu.net.dll</HintPath>
+    </Reference>
+    <Reference Include="Paratext.LexicalContracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=9a5af29a0e638a7b, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\ParatextData.8.0.2-alpha\lib\net461\Paratext.LexicalContracts.dll</HintPath>
+    </Reference>
+    <Reference Include="ParatextData">
+      <HintPath>..\..\packages\ParatextData.8.0.2-alpha\lib\net461\ParatextData.dll</HintPath>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="PtxUtils">
+      <HintPath>..\..\packages\ParatextData.8.0.2-alpha\lib\net461\PtxUtils.dll</HintPath>
+    </Reference>
+    <Reference Include="ScriptureUtils">
+      <HintPath>..\..\Output\Debug\ScriptureUtils.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.Scripture">
+      <HintPath>..\..\Downloads\SIL.Scripture.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Paratext8Provider.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="PT8VerseRefWrapper.cs" />
+    <Compile Include="Pt8VerseWrapper.cs" />
+    <Compile Include="PTScrTextWrapper.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- Uncomment to attempt repacking the dependencies - was causing trouble for MEF loading in 8.3.9
+  <Target Name="AfterBuild">
+    <PropertyGroup>
+      <ParatextDataPackage>..\..\packages\ParatextData.1.0.0\lib\net461</ParatextDataPackage>
+			<OutputAssembly>$(OutputPath)\Paratext8Plugin.dll</OutputAssembly>
+			<Merger Condition="('$(OS)' == 'Windows_NT')">&quot;..\..\packages\ILRepack.2.0.13\tools\ILRepack.exe&quot;</Merger>
+			<Merger Condition="('$(OS)' != 'Windows_NT')">mono runtime=v4.0.30319 &quot;..\..\packages\ILRepack.1.25.0\tools\ILRepack.exe&quot;</Merger>
+		</PropertyGroup>
+		<ItemGroup>
+			<MergeAssemblies Include="$(ParatextDataPackage)\icu.net.dll" />
+			<MergeAssemblies Include="$(ParatextDataPackage)\Newtonsoft.json.dll" />
+			<MergeAssemblies Include="$(ParatextDataPackage)\SIL.WritingSystems.dll" />
+			<MergeAssemblies Include="$(ParatextDataPackage)\SIL.Core.dll" />
+			<MergeAssemblies Include="$(ParatextDataPackage)\SIL.Scripture.dll" />
+		</ItemGroup>
+		<Message Text="MERGING: @(MergeAssemblies->'%(Filename)') into $(OutputAssembly)" Importance="High" />
+		<Exec Command="$(Merger) /log:E:\WorkFiles\ilmerge.log /out:&quot;$(OutputAssembly)&quot; /internalize @(MergeAssemblies->'&quot;%(FullPath)&quot;', ' ')" />
+  </Target>
+	 -->
+</Project>

@@ -21,7 +21,7 @@ namespace SIL.FieldWorks.XWorks
 	/// </summary>
 	public class DictionaryConfigurationMigrator
 	{
-		public const int VersionCurrent = 18;
+		public const int VersionCurrent = 19;
 		internal const string NodePathSeparator = " > ";
 		public const string RootFileName = "Root";
 		public const string HybridFileName = "Hybrid";
@@ -62,7 +62,7 @@ namespace SIL.FieldWorks.XWorks
 					// Further migration changes (especially Label changes) may need changes in multiple migrators:
 					foreach (var migrator in m_migrators)
 					{
-					migrator.MigrateIfNeeded(m_logger, m_propertyTable, versionProvider.ApplicationVersion);
+						migrator.MigrateIfNeeded(m_logger, m_propertyTable, versionProvider.ApplicationVersion);
 					}
 					CreateProjectCustomCssIfNeeded(m_propertyTable);
 				}
@@ -147,7 +147,7 @@ namespace SIL.FieldWorks.XWorks
 
 		internal static List<DictionaryConfigurationModel> GetConfigsNeedingMigration(LcmCache cache, int targetVersion)
 		{
-			var configSettingsDir = LcmFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(cache.ProjectId.Path));
+			var configSettingsDir = LcmFileHelper.GetConfigSettingsDir(cache.ProjectId.ProjectFolder);
 			var dictionaryConfigLoc = Path.Combine(configSettingsDir, DictionaryConfigurationListener.DictionaryConfigurationDirectoryName);
 			var reversalIndexConfigLoc = Path.Combine(configSettingsDir, DictionaryConfigurationListener.ReversalIndexConfigurationDirectoryName);
 			var projectConfigPaths = new List<string>(ConfigFilesInDir(dictionaryConfigLoc));

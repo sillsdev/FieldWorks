@@ -146,6 +146,7 @@ namespace SIL.FieldWorks.Common.Controls
 		private CheckBox m_displayUsageCheckBox;
 
 		private ToolStripButton m_printButton;
+		private Dictionary<char, string> s_xmlCharacterSubstitutions;
 
 		/// <summary>
 		/// Check to see if the object has been disposed.

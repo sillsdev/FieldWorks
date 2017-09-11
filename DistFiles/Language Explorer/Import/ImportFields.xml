@@ -499,7 +499,7 @@
 	</Field>
 
 	<Field id="erest" list="no" multi="yes" property="Restrictions"
-		   signature="MultiUnicode" type="string"
+		   signature="MultiString" type="string"
 		   uiname="Restrictions (Entry)">
 	  <Help>
 		<Usage>When you have a marker that records restrictions on this
@@ -508,7 +508,7 @@
 		<Settings>Set the Language Descriptor to the language of this
 		field.</Settings>
 
-		<Mapping>No</Mapping>
+		<Mapping>Yes</Mapping>
 
 		<Appends>Yes, appends field contents into a single field</Appends>
 
@@ -2035,7 +2035,7 @@
 	</Field>
 
 	<Field MDF="\oe \on \or \ov" id="srest" list="no" multi="yes"
-		   property="Restrictions" signature="MultiUnicode" type="string"
+		   property="Restrictions" signature="MultiString" type="string"
 		   uiname="Restrictions (Sense)">
 	  <Help>
 		<Usage>When you have a marker that records restrictions on this
@@ -2044,7 +2044,7 @@
 		<Settings>Set the Language Descriptor to the language of this
 		field.</Settings>
 
-		<Mapping>No</Mapping>
+		<Mapping>Yes</Mapping>
 
 		<Appends>Yes, appends field contents into a single field.</Appends>
 

@@ -66,6 +66,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					bool newby;
 					dlg.GetDialogInfo(out entry, out newby);
 					// No need for a PropChanged here because InsertEntryDlg takes care of that. (LT-3608)
+					m_mediator.SendMessage("MasterRefresh", null);
 					m_mediator.SendMessage("JumpToRecord", entry.Hvo);
 				}
 			}

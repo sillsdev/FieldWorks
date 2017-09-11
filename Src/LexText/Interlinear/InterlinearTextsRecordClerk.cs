@@ -437,7 +437,7 @@ namespace SIL.FieldWorks.IText
 				{
 					IScrImportSet importSettings = scr.FindOrCreateDefaultImportSettings(TypeOfImport.Paratext6, ScriptureStylesheet,
 						FwDirectoryFinder.TeStylesPath);
-					ScrText paratextProj = ParatextHelper.GetAssociatedProject(Cache.ProjectId);
+					IScrText paratextProj = ParatextHelper.GetAssociatedProject(Cache.ProjectId);
 					importSettings.ParatextScrProj = paratextProj.Name;
 					importSettings.StartRef = new BCVRef(bookNum, 0, 0);
 					int chapter = paratextProj.Versification.LastChapter(bookNum);
@@ -449,7 +449,7 @@ namespace SIL.FieldWorks.IText
 					}
 					else
 					{
-						List<ScrText> btProjects = ParatextHelper.GetBtsForProject(paratextProj).ToList();
+						List<IScrText> btProjects = ParatextHelper.GetBtsForProject(paratextProj).ToList();
 						if (btProjects.Count > 0 && (string.IsNullOrEmpty(importSettings.ParatextBTProj) ||
 							!btProjects.Any(st => st.Name == importSettings.ParatextBTProj)))
 						{

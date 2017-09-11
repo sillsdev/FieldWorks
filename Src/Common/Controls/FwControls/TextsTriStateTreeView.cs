@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
-using Paratext;
 using SIL.LCModel.Core.Scripture;
 using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.ViewsInterfaces;
@@ -25,7 +24,7 @@ namespace SIL.FieldWorks.Common.Controls
 	{
 		private IScripture m_scr;
 		private IBookImporter m_bookImporter;
-		private ScrText m_associatedPtText;
+		private IScrText m_associatedPtText;
 		internal const string ksDummyName = "dummy"; // used for Name of dummy nodes.
 
 		/// <summary>
@@ -457,7 +456,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 			if (m_associatedPtText != null)
 			{
-				ScrText btProject = ParatextHelper.GetBtsForProject(m_associatedPtText).FirstOrDefault();
+				IScrText btProject = ParatextHelper.GetBtsForProject(m_associatedPtText).FirstOrDefault();
 				if (btProject != null && btProject.BookPresent(book.CanonicalNum) && !btProject.IsCheckSumCurrent(book.CanonicalNum,
 					book.ImportedBtCheckSum.get_String(book.Cache.DefaultAnalWs).Text))
 				{

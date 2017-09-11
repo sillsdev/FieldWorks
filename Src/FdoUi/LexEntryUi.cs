@@ -796,8 +796,7 @@ namespace SIL.FieldWorks.FdoUi
 				(int) FwTextToggleVal.kttvForceOn);
 			tsBldr.SetIntPropValues((int) FwTextPropType.ktptWs,
 				(int) FwTextPropVar.ktpvDefault, defUserWs);
-			StringServices.InsertHomographNumber(tsBldr, nHomograph, hc, HomographConfiguration.HeadwordVariant.Main,
-				m_cache);
+			StringServices.InsertHomographNumber(tsBldr, nHomograph, hc, HomographConfiguration.HeadwordVariant.Main, m_cache);
 			vwenv.AddString(tsBldr.GetString());
 		}
 

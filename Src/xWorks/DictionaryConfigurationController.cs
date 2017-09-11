@@ -862,10 +862,14 @@ namespace SIL.FieldWorks.XWorks
 				foreach (var pos in cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS)
 					referenceTypes.Add(pos.Guid);
 			}
-			var noteTypes = new HashSet<Guid>(cache.LangProject.LexDbOA.ExtendedNoteTypesOA.ReallyReallyAllPossibilities.Select(pos => pos.Guid))
+			var noteTypes = new HashSet<Guid>();
+			if (cache.LangProject.LexDbOA.ExtendedNoteTypesOA != null)
 			{
-				XmlViewsUtils.GetGuidForUnspecifiedExtendedNoteType()
-			};
+				noteTypes = new HashSet<Guid>(cache.LangProject.LexDbOA.ExtendedNoteTypesOA.ReallyReallyAllPossibilities.Select(pos => pos.Guid))
+				{
+					XmlViewsUtils.GetGuidForUnspecifiedExtendedNoteType()
+				};
+			}
 			foreach (var part in model.PartsAndSharedItems)
 			{
 				FixTypeListOnNode(part, complexTypes, variantTypes, referenceTypes, noteTypes, model.IsHybrid, cache);

@@ -53,26 +53,32 @@ namespace SIL.FieldWorks.Common.FwUtils
 			{
 				// FWNX-1235 Mono's implementation of the "Windows Registry" on Unix uses XML files in separate folders for
 				// each user and each software publisher.  We need to read Paratext's entries, so we copy theirs into ours.
+				// We overwrite any existing Paratext keys in case they have changed.
 				if (MiscUtils.IsUnix)
 				{
-					const string ptRegKey = "LocalMachine/software/scrchecks";
-
-					var ptRegLoc = Path.Combine(
-						Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), ".config/paratext/registry", ptRegKey);
-
 #if DEBUG
 					// On a developer Linux machine these are kept under output/registry. Since the program is running at output/{debug|release},
 					// one level up should find the registry folder.
 					var fwRegLoc = Path.Combine(
-						Path.GetDirectoryName(FileUtils.StripFilePrefix(System.Reflection.Assembly.GetExecutingAssembly().CodeBase)) ?? ".",
-						"../registry", ptRegKey);
+						Path.GetDirectoryName(FileUtils.StripFilePrefix(System.Reflection.Assembly.GetExecutingAssembly().CodeBase)) ?? ".", "../registry");
 #else
-					var fwRegLoc = Path.Combine(
-						Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), ".config/fieldworks/registry", ptRegKey);
+					var fwRegLoc = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), ".config/fieldworks/registry");
 #endif
 
-					if (Directory.Exists(ptRegLoc))
-						DirectoryUtils.CopyDirectory(ptRegLoc, fwRegLoc, true, true);
+					var ptRegKeys = new[]
+					{
+						"LocalMachine/software/scrchecks", // Paratext 7 and earlier
+						"LocalMachine/software/paratext" // Paratext 8 (latest as of 2017.07)
+					};
+
+					foreach (var ptRegKey in ptRegKeys)
+					{
+						var ptRegKeyLoc = Path.Combine(
+							Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), ".config/paratext/registry", ptRegKey);
+
+						if (Directory.Exists(ptRegKeyLoc))
+							DirectoryUtils.CopyDirectory(ptRegKeyLoc, Path.Combine(fwRegLoc, ptRegKey), true, true);
+					}
 				}
 			}
 
@@ -161,27 +167,25 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 			/// ------------------------------------------------------------------------------------
 			/// <summary>
-			/// Determines the installation or absence of the Paratext program by checking for the
+			/// Determines the installation or absence of version 7 of the Paratext program by checking for the
 			/// existence of the registry key that that application uses to store its program files
 			/// directory in the local machine settings.
-			/// This is 'HKLM\Software\ScrChecks\1.0\Program_Files_Directory_Ptw(7,8,9)'
+			/// This is 'HKLM\Software\ScrChecks\1.0\Program_Files_Directory_Ptw7'
 			/// NOTE: This key is not opened for write access because it will fail on
 			/// non-administrator logins.
 			/// </summary>
 			/// ------------------------------------------------------------------------------------
-			public bool Paratext7orLaterInstalled()
+			public bool Paratext7Installed()
 			{
-				using (RegistryKey ParatextKey = Registry.LocalMachine.OpenSubKey("Software\\ScrChecks\\1.0"))
+				using (var ParatextKey = Registry.LocalMachine.OpenSubKey("Software\\ScrChecks\\1.0"))
 				{
-					if (ParatextKey == null)
-						return false;
-					for (var i = 7; i < 10; i++) // Check for Paratext version 7, 8, or 9
-					{
-						object dummy;
-						if (RegistryHelper.KeyExists(ParatextKey, "Program_Files_Directory_Ptw" + i))
-							return true;
-					}
-					return false;
+#if __MonoCS__
+					// Unfortunately on Linux Paratext 7.5 does not produce all the same registry keys as it does on Windows
+					// we can't actually tell the version of Paratext from these keys, so assume 7 if Settings_Directory is found
+					return ParatextKey != null && RegistryHelper.KeyExists(ParatextKey, "Settings_Directory");
+#else
+					return ParatextKey != null && RegistryHelper.KeyExists(ParatextKey, "Program_Files_Directory_Ptw7");
+#endif
 				}
 			}
 		}
@@ -349,17 +353,17 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Determines the installation or absence of the Paratext program by checking for the
+		/// Determines the installation or absence of version 7 of the Paratext program by checking for the
 		/// existence of the registry key that that application uses to store its program files
 		/// directory in the local machine settings.
-		/// This is 'HKLM\Software\ScrChecks\1.0\Program_Files_Directory_Ptw(7,8,9)'
+		/// This is 'HKLM\Software\ScrChecks\1.0\Program_Files_Directory_Ptw7'
 		/// NOTE: This key is not opened for write access because it will fail on
 		/// non-administrator logins.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public static bool Paratext7orLaterInstalled()
+		public static bool Paratext7Installed()
 		{
-			return RegistryHelperImpl.Paratext7orLaterInstalled();
+			return RegistryHelperImpl.Paratext7Installed();
 		}
 
 		/// <summary>

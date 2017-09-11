@@ -343,6 +343,8 @@
 		<PalasoFiles Include="SIL.Windows.Forms.Keyboarding.$(DebugInfo)"/>
 		<PalasoFiles Include="SIL.Lexicon.dll"/>
 		<PalasoFiles Include="SIL.Lexicon.$(DebugInfo)"/>
+		<PalasoFiles Include="SIL.Scripture.dll"/>
+		<PalasoFiles Include="SIL.Scripture.$(DebugInfo)"/>
 		<PalasoFiles Include="SIL.TestUtilities.dll"/>
 		<PalasoFiles Include="L10NSharp.dll"/>
 		<PalasoFiles Include="Commons.Xml.Relaxng.dll"/>

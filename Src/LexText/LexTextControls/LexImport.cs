@@ -245,7 +245,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				@"java.lang.Runtime.getRuntime().exec(command);" + sNewLine +
 				@"window.onerror = window.oldOnError;" + sNewLine +
 				@"}" + sNewLine +
-				@"else if (document.all) {" + sNewLine +
+				@"else if (document.compatMode) {" + sNewLine +
 				@"window.oldOnError = window.onerror;" + sNewLine +
 				@"window._command = command;" + sNewLine +
 				@"window.onerror = function (err) {" + sNewLine +

@@ -4,6 +4,10 @@
 #
 # Source this file in a shell and then run "mono FieldWorks.exe -app {Te,Flex}"
 
+# Possible values for RUNMODE:
+# - INSTALLED: when running an installed package
+# - PACKAGE: while building the package
+
 BASE=$(pwd)
 COM=$(dirname "${BASE}")/libcom/COM
 ARCH=$(uname -m)
@@ -22,14 +26,17 @@ MONO_DEBUG=explicit-null-checks
 MONO_ENV_OPTIONS="-O=-gshared"
 
 # Directory settings
-PATH="${BASE}/Output_${ARCH}/${BUILD}:\
+if [ "$RUNMODE" != "INSTALLED" ]
+then
+	PATH="${BASE}/Output_${ARCH}/${BUILD}:\
 /usr/lib/fieldworks/icu-bin:\
 ${COM}/build${ARCH}/bin:\
 ${PATH}"
-LD_LIBRARY_PATH="${BASE}/Output_${ARCH}/${BUILD}:\
+	LD_LIBRARY_PATH="${BASE}/Output_${ARCH}/${BUILD}:\
 /usr/lib/fieldworks/lib:\
 ${COM}/build${ARCH}/lib:\
 ${LD_LIBRARY_PATH}"
+fi
 # ensure we scan the default pkg-config directories (to pick up Geckofx for compiling)
 [ -z "$PKG_CONFIG_PATH" ] && PKG_CONFIG_PATH=/usr/lib/pkgconfig:/usr/share/pkgconfig
 
@@ -72,9 +79,10 @@ then
 	FW_CommonAppData=${BASE}/Output_${ARCH}/VarLibFieldworks
 	[ ! -d $FW_CommonAppData ] && mkdir -p $FW_CommonAppData
 	[ -d /var/lib/fieldworks/registry ] && cp -r /var/lib/fieldworks/registry $FW_CommonAppData
+	MONO_PATH="${BASE}/DistFiles:${BASE}/Output_${ARCH}/${BUILD}"
 fi
 
-MONO_PATH="${BASE}/DistFiles:${BASE}/Output_${ARCH}/${BUILD}:${GDK_SHARP}:${ENC_CONVERTERS}:${GECKOFX}"
+MONO_PATH="${MONO_PATH}:${GDK_SHARP}:${ENC_CONVERTERS}:${GECKOFX}"
 MONO_TRACE_LISTENER="Console.Out"
 #MONO_IOMAP=case
 MONO_MWF_SCALING=disable

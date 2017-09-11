@@ -427,7 +427,7 @@ namespace SIL.FieldWorks.TE
 				else if (!(e.InnerException is CancelException))
 				{
 					// User didn't just cancel import in the middle of a book -- let's die.
-					throw;
+					throw e;
 				}
 			}
 

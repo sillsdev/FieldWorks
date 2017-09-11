@@ -1,17 +1,12 @@
-// Copyright (c) 2006-2013 SIL International
+// Copyright (c) 2006-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ParatextHelper.cs
-// Responsibility: FieldWorks Team
 
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
-using Microsoft.Win32;
-using Paratext;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Utils;
@@ -28,12 +23,6 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 	/// ----------------------------------------------------------------------------------------
 	public interface IParatextHelper
 	{
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the Paratext project directory or null if unable to get the project directory
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		string ProjectsDirectory { get; }
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -47,7 +36,7 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 		/// Reloads the specified Paratext project with the latest data.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		void ReloadProject(ScrText project);
+		void ReloadProject(IScrText project);
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -61,7 +50,7 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 		/// Gets the list of Paratext projects.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		IEnumerable<ScrText> GetProjects();
+		IEnumerable<IScrText> GetProjects();
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -70,12 +59,183 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 		/// ------------------------------------------------------------------------------------
 		void LoadProjectMappings(IScrImportSet importSettings);
 	}
+
+	/// <summary/>
+	public interface IScrText
+	{
+		/// <summary/>
+		void Reload();
+
+		/// <summary/>
+		IScriptureProviderStyleSheet DefaultStylesheet { get; }
+
+		/// <summary/>
+		IScriptureProviderParser Parser { get;  }
+
+		/// <summary/>
+		IScriptureProviderBookSet BooksPresentSet { get;  }
+
+		/// <summary/>
+		string Name { get; set; }
+
+		/// <summary/>
+		ILexicalProject AssociatedLexicalProject { get; set; }
+
+		/// <summary/>
+		ITranslationInfo TranslationInfo { get; set; }
+
+		/// <summary/>
+		bool Editable { get; set; }
+
+		/// <summary/>
+		bool IsResourceText { get; }
+
+		/// <summary/>
+		string Directory { get; }
+
+		/// <summary/>
+		string BooksPresent { get; set; }
+
+		/// <summary/>
+		IScrVerse Versification { get; }
+
+		/// <summary/>
+		string JoinedNameAndFullName { get; }
+
+		/// <summary/>
+		string FileNamePrePart { get; }
+
+		/// <summary/>
+		string FileNameForm { get; }
+
+		/// <summary/>
+		string FileNamePostPart { get; }
+
+		/// <summary/>
+		object CoreScrText { get; }
+
+		/// <summary/>
+		void SetParameterValue(string resourcetext, string s);
+
+		/// <summary/>
+		bool BookPresent(int bookCanonicalNum);
+
+		/// <summary/>
+		bool IsCheckSumCurrent(int bookCanonicalNum, string checksum);
+
+		/// <summary/>
+		string GetBookCheckSum(int canonicalNum);
+	}
+
+	/// <summary/>
+	public interface ILexicalProject
+	{
+		/// <summary/>
+		string ProjectId { get; }
+
+		/// <summary/>
+		string ProjectType { get; }
+	}
+
+	/// <summary/>
+	public interface ITranslationInfo
+	{
+		/// <summary/>
+		string BaseProjectName { get; }
+
+		/// <summary/>
+		ProjectType Type { get; }
+	}
+
+	/// <summary/>
+	public interface IScriptureProviderBookSet
+	{
+		/// <summary/>
+		IEnumerable<int> SelectedBookNumbers { get; }
+	}
+
+	/// <summary>
+	/// </summary>
+	public interface IScriptureProviderParser
+	{
+		/// <summary>
+		/// </summary>
+		/// <param name="verseRef"></param>
+		/// <param name="b"></param>
+		/// <param name="b1"></param>
+		/// <returns></returns>
+		IEnumerable<IUsfmToken> GetUsfmTokens(IVerseRef verseRef, bool b, bool b1);
+	}
+
+	/// <summary/>
+	public interface IUsfmToken
+	{
+		/// <summary/>
+		string Marker { get; }
+
+		/// <summary/>
+		string EndMarker { get; }
+
+		/// <summary/>
+		TokenType Type { get; }
+
+		/// <summary>To use in places where the type is known in a specific implementation to call methods not exposed through the interface</summary>
+		object CoreToken { get; }
+
+		/// <summary/>
+		string Text { get; }
+	}
+
+	/// <summary/>
+	public interface IVerseRef
+	{
+		/// <summary/>
+		int BookNum { get; set; }
+
+		/// <summary/>
+		int ChapterNum { get; }
+
+		/// <summary/>
+		object CoreVerseRef { get; }
+
+		/// <summary/>
+		int VerseNum { get; }
+
+		/// <summary/>
+		string Segment();
+
+		/// <summary/>
+		IEnumerable<IVerseRef> AllVerses(bool v);
+	}
+
+	/// <summary/>
+	public interface IScriptureProviderStyleSheet
+	{
+		/// <summary/>
+		IEnumerable<ITag> Tags { get; }
+	}
+
+	/// <summary/>
+	public interface ITag
+	{
+		/// <summary/>
+		string Marker { get; set; }
+		/// <summary/>
+		string Endmarker { get; set; }
+		/// <summary/>
+		ScrStyleType StyleType { get; set; }
+		/// <summary/>
+		bool IsScriptureBook { get; }
+	}
+
 	#endregion
 
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// Helper methods used to access Paratext stuff. Tests can poke in a different
 	/// implementation of IParatextHelper by using the internal Manager class.
+	/// </summary>
+	/// <remarks>
 	/// ENHANCE (TimS): This class should somehow make it's way into FwUtils or similar.
 	/// The only reason it hasn't been moved already is because LoadProjecMappings depends
 	/// on ScrMappingList and ImportDomain which are currently defined in FDO. Those classes
@@ -89,7 +249,9 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 	/// just get this information directly from the ParatextHelper instead and ParatextProxy could cease to exist.
 	/// Enhance (response, Hasso, 2013.09): too much effort and risk for now, given we want a stable release this month;
 	/// however, combining Paratext functionality into one class so initialization is in one place (LT-14887)
-	/// </summary>
+	/// REVIEW (Haso, 2017.07): once again, we're pushing for stable soon. We recently implemented a new ScriptureProvider class which does some
+	/// (and could possibly do all) of what PTHelper[Adapter] did.
+	/// </remarks>
 	/// ----------------------------------------------------------------------------------------
 	public static class ParatextHelper
 	{
@@ -139,60 +301,9 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 			/// <summary/>
 			public ParatextHelperAdapter()
 			{
-				RefreshProjects();
+				RefreshProjects(); // REVIEW (Hasso) 2017.07: I don't think we need to do this; it is called before each time it is needed.
 			}
 
-			/// <summary>
-			/// LT-14787 Database displays error about inaccessible Paratext projects
-			/// If there is a registry value for this but the folder is not there we need to return false because
-			/// paratext is not installed correctly. Also if there is no registry entry for this then return false.
-			/// </summary>
-			private bool ParatextSettingsDirectoryExists()
-			{
-				var regValue = ParatextSettingsDirectory();
-				return !String.IsNullOrEmpty(regValue) && Directory.Exists(regValue);
-			}
-
-			/// <summary>
-			/// Returns the path to the Paratext settings (projects) directory as specified in the registry
-			/// ENHANCE (Hasso) 2013.09: added this to expose the directory for Unix users, because trying to get it from ScrTextCollections
-			/// always returns null on Unix.  This is really a Paratext problem, and this method may have no benefit.
-			/// </summary>
-			private string ParatextSettingsDirectory()
-			{
-				using (var paratextKey = Registry.LocalMachine.OpenSubKey("Software\\ScrChecks\\1.0\\Settings_Directory"))
-				{
-					if (paratextKey != null)
-					{
-						var keyName = paratextKey.ToString();
-						return Registry.GetValue(keyName, "", "") as string;
-					}
-				}
-				return null;
-			}
-
-			/// ------------------------------------------------------------------------------------
-			/// <summary>
-			/// Gets the Paratext projects directory (null if none)
-			/// </summary>
-			/// ------------------------------------------------------------------------------------
-			public string ProjectsDirectory
-			{
-				get
-				{
-					if (m_IsParatextInitialized)
-					{
-						if (MiscUtils.IsUnix)
-						{
-							// TODO FWNX-1235: Why does SrcTextCollection.SettingsDirectory not work in Unix?
-							// Does ScrTextCollection work at all in Unix?
-							return ParatextSettingsDirectory();
-						}
-						return ScrTextCollection.SettingsDirectory;
-					}
-					return null;
-				}
-			}
 
 			/// --------------------------------------------------------------------------------
 			/// <summary>
@@ -203,7 +314,7 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 			{
 				try
 				{
-					if (ParatextSettingsDirectoryExists())
+					if (ScriptureProvider.IsInstalled)
 					{
 						if (!m_IsParatextInitialized)
 						{
@@ -212,13 +323,13 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 							// again. ScrTextCollection.Initialize is safe to call multiple times and also refreshes texts.
 							// We pass the directory (rather than passing no arguments, and letting the paratext dll figure
 							// it out) because the figuring out goes wrong on Linux, where both programs are simulating
-							// the registry.
-							ScrTextCollection.Initialize(ParatextSettingsDirectory(), false);
+							// the registry in different places. TODO NOT (Hasso) 2017.07
+							ScriptureProvider.Initialize();
 							m_IsParatextInitialized = true;
 						}
 						else
 						{
-							ScrTextCollection.RefreshScrTexts();
+							ScriptureProvider.RefreshScrTexts();
 						}
 					}
 					else
@@ -238,7 +349,7 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 			/// Reloads the specified Paratext project with the latest data.
 			/// </summary>
 			/// --------------------------------------------------------------------------------
-			public void ReloadProject(ScrText project)
+			public void ReloadProject(IScrText project)
 			{
 				if (project != null)
 					project.Reload();
@@ -253,7 +364,7 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 			{
 				if (m_IsParatextInitialized)
 				{
-					return ScrTextCollection.ScrTextNames;
+					return ScriptureProvider.ScrTextNames;
 				}
 				return new string[0];
 			}
@@ -263,7 +374,7 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 			/// Gets the list of Paratext projects.
 			/// </summary>
 			/// --------------------------------------------------------------------------------
-			public IEnumerable<ScrText> GetProjects()
+			public IEnumerable<IScrText> GetProjects()
 			{
 				RefreshProjects();
 
@@ -276,7 +387,7 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 						// Most likely neither of these are necessary, but I'm preserving the behavior we had with 7.3,
 						// which did not have these arguments.
 						// We also filter out invalid ScrTexts, because there is a bug in Paratext that allows them to get through.
-						return ScrTextCollection.ScrTexts(true, true).Where(st => Directory.Exists(st.Directory));
+						return ScriptureProvider.ScrTexts().Where(st => Directory.Exists(st.Directory));
 					}
 					catch (Exception e)
 					{
@@ -284,7 +395,7 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 						m_IsParatextInitialized = false;
 					}
 				}
-				return new ScrText[0];
+				return new IScrText[0];
 			}
 
 			/// ------------------------------------------------------------------------------------
@@ -322,13 +433,11 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 					return false;
 
 				// Load the tags from the paratext project and create mappings for them.
-				ScrText scParatextText;
+				IScrText scParatextText;
 				try
 				{
-					// REVIEW (EberhardB): I'm not sure if ScrTextCollection.Get() returns a
-					// reference to a ScrText or a new object (in which case we would have to
-					// call Dispose() on it)
-					scParatextText = ScrTextCollection.Get(project);
+					// ParatextShared has a static collection that is responsible for the dispose of any IScrText objects
+					scParatextText = ScriptureProvider.Get(project);
 				}
 				catch (Exception ex)
 				{
@@ -341,13 +450,13 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 					mapping.SetIsInUse(domain, false);
 				try
 				{
-					foreach (ScrTag tag in scParatextText.DefaultStylesheet.Tags)
+					foreach (var tag in scParatextText.DefaultStylesheet.Tags)
 					{
 						if (tag == null)
 							break;
 						string marker = @"\" + tag.Marker;
 						string endMarker = string.Empty;
-						if (!String.IsNullOrEmpty(tag.Endmarker))
+						if (!string.IsNullOrEmpty(tag.Endmarker))
 							endMarker = @"\" + tag.Endmarker;
 
 						// When the nth marker has an end marker, the nth + 1 marker will be
@@ -358,10 +467,10 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 						// Create a new mapping for this marker.
 						mappingList.AddDefaultMappingIfNeeded(marker, endMarker, domain, false, false);
 					}
-					ScrParser parser = scParatextText.Parser;
+					var parser = scParatextText.Parser;
 					foreach (int bookNum in scParatextText.BooksPresentSet.SelectedBookNumbers)
 					{
-						foreach (UsfmToken token in parser.GetUsfmTokens(new VerseRef(bookNum, 0, 0), false, true))
+						foreach (var token in parser.GetUsfmTokens(ScriptureProvider.MakeVerseRef(bookNum, 0, 0), false, true))
 						{
 							if (token.Marker == null)
 								continue; // Tokens alternate between text and marker types
@@ -385,15 +494,6 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 		#endregion
 
 		#region Public methods
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the Paratext projects directory.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public static string ProjectsDirectory
-		{
-			get { return s_ptHelper.ProjectsDirectory; }
-		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -430,7 +530,7 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 		/// Gets the projects that have at least one book (restricted to the old and new testaments)
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public static IEnumerable<ScrText> ProjectsWithBooks
+		public static IEnumerable<IScrText> ProjectsWithBooks
 		{
 			get
 			{
@@ -446,9 +546,9 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 		/// </summary>
 		/// <returns>The associated project, or null if there is none.</returns>
 		/// ------------------------------------------------------------------------------------
-		public static ScrText GetAssociatedProject(IProjectIdentifier projectId)
+		public static IScrText GetAssociatedProject(IProjectIdentifier projectId)
 		{
-			ScrText assocProj = s_ptHelper.GetProjects().FirstOrDefault(scrText =>
+			var assocProj = s_ptHelper.GetProjects().FirstOrDefault(scrText =>
 				scrText.AssociatedLexicalProject.ToString() == projectId.PipeHandle);
 			s_ptHelper.ReloadProject(assocProj);
 			return assocProj;
@@ -459,7 +559,7 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 		/// Gets any back translations of the specified base project.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public static IEnumerable<ScrText> GetBtsForProject(ScrText baseProj)
+		public static IEnumerable<IScrText> GetBtsForProject(IScrText baseProj)
 		{
 			// We're looking for projects that are back translations of baseProj. That means they have type
 			// back translation, and their base project is the one we want.
@@ -491,11 +591,11 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 		/// <remark>The returned list will be empty if there is a problem with the Paratext
 		/// installation or the specified project could not be found.</remark>
 		/// ------------------------------------------------------------------------------------
-		public static IEnumerable<int> GetProjectBooks(string projShortName)
+		public static IEnumerable<int> GetProjectBooks(string projShortName) // REVIEW (Hasso) 2017.06: is this (and everything else) obsoleted by ScrProvider?
 		{
 			try
 			{
-				ScrText foundText = s_ptHelper.GetProjects().FirstOrDefault(p => p.Name == projShortName);
+				var foundText = s_ptHelper.GetProjects().FirstOrDefault(p => p.Name == projShortName);
 				// Make sure we don't add books outside of our valid range
 				if (foundText != null)
 					return foundText.BooksPresentSet.SelectedBookNumbers.Where(book => book <= BCVRef.LastBook);
@@ -530,18 +630,74 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 		/// ------------------------------------------------------------------------------------
 		private static bool IsProjectWritable(string projShortName, bool fPerformRefresh)
 		{
-			if (ScrTextCollection.SLTTexts.Contains(projShortName.ToLowerInvariant()))
+			if (ScriptureProvider.NonWorkingTexts.Contains(projShortName.ToLowerInvariant()))
 				return false;
 
 			if (fPerformRefresh)
 				s_ptHelper.RefreshProjects();
 
-			ScrText existingProj = s_ptHelper.GetProjects().FirstOrDefault(x =>
+			var existingProj = s_ptHelper.GetProjects().FirstOrDefault(x =>
 				x.Name.Equals(projShortName, StringComparison.InvariantCultureIgnoreCase));
 
 			return existingProj == null || (string.IsNullOrEmpty(existingProj.AssociatedLexicalProject.ProjectId) &&
 											existingProj.Editable && !existingProj.IsResourceText);
 		}
 		#endregion
+	}
+	/// <summary/>
+	public enum ScrStyleType
+	{
+		/// <summary/>
+		scUnknownStyle,
+		/// <summary/>
+		scCharacterStyle,
+		/// <summary/>
+		scNoteStyle,
+		/// <summary/>
+		scParagraphStyle,
+		/// <summary/>
+		scEndStyle
+	}
+
+	/// <summary/>
+	public enum ProjectType
+	{
+		/// <summary/>
+		Standard,
+		/// <summary/>
+		Resource,
+		/// <summary/>
+		BackTranslation,
+		/// <summary/>
+		Daughter,
+		/// <summary/>
+		Transliteration,
+		/// <summary/>
+		StudyBible,
+		/// <summary/>
+		GlobalConsultantNotes
+	}
+
+	/// <summary/>
+	public enum TokenType
+	{
+		/// <summary/>
+		Book,
+		/// <summary/>
+		Chapter,
+		/// <summary/>
+		Verse,
+		/// <summary/>
+		Text,
+		/// <summary/>
+		Paragraph,
+		/// <summary/>
+		Character,
+		/// <summary/>
+		Note,
+		/// <summary/>
+		End,
+		/// <summary/>
+		Unknown,
 	}
 }

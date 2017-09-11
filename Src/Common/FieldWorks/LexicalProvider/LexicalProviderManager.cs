@@ -1,18 +1,13 @@
-// ---------------------------------------------------------------------------------------------
-// Copyright (c) 2011-2015 SIL International
+// Copyright (c) 2011-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: LexicalProviderManager.cs
-// Responsibility: FW Team
-// ---------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.ServiceModel;
 using System.Threading;
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.LCModel;
 using SIL.Reporting;
 using Timer = System.Threading.Timer;
@@ -123,8 +118,7 @@ namespace SIL.FieldWorks.LexicalProvider
 			{
 				Logger.WriteError(e);
 				providerHost = null;
-				var paratextInstalled = FwRegistryHelper.Paratext7orLaterInstalled();
-				if (paratextInstalled)
+				if (ScriptureProvider.IsInstalled)
 				{
 					MessageBox.Show(PtCommunicationProb, PtCommunicationProbTitle,
 						MessageBoxButtons.OK, MessageBoxIcon.Information);

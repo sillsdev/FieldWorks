@@ -28,8 +28,8 @@ Preamble
 	<!-- MoInflClass may be nested -->
 	<xsl:variable name="MoInflClasses" select="/M3Dump/PartsOfSpeech/PartOfSpeech/InflectionClasses//MoInflClass"/>
 	<xsl:variable name="MoStemNames" select="/M3Dump/PartsOfSpeech/PartOfSpeech/StemNames/MoStemName"/>
-	<xsl:variable name="MoAlloAdhocProhibs" select="/M3Dump/AdhocCoProhibitions/MoAlloAdhocProhib"/>
-	<xsl:variable name="MoMorphAdhocProhibs" select="/M3Dump/AdhocCoProhibitions/MoMorphAdhocProhib"/>
+	<xsl:variable name="MoAlloAdhocProhibs" select="/M3Dump/AdhocCoProhibitions/descendant-or-self::MoAlloAdhocProhib"/>
+	<xsl:variable name="MoMorphAdhocProhibs" select="/M3Dump/AdhocCoProhibitions/descendant-or-self::MoMorphAdhocProhib"/>
 
 	<xsl:variable name="ProdRestricts" select="/M3Dump/ProdRestrict"/>
 	<xsl:variable name="MoAffixAllomorphs" select="/M3Dump/Lexicon/Allomorphs/MoAffixAllomorph"/>

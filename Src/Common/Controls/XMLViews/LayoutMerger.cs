@@ -216,9 +216,12 @@ namespace SIL.FieldWorks.Common.Controls
 				var dupKey = GetKeyWithDup(child, true);
 				if (dupKey == baseKey)
 					continue;
-
-				m_labelAttrSuffix.Add(dupKey, LayoutKeyUtils.GetPossibleLabelSuffix(child));
-				m_partLevelParamAttrSuffix.Add(dupKey, LayoutKeyUtils.GetPossibleParamSuffix(child));
+				// Due to an old bug some configurations have bad data with indistinguishable duplicate nodes. Just drop the extra ones.
+				if (!m_labelAttrSuffix.ContainsKey(dupKey))
+				{
+					m_labelAttrSuffix.Add(dupKey, LayoutKeyUtils.GetPossibleLabelSuffix(child));
+					m_partLevelParamAttrSuffix.Add(dupKey, LayoutKeyUtils.GetPossibleParamSuffix(child));
+				}
 			}
 		}
 

@@ -25,11 +25,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			{
 				if (components != null)
 					components.Dispose();
-				if (m_openFileDialog != null)
-					m_openFileDialog.Dispose();
 			}
 			components = null;
-			m_openFileDialog = null;
 			base.Dispose(disposing);
 		}
 

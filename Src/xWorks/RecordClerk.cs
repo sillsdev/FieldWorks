@@ -1519,6 +1519,7 @@ namespace SIL.FieldWorks.XWorks
 							}
 						}
 					}
+					m_mediator.SendMessage("MasterRefresh", null);
 				}
 			}
 			return true; //we handled this, no need to ask anyone else.
