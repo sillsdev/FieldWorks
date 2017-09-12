@@ -26,7 +26,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		// Local variables.
 		private LcmCache m_cache;
 		RecordEditView m_xrev;
-		int m_currentRoot = 0;		// Stores the root (IStText) Hvo.
+		int m_currentRoot = 0;      // Stores the root (IStText) Hvo.
+		private SliceContextMenuFactory _sliceContextMenuFactory;
 
 		#region Constructors, destructors, and suchlike methods.
 
@@ -87,11 +88,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				// Already done
 				return;
 			}
-			var dataTreeMenuHandler = new DataTreeMenuHandler(clerk, new InterlinearTextsRecordEditView.StTextDataTree(m_cache));
+			_sliceContextMenuFactory = new SliceContextMenuFactory();
 #if RANDYTODO
 			// TODO: See LexiconEditTool for how to set up all manner of menus and toolbars.
 #endif
-			m_xrev = new InterlinearTextsRecordEditView(this, new XElement("parameters", new XAttribute("layout", "FullInformation")), m_cache, clerk, dataTreeMenuHandler);
+			m_xrev = new InterlinearTextsRecordEditView(this, new XElement("parameters", new XAttribute("layout", "FullInformation")), m_cache, clerk, new InterlinearTextsRecordEditView.StTextDataTree(_sliceContextMenuFactory, m_cache));
 			m_xrev.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 			m_xrev.Dock = DockStyle.Fill;
 			Controls.Add(m_xrev);
@@ -164,8 +165,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		internal sealed class InterlinearTextsRecordEditView : RecordEditView
 		{
-			public InterlinearTextsRecordEditView(InfoPane infoPane, XElement configurationParametersElement, LcmCache cache, RecordClerk clerk, DataTreeMenuHandler dataTreeMenuHandler)
-				: base(configurationParametersElement, XDocument.Parse(AreaResources.VisibilityFilter_All), cache, clerk, dataTreeMenuHandler)
+			public InterlinearTextsRecordEditView(InfoPane infoPane, XElement configurationParametersElement, LcmCache cache, RecordClerk clerk, DataTree dataTree)
+				: base(configurationParametersElement, XDocument.Parse(AreaResources.VisibilityFilter_All), cache, clerk, dataTree)
 			{
 				(m_dataTree as StTextDataTree).InfoPane = infoPane;
 			}
@@ -194,7 +195,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					set { m_infoPane = value; }
 				}
 
-				internal StTextDataTree(LcmCache cache)
+				internal StTextDataTree(SliceContextMenuFactory sliceContextMenuFactory, LcmCache cache)
+					: base(sliceContextMenuFactory)
 				{
 					m_cache = cache;
 					InitializeBasic(cache, false);

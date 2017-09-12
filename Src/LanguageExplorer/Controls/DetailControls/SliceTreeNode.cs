@@ -3,6 +3,8 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Runtime.Serialization;
@@ -13,6 +15,7 @@ using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.Resources;
 using SIL.LCModel.Core.KernelInterfaces;
+using SIL.Xml;
 
 namespace LanguageExplorer.Controls.DetailControls
 {
@@ -43,6 +46,9 @@ namespace LanguageExplorer.Controls.DetailControls
 		protected bool m_inMenuButton = false;
 		private Slice m_myParentSlice;
 		private bool m_fShowPlusMinus = false;
+		private SliceContextMenuFactory _sliceContextMenuFactory;
+		private string _ordinaryMenuId;
+		private Tuple<ContextMenuStrip, CancelEventHandler, List<Tuple<ToolStripMenuItem, EventHandler>>> _ordinaryMenuStuff;
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
@@ -75,7 +81,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		}
 
 		/// <summary></summary>
-		public SliceTreeNode(Slice myParentSlice)
+		internal SliceTreeNode(Slice myParentSlice, SliceContextMenuFactory sliceContextMenuFactory, string ordinaryMenuId)
 		{
 			if (myParentSlice == null)
 				throw new ArgumentNullException(nameof(myParentSlice));
@@ -84,6 +90,10 @@ namespace LanguageExplorer.Controls.DetailControls
 			InitializeComponent();
 
 			m_myParentSlice = myParentSlice;
+
+			_sliceContextMenuFactory = sliceContextMenuFactory;
+			_ordinaryMenuId = ordinaryMenuId;
+			_ordinaryMenuStuff = _sliceContextMenuFactory.GetOrdinaryMenu(myParentSlice, _ordinaryMenuId);
 
 			SuspendLayout();
 			this.Paint += new PaintEventHandler(this.HandlePaint);
@@ -301,6 +311,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 			if( disposing )
 			{
+				_sliceContextMenuFactory.DisposeContextMenu(_ordinaryMenuStuff);
 				this.Paint -= new PaintEventHandler(this.HandlePaint);
 				this.SizeChanged -= new EventHandler(this.HandleSizeChanged);
 				this.KeyPress -= new System.Windows.Forms.KeyPressEventHandler(this.SliceTreeNode_KeyPress);
@@ -311,6 +322,9 @@ namespace LanguageExplorer.Controls.DetailControls
 				}
 			}
 			m_myParentSlice = null;
+			_sliceContextMenuFactory = null;
+			_ordinaryMenuId = null;
+			_ordinaryMenuStuff = null;
 
 			base.Dispose( disposing );
 		}
@@ -481,8 +495,9 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				//begin test (JDH)
 				Point p = new Point(meArgs.X,meArgs.Y);
-				if (Slice.HandleMouseDown(p))
+				if (Slice.HandleMouseDown(p) && _ordinaryMenuStuff != null)
 				{
+					_ordinaryMenuStuff.Item1.Show(m_myParentSlice, p);
 					return;
 				}
 				//end test

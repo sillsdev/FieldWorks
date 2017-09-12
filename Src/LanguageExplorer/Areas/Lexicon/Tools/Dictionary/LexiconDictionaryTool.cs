@@ -4,11 +4,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using LanguageExplorer.Controls;
+using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.Controls.PaneBar;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
@@ -25,13 +27,13 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 	{
 		private string _configureObjectName;
 		private IFwMainWnd _fwMainWnd;
+		private LcmCache _cache;
 		private PaneBarContainer _paneBarContainer;
 		private RecordClerk _recordClerk;
 		private XhtmlDocView _xhtmlDocView;
-		private ContextMenuStrip _leftContextMenuStrip;
-		private readonly HashSet<Tuple<ToolStripMenuItem, EventHandler>> _leftMenusAndHandlers = new HashSet<Tuple<ToolStripMenuItem, EventHandler>>();
-		private ContextMenuStrip _rightContextMenuStrip;
-		private readonly HashSet<Tuple<ToolStripMenuItem, EventHandler>> _rightMenusAndHandlers = new HashSet<Tuple<ToolStripMenuItem, EventHandler>>();
+		private SliceContextMenuFactory _sliceContextMenuFactory;
+		private const string leftPanelMenuId = "left";
+		private const string rightPanelMenuId = "right";
 
 
 		#region Implementation of IPropertyTableProvider
@@ -88,17 +90,12 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			_leftContextMenuStrip.Opening -= LeftContextMenuStrip_Opening;
-			_leftContextMenuStrip.Dispose();
-			_leftContextMenuStrip = null;
-
-			_rightContextMenuStrip.Opening -= RightContextMenuStrip_Opening;
-			_rightContextMenuStrip.Dispose();
-			_rightContextMenuStrip = null;
-
+			_sliceContextMenuFactory.Dispose();
 			PaneBarContainerFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _paneBarContainer);
 			_xhtmlDocView = null;
 			_fwMainWnd = null;
+			_cache = null;
+			_sliceContextMenuFactory = null;
 		}
 
 		/// <summary>
@@ -109,6 +106,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			_cache = majorFlexComponentParameters.LcmCache;
+			_sliceContextMenuFactory = new SliceContextMenuFactory();
+			RegisterContextMenuMethods();
 			_fwMainWnd = majorFlexComponentParameters.MainWindow;
 			if (_recordClerk == null)
 			{
@@ -126,12 +126,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 				Width = 10,
 				Dock = DockStyle.Right
 			};
-			var rightPanelMenu = new PanelMenu
+			var rightPanelMenu = new PanelMenu(_sliceContextMenuFactory, rightPanelMenuId)
 			{
 				Dock = DockStyle.Right,
 				BackgroundImage = img,
-				BackgroundImageLayout = ImageLayout.Center,
-				ContextMenuStrip = CreateRightContextMenuStrip()
+				BackgroundImageLayout = ImageLayout.Center
 			};
 
 			var leftSpacer = new Spacer
@@ -139,12 +138,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 				Width = 10,
 				Dock = DockStyle.Left
 			};
-			var leftPanelMenu = new PanelMenu
+			var leftPanelMenu = new PanelMenu(_sliceContextMenuFactory, leftPanelMenuId)
 			{
 				Dock = DockStyle.Left,
 				BackgroundImage = img,
-				BackgroundImageLayout = ImageLayout.Center,
-				ContextMenuStrip = CreateLeftContextMenuStrip()
+				BackgroundImageLayout = ImageLayout.Center
 			};
 			docViewPaneBar.AddControls(new List<Control> { leftPanelMenu, leftSpacer, rightPanelMenu, rightSpacer });
 
@@ -220,29 +218,19 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 
 #endregion
 
-		private ContextMenuStrip CreateRightContextMenuStrip()
+		private void RegisterContextMenuMethods()
 		{
-			_rightContextMenuStrip = new ContextMenuStrip();
-			_rightContextMenuStrip.Opening += RightContextMenuStrip_Opening;
-
-			return _rightContextMenuStrip;
+			_sliceContextMenuFactory.RegisterPanelMenuCreatorMethod(leftPanelMenuId, CreateLeftContextMenuStrip);
+			_sliceContextMenuFactory.RegisterPanelMenuCreatorMethod(rightPanelMenuId, CreateRightContextMenuStrip);
 		}
 
-		private void RightContextMenuStrip_Opening(object sender, System.ComponentModel.CancelEventArgs e)
+		private Tuple<ContextMenuStrip, CancelEventHandler, List<Tuple<ToolStripMenuItem, EventHandler>>> CreateRightContextMenuStrip(string panelMenuId)
 		{
-			if (_rightContextMenuStrip.Items.Count > 0)
-			{
-				foreach (var menuTuple in _rightMenusAndHandlers)
-				{
-					menuTuple.Item1.Click -= menuTuple.Item2;
-					_rightContextMenuStrip.Items.Remove(menuTuple.Item1);
-					menuTuple.Item1.Dispose();
-				}
-				_rightMenusAndHandlers.Clear();
-				_rightContextMenuStrip.Items.Clear();
-			}
+			var contextMenuStrip = new ContextMenuStrip();
+			contextMenuStrip.Opening += RightContextMenuStrip_Opening;
 
-			// Create new menus each time, and put them in _rightMenusAndHandlers.
+			var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>();
+			var retVal = new Tuple<ContextMenuStrip, CancelEventHandler, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, RightContextMenuStrip_Opening, menuItems);
 			ToolStripMenuItem currentToolStripMenuItem;
 
 			// 1. <menu list="Configurations" inline="true" emptyAllowed="true" behavior="singlePropertyAtomicValue" property="DictionaryPublicationLayout"/>
@@ -258,27 +246,40 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 			foreach (var config in hasPub)
 			{
 				// Key is label, value is Tag for config pathname.
-				currentToolStripMenuItem = PaneBarContextMenuFactory.CreateToolStripMenuItem(_rightContextMenuStrip, config.Key, null, Configuration_Clicked, null);
+				currentToolStripMenuItem = PaneBarContextMenuFactory.CreateToolStripMenuItem(contextMenuStrip, config.Key, null, Configuration_Clicked, null);
 				currentToolStripMenuItem.Tag = config.Value;
 				currentToolStripMenuItem.Checked = (currentPublication == config.Value);
-				_rightMenusAndHandlers.Add(new Tuple<ToolStripMenuItem, EventHandler>(currentToolStripMenuItem, Configuration_Clicked));
+				menuItems.Add(new Tuple<ToolStripMenuItem, EventHandler>(currentToolStripMenuItem, Configuration_Clicked));
 
 			}
 			if (doesNotHavePub.Count > 0)
 			{
-				_rightContextMenuStrip.Items.Add(new ToolStripMenuItem("-"));
+				contextMenuStrip.Items.Add(new ToolStripSeparator());
 				foreach (var config in doesNotHavePub)
 				{
-					currentToolStripMenuItem = PaneBarContextMenuFactory.CreateToolStripMenuItem(_rightContextMenuStrip, config.Key, null, Configuration_Clicked, null);
+					currentToolStripMenuItem = PaneBarContextMenuFactory.CreateToolStripMenuItem(contextMenuStrip, config.Key, null, Configuration_Clicked, null);
 					currentToolStripMenuItem.Tag = config.Value;
 					currentToolStripMenuItem.Checked = (currentPublication == config.Value);
-					_rightMenusAndHandlers.Add(new Tuple<ToolStripMenuItem, EventHandler>(currentToolStripMenuItem, Configuration_Clicked));
+					menuItems.Add(new Tuple<ToolStripMenuItem, EventHandler>(currentToolStripMenuItem, Configuration_Clicked));
 				}
 			}
 
-			_rightContextMenuStrip.Items.Add(new ToolStripMenuItem("-"));
-			currentToolStripMenuItem = PaneBarContextMenuFactory.CreateToolStripMenuItem(_rightContextMenuStrip, "Configure Dictionary", null, ConfigureDictionary_Clicked, null);
-			_rightMenusAndHandlers.Add(new Tuple<ToolStripMenuItem, EventHandler>(currentToolStripMenuItem, ConfigureDictionary_Clicked));
+			contextMenuStrip.Items.Add(new ToolStripSeparator());
+			currentToolStripMenuItem = PaneBarContextMenuFactory.CreateToolStripMenuItem(contextMenuStrip, "Configure Dictionary", null, ConfigureDictionary_Clicked, null);
+			menuItems.Add(new Tuple<ToolStripMenuItem, EventHandler>(currentToolStripMenuItem, ConfigureDictionary_Clicked));
+
+			return retVal;
+		}
+
+		private void RightContextMenuStrip_Opening(object sender, CancelEventArgs e)
+		{
+			var rightContextMenuStrip = (ContextMenuStrip)sender;
+			var currentlayout = PropertyTable.GetValue<string>("DictionaryPublicationLayout", SettingsGroup.LocalSettings);
+			// Make sure matching menu is checked, but none of the others are checked
+			foreach (var toolStripMenuItem in rightContextMenuStrip.Items.OfType<ToolStripMenuItem>())
+			{
+				toolStripMenuItem.Checked = (string)toolStripMenuItem.Tag == currentlayout;
+			}
 		}
 
 		private void Configuration_Clicked(object sender, EventArgs e)
@@ -290,10 +291,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 			}
 			var newValue = (string)clickedToolStripMenuItem.Tag;
 			PropertyTable.SetProperty("DictionaryPublicationLayout", newValue, SettingsGroup.LocalSettings, true, false);
-			foreach (var menuItemTuple in _rightMenusAndHandlers)
-			{
-				clickedToolStripMenuItem.Checked = (((string)menuItemTuple.Item1.Tag)== newValue);
-			}
 			_xhtmlDocView.OnPropertyChanged("DictionaryPublicationLayout");
 		}
 
@@ -315,67 +312,63 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 			}
 		}
 
-		private ContextMenuStrip CreateLeftContextMenuStrip()
+		private Tuple<ContextMenuStrip, CancelEventHandler, List<Tuple<ToolStripMenuItem, EventHandler>>> CreateLeftContextMenuStrip(string panelMenuId)
 		{
-			_leftContextMenuStrip = new ContextMenuStrip();
-			_leftContextMenuStrip.Opening += LeftContextMenuStrip_Opening;
-
-			return _leftContextMenuStrip;
-		}
-
-		private void LeftContextMenuStrip_Opening(object sender, System.ComponentModel.CancelEventArgs e)
-		{
-			// Create new menus each time, and put them in _leftMenusAndHandlers
-			if (_leftContextMenuStrip.Items.Count > 0)
-			{
-				foreach (var menuTuple in _leftMenusAndHandlers)
-				{
-					menuTuple.Item1.Click -= menuTuple.Item2;
-					_leftContextMenuStrip.Items.Remove(menuTuple.Item1);
-					menuTuple.Item1.Dispose();
-				}
-				_leftMenusAndHandlers.Clear();
-				_leftContextMenuStrip.Items.Clear();
-			}
-
 			var currentPublication = PropertyTable.GetValue<string>("SelectedPublication");
-			ToolStripMenuItem currentToolStripMenuItem = PaneBarContextMenuFactory.CreateToolStripMenuItem(_leftContextMenuStrip, "All Entries", null, ShowAllPublications_Clicked, null);
+			var contextMenuStrip = new ContextMenuStrip();
+			contextMenuStrip.Opening += LeftContextMenuStrip_Opening;
+
+			var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>();
+			var retVal = new Tuple<ContextMenuStrip, CancelEventHandler, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, LeftContextMenuStrip_Opening, menuItems);
+
+			var currentToolStripMenuItem = PaneBarContextMenuFactory.CreateToolStripMenuItem(contextMenuStrip, "All Entries", null, ShowAllPublications_Clicked, null);
 			currentToolStripMenuItem.Tag = "All Entries";
 			currentToolStripMenuItem.Checked = (currentPublication == "All Entries");
 			var pubName = _xhtmlDocView.GetCurrentPublication();
 			currentToolStripMenuItem.Checked = (xWorksStrings.AllEntriesPublication == pubName);
-			_leftMenusAndHandlers.Add(new Tuple<ToolStripMenuItem, EventHandler>(currentToolStripMenuItem, ShowAllPublications_Clicked));
+			menuItems.Add(new Tuple<ToolStripMenuItem, EventHandler>(currentToolStripMenuItem, ShowAllPublications_Clicked));
 
-			_leftContextMenuStrip.Items.Add(new ToolStripMenuItem("-"));
+			contextMenuStrip.Items.Add(new ToolStripSeparator());
 
-			var cache = PropertyTable.GetValue<LcmCache>("cache");
 			List<string> inConfig;
 			List<string> notInConfig;
-			_xhtmlDocView.SplitPublicationsByConfiguration(cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS,
-			_xhtmlDocView.GetCurrentConfiguration(false),
-																   out inConfig, out notInConfig);
+			_xhtmlDocView.SplitPublicationsByConfiguration(_cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS,
+			_xhtmlDocView.GetCurrentConfiguration(false), out inConfig, out notInConfig);
 			foreach (var pub in inConfig)
 			{
-				currentToolStripMenuItem = PaneBarContextMenuFactory.CreateToolStripMenuItem(_leftContextMenuStrip, pub, null, Publication_Clicked, null);
+				currentToolStripMenuItem = PaneBarContextMenuFactory.CreateToolStripMenuItem(contextMenuStrip, pub, null, Publication_Clicked, null);
 				currentToolStripMenuItem.Tag = pub;
 				currentToolStripMenuItem.Checked = (currentPublication == pub);
-				_leftMenusAndHandlers.Add(new Tuple<ToolStripMenuItem, EventHandler>(currentToolStripMenuItem, Publication_Clicked));
+				menuItems.Add(new Tuple<ToolStripMenuItem, EventHandler>(currentToolStripMenuItem, Publication_Clicked));
 			}
 			if (notInConfig.Any())
 			{
-				_leftContextMenuStrip.Items.Add(new ToolStripMenuItem("-"));
+				contextMenuStrip.Items.Add(new ToolStripSeparator());
 				foreach (var pub in notInConfig)
 				{
-					currentToolStripMenuItem = PaneBarContextMenuFactory.CreateToolStripMenuItem(_leftContextMenuStrip, pub, null, Publication_Clicked, null);
+					currentToolStripMenuItem = PaneBarContextMenuFactory.CreateToolStripMenuItem(contextMenuStrip, pub, null, Publication_Clicked, null);
 					currentToolStripMenuItem.Tag = pub;
 					currentToolStripMenuItem.Checked = (currentPublication == pub);
-					_leftMenusAndHandlers.Add(new Tuple<ToolStripMenuItem, EventHandler>(currentToolStripMenuItem, Publication_Clicked));
+					menuItems.Add(new Tuple<ToolStripMenuItem, EventHandler>(currentToolStripMenuItem, Publication_Clicked));
 				}
 			}
 
-			_leftContextMenuStrip.Items.Add(new ToolStripMenuItem("-"));
-			currentToolStripMenuItem = PaneBarContextMenuFactory.CreateToolStripMenuItem(_leftContextMenuStrip, "Edit Publications", null, EditPublications_Clicked, null);
-			_leftMenusAndHandlers.Add(new Tuple<ToolStripMenuItem, EventHandler>(currentToolStripMenuItem, EditPublications_Clicked));
+			contextMenuStrip.Items.Add(new ToolStripSeparator());
+			currentToolStripMenuItem = PaneBarContextMenuFactory.CreateToolStripMenuItem(contextMenuStrip, "Edit Publications", null, EditPublications_Clicked, null);
+			menuItems.Add(new Tuple<ToolStripMenuItem, EventHandler>(currentToolStripMenuItem, EditPublications_Clicked));
+
+			return retVal;
+		}
+
+		private void LeftContextMenuStrip_Opening(object sender, CancelEventArgs e)
+		{
+			var leftContextMenuStrip = (ContextMenuStrip)sender;
+			var currentPublication = PropertyTable.GetValue<string>("SelectedPublication", SettingsGroup.LocalSettings);
+			// Make sure matching menu is checked, but none of the others are checked
+			foreach (var toolStripMenuItem in leftContextMenuStrip.Items.OfType<ToolStripMenuItem>())
+			{
+				toolStripMenuItem.Checked = (string)toolStripMenuItem.Tag == currentPublication;
+			}
 		}
 
 		private void EditPublications_Clicked(object sender, EventArgs e)
@@ -397,10 +390,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 			}
 			var newValue = (string)clickedToolStripMenuItem.Tag;
 			PropertyTable.SetProperty("SelectedPublication", newValue, SettingsGroup.LocalSettings, true, false);
-			foreach (var menuItemTuple in _leftMenusAndHandlers)
-			{
-				clickedToolStripMenuItem.Checked = (((string)menuItemTuple.Item1.Tag) == newValue);
-			}
 			_xhtmlDocView.OnPropertyChanged("SelectedPublication");
 		}
 

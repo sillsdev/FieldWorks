@@ -53,6 +53,9 @@ namespace LanguageExplorer.Controls.DetailControls
 	/// System.Windows.Forms.UserControl
 	public class DataTree : UserControl, IVwNotifyChange, IFlexComponent, IRefreshableRoot
 	{
+		internal SliceContextMenuFactory SliceContextMenuFactory { get; }
+		private readonly SliceContextMenuFactory _sliceContextMenuFactory;
+
 		/// <summary>
 		/// Occurs when the current slice changes
 		/// </summary>
@@ -69,8 +72,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		private ISilDataAccess m_sda;
 		/// <summary></summary>
 		protected LcmCache m_cache;
-		/// <summary>use SetContextMenuHandler() to subscribe to this event (if you want to provide a Context menu for this DataTree)</summary>
-		internal event SliceShowMenuRequestHandler ShowContextMenuEvent;
 		/// <summary>the descendent object that is being displayed</summary>
 		protected ICmObject m_descendant;
 		/// <summary></summary>
@@ -443,7 +444,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			if (slice.IsRealSlice)
 			{
 				slice.TabIndex = index;
-				slice.TabStop = !(slice.Control == null) && slice.Control.TabStop;
+				slice.TabStop = slice.Control != null && slice.Control.TabStop;
 			}
 		}
 
@@ -459,8 +460,11 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		#endregion Slice collection manipulation methods
 
-		public DataTree()
+		internal DataTree(SliceContextMenuFactory sliceContextMenuFactory)
 		{
+			if (sliceContextMenuFactory == null) throw new ArgumentNullException(nameof(sliceContextMenuFactory));
+
+			SliceContextMenuFactory = sliceContextMenuFactory;
 			Slices = new List<Slice>();
 		}
 
@@ -1206,8 +1210,6 @@ namespace LanguageExplorer.Controls.DetailControls
 					m_tooltip.RemoveAll();
 					m_tooltip.Dispose();
 				}
-				foreach (Slice slice in Slices)
-					slice.ShowContextMenu -= OnShowContextMenu;
 			}
 			m_sda = null;
 			m_currentSlice = null;
@@ -2353,9 +2355,6 @@ namespace LanguageExplorer.Controls.DetailControls
 				// for the slice. If we need it invent a new attribute.
 				//slice.OverrideBackColor(XmlUtils.GetOptionalAttributeValue(node, "backColor"));
 
-				// dubious...should the string slice really get the context menu for the object?
-				slice.ShowContextMenu += OnShowContextMenu;
-
 				SetNodeWeight(node, slice);
 
 				slice.FinishInit();
@@ -2793,7 +2792,6 @@ namespace LanguageExplorer.Controls.DetailControls
 				slice.ConfigurationNode = node;
 				slice.CallerNode = caller;
 				slice.OverrideBackColor(XmlUtils.GetOptionalAttributeValue(node, "backColor"));
-				slice.ShowContextMenu += OnShowContextMenu;
 				SetNodeWeight(node, slice);
 
 				slice.FinishInit();
@@ -2903,39 +2901,6 @@ namespace LanguageExplorer.Controls.DetailControls
 					throw new FwConfigurationException("Invalid 'weight' value, should be heavy, normal, light, or field");
 			}
 			slice.Weight = weight;
-		}
-
-		/// <summary>
-		/// Get the context menu that would be displayed for a right click on the slice.
-		/// </summary>
-		/// <param name="slice">The slice.</param>
-		/// <param name="fHotLinkOnly">if set to <c>true</c> [f hot link only].</param>
-		/// <returns></returns>
-		public ContextMenuStrip GetSliceContextMenu(Slice slice, bool fHotLinkOnly)
-		{
-			CheckDisposed();
-			Debug.Assert(ShowContextMenuEvent!= null, "this should always be set to something");
-			// This is something of a historical artifact. There's probably no reason
-			// to pass a point to ShowContextMenuEvent. At an earlier stage, the event was
-			// ShowContextMenu, so it needed a point. TreeNodeEventArgs is still used for
-			// Slice.ShowContextMenu event, so it was somewhat awkward to change.
-			var e = new SliceMenuRequestArgs(slice, fHotLinkOnly);
-			return ShowContextMenuEvent(this, e);
-		}
-
-		/// <summary>
-		/// Set the handler which will be invoked when the user right-clicks on the
-		/// TreeNode portion of a slice, or for some other reason we need the context menu.
-		/// </summary>
-		/// <param name="handler"></param>
-		public void SetContextMenuHandler(SliceShowMenuRequestHandler handler)
-		{
-			CheckDisposed();
-			//note the = instead of += we do not want more than 1 handler trying to open the context menu!
-			//you could try changing this if we wanted to have a fall back handler, and if there
-			//was some way to get the first handler to be able to say "don't pass on this message"
-			//when it handled the menu display itself.
-			ShowContextMenuEvent = handler;
 		}
 
 		/// <summary>
@@ -3988,25 +3953,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		}
 
 		/// <summary>
-		/// Invoked by a slice when the user does something to bring up a context menu
-		/// </summary>
-		private void OnShowContextMenu(object sender, TreeNodeEventArgs e)
-		{
-			CheckDisposed();
-			// Just pass this on to, for example, the XWorks View that owns us.
-			Debug.Assert(ShowContextMenuEvent != null, "this should always be set to something");
-			CurrentSlice = e.Slice;
-			var args = new SliceMenuRequestArgs(e.Slice, false);
-			// TODO: ShowContextMenuEvent returns a ContextMenu that we should dispose. However,
-			// we can't do that right here (because that destroys the menu before being shown).
-			// Ideally we would store the context menu in a member variable and dispose this later
-			// on. However, it is unlikely that not disposing this context menu will cause any
-			// problems, so we leave it as is for now.
-			var menuToDisplay = ShowContextMenuEvent(sender, args);
-			menuToDisplay?.Show((Control)sender, e.Location);
-		}
-
-		/// <summary>
 		/// Process the message to allow setting/focusing CurrentSlice.
 		/// </summary>
 		/// <param name="parameter">The parameter.</param>
@@ -4276,6 +4222,8 @@ namespace LanguageExplorer.Controls.DetailControls
 			return null;
 		}
 
+#if RANDYTODO
+		// TODO: Not used, since the DTMenuHandler class is no more (12SEP2017).
 		/// <summary>
 		/// Try to find a slice that matches the information gleaned from another slice,
 		/// probably one that has been disposed since the information was obtained.  If there's
@@ -4305,6 +4253,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 			return sliceFound;
 		}
+#endif
 
 		private bool EquivalentKeys(object[] newKey, object[] oldKey, bool fCheckInts)
 		{

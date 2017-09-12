@@ -412,7 +412,8 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		#endregion
 
-		public TwoLevelConc(LcmCache cache, IConcPolicy cp, IGetNodeInfo gni)
+		internal TwoLevelConc(SliceContextMenuFactory sliceContextMenuFactory, LcmCache cache, IConcPolicy cp, IGetNodeInfo gni)
+			:base(sliceContextMenuFactory)
 		{
 			m_cp = cp;
 			m_gni = gni;

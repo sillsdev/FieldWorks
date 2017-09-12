@@ -5,7 +5,6 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
-using Gecko;
 using SIL.FieldWorks.Common.FwUtils;
 
 namespace LanguageExplorer.Controls
@@ -15,6 +14,19 @@ namespace LanguageExplorer.Controls
 	/// </summary>
 	internal static class PaneBarContextMenuFactory
 	{
+		/// <summary>
+		/// Create a new ToolStripMenuItem and place it in the menu strip.
+		/// </summary>
+		internal static ToolStripMenuItem CreateToolStripMenuItem(string menuText, string menuTooltip, Image image, EventHandler eventHandler)
+		{
+			var toolStripMenuItem = new ToolStripMenuItem(FwUtils.ReplaceUnderlineWithAmpersand(menuText), image, eventHandler)
+			{
+				ToolTipText = menuTooltip
+			};
+
+			return toolStripMenuItem;
+		}
+
 		/// <summary>
 		/// Create a new ToolStripMenuItem and place it in the menu strip.
 		/// </summary>
@@ -28,6 +40,7 @@ namespace LanguageExplorer.Controls
 
 			return toolStripMenuItem;
 		}
+
 		/// <summary>
 		/// Create a new ToolStripMenuItem and place it in the menu strip.
 		/// </summary>

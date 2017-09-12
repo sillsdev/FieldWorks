@@ -4,10 +4,12 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using LanguageExplorer.Controls;
+using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.Controls.PaneBar;
 using LanguageExplorer.LcmUi;
 using LanguageExplorer.Works;
@@ -26,10 +28,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditReversalEntries
 		private PaneBarContainer _paneBarContainer;
 		private RecordBrowseView _recordBrowseView;
 		private RecordClerk _recordClerk;
-		private ContextMenuStrip _contextMenuStrip;
 		private IReversalIndexRepository _reversalIndexRepository;
 		private IReversalIndex _currentReversalIndex;
-		private readonly HashSet<Tuple<ToolStripMenuItem, EventHandler>> _newMenusAndHandlers = new HashSet<Tuple<ToolStripMenuItem, EventHandler>>();
+		private LcmCache _cache;
+		private SliceContextMenuFactory _sliceContextMenuFactory;
+		private const string panelMenuId = "left";
 
 		#region Implementation of IPropertyTableProvider
 
@@ -85,19 +88,13 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditReversalEntries
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			_contextMenuStrip.Opening -= ContextMenuStrip_Opening;
-			_contextMenuStrip = null;
-
-			foreach (var menuTuple in _newMenusAndHandlers)
-			{
-				menuTuple.Item1.Click -= menuTuple.Item2;
-			}
-			_newMenusAndHandlers.Clear();
-
+			_sliceContextMenuFactory.Dispose();
 			PaneBarContainerFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _paneBarContainer);
 			_reversalIndexRepository = null;
 			_currentReversalIndex = null;
 			_recordBrowseView = null;
+			_cache = null;
+			_sliceContextMenuFactory = null;
 		}
 
 		/// <summary>
@@ -108,6 +105,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditReversalEntries
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			_sliceContextMenuFactory = new SliceContextMenuFactory();
+			_cache = majorFlexComponentParameters.LcmCache;
 			var currentGuid = ReversalIndexEntryUi.GetObjectGuidIfValid(PropertyTable, "ReversalIndexGuid");
 			if (currentGuid != Guid.Empty)
 			{
@@ -117,16 +116,16 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditReversalEntries
 			{
 				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(LexiconArea.AllReversalEntries, majorFlexComponentParameters.Statusbar, LexiconArea.AllReversalEntriesFactoryMethod);
 			}
+			_sliceContextMenuFactory.RegisterPanelMenuCreatorMethod(panelMenuId, CreatePanelContextMenuStrip);
 			_recordBrowseView = new RecordBrowseView(XDocument.Parse(LexiconResources.ReversalBulkEditReversalEntriesToolParameters).Root, majorFlexComponentParameters.LcmCache, _recordClerk);
 			var browseViewPaneBar = new PaneBar();
 			var img = LanguageExplorerResources.MenuWidget;
 			img.MakeTransparent(Color.Magenta);
-			var panelMenu = new PanelMenu
+			var panelMenu = new PanelMenu(_sliceContextMenuFactory, panelMenuId)
 			{
 				Dock = DockStyle.Left,
 				BackgroundImage = img,
-				BackgroundImageLayout = ImageLayout.Center,
-				ContextMenuStrip = CreateContextMenuStrip()
+				BackgroundImageLayout = ImageLayout.Center
 			};
 			browseViewPaneBar.AddControls(new List<Control> { panelMenu });
 
@@ -193,49 +192,39 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditReversalEntries
 
 		#endregion
 
-		private ContextMenuStrip CreateContextMenuStrip()
-		{
-			_contextMenuStrip = new ContextMenuStrip();
-
-			_contextMenuStrip.Opening += ContextMenuStrip_Opening;
-
-			return _contextMenuStrip;
-		}
-
-		private void ContextMenuStrip_Opening(object sender, System.ComponentModel.CancelEventArgs e)
+		private Tuple<ContextMenuStrip, CancelEventHandler, List<Tuple<ToolStripMenuItem, EventHandler>>> CreatePanelContextMenuStrip(string panelMenuId)
 		{
 			if (_reversalIndexRepository == null)
 			{
-				var cache = PropertyTable.GetValue<LcmCache>("cache");
-				_reversalIndexRepository = cache.ServiceLocator.GetInstance<IReversalIndexRepository>();
+				_reversalIndexRepository = _cache.ServiceLocator.GetInstance<IReversalIndexRepository>();
 			}
-			if (_contextMenuStrip.Items.Count > 0)
-			{
-				foreach (var menuTuple in _newMenusAndHandlers)
-				{
-					menuTuple.Item1.Click -= menuTuple.Item2;
-					_contextMenuStrip.Items.Remove(menuTuple.Item1);
-					menuTuple.Item1.Dispose();
-				}
-				_newMenusAndHandlers.Clear();
-				_contextMenuStrip.Items.Clear();
-			}
+
+			var contextMenuStrip = new ContextMenuStrip();
+
+			var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>();
+			var retVal = new Tuple<ContextMenuStrip, CancelEventHandler, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, MainPanelContextMenuStrip_Opening, menuItems);
 
 			// If allInstancesinRepository has any remaining instances, then they are not in the menu. Add them.
 			foreach (var rei in _reversalIndexRepository.AllInstances())
 			{
-				var newMenuItem = PaneBarContextMenuFactory.CreateToolStripMenuItem(_contextMenuStrip, rei.ChooserNameTS.Text, null, ReversalIndex_Menu_Clicked, null);
+				var newMenuItem = PaneBarContextMenuFactory.CreateToolStripMenuItem(contextMenuStrip, rei.ChooserNameTS.Text, null, ReversalIndex_Menu_Clicked, null);
 				newMenuItem.Tag = rei;
 				if (rei == _currentReversalIndex)
 				{
 					SetCheckedState(newMenuItem);
 				}
-				_newMenusAndHandlers.Add(new Tuple<ToolStripMenuItem, EventHandler>(newMenuItem, ReversalIndex_Menu_Clicked));
+				menuItems.Add(new Tuple<ToolStripMenuItem, EventHandler>(newMenuItem, ReversalIndex_Menu_Clicked));
 			}
 
-			_contextMenuStrip.Items.Add(new ToolStripMenuItem("-"));
-			var currentToolStripMenuItem = PaneBarContextMenuFactory.CreateToolStripMenuItem(_contextMenuStrip, "Configure Dictionary", null, ConfigureDictionary_Clicked, null);
-			_newMenusAndHandlers.Add(new Tuple<ToolStripMenuItem, EventHandler>(currentToolStripMenuItem, ConfigureDictionary_Clicked));
+			contextMenuStrip.Items.Add(new ToolStripSeparator());
+			var currentToolStripMenuItem = PaneBarContextMenuFactory.CreateToolStripMenuItem(contextMenuStrip, "Configure Dictionary", null, ConfigureDictionary_Clicked, null);
+			menuItems.Add(new Tuple<ToolStripMenuItem, EventHandler>(currentToolStripMenuItem, ConfigureDictionary_Clicked));
+
+			return retVal;
+		}
+
+		private void MainPanelContextMenuStrip_Opening(object sender, CancelEventArgs e)
+		{
 		}
 
 		private void ConfigureDictionary_Clicked(object sender, EventArgs e)

@@ -29,6 +29,8 @@ namespace LanguageExplorer.Areas.Lists.Tools.ChartmarkEdit
 		/// </summary>
 		private CollapsingSplitContainer _collapsingSplitContainer;
 		private RecordClerk _recordClerk;
+		private SliceContextMenuFactory _sliceContextMenuFactory;
+		private DataTree _dataTree;
 
 		#region Implementation of IPropertyTableProvider
 
@@ -84,7 +86,10 @@ namespace LanguageExplorer.Areas.Lists.Tools.ChartmarkEdit
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			_sliceContextMenuFactory.Dispose();
 			CollapsingSplitContainerFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _collapsingSplitContainer);
+			_sliceContextMenuFactory = null;
+			_dataTree = null;
 		}
 
 		/// <summary>
@@ -95,11 +100,12 @@ namespace LanguageExplorer.Areas.Lists.Tools.ChartmarkEdit
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			_sliceContextMenuFactory = new SliceContextMenuFactory();
 			if (_recordClerk == null)
 			{
 				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(DiscChartMarkerList, majorFlexComponentParameters.Statusbar, FactoryMethod);
 			}
-			var dataTreeMenuHandler = new DataTreeMenuHandler(_recordClerk, new DataTree());
+			_dataTree = new DataTree(_sliceContextMenuFactory);
 #if RANDYTODO
 			// TODO: See LexiconEditTool for how to set up all manner of menus and toolbars.
 #endif
@@ -112,7 +118,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ChartmarkEdit
 				MachineName,
 				majorFlexComponentParameters.LcmCache,
 				_recordClerk,
-				dataTreeMenuHandler);
+				_dataTree);
 			RecordClerkServices.SetClerk(majorFlexComponentParameters, _recordClerk);
 		}
 

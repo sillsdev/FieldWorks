@@ -420,7 +420,8 @@ namespace LanguageExplorer.Controls.DetailControls
 		#region member variables
 		IList m_items; // of IConcSliceInfo
 		#endregion
-		public MultiLevelConc(LcmCache cache, IList items)
+		internal MultiLevelConc(SliceContextMenuFactory sliceContextMenuFactory, LcmCache cache, IList items)
+			: base(sliceContextMenuFactory)
 		{
 			m_items = items;
 			InitializeBasic(cache, false);

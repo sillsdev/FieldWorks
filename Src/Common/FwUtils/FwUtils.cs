@@ -242,6 +242,14 @@ namespace SIL.FieldWorks.Common.FwUtils
 			return guiString.Replace("_", "&");
 		}
 
+		/// <summary>
+		/// Replace underline character with ampersand.
+		/// </summary>
+		public static string RemoveUnderline(string guiString)
+		{
+			return guiString.Replace("_", string.Empty);
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Takes a string in the form "{X=l,Y=t,Width=w,Height=h}" (where l, t, w, and h are

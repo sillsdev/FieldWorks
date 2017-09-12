@@ -4,8 +4,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
-using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using LanguageExplorer.Controls;
@@ -24,10 +24,12 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 	/// </summary>
 	internal sealed class NotebookEditTool : ITool
 	{
+		private const string panelMenuId = "left";
 		private MultiPane _multiPane;
 		private RecordBrowseView _recordBrowseView;
 		private RecordClerk _recordClerk;
-		private readonly HashSet<Tuple<ToolStripMenuItem, EventHandler>> _newMenusAndHandlers = new HashSet<Tuple<ToolStripMenuItem, EventHandler>>();
+		private SliceContextMenuFactory _sliceContextMenuFactory;
+		private DataTree _dataTree;
 
 		#region Implementation of IPropertyTableProvider
 
@@ -85,14 +87,12 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			foreach (var menuTuple in _newMenusAndHandlers)
-			{
-				menuTuple.Item1.Click -= menuTuple.Item2;
-			}
-			_newMenusAndHandlers.Clear();
+			_sliceContextMenuFactory.Dispose();
 
 			MultiPaneFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _multiPane);
 			_recordBrowseView = null;
+			_sliceContextMenuFactory = null;
+			_dataTree = null;
 		}
 
 		/// <summary>
@@ -103,17 +103,19 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			_sliceContextMenuFactory = new SliceContextMenuFactory();
+			_sliceContextMenuFactory.RegisterPanelMenuCreatorMethod(panelMenuId, CreateMainPanelContextMenuStrip);
 			if (_recordClerk == null)
 			{
 				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(NotebookArea.Records, majorFlexComponentParameters.Statusbar, NotebookArea.NotebookFactoryMethod);
 			}
 
 			_recordBrowseView = new RecordBrowseView(NotebookArea.LoadDocument(NotebookResources.NotebookEditBrowseParameters).Root, majorFlexComponentParameters.LcmCache, _recordClerk);
-			var dataTreeMenuHandler = new DataTreeMenuHandler(_recordClerk, new DataTree());
+			_dataTree = new DataTree(_sliceContextMenuFactory);
 #if RANDYTODO
 			// TODO: See LexiconEditTool for how to set up all manner of menus and toolbars.
 #endif
-			var recordEditView = new RecordEditView(XElement.Parse(NotebookResources.NotebookEditRecordEditViewParameters), XDocument.Parse(AreaResources.VisibilityFilter_All), majorFlexComponentParameters.LcmCache, _recordClerk, dataTreeMenuHandler);
+			var recordEditView = new RecordEditView(XElement.Parse(NotebookResources.NotebookEditRecordEditViewParameters), XDocument.Parse(AreaResources.VisibilityFilter_All), majorFlexComponentParameters.LcmCache, _recordClerk, _dataTree);
 			var mainMultiPaneParameters = new MultiPaneParameters
 			{
 				Orientation = Orientation.Vertical,
@@ -125,12 +127,11 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			var paneBar = new PaneBar();
 			var img = LanguageExplorerResources.MenuWidget;
 			img.MakeTransparent(Color.Magenta);
-			var panelMenu = new PanelMenu
+			var panelMenu = new PanelMenu(_sliceContextMenuFactory, panelMenuId)
 			{
 				Dock = DockStyle.Left,
 				BackgroundImage = img,
-				BackgroundImageLayout = ImageLayout.Center,
-				ContextMenuStrip = CreateContextMenuStrip()
+				BackgroundImageLayout = ImageLayout.Center
 			};
 			var panelButton = new PanelButton(PropertyTable, null, PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(MachineName), LanguageExplorerResources.ksHideFields, LanguageExplorerResources.ksShowHiddenFields)
 			{
@@ -212,9 +213,12 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 
 		#endregion
 
-		private ContextMenuStrip CreateContextMenuStrip()
+		private Tuple<ContextMenuStrip, CancelEventHandler, List<Tuple<ToolStripMenuItem, EventHandler>>> CreateMainPanelContextMenuStrip(string panelMenuId)
 		{
 			var contextMenuStrip = new ContextMenuStrip();
+			contextMenuStrip.Opening += PanelContextMenuStrip_Opening;
+			var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>();
+			var retVal = new Tuple<ContextMenuStrip, CancelEventHandler, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, PanelContextMenuStrip_Opening, menuItems);
 
 			// Insert_Subrecord menu item.
 			/*
@@ -223,7 +227,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 	<parameters className="RnGenericRec" subrecord="true"/>
 </command>
 			*/
-			var contextMenuItem = CreateToolStripMenuItem(contextMenuStrip, NotebookResources.Insert_Subrecord, null, Insert_Subrecord_Clicked);
+			var contextMenuItem = CreateToolStripMenuItem(contextMenuStrip, menuItems, NotebookResources.Insert_Subrecord, null, Insert_Subrecord_Clicked);
 #if !RANDYTODO
 			// TODO: Enable it and have better event handler deal with it.
 			contextMenuItem.Enabled = false;
@@ -236,7 +240,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 	<parameters className="RnGenericRec" subrecord="true" subsubrecord="true"/>
 </command>
 			*/
-			contextMenuItem = CreateToolStripMenuItem(contextMenuStrip, NotebookResources.Insert_Subrecord_of_Subrecord, null, Insert_Subsubrecord_Clicked);
+			contextMenuItem = CreateToolStripMenuItem(contextMenuStrip, menuItems, NotebookResources.Insert_Subrecord_of_Subrecord, null, Insert_Subsubrecord_Clicked);
 #if !RANDYTODO
 			// TODO: Enable it and have better event handler deal with it.
 			contextMenuItem.Enabled = false;
@@ -248,13 +252,17 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 	<parameters className="RnGenericRec"/>
 </command>
 			*/
-			contextMenuItem = CreateToolStripMenuItem(contextMenuStrip, NotebookResources.Demote_Record, null, Demote_Record_Clicked);
+			contextMenuItem = CreateToolStripMenuItem(contextMenuStrip, menuItems, NotebookResources.Demote_Record, null, Demote_Record_Clicked);
 #if !RANDYTODO
 			// TODO: Enable it and have better event handler deal with it.
 			contextMenuItem.Enabled = false;
 #endif
 
-			return contextMenuStrip;
+			return retVal;
+		}
+
+		private void PanelContextMenuStrip_Opening(object sender, CancelEventArgs e)
+		{
 		}
 
 		private void Demote_Record_Clicked(object sender, EventArgs e)
@@ -269,15 +277,10 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 		{
 		}
 
-		private ToolStripMenuItem GetItemForItemText(string menuText)
-		{
-			return _newMenusAndHandlers.First(t => t.Item1.Text == FwUtils.ReplaceUnderlineWithAmpersand(menuText)).Item1;
-		}
-
-		private ToolStripMenuItem CreateToolStripMenuItem(ContextMenuStrip contextMenuStrip, string menuText, string menuTooltip, EventHandler eventHandler)
+		private ToolStripMenuItem CreateToolStripMenuItem(ContextMenuStrip contextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>> menuItems, string menuText, string menuTooltip, EventHandler eventHandler)
 		{
 			var toolStripMenuItem = PaneBarContextMenuFactory.CreateToolStripMenuItem(contextMenuStrip, menuText, null, eventHandler, menuTooltip);
-			_newMenusAndHandlers.Add(new Tuple<ToolStripMenuItem, EventHandler>(toolStripMenuItem, eventHandler));
+			menuItems.Add(new Tuple<ToolStripMenuItem, EventHandler>(toolStripMenuItem, eventHandler));
 			return toolStripMenuItem;
 		}
 	}

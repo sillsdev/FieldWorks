@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using LanguageExplorer.Controls.DetailControls.Resources;
 using SIL.LCModel.Utils;
@@ -29,7 +30,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		// x coord of left of first button.
 		int m_firstButtonOffset = 0;
 		int m_lastWidth = 0;
-		ContextMenuStrip m_menu = null; // Menu last created by OnLayout. Need consistent one for OnClick.
+		List<Tuple<ToolStripMenuItem, EventHandler>> m_menuItems = null; // Menu last created by OnLayout. Need consistent one for OnClick.
 		Timer m_timer;
 		/// <summary>
 		/// Required designer variable.
@@ -74,6 +75,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 			if( disposing )
 			{
+				DisposeHotlinkMenuItems();
 				if (m_timer != null)
 				{
 					m_timer.Stop();
@@ -85,7 +87,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 			m_hotLinkFont = null;
 			m_timer = null;
-			m_menu = null; // Client is responsible for this.
 			m_slice = null; // Client is responsible for this.
 			m_buttonDrawnEnabled = null;
 			m_buttonMenuItems.Clear();
@@ -136,14 +137,21 @@ namespace LanguageExplorer.Controls.DetailControls
 				// Clear out old collection of menu items,
 				// since we are fixin to reset the menu.
 				m_buttonMenuItems.Clear();
-				m_menu = m_slice.RetrieveContextMenuForHotlinks();
-				if (m_menu == null)
+				if (m_menuItems != null)
+				{
+					// Dispose the old ones, since this class 'owns' them, so must dispose them, even if they are created elsewhere.
+					DisposeHotlinkMenuItems();
+				}
+				m_menuItems = m_slice.RetrieveHotlinksContextMenuItems();
+				if (m_menuItems == null || !m_menuItems.Any())
+				{
 					return;
+				}
 
 				var availButtonWidth = Width - 2;
-				for (var i = 0; i < m_menu.Items.Count; i++)
+				foreach (var menuItemTuple in m_menuItems)
 				{
-					var item = m_menu.Items[i];
+					var item = menuItemTuple.Item1;
 					var label = item.Text;
 					var width = (int)graphics.MeasureString(label, m_hotLinkFont).Width;
 					if (width + kGapInBetweenButtons > availButtonWidth)
@@ -152,6 +160,9 @@ namespace LanguageExplorer.Controls.DetailControls
 					}
 					m_buttonMenuItems.Add(item);
 					availButtonWidth -= width + kGapInBetweenButtons;
+				}
+				for (var i = 0; i < m_menuItems.Count; i++)
+				{
 				}
 				m_firstButtonOffset = availButtonWidth;
 				m_buttonDrawnEnabled = new bool[m_buttonMenuItems.Count];
@@ -162,6 +173,21 @@ namespace LanguageExplorer.Controls.DetailControls
 				graphics.Dispose();
 			}
 
+		}
+
+		private void DisposeHotlinkMenuItems()
+		{
+			if (m_menuItems == null)
+			{
+				return;
+			}
+			foreach (var menuItemTuple in m_menuItems)
+			{
+				menuItemTuple.Item1.Click -= menuItemTuple.Item2;
+				menuItemTuple.Item1.Dispose();
+			}
+			m_menuItems.Clear();
+			m_menuItems = null;
 		}
 
 		protected override void OnPaint(PaintEventArgs e)
@@ -215,7 +241,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			base.OnMouseUp(e); // invoke any delegates.
 			using (var graphics = CreateGraphics())
 			{
-				if (m_menu == null)
+				if (m_menuItems == null)
 				{
 					return;
 				}

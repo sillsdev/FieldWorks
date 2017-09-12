@@ -29,6 +29,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 		private RecordBrowseView _recordBrowseView;
 		private RecordClerk _recordClerk;
 		private RecordClerk _nestedRecordClerk;
+		private SliceContextMenuFactory _sliceContextMenuFactory;
+		private DataTree _dataTree;
 
 		#region Implementation of IPropertyTableProvider
 
@@ -94,6 +96,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			_sliceContextMenuFactory.Dispose();
 			PropertyTable.SetProperty("RecordListWidthGlobal", _collapsingSplitContainer.SplitterDistance, SettingsGroup.GlobalSettings, true, false);
 
 #if RANDYTODO
@@ -122,6 +125,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 
 			_recordBrowseView = null;
 			_nestedRecordClerk = null;
+			_sliceContextMenuFactory = null;
+			_dataTree = null;
 		}
 
 		/// <summary>
@@ -132,6 +137,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			_sliceContextMenuFactory = new SliceContextMenuFactory();
 			var mainCollapsingSplitContainerAsControl = (Control)majorFlexComponentParameters.MainCollapsingSplitContainer;
 			mainCollapsingSplitContainerAsControl.SuspendLayout();
 
@@ -162,11 +168,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 				Dock = DockStyle.Right
 			};
 			recordEditViewPaneBar.AddControls(new List<Control> { panelButton });
-			var dataTreeMenuHandler = new DataTreeMenuHandler(_recordClerk, new DataTree());
+			_dataTree = new DataTree(_sliceContextMenuFactory);
 #if RANDYTODO
 			// TODO: See LexiconEditTool for how to set up all manner of menus and toolbars.
 #endif
-			var recordEditView = new RecordEditView(root.Element("recordeditview").Element("parameters"), XDocument.Parse(LexiconResources.HideAdvancedFeatureFields), majorFlexComponentParameters.LcmCache, _recordClerk, dataTreeMenuHandler);
+			var recordEditView = new RecordEditView(root.Element("recordeditview").Element("parameters"), XDocument.Parse(LexiconResources.HideAdvancedFeatureFields), majorFlexComponentParameters.LcmCache, _recordClerk, _dataTree);
 			if (_nestedRecordClerk == null)
 			{
 				_nestedRecordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(RDEwords, majorFlexComponentParameters.Statusbar, RDEwordsFactoryMethod);

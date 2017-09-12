@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using LanguageExplorer.Areas;
+using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.Controls.PaneBar;
 using SIL.FieldWorks.Common.FwUtils;
 using LanguageExplorer.Works;
@@ -31,14 +32,14 @@ namespace LanguageExplorer.Controls
 		/// <param name="toolMachineName">Name of the tool being set up.</param>
 		/// <param name="cache">The LCM cache.</param>
 		/// <param name="recordClerk">RecordClerk to use with the container.</param>
-		/// <param name="dataTreeMenuHandler">DataTree context menu handler</param>
+		/// <param name="dataTree">DataTree</param>
 		/// <returns>A new instance of CollapsingSplitContainer, which has been placed into "SecondControl/Panel2" of <paramref name="mainCollapsingSplitContainer"/>.</returns>
 		internal static CollapsingSplitContainer Create(FlexComponentParameters flexComponentParameters,
 			ICollapsingSplitContainer mainCollapsingSplitContainer, bool verticalSplitter, XElement configurationParametersElement, XDocument sliceFilterDocument,
 			string toolMachineName,
 			LcmCache cache,
 			RecordClerk recordClerk,
-			DataTreeMenuHandler dataTreeMenuHandler)
+			DataTree dataTree)
 		{
 			var panelButton = new PanelButton(flexComponentParameters.PropertyTable, null, PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(toolMachineName), LanguageExplorerResources.ksHideFields, LanguageExplorerResources.ksShowHiddenFields)
 			{
@@ -57,7 +58,7 @@ namespace LanguageExplorer.Controls
 			{
 				IsFlatList = false
 			};
-			var recordEditView = new RecordEditView(configurationParametersElement, sliceFilterDocument, cache, recordClerk, dataTreeMenuHandler);
+			var recordEditView = new RecordEditView(configurationParametersElement, sliceFilterDocument, cache, recordClerk, dataTree);
 			recordEditView.InitializeFlexComponent(flexComponentParameters);
 			var paneBar = new PaneBar.PaneBar();
 			paneBar.AddControls(new List<Control> { panelButton });

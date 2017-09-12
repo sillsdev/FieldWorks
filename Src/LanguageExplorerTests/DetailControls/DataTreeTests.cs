@@ -28,6 +28,7 @@ namespace LanguageExplorerTests.DetailControls
 		private ISubscriber m_subscriber;
 		private DataTree m_dtree;
 		private Form m_parent;
+		private SliceContextMenuFactory _sliceContextMenuFactory;
 
 		#region Fixture Setup and Teardown
 		internal static Inventory GenerateParts()
@@ -91,7 +92,8 @@ namespace LanguageExplorerTests.DetailControls
 		public override void TestSetup()
 		{
 			base.TestSetup();
-			m_dtree = new DataTree();
+			_sliceContextMenuFactory = new SliceContextMenuFactory();
+			m_dtree = new DataTree(_sliceContextMenuFactory);
 			PubSubSystemFactory.CreatePubSubSystem(out m_publisher, out m_subscriber);
 			m_propertyTable = PropertyTableFactory.CreatePropertyTable(m_publisher);
 			m_dtree.InitializeFlexComponent(new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber));
@@ -113,13 +115,13 @@ namespace LanguageExplorerTests.DetailControls
 				m_parent.Close();
 				m_parent.Dispose();
 			}
-			if (m_propertyTable != null)
-			{
-				m_propertyTable.Dispose();
-				m_propertyTable = null;
-			}
+			m_propertyTable?.Dispose();
+			_sliceContextMenuFactory?.Dispose();
+
+			m_propertyTable = null;
 			m_publisher = null;
 			m_subscriber = null;
+			_sliceContextMenuFactory = null;
 
 			base.TestTearDown();
 		}
@@ -245,7 +247,7 @@ namespace LanguageExplorerTests.DetailControls
 			PubSubSystemFactory.CreatePubSubSystem(out m_publisher, out m_subscriber);
 			m_propertyTable = PropertyTableFactory.CreatePropertyTable(m_publisher);
 			m_parent = new Form();
-			m_dtree = new DataTree();
+			m_dtree = new DataTree(_sliceContextMenuFactory);
 			m_dtree.InitializeFlexComponent(new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber));
 			m_parent.Controls.Add(m_dtree);
 			m_dtree.Initialize(Cache, false, m_layouts, m_parts);
@@ -269,7 +271,7 @@ namespace LanguageExplorerTests.DetailControls
 			PubSubSystemFactory.CreatePubSubSystem(out m_publisher, out m_subscriber);
 			m_propertyTable = PropertyTableFactory.CreatePropertyTable(m_publisher);
 			m_parent = new Form();
-			m_dtree = new DataTree();
+			m_dtree = new DataTree(_sliceContextMenuFactory);
 			m_dtree.InitializeFlexComponent(new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber));
 			m_parent.Controls.Add(m_dtree);
 			m_dtree.Initialize(Cache, false, m_layouts, m_parts);
@@ -288,7 +290,7 @@ namespace LanguageExplorerTests.DetailControls
 			PubSubSystemFactory.CreatePubSubSystem(out m_publisher, out m_subscriber);
 			m_propertyTable = PropertyTableFactory.CreatePropertyTable(m_publisher);
 			m_parent = new Form();
-			m_dtree = new DataTree();
+			m_dtree = new DataTree(_sliceContextMenuFactory);
 			m_dtree.InitializeFlexComponent(new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber));
 			m_parent.Controls.Add(m_dtree);
 			m_dtree.Initialize(Cache, false, m_layouts, m_parts);

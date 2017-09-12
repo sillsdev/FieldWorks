@@ -43,10 +43,6 @@ namespace LanguageExplorer.Works
 		/// Mode string for DataTree to use at top level.
 		/// </summary>
 		protected string m_rootMode;
-		/// <summary>
-		/// handles creating the context menus for the data tree and funneling commands to the data tree.
-		/// </summary>
-		private DataTreeMenuHandler m_menuHandler;
 
 		/// <summary>
 		/// indicates that when descendant objects are displayed they should be displayed within the context
@@ -72,13 +68,12 @@ namespace LanguageExplorer.Works
 
 		#region Construction and Removal
 
-		internal RecordEditView(XElement configurationParametersElement, XDocument sliceFilterDocument, LcmCache cache, RecordClerk recordClerk, DataTreeMenuHandler dataTreeMenuHandler)
+		internal RecordEditView(XElement configurationParametersElement, XDocument sliceFilterDocument, LcmCache cache, RecordClerk recordClerk, DataTree dataTree)
 			: base(configurationParametersElement, cache, recordClerk)
 		{
-			m_menuHandler = dataTreeMenuHandler;
 			m_sliceFilterDocument = sliceFilterDocument;
 			// This must be called before InitializeComponent()
-			m_dataTree = dataTreeMenuHandler.DataTree;
+			m_dataTree = dataTree;
 			m_dataTree.CurrentSliceChanged += DataTreeCurrentSliceChanged;
 
 			// This call is required by the Windows.Forms Form Designer.
@@ -98,7 +93,6 @@ namespace LanguageExplorer.Works
 			base.InitializeFlexComponent(flexComponentParameters);
 
 			m_dataTree.InitializeFlexComponent(flexComponentParameters);
-			m_menuHandler.InitializeFlexComponent(flexComponentParameters);
 		}
 
 		#endregion
@@ -155,7 +149,6 @@ namespace LanguageExplorer.Works
 				components?.Dispose();
 				if (m_dataTree != null)
 				{
-					m_dataTree.ShowContextMenuEvent += m_menuHandler.ShowSliceContextMenu;
 					m_dataTree.CurrentSliceChanged -= DataTreeCurrentSliceChanged;
 					m_dataTree.Dispose();
 				}
@@ -405,9 +398,6 @@ namespace LanguageExplorer.Works
 			// Already done. m_dataEntryForm.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
 			if (m_dataTree.AccessibilityObject != null)
 				m_dataTree.AccessibilityObject.Name = "RecordEditView.DataTree";
-
-			// set up the context menu, overriding the automatic menu creator/handler
-			m_dataTree.ShowContextMenuEvent += m_menuHandler.ShowSliceContextMenu;
 
 			Controls.Clear();
 			Controls.Add(m_informationBar);

@@ -281,6 +281,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AccessibleNameCreator.cs" />
+    <Compile Include="Controls\DetailControls\SliceContextMenuFactory.cs" />
     <Compile Include="InsertToolbarManager.cs" />
     <Compile Include="Areas\TextsAndWords\CachePair.cs" />
     <Compile Include="ConsoleProgress.cs" />
@@ -460,7 +461,6 @@
     <Compile Include="Controls\DetailControls\SummarySlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\DetailControls\TreeEvents.cs" />
     <Compile Include="Controls\DetailControls\TwoLevelConc.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -1013,8 +1013,6 @@
     <Compile Include="Works\DictionaryExportService.cs" />
     <Compile Include="Works\DictionaryNodeOptions.cs" />
     <Compile Include="Works\DictionaryPublicationDecorator.cs" />
-    <Compile Include="Works\DTMenuHandler.cs" />
-    <Compile Include="Works\DataTreeMenuHandler.cs" />
     <Compile Include="Works\EntriesOrChildClassesRecordList.cs" />
     <Compile Include="Works\ExportDialog.cs">
       <SubType>Form</SubType>
@@ -2086,7 +2084,6 @@
     <Compile Include="Areas\Grammar\Tools\PosEdit\GoldEticGuidFixer.cs" />
     <Compile Include="Areas\Lexicon\DeleteEntriesSensesWithoutInterlinearization.cs" />
     <Compile Include="Areas\Lexicon\HomographResetter.cs" />
-    <Compile Include="Areas\Lexicon\LexEntryMenuHandler.cs" />
     <Compile Include="Areas\Lexicon\Tools\Edit\GhostLexRefSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -2101,7 +2098,6 @@
     <Compile Include="Areas\Lexicon\Tools\ReversalIndexes\ReversalIndexEntryMenuHandler.cs" />
     <Compile Include="Areas\Lists\Tools\ReversalIndexPOS\ReversalEntryPOSClerk.cs" />
     <Compile Include="Areas\Lists\Tools\ReversalIndexPOS\ReversalIndexPOSRecordList.cs" />
-    <Compile Include="Areas\Lists\Tools\ReversalIndexPOS\ReversalPOSMenuHandler.cs" />
     <Compile Include="Areas\AffixRuleFormulaVc.cs" />
     <Compile Include="Areas\MetaRuleFormulaVc.cs" />
     <Compile Include="Areas\RegRuleFormulaVc.cs" />

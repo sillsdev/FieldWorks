@@ -7,7 +7,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
-using System.Drawing.Text;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
@@ -60,15 +59,12 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// If label width is made wider than this, switch to full labels.
 		/// </summary>
 		const int MaxAbbrevWidth = 60;
+		private const string Hotlinks = "hotlinks";
+		private const string Menu = "menu";
 
-#endregion Constants
+		#endregion Constants
 
-#region Data members
-
-		/// <summary>
-		/// Subscribe to this event if you want to provide a Context menu for this slice
-		/// </summary>
-		public event TreeNodeEventHandler ShowContextMenu;
+		#region Data members
 
 		XElement m_configurationParameters;
 
@@ -122,12 +118,17 @@ namespace LanguageExplorer.Controls.DetailControls
 		}
 
 		/// <summary></summary>
-		public ContextMenuStrip RetrieveContextMenuForHotlinks()
+		internal List<Tuple<ToolStripMenuItem, EventHandler>> RetrieveHotlinksContextMenuItems()
 		{
 			CheckDisposed();
 
-			return ContainingDataTree.GetSliceContextMenu(this, true);
+			var hotlinksMenuId = HotlinksMenuId;
+			return string.IsNullOrWhiteSpace(hotlinksMenuId) ? null : SliceContextMenuFactory.GetHotlinksMenuItems(this, hotlinksMenuId);
 		}
+
+		internal string HotlinksMenuId => XmlUtils.GetOptionalAttributeValue(CallerNode ?? ConfigurationNode, Hotlinks, string.Empty);
+
+		internal string OrdinaryMenuId => XmlUtils.GetOptionalAttributeValue(CallerNode ?? ConfigurationNode, Menu, string.Empty);
 
 		/// <summary></summary>
 		public object[] Key
@@ -685,10 +686,9 @@ namespace LanguageExplorer.Controls.DetailControls
 
 			if (Control != null && Control is INotifyControlInCurrentSlice && !BeingDiscarded)
 				(Control as INotifyControlInCurrentSlice).SliceIsCurrent = isCurrent;
-			if (TreeNode != null)
-				TreeNode.Invalidate();
+			TreeNode?.Invalidate();
 
-			Slice slice = this;
+			var slice = this;
 			while (slice != null && !slice.IsDisposed)
 			{
 				slice.Active = isCurrent;
@@ -697,6 +697,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				slice = slice.ParentSlice;
 			}
 		}
+		private SliceContextMenuFactory SliceContextMenuFactory { get; set; }
 
 		/// <summary></summary>
 		public virtual void Install(DataTree parentDataTree)
@@ -706,6 +707,8 @@ namespace LanguageExplorer.Controls.DetailControls
 			if (parentDataTree == null)
 				throw new InvalidOperationException("The slice '" + GetType().Name + "' must be placed in the Parent.Controls property before installing it.");
 
+			SliceContextMenuFactory = parentDataTree.SliceContextMenuFactory;
+
 			m_splitContainer.SuspendLayout();
 			// prevents the controls of the new 'SplitContainer' being NAMELESS
 			if (m_splitContainer.Panel1.AccessibleName == null)
@@ -714,7 +717,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				m_splitContainer.Panel2.AccessibleName = "Panel2";
 
 			SliceTreeNode treeNode;
-			bool isBeingReused = m_splitContainer.Panel1.Controls.Count > 0;
+			var isBeingReused = m_splitContainer.Panel1.Controls.Count > 0;
 			if (isBeingReused)
 			{
 				treeNode = (SliceTreeNode)m_splitContainer.Panel1.Controls[0];
@@ -722,7 +725,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			else
 			{
 				// Make a standard SliceTreeNode now.
-				treeNode = new SliceTreeNode(this);
+				treeNode = new SliceTreeNode(this, SliceContextMenuFactory, XmlUtils.GetOptionalAttributeValue(CallerNode ?? ConfigurationNode, "menu", string.Empty));
 				treeNode.SuspendLayout();
 				treeNode.Dock = DockStyle.Fill;
 				m_splitContainer.Panel1.Controls.Add(treeNode);
@@ -1247,25 +1250,25 @@ namespace LanguageExplorer.Controls.DetailControls
 		}
 
 		/// <summary></summary>
-		public String GetSliceHelpTopicID()
+		public string GetSliceHelpTopicID()
 		{
 			return GetHelpTopicID(HelpTopicID, "khtpField");
 		}
 
 		/// <summary></summary>
-		public String GetChooserHelpTopicID()
+		public string GetChooserHelpTopicID()
 		{
 			return GetHelpTopicID(ChooserDlgHelpTopicID, "khtpChoose");
 		}
 
-		public String GetChooserHelpTopicID(string ChooserDlgHelpTopicID)
+		public string GetChooserHelpTopicID(string ChooserDlgHelpTopicID)
 		{
 			return GetHelpTopicID(ChooserDlgHelpTopicID, "khtpChoose");
 		}
 
 		private string GetHelpTopicID(string xmlHelpTopicID, string generatedIDPrefix)
 		{
-			String helpTopicID;
+			string helpTopicID;
 
 			if (xmlHelpTopicID == "khtpField-PhRegularRule-RuleFormula")
 				xmlHelpTopicID = "khtpChoose-Environment";
@@ -1283,17 +1286,16 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		private string GenerateHelpTopicId(string helpTopicPrefix)
 		{
-			String generatedHelpTopicID;
-
-			String tempfieldName = XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "field");
-			String templabelName = XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "label");
-			String areaChoice = PropertyTable.GetValue<string>("areaChoice");
-			string toolChoice = PropertyTable.GetValue<string>("toolChoice");
-			int parentHvo = Convert.ToInt32(XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "hvoDisplayParent"));
+			string generatedHelpTopicID;
+			var tempfieldName = XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "field");
+			var templabelName = XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "label");
+			var areaChoice = PropertyTable.GetValue<string>("areaChoice");
+			var toolChoice = PropertyTable.GetValue<string>("toolChoice");
+			var parentHvo = Convert.ToInt32(XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "hvoDisplayParent"));
 
 			if (tempfieldName == "Targets" && parentHvo != 0)
-				// Ceoss Reference (entry level) or lexical relation (sense level) subitems
 			{
+				// Cross Reference (entry level) or lexical relation (sense level) subitems
 				var repo = m_cache.ServiceLocator.GetInstance<ILexEntryRepository>();
 				ILexEntry lex;
 				repo.TryGetObject(parentHvo, out lex);
@@ -1311,7 +1313,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			else
 			{
 				templabelName = getAlphaNumeric(templabelName);
-				if (String.IsNullOrEmpty(tempfieldName))
+				if (string.IsNullOrEmpty(tempfieldName))
 				{
 					// try to use the slice label, without spaces.
 					tempfieldName = templabelName;
@@ -1616,12 +1618,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			CheckDisposed();
 
 			ContainingDataTree.CurrentSlice = this;
-			if (ShowContextMenu != null)
-			{
-				ShowContextMenu(this, new TreeNodeEventArgs(TreeNode, this, p));
-				return true;
-			}
-			return false;
+			return true;
 		}
 
 		/// <summary></summary>
