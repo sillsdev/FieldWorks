@@ -79,7 +79,7 @@ namespace LanguageExplorer.Impls
 		private bool _persistWindowSize;
 		private ParserMenuManager _parserMenuManager;
 		private DataNavigationManager _dataNavigationManager;
-		private readonly MajorFlexComponentParameters _majorFlexComponentParameters;
+		private MajorFlexComponentParameters _majorFlexComponentParameters;
 
 		/// <summary>
 		/// Create new instance of window.
@@ -955,9 +955,12 @@ namespace LanguageExplorer.Impls
 				// Quit responding to messages early on.
 				Subscriber.Unsubscribe("MigrateOldConfigurations", MigrateOldConfigurations);
 
-				_parserMenuManager.Dispose();
-				_dataNavigationManager.Dispose();
-				IdleQueue.Dispose();
+				_currentArea?.Deactivate(_majorFlexComponentParameters);
+				_currentTool?.Deactivate(_majorFlexComponentParameters);
+
+				_parserMenuManager?.Dispose();
+				_dataNavigationManager?.Dispose();
+				IdleQueue?.Dispose();
 
 				components?.Dispose();
 
@@ -968,9 +971,9 @@ namespace LanguageExplorer.Impls
 				// message loop.
 				_flexApp.FwManager.ExecuteAsync(_flexApp.RemoveWindow, this);
 
-				_dataNavigationManager.Dispose();
-				_sidePane.Dispose();
-				_viewHelper.Dispose();
+				_dataNavigationManager?.Dispose();
+				_sidePane?.Dispose();
+				_viewHelper?.Dispose();
 			}
 
 			_parserMenuManager = null;
@@ -983,6 +986,7 @@ namespace LanguageExplorer.Impls
 			_subscriber = null;
 			_areaRepository = null;
 			IdleQueue = null;
+			_majorFlexComponentParameters = null;
 
 			base.Dispose(disposing);
 

@@ -128,8 +128,10 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 			contextMenuTuple.Item1.Opening -= contextMenuTuple.Item2;
 
-			// Dispose menu and its items
-			foreach (var item in contextMenuTuple.Item1.Items.Cast<IDisposable>())
+			// Dispose menu and its items.
+			// It needs to do it on that "ToList", since simply disposing it will remove it from the "Items" collection,
+			// which then throws with a changing contents while interating.
+			foreach (var item in contextMenuTuple.Item1.Items.Cast<IDisposable>().ToList())
 			{
 				item.Dispose();
 			}
@@ -176,7 +178,9 @@ namespace LanguageExplorer.Controls.DetailControls
 			_hotLinksCreatorMethods = null;
 			_ordinaryMenuCreatorMethods = null;
 			_panelMenuCreatorMethods = null;
-		}
+
+			_isDisposed = true;
+	}
 		#endregion
 	}
 }

@@ -15,7 +15,6 @@ using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.Resources;
 using SIL.LCModel.Core.KernelInterfaces;
-using SIL.Xml;
 
 namespace LanguageExplorer.Controls.DetailControls
 {
@@ -53,17 +52,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// Required designer variable.
 		/// </summary>
 		private System.ComponentModel.Container components = null;
-
-		/// <summary></summary>
-		public Slice Slice
-		{
-			get
-			{
-				CheckDisposed();
-
-				return m_myParentSlice;
-			}
-		}
 
 		/// <summary></summary>
 		public bool ShowPlusMinus
@@ -152,7 +140,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			if (drgevent.Effect == DragDropEffects.None)
 				return;
 			// Todo JohnT: verify that m_slice is the last slice in the representation of flid.
-			LcmCache cache = Slice.ContainingDataTree.Cache;
+			LcmCache cache = m_myParentSlice.ContainingDataTree.Cache;
 			UndoableUnitOfWorkHelper.Do("Undo Move Item", "Redo Move Item",
 				cache.ActionHandlerAccessor, () =>
 				{
@@ -193,7 +181,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				// Enhance JohnT: options to allow dragging onto this object, putting the dragged object into
 				// one of its owning properties.
 				// Try to drag the object after 'this' in the relevant property.
-				if (Slice.GetSeqContext(out hvoDstOwner, out flidDst, out ihvoDstStart))
+				if (m_myParentSlice.GetSeqContext(out hvoDstOwner, out flidDst, out ihvoDstStart))
 				{
 					ihvoDstStart++; // Insert after the present object (if a sequence).
 					if (OkToMove(hvoDstOwner, flidDst, ihvoDstStart, odi))
@@ -203,11 +191,11 @@ namespace LanguageExplorer.Controls.DetailControls
 					}
 				}
 				// See if the first child is a sequence we could insert at the start of.
-				var firstChild = Slice.ConfigurationNode.Elements().FirstOrDefault();
+				var firstChild = m_myParentSlice.ConfigurationNode.Elements().FirstOrDefault();
 				if (firstChild != null && firstChild.Name == "seq")
 				{
-					hvoDstOwner = Slice.Object.Hvo;
-					flidDst = Slice.ContainingDataTree.Cache.DomainDataByFlid.MetaDataCache.GetFieldId2(Slice.Object.ClassID, firstChild.Attribute("field").Value, true);
+					hvoDstOwner = m_myParentSlice.Object.Hvo;
+					flidDst = m_myParentSlice.ContainingDataTree.Cache.DomainDataByFlid.MetaDataCache.GetFieldId2(m_myParentSlice.Object.ClassID, firstChild.Attribute("field").Value, true);
 					ihvoDstStart = 0;
 					if (OkToMove(hvoDstOwner, flidDst, ihvoDstStart, odi))
 					{
@@ -226,7 +214,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			CheckDisposed();
 
-			LcmCache cache = Slice.ContainingDataTree.Cache;
+			LcmCache cache = m_myParentSlice.ContainingDataTree.Cache;
 			ICmObjectRepository repo = cache.ServiceLocator.GetInstance<ICmObjectRepository>();
 			if (flidDst == odi.FlidSrc)
 			{
@@ -338,7 +326,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			if (pea.ClipRectangle.Height == 0 || pea.ClipRectangle.Width == 0)
 				return;
 
-			if (Slice.Parent == null)
+			if (m_myParentSlice.Parent == null)
 				// FWNX-436
 				return;
 
@@ -349,17 +337,17 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				linePen.DashStyle = System.Drawing.Drawing2D.DashStyle.Dot;
 				using (Pen boxLinePen = new Pen(lineColor, 1))
-				using (Brush backgroundBrush = new SolidBrush(Slice.ContainingDataTree.BackColor))
+				using (Brush backgroundBrush = new SolidBrush(m_myParentSlice.ContainingDataTree.BackColor))
 				using (Brush lineBrush = new SolidBrush(lineColor))
 				{
-					int nIndent = Slice.Indent;
-					DataTree.TreeItemState tis = Slice.Expansion;
+					int nIndent = m_myParentSlice.Indent;
+					DataTree.TreeItemState tis = m_myParentSlice.Expansion;
 					// Drawing within a control that covers the tree node portion of this slice, we always
 					// draw relative to a top-of-slice that is 0. I'm keeping the variable just in case
 					// we ever go back to drawing in the parent window.
 					int ypTopOfSlice = 0;
 					// int ypTopOfNextSlice = this.Height; // CS2019
-					int iSlice = Slice.ContainingDataTree.Slices.IndexOf(Slice);
+					int iSlice = m_myParentSlice.ContainingDataTree.Slices.IndexOf(m_myParentSlice);
 					// Go through the indents. This used to draw the correct tree structure at each level.
 					// Now we leave out the structue, but this figures out some stuff we need if we end up
 					// drawing a box. This could be optimized if we really never want the tree diagram.
@@ -369,7 +357,7 @@ namespace LanguageExplorer.Controls.DetailControls
 						int xpBoxLeft = kdxpLeftMargin + nInd * kdxpIndDist;
 						int xpBoxCtr = xpBoxLeft + kdxpBoxCtr;
 						// Enhance JohnT: 2nd argument of max should be label height.
-						int dypBranchHeight = Slice.GetBranchHeight();
+						int dypBranchHeight = m_myParentSlice.GetBranchHeight();
 						int dypLeftOver = Math.Max(kdypBoxHeight / 2, dypBranchHeight) - kdypBoxHeight / 2;
 						int ypBoxTop = ypTopOfSlice + dypLeftOver;
 						int ypBoxCtr = ypBoxTop + kdypBoxHeight / 2;
@@ -386,7 +374,7 @@ namespace LanguageExplorer.Controls.DetailControls
 						// |  > ypStart = center point of +/- box, ypStop = bottom of field.
 						//
 						// Draw the vertical line.
-						bool fMoreFieldsAtLevel = (Slice.ContainingDataTree.NextFieldAtIndent(nInd, iSlice) != 0);
+						bool fMoreFieldsAtLevel = (m_myParentSlice.ContainingDataTree.NextFieldAtIndent(nInd, iSlice) != 0);
 
 						// Process a terminal level with a box.
 						if (ShowPlusMinus && nInd == nIndent && tis != DataTree.TreeItemState.ktisFixed)
@@ -444,7 +432,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					//			Pen borderPen = new Pen(Color.LightGray, lineWidth);
 					//			gr.DrawLine(borderPen, xIndent, yPos, this.Width, yPos);
 
-					Slice.DrawLabel(ypTopOfSlice, gr, pea.ClipRectangle.Width);
+					m_myParentSlice.DrawLabel(ypTopOfSlice, gr, pea.ClipRectangle.Width);
 				}
 			}
 		}
@@ -453,7 +441,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			get
 			{
-				return !ShowPlusMinus && Slice.ShowContextMenuIconInTreeNode();
+				return !ShowPlusMinus && m_myParentSlice.ShowContextMenuIconInTreeNode();
 			}
 		}
 
@@ -463,9 +451,9 @@ namespace LanguageExplorer.Controls.DetailControls
 		protected override void OnDoubleClick(EventArgs e)
 		{
 			base.OnDoubleClick (e);
-			if (Slice.Expansion != DataTree.TreeItemState.ktisFixed)
+			if (m_myParentSlice.Expansion != DataTree.TreeItemState.ktisFixed)
 			{
-				int iSlice = Slice.ContainingDataTree.Slices.IndexOf(Slice);
+				int iSlice = m_myParentSlice.ContainingDataTree.Slices.IndexOf(m_myParentSlice);
 				ToggleExpansionAndScroll(iSlice);
 			}
 		}
@@ -482,7 +470,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			//in light of what JT says below, we need to explicitly tell the slice that
 			//we were clicked on, because we cannot count on a normal Click event
 			//which we would normally just subscribe to, as we do with the slice editor controls.
-			Slice.OnTreeNodeClick(this, meArgs);
+			m_myParentSlice.OnTreeNodeClick(this, meArgs);
 
 			// The documentation says we should call the base class. Not doing so means that
 			// mouse down handlers can't be attached to this class by delegation.
@@ -495,7 +483,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				//begin test (JDH)
 				Point p = new Point(meArgs.X,meArgs.Y);
-				if (Slice.HandleMouseDown(p) && _ordinaryMenuStuff != null)
+				if (m_myParentSlice.HandleMouseDown(p) && _ordinaryMenuStuff != null)
 				{
 					_ordinaryMenuStuff.Item1.Show(m_myParentSlice, p);
 					return;
@@ -507,9 +495,9 @@ namespace LanguageExplorer.Controls.DetailControls
 			int hvoSrcOwner;
 			int flidSrc;
 			int ihvoSrcStart;
-			if (!Slice.GetSeqContext(out hvoSrcOwner, out flidSrc, out ihvoSrcStart))
+			if (!m_myParentSlice.GetSeqContext(out hvoSrcOwner, out flidSrc, out ihvoSrcStart))
 				return; // If we can't identify an object to move, don't do a drag.
-			ObjectDragInfo objinfo = new ObjectDragInfo(hvoSrcOwner, flidSrc, ihvoSrcStart, ihvoSrcStart, Slice.Label);
+			ObjectDragInfo objinfo = new ObjectDragInfo(hvoSrcOwner, flidSrc, ihvoSrcStart, ihvoSrcStart, m_myParentSlice.Label);
 			DataObject dataobj = new DataObject(objinfo);
 			// Initiate a drag/drop operation. Currently we only support move.
 			// Enhance JohnT: Also support Copy.
@@ -536,15 +524,15 @@ namespace LanguageExplorer.Controls.DetailControls
 			CheckDisposed();
 
 			// Why don't we just let the slice do all the toggle work?
-			if (Slice.Expansion == DataTree.TreeItemState.ktisCollapsed)
+			if (m_myParentSlice.Expansion == DataTree.TreeItemState.ktisCollapsed)
 			{
 				// expand it
-				Slice.Expand(iSlice);
+				m_myParentSlice.Expand(iSlice);
 			}
-			else if (Slice.Expansion == DataTree.TreeItemState.ktisExpanded)
+			else if (m_myParentSlice.Expansion == DataTree.TreeItemState.ktisExpanded)
 			{
 				// collapse it
-				Slice.Collapse(iSlice);
+				m_myParentSlice.Collapse(iSlice);
 			}
 			else
 			{
