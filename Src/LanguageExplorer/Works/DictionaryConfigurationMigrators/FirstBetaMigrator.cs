@@ -37,7 +37,7 @@ namespace LanguageExplorer.Works.DictionaryConfigurationMigrators
 			Cache = propertyTable.GetValue<LcmCache>("cache");
 			var foundOne = string.Format("{0}: Configuration was found in need of migration. - {1}",
 				appVersion, DateTime.Now.ToString("yyyy MMM d h:mm:ss"));
-			var configSettingsDir = LcmFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path));
+			var configSettingsDir = LcmFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder);
 			var dictionaryConfigLoc = Path.Combine(configSettingsDir, DictionaryConfigurationListener.DictionaryConfigurationDirectoryName);
 			var stemPath = Path.Combine(dictionaryConfigLoc, "Stem" + DictionaryConfigurationModel.FileExtension);
 			var lexemePath = Path.Combine(dictionaryConfigLoc, "Lexeme" + DictionaryConfigurationModel.FileExtension);
@@ -183,6 +183,9 @@ namespace LanguageExplorer.Works.DictionaryConfigurationMigrators
 					goto case VersionRC2;
 				case VersionRC2:
 					ChangeReferenceSenseHeadwordFieldName(oldConfigPart);
+					goto case 18;
+				case 18:
+					RemoveReferencedHeadwordSubField(oldConfigPart);
 					break;
 				default:
 					logger.WriteLine(string.Format(
@@ -252,6 +255,18 @@ namespace LanguageExplorer.Works.DictionaryConfigurationMigrators
 			}
 			// Etymology changed too much to be matched in the PreHistoricMigration and was marked as custom
 			DCM.PerformActionOnNodes(etymNodes, n => {n.IsCustomField = false;});
+		}
+
+		private static void RemoveReferencedHeadwordSubField(ConfigurableDictionaryNode part)
+		{
+			DCM.PerformActionOnNodes(part.Children, node =>
+			{
+				// AllReversalSubentries under Referenced Headword field is ReversalName
+				if (node.FieldDescription == "ReversalName" && node.SubField == "MLHeadWord")
+				{
+					node.SubField = null;
+				}
+			});
 		}
 
 		private static void RemoveMostOfGramInfoUnderRefdComplexForms(ConfigurableDictionaryNode part)

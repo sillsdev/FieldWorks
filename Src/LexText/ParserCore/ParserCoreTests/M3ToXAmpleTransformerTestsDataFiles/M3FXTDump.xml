@@ -963,6 +963,21 @@ Revision History is at the end of this file.
 	  <FirstAllomorph dst="5d2239fb-c480-4316-affe-5fe7bcebdc6a"/>
 	  <RestOfAllos dst="b2c43ab8-8597-4d00-9994-075f619c7436" ord="0"/>
 	</MoAlloAdhocProhib>
+  	<MoAdhocProhibGr Id="4663">
+  		<Name>Bad -o -o sequences</Name>
+  		<Description>Sometimes the parser finds these when it is really the -oor/-oo mutual morpheme</Description>
+  		<MoAlloAdhocProhib Id="349" Adjacency="0">
+  			<FirstAllomorph dst="20992" />
+  			<RestOfAllos dst="10297" ord="0" />
+  		</MoAlloAdhocProhib>  		<MoMorphAdhocProhib Id="11771" Adjacency="4">
+  			<FirstMorpheme dst="9099" />
+  			<RestOfMorphs dst="9099" ord="0" />
+  		</MoMorphAdhocProhib>
+  		<MoMorphAdhocProhib Id="18868" Adjacency="4">
+  			<FirstMorpheme dst="5441" />
+  			<RestOfMorphs dst="5441" ord="0" />
+  		</MoMorphAdhocProhib>
+  	</MoAdhocProhibGr>
   </AdhocCoProhibitions>
   <ProdRestrict/>
   <MoMorphTypes>

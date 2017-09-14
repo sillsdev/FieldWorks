@@ -501,7 +501,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// contextCtrl
 			//
 			this.contextCtrl.DisplayedListName = "characters";
-			this.contextCtrl.InitialDirectoryForFileScan = global::SIL.FieldWorks.FwCoreDlgs.FwCoreDlgs.kstidOpen;
 			resources.ApplyResources(this.contextCtrl, "contextCtrl");
 			this.contextCtrl.Name = "contextCtrl";
 			this.contextCtrl.ScanMsgLabelText = "For a list of characters currently in use, click Scan.";
@@ -928,7 +927,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn5;
 		private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn6;
 		private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn7;
-		private CharContextCtrl contextCtrl;
+		private SIL.FieldWorks.FwCoreDlgs.CharContextCtrl contextCtrl;
 		private System.Windows.Forms.Label m_lblWsName;
 		private System.Windows.Forms.DataGridViewTextBoxColumn colChar;
 		private System.Windows.Forms.DataGridViewTextBoxColumn colCharCode;

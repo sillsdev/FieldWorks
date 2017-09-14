@@ -2302,7 +2302,7 @@ namespace LanguageExplorer.Works
 
 		private static bool IsOwner(ISenseOrEntry target, ICmObject owner)
 		{
-			return target.EntryGuid.Equals(owner is ILexEntry ? ((ILexEntry)owner).Guid : ((ILexSense)owner).Entry.Guid);
+			return target.Item.Guid.Equals(owner.Guid);
 		}
 
 		private static int CompareLexRefTargets(Tuple<ISenseOrEntry, ILexReference> lhs,

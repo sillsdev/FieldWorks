@@ -2052,6 +2052,38 @@ namespace LanguageExplorerTests.Works
 		}
 
 		[Test]
+		public void CheckExtendedNote_Null_DoesNotCrash()
+		{
+			var noteNode = new ConfigurableDictionaryNode
+			{
+				Label = "Extended Note",
+				FieldDescription = "ExtendedNoteOS",
+								DictionaryNodeOptions = new DictionaryNodeListOptions
+				{
+					ListId = DictionaryNodeListOptions.ListIds.Note
+				}
+			};
+			var senseNode = new ConfigurableDictionaryNode
+			{
+				Label = "Senses",
+				FieldDescription = "SensesOS",
+				Children = new List<ConfigurableDictionaryNode> { noteNode }
+			};
+			var entryNode = new ConfigurableDictionaryNode
+			{
+				Label = "Main Entry",
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { senseNode }
+			};
+			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { entryNode } };
+			Cache.LangProject.LexDbOA.ExtendedNoteTypesOA = null;
+			// SUT
+			DictionaryConfigurationController.MergeTypesIntoDictionaryModel(model, Cache);
+			var opts = ((DictionaryNodeListOptions)noteNode.DictionaryNodeOptions).Options;
+			Assert.AreEqual(0, opts.Count, "Extended Note generated without any crash");
+		}
+
+		[Test]
 		public void ShareNodeAsReference()
 		{
 			var configNodeChild = new ConfigurableDictionaryNode { Label = "child", FieldDescription = "someField" };

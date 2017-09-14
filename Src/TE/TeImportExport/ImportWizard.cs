@@ -10,7 +10,6 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using Microsoft.Win32;
-using Paratext;
 using SIL.LCModel.Core.Scripture;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
@@ -62,7 +61,7 @@ namespace SIL.FieldWorks.TE
 		#endregion
 
 		#region Data Members
-		private static ScrText s_noneProject;
+		private static IScrText s_noneProject;
 
 		private int m_currentStep = 0;
 		private Panel[] panSteps = new Panel[5];
@@ -89,7 +88,7 @@ namespace SIL.FieldWorks.TE
 		/// <summary></summary>
 		protected ProjectTypes m_projectType = ProjectTypes.None;
 		/// <summary></summary>
-		protected List<ScrText> m_PTLangProjects = new List<ScrText>();
+		protected List<IScrText> m_PTLangProjects = new List<IScrText>();
 		/// <summary></summary>
 		protected ISCScriptureText m_ScriptureText;
 
@@ -212,7 +211,7 @@ namespace SIL.FieldWorks.TE
 		/// ------------------------------------------------------------------------------------
 		static ImportWizard()
 		{
-			s_noneProject = new ScrText();
+			s_noneProject = ScriptureProvider.MakeScrText();
 			s_noneProject.Name = ScrImportComponents.kstidImportWizNoProjType;
 		}
 
@@ -1091,7 +1090,7 @@ namespace SIL.FieldWorks.TE
 		/// -----------------------------------------------------------------------------------
 		private bool FindParatextProjects()
 		{
-			IEnumerable<ScrText> projects = ParatextHelper.ProjectsWithBooks;
+			var projects = ParatextHelper.ProjectsWithBooks;
 
 			if (!projects.Any())
 			{
@@ -1134,7 +1133,7 @@ namespace SIL.FieldWorks.TE
 		/// ------------------------------------------------------------------------------------
 		private void LoadParatextProjectCombos()
 		{
-			ScrText assocProj = ParatextHelper.GetAssociatedProject(m_cache.ProjectId);
+			IScrText assocProj = ParatextHelper.GetAssociatedProject(m_cache.ProjectId);
 			//Ignore the case that there is information already in the combobox.
 			//Solution for TE - 4441)
 			bool loadMappings = false;
@@ -1157,11 +1156,11 @@ namespace SIL.FieldWorks.TE
 
 			if (cboPTBackTrans.Items.Count == 0)
 			{
-				IEnumerable<ScrText> btProjects = assocProj != null ? ParatextHelper.GetBtsForProject(assocProj).ToList() : null;
+				var btProjects = assocProj != null ? ParatextHelper.GetBtsForProject(assocProj).ToList() : null;
 				if (btProjects != null && btProjects.Any())
 				{
 					m_settings.ParatextBTProj = btProjects.First().Name;
-					foreach (ScrText btText in btProjects)
+					foreach (IScrText btText in btProjects)
 						cboPTBackTrans.Items.Add(btText);
 					cboPTBackTrans.SelectedIndex = 0;
 					cboPTBackTrans.Enabled = (btProjects.Count() > 1);
@@ -1206,7 +1205,7 @@ namespace SIL.FieldWorks.TE
 			{
 				for (int i = 0; i < cbo.Items.Count; i++)
 				{
-					if (selectedProj == ((ScrText)cbo.Items[i]).Name)
+					if (selectedProj == ((IScrText)cbo.Items[i]).Name)
 						cbo.SelectedIndex = i;
 				}
 			}
@@ -1292,7 +1291,7 @@ namespace SIL.FieldWorks.TE
 		/// ------------------------------------------------------------------------------------
 		private string GetPTShortName(FwOverrideComboBox cbo)
 		{
-			string shortName = ((ScrText)cbo.Items[cbo.SelectedIndex]).Name;
+			string shortName = ((IScrText)cbo.Items[cbo.SelectedIndex]).Name;
 			return shortName != s_noneProject.Name ? shortName : null;
 		}
 

@@ -6,7 +6,7 @@ using System;
 using System.Xml;
 using NUnit.Framework;
 
-namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
+namespace LanguageExplorerTests.Works.DictionaryConfigurationMigrators
 {
 #if RANDYTODO
 	/// <summary>

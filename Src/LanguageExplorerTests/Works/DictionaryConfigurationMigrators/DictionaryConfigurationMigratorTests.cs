@@ -12,7 +12,7 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Utils;
 
-namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
+namespace LanguageExplorerTests.Works.DictionaryConfigurationMigrators
 {
 	public class DictionaryConfigurationMigratorTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{

@@ -12,8 +12,9 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.IO;
 using SIL.TestUtilities;
+
 // ReSharper disable InconsistentNaming
-namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
+namespace LanguageExplorerTests.Works.DictionaryConfigurationMigrators
 {
 	public class FirstBetaMigratorTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
@@ -1174,6 +1175,22 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 			Assert.AreEqual("MLPartOfSpeech", remainingChildren[0].FieldDescription); // Label in production is Category Info.
 			remainingChildren = userModel.Parts[0].Children[1].Children[0].Children;
 			Assert.AreEqual(originalKidCount, remainingChildren.Count, "No children should have been removed from GramInfo under Senses");
+		}
+
+		[Test]
+		public void MigrateFrom83Alpha_RemoveReferencedHeadwordSubField() // LT-18470
+		{
+			//Populate a reversal configuration based on the current defaults
+			var reversalBetaModel = new DictionaryConfigurationModel { WritingSystem = "en"};
+			var betaModel = m_migrator.LoadBetaDefaultForAlphaConfig(reversalBetaModel); // SUT
+			Assert.IsTrue(betaModel.IsReversal);
+			var alphaModel = betaModel.DeepClone();
+			//Set the SubField on the ReversalName Node for our 'old' configuration
+			alphaModel.SharedItems[0].Children[2].Children[0].SubField = "MLHeadWord";
+			alphaModel.Version = 18;
+			m_migrator.MigrateFrom83Alpha(m_logger, alphaModel, betaModel); // SUT
+			Assert.AreNotEqual("MLHeadWord", betaModel.SharedItems[0].Children[2].Children[0].SubField);
+			Assert.Null(betaModel.SharedItems[0].Children[2].Children[0].SubField);
 		}
 
 		[Test]

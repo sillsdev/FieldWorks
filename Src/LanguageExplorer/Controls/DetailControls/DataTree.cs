@@ -1714,7 +1714,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// Get the template that should be used to display the specified object using the specified layout.
 		/// </summary>
-		private XElement GetTemplateForObjLayout(ICmObject obj, string layoutName,
+		public XElement GetTemplateForObjLayout(ICmObject obj, string layoutName,
 			string layoutChoiceField)
 		{
 			int classId = obj.ClassID;
@@ -1883,9 +1883,18 @@ namespace LanguageExplorer.Controls.DetailControls
 			int insPos = insertPosition;
 			testResult = NodeTestResult.kntrNothing;
 			int cPossible = 0;
+			bool isCustomFieldExists = false;
+			var duplicateNodes = new List<XElement>();
 			// This loop handles the multiple parts of a layout.
 			foreach (var partRef in template.Elements())
 			{
+				var refAttr = partRef.Attribute("customFields");
+				if (refAttr != null)
+				{
+					if (isCustomFieldExists)
+						duplicateNodes.Add(partRef);
+					isCustomFieldExists = true;
+				}
 				// This code looks for the a special part definition with an attribute called "customFields"
 				// It doesn't matter what this attribute is set to, as long as it exists.  If this attribute is
 				// found, the custom fields will not be generated.
@@ -1915,6 +1924,11 @@ namespace LanguageExplorer.Controls.DetailControls
 						return insertPosition;
 					}
 				}
+			}
+			foreach (var duplicateElement in duplicateNodes)
+			{
+				duplicateElement.Remove();
+				m_layoutInventory.PersistOverrideElement(template);
 			}
 
 			if (cPossible > 0)
@@ -2043,10 +2057,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// Append to the part refs of template a suitable one for each custom field of
 		/// the class of obj.
 		/// </summary>
-		/// <param name="obj">The obj.</param>
-		/// <param name="template">The template.</param>
-		/// <param name="insertAfter">The insert after.</param>
-		private void EnsureCustomFields(ICmObject obj, XElement template, XElement insertAfter)
+		private void EnsureCustomFields(ICmObject obj, XElement parent, XElement insertAfter)
 		{
 			var interestingClasses = new HashSet<int>();
 			int clsid = obj.ClassID;
@@ -2062,16 +2073,29 @@ namespace LanguageExplorer.Controls.DetailControls
 				{
 					bool exists = false;
 					string target = field.Name;
-					// Check the siblings of 'template', and do nothing if we find a sibling that matches.
-					if (insertAfter.Parent.Elements().Any(sibling => sibling != template
-						&& sibling.Name == "part"
-						&& sibling.Attribute("param") != null
-						&& sibling.Attribute("param").Value == target
-						&& sibling.Attribute("ref") != null
-						&& sibling.Attribute("ref").Value == "Custom"))
+
+					var refAttr = insertAfter.Attribute("ref");
+					if (refAttr == null)
 					{
-						continue;
+						var persistableParent = FindPersistableParent(parent, parent.GetOuterXml());
+						insertAfter.Add(new XAttribute("ref", "_CustomFieldPlaceholder"));
+						m_layoutInventory.PersistOverrideElement(persistableParent);
 					}
+					// We could do this search with an XPath but they are excruciatingly slow.
+					// Check all of the siblings, first going forward, then backward
+					for(var sibling = (XElement)insertAfter. NextNode; sibling != null && !exists;	sibling = (XElement)sibling.NextNode)
+					{
+						if (CheckCustomFieldsSibling(sibling, target))
+							exists = true;
+					}
+					for(var sibling = (XElement)insertAfter.PreviousNode; sibling != null && !exists;	sibling = (XElement)sibling.PreviousNode)
+					{
+						if (CheckCustomFieldsSibling(sibling, target))
+							exists = true;
+					}
+
+					if (exists)
+						continue;
 
 					var part = new XElement("part",
 						new XAttribute("ref", "Custom"),
@@ -2079,6 +2103,32 @@ namespace LanguageExplorer.Controls.DetailControls
 					insertAfter.AddAfterSelf(part);
 				}
 			}
+		}
+
+		private static XElement FindPersistableParent(XElement parent, string originalParentXml)
+		{
+			if(Equals("part", parent.Name.LocalName) || Equals("layout", parent.Name.LocalName))
+			{
+				return parent;
+			}
+			if (parent.Parent == null)
+			{
+				throw new ApplicationException($"Invalid configuration file. No parent with a ref attribute was found.{Environment.NewLine}{originalParentXml}");
+			}
+			return FindPersistableParent(parent.Parent, originalParentXml);
+		}
+
+		private static bool CheckCustomFieldsSibling(XElement sibling, string target)
+		{
+			if (!sibling.Attributes().Any())
+				return false;	// no attributes on this nodeas XmlComment  LT-3566
+
+			var paramAttr = sibling.Attribute("param");
+			var refAttr = sibling.Attribute("ref");
+			if (paramAttr != null && refAttr != null && paramAttr.Value == target && sibling.Name == "part" && refAttr.Value == "Custom")
+				return true;
+
+			return false;
 		}
 
 		/// <summary>

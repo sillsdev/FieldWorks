@@ -395,7 +395,7 @@
     <value>These messages came from the initial processing of the standard format file ("Preview Import").</value>
   </data>
   <data name="ksMisorderedMarkers" xml:space="preserve">
-    <value>The import process has detected some entries in which the field markers were not ordered as expected. (Refer to the list below to see which entries are affected.)</value>
+    <value>The import process has detected some entries in which the field markers were not ordered as expected. (Refer to the list below to see which entries are affected.) The links will open Zedit in the original SFM file at the location of interest. It only works in Internet Explorer. To use it, when the page opens, at the bottom of the browser, it displays, "Internet Explorer restricted this webpage from running scripts or ActiveX controls". Click "Allow blocked content". After the first link is clicked, the following dialog will come up, "An ActiveX control on this page might be unsafe to interact with other parts of the page. Do you want to allow this interaction?" Click "Yes" and the links will then work anywhere on the page.</value>
   </data>
   <data name="ksMissingInformation" xml:space="preserve">
     <value>Missing information</value>
@@ -930,7 +930,7 @@ If you see this message again, exit the import wizard (saving your settings) and
     <comment>Alternative wording for Use as Current Entry link-button when called from interlinear.</comment>
   </data>
   <data name="ksCompleteCircumfix" xml:space="preserve">
-    <value>To create a circumfix, every non-blank alternative of the form must have two morphemes separated by a space or period(s).</value>
+    <value>To create a circumfix, every non-blank alternative of the Lexeme Form must have two morphemes separated by a space or period(s).</value>
   </data>
   <data name="ksInvalidLexForm" xml:space="preserve">
     <value>The lexeme form does not match the morpheme type.</value>

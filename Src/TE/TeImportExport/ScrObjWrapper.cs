@@ -14,7 +14,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using Paratext;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
@@ -42,17 +41,17 @@ namespace SIL.FieldWorks.TE
 		protected IScrImportSet m_settings;
 
 		/// <summary>the Paratext project</summary>
-		protected ScrText m_ptProjectText;
+		protected IScrText m_ptProjectText;
 		/// <summary>the Paratext text parser</summary>
-		protected ScrParser m_ptParser;
+		protected IScriptureProviderParser m_ptParser;
 		/// <summary>The current state of the Paratext parser.</summary>
-		protected ScrParserState m_ptParserState;
+		protected ScriptureProvider.IScriptureProviderParserState m_ptParserState;
 		/// <summary>The current verse token that is being processed for Paratext import</summary>
 		protected int m_ptCurrentToken;
 		/// <summary>List of tokens that make up the current Paratext book </summary>
-		protected List<UsfmToken> m_ptBookTokens;
+		protected List<IUsfmToken> m_ptBookTokens;
 		/// <summary>The current reference that is being processed (currently only Book granularity)</summary>
-		protected VerseRef m_ptCurrBook;
+		protected IVerseRef m_ptCurrBook;
 
 		/// <summary>the TE scripture object</summary>
 		protected ISCScriptureText m_scSfmText;
@@ -116,7 +115,7 @@ namespace SIL.FieldWorks.TE
 		{
 			try
 			{
-				m_ptProjectText = new ScrText(paratextProjectId);
+				m_ptProjectText = ScriptureProvider.MakeScrText(paratextProjectId);
 			}
 			catch (Exception e)
 			{
@@ -133,7 +132,7 @@ namespace SIL.FieldWorks.TE
 
 				// Now initialize the TextEnum with the range of Scripture text we want
 				m_ptParser = m_ptProjectText.Parser;
-				m_ptCurrBook = new VerseRef(m_settings.StartRef.Book, 0, 0);
+				m_ptCurrBook = ScriptureProvider.MakeVerseRef(m_settings.StartRef.Book, 0, 0);
 				ResetParatextState();
 			}
 			catch (Exception e)
@@ -184,8 +183,6 @@ namespace SIL.FieldWorks.TE
 			{
 				// dispose managed and unmanaged objects
 				Cleanup();
-				if (m_ptProjectText != null)
-					m_ptProjectText.Dispose();
 			}
 			m_ptProjectText = null;
 			IsDisposed = true;
@@ -452,7 +449,7 @@ namespace SIL.FieldWorks.TE
 					{
 						try
 						{
-							ScrTag bookTag = m_ptProjectText.DefaultStylesheet.Tags.FirstOrDefault(t => (t.TextProperties & TextProperties.scBook) != 0);
+							var bookTag = m_ptProjectText.DefaultStylesheet.Tags.FirstOrDefault(t => t.IsScriptureBook);
 							return bookTag != null ? @"\" + bookTag.Marker : @"\id";
 						}
 						catch
@@ -487,7 +484,7 @@ namespace SIL.FieldWorks.TE
 				{
 					// construct the directory using Paratext settings. For example, with a short
 					// name of KAL, the directory would be: "C:\My Paratext Projects\KAL\Figures"
-					externalPaths.Add(Path.Combine(m_ptProjectText.SettingsDirectory,
+					externalPaths.Add(Path.Combine(ScriptureProvider.SettingsDirectory,
 						Path.Combine(m_ptProjectText.Name, "Figures")));
 				}
 				externalPaths.Add(m_settings.Cache.LangProject.LinkedFilesRootDir);
@@ -504,7 +501,7 @@ namespace SIL.FieldWorks.TE
 		/// Creates a BCVRef from a VerseRef.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private static BCVRef MakeBCVRef(VerseRef verseRef)
+		private static BCVRef MakeBCVRef(IVerseRef verseRef)
 		{
 			int segment = string.IsNullOrEmpty(verseRef.Segment()) ? 0 : verseRef.Segment()[0] - 'a';
 			if (segment < 0 || segment > 2)
@@ -519,8 +516,8 @@ namespace SIL.FieldWorks.TE
 		/// ------------------------------------------------------------------------------------
 		private void ResetParatextState()
 		{
-			m_ptParserState = new ScrParserState(m_ptProjectText, m_ptCurrBook);
-			m_ptBookTokens = m_ptParser.GetUsfmTokens(m_ptCurrBook, false, true);
+			m_ptParserState = ScriptureProvider.GetParserState(m_ptProjectText, m_ptCurrBook);
+			m_ptBookTokens = new List<IUsfmToken>(m_ptParser.GetUsfmTokens(m_ptCurrBook, false, true));
 			m_ptCurrentToken = 0;
 		}
 
@@ -533,10 +530,10 @@ namespace SIL.FieldWorks.TE
 		{
 			sMarker = null;
 			sText = string.Empty;
-			while (m_ptCurrentToken < m_ptBookTokens.Count)
+			while (m_ptCurrentToken < m_ptBookTokens.Count())
 			{
-				UsfmToken token = m_ptBookTokens[m_ptCurrentToken];
-				if (token.Type == UsfmTokenType.Text)
+				IUsfmToken token = m_ptBookTokens[m_ptCurrentToken];
+				if (token.Type == TokenType.Text)
 					sText += token.Text;
 				else
 				{

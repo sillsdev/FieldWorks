@@ -6,16 +6,18 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using LanguageExplorer;
+using LanguageExplorer.Works;
+using LanguageExplorer.Works.DictionaryConfigurationMigrators;
 using NUnit.Framework;
 using SIL.LCModel.Core.WritingSystems;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.DomainServices;
 using SIL.IO;
 using SIL.LCModel;
 
 // ReSharper disable InconsistentNaming
 
-namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
+namespace LanguageExplorerTests.Works.DictionaryConfigurationMigrators
 {
 	public class FirstAlphaMigratorTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{

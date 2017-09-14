@@ -24,7 +24,7 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 	public class MockParatextHelper : IParatextHelper, IDisposable
 	{
 		/// <summary>The list of projects to simulate in Paratext</summary>
-		public readonly List<ScrText> Projects = new List<ScrText>();
+		public readonly List<IScrText> Projects = new List<IScrText>();
 
 		/// <summary>Allows an implementation of LoadProjectMappings to be injected</summary>
 		public IParatextHelper m_loadProjectMappingsImpl;
@@ -56,7 +56,7 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 			{
 				// dispose managed and unmanaged objects
 				foreach (var scrText in Projects)
-					scrText.Dispose();
+					((PT7ScrTextWrapper)scrText).DisposePTObject();
 
 				Projects.Clear();
 			}
@@ -90,7 +90,7 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 		/// Reloads the specified Paratext project with the latest data. (no-op)
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public void ReloadProject(ScrText project)
+		public void ReloadProject(IScrText project)
 		{
 			// Nothing to do
 		}
@@ -110,7 +110,7 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 		/// Gets the list of Paratext projects.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public IEnumerable<ScrText> GetProjects()
+		public IEnumerable<IScrText> GetProjects()
 		{
 			return Projects;
 		}
@@ -181,7 +181,7 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 			bool editable, bool isResource, string booksPresent)
 		{
 			AddProject(shortName, associatedProject, baseProject, editable, isResource,
-				booksPresent, string.IsNullOrEmpty(baseProject) ? ProjectType.Standard : ProjectType.BackTranslation);
+				booksPresent, string.IsNullOrEmpty(baseProject) ? Paratext.ProjectType.Standard : Paratext.ProjectType.BackTranslation);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -190,7 +190,7 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public void AddProject(string shortName, string associatedProject, string baseProject,
-			bool editable, bool isResource, string booksPresent, Utilities.Enum<ProjectType> translationType)
+			bool editable, bool isResource, string booksPresent, Utilities.Enum<Paratext.ProjectType> translationType)
 		{
 			ScrText scrText = new ScrText();
 			scrText.Name = shortName;
@@ -204,8 +204,7 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 				//scrText.BaseTranslation = new BaseTranslation(derivedTranslationType, baseProject, string.Empty);
 				var baseProj = Projects.Select(x => x.Name == baseProject).FirstOrDefault();
 				Assert.That(baseProj, Is.Not.Null);
-				scrText.TranslationInfo = new TranslationInformation(translationType,
-					baseProject, string.Empty);
+				scrText.TranslationInfo = new TranslationInformation(translationType, baseProject, string.Empty);
 				Assert.That(scrText.TranslationInfo.BaseProjectName, Is.EqualTo(baseProject));
 			}
 			else
@@ -218,7 +217,7 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 			if (booksPresent != null)
 				scrText.BooksPresent = booksPresent;
 
-			Projects.Add(scrText);
+			Projects.Add(new PT7ScrTextWrapper(scrText));
 		}
 		#endregion
 	}
@@ -240,18 +239,14 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 		private MockParatextHelper m_ptHelper;
 
 		#region Setup/Teardown
-		/// <summary />
-		[TestFixtureTearDown]
+
+		/// <summary/>
 		public void FixtureTeardown()
 		{
 			ParatextHelper.Manager.Reset();
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+		/// <summary/>
 		[SetUp]
 		public void Setup()
 		{
@@ -295,7 +290,7 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 			m_ptHelper.AddProject("SOUP", "Monkey Soup");
 			m_ptHelper.AddProject("GRK", "Levington");
 			m_ptHelper.AddProject("Mony", "Money");
-			ScrText found = ParatextHelper.GetAssociatedProject(new TestProjectId(BackendProviderType.kXML, "Monkey Soup"));
+			IScrText found = ParatextHelper.GetAssociatedProject(new TestProjectId(BackendProviderType.kXML, "Monkey Soup"));
 			Assert.AreEqual("SOUP", found.Name);
 		}
 
@@ -307,6 +302,8 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 		[Test]
 		public void GetWritableShortNames()
 		{
+			if (ScriptureProvider.VersionInUse >= new Version(8, 0))
+				Assert.Ignore("This test is insufficiently mocked and uses Paratext7 data with Paratext8 logic if Paratext8 is installed.");
 			m_ptHelper.AddProject("MNKY");
 			m_ptHelper.AddProject("SOUP", "Monkey Soup", null, true, false);
 			m_ptHelper.AddProject("TWNS", null, null, false, false);
@@ -326,6 +323,8 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 		[Test]
 		public void IsProjectWritable()
 		{
+			if (ScriptureProvider.VersionInUse >= new Version(8, 0))
+				Assert.Ignore("This test is insufficiently mocked and uses Paratext7 data with Paratext8 logic if Paratext8 is installed.");
 			m_ptHelper.AddProject("MNKY");
 			m_ptHelper.AddProject("SOUP", "Monkey Soup", null, true, false);
 			m_ptHelper.AddProject("TWNS", null, null, false, false);
@@ -408,11 +407,14 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 		[Category("LongRunning")]
 		public void LoadParatextMappings_Normal()
 		{
+			if (ScriptureProvider.VersionInUse >= new Version(8, 0))
+				Assert.Ignore("This test uses data that is only valid for Paratext7. The test fails with Paratext8 installed.");
 			Unpacker.UnPackParatextTestProjects();
 
 			var stylesheet = new LcmStyleSheet();
 			stylesheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles);
 			IScrImportSet importSettings = Cache.ServiceLocator.GetInstance<IScrImportSetFactory>().Create();
+			Cache.LangProject.TranslatedScriptureOA.ImportSettingsOC.Add(importSettings);
 			importSettings.ParatextScrProj = "KAM";
 			ParatextHelper.LoadProjectMappings(importSettings);
 
@@ -436,15 +438,18 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Category("LongRunning")]
-		[Ignore("Has not been run for a while and no longer works; possibly obsolete")]
+		[Ignore("GetMappingListForDomain is returning null after the merge from release/8.3 - This test was fixed in release/8.3 but likely didn't run on develop.")]
 		public void LoadParatextMappings_MarkMappingsInUse()
 		{
+			if (ScriptureProvider.VersionInUse >= new Version(8, 0))
+				Assert.Ignore("This test uses data that is only valid for Paratext7. The test fails with Paratext8 installed.");
 			var stylesheet = new LcmStyleSheet();
 			stylesheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles);
 			IScrImportSet importSettings = Cache.ServiceLocator.GetInstance<IScrImportSetFactory>().Create();
+			Cache.LangProject.TranslatedScriptureOA.ImportSettingsOC.Add(importSettings);
 			importSettings.ParatextScrProj = "TEV";
 			ScrMappingList mappingList = importSettings.GetMappingListForDomain(ImportDomain.Main);
+			Assert.NotNull(mappingList, "Setup Failure, no mapping list returned for the domain.");
 			mappingList.Add(new ImportMappingInfo(@"\hahaha", @"\*hahaha", false,
 				MappingTargetType.TEStyle, MarkerDomain.Default, "laughing",
 				null, null, true, ImportDomain.Main));
@@ -472,36 +477,16 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Category("LongRunning")]
 		public void LoadParatextMappings_MissingEncodingFile()
 		{
 			var stylesheet = new LcmStyleSheet();
 			stylesheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles);
 			IScrImportSet importSettings = Cache.ServiceLocator.GetInstance<IScrImportSetFactory>().Create();
+			Cache.LangProject.TranslatedScriptureOA.ImportSettingsOC.Add(importSettings);
 			importSettings.ParatextScrProj = "NEC";
 
 			Unpacker.UnPackMissingFileParatextTestProjects();
 
-			ParatextHelper.LoadProjectMappings(importSettings);
-			Assert.That(importSettings.ParatextScrProj, Is.Null);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Test attempting to load a Paratext project when the Paratext SSF references a
-		/// style file that does not exist.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[Test]
-		[Ignore("Causes build to hang since Paratext code displays a 'missing style file' message box")]
-		public void LoadParatextMappings_MissingStyleFile()
-		{
-			LcmStyleSheet stylesheet = new LcmStyleSheet();
-			stylesheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles);
-			IScrImportSet importSettings = Cache.ServiceLocator.GetInstance<IScrImportSetFactory>().Create();
-			importSettings.ParatextScrProj = "NSF";
-
-			Unpacker.UnPackMissingFileParatextTestProjects();
 			ParatextHelper.LoadProjectMappings(importSettings);
 			Assert.That(importSettings.ParatextScrProj, Is.Null);
 		}

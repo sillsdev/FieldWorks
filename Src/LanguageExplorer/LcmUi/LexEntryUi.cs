@@ -730,15 +730,15 @@ namespace LanguageExplorer.LcmUi
 		/// Method to insert the homograph number with settings into the Text
 		/// </summary>
 		private void InsertHomographNumber(IVwEnv vwenv, HomographConfiguration hc, int nHomograph, int defUserWs)
-					{
+		{
 			if (nHomograph <= 0)
 				return;
 
-						// Use a string builder to embed the properties in with the TsString.
-						// this allows our TsStringCollectorEnv to properly encode the superscript.
-						// ideally, TsStringCollectorEnv could be made smarter to handle SetIntPropValues
-						// since AppendTss treats the given Tss as atomic.
-						ITsIncStrBldr tsBldr = TsStringUtils.MakeIncStrBldr();
+			// Use a string builder to embed the properties in with the TsString.
+			// this allows our TsStringCollectorEnv to properly encode the superscript.
+			// ideally, TsStringCollectorEnv could be made smarter to handle SetIntPropValues
+			// since AppendTss treats the given Tss as atomic.
+			ITsIncStrBldr tsBldr = TsStringUtils.MakeIncStrBldr();
 			tsBldr.SetIntPropValues((int) FwTextPropType.ktptSuperscript,
 				(int) FwTextPropVar.ktpvEnum,
 				(int) FwSuperscriptVal.kssvSub);
@@ -747,10 +747,9 @@ namespace LanguageExplorer.LcmUi
 				(int) FwTextToggleVal.kttvForceOn);
 			tsBldr.SetIntPropValues((int) FwTextPropType.ktptWs,
 				(int) FwTextPropVar.ktpvDefault, defUserWs);
-			StringServices.InsertHomographNumber(tsBldr, nHomograph, hc, HomographConfiguration.HeadwordVariant.Main,
-				m_cache);
-						vwenv.AddString(tsBldr.GetString());
-					}
+			StringServices.InsertHomographNumber(tsBldr, nHomograph, hc, HomographConfiguration.HeadwordVariant.Main, m_cache);
+			vwenv.AddString(tsBldr.GetString());
+		}
 
 		/// <summary>
 		///

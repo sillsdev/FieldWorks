@@ -1619,9 +1619,9 @@ namespace LanguageExplorer.Works
 				var window = PropertyTable.GetValue<Form>("window");
 				if (DialogResult.Yes == dlg.ShowDialog(window))
 				{
+#if RANDYTODO
 					using (new WaitCursor(window))
 					{
-#if RANDYTODO
 						using (ProgressState state = FwXWindow.CreatePredictiveProgressState(PropertyTable, "Delete record"))
 						{
 							state.SetMilestone(xWorksStrings.DeletingTheObject);
@@ -1643,8 +1643,9 @@ namespace LanguageExplorer.Works
 								m_suppressSaveOnChangeRecord = false;
 							}
 						}
-#endif
 					}
+					m_mediator.SendMessage("MasterRefresh", null);
+#endif
 				}
 			}
 			return true; //we handled this, no need to ask anyone else.

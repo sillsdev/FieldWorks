@@ -486,6 +486,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					bool newby;
 					dlg.GetDialogInfo(out entry, out newby);
 					// No need for a PropChanged here because InsertEntryDlg takes care of that. (LT-3608)
+#if RANDYTODO
+					// TODO: // Added in develop.
+					// m_mediator.SendMessage("MasterRefresh", null);
+#endif
 					RecordClerk.JumpToRecord(entry.Hvo);
 				}
 			}

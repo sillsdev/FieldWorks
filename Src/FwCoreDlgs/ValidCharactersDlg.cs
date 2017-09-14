@@ -1,4 +1,4 @@
-// Copyright (c) 2008-2013 SIL International
+// Copyright (c) 2008-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -670,8 +670,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			AccessibleName = GetType().Name;
 
 			m_openFileDialog = new OpenFileDialogAdapter();
-			m_openFileDialog.DefaultExt = "lds";
-			m_openFileDialog.InitialDirectory = ParatextHelper.ProjectsDirectory;
+			m_openFileDialog.InitialDirectory = ScriptureProvider.SettingsDirectory; // to import from language files from Paratext or Toolbox
 			m_openFileDialog.Title = FwCoreDlgs.kstidLanguageFileBrowser;
 
 			splitContainerOuter.Panel2MinSize = splitValidCharsOuter.Left +
@@ -916,14 +915,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			btnRemoveChar.Enabled = !string.IsNullOrEmpty(m_validCharsGridMngr.CurrentCharacter);
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Handles the Click event of the btnBrowseLangFile control.
-		/// </summary>
-		/// <param name="sender">The source of the event.</param>
-		/// <param name="e">The <see cref="T:System.EventArgs"/> instance containing the event
-		/// data.</param>
-		/// ------------------------------------------------------------------------------------
+		/// <remarks>
+		/// REVIEW (Hasso) 2017.07: this button and most other controls in the Based On tab are apparently never visible. If we want to maintain the
+		/// import functionality from Paratext and Toolbox, we should make these controls viewable--although it seems that functionality
+		/// has moved to the From Data tab (see CharContextControl). (REVIEW) so it is likely safe to remove these invisible controls entirely.
+		/// </remarks>
 		private void btnBrowseLangFile_Click(object sender, EventArgs e)
 		{
 			string paratext = ResourceHelper.GetResourceString("kstidParatextLanguageFiles");

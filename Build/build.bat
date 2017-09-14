@@ -41,6 +41,6 @@ call "%PRODUCT_DIR%\VC\vcvarsall.bat" %arch% 8.1
 REM allow typelib registration in redirected registry key even with limited permissions
 set OAPERUSERTLIBREG=1
 
-msbuild /t:refreshTargets
 msbuild /t:CheckDevelopmentPropertiesFile
+msbuild /t:refreshTargets
 msbuild %*

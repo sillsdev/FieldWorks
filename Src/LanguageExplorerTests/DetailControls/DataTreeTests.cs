@@ -2,16 +2,20 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
+using System.Xml.Linq;
 using LanguageExplorer;
 using LanguageExplorer.Controls.DetailControls;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel;
+using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Infrastructure;
+using SIL.Xml;
 
 namespace LanguageExplorerTests.DetailControls
 {
@@ -21,13 +25,13 @@ namespace LanguageExplorerTests.DetailControls
 	{
 		private Inventory m_parts;
 		private Inventory m_layouts;
-
 		private ILexEntry m_entry; // test object.
 		private IPropertyTable m_propertyTable;
 		private IPublisher m_publisher;
 		private ISubscriber m_subscriber;
 		private DataTree m_dtree;
 		private Form m_parent;
+		private CustomFieldForTest m_customField;
 		private SliceContextMenuFactory _sliceContextMenuFactory;
 
 		#region Fixture Setup and Teardown
@@ -39,7 +43,7 @@ namespace LanguageExplorerTests.DetailControls
 			keyAttrs["part"] = new[] {"id"};
 
 			var parts = new Inventory(new string[] {partDirectory},
-				"*Parts.xml", "/PartInventory/bin/*", keyAttrs, "DetailTreeTests", "ProjectPath");
+				"*Parts.xml", "/PartInventory/bin/*", keyAttrs, "DetailTreeTests", Path.GetTempPath());
 
 			return parts;
 		}
@@ -54,7 +58,7 @@ namespace LanguageExplorerTests.DetailControls
 			keyAttrs["part"] = new[] {"ref"};
 
 			var layouts = new Inventory(new[] {partDirectory},
-				"*.fwlayout", "/LayoutInventory/*", keyAttrs, "DetailTreeTests", "ProjectPath");
+				"*.fwlayout", "/LayoutInventory/*", keyAttrs, "DetailTreeTests", Path.GetTempPath());
 
 			return layouts;
 		}
@@ -70,6 +74,7 @@ namespace LanguageExplorerTests.DetailControls
 
 			m_layouts = GenerateLayouts();
 			m_parts = GenerateParts();
+			m_customField = new CustomFieldForTest(Cache, "testField", "testField", LexEntryTags.kClassId, CellarPropertyType.String, Guid.Empty);
 
 			NonUndoableUnitOfWorkHelper.Do(m_actionHandler, () =>
 			{
@@ -124,6 +129,13 @@ namespace LanguageExplorerTests.DetailControls
 			_sliceContextMenuFactory = null;
 
 			base.TestTearDown();
+		}
+
+		public override void FixtureTeardown()
+		{
+			base.FixtureTeardown();
+			if(Cache != null && Cache.MainCacheAccessor.MetaDataCache != null)
+				m_customField.Dispose();
 		}
 		#endregion
 
@@ -210,6 +222,27 @@ namespace LanguageExplorerTests.DetailControls
 			Assert.AreEqual("Citation form", (m_dtree.Controls[1] as Slice).Label);
 			Assert.AreEqual("Bibliography", (m_dtree.Controls[2] as Slice).Label);
 			Assert.AreEqual(0, (m_dtree.Controls[1] as Slice).Indent); // was 1, but indent currently suppressed.
+		}
+
+		/// <summary>Remove duplicate custom field placeholder parts</summary>
+		[Test]
+		public void RemoveDuplicateCustomFields()
+		{
+			m_dtree.Initialize(Cache, false, m_layouts, m_parts);
+			m_dtree.ShowObject(m_entry, "Normal", null, m_entry, false);
+			var template = m_dtree.GetTemplateForObjLayout(m_entry, "Normal", null);
+			var expectedElement = XElement.Parse("<layout class=\"LexEntry\" type=\"detail\" name=\"Normal\"><part ref=\"_CustomFieldPlaceholder\" customFields=\"here\" /><part ref=\"Custom\" param=\"testField\" /></layout>");
+			Assert.IsTrue(XmlUtils.NodesMatch(expectedElement, template), "Exactly one part with a _CustomFieldPlaceholder ref attribute should exist.");
+		}
+
+		[Test]
+		public void BadCustomFieldPlaceHoldersAreCorrected()
+		{
+			m_dtree.Initialize(Cache, false, m_layouts, m_parts);
+			m_dtree.ShowObject(m_entry, "NoRef", null, m_entry, false);
+			var template = m_dtree.GetTemplateForObjLayout(m_entry, "NoRef", null);
+			var expectedElement = XElement.Parse("<layout class=\"LexEntry\" type=\"detail\" name=\"NoRef\"><part customFields=\"here\" ref=\"_CustomFieldPlaceholder\" /><part ref=\"Custom\" param=\"testField\" /></layout>");
+			Assert.IsTrue(XmlUtils.NodesMatch(expectedElement, template), "The previously empty ref on the customFields=\"here\" part should be _CustomFieldPlaceholder.");
 		}
 
 		/// <summary></summary>

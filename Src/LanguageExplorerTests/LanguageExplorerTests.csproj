@@ -340,6 +340,11 @@
     <Compile Include="Works\WordsUsedOnlyElsewhereFilterTests.cs" />
     <Compile Include="Works\XhtmlDocViewTests.cs" />
     <Compile Include="Works\XWorksAppTestBase.cs" />
+    <Compile Include="Works\DictionaryConfigurationMigrators\DictionaryConfigurationMigratorTests.cs" />
+    <Compile Include="Works\DictionaryConfigurationMigrators\FirstAlphaMigratorTests.cs" />
+    <Compile Include="Works\DictionaryConfigurationMigrators\FirstBetaMigratorTests.cs" />
+    <Compile Include="Works\DictionaryConfigurationMigrators\PreHistoricMigratorTests.cs" />
+    <Compile Include="Works\DictionaryConfigurationMigrators\StubContentControlProvider.cs" />
     <Compile Include="XMLViews\BulkEditBarTests.cs" />
     <Compile Include="XMLViews\ConfiguredExportTests.cs" />
     <Compile Include="XMLViews\DhListViewTests.cs" />

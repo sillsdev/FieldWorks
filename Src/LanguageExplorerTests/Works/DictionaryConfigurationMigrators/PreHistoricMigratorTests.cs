@@ -19,7 +19,7 @@ using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Utils;
 
-namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
+namespace LanguageExplorerTests.Works.DictionaryConfigurationMigrators
 {
 #if RANDYTODO // Some of this can be salvaged, but not the part where it loads the main xml config files.
 	public class PreHistoricMigratorTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase

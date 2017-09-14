@@ -7,12 +7,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
-using Paratext;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.LCModel.Core.Scripture;
 using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.LCModel;
 using SIL.FieldWorks.Language;
 using SIL.FieldWorks.Resources;
@@ -30,7 +29,7 @@ namespace SIL.FieldWorks.Common.Controls
 		private LcmStyleSheet m_scriptureStylesheet;
 		private IScripture m_scr;
 		private LcmCache m_cache;
-		private ScrText m_associatedPtText;
+		private IScrText m_associatedPtText;
 		internal const string ksDummyName = "dummy"; // used for Name of dummy nodes.
 
 		/// <summary>
@@ -54,7 +53,7 @@ namespace SIL.FieldWorks.Common.Controls
 		private void LoadTextsAndBooks(LcmCache cache, bool usebookImporter = true)
 		{
 			if (m_cache == null)
-			{
+		{
 				m_cache = cache;
 			}
 			Nodes.Clear();
@@ -93,7 +92,7 @@ namespace SIL.FieldWorks.Common.Controls
 		public void LoadScriptureTexts(LcmCache cache, bool usebookImporter = true)
 		{
 			if (m_cache == null)
-			{
+		{
 				m_cache = cache;
 			}
 			m_associatedPtText = usebookImporter ? ParatextHelper.GetAssociatedProject(cache.ProjectId) : null;
@@ -488,7 +487,7 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 
 			if (book == null || (m_associatedPtText != null && m_associatedPtText.BookPresent(book.CanonicalNum) &&
-									!m_associatedPtText.IsCheckSumCurrent(book.CanonicalNum, book.ImportedCheckSum)))
+				!m_associatedPtText.IsCheckSumCurrent(book.CanonicalNum, book.ImportedCheckSum)))
 			{
 				// The book for this node is out-of-date with the Paratext book data
 				IScrBook importedBook = Import(bookNum, owner, false);
@@ -499,13 +498,14 @@ namespace SIL.FieldWorks.Common.Controls
 				if (book == null)
 				{
 					return false;
-				}
+			}
 			}
 
 			if (m_associatedPtText != null)
 			{
-				ScrText btProject = ParatextHelper.GetBtsForProject(m_associatedPtText).FirstOrDefault();
-				if (btProject != null && btProject.BookPresent(book.CanonicalNum) && !btProject.IsCheckSumCurrent(book.CanonicalNum, book.ImportedBtCheckSum.get_String(book.Cache.DefaultAnalWs).Text))
+				var btProject = ParatextHelper.GetBtsForProject(m_associatedPtText).FirstOrDefault();
+				if (btProject != null && btProject.BookPresent(book.CanonicalNum) && !btProject.IsCheckSumCurrent(book.CanonicalNum,
+					book.ImportedBtCheckSum.get_String(book.Cache.DefaultAnalWs).Text))
 				{
 					// The BT for this book node is out-of-date with the Paratext BT data
 					Import(bookNum, owner, true);
@@ -613,7 +613,7 @@ namespace SIL.FieldWorks.Common.Controls
 				}
 				IScrImportSet importSettings = scr.FindOrCreateDefaultImportSettings(TypeOfImport.Paratext6, m_scriptureStylesheet,
 					FwDirectoryFinder.TeStylesPath);
-				ScrText paratextProj = ParatextHelper.GetAssociatedProject(m_cache.ProjectId);
+				var paratextProj = ParatextHelper.GetAssociatedProject(m_cache.ProjectId);
 				importSettings.ParatextScrProj = paratextProj.Name;
 				importSettings.StartRef = new BCVRef(bookNum, 0, 0);
 				int chapter = paratextProj.Versification.LastChapter(bookNum);
@@ -622,10 +622,10 @@ namespace SIL.FieldWorks.Common.Controls
 				{
 					importSettings.ImportTranslation = true;
 					importSettings.ImportBackTranslation = false;
-				}
+	}
 				else
 				{
-					List<ScrText> btProjects = ParatextHelper.GetBtsForProject(paratextProj).ToList();
+					var btProjects = ParatextHelper.GetBtsForProject(paratextProj).ToList();
 					if (btProjects.Count > 0 && (string.IsNullOrEmpty(importSettings.ParatextBTProj) ||
 												!btProjects.Any(st => st.Name == importSettings.ParatextBTProj)))
 					{
@@ -651,7 +651,7 @@ namespace SIL.FieldWorks.Common.Controls
 				owningForm,
 				m_scriptureStylesheet,
 				PropertyTable.GetValue<object>("App")))
-			{
+	{
 				return scr.FindBook(bookNum);
 			}
 			return null;

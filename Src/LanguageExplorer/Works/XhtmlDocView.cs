@@ -609,7 +609,7 @@ namespace LanguageExplorer.Works
 			using (var dlg = new DictionaryConfigurationDlg(propertyTable))
 			{
 				ICmObject current = null;
-				if (guid != Guid.Empty && cache != null)
+				if (guid != Guid.Empty && cache != null && cache.ServiceLocator.ObjectRepository.IsValidObjectId(guid))
 					current = cache.ServiceLocator.GetObject(guid);
 				else if (activeClerk != null)
 					current = activeClerk.CurrentObject;
@@ -916,7 +916,6 @@ namespace LanguageExplorer.Works
 					{
 						PropertyTable.SetProperty("SelectedPublication", validPublication, true, true);
 					}
-					SetReversalIndexOnPropertyDlg();
 					UpdateContent(PublicationDecorator, currentConfig);
 					break;
 				case "ActiveClerkSelectedObject":
@@ -1046,14 +1045,6 @@ namespace LanguageExplorer.Works
 		}
 
 #endregion
-
-		/// <summary>
-		/// Method which set the current writing system when selected in ConfigureReversalIndexDialog
-		/// </summary>
-		private void SetReversalIndexOnPropertyDlg() // REVIEW (Hasso) 2016.01: this seems to sabotage whatever is selected in the Config dialog
-		{
-			DictionaryConfigurationUtils.SetReversalIndexGuidBasedOnReversalIndexConfiguration(PropertyTable, Cache);
-		}
 
 		public void OnMasterRefresh(object sender)
 		{

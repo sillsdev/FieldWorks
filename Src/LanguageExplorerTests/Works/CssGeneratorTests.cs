@@ -3916,14 +3916,17 @@ namespace LanguageExplorerTests.Works
 			private void Dispose(bool disposing)
 			{
 				Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + " ******");
+
+				if (!disposing)
+					return;
+				var fontInfo = new FontInfo();
+				var style = new TestStyle(fontInfo, m_tests.Cache) { Name = m_name, IsParagraphStyle = false };
+				m_tests.SafelyAddStyleToSheetAndTable(m_name, style);
 			}
 
 			/// <summary>Replace the populated style with an empty one</summary>
 			public void Dispose()
 			{
-				var fontInfo = new FontInfo();
-				var style = new TestStyle(fontInfo, m_tests.Cache) { Name = m_name, IsParagraphStyle = false };
-				m_tests.SafelyAddStyleToSheetAndTable(m_name, style);
 				Dispose(true);
 				GC.SuppressFinalize(this);
 			}

@@ -397,6 +397,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// ------------------------------------------------------------------------------------
 		protected void ChangeNodeState(TreeNode node)
 		{
+			if (node == null) return;
 			BeginUpdate();
 			try
 			{
