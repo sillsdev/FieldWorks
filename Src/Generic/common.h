@@ -286,8 +286,12 @@ template<typename T> inline T * AddrOf(T & x)
 
 // This is to make a signed isizeof operator, otherwise we get tons of warnings about
 // signed / unsigned mismatches.
+#if !defined(_WIN32) && !defined(_M_X64)
+#define SSIZE_T ssize_t
+#endif // !SSIZE_T
+
 #ifndef isizeof
-	#define isizeof(T) ((int)sizeof(T))
+	#define isizeof(T) ((SSIZE_T)sizeof(T))
 #endif
 
 #define SizeOfArray(rgt) (isizeof(rgt) / isizeof(rgt[0]))

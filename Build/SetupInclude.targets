@@ -383,7 +383,7 @@
 	</Choose>
 
   <Choose>
-	<When Condition="'$(OS)'=='Windows_NT'">
+	<When Condition="'$(OS)'=='Windows_NT' AND '$(Platform)'!='x64'">
 	  <PropertyGroup>
 		<useNUnit-x86>true</useNUnit-x86>
 	  </PropertyGroup>

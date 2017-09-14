@@ -397,7 +397,7 @@ void CopyBytes(IStream * pstrmSrc, IStream * pstrmDst, int cb)
 /*----------------------------------------------------------------------------------------------
 	Fill bytes in the stream.
 ----------------------------------------------------------------------------------------------*/
-void FillBytes(IStream * pstrm, byte b, int cb)
+void FillBytes(IStream * pstrm, byte b, SSIZE_T cb)
 {
 	AssertPtr(pstrm);
 
@@ -407,7 +407,7 @@ void FillBytes(IStream * pstrm, byte b, int cb)
 	FillBytes(rgb, b, Min(cb, isizeof(rgb)));
 	while (cb > 0)
 	{
-		cbT = Min(cb, isizeof(rgb));
+		cbT = (int)Min(cb, isizeof(rgb));
 		WriteBuf(pstrm, rgb, cbT);
 		cb -= cbT;
 	}
@@ -457,14 +457,14 @@ void TypeInfoHolder::GetTI(ITypeInfo ** ppti)
 /*************************************************************************************
 	Hook the dll entry points to register and unregister the type libraries.
 *************************************************************************************/
-static void RegisterAllTypeLibraries(ENUMRESNAMEPROCW fRegister);
+static void RegisterAllTypeLibraries(BOOL fRegister);
 
 
 class TypeLibraryModuleEntry : public ModuleEntry
 {
 public:
 	virtual void RegisterServer(void)
-		{  ::RegisterAllTypeLibraries(0); }
+		{  ::RegisterAllTypeLibraries(true); }
 	virtual void UnregisterServer(void)
 		{ ::RegisterAllTypeLibraries(false); }
 };
@@ -572,8 +572,8 @@ static void RegisterTypeLibrary(int rid, BOOL fRegister)
 }
 
 
-static BOOL CALLBACK RegisterTypeLibProc(HMODULE hmod, LPCTSTR pszType,
-	LPTSTR pszName, LONG lParam)
+static BOOL CALLBACK RegisterTypeLibProc(HMODULE hmod, LPCWSTR pszType,
+	LPWSTR pszName, LONG_PTR lParam)
 {
 	LPTSTR ln = pszName;
 	if (_wtol(ln) >= 0x10000)
@@ -596,8 +596,8 @@ static BOOL CALLBACK RegisterTypeLibProc(HMODULE hmod, LPCTSTR pszType,
 }
 
 
-static BOOL CALLBACK UnregisterTypeLibProc(HMODULE hmod, LPCTSTR pszType,
-	LPTSTR pszName, LONG lParam)
+static BOOL CALLBACK UnregisterTypeLibProc(HMODULE hmod, LPCWSTR pszType,
+	LPWSTR pszName, LONG_PTR lParam)
 {
 	LPTSTR ln = pszName;
 	if (_wtol(ln) >= 0x10000)
@@ -620,11 +620,11 @@ static BOOL CALLBACK UnregisterTypeLibProc(HMODULE hmod, LPCTSTR pszType,
 	return true;
 }
 
-static void RegisterAllTypeLibraries(ENUMRESNAMEPROCW fRegister)
+static void RegisterAllTypeLibraries(BOOL fRegister)
 {
 	long l=0;
 
-	if (!EnumResourceNames(ModuleEntry::GetModuleHandle(), _T("TYPELIB"), fRegister, l))
+	if (!EnumResourceNames(ModuleEntry::GetModuleHandle(), _T("TYPELIB"), fRegister ? &RegisterTypeLibProc : &UnregisterTypeLibProc, l))
 	{
 		DWORD dw = GetLastError();
 
