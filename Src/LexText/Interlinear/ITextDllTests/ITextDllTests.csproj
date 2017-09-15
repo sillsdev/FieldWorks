@@ -270,6 +270,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\xCoreInterfaces.dll</HintPath>
     </Reference>
+    <Reference Include="XMLViews, Version=9.0.0.25844, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Output\Debug\XMLViews.dll</HintPath>
+    </Reference>
     <Reference Include="xWorks, Version=4.3.0.23980, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\xWorks.dll</HintPath>
@@ -294,6 +298,7 @@
     <Compile Include="InterlinearExporterTests.cs" />
     <Compile Include="BIRDFormatImportTests.cs" />
     <Compile Include="InterlinDocForAnalysisTests.cs" />
+    <Compile Include="InterlinearTextRecordClerkTests.cs" />
     <Compile Include="InterlinLineChoicesTests.cs">
       <SubType>Code</SubType>
     </Compile>

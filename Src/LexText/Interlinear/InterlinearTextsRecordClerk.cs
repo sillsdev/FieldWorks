@@ -315,6 +315,10 @@ namespace SIL.FieldWorks.IText
 				newText.ContentsOA = NewStText;
 				Clerk.CreateFirstParagraph(NewStText, wsText);
 				InterlinMaster.LoadParagraphAnnotationsAndGenerateEntryGuessesIfNeeded(NewStText, false);
+				if (Cache.LangProject.DiscourseDataOA == null)
+					Cache.LangProject.DiscourseDataOA = Cache.ServiceLocator.GetInstance<IDsDiscourseDataFactory>().Create();
+				Cache.ServiceLocator.GetInstance<IDsConstChartFactory>().Create(Cache.LangProject.DiscourseDataOA, newText.ContentsOA,
+					Cache.LangProject.GetDefaultChartTemplate());
 			}
 
 			#endregion
