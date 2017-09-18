@@ -8,6 +8,7 @@ using System.Reflection;
 using System.Xml;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel;
 using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.Common.Controls
@@ -147,21 +148,16 @@ namespace SIL.FieldWorks.Common.Controls
 			Assert.NotNull(method, "Method name changed, or parameters changed.");
 		}
 
-#if RANDYTODO
-		// TODO: LanguageExplorer isn't built yet, so test fails on remake.
-		// TODO: Restore at some point.
+
 		/// <summary/>
 		[Test]
-		public void CallImportObtainedLexicon_ImportObtainedLexiconCanBeFound()
+		public void CallImportLexiconObtained_ImportObtainedLexiconCanBeFound()
 		{
-			var flags = (BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static);
-			var type = ReflectionHelper.GetType(ObtainProjectMethod.ImportLexiconDll,
-															ObtainProjectMethod.ImportLexiconClass);
-			Assert.NotNull(type, "Class used for ImportObtainedLexicon moved.");
-			var method = type.GetMethod(ObtainProjectMethod.ImportLexiconMethod,
-												 new[] { typeof(LcmCache), typeof(string), typeof(System.Windows.Forms.Form) });
-			Assert.NotNull(method, "Method name changed, or parameters changed.");
+			var flags = (BindingFlags.NonPublic | BindingFlags.Static);
+			var type = ReflectionHelper.GetType(ObtainProjectMethod.ImportLexiconDll, ObtainProjectMethod.ImportLexiconClass);
+			Assert.NotNull(type, $"'{ObtainProjectMethod.ImportLexiconClass}' has moved.");
+			var method = type.GetMethod(ObtainProjectMethod.ImportLexiconMethod, new[] { typeof(LcmCache), typeof(string), typeof(System.Windows.Forms.Form) });
+			Assert.NotNull(method, $"'{ObtainProjectMethod.ImportLexiconMethod}' method name on '{ObtainProjectMethod.ImportLexiconClass}' has changed, or its parameters have changed.");
 		}
-#endif
 	}
 }

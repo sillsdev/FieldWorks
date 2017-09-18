@@ -126,7 +126,7 @@ namespace SIL.FieldWorks.Common.Controls
 		}
 
 		internal const string ImportLexiconDll = @"LanguageExplorer.dll";
-		internal const string ImportLexiconClass = @"LanguageExplorer.Dumpster.FLExBridgeListener";
+		internal const string ImportLexiconClass = @"LanguageExplorer.SendReceive.LiftBridge";
 		internal const string ImportLexiconMethod = @"ImportObtainedLexicon";
 
 		internal static void CallImportObtainedLexicon(LcmCache cache, string liftPath, Form parent)
@@ -136,8 +136,7 @@ namespace SIL.FieldWorks.Common.Controls
 			// reference, or any obviously suitable project to move it to without creating other References loops.
 			// nasty reflections call seems less technical debt than creating an otherwise unnecessary project.
 			// (It puts up its own progress dialog.)
-			ReflectionHelper.CallStaticMethod(ImportLexiconDll, ImportLexiconClass,
-				ImportLexiconMethod, cache, liftPath, parent);
+			ReflectionHelper.CallStaticMethod(ImportLexiconDll, ImportLexiconClass, ImportLexiconMethod, cache, liftPath, parent);
 		}
 
 		#endregion

@@ -207,7 +207,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditReversalEntries
 			// If allInstancesinRepository has any remaining instances, then they are not in the menu. Add them.
 			foreach (var rei in _reversalIndexRepository.AllInstances())
 			{
-				var newMenuItem = PaneBarContextMenuFactory.CreateToolStripMenuItem(contextMenuStrip, rei.ChooserNameTS.Text, null, ReversalIndex_Menu_Clicked, null);
+				var newMenuItem = ToolStripMenuItemFactory.CreateToolStripMenuItem(contextMenuStrip, rei.ChooserNameTS.Text, null, ReversalIndex_Menu_Clicked, null);
 				newMenuItem.Tag = rei;
 				if (rei == _currentReversalIndex)
 				{
@@ -217,7 +217,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditReversalEntries
 			}
 
 			contextMenuStrip.Items.Add(new ToolStripSeparator());
-			var currentToolStripMenuItem = PaneBarContextMenuFactory.CreateToolStripMenuItem(contextMenuStrip, "Configure Dictionary", null, ConfigureDictionary_Clicked, null);
+			var currentToolStripMenuItem = ToolStripMenuItemFactory.CreateToolStripMenuItem(contextMenuStrip, "Configure Dictionary", null, ConfigureDictionary_Clicked, null);
 			menuItems.Add(new Tuple<ToolStripMenuItem, EventHandler>(currentToolStripMenuItem, ConfigureDictionary_Clicked));
 
 			return retVal;

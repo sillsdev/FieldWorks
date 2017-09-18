@@ -279,7 +279,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 
 		private ToolStripMenuItem CreateToolStripMenuItem(ContextMenuStrip contextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>> menuItems, string menuText, string menuTooltip, EventHandler eventHandler)
 		{
-			var toolStripMenuItem = PaneBarContextMenuFactory.CreateToolStripMenuItem(contextMenuStrip, menuText, null, eventHandler, menuTooltip);
+			var toolStripMenuItem = ToolStripMenuItemFactory.CreateToolStripMenuItem(contextMenuStrip, menuText, menuTooltip, eventHandler);
 			menuItems.Add(new Tuple<ToolStripMenuItem, EventHandler>(toolStripMenuItem, eventHandler));
 			return toolStripMenuItem;
 		}

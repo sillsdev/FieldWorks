@@ -2082,16 +2082,23 @@ namespace LanguageExplorer.Controls.DetailControls
 						m_layoutInventory.PersistOverrideElement(persistableParent);
 					}
 					// We could do this search with an XPath but they are excruciatingly slow.
-					// Check all of the siblings, first going forward, then backward
-					for(var sibling = (XElement)insertAfter. NextNode; sibling != null && !exists;	sibling = (XElement)sibling.NextNode)
+					var allOfUsSiblings = insertAfter.Parent.Elements().ToList();
+					var whereIsWaldo = allOfUsSiblings.IndexOf(insertAfter);
+					// First: Go forward if needed ("Waldo is not the last/oldest sibling").
+					for (var olderSiblingIdx = whereIsWaldo + 1; olderSiblingIdx < allOfUsSiblings.Count; olderSiblingIdx++)
 					{
-						if (CheckCustomFieldsSibling(sibling, target))
+						if (CheckCustomFieldsSibling(allOfUsSiblings[olderSiblingIdx], target))
+						{
 							exists = true;
+						}
 					}
-					for(var sibling = (XElement)insertAfter.PreviousNode; sibling != null && !exists;	sibling = (XElement)sibling.PreviousNode)
+					// Second: Go Backward if needed (Waldo is not the first/youngest sibling).
+					for (var youngerSiblingIdx = whereIsWaldo - 1; youngerSiblingIdx >= 0; youngerSiblingIdx--)
 					{
-						if (CheckCustomFieldsSibling(sibling, target))
+						if (CheckCustomFieldsSibling(allOfUsSiblings[youngerSiblingIdx], target))
+						{
 							exists = true;
+						}
 					}
 
 					if (exists)

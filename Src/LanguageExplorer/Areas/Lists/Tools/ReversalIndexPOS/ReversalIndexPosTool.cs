@@ -243,7 +243,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 			var allInstancesinRepository = _reversalIndexRepository.AllInstances().ToDictionary(rei => rei.Guid);
 			foreach (var rei in allInstancesinRepository.Values)
 			{
-				var newMenuItem = PaneBarContextMenuFactory.CreateToolStripMenuItem(contextMenuStrip, rei.ChooserNameTS.Text, null, ReversalIndex_Menu_Clicked, null);
+				var newMenuItem = ToolStripMenuItemFactory.CreateToolStripMenuItem(contextMenuStrip, rei.ChooserNameTS.Text, null, ReversalIndex_Menu_Clicked, null);
 				newMenuItem.Tag = rei;
 				menuItems.Add(new Tuple<ToolStripMenuItem, EventHandler>(newMenuItem, ReversalIndex_Menu_Clicked));
 			}

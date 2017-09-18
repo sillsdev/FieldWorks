@@ -26,6 +26,7 @@ using LanguageExplorer;
 using LanguageExplorer.HelpTopics;
 using LanguageExplorer.Impls;
 using LanguageExplorer.LcmUi;
+using LanguageExplorer.SendReceive;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
@@ -439,7 +440,14 @@ namespace SIL.FieldWorks
 			// FieldWorks processes that are waiting on us be able to continue.
 			s_projectId = projectId;
 
-			WarnUserAboutFailedLiftImportIfNecessary(GetOrCreateApplication(appArgs));
+			// Warn user about failed Lift import if necessary.
+			var liftFolder = CommonBridgeServices.GetLiftRepositoryFolderFromFwProjectFolder(Cache.ProjectId.ProjectFolder);
+			if (LiftImportFailureServices.GetFailureStatus(liftFolder) != ImportFailureStatus.NoImportNeeded)
+			{
+				MessageBox.Show(LanguageExplorerResources.LiftSRFailureDetectedOnStartupMessage,
+					LanguageExplorerResources.LiftSRFailureDetectedOnStartupTitle,
+					MessageBoxButtons.OK, MessageBoxIcon.Warning);
+			}
 
 			if (s_noUserInterface)
 			{
@@ -449,20 +457,6 @@ namespace SIL.FieldWorks
 			}
 
 			return true;
-		}
-
-		private static void WarnUserAboutFailedLiftImportIfNecessary(IFlexApp fwApp)
-		{
-			var mainWindow = fwApp.ActiveMainWindow as IFwMainWnd;
-			if(mainWindow != null)
-			{
-#if RANDYTODO
-				// Try to live without Mediator as long as possible
-				// OnWarnUserAboutFailedLiftImportIfNecessary is in FLExBridgeListener
-				// The S/R menu is global.
-				//mainWindow.Mediator.SendMessage("WarnUserAboutFailedLiftImportIfNecessary", null);
-#endif
-			}
 		}
 
 		private static bool IsSharedXmlBackendNeeded(ProjectId projectId)
@@ -1663,11 +1657,11 @@ namespace SIL.FieldWorks
 								if (activeWindow != null)
 								{
 									var activeWindowInterface = (IFwMainWnd)activeWindow;
-									activeWindowInterface.PropertyTable.SetProperty("LastBridgeUsed",
-										obtainedProjectType == ObtainedProjectType.Lift ? "LiftBridge" : "FLExBridge",
+									activeWindowInterface.PropertyTable.SetProperty(CommonBridgeServices.LastBridgeUsed,
+										obtainedProjectType == ObtainedProjectType.Lift ? CommonBridgeServices.LiftBridge : CommonBridgeServices.FLExBridge,
 										SettingsGroup.LocalSettings,
 										true,
-										true);
+										false);
 								}
 							}
 							break;
@@ -1736,11 +1730,10 @@ namespace SIL.FieldWorks
 					if (activeWindow != null && dlg.ObtainedProjectType != ObtainedProjectType.None)
 					{
 						var activeWindowInterface = (IFwMainWnd)activeWindow;
-					activeWindowInterface.PropertyTable.SetProperty("LastBridgeUsed",
-							dlg.ObtainedProjectType == ObtainedProjectType.Lift ? "LiftBridge" : "FLExBridge",
+					activeWindowInterface.PropertyTable.SetProperty(CommonBridgeServices.LastBridgeUsed,
+							dlg.ObtainedProjectType == ObtainedProjectType.Lift ? CommonBridgeServices.LiftBridge : CommonBridgeServices.FLExBridge,
 						SettingsGroup.LocalSettings,
-						true,
-							true);
+						true, false);
 					}
 
 				if (dlg.DialogResult == DialogResult.OK)

@@ -9,8 +9,8 @@ using System.Text;
 using System.Xml;
 using Chorus;
 using Chorus.UI.Notes.Bar;
-using LanguageExplorer.Dumpster;
 using LanguageExplorer.Controls.DetailControls;
+using LanguageExplorer.SendReceive;
 using SIL.LCModel;
 using SIL.Progress;
 
@@ -33,7 +33,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// </summary>
 		public static string SendReceiveUser
 		{
-			get { return FLExBridgeListener.SendReceiveUser; }
+			get { return CommonBridgeServices.SendReceiveUser; }
 		}
 
 		/// <summary />
@@ -73,13 +73,12 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		// someone finds it in a browser.
 		private static string GetDataFilePath(LcmCache cache)
 		{
-			var dataFilePath = Path.Combine(cache.ProjectId.ProjectFolder, FLExBridgeListener.FakeLexiconFileName);
+			var dataFilePath = Path.Combine(cache.ProjectId.ProjectFolder, SendReceiveMenuManager.FakeLexiconFileName);
 			if (!File.Exists(dataFilePath))
 			{
 				using (var writer = new StreamWriter(dataFilePath, false, Encoding.UTF8))
 				{
-					writer.WriteLine("This is a stub file to provide an attachment point for " +
-						FLExBridgeListener.FlexLexiconNotesFileName);
+					writer.WriteLine("This is a stub file to provide an attachment point for " + SendReceiveMenuManager.FlexLexiconNotesFileName);
 				}
 			}
 			return dataFilePath;
@@ -102,7 +101,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				return results;
 			foreach (var path in Directory.EnumerateFiles(lexiconFolder, "*.lexdb"))
 			{
-				var notesFile = path + "." + FLExBridgeListener.kChorusNotesExtension;
+				var notesFile = path + CommonBridgeServices.kChorusNotesExtension;
 				if (File.Exists(notesFile))
 					results.Add(path);
 			}

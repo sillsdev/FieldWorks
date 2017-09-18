@@ -18,6 +18,7 @@ using LanguageExplorer.Areas.TextsAndWords;
 using LanguageExplorer.Controls;
 using SIL.Code;
 using LanguageExplorer.Controls.SilSidePane;
+using LanguageExplorer.SendReceive;
 using LanguageExplorer.UtilityTools;
 using LanguageExplorer.Works;
 using SIL.FieldWorks.Common.Controls;
@@ -80,6 +81,7 @@ namespace LanguageExplorer.Impls
 		private ParserMenuManager _parserMenuManager;
 		private DataNavigationManager _dataNavigationManager;
 		private MajorFlexComponentParameters _majorFlexComponentParameters;
+		private SendReceiveMenuManager _sendReceiveMenuManager;
 
 		/// <summary>
 		/// Create new instance of window.
@@ -104,7 +106,6 @@ namespace LanguageExplorer.Impls
 
 			SetupCustomStatusBarPanels();
 
-			_sendReceiveToolStripMenuItem.Enabled = FLExBridgeHelper.IsFlexBridgeInstalled();
 			projectLocationsToolStripMenuItem.Enabled = FwRegistryHelper.FieldWorksRegistryKeyLocalMachine.CanWriteKey();
 			archiveWithRAMPSILToolStripMenuItem.Enabled = ReapRamp.Installed;
 
@@ -146,6 +147,11 @@ namespace LanguageExplorer.Impls
 
 			_parserMenuManager.InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);
 
+			IdleQueue = new IdleQueue();
+
+			_sendReceiveMenuManager = new SendReceiveMenuManager(IdleQueue, this, _flexApp, Cache, _sendReceiveToolStripMenuItem, toolStripButtonFlexLiftBridge);
+			_sendReceiveMenuManager.InitializeFlexComponent(flexComponentParameters);
+
 			SetupRepositories();
 
 			SetupOutlookBar();
@@ -158,8 +164,6 @@ namespace LanguageExplorer.Impls
 			{
 				File.Delete(CrashOnStartupDetectorPathName);
 			}
-
-			IdleQueue = new IdleQueue();
 		}
 
 		private static bool SetupCrashDetectorFile()
@@ -957,7 +961,7 @@ namespace LanguageExplorer.Impls
 
 				_currentArea?.Deactivate(_majorFlexComponentParameters);
 				_currentTool?.Deactivate(_majorFlexComponentParameters);
-
+				_sendReceiveMenuManager?.Dispose();
 				_parserMenuManager?.Dispose();
 				_dataNavigationManager?.Dispose();
 				IdleQueue?.Dispose();
@@ -976,6 +980,7 @@ namespace LanguageExplorer.Impls
 				_viewHelper?.Dispose();
 			}
 
+			_sendReceiveMenuManager = null;
 			_parserMenuManager = null;
 			_dataNavigationManager = null;
 			_sidePane = null;
@@ -1054,8 +1059,8 @@ namespace LanguageExplorer.Impls
 			}
 			catch (Exception)
 			{
-				MessageBox.Show(this, string.Format(FrameworkStrings.ksCannotLaunchX, helpFile),
-					FrameworkStrings.ksError);
+				MessageBox.Show(this, string.Format(LanguageExplorerResources.ksCannotLaunchX, helpFile),
+					LanguageExplorerResources.ksError);
 			}
 		}
 
@@ -1115,7 +1120,7 @@ namespace LanguageExplorer.Impls
 			{
 				// Some other unforeseen error:
 				MessageBox.Show(null, string.Format(FrameworkStrings.ksErrorCannotLaunchMovies,
-					string.Format(FwDirectoryFinder.CodeDirectory + "{0}Language Explorer{0}Movies", Path.DirectorySeparatorChar)), FrameworkStrings.ksError);
+					string.Format(FwDirectoryFinder.CodeDirectory + "{0}Language Explorer{0}Movies", Path.DirectorySeparatorChar)), LanguageExplorerResources.ksError);
 			}
 		}
 
@@ -1175,8 +1180,8 @@ namespace LanguageExplorer.Impls
 
 			OpenDocument(path, err =>
 			{
-				MessageBox.Show(null, string.Format(FrameworkStrings.ksCannotLaunchX, path),
-					FrameworkStrings.ksError);
+				MessageBox.Show(null, string.Format(LanguageExplorerResources.ksCannotLaunchX, path),
+					LanguageExplorerResources.ksError);
 			});
 		}
 
@@ -1464,7 +1469,7 @@ namespace LanguageExplorer.Impls
 			OpenDocument(pathnameToWritingSystemHelpFile, err =>
 			{
 				MessageBox.Show(null, string.Format(FrameworkStrings.ksCannotShowX, pathnameToWritingSystemHelpFile),
-					FrameworkStrings.ksError);
+					LanguageExplorerResources.ksError);
 			});
 		}
 
@@ -1476,7 +1481,7 @@ namespace LanguageExplorer.Impls
 			OpenDocument(xLingPaperPathname, err =>
 			{
 				MessageBox.Show(null, string.Format(FrameworkStrings.ksCannotShowX, xLingPaperPathname),
-					FrameworkStrings.ksError);
+					LanguageExplorerResources.ksError);
 			});
 		}
 

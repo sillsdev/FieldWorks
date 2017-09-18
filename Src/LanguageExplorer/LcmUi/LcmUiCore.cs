@@ -1661,6 +1661,9 @@ namespace LanguageExplorer.LcmUi
 		public static CmObjectUi CreateNewUiObject(LcmCache cache, int classId, int hvoOwner,
 			int flid, int insertionPosition)
 		{
+			if (cache == null)
+				throw new ArgumentNullException(nameof(cache));
+
 			if (CheckAndReportProblemAddingSubitem(cache, hvoOwner))
 				return null;
 			return DefaultCreateNewUiObject(classId, hvoOwner, flid, insertionPosition, cache);
@@ -2054,6 +2057,9 @@ namespace LanguageExplorer.LcmUi
 		/// </summary>
 		public static LexSenseUi CreateNewUiObject(LcmCache cache, int hvoOwner, int insertionPosition = int.MaxValue)
 		{
+			if (cache == null)
+				throw new ArgumentNullException(nameof(cache));
+
 			var owner = cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoOwner);
 			if (owner is ILexEntry)
 			{

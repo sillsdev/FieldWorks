@@ -79,15 +79,6 @@ namespace SIL.FieldWorks.Common.Framework {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Sorry, could not launch {0}..
-        /// </summary>
-        public static string ksCannotLaunchX {
-            get {
-                return ResourceManager.GetString("ksCannotLaunchX", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to File {0} could not be loaded.
         ///{1}.
         /// </summary>
@@ -121,15 +112,6 @@ namespace SIL.FieldWorks.Common.Framework {
         public static string ksCannotShowX {
             get {
                 return ResourceManager.GetString("ksCannotShowX", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Error.
-        /// </summary>
-        public static string ksError {
-            get {
-                return ResourceManager.GetString("ksError", resourceCulture);
             }
         }
         

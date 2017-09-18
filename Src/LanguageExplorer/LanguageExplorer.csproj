@@ -115,15 +115,15 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\NAudio.Lame.1.0.4\lib\net20\NAudio.Lame.dll</HintPath>
     </Reference>
-    <Reference Include="SIL.LCModel, Version=9.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="SIL.LCModel">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\SIL.LCModel.dll</HintPath>
     </Reference>
-    <Reference Include="SIL.LCModel.Core, Version=9.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="SIL.LCModel.Core">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\SIL.LCModel.Core.dll</HintPath>
     </Reference>
-    <Reference Include="SIL.LCModel.Utils, Version=9.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="SIL.LCModel.Utils">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\SIL.LCModel.Utils.dll</HintPath>
     </Reference>
@@ -897,6 +897,17 @@
     </Compile>
     <Compile Include="PersistenceProviderFactory.cs" />
     <Compile Include="RecordClerkServices.cs" />
+    <Compile Include="SendReceive\BridgeMenuInstallRound.cs" />
+    <Compile Include="SendReceive\CommonBridgeServices.cs" />
+    <Compile Include="SendReceive\FlexBridge.cs" />
+    <Compile Include="SendReceive\IBridge.cs" />
+    <Compile Include="SendReceive\LiftBridge.cs" />
+    <Compile Include="SendReceive\SendReceiveMenuManager.cs" />
+    <Compile Include="SendReceive\SendReceiveResources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SendReceiveResources.resx</DependentUpon>
+    </Compile>
     <Compile Include="SimpleLogger.cs" />
     <Compile Include="StatusBarPanelServices.cs" />
     <Compile Include="Unicode.cs" />
@@ -1147,25 +1158,6 @@
     <Compile Include="Works\XWorksViewBase.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <None Include="Controls\DetailControls\atomicNode.bmp" />
-    <None Include="Controls\DetailControls\CollectionNode.bmp" />
-    <None Include="Controls\DetailControls\SequenceSmall.bmp" />
-    <None Include="Controls\DetailControls\Resources\gotoLinkPic.png" />
-    <None Include="Controls\DetailControls\PartGenerator\LayoutGenerate.xslt" />
-    <None Include="Controls\DetailControls\PartGenerator\PartGenerate.xslt" />
-    <Content Include="..\..\..\..\Users\Randy Regnier\Desktop\DevWork\NewDevWork\05_Remove use of main xml config files\Configuration\CombinedConfig_BleedingEdge.xml">
-      <Link>XML\CombinedConfig_BleedingEdge.xml</Link>
-    </Content>
-    <Content Include="..\..\..\..\Users\Randy Regnier\Desktop\DevWork\NewDevWork\05_Remove use of main xml config files\Configuration\CombinedConfig_Develop.xml">
-      <Link>XML\CombinedConfig_Develop.xml</Link>
-    </Content>
-    <Content Include="Controls\LexText\Resources\Bullet.bmp" />
-    <Content Include="Controls\LexText\Resources\CheckBox.bmp" />
-    <Content Include="Controls\LexText\Resources\CheckedBox.bmp" />
-    <Content Include="Controls\LexText\Resources\Create Entry.ico" />
-    <Content Include="Controls\LexText\Resources\Find Lexical Entry.ico" />
-    <Content Include="LcmUi\Resources\EXCLEM.ICO" />
-    <Content Include="LcmUi\Resources\question.ico" />
     <EmbeddedResource Include="Controls\HtmlControl.resx">
       <DependentUpon>HtmlControl.cs</DependentUpon>
     </EmbeddedResource>
@@ -1239,8 +1231,6 @@
     <EmbeddedResource Include="MGA\Radio.bmp" />
     <EmbeddedResource Include="MGA\RadioSelected.bmp" />
     <EmbeddedResource Include="MGA\UserChoice.bmp" />
-    <Content Include="Works\Resources\ArrowDown.png" />
-    <Content Include="Works\Resources\ArrowUp.png" />
     <EmbeddedResource Include="Controls\DetailControls\AtomicReferenceLauncher.resx">
       <DependentUpon>AtomicReferenceLauncher.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -1550,6 +1540,10 @@
       <LastGenOutput>MGAStrings.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="SendReceive\SendReceiveResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>SendReceiveResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="Works\AddCustomFieldDlg.resx">
       <DependentUpon>AddCustomFieldDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -1664,312 +1658,10 @@
       <DependentUpon>XWorksViewBase.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <Content Include="Works\Resources\EntriesOrChildrenClerkPartOwnershipTree.xml" />
-    <Content Include="images\Arrow_Down.ico" />
-    <Content Include="images\Arrow_Up.ico" />
-    <Content Include="images\DefaultIcon.ico" />
-    <Content Include="images\Add New Analysis.ico" />
-    <Content Include="images\DropDown2003.ico" />
-    <Content Include="images\DropDown2007.ico" />
-    <Content Include="images\Grip2003.ico" />
-    <Content Include="images\Grip2007.ico" />
-    <Content Include="images\MenuWidget.bmp" />
-    <Content Include="Resources\LexiconProblemsParameters.xml" />
-    <Content Include="Resources\NaturalClassEditToolParameters.xml" />
-    <Content Include="Resources\NotebookEditBrowseParameters.xml" />
-    <Content Include="Resources\NotebookEditRecordEditViewParameters.xml" />
-    <Content Include="Resources\PhonemeEditToolParameters.xml" />
-    <Content Include="Resources\PhonologicalFeaturesAdvancedEditToolParameters.xml" />
-    <Content Include="Resources\PhonologicalRuleEditToolParameters.xml" />
-    <Content Include="Resources\PosEditParameters.xml" />
-    <Content Include="Resources\ProdRestrictEditToolParameters.xml" />
-    <Content Include="Resources\RapidDataEntryToolParameters.xml" />
-    <Content Include="Resources\ReversalBulkEditReversalEntriesToolParameters.xml" />
-    <Content Include="Resources\ReversalEditCompleteToolParameters.xml" />
-    <Content Include="Resources\ReversalToolReversalIndexPOSBrowseViewParameters.xml" />
-    <Content Include="Resources\ReversalToolReversalIndexPOSRecordEditViewParameters.xml" />
     <EmbeddedResource Include="UtilityTools\UtilityDlg.resx">
       <DependentUpon>UtilityDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <Content Include="Resources\VisibilityFilter_All.xml" />
-    <Content Include="Resources\HideAdvancedListItemFields.xml" />
-    <Content Include="Resources\HideAdvancedFeatureFields.xml" />
-    <Content Include="Resources\WordListColumns.xml" />
-    <Content Include="Resources\WordListConcordanceToolParameters.xml" />
-    <Content Include="Resources\WordListParameters.xml" />
-    <None Include="BuildInclude.targets" />
-    <None Include="images\NavigationImages\FWFirstArrow.bmp" />
-    <None Include="images\NavigationImages\FWLastArrow.bmp" />
-    <None Include="images\NavigationImages\FWLeftArrow.bmp" />
-    <None Include="images\NavigationImages\FWRightArrow.bmp" />
-    <Content Include="Resources\AdhocCoprohibitionRuleEditToolParameters.xml" />
-    <Content Include="Resources\AnalysesRecordEditViewParameters.xml" />
-    <Content Include="Resources\BulkEditEntriesOrSensesToolParameters.xml" />
-    <Content Include="Resources\BulkEditPhonemesToolParameters.xml" />
-    <Content Include="Resources\BulkEditWordformsToolParameters.xml" />
-    <Content Include="Resources\ComplexConcordanceToolParameters.xml" />
-    <Content Include="Resources\CompoundRuleAdvancedEditToolParameters.xml" />
-    <Content Include="Resources\ConcordanceColumns.xml" />
-    <Content Include="Resources\ConcordanceToolParameters.xml" />
-    <Content Include="Resources\EnvironmentEditToolParameters.xml" />
-    <Content Include="Resources\FeaturesAdvancedEditToolParameters.xml" />
-    <Content Include="Resources\FeatureTypesAdvancedEditBrowseViewParameters.xml" />
-    <Content Include="Resources\FeatureTypesAdvancedEditRecordEditViewParameters.xml" />
-    <Content Include="Resources\InterlinearEditToolParameters.xml" />
-    <Content Include="Resources\LexiconClassifiedDictionaryParameters.xml" />
-    <Content Include="Resources\LexiconDictionaryConfigureLayouts.xml" />
-    <Content Include="Resources\LexiconDictionaryToolParameters.xml" />
-    <Content Include="Resources\LexiconEditRecordDocViewParameters.xml" />
-    <Content Include="Resources\LexiconEditRecordEditViewParameters.xml" />
-    <Content Include="Resources\MatchingEntriesParameters.xml" />
-    <Content Include="Resources\TimeOfDayEditParameters.xml" />
-    <Content Include="Resources\RecTypeEditParameters.xml" />
-    <Content Include="Resources\VariantEntryTypeEditParameters.xml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Resources\UsageTypeEditParameters.xml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Resources\TranslationTypeEditParameters.xml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Resources\TextMarkupTagsEditParameters.xml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Resources\StatusEditParameters.xml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Resources\SenseTypeEditParameters.xml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Resources\SemanticDomainEditParameters.xml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Resources\RestrictionsEditParameters.xml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Resources\PositionsEditParameters.xml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Resources\PeopleEditParameters.xml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Resources\MorphTypeEditParameters.xml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Resources\PublicationsEditParameters.xml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Resources\LocationsEditParameters.xml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Resources\LexRefEditParameters.xml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Resources\GenresEditParameters.xml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Resources\RoleEditParameters.xml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Resources\EducationEditParameters.xml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Resources\CharttempEditParameters.xml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Resources\ChartmarkEditParameters.xml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Resources\ConfidenceEditParameters.xml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Resources\AnthroEditParameters.xml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Resources\ComplexEntryTypeEditParameters.xml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Resources\DomainTypeEditParameters.xml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Resources\LexiconBrowseDialogColumnDefinitions.xml" />
-    <Content Include="Resources\LexiconBrowseOverrides.xml" />
-    <Content Include="Resources\LexiconBrowseParameters.xml" />
-    <Content Include="Resources\GrammarCategoryBrowserParameters.xml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Resources\ListToolsSliceFilters.xml" />
-    <Content Include="Resources\NotebookBrowseParameters.xml" />
-    <Content Include="Resources\NotebookDocumentParameters.xml">
-      <SubType>Designer</SubType>
-    </Content>
-    <None Include="Resources\NotebookBrowseColumnDefinitions.xml" />
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\Grammar\Edit\DataEntryFilters\basicFilter.xml">
-      <Link>XML\Grammar\Edit\DataEntryFilters\basicFilter.xml</Link>
-    </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\Grammar\Edit\DataEntryFilters\basicPlusFilter.xml">
-      <Link>XML\Grammar\Edit\DataEntryFilters\basicPlusFilter.xml</Link>
-    </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\Grammar\Edit\toolConfiguration.xml">
-      <Link>XML\Grammar\Edit\toolConfiguration.xml</Link>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\Lexicon\DataTreeInclude.xml">
-      <Link>XML\Lexicon\DataTreeInclude.xml</Link>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\Lexicon\Dictionary\toolConfiguration.xml">
-      <Link>XML\Lexicon\Dictionary\toolConfiguration.xml</Link>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\Lexicon\Edit\DataEntryFilters\basicFilter.xml">
-      <Link>XML\Lexicon\Edit\DataEntryFilters\basicFilter.xml</Link>
-    </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\Lexicon\Edit\DataEntryFilters\basicPlusFilter.xml">
-      <Link>XML\Lexicon\Edit\DataEntryFilters\basicPlusFilter.xml</Link>
-    </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\Lexicon\RDE\toolConfiguration.xml">
-      <Link>XML\Lexicon\RDE\toolConfiguration.xml</Link>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\Lexicon\ReversalEntriesBulkEdit\toolConfiguration.xml">
-      <Link>XML\Lexicon\ReversalEntriesBulkEdit\toolConfiguration.xml</Link>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\Lexicon\ReversalIndices\toolConfiguration.xml">
-      <Link>XML\Lexicon\ReversalIndices\toolConfiguration.xml</Link>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\Lists\areaConfiguration.xml">
-      <Link>XML\Lists\areaConfiguration.xml</Link>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\Lists\DataTreeInclude.xml">
-      <Link>XML\Lists\DataTreeInclude.xml</Link>
-    </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\Lists\Edit\toolConfiguration.xml">
-      <Link>XML\Lists\Edit\toolConfiguration.xml</Link>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\Lists\ReversalPOSEdit\toolConfiguration.xml">
-      <Link>XML\Lists\ReversalPOSEdit\toolConfiguration.xml</Link>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\Notebook\areaConfiguration.xml">
-      <Link>XML\Notebook\areaConfiguration.xml</Link>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\Notebook\Edit\toolConfiguration.xml">
-      <Link>XML\Notebook\Edit\toolConfiguration.xml</Link>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\CommonDataTreeInclude.xml">
-      <Link>XML\CommonDataTreeInclude.xml</Link>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\ConstituentChartStyleInfo.xml">
-      <Link>XML\ConstituentChartStyleInfo.xml</Link>
-    </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\ContextHelp.xml">
-      <Link>XML\ContextHelp.xml</Link>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\Parts\CellarParts.xml">
-      <Link>XML\Parts\CellarParts.xml</Link>
-    </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\Parts\CmPossibilityParts.xml">
-      <Link>XML\Parts\CmPossibilityParts.xml</Link>
-    </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\Parts\LexEntryParts.xml">
-      <Link>XML\Parts\LexEntryParts.xml</Link>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\Parts\LexSenseParts.xml">
-      <Link>XML\Parts\LexSenseParts.xml</Link>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\Parts\MorphologyParts.xml">
-      <Link>XML\Parts\MorphologyParts.xml</Link>
-    </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\Parts\NotebookParts.xml">
-      <Link>XML\Parts\NotebookParts.xml</Link>
-    </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\Parts\ReversalParts.xml">
-      <Link>XML\Parts\ReversalParts.xml</Link>
-    </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\Parts\WFIParts.xml">
-      <Link>XML\Parts\WFIParts.xml</Link>
-    </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\Words\reusableBrowseControlConfiguration.xml">
-      <Link>XML\Word\reusableBrowseControlConfiguration.xml</Link>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\Parts\Cellar.fwlayout">
-      <Link>XML\Parts\Cellar.fwlayout</Link>
-    </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\Parts\CmPossibility.fwlayout">
-      <Link>XML\Parts\CmPossibility.fwlayout</Link>
-    </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\Parts\LexEntry.fwlayout">
-      <Link>XML\Parts\LexEntry.fwlayout</Link>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\Parts\LexSense.fwlayout">
-      <Link>XML\Parts\LexSense.fwlayout</Link>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\Parts\Morphology.fwlayout">
-      <Link>XML\Parts\Morphology.fwlayout</Link>
-    </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\Parts\Notebook.fwlayout">
-      <Link>XML\Parts\Notebook.fwlayout</Link>
-    </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\Parts\Reversal.fwlayout">
-      <Link>XML\Parts\Reversal.fwlayout</Link>
-    </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\Parts\WFI.fwlayout">
-      <Link>XML\Parts\WFI.fwlayout</Link>
-    </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\Grammar\areaConfiguration.xml">
-      <Link>XML\Grammar\areaConfiguration.xml</Link>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\Grammar\DataTreeInclude.xml">
-      <Link>XML\Grammar\DataTreeInclude.xml</Link>
-    </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\Grammar\InflAffixTemplateInclude.xml">
-      <Link>XML\Grammar\InflAffixTemplateInclude.xml</Link>
-    </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\Lexicon\areaConfiguration.xml">
-      <Link>XML\Lexicon\areaConfiguration.xml</Link>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\Main.xml">
-      <Link>XML\Main.xml</Link>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\Words\Analyses\toolConfiguration.xml">
-      <Link>XML\Word\Analyses\toolConfiguration.xml</Link>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\Words\areaConfiguration.xml">
-      <Link>XML\Word\areaConfiguration.xml</Link>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\Words\BulkEdit\toolConfiguration.xml">
-      <Link>XML\Word\BulkEdit\toolConfiguration.xml</Link>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\Words\Concordance\toolConfiguration.xml">
-      <Link>XML\Word\Concordance\toolConfiguration.xml</Link>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\Words\Texts\toolConfigInclude.xml">
-      <Link>XML\Word\Text\toolConfigInclude.xml</Link>
-      <SubType>Designer</SubType>
-    </None>
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
@@ -2199,10 +1891,6 @@
     <Compile Include="Areas\TextsAndWords\Interlinear\EditMorphBreaksDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Content Include="..\..\DistFiles\Language Explorer\Configuration\strings-en.xml">
-      <Link>XML\strings-en.xml</Link>
-      <SubType>Designer</SubType>
-    </Content>
     <Content Include="Areas\TextsAndWords\Interlinear\FlexInterlinear-generated.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\FlexInterlinear.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\FocusBoxController.ApproveAndMove.cs">
@@ -2346,7 +2034,7 @@
     </Compile>
     <Compile Include="Areas\TextsAndWords\ParserMenuManager.cs" />
     <Compile Include="BitmapExtensions.cs" />
-    <Compile Include="Controls\PaneBarContextMenuFactory.cs" />
+    <Compile Include="Controls\ToolStripMenuItemFactory.cs" />
     <Compile Include="Controls\CollapsingSplitContainerFactory.cs" />
     <Compile Include="DataNavigationManager.cs" />
     <Compile Include="Areas\TextsAndWords\IParserTrace.cs" />
@@ -2415,7 +2103,6 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Dumpster\AreaListener.cs" />
-    <Compile Include="Dumpster\FLExBridgeListener.cs" />
     <Compile Include="Areas\Lexicon\ReversalClerk.cs" />
     <Compile Include="Areas\Lexicon\ReversalEntryClerk.cs" />
     <Compile Include="Dumpster\MasterCatDlgListener.cs" />
@@ -3100,10 +2787,6 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="..\..\DistFiles\Language Explorer\Configuration\Words\Texts\toolConfiguration.xml">
-      <Link>XML\Word\Text\toolConfiguration.xml</Link>
-      <SubType>Designer</SubType>
-    </Content>
     <EmbeddedResource Include="Areas\TextsAndWords\Interlinear\InvisibleSpaceCursor.cur" />
     <EmbeddedResource Include="Areas\TextsAndWords\Interlinear\IText.ico" />
     <Content Include="Areas\TextsAndWords\Interlinear\icons\ZeroWidth.ico" />
@@ -3170,11 +2853,290 @@
     <Content Include="images\Morphology\Phoneme.ico" />
     <Content Include="images\Notebook.ico" />
     <Content Include="LT.ico" />
-    <None Include="images\Text_And_Words.ico" />
-    <None Include="images\Grammar.ico" />
     <Content Include="images\Lexicon32.ico" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="BuildInclude.targets" />
+    <None Include="Controls\DetailControls\atomicNode.bmp" />
+    <None Include="Controls\DetailControls\CollectionNode.bmp" />
+    <None Include="Controls\DetailControls\SequenceSmall.bmp" />
+    <None Include="Controls\DetailControls\Resources\gotoLinkPic.png" />
+    <None Include="Controls\DetailControls\PartGenerator\LayoutGenerate.xslt" />
+    <None Include="Controls\DetailControls\PartGenerator\PartGenerate.xslt" />
+    <None Include="Controls\LexText\Resources\Bullet.bmp" />
+    <None Include="Controls\LexText\Resources\CheckBox.bmp" />
+    <None Include="Controls\LexText\Resources\CheckedBox.bmp" />
+    <None Include="Controls\LexText\Resources\Create Entry.ico" />
+    <None Include="Controls\LexText\Resources\Find Lexical Entry.ico" />
+    <None Include="images\SendReceive\chorus16.png" />
+    <None Include="images\SendReceive\chorus32.png" />
+    <None Include="images\SendReceive\sendReceive.svg" />
+    <None Include="images\SendReceive\sendReceive16x16.png" />
+    <None Include="images\SendReceive\sendReceiveFirst16x16.png" />
+    <None Include="images\SendReceive\SendReceiveGetArrow.svg" />
+    <None Include="images\SendReceive\SendReceiveGetArrow16x16.png" />
+    <None Include="images\SendReceive\SendReceiveGetArrow32x32.png" />
+    <None Include="images\SendReceive\Sync.png" />
+    <None Include="images\Arrow_Down.ico" />
+    <None Include="images\Arrow_Up.ico" />
+    <None Include="images\DefaultIcon.ico" />
+    <None Include="images\Add New Analysis.ico" />
+    <None Include="images\DropDown2003.ico" />
+    <None Include="images\DropDown2007.ico" />
+    <None Include="images\Grip2003.ico" />
+    <None Include="images\Grip2007.ico" />
+    <None Include="images\MenuWidget.bmp" />
+    <None Include="images\NavigationImages\FWFirstArrow.bmp" />
+    <None Include="images\NavigationImages\FWLastArrow.bmp" />
+    <None Include="images\NavigationImages\FWLeftArrow.bmp" />
+    <None Include="images\NavigationImages\FWRightArrow.bmp" />
+    <None Include="images\Text_And_Words.ico" />
+    <None Include="images\Grammar.ico" />
+    <None Include="LcmUi\Resources\EXCLEM.ICO" />
+    <None Include="LcmUi\Resources\question.ico" />
+    <None Include="Works\Resources\ArrowDown.png" />
+    <None Include="Works\Resources\ArrowUp.png" />
+    <None Include="Works\Resources\EntriesOrChildrenClerkPartOwnershipTree.xml" />
+    <None Include="Resources\LexiconProblemsParameters.xml" />
+    <None Include="Resources\NaturalClassEditToolParameters.xml" />
+    <None Include="Resources\NotebookEditBrowseParameters.xml" />
+    <None Include="Resources\NotebookEditRecordEditViewParameters.xml" />
+    <None Include="Resources\PhonemeEditToolParameters.xml" />
+    <None Include="Resources\PhonologicalFeaturesAdvancedEditToolParameters.xml" />
+    <None Include="Resources\PhonologicalRuleEditToolParameters.xml" />
+    <None Include="Resources\PosEditParameters.xml" />
+    <None Include="Resources\ProdRestrictEditToolParameters.xml" />
+    <None Include="Resources\RapidDataEntryToolParameters.xml" />
+    <None Include="Resources\ReversalBulkEditReversalEntriesToolParameters.xml" />
+    <None Include="Resources\ReversalEditCompleteToolParameters.xml" />
+    <None Include="Resources\ReversalToolReversalIndexPOSBrowseViewParameters.xml" />
+    <None Include="Resources\ReversalToolReversalIndexPOSRecordEditViewParameters.xml" />
+    <None Include="Resources\VisibilityFilter_All.xml" />
+    <None Include="Resources\HideAdvancedListItemFields.xml" />
+    <None Include="Resources\HideAdvancedFeatureFields.xml" />
+    <None Include="Resources\WordListColumns.xml" />
+    <None Include="Resources\WordListConcordanceToolParameters.xml" />
+    <None Include="Resources\WordListParameters.xml" />
+    <None Include="Resources\AdhocCoprohibitionRuleEditToolParameters.xml" />
+    <None Include="Resources\AnalysesRecordEditViewParameters.xml" />
+    <None Include="Resources\BulkEditEntriesOrSensesToolParameters.xml" />
+    <None Include="Resources\BulkEditPhonemesToolParameters.xml" />
+    <None Include="Resources\BulkEditWordformsToolParameters.xml" />
+    <None Include="Resources\ComplexConcordanceToolParameters.xml" />
+    <None Include="Resources\CompoundRuleAdvancedEditToolParameters.xml" />
+    <None Include="Resources\ConcordanceColumns.xml" />
+    <None Include="Resources\ConcordanceToolParameters.xml" />
+    <None Include="Resources\EnvironmentEditToolParameters.xml" />
+    <None Include="Resources\FeaturesAdvancedEditToolParameters.xml" />
+    <None Include="Resources\FeatureTypesAdvancedEditBrowseViewParameters.xml" />
+    <None Include="Resources\FeatureTypesAdvancedEditRecordEditViewParameters.xml" />
+    <None Include="Resources\InterlinearEditToolParameters.xml" />
+    <None Include="Resources\LexiconClassifiedDictionaryParameters.xml" />
+    <None Include="Resources\LexiconDictionaryConfigureLayouts.xml" />
+    <None Include="Resources\LexiconDictionaryToolParameters.xml" />
+    <None Include="Resources\LexiconEditRecordDocViewParameters.xml" />
+    <None Include="Resources\LexiconEditRecordEditViewParameters.xml" />
+    <None Include="Resources\MatchingEntriesParameters.xml" />
+    <None Include="Resources\TimeOfDayEditParameters.xml" />
+    <None Include="Resources\RecTypeEditParameters.xml" />
+    <None Include="Resources\VariantEntryTypeEditParameters.xml" />
+    <None Include="Resources\UsageTypeEditParameters.xml" />
+    <None Include="Resources\TranslationTypeEditParameters.xml" />
+    <None Include="Resources\TextMarkupTagsEditParameters.xml" />
+    <None Include="Resources\StatusEditParameters.xml" />
+    <None Include="Resources\SenseTypeEditParameters.xml" />
+    <None Include="Resources\SemanticDomainEditParameters.xml" />
+    <None Include="Resources\RestrictionsEditParameters.xml" />
+    <None Include="Resources\PositionsEditParameters.xml" />
+    <None Include="Resources\PeopleEditParameters.xml" />
+    <None Include="Resources\MorphTypeEditParameters.xml" />
+    <None Include="Resources\PublicationsEditParameters.xml" />
+    <None Include="Resources\LocationsEditParameters.xml" />
+    <None Include="Resources\LexRefEditParameters.xml" />
+    <None Include="Resources\GenresEditParameters.xml" />
+    <None Include="Resources\RoleEditParameters.xml" />
+    <None Include="Resources\EducationEditParameters.xml" />
+    <None Include="Resources\CharttempEditParameters.xml" />
+    <None Include="Resources\ChartmarkEditParameters.xml" />
+    <None Include="Resources\ConfidenceEditParameters.xml" />
+    <None Include="Resources\AnthroEditParameters.xml" />
+    <None Include="Resources\ComplexEntryTypeEditParameters.xml" />
+    <None Include="Resources\DomainTypeEditParameters.xml" />
+    <None Include="Resources\LexiconBrowseDialogColumnDefinitions.xml" />
+    <None Include="Resources\LexiconBrowseOverrides.xml" />
+    <None Include="Resources\LexiconBrowseParameters.xml" />
+    <None Include="Resources\GrammarCategoryBrowserParameters.xml" />
+    <None Include="Resources\ListToolsSliceFilters.xml" />
+    <None Include="Resources\NotebookBrowseParameters.xml" />
+    <None Include="Resources\NotebookDocumentParameters.xml" />
+    <None Include="Resources\NotebookBrowseColumnDefinitions.xml" />
+    <None Include="..\..\..\..\Users\Randy Regnier\Desktop\DevWork\NewDevWork\05_Remove use of main xml config files\Configuration\CombinedConfig_BleedingEdge.xml">
+      <Link>XML\CombinedConfig_BleedingEdge.xml</Link>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="..\..\..\..\Users\Randy Regnier\Desktop\DevWork\NewDevWork\05_Remove use of main xml config files\Configuration\CombinedConfig_Develop.xml">
+      <Link>XML\CombinedConfig_Develop.xml</Link>
+    </None>
+    <None Include="..\..\DistFiles\Language Explorer\Configuration\Grammar\Edit\DataEntryFilters\basicFilter.xml">
+      <Link>XML\Grammar\Edit\DataEntryFilters\basicFilter.xml</Link>
+    </None>
+    <None Include="..\..\DistFiles\Language Explorer\Configuration\Grammar\Edit\DataEntryFilters\basicPlusFilter.xml">
+      <Link>XML\Grammar\Edit\DataEntryFilters\basicPlusFilter.xml</Link>
+    </None>
+    <None Include="..\..\DistFiles\Language Explorer\Configuration\Grammar\Edit\toolConfiguration.xml">
+      <Link>XML\Grammar\Edit\toolConfiguration.xml</Link>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="..\..\DistFiles\Language Explorer\Configuration\Lexicon\DataTreeInclude.xml">
+      <Link>XML\Lexicon\DataTreeInclude.xml</Link>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="..\..\DistFiles\Language Explorer\Configuration\Lexicon\Dictionary\toolConfiguration.xml">
+      <Link>XML\Lexicon\Dictionary\toolConfiguration.xml</Link>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="..\..\DistFiles\Language Explorer\Configuration\Lexicon\Edit\DataEntryFilters\basicFilter.xml">
+      <Link>XML\Lexicon\Edit\DataEntryFilters\basicFilter.xml</Link>
+    </None>
+    <None Include="..\..\DistFiles\Language Explorer\Configuration\Lexicon\Edit\DataEntryFilters\basicPlusFilter.xml">
+      <Link>XML\Lexicon\Edit\DataEntryFilters\basicPlusFilter.xml</Link>
+    </None>
+    <None Include="..\..\DistFiles\Language Explorer\Configuration\Lexicon\RDE\toolConfiguration.xml">
+      <Link>XML\Lexicon\RDE\toolConfiguration.xml</Link>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="..\..\DistFiles\Language Explorer\Configuration\Lexicon\ReversalEntriesBulkEdit\toolConfiguration.xml">
+      <Link>XML\Lexicon\ReversalEntriesBulkEdit\toolConfiguration.xml</Link>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="..\..\DistFiles\Language Explorer\Configuration\Lexicon\ReversalIndices\toolConfiguration.xml">
+      <Link>XML\Lexicon\ReversalIndices\toolConfiguration.xml</Link>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="..\..\DistFiles\Language Explorer\Configuration\Lists\areaConfiguration.xml">
+      <Link>XML\Lists\areaConfiguration.xml</Link>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="..\..\DistFiles\Language Explorer\Configuration\Lists\DataTreeInclude.xml">
+      <Link>XML\Lists\DataTreeInclude.xml</Link>
+    </None>
+    <None Include="..\..\DistFiles\Language Explorer\Configuration\Lists\Edit\toolConfiguration.xml">
+      <Link>XML\Lists\Edit\toolConfiguration.xml</Link>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="..\..\DistFiles\Language Explorer\Configuration\Lists\ReversalPOSEdit\toolConfiguration.xml">
+      <Link>XML\Lists\ReversalPOSEdit\toolConfiguration.xml</Link>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="..\..\DistFiles\Language Explorer\Configuration\Notebook\areaConfiguration.xml">
+      <Link>XML\Notebook\areaConfiguration.xml</Link>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="..\..\DistFiles\Language Explorer\Configuration\Notebook\Edit\toolConfiguration.xml">
+      <Link>XML\Notebook\Edit\toolConfiguration.xml</Link>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="..\..\DistFiles\Language Explorer\Configuration\CommonDataTreeInclude.xml">
+      <Link>XML\CommonDataTreeInclude.xml</Link>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="..\..\DistFiles\Language Explorer\Configuration\ConstituentChartStyleInfo.xml">
+      <Link>XML\ConstituentChartStyleInfo.xml</Link>
+    </None>
+    <None Include="..\..\DistFiles\Language Explorer\Configuration\ContextHelp.xml">
+      <Link>XML\ContextHelp.xml</Link>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="..\..\DistFiles\Language Explorer\Configuration\Parts\CellarParts.xml">
+      <Link>XML\Parts\CellarParts.xml</Link>
+    </None>
+    <None Include="..\..\DistFiles\Language Explorer\Configuration\Parts\CmPossibilityParts.xml">
+      <Link>XML\Parts\CmPossibilityParts.xml</Link>
+    </None>
+    <None Include="..\..\DistFiles\Language Explorer\Configuration\Parts\LexEntryParts.xml">
+      <Link>XML\Parts\LexEntryParts.xml</Link>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="..\..\DistFiles\Language Explorer\Configuration\Parts\LexSenseParts.xml">
+      <Link>XML\Parts\LexSenseParts.xml</Link>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="..\..\DistFiles\Language Explorer\Configuration\Parts\MorphologyParts.xml">
+      <Link>XML\Parts\MorphologyParts.xml</Link>
+    </None>
+    <None Include="..\..\DistFiles\Language Explorer\Configuration\Parts\NotebookParts.xml">
+      <Link>XML\Parts\NotebookParts.xml</Link>
+    </None>
+    <None Include="..\..\DistFiles\Language Explorer\Configuration\Parts\ReversalParts.xml">
+      <Link>XML\Parts\ReversalParts.xml</Link>
+    </None>
+    <None Include="..\..\DistFiles\Language Explorer\Configuration\Parts\WFIParts.xml">
+      <Link>XML\Parts\WFIParts.xml</Link>
+    </None>
+    <None Include="..\..\DistFiles\Language Explorer\Configuration\Words\reusableBrowseControlConfiguration.xml">
+      <Link>XML\Word\reusableBrowseControlConfiguration.xml</Link>
+    </None>
+    <None Include="..\..\DistFiles\Language Explorer\Configuration\Parts\Cellar.fwlayout">
+      <Link>XML\Parts\Cellar.fwlayout</Link>
+    </None>
+    <None Include="..\..\DistFiles\Language Explorer\Configuration\Parts\CmPossibility.fwlayout">
+      <Link>XML\Parts\CmPossibility.fwlayout</Link>
+    </None>
+    <None Include="..\..\DistFiles\Language Explorer\Configuration\Parts\LexEntry.fwlayout">
+      <Link>XML\Parts\LexEntry.fwlayout</Link>
+    </None>
+    <None Include="..\..\DistFiles\Language Explorer\Configuration\Parts\LexSense.fwlayout">
+      <Link>XML\Parts\LexSense.fwlayout</Link>
+    </None>
+    <None Include="..\..\DistFiles\Language Explorer\Configuration\Parts\Morphology.fwlayout">
+      <Link>XML\Parts\Morphology.fwlayout</Link>
+    </None>
+    <None Include="..\..\DistFiles\Language Explorer\Configuration\Parts\Notebook.fwlayout">
+      <Link>XML\Parts\Notebook.fwlayout</Link>
+    </None>
+    <None Include="..\..\DistFiles\Language Explorer\Configuration\Parts\Reversal.fwlayout">
+      <Link>XML\Parts\Reversal.fwlayout</Link>
+    </None>
+    <None Include="..\..\DistFiles\Language Explorer\Configuration\Parts\WFI.fwlayout">
+      <Link>XML\Parts\WFI.fwlayout</Link>
+    </None>
+    <None Include="..\..\DistFiles\Language Explorer\Configuration\Grammar\areaConfiguration.xml">
+      <Link>XML\Grammar\areaConfiguration.xml</Link>
+    </None>
+    <None Include="..\..\DistFiles\Language Explorer\Configuration\Grammar\DataTreeInclude.xml">
+      <Link>XML\Grammar\DataTreeInclude.xml</Link>
+    </None>
+    <None Include="..\..\DistFiles\Language Explorer\Configuration\Grammar\InflAffixTemplateInclude.xml">
+      <Link>XML\Grammar\InflAffixTemplateInclude.xml</Link>
+    </None>
+    <None Include="..\..\DistFiles\Language Explorer\Configuration\Lexicon\areaConfiguration.xml">
+      <Link>XML\Lexicon\areaConfiguration.xml</Link>
+    </None>
+    <None Include="..\..\DistFiles\Language Explorer\Configuration\Main.xml">
+      <Link>XML\Main.xml</Link>
+    </None>
+    <None Include="..\..\DistFiles\Language Explorer\Configuration\Words\Analyses\toolConfiguration.xml">
+      <Link>XML\Word\Analyses\toolConfiguration.xml</Link>
+    </None>
+    <None Include="..\..\DistFiles\Language Explorer\Configuration\Words\areaConfiguration.xml">
+      <Link>XML\Word\areaConfiguration.xml</Link>
+    </None>
+    <None Include="..\..\DistFiles\Language Explorer\Configuration\Words\BulkEdit\toolConfiguration.xml">
+      <Link>XML\Word\BulkEdit\toolConfiguration.xml</Link>
+    </None>
+    <None Include="..\..\DistFiles\Language Explorer\Configuration\Words\Concordance\toolConfiguration.xml">
+      <Link>XML\Word\Concordance\toolConfiguration.xml</Link>
+    </None>
+    <None Include="..\..\DistFiles\Language Explorer\Configuration\Words\Texts\toolConfigInclude.xml">
+      <Link>XML\Word\Text\toolConfigInclude.xml</Link>
+    </None>
+    <None Include="..\..\DistFiles\Language Explorer\Configuration\strings-en.xml">
+      <Link>XML\strings-en.xml</Link>
+    </None>
+    <None Include="..\..\DistFiles\Language Explorer\Configuration\Words\Texts\toolConfiguration.xml">
+      <Link>XML\Word\Text\toolConfiguration.xml</Link>
+    </None>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="BuildInclude.targets" />
   <PropertyGroup>

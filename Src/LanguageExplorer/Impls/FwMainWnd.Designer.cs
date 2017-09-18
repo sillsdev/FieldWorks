@@ -122,7 +122,7 @@ namespace LanguageExplorer.Impls
 			this._tsbPrevious = new System.Windows.Forms.ToolStripButton();
 			this._tsbNext = new System.Windows.Forms.ToolStripButton();
 			this._tsbLast = new System.Windows.Forms.ToolStripButton();
-			this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
+			this.toolStripButtonFlexLiftBridge = new System.Windows.Forms.ToolStripButton();
 			this.toolStripContainer = new System.Windows.Forms.ToolStripContainer();
 			this.mainContainer = new LanguageExplorer.Controls.CollapsingSplitContainer();
 			this._sidePane = new LanguageExplorer.Controls.SilSidePane.SidePane();
@@ -927,7 +927,7 @@ namespace LanguageExplorer.Impls
             this._tsbPrevious,
             this._tsbNext,
             this._tsbLast,
-            this.toolStripButton1});
+            this.toolStripButtonFlexLiftBridge});
 			this.toolStripStandard.Location = new System.Drawing.Point(3, 0);
 			this.toolStripStandard.Name = "toolStripStandard";
 			this.toolStripStandard.Size = new System.Drawing.Size(294, 27);
@@ -1026,7 +1026,7 @@ namespace LanguageExplorer.Impls
 			this._tsbPrevious.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this._tsbPrevious.Name = "_tsbPrevious";
 			this._tsbPrevious.Size = new System.Drawing.Size(24, 24);
-			this._tsbPrevious.Text = "toolStripButton1";
+			this._tsbPrevious.Text = "toolStripButtonFlexLiftBridge";
 			this._tsbPrevious.ToolTipText = "Show the previous item.";
 			// 
 			// _tsbNext
@@ -1036,7 +1036,7 @@ namespace LanguageExplorer.Impls
 			this._tsbNext.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this._tsbNext.Name = "_tsbNext";
 			this._tsbNext.Size = new System.Drawing.Size(24, 24);
-			this._tsbNext.Text = "toolStripButton1";
+			this._tsbNext.Text = "toolStripButtonFlexLiftBridge";
 			this._tsbNext.ToolTipText = "Show the next item.";
 			// 
 			// _tsbLast
@@ -1046,18 +1046,18 @@ namespace LanguageExplorer.Impls
 			this._tsbLast.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this._tsbLast.Name = "_tsbLast";
 			this._tsbLast.Size = new System.Drawing.Size(24, 24);
-			this._tsbLast.Text = "toolStripButton1";
+			this._tsbLast.Text = "toolStripButtonFlexLiftBridge";
 			this._tsbLast.ToolTipText = "Show the last item.";
 			// 
-			// toolStripButton1
+			// toolStripButtonFlexLiftBridge
 			// 
-			this.toolStripButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-			this.toolStripButton1.Enabled = false;
-			this.toolStripButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton1.Image")));
-			this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.toolStripButton1.Name = "toolStripButton1";
-			this.toolStripButton1.Size = new System.Drawing.Size(24, 24);
-			this.toolStripButton1.Text = "toolStripButtonFlexLiftBridge";
+			this.toolStripButtonFlexLiftBridge.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.toolStripButtonFlexLiftBridge.Enabled = false;
+			this.toolStripButtonFlexLiftBridge.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonFlexLiftBridge.Image")));
+			this.toolStripButtonFlexLiftBridge.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.toolStripButtonFlexLiftBridge.Name = "toolStripButtonFlexLiftBridge";
+			this.toolStripButtonFlexLiftBridge.Size = new System.Drawing.Size(24, 24);
+			this.toolStripButtonFlexLiftBridge.Text = "toolStripButtonFlexLiftBridge";
 			// 
 			// toolStripContainer
 			// 
@@ -1380,7 +1380,7 @@ namespace LanguageExplorer.Impls
 		private ToolStrip toolStripInsert;
 		private ToolStrip toolStripView;
 		private ToolStripButton toolStripButtonChangeFilterClearAll;
-		private ToolStripButton toolStripButton1;
+		private ToolStripButton toolStripButtonFlexLiftBridge;
 		private ToolStripMenuItem pHDeleteToolStripMenuItem;
 		private ToolStripButton toolStripButton2;
 		private ToolStripButton toolStripButtonHistoryBack;

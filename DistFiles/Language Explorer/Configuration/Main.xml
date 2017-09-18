@@ -30,18 +30,18 @@
 	<commands>
 		<command id="CmdChooseLangProject" label="_Open..." message="ChooseLangProject" icon="OpenProject" shortcut="Ctrl+O" a10status="DONE" />
 		<!-- Send/Receive commands. See "ContextHelp.xml" file for corresponding tooltips. -->
-		<command id="CmdFLExBridge" label="Send/Receive _Project (with other FLEx users)..." icon="syncSendReceive" message="FLExBridge" />
-		<command id="CmdViewMessages" label="_View Project Messages..." message="ViewMessages" />
-		<command id="CmdLiftBridge" label="Send/Receive _Lexicon (WeSay)..." icon="syncSendReceive" message="LiftBridge" />
-		<command id="CmdViewLiftMessages" label="Vie_w Lexicon Messages..." message="ViewLiftMessages" />
-		<command id="CmdObtainAnyFlexBridgeProject" label="_Get Project from Colleague..." icon="syncObtain" message="ObtainAnyFlexBridgeProject" />
-		<command id="CmdObtainLiftProject" label="Get Lexicon (WeSay) and _Merge with this Project..." icon="syncObtain" message="ObtainLiftProject" />
-		<command id="CmdObtainFirstFlexBridgeProject" label="Send this _Project for the first time..." icon="syncSendReceiveFirst" message="FirstFLExBridge" />
-		<command id="CmdObtainFirstLiftProject" label="Send this _Lexicon for the first time (to WeSay)..." icon="syncSendReceiveFirst" message="FirstLiftBridge" />
-		<command id="CmdHelpChorus" label="_Help..." message="ShowChorusHelp" />
-		<command id="CmdCheckForFlexBridgeUpdates" label="Check for FLEx Bridge _Updates..." message="CheckForFlexBridgeUpdates" />
-		<command id="CmdHelpAboutFLEXBridge" label="_About FLEx Bridge..." icon="chorus" message="AboutFlexBridge"/>
-		<command id="CmdFLExLiftBridge" label="Send/Receive..." icon="syncSendReceive" message="FLExLiftBridge" shortcut="Ctrl+R" />
+		<command id="CmdFLExBridge" label="Send/Receive _Project (with other FLEx users)..." icon="syncSendReceive" message="FLExBridge" a10status="DONE" />
+		<command id="CmdViewMessages" label="_View Project Messages..." message="ViewMessages" a10status="DONE" />
+		<command id="CmdLiftBridge" label="Send/Receive _Lexicon (WeSay)..." icon="syncSendReceive" message="LiftBridge" a10status="DONE" />
+		<command id="CmdViewLiftMessages" label="Vie_w Lexicon Messages..." message="ViewLiftMessages" a10status="DONE" />
+		<command id="CmdObtainAnyFlexBridgeProject" label="_Get Project from Colleague..." icon="syncObtain" message="ObtainAnyFlexBridgeProject" a10status="DONE" />
+		<command id="CmdObtainLiftProject" label="Get Lexicon (WeSay) and _Merge with this Project..." icon="syncObtain" message="ObtainLiftProject" a10status="DONE" />
+		<command id="CmdObtainFirstFlexBridgeProject" label="Send this _Project for the first time..." icon="syncSendReceiveFirst" message="FirstFLExBridge" a10status="DONE" />
+		<command id="CmdObtainFirstLiftProject" label="Send this _Lexicon for the first time (to WeSay)..." icon="syncSendReceiveFirst" message="FirstLiftBridge" a10status="DONE" />
+		<command id="CmdHelpChorus" label="_Help..." message="ShowChorusHelp" a10status="DONE" />
+		<command id="CmdCheckForFlexBridgeUpdates" label="Check for FLEx Bridge _Updates..." message="CheckForFlexBridgeUpdates" a10status="DONE" />
+		<command id="CmdHelpAboutFLEXBridge" label="_About FLEx Bridge..." icon="chorus" message="AboutFlexBridge" a10status="DONE" />
+		<command id="CmdFLExLiftBridge" label="Send/Receive..." icon="syncSendReceive" message="FLExLiftBridge" shortcut="Ctrl+R" a10status="DONE" />
 
 		<command id="CmdClose" label="_Close" message="CloseWindow" a10status="DONE" />
 		<command id="CmdFirstRecord" label="_First" icon="firstRecord" message="FirstRecord" a10status="DONE" />
@@ -539,20 +539,20 @@ EXTENSIONS NOT SUPPORTED -->
 			<item command="CmdClose" a10status="DONE" />
 		</menu>
 		<menu id="SendReceive" label="_Send/Receive" b4InsertMenu="true" a10status="DONE" >
-			<item command="CmdFLExBridge" />
-			<item command="CmdViewMessages"/>
-			<item command="CmdLiftBridge" />
-			<item command="CmdViewLiftMessages"/>
-			<item label="-" translate="do not translate"/>
-			<item command="CmdObtainAnyFlexBridgeProject"/>
-			<item command="CmdObtainLiftProject"/>
-			<item label="-" translate="do not translate"/>
-			<item command="CmdObtainFirstFlexBridgeProject"/>
-			<item command="CmdObtainFirstLiftProject"/>
-			<item label="-" translate="do not translate"/>
-			<item command="CmdHelpChorus"/>
-			<item command="CmdCheckForFlexBridgeUpdates"/>
-			<item command="CmdHelpAboutFLEXBridge"/>
+			<item command="CmdFLExBridge" a10status="DONE" />
+			<item command="CmdViewMessages" a10status="DONE" />
+			<item command="CmdLiftBridge" a10status="DONE" />
+			<item command="CmdViewLiftMessages" a10status="DONE" />
+			<item label="-" translate="do not translate" a10status="DONE" />
+			<item command="CmdObtainAnyFlexBridgeProject" a10status="DONE" />
+			<item command="CmdObtainLiftProject" a10status="DONE" />
+			<item label="-" translate="do not translate" a10status="DONE" />
+			<item command="CmdObtainFirstFlexBridgeProject" a10status="DONE" />
+			<item command="CmdObtainFirstLiftProject" a10status="DONE" />
+			<item label="-" translate="do not translate" a10status="DONE" />
+			<item command="CmdHelpChorus" a10status="DONE" />
+			<item command="CmdCheckForFlexBridgeUpdates" a10status="DONE" />
+			<item command="CmdHelpAboutFLEXBridge" a10status="DONE" />
 		</menu>
 		<menu id="Edit" label="_Edit" b4InsertMenu="true" a10status="DONE" >
 			<item command="CmdUndo" a10status="STUB_ONLY" />

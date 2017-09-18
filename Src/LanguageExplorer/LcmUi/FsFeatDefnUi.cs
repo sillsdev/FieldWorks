@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
 using System.Diagnostics;
 using System.Windows.Forms;
 using LanguageExplorer.Controls.LexText;
@@ -33,6 +34,9 @@ namespace LanguageExplorer.LcmUi
 		/// </summary>
 		public static FsFeatDefnUi CreateNewUiObject(LcmCache cache, IPropertyTable propertyTable, IPublisher publisher, int classId, int hvoOwner, int flid, int insertionPosition)
 		{
+			if (cache == null)
+				throw new ArgumentNullException(nameof(cache));
+
 			FsFeatDefnUi ffdUi = null;
 			string className = "FsClosedFeature";
 			if (classId == FsComplexFeatureTags.kClassId)

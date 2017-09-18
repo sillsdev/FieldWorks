@@ -183,7 +183,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 // <item command="CmdDataTree-Insert-Example"/>
 #endif
 			// <item command="CmdDataTree-Insert-SenseBelow"/>
-			var toolStripMenuItem = PaneBarContextMenuFactory.CreateToolStripMenuItem(FwUtils.RemoveUnderline(LexiconResources.Insert_Sense), LexiconResources.InsertSenseToolTip, null, Insert_SenseBelow_Clicked);
+			var toolStripMenuItem = ToolStripMenuItemFactory.CreateToolStripMenuItem(LexiconResources.Insert_Sense, LexiconResources.InsertSenseToolTip, Insert_SenseBelow_Clicked);
 			hotlinksMenuItemList.Add(new Tuple<ToolStripMenuItem, EventHandler>(toolStripMenuItem, Insert_SenseBelow_Clicked));
 			return hotlinksMenuItemList;
 		}
@@ -196,7 +196,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				Name = mnuDataTree_Sense
 			};
 			contextMenuStrip.Opening += MenuDataTree_SenseContextMenuStrip_Opening;
-			List<Tuple<ToolStripMenuItem, EventHandler>> menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(21);
+			var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(21);
 			/*
 			<command id="CmdDataTree-Insert-Example" label="Insert _Example" message="DataTreeInsert">
 				<parameters field="Examples" className="LexExampleSentence" />
@@ -369,14 +369,14 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		private ToolStripMenuItem CreateToolStripMenuItem(List<Tuple<ToolStripMenuItem, EventHandler>> menuItems, ContextMenuStrip contextMenuStrip, string menuText, string menuTooltip, EventHandler eventHandler)
 		{
-			var toolStripMenuItem = PaneBarContextMenuFactory.CreateToolStripMenuItem(contextMenuStrip, menuText, null, eventHandler, menuTooltip);
+			var toolStripMenuItem = ToolStripMenuItemFactory.CreateToolStripMenuItem(contextMenuStrip, menuText, menuTooltip, eventHandler);
 			menuItems.Add(new Tuple<ToolStripMenuItem, EventHandler>(toolStripMenuItem, eventHandler));
 			return toolStripMenuItem;
 		}
 
 		private ToolStripMenuItem CreateToolStripMenuItem(List<Tuple<ToolStripMenuItem, EventHandler>> menuItemsContextMenuStrip, ContextMenuStrip contextMenuStrip, string menuId, string commandId, string menuText, string menuTooltip, EventHandler eventHandler)
 		{
-			var toolStripMenuItem = PaneBarContextMenuFactory.CreateToolStripMenuItem(contextMenuStrip, menuText.Replace("_", String.Empty), null, eventHandler, menuTooltip);
+			var toolStripMenuItem = ToolStripMenuItemFactory.CreateToolStripMenuItem(contextMenuStrip, menuText, menuTooltip, eventHandler);
 			menuItemsContextMenuStrip.Add(new Tuple<ToolStripMenuItem, EventHandler>(toolStripMenuItem, eventHandler));
 			return toolStripMenuItem;
 		}
@@ -537,7 +537,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 </command>
 <item command="CmdInsertLexEntry" defaultVisible="false" />
 			 */
-			var newToolStripMenuItem = PaneBarContextMenuFactory.CreateToolStripMenuItem(_insertMenu, 0, LexiconResources.Entry, majorEntryImage, Keys.Control | Keys.E, Insert_Entry_Clicked, LexiconResources.Entry_Tooltip);
+			var newToolStripMenuItem = ToolStripMenuItemFactory.CreateToolStripMenuItem(_insertMenu, 0, LexiconResources.Entry, LexiconResources.Entry_Tooltip, Insert_Entry_Clicked, majorEntryImage, Keys.Control | Keys.E);
 			_newInsertMenusAndHandlers.Add(new Tuple<ToolStripMenuItem, EventHandler>(newToolStripMenuItem, Insert_Entry_Clicked));
 			/*
 <command id="CmdInsertSense" label="_Sense" message="DataTreeInsert">
@@ -545,7 +545,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 </command>
 <item command="CmdInsertSense" defaultVisible="false" />
 			 */
-			newToolStripMenuItem = PaneBarContextMenuFactory.CreateToolStripMenuItem(_insertMenu, 1, LexiconResources.Insert_Sense, null, Keys.None, Insert_Sense_Clicked, LexiconResources.InsertSenseToolTip);
+			newToolStripMenuItem = ToolStripMenuItemFactory.CreateToolStripMenuItem(_insertMenu, 1, LexiconResources.Insert_Sense, LexiconResources.InsertSenseToolTip, Insert_Sense_Clicked);
 			_newInsertMenusAndHandlers.Add(new Tuple<ToolStripMenuItem, EventHandler>(newToolStripMenuItem, Insert_Sense_Clicked));
 #if RANDYTODO
 			// TODO: Add these to the main Insert menu.

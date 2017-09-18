@@ -535,7 +535,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary>
 		/// Set up event args with a URL to jump to.
 		/// </summary>
-		/// <param name="jumpUrl"></param>
 		public FLExJumpEventArgs(string jumpUrl)
 		{
 			_jumpUrl = jumpUrl;
@@ -544,10 +543,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary>
 		/// URL that FLEx should jump to when processing this event.
 		/// </summary>
-		public string JumpUrl
-		{
-			get { return _jumpUrl; }
-		}
+		public string JumpUrl => _jumpUrl;
 	}
 
 }

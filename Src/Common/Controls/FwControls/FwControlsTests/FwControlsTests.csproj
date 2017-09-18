@@ -147,6 +147,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Output\Debug\FwCoreDlgs.dll</HintPath>
     </Reference>
+    <Reference Include="LanguageExplorer, Version=10.0.0.10611, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Output\Debug\LanguageExplorer.dll</HintPath>
+    </Reference>
     <Reference Include="SIL.LCModel.Core.Tests">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Output\Debug\SIL.LCModel.Core.Tests.dll</HintPath>

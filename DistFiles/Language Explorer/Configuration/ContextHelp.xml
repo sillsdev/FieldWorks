@@ -48,18 +48,18 @@
 	<!-- What is this?                <item id="CmdMainObjectProperties"/> -->
 	<item id="CmdProjectProperties" a10status="DONE" >Edit the special properties of this FieldWorks project (such as name and writing systems).</item>
 	<!-- Send/Receive menu -->
-	<item id="CmdFLExBridge">Send/Receive this Project (lexicon and texts)</item>
-	<item id="CmdViewMessages">View Project questions, merge conflicts, and notifications</item>
-	<item id="CmdLiftBridge">Send/Receive only the Lexicon in this project (with WeSay or other programs that use LIFT)</item>
-	<item id="CmdViewLiftMessages">View Lexicon (LIFT) questions, merge conflicts, and notifications</item>
-	<item id="CmdObtainAnyFlexBridgeProject">Receive a Project or Lexicon from a colleague for the first time (creates a new project)</item>
-	<item id="CmdObtainLiftProject">Receive a Lexicon for the first time (from a WeSay or other LIFT project) and merge it into the current project</item>
-	<item id="CmdObtainFirstFlexBridgeProject">Creates a full project repository for this project for the first time (other project members will use "Get Project")</item>
-	<item id="CmdObtainFirstLiftProject">Creates a LIFT repository for the lexical data in this project for the first time (for use with WeSay and other LIFT programs)</item>
-	<item id="CmdHelpChorus">Help for using Chorus-enabled features</item>
-	<item id="CmdCheckForFlexBridgeUpdates">Check for FLEx Bridge updates</item>
-	<item id="CmdHelpAboutFLEXBridge">Display information about FLEx Bridge</item>
-	<item id="CmdFLExLiftBridge">Send/Receive data in this project</item>	<!--This is for Toolbar icon-->
+	<item id="CmdFLExBridge" a10status="DONE" >Send/Receive this Project (lexicon and texts)</item>
+	<item id="CmdViewMessages" a10status="DONE" >View Project questions, merge conflicts, and notifications</item>
+	<item id="CmdLiftBridge" a10status="DONE" >Send/Receive only the Lexicon in this project (with WeSay or other programs that use LIFT)</item>
+	<item id="CmdViewLiftMessages" a10status="DONE" >View Lexicon (LIFT) questions, merge conflicts, and notifications</item>
+	<item id="CmdObtainAnyFlexBridgeProject" a10status="DONE" >Receive a Project or Lexicon from a colleague for the first time (creates a new project)</item>
+	<item id="CmdObtainLiftProject" a10status="DONE" >Receive a Lexicon for the first time (from a WeSay or other LIFT project) and merge it into the current project</item>
+	<item id="CmdObtainFirstFlexBridgeProject" a10status="DONE" >Creates a full project repository for this project for the first time (other project members will use "Get Project")</item>
+	<item id="CmdObtainFirstLiftProject" a10status="DONE" >Creates a LIFT repository for the lexical data in this project for the first time (for use with WeSay and other LIFT programs)</item>
+	<item id="CmdHelpChorus" a10status="DONE" >Help for using Chorus-enabled features</item>
+	<item id="CmdCheckForFlexBridgeUpdates" a10status="DONE" >Check for FLEx Bridge updates</item>
+	<item id="CmdHelpAboutFLEXBridge" a10status="DONE" >Display information about FLEx Bridge</item>
+	<item id="CmdFLExLiftBridge" a10status="DONE" >Send/Receive data in this project</item>	<!--This is for Toolbar icon-->
 	<!--
 		  Edit menu
 		  -->

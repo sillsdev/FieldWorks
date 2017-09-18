@@ -112,7 +112,7 @@ namespace LanguageExplorer.Works
 			var itemTypeName = pssl.ItemsTypeName();
 			if (itemTypeName != "*" + owningFieldName + "*")
 				display.Text = "_" + itemTypeName;	// prepend a keyboard accelarator marker
-			var toolTipInsert = display.Text.Replace("_", string.Empty);	// strip any menu keyboard accelerator marker;
+			var toolTipInsert = FwUtils.RemoveUnderline(display.Text);	// strip any menu keyboard accelerator marker;
 			command.ToolTipInsert = toolTipInsert.ToLower();
 		}
 #endif

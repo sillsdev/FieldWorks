@@ -125,9 +125,12 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			_parserToolStripMenuItems["editParserParameters"].Click += EditParserParameters_Click;
 
 			Subscriber.Subscribe("TextSelectedWord", TextSelectedWord_Handler);
+			Subscriber.Subscribe("StopParser", StopParser_Handler);
 
 			UpdateStatusPanelProgress();
 		}
+
+		#endregion
 
 		public RecordClerk Clerk
 		{
@@ -151,6 +154,11 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		{
 			// newValue will be an IWfiWordform or null;
 			_currentWordform = newValue as IWfiWordform;
+		}
+
+		private void StopParser_Handler(object newValue)
+		{
+			DisconnectFromParser();
 		}
 
 		private void Clerk_SelectedObjectChanged(object sender, SelectObjectEventArgs recordNavigationEventArgs)
@@ -189,8 +197,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			_parserToolStripMenuItems["defaultParserXAmple"].Checked = m_cache.LangProject.MorphologicalDataOA.ActiveParser == "XAmple";
 			_parserToolStripMenuItems["phonologicalRulebasedParserHermitCrab"].Checked = m_cache.LangProject.MorphologicalDataOA.ActiveParser == "HC";
 		}
-
-		#endregion
 
 		internal ParserConnection Connection
 		{
@@ -464,6 +470,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				_parserToolStripMenuItems["phonologicalRulebasedParserHermitCrab"].Click -= ChooseParser_Click;
 				_parserToolStripMenuItems["editParserParameters"].Click -= EditParserParameters_Click;
 				Subscriber.Unsubscribe("TextSelectedWord", TextSelectedWord_Handler);
+				Subscriber.Unsubscribe("StopParser", StopParser_Handler);
 
 				// Dispose managed resources here.
 				if (m_timer != null)
