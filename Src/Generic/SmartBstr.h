@@ -24,15 +24,15 @@ public:
 #ifdef DEBUG
 	bool AssertValid(void) const
 	{
-#if __MonoCS__ || !defined(_M_X64)
-		if ((ulong)m_bstr == (ulong)1)
-			return true;
-		Assert(!((ulong)m_bstr & 1));
-#else
+#if defined(_M_X64) // Windows 64bit
 		if ((ULONGLONG)m_bstr == (ULONGLONG)1)
 			return true;
 		Assert(!((ULONGLONG)m_bstr & 1));
-#endif // __MonoCS__ || !defined(_M_X64)
+#else
+		if ((ulong)m_bstr == (ulong)1)
+			return true;
+		Assert(!((ulong)m_bstr & 1));
+#endif // defined(_M_X64)
 		AssertBstrN(m_bstr);
 		return true;
 	}
@@ -268,11 +268,11 @@ public:
 	{
 		AssertObj(this);
 		BSTR bstr = m_bstr;
-#if __MonoCS__ || !defined(_M_X64)
-		if ((ulong)bstr == 1)
+#if defined(_M_X64) // Windows 64bit
+		if ((ULONGLONG)bstr == 1)
 			bstr = NULL;
 #else
-		if ((ULONGLONG)bstr == 1)
+		if ((ulong)bstr == 1)
 			bstr = NULL;
 #endif
 
@@ -464,10 +464,10 @@ protected:
 
 	bool _Null(void) const
 	{
-#if __MonoCS__ || !defined(_M_X64)
-		return (ulong)m_bstr <= (ulong)1;
-#else
+#if defined(_M_X64) // Windows 64bit
 		return (ULONGLONG)m_bstr <= (ULONGLONG)1;
+#else
+		return (ulong)m_bstr <= (ulong)1;
 #endif
 	}
 
