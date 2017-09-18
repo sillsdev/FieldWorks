@@ -37,6 +37,8 @@
 		<WriteLinesToFile File="LibraryDevelopment.properties" Lines="&lt;/Project&gt;" />
 	</Target>
 	<Target Name="CheckDevelopmentPropertiesFile">
+		<!-- Yellow text to catch the user's attention -->
+		<Warning Text="LibraryDevelopment.properties file not found. Please specify which artifacts you would like to use:" Condition="!Exists('LibraryDevelopment.properties')" />
 		<CallTarget Targets="UpdateDevelopmentPropertiesFile" Condition="!Exists('LibraryDevelopment.properties')" />
 	</Target>
 </Project>
