@@ -16,7 +16,7 @@ namespace LanguageExplorer.Controls.DetailControls
 	/// The slice can pass on the dispose obligation to one of its internal Control instances, or the Slice can do the dispose itself.
 	/// The context menu disposal *must* (read: it is imperative that) unwire the event handlers, which are provided.</para>
 	/// </summary>
-	internal sealed class SliceContextMenuFactory: IDisposable
+	public sealed class SliceContextMenuFactory: IDisposable
 	{
 		#region Slice Hotlinks handling
 		private Dictionary<string, Func<Slice, string, List<Tuple<ToolStripMenuItem, EventHandler>>>> _hotLinksCreatorMethods = new Dictionary<string, Func<Slice, string, List<Tuple<ToolStripMenuItem, EventHandler>>>>();
@@ -130,7 +130,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 			// Dispose menu and its items.
 			// It needs to do it on that "ToList", since simply disposing it will remove it from the "Items" collection,
-			// which then throws with a changing contents while interating.
+			// which then throws with a changing contents while iterating.
 			foreach (var item in contextMenuTuple.Item1.Items.Cast<IDisposable>().ToList())
 			{
 				item.Dispose();

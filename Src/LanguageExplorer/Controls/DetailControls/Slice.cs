@@ -117,15 +117,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 		}
 
-		/// <summary></summary>
-		internal List<Tuple<ToolStripMenuItem, EventHandler>> RetrieveHotlinksContextMenuItems()
-		{
-			CheckDisposed();
-
-			var hotlinksMenuId = HotlinksMenuId;
-			return string.IsNullOrWhiteSpace(hotlinksMenuId) ? null : SliceContextMenuFactory.GetHotlinksMenuItems(this, hotlinksMenuId);
-		}
-
 		internal string HotlinksMenuId => XmlUtils.GetOptionalAttributeValue(CallerNode ?? ConfigurationNode, Hotlinks, string.Empty);
 
 		internal string OrdinaryMenuId => XmlUtils.GetOptionalAttributeValue(CallerNode ?? ConfigurationNode, Menu, string.Empty);
@@ -697,7 +688,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				slice = slice.ParentSlice;
 			}
 		}
-		private SliceContextMenuFactory SliceContextMenuFactory { get; set; }
+		protected SliceContextMenuFactory SliceContextMenuFactory { get; private set; }
 
 		/// <summary></summary>
 		public virtual void Install(DataTree parentDataTree)

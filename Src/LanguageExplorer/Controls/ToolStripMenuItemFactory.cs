@@ -19,7 +19,7 @@ namespace LanguageExplorer.Controls
 		/// </summary>
 		internal static ToolStripMenuItem CreateToolStripMenuItem(string menuText, string menuTooltip, EventHandler eventHandler, Image image = null)
 		{
-			var toolStripMenuItem = new ToolStripMenuItem(FwUtils.ReplaceUnderlineWithAmpersand(menuText))
+			var toolStripMenuItem = new ToolStripMenuItem(FwUtils.RemoveUnderline(menuText))
 			{
 				ToolTipText = menuTooltip
 			};
@@ -39,17 +39,6 @@ namespace LanguageExplorer.Controls
 		{
 			var toolStripMenuItem = CreateToolStripMenuItem(menuText, menuTooltip, eventHandler, image);
 			contextMenuStrip.Items.Add(toolStripMenuItem);
-
-			return toolStripMenuItem;
-		}
-
-		/// <summary>
-		/// Create a new ToolStripMenuItem and place it in the menu strip.
-		/// </summary>
-		internal static ToolStripMenuItem CreateToolStripMenuItem(ToolStripMenuItem mainMenuStrip, int insertIndex, string menuText, string menuTooltip, EventHandler eventHandler)
-		{
-			var toolStripMenuItem = CreateToolStripMenuItem(menuText, menuTooltip, eventHandler);
-			mainMenuStrip.DropDownItems.Insert(insertIndex, toolStripMenuItem);
 
 			return toolStripMenuItem;
 		}

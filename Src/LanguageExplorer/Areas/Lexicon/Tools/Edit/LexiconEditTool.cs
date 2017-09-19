@@ -27,7 +27,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		private RecordBrowseView _recordBrowseView;
 		private MultiPane _innerMultiPane;
 		private RecordClerk _recordClerk;
-		private DataTree _dataTree;
 
 		#region Implementation of IPropertyTableProvider
 
@@ -90,7 +89,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			MultiPaneFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _multiPane);
 			_recordBrowseView = null;
 			_innerMultiPane = null;
-			_dataTree = null;
 			_lexiconEditToolMenuHelper = null;
 		}
 
@@ -121,10 +119,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 			_recordBrowseView = new RecordBrowseView(root, majorFlexComponentParameters.LcmCache, _recordClerk);
 
-			_dataTree = new DataTree(new SliceContextMenuFactory());
-			_lexiconEditToolMenuHelper = new LexiconEditToolMenuHelper(majorFlexComponentParameters, _dataTree, _recordClerk);
+			 var dataTree = new DataTree();
+			_lexiconEditToolMenuHelper = new LexiconEditToolMenuHelper(majorFlexComponentParameters, dataTree, _recordClerk);
 
-			var recordEditView = new RecordEditView(XElement.Parse(LexiconResources.LexiconEditRecordEditViewParameters), XDocument.Parse(AreaResources.VisibilityFilter_All), majorFlexComponentParameters.LcmCache, _recordClerk, _dataTree);
+			var recordEditView = new RecordEditView(XElement.Parse(LexiconResources.LexiconEditRecordEditViewParameters), XDocument.Parse(AreaResources.VisibilityFilter_All), majorFlexComponentParameters.LcmCache, _recordClerk, dataTree);
 			var nestedMultiPaneParameters = new MultiPaneParameters
 			{
 				Orientation = Orientation.Horizontal,

@@ -27,7 +27,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private LcmCache m_cache;
 		RecordEditView m_xrev;
 		int m_currentRoot = 0;      // Stores the root (IStText) Hvo.
-		private SliceContextMenuFactory _sliceContextMenuFactory;
 
 		#region Constructors, destructors, and suchlike methods.
 
@@ -88,11 +87,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				// Already done
 				return;
 			}
-			_sliceContextMenuFactory = new SliceContextMenuFactory();
 #if RANDYTODO
 			// TODO: See LexiconEditTool for how to set up all manner of menus and toolbars.
 #endif
-			m_xrev = new InterlinearTextsRecordEditView(this, new XElement("parameters", new XAttribute("layout", "FullInformation")), m_cache, clerk, new InterlinearTextsRecordEditView.StTextDataTree(_sliceContextMenuFactory, m_cache));
+			var dataTree = new InterlinearTextsRecordEditView.StTextDataTree(m_cache);
+			m_xrev = new InterlinearTextsRecordEditView(this, new XElement("parameters", new XAttribute("layout", "FullInformation")), m_cache, clerk, dataTree);
 			m_xrev.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 			m_xrev.Dock = DockStyle.Fill;
 			Controls.Add(m_xrev);
@@ -128,7 +127,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			if( disposing )
 			{
 				components?.Dispose();
+				m_xrev?.Dispose();
 			}
+			m_cache = null;
+			m_xrev = null;
 			PropertyTable = null;
 			Publisher = null;
 			Subscriber = null;
@@ -195,8 +197,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					set { m_infoPane = value; }
 				}
 
-				internal StTextDataTree(SliceContextMenuFactory sliceContextMenuFactory, LcmCache cache)
-					: base(sliceContextMenuFactory)
+				internal StTextDataTree(LcmCache cache)
+					: base()
 				{
 					m_cache = cache;
 					InitializeBasic(cache, false);

@@ -90,7 +90,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			_sliceContextMenuFactory.Dispose();
+			_sliceContextMenuFactory.Dispose(); // No Data Tree in this tool to dispose of it for us.
 			PaneBarContainerFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _paneBarContainer);
 			_xhtmlDocView = null;
 			_fwMainWnd = null;
@@ -107,7 +107,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
 			_cache = majorFlexComponentParameters.LcmCache;
-			_sliceContextMenuFactory = new SliceContextMenuFactory();
+			_sliceContextMenuFactory = new SliceContextMenuFactory(); // Make our own, since the tool has no data tree.
 			RegisterContextMenuMethods();
 			_fwMainWnd = majorFlexComponentParameters.MainWindow;
 			if (_recordClerk == null)

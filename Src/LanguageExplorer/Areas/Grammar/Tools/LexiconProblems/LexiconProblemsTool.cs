@@ -29,8 +29,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.LexiconProblems
 		/// </summary>
 		private CollapsingSplitContainer _collapsingSplitContainer;
 		private RecordClerk _recordClerk;
-		private SliceContextMenuFactory _sliceContextMenuFactory;
-		private DataTree _dataTree;
 
 		#region Implementation of IPropertyTableProvider
 
@@ -86,10 +84,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.LexiconProblems
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			_sliceContextMenuFactory.Dispose();
 			CollapsingSplitContainerFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _collapsingSplitContainer);
-			_sliceContextMenuFactory = null;
-			_dataTree = null;
 		}
 
 		/// <summary>
@@ -100,16 +95,15 @@ namespace LanguageExplorer.Areas.Grammar.Tools.LexiconProblems
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			_sliceContextMenuFactory = new SliceContextMenuFactory();
 			var root = XDocument.Parse(GrammarResources.LexiconProblemsParameters).Root;
 			if (_recordClerk == null)
 			{
 				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(LexProblems, majorFlexComponentParameters.Statusbar, FactoryMethod);
 			}
-			_dataTree = new DataTree(_sliceContextMenuFactory);
 #if RANDYTODO
 			// TODO: See LexiconEditTool for how to set up all manner of menus and toolbars.
 #endif
+			var dataTree = new DataTree();
 			_collapsingSplitContainer = CollapsingSplitContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters,
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
 				true,
@@ -118,7 +112,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.LexiconProblems
 				MachineName,
 				majorFlexComponentParameters.LcmCache,
 				_recordClerk,
-				_dataTree);
+				dataTree);
 			RecordClerkServices.SetClerk(majorFlexComponentParameters, _recordClerk);
 		}
 

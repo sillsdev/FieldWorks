@@ -15,7 +15,7 @@ namespace LanguageExplorer.Controls.DetailControls
 	/// <summary>
 	/// Summary description for SummaryCommandControl.
 	/// </summary>
-	public class SummaryCommandControl : UserControl
+	internal class SummaryCommandControl : UserControl
 	{
 		/// <summary>
 		/// This menu contains the items that are displayed when the context menu icon is clicked,
@@ -36,13 +36,15 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// Required designer variable.
 		/// </summary>
 		private System.ComponentModel.Container components = null;
+		private SliceContextMenuFactory SliceContextMenuFactory { get; set; }
 
-		public SummaryCommandControl(SummarySlice slice)
+		internal SummaryCommandControl(SummarySlice slice, SliceContextMenuFactory sliceContextMenuFactory)
 		{
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
 
 			m_slice = slice;
+			SliceContextMenuFactory = sliceContextMenuFactory;
 			m_hotLinkFont = new Font(MiscUtils.StandardSansSerif, (float)10.0, FontStyle.Underline);
 			m_timer = new Timer
 			{
@@ -75,7 +77,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 			if( disposing )
 			{
-				DisposeHotlinkMenuItems();
+				SliceContextMenuFactory.DisposeHotLinksMenus(m_menuItems);
 				if (m_timer != null)
 				{
 					m_timer.Stop();
@@ -85,6 +87,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				components?.Dispose();
 				m_hotLinkFont?.Dispose();
 			}
+			m_menuItems = null;
 			m_hotLinkFont = null;
 			m_timer = null;
 			m_slice = null; // Client is responsible for this.
@@ -140,9 +143,11 @@ namespace LanguageExplorer.Controls.DetailControls
 				if (m_menuItems != null)
 				{
 					// Dispose the old ones, since this class 'owns' them, so must dispose them, even if they are created elsewhere.
-					DisposeHotlinkMenuItems();
+					SliceContextMenuFactory.DisposeHotLinksMenus(m_menuItems);
+					m_menuItems = null;
 				}
-				m_menuItems = m_slice.RetrieveHotlinksContextMenuItems();
+				var hotlinksMenuId = m_slice.HotlinksMenuId;
+				m_menuItems = string.IsNullOrWhiteSpace(hotlinksMenuId) ? null : SliceContextMenuFactory.GetHotlinksMenuItems(m_slice, hotlinksMenuId);
 				if (m_menuItems == null || !m_menuItems.Any())
 				{
 					return;
@@ -173,21 +178,6 @@ namespace LanguageExplorer.Controls.DetailControls
 				graphics.Dispose();
 			}
 
-		}
-
-		private void DisposeHotlinkMenuItems()
-		{
-			if (m_menuItems == null)
-			{
-				return;
-			}
-			foreach (var menuItemTuple in m_menuItems)
-			{
-				menuItemTuple.Item1.Click -= menuItemTuple.Item2;
-				menuItemTuple.Item1.Dispose();
-			}
-			m_menuItems.Clear();
-			m_menuItems = null;
 		}
 
 		protected override void OnPaint(PaintEventArgs e)

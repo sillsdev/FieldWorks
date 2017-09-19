@@ -21,13 +21,10 @@ namespace LanguageExplorerTests.DetailControls
 		private IPropertyTable m_propertyTable;
 		private IPublisher m_publisher;
 		private ISubscriber m_subscriber;
-		private SliceContextMenuFactory _sliceContextMenuFactory;
 
 		#region Overrides of MemoryOnlyBackendProviderRestoredForEachTestTestBase
 		public override void TestSetup()
 		{
-			_sliceContextMenuFactory = new SliceContextMenuFactory();
-
 			base.TestSetup();
 		}
 		#endregion
@@ -38,12 +35,10 @@ namespace LanguageExplorerTests.DetailControls
 			m_Slice?.Dispose();
 			m_DataTree?.Dispose();
 			m_propertyTable?.Dispose();
-			_sliceContextMenuFactory?.Dispose();
 
 			m_Slice = null;
 			m_DataTree = null;
 			m_propertyTable = null;
-			_sliceContextMenuFactory = null;
 
 			base.TestTearDown();
 		}
@@ -108,7 +103,7 @@ namespace LanguageExplorerTests.DetailControls
 		[Test]
 		public void CreateIndentedNodes_basic()
 		{
-			m_DataTree = new DataTree(_sliceContextMenuFactory);
+			m_DataTree = new DataTree();
 			m_Slice = GenerateSlice(Cache, m_DataTree);
 
 			// Data taken from a running Sena 3
@@ -136,7 +131,7 @@ namespace LanguageExplorerTests.DetailControls
 			PubSubSystemFactory.CreatePubSubSystem(out m_publisher, out m_subscriber);
 			m_propertyTable = PropertyTableFactory.CreatePropertyTable(m_publisher);
 			var obj = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
-			m_DataTree = new DataTree(_sliceContextMenuFactory);
+			m_DataTree = new DataTree();
 			var flexComponentParameters = new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber);
 			m_DataTree.InitializeFlexComponent(flexComponentParameters);
 			m_Slice = GenerateSlice(Cache, m_DataTree);
@@ -159,7 +154,7 @@ namespace LanguageExplorerTests.DetailControls
 
 			PubSubSystemFactory.CreatePubSubSystem(out m_publisher, out m_subscriber);
 			m_propertyTable = PropertyTableFactory.CreatePropertyTable(m_publisher);
-			m_DataTree = new DataTree(_sliceContextMenuFactory);
+			m_DataTree = new DataTree();
 			var flexComponentParameters = new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber);
 			m_DataTree.InitializeFlexComponent(flexComponentParameters);
 			m_Slice = GenerateSlice(Cache, m_DataTree);
@@ -181,7 +176,7 @@ namespace LanguageExplorerTests.DetailControls
 			var obj = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
 			PubSubSystemFactory.CreatePubSubSystem(out m_publisher, out m_subscriber);
 			m_propertyTable = PropertyTableFactory.CreatePropertyTable(m_publisher);
-			m_DataTree = new DataTree(_sliceContextMenuFactory);
+			m_DataTree = new DataTree();
 			var flexComponentParameters = new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber);
 			m_DataTree.InitializeFlexComponent(flexComponentParameters);
 			m_Slice = GenerateSlice(Cache, m_DataTree);

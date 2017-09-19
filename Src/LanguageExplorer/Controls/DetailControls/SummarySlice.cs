@@ -43,6 +43,24 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 		}
 
+		#region Overrides of ViewSlice
+		/// <summary>
+		///
+		/// </summary>
+		/// <param name="parentDataTree"></param>
+		public override void Install(DataTree parentDataTree)
+		{
+			base.Install(parentDataTree);
+
+			m_commandControl = new SummaryCommandControl(this, SliceContextMenuFactory)
+			{
+				Dock = DockStyle.Fill,
+				Visible = XmlUtils.GetOptionalBooleanAttributeValue(m_callerNode, "commandVisible", false)
+			};
+			Control.Controls.Add(m_commandControl);
+		}
+		#endregion
+
 		public override void FinishInit()
 		{
 			base.FinishInit();
@@ -77,13 +95,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			m_button.Click += m_button_Click;
 			panel.Controls.Add(m_button);
 			panel.MouseDown += OnMouseDownInPanel;
-
-			m_commandControl = new SummaryCommandControl(this)
-			{
-				Dock = DockStyle.Fill,
-				Visible = XmlUtils.GetOptionalBooleanAttributeValue(m_callerNode, "commandVisible", false)
-			};
-			panel.Controls.Add(m_commandControl);
 		}
 
 		/// <summary>

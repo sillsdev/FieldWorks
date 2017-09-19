@@ -30,8 +30,6 @@ namespace LanguageExplorer.Areas.Lists.Tools.TextMarkupTagsEdit
 		/// </summary>
 		private CollapsingSplitContainer _collapsingSplitContainer;
 		private RecordClerk _recordClerk;
-		private SliceContextMenuFactory _sliceContextMenuFactory;
-		private DataTree _dataTree;
 
 		#region Implementation of IPropertyTableProvider
 
@@ -88,10 +86,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.TextMarkupTagsEdit
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			_sliceContextMenuFactory.Dispose();
 			CollapsingSplitContainerFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _collapsingSplitContainer);
-			_sliceContextMenuFactory = null;
-			_dataTree = null;
 		}
 
 		/// <summary>
@@ -102,16 +97,15 @@ namespace LanguageExplorer.Areas.Lists.Tools.TextMarkupTagsEdit
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			_sliceContextMenuFactory = new SliceContextMenuFactory();
 			if (_recordClerk == null)
 			{
 				_recordClerk =
 					majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(TextMarkupTagsList, majorFlexComponentParameters.Statusbar, FactoryMethod);
 			}
-			_dataTree = new DataTree(_sliceContextMenuFactory);
 #if RANDYTODO
 			// TODO: See LexiconEditTool for how to set up all manner of menus and toolbars.
 #endif
+			var dataTree = new DataTree();
 			_collapsingSplitContainer = CollapsingSplitContainerFactory.Create(
 				majorFlexComponentParameters.FlexComponentParameters,
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
@@ -121,7 +115,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.TextMarkupTagsEdit
 				MachineName,
 				majorFlexComponentParameters.LcmCache,
 				_recordClerk,
-				_dataTree);
+				dataTree);
 			RecordClerkServices.SetClerk(majorFlexComponentParameters, _recordClerk);
 		}
 

@@ -53,8 +53,7 @@ namespace LanguageExplorer.Controls.DetailControls
 	/// System.Windows.Forms.UserControl
 	public class DataTree : UserControl, IVwNotifyChange, IFlexComponent, IRefreshableRoot
 	{
-		internal SliceContextMenuFactory SliceContextMenuFactory { get; }
-		private readonly SliceContextMenuFactory _sliceContextMenuFactory;
+		internal SliceContextMenuFactory SliceContextMenuFactory { get; private set; }
 
 		/// <summary>
 		/// Occurs when the current slice changes
@@ -460,11 +459,9 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		#endregion Slice collection manipulation methods
 
-		internal DataTree(SliceContextMenuFactory sliceContextMenuFactory)
+		internal DataTree()
 		{
-			if (sliceContextMenuFactory == null) throw new ArgumentNullException(nameof(sliceContextMenuFactory));
-
-			SliceContextMenuFactory = sliceContextMenuFactory;
+			SliceContextMenuFactory = new SliceContextMenuFactory();
 			Slices = new List<Slice>();
 		}
 
@@ -1183,9 +1180,10 @@ namespace LanguageExplorer.Controls.DetailControls
 
 			if (disposing)
 			{
+				SliceContextMenuFactory?.Dispose();
+
 				// Do this first, before setting m_fDisposing to true.
-				if (m_sda != null)
-					m_sda.RemoveNotification(this);
+				m_sda?.RemoveNotification(this);
 
 				// We'd prefer to do any cleanup of the current slice BEFORE its parent gets disposed.
 				// But I can't find any event that is raised before Dispose when switching areas.
@@ -1200,10 +1198,14 @@ namespace LanguageExplorer.Controls.DetailControls
 				if (m_rch != null)
 				{
 					if (m_rch.HasRecordListUpdater)
-						m_rch.Fixup(false);		// no need to refresh record list on shutdown.
+					{
+						m_rch.Fixup(false); // no need to refresh record list on shutdown.
+					}
 					else
+					{
 						// It's fine to dispose it, after all, because m_rch has no other owner.
 						m_rch.Dispose();
+					}
 				}
 				if (m_tooltip != null)
 				{
@@ -1211,6 +1213,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					m_tooltip.Dispose();
 				}
 			}
+			SliceContextMenuFactory = null;
 			m_sda = null;
 			m_currentSlice = null;
 			m_root = null;
