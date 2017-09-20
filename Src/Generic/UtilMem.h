@@ -304,22 +304,22 @@ void MoveElement(void * pv, int cbElement, int ivSrc, int ivTarget);
 	{
 		return CanAllocate() ? SysAllocString(pwsz) : NULL;
 	}
-	inline BSTR __cdecl DebugSysAllocStringLen(const OLECHAR * prgwch, size_t cch)
+	inline BSTR __cdecl DebugSysAllocStringLen(const OLECHAR * prgwch, UINT cch)
 	{
-		return CanAllocate() ? SysAllocStringLen(prgwch, (int)cch) : NULL;
+		return CanAllocate() ? SysAllocStringLen(prgwch, cch) : NULL;
 	}
-	inline BSTR __cdecl DebugSysAllocStringByteLen(const char * prgch, size_t cb)
+	inline BSTR __cdecl DebugSysAllocStringByteLen(const char * prgch, UINT cb)
 	{
-		return CanAllocate() ? SysAllocStringByteLen(prgch, (int)cb) : NULL;
+		return CanAllocate() ? SysAllocStringByteLen(prgch, cb) : NULL;
 	}
 	inline int __cdecl DebugSysReAllocString(BSTR * pbstr, const OLECHAR * pwsz)
 	{
 		return CanAllocate() ? SysReAllocString(pbstr, pwsz) : FALSE;
 	}
 	inline int __cdecl DebugSysReAllocStringLen(BSTR * pbstr, const OLECHAR * prgwch,
-		size_t cch)
+		UINT cch)
 	{
-		return CanAllocate() ? SysReAllocStringLen(pbstr, prgwch, (int)cch) : FALSE;
+		return CanAllocate() ? SysReAllocStringLen(pbstr, prgwch, cch) : FALSE;
 	}
 
 	#define NewObj new(true, THIS_FILE, __LINE__)

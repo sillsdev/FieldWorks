@@ -1,5 +1,5 @@
 /*--------------------------------------------------------------------*//*:Ignore this sentence.
-Copyright (c) 1999-2013 SIL International
+Copyright (c) 1999-2017 SIL International
 This software is licensed under the LGPL, version 2.1 or later
 (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -17,7 +17,7 @@ Last reviewed:
 const int knMax = 0x7FFFFFFF;
 
 
-#if defined(_MSC_VER)
+#if defined(_MSC_VER) && !defined(_M_X64)
 
 /***********************************************************************************************
 	Intel 80386 routines.
@@ -27,7 +27,6 @@ const int knMax = 0x7FFFFFFF;
 inline int MulDiv(int n, int nMul, int nDiv)
 {
 	Assert(nDiv != 0);
-#ifndef _M_X64
 	__asm
 	{
 		mov		eax,n
@@ -35,7 +34,6 @@ inline int MulDiv(int n, int nMul, int nDiv)
 		idiv	nDiv
 		mov		n,eax
 	}
-#endif
 	return n;
 }
 
@@ -44,7 +42,6 @@ inline int MulDivMod(int n, int nMul, int nDiv, int *pnRem)
 {
 	Assert(nDiv != 0);
 	AssertPtr(pnRem);
-#ifndef _M_X64
 	__asm
 	{
 		mov		eax,n
@@ -54,11 +51,10 @@ inline int MulDivMod(int n, int nMul, int nDiv, int *pnRem)
 		mov		DWORD PTR[ecx],edx
 		mov		n,eax
 	}
-#endif
 	return n;
 }
 
-#else // defined(_MSC_VER)
+#else // defined(_MSC_VER) && !defined(_M_X64)
 
 inline int MulDiv(int n, int nMul, int nDiv)
 {
@@ -73,10 +69,10 @@ inline int MulDivMod(int n, int nMul, int nDiv, int *pnRem)
 
 	int64 m = int64(n) * nMul;
 	*pnRem = m % nDiv;
-	return m / nDiv;
+	return int(m / nDiv);
 }
 
-#endif // defined(_MSC_VER)
+#endif // defined(_MSC_VER) && !defined(_M_X64)
 
 
 /***********************************************************************************************
