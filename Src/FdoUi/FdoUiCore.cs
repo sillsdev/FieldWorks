@@ -857,11 +857,11 @@ namespace SIL.FieldWorks.FdoUi
 		{
 			CheckDisposed();
 
-			if (m_propertyTable == null)
-				m_propertyTable = propertyTable;
+			if (PropTable == null)
+				PropTable = propertyTable;
 			if (Mediator == null)
 			Mediator = mediator;
-			var window = m_propertyTable.GetValue<XWindow>("window");
+			var window = PropTable.GetValue<XWindow>("window");
 			m_hostControl = hostControl;
 
 			string sHostType = m_hostControl.GetType().Name;
@@ -873,7 +873,7 @@ namespace SIL.FieldWorks.FdoUi
 				// See e.g. LT-5156, 6534, 7160.
 				// Indeed, since CmBaseAnnotation presents itself as a 'Problem Report', we don't want
 				// to do it for any kind of annotation that couldn't be one!
-				object clrk = m_propertyTable.GetValue<object>("ActiveClerk");
+				object clrk = PropTable.GetValue<object>("ActiveClerk");
 				string sClerkType = clrk != null ? clrk.GetType().Name : "";
 				if (sClerkType == "OccurrencesOfSelectedUnit")
 					return true;		// We don't want this either.  See LT-6101.
@@ -2531,6 +2531,26 @@ namespace SIL.FieldWorks.FdoUi
 					m_targetUi.Mediator = value;
 			}
 		}
+
+		public override PropertyTable PropTable
+		{
+			get
+			{
+				CheckDisposed();
+
+				return base.PropTable;
+			}
+			set
+			{
+				CheckDisposed();
+
+				// Make sure we set our target at the same time we're set.
+				base.PropTable = value;
+				if (m_targetUi != null)
+					m_targetUi.PropTable = value;
+			}
+		}
+
 	}
 
 	/// <summary>
