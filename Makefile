@@ -15,7 +15,6 @@ SHELL=/bin/bash
 
 all:
 
-
 externaltargets: \
 	Win32Base \
 	COM-all \
@@ -359,8 +358,8 @@ Fw-build-package:
 	. environ && \
 	cd $(BUILD_ROOT)/Build \
 		&& xbuild /t:refreshTargets \
-		&& xbuild '/t:remakefw;zipLocalizedLists' /property:config=release /property:packaging=yes \
-		&& ./multitry xbuild /verbosity:detailed '/t:localize' /property:config=release /property:packaging=yes
+		&& xbuild '/t:remakefw' /property:config=release /property:packaging=yes \
+		&& ./multitry xbuild /verbosity:detailed '/t:localize-binaries' /property:config=release /property:packaging=yes
 
 Fw-build-package-fdo:
 	cd $(BUILD_ROOT)/Build \
@@ -369,10 +368,14 @@ Fw-build-package-fdo:
 
 # Begin localization section
 
+localize-source:
+	. environ && \
+	cd Build && xbuild /t:localize-source
+
 LOCALIZATIONS := $(shell ls $(BUILD_ROOT)/Localizations/messages.*.po | sed 's/.*messages\.\(.*\)\.po/\1/')
 
 l10n-all:
-	(cd $(BUILD_ROOT)/Build && xbuild /t:localize)
+	(cd $(BUILD_ROOT)/Build && xbuild /t:localize-binaries)
 
 l10n-clean:
 	# We don't want to remove strings-en.xml
