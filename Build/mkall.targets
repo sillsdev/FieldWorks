@@ -494,8 +494,10 @@
 		<Copy SourceFiles="$(fwrt)/DistFiles/libxample64.so" DestinationFolder="$(dir-outputBase)"
 				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Unix'"/>
 		<!-- Windows dynamically loaded libraries -->
-		<Copy SourceFiles="$(fwrt)/DistFiles/xample.dll" DestinationFolder="$(dir-outputBase)"
-				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
+		<Copy SourceFiles="$(fwrt)/DistFiles/xample32.dll" DestinationFiles="$(dir-outputBase)/xample.dll"
+				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'  AND '$(arch)'!='x64'"/>
+		<Copy SourceFiles="$(fwrt)/DistFiles/xample64.dll" DestinationFiles="$(dir-outputBase)/xample.dll"
+				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT' AND '$(arch)'=='x64'"/>
 		<Copy SourceFiles="$(DownloadsDir)/Commons.Xml.Relaxng.dll" DestinationFolder="$(dir-outputBase)"
 				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
 		<!-- ICU libs -->

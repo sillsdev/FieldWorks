@@ -269,14 +269,12 @@ typedef const achar * Pcsz;
 template<typename T> inline T * AddrOf(T & x)
 {
 	T * pt;
-#ifdef _MSC_VER
-#ifndef _M_X64
+#if defined(_WIN32) && !defined(_M_X64)
 	__asm
 	{
 		mov eax,x
 		mov pt,eax
 	}
-#endif
 #else
 	pt = (T*)&(char&)x;
 #endif
