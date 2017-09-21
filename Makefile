@@ -360,7 +360,7 @@ Fw-build-package:
 	cd $(BUILD_ROOT)/Build \
 		&& xbuild /t:refreshTargets \
 		&& xbuild '/t:remakefw;zipLocalizedLists' /property:config=release /property:packaging=yes \
-		&& ./multitry xbuild '/t:localize' /property:config=release /property:packaging=yes
+		&& ./multitry xbuild /verbosity:detailed '/t:localize' /property:config=release /property:packaging=yes
 
 Fw-build-package-fdo:
 	cd $(BUILD_ROOT)/Build \
