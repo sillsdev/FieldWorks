@@ -11,6 +11,7 @@ using System.Xml.Linq;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 using NUnit.Framework;
+using SIL.FieldWorks.Build.Tasks.Localization;
 
 namespace FwBuildTasks
 {
@@ -50,6 +51,12 @@ namespace FwBuildTasks
 			CreateProjects();
 
 			CreateAssemblyInfo();
+		}
+
+		[TearDown]
+		public void TearDown()
+		{
+			InstrumentedProjectLocalizer.Reset();
 		}
 
 		// Create a minimal CommonAssemblyInfo.cs file with just the lines we care about.
@@ -254,7 +261,7 @@ namespace FwBuildTasks
 			VerifyExpectedResGenArgs(m_FdoFolder, "FDO-strings", "SIL.FDO");
 
 			// The Assembly Linker should be run (once for each desired project) with expected arguments.
-			Assert.That(m_sut.LinkerPath.Count, Is.EqualTo(4));
+			Assert.That(InstrumentedProjectLocalizer.LinkerPath.Count, Is.EqualTo(4));
 			VerifyLinkerArgs(Path.Combine(m_sut.OutputFolder, "Release", "es", "FDO.resources.dll"), new EmbedInfo[] {
 				new EmbedInfo(Path.Combine(m_sut.OutputFolder, "es", "FDO", "SIL.FDO.FDO-strings.es.resources"),
 							  "SIL.FDO.FDO-strings.es.resources")
@@ -284,7 +291,7 @@ namespace FwBuildTasks
 			Assert.That(File.Exists(stringsEsPath));
 
 			// The Assembly Linker should not be run for source-only
-			Assert.That(m_sut.LinkerPath.Count, Is.EqualTo(0));
+			Assert.That(InstrumentedProjectLocalizer.LinkerPath.Count, Is.EqualTo(0));
 		}
 
 		[Test]
@@ -301,20 +308,20 @@ namespace FwBuildTasks
 			Assert.That(result, Is.True);
 
 			// The Assembly Linker should be run (once for each desired project) with expected arguments.
-			Assert.That(m_sut.LinkerPath.Count, Is.EqualTo(4));
+			Assert.That(InstrumentedProjectLocalizer.LinkerPath.Count, Is.EqualTo(4));
 		}
 
 		private void VerifyLinkerArgs(string linkerPath, EmbedInfo[] expectedResources )
 		{
 			string locale = "es";
-			var index = m_sut.LinkerPath.IndexOf(linkerPath);
+			var index = InstrumentedProjectLocalizer.LinkerPath.IndexOf(linkerPath);
 			Assert.That(index >= 0);
-			Assert.That(m_sut.LinkerCulture[index], Is.EqualTo(locale));
-			Assert.That(m_sut.LinkerFileVersion[index], Is.EqualTo("8.4.2.1234"));
-			Assert.That(m_sut.LinkerProductVersion[index], Is.EqualTo("8.4.2 beta 2"));
-			Assert.That(m_sut.LinkerVersion[index], Is.EqualTo("8.4.2.*"));
-			Assert.That(m_sut.LinkerAlArgs[index], Is.StringContaining("\"8.4.2 beta 2\""));
-			var embeddedResources = m_sut.LinkerResources[index];
+			Assert.That(InstrumentedProjectLocalizer.LinkerCulture[index], Is.EqualTo(locale));
+			Assert.That(InstrumentedProjectLocalizer.LinkerFileVersion[index], Is.EqualTo("8.4.2.1234"));
+			Assert.That(InstrumentedProjectLocalizer.LinkerProductVersion[index], Is.EqualTo("8.4.2 beta 2"));
+			Assert.That(InstrumentedProjectLocalizer.LinkerVersion[index], Is.EqualTo("8.4.2.*"));
+			Assert.That(InstrumentedProjectLocalizer.LinkerAlArgs[index], Is.StringContaining("\"8.4.2 beta 2\""));
+			var embeddedResources = InstrumentedProjectLocalizer.LinkerResources[index];
 			Assert.That(embeddedResources.Count, Is.EqualTo(expectedResources.Length));
 			foreach (var resource in expectedResources)
 				Assert.That(embeddedResources, Has.Member(resource));
@@ -346,9 +353,9 @@ namespace FwBuildTasks
 			var expectedResourceName = Path.ChangeExtension(expectedResxName, "resources");
 			var expectedResxPath = Path.Combine(expectedFolder, expectedResxName);
 			var expectedResourcePath = Path.Combine(expectedFolder, expectedResourceName);
-			Assert.That(m_sut.ResGenOutputPaths, Has.Member(expectedResourcePath));
-			Assert.That(m_sut.ResGenResxPaths, Has.Member(expectedResxPath));
-			Assert.That(m_sut.ResGenOriginalFolders, Has.Member(folder));
+			Assert.That(InstrumentedProjectLocalizer.ResGenOutputPaths, Has.Member(expectedResourcePath));
+			Assert.That(InstrumentedProjectLocalizer.ResGenResxPaths, Has.Member(expectedResxPath));
+			Assert.That(InstrumentedProjectLocalizer.ResGenOriginalFolders, Has.Member(folder));
 		}
 
 		private static void VerifyGroup(XDocument doc, string groupName, string expectedId, string expectedTxt)
@@ -625,7 +632,8 @@ namespace FwBuildTasks
 	{
 		#region IBuildEngine Members
 
-		public bool BuildProjectFile(string projectFileName, string[] targetNames, System.Collections.IDictionary globalProperties, System.Collections.IDictionary targetOutputs)
+		public bool BuildProjectFile(string projectFileName, string[] targetNames,
+			System.Collections.IDictionary globalProperties, System.Collections.IDictionary targetOutputs)
 		{
 			throw new NotImplementedException();
 		}
@@ -667,65 +675,5 @@ namespace FwBuildTasks
 		}
 
 		#endregion
-	}
-
-
-	class InstrumentedLocalizeFieldWorks : LocalizeFieldWorks
-	{
-		public string ErrorMessages = "";
-
-		public InstrumentedLocalizeFieldWorks()
-		{
-			BuildEngine = new MockBuildEngine();
-		}
-
-		/// <summary>
-		/// In normal operation, this is the same as RootDirectory. In test, we find the real one, to allow us to
-		/// find fixed files like LocalizeResx.xml
-		/// </summary>
-		internal override string RealFwRoot
-		{
-			get
-			{
-				var path = BuildUtils.GetAssemblyFolder();
-				while (Path.GetFileName(path) != "Build")
-					path = Path.GetDirectoryName(path);
-				return Path.GetDirectoryName(path);
-			}
-		}
-
-		internal override void LogError(string message)
-		{
-			ErrorMessages += System.Environment.NewLine + message;
-		}
-
-		public List<string> LinkerPath = new List<string>();
-		public List<string> LinkerCulture = new List<string>();
-		public List<string> LinkerFileVersion = new List<string>();
-		public List<string> LinkerProductVersion = new List<string>();
-		public List<string> LinkerVersion = new List<string>();
-		public List<List<EmbedInfo>> LinkerResources = new List<List<EmbedInfo>>();
-		public List<string> LinkerAlArgs = new List<string>();
-		internal override void RunAssemblyLinker(string outputDllPath, string culture, string fileversion, string productVersion, string version, List<EmbedInfo> resources)
-		{
-			LinkerPath.Add(outputDllPath);
-			LinkerCulture.Add(culture);
-			LinkerFileVersion.Add(fileversion);
-			LinkerProductVersion.Add(productVersion);
-			LinkerVersion.Add(version);
-			LinkerResources.Add(resources);
-			LinkerAlArgs.Add(BuildLinkerArgs(outputDllPath, culture, fileversion, productVersion, version, resources));
-		}
-
-		public List<string> ResGenOutputPaths = new List<string>();
-		public List<string> ResGenResxPaths = new List<string>();
-		public List<string> ResGenOriginalFolders = new List<string>();
-
-		internal override void RunResGen(string outputResourcePath, string resxPath, string originalFolder)
-		{
-			ResGenOutputPaths.Add(outputResourcePath);
-			ResGenResxPaths.Add(resxPath);
-			ResGenOriginalFolders.Add(originalFolder);
-		}
 	}
 }

@@ -111,8 +111,16 @@
     <Compile Include="DownloadFile.cs" />
     <Compile Include="DownloadFilesFromTeamCity.cs" />
     <Compile Include="ExtractIIDsTask.cs" />
+    <Compile Include="FwBuildTasksTests\InstrumentedLocalizeFieldWorks.cs" />
+    <Compile Include="FwBuildTasksTests\InstrumentedLocalizer.cs" />
+    <Compile Include="FwBuildTasksTests\InstrumentedProjectLocalizer.cs" />
     <Compile Include="GenerateNUnitReports.cs" />
     <Compile Include="GenerateTestCoverageReport.cs" />
+    <Compile Include="Localization\EmbedInfo.cs" />
+    <Compile Include="Localization\Localizer.cs" />
+    <Compile Include="Localization\LocalizerOptions.cs" />
+    <Compile Include="Localization\ProjectLocalizer.cs" />
+    <Compile Include="Localization\ProjectLocalizerOptions.cs" />
     <Compile Include="LocalizeFieldWorks.cs" />
     <Compile Include="FwBuildTasksTests\LocalizeFieldWorksTests.cs" />
     <Compile Include="Make.cs" />
@@ -156,6 +164,5 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>
