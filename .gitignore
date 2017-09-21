@@ -6,6 +6,7 @@ Build/GlobalInclude.properties
 Build/LibraryDevelopment.properties
 Build/NuGet.exe
 Build/nunit.framework.dll
+Build/nunit.framework.xml
 Build/packages.config
 Build/*.pdb
 Src/Common/ViewsInterfaces/Views.cs
@@ -86,8 +87,6 @@ Lib/src/unit++/autom4te.cache/
 Lib/src/unit++/configure
 Lib/src/unit++/VS/*/
 Lib/src/Enchant/fieldworks-enchant-1.6.1/
-Src/DbAccessFirebird/Test/temp.awk
-Src/DbAccessFirebird/testDbAccess
 Src/Kernel/libFwKernel
 Src/views/libViews
 Src/views/libVwGraphics
@@ -98,8 +97,6 @@ DistFiles/TeResources.dll
 DistFiles/Parts/GeneratedLayouts.xml
 DistFiles/Parts/GeneratedParts.xml
 DistFiles/Projects/
-DistFiles/Db4objects.Db4o.dll
-DistFiles/FirebirdSql.Data.FirebirdClient.dll
 DistFiles/Editorial\ Checks/ScrChecks.dll*
 DistFiles/Editorial\ Checks/ScrChecks.pdb
 DistFiles/Language\ Explorer/Configuration/Available\ Plugins/
