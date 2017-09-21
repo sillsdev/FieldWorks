@@ -1418,7 +1418,7 @@ namespace LanguageExplorer.LcmUi
 		/// Initialize a FLEx component with the basic interfaces.
 		/// </summary>
 		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
-		public void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
+		public virtual void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
 		{
 			FlexComponentCheckingService.CheckInitializationValues(flexComponentParameters, new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 
@@ -2489,6 +2489,18 @@ namespace LanguageExplorer.LcmUi
 				return new ReferenceBaseUi(cache, rootObj, referenceFlid, targetHvo);
 			return null;
 		}
+
+		#region Overrides of CmObjectUi
+		/// <summary>
+		/// Initialize a FLEx component with the basic interfaces.
+		/// </summary>
+		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
+		public override void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
+		{
+			base.InitializeFlexComponent(flexComponentParameters);
+			m_targetUi.InitializeFlexComponent(flexComponentParameters);
+		}
+		#endregion
 
 		public override string ContextMenuId
 		{

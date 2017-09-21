@@ -2112,8 +2112,6 @@
     <Compile Include="Dumpster\MorphologyListener.cs" />
     <Compile Include="Areas\TextsAndWords\OccurrenceComparer.cs" />
     <Compile Include="Areas\TextsAndWords\OccurrenceSorter.cs" />
-    <Compile Include="Dumpster\ParserListener.cs" />
-    <Compile Include="Dumpster\ParserParametersListener.cs" />
     <Compile Include="Dumpster\RespellerDlgListener.cs" />
     <Compile Include="Areas\TextsAndWords\RespellerTemporaryRecordClerk.cs" />
     <Compile Include="Areas\TextsAndWords\RespellerRecordList.cs" />
