@@ -104,8 +104,6 @@ Src/AppCore/libAppCore
 Src/DebugProcs/libDebugProcs
 Src/Generic/libGeneric
 Src/Language/libLanguage
-Lib/src/HermitCrab.NET/HermitCrabExe/bin
-Lib/src/HermitCrab.NET/HermitCrab/bin
 xulrunner/*
 
 DistFiles/ReleaseData/
@@ -137,11 +135,3 @@ DistFiles/Templates/SemDom.xml
 
 Src/Kernel/FwKernelTlb.idl
 Src/Kernel/*.idh
-
-Lib/src/liblcm/artifacts
-Lib/src/liblcm/src/SIL.LCModel.Core/KernelInterfaces/Kernel.cs
-Lib/src/liblcm/src/SIL.LCModel/Infrastructure/Impl/Generated*.cs
-Lib/src/liblcm/src/SIL.LCModel/Generated*.cs
-Lib/src/liblcm/src/SIL.LCModel/DomainImpl/Generated*.cs
-Lib/src/liblcm/src/SIL.LCModel/IOC/Generated*.cs
-!Lib/src/liblcm/LCM.sln
