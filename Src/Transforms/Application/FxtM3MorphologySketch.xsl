@@ -169,7 +169,7 @@ Main template
 		<!-- output dtd path -->
 		<xsl:text disable-output-escaping="yes">&#xa;<![CDATA[<!DOCTYPE lingPaper SYSTEM "file://]]></xsl:text>
 		<xsl:value-of select="$sWordWorksTransformPath"/>
-		<xsl:text disable-output-escaping="yes"><![CDATA[/XLingPap.dtd"[<!ENTITY nbsp "#00a0;">]>]]>&#xa;</xsl:text>
+		<xsl:text disable-output-escaping="yes"><![CDATA[/XLingPap.dtd"[<!ENTITY nbsp "#00a0;"><!ENTITY ldquo "&#147;"><!ENTITY rdquo "&#148;">]>]]>&#xa;</xsl:text>
 		<lingPaper version="1.12.0">
 			<frontMatter>
 				<title>
