@@ -3,6 +3,7 @@
 	<UsingTask TaskName="MSBuild.ExtensionPack.UI.Console" AssemblyFile="MSBuild.ExtensionPack.dll"/>
 	<Import Project="LibraryDevelopment.properties" Condition="Exists('LibraryDevelopment.properties')"/>
 	<Target Name="UpdateDevelopmentPropertiesFile">
+		<Message Importance="high" Text="Please specify whether you would like to use locally-built or downloaded (default) artifacts for each library:"/>
 		<MSBuild.ExtensionPack.UI.Console TaskAction="ReadLine" UserPrompt="Use artifacts from local libpalaso build? (y/N)" ToUpper="true">
 			<Output TaskParameter="UserResponse" PropertyName="UseLocalPalaso"/>
 		</MSBuild.ExtensionPack.UI.Console>
@@ -30,9 +31,9 @@
 		<WriteLinesToFile File="LibraryDevelopment.properties" Lines="&lt;UseLocalPalaso&gt;$(UseLocalPalaso)&lt;/UseLocalPalaso&gt;" />
 		<WriteLinesToFile File="LibraryDevelopment.properties" Lines="&lt;UseLocalChorus&gt;$(UseLocalChorus)&lt;/UseLocalChorus&gt;" />
 		<WriteLinesToFile File="LibraryDevelopment.properties" Lines="&lt;UseLocalLiblcm&gt;$(UseLocalLiblcm)&lt;/UseLocalLiblcm&gt;" />
-		<WriteLinesToFile File="LibraryDevelopment.properties" Lines="&lt;PalasoArtifactsDir&gt;$(PalasoArtifactsDir)&lt;/PalasoArtifactsDir&gt;" Condition="$(UseLocalPalaso)=='Y'" />
-		<WriteLinesToFile File="LibraryDevelopment.properties" Lines="&lt;ChorusArtifactsDir&gt;$(ChorusArtifactsDir)&lt;/ChorusArtifactsDir&gt;" Condition="$(UseLocalChorus)=='Y'" />
-		<WriteLinesToFile File="LibraryDevelopment.properties" Lines="&lt;LcmArtifactsDir&gt;$(LcmArtifactsDir)&lt;/LcmArtifactsDir&gt;" Condition="$(UseLocalLiblcm)=='Y'" />
+		<WriteLinesToFile File="LibraryDevelopment.properties" Lines="&lt;PalasoArtifactsDir Condition=&quot;'%24(UseLocalPalaso)'=='Y'&quot;&gt;$(PalasoArtifactsDir)&lt;/PalasoArtifactsDir&gt;" />
+		<WriteLinesToFile File="LibraryDevelopment.properties" Lines="&lt;ChorusArtifactsDir Condition=&quot;'%24(UseLocalChorus)'=='Y'&quot;&gt;$(ChorusArtifactsDir)&lt;/ChorusArtifactsDir&gt;" />
+		<WriteLinesToFile File="LibraryDevelopment.properties" Lines="&lt;LcmArtifactsDir Condition=&quot;'%24(UseLocalLiblcm)'=='Y'&quot;&gt;$(LcmArtifactsDir)&lt;/LcmArtifactsDir&gt;" />
 		<WriteLinesToFile File="LibraryDevelopment.properties" Lines="&lt;/PropertyGroup&gt;" />
 		<WriteLinesToFile File="LibraryDevelopment.properties" Lines="&lt;/Project&gt;" />
 	</Target>
