@@ -6,18 +6,18 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
+using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using XCore;
 
-namespace SIL.FieldWorks.Common.Controls
+namespace SIL.FieldWorks.IText
 {
+	#if RANDYTODO
+	// TODO: there is no need now for the FilterAllTextsDialog superclass, so merge it into this class.
+	#endif
 	/// <summary>
-	/// FilterTextsDialog bundles both texts and, when appropriate,
-	/// This file cannot be moved to the ITextDll: ../Src/LexText/Interlinear because that
-	/// dll is referenced by SIL.FieldWorks.TE and would create a circular reference.
-	/// It can't be moved to FwControls either for a similar reason - ScrControls uses FwControls!
-	/// This class uses TE to make sure the scriptures are properly initialized for use.
+	/// FilterTextsDialog bundles both ordinary and Scripture texts, when appropriate,
 	/// </summary>
 	public class FilterTextsDialog : FilterAllTextsDialog
 	{
@@ -83,12 +83,12 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			DialogResult = DialogResult.OK;
 			bool showWarning = false;
-			string message = FwControls.kOkbtnEmptySelection;
+			string message = ITextStrings.kOkbtnEmptySelection;
 			var checkedList = m_treeTexts.GetCheckedNodeList();
 			var own = Owner as XWindow;
 			if (own != null && OnlyGenresChecked(checkedList))
 			{
-				message = FwControls.kOkbtnGenreSelection;
+				message = ITextStrings.kOkbtnGenreSelection;
 				own.PropTable.SetProperty("RecordClerk-DelayedGenreAssignment", checkedList, true);
 				showWarning = true;
 			}
@@ -98,7 +98,7 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				DialogResult result;
 				MessageBoxButtons buttons = MessageBoxButtons.OKCancel;
-				result = MessageBox.Show(message, FwControls.kOkbtnNoTextSelection, buttons);
+				result = MessageBox.Show(message, ITextStrings.kOkbtnNoTextSelection, buttons);
 				if (result == DialogResult.Cancel) DialogResult = DialogResult.None;
 			}
 		}
@@ -220,7 +220,6 @@ namespace SIL.FieldWorks.Common.Controls
 			this.Controls.SetChildIndex(this.m_treeTexts, 0);
 			this.ResumeLayout(false);
 			this.PerformLayout();
-
 		}
 	}
 }

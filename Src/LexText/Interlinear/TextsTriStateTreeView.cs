@@ -11,6 +11,7 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel.Core.Scripture;
 using SIL.LCModel.Core.Text;
+using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.LCModel;
@@ -21,7 +22,7 @@ using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Utils;
 using XCore;
 
-namespace SIL.FieldWorks.Common.Controls
+namespace SIL.FieldWorks.IText
 {
 	/// <summary>
 	/// TriStateTreeView that knows how to load scripture from the cache.
@@ -120,18 +121,18 @@ namespace SIL.FieldWorks.Common.Controls
 					ntBooks.Add(node);
 			}
 
-			TreeNode bibleNode = new TreeNode(FwControls.kstidBibleNode);
+			TreeNode bibleNode = new TreeNode(ITextStrings.kstidBibleNode);
 			bibleNode.Name = "Bible";
 			if (otBooks.Count > 0)
 			{
-				TreeNode testamentNode = new TreeNode(FwControls.kstidOtNode, otBooks.ToArray());
+				TreeNode testamentNode = new TreeNode(ITextStrings.kstidOtNode, otBooks.ToArray());
 				testamentNode.Name = "Testament"; // help us query for Testaments
 				bibleNode.Nodes.Add(testamentNode);
 			}
 
 			if (ntBooks.Count > 0)
 			{
-				TreeNode testamentNode = new TreeNode(FwControls.kstidNtNode, ntBooks.ToArray());
+				TreeNode testamentNode = new TreeNode(ITextStrings.kstidNtNode, ntBooks.ToArray());
 				testamentNode.Name = "Testament"; // help us query for Testaments
 				bibleNode.Nodes.Add(testamentNode);
 			}

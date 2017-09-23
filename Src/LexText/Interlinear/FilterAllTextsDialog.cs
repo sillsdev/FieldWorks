@@ -1,25 +1,22 @@
 // Copyright (c) 2004-2013 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: FilterAllTextsDialog.cs
 
 using System;
 using System.Linq;
 using System.Windows.Forms;
+using SIL.FieldWorks.Common.Controls;
 using SIL.LCModel;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
 using XCore;
 
-namespace SIL.FieldWorks.Common.Controls
+namespace SIL.FieldWorks.IText
 {
-	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// Abstract base dialog for displaying a list of texts including Scripture portions (books, sections, etc.)
 	/// and allowing the user to choose which ones to include
 	/// </summary>
-	/// ----------------------------------------------------------------------------------------
 	public abstract class FilterAllTextsDialog : Form
 	{
 		#region Data Members
@@ -159,7 +156,7 @@ namespace SIL.FieldWorks.Common.Controls
 			System.Windows.Forms.Button m_btnHelp;
 			this.m_treeViewLabel = new System.Windows.Forms.Label();
 			this.m_btnOK = new System.Windows.Forms.Button();
-			this.m_treeTexts = new SIL.FieldWorks.Common.Controls.TextsTriStateTreeView();
+			this.m_treeTexts = new SIL.FieldWorks.IText.TextsTriStateTreeView();
 			this.m_helpProvider = new System.Windows.Forms.HelpProvider();
 			m_btnCancel = new System.Windows.Forms.Button();
 			m_btnHelp = new System.Windows.Forms.Button();

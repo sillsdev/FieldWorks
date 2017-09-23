@@ -246,17 +246,8 @@
     <Compile Include="ExplorerBarItem.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="FilterAllTextsDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="FilterTextsDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="IInheritableFwControl.cs" />
     <Compile Include="ObtainProjectMethod.cs" />
-    <Compile Include="TextsTriStateTreeView.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="FwBasicGrid.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -412,16 +403,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="DockExtender\Floaty.resx">
       <DependentUpon>Floaty.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="FilterAllTextsDialog.resx">
-      <DependentUpon>FilterAllTextsDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="FilterTextsDialog.resx">
-      <DependentUpon>FilterTextsDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="TextsTriStateTreeView.resx">
-      <DependentUpon>TextsTriStateTreeView.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="FwButton.resx">

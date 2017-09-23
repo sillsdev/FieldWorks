@@ -7,7 +7,7 @@ using System.Windows.Forms;
 using NUnit.Framework;
 
 #pragma warning disable 1591 // no XML comments needed in tests
-namespace SIL.FieldWorks.Common.Controls
+namespace SIL.FieldWorks.IText
 {
 	[SuppressMessage("ReSharper", "InconsistentNaming", Justification = "MethodName_TestName is standard for tests")]
 	public class TextsTriStateTreeViewTests
@@ -60,8 +60,8 @@ namespace SIL.FieldWorks.Common.Controls
 			var treeView = new TestTextsTriStateTreeView();
 			var dummyVersesNode = new TreeNode(TextsTriStateTreeView.ksDummyName) { Name = TextsTriStateTreeView.ksDummyName };
 			m_bookNode = new TreeNode("II Hezekiah", new[] { dummyVersesNode }) { Name = "Book", Tag = 7 };
-			m_testamentNode = new TreeNode(FwControls.kstidOtNode, new[] { m_bookNode }) { Name = "Testament" };
-			m_bibleNode = new TreeNode(FwControls.kstidBibleNode, new[] { m_testamentNode }) { Name = "Bible" };
+			m_testamentNode = new TreeNode(ITextStrings.kstidOtNode, new[] { m_bookNode }) { Name = "Testament" };
+			m_bibleNode = new TreeNode(ITextStrings.kstidBibleNode, new[] { m_testamentNode }) { Name = "Bible" };
 			treeView.Nodes.Add(m_bibleNode);
 			EnableEventHandling(treeView);
 			return treeView;

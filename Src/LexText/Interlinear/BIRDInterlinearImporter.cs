@@ -615,7 +615,7 @@ namespace SIL.FieldWorks.IText
 		}
 
 		private static ILgWritingSystem SafelyGetWritingSystem(LcmCache cache, ILgWritingSystemFactory wsFactory,
-			Language lang, out bool fIsVernacular)
+			FlexInterlinModel.Language lang, out bool fIsVernacular)
 		{
 			fIsVernacular = lang.vernacularSpecified && lang.vernacular;
 			ILgWritingSystem writingSystem = null;
