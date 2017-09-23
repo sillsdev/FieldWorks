@@ -1,6 +1,7 @@
 // Copyright (c) 2004-2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,7 +19,7 @@ namespace SIL.FieldWorks.Common.Controls
 	/// It can't be moved to FwControls either for a similar reason - ScrControls uses FwControls!
 	/// This class uses TE to make sure the scriptures are properly initialized for use.
 	/// </summary>
-	public class FilterTextsDialog : FilterAllTextsDialog<IStText>, IFilterTextsDialog<IStText>
+	public class FilterTextsDialog : FilterAllTextsDialog
 	{
 		/// <summary>
 		/// If the dialog is being used for exporting multiple texts at a time,
@@ -32,18 +33,20 @@ namespace SIL.FieldWorks.Common.Controls
 		private IStText m_selectedText;
 
 		#region Constructor/Destructor
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the ChooseScriptureDialog class.
 		/// WARNING: this constructor is called by reflection, at least in the Interlinear
 		/// Text DLL. If you change its parameters be SURE to find and fix those callers also.
 		/// </summary>
+		/// <param name="propertyTable"></param>
 		/// <param name="cache">The cache.</param>
 		/// <param name="objList">A list of texts and books to check as an array of hvos</param>
 		/// <param name="helpTopicProvider">The help topic provider.</param>
 		/// ------------------------------------------------------------------------------------
-		public FilterTextsDialog(LcmCache cache, IStText[] objList,
-			IHelpTopicProvider helpTopicProvider) : base(cache, objList, helpTopicProvider)
+		public FilterTextsDialog(PropertyTable propertyTable, LcmCache cache, IStText[] objList,
+			IHelpTopicProvider helpTopicProvider) : base(propertyTable, cache, objList, helpTopicProvider)
 		{
 			m_helpTopicId = "khtpChooseTexts";
 			InitializeComponent();
@@ -56,7 +59,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		protected override void LoadTexts()
 		{
-			m_treeTexts.LoadGeneralTexts(m_cache);
+			m_treeTexts.LoadGeneralTexts();
 		}
 
 

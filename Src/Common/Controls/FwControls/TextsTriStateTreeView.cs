@@ -7,6 +7,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel.Core.Scripture;
 using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.ViewsInterfaces;
@@ -14,6 +16,10 @@ using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.LCModel;
 using SIL.FieldWorks.Language;
 using SIL.FieldWorks.Resources;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
+using SIL.LCModel.Utils;
+using XCore;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -22,8 +28,8 @@ namespace SIL.FieldWorks.Common.Controls
 	/// </summary>
 	public class TextsTriStateTreeView : TriStateTreeView
 	{
+		private LcmStyleSheet m_scriptureStylesheet;
 		private IScripture m_scr;
-		private IBookImporter m_bookImporter;
 		private IScrText m_associatedPtText;
 		internal const string ksDummyName = "dummy"; // used for Name of dummy nodes.
 
@@ -35,21 +41,31 @@ namespace SIL.FieldWorks.Common.Controls
 			BeforeExpand += ScriptureTriStateTreeView_BeforeExpand;
 		}
 
+		/// <summary>
+		/// Get/Set the cache.
+		/// </summary>
+		public LcmCache Cache { get; set; }
+
+		/// <summary>
+		/// Get/Set the property table.
+		/// </summary>
+		public PropertyTable PropertyTable { get; set; }
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Load Texts and ScrBooks into the tree view.
 		/// </summary>
-		/// <param name="cache">The cache.</param>
-		/// <param name="bookImporter">The delegate/class that knows how to import a
-		/// (Paratext) book on demand.</param>
+		/// <param name="usebookImporter">'true' to use book importer system. Otherwise 'false'.</param>
 		/// ------------------------------------------------------------------------------------
-		private void LoadTextsAndBooks(LcmCache cache, IBookImporter bookImporter)
+		private void LoadTextsAndBooks(bool usebookImporter = true)
 		{
 			Nodes.Clear();
-			LoadGeneralTexts(cache);
+			LoadGeneralTexts();
 
-			if (cache.ServiceLocator.GetInstance<IScrBookRepository>().AllInstances().Any())
-				LoadScriptureTexts(cache, bookImporter);
+			if (Cache.ServiceLocator.GetInstance<IScrBookRepository>().AllInstances().Any())
+			{
+				LoadScriptureTexts(usebookImporter);
+			}
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -57,9 +73,9 @@ namespace SIL.FieldWorks.Common.Controls
 		/// Loads the non-Scripture texts.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public void LoadGeneralTexts(LcmCache cache)
+		public void LoadGeneralTexts()
 		{
-			TreeNode tnTexts = LoadTextsByGenreAndWithoutGenre(cache);
+			TreeNode tnTexts = LoadTextsByGenreAndWithoutGenre();
 			if (tnTexts != null && tnTexts.Nodes.Count > 0)
 			{
 				foreach (TreeNode textCat in tnTexts.Nodes)
@@ -74,19 +90,18 @@ namespace SIL.FieldWorks.Common.Controls
 		/// Loads the texts for each Scripture book title, section, footnote, etc.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public void LoadScriptureTexts(LcmCache cache, IBookImporter bookImporter)
+		public void LoadScriptureTexts(bool usebookImporter = true)
 		{
-			m_bookImporter = bookImporter;
-			m_associatedPtText = bookImporter != null ? ParatextHelper.GetAssociatedProject(cache.ProjectId) : null;
+			m_associatedPtText = usebookImporter ? ParatextHelper.GetAssociatedProject(Cache.ProjectId) : null;
 
-			m_scr = cache.LanguageProject.TranslatedScriptureOA;
+			m_scr = Cache.LanguageProject.TranslatedScriptureOA;
 			if (m_scr == null)
 				return;
 			List<TreeNode> otBooks = new List<TreeNode>();
 			List<TreeNode> ntBooks = new List<TreeNode>();
 			for (int bookNum = 1; bookNum <= BCVRef.LastBook; bookNum++)
 			{
-				var bookName = cache.ServiceLocator.GetInstance<IScrRefSystemRepository>().Singleton.BooksOS[bookNum - 1].UIBookName;
+				var bookName = Cache.ServiceLocator.GetInstance<IScrRefSystemRepository>().Singleton.BooksOS[bookNum - 1].UIBookName;
 				object book = m_scr.FindBook(bookNum);
 				if (book == null)
 				{
@@ -127,15 +142,14 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>
 		/// Load texts by Genre into the texts tree view.
 		/// </summary>
-		/// <param name="cache">The cache.</param>
 		/// <returns>A control tree of the Texts in the project</returns>
 		/// ------------------------------------------------------------------------------------
-		public TreeNode LoadTextsByGenreAndWithoutGenre(LcmCache cache)
+		public TreeNode LoadTextsByGenreAndWithoutGenre()
 		{
-			if (cache.LanguageProject.GenreListOA == null) return null;
-			var genreList = cache.LanguageProject.GenreListOA.PossibilitiesOS;
+			if (Cache.LanguageProject.GenreListOA == null) return null;
+			var genreList = Cache.LanguageProject.GenreListOA.PossibilitiesOS;
 			Debug.Assert(genreList != null);
-			var allTexts = cache.ServiceLocator.GetInstance<ITextRepository>().AllInstances();
+			var allTexts = Cache.ServiceLocator.GetInstance<ITextRepository>().AllInstances();
 			if (allTexts == null)
 				return null;
 
@@ -168,7 +182,7 @@ namespace SIL.FieldWorks.Common.Controls
 					{
 						foundFirstText = true;
 						var ws1 = tex.ChooserNameTS.get_WritingSystemAt(0);
-						var wsEngine = cache.WritingSystemFactory.get_EngineOrNull(ws1);
+						var wsEngine = Cache.WritingSystemFactory.get_EngineOrNull(ws1);
 						collator.Open(wsEngine.Id);
 					}
 				}
@@ -195,7 +209,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="parent">The parent to attach the genres to. If null, nothing is done.</param>
 		/// <param name="genreList">The owning sequence of genres - its a tree.</param>
 		/// <param name="allTexts">The flat list of all texts in the project.</param>
-		private void LoadTextsFromGenres(TreeNode parent, ILcmOwningSequence<ICmPossibility> genreList, IEnumerable<IText> allTexts)
+		private void LoadTextsFromGenres(TreeNode parent, ILcmOwningSequence<ICmPossibility> genreList, IEnumerable<LCModel.IText> allTexts)
 		{
 			if (parent == null) return;
 			var sortedGenreList = new List<ICmPossibility>();
@@ -217,7 +231,7 @@ namespace SIL.FieldWorks.Common.Controls
 				// Create a collator ready for sorting:
 				var collator = new ManagedLgIcuCollator();
 
-				foreach (IText tex in allTexts)
+				foreach (var tex in allTexts)
 				{   // This tex may not have a genre or it may claim to be in more than one
 					if (Enumerable.Contains(tex.GenresRC, gen))
 					{
@@ -385,14 +399,12 @@ namespace SIL.FieldWorks.Common.Controls
 		/// Load sections into the books of a Scripture tree view optionally including the
 		/// heading as well as the content of each section.
 		/// </summary>
-		/// <param name="cache">The cache.</param>
-		/// <param name="paratextBookImporter">The delegate/class that knows how to import a
-		/// Paratext book on demand.</param>
+		/// <param name="usebookImporter">'true' to use book importer system. Otherwise 'false'.</param>
 		/// ------------------------------------------------------------------------------------
-		public void LoadScriptureAndOtherTexts(LcmCache cache, IBookImporter paratextBookImporter)
+		public void LoadScriptureAndOtherTexts(bool usebookImporter = true)
 		{
 			// first load the book ids.
-			LoadTextsAndBooks(cache, paratextBookImporter);
+			LoadTextsAndBooks(usebookImporter);
 
 			if (Nodes.Count == 0)
 				return;
@@ -447,7 +459,7 @@ namespace SIL.FieldWorks.Common.Controls
 				!m_associatedPtText.IsCheckSumCurrent(book.CanonicalNum, book.ImportedCheckSum)))
 			{
 				// The book for this node is out-of-date with the Paratext book data
-				IScrBook importedBook = m_bookImporter.Import(bookNum, owner, false);
+				IScrBook importedBook = Import(bookNum, owner, false);
 				if (importedBook != null)
 					bookNode.Tag = book = importedBook;
 				if (book == null)
@@ -461,7 +473,7 @@ namespace SIL.FieldWorks.Common.Controls
 					book.ImportedBtCheckSum.get_String(book.Cache.DefaultAnalWs).Text))
 				{
 					// The BT for this book node is out-of-date with the Paratext BT data
-					m_bookImporter.Import(bookNum, owner, true);
+					Import(bookNum, owner, true);
 				}
 			}
 
@@ -548,17 +560,7 @@ namespace SIL.FieldWorks.Common.Controls
 			foreach (var node in Nodes.Find("Genre", true))
 				node.Collapse();
 		}
-	}
 
-	#region IParatextBookImporter interface
-	/// ----------------------------------------------------------------------------------------
-	/// <summary>
-	/// Implement this interface to represent something that can import a book from an external
-	/// source.
-	/// </summary>
-	/// ----------------------------------------------------------------------------------------
-	public interface IBookImporter
-	{
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Imports the specified book.
@@ -568,9 +570,61 @@ namespace SIL.FieldWorks.Common.Controls
 		/// message boxes.</param>
 		/// <param name="importBt">True to import only the back translation, false to import
 		/// only the main translation</param>
-		/// <returns>The ScrBook created to hold the imported data</returns>
+		/// <returns>
+		/// The ScrBook created to hold the imported data
+		/// </returns>
 		/// ------------------------------------------------------------------------------------
-		IScrBook Import(int bookNum, Form owningForm, bool importBt);
+		public IScrBook Import(int bookNum, Form owningForm, bool importBt)
+		{
+			IScripture scr = Cache.LangProject.TranslatedScriptureOA;
+			bool haveSomethingToImport = NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				if (m_scriptureStylesheet == null)
+				{
+					m_scriptureStylesheet = new LcmStyleSheet();
+					m_scriptureStylesheet.Init(Cache, Cache.LangProject.TranslatedScriptureOA.Hvo, ScriptureTags.kflidStyles);
+				}
+				IScrImportSet importSettings = scr.FindOrCreateDefaultImportSettings(TypeOfImport.Paratext6, m_scriptureStylesheet,
+					FwDirectoryFinder.TeStylesPath);
+				IScrText paratextProj = ParatextHelper.GetAssociatedProject(Cache.ProjectId);
+				importSettings.ParatextScrProj = paratextProj.Name;
+				importSettings.StartRef = new BCVRef(bookNum, 0, 0);
+				int chapter = paratextProj.Versification.LastChapter(bookNum);
+				importSettings.EndRef = new BCVRef(bookNum, chapter, paratextProj.Versification.LastVerse(bookNum, chapter));
+				if (!importBt)
+				{
+					importSettings.ImportTranslation = true;
+					importSettings.ImportBackTranslation = false;
+				}
+				else
+				{
+					List<IScrText> btProjects = ParatextHelper.GetBtsForProject(paratextProj).ToList();
+					if (btProjects.Count > 0 && (string.IsNullOrEmpty(importSettings.ParatextBTProj) ||
+						!btProjects.Any(st => st.Name == importSettings.ParatextBTProj)))
+					{
+						importSettings.ParatextBTProj = btProjects[0].Name;
+					}
+					if (string.IsNullOrEmpty(importSettings.ParatextBTProj))
+						return false;
+					importSettings.ImportTranslation = false;
+					importSettings.ImportBackTranslation = true;
+				}
+				ParatextHelper.LoadProjectMappings(importSettings);
+				ScrMappingList importMap = importSettings.GetMappingListForDomain(ImportDomain.Main);
+				ImportMappingInfo figureInfo = importMap[@"\fig"];
+				if (figureInfo != null)
+					figureInfo.IsExcluded = true;
+				importSettings.SaveSettings();
+				return true;
+			});
+
+			if (haveSomethingToImport && ReflectionHelper.GetBoolResult(ReflectionHelper.GetType("TeImportExport.dll",
+				"SIL.FieldWorks.TE.TeImportManager"), "ImportParatext", owningForm, Cache, m_scriptureStylesheet,
+				    PropertyTable.GetValue<IApp>("App")))
+			{
+				return scr.FindBook(bookNum);
+			}
+			return null;
+		}
 	}
-	#endregion
 }

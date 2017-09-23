@@ -114,10 +114,8 @@ namespace SIL.FieldWorks.IText
 			while (parent != null && !(parent is InterlinMaster))
 				parent = parent.Parent;
 			var master = parent as InterlinMaster;
-			IBookImporter bookImporter = null;
 			if (master != null)
 			{
-				bookImporter = master.Clerk as IBookImporter;
 				var clerk = master.Clerk as InterlinearTextsRecordClerk;
 				if (clerk != null)
 				{
@@ -126,7 +124,7 @@ namespace SIL.FieldWorks.IText
 			}
 			bool fFocusBox = TryHideFocusBoxAndUninstall();
 			ICmObject objRoot = m_objRepo.GetObject(m_hvoRoot);
-			using (var dlg = new InterlinearExportDialog(m_mediator, m_propertyTable, objRoot, m_vc, bookImporter))
+			using (var dlg = new InterlinearExportDialog(m_mediator, m_propertyTable, objRoot, m_vc))
 			{
 				dlg.ShowDialog(this);
 			}

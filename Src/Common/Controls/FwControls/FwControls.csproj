@@ -130,6 +130,10 @@
     <Reference Include="Accessibility">
       <Name>Accessibility</Name>
     </Reference>
+    <Reference Include="RootSite, Version=9.0.0.20498, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Output\Debug\RootSite.dll</HintPath>
+    </Reference>
     <Reference Include="ViewsInterfaces">
       <Name>ViewsInterfaces</Name>
       <HintPath>..\..\..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
@@ -247,9 +251,6 @@
     </Compile>
     <Compile Include="FilterTextsDialog.cs">
       <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="IFilterTextsDialog.cs">
-      <SubType>Code</SubType>
     </Compile>
     <Compile Include="IInheritableFwControl.cs" />
     <Compile Include="ObtainProjectMethod.cs" />

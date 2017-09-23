@@ -6,24 +6,19 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
-using Paratext;
-using SIL.LCModel.Core.Scripture;
 using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.XWorks;
-using SIL.LCModel.Utils;
 using XCore;
 
 namespace SIL.FieldWorks.IText
 {
-	public class InterlinearTextsRecordClerk : RecordClerk, IBookImporter
+	public class InterlinearTextsRecordClerk : RecordClerk
 	{
 		private LcmStyleSheet m_stylesheet;
 
@@ -155,17 +150,10 @@ namespace SIL.FieldWorks.IText
 			var interestingTextsList = GetInterestingTextList();
 			var interestingTexts = interestingTextsList.InterestingTexts.ToArray();
 
-			IFilterTextsDialog<IStText> dlg = null;
+			FilterTextsDialog dlg = null;
 			try
 			{
-				if (Cache.ServiceLocator.GetInstance<IScrBookRepository>().AllInstances().Any())
-				{
-					dlg = new FilterTextsDialogTE(Cache, interestingTexts, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), this);
-				}
-				else
-				{
-					dlg = new FilterTextsDialog(Cache, interestingTexts, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
-				}
+				dlg = new FilterTextsDialog(m_propertyTable, Cache, interestingTexts, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
 				if (dlg.ShowDialog(m_propertyTable.GetValue<IApp>("App").ActiveMainWindow) == DialogResult.OK)
 				{
 					interestingTextsList.SetInterestingTexts(dlg.GetListOfIncludedTexts());
@@ -398,107 +386,5 @@ namespace SIL.FieldWorks.IText
 			}
 			return wsText;
 		}
-
-		/// <summary>
-		/// This class creates text, it must delete it here when UNDO is commanded
-		/// so it can update InterestingTexts.
-		/// </summary>
-/*		public override void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
-		{
-			if (cvDel != 1)
-				return;
-			SaveOnChangeRecord();
-			SuppressSaveOnChangeRecord = true;
-			try
-			{
-				m_list.DeleteCurrentObject();
-			}
-			finally
-			{
-				SuppressSaveOnChangeRecord = false;
-			}
-			GetInterestingTextList().UpdateInterestingTexts();
-		} */
-
-		#region IBookImporter Members
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Imports the specified book.
-		/// </summary>
-		/// <param name="bookNum">The canonical book number.</param>
-		/// <param name="owningForm">Form that can be used as the owner of progress dialogs and
-		/// message boxes.</param>
-		/// <param name="importBt">True to import only the back translation, false to import
-		/// only the main translation</param>
-		/// <returns>
-		/// The ScrBook created to hold the imported data
-		/// </returns>
-		/// ------------------------------------------------------------------------------------
-		public IScrBook Import(int bookNum, Form owningForm, bool importBt)
-		{
-			IScripture scr = Cache.LangProject.TranslatedScriptureOA;
-			bool haveSomethingToImport = NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
-				{
-					IScrImportSet importSettings = scr.FindOrCreateDefaultImportSettings(TypeOfImport.Paratext6, ScriptureStylesheet,
-						FwDirectoryFinder.TeStylesPath);
-					IScrText paratextProj = ParatextHelper.GetAssociatedProject(Cache.ProjectId);
-					importSettings.ParatextScrProj = paratextProj.Name;
-					importSettings.StartRef = new BCVRef(bookNum, 0, 0);
-					int chapter = paratextProj.Versification.LastChapter(bookNum);
-					importSettings.EndRef = new BCVRef(bookNum, chapter, paratextProj.Versification.LastVerse(bookNum, chapter));
-					if (!importBt)
-					{
-						importSettings.ImportTranslation = true;
-						importSettings.ImportBackTranslation = false;
-					}
-					else
-					{
-						List<IScrText> btProjects = ParatextHelper.GetBtsForProject(paratextProj).ToList();
-						if (btProjects.Count > 0 && (string.IsNullOrEmpty(importSettings.ParatextBTProj) ||
-							!btProjects.Any(st => st.Name == importSettings.ParatextBTProj)))
-						{
-							importSettings.ParatextBTProj = btProjects[0].Name;
-						}
-						if (string.IsNullOrEmpty(importSettings.ParatextBTProj))
-							return false;
-						importSettings.ImportTranslation = false;
-						importSettings.ImportBackTranslation = true;
-					}
-					ParatextHelper.LoadProjectMappings(importSettings);
-					ScrMappingList importMap = importSettings.GetMappingListForDomain(ImportDomain.Main);
-					ImportMappingInfo figureInfo = importMap[@"\fig"];
-					if (figureInfo != null)
-						figureInfo.IsExcluded = true;
-					importSettings.SaveSettings();
-					return true;
-				});
-
-			if (haveSomethingToImport && ReflectionHelper.GetBoolResult(ReflectionHelper.GetType("TeImportExport.dll",
-				"SIL.FieldWorks.TE.TeImportManager"), "ImportParatext", owningForm, ScriptureStylesheet,
-				m_propertyTable.GetValue<FwApp>("App")))
-			{
-				return scr.FindBook(bookNum);
-			}
-			return null;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the Scripture stylesheet.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		private LcmStyleSheet ScriptureStylesheet
-		{
-			get
-			{
-				if (m_stylesheet == null)
-				{
-					m_stylesheet = new LcmStyleSheet();
-					m_stylesheet.Init(Cache, Cache.LangProject.TranslatedScriptureOA.Hvo, ScriptureTags.kflidStyles);
-				}
-				return m_stylesheet;
-			}
-		}
-		#endregion
 	}
 }

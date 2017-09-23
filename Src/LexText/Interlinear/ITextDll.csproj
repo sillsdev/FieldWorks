@@ -188,10 +188,6 @@
       <HintPath>..\..\..\Output\Debug\RootSite.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
-    <Reference Include="ScrControls, Version=8.0.2.25221, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\ScrControls.dll</HintPath>
-    </Reference>
     <Reference Include="ScriptureUtils, Version=8.0.9.31119, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\ScriptureUtils.dll</HintPath>

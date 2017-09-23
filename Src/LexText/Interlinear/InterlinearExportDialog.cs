@@ -31,14 +31,12 @@ namespace SIL.FieldWorks.IText
 		LCModel.IText m_text;
 		List<ICmObject> m_objs = new List<ICmObject>();
 		private event EventHandler OnLaunchFilterScrScriptureSectionsDialog;
-		private IBookImporter m_bookImporter;
 
-		public InterlinearExportDialog(Mediator mediator, PropertyTable propertyTable, ICmObject objRoot, InterlinVc vc, IBookImporter bookImporter)
+		public InterlinearExportDialog(Mediator mediator, PropertyTable propertyTable, ICmObject objRoot, InterlinVc vc)
 			: base(mediator, propertyTable)
 		{
 			m_objRoot = objRoot;
 			m_vc = vc;
-			m_bookImporter = bookImporter;
 
 			m_helpTopic = "khtpExportInterlinear";
 			columnHeader1.Text = ITextStrings.ksFormat;
@@ -92,7 +90,7 @@ namespace SIL.FieldWorks.IText
 		/// <param name="args"></param>
 		private void LaunchFilterTextsDialog(object sender, EventArgs args)
 		{
-			IFilterTextsDialog<IStText> dlg = null;
+			FilterTextsDialog dlg = null;
 			try
 			{
 				var interestingTextsList = InterestingTextsDecorator.GetInterestingTextList(m_mediator, m_propertyTable, m_cache.ServiceLocator);
@@ -103,14 +101,7 @@ namespace SIL.FieldWorks.IText
 					textsToChooseFrom = textsToChooseFrom.Where(text => !ScriptureServices.ScriptureIsResponsibleFor(text)).ToList();
 				}
 				var interestingTexts = textsToChooseFrom.ToArray();
-				if (isOkToDisplayScripture)
-				{
-					dlg = new FilterTextsDialogTE(m_cache, interestingTexts, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_bookImporter);
-				}
-				else
-				{
-					dlg = new FilterTextsDialog(m_cache, interestingTexts, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
-				}
+				dlg = new FilterTextsDialog(m_propertyTable, m_cache, interestingTexts, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
 				// LT-12181: Was 'PruneToSelectedTexts(text) and most others were deleted.
 				// We want 'PruneToInterestingTextsAndSelect(interestingTexts, selectedText)'
 				dlg.PruneToInterestingTextsAndSelect(interestingTexts, (IStText)m_objRoot);
