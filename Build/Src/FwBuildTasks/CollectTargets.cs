@@ -115,7 +115,6 @@ namespace FwBuildTasks
 			var project = Path.GetFileNameWithoutExtension(filename);
 			if (project == "ICSharpCode.SharpZLib" ||
 				project == "VwGraphicsReplayer" ||
-				project == "SilSidePaneTestApp" ||
 				project == "SfmStats" ||
 				project == "ConvertSFM")
 			{
