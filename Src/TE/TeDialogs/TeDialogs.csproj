@@ -223,36 +223,6 @@
     <Compile Include="..\..\CommonAssemblyInfo.cs">
       <Link>CommonAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="ArchiveDraftDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ArchiveMaintenanceDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="BackTransLanguageDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="BookPropertiesDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="DraftPropertiesDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="DraftPropertiesDialog.Designer.cs">
-      <DependentUpon>DraftPropertiesDialog.cs</DependentUpon>
-    </Compile>
-    <Compile Include="EmptyScripture.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="FilesOverwriteDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="FilesOverwriteDialog.Designer.cs">
-      <DependentUpon>FilesOverwriteDialog.cs</DependentUpon>
-    </Compile>
-    <Compile Include="FootnotePropertiesSelector.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Include="ImportedBooks.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -260,64 +230,8 @@
       <DependentUpon>ImportedBooks.cs</DependentUpon>
     </Compile>
     <Compile Include="ReplaceInFilterFixer.cs" />
-    <Compile Include="ScriptureProperties.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="SequenceOptionsDlg.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="SequenceOptionsDlg.Designer.cs">
-      <DependentUpon>SequenceOptionsDlg.cs</DependentUpon>
-    </Compile>
-    <Compile Include="SymbolChooserDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <EmbeddedResource Include="ArchiveDraftDialog.resx">
-      <DependentUpon>ArchiveDraftDialog.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ArchiveMaintenanceDialog.resx">
-      <DependentUpon>ArchiveMaintenanceDialog.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="BackTransLanguageDialog.resx">
-      <DependentUpon>BackTransLanguageDialog.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="BookPropertiesDialog.resx">
-      <DependentUpon>BookPropertiesDialog.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="DraftPropertiesDialog.resx">
-      <DependentUpon>DraftPropertiesDialog.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="EmptyScripture.resx">
-      <DependentUpon>EmptyScripture.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="FilesOverwriteDialog.resx">
-      <DependentUpon>FilesOverwriteDialog.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="FootnotePropertiesSelector.resx">
-      <DependentUpon>FootnotePropertiesSelector.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="ImportedBooks.resx">
       <DependentUpon>ImportedBooks.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ScriptureProperties.resx">
-      <DependentUpon>ScriptureProperties.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="SequenceOptionsDlg.resx">
-      <DependentUpon>SequenceOptionsDlg.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="SymbolChooserDialog.resx">
-      <DependentUpon>SymbolChooserDialog.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <Compile Include="AssemblyInfo.cs">
