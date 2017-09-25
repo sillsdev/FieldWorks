@@ -116,7 +116,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="SantaFeFocusMessageHandler.cs" />
     <Compile Include="ScrBookControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
