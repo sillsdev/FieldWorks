@@ -322,6 +322,13 @@
 	  <Message Text="Updated CommonAssemblyInfo.cs, bldinc.h and GlobalInclude.properties (if needed)."/>
   </Target>
 
+  <Target Name="GeneratePartsAndLayoutFiles" DependsOnTargets="GenerateCellarConstants">
+	  <XslTransformation OutputPaths="$(fwrt)/DistFiles/Parts/GeneratedParts.xml" XmlInputPaths="$(LcmArtifactsDir)/MasterLCModel.xml" XslInputPath="$(fwrt)/Src/Common/Controls/DetailControls/PartGenerator/PartGenerate.xslt"/>
+	  <XslTransformation OutputPaths="$(fwrt)/DistFiles/Parts/Generated.fwlayout" XmlInputPaths="$(LcmArtifactsDir)/MasterLCModel.xml" XslInputPath="$(fwrt)/Src/Common/Controls/DetailControls/PartGenerator/LayoutGenerate.xslt"/>
+
+	  <Message Text="Updated GeneratedParts.xml and Generated.fwlayout (if needed)."/>
+  </Target>
+
   <PropertyGroup>
 	<fwrt>$(MSBuildProjectDirectory)/..</fwrt>
 	<BUILD_LEVEL Condition="'$(BUILD_LEVEL)'==''">9</BUILD_LEVEL>

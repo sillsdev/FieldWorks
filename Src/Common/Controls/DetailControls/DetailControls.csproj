@@ -426,7 +426,6 @@
     <Compile Include="ViewSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <None Include="BuildInclude.targets" />
     <EmbeddedResource Include="AtomicReferenceLauncher.resx">
       <DependentUpon>AtomicReferenceLauncher.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -532,7 +531,6 @@
     <None Include="Resources\gotoLinkPic.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <Import Project="BuildInclude.targets" />
   <PropertyGroup>
     <PreBuildEvent>
     </PreBuildEvent>
