@@ -13,53 +13,19 @@ Last reviewed:
 #ifndef UtilInt_H
 #define UtilInt_H 1
 
-
 const int knMax = 0x7FFFFFFF;
-
-
-#if defined(_MSC_VER) && !defined(_M_X64)
 
 /***********************************************************************************************
 	Intel 80386 routines.
 ***********************************************************************************************/
+#if defined(WIN32)
 #define MulDiv MulDivImp
+#endif
 
 inline int MulDiv(int n, int nMul, int nDiv)
 {
 	Assert(nDiv != 0);
-	__asm
-	{
-		mov		eax,n
-		imul	nMul
-		idiv	nDiv
-		mov		n,eax
-	}
-	return n;
-}
-
-
-inline int MulDivMod(int n, int nMul, int nDiv, int *pnRem)
-{
-	Assert(nDiv != 0);
-	AssertPtr(pnRem);
-	__asm
-	{
-		mov		eax,n
-		imul	nMul
-		idiv	nDiv
-		mov		ecx,pnRem
-		mov		DWORD PTR[ecx],edx
-		mov		n,eax
-	}
-	return n;
-}
-
-#else // defined(_MSC_VER) && !defined(_M_X64)
-
-inline int MulDiv(int n, int nMul, int nDiv)
-{
-	Assert(nDiv != 0);
-	return int64(n) * nMul / nDiv;
+	return n * nMul / nDiv;
 }
 
 inline int MulDivMod(int n, int nMul, int nDiv, int *pnRem)
@@ -67,13 +33,10 @@ inline int MulDivMod(int n, int nMul, int nDiv, int *pnRem)
 	Assert(nDiv != 0);
 	AssertPtr(pnRem);
 
-	int64 m = int64(n) * nMul;
+	int m = n * nMul;
 	*pnRem = m % nDiv;
 	return int(m / nDiv);
 }
-
-#endif // defined(_MSC_VER) && !defined(_M_X64)
-
 
 /***********************************************************************************************
 	These arithmetic functions assert that the result doesn't overflow.
