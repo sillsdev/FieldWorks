@@ -212,7 +212,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Cluster.cs" />
-    <Compile Include="BookRevList.cs" />
     <Compile Include="DiffLocation.cs" />
     <Compile Include="Difference.cs">
       <SubType>Code</SubType>

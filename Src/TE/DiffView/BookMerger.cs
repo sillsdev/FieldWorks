@@ -300,26 +300,6 @@ namespace SIL.FieldWorks.TE
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets the style sheet associated with the BookMerger.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public IVwStylesheet StyleSheet
-		{
-			get { return m_stylesheet; }
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the list of differences that have been marked as "reviewed"
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		internal DifferenceList ReviewedDiffs
-		{
-			get { return m_reviewedDiffs; }
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
 		/// Gets/sets the list of differences detected
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
@@ -825,7 +805,7 @@ namespace SIL.FieldWorks.TE
 		/// <param name="overlap">The overlap cluster from which correlation clusters were
 		/// derived.</param>
 		/// ------------------------------------------------------------------------------------
-		public void ProcessMissingAddedSectionHead(Cluster correlation, Cluster overlap)
+		private void ProcessMissingAddedSectionHead(Cluster correlation, Cluster overlap)
 		{
 			IEnumerable<IScrSection> sections = correlation.ItemsSource.Cast<IScrSection>();
 			Debug.Assert(sections.Count() == 1, "Code here can maybe handle multiple sections, but it looks like this is not the intent. If this assertion fails, we'll need to look at the scenario and see if this is handled correctly.");
@@ -1167,47 +1147,6 @@ namespace SIL.FieldWorks.TE
 				scrVerseDest.VerseStartIndex : scrVerseDest.VerseStartIndex + scrVerseDest.TextLength);
 		}
 
-		///// ------------------------------------------------------------------------------------
-		///// <summary>
-		///// Gets the difference just before section head. We expect the difference to be an added
-		///// verse/paragraph or missing verse/para in the immediately preceding section.
-		///// </summary>
-		///// <param name="addedVerse">The added ScrVerse.</param>
-		///// <param name="fCurrentIsSource">if set to <c>true</c> Current is the source;
-		///// otherwise the Revision is the source.</param>
-		///// <param name="iSectionAdded">The index of added section.</param>
-		///// <returns>Difference just before the section head.</returns>
-		///// ------------------------------------------------------------------------------------
-		//private Difference GetDiffJustBeforeSectionHead(ScrVerse addedVerse, bool fCurrentIsSource,
-		//	int iSectionAdded)
-		//{
-		//	// Scan through differences for verse/para that is MissingInCurrent immediately prior
-		//	// to this section head.
-		//	int iDiff;
-		//	for (iDiff = ClusterDiffs.Count - 1; iDiff > 0; iDiff--)
-		//	{
-		//		int paraHvo = fCurrentIsSource ? ClusterDiffs[iDiff].HvoCurr : ClusterDiffs[iDiff].HvoRev;
-		//		int ichDiff = fCurrentIsSource ? ClusterDiffs[iDiff].IchLimCurr : ClusterDiffs[iDiff].IchLimRev;
-
-		//		// if the difference references the same paragraph and character offset
-		//		// as the added verse/paragraph...
-		//		if (paraHvo == addedVerse.Para &&
-		//			ichDiff == addedVerse.VerseStartIndex + addedVerse.TextLength)
-		//		{
-		//			int iSectionDiff = fCurrentIsSource ? ClusterDiffs[iDiff].ParaNodeMapCurr.SectionIndex :
-		//				ClusterDiffs[iDiff].ParaNodeMapRev.SectionIndex;
-		//			// and if the diff is in the immediately preceding section
-		//			if (iSectionDiff == iSectionAdded - 1)
-		//				return ClusterDiffs[iDiff]; //got it!
-		//			else
-		//				return null; // not in the immediately preceding section
-		//		}
-		//	}
-
-		//	Debug.Fail("Did not find an added/missing para/verse diff.");
-		//	return null;
-		//}
-
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the correlated section.
@@ -1247,156 +1186,6 @@ namespace SIL.FieldWorks.TE
 
 			return (IScrSection) overlapCluster.itemsCurr[0].myObj;
 		}
-
-		///// ------------------------------------------------------------------------------------
-		///// <summary>
-		///// Gets the destination IP for the given added section head by searching for a
-		///// corresponding verse number.
-		///// </summary>
-		///// <param name="correlation">The correlation cluster for the added section head.</param>
-		///// <param name="overlap">The section overlap cluster.</param>
-		///// <param name="paraDest">out: The destination paragraph</param>
-		///// <param name="ichDest">out: The destination char index.</param>
-		///// ------------------------------------------------------------------------------------
-		//private void GetDestinationIP_Old(Cluster correlation, Cluster overlap, out IScrTxtPara paraDest,
-		//	out int ichDest)
-		//{
-		//	// Determine which side of the overlap cluster (whether revision or current)
-		//	// we should search for the matching section in
-		//	List<OverlapInfo> toSearch = null;
-		//	if (correlation.clusterType == ClusterType.AddedToCurrent)
-		//	{
-		//		toSearch = overlap.itemsCurr;
-		//	}
-		//	else if (correlation.clusterType == ClusterType.MissingInCurrent)
-		//	{
-		//		toSearch = overlap.itemsRev;
-		//	}
-
-		//	// Get the section of the Destination to associate with
-		//	ScrSection sectionDest = null;
-		//	// lookup the added section head's proxy in the overlap cluster list to find
-		//	// its list of overlapping items.
-		//	foreach (OverlapInfo oi in toSearch)
-		//	{
-		//		if (oi.myHvo == correlation.HvosItemsSource[0])
-		//		{
-		//			// pick the first overlapping item from the list, as it is certain to
-		//			// contain the insertion point for this section head
-		//			// REVIEW: This is not the correct section. We need to add a new section in the case of
-		//			//   TE-7132, not associate it with an existing section.
-		//			sectionDest = new ScrSection(m_cache, ((OverlapInfo)oi.overlappedItemsInOther[0]).myHvo);
-		//			break;
-		//		}
-		//	}
-		//	Debug.Assert(sectionDest != null);
-
-		//	// Get the paragraph hvo and ich in the Destination to associate with
-		//	//int hvoParaDest = 0;
-		//	paraDest = null;
-		//	ichDest = 0;
-		//	ScrReference currentRefStart = new ScrReference(sectionDest.VerseRefStart, m_scr.Versification);
-		//	ScrReference currentRefEnd = new ScrReference(sectionDest.VerseRefStart, m_scr.Versification);
-		//	bool fFoundTheVerse = false;
-
-		//	int iPara = 0;
-		//	for (; iPara < sectionDest.ContentOA.ParagraphsOS.Count; iPara++)
-		//	{
-		//		IScrTxtPara para = (IScrTxtPara)sectionDest.ContentOA[iPara];
-		//		//REVIEW: this is a simplistic solution. it can't find the best destination IP
-		//		// if the verses are out of order, or if the added section head splits a verse.
-		//		ITsString paraContents = para.Contents;
-		//		int iRunLim = paraContents.RunCount;
-		//		int iRunNew = 0;
-		//		for (int iRun = 0; iRun < iRunLim && !fFoundTheVerse; )
-		//		{
-		//			// check the next reference in this para
-		//			RefRunType refType = Scripture.GetNextRef(iRun, iRunLim, paraContents, true,
-		//				ref currentRefStart, ref currentRefEnd, out iRunNew);
-		//			if (currentRefStart >= correlation.verseRefMin)
-		//			{
-		//				// found the destination IP!
-		//				//hvoParaDest = para.Hvo;
-		//				paraDest = para;
-		//				TsRunInfo runInfo;
-		//				bool putIpAtEnd = false;
-
-		//				// Get character position of run that started the reference.
-		//				int iRunToUse;
-		//				switch (refType)
-		//				{
-		//					case RefRunType.ChapterAndVerse:
-		//						iRunToUse = iRunNew - 2;
-		//						break;
-		//					case RefRunType.Chapter:
-		//					case RefRunType.Verse:
-		//						iRunToUse = iRunNew - 1;
-		//						break;
-		//					default:
-		//						iRunToUse = iRunLim - 1;
-		//						putIpAtEnd = true;
-		//						break;
-		//				}
-
-		//				paraContents.FetchRunInfo(iRunToUse, out runInfo);
-		//				ichDest = (putIpAtEnd ? runInfo.ichLim : runInfo.ichMin);
-		//				fFoundTheVerse = true;
-		//			}
-		//			iRun = iRunNew;
-		//		}
-		//		if (fFoundTheVerse)
-		//			break;
-		//	}
-
-		//	// Review: what do we do when the paragraph count is zero? Will that ever be?
-		//	if (paraDest == null && sectionDest.ContentOA.ParagraphsOS.Count > 0)
-		//	{
-		//		// For some reason, we don't have a destination paragrah. Therefore,
-		//		// just use the last paragraph in the destination section.
-		//		int iLastPara = sectionDest.ContentOA.ParagraphsOS.Count - 1;
-		//		paraDest = sectionDest.ContentOA[iLastPara] as IScrTxtPara;
-		//		ITsString paraContents = paraDest.Contents;
-		//		if (paraContents.RunCount > 0)
-		//		{
-		//			TsRunInfo runInfo;
-		//			paraContents.FetchRunInfo(paraContents.RunCount - 1, out runInfo);
-		//			ichDest = runInfo.ichMin;
-		//		}
-		//	}
-
-		//	//else if (iPara == 0 && ichDest == 0)
-		//	//{
-		//	//	// The IP is at the start of a section's contents. This may happen when a verse
-		//	//	// spans sections, for example.
-		//	//	// Since this is illegal because we are trying to split a section here. If we do so,
-		//	//	// we will create an empty section. We need to scan in this section until we find the end
-		//	//	// of the verse. If we find the verse and the end of the paragraph, we will not
-		//	//	// continue to scan through the following segments of the verse to determine the
-		//	//	// insertion point.
-		//	//	ITsString paraContents = paraDest.Contents;
-		//	//	int iRunLim = paraContents.RunCount;
-		//	//	int iRunNew = 0;
-		//	//	currentRefStart = new ScrReference(sectionDest.VerseRefStart, m_scr.Versification);
-		//	//	currentRefEnd = new ScrReference(sectionDest.VerseRefStart, m_scr.Versification);
-		//	//	for (int iRun = 0; iRun < iRunLim; )
-		//	//	{
-		//	//		// check the next reference in this para
-		//	//		RefRunType refType = Scripture.GetNextRef(iRun, iRunLim, paraContents, true,
-		//	//			ref currentRefStart, ref currentRefEnd, out iRunNew);
-		//	//		if (refType == RefRunType.None && currentRefStart >= correlation.verseRefMin)
-		//	//		{
-		//	//			ichDest = paraContents.get_LimOfRun(iRun);
-		//	//			return;
-		//	//		}
-		//	//		iRun = iRunNew;
-		//	//	}
-
-		//	//	Debug.Assert(currentRefStart >= correlation.verseRefMin,
-		//	//		"First paragraph does not contain target correlation reference.");
-		//	//	// set the IP to the end of the first paragraph.
-		//	//	ichDest = paraContents.Length;
-		//	//}
-		//}
 		#endregion
 
 		#region DetectDifferences: Missing/Added First Section Head
@@ -4769,107 +4558,6 @@ namespace SIL.FieldWorks.TE
 			}
 
 			m_origDiffCount = m_differences.Count;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Determines if the given diff could potentially cause data loss, if reverted.
-		/// </summary>
-		/// <param name="diff">given difference</param>
-		/// <returns><c>true</c> if no content is referenced in the revision; <c>false</c>otherwise
-		/// </returns>
-		/// ------------------------------------------------------------------------------------
-		internal bool IsDataLossDifference(Difference diff)
-		{
-			// If content is added to the current, it is a data loss difference.
-			// NOTE: Most of the time SectionAddedToCurrent and ParagraphAddedToCurrent differences
-			//  are also data loss differences. However, there are some exceptions that are handled below.
-			if ((diff.DiffType & DifferenceType.VerseAddedToCurrent) != 0 ||
-				(diff.DiffType & DifferenceType.FootnoteAddedToCurrent) != 0 ||
-				(diff.DiffType & DifferenceType.PictureAddedToCurrent) != 0)
-			{
-				return true;
-			}
-
-			// If content is missing in current, a revert would not cause data loss.
-			if ((diff.DiffType & DifferenceType.SectionMissingInCurrent) != 0 ||
-				(diff.DiffType & DifferenceType.SectionHeadMissingInCurrent) != 0 ||
-				(diff.DiffType & DifferenceType.ParagraphMissingInCurrent) != 0 ||
-				(diff.DiffType & DifferenceType.StanzaBreakMissingInCurrent) != 0 ||
-				(diff.DiffType & DifferenceType.VerseMissingInCurrent) != 0 ||
-				(diff.DiffType & DifferenceType.FootnoteMissingInCurrent) != 0 ||
-				(diff.DiffType & DifferenceType.PictureMissingInCurrent) != 0)
-			{
-				return false;
-			}
-
-			// If content is referenced in both the revision and current, the user
-			// would want to evaluate the difference.
-			if ((diff.DiffType & DifferenceType.TextDifference) != 0 ||
-				(diff.DiffType & DifferenceType.ParagraphMergedInCurrent) != 0 ||
-				(diff.DiffType & DifferenceType.CharStyleDifference) != 0 ||
-				(diff.DiffType & DifferenceType.MultipleCharStyleDifferences) != 0 ||
-				(diff.DiffType & DifferenceType.ParagraphStyleDifference) != 0 ||
-				(diff.DiffType & DifferenceType.FootnoteDifference) != 0 ||
-				(diff.DiffType & DifferenceType.PictureDifference) != 0 ||
-				(diff.DiffType & DifferenceType.WritingSystemDifference) != 0 ||
-				(diff.DiffType & DifferenceType.MultipleWritingSystemDifferences) != 0 ||
-				// The following diff types are added content, but the user may want to
-				//  evaluate them.
-				(diff.DiffType & DifferenceType.SectionHeadAddedToCurrent) != 0 ||
-				(diff.DiffType & DifferenceType.StanzaBreakAddedToCurrent) != 0)
-			{
-				return false;
-			}
-
-			// ParagraphAddedToCurrent differences are not considered data loss differences
-			//  if they occur with other differences at the same verse reference.
-			if ((diff.DiffType & DifferenceType.ParagraphAddedToCurrent) != 0)
-			{
-				// if we don't find a SectionHeadAddedToCurrent, then it is  a data loss difference.
-				return !FindDifference(DiffHashTable[diff.RefStart.BBCCCVVV],
-					DifferenceType.SectionHeadAddedToCurrent);
-			}
-
-			// Determine if a ParagraphSplitInCurrent difference refers only to content in the Current.
-			// If so, it's a data loss difference.
-			// TODO: When TE-7334 is fixed, this ParagraphSplitInCurrent difference would become
-			//	 a ParagraphsAddedToCurrent difference.
-			//  For a ParagraphsAddedToCurrent in a multiple-paragraph verse to be considered a
-			//  data loss difference:
-			//  * first determine if a SectionHeadAddedToCurrent difference occurs at this verse reference
-			//	(as is done above)
-			//  * then, we would need to check the index of the paragraph in its owner. For this to
-			//	 not be considered data loss, its owning section must be the Section(Head)AddedToCurrent.
-			//	 The added paragraph would have to be the first paragraph of this added section.
-			//	 If we don't check the index of the section and index in owner of the paragraph, we
-			//	 won't know if the paragraph added is really added content or created as a result of
-			//	 an inserted section head.
-			if ((diff.DiffType & DifferenceType.ParagraphSplitInCurrent) != 0)
-				return CurrentHasContent(diff) && !RevisionHasContent(diff);
-
-			// Search subdifferences for a difference that contains references to multiple paragraphs.
-			if (diff.SubDiffsForParas != null && diff.SubDiffsForParas.Count > 0)
-			{
-				Debug.Assert((diff.DiffType & DifferenceType.ParagraphStructureChange) != 0 ||
-					(diff.DiffType & DifferenceType.SectionAddedToCurrent) != 0);
-
-				foreach (Difference subDiff in diff.SubDiffsForParas)
-				{
-					// Verse moved diffs are contained in SectionAdded differences
-					if ((subDiff.DiffType & DifferenceType.VerseMoved) != 0)
-						return false; // The user would want to evaluate VerseMoved differences.
-
-					// ParagraphAdded diffs may be contained in ParagraphStructureChange diffs
-					if ((subDiff.DiffType & DifferenceType.ParagraphAddedToCurrent) != 0)
-						return true; // ParagraphAddedToCurrent is a data loss difference
-				}
-
-				if ((diff.DiffType & DifferenceType.ParagraphStructureChange) != 0)
-					return false; // no data loss subdiffs located.
-			}
-
-			return true;
 		}
 
 		/// ------------------------------------------------------------------------------------

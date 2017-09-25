@@ -217,9 +217,7 @@
     </Compile>
     <Compile Include="BookMergerTestsBase.cs" />
     <Compile Include="ClusterTests.cs" />
-    <Compile Include="BookRevListTests.cs" />
     <Compile Include="AutoMergeTests.cs" />
-    <Compile Include="DataLossDiffTests.cs" />
     <Compile Include="DifferenceTests.cs">
       <SubType>Code</SubType>
     </Compile>

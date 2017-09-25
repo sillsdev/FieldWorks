@@ -585,7 +585,6 @@ namespace SIL.FieldWorks.TE
 			m_bookMerger.DetectDifferences(null);
 			Assert.IsFalse(m_bookMerger.AutoMerged);
 			Assert.IsTrue(m_bookMerger.Differences.Count > 0);
-			Assert.AreEqual(0, m_bookMerger.ReviewedDiffs.Count);
 
 			// The current version should not have changed.
 			Assert.AreEqual(1, m_genesis.SectionsOS.Count);
@@ -623,7 +622,6 @@ namespace SIL.FieldWorks.TE
 			m_bookMerger.DetectDifferences(null);
 			Assert.IsFalse(m_bookMerger.AutoMerged);
 			Assert.IsTrue(m_bookMerger.Differences.Count > 0);
-			Assert.AreEqual(0, m_bookMerger.ReviewedDiffs.Count);
 
 			// The current version should not have changed.
 			Assert.AreEqual(1, m_genesis.SectionsOS.Count);
@@ -676,7 +674,6 @@ namespace SIL.FieldWorks.TE
 			m_bookMerger.DetectDifferences(null);
 			Assert.IsFalse(m_bookMerger.AutoMerged);
 			Assert.AreEqual(1, m_bookMerger.Differences.Count);
-			Assert.AreEqual(0, m_bookMerger.ReviewedDiffs.Count);
 
 			// The current version should not have changed.
 			Assert.AreEqual(1, m_genesis.SectionsOS.Count);
@@ -723,7 +720,6 @@ namespace SIL.FieldWorks.TE
 			m_bookMerger.DetectDifferences(null);
 			Assert.IsFalse(m_bookMerger.AutoMerged);
 			Assert.IsTrue(m_bookMerger.Differences.Count > 1);
-			Assert.AreEqual(0, m_bookMerger.ReviewedDiffs.Count);
 
 			// The current version should not have changed.
 			Assert.AreEqual(1, m_genesis.SectionsOS.Count);
@@ -764,7 +760,6 @@ namespace SIL.FieldWorks.TE
 			m_bookMerger.DetectDifferences(null);
 			Assert.IsFalse(m_bookMerger.AutoMerged);
 			Assert.IsTrue(m_bookMerger.Differences.Count > 1);
-			Assert.AreEqual(0, m_bookMerger.ReviewedDiffs.Count);
 
 			// The current version should not have changed.
 			Assert.AreEqual(1, m_genesis.SectionsOS.Count);

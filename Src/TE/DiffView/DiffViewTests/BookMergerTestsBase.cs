@@ -225,18 +225,6 @@ namespace SIL.FieldWorks.TE
 
 		/// --------------------------------------------------------------------------------
 		/// <summary>
-		/// Test version for IsDataLossDifference
-		/// </summary>
-		/// <param name="diff">difference to evaluate for data loss.</param>
-		/// <returns></returns>
-		/// --------------------------------------------------------------------------------
-		public bool TestDataLossDifference(Difference diff)
-		{
-			return IsDataLossDifference(diff);
-		}
-
-		/// --------------------------------------------------------------------------------
-		/// <summary>
 		/// Sets a list of differences to be used in the BookMerger for test purposes.
 		/// </summary>
 		/// --------------------------------------------------------------------------------

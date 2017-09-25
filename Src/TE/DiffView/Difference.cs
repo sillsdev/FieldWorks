@@ -834,11 +834,6 @@ namespace SIL.FieldWorks.TE
 		WritingSystemDifference = 1 << 24, //i.e. 16777216
 		/// <summary>Multiple runs in current and revision differ by writing system</summary>
 		MultipleWritingSystemDifferences = 1 << 25, //i.e. 33554432
-
-		// ATTENTION: when you add new DifferenceType's, evaluate what's needed to Undo a revert
-		//  of that diffType, and update DiffDialog.IsMajorDifference()
-		// Also, consider whether the new type needs to be added to the list in
-		//  DiffDialog.IsDataLossDifference()
 	}
 	#endregion
 
