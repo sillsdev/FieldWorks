@@ -182,6 +182,9 @@
   <data name="kstidNwsCaption" xml:space="preserve">
     <value>Distinguish New Writing System</value>
   </data>
+  <data name="ksPossibleDataLoss" xml:space="preserve">
+    <value>Possible Data Loss</value>
+  </data>
   <data name="kstidUnregistered" xml:space="preserve">
     <value>Unregistered</value>
     <comment>Displayed in HelpAbout dialog box if program is not registered</comment>
@@ -644,6 +647,9 @@ Do you want to remove English now?</value>
   </data>
   <data name="kstidCantCreateDuplicateWS" xml:space="preserve">
     <value>The "{0}" writing system already exists. To distinguish the new writing system you are creating from "{0}", add script, region and/or variant information.{1}{1}Alternatively, remove this new writing system and use the existing writing system, "{0}", if it meets your needs.</value>
+  </data>
+  <data name="ksWSChangeWarning" xml:space="preserve">
+    <value>You are changing the internal code for this writing system. This will affect every line of text in this project that uses this writing system.{0}{0}It appears that your team uses Send/Receive. Therefore, please do a Send/Receive immediately before and after making this change, and ask other teammates to refrain from working while you do this. If you and your teammates have not just done a Send/Receive, please click Cancel and do it now.</value>
   </data>
   <data name="ksWsDefineNew" xml:space="preserve">
     <value>&amp;Define New...</value>
