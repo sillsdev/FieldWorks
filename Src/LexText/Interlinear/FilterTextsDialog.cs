@@ -55,11 +55,11 @@ namespace SIL.FieldWorks.IText
 
 		#region Overrides
 		/// <summary>
-		/// Load the general texts.
+		/// Load all texts.
 		/// </summary>
 		protected override void LoadTexts()
 		{
-			m_treeTexts.LoadGeneralTexts();
+			m_treeTexts.LoadScriptureAndOtherTexts();
 		}
 
 

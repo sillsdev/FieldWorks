@@ -97,7 +97,14 @@ namespace SIL.FieldWorks.IText
 
 			m_scr = Cache.LanguageProject.TranslatedScriptureOA;
 			if (m_scr == null)
-				return;
+			{
+				if (m_associatedPtText == null)
+				{
+					return;
+				}
+				// Better create the m_scr, since ParaText seems to knows about us.
+				m_scr = Cache.ServiceLocator.GetInstance<IScriptureFactory>().Create();
+			}
 			List<TreeNode> otBooks = new List<TreeNode>();
 			List<TreeNode> ntBooks = new List<TreeNode>();
 			for (int bookNum = 1; bookNum <= BCVRef.LastBook; bookNum++)
@@ -575,7 +582,7 @@ namespace SIL.FieldWorks.IText
 		/// The ScrBook created to hold the imported data
 		/// </returns>
 		/// ------------------------------------------------------------------------------------
-		public IScrBook Import(int bookNum, Form owningForm, bool importBt)
+		private IScrBook Import(int bookNum, Form owningForm, bool importBt)
 		{
 			IScripture scr = Cache.LangProject.TranslatedScriptureOA;
 			bool haveSomethingToImport = NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>

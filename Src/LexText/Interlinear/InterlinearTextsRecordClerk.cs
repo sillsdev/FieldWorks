@@ -149,20 +149,13 @@ namespace SIL.FieldWorks.IText
 			var interestingTextsList = GetInterestingTextList();
 			var interestingTexts = interestingTextsList.InterestingTexts.ToArray();
 
-			FilterTextsDialog dlg = null;
-			try
+			using (var dlg = new FilterTextsDialog(m_propertyTable, Cache, interestingTexts, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
 			{
-				dlg = new FilterTextsDialog(m_propertyTable, Cache, interestingTexts, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
-				if (dlg.ShowDialog(m_propertyTable.GetValue<IApp>("App").ActiveMainWindow) == DialogResult.OK)
+				if (dlg.ShowDialog(m_propertyTable.GetValue<Form>("window")) == DialogResult.OK)
 				{
 					interestingTextsList.SetInterestingTexts(dlg.GetListOfIncludedTexts());
 					UpdateFilterStatusBarPanel();
 				}
-			}
-			finally
-			{
-				if (dlg != null)
-					((IDisposable)dlg).Dispose();
 			}
 
 			return true;
