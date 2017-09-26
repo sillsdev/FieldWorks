@@ -1,14 +1,7 @@
 // Copyright (c) 2002-2013 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ImportStyleProxy.cs
-// Responsibility: TE Team
-//
-// <remarks>
-// Implementation of ImportStyleProxy
-// </remarks>
-// --------------------------------------------------------------------------------------------
+
 using System.Diagnostics;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;

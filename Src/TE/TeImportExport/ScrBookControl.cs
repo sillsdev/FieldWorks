@@ -1,110 +1,90 @@
-// Copyright (c) 2007-2018 SIL International
+// Copyright (c) 2011-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System.Diagnostics;
 using SIL.LCModel.Core.Scripture;
 
-namespace SIL.FieldWorks.TE.ImportTests
+namespace SIL.FieldWorks.TE
 {
-	#region TeImportNoUi
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
-	/// Can be used instead of TeImportUi, but doesn't display any UI elements.
+	/// Summary description for ScrBookControl.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public class TeImportNoUi : TeImportUi
+	public class ScrBookControl : ScrPassageControl
 	{
-		private int m_Maximum;
-		private int m_Current;
-
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="T:TeImportNoUi"/> class.
+		/// Default constructor (hard-coded to use English Versification)
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public TeImportNoUi() : base(null, null)
+		public ScrBookControl() : this(ScrVers.English)
 		{
 		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Does nothing
+		/// Constructor that takes a versification to use for references
 		/// </summary>
-		/// <param name="e">The exception.</param>
 		/// ------------------------------------------------------------------------------------
-		public override void ErrorMessage(EncodingConverterException e)
+		public ScrBookControl(ScrVers versification) : base(null, null, versification)
+		{
+			txtScrRef.ReadOnly = true;
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Constructor that takes a "Scripture project" that provides versification info on
+		/// the fly.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public ScrBookControl(IScrProjMetaDataProvider scrProj) : base(null, scrProj, ScrVers.English)
+		{
+			txtScrRef.ReadOnly = true;
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets/sets the reference. In the setter, if the value consists of more than one
+		/// space-delimited token, only use the first.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public override string Reference
+		{
+			get { return base.Reference; }
+			set { base.Reference = value.Split(new [] {' '}, 2)[0]; }
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		///
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		protected override void DropDownBookSelected(int book)
 		{
 		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Does nothing
+		/// Create a new <see cref="ScrPassageDropDown"/> object
 		/// </summary>
-		/// <param name="message">The message.</param>
+		/// <param name="owner">The ScrPassageControl that will own the drop-down control</param>
 		/// ------------------------------------------------------------------------------------
-		public override void ErrorMessage(string message)
+		protected override ScrPassageDropDown CreateScrPassageDropDown(ScrPassageControl owner)
 		{
+			return new ScrPassageDropDown(owner, true, Versification);
 		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets or sets the maximum number of steps or increments corresponding to a progress
-		/// bar that's 100% filled.
+		/// Initializes the specified book num.
 		/// </summary>
-		/// <value></value>
+		/// <param name="bookNum">The canonical number of the book to select initially.</param>
+		/// <param name="availableBooks">The canonical numbers of the available books.</param>
 		/// ------------------------------------------------------------------------------------
-		public override int Maximum
+		public void Initialize(int bookNum, int[] availableBooks)
 		{
-			get { return m_Maximum; }
-			set { m_Maximum = value; }
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// </summary>
-		/// <value></value>
-		/// ------------------------------------------------------------------------------------
-		public override int Position
-		{
-			set { m_Current = value; }
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets or sets a message indicating progress status.
-		/// </summary>
-		/// <value></value>
-		/// ------------------------------------------------------------------------------------
-		public override string StatusMessage
-		{
-			get { return string.Empty; }
-			set { Debug.WriteLine(value); }
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// </summary>
-		/// <param name="cSteps"></param>
-		/// ------------------------------------------------------------------------------------
-		public override void Step(int cSteps)
-		{
-			if (cSteps == 0)
-				m_Current++;
-			else
-				m_Current += cSteps;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets a value indicating whether this instance is displaying a UI.
-		/// </summary>
-		/// <value>always <c>false</c>.</value>
-		/// ------------------------------------------------------------------------------------
-		public override bool IsDisplayingUi
-		{
-			get { return false; }
+			base.Initialize(new ScrReference(bookNum, 1, 1, Versification), availableBooks);
 		}
 	}
-	#endregion
 }

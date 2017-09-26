@@ -1,110 +1,121 @@
-// Copyright (c) 2007-2018 SIL International
+// Copyright (c) 2005-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System.Diagnostics;
 using SIL.LCModel.Core.Scripture;
 
-namespace SIL.FieldWorks.TE.ImportTests
+namespace SIL.FieldWorks.TE
 {
-	#region TeImportNoUi
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
-	/// Can be used instead of TeImportUi, but doesn't display any UI elements.
+	/// Summary description for SCTextSegment.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public class TeImportNoUi : TeImportUi
+	public class SCTextSegment: ISCTextSegment
 	{
-		private int m_Maximum;
-		private int m_Current;
+		private BCVRef m_firstRef;
+		private BCVRef m_lastRef;
+		private string m_filename;
+		private int m_lineNumber;
+		private string m_marker;
+		private string m_text;
+		private string m_literalVerse;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="T:TeImportNoUi"/> class.
+		/// Initializes a new instance of the <see cref="SCTextSegment"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public TeImportNoUi() : base(null, null)
+		public SCTextSegment(string text, string marker, string literalVerse,
+			BCVRef firstRef, BCVRef lastRef, string filename, int lineNumber)
 		{
+			m_marker = marker;
+			m_text = text;
+			m_firstRef = new BCVRef(firstRef);
+			m_lastRef = new BCVRef(lastRef);
+			m_filename = filename;
+			m_lineNumber = lineNumber;
+			m_literalVerse = literalVerse;
+		}
+
+		#region ISCTextSegment Members
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Return the first reference of the segment
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public BCVRef FirstReference
+		{
+			get { return new BCVRef(m_firstRef); }
+			set { m_firstRef = new BCVRef(value); }
 		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Does nothing
+		/// return the last reference of the segment
 		/// </summary>
-		/// <param name="e">The exception.</param>
 		/// ------------------------------------------------------------------------------------
-		public override void ErrorMessage(EncodingConverterException e)
+		public BCVRef LastReference
 		{
+			get { return new BCVRef(m_lastRef); }
+			set { m_lastRef = new BCVRef(value); }
 		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Does nothing
+		/// Get the filename from which the segment was read.
 		/// </summary>
-		/// <param name="message">The message.</param>
 		/// ------------------------------------------------------------------------------------
-		public override void ErrorMessage(string message)
+		public string CurrentFileName
 		{
+			get
+			{
+				return m_filename;
+			}
 		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets or sets the maximum number of steps or increments corresponding to a progress
-		/// bar that's 100% filled.
+		/// Get the line number from which the segment was read
 		/// </summary>
-		/// <value></value>
 		/// ------------------------------------------------------------------------------------
-		public override int Maximum
+		public int CurrentLineNumber
 		{
-			get { return m_Maximum; }
-			set { m_Maximum = value; }
+			get
+			{
+				return m_lineNumber;
+			}
 		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
+		/// Return the literal verse text for a verse number segment
 		/// </summary>
-		/// <value></value>
 		/// ------------------------------------------------------------------------------------
-		public override int Position
+		public string LiteralVerseNum
 		{
-			set { m_Current = value; }
+			get { return m_literalVerse; }
 		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets or sets a message indicating progress status.
+		/// Return the text of the segment
 		/// </summary>
-		/// <value></value>
 		/// ------------------------------------------------------------------------------------
-		public override string StatusMessage
+		public string Text
 		{
-			get { return string.Empty; }
-			set { Debug.WriteLine(value); }
+			get { return m_text; }
 		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
+		/// return the marker for a segment
 		/// </summary>
-		/// <param name="cSteps"></param>
 		/// ------------------------------------------------------------------------------------
-		public override void Step(int cSteps)
+		public string Marker
 		{
-			if (cSteps == 0)
-				m_Current++;
-			else
-				m_Current += cSteps;
+			get { return m_marker; }
 		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets a value indicating whether this instance is displaying a UI.
-		/// </summary>
-		/// <value>always <c>false</c>.</value>
-		/// ------------------------------------------------------------------------------------
-		public override bool IsDisplayingUi
-		{
-			get { return false; }
-		}
+		#endregion
 	}
-	#endregion
 }

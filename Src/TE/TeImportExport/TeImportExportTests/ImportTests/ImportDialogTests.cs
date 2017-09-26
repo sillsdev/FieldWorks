@@ -9,7 +9,6 @@ using SIL.LCModel.Core.Scripture;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Utils;
-using SILUBS.SharedScrControls;
 using SIL.LCModel.DomainServices;
 
 namespace SIL.FieldWorks.TE.ImportTests

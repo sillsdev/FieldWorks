@@ -13,7 +13,6 @@ using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 using SIL.Reporting;
-using SILUBS.SharedScrControls;
 using SIL.LCModel.Core.Scripture;
 
 namespace SIL.FieldWorks.TE
@@ -205,9 +204,9 @@ namespace SIL.FieldWorks.TE
 			this.chkBookIntros = new System.Windows.Forms.CheckBox();
 			this.chkOther = new System.Windows.Forms.CheckBox();
 			this.chkTranslation = new System.Windows.Forms.CheckBox();
-			this.scrPsgFrom = new SILUBS.SharedScrControls.ScrBookControl();
+			this.scrPsgFrom = new SIL.FieldWorks.TE.ScrBookControl();
 			this.label2 = new System.Windows.Forms.Label();
-			this.scrPsgTo = new SILUBS.SharedScrControls.ScrBookControl();
+			this.scrPsgTo = new SIL.FieldWorks.TE.ScrBookControl();
 			this.radImportRange = new System.Windows.Forms.RadioButton();
 			this.radImportEntire = new System.Windows.Forms.RadioButton();
 			this.btnOK = new System.Windows.Forms.Button();
@@ -290,7 +289,7 @@ namespace SIL.FieldWorks.TE
 			resources.ApplyResources(this.scrPsgFrom, "scrPsgFrom");
 			this.scrPsgFrom.Name = "scrPsgFrom";
 			this.scrPsgFrom.Reference = "textBox1";
-			this.scrPsgFrom.PassageChanged += new SILUBS.SharedScrControls.ScrPassageControl.PassageChangedHandler(this.scrPsgFrom_PassageChanged);
+			this.scrPsgFrom.PassageChanged += new SIL.FieldWorks.TE.ScrPassageControl.PassageChangedHandler(this.scrPsgFrom_PassageChanged);
 			//
 			// label2
 			//
@@ -304,7 +303,7 @@ namespace SIL.FieldWorks.TE
 			resources.ApplyResources(this.scrPsgTo, "scrPsgTo");
 			this.scrPsgTo.Name = "scrPsgTo";
 			this.scrPsgTo.Reference = "textBox1";
-			this.scrPsgTo.PassageChanged += new SILUBS.SharedScrControls.ScrPassageControl.PassageChangedHandler(this.scrPsgTo_PassageChanged);
+			this.scrPsgTo.PassageChanged += new SIL.FieldWorks.TE.ScrPassageControl.PassageChangedHandler(this.scrPsgTo_PassageChanged);
 			//
 			// radImportRange
 			//

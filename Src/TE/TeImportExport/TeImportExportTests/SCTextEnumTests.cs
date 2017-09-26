@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2017 SIL International
+// Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -8,11 +8,9 @@ using System.Reflection;
 using System.Text;
 using System.Collections;
 using System.Collections.Generic;
-
 using NUnit.Framework;
 using Rhino.Mocks;
 using SIL.LCModel.Core.Scripture;
-using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.LCModel;
 using SIL.LCModel.Utils;
 using ECInterfaces;

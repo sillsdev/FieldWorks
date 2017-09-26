@@ -96,10 +96,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\SIL.LCModel.Core.dll</HintPath>
     </Reference>
-    <Reference Include="DiffView, Version=9.0.0.31519, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\DiffView.dll</HintPath>
-    </Reference>
     <Reference Include="ECInterfaces, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485, processorArchitecture=x86" Condition="'$(OS)'!='Unix'">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\ECInterfaces.dll</HintPath>
@@ -180,14 +176,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\ScriptureUtilsTests.dll</HintPath>
     </Reference>
-    <Reference Include="ScrUtilsInterfaces, Version=5.5.0.19437, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\ScrUtilsInterfaces.dll</HintPath>
-    </Reference>
-    <Reference Include="SharedScrControls, Version=7.2.0.15701, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\SharedScrControls.dll</HintPath>
-    </Reference>
     <Reference Include="SIL.Core, Version=2.6.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Downloads\SIL.Core.dll</HintPath>
@@ -219,17 +207,9 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Windows.Forms" />
-    <Reference Include="TeDialogs, Version=5.5.0.22461, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\TeDialogs.dll</HintPath>
-    </Reference>
     <Reference Include="TeImportExport, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\TeImportExport.dll</HintPath>
-    </Reference>
-    <Reference Include="TeResources, Version=7.0.1.24126, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\TeResources.dll</HintPath>
     </Reference>
     <Reference Include="Utilities, Version=7.4.100.36, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -244,6 +224,12 @@
     <Compile Include="..\..\..\AssemblyInfoForTests.cs">
       <Link>AssemblyInfoForTests.cs</Link>
     </Compile>
+    <Compile Include="AutoMergeTests.cs" />
+    <Compile Include="BookMergerTests.cs" />
+    <Compile Include="BookMergerTestsBase.cs" />
+    <Compile Include="ClusterTests.cs" />
+    <Compile Include="DifferenceTests.cs" />
+    <Compile Include="DiffTestHelper.cs" />
     <Compile Include="ImportComponentsTests\CharacterMappingSettingsTests.cs" />
     <Compile Include="ImportComponentsTests\ImportWizardTests.cs">
       <SubType>Form</SubType>
@@ -251,6 +237,7 @@
     <Compile Include="ImportComponentsTests\ScrImportSetMessageTests.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="ImportedBooksTests.cs" />
     <Compile Include="ImportTests\ImportDialogTests.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -263,9 +250,14 @@
     <Compile Include="ImportTests\TeImportTests.cs" />
     <Compile Include="ImportTests\TeImportTestsBase.cs" />
     <Compile Include="MockScriptureProvider.cs" />
+    <Compile Include="ScrPassageControlTests.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="SCTextEnumTests.cs" />
+    <Compile Include="SegmentedBtMergeTests.cs" />
     <Compile Include="SFFileListBuilderTests.cs" />
     <Compile Include="TeImportExportExtensionsTests.cs" />
+    <Compile Include="VerseIteratorTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

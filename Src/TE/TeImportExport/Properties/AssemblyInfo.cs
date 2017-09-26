@@ -8,3 +8,4 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("TeImportExport")]
 
 [assembly: ComVisible(false)]
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("TeImportExportTests")]

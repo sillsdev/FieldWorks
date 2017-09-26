@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2017 SIL International
+// Copyright (c) 2005-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -9,7 +9,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using ECInterfaces;
-using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.LCModel;
 using SIL.LCModel.Core.Scripture;
 using SIL.LCModel.Core.Text;

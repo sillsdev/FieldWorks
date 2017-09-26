@@ -1,21 +1,16 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: TeImportTest.cs
-// Responsibility: TE Team
 
 using System;
 using System.Collections.Generic;
 using System.IO;
-
 using NUnit.Framework;
 using SIL.LCModel.Core.Scripture;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Utils;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 #if __MonoCS__

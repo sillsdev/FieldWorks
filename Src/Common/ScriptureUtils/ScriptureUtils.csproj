@@ -205,9 +205,6 @@
     <Compile Include="ScriptureProvider.cs" />
     <Compile Include="ScriptureReferenceComparer.cs" />
     <Compile Include="ScrReferencePositionComparer.cs" />
-    <Compile Include="SCTextSegment.cs">
-      <SubType>Code</SubType>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
