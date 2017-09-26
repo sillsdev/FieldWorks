@@ -255,8 +255,6 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="ImportTests\ImportStyleProxyTests.cs" />
-    <Compile Include="ImportTests\ScrNoteImportManagerTests.cs" />
-    <Compile Include="ImportTests\TeAnnotationXmlImportTests.cs" />
     <Compile Include="ImportTests\TeImportBtInterleaved.cs" />
     <Compile Include="ImportTests\TeImportBtNonInterleaved.cs" />
     <Compile Include="ImportTests\TeImportManagerTests.cs" />

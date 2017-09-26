@@ -11,7 +11,6 @@
 // --------------------------------------------------------------------------------------------
 using System.Diagnostics;
 using SIL.LCModel;
-using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Core.Scripture;
 using SIL.LCModel.Core.Text;

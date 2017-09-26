@@ -8,7 +8,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
@@ -52,18 +51,6 @@ namespace SIL.FieldWorks.TE
 			m_cache = cache;
 			m_scr = m_cache.LanguageProject.TranslatedScriptureOA;
 			m_importedBooks = new Dictionary<int, bool>();
-		}
-		#endregion
-
-		#region Internal Properties
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the scripture object.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		internal IScripture ScriptureObj
-		{
-			get { return m_scr; }
 		}
 		#endregion
 

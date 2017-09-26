@@ -68,10 +68,6 @@ namespace SIL.FieldWorks.Common.Controls
 		private ICmAnnotationDefn m_noteType = null;
 
 		/// <summary>
-		/// Properties button
-		/// </summary>
-		protected Button btnProperties;
-		/// <summary>
 		/// Controls contained by the SFFileListBuilder control
 		/// </summary>
 		protected IContainer components = null;

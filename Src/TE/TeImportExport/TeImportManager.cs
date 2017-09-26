@@ -1,13 +1,9 @@
 // Copyright (c) 2005-2013 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: TeImportManager.cs
-// Responsibility: TE Team
-// ---------------------------------------------------------------------------------------------
 
 using System;
-using System.Collections.Specialized; // for StringCollection
+using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -41,7 +37,6 @@ namespace SIL.FieldWorks.TE
 		private readonly IHelpTopicProvider m_helpTopicProvider;
 		private readonly IApp m_app;
 		private readonly bool m_fParatextStreamlinedImport;
-		private string m_sOXESFile;
 
 		/// <summary>
 		/// This keeps track of stuff we may need to Undo.
@@ -137,8 +132,7 @@ namespace SIL.FieldWorks.TE
 					return false;
 
 				// Display ImportDialog
-				using (ImportDialog importDlg = new ImportDialog(m_styleSheet, m_cache,
-					importSettings, m_helpTopicProvider, m_app))
+				using (ImportDialog importDlg = new ImportDialog(m_styleSheet, m_cache, importSettings, m_helpTopicProvider, m_app))
 				{
 					importDlg.ShowDialog(m_mainWnd);
 					if (importDlg.DialogResult == DialogResult.Cancel)
@@ -151,28 +145,13 @@ namespace SIL.FieldWorks.TE
 				}
 			}
 
-			return DoImport(importSettings, "ImportStandardFormat");
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Does the import.
-		/// </summary>
-		/// <param name="importSettings">The import settings (can be null, as is the case for
-		/// OXES import).</param>
-		/// <param name="updateDescription">description of the data update being done (i.e.,
-		/// which type of import).</param>
-		/// <returns><c>true</c> if something got imported; <c>false</c> otherwise</returns>
-		/// ------------------------------------------------------------------------------------
-		private bool DoImport(IScrImportSet importSettings, string updateDescription)
-		{
 			try
 			{
 				ScrReference firstImported;
 				using (new WaitCursor(m_mainWnd, true))
 				{
 					m_app.EnableMainWindows(false);
-					firstImported = ImportWithUndoTask(importSettings, true, updateDescription);
+					firstImported = ImportWithUndoTask(importSettings, true, "ImportStandardFormat");
 				}
 				firstImported = CompleteImport(firstImported);
 				return firstImported != ScrReference.Empty;

@@ -9,7 +9,6 @@ using SIL.FieldWorks.Common.Drawing;
 using SIL.LCModel;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Controls;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.DomainServices;
 
 namespace SIL.FieldWorks.TE
@@ -22,9 +21,6 @@ namespace SIL.FieldWorks.TE
 	public class ModifyMapping : Form
 	{
 		#region Data members
-		/// <summary></summary>
-		protected IVwStylesheet m_StyleSheet;
-
 		private IHelpTopicProvider m_helpTopicProvider;
 		private Button btnHelp;
 		private Button btnOk;

@@ -214,9 +214,6 @@
     <Compile Include="ModifyMapping.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Paratext5LocationUnknown.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ScrAnnotationInfo.cs" />
     <Compile Include="ScrImportComponents.Designer.cs">
@@ -227,27 +224,17 @@
     <Compile Include="ScrImportSetMessage.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ScrNoteImportManager.cs" />
     <Compile Include="ScrObjWrapper.cs" />
     <Compile Include="SCScriptureText.cs" />
     <Compile Include="SCTextEnum.cs" />
     <Compile Include="SFFileListBuilder.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="StyleProxyListManager.cs" />
     <Compile Include="TeImportExportExtensions.cs" />
-    <Compile Include="TeImportExportFileDialog.cs" />
     <Compile Include="TeImport.cs" />
     <Compile Include="TeImportManager.cs" />
     <Compile Include="TeImportUi.cs" />
     <Compile Include="UndoImportManager.cs" />
-    <Compile Include="XmlScrAnnotationClasses\ParagraphCollection.cs" />
-    <Compile Include="XmlScrAnnotationClasses\XmlNoteCategory.cs" />
-    <Compile Include="XmlScrAnnotationClasses\XmlNotePara.cs" />
-    <Compile Include="XmlScrAnnotationClasses\XmlNoteResponse.cs" />
-    <Compile Include="XmlScrAnnotationClasses\XmlScrAnnotationsList.cs" />
-    <Compile Include="XmlScrAnnotationClasses\XmlScrNote.cs" />
-    <Compile Include="XmlScrAnnotationClasses\XmlTextRun.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="CharacterMappingSettings.resx">
@@ -268,9 +255,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ModifyMapping.resx">
       <DependentUpon>ModifyMapping.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Paratext5LocationUnknown.resx">
-      <DependentUpon>Paratext5LocationUnknown.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ScrImportComponents.resx">
       <Generator>ResXFileCodeGenerator</Generator>
