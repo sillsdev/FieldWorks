@@ -71,20 +71,22 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 				if (!GetProjectFolders(out projectFolders))
 					return;
 
-				var reader = new StreamReader(Options.AssemblyInfoPath, Encoding.UTF8);
-				while (!reader.EndOfStream)
+				using (var reader = new StreamReader(Options.AssemblyInfoPath, Encoding.UTF8))
 				{
-					var line = reader.ReadLine();
-					if (line == null)
-						continue;
-					if (line.StartsWith("[assembly: AssemblyFileVersion"))
-						FileVersion = ExtractVersion(line);
-					else if (line.StartsWith("[assembly: AssemblyInformationalVersionAttribute"))
-						InformationVersion = ExtractVersion(line);
-					else if (line.StartsWith("[assembly: AssemblyVersion"))
-						Version = ExtractVersion(line);
+					while (!reader.EndOfStream)
+					{
+						var line = reader.ReadLine();
+						if (line == null)
+							continue;
+						if (line.StartsWith("[assembly: AssemblyFileVersion"))
+							FileVersion = ExtractVersion(line);
+						else if (line.StartsWith("[assembly: AssemblyInformationalVersionAttribute"))
+							InformationVersion = ExtractVersion(line);
+						else if (line.StartsWith("[assembly: AssemblyVersion"))
+							Version = ExtractVersion(line);
+					}
+					reader.Close();
 				}
-				reader.Close();
 				if (string.IsNullOrEmpty(FileVersion))
 					FileVersion = "0.0.0.0";
 				if (string.IsNullOrEmpty(InformationVersion))
@@ -92,12 +94,14 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 				if (string.IsNullOrEmpty(Version))
 					Version = FileVersion;
 
-				Parallel.ForEach(projectFolders, currentFolder =>
+				//Parallel.ForEach(projectFolders, currentFolder =>
+				foreach (var currentFolder in projectFolders)
 				{
 					var projectLocalizer = CreateProjectLocalizer(currentFolder,
 						new ProjectLocalizerOptions(this, Options));
 					projectLocalizer.ProcessProject();
-				});
+				}
+				//});
 			}
 			catch (Exception ex)
 			{
@@ -151,7 +155,7 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 			//for Mono 2.10.4, Directory.EnumerateFiles(...) seems to see only writeable files???
 			//var projectFiles = Directory.EnumerateFiles(root, "*.csproj");
 			var projectFiles = Directory.GetFiles(root, "*.csproj");
-			if (projectFiles.Count() > 1)
+			if (projectFiles.Length > 1)
 			{
 				LogError("Error: folder " + root + " has multiple .csproj files.");
 				return false;
@@ -173,7 +177,7 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 		{
 			if (File.Exists(sNewFile))
 				File.Delete(sNewFile);
-			POString posHeader;
+			PoString posHeader;
 			var dictTrans = LoadPOFile(CurrentFile, out posHeader);
 			if (dictTrans.Count == 0)
 			{
@@ -198,11 +202,11 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 		/// <param name="dictTrans"></param>
 		// Copied from bin/src/LocaleStrings/Program.cs. Should remove this functionality there eventually.
 		private static void TranslateStringsElements(XmlElement xel,
-			Dictionary<string, POString> dictTrans)
+			Dictionary<string, PoString> dictTrans)
 		{
 			if (xel.Name == "string")
 			{
-				POString pos;
+				PoString pos;
 				var sEnglish = xel.GetAttribute("txt");
 				if (dictTrans.TryGetValue(sEnglish, out pos))
 				{
@@ -219,15 +223,16 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 		}
 
 		// Copied from bin/src/LocaleStrings/Program.cs. Should remove this functionality there eventually.
-		private static void StoreTranslatedAttributes(XmlElement xelRoot,
-			Dictionary<string, POString> dictTrans)
+		private static void StoreTranslatedThing(XmlElement xelRoot,
+			Dictionary<string, PoString> enStrings, string whatThing,
+			Func<string, bool> skipCommentMethod,
+			Func<PoString, string, string> idMethod)
 		{
 			var xelGroup = xelRoot.OwnerDocument.CreateElement("group");
-			xelGroup.SetAttribute("id", "LocalizedAttributes");
-			var en = dictTrans.GetEnumerator();
-			while (en.MoveNext())
+			xelGroup.SetAttribute("id", whatThing);
+			foreach (var current in enStrings)
 			{
-				var pos = en.Current.Value;
+				var pos = current.Value;
 				var sValue = pos.MsgStrAsString();
 				if (string.IsNullOrEmpty(sValue))
 					continue;
@@ -236,96 +241,57 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 					continue;
 				foreach (var comment in autoComments)
 				{
-					if (comment == null || (!comment.StartsWith("/") && !comment.StartsWith("file:///")) ||
-						!IsFromXmlAttribute(comment))
-					{
+					if (skipCommentMethod(comment))
 						continue;
-					}
+
 					var xelString = xelRoot.OwnerDocument.CreateElement("string");
-					xelString.SetAttribute("id", pos.MsgIdAsString());
+					xelString.SetAttribute("id", idMethod(pos, comment));
 					xelString.SetAttribute("txt", sValue);
 					xelGroup.AppendChild(xelString);
 					break;
 				}
 			}
 			xelRoot.AppendChild(xelGroup);
+		}
+
+		private static void StoreTranslatedAttributes(XmlElement xelRoot,
+			Dictionary<string, PoString> enStrings)
+		{
+			StoreTranslatedThing(xelRoot, enStrings, "LocalizedAttributes",
+				comment => comment == null || (!comment.StartsWith("/") && !comment.StartsWith("file:///")) || !IsFromXmlAttribute(comment),
+				(pos, comment) => pos.MsgIdAsString());
 		}
 
 		// Copied from bin/src/LocaleStrings/Program.cs. Should remove this functionality there eventually.
 		private static void StoreTranslatedLiterals(XmlElement xelRoot,
-			Dictionary<string, POString> dictTrans)
+			Dictionary<string, PoString> enStrings)
 		{
-			var xelGroup = xelRoot.OwnerDocument.CreateElement("group");
-			xelGroup.SetAttribute("id", "LocalizedLiterals");
-			var en = dictTrans.GetEnumerator();
-			while (en.MoveNext())
-			{
-				var pos = en.Current.Value;
-				var sValue = pos.MsgStrAsString();
-				if (string.IsNullOrEmpty(sValue))
-					continue;
-				var autoComments = pos.AutoComments;
-				if (autoComments == null)
-					continue;
-				foreach (var comment in autoComments)
-				{
-					if (comment == null || !comment.StartsWith("/") || !comment.EndsWith("/lit"))
-						continue;
-
-					var xelString = xelRoot.OwnerDocument.CreateElement("string");
-					xelString.SetAttribute("id", pos.MsgIdAsString());
-					xelString.SetAttribute("txt", sValue);
-					xelGroup.AppendChild(xelString);
-					break;
-				}
-			}
-			xelRoot.AppendChild(xelGroup);
+			StoreTranslatedThing(xelRoot, enStrings, "LocalizedLiterals",
+				comment => comment == null || !comment.StartsWith("/") || !comment.EndsWith("/lit"),
+				(pos, comment) => pos.MsgIdAsString());
 		}
 
 		// Copied from bin/src/LocaleStrings/Program.cs. Should remove this functionality there eventually.
 		private static void StoreTranslatedContextHelp(XmlElement xelRoot,
-			Dictionary<string, POString> dictTrans)
+			Dictionary<string, PoString> enStrings)
 		{
-			var xelGroup = xelRoot.OwnerDocument.CreateElement("group");
-			xelGroup.SetAttribute("id", "LocalizedContextHelp");
-			var en = dictTrans.GetEnumerator();
-			while (en.MoveNext())
-			{
-				var pos = en.Current.Value;
-				var sValue = pos.MsgStrAsString();
-				if (string.IsNullOrEmpty(sValue))
-					continue;
-				var autoComments = pos.AutoComments;
-				if (autoComments == null)
-					continue;
-				foreach (var comment in autoComments)
-				{
-					var sId = FindContextHelpId(comment);
-					if (string.IsNullOrEmpty(sId))
-						continue;
-
-					var xelString = xelRoot.OwnerDocument.CreateElement("string");
-					xelString.SetAttribute("id", sId);
-					xelString.SetAttribute("txt", sValue);
-					xelGroup.AppendChild(xelString);
-					break;
-				}
-			}
-			xelRoot.AppendChild(xelGroup);
+			StoreTranslatedThing(xelRoot, enStrings, "LocalizedContextHelp",
+				comment => string.IsNullOrEmpty(FindContextHelpId(comment)),
+				(pos1, comment) => FindContextHelpId(comment));
 		}
 
 		// Copied from bin/src/LocaleStrings/Program.cs. Should remove this functionality there eventually.
-		private static string FindContextHelpId(string sComment)
+		private static string FindContextHelpId(string comment)
 		{
 			const string ksContextMarker = "/ContextHelp.xml::/strings/item[@id=\"";
-			if (sComment == null || !sComment.StartsWith("/"))
+			if (comment == null || !comment.StartsWith("/"))
 				return null;
 
-			var idx = sComment.IndexOf(ksContextMarker);
+			var idx = comment.IndexOf(ksContextMarker);
 			if (idx <= 0)
 				return null;
 
-			var sId = sComment.Substring(idx + ksContextMarker.Length);
+			var sId = comment.Substring(idx + ksContextMarker.Length);
 			var idxEnd = sId.IndexOf('"');
 			return idxEnd > 0 ? sId.Remove(idxEnd) : null;
 		}
@@ -337,24 +303,23 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 				return false;
 			if (sComment[idx + 1] != '@')
 				return false;
-			else
-				return sComment.Length > idx + 2;
+			return sComment.Length > idx + 2;
 		}
 
-		private static Dictionary<string, POString> LoadPOFile(string sMsgFile, out POString posHeader)
+		private static Dictionary<string, PoString> LoadPOFile(string sMsgFile, out PoString posHeader)
 		{
-			using (var srIn = new StreamReader(sMsgFile, Encoding.UTF8))
+			using (var inputStream = new StreamReader(sMsgFile, Encoding.UTF8))
 			{
-				var dictTrans = new Dictionary<string, POString>();
-				posHeader = POString.ReadFromFile(srIn);
-				var pos = POString.ReadFromFile(srIn);
+				var dictTrans = new Dictionary<string, PoString>();
+				posHeader = PoString.ReadFromFile(inputStream);
+				var pos = PoString.ReadFromFile(inputStream);
 				while (pos != null)
 				{
 					if (!pos.HasEmptyMsgStr && (pos.Flags == null || !pos.Flags.Contains("fuzzy")))
 						dictTrans.Add(pos.MsgIdAsString(), pos);
-					pos = POString.ReadFromFile(srIn);
+					pos = PoString.ReadFromFile(inputStream);
 				}
-				srIn.Close();
+				inputStream.Close();
 				return dictTrans;
 			}
 		}

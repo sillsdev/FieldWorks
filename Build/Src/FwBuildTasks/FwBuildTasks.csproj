@@ -119,13 +119,14 @@
     <Compile Include="Localization\EmbedInfo.cs" />
     <Compile Include="Localization\Localizer.cs" />
     <Compile Include="Localization\LocalizerOptions.cs" />
+    <Compile Include="Localization\Po2XmlConverter.cs" />
+    <Compile Include="Localization\Po2XmlConverter.PoMessageWriter.cs" />
+    <Compile Include="Localization\PoString.cs" />
     <Compile Include="Localization\ProjectLocalizer.cs" />
     <Compile Include="Localization\ProjectLocalizerOptions.cs" />
     <Compile Include="LocalizeFieldWorks.cs" />
     <Compile Include="FwBuildTasksTests\LocalizeFieldWorksTests.cs" />
     <Compile Include="Make.cs" />
-    <Compile Include="Po2XmlConverter.cs" />
-    <Compile Include="POString.cs" />
     <Compile Include="RegFree.cs" />
     <Compile Include="RegFreeCreator.cs" />
     <Compile Include="RegHelper.cs" />
