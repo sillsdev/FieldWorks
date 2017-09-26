@@ -120,9 +120,11 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			if (m_parserConnection != null && propertyName == "ActiveClerkSelectedObject")
 			{
-				var wordform = m_propertyTable.GetValue<IWfiWordform>(propertyName);
+				var wordform = m_propertyTable.GetValue<ICmObject>(propertyName) as IWfiWordform;
 				if (wordform != null)
+				{
 					m_parserConnection.UpdateWordform(wordform, ParserPriority.High);
+				}
 			}
 		}
 
@@ -403,7 +405,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				if (InInterlinearText)
 					wordform = m_propertyTable.GetValue<IWfiWordform>("TextSelectedWord");
 				else if (InWordAnalyses)
-					wordform = m_propertyTable.GetValue<IWfiWordform>("ActiveClerkSelectedObject");
+					wordform = m_propertyTable.GetValue<ICmObject>("ActiveClerkSelectedObject") as IWfiWordform;
 				return wordform;
 			}
 		}
