@@ -1,24 +1,13 @@
 // Copyright (c) 2004-2013 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ReBarMenuAdapter.cs
-// Authorship History: Randy Regnier
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Runtime.InteropServices;
-using System.Windows.Forms;  //for ImageList
+using System.Windows.Forms;
 using Microsoft.Win32;
-using System.ComponentModel;//registrykey
-
-// for ImageCollection
 
 namespace XCore
 {

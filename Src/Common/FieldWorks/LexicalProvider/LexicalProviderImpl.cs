@@ -11,12 +11,10 @@
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.ServiceModel;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.KernelInterfaces;
-using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;

@@ -4,12 +4,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
-using SIL.LCModel.Utils;
 using SIL.LCModel.Core.Scripture;
 using SIL.Reporting;
 

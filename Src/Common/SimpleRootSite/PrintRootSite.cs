@@ -6,14 +6,12 @@
 // Responsibility: TE Team
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Drawing.Printing;
 using System.IO;
 using System.Windows.Forms;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.KernelInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel.Utils;
 

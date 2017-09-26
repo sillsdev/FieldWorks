@@ -3,7 +3,6 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Net;
 using System.Xml;

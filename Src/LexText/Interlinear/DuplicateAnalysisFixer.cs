@@ -3,7 +3,6 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;

@@ -4,15 +4,11 @@ using System;
 using System.Collections;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Drawing.Text;
 using System.Reflection;
 using System.Resources;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-
 using SidebarLibrary.General;
 using SidebarLibrary.Win32;
 

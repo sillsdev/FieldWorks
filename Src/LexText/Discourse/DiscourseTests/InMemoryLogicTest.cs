@@ -4,14 +4,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows.Forms;
 using NUnit.Framework;
-
-using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
-using SIL.LCModel.DomainServices;
 
 namespace SIL.FieldWorks.Discourse
 {

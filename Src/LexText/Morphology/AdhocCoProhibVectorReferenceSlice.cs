@@ -3,7 +3,6 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using SIL.FieldWorks.Common.Framework.DetailControls;
-using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
 {

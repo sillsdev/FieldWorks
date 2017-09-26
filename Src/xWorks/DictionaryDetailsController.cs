@@ -4,7 +4,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
@@ -17,7 +16,6 @@ using SIL.LCModel.DomainImpl;
 using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.FwCoreDlgControls;
 using SIL.FieldWorks.FwCoreDlgs;
-using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.XWorks.DictionaryDetailsView;
 using SIL.FieldWorks.XWorks.LexText;
 using XCore;

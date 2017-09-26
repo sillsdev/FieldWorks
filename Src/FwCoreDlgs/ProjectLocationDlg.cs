@@ -5,7 +5,6 @@
 // File: ProjectLocationDlg.cs
 // Responsibility: FW team
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Security.AccessControl;
 using System.Security.Principal;

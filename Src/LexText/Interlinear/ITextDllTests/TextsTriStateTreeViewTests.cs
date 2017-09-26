@@ -2,14 +2,12 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using NUnit.Framework;
 
 #pragma warning disable 1591 // no XML comments needed in tests
 namespace SIL.FieldWorks.IText
 {
-	[SuppressMessage("ReSharper", "InconsistentNaming", Justification = "MethodName_TestName is standard for tests")]
 	public class TextsTriStateTreeViewTests
 	{
 		private TreeNode m_bibleNode, m_testamentNode, m_bookNode;
@@ -71,7 +69,6 @@ namespace SIL.FieldWorks.IText
 		/// These tests test whether events are firing at the proper time. Windows Forms Events fire only if Handle is created for the Control.
 		/// Reading AccessibilityObject has a side effect of creating Handle.
 		/// </remarks>
-		[SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "get AccessibilityObject has side effects")]
 		private static void EnableEventHandling(Control control)
 		{
 			Assert.NotNull(control.AccessibilityObject);

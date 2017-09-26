@@ -13,7 +13,6 @@ using System.Windows.Forms;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.LexText.Controls.MGA;
-using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.LexText.Controls
 {

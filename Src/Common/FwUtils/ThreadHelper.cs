@@ -8,7 +8,6 @@
 using System;
 using System.ComponentModel;
 using System.Windows.Forms;
-using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {

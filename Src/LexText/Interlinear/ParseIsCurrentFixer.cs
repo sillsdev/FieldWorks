@@ -3,13 +3,11 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows.Forms;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.FwCoreDlgs;
-using XCore;
 
 namespace SIL.FieldWorks.IText
 {

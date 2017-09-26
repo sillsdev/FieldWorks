@@ -1,16 +1,12 @@
 // Original author or copyright holder unknown.
 
 using System;
-using System.Collections;
 using System.ComponentModel;
-using System.Data;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Windows.Forms;
-
 using SidebarLibrary.General;
 using SidebarLibrary.Win32;
 

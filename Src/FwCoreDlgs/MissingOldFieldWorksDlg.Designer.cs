@@ -8,8 +8,6 @@
 // <remarks>
 // </remarks>
 
-using System.Diagnostics.CodeAnalysis;
-
 namespace SIL.FieldWorks.FwCoreDlgs
 {
 	partial class MissingOldFieldWorksDlg

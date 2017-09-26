@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using Paratext;
@@ -35,7 +34,6 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 		/// <summary>
 		/// Determine if Paratext8 is installed, if it is use it, otherwise fall back to Paratext7
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "When do you dispose a static singleton?")]
 		static ScriptureProvider()
 		{
 			var scriptureProvider = new ScriptureProvider();

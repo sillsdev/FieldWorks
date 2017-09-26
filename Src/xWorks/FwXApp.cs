@@ -1,11 +1,7 @@
 // Copyright (c) 2003-2013 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: FxApp.cs
-// Responsibility:
-// --------------------------------------------------------------------------------------------
-using System.Diagnostics.CodeAnalysis;
+
 using System.Windows.Forms;
 using System.Diagnostics;
 using Microsoft.Win32;
@@ -15,7 +11,6 @@ using SIL.LCModel;
 using SIL.FieldWorks.Common.Framework;
 using SIL.LCModel.Utils;
 using SIL.FieldWorks.Common.FwUtils;
-using XCore;
 
 namespace SIL.FieldWorks.XWorks
 {

@@ -2,17 +2,14 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System.Diagnostics.CodeAnalysis;
 using System.Xml;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
-using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.Common.Controls;
 using SIL.LCModel.Core.KernelInterfaces;
-using XCore;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
 {

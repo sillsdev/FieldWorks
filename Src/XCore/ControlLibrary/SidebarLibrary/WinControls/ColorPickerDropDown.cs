@@ -1,16 +1,11 @@
 // Original author or copyright holder unknown.
 
 using System;
-using System.Collections;
 using System.ComponentModel;
 using System.Drawing;
-using System.Data;
 using System.Windows.Forms;
-using System.Diagnostics;
 using SidebarLibrary.General;
-using SidebarLibrary.WinControls;
 using SidebarLibrary.Win32;
-using System.Diagnostics.CodeAnalysis;
 
 namespace SidebarLibrary.WinControls
 {

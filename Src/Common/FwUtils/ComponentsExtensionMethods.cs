@@ -4,7 +4,6 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 // ---------------------------------------------------------------------------------------------
 using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 
 namespace SIL.FieldWorks.Common.FwUtils

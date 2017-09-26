@@ -8,8 +8,6 @@ namespace Reflector.UserInterface
 {
 	using System;
 	using System.Collections;
-	using System.ComponentModel;
-	using System.Diagnostics.CodeAnalysis;
 	using System.Drawing;
 	using System.Globalization;
 	using System.Windows.Forms;

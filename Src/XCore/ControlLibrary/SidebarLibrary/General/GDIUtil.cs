@@ -2,10 +2,7 @@
 
 using System;
 using System.Drawing;
-using System.Drawing.Drawing2D;
-
 using SidebarLibrary.Win32;
-using System.Diagnostics.CodeAnalysis;
 
 namespace SidebarLibrary.General
 {

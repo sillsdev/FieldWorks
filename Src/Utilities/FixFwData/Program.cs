@@ -7,7 +7,6 @@
 
 using System;
 using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
 using SIL.FieldWorks.FixData;
 using SIL.Reporting;
 using SIL.LCModel.Utils;

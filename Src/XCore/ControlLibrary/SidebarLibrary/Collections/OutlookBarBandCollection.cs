@@ -2,8 +2,6 @@
 
 using System;
 using System.Collections;
-using System.Diagnostics.CodeAnalysis;
-using System.Windows.Forms;
 using SidebarLibrary.WinControls;
 
 namespace SidebarLibrary.Collections

@@ -1,7 +1,6 @@
 // Original author or copyright holder unknown.
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 
 namespace SidebarLibrary.WinControls

@@ -11,7 +11,6 @@
 // --------------------------------------------------------------------------------------------
 
 using SIL.FieldWorks.Common.Framework.DetailControls;
-using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {

@@ -10,7 +10,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Drawing.Text;
-using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 
 namespace SIL.FieldWorks.FwCoreDlgControls

@@ -9,7 +9,6 @@
 // </remarks>
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using Microsoft.Win32;
 
 namespace SIL.FieldWorks.Test.ProjectUnpacker

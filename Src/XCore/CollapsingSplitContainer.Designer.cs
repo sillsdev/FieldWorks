@@ -8,7 +8,6 @@
 // <remarks>
 // </remarks>
 
-using System.Diagnostics.CodeAnalysis;
 namespace XCore
 {
 	partial class CollapsingSplitContainer

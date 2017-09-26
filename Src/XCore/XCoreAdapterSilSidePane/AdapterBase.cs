@@ -1,15 +1,8 @@
 // Copyright (c) 2004-2013 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: AdapterBase.cs
-// Authorship History: Randy Regnier
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
+
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Windows.Forms;
 

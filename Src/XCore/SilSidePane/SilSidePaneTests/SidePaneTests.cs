@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using NUnit.Framework;
-using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.SilSidePane
 {

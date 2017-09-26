@@ -16,10 +16,8 @@
 // If we need the other methods we should copy the interface definitions from
 // stdole to ViewsInterfaces/ComWrapper.cs since stdole isn't available on Linux.
 
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Windows.Forms;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 
 namespace SIL.FieldWorks.Common.FwUtils

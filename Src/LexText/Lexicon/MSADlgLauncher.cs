@@ -3,14 +3,12 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.LexText.Controls;
-using SIL.LCModel.Utils;
 using XCore;
 
 namespace SIL.FieldWorks.XWorks.LexEd

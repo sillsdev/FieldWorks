@@ -10,7 +10,6 @@
 
 using System;
 using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO; // for Win32 message defns.
 using System.Windows.Forms;

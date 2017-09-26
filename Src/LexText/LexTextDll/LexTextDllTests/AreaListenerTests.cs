@@ -8,7 +8,6 @@
 // <remarks>
 // </remarks>
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Xml;
 using NUnit.Framework;
 using SIL.LCModel;

@@ -4,7 +4,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Xml;
@@ -15,7 +14,6 @@ using SIL.LCModel.Core.Text;
 using SIL.IO;
 using SIL.TestUtilities;
 using SIL.LCModel.Core.KernelInterfaces;
-using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;

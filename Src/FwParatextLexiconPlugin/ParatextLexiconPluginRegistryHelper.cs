@@ -3,11 +3,9 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Reflection;
 using Microsoft.Win32;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.ParatextLexiconPlugin

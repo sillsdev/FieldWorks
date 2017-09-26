@@ -9,7 +9,6 @@ using SIL.FieldWorks.Common.Controls;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 using XCore;
-using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
 {

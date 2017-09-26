@@ -3,18 +3,12 @@
 // Copyright (C) 2001-2003 Lutz Roeder. All rights reserved.
 // http://www.aisto.com/roeder
 // roeder@aisto.com
-// ---------------------------------------------------------
-using System.Diagnostics.CodeAnalysis;
-
 
 namespace Reflector.UserInterface
 {
 	using System;
-	using System.Collections;
 	using System.ComponentModel;
-	using System.Diagnostics;
 	using System.Drawing;
-	using System.Drawing.Imaging;
 	using System.Globalization;
 	using System.Runtime.InteropServices;
 	using System.Security;

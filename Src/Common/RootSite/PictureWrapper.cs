@@ -6,11 +6,9 @@
 // Responsibility: FW Team
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Utils;

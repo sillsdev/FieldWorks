@@ -7,7 +7,6 @@
 // Last reviewed:
 // --------------------------------------------------------------------------------------------
 
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Windows.Forms;  //for ImageList
 using System.Reflection;

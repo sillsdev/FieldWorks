@@ -4,7 +4,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using NUnit.Framework;
@@ -23,7 +22,6 @@ using XCore;
 
 namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 {
-	[SuppressMessage("ReSharper", "InconsistentNaming")]
 	public class PreHistoricMigratorTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
 		private PreHistoricMigrator m_migrator;

@@ -1,22 +1,10 @@
 // Copyright (c) 2003-2013 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ImageSlice.cs
-// Responsibility:
-// Last reviewed:
-//
-// <remarks>
-// Implements a simple Image XDE editor.
-// </remarks>
 
-using System;
 using System.Windows.Forms;
 using System.Drawing;
-using System.Diagnostics;
-
 using SIL.LCModel.Utils;
-using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {

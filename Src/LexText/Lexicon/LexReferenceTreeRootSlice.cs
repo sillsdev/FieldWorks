@@ -5,7 +5,6 @@
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.LCModel;
 using XCore;
-using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {

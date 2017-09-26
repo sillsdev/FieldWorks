@@ -13,7 +13,6 @@ using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
 using SIL.LCModel.Utils;
 using XCore;
-using System.Diagnostics.CodeAnalysis;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.Controls;

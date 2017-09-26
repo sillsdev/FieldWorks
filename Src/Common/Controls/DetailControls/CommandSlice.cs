@@ -1,26 +1,12 @@
 // Copyright (c) 2004-2013 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: Command.cs
-// Authorship History: Randy Regnier
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Windows.Forms;
-using System.Drawing;
 using System.Xml;
-using System.Collections;
 using System.Diagnostics;
-using System.Reflection;
-using System.IO;
-
-using SIL.LCModel.Utils;
 using XCore;
-using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {

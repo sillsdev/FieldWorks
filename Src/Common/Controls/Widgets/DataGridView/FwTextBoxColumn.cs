@@ -14,7 +14,6 @@ using System.Diagnostics;
 using System.Windows.Forms;
 using System.Drawing;
 using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel;

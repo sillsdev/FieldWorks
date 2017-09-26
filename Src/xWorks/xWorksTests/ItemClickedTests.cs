@@ -4,10 +4,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
-using System.Linq;
-using System.Text;
 using NUnit.Framework;
 using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.ViewsInterfaces;

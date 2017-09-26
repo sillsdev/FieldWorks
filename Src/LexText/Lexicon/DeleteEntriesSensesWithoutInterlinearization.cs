@@ -4,7 +4,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows.Forms;
 using System.Diagnostics;
@@ -12,7 +11,6 @@ using SIL.LCModel;
 using SIL.LCModel.Application;
 using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.FwCoreDlgs;
-using XCore;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {

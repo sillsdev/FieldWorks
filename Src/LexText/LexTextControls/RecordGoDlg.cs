@@ -3,7 +3,6 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using System.Xml;
 using SIL.LCModel.Core.Text;

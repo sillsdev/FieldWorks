@@ -12,7 +12,7 @@
 // Implementation of:
 //		XAmpleTrace - Deal with results of an XAmple trace
 // </remarks>
-using System.Diagnostics.CodeAnalysis;
+
 using System.Xml.Linq;
 using XCore;
 

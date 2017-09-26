@@ -6,7 +6,6 @@
 // Responsibility: naylor
 
 using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.Windows.Forms.Widgets;
