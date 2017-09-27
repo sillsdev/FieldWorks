@@ -311,7 +311,7 @@
 	  write the file if it hasn't changed, but the AssemblyFileVersion datestamp field should
 	  change once a day.)
   -->
-  <Target Name="GenerateVersionFiles">
+  <Target Name="GenerateVersionFiles" DependsOnTargets="MakeDirs">
 	  <Substitute Template="@(VersionTemplate)" Symbols="@(VersionSymbols)" Output="@(VersionOutput)" Condition="'$(action)'!='clean'"/>
 	  <Substitute Template="@(BldIncTemplate)" Symbols="@(VersionSymbols)" Output="@(BldIncOutput)" Condition="'$(action)'!='clean' And Exists('../Output/Common')"/>
 	  <Substitute Template="@(GlobalIncludeTemplate)" Symbols="@(VersionSymbols)" Output="@(GlobalIncludeOutput)" Condition="'$(action)'!='clean'"/>
