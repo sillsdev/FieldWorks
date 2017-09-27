@@ -231,11 +231,6 @@
     <Compile Include="ScrBookControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="ScrImportComponents.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>ScrImportComponents.resx</DependentUpon>
-    </Compile>
     <Compile Include="ScrImportSetMessage.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -252,29 +247,10 @@
     <Compile Include="SFFileListBuilder.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="TeDialogResources.cs" />
-    <Compile Include="TeDiffViewResources.Designer.cs">
-      <DependentUpon>TeDiffViewResources.resx</DependentUpon>
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-    </Compile>
     <Compile Include="TeImportExportExtensions.cs" />
     <Compile Include="TeImport.cs" />
     <Compile Include="TeImportManager.cs" />
     <Compile Include="TeImportUi.cs" />
-    <Compile Include="TeResourceHelper.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="TeStrings.Designer.cs">
-      <DependentUpon>TeStrings.resx</DependentUpon>
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-    </Compile>
-    <Compile Include="TeTMStrings.Designer.cs">
-      <DependentUpon>TeTMStrings.resx</DependentUpon>
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-    </Compile>
     <Compile Include="UndoImportManager.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -286,9 +262,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Difference.resx">
       <DependentUpon>Difference.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="HelpTopicPaths.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="ImportDialog.resx">
@@ -313,10 +286,6 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="ScrImportComponents.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>ScrImportComponents.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
     <EmbeddedResource Include="ScrImportSetMessage.resx">
       <DependentUpon>ScrImportSetMessage.cs</DependentUpon>
     </EmbeddedResource>
@@ -330,28 +299,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="SFFileListBuilder.resx">
       <DependentUpon>SFFileListBuilder.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="TeDialogStrings.resx">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="TeDiffViewResources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>TeDiffViewResources.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="TeResourceHelper.resx">
-      <DependentUpon>TeResourceHelper.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="TeStrings.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>TeStrings.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="TeTMStrings.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>TeTMStrings.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
@@ -373,104 +320,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\DropDownArrowWide.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="resources\Import.ico" />
-    <None Include="resources\Insert-Chapter.bmp" />
-    <None Include="resources\Insert-Footnote.bmp" />
-    <None Include="resources\Insert-Section.bmp" />
-    <None Include="resources\Insert-Verse.bmp" />
-    <None Include="resources\tmp-GotoFirstBook.bmp" />
-    <None Include="resources\tmp-GotoFirstChapter.bmp" />
-    <None Include="resources\tmp-GotoFirstSection.bmp" />
-    <None Include="resources\tmp-GotoLastBook.bmp" />
-    <None Include="resources\tmp-GotoLastChapter.bmp" />
-    <None Include="resources\tmp-GotoLastSection.bmp" />
-    <None Include="resources\tmp-GotoNextBook.bmp" />
-    <None Include="resources\tmp-GotoNextChapter.bmp" />
-    <None Include="resources\tmp-GotoNextSection.bmp" />
-    <None Include="resources\tmp-GotoPrevBook.bmp" />
-    <None Include="resources\tmp-GotoPrevChapter.bmp" />
-    <None Include="resources\tmp-GotoPrevSection.bmp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Images\Back Translation\Go_to_Next_Unfinished_Paragraph.bmp" />
-    <None Include="Images\Back Translation\Go_to_Previous_Unfinished_Paragraph.bmp" />
-    <None Include="Images\Back Translation\Mark_as_Untranslated_Word.bmp" />
-    <None Include="Images\Back Translation\Mark_Paragraph_as_Consultant_Checked.bmp" />
-    <None Include="Images\Back Translation\Mark_Paragraph_as_Finished.bmp" />
-    <None Include="Images\Back Translation\Mark_Paragraph_as_Unfinished.bmp" />
-    <None Include="Images\Checking\Keyterm-Filtered.bmp" />
-    <None Include="Images\Checking\Keyterm-Ignored.bmp" />
-    <None Include="Images\Checking\Keyterm-Missing.bmp" />
-    <None Include="Images\Checking\Keyterm-Rendered-Auto.bmp" />
-    <None Include="Images\Checking\Keyterm-Rendered.bmp" />
-    <None Include="Images\DiffView\Next_Difference.bmp" />
-    <None Include="Images\DiffView\Previous_Difference.bmp" />
-    <None Include="Images\Edit\Go_to_First_Book.bmp" />
-    <None Include="Images\Edit\Go_to_First_Chapter.bmp" />
-    <None Include="Images\Edit\Go_to_First_Section.bmp" />
-    <None Include="Images\Edit\Go_to_Last_Book.bmp" />
-    <None Include="Images\Edit\Go_to_Last_Chapter.bmp" />
-    <None Include="Images\Edit\Go_to_Last_Section.bmp" />
-    <None Include="Images\Edit\Go_to_Next_Book.bmp" />
-    <None Include="Images\Edit\Go_to_Next_Chapter.bmp" />
-    <None Include="Images\Edit\Go_to_Next_Footnote.bmp" />
-    <None Include="Images\Edit\Go_to_Next_Section.bmp" />
-    <None Include="Images\Edit\Go_to_Previous_Book.bmp" />
-    <None Include="Images\Edit\Go_to_Previous_Chapter.bmp" />
-    <None Include="Images\Edit\Go_to_Previous_Footnote.bmp" />
-    <None Include="Images\Edit\Go_to_Previous_Section.bmp" />
-    <None Include="Images\Format\Delete_Footnote.bmp" />
-    <None Include="Images\Insert\Insert_Chapter_Number.bmp" />
-    <None Include="Images\Insert\Insert_Cross-reference_Footnote.bmp" />
-    <None Include="Images\Insert\Insert_Footnote.bmp" />
-    <None Include="Images\Insert\Insert_Scripture_Section.bmp" />
-    <None Include="Images\Insert\Insert_Verse_Number.bmp" />
-    <None Include="Images\Insert\Insert_Verse_Numbers_Mode.bmp" />
-    <None Include="Images\Navigation\ReceiveSync.bmp" />
-    <None Include="Images\Navigation\SendSync.bmp" />
-    <None Include="Images\Sidebar\Back Trans Drafting-Large.bmp" />
-    <None Include="Images\Sidebar\Back_Translation_Task %28Old%29.bmp" />
-    <None Include="Images\Sidebar\Back_Translation_Task.bmp" />
-    <None Include="Images\Sidebar\BTConsultantCheck-Large.bmp" />
-    <None Include="Images\Sidebar\BTConsultantCheck-Small.bmp" />
-    <None Include="Images\Sidebar\BTDraft-Large.bmp" />
-    <None Include="Images\Sidebar\BTDraft-Small.bmp" />
-    <None Include="Images\Sidebar\BTPrintLayout-Large.bmp" />
-    <None Include="Images\Sidebar\BTPrintLayout-Small.bmp" />
-    <None Include="Images\Sidebar\BTSimplePrintLayout-Large.bmp" />
-    <None Include="Images\Sidebar\BTSimplePrintLayout-Small.bmp" />
-    <None Include="Images\Sidebar\Checking_Tools_Task.bmp" />
-    <None Include="Images\Sidebar\CorrectionPrintLayout-Large.bmp" />
-    <None Include="Images\Sidebar\CorrectionPrintLayout-Small.bmp" />
-    <None Include="Images\Sidebar\Drafting Icon-Large.bmp" />
-    <None Include="Images\Sidebar\Drafting Icon-Small.bmp" />
-    <None Include="Images\Sidebar\Editorial Checks-Large.png" />
-    <None Include="Images\Sidebar\Editorial Checks-Small.png" />
-    <None Include="Images\Sidebar\FilterAdvanced-Large.bmp" />
-    <None Include="Images\Sidebar\FilterAdvanced-Small.bmp" />
-    <None Include="Images\Sidebar\FilterBasic-Large.bmp" />
-    <None Include="Images\Sidebar\FilterBasic-Small.bmp" />
-    <None Include="Images\Sidebar\FilterNo-Large.bmp" />
-    <None Include="Images\Sidebar\FilterNo-Small.bmp" />
-    <None Include="Images\Sidebar\FilterTab.bmp" />
-    <None Include="Images\Sidebar\FWKeyTerms-Large.bmp" />
-    <None Include="Images\Sidebar\FWKeyTerms-Small.bmp" />
-    <None Include="Images\Sidebar\PrintLayout-Large.bmp" />
-    <None Include="Images\Sidebar\PrintLayout-Small.bmp" />
-    <None Include="Images\Sidebar\PrintLayoutTwoColumn-Large.bmp" />
-    <None Include="Images\Sidebar\PrintLayoutTwoColumn-Small.bmp" />
-    <None Include="Images\Sidebar\Publishing_Task.bmp" />
-    <None Include="Images\Sidebar\Scripture_Task.bmp" />
-    <None Include="Images\Sidebar\Template - Magnifying Glass-Large.bmp" />
-    <None Include="Images\Sidebar\Template - Plain Page With Text-Large.bmp" />
-    <None Include="Images\Tools\Find Dictionary.ico" />
-    <None Include="Images\View\Filter_by_Book.bmp" />
-    <None Include="Images\View\No_Filter.bmp" />
-    <None Include="Images\Insert_Response.png" />
-    <EmbeddedResource Include="INS_VRSE_NBRS.CUR" />
-    <EmbeddedResource Include="RightArrow.cur" />
+    <None Include="Properties\DropDownArrow.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

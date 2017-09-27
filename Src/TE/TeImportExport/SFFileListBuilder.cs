@@ -11,19 +11,18 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-
 using Microsoft.Win32;
+using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.Resources;
-using SIL.FieldWorks.TE;
 using SIL.LCModel.Core.Scripture;
 using SIL.LCModel.Core.WritingSystems;
 
-namespace SIL.FieldWorks.Common.Controls
+namespace SIL.FieldWorks.TE
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
@@ -116,7 +115,7 @@ namespace SIL.FieldWorks.Common.Controls
 			m_OpenFileDlg.CheckFileExists = true;
 			m_OpenFileDlg.RestoreDirectory = false;
 			m_OpenFileDlg.ShowHelp = false;
-			m_OpenFileDlg.Title = TeResourceHelper.GetResourceString("kstidOFDTitle");
+			m_OpenFileDlg.Title = Properties.Resources.kstidOFDTitle;
 			m_OpenFileDlg.Multiselect = true;
 
 			m_OpenFileDlg.InitialDirectory =
@@ -550,8 +549,8 @@ namespace SIL.FieldWorks.Common.Controls
 					return;
 						}
 
-						lvi.SubItems.Add(TeResourceHelper.GetResourceString("kstidNoBooks"));
-						lvi.SubItems.Add(TeResourceHelper.GetResourceString("kstidFileMissing"));
+						lvi.SubItems.Add(Properties.Resources.kstidNoBooks);
+						lvi.SubItems.Add(Properties.Resources.kstidFileMissing);
 					}
 
 			// Store the file info in the list view item tag
@@ -672,12 +671,13 @@ namespace SIL.FieldWorks.Common.Controls
 		/// ------------------------------------------------------------------------------------
 		protected virtual void ShowBadFileMessage(string filename)
 		{
-			string message = string.Format(TeResourceHelper.GetResourceString("kstidImportFileNoBooks"),
-				filename);
+			/* As of 27 Sep 2017 "kstidImportFileNoBookCaption" is not in the repository in master or develop, so skip showing the MessageBox. I gather the error iss quite rare. ;-)
+			string message = string.Format(TeStrings.kstidImportFileNoBooks, filename);
 			// TODO-Linux: Help is not implemented in Mono
 			MessageBox.Show(message, ResourceHelper.GetResourceString("kstidImportFileNoBookCaption"),
 				MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, 0, m_helpTopicProvider.HelpFile,
 				HelpNavigator.Topic, ResourceHelper.GetHelpString("kstidImportFileNoBookTopic"));
+			*/
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -757,8 +757,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 					if (fileInfo.IsReadable && !supportedEncodings.Contains(fileInfo.FileEncoding))
 					{
-						string message = string.Format(TeResourceHelper.GetResourceString("kstidUnsupportedEncoding"),
-							fileInfo.FileName, fileInfo.FileEncoding.EncodingName);
+						string message = string.Format(Properties.Resources.kstidUnsupportedEncoding, fileInfo.FileName, fileInfo.FileEncoding.EncodingName);
 
 						DisplayMessageBox(message);
 						return false;

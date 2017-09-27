@@ -120,8 +120,7 @@ namespace SIL.FieldWorks.TE
 			catch (Exception e)
 			{
 				// Can't load Paratext project if Paratext is not installed.
-				throw new ParatextLoadException(
-					TeResourceHelper.GetResourceString("kstidCheckParatextInstallation"), e);
+				throw new ParatextLoadException(Properties.Resources.kstidCheckParatextInstallation, e);
 			}
 
 			try
@@ -137,9 +136,7 @@ namespace SIL.FieldWorks.TE
 			}
 			catch (Exception e)
 			{
-				string msg = string.Format(
-					TeResourceHelper.GetResourceString("kstidParatextProjectLoadFailure"),
-					paratextProjectId);
+				string msg = string.Format(Properties.Resources.kstidParatextProjectLoadFailure, paratextProjectId);
 				throw new ParatextLoadException(msg, e);
 			}
 		}

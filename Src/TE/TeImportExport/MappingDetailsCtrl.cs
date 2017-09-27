@@ -34,9 +34,6 @@ namespace SIL.FieldWorks.TE
 
 		#region Data members
 		private ImportMappingInfo m_mapping;
-		private LcmCache m_cache;
-		private IScripture m_scr;
-		private bool m_fParatextMapping;
 		private bool m_isAnnotationMapping;
 		private bool m_fBackTransDomainLocked;
 
@@ -66,26 +63,26 @@ namespace SIL.FieldWorks.TE
 		/// </summary>
 		private System.ComponentModel.Container components = null;
 
-		static string[] s_allPseudoStyles = new string[] {
-					ScrImportComponents.kstidChapterLabelStyle,
-					ScrImportComponents.kstidTitleShortStyle,
-					ScrImportComponents.kstidFigureStyle,
-					ScrImportComponents.kstidFigureCaptionStyle,
-					ScrImportComponents.kstidFigureCopyrightStyle,
-					ScrImportComponents.kstidFigureDescriptionStyle,
-					ScrImportComponents.kstidFigureFilenameStyle,
-					ScrImportComponents.kstidFigureLayoutPositionStyle,
-					ScrImportComponents.kstidFigureRefRangeStyle,
-					ScrImportComponents.kstidFigureScaleStyle
-				};
+		static string[] s_allPseudoStyles = {
+			Properties.Resources.kstidChapterLabelStyle,
+			Properties.Resources.kstidTitleShortStyle,
+			Properties.Resources.kstidFigureStyle,
+			Properties.Resources.kstidFigureCaptionStyle,
+			Properties.Resources.kstidFigureCopyrightStyle,
+			Properties.Resources.kstidFigureDescriptionStyle,
+			Properties.Resources.kstidFigureFilenameStyle,
+			Properties.Resources.kstidFigureLayoutPositionStyle,
+			Properties.Resources.kstidFigureRefRangeStyle,
+			Properties.Resources.kstidFigureScaleStyle
+			};
 
-		static string[] s_btPseudoStyles = new string[] {
-					ScrImportComponents.kstidChapterLabelStyle,
-					ScrImportComponents.kstidTitleShortStyle,
-					ScrImportComponents.kstidFigureStyle,
-					ScrImportComponents.kstidFigureCaptionStyle,
-					ScrImportComponents.kstidFigureCopyrightStyle,
-				};
+		static string[] s_btPseudoStyles = {
+			Properties.Resources.kstidChapterLabelStyle,
+			Properties.Resources.kstidTitleShortStyle,
+			Properties.Resources.kstidFigureStyle,
+			Properties.Resources.kstidFigureCaptionStyle,
+			Properties.Resources.kstidFigureCopyrightStyle,
+			};
 
 		static Dictionary<string, MappingTargetType> s_PsuedoStyleNamesToTargetType =
 			new Dictionary<string, MappingTargetType>();
@@ -141,8 +138,6 @@ namespace SIL.FieldWorks.TE
 			m_styleListHelper = null;
 			m_StyleSheet = null;
 			m_mapping = null;
-			m_cache = null;
-			m_scr = null;
 
 			base.Dispose( disposing );
 		}
@@ -156,7 +151,7 @@ namespace SIL.FieldWorks.TE
 		/// <param name="mapping">Mapping object being modified</param>
 		/// <param name="styleSheet">Stylesheet containing styles that will appear in the list
 		/// </param>
-		/// <param name="cache">The cache representing the DB connection</param>
+		/// <param name="allWritingSystemDefinitions">All of the writing systems</param>
 		/// <param name="fBackTransDomainLocked">If <c>true</c>, won't allow the user to
 		/// check or clear the BT checkbox. If the incoming mapping is for the back translation
 		/// and has a domain of either Scripture or Footnote, these two domains remain
@@ -170,19 +165,16 @@ namespace SIL.FieldWorks.TE
 		/// for testing purposes.</remarks>
 		/// ------------------------------------------------------------------------------------
 		public virtual void Initialize(bool fParatextMapping, ImportMappingInfo mapping,
-			LcmStyleSheet styleSheet, LcmCache cache, bool isAnnotationMapping,
+			LcmStyleSheet styleSheet, IEnumerable<CoreWritingSystemDefinition> allWritingSystemDefinitions, bool isAnnotationMapping,
 			bool fBackTransDomainLocked)
 		{
 			CheckDisposed();
 
-			m_fParatextMapping = fParatextMapping;
-			m_cache = cache;
-			m_scr = cache.LangProject.TranslatedScriptureOA;
 			m_mapping = mapping;
 			m_StyleSheet = styleSheet;
 			m_isAnnotationMapping = isAnnotationMapping;
 			m_fBackTransDomainLocked = fBackTransDomainLocked;
-			m_styleListHelper.StyleSheet = styleSheet as LcmStyleSheet;
+			m_styleListHelper.StyleSheet = styleSheet;
 
 			//			// if there are items in the styles list and there is not one selected then
 			//			// set the first item to be the selected item.
@@ -193,9 +185,9 @@ namespace SIL.FieldWorks.TE
 			// Also set the maximum style level for the style list helper before the
 			// style list gets filled in.
 			cboList.Items.Clear();
-			cboList.Items.Add(TeResourceHelper.GetResourceString("kstidStyleFilterBasic"));
-			cboList.Items.Add(TeResourceHelper.GetResourceString("kstidStyleFilterAllStyles"));
-			cboList.Items.Add(TeResourceHelper.GetResourceString("kstidStyleFilterCustomList"));
+			cboList.Items.Add(Properties.Resources.kstidStyleFilterBasic);
+			cboList.Items.Add(Properties.Resources.kstidStyleFilterAllStyles);
+			cboList.Items.Add(Properties.Resources.kstidStyleFilterCustomList);
 
 			cboList.SelectedIndex = 1;
 			// This code was not completely removed for the highly likely case that
@@ -247,11 +239,11 @@ namespace SIL.FieldWorks.TE
 
 			cboWritingSys.Items.Clear();
 			// Create a fake WS for the "Based on Context" item
-			cboWritingSys.Items.Add(TeResourceHelper.GetResourceString("kstidBasedOnContext"));
+			cboWritingSys.Items.Add(Properties.Resources.kstidBasedOnContext);
 			string initialWritingSystem = string.Empty;
 			// Iterate through the available writing systems and add them to the writing systems
 			// combo box.
-			foreach (CoreWritingSystemDefinition wsObj in cache.ServiceLocator.WritingSystems.AllWritingSystems)
+			foreach (CoreWritingSystemDefinition wsObj in allWritingSystemDefinitions)
 			{
 				cboWritingSys.Items.Add(wsObj);
 
@@ -554,7 +546,9 @@ namespace SIL.FieldWorks.TE
 						contextList.Add(ContextValues.Internal);
 						contextList.Add(ContextValues.Note);
 						if (chkBackTranslation.Checked)
+						{
 							pseudoStyles = BtPseudoStyles;
+						}
 						else
 						{
 							contextList.Add(ContextValues.BackTranslation);
@@ -634,23 +628,20 @@ namespace SIL.FieldWorks.TE
 			if (s_PsuedoStyleNamesToTargetType.Count == 0)
 			{
 				// Populate it for first-time use.
-				s_PsuedoStyleNamesToTargetType[ScrImportComponents.kstidFigureStyle] = MappingTargetType.Figure;
-				s_PsuedoStyleNamesToTargetType[ScrImportComponents.kstidFigureCaptionStyle] = MappingTargetType.FigureCaption;
-				s_PsuedoStyleNamesToTargetType[ScrImportComponents.kstidFigureCopyrightStyle] = MappingTargetType.FigureCopyright;
-				s_PsuedoStyleNamesToTargetType[ScrImportComponents.kstidFigureDescriptionStyle] = MappingTargetType.FigureDescription;
-				s_PsuedoStyleNamesToTargetType[ScrImportComponents.kstidFigureFilenameStyle] = MappingTargetType.FigureFilename;
-				s_PsuedoStyleNamesToTargetType[ScrImportComponents.kstidFigureLayoutPositionStyle] = MappingTargetType.FigureLayoutPosition;
-				s_PsuedoStyleNamesToTargetType[ScrImportComponents.kstidFigureRefRangeStyle] = MappingTargetType.FigureRefRange;
-				s_PsuedoStyleNamesToTargetType[ScrImportComponents.kstidFigureScaleStyle] = MappingTargetType.FigureScale;
-				s_PsuedoStyleNamesToTargetType[ScrImportComponents.kstidTitleShortStyle] = MappingTargetType.TitleShort;
-				s_PsuedoStyleNamesToTargetType[ScrImportComponents.kstidChapterLabelStyle] = MappingTargetType.ChapterLabel;
+				s_PsuedoStyleNamesToTargetType[Properties.Resources.kstidFigureStyle] = MappingTargetType.Figure;
+				s_PsuedoStyleNamesToTargetType[Properties.Resources.kstidFigureCaptionStyle] = MappingTargetType.FigureCaption;
+				s_PsuedoStyleNamesToTargetType[Properties.Resources.kstidFigureCopyrightStyle] = MappingTargetType.FigureCopyright;
+				s_PsuedoStyleNamesToTargetType[Properties.Resources.kstidFigureDescriptionStyle] = MappingTargetType.FigureDescription;
+				s_PsuedoStyleNamesToTargetType[Properties.Resources.kstidFigureFilenameStyle] = MappingTargetType.FigureFilename;
+				s_PsuedoStyleNamesToTargetType[Properties.Resources.kstidFigureLayoutPositionStyle] = MappingTargetType.FigureLayoutPosition;
+				s_PsuedoStyleNamesToTargetType[Properties.Resources.kstidFigureRefRangeStyle] = MappingTargetType.FigureRefRange;
+				s_PsuedoStyleNamesToTargetType[Properties.Resources.kstidFigureScaleStyle] = MappingTargetType.FigureScale;
+				s_PsuedoStyleNamesToTargetType[Properties.Resources.kstidTitleShortStyle] = MappingTargetType.TitleShort;
+				s_PsuedoStyleNamesToTargetType[Properties.Resources.kstidChapterLabelStyle] = MappingTargetType.ChapterLabel;
 			}
 
 			MappingTargetType targetType;
-			if (s_PsuedoStyleNamesToTargetType.TryGetValue(selectedStyleName, out targetType))
-				mapping.MappingTarget = targetType;
-			else
-				mapping.MappingTarget = MappingTargetType.TEStyle;
+			mapping.MappingTarget = s_PsuedoStyleNamesToTargetType.TryGetValue(selectedStyleName, out targetType) ? targetType : MappingTargetType.TEStyle;
 
 			mapping.StyleName = selectedStyleName;
 		}
@@ -667,25 +658,25 @@ namespace SIL.FieldWorks.TE
 			switch (mapping.MappingTarget)
 			{
 				case MappingTargetType.ChapterLabel:
-					return ScrImportComponents.kstidChapterLabelStyle;
+					return Properties.Resources.kstidChapterLabelStyle;
 				case MappingTargetType.TitleShort:
-					return ScrImportComponents.kstidTitleShortStyle;
+					return Properties.Resources.kstidTitleShortStyle;
 				case MappingTargetType.Figure:
-					return ScrImportComponents.kstidFigureStyle;
+					return Properties.Resources.kstidFigureStyle;
 				case MappingTargetType.FigureCaption:
-					return ScrImportComponents.kstidFigureCaptionStyle;
+					return Properties.Resources.kstidFigureCaptionStyle;
 				case MappingTargetType.FigureCopyright:
-					return ScrImportComponents.kstidFigureCopyrightStyle;
+					return Properties.Resources.kstidFigureCopyrightStyle;
 				case MappingTargetType.FigureDescription:
-					return ScrImportComponents.kstidFigureDescriptionStyle;
+					return Properties.Resources.kstidFigureDescriptionStyle;
 				case MappingTargetType.FigureFilename:
-					return ScrImportComponents.kstidFigureFilenameStyle;
+					return Properties.Resources.kstidFigureFilenameStyle;
 				case MappingTargetType.FigureLayoutPosition:
-					return ScrImportComponents.kstidFigureLayoutPositionStyle;
+					return Properties.Resources.kstidFigureLayoutPositionStyle;
 				case MappingTargetType.FigureRefRange:
-					return ScrImportComponents.kstidFigureRefRangeStyle;
+					return Properties.Resources.kstidFigureRefRangeStyle;
 				case MappingTargetType.FigureScale:
-					return ScrImportComponents.kstidFigureScaleStyle;
+					return Properties.Resources.kstidFigureScaleStyle;
 				case MappingTargetType.TEStyle:
 				case MappingTargetType.DefaultParaChars:
 					return mapping.StyleName;
@@ -700,20 +691,15 @@ namespace SIL.FieldWorks.TE
 		/// Gets all the pseudo styles that the user can map markers to, dude.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		internal static string[] AllPseudoStyles
-		{
-			get { return s_allPseudoStyles; }
-		}
+		internal static string[] AllPseudoStyles => s_allPseudoStyles;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets all the pseudo styles that the user can map markers to in an interleaved BT.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		internal static string[] BtPseudoStyles
-		{
-			get { return s_btPseudoStyles; }
-		}
+		internal static string[] BtPseudoStyles => s_btPseudoStyles;
+
 		#endregion
 	}
 }

@@ -8,6 +8,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using SIL.FieldWorks.Resources;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
@@ -65,7 +66,7 @@ namespace SIL.FieldWorks.TE
 			m_hMark = m_cache.DomainDataByFlid.GetActionHandler().Mark();
 			IActionHandler actionHandler = m_cache.ActionHandlerAccessor;
 			actionHandler.BeginUndoTask("Create saved version", "Create saved version");
-			m_backupVersion = GetOrCreateVersion(TeResourceHelper.GetResourceString("kstidSavedVersionDescriptionOriginal"));
+			m_backupVersion = GetOrCreateVersion(Properties.Resources.kstidSavedVersionDescriptionOriginal);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -205,9 +206,9 @@ namespace SIL.FieldWorks.TE
 		/// ------------------------------------------------------------------------------------
 		public bool CollapseAllUndoActions()
 		{
-			string undo;
-			string redo;
-			TeResourceHelper.MakeUndoRedoLabels("kstidImport", out undo, out redo);
+			var import = Properties.Resources.kstidImport;
+			var undo = string.Format(ResourceHelper.GetResourceString("kstidUndoFrame"), import);
+			var redo = string.Format(ResourceHelper.GetResourceString("kstidRedoFrame"), import);
 			return m_cache.DomainDataByFlid.GetActionHandler().CollapseToMark(m_hMark, undo, redo);
 		}
 

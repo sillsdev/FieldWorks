@@ -3,12 +3,14 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.Drawing;
 using SIL.LCModel;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Controls;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.DomainServices;
 
 namespace SIL.FieldWorks.TE
@@ -53,7 +55,7 @@ namespace SIL.FieldWorks.TE
 		/// <c>false</c> otherwise</param>
 		/// <param name="mapping">Mapping object being modified</param>
 		/// <param name="styleSheet">Stylesheet containing styles that will appear in the list</param>
-		/// <param name="cache">The cache representing the DB connection</param>
+		/// <param name="allWritingSystemDefinitions">All of the writing systems</param>
 		/// <param name="helpTopicProvider">The help topic provider.</param>
 		/// <param name="isAnnotationMapping">If <c>true</c>, forces this mapping to be in the
 		/// Annotation domain.</param>
@@ -67,14 +69,14 @@ namespace SIL.FieldWorks.TE
 		/// for testing purposes.</remarks>
 		/// ------------------------------------------------------------------------------------
 		public virtual void Initialize(bool fParatextMapping, ImportMappingInfo mapping,
-			LcmStyleSheet styleSheet, LcmCache cache, IHelpTopicProvider helpTopicProvider,
+			LcmStyleSheet styleSheet, IEnumerable<CoreWritingSystemDefinition> allWritingSystemDefinitions, IHelpTopicProvider helpTopicProvider,
 			bool isAnnotationMapping, bool fBackTransDomainLocked)
 		{
 			CheckDisposed();
 			m_helpTopicProvider = helpTopicProvider;
 			this.markerLabel.Text = mapping.BeginMarker;
 			this.endMarkerLabel.Text = mapping.EndMarker;
-			this.mappingDetailsCtrl.Initialize(fParatextMapping, mapping, styleSheet, cache,
+			this.mappingDetailsCtrl.Initialize(fParatextMapping, mapping, styleSheet, allWritingSystemDefinitions,
 				isAnnotationMapping, fBackTransDomainLocked);
 		}
 

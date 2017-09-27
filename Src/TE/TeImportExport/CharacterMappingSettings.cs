@@ -1,13 +1,10 @@
-// Copyright (c) 2003-2017 SIL International
+// Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Reflection;
-using System.Resources;
 using System.Windows.Forms;
 using System.Diagnostics;
-
 using SIL.FieldWorks.Common.Drawing;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel;
@@ -38,7 +35,6 @@ namespace SIL.FieldWorks.TE
 		private LcmStyleSheet m_styleSheet;
 		/// <summary>Mapping being modified or added</summary>
 		protected ImportMappingInfo m_mapping;
-		private ResourceManager m_resources;
 		/// <summary>Required designer variable.</summary>
 		private System.ComponentModel.Container components = null;
 		/// <summary>exposed to dummy</summary>
@@ -82,9 +78,6 @@ namespace SIL.FieldWorks.TE
 			LcmCache cache, bool fIsAnnotation, IHelpTopicProvider helpTopicProvider, IApp app) :
 			this()
 		{
-			m_resources = new ResourceManager("SIL.FieldWorks.TE.ScrImportComponents",
-				Assembly.GetExecutingAssembly());
-
 			m_cache = cache;
 			m_helpTopicProvider = helpTopicProvider;
 			m_app = app;
@@ -116,7 +109,7 @@ namespace SIL.FieldWorks.TE
 			// Include footnote paragraph styles because they behave like character mappings.
 			mappingDetailsCtrl.m_styleListHelper.UnionIncludeAndTypeFilter = true;
 
-			mappingDetailsCtrl.Initialize(false, m_mapping, m_styleSheet, m_cache, forceAnnotation, false);
+			mappingDetailsCtrl.Initialize(false, m_mapping, m_styleSheet, m_cache.ServiceLocator.WritingSystems.AllWritingSystems, forceAnnotation, false);
 		}
 
 		/// <summary>
@@ -286,8 +279,7 @@ namespace SIL.FieldWorks.TE
 
 			if (IsDuplicateMapping != null && IsDuplicateMapping(txtBeginningMarker.Text))
 			{
-				string s = string.Format(m_resources.GetString("kstidImportMappingsDuplicateWarning"),
-					txtBeginningMarker.Text);
+				string s = string.Format(Properties.Resources.kstidImportMappingsDuplicateWarning, txtBeginningMarker.Text);
 				DisplayInvalidMappingWarning(s);
 				return;
 			}
@@ -355,8 +347,7 @@ namespace SIL.FieldWorks.TE
 			//check for missing markers
 			if (marker.Equals(string.Empty))
 			{
-				DisplayInvalidMappingWarning(m_resources.GetString(isBeginMarker ?
-					"kstidImportMappingsBeginMarkerReqd" : "kstidImportMappingsEndMarkerReqd"));
+				DisplayInvalidMappingWarning(isBeginMarker ? Properties.Resources.kstidImportMappingsBeginMarkerReqd : Properties.Resources.kstidImportMappingsEndMarkerReqd);
 				return false;
 			}
 
@@ -365,8 +356,7 @@ namespace SIL.FieldWorks.TE
 			{
 				if (ch == ' ')
 				{
-					msg = string.Format(m_resources.GetString("kstidImportMappingsNoSpace"),
-						marker);
+					msg = string.Format(Properties.Resources.kstidImportMappingsNoSpace, marker);
 					DisplayInvalidMappingWarning(msg);
 					return false;
 				}
@@ -377,9 +367,7 @@ namespace SIL.FieldWorks.TE
 			{
 				if (ch > (char)0x007F)
 				{
-					DisplayInvalidMappingWarning(m_resources.GetString(isBeginMarker ?
-						"kstidImportBeginMarkerLowerANSI" :
-						"kstidImportEndMarkerLowerANSI"));
+					DisplayInvalidMappingWarning(isBeginMarker ? Properties.Resources.kstidImportBeginMarkerLowerANSI : Properties.Resources.kstidImportEndMarkerLowerANSI);
 					return false;
 				}
 			}

@@ -328,8 +328,7 @@ namespace SIL.FieldWorks.TE
 				m_importer.Pause();
 				if (m_importer.PrevBook != null)
 				{
-					string sMsg = string.Format(TeResourceHelper.GetResourceString("kstidConfirmStopImport"),
-												m_importer.PrevBook);
+					string sMsg = string.Format(Properties.Resources.kstidConfirmStopImport, m_importer.PrevBook);
 
 					if (MessageBox.Show(sMsg, FwUtils.ksFlexAppName,
 										MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
@@ -340,7 +339,7 @@ namespace SIL.FieldWorks.TE
 					}
 				}
 				//Display "stopping" message in progress bar
-				m_progressDialog.Message = TeResourceHelper.GetResourceString("kstidStoppingImport");
+				m_progressDialog.Message = Properties.Resources.kstidStoppingImport;
 				m_progressDialog.Position = m_progressDialog.Maximum;
 			}
 			finally

@@ -213,7 +213,7 @@ namespace SIL.FieldWorks.TE
 		static ImportWizard()
 		{
 			s_noneProject = ScriptureProvider.MakeScrText();
-			s_noneProject.Name = ScrImportComponents.kstidImportWizNoProjType;
+			s_noneProject.Name = Properties.Resources.kstidImportWizNoProjType;
 		}
 
 		/// -----------------------------------------------------------------------------------
@@ -390,7 +390,7 @@ namespace SIL.FieldWorks.TE
 			this.label15 = new System.Windows.Forms.Label();
 			this.label20 = new System.Windows.Forms.Label();
 			this.panStep2_Other = new System.Windows.Forms.Panel();
-			this.sfFileListBuilder = new SIL.FieldWorks.Common.Controls.SFFileListBuilder();
+			this.sfFileListBuilder = new SIL.FieldWorks.TE.SFFileListBuilder();
 			this.label21 = new System.Windows.Forms.Label();
 			this.panStep2_PT = new System.Windows.Forms.Panel();
 			this.cboPTBackTrans = new SIL.FieldWorks.Common.Controls.FwOverrideComboBox();
@@ -657,7 +657,7 @@ namespace SIL.FieldWorks.TE
 			//
 			resources.ApplyResources(this.sfFileListBuilder, "sfFileListBuilder");
 			this.sfFileListBuilder.Name = "sfFileListBuilder";
-			this.sfFileListBuilder.FilesChanged += new SIL.FieldWorks.Common.Controls.SFFileListBuilder.FilesChangedHandler(this.OnFilesChanged);
+			this.sfFileListBuilder.FilesChanged += new SIL.FieldWorks.TE.SFFileListBuilder.FilesChangedHandler(this.OnFilesChanged);
 			//
 			// label21
 			//
@@ -904,12 +904,10 @@ namespace SIL.FieldWorks.TE
 				return;
 
 			lblOverview.Text =
-				string.Format(ScrImportComponents.kstidImportWizOverview,
-				m_LangProjName);
+				string.Format(Properties.Resources.kstidImportWizOverview, m_LangProjName);
 
 			lblFinish.Text =
-				string.Format(ScrImportComponents.kstidImportWizFinish,
-				m_LangProjName);
+				string.Format(Properties.Resources.kstidImportWizFinish, m_LangProjName);
 
 			m_nextText =
 				ResourceHelper.GetResourceString("kstidWizForwardButtonText");
@@ -1097,9 +1095,7 @@ namespace SIL.FieldWorks.TE
 			{
 				if (m_app != null)
 				{
-					MessageBox.Show(this, ScrImportComponents.kstidImportWizNoParatextProjFound,
-						m_app.ApplicationName, MessageBoxButtons.OK,
-						MessageBoxIcon.Information);
+					MessageBox.Show(this, Properties.Resources.kstidImportWizNoParatextProjFound, m_app.ApplicationName, MessageBoxButtons.OK, MessageBoxIcon.Information);
 				}
 
 				rbOther.Checked = true;
@@ -1278,8 +1274,7 @@ namespace SIL.FieldWorks.TE
 			// However, if the project name is null and the selected item in the combo box
 			// is something else, then we need to throw an exception so that the user will
 			// be notified about a problem with the project that they selected.
-			throw new ParatextLoadException(string.Format(TeResourceHelper.GetResourceString(
-				"kstidParatextProjectLoadFailure"), ptShortName), null);
+			throw new ParatextLoadException(string.Format(Properties.Resources.kstidParatextProjectLoadFailure, ptShortName), null);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1412,16 +1407,16 @@ namespace SIL.FieldWorks.TE
 				switch (mapping.Domain)
 				{
 					case MarkerDomain.BackTrans:
-						sSubItem = ScrImportComponents.kstidImportWizMappingDetailBackTrans;
+						sSubItem = Properties.Resources.kstidImportWizMappingDetailBackTrans;
 						break;
 					case MarkerDomain.Note:
-						sSubItem = ScrImportComponents.kstidImportWizMappingDetailNotes;
+						sSubItem = Properties.Resources.kstidImportWizMappingDetailNotes;
 						break;
 					case MarkerDomain.Footnote:
-						sSubItem = ScrImportComponents.kstidImportWizMappingDetailFootnotes;
+						sSubItem = Properties.Resources.kstidImportWizMappingDetailFootnotes;
 						break;
 					case MarkerDomain.Footnote | MarkerDomain.BackTrans:
-						sSubItem = ScrImportComponents.kstidImportWizMappingDetailBTFootnotes;
+						sSubItem = Properties.Resources.kstidImportWizMappingDetailBTFootnotes;
 						break;
 					case MarkerDomain.Default:
 						break;
@@ -1485,7 +1480,7 @@ namespace SIL.FieldWorks.TE
 					m_settings.ParatextBTProj != null);
 				bool isAnnotationMapping = m_lvCurrentMappingList == lvAnnotationMappings;
 				m_MappingDialog.Initialize((m_projectType == ProjectTypes.Paratext), mapping,
-					m_StyleSheet, m_cache, m_helpTopicProvider, isAnnotationMapping, fLockBtDomain);
+					m_StyleSheet, m_cache.ServiceLocator.WritingSystems.AllWritingSystems, m_helpTopicProvider, isAnnotationMapping, fLockBtDomain);
 
 				DisplayMappingDialog(m_MappingDialog);
 
@@ -2182,7 +2177,7 @@ namespace SIL.FieldWorks.TE
 		{
 			// If the mapping is excluded, display an indicator instead of the style name
 			if (mapping.IsExcluded)
-				return ScrImportComponents.kstidExcludedData;
+				return Properties.Resources.kstidExcludedData;
 
 			return MappingDetailsCtrl.MappingToUiStylename(mapping);
 		}

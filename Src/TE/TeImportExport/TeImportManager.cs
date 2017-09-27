@@ -355,12 +355,11 @@ namespace SIL.FieldWorks.TE
 				Logger.WriteEvent("Starting import");
 				using (var progressDlg = new ProgressDialogWithTask(m_mainWnd))
 				{
-					progressDlg.CancelButtonText =
-						TeResourceHelper.GetResourceString("kstidStopImporting");
+					progressDlg.CancelButtonText = Properties.Resources.kstidStopImporting;
 					progressDlg.Title =
-						TeResourceHelper.GetResourceString("kstidImportProgressCaption");
+						Properties.Resources.kstidImportProgressCaption;
 					progressDlg.Message =
-						TeResourceHelper.GetResourceString("kstidImportInitializing");
+						Properties.Resources.kstidImportInitializing;
 
 					using (TeImportUi importUi = CreateTeImportUi(progressDlg))
 					{
@@ -690,8 +689,7 @@ namespace SIL.FieldWorks.TE
 		/// ------------------------------------------------------------------------------------
 		protected virtual void DisplayImportedBooksDlg(IScrDraft backupSavedVersion)
 		{
-			using (ImportedBooks dlg = new ImportedBooks(m_cache, m_styleSheet, ImportedVersion, backupSavedVersion,
-				UndoManager.ImportedBooks.Keys, m_helpTopicProvider, m_app))
+			using (ImportedBooks dlg = new ImportedBooks(m_cache, ImportedVersion, backupSavedVersion, UndoManager.ImportedBooks.Keys, m_helpTopicProvider, m_app))
 			{
 				dlg.ShowOrSave(m_mainWnd, m_fParatextStreamlinedImport);
 			}

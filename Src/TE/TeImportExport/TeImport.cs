@@ -322,24 +322,17 @@ namespace SIL.FieldWorks.TE
 		/// Enhance JohnT: Maybe add some text, "Import"? or source name? Compare OXES override.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		protected virtual string DefaultSvDescription
-		{
-			get
-			{
-				return TeResourceHelper.GetResourceString("kstidStandardFormatImportSvDesc");
-			}
-		}
+		protected virtual string DefaultSvDescription => Properties.Resources.kstidStandardFormatImportSvDesc;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Update the message in the progress dialog box to reflect the book being imported
 		/// </summary>
-		/// <param name="stid">The resource id for the format string to use</param>
+		/// <param name="baseFormat">The format string to use</param>
 		/// ------------------------------------------------------------------------------------
-		protected void UpdateProgressDlgForBook(string stid)
+		protected void UpdateProgressDlgForBook(string baseFormat)
 		{
-			m_importCallbacks.StatusMessage = string.Format(TeResourceHelper.GetResourceString(stid),
-				ScriptureServices.GetUiBookName(m_nBookNumber));
+			m_importCallbacks.StatusMessage = string.Format(baseFormat, ScriptureServices.GetUiBookName(m_nBookNumber));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -387,7 +380,7 @@ namespace SIL.FieldWorks.TE
 		/// ------------------------------------------------------------------------------------
 		protected void PrepareToImportNewBook()
 		{
-			UpdateProgressDlgForBook("kstidImportingBook");
+			UpdateProgressDlgForBook(Properties.Resources.kstidImportingBook);
 			m_scrBook = m_undoManager.AddNewBook(m_nBookNumber, SavedVersionDescription, out m_Title);
 			ResetStateVariablesForNewBook();
 			SetBookAnnotations();
@@ -1041,11 +1034,7 @@ namespace SIL.FieldWorks.TE
 				{
 					if (!MiscUtils.RunningTests) // If we're not running the tests
 					{
-						string message = string.Format(TeResourceHelper.GetResourceString(
-							"kstidImportNoBookError"),
-							m_settings.StartRef.AsString,
-							m_settings.EndRef.AsString);
-						m_importCallbacks.ErrorMessage(message);
+						m_importCallbacks.ErrorMessage(string.Format(Properties.Resources.kstidImportNoBookError, m_settings.StartRef.AsString, m_settings.EndRef.AsString));
 					}
 					else
 					{
@@ -1989,10 +1978,6 @@ namespace SIL.FieldWorks.TE
 				if (m_fInScriptureText)
 				{
 					int verse = SOWrapper.SegmentFirstRef.Verse;
-#pragma warning disable 219
-					string formatString =
-						TeResourceHelper.GetResourceString("kstidImportIntroWithinScripture");
-#pragma warning restore 219
 					throw new ScriptureUtilsException(SUE_ErrorCode.IntroWithinScripture,
 						SOWrapper.CurrentFileName, SOWrapper.CurrentLineNumber,
 						m_sMarker + " " + m_sSegmentText,
@@ -2605,7 +2590,7 @@ namespace SIL.FieldWorks.TE
 							int verse = SOWrapper.SegmentFirstRef.Verse;
 							throw new ScriptureUtilsException(SUE_ErrorCode.BackTransStyleMismatch,
 								m_sMarker + " " + m_sSegmentText, string.Format(
-								TeResourceHelper.GetResourceString("kstidBTStyleMismatchDetails"),
+								Properties.Resources.kstidBTStyleMismatchDetails,
 								m_styleProxy.StyleId, m_vernParaStyleProxy.StyleId),
 								m_fFoundABook ? CurrentBook.BookId : null,
 								m_foundAChapter ? m_nChapter.ToString() : null,
@@ -3223,8 +3208,7 @@ namespace SIL.FieldWorks.TE
 				// If not, then we use the book in the current version. Errors are reported
 				// (mostly elsewhere) if we don't HAVE a vernacular.
 
-				UpdateProgressDlgForBook(m_importDomain == ImportDomain.BackTrans ?
-					"kstidImportingBackTranslation" : "kstidImportingAnnotations");
+				UpdateProgressDlgForBook(m_importDomain == ImportDomain.BackTrans ? Properties.Resources.kstidImportingBackTranslation : Properties.Resources.kstidImportingAnnotations);
 
 				// If we aren't importing either vernacular or BT, we aren't going to change it
 				// (presumably only importing notes), so we don't need a copy.
@@ -3602,8 +3586,7 @@ namespace SIL.FieldWorks.TE
 			if (m_fFoundABook)
 			{
 				m_importCallbacks.Position = m_importCallbacks.Maximum;
-				m_importCallbacks.StatusMessage =
-					TeResourceHelper.GetResourceString("kstidImportFinalizing");
+				m_importCallbacks.StatusMessage = Properties.Resources.kstidImportFinalizing;
 			}
 
 			FinalizeBook();
@@ -4021,7 +4004,7 @@ namespace SIL.FieldWorks.TE
 
 			throw new ScriptureUtilsException(
 				SUE_ErrorCode.BackTransTextNotPartOfParagraph,
-				string.Format(TeResourceHelper.GetResourceString("kstidBTTextNotPartOfParaDetails"), bldr.Text, sCharStyle),
+				string.Format(Properties.Resources.kstidBTTextNotPartOfParaDetails, bldr.Text, sCharStyle),
 				m_SOWrapper.CurrentFileName, m_scrBook.BookId,
 				null, null, (m_importDomain == ImportDomain.Main));
 		}
@@ -4072,9 +4055,7 @@ namespace SIL.FieldWorks.TE
 						sParaContents = sParaContents.Substring(0, 120) + "...";
 					throw new ScriptureUtilsException(
 						SUE_ErrorCode.BackTransParagraphMismatch,
-						sParaContents, string.Format(TeResourceHelper.GetResourceString(
-						"kstidBTNoCorrespondingParaDetails"),
-						m_vernParaStyleProxy.StyleId, targetRef.AsString),
+						sParaContents, string.Format(Properties.Resources.kstidBTNoCorrespondingParaDetails, m_vernParaStyleProxy.StyleId, targetRef.AsString),
 						null, null, null, false);
 				}
 				if (m_prevImportDomain == ImportDomain.Main)
@@ -4084,8 +4065,7 @@ namespace SIL.FieldWorks.TE
 			{
 				throw new ScriptureUtilsException(
 					SUE_ErrorCode.BackTransTextNotPartOfParagraph,
-					string.Format(TeResourceHelper.GetResourceString("kstidBTTextNotPartOfParaDetails"),
-					btText, m_vernParaStyleProxy.Style.Name),
+					string.Format(Properties.Resources.kstidBTTextNotPartOfParaDetails, btText, m_vernParaStyleProxy.Style.Name),
 					m_SOWrapper.CurrentFileName, m_scrBook.BookId,
 					null, null, (m_importDomain == ImportDomain.Main));
 			}

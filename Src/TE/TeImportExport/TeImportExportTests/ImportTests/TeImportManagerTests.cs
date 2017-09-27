@@ -1057,10 +1057,8 @@ namespace SIL.FieldWorks.TE.ImportTests
 			IScrDraft draftNewBooks = null;
 			UndoableUnitOfWorkHelper.Do("bla undo", "bla redo", m_actionHandler, () =>
 			{
-				draftReplacedBooks = Cache.ServiceLocator.GetInstance<IScrDraftFactory>().Create(
-					TeResourceHelper.GetResourceString("kstidSavedVersionDescriptionOriginal"), ScrDraftType.ImportedVersion);
-				draftNewBooks = Cache.ServiceLocator.GetInstance<IScrDraftFactory>().Create(
-					TeResourceHelper.GetResourceString("kstidStandardFormatImportSvDesc"), ScrDraftType.ImportedVersion);
+				draftReplacedBooks = Cache.ServiceLocator.GetInstance<IScrDraftFactory>().Create(Properties.Resources.kstidSavedVersionDescriptionOriginal, ScrDraftType.ImportedVersion);
+				draftNewBooks = Cache.ServiceLocator.GetInstance<IScrDraftFactory>().Create(Properties.Resources.kstidStandardFormatImportSvDesc, ScrDraftType.ImportedVersion);
 			});
 			m_importMgr.ResetOriginalDrafts();
 			m_importMgr.SimulateAcceptAllBooks = true;
@@ -1117,10 +1115,8 @@ namespace SIL.FieldWorks.TE.ImportTests
 			IScrBook newBook = null;
 			UndoableUnitOfWorkHelper.Do("bla undo", "bla redo", m_actionHandler, () =>
 			{
-				draftReplacedBooks = Cache.ServiceLocator.GetInstance<IScrDraftFactory>().Create(
-					TeResourceHelper.GetResourceString("kstidSavedVersionDescriptionOriginal"), ScrDraftType.ImportedVersion);
-				draftNewBooks = Cache.ServiceLocator.GetInstance<IScrDraftFactory>().Create(
-					TeResourceHelper.GetResourceString("kstidStandardFormatImportSvDesc"), ScrDraftType.ImportedVersion);
+				draftReplacedBooks = Cache.ServiceLocator.GetInstance<IScrDraftFactory>().Create(Properties.Resources.kstidSavedVersionDescriptionOriginal, ScrDraftType.ImportedVersion);
+				draftNewBooks = Cache.ServiceLocator.GetInstance<IScrDraftFactory>().Create(Properties.Resources.kstidStandardFormatImportSvDesc, ScrDraftType.ImportedVersion);
 				// Add a single book to both ScrDrafts
 				replacedBook = Cache.ServiceLocator.GetInstance<IScrBookFactory>().Create(draftReplacedBooks.BooksOS, 2);
 				newBook = Cache.ServiceLocator.GetInstance<IScrBookFactory>().Create(draftNewBooks.BooksOS, 2);
@@ -1185,10 +1181,8 @@ namespace SIL.FieldWorks.TE.ImportTests
 			IScrBook newBook2 = null;
 			UndoableUnitOfWorkHelper.Do("bla undo", "bla redo", m_actionHandler, () =>
 			{
-				draftReplacedBooks = Cache.ServiceLocator.GetInstance<IScrDraftFactory>().Create(
-					TeResourceHelper.GetResourceString("kstidSavedVersionDescriptionOriginal"), ScrDraftType.ImportedVersion);
-				draftNewBooks = Cache.ServiceLocator.GetInstance<IScrDraftFactory>().Create(
-					TeResourceHelper.GetResourceString("kstidStandardFormatImportSvDesc"), ScrDraftType.ImportedVersion);
+				draftReplacedBooks = Cache.ServiceLocator.GetInstance<IScrDraftFactory>().Create(Properties.Resources.kstidSavedVersionDescriptionOriginal, ScrDraftType.ImportedVersion);
+				draftNewBooks = Cache.ServiceLocator.GetInstance<IScrDraftFactory>().Create(Properties.Resources.kstidStandardFormatImportSvDesc, ScrDraftType.ImportedVersion);
 				// Add both imported books to both ScrDrafts
 				replacedBook1 = Cache.ServiceLocator.GetInstance<IScrBookFactory>().Create(draftReplacedBooks.BooksOS, 1);
 				replacedBook2 = Cache.ServiceLocator.GetInstance<IScrBookFactory>().Create(draftReplacedBooks.BooksOS, 65);
@@ -1255,10 +1249,8 @@ namespace SIL.FieldWorks.TE.ImportTests
 			IScrDraft draftNewBooks = null;
 			UndoableUnitOfWorkHelper.Do("bla undo", "bla redo", m_actionHandler, () =>
 			{
-				draftReplacedBooks = Cache.ServiceLocator.GetInstance<IScrDraftFactory>().Create(
-					TeResourceHelper.GetResourceString("kstidSavedVersionDescriptionOriginal"), ScrDraftType.ImportedVersion);
-				draftNewBooks = Cache.ServiceLocator.GetInstance<IScrDraftFactory>().Create(
-					TeResourceHelper.GetResourceString("kstidStandardFormatImportSvDesc"), ScrDraftType.ImportedVersion);
+				draftReplacedBooks = Cache.ServiceLocator.GetInstance<IScrDraftFactory>().Create(Properties.Resources.kstidSavedVersionDescriptionOriginal, ScrDraftType.ImportedVersion);
+				draftNewBooks = Cache.ServiceLocator.GetInstance<IScrDraftFactory>().Create(Properties.Resources.kstidStandardFormatImportSvDesc, ScrDraftType.ImportedVersion);
 			});
 
 			int origScrDraftsCount = m_scr.ArchivedDraftsOC.Count;
@@ -1304,10 +1296,8 @@ namespace SIL.FieldWorks.TE.ImportTests
 			IScrBook newBook = null;
 			UndoableUnitOfWorkHelper.Do("bla undo", "bla redo", m_actionHandler, () =>
 			{
-				draftReplacedBooks = Cache.ServiceLocator.GetInstance<IScrDraftFactory>().Create(
-					TeResourceHelper.GetResourceString("kstidSavedVersionDescriptionOriginal"), ScrDraftType.ImportedVersion);
-				draftNewBooks = Cache.ServiceLocator.GetInstance<IScrDraftFactory>().Create(
-					TeResourceHelper.GetResourceString("kstidStandardFormatImportSvDesc"), ScrDraftType.ImportedVersion);
+				draftReplacedBooks = Cache.ServiceLocator.GetInstance<IScrDraftFactory>().Create(Properties.Resources.kstidSavedVersionDescriptionOriginal, ScrDraftType.ImportedVersion);
+				draftNewBooks = Cache.ServiceLocator.GetInstance<IScrDraftFactory>().Create(Properties.Resources.kstidStandardFormatImportSvDesc, ScrDraftType.ImportedVersion);
 				// Add a single book to both ScrDrafts
 				replacedBook = Cache.ServiceLocator.GetInstance<IScrBookFactory>().Create(draftReplacedBooks.BooksOS, 2);
 				newBook = Cache.ServiceLocator.GetInstance<IScrBookFactory>().Create(draftNewBooks.BooksOS, 2);
@@ -1359,10 +1349,8 @@ namespace SIL.FieldWorks.TE.ImportTests
 			IScrBook newBook = null;
 			UndoableUnitOfWorkHelper.Do("bla undo", "bla redo", m_actionHandler, () =>
 			{
-				draftReplacedBooks = Cache.ServiceLocator.GetInstance<IScrDraftFactory>().Create(
-					TeResourceHelper.GetResourceString("kstidSavedVersionDescriptionOriginal"), ScrDraftType.ImportedVersion);
-				draftNewBooks = Cache.ServiceLocator.GetInstance<IScrDraftFactory>().Create(
-					TeResourceHelper.GetResourceString("kstidStandardFormatImportSvDesc"), ScrDraftType.ImportedVersion);
+				draftReplacedBooks = Cache.ServiceLocator.GetInstance<IScrDraftFactory>().Create(Properties.Resources.kstidSavedVersionDescriptionOriginal, ScrDraftType.ImportedVersion);
+				draftNewBooks = Cache.ServiceLocator.GetInstance<IScrDraftFactory>().Create(Properties.Resources.kstidStandardFormatImportSvDesc, ScrDraftType.ImportedVersion);
 				// Add a single book to both ScrDrafts
 				replacedBook = Cache.ServiceLocator.GetInstance<IScrBookFactory>().Create(draftReplacedBooks.BooksOS, 65);
 				newBook = Cache.ServiceLocator.GetInstance<IScrBookFactory>().Create(draftNewBooks.BooksOS, 65);

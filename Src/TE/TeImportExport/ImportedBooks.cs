@@ -16,7 +16,6 @@ using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel;
-using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 using SIL.Reporting;
 using SIL.LCModel.Utils;
@@ -96,7 +95,6 @@ namespace SIL.FieldWorks.TE
 		/// Initializes a new instance of the <see cref="T:ImportedBooks"/> class.
 		/// </summary>
 		/// <param name="cache">The cache.</param>
-		/// <param name="styleSheet">The style sheet.</param>
 		/// <param name="importVersion">The ScrDraft containing the imported books.</param>
 		/// <param name="backupVersion">where to store stuff overwritten or merged.</param>
 		/// <param name="booksImported">The canonical numbers of the books which were
@@ -104,7 +102,7 @@ namespace SIL.FieldWorks.TE
 		/// <param name="helpTopicProvider">The help topic provider.</param>
 		/// <param name="app">The application.</param>
 		/// --------------------------------------------------------------------------------
-		public ImportedBooks(LcmCache cache, LcmStyleSheet styleSheet,
+		public ImportedBooks(LcmCache cache,
 			IScrDraft importVersion, IScrDraft backupVersion, IEnumerable<int> booksImported,
 			IHelpTopicProvider helpTopicProvider, IApp app) :
 			this(cache, importVersion, backupVersion, helpTopicProvider, app)
@@ -114,8 +112,8 @@ namespace SIL.FieldWorks.TE
 				IScrBook rev = importVersion.FindBook(bookId);
 
 				ListViewItem item = new ListViewItem(
-					new string[] {rev.Name.UserDefaultWritingSystem.Text, GetBookInfo(rev)});
-				item.SubItems.Add(DlgResources.ResourceString("kstidUnknown"));
+					new[] {rev.Name.UserDefaultWritingSystem.Text, GetBookInfo(rev)});
+				item.SubItems.Add(Properties.Resources.kstidUnknown);
 
 				IScrBook curBook = m_scr.FindBook(rev.CanonicalNum);
 				if (curBook == null)
@@ -129,7 +127,7 @@ namespace SIL.FieldWorks.TE
 					});
 				}
 				else
-					item.Tag = new BookMerger(m_cache, styleSheet, rev);
+					item.Tag = new BookMerger(m_cache, rev);
 				lstImportedBooks.Items.Add(item);
 			}
 			lstImportedBooks.Items[0].Selected = true;
@@ -309,13 +307,13 @@ namespace SIL.FieldWorks.TE
 			switch (status)
 			{
 				case ImportedBookStatus.Overwritten:
-					label = TeResourceHelper.GetResourceString("kstidOverwrittenFull");
+					label = Properties.Resources.kstidOverwrittenFull;
 					break;
 				case ImportedBookStatus.New:
-					label = TeResourceHelper.GetResourceString("kstidNewBook");
+					label = Properties.Resources.kstidNewBook;
 					break;
 				case ImportedBookStatus.AutoMerged:
-					label = TeResourceHelper.GetResourceString("kstidAutoMerged");
+					label = Properties.Resources.kstidAutoMerged;
 					break;
 				default:
 					throw new ArgumentException("Invalid value", "status");
@@ -383,12 +381,11 @@ namespace SIL.FieldWorks.TE
 					bookMerger.AttemptAutoMerge = true;
 					bookMerger.BookVersionAgent = this;
 					bookMerger.UseFilteredDiffList = true;
-					progressDlg.Title = TeResourceHelper.GetResourceString("kstidImportProgressCaption");
+					progressDlg.Title = Properties.Resources.kstidImportProgressCaption;
 					Debug.Assert(bookMerger.BookRev != null);
-					progressDlg.Message = string.Format(
-						DlgResources.ResourceString("kstidMergeProgress"), bookMerger.BookRev.BestUIName);
+					progressDlg.Message = string.Format(Properties.Resources.kstidMergeProgress, bookMerger.BookRev.BestUIName);
 					progressDlg.CancelButtonText =
-						TeResourceHelper.GetResourceString("kstidStopImporting");
+						Properties.Resources.kstidStopImporting;
 
 					// User should not see undo tasks, so the strings don't need to be localized.
 					UndoableUnitOfWorkHelper.Do("Automerge", "Automerge",
@@ -405,8 +402,7 @@ namespace SIL.FieldWorks.TE
 							}
 							else if (fAutoAcceptChanges)
 							{
-								progressDlg.Message = string.Format(
-									DlgResources.ResourceString("kstidAutoAcceptMergeProgress"), bookMerger.BookRev.BestUIName);
+								progressDlg.Message = string.Format(Properties.Resources.kstidAutoAcceptMergeProgress, bookMerger.BookRev.BestUIName);
 								progressDlg.RunTask(true, bookMerger.AcceptAllChanges);
 							}
 						}
@@ -562,12 +558,11 @@ namespace SIL.FieldWorks.TE
 			IWin32Window owner, string sDetails)
 		{
 			string sType = (scrDraftType == ScrDraftType.ImportedVersion) ?
-				TeResourceHelper.GetResourceString("kstidImported") :
-				TeResourceHelper.GetResourceString("kstidSaved");
-			string sMsg = TeResourceHelper.FormatResourceString("kstidDataLossMsg",
-				sType, originalBook.BestUIName, sDetails);
+				Properties.Resources.kstidImported :
+				Properties.Resources.kstidSaved;
+			string sMsg = string.Format(Properties.Resources.kstidDataLossMsg, sType, originalBook.BestUIName, sDetails);
 			MessageBox.Show(owner, sMsg,
-				TeResourceHelper.GetResourceString("kstidDataLossCaption"),
+				Properties.Resources.kstidDataLossCaption,
 				MessageBoxButtons.OK, MessageBoxIcon.None,
 				MessageBoxDefaultButton.Button1);
 		}
@@ -594,8 +589,8 @@ namespace SIL.FieldWorks.TE
 			List<IScrSection> sectionsToRemove,	HashSet<int> missingBtWs, IWin32Window owner)
 		{
 			string sType = (scrDraftType == ScrDraftType.ImportedVersion) ?
-				TeResourceHelper.GetResourceString("kstidImported") :
-				TeResourceHelper.GetResourceString("kstidSaved");
+				Properties.Resources.kstidImported :
+				Properties.Resources.kstidSaved;
 
 			// Get the list of language name(s) used for back translations in the current book,
 			// but not in the revision.
@@ -607,11 +602,10 @@ namespace SIL.FieldWorks.TE
 			string sReferences = GetScriptureReferences((sectionsToRemove != null) ?
 				sectionsToRemove : new List<IScrSection>(originalBook.SectionsOS));
 
-			string sMsg = TeResourceHelper.FormatResourceString("kstidConfirmOverwriteBackTrans",
-				sType, sLanguages, originalBook.Name.UserDefaultWritingSystem.Text, sReferences);
+			string sMsg = string.Format(Properties.Resources.kstidConfirmOverwriteBackTrans, sType, sLanguages, originalBook.Name.UserDefaultWritingSystem.Text, sReferences);
 
 			return (MessageBox.Show(owner, sMsg,
-				TeResourceHelper.GetResourceString("kstidConfirmOverwriteBackTransCaption"),
+				Properties.Resources.kstidConfirmOverwriteBackTransCaption,
 				MessageBoxButtons.YesNo, MessageBoxIcon.None,
 				MessageBoxDefaultButton.Button2) == DialogResult.Yes);
 		}
@@ -833,9 +827,9 @@ namespace SIL.FieldWorks.TE
 
 			if (fHasIntro)
 			{
-				return (verseMin == null) ? TeResourceHelper.GetResourceString("kstidIntroOnly") :
+				return (verseMin == null) ? Properties.Resources.kstidIntroOnly :
 					ReferenceRangeStr(verseMin, verseMax) + " " +
-					TeResourceHelper.GetResourceString("kstidIntro");
+					Properties.Resources.kstidIntro;
 			}
 			else if (verseMin != null)
 				return ReferenceRangeStr(verseMin, verseMax);
@@ -949,17 +943,23 @@ namespace SIL.FieldWorks.TE
 			int diffCount = bookMerger.NumberOfDifferences;
 			if (diffCount == 0)
 			{
-				item.SubItems[kStatusCol].Text = TeResourceHelper.GetResourceString(
-					(diffCountOrig == 0) ? "kstidIdentical" : "kstidNoDifferencesLeft");
+				item.SubItems[kStatusCol].Text = (diffCountOrig == 0) ? Properties.Resources.kstidIdentical : Properties.Resources.kstidNoDifferencesLeft;
 				item.ImageIndex = 0;
 			}
 			else
 			{
-				string stid = diffCount == 1 ? "kstidOne{0}Difference" : "kstid{0}Differences";
-				stid = String.Format(stid, (diffCount == diffCountOrig) ? "Initial" : "Remaining");
-				item.SubItems[kStatusCol].Text = TeResourceHelper.GetResourceString(stid);
+				string newText;
+				if (diffCount == 1)
+				{
+					newText = diffCount == diffCountOrig ? Properties.Resources.kstidOneInitialDifference : Properties.Resources.kstidOneRemainingDifference;
+				}
+				else
+				{
+					newText = diffCount == diffCountOrig ? Properties.Resources.kstidInitialDifferences : Properties.Resources.kstidRemainingDifferences;
+				}
+				item.SubItems[kStatusCol].Text = newText;
 				if (diffCount > 1)
-					item.SubItems[kStatusCol].Text = String.Format(item.SubItems[kStatusCol].Text, diffCount);
+					item.SubItems[kStatusCol].Text = string.Format(item.SubItems[kStatusCol].Text, diffCount);
 				item.ImageIndex = -1;
 			}
 		}
@@ -987,8 +987,8 @@ namespace SIL.FieldWorks.TE
 		protected virtual bool ConfirmOverwriteOfMergedVersion(string bookName)
 		{
 			return (MessageBox.Show(this,
-				TeResourceHelper.FormatResourceString("kstidConfirmBookOverwriteAfterMerge", bookName),
-				TeResourceHelper.GetResourceString("kstidConfirmBookOverwriteAfterMergeCaption"),
+				string.Format(Properties.Resources.kstidConfirmBookOverwriteAfterMerge, bookName),
+				Properties.Resources.kstidConfirmBookOverwriteAfterMergeCaption,
 				MessageBoxButtons.YesNo, MessageBoxIcon.None, MessageBoxDefaultButton.Button2) ==
 				DialogResult.Yes);
 		}
@@ -1007,7 +1007,7 @@ namespace SIL.FieldWorks.TE
 			Logger.WriteEvent("Performing partial Overwrite of book: " + bookMerger.BookCurr.BookId);
 			using (ProgressDialogWithTask progress = new ProgressDialogWithTask(this))
 			{
-				progress.Title = DlgResources.ResourceString("kstidOverwriteCaption");
+				progress.Title = Properties.Resources.kstidOverwriteCaption;
 				progress.RunTask(bookMerger.DoPartialOverwrite, sectionsToRemove);
 			}
 		}

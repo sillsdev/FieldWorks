@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Windows.Forms;
 using SIL.LCModel;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
@@ -88,7 +87,6 @@ namespace SIL.FieldWorks.TE
 		#region member variables
 		private LcmCache m_cache;
 		private IScripture m_scr;
-		private IVwStylesheet m_stylesheet;
 		private IThreadedProgress m_progressDlg;
 
 		/// <summary>The current list of differences we will detect and then show to the user
@@ -165,10 +163,6 @@ namespace SIL.FieldWorks.TE
 		/// <summary> The revision paragraph that we have most recently checked for a
 		/// para style difference </summary>
 		private IScrTxtPara m_prevParaRev;
-
-		/// <summary>List of paragraphs whose segmented back translations have been changed
-		/// and whose CmTranslations are still awaiting update.</summary>
-		private List<IScrTxtPara> m_parasNeedingUpdateMainTrans;
 		#endregion
 
 		#region IncrementIndicies enum
@@ -196,14 +190,12 @@ namespace SIL.FieldWorks.TE
 		/// Initializes a new instance of the <see cref="BookMerger"/> class.
 		/// </summary>
 		/// <param name="cache">The cache.</param>
-		/// <param name="stylesheet">The stylesheet.</param>
 		/// <param name="bookRev">The book revision that is to be merged (with the current book
 		/// having the same canonical number).</param>
 		/// ------------------------------------------------------------------------------------
-		public BookMerger(LcmCache cache, IVwStylesheet stylesheet, IScrBook bookRev)
+		public BookMerger(LcmCache cache, IScrBook bookRev)
 		{
 			m_cache = cache;
-			m_stylesheet = stylesheet;
 			m_bookRev = bookRev;
 
 			// find the matching book in scripture
@@ -4284,8 +4276,7 @@ namespace SIL.FieldWorks.TE
 			Debug.Assert(Differences.Count > 0);
 			if (m_progressDlg != null)
 			{
-				m_progressDlg.Message = string.Format(
-						DlgResources.ResourceString("kstidAutoMerging"), BookCurr.BestUIName);
+				m_progressDlg.Message = string.Format(Properties.Resources.kstidAutoMerging, BookCurr.BestUIName);
 				m_progressDlg.Minimum = 0;
 				m_progressDlg.Maximum = Differences.Count;
 				m_progressDlg.Position = 0;
@@ -4372,7 +4363,7 @@ namespace SIL.FieldWorks.TE
 			Difference diff;
 			while ((diff = m_differences.MoveFirst()) != null)
 			{
-				progressDlg.Message = string.Format(TeResourceHelper.GetResourceString("kstidAutoAcceptMergeProgress"),
+				progressDlg.Message = string.Format(Properties.Resources.kstidAutoAcceptMergeProgress,
 					BCVRef.MakeReferenceString(diff.RefStart, diff.RefEnd,
 					cvSep, bridge, true));
 				if (progressDlg.Canceled)
@@ -4428,8 +4419,7 @@ namespace SIL.FieldWorks.TE
 
 			if (m_progressDlg != null)
 			{
-				m_progressDlg.Message = string.Format(
-					TeResourceHelper.GetResourceString("kstidOverwriting"), BookCurr.BestUIName);
+				m_progressDlg.Message = string.Format(Properties.Resources.kstidOverwriting, BookCurr.BestUIName);
 				m_progressDlg.Minimum = 0;
 				m_progressDlg.Maximum = Differences.Count + sectionsToRemove.Count + kStepsToCalcDiffs;
 				m_progressDlg.Position = 0;
@@ -5270,8 +5260,6 @@ namespace SIL.FieldWorks.TE
 		/// ------------------------------------------------------------------------------------
 		internal void ReplaceCurrentWithRevision(Difference diff)
 		{
-			m_parasNeedingUpdateMainTrans = new List<IScrTxtPara>();
-
 			// TODO (TE-7099, TE-7108): Now that reverting some section or para structure diffs
 			// can split a Current para, we should check if a diff of type VerseAdded or
 			// VerseMissing now encompasses an entire paragraph. Changing the diffType might
@@ -6363,58 +6351,6 @@ namespace SIL.FieldWorks.TE
 		protected virtual bool DisplayUi
 		{
 			get { return true; }
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Recalculate the difference list after an edit has occurred.
-		/// </summary>
-		/// <param name="owner">The form to serve as the owner for the progress dialog.</param>
-		/// ------------------------------------------------------------------------------------
-		public void RecalculateDifferences(Form owner)
-		{
-			using (var progressDlg = new ProgressDialogWithTask(owner))
-			{
-				progressDlg.Title = DlgResources.ResourceString("kstidCompareCaption");
-				progressDlg.Message = TeDiffViewResources.kstidRecalculateDiff;
-				progressDlg.RunTask(DisplayUi, RecalculateDifferences);
-			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Recalculate the difference list after an edit has occurred.
-		/// </summary>
-		/// <param name="progressDlg">The progress dialog.</param>
-		/// <param name="parameters">The parameters (ignored).</param>
-		/// <returns>always null</returns>
-		/// ------------------------------------------------------------------------------------
-		protected object RecalculateDifferences(IThreadedProgress progressDlg, params object[] parameters)
-		{
-			// Rebuild the difference list
-			Differences.Clear();
-			DetectDifferences(progressDlg);
-
-			// Remove any differences from the new list that were already marked as reviewed.
-			for (Difference reviewedDiff = m_reviewedDiffs.MoveFirst();
-				reviewedDiff != null;
-				reviewedDiff = m_reviewedDiffs.MoveNext())
-			{
-				Difference alreadyReviewed = null;
-				for (Difference newDiff = Differences.MoveFirst();
-					newDiff != null;
-					newDiff = Differences.MoveNext())
-				{
-					if (newDiff.IsEquivalent(reviewedDiff))
-					{
-						alreadyReviewed = newDiff;
-						break;
-					}
-				}
-				if (alreadyReviewed != null)
-					Differences.Remove(alreadyReviewed);
-			}
-			return null;
 		}
 		#endregion
 

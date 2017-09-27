@@ -28,8 +28,8 @@ namespace SIL.FieldWorks.TE
 		/// Initializes a new instance of the <see cref="DummyBookMerger"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public DummyBookMerger(LcmCache cache, IVwStylesheet stylesheet, IScrBook book)
-			: base(cache, stylesheet, book)
+		public DummyBookMerger(LcmCache cache, IScrBook book)
+			: base(cache, book)
 		{
 		}
 
@@ -237,16 +237,6 @@ namespace SIL.FieldWorks.TE
 				}
 			}
 		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Calls the RecalculateDifferences method.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public void CallRecalculateDifferences()
-		{
-			RecalculateDifferences(new DummyProgressDlg());
-		}
 	}
 	#endregion
 
@@ -276,7 +266,7 @@ namespace SIL.FieldWorks.TE
 
 			// init the DummyBookMerger
 			Debug.Assert(m_bookMerger == null, "m_bookMerger is not null.");
-			m_bookMerger = new DummyBookMerger(Cache, null, m_genesisRevision);
+			m_bookMerger = new DummyBookMerger(Cache, m_genesisRevision);
 		}
 
 		/// ------------------------------------------------------------------------------------

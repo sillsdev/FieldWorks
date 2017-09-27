@@ -49,8 +49,7 @@ namespace SIL.FieldWorks.TE
 			/// <param name="backupVersion">The backup version.</param>
 			/// --------------------------------------------------------------------------------
 			public DummyImportedBooks(LcmCache cache, IScrDraft booksImported, IScrDraft backupVersion)
-				: base(cache, null, booksImported, backupVersion,
-					  new HashSet<int>(booksImported.BooksOS.Select(b => b.CanonicalNum)), null, null)
+				: base(cache, booksImported, backupVersion, new HashSet<int>(booksImported.BooksOS.Select(b => b.CanonicalNum)), null, null)
 			{
 			}
 

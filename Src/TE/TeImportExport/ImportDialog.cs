@@ -454,8 +454,7 @@ namespace SIL.FieldWorks.TE
 				// If there are no files after showing the wizard, close the import dialog
 				if (InitBookNameList() == 0)
 				{
-					MessageBox.Show(this, DlgResources.ResourceString("kstidImportFilesUnavailable"),
-						m_app.ApplicationName, MessageBoxButtons.OK, MessageBoxIcon.Information);
+					MessageBox.Show(this, Properties.Resources.kstidImportFilesUnavailable, m_app.ApplicationName, MessageBoxButtons.OK, MessageBoxIcon.Information);
 					Close();
 					return;
 				}

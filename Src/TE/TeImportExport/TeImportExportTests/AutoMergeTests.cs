@@ -67,7 +67,7 @@ namespace SIL.FieldWorks.TE
 
 			// init the DummyBookMerger
 			Debug.Assert(m_bookMerger == null, "m_bookMerger is not null.");
-			m_bookMerger = new DummyBookMerger(Cache, null, m_genesisRevision);
+			m_bookMerger = new DummyBookMerger(Cache, m_genesisRevision);
 			m_bookMerger.AttemptAutoMerge = true;
 			m_bookVersionAgent = new DummyBookVersionAgent();
 			m_bookMerger.BookVersionAgent = m_bookVersionAgent;
