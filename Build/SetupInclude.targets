@@ -284,6 +284,7 @@
 	  Command="/bin/ln -T -sf $(dir-fwoutput)/XMI $(fwrt)/Output/XMI"/>
 	<Exec Condition="!Exists('$(fwrt)/Output/xmi') And '$(OS)'=='Unix'"
 	  Command="/bin/ln -T -sf $(dir-fwoutput)/XMI $(fwrt)/Output/xmi"/>
+	<Exec Condition="'$(OS)'=='Unix'" Command="ls -al $(fwrt)/Output"/>
   </Target>
 
   <!-- Generate Src/CommonAssemblyInfo.cs from Src/CommonAssemblyInfoTemplate.cs and Src/MasterVersionInfo.txt -->
