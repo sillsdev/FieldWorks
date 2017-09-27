@@ -19,9 +19,9 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 			Roundtrip = false;
 		}
 
-		public string PoFilePath { get; set; }
-		public string XmlFilePath { get; set; }
-		public bool Roundtrip { get; set; }
+		public string PoFilePath { private get; set; }
+		public string XmlFilePath { private get; set; }
+		private bool Roundtrip { get; }
 
 		public int Run()
 		{
@@ -44,7 +44,7 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 							break;
 
 						// Continuation string?
-						var m = (new Regex("^\\s*\"(.*)\"")).Match(l);
+						var m = new Regex("^\\s*\"(.*)\"").Match(l);
 						if (m.Success)
 						{
 							//Debug.Assert(msg.Current != null);
@@ -103,24 +103,24 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 		/// <summary>
 		/// This escapes characters that XML may need to be escaped with &...;.
 		/// </summary>
-		private string EscapeForXml(string p)
+		private static string EscapeForXml(string p)
 		{
 			var result = System.Security.SecurityElement.Escape(p);
-			if (result.IndexOfAny(new char[] { '\n', '\r' }) >= 0)
-			{
-				result = result.Replace("\n", "&#x0A;");
-				result = result.Replace("\r", "&#x0D;");
-			}
+			if (result.IndexOfAny(new char[] {'\n', '\r'}) < 0)
+				return result;
+
+			result = result.Replace("\n", "&#x0A;");
+			result = result.Replace("\r", "&#x0D;");
 			return result;
 		}
 
 		/// <summary>
 		/// This interprets the \ escape characters.
 		/// </summary>
-		private string UnescapeBackslashes(string p)
+		private static string UnescapeBackslashes(string p)
 		{
 			var result = p;
-			for (int idx = result.IndexOf('\\', 0); idx >= 0 && idx < result.Length; idx = result.IndexOf('\\', idx))
+			for (var idx = result.IndexOf('\\', 0); idx >= 0 && idx < result.Length; idx = result.IndexOf('\\', idx))
 			{
 				switch (result[idx + 1])
 				{

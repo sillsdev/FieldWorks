@@ -10,7 +10,7 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 {
 	internal partial class Po2XmlConverter
 	{
-		internal class PoMessageWriter
+		private class PoMessageWriter
 		{
 			private readonly XmlWriter m_writer;
 			private readonly bool m_roundtrip;
