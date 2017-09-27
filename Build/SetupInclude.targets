@@ -268,24 +268,21 @@
 
   <Target Name="Initialize" DependsOnTargets="MakeDirs;GenerateVersionFiles"/>
 
-  <Target Name="MakeDirs" DependsOnTargets="Setup;DeleteTestFiles">
-	<MakeDir Directories="$(dir-fwobj);$(dir-outputBase);$(dir-fwoutputCommon)"
-			 Condition="'$(action)'!='clean'"/>
+  <Target Name="MakeDirs" DependsOnTargets="Setup;DeleteTestFiles" Condition="'$(action)'!='clean'">
+	<MakeDir Directories="$(dir-fwobj);$(dir-outputBase);$(dir-fwoutputCommon)"/>
 	<!-- extra directory (and symbolic links) needed for Linux -->
-	<MakeDir Directories="$(fwrt)/Output" Condition="'$(action)'!='clean' And !Exists('$(fwrt)/Output') And '$(OS)'=='Unix'">
-	  <Output TaskParameter="DirectoriesCreated" ItemName="OutputCreatedForLinux"/>
-	</MakeDir>
-	<Exec Condition="'$(action)'!='clean' And !Exists('$(fwrt)/Output/$(config-capital)') And '$(OS)'=='Unix'"
+	<MakeDir Directories="$(fwrt)/Output" Condition="!Exists('$(fwrt)/Output') And '$(OS)'=='Unix'"/>
+	<Exec Condition="!Exists('$(fwrt)/Output/$(config-capital)') And '$(OS)'=='Unix'"
 	  Command="/bin/ln -T -sf $(dir-fwoutput)/$(config-capital) $(fwrt)/Output/$(config-capital)"/>
-	<Exec Condition="'$(action)'!='clean' And !Exists('$(fwrt)/Output/$(config-lower)') And '$(OS)'=='Unix'"
+	<Exec Condition="!Exists('$(fwrt)/Output/$(config-lower)') And '$(OS)'=='Unix'"
 	  Command="/bin/ln -T -sf $(dir-fwoutput)/$(config-capital) $(fwrt)/Output/$(config-lower)"/>
-	<Exec Condition="'$(action)'!='clean' And '@(OutputCreatedForLinux)'!=''"
+	<Exec Condition="!Exists('$(fwrt)/Output/Common') And '$(OS)'=='Unix'"
 	  Command="/bin/ln -T -sf $(dir-fwoutput)/Common $(fwrt)/Output/Common"/>
-	<Exec Condition="'$(action)'!='clean' And '@(OutputCreatedForLinux)'!=''"
+	<Exec Condition="!Exists('$(fwrt)/Output/common') And '$(OS)'=='Unix'"
 	  Command="/bin/ln -T -sf $(dir-fwoutput)/Common $(fwrt)/Output/common"/>
-	<Exec Condition="'$(action)'!='clean' And '@(OutputCreatedForLinux)'!=''"
+	<Exec Condition="!Exists('$(fwrt)/Output/XMI') And '$(OS)'=='Unix'"
 	  Command="/bin/ln -T -sf $(dir-fwoutput)/XMI $(fwrt)/Output/XMI"/>
-	<Exec Condition="'$(action)'!='clean' And '@(OutputCreatedForLinux)'!=''"
+	<Exec Condition="!Exists('$(fwrt)/Output/xmi') And '$(OS)'=='Unix'"
 	  Command="/bin/ln -T -sf $(dir-fwoutput)/XMI $(fwrt)/Output/xmi"/>
   </Target>
 
