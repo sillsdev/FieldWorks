@@ -60,7 +60,7 @@ namespace SIL.FieldWorks.IText
 		/// <param name="objList">A list of objects (hvos) to check as an array</param>
 		/// <param name="helpTopicProvider">The help topic provider.</param>
 		/// ------------------------------------------------------------------------------------
-		protected FilterAllTextsDialog(PropertyTable propertyTable, LcmCache cache, IStText[] objList, IHelpTopicProvider helpTopicProvider)
+		protected FilterAllTextsDialog(PropertyTable propertyTable, LcmCache cache, IStText[] objList, IHelpTopicProvider helpTopicProvider) : this()
 		{
 			if (propertyTable == null)
 				throw new ArgumentNullException(nameof(propertyTable));
