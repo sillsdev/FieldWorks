@@ -370,7 +370,7 @@ Fw-build-package-fdo:
 
 localize-source:
 	. environ && \
-	cd Build && xbuild /t:localize-source
+	cd Build && xbuild /t:localize-source /property:config=release /property:packaging=yes /verbosity:detailed
 
 LOCALIZATIONS := $(shell ls $(BUILD_ROOT)/Localizations/messages.*.po | sed 's/.*messages\.\(.*\)\.po/\1/')
 
