@@ -370,7 +370,9 @@ Fw-build-package-fdo:
 
 localize-source:
 	. environ && \
-	cd Build && xbuild /t:localize-source /property:config=release /property:packaging=yes /verbosity:detailed
+	(cd Build && xbuild /t:localize-source /property:config=release /property:packaging=yes /verbosity:detailed)
+	# Remove symbolic links from Output - we don't want those in the source package
+	find Output -type l -delete
 
 LOCALIZATIONS := $(shell ls $(BUILD_ROOT)/Localizations/messages.*.po | sed 's/.*messages\.\(.*\)\.po/\1/')
 
