@@ -141,6 +141,7 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 				return; // nothing to localize; in particular we should NOT call al with no inputs.
 
 			var embedResources = new List<EmbedInfo>();
+			var errors = 0;
 			foreach (var resxFile in resourceInfo.ResXFiles)
 			{
 				Options.LogMessage(MessageImportance.Low, "Creating assembly for {0}", resxFile);
@@ -155,8 +156,14 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 				{
 					Options.LogError(
 						$"Error occurred while processing {Path.GetFileName(resourceInfo.ProjectFolder)} for {Options.Locale}: {ex.Message}");
+					errors++;
 				}
 				Options.LogMessage(MessageImportance.Low, "Done creating assembly for {0}", resxFile);
+			}
+			if (errors == resourceInfo.ResXFiles.Count)
+			{
+				Options.LogMessage(MessageImportance.Low, $"All resx files for {Options.Locale} had errors; skipping AL");
+				return;
 			}
 			var resourceFileName = resourceInfo.AssemblyName + ".resources.dll";
 			var mainDllFolder = Path.Combine(Options.OutputFolder, Options.Config);

@@ -182,22 +182,22 @@ namespace FwBuildTasks
 
 				// Slot current localizer into array at index matching current language.
 				// This allows us to output any errors in a coherent manner.
-				int index = Array.FindIndex(poFiles, poFile => poFile == currentFile);
+				var index = Array.FindIndex(poFiles, poFile => poFile == currentFile);
 				if (index != -1)
 					m_localizers[index] = localizer;
 			}
 			);
 
-			bool buildFailed = false;
+			var buildFailed = false;
 			// Output all processing results to console:
-			for (int i = 0; i < poFiles.Length; i++)
+			for (var i = 0; i < poFiles.Length; i++)
 			{
 				if (m_localizers[i] == null)
 				{
 					LogError($"ERROR: localization of {poFiles[i]} was not done!");
 					buildFailed = true;
 				}
-				else
+				else if (m_localizers[i].Errors.Count > 0)
 				{
 					LogError($"Got Errors localizing {poFiles[i]}:");
 					foreach (var message in m_localizers[i].Errors)
