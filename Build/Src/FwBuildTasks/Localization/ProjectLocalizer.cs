@@ -199,16 +199,17 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 				alProc.StartInfo.Arguments = BuildLinkerArgs(outputDllPath, culture, fileversion, productVersion, version, resources);
 				alProc.Start();
 
-				alProc.StandardOutput.ReadToEnd();
+				var stdOutput = alProc.StandardOutput.ReadToEnd();
 				alProc.WaitForExit();
 				if (alProc.ExitCode != 0)
 				{
-					throw new ApplicationException("Assembly linker returned error " + alProc.ExitCode + " for " + outputDllPath + ".");
+					throw new ApplicationException($"Assembly linker returned error {alProc.ExitCode} for {outputDllPath}.\n" +
+						$"Command line: {alProc.StartInfo.FileName} {alProc.StartInfo.Arguments}\nOutput:\n{stdOutput}");
 				}
 			}
 		}
 
-		protected string BuildLinkerArgs(string outputDllPath, string culture, string fileversion,
+		protected static string BuildLinkerArgs(string outputDllPath, string culture, string fileversion,
 			string productVersion, string version, List<EmbedInfo> resources)
 		{
 			var builder = new StringBuilder();
