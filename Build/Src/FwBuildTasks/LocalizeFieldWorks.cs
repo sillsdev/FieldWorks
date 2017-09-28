@@ -194,12 +194,13 @@ namespace FwBuildTasks
 			{
 				if (m_localizers[i] == null)
 				{
-					LogError("ERROR: localization of " + poFiles[i] + " was not done!");
+					LogError($"ERROR: localization of {poFiles[i]} was not done!");
 					buildFailed = true;
 				}
 				else
 				{
-					foreach (string message in m_localizers[i].Errors)
+					LogError($"Got Errors localizing {poFiles[i]}:");
+					foreach (var message in m_localizers[i].Errors)
 					{
 						LogError(message);
 						buildFailed = true;  // an error was reported, e.g., from Assembly Linker, that we didn't manage to make cause a return false.
@@ -217,7 +218,7 @@ namespace FwBuildTasks
 		}
 
 		// overridden in tests to trap errors.
-		internal virtual void LogError(string message)
+		protected virtual void LogError(string message)
 		{
 			Log.LogError(message);
 		}
@@ -226,7 +227,7 @@ namespace FwBuildTasks
 		/// In normal operation, this is the same as RootDirectory. In test, we find the real one, to allow us to
 		/// find fixed files like LocalizeResx.xml
 		/// </summary>
-		internal virtual string RealFwRoot => RootDirectory;
+		protected virtual string RealFwRoot => RootDirectory;
 
 		// for testing only: get the project folders of the first Localizer
 		internal List<string> GetProjectFolders()

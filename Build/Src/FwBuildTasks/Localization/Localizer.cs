@@ -26,11 +26,11 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 	/// </summary>
 	public class Localizer
 	{
-		public LocalizerOptions Options { get; private set; }
+		private LocalizerOptions Options { get; set; }
 
-		public List<string> Errors = new List<string>();
+		public readonly List<string> Errors = new List<string>();
 
-		public string CurrentFile { get; set; }
+		private string CurrentFile { get; set; }
 
 		internal string Locale { get; set; }
 
@@ -47,7 +47,7 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 				currentFileName.Length - LocalizeFieldWorks.PoFileLeadIn.Length - LocalizeFieldWorks.PoFileExtension.Length);
 		}
 
-		internal virtual void LogError(string message)
+		internal void LogError(string message)
 		{
 			lock (Errors)
 				Errors.Add(message);

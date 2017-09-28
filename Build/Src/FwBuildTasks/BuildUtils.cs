@@ -146,7 +146,7 @@ namespace FwBuildTasks
 				process.StartInfo.UseShellExecute = false;
 				process.StartInfo.RedirectStandardError = true;
 				process.StartInfo.FileName = "xsltproc";
-				process.StartInfo.Arguments = $"--output {outputFile} {stringParams} {stylesheet} {inputFile}";
+				process.StartInfo.Arguments = $"--output \"{outputFile}\" {stringParams} \"{stylesheet}\" \"{inputFile}\"";
 				process.Start();
 
 				var stdError = process.StandardError.ReadToEnd();

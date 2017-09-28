@@ -123,9 +123,9 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 		private string GetLocalizedResxPath(ResourceInfo resourceInfo, string resxPath)
 		{
 			var resxFileName = Path.GetFileNameWithoutExtension(resxPath);
-			var partialDir = Path.GetDirectoryName(resxPath.Substring(Options.SrcFolder.Length));
-			var projectPartialDir = resourceInfo.ProjectFolder.Substring(Options.SrcFolder.Length);
-			var outputFolder = Path.Combine(Options.OutputFolder, Options.Locale) + partialDir;
+			var partialDir = Path.GetDirectoryName(resxPath.Substring(Options.SrcFolder.Length + 1));
+			var projectPartialDir = resourceInfo.ProjectFolder.Substring(Options.SrcFolder.Length + 1);
+			var outputFolder = Path.Combine(Options.OutputFolder, Options.Locale, partialDir);
 			// This is the relative path from the project folder to the resx file folder.
 			// It needs to go into the file name if not empty, but with a dot instead of folder separator.
 			var subFolder = "";
@@ -191,96 +191,80 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 		{
 			// Run assembly linker with the specified arguments
 			Directory.CreateDirectory(Path.GetDirectoryName(outputDllPath)); // make sure the directory in which we want to make it exists.
-			using (var alProc = new Process())
+			using (var process = new Process())
 			{
-				alProc.StartInfo.UseShellExecute = false;
-				alProc.StartInfo.RedirectStandardOutput = true;
-				alProc.StartInfo.FileName = Environment.OSVersion.Platform == PlatformID.Unix ? "al" : "al.exe";
-				alProc.StartInfo.Arguments = BuildLinkerArgs(outputDllPath, culture, fileversion, productVersion, version, resources);
-				alProc.Start();
+				process.StartInfo.UseShellExecute = false;
+				process.StartInfo.RedirectStandardOutput = true;
+				process.StartInfo.FileName = IsUnix ? "al" : "al.exe";
+				process.StartInfo.Arguments = BuildLinkerArgs(outputDllPath, culture, fileversion, productVersion, version, resources);
+				process.Start();
 
-				var stdOutput = alProc.StandardOutput.ReadToEnd();
-				alProc.WaitForExit();
-				if (alProc.ExitCode != 0)
+				var stdOutput = process.StandardOutput.ReadToEnd();
+				process.WaitForExit();
+				if (process.ExitCode != 0)
 				{
-					throw new ApplicationException($"Assembly linker returned error {alProc.ExitCode} for {outputDllPath}.\n" +
-						$"Command line: {alProc.StartInfo.FileName} {alProc.StartInfo.Arguments}\nOutput:\n{stdOutput}");
+					throw new ApplicationException($"Assembly linker returned error {process.ExitCode} for {outputDllPath}.\n" +
+						$"Command line: {process.StartInfo.FileName} {process.StartInfo.Arguments}\nOutput:\n{stdOutput}");
 				}
 			}
 		}
+
+		private static bool IsUnix => Environment.OSVersion.Platform == PlatformID.Unix;
 
 		protected static string BuildLinkerArgs(string outputDllPath, string culture, string fileversion,
 			string productVersion, string version, List<EmbedInfo> resources)
 		{
 			var builder = new StringBuilder();
-			builder.Append(" /out:");
-			builder.Append(Quote(outputDllPath));
+			builder.Append($" /out:\"{outputDllPath}\"");
 			foreach (var info in resources)
 			{
-				builder.Append(" /embed:");
-				builder.Append(info.Resource);
-				builder.Append(",");
-				builder.Append(info.Name);
+				builder.Append($" /embed:{info.Resource},{info.Name}");
 			}
 			if (!string.IsNullOrEmpty(culture))
 			{
-				builder.Append(" /culture:");
-				builder.Append(culture);
+				builder.Append($" /culture:{culture}");
 			}
-			builder.Append(" /fileversion:");
-			builder.Append(fileversion);
-			builder.Append(" /productversion:");
-			builder.Append(Quote(productVersion));
+			builder.Append($" /fileversion:{fileversion}");
+			builder.Append($" /productversion:\"{productVersion}\"");
 				// may be something like "8.4.2 beta 2" (see LT-14436). Test does not really cover this.
-			builder.Append(" /version:");
-			builder.Append(version);
+			builder.Append($" /version:{version}");
 			// Note: the old build process also set \target, but we want the default lib so don't need to be explicit.
 			// the old version also had support for controlling verbosity; we can add that if needed.
 			// May also want to set /config? The old version did not so I haven't.
 			return builder.ToString();
 		}
 
-		private static string Quote(string input)
-		{
-			return "\"" + input + "\"";
-		}
-
 		protected virtual void RunResGen(string outputResourcePath, string localizedResxPath,
 			string originalResxFolder)
 		{
-			using (var resgenProc = new Process())
+			using (var process = new Process())
 			{
-				resgenProc.StartInfo.UseShellExecute = false;
-				resgenProc.StartInfo.RedirectStandardOutput = true;
-				if (Environment.OSVersion.Platform == PlatformID.Unix)
+				process.StartInfo.UseShellExecute = false;
+				process.StartInfo.RedirectStandardOutput = true;
+				process.StartInfo.FileName = IsUnix ? "resgen" : "resgen.exe";
+				process.StartInfo.Arguments = $"\"{localizedResxPath}\" \"{outputResourcePath}\"";
+				if (!IsUnix)
 				{
-					resgenProc.StartInfo.FileName = "resgen";
-					resgenProc.StartInfo.Arguments = Quote(localizedResxPath) + " " + Quote(outputResourcePath);
-				}
-				else
-				{
-					resgenProc.StartInfo.FileName = "resgen.exe";
 					// It needs to be able to reference the appropriate System.Drawing.dll and System.Windows.Forms.dll to make the conversion.
 					var clrFolder = RuntimeEnvironment.GetRuntimeDirectory();
 					var drawingPath = Path.Combine(clrFolder, "System.Drawing.dll");
 					var formsPath = Path.Combine(clrFolder, "System.Windows.Forms.dll");
-					resgenProc.StartInfo.Arguments = $"\"{localizedResxPath}\" \"{outputResourcePath}\" /r:\"{drawingPath}\" /r:\"{formsPath}\"";
+
+					process.StartInfo.Arguments += $" /r:\"{drawingPath}\" /r:\"{formsPath}\"";
 				}
+
 				// Setting the working directory to the folder containing the ORIGINAL resx file allows us to find included files
 				// like FDO/Resources/Question.ico that the resx file refers to using relative paths.
-				resgenProc.StartInfo.WorkingDirectory = originalResxFolder;
-				resgenProc.Start();
+				process.StartInfo.WorkingDirectory = originalResxFolder;
+				process.Start();
 
-				// This loop is needed to work around what seems to be a race condition in Mono
-				do
-				{
-					resgenProc.StandardOutput.ReadToEnd();
-					resgenProc.WaitForExit();
-				} while (!resgenProc.HasExited);
+				var stdOutput = process.StandardOutput.ReadToEnd();
+				process.WaitForExit();
 
-				if (resgenProc.ExitCode != 0)
+				if (process.ExitCode != 0)
 				{
-					throw new ApplicationException("Resgen returned error " + resgenProc.ExitCode + " for " + localizedResxPath + ".");
+					throw new ApplicationException($"Resgen returned error {process.ExitCode} for {localizedResxPath}.\n" +
+						$"Command line: {process.StartInfo.FileName} {process.StartInfo.Arguments}\nOutput:\n{stdOutput}");
 				}
 			}
 		}

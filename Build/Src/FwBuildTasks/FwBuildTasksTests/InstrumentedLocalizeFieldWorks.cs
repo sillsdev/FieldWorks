@@ -21,7 +21,7 @@ namespace FwBuildTasks
 		/// In normal operation, this is the same as RootDirectory. In test, we find the real one, to allow us to
 		/// find fixed files like LocalizeResx.xml
 		/// </summary>
-		internal override string RealFwRoot
+		protected override string RealFwRoot
 		{
 			get
 			{
@@ -32,7 +32,7 @@ namespace FwBuildTasks
 			}
 		}
 
-		internal override void LogError(string message)
+		protected override void LogError(string message)
 		{
 			ErrorMessages += Environment.NewLine + message;
 		}

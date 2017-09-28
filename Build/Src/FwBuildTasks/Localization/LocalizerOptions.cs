@@ -50,7 +50,7 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 		public bool BuildBinaries { get; }
 
 		/// <summary>
-		/// The path where wer expect to store a file like strings-es.xml for a given locale.
+		/// The path where we expect to store a file like strings-es.xml for a given locale.
 		/// </summary>
 		/// <param name="locale"></param>
 		/// <returns></returns>
