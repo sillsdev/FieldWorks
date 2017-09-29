@@ -62,7 +62,7 @@ namespace SIL.FieldWorks.XWorks
 				if (curWs.ToLower().Contains("audio"))
 					continue;
 
-				var curWsLabel = wsMgr.Get(curWs).DisplayLabel;
+				var curWsLabel = wsMgr.Get(curWs).LanguageTag;
 				var newWsCompleteFilePath = Path.Combine(newWsFilePath, curWsLabel + ConfigFileExtension);
 				if (File.Exists(newWsCompleteFilePath))
 				{
@@ -123,7 +123,7 @@ namespace SIL.FieldWorks.XWorks
 
 		internal static string GetConfigPathForWs(WritingSystemManager wsMgr, string configDir, string ws)
 		{
-			return Path.Combine(configDir, wsMgr.Get(ws).DisplayLabel + ConfigFileExtension);
+			return Path.Combine(configDir, wsMgr.Get(ws).LanguageTag + ConfigFileExtension);
 		}
 
 		/// <summary>
