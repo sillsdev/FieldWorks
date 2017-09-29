@@ -844,20 +844,7 @@ namespace XCore
 			// We strip file:/ because that's not accepted by LoadFrom()
 			var codeBasePath = FileUtils.StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase);
 			string baseDir = Path.GetDirectoryName(codeBasePath);
-
-			string preferredLibrary = m_propertyTable.GetValue(
-				"PreferredUILibrary", "xCoreOpenSourceAdapter.dll");
-
-			try
-			{
-				adaptorAssembly = Assembly.LoadFrom(Path.Combine(baseDir, preferredLibrary));
-			}
-			catch
-			{
-				adaptorAssembly = Assembly.LoadFrom(
-					Path.Combine(baseDir, "xCoreOpenSourceAdapter.dll"));
-			}
-			Debug.Assert(adaptorAssembly != null, "XCore Could not find an adapter library DLL to use.");
+			adaptorAssembly = Assembly.LoadFrom(Path.Combine(baseDir, m_propertyTable.GetValue("PreferredUILibrary", "FlexUIAdapter.dll")));
 			return adaptorAssembly;
 		}
 

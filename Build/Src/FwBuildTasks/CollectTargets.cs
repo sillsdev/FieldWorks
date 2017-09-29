@@ -80,8 +80,6 @@ namespace FwBuildTasks
 			// These projects from Lib had nant targets.  They really should be under Src.
 			var infoEth = new DirectoryInfo(Path.Combine(m_fwroot, "Lib/src/Ethnologue"));
 			CollectInfo(infoEth);
-			var infoScr = new DirectoryInfo(Path.Combine(m_fwroot, "Lib/src/SharedScrControls"));
-			CollectInfo(infoScr);
 			var infoScr2 = new DirectoryInfo(Path.Combine(m_fwroot, "Lib/src/ScrChecks"));
 			CollectInfo(infoScr2);
 			var infoObj = new DirectoryInfo(Path.Combine(m_fwroot, "Lib/src/ObjectBrowser"));
@@ -317,22 +315,11 @@ namespace FwBuildTasks
 						writer.Write("\t<Target Name=\"{0}\"", project);
 						var bldr = new StringBuilder();
 						bldr.Append("Initialize"); // ensure the output directories and version files exist.
-						switch (project)
+						if (project == "TeImportExportTests" || project == "FwCoreDlgsTests")
 						{
-							case "xWorks":
-								// xWorks now references FlexUIAdapter.dll.
-								// But, we don't discover that dependency, because for some bizarre
-								// historical reason, the project that builds FlexUIAdapter.dll is called XCoreAdapterSilSidePane.
-								bldr.Append(";XCoreAdapterSilSidePane");
-								break;
-							case "TeImportExportTests":
-							case "FwCoreDlgsTests":
-								// The TeImportExportTests and FwCoreDlgsTests require that the ScrChecks.dll is in DistFiles/Editorial Checks.
-								// We don't discover that dependency because it's not a reference (LT-13777).
-								bldr.Append(";ScrChecks");
-								break;
-							default:
-								break;
+							// The TeImportExportTests and FwCoreDlgsTests require that the ScrChecks.dll is in DistFiles/Editorial Checks.
+							// We don't discover that dependency because it's not a reference (LT-13777).
+							bldr.Append(";ScrChecks");
 						}
 						var dependencies = m_mapProjDepends[project];
 						dependencies.Sort();
@@ -347,7 +334,7 @@ namespace FwBuildTasks
 						{
 							writer.Write(" Condition=\"'$(OS)'=='Windows_NT'\"");
 						}
-						if (project.StartsWith("LinuxSmoke") || project.StartsWith("ManagedVwWindow"))
+						if (project.StartsWith("ManagedVwWindow"))
 						{
 							writer.Write(" Condition=\"'$(OS)'=='Unix'\"");
 						}
@@ -400,8 +387,7 @@ namespace FwBuildTasks
 					{
 						// These projects are experimental.
 						// These projects weren't built by nant normally.
-						if (project == "FxtExe" ||
-							project.StartsWith("LinuxSmokeTest"))
+						if (project == "FxtExe")
 						{
 							continue;
 						}
@@ -420,8 +406,6 @@ namespace FwBuildTasks
 						// These projects are experimental.
 						// These projects weren't built by nant normally.
 						if (project == "FxtExe" ||
-							project == "FixFwData" ||
-							project.StartsWith("LinuxSmokeTest") ||
 							project.EndsWith("Tests") || // These are tests.
 							project == "TestUtils" || // This is a test.
 							project == "TestManager" || // This is a test.

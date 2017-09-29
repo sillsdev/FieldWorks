@@ -152,6 +152,10 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="FlexUIAdapter, Version=9.0.0.17628, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Debug\FlexUIAdapter.dll</HintPath>
+    </Reference>
     <Reference Include="SIL.LCModel.Core.Tests, Version=9.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\SIL.LCModel.Core.Tests.dll</HintPath>
@@ -212,24 +216,12 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <Compile Include="ConfigurationLoadTests.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="IncludeXmlTests.cs" />
     <Compile Include="InventoryTests.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <Compile Include="Tester.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="xCWindowTests.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="XWindowTestsBase.cs">
-      <SubType>Code</SubType>
     </Compile>
     <None Include="App.config" />
     <None Include="BuildInclude.targets">
