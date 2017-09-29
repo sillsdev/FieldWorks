@@ -359,7 +359,7 @@ Fw-build-package:
 	cd $(BUILD_ROOT)/Build \
 		&& xbuild /t:refreshTargets \
 		&& xbuild '/t:remakefw' /property:config=release /property:packaging=yes \
-		&& ./multitry xbuild /verbosity:detailed '/t:localize-binaries' /property:config=release /property:packaging=yes
+		&& ./multitry xbuild '/t:localize-binaries' /property:config=release /property:packaging=yes
 
 Fw-build-package-fdo:
 	cd $(BUILD_ROOT)/Build \
@@ -370,7 +370,7 @@ Fw-build-package-fdo:
 
 localize-source:
 	. environ && \
-	(cd Build && xbuild /t:localize-source /property:config=release /property:packaging=yes /verbosity:detailed)
+	(cd Build && xbuild /t:localize-source /property:config=release /property:packaging=yes)
 	# Remove symbolic links from Output - we don't want those in the source package
 	find Output -type l -delete
 	# Copy localization files to Localizations folder so that they survive a 'clean'
