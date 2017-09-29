@@ -9,7 +9,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Threading;
-
 using SIL.LCModel.Core.Scripture;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
@@ -125,7 +124,7 @@ namespace ParatextImport
 	}
 	#endregion
 
-	#region TeImporter class
+	#region ParatextImporter class
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// This class handles importing of Scripture, back translations, and notes.
@@ -133,7 +132,7 @@ namespace ParatextImport
 	/// <remarks>Note: this class runs on a background thread. It can't call any UI methods
 	/// directly!</remarks>
 	/// ----------------------------------------------------------------------------------------
-	public abstract class TeImporter : IDisposable
+	public abstract class ParatextImporter : IDisposable
 	{
 		#region class ToolboxPictureInfo
 		/// ----------------------------------------------------------------------------------------
@@ -221,7 +220,7 @@ namespace ParatextImport
 		protected string m_savedVersionDescription;
 
 		/// <summary>UI Callbacks</summary>
-		protected TeImportUi m_importCallbacks;
+		protected ParatextImportUi m_importCallbacks;
 
 		/// <summary>The writing system we use for all vernacular text.</summary>
 		protected int m_wsVern;
@@ -403,7 +402,7 @@ namespace ParatextImport
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// TeSfmImporter needs to do something for this, but TeXmlImporter doesn't.
+		/// ParatextImportSfmImporter needs to do something for this, but ParatextImportXmlImporter doesn't.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		protected virtual void EndFootnote()
@@ -584,7 +583,7 @@ namespace ParatextImport
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets the prev book. This property is called from TeImportUi.
+		/// Gets the prev book. This property is called from ParatextImportUi.
 		/// </summary>
 		/// <value>The prev book.</value>
 		/// ------------------------------------------------------------------------------------
@@ -640,7 +639,7 @@ namespace ParatextImport
 		/// <remarks>
 		/// In case some clients forget to dispose it directly.
 		/// </remarks>
-		~TeImporter()
+		~ParatextImporter()
 		{
 			Dispose(false);
 			// The base class finalizer is called automatically.
@@ -722,7 +721,7 @@ namespace ParatextImport
 	}
 	#endregion
 
-	#region TeSfmImporter class
+	#region ParatextSfmImporter class
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// This subclass handles importing from a Standard Format file (includes Paratext).
@@ -731,7 +730,7 @@ namespace ParatextImport
 	/// Note: this runs on a background thread. It can't call any UI methods directly!
 	/// </remarks>
 	/// ----------------------------------------------------------------------------------------
-	public class TeSfmImporter : TeImporter
+	public class ParatextSfmImporter : ParatextImporter
 	{
 		private static readonly char[] kControlCharacters = {'\u0000', '\u0001', '\u0002', '\u0003',
 			'\u0004', '\u0005', '\u0006', '\u0007', '\u0008', '\u0009', '\u000A', '\u000B', '\u000C',
@@ -944,10 +943,10 @@ namespace ParatextImport
 		/// </returns>
 		/// ------------------------------------------------------------------------------------
 		public static ScrReference Import(IScrImportSet settings, LcmCache cache,
-			LcmStyleSheet styleSheet, UndoImportManager undoManager, TeImportUi importCallbacks,
+			LcmStyleSheet styleSheet, UndoImportManager undoManager, ParatextImportUi importCallbacks,
 			bool streamLinedImport = false)
 		{
-			using (TeSfmImporter importer = new TeSfmImporter(settings, cache, styleSheet, undoManager,
+			using (ParatextSfmImporter importer = new ParatextSfmImporter(settings, cache, styleSheet, undoManager,
 				importCallbacks, streamLinedImport))
 			{
 				importer.Import();
@@ -970,8 +969,8 @@ namespace ParatextImport
 		/// <param name="importCallbacks">UI callbacks</param>
 		/// <param name="streamLinedImport">flag indicating if import is done through FLEx.</param>
 		/// ------------------------------------------------------------------------------------
-		protected TeSfmImporter(IScrImportSet settings, LcmCache cache,
-			LcmStyleSheet styleSheet, UndoImportManager undoManager, TeImportUi importCallbacks,
+		protected ParatextSfmImporter(IScrImportSet settings, LcmCache cache,
+			LcmStyleSheet styleSheet, UndoImportManager undoManager, ParatextImportUi importCallbacks,
 			bool streamLinedImport = false)
 		{
 			Debug.Assert(cache != null);
@@ -4479,7 +4478,7 @@ namespace ParatextImport
 		/// <remarks>
 		/// In case some clients forget to dispose it directly.
 		/// </remarks>
-		~TeSfmImporter()
+		~ParatextSfmImporter()
 		{
 			Dispose(false);
 			// The base class finalizer is called automatically.

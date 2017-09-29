@@ -19,7 +19,7 @@ namespace ParatextImport.ImportTests
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
-	public class TeImportBtNonInterleaved : TeImportTestsBase
+	public class ParatextImportBtNonInterleaved : ParatextImportTestsBase
 	{
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

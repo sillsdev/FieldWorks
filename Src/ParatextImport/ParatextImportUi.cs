@@ -12,20 +12,20 @@ using SIL.FieldWorks.Common.FwUtils;
 
 namespace ParatextImport
 {
-	#region TeImportUi class
+	#region ParatextImportUi class
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
-	/// UI elements of import. Gets called from TeImport.
+	/// UI elements of import. Gets called from ParatextImport.
 	/// </summary>
 	/// <remarks>This class needs to deal with multi threading issues since it gets called
-	/// from TeImport (which runs in the background), but every UI element it creates needs
+	/// from ParatextImport (which runs in the background), but every UI element it creates needs
 	/// to run on the main thread.</remarks>
 	/// ----------------------------------------------------------------------------------------
-	public class TeImportUi : IDisposable
+	public class ParatextImportUi : IDisposable
 	{
 		#region Data members
 		/// <summary></summary>
-		protected TeImporter m_importer;
+		protected ParatextImporter m_importer;
 
 		private IHelpTopicProvider m_helpTopicProvider;
 		private ProgressDialogWithTask m_progressDialog;
@@ -38,17 +38,17 @@ namespace ParatextImport
 		#region Delegates
 		private delegate void ExceptionErrorMessageInvoker(EncodingConverterException e);
 		private delegate void StringErrorMessageInvoker(string s);
-		private delegate void SetTeImporterInvoker(TeImporter importer);
+		private delegate void SetParatextImporterInvoker(ParatextImporter importer);
 		#endregion
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="TeImportUi"/> class.
+		/// Initializes a new instance of the <see cref="ParatextImportUi"/> class.
 		/// </summary>
 		/// <param name="progressDialog">The progress dialog.</param>
 		/// <param name="helpTopicProvider">The help topic provider.</param>
 		/// ------------------------------------------------------------------------------------
-		public TeImportUi(ProgressDialogWithTask progressDialog, IHelpTopicProvider helpTopicProvider)
+		public ParatextImportUi(ProgressDialogWithTask progressDialog, IHelpTopicProvider helpTopicProvider)
 		{
 			m_progressDialog = progressDialog;
 			if (m_progressDialog != null)
@@ -85,10 +85,10 @@ namespace ParatextImport
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Releases unmanaged resources and performs other cleanup operations before the
-		/// TeImportUi is reclaimed by garbage collection.
+		/// ParatextImportUi is reclaimed by garbage collection.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		~TeImportUi()
+		~ParatextImportUi()
 		{
 			Dispose(false);
 		}
@@ -139,14 +139,14 @@ namespace ParatextImport
 		/// </summary>
 		/// <value>The importer.</value>
 		/// ------------------------------------------------------------------------------------
-		public TeImporter Importer
+		public ParatextImporter Importer
 		{
 			set
 			{
 				CheckDisposed();
 				if (m_ctrl.InvokeRequired)
 				{
-					SetTeImporterInvoker method = delegate(TeImporter imp) { m_importer = imp; };
+					SetParatextImporterInvoker method = delegate(ParatextImporter imp) { m_importer = imp; };
 					m_ctrl.Invoke(method, value);
 				}
 				else

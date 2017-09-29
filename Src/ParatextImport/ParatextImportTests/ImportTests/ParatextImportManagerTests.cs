@@ -79,7 +79,7 @@ namespace ParatextImport.ImportTests
 		private readonly List<SegmentInfo> m_segmentList;
 		private int m_curSeg;
 		private BCVRef m_ref;
-		private readonly MockTeImporter m_importer;
+		private readonly MockParatextImporter m_importer;
 		private int m_wsOverride;
 
 		public static bool s_fSimulateCancel = true;
@@ -91,7 +91,7 @@ namespace ParatextImport.ImportTests
 		/// <param name="importer">The importer.</param>
 		/// <param name="segmentList">The segment list.</param>
 		/// ------------------------------------------------------------------------------------
-		public MockScrObjWrapper(MockTeImporter importer, List<SegmentInfo> segmentList)
+		public MockScrObjWrapper(MockParatextImporter importer, List<SegmentInfo> segmentList)
 		{
 			m_importer = importer;
 			m_segmentList = segmentList;
@@ -199,19 +199,19 @@ namespace ParatextImport.ImportTests
 	}
 	#endregion
 
-	#region class MockTeImporter
+	#region class MockParatextImporter
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	///
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	internal class MockTeImporter : TeSfmImporter
+	internal class MockParatextImporter : ParatextSfmImporter
 	{
 		private List<SegmentInfo> m_segmentList;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="MockTeImporter"/> class.
+		/// Initializes a new instance of the <see cref="MockParatextImporter"/> class.
 		/// </summary>
 		/// <param name="settings">Import settings object (filled in by wizard)</param>
 		/// <param name="cache">The cache used to import to and get misc. info. from.</param>
@@ -220,8 +220,8 @@ namespace ParatextImport.ImportTests
 		/// and maintaining the saved version (archive) of original books being overwritten).</param>
 		/// <param name="importCallbacks">UI callbacks</param>
 		/// ------------------------------------------------------------------------------------
-		public MockTeImporter(IScrImportSet settings, LcmCache cache,
-			LcmStyleSheet styleSheet, UndoImportManager undoManager, TeImportUi importCallbacks)
+		public MockParatextImporter(IScrImportSet settings, LcmCache cache,
+			LcmStyleSheet styleSheet, UndoImportManager undoManager, ParatextImportUi importCallbacks)
 			: base(settings, cache, styleSheet, undoManager, importCallbacks)
 		{
 		}
@@ -242,9 +242,9 @@ namespace ParatextImport.ImportTests
 		/// ------------------------------------------------------------------------------------
 		public static ScrReference Import(IScrImportSet settings, LcmCache cache,
 			LcmStyleSheet styleSheet, UndoImportManager undoManager,
-			TeImportUi importCallbacks, List<SegmentInfo> segmentList)
+			ParatextImportUi importCallbacks, List<SegmentInfo> segmentList)
 		{
-			using (MockTeImporter importer = new MockTeImporter(settings, cache, styleSheet, undoManager,
+			using (MockParatextImporter importer = new MockParatextImporter(settings, cache, styleSheet, undoManager,
 				importCallbacks))
 			{
 				importer.m_segmentList = segmentList;
@@ -273,18 +273,18 @@ namespace ParatextImport.ImportTests
 		{
 			CheckDisposed();
 
-			((DummyTeImportUi)m_importCallbacks).SimulateCancel();
+			((DummyParatextImportUi)m_importCallbacks).SimulateCancel();
 		}
 	}
 	#endregion
 
-	#region class DummyTeImportUi
+	#region class DummyParatextImportUi
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	///
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	internal class DummyTeImportUi : TeImportNoUi
+	internal class DummyParatextImportUi : ParatextImportNoUi
 	{
 		private bool m_fCancel;
 
@@ -354,13 +354,13 @@ namespace ParatextImport.ImportTests
 	}
 	#endregion
 
-	#region class DummyTeImportManager
+	#region class DummyParatextImportManager
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	///  A TEImportManager that does not display the ImportedBooks dialog.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public class DummyTeImportManager : TeImportManager
+	public class DummyParatextImportManager : ParatextImportManager
 	{
 		#region Member data
 		private readonly IScripture m_scr;
@@ -373,12 +373,12 @@ namespace ParatextImport.ImportTests
 		#region Constructor
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="DummyTeImportManager"/> class.
+		/// Initializes a new instance of the <see cref="DummyParatextImportManager"/> class.
 		/// </summary>
 		/// <param name="cache">The cache.</param>
 		/// <param name="styleSheet">The style sheet.</param>
 		/// ------------------------------------------------------------------------------------
-		public DummyTeImportManager(LcmCache cache, LcmStyleSheet styleSheet) :
+		public DummyParatextImportManager(LcmCache cache, LcmStyleSheet styleSheet) :
 			base(cache, styleSheet, null, false)
 		{
 			m_scr = cache.LangProject.TranslatedScriptureOA;
@@ -500,22 +500,22 @@ namespace ParatextImport.ImportTests
 		/// <returns>A TeImportUi object</returns>
 		/// <remarks>Can be overriden in tests</remarks>
 		/// ------------------------------------------------------------------------------------
-		protected override TeImportUi CreateTeImportUi(ProgressDialogWithTask progressDialog)
+		protected override ParatextImportUi CreateParatextImportUi(ProgressDialogWithTask progressDialog)
 		{
-			return new DummyTeImportUi();
+			return new DummyParatextImportUi();
 		}
 		#endregion
 	}
 	#endregion
 
-	#region class DummyTeImportManagerWithMockImporter
+	#region class DummyParatextImportManagerWithMockImporter
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// A TEImportManager that does not display the ImportedBooks dialog,
 	/// and uses a MockTeImporter.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	internal class DummyTeImportManagerWithMockImporter : DummyTeImportManager
+	internal class DummyParatextImportManagerWithMockImporter : DummyParatextImportManager
 	{
 		#region Member data
 		private List<SegmentInfo> m_segmentList;
@@ -524,12 +524,12 @@ namespace ParatextImport.ImportTests
 		#region Constructor
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="DummyTeImportManagerWithMockImporter"/> class.
+		/// Initializes a new instance of the <see cref="DummyParatextImportManagerWithMockImporter"/> class.
 		/// </summary>
 		/// <param name="cache">The cache.</param>
 		/// <param name="styleSheet">The style sheet.</param>
 		/// ------------------------------------------------------------------------------------
-		public DummyTeImportManagerWithMockImporter(LcmCache cache, LcmStyleSheet styleSheet) :
+		public DummyParatextImportManagerWithMockImporter(LcmCache cache, LcmStyleSheet styleSheet) :
 			base(cache, styleSheet)
 		{
 		}
@@ -562,9 +562,9 @@ namespace ParatextImport.ImportTests
 		/// The Scripture reference of the first thing imported
 		/// </returns>
 		protected override ScrReference Import(IScrImportSet importSettings, UndoImportManager undoManager,
-			TeImportUi importUi)
+			ParatextImportUi importUi)
 		{
-			MockTeImporter.Import(importSettings, Cache, StyleSheet,
+			MockParatextImporter.Import(importSettings, Cache, StyleSheet,
 				undoManager, importUi, m_segmentList);
 			return ScrReference.Empty;
 		}
@@ -573,17 +573,17 @@ namespace ParatextImport.ImportTests
 	}
 	#endregion
 
-	#region class TeImportManagerTests
+	#region class ParatextImportManagerTests
 	/// ---------------------------------------------------------------------------------------
 	/// <summary>
-	/// Tests for TeImportManager.
+	/// Tests for ParatextImportManager.
 	/// </summary>
 	/// ---------------------------------------------------------------------------------------
 	[TestFixture]
-	public class TeImportManagerTests : ScrInMemoryLcmTestBase
+	public class ParatextImportManagerTests : ScrInMemoryLcmTestBase
 	{
 		#region Member variables
-		private DummyTeImportManagerWithMockImporter m_importMgr;
+		private DummyParatextImportManagerWithMockImporter m_importMgr;
 		private BCVRef m_titus;
 		private LcmStyleSheet m_styleSheet;
 		private IScrImportSet m_settings;
@@ -610,7 +610,7 @@ namespace ParatextImport.ImportTests
 			NonUndoableUnitOfWorkHelper.Do(m_actionHandler, () =>
 			{
 				m_settings = m_scr.FindOrCreateDefaultImportSettings(TypeOfImport.Unknown, m_styleSheet, FwDirectoryFinder.TeStylesPath);
-				DummyTeImporter.MakeSFImportTestSettings(m_settings);
+				DummyParatextImporter.MakeSFImportTestSettings(m_settings);
 			});
 		}
 
@@ -631,7 +631,7 @@ namespace ParatextImport.ImportTests
 			m_settings.ImportBookIntros = true;
 			m_settings.ImportAnnotations = false;
 
-			m_importMgr = new DummyTeImportManagerWithMockImporter(Cache, m_styleSheet);
+			m_importMgr = new DummyParatextImportManagerWithMockImporter(Cache, m_styleSheet);
 			Cache.ServiceLocator.GetInstance<IActionHandler>().EndUndoTask();
 		}
 

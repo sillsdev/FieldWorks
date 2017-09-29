@@ -859,7 +859,7 @@
 	<value>sfFileListBuilder</value>
   </data>
   <data name="&gt;&gt;sfFileListBuilder.Type" xml:space="preserve">
-	<value>SIL.FieldWorks.Common.Controls.SFFileListBuilder, TeImportExport, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+	<value>SIL.FieldWorks.Common.Controls.SFFileListBuilder, ParatextImport, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;sfFileListBuilder.Parent" xml:space="preserve">
 	<value>panStep2_Other</value>

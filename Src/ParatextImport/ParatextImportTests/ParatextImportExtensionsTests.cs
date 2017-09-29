@@ -14,10 +14,10 @@ using SIL.LCModel.Utils;
 namespace ParatextImport
 {
 	/// <summary>
-	/// TeImportExportExtensions test fixture
+	/// ParatextImportExtensions test fixture
 	/// </summary>
 	[TestFixture]
-	public class TeImportExportExtensionsTests : ScrInMemoryLcmTestBase
+	public class ParatextImportExtensionsTests : ScrInMemoryLcmTestBase
 	{
 		#region ImportProjectIsAccessible tests
 

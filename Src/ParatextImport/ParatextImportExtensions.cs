@@ -18,7 +18,7 @@ namespace ParatextImport
 	/// <summary>
 	///
 	/// </summary>
-	public static class TeImportExportExtensions
+	public static class ParatextImportExtensions
 	{
 		/// -----------------------------------------------------------------------------------
 		/// <summary>

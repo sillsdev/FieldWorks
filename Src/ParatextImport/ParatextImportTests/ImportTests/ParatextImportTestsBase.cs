@@ -22,11 +22,11 @@ namespace ParatextImport.ImportTests
 	/// Base class for several import test classes
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public class TeImportTestsBase : ScrInMemoryLcmTestBase
+	public class ParatextImportTestsBase : ScrInMemoryLcmTestBase
 	{
 		#region Member variables
 		/// <summary></summary>
-		protected DummyTeImporter m_importer;
+		protected DummyParatextImporter m_importer;
 		/// <summary></summary>
 		protected int m_wsVern; // writing system info needed by tests
 		/// <summary></summary>
@@ -232,8 +232,8 @@ namespace ParatextImport.ImportTests
 			m_styleSheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles);
 			InitWsInfo();
 
-			DummyTeImporter.s_translatorNoteDefn = Cache.ServiceLocator.GetInstance<ICmAnnotationDefnRepository>().TranslatorAnnotationDefn;
-			DummyTeImporter.s_consultantNoteDefn = Cache.ServiceLocator.GetInstance<ICmAnnotationDefnRepository>().ConsultantAnnotationDefn;
+			DummyParatextImporter.s_translatorNoteDefn = Cache.ServiceLocator.GetInstance<ICmAnnotationDefnRepository>().TranslatorAnnotationDefn;
+			DummyParatextImporter.s_consultantNoteDefn = Cache.ServiceLocator.GetInstance<ICmAnnotationDefnRepository>().ConsultantAnnotationDefn;
 
 			m_titus = new BCVRef(56001001);
 			m_settings = m_scr.FindOrCreateDefaultImportSettings(TypeOfImport.Other, m_styleSheet, FwDirectoryFinder.TeStylesPath);
@@ -243,7 +243,7 @@ namespace ParatextImport.ImportTests
 			InitializeImportSettings();
 
 			m_actionHandler.EndUndoTask(); // Let the importer handle the undo/redo
-			m_importer = new DummyTeImporter(m_settings, this, m_styleSheet);
+			m_importer = new DummyParatextImporter(m_settings, this, m_styleSheet);
 			m_importer.Initialize();
 			m_importer.UndoInfo.StartImportingFiles();
 		}
@@ -256,7 +256,7 @@ namespace ParatextImport.ImportTests
 		/// ------------------------------------------------------------------------------------
 		protected virtual void InitializeImportSettings()
 		{
-			DummyTeImporter.MakeSFImportTestSettings(m_settings);
+			DummyParatextImporter.MakeSFImportTestSettings(m_settings);
 			m_settings.ImportBackTranslation = false;
 			m_settings.ImportBookIntros = true;
 			m_settings.ImportAnnotations = false;

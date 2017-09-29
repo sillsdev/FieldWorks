@@ -14,14 +14,14 @@ using SIL.LCModel.Utils;
 
 namespace ParatextImport.ImportTests
 {
-	#region TE Paratext 6 Import Tests (in-memory cache)
+	#region Paratext 6 Import Tests (in-memory cache)
 	/// ---------------------------------------------------------------------------------------
 	/// <summary>
-	/// TeImportTestsParatext6 tests TeImport for Paratext 6 projects
+	/// ParatextImportTestsParatext6 tests ParatextImport for Paratext 6 projects
 	/// </summary>
 	/// ---------------------------------------------------------------------------------------
 	[TestFixture]
-	public class TeImportTestParatext6 : TeImportTestsBase
+	public class ParatextImportTestParatext6 : ParatextImportTestsBase
 	{
 		#region Setup/Teardown
 		/// ------------------------------------------------------------------------------------
@@ -31,7 +31,7 @@ namespace ParatextImport.ImportTests
 		/// ------------------------------------------------------------------------------------
 		protected override void InitializeImportSettings()
 		{
-			DummyTeImporter.MakeParatextTestSettings(m_settings);
+			DummyParatextImporter.MakeParatextTestSettings(m_settings);
 			// For these tests, we want to simulate the end-marker mapping for \fr that
 			// we would get from the normal USFM.sty Paratext style sheet.
 			m_settings.SetMapping(MappingSet.Main, new ImportMappingInfo(@"\fr", @"\fr*",
@@ -3297,7 +3297,7 @@ namespace ParatextImport.ImportTests
 			ICmTranslation translation = para.GetBT();
 			ITsString tss = translation.Translation.get_String(m_wsAnal);
 			Assert.AreEqual(1, tss.RunCount);
-			TeImportTestInMemory.VerifyFootnoteMarkerOrcRun(tss, 0, m_wsAnal, true);
+			ParatextImportTestInMemory.VerifyFootnoteMarkerOrcRun(tss, 0, m_wsAnal, true);
 			VerifyFootnoteWithTranslation(0, "Primer pata nota", "Hi mom", string.Empty,
 				ScrStyleNames.NormalFootnoteParagraph);
 		}

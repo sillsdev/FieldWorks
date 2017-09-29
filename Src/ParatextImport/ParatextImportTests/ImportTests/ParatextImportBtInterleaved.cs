@@ -21,7 +21,7 @@ namespace ParatextImport.ImportTests
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
-	public class TeImportBtInterleaved: TeImportTestsBase
+	public class ParatextImportBtInterleaved: ParatextImportTestsBase
 	{
 		#region Setup
 		/// ------------------------------------------------------------------------------------
@@ -1160,7 +1160,7 @@ namespace ParatextImport.ImportTests
 		public void BackTranslationFootnotes_FootnoteWithFollowingVerseText()
 		{
 			m_settings.ImportTypeEnum = TypeOfImport.Paratext5;
-			DummyTeImporter.MakeParatextTestSettings(m_settings);
+			DummyParatextImporter.MakeParatextTestSettings(m_settings);
 			m_importer.Settings.ImportBackTranslation = true;
 
 			// ************** process a \id segment, test MakeBook() method *********************

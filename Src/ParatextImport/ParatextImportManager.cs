@@ -27,7 +27,7 @@ namespace ParatextImport
 	/// settings and then delegating the real work...
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public class TeImportManager
+	public class ParatextImportManager
 	{
 		#region Member data
 		private readonly LcmCache m_cache;
@@ -47,7 +47,7 @@ namespace ParatextImport
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="TeImportManager"/> class.
+		/// Initializes a new instance of the <see cref="ParatextImportManager"/> class.
 		/// </summary>
 		/// <param name="mainWnd">The main window initiating the import</param>
 		/// <param name="cache"></param>
@@ -56,7 +56,7 @@ namespace ParatextImport
 		/// <param name="fParatextStreamlinedImport">if set to <c>true</c> do a Paratext
 		/// streamlined import (minimal UI).</param>
 		/// ------------------------------------------------------------------------------------
-		internal TeImportManager(Form mainWnd, LcmCache cache, LcmStyleSheet styleSheet, IApp app,
+		internal ParatextImportManager(Form mainWnd, LcmCache cache, LcmStyleSheet styleSheet, IApp app,
 			bool fParatextStreamlinedImport)
 			: this(cache, styleSheet, app, fParatextStreamlinedImport)
 		{
@@ -65,7 +65,7 @@ namespace ParatextImport
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="TeImportManager"/> class.
+		/// Initializes a new instance of the <see cref="ParatextImportManager"/> class.
 		/// </summary>
 		/// <param name="cache">The cache.</param>
 		/// <param name="styleSheet">The style sheet.</param>
@@ -74,7 +74,7 @@ namespace ParatextImport
 		/// streamlined import (minimal UI).</param>
 		/// <remarks>This version is for testing only</remarks>
 		/// ------------------------------------------------------------------------------------
-		protected TeImportManager(LcmCache cache, LcmStyleSheet styleSheet, IApp app,
+		protected ParatextImportManager(LcmCache cache, LcmStyleSheet styleSheet, IApp app,
 			bool fParatextStreamlinedImport)
 		{
 			m_cache = cache;
@@ -99,7 +99,7 @@ namespace ParatextImport
 		/// ------------------------------------------------------------------------------------
 		public static bool ImportParatext(Form mainWnd, LcmCache cache, LcmStyleSheet stylesheet, IApp app)
 		{
-			TeImportManager mgr = new TeImportManager(mainWnd, cache, stylesheet, app, true);
+			ParatextImportManager mgr = new ParatextImportManager(mainWnd, cache, stylesheet, app, true);
 			return mgr.ImportSf();
 		}
 		#endregion
@@ -254,15 +254,15 @@ namespace ParatextImport
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Creates a TeImportUi object.
+		/// Creates a ParatextImportUi object.
 		/// </summary>
 		/// <param name="progressDialog">The progress dialog.</param>
-		/// <returns>A TeImportUi object</returns>
+		/// <returns>A ParatextImportUi object</returns>
 		/// <remarks>Can be overriden in tests</remarks>
 		/// ------------------------------------------------------------------------------------
-		protected virtual TeImportUi CreateTeImportUi(ProgressDialogWithTask progressDialog)
+		protected virtual ParatextImportUi CreateParatextImportUi(ProgressDialogWithTask progressDialog)
 		{
-			return new TeImportUi(progressDialog, m_helpTopicProvider);
+			return new ParatextImportUi(progressDialog, m_helpTopicProvider);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -361,7 +361,7 @@ namespace ParatextImport
 					progressDlg.Message =
 						Properties.Resources.kstidImportInitializing;
 
-					using (TeImportUi importUi = CreateTeImportUi(progressDlg))
+					using (ParatextImportUi importUi = CreateParatextImportUi(progressDlg))
 					{
 						firstImported = (ScrReference)progressDlg.RunTask(fDisplayUi,
 							ImportTask, importSettings, m_undoImportManager, importUi);
@@ -489,7 +489,7 @@ namespace ParatextImport
 			Debug.Assert(parameters.Length == 3);
 			var importSettings = (IScrImportSet)parameters[0];
 			var undoManager = (UndoImportManager)parameters[1];
-			var importUi = (TeImportUi)parameters[2];
+			var importUi = (ParatextImportUi)parameters[2];
 
 			bool fRollbackPartialBook = true;
 			try
@@ -525,9 +525,9 @@ namespace ParatextImport
 		/// <param name="importUi">The import UI.</param>
 		/// <returns></returns>
 		protected virtual ScrReference Import(IScrImportSet importSettings, UndoImportManager undoManager,
-			TeImportUi importUi)
+			ParatextImportUi importUi)
 		{
-			return TeSfmImporter.Import(importSettings, m_cache, m_styleSheet, undoManager, importUi, m_fParatextStreamlinedImport);
+			return ParatextSfmImporter.Import(importSettings, m_cache, m_styleSheet, undoManager, importUi, m_fParatextStreamlinedImport);
 			}
 
 		#endregion

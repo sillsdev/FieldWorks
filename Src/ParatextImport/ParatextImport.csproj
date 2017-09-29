@@ -247,10 +247,10 @@
     <Compile Include="SFFileListBuilder.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="TeImportExportExtensions.cs" />
-    <Compile Include="TeImport.cs" />
-    <Compile Include="TeImportManager.cs" />
-    <Compile Include="TeImportUi.cs" />
+    <Compile Include="ParatextImportExtensions.cs" />
+    <Compile Include="ParatextImport.cs" />
+    <Compile Include="ParatextImportManager.cs" />
+    <Compile Include="ParatextImportUi.cs" />
     <Compile Include="UndoImportManager.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -274,6 +274,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ImportWizard.resx">
       <DependentUpon>ImportWizard.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="MappingDetailsCtrl.resx">
       <DependentUpon>MappingDetailsCtrl.cs</DependentUpon>

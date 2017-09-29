@@ -242,13 +242,13 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="ImportTests\ImportStyleProxyTests.cs" />
-    <Compile Include="ImportTests\TeImportBtInterleaved.cs" />
-    <Compile Include="ImportTests\TeImportBtNonInterleaved.cs" />
-    <Compile Include="ImportTests\TeImportManagerTests.cs" />
-    <Compile Include="ImportTests\TeImportNoUi.cs" />
-    <Compile Include="ImportTests\TeImportParatext6Tests.cs" />
-    <Compile Include="ImportTests\TeImportTests.cs" />
-    <Compile Include="ImportTests\TeImportTestsBase.cs" />
+    <Compile Include="ImportTests\ParatextImportBtInterleaved.cs" />
+    <Compile Include="ImportTests\ParatextImportBtNonInterleaved.cs" />
+    <Compile Include="ImportTests\ParatextImportManagerTests.cs" />
+    <Compile Include="ImportTests\ParatextImportNoUi.cs" />
+    <Compile Include="ImportTests\ParatextImportParatext6Tests.cs" />
+    <Compile Include="ImportTests\ParatextImportTests.cs" />
+    <Compile Include="ImportTests\ParatextImportTestsBase.cs" />
     <Compile Include="MockScriptureProvider.cs" />
     <Compile Include="ScrPassageControlTests.cs">
       <SubType>UserControl</SubType>
@@ -256,7 +256,7 @@
     <Compile Include="SCTextEnumTests.cs" />
     <Compile Include="SegmentedBtMergeTests.cs" />
     <Compile Include="SFFileListBuilderTests.cs" />
-    <Compile Include="TeImportExportExtensionsTests.cs" />
+    <Compile Include="ParatextImportExtensionsTests.cs" />
     <Compile Include="VerseIteratorTests.cs" />
   </ItemGroup>
   <ItemGroup>

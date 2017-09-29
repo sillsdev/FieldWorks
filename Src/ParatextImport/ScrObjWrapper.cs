@@ -1,13 +1,6 @@
 // Copyright (c) 2004-2013 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ScrObjWrapper.cs
-// Responsibility: TE Team
-//
-// <remarks>
-// Implementation of ScrOjbWrapper.
-// </remarks>
 
 using System;
 using System.Collections.Generic;
@@ -24,7 +17,7 @@ namespace ParatextImport
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
-	/// This class exists to allow a single interface for the TeImporter to call to read the
+	/// This class exists to allow a single interface for the ParatextImporter to call to read the
 	/// scripture import data. Currently it can access the TESO for reading general standard
 	/// format files, and P6SO for reading Paratext 6 projects.
 	/// Certain functionality is normalized to what TE requires. E.g. this wrapper must

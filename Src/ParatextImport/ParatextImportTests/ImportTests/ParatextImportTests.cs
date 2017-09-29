@@ -23,10 +23,10 @@ namespace ParatextImport.ImportTests
 	#region DummyTeImporter
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
-	/// Dummy class for the <see cref="TeImporter"/> so we can test it.
+	/// Dummy class for the <see cref="ParatextImporter"/> so we can test it.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public class DummyTeImporter : TeSfmImporter
+	public class DummyParatextImporter : ParatextSfmImporter
 	{
 		/// <summary></summary>
 		public static ICmAnnotationDefn s_consultantNoteDefn = null;
@@ -41,10 +41,10 @@ namespace ParatextImport.ImportTests
 		/// Constructor to use when using an in-memory cache
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public DummyTeImporter(IScrImportSet settings, LcmTestBase testBase,
+		public DummyParatextImporter(IScrImportSet settings, LcmTestBase testBase,
 			LcmStyleSheet styleSheet) :
 			base(settings, testBase.Cache, styleSheet, new DummyUndoImportManager(testBase),
-				new TeImportNoUi())
+				new ParatextImportNoUi())
 		{
 		}
 		#endregion
@@ -254,7 +254,7 @@ namespace ParatextImport.ImportTests
 		#region Properties
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Exposes the <see cref="TeSfmImporter.m_importDomain"/> variable.
+		/// Exposes the <see cref="ParatextSfmImporter.m_importDomain"/> variable.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public ImportDomain CurrentImportDomain
@@ -273,7 +273,7 @@ namespace ParatextImport.ImportTests
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Exposes the <see cref="TeSfmImporter.m_CurrParaFootnotes"/> variable.
+		/// Exposes the <see cref="ParatextSfmImporter.m_CurrParaFootnotes"/> variable.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public List<FootnoteInfo> CurrParaFootnotes
@@ -287,7 +287,7 @@ namespace ParatextImport.ImportTests
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Exposes the <see cref="TeImporter.m_currSection"/> variable.
+		/// Exposes the <see cref="ParatextImporter.m_currSection"/> variable.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public IScrSection CurrentSection
@@ -306,7 +306,7 @@ namespace ParatextImport.ImportTests
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Exposes the <see cref="TeSfmImporter.GetVerseRefAsString"/> method.
+		/// Exposes the <see cref="ParatextSfmImporter.GetVerseRefAsString"/> method.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public new string GetVerseRefAsString(int wsBt)
@@ -318,7 +318,7 @@ namespace ParatextImport.ImportTests
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Exposes the <see cref="TeSfmImporter.m_settings"/> property.
+		/// Exposes the <see cref="ParatextSfmImporter.m_settings"/> property.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public IScrImportSet Settings
@@ -332,7 +332,7 @@ namespace ParatextImport.ImportTests
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Exposes the <see cref="TeImporter.m_nBookNumber"/> variable.
+		/// Exposes the <see cref="ParatextImporter.m_nBookNumber"/> variable.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public int BookNumber
@@ -351,7 +351,7 @@ namespace ParatextImport.ImportTests
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Exposes the <see cref="TeSfmImporter.m_nChapter"/> variable.
+		/// Exposes the <see cref="ParatextSfmImporter.m_nChapter"/> variable.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public int Chapter
@@ -434,7 +434,7 @@ namespace ParatextImport.ImportTests
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Exposes the <see cref="TeImporter.m_CurrFootnote"/> variable.
+		/// Exposes the <see cref="ParatextImporter.m_CurrFootnote"/> variable.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public IScrFootnote CurrentFootnote
@@ -463,7 +463,7 @@ namespace ParatextImport.ImportTests
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Exposes the <see cref="TeImporter.m_scrBook"/> variable.
+		/// Exposes the <see cref="ParatextImporter.m_scrBook"/> variable.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public IScrBook ScrBook
@@ -524,7 +524,7 @@ namespace ParatextImport.ImportTests
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Exposes the <see cref="TeSfmImporter.m_styleProxies"/> variable.
+		/// Exposes the <see cref="ParatextSfmImporter.m_styleProxies"/> variable.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public Dictionary<string, ImportStyleProxy> HtStyleProxy
@@ -538,7 +538,7 @@ namespace ParatextImport.ImportTests
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Exposes the <see cref="TeImporter.m_undoManager"/> variable.
+		/// Exposes the <see cref="ParatextImporter.m_undoManager"/> variable.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public UndoImportManager UndoInfo
@@ -552,7 +552,7 @@ namespace ParatextImport.ImportTests
 		}
 
 		/// <summary>
-		/// Exposes the <see cref="TeSfmImporter.m_fStreamLinedImport"/> variable.
+		/// Exposes the <see cref="ParatextSfmImporter.m_fStreamLinedImport"/> variable.
 		/// </summary>
 		public bool StreamLinedImport
 		{
@@ -703,7 +703,7 @@ namespace ParatextImport.ImportTests
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Exposes the <see cref="TeSfmImporter.Initialize"/> method
+		/// Exposes the <see cref="ParatextSfmImporter.Initialize"/> method
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public new void Initialize()
@@ -727,7 +727,7 @@ namespace ParatextImport.ImportTests
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Exposes the <see cref="TeSfmImporter.FindCorrespondingFootnote(string)"/> method
+		/// Exposes the <see cref="ParatextSfmImporter.FindCorrespondingFootnote(string)"/> method
 		/// </summary>
 		/// <param name="ws">The writing system of the current BT</param>
 		/// <param name="styleId">style of footnote to find</param>
@@ -744,7 +744,7 @@ namespace ParatextImport.ImportTests
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Exposes the <see cref="TeSfmImporter.ProcessSegment"/> method
+		/// Exposes the <see cref="ParatextSfmImporter.ProcessSegment"/> method
 		/// </summary>
 		/// <param name="sText">text to import</param>
 		/// <param name="sMarker">standard format marker</param>
@@ -760,7 +760,7 @@ namespace ParatextImport.ImportTests
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Exposes the <see cref="TeSfmImporter.FinalizeImport"/> method
+		/// Exposes the <see cref="ParatextSfmImporter.FinalizeImport"/> method
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public new void FinalizeImport()
@@ -772,7 +772,7 @@ namespace ParatextImport.ImportTests
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Exposes the <see cref="TeSfmImporter.AddTextToPara(string, ITsTextProps)"/> method
+		/// Exposes the <see cref="ParatextSfmImporter.AddTextToPara(string, ITsTextProps)"/> method
 		/// </summary>
 		/// <param name="sText">Text to be appended to the paragraph being built</param>
 		/// <param name="pttpProps">Properties (should contain only a named style) for the run
@@ -787,7 +787,7 @@ namespace ParatextImport.ImportTests
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Exposes the <see cref="TeSfmImporter.AddImportStyleProxyForMapping"/> method
+		/// Exposes the <see cref="ParatextSfmImporter.AddImportStyleProxyForMapping"/> method
 		/// </summary>
 		/// <param name="mapping">The mapping for which the proxy entry is to be created</param>
 		/// <param name="styleProxies">Dictionary to add the proxy to</param>
@@ -895,7 +895,7 @@ namespace ParatextImport.ImportTests
 	#region DummyScrObjWrapper
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
-	/// Dummy class for the <see cref="TeImporter"/> so we can test it.
+	/// Dummy class for the <see cref="ParatextImporter"/> so we can test it.
 	/// The tests that use the DummyTeImporter do not utilize a scr obj to read real
 	/// data files. We'll provide this dummy version of the ScrObjWrapper instead, to minimize
 	/// our overhead.
@@ -1071,14 +1071,14 @@ namespace ParatextImport.ImportTests
 	}
 	#endregion
 
-	#region TE Import Tests (in-memory cache)
+	#region Paratext Import Tests (in-memory cache)
 	/// ---------------------------------------------------------------------------------------
 	/// <summary>
-	/// TeImportTestInMemory tests TeImport using in-memory cache
+	/// ParatextImportTestInMemory tests ParatextImport using in-memory cache
 	/// </summary>
 	/// ---------------------------------------------------------------------------------------
 	[TestFixture]
-	public class TeImportTestInMemory : TeImportTestsBase
+	public class ParatextImportTestInMemory : ParatextImportTestsBase
 	{
 		#region Setup
 		/// ------------------------------------------------------------------------------------
@@ -1101,7 +1101,7 @@ namespace ParatextImport.ImportTests
 		#region Importer Individual Method Tests
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Test the <see cref="TeSfmImporter.AddImportStyleProxyForMapping"/> method.
+		/// Test the <see cref="ParatextSfmImporter.AddImportStyleProxyForMapping"/> method.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
@@ -1138,7 +1138,7 @@ namespace ParatextImport.ImportTests
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Test the <see cref="TeSfmImporter.AddImportStyleProxyForMapping"/> method.
+		/// Test the <see cref="ParatextSfmImporter.AddImportStyleProxyForMapping"/> method.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
@@ -1163,7 +1163,7 @@ namespace ParatextImport.ImportTests
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Test of the <see cref="TeSfmImporter.PrevRunIsVerseNumber"/> method.
+		/// Test of the <see cref="ParatextSfmImporter.PrevRunIsVerseNumber"/> method.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
@@ -1190,7 +1190,7 @@ namespace ParatextImport.ImportTests
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Test of the <see cref="TeSfmImporter.AddTextToPara(string, ITsTextProps)"/> method.
+		/// Test of the <see cref="ParatextSfmImporter.AddTextToPara(string, ITsTextProps)"/> method.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
@@ -1218,7 +1218,7 @@ namespace ParatextImport.ImportTests
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Test of the <see cref="TeSfmImporter.GetVerseRefAsString"/> method when Arabic
+		/// Test of the <see cref="ParatextSfmImporter.GetVerseRefAsString"/> method when Arabic
 		/// numerals are desired.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
@@ -1249,7 +1249,7 @@ namespace ParatextImport.ImportTests
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Test of the <see cref="TeSfmImporter.GetVerseRefAsString"/> method when script
+		/// Test of the <see cref="ParatextSfmImporter.GetVerseRefAsString"/> method when script
 		/// numerals are desired.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
@@ -1274,7 +1274,7 @@ namespace ParatextImport.ImportTests
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Test of the <see cref="TeSfmImporter.FindCorrespondingVernParaForSegment"/> method.
+		/// Test of the <see cref="ParatextSfmImporter.FindCorrespondingVernParaForSegment"/> method.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
@@ -1301,12 +1301,12 @@ namespace ParatextImport.ImportTests
 		public void RemoveControlCharactersTests()
 		{
 			string s = "abcd" + '\u001e';
-			string result = (string)ReflectionHelper.CallStaticMethod("ParatextImport.dll", "ParatextImport.TeSfmImporter", "RemoveControlCharacters",
+			string result = (string)ReflectionHelper.CallStaticMethod("ParatextImport.dll", "ParatextImport.ParatextSfmImporter", "RemoveControlCharacters",
 				new object[]{s});
 			Assert.AreEqual("abcd", result);
 
 			s = "abcd" + '\u0009';
-			result = (string)ReflectionHelper.CallStaticMethod("ParatextImport.dll", "ParatextImport.TeSfmImporter", "RemoveControlCharacters",
+			result = (string)ReflectionHelper.CallStaticMethod("ParatextImport.dll", "ParatextImport.ParatextSfmImporter", "RemoveControlCharacters",
 				new object[] { s });
 			Assert.AreEqual("abcd ", result);
 		}
@@ -5163,8 +5163,8 @@ namespace ParatextImport.ImportTests
 			// make sure that notes will get imported
 			m_importer.Settings.ImportAnnotations = true;
 			m_importer.Settings.AddFile("dummy.sfm", ImportDomain.Annotations,
-				"en", DummyTeImporter.s_consultantNoteDefn);
-			DummyTeImporter.SetUpMappings(m_importer.Settings);
+				"en", DummyParatextImporter.s_consultantNoteDefn);
+			DummyParatextImporter.SetUpMappings(m_importer.Settings);
 			m_importer.Initialize();
 
 			// ************** process Scripture file *********************
@@ -5198,7 +5198,7 @@ namespace ParatextImport.ImportTests
 
 			m_importer.CurrentImportDomain = ImportDomain.Annotations;
 			m_importer.DummySoWrapper.m_CurrentWs = m_wsAnal;
-			m_importer.DummySoWrapper.SetCurrentAnnotationType(DummyTeImporter.s_consultantNoteDefn.Hvo);
+			m_importer.DummySoWrapper.SetCurrentAnnotationType(DummyParatextImporter.s_consultantNoteDefn.Hvo);
 
 			m_importer.TextSegment.FirstReference = new BCVRef(2, 0, 0);
 			m_importer.TextSegment.LastReference = new BCVRef(2, 0, 0);
@@ -5246,8 +5246,8 @@ namespace ParatextImport.ImportTests
 			m_importer.Settings.ImportBookIntros = false;
 			m_importer.Settings.ImportAnnotations = true;
 			m_importer.Settings.AddFile("dummy.sfm", ImportDomain.Annotations,
-				"en", DummyTeImporter.s_consultantNoteDefn);
-			DummyTeImporter.SetUpMappings(m_importer.Settings);
+				"en", DummyParatextImporter.s_consultantNoteDefn);
+			DummyParatextImporter.SetUpMappings(m_importer.Settings);
 			m_importer.Initialize();
 
 			// ************** process (skip) Scripture file *********************
@@ -5274,7 +5274,7 @@ namespace ParatextImport.ImportTests
 
 			m_importer.CurrentImportDomain = ImportDomain.Annotations;
 			m_importer.DummySoWrapper.m_CurrentWs = m_wsAnal;
-			m_importer.DummySoWrapper.SetCurrentAnnotationType(DummyTeImporter.s_consultantNoteDefn.Hvo);
+			m_importer.DummySoWrapper.SetCurrentAnnotationType(DummyParatextImporter.s_consultantNoteDefn.Hvo);
 
 			m_importer.TextSegment.FirstReference = new BCVRef(2, 0, 0);
 			m_importer.TextSegment.LastReference = new BCVRef(2, 0, 0);
@@ -5330,14 +5330,14 @@ namespace ParatextImport.ImportTests
 			m_importer.Settings.ImportBackTranslation = true;
 			m_importer.Settings.ImportAnnotations = true;
 			m_importer.Settings.AddFile("dummy.sfm", ImportDomain.Annotations,
-				"en", DummyTeImporter.s_consultantNoteDefn);
-			DummyTeImporter.SetUpMappings(m_importer.Settings);
+				"en", DummyParatextImporter.s_consultantNoteDefn);
+			DummyParatextImporter.SetUpMappings(m_importer.Settings);
 			m_importer.Initialize();
 
 			// ************** process Back Translation file ***************
 			m_importer.CurrentImportDomain = ImportDomain.BackTrans;
 			m_importer.DummySoWrapper.m_CurrentWs = m_wsAnal;
-			m_importer.DummySoWrapper.SetCurrentAnnotationType(DummyTeImporter.s_consultantNoteDefn.Hvo);
+			m_importer.DummySoWrapper.SetCurrentAnnotationType(DummyParatextImporter.s_consultantNoteDefn.Hvo);
 
 			// ************** process a \id segment *********************
 			m_importer.TextSegment.FirstReference = new BCVRef(1, 0, 0);

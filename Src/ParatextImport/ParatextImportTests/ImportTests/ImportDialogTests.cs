@@ -1,9 +1,7 @@
 // Copyright (c) 2003-2013 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ImportDialogTests.cs
-// --------------------------------------------------------------------------------------------
+
 using NUnit.Framework;
 using SIL.LCModel.Core.Scripture;
 using SIL.FieldWorks.Common.FwUtils;

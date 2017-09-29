@@ -7,13 +7,13 @@ using SIL.LCModel.Core.Scripture;
 
 namespace ParatextImport.ImportTests
 {
-	#region TeImportNoUi
+	#region ParatextImportNoUi
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// Can be used instead of TeImportUi, but doesn't display any UI elements.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public class TeImportNoUi : TeImportUi
+	public class ParatextImportNoUi : ParatextImportUi
 	{
 		private int m_Maximum;
 		private int m_Current;
@@ -23,7 +23,7 @@ namespace ParatextImport.ImportTests
 		/// Initializes a new instance of the <see cref="T:TeImportNoUi"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public TeImportNoUi() : base(null, null)
+		public ParatextImportNoUi() : base(null, null)
 		{
 		}
 
