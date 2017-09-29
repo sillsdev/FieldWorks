@@ -315,9 +315,9 @@ namespace FwBuildTasks
 						writer.Write("\t<Target Name=\"{0}\"", project);
 						var bldr = new StringBuilder();
 						bldr.Append("Initialize"); // ensure the output directories and version files exist.
-						if (project == "TeImportExportTests" || project == "FwCoreDlgsTests")
+						if (project == "ParatextImportTests" || project == "FwCoreDlgsTests")
 						{
-							// The TeImportExportTests and FwCoreDlgsTests require that the ScrChecks.dll is in DistFiles/Editorial Checks.
+							// The ParatextImportTests and FwCoreDlgsTests require that the ScrChecks.dll be in DistFiles/Editorial Checks.
 							// We don't discover that dependency because it's not a reference (LT-13777).
 							bldr.Append(";ScrChecks");
 						}
@@ -407,8 +407,6 @@ namespace FwBuildTasks
 						// These projects weren't built by nant normally.
 						if (project == "FxtExe" ||
 							project.EndsWith("Tests") || // These are tests.
-							project == "TestUtils" || // This is a test.
-							project == "TestManager" || // This is a test.
 							project == "ProjectUnpacker") // This is only used in tests.
 						{
 							continue;

@@ -5,7 +5,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using NUnit.Framework;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Utils;
@@ -97,46 +96,7 @@ namespace SIL.FieldWorks.TE
 		new public void DetectDifferences(IThreadedProgress progressDlg)
 		{
 			base.DetectDifferences(new DummyProgressDlg());
-
-			//PrintDiffSummary();
 		}
-
-#if false // cs 169
-		/// --------------------------------------------------------------------------------
-		/// <summary>
-		/// Print a summary of all differences.
-		/// </summary>
-		/// --------------------------------------------------------------------------------
-		private void PrintDiffSummary()
-		{
-			StackTrace st = new StackTrace();
-			if (st.FrameCount > 1)
-				Debug.WriteLine(st.GetFrame(1).GetMethod()); // Outputs name of test.
-			foreach (int startRef in DiffHashTable.Keys)
-			{
-				List<Difference> diffsAtRef = DiffHashTable[startRef];
-
-				Debug.WriteLine("Differences at " + startRef);
-				foreach (Difference diff in diffsAtRef)
-				{
-					Debug.WriteLine("  -" + diff.DiffType);
-					if (diff.SubDiffsForParas != null)
-					{
-						foreach (Difference subDiff in diff.SubDiffsForParas)
-							Debug.Write("      * " + subDiff.DiffType + " ");
-						Debug.WriteLine(" ");
-					}
-
-					if ((diff.DiffType & DifferenceType.ParagraphSplitInCurrent) != 0)
-					{
-						Debug.WriteLineIf(CurrentHasContent(diff) && !RevisionHasContent(diff),
-							"  ParaSplit diff would be considered a data loss, if reverted.");
-					}
-				}
-			}
-			Debug.WriteLine(" ");
-		}
-#endif
 
 		/// --------------------------------------------------------------------------------
 		/// <summary>

@@ -5,7 +5,7 @@
 using System.Reflection;
 using System.Runtime.InteropServices;
 
-[assembly: AssemblyTitle("TeImportExport")]
+[assembly: AssemblyTitle("ParatextImport")]
 
 [assembly: ComVisible(false)]
-[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("TeImportExportTests")]
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("ParatextImportTests")]

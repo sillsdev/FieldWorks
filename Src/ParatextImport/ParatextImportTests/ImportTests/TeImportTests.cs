@@ -1300,12 +1300,12 @@ namespace SIL.FieldWorks.TE.ImportTests
 		public void RemoveControlCharactersTests()
 		{
 			string s = "abcd" + '\u001e';
-			string result = (string)ReflectionHelper.CallStaticMethod("TeImportExport.dll", "SIL.FieldWorks.TE.TeSfmImporter", "RemoveControlCharacters",
+			string result = (string)ReflectionHelper.CallStaticMethod("ParatextImport.dll", "SIL.FieldWorks.TE.TeSfmImporter", "RemoveControlCharacters",
 				new object[]{s});
 			Assert.AreEqual("abcd", result);
 
 			s = "abcd" + '\u0009';
-			result = (string)ReflectionHelper.CallStaticMethod("TeImportExport.dll", "SIL.FieldWorks.TE.TeSfmImporter", "RemoveControlCharacters",
+			result = (string)ReflectionHelper.CallStaticMethod("ParatextImport.dll", "SIL.FieldWorks.TE.TeSfmImporter", "RemoveControlCharacters",
 				new object[] { s });
 			Assert.AreEqual("abcd ", result);
 		}

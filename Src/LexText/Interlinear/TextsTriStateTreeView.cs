@@ -626,7 +626,7 @@ namespace SIL.FieldWorks.IText
 				return true;
 			});
 
-			if (haveSomethingToImport && ReflectionHelper.GetBoolResult(ReflectionHelper.GetType("TeImportExport.dll",
+			if (haveSomethingToImport && ReflectionHelper.GetBoolResult(ReflectionHelper.GetType("ParatextImport.dll",
 				"SIL.FieldWorks.TE.TeImportManager"), "ImportParatext", owningForm, Cache, m_scriptureStylesheet,
 				    PropertyTable.GetValue<IApp>("App")))
 			{
