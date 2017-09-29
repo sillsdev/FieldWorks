@@ -4,7 +4,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using SIL.LCModel;
 using System.Diagnostics;
 using SIL.LCModel.Utils;
@@ -2354,25 +2353,4 @@ namespace ParatextImport
 		}
 	}
 	#endregion
-
-#if DEBUG
-	#region ClusterListUtils class
-	internal static class ClusterListUtils
-	{
-		public static void AssertValid(this List<OverlapInfo> items)
-		{
-			if (items.Count <= 1)
-				return;
-
-			HashSet<IScrTxtPara> paras = new HashSet<IScrTxtPara>();
-			foreach (IScrTxtPara para in items.Select(info => (IScrTxtPara)info.myObj))
-			{
-				if (paras.Contains(para))
-					Debug.Fail("A ParaStructure cluster must have a different paragraph in each ScrVerse");
-				paras.Add(para);
-			}
-		}
-	}
-	#endregion
-#endif
 }

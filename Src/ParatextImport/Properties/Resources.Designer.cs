@@ -61,26 +61,6 @@ namespace ParatextImport.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap DropDownArrowNarrow {
-            get {
-                object obj = ResourceManager.GetObject("DropDownArrowNarrow", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap DropDownArrowWide {
-            get {
-                object obj = ResourceManager.GetObject("DropDownArrowWide", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Updating {0}....
         /// </summary>
         internal static string kstidAutoAcceptMergeProgress {
@@ -104,15 +84,6 @@ namespace ParatextImport.Properties {
         internal static string kstidAutoMerging {
             get {
                 return ResourceManager.GetString("kstidAutoMerging", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to &lt;Based on Context&gt;.
-        /// </summary>
-        internal static string kstidBasedOnContext {
-            get {
-                return ResourceManager.GetString("kstidBasedOnContext", resourceCulture);
             }
         }
         
@@ -141,15 +112,6 @@ namespace ParatextImport.Properties {
         internal static string kstidBTTextNotPartOfParaDetails {
             get {
                 return ResourceManager.GetString("kstidBTTextNotPartOfParaDetails", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Chapter Label (property).
-        /// </summary>
-        internal static string kstidChapterLabelStyle {
-            get {
-                return ResourceManager.GetString("kstidChapterLabelStyle", resourceCulture);
             }
         }
         
@@ -243,96 +205,6 @@ namespace ParatextImport.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Data excluded from import.
-        /// </summary>
-        internal static string kstidExcludedData {
-            get {
-                return ResourceManager.GetString("kstidExcludedData", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Figure - Caption (property).
-        /// </summary>
-        internal static string kstidFigureCaptionStyle {
-            get {
-                return ResourceManager.GetString("kstidFigureCaptionStyle", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Figure - Copyright (property).
-        /// </summary>
-        internal static string kstidFigureCopyrightStyle {
-            get {
-                return ResourceManager.GetString("kstidFigureCopyrightStyle", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Figure - Description (property).
-        /// </summary>
-        internal static string kstidFigureDescriptionStyle {
-            get {
-                return ResourceManager.GetString("kstidFigureDescriptionStyle", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Figure - File Name (property)&lt;/.
-        /// </summary>
-        internal static string kstidFigureFilenameStyle {
-            get {
-                return ResourceManager.GetString("kstidFigureFilenameStyle", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Figure - Layout Position (property)&lt;/.
-        /// </summary>
-        internal static string kstidFigureLayoutPositionStyle {
-            get {
-                return ResourceManager.GetString("kstidFigureLayoutPositionStyle", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Figure - Reference Range (property).
-        /// </summary>
-        internal static string kstidFigureRefRangeStyle {
-            get {
-                return ResourceManager.GetString("kstidFigureRefRangeStyle", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Figure - Scale Factor (property).
-        /// </summary>
-        internal static string kstidFigureScaleStyle {
-            get {
-                return ResourceManager.GetString("kstidFigureScaleStyle", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Figure - USFM Parameters (property).
-        /// </summary>
-        internal static string kstidFigureStyle {
-            get {
-                return ResourceManager.GetString("kstidFigureStyle", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to &lt;file missing&gt;.
-        /// </summary>
-        internal static string kstidFileMissing {
-            get {
-                return ResourceManager.GetString("kstidFileMissing", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to No differences found in vernacular text (back translation not compared).
         /// </summary>
         internal static string kstidIdentical {
@@ -351,51 +223,11 @@ namespace ParatextImport.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to There is an invalid character in the Beginning Marker.
-        ///The valid characters are a-z, A-Z, 0-9 and some punctuation.
-        ///Space is a valid character but only at the end of the marker..
-        /// </summary>
-        internal static string kstidImportBeginMarkerLowerANSI {
-            get {
-                return ResourceManager.GetString("kstidImportBeginMarkerLowerANSI", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to the imported version.
         /// </summary>
         internal static string kstidImported {
             get {
                 return ResourceManager.GetString("kstidImported", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to There is an invalid character in the Ending Marker.
-        ///The valid characters are a-z, A-Z, 0-9 and some punctuation.
-        ///Space is a valid character but only at the end of the marker..
-        /// </summary>
-        internal static string kstidImportEndMarkerLowerANSI {
-            get {
-                return ResourceManager.GetString("kstidImportEndMarkerLowerANSI", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The file &quot;{0}&quot; does not contain any valid books..
-        /// </summary>
-        internal static string kstidImportFileNoBooks {
-            get {
-                return ResourceManager.GetString("kstidImportFileNoBooks", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to No files are available for import..
-        /// </summary>
-        internal static string kstidImportFilesUnavailable {
-            get {
-                return ResourceManager.GetString("kstidImportFilesUnavailable", resourceCulture);
             }
         }
         
@@ -445,42 +277,6 @@ namespace ParatextImport.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to A Beginning Marker is required..
-        /// </summary>
-        internal static string kstidImportMappingsBeginMarkerReqd {
-            get {
-                return ResourceManager.GetString("kstidImportMappingsBeginMarkerReqd", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to A mapping with Beginning Marker &quot;{0}&quot; already exists. Specify a different Beginning Marker..
-        /// </summary>
-        internal static string kstidImportMappingsDuplicateWarning {
-            get {
-                return ResourceManager.GetString("kstidImportMappingsDuplicateWarning", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to An Ending Marker is required..
-        /// </summary>
-        internal static string kstidImportMappingsEndMarkerReqd {
-            get {
-                return ResourceManager.GetString("kstidImportMappingsEndMarkerReqd", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to A space is only allowed at the end of a marker. Revise the marker &quot;{0}&quot;..
-        /// </summary>
-        internal static string kstidImportMappingsNoSpace {
-            get {
-                return ResourceManager.GetString("kstidImportMappingsNoSpace", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to No Standard Format files were found for the import range {0}-{1}.
         /// </summary>
         internal static string kstidImportNoBookError {
@@ -495,95 +291,6 @@ namespace ParatextImport.Properties {
         internal static string kstidImportProgressCaption {
             get {
                 return ResourceManager.GetString("kstidImportProgressCaption", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The importer has now been set up to import Scripture data into the {0} project.
-        ///
-        ///You may return to this procedure at any time and adjust these settings, through the Source button in the File/Import dialog.
-        ///
-        ///We recommend you proceed as follows:
-        ///1. Import a small portion of your data,
-        ///2. Look at how it appears in the Translation Editor,
-        ///3. If necessary, adjust these settings and re-import until it looks correct,
-        ///4. Finally, import all of your data..
-        /// </summary>
-        internal static string kstidImportWizFinish {
-            get {
-                return ResourceManager.GetString("kstidImportWizFinish", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Back Translation.
-        /// </summary>
-        internal static string kstidImportWizMappingDetailBackTrans {
-            get {
-                return ResourceManager.GetString("kstidImportWizMappingDetailBackTrans", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Footnote Back Translation.
-        /// </summary>
-        internal static string kstidImportWizMappingDetailBTFootnotes {
-            get {
-                return ResourceManager.GetString("kstidImportWizMappingDetailBTFootnotes", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Footnotes.
-        /// </summary>
-        internal static string kstidImportWizMappingDetailFootnotes {
-            get {
-                return ResourceManager.GetString("kstidImportWizMappingDetailFootnotes", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Annotations.
-        /// </summary>
-        internal static string kstidImportWizMappingDetailNotes {
-            get {
-                return ResourceManager.GetString("kstidImportWizMappingDetailNotes", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to No Paratext projects were found. This could mean one of the following:
-        ///1)	There is no Paratext content on this computer, so there is nothing to import.
-        ///2)	Paratext (version 6 or later) is not installed.
-        ///	Install Paratext, and then restore your Paratext files to the My Paratext Projects folder as needed.
-        ///3)	Paratext content files exist, but the Paratext project files have been lost.
-        ///	Either re-create the project files using Paratext or import the files as Other Standard Format..
-        /// </summary>
-        internal static string kstidImportWizNoParatextProjFound {
-            get {
-                return ResourceManager.GetString("kstidImportWizNoParatextProjFound", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to (none).
-        /// </summary>
-        internal static string kstidImportWizNoProjType {
-            get {
-                return ResourceManager.GetString("kstidImportWizNoProjType", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to This Standard Format Import Setup procedure will help you supply some settings needed to be able to import your Standard Format Scripture data.
-        ///
-        ///You only need to do this procedure once for the {0} project.
-        ///
-        ///To begin, click Next..
-        /// </summary>
-        internal static string kstidImportWizOverview {
-            get {
-                return ResourceManager.GetString("kstidImportWizOverview", resourceCulture);
             }
         }
         
@@ -615,24 +322,6 @@ namespace ParatextImport.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} is an invalid Scripture reference..
-        /// </summary>
-        internal static string kstidInvalidScrRefEntered {
-            get {
-                return ResourceManager.GetString("kstidInvalidScrRefEntered", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Loading Biblical Terms into Project.
-        /// </summary>
-        internal static string kstidLoadKeyTermsInDBCaption {
-            get {
-                return ResourceManager.GetString("kstidLoadKeyTermsInDBCaption", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Calculating differences for {0}....
         /// </summary>
         internal static string kstidMergeProgress {
@@ -651,29 +340,11 @@ namespace ParatextImport.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to ???.
-        /// </summary>
-        internal static string kstidNoBooks {
-            get {
-                return ResourceManager.GetString("kstidNoBooks", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to All differences reviewed.
         /// </summary>
         internal static string kstidNoDifferencesLeft {
             get {
                 return ResourceManager.GetString("kstidNoDifferencesLeft", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Add Standard Format File.
-        /// </summary>
-        internal static string kstidOFDTitle {
-            get {
-                return ResourceManager.GetString("kstidOFDTitle", resourceCulture);
             }
         }
         
@@ -786,57 +457,11 @@ namespace ParatextImport.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to All Styles.
-        /// </summary>
-        internal static string kstidStyleFilterAllStyles {
-            get {
-                return ResourceManager.GetString("kstidStyleFilterAllStyles", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Basic Styles.
-        /// </summary>
-        internal static string kstidStyleFilterBasic {
-            get {
-                return ResourceManager.GetString("kstidStyleFilterBasic", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Custom List.
-        /// </summary>
-        internal static string kstidStyleFilterCustomList {
-            get {
-                return ResourceManager.GetString("kstidStyleFilterCustomList", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Title Short (property).
-        /// </summary>
-        internal static string kstidTitleShortStyle {
-            get {
-                return ResourceManager.GetString("kstidTitleShortStyle", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to ?.
         /// </summary>
         internal static string kstidUnknown {
             get {
                 return ResourceManager.GetString("kstidUnknown", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The file &quot;{0}&quot; contains an unsupported encoding of {1}.
-        ///Please convert this file manually and also contact the developers..
-        /// </summary>
-        internal static string kstidUnsupportedEncoding {
-            get {
-                return ResourceManager.GetString("kstidUnsupportedEncoding", resourceCulture);
             }
         }
     }

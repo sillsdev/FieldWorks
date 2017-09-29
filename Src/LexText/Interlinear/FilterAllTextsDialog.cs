@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using SIL.FieldWorks.Common.Controls;
 using SIL.LCModel;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Resources;
 using XCore;
 
@@ -55,27 +56,27 @@ namespace SIL.FieldWorks.IText
 		/// <summary>
 		/// Initializes a new instance of the FilterAllTextsDialog class.
 		/// </summary>
-		/// <param name="propertyTable"></param>
+		/// <param name="app"></param>
 		/// <param name="cache">The cache.</param>
 		/// <param name="objList">A list of objects (hvos) to check as an array</param>
 		/// <param name="helpTopicProvider">The help topic provider.</param>
 		/// ------------------------------------------------------------------------------------
-		protected FilterAllTextsDialog(PropertyTable propertyTable, LcmCache cache, IStText[] objList, IHelpTopicProvider helpTopicProvider) : this()
+		protected FilterAllTextsDialog(IApp app, LcmCache cache, IStText[] objList, IHelpTopicProvider helpTopicProvider) : this()
 		{
-			if (propertyTable == null)
-				throw new ArgumentNullException(nameof(propertyTable));
+			if (app == null)
+				throw new ArgumentNullException(nameof(app));
 			if (cache == null)
-				throw new ArgumentNullException("cache");
+				throw new ArgumentNullException(nameof(cache));
 			if (objList == null)
-				throw new ArgumentNullException("bookList");
+				throw new ArgumentNullException(nameof(objList));
 
-			m_treeTexts.PropertyTable = propertyTable;
+			m_treeTexts.App = app;
 			m_treeTexts.Cache = cache;
 			m_cache = cache;
 			m_objList = objList;
 			m_helpTopicProvider = helpTopicProvider;
 			m_treeTexts.AfterCheck += OnCheckedChanged;
-			AccessibleName = "FilterAllTextsDialog";
+			AccessibleName = @"FilterAllTextsDialog";
 		}
 
 		/// <summary/>

@@ -140,33 +140,6 @@ namespace SIL.FieldWorks.Common.Controls {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Step 1.
-        /// </summary>
-        internal static string kstidStep1 {
-            get {
-                return ResourceManager.GetString("kstidStep1", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Step 2.
-        /// </summary>
-        internal static string kstidStep2 {
-            get {
-                return ResourceManager.GetString("kstidStep2", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Step 3.
-        /// </summary>
-        internal static string kstidStep3 {
-            get {
-                return ResourceManager.GetString("kstidStep3", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Fi&amp;nish.
         /// </summary>
         internal static string kstidWizFinishButtonText {

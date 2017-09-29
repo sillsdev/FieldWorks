@@ -149,7 +149,7 @@ namespace SIL.FieldWorks.IText
 			var interestingTextsList = GetInterestingTextList();
 			var interestingTexts = interestingTextsList.InterestingTexts.ToArray();
 
-			using (var dlg = new FilterTextsDialog(m_propertyTable, Cache, interestingTexts, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
+			using (var dlg = new FilterTextsDialog(m_propertyTable.GetValue<IApp>("App"), Cache, interestingTexts, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
 			{
 				if (dlg.ShowDialog(m_propertyTable.GetValue<Form>("window")) == DialogResult.OK)
 				{

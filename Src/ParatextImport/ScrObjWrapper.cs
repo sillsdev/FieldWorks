@@ -394,10 +394,7 @@ namespace ParatextImport
 		/// </summary>
 		/// <exception cref="NotSupportedException">If project is not a support type</exception>
 		/// ------------------------------------------------------------------------------------
-		public List<int> BooksPresent
-		{
-			get { return m_settings.BooksForProject(); }
-		}
+		public List<int> BooksPresent => m_settings.BooksForProject();
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -406,10 +403,7 @@ namespace ParatextImport
 		/// </summary>
 		/// <exception cref="NotSupportedException">If project is not a support type</exception>
 		/// ------------------------------------------------------------------------------------
-		public bool HasNonInterleavedBT
-		{
-			get { return m_settings.HasNonInterleavedBT; }
-		}
+		public bool HasNonInterleavedBT => m_settings.HasNonInterleavedBT;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -418,10 +412,7 @@ namespace ParatextImport
 		/// </summary>
 		/// <exception cref="NotSupportedException">If project is not a support type</exception>
 		/// ------------------------------------------------------------------------------------
-		public bool HasNonInterleavedNotes
-		{
-			get { return m_settings.HasNonInterleavedNotes; }
-		}
+		public bool HasNonInterleavedNotes => m_settings.HasNonInterleavedNotes;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

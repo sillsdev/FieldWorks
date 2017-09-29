@@ -367,19 +367,14 @@ namespace ParatextImport.ImportTests
 		private HashSet<int> m_originalDrafts;
 		internal int m_cDisplayImportedBooksDlgCalled;
 		private bool m_fSimulateAcceptAllBooks;
-		//private bool m_fSimulateDeleteAllBooks = false;
 		#endregion
 
 		#region Constructor
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="DummyParatextImportManager"/> class.
 		/// </summary>
-		/// <param name="cache">The cache.</param>
-		/// <param name="styleSheet">The style sheet.</param>
-		/// ------------------------------------------------------------------------------------
-		public DummyParatextImportManager(LcmCache cache, LcmStyleSheet styleSheet) :
-			base(cache, styleSheet, null, false)
+		public DummyParatextImportManager(LcmCache cache, IScrImportSet importSettings, LcmStyleSheet styleSheet) :
+			base(null, cache, importSettings, styleSheet, null)
 		{
 			m_scr = cache.LangProject.TranslatedScriptureOA;
 			ResetOriginalDrafts();
@@ -397,18 +392,13 @@ namespace ParatextImport.ImportTests
 			m_originalDrafts = new HashSet<int>(m_scr.ArchivedDraftsOC.ToHvoArray());
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Import scripture and embed it in a Undo task so that it is undoable.
-		/// Simulates TeImportManager.DoImport()
+		/// Simulates ParatextImportManager.DoImport()
 		/// </summary>
-		/// <param name="importSettings">Import settings</param>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
-		public void CallImportWithUndoTask(IScrImportSet importSettings)
+		public void CallImportWithUndoTask()
 		{
-			ScrReference firstImported;
-			firstImported = ImportWithUndoTask(importSettings, false, string.Empty);
+			var firstImported = ImportWithUndoTask(false, string.Empty);
 			CompleteImport(firstImported);
 		}
 
@@ -441,20 +431,8 @@ namespace ParatextImport.ImportTests
 			{
 				// This is a kludgy way to get the new saved version since CallImportWithUndoTask
 				// does not save it.
-
 				return new HashSet<int>(m_scr.ArchivedDraftsOC.ToHvoArray().Except(m_originalDrafts));
 			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Exposes the undo manager for testing.
-		/// </summary>
-		/// <value>T.</value>
-		/// ------------------------------------------------------------------------------------
-		public new UndoImportManager UndoManager
-		{
-			get { return base.UndoManager; }
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -522,15 +500,11 @@ namespace ParatextImport.ImportTests
 		#endregion
 
 		#region Constructor
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="DummyParatextImportManagerWithMockImporter"/> class.
 		/// </summary>
-		/// <param name="cache">The cache.</param>
-		/// <param name="styleSheet">The style sheet.</param>
-		/// ------------------------------------------------------------------------------------
-		public DummyParatextImportManagerWithMockImporter(LcmCache cache, LcmStyleSheet styleSheet) :
-			base(cache, styleSheet)
+		public DummyParatextImportManagerWithMockImporter(LcmCache cache, IScrImportSet importSettings, LcmStyleSheet styleSheet) :
+			base(cache, importSettings, styleSheet)
 		{
 		}
 		#endregion
@@ -541,31 +515,25 @@ namespace ParatextImport.ImportTests
 		/// Import scripture and embed it in a Undo task so that it is undoable.
 		/// Simulates TeImportManager.DoImport()
 		/// </summary>
-		/// <param name="importSettings">Import settings</param>
 		/// <param name="segmentList">The segment list.</param>
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
-		internal void CallImportWithUndoTask(IScrImportSet importSettings,
-			List<SegmentInfo> segmentList)
+		internal void CallImportWithUndoTask(List<SegmentInfo> segmentList)
 		{
 			m_segmentList = segmentList;
-			base.CallImportWithUndoTask(importSettings);
+			CallImportWithUndoTask();
 		}
 
 		/// <summary>
 		/// Imports using the MockTeImporter with the specified import settings.
 		/// </summary>
-		/// <param name="importSettings">The import settings.</param>
-		/// <param name="undoManager">The undo manager.</param>
 		/// <param name="importUi">The import UI.</param>
 		/// <returns>
 		/// The Scripture reference of the first thing imported
 		/// </returns>
-		protected override ScrReference Import(IScrImportSet importSettings, UndoImportManager undoManager,
-			ParatextImportUi importUi)
+		protected override ScrReference Import(ParatextImportUi importUi)
 		{
-			MockParatextImporter.Import(importSettings, Cache, StyleSheet,
-				undoManager, importUi, m_segmentList);
+			MockParatextImporter.Import(m_importSettings, Cache, StyleSheet, m_undoImportManager, importUi, m_segmentList);
 			return ScrReference.Empty;
 		}
 
@@ -631,7 +599,7 @@ namespace ParatextImport.ImportTests
 			m_settings.ImportBookIntros = true;
 			m_settings.ImportAnnotations = false;
 
-			m_importMgr = new DummyParatextImportManagerWithMockImporter(Cache, m_styleSheet);
+			m_importMgr = new DummyParatextImportManagerWithMockImporter(Cache, m_settings, m_styleSheet);
 			Cache.ServiceLocator.GetInstance<IActionHandler>().EndUndoTask();
 		}
 
@@ -688,7 +656,7 @@ namespace ParatextImport.ImportTests
 			al.Add(new SegmentInfo(@"\rem", "This annotation should get deleted (TE-4535)", ImportDomain.Main, new BCVRef(1, 0, 0)));
 			al.Add(new SegmentInfo(@"\mt", "Geneseo", ImportDomain.Main, new BCVRef(1, 0, 0)));
 
-			m_importMgr.CallImportWithUndoTask(m_settings, al);
+			m_importMgr.CallImportWithUndoTask(al);
 
 			Assert.AreEqual(0, m_importMgr.NewSavedVersions.Count, "No new ScrDrafts should have been created");
 			Assert.AreEqual(origActCount, Cache.ActionHandlerAccessor.UndoableSequenceCount,
@@ -710,80 +678,38 @@ namespace ParatextImport.ImportTests
 		[Category("DesktopRequired")]
 		public void CancelDiscardsNewBook_AfterImportOfOneExistingBook()
 		{
-			int origActCount = Cache.ActionHandlerAccessor.UndoableSequenceCount;
+			var origActCount = Cache.ActionHandlerAccessor.UndoableSequenceCount;
 
-			IScrBook jude = m_scr.FindBook(65);
+			var jude = m_scr.FindBook(65);
 			Assert.IsNotNull(jude, "This test is invalid if Jude does not exist in test DB.");
 			Assert.IsNull(m_scr.FindBook(66), "This test is invalid if Revelation exists in test DB.");
 
-			int hvoJudeOrig = jude.Hvo;
-			int cBooksOrig = m_scr.ScriptureBooksOS.Count;
+			var hvoJudeOrig = jude.Hvo;
+			var cBooksOrig = m_scr.ScriptureBooksOS.Count;
 
-			List<SegmentInfo> al = new List<SegmentInfo>(2);
-			// process a \id segment to import Jude (an existing book)
-			al.Add(new SegmentInfo(@"\id", "", ImportDomain.Main, new BCVRef(65, 0, 0)));
-			// process a \id segment to import Rev (a non-existing book)
-			al.Add(new SegmentInfo(@"\id", "", ImportDomain.Main, new BCVRef(66, 0, 0)));
+			var al = new List<SegmentInfo>(2)
+			{
+				// process a \id segment to import Jude (an existing book)
+				new SegmentInfo(@"\id", "", ImportDomain.Main, new BCVRef(65, 0, 0)),
+				// process a \id segment to import Rev (a non-existing book)
+				new SegmentInfo(@"\id", "", ImportDomain.Main, new BCVRef(66, 0, 0))
+			};
 			m_importMgr.SimulateAcceptAllBooks = true;
-			m_importMgr.CallImportWithUndoTask(m_settings, al);
+			m_importMgr.CallImportWithUndoTask(al);
 
-			Assert.AreEqual(origActCount + 1, Cache.ActionHandlerAccessor.UndoableSequenceCount,
-				"Should have 1 extra undo sequence (import of JUD) after Undo cancels incomplete book");
+			Assert.AreEqual(origActCount + 1, Cache.ActionHandlerAccessor.UndoableSequenceCount, "Should have 1 extra undo sequence (import of JUD) after Undo cancels incomplete book");
 			Assert.AreEqual(cBooksOrig, m_scr.ScriptureBooksOS.Count);
-			IScrBook curJude = m_scr.FindBook(65);
+			var curJude = m_scr.FindBook(65);
 			Assert.AreNotEqual(hvoJudeOrig, curJude.Hvo, "The original Jude should have been overwritten.");
 			Assert.AreEqual(curJude.Hvo, m_scr.ScriptureBooksOS.ToHvoArray()[1]);
 			Assert.IsNull(m_scr.FindBook(66), "Partially-imported Revelation should have been discarded.");
-			Assert.AreEqual(2, m_importMgr.NewSavedVersions.Count, "We should have an imported version and a backup saved version.");
-			IScrDraft newSv = m_importMgr.UndoManager.ImportedVersion;
-			Assert.AreEqual(1, newSv.BooksOS.Count, "Only one new book should have survived");
-			IScrBook newJude = newSv.BooksOS[0];
-			Assert.AreEqual(65, newJude.CanonicalNum);
-			Assert.AreEqual(ScrDraftType.ImportedVersion, newSv.Type);
+			Assert.AreEqual(1, m_importMgr.NewSavedVersions.Count, "We should have an imported version.");
+			Assert.IsNull(m_importMgr.UndoManager.ImportedVersion);
 			Assert.IsNotNull(m_importMgr.UndoManager.BackupVersion);
 			Assert.AreEqual(1, m_importMgr.UndoManager.BackupVersion.BooksOS.Count);
 			Assert.AreEqual(1, m_importMgr.m_cDisplayImportedBooksDlgCalled);
 		}
 		#endregion
-
-		//#region Tests of user pressing Delete in Imported Books dialog
-		///// ------------------------------------------------------------------------------------
-		///// <summary>
-		///// Test that importing a single (existing) book and then choosing Delete in the
-		///// Imported Books dialog will remove the Undo Import action, since the next result is
-		///// that no action will have been taken.
-		///// </summary>
-		///// <remarks>Jira number is TE-7489</remarks>
-		///// ------------------------------------------------------------------------------------
-		//[Test]
-		//public void ImportAndDeleteBookRemovesUndoAction()
-		//{
-		//    int origActCount = Cache.ActionHandlerAccessor.UndoableSequenceCount;
-
-		//    IScrBook jude = m_scr.FindBook(65);
-		//    Assert.IsNotNull(jude, "This test is invalid if Jude does not exist in test DB.");
-
-		//    int hvoJudeOrig = jude.Hvo;
-		//    int cBooksOrig = m_scr.ScriptureBooksOS.Count;
-		//    jude = null;
-
-		//    MockScrObjWrapper.s_fSimulateCancel = false;
-		//    List<SegmentInfo> al = new List<SegmentInfo>(2);
-		//    // process \id segment to import Jude (an existing book)
-		//    al.Add(new SegmentInfo(@"\id", string.Empty, ImportDomain.Main, new BCVRef(65, 0, 0)));
-		//    al.Add(new SegmentInfo(@"\c", string.Empty, ImportDomain.Main, new BCVRef(65, 1, 1)));
-		//    al.Add(new SegmentInfo(@"\v", "I'm Jude and you're not.", ImportDomain.Main, new BCVRef(65, 1, 1)));
-		//    m_importMgr.SimulateDeleteAllBooks = true;
-		//    m_importMgr.CallImportWithUndoTask(m_settings, al);
-
-		//    Assert.AreEqual(origActCount, Cache.ActionHandlerAccessor.UndoableSequenceCount,
-		//        "Should have no extra undo actions");
-		//    Assert.AreEqual(cBooksOrig, m_scr.ScriptureBooksOS.Count);
-		//    jude = m_scr.FindBook(65);
-		//    Assert.AreEqual(hvoJudeOrig, jude.Hvo, "The original Jude should not have been overwritten.");
-		//    Assert.AreEqual(0, m_importMgr.NewSavedVersions.Count);
-		//}
-		//#endregion
 
 		#region Restore after cancel tests
 		/// ------------------------------------------------------------------------------------
@@ -813,15 +739,12 @@ namespace ParatextImport.ImportTests
 			al.Add(new SegmentInfo(@"\id", "", ImportDomain.Main, new BCVRef(65, 0, 0)));
 
 			m_importMgr.SimulateAcceptAllBooks = true;
-			m_importMgr.CallImportWithUndoTask(m_settings, al);
+			m_importMgr.CallImportWithUndoTask(al);
 
-			Assert.AreEqual(origActCount + 1, Cache.ActionHandlerAccessor.UndoableSequenceCount,
-				"Should have 1 extra undo action after Undo cancels incomplete book");
+			Assert.AreEqual(origActCount + 1, Cache.ActionHandlerAccessor.UndoableSequenceCount, "Should have 1 extra undo action after Undo cancels incomplete book");
 
 			Assert.AreEqual(cBooksOrig, m_scr.ScriptureBooksOS.Count);
-			Assert.AreEqual(2, m_importMgr.NewSavedVersions.Count, "We should have an imported version and a backup saved version.");
-			Assert.AreEqual(1, m_importMgr.UndoManager.ImportedVersion.BooksOS.Count);
-			Assert.AreEqual(57, m_importMgr.UndoManager.ImportedVersion.BooksOS[0].CanonicalNum);
+			Assert.AreEqual(1, m_importMgr.NewSavedVersions.Count, "We should have an imported version.");
 			Assert.AreEqual(1, m_importMgr.UndoManager.BackupVersion.BooksOS.Count);
 			Assert.AreEqual(57, m_importMgr.UndoManager.BackupVersion.BooksOS[0].CanonicalNum);
 			IScrBook restoredJude = m_scr.FindBook(65);
@@ -851,7 +774,7 @@ namespace ParatextImport.ImportTests
 			// process a \id segment to import an existing a book
 			al.Add(new SegmentInfo(@"\id", "", ImportDomain.Main, new BCVRef(57, 0, 0)));
 
-			m_importMgr.CallImportWithUndoTask(m_settings, al);
+			m_importMgr.CallImportWithUndoTask(al);
 
 			Assert.AreEqual(0, m_importMgr.NewSavedVersions.Count, "New ScrDrafts should have been purged");
 			Assert.AreEqual(origActCount, Cache.ActionHandlerAccessor.UndoableSequenceCount,
@@ -892,7 +815,7 @@ namespace ParatextImport.ImportTests
 			al.Add(new SegmentInfo(@"\s", "Section head BT", ImportDomain.BackTrans, new BCVRef(65, 1, 1)));
 			al.Add(new SegmentInfo(@"\s2", "Minor Section head BT (no match in vern)", ImportDomain.BackTrans, new BCVRef(65, 1, 1)));
 
-			m_importMgr.CallImportWithUndoTask(m_settings, al);
+			m_importMgr.CallImportWithUndoTask(al);
 
 			Assert.AreEqual(1, m_importMgr.NewSavedVersions.Count, "Exactly one new version should have been created");
 			Assert.AreEqual(origActCount + 1, Cache.ActionHandlerAccessor.UndoableSequenceCount,
@@ -902,7 +825,9 @@ namespace ParatextImport.ImportTests
 			Assert.AreEqual(hvoJudeOrig, m_scr.FindBook(65).Hvo);
 			Assert.AreEqual(1, scrHead1Para1.TranslationsOC.Count);
 			foreach (ICmTranslation trans in scrHead1Para1.TranslationsOC)
+			{
 				Assert.AreEqual("Section head BT", trans.Translation.AnalysisDefaultWritingSystem.Text);
+			}
 
 			Assert.IsNull(m_importMgr.UndoManager.ImportedVersion);
 			IScrDraft backupSv = m_importMgr.UndoManager.BackupVersion;
@@ -953,7 +878,7 @@ namespace ParatextImport.ImportTests
 			al.Add(new SegmentInfo(@"\btmt", "Genesis", ImportDomain.Main, new BCVRef(1, 0, 0), wsEn));
 			al.Add(new SegmentInfo(@"\c", "1", ImportDomain.Main, new BCVRef(1, 1, 0)));
 
-			m_importMgr.CallImportWithUndoTask(m_settings, al);
+			m_importMgr.CallImportWithUndoTask(al);
 
 			Assert.AreEqual(0, m_importMgr.NewSavedVersions.Count, "No new version should have been created");
 			Assert.AreEqual(origActCount, Cache.ActionHandlerAccessor.UndoableSequenceCount);
@@ -1002,9 +927,9 @@ namespace ParatextImport.ImportTests
 			al.Add(new SegmentInfo(@"\s2", "Minor Section head BT (no match in vern)", ImportDomain.BackTrans, new BCVRef(65, 1, 1)));
 
 			m_importMgr.SimulateAcceptAllBooks = true;
-			m_importMgr.CallImportWithUndoTask(m_settings, al);
+			m_importMgr.CallImportWithUndoTask(al);
 
-			Assert.AreEqual(2, m_importMgr.NewSavedVersions.Count, "Exactly two new versions should have been created");
+			Assert.AreEqual(1, m_importMgr.NewSavedVersions.Count, "One new version should have been created");
 			Assert.AreEqual(origActCount + 1, Cache.ActionHandlerAccessor.UndoableSequenceCount,
 				"Should have one extra undo action after Undo cancels incomplete book");
 			Assert.AreEqual("&Undo Import", Cache.ActionHandlerAccessor.GetUndoText());
@@ -1012,10 +937,7 @@ namespace ParatextImport.ImportTests
 			Assert.IsNotNull(m_scr.FindBook(1));
 			Assert.AreEqual(hvoJudeOrig, m_scr.FindBook(65).Hvo);
 
-			IScrDraft importedSv = m_importMgr.UndoManager.ImportedVersion;
-			Assert.IsNotNull(importedSv);
-			Assert.AreEqual(1, importedSv.BooksOS.Count);
-			Assert.AreEqual(1, importedSv.BooksOS[0].CanonicalNum);
+			Assert.IsNull(m_importMgr.UndoManager.ImportedVersion);
 			IScrDraft backupSv = m_importMgr.UndoManager.BackupVersion;
 			Assert.IsNotNull(backupSv);
 			Assert.AreEqual(1, backupSv.BooksOS.Count);
@@ -1062,15 +984,12 @@ namespace ParatextImport.ImportTests
 			});
 			m_importMgr.ResetOriginalDrafts();
 			m_importMgr.SimulateAcceptAllBooks = true;
-			m_importMgr.CallImportWithUndoTask(m_settings, al);
+			m_importMgr.CallImportWithUndoTask(al);
 
 			Assert.AreEqual(0, m_importMgr.NewSavedVersions.Count, "No new versions should have been created");
 
-			IScrDraft importedSv = m_importMgr.UndoManager.ImportedVersion;
-			Assert.AreEqual(draftNewBooks, importedSv);
-			Assert.AreEqual(2, importedSv.BooksOS.Count);
-			Assert.AreEqual(1, importedSv.BooksOS[0].CanonicalNum);
-			Assert.AreEqual(65, importedSv.BooksOS[1].CanonicalNum);
+			Assert.IsNull(m_importMgr.UndoManager.ImportedVersion);
+			Assert.IsFalse(draftNewBooks.IsValidObject);
 			IScrDraft backupSv = m_importMgr.UndoManager.BackupVersion;
 			Assert.AreEqual(draftReplacedBooks, backupSv);
 			Assert.AreEqual(1, backupSv.BooksOS.Count);
@@ -1124,16 +1043,11 @@ namespace ParatextImport.ImportTests
 
 			m_importMgr.ResetOriginalDrafts();
 			m_importMgr.SimulateAcceptAllBooks = true;
-			m_importMgr.CallImportWithUndoTask(m_settings, al);
+			m_importMgr.CallImportWithUndoTask(al);
 
 			Assert.AreEqual(0, m_importMgr.NewSavedVersions.Count, "No new versions should have been created");
 
-			IScrDraft importedSv = m_importMgr.UndoManager.ImportedVersion;
-			Assert.AreEqual(draftNewBooks, importedSv);
-			Assert.AreEqual(3, importedSv.BooksOS.Count);
-			Assert.AreEqual(1, importedSv.BooksOS[0].CanonicalNum);
-			Assert.AreEqual(newBook, importedSv.BooksOS[1]);
-			Assert.AreEqual(65, importedSv.BooksOS[2].CanonicalNum);
+			Assert.IsNull(m_importMgr.UndoManager.ImportedVersion);
 			IScrDraft backupSv = m_importMgr.UndoManager.BackupVersion;
 			Assert.AreEqual(draftReplacedBooks, backupSv);
 			Assert.AreEqual(2, backupSv.BooksOS.Count);
@@ -1192,17 +1106,11 @@ namespace ParatextImport.ImportTests
 
 			m_importMgr.ResetOriginalDrafts();
 			m_importMgr.SimulateAcceptAllBooks = true;
-			m_importMgr.CallImportWithUndoTask(m_settings, al);
+			m_importMgr.CallImportWithUndoTask(al);
 
 			Assert.AreEqual(0, m_importMgr.NewSavedVersions.Count, "No new versions should have been created");
 
-			IScrDraft importedSv = m_importMgr.UndoManager.ImportedVersion;
-			Assert.AreEqual(draftNewBooks, importedSv);
-			Assert.AreEqual(2, importedSv.BooksOS.Count);
-			Assert.AreEqual(1, importedSv.BooksOS[0].CanonicalNum);
-			Assert.AreNotEqual(newBook1, importedSv.BooksOS[0], "Imported book should have replaced original");
-			Assert.AreEqual(65, importedSv.BooksOS[1].CanonicalNum);
-			Assert.AreNotEqual(newBook2, importedSv.BooksOS[1], "Imported book should have replaced original");
+			Assert.IsNull(m_importMgr.UndoManager.ImportedVersion);
 
 			IScrDraft backupSv = m_importMgr.UndoManager.BackupVersion;
 			Assert.AreEqual(draftReplacedBooks, backupSv);
@@ -1257,7 +1165,7 @@ namespace ParatextImport.ImportTests
 
 			m_importMgr.ResetOriginalDrafts();
 			m_importMgr.SimulateAcceptAllBooks = true;
-			m_importMgr.CallImportWithUndoTask(m_settings, al);
+			m_importMgr.CallImportWithUndoTask(al);
 			Assert.AreEqual(origScrDraftsCount, m_scr.ArchivedDraftsOC.Count, "Number of ScrDrafts shouldn't change");
 			Assert.AreEqual(65, draftReplacedBooks.BooksOS[0].CanonicalNum);
 			Assert.AreEqual(0, draftNewBooks.BooksOS.Count);
@@ -1307,7 +1215,7 @@ namespace ParatextImport.ImportTests
 
 			m_importMgr.ResetOriginalDrafts();
 			m_importMgr.SimulateAcceptAllBooks = true;
-			m_importMgr.CallImportWithUndoTask(m_settings, al);
+			m_importMgr.CallImportWithUndoTask(al);
 			Assert.AreEqual(origScrDraftsCount, m_scr.ArchivedDraftsOC.Count, "Number of ScrDrafts shouldn't change");
 			Assert.AreEqual(2, draftReplacedBooks.BooksOS.Count);
 			Assert.AreEqual(replacedBook, draftReplacedBooks.BooksOS[0]);
@@ -1360,7 +1268,7 @@ namespace ParatextImport.ImportTests
 
 			m_importMgr.ResetOriginalDrafts();
 			m_importMgr.SimulateAcceptAllBooks = true;
-			m_importMgr.CallImportWithUndoTask(m_settings, al);
+			m_importMgr.CallImportWithUndoTask(al);
 			Assert.AreEqual(origScrDraftsCount, m_scr.ArchivedDraftsOC.Count, "Number of ScrDrafts shouldn't change");
 			Assert.AreEqual(1, draftReplacedBooks.BooksOS.Count);
 			Assert.AreEqual(65, draftReplacedBooks.BooksOS[0].CanonicalNum);
@@ -1422,7 +1330,7 @@ namespace ParatextImport.ImportTests
 			al.Add(new SegmentInfo(@"\id", "PHM Spanish Back Trans", ImportDomain.BackTrans, new BCVRef(57, 0, 0), wsEs));
 			al.Add(new SegmentInfo(@"\s", "Spanish Section head BT", ImportDomain.BackTrans, new BCVRef(57, 1, 1), wsEs));
 
-			m_importMgr.CallImportWithUndoTask(m_settings, al);
+			m_importMgr.CallImportWithUndoTask(al);
 
 			Assert.AreEqual(1, m_importMgr.NewSavedVersions.Count, "We should only have a backup saved version, no imported version.");
 			Assert.AreEqual(origActCount + 1, Cache.ActionHandlerAccessor.UndoableSequenceCount,
@@ -1476,7 +1384,7 @@ namespace ParatextImport.ImportTests
 			al.Add(new SegmentInfo(@"\c", "", ImportDomain.Main, new BCVRef(57, 1, 0)));
 			al.Add(new SegmentInfo(@"\ip", "Intro paragraph blah-blah", ImportDomain.Main, new BCVRef(57, 1, 0)));
 
-			m_importMgr.CallImportWithUndoTask(m_settings, al);
+			m_importMgr.CallImportWithUndoTask(al);
 
 			Assert.AreEqual(0, m_importMgr.NewSavedVersions.Count, "New ScrDrafts should have been purged (TE-7040)");
 			Assert.AreEqual(origActCount, Cache.ActionHandlerAccessor.UndoableSequenceCount,
@@ -1512,7 +1420,7 @@ namespace ParatextImport.ImportTests
 			// process a \id segment to import a BT for a non-existent a book
 			al.Add(new SegmentInfo(@"\id", "", ImportDomain.BackTrans, new BCVRef(40, 0, 0)));
 
-			m_importMgr.CallImportWithUndoTask(m_settings, al);
+			m_importMgr.CallImportWithUndoTask(al);
 
 			Assert.AreEqual(0, m_importMgr.NewSavedVersions.Count, "New ScrDrafts should have been purged.");
 			Assert.AreEqual(origActCount + 1, Cache.ActionHandlerAccessor.UndoableSequenceCount,
@@ -1541,7 +1449,7 @@ namespace ParatextImport.ImportTests
 			// process a \id segment to import an existing a book
 			al.Add(new SegmentInfo(@"\id", "", ImportDomain.Main, new BCVRef(57, 0, 0)));
 
-			m_importMgr.CallImportWithUndoTask(m_settings, al);
+			m_importMgr.CallImportWithUndoTask(al);
 
 			Assert.AreEqual(origActCount, Cache.ActionHandlerAccessor.UndoableSequenceCount,
 				"Should have undone the creation of the book");
@@ -1626,7 +1534,7 @@ namespace ParatextImport.ImportTests
 			al.Add(new SegmentInfo(@"\id", "", ImportDomain.Main, new BCVRef(iBookId, 0, 0)));
 
 
-			m_importMgr.CallImportWithUndoTask(m_settings, al);
+			m_importMgr.CallImportWithUndoTask(al);
 
 			using (UndoableUnitOfWorkHelper uow = new UndoableUnitOfWorkHelper(m_actionHandler, "Insert book"))
 			{
@@ -1668,17 +1576,10 @@ namespace ParatextImport.ImportTests
 			al.Add(new SegmentInfo(@"\s", "Section head", ImportDomain.Main, new BCVRef(65, 1, 1)));
 			al.Add(new SegmentInfo(@"\p", "Contents", ImportDomain.Main, new BCVRef(65, 1, 1)));
 
-			m_importMgr.CallImportWithUndoTask(m_settings, al);
+			m_importMgr.CallImportWithUndoTask(al);
 
-			Assert.AreEqual(1, m_importMgr.NewSavedVersions.Count, "We should have an imported version but not a backup saved version.");
-			Assert.AreEqual(origActCount + 1, Cache.ActionHandlerAccessor.UndoableSequenceCount,
-				"Should have 1 extra undo action.");
-#if WANTTESTPORT // can't do this any longer - what is the impact on this test?
-			// Call ProcessChapterVerseNums to simulate an edit in the diff dialog.
-			jude = m_scr.FindBook(65);
-			IScrTxtPara sc1Para = (IScrTxtPara)jude.SectionsOS[0].ContentOA.ParagraphsOS[0];
-			sc1Para.ProcessChapterVerseNums(0, 1, 0);
-#endif
+			Assert.AreEqual(0, m_importMgr.NewSavedVersions.Count, "We should not have a backup saved version.");
+			Assert.AreEqual(origActCount + 1, Cache.ActionHandlerAccessor.UndoableSequenceCount, "Should have 1 extra undo action.");
 			Assert.AreEqual("&Undo Import", Cache.ActionHandlerAccessor.GetUndoText());
 			Assert.AreEqual(1, m_importMgr.m_cDisplayImportedBooksDlgCalled);
 		}
@@ -1699,24 +1600,25 @@ namespace ParatextImport.ImportTests
 			m_settings.ImportBackTranslation = true;
 			MockScrObjWrapper.s_fSimulateCancel = false;
 
-			int origActCount = Cache.ActionHandlerAccessor.UndoableSequenceCount;
+			var origActCount = Cache.ActionHandlerAccessor.UndoableSequenceCount;
 
-			IScrBook jude = m_scr.FindBook(65);
+			var jude = m_scr.FindBook(65);
 			Assert.IsNotNull(jude, "This test is invalid if Jude isn't in the test DB.");
-			int cBooksOrig = m_scr.ScriptureBooksOS.Count;
+			var cBooksOrig = m_scr.ScriptureBooksOS.Count;
 
-			List<SegmentInfo> al = new List<SegmentInfo>(3);
 			// process a \id segment to import an existing a book
-			al.Add(new SegmentInfo(@"\id", "JUD", ImportDomain.Main, new BCVRef(65, 0, 0)));
-			al.Add(new SegmentInfo(@"\s", "Section head", ImportDomain.Main, new BCVRef(65, 1, 1)));
-			al.Add(new SegmentInfo(@"\id", "JUD Back Trans", ImportDomain.BackTrans, new BCVRef(65, 0, 0)));
-			al.Add(new SegmentInfo(@"\s", "Section head BT", ImportDomain.BackTrans, new BCVRef(65, 1, 1)));
+			var al = new List<SegmentInfo>(3)
+			{
+				new SegmentInfo(@"\id", "JUD", ImportDomain.Main, new BCVRef(65, 0, 0)),
+				new SegmentInfo(@"\s", "Section head", ImportDomain.Main, new BCVRef(65, 1, 1)),
+				new SegmentInfo(@"\id", "JUD Back Trans", ImportDomain.BackTrans, new BCVRef(65, 0, 0)),
+				new SegmentInfo(@"\s", "Section head BT", ImportDomain.BackTrans, new BCVRef(65, 1, 1))
+			};
 
-			m_importMgr.CallImportWithUndoTask(m_settings, al);
+			m_importMgr.CallImportWithUndoTask(al);
 
-			Assert.AreEqual(1, m_importMgr.NewSavedVersions.Count, "We should have an imported version but not a backup saved version.");
-			Assert.AreEqual(origActCount + 1, Cache.ActionHandlerAccessor.UndoableSequenceCount,
-				"Should have one extra undo action.");
+			Assert.AreEqual(0, m_importMgr.NewSavedVersions.Count, "We should have an imported version but not a backup saved version.");
+			Assert.AreEqual(origActCount + 1, Cache.ActionHandlerAccessor.UndoableSequenceCount, "Should have one extra undo action.");
 			Assert.AreEqual("&Undo Import", Cache.ActionHandlerAccessor.GetUndoText());
 			Assert.AreEqual(cBooksOrig, m_scr.ScriptureBooksOS.Count);
 			//verify that the original book of Jude has not been replaced
@@ -1727,22 +1629,12 @@ namespace ParatextImport.ImportTests
 			{
 				// Make sure the original BT of the first section in Jude was not changed
 				foreach (ICmTranslation trans in sh1Para.TranslationsOC)
+				{
 					Assert.AreNotEqual("Section head BT", trans.Translation.AnalysisDefaultWritingSystem.Text);
+				}
 			}
 
-			IScrDraft importedSv = m_importMgr.UndoManager.ImportedVersion;
-			Assert.IsNotNull(importedSv);
-			Assert.AreEqual(1, importedSv.BooksOS.Count);
-			IScrBook importedJude = importedSv.BooksOS[0];
-			Assert.AreEqual(65, importedJude.CanonicalNum);
-			IStTxtPara impSh1Para = ((IStTxtPara)importedJude.SectionsOS[0].HeadingOA.ParagraphsOS[0]);
-			Assert.AreEqual("Section head", impSh1Para.Contents.Text);
-			if (sh1Para.TranslationsOC.Count == 1)
-			{
-				foreach (ICmTranslation trans in impSh1Para.TranslationsOC)
-					Assert.AreEqual("Section head BT", trans.Translation.AnalysisDefaultWritingSystem.Text);
-			}
-
+			Assert.IsNull(m_importMgr.UndoManager.ImportedVersion);
 			Assert.IsNull(m_importMgr.UndoManager.BackupVersion);
 			Assert.AreEqual(1, m_importMgr.m_cDisplayImportedBooksDlgCalled);
 		}
@@ -1789,7 +1681,7 @@ namespace ParatextImport.ImportTests
 			al.Add(new SegmentInfo(@"\id", "JUD Back Trans", ImportDomain.BackTrans, new BCVRef(65, 0, 0)));
 			al.Add(new SegmentInfo(@"\s", "Section head BT", ImportDomain.BackTrans, new BCVRef(65, 1, 1)));
 
-			m_importMgr.CallImportWithUndoTask(m_settings, al);
+			m_importMgr.CallImportWithUndoTask(al);
 
 			Assert.AreEqual(1, m_importMgr.NewSavedVersions.Count, "We should only have a backup saved version, no imported version.");
 			Assert.AreEqual(origActCount + 1, Cache.ActionHandlerAccessor.UndoableSequenceCount,
@@ -1870,7 +1762,7 @@ namespace ParatextImport.ImportTests
 			al.Add(new SegmentInfo(@"\id", "JUD Spanish Back Trans", ImportDomain.BackTrans, new BCVRef(65, 0, 0), wsEs));
 			al.Add(new SegmentInfo(@"\s", "Spanish Section head BT", ImportDomain.BackTrans, new BCVRef(65, 1, 1), wsEs));
 
-			m_importMgr.CallImportWithUndoTask(m_settings, al);
+			m_importMgr.CallImportWithUndoTask(al);
 
 			Assert.AreEqual(1, m_importMgr.NewSavedVersions.Count, "We should only have a backup saved version, no imported version.");
 			Assert.AreEqual(origActCount + 1, Cache.ActionHandlerAccessor.UndoableSequenceCount,

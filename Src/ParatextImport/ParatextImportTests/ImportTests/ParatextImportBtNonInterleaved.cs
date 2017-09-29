@@ -770,7 +770,6 @@ namespace ParatextImport.ImportTests
 
 			m_importer.Settings.ImportBackTranslation = true;
 			m_importer.CurrentImportDomain = ImportDomain.BackTrans;
-			m_importer.StreamLinedImport = true;
 
 			// ************** process a \id segment, test MakeBook() method *********************
 			m_importer.TextSegment.FirstReference = new BCVRef(2, 0, 0);

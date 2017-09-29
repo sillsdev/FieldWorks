@@ -16,6 +16,7 @@ using XCore;
 using SIL.LCModel.Utils;
 using SIL.FieldWorks.XWorks;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.RootSites;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.IText
@@ -98,7 +99,7 @@ namespace SIL.FieldWorks.IText
 				textsToChooseFrom = textsToChooseFrom.Where(text => !ScriptureServices.ScriptureIsResponsibleFor(text)).ToList();
 			}
 			var interestingTexts = textsToChooseFrom.ToArray();
-			using (var dlg = new FilterTextsDialog(m_propertyTable, m_cache, interestingTexts, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
+			using (var dlg = new FilterTextsDialog(m_propertyTable.GetValue<IApp>("App"), m_cache, interestingTexts, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
 			{
 				// LT-12181: Was 'PruneToSelectedTexts(text) and most others were deleted.
 				// We want 'PruneToInterestingTextsAndSelect(interestingTexts, selectedText)'

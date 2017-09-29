@@ -550,15 +550,6 @@ namespace ParatextImport.ImportTests
 				return m_undoManager;
 			}
 		}
-
-		/// <summary>
-		/// Exposes the <see cref="ParatextSfmImporter.m_fStreamLinedImport"/> variable.
-		/// </summary>
-		public bool StreamLinedImport
-		{
-			get { return m_fStreamLinedImport; }
-			set { m_fStreamLinedImport = value; }
-		}
 		#endregion
 
 		#region Methods
@@ -1294,7 +1285,7 @@ namespace ParatextImport.ImportTests
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Test of the TeSfmImporter.RemoveControlCharacters method.
+		/// Test of the <see cref="ParatextSfmImporter.RemoveControlCharacters"/> method.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
@@ -1314,7 +1305,7 @@ namespace ParatextImport.ImportTests
 		#region Tests of EnsurePictureFilePathIsRooted method
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Test of the TeSfmImporter.EnsurePictureFilePathIsRooted method when the path is
+		/// Test of the <see cref="ParatextSfmImporter.EnsurePictureFilePathIsRooted"/> method when the path is
 		/// indeed rooted.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
@@ -1330,7 +1321,7 @@ namespace ParatextImport.ImportTests
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Test of the TeSfmImporter.EnsurePictureFilePathIsRooted method when the text
+		/// Test of the <see cref="ParatextSfmImporter.EnsurePictureFilePathIsRooted"/> method when the text
 		/// representation of the picture is bogus.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
@@ -1343,7 +1334,7 @@ namespace ParatextImport.ImportTests
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Test of the TeSfmImporter.EnsurePictureFilePathIsRooted method when the text
+		/// Test of the <see cref="ParatextSfmImporter.EnsurePictureFilePathIsRooted"/> method when the text
 		/// representation of the picture is bogus.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
@@ -1356,7 +1347,7 @@ namespace ParatextImport.ImportTests
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Test of the TeSfmImporter.EnsurePictureFilePathIsRooted method when the file
+		/// Test of the <see cref="ParatextSfmImporter.EnsurePictureFilePathIsRooted"/> method when the file
 		/// is not rooted but it is found to exist in the first external folder in
 		/// SOWrapper.ExternalPictureFolders.
 		/// </summary>
@@ -1377,7 +1368,7 @@ namespace ParatextImport.ImportTests
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Test of the TeSfmImporter.EnsurePictureFilePathIsRooted method when the file
+		/// Test of the <see cref="ParatextSfmImporter.EnsurePictureFilePathIsRooted"/> method when the file
 		/// is not rooted but it is found to exist in the second external folder in
 		/// SOWrapper.ExternalPictureFolders.
 		/// </summary>
@@ -1403,7 +1394,7 @@ namespace ParatextImport.ImportTests
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Test of the TeSfmImporter.EnsurePictureFilePathIsRooted method when the file
+		/// Test of the <see cref="ParatextSfmImporter.EnsurePictureFilePathIsRooted"/> method when the file
 		/// is "rooted" (starts with a backslash) but does not have a drive letter specified
 		/// and is found in the specified folder (relative to the current drive letter).
 		/// </summary>
@@ -1425,7 +1416,7 @@ namespace ParatextImport.ImportTests
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Test of the TeSfmImporter.EnsurePictureFilePathIsRooted method when the file is
+		/// Test of the <see cref="ParatextSfmImporter.EnsurePictureFilePathIsRooted"/> method when the file is
 		/// "rooted" (starts with a backslash) but does not have a drive letter specified and is
 		/// found in the specified folder (relative to the current drive letter).
 		/// </summary>
@@ -1439,14 +1430,13 @@ namespace ParatextImport.ImportTests
 
 			using (DummyFileMaker filemaker = new DummyFileMaker("junk.jpg", true))
 			{
-				Assert.AreEqual("P0|" + filemaker.Filename + "|P2|P3|P4",
-					ReflectionHelper.GetStrResult(m_importer, "EnsurePictureFilePathIsRooted", @"P0|\junk.jpg|P2|P3|P4"));
+				Assert.AreEqual("P0|" + filemaker.Filename + "|P2|P3|P4", ReflectionHelper.GetStrResult(m_importer, "EnsurePictureFilePathIsRooted", @"P0|\junk.jpg|P2|P3|P4"));
 			}
 		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Test of the TeSfmImporter.EnsurePictureFilePathIsRooted method when the file is not
+		/// Test of the <see cref="ParatextSfmImporter.EnsurePictureFilePathIsRooted"/> method when the file is not
 		/// rooted and cannot be found in any of the external folders in
 		/// SOWrapper.ExternalPictureFolders.
 		/// </summary>

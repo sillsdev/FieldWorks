@@ -154,15 +154,6 @@
   <data name="kstidWizTabPage" xml:space="preserve">
     <value>Pg. {0}</value>
   </data>
-  <data name="kstidStep1" xml:space="preserve">
-    <value>Step 1</value>
-  </data>
-  <data name="kstidStep2" xml:space="preserve">
-    <value>Step 2</value>
-  </data>
-  <data name="kstidStep3" xml:space="preserve">
-    <value>Step 3</value>
-  </data>
   <data name="kBridgeAlreadyRunning" xml:space="preserve">
     <value>There is already a copy of FLExBridge running.
 You probably have a Conflict Report open. It will need to be closed before you can access any of the other FLExBridge functions such as:

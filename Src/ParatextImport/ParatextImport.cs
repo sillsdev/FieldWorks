@@ -42,18 +42,8 @@ namespace ParatextImport
 		/// <summary>The Scripture reference of the footnote</summary>
 		public readonly BCVRef reference;
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/// <param name="ws"></param>
-		/// <param name="bldr"></param>
-		/// <param name="styleId"></param>
-		/// <param name="ichOffset"></param>
-		/// <param name="reference"></param>
-		/// ------------------------------------------------------------------------------------
-		public BtFootnoteBldrInfo(int ws, ITsStrBldr bldr, string styleId, int ichOffset,
-			BCVRef reference)
+		/// <summary />
+		internal BtFootnoteBldrInfo(int ws, ITsStrBldr bldr, string styleId, int ichOffset, BCVRef reference)
 		{
 			this.ws = ws;
 			this.bldr = bldr;
@@ -72,7 +62,7 @@ namespace ParatextImport
 	/// the paragraph is completed.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public class BTPictureInfo
+	public sealed class BTPictureInfo
 	{
 		/// <summary>Back translation text for the picture caption</summary>
 		public ITsIncStrBldr m_strbldrCaption;
@@ -107,13 +97,14 @@ namespace ParatextImport
 		/// <param name="segment">The first BT segment encountered for this picture.</param>
 		/// <param name="reference">The Scripture reference.</param>
 		/// ------------------------------------------------------------------------------------
-		public BTPictureInfo(string captionText, string sCopyright, int ws, string filename,
-			int lineNumber, string segment, BCVRef reference)
+		public BTPictureInfo(string captionText, string sCopyright, int ws, string filename, int lineNumber, string segment, BCVRef reference)
 		{
 			m_strbldrCaption = TsStringUtils.MakeIncStrBldr();
 			m_strbldrCaption.SetIntPropValues((int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault, ws);
-			if (!String.IsNullOrEmpty(captionText))
+			if (!string.IsNullOrEmpty(captionText))
+			{
 				m_strbldrCaption.Append(captionText);
+			}
 			m_copyright = sCopyright;
 			m_ws = ws;
 			m_filename = filename;
@@ -745,7 +736,7 @@ namespace ParatextImport
 		/// Settings object that represent the Paratext or SF settings for importing
 		/// </summary>
 		protected IScrImportSet m_settings;
-		/// <summary>Wrapper object for TE, Paratext scripture objects. Normally use the
+		/// <summary>Wrapper object for Paratext scripture objects. Normally use the
 		/// SOWrapper property to access this.</summary>
 		protected ScrObjWrapper m_SOWrapper;
 
@@ -898,35 +889,10 @@ namespace ParatextImport
 		// True if we are importing (typically BT only) to the main, current version of Scripture,
 		// as opposed to the typical case of importing to an archive.
 		private bool m_fImportingToMain;
-
-		/// <summary>
-		/// flag that indicates import is being done through FLEx and some special processing
-		/// may need to be done.
-		/// </summary>
-		protected bool m_fStreamLinedImport;
 		#endregion
 
 		#region Import, the only public (static) method (2 overloads)
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// This static method imports Scripture (This overload used only for testing w/o merge
-		/// or overwrite dialog.)
-		/// </summary>
-		/// <param name="settings">Import settings object (filled in by wizard)</param>
-		/// <param name="cache">The cache used to import to and get misc. info. from.</param>
-		/// <param name="styleSheet">Stylesheet from which to get scripture styles.</param>
-		/// <param name="undoManager">The undo import manager (which is responsible for creating
-		/// and maintaining the archive of original books being overwritten and maintaining
-		/// the book filter).</param>
-		/// <returns>The reference of the first thing that was imported</returns>
-		/// ------------------------------------------------------------------------------------
-		public static ScrReference Import(IScrImportSet settings, LcmCache cache,
-			LcmStyleSheet styleSheet, UndoImportManager undoManager)
-		{
-			return Import(settings, cache, styleSheet, undoManager, null);
-		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Call this static method to Import Scripture
 		/// </summary>
@@ -937,27 +903,21 @@ namespace ParatextImport
 		/// and maintaining the archive of original books being overwritten and maintaining
 		/// the book filter).</param>
 		/// <param name="importCallbacks">UI callbacks</param>
-		/// <param name="streamLinedImport">flag indicated if import id done through FLEx.</param>
 		/// <returns>
 		/// The Scripture reference of the first thing that was imported
 		/// </returns>
-		/// ------------------------------------------------------------------------------------
-		public static ScrReference Import(IScrImportSet settings, LcmCache cache,
-			LcmStyleSheet styleSheet, UndoImportManager undoManager, ParatextImportUi importCallbacks,
-			bool streamLinedImport = false)
+		public static ScrReference Import(IScrImportSet settings, LcmCache cache, LcmStyleSheet styleSheet, UndoImportManager undoManager, ParatextImportUi importCallbacks)
 		{
-			using (ParatextSfmImporter importer = new ParatextSfmImporter(settings, cache, styleSheet, undoManager,
-				importCallbacks, streamLinedImport))
+			using (var importer = new ParatextSfmImporter(settings, cache, styleSheet, undoManager, importCallbacks))
 			{
 				importer.Import();
 				importCallbacks.AllowCancel = false; // LT-16647: Disallow canceling import after it is complete (before disposing importer).
 				return importer.m_firstImportedRef;
-			}	// Dispose() releases any hold on ICU character properties.
+			}
 		}
 		#endregion
 
 		#region Constructor (protected)
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the TeSfmImporter class
 		/// </summary>
@@ -967,11 +927,7 @@ namespace ParatextImport
 		/// <param name="undoManager">The undo import manager(which is responsible for creating
 		/// and maintainging the archive of original books being overwritten).</param>
 		/// <param name="importCallbacks">UI callbacks</param>
-		/// <param name="streamLinedImport">flag indicating if import is done through FLEx.</param>
-		/// ------------------------------------------------------------------------------------
-		protected ParatextSfmImporter(IScrImportSet settings, LcmCache cache,
-			LcmStyleSheet styleSheet, UndoImportManager undoManager, ParatextImportUi importCallbacks,
-			bool streamLinedImport = false)
+		protected ParatextSfmImporter(IScrImportSet settings, LcmCache cache, LcmStyleSheet styleSheet, UndoImportManager undoManager, ParatextImportUi importCallbacks)
 		{
 			Debug.Assert(cache != null);
 			Debug.Assert(styleSheet != null);
@@ -982,7 +938,6 @@ namespace ParatextImport
 			m_undoManager = undoManager;
 			m_importCallbacks = importCallbacks;
 			m_importCallbacks.Importer = this;
-			m_fStreamLinedImport = streamLinedImport;
 
 			Debug.Assert(m_settings.BasicSettingsExist);
 			// ENHANCE (TomB): Make it possible to start importing in the middle
@@ -1014,7 +969,6 @@ namespace ParatextImport
 					while (SOWrapper.GetNextSegment(out sText, out sMarker, out domain))
 					{
 						CheckPause();
-						//				Trace.WriteLine(sMarker + " " + sText);
 						m_sSegmentText = RemoveControlCharacters(sText);
 						m_sMarker = sMarker;
 						m_importDomain = domain;
@@ -1057,8 +1011,7 @@ namespace ParatextImport
 			finally
 			{
 				m_importCallbacks.Position = m_importCallbacks.Maximum;
-				if (SOWrapper != null)
-					SOWrapper.Cleanup();
+				SOWrapper?.Cleanup();
 			}
 			Debug.WriteLine("import time: " + (DateTime.Now - beg));
 		}
@@ -1070,7 +1023,7 @@ namespace ParatextImport
 		/// Need to use this because control characters are not valid in XML unless they are quoted.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private static string RemoveControlCharacters(string sText)
+		internal static string RemoveControlCharacters(string sText)
 		{
 			if (sText.IndexOfAny(kControlCharacters) == -1)
 				return sText;
@@ -1760,7 +1713,7 @@ namespace ParatextImport
 		/// <returns>text representation with folder added, if necessary (or original text
 		/// representation, if not)</returns>
 		/// ------------------------------------------------------------------------------------
-		private string EnsurePictureFilePathIsRooted(string textRep)
+		internal string EnsurePictureFilePathIsRooted(string textRep)
 		{
 			// Determine file name string.
 			int iFileNameStart = textRep.IndexOf('|');
@@ -2863,7 +2816,6 @@ namespace ParatextImport
 			return m_lastPara;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Find a paragraph with the specified style id, containing the specified verse number,
 		/// if specified, and having the correct sequence number. Sets all appropriate state
@@ -2879,7 +2831,6 @@ namespace ParatextImport
 		/// support special logic we do in section headers when two paragraphs with the same
 		/// style are imported in succession.</param>
 		/// <returns>The corrersponding StTxtPara, or null if no matching para is found</returns>
-		/// ------------------------------------------------------------------------------------
 		protected IScrTxtPara FindCorrespondingVernParaForSegment(IStStyle style,
 			BCVRef targetRef, out bool fAppend)
 		{
@@ -2913,12 +2864,10 @@ namespace ParatextImport
 			return m_lastPara;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Find the next picture
 		/// </summary>
 		/// <returns>found picture, or null if the next picture is not found</returns>
-		/// ------------------------------------------------------------------------------------
 		protected ICmPicture FindCorrespondingPicture(int index)
 		{
 			if (index >= m_CurrParaPictures.Count)
@@ -2926,76 +2875,71 @@ namespace ParatextImport
 			return m_CurrParaPictures[index];
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Find a footnote with the specified style id
 		/// </summary>
 		/// <param name="styleId">style of footnote to find</param>
 		/// <returns>found footnote, or null if corrersponding footnote of styleId is not
 		/// found</returns>
-		/// ------------------------------------------------------------------------------------
 		protected IScrFootnote FindCorrespondingFootnote(string styleId)
 		{
 			if (!m_BTfootnoteIndex.ContainsKey(m_wsCurrBtPara))
+			{
 				m_BTfootnoteIndex[m_wsCurrBtPara] = 0;
-			int index = m_BTfootnoteIndex[m_wsCurrBtPara];
-			IScrFootnote footnote = FindCorrespondingFootnote(styleId, index);
+			}
+			var index = m_BTfootnoteIndex[m_wsCurrBtPara];
+			var footnote = FindCorrespondingFootnote(styleId, index);
 			if (footnote != null)
+			{
 				m_BTfootnoteIndex[m_wsCurrBtPara] = index + 1;
+			}
 			return footnote;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Find a footnote with the specified style id
 		/// </summary>
 		/// <param name="styleId">style of footnote to find</param>
 		/// <param name="index">Index of footnote within the current paragraph</param>
-		/// <returns>found footnote, or null if corresponding footnote of styleId is not
-		/// found</returns>
-		/// ------------------------------------------------------------------------------------
+		/// <returns>
+		/// Found footnote, or null if corresponding footnote of styleId is not found,
+		/// or <paramref name="index"/> is outside the range of known footnotes
+		/// </returns>
 		protected IScrFootnote FindCorrespondingFootnote(string styleId, int index)
 		{
-			try
+			if (index < 0 || m_CurrParaFootnotes.Count < index + 1)
 			{
-				FootnoteInfo finfo = m_CurrParaFootnotes[index];
-				return (finfo.paraStylename == styleId) ? finfo.footnote : null;
+				return null; // "index" is out of range.
 			}
-			catch
-			{
-				return null;
-			}
+			var finfo = m_CurrParaFootnotes[index];
+			return (finfo.paraStylename == styleId) ? finfo.footnote : null;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Finalize the BT of the footnote, if any.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		protected void EndBTFootnote()
 		{
 			Debug.Assert(m_fInFootnote);
 			Debug.Assert(m_BTFootnoteStrBldr != null);
-			ITsStrBldr strbldr = m_BTStrBldrs[m_wsCurrBtPara];
+			var strbldr = m_BTStrBldrs[m_wsCurrBtPara];
 			TrimTrailingSpace(m_BTFootnoteStrBldr);
 			// If the last character in the paragraph is a separator, then insert the footnote
 			// marker before it. (see TE-2431)
-			int ichMarker = strbldr.Length;
+			var ichMarker = strbldr.Length;
 			if (ichMarker > 0)
 			{
-				string s = strbldr.GetChars(ichMarker - 1, ichMarker);
+				var s = strbldr.GetChars(ichMarker - 1, ichMarker);
 				if (Icu.IsSeparator(s[0]))
 					ichMarker--;
 			}
 			if (m_CurrBTFootnote != null)
 			{
 				// Don't support importing multi-para footnotes
-				IScrTxtPara para = (IScrTxtPara)m_CurrBTFootnote.ParagraphsOS[0];
+				var para = (IScrTxtPara)m_CurrBTFootnote.ParagraphsOS[0];
 
-				ICmTranslation transl = para.GetOrCreateBT();
-				ITsString btTss = m_BTFootnoteStrBldr.Length == 0 ?
-					TsStringUtils.EmptyString(m_wsCurrBtPara) :
-					m_BTFootnoteStrBldr.GetString();
+				var transl = para.GetOrCreateBT();
+				var btTss = m_BTFootnoteStrBldr.Length == 0 ? TsStringUtils.EmptyString(m_wsCurrBtPara) : m_BTFootnoteStrBldr.GetString();
 				transl.Translation.set_String(m_wsCurrBtPara, btTss);
 				m_CurrBTFootnote.InsertRefORCIntoTrans(strbldr, ichMarker, m_wsCurrBtPara);
 				m_CurrBTFootnote = null;
@@ -3132,7 +3076,9 @@ namespace ParatextImport
 				// Add the text to the current paragraph
 				//TODO BryanW: Use WS from proxy
 				if (m_settings.ImportTranslation)
+				{
 					AddTextToPara(m_sSegmentText, m_vernTextProps);
+				}
 				return true;
 			}
 
@@ -3150,7 +3096,9 @@ namespace ParatextImport
 				if (m_fInFootnote || (m_styleProxy.Domain & MarkerDomain.Footnote) == 0)
 				{
 					if (m_settings.ImportTranslation)
+					{
 						AddTextToPara(m_sSegmentText, m_vernTextProps);
+					}
 					return true;
 				}
 				return false;
@@ -3165,7 +3113,9 @@ namespace ParatextImport
 				// (This is unusual, but it could happen: \c \s \p \vt) Any pending chapter # must be
 				// written out.
 				if (m_fChapterNumberPending && !m_fInFootnote)
+				{
 					AddDropChapterNumToPara(m_ParaBldr.StringBuilder, 0);
+				}
 
 				// Check for the special case of an "end-marker" that is really a begin marker
 				// that maps to default paragraph characters but actually has an end-marker of
@@ -3187,15 +3137,13 @@ namespace ParatextImport
 		{
 			FinalizeBook();
 			StartingNewBook();
-			//m_currSection = null; // Done with the previous section
-			//m_iCurrSection = -1;
 
 			// Determine current Book number. For now we rely on a ContextValues.Book
 			// tag to come from the TextEnum as the first tag of every book.
 			// m_nBookNumber should be set before we call PrepareToImportNewBook().
 			m_nBookNumber = SOWrapper.SegmentFirstRef.Book;
 
-			Logger.WriteEvent(string.Format("Importing book {0}", m_nBookNumber));
+			Logger.WriteEvent($"Importing book {m_nBookNumber}");
 			m_prevRef = new BCVRef(m_currentRef);
 			m_currentRef = new BCVRef(m_nBookNumber, 1, 0);
 
@@ -3211,21 +3159,20 @@ namespace ParatextImport
 
 				// If we aren't importing either vernacular or BT, we aren't going to change it
 				// (presumably only importing notes), so we don't need a copy.
-				m_fImportingToMain = (m_importDomain == ImportDomain.BackTrans ||
-					(m_importDomain == ImportDomain.Main && m_settings.ImportBackTranslation));
+				m_fImportingToMain = (m_importDomain == ImportDomain.BackTrans || (m_importDomain == ImportDomain.Main && m_settings.ImportBackTranslation));
 				m_scrBook = m_undoManager.PrepareBookNotImportingVern(m_nBookNumber, m_fImportingToMain);
 
-				if (m_importDomain == ImportDomain.BackTrans && m_scrBook == null &&
-					m_settings.ImportBackTranslation)
+				if (m_importDomain == ImportDomain.BackTrans && m_scrBook == null && m_settings.ImportBackTranslation)
 				{
-					throw new ScriptureUtilsException(SUE_ErrorCode.BackTransMissingVernBook, null, null,
-						ScrReference.NumberToBookCode(m_nBookNumber), null, null, false);
+					throw new ScriptureUtilsException(SUE_ErrorCode.BackTransMissingVernBook, null, null, ScrReference.NumberToBookCode(m_nBookNumber), null, null, false);
 				}
 
 				ResetStateVariablesForNewBook();
 				SetBookAnnotations();
 				if (m_importDomain == ImportDomain.BackTrans)
+				{
 					m_wsCurrBtPara = SOWrapper.CurrentWs(m_wsAnal);
+				}
 				SOWrapper.SetBookCheckSum(m_scrBook);
 				return;
 			}
@@ -3234,19 +3181,24 @@ namespace ParatextImport
 			SOWrapper.SetBookCheckSum(m_scrBook);
 
 			if (!m_settings.ImportTranslation)
+			{
 				return;
+			}
 
 			// Set the id text for the book, everything following the 3-letter book code.
 			string idText = m_sSegmentText.Trim();
 			int spacePos = idText.IndexOf(" ");
 			if (spacePos == -1)
+			{
 				CurrentBook.IdText = string.Empty;
+			}
 			else
+			{
 				CurrentBook.IdText = idText.Substring(spacePos + 1);
+			}
 
 			// Set the title of the book in the UI language.
-			CurrentBook.Name.UserDefaultWritingSystem =
-				TsStringUtils.MakeString(CurrentBook.BestUIName, m_cache.DefaultUserWs);
+			CurrentBook.Name.UserDefaultWritingSystem = TsStringUtils.MakeString(CurrentBook.BestUIName, m_cache.DefaultUserWs);
 
 			// Create an empty title paragraph in case we don't get a Main Title.
 			FinalizePrevTitle();
@@ -4083,36 +4035,25 @@ namespace ParatextImport
 		/// ------------------------------------------------------------------------------------
 		private void AddPendingBTFootnotes(int ws, ITsStrBldr bldr)
 		{
-			int iFootnote = 0;
-			foreach (BtFootnoteBldrInfo info in m_BtFootnoteStrBldrs)
+			var iFootnote = 0;
+			foreach (var info in m_BtFootnoteStrBldrs)
 			{
-				if (info.ws == ws)
+				if (info.ws != ws)
 				{
-					IStFootnote footnote = FindCorrespondingFootnote(info.styleId, iFootnote);
-					if (footnote == null)
-					{
-						if (m_fStreamLinedImport)
-						{
-							// will just skip this and any other footnotes in the paragraph.
-							return;
-						}
-						throw new ScriptureUtilsException(
-							SUE_ErrorCode.BackTransMissingVernFootnote,
-							null, 0, info.bldr.Text,
-							CurrentBook.BookId,
-							info.reference.Chapter.ToString(),
-							info.reference.Verse.ToString(),
-							m_importDomain == ImportDomain.Main);
-					}
-					// Only allow one paragraph per footnote
-					IStTxtPara footnotePara = (IStTxtPara)footnote.ParagraphsOS[0];
-					ICmTranslation transl = footnotePara.GetOrCreateBT();
-					transl.Translation.set_String(ws, info.bldr.Length == 0 ?
-						TsStringUtils.EmptyString(ws) : info.bldr.GetString());
-
-					footnote.InsertRefORCIntoTrans(bldr, info.ichOffset + iFootnote, ws);
-					iFootnote++;
+					continue;
 				}
+				var footnote = FindCorrespondingFootnote(info.styleId, iFootnote);
+				if (footnote == null)
+				{
+					// Just skip this and any other footnotes in the paragraph.
+					return;
+				}
+				// Only allow one paragraph per footnote
+				var footnotePara = (IStTxtPara)footnote.ParagraphsOS[0];
+				var transl = footnotePara.GetOrCreateBT();
+				transl.Translation.set_String(ws, info.bldr.Length == 0 ? TsStringUtils.EmptyString(ws) : info.bldr.GetString());
+				footnote.InsertRefORCIntoTrans(bldr, info.ichOffset + iFootnote, ws);
+				iFootnote++;
 			}
 		}
 

@@ -2,7 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -20,7 +20,6 @@ using SIL.FieldWorks.Resources;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Utils;
-using XCore;
 
 namespace SIL.FieldWorks.IText
 {
@@ -29,6 +28,7 @@ namespace SIL.FieldWorks.IText
 	/// </summary>
 	public class TextsTriStateTreeView : TriStateTreeView
 	{
+		private LcmCache m_cache;
 		private LcmStyleSheet m_scriptureStylesheet;
 		private IScripture m_scr;
 		private IScrText m_associatedPtText;
@@ -39,50 +39,52 @@ namespace SIL.FieldWorks.IText
 		/// </summary>
 		public TextsTriStateTreeView()
 		{
-			BeforeExpand += ScriptureTriStateTreeView_BeforeExpand;
+			BeforeExpand += TriStateTreeView_BeforeExpand;
 		}
 
 		/// <summary>
-		/// Get/Set the cache.
+		/// Set the cache.
 		/// </summary>
-		public LcmCache Cache { get; set; }
-
-		/// <summary>
-		/// Get/Set the property table.
-		/// </summary>
-		public PropertyTable PropertyTable { get; set; }
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Load Texts and ScrBooks into the tree view.
-		/// </summary>
-		/// <param name="usebookImporter">'true' to use book importer system. Otherwise 'false'.</param>
-		/// ------------------------------------------------------------------------------------
-		private void LoadTextsAndBooks(bool usebookImporter = true)
+		public LcmCache Cache
 		{
-			Nodes.Clear();
-			LoadGeneralTexts();
-
-			if (Cache.ServiceLocator.GetInstance<IScrBookRepository>().AllInstances().Any())
+			set
 			{
-				LoadScriptureTexts(usebookImporter);
+				m_cache = value;
+				m_associatedPtText = ParatextHelper.GetAssociatedProject(m_cache.ProjectId);
+				m_scr = m_cache.LanguageProject.TranslatedScriptureOA;
+				if (m_scr == null && m_associatedPtText != null)
+				{
+					m_scr = m_cache.ServiceLocator.GetInstance<IScriptureFactory>().Create();
+				}
+				if (m_scr == null)
+				{
+					return;
+				}
+				m_scriptureStylesheet = new LcmStyleSheet();
+				m_scriptureStylesheet.Init(m_cache, m_scr.Hvo, ScriptureTags.kflidStyles);
 			}
 		}
+
+		/// <summary>
+		/// Get/Set the FW application.
+		/// </summary>
+		public IApp App { private get; set; }
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Loads the non-Scripture texts.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public void LoadGeneralTexts()
+		private void LoadGeneralTexts()
 		{
-			TreeNode tnTexts = LoadTextsByGenreAndWithoutGenre();
-			if (tnTexts != null && tnTexts.Nodes.Count > 0)
+			var tnTexts = LoadTextsByGenreAndWithoutGenre();
+			if (tnTexts == null || tnTexts.Nodes.Count == 0)
 			{
-				foreach (TreeNode textCat in tnTexts.Nodes)
-				{
-					Nodes.Add(textCat);
-				}
+				return;
+			}
+			foreach (TreeNode textCat in tnTexts.Nodes)
+			{
+				Nodes.Add(textCat);
 			}
 		}
 
@@ -91,56 +93,67 @@ namespace SIL.FieldWorks.IText
 		/// Loads the texts for each Scripture book title, section, footnote, etc.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public void LoadScriptureTexts(bool usebookImporter = true)
+		private void LoadScriptureTexts()
 		{
-			m_associatedPtText = usebookImporter ? ParatextHelper.GetAssociatedProject(Cache.ProjectId) : null;
-
-			m_scr = Cache.LanguageProject.TranslatedScriptureOA;
-			if (m_scr == null)
+			if (!m_cache.ServiceLocator.GetInstance<IScrBookRepository>().AllInstances().Any())
 			{
-				if (m_associatedPtText == null)
-				{
-					return;
-				}
-				// Better create the m_scr, since ParaText seems to knows about us.
-				m_scr = Cache.ServiceLocator.GetInstance<IScriptureFactory>().Create();
+				return; // Noby home, so skip them.
 			}
-			List<TreeNode> otBooks = new List<TreeNode>();
-			List<TreeNode> ntBooks = new List<TreeNode>();
-			for (int bookNum = 1; bookNum <= BCVRef.LastBook; bookNum++)
+			var otBooks = new List<TreeNode>();
+			var ntBooks = new List<TreeNode>();
+			for (var bookNum = 1; bookNum <= BCVRef.LastBook; bookNum++)
 			{
-				var bookName = Cache.ServiceLocator.GetInstance<IScrRefSystemRepository>().Singleton.BooksOS[bookNum - 1].UIBookName;
+				var bookName = m_cache.ServiceLocator.GetInstance<IScrRefSystemRepository>().Singleton.BooksOS[bookNum - 1].UIBookName;
 				object book = m_scr.FindBook(bookNum);
 				if (book == null)
 				{
 					if (m_associatedPtText != null && m_associatedPtText.BookPresent(bookNum))
+					{
 						book = bookNum;
+					}
 					else
+					{
 						continue;
+					}
 				}
 
-				TreeNode node = new TreeNode(bookName);
-				node.Tag = book;
-				node.Name = "Book"; // help us query for books.
+				var node = new TreeNode(bookName)
+				{
+					Tag = book,
+					Name = "Book"
+				};
+				// help us query for books.
 				if (bookNum < ScriptureTags.kiNtMin)
+				{
 					otBooks.Add(node);
+				}
 				else
+				{
 					ntBooks.Add(node);
+				}
 			}
 
-			TreeNode bibleNode = new TreeNode(ITextStrings.kstidBibleNode);
-			bibleNode.Name = "Bible";
+			var bibleNode = new TreeNode(ITextStrings.kstidBibleNode)
+			{
+				Name = "Bible"
+			};
 			if (otBooks.Count > 0)
 			{
-				TreeNode testamentNode = new TreeNode(ITextStrings.kstidOtNode, otBooks.ToArray());
-				testamentNode.Name = "Testament"; // help us query for Testaments
+				var testamentNode = new TreeNode(ITextStrings.kstidOtNode, otBooks.ToArray())
+				{
+					Name = "Testament"
+				};
+				// help us query for Testaments
 				bibleNode.Nodes.Add(testamentNode);
 			}
 
 			if (ntBooks.Count > 0)
 			{
-				TreeNode testamentNode = new TreeNode(ITextStrings.kstidNtNode, ntBooks.ToArray());
-				testamentNode.Name = "Testament"; // help us query for Testaments
+				var testamentNode = new TreeNode(ITextStrings.kstidNtNode, ntBooks.ToArray())
+				{
+					Name = "Testament"
+				};
+				// help us query for Testaments
 				bibleNode.Nodes.Add(testamentNode);
 			}
 			Nodes.Add(bibleNode);
@@ -152,18 +165,22 @@ namespace SIL.FieldWorks.IText
 		/// </summary>
 		/// <returns>A control tree of the Texts in the project</returns>
 		/// ------------------------------------------------------------------------------------
-		public TreeNode LoadTextsByGenreAndWithoutGenre()
+		private TreeNode LoadTextsByGenreAndWithoutGenre()
 		{
-			if (Cache.LanguageProject.GenreListOA == null) return null;
-			var genreList = Cache.LanguageProject.GenreListOA.PossibilitiesOS;
+			if (m_cache.LanguageProject.GenreListOA == null) return null;
+			var genreList = m_cache.LanguageProject.GenreListOA.PossibilitiesOS;
 			Debug.Assert(genreList != null);
-			var allTexts = Cache.ServiceLocator.GetInstance<ITextRepository>().AllInstances();
+			var allTexts = m_cache.ServiceLocator.GetInstance<ITextRepository>().AllInstances();
 			if (allTexts == null)
+			{
 				return null;
+			}
 
 			// Title node for all texts, Biblical and otherwise
-			var textsNode = new TreeNode("All Texts in Genres and not in Genres");
-			textsNode.Name = "Texts";
+			var textsNode = new TreeNode("All Texts in Genres and not in Genres")
+			{
+				Name = "Texts"
+			};
 
 			// For each genre, find the texts that claim it
 			LoadTextsFromGenres(textsNode, genreList, allTexts);
@@ -177,35 +194,41 @@ namespace SIL.FieldWorks.IText
 
 			foreach (var tex in allTexts)
 			{
-				if (tex.GenresRC.Count == 0)
+				if (tex.GenresRC.Any())
 				{
-					var texItem = new TreeNode(tex.ChooserNameTS.Text);
-					texItem.Tag = tex.ContentsOA;
-					texItem.Name = "Text";
-					textsWithNoGenre.Add(texItem);
-
-					// LT-12179: If this is the first tex we've added, establish the collator's details
-					// according to the writing system at the start of the tex:
-					if (!foundFirstText)
-					{
-						foundFirstText = true;
-						var ws1 = tex.ChooserNameTS.get_WritingSystemAt(0);
-						var wsEngine = Cache.WritingSystemFactory.get_EngineOrNull(ws1);
-						collator.Open(wsEngine.Id);
-					}
+					continue;
 				}
+				var texItem = new TreeNode(tex.ChooserNameTS.Text)
+				{
+					Tag = tex.ContentsOA,
+					Name = "Text"
+				};
+				textsWithNoGenre.Add(texItem);
+
+				// LT-12179: If this is the first tex we've added, establish the collator's details
+				// according to the writing system at the start of the tex:
+				if (foundFirstText)
+				{
+					continue;
+				}
+				foundFirstText = true;
+				var ws1 = tex.ChooserNameTS.get_WritingSystemAt(0);
+				var wsEngine = m_cache.WritingSystemFactory.get_EngineOrNull(ws1);
+				collator.Open(wsEngine.Id);
 			}
 
-			if (textsWithNoGenre.Count > 0)
+			if (!textsWithNoGenre.Any())
 			{
-				// LT-12179: Order the TreeNodes alphabetically:
-				textsWithNoGenre.Sort((x, y) => collator.Compare(x.Text, y.Text, LgCollatingOptions.fcoIgnoreCase));
-
-				// Make a TreeNode for the texts with no known genre
-				var woGenreTreeNode = new TreeNode("No Genre", textsWithNoGenre.ToArray());
-				woGenreTreeNode.Name = "TextsWoGenre";
-				textsNode.Nodes.Add(woGenreTreeNode);
+				return textsNode;
 			}
+			// LT-12179: Order the TreeNodes alphabetically:
+			textsWithNoGenre.Sort((x, y) => collator.Compare(x.Text, y.Text, LgCollatingOptions.fcoIgnoreCase));
+			// Make a TreeNode for the texts with no known genre
+			var woGenreTreeNode = new TreeNode("No Genre", textsWithNoGenre.ToArray())
+			{
+				Name = "TextsWoGenre"
+			};
+			textsNode.Nodes.Add(woGenreTreeNode);
 			return textsNode;
 		}
 
@@ -217,14 +240,13 @@ namespace SIL.FieldWorks.IText
 		/// <param name="parent">The parent to attach the genres to. If null, nothing is done.</param>
 		/// <param name="genreList">The owning sequence of genres - its a tree.</param>
 		/// <param name="allTexts">The flat list of all texts in the project.</param>
-		private void LoadTextsFromGenres(TreeNode parent, ILcmOwningSequence<ICmPossibility> genreList, IEnumerable<LCModel.IText> allTexts)
+		private static void LoadTextsFromGenres(TreeNode parent, ILcmOwningSequence<ICmPossibility> genreList, IEnumerable<LCModel.IText> allTexts)
 		{
-			if (parent == null) return;
-			var sortedGenreList = new List<ICmPossibility>();
-			foreach (var gen in genreList)
+			if (parent == null)
 			{
-				sortedGenreList.Add(gen);
+				return;
 			}
+			var sortedGenreList = new List<ICmPossibility>(genreList);
 			var sorter = new CmPossibilitySorter();
 			sortedGenreList.Sort(sorter);
 			foreach (var gen in sortedGenreList)
@@ -241,25 +263,29 @@ namespace SIL.FieldWorks.IText
 
 				foreach (var tex in allTexts)
 				{   // This tex may not have a genre or it may claim to be in more than one
-					if (Enumerable.Contains(tex.GenresRC, gen))
+					if (!Enumerable.Contains(tex.GenresRC, gen))
 					{
-						var texItem = new TreeNode(tex.ChooserNameTS.Text);
-						texItem.Tag = tex.ContentsOA;
-						texItem.Name = "Text";
-
-						// LT-12179: Add the new TreeNode to the (not-yet-)sorted list:
-						sortedNodes.Add(texItem);
-
-						// LT-12179: If this is the first tex we've added, establish the collator's details
-						// according to the writing system at the start of the tex:
-						if (!foundFirstText)
-						{
-							foundFirstText = true;
-							var ws1 = tex.ChooserNameTS.get_WritingSystemAt(0);
-							var wsEngine = gen.Cache.WritingSystemFactory.get_EngineOrNull(ws1);
-							collator.Open(wsEngine.Id);
-						}
+						continue;
 					}
+					var texItem = new TreeNode(tex.ChooserNameTS.Text)
+					{
+						Tag = tex.ContentsOA,
+						Name = "Text"
+					};
+
+					// LT-12179: Add the new TreeNode to the (not-yet-)sorted list:
+					sortedNodes.Add(texItem);
+
+					// LT-12179: If this is the first tex we've added, establish the collator's details
+					// according to the writing system at the start of the tex:
+					if (foundFirstText)
+					{
+						continue;
+					}
+					foundFirstText = true;
+					var ws1 = tex.ChooserNameTS.get_WritingSystemAt(0);
+					var wsEngine = gen.Cache.WritingSystemFactory.get_EngineOrNull(ws1);
+					collator.Open(wsEngine.Id);
 				}
 
 				// LT-12179:
@@ -322,11 +348,14 @@ namespace SIL.FieldWorks.IText
 		/// ------------------------------------------------------------------------------------
 		protected override void FillInIfHidden(object tag)
 		{
-			if (tag is ICmObject)
+			if (!(tag is ICmObject))
 			{
-				IScrBook book = ((ICmObject)tag).OwnerOfClass<IScrBook>();
-				if (book != null)
-					FillInChildren(FindNode(Nodes, book), false);
+				return;
+			}
+			var book = ((ICmObject)tag).OwnerOfClass<IScrBook>();
+			if (book != null)
+			{
+				FillInChildren(FindNode(Nodes, book), false);
 			}
 		}
 
@@ -335,15 +364,19 @@ namespace SIL.FieldWorks.IText
 		/// Finds the node for the specified book.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private static TreeNode FindNode(TreeNodeCollection nodes, IScrBook book)
+		private static TreeNode FindNode(IEnumerable nodes, IScrBook book)
 		{
 			foreach (TreeNode node in nodes)
 			{
 				if (node.Tag != null && (node.Tag.Equals(book.CanonicalNum) || node.Tag.Equals(book)))
+				{
 					return node;
+				}
 				var result = FindNode(node.Nodes, book);
 				if (result != null)
+				{
 					return result;
+				}
 			}
 			return null;
 		}
@@ -361,17 +394,20 @@ namespace SIL.FieldWorks.IText
 		private bool FillInChildren(TreeNode bookNode, bool checkChildren)
 		{
 			if (bookNode == null)
-				return false;
-			bool retval = true;
-			if ((bookNode.Tag is IScrBook || bookNode.Tag is int) &&
-				bookNode.Nodes.Count == 1 && bookNode.Nodes[0].Name == ksDummyName)
 			{
-				BeforeExpand -= ScriptureTriStateTreeView_BeforeExpand; // prevent recursion
-				retval = FillInBookChildren(bookNode);
-				if (retval && checkChildren)
-					CheckAllChildren(bookNode);
-				BeforeExpand += ScriptureTriStateTreeView_BeforeExpand;
+				return false;
 			}
+			if ((!(bookNode.Tag is IScrBook) && !(bookNode.Tag is int)) || bookNode.Nodes.Count != 1 || bookNode.Nodes[0].Name != ksDummyName)
+			{
+				return true;
+			}
+			BeforeExpand -= TriStateTreeView_BeforeExpand; // prevent recursion
+			var retval = FillInBookChildren(bookNode);
+			if (retval && checkChildren)
+			{
+				CheckAllChildren(bookNode);
+			}
+			BeforeExpand += TriStateTreeView_BeforeExpand;
 			return retval;
 		}
 
@@ -397,31 +433,33 @@ namespace SIL.FieldWorks.IText
 		/// <param name="e">The <see cref="T:System.Windows.Forms.TreeViewCancelEventArgs"/>
 		/// instance containing the event data.</param>
 		/// ------------------------------------------------------------------------------------
-		void ScriptureTriStateTreeView_BeforeExpand(object sender, TreeViewCancelEventArgs e)
+		private void TriStateTreeView_BeforeExpand(object sender, TreeViewCancelEventArgs e)
 		{
 			e.Cancel = !FillInChildren(e.Node, false);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Load sections into the books of a Scripture tree view optionally including the
-		/// heading as well as the content of each section.
+		/// Load all texts, including Scripture texts, if present.
 		/// </summary>
-		/// <param name="usebookImporter">'true' to use book importer system. Otherwise 'false'.</param>
-		/// ------------------------------------------------------------------------------------
-		public void LoadScriptureAndOtherTexts(bool usebookImporter = true)
+		public void LoadAllTexts()
 		{
 			// first load the book ids.
-			LoadTextsAndBooks(usebookImporter);
+			Nodes.Clear();
+			LoadGeneralTexts();
+			LoadScriptureTexts();
 
 			if (Nodes.Count == 0)
+			{
 				return;
+			}
 
 			//This requires the Bible node be loaded last.
-			TreeNode bibleNode = Nodes[Nodes.Count-1];
+			var bibleNode = Nodes[Nodes.Count-1];
 			//If there was no Bible node loaded then just return. This might be the case for the SE version of FLEx.
 			if (bibleNode.Name != "Bible")
+			{
 				return;
+			}
 
 			if (bibleNode.Nodes.Count == 0)
 			{
@@ -436,8 +474,10 @@ namespace SIL.FieldWorks.IText
 				{
 					// Put a dummy node into each book so the computer thinks it can be expanded.
 					// When it is, we will replace this with the real children.
-					TreeNode node = new TreeNode(ksDummyName);
-					node.Name = ksDummyName;
+					var node = new TreeNode(ksDummyName)
+					{
+						Name = ksDummyName
+					};
 					bookNode.Nodes.Add(node);
 				}
 			}
@@ -455,98 +495,115 @@ namespace SIL.FieldWorks.IText
 		/// ------------------------------------------------------------------------------------
 		protected virtual bool FillInBookChildren(TreeNode bookNode)
 		{
-			IScrBook book = bookNode.Tag as IScrBook;
-			int bookNum = (book == null) ? (int)bookNode.Tag : book.CanonicalNum;
-			Form owner = FindForm();
-			while (owner != null && !owner.Visible)
-				owner = owner.Owner;
-			if (owner == null)
-				owner = Form.ActiveForm ?? Application.OpenForms[0];
-
-			if (book == null || (m_associatedPtText != null && m_associatedPtText.BookPresent(book.CanonicalNum) &&
-				!m_associatedPtText.IsCheckSumCurrent(book.CanonicalNum, book.ImportedCheckSum)))
+			var book = bookNode.Tag as IScrBook;
+			var bookNum = book?.CanonicalNum ?? (int)bookNode.Tag;
+			var owningForm = FindForm();
+			while (owningForm != null && !owningForm.Visible)
 			{
-				// The book for this node is out-of-date with the Paratext book data
-				IScrBook importedBook = Import(bookNum, owner, false);
-				if (importedBook != null)
-					bookNode.Tag = book = importedBook;
-				if (book == null)
-					return false;
+				owningForm = owningForm.Owner;
+			}
+			if (owningForm == null)
+			{
+				owningForm = Form.ActiveForm ?? Application.OpenForms[0];
 			}
 
 			if (m_associatedPtText != null)
 			{
+				// Update main text, if possible/needed.
+				if (m_associatedPtText.BookPresent(bookNum))
+				{
+					// PT has it.
+					// If we don't have it, OR if our copy is stale, then get updated copy.
+					if (book == null || !m_associatedPtText.IsCheckSumCurrent(bookNum, book.ImportedCheckSum))
+					{
+						// Get new/fresh version from PT.
+						var importedBook = ImportBook(owningForm, bookNum);
+						if (importedBook != null)
+						{
+							book = importedBook;
+							bookNode.Tag = importedBook;
+						}
+					}
+				}
+				if (book == null)
+				{
+					// No book, so don't fret about a back translation
+					return false;
+				}
+
+				// Update back translation
 				IScrText btProject = ParatextHelper.GetBtsForProject(m_associatedPtText).FirstOrDefault();
-				if (btProject != null && btProject.BookPresent(book.CanonicalNum) && !btProject.IsCheckSumCurrent(book.CanonicalNum,
-					book.ImportedBtCheckSum.get_String(book.Cache.DefaultAnalWs).Text))
+				if (btProject != null && btProject.BookPresent(book.CanonicalNum) && !btProject.IsCheckSumCurrent(book.CanonicalNum, book.ImportedBtCheckSum.get_String(book.Cache.DefaultAnalWs).Text))
 				{
 					// The BT for this book node is out-of-date with the Paratext BT data
-					Import(bookNum, owner, true);
+					ImportBackTranslation(owningForm, bookNum, btProject);
 				}
 			}
 
 			bookNode.Nodes.Clear(); // Gets rid of dummy.
-			//IScrBook book = (IScrBook)bookNode.Tag;
 			// Add Title node.
 			if (book.TitleOA != null)
 			{
-				TreeNode titleNode =
-					new TreeNode(ResourceHelper.GetResourceString("kstidScriptureTitle"));
-				titleNode.Name = book.TitleOA.ToString();
-				titleNode.Tag = book.TitleOA;
+				var titleNode = new TreeNode(ResourceHelper.GetResourceString("kstidScriptureTitle"))
+				{
+					Name = book.TitleOA.ToString(),
+					Tag = book.TitleOA
+				};
 				bookNode.Nodes.Add(titleNode);
 			}
 
 			// Add Sections.
-			foreach (IScrSection section in book.SectionsOS)
+			foreach (var section in book.SectionsOS)
 			{
-				string chapterVerseBridge = m_scr.ChapterVerseBridgeAsString(section);
-				if (section.HeadingOA != null)
+				var chapterVerseBridge = m_scr.ChapterVerseBridgeAsString(section);
+				// Include the heading text if it's not empty.  See LT-8764.
+				var cTotal = section.HeadingOA?.ParagraphsOS.Cast<IScrTxtPara>().Sum(para => para.Contents.Length);
+				if (cTotal > 0)
 				{
-					// Include the heading text if it's not empty.  See LT-8764.
-					int cTotal = 0;
-					foreach (IScrTxtPara para in section.HeadingOA.ParagraphsOS)
-						cTotal += para.Contents.Length;
-					if (cTotal > 0)
+					var sFmt = ResourceHelper.GetResourceString("kstidSectionHeading");
+					var node = new TreeNode(string.Format(sFmt, chapterVerseBridge))
 					{
-						string sFmt = ResourceHelper.GetResourceString("kstidSectionHeading");
-						TreeNode node = new TreeNode(String.Format(sFmt, chapterVerseBridge));
-						node.Name = String.Format(sFmt, section);
-						node.Tag = section.HeadingOA; // expect an StText
-						bookNode.Nodes.Add(node);
-					}
+						Name = string.Format(sFmt, section),
+						Tag = section.HeadingOA // expect an StText
+					};
+					bookNode.Nodes.Add(node);
 				}
-				TreeNode sectionNode = new TreeNode(chapterVerseBridge);
-				sectionNode.Name = section.ToString();
-				sectionNode.Tag = section.ContentOA; // expect an StText
+				var sectionNode = new TreeNode(chapterVerseBridge)
+				{
+					Name = section.ToString(),
+					Tag = section.ContentOA // expect an StText
+				};
 				bookNode.Nodes.Add(sectionNode);
 			}
 
 			// Add Footnotes in reverse order, so we can insert them in the proper order.
-			List<IScrFootnote> footnotes = new List<IScrFootnote>(book.FootnotesOS);
+			var footnotes = new List<IScrFootnote>(book.FootnotesOS);
 			footnotes.Reverse();
-			foreach (IScrFootnote scrFootnote in footnotes)
+			foreach (var scrFootnote in footnotes)
 			{
 				// insert under the relevant section, if any (LTB-408)
 				IScrSection containingSection;
 				IStText containingTitle = null;
-				if (scrFootnote.TryGetContainingSection(out containingSection) ||
-					scrFootnote.TryGetContainingTitle(out containingTitle))
+				if (!scrFootnote.TryGetContainingSection(out containingSection) && !scrFootnote.TryGetContainingTitle(out containingTitle))
 				{
-					string nodeName = m_scr.ContainingRefAsString(scrFootnote);
-					TreeNode footnoteNode = new TreeNode(nodeName);
-					footnoteNode.Tag = scrFootnote;
-					footnoteNode.Name = "Footnote";
+					continue;
+				}
+				var nodeName = m_scr.ContainingRefAsString(scrFootnote);
+				var footnoteNode = new TreeNode(nodeName)
+				{
+					Tag = scrFootnote,
+					Name = "Footnote"
+				};
 
-					// see if we can lookup the node of this section.
-					int nodeIndex = bookNode.Nodes.IndexOfKey(
-						containingSection != null ? containingSection.ToString() : containingTitle.ToString());
-					//TreeNode[] sectionNodes = bookNode.Nodes.Find(hvoSection.ToString(), false);
-					//if (sectionNodes != null && sectionNodes.Length > 0)
-					if (nodeIndex >= 0)
-						bookNode.Nodes.Insert(nodeIndex + 1, footnoteNode);
-					else
-						bookNode.Nodes.Add(footnoteNode);	// insert at end.
+				// see if we can lookup the node of this section.
+				var nodeIndex = bookNode.Nodes.IndexOfKey(containingSection?.ToString() ?? containingTitle.ToString());
+				if (nodeIndex >= 0)
+				{
+					bookNode.Nodes.Insert(nodeIndex + 1, footnoteNode);
+				}
+				else
+				{
+					bookNode.Nodes.Add(footnoteNode);	// insert at end.
 				}
 			}
 			return true;
@@ -559,79 +616,95 @@ namespace SIL.FieldWorks.IText
 		/// ------------------------------------------------------------------------------------
 		public void ExpandToBooks()
 		{
-			BeforeExpand -= ScriptureTriStateTreeView_BeforeExpand; // Prevent loading Books before the user expands them
+			BeforeExpand -= TriStateTreeView_BeforeExpand; // Prevent loading Books before the user expands them
 			ExpandAll();
-			BeforeExpand += ScriptureTriStateTreeView_BeforeExpand;
+			BeforeExpand += TriStateTreeView_BeforeExpand;
 			// Collapse anything below book level
 			foreach (var node in Nodes.Find("Book", true))
+			{
 				node.Collapse();
+			}
 			foreach (var node in Nodes.Find("Genre", true))
+			{
 				node.Collapse();
+			}
 		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Imports the specified book.
 		/// </summary>
-		/// <param name="bookNum">The canonical book number.</param>
 		/// <param name="owningForm">Form that can be used as the owner of progress dialogs and
 		/// message boxes.</param>
-		/// <param name="importBt">True to import only the back translation, false to import
-		/// only the main translation</param>
+		/// <param name="bookNum">The canonical book number.</param>
 		/// <returns>
 		/// The ScrBook created to hold the imported data
 		/// </returns>
 		/// ------------------------------------------------------------------------------------
-		private IScrBook Import(int bookNum, Form owningForm, bool importBt)
+		private IScrBook ImportBook(Form owningForm, int bookNum)
 		{
-			IScripture scr = Cache.LangProject.TranslatedScriptureOA;
-			bool haveSomethingToImport = NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			IScrImportSet importSettings = null;
+			var haveSomethingToImport = NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
 			{
-				if (m_scriptureStylesheet == null)
-				{
-					m_scriptureStylesheet = new LcmStyleSheet();
-					m_scriptureStylesheet.Init(Cache, Cache.LangProject.TranslatedScriptureOA.Hvo, ScriptureTags.kflidStyles);
-				}
-				IScrImportSet importSettings = scr.FindOrCreateDefaultImportSettings(TypeOfImport.Paratext6, m_scriptureStylesheet,
-					FwDirectoryFinder.TeStylesPath);
-				IScrText paratextProj = ParatextHelper.GetAssociatedProject(Cache.ProjectId);
-				importSettings.ParatextScrProj = paratextProj.Name;
+				importSettings = m_scr.FindOrCreateDefaultImportSettings(TypeOfImport.Paratext6, m_scriptureStylesheet, FwDirectoryFinder.TeStylesPath);
+				importSettings.ParatextScrProj = m_associatedPtText.Name;
 				importSettings.StartRef = new BCVRef(bookNum, 0, 0);
-				int chapter = paratextProj.Versification.LastChapter(bookNum);
-				importSettings.EndRef = new BCVRef(bookNum, chapter, paratextProj.Versification.LastVerse(bookNum, chapter));
-				if (!importBt)
-				{
-					importSettings.ImportTranslation = true;
-					importSettings.ImportBackTranslation = false;
-				}
-				else
-				{
-					List<IScrText> btProjects = ParatextHelper.GetBtsForProject(paratextProj).ToList();
-					if (btProjects.Count > 0 && (string.IsNullOrEmpty(importSettings.ParatextBTProj) ||
-						!btProjects.Any(st => st.Name == importSettings.ParatextBTProj)))
-					{
-						importSettings.ParatextBTProj = btProjects[0].Name;
-					}
-					if (string.IsNullOrEmpty(importSettings.ParatextBTProj))
-						return false;
-					importSettings.ImportTranslation = false;
-					importSettings.ImportBackTranslation = true;
-				}
+				var chapter = m_associatedPtText.Versification.LastChapter(bookNum);
+				importSettings.EndRef = new BCVRef(bookNum, chapter, m_associatedPtText.Versification.LastVerse(bookNum, chapter));
+				importSettings.ImportTranslation = true;
+				importSettings.ImportBackTranslation = false;
 				ParatextHelper.LoadProjectMappings(importSettings);
-				ScrMappingList importMap = importSettings.GetMappingListForDomain(ImportDomain.Main);
-				ImportMappingInfo figureInfo = importMap[@"\fig"];
+				var importMap = importSettings.GetMappingListForDomain(ImportDomain.Main);
+				var figureInfo = importMap[@"\fig"];
 				if (figureInfo != null)
+				{
 					figureInfo.IsExcluded = true;
+				}
 				importSettings.SaveSettings();
 				return true;
 			});
 
-			if (haveSomethingToImport && ReflectionHelper.GetBoolResult(ReflectionHelper.GetType("ParatextImport.dll",
-				"ParatextImport.ParatextImportManager"), "ImportParatext", owningForm, Cache, m_scriptureStylesheet, PropertyTable.GetValue<IApp>("App")))
+			if (haveSomethingToImport && ReflectionHelper.GetBoolResult(ReflectionHelper.GetType("ParatextImport.dll", "ParatextImport.ParatextImportManager"), "ImportParatext", owningForm, m_cache, importSettings, m_scriptureStylesheet, App))
 			{
-				return scr.FindBook(bookNum);
+				return m_scr.FindBook(bookNum);
 			}
 			return null;
+		}
+
+		/// <summary>
+		/// Imports the specified book's back translation.
+		/// </summary>
+		/// <param name="owningForm">Form that can be used as the owner of progress dialogs and
+		/// message boxes.</param>
+		/// <param name="bookNum">The canonical book number.</param>
+		/// <param name="btProject">The BT project to import</param>
+		private void ImportBackTranslation(Form owningForm, int bookNum, IScrText btProject)
+		{
+			if (string.IsNullOrEmpty(btProject.Name))
+			{
+				return;
+			}
+			IScrImportSet importSettings = null;
+			NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
+			{
+				importSettings = m_scr.FindOrCreateDefaultImportSettings(TypeOfImport.Paratext6, m_scriptureStylesheet, FwDirectoryFinder.TeStylesPath);
+				importSettings.ParatextScrProj = m_associatedPtText.Name;
+				importSettings.StartRef = new BCVRef(bookNum, 0, 0);
+				importSettings.ParatextBTProj = btProject.Name;
+				importSettings.ImportTranslation = false;
+				importSettings.ImportBackTranslation = true;
+
+				ParatextHelper.LoadProjectMappings(importSettings);
+				var importMap = importSettings.GetMappingListForDomain(ImportDomain.Main);
+				var figureInfo = importMap[@"\fig"];
+				if (figureInfo != null)
+				{
+					figureInfo.IsExcluded = true;
+				}
+				importSettings.SaveSettings();
+			});
+
+			ReflectionHelper.GetBoolResult(ReflectionHelper.GetType("ParatextImport.dll", "ParatextImport.ParatextImportManager"), "ImportParatext", owningForm, m_cache, importSettings, m_scriptureStylesheet, App);
 		}
 	}
 }

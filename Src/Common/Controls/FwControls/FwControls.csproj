@@ -281,9 +281,6 @@
     <Compile Include="FwDrawing.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="FwListView.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="FwPanel.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -375,9 +372,6 @@
     <Compile Include="WizardDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="WizardStepPanel.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Include="WSChooser.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -433,10 +427,6 @@
     <EmbeddedResource Include="FwHelpButton.resx">
       <SubType>Designer</SubType>
       <DependentUpon>FwHelpButton.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="FwListView.resx">
-      <DependentUpon>FwListView.cs</DependentUpon>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="FwPopup.resx">
       <DependentUpon>FwPopup.cs</DependentUpon>
@@ -496,10 +486,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="WizardDialog.resx">
       <DependentUpon>WizardDialog.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="WizardStepPanel.resx">
-      <DependentUpon>WizardStepPanel.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="WSChooser.resx">

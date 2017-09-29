@@ -181,22 +181,10 @@
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="BookMerger.cs" />
-    <Compile Include="CharacterMappingSettings.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="Cluster.cs" />
-    <Compile Include="ConfirmOverlappingFileReplaceDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="Difference.cs" />
     <Compile Include="DiffLocation.cs" />
-    <Compile Include="DropDownContainer.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="IBookVersionAgent.cs" />
-    <Compile Include="ImportDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="ImportedBooks.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -204,21 +192,9 @@
       <DependentUpon>ImportedBooks.cs</DependentUpon>
     </Compile>
     <Compile Include="ImportStyleProxy.cs" />
-    <Compile Include="ImportWizard.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="ISCScriptureText.cs" />
     <Compile Include="ISCTextEnum.cs" />
     <Compile Include="ISCTextSegment.cs" />
-    <Compile Include="LabelButton.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="MappingDetailsCtrl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="ModifyMapping.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="ParatextLoadException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -228,25 +204,10 @@
     </Compile>
     <Compile Include="ReplaceInFilterFixer.cs" />
     <Compile Include="ScrAnnotationInfo.cs" />
-    <Compile Include="ScrBookControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="ScrImportSetMessage.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="ScrObjWrapper.cs" />
-    <Compile Include="ScrPassageControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="ScrPassageDropDown.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="SCScriptureText.cs" />
     <Compile Include="SCTextEnum.cs" />
     <Compile Include="SCTextSegment.cs" />
-    <Compile Include="SFFileListBuilder.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Include="ParatextImportExtensions.cs" />
     <Compile Include="ParatextImport.cs" />
     <Compile Include="ParatextImportManager.cs" />
@@ -254,52 +215,18 @@
     <Compile Include="UndoImportManager.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="CharacterMappingSettings.resx">
-      <DependentUpon>CharacterMappingSettings.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ConfirmOverlappingFileReplaceDialog.resx">
-      <DependentUpon>ConfirmOverlappingFileReplaceDialog.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Difference.resx">
       <DependentUpon>Difference.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ImportDialog.resx">
-      <DependentUpon>ImportDialog.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="ImportedBooks.resx">
       <DependentUpon>ImportedBooks.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="ImportWizard.resx">
-      <DependentUpon>ImportWizard.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="MappingDetailsCtrl.resx">
-      <DependentUpon>MappingDetailsCtrl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ModifyMapping.resx">
-      <DependentUpon>ModifyMapping.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ScrImportSetMessage.resx">
-      <DependentUpon>ScrImportSetMessage.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ScrPassageControl.resx">
-      <DependentUpon>ScrPassageControl.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ScrPassageDropDown.resx">
-      <DependentUpon>ScrPassageDropDown.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="SFFileListBuilder.resx">
-      <DependentUpon>SFFileListBuilder.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
@@ -318,10 +245,6 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\DropDownArrowWide.png" />
-    <None Include="Properties\DropDownArrow.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

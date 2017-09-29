@@ -3,21 +3,19 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.Controls;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
-using SIL.LCModel.Infrastructure;
 using SIL.Reporting;
 using SIL.LCModel.Utils;
 using SIL.LCModel.Core.Scripture;
+using SIL.LCModel.Infrastructure;
 
 namespace ParatextImport
 {
@@ -30,76 +28,58 @@ namespace ParatextImport
 	public class ParatextImportManager
 	{
 		#region Member data
-		private readonly LcmCache m_cache;
+
+		/// <summary>
+		/// Import settings provided by FLEx.
+		/// </summary>
+		protected readonly IScrImportSet m_importSettings;
 		private readonly Form m_mainWnd;
-		private readonly LcmStyleSheet m_styleSheet;
 		private readonly IHelpTopicProvider m_helpTopicProvider;
 		private readonly IApp m_app;
-		private readonly bool m_fParatextStreamlinedImport;
-
 		/// <summary>
 		/// This keeps track of stuff we may need to Undo.
 		/// </summary>
-		private UndoImportManager m_undoImportManager;
+		protected UndoImportManager m_undoImportManager;
 		#endregion
 
 		#region Constructor
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="ParatextImportManager"/> class.
 		/// </summary>
 		/// <param name="mainWnd">The main window initiating the import</param>
 		/// <param name="cache"></param>
+		/// <param name="importSettings"></param>
 		/// <param name="styleSheet">The stylesheet.</param>
 		/// <param name="app">The app.</param>
-		/// <param name="fParatextStreamlinedImport">if set to <c>true</c> do a Paratext
-		/// streamlined import (minimal UI).</param>
-		/// ------------------------------------------------------------------------------------
-		internal ParatextImportManager(Form mainWnd, LcmCache cache, LcmStyleSheet styleSheet, IApp app,
-			bool fParatextStreamlinedImport)
-			: this(cache, styleSheet, app, fParatextStreamlinedImport)
+		internal ParatextImportManager(Form mainWnd, LcmCache cache, IScrImportSet importSettings, LcmStyleSheet styleSheet, IApp app)
 		{
-			m_mainWnd = mainWnd;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Initializes a new instance of the <see cref="ParatextImportManager"/> class.
-		/// </summary>
-		/// <param name="cache">The cache.</param>
-		/// <param name="styleSheet">The style sheet.</param>
-		/// <param name="app">The app.</param>
-		/// <param name="fParatextStreamlinedImport">if set to <c>true</c> do a Paratext
-		/// streamlined import (minimal UI).</param>
-		/// <remarks>This version is for testing only</remarks>
-		/// ------------------------------------------------------------------------------------
-		protected ParatextImportManager(LcmCache cache, LcmStyleSheet styleSheet, IApp app,
-			bool fParatextStreamlinedImport)
-		{
-			m_cache = cache;
+			m_mainWnd = mainWnd; // Null for tests.
+			Cache = cache;
+			m_importSettings = importSettings;
 			m_helpTopicProvider = app as IHelpTopicProvider;
 			m_app = app;
-			m_styleSheet = styleSheet;
-			m_fParatextStreamlinedImport = fParatextStreamlinedImport;
+			StyleSheet = styleSheet;
 		}
 		#endregion
 
 		#region Public Static methods
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Perform a Paratext streamlined import
 		/// </summary>
 		/// <param name="mainWnd">The main window.</param>
 		/// <param name="cache"></param>
+		/// <param name="importSettings">Import settings for this import. Theory has it it is only one book.</param>
 		/// <param name="stylesheet">The Scripture stylesheet.</param>
 		/// <param name="app">The app.</param>
 		/// <returns><c>true</c> if something got imported; <c>false</c> otherwise</returns>
-		/// ------------------------------------------------------------------------------------
-		public static bool ImportParatext(Form mainWnd, LcmCache cache, LcmStyleSheet stylesheet, IApp app)
+		/// <remarks>
+		/// Called using Reflection from TextsTriStateTreeView.
+		/// </remarks>
+		public static bool ImportParatext(Form mainWnd, LcmCache cache, IScrImportSet importSettings, LcmStyleSheet stylesheet, IApp app)
 		{
-			ParatextImportManager mgr = new ParatextImportManager(mainWnd, cache, stylesheet, app, true);
+			var mgr = new ParatextImportManager(mainWnd, cache, importSettings, stylesheet, app);
 			return mgr.ImportSf();
 		}
 		#endregion
@@ -113,143 +93,37 @@ namespace ParatextImport
 		/// ------------------------------------------------------------------------------------
 		private bool ImportSf()
 		{
-			IScrImportSet importSettings;
-
-			if (m_fParatextStreamlinedImport)
-			{
-				importSettings = m_cache.LangProject.TranslatedScriptureOA.FindImportSettings(TypeOfImport.Paratext6);
-				if (importSettings == null)
-					throw new InvalidOperationException("Caller must set import settings before attempting a streamlined Paratext import");
-			}
-			else
-			{
-				using (new WaitCursor(m_mainWnd))
-				{
-					importSettings = GetImportSettings();
-				}
-				if (importSettings == null) // User cancelled in import wizard
-					return false;
-
-				// Display ImportDialog
-				using (ImportDialog importDlg = new ImportDialog(m_styleSheet, m_cache, importSettings, m_helpTopicProvider, m_app))
-				{
-					importDlg.ShowDialog(m_mainWnd);
-					if (importDlg.DialogResult == DialogResult.Cancel)
-					{
-						Logger.WriteEvent("User canceled import dialog");
-						return false;
-					}
-					// Settings could have changed if the user went into the wizard.
-					importSettings = importDlg.ImportSettings;
-				}
-			}
-
 			try
 			{
 				ScrReference firstImported;
 				using (new WaitCursor(m_mainWnd, true))
 				{
 					m_app.EnableMainWindows(false);
-					firstImported = ImportWithUndoTask(importSettings, true, "ImportStandardFormat");
+					firstImported = ImportWithUndoTask(true, "ImportStandardFormat");
 				}
 				firstImported = CompleteImport(firstImported);
+
+				// TODO: Enable this with Ken's approval.
+				//// Remove all archived drafts produced on import, as FLEx doesn't need them.
+				//// Keeping them around only serves to grow the data set forever for no benefit.
+				//// NB: This will also delete archived books from other imports, even back when TE was doing them.
+				//using (new WaitCursor(m_mainWnd, true))
+				//{
+				//	NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+				//	{
+				//		foreach (var archivedDraft in Cache.LanguageProject.TranslatedScriptureOA.ArchivedDraftsOC.ToList())
+				//		{
+				//			archivedDraft.Delete();
+				//		}
+				//	});
+				//}
+
 				return firstImported != ScrReference.Empty;
 			}
 			finally
 			{
 				m_app.EnableMainWindows(true);
 			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Get the settings for Import, either from database or from wizard
-		/// </summary>
-		/// <returns>Import settings, or <c>null</c> if user canceled dialog.</returns>
-		/// ------------------------------------------------------------------------------------
-		protected IScrImportSet GetImportSettings()
-		{
-			ILangProject proj = m_cache.LangProject;
-			IScripture scr = proj.TranslatedScriptureOA;
-			IScrImportSet importSettings = null;
-			NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
-			{
-				importSettings = scr.FindOrCreateDefaultImportSettings(TypeOfImport.Unknown, m_styleSheet,
-					FwDirectoryFinder.TeStylesPath);
-			});
-
-			importSettings.OverlappingFileResolver = new ConfirmOverlappingFileReplaceDialog(m_helpTopicProvider);
-			if (!importSettings.BasicSettingsExist)
-			{
-				using (NonUndoableUnitOfWorkHelper undoHelper = new NonUndoableUnitOfWorkHelper(
-					m_cache.ServiceLocator.GetInstance<IActionHandler>()))
-				{
-					using (ImportWizard importWizard = new ImportWizard(m_cache.ProjectId.Name,
-						scr, m_styleSheet, m_helpTopicProvider, m_app))
-					{
-						if (importWizard.ShowDialog() == DialogResult.Cancel)
-							return null;
-						// Scripture reference range may have changed
-						ImportDialog.ClearDialogReferences();
-						importSettings = scr.DefaultImportSettings;
-					}
-					undoHelper.RollBack = false;
-				}
-			}
-			else
-			{
-				StringCollection sInvalidFiles;
-				bool fCompletedWizard = false;
-				while (!importSettings.ImportProjectIsAccessible(out sInvalidFiles))
-				{
-					// Display the "Project Not Found" message box
-					using (ScrImportSetMessage dlg = new ScrImportSetMessage())
-					{
-						string[] files = new string[sInvalidFiles.Count];
-						sInvalidFiles.CopyTo(files, 0);
-						dlg.InvalidFiles = files;
-						dlg.HelpURL = m_helpTopicProvider.HelpFile;
-						dlg.HelpTopic = "/Beginning_Tasks/Import_Standard_Format/Project_Files_Unavailable.htm";
-						dlg.DisplaySetupOption = true;
-						switch(dlg.ShowDialog())
-						{
-							case DialogResult.OK: // Setup...
-							{
-								using (NonUndoableUnitOfWorkHelper undoHelper = new NonUndoableUnitOfWorkHelper(
-									m_cache.ServiceLocator.GetInstance<IActionHandler>()))
-								{
-									using (ImportWizard importWizard = new ImportWizard(
-										m_cache.ProjectId.Name, scr, m_styleSheet, m_helpTopicProvider, m_app))
-									{
-										if (importWizard.ShowDialog() == DialogResult.Cancel)
-											return null;
-										// Scripture reference range may have changed
-										ImportDialog.ClearDialogReferences();
-										importSettings = scr.DefaultImportSettings;
-										fCompletedWizard = true;
-									}
-									undoHelper.RollBack = false;
-								}
-								break;
-							}
-							case DialogResult.Cancel:
-								return null;
-							case DialogResult.Retry:
-								// Loop around until user gets tired.
-								break;
-						}
-					}
-				}
-				if (!fCompletedWizard)
-				{
-					if (ParatextProjHasUnmappedMarkers(importSettings))
-					{
-						// TODO: Show message box and then bring up import wizard
-					}
-				}
-			}
-
-			return importSettings;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -265,46 +139,31 @@ namespace ParatextImport
 			return new ParatextImportUi(progressDialog, m_helpTopicProvider);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets the undo manager (currenly only used for tests).
+		/// Gets the undo manager (currently only used for tests).
 		/// </summary>
-		/// <value>T.</value>
-		/// ------------------------------------------------------------------------------------
-		protected UndoImportManager UndoManager
-		{
-			get { return m_undoImportManager; }
-		}
+		internal UndoImportManager UndoManager => m_undoImportManager;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the imported saved version (currenly only used for tests).
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		protected IScrDraft ImportedVersion
-		{
-			get { return m_undoImportManager.ImportedVersion; }
-		}
+		protected IScrDraft ImportedVersion => m_undoImportManager.ImportedVersion;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the cache.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		protected LcmCache Cache
-		{
-			get { return m_cache; }
-		}
+		protected LcmCache Cache { get; }
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the style sheet.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		protected LcmStyleSheet StyleSheet
-		{
-			get { return m_styleSheet; }
-		}
+		protected LcmStyleSheet StyleSheet { get; }
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -315,26 +174,24 @@ namespace ParatextImport
 		/// (such as tests) that calls this directly should call
 		/// UndoManager.CollapseAllUndoActions().
 		/// </summary>
-		/// <param name="importSettings">The SFM import settings.  If null, then this is an XML import.</param>
 		/// <param name="fDisplayUi">set to <c>true</c> to display the progress dialog,
 		/// <c>false</c> to run without UI.</param>
 		/// <param name="updateDescription">description of the data update being done (i.e.,
 		/// which type of import).</param>
 		/// <returns>The reference of the first thing that was imported</returns>
 		/// ------------------------------------------------------------------------------------
-		protected ScrReference ImportWithUndoTask(IScrImportSet importSettings,
-			bool fDisplayUi, string updateDescription)
+		protected ScrReference ImportWithUndoTask(bool fDisplayUi, string updateDescription)
 		{
-			m_undoImportManager = new UndoImportManager(m_cache);
+			m_undoImportManager = new UndoImportManager(Cache);
 			if (m_mainWnd == null)
 			{
 				// Can happen in tests (and is probably the only time we'll get here).
-				return InternalImport(importSettings, fDisplayUi);
+				return InternalImport(fDisplayUi);
 			}
 
 			using (new DataUpdateMonitor(m_mainWnd, updateDescription))
 			{
-				return InternalImport(importSettings, fDisplayUi);
+				return InternalImport(fDisplayUi);
 			}
 		}
 
@@ -342,11 +199,10 @@ namespace ParatextImport
 		/// <summary>
 		/// Actually does the import, really.
 		/// </summary>
-		/// <param name="importSettings">The import settings.</param>
 		/// <param name="fDisplayUi">if set to <c>true</c> shows the UI.</param>
 		/// <returns>The first reference that was imported</returns>
 		/// ------------------------------------------------------------------------------------
-		private ScrReference InternalImport(IScrImportSet importSettings, bool fDisplayUi)
+		private ScrReference InternalImport(bool fDisplayUi)
 		{
 			ScrReference firstImported = ScrReference.Empty;
 			bool fPartialBtImported = false;
@@ -356,15 +212,12 @@ namespace ParatextImport
 				using (var progressDlg = new ProgressDialogWithTask(m_mainWnd))
 				{
 					progressDlg.CancelButtonText = Properties.Resources.kstidStopImporting;
-					progressDlg.Title =
-						Properties.Resources.kstidImportProgressCaption;
-					progressDlg.Message =
-						Properties.Resources.kstidImportInitializing;
+					progressDlg.Title = Properties.Resources.kstidImportProgressCaption;
+					progressDlg.Message = Properties.Resources.kstidImportInitializing;
 
-					using (ParatextImportUi importUi = CreateParatextImportUi(progressDlg))
+					using (var importUi = CreateParatextImportUi(progressDlg))
 					{
-						firstImported = (ScrReference)progressDlg.RunTask(fDisplayUi,
-							ImportTask, importSettings, m_undoImportManager, importUi);
+						firstImported = (ScrReference)progressDlg.RunTask(fDisplayUi, ImportTask, importUi);
 					}
 				}
 			}
@@ -450,20 +303,20 @@ namespace ParatextImport
 		protected ScrReference CompleteImport(ScrReference firstImported)
 		{
 			if (firstImported == null)
+			{
 				return ScrReference.Empty;
-
-			// An empty first imported reference can happen if we imported just the BT.
-			//Debug.Assert(!firstImported.IsEmpty, "We should have a useful reference if we imported something!");
+			}
 
 			// Display the ImportedBooks dialog if we imported any vernacular Scripture.
 			if (m_undoImportManager.ImportedBooks.Any(x => x.Value))
+			{
 				DisplayImportedBooksDlg(m_undoImportManager.BackupVersion);
+			}
 
 			m_undoImportManager.RemoveEmptyBackupSavedVersion();
 			// Keeping versions we made just for PT imports (which always entirely replace the current non-archived ones)
 			// just clutters things up and makes S/R more expensive.
-			if (m_fParatextStreamlinedImport)
-				m_undoImportManager.RemoveImportedVersion();
+			m_undoImportManager.RemoveImportedVersion();
 			m_undoImportManager.CollapseAllUndoActions();
 			// sync stuff
 			if (m_app != null)
@@ -486,17 +339,15 @@ namespace ParatextImport
 		/// <returns></returns>
 		private object ImportTask(IProgress progressDlg, object[] parameters)
 		{
-			Debug.Assert(parameters.Length == 3);
-			var importSettings = (IScrImportSet)parameters[0];
-			var undoManager = (UndoImportManager)parameters[1];
-			var importUi = (ParatextImportUi)parameters[2];
+			Debug.Assert(parameters.Length == 1);
+			var importUi = (ParatextImportUi)parameters[0];
 
 			bool fRollbackPartialBook = true;
 			try
 			{
 				Logger.WriteEvent("Starting import task");
-				undoManager.StartImportingFiles();
-				ScrReference firstRef = Import(importSettings, undoManager, importUi);
+				m_undoImportManager.StartImportingFiles();
+				var firstRef = Import(importUi);
 				fRollbackPartialBook = false;
 				return firstRef;
 			}
@@ -512,7 +363,7 @@ namespace ParatextImport
 			}
 			finally
 			{
-				undoManager.DoneImportingFiles(fRollbackPartialBook);
+				m_undoImportManager.DoneImportingFiles(fRollbackPartialBook);
 				Logger.WriteEvent("Finished importing");
 			}
 		}
@@ -520,15 +371,12 @@ namespace ParatextImport
 		/// <summary>
 		/// Calls the importer.
 		/// </summary>
-		/// <param name="importSettings">The import settings.</param>
-		/// <param name="undoManager">The undo manager.</param>
 		/// <param name="importUi">The import UI.</param>
 		/// <returns></returns>
-		protected virtual ScrReference Import(IScrImportSet importSettings, UndoImportManager undoManager,
-			ParatextImportUi importUi)
+		protected virtual ScrReference Import(ParatextImportUi importUi)
 		{
-			return ParatextSfmImporter.Import(importSettings, m_cache, m_styleSheet, undoManager, importUi, m_fParatextStreamlinedImport);
-			}
+			return ParatextSfmImporter.Import(m_importSettings, Cache, StyleSheet, m_undoImportManager, importUi);
+		}
 
 		#endregion
 
@@ -689,9 +537,9 @@ namespace ParatextImport
 		/// ------------------------------------------------------------------------------------
 		protected virtual void DisplayImportedBooksDlg(IScrDraft backupSavedVersion)
 		{
-			using (ImportedBooks dlg = new ImportedBooks(m_cache, ImportedVersion, backupSavedVersion, UndoManager.ImportedBooks.Keys, m_helpTopicProvider, m_app))
+			using (ImportedBooks dlg = new ImportedBooks(Cache, ImportedVersion, backupSavedVersion, UndoManager.ImportedBooks.Keys, m_helpTopicProvider, m_app))
 			{
-				dlg.ShowOrSave(m_mainWnd, m_fParatextStreamlinedImport);
+				dlg.ShowOrSave(m_mainWnd, true);
 			}
 		}
 		#endregion

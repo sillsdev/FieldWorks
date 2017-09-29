@@ -646,7 +646,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
-		/// Paint method for steps. This is shared between WizardDialog and WizardStepPanel.
+		/// Paint method for steps.
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
 		internal static void PanStepsPaint(IWizardPaintPanSteps steps, PaintEventArgs e)

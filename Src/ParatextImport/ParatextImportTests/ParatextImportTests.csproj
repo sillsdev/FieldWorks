@@ -230,17 +230,7 @@
     <Compile Include="ClusterTests.cs" />
     <Compile Include="DifferenceTests.cs" />
     <Compile Include="DiffTestHelper.cs" />
-    <Compile Include="ImportComponentsTests\CharacterMappingSettingsTests.cs" />
-    <Compile Include="ImportComponentsTests\ImportWizardTests.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ImportComponentsTests\ScrImportSetMessageTests.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="ImportedBooksTests.cs" />
-    <Compile Include="ImportTests\ImportDialogTests.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="ImportTests\ImportStyleProxyTests.cs" />
     <Compile Include="ImportTests\ParatextImportBtInterleaved.cs" />
     <Compile Include="ImportTests\ParatextImportBtNonInterleaved.cs" />
@@ -250,28 +240,13 @@
     <Compile Include="ImportTests\ParatextImportTests.cs" />
     <Compile Include="ImportTests\ParatextImportTestsBase.cs" />
     <Compile Include="MockScriptureProvider.cs" />
-    <Compile Include="ScrPassageControlTests.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Include="SCTextEnumTests.cs" />
     <Compile Include="SegmentedBtMergeTests.cs" />
-    <Compile Include="SFFileListBuilderTests.cs" />
-    <Compile Include="ParatextImportExtensionsTests.cs" />
     <Compile Include="VerseIteratorTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <EmbeddedResource Include="EncTest.map" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="ImportComponentsTests\ImportWizardTests.resx">
-      <DependentUpon>ImportWizardTests.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="SFFileListBuilderTests.resx">
-      <DependentUpon>SFFileListBuilderTests.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />

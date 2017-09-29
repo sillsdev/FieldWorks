@@ -8,6 +8,7 @@ using System.Linq;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel;
 using XCore;
 
@@ -40,13 +41,12 @@ namespace SIL.FieldWorks.IText
 		/// WARNING: this constructor is called by reflection, at least in the Interlinear
 		/// Text DLL. If you change its parameters be SURE to find and fix those callers also.
 		/// </summary>
-		/// <param name="propertyTable"></param>
+		/// <param name="app"></param>
 		/// <param name="cache">The cache.</param>
 		/// <param name="objList">A list of texts and books to check as an array of hvos</param>
 		/// <param name="helpTopicProvider">The help topic provider.</param>
 		/// ------------------------------------------------------------------------------------
-		public FilterTextsDialog(PropertyTable propertyTable, LcmCache cache, IStText[] objList,
-			IHelpTopicProvider helpTopicProvider) : base(propertyTable, cache, objList, helpTopicProvider)
+		public FilterTextsDialog(IApp app, LcmCache cache, IStText[] objList, IHelpTopicProvider helpTopicProvider) : base(app, cache, objList, helpTopicProvider)
 		{
 			m_helpTopicId = "khtpChooseTexts";
 			InitializeComponent();
@@ -59,7 +59,7 @@ namespace SIL.FieldWorks.IText
 		/// </summary>
 		protected override void LoadTexts()
 		{
-			m_treeTexts.LoadScriptureAndOtherTexts();
+			m_treeTexts.LoadAllTexts();
 		}
 
 
@@ -79,11 +79,11 @@ namespace SIL.FieldWorks.IText
 		/// </summary>
 		/// <param name="obj"></param>
 		/// <param name="e"></param>
-		protected void OnOk(Object obj, EventArgs e)
+		protected void OnOk(object obj, EventArgs e)
 		{
 			DialogResult = DialogResult.OK;
-			bool showWarning = false;
-			string message = ITextStrings.kOkbtnEmptySelection;
+			var showWarning = false;
+			var message = ITextStrings.kOkbtnEmptySelection;
 			var checkedList = m_treeTexts.GetCheckedNodeList();
 			var own = Owner as XWindow;
 			if (own != null && OnlyGenresChecked(checkedList))
@@ -93,13 +93,16 @@ namespace SIL.FieldWorks.IText
 				showWarning = true;
 			}
 			if (m_treeTexts.GetNodesWithState(TriStateTreeView.CheckState.Checked).Length == 0)
-				showWarning = true;
-			if (showWarning)
 			{
-				DialogResult result;
-				MessageBoxButtons buttons = MessageBoxButtons.OKCancel;
-				result = MessageBox.Show(message, ITextStrings.kOkbtnNoTextSelection, buttons);
-				if (result == DialogResult.Cancel) DialogResult = DialogResult.None;
+				showWarning = true;
+			}
+			if (!showWarning)
+			{
+				return;
+			}
+			if (MessageBox.Show(message, ITextStrings.kOkbtnNoTextSelection, MessageBoxButtons.OKCancel) == DialogResult.Cancel)
+			{
+				DialogResult = DialogResult.None;
 			}
 		}
 
@@ -108,7 +111,7 @@ namespace SIL.FieldWorks.IText
 		/// </summary>
 		/// <param name="checkedList">A list of TreeNodes that are also ICmPossibility(s)</param>
 		/// <returns>true if not empty and all genres, false otherwise.</returns>
-		private bool OnlyGenresChecked(List<TreeNode> checkedList)
+		private static bool OnlyGenresChecked(List<TreeNode> checkedList)
 		{
 			if (checkedList.Count == 0) return false;
 			return checkedList.All(node => node.Name == "Genre");
