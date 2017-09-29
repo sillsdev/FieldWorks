@@ -19,7 +19,7 @@ using SIL.Reporting;
 using SIL.LCModel.Utils;
 using SIL.LCModel.Core.Scripture;
 
-namespace SIL.FieldWorks.TE
+namespace ParatextImport
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>

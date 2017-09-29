@@ -16,7 +16,7 @@ using SIL.LCModel;
 using SIL.FieldWorks.FwCoreDlgControls;
 using SIL.LCModel.DomainServices;
 
-namespace SIL.FieldWorks.TE.ImportComponentsTests
+namespace ParatextImport.ImportComponentsTests
 {
 	/// -----------------------------------------------------------------------------------------
 	/// <summary>

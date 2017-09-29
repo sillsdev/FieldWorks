@@ -7,7 +7,7 @@ using NUnit.Framework;
 using SIL.LCModel;
 using SIL.LCModel.Core.Scripture;
 
-namespace SIL.FieldWorks.TE
+namespace ParatextImport
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>

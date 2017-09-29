@@ -10,7 +10,7 @@ using SIL.LCModel.Core.Scripture;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 
-namespace SIL.FieldWorks.TE
+namespace ParatextImport
 {
 	#region TeImportUi class
 	/// ----------------------------------------------------------------------------------------

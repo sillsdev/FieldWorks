@@ -11,7 +11,7 @@ using SIL.LCModel;
 using SIL.LCModel.Utils;
 using SIL.LCModel.DomainServices;
 
-namespace SIL.FieldWorks.TE.ImportTests
+namespace ParatextImport.ImportTests
 {
 	#region DummyImportDialog
 	/// ----------------------------------------------------------------------------------------

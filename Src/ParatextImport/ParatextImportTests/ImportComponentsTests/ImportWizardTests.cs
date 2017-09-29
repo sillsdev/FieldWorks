@@ -17,7 +17,7 @@ using SIL.FieldWorks.Test.ProjectUnpacker;
 using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.Common.FwUtils;
 
-namespace SIL.FieldWorks.TE.ImportComponentsTests
+namespace ParatextImport.ImportComponentsTests
 {
 	#region ImportWizard wrapper class to access protected members
 	internal class ImportWizardWrapper : ImportWizard

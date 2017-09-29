@@ -22,7 +22,7 @@ using SIL.FieldWorks.Resources;
 using SIL.LCModel.Core.Scripture;
 using SIL.LCModel.Core.WritingSystems;
 
-namespace SIL.FieldWorks.TE
+namespace ParatextImport
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>

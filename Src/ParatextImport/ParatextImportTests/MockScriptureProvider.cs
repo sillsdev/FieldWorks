@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.LCModel.Utils;
 
-namespace SIL.FieldWorks.TE
+namespace ParatextImport
 {
 	internal class MockScriptureProvider : ScriptureProvider.IScriptureProvider
 	{

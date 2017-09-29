@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using NUnit.Framework;
+using SIL.FieldWorks.Common.Controls;
 using SIL.LCModel.Core.Scripture;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.KernelInterfaces;
@@ -17,7 +18,7 @@ using SIL.LCModel.DomainServices;
 #pragma warning disable 419 // ambiguous reference; mono bug #639867
 #endif
 
-namespace SIL.FieldWorks.TE.ImportTests
+namespace ParatextImport.ImportTests
 {
 	#region DummyTeImporter
 	/// ----------------------------------------------------------------------------------------
@@ -659,7 +660,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 			{
 				base.StopImport();
 			}
-			catch (Common.Controls.CancelException)
+			catch (CancelException)
 			{
 			}
 		}
@@ -1300,12 +1301,12 @@ namespace SIL.FieldWorks.TE.ImportTests
 		public void RemoveControlCharactersTests()
 		{
 			string s = "abcd" + '\u001e';
-			string result = (string)ReflectionHelper.CallStaticMethod("ParatextImport.dll", "SIL.FieldWorks.TE.TeSfmImporter", "RemoveControlCharacters",
+			string result = (string)ReflectionHelper.CallStaticMethod("ParatextImport.dll", "ParatextImport.TeSfmImporter", "RemoveControlCharacters",
 				new object[]{s});
 			Assert.AreEqual("abcd", result);
 
 			s = "abcd" + '\u0009';
-			result = (string)ReflectionHelper.CallStaticMethod("ParatextImport.dll", "SIL.FieldWorks.TE.TeSfmImporter", "RemoveControlCharacters",
+			result = (string)ReflectionHelper.CallStaticMethod("ParatextImport.dll", "ParatextImport.TeSfmImporter", "RemoveControlCharacters",
 				new object[] { s });
 			Assert.AreEqual("abcd ", result);
 		}

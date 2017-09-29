@@ -627,8 +627,7 @@ namespace SIL.FieldWorks.IText
 			});
 
 			if (haveSomethingToImport && ReflectionHelper.GetBoolResult(ReflectionHelper.GetType("ParatextImport.dll",
-				"SIL.FieldWorks.TE.TeImportManager"), "ImportParatext", owningForm, Cache, m_scriptureStylesheet,
-				    PropertyTable.GetValue<IApp>("App")))
+				"ParatextImport.TeImportManager"), "ImportParatext", owningForm, Cache, m_scriptureStylesheet, PropertyTable.GetValue<IApp>("App")))
 			{
 				return scr.FindBook(bookNum);
 			}

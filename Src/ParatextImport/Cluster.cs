@@ -12,7 +12,7 @@ using SIL.LCModel.Core.Scripture;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.DomainServices;
 
-namespace SIL.FieldWorks.TE
+namespace ParatextImport
 {
 	#region Cluster class
 	/// ----------------------------------------------------------------------------------------

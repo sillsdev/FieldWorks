@@ -11,7 +11,7 @@ using SIL.LCModel;
 using SIL.LCModel.Core.Scripture;
 using SIL.LCModel.DomainServices;
 
-namespace SIL.FieldWorks.TE
+namespace ParatextImport
 {
 	#region DifferenceList class
 	/// ----------------------------------------------------------------------------------------

@@ -14,7 +14,7 @@ using SIL.LCModel.Core.Scripture;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 
-namespace SIL.FieldWorks.TE.ImportTests
+namespace ParatextImport.ImportTests
 {
 	#region class SegmentInfo
 	/// ----------------------------------------------------------------------------------------

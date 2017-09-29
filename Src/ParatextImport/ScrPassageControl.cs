@@ -16,7 +16,7 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.Windows.Forms;
 using SIL.LCModel.Core.Scripture;
 
-namespace SIL.FieldWorks.TE
+namespace ParatextImport
 {
 	/// <summary>
 	/// Summary description for ScrPassageControl.

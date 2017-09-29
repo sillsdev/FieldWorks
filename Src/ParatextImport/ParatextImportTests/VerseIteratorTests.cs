@@ -9,7 +9,7 @@ using SIL.LCModel.Core.Text;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 
-namespace SIL.FieldWorks.TE
+namespace ParatextImport
 {
 	/// <summary/>
 	[TestFixture]

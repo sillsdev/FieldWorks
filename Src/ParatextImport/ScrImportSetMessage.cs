@@ -5,7 +5,7 @@
 using System;
 using System.Windows.Forms;
 
-namespace SIL.FieldWorks.TE
+namespace ParatextImport
 {
 	/// <summary>
 	/// Summary description for ScrImportSetMessage.

@@ -9,7 +9,7 @@ using SilEncConverters40;
 using SIL.LCModel;
 using SIL.LCModel.Core.Scripture;
 
-namespace SIL.FieldWorks.TE
+namespace ParatextImport
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>

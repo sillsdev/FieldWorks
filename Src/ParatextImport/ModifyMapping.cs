@@ -13,7 +13,7 @@ using SIL.FieldWorks.Common.Controls;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.DomainServices;
 
-namespace SIL.FieldWorks.TE
+namespace ParatextImport
 {
 	/// ------------------------------------------------------------------------------------
 	/// <summary>

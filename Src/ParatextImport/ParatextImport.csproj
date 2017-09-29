@@ -8,7 +8,7 @@
     <ProjectGuid>{1C23DE94-04CC-470A-9D1E-E236E23B9C8A}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SIL.FieldWorks.TE</RootNamespace>
+    <RootNamespace>ParatextImport</RootNamespace>
     <AssemblyName>ParatextImport</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

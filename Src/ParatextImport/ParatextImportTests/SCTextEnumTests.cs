@@ -19,7 +19,7 @@ using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.DomainServices;
 
-namespace SIL.FieldWorks.TE
+namespace ParatextImport
 {
 	#region DummyEncConverter class
 	/// ----------------------------------------------------------------------------------------
@@ -1529,8 +1529,7 @@ namespace SIL.FieldWorks.TE
 			string encFileName = Path.Combine(Path.GetTempPath(), "test.map");
 			try
 			{
-				using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(
-					"SIL.FieldWorks.TE.EncTest.map"))
+				using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("ParatextImport.EncTest.map"))
 				{
 					Assert.IsNotNull(stream);
 

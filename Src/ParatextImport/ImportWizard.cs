@@ -25,7 +25,7 @@ using SIL.FieldWorks.Resources;
 using SIL.Reporting;
 using SIL.LCModel.Utils;
 
-namespace SIL.FieldWorks.TE
+namespace ParatextImport
 {
 	/// -----------------------------------------------------------------------------------
 	/// <summary>
@@ -390,7 +390,7 @@ namespace SIL.FieldWorks.TE
 			this.label15 = new System.Windows.Forms.Label();
 			this.label20 = new System.Windows.Forms.Label();
 			this.panStep2_Other = new System.Windows.Forms.Panel();
-			this.sfFileListBuilder = new SIL.FieldWorks.TE.SFFileListBuilder();
+			this.sfFileListBuilder = new ParatextImport.SFFileListBuilder();
 			this.label21 = new System.Windows.Forms.Label();
 			this.panStep2_PT = new System.Windows.Forms.Panel();
 			this.cboPTBackTrans = new SIL.FieldWorks.Common.Controls.FwOverrideComboBox();
@@ -657,7 +657,7 @@ namespace SIL.FieldWorks.TE
 			//
 			resources.ApplyResources(this.sfFileListBuilder, "sfFileListBuilder");
 			this.sfFileListBuilder.Name = "sfFileListBuilder";
-			this.sfFileListBuilder.FilesChanged += new SIL.FieldWorks.TE.SFFileListBuilder.FilesChangedHandler(this.OnFilesChanged);
+			this.sfFileListBuilder.FilesChanged += new ParatextImport.SFFileListBuilder.FilesChangedHandler(this.OnFilesChanged);
 			//
 			// label21
 			//

@@ -21,7 +21,7 @@ using SIL.LCModel.DomainServices;
 using SIL.Reporting;
 using SIL.LCModel.Utils;
 
-namespace SIL.FieldWorks.TE
+namespace ParatextImport
 {
 	#region BtFootnoteBldrInfo
 	/// ----------------------------------------------------------------------------------------

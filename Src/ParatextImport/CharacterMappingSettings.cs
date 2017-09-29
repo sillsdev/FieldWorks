@@ -12,7 +12,7 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel.DomainServices;
 
-namespace SIL.FieldWorks.TE
+namespace ParatextImport
 {
 	/// <summary>
 	/// CharacterMappingSettings is a dialog box with fields to edit an ECMapping for a

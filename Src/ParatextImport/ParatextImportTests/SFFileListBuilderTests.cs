@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
@@ -15,7 +14,7 @@ using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Core.Scripture;
 using SIL.LCModel.Core.WritingSystems;
 
-namespace SIL.FieldWorks.TE
+namespace ParatextImport
 {
 	#region DummyScrImportFileInfo
 	/// ----------------------------------------------------------------------------------------

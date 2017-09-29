@@ -20,7 +20,7 @@ using SIL.LCModel.DomainServices;
 using SIL.Reporting;
 using SIL.LCModel.Core.Scripture;
 
-namespace SIL.FieldWorks.TE
+namespace ParatextImport
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
@@ -88,7 +88,7 @@ namespace SIL.FieldWorks.TE
 					break;
 				case TypeOfImport.Other:
 				case TypeOfImport.Paratext5:
-					LCModel.Core.Scripture.ScrVers versification = m_settings.Cache.LangProject.TranslatedScriptureOA.Versification;
+					var versification = m_settings.Cache.LangProject.TranslatedScriptureOA.Versification;
 					m_settings.CheckForOverlappingFilesInRange(
 						new ScrReference(m_settings.StartRef, versification),
 						new ScrReference(m_settings.EndRef, versification));

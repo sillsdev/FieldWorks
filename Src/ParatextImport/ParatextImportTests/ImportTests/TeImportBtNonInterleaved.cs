@@ -11,7 +11,7 @@ using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Utils;
 using SIL.LCModel;
 
-namespace SIL.FieldWorks.TE.ImportTests
+namespace ParatextImport.ImportTests
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>

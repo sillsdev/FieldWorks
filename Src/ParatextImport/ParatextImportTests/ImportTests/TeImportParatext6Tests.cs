@@ -12,7 +12,7 @@ using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Utils;
 
-namespace SIL.FieldWorks.TE.ImportTests
+namespace ParatextImport.ImportTests
 {
 	#region TE Paratext 6 Import Tests (in-memory cache)
 	/// ---------------------------------------------------------------------------------------

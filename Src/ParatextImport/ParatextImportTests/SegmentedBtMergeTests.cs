@@ -15,7 +15,7 @@ using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Utils;
 
-namespace SIL.FieldWorks.TE
+namespace ParatextImport
 {
 	/// <summary>
 	/// Additional tests of BookMerger to confirm appropriate merging of segmented back translation.

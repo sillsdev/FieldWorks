@@ -5,7 +5,7 @@
 using System.Diagnostics;
 using SIL.LCModel.Core.Scripture;
 
-namespace SIL.FieldWorks.TE.ImportTests
+namespace ParatextImport.ImportTests
 {
 	#region TeImportNoUi
 	/// ----------------------------------------------------------------------------------------

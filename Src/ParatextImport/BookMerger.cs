@@ -16,7 +16,7 @@ using SIL.LCModel.Core.Scripture;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.KernelInterfaces;
 
-namespace SIL.FieldWorks.TE
+namespace ParatextImport
 {
 	#region ParaCorrelationInfo
 	/// ------------------------------------------------------------------------------------

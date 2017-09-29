@@ -6,7 +6,7 @@ using SIL.FieldWorks.Common.Framework;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel;
 
-namespace SIL.FieldWorks.TE
+namespace ParatextImport
 {
 	/// <summary>
 	/// Handles the problem of replacing a current book with an alternative. (Either may be null.)

@@ -5,7 +5,7 @@
 using System.Windows.Forms;
 using NUnit.Framework;
 
-namespace SIL.FieldWorks.TE.ImportComponentsTests
+namespace ParatextImport.ImportComponentsTests
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
