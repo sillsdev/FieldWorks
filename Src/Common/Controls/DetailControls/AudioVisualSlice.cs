@@ -319,7 +319,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 			base.Initialize(cache, obj, flid, fieldName, persistProvider, mediator, propertyTable,
 				displayNameProperty, displayWs);
-			m_view.Init(obj as ICmFile, flid);
+			m_view.Init(obj as ICmFile, flid, propertyTable);
 		}
 		/// <summary>
 		/// Handle launching of the media player.
@@ -437,9 +437,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			m_vc = null;
 		}
 
-		public void Init(ICmFile obj, int flid)
+		public void Init(ICmFile obj, int flid, PropertyTable propertyTable)
 		{
 			CheckDisposed();
+			m_propertyTable = propertyTable;
 			m_cache = m_propertyTable.GetValue<LcmCache>("cache");
 			m_file = obj;
 			m_flid = flid;
