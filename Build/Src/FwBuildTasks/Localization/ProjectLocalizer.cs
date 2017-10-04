@@ -10,6 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 using System.Xml.Linq;
 using FwBuildTasks;
 using Microsoft.Build.Framework;
@@ -198,20 +199,51 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 		{
 			// Run assembly linker with the specified arguments
 			Directory.CreateDirectory(Path.GetDirectoryName(outputDllPath)); // make sure the directory in which we want to make it exists.
-			using (var process = new Process())
+			var fileName = IsUnix ? "al" : "al.exe";
+			var arguments = BuildLinkerArgs(outputDllPath, culture, fileversion,
+				productVersion, version, resources);
+			var stdOutput = string.Empty;
+			var exitCode = RunProcess(fileName, arguments, out stdOutput);
+			if (exitCode != 0)
 			{
-				process.StartInfo.UseShellExecute = false;
-				process.StartInfo.RedirectStandardOutput = true;
-				process.StartInfo.FileName = IsUnix ? "al" : "al.exe";
-				process.StartInfo.Arguments = BuildLinkerArgs(outputDllPath, culture, fileversion, productVersion, version, resources);
-				process.Start();
+				throw new ApplicationException(
+					$"Assembly linker returned error {exitCode} for {outputDllPath}.\n" +
+					$"Command line: {fileName} {arguments}\nOutput:\n{stdOutput}");
+			}
+		}
 
-				var stdOutput = process.StandardOutput.ReadToEnd();
-				process.WaitForExit();
-				if (process.ExitCode != 0)
+		private static int RunProcess(string fileName, string arguments, out string stdOutput,
+			int timeout = 300000 /* 5 min */)
+		{
+			var output = string.Empty;
+			using (var outputWaitHandle = new AutoResetEvent(false))
+			{
+				using (var process = new Process())
 				{
-					throw new ApplicationException($"Assembly linker returned error {process.ExitCode} for {outputDllPath}.\n" +
-						$"Command line: {process.StartInfo.FileName} {process.StartInfo.Arguments}\nOutput:\n{stdOutput}");
+					try
+					{
+						process.StartInfo.UseShellExecute = false;
+						process.StartInfo.RedirectStandardOutput = true;
+						process.StartInfo.FileName = fileName;
+						process.StartInfo.Arguments = arguments;
+						process.OutputDataReceived += (sender, e) =>
+						{
+							if (e.Data == null)
+								outputWaitHandle.Set();
+							else
+								output = e.Data;
+						};
+						process.Start();
+
+						process.BeginOutputReadLine();
+						process.WaitForExit(timeout);
+						stdOutput = output;
+						return process.ExitCode;
+					}
+					finally
+					{
+						outputWaitHandle.WaitOne(timeout);
+					}
 				}
 			}
 		}
@@ -244,35 +276,23 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 		protected virtual void RunResGen(string outputResourcePath, string localizedResxPath,
 			string originalResxFolder)
 		{
-			using (var process = new Process())
+			var fileName = IsUnix ? "resgen" : "resgen.exe";
+			var arguments = $"\"{localizedResxPath}\" \"{outputResourcePath}\"";
+			if (!IsUnix)
 			{
-				process.StartInfo.UseShellExecute = false;
-				process.StartInfo.RedirectStandardOutput = true;
-				process.StartInfo.FileName = IsUnix ? "resgen" : "resgen.exe";
-				process.StartInfo.Arguments = $"\"{localizedResxPath}\" \"{outputResourcePath}\"";
-				if (!IsUnix)
-				{
-					// It needs to be able to reference the appropriate System.Drawing.dll and System.Windows.Forms.dll to make the conversion.
-					var clrFolder = RuntimeEnvironment.GetRuntimeDirectory();
-					var drawingPath = Path.Combine(clrFolder, "System.Drawing.dll");
-					var formsPath = Path.Combine(clrFolder, "System.Windows.Forms.dll");
+				// It needs to be able to reference the appropriate System.Drawing.dll and System.Windows.Forms.dll to make the conversion.
+				var clrFolder = RuntimeEnvironment.GetRuntimeDirectory();
+				var drawingPath = Path.Combine(clrFolder, "System.Drawing.dll");
+				var formsPath = Path.Combine(clrFolder, "System.Windows.Forms.dll");
 
-					process.StartInfo.Arguments += $" /r:\"{drawingPath}\" /r:\"{formsPath}\"";
-				}
-
-				// Setting the working directory to the folder containing the ORIGINAL resx file allows us to find included files
-				// like FDO/Resources/Question.ico that the resx file refers to using relative paths.
-				process.StartInfo.WorkingDirectory = originalResxFolder;
-				process.Start();
-
-				var stdOutput = process.StandardOutput.ReadToEnd();
-				process.WaitForExit();
-
-				if (process.ExitCode != 0)
-				{
-					throw new ApplicationException($"Resgen returned error {process.ExitCode} for {localizedResxPath}.\n" +
-						$"Command line: {process.StartInfo.FileName} {process.StartInfo.Arguments}\nOutput:\n{stdOutput}");
-				}
+				arguments += $" /r:\"{drawingPath}\" /r:\"{formsPath}\"";
+			}
+			var stdOutput = string.Empty;
+			var exitCode = RunProcess(fileName, arguments, out stdOutput);
+			if (exitCode != 0)
+			{
+				throw new ApplicationException($"Resgen returned error {exitCode} for {localizedResxPath}.\n" +
+					$"Command line: {fileName} {arguments}\nOutput:\n{stdOutput}");
 			}
 		}
 

@@ -94,14 +94,12 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 				if (string.IsNullOrEmpty(Version))
 					Version = FileVersion;
 
-				//Parallel.ForEach(projectFolders, currentFolder =>
-				foreach (var currentFolder in projectFolders)
+				Parallel.ForEach(projectFolders, currentFolder =>
 				{
 					var projectLocalizer = CreateProjectLocalizer(currentFolder,
 						new ProjectLocalizerOptions(this, Options));
 					projectLocalizer.ProcessProject();
-				}
-				//});
+				});
 			}
 			catch (Exception ex)
 			{
