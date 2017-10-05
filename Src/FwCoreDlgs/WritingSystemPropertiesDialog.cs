@@ -1778,6 +1778,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 							mediator.SendMessage("WritingSystemUpdated", kvp.Key.Id);
 					}
 				}
+				if (m_fChanged && uowHelper != null)
+				{
+					uowHelper.RollBack = false;
+				}
 				m_wsManager.Save();
 			}
 			finally
