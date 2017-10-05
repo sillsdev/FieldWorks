@@ -308,7 +308,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 			}
 			if (refreshNeeded)
 			{
-				Publisher.Publish("MasterRefresh", null);
+				_fwMainWnd.RefreshAllViews();
 			}
 		}
 

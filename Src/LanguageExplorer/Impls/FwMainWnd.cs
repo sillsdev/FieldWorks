@@ -820,13 +820,7 @@ namespace LanguageExplorer.Impls
 		/// ------------------------------------------------------------------------------------
 		public void FinishRefresh()
 		{
-#if RANDYTODO
-			// TODO: Decide which is right.
 			Cache.ServiceLocator.GetInstance<IUndoStackManager>().Refresh();
-#else
-			// This is from my fork:
-			//ZAP?? Cache.ServiceLocator.GetInstance<IUndoStackManager>().Refresh();
-#endif
 			_currentArea.FinishRefresh();
 			Refresh();
 		}

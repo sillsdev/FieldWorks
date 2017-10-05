@@ -230,18 +230,19 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditReversalEntries
 		private void ConfigureDictionary_Clicked(object sender, EventArgs e)
 		{
 			bool refreshNeeded;
+			var mainWindow = PropertyTable.GetValue<IFwMainWnd>("window");
 			using (var dlg = new DictionaryConfigurationDlg(PropertyTable))
 			{
 				var controller = new DictionaryConfigurationController(dlg, _recordClerk?.CurrentObject);
 				controller.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 				dlg.Text = string.Format(xWorksStrings.ConfigureTitle, xWorksStrings.Dictionary);
 				dlg.HelpTopic = "khtpConfigureDictionary";
-				dlg.ShowDialog(PropertyTable.GetValue<IWin32Window>("window"));
+				dlg.ShowDialog((IWin32Window)mainWindow);
 				refreshNeeded = controller.MasterRefreshRequired;
 			}
 			if (refreshNeeded)
 			{
-				Publisher.Publish("MasterRefresh", null);
+				mainWindow.RefreshAllViews();
 			}
 		}
 

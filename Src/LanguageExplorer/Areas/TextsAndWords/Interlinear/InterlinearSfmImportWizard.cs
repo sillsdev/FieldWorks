@@ -585,7 +585,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					Close();
 				}
 			}
-			m_publisher.Publish("MasterRefresh", ActiveForm);
+			m_propertyTable.GetValue<IFwMainWnd>("window").RefreshAllViews();
 			if (m_firstNewText != null)
 			{
 #if RANDYTODO

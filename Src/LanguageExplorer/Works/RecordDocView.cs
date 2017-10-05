@@ -321,12 +321,13 @@ namespace LanguageExplorer.Works
 		{
 			using (var dlg = new XmlDocConfigureDlg())
 			{
+				var mainWindow = PropertyTable.GetValue<IFwMainWnd>("window");
 				// If this is optional and defaults to DictionaryPublicationLayout,
 				// it messes up our Dictionary when we make something else configurable (like Classified Dictionary).
 				var sProp = XmlUtils.GetOptionalAttributeValue(m_xnSpec, "layoutProperty");
 				Debug.Assert(sProp != null, "When making a view configurable you need to put a 'layoutProperty' in the XML configuration.");
 				dlg.SetConfigDlgInfo(m_xnSpec, Cache, (LcmStyleSheet)StyleSheet,
-					FindForm() as IFwMainWnd, PropertyTable, Publisher, sProp);
+					mainWindow, PropertyTable, Publisher, sProp);
 				if (nodePath != null)
 					dlg.SetActiveNode(nodePath);
 				if (dlg.ShowDialog(this) == DialogResult.OK)
@@ -337,7 +338,7 @@ namespace LanguageExplorer.Works
 				}
 				if (dlg.MasterRefreshRequired)
 				{
-					Publisher.Publish("MasterRefresh", null);
+					mainWindow.RefreshAllViews();
 				}
 			}
 		}
@@ -530,8 +531,9 @@ namespace LanguageExplorer.Works
 				sProp = "DictionaryPublicationLayout";
 			using(var dlg = new XmlDocConfigureDlg())
 			{
+				var mainWindow = PropertyTable.GetValue<IFwMainWnd>("window");
 				dlg.SetConfigDlgInfo(m_configurationParametersElement, Cache, FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable),
-					FindForm() as IFwMainWnd, PropertyTable, Publisher, sProp);
+					mainWindow, PropertyTable, Publisher, sProp);
 				if (dlg.ShowDialog(this) == DialogResult.OK)
 				{
 					// LT-8767 When this dialog is launched from the Configure Dictionary View dialog
@@ -543,7 +545,7 @@ namespace LanguageExplorer.Works
 				}
 				if (dlg.MasterRefreshRequired)
 				{
-					Publisher.Publish("MasterRefresh", null);
+					mainWindow.RefreshAllViews();
 				}
 				return true; // we handled it
 			}

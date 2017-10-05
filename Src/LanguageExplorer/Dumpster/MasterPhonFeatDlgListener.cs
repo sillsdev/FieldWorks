@@ -106,7 +106,7 @@ namespace LanguageExplorer.Dumpster
 						// this call, so there is code in the Mediator to handle in the middle of a msg the case
 						// where the object is nolonger valid.  This has happend before and was being handled, this
 						// call "SendMessageToAllNow" has not had the code to handle the exception, so it was added.
-						Publisher.Publish("MasterRefresh", cache.LangProject.PhFeatureSystemOA);
+						PropertyTable.GetValue<IFwMainWnd>("window").RefreshAllViews();
 						break;
 				}
 			}

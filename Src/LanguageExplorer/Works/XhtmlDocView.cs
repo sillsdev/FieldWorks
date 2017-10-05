@@ -606,6 +606,7 @@ namespace LanguageExplorer.Works
 			var cache = (LcmCache)tagObjects[5];
 			var activeClerk = (RecordClerk)tagObjects[6];
 			bool refreshNeeded;
+			var mainWindow = propertyTable.GetValue<IFwMainWnd>("window");
 			using (var dlg = new DictionaryConfigurationDlg(propertyTable))
 			{
 				ICmObject current = null;
@@ -618,12 +619,12 @@ namespace LanguageExplorer.Works
 				controller.SetStartingNode(classList);
 				dlg.Text = String.Format(xWorksStrings.ConfigureTitle, DictionaryConfigurationListener.GetDictionaryConfigurationType(propertyTable));
 				dlg.HelpTopic = DictionaryConfigurationListener.GetConfigDialogHelpTopic(propertyTable);
-				dlg.ShowDialog(propertyTable.GetValue<IWin32Window>("window"));
+				dlg.ShowDialog((IWin32Window)mainWindow);
 				refreshNeeded = controller.MasterRefreshRequired;
 			}
 			if (refreshNeeded)
 			{
-				publisher.Publish("MasterRefresh", null);
+				mainWindow.RefreshAllViews();
 			}
 		}
 

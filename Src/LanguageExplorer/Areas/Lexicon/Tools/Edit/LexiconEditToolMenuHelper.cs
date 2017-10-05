@@ -478,18 +478,16 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		{
 			using (InsertEntryDlg dlg = new InsertEntryDlg())
 			{
+				var mainWindow = PropertyTable.GetValue<IFwMainWnd>("window");
 				dlg.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 				dlg.SetDlgInfo(Cache, PersistenceProviderFactory.CreatePersistenceProvider(PropertyTable));
-				if (dlg.ShowDialog(Form.ActiveForm) == DialogResult.OK)
+				if (dlg.ShowDialog((Form)mainWindow) == DialogResult.OK)
 				{
 					ILexEntry entry;
 					bool newby;
 					dlg.GetDialogInfo(out entry, out newby);
 					// No need for a PropChanged here because InsertEntryDlg takes care of that. (LT-3608)
-#if RANDYTODO
-					// TODO: // Added in develop.
-					// m_mediator.SendMessage("MasterRefresh", null);
-#endif
+					mainWindow.RefreshAllViews();
 					RecordClerk.JumpToRecord(entry.Hvo);
 				}
 			}

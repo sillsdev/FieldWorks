@@ -221,7 +221,9 @@ namespace LanguageExplorer.Works
 				refreshNeeded = controller.MasterRefreshRequired;
 			}
 			if (refreshNeeded)
-			Publisher.Publish("MasterRefresh", null);
+			{
+				PropertyTable.GetValue<IFwMainWnd>("window").RefreshAllViews();
+			}
 			return true; // message handled
 		}
 

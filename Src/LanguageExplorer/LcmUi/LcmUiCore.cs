@@ -2098,7 +2098,7 @@ namespace LanguageExplorer.LcmUi
 			{
 				IMoMorphSynAnalysis msa;
 				var entrySenseCount = ownerEntry.SensesOS.Count;
-				var appendNewSense = (insertionPosition == int.MaxValue) || (insertionPosition >= entrySenseCount); ;
+				var appendNewSense = insertionPosition >= entrySenseCount;
 				if (entrySenseCount == 0)
 				{
 					// No senses at all.

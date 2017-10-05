@@ -1644,7 +1644,7 @@ namespace LanguageExplorer.Works
 							}
 						}
 					}
-					m_mediator.SendMessage("MasterRefresh", null);
+					PropertyTable.GetValue<IFwMainWnd>("window").RefreshAllViews();
 #endif
 				}
 			}

@@ -53,7 +53,7 @@
 		<command id="CmdListColleagues" label="List _Colleagues" message="ListColleagues"/>
 		<command id="CmdNewWindow" label="_New Window" message="NewWindow" a10status="DONE" />
 		<!-- F5 doesn't seem to work with the open source adapter -->
-		<command id="CmdRefresh" label="_Refresh" message="MasterRefresh" icon="Refresh" shortcut="F5" oneatatime="true" a10status="PARTIALLY_DONE" />
+		<command id="CmdRefresh" label="_Refresh" message="MasterRefresh" icon="Refresh" shortcut="F5" oneatatime="true" a10status="DONE" />
 		<command id="CmdProjectProperties" label="Field_Works Project Properties..." message="FileProjectProperties" a10status="DONE" />
 		<command id="CmdProjectLocation" label="Project Locations..." message="FileProjectLocation" a10status="DONE" />
 		<command id="CmdDeleteProject" label="_Delete Project..." message="DeleteProject" icon="Delete" a10status="DONE" />

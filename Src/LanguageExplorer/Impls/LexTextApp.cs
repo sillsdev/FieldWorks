@@ -594,7 +594,6 @@ Old Mediator methods/commands
 				foreach (var xwnd in rgxw)
 				{
 					xwnd.FinishRefresh();
-					((Form)xwnd).Refresh();
 				}
 
 				// LT-3963: active window changes as a result of a refresh.
@@ -608,11 +607,7 @@ Old Mediator methods/commands
 					// Refresh it last, so its saved settings get restored.
 					activeWnd.FinishRefresh();
 					var asForm = activeWnd as Form;
-					if (asForm != null)
-					{
-						asForm.Refresh();
-						asForm.Activate();
-					}
+					asForm?.Activate();
 				}
 				return true;
 			}
@@ -2076,7 +2071,7 @@ Old Mediator methods/commands
 							 dlg is LexImportWizard || dlg is NotebookImportWiz || dlg is LiftImportDlg)
 					{
 						// Make everything we've imported visible.
-						wndActive.Publisher.Publish("MasterRefresh", wndActive);
+						PropertyTable.GetValue<IFwMainWnd>("window").RefreshAllViews();
 					}
 				}
 			}

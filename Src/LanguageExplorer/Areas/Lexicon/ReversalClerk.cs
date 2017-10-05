@@ -380,7 +380,7 @@ namespace LanguageExplorer.Areas.Lexicon
 			}
 			// Without this, stale data can still display in the BulkEditSenses tool if you
 			// recreate the deleted reversal index.
-			Publisher.Publish("MasterRefresh", null);
+			PropertyTable.GetValue<IFwMainWnd>("window").RefreshAllViews();
 		}
 
 		/// <summary />

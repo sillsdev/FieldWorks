@@ -1905,19 +1905,19 @@ namespace SIL.FieldWorks
 		{
 			using (ProjectLocationDlg dlg = new ProjectLocationDlg(app, cache))
 			{
-			if (dlg.ShowDialog(dialogOwner) != DialogResult.OK)
-				return;
-			string projectPath = cache.ProjectId.Path;
-			string parentDirectory = Path.GetDirectoryName(cache.ProjectId.ProjectFolder);
-			string projectsDirectory = FwDirectoryFinder.ProjectsDirectory;
-			if (!MiscUtils.IsUnix)
-			{
-				parentDirectory = parentDirectory.ToLowerInvariant();
-				projectsDirectory = projectsDirectory.ToLowerInvariant();
-			}
+				if (dlg.ShowDialog(dialogOwner) != DialogResult.OK)
+					return;
+				string projectPath = cache.ProjectId.Path;
+				string parentDirectory = Path.GetDirectoryName(cache.ProjectId.ProjectFolder);
+				string projectsDirectory = FwDirectoryFinder.ProjectsDirectory;
+				if (!MiscUtils.IsUnix)
+				{
+					parentDirectory = parentDirectory.ToLowerInvariant();
+					projectsDirectory = projectsDirectory.ToLowerInvariant();
+				}
 
-			UpdateProjectsLocation(dlg.ProjectsFolder, app, projectPath);
-		}
+				UpdateProjectsLocation(dlg.ProjectsFolder, app, projectPath);
+			}
 		}
 
 		/// ------------------------------------------------------------------------------------

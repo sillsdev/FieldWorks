@@ -634,7 +634,7 @@ namespace LanguageExplorer.Works
 			if(ConfigurationViewImported != null)
 				ConfigurationViewImported();
 
-			Publisher.Publish("MasterRefresh", null);
+			PropertyTable.GetValue<IFwMainWnd>("window").RefreshAllViews();
 		}
 
 		public bool IsConfigurationACustomizedOriginal(DictionaryConfigurationModel configuration)

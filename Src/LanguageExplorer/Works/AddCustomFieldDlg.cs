@@ -849,7 +849,7 @@ namespace LanguageExplorer.Works
 			}
 			if (changed) // only fire the 'big gun' if something has actually changed
 			{
-				m_publisher.Publish("MasterRefresh", null);
+				m_propertyTable.GetValue<IFwMainWnd>("window").RefreshAllViews();
 			}
 			DialogResult = DialogResult.OK;
 		}

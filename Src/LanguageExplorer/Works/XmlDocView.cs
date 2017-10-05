@@ -1210,8 +1210,9 @@ namespace LanguageExplorer.Works
 				sProp = "DictionaryPublicationLayout";
 			using(var dlg = new XmlDocConfigureDlg())
 			{
+				var mainWindow = PropertyTable.GetValue<IFwMainWnd>("window");
 				dlg.SetConfigDlgInfo(m_configurationParametersElement, Cache, StyleSheet,
-					FindForm() as IFwMainWnd, PropertyTable, Publisher, sProp);
+					mainWindow, PropertyTable, Publisher, sProp);
 				dlg.SetActiveNode(nodePath);
 				if(dlg.ShowDialog(this) == DialogResult.OK)
 				{
@@ -1221,7 +1222,7 @@ namespace LanguageExplorer.Works
 				}
 				if (dlg.MasterRefreshRequired)
 				{
-					Publisher.Publish("MasterRefresh", null);
+					mainWindow.RefreshAllViews();
 				}
 			}
 		}
