@@ -173,20 +173,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			var interestingTextsList = GetInterestingTextList();
 			var interestingTexts = interestingTextsList.InterestingTexts.ToArray();
 
-			IFilterTextsDialog<IStText> dlg = null;
-			try
+			using (var dlg = new FilterTextsDialog(PropertyTable.GetValue<IApp>("App"), Cache, interestingTexts, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
 			{
-				dlg = new FilterTextsDialog(PropertyTable, Cache, interestingTexts, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
-				if (dlg.ShowDialog(PropertyTable.GetValue<IApp>("App").ActiveMainWindow) == DialogResult.OK)
+				if (dlg.ShowDialog(PropertyTable.GetValue<Form>("window")) == DialogResult.OK)
 				{
 					interestingTextsList.SetInterestingTexts(dlg.GetListOfIncludedTexts());
 					UpdateFilterStatusBarPanel();
 				}
-			}
-			finally
-			{
-				if (dlg != null)
-					((IDisposable)dlg).Dispose();
 			}
 
 			return true;
@@ -346,6 +339,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				newText.ContentsOA = NewStText;
 				Clerk.CreateFirstParagraph(NewStText, wsText);
 				InterlinMaster.LoadParagraphAnnotationsAndGenerateEntryGuessesIfNeeded(NewStText, false);
+				if (Cache.LangProject.DiscourseDataOA == null)
+					Cache.LangProject.DiscourseDataOA = Cache.ServiceLocator.GetInstance<IDsDiscourseDataFactory>().Create();
+				Cache.ServiceLocator.GetInstance<IDsConstChartFactory>().Create(Cache.LangProject.DiscourseDataOA, newText.ContentsOA,
+					Cache.LangProject.GetDefaultChartTemplate());
 			}
 
 #endregion

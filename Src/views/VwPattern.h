@@ -216,7 +216,7 @@ public:
 	}
 
 	// IVwPattern methods
-	STDMETHOD(put_Window)(int hwnd);
+	STDMETHOD(put_Window)(DWORD * hwnd);
 	STDMETHOD(FlushMessages)();
 	STDMETHOD(get_AbortRequest)(ComBool * pfAbort);
 	STDMETHOD(put_AbortRequest)(ComBool fAbort);

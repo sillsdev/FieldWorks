@@ -32,7 +32,7 @@
 // English (U.S.) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
-#ifdef _WIN32
+#if defined(_WIN32) || defined(_M_X64)
 LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 #pragma code_page(1252)
 #endif //_WIN32
@@ -79,7 +79,7 @@ BEGIN
 	//"#include ""..\\..\\appcore\\Res\\AfApp.rc""\r\n"
 	"#include ""..\\..\\Widgets\\Res\\NetworkTreeView.rc""\r\n"
 	"#include ""..\\..\\Generic\\Generic.rc""\r\n"
-	"#ifdef _WIN32\r\n"
+	"#if defined(_WIN32) || defined(_M_X64)\r\n"
 	"LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US\r\n"
 	"#pragma code_page(1252)\r\n"
 	"#endif //_WIN32\r\n"
@@ -291,7 +291,7 @@ END
 //#include "..\..\appcore\Res\AfApp.rc"
 #include "..\..\Widgets\Res\NetworkTreeView.rc"
 #include "..\..\Generic\Generic.rc"
-#ifdef _WIN32
+#if defined(_WIN32) || defined(_M_X64)
 LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 #pragma code_page(1252)
 #endif //_WIN32

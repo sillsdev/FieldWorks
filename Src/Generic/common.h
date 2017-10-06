@@ -269,14 +269,12 @@ typedef const achar * Pcsz;
 template<typename T> inline T * AddrOf(T & x)
 {
 	T * pt;
-#ifdef _MSC_VER
-#ifndef _M_X64
+#if defined(_WIN32) && !defined(_M_X64)
 	__asm
 	{
 		mov eax,x
 		mov pt,eax
 	}
-#endif
 #else
 	pt = (T*)&(char&)x;
 #endif
@@ -286,8 +284,12 @@ template<typename T> inline T * AddrOf(T & x)
 
 // This is to make a signed isizeof operator, otherwise we get tons of warnings about
 // signed / unsigned mismatches.
+#if !defined(_WIN32) && !defined(_M_X64)
+#define SSIZE_T ssize_t
+#endif // !SSIZE_T
+
 #ifndef isizeof
-	#define isizeof(T) ((int)sizeof(T))
+	#define isizeof(T) ((SSIZE_T)sizeof(T))
 #endif
 
 #define SizeOfArray(rgt) (isizeof(rgt) / isizeof(rgt[0]))

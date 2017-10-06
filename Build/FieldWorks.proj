@@ -37,8 +37,8 @@
 
   <Target Name="all" DependsOnTargets="mkall"/>
 
-  <!-- do nothing target that merely recreates the FieldWorks.targets and some generated files -->
-  <Target Name="refreshTargets" DependsOnTargets="GenerateVersionFiles;RestoreNuGetPackages"/>
+  <!-- Recreates the FieldWorks.targets (in Setup target) and some generated files -->
+  <Target Name="refreshTargets" DependsOnTargets="GenerateVersionFiles"/>
 
   <!-- dummy target to perform platform specific initialization -->
   <Target Name="init" DependsOnTargets="initLinux;initWindows"/>

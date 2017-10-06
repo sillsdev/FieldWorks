@@ -13,7 +13,7 @@ Last reviewed:
 #ifndef Mutex_H
 #define Mutex_H 1
 
-#ifndef WIN32
+#if !defined(WIN32) && !defined(_M_X64)
 #include <pthread.h>
 #include <errno.h>
 #include <stdexcept>

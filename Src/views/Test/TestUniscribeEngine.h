@@ -48,7 +48,7 @@ namespace TestViews
 			chrp.dympHeight = 0;
 
 			HDC hdc;
-#ifdef WIN32
+#if defined(WIN32) || defined(_M_X64)
 			int dxMax = 600;
 			hdc = ::CreateCompatibleDC(::GetDC(::GetDesktopWindow()));
 			HBITMAP hbm = ::CreateCompatibleBitmap(hdc, dxMax, dxMax);
@@ -67,7 +67,7 @@ namespace TestViews
 			m_qref->get_Renderer(qws, qvg, &m_qre);
 
 			qvg.Clear();
-#ifdef WIN32
+#if defined(WIN32) || defined(_M_X64)
 			::DeleteObject(hbm);
 			::DeleteDC(hdc);
 #endif

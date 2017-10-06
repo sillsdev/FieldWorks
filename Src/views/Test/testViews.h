@@ -15,7 +15,7 @@ Last reviewed:
 #pragma once
 #include "Main.h"
 
-#ifdef WIN32
+#if defined(WIN32) || defined(_M_X64)
 #define NEWLINE "\r\n"
 #else
 #define NEWLINE "\n"
@@ -52,7 +52,7 @@ namespace TestViews
 
 	// These functions are used for test setup and teardown (only)
 
-#ifdef WIN32
+#if defined(WIN32) || defined(_M_X64)
 
 	inline HDC GetTestDC()
 	{

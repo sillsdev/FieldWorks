@@ -936,4 +936,25 @@ Click "Cancel" to abort this import.</value>
   <data name="ksImportLangMissingTextStartsWith" xml:space="preserve">
     <value>The first words of this text are: </value>
   </data>
+  <data name="kOkbtnEmptySelection" xml:space="preserve">
+    <value>OK will create an empty text</value>
+  </data>
+  <data name="kOkbtnGenreSelection" xml:space="preserve">
+    <value>OK will create an empty text assigned to these genres</value>
+  </data>
+  <data name="kOkbtnNoTextSelection" xml:space="preserve">
+    <value>No texts are selected</value>
+  </data>
+  <data name="kstidBibleNode" xml:space="preserve">
+    <value>Bible</value>
+    <comment>text for Entire Bible node in Scripture tree controls</comment>
+  </data>
+  <data name="kstidNtNode" xml:space="preserve">
+    <value>New Testament</value>
+    <comment>text for NT node in Scripture tree controls</comment>
+  </data>
+  <data name="kstidOtNode" xml:space="preserve">
+    <value>Old Testament</value>
+    <comment>text for OT node in Scripture tree controls</comment>
+  </data>
 </root>

@@ -14,7 +14,7 @@ Description:
 #ifndef UTILTYPELIB_H
 #define UTILTYPELIB_H 1
 
-#ifndef WIN32
+#if !defined(WIN32) && !defined(_M_X64)
 class ITypeInfo;
 class ITypeLib;
 #endif

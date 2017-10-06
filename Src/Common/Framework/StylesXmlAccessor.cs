@@ -28,10 +28,6 @@ namespace SIL.FieldWorks.Common.Framework
 	/// A class that supports having a collection of factory styles defined in an XML file.
 	/// A static method can be called to update the database styles if they are out of date
 	/// with respect to the file.
-	///
-	/// Note: This class was refactored from TeStylesXmlAccessor, which originally included
-	/// all its functionality. Some traces of TE names may remain. The TeStylesXmlAccessor unit
-	/// test tests much of the functionality of this class.
 	/// </summary>
 	public abstract class StylesXmlAccessor : SettingsXmlAccessorBase
 	{

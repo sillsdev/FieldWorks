@@ -61,7 +61,7 @@ namespace TestViews
 			mws->put_DefaultFontName(fontStr);
 
 			HDC hdc;
-#ifdef WIN32
+#if defined(WIN32) || defined(_M_X64)
 			int dxMax = 600;
 			hdc = ::CreateCompatibleDC(::GetDC(::GetDesktopWindow()));
 			HBITMAP hbm = ::CreateCompatibleBitmap(hdc, dxMax, dxMax);
@@ -84,7 +84,7 @@ namespace TestViews
 			m_qre->putref_RenderEngineFactory(m_qref);
 
 			qvg.Clear();
-#ifdef WIN32
+#if defined(WIN32) || defined(_M_X64)
 			::DeleteObject(hbm);
 			::DeleteDC(hdc);
 #endif

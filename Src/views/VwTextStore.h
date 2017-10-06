@@ -188,6 +188,7 @@ protected:
 	virtual void GetCurrentWritingSystem();
 
 	VwRootBox * m_prootb;
+	static TsViewCookie m_nextId;
 
 public:
 	static ITfThreadMgrPtr s_qttmThreadMgr;
@@ -197,6 +198,7 @@ public:
 	ITfDocumentMgrPtr m_qtdmDocMgr;
 	ITfContextPtr m_qtcContext;
 	TfEditCookie m_tfEditCookie;
+	TsViewCookie m_id;
 
 private:
 	// Internal methods.

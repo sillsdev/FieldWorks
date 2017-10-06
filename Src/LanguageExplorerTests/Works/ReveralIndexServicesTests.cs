@@ -88,14 +88,14 @@ namespace LanguageExplorerTests.Works
 
 		private string GetFilenameForWs(string riConfigDir, string ws)
 		{
-			return Path.Combine(riConfigDir, WSMgr.Get(ws) + RIS.ConfigFileExtension);
+			return Path.Combine(riConfigDir, WSMgr.Get(ws).LanguageTag + RIS.ConfigFileExtension);
 		}
 
 		private void CreateDummyConfigForWS(string filename, string ws)
 		{
 			var xmldoc = new XDocument();
 			var xElement = new XElement(RIS.DictConfigElement);
-			xElement.Add(new XAttribute("name", string.IsNullOrEmpty(ws) ? "All Reversal Indexes" : WSMgr.Get(ws).DisplayLabel));
+			xElement.Add(new XAttribute("name", string.IsNullOrEmpty(ws) ? "All Reversal Indexes" : WSMgr.Get(ws).LanguageTag));
 			xElement.Add(new XAttribute(RIS.WsAttribute, ws ?? String.Empty));
 			xmldoc.Add(xElement);
 			xmldoc.Save(filename);

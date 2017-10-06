@@ -115,6 +115,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\NAudio.Lame.1.0.4\lib\net20\NAudio.Lame.dll</HintPath>
     </Reference>
+    <Reference Include="ScriptureUtils, Version=10.0.0.28547, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Debug\ScriptureUtils.dll</HintPath>
+    </Reference>
     <Reference Include="SIL.LCModel">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\SIL.LCModel.dll</HintPath>
@@ -1110,6 +1114,7 @@
     <Compile Include="Works\RecordView.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="Works\ReversalIndexServices.cs" />
     <Compile Include="Works\SelectObjectEventArgs.cs" />
     <Compile Include="Works\SemanticDomainRdeTreeBarHandler.cs" />
     <Compile Include="Works\SubitemRecordClerk.cs" />
@@ -1893,6 +1898,12 @@
     </Compile>
     <Content Include="Areas\TextsAndWords\Interlinear\FlexInterlinear-generated.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\FlexInterlinear.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\FilterAllTextsDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Areas\TextsAndWords\Interlinear\FilterTextsDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Areas\TextsAndWords\Interlinear\FocusBoxController.ApproveAndMove.cs">
       <DependentUpon>FocusBoxController.cs</DependentUpon>
       <SubType>UserControl</SubType>
@@ -2018,6 +2029,9 @@
     <Compile Include="Areas\TextsAndWords\Interlinear\ShowSpaceDecorator.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\SymbolicValue.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\TextsFilterItem.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\TextsTriStateTreeView.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Areas\TextsAndWords\Interlinear\TitleContentsPane.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -2445,6 +2459,16 @@
     <EmbeddedResource Include="Areas\TextsAndWords\Interlinear\ComplexConcWordDlg.resx">
       <DependentUpon>ComplexConcWordDlg.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Areas\TextsAndWords\Interlinear\FilterAllTextsDialog.resx">
+      <DependentUpon>FilterAllTextsDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Areas\TextsAndWords\Interlinear\FilterTextsDialog.resx">
+      <DependentUpon>FilterTextsDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Areas\TextsAndWords\Interlinear\TextsTriStateTreeView.resx">
+      <DependentUpon>TextsTriStateTreeView.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Areas\TextsAndWords\Interlinear\ConcordanceControl.resx">
       <DependentUpon>ConcordanceControl.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -2854,7 +2878,6 @@
     <Content Include="images\Lexicon32.ico" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="BuildInclude.targets" />
     <None Include="Controls\DetailControls\atomicNode.bmp" />
     <None Include="Controls\DetailControls\CollectionNode.bmp" />
     <None Include="Controls\DetailControls\SequenceSmall.bmp" />
@@ -3136,7 +3159,6 @@
     </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="BuildInclude.targets" />
   <PropertyGroup>
     <PreBuildEvent>
     </PreBuildEvent>

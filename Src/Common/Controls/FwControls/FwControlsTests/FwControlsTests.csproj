@@ -219,7 +219,6 @@
     </Compile>
     <Compile Include="ProgressDlgTests.cs">
     </Compile>
-    <Compile Include="TextsTriStateTreeViewTests.cs" />
     <Compile Include="TriStateTreeViewTests.cs">
     </Compile>
     <EmbeddedResource Include="DummyDerivedForm.resx">

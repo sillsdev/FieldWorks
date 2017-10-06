@@ -1,0 +1,307 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="kstidAutoAcceptMergeProgress" xml:space="preserve">
+    <value>Updating {0}...</value>
+    <comment>Progress dialog message displayed when auto-merging differences for streamlined Paratext import</comment>
+  </data>
+  <data name="kstidAutoMerged" xml:space="preserve">
+    <value>New section(s) successfully merged</value>
+    <comment>Status value displayed in Imported Book dialog box when the imported version of the book contains new material that has been merged in successfully (i.e., without having to replace any existing material).</comment>
+  </data>
+  <data name="kstidAutoMerging" xml:space="preserve">
+    <value>Replacing range of imported sections in current version of {0}...</value>
+    <comment>Progress dialog message displayed when replacing range in imported version.</comment>
+  </data>
+  <data name="kstidBTNoCorrespondingParaDetails" xml:space="preserve">
+    <value>No vernacular paragraph could be found having style "{0}" and containing "{1}".</value>
+  </data>
+  <data name="kstidBTStyleMismatchDetails" xml:space="preserve">
+    <value>The style "{0}" does not match the vernacular paragraph style "{1}".</value>
+  </data>
+  <data name="kstidBTTextNotPartOfParaDetails" xml:space="preserve">
+    <value>{0}
+	(Style: {1})</value>
+  </data>
+  <data name="kstidCheckParatextInstallation" xml:space="preserve">
+    <value>Problem communicating with Paratext. Please ensure that Paratext is correctly installed.</value>
+    <comment>Error message when we are unable to load the Paratext objects required for importing a Paratext project</comment>
+  </data>
+  <data name="kstidConfirmBookOverwriteAfterMerge" xml:space="preserve">
+    <value>You have reviewed some differences between the imported version and the current version of {0}.
+
+Do you want to replace the range in the current version with the imported version?
+
+To keep the decisions you made in the Compare and Merge Versions dialog box, click No.</value>
+    <comment>Message displayed in Imported Books dialog box (parameter 0 is the name of the book) if user clicks Overwrite button after using the Compare and Merge dialog box to merge one or more of the differences.</comment>
+  </data>
+  <data name="kstidConfirmBookOverwriteAfterMergeCaption" xml:space="preserve">
+    <value>Confirm Replace Merged Version</value>
+  </data>
+  <data name="kstidConfirmOverwriteBackTrans" xml:space="preserve">
+    <value>The current version has back translations that are absent in {0} for these writing systems:
+{1}
+By replacing {2}, you may lose the back translation for the following overlapping range:
+{3}
+Do you want to proceed and risk losing the current back translation when you replace this range?</value>
+    <comment>Message displayed in Imported Books dialog box if user confirms that they want to Replace Range in a book even though they may lose back translation data.
+	Parameter 0: "imported" or "saved", Parameter 1: language name, Parameter 2: book name, Parameter 3: Scripture references</comment>
+  </data>
+  <data name="kstidConfirmOverwriteBackTransCaption" xml:space="preserve">
+    <value>Confirm Potential Loss of Back Translation</value>
+    <comment>Caption on message box displayed in Imported Books dialog box if user confirms that they want to Replace Range in a book even though they may lose back translation data.</comment>
+  </data>
+  <data name="kstidConfirmStopImport" xml:space="preserve">
+    <value>If you stop importing right now, you will have successfully imported everything up to and including {0}.
+Are you sure you want to stop importing? (Click No to continue importing.)</value>
+    <comment>MessageBox prompt</comment>
+  </data>
+  <data name="kstidDataLossCaption" xml:space="preserve">
+    <value>Unable to Replace Range</value>
+    <comment>Caption for message displayed in Imported Books dialog box and Saved and Imported Versions dialog box</comment>
+  </data>
+  <data name="kstidDataLossMsg" xml:space="preserve">
+    <value>Translation Editor cannot replace this range in {1} because section references do not align
+for verses that are missing in {0}.
+Translation Editor can only replace full sections in the current book.
+
+Details of content that would be deleted:
+{2}
+
+If you want to use this version, you will need to use Compare and Merge to manually merge the changes
+in section head locations.</value>
+    <comment>Message displayed in Imported Books dialog box and Saved and Imported Versions dialog box (parameter 0 is "imported" or "saved"; parameter 1 is the name of the book, parameter 2 is the list of content that will be deleted)</comment>
+  </data>
+  <data name="kstidIdentical" xml:space="preserve">
+    <value>No differences found in vernacular text (back translation not compared)</value>
+    <comment>Status value displayed in Imported Book dialog when there are no differences between the imported version of a book and the current version</comment>
+  </data>
+  <data name="kstidImport" xml:space="preserve">
+    <value>Import</value>
+    <comment>Undo/Redo string for File/Import</comment>
+  </data>
+  <data name="kstidImported" xml:space="preserve">
+    <value>the imported version</value>
+    <comment>The article, adjective and noun are included to accomodate languages with different word order.</comment>
+  </data>
+  <data name="kstidImportFinalizing" xml:space="preserve">
+    <value>Finalizing import...</value>
+    <comment>Status message in progress dialog when import is finishing and views are being refreshed</comment>
+  </data>
+  <data name="kstidImportingAnnotations" xml:space="preserve">
+    <value>Importing annotations for {0}...</value>
+    <comment>Display for Progress Dialog when importing Annotations (Parameter will be a vernacular book name)</comment>
+  </data>
+  <data name="kstidImportingBackTranslation" xml:space="preserve">
+    <value>Importing back translation of {0}...</value>
+    <comment>Display for Progress Dialog when importing a back translation (Parameter will be a vernacular book name)</comment>
+  </data>
+  <data name="kstidImportingBook" xml:space="preserve">
+    <value>Importing {0}...</value>
+    <comment>Display for Progress Dialog when importing (Parameter will be a vernacular book name)</comment>
+  </data>
+  <data name="kstidImportInitializing" xml:space="preserve">
+    <value>Starting import...</value>
+    <comment>Status message in progress dialog when import is initializing</comment>
+  </data>
+  <data name="kstidImportNoBookError" xml:space="preserve">
+    <value>No Standard Format files were found for the import range {0}-{1}</value>
+    <comment>Message text when an import contains no books.</comment>
+  </data>
+  <data name="kstidImportProgressCaption" xml:space="preserve">
+    <value>Import</value>
+    <comment>This is the text in the caption of the importing progress dialog box.</comment>
+  </data>
+  <data name="kstidInitialDifferences" xml:space="preserve">
+    <value>{0} Differences</value>
+    <comment>Status value displayed in Imported Book dialog when there are differences between the imported version of a book and the current version</comment>
+  </data>
+  <data name="kstidIntro" xml:space="preserve">
+    <value>(with intro)</value>
+    <comment>Text used to partially describe a book reference when the book contains an introduction along with a range of Scripture references (e.g. Imported Books dialog and Saved Versions dialog)</comment>
+  </data>
+  <data name="kstidIntroOnly" xml:space="preserve">
+    <value>(intro only)</value>
+    <comment>Text describing a book reference when the book contains only an introduction (e.g. Imported Books dialog and Saved Versions dialog)</comment>
+  </data>
+  <data name="kstidMergeProgress" xml:space="preserve">
+    <value>Calculating differences for {0}...</value>
+    <comment>Progress dialog message displayed when calculating differences for the diff view</comment>
+  </data>
+  <data name="kstidNewBook" xml:space="preserve">
+    <value>New book</value>
+    <comment>Status value displayed in Imported Book dialog when the imported version of the book is the only one (no pre-existing versions of that book)</comment>
+  </data>
+  <data name="kstidNoDifferencesLeft" xml:space="preserve">
+    <value>All differences reviewed</value>
+    <comment>Status value displayed in Imported Book dialog when there are no more differences to be reviewed.</comment>
+  </data>
+  <data name="kstidOneInitialDifference" xml:space="preserve">
+    <value>1 difference</value>
+    <comment>Status value displayed in Imported Book dialog when there is one difference between the imported version of a book and the current version</comment>
+  </data>
+  <data name="kstidOneRemainingDifference" xml:space="preserve">
+    <value>1 unreviewed difference remaining</value>
+    <comment>Status value displayed in Imported Book dialog when there is one unreviewed differences between the imported version of a book and the current version after using the Compare and Merge dialog box.</comment>
+  </data>
+  <data name="kstidOverwriteCaption" xml:space="preserve">
+    <value>Replace Range</value>
+    <comment>Caption for the progress dialog when overwriting a book</comment>
+  </data>
+  <data name="kstidOverwriting" xml:space="preserve">
+    <value>Replacing Range in {0}...</value>
+    <comment>Progress dialog message displayed when overwriting the current version with the saved or imported version.</comment>
+  </data>
+  <data name="kstidOverwrittenFull" xml:space="preserve">
+    <value>Imported version has replaced current version</value>
+    <comment>Status value displayed in Imported Book dialog when user has chosen to replace the current version of a book with the imported version</comment>
+  </data>
+  <data name="kstidParatextProjectLoadFailure" xml:space="preserve">
+    <value>Paratext Project {0} could not be loaded. Please ensure that Paratext is correctly installed and that it can open this project.</value>
+    <comment>Error message when we are unable to load a Paratext project</comment>
+  </data>
+  <data name="kstidRemainingDifferences" xml:space="preserve">
+    <value>{0} unreviewed differences remaining</value>
+    <comment>Status value displayed in Imported Book dialog when there are still unreviewed differences between the imported version of a book and the current version after using the Compare and Merge dialog box.</comment>
+  </data>
+  <data name="kstidSaved" xml:space="preserve">
+    <value>the saved version</value>
+    <comment>The article, adjective and noun are included to accomodate languages with different word order.</comment>
+  </data>
+  <data name="kstidSavedVersionDescriptionOriginal" xml:space="preserve">
+    <value>Books replaced by last import</value>
+    <comment>Name of saved version that is a copy of original books before import changed them.</comment>
+  </data>
+  <data name="kstidStandardFormatImportSvDesc" xml:space="preserve">
+    <value>Last Standard Format Import</value>
+    <comment>Default description for saved version created by standard format import.</comment>
+  </data>
+  <data name="kstidStopImporting" xml:space="preserve">
+    <value>Stop</value>
+    <comment>Stop button text on the import progress dialog.</comment>
+  </data>
+  <data name="kstidStoppingImport" xml:space="preserve">
+    <value>Stopping import...</value>
+    <comment>Progress bar message</comment>
+  </data>
+  <data name="kstidUnknown" xml:space="preserve">
+    <value>?</value>
+    <comment>Symbol or short string representing an unknown number of unreviewed differences in the Merge Imported Scripture dialog box</comment>
+  </data>
+</root>

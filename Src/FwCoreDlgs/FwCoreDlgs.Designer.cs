@@ -732,6 +732,15 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Possible Data Loss.
+        /// </summary>
+        public static string ksPossibleDataLoss {
+            get {
+                return ResourceManager.GetString("ksPossibleDataLoss", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0} Prefix.
         /// </summary>
         public static string ksPrefixMenuCmd {
@@ -1942,6 +1951,15 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         public static string ksWsAlreadyExists {
             get {
                 return ResourceManager.GetString("ksWsAlreadyExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You are changing the internal code for this writing system. This will affect every line of text in this project that uses this writing system.{0}{0}It appears that your team uses Send/Receive. Therefore, please do a Send/Receive immediately before and after making this change, and ask other teammates to refrain from working while you do this. If you and your teammates have not just done a Send/Receive, please click Cancel and do it now..
+        /// </summary>
+        public static string ksWSChangeWarning {
+            get {
+                return ResourceManager.GetString("ksWSChangeWarning", resourceCulture);
             }
         }
         

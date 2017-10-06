@@ -268,24 +268,21 @@
 
   <Target Name="Initialize" DependsOnTargets="MakeDirs;GenerateVersionFiles"/>
 
-  <Target Name="MakeDirs" DependsOnTargets="Setup;DeleteTestFiles">
-	<MakeDir Directories="$(dir-fwobj);$(dir-outputBase);$(dir-fwoutputCommon)"
-			 Condition="'$(action)'!='clean'"/>
+  <Target Name="MakeDirs" DependsOnTargets="Setup;DeleteTestFiles" Condition="'$(action)'!='clean'">
+	<MakeDir Directories="$(dir-fwobj);$(dir-outputBase);$(dir-fwoutputCommon)"/>
 	<!-- extra directory (and symbolic links) needed for Linux -->
-	<MakeDir Directories="$(fwrt)/Output" Condition="'$(action)'!='clean' And !Exists('$(fwrt)/Output') And '$(OS)'=='Unix'">
-	  <Output TaskParameter="DirectoriesCreated" ItemName="OutputCreatedForLinux"/>
-	</MakeDir>
-	<Exec Condition="'$(action)'!='clean' And !Exists('$(fwrt)/Output/$(config-capital)') And '$(OS)'=='Unix'"
+	<MakeDir Directories="$(fwrt)/Output" Condition="!Exists('$(fwrt)/Output') And '$(OS)'=='Unix'"/>
+	<Exec Condition="!Exists('$(fwrt)/Output/$(config-capital)') And '$(OS)'=='Unix'"
 	  Command="/bin/ln -T -sf $(dir-fwoutput)/$(config-capital) $(fwrt)/Output/$(config-capital)"/>
-	<Exec Condition="'$(action)'!='clean' And !Exists('$(fwrt)/Output/$(config-lower)') And '$(OS)'=='Unix'"
+	<Exec Condition="!Exists('$(fwrt)/Output/$(config-lower)') And '$(OS)'=='Unix'"
 	  Command="/bin/ln -T -sf $(dir-fwoutput)/$(config-capital) $(fwrt)/Output/$(config-lower)"/>
-	<Exec Condition="'$(action)'!='clean' And '@(OutputCreatedForLinux)'!=''"
+	<Exec Condition="!Exists('$(fwrt)/Output/Common') And '$(OS)'=='Unix'"
 	  Command="/bin/ln -T -sf $(dir-fwoutput)/Common $(fwrt)/Output/Common"/>
-	<Exec Condition="'$(action)'!='clean' And '@(OutputCreatedForLinux)'!=''"
+	<Exec Condition="!Exists('$(fwrt)/Output/common') And '$(OS)'=='Unix'"
 	  Command="/bin/ln -T -sf $(dir-fwoutput)/Common $(fwrt)/Output/common"/>
-	<Exec Condition="'$(action)'!='clean' And '@(OutputCreatedForLinux)'!=''"
+	<Exec Condition="!Exists('$(fwrt)/Output/XMI') And '$(OS)'=='Unix'"
 	  Command="/bin/ln -T -sf $(dir-fwoutput)/XMI $(fwrt)/Output/XMI"/>
-	<Exec Condition="'$(action)'!='clean' And '@(OutputCreatedForLinux)'!=''"
+	<Exec Condition="!Exists('$(fwrt)/Output/xmi') And '$(OS)'=='Unix'"
 	  Command="/bin/ln -T -sf $(dir-fwoutput)/XMI $(fwrt)/Output/xmi"/>
   </Target>
 
@@ -311,7 +308,7 @@
 	  write the file if it hasn't changed, but the AssemblyFileVersion datestamp field should
 	  change once a day.)
   -->
-  <Target Name="GenerateVersionFiles">
+  <Target Name="GenerateVersionFiles" DependsOnTargets="MakeDirs">
 	  <Substitute Template="@(VersionTemplate)" Symbols="@(VersionSymbols)" Output="@(VersionOutput)" Condition="'$(action)'!='clean'"/>
 	  <Substitute Template="@(BldIncTemplate)" Symbols="@(VersionSymbols)" Output="@(BldIncOutput)" Condition="'$(action)'!='clean' And Exists('../Output/Common')"/>
 	  <Substitute Template="@(GlobalIncludeTemplate)" Symbols="@(VersionSymbols)" Output="@(GlobalIncludeOutput)" Condition="'$(action)'!='clean'"/>
@@ -320,6 +317,13 @@
 	  <Substitute Template="@(FwUtilsTemplate)" Symbols="@(VersionSymbols)" Output="@(FwUtilsOutput)" Condition="'$(action)'!='clean'"/>
 
 	  <Message Text="Updated CommonAssemblyInfo.cs, bldinc.h and GlobalInclude.properties (if needed)."/>
+  </Target>
+
+  <Target Name="GeneratePartsAndLayoutFiles" DependsOnTargets="GenerateCellarConstants">
+	  <XslTransformation OutputPaths="$(fwrt)/DistFiles/Parts/GeneratedParts.xml" XmlInputPaths="$(LcmArtifactsDir)/MasterLCModel.xml" XslInputPath="$(fwrt)/Src/LanguageExplorer/Controls/DetailControls/PartGenerator/PartGenerate.xslt"/>
+	  <XslTransformation OutputPaths="$(fwrt)/DistFiles/Parts/Generated.fwlayout" XmlInputPaths="$(LcmArtifactsDir)/MasterLCModel.xml" XslInputPath="$(fwrt)/Src/LanguageExplorer/Controls/DetailControls/PartGenerator/LayoutGenerate.xslt"/>
+
+	  <Message Text="Updated GeneratedParts.xml and Generated.fwlayout (if needed)."/>
   </Target>
 
   <PropertyGroup>
@@ -383,7 +387,7 @@
 	</Choose>
 
   <Choose>
-	<When Condition="'$(OS)'=='Windows_NT'">
+	<When Condition="'$(OS)'=='Windows_NT' AND '$(Platform)'!='x64'">
 	  <PropertyGroup>
 		<useNUnit-x86>true</useNUnit-x86>
 	  </PropertyGroup>

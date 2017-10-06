@@ -1,5 +1,11 @@
 echo off
 
+echo.
+echo.
+echo NOTE: If you are building from a clean repository, you will need to answer a few questions after restoring NuGet packages before the build can continue.
+echo.
+echo.
+
 REM cause Environment variable changes to be lost after this process dies:
 if not "%OS%"=="" setlocal
 
@@ -41,6 +47,13 @@ call "%PRODUCT_DIR%\VC\vcvarsall.bat" %arch% 8.1
 REM allow typelib registration in redirected registry key even with limited permissions
 set OAPERUSERTLIBREG=1
 
-msbuild /t:CheckDevelopmentPropertiesFile
-msbuild /t:refreshTargets
-msbuild %*
+REM Run the next target only if the previous target succeeded
+(
+	msbuild /t:RestoreNuGetPackages
+) && (
+	msbuild /t:CheckDevelopmentPropertiesFile
+) && (
+	msbuild /t:refreshTargets
+) && (
+	msbuild %*
+)

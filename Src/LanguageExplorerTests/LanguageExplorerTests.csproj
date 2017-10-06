@@ -78,6 +78,9 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Accessibility">
+      <Name>Accessibility</Name>
+    </Reference>
     <Reference Include="CacheLight, Version=10.0.0.25441, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\CacheLight.dll</HintPath>
@@ -262,6 +265,7 @@
     <Compile Include="Interlinear\ImportInterlinearAnalysesTests.cs" />
     <Compile Include="Interlinear\InterlinDocForAnalysisTests.cs" />
     <Compile Include="Interlinear\InterlinearExporterTests.cs" />
+    <Compile Include="Interlinear\InterlinearTextRecordClerkTests.cs" />
     <Compile Include="Interlinear\InterlinLineChoicesTests.cs" />
     <Compile Include="Interlinear\InterlinMasterTests.cs" />
     <Compile Include="Interlinear\InterlinSfmImportTests.cs" />

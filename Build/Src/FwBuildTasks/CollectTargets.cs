@@ -80,8 +80,6 @@ namespace FwBuildTasks
 			// These projects from Lib had nant targets.  They really should be under Src.
 			var infoEth = new DirectoryInfo(Path.Combine(m_fwroot, "Lib/src/Ethnologue"));
 			CollectInfo(infoEth);
-			var infoScr = new DirectoryInfo(Path.Combine(m_fwroot, "Lib/src/SharedScrControls"));
-			CollectInfo(infoScr);
 			var infoScr2 = new DirectoryInfo(Path.Combine(m_fwroot, "Lib/src/ScrChecks"));
 			CollectInfo(infoScr2);
 			var infoObj = new DirectoryInfo(Path.Combine(m_fwroot, "Lib/src/ObjectBrowser"));
@@ -315,19 +313,11 @@ namespace FwBuildTasks
 						writer.Write("\t<Target Name=\"{0}\"", project);
 						var bldr = new StringBuilder();
 						bldr.Append("Initialize"); // ensure the output directories and version files exist.
-						switch (project)
+						if (project == "ParatextImportTests" || project == "FwCoreDlgsTests")
 						{
-							case "COMInterfaces":
-								bldr.Append(";mktlbs");
-								break;
-							case "TeImportExportTests":
-							case "FwCoreDlgsTests":
-								// The TeImportExportTests and FwCoreDlgsTests require that the ScrChecks.dll is in DistFiles/Editorial Checks.
-								// We don't discover that dependency because it's not a reference (LT-13777).
-								bldr.Append(";ScrChecks");
-								break;
-							default:
-								break;
+							// The ParatextImportTests and FwCoreDlgsTests require that the ScrChecks.dll be in DistFiles/Editorial Checks.
+							// We don't discover that dependency because it's not a reference (LT-13777).
+							bldr.Append(";ScrChecks");
 						}
 						var dependencies = m_mapProjDepends[project];
 						dependencies.Sort();
@@ -342,7 +332,7 @@ namespace FwBuildTasks
 						{
 							writer.Write(" Condition=\"'$(OS)'=='Windows_NT'\"");
 						}
-						if (project.StartsWith("LinuxSmoke") || project.StartsWith("ManagedVwWindow"))
+						if (project.StartsWith("ManagedVwWindow"))
 						{
 							writer.Write(" Condition=\"'$(OS)'=='Unix'\"");
 						}
@@ -393,7 +383,7 @@ namespace FwBuildTasks
 					bool first = true;
 					foreach (var project in m_mapProjFile.Keys)
 					{
-					if (project.StartsWith("LinuxSmokeTest"))
+						if (project == "FxtExe")
 						{
 							continue;
 						}
@@ -409,11 +399,8 @@ namespace FwBuildTasks
 					first = true;
 					foreach (var project in m_mapProjFile.Keys)
 					{
-					if (project == "FixFwData" ||
-							project.StartsWith("LinuxSmokeTest") ||
+						if (project == "FxtExe" ||
 							project.EndsWith("Tests") || // These are tests.
-							project == "TestUtils" || // This is a test.
-							project == "TestManager" || // This is a test.
 							project == "ProjectUnpacker") // This is only used in tests.
 						{
 							continue;
@@ -425,8 +412,6 @@ namespace FwBuildTasks
 						first = false;
 					}
 					writer.WriteLine("\"/>");
-
-					ProcessDependencyGraph(writer);
 
 					writer.WriteLine("</Project>");
 					writer.Flush();
@@ -482,145 +467,6 @@ namespace FwBuildTasks
 				}
 			}
 			return (m_timeoutMap.ContainsKey(project) ? m_timeoutMap[project] : m_timeoutMap["default"])*1000;
-		}
-
-		void ProcessDependencyGraph(StreamWriter writer)
-		{
-#if false
-	// The parallelized building isn't much faster, and tests don't all work right.
-	// ----------------------------------------------------------------------------
-	// Filter dependencies for those that are actually built.
-	// Also collect all projects that don't depend on any other built projects.
-			Dictionary<string, List<string>> mapProjInternalDepends = new Dictionary<string, List<string>>();
-			List<HashSet<string>> groupDependencies = new List<HashSet<string>>();
-			groupDependencies.Add(new HashSet<string>());
-			int cProjects = 0;
-			foreach (var project in m_mapProjFile.Keys)
-			{
-				if (project.StartsWith("SharpViews") ||		// These projects are experimental.
-					project == "FxtExe" ||					// These projects weren't built by nant normally.
-					project == "FixFwData" ||
-					project.StartsWith("LinuxSmokeTest"))
-				{
-					continue;
-				}
-				var dependencies = new List<string>();
-				foreach (var dep in m_mapProjDepends[project])
-				{
-					if (m_mapProjFile.ContainsKey(dep))
-						dependencies.Add(dep);
-				}
-				if (project == "xWorksTests" && !dependencies.Contains("XCoreAdapterSilSidePane"))
-					dependencies.Add("XCoreAdapterSilSidePane");
-				if (dependencies.Count == 0)
-					groupDependencies[0].Add(project);
-				dependencies.Sort();
-				mapProjInternalDepends.Add(project, dependencies);
-				++cProjects;
-			}
-			if (groupDependencies[0].Count == 0)
-				return;
-			int num = 1;
-			HashSet<string> total = new HashSet<string>(groupDependencies[0]);
-			// Work through all the dependencies, collecting sets of projects that can be
-			// built in parallel.
-			while (total.Count < cProjects)
-			{
-				groupDependencies.Add(new HashSet<string>());
-				foreach (var project in mapProjInternalDepends.Keys)
-				{
-					bool fAlready = false;
-					for (int i = 0; i < groupDependencies.Count - 1; ++i)
-					{
-						if (groupDependencies[i].Contains(project))
-						{
-							fAlready = true;
-							break;
-						}
-					}
-					if (fAlready)
-						continue;
-					var dependencies = mapProjInternalDepends[project];
-					if (total.IsSupersetOf(dependencies))
-						groupDependencies[num].Add(project);
-				}
-				if (groupDependencies[num].Count == 0)
-					break;
-				foreach (var x in groupDependencies[num])
-					total.Add(x);
-				++num;
-			}
-			writer.WriteLine("<!--");
-			writer.WriteLine("\tUsing this parallelization gains only 15% for building FieldWorks,");
-			writer.WriteLine("\tand possibly nothing for running tests. (Although trials have shown");
-			writer.WriteLine("\t1600+ new test failures when trying this parallelized setup!)");
-			writer.WriteLine();
-			for (int i = 0; i < groupDependencies.Count; ++i)
-			{
-				var targName = string.Format("cs{0:d03}", i+1);
-				writer.Write("\t<Target Name=\"{0}\"", targName);
-				var depends = String.Format("cs{0:d03}", i);
-				if (i == 0)
-					depends = "Initialize";
-				if (groupDependencies[i].Contains("COMInterfaces"))
-					depends = "mktlbs;" + depends;
-				writer.WriteLine(" DependsOnTargets=\"{0}\">", depends);
-				bool fIncludesTests = false;
-				int count = 0;
-				writer.Write("\t\t<MSBuild Projects=\"");
-				foreach (var targ in groupDependencies[i])
-				{
-					if (count > 0)
-						writer.Write(";");
-					writer.Write(m_mapProjFile[targ].Replace(m_fwroot, "$(fwrt)"));
-					++count;
-					if (targ.EndsWith("Tests") ||
-						targ == "TestManager" ||
-						targ == "ProjectUnpacker")
-					{
-						fIncludesTests = true;
-					}
-				}
-				writer.WriteLine("\"");
-				writer.WriteLine("\t\t         Targets=\"$(msbuild-target)\"");
-				writer.WriteLine("\t\t         Properties=\"$(msbuild-props)\"");
-				writer.WriteLine("\t\t         BuildInParallel=\"true\"");
-				writer.WriteLine("\t\t         ToolsVersion=\"14.0\"/>");
-				if (fIncludesTests)
-				{
-					writer.WriteLine("\t\t<NUnit Condition=\"'$(action)'=='test'\"");
-					writer.Write("\t\t       Assemblies=\"");
-					count = 0;
-					int timeout = 0;
-					foreach (var targ in groupDependencies[i])
-					{
-						if (targ.EndsWith("Tests") ||
-							targ == "TestManager" ||
-							targ == "ProjectUnpacker")
-						{
-							if (count > 0)
-								writer.Write(";");
-							writer.Write("$(dir-outputBase)/{0}.dll", targ);
-							++count;
-							timeout += TimeoutForProject(targ);
-						}
-					}
-					writer.WriteLine("\"");
-					writer.WriteLine("\t\t       ToolPath=\"$(fwrt)/Bin/NUnit/bin\"");
-					writer.WriteLine("\t\t       WorkingDirectory=\"$(dir-outputBase)\"");
-					writer.WriteLine("\t\t       OutputXmlFile=\"$(dir-outputBase)/cs{0:d03}.dll-nunit-output.xml\"", i+1);
-					writer.WriteLine("\t\t       Force32Bit=\"$(useNUnit-x86)\"");
-					writer.WriteLine("\t\t       ExcludeCategory=\"$(excludedCategories)\"");
-					writer.WriteLine("\t\t       Timeout=\"{0}\"", timeout);
-					writer.WriteLine("\t\t       ContinueOnError=\"true\" />");
-				}
-				writer.WriteLine("\t</Target>");
-				writer.WriteLine();
-			}
-			writer.WriteLine("\t<Target Name=\"csAll\" DependsOnTargets=\"cs{0:d03}\"/>", groupDependencies.Count);
-			writer.WriteLine("-->");
-			writer.WriteLine();
-#endif
 		}
 	}
 }

@@ -1774,6 +1774,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 						m_fChanged = true;
 					}
 				}
+				if (m_fChanged && uowHelper != null)
+				{
+					uowHelper.RollBack = false;
+				}
 				m_wsManager.Save();
 				if (uowHelper != null)
 					uowHelper.RollBack = false;
@@ -2065,6 +2069,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 				if (origWS == null || tempWS.LanguageTag != origWS.LanguageTag)
 				{
+					// Users must acknowledge the send and receive steps to avoid data loss on modifying the WS.
+					bool hasFlexOrLiftRepo = FLExBridgeHelper.DoesProjectHaveFlexRepo(m_cache.ProjectId) || FLExBridgeHelper.DoesProjectHaveLiftRepo(m_cache.ProjectId);
+					if (origWS != null && hasFlexOrLiftRepo)
+					{
+						if (!AcceptWSChangeWarning())
+							return false;
+					}
 					// We can't let anyone change the user writing system (or "English"). Too many strings depend on
 					// this, and we'd get numerous crashes and terrible behavior if it was changed.
 					if (origWS != null && (origWS == m_wsManager.UserWritingSystem || origWS.LanguageTag == "en"))
@@ -2107,6 +2118,16 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			string caption = FwCoreDlgs.kstidNwsCaption;
 			string msg = string.Format(FwCoreDlgs.kstidCantCreateDuplicateWS, tempWS.DisplayLabel, Environment.NewLine);
 			MessageBox.Show(msg, caption, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+		}
+
+		/// <summary>
+		/// Displays the "writing system change warning" message and the necessary S/R steps to avoid data loss.
+		/// </summary>
+		protected virtual bool AcceptWSChangeWarning()
+		{
+			string caption = FwCoreDlgs.ksPossibleDataLoss;
+			string msg = string.Format(FwCoreDlgs.ksWSChangeWarning, Environment.NewLine);
+			return MessageBox.Show(msg, caption, MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation) == DialogResult.OK;
 		}
 
 		/// <summary>

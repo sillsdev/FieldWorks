@@ -706,7 +706,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			//Temporary:
 			clbFeatures.Items.AddRange(m_Features);
-			//SIL.FieldWorks.TE.GetAppFeatures();
 		}
 
 		private void CreateNewAccounts()

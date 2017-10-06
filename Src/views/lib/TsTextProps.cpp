@@ -984,7 +984,9 @@ TsPropsHolder * TsPropsHolder::GetPropsHolder(void)
 ----------------------------------------------------------------------------------------------*/
 TsPropsHolder::TsPropsHolder(void)
 {
-
+	Assert(!m_prgpzttpHash);
+	Assert(!m_cpzttpHash);
+	Assert(!m_cpzttp);
 }
 
 

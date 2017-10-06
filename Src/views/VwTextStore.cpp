@@ -30,6 +30,8 @@ using namespace std;
 #include "IcuCommon.h"
 #pragma warning(pop)
 
+TsViewCookie VwTextStore::m_nextId = 0;
+
 #undef THIS_FILE
 DEFINE_THIS_FILE
 
@@ -155,6 +157,8 @@ VwTextStore::VwTextStore(VwRootBox * prootb)
 	if (!fpTracing)
 		fopen_s(&fpTracing, "C:\\FW\\TraceTSF.debug", "a");
 #endif
+
+	m_id = ++m_nextId;
 }
 
 /*----------------------------------------------------------------------------------------------
@@ -1169,8 +1173,8 @@ STDMETHODIMP VwTextStore::GetActiveView(TsViewCookie * pvcView)
 
 	if (!s_qttmThreadMgr)
 		ThrowHr(WarnHr(E_UNEXPECTED));
-	Assert(sizeof(TsViewCookie) >= sizeof(VwTextStore *));
-	*pvcView = (TsViewCookie)(uintptr_t)(this);
+	Assert(sizeof(TsViewCookie) == sizeof(int));
+	*pvcView = (TsViewCookie) m_id;
 
 #ifdef TRACING_TSF
 	StrAnsi sta;
@@ -1251,7 +1255,7 @@ STDMETHODIMP VwTextStore::GetTextExt(TsViewCookie vcView, LONG acpStart, LONG ac
 	HDC hdc;
 	CheckHr(qvg32->GetDeviceContext(&hdc));
 	HWND hwnd = ::WindowFromDC(hdc);
-	if ((TsViewCookie)(uintptr_t)(this) != vcView)
+	if ((TsViewCookie) m_id != vcView)
 		ThrowHr(WarnHr(E_NOTIMPL)); // Probably another view, but we only support the current.
 
 	Rect rcSel(0,0,0,0); // default if no selection: top left of window.
@@ -1310,9 +1314,8 @@ STDMETHODIMP VwTextStore::GetWnd(TsViewCookie vcView, HWND * phwnd)
 
 	if (!s_qttmThreadMgr)
 		ThrowHr(WarnHr(E_UNEXPECTED));
-
-	Assert(sizeof(TsViewCookie) >= sizeof(VwTextStore *));
-	if ((TsViewCookie)(uintptr_t)(this) != vcView)
+	Assert(sizeof(TsViewCookie) == sizeof(int));
+	if ((TsViewCookie) m_id != vcView)
 		ThrowHr(WarnHr(E_INVALIDARG));
 	HoldScreenGraphics hg(m_qrootb);
 	IVwGraphicsWin32Ptr qvg32;

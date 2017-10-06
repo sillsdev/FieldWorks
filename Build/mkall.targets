@@ -220,7 +220,7 @@
 		<SetEnvVar Variable="ANAL_TYPE" Value="$(Original-ANAL_TYPE)" />
 	</Target>
 
-	<Target Name="remakefw-internal" DependsOnTargets="CleanAll;Initialize;setRegistryValues;CopyDlls;ensureTLBsUpToDate;mkall"/>
+	<Target Name="remakefw-internal" DependsOnTargets="CleanAll;Initialize;setRegistryValues;CopyDlls;ensureTLBsUpToDate;GeneratePartsAndLayoutFiles;mkall"/>
 
 	<Target Name="remakefw" DependsOnTargets="remakefw-internal">
 		<!-- If tests were run on a developer machine, fail to alert the developer of any failures -->
@@ -241,6 +241,8 @@
 		<GeneratedFiles Include="$(fwrt)/Src/**/asserts.log"/>
 		<GeneratedFiles Include="$(fwrt)/Src/Common/ViewsInterfaces/Views.cs"/>
 		<GeneratedFiles Include="$(fwrt)/Lib/debug/unit++.lib"/>
+		<GeneratedFiles Include="$(fwrt)/DistFiles/Parts/GeneratedParts.xml"/>
+		<GeneratedFiles Include="$(fwrt)/DistFiles/Parts/Generated.fwlayout"/>
 	</ItemGroup>
 
 	<Target Name="Clean" DependsOnTargets="CleanAll">
@@ -494,8 +496,10 @@
 		<Copy SourceFiles="$(fwrt)/DistFiles/libxample64.so" DestinationFolder="$(dir-outputBase)"
 				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Unix'"/>
 		<!-- Windows dynamically loaded libraries -->
-		<Copy SourceFiles="$(fwrt)/DistFiles/xample.dll" DestinationFolder="$(dir-outputBase)"
-				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
+		<Copy SourceFiles="$(fwrt)/DistFiles/xample32.dll" DestinationFiles="$(dir-outputBase)/xample.dll"
+				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'  AND '$(arch)'!='x64'"/>
+		<Copy SourceFiles="$(fwrt)/DistFiles/xample64.dll" DestinationFiles="$(dir-outputBase)/xample.dll"
+				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT' AND '$(arch)'=='x64'"/>
 		<Copy SourceFiles="$(DownloadsDir)/Commons.Xml.Relaxng.dll" DestinationFolder="$(dir-outputBase)"
 				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
 		<!-- ICU libs -->

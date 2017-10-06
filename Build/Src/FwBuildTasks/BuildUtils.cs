@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -32,7 +33,7 @@ namespace FwBuildTasks
 			else
 				path = codebase;
 			// Handle Windows style absolute paths.
-			Regex r = new Regex("^/[A-Za-z]:");
+			var r = new Regex("^/[A-Za-z]:");
 			if (r.IsMatch(path))
 				path = path.Substring(1);
 			return Path.GetDirectoryName(path);
@@ -58,7 +59,8 @@ namespace FwBuildTasks
 			// libxslt.so on Linux.
 			if (IsUnix)
 			{
-				ApplyLinuxXslt(stylesheet, resxPath, localizedResxPath, parameters);
+				//ApplyLinuxXslt(stylesheet, resxPath, localizedResxPath, parameters);
+				ApplyLinuxXsltCommandLine(stylesheet, resxPath, localizedResxPath, parameters);
 			}
 			else
 			{
@@ -66,54 +68,96 @@ namespace FwBuildTasks
 			}
 		}
 
-		[DllImport("libxml2.so.2")] static extern void xmlInitParser();
-		[DllImport("libxml2.so.2")] static extern void xmlSubstituteEntitiesDefault(int flag);
-		[DllImport("libxml2.so.2")] static extern void xmlCleanupParser();
-		[DllImport("libxml2.so.2")] static extern IntPtr xmlParseFile([MarshalAs(UnmanagedType.LPStr)] string filename);
-		[DllImport("libxml2.so.2")] static extern void xmlFreeDoc(IntPtr doc);
-		[DllImport("libxslt.so.1")] static extern void xsltSetXIncludeDefault(int flag);
-		[DllImport("libxslt.so.1")] static extern void xsltCleanupGlobals();
-		[DllImport("libxslt.so.1")] static extern IntPtr xsltParseStylesheetFile([MarshalAs(UnmanagedType.LPStr)] string filename);
-		[DllImport("libxslt.so.1")] static extern void xsltFreeStylesheet(IntPtr xsl);
-		[DllImport("libxslt.so.1")] static extern IntPtr xsltApplyStylesheet(IntPtr xsl, IntPtr doc, [MarshalAs(UnmanagedType.LPArray, SizeParamIndex=1, ArraySubType=UnmanagedType.LPStr)] string[] parameters);
-		[DllImport("libxslt.so.1")] static extern int xsltSaveResultToFilename(string outfile, IntPtr res, IntPtr xsl, int compress);
-		[DllImport("libexslt.so.0")] static extern void exsltRegisterAll();
+		[DllImport("libxml2.so.2")]
+		private static extern void xmlInitParser();
+		[DllImport("libxml2.so.2")]
+		private static extern void xmlSubstituteEntitiesDefault(int flag);
+		[DllImport("libxml2.so.2")]
+		private static extern void xmlCleanupParser();
+		[DllImport("libxml2.so.2")]
+		private static extern IntPtr xmlParseFile([MarshalAs(UnmanagedType.LPStr)] string filename);
+		[DllImport("libxml2.so.2")]
+		private static extern void xmlFreeDoc(IntPtr doc);
+
+		[DllImport("libxslt.so.1")]
+		private static extern void xsltSetXIncludeDefault(int flag);
+		[DllImport("libxslt.so.1")]
+		private static extern void xsltCleanupGlobals();
+		[DllImport("libxslt.so.1")]
+		private static extern IntPtr xsltParseStylesheetFile([MarshalAs(UnmanagedType.LPStr)] string filename);
+		[DllImport("libxslt.so.1")]
+		private static extern void xsltFreeStylesheet(IntPtr xsl);
+		[DllImport("libxslt.so.1")]
+		private static extern IntPtr xsltApplyStylesheet(IntPtr xsl, IntPtr doc, [MarshalAs(UnmanagedType.LPArray, SizeParamIndex=1, ArraySubType=UnmanagedType.LPStr)] string[] parameters);
+		[DllImport("libxslt.so.1")]
+		private static extern int xsltSaveResultToFilename(string outfile, IntPtr res, IntPtr xsl, int compress);
+
+		[DllImport("libexslt.so.0")]
+		private static extern void exsltRegisterAll();
+
 		private static void ApplyLinuxXslt(string stylesheet, string inputFile, string outputFile, List<XsltParam> xparams)
 		{
-			IntPtr xsl = xsltParseStylesheetFile(stylesheet);
+			var xsl = xsltParseStylesheetFile(stylesheet);
 			if (xsl == IntPtr.Zero)
-				throw new Exception(String.Format("ApplyLinuxXslt: Cannot parse XSLT file \"{0}\"", stylesheet));
+				throw new Exception($"ApplyLinuxXslt: Cannot parse XSLT file \"{stylesheet}\"");
 			try
 			{
 				xmlInitParser();
 				xmlSubstituteEntitiesDefault(1);
 				xsltSetXIncludeDefault(1);
 				exsltRegisterAll();
-				IntPtr doc = xmlParseFile(inputFile);
+				var doc = xmlParseFile(inputFile);
 				if (doc == IntPtr.Zero)
-					throw new Exception(String.Format("ApplyLinuxXslt: Cannot parse XML file \"{0}\"", inputFile));
-				string[] parameters = new string[2 * xparams.Count + 1];
-				int i = 0;
+					throw new Exception($"ApplyLinuxXslt: Cannot parse XML file \"{inputFile}\"");
+				var parameters = new string[2 * xparams.Count + 1];
+				var i = 0;
 				foreach (var xparam in xparams)
 				{
 					parameters[i++] = xparam.Name;
-					parameters[i++] = String.Format("'{0}'", xparam.Value);
+					parameters[i++] = $"'{xparam.Value}'";
 				}
 				parameters[i] = null;
-				IntPtr res = xsltApplyStylesheet(xsl, doc, parameters);
+				var res = xsltApplyStylesheet(xsl, doc, parameters);
 				xmlFreeDoc(doc);
 				if (res == IntPtr.Zero)
-					throw new Exception(String.Format("ApplyLinuxXslt: Applying stylesheet to \"{0}\" failed.", inputFile));
-				int ok = xsltSaveResultToFilename(outputFile, res, xsl, 0);
+					throw new Exception($"ApplyLinuxXslt: Applying stylesheet to \"{inputFile}\" failed.");
+				var ok = xsltSaveResultToFilename(outputFile, res, xsl, 0);
 				xmlFreeDoc(res);
 				if (ok < 0)
-					throw new Exception(String.Format("ApplyLinuxXslt: Cannot save result file \"{0}\"", outputFile));
+					throw new Exception($"ApplyLinuxXslt: Cannot save result file \"{outputFile}\"");
 			}
 			finally
 			{
 				xsltFreeStylesheet(xsl);
 			}
 		}
+
+		private static void ApplyLinuxXsltCommandLine(string stylesheet, string inputFile,
+			string outputFile, IEnumerable<XsltParam> xparams)
+		{
+			var stringParams = new StringBuilder();
+			foreach (var xparam in xparams)
+			{
+				stringParams.Append($"--stringparam {xparam.Name} '{xparam.Value}' ");
+			}
+
+			using (var process = new Process())
+			{
+				process.StartInfo.UseShellExecute = false;
+				process.StartInfo.RedirectStandardError = true;
+				process.StartInfo.FileName = "xsltproc";
+				process.StartInfo.Arguments = $"--output \"{outputFile}\" {stringParams} \"{stylesheet}\" \"{inputFile}\"";
+				process.Start();
+
+				var stdError = process.StandardError.ReadToEnd();
+				process.WaitForExit();
+				if (process.ExitCode != 0)
+				{
+					throw new ApplicationException($"xsltproc returned error {process.ExitCode} for {inputFile}. Output:\n{stdError}.");
+				}
+			}
+		}
+
 
 		private static void ApplyDotNetXslt(string stylesheet, string inputFile, string outputFile, List<XsltParam> xparams)
 		{

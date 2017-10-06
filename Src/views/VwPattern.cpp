@@ -2259,12 +2259,12 @@ void VwSearchKiller::CreateCom(IUnknown *punkCtl, REFIID riid, void ** ppv)
 /*----------------------------------------------------------------------------------------------
 	Set the window whose messages are to be flushed.
 ----------------------------------------------------------------------------------------------*/
-STDMETHODIMP VwSearchKiller::put_Window(int hwnd)
+STDMETHODIMP VwSearchKiller::put_Window(DWORD * hwnd)
 {
 	BEGIN_COM_METHOD;
 
 #if defined(WIN32) || defined(WIN64)
-	m_hwnd = (HWND)IntToPtr(hwnd);
+	m_hwnd = (HWND)hwnd;
 #else
 	// TODO-Linux: Handle this if neccessary - problem on 64bit
 	Assert(!"VwSearchKiller::put_Window shouldn't be called on Linux");

@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<UsingTask TaskName="DownloadFile" AssemblyFile="FwBuildTasks.dll"/> <!-- needed because DownloadNuGet is called in a separate process -->
+
 	<PropertyGroup>
 		<NuGetToolsPath>$(MSBuildThisFileDirectory)</NuGetToolsPath>
 		<PlatformPackagesConfig Condition="'$(OS)'=='Windows_NT'">$(NuGetToolsPath)nuget-windows/packages.config</PlatformPackagesConfig>
@@ -48,46 +50,15 @@
 		This effectively acts as a lock that makes sure that the download operation will only happen once and all
 		parallel builds will have to wait for it to complete.
 		-->
-		<MsBuild Targets="_DownloadNuGet" Projects="$(MSBuildThisFileFullPath)" Properties="Configuration=NOT_IMPORTANT;" />
+		<MSBuild Targets="DownloadNuGet" Projects="$(MSBuildThisFileFullPath)" Properties="Configuration=NOT_IMPORTANT;" />
 	</Target>
 
-	<Target Name="_DownloadNuGet" Condition="!Exists('$(NuGetExePath)')">
-		<DownloadNuGet OutputFilename="$(NuGetExePath)" Condition="'$(OS)' == 'Windows_NT'" />
+	<Target Name="DownloadNuGet" Condition="!Exists('$(NuGetExePath)')">
+		<Message Text="Downloading NuGet.exe." />
+		<DownloadFile Address="$(NuGetUrl)" DownloadsDir="$(NuGetToolsPath)" Condition="'$(OS)' == 'Windows_NT'"/>
+		<!-- For some reason, System.Uri doesn't like Google Drive's URI scheme, so use wget or curl -->
 		<Exec Command="wget -O NuGet.exe $(NuGetUrl) || curl -o NuGet.exe -L $(NuGetUrl)" WorkingDirectory="$(NuGetToolsPath)" Condition="'$(OS)' != 'Windows_NT'" />
 	</Target>
-
-	<UsingTask TaskName="DownloadNuGet" TaskFactory="CodeTaskFactory"
-		AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll"
-		Condition=" '$(OS)' == 'Windows_NT' ">
-		<ParameterGroup>
-			<OutputFilename ParameterType="System.String" Required="true" />
-		</ParameterGroup>
-		<Task>
-			<Reference Include="System.Core" />
-			<Using Namespace="System" />
-			<Using Namespace="System.IO" />
-			<Using Namespace="System.Net" />
-			<Using Namespace="Microsoft.Build.Framework" />
-			<Using Namespace="Microsoft.Build.Utilities" />
-			<Code Type="Fragment" Language="cs">
-				<![CDATA[
-				try {
-					OutputFilename = Path.GetFullPath(OutputFilename);
-
-					Log.LogMessage("Downloading latest version of NuGet.exe...");
-					WebClient webClient = new WebClient();
-					webClient.DownloadFile("$(NuGetUrl)", OutputFilename);
-
-					return true;
-				}
-				catch (Exception ex) {
-					Log.LogErrorFromException(ex);
-					return false;
-				}
-			]]>
-			</Code>
-		</Task>
-	</UsingTask>
 
 	<Target Name="CleanNuGet">
 		<ForceDelete Files="$(NuGetExePath)"/>

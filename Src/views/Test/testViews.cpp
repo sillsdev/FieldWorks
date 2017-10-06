@@ -9,13 +9,12 @@ Last reviewed:
 
 	Global initialization/cleanup for unit testing the Views DLL classes.
 -------------------------------------------------------------------------------*//*:End Ignore*/
-#ifndef WIN32
+#if !defined(WIN32) && !defined(_M_X64)
 #define INITGUID
 #endif
 #include "testViews.h"
 #include "RedirectHKCU.h"
-
-#ifndef WIN32
+#if !defined(WIN32) && !defined(_M_X64)
 // These define GUIDs that we need to define globally somewhere
 #include "TestVwTxtSrc.h"
 #include "TestLayoutPage.h"
@@ -25,7 +24,7 @@ namespace unitpp
 {
 	void GlobalSetup(bool verbose)
 	{
-#ifdef WIN32
+#if defined(WIN32) || defined(_M_X64)
 		ModuleEntry::DllMain(0, DLL_PROCESS_ATTACH);
 #endif
 		::OleInitialize(NULL);
@@ -36,7 +35,7 @@ namespace unitpp
 	void GlobalTeardown()
 	{
 		::OleUninitialize();
-#ifdef WIN32
+#if defined(WIN32) || defined(_M_X64)
 		ModuleEntry::DllMain(0, DLL_PROCESS_DETACH);
 #endif
 	}

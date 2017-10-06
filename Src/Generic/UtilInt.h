@@ -1,5 +1,5 @@
 /*--------------------------------------------------------------------*//*:Ignore this sentence.
-Copyright (c) 1999-2013 SIL International
+Copyright (c) 1999-2017 SIL International
 This software is licensed under the LGPL, version 2.1 or later
 (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -13,57 +13,19 @@ Last reviewed:
 #ifndef UtilInt_H
 #define UtilInt_H 1
 
-
 const int knMax = 0x7FFFFFFF;
-
-
-#if defined(_MSC_VER)
 
 /***********************************************************************************************
 	Intel 80386 routines.
 ***********************************************************************************************/
+#if defined(WIN32)
 #define MulDiv MulDivImp
+#endif
 
 inline int MulDiv(int n, int nMul, int nDiv)
 {
 	Assert(nDiv != 0);
-#ifndef _M_X64
-	__asm
-	{
-		mov		eax,n
-		imul	nMul
-		idiv	nDiv
-		mov		n,eax
-	}
-#endif
-	return n;
-}
-
-
-inline int MulDivMod(int n, int nMul, int nDiv, int *pnRem)
-{
-	Assert(nDiv != 0);
-	AssertPtr(pnRem);
-#ifndef _M_X64
-	__asm
-	{
-		mov		eax,n
-		imul	nMul
-		idiv	nDiv
-		mov		ecx,pnRem
-		mov		DWORD PTR[ecx],edx
-		mov		n,eax
-	}
-#endif
-	return n;
-}
-
-#else // defined(_MSC_VER)
-
-inline int MulDiv(int n, int nMul, int nDiv)
-{
-	Assert(nDiv != 0);
-	return int64(n) * nMul / nDiv;
+	return n * nMul / nDiv;
 }
 
 inline int MulDivMod(int n, int nMul, int nDiv, int *pnRem)
@@ -71,13 +33,10 @@ inline int MulDivMod(int n, int nMul, int nDiv, int *pnRem)
 	Assert(nDiv != 0);
 	AssertPtr(pnRem);
 
-	int64 m = int64(n) * nMul;
+	int m = n * nMul;
 	*pnRem = m % nDiv;
-	return m / nDiv;
+	return int(m / nDiv);
 }
-
-#endif // defined(_MSC_VER)
-
 
 /***********************************************************************************************
 	These arithmetic functions assert that the result doesn't overflow.

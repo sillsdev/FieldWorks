@@ -228,36 +228,36 @@ const wchar * SkipLeadingWhiteSpace(const wchar * psz)
 		length of trimmed string.
 	}
 ----------------------------------------------------------------------------------------------*/
-unsigned LengthLessTrailingWhiteSpace(const char * psz)
+unsigned int LengthLessTrailingWhiteSpace(const char * psz)
 {
 	const char * pszLim = psz + strlen(psz);
 	while (pszLim > psz && isascii(pszLim[-1]) && isspace(pszLim[-1]))
 		pszLim--;
 
-	return (int)(pszLim - psz);
+	return (unsigned int)(pszLim - psz);
 }
 
-unsigned LengthLessTrailingWhiteSpace(const wchar * psz)
+unsigned int LengthLessTrailingWhiteSpace(const wchar * psz)
 {
 	UnicodeString us(psz);
-	int ich;
+	unsigned int count;
 	bool fSurr;
-	for (ich=us.length(); ich > 0; --ich)
+	for (count=us.length(); count > 0; --count)
 	{
 		fSurr = false;
-		UChar32 ch = us.charAt(ich-1);
+		UChar32 ch = us.charAt(count-1);
 		if (U16_IS_SURROGATE(ch))
 		{
 			fSurr = true;
-			if (ich > 1)
-				ch = us.char32At(ich-2);
+			if (count > 1)
+				ch = us.char32At(count-2);
 		}
 		if (! u_isUWhiteSpace(ch))
 			break;
 		if (fSurr)
-			--ich;
+			--count;
 	}
-	return ich;
+	return count;
 }
 
 };

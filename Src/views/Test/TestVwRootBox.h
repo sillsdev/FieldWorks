@@ -336,7 +336,7 @@ namespace TestViews
 
 			// Now make the root box and view constructor and Graphics object.
 			IVwRootBoxPtr qrootb;
-#ifdef WIN32
+#if defined(WIN32) || defined(_M_X64)
 			qrootb.CreateInstance(CLSID_VwRootBox);
 #else
 			VwRootBox::CreateCom(NULL, IID_IVwRootBox, (void **)&qrootb);
@@ -468,7 +468,7 @@ namespace TestViews
 
 			// Now make the root box and view constructor and Graphics object.
 			IVwRootBoxPtr qrootb;
-#ifdef WIN32
+#if defined(WIN32) || defined(_M_X64)
 			qrootb.CreateInstance(CLSID_VwRootBox);
 #else
 			VwRootBox::CreateCom(NULL, IID_IVwRootBox, (void **)&qrootb);
@@ -578,7 +578,7 @@ namespace TestViews
 
 		void testAccessible()
 		{
-#ifdef WIN32
+#if defined(WIN32) || defined(_M_X64)
 		// TODO-Linux: implement IAccessible
 			// Create test data in a temporary cache.
 			// First make some generic objects.

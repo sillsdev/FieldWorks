@@ -1175,7 +1175,7 @@ template<class T, class H, class Eq>
 		ihsnd = m_ihsndLim;
 		++m_ihsndLim;
 	}
-#ifndef WIN32
+#if !defined(WIN32) && !defined(_M_X64)
 	const char * psz = strdup(pszKey);
 #else
 	const char * psz = _strdup(pszKey);

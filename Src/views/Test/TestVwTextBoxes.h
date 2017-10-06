@@ -166,7 +166,7 @@ namespace TestViews
 		void testPictureLayoutWithExactLineSpacing()
 		{
 			// TODO-Linux: Port create picture process.
-#ifdef WIN32
+#if defined(WIN32) || defined(_M_X64)
 			// Make a string.
 			ITsStringPtr qtss;
 			StrUni stuPara1(L"Para");

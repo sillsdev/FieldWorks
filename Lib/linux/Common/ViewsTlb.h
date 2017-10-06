@@ -4,9 +4,9 @@
 
 
  /* File created by MIDL compiler version 8.00.0603 */
-/* at Mon Jun 05 13:48:11 2017
+/* at Thu Sep 21 14:47:49 2017
  */
-/* Compiler settings for C:\develop\fwrepo\fw\Output\Common\ViewsTlb.idl:
+/* Compiler settings for C:\Dev\05_FieldWorks\Output\Common\ViewsTlb.idl:
     Oicf, W1, Zp8, env=Win32 (32b run), target_arch=X86 8.00.0603 
     protocol : dce , ms_ext, c_ext, robust
     error checks: allocation ref bounds_check enum stub_data 
@@ -1462,7 +1462,7 @@ VwStringTextSource
 GENERIC_DECLARE_SMART_INTERFACE_PTR(
 IVwSearchKiller
 ,
-FF1B39DE-20D3-4cdd-A134-DCBE3BE23F3E
+D83E25D9-C2E9-42E4-A822-2E97A11D0B91
 );
 ATTACH_GUID_TO_CLASS(class,
 4ADA9157-67F8-499b-88CE-D63DF918DF83
@@ -8849,13 +8849,10 @@ GraphiteEngine;
 
 #if defined(__cplusplus) && !defined(CINTERFACE)
     
-    MIDL_INTERFACE("FF1B39DE-20D3-4cdd-A134-DCBE3BE23F3E")
+    MIDL_INTERFACE("D83E25D9-C2E9-42E4-A822-2E97A11D0B91")
     IVwSearchKiller : public IUnknown
     {
     public:
-        virtual /* [propput] */ HRESULT STDMETHODCALLTYPE put_Window( 
-            /* [in] */ int hwnd) = 0;
-        
         virtual HRESULT STDMETHODCALLTYPE FlushMessages( void) = 0;
         
         virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_AbortRequest( 
@@ -8884,10 +8881,6 @@ GraphiteEngine;
         
         ULONG ( STDMETHODCALLTYPE *Release )( 
             IVwSearchKiller * This);
-        
-        /* [propput] */ HRESULT ( STDMETHODCALLTYPE *put_Window )( 
-            IVwSearchKiller * This,
-            /* [in] */ int hwnd);
         
         HRESULT ( STDMETHODCALLTYPE *FlushMessages )( 
             IVwSearchKiller * This);
@@ -8922,9 +8915,6 @@ GraphiteEngine;
 #define IVwSearchKiller_Release(This)	\
     ( (This)->lpVtbl -> Release(This) ) 
 
-
-#define IVwSearchKiller_put_Window(This,hwnd)	\
-    ( (This)->lpVtbl -> put_Window(This,hwnd) ) 
 
 #define IVwSearchKiller_FlushMessages(This)	\
     ( (This)->lpVtbl -> FlushMessages(This) ) 

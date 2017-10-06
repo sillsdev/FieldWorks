@@ -317,7 +317,6 @@
     <Compile Include="StyleLists\StyleComboListHelper.cs" />
     <Compile Include="StyleLists\StyleListBoxHelper.cs" />
     <Compile Include="StyleLists\StyleListItem.cs" />
-    <Compile Include="StyleLists\StyleListViewHelper.cs" />
     <Compile Include="UpDownMeasureControl.cs">
       <SubType>Component</SubType>
     </Compile>

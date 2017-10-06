@@ -15,6 +15,7 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Utils;
+using SIL.FieldWorks.Common.RootSites;
 using LanguageExplorer.Works;
 using SIL.Xml;
 using WaitCursor = SIL.FieldWorks.Common.FwUtils.WaitCursor;
@@ -103,29 +104,23 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <param name="args"></param>
 		private void LaunchFilterTextsDialog(object sender, EventArgs args)
 		{
-			IFilterTextsDialog<IStText> dlg = null;
-			try
+			var interestingTextsList = InterestingTextsDecorator.GetInterestingTextList(PropertyTable, m_cache.ServiceLocator);
+			var textsToChooseFrom = new List<IStText>(interestingTextsList.InterestingTexts);
+			var isOkToDisplayScripture = m_cache.ServiceLocator.GetInstance<IScrBookRepository>().AllInstances().Any();
+			if (!isOkToDisplayScripture)
 			{
-				var interestingTextsList = InterestingTextsDecorator.GetInterestingTextList(PropertyTable, m_cache.ServiceLocator);
-				var textsToChooseFrom = new List<IStText>(interestingTextsList.InterestingTexts);
-				var isOkToDisplayScripture = m_cache.ServiceLocator.GetInstance<IScrBookRepository>().AllInstances().Any();
-				if (!isOkToDisplayScripture)
-				{   // Mustn't show any Scripture, so remove scripture from the list
-					textsToChooseFrom = textsToChooseFrom.Where(text => !ScriptureServices.ScriptureIsResponsibleFor(text)).ToList();
-				}
-				var interestingTexts = textsToChooseFrom.ToArray();
-				dlg = new FilterTextsDialog(PropertyTable, m_cache, interestingTexts, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
+				// Mustn't show any Scripture, so remove scripture from the list
+				textsToChooseFrom = textsToChooseFrom.Where(text => !ScriptureServices.ScriptureIsResponsibleFor(text)).ToList();
+			}
+			var interestingTexts = textsToChooseFrom.ToArray();
+			using (var dlg = new FilterTextsDialog(PropertyTable.GetValue<IApp>("App"), m_cache, interestingTexts, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
+			{
 				// LT-12181: Was 'PruneToSelectedTexts(text) and most others were deleted.
 				// We want 'PruneToInterestingTextsAndSelect(interestingTexts, selectedText)'
 				dlg.PruneToInterestingTextsAndSelect(interestingTexts, (IStText)m_objRoot);
 				dlg.TreeViewLabel = ITextStrings.ksSelectSectionsExported;
 				if (dlg.ShowDialog(this) == DialogResult.OK)
 					m_objs.AddRange(dlg.GetListOfIncludedTexts());
-			}
-			finally
-			{
-				if (dlg != null)
-					((IDisposable)dlg).Dispose();
 			}
 		}
 

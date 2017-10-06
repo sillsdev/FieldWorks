@@ -16,7 +16,7 @@ Last reviewed:
 
 #include "testViews.h"
 
-#ifndef WIN32 // on Linux - symbols for for methods of Vector<int> - This include adds them into testLanguage
+#if !defined(WIN32) && !defined(_M_X64) // on Linux - symbols for for methods of Vector<int> - This include adds them into testLanguage
 #include "Vector_i.cpp"
 #endif
 
@@ -221,7 +221,7 @@ namespace TestViews
 		if (ichMin == ichLim)
 			return S_OK;
 
-#ifdef WIN32
+#if defined(WIN32) || defined(_M_X64)
 		wmemcpy(prgchBuf, m_stu.Chars() + ichMin, ichLim - ichMin);
 #else
 		wmemcpy((wchar_t*)prgchBuf, (wchar_t*)m_stu.Chars() + ichMin, ichLim - ichMin);
@@ -401,7 +401,7 @@ namespace TestViews
 
 		void VerifyBreakPointing()
 		{
-#ifdef WIN32
+#if defined(WIN32) || defined(_M_X64)
 			// Create an IVwGraphics object and initialize it.
 			int dxMax = 600;
 			HDC hdc = ::CreateCompatibleDC(::GetDC(::GetDesktopWindow()));

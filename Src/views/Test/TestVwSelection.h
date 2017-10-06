@@ -2579,7 +2579,7 @@ namespace TestViews
 			CheckHr(qselRange->GetSelectionString(&qtss,  sep.Bstr()));
 			qtss->get_Text(&sbstr);
 
-#ifdef WIN32
+#if defined(WIN32) || defined(_M_X64)
 #define nwln L"\r\n"
 #else
 #define nwln L"\n"
