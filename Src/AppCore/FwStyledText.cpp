@@ -117,28 +117,25 @@ static void CopyOneWsFontInfo(const OLECHAR * & pchSrc, OLECHAR * & pchDst)
 {
 	// Copy ws info and length of font family name and font family name itself
 	// and # int props and int props themselves.
+	// See logic at SkipStrProposAndGetIntPropCount below
 	int cchFF = *(pchSrc + 2); // Follows ws.
-	int cpropInt = SignedInt(pchSrc[3 + cchFF]); // Follows ws, cchFF and ff itself.
-	int cchStrProps = 0;
+	int ich = 3 + cchFF;
+	int cpropInt = SignedInt(pchSrc[ich]); // Follows ws, cchFF and ff itself.
 	if (cpropInt < 0)
 	{
 		// Additional string properties.
-		int cpropStr = cpropInt * -1;
-		cchStrProps = 1; // counter
-		// Point at the data right after the ws (2), char count for FF, FF itself, and
-		// the cprop that turned out to be a cpropStr.
-		OLECHAR * pchTmp = const_cast<OLECHAR *>(pchSrc) + 3 + cchFF + 1;
+		int cpropStr = (-cpropInt);
+		ich++;
 		for (int iprop = 0; iprop < cpropStr; iprop++)
 		{
-			int cch = *pchTmp;
-			cchStrProps += 1 + cch;
-			pchTmp += 1 + cch;
+			int cch = pchSrc[ich + 1];
+			ich += 2 + cch;
 		}
 		// The character following the extra strings is the real integer property count.
-		cpropInt = *pchTmp;
+		cpropInt = pchSrc[ich];
 	}
-	// First 4 = 2 (ws) + 1 (cchFF) + 1 (cprop).
-	int cchCopy = 4 + cchFF + cchStrProps + (cpropInt * 4);
+	// ich is the index of the integer property count.
+	int cchCopy = ich + 1 + (cpropInt * 4);
 	MoveItems(pchSrc, pchDst, cchCopy);
 	pchSrc += cchCopy;
 	pchDst += cchCopy;
