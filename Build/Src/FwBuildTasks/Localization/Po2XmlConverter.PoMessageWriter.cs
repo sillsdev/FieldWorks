@@ -27,8 +27,8 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 
 			public List<string> Current
 			{
-				get => m_current ?? (m_current = new List<string>());
-				set => m_current = value;
+				get { return m_current ?? (m_current = new List<string>()); }
+				set { m_current = value; }
 			}
 
 			public List<string> Msgid { get; set; }

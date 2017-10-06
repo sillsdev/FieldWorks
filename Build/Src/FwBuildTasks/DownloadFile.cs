@@ -26,6 +26,9 @@ namespace FwBuildTasks
 		/// <summary>time to wait before retrying failed downloads (four minutes = 240,000ms)</summary>
 		protected const int RetryWaitTime = 240000;
 
+		/// <summary>Number of milliseconds in a minute (60,000ms)</summary>
+		protected const int MillisPerMinute = 60000;
+
 		/// <summary>HTTP address to download from</summary>
 		[Required]
 		public string Address
@@ -80,8 +83,9 @@ namespace FwBuildTasks
 					}
 					if (retries > 0)
 					{
-						Log.LogMessage(MessageImportance.High, "Could not retrieve latest {0}. No network connection. Trying {1} more times.", remoteUrl, retries);
-						Thread.Sleep(RetryWaitTime); // wait a minute
+						Log.LogMessage(MessageImportance.High, "Could not retrieve latest {0}. No network connection. Trying {1} more times in {2}-minute intervals.",
+							remoteUrl, retries, RetryWaitTime/MillisPerMinute);
+						Thread.Sleep(RetryWaitTime); // wait a few minutes
 					}
 					continue;
 				}
@@ -106,8 +110,9 @@ namespace FwBuildTasks
 					break; // log error and return false
 
 				// The server had no response. Perhaps there are network problems that will clear up in a minute or two.
-				Log.LogMessage(MessageImportance.High, "Could not download {0}. Trying {1} more times.", remoteUrl, retries);
-				Thread.Sleep(RetryWaitTime); // wait a minute
+				Log.LogMessage(MessageImportance.High, "Could not download {0}. Trying {1} more times in {2}-minute intervals.",
+					remoteUrl, retries, RetryWaitTime/MillisPerMinute);
+				Thread.Sleep(RetryWaitTime); // wait a few minutes
 			}
 
 			Log.LogError("Could not retrieve latest {0}. Exceeded retry count.", remoteUrl);

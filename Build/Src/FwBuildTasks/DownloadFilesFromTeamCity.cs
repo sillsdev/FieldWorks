@@ -185,7 +185,8 @@ namespace FwBuildTasks
 							Log.LogWarning("Unexpected Server Response[{0}] to request {1}", webResponse.StatusCode, url);
 						if (retries > 0)
 						{
-							Log.LogMessage(MessageImportance.High, "Could not retrieve {0}. Trying {1} more times.", url, retries);
+							Log.LogMessage(MessageImportance.High, "Could not retrieve {0}. Trying {1} more times in {2}-minute intervals.",
+								url, retries, RetryWaitTime / MillisPerMinute);
 							Thread.Sleep(RetryWaitTime); // wait a minute
 						}
 						continue;
@@ -212,7 +213,8 @@ namespace FwBuildTasks
 					}
 					if (retries > 0)
 					{
-						Log.LogMessage(MessageImportance.High, "Could not retrieve {0}. Trying {1} more times.", url, retries);
+						Log.LogMessage(MessageImportance.High, "Could not retrieve {0}. Trying {1} more times in {2}-minute intervals.",
+							url, retries, RetryWaitTime / MillisPerMinute);
 						Thread.Sleep(RetryWaitTime); // wait a minute
 					}
 				}
