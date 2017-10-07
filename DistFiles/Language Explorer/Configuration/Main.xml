@@ -11,16 +11,13 @@
 	   where the default tool is defined for each 'Area' of FLEX-->
 	<!-- The main sections of this file are the following
 	commands
-	lists
+	areas
 	controls (dialog or embedded browse view
-	menus
+	menubar
 	contextMenus
-	sidebar
 	toolbars
-	statusbar
 	resources
 	listeners
-	defaultProperties
 	contexthelpstrings -->
 
 
@@ -28,44 +25,9 @@
 	<!-- ************************ commands *********************** -->
 	<!-- ********************************************************** -->
 	<commands>
-		<command id="CmdChooseLangProject" label="_Open..." message="ChooseLangProject" icon="OpenProject" shortcut="Ctrl+O" a10status="DONE" />
-		<!-- Send/Receive commands. See "ContextHelp.xml" file for corresponding tooltips. -->
-		<command id="CmdFLExBridge" label="Send/Receive _Project (with other FLEx users)..." icon="syncSendReceive" message="FLExBridge" a10status="DONE" />
-		<command id="CmdViewMessages" label="_View Project Messages..." message="ViewMessages" a10status="DONE" />
-		<command id="CmdLiftBridge" label="Send/Receive _Lexicon (WeSay)..." icon="syncSendReceive" message="LiftBridge" a10status="DONE" />
-		<command id="CmdViewLiftMessages" label="Vie_w Lexicon Messages..." message="ViewLiftMessages" a10status="DONE" />
-		<command id="CmdObtainAnyFlexBridgeProject" label="_Get Project from Colleague..." icon="syncObtain" message="ObtainAnyFlexBridgeProject" a10status="DONE" />
-		<command id="CmdObtainLiftProject" label="Get Lexicon (WeSay) and _Merge with this Project..." icon="syncObtain" message="ObtainLiftProject" a10status="DONE" />
-		<command id="CmdObtainFirstFlexBridgeProject" label="Send this _Project for the first time..." icon="syncSendReceiveFirst" message="FirstFLExBridge" a10status="DONE" />
-		<command id="CmdObtainFirstLiftProject" label="Send this _Lexicon for the first time (to WeSay)..." icon="syncSendReceiveFirst" message="FirstLiftBridge" a10status="DONE" />
-		<command id="CmdHelpChorus" label="_Help..." message="ShowChorusHelp" a10status="DONE" />
-		<command id="CmdCheckForFlexBridgeUpdates" label="Check for FLEx Bridge _Updates..." message="CheckForFlexBridgeUpdates" a10status="DONE" />
-		<command id="CmdHelpAboutFLEXBridge" label="_About FLEx Bridge..." icon="chorus" message="AboutFlexBridge" a10status="DONE" />
-		<command id="CmdFLExLiftBridge" label="Send/Receive..." icon="syncSendReceive" message="FLExLiftBridge" shortcut="Ctrl+R" a10status="DONE" />
-
-		<command id="CmdClose" label="_Close" message="CloseWindow" a10status="DONE" />
-		<command id="CmdFirstRecord" label="_First" icon="firstRecord" message="FirstRecord" a10status="DONE" />
 		<command id="CmdDeleteRecord" label="_Delete {0}..." message="DeleteRecord" icon="Delete" shortcut="Ctrl+Del"/>
-		<command id="CmdLastRecord" label="_Last" icon="lastRecord" message="LastRecord" a10status="DONE" />
-		<command id="CmdPreviousRecord" label="_Previous" icon="previousRecord" message="PreviousRecord" shortcut="Alt+P" a10status="DONE" />
-		<command id="CmdNextRecord" label="_Next" icon="nextRecord" message="NextRecord" shortcut="Alt+N" a10status="DONE" />
-		<command id="CmdListPropertiesTable" label="_List Properties Table" message="ListPropertiesTable" a10status="DONE" />
 		<command id="CmdListColleagues" label="List _Colleagues" message="ListColleagues"/>
-		<command id="CmdNewWindow" label="_New Window" message="NewWindow" a10status="DONE" />
-		<!-- F5 doesn't seem to work with the open source adapter -->
-		<command id="CmdRefresh" label="_Refresh" message="MasterRefresh" icon="Refresh" shortcut="F5" oneatatime="true" a10status="DONE" />
-		<command id="CmdProjectProperties" label="Field_Works Project Properties..." message="FileProjectProperties" a10status="DONE" />
-		<command id="CmdProjectLocation" label="Project Locations..." message="FileProjectLocation" a10status="DONE" />
-		<command id="CmdDeleteProject" label="_Delete Project..." message="DeleteProject" icon="Delete" a10status="DONE" />
-		<command id="CmdCreateProjectShortcut" label="_Create Shortcut on Desktop" message="CreateShortcut" a10status="DONE" />
-		<command id="CmdNewLangProject" label="_New FieldWorks Project..." message="NewLangProject" icon="NewProject" a10status="DONE" />
-		<command id="CmdPrint" label="_Print..." message="Print" shortcut="Ctrl+P" a10status="PARTIALLY_DONE" />
-		<command id="CmdProjectUtilities" label="_Utilities..." message="Utilities">
-			<parameters title="FieldWorks Project Utilities" filename="Language Explorer/Configuration/UtilityCatalogInclude.xml"/>
-		</command>
-		<command id="CmdArchiveWithRamp" label="_Archive with RAMP (SIL)..." message="ArchiveWithRamp" icon="ArchiveWithRamp" a10status="DONE" />
 		<command id="CmdUploadToWebonary" label="Upload to _Webonary..." message="UploadToWebonary"/>
-		<command id="CmdPageSetup" label="Page Setup..." message="PageSetup"/>
 		<command id="CmdImportSFMLexicon" label="_Standard Format Lexicon..." message="SFMImport" a10status="LEXICONAREAONLY" />
 		<command id="CmdImportSFMNotebook" label="Standard Format _Notebook data..." message="LaunchConnectedDialog">
 			<parameters>
@@ -98,7 +60,6 @@
 			</parameters>
 		</command>
 		<command id="CmdImportTranslatedLists" label="_Translated List Content" message="ImportTranslatedLists"/>
-		<command id="CmdExport" label="_Export..." message="Export"/>
 		<command id="CmdSynch" label="S_ynchronize with LiftShare..." message="Synchronize" translate="This command tries to update from an external source of lexical data."/>
 		<command id="CmdAddCustomField" label="Custom _Fields..." message="AddCustomField"/>
 		<command id="CmdConfigureColumns" label="_Columns..." icon="columnChooser" message="ConfigureColumns"/>
@@ -116,14 +77,6 @@
 		<command id="CmdShowCharMap" label="Special _character..." message="ShowCharMap" icon="SpecialCharacter"/>
 		<command id="CmdFormatStyle" label="_Styles..." message="FormatStyle"/>
 		<command id="CmdFormatApplyStyle" label="_Apply Style..." message="FormatApplyStyle"/>
-		<command id="CmdWritingSystemProperties" label="Se_t up Writing Systems..." message="WritingSystemProperties" a10status="DONE" />
-		<command id="CmdBackup" label="_Back up this Project..." message="BackupThisProject" a10status="DONE" />
-		<command id="CmdRestoreFromBackup" label="_Restore a Project..." message="RestoreAProject" a10status="DONE" />
-		<!-- this will require something dynamic unless we somehow make a way to define it specifically in the
-			 configuration files of various applications. we could perhaps make it possible to define the label here
-			 using the property value: label="{MainObjectLabel}" and then add to XCore the ability to define this:
-			 <property id="MainObjectLabel">Lexical Database</property>-->
-		<command id="CmdMainObjectProperties" label="?? Properties (TODO)" message="MainObjectProperties" a10status="TODO_REALLY?" />
 		<command id="CmdUndo" label="_Undo" message="Undo" icon="Undo" shortcut="Ctrl+Z" a10status="STUB_ONLY" />
 		<command id="CmdRedo" label="_Redo" message="Redo" icon="Redo" shortcut="Ctrl+Y" a10status="STUB_ONLY" />
 		<command id="CmdCopy" label="_Copy" message="EditCopy" icon="Copy" shortcut="Ctrl+C" a10status="PARTIALLY_DONE" />
@@ -134,29 +87,14 @@
 		<command id="CmdSelectAll" label="Select _All" message="EditSelectAll" shortcut="Ctrl+A" a10status="PARTIALLY_DONE" />
 		<command id="CmdFindAndReplaceText" label="Find..." message="FindAndReplaceText" shortcut="Ctrl+Shift+F" icon="findReplaceText"/>
 		<command id="CmdReplaceText" label="Replace..." message="ReplaceText" shortcut="Ctrl+H"/>
-		<command id="CmdHelpAbout" label="_About Language Explorer..." message="HelpAbout" a10status="DONE" />
-		<command id="CmdHelpLanguageExplorer" label="_Language Explorer..." message="HelpLanguageExplorer" shortcut="F1" a10status="DONE" />
-		<command id="CmdHelpTraining" label="_Training" message="HelpTraining" a10status="DONE" />
-		<command id="CmdHelpDemoMovies" label="_Demo Movies..." message="HelpDemoMovies" a10status="DONE" />
-		<!-- LT-15886 <command id="CmdHelpCheckForUpdates" label="Check for _Updates..." message="HelpCheckForUpdates"/> -->
-		<command id="CmdHelpReportBug" label="_Report a Problem..." message="HelpReportProblem" a10status="DONE" />
-		<command id="CmdHelpMakeSuggestion" label="_Make a Suggestion..." message="HelpMakeSuggestion" a10status="DONE" />
 		<command id="CmdHelpMorphologyInto" label="Introduction to _Parsing..." message="HelpMorphologyIntro"/>
-		<command id="CmdHelpXLingPap" label="Editing Linguistics Papers Using _XLingPaper ..." message="HelpHelpsFile" a10status="DONE" >
-			<parameters file="XLingPap/UserDoc.htm"/>
-		</command>
 		<command id="CmdHelpLexicographyIntro" label="Introduction to _Lexicography..." message="HelpLexicographyIntro" a10status="LEXICONAREAONLY" >
 			<parameters file="Lexicography Introduction/Introduction to Lexicography.htm"/>
 		</command>
 		<command id="CmdHelpNotesSFMDatabaseImport" label="Technical Notes on _SFM Database Import..." message="HelpNotesSFMDatabaseImport" a10status="LEXICONAREAONLY" />
-		<command id="CmdHelpNotesSendReceive" label="Technical Notes on FieldWorks Send-_Receive..." message="HelpNotesSendReceive" a10status="DONE" />
 		<command id="CmdHelpNotesLinguaLinksDatabaseImport" label="Technical Notes on Lin_guaLinks Import..." message="HelpNotesLinguaLinksDatabaseImport" a10status="LEXICONAREAONLY" />
 		<!-- Help/Resources/Technical Notes on LinguaLinks Import... -->
 		<command id="CmdHelpNotesInterlinearImport" label="Technical Notes on _Interlinear Import..." message="HelpNotesInterlinearImport"/>
-		<!-- Help/Resources/Technical Notes on Interlinear Import... -->
-		<command id="CmdHelpNotesWritingSystems" label="Technical Notes on _Writing Systems..." message="HelpTrainingFile" a10status="DONE" >
-			<parameters file="Technical Notes on Writing Systems.pdf"/>
-		</command>
 		<command id="CmdTestFollowLink" label="Test Follow Link" message="TestFollowLink" shortcut="F12"/>
 		<command id="CmdHistoryBack" label="Go Back" message="HistoryBack" icon="historyBack" shortcut="Alt+Left"/>
 		<command id="CmdHistoryForward" label="Go Forward" message="HistoryForward" icon="historyForward" shortcut="Alt+Right"/>
@@ -263,9 +201,6 @@
 <!-- START include: "Lists/areaConfiguration.xml" query="root/commands/*" -->
 		<include path="Lists/areaConfiguration.xml" query="root/commands/*"/>
 <!-- END include: "Lists/areaConfiguration.xml" query="root/commands/*" -->
-<!-- EXTENSIONS NOT SUPPORTED
-		<include path="Extensions/*/MainConfigurationExtension.xml" query="root/commands/*"/>
-EXTENSIONS NOT SUPPORTED -->
 		<!-- Commands to launch the various movies-->
 		<command id="CmdHelpDemoWelcome" label="_Welcome" message="HelpDemoMovies">
 			<parameters file="1-welcome"/>
@@ -365,53 +300,26 @@ EXTENSIONS NOT SUPPORTED -->
 	<!-- ********************************************************** -->
 	<!-- ************************ lists *********************** -->
 	<!-- ********************************************************** -->
-	<!--What is the lists section for?-->
-	<lists>
-<!-- START include: "Words/areaConfiguration.xml" query="root/lists/*" -->
-		<include path="Words/areaConfiguration.xml" query="root/lists/*"/>
-<!-- END include: "Words/areaConfiguration.xml" query="root/lists/*" -->
-<!-- START include: "Lexicon/areaConfiguration.xml" query="root/lists/*" -->
-		<include path="Lexicon/areaConfiguration.xml" query="root/lists/*"/>
-<!-- END include: "Lexicon/areaConfiguration.xml" query="root/lists/*" -->
-<!-- START include: "Grammar/areaConfiguration.xml" query="root/lists/*" -->
-		<include path="Grammar/areaConfiguration.xml" query="root/lists/*"/>
-<!-- END include: "Grammar/areaConfiguration.xml" query="root/lists/*" -->
-<!-- START include: "Notebook/areaConfiguration.xml" query="root/lists/*" -->
-		<include path="Notebook/areaConfiguration.xml" query="root/lists/*"/>
-<!-- END include: "Notebook/areaConfiguration.xml" query="root/lists/*" -->
-<!-- START include: "Lists/areaConfiguration.xml" query="root/lists/*" -->
-		<include path="Lists/areaConfiguration.xml" query="root/lists/*"/>
-<!-- END include: "Lists/areaConfiguration.xml" query="root/lists/*" -->
-<!-- EXTENSIONS NOT SUPPORTED
-		<include path="Extensions/*/MainConfigurationExtension.xml" query="root/lists/*"/>
-EXTENSIONS NOT SUPPORTED -->
-
-		<list id="AreasList">
-			<!--This determines which areas show up in the Areas side bar.
-				It also determines what appears under the View menu. eg View:Lexicon:...-->
-			<include path="Lexicon/areaConfiguration.xml" query="root/item"/>
-			<include path="Words/areaConfiguration.xml" query="root/item"/>
-			<include path="Grammar/areaConfiguration.xml" query="root/item"/>
-			<include path="Notebook/areaConfiguration.xml" query="root/item"/>
-			<include path="Lists/areaConfiguration.xml" query="root/item"/>
-<!-- EXTENSIONS NOT SUPPORTED
-			<include path="Extensions/*/MainConfigurationExtension.xml" query="root/item"/>
-EXTENSIONS NOT SUPPORTED -->
-		</list>
-		<!-- WANTPORT (JohnT: what is actually disabled by omitting these? FiltersList might be needed by the
-		disabled Views/FilterChoices item, but that seems useless. See FWR-657. I cannot find that ListTools is ever used anywhere.
-		WritingSystemList is used in a couple of places in the code, but I cannot find evidence that it is used in a way
-		that requires declaration here.)
-			 <list id="ListTools"/>
-			 <list id="WritingSystemList"/>
-			 <list id="FiltersList"/>
-			 WANTPORT -->
-		<list id="ReversalIndexList"/>
-	</lists>
+	<areas>
+	  <!-- START include: "Lexicon/areaConfiguration.xml" query="root/item" -->
+	  <include path="Lexicon/areaConfiguration.xml" query="root/item"/>
+	  <!-- END include: "Lexicon/areaConfiguration.xml" query="root/item" -->
+	  <!-- START include: "Words/areaConfiguration.xml" query="root/item" -->
+	  <include path="Words/areaConfiguration.xml" query="root/item"/>
+	  <!-- END include: "Words/areaConfiguration.xml" query="root/item" -->
+	  <!-- START include: "Grammar/areaConfiguration.xml" query="root/item" -->
+	  <include path="Grammar/areaConfiguration.xml" query="root/item"/>
+	  <!-- END include: "v" -->
+	  <!-- START include: "Notebook/areaConfiguration.xml" query="root/item" -->
+	  <include path="Notebook/areaConfiguration.xml" query="root/item"/>
+	  <!-- END include: "Notebook/areaConfiguration.xml" query="root/item" -->
+	  <!-- START include: "Lists/areaConfiguration.xml" query="root/item" -->
+	  <include path="Lists/areaConfiguration.xml" query="root/item"/>
+	  <!-- END include: "Lists/areaConfiguration.xml" query="root/item" -->
+	</areas>
 	<!-- ********************************************************** -->
 	<!-- ******** controls (dialog or embedded browse view) ******* -->
 	<!-- ********************************************************** -->
-	<!--What is this section for/do?-->
 	<controls>
 <!-- START include: "Lexicon/areaConfiguration.xml" query="root/controls/*" -->
 		<include path="Lexicon/areaConfiguration.xml" query="root/controls/*"/>
@@ -428,9 +336,6 @@ EXTENSIONS NOT SUPPORTED -->
 <!-- START include: "Grammar/areaConfiguration.xml" query="root/controls/*" -->
 		<include path="Grammar/areaConfiguration.xml" query="root/controls/*"/>
 <!-- END include: "Grammar/areaConfiguration.xml" query="root/controls/*" -->
-<!-- EXTENSIONS NOT SUPPORTED
-		<include path="Extensions/*/MainConfigurationExtension.xml" query="root/controls/*"/>
-EXTENSIONS NOT SUPPORTED -->
 	</controls>
 	<!-- ********************************************************** -->
 	<!-- ************************ menus *********************** -->
@@ -465,48 +370,19 @@ EXTENSIONS NOT SUPPORTED -->
 		 public bool OnInsertInterlinText(object argument)  this method is the code which gets executed
 		 when the command is invoked.
 		 =============================================================================================
-		 Here is a second example:
-		 <item command="CmdNewLangProject"/> this command will appear in all Areas
-		 and has no defaultVisible attribute so the default is visible.
-		 Examine it's XML definition
-		 <command id="CmdNewLangProject" label="_New FieldWorks Project..."
-		 message="NewLangProject" icon="NewProject"/>
-		 Do a search on NewLangProject in the .cs files
-		 finding OnNewLangProject  and we do not find OnDisplayNewLangProject.
-
-		 =============================================================================================
 		 Looking at the Edit menu below we see the following
 		 <include path="Lexicon/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Edit']/*"/>
 		 <include path="Words/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Edit']/*"/>
 		 <include path="Grammar/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Edit']/*"/>
 		 <include path="Lists/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Edit']/*"/>
-		 <include path="Extensions/*/MainConfigurationExtension.xml" query="root/menuAddOn/menu[@id='Edit']/*"/>
 		 These include elements include all the menu items in each of these files in the Edit menu. They could
 		 have all been included in this file Main.xml and still worked perfectly well in each area. They are
 		 kept in separate files just to make it easier for programming purposes to see which commands are associate
 		 with a particular area.
 	-->
 	<menubar>
-		<menu id="File" label="_File" b4InsertMenu="true" a10status="DONE" >
-			<item command="CmdNewLangProject" a10status="DONE" />
-			<item command="CmdChooseLangProject" a10status="DONE" />
-			<item label="-" translate="do not translate" a10status="DONE" />
-			<menu id="ProjectManagement" label="Project _Management" a10status="DONE" >
-				<item command="CmdProjectProperties" a10status="DONE" />
-				<item command="CmdBackup" a10status="DONE" />
-				<item command="CmdRestoreFromBackup" a10status="DONE" />
-				<item label="-" translate="do not translate" a10status="DONE" />
-				<item command ="CmdProjectLocation" a10status="DONE" />
-				<item command="CmdDeleteProject" a10status="DONE" />
-				<item command="CmdCreateProjectShortcut" a10status="DONE" />
-			</menu>
-			<item label="-" translate="do not translate" a10status="DONE" />
-			<item command="CmdArchiveWithRamp" a10status="DONE" />
+		<menu id="File" label="_File" b4InsertMenu="true" a10status="PARTIALLY_DONE" >
 			<item command="CmdUploadToWebonary" />
-			<item label="-" translate="do not translate" a10status="DONE" />
-			<item command="CmdPageSetup" a10status="NotSupportedException" />
-			<item command="CmdPrint" a10status="STUB_ONLY" />
-			<item label="-" translate="do not translate" a10status="DONE" />
 			<menu id="Import" label="_Import" a10status="DONE" >
 				<item command="CmdImportSFMLexicon" a10status="LEXICONAREAONLY" />
 				<item command="CmdImportLinguaLinksData" a10status="LEXICONAREAONLY" />
@@ -516,45 +392,9 @@ EXTENSIONS NOT SUPPORTED -->
 				<item command="CmdImportInterlinearData"/>
 				<item command="CmdImportSFMNotebook"/>
 				<item command="CmdImportTranslatedLists"/>
-<!-- EXTENSIONS NOT SUPPORTED
-				<include path="Extensions/*/MainConfigurationExtension.xml" query="root/menuAddOn/menu[@id='Import']/*"/>
-EXTENSIONS NOT SUPPORTED -->
 			</menu>
-			<item command="CmdExport" a10status="DONE" />
-			<!-- There are handlers for a generic "Export..." menu (follows Import menu).
-				Two are area-specific (Notebook & Grammar "Grammar Sketch" tool's GeneratedHtmlViewer class).
-				One seems to be more global, or at least it appears to be able to handle cross domain exports (with some custom field restrictions on a few classes).
-				So, leave the "Export" menu pending for the moment.
-				In the end, I expect one of the three possible event handlers will be wired up/removed, as the user switches from place to place. -->
-<!-- EXTENSIONS NOT SUPPORTED
-				<include path="Words/areaConfiguration.xml" query="root/menuAddOn/menu[@id='FileExport']/*"/>
-EXTENSIONS NOT SUPPORTED -->
-			<!-- needs more work to implement. -->
-			<!--item command="CmdSynch"/-->
-			<item label="-" translate="do not translate" a10status="DONE" />
-			<!-- (this was ToDo even in 6.0) <menu id="Properties" label="P_roperties">
-				<item command="CmdMainObjectProperties" />
-				</menu>-->
-
-			<item command="CmdClose" a10status="DONE" />
 		</menu>
-		<menu id="SendReceive" label="_Send/Receive" b4InsertMenu="true" a10status="DONE" >
-			<item command="CmdFLExBridge" a10status="DONE" />
-			<item command="CmdViewMessages" a10status="DONE" />
-			<item command="CmdLiftBridge" a10status="DONE" />
-			<item command="CmdViewLiftMessages" a10status="DONE" />
-			<item label="-" translate="do not translate" a10status="DONE" />
-			<item command="CmdObtainAnyFlexBridgeProject" a10status="DONE" />
-			<item command="CmdObtainLiftProject" a10status="DONE" />
-			<item label="-" translate="do not translate" a10status="DONE" />
-			<item command="CmdObtainFirstFlexBridgeProject" a10status="DONE" />
-			<item command="CmdObtainFirstLiftProject" a10status="DONE" />
-			<item label="-" translate="do not translate" a10status="DONE" />
-			<item command="CmdHelpChorus" a10status="DONE" />
-			<item command="CmdCheckForFlexBridgeUpdates" a10status="DONE" />
-			<item command="CmdHelpAboutFLEXBridge" a10status="DONE" />
-		</menu>
-		<menu id="Edit" label="_Edit" b4InsertMenu="true" a10status="DONE" >
+		<menu id="Edit" label="_Edit" b4InsertMenu="true" a10status="PARTIALLY_DONE" >
 			<item command="CmdUndo" a10status="STUB_ONLY" />
 			<item command="CmdRedo" a10status="STUB_ONLY" />
 			<item label="-" translate="do not translate" a10status="DONE" />
@@ -597,9 +437,7 @@ InterlinMaster user:
 			<include path="Lists/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Edit']/*"/>
 <!-- END include: "Lists/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Edit']/*" -->
 		</menu>
-		<menu id="View" label="_View" b4InsertMenu="true" a10status="DONE" >
-			<item command="CmdRefresh" a10status="DONE" />
-			<item label="-" translate="do not translate" a10status="DONE" />
+		<menu id="View" label="_View" b4InsertMenu="true" a10status="PARTIALLY_DONE" >
 			<menu label="_Lexicon" list="LexicalToolsList" behavior="singlePropertyAtomicValue" property="toolChoice"/>
 			<menu label="_Texts &amp;&amp; Words" list="WordToolsList" behavior="singlePropertyAtomicValue" property="toolChoice"/>
 			<menu label="_Grammar" list="GrammarToolsList" behavior="singlePropertyAtomicValue" property="toolChoice"/>
@@ -614,46 +452,11 @@ InterlinMaster user:
 <!-- START include: "Words/areaConfiguration.xml" query="root/menuAddOn/menu[@id='View']/*" -->
 			<include path="Words/areaConfiguration.xml" query="root/menuAddOn/menu[@id='View']/*"/>
 <!-- END include: "Words/areaConfiguration.xml" query="root/menuAddOn/menu[@id='View']/*" -->
-<!-- START include: "Notebook/areaConfiguration.xml" query="root/menuAddOn/menu[@id='View']/*" -->
-			<include path="Notebook/areaConfiguration.xml" query="root/menuAddOn/menu[@id='View']/*"/>
-<!-- END include: "Notebook/areaConfiguration.xml" query="root/menuAddOn/menu[@id='View']/*" -->
-<!-- START include: "Lists/areaConfiguration.xml" query="root/menuAddOn/menu[@id='View']/*" -->
-			<include path="Lists/areaConfiguration.xml" query="root/menuAddOn/menu[@id='View']/*"/>
-<!-- END include: "Lists/areaConfiguration.xml" query="root/menuAddOn/menu[@id='View']/*" -->
-<!-- START include: "Grammar/areaConfiguration.xml" query="root/menuAddOn/menu[@id='View']/*" -->
-			<include path="Grammar/areaConfiguration.xml" query="root/menuAddOn/menu[@id='View']/*"/>
-<!-- END include: "Grammar/areaConfiguration.xml" query="root/menuAddOn/menu[@id='View']/*" -->
 		</menu>
-
-		<!--<menu id="Areas" label="_Areas" list="AreasList" behavior="singlePropertyAtomicValue"
-			property="areaChoice" />
-			<menu id="Tools" label="_Tools" list="ToolsList" behavior="singlePropertyAtomicValue"
-			property="toolChoice" />
-		-->
-		<menu id="Data" label="_Data" a10status="DONE" >
-			<item command="CmdFirstRecord" a10status="DONE" />
-			<item command="CmdPreviousRecord" a10status="DONE" />
-			<item command="CmdNextRecord" a10status="DONE" />
-			<item command="CmdLastRecord" a10status="DONE" />
-			<item label="-" translate="do not translate"/>
-<!-- START include: "Lexicon/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Data']/*" -->
-			<include path="Lexicon/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Data']/*"/>
-<!-- END include: "Lexicon/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Data']/*" -->
+		<menu id="Data" label="_Data" a10status="PARTIALLY_DONE" >
 <!-- START include: "Words/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Data']/*" -->
 			<include path="Words/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Data']/*"/>
 <!-- END include: "Words/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Data']/*" -->
-<!-- START include: "Notebook/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Data']/*" -->
-			<include path="Notebook/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Data']/*"/>
-<!-- END include: "Notebook/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Data']/*" -->
-<!-- START include: "Lists/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Data']/*" -->
-			<include path="Lists/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Data']/*"/>
-<!-- END include: "Lists/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Data']/*" -->
-<!-- START include: "Grammar/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Data']/*" -->
-			<include path="Grammar/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Data']/*"/>
-<!-- END include: "Grammar/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Data']/*" -->
-<!-- EXTENSIONS NOT SUPPORTED
-			<include path="Extensions/*/MainConfigurationExtension.xml" query="root/menuAddOn/menu[@id='Data']/*"/>
-EXTENSIONS NOT SUPPORTED -->
 		</menu>
 		<menu id="Insert" label="_Insert" a10status="DONE" >
 <!-- START include: "Lexicon/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Insert']/*" -->
@@ -671,18 +474,14 @@ EXTENSIONS NOT SUPPORTED -->
 <!-- START include: "Grammar/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Insert']/*" -->
 			<include path="Grammar/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Insert']/*"/>
 <!-- END include: "Grammar/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Insert']/*" -->
-<!-- EXTENSIONS NOT SUPPORTED
-			<include path="Extensions/*/MainConfigurationExtension.xml" query="root/menuAddOn/menu[@id='Insert']/*"/>
-EXTENSIONS NOT SUPPORTED -->
 			<item label="-" translate="do not translate"/>
 			<item command="CmdShowCharMap"/>
 			<item command="CmdInsertLinkToFile"/>
 		</menu>
-		<menu id="Format" label="F_ormat" a10status="DONE" >
+		<menu id="Format" label="F_ormat" a10status="PARTIALLY_DONE" >
 			<item command="CmdFormatStyle"/>
 			<item command="CmdFormatApplyStyle"/>
 			<menu id="WritingSystemMenu" label="_Writing System" list="WritingSystemList" behavior="singlePropertyAtomicValue" property="WritingSystemHvo"/>
-			<item command="CmdWritingSystemProperties" a10status="DONE" />
 		</menu>
 		<!-- Reworked Tools menu [LT-9852] June '09	-->
 		<menu id="Tools" label="_Tools" a10status="DONE" >
@@ -694,9 +493,6 @@ EXTENSIONS NOT SUPPORTED -->
 <!-- START include: "Words/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Configure']/*" -->
 				<include path="Words/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Configure']/*"/>
 <!-- END include: "Words/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Configure']/*" -->
-<!-- START include: "Grammar/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Configure']/*" -->
-				<include path="Grammar/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Configure']/*"/>
-<!-- END include: "Grammar/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Configure']/*" -->
 <!-- START include: "Notebook/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Configure']/*" -->
 				<include path="Notebook/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Configure']/*"/>
 <!-- END include: "Notebook/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Configure']/*" -->
@@ -707,8 +503,6 @@ EXTENSIONS NOT SUPPORTED -->
 				<item command="CmdConfigHeadwordNumbers"/>
 				<item command="CmdRestoreDefaults"/>
 				<item label="-" translate="do not translate" a10status="DONE" />
-				<!-- This Setup Writing Systems... is a copy of the one on the Format menu -->
-				<item command="CmdWritingSystemProperties" a10status="DONE" />
 				<item command="CmdAddCustomField" defaultVisible="false"/>
 			</menu>
 			<!-- Area-specific Tools (other than Configure menu) go here. -->
@@ -720,15 +514,6 @@ EXTENSIONS NOT SUPPORTED -->
 <!-- START include: "Words/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Tools']/*" -->
 			<include path="Words/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Tools']/*"/>
 <!-- END include: "Words/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Tools']/*" -->
-<!-- START include: "Grammar/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Tools']/*" -->
-			<include path="Grammar/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Tools']/*"/>
-<!-- END include: "Grammar/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Tools']/*" -->
-<!-- START include: "Notebook/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Tools']/*" -->
-			<include path="Notebook/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Tools']/*"/>
-<!-- END include: "Notebook/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Tools']/*" -->
-<!-- START include: "Lists/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Tools']/*" -->
-			<include path="Lists/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Tools']/*"/>
-<!-- END include: "Lists/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Tools']/*" -->
 			<!-- Non-area-specific Tools go here. -->
 			<item label="-" translate="do not translate" a10status="DONE" />
 			<menu label="Spelling">
@@ -738,10 +523,6 @@ EXTENSIONS NOT SUPPORTED -->
 				<item label="-" translate="do not translate"/>
 				<item command="CmdChangeSpelling" defaultVisible="false" a10status="Used in Words area" />
 			</menu>
-			<item command="CmdProjectUtilities" a10status="DONE" />
-<!-- EXTENSIONS NOT SUPPORTED
-			<include path="Extensions/*/MainConfigurationExtension.xml" query="root/menuAddOn/menu[@id='Tools']/*"/>
-EXTENSIONS NOT SUPPORTED -->
 			<item label="-" translate="do not translate"/>
 			<item command="CmdToolsOptions"/>
 			<item command="CmdMacroF2" defaultVisible="false"/>
@@ -756,51 +537,17 @@ EXTENSIONS NOT SUPPORTED -->
 			<item command="CmdMacroF12" defaultVisible="false"/>
 		</menu>
 
-<!-- START include: "Lexicon/areaConfiguration.xml" query="root/menubar/*" -->
-		<include path="Lexicon/areaConfiguration.xml" query="root/menubar/*"/>
-<!-- END include: "Lexicon/areaConfiguration.xml" query="root/menubar/*" -->
 <!-- START include: "Words/areaConfiguration.xml" query="root/menubar/*" -->
 		<include path="Words/areaConfiguration.xml" query="root/menubar/*"/>
 <!-- END include: "Words/areaConfiguration.xml" query="root/menubar/*" -->
-<!-- START include: "Grammar/areaConfiguration.xml" query="root/menubar/*" -->
-		<include path="Grammar/areaConfiguration.xml" query="root/menubar/*"/>
-<!-- END include: "Grammar/areaConfiguration.xml" query="root/menubar/*" -->
-<!-- START include: "Notebook/areaConfiguration.xml" query="root/menubar/*" -->
-		<include path="Notebook/areaConfiguration.xml" query="root/menubar/*"/>
-<!-- END include: "Notebook/areaConfiguration.xml" query="root/menubar/*" -->
-<!-- START include: "Lists/areaConfiguration.xml" query="root/menubar/*" -->
-		<include path="Lists/areaConfiguration.xml" query="root/menubar/*"/>
-<!-- END include: "Lists/areaConfiguration.xml" query="root/menubar/*" -->
-
-<!-- EXTENSIONS NOT SUPPORTED
-		<include path="Extensions/*/MainConfigurationExtension.xml" query="root/menubar/*"/>
-EXTENSIONS NOT SUPPORTED -->
-		<menu id="Window" label="_Window" a10status="DONE" >
-			<item command="CmdNewWindow" a10status="DONE" />
-		</menu>
-		<menu id="Help" label="_Help" a10status="DONE" >
-			<!--  <item label="Show Help Balloons" boolProperty="ShowBalloonHelp" />
-			<separator />-->
-			<item command="CmdHelpLanguageExplorer" a10status="DONE" />
-			<item command="CmdHelpTraining" a10status="DONE" />
-			<item command="CmdHelpDemoMovies" a10status="DONE" />
-			<menu id="Resources" label="_Resources" a10status="DONE" >
+		<menu id="Help" label="_Help" a10status="PARTIALLY_DONE" >
+			<menu id="Resources" label="_Resources" a10status="PARTIALLY_DONE" >
 				<item command="CmdHelpLexicographyIntro"/>
 				<item command="CmdHelpMorphologyInto"/>
-				<item command="CmdHelpNotesSendReceive" a10status="DONE" />
 				<item command="CmdHelpNotesSFMDatabaseImport" a10status="LEXICONAREAONLY" />
 				<item command="CmdHelpNotesLinguaLinksDatabaseImport"/>
 				<item command="CmdHelpNotesInterlinearImport" a10status="Used in Words area" />
-				<item command="CmdHelpNotesWritingSystems" a10status="DONE" />
-				<item command="CmdHelpXLingPap" a10status="DONE" />
 			</menu>
-			<item label="-" translate="do not translate" a10status="DONE" />
-			<!-- LT-15886 <item command="CmdHelpCheckForUpdates"/>
-			This feature was never completed because FLEx would crash after updating on some machines for unexplained reasons.-->
-			<item command="CmdHelpReportBug" a10status="DONE" />
-			<item command="CmdHelpMakeSuggestion" a10status="DONE" />
-			<item label="-" translate="do not translate" a10status="DONE" />
-			<item command="CmdHelpAbout" a10status="DONE" />
 		</menu>
 	</menubar>
 	<!-- ********************************************************** -->
@@ -977,75 +724,17 @@ EXTENSIONS NOT SUPPORTED -->
 <!-- START include: "Grammar/areaConfiguration.xml" query="root/contextMenus/*" -->
 		<include path="Grammar/areaConfiguration.xml" query="root/contextMenus/*"/>
 <!-- END include: "Grammar/areaConfiguration.xml" query="root/contextMenus/*" -->
-<!-- EXTENSIONS NOT SUPPORTED
-		<include path="Extensions/*/MainConfigurationExtension.xml" query="root/contextMenus/*"/>
-EXTENSIONS NOT SUPPORTED -->
 	</contextMenus>
-	<!-- ********************************************************** -->
-	<!-- ************************ sidebar *********************** -->
-	<!-- ********************************************************** -->
-	<!--What is this section for/do?-->
-	<sidebar>
-<!-- START include: "Lexicon/areaConfiguration.xml" query="root/sidebar/*" -->
-		<include path="Lexicon/areaConfiguration.xml" query="root/sidebar/*"/>
-<!-- END include: "Lexicon/areaConfiguration.xml" query="root/sidebar/*" -->
-<!-- START include: "Words/areaConfiguration.xml" query="root/sidebar/*" -->
-		<include path="Words/areaConfiguration.xml" query="root/sidebar/*"/>
-<!-- END include: "Words/areaConfiguration.xml" query="root/sidebar/*" -->
-<!-- START include: "Notebook/areaConfiguration.xml" query="root/sidebar/*" -->
-		<include path="Notebook/areaConfiguration.xml" query="root/sidebar/*"/>
-<!-- END include: "Notebook/areaConfiguration.xml" query="root/sidebar/*" -->
-<!-- START include: "Lists/areaConfiguration.xml" query="root/sidebar/*" -->
-		<include path="Lists/areaConfiguration.xml" query="root/sidebar/*"/>
-<!-- END include: "Lists/areaConfiguration.xml" query="root/sidebar/*" -->
-<!-- START include: "Grammar/areaConfiguration.xml" query="root/sidebar/*" -->
-		<include path="Grammar/areaConfiguration.xml" query="root/sidebar/*"/>
-<!-- END include: "Grammar/areaConfiguration.xml" query="root/sidebar/*" -->
-<!-- EXTENSIONS NOT SUPPORTED
-		<include path="Extensions/*/MainConfigurationExtension.xml" query="root/sidebar/*"/>
-EXTENSIONS NOT SUPPORTED -->
-
-		<tab label="Areas" list="AreasList" behavior="singlePropertyAtomicValue" property="areaChoice"/>
-		<tab label="Tools" list="ToolsList" behavior="singlePropertyAtomicValue" property="toolChoice"/>
-		<!-- The original WWBaseConfigurationInclude file had these, as well, but they don't yet have a place in LexText.
-I (RandyR) brought them into this file, just to keep track of them for the time they get dealt with.
-		<tab label="Views" list="ListViews" behavior="singlePropertyAtomicValue" property="toolChoice" />
-		<tab label="Filters">
-			<item id="noFilter" label="No Filter" boolProperty="foo" icon="NoFilter" />
-		</tab>
-		<tab label="Sort Methods">
-			<item id="defaultSort" label="Default" boolProperty="foo" icon="DefaultSort" />
-		</tab>
--->
-	</sidebar>
 	<!-- ********************************************************** -->
 	<!-- ************************ toolbars *********************** -->
 	<!-- ********************************************************** -->
 	<!--This sections defines the various toolbars and the commands in them.-->
 	<toolbars>
-<!-- START include: "Lexicon/areaConfiguration.xml" query="root/toolbars/*" -->
-		<include path="Lexicon/areaConfiguration.xml" query="root/toolbars/*" a10status="DONE: Includes nothing" />
-<!-- END include: "Lexicon/areaConfiguration.xml" query="root/toolbars/*" -->
-<!-- START include: "Words/areaConfiguration.xml" query="root/toolbars/*" -->
-		<include path="Words/areaConfiguration.xml" query="root/toolbars/*" a10status="DONE: Includes nothing" />
-<!-- END include: "Words/areaConfiguration.xml" query="root/toolbars/*" -->
-<!-- START include: "Notebook/areaConfiguration.xml" query="root/toolbars/*" -->
-		<include path="Notebook/areaConfiguration.xml" query="root/toolbars/*" a10status="DONE: Includes nothing" />
-<!-- END include: "Notebook/areaConfiguration.xml" query="root/toolbars/*" -->
-<!-- START include: "Lists/areaConfiguration.xml" query="root/toolbars/*" -->
-		<include path="Lists/areaConfiguration.xml" query="root/toolbars/*" a10status="DONE: Includes nothing" />
-<!-- END include: "Lists/areaConfiguration.xml" query="root/toolbars/*" -->
-<!-- START include: "Grammar/areaConfiguration.xml" query="root/toolbars/*" -->
-		<include path="Grammar/areaConfiguration.xml" query="root/toolbars/*" a10status="DONE: Includes nothing" />
-<!-- END include: "Grammar/areaConfiguration.xml" query="root/toolbars/*" -->
-<!-- EXTENSIONS NOT SUPPORTED
-		<include path="Extensions/*/MainConfigurationExtension.xml" query="root/toolbars/*"/>
-EXTENSIONS NOT SUPPORTED -->
-		<toolbar id="Format" a10status="DONE" >
+		<toolbar id="Format" a10status="PARTIALLY_DONE" >
 			<menu id="WritingSystemCombo" label="Writing System" list="WritingSystemList" behavior="singlePropertyAtomicValue" property="WritingSystemHvo" width="150"  a10status="PARTIALLY_DONE" />
 			<menu id="CombinedStylesCombo" label="Styles" list="CombinedStylesList" behavior="singlePropertyAtomicValue" property="BestStyleName" width="250"  a10status="PARTIALLY_DONE" />
 		</toolbar>
-		<toolbar id="Insert" a10status="DONE" >
+		<toolbar id="Insert" a10status="PARTIALLY_DONE" >
 <!-- START include: "Lexicon/areaConfiguration.xml" query="root/toolbarsAddOn/toolbar[@id='Insert']/item" -->
 			<include path="Lexicon/areaConfiguration.xml" query="root/toolbarsAddOn/toolbar[@id='Insert']/item"/>
 <!-- END include: "Lexicon/areaConfiguration.xml" query="root/toolbarsAddOn/toolbar[@id='Insert']/item" -->
@@ -1061,54 +750,14 @@ EXTENSIONS NOT SUPPORTED -->
 <!-- START include: "Grammar/areaConfiguration.xml" query="root/toolbarsAddOn/toolbar[@id='Insert']/item" -->
 			<include path="Grammar/areaConfiguration.xml" query="root/toolbarsAddOn/toolbar[@id='Insert']/item"/>
 <!-- END include: "Grammar/areaConfiguration.xml" query="root/toolbarsAddOn/toolbar[@id='Insert']/item" -->
-<!-- EXTENSIONS NOT SUPPORTED
-			<include path="Extensions/*/MainConfigurationExtension.xml" query="root/toolbarsAddOn/toolbar[@id='Insert']/item"/>
-EXTENSIONS NOT SUPPORTED -->
 		</toolbar>
-		<!--<toolbar id="Edit">
-			<include path="Words/areaConfiguration.xml" query="root/toolbarsAddOn/toolbar[@id='Edit']/item"/>
-		</toolbar>-->
-		<toolbar id="View" a10status="DONE" >
+		<toolbar id="View" a10status="PARTIALLY_DONE" >
 <!-- START include: "Words/areaConfiguration.xml" query="root/toolbarsAddOn/toolbar[@id='View']/item" -->
 			<include path="Words/areaConfiguration.xml" query="root/toolbarsAddOn/toolbar[@id='View']/item"/>
 <!-- END include: "Words/areaConfiguration.xml" query="root/toolbarsAddOn/toolbar[@id='View']/item" -->
 			<item command="CmdChangeFilterClearAll" a10status="PARTIALLY_DONE" />
 		</toolbar>
-		<toolbar id="Standard" a10status="DONE" >
-			<item command="CmdHistoryBack" a10status="PARTIALLY_DONE" />
-			<item command="CmdHistoryForward" a10status="PARTIALLY_DONE" />
-			<item label="-" translate="do not translate" a10status="DONE" />
-			<item command="CmdDeleteRecord" a10status="PARTIALLY_DONE" />
-			<item label="-" translate="do not translate" a10status="DONE" />
-			<item command="CmdUndo" a10status="PARTIALLY_DONE" />
-			<item command="CmdRedo" a10status="PARTIALLY_DONE" />
-			<item command="CmdRefresh" a10status="DONE" />
-			<item label="-" translate="do not translate" a10status="DONE" />
-			<item command="CmdFirstRecord" a10status="DONE" />
-			<item command="CmdPreviousRecord" a10status="DONE" />
-			<item command="CmdNextRecord" a10status="DONE" />
-			<item command="CmdLastRecord" a10status="DONE" />
-			<item command="CmdFLExLiftBridge" a10status="PARTIALLY_DONE" />
-		</toolbar>
 	</toolbars>
-	<!-- ********************************************************** -->
-	<!-- ************************ statusbar *********************** -->
-	<!-- ********************************************************** -->
-
-	<statusbar>
-		<!-- At runtime, put text in these by setting the property 'StatusPanelMessage',
-		'StatusPanelProgress', etc. to something -->
-<!--
-By 'DONE', I (RBR) mean that the status bar exists and has its chunks. It is then up to areas/tools to interact with zero, or more, of its parts.
--->
-		<panel id="Message" width="Contents" minwidth="40" a10status="DONE" />
-		<panel id="Progress" width="Contents" minwidth="40" a10status="DONE" />
-		<panel id="Area" a10status="DONE" />
-		<panel id="ProgressBar" width="Contents" minwidth="150" assemblyPath="FwControls.dll" class="SIL.FieldWorks.Common.Controls.StatusBarProgressPanel" a10status="DONE" />
-		<panel id="Sort" width="Contents" minwidth="40" assemblyPath="FwControls.dll" class="SIL.FieldWorks.Common.Controls.StatusBarTextBox" a10status="DONE" />
-		<panel id="Filter" width="Contents" minwidth="40" assemblyPath="FwControls.dll" class="SIL.FieldWorks.Common.Controls.StatusBarTextBox" a10status="DONE" />
-		<panel id="RecordNumber" width="Contents" minwidth="40" a10status="DONE" />
-	</statusbar>
 	<!-- ********************************************************** -->
 	<!-- ************************ resources *********************** -->
 	<!-- ********************************************************** -->
@@ -1127,9 +776,6 @@ By 'DONE', I (RBR) mean that the status bar exists and has its chunks. It is the
 		<imageList assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.DetailControls.DataTreeImages" field="nodeImages" size="small" labels="sequence, collection, atomic" a10status="DUNNO" />
 		<imageList assemblyPath="LexTextDll.dll" class="LanguageExplorer.Works.LexText.ImageHolder" field="smallImages" size="small" labels="Pie, Circle, TwoHalfs, Help, Delete, Remove, Left, Right" a10status="MOVE_TO-LanguageExplorer.Works.LexText.ImageHolder" />
 		<imageList assemblyPath="LexTextDll.dll" class="LanguageExplorer.Works.LexText.ImageHolder" field="smallCommandImages" size="small" labels="findWordform, addNewAnalysis" a10status="MOVE_TO-LanguageExplorer.Works.LexText.ImageHolder" />
-<!-- START include: "Lexicon/areaConfiguration.xml" query="root/resources/*" -->
-		<include path="Lexicon/areaConfiguration.xml" query="root/resources/*"/>
-<!-- END include: "Lexicon/areaConfiguration.xml" query="root/resources/*" -->
 <!-- START include: "Words/areaConfiguration.xml" query="root/resources/*" -->
 		<include path="Words/areaConfiguration.xml" query="root/resources/*"/>
 <!-- END include: "Words/areaConfiguration.xml" query="root/resources/*" -->
@@ -1139,12 +785,6 @@ By 'DONE', I (RBR) mean that the status bar exists and has its chunks. It is the
 <!-- START include: "Notebook/areaConfiguration.xml" query="root/resources/*" -->
 		<include path="Notebook/areaConfiguration.xml" query="root/resources/*"/>
 <!-- END include: "Notebook/areaConfiguration.xml" query="root/resources/*" -->
-<!-- START include: "Lists/areaConfiguration.xml" query="root/resources/*" -->
-		<include path="Lists/areaConfiguration.xml" query="root/resources/*"/>
-<!-- END include: "Lists/areaConfiguration.xml" query="root/resources/*" -->
-<!-- EXTENSIONS NOT SUPPORTED
-		<include path="Extensions/*/MainConfigurationExtension.xml" query="root/resources/*"/>
-EXTENSIONS NOT SUPPORTED -->
 	</resources>
 	<!-- ********************************************************** -->
 	<!-- ************************ listeners *********************** -->
@@ -1152,7 +792,7 @@ EXTENSIONS NOT SUPPORTED -->
 	<!--Listeners are classes that are instantiated and added to the mediator's list of colleagues (message handlers)
   to handle messages that are not specific to one particular tool.-->
 	<listeners>
-		<listener assemblyPath="xCore.dll" class="XCore.MockupDialogLauncher" a10status="REMOVED" />
+<!-- NB: By the end of the brain transplant, there will be no listeners. -->
 <!-- START include: "Lexicon/areaConfiguration.xml" query="root/listeners/*" -->
 		<include path="Lexicon/areaConfiguration.xml" query="root/listeners/*"/>
 <!-- END include: "Lexicon/areaConfiguration.xml" query="root/listeners/*" -->
@@ -1162,112 +802,16 @@ EXTENSIONS NOT SUPPORTED -->
 <!-- START include: "Words/areaConfiguration.xml" query="root/listeners/*" -->
 		<include path="Words/areaConfiguration.xml" query="root/listeners/*"/>
 <!-- END include: "Words/areaConfiguration.xml" query="root/listeners/*" -->
-<!-- START include: "Grammar/areaConfiguration.xml" query="root/listeners/*" -->
-		<include path="Grammar/areaConfiguration.xml" query="root/listeners/*"/>
-<!-- END include: "Grammar/areaConfiguration.xml" query="root/listeners/*" -->
-<!-- START include: "Lists/areaConfiguration.xml" query="root/listeners/*" -->
-		<include path="Lists/areaConfiguration.xml" query="root/listeners/*"/>
-<!-- END include: "Lists/areaConfiguration.xml" query="root/listeners/*" -->
-<!-- EXTENSIONS NOT SUPPORTED
-		<include path="Extensions/*/MainConfigurationExtension.xml" query="root/listeners/*"/>
-EXTENSIONS NOT SUPPORTED -->
 		<!-- this guy watches what the 'areas' list puts in the 'areaChoice' property and
 			populates the "tools" list appropriately. -->
 		<listener assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Dumpster.AreaListener"/>
-		<listener assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Dumpster.FLExBridgeListener"/>
 		<!-- take care of the writing system combo box -->
 		<listener assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.WritingSystemListHandler"/>
 		<listener assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.CombinedStylesListHandler"/>
 		<listener assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.LinkListener"/>
-<!-- NOT USED
-		<listener assemblyPath="FlexUIAdapter.dll" class="XCore.ContextHelper">
-			<parameters contextHelpPath="ContextHelp.xml"/>
-		</listener>
-NOT USED -->
 		<listener assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.MacroListener"/>
 		<listener assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.DictionaryConfigurationListener"/>
-<!-- NOT USED
-		<listener assemblyPath="xCore.dll" class="XCore.ProgressListener" />
-NOT USED -->
 	</listeners>
-	<!-- ********************************************************** -->
-	<!-- ************************ defaultProperties *********************** -->
-	<!-- ********************************************************** -->
-	<!--set the value of some simple properties to the defaults we want in the case that
-	   this is the first time the user has run the program, or the settings file is missing,
-	   or the program was launched with the shift key down
-	   Also for each area, the default tool is defined.-->
-	<defaultProperties>
-<!-- START include: "Lexicon/areaConfiguration.xml" query="root/defaultProperties/*" -->
-		<include path="Lexicon/areaConfiguration.xml" query="root/defaultProperties/*"/>
-<!-- END include: "Lexicon/areaConfiguration.xml" query="root/defaultProperties/*" -->
-<!-- START include: "Words/areaConfiguration.xml" query="root/defaultProperties/*" -->
-		<include path="Words/areaConfiguration.xml" query="root/defaultProperties/*"/>
-<!-- END include: "Words/areaConfiguration.xml" query="root/defaultProperties/*" -->
-<!-- START include: "Notebook/areaConfiguration.xml" query="root/defaultProperties/*" -->
-		<include path="Notebook/areaConfiguration.xml" query="root/defaultProperties/*"/>
-<!-- END include: "Notebook/areaConfiguration.xml" query="root/defaultProperties/*" -->
-<!-- START include: "Lists/areaConfiguration.xml" query="root/defaultProperties/*" -->
-		<include path="Lists/areaConfiguration.xml" query="root/defaultProperties/*"/>
-<!-- END include: "Lists/areaConfiguration.xml" query="root/defaultProperties/*" -->
-<!-- START include: "Grammar/areaConfiguration.xml" query="root/defaultProperties/*" -->
-		<include path="Grammar/areaConfiguration.xml" query="root/defaultProperties/*"/>
-<!-- END include: "Grammar/areaConfiguration.xml" query="root/defaultProperties/*" -->
-<!-- START include: "CommonDataTreeInclude.xml" query="root/defaultProperties/*" -->
-		<include path="CommonDataTreeInclude.xml" query="root/defaultProperties/*"/>
-<!-- END include: "CommonDataTreeInclude.xml" query="root/defaultProperties/*" -->
-<!-- EXTENSIONS NOT SUPPORTED
-		<include path="Extensions/*/MainConfigurationExtension.xml" query="root/defaultProperties/*"/>
-EXTENSIONS NOT SUPPORTED -->
-
-		<property name="PreferredUILibrary" value="FlexUIAdapter.dll" persist="false" a10status="REMOVED" />
-		<!--
-		We want to only show the sidebar by default.
-		If the user turns it off, than the preference will be saved in their settings file
-		Note: As of 8 February 2007 (and even well before then), we don't support the user hiding the sidebar completely.
-		-->
-		<property name="ShowSidebar" bool="true" persist="true" settingsGroup="global" a10status="REMOVED" />
-		<!-- This is the splitter distance for the sidebar/secondary splitter pair of controls. -->
-		<property name="SidebarWidthGlobal" intValue="140" persist="true" a10status="DONE" />
-		<!-- Label when collapsed to icon. -->
-		<property name="SidebarLabel" value="Sidebar" persist="true" a10status="REMOVED" />
-		<!-- This property is driven by the needs of the current main control, not the user. -->
-		<property name="ShowRecordList" bool="false" persist="true" a10status="PARTIALLY_DONE" />
-		<!-- This is the splitter distance for the record list/main content pair of controls. -->
-		<property name="RecordListWidthGlobal" intValue="200" persist="true" a10status="DONE" />
-		<!-- Label when collapsed to icon. -->
-
-		<property name="RecordListLabel" value="Record List" persist="true" a10status="REMOVED" />
-		<property name="MainContentLabel" value="Main Content" persist="true" a10status="REMOVED" />
-		<property name="AllButSidebarLabel" value="Record List &amp; MainContent" persist="true"/>
-
-		<property name="InitialArea" value="lexicon" settingsGroup="local" a10status="DONE" />
-		<property name="DoLog" bool="true" persist="false" a10status="REMOVED" />
-		<!-- ShowBalloonHelp and ShowMorphBundles are no longer supported in GUI, but still in the code.
-		So, add a default value here in order to prevent it from persisting -->
-		<property name="ShowBalloonHelp" bool="false" persist="false" a10status="REMOVED" />
-		<property name="ShowMorphBundles" bool="true" persist="false" settingsGroup="local" a10status="REMOVED" />
-		<!-- Default splitter values -->
-		<!--		<property name="PartsOfSpeech.editBasic.DataTree-Splitter" intValue="200"/>
-		<property name="PartsOfSpeech.editPlus.DataTree-Splitter" intValue="200"/>
--->
-		<!-- set this property to the item with the id "pos" of the list "AreasList". will also set the "areaChoiceParameters" property to the contents of the corresponding <parameters> node.
-		note that this currently should match the tool chosen below, under <contentClass> -->
-		<!-- simple string properties can be set like this: <property name ="UserName" value="Leroy"/> -->
-		<!-- increment this to make toolbar layouts revert to default -->
-		<property name="CurrentToolbarVersion" value="1" a10status="DONE" />
-		<!-- set these properties so they don't get set the first time they're accessed in a menu. (cf. LT-2789) -->
-		<property name="SortedFromEnd" bool="false" persist="true" settingsGroup="local" a10status="DONE" />
-		<property name="SortedByLength" bool="false" persist="true" settingsGroup="local" a10status="DONE" />
-		<!-- Properties that should never persist -->
-		<property name="SuspendLoadListUntilOnChangeFilter" value="" persist="false" settingsGroup="local" a10status="DONE" />
-		<property name="SuspendLoadingRecordUntilOnJumpToRecord" value="" persist="false" settingsGroup="local" a10status="DONE" />
-	</defaultProperties>
-	<!-- The class which will  fill up the window (minus the sidebar, toolbars, and menubar).
-	this path is relative to be executing application.-->
-	<!-- contentClass assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.RecordEditView">
-		<parameters field="PartsOfSpeech" templatePath="MorphologyEditor/XDEs"/>
-	</contentClass-->
 	<contexthelpstrings>
 		<!-- Just include them to make it easier to find them when looking for tool tips. The original code didn't do this. -->
 <!-- START include: "ContextHelp.xml" query="strings" -->

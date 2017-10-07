@@ -31,45 +31,10 @@
 	<!--
 		  File menu
 		  -->
-	<item id="CmdNewLangProject" a10status="DONE" >Create a new FieldWorks project.</item>
-	<item id="CmdChooseLangProject" a10status="DONE" >Open an existing FieldWorks project.</item>
-	<item id="CmdClose" a10status="DONE" >Close this project.</item>
-	<item id="CmdSave">Save</item>
-	<item id="CmdArchiveWithRamp" a10status="DONE" >Starts RAMP (if it is installed) and prepares an archive package for uploading.</item>
-	<item id="CmdRefresh" a10status="DONE" >Refresh the screen.</item>
-	<item id="CmdPageSetup" a10status="DONE" >Determine page layout options for printing.</item>
-	<item id="CmdPrint" a10status="DONE" >Print</item>
 	<item id="CmdImport">Import an existing lexicon.</item>
-	<item id="CmdExport" a10status="DONE" >Export this FieldWorks project to a file.</item>
-	<item id="CmdBackup" a10status="DONE" >Back up a FieldWorks project.</item>
-	<item id="CmdRestoreFromBackup" a10status="DONE" >Restore a FieldWorks project.</item>
-	<item id="CmdDeleteProject" a10status="DONE" >Delete FieldWorks project.</item>
-	<item id="CmdCreateProjectShortcut" a10status="DONE" >Create a desktop shortcut to this project.</item>
-	<!-- What is this?                <item id="CmdMainObjectProperties"/> -->
-	<item id="CmdProjectProperties" a10status="DONE" >Edit the special properties of this FieldWorks project (such as name and writing systems).</item>
-	<!-- Send/Receive menu -->
-	<item id="CmdFLExBridge" a10status="DONE" >Send/Receive this Project (lexicon and texts)</item>
-	<item id="CmdViewMessages" a10status="DONE" >View Project questions, merge conflicts, and notifications</item>
-	<item id="CmdLiftBridge" a10status="DONE" >Send/Receive only the Lexicon in this project (with WeSay or other programs that use LIFT)</item>
-	<item id="CmdViewLiftMessages" a10status="DONE" >View Lexicon (LIFT) questions, merge conflicts, and notifications</item>
-	<item id="CmdObtainAnyFlexBridgeProject" a10status="DONE" >Receive a Project or Lexicon from a colleague for the first time (creates a new project)</item>
-	<item id="CmdObtainLiftProject" a10status="DONE" >Receive a Lexicon for the first time (from a WeSay or other LIFT project) and merge it into the current project</item>
-	<item id="CmdObtainFirstFlexBridgeProject" a10status="DONE" >Creates a full project repository for this project for the first time (other project members will use "Get Project")</item>
-	<item id="CmdObtainFirstLiftProject" a10status="DONE" >Creates a LIFT repository for the lexical data in this project for the first time (for use with WeSay and other LIFT programs)</item>
-	<item id="CmdHelpChorus" a10status="DONE" >Help for using Chorus-enabled features</item>
-	<item id="CmdCheckForFlexBridgeUpdates" a10status="DONE" >Check for FLEx Bridge updates</item>
-	<item id="CmdHelpAboutFLEXBridge" a10status="DONE" >Display information about FLEx Bridge</item>
-	<item id="CmdFLExLiftBridge" a10status="DONE" >Send/Receive data in this project</item>	<!--This is for Toolbar icon-->
 	<!--
 		  Edit menu
 		  -->
-	<item id="CmdUndo" a10status="DONE" >Undo previous actions.</item>
-	<item id="CmdRedo" a10status="DONE" >Redo previous actions.</item>
-	<item id="CmdCut" a10status="DONE" >Cut</item>
-	<item id="CmdCopy" a10status="DONE" >Copy</item>
-	<item id="CmdPaste" a10status="DONE" >Paste</item>
-	<item id="CmdPasteHyperlink" a10status="DONE" >Paste clipboard content as hyperlink.</item>
-	<item id="CmdCopyLocationAsHyperlink" a10status="DONE" >Create a hyperlink to this location and copy it to the clipboard.</item>
 	<item id="CmdGoToEntry">Find a lexical entry.</item> <!-- Replaced "CmdFind" -->
 	<item id="CmdDeleteRecord">Delete this {0}.</item>
 	<item id="CmdFindAndReplaceText">Find and Replace Text</item>
@@ -88,20 +53,12 @@
 	  -->
 	<item id="Sidebar">Show the sidebar.</item>
 	<item id="Record List">Show the list of records.</item>
-
-	<item id="Show_DictionaryPubPreview" a10status="DONE" >Display the dictionary entry for this lexeme above the Lexicon Edit pane.</item>
 	<item id="ShowHiddenFields">Display all possible fields.</item>
-	<item id="CmdToggleRawAndInterlinear">Toggle between the baseline and interlinear text view.</item>
 	<item id="CmdChangeFilterClearAll">Turn off all filters.</item>
 	<item id="ShowInvisibleSpaces">View the invisible, zero-width spaces in this text.</item>
 	<!--
 		 Data menu
 		 -->
-	<item id="CmdFirstRecord" a10status="DONE" >Show the first item.</item>
-	<item id="CmdPreviousRecord" a10status="DONE" >Show the previous item.</item>
-	<item id="CmdNextRecord" a10status="DONE" >Show the next item.</item>
-	<item id="CmdLastRecord" a10status="DONE" >Show the last item.</item>
-	<item id="CmdMergeEntry" a10status="DONE" >Merge current lexical entry into another entry.</item>
 	<item id="CmdApproveAndMoveNext">Approve the suggested analysis and move to the next word.</item>
 	<item id="CmdApproveForWholeTextAndMoveNext">Approve the suggested analysis throughout this text, and move to the next word.</item>
 	<item id="CmdNextIncompleteBundle">Approve the suggested analysis, and jump to the next word with a suggested or incomplete analysis.</item>
@@ -123,7 +80,6 @@
 		 Insert menu
 		 -->
 	<item id="CmdInsertGenericMajorEntry">Create a new entry and add it to the lexicon.</item>
-	<item id="CmdInsertLexEntry" a10status="DONE" >Create a new lexical entry.</item>
 	<item id="CmdInsertPOS">Add a new category.</item>
 	<item id="CmdInsertAnnotationDef">Create a new annotation definition.</item>
 	<item id="CmdInsertSemDom">Create a new semantic domain.</item>
@@ -155,8 +111,6 @@
 	<item id="CmdInsertAllomorphACP">Create a rule to prevent allomorphs from co-occurring.</item>
 	<item id="CmdInsertACPGroup">Create a group of ad hoc rules.</item>
 	<item id="CmdImportWordSet">Import a set of words in a file and give the set a name.</item>
-	<item id="CmdInsertSense" a10status="DONE" >Insert a new sense.</item>
-	<item id="CmdInsertSubsense" a10status="DONE" >Insert a new subsense.</item>
 	<item id="CmdInsertLinkToFile">Insert a link to an external file.</item>
 	<item id="CmdAddNote">Insert a note.</item>
 	<item id="CmdChooseTexts" a10status="DONE" >Choose texts to display and use.</item>
@@ -166,7 +120,7 @@
 	<item id="CmdDataTree-Insert-Pronunciation">Add a pronunciation field to this entry.</item>
 	<item id="CmdInsertMediaFile" a10status="DONE" >Add a sound or movie file to the pronunciation, creating the pronunciation if necessary.</item>
 	<item id="CmdInsertText">Add a new text to the corpus.</item>
-	<item id="CmdDataTree-Insert-Etymology" a10status="DONE" >Add a set of etymological fields to this entry.</item>
+	<item id="CmdDataTree-Insert-Etymology">Add a set of etymological fields to this entry.</item>
 	<item id="CmdInsertFeatureType">Create a new feature type.</item>
 	<item id="CmdInsertPhonologicalClosedFeature">Add a phonological feature.</item>
 	<item id="CmdInsertClosedFeature">Add a feature.</item>
@@ -186,14 +140,12 @@
 		 Format menu
 		 -->
 	<item id="CmdFormatStyle">Add, delete, or change styles.</item>
-	<item id="CmdWritingSystemProperties" a10status="DONE" >Add, remove, or change the writing systems specified for this project.</item>
 	<!--
 		 Tools menu
 		 -->
 	<item id="Entries">Show the entries and edit them.</item>
 	<item id="Problems">See a list of entries with problems.</item>
 	<item id="CmdConfigureList">Configure properties of a list.</item>
-	<item id="CmdProjectUtilities" a10status="DONE" >Run some special utilities to process your data.</item>
 	<item id="CmdAddCustomField">Add or edit custom fields.</item>
 	<item id="CmdConfigureColumns">Configure current browse pane.</item>
 	<item id="CmdLexiconLookup">Show dictionary entry for root/stem of current word, or open a search dialog box.</item>
@@ -214,19 +166,10 @@
 	<item id="CmdParseCurrentWord" a10status="DONE" >Have the Parser parse just the current word.</item>
 	<item id="CmdEditParserParameters" a10status="DONE" >Edit the special parameters for the Parser.</item>
 	<!--
-		 Window menu
-		 -->
-	<item id="CmdNewWindow" a10status="DONE" >Launch a new window of this editor.</item>
-	<!--
 		 Help menu
 		 -->
 	<item id="CmdShowHelpBalloons">If checked, this will show balloon pop-up help for items.</item>
-	<item id="CmdHelpAbout" a10status="DONE" >Display version information about this application.</item>
 	<item id="CmdHelpMorphologyInto">Display a document describing how FieldWorks handles morphology (only available in English).</item>
-	<item id="CmdHelpXLingPap" a10status="DONE" >You can edit your Grammar Sketch in XLingPaper format using an XML editor (only available in English).</item>
-	<item id="CmdHelpTraining" a10status="DONE" >Training for using Language Explorer (only available in English).</item>
-	<item id="CmdHelpLanguageExplorer" a10status="DONE" >Help on using Language Explorer (only available in English).</item>
-	<item id="CmdHelpDemoMovies" a10status="DONE" >Run the Demo Movies.</item>
 	<item id="CmdHelpDemoWelcome">Purpose of movies and where else to find help.</item>
 	<item id="CmdHelpDemoOverview">Tour of Language Explorer.</item>
 	<item id="CmdHelpDemoConfigColumns">Examples of configuring columns.</item>
@@ -249,10 +192,8 @@
 	<item id="CmdHelpDemoPlayAll">Play all the movies (length 84 minutes).</item>
 	<item id="CmdHelpLexicographyIntro">Display Introduction to Lexicography (only available in English).</item>
 	<item id="CmdHelpNotesSFMDatabaseImport">Display technical notes on SFM database import (only available in English).</item>
-	<item id="CmdHelpNotesSendReceive" a10status="DONE" >Display technical notes on FieldWorks Send/Receive (only available in English).</item>
 	<item id="CmdHelpNotesLinguaLinksDatabaseImport">Display technical notes on LinguaLinks database import (only available in English).</item>
 	<item id="CmdHelpNotesInterlinearImport">Display technical notes on interlinear import (only available in English).</item>
-	<item id="CmdHelpNotesWritingSystems" a10status="DONE" >Display technical notes on Writing Systems (only available in English).</item>
 	<!--
 =======================
   LexText Slices

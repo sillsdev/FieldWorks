@@ -4,9 +4,6 @@
 	<!--  ************************ commands ***********************   -->
 	<!--  **********************************************************   -->
 	<commands>
-<!-- EXTENSIONS NOT SUPPORTED
-		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/commands/*"/>
-EXTENSIONS NOT SUPPORTED -->
 <!-- START include (Grammar_Area): "DataTreeInclude.xml" query="window/commands/*" -->
 		<include path="DataTreeInclude.xml" query="window/commands/*"/>
 <!-- END include (Grammar_Area): "DataTreeInclude.xml" query="window/commands/*" -->
@@ -95,15 +92,6 @@ EXTENSIONS NOT SUPPORTED -->
 		<command id="CmdMappingJumpToNC" label="Show in Natural Classes list" message="MappingJumpToNaturalClass"/>
 		<command id="CmdMappingJumpToPhoneme" label="Show in Phonemes list" message="MappingJumpToPhoneme"/>
 	</commands>
-	<!--  **********************************************************   -->
-	<!--  ************************ lists ***********************   -->
-	<!--  **********************************************************   -->
-	<lists>
-<!-- EXTENSIONS NOT SUPPORTED Grammar Area
-		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/lists/*"/>
-EXTENSIONS NOT SUPPORTED Grammar Area -->
-		<list id="GrammarToolsList" a10status="DONE??" />
-	</lists>
 	<!-- ********************************************************** -->
 	<!-- ************* controls (embedded browse view) ************ -->
 	<!-- ********************************************************** -->
@@ -250,24 +238,10 @@ EXTENSIONS NOT SUPPORTED Grammar Area -->
 					</columns>
 				</parameters>
 			</guicontrol>
-<!-- EXTENSIONS NOT SUPPORTED Grammar Area
-			<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/controls/parameter/guicontrol/*"/>
-EXTENSIONS NOT SUPPORTED Grammar Area -->
 			<clerks>
-<!-- EXTENSIONS NOT SUPPORTED Grammar Area
-			<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/controls/parameter/clerks/clerk/*"/>
-EXTENSIONS NOT SUPPORTED Grammar Area -->
 			</clerks>
 		</parameters>
 	</controls>
-	<!-- ********************************************************** -->
-	<!--  ************************ menus ***********************   -->
-	<!--  **********************************************************   -->
-	<menubar>
-<!-- EXTENSIONS NOT SUPPORTED Grammar Area
-		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/menubar/*"/>
-EXTENSIONS NOT SUPPORTED Grammar Area -->
-	</menubar>
 	<!-- ********************************************************** -->
 	<!-- ************************ menuAddOn *********************** -->
 	<!-- ********************************************************** -->
@@ -307,9 +281,6 @@ EXTENSIONS NOT SUPPORTED Grammar Area -->
 			<item command="CmdInsertAllomorphACP" defaultVisible="false"/>
 			<item command="CmdInsertACPGroup" defaultVisible="false"/>
 		</menu>
-<!-- EXTENSIONS NOT SUPPORTED Grammar Area
-		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/menuAddOn/*"/>
-EXTENSIONS NOT SUPPORTED Grammar Area -->
 	</menuAddOn>
 	<!-- ********************************************************** -->
 	<!-- ************************ contextMenus *********************** -->
@@ -321,9 +292,6 @@ EXTENSIONS NOT SUPPORTED Grammar Area -->
 <!-- START include (Grammar_Area): "InflAffixTemplateInclude.xml" query="window/contextMenus/*" -->
 		<include path="InflAffixTemplateInclude.xml" query="window/contextMenus/*"/>
 <!-- END include (Grammar_Area): "InflAffixTemplateInclude.xml" query="window/contextMenus/*" -->
-<!-- EXTENSIONS NOT SUPPORTED Grammar Area
-		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/contextMenus/*"/>
-EXTENSIONS NOT SUPPORTED Grammar Area -->
 
 		<menu id="mnuPhRegularRule">
 			<item command="CmdCtxtOccurOnce"/>
@@ -354,23 +322,6 @@ EXTENSIONS NOT SUPPORTED Grammar Area -->
 			<item command="CmdMappingJumpToPhoneme"/>
 		</menu>
 	</contextMenus>
-	<!--  **********************************************************   -->
-	<!--  ************************ sidebar ***********************   -->
-	<!--  **********************************************************   -->
-	<sidebar>
-		<tab label="Grammar Tools" list="GrammarToolsList" behavior="singlePropertyAtomicValue" property="toolChoice"/>
-<!-- EXTENSIONS NOT SUPPORTED Grammar Area
-		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/sidebar/*"/>
-EXTENSIONS NOT SUPPORTED Grammar Area -->
-	</sidebar>
-	<!-- ********************************************************** -->
-	<!--  ************************ toolbars ***********************   -->
-	<!--  **********************************************************   -->
-	<toolbars>
-<!-- EXTENSIONS NOT SUPPORTED Grammar Area
-		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/toolbars/*"/>
-EXTENSIONS NOT SUPPORTED Grammar Area -->
-	</toolbars>
 	<!-- ********************************************************** -->
 	<!-- ************************ toolbarsAddOn *********************** -->
 	<!-- ********************************************************** -->
@@ -404,9 +355,6 @@ EXTENSIONS NOT SUPPORTED Grammar Area -->
 			<item command="CmdInsertAllomorphACP" defaultVisible="false"/>
 			<item command="CmdInsertACPGroup" defaultVisible="false"/>
 		</toolbar>
-<!-- EXTENSIONS NOT SUPPORTED Grammar Area
-		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/toolbarsAddOn/*"/>
-EXTENSIONS NOT SUPPORTED Grammar Area -->
 	</toolbarsAddOn>
 	<!--  **********************************************************   -->
 	<!--  ************************ resources ***********************   -->
@@ -414,42 +362,12 @@ EXTENSIONS NOT SUPPORTED Grammar Area -->
 	<resources>
 		<imageList assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.images.Morphology.ImageHolder" field="smallImages" size="small" labels="Pie, Circle, TwoHalfs, Help, Delete, Remove, Left, Right, AddSubItem"/>
 		<imageList assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.images.Morphology.MEImages" field="buttonImages" size="small" labels="pos, endocompoundRule, exocompoundRule, phoneme, boundaryMarker, naturalClass, environment, morphCoprohib, alloCoprohib, coprohibGroup, AddItem, addFeature, addComplexFeature, addExceptionFeature, metathesis"/>
-<!-- EXTENSIONS NOT SUPPORTED Grammar Area
-		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/resources/*"/>
-EXTENSIONS NOT SUPPORTED Grammar Area -->
 	</resources>
-	<!--  **********************************************************   -->
-	<!--  ************************ listeners ***********************   -->
-	<!--  **********************************************************   -->
-	<listeners>
-<!-- EXTENSIONS NOT SUPPORTED Grammar Area
-		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/listeners/*"/>
-EXTENSIONS NOT SUPPORTED Grammar Area -->
-		<listener assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Dumpster.MasterCatDlgListener" a10status="DONE" />
-		<listener assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Dumpster.MasterInflFeatDlgListener" a10status="DONE" />
-		<listener assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Dumpster.MasterPhonFeatDlgListener" a10status="DONE" />
-	</listeners>
-	<!--  **********************************************************   -->
-	<!--  ************************ defaultProperties ***********************   -->
-	<!--  **********************************************************   -->
-	<!-- set the value of some simple properties to the defaults we want in the case that this is the first time the user has run the program, or the settings file is missing, or the program was launched with the shift key down  -->
-	<defaultProperties>
-<!-- EXTENSIONS NOT SUPPORTED Grammar Area
-		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/defaultProperties/*"/>
-EXTENSIONS NOT SUPPORTED Grammar Area -->
-		<property name="ToolForAreaNamed_grammar" value="posEdit" settingsGroup="local" a10status="DONE" />
-		<!--  Default splitter values   -->
-		<property name="PartsOfSpeech.posEdit.DataTree-Splitter" intValue="200" settingsGroup="local" a10status="DONE" />
-		<property name="PartsOfSpeech.posAdvancedEdit.DataTree-Splitter" intValue="200" settingsGroup="local" a10status="DONE" />
-	</defaultProperties>
 	<!--  **********************************************************   -->
 	<!--  ************************ Area Item ***********************   -->
 	<!--  **********************************************************   -->
 	<item label="Grammar" value="grammar" icon="folder-grammar">
 		<parameters id="grammar">
-			<panels>
-				<listPanel label="Grammar Tools" listId="GrammarToolsList"/>
-			</panels>
 			<clerks>
 				<!-- Only put clerks here if they are shared by various tools. Put clerks for specific tool usage in the tool definition file. -->
 				<clerk id="categories" a10status="DONE_FORK" >
@@ -503,12 +421,6 @@ EXTENSIONS NOT SUPPORTED Grammar Area -->
 					</filters>
 					<sortMethods/>
 				</clerk>
-<!-- START include Grammar Area: "Edit/toolConfiguration.xml" query="root/clerks/*" -->
-				<include path="Edit/toolConfiguration.xml" query="root/clerks/*"/>
-<!-- END include Grammar Area: "Edit/toolConfiguration.xml" query="root/clerks/*" -->
-<!-- EXTENSIONS NOT SUPPORTED Grammar Area
-				<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/clerks/*"/>
-EXTENSIONS NOT SUPPORTED Grammar Area -->
 			</clerks>
 			<tools>
 <!-- START include Grammar Area: "Edit/toolConfiguration.xml" query="root/tools/*" -->

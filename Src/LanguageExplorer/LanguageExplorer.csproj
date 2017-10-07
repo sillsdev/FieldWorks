@@ -115,6 +115,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\NAudio.Lame.1.0.4\lib\net20\NAudio.Lame.dll</HintPath>
     </Reference>
+    <Reference Include="ParatextImport, Version=10.0.0.29576, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Debug\ParatextImport.dll</HintPath>
+    </Reference>
     <Reference Include="ScriptureUtils, Version=10.0.0.28547, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\ScriptureUtils.dll</HintPath>
@@ -2119,10 +2123,7 @@
     <Compile Include="Dumpster\AreaListener.cs" />
     <Compile Include="Areas\Lexicon\ReversalClerk.cs" />
     <Compile Include="Areas\Lexicon\ReversalEntryClerk.cs" />
-    <Compile Include="Dumpster\MasterCatDlgListener.cs" />
     <Compile Include="Dumpster\MasterDlgListener.cs" />
-    <Compile Include="Dumpster\MasterInflFeatDlgListener.cs" />
-    <Compile Include="Dumpster\MasterPhonFeatDlgListener.cs" />
     <Compile Include="Dumpster\MorphologyListener.cs" />
     <Compile Include="Areas\TextsAndWords\OccurrenceComparer.cs" />
     <Compile Include="Areas\TextsAndWords\OccurrenceSorter.cs" />

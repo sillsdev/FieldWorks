@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- edited with XML Spy v4.4 U (http://www.xmlspy.com) by Randy Regnier (SIL International) -->
 <root a10status="Entire file in my fork is gone" >
-	<clerks/>
 	<tools>
 		<tool label="Category Edit" value="posEdit" icon="EditView" a10status="Entire file in my fork is gone" >
 			<control>

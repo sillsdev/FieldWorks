@@ -1456,26 +1456,20 @@ namespace LanguageExplorer.Impls
 
 		private void Help_Training_Writing_Systems(object sender, EventArgs e)
 		{
-			var pathnameToWritingSystemHelpFile = string.Format(FwDirectoryFinder.CodeDirectory +
-				"{0}Language Explorer{0}Training{0}Technical Notes on Writing Systems.pdf",
-				Path.DirectorySeparatorChar);
-
+			var pathnameToWritingSystemHelpFile = Path.Combine(FwDirectoryFinder.CodeDirectory, "Language Explorer", "Training", "Technical Notes on Writing Systems.pdf");
 			OpenDocument(pathnameToWritingSystemHelpFile, err =>
 			{
-				MessageBox.Show(null, string.Format(FrameworkStrings.ksCannotShowX, pathnameToWritingSystemHelpFile),
-					LanguageExplorerResources.ksError);
+				MessageBox.Show(this, string.Format(FrameworkStrings.ksCannotShowX, pathnameToWritingSystemHelpFile), LanguageExplorerResources.ksError);
 			});
 		}
 
 		private void Help_XLingPaper(object sender, EventArgs e)
 		{
-			var xLingPaperPathname = string.Format(FwDirectoryFinder.CodeDirectory + "{0}Helps{0}XLingPap{0}UserDoc.htm",
-				Path.DirectorySeparatorChar);
+			var xLingPaperPathname = Path.Combine(FwDirectoryFinder.CodeDirectory, "Helps", "XLingPap", "UserDoc.htm");
 
 			OpenDocument(xLingPaperPathname, err =>
 			{
-				MessageBox.Show(null, string.Format(FrameworkStrings.ksCannotShowX, xLingPaperPathname),
-					LanguageExplorerResources.ksError);
+				MessageBox.Show(this, string.Format(FrameworkStrings.ksCannotShowX, xLingPaperPathname), LanguageExplorerResources.ksError);
 			});
 		}
 

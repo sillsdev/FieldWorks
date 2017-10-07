@@ -4,9 +4,6 @@
 	<!-- ************************ commands ******************** -->
 	<!-- ********************************************************** -->
 	<commands>
-<!-- EXTENSIONS NOT SUPPORTED (Words_Area)
-		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/commands/*"/>)
-EXTENSIONS NOT SUPPORTED (Words_Area) -->
 		<!-- Parser commands -->
 		<command id="CmdEditParserParameters" label="_Edit Parser Parameters..." message="EditParserParameters">
 			<params className="MoMorphData"/>
@@ -46,7 +43,6 @@ EXTENSIONS NOT SUPPORTED (Words_Area) -->
 
 		<command id="CmdApproveAll" label="Approve All" message="ApproveAll" icon="approveAll"/>
 		<command id="CmdApprove" label="Approve and _Stay" message="ApproveAndStayPut" shortcut="Ctrl+S"/>
-		<!--command id="CmdApproveAndStayPut" label="Stay Put" tooltip="Approve (and do not move)" message="ApproveAndStayPut" shortcut="Ctrl+S" /-->
 		<command id="CmdApproveAndMoveNext" label="_Approve and Move Next" message="ApproveAndMoveNext" shortcut="Enter" icon="approveAndMoveNext"/>
 		<command id="CmdBrowseMoveNext" label="Move _Next" message="BrowseMoveNext" shortcut="Shift+Enter"/>
 		<command id="CmdApproveAndMoveNextSameLine" label="Move Next, _Same Line" message="ApproveAndMoveNextSameLine" shortcut="Ctrl+Enter"/>
@@ -66,7 +62,6 @@ EXTENSIONS NOT SUPPORTED (Words_Area) -->
 		<command id="CmdNextIncompleteBundle" label="Approve and _Jump to Next Incomplete" message="NextIncompleteBundle" shortcut="Ctrl+J"/>
 		<command id="CmdNextIncompleteBundleNc" label="_Jump to Next" message="NextIncompleteBundleNc" shortcut="Shift+Ctrl+J"/>
 		<command id="CmdPrevIncompleteBundle" label="Previous Incomplete Word" message="PrevIncompleteBundle"/>
-		<!--<command id="CmdToggleRawAndInterlinear" label="Toggle _Baseline and Interlinearize" message="ToggleRawAndInterlinear" shortcut="Ctrl+R"/>-->
 		<command id="CmdShowMorphology" label="Show _Morphology" message="ShowMorphology" shortcut="Ctrl+M"/>
 		<command id="CmdBreakPhrase" label="_Break phrase into words" message="BreakPhrase" icon="breakPhrase" shortcut="Ctrl+W"/>
 		<command id="CmdMakePhrase" label="_Make phrase with next word" message="JoinWords" icon="linkWords" shortcut="Ctrl+M"/>
@@ -74,7 +69,6 @@ EXTENSIONS NOT SUPPORTED (Words_Area) -->
 		<command id="CmdDeleteFreeTrans" label="Delete Free Translation" message="DeleteFreeform"/>
 		<command id="CmdDeleteLitTrans" label="Delete Literal Translation" message="DeleteFreeform"/>
 		<command id="CmdDeleteNote" label="Delete Note" message="DeleteFreeform"/>
-		<!--		<command id="CmdShowMorphBundles" label="Show Morphology" message="ShowMorphBundles" boolProperty="ShowMorphBundles"/> -->
 		<command id="CmdConfigureInterlinear" label="Interlinear..." message="ConfigureInterlinear"/>
 		<command id="CmdExportInterlinear" label="_Export Interlinear..." message="ExportInterlinear"/>
 		<command id="CmdExportDiscourseChart" label="Export Discourse Chart..." message="ExportDiscourse"/>
@@ -88,9 +82,6 @@ EXTENSIONS NOT SUPPORTED (Words_Area) -->
 			<parameters title="Go To Wordform" formlabel="Go _To..." okbuttonlabel="_Go"/>
 		</command>
 		<command id="CmdShowWordformConc" label="Assign Analysis..." message="ShowWordformConc"/>
-		<!--<command id="CmdWordformSpellingStatusUnknown" label="Unknown" message="SpellingStatusUnknown"/>
-		<command id="CmdWordformSpellingStatusGood" label="Good" message="SpellingStatusGood"/>
-		<command id="CmdWordformSpellingStatusDisapprove" label="Disapproved" message="SpellingStatusDisapprove"/>-->
 		<command id="CmdDataTree-Merge-MainWordform" label="Merge Wordform..." message="MergeWordform"/>
 		<command id="CmdDataTree-Delete-MainWordform" label="Delete Wordform..." message="DeleteRecord" icon="Delete"/>
 		<command id="CmdWordformEditForm" label="Edit..." message="WordformEditForm"/>
@@ -138,15 +129,6 @@ EXTENSIONS NOT SUPPORTED (Words_Area) -->
 		<command id="CmdPatternNodeSetCriteria" label="Set criteria..." message="PatternNodeSetCriteria"/>
 		<command id="CmdPatternNodeGroup" label="Group" message="PatternNodeGroup"/>
 	</commands>
-	<!-- ********************************************************** -->
-	<!-- ************************ lists *********************** -->
-	<!-- ********************************************************** -->
-	<lists>
-<!-- EXTENSIONS NOT SUPPORTED (Words_Area)
-		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/lists/*"/>
-EXTENSIONS NOT SUPPORTED (Words_Area) -->
-		<list id="WordToolsList" a10status="DONE" />
-	</lists>
 	<!-- ********************************************************** -->
 	<!-- ************* controls (embedded browse view) ************ -->
 	<!-- ********************************************************** -->
@@ -218,10 +200,6 @@ EXTENSIONS NOT SUPPORTED (Words_Area) -->
 					</columns>
 				</parameters>
 			</guicontrol>
-<!-- EXTENSIONS NOT SUPPORTED (Words_Area)
-			<include path="Extensions/*/AreaConfigurationExtension.xml"
-				query="root/controls/parameter/guicontrol/*"/>
-EXTENSIONS NOT SUPPORTED (Words_Area) -->
 			<clerks>
 				<!-- this clerk is explicitly known to InterlinearSfmImportWizard.OnFinishButton-->
 				<clerk id="interlinearTexts" shouldHandleDeletion="false">
@@ -264,9 +242,6 @@ EXTENSIONS NOT SUPPORTED (Words_Area) -->
 					<filters/>
 					<sortMethods/>
 				</clerk>
-<!-- EXTENSIONS NOT SUPPORTED (Words_Area)
-				<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/controls/parameter/clerks/clerk/*"/>
-EXTENSIONS NOT SUPPORTED (Words_Area) -->
 			</clerks>
 		</parameters>
 	</controls>
@@ -292,9 +267,6 @@ EXTENSIONS NOT SUPPORTED (Words_Area) -->
 			</menu>
 			<item command="CmdEditParserParameters"/>
 		</menu>
-<!-- EXTENSIONS NOT SUPPORTED (Words_Area)
-		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/menubar/*"/>
-EXTENSIONS NOT SUPPORTED (Words_Area) -->
 	</menubar>
 	<!-- ********************************************************** -->
 	<!-- ************************ menuAddOn *********************** -->
@@ -310,10 +282,7 @@ EXTENSIONS NOT SUPPORTED (Words_Area) -->
 		</menu>
 		<menu id="View">
 			<item command="CmdChooseTexts" defaultVisible="false"/>
-			<!--<item command="CmdToggleRawAndInterlinear" defaultVisible="false"/>-->
-			<!--<item label="Show _Morphology" boolProperty="ShowMorphBundles" defaultVisible="false" /> -->
 		</menu>
-
 		<menu id="Data">
 			<item command="CmdParse" defaultVisible="false" a10status="NOT USED/IMPLEMENTED" />
 			<item label="-" translate="do not translate"/>
@@ -322,7 +291,6 @@ EXTENSIONS NOT SUPPORTED (Words_Area) -->
 			<item command="CmdNextIncompleteBundle" defaultVisible="false"/>
 			<item command="CmdApprove" defaultVisible="false"/>
 			<menu id="ApproveAnalysisMovementMenu" label="_Approve suggestion and" defaultVisible="false">
-				<!--item command="CmdApproveAndStayPut" /-->
 				<item command="CmdApproveAndMoveNextSameLine"/>
 				<item command="CmdMoveFocusBoxRight"/>
 				<item command="CmdMoveFocusBoxLeft"/>
@@ -341,7 +309,6 @@ EXTENSIONS NOT SUPPORTED (Words_Area) -->
 			<item command="CmdRepeatLastMoveRight" defaultVisible="false"/>
 			<item command="CmdApproveAll" defaultVisible="false"/>
 		</menu>
-
 		<menu id="Insert">
 			<item command="CmdInsertText" defaultVisible="false"/>
 			<item label="-" translate="do not translate"/>
@@ -353,7 +320,6 @@ EXTENSIONS NOT SUPPORTED (Words_Area) -->
 			<item command="CmdImportWordSet" defaultVisible="false" a10status="DONE" />
 			<item command="CmdInsertHumanApprovedAnalysis" defaultVisible="false" a10status="PLACEHOLDER" />
 		</menu>
-
 		<menu id="Tools">
 			<!-- These two are mutually exclusive.-->
 			<item command="CmdLexiconLookup" defaultVisible="false"/>
@@ -363,9 +329,6 @@ EXTENSIONS NOT SUPPORTED (Words_Area) -->
 		<menu id="Configure">
 			<item command="CmdConfigureInterlinear" defaultVisible="false"/>
 		</menu>
-<!-- EXTENSIONS NOT SUPPORTED (Words_Area)
-		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/menuAddOn/*"/>
-EXTENSIONS NOT SUPPORTED (Words_Area) -->
 	</menuAddOn>
 	<!-- ********************************************************** -->
 	<!-- ************************ contextMenus *********************** -->
@@ -401,7 +364,6 @@ EXTENSIONS NOT SUPPORTED (Words_Area) -->
 			<item command="CmdApprove">Approve the suggested analysis and stay on this word</item>
 
 			<menu id="ApproveAnalysisMovementMenu" label="_Approve suggestion and" defaultVisible="false">
-				<!--item command="CmdApproveAndStayPut" /-->
 				<item command="CmdApproveAndMoveNextSameLine"/>
 				<item command="CmdMoveFocusBoxRight"/>
 				<item command="CmdMoveFocusBoxLeft"/>
@@ -424,29 +386,12 @@ EXTENSIONS NOT SUPPORTED (Words_Area) -->
 		<menu id="mnuDataTree-MainWordform">
 			<item command="CmdShowWordformConc"/>
 			<item command="CmdRespeller"/>
-			<!-- Not implemented yet
-			<menu id="mnuDataTree-WordformEdit" label="Form">
-				<item command="CmdWordformEditForm"/>
-				<item command="CmdWordformChangeCase"/>
-			</menu>
-			-->
-			<!--<menu id="mnuDataTree-WordformSpellingStatus" label="Spelling Status">
-				<item command="CmdWordformSpellingStatusUnknown"/>
-				<item command="CmdWordformSpellingStatusGood"/>
-				<item command="CmdWordformSpellingStatusDisapprove"/>
-			</menu>
-			<item label="-" translate="do not translate"/>-->
-			<!-- Not implemented yet
-			<item command="CmdDataTree-Merge-MainWordform"/>
-			-->
 			<item command="CmdDataTree-Delete-MainWordform"/>
 		</menu>
 		<menu id="mnuDataTree-WordformSpelling">
 			<item command="CmdRespeller"/>
 		</menu>
 		<menu id="mnuDataTree-MainWordform-Hotlinks">
-			<!--<item command="CmdWordformEditForm"/>
-			<item command="CmdWordformChangeCase"/>-->
 			<item command="CmdShowWordformConc"/>
 		</menu>
 		<menu id="mnuDataTree-HumanApprovedAnalysisSummary">
@@ -468,8 +413,6 @@ EXTENSIONS NOT SUPPORTED (Words_Area) -->
 			<item command="CmdDataTree-Delete-HumanApprovedAnalysis"/>
 		</menu>
 		<menu id="mnuDataTree-HumanApprovedAnalysis-Hotlinks">
-			<!--<item command="CmdAnalysisUnknown"/>
-			<item command="CmdAnalysisDisapprove"/>-->
 			<item command="CmdShowHumanApprovedAnalysisConc"/>
 		</menu>
 		<menu id="mnuDataTree-ParserProducedAnalysis">
@@ -481,10 +424,6 @@ EXTENSIONS NOT SUPPORTED (Words_Area) -->
 			<item label="-" translate="do not translate"/>
 			<item command="CmdDataTree-Delete-ParserProducedAnalysis"/>
 		</menu>
-		<!--<menu id="mnuDataTree-ParserProducedAnalysis-Hotlinks">
-			<item command="CmdAnalysisApprove"/>
-			<item command="CmdAnalysisDisapprove"/>
-		</menu>-->
 		<menu id="mnuDataTree-HumanDisapprovedAnalysis">
 			<menu id="mnuDataTree-HumanDisapprovedStatus" label="User Opinion">
 				<item command="CmdAnalysisApprove"/>
@@ -494,10 +433,6 @@ EXTENSIONS NOT SUPPORTED (Words_Area) -->
 			<item label="-" translate="do not translate"/>
 			<item command="CmdDataTree-Delete-HumanDisapprovedAnalysis"/>
 		</menu>
-		<!--<menu id="mnuDataTree-HumanDisapprovedAnalysis-Hotlinks">
-			<item command="CmdAnalysisApprove"/>
-			<item command="CmdAnalysisUnknown"/>
-		</menu>-->
 		<menu id="mnuDataTree-WordGlossForm">
 			<item command="CmdShowWordGlossConc"/>
 			<item command="CmdWordGlossJumpToConcordance"/>
@@ -505,13 +440,6 @@ EXTENSIONS NOT SUPPORTED (Words_Area) -->
 			<item command="CmdDataTree-Merge-WordGloss"/>
 			<item command="CmdDataTree-Delete-WordGloss"/>
 		</menu>
-		<!--<menu id="mnuDataTree-WordGloss">
-			<item command="CmdDataTree-Insert-WordGloss"/>
-		</menu>
-		<menu id="mnuDataTree-WordGloss-Hotlinks">
-			<item command="CmdDataTree-Insert-WordGloss"/>
-		</menu>-->
-
 		<menu id="mnuComplexConcordance">
 			<item command="CmdPatternNodeOccurOnce"/>
 			<item command="CmdPatternNodeOccurZeroMore"/>
@@ -521,31 +449,7 @@ EXTENSIONS NOT SUPPORTED (Words_Area) -->
 			<item command="CmdPatternNodeSetCriteria"/>
 			<item command="CmdPatternNodeGroup"/>
 		</menu>
-<!-- EXTENSIONS NOT SUPPORTED (Words_Area)
-		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/contextMenus/*"/>
-EXTENSIONS NOT SUPPORTED (Words_Area) -->
 	</contextMenus>
-	<!-- ********************************************************** -->
-	<!-- ************************ sidebar *********************** -->
-	<!-- ********************************************************** -->
-	<sidebar>
-		<tab label="Word Tools" list="WordToolsList" behavior="singlePropertyAtomicValue" property="toolChoice"/>
-		<!-- <tab label="Filters" list="WordsFiltersList" behavior="singlePropertyAtomicValue" property="words">
-	  <item id="all" label="All" boolProperty="foo" icon="NoFilter"/>
- see RecordClerk::OnDisplayWordsFiltersList
-	</tab>-->
-<!-- EXTENSIONS NOT SUPPORTED (Words_Area)
-		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/sidebar/*"/>
-EXTENSIONS NOT SUPPORTED (Words_Area) -->
-	</sidebar>
-	<!-- ********************************************************** -->
-	<!-- ************************ toolbars *********************** -->
-	<!-- ********************************************************** -->
-	<toolbars>
-<!-- EXTENSIONS NOT SUPPORTED (Words_Area)
-		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/toolbars/*"/>
-EXTENSIONS NOT SUPPORTED (Words_Area) -->
-	</toolbars>
 	<!-- ********************************************************** -->
 	<!-- ************************ toolbarsAddOn *********************** -->
 	<!-- ********************************************************** -->
@@ -565,9 +469,6 @@ EXTENSIONS NOT SUPPORTED (Words_Area) -->
 			<item command="CmdFindAndReplaceText" defaultVisible="false"/>
 			<item command="CmdBreakPhrase" defaultVisible="false"/>
 		</toolbar>
-<!-- EXTENSIONS NOT SUPPORTED (Words_Area)
-		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/toolbarsAddOn/*"/>
-EXTENSIONS NOT SUPPORTED (Words_Area) -->
 	</toolbarsAddOn>
 	<!-- ********************************************************** -->
 	<!-- ************************ resources *********************** -->
@@ -575,23 +476,14 @@ EXTENSIONS NOT SUPPORTED (Words_Area) -->
 	<resources>
 		<imageList assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.TextsAndWords.Interlinear.ImageHolder" field="buttonImages" size="small"
 			labels="findInDictionary, addLiteralTranslation, addFreeTranslation, addNewText, insertNote, findReplaceText, linkWords, breakPhrase, addScripture, approveAndMoveNext, browseAndMoveNext, tryAWord, zeroWidth, approveAll"/>
-<!-- EXTENSIONS NOT SUPPORTED (Words_Area)
-		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/resources/*"/>
-EXTENSIONS NOT SUPPORTED (Words_Area) -->
 	</resources>
 	<!-- ********************************************************** -->
 	<!-- ************************ listeners *********************** -->
 	<!-- ********************************************************** -->
 	<listeners>
-<!-- EXTENSIONS NOT SUPPORTED (Words_Area)
-		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/listeners/*"/>
-EXTENSIONS NOT SUPPORTED (Words_Area) -->
 		<listener assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Dumpster.MorphologyListener">
 			<parameters clerk="concordanceWords"/>
 		</listener>
-		<listener assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Dumpster.ParserListener"/>
-		<listener assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Dumpster.ParserParametersListener"/>
-		<listener assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Dumpster.ImportWordSetListener" a10status="DONE_Removed" />
 		<listener assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Dumpster.RespellerDlgListener">
 			<parameters>
 				<clerks>
@@ -619,35 +511,10 @@ EXTENSIONS NOT SUPPORTED (Words_Area) -->
 		</listener>
 	</listeners>
 	<!-- ********************************************************** -->
-	<!-- ************************ defaultProperties *********************** -->
-	<!-- ********************************************************** -->
-	<defaultProperties>
-<!-- EXTENSIONS NOT SUPPORTED (Words_Area)
-		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/defaultProperties/*"/>
-EXTENSIONS NOT SUPPORTED (Words_Area) -->
-		<!--This next line specifies which tool in this area is the default tool which Flex starts off in
-			  when the user switches to this area.-->
-		<property name="ToolForAreaNamed_textsWords" value="interlinearEdit" settingsGroup="local" a10status="DONE" />
-		<!--
-			Set to 'true' to remove multi-morpheme analyses on simple typo fix.
-			Otherwise, set it to false to keep them.
-			The user will get to decide in the UI.
-		-->
-		<property name="RemoveAnalyses" bool="true" persist="true" a10status="DONE" />
-		<property name="UpdateLexiconIfPossible" bool="true" persist="true" a10status="DONE" />
-		<property name="ITexts_AddWordsToLexicon" bool="false" persist="true" settingsGroup="local" a10status="DONE" />
-		<property name="ITexts_ShowAddWordsToLexiconDlg" bool="true" persist="true" settingsGroup="local" a10status="DONE" />
-		<property name="ITexts-ScriptureIds" value="" persist="true" settingsGroup="local" a10status="DONE" />
-	</defaultProperties>
-	<!-- ********************************************************** -->
 	<!-- *********************** Area Item *********************************** -->
 	<!-- ********************************************************** -->
 	<item label="Texts &amp; Words" value="textsWords" icon="folder-words">
 		<parameters id="textsWords">
-			<panels>
-				<listPanel label="Word Tools" listId="WordToolsList"/>
-				<!--  <listPanel label="Filters" listId="FiltersList"/>-->
-			</panels>
 			<clerks>
 				<!-- Only put clerks here if they are shared by various tools. Put clerks for specific tool usage in the tool definition file. -->
 				<clerk id="interlinearTexts">
@@ -673,32 +540,23 @@ EXTENSIONS NOT SUPPORTED (Words_Area) -->
 					</sortMethods>
 					<recordFilterListProvider assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.WfiRecordFilterListProvider"/>
 				</clerk>
-<!-- START include (Words_Area): "Analyses/toolConfiguration.xml" query="root/clerks/*" -->
-				<include path="Analyses/toolConfiguration.xml" query="root/clerks/*"/>
-<!-- END include (Words_Area): "Analyses/toolConfiguration.xml" query="root/clerks/*" -->
 <!-- START include (Words_Area): "Concordance/toolConfiguration.xml" query="root/clerks/*" -->
 				<include path="Concordance/toolConfiguration.xml" query="root/clerks/*"/>
 <!-- END include (Words_Area): "Concordance/toolConfiguration.xml" query="root/clerks/*" -->
-<!-- START include (Words_Area): "BulkEdit/toolConfiguration.xml" query="root/clerks/*" -->
-				<include path="BulkEdit/toolConfiguration.xml" query="root/clerks/*"/>
-<!-- END include (Words_Area): "BulkEdit/toolConfiguration.xml" query="root/clerks/*" -->
-<!-- EXTENSIONS NOT SUPPORTED (Words_Area)
-				<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/clerks/*"/>
-EXTENSIONS NOT SUPPORTED (Words_Area) -->
 			</clerks>
 			<tools>
+			  <!-- START include (Words_Area): "Texts/toolConfiguration.xml" query="root/tools/*" -->
 				<include path="Texts/toolConfiguration.xml" query="root/tools/*"/>
+			  <!-- END include (Words_Area): "Texts/toolConfiguration.xml" query="root/tools/*" -->
+			  <!-- START include (Words_Area): "Concordance/toolConfiguration.xml" query="root/tools/*" -->
 				<include path="Concordance/toolConfiguration.xml" query="root/tools/*"/>
+			  <!-- END include (Words_Area): "Concordance/toolConfiguration.xml" query="root/tools/*" -->
+			  <!-- START include (Words_Area): "Analyses/toolConfiguration.xml" query="root/tools/*" -->
 				<include path="Analyses/toolConfiguration.xml" query="root/tools/*"/>
+			  <!-- END include (Words_Area): "Analyses/toolConfiguration.xml" query="root/tools/*" -->
+			  <!-- START include (Words_Area): "BulkEdit/toolConfiguration.xml" query="root/tools/*" -->
 				<include path="BulkEdit/toolConfiguration.xml" query="root/tools/*"/>
-<!-- START include (Words_Area): "tatistics/toolConfiguration.xml" query="root/tools/*" -->
-<!-- DONE
-		<include path="Statistics/toolConfiguration.xml" query="root/tools/*"/>
-DONE -->
-<!-- END include (Words_Area): "tatistics/toolConfiguration.xml" query="root/tools/*" -->
-<!-- EXTENSIONS NOT SUPPORTED (Words_Area)
-				<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/tools/*"/>
-EXTENSIONS NOT SUPPORTED (Words_Area) -->
+			  <!-- END include (Words_Area): "BulkEdit/toolConfiguration.xml" query="root/tools/*" -->
 			</tools>
 		</parameters>
 	</item>

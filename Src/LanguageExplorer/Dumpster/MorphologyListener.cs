@@ -266,7 +266,6 @@ namespace LanguageExplorer.Dumpster
 			return true;
 		}
 
-		// currently duplicated in FLExBridgeListener, to avoid an assembly dependency.
 		private bool IsVernacularSpellingEnabled()
 		{
 			return PropertyTable.GetValue("UseVernSpellingDictionary", true);

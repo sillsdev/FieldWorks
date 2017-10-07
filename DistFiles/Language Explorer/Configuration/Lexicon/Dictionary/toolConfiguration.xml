@@ -17,7 +17,6 @@
 			</parameters>
 		</control>
 	</reusableControls>
-	<clerks/>
 	<tools>
 		<tool label="Dictionary" value="lexiconDictionary" icon="DocumentView">
 			<control>

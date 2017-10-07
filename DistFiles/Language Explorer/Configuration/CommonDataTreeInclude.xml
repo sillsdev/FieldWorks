@@ -176,10 +176,4 @@
 		<item label="Show Hidden Fields" boolProperty="ShowHiddenFields-WordsEdit" defaultVisible="true" settingsGroup="local"/>
 	</menu>
   </contextMenus>
-	<defaultProperties>
-		<!-- These properties can be used to set the settingsGroup for context dependent properties. no need to persist these. -->
-		<property name="SliceSplitterBaseDistance" intValue="-1"  persist="false" settingsGroup="local" a10status="DONE" />
-		<property name="ShowHiddenFields-" bool="false" persist="false" settingsGroup="local" a10status="DONE" />
-		<property name="SelectedWritingSystemHvosForCurrentContextMenu" value="" persist="false" settingsGroup="local" a10status="DONE" />
-	</defaultProperties>
 </root>

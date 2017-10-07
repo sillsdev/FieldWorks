@@ -86,9 +86,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			PropertyTable.SetDefault("CopyAnalysesToNewSpelling", true, SettingsGroup.GlobalSettings, true, false);
 			PropertyTable.SetDefault("MaintainCaseOnChangeSpelling", true, SettingsGroup.GlobalSettings, true, false);
 
-			// <property name="ITexts_AddWordsToLexicon" bool="false" persist="true" settingsGroup="local" />
-			// <property name="ITexts_ShowAddWordsToLexiconDlg" bool="true" persist="true" settingsGroup="local" />
-			// <property name="ITexts-ScriptureIds" value="" persist="true" settingsGroup="local" />
 			PropertyTable.SetDefault("ITexts_AddWordsToLexicon", false, SettingsGroup.LocalSettings, true, false);
 			PropertyTable.SetDefault("ITexts_ShowAddWordsToLexiconDlg", true, SettingsGroup.LocalSettings, true, false);
 			PropertyTable.SetDefault("ITexts-ScriptureIds", string.Empty, SettingsGroup.LocalSettings, true, false);

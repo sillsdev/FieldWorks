@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
+using ParatextImport;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel.Core.Scripture;
@@ -19,7 +20,6 @@ using SIL.FieldWorks.Language;
 using SIL.FieldWorks.Resources;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
-using SIL.LCModel.Utils;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
@@ -662,7 +662,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				return true;
 			});
 
-			if (haveSomethingToImport && ReflectionHelper.GetBoolResult(ReflectionHelper.GetType("ParatextImport.dll", "ParatextImport.ParatextImportManager"), "ImportParatext", owningForm, m_cache, importSettings, m_scriptureStylesheet, App))
+			if (haveSomethingToImport && ParatextImportManager.ImportParatext(owningForm, m_cache, importSettings, m_scriptureStylesheet, App))
 			{
 				return m_scr.FindBook(bookNum);
 			}
@@ -702,7 +702,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				importSettings.SaveSettings();
 			});
 
-			ReflectionHelper.GetBoolResult(ReflectionHelper.GetType("ParatextImport.dll", "ParatextImport.ParatextImportManager"), "ImportParatext", owningForm, m_cache, importSettings, m_scriptureStylesheet, App);
+			ParatextImportManager.ImportParatext(owningForm, m_cache, importSettings, m_scriptureStylesheet, App);
 		}
 	}
 }
