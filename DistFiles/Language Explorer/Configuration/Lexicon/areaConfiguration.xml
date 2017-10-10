@@ -7,9 +7,6 @@
 <!-- START include (Lexicon_Area): "DataTreeInclude.xml" query="window/commands/*" -->
 		<include path="DataTreeInclude.xml" query="window/commands/*"/>
 <!-- END include (Lexicon_Area): "DataTreeInclude.xml" query="window/commands/*" -->
-		<command id="CmdGoToEntry" label="_Find lexical entry..." message="GotoLexEntry" icon="goToEntry" shortcut="Ctrl+F" a10status="Defined here, but used in Main.xml." >
-			<parameters title="Go To Entry" formlabel="Go _To..." okbuttonlabel="_Go"/>
-		</command>
 		<command id="CmdShowAllPublications" label="All Entries" message="ShowAllEntries"/>
 		<command id="CmdInsertPicture" label="_Picture" message="InsertPicture">
 			<parameters field="Pictures" className="LexSense"/>
@@ -159,7 +156,6 @@
 			<item command="CmdInsertReversalEntry" defaultVisible="false"/>
 			<item command="CmdDataTree-Insert-Pronunciation" defaultVisible="false"/>
 			<item command="CmdInsertMediaFile" defaultVisible="false"/>
-			<item command="CmdDataTree-Insert-Etymology" defaultVisible="false"/>
 			<item label="-" translate="do not translate"/>
 			<item command="CmdInsertPicture" defaultVisible="false"/>
 			<item command="CmdInsertExtNote" defaultVisible="false"/>
@@ -183,24 +179,6 @@
 	<!-- ************************ contextMenus *********************** -->
 	<!-- ********************************************************** -->
 	<contextMenus>
-		<menu id="PaneBar-LexicalDetail" label="">
-			<menu id="LexEntryPaneMenu" icon="MenuWidget">
-				<item label="Show Dictionary Preview" boolProperty="Show_DictionaryPubPreview"/>
-				<item label="-" translate="do not translate"/>
-				<item label="Insert _Variant" command="CmdInsertVariant"/>
-				<item label="Insert A_llomorph" command="CmdDataTree-Insert-AlternateForm"/>
-				<item label="Insert _Pronunciation" command="CmdDataTree-Insert-Pronunciation"/>
-				<item label="Insert Sound or Movie _File" command="CmdInsertMediaFile"/>
-				<item label="Insert _Etymology" command="CmdDataTree-Insert-Etymology"/>
-				<item label="-" translate="do not translate"/>
-				<item command="CmdChangeToComplexForm"/>
-				<item command="CmdChangeToVariant"/>
-				<item command="CmdMergeEntry" defaultVisible="false"/>
-				<item label="-" translate="do not translate"/>
-				<item command="CmdRootEntryJumpToConcordance"/>
-			</menu>
-			<item label="Show Hidden Fields" boolProperty="ShowHiddenFields-lexiconEdit" defaultVisible="true" settingsGroup="local"/>
-		</menu>
 		<menu id="PaneBar-Dictionary" label="">
 			<!-- *** Put any alignment="right" menus in first. *** -->
 			<menu id="LexEntryPaneMenu" icon="MenuWidget" alignment="right">
@@ -231,12 +209,7 @@
 	<!-- ************************ toolbarsAddOn *********************** -->
 	<!-- ********************************************************** -->
 	<toolbarsAddOn>
-		<!--	Brings out bug where showing a list forces the list to set a current value which then propogates messages to a world that is not ready for them!
-
-		<toolbar id="BarViews" list="ListViews" behavior="singlePropertyAtomicValue" property="toolChoice"/> -->
-		<!--    <include query="window/toolbars/*"/> -->
 		<toolbar id="Insert">
-			<item command="CmdGoToEntry" defaultVisible="false"/>
 			<item command="CmdInsertReversalEntry" defaultVisible="false"/>
 			<item command="CmdGoToReversalEntry" defaultVisible="false"/>
 		</toolbar>
@@ -276,7 +249,6 @@
 					<sortMethods>
 						<sortMethod label="Form" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName"/>
 					</sortMethods>
-					<!--<recordFilterListProvider assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.WfiRecordFilterListProvider"/>-->
 				</clerk>
 				<clerk id="entriesOrChildren">
 					<recordList owner="LexDb" property="Entries"> <!-- by default load for Entries but can be for AllSenses too -->

@@ -39,15 +39,14 @@ namespace LanguageExplorer.Controls.LexText
 			SetDlgInfo(cache, wp, form, cache.DefaultAnalWs);
 		}
 
-		protected override void InitializeMatchingObjects(LcmCache cache)
+		protected override void InitializeMatchingObjects()
 		{
 			var xnWindow = PropertyTable.GetValue<XElement>("WindowConfiguration");
 			var configNode = xnWindow.XPathSelectElement("controls/parameters/guicontrol[@id=\"matchingRecords\"]/parameters");
 
-			SearchEngine searchEngine = SearchEngine.Get(PropertyTable, "RecordGoSearchEngine", () => new RecordGoSearchEngine(cache));
+			SearchEngine searchEngine = SearchEngine.Get(PropertyTable, "RecordGoSearchEngine", () => new RecordGoSearchEngine(m_cache));
 
-			m_matchingObjectsBrowser.Initialize(cache, FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable), configNode,
-				searchEngine);
+			m_matchingObjectsBrowser.Initialize(m_cache, FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable), configNode, searchEngine);
 
 			// start building index
 			var ws = (CoreWritingSystemDefinition) m_cbWritingSystems.SelectedItem;

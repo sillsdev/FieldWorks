@@ -39,5 +39,37 @@ namespace LanguageExplorer
 		/// Only used by RecordClerk's UpdateStatusBarRecordNumber method
 		/// </remarks>
 		internal const string StatusPanelRecordNumber = "statusBarPanelRecordNumber"; // Reset on area/tool change. StringTable.Table.GetString("No Records", "Misc");
+		/// <summary>
+		/// Name of file tool strip
+		/// </summary>
+		internal const string FileToolStripMenuItem = "_fileToolStripMenuItem";
+		/// <summary>
+		/// Name of Edit tool strip
+		/// </summary>
+		internal const string EditToolStripMenuItem = "_editToolStripMenuItem";
+		/// <summary>
+		/// Name of file tool strip
+		/// </summary>
+		internal const string ViewToolStripMenuItem = "_viewToolStripMenuItem";
+		/// <summary>
+		/// Name of file tool strip
+		/// </summary>
+		internal const string DataToolStripMenuItem = "_dataToolStripMenuItem";
+		/// <summary>
+		/// Name of insert tool strip
+		/// </summary>
+		internal const string InsertToolStripMenuItem = "_insertToolStripMenuItem";
+		/// <summary>
+		/// Name of insert tool strip
+		/// </summary>
+		internal const string FormatToolStripMenuItem = "_formatToolStripMenuItem";
+		/// <summary>
+		/// Name of insert tool strip
+		/// </summary>
+		internal const string ToolsToolStripMenuItem = "_toolsToolStripMenuItem";
+		/// <summary>
+		/// Name of insert tool strip
+		/// </summary>
+		internal const string HelpToolStripMenuItem = "_helpToolStripMenuItem";
 	}
 }

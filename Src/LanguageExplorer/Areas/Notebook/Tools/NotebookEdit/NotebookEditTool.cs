@@ -220,7 +220,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 	<parameters className="RnGenericRec" subrecord="true"/>
 </command>
 			*/
-			var contextMenuItem = CreateToolStripMenuItem(contextMenuStrip, menuItems, NotebookResources.Insert_Subrecord, null, Insert_Subrecord_Clicked);
+			var contextMenuItem = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Insert_Subrecord_Clicked, NotebookResources.Insert_Subrecord);
 #if !RANDYTODO
 			// TODO: Enable it and have better event handler deal with it.
 			contextMenuItem.Enabled = false;
@@ -233,7 +233,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 	<parameters className="RnGenericRec" subrecord="true" subsubrecord="true"/>
 </command>
 			*/
-			contextMenuItem = CreateToolStripMenuItem(contextMenuStrip, menuItems, NotebookResources.Insert_Subrecord_of_Subrecord, null, Insert_Subsubrecord_Clicked);
+			contextMenuItem = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Insert_Subsubrecord_Clicked, NotebookResources.Insert_Subrecord_of_Subrecord);
 #if !RANDYTODO
 			// TODO: Enable it and have better event handler deal with it.
 			contextMenuItem.Enabled = false;
@@ -245,7 +245,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 	<parameters className="RnGenericRec"/>
 </command>
 			*/
-			contextMenuItem = CreateToolStripMenuItem(contextMenuStrip, menuItems, NotebookResources.Demote_Record, null, Demote_Record_Clicked);
+			contextMenuItem = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Demote_Record_Clicked, NotebookResources.Demote_Record);
 #if !RANDYTODO
 			// TODO: Enable it and have better event handler deal with it.
 			contextMenuItem.Enabled = false;
@@ -268,13 +268,6 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 
 		private void Insert_Subrecord_Clicked(object sender, EventArgs e)
 		{
-		}
-
-		private ToolStripMenuItem CreateToolStripMenuItem(ContextMenuStrip contextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>> menuItems, string menuText, string menuTooltip, EventHandler eventHandler)
-		{
-			var toolStripMenuItem = ToolStripMenuItemFactory.CreateToolStripMenuItem(contextMenuStrip, menuText, menuTooltip, eventHandler);
-			menuItems.Add(new Tuple<ToolStripMenuItem, EventHandler>(toolStripMenuItem, eventHandler));
-			return toolStripMenuItem;
 		}
 	}
 }

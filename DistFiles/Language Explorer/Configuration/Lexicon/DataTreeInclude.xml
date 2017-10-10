@@ -253,9 +253,6 @@
 		<!--
 			Etymology
 		-->
-		<command id="CmdDataTree-Insert-Etymology" label="_Etymology" message="DataTreeInsert">
-			<parameters field="Etymology" className="LexEtymology" ownerClass="LexEntry"/>
-		</command>
 		<command id="CmdDataTree-Delete-Etymology" label="Delete this Etymology" message="DataTreeDelete" icon="Delete">
 			<parameters field="Etymology" className="LexEtymology"/>
 		</command>
@@ -439,29 +436,6 @@
 			<item command="CmdDataTree-Insert-SubSense"/>
 			<!-- <item command="CmdDataTree-Help"/> -->
 		</menu>
-		<menu id="mnuDataTree-Sense">
-			<item command="CmdDataTree-Insert-Example"/>
-			<item command="CmdFindExampleSentence"/>
-			<item command="CmdDataTree-Insert-ExtNote"/>
-			<item command="CmdDataTree-Insert-SenseBelow"/>
-			<item command="CmdDataTree-Insert-SubSense"/>
-			<item command="CmdInsertPicture" label="Insert _Picture" defaultVisible="false"/>
-			<item label="-" translate="do not translate"/>
-			<item command="CmdSenseJumpToConcordance"/>
-			<item label="-" translate="do not translate"/>
-			<item command="CmdDataTree-MoveUp-Sense"/>
-			<item command="CmdDataTree-MoveDown-Sense"/>
-			<item command="CmdDataTree-MakeSub-Sense"/>
-			<item command="CmdDataTree-Promote-Sense"/>
-			<item label="-" translate="do not translate"/>
-			<item command="CmdDataTree-Merge-Sense"/>
-			<item command="CmdDataTree-Split-Sense"/>
-			<item command="CmdDataTree-Delete-Sense"/>
-		</menu>
-		<menu id="mnuDataTree-Sense-Hotlinks">
-			<item command="CmdDataTree-Insert-Example"/>
-			<item command="CmdDataTree-Insert-SenseBelow" a10status="DONE" />
-		</menu>
 		<menu id="mnuDataTree-Examples">
 			<item command="CmdDataTree-Insert-Example"/>
 			<item command="CmdFindExampleSentence"/>
@@ -540,21 +514,6 @@
 		<menu id="mnuDataTree-Subsenses">
 			<item command="CmdDataTree-Insert-SubSense"/>
 			<!-- <item command="CmdDataTree-Help"/> -->
-		</menu>
-		<menu id="mnuDataTree-Etymology">
-			<item command="CmdDataTree-Insert-Etymology" label="Insert _Etymology"/>
-			<item label="-" translate="do not translate"/>
-			<item command="CmdDataTree-MoveUp-Etymology"/>
-			<item command="CmdDataTree-MoveDown-Etymology"/>
-			<item label="-" translate="do not translate"/>
-			<item command="CmdDataTree-Delete-Etymology"/>
-		</menu>
-		<menu id="mnuDataTree-DeleteEtymology">
-			<item command="CmdDataTree-Delete-Etymology"/>
-			<!-- <item command="CmdDataTree-Help"/> -->
-		</menu>
-		<menu id="mnuDataTree-Etymology-Hotlinks">
-			<item command="CmdDataTree-Insert-Etymology" label="Insert _Etymology"/>
 		</menu>
 		<menu id="mnuDataTree-DeleteAddLexReference">
 			<item command="CmdDataTree-Delete-LexReference"/>

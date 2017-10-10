@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using System.Xml.XPath;
+using LanguageExplorer.Areas.Lexicon;
 using LanguageExplorer.Controls.XMLViews;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Core.Text;
@@ -82,25 +83,24 @@ namespace LanguageExplorer.Controls.LexText
 			m_objectsLabel.Text = LexTextControls.ksLexicalEntries;
 		}
 
-		protected override void InitializeMatchingObjects(LcmCache cache)
+		protected override void InitializeMatchingObjects()
 		{
-			var xnWindow = PropertyTable.GetValue<XElement>("WindowConfiguration");
-			var configNode = xnWindow.XPathSelectElement("controls/parameters/guicontrol[@id=\"matchingEntries\"]/parameters");
+			var searchEngine = SearchEngine.Get(PropertyTable, "EntryGoSearchEngine", () => new EntryGoSearchEngine(m_cache));
 
-			SearchEngine searchEngine = SearchEngine.Get(PropertyTable, "EntryGoSearchEngine", () => new EntryGoSearchEngine(cache));
-
-			m_matchingObjectsBrowser.Initialize(cache, FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable), configNode, searchEngine);
+			m_matchingObjectsBrowser.Initialize(m_cache, FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable), XDocument.Parse(LexiconResources.MatchingEntriesParameters).Root, searchEngine);
 
 			m_matchingObjectsBrowser.ColumnsChanged += m_matchingObjectsBrowser_ColumnsChanged;
 
 			// start building index
 			var selectedWs = (CoreWritingSystemDefinition) m_cbWritingSystems.SelectedItem;
 			if (selectedWs != null)
+			{
 				m_matchingObjectsBrowser.SearchAsync(GetFields(string.Empty, selectedWs.Handle));
+			}
 		}
-		#endregion Construction and Destruction
+#endregion Construction and Destruction
 
-		#region	Other methods
+#region	Other methods
 
 		/// <summary>
 		/// Reset the list of matching items.
@@ -195,9 +195,9 @@ namespace LanguageExplorer.Controls.LexText
 			}
 		}
 
-		#endregion	// Other methods
+#endregion  // Other methods
 
-		#region	Event handlers
+#region	Event handlers
 
 		protected override string AdjustText(out int addToSelection)
 		{
@@ -247,6 +247,6 @@ namespace LanguageExplorer.Controls.LexText
 			}
 		}
 
-		#endregion	// Event handlers
+#endregion  // Event handlers
 	}
 }

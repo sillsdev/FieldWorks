@@ -269,4 +269,46 @@
   <data name="DeleteSenseAndSubsenses" xml:space="preserve">
     <value>Delete this Sense and any Subsenses</value>
   </data>
+  <data name="Etymology" xml:space="preserve">
+    <value>Etymology</value>
+  </data>
+  <data name="Insert_Etymology" xml:space="preserve">
+    <value>Insert _Etymology</value>
+  </data>
+  <data name="Insert_Etymology_Tooltip" xml:space="preserve">
+    <value>Add a set of etymological fields to this entry.</value>
+  </data>
+  <data name="Redo_Insert_Etymology" xml:space="preserve">
+    <value>Redo Insert Etymology</value>
+  </data>
+  <data name="Undo_Insert_Etymology" xml:space="preserve">
+    <value>Undo Insert Etymology</value>
+  </data>
+  <data name="Major_Entry" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\images\Create Entry.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Go" xml:space="preserve">
+    <value>_Go</value>
+  </data>
+  <data name="GoToEntryToolTip" xml:space="preserve">
+    <value>Find a lexical entry.</value>
+  </data>
+  <data name="Go_To" xml:space="preserve">
+    <value>Go _To...</value>
+  </data>
+  <data name="Go_To_Entry_Dlg_Title" xml:space="preserve">
+    <value>Go To Entry</value>
+  </data>
+  <data name="Insert_Example" xml:space="preserve">
+    <value>Insert _Example</value>
+  </data>
+  <data name="Find_Lexical_Entry" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\images\Find Lexical Entry.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Find_Entry" xml:space="preserve">
+    <value>_Find lexical entry...</value>
+  </data>
+  <data name="Sense" xml:space="preserve">
+    <value>_Sense</value>
+  </data>
 </root>

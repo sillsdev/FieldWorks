@@ -147,7 +147,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 							dlg.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 							dlg.StartingEntry = m_obj as ILexEntry ?? (m_obj as ILexSense).Entry;
 							dlg.SetDlgInfo(m_cache, null);
-							String str = ShowHelp.RemoveSpaces(Slice.Label);
+							var str = ShowHelp.RemoveSpaces(Slice.Label);
 							dlg.SetHelpTopic("khtpChooseComplexFormEntryOrSense-" + str);
 							dlg.SetOkButtonText(LanguageExplorerResources.ksMakeComponentOf);
 							if (dlg.ShowDialog(FindForm()) == DialogResult.OK)

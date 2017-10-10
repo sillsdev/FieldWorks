@@ -309,7 +309,7 @@
 	  <!-- END include: "Words/areaConfiguration.xml" query="root/item" -->
 	  <!-- START include: "Grammar/areaConfiguration.xml" query="root/item" -->
 	  <include path="Grammar/areaConfiguration.xml" query="root/item"/>
-	  <!-- END include: "v" -->
+	  <!-- END include: "Grammar/areaConfiguration.xml" query="root/item" -->
 	  <!-- START include: "Notebook/areaConfiguration.xml" query="root/item" -->
 	  <include path="Notebook/areaConfiguration.xml" query="root/item"/>
 	  <!-- END include: "Notebook/areaConfiguration.xml" query="root/item" -->
@@ -405,7 +405,6 @@
 			<item command="CmdPasteHyperlink" a10status="PARTIALLY_DONE" />
 			<item command="CmdCopyLocationAsHyperlink" a10status="PARTIALLY_DONE" />
 			<item label="-" translate="do not translate" a10status="DONE" />
-			<item command="CmdGoToEntry" a10status="Defined in Lex Area file" />
 			<item command="CmdGoToRecord" a10status="Defined in Notebook Area file" />
 <!-- These are the places that handle "CmdFindAndReplaceText" & "CmdReplaceText":
 XmlDocView users:

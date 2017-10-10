@@ -291,6 +291,7 @@
     <Compile Include="AccessibleNameCreator.cs" />
     <Compile Include="Areas\Lexicon\Tools\Edit\LexiconEditToolMenuHelper.cs" />
     <Compile Include="Controls\DetailControls\SliceContextMenuFactory.cs" />
+    <Compile Include="Controls\ToolStripButtonFactory.cs" />
     <Compile Include="InsertToolbarManager.cs" />
     <Compile Include="Areas\TextsAndWords\CachePair.cs" />
     <Compile Include="ConsoleProgress.cs" />
@@ -1900,6 +1901,12 @@
     <Compile Include="Areas\TextsAndWords\Interlinear\EditMorphBreaksDlg.cs">
       <SubType>Form</SubType>
     </Compile>
+    <None Include="..\..\DistFiles\Parts\GeneratedParts.xml">
+      <Link>XML\Parts\GeneratedParts.xml</Link>
+    </None>
+    <None Include="..\..\DistFiles\Parts\StandardParts.xml">
+      <Link>XML\Parts\StandardParts.xml</Link>
+    </None>
     <Content Include="Areas\TextsAndWords\Interlinear\FlexInterlinear-generated.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\FlexInterlinear.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\FilterAllTextsDialog.cs">
@@ -2879,6 +2886,12 @@
     <Content Include="images\Lexicon32.ico" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\DistFiles\Parts\Generated.fwlayout">
+      <Link>XML\Parts\Generated.fwlayout</Link>
+    </None>
+    <None Include="..\..\DistFiles\Parts\Standard.fwlayout">
+      <Link>XML\Parts\Standard.fwlayout</Link>
+    </None>
     <None Include="Controls\DetailControls\atomicNode.bmp" />
     <None Include="Controls\DetailControls\CollectionNode.bmp" />
     <None Include="Controls\DetailControls\SequenceSmall.bmp" />
@@ -2998,6 +3011,7 @@
     </None>
     <None Include="..\..\..\..\Users\Randy Regnier\Desktop\DevWork\NewDevWork\05_Remove use of main xml config files\Configuration\CombinedConfig_Develop.xml">
       <Link>XML\CombinedConfig_Develop.xml</Link>
+      <SubType>Designer</SubType>
     </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\Grammar\Edit\DataEntryFilters\basicFilter.xml">
       <Link>XML\Grammar\Edit\DataEntryFilters\basicFilter.xml</Link>
@@ -3133,9 +3147,11 @@
     </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\Lexicon\areaConfiguration.xml">
       <Link>XML\Lexicon\areaConfiguration.xml</Link>
+      <SubType>Designer</SubType>
     </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\Main.xml">
       <Link>XML\Main.xml</Link>
+      <SubType>Designer</SubType>
     </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\Words\Analyses\toolConfiguration.xml">
       <Link>XML\Word\Analyses\toolConfiguration.xml</Link>

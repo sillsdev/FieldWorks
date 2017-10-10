@@ -237,19 +237,16 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 			IDictionary<string, string> hasPub;
 			IDictionary<string, string> doesNotHavePub;
 			var allConfigurations = DictionaryConfigurationUtils.GatherBuiltInAndUserConfigurations(PropertyTable.GetValue<LcmCache>("cache"), _configureObjectName);
-			_xhtmlDocView.SplitConfigurationsByPublication(allConfigurations,
-														_xhtmlDocView.GetCurrentPublication(),
-														out hasPub, out doesNotHavePub);
+			_xhtmlDocView.SplitConfigurationsByPublication(allConfigurations, _xhtmlDocView.GetCurrentPublication(), out hasPub, out doesNotHavePub);
 			// Add menu items that display the configuration name and send PropChanges with
 			// the configuration path.
 			var currentPublication = PropertyTable.GetValue<string>("DictionaryPublicationLayout");
 			foreach (var config in hasPub)
 			{
 				// Key is label, value is Tag for config pathname.
-				currentToolStripMenuItem = ToolStripMenuItemFactory.CreateToolStripMenuItem(contextMenuStrip, config.Key, null, Configuration_Clicked, null);
+				currentToolStripMenuItem = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Configuration_Clicked, string.Empty, config.Key);
 				currentToolStripMenuItem.Tag = config.Value;
 				currentToolStripMenuItem.Checked = (currentPublication == config.Value);
-				menuItems.Add(new Tuple<ToolStripMenuItem, EventHandler>(currentToolStripMenuItem, Configuration_Clicked));
 
 			}
 			if (doesNotHavePub.Count > 0)
@@ -257,16 +254,14 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 				contextMenuStrip.Items.Add(new ToolStripSeparator());
 				foreach (var config in doesNotHavePub)
 				{
-					currentToolStripMenuItem = ToolStripMenuItemFactory.CreateToolStripMenuItem(contextMenuStrip, config.Key, null, Configuration_Clicked, null);
+					currentToolStripMenuItem = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Configuration_Clicked, string.Empty, config.Key);
 					currentToolStripMenuItem.Tag = config.Value;
 					currentToolStripMenuItem.Checked = (currentPublication == config.Value);
-					menuItems.Add(new Tuple<ToolStripMenuItem, EventHandler>(currentToolStripMenuItem, Configuration_Clicked));
 				}
 			}
 
 			contextMenuStrip.Items.Add(new ToolStripSeparator());
-			currentToolStripMenuItem = ToolStripMenuItemFactory.CreateToolStripMenuItem(contextMenuStrip, "Configure Dictionary", null, ConfigureDictionary_Clicked, null);
-			menuItems.Add(new Tuple<ToolStripMenuItem, EventHandler>(currentToolStripMenuItem, ConfigureDictionary_Clicked));
+			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, ConfigureDictionary_Clicked, "Configure Dictionary");
 
 			return retVal;
 		}
@@ -321,12 +316,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 			var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>();
 			var retVal = new Tuple<ContextMenuStrip, CancelEventHandler, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, LeftContextMenuStrip_Opening, menuItems);
 
-			var currentToolStripMenuItem = ToolStripMenuItemFactory.CreateToolStripMenuItem(contextMenuStrip, "All Entries", null, ShowAllPublications_Clicked, null);
+			var currentToolStripMenuItem = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, ShowAllPublications_Clicked, "All Entries");
 			currentToolStripMenuItem.Tag = "All Entries";
 			currentToolStripMenuItem.Checked = (currentPublication == "All Entries");
 			var pubName = _xhtmlDocView.GetCurrentPublication();
 			currentToolStripMenuItem.Checked = (xWorksStrings.AllEntriesPublication == pubName);
-			menuItems.Add(new Tuple<ToolStripMenuItem, EventHandler>(currentToolStripMenuItem, ShowAllPublications_Clicked));
 
 			contextMenuStrip.Items.Add(new ToolStripSeparator());
 
@@ -336,26 +330,23 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 			_xhtmlDocView.GetCurrentConfiguration(false), out inConfig, out notInConfig);
 			foreach (var pub in inConfig)
 			{
-				currentToolStripMenuItem = ToolStripMenuItemFactory.CreateToolStripMenuItem(contextMenuStrip, pub, null, Publication_Clicked, null);
+				currentToolStripMenuItem = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Publication_Clicked, pub);
 				currentToolStripMenuItem.Tag = pub;
 				currentToolStripMenuItem.Checked = (currentPublication == pub);
-				menuItems.Add(new Tuple<ToolStripMenuItem, EventHandler>(currentToolStripMenuItem, Publication_Clicked));
 			}
 			if (notInConfig.Any())
 			{
 				contextMenuStrip.Items.Add(new ToolStripSeparator());
 				foreach (var pub in notInConfig)
 				{
-					currentToolStripMenuItem = ToolStripMenuItemFactory.CreateToolStripMenuItem(contextMenuStrip, pub, null, Publication_Clicked, null);
+					currentToolStripMenuItem = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Publication_Clicked, pub);
 					currentToolStripMenuItem.Tag = pub;
 					currentToolStripMenuItem.Checked = (currentPublication == pub);
-					menuItems.Add(new Tuple<ToolStripMenuItem, EventHandler>(currentToolStripMenuItem, Publication_Clicked));
 				}
 			}
 
 			contextMenuStrip.Items.Add(new ToolStripSeparator());
-			currentToolStripMenuItem = ToolStripMenuItemFactory.CreateToolStripMenuItem(contextMenuStrip, "Edit Publications", null, EditPublications_Clicked, null);
-			menuItems.Add(new Tuple<ToolStripMenuItem, EventHandler>(currentToolStripMenuItem, EditPublications_Clicked));
+			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, EditPublications_Clicked, "Edit Publications");
 
 			return retVal;
 		}

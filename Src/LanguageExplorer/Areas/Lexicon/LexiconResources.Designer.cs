@@ -102,6 +102,70 @@ namespace LanguageExplorer.Areas.Lexicon {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Etymology.
+        /// </summary>
+        internal static string Etymology {
+            get {
+                return ResourceManager.GetString("Etymology", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to _Find lexical entry....
+        /// </summary>
+        internal static string Find_Entry {
+            get {
+                return ResourceManager.GetString("Find_Entry", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon Find_Lexical_Entry {
+            get {
+                object obj = ResourceManager.GetObject("Find_Lexical_Entry", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to _Go.
+        /// </summary>
+        internal static string Go {
+            get {
+                return ResourceManager.GetString("Go", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Go _To....
+        /// </summary>
+        internal static string Go_To {
+            get {
+                return ResourceManager.GetString("Go_To", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Go To Entry.
+        /// </summary>
+        internal static string Go_To_Entry_Dlg_Title {
+            get {
+                return ResourceManager.GetString("Go_To_Entry_Dlg_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Find a lexical entry..
+        /// </summary>
+        internal static string GoToEntryToolTip {
+            get {
+                return ResourceManager.GetString("GoToEntryToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
         ///&lt;!-- this file lists special instructions for XDE nodes. Currently, all that you are allowed to say is
         ///that a node is not visible. You do that by listing the node here. the id of the node must match the XDE
@@ -131,6 +195,33 @@ namespace LanguageExplorer.Areas.Lexicon {
         internal static string Insert_Allomorph_Tooltip {
             get {
                 return ResourceManager.GetString("Insert_Allomorph_Tooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Insert _Etymology.
+        /// </summary>
+        internal static string Insert_Etymology {
+            get {
+                return ResourceManager.GetString("Insert_Etymology", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add a set of etymological fields to this entry..
+        /// </summary>
+        internal static string Insert_Etymology_Tooltip {
+            get {
+                return ResourceManager.GetString("Insert_Etymology_Tooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Insert _Example.
+        /// </summary>
+        internal static string Insert_Example {
+            get {
+                return ResourceManager.GetString("Insert_Example", resourceCulture);
             }
         }
         
@@ -426,6 +517,16 @@ namespace LanguageExplorer.Areas.Lexicon {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon Major_Entry {
+            get {
+                object obj = ResourceManager.GetObject("Major_Entry", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
         ///&lt;parameters id=&quot;lexentryMatchList&quot; listItemsClass=&quot;LexEntry&quot; filterBar=&quot;false&quot; treeBarAvailability=&quot;NotAllowed&quot; defaultCursor=&quot;Arrow&quot; hscroll=&quot;true&quot; altTitleId=&quot;LexEntry-Plural&quot; editable=&quot;false&quot;&gt;
         ///	&lt;columns&gt;
@@ -472,6 +573,15 @@ namespace LanguageExplorer.Areas.Lexicon {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Redo Insert Etymology.
+        /// </summary>
+        internal static string Redo_Insert_Etymology {
+            get {
+                return ResourceManager.GetString("Redo_Insert_Etymology", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
         ///&lt;parameters toolId=&quot;reversalBulkEditReversalEntries&quot; clerk=&quot;AllReversalEntries&quot; filterBar=&quot;true&quot; bulkEdit=&quot;true&quot; bulkEditListItemsClasses=&quot;ReversalIndexEntry&quot; selectColumn=&quot;true&quot; altTitleId=&quot;ReversalIndexEntry-Plural&quot; ShowOwnerShortname=&quot;true&quot; &gt;
         ///	&lt;enableBulkEditTabs enableBEListChoice=&quot;true&quot; enableBEBulkCopy=&quot;true&quot; enableBEClickCopy=&quot;true&quot; enableBEProcess=&quot;true&quot; enableBEFindReplace=&quot;true&quot; enableBEOther=&quot;true&quot; /&gt;
@@ -496,6 +606,15 @@ namespace LanguageExplorer.Areas.Lexicon {
         internal static string ReversalEditCompleteToolParameters {
             get {
                 return ResourceManager.GetString("ReversalEditCompleteToolParameters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to _Sense.
+        /// </summary>
+        internal static string Sense {
+            get {
+                return ResourceManager.GetString("Sense", resourceCulture);
             }
         }
         
@@ -532,6 +651,15 @@ namespace LanguageExplorer.Areas.Lexicon {
         internal static string Show_Unused_Items {
             get {
                 return ResourceManager.GetString("Show_Unused_Items", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Undo Insert Etymology.
+        /// </summary>
+        internal static string Undo_Insert_Etymology {
+            get {
+                return ResourceManager.GetString("Undo_Insert_Etymology", resourceCulture);
             }
         }
     }

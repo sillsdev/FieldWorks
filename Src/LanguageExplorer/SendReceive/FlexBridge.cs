@@ -117,15 +117,14 @@ namespace LanguageExplorer.SendReceive
 			switch (currentInstallRound)
 			{
 				case BridgeMenuInstallRound.One:
-					_mainSendReceiveMenu = ToolStripMenuItemFactory.CreateToolStripMenuItem(mainSendReceiveToolStripMenuItem, int.MaxValue, SendReceiveResources.SendReceiveFlexBridge, SendReceiveResources.SendReceiveFlexBridgeToolTip, S_R_FlexBridge_Click, SendReceiveResources.sendReceive16x16);
-
-					_viewMessagesMenu = ToolStripMenuItemFactory.CreateToolStripMenuItem(mainSendReceiveToolStripMenuItem, int.MaxValue, SendReceiveResources.ViewMessagesFlexBridge, SendReceiveResources.ViewMessagesFlexBridgeTooltip, ViewMessages_FlexBridge_Click);
+					_mainSendReceiveMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(mainSendReceiveToolStripMenuItem, S_R_FlexBridge_Click, SendReceiveResources.SendReceiveFlexBridge, SendReceiveResources.SendReceiveFlexBridgeToolTip, Keys.None, SendReceiveResources.sendReceive16x16);
+					_viewMessagesMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(mainSendReceiveToolStripMenuItem, ViewMessages_FlexBridge_Click, SendReceiveResources.ViewMessagesFlexBridge, SendReceiveResources.ViewMessagesFlexBridgeTooltip);
 					break;
 				case BridgeMenuInstallRound.Two:
-					_mainSendReceiveMenu = ToolStripMenuItemFactory.CreateToolStripMenuItem(mainSendReceiveToolStripMenuItem, int.MaxValue, SendReceiveResources.ObtainAnyFlexBridgeProject, SendReceiveResources.ObtainAnyFlexBridgeProjectToolTip, ObtainAnyFlexBridgeProject_Click, SendReceiveResources.SendReceiveGetArrow16x16);
+					_mainSendReceiveMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(mainSendReceiveToolStripMenuItem, ObtainAnyFlexBridgeProject_Click, SendReceiveResources.ObtainAnyFlexBridgeProject, SendReceiveResources.ObtainAnyFlexBridgeProjectToolTip, Keys.None, SendReceiveResources.SendReceiveGetArrow16x16);
 					break;
 				case BridgeMenuInstallRound.Three:
-					_mainSendReceiveMenu = ToolStripMenuItemFactory.CreateToolStripMenuItem(mainSendReceiveToolStripMenuItem, int.MaxValue, SendReceiveResources.SendFlexBridgeProjectFirstTime, SendReceiveResources.SendFlexBridgeProjectFirstTimeToolTip, SendFlexBridgeFirstTime_Click, SendReceiveResources.sendReceiveFirst16x16);
+					_mainSendReceiveMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(mainSendReceiveToolStripMenuItem, SendFlexBridgeFirstTime_Click, SendReceiveResources.SendFlexBridgeProjectFirstTime, SendReceiveResources.SendFlexBridgeProjectFirstTimeToolTip, Keys.None, SendReceiveResources.sendReceiveFirst16x16);
 					break;
 			}
 		}

@@ -187,7 +187,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		private readonly DisposableObjectsSet<RecordSorter> m_SortersToDispose = new DisposableObjectsSet<RecordSorter>();
 		private LcmCache m_cache;
-		private XElement m_nodeSpec;
+		private XElement m_configParamsElement;
 		/// <summary/>
 		protected DhListView m_lvHeader;
 		private RecordSorter m_sorter;
@@ -195,41 +195,43 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// Required designer variable.
 		/// </summary>
 		private Container components;
-		/// <summary></summary>
+		/// <summary/>
 		protected internal XmlBrowseViewBase m_xbv;
-		/// <summary></summary>
+		/// <summary/>
 		protected internal FilterBar m_filterBar;
-		/// <summary></summary>
+		/// <summary/>
 		protected internal RecordFilter m_currentFilter;
+#if RANDYTODO
+		// TODO: Think about the refactor idea. No sense in having "bad design" hang around, if it can be fixed up.
+#endif
 		/// <summary>REFACTOR: this variable should be removed and handled through events. Having this here is bad design.</summary>
 		protected internal BulkEditBar m_bulkEditBar;
+		/// <summary/>
 		internal ISortItemProvider m_sortItemProvider;
-		private int m_lastLayoutWidth = 0;
+		private int m_lastLayoutWidth;
 		/// <summary>
 		/// This cache is a 'Decorator' of the main FDO ISilDataAccess implementation.
 		/// This class adds support for fake flids used by the Browse view system,
 		/// which would normally not be available in the min FDO SDA implementation.
 		/// </summary>
 		private XMLViewsDataCache m_specialCache;
-
-		/// <summary></summary>
-		protected int m_icolCurrent = 0;
-//		bool m_doHScroll = false;
+		/// <summary/>
+		protected int m_icolCurrent;
 		/// <summary/>
 		protected Button m_configureButton;
 		private Button m_checkMarkButton;
 		/// <summary/>
-		protected BrowseViewScroller m_scrollContainer = null;
+		protected BrowseViewScroller m_scrollContainer;
 		/// <summary/>
 		protected ScrollBar m_scrollBar;
 		private ToolTip m_tooltip;
 		private bool m_listModificationInProgress;
-		private bool m_fFilterInitializationComplete = false;
+		private bool m_fFilterInitializationComplete;
 		private int[] m_colWidths; // Last values computed and set by AdjustColumnWidths.
 
 		// This flag is used to minimize redoing the filtering and sorting when
 		// changing the list of columns shown.
-		private bool m_fUpdatingColumnList = false;
+		private bool m_fUpdatingColumnList;
 
 		/// <summary></summary>
 		public event FilterChangeHandler FilterChanged;
@@ -852,10 +854,9 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// the sorted, filtered list of objects accessed as property madeUpFieldIdentifier of hvoRoot.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public BrowseViewer(XElement nodeSpec, int hvoRoot,
-			LcmCache cache, ISortItemProvider sortItemProvider, ISilDataAccessManaged sda)
+		public BrowseViewer(XElement configParamsElement, int hvoRoot, LcmCache cache, ISortItemProvider sortItemProvider, ISilDataAccessManaged sda)
 		{
-			ContructorSurrogate(nodeSpec, hvoRoot, cache, sortItemProvider, sda);
+			ContructorSurrogate(configParamsElement, hvoRoot, cache, sortItemProvider, sda);
 		}
 
 		/// <summary>
@@ -866,16 +867,14 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// The key is the nodeSpec passed to the constructor surrogate and the hvoRoot.
 		/// The value is the
 		/// </summary>
-		static Dictionary<Tuple<XElement, int>, Tuple<Dictionary<int, int>, bool>> s_selectedCache
-			= new Dictionary<Tuple<XElement, int>, Tuple<Dictionary<int, int>, bool>>();
+		static Dictionary<Tuple<XElement, int>, Tuple<Dictionary<int, int>, bool>> s_selectedCache = new Dictionary<Tuple<XElement, int>, Tuple<Dictionary<int, int>, bool>>();
 
-		private void ContructorSurrogate(XElement nodeSpec, int hvoRoot,
-			LcmCache cache, ISortItemProvider sortItemProvider, ISilDataAccessManaged sda)
+		private void ContructorSurrogate(XElement configParamsElement, int hvoRoot, LcmCache cache, ISortItemProvider sortItemProvider, ISilDataAccessManaged sda)
 		{
-			m_nodeSpec = nodeSpec;
+			m_configParamsElement = configParamsElement;
 			m_cache = cache;
 			Tuple<Dictionary<int, int>, bool> selectedInfo;
-			var key = new Tuple<XElement, int>(nodeSpec, hvoRoot);
+			var key = new Tuple<XElement, int>(configParamsElement, hvoRoot);
 			if (s_selectedCache.TryGetValue(key, out selectedInfo))
 			{
 				m_specialCache = new XMLViewsDataCache(sda, selectedInfo.Item2, selectedInfo.Item1);
@@ -883,15 +882,17 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 			else
 			{
-				m_specialCache = new XMLViewsDataCache(sda, nodeSpec);
+				m_specialCache = new XMLViewsDataCache(sda, XmlUtils.GetOptionalBooleanAttributeValue(m_configParamsElement, "defaultChecked", true));
 			}
 			m_lvHeader = new DhListView(this);
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
 			SuspendLayout();
-			m_scrollContainer = new BrowseViewScroller(this);
-			m_scrollContainer.AutoScroll = true;
-			m_scrollContainer.TabStop = false;
+			m_scrollContainer = new BrowseViewScroller(this)
+			{
+				AutoScroll = true,
+				TabStop = false
+			};
 			Controls.Add(m_scrollContainer);
 			m_scrollBar = new VScrollBar();
 			//m_scrollBar.Scroll += new ScrollEventHandler(m_scrollBar_Scroll);
@@ -908,7 +909,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public void FinishInitialization(int hvoRoot, int madeUpFieldIdentifier)
 		{
-			m_xbv.Init(m_nodeSpec, hvoRoot, madeUpFieldIdentifier, m_cache, this);
+			m_xbv.Init(m_configParamsElement, hvoRoot, madeUpFieldIdentifier, m_cache, this);
 			m_xbv.SelectionChangedEvent += OnSelectionChanged;
 			m_xbv.SelectedIndexChanged += m_xbv_SelectedIndexChanged;
 			// Sometimes we get a spurious "out of memory" error while trying to create a handle for the
@@ -941,7 +942,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			m_lvHeader.AccessibleName = "HeaderListView";
 			m_lvHeader.Scrollable = false; // don't EVER show scroll bar in it!!
 			m_lvHeader.TabStop = false;
-			//AddControl(m_lvHeader); Do this after making the filter bar if any.
 
 			Name = "BrowseView";
 			Size = new Size(400, 304);
@@ -979,10 +979,10 @@ namespace LanguageExplorer.Controls.XMLViews
 			//
 			// FilterBar
 			//
-			var xa = m_nodeSpec.Attribute("filterBar");
+			var xa = m_configParamsElement.Attribute("filterBar");
 			if (xa != null && xa.Value == "true")
 			{
-				m_filterBar = new FilterBar(this, m_nodeSpec, PropertyTable.GetValue<IApp>("App"));
+				m_filterBar = new FilterBar(this, PropertyTable.GetValue<IApp>("App"));
 				m_filterBar.FilterChanged += FilterChangedHandler;
 				//m_filterBar.Dock = System.Windows.Forms.DockStyle.Top;
 				m_filterBar.Name = "FilterBar";
@@ -991,10 +991,10 @@ namespace LanguageExplorer.Controls.XMLViews
 				AddControl(m_filterBar);
 			}
 			AddControl(m_lvHeader); // last so on top of z-order, puts it above other things docked at top.
-			xa = m_nodeSpec.Attribute("bulkEdit");
+			xa = m_configParamsElement.Attribute("bulkEdit");
 			if (xa != null && xa.Value == "true")
 			{
-				m_bulkEditBar = CreateBulkEditBar(this, m_nodeSpec, PropertyTable, m_cache);
+				m_bulkEditBar = CreateBulkEditBar(this, m_configParamsElement, PropertyTable, m_cache);
 				m_bulkEditBar.Dock = DockStyle.Bottom;
 				m_bulkEditBar.Name = "BulkEditBar";
 				m_bulkEditBar.AccessibleName = "BulkEditBar";
@@ -1035,7 +1035,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			// but I think I (JT) found that if the total width of the columns is any more than it is now,
 			// DotNet adds a horizontal scroll bar which totally hides the labels.
 			m_configureButton = new Button();
-			m_configureButton.Visible = !XmlUtils.GetOptionalBooleanAttributeValue(m_nodeSpec, "disableConfigButton", false);
+			m_configureButton.Visible = !XmlUtils.GetOptionalBooleanAttributeValue(m_configParamsElement, "disableConfigButton", false);
 			m_configureButton.Click += m_configureButton_Click;
 			// Don't dock the button, this destroys all control over its height, and it overwrites the line at the bottom
 			// of the header bar.
@@ -1481,8 +1481,8 @@ namespace LanguageExplorer.Controls.XMLViews
 
 			if( disposing )
 			{
-				if (m_nodeSpec != null && m_specialCache != null && m_xbv != null && RootObjectHvo != 0)
-					s_selectedCache[new Tuple<XElement, int>(m_nodeSpec, RootObjectHvo)] =
+				if (m_configParamsElement != null && m_specialCache != null && m_xbv != null && RootObjectHvo != 0)
+					s_selectedCache[new Tuple<XElement, int>(m_configParamsElement, RootObjectHvo)] =
 						new Tuple<Dictionary<int, int>, bool>(m_specialCache.SelectedCache, m_specialCache.DefaultSelected);
 				// If these controls are child controls of either 'this' or of m_scrollContainer,
 				// they will automatically be disposed. If they have been removed for whatever reason,
@@ -1549,7 +1549,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			m_bulkEditBar = null;
 			m_scrollContainer = null;
 			m_cache = null;
-			m_nodeSpec = null;
+			m_configParamsElement = null;
 			m_sortItemProvider = null;
 			m_sorter = null;
 			m_tooltip = null;
@@ -1878,7 +1878,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 
 			internal OneColumnXmlBrowseView(BrowseViewer bv, int icolLvHeaderToAdd)
-				: this(bv.m_nodeSpec, bv.RootObjectHvo, bv.MainTag, bv.Cache, bv.PropertyTable, bv.StyleSheet, bv)
+				: this(bv.m_configParamsElement, bv.RootObjectHvo, bv.MainTag, bv.Cache, bv.PropertyTable, bv.StyleSheet, bv)
 			{
 				// add only the specified column to this browseview.
 				(Vc as OneColumnXmlBrowseViewVc).SetupOneColumnSpec(bv, icolLvHeaderToAdd);
@@ -3750,12 +3750,11 @@ namespace LanguageExplorer.Controls.XMLViews
 			Subscriber = flexComponentParameters.Subscriber;
 
 			// Make the right subclass of XmlBrowseViewBase first, the column header creation uses information from it.
-			if (m_nodeSpec == null)
+			if (m_configParamsElement == null)
 			{
-				// Some XMLViews tests have not set it.
-				// m_xbv has been set to FakeXmlBrowseViewBase
+				// Tests.
 			}
-			else if (m_nodeSpec.Attribute("editRowModelClass") != null)
+			else if (m_configParamsElement.Attribute("editRowModelClass") != null)
 			{
 				m_xbv = new XmlBrowseRDEView(); // Use special RDE class.
 			}
@@ -4055,10 +4054,8 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// Initializes a new instance of the <see><cref>T:BrowseActiveViewer</cref></see> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public BrowseActiveViewer(XElement nodeSpec, int hvoRoot,
-								  LcmCache cache, ISortItemProvider sortItemProvider,
-								  ISilDataAccessManaged sda)
-			: base(nodeSpec, hvoRoot, cache, sortItemProvider, sda)
+		public BrowseActiveViewer(XElement configParamsElement, int hvoRoot, LcmCache cache, ISortItemProvider sortItemProvider, ISilDataAccessManaged sda)
+			: base(configParamsElement, hvoRoot, cache, sortItemProvider, sda)
 		{
 
 		}

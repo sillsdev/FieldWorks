@@ -24,12 +24,10 @@
 				 menu="mnuDataTree-Pronunciation" />
 		</part>
 		<part id="LexEntry-Detail-Etymologies" type="detail">
-			<seq field="Etymology" layout="Normal" ghost="Form" ghostWs="analysis" ghostLabel="Etymology"
-				 menu="mnuDataTree-Etymology" />
+			<seq field="Etymology" layout="Normal" ghost="Form" ghostWs="analysis" ghostLabel="Etymology" menu="mnuDataTree-Etymology" />
 		</part>
 		<part id="LexEntry-Detail-RestrictionsAllA" type="Detail">
-			<slice field="Restrictions" label="Restrictions" editor="multistring" ws="all analysis"
-				   menu="mnuDataTree-Help" />
+			<slice field="Restrictions" label="Restrictions" editor="multistring" ws="all analysis" menu="mnuDataTree-Help" />
 		</part>
 <!-- RANDYTODO: Leave out for now, since the version of Chorus being used insists on Palaso 3, not 4.
 		<part id="LexEntry-Detail-Messages" type="detail">

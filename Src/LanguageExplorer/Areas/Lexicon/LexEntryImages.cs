@@ -72,12 +72,10 @@ namespace LanguageExplorer.Areas.Lexicon
 			//
 			this.buttonImages.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("buttonImages.ImageStream")));
 			this.buttonImages.TransparentColor = System.Drawing.Color.Fuchsia;
-			this.buttonImages.Images.SetKeyName(0, "majorEntry");
-			this.buttonImages.Images.SetKeyName(1, "minorEntry");
-			this.buttonImages.Images.SetKeyName(2, "subentry");
-			this.buttonImages.Images.SetKeyName(3, "goToEntry");
-			this.buttonImages.Images.SetKeyName(4, "reversalEntry");
-			this.buttonImages.Images.SetKeyName(5, "gotoReversalEntry");
+			this.buttonImages.Images.SetKeyName(0, "minorEntry");
+			this.buttonImages.Images.SetKeyName(1, "subentry");
+			this.buttonImages.Images.SetKeyName(2, "reversalEntry");
+			this.buttonImages.Images.SetKeyName(3, "gotoReversalEntry");
 			//
 			// LexEntryImages
 			//

@@ -66,16 +66,16 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 		}
 
 		/// <summary />
-		protected override void InitializeMatchingObjects(LcmCache cache)
+		protected override void InitializeMatchingObjects()
 		{
 			var xnWindow = PropertyTable.GetValue<XElement>("WindowConfiguration");
 			var configNode = xnWindow.XPathSelectElement("controls/parameters/guicontrol[@id=\"matchingReversalEntries\"]/parameters");
 
 			var searchEngine = (ReversalEntrySearchEngine)SearchEngine.Get(PropertyTable, "ReversalEntrySearchEngine-" + m_reveralIndex.Hvo,
-				() => new ReversalEntrySearchEngine(cache, m_reveralIndex));
+				() => new ReversalEntrySearchEngine(m_cache, m_reveralIndex));
 			searchEngine.FilteredEntryHvos = m_FilteredReversalEntryHvos;
 
-			m_matchingObjectsBrowser.Initialize(cache, FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable), configNode, searchEngine, m_cache.ServiceLocator.WritingSystemManager.Get(m_reveralIndex.WritingSystem));
+			m_matchingObjectsBrowser.Initialize(m_cache, FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable), configNode, searchEngine, m_cache.ServiceLocator.WritingSystemManager.Get(m_reveralIndex.WritingSystem));
 
 			// start building index
 			var wsObj = (CoreWritingSystemDefinition) m_cbWritingSystems.SelectedItem;

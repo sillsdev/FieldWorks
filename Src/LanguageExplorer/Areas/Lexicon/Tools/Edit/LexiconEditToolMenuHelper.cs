@@ -15,8 +15,10 @@ using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.Controls.LexText;
 using LanguageExplorer.LcmUi;
 using LanguageExplorer.Works;
+using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Infrastructure;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
@@ -30,21 +32,35 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		internal const string panelMenuId = "left";
 		private const string mnuDataTree_Sense_Hotlinks = "mnuDataTree-Sense-Hotlinks";
 		private const string mnuDataTree_Sense = "mnuDataTree-Sense";
+		private const string mnuDataTree_Etymology = "mnuDataTree-Etymology";
+		private const string mnuDataTree_Etymology_Hotlinks = "mnuDataTree-Etymology-Hotlinks";
 		private MajorFlexComponentParameters _majorFlexComponentParameters;
+		private ToolStripMenuItem _editMenu;
+		private List<Tuple<ToolStripMenuItem, EventHandler>> _newEditMenusAndHandlers = new List<Tuple<ToolStripMenuItem, EventHandler>>();
 		private ToolStripMenuItem _insertMenu;
+		private List<Tuple<ToolStripMenuItem, EventHandler>> _newInsertMenusAndHandlers = new List<Tuple<ToolStripMenuItem, EventHandler>>();
 		private ToolStripButton _insertEntryToolStripButton;
-		private HashSet<Tuple<ToolStripMenuItem, EventHandler>> _newInsertMenusAndHandlers = new HashSet<Tuple<ToolStripMenuItem, EventHandler>>();
+		private ToolStripButton _insertGoToEntryToolStripButton;
 
-		internal LexiconEditToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, DataTree dataTree, RecordClerk recordClerk)
+		private LcmCache Cache { get; set; }
+		private IFwMainWnd MainWindow { get; set; }
+		private DataTree DataTree { get; set; }
+		private RecordClerk RecordClerk { get; set; }
+		internal MultiPane InnerMultiPane { get; set; }
+		internal SliceContextMenuFactory SliceContextMenuFactory { get; set; }
+
+		internal LexiconEditToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters,
+			DataTree dataTree, RecordClerk recordClerk)
 		{
-			if (majorFlexComponentParameters == null) throw new ArgumentNullException(nameof(majorFlexComponentParameters));
+			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
+			Guard.AgainstNull(dataTree, nameof(dataTree));
+			Guard.AgainstNull(recordClerk, nameof(recordClerk));
 
 			_majorFlexComponentParameters = majorFlexComponentParameters;
 			Cache = _majorFlexComponentParameters.LcmCache;
 			MainWindow = majorFlexComponentParameters.MainWindow;
 			DataTree = dataTree;
 			RecordClerk = recordClerk;
-
 			SliceContextMenuFactory = DataTree.SliceContextMenuFactory;
 
 			InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);
@@ -52,29 +68,26 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		internal void Initialize()
 		{
-			Image majorEntryImage;
-			using (var images = new LexEntryImages())
-			{
-				majorEntryImage = images.buttonImages.Images["majorEntry"];
-			}
-			AddInsertMenuItems(majorEntryImage);
-			AddToolbarItems(majorEntryImage);
-			SliceContextMenuFactory.RegisterHotlinksMenuCreatorMethod(mnuDataTree_Sense_Hotlinks, Create_mnuDataTree_Sense_Hotlinks);
-			SliceContextMenuFactory.RegisterOrdinaryMenuCreatorMethod(mnuDataTree_Sense, Create_mnuDataTree_Sense);
+			AddEditMenuItems();
+			AddInsertMenuItems();
+			AddToolbarItems();
+
+			RegisterHotLinkMenus();
+			RegisterOrdinaryContextMenus();
 			SliceContextMenuFactory.RegisterPanelMenuCreatorMethod(panelMenuId, CreateMainPanelContextMenuStrip);
 		}
 
-		internal SliceContextMenuFactory SliceContextMenuFactory { get; }
+		private void RegisterHotLinkMenus()
+		{
+			SliceContextMenuFactory.RegisterHotlinksMenuCreatorMethod(mnuDataTree_Sense_Hotlinks, Create_mnuDataTree_Sense_Hotlinks);
+			SliceContextMenuFactory.RegisterHotlinksMenuCreatorMethod(mnuDataTree_Etymology_Hotlinks, Create_mnuDataTree_Etymology_Hotlinks);
+		}
 
-		private LcmCache Cache { get; }
-
-		private IFwMainWnd MainWindow { get; }
-
-		private DataTree DataTree { get; set; }
-
-		private RecordClerk RecordClerk { get; set; }
-
-		internal MultiPane InnerMultiPane { get; set; }
+		private void RegisterOrdinaryContextMenus()
+		{
+			SliceContextMenuFactory.RegisterOrdinaryMenuCreatorMethod(mnuDataTree_Sense, Create_mnuDataTree_Sense);
+			SliceContextMenuFactory.RegisterOrdinaryMenuCreatorMethod(mnuDataTree_Etymology, Create_mnuDataTree_Etymology);
+		}
 
 		#region Implementation of IPropertyTableProvider
 
@@ -149,6 +162,14 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 			if (disposing)
 			{
+				foreach (var menuTuple in _newEditMenusAndHandlers)
+				{
+					menuTuple.Item1.Click -= menuTuple.Item2;
+					_editMenu.DropDownItems.Remove(menuTuple.Item1);
+					menuTuple.Item1.Dispose();
+				}
+				_newEditMenusAndHandlers.Clear();
+
 				foreach (var menuTuple in _newInsertMenusAndHandlers)
 				{
 					menuTuple.Item1.Click -= menuTuple.Item2;
@@ -165,7 +186,12 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			_insertMenu = null;
 			_insertEntryToolStripButton = null;
 			_newInsertMenusAndHandlers = null;
-
+			SliceContextMenuFactory = null;
+			Cache = null;
+			MainWindow = null;
+			DataTree = null;
+			RecordClerk = null;
+			InnerMultiPane = null;
 
 			_isDisposed = true;
 		}
@@ -178,17 +204,70 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				throw new ArgumentException($"Expected argmuent value of '{mnuDataTree_Sense_Hotlinks}', but got '{nameof(hotlinksMenuId)}' instead.");
 			}
 			var hotlinksMenuItemList = new List<Tuple<ToolStripMenuItem, EventHandler>>(2);
-#if RANDYTODO
-// TODO: Add "CmdDataTree-Insert-Example" to "mnuDataTree-Sense-Hotlinks"
-// <item command="CmdDataTree-Insert-Example"/>
-#endif
+
+			// <item command="CmdDataTree-Insert-Example"/>
+			ToolStripMenuItemFactory.CreateHotLinkToolStripMenuItem(hotlinksMenuItemList, Insert_Example_Clicked, LexiconResources.Insert_Example);
+
 			// <item command="CmdDataTree-Insert-SenseBelow"/>
-			var toolStripMenuItem = ToolStripMenuItemFactory.CreateToolStripMenuItem(LexiconResources.Insert_Sense, LexiconResources.InsertSenseToolTip, Insert_SenseBelow_Clicked);
-			hotlinksMenuItemList.Add(new Tuple<ToolStripMenuItem, EventHandler>(toolStripMenuItem, Insert_SenseBelow_Clicked));
+			ToolStripMenuItemFactory.CreateHotLinkToolStripMenuItem(hotlinksMenuItemList, Insert_SenseBelow_Clicked, LexiconResources.Insert_Sense, LexiconResources.InsertSenseToolTip);
+
 			return hotlinksMenuItemList;
 		}
 
-		private Tuple<ContextMenuStrip, CancelEventHandler, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_Sense(Slice slice, string hotlinksMenuId)
+		private List<Tuple<ToolStripMenuItem, EventHandler>> Create_mnuDataTree_Etymology_Hotlinks(Slice slice, string hotlinksMenuId)
+		{
+			if (hotlinksMenuId != mnuDataTree_Etymology_Hotlinks)
+			{
+				throw new ArgumentException($"Expected argmuent value of '{mnuDataTree_Etymology_Hotlinks}', but got '{nameof(hotlinksMenuId)}' instead.");
+			}
+			var hotlinksMenuItemList = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
+			// <item command="CmdDataTree-Insert-Etymology"/>
+			ToolStripMenuItemFactory.CreateHotLinkToolStripMenuItem(hotlinksMenuItemList, Insert_Etymology_Clicked, LexiconResources.Insert_Etymology, LexiconResources.Insert_Etymology_Tooltip);
+
+			return hotlinksMenuItemList;
+		}
+
+		private Tuple<ContextMenuStrip, CancelEventHandler, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_Etymology(Slice slice, string contextMenuId)
+		{
+			// Start: <menu id="mnuDataTree-Etymology">
+			var contextMenuStrip = new ContextMenuStrip
+			{
+				Name = mnuDataTree_Etymology
+			};
+			contextMenuStrip.Opening += MenuDataTree_EtymologyContextMenuStrip_Opening;
+			var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(6);
+
+			// <item command="CmdDataTree-Insert-Etymology" label="Insert _Etymology"/>
+			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Insert_Etymology_Clicked, LexiconResources.Insert_Etymology, LexiconResources.Insert_Etymology_Tooltip);
+			/*
+			<item label="-" translate="do not translate"/>
+			<item command="CmdDataTree-MoveUp-Etymology"/>
+			<item command="CmdDataTree-MoveDown-Etymology"/>
+			<item label="-" translate="do not translate"/>
+			<item command="CmdDataTree-Delete-Etymology"/>
+			 */
+
+			// End: <menu id="mnuDataTree-Etymology">
+
+			return new Tuple<ContextMenuStrip, CancelEventHandler, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, MenuDataTree_EtymologyContextMenuStrip_Opening, menuItems);
+		}
+
+		private void MenuDataTree_EtymologyContextMenuStrip_Opening(object sender, CancelEventArgs e)
+		{
+#if RANDYTODO
+			// TODO: Enable/disable menu items, based on selected slice in DataTree.
+#endif
+		}
+
+		private void Insert_Etymology_Clicked(object sender, EventArgs e)
+		{
+			UndoableUnitOfWorkHelper.Do(LexiconResources.Undo_Insert_Etymology, LexiconResources.Redo_Insert_Etymology, Cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
+			{
+				((ILexEntry)RecordClerk.CurrentObject).EtymologyOS.Add(Cache.ServiceLocator.GetInstance<ILexEtymologyFactory>().Create());
+			});
+		}
+
+		private Tuple<ContextMenuStrip, CancelEventHandler, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_Sense(Slice slice, string contextMenuId)
 		{
 			// Start: <menu id="mnuDataTree-Sense">
 			var contextMenuStrip = new ContextMenuStrip
@@ -197,6 +276,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			};
 			contextMenuStrip.Opening += MenuDataTree_SenseContextMenuStrip_Opening;
 			var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(21);
+
 			/*
 			<command id="CmdDataTree-Insert-Example" label="Insert _Example" message="DataTreeInsert">
 				<parameters field="Examples" className="LexExampleSentence" />
@@ -214,21 +294,12 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			<item command="CmdDataTree-Insert-ExtNote"/>
 			*/
 			// TODO: Add above menus.
-			/*
-			<command id="CmdDataTree-Insert-SenseBelow" label="Insert _Sense" message="DataTreeInsert">
-				<parameters field="Senses" className="LexSense" slice="owner" recomputeVirtual="LexSense.LexSenseOutline" />
-			</command>
-			<item command="CmdDataTree-Insert-SenseBelow"/>
-			*/
-			CreateToolStripMenuItem(menuItems, contextMenuStrip, mnuDataTree_Sense, "CmdDataTree-Insert-SenseBelow", LexiconResources.Insert_Sense, LexiconResources.InsertSenseToolTip, Insert_Sense_Clicked);
 
-			/*
-			<command id="CmdDataTree-Insert-SubSense" label="Insert Su_bsense" message="DataTreeInsert">
-				<parameters field="Senses" className="LexSense" ownerClass="LexSense" recomputeVirtual="LexSense.LexSenseOutline" />
-			</command>
-			<item command="CmdDataTree-Insert-SubSense"/>
-			*/
-			CreateToolStripMenuItem(menuItems, contextMenuStrip, mnuDataTree_Sense, "CmdDataTree-Insert-SubSense", LexiconResources.Insert_Subsense, LexiconResources.Insert_Subsense_Tooltip, Insert_Subsense_Clicked);
+			// <item command="CmdDataTree-Insert-SenseBelow"/>
+			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Insert_Sense_Clicked, LexiconResources.Insert_Sense, LexiconResources.InsertSenseToolTip);
+
+			// <item command="CmdDataTree-Insert-SubSense"/>
+			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Insert_Subsense_Clicked, LexiconResources.Insert_Subsense, LexiconResources.Insert_Subsense_Tooltip);
 
 			// TODO: Add below menus.
 			/*
@@ -244,18 +315,15 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			<item command="CmdDataTree-Merge-Sense"/>
 			<item command="CmdDataTree-Split-Sense"/>
 			*/
-			/*
-			<command id="CmdDataTree-Delete-Sense" label="Delete this Sense and any Subsenses" message="DataTreeDeleteSense" icon="Delete">
-				<parameters field="Senses" className="LexSense" />
-			</command>
-			<item command="CmdDataTree-Delete-Sense"/>
-			*/
-			var toolStripMenuItem = CreateToolStripMenuItem(menuItems, contextMenuStrip, mnuDataTree_Sense, "CmdDataTree-Delete-Sense", LexiconResources.DeleteSenseAndSubsenses, String.Empty, Delete_Sense_Clicked);
+
+			//<item command="CmdDataTree-Delete-Sense"/>
+			var toolStripMenuItem = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Delete_Sense_Clicked, LexiconResources.DeleteSenseAndSubsenses);
 			toolStripMenuItem.Image = LanguageExplorerResources.Delete;
 			toolStripMenuItem.ImageTransparentColor = Color.Magenta;
+
 			// TODO: Add below menus.
 			/*
-				// Plus it gets these more general menus added to it, which shoudl be commmon to all (almost all?) slices:
+				// Plus it gets these more general menus added to it, which should be commmon to all (almost all?) slices:
 				<item label="-" translate="do not translate"/>
 				Field Visibility
 				Help
@@ -268,12 +336,15 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		private void MenuDataTree_SenseContextMenuStrip_Opening(object sender, CancelEventArgs e)
 		{
 #if RANDYTODO
-// TODO: Enable/disable menu items, based on selected slice in DataTree.
+			// TODO: Enable/disable menu items, based on selected slice in DataTree.
 #endif
 		}
 
 		private Tuple<ContextMenuStrip, CancelEventHandler, List<Tuple<ToolStripMenuItem, EventHandler>>> CreateMainPanelContextMenuStrip(string panelMenuId)
 		{
+			// <menu id="PaneBar-LexicalDetail" label="">
+			// <menu id="LexEntryPaneMenu" icon="MenuWidget">
+			// Handled elsewhere: <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-lexiconEdit" defaultVisible="true" settingsGroup="local"/>
 			var contextMenuStrip = new ContextMenuStrip();
 			contextMenuStrip.Opening += MainPanelContextMenuStrip_Opening;
 
@@ -281,41 +352,44 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			var retVal = new Tuple<ContextMenuStrip, CancelEventHandler, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, MainPanelContextMenuStrip_Opening, menuItems);
 
 			// Show_Dictionary_Preview menu item.
-			var contextMenuItem = CreateToolStripMenuItem(menuItems, contextMenuStrip, LexiconResources.Show_DictionaryPubPreview, LexiconResources.Show_DictionaryPubPreview_ToolTip, Show_Dictionary_Preview_Clicked);
+			var contextMenuItem = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Show_Dictionary_Preview_Clicked, LexiconResources.Show_DictionaryPubPreview, LexiconResources.Show_DictionaryPubPreview_ToolTip);
 			contextMenuItem.Checked = PropertyTable.GetValue<bool>(Show_DictionaryPubPreview);
 
 			// Separator
 			contextMenuStrip.Items.Add(new ToolStripSeparator());
 
 			// Insert_Sense menu item. (CmdInsertSense->msg: DataTreeInsert, also on Insert menu)
-			CreateToolStripMenuItem(menuItems, contextMenuStrip, LexiconResources.Insert_Sense, LexiconResources.InsertSenseToolTip, Insert_Sense_Clicked);
+			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Insert_Sense_Clicked, LexiconResources.Insert_Sense, LexiconResources.InsertSenseToolTip);
 
 			// Insert Subsense (in sense) menu item. (CmdInsertSubsense->msg: DataTreeInsert, also on Insert menu)
-			CreateToolStripMenuItem(menuItems, contextMenuStrip, LexiconResources.Insert_Subsense, LexiconResources.Insert_Subsense_Tooltip, Insert_Subsense_Clicked);
+			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Insert_Subsense_Clicked, LexiconResources.Insert_Subsense, LexiconResources.Insert_Subsense_Tooltip);
 
 			// Insert _Variant menu item. (CmdInsertVariant->msg: InsertItemViaBackrefVector, also on Insert menu)
-			CreateToolStripMenuItem(menuItems, contextMenuStrip, LexiconResources.Insert_Variant, LexiconResources.Insert_Variant_Tooltip, Insert_Variant_Clicked);
+			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Insert_Variant_Clicked, LexiconResources.Insert_Variant, LexiconResources.Insert_Variant_Tooltip);
 
 			// Insert A_llomorph menu item. (CmdDataTree-Insert-AlternateForm->msg: DataTreeInsert, also on Insert menu)
-			CreateToolStripMenuItem(menuItems, contextMenuStrip, LexiconResources.Insert_Allomorph, LexiconResources.Insert_Allomorph_Tooltip, Insert_Allomorph_Clicked);
+			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Insert_Allomorph_Clicked, LexiconResources.Insert_Allomorph, LexiconResources.Insert_Allomorph_Tooltip);
 
 			// Insert _Pronunciation menu item. (CmdDataTree-Insert-Pronunciation->msg: DataTreeInsert, also on Insert menu)
-			CreateToolStripMenuItem(menuItems, contextMenuStrip, LexiconResources.Insert_Pronunciation, LexiconResources.Insert_Pronunciation_Tooltip, Insert_Pronunciation_Clicked);
+			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Insert_Pronunciation_Clicked, LexiconResources.Insert_Pronunciation, LexiconResources.Insert_Pronunciation_Tooltip);
 
 			// Insert Sound or Movie _File menu item. (CmdInsertMediaFile->msg: InsertMediaFile, also on Insert menu)
-			CreateToolStripMenuItem(menuItems, contextMenuStrip, LexiconResources.Insert_Sound_Or_Movie_File, LexiconResources.Insert_Sound_Or_Movie_File_Tooltip, Insert_Sound_Or_Movie_File_Clicked);
+			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Insert_Sound_Or_Movie_File_Clicked, LexiconResources.Insert_Sound_Or_Movie_File, LexiconResources.Insert_Sound_Or_Movie_File_Tooltip);
+
+			// Insert _Etymology menu item. (CmdDataTree-Insert-Etymology->msg: DataTreeInsert, also on Insert menu and a hotlionks and another context menu.)
+			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Insert_Etymology_Clicked, LexiconResources.Insert_Etymology, LexiconResources.Insert_Etymology_Tooltip);
 
 			// Separator
 			contextMenuStrip.Items.Add(new ToolStripSeparator());
 
-			// Lexeme Form has components menu item. (CmdChangeToVariant->msg: ConvertEntryIntoComplexForm)
-			CreateToolStripMenuItem(menuItems, contextMenuStrip, LexiconResources.Lexeme_Form_Has_Components, LexiconResources.Lexeme_Form_Has_Components_Tooltip, Lexeme_Form_Has_Components_Clicked);
+			// Lexeme Form has components. (CmdChangeToComplexForm->msg: ConvertEntryIntoVariant)
+			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Lexeme_Form_Has_Components_Clicked, LexiconResources.Lexeme_Form_Has_Components, LexiconResources.Lexeme_Form_Has_Components_Tooltip);
 
-			// Lexeme Form is a variant menu item. (CmdChangeToComplexForm->msg: ConvertEntryIntoVariant)
-			CreateToolStripMenuItem(menuItems, contextMenuStrip, LexiconResources.Lexeme_Form_Is_A_Variant, LexiconResources.Lexeme_Form_Is_A_Variant_Tooltip, Lexeme_Form_Is_A_Variant_Clicked);
+			// Lexeme Form is a variant menu item. (CmdChangeToVariant->msg: ConvertEntryIntoComplexForm)
+			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Lexeme_Form_Is_A_Variant_Clicked, LexiconResources.Lexeme_Form_Is_A_Variant, LexiconResources.Lexeme_Form_Is_A_Variant_Tooltip);
 
 			// _Merge with entry... menu item. (CmdMergeEntry->msg: MergeEntry, also on Tool menu)
-			contextMenuItem = CreateToolStripMenuItem(menuItems, contextMenuStrip, LexiconResources.Merge_With_Entry, LexiconResources.Merge_With_Entry_Tooltip, Merge_With_Entry_Clicked);
+			contextMenuItem = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Merge_With_Entry_Clicked, LexiconResources.Merge_With_Entry, LexiconResources.Merge_With_Entry_Tooltip);
 			// NB: defaultVisible="false"
 			// Original code that controlled: display.Enabled = display.Visible = InFriendlyArea;
 			// It is now only in a friendly area, so should always be visible and enabled, per the old code.
@@ -326,9 +400,17 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			contextMenuStrip.Items.Add(new ToolStripSeparator());
 
 			// Show Entry in Concordance menu item. (CmdRootEntryJumpToConcordance->msg: JumpToTool, also on Insert menu)
-			CreateToolStripMenuItem(menuItems, contextMenuStrip, LexiconResources.Show_Entry_In_Concordance, null, Show_Entry_In_Concordance_Clicked);
+			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Show_Entry_In_Concordance_Clicked, LexiconResources.Show_Entry_In_Concordance);
 
 			return retVal;
+		}
+
+
+		private void Insert_Example_Clicked(object sender, EventArgs e)
+		{
+#if RANDYTODO
+			// TODO: "CmdDataTree-Insert-Example"
+#endif
 		}
 
 		private void Insert_SenseBelow_Clicked(object sender, EventArgs e)
@@ -346,18 +428,16 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				}
 				currentSlice = currentSlice.ParentSlice;
 			}
-			var indexInOwningSensesProperty = 0;
 			if (currentSense.Owner is ILexSense)
 			{
 				var owningSense = (ILexSense)currentSense.Owner;
-				indexInOwningSensesProperty = owningSense.SensesOS.IndexOf(currentSense);
+				LexSenseUi.CreateNewLexSense(Cache, owningSense, owningSense.SensesOS.IndexOf(currentSense) + 1);
 			}
 			else
 			{
-				var owningEntry = (ILexEntry)currentSense.Owner;
-				indexInOwningSensesProperty = owningEntry.SensesOS.IndexOf(currentSense);
+				var owningEntry = (ILexEntry)RecordClerk.CurrentObject;
+				LexSenseUi.CreateNewLexSense(Cache, owningEntry, owningEntry.SensesOS.IndexOf(currentSense) + 1);
 			}
-			LexSenseUi.CreateNewLexSense(Cache, (ILexEntry)RecordClerk.CurrentObject, indexInOwningSensesProperty + 1);
 		}
 
 		private void MainPanelContextMenuStrip_Opening(object sender, CancelEventArgs e)
@@ -365,20 +445,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 #if RANDYTODO
 			// TODO: Enable/disable menu items, based on selected slice in DataTree.
 #endif
-		}
-
-		private ToolStripMenuItem CreateToolStripMenuItem(List<Tuple<ToolStripMenuItem, EventHandler>> menuItems, ContextMenuStrip contextMenuStrip, string menuText, string menuTooltip, EventHandler eventHandler)
-		{
-			var toolStripMenuItem = ToolStripMenuItemFactory.CreateToolStripMenuItem(contextMenuStrip, menuText, menuTooltip, eventHandler);
-			menuItems.Add(new Tuple<ToolStripMenuItem, EventHandler>(toolStripMenuItem, eventHandler));
-			return toolStripMenuItem;
-		}
-
-		private ToolStripMenuItem CreateToolStripMenuItem(List<Tuple<ToolStripMenuItem, EventHandler>> menuItemsContextMenuStrip, ContextMenuStrip contextMenuStrip, string menuId, string commandId, string menuText, string menuTooltip, EventHandler eventHandler)
-		{
-			var toolStripMenuItem = ToolStripMenuItemFactory.CreateToolStripMenuItem(contextMenuStrip, menuText, menuTooltip, eventHandler);
-			menuItemsContextMenuStrip.Add(new Tuple<ToolStripMenuItem, EventHandler>(toolStripMenuItem, eventHandler));
-			return toolStripMenuItem;
 		}
 
 		private void Show_Entry_In_Concordance_Clicked(object sender, EventArgs e)
@@ -403,11 +469,14 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 			using (var dlg = new MergeEntryDlg())
 			{
+				var window = PropertyTable.GetValue<Form>("window");
 				dlg.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 				// <parameters title="Merge Entry" formlabel="_Find:" okbuttonlabel="_Merge"/>
 				dlg.SetDlgInfo(Cache, XElement.Parse(LexiconResources.MatchingEntriesParameters), currentEntry, LexiconResources.ksMergeEntry, FwUtils.ReplaceUnderlineWithAmpersand(LexiconResources.ks_Find), FwUtils.ReplaceUnderlineWithAmpersand(LexiconResources.ks_Merge));
-				if (dlg.ShowDialog() != DialogResult.OK)
+				if (dlg.ShowDialog(window) != DialogResult.OK)
+				{
 					return;
+				}
 
 				var survivor = (ILexEntry)dlg.SelectedObject;
 				Debug.Assert(survivor != currentEntry);
@@ -416,10 +485,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					survivor.MergeObject(currentEntry, true);
 					survivor.DateModified = DateTime.Now;
 				});
-				MessageBox.Show(null,
-					LexiconResources.ksEntriesHaveBeenMerged,
-					LexiconResources.ksMergeReport,
-					MessageBoxButtons.OK, MessageBoxIcon.Information);
+				MessageBox.Show(window, LexiconResources.ksEntriesHaveBeenMerged, LexiconResources.ksMergeReport, MessageBoxButtons.OK, MessageBoxIcon.Information);
 				var commands = new List<string>
 				{
 					"AboutToFollowLink",
@@ -476,7 +542,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		private void Insert_Entry_Clicked(object sender, EventArgs e)
 		{
-			using (InsertEntryDlg dlg = new InsertEntryDlg())
+			using (var dlg = new InsertEntryDlg())
 			{
 				var mainWindow = PropertyTable.GetValue<IFwMainWnd>("window");
 				dlg.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
@@ -493,6 +559,26 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			}
 		}
 
+		private void GoToEntry_Clicked(object sender, EventArgs e)
+		{
+			using (var dlg = new EntryGoDlg())
+			{
+				dlg.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
+				var windowParameters = new WindowParams
+				{
+					m_btnText = FwUtils.ReplaceUnderlineWithAmpersand(LexiconResources.Go),
+					m_label = FwUtils.ReplaceUnderlineWithAmpersand(LexiconResources.Go_To),
+					m_title = LexiconResources.Go_To_Entry_Dlg_Title
+				};
+				dlg.SetDlgInfo(Cache, windowParameters);
+				dlg.SetHelpTopic("khtpFindLexicalEntry");
+				if (dlg.ShowDialog(PropertyTable.GetValue<Form>("window")) == DialogResult.OK)
+				{
+					RecordClerk.JumpToRecord(dlg.SelectedObject.Hvo);
+				}
+			}
+		}
+
 		private void Show_Dictionary_Preview_Clicked(object sender, EventArgs e)
 		{
 			var menuItem = (ToolStripMenuItem)sender;
@@ -501,50 +587,33 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			InnerMultiPane.Panel1Collapsed = !PropertyTable.GetValue<bool>(Show_DictionaryPubPreview);
 		}
 
-		private void AddToolbarItems(Image majorEntryImage)
+		private void AddToolbarItems()
 		{
-			/*
-<command id="CmdInsertLexEntry" label="_Entry..." message="InsertItemInVector" shortcut="Ctrl+E" icon="majorEntry">
-	<parameters className="LexEntry" />
-</command>
-<item command="CmdInsertLexEntry" defaultVisible="false" />
-			 */
-			_insertEntryToolStripButton = new ToolStripButton("toolStripButtonInsertEntry", majorEntryImage, Insert_Entry_Clicked)
-			{
-				DisplayStyle = ToolStripItemDisplayStyle.Image,
-				ToolTipText = LexiconResources.Entry_Tooltip
-			};
-			InsertToolbarManager.AddInsertToolbarItems(_majorFlexComponentParameters, new List<ToolStripButton> { _insertEntryToolStripButton });
-#if RANDYTODO
-			// TODO: Add new "Insert" toolbar item.
-/*
-<command id="CmdGoToEntry" label="_Find lexical entry..." message="GotoLexEntry" icon="goToEntry" shortcut="Ctrl+F" a10status="Derfined here, but used in Main.xml.">
-<parameters title="Go To Entry" formlabel="Go _To..." okbuttonlabel="_Go" />
-</command>
-<item command="CmdGoToEntry" defaultVisible="false" />
-*/
-#endif
+			// <item command="CmdInsertLexEntry" defaultVisible="false" />
+			_insertEntryToolStripButton = ToolStripButtonFactory.CreateToolStripButton(Insert_Entry_Clicked, "toolStripButtonInsertEntry", LexiconResources.Major_Entry.ToBitmap(), LexiconResources.Entry_Tooltip);
+			// <item command="CmdGoToEntry" defaultVisible="false" />
+			_insertGoToEntryToolStripButton = ToolStripButtonFactory.CreateToolStripButton(GoToEntry_Clicked, "toolStripButtonGoToEntry", LexiconResources.Find_Lexical_Entry.ToBitmap(), LexiconResources.GoToEntryToolTip);
+
+			InsertToolbarManager.AddInsertToolbarItems(_majorFlexComponentParameters, new List<ToolStripButton> { _insertEntryToolStripButton, _insertGoToEntryToolStripButton });
 		}
 
-		private void AddInsertMenuItems(Image majorEntryImage)
+		private void AddEditMenuItems()
 		{
-			_insertMenu = (ToolStripMenuItem)_majorFlexComponentParameters.MenuStrip.Items["_insertToolStripMenuItem"];
-			/*
-<command id="CmdInsertLexEntry" label="_Entry..." message="InsertItemInVector" shortcut="Ctrl+E" icon="majorEntry">
-	<parameters className="LexEntry" />
-</command>
-<item command="CmdInsertLexEntry" defaultVisible="false" />
-			 */
-			var newToolStripMenuItem = ToolStripMenuItemFactory.CreateToolStripMenuItem(_insertMenu, 0, LexiconResources.Entry, LexiconResources.Entry_Tooltip, Insert_Entry_Clicked, majorEntryImage, Keys.Control | Keys.E);
-			_newInsertMenusAndHandlers.Add(new Tuple<ToolStripMenuItem, EventHandler>(newToolStripMenuItem, Insert_Entry_Clicked));
-			/*
-<command id="CmdInsertSense" label="_Sense" message="DataTreeInsert">
-	<parameters field="Senses" className="LexSense" ownerClass="LexEntry" />
-</command>
-<item command="CmdInsertSense" defaultVisible="false" />
-			 */
-			newToolStripMenuItem = ToolStripMenuItemFactory.CreateToolStripMenuItem(_insertMenu, 1, LexiconResources.Insert_Sense, LexiconResources.InsertSenseToolTip, Insert_Sense_Clicked);
-			_newInsertMenusAndHandlers.Add(new Tuple<ToolStripMenuItem, EventHandler>(newToolStripMenuItem, Insert_Sense_Clicked));
+			_editMenu = (ToolStripMenuItem)_majorFlexComponentParameters.MenuStrip.Items[LanguageExplorerConstants.EditToolStripMenuItem];
+			// Insert before third separator menu
+			// <item command="CmdGoToEntry" />
+			ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_newEditMenusAndHandlers, _editMenu, GoToEntry_Clicked, LexiconResources.Find_Entry, LexiconResources.GoToEntryToolTip, Keys.Control | Keys.F, LexiconResources.Find_Lexical_Entry.ToBitmap(), 10);
+		}
+
+		private void AddInsertMenuItems()
+		{
+			_insertMenu = (ToolStripMenuItem)_majorFlexComponentParameters.MenuStrip.Items[LanguageExplorerConstants.InsertToolStripMenuItem];
+
+			var insertIndex = 0;
+			// <item command="CmdInsertLexEntry" defaultVisible="false" />
+			ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_newInsertMenusAndHandlers, _insertMenu, Insert_Entry_Clicked, LexiconResources.Entry, LexiconResources.Entry_Tooltip, Keys.Control | Keys.E, LexiconResources.Major_Entry.ToBitmap(), insertIndex);
+			// <item command="CmdInsertSense" defaultVisible="false" />
+			ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_newInsertMenusAndHandlers, _insertMenu, Insert_Sense_Clicked, LexiconResources.Sense, LexiconResources.InsertSenseToolTip, Keys.None, null, ++insertIndex);
 #if RANDYTODO
 			// TODO: Add these to the main Insert menu.
 /*
@@ -568,10 +637,12 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 	<parameters field="MediaFiles" className="LexPronunciation" />
 </command>
 			<item command="CmdInsertMediaFile" defaultVisible="false" />
-<command id="CmdDataTree-Insert-Etymology" label="_Etymology" message="DataTreeInsert">
-	<parameters field="Etymology" className="LexEtymology" ownerClass="LexEntry" />
-</command>
-			<item command="CmdDataTree-Insert-Etymology" defaultVisible="false" />
+*/
+#endif
+			//<item command="CmdDataTree-Insert-Etymology" defaultVisible="false" />
+			ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_newInsertMenusAndHandlers, _insertMenu, Insert_Etymology_Clicked, LexiconResources.Etymology, LexiconResources.Insert_Etymology_Tooltip, Keys.None, null, ++insertIndex);
+#if RANDYTODO
+/*
 			<item label="-" translate="do not translate" />
 <command id="CmdInsertSubsense" label="Subsense (in sense)" message="DataTreeInsert">
 	<parameters field="Senses" className="LexSense" ownerClass="LexSense" />

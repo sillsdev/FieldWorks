@@ -166,14 +166,14 @@ namespace LanguageExplorer.SendReceive
 
 		private void AddCommonMenuItems()
 		{
-			_helpChorusMenu = ToolStripMenuItemFactory.CreateToolStripMenuItem(MainSendReceiveToolStripMenuItem, int.MaxValue, SendReceiveResources.HelpChorus, SendReceiveResources.HelpChorusToolTip, HelpChorus_Click);
+			_helpChorusMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(MainSendReceiveToolStripMenuItem, HelpChorus_Click, SendReceiveResources.HelpChorus, SendReceiveResources.HelpChorusToolTip);
 
 			if (!MiscUtils.IsUnix)
 			{
-				_checkForFlexBridgeUpdatesMenu = ToolStripMenuItemFactory.CreateToolStripMenuItem(MainSendReceiveToolStripMenuItem, int.MaxValue, SendReceiveResources.CheckForFlexBridgeUpdates, SendReceiveResources.CheckForFlexBridgeUpdatesToolTip, CheckForFlexBridgeUpdates_Click);
+				_checkForFlexBridgeUpdatesMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(MainSendReceiveToolStripMenuItem, CheckForFlexBridgeUpdates_Click, SendReceiveResources.CheckForFlexBridgeUpdates, SendReceiveResources.CheckForFlexBridgeUpdatesToolTip);
 			}
 
-			_helpAboutFLEXBridgeMenu = ToolStripMenuItemFactory.CreateToolStripMenuItem(MainSendReceiveToolStripMenuItem, int.MaxValue, SendReceiveResources.HelpAboutFLEXBridge, SendReceiveResources.HelpAboutFLEXBridgeToolTip, HelpAboutFLEXBridge_Click);
+			_helpAboutFLEXBridgeMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(MainSendReceiveToolStripMenuItem, HelpAboutFLEXBridge_Click, SendReceiveResources.HelpAboutFLEXBridge, SendReceiveResources.HelpAboutFLEXBridgeToolTip);
 		}
 
 		private void HelpAboutFLEXBridge_Click(object sender, EventArgs e)

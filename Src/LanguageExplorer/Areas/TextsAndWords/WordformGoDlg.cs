@@ -46,15 +46,14 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 		#region Other methods
 
-		protected override void InitializeMatchingObjects(LcmCache cache)
+		protected override void InitializeMatchingObjects()
 		{
 			var xnWindow = PropertyTable.GetValue<XElement>("WindowConfiguration");
 			var configNode = xnWindow.XPathSelectElement("controls/parameters/guicontrol[@id=\"WordformsBrowseView\"]/parameters");
 
-			SearchEngine searchEngine = SearchEngine.Get(PropertyTable, "WordformGoSearchEngine", () => new WordformGoSearchEngine(cache));
+			SearchEngine searchEngine = SearchEngine.Get(PropertyTable, "WordformGoSearchEngine", () => new WordformGoSearchEngine(m_cache));
 
-			m_matchingObjectsBrowser.Initialize(cache, FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable), configNode,
-				searchEngine);
+			m_matchingObjectsBrowser.Initialize(m_cache, FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable), configNode, searchEngine);
 
 			// start building index
 			var wsObj = (CoreWritingSystemDefinition) m_cbWritingSystems.SelectedItem;

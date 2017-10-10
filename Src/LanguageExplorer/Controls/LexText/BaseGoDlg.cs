@@ -256,8 +256,8 @@ namespace LanguageExplorer.Controls.LexText
 			IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable);
 			// Set font, writing system factory, and writing system code for the Lexical Form
 			// edit box.  Also set an empty string with the proper writing system.
-			m_tbForm.Font = new Font(cache.ServiceLocator.WritingSystemManager.Get(ws).DefaultFontName, 10);
-			m_tbForm.WritingSystemFactory = cache.WritingSystemFactory;
+			m_tbForm.Font = new Font(m_cache.ServiceLocator.WritingSystemManager.Get(ws).DefaultFontName, 10);
+			m_tbForm.WritingSystemFactory = m_cache.WritingSystemFactory;
 			m_tbForm.WritingSystemCode = ws;
 			m_tbForm.AdjustStringHeight = false;
 			m_tbForm.Tss = TsStringUtils.EmptyString(ws);
@@ -270,30 +270,30 @@ namespace LanguageExplorer.Controls.LexText
 			SetBottomMessage();
 			m_fwTextBoxBottomMsg.BorderStyle = BorderStyle.None;
 
-			m_analHvos.UnionWith(cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems.Select(wsObj => wsObj.Handle));
-			List<int> vernList = cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems.Select(wsObj => wsObj.Handle).ToList();
+			m_analHvos.UnionWith(m_cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems.Select(wsObj => wsObj.Handle));
+			List<int> vernList = m_cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems.Select(wsObj => wsObj.Handle).ToList();
 			m_vernHvos.UnionWith(vernList);
 			LoadWritingSystemCombo();
 			int iWs = vernList.IndexOf(ws);
 			CoreWritingSystemDefinition currentWs;
 			if (iWs < 0)
 			{
-				List<int> analList = cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems.Select(wsObj => wsObj.Handle).ToList();
+				List<int> analList = m_cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems.Select(wsObj => wsObj.Handle).ToList();
 				iWs = analList.IndexOf(ws);
 				if (iWs < 0)
 				{
-					currentWs = cache.ServiceLocator.WritingSystemManager.Get(ws);
+					currentWs = m_cache.ServiceLocator.WritingSystemManager.Get(ws);
 					m_cbWritingSystems.Items.Add(currentWs);
 					SetCbWritingSystemsSize();
 				}
 				else
 				{
-					currentWs = cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems[iWs];
+					currentWs = m_cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems[iWs];
 				}
 			}
 			else
 			{
-				currentWs = cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems[iWs];
+				currentWs = m_cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems[iWs];
 			}
 			Debug.Assert(currentWs != null && currentWs.Handle == ws);
 
@@ -306,7 +306,7 @@ namespace LanguageExplorer.Controls.LexText
 			// we've set WSF on all the controls.
 			m_cbWritingSystems.SelectedIndexChanged += m_cbWritingSystems_SelectedIndexChanged;
 
-			InitializeMatchingObjects(cache);
+			InitializeMatchingObjects();
 
 			// Adjust things if the form box needs to grow to accommodate its style.
 			int oldHeight = m_tbForm.Height;
@@ -417,7 +417,7 @@ namespace LanguageExplorer.Controls.LexText
 			}
 		}
 
-		protected virtual void InitializeMatchingObjects(LcmCache cache)
+		protected virtual void InitializeMatchingObjects()
 		{
 			// override.
 		}

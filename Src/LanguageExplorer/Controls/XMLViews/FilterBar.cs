@@ -390,10 +390,9 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// Initializes a new instance of the <see cref="T:FilterBar"/> class.
 		/// </summary>
 		/// <param name="bv">The bv.</param>
-		/// <param name="spec">The spec (not used).</param>
 		/// <param name="app">The application.</param>
 		/// ------------------------------------------------------------------------------------
-		public FilterBar(BrowseViewer bv, XElement spec, IApp app)
+		public FilterBar(BrowseViewer bv, IApp app)
 		{
 			m_bv = bv;
 			m_columns = m_bv.ColumnSpecs;

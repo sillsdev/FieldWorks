@@ -100,8 +100,8 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Simpler constructor supplies default args
 		/// </summary>
-		internal XMLViewsDataCache(ISilDataAccessManaged domainDataByFlid, XElement nodeSpec)
-			: this(domainDataByFlid, XmlUtils.GetOptionalBooleanAttributeValue(nodeSpec, "defaultChecked", true),
+		internal XMLViewsDataCache(ISilDataAccessManaged domainDataByFlid, bool defaultSelected)
+			: this(domainDataByFlid, defaultSelected,
 			new Dictionary<int, int>())
 		{
 		}

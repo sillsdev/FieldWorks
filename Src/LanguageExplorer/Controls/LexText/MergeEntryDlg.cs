@@ -191,12 +191,12 @@ namespace LanguageExplorer.Controls.LexText
 			m_fwTextBoxBottomMsg.Tss = tsb.GetString();
 		}
 
-		protected override void InitializeMatchingObjects(LcmCache cache)
+		protected override void InitializeMatchingObjects()
 		{
-			var searchEngine = (MergeEntrySearchEngine)SearchEngine.Get(PropertyTable, "MergeEntrySearchEngine", () => new MergeEntrySearchEngine(cache));
+			var searchEngine = (MergeEntrySearchEngine)SearchEngine.Get(PropertyTable, "MergeEntrySearchEngine", () => new MergeEntrySearchEngine(m_cache));
 			searchEngine.CurrentEntryHvo = m_startingEntry.Hvo;
 
-			m_matchingObjectsBrowser.Initialize(cache, FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable), m_parametersElement,
+			m_matchingObjectsBrowser.Initialize(m_cache, FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable), m_parametersElement,
 				searchEngine);
 
 			// start building index
