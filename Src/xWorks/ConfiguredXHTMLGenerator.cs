@@ -1244,7 +1244,7 @@ namespace SIL.FieldWorks.XWorks
 		private static string GenerateSrcAttributeFromFilePath(ICmFile file, string subFolder, GeneratorSettings settings)
 		{
 			string filePath;
-			if (settings.UseRelativePaths && subFolder != null)
+			if (settings.UseRelativePaths && subFolder != null && file.InternalPath != null)
 			{
 				filePath = Path.Combine(subFolder, Path.GetFileName(MakeSafeFilePath(file.InternalPath)));
 				if (settings.CopyFiles)
