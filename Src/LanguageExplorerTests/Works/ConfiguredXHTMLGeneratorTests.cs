@@ -5415,6 +5415,17 @@ namespace LanguageExplorerTests.Works
 		[Test]
 		public void GenerateXHTMLForEntry_NullInternalPathDoesNotCrash()
 		{
+			var thumbNailNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "PictureFileRA",
+				CSSClassNameOverride = "picture"
+			};
+			var pictureNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "PicturesOfSenses",
+				CSSClassNameOverride = "Pictures",
+				Children = new List<ConfigurableDictionaryNode> { thumbNailNode }
+			};
 			var pronunciationsNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "PronunciationsOS",
@@ -5423,7 +5434,7 @@ namespace LanguageExplorerTests.Works
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
-				Children = new List<ConfigurableDictionaryNode> { pronunciationsNode },
+				Children = new List<ConfigurableDictionaryNode> { pronunciationsNode, pictureNode },
 				FieldDescription = "LexEntry"
 			};
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
@@ -5436,6 +5447,15 @@ namespace LanguageExplorerTests.Works
 			var pron1 = Cache.ServiceLocator.GetInstance<ILexPronunciationFactory>().Create();
 			entry.PronunciationsOS.Add(pron1);
 			CreateTestMediaFile(Cache, null, folder, pron1);
+
+			AddSenseToEntry(entry, "second", m_wsEn, Cache);
+			var sense = entry.SensesOS[0];
+			var sensePic = Cache.ServiceLocator.GetInstance<ICmPictureFactory>().Create();
+			sense.PicturesOS.Add(sensePic);
+			var pic = Cache.ServiceLocator.GetInstance<ICmFileFactory>().Create();
+			Cache.LangProject.MediaOC.Add(folder);
+			folder.FilesOC.Add(pic);
+			sensePic.PictureFileRA = pic;
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 
 			//SUT

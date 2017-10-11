@@ -740,7 +740,16 @@ private void ReloadPaneBar(IPaneBar paneBar)
 			{
 				// Making the tab control currently requires this first...
 				m_tcPane.StyleSheet = m_styleSheet;
+				m_tcPane.Visible = true;
 			}
+			if (m_bookmarks != null && m_bookmarks.Count > 0)
+			{
+				foreach (InterAreaBookmark bookmark in m_bookmarks.Values)
+				{
+					bookmark.Init(this, Cache, PropertyTable);
+				}
+			}
+
 			FinishInitTabPages();
 			SetInitialTabPage();
 			InitBase();

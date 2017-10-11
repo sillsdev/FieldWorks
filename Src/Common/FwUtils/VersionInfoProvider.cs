@@ -125,7 +125,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			get
 			{
 				object[] attributes = m_assembly.GetCustomAttributes(typeof(AssemblyTitleAttribute), false);
-				return (attributes != null && attributes.Length > 0) ?
+				return attributes != null && attributes.Length > 0 ?
 					((AssemblyTitleAttribute)attributes[0]).Title : InternalProductName;
 			}
 		}
@@ -193,10 +193,24 @@ namespace SIL.FieldWorks.Common.FwUtils
 						productDate = dt.ToString("yyyy/MM/dd");
 					}
 				}
+				string bitness;
+				switch (IntPtr.Size)
+				{
+					case 4:
+						bitness = "(32 bit)";
+						break;
+					case 8:
+						bitness = "(64 bit)";
+						break;
+					default:
+						bitness = "(Why hasn't he come back yet?)";
+						break;
+				}
+
 #if DEBUG
-				return string.Format(FwUtilsStrings.kstidAppVersionFmt, appVersion, productDate, "(Debug version)");
+				return string.Format(FwUtilsStrings.kstidAppVersionFmt, appVersion, productDate, bitness + "(Debug version)");
 #else
-				return string.Format(FwUtilsStrings.kstidAppVersionFmt, appVersion, productDate, "");
+				return string.Format(FwUtilsStrings.kstidAppVersionFmt, appVersion, productDate, bitness);
 #endif
 			}
 		}
