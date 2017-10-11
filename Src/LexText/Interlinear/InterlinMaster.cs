@@ -740,6 +740,14 @@ namespace SIL.FieldWorks.IText
 				m_tcPane.StyleSheet = m_styleSheet;
 				m_tcPane.Visible = true;
 			}
+			if (m_bookmarks != null && m_bookmarks.Count > 0)
+			{
+				foreach (InterAreaBookmark bookmark in m_bookmarks.Values)
+				{
+					bookmark.Init(this, Cache, propertyTable);
+				}
+			}
+
 			FinishInitTabPages(configurationParameters);
 			SetInitialTabPage();
 			m_currentTool = configurationParameters.Attributes["clerk"].Value;
