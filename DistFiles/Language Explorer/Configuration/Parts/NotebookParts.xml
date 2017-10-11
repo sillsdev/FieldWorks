@@ -3,7 +3,7 @@
 <PartInventory>
 	<bin class="RnGenericRec">
 		<part id="RnGenericRec-Detail-Title" type="detail">
-			<slice field="Title" label="Title" editor="string" labelws="true" wsempty="analysis" menu="mnuDataTree-Help"/>
+			<slice field="Title" label="Title" editor="string" labelws="true" wsempty="analysis" />
 		</part>
 
 		<part id="RnGenericRec-Detail-FurtherQuestions" type="detail">
@@ -15,7 +15,7 @@
 		</part>
 
 		<part id="RnGenericRec-Detail-Text" type="detail">
-			<obj field="Text" layout="Contents" menu="mnuDataTree-Help" ghost="Contents" ghostWs="vernacular"
+			<obj field="Text" layout="Contents" ghost="Contents" ghostWs="vernacular"
 				 ghostLabel="Text" ghostClass="Text" />
 		</part>
 
@@ -43,7 +43,7 @@
 		</part>
 
 		<part id="RnGenericRec-Detail-HeavySummary" type="detail" paramType="JtLayoutsOfThisClass">
-			<slice field="SubRecords" editor="summary" layout="default" weight="heavy" editable="no" menu="mnuDataTree-Help" header="true"/>
+			<slice field="SubRecords" editor="summary" layout="default" weight="heavy" editable="no" header="true"/>
 		</part>
 
 		<part id="RnGenericRec-Detail-Participants" type="Detail">
@@ -56,7 +56,7 @@
 		</part>
 
 		<part id="RnGenericRec-Detail-AnthroCodes" type="Detail">
-			<slice field="AnthroCodes" label="Anthropology Categories" editor="possVectorReference" menu="mnuDataTree-Help">
+			<slice field="AnthroCodes" label="Anthropology Categories" editor="possVectorReference" >
 				<deParams ws="best analysis" displayProperty="AbbrAndNameTSS"/>
 				<chooserInfo helpBrowser="false">
 					<!-- Duplicates info in Text-Detail-NotebookFields-->
@@ -66,7 +66,7 @@
 		</part>
 
 		<part id="RnGenericRec-Detail-Confidence" type="Detail">
-			<slice field="Confidence" label="Confidence" editor="possAtomicReference" menu="mnuDataTree-Help">
+			<slice field="Confidence" label="Confidence" editor="possAtomicReference" >
 				<chooserInfo>
 					<chooserLink type="goto" label="Edit the list of Confidence Levels" tool="confidenceEdit" />
 				</chooserInfo>
@@ -74,7 +74,7 @@
 		</part>
 
 		<part id="RnGenericRec-Detail-Locations" type="Detail">
-			<slice field="Locations" label="Locations" editor="possVectorReference" menu="mnuDataTree-Help">
+			<slice field="Locations" label="Locations" editor="possVectorReference" >
 				<deParams ws="best analorvern"/>
 				<chooserInfo>
 					<!-- Duplicates info in Text-Detail-NotebookFields-->
@@ -84,7 +84,7 @@
 		</part>
 
 		<part id="RnGenericRec-Detail-Researchers" type="Detail">
-			<slice field="Researchers" label="Researchers" editor="possVectorReference" menu="mnuDataTree-Help">
+			<slice field="Researchers" label="Researchers" editor="possVectorReference" >
 				<deParams ws="best analorvern"/>
 				<chooserInfo>
 					<!-- Duplicates info in Text-Detail-NotebookFields-->
@@ -94,7 +94,7 @@
 		</part>
 
 		<part id="RnGenericRec-Detail-Restrictions" type="Detail">
-			<slice field="Restrictions" label="Restrictions" editor="possVectorReference" menu="mnuDataTree-Help">
+			<slice field="Restrictions" label="Restrictions" editor="possVectorReference" >
 				<chooserInfo>
 					<chooserLink type="goto" label="Edit the list of Restrictions" tool="restrictionsEdit" />
 				</chooserInfo>
@@ -102,7 +102,7 @@
 		</part>
 
 		<part id="RnGenericRec-Detail-Sources" type="Detail">
-			<slice field="Sources" label="Sources" editor="possVectorReference" menu="mnuDataTree-Help">
+			<slice field="Sources" label="Sources" editor="possVectorReference" >
 				<deParams ws="best analorvern"/>
 				<chooserInfo>
 					<!-- Duplicates info in Text-Detail-NotebookFields-->
@@ -112,7 +112,7 @@
 		</part>
 
 		<part id="RnGenericRec-Detail-Status" type="Detail">
-			<slice field="Status" label="Status" editor="possAtomicReference" menu="mnuDataTree-Help">
+			<slice field="Status" label="Status" editor="possAtomicReference" >
 				<chooserInfo>
 					<chooserLink type="goto" label="Edit the Status list" tool="statusEdit" />
 				</chooserInfo>
@@ -120,7 +120,7 @@
 		</part>
 
 		<part id="RnGenericRec-Detail-TimeOfEvent" type="Detail">
-			<slice field="TimeOfEvent" label="Time of Event" editor="possVectorReference" menu="mnuDataTree-Help">
+			<slice field="TimeOfEvent" label="Time of Event" editor="possVectorReference" >
 				<chooserInfo>
 					<chooserLink type="goto" label="Edit the Time of Day list" tool="timeOfDayEdit" />
 				</chooserInfo>
@@ -128,7 +128,7 @@
 		</part>
 
 		<part id="RnGenericRec-Detail-Type" type="Detail">
-			<slice field="Type" label="Record Type" editor="possAtomicReference" menu="mnuDataTree-Help">
+			<slice field="Type" label="Record Type" editor="possAtomicReference" >
 				<deParams nullLabel=""/>
 				<chooserInfo>
 					<chooserLink type="goto" label="Edit the Record Types" tool="recTypeEdit" />
@@ -138,22 +138,22 @@
 
 		<part id="RnGenericRec-Detail-SeeAlso" type="Detail">
 			<slice field="SeeAlso" label="See Also" editor="custom" assemblyPath="LanguageExplorer.dll"
-			 class="LanguageExplorer.Areas.Notebook.Tools.NotebookEdit.RecordReferenceVectorSlice" menu="mnuDataTree-Help"/>
+			 class="LanguageExplorer.Areas.Notebook.Tools.NotebookEdit.RecordReferenceVectorSlice" />
 		</part>
 
 		<part id="RnGenericRec-Detail-SupportingEvidence" type="Detail">
 			<slice field="SupportingEvidence" label="Supporting Evidence" editor="custom" assemblyPath="LanguageExplorer.dll"
-			 class="LanguageExplorer.Areas.Notebook.Tools.NotebookEdit.RecordReferenceVectorSlice" menu="mnuDataTree-Help"/>
+			 class="LanguageExplorer.Areas.Notebook.Tools.NotebookEdit.RecordReferenceVectorSlice" />
 		</part>
 
 		<part id="RnGenericRec-Detail-CounterEvidence" type="Detail">
 			<slice field="CounterEvidence" label="Counter Evidence" editor="custom" assemblyPath="LanguageExplorer.dll"
-			 class="LanguageExplorer.Areas.Notebook.Tools.NotebookEdit.RecordReferenceVectorSlice" menu="mnuDataTree-Help"/>
+			 class="LanguageExplorer.Areas.Notebook.Tools.NotebookEdit.RecordReferenceVectorSlice" />
 		</part>
 
 		<part id="RnGenericRec-Detail-SupersededBy" type="Detail">
 			<slice field="SupersededBy" label="Superseded By" editor="custom" assemblyPath="LanguageExplorer.dll"
-			 class="LanguageExplorer.Areas.Notebook.Tools.NotebookEdit.RecordReferenceVectorSlice" menu="mnuDataTree-Help"/>
+			 class="LanguageExplorer.Areas.Notebook.Tools.NotebookEdit.RecordReferenceVectorSlice" />
 		</part>
 
 		<part id="RnGenericRec-Jt-Title" type="jtview">

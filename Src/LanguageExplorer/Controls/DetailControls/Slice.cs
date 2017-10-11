@@ -5,6 +5,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
@@ -19,6 +20,7 @@ using LanguageExplorer.LcmUi;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.Resources;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Utils;
@@ -45,6 +47,17 @@ namespace LanguageExplorer.Controls.DetailControls
 	/// but I worked with it quite a while without finding the true problem.
 	/// So, I went back to a Slice having a SplitContainer,
 	/// rather than the better option of it being a SplitContainer.
+	///
+	/// Update (10 OCT 2017): I (Randy R) spent more time getting a Slice to 'be a' SplitContainer,
+	/// rather than 'have a' SplitContainer. I was able to find a bug in DataTree related to resetting the splitter,
+	/// *but* I then got to thinking more, and I now think that DataTree 'is a' SplitContainer,
+	/// and Slices are not controls at all, but simply providers of the left (always a SliceTreeNode instance)
+	/// and right (some kind of view control) controls.
+	///
+	/// If that workes, then a bazillion Slice subclasses would go away, with only one Slice class remaining.
+	/// That one Slice class would then have something like two properties: TreeNodeControl & MainControl.
+	/// The DataTree would then populate its twos panels with left & right controls from the now non-Control slices it had.
+	/// The Slice factory can then be tasked with creating the Slice instance and its two controls from the xml parts/layouts.
 #endif
 	///</remarks>
 #if SLICE_IS_SPLITCONTAINER
@@ -61,6 +74,9 @@ namespace LanguageExplorer.Controls.DetailControls
 		const int MaxAbbrevWidth = 60;
 		private const string Hotlinks = "hotlinks";
 		private const string Menu = "menu";
+		private const string always = "always";
+		private const string ifdata = "ifdata";
+		private const string never = "never";
 
 		#endregion Constants
 
@@ -72,7 +88,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		//		protected MenuController m_menuController= null;
 		//end test
 
-		protected int m_indent = 0;
+		protected int m_indent;
 		protected DataTree.TreeItemState m_expansion = DataTree.TreeItemState.ktisFixed; // Default is not expandable.
 		protected string m_strLabel;
 		protected string m_strAbbr;
@@ -90,7 +106,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		protected ObjectWeight m_weight = ObjectWeight.field;
 		protected bool m_widthHasBeenSetByDataTree = false;
 		protected IPersistenceProvider m_persistenceProvider;
-
+		private Dictionary<string, ToolStripMenuItem> m_visibilityMenus = new Dictionary<string, ToolStripMenuItem>();
 		protected Slice m_parentSlice;
 		private SplitContainer m_splitContainer;
 
@@ -120,6 +136,91 @@ namespace LanguageExplorer.Controls.DetailControls
 		internal string HotlinksMenuId => XmlUtils.GetOptionalAttributeValue(CallerNode ?? ConfigurationNode, Hotlinks, string.Empty);
 
 		internal string OrdinaryMenuId => XmlUtils.GetOptionalAttributeValue(CallerNode ?? ConfigurationNode, Menu, string.Empty);
+
+		/// <summary>
+		/// Add these menus:
+		/// 1. Separator (but only if there are already items in the ContextMenuStrip).
+		/// 2. 'Field Visbility', and its three sub-menus.
+		/// 3. Have Slice subclasses to add ones they need (e.g., Writing Systems and its sub-menus).
+		/// 4. 'Help...'
+		/// </summary>
+		/// <param name="sliceTreeNodeContextMenuStripTuple"></param>
+		internal void AddCoreContextMenus(ref Tuple<ContextMenuStrip, CancelEventHandler, List<Tuple<ToolStripMenuItem, EventHandler>>> sliceTreeNodeContextMenuStripTuple)
+		{
+			ContextMenuStrip contextMenuStrip;
+			List<Tuple<ToolStripMenuItem, EventHandler>> menuItems;
+			if (sliceTreeNodeContextMenuStripTuple == null)
+			{
+				// Nobody added a context menu, we we have to do it.
+				contextMenuStrip = new ContextMenuStrip();
+				contextMenuStrip.Opening += TopLevelContextmenuOnOpening;
+				menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>();
+				sliceTreeNodeContextMenuStripTuple = new Tuple<ContextMenuStrip, CancelEventHandler, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, TopLevelContextmenuOnOpening, menuItems);
+			}
+			else
+			{
+				contextMenuStrip = sliceTreeNodeContextMenuStripTuple.Item1;
+				menuItems = sliceTreeNodeContextMenuStripTuple.Item3;
+			}
+			if (contextMenuStrip.Items.Count > 0)
+			{
+				// 1. Add separator (since there are already items in the context menu).
+				contextMenuStrip.Items.Add(new ToolStripSeparator());
+			}
+			// 2. 'Field Visbility', and its three sub-menus.
+			var contextmenu = new ToolStripMenuItem(LanguageExplorerResources.ksFieldVisibility);
+			contextMenuStrip.Items.Add(contextmenu);
+			m_visibilityMenus.Add(always, ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(menuItems, contextmenu, AlwaysVisible_Clicked, LanguageExplorerResources.ksAlwaysVisible));
+			m_visibilityMenus.Add(ifdata, ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(menuItems, contextmenu, IfDataVisibility_Click, LanguageExplorerResources.ksHiddenUnlessData));
+			m_visibilityMenus.Add(never, ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(menuItems, contextmenu, NeverVisibility_Click, LanguageExplorerResources.ksNormallyHidden));
+
+			// 3. Have Slice subclasses to add ones they need (e.g., Writing Systems and its sub-menus).
+			AddSpecialContextMenus(contextMenuStrip, menuItems);
+
+			// 4. 'Help...'
+			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Help_Clicked, LanguageExplorerResources.ksHelp, string.Empty, Keys.None, ResourceHelper.ButtonMenuHelpIcon);
+		}
+
+		private void Help_Clicked(object sender, EventArgs eventArgs)
+		{
+			ShowHelp.ShowHelpTopic(PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), GetSliceHelpTopicID());
+		}
+
+		private void AlwaysVisible_Clicked(object sender, EventArgs eventArgs)
+		{
+			SetFieldVisibility(always);
+		}
+
+		private void IfDataVisibility_Click(object sender, EventArgs eventArgs)
+		{
+			SetFieldVisibility(ifdata);
+		}
+
+		/// <summary></summary>
+		private void NeverVisibility_Click(object sender, EventArgs eventArgs)
+		{
+			SetFieldVisibility(never);
+		}
+
+		private void TopLevelContextmenuOnOpening(object sender, CancelEventArgs cancelEventArgs)
+		{
+			// Set checked state of the three visibility menus.
+			foreach (var kvp in m_visibilityMenus)
+			{
+				kvp.Value.Checked = IsVisibilityItemChecked(kvp.Key);
+				if (kvp.Value.Checked)
+				{
+					// Only one of the three is checked.
+					break;
+				}
+			}
+		}
+
+		protected virtual void PrepareToShowContextMenu()
+		{ /* No thing here. Suclasses can override and do more, if desired. */ }
+
+		protected virtual void AddSpecialContextMenus(ContextMenuStrip topLevelContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>> menuItems)
+		{ /* No thing here. Suclasses can override and add more, if desired. */ }
 
 		/// <summary></summary>
 		public object[] Key
@@ -1937,20 +2038,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			return -1;
 		}
 
-		Slice NextSlice
-		{
-			get
-			{
-				CheckDisposed();
-
-				int indexOfThis = IndexInContainer;
-				if (indexOfThis < ContainingDataTree.Slices.Count - 1)
-					return ContainingDataTree.Slices[indexOfThis + 1];
-				else
-					return null;
-			}
-		}
-
 		/// <summary>
 		/// Insert a new object of the specified class into the specified property of your object.
 		/// </summary>
@@ -2000,10 +2087,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				{
 					return -1;
 				}
-#if RANDYTODO
-				// TODO: Ok, I give up. How can a slice that is processing this method *not* have its "ContainingDataTree" property set?
-#endif
-				if (ContainingDataTree != null && ContainingDataTree.CurrentSlice != null)
+				if (ContainingDataTree.CurrentSlice != null)
 				{
 					ISilDataAccess sda = m_cache.DomainDataByFlid;
 					int chvo = insertionPosition;
@@ -2729,13 +2813,6 @@ only be sent to the subscribers one at a time and considered done as soon as som
 			return null;
 		}
 
-#if RANDYTODO
-		private void CheckVisibilityItem(UIItemDisplayProperties display, string visibility)
-		{
-			display.Checked = IsVisibilityItemChecked(visibility);
-		}
-#endif
-
 		protected bool IsVisibilityItemChecked(string visibility)
 		{
 			CheckDisposed();
@@ -2748,70 +2825,8 @@ only be sent to the subscribers one at a time and considered done as soon as som
 					continue;
 				lastPartRef = node;
 			}
-			return lastPartRef != null && XmlUtils.GetOptionalAttributeValue(lastPartRef, "visibility", "always") == visibility;
+			return lastPartRef != null && XmlUtils.GetOptionalAttributeValue(lastPartRef, "visibility", always) == visibility;
 		}
-
-		/// <summary></summary>
-		public bool OnShowFieldAlwaysVisible(object args)
-		{
-			CheckDisposed();
-
-			SetFieldVisibility("always");
-
-			return true;
-		}
-
-		/// <summary></summary>
-		public bool OnShowFieldIfData(object args)
-		{
-			CheckDisposed();
-
-			SetFieldVisibility("ifdata");
-
-			return true;
-		}
-
-		/// <summary></summary>
-		public bool OnShowFieldNormallyHidden(object args)
-		{
-			CheckDisposed();
-
-			SetFieldVisibility("never");
-
-			return true;
-		}
-
-#if RANDYTODO
-		/// <summary></summary>
-		public virtual bool OnDisplayShowFieldAlwaysVisible(object commandObject, ref UIItemDisplayProperties display)
-		{
-			CheckDisposed();
-
-			display.Enabled = true;
-			CheckVisibilityItem(display, "always");
-			return true; //we've handled this
-		}
-
-		/// <summary></summary>
-		public virtual bool OnDisplayShowFieldIfData(object commandObject, ref UIItemDisplayProperties display)
-		{
-			CheckDisposed();
-
-			display.Enabled = true;
-			CheckVisibilityItem(display, "ifdata");
-			return true; //we've handled this
-		}
-
-		/// <summary></summary>
-		public virtual bool OnDisplayShowFieldNormallyHidden(object commandObject, ref UIItemDisplayProperties display)
-		{
-			CheckDisposed();
-
-			display.Enabled = true;
-			CheckVisibilityItem(display, "never");
-			return true; //we've handled this
-		}
-#endif
 
 		/// <summary>
 		/// This is used to control the width of the slice when the data tree is being laid out.

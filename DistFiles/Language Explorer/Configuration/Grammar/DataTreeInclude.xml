@@ -1,23 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <window>
-	<!--<include path="../CommonDataTreeInclude.xml"/> -->
 <!--
   ===========================================================
   Commands
   ===========================================================
   -->
 	<commands>
-		<!--<include query="window/commands/*"/> -->
 		<command id="CmdJumpToText" label="Show in Interlinear Texts view" message="JumpToTool">
 			<parameters tool="interlinearEdit" className="Text"/>
 		</command>
 		<command id="CmdJumpToNotebook" label="Show Record in Notebook" message="JumpToTool">
 			<parameters tool="notebookEdit" className="RnGenericRecord"/>
 		</command>
-		<!--
-	No-op - no operation makes sense here
-	-->
-		<command id="CmdDataTree-Help" label="Help..." icon="Help" message="DataTreeHelp"/>
 <!--
 	Adhoc Co-prohibitions
 	-->
@@ -57,19 +51,6 @@
 		<command id="CmdDataTree-Delete-ClosedFeature-Value" label="Delete Feature Value" message="DataTreeDelete" icon="Delete">
 			<parameters field="Values" className="FsSymFeatVal"/>
 		</command>
-<!--    <command id="CmdDataTree-Insert-FeatureStructure-ClosedFeature" label="Insert Closed Feature" message="DataTreeInsert">
-	  <parameters field="FeatureSpecs" className="FsClosedValue"/>
-	</command>
-	<command id="CmdDataTree-Delete-FeatureStructure-Feature" label="Delete Feature" message="DataTreeDelete" icon="Delete">
-	  <parameters field="FeatureSpecs" className="FsFeatureSpecification"/>
-	</command>
-	<command id="CmdDataTree-Insert-FeatureStructure-ComplexFeature" label="Insert Complex Feature" message="DataTreeInsert">
-	  <parameters field="FeatureSpecs" className="FsComplexValue"/>
-	</command>
-	<command id="CmdDataTree-Delete-FeatureStructure-ComplexFeature" label="Delete Complex Feature" message="DataTreeDelete" icon="Delete">
-	  <parameters field="FeatureSpecs" className="FsComplexValue"/>
-	</command>
-	-->
 <!--
 	Parts of Speech
 	-->
@@ -136,10 +117,6 @@
   ===========================================================
   -->
 	<contextMenus>
-		<!--<include query="window/contextMenus/*"/> -->
-		<menu id="mnuDataTree-Help">
-			<!-- <item command="CmdDataTree-Help"/> -->
-		</menu>
 		<menu id="mnuDataTree-Text">
 			<item command="CmdJumpToText"/>
 		</menu>
@@ -154,19 +131,15 @@
 			<item command="CmdDataTree-Insert-Adhoc-Group-Members-Morpheme"/>
 			<item command="CmdDataTree-Insert-Adhoc-Group-Members-Allomorph"/>
 			<item command="CmdDataTree-Insert-Adhoc-Group-Members-Group"/>
-			<!-- <item command="CmdDataTree-Help"/> -->
 		</menu>
 		<menu id="mnuDataTree-Delete-Adhoc-Morpheme">
 			<item command="CmdDataTree-Delete-Adhoc-Group-Members-Morpheme"/>
-			<!-- <item command="CmdDataTree-Help"/> -->
 		</menu>
 		<menu id="mnuDataTree-Delete-Adhoc-Allomorph">
 			<item command="CmdDataTree-Delete-Adhoc-Group-Members-Allomorph"/>
-			<!-- <item command="CmdDataTree-Help"/> -->
 		</menu>
 		<menu id="mnuDataTree-Delete-Adhoc-Group">
 			<item command="CmdDataTree-Delete-Adhoc-Group-Members-Group"/>
-			<!-- <item command="CmdDataTree-Help"/> -->
 		</menu>
 
 <!--
@@ -175,61 +148,43 @@
 		<menu id="mnuDataTree-CompoundRule-LinkerAffixAllomorph">
 			<item command="CmdDataTree-Create-CompoundRule-LinkerAffixAllomorph"/>
 			<item command="CmdDataTree-Delete-CompoundRule-LinkerAffixAllomorph"/>
-			<!-- <item command="CmdDataTree-Help"/> -->
 		</menu>
 		<menu id="mnuDataTree-FeatureStructure-Feature">
 			<item command="CmdDataTree-Delete-FeatureStructure-Feature"/>
-			<!-- <item command="CmdDataTree-Help"/> -->
 		</menu>
 <!--
 	Features
 	-->
 		<menu id="mnuDataTree-ClosedFeature-Values">
 			<item command="CmdDataTree-Insert-ClosedFeature-Value"/>
-			<!-- <item command="CmdDataTree-Help"/> -->
 		</menu>
 		<menu id="mnuDataTree-ClosedFeature-Value">
 			<item command="CmdDataTree-Delete-ClosedFeature-Value"/>
-			<!-- <item command="CmdDataTree-Help"/> -->
-		</menu>
-		<menu id="mnuDataTree-FeatureStructure-Features">
-<!--      <item command="CmdDataTree-Insert-FeatureStructure-ClosedFeature"/>
-	  <item command="CmdDataTree-Insert-FeatureStructure-ComplexFeature"/>
-	  <item command="CmdDataTree-Delete-FeatureStructure-Feature"/>
-	  <item command="CmdDataTree-Delete-FeatureStructure-ComplexFeature"/> -->
-			<!-- <item command="CmdDataTree-Help"/> -->
 		</menu>
 <!--
 	Parts of Speech
 	-->
 		<menu id="mnuDataTree-POS-AffixSlots">
 			<item command="CmdDataTree-Insert-POS-AffixSlot"/>
-			<!-- <item command="CmdDataTree-Help"/> -->
 		</menu>
 		<menu id="mnuDataTree-POS-AffixSlot">
 			<item command="CmdDataTree-Delete-POS-AffixSlot"/>
-			<!-- <item command="CmdDataTree-Help"/> -->
 		</menu>
 		<menu id="mnuDataTree-POS-AffixTemplates">
 			<item command="CmdDataTree-Insert-POS-AffixTemplate"/>
-			<!-- <item command="CmdDataTree-Help"/> -->
 		</menu>
 		<menu id="mnuDataTree-POS-AffixTemplate">
 			<item command="CmdDataTree-Delete-POS-AffixTemplate"/>
 			<item command="CmdDataTree-Copy-POS-AffixTemplate"/>
-			<!-- <item command="CmdDataTree-Help"/> -->
 		</menu>
 		<menu id="mnuDataTree-POS-InflectionClass-Subclasses">
 			<item command="CmdDataTree-Insert-POS-InflectionClass-Subclasses"/>
-			<!-- <item command="CmdDataTree-Help"/> -->
 		</menu>
 		<menu id="mnuDataTree-POS-InflectionClasses">
 			<item command="CmdDataTree-Insert-POS-InflectionClass"/>
-			<!-- <item command="CmdDataTree-Help"/> -->
 		</menu>
 		<menu id="mnuDataTree-POS-InflectionClass">
 			<item command="CmdDataTree-Delete-POS-InflectionClass"/>
-			<!-- <item command="CmdDataTree-Help"/> -->
 		</menu>
 		<menu id="mnuDataTree-POS-StemNames">
 			<item command="CmdDataTree-Insert-POS-StemName"/>
@@ -245,18 +200,15 @@
 		</menu>
 		<menu id="mnuDataTree-POS-SubPossibilities">
 			<item command="CmdDataTree-Insert-POS-SubPossibilities"/>
-			<!-- <item command="CmdDataTree-Help"/> -->
 		</menu>
 <!--
 	Phonemes
 	-->
 		<menu id="mnuDataTree-Phoneme-Codes">
 			<item command="CmdDataTree-Insert-Phoneme-Code" label="Insert Grapheme"/>
-			<!-- <item command="CmdDataTree-Help"/> -->
 		</menu>
 		<menu id="mnuDataTree-Phoneme-Code">
 			<item command="CmdDataTree-Delete-Phoneme-Code"/>
-			<!-- <item command="CmdDataTree-Help"/> -->
 		</menu>
 <!--
 	Environments

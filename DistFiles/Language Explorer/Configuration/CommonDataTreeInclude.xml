@@ -3,36 +3,8 @@
   <commands>
 	<!--any old object -->
 	<command id="CmdDataTree-Delete" label="Delete {0}" message="DataTreeDelete" icon="Delete"/>
-	<command id="CmdDataTree-WritingSystemMenu-ShowAllRightNow" label="Show all right now" message="DataTreeWritingSystemsShowAll"/>
-	<command id="CmdDataTree-WritingSystemMenu-Configure" label="Configure..." message="DataTreeWritingSystemsConfigureDlg"/>
   </commands>
   <contextMenus>
-	<menu id="mnuDataTree-Object">
-		<!--<item command="CmdDataTree-Delete" />-->
-		<item label="-" translate="do not translate"/>
-		<menu id="mnuVisibility" label="Field Visibility">
-			<item command="CmdAlwaysVisible"/>
-			<item command="CmdIfData"/>
-			<item command="CmdNormallyHidden"/>
-		</menu>
-		<item command="CmdDataTree-Help"/>
-	</menu>
-	<menu id="mnuDataTree-MultiStringSlice">
-		<item label="-" translate="do not translate"/>
-		<!--Enhance so we don't have to copy the mnuVisibility <include path="CommonDataTreeInclude.xml" query="root/contextMenus/menu/menu[@id='mnuVisibility']"/> -->
-		<menu id="mnuVisibility" label="Field Visibility">
-			<item command="CmdAlwaysVisible"/>
-			<item command="CmdIfData"/>
-			<item command="CmdNormallyHidden"/>
-		</menu>
-		<menu id="DataTree-WritingSystemsMenu" label="Writing Systems">
-			<item command="CmdDataTree-WritingSystemMenu-ShowAllRightNow"/>
-			<menu list="WritingSystemOptionsForSlice" inline="true" emptyAllowed="true"
-				  behavior="singlePropertySequenceValue" property="SelectedWritingSystemHvosForCurrentContextMenu" defaultPropertyValue=""/>
-			<item command="CmdDataTree-WritingSystemMenu-Configure"/>
-		</menu>
-		<item command="CmdDataTree-Help"/>
-	 </menu>
 	  <!--A unique ShowHiddenFields menu is required for all tools so they can have their own boolProperty-->
 	<menu id="PaneBar-ShowHiddenFields-posEdit" label="">
 		<item label="Show Hidden Fields" boolProperty="ShowHiddenFields-posEdit" defaultVisible="true" settingsGroup="local"/>

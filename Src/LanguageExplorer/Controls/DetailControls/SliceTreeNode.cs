@@ -374,7 +374,6 @@ namespace LanguageExplorer.Controls.DetailControls
 						// |  > ypStart = center point of +/- box, ypStop = bottom of field.
 						//
 						// Draw the vertical line.
-						bool fMoreFieldsAtLevel = (m_myParentSlice.ContainingDataTree.NextFieldAtIndent(nInd, iSlice) != 0);
 
 						// Process a terminal level with a box.
 						if (ShowPlusMinus && nInd == nIndent && tis != DataTree.TreeItemState.ktisFixed)

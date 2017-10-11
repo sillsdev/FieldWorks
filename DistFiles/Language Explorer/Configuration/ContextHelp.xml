@@ -1,10 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <strings>
-	<!-- for now, just put all of them in this file. Since we may switch to a non XML format,
-	I'm hesitant to do the coding necessary to support including at the moment.
-	and in the near-term, we plan to ship one application ("LexText").
-	<includeBase path="put something here"/>
-	-->
 	<!--
 	attributes of an item element:
 		id             required; the identifier; should be the same as an id or attr attribute of an XDE node or command
@@ -150,15 +145,6 @@
 	<item id="CmdViewIncorrectWords">View incorrectly spelled words in use.</item>
 	<item id="CmdChangeSpelling">Change spelling of multiple occurrences.</item>
 	<item id="ITexts_AddWordsToLexicon">As I add new word glosses, create lexical entries.</item>
-	<!--
-		 Parse menu
-		 -->
-	<item id="CmdStartParser" a10status="DONE" >Start the Parser running.</item>
-	<item id="CmdStopParser" a10status="DONE" >Stop the Parser.</item>
-	<item id="CmdReloadParser" a10status="DONE" >Reload the Parser information.</item>
-	<item id="CmdTryAWord" a10status="DONE" >Have the Parser try a single word.</item>
-	<item id="CmdParseCurrentWord" a10status="DONE" >Have the Parser parse just the current word.</item>
-	<item id="CmdEditParserParameters" a10status="DONE" >Edit the special parameters for the Parser.</item>
 	<!--
 		 Help menu
 		 -->

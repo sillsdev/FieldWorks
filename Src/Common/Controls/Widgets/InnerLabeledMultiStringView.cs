@@ -418,16 +418,18 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// if true, includes unchecked active wss.</param>
 		public List<CoreWritingSystemDefinition> GetWritingSystemOptions(bool fIncludeUncheckedActiveWss)
 		{
-			var result = WritingSystemServices.GetWritingSystemList(m_cache, m_wsMagic, m_hvoObj,
-				m_forceIncludeEnglish, fIncludeUncheckedActiveWss);
+			var result = WritingSystemServices.GetWritingSystemList(m_cache, m_wsMagic, m_hvoObj, m_forceIncludeEnglish, fIncludeUncheckedActiveWss);
 			if (fIncludeUncheckedActiveWss && m_wsOptional != 0)
 			{
 				result = new List<CoreWritingSystemDefinition>(result); // just in case caller does not want it modified
-				var additionalWss = WritingSystemServices.GetWritingSystemList(m_cache, m_wsOptional, m_hvoObj,
-					m_forceIncludeEnglish, fIncludeUncheckedActiveWss);
+				var additionalWss = WritingSystemServices.GetWritingSystemList(m_cache, m_wsOptional, m_hvoObj, m_forceIncludeEnglish, true);
 				foreach (var ws in additionalWss)
+				{
 					if (!result.Contains(ws))
+					{
 						result.Add(ws);
+					}
+				}
 			}
 			return result;
 		}

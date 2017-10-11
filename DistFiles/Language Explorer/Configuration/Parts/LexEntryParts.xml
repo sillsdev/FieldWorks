@@ -6,12 +6,12 @@
 			<RecordChangeHandler assemblyPath="LanguageExplorer.dll" listName="RecordClerk-entries" class="LanguageExplorer.Areas.Lexicon.LexEntryChangeHandler"/>
 		</part>
 		<part id="LexEntry-Detail-LexemeForm" type="detail">
-			<obj field="LexemeForm" layout="AsLexemeFormBasic" menu="mnuDataTree-Help" ghost="Form" ghostWs="vernacular"
+			<obj field="LexemeForm" layout="AsLexemeFormBasic" ghost="Form" ghostWs="vernacular"
 				 ghostLabel="Lexeme Form" ghostClass="MoStemAllomorph" ghostInitMethod="SetMorphTypeToRoot" />
 		</part>
 		<part id="LexEntry-Detail-CitationFormAllV" type="detail">
 			<slice field="CitationForm" label="Lexeme" editor="multistring" ws="all vernacular" weight="light"
-				   menu="mnuDataTree-Help" contextMenu="mnuDataTree-CitationFormContext"
+				   contextMenu="mnuDataTree-CitationFormContext"
 				   tooltip="The Citation Form is used to override the Lexeme Form as the headword in the printed dictionary.">
 				<!-- removed per LT-4192 properties>
 					 <bold value="on" />
@@ -27,24 +27,20 @@
 			<seq field="Etymology" layout="Normal" ghost="Form" ghostWs="analysis" ghostLabel="Etymology" menu="mnuDataTree-Etymology" />
 		</part>
 		<part id="LexEntry-Detail-RestrictionsAllA" type="Detail">
-			<slice field="Restrictions" label="Restrictions" editor="multistring" ws="all analysis" menu="mnuDataTree-Help" />
+			<slice field="Restrictions" label="Restrictions" editor="multistring" ws="all analysis" />
 		</part>
-<!-- RANDYTODO: Leave out for now, since the version of Chorus being used insists on Palaso 3, not 4.
 		<part id="LexEntry-Detail-Messages" type="detail">
-			<slice field="Self" label="Messages" editor="Custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.Tools.Edit.ChorusMessageSlice" menu="mnuDataTree-Help" helpTopicID="khtpField-LexEntry-Messages"  />
+			<slice field="Self" label="Messages" editor="Custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.Tools.Edit.ChorusMessageSlice" helpTopicID="khtpField-LexEntry-Messages"  />
 		</part>
--->
 	<part id ="LexEntry-Detail-EntryRefsGhostComponents" type="detail">
 	  <if field="ComplexFormEntryRefs" lengthatmost="0">
-		<slice field="EntryRefs" label="Components" editor="Custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.Tools.Edit.GhostLexRefSlice"
-					   menu="mnuDataTree-Help">
+		<slice field="EntryRefs" label="Components" editor="Custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.Tools.Edit.GhostLexRefSlice" >
 		  <deParams displayProperty='HeadWord' />
 		</slice>
 	  </if>
 	</part>
 	<part id="LexEntry-Detail-PublishIn" type="Detail">
-		<slice field="PublishIn" label="Publish Entry In" tooltip="Remove a publication from this field to completely exclude this entry from that publication.  Nothing in the entry will appear, and it will not appear in references." editor="defaultVectorReference" visField="DoNotPublishIn"
-			menu="mnuDataTree-Help">
+		<slice field="PublishIn" label="Publish Entry In" tooltip="Remove a publication from this field to completely exclude this entry from that publication.  Nothing in the entry will appear, and it will not appear in references." editor="defaultVectorReference" visField="DoNotPublishIn">
 			<deParams displayProperty="ShortName" ws="best analysis" />
 			<chooserInfo>
 				<chooserLink type="goto" label="Edit the Publications list" tool="publicationsEdit" />
@@ -52,8 +48,7 @@
 		</slice>
 	</part>
 	<part id="LexEntry-Detail-PublishInForPronunciations" type="Detail">
-		<slice field="PublishIn" label="Publish Pronunciation In" tooltip="Remove a publication from this field to exclude only this pronunciation from that publication." editor="defaultVectorReference" visField="DoNotPublishIn"
-			menu="mnuDataTree-Help">
+		<slice field="PublishIn" label="Publish Pronunciation In" tooltip="Remove a publication from this field to exclude only this pronunciation from that publication." editor="defaultVectorReference" visField="DoNotPublishIn">
 			<deParams displayProperty="ShortName" ws="best analysis" />
 			<chooserInfo>
 				<chooserLink type="goto" label="Edit the Publications list" tool="publicationsEdit" />
@@ -62,18 +57,16 @@
 	</part>
 	<part id ="LexEntry-Detail-EntryRefsGhostVariantOf" type="detail">
 	  <if field="VariantEntryRefs" lengthatmost="0">
-		<slice field="EntryRefs" label="Variant of" editor="Custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.Tools.Edit.GhostLexRefSlice"
-					   menu="mnuDataTree-Help" forVariant='true' helpTopicID="khtpField-LexEntryRef-VariantOf">
+		<slice field="EntryRefs" label="Variant of" editor="Custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.Tools.Edit.GhostLexRefSlice" forVariant='true' helpTopicID="khtpField-LexEntryRef-VariantOf">
 		  <deParams displayProperty='HeadWord'/>
 		</slice>
 	  </if>
 	</part>
 	<part id="LexEntry-Detail-EntryRefs" type="detail">
-	  <seq field="EntryRefs" menu="mnuDataTree-Help"/>
+	  <seq field="EntryRefs" />
 	</part>
 		<part id="LexEntry-Detail-BibliographyAllA" type="Detail">
-			<slice field="Bibliography" label="Bibliography" editor="multistring" ws="all analysis"
-				   menu="mnuDataTree-Help" />
+			<slice field="Bibliography" label="Bibliography" editor="multistring" ws="all analysis" />
 		</part>
 		<part id="LexEntry-Jt-SenseList">
 			<para>
@@ -103,15 +96,15 @@
 			</para>
 		</part>
 		<part id="LexEntry-Detail-GrammaticalFunctionsSection" type="Detail" paramType="LiteralString">
-			<slice editor="summary" layout="default" editable="no" weight="heavy" menu="mnuDataTree-Help"
+			<slice editor="summary" layout="default" editable="no" weight="heavy"
 				   header="true" helpTopicID="khtpField-LexEntry-GrammaticalFunctionsSection" />
 		</part>
 		<part id="LexEntry-Detail-PublicationSection" type="Detail" paramType="LiteralString">
-			<slice editor="summary" layout="default" editable="no" weight="heavy" menu="mnuDataTree-Help"
+			<slice editor="summary" layout="default" editable="no" weight="heavy"
 				   header="true" helpTopicID="khtpField-LexEntry-PublicationSection" />
 		</part>
 		<part id="LexEntry-Detail-AlternateFormsSection" type="Detail" paramType="LiteralString">
-			<slice editor="summary" layout="default" editable="no" weight="heavy" menu="mnuDataTree-Help"
+			<slice editor="summary" layout="default" editable="no" weight="heavy"
 				   header="true" helpTopicID="khtpField-LexEntry-AlternateFormsSection"/>
 		</part>
 		<part id="LexEntry-Detail-AlternateForms" type="Detail">
@@ -317,7 +310,7 @@
 		</part>
 		<part id="LexEntry-Detail-ShowMainEntryIn" type="Detail">
 			<slice field="ShowMainEntryIn" label="Show As Headword In" tooltip="The current entry is included as a main entry headword only in publications shown in this field; otherwise, it only appears in references." editor="defaultVectorReference" visField="DoNotShowMainEntryIn"
-				menu="mnuDataTree-Help" chooserDlgHelpTopicID="khtpChoose-lexiconEdit-PrimaryLexemes">
+				chooserDlgHelpTopicID="khtpChoose-lexiconEdit-PrimaryLexemes">
 				<deParams displayProperty="ShortName" ws="best analysis" />
 				<chooserInfo>
 					<chooserLink type="goto" label="Edit the Publications list" tool="publicationsEdit" />
@@ -653,11 +646,10 @@
 		</part>
 		<!-- *********************************************************************************** -->
 		<part id="LexEntry-Detail-SummaryDefinitionAllA" type="Detail">
-			<slice field="SummaryDefinition" label="Summary Definition" editor="multistring" ws="all analysis"
-				   menu="mnuDataTree-Help"  />
+			<slice field="SummaryDefinition" label="Summary Definition" editor="multistring" ws="all analysis" />
 		</part>
 		<part id="LexEntry-Detail-CommentAllA" type="Detail">
-			<slice field="Comment" label="Note" editor="multistring" ws="all analysis" menu="mnuDataTree-Help"/>
+			<slice field="Comment" label="Note" editor="multistring" ws="all analysis" />
 		</part>
 		<part id="LexEntry-Jt-SummaryDefinitionPub">
 			<configureMlString field="SummaryDefinition" />
@@ -789,7 +781,7 @@
 			</multiling>
 		</part>
 		<part id="LexEntry-Detail-EntryType" type="Detail">
-			<slice field="EntryType" label="Entry Type" editor="possAtomicReference" menu="mnuDataTree-Help">
+			<slice field="EntryType" label="Entry Type" editor="possAtomicReference" >
 				<deParams ws="best analysis" changeRequiresRefresh="true" />
 				<chooserInfo>
 					<chooserLink type="goto" label="Edit the Entry Types" tool="entryTypeEdit" />
@@ -797,8 +789,7 @@
 			</slice>
 		</part>
 		<part id="LexEntry-Detail-LiteralMeaningAllA" type="detail">
-			<slice field="LiteralMeaning" label="Literal Meaning" editor="multistring" ws="all analysis"
-				   menu="mnuDataTree-Help" />
+			<slice field="LiteralMeaning" label="Literal Meaning" editor="multistring" ws="all analysis" />
 		</part>
 		<part id="LexEntry-Detail-DateCreatedAllA" type="Detail">
 			<slice field="DateCreated" label="Date Created" editor="Time">
@@ -818,7 +809,7 @@
 			</slice>
 		</part>
 		<part id="LexEntry-Detail-DialectLabelsEntry" type="Detail">
-			<slice field="DialectLabels" label="Dialect Labels (Entry)" editor="possVectorReference" menu="mnuDataTree-Help">
+			<slice field="DialectLabels" label="Dialect Labels (Entry)" editor="possVectorReference" >
 				<deParams ws="best vernoranal" displayProperty="BestAbbreviation" changeRequiresRefresh="true"/>
 				<chooserInfo>
 					<chooserLink type="goto" label="Edit the Dialect Labels list" tool="dialectsListEdit" />
@@ -838,7 +829,7 @@
 			</slice>
 		</part>
 		<part id="LexEntry-Detail-VariantFormsSection" type="Detail" paramType="LiteralString">
-			<slice editor="summary" layout="default" editable="no" weight="heavy" menu="mnuDataTree-Help" header="true" helpTopicID="khtpField-LexEntry-VariantsSection"/>
+			<slice editor="summary" layout="default" editable="no" weight="heavy" header="true" helpTopicID="khtpField-LexEntry-VariantsSection"/>
 		</part>
 		<part id="LexEntry-Detail-VariantForms" type="Detail">
 			<seq field="VariantFormEntryBackRefs" menu="mnuDataTree-VariantForms" layout="VariantSection"/>
@@ -969,7 +960,7 @@
 			</para>
 		</part>
 		<part id="LexEtymology-Detail-PrecComment" type="Detail">
-			<slice field="PrecComment" label="Preceding Annotation" editor="multistring" ws="all analysis" menu="mnuDataTree-Help" />
+			<slice field="PrecComment" label="Preceding Annotation" editor="multistring" ws="all analysis" />
 		</part>
 		<part id="LexEtymology-Jt-EtymologyPrecComment" type="jtview">
 			<para>
@@ -1010,7 +1001,7 @@
 			</para>
 		</part>
 		<part id="LexEtymology-Detail-Language" type="Detail">
-			<slice field="Language" label="Source Language" editor="possVectorReference" menu="mnuDataTree-Help" indent="true">
+			<slice field="Language" label="Source Language" editor="possVectorReference" indent="true">
 				<deParams ws="best analysis" changeRequiresRefresh="true" />
 				<chooserInfo>
 					<chooserLink type="goto" label="Edit the Languages List" tool="languagesListEdit" />
@@ -1018,22 +1009,22 @@
 			</slice>
 		</part>
 		<part id="LexEtymology-Detail-LanguageNotes" type="Detail">
-			<slice field="LanguageNotes" label="Source Language Notes" editor="multistring" ws="all analysis" menu="mnuDataTree-Help" />
+			<slice field="LanguageNotes" label="Source Language Notes" editor="multistring" ws="all analysis" />
 		</part>
 		<part id="LexEtymology-Detail-Form" type="Detail">
-			<slice field="Form" label="Source Form" editor="multistring" ws="analysis vernacular" menu="mnuDataTree-Help" />
+			<slice field="Form" label="Source Form" editor="multistring" ws="analysis vernacular" />
 		</part>
 		<part id="LexEtymology-Detail-Gloss" type="Detail">
-			<slice field="Gloss" label="Gloss" editor="multistring" ws="all analysis" menu="mnuDataTree-Help" />
+			<slice field="Gloss" label="Gloss" editor="multistring" ws="all analysis" />
 		</part>
 		<part id="LexEtymology-Detail-Comment" type="Detail">
-			<slice field="Comment" label="Following Comment" editor="multistring" ws="all analysis" menu="mnuDataTree-Help" />
+			<slice field="Comment" label="Following Comment" editor="multistring" ws="all analysis" />
 		</part>
 		<part id="LexEtymology-Detail-Bibliography" type="Detail">
-			<slice field="Bibliography" label="Bibliographic Source" editor="multistring" ws="all analysis" menu="mnuDataTree-Help" />
+			<slice field="Bibliography" label="Bibliographic Source" editor="multistring" ws="all analysis" />
 		</part>
 		<part id="LexEtymology-Detail-Note" type="Detail">
-			<slice field="Note" label="Etymology Note" editor="multistring" ws="all analysis" menu="mnuDataTree-Help" />
+			<slice field="Note" label="Etymology Note" editor="multistring" ws="all analysis" />
 		</part>
 		<part id="LexEtymology-Jt-PrecComment" type="JtView">
 			<string field="PrecComment"  ws="$ws=analysis" />
@@ -1069,7 +1060,7 @@
 			<slice field="Form" label="Pronunciation" editor="multistring" ws="all pronunciation" optionalWs="all vernacular" menu="mnuDataTree-Pronunciation" />
 		</part>
 		<part id="LexPronunciation-Detail-Location" type="Detail">
-			<slice field="Location" label="Location" editor="possAtomicReference" menu="mnuDataTree-Help" sameObject="true"><!-- assume same object as preceding field for formatting lines on display -->
+			<slice field="Location" label="Location" editor="possAtomicReference" sameObject="true"><!-- assume same object as preceding field for formatting lines on display -->
 				<deParams ws="vernacular analysis" displayProperty="VernShortNameTss"/>
 				<chooserInfo>
 					<chooserLink type="goto" label="Edit the Locations list" tool="locationsEdit" />
@@ -1086,8 +1077,7 @@
 			<slice field="Tone" label="Tone" editor="String" sameObject="true"/><!-- assume same object as preceding field for formatting lines on display -->
 		</part>
 		<part id="LexPronunciation-Detail-PublishIn" type="Detail">
-			<slice field="PublishIn" label="Publish Pronunciation In" tooltip="Remove a publication from this field to exclude only this pronunciation from that publication." editor="defaultVectorReference" visField="DoNotPublishIn"
-				menu="mnuDataTree-Help">
+			<slice field="PublishIn" label="Publish Pronunciation In" tooltip="Remove a publication from this field to exclude only this pronunciation from that publication." editor="defaultVectorReference" visField="DoNotPublishIn" >
 				<deParams displayProperty="ShortName" ws="best analysis" />
 				<chooserInfo>
 					<chooserLink type="goto" label="Edit the Publications list" tool="publicationsEdit" />
@@ -1152,7 +1142,7 @@
 			</if>
 			<if field="RefType" intequals="0">
 				<slice field="ComponentLexemes" label="Variant of" editor="Custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.Tools.Edit.EntrySequenceReferenceSlice"
-					   menu="mnuDataTree-Help" helpTopicID="khtpField-LexEntryRef-VariantOf">
+					   helpTopicID="khtpField-LexEntryRef-VariantOf">
 					<deParams displayProperty='HeadWordPlusDialect' />
 				</slice>
 			</if>
@@ -1160,26 +1150,25 @@
 		<part id="LexEntryRef-Detail-PrimaryLexemes" type="Detail">
 			<if field="RefType" intequals="1">
 				<slice field="PrimaryLexemes" label="Show Subentry under" tooltip="The current entry is shown as a subentry under the component entries shown in this field in Dictionary." editor="Custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.Tools.Edit.EntrySequenceReferenceSlice"
-					   menu="mnuDataTree-Help" chooserDlgHelpTopicID="khtpChoose-lexiconEdit-ShowSubentryUnder">
+					   chooserDlgHelpTopicID="khtpChoose-lexiconEdit-ShowSubentryUnder">
 					<deParams displayProperty='HeadWord' />
 				</slice>
 			</if>
 		</part>
 		<part id="LexEntry-Detail-ShowMinorEntry" type="Detail">
 			<if field="EntryRefs" lengthatleast="1">
-				<slice field="PublishAsMinorEntry" label="Show Minor Entry" tooltip="Show this entry as a minor entry in Dictionary." editor="checkbox" editable="true" indent="true"
-					   menu="mnuDataTree-Help"/>
+				<slice field="PublishAsMinorEntry" label="Show Minor Entry" tooltip="Show this entry as a minor entry in Dictionary." editor="checkbox" editable="true" indent="true" />
 			</if>
 		</part>
 		<part id="LexEntryRef-Detail-Summary" type="Detail">
 			<slice field="Summary" label="Comment" editor="multistring" ws="all analysis"
-				   menu="mnuDataTree-Help" helpTopicID="khtpField-lexiconEdit-LexEntryRef-EntryLevel-Comment"/>
+				   helpTopicID="khtpField-lexiconEdit-LexEntryRef-EntryLevel-Comment"/>
 		</part>
 		<part id="LexEntryRef-Detail-RefVariantForm" type="Detail">
-			<obj class="LexEntryRef" field="OwningEntry" layout="AsVariantForm" menu="mnuDataTree-Help"/>
+			<obj class="LexEntryRef" field="OwningEntry" layout="AsVariantForm" />
 		</part>
 		<part id="LexEntryRef-Detail-RefVariantDialectsEntry" type="Detail">
-			<slice field="VariantEntryDialectLabels" label="Dialect Labels (Entry)" editor="possVectorReference" sameObject="true" menu="mnuDataTree-Help">
+			<slice field="VariantEntryDialectLabels" label="Dialect Labels (Entry)" editor="possVectorReference" sameObject="true" >
 			  <deParams ws="best vernoranal" displayProperty="BestAbbreviation" changeRequiresRefresh="true" />
 			  <chooserInfo>
 				<chooserLink type="goto" label="Edit the Dialect Labels List" tool="dialectsListEdit" />
@@ -1188,7 +1177,7 @@
 		</part>
 		<part id="LexEntryRef-Detail-RefVariantEntryTypes" type="Detail">
 			<if field="RefType" intequals="0">
-				<slice field="VariantEntryTypes" label="Variant Type" editor="possVectorReference" sameObject="true" menu="mnuDataTree-Help">
+				<slice field="VariantEntryTypes" label="Variant Type" editor="possVectorReference" sameObject="true" >
 				  <deParams ws="best analysis" changeRequiresRefresh="true" />
 				  <chooserInfo>
 					<chooserLink type="goto" label="Edit the Variant Types" tool="variantEntryTypeEdit" />
@@ -1199,14 +1188,14 @@
 		<part id="LexEntryRef-Detail-RefComplexEntryTypes" type="Detail">
 <!-- ENHANCE (SteveMc): Make ComplexEntryTypes look atomic? -->
 			<if field="RefType" intequals="1">
-				<slice field="ComplexEntryTypes" label="Complex Form Type" editor="possVectorReference" menu="mnuDataTree-Help"/>
+				<slice field="ComplexEntryTypes" label="Complex Form Type" editor="possVectorReference" />
 			</if>
 		</part>
 		<part id="LexEntryRef-Detail-RefShowMinorEntry" type="Detail">
-			<slice field="HideMinorEntry" label="Show Minor Entry" editor="checkbox" editable="true" toggleValue="true" menu="mnuDataTree-Help"/>
+			<slice field="HideMinorEntry" label="Show Minor Entry" editor="checkbox" editable="true" toggleValue="true" />
 		</part>
 		<part id="LexEntryRef-Detail-RefSummary" type="Detail">
-			<slice field="Summary" label="Comment" editor="multistring" ws="all analysis" menu="mnuDataTree-Help"/>
+			<slice field="Summary" label="Comment" editor="multistring" ws="all analysis" />
 		</part>
 
 		<part id="LexEntryRef-Jt-VariantEntryTypePub" type="jtview">

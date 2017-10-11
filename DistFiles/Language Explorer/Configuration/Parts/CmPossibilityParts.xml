@@ -3,63 +3,63 @@
 <PartInventory>
   <bin class="CmPossibility">
 	<part id="CmPossibility-Detail-NameAllA" type="Detail">
-		<slice field="Name" label="Name" editor="multistring" ws="all analysis"  menu="mnuDataTree-Help"/>
+		<slice field="Name" label="Name" editor="multistring" ws="all analysis" />
 	</part>
 	  <part id="CmPossibility-Detail-NameAllV" type="Detail">
-		  <slice field="Name" label="Name" editor="multistring" ws="all vernacular"  menu="mnuDataTree-Help"/>
+		  <slice field="Name" label="Name" editor="multistring" ws="all vernacular" />
 	  </part>
 	<part id="CmPossibility-Detail-NameSubcategory" type="Detail">
-		<slice field="Name" label="Name" editor="multistring" ws="all analysis"  menu="mnuDataTree-Help" helpTopicID="hkhtpField-PartOfSpeech-Subcategory"/>
+		<slice field="Name" label="Name" editor="multistring" ws="all analysis" helpTopicID="hkhtpField-PartOfSpeech-Subcategory"/>
 	</part>
 	<part id="CmPossibility-Detail-NameAllVA" type="Detail">
-		<slice field="Name" label="Name" editor="multistring" ws="vernacular analysis"  menu="mnuDataTree-Help"/>
+		<slice field="Name" label="Name" editor="multistring" ws="vernacular analysis" />
 	</part>
 	<part id="CmPossibility-Detail-NameAllAV" type="Detail">
-		<slice field="Name" label="Name" editor="multistring" ws="analysis vernacular"  menu="mnuDataTree-Help"/>
+		<slice field="Name" label="Name" editor="multistring" ws="analysis vernacular" />
 	</part>
 	<part id="CmPossibility-Detail-NameRDEV" type="Detail">
-		<slice field="Name" label="Vernacular" editor="string" ws="vernacular"  menu="mnuDataTree-Help"/>
+		<slice field="Name" label="Vernacular" editor="string" ws="vernacular" />
 	</part>
 		<part id="CmPossibility-Detail-NameRDEA" type="Detail">
-			<slice field="Name" label="Analysis" editor="string" ws="analysis"  menu="mnuDataTree-Help"/>
+			<slice field="Name" label="Analysis" editor="string" ws="analysis" />
 		</part>
 	  <part id="CmPossibility-Detail-AbbreviationAllA" type="Detail">
-		  <slice field="Abbreviation" label="Abbreviation" editor="multistring" ws="all analysis"  menu="mnuDataTree-Help"/>
+		  <slice field="Abbreviation" label="Abbreviation" editor="multistring" ws="all analysis" />
 	  </part>
 	  <part id="CmPossibility-Detail-AbbreviationAllV" type="Detail">
-		  <slice field="Abbreviation" label="Abbreviation" editor="multistring" ws="all vernacular"  menu="mnuDataTree-Help"/>
+		  <slice field="Abbreviation" label="Abbreviation" editor="multistring" ws="all vernacular" />
 	  </part>
 	  <part id="CmPossibility-Detail-AbbreviationAllVA" type="Detail">
-		  <slice field="Abbreviation" label="Abbreviation" editor="multistring" ws="vernacular analysis"  menu="mnuDataTree-Help"/>
+		  <slice field="Abbreviation" label="Abbreviation" editor="multistring" ws="vernacular analysis" />
 	  </part>
 	  <part id="CmPossibility-Detail-AbbreviationAllAV" type="Detail">
-		  <slice field="Abbreviation" label="Abbreviation" editor="multistring" ws="analysis vernacular"  menu="mnuDataTree-Help"/>
+		  <slice field="Abbreviation" label="Abbreviation" editor="multistring" ws="analysis vernacular" />
 	  </part>
 	  <part id="CmPossibility-Detail-DescriptionAllA" type="Detail">
-		  <slice field="Description" label="Description" editor="multistring" ws="all analysis"  menu="mnuDataTree-Help"/>
+		  <slice field="Description" label="Description" editor="multistring" ws="all analysis" />
 	  </part>
 	  <part id="CmPossibility-Detail-DescriptionAllV" type="Detail">
-		  <slice field="Description" label="Description" editor="multistring" ws="all vernacular"  menu="mnuDataTree-Help"/>
+		  <slice field="Description" label="Description" editor="multistring" ws="all vernacular" />
 	  </part>
 	  <part id="CmPossibility-Detail-DescriptionAllAV" type="Detail">
-		  <slice field="Description" label="Description" editor="multistring" ws="analysis vernacular"  menu="mnuDataTree-Help"/>
+		  <slice field="Description" label="Description" editor="multistring" ws="analysis vernacular" />
 	  </part>
 	  <part id="CmPossibility-Detail-DescriptionAllVA" type="Detail">
-		  <slice field="Description" label="Description" editor="multistring" ws="vernacular analysis"  menu="mnuDataTree-Help"/>
+		  <slice field="Description" label="Description" editor="multistring" ws="vernacular analysis" />
 	  </part>
 	<part id="CmPossibility-Detail-Status" type="Detail">
-		<slice id="CmPossibilityStatus" field="Status" label="Status" editor="possAtomicReference"  menu="mnuDataTree-Help">
+		<slice id="CmPossibilityStatus" field="Status" label="Status" editor="possAtomicReference" >
 			<deParams ws="best analorvern"/>
 			<chooserInfo>
 				<chooserLink type="goto" label="Edit the Status list" tool="statusEdit"/>
 			</chooserInfo>
 		</slice>
 	</part>
-	<part id="CmPossibility-Detail-Discussion" type="Detail"  menu="mnuDataTree-Help">
-		<slice id="CmPossibilityDiscussion" field="Discussion" label="Discussion" editor="sttext"  menu="mnuDataTree-Help"/>
+	<part id="CmPossibility-Detail-Discussion" type="Detail" >
+		<slice id="CmPossibilityDiscussion" field="Discussion" label="Discussion" editor="sttext" />
 	</part>
 	<part id="CmPossibility-Detail-Confidence" type="Detail">
-		<slice id="CmPossibilityConfidence" field="Confidence" label="Confidence" editor="possAtomicReference"  menu="mnuDataTree-Help">
+		<slice id="CmPossibilityConfidence" field="Confidence" label="Confidence" editor="possAtomicReference" >
 			<deParams ws="best analysis"/>
 			<chooserInfo title="Choose Confidence Level">
 				<chooserLink type="goto" label="Edit the list of Confidence levels" tool="confidenceEdit"/>
@@ -67,7 +67,7 @@
 		</slice>
 	</part>
 	<part id="CmPossibility-Detail-Researchers" type="Detail">
-		<slice id="CmPossibilityResearchers" field="Researchers" label="Researchers" editor="possVectorReference"  menu="mnuDataTree-Help">
+		<slice id="CmPossibilityResearchers" field="Researchers" label="Researchers" editor="possVectorReference" >
 			<deParams ws="vernacular analysis" displayProperty="VernShortNameTss"/>
 			<chooserInfo guicontrol="PeopleFlatList">
 				<chooserLink type="goto" label="Edit the list of Researchers" tool="peopleEdit"/>
@@ -75,7 +75,7 @@
 		</slice>
 	</part>
 	<part id="CmPossibility-Detail-Restrictions" type="Detail">
-		<slice id="CmPossibilityRestrictions" field="Restrictions" label="Restrictions" editor="possVectorReference"  menu="mnuDataTree-Help">
+		<slice id="CmPossibilityRestrictions" field="Restrictions" label="Restrictions" editor="possVectorReference" >
 			<deParams ws="best analysis"/>
 			<chooserInfo>
 				<chooserLink type="goto" label="Edit the list of Restrictions" tool="restrictionsEdit"/>
@@ -130,11 +130,11 @@
 
   <bin class="CmSemanticDomain">
 	<part id="CmSemanticDomain-Detail-LouwNidaCodes" type="Detail">
-		<slice field="LouwNidaCodes" label="Louw &amp; Nida Codes" editor="string"  menu="mnuDataTree-Help">
+		<slice field="LouwNidaCodes" label="Louw &amp; Nida Codes" editor="string" >
 		</slice>
 	</part>
 	<part id="CmSemanticDomain-Detail-OcmCodes" type="Detail">
-		<slice field="OcmCodes" label="OCM Codes" editor="string"  menu="mnuDataTree-Help">
+		<slice field="OcmCodes" label="OCM Codes" editor="string" >
 		</slice>
 	</part>
 	<part id="CmSemanticDomain-Detail-Questions" type="Detail">
@@ -146,7 +146,7 @@
 		  <seq field="Questions" layout="RDE"/>
 	</part>
 	<part id="CmSemanticDomain-Detail-OcmRefs" type="Detail">
-		<slice field="OcmRefs" label="Anthropology Categories" editor="possVectorReference"  menu="mnuDataTree-Help">
+		<slice field="OcmRefs" label="Anthropology Categories" editor="possVectorReference" >
 			<deParams displayProperty="LongName" ws="best analysis"/>
 			<chooserInfo>
 				<chooserLink type="goto" label="Edit the Anthropology Categories" tool="anthroEdit"/>
@@ -154,7 +154,7 @@
 		</slice>
 	</part>
 	<part id="CmSemanticDomain-Detail-RelatedDomains" type="Detail">
-		<slice field="RelatedDomains" label="Related Domains" editor="possVectorReference"  menu="mnuDataTree-Help">
+		<slice field="RelatedDomains" label="Related Domains" editor="possVectorReference" >
 			<deParams displayProperty="LongName" ws="best analysis"/>
 			<chooserInfo>
 				<!-- THIS PUTS US IN THE SAME PLACE! chooserLink type="goto" label="Edit the Semantic Domains" tool="semanticDomainEdit"/ -->
@@ -169,7 +169,7 @@
 		</multiling>
 	</part>
 	<part id="CmSemanticDomain-Detail-DescriptionSummary" type="Detail">
-		<slice field="Description" editor="jtview" layout="default" editable="no" menu="mnuDataTree-Help"/>
+		<slice field="Description" editor="jtview" layout="default" editable="no" />
 	</part>
 	<part id="CmSemanticDomain-Jt-DescriptionRDE" type="jtview">
 		<multiling ws="all analysis" sep=" ">
@@ -210,31 +210,31 @@
 		</multiling>
 	</part>
 	<part id="CmDomainQ-Detail-QuestionSummary" type="Detail">
-		<slice field="Question" editor="jtview" layout="default" editable="no" menu="mnuDataTree-Help"/>
+		<slice field="Question" editor="jtview" layout="default" editable="no" />
 	</part>
 	<part id="CmDomainQ-Detail-ExampleWordsSummary" type="Detail">
-		<slice field="ExampleWords" editor="jtview" layout="default" editable="no" menu="mnuDataTree-Help"/>
+		<slice field="ExampleWords" editor="jtview" layout="default" editable="no" />
 	</part>
 	<part id="CmDomainQ-Detail-ExampleSentencesSummary" type="Detail">
-		<slice field="ExampleSentences" editor="jtview" layout="default" editable="no" menu="mnuDataTree-Help"/>
+		<slice field="ExampleSentences" editor="jtview" layout="default" editable="no" />
 	</part>
 	<part id="CmDomainQ-Detail-QuestionAllA" type="Detail">
 		<slice field="Question" label="Question" editor="multistring" ws="all analysis" menu="mnuDataTree-DeleteQuestion">
 		</slice>
 	</part>
 	<part id="CmDomainQ-Detail-ExampleWordsAllA" type="Detail">
-		<slice field="ExampleWords" label="Example Words" editor="multistring" ws="all analysis"  menu="mnuDataTree-Help">
+		<slice field="ExampleWords" label="Example Words" editor="multistring" ws="all analysis" >
 		</slice>
 	</part>
 	<part id="CmDomainQ-Detail-ExampleSentencesAllA" type="Detail">
-		<slice field="ExampleSentences" label="Example Sentences" editor="multistring" ws="all analysis"  menu="mnuDataTree-Help">
+		<slice field="ExampleSentences" label="Example Sentences" editor="multistring" ws="all analysis" >
 		</slice>
 	</part>
   </bin>
 
   <bin class="CmLocation">
 	<part id="CmLocation-Detail-AliasAllA" type="Detail">
-		<slice field="Alias" label="Alias" editor="multistring" ws="all analysis"  menu="mnuDataTree-Help">
+		<slice field="Alias" label="Alias" editor="multistring" ws="all analysis" >
 		</slice>
 	</part>
 	<part id="CmLocation-Detail-SubPossibilities" type="Detail">
@@ -254,23 +254,23 @@
 
   <bin class="CmPerson">
 	<part id="CmPerson-Detail-DateOfBirth" type="Detail">
-		<slice field="DateOfBirth" label="Date of Birth" editor="GenDate"  menu="mnuDataTree-Help">
+		<slice field="DateOfBirth" label="Date of Birth" editor="GenDate" >
 		</slice>
 	</part>
 	<part id="CmPerson-Detail-IsResearcher" type="Detail">
-		<slice field="IsResearcher" label="Is a Researcher" editor="Checkbox"  menu="mnuDataTree-Help">
+		<slice field="IsResearcher" label="Is a Researcher" editor="Checkbox" >
 		</slice>
 	</part>
 	<part id="CmPerson-Detail-DateOfDeath" type="Detail">
-		<slice field="DateOfDeath" label="Date of Death" editor="GenDate"  menu="mnuDataTree-Help">
+		<slice field="DateOfDeath" label="Date of Death" editor="GenDate" >
 		</slice>
 	</part>
 	<part id="CmPerson-Detail-AliasAllA" type="Detail">
-		<slice field="Alias" label="Alias" editor="multistring" ws="all analysis"  menu="mnuDataTree-Help">
+		<slice field="Alias" label="Alias" editor="multistring" ws="all analysis" >
 		</slice>
 	</part>
 	<part id="CmPerson-Detail-Positions" type="Detail">
-		<slice field="Positions" label="Positions" editor="possVectorReference"  menu="mnuDataTree-Help">
+		<slice field="Positions" label="Positions" editor="possVectorReference" >
 			<deParams ws="best analorvern"/>
 			<chooserInfo>
 				<chooserLink type="goto" label="Edit the Positions list" tool="positionsEdit"/>
@@ -278,7 +278,7 @@
 		</slice>
 	</part>
 	<part id="CmPerson-Detail-PlacesOfResidence" type="Detail">
-		<slice field="PlacesOfResidence" label="Place of Residence" editor="possVectorReference"  menu="mnuDataTree-Help">
+		<slice field="PlacesOfResidence" label="Place of Residence" editor="possVectorReference" >
 			<deParams ws="vernacular analysis" displayProperty="VernShortNameTss"/>
 			<chooserInfo>
 				<chooserLink type="goto" label="Edit the Locations list" tool="locationsEdit"/>
@@ -286,7 +286,7 @@
 		</slice>
 	</part>
 	<part id="CmPerson-Detail-Education" type="Detail">
-		<slice field="Education" label="Education" editor="possAtomicReference"  menu="mnuDataTree-Help">
+		<slice field="Education" label="Education" editor="possAtomicReference" >
 			<deParams ws="best analorvern"/>
 			<chooserInfo>
 				<chooserLink type="goto" label="Edit the Education list" tool="educationEdit"/>
@@ -294,7 +294,7 @@
 		</slice>
 	</part>
 	<part id="CmPerson-Detail-PlaceOfBirth" type="Detail">
-		<slice field="PlaceOfBirth" label="Place of Birth" editor="possAtomicReference"  menu="mnuDataTree-Help">
+		<slice field="PlaceOfBirth" label="Place of Birth" editor="possAtomicReference" >
 			<deParams ws="vernacular analysis" displayProperty="VernShortNameTss"/>
 			<chooserInfo>
 				<chooserLink type="goto" label="Edit the Locations list" tool="locationsEdit"/>
@@ -302,7 +302,7 @@
 		</slice>
 	</part>
 	<part id="CmPerson-Detail-Gender" type="Detail">
-		<slice field="Gender" label="Gender" editor="enumComboBox"  menu="mnuDataTree-Help">
+		<slice field="Gender" label="Gender" editor="enumComboBox" >
 			<deParams>
 				<stringList group="Gender" ids="Unknown, Male, Female"/>
 			</deParams>
@@ -315,13 +315,13 @@
 		<string field="ReverseAbbr" ws="analysis"/>
 	</part>
 	<part id="LexEntryType-Detail-ReverseAbbrAllA" type="Detail">
-		<slice field="ReverseAbbr" label="Reverse Abbr." editor="multistring" ws="all analysis"  menu="mnuDataTree-Help"/>
+		<slice field="ReverseAbbr" label="Reverse Abbr." editor="multistring" ws="all analysis" />
 	</part>
 	<part id="LexEntryType-Jt-ReverseName" type="JtView">
 		<string field="ReverseName" ws="analysis"/>
 	</part>
 	<part id="LexEntryType-Detail-ReverseNameAllA" type="Detail">
-		<slice field="ReverseName" label="Reverse Name" editor="multistring" ws="all analysis"  menu="mnuDataTree-Help"/>
+		<slice field="ReverseName" label="Reverse Name" editor="multistring" ws="all analysis" />
 	</part>
 	<part id="LexEntryType-Detail-Subtypes" type="Detail">
 		<!-- We want to display the SubPossibilities field only if the owning list has depth greater than 1 -->
@@ -372,16 +372,16 @@
 			<string field="GlossPrepend" ws="analysis"/>
 		</part>
 		<part id="LexEntryInflType-Detail-GlossPrependAllA" type="Detail">
-			<slice field="GlossPrepend" label="Prepend to Gloss" editor="multistring" ws="all analysis"  menu="mnuDataTree-Help"/>
+			<slice field="GlossPrepend" label="Prepend to Gloss" editor="multistring" ws="all analysis" />
 		</part>
 		<part id="LexEntryInflType-Jt-GlossAppend" type="JtView">
 			<string field="GlossAppend" ws="analysis"/>
 		</part>
 		<part id="LexEntryInflType-Detail-GlossAppendAllA" type="Detail">
-			<slice field="GlossAppend" label="Append to Gloss" editor="multistring" ws="all analysis"  menu="mnuDataTree-Help"/>
+			<slice field="GlossAppend" label="Append to Gloss" editor="multistring" ws="all analysis" />
 		</part>
 		<part id="LexEntryInflType-Detail-Slots" type="Detail">
-			<slice field="Slots" label="Slots" editor="defaultVectorReference" menu="mnuDataTree-Help">
+			<slice field="Slots" label="Slots" editor="defaultVectorReference" >
 				<deParams displayProperty="LongNameTSS" ws="best analorvern"/>
 				<chooserInfo text="The following slots are available" flidTextParam="5133004">
 					<chooserLink type="goto" label="Edit slots" target="TopPOS" tool="posEdit"/>
@@ -396,16 +396,16 @@
 	<bin class="LexRefType">
 	<part id="LexRefType-Detail-ReverseNameAllA" type="Detail">
 	<if field="MappingType" intmemberof="2,3,7,8,12,13">
-		<slice field="ReverseName" label="Reverse Name" editor="multistring" ws="all analysis"  menu="mnuDataTree-Help"/>
+		<slice field="ReverseName" label="Reverse Name" editor="multistring" ws="all analysis" />
 	</if>
 	</part>
 	<part id="LexRefType-Detail-ReverseAbbreviationAllA" type="Detail">
 	<if field="MappingType" intmemberof="2,3,7,8,12,13">
-	  <slice field="ReverseAbbreviation" label="Reverse Abbreviation" editor="multistring" ws="all analysis"  menu="mnuDataTree-Help"/>
+	  <slice field="ReverseAbbreviation" label="Reverse Abbreviation" editor="multistring" ws="all analysis" />
 	</if>
 	</part>
 	<part id="LexRefType-Detail-MappingType" type="Detail">
-		<slice field="MappingType" label="Reference set type" editor="enumComboBox"  menu="mnuDataTree-Help" refreshDataTreeOnChange="true">
+		<slice field="MappingType" label="Reference set type" editor="enumComboBox" refreshDataTreeOnChange="true">
 			<deParams>
 				<stringList group="MappingType" ids="SenseCollection, SensePair, SensePair2, SenseTree, SenseSequence, EntryCollection, EntryPair, EntryPair2, EntryTree, EntrySequence, EntrySenseCollection, EntrySensePair, EntrySensePair2, EntrySenseTree, EntrySenseSequence, SenseUnidirectional, EntryUnidirectional, EntrySenseUnidirectional"/>
 			</deParams>

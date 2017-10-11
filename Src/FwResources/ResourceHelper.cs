@@ -534,6 +534,16 @@ namespace SIL.FieldWorks.Resources
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
+		/// Gets the down arrow icon used on buttons that display popup menus when clicked.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public static Image ButtonMenuHelpIcon
+		{
+			get { return Helper.menuToolBarImages.Images[9]; }
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
 		/// Gets a slightly different version of the down arrow icon used on buttons that
 		/// display popup menus when clicked. This one is used in the FwComboBox widget.
 		/// To get the right appearance, the arrow needs to be one pixel further left than

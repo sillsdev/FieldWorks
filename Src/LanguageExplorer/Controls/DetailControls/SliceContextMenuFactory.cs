@@ -50,7 +50,9 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		internal Tuple<ContextMenuStrip, CancelEventHandler, List<Tuple<ToolStripMenuItem, EventHandler>>> GetOrdinaryMenu(Slice slice, string ordinaryMenuId)
 		{
-			return _ordinaryMenuCreatorMethods.ContainsKey(ordinaryMenuId) ? _ordinaryMenuCreatorMethods[ordinaryMenuId].Invoke(slice, ordinaryMenuId) : null;
+			var retval = _ordinaryMenuCreatorMethods.ContainsKey(ordinaryMenuId) ? _ordinaryMenuCreatorMethods[ordinaryMenuId].Invoke(slice, ordinaryMenuId) : null;
+			slice.AddCoreContextMenus(ref retval);
+			return retval;
 		}
 
 		/// <summary>

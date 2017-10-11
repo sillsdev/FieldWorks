@@ -2664,8 +2664,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				if (editor != null && editor == "custom")
 				{
 					Type typeFound;
-					System.Reflection.MethodInfo mi =
-						XmlViewsUtils.GetStaticMethod(node, "assemblyPath", "class", "ShowSliceForVisibleIfData", out typeFound);
+					System.Reflection.MethodInfo mi = XmlViewsUtils.GetStaticMethod(node, "assemblyPath", "class", "ShowSliceForVisibleIfData", out typeFound);
 					if (mi != null)
 					{
 						var parameters = new object[2];

@@ -115,7 +115,7 @@
 			</para>
 		</part>
 		<part id="CmBaseAnnotation-Detail-BeginObjectLink" type="Detail">
-			<slice field="BeginObject" label="Problem Object" editor="hyperlink" menu="mnuDataTree-Help"/>
+			<slice field="BeginObject" label="Problem Object" editor="hyperlink" />
 		</part>
 		<part id="Segment-Jt-BaselineText">
 			  <string field="BaselineText"/>
@@ -153,7 +153,7 @@
   </bin>
 	<bin class="CmAnnotation">
 		<part id="CmAnnotation-Detail-TextOnly" type="Detail">
-			<slice label="Text" editor="sttext" field="Text" menu="mnuDataTree-Help"/>
+			<slice label="Text" editor="sttext" field="Text" />
 		</part>
 	</bin>
 	<bin class="CmIndirectAnnotation">
@@ -172,22 +172,22 @@
 	</bin>
 	<bin class="Text">
 		<part id="Text-Detail-TitleAllWs" type="Detail">
-			<slice label="Title" editor="multistring" ws="vernacular analysis" field="Name" menu="mnuDataTree-Help"/>
+			<slice label="Title" editor="multistring" ws="vernacular analysis" field="Name" />
 		</part>
 		<part id="Text-Detail-AbbreviationAllWs" type="Detail">
-			<slice label="Abbreviation" editor="multistring" ws="vernacular analysis" field="Abbreviation" menu="mnuDataTree-Help"/>
+			<slice label="Abbreviation" editor="multistring" ws="vernacular analysis" field="Abbreviation" />
 		</part>
 		<part id="Text-Detail-SourceAllWs" type="Detail">
-			<slice label="Source" editor="multistring" ws="vernacular analysis" field="Source" menu="mnuDataTree-Help"/>
+			<slice label="Source" editor="multistring" ws="vernacular analysis" field="Source" />
 		</part>
 		<part id="Text-Detail-IsTranslated" type="Detail">
-			<slice label="Text is a translation" field="IsTranslated" editor="Checkbox" menu="mnuDataTree-Help"/>
+			<slice label="Text is a translation" field="IsTranslated" editor="Checkbox" />
 		</part>
 		<part id="Text-Detail-CommentAllWs" type="Detail">
-			<slice label="Comment" editor="multistring" ws="analysis vernacular" field="Description" menu="mnuDataTree-Help"/>
+			<slice label="Comment" editor="multistring" ws="analysis vernacular" field="Description" />
 		</part>
 		<part id="Text-Detail-Genres" type="Detail">
-			<slice field="Genres" label="Genres" editor="possVectorReference" menu="mnuDataTree-Help">
+			<slice field="Genres" label="Genres" editor="possVectorReference" >
 				<deParams ws="best analysis"/>
 				<chooserInfo>
 					<chooserLink type="goto" label="Edit the Genres" tool="genresEdit" />
@@ -243,10 +243,10 @@
 	</bin>
 	<bin class="StText">
 		<part id="StText-Detail-TitleAllWs" type="Detail">
-			<slice label="Title" editor="multistring" editable="no" ws="vernacular analysis" field="Title" menu="mnuDataTree-Help"/>
+			<slice label="Title" editor="multistring" editable="no" ws="vernacular analysis" field="Title" />
 		</part>
 		<part id="StText-Detail-IsTranslation" type="Detail">
-			<slice label="Text is a translation" field="IsTranslation" editor="Checkbox" editable="no" menu="mnuDataTree-Help"/>
+			<slice label="Text is a translation" field="IsTranslation" editor="Checkbox" editable="no" />
 		</part>
 		<part id="StText-Jt-Paragraphs" type="jtview">
 			<div>

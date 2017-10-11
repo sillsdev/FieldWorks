@@ -151,7 +151,7 @@
 			</choice>
 		</part>
 		<part id="MoDerivAffMsa-Detail-ToInflectionClass" type="Detail">
-			<slice field="ToInflectionClass" label="To Inflection Class" editor="defaultAtomicReference" menu="mnuDataTree-Help">
+			<slice field="ToInflectionClass" label="To Inflection Class" editor="defaultAtomicReference" >
 				<deParams ws="best analorvern"/>
 				<chooserInfo flidTextParam="5031004" text="The following inflection classes are available for the category {0}.">
 					<chooserLink type="goto" label="Edit the Inflection Classes for {0}" tool="posEdit"/>
@@ -159,7 +159,7 @@
 			</slice>
 		</part>
 		<part id="MoDerivAffMsa-Detail-FromInflectionClass" type="Detail">
-			<slice field="FromInflectionClass" label="From Inflection Class" editor="defaultAtomicReference" menu="mnuDataTree-Help">
+			<slice field="FromInflectionClass" label="From Inflection Class" editor="defaultAtomicReference" >
 				<deParams ws="best analorvern"/>
 				<chooserInfo flidTextParam="5031003" text="The following inflection classes are available for the category {0}.">
 					<chooserLink type="goto" label="Edit the Inflection Classes for {0}" tool="posEdit"/>
@@ -173,7 +173,7 @@
 			<slice label="To Inflection Features" field="ToMsFeatures" weight="light" editor="custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Grammar.MsaInflectionFeatureListDlgLauncherSlice"/>
 		</part>
 		<part id="MoDerivAffMsa-Detail-FromProdRestrict" type="Detail">
-			<slice field="FromProdRestrict" label='From Exception "Features"' editor="possVectorReference" menu="mnuDataTree-Help">
+			<slice field="FromProdRestrict" label='From Exception "Features"' editor="possVectorReference" >
 				<deParams ws="best analorvern"/>
 				<chooserInfo text='The following exception "features" are available.'>
 					<chooserLink type="goto" label='Edit the Exception "Features"' tool="ProdRestrictEdit"/>
@@ -181,7 +181,7 @@
 			</slice>
 		</part>
 		<part id="MoDerivAffMsa-Detail-FromStemName" type="Detail">
-			<slice field="FromStemName" label="From Stem Name" editor="defaultAtomicReference" menu="mnuDataTree-Help">
+			<slice field="FromStemName" label="From Stem Name" editor="defaultAtomicReference" >
 				<deParams ws="best analorvern"/>
 				<chooserInfo flidTextParam="5031003" text="The following stem names are available for the category {0}.">
 					<chooserLink type="goto" label="Edit the Stem Names for {0}" tool="posEdit"/>
@@ -189,7 +189,7 @@
 			</slice>
 		</part>
 		<part id="MoDerivAffMsa-Detail-ToProdRestrict" type="Detail">
-			<slice field="ToProdRestrict" label='To Exception "Features"' editor="possVectorReference" menu="mnuDataTree-Help">
+			<slice field="ToProdRestrict" label='To Exception "Features"' editor="possVectorReference" >
 				<deParams ws="best analorvern"/>
 				<chooserInfo text='The following exception "features" are available.'>
 					<chooserLink type="goto" label='Edit the Exception "Features"' tool="ProdRestrictEdit"/>
@@ -197,12 +197,12 @@
 			</slice>
 		</part>
 		<part id="MoDerivAffMsa-Detail-ToPartOfSpeech" type="Detail">
-			<slice field="ToPartOfSpeech" label="To Category" editor="atomicreferencepos" menu="mnuDataTree-Help">
+			<slice field="ToPartOfSpeech" label="To Category" editor="atomicreferencepos" >
 				<deParams ws="best analorvern"/>
 			</slice>
 		</part>
 		<part id="MoDerivAffMsa-Detail-FromPartOfSpeech" type="Detail">
-			<slice field="FromPartOfSpeech" label="From Category" editor="atomicreferencepos" menu="mnuDataTree-Help">
+			<slice field="FromPartOfSpeech" label="From Category" editor="atomicreferencepos" >
 				<deParams ws="analysis vernacular"/>
 			</slice>
 		</part>
@@ -253,17 +253,17 @@
 		</part>
 
 		<part id="MoForm-Detail-FormAllV" type="Detail">
-			<slice field="Form" label="Form" editor="multistring" ws="all vernacular" menu="mnuDataTree-Help"
+			<slice field="Form" label="Form" editor="multistring" ws="all vernacular"
 				   spell="no" helpTopicID="khtpField-lexiconEdit-AlternateFormsSection-MoStemAllomorph-Form"/>
 		</part>
 		<part id="MoForm-Detail-FormAllVAffix" type="Detail">
-			<slice field="Form" label="Form" editor="multistring" ws="all vernacular" menu="mnuDataTree-Help"
+			<slice field="Form" label="Form" editor="multistring" ws="all vernacular"
 				   spell="no" helpTopicID="khtpField-lexiconEdit-AlternateFormsSection-MoAffixAllomorph-Form"/>
 		</part>
 
 		<!-- Morph Type at Entry Level -->
 		<part id="MoForm-Detail-MorphTypeBasic" type="Detail">
-			<slice field="MorphType" label="Morph Type" editor="MorphTypeAtomicReference" menu="mnuDataTree-Help">
+			<slice field="MorphType" label="Morph Type" editor="MorphTypeAtomicReference" >
 				<deParams ws="best analysis"/>
 				<chooserInfo title="Choose Morpheme Type"/>
 			</slice>
@@ -271,7 +271,7 @@
 
 		<!-- Morph Type in Allomorph section -->
 		<part id="MoForm-Detail-MorphType" type="Detail">
-			<slice field="MorphType" label="Morph Type" editor="MorphTypeAtomicReference" menu="mnuDataTree-Help"
+			<slice field="MorphType" label="Morph Type" editor="MorphTypeAtomicReference"
 				   helpTopicID="khtpField-lexiconEdit-AlternateFormsSection-MorphType">
 				<deParams ws="best analysis"/> <!-- displayProperty="LongName" removed -->
 				<chooserInfo title="Choose Morpheme Type"/>
@@ -393,7 +393,7 @@
 			<choice>
 				<where field="MorphType" guidequals="D7F713DA-E8CF-11D3-9764-00C04F186933" >
 					<!-- infix-->
-					<slice label="Infix Positions" field="Position" editor="phoneEnvReference" menu="mnuDataTree-Help">
+					<slice label="Infix Positions" field="Position" editor="phoneEnvReference" >
 						<deParams ws="analysis vernacular"/>
 						<chooserInfo text="The following well-formed environments have been specified in the grammar area." guicontrol="EnvironmentFlatList">
 							<chooserLink type="goto" label="Edit the Environments" tool="EnvironmentEdit"/>
@@ -402,7 +402,7 @@
 				</where>
 				<where field="MorphType" guidequals="18D9B1C3-B5B6-4C07-B92C-2FE1D2281BD4" >
 					<!-- infixing interfix -->
-					<slice label="Infix Positions" field="Position" editor="phoneEnvReference" menu="mnuDataTree-Help">
+					<slice label="Infix Positions" field="Position" editor="phoneEnvReference" >
 						<deParams ws="analysis vernacular"/>
 						<chooserInfo text="The following well-formed environments have been specified in the grammar area." guicontrol="EnvironmentFlatList">
 							<chooserLink type="goto" label="Edit the Environments" tool="EnvironmentEdit"/>
@@ -438,7 +438,7 @@
 			<obj field="MorphType" layout="pubPostfix"/>
 		</part>
 		<part id="MoStemAllomorph-Detail-StemName" type="Detail">
-			<slice field="StemName" label="Stem Name" editor="defaultAtomicReference" menu="mnuDataTree-Help"
+			<slice field="StemName" label="Stem Name" editor="defaultAtomicReference"
 				   helpTopicID="khtpField-lexiconEdit-AlternateFormsSection-MoStemAllomorph-StemName">
 				<deParams ws="best analorvern"/>
 				<chooserInfo text="The following stem names are available for the currently chosen categories.">
@@ -447,7 +447,7 @@
 			</slice>
 		</part>
 		<part id="MoStemAllomorph-Detail-StemNameForLexemeForm" type="Detail">
-			<slice field="StemName" label="Stem Name" editor="defaultAtomicReference" menu="mnuDataTree-Help"  helpTopicID="khtpField-LexemeForm-StemName">
+			<slice field="StemName" label="Stem Name" editor="defaultAtomicReference" helpTopicID="khtpField-LexemeForm-StemName">
 				<deParams ws="best analorvern"/>
 				<chooserInfo text="The following stem names are available for the currently chosen categories.">
 					<chooserLink type="goto" label="Edit the Stem Names for categories" tool="posEdit"/>
@@ -457,7 +457,7 @@
 	</bin>
 	<bin class="MoAffixForm">
 		<part id="MoAffixForm-Detail-InflectionClasses" type="Detail">
-			<slice field="InflectionClasses" label="Inflection Classes" editor="defaultVectorReference" menu="mnuDataTree-Help"
+			<slice field="InflectionClasses" label="Inflection Classes" editor="defaultVectorReference"
 				   helpTopicID="khtpField-lexiconEdit-AlternateFormsSection-MoAffixAllomorph-InflectionClasses">
 				<deParams ws="best analorvern"/>
 				<chooserInfo text="The following inflection classes are available for the currently chosen categories.">
@@ -466,7 +466,7 @@
 			</slice>
 		</part>
 		<part id="MoAffixForm-Detail-InflectionClassesForLexemeForm" type="Detail">
-			<slice field="InflectionClasses" label="Inflection Classes" editor="defaultVectorReference" menu="mnuDataTree-Help">
+			<slice field="InflectionClasses" label="Inflection Classes" editor="defaultVectorReference" >
 				<deParams ws="best analorvern"/>
 				<chooserInfo text="The following inflection classes are available for the currently chosen categories.">
 					<chooserLink type="goto" label="Edit the Inflection Classes for categories" tool="posEdit"/>
@@ -484,7 +484,7 @@
 	</bin>
 	<bin class="MoUnclassifiedAffixMsa">
 		<part id="MoUnclassifiedAffixMsa-Detail-PartOfSpeech" type="Detail">
-			<slice field="PartOfSpeech" label="Category" editor="atomicreferencepos" menu="mnuDataTree-Help">
+			<slice field="PartOfSpeech" label="Category" editor="atomicreferencepos" >
 				<deParams ws="best analorvern"/>
 			</slice>
 		</part>
@@ -500,12 +500,12 @@
 	</bin>
 	<bin class="MoInflAffMsa">
 		<part id="MoInflAffMsa-Detail-PartOfSpeech" type="Detail">
-			<slice field="PartOfSpeech" label="Category" editor="atomicreferencepos" menu="mnuDataTree-Help">
+			<slice field="PartOfSpeech" label="Category" editor="atomicreferencepos" >
 				<deParams ws="best analorvern"/>
 			</slice>
 		</part>
 		<part id="MoInflAffMsa-Detail-Slots" type="Detail">
-			<slice field="Slots" label="Slots" editor="defaultVectorReference" menu="mnuDataTree-Help">
+			<slice field="Slots" label="Slots" editor="defaultVectorReference" >
 				<deParams ws="best analorvern"/>
 				<chooserInfo text="The following slots are available to category {0}" flidTextParam="5038005">
 					<chooserLink type="goto" label="Edit slots for {0}" target="TopPOS" tool="posEdit"/>
@@ -516,7 +516,7 @@
 			<slice label="Inflection Features" field="InflFeats" weight="light" editor="custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Grammar.MsaInflectionFeatureListDlgLauncherSlice"/>
 		</part>
 		<part id="MoInflAffMsa-Detail-FromProdRestrict" type="Detail">
-			<slice field="FromProdRestrict" label='From Exception "Features"' editor="possVectorReference" menu="mnuDataTree-Help">
+			<slice field="FromProdRestrict" label='From Exception "Features"' editor="possVectorReference" >
 				<deParams ws="best analorvern"/>
 				<chooserInfo text='The following exception "features" are available.'>
 					<chooserLink type="goto" label='Edit the Exception "Features"' tool="ProdRestrictEdit"/>
@@ -624,7 +624,7 @@
 			<obj field="PartOfSpeech" layout="GreenAbbrPara"/>
 		</part>
 		<part id="MoStemMsa-Detail-InflectionClass" type="Detail">
-			<slice field="InflectionClass" label="Inflection Class" editor="defaultAtomicReference" menu="mnuDataTree-Help" chooserDlgHelpTopicID="khtpChoose-InflectionClass">
+			<slice field="InflectionClass" label="Inflection Class" editor="defaultAtomicReference" chooserDlgHelpTopicID="khtpChoose-InflectionClass">
 				<deParams ws="best analorvern"/>
 				<chooserInfo flidTextParam="5001002" text="The following inflection classes are available for the category {0}.">
 					<chooserLink type="goto" label="Edit the Inflection Classes for {0}" tool="posEdit"/>
@@ -632,7 +632,7 @@
 			</slice>
 		</part>
 		<part id="MoStemMsa-Detail-InflectionClassDisabled" type="Detail">
-			<slice field="InflectionClass" label="Inflection Class" editor="defaultAtomicReferenceDisabled" textStyle="Disabled Text" menu="mnuDataTree-Help" chooserDlgHelpTopicID="khtpChoose-InflectionClass" >
+			<slice field="InflectionClass" label="Inflection Class" editor="defaultAtomicReferenceDisabled" textStyle="Disabled Text" chooserDlgHelpTopicID="khtpChoose-InflectionClass" >
 				<deParams ws="best analorvern"/>
 				<chooserInfo flidTextParam="5001002" text="The following inflection classes are available for the category {0}.">
 					<chooserLink type="goto" label="Edit the Inflection Classes for {0}" tool="posEdit"/>
@@ -643,7 +643,7 @@
 			<slice label="Inflection Features" field="MsFeatures" weight="light" editor="custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Grammar.MsaInflectionFeatureListDlgLauncherSlice"/>
 		</part>
 		<part id="MoStemMsa-Detail-ProdRestrict" type="Detail">
-			<slice field="ProdRestrict" label='Exception "Features"' editor="possVectorReference" menu="mnuDataTree-Help">
+			<slice field="ProdRestrict" label='Exception "Features"' editor="possVectorReference" >
 				<deParams ws="best analorvern"/>
 				<chooserInfo text='The following exception "features" are available.'>
 					<chooserLink type="goto" label='Edit the Exception "Features"' tool="ProdRestrictEdit"/>
@@ -651,24 +651,24 @@
 			</slice>
 		</part>
 		<part id="MoStemMsa-Detail-PartOfSpeech" type="Detail">
-			<slice field="PartOfSpeech" label="Category" editor="atomicreferencepos" menu="mnuDataTree-Help">
+			<slice field="PartOfSpeech" label="Category" editor="atomicreferencepos" >
 				<deParams ws="best analorvern"/>
 			</slice>
 		</part>
 		<part id="MoStemMsa-Detail-Category" type="Detail">
-			<slice field="PartOfSpeech" label="Category" editor="atomicreferencepos" menu="mnuDataTree-Help">
+			<slice field="PartOfSpeech" label="Category" editor="atomicreferencepos" >
 				<deParams ws="best analorvern"/>
 			</slice>
 		</part>
 		<part id="MoStemMsa-Detail-CategoryDisabled" type="Detail">
-			<slice field="PartOfSpeech" label="Category" editor="atomicreferenceposdisabled" menu="mnuDataTree-Help">
+			<slice field="PartOfSpeech" label="Category" editor="atomicreferenceposdisabled" >
 				<deParams ws="best analorvern">
 					<forecolor>GrayText</forecolor>
 				</deParams>
 			</slice>
 		</part>
 		<part id="MoStemMsa-Detail-InflectionClass" type="Detail">
-			<slice field="InflectionClass" label="Inflection Class" editor="defaultAtomicReference" menu="mnuDataTree-Help" chooserDlgHelpTopicID="khtpChoose-InflectionClass">
+			<slice field="InflectionClass" label="Inflection Class" editor="defaultAtomicReference" chooserDlgHelpTopicID="khtpChoose-InflectionClass">
 				<deParams ws="best analorvern"/>
 				<chooserInfo flidTextParam="5001002" text="The following inflection classes are available for the category {0}.">
 					<chooserLink type="goto" label="Edit the Inflection Classes for {0}" tool="posEdit"/>
@@ -676,7 +676,7 @@
 			</slice>
 		</part>
 		<part id="MoStemMsa-Detail-InflectionClassDisabled" type="Detail">
-			<slice field="InflectionClass" label="Inflection Class" editor="defaultAtomicReferenceDisabled" menu="mnuDataTree-Help" chooserDlgHelpTopicID="khtpChoose-InflectionClass">
+			<slice field="InflectionClass" label="Inflection Class" editor="defaultAtomicReferenceDisabled" chooserDlgHelpTopicID="khtpChoose-InflectionClass">
 				<deParams ws="best analorvern">
 					<forecolor>GrayText</forecolor>
 				</deParams>
@@ -689,7 +689,7 @@
 			<obj field="PartOfSpeech" layout="NameBest"/>
 		</part>
 		<part id="MoStemMsa-Detail-FromPartsOfSpeech" type="Detail">
-			<slice field="FromPartsOfSpeech" label="Attaches to Categories" editor="defaultVectorReference" menu="mnuDataTree-Help">
+			<slice field="FromPartsOfSpeech" label="Attaches to Categories" editor="defaultVectorReference" >
 				<deParams ws="best analorvern"/>
 				<chooserInfo text="The following categories are available.">
 					<chooserLink type="goto" label="Add a category" tool="posEdit"/>
@@ -796,7 +796,7 @@
 			<slice field="SecondaryOrder" label="Secondary Order" editor="Integer"/>
 		</part>
 		<part id="MoMorphType-Detail-SecondaryOrder" type="Detail">
-			<slice field="SecondaryOrder" label="Secondary Order" editor="Integer" menu="mnuDataTree-Help"/>
+			<slice field="SecondaryOrder" label="Secondary Order" editor="Integer" />
 		</part>
 		<part id="MoMorphType-Jt-SimpleName" type="jtview">
 			<string field="Name" ws="best analysis"/>
@@ -810,13 +810,13 @@
 	</bin>
 	<bin class="PartOfSpeech">
 		<part id="PartOfSpeech-Detail-AffixSlotsSection" type="Detail" paramType="LiteralString">
-			<slice editor="summary" layout="default" editable="no" weight="heavy" menu="mnuDataTree-Help" header="true" helpTopicID="khtpField-PartOfSpeech-AffixSlotsSection"/>
+			<slice editor="summary" layout="default" editable="no" weight="heavy" header="true" helpTopicID="khtpField-PartOfSpeech-AffixSlotsSection"/>
 		</part>
 		<part id="PartOfSpeech-Detail-AffixSlots" type="Detail">
 			<seq field="AffixSlots" layout="EditSlot"/>
 		</part>
 		<part id="PartOfSpeech-Detail-AffixTemplatesSection" type="Detail" paramType="LiteralString">
-			<slice editor="summary" layout="default" editable="no" weight="heavy" menu="mnuDataTree-Help" header="true" helpTopicID="khtpField-PartOfSpeech-AffixTemplatesSection"/>
+			<slice editor="summary" layout="default" editable="no" weight="heavy" header="true" helpTopicID="khtpField-PartOfSpeech-AffixTemplatesSection"/>
 		</part>
 		<part id="PartOfSpeech-Detail-AffixTemplates" type="Detail">
 			<seq field="AffixTemplates" layout="default"/>
@@ -828,7 +828,7 @@
 			</ifnot>
 		</part>
 		<part id="PartOfSpeech-Detail-DefaultInflectionClass" type="Detail">
-			<slice field="DefaultInflectionClass" label="Default Inflection Class" editor="defaultAtomicReference" menu="mnuDataTree-Help">
+			<slice field="DefaultInflectionClass" label="Default Inflection Class" editor="defaultAtomicReference" >
 				<deParams ws="best analorvern"/>
 				<chooserInfo>
 					<chooserLink type="goto" label="Edit the Inflection Classes for {0}." tool="posEdit"/>
@@ -836,13 +836,13 @@
 			</slice>
 		</part>
 		<part id="PartOfSpeech-Detail-InflectionClassesSection" type="Detail" paramType="LiteralString">
-			<slice editor="summary" layout="default" editable="no" weight="heavy" menu="mnuDataTree-Help" header="true" helpTopicID="khtpField-MoInflClass-InflectionClassInfo" />
+			<slice editor="summary" layout="default" editable="no" weight="heavy" header="true" helpTopicID="khtpField-MoInflClass-InflectionClassInfo" />
 		</part>
 		<part id="PartOfSpeech-Detail-InflectionClasses" type="Detail">
 		   <seq field="InflectionClasses" layout="EditInflectionClass"/>
 		</part>
 		<part id="PartOfSpeech-Detail-StemNamesSection" type="Detail" paramType="LiteralString">
-			<slice editor="summary" layout="default" editable="no" weight="heavy" menu="mnuDataTree-Help" header="true" helpTopicID="khtpField-PartOfSpeech-StemNamesSection"/>
+			<slice editor="summary" layout="default" editable="no" weight="heavy" header="true" helpTopicID="khtpField-PartOfSpeech-StemNamesSection"/>
 		</part>
 		<part id="PartOfSpeech-Detail-StemNames" type="Detail">
 			<seq field="StemNames" layout="EditStemName"/>
@@ -866,7 +866,7 @@
 			<string field="Name" ws="best analysis"/>
 		</part>
 		<part id="PartOfSpeech-Detail-InflectableFeatsSection" type="Detail" paramType="LiteralString">
-			<slice editor="summary" layout="default" editable="no" weight="heavy" menu="mnuDataTree-Help" header="true" helpTopicID="khtpField-posEdit-PartOfSpeech-Features" />
+			<slice editor="summary" layout="default" editable="no" weight="heavy" header="true" helpTopicID="khtpField-posEdit-PartOfSpeech-Features" />
 		</part>
 		<part id="PartOfSpeech-Detail-InflectableFeats" type="Detail">
 			<slice field="InflectableFeats" label="Inflectable Features" editor="defaultVectorReference">
@@ -877,7 +877,7 @@
 			</slice>
 		</part>
 		<part id="PartOfSpeech-Detail-SubCategoriesSection" type="Detail" paramType="LiteralString">
-			<slice editor="summary" layout="default" editable="no" weight="heavy" menu="mnuDataTree-Help" header="true"/>
+			<slice editor="summary" layout="default" editable="no" weight="heavy" header="true"/>
 		</part>
 		<part id="PartOfSpeech-Detail-SubPossibilities" type="Detail">
 			<!-- We want to display the SubPossibilities field only if the owning list has depth greater than 1 -->
@@ -910,10 +910,10 @@
 	</bin>
 	<bin class="MoInflAffixSlot">
 		<part id="MoInflAffixSlot-Detail-NameAllA" type="Detail">
-			<slice field="Name" label="Name" editor="multistring" ws="all analysis" menu="mnuDataTree-Help"/>
+			<slice field="Name" label="Name" editor="multistring" ws="all analysis" />
 		</part>
 		<part id="MoInflAffixSlot-Detail-DescriptionAllA" type="Detail">
-			<slice field="Description" label="Description" editor="multistring" ws="all analysis" menu="mnuDataTree-Help"/>
+			<slice field="Description" label="Description" editor="multistring" ws="all analysis" />
 		</part>
 		<part id="MoInflAffixSlot-Jt-SlotSummary" type="jtview">
 			<lit/>
@@ -1354,27 +1354,27 @@
 		</part>
 		<part id="MoInflAffixTemplate-Detail-NameAllA" type="Detail">
 			<if field="Disabled" boolequals="true">
-				<slice field="Name" label="Name" editor="multistring" ws="all analysis" textStyle="Disabled Text" menu="mnuDataTree-Help"/>
+				<slice field="Name" label="Name" editor="multistring" ws="all analysis" textStyle="Disabled Text" />
 			</if>
 			<if field="Disabled" boolequals="false">
-				<slice field="Name" label="Name" editor="multistring" ws="all analysis" textStyle="Default Paragraph Characters" menu="mnuDataTree-Help"/>
+				<slice field="Name" label="Name" editor="multistring" ws="all analysis" textStyle="Default Paragraph Characters" />
 			</if>
 		</part>
 		<part id="MoInflAffixTemplate-Detail-DescriptionAllA" type="Detail">
 			<if field="Disabled" boolequals="true">
-				<slice field="Description" label="Description" editor="multistring" ws="all analysis" textStyle="Disabled Text" menu="mnuDataTree-Help"/>
+				<slice field="Description" label="Description" editor="multistring" ws="all analysis" textStyle="Disabled Text" />
 			</if>
 			<if field="Disabled" boolequals="false">
-				<slice field="Description" label="Description" editor="multistring" ws="all analysis" textStyle="Default Paragraph Characters" menu="mnuDataTree-Help"/>
+				<slice field="Description" label="Description" editor="multistring" ws="all analysis" textStyle="Default Paragraph Characters" />
 			</if>
 		</part>
 		<part id="MoInflAffixTemplate-Detail-TemplateTable" type="Detail">
-			<slice id="TemplateTable" label="Table" editor="Custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Grammar.Tools.PosEdit.InflAffixTemplateSlice" layout="TemplateTablex" menu="mnuDataTree-Help" helpTopicID="khtpField-MoInflAffixTemplate-Table">
+			<slice id="TemplateTable" label="Table" editor="Custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Grammar.Tools.PosEdit.InflAffixTemplateSlice" layout="TemplateTablex" helpTopicID="khtpField-MoInflAffixTemplate-Table">
 				<deParams menu="mnuInflAffixTemplate-TemplateTable"/>
 			</slice>
 		</part>
 		<part id="MoInflAffixTemplate-Detail-Message" type="detail" paramType="JtLayoutsOfThisClass">
-			<slice editor="jtview" layout="default" editable="no" menu="mnuDataTree-Help" helpTopicID="khtpField-MoInflAffixTemplate-Note" />
+			<slice editor="jtview" layout="default" editable="no" helpTopicID="khtpField-MoInflAffixTemplate-Note" />
 		</part>
 		<part id="MoInflAffixTemplate-Jt-SpecialNote" type="jtview">
 			<if field="Disabled" boolequals="true">
@@ -1395,7 +1395,7 @@
 			<slice field="Final" label="Requires more derivation" editor="Checkbox"  toggleValue="true" />
 		</part>
 		<part id="MoInflAffixTemplate-Detail-Active" type="detail">
-			<slice field="Disabled" label="Active" editor="checkboxwithrefresh" editable="true" toggleValue="true" menu="mnuDataTree-Help"/>
+			<slice field="Disabled" label="Active" editor="checkboxwithrefresh" editable="true" toggleValue="true" />
 		</part>
 		<part id="MoInflAffixTemplate-Jt-TemplateTabley" type="jtview">
 			<table columns="%ColumnCount">
@@ -1660,16 +1660,16 @@
 	</bin>
 	<bin class="MoStemName">
 		<part id="MoStemName-Detail-NameAllA" type="Detail">
-			<slice field="Name" label="Name" editor="multistring" ws="all analysis" menu="mnuDataTree-Help"/>
+			<slice field="Name" label="Name" editor="multistring" ws="all analysis" />
 		</part>
 		<part id="MoStemName-Detail-AbbreviationAllA" type="Detail">
-			<slice field="Abbreviation" label="Abbreviation" editor="multistring" ws="all analysis" menu="mnuDataTree-Help"/>
+			<slice field="Abbreviation" label="Abbreviation" editor="multistring" ws="all analysis" />
 		</part>
 		<part id="MoStemName-Detail-DescriptionAllA" type="Detail">
-			<slice field="Description" label="Description" editor="multistring" ws="all analysis" menu="mnuDataTree-Help"/>
+			<slice field="Description" label="Description" editor="multistring" ws="all analysis" />
 		</part>
 		<part id="MoStemName-Detail-StemNameRegionsSection" type="Detail" paramType="LiteralString">
-			<slice editor="summary" layout="default" editable="no" menu="mnuDataTree-Help" helpTopicID="khtpField-PartOfSpeech-StemNameRegionsSection"/>
+			<slice editor="summary" layout="default" editable="no" helpTopicID="khtpField-PartOfSpeech-StemNameRegionsSection"/>
 		</part>
 		<part id="MoStemName-Detail-StemNameRegions" type="Detail">
 			<seq field="Regions" layout="EditStemNameRegion"/>
@@ -1686,13 +1686,13 @@
 			</para>
 		</part>
 		<part id="FsFeatStrucType-Detail-NameAllA" type="Detail">
-			<slice field="Name" label="Name" editor="multistring" ws="all analysis" menu="mnuDataTree-Help"/>
+			<slice field="Name" label="Name" editor="multistring" ws="all analysis" />
 		</part>
 		<part id="FsFeatStrucType-Detail-AbbreviationAllA" type="Detail">
-			<slice field="Abbreviation" label="Abbreviation" editor="multistring" ws="all analysis" menu="mnuDataTree-Help"/>
+			<slice field="Abbreviation" label="Abbreviation" editor="multistring" ws="all analysis" />
 		</part>
 		<part id="FsFeatStrucType-Detail-DescriptionAllA" type="Detail">
-			<slice field="Description" label="Description" editor="multistring" ws="all analysis" menu="mnuDataTree-Help"/>
+			<slice field="Description" label="Description" editor="multistring" ws="all analysis" />
 		</part>
 		<part id="FsFeatStrucType-Detail-Features" type="Detail">
 			<slice field="Features" label="Features" editor="defaultVectorReference">
@@ -1722,7 +1722,7 @@
 			<slice label="Region Features" weight="light" editor="custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Grammar.MsaInflectionFeatureListDlgLauncherSlice"/>
 		</part>
 		<part id="FsFeatStruc-Detail-Type" type="Detail">
-			<slice field="Type" label="Feature Type" editor="defaultAtomicReference" menu="mnuDataTree-Help">
+			<slice field="Type" label="Feature Type" editor="defaultAtomicReference" >
 				<deParams ws="best analorvern"/>
 				<chooserInfo text="The following feature types are available.">
 					<chooserLink type="goto" label="Edit the Feature Types" tool="featureTypesAdvancedEdit"/>
@@ -1744,10 +1744,10 @@
 	</bin>
 	<bin class="FsFeatureSpecification">
 		<part id="FsFeatureSpecification-Detail-Feature" type="Detail">
-			<slice field="Feature" label="Feature" editor="defaultAtomicReference" menu="mnuDataTree-Help"/>
+			<slice field="Feature" label="Feature" editor="defaultAtomicReference" />
 		</part>
 		<part id="FsFeatureSpecification-Detail-FeatureSpecs" type="Detail">
-			<slice field="Feature" label="Feature" editor="defaultAtomicReference" menu="mnuDataTree-Help"/>
+			<slice field="Feature" label="Feature" editor="defaultAtomicReference" />
 		</part>
 		<part id="FsFeatureSpecification-Jt-FeatureSummary" type="jtview">
 			<lit/>
@@ -1755,20 +1755,20 @@
 	</bin>
 	<bin class="FsClosedValue">
 		<part id="FsClosedValue-Detail-Feature" type="Detail">
-			<slice field="Feature" label="Name" editor="defaultAtomicReference" menu="mnuDataTree-Help"/>
+			<slice field="Feature" label="Name" editor="defaultAtomicReference" />
 		</part>
 		<part id="FsClosedValue-Detail-Value" type="Detail">
-			<slice field="Value" label="Value" editor="defaultAtomicReference" menu="mnuDataTree-Help"/>
+			<slice field="Value" label="Value" editor="defaultAtomicReference" />
 		</part>
 		<part id="FsClosedValue-Detail-FeatureSpecs" type="Detail">
 			<!-- I don't know why the following just comes out as a plain old atomic ref chooser -->
-			<slice field="Feature" label="Feature" editor="defaultAtomicReference" menu="mnuDataTree-Help">
+			<slice field="Feature" label="Feature" editor="defaultAtomicReference" >
 				<deParams ws="best analysis"/>
 				<chooserInfo text="The following features are available.">
 					<chooserLink type="goto" label="Edit the Category Inflectable Features" tool="posEdit"/>
 				</chooserInfo>
 			</slice>
-			<slice field="Value" label="Value" editor="defaultAtomicReference" menu="mnuDataTree-Help"/>
+			<slice field="Value" label="Value" editor="defaultAtomicReference" />
 		</part>
 		<part id="FsClosedValue-Jt-FeatureSummary" type="jtview">
 			<lit/>
@@ -1776,20 +1776,20 @@
 	</bin>
 	<bin class="FsComplexValue">
 		<part id="FsComplexValue-Detail-Feature" type="Detail">
-			<slice field="Feature" label="Name" editor="defaultAtomicReference" menu="mnuDataTree-Help"/>
+			<slice field="Feature" label="Name" editor="defaultAtomicReference" />
 		</part>
 		<part id="FsComplexValue-Detail-Value" type="Detail">
 			<obj field="Value" label="Nested Features" layout="NestedInflFeats"/>
 		</part>
 		<part id="FsComplexValue-Detail-FeatureSpecs" type="Detail">
 			<!-- I don't know why the following just comes out as a plain old atomic ref chooser -->
-			<slice field="Feature" label="Feature" editor="defaultAtomicReference" menu="mnuDataTree-Help">
+			<slice field="Feature" label="Feature" editor="defaultAtomicReference" >
 				<deParams ws="best analysis"/>
 				<chooserInfo text="The following features are available.">
 					<chooserLink type="goto" label="Edit the Category Inflectable Features" tool="posEdit"/>
 				</chooserInfo>
 			</slice>
-			<slice field="Value" label="Value" editor="defaultAtomicReference" menu="mnuDataTree-Help"/>
+			<slice field="Value" label="Value" editor="defaultAtomicReference" />
 		</part>
 		<part id="FsComplexValue-Jt-FeatureSummary" type="jtview">
 			<lit/>
@@ -1797,19 +1797,19 @@
 	</bin>
 	<bin class="FsFeatDefn">
 		<part id="FsFeatDefn-Detail-NameAllA" type="Detail">
-			<slice field="Name" label="Name" editor="multistring" ws="all analysis" menu="mnuDataTree-Help"/>
+			<slice field="Name" label="Name" editor="multistring" ws="all analysis" />
 		</part>
 		<part id="FsFeatDefn-Detail-AbbreviationAllA" type="Detail">
-			<slice field="Abbreviation" label="Abbreviation" editor="multistring" ws="all analysis" menu="mnuDataTree-Help"/>
+			<slice field="Abbreviation" label="Abbreviation" editor="multistring" ws="all analysis" />
 		</part>
 		<part id="FsFeatDefn-Detail-DescriptionAllA" type="Detail">
-			<slice field="Description" label="Description" editor="multistring" ws="all analysis" menu="mnuDataTree-Help"/>
+			<slice field="Description" label="Description" editor="multistring" ws="all analysis" />
 		</part>
 		<part id="FsFeatDefn-Detail-GlossAbbreviationAllA" type="Detail" visibility="never">
-			<slice field="GlossAbbreviation" label="Gloss Abbreviation" editor="multistring" ws="all analysis" menu="mnuDataTree-Help"/>
+			<slice field="GlossAbbreviation" label="Gloss Abbreviation" editor="multistring" ws="all analysis" />
 		</part>
 		<part id="FsFeatDefn-Detail-RightGlossSepAllA" type="Detail">
-			<slice field="RightGlossSep" label="Right Gloss Separator" editor="multistring" ws="all analysis" menu="mnuDataTree-Help"/>
+			<slice field="RightGlossSep" label="Right Gloss Separator" editor="multistring" ws="all analysis" />
 		</part>
 		<part id="FsFeatDefn-Jt-FsFeatDefnSummary" type="jtview">
 			<string field="Name" ws="analysis"/>
@@ -1829,7 +1829,7 @@
 			</para>
 		</part>
 		<part id="FsComplexFeature-Detail-Type" type="Detail">
-			<slice field="Type" label="Type" editor="defaultAtomicReference" menu="mnuDataTree-Help" chooserDlgHelpTopicID="khtpField-featuresAdvancedEdit-FsComplexFeature-Type"/>
+			<slice field="Type" label="Type" editor="defaultAtomicReference" chooserDlgHelpTopicID="khtpField-featuresAdvancedEdit-FsComplexFeature-Type"/>
 		</part>
 		<part id="FsComplexFeature-Jt-Kind" type="jtview">
 			<lit>Complex Feature</lit>
@@ -1840,10 +1840,10 @@
 	</bin>
 	<bin class="FsClosedFeature">
 		<part id="FsClosedFeature-Detail-Message" type="detail" paramType="JtLayoutsOfThisClass">
-			<slice editor="jtview" layout="default" backColor="lightYellow" editable="no" menu="mnuDataTree-Help" helpTopicID="khtpField-FsClosedFeature-Note" />
+			<slice editor="jtview" layout="default" backColor="lightYellow" editable="no" helpTopicID="khtpField-FsClosedFeature-Note" />
 		</part>
 		<part id="FsClosedFeature-Detail-SpecialNote" type="detail" paramType="JtLayoutsOfThisClass">
-			<slice editor="jtview" layout="default" backColor="lightYellow" editable="no" menu="mnuDataTree-Help" helpTopicID="khtpField-FsClosedFeature-SpecialNote" />
+			<slice editor="jtview" layout="default" backColor="lightYellow" editable="no" helpTopicID="khtpField-FsClosedFeature-SpecialNote" />
 		</part>
 		<part id="FsClosedFeature-Jt-SpecialNote" type="jtview">
 			<para>
@@ -1855,11 +1855,11 @@
 			</para>
 		</part>
 		<part id="FsClosedFeature-Detail-ValuesSection" type="Detail" paramType="LiteralString">
-			<slice editor="summary" layout="default" editable="no" weight="heavy" menu="mnuDataTree-Help" header="true"
+			<slice editor="summary" layout="default" editable="no" weight="heavy" header="true"
 				   helpTopicID="khtpField-phonologicalFeaturesAdvancedEdit-ValuesSection"/>
 		</part>
 		<part id="FsClosedFeature-Detail-InflectionFeaturesValuesSection" type="Detail" paramType="LiteralString">
-			<slice editor="summary" layout="default" editable="no" weight="heavy" menu="mnuDataTree-Help" header="true"
+			<slice editor="summary" layout="default" editable="no" weight="heavy" header="true"
 				   helpTopicID="khtpField-featuresAdvancedEdit-FsSymFeatVal-ValuesSection"/>
 		</part>
 	<part id="FsClosedFeature-Detail-Values" type="Detail">
@@ -1880,19 +1880,19 @@
 			<lit/>
 		</part>
 		<part id="FsSymFeatVal-Detail-NameAllA" type="Detail">
-			<slice field="Name" label="Name" editor="multistring" ws="all analysis" menu="mnuDataTree-Help"/>
+			<slice field="Name" label="Name" editor="multistring" ws="all analysis" />
 		</part>
 		<part id="FsSymFeatVal-Detail-AbbreviationAllA" type="Detail">
-			<slice field="Abbreviation" label="Abbreviation" editor="multistring" ws="all analysis" menu="mnuDataTree-Help"/>
+			<slice field="Abbreviation" label="Abbreviation" editor="multistring" ws="all analysis" />
 		</part>
 		<part id="FsSymFeatVal-Detail-DescriptionAllA" type="Detail">
-			<slice field="Description" label="Description" editor="multistring" ws="all analysis" menu="mnuDataTree-Help"/>
+			<slice field="Description" label="Description" editor="multistring" ws="all analysis" />
 		</part>
 		<part id="FsSymFeatVal-Detail-GlossAbbreviationAllA" type="Detail">
-			<slice field="GlossAbbreviation" label="Gloss Abbreviation" editor="multistring" ws="all analysis" menu="mnuDataTree-Help"/>
+			<slice field="GlossAbbreviation" label="Gloss Abbreviation" editor="multistring" ws="all analysis" />
 		</part>
 		<part id="FsSymFeatVal-Detail-RightGlossSepAllA" type="Detail">
-			<slice field="RightGlossSep" label="Right Gloss Separator" abbr="rgs" editor="multistring" ws="all analysis" menu="mnuDataTree-Help"/>
+			<slice field="RightGlossSep" label="Right Gloss Separator" abbr="rgs" editor="multistring" ws="all analysis" />
 		</part>
 		<part id="FsSymFeatVal-Jt-FsSymFeatValBrowsePara" type="jtview">
 			<para>
@@ -1906,18 +1906,18 @@
 	<bin class="MoCompoundRule">
 		<part id="MoCompoundRule-Detail-NameAllA" type="Detail">
 			<if field="Disabled" boolequals="true">
-				<slice field="Name" label="Name" editor="multistring" ws="all analysis" textStyle="Disabled Text" menu="mnuDataTree-Help"/>
+				<slice field="Name" label="Name" editor="multistring" ws="all analysis" textStyle="Disabled Text" />
 			</if>
 			<if field="Disabled" boolequals="false">
-				<slice field="Name" label="Name" editor="multistring" ws="all analysis" textStyle="Default Paragraph Characters" menu="mnuDataTree-Help"/>
+				<slice field="Name" label="Name" editor="multistring" ws="all analysis" textStyle="Default Paragraph Characters" />
 			</if>
 		</part>
 		<part id="MoCompoundRule-Detail-DescriptionAllA" type="Detail">
 			<if field="Disabled" boolequals="true">
-				<slice field="Description" label="Description" editor="multistring" ws="all analysis" textStyle="Disabled Text" menu="mnuDataTree-Help"/>
+				<slice field="Description" label="Description" editor="multistring" ws="all analysis" textStyle="Disabled Text" />
 			</if>
 			<if field="Disabled" boolequals="false">
-				<slice field="Description" label="Description" editor="multistring" ws="all analysis" textStyle="Default Paragraph Characters" menu="mnuDataTree-Help"/>
+				<slice field="Description" label="Description" editor="multistring" ws="all analysis" textStyle="Default Paragraph Characters" />
 			</if>
 		</part>
 		<part id="MoCompoundRule-Jt-LeftMsa" type="jtview">
@@ -1970,7 +1970,7 @@
 			</if>
 		</part>
 		<part id="MoCompoundRule-Detail-Active" type="detail">
-			<slice field="Disabled" label="Active" editor="checkboxwithrefresh" editable="true" toggleValue="true" menu="mnuDataTree-Help"/>
+			<slice field="Disabled" label="Active" editor="checkboxwithrefresh" editable="true" toggleValue="true" />
 		</part>
 
 
@@ -2060,7 +2060,7 @@
 			</if>
 		</part>
 		<part id="MoExoCompound-Detail-ToProdRestrict" type="Detail">
-			<slice field="ToProdRestrict" label='To Exception "Features"' editor="possVectorReference" menu="mnuDataTree-Help">
+			<slice field="ToProdRestrict" label='To Exception "Features"' editor="possVectorReference" >
 				<deParams ws="best analorvern"/>
 				<chooserInfo text='The following exception "features" are available.'>
 					<chooserLink type="goto" label='Edit the Exception "Features"' tool="ProdRestrictEdit"/>
@@ -2108,7 +2108,7 @@
 			<obj field="OverridingMsa" label="Overriding MSA" layout="LeftMsa"/>
 		</part>
 		<part id="MoEndoCompound-Detail-ToProdRestrict" type="Detail">
-			<slice field="ToProdRestrict" label='To Exception "Features"' editor="possVectorReference" menu="mnuDataTree-Help">
+			<slice field="ToProdRestrict" label='To Exception "Features"' editor="possVectorReference" >
 				<deParams ws="best analorvern"/>
 				<chooserInfo text='The following exception "features" are available.'>
 					<chooserLink type="goto" label='Edit the Exception "Features"' tool="ProdRestrictEdit"/>
@@ -2131,28 +2131,28 @@
 	</bin>
 	<bin class="MoAlloAdhocProhib">
 		<part id="MoAlloAdhocProhib-Detail-SummaryAllomorph" type="detail" paramType="JtLayoutsOfThisClass">
-			<slice editor="jtview" layout="default" editable="no" menu="mnuDataTree-Help" helpTopicID="khtpField-MoAlloAdhocProhib-Allomorph" />
+			<slice editor="jtview" layout="default" editable="no" helpTopicID="khtpField-MoAlloAdhocProhib-Allomorph" />
 		</part>
 		<part id="MoAlloAdhocProhib-Detail-FirstAllomorph" type="Detail">
 			<if field="Disabled" boolequals="true">
-				<slice field="FirstAllomorph" label="Key Allomorph" textStyle="Disabled Text" editor="Custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit.AdhocCoProhibAtomicReferenceDisabledSlice" menu="mnuDataTree-Help">
+				<slice field="FirstAllomorph" label="Key Allomorph" textStyle="Disabled Text" editor="Custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit.AdhocCoProhibAtomicReferenceDisabledSlice" >
 					<deParams displayProperty="LongName" ws="vernacular"/>
 				</slice>
 			</if>
 			<if field="Disabled" boolequals="false">
-				<slice field="FirstAllomorph" label="Key Allomorph" editor="Custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit.AdhocCoProhibAtomicReferenceSlice" menu="mnuDataTree-Help">
+				<slice field="FirstAllomorph" label="Key Allomorph" editor="Custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit.AdhocCoProhibAtomicReferenceSlice" >
 					<deParams displayProperty="LongName" ws="vernacular"/>
 				</slice>
 			</if>
 		</part>
 		<part id="MoAlloAdhocProhib-Detail-RestOfAllos">
 			<if field="Disabled" boolequals="true">
-				<slice field="RestOfAllos" label="Other Allomorph(s)" textStyle="Disabled Text" editor="Custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit.AdhocCoProhibVectorReferenceDisabledSlice" menu="mnuDataTree-Help">
+				<slice field="RestOfAllos" label="Other Allomorph(s)" textStyle="Disabled Text" editor="Custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit.AdhocCoProhibVectorReferenceDisabledSlice" >
 					<deParams displayProperty="LongName" ws="vernacular"/>
 				</slice>
 			</if>
 			<if field="Disabled" boolequals="false">
-				<slice field="RestOfAllos" label="Other Allomorph(s)" editor="Custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit.AdhocCoProhibVectorReferenceSlice" menu="mnuDataTree-Help">
+				<slice field="RestOfAllos" label="Other Allomorph(s)" editor="Custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit.AdhocCoProhibVectorReferenceSlice" >
 					<deParams displayProperty="LongName" ws="vernacular"/>
 				</slice>
 			</if>
@@ -2229,7 +2229,7 @@
 	<bin class="MoAdhocProhib">
 		<part id="MoAdhocProhib-Detail-Adjacency" type="Detail">
 			<if field="Disabled" boolequals="true">
-				<slice field="Adjacency" label="Cannot Occur" editor="enumComboBox" menu="mnuDataTree-Help">
+				<slice field="Adjacency" label="Cannot Occur" editor="enumComboBox" >
 					<deParams>
 						<!-- N.B. The order of right/left has been swapped in the following from how it is interpreted internally.  This is to make it more perspicous to the user.  -->
 						<stringList group="Linguistics/Morphology/Adjacency" ids="Anywhere, Somewhere to right, Somewhere to left, Adjacent to right, Adjacent to left"/>
@@ -2238,7 +2238,7 @@
 				</slice>
 			</if>
 			<if field="Disabled" boolequals="false">
-				<slice field="Adjacency" label="Cannot Occur" editor="enumComboBox" menu="mnuDataTree-Help">
+				<slice field="Adjacency" label="Cannot Occur" editor="enumComboBox" >
 					<deParams>
 						<!-- N.B. The order of right/left has been swapped in the following from how it is interpreted internally.  This is to make it more perspicous to the user.  -->
 						<stringList group="Linguistics/Morphology/Adjacency" ids="Anywhere, Somewhere to right, Somewhere to left, Adjacent to right, Adjacent to left"/>
@@ -2274,12 +2274,12 @@
 			</if>
 		</part>
 		<part id="MoAdhocProhib-Detail-Active" type="detail">
-			<slice field="Disabled" label="Active" editor="checkboxwithrefresh" editable="true" toggleValue="true" menu="mnuDataTree-Help"/>
+			<slice field="Disabled" label="Active" editor="checkboxwithrefresh" editable="true" toggleValue="true" />
 		</part>
 	</bin>
 	<bin class="MoMorphAdhocProhib">
 		<part id="MoMorphAdhocProhib-Detail-SummaryMorpheme" type="detail" paramType="JtLayoutsOfThisClass">
-			<slice editor="jtview" layout="default" editable="no" menu="mnuDataTree-Help" helpTopicID="khtpField-MoAlloAdhocProhib-Morpheme" />
+			<slice editor="jtview" layout="default" editable="no" helpTopicID="khtpField-MoAlloAdhocProhib-Morpheme" />
 		</part>
 		<part id="MoMorphAdhocProhib-Jt-Type" type="jtview">
 			<if field="Disabled" boolequals="true">
@@ -2327,24 +2327,24 @@
 		</part>
 		<part id="MoMorphAdhocProhib-Detail-FirstMorpheme" type="Detail">
 			<if field="Disabled" boolequals="true">
-				<slice field="FirstMorpheme" label="Key Morpheme" textStyle="Disabled Text" editor="Custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit.AdhocCoProhibAtomicReferenceDisabledSlice" menu="mnuDataTree-Help">
+				<slice field="FirstMorpheme" label="Key Morpheme" textStyle="Disabled Text" editor="Custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit.AdhocCoProhibAtomicReferenceDisabledSlice" >
 					<deParams displayProperty="LongNameAdHocTs" ws="vernacular"/>
 				</slice>
 			</if>
 			<if field="Disabled" boolequals="false">
-				<slice field="FirstMorpheme" label="Key Morpheme" editor="Custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit.AdhocCoProhibAtomicReferenceSlice" menu="mnuDataTree-Help">
+				<slice field="FirstMorpheme" label="Key Morpheme" editor="Custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit.AdhocCoProhibAtomicReferenceSlice" >
 					<deParams displayProperty="LongNameAdHocTs" ws="vernacular"/>
 				</slice>
 			</if>
 		</part>
 		<part id="MoMorphAdhocProhib-Detail-RestOfMorphs">
 			<if field="Disabled" boolequals="true">
-				<slice field="RestOfMorphs" label="Other Morpheme(s)" textStyle="Disabled Text" editor="Custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit.AdhocCoProhibVectorReferenceDisabledSlice" menu="mnuDataTree-Help">
+				<slice field="RestOfMorphs" label="Other Morpheme(s)" textStyle="Disabled Text" editor="Custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit.AdhocCoProhibVectorReferenceDisabledSlice" >
 					<deParams displayProperty="LongNameAdHocTs" ws="vernacular"/>
 				</slice>
 			</if>
 			<if field="Disabled" boolequals="false">
-				<slice field="RestOfMorphs" label="Other Morpheme(s)" editor="Custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit.AdhocCoProhibVectorReferenceSlice" menu="mnuDataTree-Help">
+				<slice field="RestOfMorphs" label="Other Morpheme(s)" editor="Custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit.AdhocCoProhibVectorReferenceSlice" >
 					<deParams displayProperty="LongNameAdHocTs" ws="vernacular"/>
 				</slice>
 			</if>
@@ -2423,33 +2423,33 @@
 		</part>
 		<part id="MoAdhocProhibGr-Detail-NestedGroupName" type="Detail">
 			<if field="Disabled" boolequals="true">
-				<slice field="Name" label="Name" editor="multistring" ws="all analysis" textStyle="Disabled Text" menu="mnuDataTree-Help" helpTopicID="khtpField-MoAdhocProhibGr-NestedGroupName"/>
+				<slice field="Name" label="Name" editor="multistring" ws="all analysis" textStyle="Disabled Text" helpTopicID="khtpField-MoAdhocProhibGr-NestedGroupName"/>
 			</if>
 			<if field="Disabled" boolequals="false">
-				<slice field="Name" label="Name" editor="multistring" ws="all analysis" textStyle="Default Paragraph Characters" menu="mnuDataTree-Help" helpTopicID="khtpField-MoAdhocProhibGr-NestedGroupName"/>
+				<slice field="Name" label="Name" editor="multistring" ws="all analysis" textStyle="Default Paragraph Characters" helpTopicID="khtpField-MoAdhocProhibGr-NestedGroupName"/>
 			</if>
 	</part>
 		<part id="MoAdhocProhibGr-Detail-Name" type="Detail">
 			<if field="Disabled" boolequals="true">
-				<slice field="Name" label="Name" editor="multistring" ws="all analysis" textStyle="Disabled Text" menu="mnuDataTree-Help"/>
+				<slice field="Name" label="Name" editor="multistring" ws="all analysis" textStyle="Disabled Text" />
 			</if>
 			<if field="Disabled" boolequals="false">
-				<slice field="Name" label="Name" editor="multistring" ws="all analysis" textStyle="Default Paragraph Characters" menu="mnuDataTree-Help" />
+				<slice field="Name" label="Name" editor="multistring" ws="all analysis" textStyle="Default Paragraph Characters" />
 			</if>
 		</part>
 		<part id="MoAdhocProhibGr-Detail-Description" type="Detail">
 			<if field="Disabled" boolequals="true">
-				<slice field="Description" label="Description" editor="multistring" ws="all analysis" textStyle="Disabled Text" menu="mnuDataTree-Help"/>
+				<slice field="Description" label="Description" editor="multistring" ws="all analysis" textStyle="Disabled Text" />
 			</if>
 			<if field="Disabled" boolequals="false">
-				<slice field="Description" label="Description" editor="multistring" ws="all analysis" textStyle="Default Paragraph Characters" menu="mnuDataTree-Help" />
+				<slice field="Description" label="Description" editor="multistring" ws="all analysis" textStyle="Default Paragraph Characters" />
 			</if>
 		</part>
 		<part id="MoAdhocProhibGr-Detail-MembersSection" type="Detail" paramType="LiteralString">
-			<slice editor="summary" layout="default" editable="no" weight="heavy" menu="mnuDataTree-Help" helpTopicID="khtpField-MoAdhocProhibGr-MembersSection" header="true"/>
+			<slice editor="summary" layout="default" editable="no" weight="heavy" helpTopicID="khtpField-MoAdhocProhibGr-MembersSection" header="true"/>
 		</part>
 		<part id="MoAdhocProhibGr-Detail-NestedMembersSection" type="Detail" paramType="LiteralString">
-			<slice editor="summary" layout="default" editable="no" weight="heavy" menu="mnuDataTree-Help" helpTopicID="khtpField-MoAdhocProhibGr-NestedMembersSection" header="true"/>
+			<slice editor="summary" layout="default" editable="no" weight="heavy" helpTopicID="khtpField-MoAdhocProhibGr-NestedMembersSection" header="true"/>
 		</part>
 		<part id="MoAdhocProhibGr-Detail-Members" type="Detail">
 			<seq field="Members" layout="EditAdHocGroup"/>
@@ -2460,46 +2460,30 @@
 	</bin>
 	<bin class="MoInflClass">
 	   <part id="MoInflClass-Detail-NameAllA" type="Detail">
-		  <slice field="Name" label="Name" editor="multistring"  ws="all analysis" menu="mnuDataTree-Help"/>
+		  <slice field="Name" label="Name" editor="multistring"  ws="all analysis" />
 	   </part>
 	   <part id="MoInflClass-Detail-AbbreviationAllA" type="Detail">
-			<slice field="Abbreviation" label="Abbreviation" editor="multistring" ws="all analysis" menu="mnuDataTree-Help"/>
+			<slice field="Abbreviation" label="Abbreviation" editor="multistring" ws="all analysis" />
 		</part>
 		<part id="MoInflClass-Detail-DescriptionAllA" type="Detail">
-			<slice field="Description" label="Description" editor="multistring" ws="all analysis" menu="mnuDataTree-Help" />
+			<slice field="Description" label="Description" editor="multistring" ws="all analysis" />
 		</part>
 	   <part id="MoInflClass-Detail-SubClassesSection" type="Detail" paramType="LiteralString">
-		  <slice editor="summary" layout="default" editable="no" menu="mnuDataTree-Help" header="true" field="Subclasses"/>
-	   <!--   <slice editor="summary" layout="default" editable="no" weight="heavy" menu="mnuDataTree-Help" header="true"/> -->
+		  <slice editor="summary" layout="default" editable="no" header="true" field="Subclasses"/>
 	   </part>
 	   <part id="MoInflClass-Detail-SubClasses" type="Detail">
 		  <seq field="Subclasses" layout="SubClassesAllA"/>
-		  <!-- We want to display the SubPossibilities field only if the owning list has depth greater than 1 -->
-		  <!--  Do we need this here like in subcategories??
-		  <choice>
-			 <where target="owner" is="CmPossibilityList" field="Depth" intlessthan="2">
-		  -->
-				<!-- do nothing! -->
-		  <!--
-			 </where>
-			 <otherwise>
-				<seq field="SubPossibilities" layout="SubCategories"/>
-			 </otherwise>
-			 </choice>
-		  -->
 	   </part>
 	   <part id="MoInflClass-Jt-NameBest" type="jtview">
 		   <string field="Name" ws="best analysis"/>
 	   </part>
-
-
 	</bin>
 	<bin class="PhPhoneme">
 		<part id="PhPhoneme-Detail-NameAllV" type="Detail">
-			<slice field="Name" label="Refer to as" editor="multistring" ws="all vernacular" menu="mnuDataTree-Help"/>
+			<slice field="Name" label="Refer to as" editor="multistring" ws="all vernacular" />
 		</part>
 	<part id="PhPhoneme-Detail-BasicIPASymbol" type="Detail">
-	  <slice field="BasicIPASymbol" label="IPA Symbol" editor="customWithParams" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit.BasicIPASymbolSlice" ws="pronunciation" menu="mnuDataTree-Help"/>
+	  <slice field="BasicIPASymbol" label="IPA Symbol" editor="customWithParams" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit.BasicIPASymbolSlice" ws="pronunciation" />
 	</part>
 	<part id="PhPhoneme-Jt-BasicIPASymbol" type="jtview">
 	  <string field="BasicIPASymbol" />
@@ -2519,7 +2503,7 @@
 	  </slice>
 	</part>
 	<part id="PhPhoneme-Detail-RepresentationsSection" type="Detail" paramType="LiteralString">
-			<slice editor="summary" layout="default" editable="no" weight="heavy" menu="mnuDataTree-Help" header="true"/>
+			<slice editor="summary" layout="default" editable="no" weight="heavy" header="true"/>
 	</part>
 	<part id="PhPhoneme-Jt-PhonologicalFeaturesForPhonemes" type="jtview">
 		<obj class="PhPhoneme" field="Features" layout="PhonFeats"/>
@@ -2656,7 +2640,7 @@
 			<slice field="OrderNumber" label="Order Number" editor="int"/>
 		</part>
 		<part id="PhSegmentRule-Detail-Active" type="detail">
-			<slice field="Disabled" label="Active" editor="checkboxwithrefresh" editable="true" toggleValue="true" menu="mnuDataTree-Help"/>
+			<slice field="Disabled" label="Active" editor="checkboxwithrefresh" editable="true" toggleValue="true" />
 		</part>
 		<part id="PhSegmentRule-Detail-Direction" type="detail">
 			<if field="Disabled" boolequals="true">
@@ -2703,7 +2687,7 @@
 			</if>
 		</part>
 		<part id="PhRegularRule-Detail-RuleFormulaSection" type="detail" paramType="LiteralString">
-			<slice editor="summary" layout="Edit" editable="no" weight="heavy" menu="mnuDataTree-Help" header="true"
+			<slice editor="summary" layout="Edit" editable="no" weight="heavy" header="true"
 				   helpTopicID="khtpField-PhonologicalRuleEdit-PhRegularRule-RuleFormulaSection"/>
 		</part>
 		<part id="PhRegularRule-Detail-RuleFormula" type="detail">
@@ -2713,7 +2697,7 @@
 
 	<bin class="PhSegRuleRHS">
 		<part id="PhSegRuleRHS-Detail-RequiredPOSesDisabled" type="detail">
-			<slice field="InputPOSes" label="Required Categories" editor="defaultVectorReferenceDisabled" textStyle="Disabled Text" menu="mnuDataTree-Help">
+			<slice field="InputPOSes" label="Required Categories" editor="defaultVectorReferenceDisabled" textStyle="Disabled Text" >
 				<deParams ws="best analorvern"/>
 				<chooserInfo text="The following categories are available.">
 					<chooserLink type="goto" label="Add a category" tool="posEdit"/>
@@ -2721,7 +2705,7 @@
 			</slice>
 		</part>
 		<part id="PhSegRuleRHS-Detail-RequiredPOSes" type="detail">
-			<slice field="InputPOSes" label="Required Categories" editor="defaultVectorReference" menu="mnuDataTree-Help">
+			<slice field="InputPOSes" label="Required Categories" editor="defaultVectorReference" >
 				<deParams ws="best analorvern"/>
 				<chooserInfo text="The following categories are available.">
 					<chooserLink type="goto" label="Add a category" tool="posEdit"/>
@@ -2729,7 +2713,7 @@
 			</slice>
 		</part>
 		<part id="PhSegRuleRHS-Detail-RequiredRuleFeatsDisabled" type="detail">
-			<slice field="ReqRuleFeats" label="Required Properties" editor="defaultVectorReferenceDisabled" textStyle="Disabled Text" menu="mnuDataTree-Help">
+			<slice field="ReqRuleFeats" label="Required Properties" editor="defaultVectorReferenceDisabled" textStyle="Disabled Text" >
 				<deParams ws="best analorvern"/>
 				<chooserInfo text='The following exception "features" and inflection classes are available.'>
 					<chooserLink type="goto" label='Edit the Exception "Features"' tool="ProdRestrictEdit"/>
@@ -2738,7 +2722,7 @@
 			</slice>
 		</part>
 		<part id="PhSegRuleRHS-Detail-RequiredRuleFeats" type="detail">
-			<slice field="ReqRuleFeats" label="Required Properties" editor="defaultVectorReference" menu="mnuDataTree-Help">
+			<slice field="ReqRuleFeats" label="Required Properties" editor="defaultVectorReference" >
 				<deParams ws="best analorvern"/>
 				<chooserInfo text='The following exception "features" and inflection classes are available.'>
 					<chooserLink type="goto" label='Edit the Exception "Features"' tool="ProdRestrictEdit"/>
@@ -2747,7 +2731,7 @@
 			</slice>
 		</part>
 		<part id="PhSegRuleRHS-Detail-ExcludedRuleFeatsDisabled" type="detail">
-			<slice field="ExclRuleFeats" label="Excluded Properties" editor="defaultVectorReferenceDisabled" textStyle="Disabled Text" menu="mnuDataTree-Help">
+			<slice field="ExclRuleFeats" label="Excluded Properties" editor="defaultVectorReferenceDisabled" textStyle="Disabled Text" >
 				<deParams ws="best analorvern"/>
 				<chooserInfo text='The following exception "features" and inflection classes are available.'>
 					<chooserLink type="goto" label='Edit the Exception "Features"' tool="ProdRestrictEdit"/>
@@ -2756,7 +2740,7 @@
 			</slice>
 		</part>
 		<part id="PhSegRuleRHS-Detail-ExcludedRuleFeats" type="detail">
-			<slice field="ExclRuleFeats" label="Excluded Properties" editor="defaultVectorReference" menu="mnuDataTree-Help">
+			<slice field="ExclRuleFeats" label="Excluded Properties" editor="defaultVectorReference" >
 				<deParams ws="best analorvern"/>
 				<chooserInfo text='The following exception "features" and inflection classes are available.'>
 					<chooserLink type="goto" label='Edit the Exception "Features"' tool="ProdRestrictEdit"/>
@@ -2765,7 +2749,7 @@
 			</slice>
 		</part>
 		<part id="PhSegRuleRHS-Detail-RuleFormula" type="detail">
-			<slice id="RuleFormula" editor="Custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit.RegRuleFormulaSlice" menu="mnuDataTree-Help" helpTopicID="khtpField-PhRegularRule-RuleFormula">
+			<slice id="RuleFormula" editor="Custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit.RegRuleFormulaSlice" helpTopicID="khtpField-PhRegularRule-RuleFormula">
 				<chooserInfo text="The following well-formed environments have been specified in the grammar area." guicontrol="RuleEnvironmentFlatList">
 					<chooserLink type="goto" label="Edit the Environments" tool="EnvironmentEdit"/>
 				</chooserInfo>
@@ -2775,10 +2759,10 @@
 
 	<bin class="PhMetathesisRule">
 		<part id="PhMetathesisRule-Detail-RuleFormulaSection" type="detail" paramType="LiteralString">
-			<slice editor="summary" layout="Edit" editable="no" weight="heavy" menu="mnuDataTree-Help" header="true"/>
+			<slice editor="summary" layout="Edit" editable="no" weight="heavy" header="true"/>
 		</part>
 		<part id="PhMetathesisRule-Detail-RuleFormula" type="detail">
-			<slice id="RuleFormula" editor="Custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Grammar.Tools.PosEdit.MetaRuleFormulaSlice" menu="mnuDataTree-Help" helpTopicID="khtpField-PhMetathesisRule-RuleFormula"/>
+			<slice id="RuleFormula" editor="Custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Grammar.Tools.PosEdit.MetaRuleFormulaSlice" helpTopicID="khtpField-PhMetathesisRule-RuleFormula"/>
 		</part>
 	</bin>
 

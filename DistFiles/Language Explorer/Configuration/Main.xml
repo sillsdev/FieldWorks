@@ -12,13 +12,14 @@
 	<!-- The main sections of this file are the following
 	commands
 	areas
-	controls (dialog or embedded browse view
+	controls (dialog or embedded browse view)
 	menubar
 	contextMenus
 	toolbars
 	resources
 	listeners
-	contexthelpstrings -->
+	contexthelpstrings
+  -->
 
 
 	<!-- ********************************************************** -->
@@ -179,9 +180,6 @@
 		</command>
 		<!-- This is on the popup menu, and is for non-record level objects. -->
 		<command id="CmdDeleteSelectedObject" label="Delete selected {0}" message="DeleteSelectedItem"/>
-		<command id="CmdAlwaysVisible" label="Always visible" message="ShowFieldAlwaysVisible"/>
-		<command id="CmdIfData" label="Normally hidden, unless non-empty" message="ShowFieldIfData"/>
-		<command id="CmdNormallyHidden" label="Normally hidden" message="ShowFieldNormallyHidden"/>
 		<!-- Add commands from included files to the main application. -->
 <!-- START include: "CommonDataTreeInclude.xml" query="root/commands/*" -->
 		<include path="CommonDataTreeInclude.xml" query="root/commands/*"/>

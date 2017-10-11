@@ -262,8 +262,7 @@
 			</seq>
 		</part>
 		<part id="LexSense-Jt-PublishInForPicture" type="jtview">
-			<slice field="PublishIn" label="Publish Picture In" tooltip="Remove a publication from this field to completely exclude only this picture from that publication." editor="defaultVectorReference" visField="DoNotPublishIn"
-				menu="mnuDataTree-Help">
+			<slice field="PublishIn" label="Publish Picture In" tooltip="Remove a publication from this field to completely exclude only this picture from that publication." editor="defaultVectorReference" visField="DoNotPublishIn" >
 				<deParams displayProperty="ShortName" ws="best analysis" />
 				<chooserInfo>
 					<chooserLink type="goto" label="Edit the Publications list" tool="publicationsEdit" />
@@ -416,7 +415,7 @@
 			<seq field="Senses" indent="true" />
 		</part>
 		<part id="LexSense-Detail-UsageTypes" type="Detail">
-			<slice field="UsageTypes" label="Usages" editor="possVectorReference" menu="mnuDataTree-Help">
+			<slice field="UsageTypes" label="Usages" editor="possVectorReference" >
 				<deParams displayProperty="ShortName" ws="best analysis" />
 				<chooserInfo>
 					<chooserLink type="goto" label="Edit the list of Usages." tool="usageTypeEdit" />
@@ -425,11 +424,11 @@
 		</part>
 		<part id="LexSense-Detail-ReversalEntries" type="detail">
 			<slice field="ReversalEntries" label="Reversal Entries" editor="Custom" assemblyPath="LanguageExplorer.dll"
-				class="LanguageExplorer.Areas.Lexicon.Tools.Edit.ReversalIndexEntrySlice" menu="mnuDataTree-Help" />
+				class="LanguageExplorer.Areas.Lexicon.Tools.Edit.ReversalIndexEntrySlice" />
 				tooltip="Translation equivalent used in the finder list (Reversal Index)."/>
 		</part>
 		<part id="LexSense-Detail-SenseType" type="Detail">
-			<slice field="SenseType" label="Sense Type" editor="possAtomicReference" menu="mnuDataTree-Help">
+			<slice field="SenseType" label="Sense Type" editor="possAtomicReference" >
 				<deParams ws="best analysis" />
 				<chooserInfo>
 					<chooserLink type="goto" label="Edit the Sense Types" tool="senseTypeEdit" />
@@ -437,7 +436,7 @@
 			</slice>
 		</part>
 		<part id="LexSense-Detail-DialectLabelsSense" type="Detail">
-			<slice field="DialectLabels" label="Dialect Labels (Sense)" editor="possVectorReference" menu="mnuDataTree-Help">
+			<slice field="DialectLabels" label="Dialect Labels (Sense)" editor="possVectorReference" >
 				<deParams ws="best vernoranal" displayProperty="BestAbbreviation" changeRequiresRefresh="true"/>
 				<chooserInfo>
 					<chooserLink type="goto" label="Edit the Dialect Labels list" tool="dialectsListEdit" />
@@ -445,7 +444,7 @@
 			</slice>
 		</part>
 		<part id="LexSense-Detail-DomainTypes" type="Detail">
-			<slice field="DomainTypes" label="Academic Domains" editor="possVectorReference" menu="mnuDataTree-Help">
+			<slice field="DomainTypes" label="Academic Domains" editor="possVectorReference" >
 				<deParams displayProperty="ShortName" ws="best analysis" />
 				<chooserInfo>
 					<chooserLink type="goto" label="Edit the Academic Domains" tool="domainTypeEdit" />
@@ -453,8 +452,7 @@
 			</slice>
 		</part>
 		<part id="LexSense-Detail-SemanticDomains" type="Detail">
-			<slice field="SemanticDomains" label="Semantic Domains" editor="SemDomVectorReference"
-				menu="mnuDataTree-Help">
+			<slice field="SemanticDomains" label="Semantic Domains" editor="SemDomVectorReference" >
 				<deParams displayProperty="AbbrAndNameTSS" ws="best analysis" />
 				<chooserInfo>
 					<chooserLink type="goto" label="Edit the Semantic Domains" tool="semanticDomainEdit" />
@@ -462,8 +460,7 @@
 			</slice>
 		</part>
 		<part id="LexSense-Detail-PublishIn" type="Detail">
-			<slice field="PublishIn" label="Publish Sense In" tooltip="Remove a publication from this field to exclude everything in this sense from that publication." editor="defaultVectorReference" visField="DoNotPublishIn"
-				menu="mnuDataTree-Help">
+			<slice field="PublishIn" label="Publish Sense In" tooltip="Remove a publication from this field to exclude everything in this sense from that publication." editor="defaultVectorReference" visField="DoNotPublishIn" >
 				<deParams displayProperty="ShortName" ws="best analysis" />
 				<chooserInfo>
 					<chooserLink type="goto" label="Edit the Publications list" tool="publicationsEdit" />
@@ -471,8 +468,7 @@
 			</slice>
 		</part>
 		<part id="LexSense-Detail-AnthroCodes" type="Detail">
-			<slice field="AnthroCodes" label="Anthropology Categories" editor="possVectorReference"
-				menu="mnuDataTree-Help">
+			<slice field="AnthroCodes" label="Anthropology Categories" editor="possVectorReference" >
 				<deParams displayProperty="LongName" ws="best analysis" />
 				<chooserInfo>
 					<chooserLink type="goto" label="Edit the Anthropology Categories" tool="anthroEdit" />
@@ -480,7 +476,7 @@
 			</slice>
 		</part>
 		><part id="LexSense-Detail-Status" type="Detail">
-			<slice field="Status" label="Status" editor="possAtomicReference" menu="mnuDataTree-Help">
+			<slice field="Status" label="Status" editor="possAtomicReference" >
 				<deParams ws="best analysis" />
 				<chooserInfo title="Choose Status">
 					<chooserLink type="goto" label="Edit the Status list" tool="statusEdit" />
@@ -488,17 +484,17 @@
 			</slice>
 		</part>
 		<part id="LexSense-Detail-Source" type="Detail">
-			<slice field="Source" label="Source" editor="String" menu="mnuDataTree-Help" />
+			<slice field="Source" label="Source" editor="String" />
 		</part>
 		<part id="LexSense-Detail-ScientificName" type="Detail">
-			<slice field="ScientificName" label="ScientificName" editor="String" menu="mnuDataTree-Help" />
+			<slice field="ScientificName" label="ScientificName" editor="String" />
 		</part>
 		<!-- *********************************************************************************** -->
 		<part id="LexSense-Detail-SenseSummary" type="detail">
-			<slice id="LexSenseId" editor="jtview" expansion="expanded" menu="mnuDataTree-Help" />
+			<slice id="LexSenseId" editor="jtview" expansion="expanded" />
 		</part>
 		<part id="LexSense-Detail-GlossAllA" type="detail">
-			<slice field="Gloss" label="Gloss" editor="multistring" ws="all analysis" menu="mnuDataTree-Help" sideEffectMethod="AdjustDerivedAnalysis" tooltip="Short translation equivalent for this lexeme.  Used in interlinear texts, and in the dictionary article when Definition is empty.">
+			<slice field="Gloss" label="Gloss" editor="multistring" ws="all analysis" sideEffectMethod="AdjustDerivedAnalysis" tooltip="Short translation equivalent for this lexeme.  Used in interlinear texts, and in the dictionary article when Definition is empty.">
 				<properties>
 					<bold value="on" />
 					<fontsize value="100%" />
@@ -515,39 +511,32 @@
 		</part>
 
 		<part id="LexSense-Detail-DefinitionAllA" type="detail">
-			<slice field="Definition" label="Definition" editor="multistring" ws="all analysis" menu="mnuDataTree-Help"
+			<slice field="Definition" label="Definition" editor="multistring" ws="all analysis"
 			tooltip="Full meaning of this lexeme.  Used in the dictionary article."/>
 		</part>
 		<part id="LexSense-Detail-MsaCombo" type="detail">
-			<slice field="MorphoSyntaxAnalysis" label="Grammatical Info." abrev="gfn" editor="msaReferenceComboBox"
-				menu="mnuDataTree-Help" />
+			<slice field="MorphoSyntaxAnalysis" label="Grammatical Info." abrev="gfn" editor="msaReferenceComboBox" />
 		</part>
 		<part id="LexSense-Detail-AnthroNoteAllA" type="detail">
-			<slice field="AnthroNote" label="Anthropology Note" editor="multistring" ws="all analysis"
-				menu="mnuDataTree-Help" />
+			<slice field="AnthroNote" label="Anthropology Note" editor="multistring" ws="all analysis" />
 		</part>
 		<part id="LexSense-Detail-BibliographyAllA" type="detail">
-			<slice field="Bibliography" label="Bibliography" editor="multistring" ws="all analysis"
-				menu="mnuDataTree-Help" />
+			<slice field="Bibliography" label="Bibliography" editor="multistring" ws="all analysis" />
 		</part>
 		<part id="LexSense-Detail-DiscourseNoteAllA" type="detail">
-			<slice field="DiscourseNote" label="Discourse Note" editor="multistring" ws="all analysis"
-				menu="mnuDataTree-Help" />
+			<slice field="DiscourseNote" label="Discourse Note" editor="multistring" ws="all analysis" />
 		</part>
 		<part id="LexSense-Detail-EncyclopedicInfoAllA" type="detail">
-			<slice field="EncyclopedicInfo" label="Encyclopedic Info" editor="multistring" ws="all analysis"
-				menu="mnuDataTree-Help" />
+			<slice field="EncyclopedicInfo" label="Encyclopedic Info" editor="multistring" ws="all analysis" />
 		</part>
 		<part id="LexSense-Detail-GeneralNoteAllA" type="detail">
-			<slice field="GeneralNote" label="General Note" editor="multistring" ws="all analysis"
-				menu="mnuDataTree-Help" />
+			<slice field="GeneralNote" label="General Note" editor="multistring" ws="all analysis" />
 		</part>
 		<part id="LexSense-Detail-GrammarNoteAllA" type="detail">
-			<slice field="GrammarNote" label="Grammar Note" editor="multistring" ws="all analysis"
-				menu="mnuDataTree-Help" />
+			<slice field="GrammarNote" label="Grammar Note" editor="multistring" ws="all analysis" />
 		</part>
 		<part id="LexSense-Detail-ComplexFormEntries" type="Detail">
-			<slice field="ComplexFormEntries" label="Complex Forms" menu="mnuDataTree-Help"
+			<slice field="ComplexFormEntries" label="Complex Forms"
 				   editor="custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.Tools.Edit.EntrySequenceReferenceSlice">
 				<deParams displayProperty="HeadWord"/>
 			</slice>
@@ -562,32 +551,28 @@
 			</slice>
 		</part>
 		<part id="LexSense-Detail-Subentries" type="Detail">
-			<slice field="Subentries" label="Subentries" tooltip="Show these subentries below this sense in root-based dictionary views." menu="mnuDataTree-Help"
+			<slice field="Subentries" label="Subentries" tooltip="Show these subentries below this sense in root-based dictionary views."
 				   editor="custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.Tools.Edit.EntrySequenceReferenceSlice">
 				<deParams displayProperty="HeadWord"/>
 			</slice>
 		</part>
 		<part id="LexSense-Detail-VariantForms" type="Detail">
-			<slice field="VariantFormEntries" label="Variants of Sense" editable="no" menu="mnuDataTree-Help"
+			<slice field="VariantFormEntries" label="Variants of Sense" editable="no"
 				   editor="custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.Tools.Edit.EntrySequenceReferenceSlice">
 				<deParams displayProperty="HeadWord"/>
 			</slice>
 		</part>
 		<part id="LexSense-Detail-PhonologyNoteAllA" type="detail">
-			<slice field="PhonologyNote" label="Phonology Note" editor="multistring" ws="all analysis"
-				menu="mnuDataTree-Help" />
+			<slice field="PhonologyNote" label="Phonology Note" editor="multistring" ws="all analysis" />
 		</part>
 		<part id="LexSense-Detail-RestrictionsAllA" type="detail">
-			<slice field="Restrictions" label="Restrictions" editor="multistring" ws="all analysis"
-				menu="mnuDataTree-Help" />
+			<slice field="Restrictions" label="Restrictions" editor="multistring" ws="all analysis" />
 		</part>
 		<part id="LexSense-Detail-SemanticsNoteAllA" type="detail">
-			<slice field="SemanticsNote" label="Semantics Note" editor="multistring" ws="all analysis"
-				menu="mnuDataTree-Help" />
+			<slice field="SemanticsNote" label="Semantics Note" editor="multistring" ws="all analysis" />
 		</part>
 		<part id="LexSense-Detail-SocioLinguisticsNoteAllA" type="detail">
-			<slice field="SocioLinguisticsNote" label="Sociolinguistics Note" editor="multistring"
-				ws="all analysis" menu="mnuDataTree-Help" />
+			<slice field="SocioLinguisticsNote" label="Sociolinguistics Note" editor="multistring" ws="all analysis" />
 		</part>
 		<part id="LexSense-Detail-Examples" type="detail">
 			<seq field="Examples" ghost="Example" ghostWs="vernacular" ghostLabel="Example" ghostAbbe="ex"
@@ -721,10 +706,10 @@
 	</bin>
 	<bin class="LexExtendedNote">
 		<part id="LexExtendedNote-Detail-Type" type="Detail">
-			<slice field="ExtendedNoteType" label="Type" editor="possAtomicReference" menu="mnuDataTree-Help" />
+			<slice field="ExtendedNoteType" label="Type" editor="possAtomicReference" />
 		</part>
 		<part id="LexExtendedNote-Detail-DiscussionAllA" type="Detail">
-			<slice field="Discussion" label="Discussion" editor="multistring" ws="all analysis" menu="mnuDataTree-Help" />
+			<slice field="Discussion" label="Discussion" editor="multistring" ws="all analysis" />
 		</part>
 		<part id="LexExtendedNote-Detail-Examples" type="detail">
 			<seq field="Examples" ghost="Example" ghostWs="vernacular" ghostLabel="Example" ghostAbbe="ex"
@@ -741,11 +726,10 @@
 				ghostInitMethod="SetTypeToFreeTrans" />
 		</part>
 		<part id="LexExampleSentence-Detail-Reference" type="Detail">
-			<slice field="Reference" label="Reference" editor="String" weight="light" menu="mnuDataTree-Help" />
+			<slice field="Reference" label="Reference" editor="String" weight="light" />
 		</part>
 		<part id="LexExampleSentence-Detail-PublishIn" type="Detail">
-			<slice field="PublishIn" label="Publish Example In" tooltip="Remove a publication from this field to exclude only this example from that publication." editor="defaultVectorReference" visField="DoNotPublishIn"
-				menu="mnuDataTree-Help">
+			<slice field="PublishIn" label="Publish Example In" tooltip="Remove a publication from this field to exclude only this example from that publication." editor="defaultVectorReference" visField="DoNotPublishIn" >
 				<deParams displayProperty="ShortName" ws="best analysis" />
 				<chooserInfo>
 					<chooserLink type="goto" label="Edit the Publications list" tool="publicationsEdit" />
@@ -759,7 +743,7 @@
 				weight="light" />
 		</part>
 		<part id="CmTranslation-Detail-Type" type="Detail">
-			<slice field="Type" label="Type" editor="ReferenceComboBox" menu="mnuDataTree-Help" />
+			<slice field="Type" label="Type" editor="ReferenceComboBox" />
 		</part>
 	</bin>
 	<bin class="LexReference">
@@ -881,8 +865,7 @@
 			<slice label="Picture" editor="picture" thumbnail="true" menu="mnuDataTree-Picture" />
 		</part>
 		<part id="CmPicture-Detail-PublishIn" type="detail">
-			<slice field="PublishIn" label="Publish Picture In" tooltip="Remove a publication from this field to exclude only this picture from that publication." editor="defaultVectorReference" visField="DoNotPublishIn"
-				menu="mnuDataTree-Help">
+			<slice field="PublishIn" label="Publish Picture In" tooltip="Remove a publication from this field to exclude only this picture from that publication." editor="defaultVectorReference" visField="DoNotPublishIn" >
 				<deParams displayProperty="ShortName" ws="best analysis" />
 				<chooserInfo>
 					<chooserLink type="goto" label="Edit the Publications list" tool="publicationsEdit" />

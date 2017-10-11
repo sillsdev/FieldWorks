@@ -128,6 +128,15 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Configure....
+        /// </summary>
+        internal static string Configure {
+            get {
+                return ResourceManager.GetString("Configure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
         internal static System.Drawing.Icon DefaultIcon {
@@ -3019,6 +3028,15 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Show all right now.
+        /// </summary>
+        internal static string ShowAllRightNow {
+            get {
+                return ResourceManager.GetString("ShowAllRightNow", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Something went wrong the last time this program was run. Click &apos;Yes&apos; to revert to &apos;factory settings&apos;, &apos;No&apos; to see if you can preserve your settings without crashing again..
         /// </summary>
         internal static string SomethingWentWrongLastTime {
@@ -3061,6 +3079,15 @@ namespace LanguageExplorer {
             get {
                 object obj = ResourceManager.GetObject("Text_And_Words", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Writing Systems.
+        /// </summary>
+        internal static string WritingSystems {
+            get {
+                return ResourceManager.GetString("WritingSystems", resourceCulture);
             }
         }
     }

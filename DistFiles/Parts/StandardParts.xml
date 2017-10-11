@@ -6,25 +6,25 @@
 		<slice editor="jtview" layout="default"/>
 	</part>
 	<part id="CmObject-Detail-Summary" type="detail" paramType="JtLayoutsOfThisClass">
-		<slice editor="jtview" layout="default" editable="no" menu="mnuDataTree-Help"/>
+		<slice editor="jtview" layout="default" editable="no" />
 	</part>
 	<part id="CmObject-Detail-NormalSummary" type="detail" paramType="JtLayoutsOfThisClass">
-		<slice editor="summary" layout="default" editable="no" weight="normal" menu="mnuDataTree-Help" header="true"/>
+		<slice editor="summary" layout="default" editable="no" weight="normal" header="true"/>
 	</part>
 	<part id="CmObject-Detail-HeavySummary" type="detail" paramType="JtLayoutsOfThisClass">
-		<slice editor="summary" layout="default" editable="no" weight="heavy" menu="mnuDataTree-Help" header="true"/>
+		<slice editor="summary" layout="default" editable="no" weight="heavy" header="true"/>
 	</part>
 	<part id="CmObject-Detail-Section" type="detail" paramType="LiteralString">
-		<slice editor="summary" layout="default" editable="no" weight="heavy" menu="mnuDataTree-Help" header="true"/>
+		<slice editor="summary" layout="default" editable="no" weight="heavy" header="true"/>
 	</part>
 	<part id="CmObject-Detail-Message" type="detail" paramType="JtLayoutsOfThisClass">
-		<slice editor="jtview" layout="default" backColor="lightYellow" editable="no" menu="mnuDataTree-Help"/>
+		<slice editor="jtview" layout="default" backColor="lightYellow" editable="no" />
 	</part>
 	<part id="CmObject-Detail-Blank" type="detail">
 		<slice label="This is a dummy label" editable="no" header="true"/>
 	</part>
 	<part id="CmObject-Detail-Custom" type="detail" paramType="FieldName">
-		<slice editor="autoCustom" menu="mnuDataTree-Help" helpTopicID="khtpCustomFields"/>
+		<slice editor="autoCustom" helpTopicID="khtpCustomFields"/>
 	</part>
   </bin>
 </PartInventory>
