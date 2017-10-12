@@ -1092,7 +1092,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 				RnSfMarker rsfm = lvi.Tag as RnSfMarker;
 				var app = m_propertyTable.GetValue<IApp>("App");
 				dlg.Initialize(m_cache, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), app, rsfm,
-					m_SfmFile, m_mapFlidName, m_stylesheet, m_mediator);
+					m_SfmFile, m_mapFlidName, m_stylesheet, m_mediator, m_propertyTable);
 				if (dlg.ShowDialog(this) == DialogResult.OK)
 				{
 					rsfm = dlg.Results;
