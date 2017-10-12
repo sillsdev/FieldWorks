@@ -213,7 +213,7 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 		}
 
 		private static int RunProcess(string fileName, string arguments, out string stdOutput,
-			int timeout = 300000 /* 5 min */)
+			int timeout = 300000 /* 5 min */, string workdir = null)
 		{
 			var output = string.Empty;
 			using (var outputWaitHandle = new AutoResetEvent(false))
@@ -226,6 +226,8 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 						process.StartInfo.RedirectStandardOutput = true;
 						process.StartInfo.FileName = fileName;
 						process.StartInfo.Arguments = arguments;
+						if (workdir != null)
+							process.StartInfo.WorkingDirectory = workdir;
 						process.OutputDataReceived += (sender, e) =>
 						{
 							if (e.Data == null)
@@ -288,7 +290,9 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 				arguments += $" /r:\"{drawingPath}\" /r:\"{formsPath}\"";
 			}
 			var stdOutput = string.Empty;
-			var exitCode = RunProcess(fileName, arguments, out stdOutput);
+			// Setting the working directory to the folder containing the ORIGINAL resx file allows us to find included files
+			// like FDO/Resources/Question.ico that the resx file refers to using relative paths.
+			var exitCode = RunProcess(fileName, arguments, out stdOutput, workdir: originalResxFolder);
 			if (exitCode != 0)
 			{
 				throw new ApplicationException($"Resgen returned error {exitCode} for {localizedResxPath}.\n" +
