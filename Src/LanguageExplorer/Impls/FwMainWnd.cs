@@ -690,32 +690,39 @@ namespace LanguageExplorer.Impls
 
 		#region Implementation of IFwMainWnd
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the active view of the window
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public IRootSite ActiveView { get; private set; }
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the focused control of the window
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public Control FocusedControl => FromHandle(Win32.GetFocus());
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the data object cache.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public LcmCache Cache => _flexApp.Cache;
 
-		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Get the specified main menu
+		/// </summary>
+		/// <param name="menuName"></param>
+		/// <returns>Return the specified main menu, or null if not found.</returns>
+		public ToolStripMenuItem GetMainMenu(string menuName)
+		{
+			ToolStripMenuItem retval = null;
+			if (_menuStrip.Items.ContainsKey(menuName))
+			{
+				retval = (ToolStripMenuItem)_menuStrip.Items[menuName];
+			}
+			return retval;
+		}
+
 		/// <summary>
 		/// Create the client windows and add correspnding stuff to the sidebar, View menu,  etc.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public void InitAndShowClient()
 		{
 			CheckDisposed();
@@ -723,47 +730,39 @@ namespace LanguageExplorer.Impls
 			Show();
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets a Rectangle representing the position and size of the window in its
 		/// normal (non-minimized, non-maximized) state.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public Rectangle NormalStateDesktopBounds { get; private set; }
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Called just before a window syncronizes it's views with DB changes (e.g. when an
 		/// undo or redo command is issued).
 		/// </summary>
 		/// <param name="sync">syncronization message</param>
-		/// ------------------------------------------------------------------------------------
 		public void PreSynchronize(SyncMsg sync)
 		{
 			throw new NotImplementedException();
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Called when a window syncronizes it's views with DB changes (e.g. when an undo or
 		/// redo command is issued).
 		/// </summary>
 		/// <param name="sync">syncronization message</param>
 		/// <returns>true if successful; false results in RefreshAllWindows.</returns>
-		/// ------------------------------------------------------------------------------------
 		public bool Synchronize(SyncMsg sync)
 		{
 			throw new NotImplementedException();
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Called when a window is finished being created and completely initialized.
 		/// </summary>
 		/// <returns>True if successful; false otherwise.  False should keep the main window
 		/// from being shown/initialized (maybe even close the window if false is returned)
 		/// </returns>
-		/// ------------------------------------------------------------------------------------
 		public bool OnFinishedInit()
 		{
 			CheckDisposed();
@@ -788,36 +787,30 @@ namespace LanguageExplorer.Impls
 			return true;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Handle the Find menu command.
 		/// </summary>
 		/// <param name="args">Arguments</param>
 		/// <returns><c>true</c> if message handled, otherwise <c>false</c>.</returns>
-		/// ------------------------------------------------------------------------------------
 		public bool OnEditFind(object args)
 		{
 			throw new NotImplementedException();
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Prepare to refresh the main window and its IAreas and ITools.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public void PrepareToRefresh()
 		{
 			_currentArea.PrepareToRefresh();
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Finish refreshing the main window and its IAreas and ITools.
 		/// </summary>
 		/// <remarks>
 		/// This should call Refresh on real window implementations,
 		/// after everything else is done.</remarks>
-		/// ------------------------------------------------------------------------------------
 		public void FinishRefresh()
 		{
 			Cache.ServiceLocator.GetInstance<IUndoStackManager>().Refresh();
@@ -825,11 +818,9 @@ namespace LanguageExplorer.Impls
 			Refresh();
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Refreshes all the views in this window and in all others in the app.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public void RefreshAllViews()
 		{
 			// Susanna asked that refresh affect only the currently active project, which is
@@ -1405,11 +1396,6 @@ namespace LanguageExplorer.Impls
 			// show the RAMP dialog
 			var ramp = new ReapRamp();
 			ramp.ArchiveNow(this, MainMenuStrip.Font, Icon, filesToArchive, PropertyTable, _flexApp, Cache);
-		}
-
-		private void File_Page_Setup(object sender, EventArgs e)
-		{
-			throw new NotSupportedException("There was no code to support this menu in the original system.");
 		}
 
 		private void File_Translated_List_Content(object sender, EventArgs e)

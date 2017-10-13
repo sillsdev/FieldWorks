@@ -34,7 +34,6 @@ namespace LanguageExplorer.Impls
 			this.toolStripMenuItem8 = new System.Windows.Forms.ToolStripSeparator();
 			this.archiveWithRAMPSILToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripMenuItem9 = new System.Windows.Forms.ToolStripSeparator();
-			this.pageSetupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.printToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripMenuItem10 = new System.Windows.Forms.ToolStripSeparator();
 			this.importToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -186,7 +185,6 @@ namespace LanguageExplorer.Impls
             this.toolStripMenuItem8,
             this.archiveWithRAMPSILToolStripMenuItem,
             this.toolStripMenuItem9,
-            this.pageSetupToolStripMenuItem,
             this.printToolStripMenuItem,
             this.toolStripMenuItem10,
             this.importToolStripMenuItem,
@@ -311,15 +309,6 @@ namespace LanguageExplorer.Impls
 			// 
 			this.toolStripMenuItem9.Name = "toolStripMenuItem9";
 			this.toolStripMenuItem9.Size = new System.Drawing.Size(208, 6);
-			// 
-			// pageSetupToolStripMenuItem
-			// 
-			this.pageSetupToolStripMenuItem.Enabled = false;
-			this.pageSetupToolStripMenuItem.Name = "pageSetupToolStripMenuItem";
-			this.pageSetupToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
-			this.pageSetupToolStripMenuItem.Text = "Page Setup...";
-			this.pageSetupToolStripMenuItem.ToolTipText = "Determine page layout options for printing.";
-			this.pageSetupToolStripMenuItem.Click += new System.EventHandler(this.File_Page_Setup);
 			// 
 			// printToolStripMenuItem
 			// 
@@ -1315,7 +1304,6 @@ namespace LanguageExplorer.Impls
 		private System.Windows.Forms.ToolStripSeparator toolStripMenuItem8;
 		private System.Windows.Forms.ToolStripMenuItem archiveWithRAMPSILToolStripMenuItem;
 		private System.Windows.Forms.ToolStripSeparator toolStripMenuItem9;
-		private System.Windows.Forms.ToolStripMenuItem pageSetupToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem printToolStripMenuItem;
 		private System.Windows.Forms.ToolStripSeparator toolStripMenuItem10;
 		private System.Windows.Forms.ToolStripMenuItem importToolStripMenuItem;

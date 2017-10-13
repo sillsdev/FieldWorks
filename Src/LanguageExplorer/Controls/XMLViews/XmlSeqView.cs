@@ -478,15 +478,13 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// Print method for printing one record (e.g. from RecordEditView)
 		/// in Document View.
 		///</summary>
-		///<param name="pd"></param>
-		///<param name="mainObjHvo"></param>
-		public void PrintFromDetail(PrintDocument pd, int mainObjHvo)
+		public void PrintFromDetail(PrintDocument printDoc, int mainObjHvo)
 		{
 			CheckDisposed();
 
 			var oldSda = RootBox.DataAccess;
 			RootBox.DataAccess = CachePrintDecorator(m_sdaSource, m_hvoRoot, m_mainFlid, new[] {mainObjHvo});
-			base.Print(pd);
+			base.Print(printDoc);
 			RootBox.DataAccess = oldSda;
 		}
 
@@ -495,12 +493,12 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// Print method
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public override void Print(PrintDocument pd)
+		public override void Print(PrintDocument printDoc)
 		{
 			CheckDisposed();
 
 			ISilDataAccess oldSda = null;
-			bool fPrintSelection = (pd.PrinterSettings.PrintRange == PrintRange.Selection);
+			bool fPrintSelection = (printDoc.PrinterSettings.PrintRange == PrintRange.Selection);
 			if (fPrintSelection)
 			{
 				oldSda = RootBox.DataAccess;
@@ -519,9 +517,11 @@ namespace LanguageExplorer.Controls.XMLViews
 					selectedObjects[i] = originalObjects[i + ihvoMin];
 				RootBox.DataAccess = CachePrintDecorator(m_sdaSource, m_hvoRoot, m_mainFlid, selectedObjects);
 			}
-			base.Print(pd);
+			base.Print(printDoc);
 			if (fPrintSelection)
+			{
 				RootBox.DataAccess = oldSda;
+			}
 		}
 
 		///<summary>

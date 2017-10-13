@@ -879,6 +879,7 @@
     <Compile Include="LcmUi\ReversalIndexEntryUi.cs" />
     <Compile Include="LcmUi\TypeAheadSupportVc.cs" />
     <Compile Include="LcmUi\WfiWordformUi.cs" />
+    <Compile Include="MenuServices.cs" />
     <Compile Include="MGA\GlossListBox.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -3016,9 +3017,6 @@
     <None Include="..\..\DistFiles\Language Explorer\Configuration\Grammar\Edit\DataEntryFilters\basicFilter.xml">
       <Link>XML\Grammar\Edit\DataEntryFilters\basicFilter.xml</Link>
     </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\Grammar\Edit\DataEntryFilters\basicPlusFilter.xml">
-      <Link>XML\Grammar\Edit\DataEntryFilters\basicPlusFilter.xml</Link>
-    </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\Grammar\Edit\toolConfiguration.xml">
       <Link>XML\Grammar\Edit\toolConfiguration.xml</Link>
       <SubType>Designer</SubType>
@@ -3030,12 +3028,6 @@
     <None Include="..\..\DistFiles\Language Explorer\Configuration\Lexicon\Dictionary\toolConfiguration.xml">
       <Link>XML\Lexicon\Dictionary\toolConfiguration.xml</Link>
       <SubType>Designer</SubType>
-    </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\Lexicon\Edit\DataEntryFilters\basicFilter.xml">
-      <Link>XML\Lexicon\Edit\DataEntryFilters\basicFilter.xml</Link>
-    </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\Lexicon\Edit\DataEntryFilters\basicPlusFilter.xml">
-      <Link>XML\Lexicon\Edit\DataEntryFilters\basicPlusFilter.xml</Link>
     </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\Lexicon\RDE\toolConfiguration.xml">
       <Link>XML\Lexicon\RDE\toolConfiguration.xml</Link>

@@ -599,7 +599,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		private void AddEditMenuItems()
 		{
-			_editMenu = (ToolStripMenuItem)_majorFlexComponentParameters.MenuStrip.Items[LanguageExplorerConstants.EditToolStripMenuItem];
+			_editMenu = MenuServices.GetEditMenu(_majorFlexComponentParameters.MenuStrip);
 			// Insert before third separator menu
 			// <item command="CmdGoToEntry" />
 			ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_newEditMenusAndHandlers, _editMenu, GoToEntry_Clicked, LexiconResources.Find_Entry, LexiconResources.GoToEntryToolTip, Keys.Control | Keys.F, LexiconResources.Find_Lexical_Entry.ToBitmap(), 10);
@@ -607,7 +607,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		private void AddInsertMenuItems()
 		{
-			_insertMenu = (ToolStripMenuItem)_majorFlexComponentParameters.MenuStrip.Items[LanguageExplorerConstants.InsertToolStripMenuItem];
+			_insertMenu = MenuServices.GetInsertMenu(_majorFlexComponentParameters.MenuStrip);
 
 			var insertIndex = 0;
 			// <item command="CmdInsertLexEntry" defaultVisible="false" />

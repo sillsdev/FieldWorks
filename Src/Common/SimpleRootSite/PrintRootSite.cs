@@ -180,9 +180,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		public void Print(PrintDocument pd)
 		{
-#if false
-			long x1 = System.DateTime.Now.Ticks;
-#endif
 			pd.PrintPage += new PrintPageEventHandler(this.pd_PrintPage);
 			pd.Print();
 			if (m_rootb != null)
@@ -193,22 +190,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				var msg = String.Format(Properties.Resources.ksPrintToFileFailed, pd.PrinterSettings.PrintFileName);
 				MessageBox.Show(msg, Properties.Resources.kstidPrintErrorCaption);
 			}
-
-#if false
-			long x2 = System.DateTime.Now.Ticks;
-			Debug.WriteLine("PrintRootSite.Print() took " + DeltaTime(x1,x2) + " seconds.");
-#endif
 		}
-
-#if false
-		private string DeltaTime(long x1, long x2)
-		{
-			long delta = x2 - x1;
-			long xSec = delta / 10000000;
-			long xMilli = (delta / 10000) % 1000;
-			return String.Format("{0}.{1:D3}", xSec, xMilli);
-		}
-#endif
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

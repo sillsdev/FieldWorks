@@ -36,14 +36,38 @@ namespace LanguageExplorer.Works
 		internal string m_configObjectName;
 		internal const string CurrentSelectedEntryClass = "currentSelectedEntry";
 		private string m_currentConfigView; // used when this is a Dictionary view to store which view is active.
+		private ToolStripMenuItem m_printMenu;
 
 		/// <summary />
-		internal XhtmlDocView(XElement configurationParametersElement, LcmCache cache, RecordClerk recordClerk)
+		internal XhtmlDocView(XElement configurationParametersElement, LcmCache cache, RecordClerk recordClerk, ToolStripMenuItem printMenu)
 			: base(configurationParametersElement, cache, recordClerk)
 		{
+			m_printMenu = printMenu;
+			m_printMenu.Click += PrintMenu_Click;
+			m_printMenu.Enabled = true;
 		}
 
 		#region Overrides of XWorksViewBase
+		/// -----------------------------------------------------------------------------------
+		/// <summary>
+		/// Clean up any resources being used.
+		/// </summary>
+		/// <param name="disposing"><c>true</c> to release both managed and unmanaged
+		/// resources; <c>false</c> to release only unmanaged resources.
+		/// </param>
+		/// -----------------------------------------------------------------------------------
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing)
+			{
+				m_printMenu.Click -= PrintMenu_Click;
+				m_printMenu.Enabled = false;
+			}
+
+			base.Dispose(disposing);
+
+			m_printMenu = null;
+		}
 
 		/// <summary>
 		/// Initialize a FLEx component with the basic interfaces.
@@ -746,8 +770,7 @@ namespace LanguageExplorer.Works
 		protected override void ReadParameters()
 		{
 			base.ReadParameters();
-			var backColorName = XmlUtils.GetOptionalAttributeValue(m_configurationParametersElement,
-				"backColor", "Window");
+			var backColorName = XmlUtils.GetOptionalAttributeValue(m_configurationParametersElement, "backColor", "Window");
 			BackColor = Color.FromName(backColorName);
 			m_configObjectName = XmlUtils.GetOptionalAttributeValue(m_configurationParametersElement, "configureObjectName", null);
 		}
@@ -755,21 +778,16 @@ namespace LanguageExplorer.Works
 		/// <summary>
 		/// Handle the 'File Print...' menu item click (defined in the Lexicon areaConfiguration.xml)
 		/// </summary>
-		/// <param name="commandObject"></param>
-		/// <returns></returns>
-		public bool OnPrint(object commandObject)
+		private void PrintMenu_Click(object sender, EventArgs e)
 		{
 			CloseContextMenuIfOpen(); // not sure if this is necessary or not
 			PrintPage(m_mainView);
-			return true;
 		}
 
 		internal static void PrintPage(XWebBrowser browser)
 		{
 			var geckoBrowser = browser.NativeBrowser as GeckoWebBrowser;
-			if (geckoBrowser == null)
-				return;
-			geckoBrowser.Window.Print();
+			geckoBrowser?.Window.Print();
 		}
 
 		/// <summary>

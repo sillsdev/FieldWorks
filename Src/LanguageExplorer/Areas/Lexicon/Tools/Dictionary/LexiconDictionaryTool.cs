@@ -116,7 +116,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 			}
 			var root = XDocument.Parse(LexiconResources.LexiconDictionaryToolParameters).Root;
 			_configureObjectName = root.Attribute("configureObjectName").Value;
-			_xhtmlDocView = new XhtmlDocView(root, majorFlexComponentParameters.LcmCache, _recordClerk);
+			_xhtmlDocView = new XhtmlDocView(root, majorFlexComponentParameters.LcmCache, _recordClerk, MenuServices.GetFilePrintMenu(majorFlexComponentParameters.MenuStrip));
 			var docViewPaneBar = new PaneBar();
 			var img = LanguageExplorerResources.MenuWidget;
 			img.MakeTransparent(Color.Magenta);

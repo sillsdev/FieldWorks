@@ -118,8 +118,7 @@ namespace SIL.FieldWorks.Common.Framework
 			}
 			catch(COMException e)
 			{
-				Debug.WriteLine("Got exception in FwRootSite.HandleSelectionChanged: "
-					+ e.Message);
+				Debug.WriteLine("Got exception in HandleSelectionChanged: " + e.Message);
 			}
 		}
 

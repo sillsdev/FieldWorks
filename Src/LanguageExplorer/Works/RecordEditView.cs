@@ -58,23 +58,22 @@ namespace LanguageExplorer.Works
 		private string m_titleField;
 		private string m_titleStr;
 		private string m_printLayout;
-
-		//// <summary>
-		//// used to associate menu commands with the slice that sent them
-		//// </summary>
-		//protected Slice m_sourceOfMenuCommandSlice=null;
+		private ToolStripMenuItem m_printMenu;
 
 		#endregion // Data members
 
 		#region Construction and Removal
 
-		internal RecordEditView(XElement configurationParametersElement, XDocument sliceFilterDocument, LcmCache cache, RecordClerk recordClerk, DataTree dataTree)
+		internal RecordEditView(XElement configurationParametersElement, XDocument sliceFilterDocument, LcmCache cache, RecordClerk recordClerk, DataTree dataTree, ToolStripMenuItem printMenu)
 			: base(configurationParametersElement, cache, recordClerk)
 		{
 			m_sliceFilterDocument = sliceFilterDocument;
 			// This must be called before InitializeComponent()
 			m_dataTree = dataTree;
 			m_dataTree.CurrentSliceChanged += DataTreeCurrentSliceChanged;
+			m_printMenu = printMenu;
+			m_printMenu.Click += PrintMenu_Click;
+			m_printMenu.Enabled = true;
 
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
@@ -147,6 +146,10 @@ namespace LanguageExplorer.Works
 			if (disposing)
 			{
 				components?.Dispose();
+
+				m_printMenu.Click -= PrintMenu_Click;
+				m_printMenu.Enabled = false;
+
 				if (m_dataTree != null)
 				{
 					m_dataTree.CurrentSliceChanged -= DataTreeCurrentSliceChanged;
@@ -158,6 +161,7 @@ namespace LanguageExplorer.Works
 				}
 			}
 			m_dataTree = null;
+			m_printMenu = null;
 
 			base.Dispose(disposing);
 		}
@@ -517,13 +521,10 @@ namespace LanguageExplorer.Works
 
 		#region Print methods
 
-		public bool OnPrint(object args)
+		private void PrintMenu_Click(object sender, EventArgs e)
 		{
-			CheckDisposed();
-
 			if (m_printLayout == null || Clerk.CurrentObject == null)
-				return false;
-			// Don't bother; this edit view does not specify a print layout, or there's nothing to print.
+				return; // Don't bother; this edit view does not specify a print layout, or there's nothing to print.
 
 			var area = PropertyTable.GetValue<string>("areaChoice");
 			string toolId;
@@ -536,19 +537,20 @@ namespace LanguageExplorer.Works
 					toolId = "lexiconDictionary";
 					break;
 				default:
-					return false;
+					return;
 			}
 			var toolInXmlConfig = FindToolInXMLConfig(toolId);
 			if (toolInXmlConfig == null)
-				return false;
+			{
+				return;
+			}
 			var innerControlNode = GetToolInnerControlNodeWithRightLayout(toolInXmlConfig);
 			if (innerControlNode == null)
-				return false;
+			{
+				return;
+			}
 			using (var docView = CreateDocView(innerControlNode))
 			{
-				if (docView == null)
-					return false;
-
 				using (var pd = new PrintDocument())
 				using (var dlg = new PrintDialog())
 				{
@@ -566,7 +568,6 @@ namespace LanguageExplorer.Works
 						docView.PrintFromDetail(pd, Clerk.CurrentObject.Hvo);
 					}
 				}
-				return true;
 			}
 		}
 
@@ -593,17 +594,7 @@ namespace LanguageExplorer.Works
 
 		private XmlDocView CreateDocView(XElement parentConfigNode)
 		{
-			Debug.Assert(parentConfigNode != null,
-				"Can't create a view without the XML control configuration.");
-			XmlDocView docView;
-			try
-			{
-				docView = (XmlDocView)DynamicLoader.CreateObjectUsingLoaderNode(parentConfigNode);
-			}
-			catch (Exception e)
-			{
-				return null;
-			}
+			var docView = (XmlDocView)DynamicLoader.CreateObjectUsingLoaderNode(parentConfigNode);
 			// TODO: Not right yet!
 			docView.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 			return docView;

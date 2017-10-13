@@ -2008,40 +2008,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			return true;
 		}
 
-		/// <summary>
-		/// Tries to be smart about whether our RootSite should print or not.
-		/// </summary>
-		/// <param name="args"></param>
-		/// <returns></returns>
-		public override bool OnPrint(object args)
-		{
-			CheckDisposed();
-
-#if RANDYTODO
-			// TODO: Use new interface instead of 'MultiPane', so this code has no dependency on the LangaugeExporer project.
-			// TODO: The interface will need at least the one 'PrintPane' property.
-
-			var tool = PropertyTable.GetValue<MultiPane>("currentContentControlObject", null);
-			if (tool != null)
-			{
-				// We want to print only if this tool is selected for printing, or if nothing has been selected.
-				// or if no default has been specified.
-				if ((tool).PrintPane == m_id ||
-					(tool).PrintPane == "")
-				{
-					return base.OnPrint(args);
-				}
-				// allow the specified default RootSite to Print.
-				return false;
-			}
-			else
-#endif
-			{
-				// It's not a MultiPane, so we should just have one RootSite to Print.
-				return base.OnPrint(args);
-			}
-		}
-
 		/// <remarks>
 		/// The ScrollBar.Maximum is equal to the maxUserReachable + ScrollBar.LargeChange - 1, which
 		/// in this implementation is also equal to RootBox.Height - MeanRowHeight - 1 in cases

@@ -41,6 +41,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		static public Dictionary<Tuple<string, Guid>, InterAreaBookmark> m_bookmarks;
 		private bool m_fParsedTextDuringSave;
+		private ToolStripMenuItem m_printMenu;
 
 		// This flag is normally set during a Refresh. When it is set, we suppress switching the focus box
 		// to the current occurrence in a concordance view, which would otherwise happen as a side effect
@@ -84,7 +85,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			InitializeComponent();
 		}
 
-		internal InterlinMaster(XElement configurationParametersElement, LcmCache cache, RecordClerk recordClerk, bool showTitlePane = true)
+		internal InterlinMaster(XElement configurationParametersElement, LcmCache cache, RecordClerk recordClerk, ToolStripMenuItem printMenu, bool showTitlePane = true)
 			:base(configurationParametersElement, cache, recordClerk)
 		{
 			// This call is required by the Windows.Forms Form Designer.
@@ -92,6 +93,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			Dock = DockStyle.Top;
 			m_tcPane.Visible = showTitlePane;
 			m_rtPane.Clerk = recordClerk;
+			m_printMenu = printMenu;
 		}
 
 		internal string BookmarkId => Clerk.Id ?? string.Empty;
@@ -575,7 +577,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					case ktpsInfo:
 						// It may already be initialized, but this is not very expensive and sometimes
 						// the infoPane was initialized with no data and should be re-initialized here
-						m_infoPane.Initialize(Clerk);
+						m_infoPane.Initialize(Clerk, m_printMenu);
 						m_infoPane.Dock = DockStyle.Fill;
 
 						m_infoPane.Enabled = m_infoPane.CurrentRootHvo != 0;

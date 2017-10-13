@@ -115,7 +115,8 @@ namespace LanguageExplorer.Areas.Lists.Tools.TextMarkupTagsEdit
 				MachineName,
 				majorFlexComponentParameters.LcmCache,
 				_recordClerk,
-				dataTree);
+				dataTree,
+				MenuServices.GetFilePrintMenu(majorFlexComponentParameters.MenuStrip));
 			RecordClerkServices.SetClerk(majorFlexComponentParameters, _recordClerk);
 		}
 

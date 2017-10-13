@@ -994,6 +994,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			CurrentAnalysisTree = new AnalysisTree();
 			// Tab should move between the piles inside the focus box!  See LT-9228.
 			AcceptsTab = true;
+			SuppressPrintHandling = true; // The SandBox is never the control that should print.
 		}
 
 		public SandboxBase(LcmCache cache, IVwStylesheet ss, InterlinLineChoices choices)
@@ -3880,18 +3881,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				this.Size = new Size(RootBox.Width + Margin.Horizontal, RootBox.Height + Margin.Vertical);
 			}
-		}
-
-		/// <summary>
-		/// The SandBox is never the control that should print.
-		/// </summary>
-		/// <param name="args"></param>
-		/// <returns></returns>
-		public override bool OnPrint(object args)
-		{
-			CheckDisposed();
-
-			return false; // didn't handle it.
 		}
 
 		/// <summary>

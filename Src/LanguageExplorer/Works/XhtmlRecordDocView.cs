@@ -23,11 +23,36 @@ namespace LanguageExplorer.Works
 	{
 		private XWebBrowser m_mainView;
 		internal string m_configObjectName;
+		private ToolStripMenuItem m_printMenu;
 
-		public XhtmlRecordDocView(XElement configurationParameters, LcmCache cache, RecordClerk recordClerk)
+		public XhtmlRecordDocView(XElement configurationParameters, LcmCache cache, RecordClerk recordClerk, ToolStripMenuItem printMenu)
 			: base(configurationParameters, cache, recordClerk)
 		{
+			m_printMenu = printMenu;
+			m_printMenu.Click += PrintMenu_Click;
+			m_printMenu.Enabled = true;
 		}
+
+		#region Overrides of RecordView
+		/// <summary>
+		/// Clean up any resources being used.
+		/// </summary>
+		/// <param name="disposing"><c>true</c> to release both managed and unmanaged
+		/// resources; <c>false</c> to release only unmanaged resources.
+		/// </param>
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing)
+			{
+				m_printMenu.Click -= PrintMenu_Click;
+				m_printMenu.Enabled = false;
+			}
+
+			base.Dispose(disposing);
+
+			m_printMenu = null;
+		}
+		#endregion
 
 		/// <summary>
 		/// Initialize a FLEx component with the basic interfaces.
@@ -99,14 +124,11 @@ namespace LanguageExplorer.Works
 #endif
 
 		/// <summary>
-		/// Handle the 'File Print...' menu item click (defined in the Lexicon areaConfiguration.xml)
+		/// Handle the 'File Print...' menu item click
 		/// </summary>
-		/// <param name="commandObject"></param>
-		/// <returns></returns>
-		public bool OnPrint(object commandObject)
+		private void PrintMenu_Click(object sender, EventArgs e)
 		{
 			XhtmlDocView.PrintPage(m_mainView);
-			return true;
 		}
 
 		protected override void ShowRecord()

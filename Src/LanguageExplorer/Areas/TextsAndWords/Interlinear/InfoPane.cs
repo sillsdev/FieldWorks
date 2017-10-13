@@ -80,7 +80,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <summary>
 		/// Initialize the pane with a record clerk. (It already has the cache.)
 		/// </summary>
-		internal void Initialize(RecordClerk clerk)
+		internal void Initialize(RecordClerk clerk, ToolStripMenuItem printMenu)
 		{
 			if (m_xrev != null)
 			{
@@ -91,7 +91,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// TODO: See LexiconEditTool for how to set up all manner of menus and toolbars.
 #endif
 			var dataTree = new InterlinearTextsRecordEditView.StTextDataTree(m_cache);
-			m_xrev = new InterlinearTextsRecordEditView(this, new XElement("parameters", new XAttribute("layout", "FullInformation")), m_cache, clerk, dataTree);
+			m_xrev = new InterlinearTextsRecordEditView(this, new XElement("parameters", new XAttribute("layout", "FullInformation")), m_cache, clerk, dataTree, printMenu);
 			m_xrev.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 			m_xrev.Dock = DockStyle.Fill;
 			Controls.Add(m_xrev);
@@ -167,8 +167,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		internal sealed class InterlinearTextsRecordEditView : RecordEditView
 		{
-			public InterlinearTextsRecordEditView(InfoPane infoPane, XElement configurationParametersElement, LcmCache cache, RecordClerk clerk, DataTree dataTree)
-				: base(configurationParametersElement, XDocument.Parse(AreaResources.VisibilityFilter_All), cache, clerk, dataTree)
+			public InterlinearTextsRecordEditView(InfoPane infoPane, XElement configurationParametersElement, LcmCache cache, RecordClerk clerk, DataTree dataTree, ToolStripMenuItem printMenu)
+				: base(configurationParametersElement, XDocument.Parse(AreaResources.VisibilityFilter_All), cache, clerk, dataTree, printMenu)
 			{
 				(m_dataTree as StTextDataTree).InfoPane = infoPane;
 			}

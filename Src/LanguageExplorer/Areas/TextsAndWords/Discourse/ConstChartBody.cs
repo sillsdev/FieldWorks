@@ -533,7 +533,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// to be controlled.
 		/// </summary>
 		/// <param name="dlg"></param>
-		public override void AdjustPrintDialog(PrintDialog dlg)
+		protected override void AdjustPrintDialog(PrintDialog dlg)
 		{
 			base.AdjustPrintDialog(dlg);
 			dlg.Document.DefaultPageSettings.Landscape = true;

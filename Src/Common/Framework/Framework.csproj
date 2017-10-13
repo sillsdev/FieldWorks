@@ -282,9 +282,6 @@
     <Compile Include="FwRegistrySettings.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="FwRootSite.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Include="SettingsXmlAccessorBase.cs" />
     <Compile Include="StatusBarProgressHandler.cs" />
     <Compile Include="StylesXmlAccessor.cs" />
@@ -295,10 +292,6 @@
       <SubType>Designer</SubType>
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>FrameworkStrings.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Include="FwRootSite.resx">
-      <DependentUpon>FwRootSite.cs</DependentUpon>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="UndoRedoDropDown.resx">
       <DependentUpon>UndoRedoDropDown.cs</DependentUpon>

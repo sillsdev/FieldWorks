@@ -211,6 +211,8 @@ namespace SIL.FieldWorks.Common.RootSites
 
 		/// <summary>handler for typing and other edit requests</summary>
 		protected EditingHelper m_editingHelper;
+		/// <summary />
+		private ToolStripMenuItem m_printMenu;
 
 		/// <summary>
 		/// A writing system factory used to interpret data in the view. Subclasses of
@@ -418,6 +420,12 @@ namespace SIL.FieldWorks.Common.RootSites
 					Subscriber.Unsubscribe("WritingSystemHvo", WritingSystemHvo_Changed);
 					Subscriber.Unsubscribe("BestStyleName", BestStyleName_Changed);
 					Subscriber.Unsubscribe("DisplayBestStyleName", DisplayBestStyleName);
+				}
+
+				if (m_printMenu != null)
+				{
+					m_printMenu.Click -= Print_Click;
+					m_printMenu.Enabled = false;
 				}
 
 				// Do this here, before disposing m_messageSequencer,
@@ -2044,52 +2052,43 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>
 		/// Print stuff.
 		/// </summary>
-		/// <param name="args"></param>
-		/// <returns></returns>
-		public virtual bool OnPrint(object args)
+		private void Print_Click(object sender, EventArgs e)
 		{
-			CheckDisposed();
-			if (SuppressPrintHandling)
-				return false;
-
-			using (PrintDocument pd = new PrintDocument())
+			if (!Focused)
 			{
-				//			PageSetupDialog pageDlg = new PageSetupDialog();
-				//			pageDlg.Document = pd;
-				//			pageDlg.ShowDialog();
-
-				using (PrintDialog dlg = new PrintDialog())
-				{
-					dlg.Document = pd;
-					dlg.AllowSomePages = true;
-					dlg.AllowSelection = false;
-					dlg.PrinterSettings.FromPage = 1;
-					dlg.PrinterSettings.ToPage = 1;
-					SetupPrintHelp(dlg);
-					AdjustPrintDialog(dlg);
-
-					if (dlg.ShowDialog() != DialogResult.OK)
-						return true;
-
-					if (MiscUtils.IsUnix)
-					{
-						using (PageSetupDialog pageDlg = new PageSetupDialog())
-						{
-							pageDlg.Document = dlg.Document;
-							pageDlg.AllowPrinter = false;
-							if (pageDlg.ShowDialog() != DialogResult.OK)
-								return true;
-						}
-					}
-
-					// REVIEW: .NET does not appear to handle the collation setting correctly
-					// so for now, we do not support non-collated printing.  Forcing the setting
-					// seems to work fine.
-					pd.PrinterSettings.Collate = true;
-					Print(pd);
-				}
+				return;
 			}
-			return true;
+			using (PrintDocument printDoc = new PrintDocument())
+			using (PrintDialog dlg = new PrintDialog())
+			{
+				dlg.Document = printDoc;
+				dlg.AllowSomePages = true;
+				dlg.AllowSelection = false;
+				dlg.PrinterSettings.FromPage = 1;
+				dlg.PrinterSettings.ToPage = 1;
+				SetupPrintHelp(dlg);
+				AdjustPrintDialog(dlg);
+
+				if (dlg.ShowDialog() != DialogResult.OK)
+					return;
+
+				if (MiscUtils.IsUnix)
+				{
+					using (PageSetupDialog pageDlg = new PageSetupDialog())
+					{
+						pageDlg.Document = dlg.Document;
+						pageDlg.AllowPrinter = false;
+						if (pageDlg.ShowDialog() != DialogResult.OK)
+							return;
+					}
+				}
+
+				// REVIEW: .NET does not appear to handle the collation setting correctly
+				// so for now, we do not support non-collated printing.  Forcing the setting
+				// seems to work fine.
+				printDoc.PrinterSettings.Collate = true;
+				Print(printDoc);
+			}
 		}
 
 		/// <summary>
@@ -2097,7 +2096,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// See XmlSeqView for an example.
 		/// </summary>
 		/// <param name="dlg"></param>
-		public virtual void AdjustPrintDialog(PrintDialog dlg)
+		protected virtual void AdjustPrintDialog(PrintDialog dlg)
 		{
 			CheckDisposed();
 		}
@@ -2133,34 +2132,20 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// Note: this does not implement the lower level IPrintRootSite.Print(pd).
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public virtual void Print(PrintDocument pd)
+		public virtual void Print(PrintDocument printDoc)
 		{
 			CheckDisposed();
 			if (m_rootb == null || DataAccess == null)
+			{
 				return;
+			}
 			int hvo;
 			IVwViewConstructor vc;
 			int frag;
 			IVwStylesheet ss;
 			GetPrintInfo(out hvo, out vc, out frag, out ss);
-
 			IPrintRootSite printRootSite = new PrintRootSite(DataAccess, hvo, vc, frag, ss);
-			PrintWithErrorHandling(printRootSite, pd, FindForm());
-		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Helper method to allow for standard error reporting when something goes wrong during
-		/// printing of the contents of a rootsite.
-		/// </summary>
-		/// <param name="printRootSite">The actual rootsite responsible for printing</param>
-		/// <param name="printDoc">The document to print</param>
-		/// <param name="parentForm">Used if something goes wrong and a message box needs to be
-		/// shown</param>
-		/// ------------------------------------------------------------------------------------
-		public static void PrintWithErrorHandling(IPrintRootSite printRootSite,
-			PrintDocument printDoc, Form parentForm)
-		{
 			try
 			{
 				printRootSite.Print(printDoc);
@@ -2171,9 +2156,8 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 			catch (Exception e)
 			{
-				string errorMsg = String.Format(Properties.Resources.kstidPrintingException, e.Message);
-				MessageBox.Show(parentForm, errorMsg, Properties.Resources.kstidPrintErrorCaption,
-					MessageBoxButtons.OK, MessageBoxIcon.Error);
+				var errorMsg = string.Format(Properties.Resources.kstidPrintingException, e.Message);
+				MessageBox.Show(FindForm(), errorMsg, Properties.Resources.kstidPrintErrorCaption, MessageBoxButtons.OK, MessageBoxIcon.Error);
 			}
 		}
 		#endregion
@@ -3168,15 +3152,18 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 		}
 
-		/// -----------------------------------------------------------------------------------
+		#region Overrides of Control
 		/// <summary>
 		/// View is getting focus: Activate the rootbox and set the appropriate keyboard
 		/// </summary>
-		/// <param name="e"></param>
-		/// -----------------------------------------------------------------------------------
 		protected override void OnGotFocus(EventArgs e)
 		{
 			CheckDisposed();
+
+			if (m_printMenu != null)
+			{
+				m_printMenu.Enabled = true;
+			}
 
 			//Debug.WriteLine("SimpleRootSite.OnGotFocus() hwnd = " + this.Handle);
 
@@ -3192,6 +3179,19 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			EditingHelper.GotFocus();
 		}
+
+		/// <summary>Raises the <see cref="E:System.Windows.Forms.Control.LostFocus" /> event.</summary>
+		/// <param name="e">An <see cref="T:System.EventArgs" /> that contains the event data. </param>
+		protected override void OnLostFocus(EventArgs e)
+		{
+			base.OnLostFocus(e);
+
+			if (m_printMenu != null)
+			{
+				m_printMenu.Enabled = false;
+			}
+		}
+		#endregion
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -6167,14 +6167,28 @@ namespace SIL.FieldWorks.Common.RootSites
 			Subscriber = flexComponentParameters.Subscriber;
 
 			Subscriber.Subscribe("AboutToFollowLink", AboutToFollowLink);
-
 			Subscriber.Subscribe("DisplayWritingSystemHvo", DisplayWritingSystemHvo);
 			Subscriber.Subscribe("WritingSystemHvo", WritingSystemHvo_Changed);
-
 			Subscriber.Subscribe("DisplayBestStyleName", DisplayBestStyleName);
 			Subscriber.Subscribe("BestStyleName", BestStyleName_Changed);
-
 			Subscriber.Subscribe("DisplayCombinedStylesList", DisplayCombinedStylesList);
+
+			if (!SuppressPrintHandling)
+			{
+				// Get the "Print" menu from the window's "File" menu, and wire up the Print_Click handler and enable the menu.
+				var mainWindow = PropertyTable.GetValue<Form>("window");
+				// Many tests have no window.
+				if (mainWindow != null)
+				{
+					// Have to do it the hard way.
+					var windowType = mainWindow.GetType();
+					var mi = windowType.GetMethod("GetMainMenu", new[] { typeof(string) });
+					var fileMenu = (ToolStripMenuItem)mi.Invoke(mainWindow, new object[] { "_fileToolStripMenuItem" });
+					m_printMenu = (ToolStripMenuItem)fileMenu.DropDownItems["printToolStripMenuItem"];
+					m_printMenu.Click += Print_Click;
+					m_printMenu.Enabled = false;
+				}
+			}
 		}
 
 		#endregion

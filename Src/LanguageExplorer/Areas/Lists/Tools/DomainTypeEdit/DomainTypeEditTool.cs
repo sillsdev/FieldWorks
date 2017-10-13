@@ -113,7 +113,8 @@ namespace LanguageExplorer.Areas.Lists.Tools.DomainTypeEdit
 				MachineName,
 				majorFlexComponentParameters.LcmCache,
 				_recordClerk,
-				dataTree);
+				dataTree,
+				MenuServices.GetFilePrintMenu(majorFlexComponentParameters.MenuStrip));
 			RecordClerkServices.SetClerk(majorFlexComponentParameters, _recordClerk);
 		}
 
