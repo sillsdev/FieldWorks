@@ -44,7 +44,7 @@ namespace SIL.FieldWorks
 		/// ------------------------------------------------------------------------------------
 		public void ShutdownApp(IFlexApp app)
 		{
-			FieldWorks.ShutdownApp(app, true);
+			FieldWorks.ShutdownApp(app);
 		}
 
 		/// ------------------------------------------------------------------------------------

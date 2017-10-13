@@ -2,7 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace LanguageExplorer
@@ -22,6 +22,8 @@ namespace LanguageExplorer
 			return (ToolStripMenuItem)menustrip.Items[menuName];
 		}
 
+		#region File menu
+
 		internal static ToolStripMenuItem GetFileMenu(MenuStrip menustrip)
 		{
 			return GetMenu(menustrip, LanguageExplorerConstants.FileToolStripMenuItem);
@@ -32,39 +34,103 @@ namespace LanguageExplorer
 			return GetMenu(GetMenu(menustrip, LanguageExplorerConstants.FileToolStripMenuItem).DropDownItems, "printToolStripMenuItem");
 		}
 
+		internal static ToolStripMenuItem GetFileExportMenu(MenuStrip menustrip)
+		{
+			return GetMenu(GetMenu(menustrip, LanguageExplorerConstants.FileToolStripMenuItem).DropDownItems, "exportToolStripMenuItem");
+		}
+
+		internal static ToolStripMenuItem GetFileImportMenu(MenuStrip menustrip)
+		{
+			return GetMenu(GetMenu(menustrip, LanguageExplorerConstants.FileToolStripMenuItem).DropDownItems, "importToolStripMenuItem");
+		}
+
+		#endregion File menu
+
+		#region Edit menu
+
 		internal static ToolStripMenuItem GetEditMenu(MenuStrip menustrip)
 		{
 			return GetMenu(menustrip, LanguageExplorerConstants.EditToolStripMenuItem);
 		}
+
+		#endregion Edit menu
+
+		#region View menu
 
 		internal static ToolStripMenuItem GetViewMenu(MenuStrip menustrip)
 		{
 			return GetMenu(menustrip, LanguageExplorerConstants.ViewToolStripMenuItem);
 		}
 
+		internal static ToolStripMenuItem GetViewRefreshMenu(MenuStrip menustrip)
+		{
+			return GetMenu(GetMenu(menustrip, LanguageExplorerConstants.ViewToolStripMenuItem).DropDownItems, "refreshToolStripMenuItem");
+		}
+
+		#endregion View menu
+
+		#region Data menu
+
 		internal static ToolStripMenuItem GetDataMenu(MenuStrip menustrip)
 		{
 			return GetMenu(menustrip, LanguageExplorerConstants.DataToolStripMenuItem);
 		}
+
+		#endregion Data menu
+
+		#region Insert menu
 
 		internal static ToolStripMenuItem GetInsertMenu(MenuStrip menustrip)
 		{
 			return GetMenu(menustrip, LanguageExplorerConstants.InsertToolStripMenuItem);
 		}
 
+		#endregion Insert menu
+
+		#region Format menu
+
 		internal static ToolStripMenuItem GetFormatMenu(MenuStrip menustrip)
 		{
 			return GetMenu(menustrip, LanguageExplorerConstants.FormatToolStripMenuItem);
 		}
+
+		#endregion Format menu
+
+		#region Tools menu
 
 		internal static ToolStripMenuItem GetToolsMenu(MenuStrip menustrip)
 		{
 			return GetMenu(menustrip, LanguageExplorerConstants.ToolsToolStripMenuItem);
 		}
 
+		#endregion Tools menu
+
+		#region Help menu
+
 		internal static ToolStripMenuItem GetHelpMenu(MenuStrip menustrip)
 		{
 			return GetMenu(menustrip, LanguageExplorerConstants.HelpToolStripMenuItem);
 		}
+
+		#endregion Help menu
+
+		#region Standard toolbar
+
+		private static ToolStripPanel GetStandardToolStripPanel(ToolStripContainer toolStripContainer)
+		{
+			return toolStripContainer.TopToolStripPanel;
+		}
+
+		private static ToolStrip GetStandardToolStrip(ToolStripContainer toolStripContainer)
+		{
+			return GetStandardToolStripPanel(toolStripContainer).Controls.Cast<Control>().Where(control => control.Name == "toolStripStandard").Cast<ToolStrip>().First();
+		}
+
+		internal static ToolStripItem GetStandardToolStripRefreshButton(ToolStripContainer toolStripContainer)
+		{
+			return GetStandardToolStrip(toolStripContainer).Items["toolStripButton_Refresh"];
+		}
+
+		#endregion Standard toolbar
 	}
 }

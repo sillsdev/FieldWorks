@@ -24,11 +24,11 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CompoundRuleAdvancedEdit
 	/// </summary>
 	internal sealed class CompoundRuleAdvancedEditTool : ITool
 	{
+		private GrammarAreaMenuHelper _grammarAreaWideMenuHelper;
 		private const string CompoundRules = "compoundRules";
 		private MultiPane _multiPane;
 		private RecordBrowseView _recordBrowseView;
 		private RecordClerk _recordClerk;
-		//private DataTree _dataTree;
 
 		#region Implementation of IPropertyTableProvider
 
@@ -84,7 +84,9 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CompoundRuleAdvancedEdit
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			_grammarAreaWideMenuHelper.Dispose();
 			MultiPaneFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _multiPane);
+			_grammarAreaWideMenuHelper = null;
 		}
 
 		/// <summary>
@@ -99,6 +101,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CompoundRuleAdvancedEdit
 			{
 				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(CompoundRules, majorFlexComponentParameters.Statusbar, FactoryMethod);
 			}
+			_grammarAreaWideMenuHelper = new GrammarAreaMenuHelper(majorFlexComponentParameters, _recordClerk); // Use generic export event handler.
 
 			var root = XDocument.Parse(GrammarResources.CompoundRuleAdvancedEditToolParameters).Root;
 			_recordBrowseView = new RecordBrowseView(root.Element("browseview").Element("parameters"), majorFlexComponentParameters.LcmCache, _recordClerk);

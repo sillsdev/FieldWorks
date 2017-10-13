@@ -15,10 +15,6 @@ using SIL.Windows.Forms;
 
 namespace LanguageExplorer.Works
 {
-#if RANDYTODO
-	// TODO: This was created in the old FwXWindow class.
-	// TODO: Figure out who can create it now.
-#endif
 	/// <summary>
 	/// Dialog for publishing data to Webonary web site.
 	/// </summary>

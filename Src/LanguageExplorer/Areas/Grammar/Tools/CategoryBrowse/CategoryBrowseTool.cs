@@ -21,6 +21,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CategoryBrowse
 	/// </summary>
 	internal sealed class CategoryBrowseTool : ITool
 	{
+		private GrammarAreaMenuHelper _grammarAreaWideMenuHelper;
 		private const string CategoriesWithoutTreeBarHandler = "categories_withoutTreeBarHandler";
 		private PaneBarContainer _paneBarContainer;
 		private RecordClerk _recordClerk;
@@ -79,7 +80,9 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CategoryBrowse
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			_grammarAreaWideMenuHelper.Dispose();
 			PaneBarContainerFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _paneBarContainer);
+			_grammarAreaWideMenuHelper = null;
 		}
 
 		/// <summary>
@@ -94,6 +97,8 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CategoryBrowse
 			{
 				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(CategoriesWithoutTreeBarHandler, majorFlexComponentParameters.Statusbar, FactoryMethod);
 			}
+			_grammarAreaWideMenuHelper = new GrammarAreaMenuHelper(majorFlexComponentParameters, _recordClerk); // Use generic export event handler.
+
 			_paneBarContainer = PaneBarContainerFactory.Create(
 				majorFlexComponentParameters.FlexComponentParameters,
 				majorFlexComponentParameters.MainCollapsingSplitContainer,

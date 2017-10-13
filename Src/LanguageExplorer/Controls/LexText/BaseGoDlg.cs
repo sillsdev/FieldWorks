@@ -22,7 +22,7 @@ using SIL.Windows.Forms;
 namespace LanguageExplorer.Controls.LexText
 {
 	/// <summary/>
-	public class BaseGoDlg : Form, IFlexComponent
+	public abstract class BaseGoDlg : Form, IFlexComponent
 	{
 		#region	Data members
 
@@ -119,7 +119,7 @@ namespace LanguageExplorer.Controls.LexText
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public BaseGoDlg()
+		protected BaseGoDlg()
 		{
 			//
 			// Required for Windows Form Designer support
@@ -417,10 +417,7 @@ namespace LanguageExplorer.Controls.LexText
 			}
 		}
 
-		protected virtual void InitializeMatchingObjects()
-		{
-			// override.
-		}
+		protected abstract void InitializeMatchingObjects();
 
 		// Grow the dialog's height by delta.
 		// Adjust any controls that need it.

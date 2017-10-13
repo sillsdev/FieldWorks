@@ -5,7 +5,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -27,16 +26,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
 	public partial class InterlinearSfmImportWizard : WizardDialog, IFwExtension
 	{
-//		private const string kSfmImportSettingsRegistryKeyName = "SFM import settings";
 		protected LcmCache m_cache;
 		private IPropertyTable m_propertyTable;
-		private IPublisher m_publisher;
 		private IHelpTopicProvider m_helpTopicProvider;
 		private List<InterlinearMapping> m_mappings = new List<InterlinearMapping>();
 		// Maps from writing system name to most recently selected encoding converter for that WS.
-		private Dictionary<string, string> m_preferredConverters = new Dictionary<string, string>();
-		//Map of the information about which tags follow others, needed to count the number of resulting interlinear texts
-		//after the users mapping has been applied.
+		// Map of the information about which tags follow others, needed to count the number of resulting interlinear texts
+		// after the users mapping has been applied.
 		Dictionary<string, Dictionary<string, int>> followedBy = new Dictionary<string, Dictionary<string, int>>();
 		private bool m_firstTimeInMappingsPane = true;
 
@@ -50,14 +46,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		protected virtual void SetDialogTitle()
 		{
-			Text = String.Format(Text, ITextStrings.ksInterlinearTexts);
+			Text = string.Format(Text, ITextStrings.ksInterlinearTexts);
 		}
 
-		public void Init(LcmCache cache, IPropertyTable propertyTable, IPublisher publisher)
+		void IFwExtension.Init(LcmCache cache, IPropertyTable propertyTable, IPublisher publisher)
 		{
 			m_cache = cache;
 			m_propertyTable = propertyTable;
-			m_publisher = publisher;
 			if (m_propertyTable != null)
 			{
 				m_helpTopicProvider = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
@@ -68,29 +63,33 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private void m_browseInputFilesButton_Click(object sender, EventArgs e)
 		{
 			m_fileListBox.Text = GetFiles(m_fileListBox.Text);
-			if (!string.IsNullOrEmpty(m_fileListBox.Text))
+			if (string.IsNullOrEmpty(m_fileListBox.Text))
 			{
-				var input = InputFiles;
-				if (input.Length > 0)
-				{
-					var settingsPath = GetDefaultOutputSettingsPath(input[0]);
-					m_saveSettingsFileBox.Text = settingsPath;
-				}
-				if (input.Length == 1)
-					MakeEndOfTextVisibleAndFocus(m_fileListBox);
-				m_loadSettingsFileBox.Text = GetDefaultInputSettingsPath();
-				foreach (var path in input)
-				{
-					var inputSettings = GetDefaultOutputSettingsPath(path);
-					if (File.Exists(inputSettings))
-					{
-						m_loadSettingsFileBox.Text = inputSettings;
-						break;
-					}
-				}
-				MakeEndOfTextVisibleAndFocus(m_loadSettingsFileBox);
-				m_browseLoadSettingsFileButon.Focus(); // a reasonable choice, and we've messed with focus making things visible
+				return;
 			}
+			var input = InputFiles;
+			if (input.Length > 0)
+			{
+				var settingsPath = GetDefaultOutputSettingsPath(input[0]);
+				m_saveSettingsFileBox.Text = settingsPath;
+			}
+			if (input.Length == 1)
+			{
+				MakeEndOfTextVisibleAndFocus(m_fileListBox);
+			}
+			m_loadSettingsFileBox.Text = GetDefaultInputSettingsPath();
+			foreach (var path in input)
+			{
+				var inputSettings = GetDefaultOutputSettingsPath(path);
+				if (!File.Exists(inputSettings))
+				{
+					continue;
+				}
+				m_loadSettingsFileBox.Text = inputSettings;
+				break;
+			}
+			MakeEndOfTextVisibleAndFocus(m_loadSettingsFileBox);
+			m_browseLoadSettingsFileButon.Focus(); // a reasonable choice, and we've messed with focus making things visible
 		}
 
 		/// <summary>
@@ -99,19 +98,22 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// I cannot find any portable way to achieve the desired scrolling without doing this.
 		/// </summary>
 		/// <param name="textBox"></param>
-		private void MakeEndOfTextVisibleAndFocus(TextBox textBox)
+		private static void MakeEndOfTextVisibleAndFocus(TextBox textBox)
 		{
 			if (textBox.Text.Length == 0)
+			{
 				return;
+			}
 			// It would seem logical that we would not want the -1, so we would be asking for the position of the
 			// imaginary character at the very end. However, that just always returns (0,0).
-			Point endPosition = textBox.GetPositionFromCharIndex(textBox.Text.Length - 1);
-			if (endPosition.X > textBox.Width)
+			var endPosition = textBox.GetPositionFromCharIndex(textBox.Text.Length - 1);
+			if (endPosition.X <= textBox.Width)
 			{
-				textBox.Focus();
-				textBox.Select(textBox.Text.Length, 0);
-				textBox.ScrollToCaret();
+				return;
 			}
+			textBox.Focus();
+			textBox.Select(textBox.Text.Length, 0);
+			textBox.ScrollToCaret();
 		}
 
 		private string GetDefaultOutputSettingsPath(string input)
@@ -120,15 +122,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			return Path.ChangeExtension(pathWithoutExtension + "-import-settings", ".map");
 		}
 
-		private string[] InputFiles
-		{
-			get { return SplitPaths(m_fileListBox.Text); }
-		}
+		private string[] InputFiles => SplitPaths(m_fileListBox.Text);
 
-		string FirstInputFile
-		{
-			get { return InputFiles.FirstOrDefault(); }
-		}
+		private string FirstInputFile => InputFiles.FirstOrDefault();
 
 		private void m_browseLoadSettingsFileButon_Click(object sender, EventArgs e)
 		{
@@ -141,14 +137,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			using (var openFileDialog = new OpenFileDialogAdapter())
 			{
-				openFileDialog.Filter = ResourceHelper.BuildFileFilter(FileFilterType.InterlinearSfm,
-					FileFilterType.AllFiles);
+				openFileDialog.Filter = ResourceHelper.BuildFileFilter(FileFilterType.InterlinearSfm, FileFilterType.AllFiles);
 				openFileDialog.CheckFileExists = true;
 				openFileDialog.Multiselect = true; // can import multiple files
 
 				var files = SplitPaths(currentFiles);
-				string dir = string.Empty;
-				string initialFileName = string.Empty;
+				var dir = string.Empty;
+				var initialFileName = string.Empty;
 				openFileDialog.FileName = "";
 				if (files.Length > 0)
 				{
@@ -159,14 +154,18 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					{
 						dir = Path.GetDirectoryName(firstFilePath);
 						if (File.Exists(firstFilePath))
+						{
 							initialFileName = Path.GetFileName(firstFilePath);
+						}
 					}
 					catch
 					{
 					}
 				}
 				if (Directory.Exists(dir))
+				{
 					openFileDialog.InitialDirectory = dir;
+				}
 				// It doesn't seem to be possible to open the dialog with more than one file selected.
 				// However there will often be only one so that's at least somewhat helpful.
 				openFileDialog.FileName = initialFileName;
@@ -174,24 +173,29 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				while (true) // loop until approved set of files or cancel
 				{
 					if (openFileDialog.ShowDialog() != DialogResult.OK)
+					{
 						return currentFiles;
+					}
 					var badFiles = new List<string>();
 					foreach (var fileName in openFileDialog.FileNames)
 					{
-						if (!new Sfm2Xml.IsSfmFile(fileName).IsValid)
+						if (!new IsSfmFile(fileName).IsValid)
+						{
 							badFiles.Add(fileName);
+						}
 					}
 					if (badFiles.Count > 0)
 					{
-						string msg = String.Format(ITextStrings.ksInvalidInterlinearFiles,
-							string.Join(", ", badFiles.ToArray()));
-						DialogResult dr = MessageBox.Show(this, msg,
-							ITextStrings.ksPossibleInvalidFile,
-							MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
+						var msg = string.Format(ITextStrings.ksInvalidInterlinearFiles, string.Join(", ", badFiles.ToArray()));
+						var dr = MessageBox.Show(this, msg, ITextStrings.ksPossibleInvalidFile, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
 						if (dr == DialogResult.Yes)
+						{
 							return JoinPaths(openFileDialog.FileNames);
+						}
 						if (dr == DialogResult.No)
+						{
 							continue; // loop and show dialog again...hopefully same files selected.
+						}
 						break; // user must have chosen cancel, break out of loop
 					}
 					return JoinPaths(openFileDialog.FileNames);
@@ -213,7 +217,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		internal static string[] SplitPaths(string input)
 		{
 			if (string.IsNullOrEmpty(input))
+			{
 				return new string[0];
+			}
 			var results = new List<string>();
 			var remaining = input;
 			for (;;)
@@ -241,12 +247,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private static void AddSimpleItems(List<string> results, string remaining)
 		{
 			if (string.IsNullOrWhiteSpace(remaining))
+			{
 				return;
+			}
 			results.AddRange(remaining.Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries).Select(x => x.Trim()).Where(x => !string.IsNullOrWhiteSpace(x)));
 		}
 
-		private string GetFile(string currentFile, string pathForInitialDirectory,
-			FileFilterType[] types, bool checkFileExists, string title, Func<string, bool> isValidFile)
+		private string GetFile(string currentFile, string pathForInitialDirectory, FileFilterType[] types, bool checkFileExists, string title, Func<string, bool> isValidFile)
 		{
 			using (var openFileDialog = new OpenFileDialogAdapter())
 			{
@@ -254,7 +261,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				openFileDialog.CheckFileExists = checkFileExists;
 				openFileDialog.Multiselect = false;
 
-				bool done = false;
+				var done = false;
 				while (!done)
 				{
 					// LT-6620 : putting in an invalid path was causing an exception in the openFileDialog.ShowDialog()
@@ -268,33 +275,37 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					{
 					}
 					if (Directory.Exists(dir))
+					{
 						openFileDialog.InitialDirectory = dir;
+					}
 					if (File.Exists(currentFile))
+					{
 						openFileDialog.FileName = currentFile;
+					}
 					else
+					{
 						openFileDialog.FileName = "";
+					}
 
 					openFileDialog.Title = title;
 					if (openFileDialog.ShowDialog() == DialogResult.OK)
 					{
 						if (!(isValidFile(openFileDialog.FileName)))
 						{
-							string msg = String.Format(ITextStrings.ksInvalidFileAreYouSure,
-								openFileDialog.FileName);
-							DialogResult dr = MessageBox.Show(this, msg,
-								ITextStrings.ksPossibleInvalidFile,
-								MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
-							if (dr == DialogResult.Yes)
-								return openFileDialog.FileName;
-							else if (dr == DialogResult.No)
+							var msg = string.Format(ITextStrings.ksInvalidFileAreYouSure, openFileDialog.FileName);
+							var dr = MessageBox.Show(this, msg, ITextStrings.ksPossibleInvalidFile, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
+							switch (dr)
+							{
+								case DialogResult.Yes:
+									return openFileDialog.FileName;
+								case DialogResult.No:
 									continue;
-								else
-									break;	// exit with current still
+							}
+							break;	// exit with current still
 						}
 						return openFileDialog.FileName;
 					}
-					else
-						done = true;
+					done = true;
 				}
 				return currentFile;
 			}
@@ -307,7 +318,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				// Populate m_mappingsList based on the selected files.
 				var sfmcounts = new Dictionary<string, int>();
 				var sfmOrder = new Dictionary<int, string>(); // key is 100000*fileNum + orderInFile, value is a marker
-				int fileNum = 0;
+				var fileNum = 0;
 				foreach (var pathName in InputFiles)
 				{
 					var reader = new SfmFileReaderEx(pathName);
@@ -329,7 +340,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				m_oldMappings = m_firstTimeInMappingsPane ? LoadSettings() : new List<InterlinearMapping>((m_mappings));
 				m_firstTimeInMappingsPane = false;
 				foreach (var mapping in m_oldMappings)
+				{
 					savedMappings[mapping.Marker] = mapping;
+				}
 				m_mappings.Clear();
 				var keys = new List<int>(sfmOrder.Keys);
 				keys.Sort();
@@ -344,13 +357,19 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						{
 							var ws = GetDefaultWs(mapping);
 							if (ws != 0)
+							{
 								mapping.WritingSystem = m_cache.WritingSystemFactory.GetStrFromWs(ws);
+							}
 						}
 						else if (mapping.WritingSystem == "{vern}")
+						{
 							mapping.WritingSystem = m_cache.WritingSystemFactory.GetStrFromWs(m_cache.DefaultVernWs);
+						}
 					}
 					else
+					{
 						mapping = new InterlinearMapping() {Marker = marker};
+					}
 					mapping.Count = sfmcounts[marker].ToString();
 					m_mappings.Add(mapping);
 				}
@@ -366,47 +385,48 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					m_mappingsList.Items.Add(item);
 				}
 				if (m_mappingsList.Items.Count > 0)
+				{
 					m_mappingsList.SelectedIndices.Add(0);
+				}
 				m_mappingsList.ResumeLayout();
 			}
 			else if(CurrentStepNumber == 1)
 			{
-				ICollection<CoreWritingSystemDefinition> currentVernacWSs = m_cache.LanguageProject.VernacularWritingSystems;
-				ICollection<CoreWritingSystemDefinition> currentAnalysWSs = m_cache.LanguageProject.AnalysisWritingSystems;
+				var currentVernacWSs = m_cache.LanguageProject.VernacularWritingSystems;
+				var currentAnalysWSs = m_cache.LanguageProject.AnalysisWritingSystems;
 				var vernToAdd = new ArrayList();
 				var analysToAdd = new ArrayList();
-				int textCount = CalculateTextCount(m_mappings, followedBy);
+				var textCount = CalculateTextCount(m_mappings, followedBy);
 				foreach(var mapping in m_mappings)
 				{
 					if (mapping.Destination == InterlinDestination.Ignored)
+					{
 						continue; // may well have no WS, in any case, we don't care whether it's in our list.
-					bool creationCancelled = false;
+					}
+					var creationCancelled = false;
 					var ws = (CoreWritingSystemDefinition) m_cache.WritingSystemFactory.get_Engine(mapping.WritingSystem);
 					if (mapping.Destination == InterlinDestination.Baseline || mapping.Destination == InterlinDestination.Wordform)
 					{
-						if(!currentVernacWSs.Contains(ws) && !vernToAdd.Contains(ws))
+						if (currentVernacWSs.Contains(ws) || vernToAdd.Contains(ws))
 						{
-							//Show creation dialog for Vernacular
-							var result = MessageBox.Show(this,
-														 String.Format(ITextStrings.ksImportSFMInterlinNewVernac, ws),
-														 String.Format(ITextStrings.ksImportSFMInterlinNewWSTitle, ws), MessageBoxButtons.YesNo);
-							if(result == DialogResult.Yes)
-							{
-								vernToAdd.Add(ws);
-							}
-							else //if they bail out we won't add any writing systems, they might change them all
-							{
-								return;
-							}
+							continue;
+						}
+						//Show creation dialog for Vernacular
+						var result = MessageBox.Show(this, string.Format(ITextStrings.ksImportSFMInterlinNewVernac, ws), string.Format(ITextStrings.ksImportSFMInterlinNewWSTitle, ws), MessageBoxButtons.YesNo);
+						if(result == DialogResult.Yes)
+						{
+							vernToAdd.Add(ws);
+						}
+						else //if they bail out we won't add any writing systems, they might change them all
+						{
+							return;
 						}
 					}
 					else
 					{
 						if(!currentAnalysWSs.Contains(ws) && !analysToAdd.Contains(ws))
 						{
-							var result = MessageBox.Show(this,
-														 String.Format(ITextStrings.ksImportSFMInterlinNewAnalysis, ws),
-														 String.Format(ITextStrings.ksImportSFMInterlinNewWSTitle, ws), MessageBoxButtons.YesNo);
+							var result = MessageBox.Show(this, string.Format(ITextStrings.ksImportSFMInterlinNewAnalysis, ws), string.Format(ITextStrings.ksImportSFMInterlinNewWSTitle, ws), MessageBoxButtons.YesNo);
 							if (result == DialogResult.Yes)
 							{
 								analysToAdd.Add(ws);
@@ -418,8 +438,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						}
 					}
 				}
-				NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(m_cache.ActionHandlerAccessor,
-					() => //Add all the collected new languages into the project in their proper section.
+				NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(m_cache.ActionHandlerAccessor, () => //Add all the collected new languages into the project in their proper section.
 					{
 						foreach (CoreWritingSystemDefinition analysLang in analysToAdd)
 						{
@@ -432,11 +451,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					});
 				if(textCount > 1)
 				{
-					numberOfTextsLabel.Text = String.Format(ITextStrings.ksImportSFMInterlinTextCount, textCount);
+					numberOfTextsLabel.Text = string.Format(ITextStrings.ksImportSFMInterlinTextCount, textCount);
 				}
 				else
 				{
-					numberOfTextsLabel.Text = String.Empty;
+					numberOfTextsLabel.Text = string.Empty;
 				}
 			}
 			base.OnNextButton();
@@ -464,14 +483,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <summary>
 		/// Given the mapping and followed by information from the file calculate how many texts will result from an import.
 		/// </summary>
-		/// <param name="mMappings"></param>
-		/// <param name="dictionary"></param>
-		/// <returns></returns>
-		private int CalculateTextCount(List<InterlinearMapping> mMappings, Dictionary<string, Dictionary<string, int>> dictionary)
+		private static int CalculateTextCount(List<InterlinearMapping> mMappings, Dictionary<string, Dictionary<string, int>> dictionary)
 		{
-			int count = 0;
+			var count = 0;
 			var headers = new HashSet<string>();
-			foreach (InterlinearMapping interlinearMapping in mMappings)
+			foreach (var interlinearMapping in mMappings)
 			{
 				if(interlinearMapping.Destination == InterlinDestination.Id ||
 				   interlinearMapping.Destination == InterlinDestination.Source ||
@@ -484,10 +500,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 			// if no headers were mapped then only one text could result (and 0 would be counted)
 			if (headers.Count == 0)
+			{
 				return 1;
+			}
 
 			//iterate through the data of markers and the counts of markers that follow them
-			foreach (KeyValuePair<string, Dictionary<string, int>> markerAndFollowing in dictionary)
+			foreach (var markerAndFollowing in dictionary)
 			{
 				//if the marker is a header
 				if(headers.Contains(markerAndFollowing.Key))
@@ -515,24 +533,23 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		protected override bool ValidToGoForward()
 		{
-			if (CurrentStepNumber == 1)
-				return ValidateReadyToImport();
-			return base.ValidToGoForward();
+			return CurrentStepNumber == 1 ? ValidateReadyToImport() : base.ValidToGoForward();
 		}
 
 		// Return true if all is well to proceed with the import. Otherwise display a message box and return false.
 		protected virtual bool ValidateReadyToImport()
 		{
-			bool gotBaseline = false;
+			var gotBaseline = false;
 			foreach (var mapping in m_mappings)
 			{
 				if (mapping.Destination == InterlinDestination.Baseline)
+				{
 					gotBaseline = true;
+				}
 			}
 			if (!gotBaseline)
 			{
-				MessageBox.Show(this, ITextStrings.ksMustHaveBaseline, ITextStrings.ksError, MessageBoxButtons.OK,
-					MessageBoxIcon.Error);
+				MessageBox.Show(this, ITextStrings.ksMustHaveBaseline, ITextStrings.ksError, MessageBoxButtons.OK, MessageBoxIcon.Error);
 				return false;
 			}
 			return true;
@@ -561,7 +578,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			base.OnFinishButton();
 			SaveSettings();
 			if (string.IsNullOrEmpty(m_fileListBox.Text))
+			{
 				return;
+			}
 			using (var dlg = new ProgressDialogWithTask(this))
 			{
 				dlg.AllowCancel = false;
@@ -578,9 +597,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					// JohnT: I hate to just report and otherwise ignore all exceptions, but have not been able to find any doc of which ones,
 					// if any, EncConverters may throw.
 					System.Diagnostics.Debug.WriteLine("Error: " + ex.InnerException.Message);
-					MessageBox.Show(this, String.Format(ITextStrings.ksSfmImportProblem, ex.InnerException.Message),
-						ITextStrings.ksUnhandledError,
-						MessageBoxButtons.OK, MessageBoxIcon.Error);
+					MessageBox.Show(this, string.Format(ITextStrings.ksSfmImportProblem, ex.InnerException.Message), ITextStrings.ksUnhandledError, MessageBoxButtons.OK, MessageBoxIcon.Error);
 					DialogResult = DialogResult.Cancel;
 					Close();
 				}
@@ -588,9 +605,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			m_propertyTable.GetValue<IFwMainWnd>("window").RefreshAllViews();
 			if (m_firstNewText != null)
 			{
-#if RANDYTODO
-				// Theory has it that the clerk is already in the repository.
-#endif
 				// try to select it.
 				var clerk = RecordClerk.ActiveRecordClerkRepository.GetRecordClerk("interlinearTexts");
 				clerk?.JumpToRecord(m_firstNewText.ContentsOA.Hvo);
@@ -610,13 +624,17 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				var path = path1.Trim();
 				if (!File.Exists(path))
+				{
 					continue; // report?
+				}
 				var input = new ByteReader(path);
 				var converterStage1 = GetSfmConverter();
 				var stage1 = converterStage1.Convert(input, m_mappings, m_cache.ServiceLocator.WritingSystemManager);
 				// Skip actual import if SHIFT was held down.
-				if (secretShiftText.Visible == true)
+				if (secretShiftText.Visible)
+				{
 					continue;
+				}
 				DoStage2Conversion(stage1, dlg);
 			}
 			return null;
@@ -646,10 +664,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private void SaveSettings()
 		{
 			var path = m_saveSettingsFileBox.Text.Trim();
-			//if (!string.IsNullOrEmpty(path))
-			//    FwRegistryHelper.FieldWorksRegistryKey.SetValue(kSfmImportSettingsRegistryKeyName, path);
 			if (string.IsNullOrEmpty(path))
+			{
 				return;
+			}
 			var mappingsToSave = new List<InterlinearMapping>(m_mappings);
 			// We will save our current mappings and any others from the file we loaded (may be useful if these
 			// settings are later applied to another file).
@@ -659,12 +677,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				foreach (var mapping in m_oldMappings)
 				{
 					if (!currentMarkers.Contains(mapping.Marker))
+					{
 						mappingsToSave.Add(mapping);
+					}
 				}
 			}
 			try
 			{
-				XmlSerializer serializer = new XmlSerializer(mappingsToSave.GetType());
+				var serializer = new XmlSerializer(mappingsToSave.GetType());
 				using (var writer = new StreamWriter(path))
 				{
 					serializer.Serialize(writer, mappingsToSave);
@@ -675,7 +695,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				var msg = string.Format(ITextStrings.ksErrorWritingSettings, path, ex.Message);
 				MessageBox.Show(this, msg, ITextStrings.ksError, MessageBoxButtons.OK, MessageBoxIcon.Warning);
-				return;
 			}
 		}
 
@@ -683,12 +702,16 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			var path = m_loadSettingsFileBox.Text;
 			if (string.IsNullOrEmpty(path) || !File.Exists(path))
+			{
 				path = GetDefaultInputSettingsPath();
+			}
 			if (string.IsNullOrEmpty(path) || !File.Exists(path))
+			{
 				return new List<InterlinearMapping>();
+			}
 			try
 			{
-				XmlSerializer serializer = new XmlSerializer(typeof(List<InterlinearMapping>));
+				var serializer = new XmlSerializer(typeof(List<InterlinearMapping>));
 				using (var reader = new StreamReader(path))
 				{
 					var result = (List<InterlinearMapping>)serializer.Deserialize(reader);
@@ -704,8 +727,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 			catch (InvalidOperationException ex)
 			{
-				var msg = string.Format(ITextStrings.ksErrorReadingSettings, path, ex.Message + ". " +
-					(ex.InnerException != null ? ex.InnerException.Message : ""));
+				var msg = string.Format(ITextStrings.ksErrorReadingSettings, path, ex.Message + ". " + (ex.InnerException?.Message ?? string.Empty));
 				MessageBox.Show(this, msg, ITextStrings.ksError, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				return new List<InterlinearMapping>();
 			}
@@ -713,23 +735,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private string GetDefaultInputSettingsPath()
 		{
-			string path;
-			string sRootDir = FwDirectoryFinder.CodeDirectory;
-			string sTransformDir;
-			if (!sRootDir.EndsWith(Path.DirectorySeparatorChar.ToString()))
-				sRootDir += Path.DirectorySeparatorChar;
-			sTransformDir = sRootDir + String.Format("Language Explorer{0}Import{0}", Path.DirectorySeparatorChar);
-			path = Path.Combine(sTransformDir, SfmImportSettingsFileName);
-			return path;
+			return Path.Combine(FwDirectoryFinder.CodeDirectory, "Language Explorer", "Import", SfmImportSettingsFileName);
 		}
 
-		protected virtual string SfmImportSettingsFileName
-		{
-			get
-			{
-				return "InterlinearSfmImport.map";
-			}
-		}
+		protected virtual string SfmImportSettingsFileName => "InterlinearSfmImport.map";
 
 		internal static string GetDestinationName(InterlinDestination dest)
 		{
@@ -740,18 +749,19 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private void m_modifyMappingButton_Click(object sender, EventArgs e)
 		{
 			if (m_mappingsList.SelectedIndices.Count == 0)
+			{
 				return;
+			}
 			using (var dlg = new SfmToTextsAndWordsMappingDlg())
 			{
 				var index = m_mappingsList.SelectedIndices[0];
 				var mapping = m_mappings[index];
 				var destinationsFilter = GetDestinationsFilter();
-				dlg.SetupDlg(m_helpTopicProvider, m_propertyTable.GetValue<IApp>("App"), m_cache,
-					mapping, destinationsFilter);
+				dlg.SetupDlg(m_helpTopicProvider, m_propertyTable.GetValue<IApp>("App"), m_cache, mapping, destinationsFilter);
 				dlg.ShowDialog(this);
 				var item = m_mappingsList.Items[index];
 				item.SubItems[2].Text = GetDestinationName(mapping.Destination);
-				item.SubItems[3].Text = mapping.WritingSystem != null ? GetWritingSystemName(mapping.WritingSystem) : "";
+				item.SubItems[3].Text = mapping.WritingSystem != null ? GetWritingSystemName(mapping.WritingSystem) : string.Empty;
 				item.SubItems[4].Text = mapping.Converter;
 			}
 		}
@@ -770,7 +780,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private void m_btnCancel_Click(object sender, EventArgs e)
 		{
 			if (string.IsNullOrEmpty(m_loadSettingsFileBox.Text) || CurrentStepNumber == 0)
+			{
 				return;
+			}
 			var result = MessageBox.Show(this, ITextStrings.ksAskSaveSettings, ITextStrings.ksSaveSettingsCaption, MessageBoxButtons.YesNoCancel);
 			if (result == DialogResult.Cancel)
 			{
@@ -778,7 +790,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				return;
 			}
 			if (result == DialogResult.Yes)
+			{
 				SaveSettings();
+			}
 		}
 
 		private void m_btnHelp_Click(object sender, EventArgs e)
@@ -788,9 +802,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private void m_browseSaveSettingsFileButon_Click(object sender, EventArgs e)
 		{
-			m_saveSettingsFileBox.Text = GetFile(m_saveSettingsFileBox.Text, FirstInputFile, new[] { FileFilterType.ImportMapping, FileFilterType.AllFiles }, false,
-				ITextStrings.ksSelectMapFile, path => true);
-
+			m_saveSettingsFileBox.Text = GetFile(m_saveSettingsFileBox.Text, FirstInputFile, new[] { FileFilterType.ImportMapping, FileFilterType.AllFiles }, false, ITextStrings.ksSelectMapFile, path => true);
 		}
 
 		private void m_mappingsList_MouseDoubleClick(object sender, MouseEventArgs e)
@@ -801,7 +813,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private void m_useDefaultSettingsLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
 			m_loadSettingsFileBox.Text = GetDefaultInputSettingsPath();
-
 		}
 	}
 }

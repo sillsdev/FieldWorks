@@ -10,14 +10,11 @@ namespace LanguageExplorer.Controls.LexText
 	/// <summary>
 	/// A small interface to allow for plugin stuff, like import dialogs
 	/// </summary>
-	public interface IFwExtension
+	internal interface IFwExtension
 	{
 		/// <summary>
 		/// Called instead of a constructor with parameters
 		/// </summary>
-		/// <param name="cache"></param>
-		/// <param name="propertyTable"></param>
-		/// <param name="publisher"></param>
 		void Init(LcmCache cache, IPropertyTable propertyTable, IPublisher publisher);
 	}
 }

@@ -28,6 +28,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 	/// </summary>
 	internal sealed class LexiconEditToolMenuHelper : IFlexComponent, IDisposable
 	{
+		private LexiconAreaMenuHelper _lexiconAreaMenuHelper;
 		internal const string Show_DictionaryPubPreview = "Show_DictionaryPubPreview";
 		internal const string panelMenuId = "left";
 		private const string mnuDataTree_Sense_Hotlinks = "mnuDataTree-Sense-Hotlinks";
@@ -41,33 +42,30 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		private List<Tuple<ToolStripMenuItem, EventHandler>> _newInsertMenusAndHandlers = new List<Tuple<ToolStripMenuItem, EventHandler>>();
 		private ToolStripButton _insertEntryToolStripButton;
 		private ToolStripButton _insertGoToEntryToolStripButton;
-
-		private LcmCache Cache { get; set; }
-		private IFwMainWnd MainWindow { get; set; }
 		private DataTree DataTree { get; set; }
 		private RecordClerk RecordClerk { get; set; }
 		internal MultiPane InnerMultiPane { get; set; }
 		internal SliceContextMenuFactory SliceContextMenuFactory { get; set; }
 
-		internal LexiconEditToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters,
-			DataTree dataTree, RecordClerk recordClerk)
+		internal LexiconEditToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, DataTree dataTree, RecordClerk recordClerk)
 		{
 			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
 			Guard.AgainstNull(dataTree, nameof(dataTree));
 			Guard.AgainstNull(recordClerk, nameof(recordClerk));
 
 			_majorFlexComponentParameters = majorFlexComponentParameters;
-			Cache = _majorFlexComponentParameters.LcmCache;
-			MainWindow = majorFlexComponentParameters.MainWindow;
 			DataTree = dataTree;
 			RecordClerk = recordClerk;
 			SliceContextMenuFactory = DataTree.SliceContextMenuFactory;
+			_lexiconAreaMenuHelper = new LexiconAreaMenuHelper(_majorFlexComponentParameters, RecordClerk);
 
 			InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);
 		}
 
 		internal void Initialize()
 		{
+			_lexiconAreaMenuHelper.Initialize();
+
 			AddEditMenuItems();
 			AddInsertMenuItems();
 			AddToolbarItems();
@@ -162,6 +160,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 			if (disposing)
 			{
+				_lexiconAreaMenuHelper.Dispose();
 				foreach (var menuTuple in _newEditMenusAndHandlers)
 				{
 					menuTuple.Item1.Click -= menuTuple.Item2;
@@ -182,13 +181,12 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				InsertToolbarManager.DeactivateInsertToolbar(_majorFlexComponentParameters);
 				_insertEntryToolStripButton.Dispose();
 			}
+			_lexiconAreaMenuHelper = null;
 			_majorFlexComponentParameters = null;
 			_insertMenu = null;
 			_insertEntryToolStripButton = null;
 			_newInsertMenusAndHandlers = null;
 			SliceContextMenuFactory = null;
-			Cache = null;
-			MainWindow = null;
 			DataTree = null;
 			RecordClerk = null;
 			InnerMultiPane = null;
@@ -261,9 +259,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		private void Insert_Etymology_Clicked(object sender, EventArgs e)
 		{
-			UndoableUnitOfWorkHelper.Do(LexiconResources.Undo_Insert_Etymology, LexiconResources.Redo_Insert_Etymology, Cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
+			UndoableUnitOfWorkHelper.Do(LexiconResources.Undo_Insert_Etymology, LexiconResources.Redo_Insert_Etymology, _majorFlexComponentParameters.LcmCache.ServiceLocator.GetInstance<IActionHandler>(), () =>
 			{
-				((ILexEntry)RecordClerk.CurrentObject).EtymologyOS.Add(Cache.ServiceLocator.GetInstance<ILexEtymologyFactory>().Create());
+				((ILexEntry)RecordClerk.CurrentObject).EtymologyOS.Add(_majorFlexComponentParameters.LcmCache.ServiceLocator.GetInstance<ILexEtymologyFactory>().Create());
 			});
 		}
 
@@ -431,12 +429,12 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			if (currentSense.Owner is ILexSense)
 			{
 				var owningSense = (ILexSense)currentSense.Owner;
-				LexSenseUi.CreateNewLexSense(Cache, owningSense, owningSense.SensesOS.IndexOf(currentSense) + 1);
+				LexSenseUi.CreateNewLexSense(_majorFlexComponentParameters.LcmCache, owningSense, owningSense.SensesOS.IndexOf(currentSense) + 1);
 			}
 			else
 			{
 				var owningEntry = (ILexEntry)RecordClerk.CurrentObject;
-				LexSenseUi.CreateNewLexSense(Cache, owningEntry, owningEntry.SensesOS.IndexOf(currentSense) + 1);
+				LexSenseUi.CreateNewLexSense(_majorFlexComponentParameters.LcmCache, owningEntry, owningEntry.SensesOS.IndexOf(currentSense) + 1);
 			}
 		}
 
@@ -449,7 +447,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		private void Show_Entry_In_Concordance_Clicked(object sender, EventArgs e)
 		{
-			MessageBox.Show((Form)MainWindow, "Show Entry In Concordance...");
+			MessageBox.Show((Form)_majorFlexComponentParameters.MainWindow, "Show Entry In Concordance...");
 		}
 
 		private void Delete_Sense_Clicked(object sender, EventArgs e)
@@ -472,7 +470,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				var window = PropertyTable.GetValue<Form>("window");
 				dlg.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 				// <parameters title="Merge Entry" formlabel="_Find:" okbuttonlabel="_Merge"/>
-				dlg.SetDlgInfo(Cache, XElement.Parse(LexiconResources.MatchingEntriesParameters), currentEntry, LexiconResources.ksMergeEntry, FwUtils.ReplaceUnderlineWithAmpersand(LexiconResources.ks_Find), FwUtils.ReplaceUnderlineWithAmpersand(LexiconResources.ks_Merge));
+				dlg.SetDlgInfo(_majorFlexComponentParameters.LcmCache, XElement.Parse(LexiconResources.MatchingEntriesParameters), currentEntry, LexiconResources.ksMergeEntry, FwUtils.ReplaceUnderlineWithAmpersand(LexiconResources.ks_Find), FwUtils.ReplaceUnderlineWithAmpersand(LexiconResources.ks_Merge));
 				if (dlg.ShowDialog(window) != DialogResult.OK)
 				{
 					return;
@@ -480,7 +478,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 				var survivor = (ILexEntry)dlg.SelectedObject;
 				Debug.Assert(survivor != currentEntry);
-				UndoableUnitOfWorkHelper.Do(LexiconResources.ksUndoMergeEntry, LexiconResources.ksRedoMergeEntry, Cache.ActionHandlerAccessor, () =>
+				UndoableUnitOfWorkHelper.Do(LexiconResources.ksUndoMergeEntry, LexiconResources.ksRedoMergeEntry, _majorFlexComponentParameters.LcmCache.ActionHandlerAccessor, () =>
 				{
 					survivor.MergeObject(currentEntry, true);
 					survivor.DateModified = DateTime.Now;
@@ -502,42 +500,42 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		private void Lexeme_Form_Is_A_Variant_Clicked(object sender, EventArgs e)
 		{
-			MessageBox.Show((Form)MainWindow, "Lexeme Form Is A Variant...");
+			MessageBox.Show((Form)_majorFlexComponentParameters.MainWindow, "Lexeme Form Is A Variant...");
 		}
 
 		private void Lexeme_Form_Has_Components_Clicked(object sender, EventArgs e)
 		{
-			MessageBox.Show((Form)MainWindow, "Lexeme Form Has Components...");
+			MessageBox.Show((Form)_majorFlexComponentParameters.MainWindow, "Lexeme Form Has Components...");
 		}
 
 		private void Insert_Sound_Or_Movie_File_Clicked(object sender, EventArgs e)
 		{
-			MessageBox.Show((Form)MainWindow, "Inserting Sound or Movie File...");
+			MessageBox.Show((Form)_majorFlexComponentParameters.MainWindow, "Inserting Sound or Movie File...");
 		}
 
 		private void Insert_Pronunciation_Clicked(object sender, EventArgs e)
 		{
-			MessageBox.Show((Form)MainWindow, "Inserting Pronunciation...");
+			MessageBox.Show((Form)_majorFlexComponentParameters.MainWindow, "Inserting Pronunciation...");
 		}
 
 		private void Insert_Allomorph_Clicked(object sender, EventArgs e)
 		{
-			MessageBox.Show((Form)MainWindow, "Inserting Allomorph...");
+			MessageBox.Show((Form)_majorFlexComponentParameters.MainWindow, "Inserting Allomorph...");
 		}
 
 		private void Insert_Variant_Clicked(object sender, EventArgs e)
 		{
-			MessageBox.Show((Form)MainWindow, "Inserting Variant...");
+			MessageBox.Show((Form)_majorFlexComponentParameters.MainWindow, "Inserting Variant...");
 		}
 
 		private void Insert_Subsense_Clicked(object sender, EventArgs e)
 		{
-			MessageBox.Show((Form)MainWindow, "Inserting Subsense...");
+			MessageBox.Show((Form)_majorFlexComponentParameters.MainWindow, "Inserting Subsense...");
 		}
 
 		private void Insert_Sense_Clicked(object sender, EventArgs e)
 		{
-			LexSenseUi.CreateNewLexSense(Cache, (ILexEntry)RecordClerk.CurrentObject);
+			LexSenseUi.CreateNewLexSense(_majorFlexComponentParameters.LcmCache, (ILexEntry)RecordClerk.CurrentObject);
 		}
 
 		private void Insert_Entry_Clicked(object sender, EventArgs e)
@@ -546,7 +544,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			{
 				var mainWindow = PropertyTable.GetValue<IFwMainWnd>("window");
 				dlg.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-				dlg.SetDlgInfo(Cache, PersistenceProviderFactory.CreatePersistenceProvider(PropertyTable));
+				dlg.SetDlgInfo(_majorFlexComponentParameters.LcmCache, PersistenceProviderFactory.CreatePersistenceProvider(PropertyTable));
 				if (dlg.ShowDialog((Form)mainWindow) == DialogResult.OK)
 				{
 					ILexEntry entry;
@@ -570,7 +568,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					m_label = FwUtils.ReplaceUnderlineWithAmpersand(LexiconResources.Go_To),
 					m_title = LexiconResources.Go_To_Entry_Dlg_Title
 				};
-				dlg.SetDlgInfo(Cache, windowParameters);
+				dlg.SetDlgInfo(_majorFlexComponentParameters.LcmCache, windowParameters);
 				dlg.SetHelpTopic("khtpFindLexicalEntry");
 				if (dlg.ShowDialog(PropertyTable.GetValue<Form>("window")) == DialogResult.OK)
 				{

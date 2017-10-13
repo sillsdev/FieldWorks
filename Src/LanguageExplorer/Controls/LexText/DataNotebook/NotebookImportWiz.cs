@@ -730,7 +730,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 		/// <summary>
 		/// Initialize the data values for this dialog.
 		/// </summary>
-		public void Init(LcmCache cache, IPropertyTable propertyTable, IPublisher publisher)
+		void IFwExtension.Init(LcmCache cache, IPropertyTable propertyTable, IPublisher publisher)
 		{
 			m_cache = cache;
 			m_propertyTable = propertyTable;

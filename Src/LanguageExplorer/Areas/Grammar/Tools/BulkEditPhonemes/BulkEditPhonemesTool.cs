@@ -19,6 +19,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.BulkEditPhonemes
 	/// </summary>
 	internal sealed class BulkEditPhonemesTool : ITool
 	{
+		private GrammarAreaMenuHelper _grammarAreaWideMenuHelper;
 		private PaneBarContainer _paneBarContainer;
 		private AssignFeaturesToPhonemes _assignFeaturesToPhonemesView;
 		private RecordClerk _recordClerk;
@@ -77,8 +78,10 @@ namespace LanguageExplorer.Areas.Grammar.Tools.BulkEditPhonemes
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			_grammarAreaWideMenuHelper.Dispose();
 			PaneBarContainerFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _paneBarContainer);
 			_assignFeaturesToPhonemesView = null;
+			_grammarAreaWideMenuHelper = null;
 		}
 
 		/// <summary>
@@ -101,6 +104,8 @@ namespace LanguageExplorer.Areas.Grammar.Tools.BulkEditPhonemes
 			{
 				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(GrammarArea.Phonemes, majorFlexComponentParameters.Statusbar, GrammarArea.PhonemesFactoryMethod);
 			}
+			_grammarAreaWideMenuHelper = new GrammarAreaMenuHelper(majorFlexComponentParameters, _recordClerk); // Use generic export event handler.
+
 			_assignFeaturesToPhonemesView = new AssignFeaturesToPhonemes(XDocument.Parse(GrammarResources.BulkEditPhonemesToolParameters).Root, majorFlexComponentParameters.LcmCache, _recordClerk);
 
 			_paneBarContainer = PaneBarContainerFactory.Create(

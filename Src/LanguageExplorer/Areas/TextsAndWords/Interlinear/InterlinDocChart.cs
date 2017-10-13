@@ -30,6 +30,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		protected override void Dispose(bool disposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
+
+			if (disposing)
+			{
+			}
+
 			base.Dispose(disposing);
 		}
 	}

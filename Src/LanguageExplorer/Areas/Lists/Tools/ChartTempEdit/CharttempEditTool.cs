@@ -23,6 +23,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ChartTempEdit
 	/// </summary>
 	internal sealed class CharttempEditTool : ITool
 	{
+		private ListsAreaMenuHelper _listsAreaMenuHelper;
 		private const string DiscChartTemplateList = "DiscChartTemplateList";
 		/// <summary>
 		/// Main control to the right of the side bar control. This holds a RecordBar on the left and a PaneBarContainer on the right.
@@ -85,7 +86,9 @@ namespace LanguageExplorer.Areas.Lists.Tools.ChartTempEdit
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			_listsAreaMenuHelper.Dispose();
 			CollapsingSplitContainerFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _collapsingSplitContainer);
+			_listsAreaMenuHelper = null;
 		}
 
 		/// <summary>
@@ -100,6 +103,8 @@ namespace LanguageExplorer.Areas.Lists.Tools.ChartTempEdit
 			{
 				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(DiscChartTemplateList, majorFlexComponentParameters.Statusbar, FactoryMethod);
 			}
+			_listsAreaMenuHelper = new ListsAreaMenuHelper(majorFlexComponentParameters, _recordClerk);
+
 #if RANDYTODO
 			// TODO: See LexiconEditTool for how to set up all manner of menus and toolbars.
 #endif

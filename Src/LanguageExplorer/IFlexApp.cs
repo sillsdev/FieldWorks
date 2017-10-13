@@ -113,16 +113,6 @@ namespace LanguageExplorer
 		string GetResourceString(string stid);
 
 		/// <summary>
-		/// Save any settings.
-		/// </summary>
-		/// <remarks>
-		/// This is the real place to save settings, as opposed to SaveSettingsNow, which is
-		/// a dummy implementation required because (for the sake of the SettingsKey method)
-		/// we implement ISettings.
-		/// </remarks>
-		void SaveSettings();
-
-		/// <summary>
 		/// The name of the sample DB for the app.
 		/// </summary>
 		string SampleDatabase { get; }

@@ -2,7 +2,6 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
@@ -20,8 +19,9 @@ namespace LanguageExplorer.Areas.Notebook
 	{
 		internal const string Records = "records";
 		private readonly IToolRepository _toolRepository;
-		private ToolStripItem _fileExportMenu;
-		private bool _fileExportOriginalValue;
+		private NotebookAreaMenuHelper _notebookAreaMenuHelper;
+
+		internal RecordClerk RecordClerk { get; set; }
 
 		/// <summary>
 		/// Contructor used by Reflection to feed the tool repository to the area.
@@ -37,24 +37,6 @@ namespace LanguageExplorer.Areas.Notebook
 			var configurationDocument = XDocument.Parse(resourceName);
 			configurationDocument.Root.Add(XElement.Parse(NotebookResources.NotebookBrowseColumnDefinitions));
 			return configurationDocument;
-		}
-
-		void FileExportMenu_Click(object sender, EventArgs e)
-		{
-#if RANDYTODO
-			// TODO: Have to move NotebookExportDialog (and a lot more) from xWorks to this project,
-			// TODO: before this can be enabled.
-			// TODO: RecordClerk's "AreCustomFieldsAProblem" method will also need a new home: maybe FDO is a better place for it.
-				if (AreCustomFieldsAProblem(new int[] { RnGenericRecTags.kClassId}))
-					return true;
-				using (var dlg = new NotebookExportDialog())
-				{
-					dlg.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
-					dlg.ShowDialog();
-				}
-#else
-			MessageBox.Show(PropertyTable.GetValue<Form>("window"), @"Notebook export not yet implemented. Stay tuned.", @"Export not ready", MessageBoxButtons.OK);
-#endif
 		}
 
 		#region Implementation of IPropertyTableProvider
@@ -111,10 +93,8 @@ namespace LanguageExplorer.Areas.Notebook
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			_fileExportMenu.Click -= FileExportMenu_Click;
-			_fileExportMenu.Enabled = _fileExportOriginalValue;
-			_fileExportMenu.Visible = _fileExportOriginalValue;
-			_fileExportMenu = null;
+			_notebookAreaMenuHelper.Dispose();
+			_notebookAreaMenuHelper = null;
 		}
 
 		/// <summary>
@@ -125,13 +105,8 @@ namespace LanguageExplorer.Areas.Notebook
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			// File->Export menu is visible and enabled in this tool.
-			// TODO-Linux: boolean 'searchAllChildren' parameter is marked with "MonoTODO".
-			_fileExportMenu = majorFlexComponentParameters.MenuStrip.Items.Find("exportToolStripMenuItem", true)[0];
-			_fileExportOriginalValue = _fileExportMenu.Enabled;
-			_fileExportMenu.Visible = true;
-			_fileExportMenu.Enabled = true;
-			_fileExportMenu.Click += FileExportMenu_Click;
+			_notebookAreaMenuHelper = new NotebookAreaMenuHelper(majorFlexComponentParameters);
+			_notebookAreaMenuHelper.Initialize();
 		}
 
 		/// <summary>

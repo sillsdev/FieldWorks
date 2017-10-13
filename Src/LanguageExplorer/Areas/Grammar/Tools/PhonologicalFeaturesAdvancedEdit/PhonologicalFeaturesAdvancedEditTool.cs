@@ -24,6 +24,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalFeaturesAdvancedEdit
 	/// </summary>
 	internal sealed class PhonologicalFeaturesAdvancedEditTool : ITool
 	{
+		private GrammarAreaMenuHelper _grammarAreaWideMenuHelper;
 		private const string Phonologicalfeatures = "phonologicalfeatures";
 		private MultiPane _multiPane;
 		private RecordBrowseView _recordBrowseView;
@@ -83,8 +84,10 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalFeaturesAdvancedEdit
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			_grammarAreaWideMenuHelper.Dispose();
 			MultiPaneFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _multiPane);
 			_recordBrowseView = null;
+			_grammarAreaWideMenuHelper = null;
 		}
 
 		/// <summary>
@@ -99,6 +102,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalFeaturesAdvancedEdit
 			{
 				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(Phonologicalfeatures, majorFlexComponentParameters.Statusbar, FactoryMethod);
 			}
+			_grammarAreaWideMenuHelper = new GrammarAreaMenuHelper(majorFlexComponentParameters, _recordClerk); // Use generic export event handler.
 
 			var root = XDocument.Parse(GrammarResources.PhonologicalFeaturesAdvancedEditToolParameters).Root;
 			_recordBrowseView = new RecordBrowseView(root.Element("browseview").Element("parameters"), majorFlexComponentParameters.LcmCache, _recordClerk);

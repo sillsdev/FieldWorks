@@ -289,7 +289,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AccessibleNameCreator.cs" />
+    <Compile Include="Areas\AreaServices.cs" />
+    <Compile Include="Areas\AreaWideMenuHelper.cs" />
+    <Compile Include="Areas\Grammar\GrammarAreaMenuHelper.cs" />
+    <Compile Include="Areas\Grammar\Tools\GrammarSketch\GrammarSketchToolMenuHelper.cs" />
+    <Compile Include="Areas\Lexicon\LexiconAreaMenuHelper.cs" />
+    <Compile Include="Areas\Lists\ListsAreaMenuHelper.cs" />
+    <Compile Include="Areas\Notebook\NotebookAreaMenuHelper.cs" />
     <Compile Include="Areas\Lexicon\Tools\Edit\LexiconEditToolMenuHelper.cs" />
+    <Compile Include="Areas\TextsAndWords\TextAndWordsAreaMenuHelper.cs" />
     <Compile Include="Controls\DetailControls\SliceContextMenuFactory.cs" />
     <Compile Include="Controls\ToolStripButtonFactory.cs" />
     <Compile Include="InsertToolbarManager.cs" />
@@ -1902,12 +1910,6 @@
     <Compile Include="Areas\TextsAndWords\Interlinear\EditMorphBreaksDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <None Include="..\..\DistFiles\Parts\GeneratedParts.xml">
-      <Link>XML\Parts\GeneratedParts.xml</Link>
-    </None>
-    <None Include="..\..\DistFiles\Parts\StandardParts.xml">
-      <Link>XML\Parts\StandardParts.xml</Link>
-    </None>
     <Content Include="Areas\TextsAndWords\Interlinear\FlexInterlinear-generated.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\FlexInterlinear.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\FilterAllTextsDialog.cs">
@@ -2887,8 +2889,14 @@
     <Content Include="images\Lexicon32.ico" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\DistFiles\Parts\GeneratedParts.xml">
+      <Link>XML\Parts\GeneratedParts.xml</Link>
+    </None>
     <None Include="..\..\DistFiles\Parts\Generated.fwlayout">
       <Link>XML\Parts\Generated.fwlayout</Link>
+    </None>
+    <None Include="..\..\DistFiles\Parts\StandardParts.xml">
+      <Link>XML\Parts\StandardParts.xml</Link>
     </None>
     <None Include="..\..\DistFiles\Parts\Standard.fwlayout">
       <Link>XML\Parts\Standard.fwlayout</Link>

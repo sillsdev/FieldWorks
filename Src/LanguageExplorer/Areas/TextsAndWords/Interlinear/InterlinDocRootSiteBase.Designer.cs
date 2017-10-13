@@ -18,22 +18,33 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		protected override void Dispose(bool disposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + ". ******************");
+			if (IsDisposed)
+			{
+				return; // Only do it once.
+			}
 			if (disposing)
 			{
-				if (components != null)
-					components.Dispose();
+				components?.Dispose();
+
+				if (_exportMenu != null)
+				{
+					_exportMenu.Click -= ExportInterlinear_Click;
+					_fileMenu.DropDownItems.Remove(_exportMenu);
+					_exportMenu.Dispose();
+				}
 
 				// Do this, before calling base.
-				if (m_sda != null)
-					m_sda.RemoveNotification(this);
-				if (m_vc != null)
-					m_vc.Dispose();
+				m_sda?.RemoveNotification(this);
+				m_vc?.Dispose();
 
 				if (m_contextButton != null && !Controls.Contains(m_contextButton))
 					m_contextButton.Dispose();
 			}
 			m_vc = null;
 			m_contextButton = null;
+			_fileMenu = null;
+			_exportMenu = null;
+
 			base.Dispose(disposing);
 		}
 

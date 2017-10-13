@@ -29,11 +29,11 @@ namespace SIL.FieldWorks.Common.Widgets
 		bool m_editable;
 		int m_hvoObj;
 		int m_flid;
-		int m_wsMagic;
+		int m_wsOptions;
 		// This is additional writing systems that might possibly be relevant in addition to the one(s) indicated
 		// by m_wsMagic. Currently the only example is that on a pronunciation field, vernacular as well as
 		// the default pronunciation WSS might be relevant.
-		int m_wsOptional;
+		int m_wsAdditionalOptions;
 		List<CoreWritingSystemDefinition> m_rgws;
 		List<CoreWritingSystemDefinition> m_rgwsToDisplay;
 		LabeledMultiStringVc m_vc;
@@ -194,8 +194,8 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			m_hvoObj = hvo;
 			m_flid = flid;
-			m_wsMagic = wsMagic;
-			m_wsOptional = wsOptional;
+			m_wsOptions = wsMagic;
+			m_wsAdditionalOptions = wsOptional;
 			m_forceIncludeEnglish = forceIncludeEnglish;
 			m_editable = editable;
 			if (editable && RootSiteEditingHelper != null)
@@ -418,11 +418,11 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// if true, includes unchecked active wss.</param>
 		public List<CoreWritingSystemDefinition> GetWritingSystemOptions(bool fIncludeUncheckedActiveWss)
 		{
-			var result = WritingSystemServices.GetWritingSystemList(m_cache, m_wsMagic, m_hvoObj, m_forceIncludeEnglish, fIncludeUncheckedActiveWss);
-			if (fIncludeUncheckedActiveWss && m_wsOptional != 0)
+			var result = WritingSystemServices.GetWritingSystemList(m_cache, m_wsOptions, m_hvoObj, m_forceIncludeEnglish, fIncludeUncheckedActiveWss);
+			if (fIncludeUncheckedActiveWss && m_wsAdditionalOptions != 0)
 			{
 				result = new List<CoreWritingSystemDefinition>(result); // just in case caller does not want it modified
-				var additionalWss = WritingSystemServices.GetWritingSystemList(m_cache, m_wsOptional, m_hvoObj, m_forceIncludeEnglish, true);
+				var additionalWss = WritingSystemServices.GetWritingSystemList(m_cache, m_wsAdditionalOptions, m_hvoObj, m_forceIncludeEnglish, true);
 				foreach (var ws in additionalWss)
 				{
 					if (!result.Contains(ws))

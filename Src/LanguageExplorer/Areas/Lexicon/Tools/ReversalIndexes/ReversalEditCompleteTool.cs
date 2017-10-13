@@ -26,6 +26,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 	/// </summary>
 	internal sealed class ReversalEditCompleteTool : ITool
 	{
+		private LexiconAreaMenuHelper _lexiconAreaMenuHelper;
 		private const string panelMenuId = "left";
 		private LcmCache _cache;
 		private MultiPane _multiPane;
@@ -89,6 +90,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			_lexiconAreaMenuHelper.Dispose();
 			MultiPaneFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _multiPane);
 
 			_cache = null;
@@ -96,6 +98,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 			_currentReversalIndex = null;
 			_xhtmlDocView = null;
 			_sliceContextMenuFactory = null;
+			_lexiconAreaMenuHelper = null;
 		}
 
 		/// <summary>
@@ -116,6 +119,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 			{
 				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(LexiconArea.AllReversalEntries, majorFlexComponentParameters.Statusbar, LexiconArea.AllReversalEntriesFactoryMethod);
 			}
+			_lexiconAreaMenuHelper = new LexiconAreaMenuHelper(majorFlexComponentParameters, _recordClerk);
 
 			var root = XDocument.Parse(LexiconResources.ReversalEditCompleteToolParameters).Root;
 			_xhtmlDocView = new XhtmlDocView(root.Element("docview").Element("parameters"), majorFlexComponentParameters.LcmCache, _recordClerk, MenuServices.GetFilePrintMenu(majorFlexComponentParameters.MenuStrip));

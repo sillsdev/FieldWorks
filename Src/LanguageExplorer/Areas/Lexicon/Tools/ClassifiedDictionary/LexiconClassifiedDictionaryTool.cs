@@ -20,6 +20,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ClassifiedDictionary
 	/// </summary>
 	internal sealed class LexiconClassifiedDictionaryTool : ITool
 	{
+		private LexiconAreaMenuHelper _lexiconAreaMenuHelper;
 		private PaneBarContainer _paneBarContainer;
 		private RecordClerk _recordClerk;
 
@@ -77,7 +78,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ClassifiedDictionary
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			_lexiconAreaMenuHelper.Dispose();
 			PaneBarContainerFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _paneBarContainer);
+			_lexiconAreaMenuHelper = null;
 		}
 
 		/// <summary>
@@ -92,6 +95,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ClassifiedDictionary
 			{
 				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(LexiconArea.SemanticDomainList_LexiconArea, majorFlexComponentParameters.Statusbar, LexiconArea.SemanticDomainList_LexiconAreaFactoryMethod);
 			}
+			_lexiconAreaMenuHelper = new LexiconAreaMenuHelper(majorFlexComponentParameters, _recordClerk);
+
 			var semanticDomainRdeTreeBarHandler = (SemanticDomainRdeTreeBarHandler)_recordClerk.BarHandler;
 
 			var panelButton = new PanelButton(PropertyTable, null, "ShowFailingItems-lexiconClassifiedDictionary", LexiconResources.Show_Unused_Items, LexiconResources.Show_Unused_Items)
@@ -109,6 +114,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ClassifiedDictionary
 			// Too early before now.
 			semanticDomainRdeTreeBarHandler.FinishInitialization(xmlDocViewPaneBar);
 			RecordClerkServices.SetClerk(majorFlexComponentParameters, _recordClerk);
+			_lexiconAreaMenuHelper.Initialize();
 		}
 
 		/// <summary>

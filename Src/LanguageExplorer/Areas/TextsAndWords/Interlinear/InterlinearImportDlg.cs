@@ -40,14 +40,15 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				dlg.FilterIndex = 1;
 				dlg.CheckFileExists = true;
 				dlg.Multiselect = false;
-				if (!String.IsNullOrEmpty(m_tbFilename.Text) &&
-					!String.IsNullOrEmpty(m_tbFilename.Text.Trim()))
+				if (!string.IsNullOrEmpty(m_tbFilename.Text) && !string.IsNullOrEmpty(m_tbFilename.Text.Trim()))
 				{
 					dlg.FileName = m_tbFilename.Text;
 				}
-				DialogResult res = dlg.ShowDialog();
+				var res = dlg.ShowDialog();
 				if (res == DialogResult.OK)
+				{
 					m_tbFilename.Text = dlg.FileName;
+				}
 			}
 		}
 
@@ -60,10 +61,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				dlg.Maximum = 500;
 				using (new WaitCursor(this, true))
 				{
-					var import = new LinguaLinksImport(m_cache,
-						Path.Combine(Path.GetTempPath(), "LanguageExplorer" + Path.DirectorySeparatorChar),
-						Path.Combine(FwDirectoryFinder.CodeDirectory, Path.Combine("Language Explorer", "Import" + Path.DirectorySeparatorChar)));
-					import.NextInput = m_tbFilename.Text;
+					var import = new LinguaLinksImport(m_cache, Path.Combine(Path.GetTempPath(), "LanguageExplorer" + Path.DirectorySeparatorChar), Path.Combine(FwDirectoryFinder.CodeDirectory, Path.Combine("Language Explorer", "Import" + Path.DirectorySeparatorChar)))
+					{
+						NextInput = m_tbFilename.Text
+					};
 					import.Error += import_Error;
 					try
 					{
@@ -72,18 +73,17 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						{
 							DialogResult = DialogResult.OK; // only 'OK' if not exception
 							var firstNewText = import.FirstNewText;
-							if (firstNewText != null && m_publisher != null)
+							if (firstNewText != null)
 							{
-								m_publisher.Publish("JumpToRecord", firstNewText.Hvo);
+								m_publisher?.Publish("JumpToRecord", firstNewText.Hvo);
 							}
 						}
 						else
 						{
 							DialogResult = DialogResult.Abort; // unsuccessful import
-							string message = ITextStrings.ksInterlinImportFailed + Environment.NewLine + Environment.NewLine;
+							var message = ITextStrings.ksInterlinImportFailed + Environment.NewLine + Environment.NewLine;
 							message += m_messages.ToString();
-							MessageBox.Show(this, message, ITextStrings.ksImportFailed, MessageBoxButtons.OK,
-								MessageBoxIcon.Warning);
+							MessageBox.Show(this, message, ITextStrings.ksImportFailed, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 						}
 						Close();
 					}
@@ -91,9 +91,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					{
 						System.Diagnostics.Debug.WriteLine("Error: " + ex.InnerException.Message);
 
-						MessageBox.Show(String.Format(import.ErrorMessage, ex.InnerException.Message),
-							ITextStrings.ksUnhandledError,
-							MessageBoxButtons.OK, MessageBoxIcon.Error);
+						MessageBox.Show(string.Format(import.ErrorMessage, ex.InnerException.Message), ITextStrings.ksUnhandledError, MessageBoxButtons.OK, MessageBoxIcon.Error);
 						DialogResult = DialogResult.Cancel;	// only 'OK' if not exception
 						Close();
 					}
@@ -109,12 +107,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private void m_btnHelp_Click(object sender, EventArgs e)
 		{
 			if (m_helpTopicProvider != null)
+			{
 				ShowHelp.ShowHelpTopic(m_helpTopicProvider, HelpTopic);
+			}
 		}
 
 		#region IFwExtension Members
 
-		public void Init(LcmCache cache, IPropertyTable propertyTable, IPublisher publisher)
+		void IFwExtension.Init(LcmCache cache, IPropertyTable propertyTable, IPublisher publisher)
 		{
 			m_cache = cache;
 			m_publisher = publisher;
@@ -130,27 +130,5 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			m_btnOK.Enabled = File.Exists(m_tbFilename.Text);
 		}
-
-		// TODO-Linux: this doesn't work on Linux
-		// Code review comment from SteveMc: On Linux, could invoking open office be tried?
-		// Otherwise, maybe we should change the .doc file to an html file for portability.
-		private void linkLabel2_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-		{
-			string path = String.Format(FwDirectoryFinder.CodeDirectory +
-				"{0}Helps{0}Language Explorer{0}Training{0}Technical Notes on Interlinear Import.doc",
-				Path.DirectorySeparatorChar);
-			try
-			{
-				using (System.Diagnostics.Process.Start(path))
-				{
-				}
-			}
-			catch (Exception)
-			{
-				MessageBox.Show(null, String.Format(ITextStrings.ksCannotLaunchX, path),
-					ITextStrings.ksError);
-			}
-		}
-
 	}
 }

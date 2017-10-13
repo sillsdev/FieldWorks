@@ -4,10 +4,9 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Text;
 using System.Collections;
-using System.Xml;	// XmlNode
+using System.Xml.Linq;
+using System.Xml.XPath;
 
 namespace Sfm2Xml
 {
@@ -350,19 +349,20 @@ namespace Sfm2Xml
 		/// <returns>true if successfull</returns>
 		public bool ReadLexImportFields(string xmlFileName)
 		{
-			bool success = true;
-			System.Xml.XmlDocument xmlMap = new System.Xml.XmlDocument();
+			var success = true;
 			try
 			{
-				xmlMap.Load(xmlFileName);
-				System.Xml.XmlNode abbrSignatures = xmlMap.SelectSingleNode("ImportFields/AbbreviationSignatures");
+				var xmlMap = XDocument.Load(xmlFileName);
+				var abbrSignatures = xmlMap.XPathSelectElement("ImportFields/AbbreviationSignatures");
 				ReadSignatureNode(abbrSignatures);
 
-				System.Xml.XmlNodeList classList = xmlMap.SelectNodes("ImportFields/Class");
-				foreach (System.Xml.XmlNode classNode in classList)
+				var classList = xmlMap.XPathSelectElements("ImportFields/Class");
+				foreach (var classNode in classList)
 				{
 					if (!ReadAClassNode(classNode))
+					{
 						success = false;
+					}
 				}
 				success = Initialize();
 
@@ -388,67 +388,64 @@ namespace Sfm2Xml
 			return true;
 		}
 
-		private bool ReadSignatureNode(System.Xml.XmlNode node)
+		private void ReadSignatureNode(XElement element)
 		{
-			System.Xml.XmlAttribute nameAttr = node.Attributes["names"];
+			var nameAttr = element.Attribute("names");
 			if (nameAttr == null)
-				return false;
-			string sigNames = nameAttr.Value;
-			string [] sigs = STATICS.SplitString(sigNames);
+			{
+				return;
+			}
+			var sigNames = nameAttr.Value;
+			var sigs = STATICS.SplitString(sigNames);
 			m_AbbrSignatures = new List<string>(sigs);
-			return true;
 		}
 
 
 		/// <summary>
-		/// helper method to read a class node and store the fields
+		/// helper method to read a class element and store the fields
 		/// </summary>
-		/// <param name="node"></param>
-		/// <returns></returns>
-		private bool ReadAClassNode(System.Xml.XmlNode node)
+		private bool ReadAClassNode(XElement element)
 		{
-			bool success = true;
-			System.Xml.XmlAttribute nameAttr = node.Attributes["name"];
+			var nameAttr = element.Attribute("name");
 			if (nameAttr == null)
+			{
 				return false;
-			string className = nameAttr.Value;
-			System.Xml.XmlAttribute partOfAttr = node.Attributes["partOf"];
+			}
+			var className = nameAttr.Value;
+			var partOfAttr = element.Attribute("partOf");
 			if (partOfAttr == null)
+			{
 				return false;
-			string partOf = partOfAttr.Value;
-			System.Xml.XmlNodeList idList = node.SelectNodes("Field");
-			foreach (System.Xml.XmlNode idNode in idList)
+			}
+			var partOf = partOfAttr.Value;
+			foreach (var idElement in element.Elements("Field"))
 			{
 				ILexImportField field = new LexImportField();
-				if (field.ReadNode(idNode))
+				if (field.ReadElement(idElement))
 				{
 					// is a abbrv field
 					field.IsAbbrField = m_AbbrSignatures.Contains(field.Signature);
 					AddField(className, partOf, field);
 
-					List<string> classnames = null;
+					List<string> classnames;
 					if (!m_allFields.TryGetValue(field.ID, out classnames))
-						m_allFields.Add(field.ID, new List<string>(new string[] { className }));
+					{
+						m_allFields.Add(field.ID, new List<string>(new[] { className }));
+					}
 					else
 					{
 						// Review DanH (RandyR): Why add more than one, since only one is ever used?
 						// Maybe it should not be a List of strings, but only one string.
 						classnames.Add(className);
-						// Not used anywhere, other than adding stuff to it.
-						// m_dupFields.Add(field.ID); // Set's won't add them more than once.
 					}
-					// Not used anywhere, other than adding stuff to it.
-					// is a unique field
-//					if (field.IsUnique)
-//						m_uniqueFields.Add(field.ID);
 				}
 				else
 				{
 					// error case where the xml field wasn't able to be read
-					success = false;	// error
+					return false;
 				}
 			}
-			return success;
+			return true;
 		}
 	}
 }

@@ -18,6 +18,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.BulkEditWordforms
 	/// </summary>
 	internal sealed class BulkEditWordformsTool : ITool
 	{
+		private AreaWideMenuHelper _areaWideMenuHelper;
+		private TextAndWordsAreaMenuHelper _textAndWordsAreaMenuHelper;
 		private PaneBarContainer _paneBarContainer;
 		private RecordBrowseView _recordBrowseView;
 		private RecordClerk _recordClerk;
@@ -76,8 +78,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.BulkEditWordforms
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			_areaWideMenuHelper.Dispose();
+			_textAndWordsAreaMenuHelper.Dispose();
 			PaneBarContainerFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _paneBarContainer);
 			_recordBrowseView = null;
+			_areaWideMenuHelper = null;
+			_textAndWordsAreaMenuHelper = null;
 		}
 
 		/// <summary>
@@ -92,6 +98,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.BulkEditWordforms
 			{
 				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(TextAndWordsArea.ConcordanceWords, majorFlexComponentParameters.Statusbar, TextAndWordsArea.ConcordanceWordsFactoryMethod);
 			}
+			_areaWideMenuHelper = new AreaWideMenuHelper(majorFlexComponentParameters, _recordClerk);
+			_areaWideMenuHelper.SetupFileExportMenu();
+			_textAndWordsAreaMenuHelper = new TextAndWordsAreaMenuHelper(majorFlexComponentParameters);
+			_textAndWordsAreaMenuHelper.AddMenusForAllButConcordanceTool();
 
 			var root = XDocument.Parse(TextAndWordsResources.BulkEditWordformsToolParameters).Root;
 			root.Element("includeColumns").ReplaceWith(XElement.Parse(TextAndWordsResources.WordListColumns));

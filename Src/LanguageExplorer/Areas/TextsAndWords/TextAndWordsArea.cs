@@ -21,14 +21,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 	{
 		internal const string ConcordanceWords = "concordanceWords";
 		private readonly IToolRepository _toolRepository;
-		private ToolStrip _insertMenuItem;
-		private ToolStripSeparator _separator2ToolStripMenuItem;
-		private ToolStripMenuItem _importWordSetToolStripMenuItem;
-		private ToolStripMenuItem _addApprovedAnalysisToolStripMenuItem;
-		private LcmCache _cache;
-		private IFlexApp _flexApp;
-		private IFwMainWnd _fwMainWnd;
-		private ParserMenuManager _parserMenuManager;
+		private TextAndWordsAreaMenuHelper _textAndWordsAreaMenuHelper;
 
 		/// <summary>
 		/// Contructor used by Reflection to feed the tool repository to the area.
@@ -103,17 +96,8 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			_insertMenuItem.Items.Remove(_separator2ToolStripMenuItem);
-			_separator2ToolStripMenuItem.Dispose();
-
-			_insertMenuItem.Items.Remove(_addApprovedAnalysisToolStripMenuItem);
-			_addApprovedAnalysisToolStripMenuItem.Dispose();
-
-			_insertMenuItem.Items.Remove(_importWordSetToolStripMenuItem);
-			_importWordSetToolStripMenuItem.Dispose();
-
-			_cache = null;
-			_flexApp = null;
+			_textAndWordsAreaMenuHelper.Dispose();
+			_textAndWordsAreaMenuHelper = null;
 		}
 
 		/// <summary>
@@ -124,49 +108,9 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			/*
-			These are all possible menu items (Insert menu) for the Text & Words area.
-			<menu id="Insert">
-						<item command="CmdInsertText" defaultVisible="false"/>
-						<item label="-" translate="do not translate"/>
-						<item command="CmdAddNote" defaultVisible="false"/>
-						<item command="CmdAddWordGlossesToFreeTrans" defaultVisible="false"/>
-						<item label="Click Inserts Invisible Space" boolProperty="ClickInvisibleSpace" defaultVisible="false" settingsGroup="local" icon="zeroWidth"/>
-						<item command="CmdGuessWordBreaks" defaultVisible="false"/>
-						<item label="-" translate="do not translate"/>
-DONE:					<item command="CmdImportWordSet" defaultVisible="false"/>
-						<item command="CmdInsertHumanApprovedAnalysis" defaultVisible="false"/>
-			</menu>
-			All of the above menus go above the global separator named "insertMenuLastGlobalSeparator"
-			*/
-			ToolStripItem insertMenuLastGlobalSeparator = majorFlexComponentParameters.MenuStrip.Items.Find("insertMenuLastGlobalSeparator", true)[0];
-			_insertMenuItem = insertMenuLastGlobalSeparator.GetCurrentParent();
+			_textAndWordsAreaMenuHelper = new TextAndWordsAreaMenuHelper(majorFlexComponentParameters);
 
-			// Add Approved Analysis...
-			_addApprovedAnalysisToolStripMenuItem = new ToolStripMenuItem("PH: " + TextAndWordsResources.ksAddApprovedAnalysis, LanguageExplorerResources.Add_New_Analysis.ToBitmap())
-			{
-				Enabled = false
-			};
-			_insertMenuItem.Items.Insert(0, _addApprovedAnalysisToolStripMenuItem);
-
-			_importWordSetToolStripMenuItem = new ToolStripMenuItem(FwUtils.ReplaceUnderlineWithAmpersand(TextAndWordsResources.ksImportWordSet));
-			_importWordSetToolStripMenuItem.Click += ImportWordSetToolStripMenuItemOnClick;
-			_insertMenuItem.Items.Insert(0, _importWordSetToolStripMenuItem);
-
-			_separator2ToolStripMenuItem = new ToolStripSeparator();
-			_insertMenuItem.Items.Insert(0, _separator2ToolStripMenuItem);
-
-			_cache = majorFlexComponentParameters.LcmCache;
-			_flexApp = majorFlexComponentParameters.FlexApp;
-			_fwMainWnd = majorFlexComponentParameters.MainWindow;
-		}
-
-		private void ImportWordSetToolStripMenuItemOnClick(object sender, EventArgs eventArgs)
-		{
-			using (var dlg = new ImportWordSetDlg(_cache, _flexApp, RecordClerk.ActiveRecordClerkRepository.ActiveRecordClerk, _parserMenuManager))
-			{
-				dlg.ShowDialog((Form)_fwMainWnd);
-			}
+			_textAndWordsAreaMenuHelper.InitializeAreaWideMenus();
 		}
 
 		/// <summary>

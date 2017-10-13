@@ -85,7 +85,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			InitializeComponent();
 		}
 
-		internal InterlinMaster(XElement configurationParametersElement, LcmCache cache, RecordClerk recordClerk, ToolStripMenuItem printMenu, bool showTitlePane = true)
+		internal InterlinMaster(XElement configurationParametersElement, LcmCache cache, RecordClerk recordClerk, ToolStripMenuItem fileMenu, ToolStripMenuItem printMenu, bool showTitlePane = true)
 			:base(configurationParametersElement, cache, recordClerk)
 		{
 			// This call is required by the Windows.Forms Form Designer.
@@ -94,6 +94,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			m_tcPane.Visible = showTitlePane;
 			m_rtPane.Clerk = recordClerk;
 			m_printMenu = printMenu;
+			m_taggingPane.FileMenu = fileMenu;
+			m_printViewPane.FileMenu = fileMenu;
+			m_idcGloss.FileMenu = fileMenu;
+			m_idcAnalyze.FileMenu = fileMenu;
 		}
 
 		internal string BookmarkId => Clerk.Id ?? string.Empty;
@@ -168,19 +172,21 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private void SetupInterlinearTabControlForStText(IInterlinearTabControl site)
 		{
 			InitializeInterlinearTabControl(site);
-			//if (site is ISetupLineChoices && m_tabCtrl.SelectedIndex != ktpsCChart)
 			if (site is ISetupLineChoices)
 			{
-				var interlinearView = site as ISetupLineChoices;
+				var interlinearView = (ISetupLineChoices)site;
 				string lineChoicesKey = "InterlinConfig_" + (interlinearView.ForEditing ? "Edit" : "Doc") + "_" + InterlinearTab;
 				var mode = GetLineMode();
 				interlinearView.SetupLineChoices(lineChoicesKey, mode);
 			}
 			// Review: possibly need to do SetPaneSizeAndRoot
-			if (site != null && site is IChangeRootObject)
+			if (site != null)
 			{
-				if (site is Control) (site as Control).SuspendLayout();
-				(site as IChangeRootObject).SetRoot(RootStTextHvo);
+				if (site is Control)
+				{
+					(site as Control).SuspendLayout();
+				}
+				site.SetRoot(RootStTextHvo);
 				if (site is Control) (site as Control).ResumeLayout();
 			}
 		}
@@ -213,7 +219,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// re-select our annotation if we're in the raw text pane, since
 			// initialization subsequent to ShowRecord() loses our selection.
 			if (m_tabCtrl.SelectedIndex == ktpsRawText)
-				this.SelectAnnotation();
+				SelectAnnotation();
 		}
 
 		/// <summary>
@@ -445,14 +451,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// LT-10995: the TitleContentsPane m_tcPane and the TabControl m_tabCtrl used to be
 			// docked (definition in InterlinMaster.resx). However, this led to problems if the
 			// font size of displayed data got changed. So we are doing the layout ourselves now:
-			m_tabCtrl.Width = this.Width; // tab control width = container width
+			m_tabCtrl.Width = Width; // tab control width = container width
 
 			if (m_tcPane == null)
 			{
 				// If there is no TitleContentsPane then the TabControl needs to occupy the
 				// entire container:
 				m_tabCtrl.Location = new Point(0, 0);
-				m_tabCtrl.Height = this.Height;
+				m_tabCtrl.Height = Height;
 			}
 			else
 			{
@@ -460,13 +466,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				// container, match the container's width, and have its height calculated
 				// automatically:
 				m_tcPane.Location = new Point(0,0);
-				m_tcPane.Width = this.Width;
+				m_tcPane.Width = Width;
 				m_tcPane.AdjustHeight();
 
 				// And then the TabControl needs to fill the rest of the container below
 				// the TitleContentsPane:
 				m_tabCtrl.Location = new Point(0, m_tcPane.Height);
-				m_tabCtrl.Height = this.Height - m_tcPane.Height;
+				m_tabCtrl.Height = Height - m_tcPane.Height;
 			}
 
 			base.OnLayout(levent);
@@ -534,11 +540,19 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 		}
 
-		bool m_fInShowTabView = false;
+		bool m_fInShowTabView;
 		protected void ShowTabView()
 		{
 			SaveWorkInProgress();
 			m_fInShowTabView = true;
+			m_taggingPane.ShowExportMenu = false;
+			m_idcGloss.ShowExportMenu = false;
+			m_idcAnalyze.ShowExportMenu = false;
+			m_printViewPane.ShowExportMenu = false;
+			if (m_constChartPane != null)
+			{
+				((ConstituentChart)m_constChartPane).ShowExportMenu = false;
+			}
 			try
 			{
 				m_tabCtrl.SelectedIndex = (int)InterlinearTab; // set the persisted tab setting.
@@ -557,22 +571,32 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				{
 					case ktpsRawText:
 						if (ParentForm == Form.ActiveForm)
+						{
 							m_rtPane.Focus();
+						}
 						if (m_rtPane.RootBox != null && m_rtPane.RootBox.Selection == null && RootStText != null)
+						{
 							m_rtPane.RootBox.MakeSimpleSel(true, false, false, true);
+						}
 						break;
 					case ktpsCChart:
 						if (RootStText == null)
+						{
 							m_constChartPane.Enabled = false;
+							((ConstituentChart)m_constChartPane).ShowExportMenu = false;
+						}
 						else
 						{
 							// LT-7733 Warning dialog for Text Chart
 							MessageBoxExManager.Trigger("TextChartNewFeature");
 							m_constChartPane.Enabled = true;
+							((ConstituentChart)m_constChartPane).ShowExportMenu = true;
 						}
 						//SetConstChartRoot(); should be done above in SetCurrentInterlinearTabControl()
 						if (ParentForm == Form.ActiveForm)
+						{
 							m_constChartPane.Focus();
+						}
 						break;
 					case ktpsInfo:
 						// It may already be initialized, but this is not very expensive and sometimes
@@ -583,16 +607,28 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						m_infoPane.Enabled = m_infoPane.CurrentRootHvo != 0;
 						if (m_infoPane.Enabled)
 						{
-							m_infoPane.BackColor = System.Drawing.SystemColors.Control;
+							m_infoPane.BackColor = SystemColors.Control;
 							if (ParentForm == Form.ActiveForm)
+							{
 								m_infoPane.Focus();
+							}
 						}
 						else
 						{
-							m_infoPane.BackColor = System.Drawing.Color.White;
+							m_infoPane.BackColor = Color.White;
 						}
 						break;
-					default:
+					case ktpsPrint:
+						m_printViewPane.ShowExportMenu = true;
+						break;
+					case ktpsGloss:
+						m_idcGloss.ShowExportMenu = true;
+						break;
+					case ktpsAnalyze:
+						m_idcAnalyze.ShowExportMenu = true;
+						break;
+					case ktpsTagging:
+						m_taggingPane.ShowExportMenu = true;
 						break;
 				}
 				SelectAnnotation();
@@ -606,14 +642,18 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private void CreateCChart()
 		{
-			m_constChartPane = new ConstituentChart(Cache);
+			var constituentChart = new ConstituentChart(Cache);
+			m_constChartPane = constituentChart;
 			(m_constChartPane as IFlexComponent).InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
+			constituentChart.FileMenu = m_printViewPane.FileMenu;
 			m_constChartPane.BackColor = SystemColors.Window;
 			m_constChartPane.Name = "m_constChartPane";
 			m_constChartPane.Dock = DockStyle.Fill;
 			m_tpCChart.Controls.Add(m_constChartPane);
 			if (m_styleSheet != null)
+			{
 				m_styleSheet = ((IStyleSheet)m_constChartPane).StyleSheet;
+			}
 		}
 
 		/// <summary>
@@ -1314,8 +1354,9 @@ private void ReloadPaneBar(IPaneBar paneBar)
 				string toolChoice = PropertyTable.GetValue("toolChoice", "");
 				Guid guid = Guid.Empty;
 				if (Clerk.CurrentObject != null)
+				{
 					guid = Clerk.CurrentObject.Guid;
-				LcmCache cache = Cache;
+				}
 				// Not sure what will happen with guid == Guid.Empty on the link...
 				FwLinkArgs link = new FwLinkArgs(toolChoice, guid, InterlinearTab.ToString());
 				link.PropertyTableEntries.Add(new Property("InterlinearTab",

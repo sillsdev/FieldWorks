@@ -5,7 +5,7 @@
 using System;
 using System.Text;
 using System.Collections;
-using System.Xml;	// XmlNode
+using System.Xml.Linq;
 
 namespace Sfm2Xml
 {
@@ -25,16 +25,14 @@ namespace Sfm2Xml
 		bool IsRef { get;}		// true if it's a ref: 'lxrel' and 'cref'
 		bool IsAutoField { get;}	// true if it's an auto
 		bool IsUnique { get;}	// only can have on unique per object(overrides begin marker logic)
-		XmlNode Node { get;}		// original XML
+		XElement Element { get;}		// original XML
 
 		ICollection Markers { get;}		// mdf markers normally associated with this field
 		string DataType { get; set;}	// type of data [integer, date, string, ...]
 		bool IsAbbrField { get; set;}	// true if this field allows the abbr field to be editied
 
 		/// Read a 'Field' node from the controled xml file that contains the ImportFields
-		bool ReadNode(System.Xml.XmlNode node);
-		////bool IsCustomField { get; set;}
-		////Guid CustomFieldID { get; set;}
+		bool ReadElement(XElement element);
 		ClsFieldDescription ClsFieldDescription { get;}	// return an equivelant Cls object
 		ClsFieldDescription ClsFieldDescriptionWith(ClsFieldDescription fieldIn);
 
@@ -68,49 +66,39 @@ namespace Sfm2Xml
 			const int kclidLexSense = 5016;
 
 			m_class = (fdClass == kclidLexEntry?"LexEntry":(fdClass== kclidLexSense?"LexSense":"UnknownClass"));
-			m_uiClass = uiClass;
-			//m_customFieldID = customID;
+			UIClass = uiClass;
 			m_flid = flid;
 			m_big = big;
 			m_wsSelector = wsSelector;
 		}
-		//private Guid m_customFieldID = Guid.Empty;
-		private int m_wsSelector = 0;
-		private bool m_big = false;
+		private int m_wsSelector;
+		private bool m_big;
 		private int m_flid;
-		private uint m_crc=0;
+		private uint m_crc;
 		private string m_class = "";	// lexEntry or LexSense
-		private string m_uiClass = "";	// "Entry", "Subentry", "Variant", "Sense" - used in the UI
-		private Guid m_guidListId = Guid.Empty;
 
-		//public Guid CustomFieldID
-		//{
-		//    get { return m_customFieldID; }
-		//    //set { m_customFieldID = value; }
-		//}
 		public string CustomKey
 		{
 			get
 			{
-				string result = "_n:" + UIName + "_c:" + Class + "_t:" + Signature;
+				var result = "_n:" + UIName + "_c:" + Class + "_t:" + Signature;
 				return result;	//.ToLowerInvariant();
 			}
 		}
-		public int WsSelector { get { return m_wsSelector; } }
-		public bool Big { get { return m_big; } }
-		public int FLID { get { return m_flid; } }
-		public string Class { get { return m_class; } }
-		public string UIClass { get { return m_uiClass; } set { m_uiClass = value; } }
+		public int WsSelector => m_wsSelector;
+		public bool Big => m_big;
+		public int FLID => m_flid;
+		public string Class => m_class;
+		public string UIClass { get; set; } = string.Empty;
+
 		public uint CRC	// intent is to use this value to compare to others to see if they are the same or different
 		{
 			get
 			{
 				if (m_crc == 0)
 				{
-					StringBuilder data = new StringBuilder();
+					var data = new StringBuilder();
 					data.Append(CustomKey);
-//					data.Append('0');
-//					data.Append(m_customFieldID.ToString());
 					data.Append('1');
 					data.Append(m_wsSelector);
 					data.Append('2');
@@ -120,20 +108,20 @@ namespace Sfm2Xml
 					data.Append('4');
 					data.Append(m_class);
 					data.Append('5');
-					data.Append(m_uiClass);
+					data.Append(UIClass);
 					data.Append('6');
-					data.Append(m_guidListId);
+					data.Append(ListRootId);
 
-					ASCIIEncoding AE = new ASCIIEncoding();
-					byte[] byteData = AE.GetBytes(data.ToString());
+					var AE = new ASCIIEncoding();
+					var byteData = AE.GetBytes(data.ToString());
 
-					CRC crc = new CRC();
+					var crc = new CRC();
 					m_crc = crc.CalculateCRC(byteData, byteData.Length);
 				}
 				return m_crc;
 			}
 		}
-		public Guid ListRootId { get { return m_guidListId; } set { m_guidListId = value; } }
+		public Guid ListRootId { get; set; } = Guid.Empty;
 	}
 
 	/// <summary>
@@ -151,7 +139,7 @@ namespace Sfm2Xml
 		private bool m_isRef;	// defaults to false, ref fields like 'lxrel' and 'cref'
 		private bool m_isAutoField;	// defaults to false
 		private bool m_isUnique;	// defaults to false; only can have one unique per object(overrides begin marker logic)
-		private XmlNode m_node;  // the original XML itself (used by help)
+		private XElement m_element;  // the original XML itself (used by help)
 
 		private Hashtable m_mdfMarkers;	// 0 - n markers
 		private bool m_isAbbrField;	// true if this field allows the abbr field to be editied
@@ -261,7 +249,7 @@ namespace Sfm2Xml
 		public bool IsRef { get { return m_isRef; } }
 		public bool IsAutoField { get { return m_isAutoField; } }
 		public bool IsUnique { get { return m_isUnique; } }
-		public XmlNode Node { get { return m_node; } }
+		public XElement Element { get { return m_element; } }
 
 		public ICollection Markers { get { return m_mdfMarkers.Keys; } }
 
@@ -336,48 +324,48 @@ namespace Sfm2Xml
 		/// <summary>
 		/// Read a 'Field' node from the controled xml file that contains the ImportFields
 		/// </summary>
-		/// <param name="node"></param>
+		/// <param name="element"></param>
 		/// <returns></returns>
-		public bool ReadNode(System.Xml.XmlNode node)
+		public bool ReadElement(XElement element)
 		{
-			bool success = true;
-			m_node = node;
-			foreach (System.Xml.XmlAttribute Attribute in node.Attributes)
+			var success = true;
+			m_element = element;
+			foreach (var attribute in element.Attributes())
 			{
-				switch (Attribute.Name)
+				switch (attribute.Name.LocalName)
 				{
 					case "id":
-						m_name = ReadRequiredString(Attribute.Value, ref success);
+						m_name = ReadRequiredString(attribute.Value, ref success);
 						break;
 					case "uiname":
-						m_uiName = ReadRequiredString(Attribute.Value, ref success);
+						m_uiName = ReadRequiredString(attribute.Value, ref success);
 						break;
 					case "property":
-						m_property = ReadRequiredString(Attribute.Value, ref success);
+						m_property = ReadRequiredString(attribute.Value, ref success);
 						break;
 					case "signature":
-						m_signature = ReadRequiredString(Attribute.Value, ref success);
+						m_signature = ReadRequiredString(attribute.Value, ref success);
 						break;
 					case "list":
-						m_isList = ReadBoolValue(Attribute.Value, false);
+						m_isList = ReadBoolValue(attribute.Value, false);
 						break;
 					case "multi":
-						m_isMulti = ReadBoolValue(Attribute.Value, false);
+						m_isMulti = ReadBoolValue(attribute.Value, false);
 						break;
 					case "ref":
-						m_isRef = ReadBoolValue(Attribute.Value, false);
+						m_isRef = ReadBoolValue(attribute.Value, false);
 						break;
 					case "autofield":
-						m_isAutoField = ReadBoolValue(Attribute.Value, false);
+						m_isAutoField = ReadBoolValue(attribute.Value, false);
 						break;
 					case "type":
-						m_dataType = ReadRequiredString(Attribute.Value, ref success);
+						m_dataType = ReadRequiredString(attribute.Value, ref success);
 						break;
 					case "unique":
-						m_isUnique = ReadBoolValue(Attribute.Value, false);
+						m_isUnique = ReadBoolValue(attribute.Value, false);
 						break;
 					case "MDF":
-						STATICS.SplitString(Attribute.Value, ref m_mdfMarkers);
+						STATICS.SplitString(attribute.Value, ref m_mdfMarkers);
 						break;
 					default:
 						break;

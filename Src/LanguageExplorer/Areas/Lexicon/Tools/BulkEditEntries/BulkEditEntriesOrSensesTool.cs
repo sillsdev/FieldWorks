@@ -22,6 +22,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditEntries
 	/// </summary>
 	internal sealed class BulkEditEntriesOrSensesTool : ITool
 	{
+		private LexiconAreaMenuHelper _lexiconAreaMenuHelper;
 		private const string EntriesOrChildren = "entriesOrChildren";
 		private PaneBarContainer _paneBarContainer;
 		private RecordBrowseView _recordBrowseView;
@@ -81,7 +82,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditEntries
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			_lexiconAreaMenuHelper.Dispose();
 			PaneBarContainerFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _paneBarContainer);
+			_lexiconAreaMenuHelper = null;
 		}
 
 		/// <summary>
@@ -99,6 +102,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditEntries
 			{
 				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(EntriesOrChildren, majorFlexComponentParameters.Statusbar, FactoryMethod);
 			}
+			_lexiconAreaMenuHelper = new LexiconAreaMenuHelper(majorFlexComponentParameters, _recordClerk);
 
 			var root = XDocument.Parse(LexiconResources.BulkEditEntriesOrSensesToolParameters).Root;
 			var parametersElement = root.Element("parameters");
@@ -111,6 +115,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditEntries
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
 				_recordBrowseView);
 			RecordClerkServices.SetClerk(majorFlexComponentParameters, _recordClerk);
+			_lexiconAreaMenuHelper.Initialize();
 		}
 
 		/// <summary>

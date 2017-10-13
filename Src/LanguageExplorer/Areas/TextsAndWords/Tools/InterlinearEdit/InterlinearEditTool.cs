@@ -21,6 +21,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 	/// </summary>
 	internal sealed class InterlinearEditTool : ITool
 	{
+		private TextAndWordsAreaMenuHelper _textAndWordsAreaMenuHelper;
 		private const string InterlinearTexts = "interlinearTexts";
 		private MultiPane _multiPane;
 		private RecordBrowseView _recordBrowseView;
@@ -83,9 +84,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			_textAndWordsAreaMenuHelper.Dispose();
 			MultiPaneFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _multiPane);
 			_recordBrowseView = null;
 			_interlinMaster = null;
+			_textAndWordsAreaMenuHelper = null;
 		}
 
 		/// <summary>
@@ -96,6 +99,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			_textAndWordsAreaMenuHelper = new TextAndWordsAreaMenuHelper(majorFlexComponentParameters);
+			_textAndWordsAreaMenuHelper.AddMenusForAllButConcordanceTool();
 			if (_recordClerk == null)
 			{
 				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(InterlinearTexts, majorFlexComponentParameters.Statusbar, FactoryMethod);
@@ -112,7 +117,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 			};
 			var root = XDocument.Parse(TextAndWordsResources.InterlinearEditToolParameters).Root;
 			_recordBrowseView = new RecordBrowseView(root.Element("recordbrowseview").Element("parameters"), majorFlexComponentParameters.LcmCache, _recordClerk);
-			_interlinMaster = new InterlinMaster(root.Element("interlinearmaster").Element("parameters"), majorFlexComponentParameters.LcmCache, _recordClerk, MenuServices.GetFilePrintMenu(majorFlexComponentParameters.MenuStrip));
+			_interlinMaster = new InterlinMaster(root.Element("interlinearmaster").Element("parameters"), majorFlexComponentParameters.LcmCache, _recordClerk, MenuServices.GetFileMenu(majorFlexComponentParameters.MenuStrip), MenuServices.GetFilePrintMenu(majorFlexComponentParameters.MenuStrip));
 			_multiPane = MultiPaneFactory.CreateMultiPaneWithTwoPaneBarContainersInMainCollapsingSplitContainer(
 				majorFlexComponentParameters.FlexComponentParameters,
 				majorFlexComponentParameters.MainCollapsingSplitContainer,

@@ -14,8 +14,10 @@ using System.Text;
 using System.Windows.Forms;
 using IWshRuntimeLibrary;
 using LanguageExplorer.Archiving;
+using LanguageExplorer.Areas;
 using LanguageExplorer.Areas.TextsAndWords;
 using LanguageExplorer.Controls;
+using LanguageExplorer.Controls.LexText;
 using SIL.Code;
 using LanguageExplorer.Controls.SilSidePane;
 using LanguageExplorer.SendReceive;
@@ -144,6 +146,11 @@ namespace LanguageExplorer.Impls
 				Cache,
 				_flexApp,
 				this);
+
+			// Most tools show it, but let them deal with it and its event handler.
+			var fileExportMenu = MenuServices.GetFileExportMenu(_majorFlexComponentParameters.MenuStrip);
+			fileExportMenu.Visible = false;
+			fileExportMenu.Enabled = false;
 
 			_parserMenuManager.InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);
 
@@ -1398,6 +1405,32 @@ namespace LanguageExplorer.Impls
 			ramp.ArchiveNow(this, MainMenuStrip.Font, Icon, filesToArchive, PropertyTable, _flexApp, Cache);
 		}
 
+		private void UploadToWebonary_Click(object sender, EventArgs e)
+		{
+			var publications = Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Select(p => p.Name.BestAnalysisAlternative.Text).ToList();
+			var projectConfigDir = DictionaryConfigurationListener.GetProjectConfigurationDirectory(PropertyTable, DictionaryConfigurationListener.DictionaryConfigurationDirectoryName);
+			var defaultConfigDir = DictionaryConfigurationListener.GetDefaultConfigurationDirectory(DictionaryConfigurationListener.DictionaryConfigurationDirectoryName);
+			var configurations = DictionaryConfigurationController.GetDictionaryConfigurationLabels(Cache, defaultConfigDir, projectConfigDir);
+			// Now collect all the reversal configurations into the reversals variable
+			projectConfigDir = DictionaryConfigurationListener.GetProjectConfigurationDirectory(PropertyTable, DictionaryConfigurationListener.ReversalIndexConfigurationDirectoryName);
+			defaultConfigDir = DictionaryConfigurationListener.GetDefaultConfigurationDirectory(DictionaryConfigurationListener.ReversalIndexConfigurationDirectoryName);
+			var reversals = DictionaryConfigurationController.GetDictionaryConfigurationLabels(Cache, defaultConfigDir, projectConfigDir);
+
+			// show dialog
+			var model = new UploadToWebonaryModel(PropertyTable)
+			{
+				Reversals = reversals,
+				Configurations = configurations,
+				Publications = publications
+			};
+			using (var controller = new UploadToWebonaryController(Cache, PropertyTable, Publisher))
+			using (var dialog = new UploadToWebonaryDlg(controller, model, PropertyTable))
+			{
+				dialog.ShowDialog();
+				RefreshAllViews();
+			}
+		}
+
 		private void File_Translated_List_Content(object sender, EventArgs e)
 		{
 			string filename;
@@ -1507,40 +1540,6 @@ namespace LanguageExplorer.Impls
 #endif
 		}
 
-		private void File_Export_Global(object sender, EventArgs e)
-		{
-			// This handles the general case if nobody else is handling it.
-			// Other handlers:
-			//		A. The notebook area does its version for all of its tools.
-			//		B. The "grammarSketch" tool in the 'grammar" area does its own thing. (Same as below, but without AreCustomFieldsAProblem and ActivateUI.)
-			// Not visible and thus, not enabled:
-			//		A. Tools in "textsWords": complexConcordance, concordance, corpusStatistics, and interlinearEdit
-			// Stuff that uses this code:
-			//		A. lexicon area: all 8 tools
-			//		B. textsWords area: Analyses, bulkEditWordforms, wordListConcordance (all use "concordanceWords" clerk, so can do export)
-			//		C. grammar area: all tools, except grammarSketch,, which goes its own way
-			//		D. lists area: all 27 tools
-#if RANDYTODO
-			// TODO: RecordClerk's "AreCustomFieldsAProblem" method will also need a new home: maybe FDO is a better place for it.
-			// It's somewhat unfortunate that this bit of code knows what classes can have custom fields.
-			// However, we put in code to prevent punctuation in custom field names at the same time as this check (which is therefore
-			// for the benefit of older projects), so it should not be necessary to check any additional classes we allow to have them.
-			if (AreCustomFieldsAProblem(new int[] { LexEntryTags.kClassId, LexSenseTags.kClassId, LexExampleSentenceTags.kClassId, MoFormTags.kClassId }))
-				return true;
-			using (var dlg = new ExportDialog())
-			{
-				dlg.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
-				dlg.ShowDialog();
-			}
-#if RANDYTODO
-			// TODO: This method is on RecordClerk, so figure out how to call it from here, if it is still needed at all.
-			ActivateUI(true);
-#endif
-#else
-			MessageBox.Show(this, "Export not yet implemented. Stay tuned.", "Export not ready", MessageBoxButtons.OK);
-#endif
-		}
-
 		private void Edit_Paste_Hyperlink(object sender, EventArgs e)
 		{
 			if (_stylesheet == null)
@@ -1642,5 +1641,23 @@ very simple minor adjustments. ;)"
 		}
 
 		#endregion
+
+		private void File_Import_Standard_Format_Marker_Click(object sender, EventArgs e)
+		{
+			using (var importWizard = new LexImportWizard())
+			{
+				var wndActive = _majorFlexComponentParameters.MainWindow;
+				((IFwExtension)importWizard).Init(_majorFlexComponentParameters.LcmCache, wndActive.PropertyTable, wndActive.Publisher);
+				importWizard.ShowDialog((Form)_majorFlexComponentParameters.MainWindow);
+			}
+		}
+
+		private void Tools_Options_Click(object sender, EventArgs e)
+		{
+			using (var optionsDlg = new LexOptionsDlg())
+			{
+				AreaServices.HandleDlg(optionsDlg, Cache, _flexApp, this, PropertyTable, Publisher);
+			}
+		}
 	}
 }

@@ -2723,6 +2723,7 @@ namespace SIL.FieldWorks
 					s_activeMainWnd.Publisher.Publish("MigrateOldConfigurations", null);
 				}
 				EnsureValidReversalIndexConfigFile(s_flexApp.Cache);
+				s_activeMainWnd.PropertyTable.SetProperty("AppSettings", s_appSettings, false, false);
 			}
 			catch (StartupException ex)
 			{
@@ -2977,16 +2978,11 @@ namespace SIL.FieldWorks
 		/// If no other applications are running, then FieldWorks will also be shutdown.
 		/// </summary>
 		/// <param name="app">The application to shut down.</param>
-		/// <param name="fSaveSettings">True to have the application save its settings,
-		/// false otherwise</param>
 		/// ------------------------------------------------------------------------------------
-		internal static void ShutdownApp(IFlexApp app, bool fSaveSettings)
+		internal static void ShutdownApp(IFlexApp app)
 		{
 			if (app != s_flexApp)
-				throw new ArgumentException("Application must belong to this FieldWorks", "app");
-
-			if (fSaveSettings)
-				app.SaveSettings();
+				throw new ArgumentException("Application must belong to this FieldWorks", nameof(app));
 
 			if (s_activeMainWnd != null && app.MainWindows.Contains(s_activeMainWnd))
 			{
@@ -3040,7 +3036,7 @@ namespace SIL.FieldWorks
 				return;
 			// This is typically used if an exception happens so we need to ignore any errors
 			// because we have no idea what state the application is in.
-			ExceptionHelper.LogAndIgnoreErrors(() => ShutdownApp(app, false));
+			ExceptionHelper.LogAndIgnoreErrors(() => ShutdownApp(app));
 		}
 
 		/// ------------------------------------------------------------------------------------

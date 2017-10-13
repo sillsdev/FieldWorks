@@ -17,6 +17,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Browse
 	/// </summary>
 	internal sealed class LexiconBrowseTool : ITool
 	{
+		private LexiconAreaMenuHelper _lexiconAreaMenuHelper;
 		private PaneBarContainer _paneBarContainer;
 		private RecordBrowseView _recordBrowseView;
 		private RecordClerk _recordClerk;
@@ -75,8 +76,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Browse
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			_lexiconAreaMenuHelper.Dispose();
 			PaneBarContainerFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _paneBarContainer);
 			_recordBrowseView = null;
+			_lexiconAreaMenuHelper = null;
 		}
 
 		/// <summary>
@@ -91,6 +94,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Browse
 			{
 				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(LexiconArea.Entries, majorFlexComponentParameters.Statusbar, LexiconArea.EntriesFactoryMethod);
 			}
+			_lexiconAreaMenuHelper = new LexiconAreaMenuHelper(majorFlexComponentParameters, _recordClerk);
+
 			var root = XDocument.Parse(LexiconResources.LexiconBrowseParameters).Root;
 			var columnsElement = XElement.Parse(LexiconResources.LexiconBrowseDialogColumnDefinitions);
 			OverrideServices.OverrideVisibiltyAttributes(columnsElement, XElement.Parse(LexiconResources.LexiconBrowseOverrides));
@@ -101,6 +106,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Browse
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
 				_recordBrowseView);
 			RecordClerkServices.SetClerk(majorFlexComponentParameters, _recordClerk);
+			_lexiconAreaMenuHelper.Initialize();
 		}
 
 		/// <summary>

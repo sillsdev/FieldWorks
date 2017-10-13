@@ -14,6 +14,7 @@ using System.Threading;
 using System.Windows.Forms;
 using LanguageExplorer.Controls.XMLViews;
 using Microsoft.Win32;
+using SIL.Code;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.ViewsInterfaces;
@@ -45,17 +46,8 @@ namespace LanguageExplorer.Impls
 		/* TODO: Make sure these old style Mediator commands/methods are handled in the best IArea/ITool manner.
 		 * TODO: This will likely mean some/all of these get moved elsewhere, since they are not global.
 Old Mediator methods/commands
-	LaunchConnectedDialog: OnDisplayLaunchConnectedDialog & OnLaunchConnectedDialog
-		Services these xml faux global commands:
-			CmdImportSFMLexicon
-			CmdImportLinguaLinksData
-		 * CmdImportLiftData
-		 * CmdImportInterlinearSfm
-		 * CmdImportWordsAndGlossesSfm
-		 * CmdImportInterlinearData
 	ConfigureHomographs: OnConfigureHomographs (no display check)
 		 * Services this global(?) command CmdConfigHomographs
-	OnRefresh (not used by Mediator now)
 		 */
 #endif
 		#region Data Members
@@ -100,19 +92,16 @@ Old Mediator methods/commands
 
 		#region Construction and Initializing
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		/// <param name="fwManager">The FieldWorks manager for dealing with FieldWorks-level
-		/// stuff.</param>
+		/// <param name="fwManager">The FieldWorks manager for dealing with FieldWorks-level stuff.</param>
 		/// <param name="helpTopicProvider"></param>
 		/// <param name="appArgs">The application arguments.</param>
-		/// ------------------------------------------------------------------------------------
 		internal LexTextApp(IFieldWorksManager fwManager, IHelpTopicProvider helpTopicProvider, FwAppArgs appArgs)
 		{
-			if (fwManager == null) throw new ArgumentNullException(nameof(fwManager));
-			if (helpTopicProvider == null) throw new ArgumentNullException(nameof(helpTopicProvider));
+			Guard.AgainstNull(fwManager, nameof(fwManager));
+			Guard.AgainstNull(helpTopicProvider, nameof(helpTopicProvider));
 
 			IsModalDialogOpen = false;
 			PictureHolder = new PictureHolder();
@@ -272,40 +261,32 @@ Old Mediator methods/commands
 		#endregion ISettings interface implementation
 
 		#region IFeedbackInfoProvider interface implementation
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// E-mail address for bug reports, etc.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public string SupportEmailAddress => LanguageExplorerResources.kstidSupportEmail;
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// E-mail address for feedback reports, kudos, etc.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public string FeedbackEmailAddress => "FLEXUsage@sil.org";
 
 		#endregion IFeedbackInfoProvider interface implementation
 
 		#region IHelpTopicProvider interface implementation
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets a URL identifying a Help topic.
 		/// </summary>
 		/// <param name="stid">An identifier for the desired Help topic</param>
 		/// <returns>The requested string</returns>
-		/// ------------------------------------------------------------------------------------
 		public string GetHelpString(string stid)
 		{
 			return m_helpTopicProvider.GetHelpString(stid);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// The HTML help file (.chm) for the app.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public string HelpFile => m_helpTopicProvider.HelpFile;
 
 		#endregion IHelpTopicProvider interface implementation
@@ -376,7 +357,7 @@ Old Mediator methods/commands
 			if (disposing)
 			{
 				// Dispose managed resources here.
-			UpdateAppRuntimeCounter();
+				UpdateAppRuntimeCounter();
 
 				Logger.WriteEvent("Disposing app: " + GetType().Name);
 				RegistrySettings.FirstTimeAppHasBeenRun = false;
@@ -467,13 +448,11 @@ Old Mediator methods/commands
 
 		#region IApp interface implementation
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Return a string from a resource ID
 		/// </summary>
 		/// <param name="stid">String resource id</param>
 		/// <returns>string</returns>
-		/// -----------------------------------------------------------------------------------
 		public string ResourceString(string stid)
 		{
 			CheckDisposed();
@@ -487,31 +466,25 @@ Old Mediator methods/commands
 				return (stid == null ? "NullStringID" : LanguageExplorerResources.ResourceManager.GetString(stid));
 			}
 			catch (Exception e)
-		{
-				if (!m_fResourceFailed)
 			{
-					MessageBox.Show(null,
-						string.Format(LanguageExplorerResources.ksErrorLoadingResourceStrings, e.Message),
-						LanguageExplorerResources.ksError);
+				if (!m_fResourceFailed)
+				{
+					MessageBox.Show(m_activeMainWindow, string.Format(LanguageExplorerResources.ksErrorLoadingResourceStrings, e.Message), LanguageExplorerResources.ksError);
 					m_fResourceFailed = true;
 				}
 				return (stid == null) ? "NullStringID" : null;
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets/Sets the measurement system used in the application
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public MsrSysType MeasurementSystem
 		{
-			// REVIEW (TimS): Can we remove this property and just use FwRegistrySettings directly?
 			get { return (MsrSysType)FwRegistrySettings.MeasurementUnitSetting; }
 			set { FwRegistrySettings.MeasurementUnitSetting = (int)value; }
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Get the active form. This is usually the same as Form.ActiveForm, but sometimes
 		/// the official active form is something other than one of our main windows, for
@@ -519,14 +492,11 @@ Old Mediator methods/commands
 		/// which should be something that has a taskbar icon. It is often useful as the
 		/// appropriate parent window for a dialog that otherwise doesn't have one.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public Form ActiveMainWindow => m_activeMainWindow;
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the name of the application.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public string ApplicationName => FwUtils.ksFlexAppName;
 
 		/// <summary>
@@ -534,11 +504,9 @@ Old Mediator methods/commands
 		/// </summary>
 		public PictureHolder PictureHolder { get; private set; }
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Refreshes all the views in all of the Main Windows of the app.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public void RefreshAllViews()
 		{
 			CheckDisposed();
@@ -661,7 +629,6 @@ Old Mediator methods/commands
 			}
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Enable or disable all top-level windows. This allows nesting. In other words,
 		/// calling EnableMainWindows(false) twice requires 2 calls to EnableMainWindows(true)
@@ -671,7 +638,6 @@ Old Mediator methods/commands
 		/// select the main window.
 		/// </summary>
 		/// <param name="fEnable">Enable (true) or disable (false).</param>
-		/// -----------------------------------------------------------------------------------
 		public void EnableMainWindows(bool fEnable)
 		{
 			CheckDisposed();
@@ -694,11 +660,9 @@ Old Mediator methods/commands
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Close and remove the Find/Replace modeless dialog (result of LT-5702)
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public void RemoveFindReplaceDialog()
 		{
 			if (m_findReplaceDlg == null)
@@ -712,14 +676,12 @@ Old Mediator methods/commands
 			m_findReplaceDlg = null;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Display the Find/Replace modeless dialog
 		/// </summary>
 		/// <param name="fReplace"><c>true</c> to make the replace tab active</param>
 		/// <param name="rootsite">The view where the find will be conducted</param>
 		/// <returns><c>true</c> if the dialog is successfully displayed</returns>
-		/// ------------------------------------------------------------------------------------
 		public bool ShowFindReplaceDialog(bool fReplace, RootSite rootsite)
 		{
 			CheckDisposed();
@@ -750,14 +712,12 @@ Old Mediator methods/commands
 			return false;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Handles the incoming link, after the right window of the right application on the right
 		/// project has been activated.
 		/// See the class comment on FwLinkArgs for details on how all the parts of hyperlinking work.
 		/// </summary>
 		/// <param name="link">The link.</param>
-		/// ------------------------------------------------------------------------------------
 		public void HandleIncomingLink(FwLinkArgs link)
 		{
 			CheckDisposed();
@@ -786,18 +746,15 @@ Old Mediator methods/commands
 			asForm.Activate();
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Handles an outgoing link request from this application.
 		/// </summary>
 		/// <param name="link">The link.</param>
-		/// ------------------------------------------------------------------------------------
 		public void HandleOutgoingLink(FwAppArgs link)
 		{
 			m_fwManager.HandleLinkRequest(link);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Handle changes to the LinkedFiles root directory for a language project.
 		/// </summary>
@@ -805,14 +762,13 @@ Old Mediator methods/commands
 		/// <returns></returns>
 		/// <remarks>This may not be the best place for this method, but I'm not sure there is a
 		/// "best place".</remarks>
-		/// ------------------------------------------------------------------------------------
 		public bool UpdateExternalLinks(string oldLinkedFilesRootDir)
 		{
-			var lp = Cache.LanguageProject;
-			var sNewLinkedFilesRootDir = lp.LinkedFilesRootDir;
+			ILangProject lp = Cache.LanguageProject;
+			string sNewLinkedFilesRootDir = lp.LinkedFilesRootDir;
 			if (!FileUtils.PathsAreEqual(sNewLinkedFilesRootDir, oldLinkedFilesRootDir))
 			{
-				var rgFilesToMove = new List<string>();
+				List<string> rgFilesToMove = new List<string>();
 				// TODO: offer to move or copy existing files.
 				foreach (ICmFolder cf in lp.MediaOC)
 					CollectMovableFilesFromFolder(cf, rgFilesToMove, oldLinkedFilesRootDir, sNewLinkedFilesRootDir);
@@ -831,91 +787,90 @@ Old Mediator methods/commands
 						rgFilesToMove.Add(linkInfo.RelativePath);
 					}
 				}
-				if (rgFilesToMove.Count <= 0)
+				if (rgFilesToMove.Count > 0)
 				{
-					return false;
-				}
-				FileLocationChoice action;
-				using (var dlg = new MoveOrCopyFilesDlg())
-				{
-					dlg.Initialize(rgFilesToMove.Count, oldLinkedFilesRootDir, sNewLinkedFilesRootDir, this);
-					var res = dlg.ShowDialog();
-					Debug.Assert(res == DialogResult.OK);
-					if (res != DialogResult.OK)
-						return false;   // should never happen!
-					action = dlg.Choice;
-				}
-				if (action == FileLocationChoice.Leave) // Expand path
-				{
-					NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor,
-						() =>
-						{
-							foreach (ICmFolder cf in lp.MediaOC)
-								ExpandToFullPath(cf, oldLinkedFilesRootDir, sNewLinkedFilesRootDir);
-							foreach (ICmFolder cf in lp.PicturesOC)
-								ExpandToFullPath(cf, oldLinkedFilesRootDir, sNewLinkedFilesRootDir);
-						});
-					// Hyperlinks are always already full paths.
-					return false;
-				}
-				var rgLockedFiles = new List<string>();
-				foreach (var sFile in rgFilesToMove)
-				{
-					var sOldPathname = Path.Combine(oldLinkedFilesRootDir, sFile);
-					var sNewPathname = Path.Combine(sNewLinkedFilesRootDir, sFile);
-					var sNewDir = Path.GetDirectoryName(sNewPathname);
-					if (!Directory.Exists(sNewDir))
-						Directory.CreateDirectory(sNewDir);
-					Debug.Assert(FileUtils.TrySimilarFileExists(sOldPathname, out sOldPathname));
-					if (FileUtils.TrySimilarFileExists(sNewPathname, out sNewPathname))
-						File.Delete(sNewPathname);
-					try
+					FileLocationChoice action;
+					using (MoveOrCopyFilesDlg dlg = new MoveOrCopyFilesDlg()) // REVIEW (Hasso) 2015.08: should this go in MoveOrCopyFilesController?
 					{
-						if (action == FileLocationChoice.Move)
-						{
-							//LT-13343 do copy followed by delete to ensure the file gets put in the new location.
-							//If the current FLEX record has a picture displayed the File.Delete will fail.
-							File.Copy(sOldPathname, sNewPathname);
-							File.Delete(sOldPathname);
-						}
-
-						else
-							File.Copy(sOldPathname, sNewPathname);
+						dlg.Initialize(rgFilesToMove.Count, oldLinkedFilesRootDir, sNewLinkedFilesRootDir, this);
+						DialogResult res = dlg.ShowDialog();
+						Debug.Assert(res == DialogResult.OK);
+						if (res != DialogResult.OK)
+							return false;   // should never happen!
+						action = dlg.Choice;
 					}
-					catch (Exception ex)
+					if (action == FileLocationChoice.Leave) // Expand path
 					{
-						Debug.WriteLine($"{ex.Message}: {sOldPathname}");
-						rgLockedFiles.Add(sFile);
+						NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor,
+							() =>
+							{
+								foreach (ICmFolder cf in lp.MediaOC)
+									ExpandToFullPath(cf, oldLinkedFilesRootDir, sNewLinkedFilesRootDir);
+								foreach (ICmFolder cf in lp.PicturesOC)
+									ExpandToFullPath(cf, oldLinkedFilesRootDir, sNewLinkedFilesRootDir);
+							});
+						// Hyperlinks are always already full paths.
+						return false;
 					}
-				}
-				NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(Cache.ActionHandlerAccessor,
-					() => StringServices.FixHyperlinkFolder(hyperlinks, oldLinkedFilesRootDir, sNewLinkedFilesRootDir));
-
-				// If any files failed to be moved or copied above, try again now that we've
-				// opened a new window and had more time elapse (and more demand to reuse
-				// memory) since the failure.
-				if (rgLockedFiles.Count > 0)
-				{
-					GC.Collect();   // make sure the window is disposed!
-					Thread.Sleep(1000);
-					foreach (var sFile in rgLockedFiles)
+					List<string> rgLockedFiles = new List<string>();
+					foreach (string sFile in rgFilesToMove)
 					{
-						var sOldPathname = Path.Combine(oldLinkedFilesRootDir, sFile);
-						var sNewPathname = Path.Combine(sNewLinkedFilesRootDir, sFile);
+						string sOldPathname = Path.Combine(oldLinkedFilesRootDir, sFile);
+						string sNewPathname = Path.Combine(sNewLinkedFilesRootDir, sFile);
+						string sNewDir = Path.GetDirectoryName(sNewPathname);
+						if (!Directory.Exists(sNewDir))
+							Directory.CreateDirectory(sNewDir);
+						Debug.Assert(FileUtils.TrySimilarFileExists(sOldPathname, out sOldPathname));
+						if (FileUtils.TrySimilarFileExists(sNewPathname, out sNewPathname))
+							File.Delete(sNewPathname);
 						try
 						{
 							if (action == FileLocationChoice.Move)
-								FileUtils.Move(sOldPathname, sNewPathname);
+							{
+								//LT-13343 do copy followed by delete to ensure the file gets put in the new location.
+								//If the current FLEX record has a picture displayed the File.Delete will fail.
+								File.Copy(sOldPathname, sNewPathname);
+								File.Delete(sOldPathname);
+							}
+
 							else
 								File.Copy(sOldPathname, sNewPathname);
 						}
 						catch (Exception ex)
 						{
-							Debug.WriteLine($"{ex.Message}: {sOldPathname} (SECOND ATTEMPT)");
+							Debug.WriteLine(String.Format("{0}: {1}", ex.Message, sOldPathname));
+							rgLockedFiles.Add(sFile);
 						}
 					}
+					NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(Cache.ActionHandlerAccessor,
+						() => StringServices.FixHyperlinkFolder(hyperlinks, oldLinkedFilesRootDir, sNewLinkedFilesRootDir));
+
+					// If any files failed to be moved or copied above, try again now that we've
+					// opened a new window and had more time elapse (and more demand to reuse
+					// memory) since the failure.
+					if (rgLockedFiles.Count > 0)
+					{
+						GC.Collect();   // make sure the window is disposed!
+						Thread.Sleep(1000);
+						foreach (string sFile in rgLockedFiles)
+						{
+							string sOldPathname = Path.Combine(oldLinkedFilesRootDir, sFile);
+							string sNewPathname = Path.Combine(sNewLinkedFilesRootDir, sFile);
+							try
+							{
+								if (action == FileLocationChoice.Move)
+									FileUtils.Move(sOldPathname, sNewPathname);
+								else
+									File.Copy(sOldPathname, sNewPathname);
+							}
+							catch (Exception ex)
+							{
+								Debug.WriteLine(String.Format("{0}: {1} (SECOND ATTEMPT)", ex.Message, sOldPathname));
+							}
+						}
+					}
+					return true;
 				}
-				return true;
 			}
 			return false;
 		}
@@ -924,7 +879,6 @@ Old Mediator methods/commands
 
 		#region IFlexApp interface implementation
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Array of main windows that are currently open for this application. This array can
 		/// be used (with foreach) to do all the kinds of things that used to require a custom
@@ -932,7 +886,6 @@ Old Mediator methods/commands
 		/// each one (e.g., AreAllWndsOkToChange, SaveAllWndsEdits, etc.).
 		/// In C++, was GetMainWindows()
 		/// </summary>
-		/// -----------------------------------------------------------------------------------
 		public List<IFwMainWnd> MainWindows
 		{
 			get
@@ -942,13 +895,10 @@ Old Mediator methods/commands
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Activate the given window.
 		/// </summary>
-		/// <param name="iMainWnd">Index (in the internal list of main windows) of the window to
-		/// activate</param>
-		/// ------------------------------------------------------------------------------------
+		/// <param name="iMainWnd">Index (in the internal list of main windows) of the window to activate</param>
 		public void ActivateWindow(int iMainWnd)
 		{
 			var wnd = (Form)MainWindows[iMainWnd];
@@ -957,7 +907,6 @@ Old Mediator methods/commands
 				wnd.WindowState = FormWindowState.Normal;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Creates and opens a main FLEx window.
 		/// </summary>
@@ -965,7 +914,6 @@ Old Mediator methods/commands
 		/// <param name="isNewCache">if set to <c>true</c> [is new cache].</param>
 		/// <param name="wndCopyFrom">The WND copy from.</param>
 		/// <param name="fOpeningNewProject">if set to <c>true</c> [f opening new project].</param>
-		/// ------------------------------------------------------------------------------------
 		public Form NewMainAppWnd(IProgress progressDlg, bool isNewCache, Form wndCopyFrom, bool fOpeningNewProject)
 		{
 			if (progressDlg != null)
@@ -987,14 +935,12 @@ Old Mediator methods/commands
 			return form;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Registers events for the main window and adds the main window to the list of
 		/// windows. Then shows the window.
 		/// </summary>
 		/// <param name="fwMainWindow">The new main window.</param>
 		/// <param name="wndCopyFrom">Form to copy from, or <c>null</c></param>
-		/// ------------------------------------------------------------------------------------
 		public void InitAndShowMainWindow(Form fwMainWindow, Form wndCopyFrom)
 		{
 			if (fwMainWindow == null) throw new ArgumentNullException(nameof(fwMainWindow));
@@ -1061,13 +1007,11 @@ Old Mediator methods/commands
 			Application.Idle += CloseOldWindow;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Use this for slow operations that should happen during the splash screen instead of
 		/// during app construction
 		/// </summary>
 		/// <param name="progressDlg">The progress dialog to use.</param>
-		/// ------------------------------------------------------------------------------------
 		public void DoApplicationInitialization(IProgress progressDlg)
 		{
 			InitializeMessageDialogs(progressDlg);
@@ -1075,13 +1019,11 @@ Old Mediator methods/commands
 				progressDlg.Message = LanguageExplorerResources.ksLoading_;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Called just after DoApplicationInitialization(). Allows a separate overide of
 		/// loading settings. If you override this you probably also want to
 		/// override SaveSettings.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public void LoadSettings()
 		{
 			// Keyman has an option to change the system keyboard with a keyman keyboard change.
@@ -1145,28 +1087,22 @@ Old Mediator methods/commands
 			return true;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets the cache.
+		/// Gets the cache, or null if not available.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public LcmCache Cache => m_fwManager?.Cache;
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the FieldWorks manager for this application.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public IFieldWorksManager FwManager => m_fwManager;
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Removes the specified IFwMainWnd from the list of windows. If it is ok to close down
 		/// the application and the count of main windows is zero, then this method will also
 		/// shut down the application.
 		/// </summary>
 		/// <param name="fwMainWindow">The IFwMainWnd to remove</param>
-		/// ------------------------------------------------------------------------------------
 		public void RemoveWindow(IFwMainWnd fwMainWindow)
 		{
 			if (IsDisposed || BeingDisposed)
@@ -1190,41 +1126,31 @@ Old Mediator methods/commands
 				m_fwManager.ExecuteAsync(m_fwManager.ShutdownApp, this);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets a value indicating whether this instance has a modal dialog or message box open.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public bool IsModalDialogOpen { get; private set; }
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the full path of the product executable filename
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public string ProductExecutableFile => FwDirectoryFinder.FieldWorksExe;
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets a value indicating whether this instance has been fully initialized.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public bool HasBeenFullyInitialized => m_fInitialized && !IsDisposed && !BeingDisposed;
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the registry settings for this FwApp
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public FwRegistrySettings RegistrySettings { get; private set; }
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Return a string from a resource ID.
 		/// </summary>
 		/// <param name="stid">String resource id</param>
-		/// <returns>String</returns>
-		/// -----------------------------------------------------------------------------------
+		/// <returns>The resource string</returns>
 		public string GetResourceString(string stid)
 		{
 			var str = ResourceString(stid);
@@ -1234,26 +1160,9 @@ Old Mediator methods/commands
 			return str;
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Save any settings. For now, app has no settings to save.
-		/// </summary>
-		/// <remarks>
-		/// This is the real place to save settings, as opposed to SaveSettingsNow, which is
-		/// a dummy implementation required because (for the sake of the SettingsKey method)
-		/// we implement ISettings.
-		/// </remarks>
-		/// ------------------------------------------------------------------------------------
-		public void SaveSettings()
-		{
-			// NB: Don't try to save window settings here, because the windwos are gone by this call.
-		}
-
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// The name of the sample DB for the app.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public string SampleDatabase => Path.Combine(FwDirectoryFinder.LcmDirectories.ProjectsDirectory, "Sena 3", "Sena 3" + LcmFileHelper.ksFwDataXmlFileExtension);
 
 		#endregion IFlexApp interface implementation
@@ -1266,12 +1175,10 @@ Old Mediator methods/commands
 				RestartSpellChecking(c);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initialize the required inventories.
 		/// </summary>
 		/// <param name="progressDlg">The progress dialog</param>
-		/// ------------------------------------------------------------------------------------
 		private static void InitializeMessageDialogs(IProgress progressDlg)
 		{
 			if (progressDlg != null)
@@ -1342,19 +1249,6 @@ Old Mediator methods/commands
 		}
 
 		/// <summary>
-		/// Uses Process.Start to run path. If running in Linux and path ends in .html or .htm,
-		/// surrounds the path in double quotes and opens it with a web browser.
-		/// </summary>
-		/// <param name="path"></param>
-		/// <param name="exceptionHandler"/>
-		/// Delegate to run if an exception is thrown. Takes the exception as an argument.
-
-		private void OpenDocument(string path, Action<Exception> exceptionHandler)
-		{
-			OpenDocument<Exception>(path, exceptionHandler);
-		}
-
-		/// <summary>
 		/// Like OpenDocument(), but allowing specification of specific exception type T to catch.
 		/// </summary>
 		private static void OpenDocument<T>(string path, Action<T> exceptionHandler) where T : Exception
@@ -1380,14 +1274,10 @@ Old Mediator methods/commands
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Adjust the new window position - offset right and down from the original.
 		/// Also copy the window size, state, and set the StartPosition mode to manual.
 		/// </summary>
-		/// <param name="wndNew"></param>
-		/// <param name="wndCopyFrom"></param>
-		/// -----------------------------------------------------------------------------------
 		private static void AdjustNewWindowPosition(Form wndNew, Form wndCopyFrom)
 		{
 			// Get position and size
@@ -1427,44 +1317,31 @@ Old Mediator methods/commands
 			wndNew.WindowState = wndCopyFrom.WindowState;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Handles the EnterThreadModal event of the Application control.
 		/// </summary>
-		/// <param name="sender">The source of the event.</param>
-		/// <param name="e">The <see cref="T:System.EventArgs"/> instance containing the event data.</param>
-		/// ------------------------------------------------------------------------------------
 		private void Application_EnterThreadModal(object sender, EventArgs e)
 		{
 			IsModalDialogOpen = true;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Handles the LeaveThreadModal event of the Application control.
 		/// </summary>
-		/// <param name="sender">The source of the event.</param>
-		/// <param name="e">The <see cref="T:System.EventArgs"/> instance containing the event data.</param>
-		/// ------------------------------------------------------------------------------------
 		private void Application_LeaveThreadModal(object sender, EventArgs e)
 		{
 			IsModalDialogOpen = false;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// When a window is closed, we need to make sure we close any root boxes that may
 		/// be on the window.
 		/// </summary>
-		/// <param name="sender">Presumably a main window</param>
-		/// <param name="e"></param>
-		/// ------------------------------------------------------------------------------------
 		private static void OnWindowClosed(object sender, EventArgs e)
 		{
 			CloseRootBoxes(sender as Control);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Recursively look at all the controls belonging to the specified control and save
 		/// the settings for each root box for controls of type ISettings. Then close
@@ -1474,32 +1351,31 @@ Old Mediator methods/commands
 		/// we have to close the rootboxes here instead.
 		/// </summary>
 		/// <param name="ctrl">A main window or any of its descendents</param>
-		/// ------------------------------------------------------------------------------------
 		private static void CloseRootBoxes(Control ctrl)
 		{
-			if (ctrl != null)
-		{
-				if (ctrl is ISettings)
-					((ISettings)ctrl).SaveSettingsNow();
+			if (ctrl == null)
+			{
+				return;
+			}
 
-				if (ctrl is IRootSite)
-					((IRootSite)ctrl).CloseRootBox();
+			if (ctrl is ISettings)
+				((ISettings)ctrl).SaveSettingsNow();
 
-				foreach (Control childControl in ctrl.Controls)
-					CloseRootBoxes(childControl);
+			if (ctrl is IRootSite)
+				((IRootSite)ctrl).CloseRootBox();
+
+			foreach (Control childControl in ctrl.Controls)
+			{
+				CloseRootBoxes(childControl);
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// The active main window is closing, so try to find some other main window that can
 		/// "own" the find/replace dialog, so it can stay alive.
 		/// If we can't find one, then all main windows are going away and we're going
 		/// to have to close, too.
 		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		/// ------------------------------------------------------------------------------------
 		private void OnClosingWindow(object sender, CancelEventArgs e)
 		{
 			if (!(sender is IFwMainWnd))
@@ -1526,32 +1402,23 @@ Old Mediator methods/commands
 			RemoveFindReplaceDialog();
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Note the most recent of our main windows to become active.
 		/// </summary>
-		/// <param name="sender">The source of the event.</param>
-		/// <param name="e">The <see cref="T:System.EventArgs"/> instance containing the event data.</param>
-		/// ------------------------------------------------------------------------------------
 		private void fwMainWindow_Activated(object sender, EventArgs e)
 		{
 			m_activeMainWindow = (Form)sender;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Make sure a window that's no longer valid isn't considered active.
 		/// </summary>
-		/// <param name="sender">The source of the event.</param>
-		/// <param name="e">The <see cref="T:System.EventArgs"/> instance containing the event data.</param>
-		/// ------------------------------------------------------------------------------------
 		private void fwMainWindow_HandleDestroyed(object sender, EventArgs e)
 		{
 			if (m_activeMainWindow == sender)
 				m_activeMainWindow = null;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Calculate a size (width or height) which is 2/3 of the screen area or the minimum
 		/// allowable size.
@@ -1559,7 +1426,6 @@ Old Mediator methods/commands
 		/// <param name="screenSize">Total available width or height (for the screen)</param>
 		/// <param name="minSize">Minimum width or height for the window</param>
 		/// <returns>The ideal width or height for a cascaded window</returns>
-		/// ------------------------------------------------------------------------------------
 		private static int CascadeSize(int screenSize, int minSize)
 		{
 			var retSize = (screenSize * 2) / 3;
@@ -1568,14 +1434,11 @@ Old Mediator methods/commands
 			return retSize;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Cascade the windows from top left and resize them to fill 2/3 of the screen area (or
 		/// the minimum allowable size).
 		/// </summary>
-		/// <param name="wndCurr">Current Window (i.e. window whose menu was used to issue the
-		/// Cascade command.</param>
-		/// ------------------------------------------------------------------------------------
+		/// <param name="wndCurr">Current Window (i.e. window whose menu was used to issue the Cascade command.</param>
 		private void CascadeWindows(Form wndCurr)
 		{
 			// Get the screen in which to cascade.
@@ -1614,7 +1477,6 @@ Old Mediator methods/commands
 			wndCurr.Activate();
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// This method can be used to do the size and spacing calculations when tiling either
 		/// side-by-side or stacked. It calculates two things: 1) The desired width or height
@@ -1632,15 +1494,12 @@ Old Mediator methods/commands
 		/// tiled windows.</param>
 		/// <param name="windowSpacing">The distance, in pixels, between the left or top edge
 		/// of each tiled window. If there is only one window, this is undefined.</param>
-		/// ------------------------------------------------------------------------------------
-		private void CalcTileSizeAndSpacing(Screen scrn, int screenDimension,
-			int minWindowDimension, out int desiredWindowDimension, out int windowSpacing)
+		private void CalcTileSizeAndSpacing(Screen scrn, int screenDimension, int minWindowDimension, out int desiredWindowDimension, out int windowSpacing)
 		{
 			CalcTileSizeAndSpacing(scrn, MainWindows, screenDimension, minWindowDimension,
 				out desiredWindowDimension, out windowSpacing);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// This method can be used to do the size and spacing calculations when tiling either
 		/// side-by-side or stacked. It calculates two things: 1) The desired width or height
@@ -1660,7 +1519,6 @@ Old Mediator methods/commands
 		/// tiled windows.</param>
 		/// <param name="windowSpacing">The distance, in pixels, between the left or top edge
 		/// of each tiled window. If there is only one window, this is undefined.</param>
-		/// ------------------------------------------------------------------------------------
 		private static void CalcTileSizeAndSpacing(Screen scrn, ICollection<IFwMainWnd> windowsToTile,
 			int screenDimension, int minWindowDimension,
 			out int desiredWindowDimension, out int windowSpacing)
@@ -1689,7 +1547,6 @@ Old Mediator methods/commands
 			desiredWindowDimension = minWindowDimension;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Arrange the windows top to bottom or left to right.
 		/// </summary>
@@ -1697,13 +1554,11 @@ Old Mediator methods/commands
 		/// tile vertical or horizontal command.</param>
 		/// <param name="orientation">The value indicating whether to tile side by side or
 		/// stacked.</param>
-		/// ------------------------------------------------------------------------------------
 		private void TileWindows(Form wndCurr, WindowTiling orientation)
 		{
 			TileWindows(wndCurr, MainWindows, orientation);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Arrange the windows top to bottom or left to right.
 		/// </summary>
@@ -1713,7 +1568,6 @@ Old Mediator methods/commands
 		/// current window)</param>
 		/// <param name="orientation">The value indicating whether to tile side by side or
 		/// stacked.</param>
-		/// ------------------------------------------------------------------------------------
 		private static void TileWindows(Form wndCurr, List<IFwMainWnd> windowsToTile, WindowTiling orientation)
 		{
 			// Get the screen in which to tile.
@@ -1792,11 +1646,9 @@ Old Mediator methods/commands
 			wndCurr.Activate();
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Suppress execution of all synchronize messages and store them in a queue instead.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		private void SuppressSynchronize()
 		{
 			if (m_suppressedCacheInfo != null)
@@ -1805,12 +1657,10 @@ Old Mediator methods/commands
 				m_suppressedCacheInfo = new SuppressedCacheInfo();
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Resume execution of synchronize messages. If there are any messages in the queue
 		/// execute them now.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		private void ResumeSynchronize()
 		{
 			if (m_suppressedCacheInfo == null)
@@ -1851,14 +1701,10 @@ Old Mediator methods/commands
 			EndUpdate();
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Suppress all calls to <see cref="T:RefreshAllViews()"/> until <see cref="T:EndUpdate"/>
-		/// is called.
+		/// Suppress all calls to <see cref="T:RefreshAllViews()"/> until <see cref="T:EndUpdate"/> is called.
 		/// </summary>
-		/// <remarks>Used by <see cref="T:ResumeSynchronize"/> to do only one refresh of the
-		/// view.</remarks>
-		/// ------------------------------------------------------------------------------------
+		/// <remarks>Used by <see cref="T:ResumeSynchronize"/> to do only one refresh of the view.</remarks>
 		private void BeginUpdate()
 		{
 			CheckDisposed();
@@ -1867,12 +1713,9 @@ Old Mediator methods/commands
 			m_refreshView = false;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Do a <see cref="T:RefreshAllViews()"/> if it was called at least once after
-		/// <see cref="T:BeginUpdate"/>
+		/// Do a <see cref="T:RefreshAllViews()"/> if it was called at least once after <see cref="T:BeginUpdate"/>
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		private void EndUpdate()
 		{
 			CheckDisposed();
@@ -1889,10 +1732,6 @@ Old Mediator methods/commands
 		/// Build a list of files that can be moved (or copied) to the new LinkedFiles root
 		/// directory.
 		/// </summary>
-		/// <param name="folder"></param>
-		/// <param name="rgFilesToMove"></param>
-		/// <param name="sOldRootDir"></param>
-		/// <param name="sNewRootDir"></param>
 		private static void CollectMovableFilesFromFolder(ICmFolder folder, ICollection<string> rgFilesToMove, string sOldRootDir, string sNewRootDir)
 		{
 			foreach (var file in folder.FilesOC)
@@ -1928,16 +1767,15 @@ Old Mediator methods/commands
 				}
 			}
 			foreach (var sub in folder.SubFoldersOC)
+			{
 				CollectMovableFilesFromFolder(sub, rgFilesToMove, sOldRootDir, sNewRootDir);
+			}
 		}
 
 		/// <summary>
 		/// Expand the internal paths from relative to absolute as needed, since the user
 		/// doesn't want to move (or copy) them.
 		/// </summary>
-		/// <param name="folder"></param>
-		/// <param name="sOldRootDir"></param>
-		/// <param name="sNewRootDir"></param>
 		private static void ExpandToFullPath(ICmFolder folder, string sOldRootDir, string sNewRootDir)
 		{
 			foreach (var file in folder.FilesOC)
@@ -1960,129 +1798,6 @@ Old Mediator methods/commands
 		}
 
 #if RANDYTODO //Old Mediator stuff
-		private bool OnDisplaySFMImport(object parameters, ref UIItemDisplayProperties display)
-		{
-			return true;
-		}
-
-		private bool OnSFMImport(object parameters)
-		{
-			Form formActive = ActiveForm;
-			IFwMainWnd wndActive = (IFwMainWnd)formActive;
-			using (var importWizard = new LexImportWizard())
-			{
-				((IFwExtension)importWizard).Init(Cache, wndActive.PropertyTable, wndActive.Publisher);
-				importWizard.ShowDialog(formActive);
-			}
-			return true;
-		}
-
-		/// <summary>
-		/// Display the import commands only while in the appropriate area.
-		/// </summary>
-		private bool OnDisplayLaunchConnectedDialog(object parameters, ref UIItemDisplayProperties display)
-		{
-			display.Enabled = false;
-			display.Visible = false;
-			XCore.Command command = parameters as XCore.Command;
-			if (command == null)
-				return true;
-			Form formActive = ActiveForm;
-			IFwMainWnd wndActive = formActive as IFwMainWnd;
-			if (wndActive == null)
-				return true;
-			Mediator mediator = wndActive.Mediator;
-			if (mediator == null)
-				return true;
-			string area = wndActive.PropTable.GetValue<string>("areaChoice");
-			bool fEnabled = true;
-			switch (command.Id)
-		{
-				case "CmdImportSFMLexicon": // Fall through
-				case "CmdImportLinguaLinksData": // Fall through
-				case "CmdImportLiftData":
-					fEnabled = area == "lexicon";
-					break;
-				case "CmdImportInterlinearSfm": // Fall through
-				case "CmdImportWordsAndGlossesSfm": // Fall through
-				case "CmdImportInterlinearData":
-					if (wndActive.PropTable.GetValue<string>("toolChoice") == "concordance" || wndActive.PropTable.GetValue<string>("toolChoice") == "concordance")
-
-		{
-						fEnabled = false;
-		}
-					else
-		{
-						fEnabled = area == "textsWords";
-					}
-					break;
-				case "CmdImportSFMNotebook":
-					fEnabled = area == "notebook";
-					break;
-			}
-			display.Enabled = fEnabled;
-			display.Visible = fEnabled;
-					return true;
-			}
-
-		/// <summary>
-		/// Used to launch various import dialogs, but could do other things
-		/// </summary>
-		/// <param name="commandObject"></param>
-		/// <returns></returns>
-		private bool OnLaunchConnectedDialog(object commandObject)
-		{
-			CheckDisposed();
-
-			XCore.Command command = (XCore.Command)commandObject;
-			System.Xml.XmlNode first = command.Parameters[0];
-			System.Xml.XmlNode classInfo = first.SelectSingleNode("dynamicloaderinfo");
-
-			Form formActive = ActiveForm;
-
-			IFwMainWnd wndActive = formActive as IFwMainWnd;
-			IFwExtension dlg = null;
-			try
-				{
-				try
-					{
-					dlg = (IFwExtension)DynamicLoader.CreateObject(classInfo);
-					}
-				catch (Exception error)
-				{
-					string message = XmlUtils.GetOptionalAttributeValue(classInfo, "notFoundMessage", null);
-						// Make this localizable!
-					if (message != null)
-						throw new ApplicationException(message, error);
-				}
-				var oldWsUser = Cache.WritingSystemFactory.UserWs;
-				dlg.Init(Cache, wndActive.PropertyTable, wndActive.Publisher);
-				DialogResult dr = ((Form) dlg).ShowDialog(ActiveForm);
-				if (dr == DialogResult.OK)
-				{
-					FileLocationChoice action;
-					using (MoveOrCopyFilesDlg dlg = new MoveOrCopyFilesDlg()) // REVIEW (Hasso) 2015.08: should this go in MoveOrCopyFilesController?
-					{
-						LexOptionsDlg loDlg = dlg as LexOptionsDlg;
-						if ((oldWsUser != Cache.WritingSystemFactory.UserWs) || loDlg.PluginsUpdated)
-							ReplaceMainWindow(wndActive);
-					}
-					else if (dlg is LinguaLinksImportDlg || dlg is InterlinearImportDlg ||
-							 dlg is LexImportWizard || dlg is NotebookImportWiz || dlg is LiftImportDlg)
-					{
-						// Make everything we've imported visible.
-						PropertyTable.GetValue<IFwMainWnd>("window").RefreshAllViews();
-					}
-				}
-			}
-			finally
-								{
-				if (dlg != null && dlg is IDisposable)
-					(dlg as IDisposable).Dispose();
-			}
-			return true;
-					}
-
 		public bool OnConfigureHomographs(object commandObject)
 					{
 			CheckDisposed();
@@ -2137,29 +1852,6 @@ Old Mediator methods/commands
 					}
 					return true;
 				}
-
-		/// <summary>
-		/// On Refresh, we want to reload the XML configuration files.  This greatly facilitates developing
-		/// those files, even though it's not as useful for normal use.  It might prove useful whenever we
-		/// get around to allowing user customization (or it might not).
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <returns></returns>
-		public bool OnRefresh(object sender)
-		{
-			CheckDisposed();
-			Set<string> setDatabases = new Set<string>();
-			foreach (IFwMainWnd wnd in m_rgMainWindows)
-			{
-				string sDatabase = wnd.Cache.ProjectId.Name;
-				if (setDatabases.Contains(sDatabase))
-						continue;
-				setDatabases.Add(sDatabase);
-				Inventory.GetInventory("layouts", sDatabase).ReloadIfChanges();
-				Inventory.GetInventory("parts", sDatabase).ReloadIfChanges();
-			}
-			return false;
-		}
 
 		public bool OnHelpNotesLinguaLinksDatabaseImport(object sender)
 					{
@@ -2268,12 +1960,10 @@ Old Mediator methods/commands
 
 		#region SuppressedCacheInfo class
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Helper class that contains queued SyncMsgs and a reference count for
 		/// Suppress/ResumeSynchronize.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		private class SuppressedCacheInfo
 		{
 			/// <summary>Reference count</summary>

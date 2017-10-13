@@ -311,4 +311,10 @@
   <data name="Sense" xml:space="preserve">
     <value>_Sense</value>
   </data>
+  <data name="ImportLIFTLexicon" xml:space="preserve">
+    <value>L_IFT Lexicon...</value>
+  </data>
+  <data name="ImportLinguaLinksData" xml:space="preserve">
+    <value>_LinguaLinks Data...</value>
+  </data>
 </root>

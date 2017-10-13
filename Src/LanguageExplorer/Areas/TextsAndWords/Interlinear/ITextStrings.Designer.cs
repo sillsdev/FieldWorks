@@ -39,7 +39,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-					global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("LanguageExplorer.Areas.TextsAndWords.Interlinear.ITextStrings", typeof(ITextStrings).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("LanguageExplorer.Areas.TextsAndWords.Interlinear.ITextStrings", typeof(ITextStrings).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -95,7 +95,25 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear {
                 return ResourceManager.GetString("DeletedObjectDetected", resourceCulture);
             }
         }
-
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Export Discourse Chart....
+        /// </summary>
+        internal static string Export_Discourse_Chart {
+            get {
+                return ResourceManager.GetString("Export_Discourse_Chart", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to _Export Interlinear....
+        /// </summary>
+        internal static string ExportInterlinear {
+            get {
+                return ResourceManager.GetString("ExportInterlinear", resourceCulture);
+            }
+        }
+        
         /// <summary>
         ///   Looks up a localized string similar to OK will create an empty text.
         /// </summary>
@@ -104,7 +122,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear {
                 return ResourceManager.GetString("kOkbtnEmptySelection", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to OK will create an empty text assigned to these genres.
         /// </summary>
@@ -113,7 +131,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear {
                 return ResourceManager.GetString("kOkbtnGenreSelection", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to No texts are selected.
         /// </summary>
@@ -122,7 +140,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear {
                 return ResourceManager.GetString("kOkbtnNoTextSelection", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Accept entire analysis (Ctrl-TAB).
         /// </summary>
@@ -1935,7 +1953,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear {
                 return ResourceManager.GetString("ksTexts", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Bible.
         /// </summary>
@@ -1944,7 +1962,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear {
                 return ResourceManager.GetString("kstidBibleNode", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to New Testament.
         /// </summary>
@@ -1953,7 +1971,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear {
                 return ResourceManager.GetString("kstidNtNode", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Old Testament.
         /// </summary>
@@ -1962,7 +1980,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear {
                 return ResourceManager.GetString("kstidOtNode", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Title.
         /// </summary>

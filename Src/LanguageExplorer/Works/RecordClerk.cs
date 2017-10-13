@@ -38,6 +38,7 @@ using System.Windows.Forms;
 using LanguageExplorer.Controls.XMLViews;
 using LanguageExplorer.LcmUi;
 using LanguageExplorer.LcmUi.Dialogs;
+using SIL.Code;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.ViewsInterfaces;
@@ -203,16 +204,11 @@ namespace LanguageExplorer.Works
 		/// <param name="shouldHandleDeletion"></param>
 		internal RecordClerk(string id, StatusBar statusBar, RecordList recordList, RecordSorter defaultSorter, string defaultSortLabel, RecordFilter defaultFilter, bool allowDeletions, bool shouldHandleDeletion)
 		{
-			if (string.IsNullOrWhiteSpace(id))
-				throw new ArgumentNullException(nameof(id));
-			if (statusBar == null)
-				throw new ArgumentNullException(nameof(statusBar));
-			if (recordList == null)
-				throw new ArgumentNullException(nameof(recordList));
-			if (defaultSorter == null)
-				throw new ArgumentNullException(nameof(defaultSorter));
-			if (string.IsNullOrWhiteSpace(defaultSortLabel))
-				throw new ArgumentNullException(nameof(defaultSortLabel));
+			Guard.AgainstNullOrEmptyString(id, nameof(id));
+			Guard.AgainstNull(statusBar, nameof(statusBar));
+			Guard.AgainstNull(recordList, nameof(recordList));
+			Guard.AgainstNull(defaultSorter, nameof(defaultSorter));
+			Guard.AgainstNullOrEmptyString(defaultSortLabel, nameof(defaultSortLabel));
 
 			m_id = id;
 			m_statusBar = statusBar;
@@ -238,14 +234,10 @@ namespace LanguageExplorer.Works
 		/// <param name="shouldHandleDeletion"></param>
 		internal RecordClerk(string id, StatusBar statusBar, RecordList recordList, Dictionary<string, PropertyRecordSorter> sorters, RecordFilter defaultFilter, bool allowDeletions, bool shouldHandleDeletion)
 		{
-			if (string.IsNullOrWhiteSpace(id))
-				throw new ArgumentNullException(nameof(id));
-			if (statusBar == null)
-				throw new ArgumentNullException(nameof(statusBar));
-			if (recordList == null)
-				throw new ArgumentNullException(nameof(recordList));
-			if (sorters == null)
-				throw new ArgumentNullException(nameof(sorters));
+			Guard.AgainstNullOrEmptyString(id, nameof(id));
+			Guard.AgainstNull(statusBar, nameof(statusBar));
+			Guard.AgainstNull(recordList, nameof(recordList));
+			Guard.AgainstNull(sorters, nameof(sorters));
 
 			m_id = id;
 			m_statusBar = statusBar;
@@ -274,8 +266,7 @@ namespace LanguageExplorer.Works
 		internal RecordClerk(string id, StatusBar statusBar, RecordList recordList, RecordSorter defaultSorter, string defaultSortLabel, RecordFilter defaultFilter, bool allowDeletions, bool shouldHandleDeletion, RecordFilterListProvider filterProvider)
 			: this(id, statusBar, recordList, defaultSorter, defaultSortLabel, defaultFilter, allowDeletions, shouldHandleDeletion)
 		{
-			if (filterProvider == null)
-				throw new ArgumentNullException(nameof(filterProvider));
+			Guard.AgainstNull(filterProvider, nameof(filterProvider));
 
 			m_filterProvider = filterProvider;
 		}
@@ -295,8 +286,7 @@ namespace LanguageExplorer.Works
 		internal RecordClerk(string id, StatusBar statusBar, RecordList recordList, RecordSorter defaultSorter, string defaultSortLabel, RecordFilter defaultFilter, bool allowDeletions, bool shouldHandleDeletion, RecordBarHandler recordBarHandler)
 			: this(id, statusBar, recordList, defaultSorter, defaultSortLabel, defaultFilter, allowDeletions, shouldHandleDeletion)
 		{
-			if (recordBarHandler == null)
-				throw new ArgumentNullException(nameof(recordBarHandler));
+			Guard.AgainstNull(recordBarHandler, nameof(recordBarHandler));
 
 			m_recordBarHandler = recordBarHandler;
 		}
@@ -316,8 +306,7 @@ namespace LanguageExplorer.Works
 		internal RecordClerk(string id, StatusBar statusBar, RecordList recordList, RecordSorter defaultSorter, string defaultSortLabel, RecordFilter defaultFilter, bool allowDeletions, bool shouldHandleDeletion, RecordClerk clerkProvidingRootObject)
 			: this(id, statusBar, recordList, defaultSorter, defaultSortLabel, defaultFilter, allowDeletions, shouldHandleDeletion)
 		{
-			if (clerkProvidingRootObject == null)
-				throw new ArgumentNullException(nameof(clerkProvidingRootObject));
+			Guard.AgainstNull(clerkProvidingRootObject, nameof(clerkProvidingRootObject));
 
 			m_clerkProvidingRootObject = clerkProvidingRootObject;
 		}
@@ -341,17 +330,17 @@ namespace LanguageExplorer.Works
 		internal RecordClerk(string id, RecordList recordList, RecordSorter defaultSorter, string defaultSortLabel, RecordFilter defaultFilter, bool allowDeletions, bool shouldHandleDeletion, RecordClerk relatedClerk, string relationToRelatedClerk)
 			: this(id, recordList, defaultSorter, defaultSortLabel, defaultFilter, allowDeletions, shouldHandleDeletion)
 		{
-			if (relatedClerk == null) throw new ArgumentNullException("relatedClerk");
-			if (string.IsNullOrWhiteSpace(relationToRelatedClerk)) throw new ArgumentNullException("relationToRelatedClerk");
+			Guard.AgainstNull(relatedClerk, nameof(relatedClerk));
+			Guard.AgainstNullOrEmptyString(relationToRelatedClerk, nameof(relationToRelatedClerk));
 
 			m_relatedClerk = relatedClerk;
 			m_relationToRelatedClerk = relationToRelatedClerk;
 		}
 #endif
 
-#endregion Constructors
+		#endregion Constructors
 
-#region Implementation of IPropertyTableProvider
+		#region Implementation of IPropertyTableProvider
 
 		/// <summary>
 		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
@@ -1273,9 +1262,9 @@ namespace LanguageExplorer.Works
 			}
 		}
 
-		private bool AreCustomFieldsAProblem(int[] clsids)
+		internal bool AreCustomFieldsAProblem(int[] clsids)
 		{
-			var mdc = (IFwMetaDataCacheManaged) Cache.MetaDataCacheAccessor;
+			var mdc = (IFwMetaDataCacheManaged)Cache.MetaDataCacheAccessor;
 			var rePunct = new Regex(@"\p{P}");
 			foreach (var clsid in clsids)
 			{
@@ -1283,17 +1272,18 @@ namespace LanguageExplorer.Works
 				foreach (var flid in flids)
 				{
 					if (!mdc.IsCustom(flid))
-						continue;
-					string name = mdc.GetFieldName(flid);
-					if (rePunct.IsMatch(name))
 					{
-						var msg = string.Format(xWorksStrings.PunctInFieldNameWarning, name);
-						// The way this is worded, 'Yes' means go on with the export. We won't bother them reporting
-						// other messed-up fields. a 'no' answer means don't continue, which means it's a problem.
-						return (MessageBox.Show(Form.ActiveForm, msg, xWorksStrings.PunctInfieldNameCaption,
-							MessageBoxButtons.YesNo, MessageBoxIcon.Warning)
-							!= DialogResult.Yes);
+						continue;
 					}
+					var name = mdc.GetFieldName(flid);
+					if (!rePunct.IsMatch(name))
+					{
+						continue;
+					}
+					var msg = string.Format(xWorksStrings.PunctInFieldNameWarning, name);
+					// The way this is worded, 'Yes' means go on with the export. We won't bother them reporting
+					// other messed-up fields. A 'no' answer means don't continue, which means it's a problem.
+					return (MessageBox.Show(Form.ActiveForm, msg, xWorksStrings.PunctInfieldNameCaption, MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes);
 				}
 			}
 			return false; // no punctuation in custom fields.
@@ -1303,31 +1293,19 @@ namespace LanguageExplorer.Works
 		{
 			CheckDisposed();
 
-			string areaChoice = PropertyTable.GetValue<string>("areaChoice");
-			if (areaChoice == "notebook")
+			// It's somewhat unfortunate that this bit of code knows what classes can have custom fields.
+			// However, we put in code to prevent punctuation in custom field names at the same time as this check (which is therefore
+			// for the benefit of older projects), so it should not be necessary to check any additional classes we allow to have them.
+			if (AreCustomFieldsAProblem(new[] {LexEntryTags.kClassId, LexSenseTags.kClassId, LexExampleSentenceTags.kClassId, MoFormTags.kClassId }))
 			{
-				if (AreCustomFieldsAProblem(new int[] { RnGenericRecTags.kClassId}))
-					return true;
-				using (var dlg = new NotebookExportDialog())
-				{
-					dlg.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-					dlg.ShowDialog();
-				}
+				return true;
 			}
-			else
+			using (var dlg = new ExportDialog())
 			{
-				// It's somewhat unfortunate that this bit of code knows what classes can have custom fields.
-				// However, we put in code to prevent punctuation in custom field names at the same time as this check (which is therefore
-				// for the benefit of older projects), so it should not be necessary to check any additional classes we allow to have them.
-				if (AreCustomFieldsAProblem(new int[] { LexEntryTags.kClassId, LexSenseTags.kClassId, LexExampleSentenceTags.kClassId, MoFormTags.kClassId }))
-					return true;
-				using (var dlg = new ExportDialog())
-				{
-					dlg.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-					dlg.ShowDialog();
-				}
-				ActivateUI(true);
+				dlg.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
+				dlg.ShowDialog(PropertyTable.GetValue<Form>("window"));
 			}
+			ActivateUI(true);
 			return true;	// handled
 		}
 

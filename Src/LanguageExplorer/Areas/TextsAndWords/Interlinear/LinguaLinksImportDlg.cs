@@ -181,10 +181,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <summary>
 		/// From IFwExtension
 		/// </summary>
-		/// <param name="cache"></param>
-		/// <param name="propertyTable"></param>
-		/// <param name="publisher"></param>
-		public void Init(LcmCache cache, IPropertyTable propertyTable, IPublisher publisher)
+		void IFwExtension.Init(LcmCache cache, IPropertyTable propertyTable, IPublisher publisher)
 		{
 			CheckDisposed();
 

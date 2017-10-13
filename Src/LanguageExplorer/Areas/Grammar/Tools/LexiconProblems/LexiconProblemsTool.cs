@@ -22,6 +22,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.LexiconProblems
 	/// </summary>
 	internal sealed class LexiconProblemsTool : ITool
 	{
+		private GrammarAreaMenuHelper _grammarAreaWideMenuHelper;
 		private const string LexProblems = "lexProblems";
 		/// <summary>
 		/// Main control to the right of the side bar control. This holds a RecordBar on the left and a PaneBarContainer on the right.
@@ -84,7 +85,9 @@ namespace LanguageExplorer.Areas.Grammar.Tools.LexiconProblems
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			_grammarAreaWideMenuHelper.Dispose();
 			CollapsingSplitContainerFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _collapsingSplitContainer);
+			_grammarAreaWideMenuHelper = null;
 		}
 
 		/// <summary>
@@ -100,6 +103,8 @@ namespace LanguageExplorer.Areas.Grammar.Tools.LexiconProblems
 			{
 				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(LexProblems, majorFlexComponentParameters.Statusbar, FactoryMethod);
 			}
+			_grammarAreaWideMenuHelper = new GrammarAreaMenuHelper(majorFlexComponentParameters, _recordClerk); // Use generic export event handler.
+
 #if RANDYTODO
 			// TODO: See LexiconEditTool for how to set up all manner of menus and toolbars.
 #endif

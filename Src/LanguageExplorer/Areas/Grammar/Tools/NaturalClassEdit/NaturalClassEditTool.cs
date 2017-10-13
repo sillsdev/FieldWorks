@@ -24,6 +24,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.NaturalClassEdit
 	/// </summary>
 	internal sealed class NaturalClassEditTool : ITool
 	{
+		private GrammarAreaMenuHelper _grammarAreaWideMenuHelper;
 		private const string NaturalClasses = "naturalClasses";
 		private MultiPane _multiPane;
 		private RecordBrowseView _recordBrowseView;
@@ -83,8 +84,10 @@ namespace LanguageExplorer.Areas.Grammar.Tools.NaturalClassEdit
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			_grammarAreaWideMenuHelper.Dispose();
 			MultiPaneFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _multiPane);
 			_recordBrowseView = null;
+			_grammarAreaWideMenuHelper = null;
 		}
 
 		/// <summary>
@@ -99,6 +102,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.NaturalClassEdit
 			{
 				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(NaturalClasses, majorFlexComponentParameters.Statusbar, FactoryMethod);
 			}
+			_grammarAreaWideMenuHelper = new GrammarAreaMenuHelper(majorFlexComponentParameters, _recordClerk); // Use generic export event handler.
 
 			var root = XDocument.Parse(GrammarResources.NaturalClassEditToolParameters).Root;
 			_recordBrowseView = new RecordBrowseView(root.Element("browseview").Element("parameters"), majorFlexComponentParameters.LcmCache, _recordClerk);

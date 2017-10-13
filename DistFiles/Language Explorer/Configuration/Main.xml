@@ -28,39 +28,6 @@
 	<commands>
 		<command id="CmdDeleteRecord" label="_Delete {0}..." message="DeleteRecord" icon="Delete" shortcut="Ctrl+Del"/>
 		<command id="CmdListColleagues" label="List _Colleagues" message="ListColleagues"/>
-		<command id="CmdUploadToWebonary" label="Upload to _Webonary..." message="UploadToWebonary"/>
-		<command id="CmdImportSFMLexicon" label="_Standard Format Lexicon..." message="SFMImport" a10status="LEXICONAREAONLY" />
-		<command id="CmdImportSFMNotebook" label="Standard Format _Notebook data..." message="LaunchConnectedDialog">
-			<parameters>
-				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.LexText.DataNotebook.NotebookImportWiz"/>
-			</parameters>
-		</command>
-		<command id="CmdImportLinguaLinksData" label="_LinguaLinks Data..." message="LaunchConnectedDialog">
-			<parameters>
-				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.TextsAndWords.Interlinear.LinguaLinksImportDlg"/>
-			</parameters>
-		</command>
-		<command id="CmdImportInterlinearSfm" label="Standard Format I_nterlinear..." message="LaunchConnectedDialog">
-			<parameters>
-				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.TextsAndWords.Interlinear.InterlinearSfmImportWizard"/>
-			</parameters>
-		</command>
-	<command id="CmdImportWordsAndGlossesSfm" label="Standard Format W_ords and Glosses..." message="LaunchConnectedDialog">
-	  <parameters>
-		<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.TextsAndWords.Interlinear.WordsSfmImportWizard"/>
-	  </parameters>
-	</command>
-		<command id="CmdImportInterlinearData" label="FLExText Interl_inear..." message="LaunchConnectedDialog">
-			<parameters>
-				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.TextsAndWords.Interlinear.InterlinearImportDlg"/>
-			</parameters>
-		</command>
-		<command id="CmdImportLiftData" label="L_IFT Lexicon..." message="LaunchConnectedDialog" a10status="LEXICONAREAONLY" >
-			<parameters>
-				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.LexText.LiftImportDlg"/>
-			</parameters>
-		</command>
-		<command id="CmdImportTranslatedLists" label="_Translated List Content" message="ImportTranslatedLists"/>
 		<command id="CmdSynch" label="S_ynchronize with LiftShare..." message="Synchronize" translate="This command tries to update from an external source of lexical data."/>
 		<command id="CmdAddCustomField" label="Custom _Fields..." message="AddCustomField"/>
 		<command id="CmdConfigureColumns" label="_Columns..." icon="columnChooser" message="ConfigureColumns"/>
@@ -70,11 +37,6 @@
 		<command id="CmdUseVernSpellingDictionary" label="Show Vernacular Spelling _Errors" message="UseVernSpellingDictionary"/>
 		<command id="CmdConfigHeadwordNumbers" label="Headword Numbers..." message="ConfigureHeadwordNumbers"/>
 		<command id="CmdRestoreDefaults" label="Restore Defaults..." message="RestoreDefaultLayouts"/>
-		<command id="CmdToolsOptions" label="_Options..." message="LaunchConnectedDialog">
-			<parameters>
-				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.LexText.LexOptionsDlg"/>
-			</parameters>
-		</command>
 		<command id="CmdShowCharMap" label="Special _character..." message="ShowCharMap" icon="SpecialCharacter"/>
 		<command id="CmdFormatStyle" label="_Styles..." message="FormatStyle"/>
 		<command id="CmdFormatApplyStyle" label="_Apply Style..." message="FormatApplyStyle"/>
@@ -379,19 +341,6 @@
 		 with a particular area.
 	-->
 	<menubar>
-		<menu id="File" label="_File" b4InsertMenu="true" a10status="PARTIALLY_DONE" >
-			<item command="CmdUploadToWebonary" />
-			<menu id="Import" label="_Import" a10status="DONE" >
-				<item command="CmdImportSFMLexicon" a10status="LEXICONAREAONLY" />
-				<item command="CmdImportLinguaLinksData" a10status="LEXICONAREAONLY" />
-				<item command="CmdImportLiftData" a10status="LEXICONAREAONLY" />
-				<item command="CmdImportInterlinearSfm"/>
-				<item command="CmdImportWordsAndGlossesSfm"/>
-				<item command="CmdImportInterlinearData"/>
-				<item command="CmdImportSFMNotebook"/>
-				<item command="CmdImportTranslatedLists"/>
-			</menu>
-		</menu>
 		<menu id="Edit" label="_Edit" b4InsertMenu="true" a10status="PARTIALLY_DONE" >
 			<item command="CmdUndo" a10status="STUB_ONLY" />
 			<item command="CmdRedo" a10status="STUB_ONLY" />
@@ -520,8 +469,6 @@ InterlinMaster user:
 				<item label="-" translate="do not translate"/>
 				<item command="CmdChangeSpelling" defaultVisible="false" a10status="Used in Words area" />
 			</menu>
-			<item label="-" translate="do not translate"/>
-			<item command="CmdToolsOptions"/>
 			<item command="CmdMacroF2" defaultVisible="false"/>
 			<item command="CmdMacroF3" defaultVisible="false"/>
 			<item command="CmdMacroF4" defaultVisible="false"/>

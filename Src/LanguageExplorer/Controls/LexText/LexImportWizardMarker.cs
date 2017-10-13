@@ -20,6 +20,7 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
+using SIL.Xml;
 using TreeView = System.Windows.Forms.TreeView;
 
 namespace LanguageExplorer.Controls.LexText
@@ -61,12 +62,11 @@ namespace LanguageExplorer.Controls.LexText
 		private string m_refFuncStringOrig;
 		private Button buttonHelp;	// initial value
 		private Hashtable m_htNameToAbbr = new Hashtable();
-		struct NameWSandAbbr	// objects that are stuffed in the m_htNameToAbbr hashtable
+		private struct NameWSandAbbr	// objects that are stuffed in the m_htNameToAbbr hashtable
 		{
-			public string name;
-			public string nameWS;
-			public string abbr;
-			public string abbrWS;
+			public string Name;
+			public string NameWS;
+			public string Abbr;
 		};
 		private const string s_helpTopic = "khtpImportSFMModifyMapping";
 		private Panel panelBottom;
@@ -74,8 +74,8 @@ namespace LanguageExplorer.Controls.LexText
 		private GeckoWebBrowser m_browser;
 		private XslCompiledTransform m_xslShowInfoTransform;
 		private XmlDocument m_xmlShowInfoDoc;
-		private string m_sHelpHtm = Path.Combine(FwDirectoryFinder.CodeDirectory, @"Language Explorer/Import/Help.htm");
-		private int m_panelBottomHeight = 0;
+		private string m_sHelpHtm = Path.Combine(FwDirectoryFinder.CodeDirectory, "Language Explorer", "Import", "Help.htm");
+		private int m_panelBottomHeight;
 		private HelpProvider helpProvider;
 
 		private void EnableLangDesc(bool enable)
@@ -83,8 +83,7 @@ namespace LanguageExplorer.Controls.LexText
 			blbLangDesc.Enabled = cbLangDesc.Enabled = btnAddLangDesc.Enabled = enable;
 		}
 
-		public void Init(MarkerPresenter.ContentMapping currentMarker, Hashtable uiLangsHT, LcmCache cache,
-			IHelpTopicProvider helpTopicProvider, IApp app)
+		public void Init(MarkerPresenter.ContentMapping currentMarker, Hashtable uiLangsHT, LcmCache cache, IHelpTopicProvider helpTopicProvider, IApp app)
 		{
 			CheckDisposed();
 
@@ -109,9 +108,7 @@ namespace LanguageExplorer.Controls.LexText
 			// - remove CFS that are in the TV and not in the CFS list
 			// - add CFS that are in the list and not in the TV
 			// - handle the case where the current marker is a CF and it's no longer in the list (just throw for now)
-
-			//ReadCustomFieldsFromDB(cache);
-			bool customFieldsChanged = false;
+			bool customFieldsChanged;
 			m_customFields = LexImportWizard.Wizard().ReadCustomFieldsFromDB(out customFieldsChanged);
 
 			// Init will only be called the first time, so here we don't have to remove an nodes
@@ -119,26 +116,26 @@ namespace LanguageExplorer.Controls.LexText
 			tvDestination.BeginUpdate();
 			foreach (TreeNode classNameNode in tvDestination.Nodes)
 			{
-				string className = classNameNode.Text.Trim(new char[] {'(', ')'});
+				var className = classNameNode.Text.Trim('(', ')');
 				if (m_customFields.FieldsForClass(className) == null)
 					continue;
 
 				foreach (LexImportField field in m_customFields.FieldsForClass(className))
 				{
-					TreeNode cnode = new TreeNode(field.UIName + " (Custom Field)");
-					cnode.Tag = field;
+					var cnode = new TreeNode(field.UIName + " (Custom Field)")
+					{
+						Tag = field
+					};
 					classNameNode.Nodes.Add(cnode);
 				}
-				//tvDestination.Nodes.Add(tnode);
 			}
-			//tvDestination.ExpandAll();
 			tvDestination.EndUpdate();
 
 			// end of CFS processing
 
 			// set the correct marker and number of times it is used
 			m_lblMarker.Text = currentMarker.Marker;
-			m_lblInstances.Text = String.Format(LexTextControls.ksXInstances, currentMarker.Count);
+			m_lblInstances.Text = string.Format(LexTextControls.ksXInstances, currentMarker.Count);
 
 			if (currentMarker.AutoImport)
 			{
@@ -149,11 +146,11 @@ namespace LanguageExplorer.Controls.LexText
 			// chkbxExclude.Checked = false;
 			// tvDestination.Enabled = true;
 			// find the node that has the tag.meaningid value the same as the currentmarker
-			bool found = false;
+			var found = false;
 			foreach (TreeNode classNode in tvDestination.Nodes)
 			{
 				if (currentMarker.ClsFieldDescription is ClsCustomFieldDescription &&
-					currentMarker.DestinationClass != classNode.Text.Trim(new char[] {'(', ')'}))
+					currentMarker.DestinationClass != classNode.Text.Trim('(', ')'))
 					continue;
 
 				foreach (TreeNode fieldNode in classNode.Nodes)
@@ -174,7 +171,7 @@ namespace LanguageExplorer.Controls.LexText
 			// set the writing system combo box
 			foreach (DictionaryEntry lang in m_uiLangs)
 			{
-				LanguageInfoUI langInfo = lang.Value as LanguageInfoUI;
+				var langInfo = lang.Value as LanguageInfoUI;
 				// make sure there is only one entry for each writing system (especially 'ignore')
 				if (cbLangDesc.FindStringExact(langInfo.ToString()) < 0)
 				{
@@ -186,11 +183,8 @@ namespace LanguageExplorer.Controls.LexText
 			if (cbLangDesc.SelectedIndex < 0)
 			{
 				// default to ignore if it's in the list
-				int ignorePos = cbLangDesc.FindStringExact(MarkerPresenter.ContentMapping.Ignore());
-				if (ignorePos >= 0)
-					cbLangDesc.SelectedIndex = ignorePos;
-				else
-					cbLangDesc.SelectedIndex = 0;	// first item in list as fail safe
+				var ignorePos = cbLangDesc.FindStringExact(MarkerPresenter.ContentMapping.Ignore());
+				cbLangDesc.SelectedIndex = ignorePos >= 0 ? ignorePos : 0;
 			}
 
 			// add the func if it's present
@@ -201,28 +195,23 @@ namespace LanguageExplorer.Controls.LexText
 
 				cbFunction.Enabled = true;
 
-				TreeNode node = tvDestination.SelectedNode;
-				if (node != null)
+				var node = tvDestination.SelectedNode;
+				var field = node?.Tag as LexImportField;
+				if (field != null)
 				{
-					LexImportField field = node.Tag as LexImportField;
-					if (field != null)
+					FillLexicalRefTypesCombo(field);
+					// walk the name to abbr list and select the name
+					var name = m_refFuncString;
+					foreach (DictionaryEntry de in m_htNameToAbbr)
 					{
-						FillLexicalRefTypesCombo(field);
-						// walk the name to abbr list and select the name
-						string name = m_refFuncString;
-						foreach (DictionaryEntry de in m_htNameToAbbr)
+						var nwsa = (NameWSandAbbr)de.Value;
+						if (nwsa.Abbr == name)
 						{
-							NameWSandAbbr nwsa = (NameWSandAbbr)de.Value;
-							//if (de.Value as string == name)
-							if (nwsa.abbr == name)
-							{
-								//name = de.Key as string;
-								name = nwsa.name;	//.abbr;
-								break;
-							}
+							name = nwsa.Name;
+							break;
 						}
-						cbFunction.Text = name;
 					}
+					cbFunction.Text = name;
 				}
 			}
 			m_refFuncStringOrig = m_refFuncString;	// save the initial value
@@ -272,9 +261,8 @@ namespace LanguageExplorer.Controls.LexText
 			{
 				CheckDisposed();
 
-				LanguageInfoUI langinfo = cbLangDesc.SelectedItem as LanguageInfoUI;
+				var langinfo = cbLangDesc.SelectedItem as LanguageInfoUI;
 				return langinfo.FwName;
-//				return cbLangDesc.SelectedItem.ToString();
 			}
 		}
 		public string LangDesc
@@ -283,7 +271,7 @@ namespace LanguageExplorer.Controls.LexText
 			{
 				CheckDisposed();
 
-				LanguageInfoUI langinfo = cbLangDesc.SelectedItem as LanguageInfoUI;
+				var langinfo = cbLangDesc.SelectedItem as LanguageInfoUI;
 				return langinfo.Key;
 			}
 		}
@@ -293,10 +281,8 @@ namespace LanguageExplorer.Controls.LexText
 			get
 			{
 				CheckDisposed();
-				TreeNode node = m_StoredTreeNode ?? tvDestination.SelectedNode;
-				if (node == null)
-					return "";
-				return (node.Tag as LexImportField).ID;
+				var node = m_StoredTreeNode ?? tvDestination.SelectedNode;
+				return node == null ? string.Empty : (node.Tag as LexImportField)?.ID;
 			}
 		}
 
@@ -305,10 +291,8 @@ namespace LanguageExplorer.Controls.LexText
 			get
 			{
 				CheckDisposed();
-				TreeNode node = m_StoredTreeNode ?? tvDestination.SelectedNode;
-				if (node == null)
-					return "";
-				return node.Parent.Text.Trim(new char[] {'(',')'});
+				var node = m_StoredTreeNode ?? tvDestination.SelectedNode;
+				return node?.Parent.Text.Trim('(', ')') ?? string.Empty;
 			}
 		}
 
@@ -318,10 +302,8 @@ namespace LanguageExplorer.Controls.LexText
 			get
 			{
 				CheckDisposed();
-				TreeNode node = m_StoredTreeNode ?? tvDestination.SelectedNode;
-				if (node == null)
-					return false;
-				return (node.Tag is LexImportCustomField);//.IsCustomField;
+				var node = m_StoredTreeNode ?? tvDestination.SelectedNode;
+				return node?.Tag is LexImportCustomField;//.IsCustomField;
 			}
 		}
 
@@ -333,10 +315,8 @@ namespace LanguageExplorer.Controls.LexText
 				return rbAbbrAbbr.Checked;
 			}
 		}
-		public bool IsFuncField
-		{
-			get { return cbFunction.Enabled; }
-		}
+		public bool IsFuncField => cbFunction.Enabled;
+
 		public string FuncField
 		{
 			get
@@ -348,11 +328,10 @@ namespace LanguageExplorer.Controls.LexText
 					if (m_htNameToAbbr.ContainsKey(cbFunction.Text))
 					{
 						//	return m_htNameToAbbr[cbFunction.Text] as string;
-						NameWSandAbbr nwsa = (NameWSandAbbr)m_htNameToAbbr[cbFunction.Text];
-						return nwsa.name;	// abbr;
+						var nwsa = (NameWSandAbbr)m_htNameToAbbr[cbFunction.Text];
+						return nwsa.Name;
 					}
-					else
-						return cbFunction.Text;
+					return cbFunction.Text;
 				}
 				return m_refFuncStringOrig;	// default to initial value if not found
 			}
@@ -368,20 +347,17 @@ namespace LanguageExplorer.Controls.LexText
 				{
 					if (m_htNameToAbbr.ContainsKey(cbFunction.Text))
 					{
-						NameWSandAbbr nwsa = (NameWSandAbbr)m_htNameToAbbr[cbFunction.Text];
-						return nwsa.nameWS;
+						var nwsa = (NameWSandAbbr)m_htNameToAbbr[cbFunction.Text];
+						return nwsa.NameWS;
 					}
-					else
-						return "en";
+					return "en";
 				}
 				return "en";	// default to initial value if not found
 			}
 		}
 
-
-//		private Dictionary<Sfm2Xml.ILexImportField, TreeNode> m_customFieldNodes = new Dictionary<Sfm2Xml.ILexImportField, TreeNode>();
 		private ILexImportFields m_customFields = new LexImportFields();
-		public ILexImportFields CustomFields { get { return m_customFields; } }
+		public ILexImportFields CustomFields => m_customFields;
 
 		public LexImportWizardMarker(ILexImportFields fwFields)
 		{
@@ -398,12 +374,13 @@ namespace LanguageExplorer.Controls.LexText
 
 			foreach(string className in fwFields.Classes)
 			{
-				TreeNode tnode = new TreeNode( String.Format("({0})", className));
-//				tnode.Tag = className;
+				var tnode = new TreeNode($"({className})");
 				foreach (LexImportField field in fwFields.FieldsForClass(className))
 				{
-					TreeNode cnode = new TreeNode(field.UIName);
-					cnode.Tag = field;
+					var cnode = new TreeNode(field.UIName)
+					{
+						Tag = field
+					};
 					tnode.Nodes.Add(cnode);
 				}
 				tvDestination.Nodes.Add(tnode);
@@ -422,7 +399,7 @@ namespace LanguageExplorer.Controls.LexText
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
+				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
 		}
 
 		/// <summary>
@@ -437,10 +414,7 @@ namespace LanguageExplorer.Controls.LexText
 
 			if( disposing )
 			{
-				if(components != null)
-				{
-					components.Dispose();
-				}
+				components?.Dispose();
 			}
 			base.Dispose( disposing );
 		}
@@ -657,17 +631,11 @@ namespace LanguageExplorer.Controls.LexText
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
 			this.Name = "LexImportWizardMarker";
-			this.Load += new System.EventHandler(this.LexImportWizardMarker_Load);
 			this.panelBottom.ResumeLayout(false);
 			this.ResumeLayout(false);
 
 		}
 		#endregion
-
-		private void LexImportWizardMarker_Load(object sender, EventArgs e)
-		{
-
-		}
 
 		private void tvDestination_BeforeSelect(object sender, TreeViewCancelEventArgs e)
 		{
@@ -680,7 +648,7 @@ namespace LanguageExplorer.Controls.LexText
 					tvDestination.SelectedNode = e.Node.FirstNode;
 					return;
 				}
-				TreeNode parent = tvDestination.SelectedNode.Parent;
+				var parent = tvDestination.SelectedNode.Parent;
 				if (parent.Index < e.Node.Index)	// going down
 					tvDestination.SelectedNode = parent.NextNode.FirstNode;
 				else if (e.Node.Index > 0)			// going up
@@ -707,22 +675,22 @@ namespace LanguageExplorer.Controls.LexText
 		{
 			using (var dlg = new LexImportWizardLanguage(m_cache, m_uiLangs, m_helpTopicProvider, m_app))
 			{
-			if (dlg.ShowDialog(this) == DialogResult.OK)
-			{
-				string langDesc, ws, ec, wsId;
-				// retrieve the new WS information from the dlg
-				dlg.GetCurrentLangInfo(out langDesc, out ws, out ec, out wsId);
-
-				// now put the lang info into the language list view
-				if (LexImportWizard.Wizard().AddLanguage(langDesc, ws, ec, wsId))
+				if (dlg.ShowDialog(this) == DialogResult.OK)
 				{
-					// this was added to the list of languages, so add it to the dlg and select it
-					var langInfo = new LanguageInfoUI(langDesc, ws, ec, wsId);
-					if (cbLangDesc.FindStringExact(langInfo.ToString()) < 0)
+					string langDesc, ws, ec, wsId;
+					// retrieve the new WS information from the dlg
+					dlg.GetCurrentLangInfo(out langDesc, out ws, out ec, out wsId);
+
+					// now put the lang info into the language list view
+					if (LexImportWizard.Wizard().AddLanguage(langDesc, ws, ec, wsId))
 					{
-						cbLangDesc.Items.Add(langInfo);
-					}
-					cbLangDesc.SelectedItem = langInfo;
+						// this was added to the list of languages, so add it to the dlg and select it
+						var langInfo = new LanguageInfoUI(langDesc, ws, ec, wsId);
+						if (cbLangDesc.FindStringExact(langInfo.ToString()) < 0)
+						{
+							cbLangDesc.Items.Add(langInfo);
+						}
+						cbLangDesc.SelectedItem = langInfo;
 					}
 				}
 			}
@@ -731,7 +699,7 @@ namespace LanguageExplorer.Controls.LexText
 		private void EnableControlsFromField(LexImportField field)
 		{
 			// see if the abbr controls should be enabled or not
-			bool enable = false;
+			var enable = false;
 			if (field != null)
 				enable = field.IsAbbrField;
 			lblAbbr.Enabled = enable;
@@ -743,7 +711,7 @@ namespace LanguageExplorer.Controls.LexText
 			lblFunction.Enabled = enable;
 			cbFunction.Enabled = enable;
 			if (lblFunction.Enabled == false)
-				lblFunction.Text = "Not An Active Field :";
+				lblFunction.Text = @"Not An Active Field :";
 		}
 
 		LexImportField m_LastSelectedField;
@@ -751,7 +719,7 @@ namespace LanguageExplorer.Controls.LexText
 		private void tvDestination_AfterSelect(object sender, TreeViewEventArgs e)
 		{
 			UpdateOKButtonState();
-			LexImportField field = e.Node.Tag as LexImportField;
+			var field = e.Node.Tag as LexImportField;
 			if (field == null)
 				return;
 
@@ -767,61 +735,59 @@ namespace LanguageExplorer.Controls.LexText
 
 			if (name != null)
 			{
-				string sname, snameWS, sabbr, sabbrWS;
 				tssAnal = name.GetAlternativeOrBestTss(m_cache.DefaultAnalWs, out wsActual);
-				sname = tssAnal.Text;
-				snameWS = m_cache.LanguageWritingSystemFactoryAccessor.GetStrFromWs(wsActual);
+				var sname = tssAnal.Text;
+				var snameWS = m_cache.LanguageWritingSystemFactoryAccessor.GetStrFromWs(wsActual);
 
 				cbFunction.Items.Add(sname);
 
 				if (!m_htNameToAbbr.ContainsKey(sname))
 				{
+					string sabbr;
 					if (abbr == null)
 					{
 						sabbr = sname;	// use both for the map key
-						sabbrWS = snameWS;
 					}
 					else
 					{
 						tssAnal = abbr.GetAlternativeOrBestTss(m_cache.DefaultAnalWs, out wsActual);
 						sabbr = tssAnal.Text;
-						sabbrWS = m_cache.LanguageWritingSystemFactoryAccessor.GetStrFromWs(wsActual);
 					}
-					NameWSandAbbr nwsa = new NameWSandAbbr();
-					nwsa.name = sname;
-					nwsa.nameWS = snameWS;
-					nwsa.abbr = sabbr;
-					nwsa.abbrWS = sabbrWS;
+					var nwsa = new NameWSandAbbr
+					{
+						Name = sname,
+						NameWS = snameWS,
+						Abbr = sabbr
+					};
 					m_htNameToAbbr.Add(sname, nwsa);
 				}
 			}
 			if (reverseName != null)
 			{
-				string srname, srnameWS, srabbr, srabbrWS;
 				tssAnal = reverseName.GetAlternativeOrBestTss(m_cache.DefaultAnalWs, out wsActual);
-				srname = tssAnal.Text;
-				srnameWS = m_cache.LanguageWritingSystemFactoryAccessor.GetStrFromWs(wsActual);
+				var srname = tssAnal.Text;
+				var srnameWS = m_cache.LanguageWritingSystemFactoryAccessor.GetStrFromWs(wsActual);
 
 				cbFunction.Items.Add(srname);
 
 				if (!m_htNameToAbbr.ContainsKey(srname))
 				{
+					string srabbr;
 					if (reverseAbbr == null)
 					{
 						srabbr = srname;	// use both for the map key
-						srabbrWS = srnameWS;
 					}
 					else
 					{
 						tssAnal = reverseAbbr.GetAlternativeOrBestTss(m_cache.DefaultAnalWs, out wsActual);
 						srabbr = tssAnal.Text;
-						srabbrWS = m_cache.LanguageWritingSystemFactoryAccessor.GetStrFromWs(wsActual);
 					}
-					NameWSandAbbr nwsa = new NameWSandAbbr();
-					nwsa.name = srname;
-					nwsa.nameWS = srnameWS;
-					nwsa.abbr = srabbr;
-					nwsa.abbrWS = srabbrWS;
+					var nwsa = new NameWSandAbbr
+					{
+						Name = srname,
+						NameWS = srnameWS,
+						Abbr = srabbr
+					};
 					m_htNameToAbbr.Add(srname, nwsa);
 				}
 			}
@@ -839,7 +805,6 @@ namespace LanguageExplorer.Controls.LexText
 			if (field.IsRef)
 			{
 				lblFunction.Text = LexTextControls.ksLexicalRelationType;
-				//string abbr, name, reverseAbbr, reverseName;
 				rbAbbrAbbr.Checked = true;
 				rbAbbrName.Checked = false;
 				if (field.ID == "cref" || field.ID == "scref")
@@ -858,20 +823,12 @@ namespace LanguageExplorer.Controls.LexText
 							case (int)MappingTypes.kmtEntryOrSensePair:
 							case (int)MappingTypes.kmtEntryOrSenseSequence:
 							case (int)MappingTypes.kmtEntryOrSenseUnidirectional:
-								//abbr = lrt.Abbreviation.AnalysisDefaultWritingSystem.Text;
-								//name = lrt.Name.AnalysisDefaultWritingSystem.Text;
-								//AddAbbrAndNameInfo(abbr, name, "en", null, null, null);
 								AddAbbrAndNameInfo(lrt.Abbreviation, lrt.Name, null, null);
 								break;
 							case (int)MappingTypes.kmtEntryAsymmetricPair:
 							case (int)MappingTypes.kmtEntryTree:
 							case (int)MappingTypes.kmtEntryOrSenseAsymmetricPair:
 							case (int)MappingTypes.kmtEntryOrSenseTree:
-								//abbr = lrt.Abbreviation.AnalysisDefaultWritingSystem.Text;
-								//name = lrt.Name.AnalysisDefaultWritingSystem.Text;
-								//reverseAbbr = lrt.ReverseAbbreviation.AnalysisDefaultWritingSystem.Text;
-								//reverseName = lrt.ReverseName.AnalysisDefaultWritingSystem.Text;
-								//AddAbbrAndNameInfo(abbr, name, "en", reverseAbbr, reverseName, "en");
 								AddAbbrAndNameInfo(lrt.Abbreviation, lrt.Name, lrt.ReverseAbbreviation, lrt.ReverseName);
 								break;
 						}
@@ -893,20 +850,12 @@ namespace LanguageExplorer.Controls.LexText
 							case (int)MappingTypes.kmtEntryOrSensePair:
 							case (int)MappingTypes.kmtEntryOrSenseSequence:
 							case (int)MappingTypes.kmtEntryOrSenseUnidirectional:
-								//abbr = lrt.Abbreviation.AnalysisDefaultWritingSystem.Text;
-								//name = lrt.Name.AnalysisDefaultWritingSystem.Text;
-								//AddAbbrAndNameInfo(abbr, name, "en", null, null, null);
 								AddAbbrAndNameInfo(lrt.Abbreviation, lrt.Name, null, null);
 								break;
 							case (int)MappingTypes.kmtSenseAsymmetricPair:
 							case (int)MappingTypes.kmtSenseTree:
 							case (int)MappingTypes.kmtEntryOrSenseAsymmetricPair:
 							case (int)MappingTypes.kmtEntryOrSenseTree:
-								//abbr = lrt.Abbreviation.AnalysisDefaultWritingSystem.Text;
-								//name = lrt.Name.AnalysisDefaultWritingSystem.Text;
-								//reverseAbbr = lrt.ReverseAbbreviation.AnalysisDefaultWritingSystem.Text;
-								//reverseName = lrt.ReverseName.AnalysisDefaultWritingSystem.Text;
-								//AddAbbrAndNameInfo(abbr, name, "en", reverseAbbr, reverseName, "en");
 								AddAbbrAndNameInfo(lrt.Abbreviation, lrt.Name, lrt.ReverseAbbreviation, lrt.ReverseName);
 								break;
 						}
@@ -954,17 +903,11 @@ namespace LanguageExplorer.Controls.LexText
 		/// </summary>
 		private void UpdateOKButtonState()
 		{
-			bool enable = false;	// default to not enabled
-			if (chkbxExclude.Checked || chkbxAutoField.Checked ||
-				tvDestination.SelectedNode != null)	// something is selected
-				enable = true;
+			// default to not enabled
+			var enable = chkbxExclude.Checked || chkbxAutoField.Checked || tvDestination.SelectedNode != null;
 
 			if (btnOK.Enabled != enable)
 			{
-				if (enable)
-				{
-//					btnOK.StyleChanged
-				}
 				btnOK.Enabled = enable;
 			}
 		}
@@ -990,25 +933,19 @@ namespace LanguageExplorer.Controls.LexText
 
 			// init transform used in help panel
 			m_xslShowInfoTransform = new XslCompiledTransform();
-			string sXsltFile = Path.Combine(FwDirectoryFinder.CodeDirectory, @"Language Explorer/Import/ImportFieldsHelpToHtml.xsl");
+			var sXsltFile = Path.Combine(FwDirectoryFinder.CodeDirectory, @"Language Explorer/Import/ImportFieldsHelpToHtml.xsl");
 			m_xslShowInfoTransform.Load(sXsltFile);
 			// init XmlDoc, too
 			m_xmlShowInfoDoc = new XmlDocument();
 		}
 		private void ShowInfo(LexImportField field)
 		{
-			XmlNode node = field.Node;
-			////if (node == null)
-			////{
-			////    // custom fields didn't come from the ImportFields.xml file so the node doesn't exist
-			////    webBrowserInfo.DocumentText = "";	// just make it empty for now
-			////    return;
-			////}
+			var element = field.Element;
 			var tempfile = Path.Combine(Path.GetTempPath(), "temphelp.htm");
-			using (StreamWriter w = new StreamWriter(tempfile, false))
-			using (XmlTextWriter tw = new XmlTextWriter(w))
+			using (var w = new StreamWriter(tempfile, false))
+			using (var tw = new XmlTextWriter(w))
 			{
-				m_xmlShowInfoDoc.LoadXml(node.OuterXml); // N.B. LoadXml requires UTF-16 or UCS-2 encodings
+				m_xmlShowInfoDoc.LoadXml(element.GetOuterXml()); // N.B. LoadXml requires UTF-16 or UCS-2 encodings
 				m_xslShowInfoTransform.Transform(m_xmlShowInfoDoc, tw);
 			}
 			var uri = new Uri(tempfile);
@@ -1017,7 +954,7 @@ namespace LanguageExplorer.Controls.LexText
 
 		private void btnShowInfo_Click(object sender, EventArgs e)
 		{
-			Size sz = new Size(ClientSize.Width, ClientSize.Height);
+			var sz = new Size(ClientSize.Width, ClientSize.Height);
 			if (panelBottom.Visible)
 			{
 				panelBottom.Visible = false;
@@ -1040,7 +977,7 @@ namespace LanguageExplorer.Controls.LexText
 			// Mediator accessor in the LexImportWizard now checks to make sure that
 			// it's not disposed - if it is it creates a new one.
 			IPublisher publisher = null;
-			LexImportWizard wiz = LexImportWizard.Wizard();
+			var wiz = LexImportWizard.Wizard();
 			if (wiz != null)
 			{
 				publisher = wiz.Publisher;
@@ -1048,8 +985,7 @@ namespace LanguageExplorer.Controls.LexText
 			if (publisher == null)
 			{
 				// See LT-9100 and LT-9266.  Apparently this condition can happen.
-				MessageBox.Show(LexTextControls.ksCannotSoTryAgain, LexTextControls.ksInternalProblem,
-								MessageBoxButtons.OK, MessageBoxIcon.Information);
+				MessageBox.Show(LexTextControls.ksCannotSoTryAgain, LexTextControls.ksInternalProblem, MessageBoxButtons.OK, MessageBoxIcon.Information);
 				return;
 			}
 			publisher.Publish("AddCustomField", null);
@@ -1080,25 +1016,26 @@ namespace LanguageExplorer.Controls.LexText
 			foreach (TreeNode classNameNode in tvDestination.Nodes)
 			{
 				// Remove any existing custom entries from the list (add them back due to possible changes in name etc...)
-				TreeNode[] leaves = new TreeNode[classNameNode.Nodes.Count];
+				var leaves = new TreeNode[classNameNode.Nodes.Count];
 				classNameNode.Nodes.CopyTo(leaves, 0);
-				foreach (TreeNode leafNode in leaves)
+				foreach (var leafNode in leaves)
 				{
 					if (leafNode.Tag is LexImportCustomField)
 						classNameNode.Nodes.Remove(leafNode);
 				}
 
 				// Now add any custom fields for this class
-				string className = classNameNode.Text.Trim(new char[] { '(', ')' });
+				var className = classNameNode.Text.Trim('(', ')');
 				if (m_customFields.FieldsForClass(className) == null)
 					continue;
 
 				foreach (LexImportField field in m_customFields.FieldsForClass(className))
 				{
-					TreeNode cnode = new TreeNode(field.UIName + " (Custom Field)");
-					cnode.Tag = field;
+					var cnode = new TreeNode(field.UIName + " (Custom Field)")
+					{
+						Tag = field
+					};
 					classNameNode.Nodes.Add(cnode);
-//					m_customFieldNodes.Add(field, cnode);
 				}
 
 			}
@@ -1113,11 +1050,11 @@ namespace LanguageExplorer.Controls.LexText
 
 			if (lblFunction.Enabled)
 			{
-				string funcText = cbFunction.Text;
+				var funcText = cbFunction.Text;
 				// add case to handle when the user hasn't entered text or selected any items in the drop down list.
 				if (funcText.Length == 0)
 				{
-					string labelText = lblFunction.Text.TrimEnd(new[]{' ', ':'});
+					var labelText = lblFunction.Text.TrimEnd(' ', ':');
 					MessageBox.Show("You must select a '"+labelText+"' item or enter a new one to continue.", "Missing information", MessageBoxButtons.OK, MessageBoxIcon.Stop);
 					cbFunction.Focus();
 					return;
@@ -1125,7 +1062,7 @@ namespace LanguageExplorer.Controls.LexText
 				if (!cbFunction.Items.Contains(funcText))
 				{
 					// found case where the user has entered their own text and want to add it to the proper list
-					TreeNode tn = tvDestination.SelectedNode;
+					var tn = tvDestination.SelectedNode;
 					var field = tn.Tag as LexImportField;
 					if (field != null && field.IsRef)
 					{
@@ -1168,14 +1105,6 @@ namespace LanguageExplorer.Controls.LexText
 			// after dialog is closed.
 			m_StoredTreeNode = tvDestination.SelectedNode;
 			DialogResult = DialogResult.OK;
-		}
-
-		public MarkerPresenter.ContentMapping GetContentMapping()
-		{
-			//MarkerPresenter.ContentMapping cm = new MarkerPresenter.ContentMapping("xx", "xxx",
-			//            public ContentMapping(string marker, string desc, string className, string fwDest,
-			//    string ws, string langDescriptor, int count, int order, Sfm2Xml.ClsFieldDescription fdesc, bool isCustom)
-			return null;
 		}
 	}
 }

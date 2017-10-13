@@ -147,6 +147,33 @@ namespace LanguageExplorer.Areas.TextsAndWords {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to FLExText Interl_inear....
+        /// </summary>
+        internal static string Import_FLExText_Interlinear_Data {
+            get {
+                return ResourceManager.GetString("Import_FLExText_Interlinear_Data", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Standard Format I_nterlinear....
+        /// </summary>
+        internal static string Import_Standard_Format_Interlinear {
+            get {
+                return ResourceManager.GetString("Import_Standard_Format_Interlinear", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Standard Format W_ords and Glosses....
+        /// </summary>
+        internal static string Import_Standard_Format_Words_and_Glosses {
+            get {
+                return ResourceManager.GetString("Import_Standard_Format_Words_and_Glosses", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
         ///&lt;root&gt;
         ///	&lt;recordbrowseview&gt;

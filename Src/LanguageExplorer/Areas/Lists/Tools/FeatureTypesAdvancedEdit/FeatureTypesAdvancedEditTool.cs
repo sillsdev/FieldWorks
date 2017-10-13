@@ -24,6 +24,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.FeatureTypesAdvancedEdit
 	/// </summary>
 	internal sealed class FeatureTypesAdvancedEditTool : ITool
 	{
+		private ListsAreaMenuHelper _listsAreaMenuHelper;
 		private const string FeatureTypes = "featureTypes";
 		private MultiPane _multiPane;
 		private RecordBrowseView _recordBrowseView;
@@ -83,9 +84,11 @@ namespace LanguageExplorer.Areas.Lists.Tools.FeatureTypesAdvancedEdit
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			_listsAreaMenuHelper.Dispose();
 			MultiPaneFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _multiPane);
 
 			_recordBrowseView = null;
+			_listsAreaMenuHelper = null;
 		}
 
 		/// <summary>
@@ -100,7 +103,9 @@ namespace LanguageExplorer.Areas.Lists.Tools.FeatureTypesAdvancedEdit
 			{
 				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(FeatureTypes, majorFlexComponentParameters.Statusbar, FactoryMethod);
 			}
+			_listsAreaMenuHelper = new ListsAreaMenuHelper(majorFlexComponentParameters, _recordClerk);
 			_recordBrowseView = new RecordBrowseView(XDocument.Parse(ListResources.FeatureTypesAdvancedEditBrowseViewParameters).Root, majorFlexComponentParameters.LcmCache, _recordClerk);
+
 #if RANDYTODO
 			// TODO: See LexiconEditTool for how to set up all manner of menus and toolbars.
 #endif

@@ -99,7 +99,7 @@ namespace LanguageExplorer.Controls
 		/// </remarks>
 		internal static ToolStripMenuItem CreateToolStripMenuItemForToolStripMenuItem(IList<Tuple<ToolStripMenuItem, EventHandler>> menuItems, ToolStripMenuItem mainMenuStrip, EventHandler eventHandler, string menuText, string menuTooltip = "", Keys shortcutKeys = Keys.None, Image image = null, int insertIndex = int.MaxValue)
 		{
-			var toolStripMenuItem = CreateToolStripMenuItemForToolStripMenuItem(mainMenuStrip, eventHandler, MungeTheMenuText(menuText), menuTooltip, shortcutKeys, image);
+			var toolStripMenuItem = CreateToolStripMenuItemForToolStripMenuItem(mainMenuStrip, eventHandler, MungeTheMenuText(menuText), menuTooltip, shortcutKeys, image, insertIndex);
 
 			menuItems.Add(new Tuple<ToolStripMenuItem, EventHandler>(toolStripMenuItem, eventHandler));
 
@@ -119,6 +119,15 @@ namespace LanguageExplorer.Controls
 			InsertToolStripMenuItem(mainMenuStrip.DropDownItems, toolStripMenuItem, insertIndex);
 
 			return toolStripMenuItem;
+		}
+
+		internal static ToolStripSeparator CreateToolStripSeparatorForToolStripMenuItem(ToolStripMenuItem mainMenuStrip, int insertIndex = int.MaxValue)
+		{
+			var newToolStripSeparator = new ToolStripSeparator();
+
+			InsertToolStripMenuItem(mainMenuStrip.DropDownItems, newToolStripSeparator, insertIndex);
+
+			return newToolStripSeparator;
 		}
 	}
 }

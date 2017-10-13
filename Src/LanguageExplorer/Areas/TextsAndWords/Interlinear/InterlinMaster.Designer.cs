@@ -26,15 +26,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 			if (disposing)
 			{
-				//SuspendLayout();	// don't want do trigger OnLayout() when removing controls!
-				//DestroyTitleContentsPane();
-				//if (m_tabCtrl != null)
-				//    m_tabCtrl.SelectedIndexChanged -= new System.EventHandler(m_tabCtrl_SelectedIndexChanged);
-				//DisposeInterlinDocPanes();
-				//DisposeIfParentNull(m_panelInterlin);
-
-				//DisposeIfParentNull(m_rtPane);
-				//DisposeIfParentNull(m_infoPane);
 				if (components != null)
 				{
 					components.Dispose();
@@ -48,7 +39,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				{
 					IApp app = PropertyTable.GetValue<IApp>("App");
 					if (app != null)
+					{
 						app.RemoveFindReplaceDialog();
+					}
 				}
 			}
 

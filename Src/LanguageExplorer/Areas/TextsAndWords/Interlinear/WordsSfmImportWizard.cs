@@ -2,7 +2,6 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
 using System.Collections.Generic;
 using System.IO;
 using LanguageExplorer.Controls.LexText;
@@ -21,16 +20,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		protected override void SetDialogTitle()
 		{
-			Text = String.Format(Text, ITextStrings.ksWordsAndGlosses);
+			Text = string.Format(Text, ITextStrings.ksWordsAndGlosses);
 		}
 
-		protected override string SfmImportSettingsFileName
-		{
-			get
-			{
-				return "WordsSfmImport.map";
-			}
-		}
+		protected override string SfmImportSettingsFileName => "WordsSfmImport.map";
 
 		/// <summary>
 		/// Don't care about checking the baseline in this dialog.
@@ -60,9 +53,5 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			dlg.Position += 50;
 			stage2Converter.ImportWordsFrag(() => new MemoryStream(stage1), LinguaLinksImport.ImportAnalysesLevel.WordGloss);
 		}
-
-
-
-
 	}
 }

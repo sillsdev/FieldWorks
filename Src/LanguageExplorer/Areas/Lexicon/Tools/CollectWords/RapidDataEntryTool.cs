@@ -24,6 +24,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 	/// </summary>
 	internal sealed class RapidDataEntryTool : ITool
 	{
+		private LexiconAreaMenuHelper _lexiconAreaMenuHelper;
 		internal const string RDEwords = "RDEwords";
 		private CollapsingSplitContainer _collapsingSplitContainer;
 		private RecordBrowseView _recordBrowseView;
@@ -94,6 +95,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			_lexiconAreaMenuHelper.Dispose();
 			PropertyTable.SetProperty("RecordListWidthGlobal", _collapsingSplitContainer.SplitterDistance, SettingsGroup.GlobalSettings, true, false);
 
 #if RANDYTODO
@@ -122,6 +124,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 
 			_recordBrowseView = null;
 			_nestedRecordClerk = null;
+			_lexiconAreaMenuHelper = null;
 		}
 
 		/// <summary>
@@ -140,6 +143,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 			{
 				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(LexiconArea.SemanticDomainList_LexiconArea, majorFlexComponentParameters.Statusbar, LexiconArea.SemanticDomainList_LexiconAreaFactoryMethod);
 			}
+			_lexiconAreaMenuHelper = new LexiconAreaMenuHelper(majorFlexComponentParameters, _recordClerk);
+
 			var semanticDomainRdeTreeBarHandler = (SemanticDomainRdeTreeBarHandler)_recordClerk.BarHandler;
 			var recordBar = new RecordBar(PropertyTable)
 			{
@@ -197,6 +202,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 			semanticDomainRdeTreeBarHandler.FinishInitialization(new PaneBar());
 			recordEditView.FinishInitialization();
 			RecordClerkServices.SetClerk(majorFlexComponentParameters, _recordClerk);
+			_lexiconAreaMenuHelper.Initialize();
 		}
 
 		/// <summary>

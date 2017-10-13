@@ -13,6 +13,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 	/// </summary>
 	internal sealed class CorpusStatisticsTool : ITool
 	{
+		private TextAndWordsAreaMenuHelper _textAndWordsAreaMenuHelper;
 		private StatisticsView _statisticsView;
 
 		#region Implementation of IPropertyTableProvider
@@ -69,11 +70,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			_textAndWordsAreaMenuHelper.Dispose();
 			_statisticsView.Deactivate(majorFlexComponentParameters);
 
 			// Remove StatisticsView (right panel of 'mainCollapsingSplitContainer').
 			majorFlexComponentParameters.MainCollapsingSplitContainer.SecondControl = null;
 			_statisticsView = null;
+			_textAndWordsAreaMenuHelper = null;
 		}
 
 		/// <summary>
@@ -84,6 +87,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			_textAndWordsAreaMenuHelper = new TextAndWordsAreaMenuHelper(majorFlexComponentParameters);
+			_textAndWordsAreaMenuHelper.AddMenusForAllButConcordanceTool();
+
 			// Get the StatisticsView into right panel of 'mainCollapsingSplitContainer'.
 			_statisticsView = new StatisticsView(majorFlexComponentParameters.Statusbar);
 			majorFlexComponentParameters.MainCollapsingSplitContainer.SecondControl = _statisticsView;

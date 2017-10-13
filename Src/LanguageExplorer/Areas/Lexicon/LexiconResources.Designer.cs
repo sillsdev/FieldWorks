@@ -181,6 +181,24 @@ namespace LanguageExplorer.Areas.Lexicon {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to L_IFT Lexicon....
+        /// </summary>
+        internal static string ImportLIFTLexicon {
+            get {
+                return ResourceManager.GetString("ImportLIFTLexicon", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to _LinguaLinks Data....
+        /// </summary>
+        internal static string ImportLinguaLinksData {
+            get {
+                return ResourceManager.GetString("ImportLinguaLinksData", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Insert A_llomorph.
         /// </summary>
         internal static string Insert_Allomorph {

@@ -246,4 +246,13 @@
   <data name="ksImportWordSet" xml:space="preserve">
     <value>_Import Word Set...</value>
   </data>
+  <data name="Import_FLExText_Interlinear_Data" xml:space="preserve">
+    <value>FLExText Interl_inear...</value>
+  </data>
+  <data name="Import_Standard_Format_Interlinear" xml:space="preserve">
+    <value>Standard Format I_nterlinear...</value>
+  </data>
+  <data name="Import_Standard_Format_Words_and_Glosses" xml:space="preserve">
+    <value>Standard Format W_ords and Glosses...</value>
+  </data>
 </root>

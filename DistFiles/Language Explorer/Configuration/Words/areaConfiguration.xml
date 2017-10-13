@@ -70,8 +70,6 @@
 		<command id="CmdDeleteLitTrans" label="Delete Literal Translation" message="DeleteFreeform"/>
 		<command id="CmdDeleteNote" label="Delete Note" message="DeleteFreeform"/>
 		<command id="CmdConfigureInterlinear" label="Interlinear..." message="ConfigureInterlinear"/>
-		<command id="CmdExportInterlinear" label="_Export Interlinear..." message="ExportInterlinear"/>
-		<command id="CmdExportDiscourseChart" label="Export Discourse Chart..." message="ExportDiscourse"/>
 		<!-- the next two commands duplicate another shortcut, and should not be shown or enabled at the same time as
 			  the focus-box moving commands-->
 		<command id="CmdRepeatLastMoveLeft" label="Move _Left (last thing moved)" message="RepeatLastMoveLeft" shortcut="Ctrl+Left"/>
@@ -272,11 +270,6 @@
 	<!-- ************************ menuAddOn *********************** -->
 	<!-- ********************************************************** -->
 	<menuAddOn>
-		<menu id="FileExport">
-			<!-- Main File menu, but follows its "Import" menu. NB: These are *not* sub-menus of the main File->Export, but siblings of it. -->
-			<item command="CmdExportInterlinear" defaultVisible="false"/>
-			<item command="CmdExportDiscourseChart" defaultVisible="false"/>
-		</menu>
 		<menu id="Edit">
 			<item command="CmdGoToWfiWordform" defaultVisible="false"/>
 		</menu>

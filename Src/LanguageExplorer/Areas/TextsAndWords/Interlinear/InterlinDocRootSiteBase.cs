@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.XMLViews;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel.Core.KernelInterfaces;
@@ -23,13 +24,17 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 	/// <summary>
 	/// Ideally this would be an abstract class, but Designer does not handle abstract classes.
 	/// </summary>
-	public partial class InterlinDocRootSiteBase : RootSite,
-		IInterlinearTabControl, IVwNotifyChange, IHandleBookmark, ISelectOccurrence, IStyleSheet, ISetupLineChoices
+	public partial class InterlinDocRootSiteBase : RootSite, IInterlinearTabControl, IVwNotifyChange, IHandleBookmark, ISelectOccurrence, IStyleSheet, ISetupLineChoices
 	{
 		private ISilDataAccess m_sda;
-		protected internal int m_hvoRoot; // IStText
+		/// <summary>
+		/// HVO of some IStText
+		/// </summary>
+		protected internal int m_hvoRoot;
 		protected InterlinVc m_vc;
 		protected ICmObjectRepository m_objRepo;
+		private ToolStripMenuItem _fileMenu;
+		private ToolStripMenuItem _exportMenu;
 
 		/// <summary>
 		/// Context menu for use when user right-clicks on Interlinear segment labels.
@@ -50,7 +55,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <summary>
 		/// Helps determine if a rt-click is opening or closing the context menu.
 		/// </summary>
-		private long m_ticksWhenContextMenuClosed = 0;
+		private long m_ticksWhenContextMenuClosed;
 
 		private readonly HashSet<IWfiWordform> m_wordformsToUpdate;
 
@@ -95,19 +100,35 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			m_objRepo = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>();
 		}
 
-#if RANDYTODO
-		public bool OnDisplayExportInterlinear(object commandObject, ref UIItemDisplayProperties display)
+		internal ToolStripMenuItem FileMenu
 		{
-			if (m_hvoRoot != 0)
-				display.Enabled = true;
-			else
-				display.Enabled = false;
-			display.Visible = true;
-			return true;
+			get { return _fileMenu; }
+			set
+			{
+				_fileMenu = value;
+				// Add ExportInterlinear menu to File menu
+				_exportMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_fileMenu, ExportInterlinear_Click, ITextStrings.ExportInterlinear, string.Empty, Keys.None, null, _fileMenu.DropDownItems.Count - 3);
+			}
 		}
-#endif
 
-		public bool OnExportInterlinear(object argument)
+		internal bool ShowExportMenu
+		{
+			set
+			{
+				if (!value)
+				{
+					_exportMenu.Visible = false;
+					_exportMenu.Enabled = true;
+				}
+				else
+				{
+					_exportMenu.Visible = true;
+					_exportMenu.Enabled = m_hvoRoot != 0;
+				}
+			}
+		}
+
+		private void ExportInterlinear_Click(object sender, EventArgs e)
 		{
 			// If the currently selected text is from Scripture, then we need to give the dialog
 			// the list of Scripture texts that have been selected for interlinearization.
@@ -134,8 +155,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				CreateFocusBox();
 			}
-
-			return true; // we handled this
 		}
 		/// <summary>
 		/// Hides the sandbox and removes it from the controls.

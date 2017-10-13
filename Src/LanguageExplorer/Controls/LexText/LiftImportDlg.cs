@@ -1,13 +1,7 @@
-// Copyright (c) 2008-2013 SIL International
+// Copyright (c) 2008-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: LiftImportDlg.cs
-// Responsibility: SteveMc (original version by John Hatton as extension)
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
+
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -54,9 +48,6 @@ namespace LanguageExplorer.Controls.LexText
 		/// <summary>
 		/// From IFwExtension
 		/// </summary>
-		/// <param name="cache"></param>
-		/// <param name="propertyTable"></param>
-		/// <param name="publisher"></param>
 		void IFwExtension.Init(LcmCache cache, IPropertyTable propertyTable, IPublisher publisher)
 		{
 			m_cache = cache;

@@ -22,6 +22,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ChartmarkEdit
 	/// </summary>
 	internal sealed class ChartmarkEditTool : ITool
 	{
+		private ListsAreaMenuHelper _listsAreaMenuHelper;
 		private const string DiscChartMarkerList = "DiscChartMarkerList";
 		/// <summary>
 		/// Main control to the right of the side bar control. This holds a RecordBar on the left and a PaneBarContainer on the right.
@@ -84,7 +85,9 @@ namespace LanguageExplorer.Areas.Lists.Tools.ChartmarkEdit
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			_listsAreaMenuHelper.Dispose();
 			CollapsingSplitContainerFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _collapsingSplitContainer);
+			_listsAreaMenuHelper = null;
 		}
 
 		/// <summary>
@@ -99,6 +102,8 @@ namespace LanguageExplorer.Areas.Lists.Tools.ChartmarkEdit
 			{
 				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(DiscChartMarkerList, majorFlexComponentParameters.Statusbar, FactoryMethod);
 			}
+			_listsAreaMenuHelper = new ListsAreaMenuHelper(majorFlexComponentParameters, _recordClerk);
+
 #if RANDYTODO
 			// TODO: See LexiconEditTool for how to set up all manner of menus and toolbars.
 #endif

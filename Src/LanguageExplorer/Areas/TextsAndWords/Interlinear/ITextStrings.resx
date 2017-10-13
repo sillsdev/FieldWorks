@@ -957,4 +957,10 @@ Click "Cancel" to abort this import.</value>
     <value>Old Testament</value>
     <comment>text for OT node in Scripture tree controls</comment>
   </data>
+  <data name="ExportInterlinear" xml:space="preserve">
+    <value>_Export Interlinear...</value>
+  </data>
+  <data name="Export_Discourse_Chart" xml:space="preserve">
+    <value>Export Discourse Chart...</value>
+  </data>
 </root>

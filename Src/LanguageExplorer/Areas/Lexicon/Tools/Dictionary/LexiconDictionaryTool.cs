@@ -25,6 +25,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 	/// </summary>
 	internal sealed class LexiconDictionaryTool : ITool
 	{
+		private LexiconAreaMenuHelper _lexiconAreaMenuHelper;
 		private string _configureObjectName;
 		private IFwMainWnd _fwMainWnd;
 		private LcmCache _cache;
@@ -90,12 +91,14 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			_lexiconAreaMenuHelper.Dispose();
 			_sliceContextMenuFactory.Dispose(); // No Data Tree in this tool to dispose of it for us.
 			PaneBarContainerFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _paneBarContainer);
 			_xhtmlDocView = null;
 			_fwMainWnd = null;
 			_cache = null;
 			_sliceContextMenuFactory = null;
+			_lexiconAreaMenuHelper = null;
 		}
 
 		/// <summary>
@@ -114,6 +117,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 			{
 				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(LexiconArea.Entries, majorFlexComponentParameters.Statusbar, LexiconArea.EntriesFactoryMethod);
 			}
+			_lexiconAreaMenuHelper = new LexiconAreaMenuHelper(majorFlexComponentParameters, _recordClerk);
+
 			var root = XDocument.Parse(LexiconResources.LexiconDictionaryToolParameters).Root;
 			_configureObjectName = root.Attribute("configureObjectName").Value;
 			_xhtmlDocView = new XhtmlDocView(root, majorFlexComponentParameters.LcmCache, _recordClerk, MenuServices.GetFilePrintMenu(majorFlexComponentParameters.MenuStrip));

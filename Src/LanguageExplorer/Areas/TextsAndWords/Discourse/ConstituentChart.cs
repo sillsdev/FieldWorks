@@ -11,6 +11,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Xml;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
+using LanguageExplorer.Controls;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
@@ -65,11 +66,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		internal LcmCache m_cache;
 		private ILcmServiceLocator m_serviceLocator;
 		private XmlNode m_configurationParameters;
+		private ToolStripMenuItem _fileMenu;
+		protected ToolStripMenuItem _exportMenu;
+
 		#endregion
 
-		/// <summary>
-		/// Make one. Usually called by reflection.
-		/// </summary>
+		/// <summary />
 		public ConstituentChart(LcmCache cache) : this(cache, new ConstituentChartLogic(cache))
 		{
 		}
@@ -84,6 +86,43 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			m_logic = logic;
 
 			BuildUIComponents();
+		}
+
+		internal ToolStripMenuItem FileMenu
+		{
+			get { return _fileMenu; }
+			set
+			{
+				_fileMenu = value;
+				// Add ExportInterlinear menu to File menu
+				_exportMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_fileMenu, ExportDiscourseChart_Click, ITextStrings.Export_Discourse_Chart, string.Empty, Keys.None, null, _fileMenu.DropDownItems.Count - 3);
+			}
+		}
+
+		internal bool ShowExportMenu
+		{
+			set
+			{
+				if (!value)
+				{
+					_exportMenu.Visible = false;
+					_exportMenu.Enabled = true;
+				}
+				else
+				{
+					_exportMenu.Visible = true;
+					_exportMenu.Enabled = m_hvoRoot != 0 && m_chart != null && m_body != null && m_logic != null;
+				}
+			}
+		}
+
+		private void ExportDiscourseChart_Click(object sender, EventArgs e)
+		{
+			using (var dlg = new DiscourseExportDialog(m_chart.Hvo, m_body.Vc, m_logic.WsLineNumber))
+			{
+				dlg.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
+				dlg.ShowDialog(this);
+			}
 		}
 
 		#region Implementation of IPropertyTableProvider
@@ -1159,9 +1198,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// <returns></returns>
 		public bool OnExportDiscourse(object argument)
 		{
-			// guards against LT-8309, though I could not reproduce all cases.
-			if (m_chart == null || m_body == null || m_logic == null)
-				return false;
 			using (var dlg = new DiscourseExportDialog(m_chart.Hvo, m_body.Vc, m_logic.WsLineNumber))
 			{
 				dlg.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));

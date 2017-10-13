@@ -7,6 +7,7 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
+using L10NSharp.UI;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.Controls.PaneBar;
@@ -23,6 +24,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 	/// </summary>
 	internal sealed class AnalysesTool : ITool
 	{
+		private AreaWideMenuHelper _areaWideMenuHelper;
+		private TextAndWordsAreaMenuHelper _textAndWordsAreaMenuHelper;
 		private MultiPane _multiPane;
 		private RecordBrowseView _recordBrowseView;
 		private RecordClerk _recordClerk;
@@ -81,8 +84,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			_areaWideMenuHelper.Dispose();
+			_textAndWordsAreaMenuHelper.Dispose();
 			MultiPaneFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _multiPane);
 			_recordBrowseView = null;
+			_areaWideMenuHelper = null;
+			_textAndWordsAreaMenuHelper = null;
 		}
 
 		/// <summary>
@@ -97,6 +104,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 			{
 				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(TextAndWordsArea.ConcordanceWords, majorFlexComponentParameters.Statusbar, TextAndWordsArea.ConcordanceWordsFactoryMethod);
 			}
+			_areaWideMenuHelper = new AreaWideMenuHelper(majorFlexComponentParameters, _recordClerk);
+			_areaWideMenuHelper.SetupFileExportMenu();
+			_textAndWordsAreaMenuHelper = new TextAndWordsAreaMenuHelper(majorFlexComponentParameters);
+			_textAndWordsAreaMenuHelper.AddMenusForAllButConcordanceTool();
 
 			var root = XDocument.Parse(TextAndWordsResources.WordListParameters).Root;
 			var columnsElement = XElement.Parse(TextAndWordsResources.WordListColumns);

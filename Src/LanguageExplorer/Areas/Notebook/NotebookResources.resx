@@ -120,6 +120,9 @@
   <data name="Demote_Record" xml:space="preserve">
     <value>Demote Record...</value>
   </data>
+  <data name="Import_Standard_Format_Notebook_data" xml:space="preserve">
+    <value>Standard Format _Notebook data...</value>
+  </data>
   <data name="Insert_Subrecord" xml:space="preserve">
     <value>Insert _Subrecord</value>
   </data>

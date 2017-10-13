@@ -88,6 +88,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookBrowse
 		{
 			if (_recordClerk == null)
 			{
+				// Try getting it from the notebook area.
 				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(NotebookArea.Records, majorFlexComponentParameters.Statusbar, NotebookArea.NotebookFactoryMethod);
 			}
 			_recordBrowseView = new RecordBrowseView(NotebookArea.LoadDocument(NotebookResources.NotebookBrowseParameters).Root, majorFlexComponentParameters.LcmCache, _recordClerk);

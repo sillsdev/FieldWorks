@@ -70,6 +70,15 @@ namespace LanguageExplorer.Areas.Notebook {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Standard Format _Notebook data....
+        /// </summary>
+        internal static string Import_Standard_Format_Notebook_data {
+            get {
+                return ResourceManager.GetString("Import_Standard_Format_Notebook_data", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Insert _Subrecord.
         /// </summary>
         internal static string Insert_Subrecord {

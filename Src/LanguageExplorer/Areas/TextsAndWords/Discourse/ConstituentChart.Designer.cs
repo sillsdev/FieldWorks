@@ -21,11 +21,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		{
 			if (disposing)
 			{
-				if (components != null)
-					components.Dispose();
+				components?.Dispose();
 
-				if (m_toolTip != null)
-					m_toolTip.Dispose();
+				m_toolTip?.Dispose();
 			}
 
 			components = null;

@@ -24,6 +24,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.ProdRestrictEdit
 	/// </summary>
 	internal sealed class ProdRestrictEditTool : ITool
 	{
+		private GrammarAreaMenuHelper _grammarAreaWideMenuHelper;
 		private const string ProdRestrict = "ProdRestrict";
 		private MultiPane _multiPane;
 		private RecordBrowseView _recordBrowseView;
@@ -84,8 +85,10 @@ namespace LanguageExplorer.Areas.Grammar.Tools.ProdRestrictEdit
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			_grammarAreaWideMenuHelper.Dispose();
 			MultiPaneFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _multiPane);
 			_recordBrowseView = null;
+			_grammarAreaWideMenuHelper = null;
 		}
 
 		/// <summary>
@@ -100,6 +103,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.ProdRestrictEdit
 			{
 				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(ProdRestrict, majorFlexComponentParameters.Statusbar, FactoryMethod);
 			}
+			_grammarAreaWideMenuHelper = new GrammarAreaMenuHelper(majorFlexComponentParameters, _recordClerk); // Use generic export event handler.
 
 			var root = XDocument.Parse(GrammarResources.ProdRestrictEditToolParameters).Root;
 			_recordBrowseView = new RecordBrowseView(root.Element("browseview").Element("parameters"), majorFlexComponentParameters.LcmCache, _recordClerk);

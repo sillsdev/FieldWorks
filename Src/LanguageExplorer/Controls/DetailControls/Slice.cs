@@ -217,10 +217,10 @@ namespace LanguageExplorer.Controls.DetailControls
 		}
 
 		protected virtual void PrepareToShowContextMenu()
-		{ /* No thing here. Suclasses can override and do more, if desired. */ }
+		{ /* Nothing to do here. Suclasses can override and do more, if desired. */ }
 
 		protected virtual void AddSpecialContextMenus(ContextMenuStrip topLevelContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>> menuItems)
-		{ /* No thing here. Suclasses can override and add more, if desired. */ }
+		{ /* Nothing to do here either. Suclasses can override and add more, if desired. */ }
 
 		/// <summary></summary>
 		public object[] Key

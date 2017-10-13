@@ -310,7 +310,7 @@
     <value>webonaryPasswordTextbox</value>
   </data>
   <data name="&gt;&gt;webonaryPasswordTextbox.Type" xml:space="preserve">
-    <value>SIL.FieldWorks.Common.Widgets.PasswordBox, Widgets, Version=8.3.6.17331, Culture=neutral, PublicKeyToken=null</value>
+    <value>SIL.FieldWorks.Common.Widgets.PasswordBox, Widgets, Version=10.0.0.28345, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;webonaryPasswordTextbox.Parent" xml:space="preserve">
     <value>settingsForWebonaryTableLayoutPanel</value>
