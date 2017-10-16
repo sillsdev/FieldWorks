@@ -8,6 +8,7 @@ using System.IO;
 using System.Reflection;
 using System.Xml;
 using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 using SIL.Xml;
 
 namespace SIL.FieldWorks.Common.FwUtils
@@ -39,16 +40,33 @@ namespace SIL.FieldWorks.Common.FwUtils
 				if (s_singletonStringTable == null)
 				{
 					// Half my kingdom to be able to get at FwDirectoryFinder.FlexFolder from here!
-					var parentOfLanguageExplorerFolder = Path.GetDirectoryName(FileUtils.StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase));
-					while (parentOfLanguageExplorerFolder.ToLowerInvariant().LastIndexOf("output") > -1)
+					var parentOfLanguageExplorerFolder = Path.GetDirectoryName(FileUtils.StripFilePrefix(typeof(StringTable).Assembly.CodeBase));
+					var installedBinary = false;
+					if (Platform.IsLinux)
 					{
-						// If a dev machine, move up to parent of 'output' folder.
-						parentOfLanguageExplorerFolder = Path.GetDirectoryName(parentOfLanguageExplorerFolder);
+						// First check if we're running an installed version. If so, replace
+						// /usr/lib/fieldworks with /usr/share/fieldworks
+						if (parentOfLanguageExplorerFolder.EndsWith("lib/fieldworks"))
+						{
+							installedBinary = true;
+							parentOfLanguageExplorerFolder = Path.Combine(
+								Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
+								"fieldworks");
+						}
 					}
-					if (Directory.Exists(Path.Combine(parentOfLanguageExplorerFolder, "DistFiles")))
+					if (!installedBinary)
 					{
-						// If a dev machine, move down to "Distfiles" folder.
-						parentOfLanguageExplorerFolder = Path.Combine(parentOfLanguageExplorerFolder, "DistFiles");
+						while (parentOfLanguageExplorerFolder.ToLowerInvariant().LastIndexOf("output") > -1)
+						{
+							// If a dev machine, move up to parent of 'output' folder.
+							parentOfLanguageExplorerFolder = Path.GetDirectoryName(parentOfLanguageExplorerFolder);
+						}
+						var distFilesDir = Path.Combine(parentOfLanguageExplorerFolder, "DistFiles");
+						if (Directory.Exists(distFilesDir))
+						{
+							// If a dev machine, move down to "Distfiles" folder.
+							parentOfLanguageExplorerFolder = distFilesDir;
+						}
 					}
 					// Finally, "parentOfLanguageExplorerFolder" should have the child folder named "Language Explorer" for devs or users.
 					// I suppose I could throw if that is not the case, as StringTable can't load if it isn't.
