@@ -3,13 +3,13 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Security;
 using System.Windows.Forms;
 using System.Xml.Serialization;
 using System.IO;
-using System.Threading;		// for Monitor (dlh)
 using System.Text;
 using SIL.FieldWorks.Common.FwUtils;
 
@@ -19,7 +19,7 @@ namespace XCore
 	/// Summary description for PropertyTable.
 	/// </summary>
 	[Serializable]
-	public sealed class PropertyTable : IDisposable
+	public sealed class PropertyTable : IDisposable, IPropertyRetriever
 	{
 		/// <summary>
 		/// Specify where to set/get a property in the property table.
@@ -38,7 +38,7 @@ namespace XCore
 
 		private Mediator Mediator { get; set; }
 
-		private Dictionary<string, Property> m_properties;
+		private ConcurrentDictionary<string, Property> m_properties;
 		/// <summary>
 		/// Control how much output we send to the application's listeners (e.g. visual studio output window)
 		/// </summary>
@@ -53,7 +53,7 @@ namespace XCore
 		/// -----------------------------------------------------------------------------------
 		public PropertyTable(Mediator mediator)
 		{
-			m_properties = new Dictionary<string, Property>(100);
+			m_properties = new ConcurrentDictionary<string, Property>();
 			Mediator = mediator;
 		}
 
@@ -184,9 +184,8 @@ namespace XCore
 		{
 			CheckDisposed();
 			Property goner;
-			if (m_properties.TryGetValue(name, out goner))
+			if (m_properties.TryRemove(name, out goner))
 			{
-				m_properties.Remove(name);
 				goner.value = null;
 			}
 		}
@@ -307,18 +306,8 @@ namespace XCore
 
 		private Property GetProperty(string key)
 		{
-			if (!Monitor.TryEnter(m_properties))
-			{
-				FwUtils.ErrorBeep();
-				TraceVerboseLine(">>>>>>>*****  colision: <A>  ********<<<<<<<<<<<");
-				Monitor.Enter(m_properties);
-			}
-
 			Property result;
 			m_properties.TryGetValue(key, out result);
-
-			Monitor.Exit(m_properties);
-
 			return result;
 		}
 
@@ -388,12 +377,6 @@ namespace XCore
 		/// <exception cref="ArgumentException">Thrown if the property value is not type "T".</exception>
 		private T GetValueInternal<T>(string key)
 		{
-			if (!Monitor.TryEnter(m_properties))
-			{
-				FwUtils.ErrorBeep();
-				TraceVerboseLine(">>>>>>>*****  colision: <A>  ********<<<<<<<<<<<");
-				Monitor.Enter(m_properties);
-			}
 			var result = default(T);
 			Property prop;
 			if (m_properties.TryGetValue(key, out prop))
@@ -412,7 +395,6 @@ namespace XCore
 					throw new ArgumentException("Mismatched data type.");
 				}
 			}
-			Monitor.Exit(m_properties);
 
 			return result;
 		}
@@ -499,17 +481,10 @@ namespace XCore
 		/// </param>
 		private void SetDefaultInternal(string key, object defaultValue, bool doBroadcastIfChanged)
 		{
-			if(!Monitor.TryEnter(m_properties))
-			{
-				TraceVerboseLine(">>>>>>>*****  colision: <c>  ********<<<<<<<<<<<");
-				Monitor.Enter(m_properties);
-			}
 			if (!m_properties.ContainsKey(key))
 			{
 				SetPropertyInternal(key, defaultValue, doBroadcastIfChanged);
 			}
-
-			Monitor.Exit(m_properties);
 		}
 
 		/// <summary>
@@ -560,11 +535,6 @@ namespace XCore
 			CheckDisposed();
 
 			var didChange = true;
-			if (!Monitor.TryEnter(m_properties))
-			{
-				TraceVerboseLine(">>>>>>>*****  colision: <d>  ********<<<<<<<<<<<");
-				Monitor.Enter(m_properties);
-			}
 			if (m_properties.ContainsKey(key))
 			{
 				Property property = m_properties[key];
@@ -594,8 +564,6 @@ namespace XCore
 			{
 				BroadcastPropertyChange(key);
 			}
-
-			Monitor.Exit(m_properties);
 
 #if SHOWTRACE
 			if (newValue != null)
@@ -758,26 +726,14 @@ namespace XCore
 
 		private void SetPropertyDisposeInternal(string key, bool doDispose)
 		{
-			if(!Monitor.TryEnter(m_properties))
-			{
-				TraceVerboseLine(">>>>>>>*****  colision: <e>  ********<<<<<<<<<<<");
-				Monitor.Enter(m_properties);
-			}
-			try
-			{
-				Property property = m_properties[key];
-				// Don't need an assert,
-				// since the Dictionary will throw an exception,
-				// if the key is missing.
-				//Debug.Assert(property != null);
-				if (!(property.value is IDisposable))
-					throw new ArgumentException(String.Format("The property named: {0} is not valid for disposing.", key));
-				property.doDispose = doDispose;
-			}
-			finally
-			{
-				Monitor.Exit(m_properties);
-			}
+			var property = m_properties[key];
+			// Don't need an assert,
+			// since the Dictionary will throw an exception,
+			// if the key is missing.
+			//Debug.Assert(property != null);
+			if (!(property.value is IDisposable))
+				throw new ArgumentException(String.Format("The property named: {0} is not valid for disposing.", key));
+			property.doDispose = doDispose;
 		}
 		#endregion
 
@@ -789,21 +745,8 @@ namespace XCore
 
 			string key;
 			GetBestSettingsGroupAndKey(name, settingsGroup, out key);
-			if (!Monitor.TryEnter(m_properties))
-			{
-				TraceVerboseLine(">>>>>>>*****  colision: <f>  ********<<<<<<<<<<<");
-				Monitor.Enter(m_properties);
-			}
 			// Will properly throw if not in Dictionary.
-			Property property = null;
-			try
-			{
-				property = m_properties[key];
-			}
-			finally
-			{
-				Monitor.Exit(m_properties);
-			}
+			var property = m_properties[key];
 
 			property.doPersist = doPersist;
 		}
@@ -1059,12 +1002,6 @@ namespace XCore
 				//	null property if there were no other properties.
 				if (property != null)
 				{
-					if(!Monitor.TryEnter(m_properties))
-					{
-						TraceVerboseLine(">>>>>>>*****  colision: <g>  ********<<<<<<<<<<<");
-						Monitor.Enter(m_properties);
-					}
-
 					// REVIEW JohnH(RandyR): I added the Remove call,
 					// because one of the properties was already there, and 'Add' throws an exception,
 					// if it is there.
@@ -1072,20 +1009,13 @@ namespace XCore
 					// This is only called once, and no code should ever putting duplicates when saving.
 					// RESPONSE (RR): Beats me how it happened, but I 'found it' via the exception
 					// that was thrown by it already being there.
-					m_properties.Remove(property.name); // In case it is there.
-					m_properties.Add(property.name, property);
-					Monitor.Exit(m_properties);
+					m_properties.AddOrUpdate(property.name, property, (name, prop) => prop);
 				}
 			}
 		}
 
 		private Property[] MakePropertyArrayForSerializing(string settingsId, string[] omitSettingIds)
 		{
-			if (!Monitor.TryEnter(m_properties))
-			{
-				TraceVerboseLine(">>>>>>>*****  colision: <i>  ********<<<<<<<<<<<");
-				Monitor.Enter(m_properties);
-			}
 			List<Property> list = new List<Property>(m_properties.Count);
 			foreach (KeyValuePair<string, Property> kvp in m_properties)
 			{
@@ -1107,18 +1037,12 @@ namespace XCore
 				if (fIncludeThis)
 					list.Add(property);
 			}
-			Monitor.Exit(m_properties);
 
 			return list.ToArray();
 		}
 
 		private Property[] MakePropertyArrayForSerializingForNewProjectName(string oldSettingsId, string newSettingsId)
 		{
-			if (!Monitor.TryEnter(m_properties))
-			{
-				TraceVerboseLine(">>>>>>>*****  colision: <i>  ********<<<<<<<<<<<");
-				Monitor.Enter(m_properties);
-			}
 			List<Property> list = new List<Property>(m_properties.Count);
 			foreach (KeyValuePair<string, Property> kvp in m_properties)
 			{
@@ -1137,7 +1061,6 @@ namespace XCore
 				property.name = strBuild.ToString();
 				list.Add(property);
 			}
-			Monitor.Exit(m_properties);
 
 			return list.ToArray();
 		}
@@ -1162,5 +1085,4 @@ namespace XCore
 
 		#endregion
 	}
-
 }

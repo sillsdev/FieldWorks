@@ -858,6 +858,22 @@ namespace XCore
 			Assert.IsNull(nullObject, String.Format("Invalid value for {0} {1}.", "local", "BestStringPropertyA"));
 		}
 
+		[Test]
+		public void ReadOnlyPropertyTable_GetWithDefaultDoesNotSet()
+		{
+			var noSuchPropName = "No Such Property";
+			var myDefault = "MyDefault";
+			var notDefault = "NotDefault";
+			var roPropTable = new ReadOnlyPropertyTable(m_propertyTable);
+			// Initial conditions
+			Assert.IsNull(m_propertyTable.GetValue<string>(noSuchPropName));
+			var getResult = roPropTable.GetStringProperty(noSuchPropName, myDefault);
+			Assert.IsNull(m_propertyTable.GetValue<string>(noSuchPropName), "Default should not have been set in the property table.");
+			Assert.AreEqual(myDefault, getResult, "Default value not returned.");
+			m_propertyTable.SetProperty(noSuchPropName, notDefault, false);
+			Assert.AreEqual(roPropTable.GetStringProperty(noSuchPropName, myDefault), notDefault, "Default was used instead of value from property table.");
+		}
+
 		/// <summary>
 		/// Test the various versions of SetPropertyPersistence.
 		/// </summary>

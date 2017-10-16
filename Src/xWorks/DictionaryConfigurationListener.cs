@@ -94,7 +94,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Get the base (non-localized) name of the area in FLEx being configured, such as Dictionary or Reversal Index.
 		/// </summary>
-		internal static string GetDictionaryConfigurationBaseType(PropertyTable propertyTable)
+		internal static string GetDictionaryConfigurationBaseType(IPropertyRetriever propertyTable)
 		{
 			var toolName = propertyTable.GetStringProperty("currentContentControl", null);
 			switch (toolName)
@@ -168,7 +168,7 @@ namespace SIL.FieldWorks.XWorks
 		/// Get the name of the innermost directory name for configurations for the part of FLEx the user is
 		/// working in, such as Dictionary or Reversal Index.
 		/// </summary>
-		private static string GetInnermostConfigurationDirectory(PropertyTable propertyTable)
+		private static string GetInnermostConfigurationDirectory(IPropertyRetriever propertyTable)
 		{
 			switch(propertyTable.GetStringProperty("currentContentControl", null))
 			{

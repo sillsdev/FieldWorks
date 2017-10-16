@@ -1696,7 +1696,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 
 				m_migrator.CopyNewDefaultsIntoConvertedModel(convertedMinorEntry, defaultMinorEntry);
 				string cssResults = null;
-				Assert.DoesNotThrow(()=>cssResults = CssGenerator.GenerateCssFromConfiguration(convertedMinorEntry, m_propertyTable));
+				Assert.DoesNotThrow(()=>cssResults = CssGenerator.GenerateCssFromConfiguration(convertedMinorEntry, new ReadOnlyPropertyTable(m_propertyTable)));
 				Assert.That(cssResults, Is.StringContaining(HwBefore));
 				Assert.That(cssResults, Is.StringContaining(HwBetween));
 				Assert.That(cssResults, Is.StringContaining(HwAfter));

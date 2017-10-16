@@ -190,6 +190,7 @@
     </Compile>
     <Compile Include="IFeedbackInfoProvider.cs" />
     <Compile Include="IImageCollection.cs" />
+    <Compile Include="IPropertyRetriever.cs" />
     <Compile Include="MessageSequencer.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -218,6 +219,7 @@
     <Compile Include="PersistenceProvider.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="ReadOnlyPropertyTable.cs" />
     <Compile Include="RecordFilterListProvider.cs">
       <SubType>Code</SubType>
     </Compile>

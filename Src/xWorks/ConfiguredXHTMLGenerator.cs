@@ -103,14 +103,15 @@ namespace SIL.FieldWorks.XWorks
 			using (var writer = XmlWriter.Create(stringBuilder))
 			using (var cssWriter = new StreamWriter(previewCssPath, false, Encoding.UTF8))
 			{
-				var exportSettings = new GeneratorSettings(propertyTable.GetValue<LcmCache>("cache"), propertyTable, false, false, null,
-					IsNormalRtl(propertyTable));
+				var readOnlyPropTable = new ReadOnlyPropertyTable(propertyTable);
+				var exportSettings = new GeneratorSettings(readOnlyPropTable.GetValue<LcmCache>("cache"), readOnlyPropTable, false, false, null,
+					IsNormalRtl(readOnlyPropTable));
 				GenerateOpeningHtml(previewCssPath, custCssPath, exportSettings, writer);
 				var content = GenerateXHTMLForEntry(entry, configuration, pubDecorator, exportSettings);
 				writer.WriteRaw(content);
 				GenerateClosingHtml(writer);
 				writer.Flush();
-				cssWriter.Write(CssGenerator.GenerateCssFromConfiguration(configuration, propertyTable));
+				cssWriter.Write(CssGenerator.GenerateCssFromConfiguration(configuration, readOnlyPropTable));
 				cssWriter.Flush();
 			}
 
@@ -242,7 +243,7 @@ namespace SIL.FieldWorks.XWorks
 				|| clerk.SortName.StartsWith("Form") || clerk.SortName.StartsWith("Reversal Form");
 		}
 
-		private static bool IsNormalRtl(PropertyTable propertyTable)
+		private static bool IsNormalRtl(ReadOnlyPropertyTable propertyTable)
 		{
 			// Right-to-Left for the overall layout is determined by Dictionary-Normal
 			var dictionaryNormalStyle = new ExportStyleInfo(FontHeightAdjuster.StyleSheetFromPropertyTable(propertyTable).Styles["Dictionary-Normal"]);
@@ -266,6 +267,7 @@ namespace SIL.FieldWorks.XWorks
 			using (var xhtmlWriter = XmlWriter.Create(xhtmlPath))
 			using (var cssWriter = new StreamWriter(cssPath, false, Encoding.UTF8))
 			{
+				var readOnlyPropertyTable = new ReadOnlyPropertyTable(propertyTable);
 				var custCssPath = string.Empty;
 				var projType = string.IsNullOrEmpty(configDir) ? null : new DirectoryInfo(configDir).Name;
 				if (!string.IsNullOrEmpty(projType))
@@ -273,7 +275,7 @@ namespace SIL.FieldWorks.XWorks
 					var cssName = projType == "Dictionary" ? "ProjectDictionaryOverrides.css" : "ProjectReversalOverrides.css";
 					custCssPath = CopyCustomCssToTempFolder(configDir, xhtmlPath, cssName);
 				}
-				var settings = new GeneratorSettings(cache, propertyTable, true, true, Path.GetDirectoryName(xhtmlPath), IsNormalRtl(propertyTable), Path.GetFileName(cssPath) == "configured.css");
+				var settings = new GeneratorSettings(cache, readOnlyPropertyTable, true, true, Path.GetDirectoryName(xhtmlPath), IsNormalRtl(readOnlyPropertyTable), Path.GetFileName(cssPath) == "configured.css");
 				GenerateOpeningHtml(cssPath, custCssPath, settings, xhtmlWriter);
 				Tuple<int, int> currentPageBounds = GetPageForCurrentEntry(settings, entryHvos, entriesPerPage);
 				GenerateTopOfPageButtonsIfNeeded(settings, entryHvos, entriesPerPage, currentPageBounds, xhtmlWriter, cssWriter);
@@ -323,7 +325,7 @@ namespace SIL.FieldWorks.XWorks
 					cssWriter.Write(CssGenerator.GenerateCssForSelectedEntry(settings.RightToLeft));
 					CopyFileSafely(settings, Path.Combine(FwDirectoryFinder.FlexFolder, ImagesFolder, CurrentEntryMarker), CurrentEntryMarker);
 				}
-				cssWriter.Write(CssGenerator.GenerateCssFromConfiguration(configuration, propertyTable));
+				cssWriter.Write(CssGenerator.GenerateCssFromConfiguration(configuration, readOnlyPropertyTable));
 				cssWriter.Flush();
 			}
 		}
@@ -3162,13 +3164,20 @@ namespace SIL.FieldWorks.XWorks
 		public class GeneratorSettings
 		{
 			public LcmCache Cache { get; private set; }
-			public PropertyTable PropertyTable { get; private set; }
+			public ReadOnlyPropertyTable PropertyTable { get; private set; }
 			public bool UseRelativePaths { get; private set; }
 			public bool CopyFiles { get; private set; }
 			public string ExportPath { get; private set; }
 			public bool RightToLeft { get; private set; }
 			public bool IsWebExport { get; private set; }
-			public GeneratorSettings(LcmCache cache, PropertyTable propertyTable, bool relativePaths, bool copyFiles, string exportPath, bool rightToLeft = false, bool isWebExport = false)
+
+			public GeneratorSettings(LcmCache cache, PropertyTable propertyTable, bool relativePaths,bool copyFiles, string exportPath, bool rightToLeft = false, bool isWebExport = false)
+				: this(cache, propertyTable == null ? null : new ReadOnlyPropertyTable(propertyTable), relativePaths, copyFiles, exportPath, rightToLeft, isWebExport)
+			{
+			}
+
+
+			public GeneratorSettings(LcmCache cache, ReadOnlyPropertyTable propertyTable, bool relativePaths, bool copyFiles, string exportPath, bool rightToLeft = false, bool isWebExport = false)
 			{
 				if (cache == null || propertyTable == null)
 				{

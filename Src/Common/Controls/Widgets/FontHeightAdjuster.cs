@@ -291,7 +291,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// </summary>
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
-		public static LcmStyleSheet StyleSheetFromPropertyTable(PropertyTable propertyTable)
+		public static LcmStyleSheet StyleSheetFromPropertyTable(IPropertyRetriever propertyTable)
 		{
 			Form mainWindow = propertyTable.GetValue<Form>("window");
 			PropertyInfo pi = null;

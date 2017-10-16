@@ -35,7 +35,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private ConfiguredXHTMLGenerator.GeneratorSettings DefaultSettings
 		{
-			get { return new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null); }
+			get { return new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, new ReadOnlyPropertyTable(m_propertyTable), false, false, null); }
 		}
 
 		[TestFixtureSetUp]

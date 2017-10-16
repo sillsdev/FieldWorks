@@ -30,7 +30,7 @@ namespace SIL.FieldWorks.XWorks
 {
 	public class CssGeneratorTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
-		private PropertyTable m_propertyTable;
+		private ReadOnlyPropertyTable m_propertyTable;
 		private LcmStyleSheet m_styleSheet;
 		private MockFwXApp m_application;
 		private string m_configFilePath;
@@ -63,7 +63,7 @@ namespace SIL.FieldWorks.XWorks
 			m_configFilePath = Path.Combine(FwDirectoryFinder.CodeDirectory, m_application.DefaultConfigurationPathname);
 			m_window = new MockFwXWindow(m_application, m_configFilePath);
 			m_window.Init(Cache); // initializes Mediator values
-			m_propertyTable = m_window.PropTable;
+			m_propertyTable = new ReadOnlyPropertyTable(m_window.PropTable);
 			m_window.LoadUI(m_configFilePath); // actually loads UI here; needed for non-null stylesheet
 
 			m_styleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
@@ -74,7 +74,7 @@ namespace SIL.FieldWorks.XWorks
 		protected void TearDown()
 		{
 			m_application.Dispose();
-			m_propertyTable.Dispose();
+			m_window.PropTable.Dispose();
 			FwRegistrySettings.Release();
 		}
 
