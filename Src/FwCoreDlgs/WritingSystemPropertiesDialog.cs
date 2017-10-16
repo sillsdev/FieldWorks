@@ -1517,6 +1517,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			if (!IetfLanguageTag.TryGetSubtags(selectedLanguageTag, out languageSubtag, out scriptSubtag, out regionSubtag, out variantSubtags))
 				return;
 			languageSubtag = new LanguageSubtag(languageSubtag, desiredLanguageName);
+			if (!CheckChangingWSForSRProject(languageSubtag))
+				return;
 			foreach (CoreWritingSystemDefinition ws in m_listBoxRelatedWSs.Items)
 			{
 				ws.Language = languageSubtag;
@@ -2084,13 +2086,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 				if (origWS == null || tempWS.LanguageTag != origWS.LanguageTag)
 				{
-					// Users must acknowledge the send and receive steps to avoid data loss on modifying the WS.
-					bool hasFlexOrLiftRepo = FLExBridgeHelper.DoesProjectHaveFlexRepo(m_cache.ProjectId) || FLExBridgeHelper.DoesProjectHaveLiftRepo(m_cache.ProjectId);
-					if (origWS != null && hasFlexOrLiftRepo)
-					{
-						if (!AcceptWSChangeWarning())
-							return false;
-					}
 					// We can't let anyone change the user writing system (or "English"). Too many strings depend on
 					// this, and we'd get numerous crashes and terrible behavior if it was changed.
 					if (origWS != null && (origWS == m_wsManager.UserWritingSystem || origWS.LanguageTag == "en"))
@@ -2109,6 +2104,34 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				}
 			}
 
+			return true;
+		}
+
+		/// <summary>
+		/// Check if the writing system is being changed and prompt the user with instructions to successfully perform the change
+		/// </summary>
+		/// <param name="newLangTag">The language tag of the original WritingSystem.</param>
+		/// <returns></returns>
+		private bool CheckChangingWSForSRProject(LanguageSubtag newLangTag)
+		{
+			bool hasFlexOrLiftRepo = FLExBridgeHelper.DoesProjectHaveFlexRepo(m_cache.ProjectId) || FLExBridgeHelper.DoesProjectHaveLiftRepo(m_cache.ProjectId);
+
+			if (hasFlexOrLiftRepo)
+			{
+				foreach (CoreWritingSystemDefinition tempWS in m_listBoxRelatedWSs.Items)
+				{
+					// deals with the m_tempWritingSystems and m_listBoxRelatedWSs being out of sync (see CheckIeftLanguageTagChange())
+					if (!m_tempWritingSystems.ContainsKey(tempWS) || m_tempWritingSystems[tempWS] == null)
+						continue;
+					if (newLangTag.Name != m_tempWritingSystems[tempWS].Language.Name)
+					{
+						if (AcceptWSChangeWarning(((CoreWritingSystemDefinition)m_listBoxRelatedWSs.Items[0]).Language.Name))
+							return true;
+						break;
+					}
+				}
+				return false;
+			}
 			return true;
 		}
 
@@ -2138,10 +2161,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary>
 		/// Displays the "writing system change warning" message and the necessary S/R steps to avoid data loss.
 		/// </summary>
-		protected virtual bool AcceptWSChangeWarning()
+		protected virtual bool AcceptWSChangeWarning(string wsLanguageName)
 		{
 			string caption = FwCoreDlgs.ksPossibleDataLoss;
-			string msg = string.Format(FwCoreDlgs.ksWSChangeWarning, Environment.NewLine);
+			string msg = string.Format(FwCoreDlgs.ksWSChangeWarning, m_listBoxRelatedWSs.Items.Count, wsLanguageName, Environment.NewLine);
 			return MessageBox.Show(msg, caption, MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation) == DialogResult.OK;
 		}
 
