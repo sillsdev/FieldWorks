@@ -2132,7 +2132,7 @@ namespace ParatextImport
 			// Verify that there is only one footnote remaining in current.
 			Assert.AreEqual(1, m_genesis.FootnotesOS.Count);
 
-			// verify the diffs existance
+			// verify the diffs existence
 			Assert.AreEqual(01001001, diff.RefStart);
 			Assert.AreEqual(01001001, diff.RefEnd);
 			Assert.AreEqual(DifferenceType.TextDifference, diff.DiffType);

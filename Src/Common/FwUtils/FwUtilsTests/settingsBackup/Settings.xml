@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ArrayOfProperty xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Property>
+	<name>BooleanPropertyA</name>
+	<value xsi:type="xsd:boolean">false</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>BooleanPropertyB</name>
+	<value xsi:type="xsd:boolean">true</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>BestBooleanPropertyA</name>
+	<value xsi:type="xsd:boolean">true</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>IntegerPropertyA</name>
+	<value xsi:type="xsd:int">253</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>IntegerPropertyB</name>
+	<value xsi:type="xsd:int">-2</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>BestIntegerPropertyA</name>
+	<value xsi:type="xsd:int">-101</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>StringPropertyA</name>
+	<value xsi:type="xsd:string">global_StringPropertyA_value</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>StringPropertyB</name>
+	<value xsi:type="xsd:string">global_StringPropertyB_value</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>BestStringPropertyA</name>
+	<value xsi:type="xsd:string">global_BestStringPropertyA_value</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+</ArrayOfProperty>

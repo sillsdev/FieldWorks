@@ -35,7 +35,7 @@ namespace LanguageExplorerTests.Works
 
 		private ConfiguredXHTMLGenerator.GeneratorSettings DefaultSettings
 		{
-			get { return new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null); }
+			get { return new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, new ReadOnlyPropertyTable(m_propertyTable), false, false, null); }
 		}
 
 		[TestFixtureSetUp]
@@ -71,7 +71,7 @@ namespace LanguageExplorerTests.Works
 			XHTMLStringBuilder = new StringBuilder();
 		}
 
-		#region disposal
+	#region disposal
 		protected virtual void Dispose(bool disposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
@@ -98,7 +98,7 @@ namespace LanguageExplorerTests.Works
 			// from executing a second time.
 			GC.SuppressFinalize(this);
 		}
-		#endregion disposal
+	#endregion disposal
 
 		[Test]
 		public void GenerateXHTMLForEntry_LexemeFormConfigurationGeneratesCorrectResult()
@@ -122,7 +122,7 @@ namespace LanguageExplorerTests.Works
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(frenchLexForm, 1);
 		}
 
-		#region PrimareyEntryReferenceTests
+	#region PrimareyEntryReferenceTests
 		// Xpath used by PrimaryEntryReference tests
 		private const string referringSenseXpath = "/div[@class='reversalindexentry']/span[@class='referringsenses']/span[@class='sensecontent']/span[@class='referringsense']";
 		private const string entryRefsXpath = referringSenseXpath + "/span[@class='mainentryrefs']";
@@ -310,7 +310,7 @@ namespace LanguageExplorerTests.Works
 			CssGeneratorTests.PopulateFieldsForTesting(mainRevEntryNode);
 			return mainRevEntryNode;
 		}
-		#endregion PrimareyEntryReferenceTests
+	#endregion PrimareyEntryReferenceTests
 
 		[Test]
 		public void GenerateLetterHeaderIfNeeded_GeneratesHeaderIfNoPreviousHeader()

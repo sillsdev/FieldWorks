@@ -1561,7 +1561,7 @@ namespace LanguageExplorerTests.Works.DictionaryConfigurationMigrators
 
 		}
 
-		#region Minor Entry Componenents Referenced Entries Tests
+	#region Minor Entry Componenents Referenced Entries Tests
 		private const string HwBefore = "H.before";
 		private const string GlsBefore = "G.before";
 		private const string HwAfter = "H.after";
@@ -1695,7 +1695,7 @@ namespace LanguageExplorerTests.Works.DictionaryConfigurationMigrators
 
 				m_migrator.CopyNewDefaultsIntoConvertedModel(convertedMinorEntry, defaultMinorEntry);
 				string cssResults = null;
-				Assert.DoesNotThrow(()=>cssResults = CssGenerator.GenerateCssFromConfiguration(convertedMinorEntry, m_propertyTable));
+				Assert.DoesNotThrow(()=>cssResults = CssGenerator.GenerateCssFromConfiguration(convertedMinorEntry, new ReadOnlyPropertyTable(m_propertyTable)));
 				Assert.That(cssResults, Is.StringContaining(HwBefore));
 				Assert.That(cssResults, Is.StringContaining(HwBetween));
 				Assert.That(cssResults, Is.StringContaining(HwAfter));
@@ -1796,7 +1796,7 @@ namespace LanguageExplorerTests.Works.DictionaryConfigurationMigrators
 			}
 		}
 
-		#endregion
+	#endregion
 
 		private static DictionaryConfigurationModel BuildConvertedComplexEntryTypeNodes()
 		{
@@ -2580,7 +2580,7 @@ namespace LanguageExplorerTests.Works.DictionaryConfigurationMigrators
 			Assert.AreEqual("Single Sense", newTypeNode1.Label, "A custom field copies its label properly during conversion");
 		}
 
-		#region Helper
+	#region Helper
 		private void DeleteStyleSheet(string styleName)
 		{
 			var style = m_styleSheet.FindStyle(styleName);
@@ -2599,7 +2599,7 @@ namespace LanguageExplorerTests.Works.DictionaryConfigurationMigrators
 				get { return m_partName; }
 			}
 		}
-		#endregion Helper
+	#endregion Helper
 	}
 #endif
 }

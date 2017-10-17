@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ArrayOfProperty xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+	<Property>
+		<name>db$TestLocal$BooleanPropertyA</name>
+		<value xsi:type="xsd:boolean">true</value>
+		<doPersist>true</doPersist>
+		<doDispose>false</doDispose>
+	</Property>
+	<Property>
+		<name>db$TestLocal$BooleanPropertyB</name>
+		<value xsi:type="xsd:boolean">false</value>
+		<doPersist>true</doPersist>
+		<doDispose>false</doDispose>
+	</Property>
+	<Property>
+		<name>db$TestLocal$BestBooleanPropertyB</name>
+		<value xsi:type="xsd:boolean">false</value>
+		<doPersist>true</doPersist>
+		<doDispose>false</doDispose>
+	</Property>
+	<Property>
+		<name>db$TestLocal$IntegerPropertyA</name>
+		<value xsi:type="xsd:int">333</value>
+		<doPersist>true</doPersist>
+		<doDispose>false</doDispose>
+	</Property>
+	<Property>
+		<name>db$TestLocal$IntegerPropertyB</name>
+		<value xsi:type="xsd:int">-500</value>
+		<doPersist>true</doPersist>
+		<doDispose>false</doDispose>
+	</Property>
+	<Property>
+		<name>db$TestLocal$BestIntegerPropertyB</name>
+		<value xsi:type="xsd:int">-586</value>
+		<doPersist>true</doPersist>
+		<doDispose>false</doDispose>
+	</Property>
+	<Property>
+		<name>db$TestLocal$StringPropertyA</name>
+		<value xsi:type="xsd:string">local_StringPropertyA_value</value>
+		<doPersist>true</doPersist>
+		<doDispose>false</doDispose>
+	</Property>
+	<Property>
+		<name>db$TestLocal$StringPropertyB</name>
+		<value xsi:type="xsd:string">local_StringPropertyB_value</value>
+		<doPersist>true</doPersist>
+		<doDispose>false</doDispose>
+	</Property>
+	<Property>
+		<name>db$TestLocal$BestStringPropertyB</name>
+		<value xsi:type="xsd:string">local_BestStringPropertyB_value</value>
+		<doPersist>true</doPersist>
+		<doDispose>false</doDispose>
+	</Property>
+</ArrayOfProperty>

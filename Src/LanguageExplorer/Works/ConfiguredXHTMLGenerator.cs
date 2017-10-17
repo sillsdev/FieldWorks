@@ -81,8 +81,7 @@ namespace LanguageExplorer.Works
 		/// Generates self-contained XHTML for a single entry for, eg, the preview panes in Lexicon Edit and the Dictionary Config dialog
 		/// </summary>
 		/// <returns>The HTML as a string</returns>
-		public static string GenerateEntryHtmlWithStyles(ICmObject entry, DictionaryConfigurationModel configuration,
-																		 DictionaryPublicationDecorator pubDecorator, IPropertyTable propertyTable, LcmCache cache)
+		public static string GenerateEntryHtmlWithStyles(ICmObject entry, DictionaryConfigurationModel configuration, DictionaryPublicationDecorator pubDecorator, IPropertyTable propertyTable, LcmCache cache)
 		{
 			if (entry == null)
 			{
@@ -102,14 +101,14 @@ namespace LanguageExplorer.Works
 			using (var writer = XmlWriter.Create(stringBuilder))
 			using (var cssWriter = new StreamWriter(previewCssPath, false, Encoding.UTF8))
 			{
-				var exportSettings = new GeneratorSettings(cache, propertyTable, false, false, null,
-					IsNormalRtl(propertyTable));
+				IReadonlyPropertyTable readOnlyPropTable = new ReadOnlyPropertyTable(propertyTable);
+				var exportSettings = new GeneratorSettings(cache, readOnlyPropTable, false, false, null, IsNormalRtl(readOnlyPropTable));
 				GenerateOpeningHtml(previewCssPath, custCssPath, exportSettings, writer);
 				var content = GenerateXHTMLForEntry(entry, configuration, pubDecorator, exportSettings);
 				writer.WriteRaw(content);
 				GenerateClosingHtml(writer);
 				writer.Flush();
-				cssWriter.Write(CssGenerator.GenerateCssFromConfiguration(configuration, propertyTable, cache));
+				cssWriter.Write(CssGenerator.GenerateCssFromConfiguration(configuration, readOnlyPropTable, cache));
 				cssWriter.Flush();
 			}
 
@@ -243,10 +242,10 @@ namespace LanguageExplorer.Works
 				|| clerk.SortName.StartsWith("Form") || clerk.SortName.StartsWith("Reversal Form");
 		}
 
-		private static bool IsNormalRtl(IPropertyTable propertyTable)
+		private static bool IsNormalRtl(IReadonlyPropertyTable readOnlyPropertyTable)
 		{
 			// Right-to-Left for the overall layout is determined by Dictionary-Normal
-			var dictionaryNormalStyle = new ExportStyleInfo(FontHeightAdjuster.StyleSheetFromPropertyTable(propertyTable).Styles["Dictionary-Normal"]);
+			var dictionaryNormalStyle = new ExportStyleInfo(FontHeightAdjuster.StyleSheetFromPropertyTable(readOnlyPropertyTable).Styles["Dictionary-Normal"]);
 			return dictionaryNormalStyle.DirectionIsRightToLeft == TriStateBool.triTrue; // default is LTR
 		}
 
@@ -268,6 +267,7 @@ namespace LanguageExplorer.Works
 			using (var xhtmlWriter = XmlWriter.Create(xhtmlPath))
 			using (var cssWriter = new StreamWriter(cssPath, false, Encoding.UTF8))
 			{
+				IReadonlyPropertyTable readOnlyPropertyTable = new ReadOnlyPropertyTable(propertyTable);
 				var custCssPath = string.Empty;
 				var projType = string.IsNullOrEmpty(configDir) ? null : new DirectoryInfo(configDir).Name;
 				if (!string.IsNullOrEmpty(projType))
@@ -275,7 +275,7 @@ namespace LanguageExplorer.Works
 					var cssName = projType == "Dictionary" ? "ProjectDictionaryOverrides.css" : "ProjectReversalOverrides.css";
 					custCssPath = CopyCustomCssToTempFolder(configDir, xhtmlPath, cssName);
 				}
-				var settings = new GeneratorSettings(cache, propertyTable, true, true, Path.GetDirectoryName(xhtmlPath), IsNormalRtl(propertyTable), Path.GetFileName(cssPath) == "configured.css");
+				var settings = new GeneratorSettings(cache, readOnlyPropertyTable, true, true, Path.GetDirectoryName(xhtmlPath), IsNormalRtl(readOnlyPropertyTable), Path.GetFileName(cssPath) == "configured.css");
 				GenerateOpeningHtml(cssPath, custCssPath, settings, xhtmlWriter);
 				Tuple<int, int> currentPageBounds = GetPageForCurrentEntry(settings, entryHvos, entriesPerPage, activeClerk);
 				GenerateTopOfPageButtonsIfNeeded(settings, entryHvos, entriesPerPage, currentPageBounds, xhtmlWriter, cssWriter);
@@ -325,7 +325,7 @@ namespace LanguageExplorer.Works
 					cssWriter.Write(CssGenerator.GenerateCssForSelectedEntry(settings.RightToLeft));
 					CopyFileSafely(settings, Path.Combine(FwDirectoryFinder.FlexFolder, ImagesFolder, CurrentEntryMarker), CurrentEntryMarker);
 				}
-				cssWriter.Write(CssGenerator.GenerateCssFromConfiguration(configuration, propertyTable, cache));
+				cssWriter.Write(CssGenerator.GenerateCssFromConfiguration(configuration, readOnlyPropertyTable, cache));
 				cssWriter.Flush();
 			}
 		}
@@ -1294,7 +1294,7 @@ namespace LanguageExplorer.Works
 			FileUtils.EnsureDirectoryExists(Path.GetDirectoryName(destination));
 			// If an audio file is referenced by multiple entries they could end up in separate threads.
 			// Locking on the PropertyTable seems safe since it will be the same PropertyTable for each thread.
-			lock (settings.PropertyTable)
+			lock (settings.ReadOnlyPropertyTable)
 			{
 				if (!File.Exists(destination))
 				{
@@ -3000,8 +3000,7 @@ namespace LanguageExplorer.Works
 			}
 			if (!String.IsNullOrEmpty(style))
 			{
-				var cssStyle = CssGenerator.GenerateCssStyleFromLcmStyleSheet(style,
-					settings.Cache.WritingSystemFactory.GetWsFromStr(writingSystem), settings.PropertyTable);
+				var cssStyle = CssGenerator.GenerateCssStyleFromLcmStyleSheet(style, settings.Cache.WritingSystemFactory.GetWsFromStr(writingSystem), settings.ReadOnlyPropertyTable);
 				var css = cssStyle.ToString();
 				if (!String.IsNullOrEmpty(css))
 					writer.WriteAttributeString("style", css);
@@ -3161,20 +3160,25 @@ namespace LanguageExplorer.Works
 		public class GeneratorSettings
 		{
 			public LcmCache Cache { get; private set; }
-			public IPropertyTable PropertyTable { get; private set; }
+			public IReadonlyPropertyTable ReadOnlyPropertyTable { get; private set; }
 			public bool UseRelativePaths { get; private set; }
 			public bool CopyFiles { get; private set; }
 			public string ExportPath { get; private set; }
 			public bool RightToLeft { get; private set; }
 			public bool IsWebExport { get; private set; }
+
 			public GeneratorSettings(LcmCache cache, IPropertyTable propertyTable, bool relativePaths, bool copyFiles, string exportPath, bool rightToLeft = false, bool isWebExport = false)
+						: this(cache, propertyTable == null ? null : new ReadOnlyPropertyTable(propertyTable), relativePaths, copyFiles, exportPath, rightToLeft, isWebExport)
 			{
-				if (cache == null || propertyTable == null)
+			}
+			public GeneratorSettings(LcmCache cache, IReadonlyPropertyTable readOnlyPropertyTable, bool relativePaths, bool copyFiles, string exportPath, bool rightToLeft = false, bool isWebExport = false)
+			{
+				if (cache == null || readOnlyPropertyTable == null)
 				{
 					throw new ArgumentNullException();
 				}
 				Cache = cache;
-				PropertyTable = propertyTable;
+				ReadOnlyPropertyTable = readOnlyPropertyTable;
 				UseRelativePaths = relativePaths;
 				CopyFiles = copyFiles;
 				ExportPath = exportPath;

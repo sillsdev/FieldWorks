@@ -200,6 +200,7 @@
     <Compile Include="InterfacesTests.cs" />
     <Compile Include="DisposableObjectsSetTests.cs" />
     <Compile Include="IVwCacheDaTests.cs" />
+    <Compile Include="PropertyTableTests.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -269,6 +270,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="food\veggiesIncludeWithSubInclude.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="settingsBackup\db_TestLocal_Settings.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="settingsBackup\Settings.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

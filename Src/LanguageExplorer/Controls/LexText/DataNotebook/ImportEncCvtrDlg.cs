@@ -47,10 +47,9 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 			base.OnShown(e);
 		}
 
-		public void Initialize(string wsName, string encConverter, IHelpTopicProvider helpTopicProvider,
-			IApp app)
+		public void Initialize(string wsName, string encConverter, IHelpTopicProvider helpTopicProvider, IApp app)
 		{
-			m_lblDescription.Text = String.Format(m_sDescriptionFmt, wsName);
+			m_lblDescription.Text = string.Format(m_sDescriptionFmt, wsName);
 			m_sEncConverter = encConverter;
 			m_helpTopicProvider = helpTopicProvider;
 			m_app = app;

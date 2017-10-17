@@ -87,6 +87,28 @@ namespace SIL.FieldWorks.Common.FwUtils.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
+        ///&lt;ArrayOfProperty xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema&quot;&gt;
+        ///	&lt;Property&gt;
+        ///		&lt;name&gt;db$TestLocal$BooleanPropertyA&lt;/name&gt;
+        ///		&lt;value xsi:type=&quot;xsd:boolean&quot;&gt;true&lt;/value&gt;
+        ///		&lt;doPersist&gt;true&lt;/doPersist&gt;
+        ///		&lt;doDispose&gt;false&lt;/doDispose&gt;
+        ///	&lt;/Property&gt;
+        ///	&lt;Property&gt;
+        ///		&lt;name&gt;db$TestLocal$BooleanPropertyB&lt;/name&gt;
+        ///		&lt;value xsi:type=&quot;xsd:boolean&quot;&gt;false&lt;/value&gt;
+        ///		&lt;doPersist&gt;true&lt;/doPersist&gt;
+        ///		&lt;doDispose&gt;false&lt;/doDispose&gt;
+        ///	&lt;/ [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string db_TestLocal_Settings_xml {
+            get {
+                return ResourceManager.GetString("db_TestLocal_Settings_xml", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
         ///&lt;strings inheritPath=&quot;..&quot;&gt;
         ///  &lt;string id=&quot;orange&quot; txt=&quot;orng&quot;/&gt;
@@ -229,6 +251,30 @@ namespace SIL.FieldWorks.Common.FwUtils.Properties {
         internal static string InventoryLaterTestFiles__Override1Layouts_xml {
             get {
                 return ResourceManager.GetString("InventoryLaterTestFiles__Override1Layouts_xml", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
+        ///&lt;ArrayOfProperty xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema&quot;&gt;
+        ///  &lt;Property&gt;
+        ///	&lt;name&gt;BooleanPropertyA&lt;/name&gt;
+        ///	&lt;value xsi:type=&quot;xsd:boolean&quot;&gt;false&lt;/value&gt;
+        ///	&lt;doPersist&gt;true&lt;/doPersist&gt;
+        ///	&lt;doDispose&gt;false&lt;/doDispose&gt;
+        ///  &lt;/Property&gt;
+        ///  &lt;Property&gt;
+        ///	&lt;name&gt;BooleanPropertyB&lt;/name&gt;
+        ///	&lt;value xsi:type=&quot;xsd:boolean&quot;&gt;true&lt;/value&gt;
+        ///	&lt;doPersist&gt;true&lt;/doPersist&gt;
+        ///	&lt;doDispose&gt;false&lt;/doDispose&gt;
+        ///  &lt;/Property&gt;
+        ///  &lt;Property&gt;
+        ///	&lt;nam [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string Settings_xml {
+            get {
+                return ResourceManager.GetString("Settings_xml", resourceCulture);
             }
         }
     }

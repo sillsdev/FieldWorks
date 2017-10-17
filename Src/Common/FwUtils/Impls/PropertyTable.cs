@@ -3,24 +3,16 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Security;
 using System.Windows.Forms;
 using System.Xml.Serialization;
 using System.IO;
-using System.Threading;		// for Monitor (dlh)
 
 namespace SIL.FieldWorks.Common.FwUtils.Impls
 {
-#if RANDYTODO
-	// TODO: The dictionary world has tried to make this class work in a multi-threaded environment.
-	// TODO: But, I (RBR) am not sure that is a good idea, since this class can publish messages that would expect to
-	// TODO: be run on the main UI thread.
-	// TODO: Option 1: Feed all expected stuff from the PropertyTable into the threaded context, but not the table itself.
-	// TODO:	This could be a Dictionary<string, object> parameter, and the client would need to cast the value to the expected type.
-	// TODO: Option 2: Create a read only clone of the table to feed to the other threads.
-#endif
 	/// <summary>
 	/// Table of properties, some of which are persisted, and some that are not.
 	/// </summary>
@@ -29,7 +21,7 @@ namespace SIL.FieldWorks.Common.FwUtils.Impls
 	{
 		private IPublisher Publisher { get; set; }
 
-		private Dictionary<string, Property> m_properties;
+		private ConcurrentDictionary<string, Property> m_properties;
 		/// <summary>
 		/// Control how much output we send to the application's listeners (e.g. visual studio output window)
 		/// </summary>
@@ -44,7 +36,7 @@ namespace SIL.FieldWorks.Common.FwUtils.Impls
 		/// -----------------------------------------------------------------------------------
 		internal PropertyTable(IPublisher publisher)
 		{
-			m_properties = new Dictionary<string, Property>(100);
+			m_properties = new ConcurrentDictionary<string, Property>();
 			Publisher = publisher;
 		}
 
@@ -169,9 +161,8 @@ namespace SIL.FieldWorks.Common.FwUtils.Impls
 
 			var key = GetPropertyKeyFromSettingsGroup(name, settingsGroup);
 			Property goner;
-			if (m_properties.TryGetValue(key, out goner))
+			if (m_properties.TryRemove(key, out goner))
 			{
-				m_properties.Remove(key);
 				goner.value = null;
 			}
 		}
@@ -202,12 +193,12 @@ namespace SIL.FieldWorks.Common.FwUtils.Impls
 		private string GetPropertyKeyFromSettingsGroup(string name, SettingsGroup settingsGroup)
 		{
 			switch (settingsGroup)
-		{
+			{
 				default:
 					throw new NotImplementedException($"{settingsGroup} is not yet supported. Developers need to add support for it.");
 				case SettingsGroup.BestSettings:
-			{
-				var key = FormatPropertyNameForLocalSettings(name);
+				{
+					var key = FormatPropertyNameForLocalSettings(name);
 					return GetProperty(key) != null ?
 						key // local exists. We don't care if global exists, or not, since we prefer local over global.
 						: name; // Whether a global property exists, or not, go with the global internal property name.
@@ -285,17 +276,8 @@ namespace SIL.FieldWorks.Common.FwUtils.Impls
 
 		private Property GetProperty(string key)
 		{
-			if (!Monitor.TryEnter(m_properties))
-			{
-				FwUtils.ErrorBeep();
-				TraceVerboseLine(">>>>>>>*****  colision: <A>  ********<<<<<<<<<<<");
-				Monitor.Enter(m_properties);
-			}
-
 			Property result;
 			m_properties.TryGetValue(key, out result);
-
-			Monitor.Exit(m_properties);
 
 			return result;
 		}
@@ -362,12 +344,6 @@ namespace SIL.FieldWorks.Common.FwUtils.Impls
 		/// <exception cref="ArgumentException">Thrown if the property value is not type "T".</exception>
 		private T GetValueInternal<T>(string key)
 		{
-			if (!Monitor.TryEnter(m_properties))
-			{
-				FwUtils.ErrorBeep();
-				TraceVerboseLine(">>>>>>>*****  colision: <A>  ********<<<<<<<<<<<");
-				Monitor.Enter(m_properties);
-			}
 			var result = default(T);
 			Property prop;
 			if (m_properties.TryGetValue(key, out prop))
@@ -386,7 +362,6 @@ namespace SIL.FieldWorks.Common.FwUtils.Impls
 					throw new ArgumentException("Mismatched data type.");
 				}
 			}
-			Monitor.Exit(m_properties);
 
 			return result;
 		}
@@ -461,17 +436,10 @@ namespace SIL.FieldWorks.Common.FwUtils.Impls
 		/// </param>
 		private void SetDefaultInternal(string key, object defaultValue, bool persistProperty, bool doBroadcastIfChanged)
 		{
-			if(!Monitor.TryEnter(m_properties))
-			{
-				TraceVerboseLine(">>>>>>>*****  colision: <c>  ********<<<<<<<<<<<");
-				Monitor.Enter(m_properties);
-			}
 			if (!m_properties.ContainsKey(key))
 			{
 				SetPropertyInternal(key, defaultValue, persistProperty, doBroadcastIfChanged);
 			}
-
-			Monitor.Exit(m_properties);
 		}
 
 		/// <summary>
@@ -526,11 +494,6 @@ namespace SIL.FieldWorks.Common.FwUtils.Impls
 			CheckDisposed();
 
 			var didChange = true;
-			if (!Monitor.TryEnter(m_properties))
-			{
-				TraceVerboseLine(">>>>>>>*****  collision: <d>  ********<<<<<<<<<<<");
-				Monitor.Enter(m_properties);
-			}
 			if (m_properties.ContainsKey(key))
 			{
 				var property = m_properties[key];
@@ -567,15 +530,6 @@ namespace SIL.FieldWorks.Common.FwUtils.Impls
 				var propertyName = key.StartsWith(localSettingsPrefix) ? key.Remove(0, localSettingsPrefix.Length) : key;
 				Publisher.Publish(propertyName, newValue);
 			}
-
-			Monitor.Exit(m_properties);
-
-#if SHOWTRACE
-			if (newValue != null)
-			{
-				TraceVerboseLine("Property '"+key+"' --> '"+newValue.ToString()+"'");
-			}
-#endif
 		}
 
 		/// <summary>
@@ -604,26 +558,10 @@ namespace SIL.FieldWorks.Common.FwUtils.Impls
 
 		private void SetPropertyDisposeInternal(string key, bool doDispose)
 		{
-			if(!Monitor.TryEnter(m_properties))
-			{
-				TraceVerboseLine(">>>>>>>*****  colision: <e>  ********<<<<<<<<<<<");
-				Monitor.Enter(m_properties);
-			}
-			try
-			{
-				Property property = m_properties[key];
-				// Don't need an assert,
-				// since the Dictionary will throw an exception,
-				// if the key is missing.
-				//Debug.Assert(property != null);
-				if (!(property.value is IDisposable))
-					throw new ArgumentException(String.Format("The property named: {0} is not valid for disposing.", key));
-				property.doDispose = doDispose;
-			}
-			finally
-			{
-				Monitor.Exit(m_properties);
-			}
+			var property = m_properties[key];
+			if (!(property.value is IDisposable))
+				throw new ArgumentException($"The property named: {key} is not valid for disposing.");
+			property.doDispose = doDispose;
 		}
 		#endregion
 
@@ -662,8 +600,8 @@ namespace SIL.FieldWorks.Common.FwUtils.Impls
 			CheckDisposed();
 			try
 			{
-				XmlSerializer szr = new XmlSerializer(typeof (Property[]));
-				string path = SettingsPath(settingsId);
+				var szr = new XmlSerializer(typeof (Property[]));
+				var path = SettingsPath(settingsId);
 				Directory.CreateDirectory(Path.GetDirectoryName(path)); // Just in case it does not exist.
 				using (var writer = new StreamWriter(path))
 				{
@@ -688,7 +626,7 @@ namespace SIL.FieldWorks.Common.FwUtils.Impls
 
 		private string GetPathPrefixForSettingsId(string settingsId)
 		{
-			if (String.IsNullOrEmpty(settingsId))
+			if (string.IsNullOrEmpty(settingsId))
 				return string.Empty;
 
 			return FormatPropertyNameForLocalSettings(string.Empty, settingsId);
@@ -702,7 +640,7 @@ namespace SIL.FieldWorks.Common.FwUtils.Impls
 		private string SettingsPath(string settingsId)
 		{
 			CheckDisposed();
-			string pathPrefix = GetPathPrefixForSettingsId(settingsId);
+			var pathPrefix = GetPathPrefixForSettingsId(settingsId);
 			return Path.Combine(UserSettingDirectory, pathPrefix + "Settings.xml");
 		}
 
@@ -719,7 +657,7 @@ namespace SIL.FieldWorks.Common.FwUtils.Impls
 
 		private string FormatPropertyNameForLocalSettings(string name, string settingsId)
 		{
-			return String.Format(LocalSettingsPropertyFormat, settingsId, name);
+			return string.Format(LocalSettingsPropertyFormat, settingsId, name);
 		}
 
 		private string FormatPropertyNameForLocalSettings(string name)
@@ -797,10 +735,10 @@ namespace SIL.FieldWorks.Common.FwUtils.Impls
 
 			try
 			{
-				XmlSerializer szr = new XmlSerializer(typeof(Property[]));
+				var szr = new XmlSerializer(typeof(Property[]));
 				using (var reader = new StreamReader(path))
 				{
-					Property[] list = (Property[])szr.Deserialize(reader);
+					var list = (Property[])szr.Deserialize(reader);
 					ReadPropertyArrayForDeserializing(list);
 				}
 			}
@@ -832,37 +770,26 @@ namespace SIL.FieldWorks.Common.FwUtils.Impls
 				//	null property if there were no other properties.
 				if (property != null)
 				{
-					if(!Monitor.TryEnter(m_properties))
-					{
-						TraceVerboseLine(">>>>>>>*****  colision: <g>  ********<<<<<<<<<<<");
-						Monitor.Enter(m_properties);
-					}
-
 					// REVIEW JohnH(RandyR): I added the Remove call,
 					// because one of the properties was already there, and 'Add' throws an exception,
 					// if it is there.
-					//ANSWER (JH): But how could a duplicate get in there?
+					// ANSWER (JH): But how could a duplicate get in there?
 					// This is only called once, and no code should ever putting duplicates when saving.
 					// RESPONSE (RR): Beats me how it happened, but I 'found it' via the exception
 					// that was thrown by it already being there.
-					m_properties.Remove(property.name); // In case it is there.
-					m_properties.Add(property.name, property);
-					Monitor.Exit(m_properties);
+					Property goner;
+					m_properties.TryRemove(property.name, out goner); // In case it is there.
+					m_properties[property.name] = property;
 				}
 			}
 		}
 
 		private Property[] MakePropertyArrayForSerializing(string settingsId, string[] omitSettingIds)
 		{
-			if (!Monitor.TryEnter(m_properties))
+			var list = new List<Property>(m_properties.Count);
+			foreach (var kvp in m_properties)
 			{
-				TraceVerboseLine(">>>>>>>*****  colision: <i>  ********<<<<<<<<<<<");
-				Monitor.Enter(m_properties);
-			}
-			List<Property> list = new List<Property>(m_properties.Count);
-			foreach (KeyValuePair<string, Property> kvp in m_properties)
-			{
-				Property property = kvp.Value;
+				var property = kvp.Value;
 				if (!property.doPersist)
 					continue;
 				if (property.value == null)
@@ -882,29 +809,9 @@ namespace SIL.FieldWorks.Common.FwUtils.Impls
 				if (fIncludeThis)
 					list.Add(property);
 			}
-			Monitor.Exit(m_properties);
 
 			return list.ToArray();
 		}
-		#endregion
-
-		#region TraceSwitch methods
-//		private void TraceVerbose(string s)
-//		{
-//			if(m_traceSwitch.TraceVerbose)
-//				Trace.Write(s);
-//		}
-		private void TraceVerboseLine(string s)
-		{
-			if(m_traceSwitch.TraceVerbose)
-				Trace.WriteLine("PTID="+System.Threading.Thread.CurrentThread.GetHashCode()+": "+s);
-		}
-//		private void TraceInfoLine(string s)
-//		{
-//			if(m_traceSwitch.TraceInfo || m_traceSwitch.TraceVerbose)
-//				Trace.WriteLine("PTID="+System.Threading.Thread.CurrentThread.GetHashCode()+": "+s);
-//		}
-
 		#endregion
 	}
 }

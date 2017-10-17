@@ -6,9 +6,9 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
-using System.Reflection;
+using System.Linq;
 using System.Windows.Forms;
-using LanguageExplorer.Controls.XMLViews;
+using LanguageExplorer.Works;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
@@ -44,7 +44,6 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 
 		string m_sContentsGroupFmt;
 		string m_sContentsLabelFmt;
-		//string m_sOptionsGroupFmt;
 
 		internal class DestinationField
 		{
@@ -275,48 +274,28 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 
 		private void m_btnAddCustom_Click(object sender, EventArgs e)
 		{
-			// What we'd like to do is the following bit of code, but we can't due to
-			// circular dependencies that would be introduced.  We could possibly move
-			// the dialog to another assembly/dll, but that would require reworking a
-			// fair number of strings that have been converted to resources.
-			//using (var dlg = new AddCustomFieldDlg(m_mediator, AddCustomFieldDlg.LocationType.Notebook))
-			//    dlg.ShowDialog();
-			System.Type typeFound;
-			MethodInfo mi = XmlViewsUtils.GetStaticMethod("xWorks.dll",
-				"LanguageExplorer.Works.AddCustomFieldDlg",
-				"ShowNotebookCustomFieldDlg",
-				"AnthroFieldMappingDlg.m_btnAddCustom_Click()", out typeFound);
-			if (mi != null)
+			using (var dlg = new AddCustomFieldDlg(m_propertyTable, m_publisher, AddCustomFieldDlg.LocationType.Notebook))
 			{
-				var parameters = new object[2];
-				parameters[0] = m_propertyTable;
-				parameters[1] = m_publisher;
-				mi.Invoke(typeFound,
-					System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public |
-					System.Reflection.BindingFlags.NonPublic, null, parameters, null);
-				// Now, clean up our map of possible field targets and reload the field combo list.
-				List<int> delFields = new List<int>();
-				foreach (int key in m_mapFlidName.Keys)
+				if (dlg.ShowCustomFieldWarning(m_propertyTable.GetValue<Form>("window")))
 				{
-					if (!m_mdc.FieldExists(key))
-						delFields.Add(key);
+					dlg.ShowDialog();
 				}
-				foreach (int flid in delFields)
-					m_mapFlidName.Remove(flid);
-				foreach (int flid in m_mdc.GetFields(RnGenericRecTags.kClassId, false, (int)CellarPropertyTypeFilter.All))
+				// Now, clean up our map of possible field targets and reload the field combo list.
+				var delFields = m_mapFlidName.Keys.Where(key => !m_mdc.FieldExists(key)).ToList();
+				foreach (var flid in delFields)
 				{
-					if (m_mapFlidName.ContainsKey(flid))
-						continue;
-					if (m_mdc.IsCustom(flid))
+					m_mapFlidName.Remove(flid);
+				}
+				foreach (var flid in m_mdc.GetFields(RnGenericRecTags.kClassId, false, (int)CellarPropertyTypeFilter.All))
+				{
+					if (m_mapFlidName.ContainsKey(flid) || !m_mdc.IsCustom(flid))
 					{
-						string name = m_mdc.GetFieldName(flid);
-						m_mapFlidName.Add(flid, name);
+						continue;
 					}
+					var name = m_mdc.GetFieldName(flid);
+					m_mapFlidName.Add(flid, name);
 				}
 				FillInFieldList();
-			}
-			else
-			{
 			}
 		}
 

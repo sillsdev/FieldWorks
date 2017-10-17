@@ -447,7 +447,7 @@ namespace LanguageExplorer.SendReceive
 
 		private string GetLiftPathname()
 		{
-			// Part 2 of the LT-14809 fix is to test for the existance of the lift folder.
+			// Part 2 of the LT-14809 fix is to test for the existence of the lift folder.
 			// FB will delete it if the S/R was cancelled and Flex had just created the lift folder and file.
 			// So don't crash if the folder no longer exists.
 			return Directory.Exists(_liftProjectDir) ? Directory.GetFiles(_liftProjectDir, "*.lift").FirstOrDefault() : null;

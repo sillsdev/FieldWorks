@@ -284,29 +284,14 @@ namespace SIL.FieldWorks.Common.Widgets
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Determine a stylesheet from a IPropertyTable. Currently this is done by looking for the main window
+		/// Determine a stylesheet from an IPropertyRetriever. Currently this is done by looking for the main window
 		/// and seeing whether it has a StyleSheet property that returns one. (We use reflection
 		/// because the relevant classes are in DLLs we can't reference.)
 		/// </summary>
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
-		public static LcmStyleSheet StyleSheetFromPropertyTable(IPropertyTable propertyTable)
+		public static LcmStyleSheet StyleSheetFromPropertyTable(IPropertyRetriever propertyTable)
 		{
-#if RANDYTODO
-			// TODO: Is there any reason for all of this, if we can just get the only one from the property table?
-			Form mainWindow = propertyTable.GetValue<Form>("window");
-			PropertyInfo pi = null;
-			if (mainWindow != null)
-			{
-				string areaChoice = propertyTable.GetValue<string>("areaChoice");
-				if (areaChoice != null && areaChoice.ToLowerInvariant() == "notebook")
-					pi = mainWindow.GetType().GetProperty("AnthroStyleSheet");
-				if (pi == null)
-					pi = mainWindow.GetType().GetProperty("StyleSheet");
-			}
-			if (pi != null)
-				return pi.GetValue(mainWindow, null) as LcmStyleSheet;
-#endif
 			return propertyTable.GetValue<LcmStyleSheet>("LcmStyleSheet");
 		}
 

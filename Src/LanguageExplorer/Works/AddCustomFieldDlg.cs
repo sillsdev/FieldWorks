@@ -80,19 +80,6 @@ namespace LanguageExplorer.Works
 		private ComboBox m_listComboBox;
 		private Label m_listLabel;
 
-		/// <summary>
-		/// Provide access (via reflection) to this dialog for use by the
-		/// Data Notebook standard format importer.
-		/// </summary>
-		public static void ShowNotebookCustomFieldDlg(IPropertyTable propertyTable, IPublisher publisher)
-		{
-			using (var dlg = new AddCustomFieldDlg(propertyTable, publisher, LocationType.Notebook))
-			{
-				if (dlg.ShowCustomFieldWarning(null))
-					dlg.ShowDialog();
-			}
-		}
-
 		public AddCustomFieldDlg(IPropertyTable propertyTable, IPublisher publisher, LocationType locationType)
 		{
 			// create member variables
@@ -166,7 +153,7 @@ namespace LanguageExplorer.Works
 			else
 			//********
 			//I need to handle the situation where there are no custom fields in
-			//existance yet. After discussion with Susanna we decided to open the dialog
+			//existence yet. After discussion with Susanna we decided to open the dialog
 			  //with the CustomFieldName and Description controls disabled.
 			{
 				SetStateNoCustomFields();

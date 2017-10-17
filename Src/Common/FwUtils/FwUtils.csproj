@@ -222,6 +222,7 @@
     <Compile Include="AlphaOutline.cs" />
     <Compile Include="FwApplicationSettings.cs" />
     <Compile Include="FwApplicationSettingsBase.cs" />
+    <Compile Include="IReadonlyPropertyTable.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Benchmark.cs" />
     <Compile Include="CharacterCategorizer.cs" />
@@ -252,6 +253,7 @@
     <Compile Include="IHelpTopicProvider.cs" />
     <Compile Include="InstallationException.cs" />
     <Compile Include="IProjectSpecificSettingsKeyProvider.cs" />
+    <Compile Include="IPropertyRetriever.cs" />
     <Compile Include="IPropertyTable.cs" />
     <Compile Include="IPropertyTableProvider.cs" />
     <Compile Include="IPublisher.cs" />
@@ -278,6 +280,7 @@
     <Compile Include="PubSubSystemFactory.cs" />
     <Compile Include="PunctuationPatterns.cs" />
     <Compile Include="QuotationMarks.cs" />
+    <Compile Include="ReadOnlyPropertyTable.cs" />
     <Compile Include="RecordErrorEventArgs.cs" />
     <Compile Include="RecordFilterListProvider.cs" />
     <Compile Include="ReversalIndexServices.cs" />
