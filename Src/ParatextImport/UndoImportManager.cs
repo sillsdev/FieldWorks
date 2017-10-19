@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using SIL.FieldWorks.Resources;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
@@ -15,38 +14,31 @@ using SIL.LCModel.Core.Scripture;
 
 namespace ParatextImport
 {
-	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// Manages info and stuff for doing import in such a way that it can be undone.
 	/// </summary>
-	/// ----------------------------------------------------------------------------------------
 	public class UndoImportManager
 	{
 		#region Data members
 		// saved version for immediate merge (contains books from original)
 		// saved version into which to put selected imported books.
-		private readonly LcmCache m_cache;
 		private int m_lastBookAddedToImportedBooks;
-		private int m_hMark = 0;
+		private int m_hMark;
 		private readonly IScripture m_scr;
 		private IScrBookAnnotations m_annotations;
-		/// <summary>For each book we import, we indicate whether or not we have imported the
-		/// vernacular</summary>
-		private readonly Dictionary<int, bool> m_importedBooks;
+
 		#endregion
 
 		#region Constructor
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="UndoImportManager"/> class.
 		/// </summary>
 		/// <param name="cache">The cache.</param>
-		/// ------------------------------------------------------------------------------------
 		public UndoImportManager(LcmCache cache)
 		{
-			m_cache = cache;
-			m_scr = m_cache.LanguageProject.TranslatedScriptureOA;
-			m_importedBooks = new Dictionary<int, bool>();
+			Cache = cache;
+			m_scr = Cache.LanguageProject.TranslatedScriptureOA;
+			ImportedBooks = new Dictionary<int, bool>();
 		}
 		#endregion
 
@@ -56,15 +48,14 @@ namespace ParatextImport
 		/// </summary>
 		public void StartImportingFiles()
 		{
-			Debug.Assert(m_cache.DomainDataByFlid.GetActionHandler() != null);
-			Debug.Assert(m_cache.DomainDataByFlid.GetActionHandler().CurrentDepth == 0);
-			m_hMark = m_cache.DomainDataByFlid.GetActionHandler().Mark();
-			var actionHandler = m_cache.ActionHandlerAccessor;
+			Debug.Assert(Cache.DomainDataByFlid.GetActionHandler() != null);
+			Debug.Assert(Cache.DomainDataByFlid.GetActionHandler().CurrentDepth == 0);
+			m_hMark = Cache.DomainDataByFlid.GetActionHandler().Mark();
+			var actionHandler = Cache.ActionHandlerAccessor;
 			actionHandler.BeginUndoTask("Create saved version", "Create saved version");
 			BackupVersion = GetOrCreateVersion(Properties.Resources.kstidSavedVersionDescriptionOriginal);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Adds the new book (to the saved version...create it if need be) for which the
 		/// vernacular is about to be imported.
@@ -74,7 +65,6 @@ namespace ParatextImport
 		/// if necessary.</param>
 		/// <param name="title">The title of the newly created book.</param>
 		/// <returns>The newly created book (which has been added to the imported version)</returns>
-		/// ------------------------------------------------------------------------------------
 		public IScrBook AddNewBook(int nCanonicalBookNumber, string description, out IStText title)
 		{
 			if (ImportedVersion == null)
@@ -97,11 +87,10 @@ namespace ParatextImport
 				ImportedVersion.BooksOS.Remove(existingBook);
 			}
 
-			var newScrBook = m_cache.ServiceLocator.GetInstance<IScrBookFactory>().Create(ImportedVersion.BooksOS, nCanonicalBookNumber, out title);
+			var newScrBook = Cache.ServiceLocator.GetInstance<IScrBookFactory>().Create(ImportedVersion.BooksOS, nCanonicalBookNumber, out title);
 			return newScrBook;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Called when we are about to import a book but are not importing the main translation.
 		/// </summary>
@@ -111,11 +100,10 @@ namespace ParatextImport
 		/// <returns>The version of the book in the imported version if available; otherwise
 		/// the current version of the book (in which case a backup will be made first if
 		/// <c>fMakeBackup</c> is <c>true</c>.</returns>
-		/// ------------------------------------------------------------------------------------
 		public IScrBook PrepareBookNotImportingVern(int nCanonicalBookNumber, bool fMakeBackup)
 		{
 			var isvBook = SetCurrentBook(nCanonicalBookNumber, false);
-			if (isvBook != null && m_importedBooks.ContainsKey(nCanonicalBookNumber))
+			if (isvBook != null && ImportedBooks.ContainsKey(nCanonicalBookNumber))
 				return isvBook;
 
 			var cvBook = m_scr.FindBook(nCanonicalBookNumber);
@@ -133,7 +121,6 @@ namespace ParatextImport
 			return cvBook;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Creator of this object MUST call this after import is done, whether or not it
 		/// succeeded.
@@ -141,10 +128,9 @@ namespace ParatextImport
 		/// <param name="fRollbackLastSequence"><c>false</c> if import completed normally or was
 		/// stopped by user after importing one or more complete books. <c>true</c> if an error
 		/// occurred during import or user cancelled import in the middle of a book.</param>
-		/// ------------------------------------------------------------------------------------
 		public void DoneImportingFiles(bool fRollbackLastSequence)
 		{
-			if (m_cache.ActionHandlerAccessor.CurrentDepth == 0)
+			if (Cache.ActionHandlerAccessor.CurrentDepth == 0)
 			{
 				Logger.WriteEvent("DoneImportingFiles called when no UOW is in progress");
 				Debug.Fail("DoneImportingFiles called when no UOW is in progress");
@@ -152,33 +138,32 @@ namespace ParatextImport
 			}
 			if (fRollbackLastSequence)
 			{
-				m_cache.ActionHandlerAccessor.Rollback(0);
-				m_importedBooks.Remove(m_lastBookAddedToImportedBooks);
+				Cache.ActionHandlerAccessor.Rollback(0);
+				ImportedBooks.Remove(m_lastBookAddedToImportedBooks);
 			}
 			else
 			{
-				m_cache.ActionHandlerAccessor.EndUndoTask();
+				Cache.ActionHandlerAccessor.EndUndoTask();
 			}
 
-			m_cache.ServiceLocator.WritingSystemManager.Save();
+			Cache.ServiceLocator.WritingSystemManager.Save();
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Removes the saved version for backups of any overwritten books if it is empty.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public void RemoveEmptyBackupSavedVersion()
 		{
-			if (BackupVersion != null && BackupVersion.IsValidObject && BackupVersion.BooksOS.Count == 0)
+			if (BackupVersion == null || !BackupVersion.IsValidObject || BackupVersion.BooksOS.Count != 0)
 			{
-				using (var uow = new UndoableUnitOfWorkHelper(m_cache.ActionHandlerAccessor, "Remove saved version"))
-				{
-					m_scr.ArchivedDraftsOC.Remove(BackupVersion);
-					uow.RollBack = false;
-				}
-				BackupVersion = null;
+				return;
 			}
+			using (var uow = new UndoableUnitOfWorkHelper(Cache.ActionHandlerAccessor, "Remove saved version"))
+			{
+				m_scr.ArchivedDraftsOC.Remove(BackupVersion);
+				uow.RollBack = false;
+			}
+			BackupVersion = null;
 		}
 
 		/// <summary>
@@ -193,47 +178,39 @@ namespace ParatextImport
 			if (ImportedVersion != null && ImportedVersion.IsValidObject)
 			{
 				// No need to localize, this should not be seen by the user.
-				UndoableUnitOfWorkHelper.Do("Remove temp version", "Restore temp version", m_cache.ActionHandlerAccessor, () => m_scr.ArchivedDraftsOC.Remove(ImportedVersion));
+				UndoableUnitOfWorkHelper.Do("Remove temp version", "Restore temp version", Cache.ActionHandlerAccessor, () => m_scr.ArchivedDraftsOC.Remove(ImportedVersion));
 				ImportedVersion = null;
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// When really, truly done with all merging etc, collapse all the things we can Undo
 		/// for the import into a single Undo Item.
 		/// </summary>
 		/// <returns>True if some actions were collapsed, false otherwise</returns>
-		/// ------------------------------------------------------------------------------------
 		public bool CollapseAllUndoActions()
 		{
 			var import = Properties.Resources.kstidImport;
 			var undo = string.Format(ResourceHelper.GetResourceString("kstidUndoFrame"), import);
 			var redo = string.Format(ResourceHelper.GetResourceString("kstidRedoFrame"), import);
-			return m_cache.DomainDataByFlid.GetActionHandler().CollapseToMark(m_hMark, undo, redo);
+			return Cache.DomainDataByFlid.GetActionHandler().CollapseToMark(m_hMark, undo, redo);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Undoes the entire import. Presumably there was either nothing in the file, or the
 		/// user canceled during the first book.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public void UndoEntireImport()
 		{
 			if (CollapseAllUndoActions())
 			{
-				m_cache.ActionHandlerAccessor.Undo();
+				Cache.ActionHandlerAccessor.Undo();
 			}
-			m_importedBooks.Clear();
+			ImportedBooks.Clear();
 			ImportedVersion = null;
 			BackupVersion = null;
-
-			// TODO (TE-4711): Undo any changes to the stylesheet and force application windows
-			// to reload their stylesheets.
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Inserts a Scriture annotation for the book currently being imported.
 		/// </summary>
@@ -245,77 +222,47 @@ namespace ParatextImport
 		/// <param name="guidNoteType">The GUID representing the CmAnnotationDefn to use for
 		/// the type</param>
 		/// <returns>The newly created annotation</returns>
-		/// ------------------------------------------------------------------------------------
 		public IScrScriptureNote InsertNote(int bcvStartReference, int bcvEndReference, ICmObject obj, StTxtParaBldr bldr, Guid guidNoteType)
 		{
-			IScrScriptureNote note = m_annotations.InsertImportedNote(bcvStartReference, bcvEndReference, obj, obj, guidNoteType, bldr);
-
-			return note;
+			return m_annotations.InsertImportedNote(bcvStartReference, bcvEndReference, obj, obj, guidNoteType, bldr);
 		}
 		#endregion
 
 		#region Non-private properties
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the cache.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		protected LcmCache Cache => m_cache;
+		protected LcmCache Cache { get; }
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the canonical numbers of the books that were imported.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public Dictionary<int, bool> ImportedBooks => m_importedBooks;
+		public Dictionary<int, bool> ImportedBooks { get; }
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the version we use to back up originals of merged or overwritten books,
 		/// creating a new one if necessary.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public IScrDraft BackupVersion { get; private set; }
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// The saved version into which we are putting new books imported.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public IScrDraft ImportedVersion { get; private set; }
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the sequence of saved versions of Scripture books that will be restored in the
-		/// event of an Undo.
-		/// </summary>
-		/// <remarks>This is implemented to support testing but could be useful for displaying
-		/// somewhere in the UI some day.</remarks>
-		/// <value>An FdoOwningSequence containing the books to restore.</value>
-		/// ------------------------------------------------------------------------------------
-		public ILcmOwningSequence<IScrBook> BooksToRestore => BackupVersion?.BooksOS;
 
 		#endregion
 
 		#region Private methods
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets or creates an imported ScrDraft with the specified description.
 		/// </summary>
 		/// <param name="description">The description of the draft to get.</param>
-		/// ------------------------------------------------------------------------------------
 		private IScrDraft GetOrCreateVersion(string description)
 		{
-			IScrDraft draft = m_cache.ServiceLocator.GetInstance<IScrDraftRepository>().GetDraft(description, ScrDraftType.ImportedVersion);
-			if (draft == null)
-			{
-				draft = m_cache.ServiceLocator.GetInstance<IScrDraftFactory>().Create(description, ScrDraftType.ImportedVersion);
-			}
-
-			return draft;
+			return Cache.ServiceLocator.GetInstance<IScrDraftRepository>().GetDraft(description, ScrDraftType.ImportedVersion) ??
+			            Cache.ServiceLocator.GetInstance<IScrDraftFactory>().Create(description, ScrDraftType.ImportedVersion);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Sets the current book, particularly picking the right set of annotations
 		/// to add new ones to. Also (and more conspicuously) ends the current Undo task
@@ -329,16 +276,17 @@ namespace ParatextImport
 		/// <c>null</c></returns>
 		/// <remarks>If importing annotations and/or BTs without importing the vernacular, the
 		/// importer is responsible for calling this directly.</remarks>
-		/// ------------------------------------------------------------------------------------
 		private IScrBook SetCurrentBook(int nCanonicalBookNumber, bool fVernacular)
 		{
 			if (nCanonicalBookNumber <= 0 || nCanonicalBookNumber > BCVRef.LastBook)
+			{
 				throw new ArgumentOutOfRangeException(nameof(nCanonicalBookNumber), nCanonicalBookNumber, @"Expected a canonical book number.");
+			}
 
-			IActionHandler actionHandler = m_cache.DomainDataByFlid.GetActionHandler();
+			var actionHandler = Cache.DomainDataByFlid.GetActionHandler();
 
 			// We want a new undo task for each new book, except the first one
-			if (m_importedBooks.Count > 0)
+			if (ImportedBooks.Count > 0)
 			{
 				actionHandler.EndUndoTask();
 			}
@@ -350,14 +298,14 @@ namespace ParatextImport
 				// completes.
 				actionHandler.BeginUndoTask("Undo Import Book " + nCanonicalBookNumber, "Redo Import Book " + nCanonicalBookNumber);
 			}
-			if (m_importedBooks.ContainsKey(nCanonicalBookNumber))
+			if (ImportedBooks.ContainsKey(nCanonicalBookNumber))
 			{
 				m_lastBookAddedToImportedBooks = 0;
 			}
 			else
 			{
 				m_lastBookAddedToImportedBooks = nCanonicalBookNumber;
-				m_importedBooks[nCanonicalBookNumber] = fVernacular;
+				ImportedBooks[nCanonicalBookNumber] = fVernacular;
 			}
 
 			m_annotations = m_scr.BookAnnotationsOS[nCanonicalBookNumber - 1];
