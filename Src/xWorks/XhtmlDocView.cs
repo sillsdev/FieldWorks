@@ -945,8 +945,8 @@ namespace SIL.FieldWorks.XWorks
 				if (configuration == null || configuration.WritingSystem != currReversalWs)
 				{
 					var newConfig = Path.Combine(DictionaryConfigurationListener.GetProjectConfigurationDirectory(m_propertyTable),
-						writingSystem.DisplayLabel + DictionaryConfigurationModel.FileExtension);
-					m_propertyTable.SetProperty("ReversalIndexPublicationLayout", newConfig, true);
+						writingSystem.Id + DictionaryConfigurationModel.FileExtension);
+					m_propertyTable.SetProperty("ReversalIndexPublicationLayout", File.Exists(newConfig) ? newConfig : null, true);
 				}
 			}
 			var currentObjectGuid = Clerk.CurrentObject.Guid.ToString();
