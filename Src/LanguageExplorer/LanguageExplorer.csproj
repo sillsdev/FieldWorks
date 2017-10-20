@@ -805,7 +805,6 @@
     </Compile>
     <Compile Include="Controls\XMLViews\XmlViewsUtils.cs" />
     <Compile Include="Folders.cs" />
-    <Compile Include="HelpTopics\HelpTopicProviderBase.cs" />
     <Compile Include="ICtrlTabProvider.cs" />
     <Compile Include="IFieldWorksManager.cs" />
     <Compile Include="IFlexApp.cs" />

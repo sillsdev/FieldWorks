@@ -13,6 +13,7 @@ using System.Security;
 using System.Threading;
 using System.Windows.Forms;
 using LanguageExplorer.Controls.XMLViews;
+using LanguageExplorer.HelpTopics;
 using Microsoft.Win32;
 using SIL.Code;
 using SIL.FieldWorks.Common.Controls;
@@ -96,17 +97,15 @@ Old Mediator methods/commands
 		/// Constructor.
 		/// </summary>
 		/// <param name="fwManager">The FieldWorks manager for dealing with FieldWorks-level stuff.</param>
-		/// <param name="helpTopicProvider"></param>
 		/// <param name="appArgs">The application arguments.</param>
-		internal LexTextApp(IFieldWorksManager fwManager, IHelpTopicProvider helpTopicProvider, FwAppArgs appArgs)
+		internal LexTextApp(IFieldWorksManager fwManager, FwAppArgs appArgs)
 		{
 			Guard.AgainstNull(fwManager, nameof(fwManager));
-			Guard.AgainstNull(helpTopicProvider, nameof(helpTopicProvider));
 
 			IsModalDialogOpen = false;
 			PictureHolder = new PictureHolder();
 			m_fwManager = fwManager;
-			m_helpTopicProvider = helpTopicProvider;
+			m_helpTopicProvider = new FlexHelpTopicProvider();
 			RegistrySettings = new FwRegistrySettings(this)
 			{
 				LatestAppStartupTime = DateTime.Now.ToUniversalTime().Ticks.ToString()

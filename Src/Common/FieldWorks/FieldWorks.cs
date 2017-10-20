@@ -98,7 +98,6 @@ namespace SIL.FieldWorks
 		private static bool s_renameSuccessful;
 		private static string s_renameNewName;
 		private static IFlexApp s_flexApp;
-		private static IHelpTopicProvider s_helpTopicProvider;
 		private static IFieldWorksManager s_fwManager;
 		private static LcmCache s_cache;
 		private static string s_sWsUser;
@@ -2831,12 +2830,7 @@ namespace SIL.FieldWorks
 		{
 			if (s_flexApp == null)
 			{
-				if (s_helpTopicProvider == null)
-				{
-					GetHelpTopicProvider();
-				}
-				s_flexApp = new LexTextApp(s_fwManager, s_helpTopicProvider, args);
-				s_helpTopicProvider = null;
+				s_flexApp = new LexTextApp(s_fwManager, args);
 				s_flexAppKey = s_flexApp.SettingsKey;
 			}
 			return s_flexApp;
@@ -3358,7 +3352,7 @@ namespace SIL.FieldWorks
 			{
 				return s_flexApp;
 			}
-			return s_helpTopicProvider ?? (s_helpTopicProvider = new FlexHelpTopicProvider());
+			return new FlexHelpTopicProvider();
 		}
 
 		/// ------------------------------------------------------------------------------------

@@ -1,46 +1,50 @@
-// Copyright (c) 2010-2015 SIL International
+// Copyright (c) 2010-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Reflection;
 using System.Resources;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Resources;
 
 namespace LanguageExplorer.HelpTopics
 {
-#if RANDYTODO
-	// TODO: Merge HelpTopicProviderBase and FlexHelpTopicProvider.
-#endif
-	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// FLEx-specific HelpTopicProvider
 	/// </summary>
-	/// ----------------------------------------------------------------------------------------
-	internal sealed class FlexHelpTopicProvider : HelpTopicProviderBase
+	internal sealed class FlexHelpTopicProvider : IHelpTopicProvider
 	{
-		private static ResourceManager s_helpResources = null;
+		private static ResourceManager s_helpResources;
 
-		internal FlexHelpTopicProvider() {}
+		private IHelpTopicProvider AsIHelpTopicProvider => this;
 
-		/// ------------------------------------------------------------------------------------
+		#region IHelpTopicProvider implementation
 		/// <summary>
 		/// Gets a help file URL or topic
 		/// </summary>
 		/// <param name="stid"></param>
 		/// <returns>The requested string</returns>
-		/// ------------------------------------------------------------------------------------
-		public override string GetHelpString(string stid)
+		string IHelpTopicProvider.GetHelpString(string stid)
 		{
 			if (s_helpResources == null)
 			{
-				s_helpResources = new ResourceManager("LanguageExplorer.HelpTopics.HelpTopicPaths",
-					Assembly.GetExecutingAssembly());
+				s_helpResources = new ResourceManager("LanguageExplorer.HelpTopics.HelpTopicPaths", Assembly.GetExecutingAssembly());
 			}
 
-			if (stid == null)
+			if (string.IsNullOrWhiteSpace(stid))
+			{
 				return "NullStringID";
+			}
 
 			// First try to find it in our resource file. If that doesn't work, try the more general one
-			return s_helpResources.GetString(stid) ?? base.GetHelpString(stid);
+			return s_helpResources.GetString(stid) ?? ResourceHelper.GetHelpString(stid);
 		}
+
+		/// <summary>
+		/// The HTML help file (.chm) for the app.
+		/// </summary>
+		string IHelpTopicProvider.HelpFile => FwDirectoryFinder.CodeDirectory + AsIHelpTopicProvider.GetHelpString("UserHelpFile");
+
+		#endregion
 	}
 }

@@ -205,7 +205,7 @@ namespace LanguageExplorer.Impls
 			this.newFieldWorksProjectToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("newFieldWorksProjectToolStripMenuItem.Image")));
 			this.newFieldWorksProjectToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.newFieldWorksProjectToolStripMenuItem.Name = "newFieldWorksProjectToolStripMenuItem";
-			this.newFieldWorksProjectToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
+			this.newFieldWorksProjectToolStripMenuItem.Size = new System.Drawing.Size(215, 26);
 			this.newFieldWorksProjectToolStripMenuItem.Text = "&New FieldWorks Project...";
 			this.newFieldWorksProjectToolStripMenuItem.ToolTipText = "Create a new FieldWorks project.";
 			this.newFieldWorksProjectToolStripMenuItem.Click += new System.EventHandler(this.File_New_FieldWorks_Project);
@@ -216,7 +216,7 @@ namespace LanguageExplorer.Impls
 			this.openToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.openToolStripMenuItem.Name = "openToolStripMenuItem";
 			this.openToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
-			this.openToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
+			this.openToolStripMenuItem.Size = new System.Drawing.Size(215, 26);
 			this.openToolStripMenuItem.Text = "&Open...";
 			this.openToolStripMenuItem.ToolTipText = "Open an existing FieldWorks project.";
 			this.openToolStripMenuItem.Click += new System.EventHandler(this.File_Open);
@@ -224,7 +224,7 @@ namespace LanguageExplorer.Impls
 			// toolStripMenuItem1
 			// 
 			this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-			this.toolStripMenuItem1.Size = new System.Drawing.Size(208, 6);
+			this.toolStripMenuItem1.Size = new System.Drawing.Size(212, 6);
 			// 
 			// projectManagementToolStripMenuItem
 			// 
@@ -237,7 +237,7 @@ namespace LanguageExplorer.Impls
             this.deleteProjectToolStripMenuItem,
             this.createShortcutOnDesktopToolStripMenuItem});
 			this.projectManagementToolStripMenuItem.Name = "projectManagementToolStripMenuItem";
-			this.projectManagementToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
+			this.projectManagementToolStripMenuItem.Size = new System.Drawing.Size(215, 26);
 			this.projectManagementToolStripMenuItem.Text = "Project &Management";
 			this.projectManagementToolStripMenuItem.Click += new System.EventHandler(this.File_Create_Shortcut_on_Desktop);
 			// 
@@ -299,13 +299,13 @@ namespace LanguageExplorer.Impls
 			// toolStripMenuItem8
 			// 
 			this.toolStripMenuItem8.Name = "toolStripMenuItem8";
-			this.toolStripMenuItem8.Size = new System.Drawing.Size(208, 6);
+			this.toolStripMenuItem8.Size = new System.Drawing.Size(212, 6);
 			// 
 			// archiveWithRAMPSILToolStripMenuItem
 			// 
 			this.archiveWithRAMPSILToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("archiveWithRAMPSILToolStripMenuItem.Image")));
 			this.archiveWithRAMPSILToolStripMenuItem.Name = "archiveWithRAMPSILToolStripMenuItem";
-			this.archiveWithRAMPSILToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
+			this.archiveWithRAMPSILToolStripMenuItem.Size = new System.Drawing.Size(215, 26);
 			this.archiveWithRAMPSILToolStripMenuItem.Text = "&Archive with RAMP (SIL)...";
 			this.archiveWithRAMPSILToolStripMenuItem.ToolTipText = "Starts RAMP (if it is installed) and prepares an archive package for uploading.";
 			this.archiveWithRAMPSILToolStripMenuItem.Click += new System.EventHandler(this.File_Archive_With_RAMP);
@@ -313,28 +313,28 @@ namespace LanguageExplorer.Impls
 			// uploadToWebonaryToolStripMenuItem
 			// 
 			this.uploadToWebonaryToolStripMenuItem.Name = "uploadToWebonaryToolStripMenuItem";
-			this.uploadToWebonaryToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
+			this.uploadToWebonaryToolStripMenuItem.Size = new System.Drawing.Size(215, 26);
 			this.uploadToWebonaryToolStripMenuItem.Text = "Upload to &Webonary...";
 			this.uploadToWebonaryToolStripMenuItem.Click += new System.EventHandler(this.UploadToWebonary_Click);
 			// 
 			// toolStripMenuItem9
 			// 
 			this.toolStripMenuItem9.Name = "toolStripMenuItem9";
-			this.toolStripMenuItem9.Size = new System.Drawing.Size(208, 6);
+			this.toolStripMenuItem9.Size = new System.Drawing.Size(212, 6);
 			// 
 			// printToolStripMenuItem
 			// 
 			this.printToolStripMenuItem.Enabled = false;
 			this.printToolStripMenuItem.Name = "printToolStripMenuItem";
 			this.printToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.P)));
-			this.printToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
+			this.printToolStripMenuItem.Size = new System.Drawing.Size(215, 26);
 			this.printToolStripMenuItem.Text = "&Print...";
 			this.printToolStripMenuItem.ToolTipText = "Print";
 			// 
 			// toolStripMenuItem10
 			// 
 			this.toolStripMenuItem10.Name = "toolStripMenuItem10";
-			this.toolStripMenuItem10.Size = new System.Drawing.Size(208, 6);
+			this.toolStripMenuItem10.Size = new System.Drawing.Size(212, 6);
 			// 
 			// importToolStripMenuItem
 			// 
@@ -342,7 +342,7 @@ namespace LanguageExplorer.Impls
             this.standardFormatLexiconToolStripMenuItem,
             this.translatedListContentToolStripMenuItem1});
 			this.importToolStripMenuItem.Name = "importToolStripMenuItem";
-			this.importToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
+			this.importToolStripMenuItem.Size = new System.Drawing.Size(215, 26);
 			this.importToolStripMenuItem.Text = "&Import";
 			// 
 			// standardFormatLexiconToolStripMenuItem
@@ -363,19 +363,19 @@ namespace LanguageExplorer.Impls
 			// 
 			this.exportToolStripMenuItem.Enabled = false;
 			this.exportToolStripMenuItem.Name = "exportToolStripMenuItem";
-			this.exportToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
+			this.exportToolStripMenuItem.Size = new System.Drawing.Size(215, 26);
 			this.exportToolStripMenuItem.Text = "&Export...";
 			this.exportToolStripMenuItem.ToolTipText = "Export this FieldWorks project to a file.";
 			// 
 			// toolStripMenuItem3
 			// 
 			this.toolStripMenuItem3.Name = "toolStripMenuItem3";
-			this.toolStripMenuItem3.Size = new System.Drawing.Size(208, 6);
+			this.toolStripMenuItem3.Size = new System.Drawing.Size(212, 6);
 			// 
 			// closeToolStripMenuItem
 			// 
 			this.closeToolStripMenuItem.Name = "closeToolStripMenuItem";
-			this.closeToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
+			this.closeToolStripMenuItem.Size = new System.Drawing.Size(215, 26);
 			this.closeToolStripMenuItem.Text = "&Close";
 			this.closeToolStripMenuItem.ToolTipText = "Close this project.";
 			this.closeToolStripMenuItem.Click += new System.EventHandler(this.File_CloseWindow);
@@ -648,14 +648,14 @@ namespace LanguageExplorer.Impls
 			// toolStripMenuItem6
 			// 
 			this.toolStripMenuItem6.Name = "toolStripMenuItem6";
-			this.toolStripMenuItem6.Size = new System.Drawing.Size(149, 6);
+			this.toolStripMenuItem6.Size = new System.Drawing.Size(124, 6);
 			// 
 			// configureToolStripMenuItem
 			// 
 			this.configureToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.setUpWritingSystemsToolStripMenuItem});
 			this.configureToolStripMenuItem.Name = "configureToolStripMenuItem";
-			this.configureToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.configureToolStripMenuItem.Size = new System.Drawing.Size(127, 22);
 			this.configureToolStripMenuItem.Text = "Configure";
 			// 
 			// setUpWritingSystemsToolStripMenuItem
@@ -669,17 +669,17 @@ namespace LanguageExplorer.Impls
 			// toolStripMenuItem15
 			// 
 			this.toolStripMenuItem15.Name = "toolStripMenuItem15";
-			this.toolStripMenuItem15.Size = new System.Drawing.Size(149, 6);
+			this.toolStripMenuItem15.Size = new System.Drawing.Size(124, 6);
 			// 
 			// toolStripMenuItem16
 			// 
 			this.toolStripMenuItem16.Name = "toolStripMenuItem16";
-			this.toolStripMenuItem16.Size = new System.Drawing.Size(149, 6);
+			this.toolStripMenuItem16.Size = new System.Drawing.Size(124, 6);
 			// 
 			// utilitiesToolStripMenuItem
 			// 
 			this.utilitiesToolStripMenuItem.Name = "utilitiesToolStripMenuItem";
-			this.utilitiesToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.utilitiesToolStripMenuItem.Size = new System.Drawing.Size(127, 22);
 			this.utilitiesToolStripMenuItem.Text = "&Utilities...";
 			this.utilitiesToolStripMenuItem.ToolTipText = "Run some special utilities to process your data.";
 			this.utilitiesToolStripMenuItem.Click += new System.EventHandler(this.utilitiesToolStripMenuItem_Click);
@@ -687,12 +687,12 @@ namespace LanguageExplorer.Impls
 			// toolStripMenuItem19
 			// 
 			this.toolStripMenuItem19.Name = "toolStripMenuItem19";
-			this.toolStripMenuItem19.Size = new System.Drawing.Size(149, 6);
+			this.toolStripMenuItem19.Size = new System.Drawing.Size(124, 6);
 			// 
 			// optionsToolStripMenuItem
 			// 
 			this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
-			this.optionsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.optionsToolStripMenuItem.Size = new System.Drawing.Size(127, 22);
 			this.optionsToolStripMenuItem.Text = "&Options...";
 			this.optionsToolStripMenuItem.Click += new System.EventHandler(this.Tools_Options_Click);
 			// 
@@ -1101,10 +1101,10 @@ namespace LanguageExplorer.Impls
 			// 
 			// toolStripContainer.TopToolStripPanel
 			// 
-			this.toolStripContainer.TopToolStripPanel.Controls.Add(this.toolStripFormat);
-			this.toolStripContainer.TopToolStripPanel.Controls.Add(this.toolStripInsert);
-			this.toolStripContainer.TopToolStripPanel.Controls.Add(this.toolStripView);
 			this.toolStripContainer.TopToolStripPanel.Controls.Add(this.toolStripStandard);
+			this.toolStripContainer.TopToolStripPanel.Controls.Add(this.toolStripView);
+			this.toolStripContainer.TopToolStripPanel.Controls.Add(this.toolStripInsert);
+			this.toolStripContainer.TopToolStripPanel.Controls.Add(this.toolStripFormat);
 			// 
 			// mainContainer
 			// 
@@ -1155,7 +1155,7 @@ namespace LanguageExplorer.Impls
 			this.toolStripView.Dock = System.Windows.Forms.DockStyle.None;
 			this.toolStripView.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripButtonChangeFilterClearAll});
-			this.toolStripView.Location = new System.Drawing.Point(300, 0);
+			this.toolStripView.Location = new System.Drawing.Point(299, 0);
 			this.toolStripView.Name = "toolStripView";
 			this.toolStripView.Size = new System.Drawing.Size(35, 25);
 			this.toolStripView.TabIndex = 5;
@@ -1174,7 +1174,7 @@ namespace LanguageExplorer.Impls
 			// toolStripInsert
 			// 
 			this.toolStripInsert.Dock = System.Windows.Forms.DockStyle.None;
-			this.toolStripInsert.Location = new System.Drawing.Point(341, 0);
+			this.toolStripInsert.Location = new System.Drawing.Point(339, 0);
 			this.toolStripInsert.Name = "toolStripInsert";
 			this.toolStripInsert.Size = new System.Drawing.Size(111, 25);
 			this.toolStripInsert.TabIndex = 4;
@@ -1185,9 +1185,9 @@ namespace LanguageExplorer.Impls
 			this.toolStripFormat.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripComboBoxWritingSystem,
             this.toolStripComboBoxStyles});
-			this.toolStripFormat.Location = new System.Drawing.Point(457, 0);
+			this.toolStripFormat.Location = new System.Drawing.Point(456, 0);
 			this.toolStripFormat.Name = "toolStripFormat";
-			this.toolStripFormat.Size = new System.Drawing.Size(289, 25);
+			this.toolStripFormat.Size = new System.Drawing.Size(258, 25);
 			this.toolStripFormat.TabIndex = 3;
 			// 
 			// toolStripComboBoxWritingSystem

@@ -52,12 +52,6 @@ namespace LanguageExplorer.Impls
 	/// The main control for this window is an instance of CollapsingSplitContainer (mainContainer data member).
 	/// "mainContainer" holds the SidePane (_sidePane) in its Panel1/FirstControl (left side).
 	/// It holds a tool-specific control in its right side (Panel2/SecondControl).
-#if RANDYTODO
-	// TODO: These comments come from the original xWindow class
-	/// Event handlers expected to be managed by areas/tools that are ostensibly global:
-	///		1. printToolStripMenuItem : the active tool can enable this and add an event handler, if needed.
-	///		2. exportToolStripMenuItem : the active tool can enable this and add an event handler, if needed.
-#endif
 	/// </remarks>
 	internal sealed partial class FwMainWnd : Form, IFwMainWnd
 	{
