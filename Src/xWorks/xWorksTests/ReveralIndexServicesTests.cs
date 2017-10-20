@@ -83,6 +83,8 @@ namespace SIL.FieldWorks.XWorks
 				XAttribute modifiedAtt;
 				GetLastModifiedAttributeFromFile(normalFilename, out modifiedAtt);
 				Assert.AreEqual(normalFileModified, modifiedAtt.Value, "File with proper name and WS should not have been modified");
+				var enWsLabel = WSMgr.Get(analWss[0]).DisplayLabel;
+				Assert.AreEqual(enWsLabel, "English", "English WS should have name English");
 			}
 		}
 

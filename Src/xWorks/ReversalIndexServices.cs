@@ -62,8 +62,8 @@ namespace SIL.FieldWorks.XWorks
 				if (curWs.ToLower().Contains("audio"))
 					continue;
 
-				var curWsLabel = wsMgr.Get(curWs).LanguageTag;
-				var newWsCompleteFilePath = Path.Combine(newWsFilePath, curWsLabel + ConfigFileExtension);
+				var curWsLabel = wsMgr.Get(curWs).DisplayLabel;
+				var newWsCompleteFilePath = Path.Combine(newWsFilePath, curWs + ConfigFileExtension);
 				if (File.Exists(newWsCompleteFilePath))
 				{
 					XAttribute wsAtt;
