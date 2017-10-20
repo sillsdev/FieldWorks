@@ -43,14 +43,6 @@ namespace LanguageExplorer.Impls
 	/// </remarks>
 	internal sealed class LexTextApp : IFlexApp
 	{
-#if RANDYTODO
-		/* TODO: Make sure these old style Mediator commands/methods are handled in the best IArea/ITool manner.
-		 * TODO: This will likely mean some/all of these get moved elsewhere, since they are not global.
-Old Mediator methods/commands
-	ConfigureHomographs: OnConfigureHomographs (no display check)
-		 * Services this global(?) command CmdConfigHomographs
-		 */
-#endif
 		#region Data Members
 
 		private static bool m_fResourceFailed;
@@ -1797,41 +1789,6 @@ Old Mediator methods/commands
 		}
 
 #if RANDYTODO //Old Mediator stuff
-		public bool OnConfigureHomographs(object commandObject)
-					{
-			CheckDisposed();
-
-			var configDlg = commandObject as XmlDocConfigureDlg;
-
-			Form formActive = ActiveForm;
-			IFwMainWnd wndActive = formActive as IFwMainWnd;
-			if (wndActive == null && configDlg != null)
-				wndActive = configDlg.Owner as IFwMainWnd;
-			if (wndActive != null)
-			{
-				var hc = wndActive.Cache.ServiceLocator.GetInstance<HomographConfiguration>();
-				using (var dlg = new ConfigureHomographDlg())
-						{
-					dlg.SetupDialog(hc, wndActive.Cache, wndActive.ActiveStyleSheet, this, this);
-					dlg.StartPosition = FormStartPosition.CenterScreen;
-					if (dlg.ShowDialog((Form)wndActive) != DialogResult.OK)
-						return true;
-					dlg.GetResults(hc);
-					// Make sure "hc" is in PropertyTable, so new stuff is persisted.
-					if (!PropertyTable.PropertyExists("HomographConfiguration"))
-							{
-						PropertyTable.SetProperty("HomographConfiguration", hc.PersistData, true, false);
-							}
-					// If called from config dlg, it will do its own refresh when it closes.
-					if (configDlg == null)
-						OnMasterRefresh(null);
-							else
-						configDlg.MasterRefreshRequired = true;
-						}
-						}
-			return true;
-					}
-
 		public bool OnRestoreDefaultLayouts(object commandObject)
 					{
 			CheckDisposed();

@@ -12,7 +12,7 @@ using SIL.LCModel.DomainImpl;
 using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.FwCoreDlgs;
 
-namespace LanguageExplorer.Controls.LexText
+namespace LanguageExplorer.Works
 {
 	public partial class ConfigureHomographDlg : Form
 	{

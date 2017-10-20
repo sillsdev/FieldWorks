@@ -513,10 +513,10 @@
     <Compile Include="Controls\LexText\BaseGoDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Controls\LexText\ConfigureHomographDlg.cs">
+    <Compile Include="Works\ConfigureHomographDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Controls\LexText\ConfigureHomographDlg.designer.cs">
+    <Compile Include="Works\ConfigureHomographDlg.designer.cs">
       <DependentUpon>ConfigureHomographDlg.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\LexText\ContextMenuRequestedEventArgs.cs" />
@@ -1342,7 +1342,7 @@
       <DependentUpon>BaseGoDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\LexText\ConfigureHomographDlg.resx">
+    <EmbeddedResource Include="Works\ConfigureHomographDlg.resx">
       <DependentUpon>ConfigureHomographDlg.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\LexText\DataNotebook\AnthroFieldMappingDlg.resx">

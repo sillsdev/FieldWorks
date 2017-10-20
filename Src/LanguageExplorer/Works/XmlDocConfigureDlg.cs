@@ -32,6 +32,7 @@ using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.FwCoreDlgControls;
 using SIL.FieldWorks.FwCoreDlgs;
+using SIL.LCModel.DomainImpl;
 using SIL.LCModel.Infrastructure;
 using SIL.Windows.Forms;
 using SIL.Xml;
@@ -237,17 +238,18 @@ namespace LanguageExplorer.Works
 		/// <summary>
 		/// Initialize the dialog after creating it.
 		/// </summary>
-		public void SetConfigDlgInfo(XElement configurationParameters, LcmCache cache,
-			LcmStyleSheet styleSheet, IFwMainWnd mainWindow, IPropertyTable propertyTable, IPublisher publisher, string sLayoutPropertyName)
+		public void SetConfigDlgInfo(XElement configurationParameters, LcmCache cache, LcmStyleSheet styleSheet, IFwMainWnd mainWindow, IPropertyTable propertyTable, IPublisher publisher, string sLayoutPropertyName)
 		{
 			CheckDisposed();
 			m_configurationParameters = configurationParameters;
-			string labelKey = XmlUtils.GetOptionalAttributeValue(configurationParameters, "viewTypeLabelKey");
-			if (!String.IsNullOrEmpty(labelKey))
+			var labelKey = XmlUtils.GetOptionalAttributeValue(configurationParameters, "viewTypeLabelKey");
+			if (!string.IsNullOrEmpty(labelKey))
 			{
-				string sLabel = xWorksStrings.ResourceManager.GetString(labelKey);
-				if (!String.IsNullOrEmpty(sLabel))
+				var sLabel = xWorksStrings.ResourceManager.GetString(labelKey);
+				if (!string.IsNullOrEmpty(sLabel))
+				{
 					m_lblViewType.Text = sLabel;
+				}
 			}
 			m_cache = cache;
 			m_mdc = m_cache.DomainDataByFlid.MetaDataCache;
@@ -4675,7 +4677,13 @@ namespace LanguageExplorer.Works
 
 		private void m_linkConfigureHomograph_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
-			m_publisher.Publish("ConfigureHeadwordNumbers", this);
+			using (var dlg = new ConfigureHomographDlg())
+			{
+				var flexApp = m_mainWindow.PropertyTable.GetValue<IFlexApp>("App");
+				dlg.SetupDialog(m_mainWindow.Cache.ServiceLocator.GetInstance<HomographConfiguration>(), m_mainWindow.Cache, m_mainWindow.PropertyTable.GetValue<LcmStyleSheet>("LcmStyleSheet"), flexApp, flexApp);
+				dlg.StartPosition = FormStartPosition.CenterScreen;
+				MasterRefreshRequired = dlg.ShowDialog((Form)m_mainWindow) == DialogResult.OK;
+			}
 		}
 
 		#region ILayoutConverter methods
