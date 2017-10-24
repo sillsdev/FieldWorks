@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Diagnostics;
+using LanguageExplorerTests;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
@@ -57,8 +58,8 @@ namespace SIL.FieldWorks.Common.RootSites
 			styleSheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles);
 
 			Debug.Assert(m_basicView == null, "m_basicView is not null.");
-			PubSubSystemFactory.CreatePubSubSystem(out m_publisher, out m_subscriber);
-			m_propertyTable = PropertyTableFactory.CreatePropertyTable(m_publisher);
+			TestSetupServices.SetupTestPubSubSystem(out m_publisher, out m_subscriber);
+			m_propertyTable = TestSetupServices.SetupTestPropertyTable(m_publisher);
 
 			//if (m_basicView != null)
 			//	m_basicView.Dispose();

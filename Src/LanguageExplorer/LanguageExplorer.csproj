@@ -135,6 +135,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\SIL.LCModel.Utils.dll</HintPath>
     </Reference>
+    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Security" />
     <Reference Include="ViewsInterfaces">
       <Name>ViewsInterfaces</Name>
@@ -298,8 +299,13 @@
     <Compile Include="Areas\Notebook\NotebookAreaMenuHelper.cs" />
     <Compile Include="Areas\Lexicon\Tools\Edit\LexiconEditToolMenuHelper.cs" />
     <Compile Include="Areas\TextsAndWords\TextAndWordsAreaMenuHelper.cs" />
+    <Compile Include="Impls\PropertyTable.cs" />
+    <Compile Include="Impls\Publisher.cs" />
+    <Compile Include="Impls\Subscriber.cs" />
+    <Compile Include="LanguageExplorerCompositionServices.cs" />
     <Compile Include="Controls\DetailControls\SliceContextMenuFactory.cs" />
     <Compile Include="Controls\ToolStripButtonFactory.cs" />
+    <Compile Include="Impls\RefreshInterest.cs" />
     <Compile Include="InsertToolbarManager.cs" />
     <Compile Include="Areas\TextsAndWords\CachePair.cs" />
     <Compile Include="ConsoleProgress.cs" />
@@ -2390,7 +2396,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>LanguageExplorerResources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Impls\LexTextApp.cs" />
+    <Compile Include="Impls\FlexApp.cs" />
     <Compile Include="SILErrorReportingAdapter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Areas\RecordBar.cs">

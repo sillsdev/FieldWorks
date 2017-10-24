@@ -8,4 +8,7 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyTitle("FieldWorks Helper Methods")]
 
 [assembly: System.Runtime.InteropServices.ComVisible(false)]
+
+[assembly: InternalsVisibleTo("FieldWorks")]
+
 [assembly: InternalsVisibleTo("FwUtilsTests")]

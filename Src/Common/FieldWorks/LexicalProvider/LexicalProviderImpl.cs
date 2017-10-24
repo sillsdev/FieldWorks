@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.ServiceModel;
 using LanguageExplorer.HelpTopics;
@@ -63,17 +64,12 @@ namespace SIL.FieldWorks.LexicalProvider
 			FieldWorks.ThreadHelper.InvokeAsync(() =>
 			{
 				ITsString tss = TsStringUtils.MakeString(entry, FieldWorks.Cache.DefaultVernWs);
-				IPublisher publisher;
-				ISubscriber subscriber;
-				PubSubSystemFactory.CreatePubSubSystem(out publisher, out subscriber);
-				using (var propertyTable = PropertyTableFactory.CreatePropertyTable(publisher))
-				{
-					var styleSheet = new LcmStyleSheet();
-					styleSheet.Init(FieldWorks.Cache, FieldWorks.Cache.LanguageProject.Hvo, LangProjectTags.kflidStyles);
-					propertyTable.SetProperty("LcmStyleSheet", styleSheet, false, false);
-					LexEntryUi.DisplayEntries(FieldWorks.Cache, null, propertyTable, publisher, subscriber, new FlexHelpTopicProvider(), "UserHelpFile", tss, null);
-					propertyTable.RemoveProperty("LcmStyleSheet");
-				}
+				IPublisher publisher = new MyDoNothingPublisher();
+				ISubscriber subscriber = new MyDoNothingSubscriber();
+				IPropertyTable propertyTable = new MyDoAlmostNothingPropertyTable();
+				var styleSheet = propertyTable.GetValue<LcmStyleSheet>("LcmStyleSheet");
+				styleSheet.Init(FieldWorks.Cache, FieldWorks.Cache.LanguageProject.Hvo, LangProjectTags.kflidStyles);
+				LexEntryUi.DisplayEntries(FieldWorks.Cache, null, propertyTable, publisher, subscriber, new FlexHelpTopicProvider(), "UserHelpFile", tss, null);
 			});
 		}
 
@@ -579,6 +575,359 @@ namespace SIL.FieldWorks.LexicalProvider
 			// Shouldn't ever get here, but since we don't know what type it is just return
 			// a random default and hope for the best.
 			return LexemeType.Stem;
+		}
+		#endregion
+
+		#region Private classes
+
+		/// <summary>
+		/// Do nothing IPublisher, since there are no subscribers in the LexicalProviderImpl.
+		/// </summary>
+		private class MyDoNothingPublisher : IPublisher
+		{
+			#region Implementation of IPublisher
+
+			/// <summary>
+			/// Publish the message using the new value.
+			/// </summary>
+			/// <param name="message">The message to publish.</param>
+			/// <param name="newValue">The new value to send to subscribers. This may be null.</param>
+			public void Publish(string message, object newValue)
+			{
+				// Pretend to do something.
+			}
+
+			/// <summary>
+			/// Publish an ordered sequence of messages, each of which has a newValue (which may be null).
+			/// </summary>
+			/// <param name="messages">Ordered list of messages to publish. Each message has a matching new value (which may be null).</param>
+			/// <param name="newValues">Ordered list of new values. Each value matches a message.</param>
+			/// <exception cref="ArgumentNullException">Thrown if either <paramref name="messages"/> or <paramref name="newValues"/> are null.</exception>
+			/// <exception cref="ArgumentException">Thrown if the <paramref name="messages"/> and <paramref name="newValues"/> lists are not the same size.</exception>
+			public void Publish(IList<string> messages, IList<object> newValues)
+			{
+				// Pretend to do something.
+			}
+
+			#endregion
+		}
+
+		/// <summary>
+		/// Do nothing ISubscriber, since there are no subscribers in the LexicalProviderImpl.
+		/// </summary>
+		private class MyDoNothingSubscriber : ISubscriber
+		{
+			private readonly Dictionary<string, HashSet<Action<object>>> _subscriptions = new Dictionary<string, HashSet<Action<object>>>();
+
+			#region Implementation of ISubscriber
+
+			/// <summary>
+			/// An object subscribes to message <paramref name="message"/> using
+			/// the method <paramref name="messageHandler"/>, which method that takes one parameter of type "object".
+			/// </summary>
+			/// <param name="message">The message being subscribed to receive.</param>
+			/// <param name="messageHandler">The method on subscriber to call, when <paramref name="message"/>
+			/// has been published</param>
+			void ISubscriber.Subscribe(string message, Action<object> messageHandler)
+			{
+				// Pretend to do something.
+			}
+
+			/// <summary>
+			/// Register end of interest (unsubscribe) of an object in receiving <paramref name="message"/>
+			/// when/if published.
+			/// </summary>
+			/// <param name="message">The message that is no longer of interest to subscriber</param>
+			/// <param name="messageHandler">The action that is no longer interested in <paramref name="message"/>.</param>
+			void ISubscriber.Unsubscribe(string message, Action<object> messageHandler)
+			{
+				// Pretend to do something.
+			}
+
+			/// <summary>
+			/// Get all current subscriptions.
+			/// </summary>
+			public IReadOnlyDictionary<string, HashSet<Action<object>>> Subscriptions => new ReadOnlyDictionary<string, HashSet<Action<object>>>(_subscriptions);
+
+			#endregion
+		}
+
+		/// <summary>
+		/// Do almost nothing IPropertyTable, since there is only one property in the LexicalProviderImpl.
+		/// </summary>
+		private class MyDoAlmostNothingPropertyTable : IPropertyTable
+		{
+			private object _lcmStyleSheet = new LcmStyleSheet();
+
+			private IPropertyRetriever AsIPropertyRetriever => this;
+
+			#region Implementation of IPropertyRetriever
+
+			/// <summary>
+			/// Test whether a property exists, tries local first and then global.
+			/// </summary>
+			/// <param name="name"></param>
+			/// <returns></returns>
+			bool IPropertyRetriever.PropertyExists(string name)
+			{
+				return name == "LcmStyleSheet";
+			}
+
+			/// <summary>
+			/// Test whether a property exists in the specified group.
+			/// </summary>
+			/// <param name="name">Name of the property to check for existence.</param>
+			/// <param name="settingsGroup">Group the property is expected to be in.</param>
+			/// <returns>"true" if the property exists, otherwise "false".</returns>
+			bool IPropertyRetriever.PropertyExists(string name, SettingsGroup settingsGroup)
+			{
+				return AsIPropertyRetriever.PropertyExists(name);
+			}
+
+			/// <summary>
+			/// Try to get the specified property in any settings group. Gives any value found.
+			/// </summary>
+			/// <param name="name">Name of the property to get.</param>
+			/// <param name="propertyValue">Null, if it didn't find the property (default value for basic data types).</param>
+			/// <returns>"True" if the property was found, otherwise "false".</returns>
+			/// <remarks>If the return value is "false" and "T" is a basic data type,  then the client ought not use the returned value.</remarks>
+			/// <exception cref="ArgumentException">Thrown if the stored property is not type "T".</exception>
+			bool IPropertyRetriever.TryGetValue<T>(string name, out T propertyValue)
+			{
+				if (name == "LcmStyleSheet" && _lcmStyleSheet is T)
+				{
+					propertyValue = (T)_lcmStyleSheet;
+					return true;
+				}
+				propertyValue = default(T);
+				return false;
+			}
+
+			/// <summary>
+			/// Try to get the specified property in the specified settings group. Gives any value found.
+			/// </summary>
+			/// <param name="name">Name of the property to get.</param>
+			/// <param name="settingsGroup">The group the property is expected to be in.</param>
+			/// <param name="propertyValue">Null, if it didn't find the property (default value for basic data types).</param>
+			/// <returns>"True" if the property was found, otherwise "false".</returns>
+			/// <remarks>If the return value is "false" and "T" is a basic data type,  then the client ought not use the returned value.</remarks>
+			/// <exception cref="ArgumentException">Thrown if the stored property is not type "T".</exception>
+			bool IPropertyRetriever.TryGetValue<T>(string name, SettingsGroup settingsGroup, out T propertyValue)
+			{
+				return AsIPropertyRetriever.TryGetValue<T>(name, out propertyValue);
+			}
+
+			/// <summary>
+			/// Get the value (of type "T" of the best property (i.e. tries local first, then global).
+			/// </summary>
+			/// <typeparam name="T">Type of property to return.</typeparam>
+			/// <param name="name">Name of property to return.</param>
+			/// <returns> Returns the property value, or null if the property is not found,
+			/// and "T" is a reference type,
+			/// otherwise the default of the basic type (e.g., 'false' for a boolean).</returns>
+			/// <exception cref="ArgumentException">Thrown if the stored property is not type "T".</exception>
+			T IPropertyRetriever.GetValue<T>(string name)
+			{
+				var result = default(T);
+				if (name == "LcmStyleSheet" && _lcmStyleSheet is T)
+				{
+					result = (T)_lcmStyleSheet;
+				}
+				return result;
+			}
+
+			/// <summary>
+			/// Get the property of type "T" (tries local then global),
+			/// set the defaultValue if it doesn't exist. (creates global property)
+			/// </summary>
+			/// <typeparam name="T">Type of property to return</typeparam>
+			/// <param name="name">Name of property to return</param>
+			/// <param name="defaultValue">Default value of property, if it isn't in the table. (Sets value, if the property is not found.)</param>
+			/// <returns>The stored property of type "T", or <paramref name="defaultValue"/>, if not stored.</returns>
+			/// <exception cref="ArgumentException">Thrown if the stored property is not type "T".</exception>
+			T IPropertyRetriever.GetValue<T>(string name, T defaultValue)
+			{
+				return AsIPropertyRetriever.GetValue<T>(name);
+			}
+
+			/// <summary>
+			/// Get the value (of Type "T") of the property of the specified settingsGroup.
+			/// </summary>
+			/// <param name="name">Name of the property to get.</param>
+			/// <param name="settingsGroup">The group to store the property in.</param>
+			/// <returns>Returns null if the property is not found,
+			/// and "T" is a reference type,
+			/// otherwise the default of the basic type (e.g., 'false' for a boolean).</returns>
+			/// <exception cref="ArgumentException">Thrown if the stored property is not type "T".</exception>
+			T IPropertyRetriever.GetValue<T>(string name, SettingsGroup settingsGroup)
+			{
+				return AsIPropertyRetriever.GetValue<T>(name);
+			}
+
+			/// <summary>
+			/// Get the value (of Type "T") of the property of the specified settingsGroup.
+			/// </summary>
+			/// <param name="name">Name of the property to get.</param>
+			/// <param name="settingsGroup">The group to store the property in.</param>
+			/// <param name="defaultValue">Default value of property, if it isn't in the table.</param>
+			/// <returns>Returns the property if found, otherwise return the the provided default value.</returns>
+			/// <exception cref="ArgumentException">Thrown if the stored property is not type "T".</exception>
+			T IPropertyRetriever.GetValue<T>(string name, SettingsGroup settingsGroup, T defaultValue)
+			{
+				return AsIPropertyRetriever.GetValue<T>(name);
+			}
+
+			#endregion
+
+			#region Implementation of IDisposable
+
+			/// <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
+			public void Dispose()
+			{
+				throw new NotSupportedException();
+			}
+
+			#endregion
+
+			#region Implementation of IPropertyTable
+
+			/// <summary>
+			/// Set the property value for the specified settingsGroup, and allow user to broadcast the change, or not.
+			/// Caller must also declare if the property is to be persisted, or not.
+			/// </summary>
+			/// <param name="name">Property name</param>
+			/// <param name="newValue">New value of the property. (It may never have been set before.)</param>
+			/// <param name="settingsGroup">The group to store the property in.</param>
+			/// <param name="persistProperty">
+			/// "true" if the property is to be persisted, otherwise "false".</param>
+			/// <param name="doBroadcastIfChanged">
+			/// "true" if the property should be broadcast, and then, only if it has changed.
+			/// "false" to not broadcast it at all.
+			/// </param>
+			public void SetProperty(string name, object newValue, SettingsGroup settingsGroup, bool persistProperty, bool doBroadcastIfChanged)
+			{
+				throw new NotSupportedException();
+			}
+
+			/// <summary>
+			/// Set the value of the best property setting (try finding local first, then global)
+			/// and broadcast the change if so instructed.
+			/// Caller must also declare if the property is to be persisted, or not.
+			/// </summary>
+			/// <param name="name">Property name</param>
+			/// <param name="newValue">New value of the property. (It may never have been set before.)</param>
+			/// <param name="persistProperty">
+			/// "true" if the property is to be persisted, otherwise "false".</param>
+			/// <param name="doBroadcastIfChanged">
+			/// "true" if the property should be broadcast, and then, only if it has changed.
+			/// "false" to not broadcast it at all.
+			/// </param>
+			public void SetProperty(string name, object newValue, bool persistProperty, bool doBroadcastIfChanged)
+			{
+				throw new NotSupportedException();
+			}
+
+			/// <summary>
+			/// Set the default value of a property, but *only* if property is not in the table.
+			/// Do nothing, if the property is alreeady in the table.
+			/// </summary>
+			/// <param name="name">Name of the property to set</param>
+			/// <param name="defaultValue">Default value of the new property</param>
+			/// <param name="settingsGroup">Group the property is expected to be in.</param>
+			/// <param name="persistProperty">
+			/// "true" if the property is to be persisted, otherwise "false".</param>
+			/// <param name="doBroadcastIfChanged">
+			/// "true" if the property should be broadcast, and then, only if it has changed.
+			/// "false" to not broadcast it at all.
+			/// </param>
+			public void SetDefault(string name, object defaultValue, SettingsGroup settingsGroup, bool persistProperty, bool doBroadcastIfChanged)
+			{
+				throw new NotSupportedException();
+			}
+
+			/// <summary>
+			/// Remove a property from the table.
+			/// </summary>
+			/// <param name="name">Name of the property to remove.</param>
+			/// <param name="settingsGroup">The group to remove the property from.</param>
+			public void RemoveProperty(string name, SettingsGroup settingsGroup)
+			{
+				throw new NotSupportedException();
+			}
+
+			/// <summary>
+			/// Remove a property from the table.
+			/// </summary>
+			/// <param name="name">Name of the property to remove.</param>
+			public void RemoveProperty(string name)
+			{
+				throw new NotSupportedException();
+			}
+
+			/// <summary>
+			/// Declare if the property is to be disposed by the table.
+			/// </summary>
+			/// <param name="name">Property name.</param>
+			/// <param name="doDispose">"True" if table is to dispose the property, otherwise "false"</param>
+			public void SetPropertyDispose(string name, bool doDispose)
+			{
+				throw new NotSupportedException();
+			}
+
+			/// <summary>
+			/// Declare if the property is to be disposed by the table.
+			/// </summary>
+			/// <param name="name">Property name.</param>
+			/// <param name="doDispose">"True" if table is to dispose the property, otherwise "false"</param>
+			/// <param name="settingsGroup">The settings group the property is in.</param>
+			public void SetPropertyDispose(string name, bool doDispose, SettingsGroup settingsGroup)
+			{
+				throw new NotSupportedException();
+			}
+
+			/// <summary>
+			/// Gets/sets folder where user settings are saved
+			/// </summary>
+			public string UserSettingDirectory { get; set; }
+
+			/// <summary>
+			/// Establishes a current group id for saving to property tables/files with SettingsGroup.GlobalSettings.
+			/// </summary>
+			public string GlobalSettingsId { get; }
+
+			/// <summary>
+			/// Establishes a current group id for saving to property tables/files with SettingsGroup.LocalSettings.
+			/// By default, this is the same as GlobalSettingsId.
+			/// </summary>
+			public string LocalSettingsId { get; set; }
+
+			/// <summary>
+			/// Load with properties stored
+			/// in the settings file, if that file is found.
+			/// </summary>
+			/// <param name="settingsId">e.g. "itinerary"</param>
+			public void RestoreFromFile(string settingsId)
+			{
+				throw new NotSupportedException();
+			}
+
+			/// <summary>
+			/// Save general application settings
+			/// </summary>
+			public void SaveGlobalSettings()
+			{
+				throw new NotSupportedException();
+			}
+
+			/// <summary>
+			/// Save database specific settings.
+			/// </summary>
+			public void SaveLocalSettings()
+			{
+				throw new NotSupportedException();
+			}
+
+			#endregion
 		}
 		#endregion
 	}

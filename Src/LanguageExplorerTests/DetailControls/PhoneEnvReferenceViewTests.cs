@@ -34,8 +34,8 @@ namespace LanguageExplorerTests.DetailControls
 			sda.SetString(hvos[1], PhoneEnvReferenceView.kEnvStringRep, TsStringUtils.MakeString("abc", 6));
 			IPublisher publisher;
 			ISubscriber subscriber;
-			PubSubSystemFactory.CreatePubSubSystem(out publisher, out subscriber);
-			using (var propertyTable = PropertyTableFactory.CreatePropertyTable(publisher))
+			TestSetupServices.SetupTestPubSubSystem(out publisher, out subscriber);
+			using (var propertyTable = TestSetupServices.SetupTestPropertyTable(publisher))
 			using (var view = new PhoneEnvReferenceView())
 			{
 				view.InitializeFlexComponent(new FlexComponentParameters(propertyTable, publisher, subscriber));

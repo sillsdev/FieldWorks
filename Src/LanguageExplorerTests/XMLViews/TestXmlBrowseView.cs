@@ -20,8 +20,8 @@ namespace LanguageExplorerTests.XMLViews
 		{
 			IPublisher publisher;
 			ISubscriber subscriber;
-			PubSubSystemFactory.CreatePubSubSystem(out publisher, out subscriber);
-			using (var propertyTable = PropertyTableFactory.CreatePropertyTable(publisher))
+			TestSetupServices.SetupTestPubSubSystem(out publisher, out subscriber);
+			using (var propertyTable = TestSetupServices.SetupTestPropertyTable(publisher))
 			using (var bv = new XmlBrowseView())
 			{
 				bv.InitializeFlexComponent(new FlexComponentParameters(propertyTable, publisher, subscriber));
@@ -57,8 +57,8 @@ namespace LanguageExplorerTests.XMLViews
 				"</root>";
 			IPublisher publisher;
 			ISubscriber subscriber;
-			PubSubSystemFactory.CreatePubSubSystem(out publisher, out subscriber);
-			using (var propertyTable = PropertyTableFactory.CreatePropertyTable(publisher))
+			TestSetupServices.SetupTestPubSubSystem(out publisher, out subscriber);
+			using (var propertyTable = TestSetupServices.SetupTestPropertyTable(publisher))
 			{
 				var output = XmlBrowseViewBaseVc.GetSavedColumns(input, propertyTable, "myKey");
 				Assert.That(XmlUtils.GetOptionalAttributeValue(output.Root, "version"), Is.EqualTo(BrowseViewer.kBrowseViewVersion.ToString()));

@@ -23,11 +23,10 @@ namespace LanguageExplorerTests.XMLViews
 		[SetUp]
 		public void SetUp()
 		{
-			PubSubSystemFactory.CreatePubSubSystem(out m_publisher, out m_subscriber);
-			m_propertyTable = PropertyTableFactory.CreatePropertyTable(m_publisher);
+			TestSetupServices.SetupTestPubSubSystem(out m_publisher, out m_subscriber);
+			m_propertyTable = TestSetupServices.SetupTestPropertyTable(m_publisher);
 			var st = StringTable.Table; // Make sure it is loaded.
-			m_cache = LcmCache.CreateCacheWithNewBlankLangProj(
-				new TestProjectId(BackendProviderType.kMemoryOnly, null), "en", "en", "en", new DummyLcmUI(), FwDirectoryFinder.LcmDirectories, new LcmSettings());
+			m_cache = LcmCache.CreateCacheWithNewBlankLangProj(new TestProjectId(BackendProviderType.kMemoryOnly, null), "en", "en", "en", new DummyLcmUI(), FwDirectoryFinder.LcmDirectories, new LcmSettings());
 			m_propertyTable.SetProperty("cache", m_cache, true, true);
 		}
 

@@ -5,6 +5,7 @@
 using Rhino.Mocks;
 using System.Drawing;
 using System.Windows.Forms;
+using LanguageExplorerTests;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
@@ -45,49 +46,20 @@ namespace SIL.FieldWorks.Common.RootSites
 		public void AdjustScrollRange()
 		{
 			var rootBox = MockRepository.GenerateMock<IVwRootBox>();
-			// This was taken out because it doesn't seem like the views code does this
-			// anymore. It just calls AdjustScrollRange for the original view that changed.
-			// Done as a part of TE-3576
-			//// result for style pane
-			//rootBox.ExpectAndReturn("Height", 900);
-			//rootBox.ExpectAndReturn("Width", 100);
-			//rootBox.ExpectAndReturn("Height", 1000);
-			//rootBox.ExpectAndReturn("Width", 100);
-			//rootBox.ExpectAndReturn("Height", 1000);
-			//rootBox.ExpectAndReturn("Width", 100);
-			//// result for draft pane
-			//rootBox.ExpectAndReturn("Height", 950);
-			//rootBox.ExpectAndReturn("Width", 100);
-			//rootBox.ExpectAndReturn("Height", 900);
-			//rootBox.ExpectAndReturn("Width", 100);
-			//rootBox.ExpectAndReturn("Height", 1000);
-			//rootBox.ExpectAndReturn("Width", 100);
 			// result for bt pane
 			rootBox.Expect(r => r.Height).Return(1100);
 			rootBox.Expect(r => r.Width).Return(100);
-			//rootBox.Expect(r => r.Height).Return(1100);
-			//rootBox.Expect(r => r.Height).Return(1100);
-			//rootBox.Expect(r => r.Height).Return(1100);
-			//rootBox.ExpectAndReturn("Height", 1100);
-			//rootBox.ExpectAndReturn("Width", 100);
-			//rootBox.ExpectAndReturn("Height", 900);
-			//rootBox.ExpectAndReturn("Width", 100);
-			//rootBox.ExpectAndReturn("Height", 950);
-			//rootBox.ExpectAndReturn("Width", 100);
 
 			IPublisher publisher;
 			ISubscriber subscriber;
-			PubSubSystemFactory.CreatePubSubSystem(out publisher, out subscriber);
-			using (var propertyTable = PropertyTableFactory.CreatePropertyTable(publisher))
+			TestSetupServices.SetupTestPubSubSystem(out publisher, out subscriber);
+			using (var propertyTable = TestSetupServices.SetupTestPropertyTable(publisher))
+			using (DummyBasicView stylePane = new DummyBasicView(), draftPane = new DummyBasicView(), btPane = new DummyBasicView())
 			{
-			using (DummyBasicView stylePane = new DummyBasicView(),
-				draftPane = new DummyBasicView(),
-				btPane = new DummyBasicView())
-			{
-					var flexComponentParameterObject = new FlexComponentParameters(propertyTable, publisher, subscriber);
-					stylePane.InitializeFlexComponent(flexComponentParameterObject);
-					draftPane.InitializeFlexComponent(flexComponentParameterObject);
-					btPane.InitializeFlexComponent(flexComponentParameterObject);
+				var flexComponentParameterObject = new FlexComponentParameters(propertyTable, publisher, subscriber);
+				stylePane.InitializeFlexComponent(flexComponentParameterObject);
+				draftPane.InitializeFlexComponent(flexComponentParameterObject);
+				btPane.InitializeFlexComponent(flexComponentParameterObject);
 				using (RootSiteGroup group = new RootSiteGroup())
 				{
 					PrepareView(stylePane, 50, 300, (IVwRootBox)rootBox);
@@ -98,7 +70,7 @@ namespace SIL.FieldWorks.Common.RootSites
 					group.AddToSyncGroup(draftPane);
 					group.AddToSyncGroup(btPane);
 					group.ScrollingController = btPane;
-						group.Controls.AddRange(new Control[] { stylePane, draftPane, btPane });
+					group.Controls.AddRange(new Control[] { stylePane, draftPane, btPane });
 
 					btPane.ScrollMinSize = new Size(100, 1000);
 					btPane.ScrollPosition = new Point(0, 700);
@@ -116,7 +88,6 @@ namespace SIL.FieldWorks.Common.RootSites
 					Assert.AreEqual(800, -btPane.ScrollPosition.Y, "Wrong scroll position");
 				}
 			}
-		}
 		}
 
 		/// ------------------------------------------------------------------------------------

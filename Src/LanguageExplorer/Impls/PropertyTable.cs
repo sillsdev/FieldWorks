@@ -1,24 +1,28 @@
-// Copyright (c) 2003-2017 SIL International
+// Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Security;
 using System.Windows.Forms;
 using System.Xml.Serialization;
 using System.IO;
+using SIL.FieldWorks.Common.FwUtils;
 
-namespace SIL.FieldWorks.Common.FwUtils.Impls
+namespace LanguageExplorer.Impls
 {
 	/// <summary>
 	/// Table of properties, some of which are persisted, and some that are not.
 	/// </summary>
+	[Export(typeof(IPropertyTable))]
 	[Serializable]
 	internal sealed class PropertyTable : IPropertyTable
 	{
+		[Import]
 		private IPublisher Publisher { get; set; }
 
 		private ConcurrentDictionary<string, Property> m_properties;
@@ -29,14 +33,19 @@ namespace SIL.FieldWorks.Common.FwUtils.Impls
 		private string m_localSettingsId;
 		private string m_userSettingDirectory = string.Empty;
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="PropertyTable"/> class.
 		/// </summary>
-		/// -----------------------------------------------------------------------------------
-		internal PropertyTable(IPublisher publisher)
+		internal PropertyTable()
 		{
 			m_properties = new ConcurrentDictionary<string, Property>();
+		}
+
+		/// <summary>
+		/// For Testing only.
+		/// </summary>
+		internal PropertyTable(IPublisher publisher) : this()
+		{
 			Publisher = publisher;
 		}
 
@@ -746,15 +755,17 @@ namespace SIL.FieldWorks.Common.FwUtils.Impls
 			{
 				//don't do anything
 			}
-			catch(Exception )
+			catch(Exception e)
 			{
 				var activeForm = Form.ActiveForm;
 				if (activeForm == null)
-					MessageBox.Show(FwUtilsStrings.ProblemRestoringSettings);
+				{
+					MessageBox.Show(LanguageExplorerResources.ProblemRestoringSettings);
+				}
 				else
 				{
 					// Make sure as far as possible it comes up in front of any active window, including the splash screen.
-					activeForm.Invoke((Func<DialogResult>)(() => MessageBox.Show(activeForm, FwUtilsStrings.ProblemRestoringSettings)));
+					activeForm.Invoke((Func<DialogResult>)(() => MessageBox.Show(activeForm, LanguageExplorerResources.ProblemRestoringSettings)));
 				}
 			}
 		}

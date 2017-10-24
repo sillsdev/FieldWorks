@@ -110,7 +110,7 @@ namespace LanguageExplorerTests.Works
 		/// Create the client windows and add corresponding stuff to the sidebar, View menu,  etc.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		void IFwMainWnd.InitAndShowClient()
+		void IFwMainWnd.Initialize(IFwMainWnd windowToCopyFrom, FwLinkArgs linkArgs)
 		{
 			throw new NotImplementedException();
 		}

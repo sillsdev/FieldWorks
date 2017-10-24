@@ -40,8 +40,8 @@ namespace LanguageExplorerTests.Discourse
 			m_chart = m_helper.SetupAChart();
 
 			m_constChart = new ConstituentChart(Cache, m_logic);
-			PubSubSystemFactory.CreatePubSubSystem(out m_publisher, out m_subscriber);
-			m_propertyTable = PropertyTableFactory.CreatePropertyTable(m_publisher);
+			TestSetupServices.SetupTestPubSubSystem(out m_publisher, out m_subscriber);
+			m_propertyTable = TestSetupServices.SetupTestPropertyTable(m_publisher);
 			m_constChart.InitializeFlexComponent(new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber));
 			m_chartBody = m_constChart.Body;
 			m_chartBody.Cache = Cache; // don't know why constructor doesn't do this, but it doesn't.

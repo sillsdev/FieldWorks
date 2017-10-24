@@ -97,11 +97,16 @@ namespace LanguageExplorerTests.DetailControls
 		{
 			base.TestSetup();
 			m_dtree = new DataTree();
-			PubSubSystemFactory.CreatePubSubSystem(out m_publisher, out m_subscriber);
-			m_propertyTable = PropertyTableFactory.CreatePropertyTable(m_publisher);
+			SetupPubSubAndPropertyTable();
 			m_dtree.InitializeFlexComponent(new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber));
 			m_parent = new Form();
 			m_parent.Controls.Add(m_dtree);
+		}
+
+		private void SetupPubSubAndPropertyTable()
+		{
+			TestSetupServices.SetupTestPubSubSystem(out m_publisher, out m_subscriber);
+			m_propertyTable = TestSetupServices.SetupTestPropertyTable(m_publisher);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -273,8 +278,7 @@ namespace LanguageExplorerTests.DetailControls
 				TsStringUtils.MakeString("blah blah", Cache.DefaultAnalWs));
 
 			m_propertyTable.Dispose();
-			PubSubSystemFactory.CreatePubSubSystem(out m_publisher, out m_subscriber);
-			m_propertyTable = PropertyTableFactory.CreatePropertyTable(m_publisher);
+			SetupPubSubAndPropertyTable();
 			m_parent = new Form();
 			m_dtree = new DataTree();
 			m_dtree.InitializeFlexComponent(new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber));
@@ -297,8 +301,7 @@ namespace LanguageExplorerTests.DetailControls
 			m_entry.EtymologyOS.Add(etymology);
 
 			m_propertyTable.Dispose();
-			PubSubSystemFactory.CreatePubSubSystem(out m_publisher, out m_subscriber);
-			m_propertyTable = PropertyTableFactory.CreatePropertyTable(m_publisher);
+			SetupPubSubAndPropertyTable();
 			m_parent = new Form();
 			m_dtree = new DataTree();
 			m_dtree.InitializeFlexComponent(new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber));
@@ -316,8 +319,7 @@ namespace LanguageExplorerTests.DetailControls
 			etymology.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString("rubbish", Cache.DefaultVernWs);
 
 			m_propertyTable.Dispose();
-			PubSubSystemFactory.CreatePubSubSystem(out m_publisher, out m_subscriber);
-			m_propertyTable = PropertyTableFactory.CreatePropertyTable(m_publisher);
+			SetupPubSubAndPropertyTable();
 			m_parent = new Form();
 			m_dtree = new DataTree();
 			m_dtree.InitializeFlexComponent(new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber));

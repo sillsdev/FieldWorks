@@ -1,12 +1,8 @@
-// Copyright (c) 2010-2013 SIL International
+// Copyright (c) 2010-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: IFieldWorksManager.cs
-// Responsibility: FW Team
 
 using System;
-using System.Collections.Generic;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
@@ -14,7 +10,6 @@ using SIL.LCModel;
 
 namespace LanguageExplorer
 {
-	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// Interface for handling FieldWorks-level (i.e. above the application level) stuff.
 	/// This includes:
@@ -22,26 +17,20 @@ namespace LanguageExplorer
 	/// - Creating/managing the LcmCache
 	/// - Handling FieldWorks-level synchronization messages
 	/// </summary>
-	/// ----------------------------------------------------------------------------------------
 	public interface IFieldWorksManager
 	{
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the cache.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		LcmCache Cache { get; }
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Shutdowns the specified application. The application will be disposed of immediately.
 		/// If no other applications are running, then FieldWorks will also be shutdown.
 		/// </summary>
 		/// <param name="app">The application to shut down.</param>
-		/// ------------------------------------------------------------------------------------
 		void ShutdownApp(IFlexApp app);
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Executes the specified method asynchronously. The method will typically be called
 		/// when the the Application.Run() loop regains control or the next call to
@@ -49,7 +38,6 @@ namespace LanguageExplorer
 		/// </summary>
 		/// <param name="action">The action to execute</param>
 		/// <param name="param1">The first parameter of the action.</param>
-		/// ------------------------------------------------------------------------------------
 		void ExecuteAsync<T>(Action<T> action, T param1);
 
 		/// ------------------------------------------------------------------------------------
@@ -106,17 +94,6 @@ namespace LanguageExplorer
 		/// <param name="dialogOwner">The dialog owner.</param>
 		/// ------------------------------------------------------------------------------------
 		void RestoreProject(IHelpTopicProvider helpTopicProvider, Form dialogOwner);
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Lets the user archive data using RAMP
-		/// </summary>
-		/// <param name="helpTopicProvider">The FieldWorks application's help topic provider.</param>
-		/// <param name="dialogOwner">The owner of the dialog</param>
-		/// <returns>The list of the files to archive, or <c>null</c> if the user cancels the
-		/// archive dialog</returns>
-		/// ------------------------------------------------------------------------------------
-		List<string> ArchiveProjectWithRamp(IHelpTopicProvider helpTopicProvider, Form dialogOwner);
 
 		/// <summary>
 		/// Reopens the given FLEx project. This may be necessary if some external process modified the project data.

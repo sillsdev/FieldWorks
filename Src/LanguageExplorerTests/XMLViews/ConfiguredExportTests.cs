@@ -31,8 +31,8 @@ namespace LanguageExplorerTests.XMLViews
 		{
 			base.TestSetup();
 
-			PubSubSystemFactory.CreatePubSubSystem(out m_publisher, out m_subscriber);
-			m_propertyTable = PropertyTableFactory.CreatePropertyTable(m_publisher);
+			TestSetupServices.SetupTestPubSubSystem(out m_publisher, out m_subscriber);
+			m_propertyTable = TestSetupServices.SetupTestPropertyTable(m_publisher);
 		}
 
 		/// ------------------------------------------------------------------------------------

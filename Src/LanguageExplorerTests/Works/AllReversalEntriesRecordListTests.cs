@@ -28,7 +28,7 @@ namespace LanguageExplorerTests.Works
 		protected IReversalIndex m_revIndex;
 
 
-		#region IDisposable Section
+	#region IDisposable Section
 		~AllReversalEntriesRecordListTestBase()
 		{
 			Dispose(false);
@@ -77,9 +77,9 @@ namespace LanguageExplorerTests.Works
 			get;
 			private set;
 		}
-		#endregion IDisposable Section
+	#endregion IDisposable Section
 
-		#region Setup and Teardown
+	#region Setup and Teardown
 		/// <summary>
 		/// Run by FixtureInit() in XWorksAppTestBase
 		/// </summary>
@@ -123,8 +123,8 @@ namespace LanguageExplorerTests.Works
 		[SetUp]
 		public void Initialize()
 		{
-			PubSubSystemFactory.CreatePubSubSystem(out m_publisher, out m_subscriber);
-			m_propertyTable = PropertyTableFactory.CreatePropertyTable(m_publisher);
+			TestSetupServices.SetupTestPubSubSystem(out m_publisher, out m_subscriber);
+			m_propertyTable = TestSetupServices.SetupTestPropertyTable(m_publisher);
 			//Rick: So far the tests in this file are very basic.
 			//I would suggest looking in BulkEditBarTests.cs to expand the capabilities of these tests.
 			CreateAndInitializeNewWindow();
@@ -235,13 +235,13 @@ namespace LanguageExplorerTests.Works
 #endif
 		}
 
-		#endregion Setup and Teardown
+	#endregion Setup and Teardown
 	}
 
 	[TestFixture]
 	public class AllReversalEntriesRecordListTests : AllReversalEntriesRecordListTestBase
 	{
-		#region AllReversalEntriesRecordListTests tests
+	#region AllReversalEntriesRecordListTests tests
 
 		/// <summary>
 		/// This test was written for LT-14722 Stop Crash when clicking Reversal Indexes
@@ -270,7 +270,7 @@ namespace LanguageExplorerTests.Works
 			}
 		}
 
-		#endregion AllReversalEntriesRecordListTests tests
+	#endregion AllReversalEntriesRecordListTests tests
 	}
 #endif
 }

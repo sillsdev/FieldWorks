@@ -38,7 +38,6 @@ namespace LanguageExplorerTests.DetailControls
 			var servLoc = Cache.ServiceLocator;
 			m_leFact = servLoc.GetInstance<ILexEntryFactory>();
 			m_lerFact = servLoc.GetInstance<ILexEntryRefFactory>();
-			//m_moFact = servLoc.GetInstance<IMoStemAllomorphFactory>();
 			MockLauncher = new MockAtomicReferenceLauncher();
 			m_wsAnalysis = Cache.DefaultAnalWs;
 			m_wsVern = Cache.DefaultVernWs;

@@ -1200,4 +1200,7 @@ you expect.</value>
   <data name="Configure" xml:space="preserve">
     <value>Configure...</value>
   </data>
+  <data name="ProblemRestoringSettings" xml:space="preserve">
+    <value>There was a problem while trying to restore the settings.  Your settings will be restored to their default values.</value>
+  </data>
 </root>

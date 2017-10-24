@@ -7,6 +7,7 @@
 
 using Rhino.Mocks;
 using System.Drawing;
+using LanguageExplorerTests;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils.Attributes;
@@ -114,8 +115,8 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		[SetUp]
 		public void Setup()
 		{
-			PubSubSystemFactory.CreatePubSubSystem(out m_publisher, out m_subscriber);
-			m_propertyTable = PropertyTableFactory.CreatePropertyTable(m_publisher);
+			TestSetupServices.SetupTestPubSubSystem(out m_publisher, out m_subscriber);
+			m_propertyTable = TestSetupServices.SetupTestPropertyTable(m_publisher);
 
 			m_site = new DummyRootSite();
 			m_site.InitializeFlexComponent(new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber));

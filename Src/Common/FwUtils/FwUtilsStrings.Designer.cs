@@ -352,15 +352,6 @@ namespace SIL.FieldWorks.Common.FwUtils {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to There was a problem while trying to restore the settings.  Your settings will be restored to their default values..
-        /// </summary>
-        internal static string ProblemRestoringSettings {
-            get {
-                return ResourceManager.GetString("ProblemRestoringSettings", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Retry.
         /// </summary>
         internal static string Retry {

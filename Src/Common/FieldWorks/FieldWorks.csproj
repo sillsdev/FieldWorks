@@ -86,7 +86,7 @@
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-	<Prefer32Bit>false</Prefer32Bit>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
     <DebugType>pdbonly</DebugType>
@@ -99,13 +99,14 @@
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-	<Prefer32Bit>false</Prefer32Bit>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="LanguageExplorer, Version=10.0.0.37221, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\LanguageExplorer.dll</HintPath>
     </Reference>
+    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="ViewsInterfaces, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
@@ -230,7 +231,9 @@
     <Compile Include="ApplicationBusyDialog.Designer.cs">
       <DependentUpon>ApplicationBusyDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="ComposablePartCatalogExtensions.cs" />
     <Compile Include="FieldWorksManager.cs" />
+    <Compile Include="FwApplicationSettings.cs" />
     <Compile Include="FwRestoreProjectSettings.cs" />
     <Compile Include="LexicalProvider\LexicalProviderImpl.cs" />
     <Compile Include="LexicalProvider\LexicalProviderManager.cs" />

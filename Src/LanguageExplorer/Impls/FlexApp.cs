@@ -5,17 +5,15 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.Composition;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Security;
 using System.Threading;
 using System.Windows.Forms;
 using LanguageExplorer.Controls.XMLViews;
-using LanguageExplorer.HelpTopics;
 using Microsoft.Win32;
-using SIL.Code;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.ViewsInterfaces;
@@ -41,19 +39,22 @@ namespace LanguageExplorer.Impls
 	/// <remarks>
 	/// There is only one of these per process, but it can contain multiple windows.
 	/// </remarks>
-	internal sealed class LexTextApp : IFlexApp
+	[Export(typeof(IFlexApp))]
+	internal sealed class FlexApp : IFlexApp
 	{
 		#region Data Members
+		[Import]
+		private ExportFactory<IFwMainWnd> WindowFactory { get; set; }
+		private List<Tuple<IFwMainWnd, ExportLifetimeContext<IFwMainWnd>>> _windows = new List<Tuple<IFwMainWnd, ExportLifetimeContext<IFwMainWnd>>>();
 
 		private static bool m_fResourceFailed;
 		/// <summary>
 		///  Web browser to use in Linux
 		/// </summary>
 		private const string webBrowserProgramLinux = "firefox";
+		[Import]
 		private IHelpTopicProvider m_helpTopicProvider;
 		private bool m_fInitialized;
-		/// <summary></summary>
-		private List<IFwMainWnd> m_rgMainWindows = new List<IFwMainWnd>(1);
 		/// <summary>
 		/// One of m_rgMainWindows, the one most recently activated.
 		/// </summary>
@@ -63,41 +64,39 @@ namespace LanguageExplorer.Impls
 		/// <summary>
 		/// The FieldWorks manager for dealing with FieldWorks-level stuff.
 		/// </summary>
+		[Import]
 		private IFieldWorksManager m_fwManager;
 		/// <summary></summary>
 		private FwFindReplaceDlg m_findReplaceDlg;
 		private SuppressedCacheInfo m_suppressedCacheInfo;
 		/// <summary>
-		/// null means that we are not suppressing view refreshes.
-		/// True means we're suppressing and we need to do a refresh when finished.
-		/// False means we're suppressing, but have no need to do a refresh when finished.
+		/// "NotSupressingRefresh" means that we are not suppressing view refreshes.
+		/// "SupressingRefreshAndWantRefresh" means we're suppressing and we need to do a refresh when finished.
+		/// "SupressingRefreshButDoNotWantRefresh" means we're suppressing, but have no need to do a refresh when finished.
 		/// </summary>
-		private bool? m_refreshView;
+		private RefreshInterest DeclareRefreshInterest { get; set; }
 		/// <summary>The find patterns for the find/replace dialog, one for each database.</summary>
 		/// <remarks>We need one pattern per database (cache). Otherwise it'll crash when we try to
 		/// load the previous search term because the new database has different writing system hvos
 		/// (TE-5598).</remarks>
 		private IVwPattern m_findPattern;
-		private readonly FwAppArgs m_appArgs;
 		private IFwMainWnd m_windowToCloseOnIdle;
 
-		#endregion Data Members
+#endregion Data Members
 
-		#region Construction and Initializing
+#region Construction and Initializing
 
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		/// <param name="fwManager">The FieldWorks manager for dealing with FieldWorks-level stuff.</param>
-		/// <param name="appArgs">The application arguments.</param>
-		internal LexTextApp(IFieldWorksManager fwManager, FwAppArgs appArgs)
+		/// <remarks>
+		/// Called by MEF
+		/// </remarks>
+		internal FlexApp()
 		{
-			Guard.AgainstNull(fwManager, nameof(fwManager));
-
+			DeclareRefreshInterest = RefreshInterest.NotSupressingRefresh;
 			IsModalDialogOpen = false;
 			PictureHolder = new PictureHolder();
-			m_fwManager = fwManager;
-			m_helpTopicProvider = new FlexHelpTopicProvider();
 			RegistrySettings = new FwRegistrySettings(this)
 			{
 				LatestAppStartupTime = DateTime.Now.ToUniversalTime().Ticks.ToString()
@@ -108,12 +107,11 @@ namespace LanguageExplorer.Impls
 			Application.LeaveThreadModal += Application_LeaveThreadModal;
 
 			Application.AddMessageFilter(this);
-			m_appArgs = appArgs;
 		}
 
-		#endregion Construction and Initializing
+#endregion Construction and Initializing
 
-		#region non-interface properties
+#region non-interface properties
 
 		/// <summary>
 		/// Guid for the application (used for uniquely identifying DB items that "belong" to
@@ -152,13 +150,20 @@ namespace LanguageExplorer.Impls
 				{
 					return activeForm;
 				}
-				foreach (Form wnd in m_rgMainWindows)
+				foreach (var tuple in _windows)
 				{
+					var wnd = (Form)tuple.Item1;
 					if (wnd.ContainsFocus)
+					{
+						// It is focussed, so return it.
 						return wnd;
+					}
 				}
-				if (m_rgMainWindows.Count > 0)
-					return (Form)m_rgMainWindows[0];
+				// None have focus, so get the first one, if there is one.
+				if (_windows.Any())
+				{
+					return (Form)_windows[0].Item1;
+				}
 				return null;
 			}
 		}
@@ -169,9 +174,9 @@ namespace LanguageExplorer.Impls
 		/// </summary>
 		private IVwPattern FindPattern => m_findPattern ?? (m_findPattern = VwPatternClass.Create());
 
-		#endregion non-interface properties
+#endregion non-interface properties
 
-		#region IProjectSpecificSettingsKeyProvider interface implementation
+#region IProjectSpecificSettingsKeyProvider interface implementation
 
 		/// <summary>
 		/// Gets the project specific settings key.
@@ -188,9 +193,9 @@ namespace LanguageExplorer.Impls
 			}
 		}
 
-		#endregion IProjectSpecificSettingsKeyProvider interface implementation
+#endregion IProjectSpecificSettingsKeyProvider interface implementation
 
-		#region IMessageFilter interface implementation
+#region IMessageFilter interface implementation
 
 		/// <summary>
 		/// Filters out a message before it is dispatched.
@@ -219,9 +224,9 @@ namespace LanguageExplorer.Impls
 
 			return false;
 		}
-		#endregion IMessageFilter interface implementation
+#endregion IMessageFilter interface implementation
 
-		#region ISettings interface implementation
+#region ISettings interface implementation
 
 		/// <summary>
 		/// The RegistryKey for this application.
@@ -249,9 +254,9 @@ namespace LanguageExplorer.Impls
 		{
 			throw new NotSupportedException("'SaveSettingsNow' is not supported. Use 'SaveSettings' method instead.");
 		}
-		#endregion ISettings interface implementation
+#endregion ISettings interface implementation
 
-		#region IFeedbackInfoProvider interface implementation
+#region IFeedbackInfoProvider interface implementation
 		/// <summary>
 		/// E-mail address for bug reports, etc.
 		/// </summary>
@@ -262,9 +267,9 @@ namespace LanguageExplorer.Impls
 		/// </summary>
 		public string FeedbackEmailAddress => "FLEXUsage@sil.org";
 
-		#endregion IFeedbackInfoProvider interface implementation
+#endregion IFeedbackInfoProvider interface implementation
 
-		#region IHelpTopicProvider interface implementation
+#region IHelpTopicProvider interface implementation
 		/// <summary>
 		/// Gets a URL identifying a Help topic.
 		/// </summary>
@@ -280,9 +285,9 @@ namespace LanguageExplorer.Impls
 		/// </summary>
 		public string HelpFile => m_helpTopicProvider.HelpFile;
 
-		#endregion IHelpTopicProvider interface implementation
+#endregion IHelpTopicProvider interface implementation
 
-		#region IDisposable interface implementation
+#region IDisposable interface implementation
 
 		/// <summary>
 		/// See if the object has been disposed.
@@ -300,7 +305,7 @@ namespace LanguageExplorer.Impls
 				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
 		}
 
-		#region Dispose support
+#region Dispose support
 
 		/// <summary>
 		/// Finalizer, in case client doesn't dispose it.
@@ -309,7 +314,7 @@ namespace LanguageExplorer.Impls
 		/// <remarks>
 		/// In case some clients forget to dispose it directly.
 		/// </remarks>
-		~LexTextApp()
+		~FlexApp()
 		{
 			Dispose(false);
 			// The base class finalizer is called automatically.
@@ -354,24 +359,21 @@ namespace LanguageExplorer.Impls
 				RegistrySettings.FirstTimeAppHasBeenRun = false;
 
 				// Dispose managed resources here.
-				var mainWnds = new List<IFwMainWnd>(m_rgMainWindows); // Use another array, since m_rgMainWindows may change.
-				m_rgMainWindows.Clear(); // In fact, just clear the main array, so the windows won't have to worry so much.
-				foreach (var mainWnd in mainWnds)
+				var mainWnds = new List<Tuple<IFwMainWnd, ExportLifetimeContext<IFwMainWnd>>>(_windows); // Use another list, since _windows may change.
+				_windows.Clear(); // In fact, just clear the main array, so the windows won't have to worry so much.
+				foreach (var tuple in mainWnds)
 				{
-					if (mainWnd is Form)
+					var mainWnd = tuple.Item1;
+					var wnd = mainWnd as Form;
+					if (wnd != null)
 					{
-						var wnd = (Form)mainWnd;
 						wnd.Closing -= OnClosingWindow;
 						wnd.Closed -= OnWindowClosed;
 						wnd.Activated -= fwMainWindow_Activated;
 						wnd.HandleDestroyed -= fwMainWindow_HandleDestroyed;
 						wnd.FormClosing -= FwMainWindowOnFormClosing;
-						wnd.Dispose();
 					}
-					else
-					{
-						mainWnd.Dispose();
-					}
+					mainWnd.Dispose();
 				}
 				m_findReplaceDlg?.Dispose();
 
@@ -384,16 +386,16 @@ namespace LanguageExplorer.Impls
 
 				Application.RemoveMessageFilter(this);
 				PictureHolder.Dispose();
+				DeclareRefreshInterest = RefreshInterest.NotSupressingRefresh;
 			}
 
 			// Dispose unmanaged resources here, whether disposing is true or false.
-			m_rgMainWindows = null;
+			_windows = null;
 			m_activeMainWindow = null;
 			RegistrySettings = null;
 			m_findPattern = null;
 			m_findReplaceDlg = null;
 			m_suppressedCacheInfo = null;
-			m_refreshView = null;
 			PictureHolder = null;
 
 			IsDisposed = true;
@@ -420,7 +422,7 @@ namespace LanguageExplorer.Impls
 			}
 		}
 
-		#endregion Dispose support
+#endregion Dispose support
 
 		/// <summary>
 		/// Dispose the object.
@@ -435,9 +437,9 @@ namespace LanguageExplorer.Impls
 			// from executing a second time.
 			GC.SuppressFinalize(this);
 		}
-		#endregion IDisposable interface implementation
+#endregion IDisposable interface implementation
 
-		#region IApp interface implementation
+#region IApp interface implementation
 
 		/// <summary>
 		/// Return a string from a resource ID
@@ -502,14 +504,16 @@ namespace LanguageExplorer.Impls
 		{
 			CheckDisposed();
 
-			if (m_refreshView != null)
+			if (DeclareRefreshInterest != RefreshInterest.NotSupressingRefresh)
 			{
-				m_refreshView = true;
+				DeclareRefreshInterest = RefreshInterest.SupressingRefreshAndWantRefresh;
 			}
 			else
 			{
 				foreach (var wnd in MainWindows)
+				{
 					wnd.RefreshAllViews();
+				}
 			}
 		}
 
@@ -714,7 +718,7 @@ namespace LanguageExplorer.Impls
 			CheckDisposed();
 
 			// Get window that uses the given DB.
-			var fwxwnd = m_rgMainWindows.Count > 0 ? m_rgMainWindows[0] : null;
+			var fwxwnd = _windows.Any() ? _windows[0].Item1 : null;
 			if (fwxwnd == null)
 		{
 				return;
@@ -866,9 +870,9 @@ namespace LanguageExplorer.Impls
 			return false;
 		}
 
-		#endregion IApp interface implementation
+#endregion IApp interface implementation
 
-		#region IFlexApp interface implementation
+#region IFlexApp interface implementation
 
 		/// <summary>
 		/// Array of main windows that are currently open for this application. This array can
@@ -882,7 +886,7 @@ namespace LanguageExplorer.Impls
 			get
 			{
 				CheckDisposed();
-				return m_rgMainWindows;
+				return new List<IFwMainWnd>(_windows.Select(tuple => tuple.Item1));
 			}
 		}
 
@@ -904,8 +908,7 @@ namespace LanguageExplorer.Impls
 		/// <param name="progressDlg">The progress DLG.</param>
 		/// <param name="isNewCache">if set to <c>true</c> [is new cache].</param>
 		/// <param name="wndCopyFrom">The WND copy from.</param>
-		/// <param name="fOpeningNewProject">if set to <c>true</c> [f opening new project].</param>
-		public Form NewMainAppWnd(IProgress progressDlg, bool isNewCache, Form wndCopyFrom, bool fOpeningNewProject)
+		public Form NewMainAppWnd(IProgress progressDlg, bool isNewCache, Form wndCopyFrom = null)
 		{
 			if (progressDlg != null)
 			{
@@ -913,70 +916,53 @@ namespace LanguageExplorer.Impls
 			}
 			// We pass a copy of the link information because it doesn't get used until after the following line
 			// removes the information we need.
-			var form = new FwMainWnd(this, (FwMainWnd)wndCopyFrom, m_appArgs.HasLinkInformation ? m_appArgs.CopyLinkArgs() : null);
-			m_appArgs.ClearLinkInformation(); // Make sure the next window that is opened doesn't default to the same place
+			var exportLifetimeContext = WindowFactory.CreateExport();
+			var factoryMadeIFwMainWnd = exportLifetimeContext.Value;
+			_windows.Add(new Tuple<IFwMainWnd, ExportLifetimeContext<IFwMainWnd>>(factoryMadeIFwMainWnd, exportLifetimeContext));
 
-			m_activeMainWindow = form;
+			FwAppArgs.ClearLinkInformation(); // Make sure the next window that is opened doesn't default to the same place
 
 			if (isNewCache)
 			{
 				InitializePartInventories(progressDlg, true);
 			}
-
-			return form;
-		}
-
-		/// <summary>
-		/// Registers events for the main window and adds the main window to the list of
-		/// windows. Then shows the window.
-		/// </summary>
-		/// <param name="fwMainWindow">The new main window.</param>
-		/// <param name="wndCopyFrom">Form to copy from, or <c>null</c></param>
-		public void InitAndShowMainWindow(Form fwMainWindow, Form wndCopyFrom)
-		{
-			if (fwMainWindow == null) throw new ArgumentNullException(nameof(fwMainWindow));
-
-			CheckDisposed();
-
-			if (!(fwMainWindow is IFwMainWnd))
+			// Let the application do its initialization of the new window
+			using (new DataUpdateMonitor((Control)factoryMadeIFwMainWnd, "Creating new main window"))
 			{
-				throw new ArgumentException(@"Form must implement IFwMainWnd", nameof(fwMainWindow));
+				var fwMainWndAsForm = (Form)factoryMadeIFwMainWnd;
+				factoryMadeIFwMainWnd.Initialize(wndCopyFrom as IFwMainWnd, FwAppArgs.HasLinkInformation ? FwAppArgs.CopyLinkArgs() : null);
+				fwMainWndAsForm.Closing += OnClosingWindow;
+				fwMainWndAsForm.Closed += OnWindowClosed;
+				fwMainWndAsForm.Activated += fwMainWindow_Activated;
+				if (factoryMadeIFwMainWnd == Form.ActiveForm)
+				{
+					m_activeMainWindow = fwMainWndAsForm;
+				}
+				fwMainWndAsForm.HandleDestroyed += fwMainWindow_HandleDestroyed;
+				fwMainWndAsForm.FormClosing += FwMainWindowOnFormClosing;
+				fwMainWndAsForm.Show(); // Show method loads persisted settings for window & controls
+				fwMainWndAsForm.Activate(); // This makes main window come to front after splash screen closes
+
+				// adjust position if this is an additional window
+				if (wndCopyFrom != null)
+				{
+					AdjustNewWindowPosition(fwMainWndAsForm, wndCopyFrom);
+				}
+				else if (fwMainWndAsForm.WindowState != FormWindowState.Maximized)
+				{
+					// Fix the stored position in case it is off the screen.  This can happen if the
+					// user has removed a second monitor, or changed the screen resolution downward,
+					// since the last time he ran the program.  (See LT-1083.)
+					var rcNewWnd = fwMainWndAsForm.DesktopBounds;
+					ScreenHelper.EnsureVisibleRect(ref rcNewWnd);
+					fwMainWndAsForm.DesktopBounds = rcNewWnd;
+					fwMainWndAsForm.StartPosition = FormStartPosition.Manual;
+				}
+
+				m_fInitialized = true;
 			}
 
-			var fwMainWnd = (IFwMainWnd)fwMainWindow;
-			fwMainWindow.Closing += OnClosingWindow;
-			fwMainWindow.Closed += OnWindowClosed;
-			m_rgMainWindows.Add(fwMainWnd);
-			fwMainWindow.Activated += fwMainWindow_Activated;
-			if (fwMainWindow == Form.ActiveForm)
-				m_activeMainWindow = fwMainWindow;
-			fwMainWindow.HandleDestroyed += fwMainWindow_HandleDestroyed;
-			fwMainWindow.FormClosing += FwMainWindowOnFormClosing;
-			fwMainWindow.Show(); // Show method loads persisted settings for window & controls
-			fwMainWindow.Activate(); // This makes main window come to front after splash screen closes
-
-			// adjust position if this is an additional window
-			if (wndCopyFrom != null)
-			{
-				AdjustNewWindowPosition(fwMainWindow, wndCopyFrom);
-				// TODO BryanW: see AfMdiMainWnd::CmdWndNew() for other items that need to be
-				// coordinated
-			}
-			else if (fwMainWindow.WindowState != FormWindowState.Maximized)
-			{
-				// Fix the stored position in case it is off the screen.  This can happen if the
-				// user has removed a second monitor, or changed the screen resolution downward,
-				// since the last time he ran the program.  (See LT-1083.)
-				Rectangle rcNewWnd = fwMainWindow.DesktopBounds;
-				//				Rectangle rcScrn = Screen.FromRectangle(rcNewWnd).WorkingArea;
-				ScreenHelper.EnsureVisibleRect(ref rcNewWnd);
-				fwMainWindow.DesktopBounds = rcNewWnd;
-				fwMainWindow.StartPosition = FormStartPosition.Manual;
-			}
-
-			fwMainWnd.InitAndShowClient();
-
-			m_fInitialized = true;
+			return (Form)factoryMadeIFwMainWnd;
 		}
 
 		private void FwMainWindowOnFormClosing(object sender, FormClosingEventArgs formClosingEventArgs)
@@ -1097,24 +1083,40 @@ namespace LanguageExplorer.Impls
 		public void RemoveWindow(IFwMainWnd fwMainWindow)
 		{
 			if (IsDisposed || BeingDisposed)
+			{
 				return;
+			}
 
-			if (!m_rgMainWindows.Contains(fwMainWindow))
+			if (!MainWindows.Contains(fwMainWindow))
+			{
 				return; // It isn't our window.
+			}
 
 			// NOTE: The main window that was passed in is most likely already disposed, so
 			// make sure we don't call anything that would throw an ObjectDisposedException!
-			m_rgMainWindows.Remove(fwMainWindow);
-			var form = (Form)fwMainWindow;
-			form.Activated -= fwMainWindow_Activated;
-			form.HandleDestroyed -= fwMainWindow_HandleDestroyed;
-			form.FormClosing -= FwMainWindowOnFormClosing;
+			var gonerTuple = (_windows
+				.Select(tuple => new {tuple, currentWindow = tuple.Item1})
+				.Where(@t => @t.currentWindow == fwMainWindow)
+				.Select(@t => @t.tuple)).FirstOrDefault();
+			if (gonerTuple != null)
+			{
+				_windows.Remove(gonerTuple);
+				var form = (Form)gonerTuple.Item1;
+				form.Activated -= fwMainWindow_Activated;
+				form.HandleDestroyed -= fwMainWindow_HandleDestroyed;
+				form.FormClosing -= FwMainWindowOnFormClosing;
+				gonerTuple.Item2.Dispose(); // Disposing the factory also disposes the IFwMainWnd it created.
+			}
 
 			if (m_activeMainWindow == fwMainWindow)
+			{
 				m_activeMainWindow = null; // Just in case
+			}
 
-			if (m_rgMainWindows.Count == 0)
+			if (!_windows.Any())
+			{
 				m_fwManager.ExecuteAsync(m_fwManager.ShutdownApp, this);
+			}
 		}
 
 		/// <summary>
@@ -1156,7 +1158,9 @@ namespace LanguageExplorer.Impls
 		/// </summary>
 		public string SampleDatabase => Path.Combine(FwDirectoryFinder.LcmDirectories.ProjectsDirectory, "Sena 3", "Sena 3" + LcmFileHelper.ksFwDataXmlFileExtension);
 
-		#endregion IFlexApp interface implementation
+		public FwAppArgs FwAppArgs { set; private get; }
+
+#endregion IFlexApp interface implementation
 
 		private static void RestartSpellChecking(Control root)
 		{
@@ -1700,8 +1704,8 @@ namespace LanguageExplorer.Impls
 		{
 			CheckDisposed();
 
-			Debug.Assert(m_refreshView == null, "Nested BeginUpdate");
-			m_refreshView = false;
+			Debug.Assert(DeclareRefreshInterest == RefreshInterest.NotSupressingRefresh, "Nested BeginUpdate");
+			DeclareRefreshInterest = RefreshInterest.SupressingRefreshButDoNotWantRefresh;
 		}
 
 		/// <summary>
@@ -1711,10 +1715,10 @@ namespace LanguageExplorer.Impls
 		{
 			CheckDisposed();
 
-			Debug.Assert(m_refreshView != null, "EndUpdate called without BeginUpdate");
+			Debug.Assert(DeclareRefreshInterest != RefreshInterest.NotSupressingRefresh, "EndUpdate called without BeginUpdate");
 
-			var needRefresh = (bool)m_refreshView;
-			m_refreshView = null; // Make sure we don't try suppress the following RefreshAllViews()
+			var needRefresh = DeclareRefreshInterest == RefreshInterest.SupressingRefreshAndWantRefresh;
+			DeclareRefreshInterest = RefreshInterest.NotSupressingRefresh; // Make sure we don't try suppress the following RefreshAllViews()
 			if (needRefresh)
 				RefreshAllViews();
 		}
@@ -1914,7 +1918,7 @@ namespace LanguageExplorer.Impls
 		}
 #endif
 
-		#region SuppressedCacheInfo class
+#region SuppressedCacheInfo class
 
 		/// <summary>
 		/// Helper class that contains queued SyncMsgs and a reference count for
@@ -1928,6 +1932,6 @@ namespace LanguageExplorer.Impls
 			public readonly Queue<SyncMsg> Queue = new Queue<SyncMsg>();
 		}
 
-		#endregion
+#endregion
 	}
 }

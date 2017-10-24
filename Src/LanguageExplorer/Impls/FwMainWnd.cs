@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -53,10 +54,11 @@ namespace LanguageExplorer.Impls
 	/// "mainContainer" holds the SidePane (_sidePane) in its Panel1/FirstControl (left side).
 	/// It holds a tool-specific control in its right side (Panel2/SecondControl).
 	/// </remarks>
+	[Export(typeof(IFwMainWnd))]
 	internal sealed partial class FwMainWnd : Form, IFwMainWnd
 	{
 		// Used to count the number of times we've been asked to suspend Idle processing.
-		private int _countSuspendIdleProcessing = 0;
+		private int _countSuspendIdleProcessing;
 		/// <summary>
 		///  Web browser to use in Linux
 		/// </summary>
@@ -68,9 +70,14 @@ namespace LanguageExplorer.Impls
 		private IArea _currentArea;
 		private ITool _currentTool;
 		private LcmStyleSheet _stylesheet;
+		[Import]
+		private IPropertyTable _propertyTable;
+		[Import]
 		private IPublisher _publisher;
+		[Import]
 		private ISubscriber _subscriber;
-		private readonly IFlexApp _flexApp;
+		[Import]
+		private IFlexApp _flexApp;
 		private DateTime _lastToolChange = DateTime.MinValue;
 		private readonly HashSet<string> _toolsReportedToday = new HashSet<string>();
 		private bool _persistWindowSize;
@@ -85,86 +92,6 @@ namespace LanguageExplorer.Impls
 		public FwMainWnd()
 		{
 			InitializeComponent();
-		}
-
-		/// <summary>
-		/// Create new instance of window.
-		/// </summary>
-		public FwMainWnd(IFlexApp flexApp, FwMainWnd wndCopyFrom, FwLinkArgs linkArgs)
-			: this()
-		{
-			Guard.AssertThat(wndCopyFrom == null, "Support for the 'wndCopyFrom' is not yet implemented.");
-			Guard.AssertThat(linkArgs == null, "Support for the 'linkArgs' is not yet implemented.");
-
-			var wasCrashDuringPreviousStartup = SetupCrashDetectorFile();
-
-			_flexApp = flexApp;
-
-			SetupCustomStatusBarPanels();
-
-			projectLocationsToolStripMenuItem.Enabled = FwRegistryHelper.FieldWorksRegistryKeyLocalMachine.CanWriteKey();
-			archiveWithRAMPSILToolStripMenuItem.Enabled = ReapRamp.Installed;
-
-			_viewHelper = new ActiveViewHelper(this);
-
-			SetupStylesheet();
-			PubSubSystemFactory.CreatePubSubSystem(out _publisher, out _subscriber);
-			SetupPropertyTable();
-			RegisterSubscriptions();
-
-			_dataNavigationManager = new DataNavigationManager(new Dictionary<Navigation, Tuple<ToolStripMenuItem, ToolStripButton>>
-			{
-				{Navigation.First, new Tuple<ToolStripMenuItem, ToolStripButton>(_data_First, _tsbFirst)},
-				{Navigation.Previous, new Tuple<ToolStripMenuItem, ToolStripButton>(_data_Previous, _tsbPrevious)},
-				{Navigation.Next, new Tuple<ToolStripMenuItem, ToolStripButton>(_data_Next, _tsbNext)},
-				{Navigation.Last, new Tuple<ToolStripMenuItem, ToolStripButton>(_data_Last, _tsbLast)}
-			});
-
-			RestoreWindowSettings(wasCrashDuringPreviousStartup);
-			var restoreSize = Size;
-
-			var flexComponentParameters = new FlexComponentParameters(PropertyTable, Publisher, Subscriber);
-			_recordClerkRepositoryForTools = new RecordClerkRepository(Cache, flexComponentParameters);
-
-			SetupParserMenuItems();
-
-			_majorFlexComponentParameters = new MajorFlexComponentParameters(
-				mainContainer,
-				_menuStrip,
-				toolStripContainer,
-				_statusbar,
-				_parserMenuManager,
-				_dataNavigationManager,
-				_recordClerkRepositoryForTools,
-				flexComponentParameters,
-				Cache,
-				_flexApp,
-				this);
-
-			// Most tools show it, but let them deal with it and its event handler.
-			var fileExportMenu = MenuServices.GetFileExportMenu(_majorFlexComponentParameters.MenuStrip);
-			fileExportMenu.Visible = false;
-			fileExportMenu.Enabled = false;
-
-			_parserMenuManager.InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);
-
-			IdleQueue = new IdleQueue();
-
-			_sendReceiveMenuManager = new SendReceiveMenuManager(IdleQueue, this, _flexApp, Cache, _sendReceiveToolStripMenuItem, toolStripButtonFlexLiftBridge);
-			_sendReceiveMenuManager.InitializeFlexComponent(flexComponentParameters);
-
-			SetupRepositories();
-
-			SetupOutlookBar();
-
-			SetWindowTitle();
-
-			SetupWindowSizeIfNeeded(restoreSize);
-
-			if (File.Exists(CrashOnStartupDetectorPathName)) // Have to check again, because unit test check deletes it in the RestoreWindowSettings method.
-			{
-				File.Delete(CrashOnStartupDetectorPathName);
-			}
 		}
 
 		private static bool SetupCrashDetectorFile()
@@ -462,7 +389,6 @@ namespace LanguageExplorer.Impls
 
 		private void SetupPropertyTable()
 		{
-			PropertyTable = PropertyTableFactory.CreatePropertyTable(_publisher);
 			LoadPropertyTable();
 			SetDefaultProperties();
 			SetTemporaryProperties();
@@ -675,7 +601,7 @@ namespace LanguageExplorer.Impls
 		/// <summary>
 		/// Placement in the IPropertyTableProvider interface lets FwApp call PropertyTable.DoStuff.
 		/// </summary>
-		public IPropertyTable PropertyTable { get; private set; }
+		public IPropertyTable PropertyTable => _propertyTable;
 
 		#endregion
 
@@ -722,13 +648,85 @@ namespace LanguageExplorer.Impls
 		}
 
 		/// <summary>
-		/// Create the client windows and add correspnding stuff to the sidebar, View menu,  etc.
+		/// Initialize the window, before being shown.
 		/// </summary>
-		public void InitAndShowClient()
+		/// <remarks>
+		/// This allows for creating all sorts of things used by the implementation.
+		/// </remarks>
+		public void Initialize(IFwMainWnd windowToCopyFrom = null, FwLinkArgs linkArgs = null)
 		{
-			CheckDisposed();
+			Guard.AssertThat(windowToCopyFrom == null, "Support for the 'windowToCopyFrom' is not yet implemented.");
+			Guard.AssertThat(linkArgs == null, "Support for the 'linkArgs' is not yet implemented.");
 
-			Show();
+			var wasCrashDuringPreviousStartup = SetupCrashDetectorFile();
+
+			SetupCustomStatusBarPanels();
+
+			projectLocationsToolStripMenuItem.Enabled = FwRegistryHelper.FieldWorksRegistryKeyLocalMachine.CanWriteKey();
+			archiveWithRAMPSILToolStripMenuItem.Enabled = ReapRamp.Installed;
+
+			_viewHelper = new ActiveViewHelper(this);
+
+			SetupStylesheet();
+			SetupPropertyTable();
+			RegisterSubscriptions();
+
+			_dataNavigationManager = new DataNavigationManager(
+				new Dictionary<Navigation, Tuple<ToolStripMenuItem, ToolStripButton>>
+				{
+					{Navigation.First, new Tuple<ToolStripMenuItem, ToolStripButton>(_data_First, _tsbFirst)},
+					{Navigation.Previous, new Tuple<ToolStripMenuItem, ToolStripButton>(_data_Previous, _tsbPrevious)},
+					{Navigation.Next, new Tuple<ToolStripMenuItem, ToolStripButton>(_data_Next, _tsbNext)},
+					{Navigation.Last, new Tuple<ToolStripMenuItem, ToolStripButton>(_data_Last, _tsbLast)}
+				});
+
+			RestoreWindowSettings(wasCrashDuringPreviousStartup);
+			var restoreSize = Size;
+
+			var flexComponentParameters = new FlexComponentParameters(PropertyTable, Publisher, Subscriber);
+			_recordClerkRepositoryForTools = new RecordClerkRepository(Cache, flexComponentParameters);
+
+			SetupParserMenuItems();
+
+			_majorFlexComponentParameters = new MajorFlexComponentParameters(
+				mainContainer,
+				_menuStrip,
+				toolStripContainer,
+				_statusbar,
+				_parserMenuManager,
+				_dataNavigationManager,
+				_recordClerkRepositoryForTools,
+				flexComponentParameters,
+				Cache,
+				_flexApp,
+				this);
+
+			// Most tools show it, but let them deal with it and its event handler.
+			var fileExportMenu = MenuServices.GetFileExportMenu(_majorFlexComponentParameters.MenuStrip);
+			fileExportMenu.Visible = false;
+			fileExportMenu.Enabled = false;
+
+			_parserMenuManager.InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);
+
+			IdleQueue = new IdleQueue();
+
+			_sendReceiveMenuManager = new SendReceiveMenuManager(IdleQueue, this, _flexApp, Cache,
+				_sendReceiveToolStripMenuItem, toolStripButtonFlexLiftBridge);
+			_sendReceiveMenuManager.InitializeFlexComponent(flexComponentParameters);
+
+			SetupRepositories();
+
+			SetupOutlookBar();
+
+			SetWindowTitle();
+
+			SetupWindowSizeIfNeeded(restoreSize);
+
+			if (File.Exists(CrashOnStartupDetectorPathName)
+			) // Have to check again, because unit test check deletes it in the RestoreWindowSettings method.
+			{
+				File.Delete(CrashOnStartupDetectorPathName);
+			}
 		}
 
 		/// <summary>
@@ -991,7 +989,7 @@ namespace LanguageExplorer.Impls
 			{
 				// Leave the PropertyTable for last, since the above stuff may still want to access it, while shutting down.
 				PropertyTable.Dispose();
-				PropertyTable = null;
+				/*PropertyTable = null;*/
 			}
 		}
 
@@ -1387,12 +1385,21 @@ namespace LanguageExplorer.Impls
 
 		private void File_Archive_With_RAMP(object sender, EventArgs e)
 		{
-			// prompt the user to select or create a FieldWorks backup
-			var filesToArchive = _flexApp.FwManager.ArchiveProjectWithRamp(_flexApp, this);
+			List<string> filesToArchive = null;
+			using (var dlg = new ArchiveWithRamp(Cache, _flexApp))
+			{
+				// prompt the user to select or create a FieldWorks backup
+				if (dlg.ShowDialog(this) == DialogResult.OK)
+				{
+					filesToArchive = dlg.FilesToArchive;
+				}
+			}
 
 			// if there are no files to archive, return now.
-			if((filesToArchive == null) || (filesToArchive.Count == 0))
+			if ((filesToArchive == null) || (filesToArchive.Count == 0))
+			{
 				return;
+			}
 
 			// show the RAMP dialog
 			var ramp = new ReapRamp();

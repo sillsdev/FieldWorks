@@ -4,6 +4,7 @@
 
 using System;
 using System.Diagnostics;
+using LanguageExplorerTests;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Core.KernelInterfaces;
@@ -254,8 +255,8 @@ namespace SIL.FieldWorks.Common.RootSites
 				ScriptureTags.kflidStyles);
 
 			Debug.Assert(m_basicView == null, "m_basicView is not null.");
-			PubSubSystemFactory.CreatePubSubSystem(out m_publisher, out m_subscriber);
-			m_propertyTable = PropertyTableFactory.CreatePropertyTable(m_publisher);
+			TestSetupServices.SetupTestPubSubSystem(out m_publisher, out m_subscriber);
+			m_propertyTable = TestSetupServices.SetupTestPropertyTable(m_publisher);
 
 			m_basicView = new DummyBasicView {Cache = Cache, Visible = false, StyleSheet = styleSheet};
 			m_basicView.InitializeFlexComponent(new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber));

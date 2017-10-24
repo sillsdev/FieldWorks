@@ -519,8 +519,8 @@ namespace LanguageExplorerTests.XMLViews
 		[SetUp]
 		public void SetUp()
 		{
-			PubSubSystemFactory.CreatePubSubSystem(out m_publisher, out m_subscriber);
-			m_propertyTable = PropertyTableFactory.CreatePropertyTable(m_publisher);
+			TestSetupServices.SetupTestPubSubSystem(out m_publisher, out m_subscriber);
+			m_propertyTable = TestSetupServices.SetupTestPropertyTable(m_publisher);
 			var bv = new FakeBrowseViewer();
 			var flexComponentParameters = new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber);
 			bv.InitializeFlexComponent(flexComponentParameters);

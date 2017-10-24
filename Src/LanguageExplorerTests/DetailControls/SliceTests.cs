@@ -128,8 +128,8 @@ namespace LanguageExplorerTests.DetailControls
 		[Test]
 		public void Expand()
 		{
-			PubSubSystemFactory.CreatePubSubSystem(out m_publisher, out m_subscriber);
-			m_propertyTable = PropertyTableFactory.CreatePropertyTable(m_publisher);
+			TestSetupServices.SetupTestPubSubSystem(out m_publisher, out m_subscriber);
+			m_propertyTable = TestSetupServices.SetupTestPropertyTable(m_publisher);
 			var obj = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
 			m_DataTree = new DataTree();
 			var flexComponentParameters = new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber);
@@ -152,8 +152,8 @@ namespace LanguageExplorerTests.DetailControls
 		{
 			var obj = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
 
-			PubSubSystemFactory.CreatePubSubSystem(out m_publisher, out m_subscriber);
-			m_propertyTable = PropertyTableFactory.CreatePropertyTable(m_publisher);
+			TestSetupServices.SetupTestPubSubSystem(out m_publisher, out m_subscriber);
+			m_propertyTable = TestSetupServices.SetupTestPropertyTable(m_publisher);
 			m_DataTree = new DataTree();
 			var flexComponentParameters = new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber);
 			m_DataTree.InitializeFlexComponent(flexComponentParameters);
@@ -174,8 +174,8 @@ namespace LanguageExplorerTests.DetailControls
 			var path = GeneratePath();
 			var reuseMap = new ObjSeqHashMap();
 			var obj = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
-			PubSubSystemFactory.CreatePubSubSystem(out m_publisher, out m_subscriber);
-			m_propertyTable = PropertyTableFactory.CreatePropertyTable(m_publisher);
+			TestSetupServices.SetupTestPubSubSystem(out m_publisher, out m_subscriber);
+			m_propertyTable = TestSetupServices.SetupTestPropertyTable(m_publisher);
 			m_DataTree = new DataTree();
 			var flexComponentParameters = new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber);
 			m_DataTree.InitializeFlexComponent(flexComponentParameters);

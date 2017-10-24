@@ -277,6 +277,11 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Interlinear\WordBreakGuesserTests.cs" />
+    <Compile Include="LanguageExplorerTestsResources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>LanguageExplorerTestsResources.resx</DependentUpon>
+    </Compile>
     <Compile Include="LayoutKeyUtilsTests.cs" />
     <Compile Include="LcmUi\LcmUiTests.cs" />
     <Compile Include="Lexicon\LexEntryChangeHandlerTests.cs" />
@@ -294,6 +299,8 @@
     <Compile Include="LexTextControls\WordsSfmImportTests.cs" />
     <Compile Include="MGA\MGATests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="PropertyTableTests.cs" />
+    <Compile Include="PubSubSystemTests.cs" />
     <Compile Include="SendReceive\LiftBridgeTests.cs" />
     <Compile Include="SilSidePaneTests\ItemTests.cs" />
     <Compile Include="SilSidePaneTests\NavPaneOptionsDlgTests.cs" />
@@ -302,6 +309,7 @@
     <Compile Include="SilSidePaneTests\TabTests.cs" />
     <Compile Include="SilSidePaneTests\TestUtilities.cs" />
     <Compile Include="SimpleLoggerTests.cs" />
+    <Compile Include="TestSetupServices.cs" />
     <Compile Include="TextsAndWords\RespellingTests.cs" />
     <Compile Include="TextsAndWords\WordGrammarDebuggingTests.cs" />
     <Compile Include="ToolRepositoryTests.cs" />
@@ -389,6 +397,8 @@
     <Content Include="DetailControls\TestParts.xml" />
     <Content Include="LexTextControls\FeatureSystem2.xml" />
     <Content Include="LexTextControls\FeatureSystem3.xml" />
+    <None Include="SettingsBackup\db_TestLocal_Settings.xml" />
+    <None Include="SettingsBackup\Settings.xml" />
     <Content Include="Works\strings-en.xml" />
     <Content Include="Works\strings-es-MX.xml" />
     <Content Include="Works\strings-fr.xml" />
@@ -418,6 +428,10 @@
     <Content Include="Interlinear\ParagraphParserTestTexts.xml" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="LanguageExplorerTestsResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>LanguageExplorerTestsResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="XMLViews\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>

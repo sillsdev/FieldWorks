@@ -21,8 +21,8 @@ namespace LanguageExplorerTests.Works
 			// Setup
 			IPublisher publisher;
 			ISubscriber subscriber;
-			PubSubSystemFactory.CreatePubSubSystem(out publisher, out subscriber);
-			using (var propertyTable = PropertyTableFactory.CreatePropertyTable(publisher))
+			TestSetupServices.SetupTestPubSubSystem(out publisher, out subscriber);
+			using (var propertyTable = TestSetupServices.SetupTestPropertyTable(publisher))
 			using (var dummyWindow = new DummyFwMainWnd())
 			using (var statusbar = new StatusBar())
 			using (IRecordClerkRepository recordClerkRepository = new RecordClerkRepository(Cache, new FlexComponentParameters(propertyTable, publisher, subscriber)))

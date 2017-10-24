@@ -1,10 +1,11 @@
-// Copyright (c) 2002-2017 SIL International
+// Copyright (c) 2002-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.Framework;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel.Utils;
 
@@ -35,18 +36,8 @@ namespace LanguageExplorer
 		/// initialization should be done for this cache.</param>
 		/// <param name="wndCopyFrom"> Must be null for creating the original app window.
 		/// Otherwise, a reference to the main window whose settings we are copying.</param>
-		/// <param name="fOpeningNewProject"><c>true</c> if opening a brand spankin' new
-		/// project</param>
 		/// <returns>New instance of main window if successful; otherwise <c>null</c></returns>
-		Form NewMainAppWnd(IProgress progressDlg, bool fNewCache, Form wndCopyFrom, bool fOpeningNewProject);
-
-		/// <summary>
-		/// Registers events for the main window and adds the main window to the list of
-		/// windows. Then shows the window.
-		/// </summary>
-		/// <param name="fwMainWindow">The new main window.</param>
-		/// <param name="wndCopyFrom">Form to copy from, or <c>null</c></param>
-		void InitAndShowMainWindow(Form fwMainWindow, Form wndCopyFrom);
+		Form NewMainAppWnd(IProgress progressDlg, bool fNewCache, Form wndCopyFrom);
 
 		/// <summary>
 		/// Closes and re-opens the argument window, in the same place, as a drastic way of applying new settings.
@@ -116,5 +107,10 @@ namespace LanguageExplorer
 		/// The name of the sample DB for the app.
 		/// </summary>
 		string SampleDatabase { get; }
+
+		/// <summary>
+		/// Command line arguments.
+		/// </summary>
+		FwAppArgs FwAppArgs { set; }
 	}
 }

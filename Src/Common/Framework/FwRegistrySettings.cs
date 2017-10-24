@@ -77,7 +77,8 @@ namespace SIL.FieldWorks.Common.Framework
 		public FwRegistrySettings(IApp app)
 		{
 			if (app == null)
-				throw new ArgumentNullException("app");
+				throw new ArgumentNullException(nameof(app));
+
 			m_firstTimeAppHasBeenRun = new RegistryBoolSetting(app.SettingsKey, "FirstTime", true);
 			m_showSideBar = new RegistryBoolSetting(app.SettingsKey, "ShowSideBar", true);
 			m_showStatusBar = new RegistryBoolSetting(app.SettingsKey, "ShowStatusBar", true);

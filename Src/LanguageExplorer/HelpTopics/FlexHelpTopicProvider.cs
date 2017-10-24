@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System.ComponentModel.Composition;
 using System.Reflection;
 using System.Resources;
 using SIL.FieldWorks.Common.FwUtils;
@@ -12,6 +13,7 @@ namespace LanguageExplorer.HelpTopics
 	/// <summary>
 	/// FLEx-specific HelpTopicProvider
 	/// </summary>
+	[Export(typeof(IHelpTopicProvider))]
 	internal sealed class FlexHelpTopicProvider : IHelpTopicProvider
 	{
 		private static ResourceManager s_helpResources;

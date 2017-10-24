@@ -6,6 +6,7 @@ using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using LanguageExplorerTests;
 using NUnit.Framework;
 using SIL.LCModel;
 using SIL.FieldWorks.Common.ViewsInterfaces;
@@ -294,9 +295,8 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			IPublisher publisher;
 			ISubscriber subscriber;
-			PubSubSystemFactory.CreatePubSubSystem(out publisher, out subscriber);
-			using (var propertyTable = PropertyTableFactory.CreatePropertyTable(publisher))
-			{
+			TestSetupServices.SetupTestPubSubSystem(out publisher, out subscriber);
+			using (var propertyTable = TestSetupServices.SetupTestPropertyTable(publisher))
 			using (DummyFootnoteView footnoteView = new DummyFootnoteView(Cache))
 			{
 				footnoteView.StyleSheet = styleSheet;
@@ -340,7 +340,6 @@ namespace SIL.FieldWorks.Common.RootSites
 					"Space after marker is not read-only");
 			}
 		}
-		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -366,9 +365,8 @@ namespace SIL.FieldWorks.Common.RootSites
 			// Prepare the test by creating a footnote view
 			IPublisher publisher;
 			ISubscriber subscriber;
-			PubSubSystemFactory.CreatePubSubSystem(out publisher, out subscriber);
-			using (var propertyTable = PropertyTableFactory.CreatePropertyTable(publisher))
-			{
+			TestSetupServices.SetupTestPubSubSystem(out publisher, out subscriber);
+			using (var propertyTable = TestSetupServices.SetupTestPropertyTable(publisher))
 			using (DummyFootnoteView footnoteView = new DummyFootnoteView(Cache, true))
 			{
 				footnoteView.StyleSheet = styleSheet;
@@ -389,7 +387,6 @@ namespace SIL.FieldWorks.Common.RootSites
 				sel.GetSelectionString(out tss, string.Empty);
 				Assert.AreEqual("abcde", tss.Text);
 			}
-		}
 		}
 
 		/// ------------------------------------------------------------------------------------

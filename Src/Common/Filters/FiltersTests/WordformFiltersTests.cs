@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using LanguageExplorerTests;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Core.Text;
@@ -26,8 +27,8 @@ namespace SIL.FieldWorks.Filters
 			var wsf = new WordSetFilter(wfiset);
 			IPublisher publisher;
 			ISubscriber subscriber;
-			PubSubSystemFactory.CreatePubSubSystem(out publisher, out subscriber);
-			using (var propertyTable = PropertyTableFactory.CreatePropertyTable(publisher))
+			TestSetupServices.SetupTestPubSubSystem(out publisher, out subscriber);
+			using (var propertyTable = TestSetupServices.SetupTestPropertyTable(publisher))
 			{
 				propertyTable.SetProperty("cache", Cache, true, true);
 				flp.InitializeFlexComponent(new FlexComponentParameters(propertyTable, publisher, subscriber));

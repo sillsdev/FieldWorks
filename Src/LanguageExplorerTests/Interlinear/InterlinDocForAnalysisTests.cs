@@ -81,8 +81,8 @@ namespace LanguageExplorerTests.Interlinear
 		{
 			base.TestSetup();
 
-			PubSubSystemFactory.CreatePubSubSystem(out m_publisher, out m_subscriber);
-			m_propertyTable = PropertyTableFactory.CreatePropertyTable(m_publisher);
+			TestSetupServices.SetupTestPubSubSystem(out m_publisher, out m_subscriber);
+			m_propertyTable = TestSetupServices.SetupTestPropertyTable(m_publisher);
 			m_interlinDoc = new MockInterlinDocForAnalyis(m_stText0);
 			m_interlinDoc.InitializeFlexComponent(new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber));
 			m_focusBox = m_interlinDoc.FocusBox as TestableFocusBox;

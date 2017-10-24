@@ -46,8 +46,8 @@ namespace LanguageExplorerTests.Lexicon
 			const string wsId = "en";
 			IPublisher publisher;
 			ISubscriber subscriber;
-			PubSubSystemFactory.CreatePubSubSystem(out publisher, out subscriber);
-			using (var propertyTable = PropertyTableFactory.CreatePropertyTable(publisher))
+			TestSetupServices.SetupTestPubSubSystem(out publisher, out subscriber);
+			using (var propertyTable = TestSetupServices.SetupTestPropertyTable(publisher))
 			using (var cache = CreateCache())
 			{
 				var reversalIndexRepository = cache.ServiceLocator.GetInstance<IReversalIndexRepository>();

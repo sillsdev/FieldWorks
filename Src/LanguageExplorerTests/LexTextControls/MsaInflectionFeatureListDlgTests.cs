@@ -113,8 +113,8 @@ namespace LanguageExplorerTests.LexTextControls
 
 			IPublisher publisher;
 			ISubscriber subscriber;
-			PubSubSystemFactory.CreatePubSubSystem(out publisher, out subscriber);
-			using (var propertyTable = PropertyTableFactory.CreatePropertyTable(publisher))
+			TestSetupServices.SetupTestPubSubSystem(out publisher, out subscriber);
+			using (var propertyTable = TestSetupServices.SetupTestPropertyTable(publisher))
 			using (var dlg = new FeatureSystemInflectionFeatureListDlg())
 			{
 				ILexEntryInflType cobj =
@@ -164,8 +164,8 @@ namespace LanguageExplorerTests.LexTextControls
 		{
 			IPublisher publisher;
 			ISubscriber subscriber;
-			PubSubSystemFactory.CreatePubSubSystem(out publisher, out subscriber);
-			using (var propertyTable = PropertyTableFactory.CreatePropertyTable(publisher))
+			TestSetupServices.SetupTestPubSubSystem(out publisher, out subscriber);
+			using (var propertyTable = TestSetupServices.SetupTestPropertyTable(publisher))
 			using (MsaInflectionFeatureListDlg dlg = new MsaInflectionFeatureListDlg())
 			{
 				foreach (IFsFeatureSpecification spec in featStruct.FeatureSpecsOC)

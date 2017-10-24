@@ -160,6 +160,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\SIL.WritingSystems.dll</HintPath>
     </Reference>
+    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Management" />
     <Reference Include="System.Xml.Linq" />
@@ -220,7 +221,6 @@
     </Compile>
     <Compile Include="ActivationContextHelper.cs" />
     <Compile Include="AlphaOutline.cs" />
-    <Compile Include="FwApplicationSettings.cs" />
     <Compile Include="FwApplicationSettingsBase.cs" />
     <Compile Include="IReadonlyPropertyTable.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -277,7 +277,6 @@
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="ProjectId.cs" />
-    <Compile Include="PubSubSystemFactory.cs" />
     <Compile Include="PunctuationPatterns.cs" />
     <Compile Include="QuotationMarks.cs" />
     <Compile Include="ReadOnlyPropertyTable.cs" />
@@ -322,8 +321,6 @@
     <Compile Include="Property.cs" />
     <Compile Include="WaitCursor.cs" />
     <Compile Include="RegistryGroup.cs" />
-    <Compile Include="PropertyTableFactory.cs" />
-    <Compile Include="Impls\PropertyTable.cs" />
     <Compile Include="MessageBoxEx\MessageBoxEx.cs" />
     <Compile Include="MessageBoxEx\MessageBoxExButton.cs" />
     <Compile Include="MessageBoxEx\MessageBoxExButtons.cs" />
@@ -367,6 +364,7 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <DistFiles>../../../DistFiles</DistFiles>

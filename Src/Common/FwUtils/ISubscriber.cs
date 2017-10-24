@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections.Generic;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
@@ -28,5 +29,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <param name="message">The message that is no longer of interest to subscriber</param>
 		/// <param name="messageHandler">The action that is no longer interested in <paramref name="message"/>.</param>
 		void Unsubscribe(string message, Action<object> messageHandler);
+
+		/// <summary>
+		/// Get all current subscriptions.
+		/// </summary>
+		IReadOnlyDictionary<string, HashSet<Action<object>>> Subscriptions { get; }
 	}
 }
