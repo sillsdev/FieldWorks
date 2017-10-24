@@ -1646,7 +1646,7 @@ namespace SIL.FieldWorks.IText
 			// try to get one. Otherwise, if we've already cached a default, use it...it's surprising for the
 			// user if we move the focus box to something and the default changes. (LT-4643 etc.)
 			int hvoDefault = 0;
-			if (m_occurrenceSelected != null && m_occurrenceSelected.Analysis.Wordform == wordform)
+			if (m_occurrenceSelected != null && m_occurrenceSelected.Analysis == wordform)
 			{
 				// Try to establish a default based on the current occurrence.
 				if (m_fSetWordformInProgress ||
