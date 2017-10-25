@@ -336,7 +336,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			{
 				bool conflictOccurred = DetectMainConflicts(projectFolder, savedState);
 				var app = _propertyTable.GetValue<LexTextApp>("App");
-				var newAppWindow = RefreshCacheWindowAndAll(app, _propertyTable, fullProjectFileName);
+				var newAppWindow = RefreshCacheWindowAndAll(app, fullProjectFileName);
 				if (conflictOccurred)
 				{
 					// Send a message for the reopened instance to display the message viewer (used to be conflict report),
@@ -486,7 +486,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			{
 				bool conflictOccurred = DetectLiftConflicts(liftFolder, savedState);
 				var app = _propertyTable.GetValue<LexTextApp>("App");
-				var newAppWindow = RefreshCacheWindowAndAll(app, _propertyTable, fullProjectFileName);
+				var newAppWindow = RefreshCacheWindowAndAll(app, fullProjectFileName);
 				if (conflictOccurred)
 				{
 					// Send a message for the reopened instance to display the message viewer (used to be conflict report),
@@ -1425,13 +1425,13 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			return Path.Combine(Directory.GetParent(oldProjectFolder).FullName, revisedProjName);
 		}
 
-		private static FwXWindow RefreshCacheWindowAndAll(LexTextApp app, PropertyTable propertyTable, string fullProjectFileName)
+		private static FwXWindow RefreshCacheWindowAndAll(LexTextApp app, string fullProjectFileName)
 		{
 			var manager = app.FwManager;
 			var appArgs = new FwAppArgs(fullProjectFileName);
 			var newAppWindow =
 				(FwXWindow)manager.ReopenProject(manager.Cache.ProjectId.Name, appArgs).ActiveMainWindow;
-			if (IsVernacularSpellingEnabled(propertyTable))
+			if (IsVernacularSpellingEnabled(newAppWindow.PropTable))
 				WfiWordformServices.ConformSpellingDictToWordforms(newAppWindow.Cache);
 			//clear out any sort cache files (or whatever else might mess us up) and then refresh
 			newAppWindow.ClearInvalidatedStoredData();
