@@ -1057,22 +1057,23 @@ namespace SIL.FieldWorks.FdoUi
 			ConsiderDeletingRelatedFile(file, m_mediator, m_propertyTable);
 		}
 
-		public static void ConsiderDeletingRelatedFile(ICmFile file, Mediator mediator, PropertyTable propertyTable)
+		/// <returns>true if and only if the file was deleted</returns>
+		public static bool ConsiderDeletingRelatedFile(ICmFile file, Mediator mediator, PropertyTable propertyTable)
 		{
 			if (file == null)
-				return;
+				return false;
 			var refs = file.ReferringObjects;
 			if (refs.Count > 1)
-				return; // exactly one if only this CmPicture uses it.
+				return false; // exactly one if only this CmPicture uses it.
 			var path = file.InternalPath;
 			if (Path.IsPathRooted(path))
-				return; // don't delete external file
+				return false; // don't delete external file
 			string msg = String.Format(FdoUiStrings.ksDeleteFileAlso, path);
 			if (MessageBox.Show(Form.ActiveForm, msg, FdoUiStrings.ksDeleteFileCaption, MessageBoxButtons.YesNo,
 				MessageBoxIcon.Question)
 				!= DialogResult.Yes)
 			{
-				return;
+				return false;
 			}
 			if (mediator != null)
 			{
@@ -1081,25 +1082,27 @@ namespace SIL.FieldWorks.FdoUi
 					var app = propertyTable.GetValue<FwApp>("App");
 					app.PictureHolder.ReleasePicture(file.AbsoluteInternalPath);
 				}
-			string fileToDelete = file.AbsoluteInternalPath;
-			// I'm not sure why, but if we try to delete it right away, we typically get a failure,
-			// with an exception indicating that something is using the file, despite the code above that
-			// tries to make our picture cache let go of it.
-			// However, waiting until idle seems to solve the problem.
-			mediator.IdleQueue.Add(IdleQueuePriority.Low, obj =>
-				{
-					try
+				string fileToDelete = file.AbsoluteInternalPath;
+				// I'm not sure why, but if we try to delete it right away, we typically get a failure,
+				// with an exception indicating that something is using the file, despite the code above that
+				// tries to make our picture cache let go of it.
+				// However, waiting until idle seems to solve the problem.
+				mediator.IdleQueue.Add(IdleQueuePriority.Low, obj =>
 					{
-						File.Delete(fileToDelete);
-					}
-					catch (IOException)
-					{
-						// If we can't actually delete the file for some reason, don't bother the user complaining.
-					}
-					return true; // task is complete, don't try again.
-				});
-			file.Delete();
-		}
+						try
+						{
+							File.Delete(fileToDelete);
+						}
+						catch (IOException)
+						{
+							// If we can't actually delete the file for some reason, don't bother the user complaining.
+						}
+						return true; // task is complete, don't try again.
+					});
+				file.Delete();
+				return true;
+			}
+			return false;
 		}
 
 		protected virtual void ReallyDeleteUnderlyingObject()

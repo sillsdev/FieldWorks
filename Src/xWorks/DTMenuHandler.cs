@@ -351,8 +351,10 @@ namespace SIL.FieldWorks.XWorks
 					Cache.ActionHandlerAccessor,
 					() =>
 					{
-						CmObjectUi.ConsiderDeletingRelatedFile(media.MediaFileRA, m_mediator, m_propertyTable);
-						Cache.DomainDataByFlid.DeleteObj(media.Hvo);
+						if (CmObjectUi.ConsiderDeletingRelatedFile(media.MediaFileRA, m_mediator, m_propertyTable))
+						{
+							Cache.DomainDataByFlid.DeleteObj(media.Hvo);
+						}
 					});
 			}
 			return true;
