@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.Controls;
 using SIL.LCModel.Core.Scripture;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.KernelInterfaces;
@@ -23,7 +22,7 @@ namespace ParatextImport.ImportTests
 	#region DummyTeImporter
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
-	/// Dummy class for the <see cref="ParatextImporter"/> so we can test it.
+	/// Dummy class for the <see cref="ParatextSfmImporter"/> so we can test it.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	public class DummyParatextImporter : ParatextSfmImporter
@@ -41,10 +40,8 @@ namespace ParatextImport.ImportTests
 		/// Constructor to use when using an in-memory cache
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public DummyParatextImporter(IScrImportSet settings, LcmTestBase testBase,
-			LcmStyleSheet styleSheet) :
-			base(settings, testBase.Cache, styleSheet, new DummyUndoImportManager(testBase),
-				new ParatextImportNoUi())
+		public DummyParatextImporter(IScrImportSet settings, LcmTestBase testBase, LcmStyleSheet styleSheet) :
+			base(settings, testBase.Cache, styleSheet, new DummyUndoImportManager(testBase), new ParatextImportNoUi())
 		{
 		}
 		#endregion
@@ -54,8 +51,7 @@ namespace ParatextImport.ImportTests
 		{
 			if (disposing)
 			{
-				if (m_importCallbacks != null)
-					m_importCallbacks.Dispose();
+				m_importCallbacks?.Dispose();
 			}
 			m_importCallbacks = null;
 			base.Dispose(disposing);
@@ -287,7 +283,7 @@ namespace ParatextImport.ImportTests
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Exposes the <see cref="ParatextImporter.m_currSection"/> variable.
+		/// Exposes the <see cref="ParatextSfmImporter.m_currSection"/> variable.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public IScrSection CurrentSection
@@ -332,7 +328,7 @@ namespace ParatextImport.ImportTests
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Exposes the <see cref="ParatextImporter.m_nBookNumber"/> variable.
+		/// Exposes the <see cref="ParatextSfmImporter.m_nBookNumber"/> variable.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public int BookNumber
@@ -434,7 +430,7 @@ namespace ParatextImport.ImportTests
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Exposes the <see cref="ParatextImporter.m_CurrFootnote"/> variable.
+		/// Exposes the <see cref="ParatextSfmImporter.m_CurrFootnote"/> variable.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public IScrFootnote CurrentFootnote
@@ -463,7 +459,7 @@ namespace ParatextImport.ImportTests
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Exposes the <see cref="ParatextImporter.m_scrBook"/> variable.
+		/// Exposes the <see cref="ParatextSfmImporter.CurrentBook"/> variable.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public IScrBook ScrBook
@@ -471,12 +467,12 @@ namespace ParatextImport.ImportTests
 			get
 			{
 				CheckDisposed();
-				return m_scrBook;
+				return CurrentBook;
 			}
 			set
 			{
 				CheckDisposed();
-				m_scrBook = value;
+				CurrentBook = value;
 			}
 		}
 
@@ -490,7 +486,7 @@ namespace ParatextImport.ImportTests
 			get
 			{
 				CheckDisposed();
-				return m_scrBook.TitleOA.Hvo;
+				return CurrentBook.TitleOA.Hvo;
 			}
 		}
 
@@ -538,7 +534,7 @@ namespace ParatextImport.ImportTests
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Exposes the <see cref="ParatextImporter.m_undoManager"/> variable.
+		/// Exposes the <see cref="ParatextSfmImporter.m_undoManager"/> variable.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public UndoImportManager UndoInfo
@@ -636,24 +632,6 @@ namespace ParatextImport.ImportTests
 			Assert.AreEqual(runCount, tss.RunCount);
 			AssertEx.RunIsCorrect(tss, 0, sFootnoteSegment, null, m_wsVern);
 			return tss;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Simulates the user stopping an import.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public new void StopImport()
-		{
-			CheckDisposed();
-
-			try
-			{
-				base.StopImport();
-			}
-			catch (CancelException)
-			{
-			}
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -886,7 +864,7 @@ namespace ParatextImport.ImportTests
 	#region DummyScrObjWrapper
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
-	/// Dummy class for the <see cref="ParatextImporter"/> so we can test it.
+	/// Dummy class for the <see cref="ParatextSfmImporter"/> so we can test it.
 	/// The tests that use the DummyTeImporter do not utilize a scr obj to read real
 	/// data files. We'll provide this dummy version of the ScrObjWrapper instead, to minimize
 	/// our overhead.

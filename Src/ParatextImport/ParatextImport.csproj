@@ -205,7 +205,7 @@
     <Compile Include="SCTextEnum.cs" />
     <Compile Include="SCTextSegment.cs" />
     <Compile Include="ParatextImportExtensions.cs" />
-    <Compile Include="ParatextImport.cs" />
+    <Compile Include="ParatextSfmImporter.cs" />
     <Compile Include="ParatextImportManager.cs" />
     <Compile Include="ParatextImportUi.cs" />
     <Compile Include="UndoImportManager.cs" />

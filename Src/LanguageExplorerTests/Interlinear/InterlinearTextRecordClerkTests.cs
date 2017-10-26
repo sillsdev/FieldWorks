@@ -102,7 +102,7 @@ namespace LanguageExplorerTests.Interlinear
 				CreateAndInsertStText createAndInsertStText = new NonUndoableCreateAndInsertStText(cache, this);
 				XmlDocument xmlDoc = new XmlDocument();
 				// xml taken from a dummy project
-				string outerXmlFromProject = "<recordList owner=\"LangProject\" property=\"InterestingTexts\"><!-- We use a decorator here so it can override certain virtual properties and limit occurrences to interesting texts. --><decoratorClass assemblyPath=\"xWorks.dll\" class=\"SIL.FieldWorks.XWorks.InterestingTextsDecorator\" /></recordList>";
+				string outerXmlFromProject = "<recordList owner=\"LangProject\" property=\"InterestingTexts\"><!-- We use a decorator here so it can override certain virtual properties and limit occurrences to interesting texts. --><decoratorClass assemblyPath=\"xWorks.dll\" class=\"LanguageExplorer.Works.InterestingTextsDecorator\" /></recordList>";
 				xmlDoc.LoadXml(outerXmlFromProject);
 				XmlNode root = xmlDoc.FirstChild;
 				XmlNode attr = xmlDoc.CreateNode(XmlNodeType.Attribute, "property", "InterestingTexts");

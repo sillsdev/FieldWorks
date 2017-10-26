@@ -158,7 +158,7 @@ namespace LanguageExplorer.SendReceive
 			}
 
 			var liftFolder = CommonBridgeServices.GetLiftRepositoryFolderFromFwProjectFolder(Cache.ProjectId.ProjectFolder);
-			HandlePotentialConflicts(FlexApp, PropertyTable.GetValue("UseVernSpellingDictionary", true), liftFolder, PrepareToDetectLiftConflicts(liftFolder), fullProjectFileName);
+			HandlePotentialConflicts(FlexApp.FwManager, liftFolder, PrepareToDetectLiftConflicts(liftFolder), fullProjectFileName);
 		}
 
 		/// <inheritdoc />
@@ -284,7 +284,7 @@ namespace LanguageExplorer.SendReceive
 		}
 		#endregion
 
-		private static void HandlePotentialConflicts(IFlexApp flexApp, bool useVernSpellingDictionary, string liftFolder, IReadOnlyDictionary<string, long> savedState, string fullProjectFileName)
+		private static void HandlePotentialConflicts(IFieldWorksManager manager, string liftFolder, IReadOnlyDictionary<string, long> savedState, string fullProjectFileName)
 		{
 			var detectedLiftConflicts = false;
 
@@ -303,7 +303,7 @@ namespace LanguageExplorer.SendReceive
 				return;
 			}
 
-			var newAppWindow = CommonBridgeServices.RefreshCacheWindowAndAll(flexApp, useVernSpellingDictionary, fullProjectFileName);
+			var newAppWindow = CommonBridgeServices.RefreshCacheWindowAndAll(manager, fullProjectFileName);
 			// Send a message for the reopened instance to display the message viewer (used to be conflict report),
 			// we have been disposed by now
 			newAppWindow.Publisher.Publish("ViewLiftMessages", null);
@@ -811,8 +811,7 @@ namespace LanguageExplorer.SendReceive
 			}
 
 			var liftFolder = CommonBridgeServices.GetLiftRepositoryFolderFromFwProjectFolder(Cache.ProjectId.ProjectFolder);
-			HandlePotentialConflicts(FlexApp,
-				PropertyTable.GetValue("UseVernSpellingDictionary", true),
+			HandlePotentialConflicts(FlexApp.FwManager,
 				liftFolder,
 				PrepareToDetectLiftConflicts(liftFolder),
 				CommonBridgeServices.GetFullProjectFileName(Cache));

@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 using System.Xml.XPath;
+using SIL.PlatformUtilities;
 using SIL.Xml;
 
 namespace SIL.FieldWorks.Common.FwUtils

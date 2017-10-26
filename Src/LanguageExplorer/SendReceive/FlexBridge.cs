@@ -97,7 +97,7 @@ namespace LanguageExplorer.SendReceive
 			if (dataChanged)
 			{
 				var conflictOccurred = CommonBridgeServices.DetectMainConflicts(projectFolder, savedState);
-				var newAppWindow = CommonBridgeServices.RefreshCacheWindowAndAll(FlexApp, PropertyTable.GetValue("UseVernSpellingDictionary", true), fullProjectFileName);
+				var newAppWindow = CommonBridgeServices.RefreshCacheWindowAndAll(FlexApp.FwManager, fullProjectFileName);
 				if (conflictOccurred)
 				{
 					// Send a message for the reopened instance to display the message viewer (used to be conflict report),

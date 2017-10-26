@@ -103,12 +103,11 @@ namespace LanguageExplorer.SendReceive
 			return false; // no conflicts added.
 		}
 
-		internal static IFwMainWnd RefreshCacheWindowAndAll(IFlexApp flexApp, bool isVernacularSpellingEnabled, string fullProjectFileName)
+		internal static IFwMainWnd RefreshCacheWindowAndAll(IFieldWorksManager manager, string fullProjectFileName)
 		{
-			var manager = flexApp.FwManager;
 			var appArgs = new FwAppArgs(fullProjectFileName);
 			var newAppWindow = (IFwMainWnd)manager.ReopenProject(manager.Cache.ProjectId.Name, appArgs).ActiveMainWindow;
-			if (isVernacularSpellingEnabled)
+			if (newAppWindow.PropertyTable.GetValue("UseVernSpellingDictionary", true))
 			{
 				WfiWordformServices.ConformSpellingDictToWordforms(newAppWindow.Cache);
 			}

@@ -1,8 +1,7 @@
-﻿// Copyright (c) 2016-2017 SIL International
+﻿// Copyright (c) 2016-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-#if RANDYTODO
 using System;
 using System.IO;
 using System.Xml.Linq;
@@ -83,6 +82,8 @@ namespace LanguageExplorerTests.Works
 				XAttribute modifiedAtt;
 				GetLastModifiedAttributeFromFile(normalFilename, out modifiedAtt);
 				Assert.AreEqual(normalFileModified, modifiedAtt.Value, "File with proper name and WS should not have been modified");
+				var enWsLabel = WSMgr.Get(analWss[0]).DisplayLabel;
+				Assert.AreEqual(enWsLabel, "English", "English WS should have name English");
 			}
 		}
 
@@ -125,4 +126,3 @@ namespace LanguageExplorerTests.Works
 		}
 	}
 }
-#endif

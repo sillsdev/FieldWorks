@@ -15,17 +15,17 @@ namespace ParatextImport
 	#region ParatextImportUi class
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
-	/// UI elements of import. Gets called from ParatextImport.
+	/// UI elements of import. Gets called from ParatextSfmImporter.
 	/// </summary>
 	/// <remarks>This class needs to deal with multi threading issues since it gets called
-	/// from ParatextImport (which runs in the background), but every UI element it creates needs
+	/// from ParatextSfmImporter (which runs in the background), but every UI element it creates needs
 	/// to run on the main thread.</remarks>
 	/// ----------------------------------------------------------------------------------------
 	public class ParatextImportUi : IDisposable
 	{
 		#region Data members
-		/// <summary></summary>
-		protected ParatextImporter m_importer;
+		/// <summary />
+		protected ParatextSfmImporter m_importer;
 
 		private IHelpTopicProvider m_helpTopicProvider;
 		private ProgressDialogWithTask m_progressDialog;
@@ -38,7 +38,7 @@ namespace ParatextImport
 		#region Delegates
 		private delegate void ExceptionErrorMessageInvoker(EncodingConverterException e);
 		private delegate void StringErrorMessageInvoker(string s);
-		private delegate void SetParatextImporterInvoker(ParatextImporter importer);
+		private delegate void SetParatextImporterInvoker(ParatextSfmImporter importer);
 		#endregion
 
 		/// ------------------------------------------------------------------------------------
@@ -139,14 +139,14 @@ namespace ParatextImport
 		/// </summary>
 		/// <value>The importer.</value>
 		/// ------------------------------------------------------------------------------------
-		public ParatextImporter Importer
+		public ParatextSfmImporter Importer
 		{
 			set
 			{
 				CheckDisposed();
 				if (m_ctrl.InvokeRequired)
 				{
-					SetParatextImporterInvoker method = delegate(ParatextImporter imp) { m_importer = imp; };
+					SetParatextImporterInvoker method = delegate(ParatextSfmImporter imp) { m_importer = imp; };
 					m_ctrl.Invoke(method, value);
 				}
 				else

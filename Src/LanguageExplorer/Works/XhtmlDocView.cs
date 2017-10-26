@@ -1006,9 +1006,8 @@ namespace LanguageExplorer.Works
 				var configuration = File.Exists(currentConfig) ? new DictionaryConfigurationModel(currentConfig, Cache) : null;
 				if (configuration == null || configuration.WritingSystem != currReversalWs)
 				{
-					var newConfig = Path.Combine(DictionaryConfigurationListener.GetProjectConfigurationDirectory(PropertyTable),
-						writingSystem.DisplayLabel + DictionaryConfigurationModel.FileExtension);
-					PropertyTable.SetProperty("ReversalIndexPublicationLayout", newConfig, true, true);
+					var newConfig = Path.Combine(DictionaryConfigurationListener.GetProjectConfigurationDirectory(PropertyTable), writingSystem.Id + DictionaryConfigurationModel.FileExtension);
+					PropertyTable.SetProperty("ReversalIndexPublicationLayout", File.Exists(newConfig) ? newConfig : null, true, true);
 				}
 			}
 			var currentObjectGuid = Clerk.CurrentObject.Guid.ToString();

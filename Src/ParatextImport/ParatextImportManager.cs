@@ -2,7 +2,6 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -19,12 +18,10 @@ using SIL.LCModel.Infrastructure;
 
 namespace ParatextImport
 {
-	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// Helper class that manages the different aspects of import: interacting with user,
 	/// settings and then delegating the real work...
 	/// </summary>
-	/// ----------------------------------------------------------------------------------------
 	public class ParatextImportManager
 	{
 		#region Member data
@@ -85,12 +82,10 @@ namespace ParatextImport
 		#endregion
 
 		#region Miscellaneous protected methods
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Get settings for and perform the Standard Format import
 		/// </summary>
 		/// <returns><c>true</c> if something got imported; <c>false</c> otherwise</returns>
-		/// ------------------------------------------------------------------------------------
 		private bool ImportSf()
 		{
 			try
@@ -103,20 +98,19 @@ namespace ParatextImport
 				}
 				firstImported = CompleteImport(firstImported);
 
-				// TODO: Enable this with Ken's approval.
-				//// Remove all archived drafts produced on import, as FLEx doesn't need them.
-				//// Keeping them around only serves to grow the data set forever for no benefit.
-				//// NB: This will also delete archived books from other imports, even back when TE was doing them.
-				//using (new WaitCursor(m_mainWnd, true))
-				//{
-				//	NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
-				//	{
-				//		foreach (var archivedDraft in Cache.LanguageProject.TranslatedScriptureOA.ArchivedDraftsOC.ToList())
-				//		{
-				//			archivedDraft.Delete();
-				//		}
-				//	});
-				//}
+				// Remove all archived drafts produced on import, as FLEx doesn't need them.
+				// Keeping them around only serves to grow the data set forever for no benefit.
+				// NB: This will also delete archived books from other imports, even back to when TE was making them.
+				using (new WaitCursor(m_mainWnd, true))
+				{
+					NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+					{
+						foreach (var archivedDraft in Cache.LanguageProject.TranslatedScriptureOA.ArchivedDraftsOC.ToList())
+						{
+							archivedDraft.Delete();
+						}
+					});
+				}
 
 				return firstImported != ScrReference.Empty;
 			}
@@ -126,14 +120,12 @@ namespace ParatextImport
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Creates a ParatextImportUi object.
 		/// </summary>
 		/// <param name="progressDialog">The progress dialog.</param>
 		/// <returns>A ParatextImportUi object</returns>
 		/// <remarks>Can be overriden in tests</remarks>
-		/// ------------------------------------------------------------------------------------
 		protected virtual ParatextImportUi CreateParatextImportUi(ProgressDialogWithTask progressDialog)
 		{
 			return new ParatextImportUi(progressDialog, m_helpTopicProvider);
@@ -144,28 +136,21 @@ namespace ParatextImport
 		/// </summary>
 		internal UndoImportManager UndoManager => m_undoImportManager;
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the imported saved version (currenly only used for tests).
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		protected IScrDraft ImportedVersion => m_undoImportManager.ImportedVersion;
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the cache.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		protected LcmCache Cache { get; }
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the style sheet.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		protected LcmStyleSheet StyleSheet { get; }
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Import scripture and embed it in a Undo task so that it is undoable.
 		/// Nb: this creates a Mark in the undo stack (unless no books at all are imported or an
@@ -179,7 +164,6 @@ namespace ParatextImport
 		/// <param name="updateDescription">description of the data update being done (i.e.,
 		/// which type of import).</param>
 		/// <returns>The reference of the first thing that was imported</returns>
-		/// ------------------------------------------------------------------------------------
 		protected ScrReference ImportWithUndoTask(bool fDisplayUi, string updateDescription)
 		{
 			m_undoImportManager = new UndoImportManager(Cache);
@@ -195,17 +179,15 @@ namespace ParatextImport
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Actually does the import, really.
 		/// </summary>
 		/// <param name="fDisplayUi">if set to <c>true</c> shows the UI.</param>
 		/// <returns>The first reference that was imported</returns>
-		/// ------------------------------------------------------------------------------------
 		private ScrReference InternalImport(bool fDisplayUi)
 		{
-			ScrReference firstImported = ScrReference.Empty;
-			bool fPartialBtImported = false;
+			var firstImported = ScrReference.Empty;
+			var fPartialBtImported = false;
 			try
 			{
 				Logger.WriteEvent("Starting import");
@@ -228,7 +210,7 @@ namespace ParatextImport
 					var se = (ScriptureUtilsException)e.InnerException;
 					if (m_helpTopicProvider != null)
 					{
-						string sCaption = GetDialogCaption(se.ImportErrorCodeType);
+						var sCaption = GetDialogCaption(se.ImportErrorCodeType);
 						// TODO-Linux: Help is not implemented in Mono
 						MessageBox.Show(m_mainWnd, se.Message, sCaption, MessageBoxButtons.OK,
 							MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, 0, m_helpTopicProvider.HelpFile,
@@ -242,8 +224,8 @@ namespace ParatextImport
 					if (!MiscUtils.RunningTests)
 					{
 						Logger.WriteError(e);
-						string sCaption = ScriptureUtilsException.GetResourceString("kstidImportErrorCaption");
-						Exception innerE = e.InnerException;
+						var sCaption = ScriptureUtilsException.GetResourceString("kstidImportErrorCaption");
+						var innerE = e.InnerException;
 						var sbMsg = new StringBuilder(innerE.Message);
 						while (innerE.InnerException != null)
 						{
@@ -274,13 +256,11 @@ namespace ParatextImport
 			return firstImported;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the caption for the Unable to Import message box.
 		/// </summary>
 		/// <param name="codeType">Type of the code.</param>
 		/// <returns>string for the message box caption</returns>
-		/// ------------------------------------------------------------------------------------
 		private string GetDialogCaption(ErrorCodeType codeType)
 		{
 			switch(codeType)
@@ -294,12 +274,10 @@ namespace ParatextImport
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Completes the import.
 		/// </summary>
 		/// <param name="firstImported">The reference of the first thing that was imported</param>
-		/// ------------------------------------------------------------------------------------
 		protected ScrReference CompleteImport(ScrReference firstImported)
 		{
 			if (firstImported == null)
@@ -319,14 +297,15 @@ namespace ParatextImport
 				m_undoImportManager.RemoveImportedVersion();
 			m_undoImportManager.CollapseAllUndoActions();
 			// sync stuff
-			if (m_app != null)
+			if (m_app == null)
 			{
-				using (new WaitCursor(m_mainWnd))
-				{
-					// Refresh all the views of all applications connected to the same DB. This
-					// will cause any needed Scripture data to be reloaded lazily.
-					m_app.Synchronize(SyncMsg.ksyncStyle);
-				}
+				return firstImported;
+			}
+			using (new WaitCursor(m_mainWnd))
+			{
+				// Refresh all the views of all applications connected to the same DB. This
+				// will cause any needed Scripture data to be reloaded lazily.
+				m_app.Synchronize(SyncMsg.ksyncStyle);
 			}
 			return firstImported;
 		}
@@ -342,7 +321,7 @@ namespace ParatextImport
 			Debug.Assert(parameters.Length == 1);
 			var importUi = (ParatextImportUi)parameters[0];
 
-			bool fRollbackPartialBook = true;
+			var fRollbackPartialBook = true;
 			try
 			{
 				Logger.WriteEvent("Starting import task");
@@ -380,164 +359,16 @@ namespace ParatextImport
 
 		#endregion
 
-		#region Methods for supporting checking for unmapped Paratext markers
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Iterate through the ScriptureTexts' lists of tags. If any missing mappings are found
-		/// return true to give the user a chance to use the ImportWizard to map everything.
-		/// </summary>
-		/// <param name="settings">Import settings object</param>
-		/// <returns><c>true</c> if the settings represent a P6 project which has markers (tags)
-		/// in its stylesheet which the user has not had a chance to map in the import wizard.
-		/// </returns>
-		/// ------------------------------------------------------------------------------------
-		protected bool ParatextProjHasUnmappedMarkers(IScrImportSet settings)
-		{
-			// Load ScriptureText object
-			if (settings.ImportTypeEnum != TypeOfImport.Paratext6)
-				return false;
-
-			return (ParatextProjHasUnmappedMarkers(settings.ParatextScrProj) ||
-				ParatextProjHasUnmappedMarkers(settings.ParatextBTProj) ||
-				ParatextProjHasUnmappedMarkers(settings.ParatextNotesProj));
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Iterate through the ScriptureText's list of tags. If any missing mappings are found
-		/// return true to give the user a chance to use the ImportWizard to map everything.
-		/// </summary>
-		/// <param name="sParatextProjectId">P6 project id</param>
-		/// <returns><c>true</c> if the P6 project has markers (tags) in its stylesheet which
-		/// the user has not had a chance to map in the import wizard.
-		/// </returns>
-		/// ------------------------------------------------------------------------------------
-		protected bool ParatextProjHasUnmappedMarkers(string sParatextProjectId)
-		{
-			if (sParatextProjectId == string.Empty)
-				return false;
-			return false;
-
-//			ImportStyleProxy styleProxy;
-//			int iscTag = 0;
-//			string sMarker, sName;
-//
-//			ParatextSOLib.ISCScriptureText3 scText =
-//				(ParatextSOLib.ISCScriptureText3)new ParatextSOLib.SCScriptureTextClass();
-//			scText.Load(sParatextProjectId);
-//
-//			ParatextSOLib.SCTextProperties scTextProps;
-//			ParatextSOLib.SCTag scTag;
-//
-//			// for every tag in Paratext ScriptureText
-//			while (GetPTScrTextNthTag(scText, iscTag++, out scTag, out sMarker))
-//			{
-//				if ((scTextProps & ParatextSOLib.SCTextProperties.scBook) != 0)
-//				{
-//					// Map for processing purposes, but not to a style
-//					m_htStyleProxy[sMarker] = new ImportStyleProxy(null,
-//						StyleType.kstParagraph, m_wsVern, ContextValues.Book);
-//					continue;
-//				}
-//
-//				// Is this marker missing from the hashtable of proxies?
-//				if (!m_htStyleProxy.ContainsKey(sMarker))
-//				{
-//					// ENHANCE: Bring up wizard (open to mappings page) if any mappings are not set
-//
-//					string sTagName = SOWrapper.TagName;
-//					sName = (sTagName == string.Empty) ? sMarker : sTagName;
-//
-//					ParatextSOLib.SCStyleType scStyleType = SOWrapper.TagStyleType;
-//
-//					// set our import tag type, style type, writing system
-//					ContextValues context = ContextValues.General;
-//					StyleType styleType;
-//
-//					if ((scTextProps & ParatextSOLib.SCTextProperties.scChapter) != 0)
-//					{
-//						// map to chapter style (Structure and Function will get set automatically)
-//						m_htStyleProxy[sMarker] = new ImportStyleProxy("Chapter Number",
-//							StyleType.kstCharacter, m_wsVern, ContextValues.Text);
-//						continue;
-//					}
-//					else if ((scTextProps & ParatextSOLib.SCTextProperties.scVerse) != 0)
-//					{
-//						// map to verse style (Structure and Function will get set automatically)
-//						m_htStyleProxy[sMarker] = new ImportStyleProxy("Verse Number",
-//							StyleType.kstCharacter, m_wsVern, ContextValues.Text);
-//						continue;
-//					}
-//					else if (scStyleType == ParatextSOLib.SCStyleType.scEndStyle)
-//					{
-//						context = ContextValues.EndMarker;
-//
-//						// set our style type, writing system
-//						//note that for ContextValues.EndMarker, styleType & writing system will be ignored
-//						styleType = StyleType.kstCharacter; // Pretend that endmarker is a character style
-//					}
-//					else //for most styles
-//					{
-//						styleType = (scStyleType == ParatextSOLib.SCStyleType.scParagraphStyle) ?
-//							StyleType.kstParagraph :
-//							StyleType.kstCharacter;
-//					}
-//					int writingSystem = ((scTextProps & ParatextSOLib.SCTextProperties.scVernacular) > 0) ?
-//					m_wsVern : m_wsAnal;
-//
-//					//REVIEW: we should probably support char style text inheriting its ws from the para
-//
-//					// add a new proxy to the hash map
-//					styleProxy = new ImportStyleProxy(sName, styleType, writingSystem, context);
-//					m_htStyleProxy[sMarker] = styleProxy;
-//					// The actual type and context may not be what we requested, if this is an
-//					// existing style.
-//					styleType = styleProxy.StyleType;
-//					context = styleProxy.Context;
-//
-//					// Save the end marker of the scTag, if appropriate
-//					if (styleType == StyleType.kstCharacter || context == ContextValues.Note)
-//					{
-//						string sEndMarker = m_scParatextTag.Endmarker;
-//						if (sEndMarker.Length > 0)
-//							sEndMarker = @"\" + sEndMarker;
-//						if (sEndMarker.Length > 0)
-//							styleProxy.EndMarker = sEndMarker;
-//					}
-//
-//					// set formatting of this new proxy if needed (unmapped)
-//					if (styleProxy.IsUnknownMapping //if name is not in stylesheet
-//						&& context != ContextValues.EndMarker) // and this is not an endmarker
-//					{
-//						//set formatting info in proxy
-//						ITsTextProps tsTextPropsFormat;
-//						ITsPropsBldr tsPropsBldr = TsStringUtils.MakePropsBldr();
-//						//REVIEW: Should we get formatting info from scTag
-//						tsPropsBldr.SetIntPropValues((int)FwTextPropType.ktptItalic,
-//							(int)FwTextPropVar.ktpvEnum, (int)FwTextToggleVal.kttvInvert); //italic for now
-//						tsPropsBldr.SetIntPropValues((int)FwTextPropType.ktptBold,
-//							(int)FwTextPropVar.ktpvEnum, (int)FwTextToggleVal.kttvInvert); //bold also
-//						tsTextPropsFormat = tsPropsBldr.GetTextProps();
-//						bool fPublishableText = ((scTextProps & ParatextSOLib.SCTextProperties.scPublishable) > 0 ? true : false);
-//						styleProxy.SetFormat(tsTextPropsFormat, fPublishableText);
-//					}
-//				}
-//			}
-		}
-		#endregion
-
 		#region Merging Differences
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Displays the imported books dialog box (virtual to allow tests to suppress display
 		/// of dialog box).
 		/// </summary>
 		/// <param name="backupSavedVersion">The saved version for backups of any overwritten
 		/// books.</param>
-		/// ------------------------------------------------------------------------------------
 		protected virtual void DisplayImportedBooksDlg(IScrDraft backupSavedVersion)
 		{
-			using (ImportedBooks dlg = new ImportedBooks(Cache, ImportedVersion, backupSavedVersion, UndoManager.ImportedBooks.Keys, m_helpTopicProvider, m_app))
+			using (var dlg = new ImportedBooks(Cache, ImportedVersion, backupSavedVersion, UndoManager.ImportedBooks.Keys, m_helpTopicProvider, m_app))
 			{
 				dlg.ShowOrSave(m_mainWnd, true);
 			}
