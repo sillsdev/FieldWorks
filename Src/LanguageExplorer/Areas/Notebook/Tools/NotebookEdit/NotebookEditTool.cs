@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Xml.Linq;
@@ -22,58 +23,16 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 	/// <summary>
 	/// ITool implementation for the "notebookEdit" tool in the "notebook" area.
 	/// </summary>
+	[Export(AreaServices.NotebookAreaMachineName, typeof(ITool))]
+	[Export(typeof(ITool))]
 	internal sealed class NotebookEditTool : ITool
 	{
 		private const string panelMenuId = "left";
 		private MultiPane _multiPane;
 		private RecordBrowseView _recordBrowseView;
 		private RecordClerk _recordClerk;
-
-		#region Implementation of IPropertyTableProvider
-
-		/// <summary>
-		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
-		/// </summary>
-		public IPropertyTable PropertyTable { get; private set; }
-
-		#endregion
-
-		#region Implementation of IPublisherProvider
-
-		/// <summary>
-		/// Get the IPublisher.
-		/// </summary>
-		public IPublisher Publisher { get; private set; }
-
-		#endregion
-
-		#region Implementation of ISubscriberProvider
-
-		/// <summary>
-		/// Get the ISubscriber.
-		/// </summary>
-		public ISubscriber Subscriber { get; private set; }
-
-		#endregion
-
-		#region Implementation of IFlexComponent
-
-		/// <summary>
-		/// Initialize a FLEx component with the basic interfaces.
-		/// </summary>
-		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
-		public void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
-		{
-			FlexComponentCheckingService.CheckInitializationValues(flexComponentParameters, new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-
-			PropertyTable = flexComponentParameters.PropertyTable;
-			Publisher = flexComponentParameters.Publisher;
-			Subscriber = flexComponentParameters.Subscriber;
-
-			PropertyTable.SetDefault($"ToolForAreaNamed_{AreaMachineName}", MachineName, SettingsGroup.LocalSettings, true, false);
-		}
-
-		#endregion
+		[Import(AreaServices.NotebookAreaMachineName)]
+		private IArea _area;
 
 		#region Implementation of IMajorFlexComponent
 
@@ -97,6 +56,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			majorFlexComponentParameters.FlexComponentParameters.PropertyTable.SetDefault($"{AreaServices.ToolForAreaNamed_}{_area.MachineName}", MachineName, SettingsGroup.LocalSettings, true, false);
 			if (_recordClerk == null)
 			{
 				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(NotebookArea.Records, majorFlexComponentParameters.Statusbar, NotebookArea.NotebookFactoryMethod);
@@ -112,7 +72,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			var mainMultiPaneParameters = new MultiPaneParameters
 			{
 				Orientation = Orientation.Vertical,
-				AreaMachineName = AreaMachineName,
+				Area = _area,
 				Id = "RecordBrowseAndDetailMultiPane",
 				ToolMachineName = MachineName,
 				DefaultPrintPane = "RecordDetailPane"
@@ -126,7 +86,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 				BackgroundImage = img,
 				BackgroundImageLayout = ImageLayout.Center
 			};
-			var panelButton = new PanelButton(PropertyTable, null, PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(MachineName), LanguageExplorerResources.ksHideFields, LanguageExplorerResources.ksShowHiddenFields)
+			var panelButton = new PanelButton(majorFlexComponentParameters.FlexComponentParameters.PropertyTable, null, PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(MachineName), LanguageExplorerResources.ksHideFields, LanguageExplorerResources.ksShowHiddenFields)
 			{
 				Dock = DockStyle.Right
 			};
@@ -184,7 +144,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 		/// Get the internal name of the component.
 		/// </summary>
 		/// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
-		public string MachineName => "notebookEdit";
+		public string MachineName => AreaServices.NotebookEditToolMachineName;
 
 		/// <summary>
 		/// User-visible localizable component name.
@@ -195,9 +155,9 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 		#region Implementation of ITool
 
 		/// <summary>
-		/// Get the area machine name the tool is for.
+		/// Get the area for the tool.
 		/// </summary>
-		public string AreaMachineName => "notebook";
+		public IArea Area => _area;
 
 		/// <summary>
 		/// Get the image for the area.

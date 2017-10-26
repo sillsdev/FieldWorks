@@ -18,7 +18,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 	/// <summary>
 	/// The main view for the "corpusStatistics" tool in the "textsWords" area.
 	/// </summary>
-	internal sealed partial class StatisticsView : UserControl, IMajorFlexComponent, IMainContentControl
+	internal sealed partial class StatisticsView : UserControl, IMajorFlexComponent, IFlexComponent, IMainContentControl
 	{
 		private StatusBar _statusBar;
 		private InterlinearTextsRecordClerk _interlinearTextsRecordClerk;

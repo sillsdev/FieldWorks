@@ -3,67 +3,23 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Drawing;
+using System.Linq;
 using SIL.FieldWorks.Common.FwUtils;
 
 namespace LanguageExplorer.Areas.Lists
 {
+	[Export(AreaServices.ListsAreaMachineName, typeof(IArea))]
+	[Export(typeof(IArea))]
 	internal sealed class ListsArea : IArea
 	{
-		private readonly IToolRepository _toolRepository;
-
-		/// <summary>
-		/// Contructor used by Reflection to feed the tool repository to the area.
-		/// </summary>
-		/// <param name="toolRepository"></param>
-		internal ListsArea(IToolRepository toolRepository)
-		{
-			_toolRepository = toolRepository;
-		}
-
-		#region Implementation of IPropertyTableProvider
-
-		/// <summary>
-		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
-		/// </summary>
-		public IPropertyTable PropertyTable { get; private set; }
-
-		#endregion
-
-		#region Implementation of IPublisherProvider
-
-		/// <summary>
-		/// Get the IPublisher.
-		/// </summary>
-		public IPublisher Publisher { get; private set; }
-
-		#endregion
-
-		#region Implementation of ISubscriberProvider
-
-		/// <summary>
-		/// Get the ISubscriber.
-		/// </summary>
-		public ISubscriber Subscriber { get; private set; }
-
-		#endregion
-
-		#region Implementation of IFlexComponent
-
-		/// <summary>
-		/// Initialize a FLEx component with the basic interfaces.
-		/// </summary>
-		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
-		public void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
-		{
-			FlexComponentCheckingService.CheckInitializationValues(flexComponentParameters, new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-
-			PropertyTable = flexComponentParameters.PropertyTable;
-			Publisher = flexComponentParameters.Publisher;
-			Subscriber = flexComponentParameters.Subscriber;
-		}
-
-		#endregion
+		[ImportMany(AreaServices.ListsAreaMachineName)]
+		private IEnumerable<ITool> _myTools;
+		private const string MyUiName = "Lists";
+		private string PropertyNameForToolName => $"{AreaServices.ToolForAreaNamed_}{MachineName}";
+		[Import]
+		private IPropertyTable _propertyTable;
 
 		#region Implementation of IMajorFlexComponent
 
@@ -85,6 +41,7 @@ namespace LanguageExplorer.Areas.Lists
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			_propertyTable.SetDefault(PropertyNameForToolName, DefaultToolMachineName, SettingsGroup.LocalSettings, true, false);
 		}
 
 		/// <summary>
@@ -92,7 +49,7 @@ namespace LanguageExplorer.Areas.Lists
 		/// </summary>
 		public void PrepareToRefresh()
 		{
-			_toolRepository.GetPersistedOrDefaultToolForArea(this).PrepareToRefresh();
+			PersistedOrDefaultToolForArea.PrepareToRefresh();
 		}
 
 		/// <summary>
@@ -100,7 +57,7 @@ namespace LanguageExplorer.Areas.Lists
 		/// </summary>
 		public void FinishRefresh()
 		{
-			_toolRepository.GetPersistedOrDefaultToolForArea(this).FinishRefresh();
+			PersistedOrDefaultToolForArea.FinishRefresh();
 		}
 
 		/// <summary>
@@ -109,10 +66,9 @@ namespace LanguageExplorer.Areas.Lists
 		/// </summary>
 		public void EnsurePropertiesAreCurrent()
 		{
-			PropertyTable.SetProperty("InitialArea", MachineName, SettingsGroup.LocalSettings, true, false);
+			_propertyTable.SetProperty(AreaServices.InitialArea, MachineName, SettingsGroup.LocalSettings, true, false);
 
-			var myCurrentTool = _toolRepository.GetPersistedOrDefaultToolForArea(this);
-			myCurrentTool.EnsurePropertiesAreCurrent();
+			PersistedOrDefaultToolForArea.EnsurePropertiesAreCurrent();
 		}
 
 		#endregion
@@ -123,12 +79,12 @@ namespace LanguageExplorer.Areas.Lists
 		/// Get the internal name of the component.
 		/// </summary>
 		/// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
-		public string MachineName => "lists";
+		public string MachineName => AreaServices.ListsAreaMachineName;
 
 		/// <summary>
 		/// User-visible localizable component name.
 		/// </summary>
-		public string UiName => "Lists";
+		public string UiName => MyUiName;
 		#endregion
 
 		#region Implementation of IArea
@@ -138,15 +94,12 @@ namespace LanguageExplorer.Areas.Lists
 		/// the persisted one is no longer available.
 		/// </summary>
 		/// <returns>The last persisted tool or the default tool for the area.</returns>
-		public ITool GetPersistedOrDefaultToolForArea()
-		{
-			return _toolRepository.GetPersistedOrDefaultToolForArea(this);
-		}
+		public ITool PersistedOrDefaultToolForArea => _myTools.First(tool => tool.MachineName == _propertyTable.GetValue<string>(PropertyNameForToolName));
 
 		/// <summary>
 		/// Get the machine name of the area's default tool.
 		/// </summary>
-		public string DefaultToolMachineName => "domainTypeEdit";
+		public string DefaultToolMachineName => AreaServices.ListsAreaDefaultToolMachineName;
 
 		/// <summary>
 		/// Get all installed tools for the area.
@@ -157,45 +110,41 @@ namespace LanguageExplorer.Areas.Lists
 			{
 				var myToolsInOrder = new List<string>
 				{
-					"domainTypeEdit",
-					"anthroEdit",
-					"complexEntryTypeEdit",
-					"confidenceEdit",
-					"chartmarkEdit",
-					"charttempEdit",
-					"educationEdit",
-					"roleEdit",
-					"featureTypesAdvancedEdit",
-					"genresEdit",
-					"lexRefEdit",
-					"locationsEdit",
-					"publicationsEdit",
-					"morphTypeEdit",
-					"peopleEdit",
-					"positionsEdit",
-					"restrictionsEdit",
-					"semanticDomainEdit",
-					"senseTypeEdit",
-					"statusEdit",
-					"textMarkupTagsEdit",
-					"translationTypeEdit",
-					"usageTypeEdit",
-					"variantEntryTypeEdit",
-					"recTypeEdit",
-					"timeOfDayEdit",
-					"reversalToolReversalIndexPOS"
+					AreaServices.DomainTypeEditMachineName,
+					AreaServices.AnthroEditMachineName,
+					AreaServices.ComplexEntryTypeEditMachineName,
+					AreaServices.ConfidenceEditMachineName,
+					AreaServices.ChartmarkEditMachineName,
+					AreaServices.CharttempEditMachineName,
+					AreaServices.EducationEditMachineName,
+					AreaServices.RoleEditMachineName,
+					AreaServices.FeatureTypesAdvancedEditMachineName,
+					AreaServices.GenresEditMachineName,
+					AreaServices.LexRefEditMachineName,
+					AreaServices.LocationsEditMachineName,
+					AreaServices.PublicationsEditMachineName,
+					AreaServices.MorphTypeEditMachineName,
+					AreaServices.PeopleEditMachineName,
+					AreaServices.PositionsEditMachineName,
+					AreaServices.RestrictionsEditMachineName,
+					AreaServices.SemanticDomainEditMachineName,
+					AreaServices.SenseTypeEditMachineName,
+					AreaServices.StatusEditMachineName,
+					AreaServices.TextMarkupTagsEditMachineName,
+					AreaServices.TranslationTypeEditMachineName,
+					AreaServices.UsageTypeEditMachineName,
+					AreaServices.VariantEntryTypeEditMachineName,
+					AreaServices.RecTypeEditMachineName,
+					AreaServices.TimeOfDayEditMachineName,
+					AreaServices.ReversalToolReversalIndexPOSMachineName
 				};
 
 #if RANDYTODO
 				// TODO: Add user-defined tools in some kind of generic list area that can work with user-defined lists.
 				// TODO: That generic list tools will *not* be located by reflection in a plugin assembly like all other tools,
 				// TODO: but it/they will be created by this area, as/if needed for each user-defined tool.
-
-				// TODO: Q: should they be added to the tool repository?
-				// TODO: A1: Probably, since the tool repository really only needs to be create once per project, but...
-				// TODO:	In that case, then creation of the area and tool repository needs to be rethought. Work for another day....
 #endif
-				return _toolRepository.AllToolsForAreaInOrder(myToolsInOrder, MachineName);
+				return myToolsInOrder.Select(toolName => _myTools.First(tool => tool.MachineName == toolName)).ToList();
 			}
 		}
 

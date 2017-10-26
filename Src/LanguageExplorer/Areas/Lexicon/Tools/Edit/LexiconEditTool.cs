@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Xml.Linq;
@@ -20,6 +21,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 	/// <summary>
 	/// ITool implementation for the "lexiconEdit" tool in the "lexicon" area.
 	/// </summary>
+	[Export(AreaServices.LexiconAreaMachineName, typeof(ITool))]
+	[Export(typeof(ITool))]
 	internal sealed class LexiconEditTool : ITool
 	{
 		private LexiconEditToolMenuHelper _lexiconEditToolMenuHelper;
@@ -27,52 +30,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		private RecordBrowseView _recordBrowseView;
 		private MultiPane _innerMultiPane;
 		private RecordClerk _recordClerk;
-
-		#region Implementation of IPropertyTableProvider
-
-		/// <summary>
-		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
-		/// </summary>
-		public IPropertyTable PropertyTable { get; private set; }
-
-		#endregion
-
-		#region Implementation of IPublisherProvider
-
-		/// <summary>
-		/// Get the IPublisher.
-		/// </summary>
-		public IPublisher Publisher { get; private set; }
-
-		#endregion
-
-		#region Implementation of ISubscriberProvider
-
-		/// <summary>
-		/// Get the ISubscriber.
-		/// </summary>
-		public ISubscriber Subscriber { get; private set; }
-
-		#endregion
-
-		#region Implementation of IFlexComponent
-
-		/// <summary>
-		/// Initialize a FLEx component with the basic interfaces.
-		/// </summary>
-		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
-		public void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
-		{
-			FlexComponentCheckingService.CheckInitializationValues(flexComponentParameters, new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-
-			PropertyTable = flexComponentParameters.PropertyTable;
-			Publisher = flexComponentParameters.Publisher;
-			Subscriber = flexComponentParameters.Subscriber;
-
-			PropertyTable.SetDefault($"ToolForAreaNamed_{AreaMachineName}", MachineName, SettingsGroup.LocalSettings, true, false);
-		}
-
-		#endregion
+		[Import(AreaServices.LexiconAreaMachineName)]
+		private IArea _area;
+		[Import]
+		private IPropertyTable _propertyTable;
 
 		#region Implementation of IMajorFlexComponent
 
@@ -100,6 +61,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			_propertyTable.SetDefault($"{AreaServices.ToolForAreaNamed_}{_area.MachineName}", MachineName, SettingsGroup.LocalSettings, true, false);
 			if (_recordClerk == null)
 			{
 				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(LexiconArea.Entries, majorFlexComponentParameters.Statusbar, LexiconArea.EntriesFactoryMethod);
@@ -126,7 +88,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			var nestedMultiPaneParameters = new MultiPaneParameters
 			{
 				Orientation = Orientation.Horizontal,
-				AreaMachineName = AreaMachineName,
+				Area = _area,
 				DefaultFixedPaneSizePoints = "60",
 				Id = "TestEditMulti",
 				ToolMachineName = MachineName,
@@ -142,7 +104,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			var mainMultiPaneParameters = new MultiPaneParameters
 			{
 				Orientation = Orientation.Vertical,
-				AreaMachineName = AreaMachineName,
+				Area = _area,
 				Id = "LexItemsAndDetailMultiPane",
 				ToolMachineName = MachineName,
 				DefaultPrintPane = "DictionaryPubPreview"
@@ -157,7 +119,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				BackgroundImage = img,
 				BackgroundImageLayout = ImageLayout.Center
 			};
-			var panelButton = new PanelButton(PropertyTable, null, PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(MachineName), LanguageExplorerResources.ksHideFields, LanguageExplorerResources.ksShowHiddenFields)
+			var panelButton = new PanelButton(_propertyTable, null, PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(MachineName), LanguageExplorerResources.ksHideFields, LanguageExplorerResources.ksShowHiddenFields)
 			{
 				Dock = DockStyle.Right
 			};
@@ -167,7 +129,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				mainMultiPaneParameters,
 				_recordBrowseView, "Browse", new PaneBar(),
 				_innerMultiPane = MultiPaneFactory.CreateNestedMultiPane(majorFlexComponentParameters.FlexComponentParameters, nestedMultiPaneParameters), "Dictionary & Details", paneBar);
-			_innerMultiPane.Panel1Collapsed = !PropertyTable.GetValue<bool>(LexiconEditToolMenuHelper.Show_DictionaryPubPreview);
+			_innerMultiPane.Panel1Collapsed = !_propertyTable.GetValue<bool>(LexiconEditToolMenuHelper.Show_DictionaryPubPreview);
 			_lexiconEditToolMenuHelper.InnerMultiPane = _innerMultiPane;
 			panelButton.DatTree = recordEditView.DatTree;
 
@@ -211,20 +173,20 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// Get the internal name of the component.
 		/// </summary>
 		/// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
-		public string MachineName => "lexiconEdit";
+		public string MachineName => AreaServices.LexiconEditMachineName;
 
 		/// <summary>
 		/// User-visible localizable component name.
 		/// </summary>
 		public string UiName => "Lexicon Edit";
-#endregion
+		#endregion
 
-#region Implementation of ITool
+		#region Implementation of ITool
 
 		/// <summary>
-		/// Get the area machine name the tool is for.
+		/// Get the area for the tool.
 		/// </summary>
-		public string AreaMachineName => "lexicon";
+		public IArea Area => _area;
 
 		/// <summary>
 		/// Get the image for the area.

@@ -3,15 +3,14 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
-using L10NSharp.UI;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.Controls.PaneBar;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
 using LanguageExplorer.Works;
 using SIL.LCModel.Application;
@@ -22,6 +21,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 	/// <summary>
 	/// ITool implementation for the "Analyses" tool in the "textsWords" area.
 	/// </summary>
+	[Export(AreaServices.TextAndWordsAreaMachineName, typeof(ITool))]
+	[Export(typeof(ITool))]
 	internal sealed class AnalysesTool : ITool
 	{
 		private AreaWideMenuHelper _areaWideMenuHelper;
@@ -29,50 +30,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 		private MultiPane _multiPane;
 		private RecordBrowseView _recordBrowseView;
 		private RecordClerk _recordClerk;
-
-		#region Implementation of IPropertyTableProvider
-
-		/// <summary>
-		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
-		/// </summary>
-		public IPropertyTable PropertyTable { get; private set; }
-
-		#endregion
-
-		#region Implementation of IPublisherProvider
-
-		/// <summary>
-		/// Get the IPublisher.
-		/// </summary>
-		public IPublisher Publisher { get; private set; }
-
-		#endregion
-
-		#region Implementation of ISubscriberProvider
-
-		/// <summary>
-		/// Get the ISubscriber.
-		/// </summary>
-		public ISubscriber Subscriber { get; private set; }
-
-		#endregion
-
-		#region Implementation of IFlexComponent
-
-		/// <summary>
-		/// Initialize a FLEx component with the basic interfaces.
-		/// </summary>
-		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
-		public void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
-		{
-			FlexComponentCheckingService.CheckInitializationValues(flexComponentParameters, new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-
-			PropertyTable = flexComponentParameters.PropertyTable;
-			Publisher = flexComponentParameters.Publisher;
-			Subscriber = flexComponentParameters.Subscriber;
-		}
-
-		#endregion
+		[Import(AreaServices.TextAndWordsAreaMachineName)]
+		private IArea _area;
 
 		#region Implementation of IMajorFlexComponent
 
@@ -132,7 +91,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 				new MultiPaneParameters
 				{
 					Orientation = Orientation.Vertical,
-					AreaMachineName = AreaMachineName,
+					Area = _area,
 					Id = "WordsAndAnalysesMultiPane",
 					ToolMachineName = MachineName
 				},
@@ -183,7 +142,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 		/// Get the internal name of the component.
 		/// </summary>
 		/// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
-		public string MachineName => "Analyses";
+		public string MachineName => AreaServices.AnalysesMachineName;
 
 		/// <summary>
 		/// User-visible localizable component name.
@@ -194,9 +153,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 		#region Implementation of ITool
 
 		/// <summary>
-		/// Get the area machine name the tool is for.
+		/// Get the area for the tool.
 		/// </summary>
-		public string AreaMachineName => "textsWords";
+		public IArea Area => _area;
 
 		/// <summary>
 		/// Get the image for the area.

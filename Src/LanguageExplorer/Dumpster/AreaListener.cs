@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Xml;
+using LanguageExplorer.Areas;
 using SIL.LCModel;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.Xml;
@@ -562,7 +563,7 @@ namespace LanguageExplorer.Dumpster
 					// Before switching areas, we need to fix the tool recorded for that area,
 					// otherwise ActivateToolForArea will override our tool choice with the last
 					// tool active in the area (LT-4696).
-					PropertyTable.SetProperty("ToolForAreaNamed_" + area, toolName, true, true);
+					PropertyTable.SetProperty($"{AreaServices.ToolForAreaNamed_}{area}", toolName, true, true);
 					PropertyTable.SetProperty("areaChoice", area, true, true);
 				}
 			}
@@ -572,7 +573,7 @@ namespace LanguageExplorer.Dumpster
 				// the currentContentControl (is that partly obsolete?).
 				if (area != null)
 				{
-					PropertyTable.SetProperty("ToolForAreaNamed_" + area, toolName, true, true);
+					PropertyTable.SetProperty($"{AreaServices.ToolForAreaNamed_}{area}", toolName, true, true);
 				}
 			}
 			PropertyTable.SetProperty("currentContentControlParameters", node.SelectSingleNode("control"), true, true);
@@ -597,8 +598,8 @@ namespace LanguageExplorer.Dumpster
 
 		private static string GetAreaNeededForTool(string toolName, XmlNode windowConfiguration)
 		{
-			if (IsToolInArea(toolName, "lexicon", windowConfiguration))
-				return "lexicon";
+			if (IsToolInArea(toolName, AreaServices.InitialAreaMachineName, windowConfiguration))
+				return AreaServices.InitialAreaMachineName;
 			if (IsToolInArea(toolName, "grammar", windowConfiguration))
 				return "grammar";
 			if (IsToolInArea(toolName, "textsWords", windowConfiguration))

@@ -225,7 +225,7 @@ namespace LanguageExplorer.Dumpster
 		{
 			get
 			{
-				return InFriendlyArea && PropertyTable.GetValue<string>("ToolForAreaNamed_textsWords") == "Analyses";
+				return InFriendlyArea && PropertyTable.GetValue<string>($"{AreaServices.ToolForAreaNamed_}textsWords") == "Analyses";
 			}
 		}
 	}

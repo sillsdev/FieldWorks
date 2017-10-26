@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Xml.Linq;
@@ -19,6 +20,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 	/// <summary>
 	/// ITool implementation for the "interlinearEdit" tool in the "textsWords" area.
 	/// </summary>
+	[Export(AreaServices.TextAndWordsAreaMachineName, typeof(ITool))]
+	[Export(typeof(ITool))]
 	internal sealed class InterlinearEditTool : ITool
 	{
 		private TextAndWordsAreaMenuHelper _textAndWordsAreaMenuHelper;
@@ -27,52 +30,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 		private RecordBrowseView _recordBrowseView;
 		private RecordClerk _recordClerk;
 		private InterlinMaster _interlinMaster;
-
-		#region Implementation of IPropertyTableProvider
-
-		/// <summary>
-		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
-		/// </summary>
-		public IPropertyTable PropertyTable { get; private set; }
-
-		#endregion
-
-		#region Implementation of IPublisherProvider
-
-		/// <summary>
-		/// Get the IPublisher.
-		/// </summary>
-		public IPublisher Publisher { get; private set; }
-
-		#endregion
-
-		#region Implementation of ISubscriberProvider
-
-		/// <summary>
-		/// Get the ISubscriber.
-		/// </summary>
-		public ISubscriber Subscriber { get; private set; }
-
-		#endregion
-
-		#region Implementation of IFlexComponent
-
-		/// <summary>
-		/// Initialize a FLEx component with the basic interfaces.
-		/// </summary>
-		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
-		public void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
-		{
-			FlexComponentCheckingService.CheckInitializationValues(flexComponentParameters, new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-
-			PropertyTable = flexComponentParameters.PropertyTable;
-			Publisher = flexComponentParameters.Publisher;
-			Subscriber = flexComponentParameters.Subscriber;
-
-			PropertyTable.SetDefault($"ToolForAreaNamed_{AreaMachineName}", MachineName, SettingsGroup.LocalSettings, true, false);
-		}
-
-		#endregion
+		[Import(AreaServices.TextAndWordsAreaMachineName)]
+		private IArea _area;
 
 		#region Implementation of IMajorFlexComponent
 
@@ -99,6 +58,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			majorFlexComponentParameters.FlexComponentParameters.PropertyTable.SetDefault($"{AreaServices.ToolForAreaNamed_}{_area.MachineName}", MachineName, SettingsGroup.LocalSettings, true, false);
 			_textAndWordsAreaMenuHelper = new TextAndWordsAreaMenuHelper(majorFlexComponentParameters);
 			_textAndWordsAreaMenuHelper.AddMenusForAllButConcordanceTool();
 			if (_recordClerk == null)
@@ -108,7 +68,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 			var multiPaneParameters = new MultiPaneParameters
 			{
 				Orientation = Orientation.Vertical,
-				AreaMachineName = AreaMachineName,
+				Area = _area,
 				Id = "EditViewTextsMultiPane",
 				ToolMachineName = MachineName,
 				DefaultFixedPaneSizePoints = "145",
@@ -168,7 +128,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 		/// Get the internal name of the component.
 		/// </summary>
 		/// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
-		public string MachineName => "interlinearEdit";
+		public string MachineName => AreaServices.InterlinearEditMachineName;
 
 		/// <summary>
 		/// User-visible localizable component name.
@@ -180,9 +140,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 		#region Implementation of ITool
 
 		/// <summary>
-		/// Get the area machine name the tool is for.
+		/// Get the area for the tool.
 		/// </summary>
-		public string AreaMachineName => "textsWords";
+		public IArea Area => _area;
 
 		/// <summary>
 		/// Get the image for the area.

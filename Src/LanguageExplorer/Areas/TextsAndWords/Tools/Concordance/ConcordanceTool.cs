@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Xml.Linq;
@@ -19,6 +20,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Concordance
 	/// <summary>
 	/// ITool implementation for the "concordance" tool in the "textsWords" area.
 	/// </summary>
+	[Export(AreaServices.TextAndWordsAreaMachineName, typeof(ITool))]
+	[Export(typeof(ITool))]
 	internal sealed class ConcordanceTool : ITool
 	{
 		private const string OccurrencesOfSelectedUnit = "OccurrencesOfSelectedUnit";
@@ -27,50 +30,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Concordance
 		private RecordBrowseView _recordBrowseView;
 		private RecordClerk _recordClerk;
 		private InterlinMasterNoTitleBar _interlinMasterNoTitleBar;
-
-		#region Implementation of IPropertyTableProvider
-
-		/// <summary>
-		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
-		/// </summary>
-		public IPropertyTable PropertyTable { get; private set; }
-
-		#endregion
-
-		#region Implementation of IPublisherProvider
-
-		/// <summary>
-		/// Get the IPublisher.
-		/// </summary>
-		public IPublisher Publisher { get; private set; }
-
-		#endregion
-
-		#region Implementation of ISubscriberProvider
-
-		/// <summary>
-		/// Get the ISubscriber.
-		/// </summary>
-		public ISubscriber Subscriber { get; private set; }
-
-		#endregion
-
-		#region Implementation of IFlexComponent
-
-		/// <summary>
-		/// Initialize a FLEx component with the basic interfaces.
-		/// </summary>
-		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
-		public void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
-		{
-			FlexComponentCheckingService.CheckInitializationValues(flexComponentParameters, new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-
-			PropertyTable = flexComponentParameters.PropertyTable;
-			Publisher = flexComponentParameters.Publisher;
-			Subscriber = flexComponentParameters.Subscriber;
-		}
-
-		#endregion
+		[Import(AreaServices.TextAndWordsAreaMachineName)]
+		private IArea _area;
 
 		#region Implementation of IMajorFlexComponent
 
@@ -104,7 +65,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Concordance
 			var mainConcordanceContainerParameters = new MultiPaneParameters
 			{
 				Orientation = Orientation.Vertical,
-				AreaMachineName = AreaMachineName,
+				Area = _area,
 				Id = "WordsAndOccurrencesMultiPane",
 				ToolMachineName = MachineName,
 				DefaultPrintPane = "wordOccurrenceList",
@@ -123,7 +84,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Concordance
 			var nestedMultiPaneParameters = new MultiPaneParameters
 			{
 				Orientation = Orientation.Horizontal,
-				AreaMachineName = AreaMachineName,
+				Area = _area,
 				Id = "LineAndTextMultiPane",
 				ToolMachineName = MachineName,
 				FirstCollapseZone = 110000,
@@ -177,7 +138,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Concordance
 		/// Get the internal name of the component.
 		/// </summary>
 		/// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
-		public string MachineName => "concordance";
+		public string MachineName => AreaServices.ConcordanceMachineName;
 
 		/// <summary>
 		/// User-visible localizable component name.
@@ -189,9 +150,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Concordance
 		#region Implementation of ITool
 
 		/// <summary>
-		/// Get the area machine name the tool is for.
+		/// Get the area for the tool.
 		/// </summary>
-		public string AreaMachineName => "textsWords";
+		public IArea Area => _area;
 
 		/// <summary>
 		/// Get the image for the area.

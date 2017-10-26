@@ -65,7 +65,7 @@ namespace LanguageExplorer.Areas
 		internal MultiPane(MultiPaneParameters parameters)
 			: this()
 		{
-			m_areaMachineName = parameters.AreaMachineName;
+			m_areaMachineName = parameters.Area.MachineName;
 			m_id = parameters.Id ?? "NOID";
 			m_defaultFixedPaneSizePoints = parameters.DefaultFixedPaneSizePoints ?? "50%";
 			m_defaultPrintPaneId = parameters.DefaultPrintPane ?? string.Empty;

@@ -510,7 +510,7 @@ namespace LanguageExplorer.Works
 										Cache.ActionHandlerAccessor, () => new DeleteCustomList(Cache).Run(curList));
 		}
 
-#endregion Event handlers
+		#endregion Event handlers
 
 #if RANDYTODO
 		public bool OnDisplayShowTreeBar(object commandObject, ref UIItemDisplayProperties display)
@@ -528,15 +528,15 @@ namespace LanguageExplorer.Works
 			// In order for this menu to be visible and enabled it has to be in the correct area (lexicon)
 			// and the right tool(s).
 			// Tools that allow this menu, as far as I (RickM) can tell, as of 10 Aug 2007:
-			// (areaChoice == "lexicon" or "words" or "grammar" or "lists"
+			// (areaChoice == AreaServices.InitialAreaMachineName or "words" or "grammar" or "lists"
 
 			RecordClerk clerk = Clerk;
 			string areaChoice = m_propertyTable.GetValue<string>("areaChoice");
 			//uncomment the following line if we need to turn on or off the Export menu item
 			//for specific tools in the various areas of the application.
-			//string toolChoice = m_mediator.PropertyTable.GetStringProperty("ToolForAreaNamed_lexicon", null);
+			//string toolChoice = m_mediator.PropertyTable.GetStringProperty($"{AreaServices.ToolForAreaNamed_}lexicon", null);
 			//string toolChoice = m_mediator.PropertyTable.GetStringProperty("grammarSketch_grammar", null);
-			bool inFriendlyTerritory = (areaChoice == "lexicon"
+			bool inFriendlyTerritory = (areaChoice == AreaServices.InitialAreaMachineName
 #if RANDYTODO
 			// TODO: The "notebook" area uses its own dlg. See: RecordClerk's method: OnExport
 #endif
@@ -578,13 +578,13 @@ namespace LanguageExplorer.Works
 			// The old code tried to fish out some 'editable' attr from the xml file,
 			// but in some contexts in switching tools in the Lexicon area, the config file was for the dictionary preview
 			// control, which was set to 'false'. That makes sense, since the view itself isn't editable.
-			// No: if (areaChoice == "lexicon" && fEditable && (m_vectorName == "entries" || m_vectorName == "AllSenses"))
+			// No: if (areaChoice == AreaServices.InitialAreaMachineName && fEditable && (m_vectorName == "entries" || m_vectorName == "AllSenses"))
 			string toolChoice = m_propertyTable.GetValue("toolChoice", string.Empty);
 			string areaChoice = m_propertyTable.GetValue("areaChoice", string.Empty);
 			bool inFriendlyTerritory = false;
 			switch (areaChoice)
 			{
-				case "lexicon":
+				case AreaServices.InitialAreaMachineName:
 					inFriendlyTerritory = toolChoice == "lexiconEdit" || toolChoice == "bulkEditEntriesOrSenses" ||
 										  toolChoice == "lexiconBrowse";
 					break;
@@ -613,7 +613,7 @@ namespace LanguageExplorer.Works
 			string areaChoice = PropertyTable.GetValue("areaChoice", string.Empty);
 			switch (areaChoice)
 			{
-				case "lexicon":
+				case AreaServices.InitialAreaMachineName:
 					locationType = AddCustomFieldDlg.LocationType.Lexicon;
 					break;
 				case "notebook":

@@ -1,9 +1,8 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
-using SIL.FieldWorks.Common.FwUtils;
 
 namespace LanguageExplorer
 {
@@ -15,7 +14,7 @@ namespace LanguageExplorer
 	///
 	/// NB: This interface is not intended to be used outside of FwMainWnd, except for tests.
 	/// </remarks>
-	internal interface IAreaRepository : IFlexComponent
+	internal interface IAreaRepository
 	{
 		/// <summary>
 		/// Get the most recently persisted area, or the default area if

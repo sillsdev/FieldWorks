@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -26,6 +27,8 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 	/// <summary>
 	/// ITool implementation for the "reversalToolReversalIndexPOS" tool in the "lists" area.
 	/// </summary>
+	[Export(AreaServices.ListsAreaMachineName, typeof(ITool))]
+	[Export(typeof(ITool))]
 	internal sealed class ReversalIndexPosTool : ITool
 	{
 		private ListsAreaMenuHelper _listsAreaMenuHelper;
@@ -37,50 +40,10 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 		private RecordBrowseView _recordBrowseView;
 		private IReversalIndexRepository _reversalIndexRepository;
 		private IReversalIndex _currentReversalIndex;
-
-		#region Implementation of IPropertyTableProvider
-
-		/// <summary>
-		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
-		/// </summary>
-		public IPropertyTable PropertyTable { get; private set; }
-
-		#endregion
-
-		#region Implementation of IPublisherProvider
-
-		/// <summary>
-		/// Get the IPublisher.
-		/// </summary>
-		public IPublisher Publisher { get; private set; }
-
-		#endregion
-
-		#region Implementation of ISubscriberProvider
-
-		/// <summary>
-		/// Get the ISubscriber.
-		/// </summary>
-		public ISubscriber Subscriber { get; private set; }
-
-		#endregion
-
-		#region Implementation of IFlexComponent
-
-		/// <summary>
-		/// Initialize a FLEx component with the basic interfaces.
-		/// </summary>
-		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
-		public void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
-		{
-			FlexComponentCheckingService.CheckInitializationValues(flexComponentParameters, new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-
-			PropertyTable = flexComponentParameters.PropertyTable;
-			Publisher = flexComponentParameters.Publisher;
-			Subscriber = flexComponentParameters.Subscriber;
-		}
-
-		#endregion
+		[Import(AreaServices.ListsAreaMachineName)]
+		private IArea _area;
+		[Import]
+		private IPropertyTable _propertyTable;
 
 		#region Implementation of IMajorFlexComponent
 
@@ -109,7 +72,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			var currentGuid = ReversalIndexEntryUi.GetObjectGuidIfValid(PropertyTable, "ReversalIndexGuid");
+			var currentGuid = ReversalIndexEntryUi.GetObjectGuidIfValid(_propertyTable, "ReversalIndexGuid");
 			if (currentGuid != Guid.Empty)
 			{
 				_currentReversalIndex = (IReversalIndex)majorFlexComponentParameters.LcmCache.ServiceLocator.GetObject(currentGuid);
@@ -131,7 +94,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 			var mainMultiPaneParameters = new MultiPaneParameters
 			{
 				Orientation = Orientation.Vertical,
-				AreaMachineName = AreaMachineName,
+				Area = _area,
 				Id = "RevEntryPOSesAndDetailMultiPane",
 				ToolMachineName = MachineName
 			};
@@ -147,7 +110,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 			browseViewPaneBar.AddControls(new List<Control> { panelMenu });
 
 			var recordEditViewPaneBar = new PaneBar();
-			var panelButton = new PanelButton(PropertyTable, null, PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(MachineName), LanguageExplorerResources.ksHideFields, LanguageExplorerResources.ksShowHiddenFields)
+			var panelButton = new PanelButton(_propertyTable, null, PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(MachineName), LanguageExplorerResources.ksHideFields, LanguageExplorerResources.ksShowHiddenFields)
 			{
 				Dock = DockStyle.Right
 			};
@@ -205,7 +168,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 		/// Get the internal name of the component.
 		/// </summary>
 		/// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
-		public string MachineName => "reversalToolReversalIndexPOS";
+		public string MachineName => AreaServices.ReversalToolReversalIndexPOSMachineName;
 
 		/// <summary>
 		/// User-visible localizable component name.
@@ -216,9 +179,9 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 		#region Implementation of ITool
 
 		/// <summary>
-		/// Get the area machine name the tool is for.
+		/// Get the area for the tool.
 		/// </summary>
-		public string AreaMachineName => "lists";
+		public IArea Area => _area;
 
 		/// <summary>
 		/// Get the image for the area.
@@ -256,7 +219,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 		{
 			var contextMenuItem = (ToolStripMenuItem)sender;
 			_currentReversalIndex = (IReversalIndex)contextMenuItem.Tag;
-			PropertyTable.SetProperty("ReversalIndexGuid", _currentReversalIndex.Guid.ToString(), SettingsGroup.LocalSettings, true, false);
+			_propertyTable.SetProperty("ReversalIndexGuid", _currentReversalIndex.Guid.ToString(), SettingsGroup.LocalSettings, true, false);
 			((ReversalClerk)_recordClerk).ChangeOwningObjectIfPossible();
 			SetCheckedState(contextMenuItem);
 		}
@@ -264,7 +227,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 		private void SetCheckedState(ToolStripMenuItem reversalToolStripMenuItem)
 		{
 			var currentTag = (IReversalIndex)reversalToolStripMenuItem.Tag;
-			reversalToolStripMenuItem.Checked = (currentTag.Guid.ToString() == PropertyTable.GetValue<string>("ReversalIndexGuid"));
+			reversalToolStripMenuItem.Checked = (currentTag.Guid.ToString() == _propertyTable.GetValue<string>("ReversalIndexGuid"));
 		}
 
 		private static RecordClerk FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId, StatusBar statusBar)
@@ -278,9 +241,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 				currentReversalIndex = (IReversalIndex)cache.ServiceLocator.GetObject(currentReversalIndexGuid);
 			}
 
-			return new ReversalEntryPOSClerk(statusBar, cache.ServiceLocator,
-				cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(),
-				currentReversalIndex);
+			return new ReversalEntryPOSClerk(statusBar, cache.ServiceLocator, cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), currentReversalIndex);
 		}
 	}
 }

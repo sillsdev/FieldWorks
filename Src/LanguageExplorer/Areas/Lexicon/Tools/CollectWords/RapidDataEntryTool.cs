@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Xml.Linq;
@@ -22,6 +23,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 	/// <summary>
 	/// ITool implementation for the "rapidDataEntry" tool in the "lexicon" area.
 	/// </summary>
+	[Export(AreaServices.LexiconAreaMachineName, typeof(ITool))]
+	[Export(typeof(ITool))]
 	internal sealed class RapidDataEntryTool : ITool
 	{
 		private LexiconAreaMenuHelper _lexiconAreaMenuHelper;
@@ -30,60 +33,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 		private RecordBrowseView _recordBrowseView;
 		private RecordClerk _recordClerk;
 		private RecordClerk _nestedRecordClerk;
-
-		#region Implementation of IPropertyTableProvider
-
-		/// <summary>
-		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
-		/// </summary>
-		public IPropertyTable PropertyTable { get; private set; }
-
-		#endregion
-
-		#region Implementation of IPublisherProvider
-
-		/// <summary>
-		/// Get the IPublisher.
-		/// </summary>
-		public IPublisher Publisher { get; private set; }
-
-		#endregion
-
-		#region Implementation of ISubscriberProvider
-
-		/// <summary>
-		/// Get the ISubscriber.
-		/// </summary>
-		public ISubscriber Subscriber { get; private set; }
-
-		#endregion
-
-		#region Implementation of IFlexComponent
-
-		/// <summary>
-		/// Initialize a FLEx component with the basic interfaces.
-		/// </summary>
-		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
-		public void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
-		{
-			FlexComponentCheckingService.CheckInitializationValues(flexComponentParameters, new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-
-			PropertyTable = flexComponentParameters.PropertyTable;
-			Publisher = flexComponentParameters.Publisher;
-			Subscriber = flexComponentParameters.Subscriber;
-
-#if RANDYTODO
-			// TODO: Came from Fork commit: "Get all tree-based tools to switch to selected item." 2016-08-12 14:29:42
-			// TODO: Wait on other changes from fork that add all the guts to this method.
-			var recordBar = new RecordBar(PropertyTable)
-			{
-				IsFlatList = false,
-				Dock = DockStyle.Fill
-			};
-#endif
-		}
-
-		#endregion
+		[Import(AreaServices.LexiconAreaMachineName)]
+		private IArea _area;
+		[Import]
+		private IPropertyTable _propertyTable;
 
 		#region Implementation of IMajorFlexComponent
 
@@ -96,7 +49,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
 			_lexiconAreaMenuHelper.Dispose();
-			PropertyTable.SetProperty("RecordListWidthGlobal", _collapsingSplitContainer.SplitterDistance, SettingsGroup.GlobalSettings, true, false);
+			_propertyTable.SetProperty("RecordListWidthGlobal", _collapsingSplitContainer.SplitterDistance, SettingsGroup.GlobalSettings, true, false);
 
 #if RANDYTODO
 			// If these removals are more permanent, then move up to the "RemoveObsoleteProperties" method on the main window.
@@ -114,11 +67,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 					So, I suspect those properties will eventually go away permanently, but I'm not there yet."
 			*/
 #endif
-			PropertyTable.RemoveProperty(RecordClerk.ClerkSelectedObjectPropertyId(_nestedRecordClerk.Id));
-			PropertyTable.RemoveProperty(RecordClerk.ClerkSelectedObjectPropertyId(_recordClerk.Id));
+			_propertyTable.RemoveProperty(RecordClerk.ClerkSelectedObjectPropertyId(_nestedRecordClerk.Id));
+			_propertyTable.RemoveProperty(RecordClerk.ClerkSelectedObjectPropertyId(_recordClerk.Id));
 
-			PropertyTable.RemoveProperty("ActiveClerkOwningObject");
-			PropertyTable.RemoveProperty("ActiveClerkSelectedObject");
+			_propertyTable.RemoveProperty("ActiveClerkOwningObject");
+			_propertyTable.RemoveProperty("ActiveClerkSelectedObject");
 
 			CollapsingSplitContainerFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _collapsingSplitContainer);
 
@@ -146,7 +99,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 			_lexiconAreaMenuHelper = new LexiconAreaMenuHelper(majorFlexComponentParameters, _recordClerk);
 
 			var semanticDomainRdeTreeBarHandler = (SemanticDomainRdeTreeBarHandler)_recordClerk.BarHandler;
-			var recordBar = new RecordBar(PropertyTable)
+			var recordBar = new RecordBar(_propertyTable)
 			{
 				IsFlatList = false,
 				Dock = DockStyle.Fill
@@ -159,10 +112,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 			_collapsingSplitContainer.FirstLabel = AreaResources.ksRecordListLabel;
 			_collapsingSplitContainer.FirstControl = recordBar;
 			_collapsingSplitContainer.SecondLabel = AreaResources.ksMainContentLabel;
-			_collapsingSplitContainer.SplitterDistance = PropertyTable.GetValue<int>("RecordListWidthGlobal", SettingsGroup.GlobalSettings);
+			_collapsingSplitContainer.SplitterDistance = _propertyTable.GetValue<int>("RecordListWidthGlobal", SettingsGroup.GlobalSettings);
 
 			var recordEditViewPaneBar = new PaneBar();
-			var panelButton = new PanelButton(PropertyTable, null, PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(MachineName), LanguageExplorerResources.ksHideFields, LanguageExplorerResources.ksShowHiddenFields)
+			var panelButton = new PanelButton(_propertyTable, null, PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(MachineName), LanguageExplorerResources.ksHideFields, LanguageExplorerResources.ksShowHiddenFields)
 			{
 				Dock = DockStyle.Right
 			};
@@ -180,7 +133,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 			var mainMultiPaneParameters = new MultiPaneParameters
 			{
 				Orientation = Orientation.Horizontal,
-				AreaMachineName = AreaMachineName,
+				Area = _area,
 				Id = "SemanticCategoryAndItems",
 				ToolMachineName = MachineName,
 				DefaultFocusControl = "RecordBrowseView",
@@ -188,7 +141,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 				SecondControlParameters = new SplitterChildControlParameters { Control = _recordBrowseView, Label = "Details" }
 			};
 			var nestedMultiPane = MultiPaneFactory.CreateNestedMultiPane(majorFlexComponentParameters.FlexComponentParameters, mainMultiPaneParameters);
-			nestedMultiPane.SplitterDistance = PropertyTable.GetValue<int>($"MultiPaneSplitterDistance_{AreaMachineName}_{MachineName}_{mainMultiPaneParameters.Id}");
+			nestedMultiPane.SplitterDistance = _propertyTable.GetValue<int>($"MultiPaneSplitterDistance_{_area.MachineName}_{MachineName}_{mainMultiPaneParameters.Id}");
 			_collapsingSplitContainer.SecondControl = PaneBarContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, recordEditViewPaneBar, nestedMultiPane);
 			majorFlexComponentParameters.MainCollapsingSplitContainer.SecondControl = _collapsingSplitContainer;
 			_collapsingSplitContainer.ResumeLayout();
@@ -228,7 +181,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 		/// </summary>
 		public void EnsurePropertiesAreCurrent()
 		{
-			PropertyTable.SetProperty("RecordListWidthGlobal", _collapsingSplitContainer.SplitterDistance, SettingsGroup.GlobalSettings, true, false);
+			_propertyTable.SetProperty("RecordListWidthGlobal", _collapsingSplitContainer.SplitterDistance, SettingsGroup.GlobalSettings, true, false);
 		}
 
 #endregion
@@ -239,20 +192,20 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 		/// Get the internal name of the component.
 		/// </summary>
 		/// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
-		public string MachineName => "rapidDataEntry";
+		public string MachineName => AreaServices.RapidDataEntryMachineName;
 
 		/// <summary>
 		/// User-visible localizable component name.
 		/// </summary>
 		public string UiName => "MEMORY ISSUES: Collect Words";
-#endregion
+		#endregion
 
-#region Implementation of ITool
+		#region Implementation of ITool
 
 		/// <summary>
-		/// Get the area machine name the tool is for.
+		/// Get the area for the tool.
 		/// </summary>
-		public string AreaMachineName => "lexicon";
+		public IArea Area => _area;
 
 		/// <summary>
 		/// Get the image for the area.

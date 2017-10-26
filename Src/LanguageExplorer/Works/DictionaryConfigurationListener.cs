@@ -6,6 +6,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using LanguageExplorer.Areas;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 
@@ -237,7 +238,7 @@ namespace LanguageExplorer.Works
 		{
 			get
 			{
-				return PropertyTable.GetValue<string>("areaChoice") == "lexicon";
+				return PropertyTable.GetValue<string>("areaChoice") == AreaServices.InitialAreaMachineName;
 			}
 		}
 

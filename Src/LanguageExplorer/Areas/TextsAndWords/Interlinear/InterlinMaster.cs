@@ -1392,7 +1392,7 @@ private void ReloadPaneBar(IPaneBar paneBar)
 		/// <returns></returns>
 		protected bool InFriendlyTool(string desiredTool)
 		{
-			var toolChoice = PropertyTable.GetValue<string>("ToolForAreaNamed_textsWords");
+			var toolChoice = PropertyTable.GetValue<string>($"{AreaServices.ToolForAreaNamed_}textsWords");
 			return toolChoice != null && toolChoice == desiredTool;
 		}
 

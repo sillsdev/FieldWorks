@@ -3,7 +3,9 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using SIL.Code;
@@ -15,22 +17,20 @@ using SIL.LCModel.Application;
 
 namespace LanguageExplorer.Areas.Notebook
 {
+	[Export(AreaServices.NotebookAreaMachineName, typeof(IArea))]
+	[Export(typeof(IArea))]
 	internal sealed class NotebookArea : IArea
 	{
+		[ImportMany(AreaServices.NotebookAreaMachineName)]
+		private IEnumerable<ITool> _myTools;
 		internal const string Records = "records";
-		private readonly IToolRepository _toolRepository;
+		private const string MyUiName = "Notebook";
+		private string PropertyNameForToolName => $"{AreaServices.ToolForAreaNamed_}{MachineName}";
 		private NotebookAreaMenuHelper _notebookAreaMenuHelper;
+		[Import]
+		private IPropertyTable _propertyTable;
 
 		internal RecordClerk RecordClerk { get; set; }
-
-		/// <summary>
-		/// Contructor used by Reflection to feed the tool repository to the area.
-		/// </summary>
-		/// <param name="toolRepository"></param>
-		internal NotebookArea(IToolRepository toolRepository)
-		{
-			_toolRepository = toolRepository;
-		}
 
 		internal static XDocument LoadDocument(string resourceName)
 		{
@@ -38,50 +38,6 @@ namespace LanguageExplorer.Areas.Notebook
 			configurationDocument.Root.Add(XElement.Parse(NotebookResources.NotebookBrowseColumnDefinitions));
 			return configurationDocument;
 		}
-
-		#region Implementation of IPropertyTableProvider
-
-		/// <summary>
-		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
-		/// </summary>
-		public IPropertyTable PropertyTable { get; private set; }
-
-		#endregion
-
-		#region Implementation of IPublisherProvider
-
-		/// <summary>
-		/// Get the IPublisher.
-		/// </summary>
-		public IPublisher Publisher { get; private set; }
-
-		#endregion
-
-		#region Implementation of ISubscriberProvider
-
-		/// <summary>
-		/// Get the ISubscriber.
-		/// </summary>
-		public ISubscriber Subscriber { get; private set; }
-
-		#endregion
-
-		#region Implementation of IFlexComponent
-
-		/// <summary>
-		/// Initialize a FLEx component with the basic interfaces.
-		/// </summary>
-		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
-		public void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
-		{
-			FlexComponentCheckingService.CheckInitializationValues(flexComponentParameters, new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-
-			PropertyTable = flexComponentParameters.PropertyTable;
-			Publisher = flexComponentParameters.Publisher;
-			Subscriber = flexComponentParameters.Subscriber;
-		}
-
-		#endregion
 
 		#region Implementation of IMajorFlexComponent
 
@@ -105,6 +61,7 @@ namespace LanguageExplorer.Areas.Notebook
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			_propertyTable.SetDefault(PropertyNameForToolName, DefaultToolMachineName, SettingsGroup.LocalSettings, true, false);
 			_notebookAreaMenuHelper = new NotebookAreaMenuHelper(majorFlexComponentParameters);
 			_notebookAreaMenuHelper.Initialize();
 		}
@@ -114,7 +71,7 @@ namespace LanguageExplorer.Areas.Notebook
 		/// </summary>
 		public void PrepareToRefresh()
 		{
-			_toolRepository.GetPersistedOrDefaultToolForArea(this).PrepareToRefresh();
+			PersistedOrDefaultToolForArea.PrepareToRefresh();
 		}
 
 		/// <summary>
@@ -122,7 +79,7 @@ namespace LanguageExplorer.Areas.Notebook
 		/// </summary>
 		public void FinishRefresh()
 		{
-			_toolRepository.GetPersistedOrDefaultToolForArea(this).FinishRefresh();
+			PersistedOrDefaultToolForArea.FinishRefresh();
 		}
 
 		/// <summary>
@@ -131,10 +88,9 @@ namespace LanguageExplorer.Areas.Notebook
 		/// </summary>
 		public void EnsurePropertiesAreCurrent()
 		{
-			PropertyTable.SetProperty("InitialArea", MachineName, SettingsGroup.LocalSettings, true, false);
+			_propertyTable.SetProperty(AreaServices.InitialArea, MachineName, SettingsGroup.LocalSettings, true, false);
 
-			var myCurrentTool = _toolRepository.GetPersistedOrDefaultToolForArea(this);
-			myCurrentTool.EnsurePropertiesAreCurrent();
+			PersistedOrDefaultToolForArea.EnsurePropertiesAreCurrent();
 		}
 
 		#endregion
@@ -145,12 +101,12 @@ namespace LanguageExplorer.Areas.Notebook
 		/// Get the internal name of the component.
 		/// </summary>
 		/// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
-		public string MachineName => "notebook";
+		public string MachineName => AreaServices.NotebookAreaMachineName;
 
 		/// <summary>
 		/// User-visible localizable component name.
 		/// </summary>
-		public string UiName => "Notebook";
+		public string UiName => MyUiName;
 		#endregion
 
 		#region Implementation of IArea
@@ -160,15 +116,12 @@ namespace LanguageExplorer.Areas.Notebook
 		/// the persisted one is no longer available.
 		/// </summary>
 		/// <returns>The last persisted tool or the default tool for the area.</returns>
-		public ITool GetPersistedOrDefaultToolForArea()
-		{
-			return _toolRepository.GetPersistedOrDefaultToolForArea(this);
-		}
+		public ITool PersistedOrDefaultToolForArea => _myTools.First(tool => tool.MachineName == _propertyTable.GetValue<string>(PropertyNameForToolName));
 
 		/// <summary>
 		/// Get the machine name of the area's default tool.
 		/// </summary>
-		public string DefaultToolMachineName => "notebookEdit";
+		public string DefaultToolMachineName => AreaServices.NotebookAreaDefaultToolMachineName;
 
 		/// <summary>
 		/// Get all installed tools for the area.
@@ -179,11 +132,11 @@ namespace LanguageExplorer.Areas.Notebook
 			{
 				var myToolsInOrder = new List<string>
 				{
-					"notebookEdit",
-					"notebookBrowse",
-					"notebookDocument"
+					AreaServices.NotebookEditToolMachineName,
+					AreaServices.NotebookBrowseToolMachineName,
+					AreaServices.NotebookDocumentToolMachineName
 				};
-				return _toolRepository.AllToolsForAreaInOrder(myToolsInOrder, MachineName);
+				return myToolsInOrder.Select(toolName => _myTools.First(tool => tool.MachineName == toolName)).ToList();
 			}
 		}
 

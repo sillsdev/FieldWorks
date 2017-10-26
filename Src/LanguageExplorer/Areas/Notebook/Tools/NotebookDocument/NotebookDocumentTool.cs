@@ -2,10 +2,10 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Xml.Linq;
 using LanguageExplorer.Controls;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
 using LanguageExplorer.Works;
 using SIL.LCModel.Application;
@@ -15,54 +15,14 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookDocument
 	/// <summary>
 	/// ITool implementation for the "notebookDocument" tool in the "notebook" area.
 	/// </summary>
+	[Export(AreaServices.NotebookAreaMachineName, typeof(ITool))]
+	[Export(typeof(ITool))]
 	internal sealed class NotebookDocumentTool : ITool
 	{
 		private PaneBarContainer _paneBarContainer;
 		private RecordClerk _recordClerk;
-
-		#region Implementation of IPropertyTableProvider
-
-		/// <summary>
-		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
-		/// </summary>
-		public IPropertyTable PropertyTable { get; private set; }
-
-		#endregion
-
-		#region Implementation of IPublisherProvider
-
-		/// <summary>
-		/// Get the IPublisher.
-		/// </summary>
-		public IPublisher Publisher { get; private set; }
-
-		#endregion
-
-		#region Implementation of ISubscriberProvider
-
-		/// <summary>
-		/// Get the ISubscriber.
-		/// </summary>
-		public ISubscriber Subscriber { get; private set; }
-
-		#endregion
-
-		#region Implementation of IFlexComponent
-
-		/// <summary>
-		/// Initialize a FLEx component with the basic interfaces.
-		/// </summary>
-		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
-		public void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
-		{
-			FlexComponentCheckingService.CheckInitializationValues(flexComponentParameters, new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-
-			PropertyTable = flexComponentParameters.PropertyTable;
-			Publisher = flexComponentParameters.Publisher;
-			Subscriber = flexComponentParameters.Subscriber;
-		}
-
-		#endregion
+		[Import(AreaServices.NotebookAreaMachineName)]
+		private IArea _area;
 
 		#region Implementation of IMajorFlexComponent
 
@@ -128,7 +88,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookDocument
 		/// Get the internal name of the component.
 		/// </summary>
 		/// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
-		public string MachineName => "notebookDocument";
+		public string MachineName => AreaServices.NotebookDocumentToolMachineName;
 
 		/// <summary>
 		/// User-visible localizable component name.
@@ -139,9 +99,9 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookDocument
 		#region Implementation of ITool
 
 		/// <summary>
-		/// Get the area machine name the tool is for.
+		/// Get the area for the tool.
 		/// </summary>
-		public string AreaMachineName => "notebook";
+		public IArea Area => _area;
 
 		/// <summary>
 		/// Get the image for the area.

@@ -14,6 +14,7 @@ using System.Windows.Forms;
 using System.Xml.Linq;
 using System.Xml;
 using System.Xml.Xsl;
+using LanguageExplorer.Areas;
 using LanguageExplorer.Controls.LexText;
 using LanguageExplorer.Controls.XMLViews;
 using LanguageExplorer.LcmUi;
@@ -404,7 +405,7 @@ namespace LanguageExplorer.Works
 			}
 			else
 			{
-				area = "lexicon";
+				area = AreaServices.InitialAreaMachineName;
 				switch (ft)
 				{
 					case FxtTypes.kftClassifiedDict:

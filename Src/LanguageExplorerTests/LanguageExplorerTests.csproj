@@ -141,6 +141,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\SIL.Lift.dll</HintPath>
     </Reference>
+    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="ViewsInterfaces">
       <Name>ViewsInterfaces</Name>
       <HintPath>..\..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
@@ -234,7 +235,8 @@
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="ArchivingTests.cs" />
-    <Compile Include="AreaRepositoryTests.cs" />
+    <Compile Include="Repository\AreaRepositoryTests.cs" />
+    <Compile Include="Repository\AreaTestBase.cs" />
     <Compile Include="DetailControls\AtomicReferenceLauncherTests.cs" />
     <Compile Include="DetailControls\DataTreeTests.cs" />
     <Compile Include="DetailControls\PhoneEnvReferenceViewTests.cs" />
@@ -257,6 +259,7 @@
     <Compile Include="Discourse\LogicTest.cs" />
     <Compile Include="Discourse\NotifyChangeSpy.cs" />
     <Compile Include="Discourse\TestCCLogic.cs" />
+    <Compile Include="Repository\GrammarAreaTests.cs" />
     <Compile Include="Grammar\GoldEticGuidFixerTests.cs" />
     <Compile Include="Interlinear\AddWordsToLexiconTests.cs" />
     <Compile Include="Interlinear\BIRDFormatImportTests.cs" />
@@ -284,6 +287,7 @@
     </Compile>
     <Compile Include="LayoutKeyUtilsTests.cs" />
     <Compile Include="LcmUi\LcmUiTests.cs" />
+    <Compile Include="Repository\LexiconAreaTests.cs" />
     <Compile Include="Lexicon\LexEntryChangeHandlerTests.cs" />
     <Compile Include="Lexicon\LexReferenceTreeRootLauncherTests.cs" />
     <Compile Include="Lexicon\CircularRefBreakerTests.cs" />
@@ -297,7 +301,10 @@
     <Compile Include="LexTextControls\MasterCategoryTests.cs" />
     <Compile Include="LexTextControls\MsaInflectionFeatureListDlgTests.cs" />
     <Compile Include="LexTextControls\WordsSfmImportTests.cs" />
+    <Compile Include="Repository\ListsAreaTests.cs" />
+    <Compile Include="Repository\MefTestBase.cs" />
     <Compile Include="MGA\MGATests.cs" />
+    <Compile Include="Repository\NotebookAreaTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PropertyTableTests.cs" />
     <Compile Include="PubSubSystemTests.cs" />
@@ -310,9 +317,9 @@
     <Compile Include="SilSidePaneTests\TestUtilities.cs" />
     <Compile Include="SimpleLoggerTests.cs" />
     <Compile Include="TestSetupServices.cs" />
+    <Compile Include="Repository\TextAndWordsAreaTests.cs" />
     <Compile Include="TextsAndWords\RespellingTests.cs" />
     <Compile Include="TextsAndWords\WordGrammarDebuggingTests.cs" />
-    <Compile Include="ToolRepositoryTests.cs" />
     <Compile Include="Works\AddCustomFieldDialogTests.cs" />
     <Compile Include="Works\AllReversalEntriesRecordListTests.cs" />
     <Compile Include="Works\BulkEditBarTests.cs" />

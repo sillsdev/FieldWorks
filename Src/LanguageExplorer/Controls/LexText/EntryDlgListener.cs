@@ -56,7 +56,7 @@ namespace LanguageExplorer.Controls.LexText
 			{
 				string areaChoice = PropertyTable.GetValue<string>("areaChoice");
 				if (areaChoice == null) return false; // happens at start up
-				if ("lexicon" == areaChoice)
+				if (AreaServices.InitialAreaMachineName == areaChoice)
 				{
 					return PropertyTable.GetValue<string>("toolChoice") == "lexiconEdit";
 				}

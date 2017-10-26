@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
+using LanguageExplorer.Areas;
 using LanguageExplorer.LcmUi;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
@@ -368,9 +369,9 @@ namespace LanguageExplorer.Dumpster
 			get
 			{
 				string areaChoice = PropertyTable.GetValue<string>("areaChoice");
-				string toolFor = PropertyTable.GetValue<string>("ToolForAreaNamed_lexicon");
+				string toolFor = PropertyTable.GetValue<string>($"{AreaServices.ToolForAreaNamed_}lexicon");
 
-				return areaChoice == "lexicon" && toolFor.StartsWith("reversalTool");
+				return areaChoice == AreaServices.InitialAreaMachineName && toolFor.StartsWith("reversalTool");
 			}
 		}
 

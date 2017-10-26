@@ -576,7 +576,7 @@ namespace LanguageExplorer.LcmUi
 			string tool = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "tool");
 			//string areaChoice = m_propertyTable.GetValue<string>("areaChoice");
 			//string areaChoice = m_propertyTable.GetValue<string>("areaChoice");
-			//string toolChoice = m_propertyTable.GetValue<string>("ToolForAreaNamed_" + areaChoice);
+			//string toolChoice = m_propertyTable.GetValue<string>($"{AreaServices.ToolForAreaNamed_}{areaChoice}");
 			string toolChoice = m_propertyTable.GetValue<string>("toolChoice");
 			if (!IsAcceptableContextToJump(toolChoice, tool))
 			{

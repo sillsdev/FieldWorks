@@ -2168,9 +2168,6 @@
     <Compile Include="IAreaRepository.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="IToolRepository.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="MajorFlexComponentParameters.cs" />
     <Compile Include="SendReceive\FLExBridgeFirstSendReceiveInstructionsDlg.cs">
       <SubType>Form</SubType>
@@ -2366,7 +2363,6 @@
     <Compile Include="Areas\TextsAndWords\Tools\WordListConcordance\WordListConcordanceTool.cs" />
     <Compile Include="FlexStylesXmlAccessor.cs" />
     <Compile Include="Impls\AreaRepository.cs" />
-    <Compile Include="Impls\ToolRepository.cs" />
     <Compile Include="Impls\FwMainWnd.cs">
       <SubType>Form</SubType>
     </Compile>

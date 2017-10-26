@@ -20,7 +20,7 @@ namespace LanguageExplorer.Areas
 		/// <summary />
 		internal string ToolMachineName { get; set; }
 		/// <summary />
-		internal string AreaMachineName { get; set; }
+		internal IArea Area { get; set; }
 		/// <summary />
 		internal int FirstCollapseZone { get; set; }
 		/// <summary />

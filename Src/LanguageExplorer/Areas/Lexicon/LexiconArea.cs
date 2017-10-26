@@ -4,7 +4,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using LanguageExplorer.LcmUi;
@@ -21,81 +23,21 @@ namespace LanguageExplorer.Areas.Lexicon
 	/// <summary>
 	/// IArea implementation for the main, and thus only required, Area: "lexicon".
 	/// </summary>
+	[Export(AreaServices.LexiconAreaMachineName, typeof(IArea))]
+	[Export(typeof(IArea))]
 	internal sealed class LexiconArea : IArea
 	{
+		[ImportMany(AreaServices.LexiconAreaMachineName)]
+		private IEnumerable<ITool> _myTools;
+		private const string MyUiName = "Lexical Tools";
+		private string PropertyNameForToolName => $"{AreaServices.ToolForAreaNamed_}{MachineName}";
 		internal const string Entries = "entries";
 		internal const string AllReversalEntries = "AllReversalEntries";
 		internal const string SemanticDomainList_LexiconArea = "SemanticDomainList_LexiconArea";
 		private const string khomographconfiguration = "HomographConfiguration";
-		private readonly IToolRepository _toolRepository;
-
-		/// <summary>
-		/// Contructor used by Reflection to feed the tool repository to the area.
-		/// </summary>
-		/// <param name="toolRepository"></param>
-		internal LexiconArea(IToolRepository toolRepository)
-		{
-			_toolRepository = toolRepository;
-		}
-
-		#region Implementation of IPropertyTableProvider
-
-		/// <summary>
-		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
-		/// </summary>
-		public IPropertyTable PropertyTable { get; private set; }
-
-		#endregion
-
-		#region Implementation of IPublisherProvider
-
-		/// <summary>
-		/// Get the IPublisher.
-		/// </summary>
-		public IPublisher Publisher { get; private set; }
-
-		#endregion
-
-		#region Implementation of ISubscriberProvider
-
-		/// <summary>
-		/// Get the ISubscriber.
-		/// </summary>
-		public ISubscriber Subscriber { get; private set; }
-
-		#endregion
-
-		#region Implementation of IFlexComponent
-
-		/// <summary>
-		/// Initialize a FLEx component with the basic interfaces.
-		/// </summary>
-		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
-		public void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
-		{
-			FlexComponentCheckingService.CheckInitializationValues(flexComponentParameters, new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-
-			PropertyTable = flexComponentParameters.PropertyTable;
-			Publisher = flexComponentParameters.Publisher;
-			Subscriber = flexComponentParameters.Subscriber;
-
-			if (_toolRepository.Publisher == null)
-			{
-				_toolRepository.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-			}
-
-			// Restore HomographConfiguration settings.
-			string hcSettings;
-			if (!PropertyTable.TryGetValue(khomographconfiguration, out hcSettings)) return;
-
-			var serviceLocator = PropertyTable.GetValue<LcmCache>("cache").ServiceLocator;
-			var hc = serviceLocator.GetInstance<HomographConfiguration>();
-			hc.PersistData = hcSettings;
-
-			PropertyTable.SetDefault("SelectedPublication", "Main Dictionary", SettingsGroup.LocalSettings, true, true);
-		}
-
-		#endregion
+		private bool _hasBeenActivated;
+		[Import]
+		private IPropertyTable _propertyTable;
 
 		#region Implementation of IMajorFlexComponent
 
@@ -103,12 +45,12 @@ namespace LanguageExplorer.Areas.Lexicon
 		/// Get the internal name of the component.
 		/// </summary>
 		/// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
-		public string MachineName => "lexicon";
+		public string MachineName => AreaServices.LexiconAreaMachineName;
 
 		/// <summary>
 		/// User-visible localizable component name.
 		/// </summary>
-		public string UiName => "Lexical Tools";
+		public string UiName => MyUiName;
 
 		/// <summary>
 		/// Deactivate the component.
@@ -128,8 +70,22 @@ namespace LanguageExplorer.Areas.Lexicon
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			PropertyTable.SetDefault("Show_DictionaryPubPreview", true, SettingsGroup.LocalSettings, true, false);
-			PropertyTable.SetDefault("Show_reversalIndexEntryList", true, SettingsGroup.LocalSettings, false, false);
+			_propertyTable.SetDefault(PropertyNameForToolName, AreaServices.LexiconAreaDefaultToolMachineName, SettingsGroup.LocalSettings, true, false);
+			if (!_hasBeenActivated)
+			{
+				// Restore HomographConfiguration settings.
+				string hcSettings;
+				if (_propertyTable.TryGetValue(khomographconfiguration, out hcSettings))
+				{
+					var serviceLocator = majorFlexComponentParameters.LcmCache.ServiceLocator;
+					var hc = serviceLocator.GetInstance<HomographConfiguration>();
+					hc.PersistData = hcSettings;
+					_propertyTable.SetDefault("SelectedPublication", "Main Dictionary", SettingsGroup.LocalSettings, true, true);
+				}
+				_hasBeenActivated = true;
+			}
+			_propertyTable.SetDefault("Show_DictionaryPubPreview", true, SettingsGroup.LocalSettings, true, false);
+			_propertyTable.SetDefault("Show_reversalIndexEntryList", true, SettingsGroup.LocalSettings, false, false);
 		}
 
 		/// <summary>
@@ -137,7 +93,7 @@ namespace LanguageExplorer.Areas.Lexicon
 		/// </summary>
 		public void PrepareToRefresh()
 		{
-			_toolRepository.GetPersistedOrDefaultToolForArea(this).PrepareToRefresh();
+			PersistedOrDefaultToolForArea.PrepareToRefresh();
 		}
 
 		/// <summary>
@@ -145,7 +101,7 @@ namespace LanguageExplorer.Areas.Lexicon
 		/// </summary>
 		public void FinishRefresh()
 		{
-			_toolRepository.GetPersistedOrDefaultToolForArea(this).FinishRefresh();
+			PersistedOrDefaultToolForArea.FinishRefresh();
 		}
 
 		/// <summary>
@@ -154,14 +110,13 @@ namespace LanguageExplorer.Areas.Lexicon
 		/// </summary>
 		public void EnsurePropertiesAreCurrent()
 		{
-			PropertyTable.SetProperty("InitialArea", MachineName, SettingsGroup.LocalSettings, true, false);
+			_propertyTable.SetProperty(AreaServices.InitialArea, MachineName, SettingsGroup.LocalSettings, true, false);
 
-			var serviceLocator = PropertyTable.GetValue<LcmCache>("cache").ServiceLocator;
+			var serviceLocator = _propertyTable.GetValue<LcmCache>("cache").ServiceLocator;
 			var hc = serviceLocator.GetInstance<HomographConfiguration>();
-			PropertyTable.SetProperty(khomographconfiguration, hc.PersistData, true, false);
+			_propertyTable.SetProperty(khomographconfiguration, hc.PersistData, true, false);
 
-			var myCurrentTool = _toolRepository.GetPersistedOrDefaultToolForArea(this);
-			myCurrentTool.EnsurePropertiesAreCurrent();
+			PersistedOrDefaultToolForArea.EnsurePropertiesAreCurrent();
 		}
 
 		#endregion
@@ -173,15 +128,12 @@ namespace LanguageExplorer.Areas.Lexicon
 		/// the persisted one is no longer available.
 		/// </summary>
 		/// <returns>The last persisted tool or the default tool for the area.</returns>
-		public ITool GetPersistedOrDefaultToolForArea()
-		{
-			return _toolRepository.GetPersistedOrDefaultToolForArea(this);
-		}
+		public ITool PersistedOrDefaultToolForArea => _myTools.First(tool => tool.MachineName == _propertyTable.GetValue<string>(PropertyNameForToolName));
 
 		/// <summary>
 		/// Get the machine name of the area's default tool.
 		/// </summary>
-		public string DefaultToolMachineName => "lexiconEdit";
+		public string DefaultToolMachineName => AreaServices.LexiconAreaDefaultToolMachineName;
 
 		/// <summary>
 		/// Get all installed tools for the area.
@@ -192,16 +144,16 @@ namespace LanguageExplorer.Areas.Lexicon
 			{
 				var myToolsInOrder = new List<string>
 				{
-					"lexiconEdit",
-					"lexiconBrowse",
-					"lexiconDictionary",
-					"rapidDataEntry",
-					"lexiconClassifiedDictionary",
-					"bulkEditEntriesOrSenses",
-					"reversalEditComplete",
-					"reversalBulkEditReversalEntries"
+					AreaServices.LexiconEditMachineName,
+					AreaServices.LexiconBrowseMachineName,
+					AreaServices.LexiconDictionaryMachineName,
+					AreaServices.RapidDataEntryMachineName,
+					AreaServices.LexiconClassifiedDictionaryMachineName,
+					AreaServices.BulkEditEntriesOrSensesMachineName,
+					AreaServices.ReversalEditCompleteMachineName,
+					AreaServices.ReversalBulkEditReversalEntriesMachineName
 				};
-				return _toolRepository.AllToolsForAreaInOrder(myToolsInOrder, MachineName);
+				return myToolsInOrder.Select(toolName => _myTools.First(tool => tool.MachineName == toolName)).ToList();
 			}
 		}
 

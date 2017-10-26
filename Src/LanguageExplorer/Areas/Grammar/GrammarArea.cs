@@ -3,7 +3,9 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
@@ -17,63 +19,17 @@ namespace LanguageExplorer.Areas.Grammar
 	/// <summary>
 	/// IArea implementation for the grammar area.
 	/// </summary>
+	[Export(AreaServices.GrammarAreaMachineName, typeof(IArea))]
+	[Export(typeof(IArea))]
 	internal sealed class GrammarArea : IArea
 	{
+		[ImportMany(AreaServices.GrammarAreaMachineName)]
+		private IEnumerable<ITool> _myTools;
+		private const string MyUiName = "Grammar";
+		private string PropertyNameForToolName => $"{AreaServices.ToolForAreaNamed_}{MachineName}";
 		internal const string Phonemes = "phonemes";
-		private readonly IToolRepository _toolRepository;
-
-		/// <summary>
-		/// Contructor used by Reflection to feed the tool repository to the area.
-		/// </summary>
-		/// <param name="toolRepository"></param>
-		internal GrammarArea(IToolRepository toolRepository)
-		{
-			_toolRepository = toolRepository;
-		}
-
-		#region Implementation of IPropertyTableProvider
-
-		/// <summary>
-		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
-		/// </summary>
-		public IPropertyTable PropertyTable { get; private set; }
-
-		#endregion
-
-		#region Implementation of IPublisherProvider
-
-		/// <summary>
-		/// Get the IPublisher.
-		/// </summary>
-		public IPublisher Publisher { get; private set; }
-
-		#endregion
-
-		#region Implementation of ISubscriberProvider
-
-		/// <summary>
-		/// Get the ISubscriber.
-		/// </summary>
-		public ISubscriber Subscriber { get; private set; }
-
-		#endregion
-
-		#region Implementation of IFlexComponent
-
-		/// <summary>
-		/// Initialize a FLEx component with the basic interfaces.
-		/// </summary>
-		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
-		public void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
-		{
-			FlexComponentCheckingService.CheckInitializationValues(flexComponentParameters, new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-
-			PropertyTable = flexComponentParameters.PropertyTable;
-			Publisher = flexComponentParameters.Publisher;
-			Subscriber = flexComponentParameters.Subscriber;
-		}
-
-		#endregion
+		[Import]
+		private IPropertyTable _propertyTable;
 
 		#region Implementation of IMajorFlexComponent
 
@@ -95,6 +51,7 @@ namespace LanguageExplorer.Areas.Grammar
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			_propertyTable.SetDefault(PropertyNameForToolName, DefaultToolMachineName, SettingsGroup.LocalSettings, true, false);
 		}
 
 		/// <summary>
@@ -102,7 +59,7 @@ namespace LanguageExplorer.Areas.Grammar
 		/// </summary>
 		public void PrepareToRefresh()
 		{
-			_toolRepository.GetPersistedOrDefaultToolForArea(this).PrepareToRefresh();
+			PersistedOrDefaultToolForArea.PrepareToRefresh();
 		}
 
 		/// <summary>
@@ -110,7 +67,7 @@ namespace LanguageExplorer.Areas.Grammar
 		/// </summary>
 		public void FinishRefresh()
 		{
-			_toolRepository.GetPersistedOrDefaultToolForArea(this).FinishRefresh();
+			PersistedOrDefaultToolForArea.FinishRefresh();
 		}
 
 		/// <summary>
@@ -119,10 +76,9 @@ namespace LanguageExplorer.Areas.Grammar
 		/// </summary>
 		public void EnsurePropertiesAreCurrent()
 		{
-			PropertyTable.SetProperty("InitialArea", MachineName, SettingsGroup.LocalSettings, true, false);
+			_propertyTable.SetProperty(AreaServices.InitialArea, MachineName, SettingsGroup.LocalSettings, true, false);
 
-			var myCurrentTool = _toolRepository.GetPersistedOrDefaultToolForArea(this);
-			myCurrentTool.EnsurePropertiesAreCurrent();
+			PersistedOrDefaultToolForArea.EnsurePropertiesAreCurrent();
 		}
 
 		#endregion
@@ -133,12 +89,12 @@ namespace LanguageExplorer.Areas.Grammar
 		/// Get the internal name of the component.
 		/// </summary>
 		/// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
-		public string MachineName => "grammar";
+		public string MachineName => AreaServices.GrammarAreaMachineName;
 
 		/// <summary>
 		/// User-visible localizable component name.
 		/// </summary>
-		public string UiName => "Grammar";
+		public string UiName => MyUiName;
 
 		#endregion
 
@@ -149,15 +105,12 @@ namespace LanguageExplorer.Areas.Grammar
 		/// the persisted one is no longer available.
 		/// </summary>
 		/// <returns>The last persisted tool or the default tool for the area.</returns>
-		public ITool GetPersistedOrDefaultToolForArea()
-		{
-			return _toolRepository.GetPersistedOrDefaultToolForArea(this);
-		}
+		public ITool PersistedOrDefaultToolForArea => _myTools.First(tool => tool.MachineName == _propertyTable.GetValue<string>(PropertyNameForToolName));
 
 		/// <summary>
 		/// Get the machine name of the area's default tool.
 		/// </summary>
-		public string DefaultToolMachineName => "posEdit";
+		public string DefaultToolMachineName => AreaServices.GrammarAreaDefaultToolMachineName;
 
 		/// <summary>
 		/// Get all installed tools for the area.
@@ -168,22 +121,22 @@ namespace LanguageExplorer.Areas.Grammar
 			{
 				var myToolsInOrder = new List<string>
 				{
-					"posEdit",
-					"categoryBrowse",
-					"compoundRuleAdvancedEdit",
-					"phonemeEdit",
-					"phonologicalFeaturesAdvancedEdit",
-					"bulkEditPhonemes",
-					"naturalClassEdit",
-					"EnvironmentEdit",
-					"PhonologicalRuleEdit",
-					"AdhocCoprohibitionRuleEdit",
-					"featuresAdvancedEdit",
-					"ProdRestrictEdit",
-					"grammarSketch",
-					"lexiconProblems"
+					AreaServices.PosEditMachineName,
+					AreaServices.CategoryBrowseMachineName,
+					AreaServices.CompoundRuleAdvancedEditMachineName,
+					AreaServices.PhonemeEditMachineName,
+					AreaServices.PhonologicalFeaturesAdvancedEditMachineName,
+					AreaServices.BulkEditPhonemesMachineName,
+					AreaServices.NaturalClassEditMachineName,
+					AreaServices.EnvironmentEditMachineName,
+					AreaServices.PhonologicalRuleEditMachineName,
+					AreaServices.AdhocCoprohibitionRuleEditMachineName,
+					AreaServices.FeaturesAdvancedEditMachineName,
+					AreaServices.ProdRestrictEditMachineName,
+					AreaServices.GrammarSketchMachineName,
+					AreaServices.LexiconProblemsMachineName
 				};
-				return _toolRepository.AllToolsForAreaInOrder(myToolsInOrder, MachineName);
+				return myToolsInOrder.Select(toolName => _myTools.First(tool => tool.MachineName == toolName)).ToList();
 			}
 		}
 

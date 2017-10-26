@@ -2,9 +2,10 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using LanguageExplorer.Works;
@@ -17,74 +18,19 @@ namespace LanguageExplorer.Areas.TextsAndWords
 	/// <summary>
 	/// IArea implementation for the area: "textAndWords".
 	/// </summary>
+	[Export(AreaServices.TextAndWordsAreaMachineName, typeof(IArea))]
+	[Export(typeof(IArea))]
 	internal sealed class TextAndWordsArea : IArea
 	{
+		[ImportMany(AreaServices.TextAndWordsAreaMachineName)]
+		private IEnumerable<ITool> _myTools;
+		private const string MyUiName = "Texts & Words";
 		internal const string ConcordanceWords = "concordanceWords";
-		private readonly IToolRepository _toolRepository;
+		private string PropertyNameForToolName => $"{AreaServices.ToolForAreaNamed_}{MachineName}";
 		private TextAndWordsAreaMenuHelper _textAndWordsAreaMenuHelper;
-
-		/// <summary>
-		/// Contructor used by Reflection to feed the tool repository to the area.
-		/// </summary>
-		/// <param name="toolRepository"></param>
-		internal TextAndWordsArea(IToolRepository toolRepository)
-		{
-			_toolRepository = toolRepository;
-		}
-
-		#region Implementation of IPropertyTableProvider
-
-		/// <summary>
-		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
-		/// </summary>
-		public IPropertyTable PropertyTable { get; private set; }
-
-		#endregion
-
-		#region Implementation of IPublisherProvider
-
-		/// <summary>
-		/// Get the IPublisher.
-		/// </summary>
-		public IPublisher Publisher { get; private set; }
-
-		#endregion
-
-		#region Implementation of ISubscriberProvider
-
-		/// <summary>
-		/// Get the ISubscriber.
-		/// </summary>
-		public ISubscriber Subscriber { get; private set; }
-
-		#endregion
-
-		#region Implementation of IFlexComponent
-
-		/// <summary>
-		/// Initialize a FLEx component with the basic interfaces.
-		/// </summary>
-		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
-		public void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
-		{
-			FlexComponentCheckingService.CheckInitializationValues(flexComponentParameters, new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-
-			PropertyTable = flexComponentParameters.PropertyTable;
-			Publisher = flexComponentParameters.Publisher;
-			Subscriber = flexComponentParameters.Subscriber;
-
-			// Respeller dlg uses these.
-			PropertyTable.SetDefault("RemoveAnalyses", true, SettingsGroup.GlobalSettings, true, false);
-			PropertyTable.SetDefault("UpdateLexiconIfPossible", true, SettingsGroup.GlobalSettings, true, false);
-			PropertyTable.SetDefault("CopyAnalysesToNewSpelling", true, SettingsGroup.GlobalSettings, true, false);
-			PropertyTable.SetDefault("MaintainCaseOnChangeSpelling", true, SettingsGroup.GlobalSettings, true, false);
-
-			PropertyTable.SetDefault("ITexts_AddWordsToLexicon", false, SettingsGroup.LocalSettings, true, false);
-			PropertyTable.SetDefault("ITexts_ShowAddWordsToLexiconDlg", true, SettingsGroup.LocalSettings, true, false);
-			PropertyTable.SetDefault("ITexts-ScriptureIds", string.Empty, SettingsGroup.LocalSettings, true, false);
-		}
-
-		#endregion
+		private bool _hasBeenActivated;
+		[Import]
+		private IPropertyTable _propertyTable;
 
 		#region Implementation of IMajorFlexComponent
 
@@ -108,6 +54,21 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			_propertyTable.SetDefault(PropertyNameForToolName, DefaultToolMachineName, SettingsGroup.LocalSettings, true, false);
+			if (!_hasBeenActivated)
+			{
+				// Respeller dlg uses these.
+				_propertyTable.SetDefault("RemoveAnalyses", true, SettingsGroup.GlobalSettings, true, false);
+				_propertyTable.SetDefault("UpdateLexiconIfPossible", true, SettingsGroup.GlobalSettings, true, false);
+				_propertyTable.SetDefault("CopyAnalysesToNewSpelling", true, SettingsGroup.GlobalSettings, true, false);
+				_propertyTable.SetDefault("MaintainCaseOnChangeSpelling", true, SettingsGroup.GlobalSettings, true, false);
+
+				_propertyTable.SetDefault("ITexts_AddWordsToLexicon", false, SettingsGroup.LocalSettings, true, false);
+				_propertyTable.SetDefault("ITexts_ShowAddWordsToLexiconDlg", true, SettingsGroup.LocalSettings, true, false);
+				_propertyTable.SetDefault("ITexts-ScriptureIds", string.Empty, SettingsGroup.LocalSettings, true, false);
+				_hasBeenActivated = true;
+			}
+
 			_textAndWordsAreaMenuHelper = new TextAndWordsAreaMenuHelper(majorFlexComponentParameters);
 
 			_textAndWordsAreaMenuHelper.InitializeAreaWideMenus();
@@ -118,7 +79,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// </summary>
 		public void PrepareToRefresh()
 		{
-			_toolRepository.GetPersistedOrDefaultToolForArea(this).PrepareToRefresh();
+			PersistedOrDefaultToolForArea.PrepareToRefresh();
 		}
 
 		/// <summary>
@@ -126,7 +87,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// </summary>
 		public void FinishRefresh()
 		{
-			_toolRepository.GetPersistedOrDefaultToolForArea(this).FinishRefresh();
+			PersistedOrDefaultToolForArea.FinishRefresh();
 		}
 
 		/// <summary>
@@ -135,10 +96,9 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// </summary>
 		public void EnsurePropertiesAreCurrent()
 		{
-			PropertyTable.SetProperty("InitialArea", MachineName, SettingsGroup.LocalSettings, true, false);
+			_propertyTable.SetProperty(AreaServices.InitialArea, MachineName, SettingsGroup.LocalSettings, true, false);
 
-			var myCurrentTool = _toolRepository.GetPersistedOrDefaultToolForArea(this);
-			myCurrentTool.EnsurePropertiesAreCurrent();
+			PersistedOrDefaultToolForArea.EnsurePropertiesAreCurrent();
 		}
 
 		#endregion
@@ -149,12 +109,12 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// Get the internal name of the component.
 		/// </summary>
 		/// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
-		public string MachineName => "textAndWords";
+		public string MachineName => AreaServices.TextAndWordsAreaMachineName;
 
 		/// <summary>
 		/// User-visible localizable component name.
 		/// </summary>
-		public string UiName => "Texts & Words";
+		public string UiName => MyUiName;
 		#endregion
 
 		#region Implementation of IArea
@@ -164,15 +124,12 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// the persisted one is no longer available.
 		/// </summary>
 		/// <returns>The last persisted tool or the default tool for the area.</returns>
-		public ITool GetPersistedOrDefaultToolForArea()
-		{
-			return _toolRepository.GetPersistedOrDefaultToolForArea(this);
-		}
+		public ITool PersistedOrDefaultToolForArea => _myTools.First(tool => tool.MachineName == _propertyTable.GetValue<string>(PropertyNameForToolName));
 
 		/// <summary>
 		/// Get the machine name of the area's default tool.
 		/// </summary>
-		public string DefaultToolMachineName => "interlinearEdit";
+		public string DefaultToolMachineName => AreaServices.TextAndWordsAreaDefaultToolMachineName;
 
 		/// <summary>
 		/// Get all installed tools for the area.
@@ -183,15 +140,15 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			{
 				var myToolsInOrder = new List<string>
 				{
-					"interlinearEdit",
-					"concordance",
-					"complexConcordance",
-					"wordListConcordance",
-					"Analyses",
-					"bulkEditWordforms",
-					"corpusStatistics"
+					AreaServices.InterlinearEditMachineName,
+					AreaServices.ConcordanceMachineName,
+					AreaServices.ComplexConcordanceMachineName,
+					AreaServices.WordListConcordanceMachineName,
+					AreaServices.AnalysesMachineName,
+					AreaServices.BulkEditWordformsMachineName,
+					AreaServices.CorpusStatisticsMachineName
 				};
-				return _toolRepository.AllToolsForAreaInOrder(myToolsInOrder, MachineName);
+				return myToolsInOrder.Select(toolName => _myTools.First(tool => tool.MachineName == toolName)).ToList();
 			}
 		}
 

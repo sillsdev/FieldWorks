@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Xml.Linq;
@@ -20,6 +21,8 @@ namespace LanguageExplorer.Areas.Lists.Tools.EducationEdit
 	/// <summary>
 	/// ITool implementation for the "educationEdit" tool in the "lists" area.
 	/// </summary>
+	[Export(AreaServices.ListsAreaMachineName, typeof(ITool))]
+	[Export(typeof(ITool))]
 	internal sealed class EducationEditTool : ITool
 	{
 		private ListsAreaMenuHelper _listsAreaMenuHelper;
@@ -30,50 +33,8 @@ namespace LanguageExplorer.Areas.Lists.Tools.EducationEdit
 		/// </summary>
 		private CollapsingSplitContainer _collapsingSplitContainer;
 		private RecordClerk _recordClerk;
-
-		#region Implementation of IPropertyTableProvider
-
-		/// <summary>
-		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
-		/// </summary>
-		public IPropertyTable PropertyTable { get; private set; }
-
-		#endregion
-
-		#region Implementation of IPublisherProvider
-
-		/// <summary>
-		/// Get the IPublisher.
-		/// </summary>
-		public IPublisher Publisher { get; private set; }
-
-		#endregion
-
-		#region Implementation of ISubscriberProvider
-
-		/// <summary>
-		/// Get the ISubscriber.
-		/// </summary>
-		public ISubscriber Subscriber { get; private set; }
-
-		#endregion
-
-		#region Implementation of IFlexComponent
-
-		/// <summary>
-		/// Initialize a FLEx component with the basic interfaces.
-		/// </summary>
-		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
-		public void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
-		{
-			FlexComponentCheckingService.CheckInitializationValues(flexComponentParameters, new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-
-			PropertyTable = flexComponentParameters.PropertyTable;
-			Publisher = flexComponentParameters.Publisher;
-			Subscriber = flexComponentParameters.Subscriber;
-		}
-
-		#endregion
+		[Import(AreaServices.ListsAreaMachineName)]
+		private IArea _area;
 
 		#region Implementation of IMajorFlexComponent
 
@@ -159,7 +120,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.EducationEdit
 		/// Get the internal name of the component.
 		/// </summary>
 		/// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
-		public string MachineName => "educationEdit";
+		public string MachineName => AreaServices.EducationEditMachineName;
 
 		/// <summary>
 		/// User-visible localizable component name.
@@ -170,9 +131,9 @@ namespace LanguageExplorer.Areas.Lists.Tools.EducationEdit
 		#region Implementation of ITool
 
 		/// <summary>
-		/// Get the area machine name the tool is for.
+		/// Get the area for the tool.
 		/// </summary>
-		public string AreaMachineName => "lists";
+		public IArea Area => _area;
 
 		/// <summary>
 		/// Get the image for the area.

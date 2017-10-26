@@ -2,14 +2,12 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using SIL.FieldWorks.Common.FwUtils;
-
 namespace LanguageExplorer
 {
 	/// <summary>
 	/// Interface for major FLEx components
 	/// </summary>
-	internal interface IMajorFlexComponent : IFlexComponent
+	internal interface IMajorFlexComponent
 	{
 		/// <summary>
 		/// Deactivate the component.

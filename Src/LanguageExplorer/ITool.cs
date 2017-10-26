@@ -12,9 +12,9 @@ namespace LanguageExplorer
 	internal interface ITool : IMajorFlexUiComponent
 	{
 		/// <summary>
-		/// Get the area machine name the tool is for.
+		/// Get the area for the tool.
 		/// </summary>
-		string AreaMachineName { get; }
+		IArea Area { get; }
 
 		/// <summary>
 		/// Get the image for the area.

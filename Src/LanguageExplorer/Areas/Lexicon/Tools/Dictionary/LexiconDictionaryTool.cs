@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -23,6 +24,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 	/// <summary>
 	/// ITool implementation for the "lexiconDictionary" tool in the "lexicon" area.
 	/// </summary>
+	[Export(AreaServices.LexiconAreaMachineName, typeof(ITool))]
+	[Export(typeof(ITool))]
 	internal sealed class LexiconDictionaryTool : ITool
 	{
 		private LexiconAreaMenuHelper _lexiconAreaMenuHelper;
@@ -35,51 +38,14 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 		private SliceContextMenuFactory _sliceContextMenuFactory;
 		private const string leftPanelMenuId = "left";
 		private const string rightPanelMenuId = "right";
-
-
-		#region Implementation of IPropertyTableProvider
-
-		/// <summary>
-		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
-		/// </summary>
-		public IPropertyTable PropertyTable { get; private set; }
-
-		#endregion
-
-		#region Implementation of IPublisherProvider
-
-		/// <summary>
-		/// Get the IPublisher.
-		/// </summary>
-		public IPublisher Publisher { get; private set; }
-
-		#endregion
-
-		#region Implementation of ISubscriberProvider
-
-		/// <summary>
-		/// Get the ISubscriber.
-		/// </summary>
-		public ISubscriber Subscriber { get; private set; }
-
-		#endregion
-
-		#region Implementation of IFlexComponent
-
-		/// <summary>
-		/// Initialize a FLEx component with the basic interfaces.
-		/// </summary>
-		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
-		public void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
-		{
-			FlexComponentCheckingService.CheckInitializationValues(flexComponentParameters, new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-
-			PropertyTable = flexComponentParameters.PropertyTable;
-			Publisher = flexComponentParameters.Publisher;
-			Subscriber = flexComponentParameters.Subscriber;
-		}
-
-		#endregion
+		[Import(AreaServices.LexiconAreaMachineName)]
+		private IArea _area;
+		[Import]
+		private IPropertyTable _propertyTable;
+		[Import]
+		private IPublisher _publisher;
+		[Import]
+		private ISubscriber _subscriber;
 
 		#region Implementation of IMajorFlexComponent
 
@@ -197,7 +163,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 		/// Get the internal name of the component.
 		/// </summary>
 		/// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
-		public string MachineName => "lexiconDictionary";
+		public string MachineName => AreaServices.LexiconDictionaryMachineName;
 
 #if RANDYTODO
 		// TODO: It displays fine the first time it is selected, but the second time PropertyTable is upset in a multi-thread context.
@@ -207,14 +173,14 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 		/// User-visible localizable component name.
 		/// </summary>
 		public string UiName => "BUGGY: Dictionary";
-#endregion
+		#endregion
 
-#region Implementation of ITool
+		#region Implementation of ITool
 
 		/// <summary>
-		/// Get the area machine name the tool is for.
+		/// Get the area for the tool.
 		/// </summary>
-		public string AreaMachineName => "lexicon";
+		public IArea Area => _area;
 
 		/// <summary>
 		/// Get the image for the area.
@@ -241,11 +207,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 			// 1. <menu list="Configurations" inline="true" emptyAllowed="true" behavior="singlePropertyAtomicValue" property="DictionaryPublicationLayout"/>
 			IDictionary<string, string> hasPub;
 			IDictionary<string, string> doesNotHavePub;
-			var allConfigurations = DictionaryConfigurationUtils.GatherBuiltInAndUserConfigurations(PropertyTable.GetValue<LcmCache>("cache"), _configureObjectName);
+			var allConfigurations = DictionaryConfigurationUtils.GatherBuiltInAndUserConfigurations(_propertyTable.GetValue<LcmCache>("cache"), _configureObjectName);
 			_xhtmlDocView.SplitConfigurationsByPublication(allConfigurations, _xhtmlDocView.GetCurrentPublication(), out hasPub, out doesNotHavePub);
 			// Add menu items that display the configuration name and send PropChanges with
 			// the configuration path.
-			var currentPublication = PropertyTable.GetValue<string>("DictionaryPublicationLayout");
+			var currentPublication = _propertyTable.GetValue<string>("DictionaryPublicationLayout");
 			foreach (var config in hasPub)
 			{
 				// Key is label, value is Tag for config pathname.
@@ -274,7 +240,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 		private void RightContextMenuStrip_Opening(object sender, CancelEventArgs e)
 		{
 			var rightContextMenuStrip = (ContextMenuStrip)sender;
-			var currentlayout = PropertyTable.GetValue<string>("DictionaryPublicationLayout", SettingsGroup.LocalSettings);
+			var currentlayout = _propertyTable.GetValue<string>("DictionaryPublicationLayout", SettingsGroup.LocalSettings);
 			// Make sure matching menu is checked, but none of the others are checked
 			foreach (var toolStripMenuItem in rightContextMenuStrip.Items.OfType<ToolStripMenuItem>())
 			{
@@ -290,17 +256,17 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 				return; // No change.
 			}
 			var newValue = (string)clickedToolStripMenuItem.Tag;
-			PropertyTable.SetProperty("DictionaryPublicationLayout", newValue, SettingsGroup.LocalSettings, true, false);
+			_propertyTable.SetProperty("DictionaryPublicationLayout", newValue, SettingsGroup.LocalSettings, true, false);
 			_xhtmlDocView.OnPropertyChanged("DictionaryPublicationLayout");
 		}
 
 		private void ConfigureDictionary_Clicked(object sender, EventArgs e)
 		{
 			bool refreshNeeded;
-			using (var dlg = new DictionaryConfigurationDlg(PropertyTable))
+			using (var dlg = new DictionaryConfigurationDlg(_propertyTable))
 			{
 				var controller = new DictionaryConfigurationController(dlg, _recordClerk?.CurrentObject);
-				controller.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
+				controller.InitializeFlexComponent(new FlexComponentParameters(_propertyTable, _publisher, _subscriber));
 				dlg.Text = string.Format(xWorksStrings.ConfigureTitle, xWorksStrings.Dictionary);
 				dlg.HelpTopic = "khtpConfigureDictionary";
 				dlg.ShowDialog((IWin32Window)_fwMainWnd);
@@ -314,7 +280,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 
 		private Tuple<ContextMenuStrip, CancelEventHandler, List<Tuple<ToolStripMenuItem, EventHandler>>> CreateLeftContextMenuStrip(string panelMenuId)
 		{
-			var currentPublication = PropertyTable.GetValue<string>("SelectedPublication");
+			var currentPublication = _propertyTable.GetValue<string>("SelectedPublication");
 			var contextMenuStrip = new ContextMenuStrip();
 			contextMenuStrip.Opening += LeftContextMenuStrip_Opening;
 
@@ -359,7 +325,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 		private void LeftContextMenuStrip_Opening(object sender, CancelEventArgs e)
 		{
 			var leftContextMenuStrip = (ContextMenuStrip)sender;
-			var currentPublication = PropertyTable.GetValue<string>("SelectedPublication", SettingsGroup.LocalSettings);
+			var currentPublication = _propertyTable.GetValue<string>("SelectedPublication", SettingsGroup.LocalSettings);
 			// Make sure matching menu is checked, but none of the others are checked
 			foreach (var toolStripMenuItem in leftContextMenuStrip.Items.OfType<ToolStripMenuItem>())
 			{
@@ -385,13 +351,13 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 				return; // No change.
 			}
 			var newValue = (string)clickedToolStripMenuItem.Tag;
-			PropertyTable.SetProperty("SelectedPublication", newValue, SettingsGroup.LocalSettings, true, false);
+			_propertyTable.SetProperty("SelectedPublication", newValue, SettingsGroup.LocalSettings, true, false);
 			_xhtmlDocView.OnPropertyChanged("SelectedPublication");
 		}
 
 		private void ShowAllPublications_Clicked(object sender, EventArgs e)
 		{
-			PropertyTable.SetProperty("SelectedPublication", xWorksStrings.AllEntriesPublication, true, false);
+			_propertyTable.SetProperty("SelectedPublication", xWorksStrings.AllEntriesPublication, true, false);
 			_xhtmlDocView.OnPropertyChanged("SelectedPublication");
 		}
 	}

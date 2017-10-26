@@ -57,19 +57,8 @@ namespace LanguageExplorer.Impls
 	[Export(typeof(IFwMainWnd))]
 	internal sealed partial class FwMainWnd : Form, IFwMainWnd
 	{
-		// Used to count the number of times we've been asked to suspend Idle processing.
-		private int _countSuspendIdleProcessing;
-		/// <summary>
-		///  Web browser to use in Linux
-		/// </summary>
-		private string _webBrowserProgramLinux = "firefox";
-		private IRecordClerkRepositoryForTools _recordClerkRepositoryForTools;
+		[Import]
 		private IAreaRepository _areaRepository;
-		private IToolRepository _toolRepository;
-		private ActiveViewHelper _viewHelper;
-		private IArea _currentArea;
-		private ITool _currentTool;
-		private LcmStyleSheet _stylesheet;
 		[Import]
 		private IPropertyTable _propertyTable;
 		[Import]
@@ -78,6 +67,17 @@ namespace LanguageExplorer.Impls
 		private ISubscriber _subscriber;
 		[Import]
 		private IFlexApp _flexApp;
+		// Used to count the number of times we've been asked to suspend Idle processing.
+		private int _countSuspendIdleProcessing;
+		/// <summary>
+		///  Web browser to use in Linux
+		/// </summary>
+		private string _webBrowserProgramLinux = "firefox";
+		private IRecordClerkRepositoryForTools _recordClerkRepositoryForTools;
+		private ActiveViewHelper _viewHelper;
+		private IArea _currentArea;
+		private ITool _currentTool;
+		private LcmStyleSheet _stylesheet;
 		private DateTime _lastToolChange = DateTime.MinValue;
 		private readonly HashSet<string> _toolsReportedToday = new HashSet<string>();
 		private bool _persistWindowSize;
@@ -123,13 +123,6 @@ namespace LanguageExplorer.Impls
 			_persistWindowSize = false;
 			Size = restoreSize;
 			_persistWindowSize = true;
-		}
-
-		private void SetupRepositories()
-		{
-			_toolRepository = new ToolRepository();
-			_areaRepository = new AreaRepository(_toolRepository);
-			_areaRepository.InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);
 		}
 
 		private void SetupStylesheet()
@@ -343,7 +336,7 @@ namespace LanguageExplorer.Impls
 			_currentTool = clickedTool;
 			var areaName = _currentArea.MachineName;
 			var toolName = _currentTool.MachineName;
-			PropertyTable.SetProperty($"ToolForAreaNamed_{areaName}", toolName, SettingsGroup.LocalSettings, true, false);
+			PropertyTable.SetProperty($"{AreaServices.ToolForAreaNamed_}{areaName}", toolName, SettingsGroup.LocalSettings, true, false);
 			PropertyTable.SetProperty("toolChoice", _currentTool.MachineName, SettingsGroup.LocalSettings, true, false);
 
 			// Do some logging.
@@ -438,7 +431,7 @@ namespace LanguageExplorer.Impls
 			// This is the splitter distance for the record list/main content pair of controls.
 			PropertyTable.SetDefault("RecordListWidthGlobal", 200, SettingsGroup.GlobalSettings, true, false);
 
-			PropertyTable.SetDefault("InitialArea", "lexicon", SettingsGroup.LocalSettings, true, false);
+			PropertyTable.SetDefault(AreaServices.InitialArea, AreaServices.InitialAreaMachineName, SettingsGroup.LocalSettings, true, false);
 			// Set these properties so they don't get set the first time they're accessed in a browse view menu. (cf. LT-2789)
 			PropertyTable.SetDefault("SortedFromEnd", false, SettingsGroup.LocalSettings, true, false);
 			PropertyTable.SetDefault("SortedByLength", false, SettingsGroup.LocalSettings, true, false);
@@ -710,11 +703,8 @@ namespace LanguageExplorer.Impls
 
 			IdleQueue = new IdleQueue();
 
-			_sendReceiveMenuManager = new SendReceiveMenuManager(IdleQueue, this, _flexApp, Cache,
-				_sendReceiveToolStripMenuItem, toolStripButtonFlexLiftBridge);
+			_sendReceiveMenuManager = new SendReceiveMenuManager(IdleQueue, this, _flexApp, Cache, _sendReceiveToolStripMenuItem, toolStripButtonFlexLiftBridge);
 			_sendReceiveMenuManager.InitializeFlexComponent(flexComponentParameters);
-
-			SetupRepositories();
 
 			SetupOutlookBar();
 
@@ -722,8 +712,7 @@ namespace LanguageExplorer.Impls
 
 			SetupWindowSizeIfNeeded(restoreSize);
 
-			if (File.Exists(CrashOnStartupDetectorPathName)
-			) // Have to check again, because unit test check deletes it in the RestoreWindowSettings method.
+			if (File.Exists(CrashOnStartupDetectorPathName)) // Have to check again, because unit test check deletes it in the RestoreWindowSettings method.
 			{
 				File.Delete(CrashOnStartupDetectorPathName);
 			}
@@ -1620,7 +1609,7 @@ very simple minor adjustments. ;)"
 			base.OnLoad(e);
 
 			var currentArea = _areaRepository.GetPersistedOrDefaultArea();
-			var currentTool = currentArea.GetPersistedOrDefaultToolForArea();
+			var currentTool = currentArea.PersistedOrDefaultToolForArea;
 			_sidePane.TabClicked += Area_Clicked;
 			_sidePane.ItemClicked += Tool_Clicked;
 			// This call fires Area_Clicked and then Tool_Clicked to make sure the provided tab and item are both selected in the end.

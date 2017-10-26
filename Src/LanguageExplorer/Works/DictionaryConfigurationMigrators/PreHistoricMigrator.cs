@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
+using LanguageExplorer.Areas;
 using LanguageExplorer.Controls.XMLViews;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
@@ -121,7 +122,7 @@ namespace LanguageExplorer.Works.DictionaryConfigurationMigrators
 		private XElement GetConfigureLayoutsNodeForTool(string tool)
 		{
 			var collector = new XElement[1];
-			var parameter = new Tuple<string, string, XElement[]>("lexicon", tool, collector);
+			var parameter = new Tuple<string, string, XElement[]>(AreaServices.InitialAreaMachineName, tool, collector);
 			m_publisher.Publish("GetContentControlParameters", parameter);
 			var controlNode = collector[0];
 			var parameters = controlNode.Elements("parameters").First();

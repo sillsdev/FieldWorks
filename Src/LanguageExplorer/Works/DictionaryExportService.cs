@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
+using LanguageExplorer.Areas;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Utils;
@@ -159,7 +160,7 @@ namespace LanguageExplorer.Works
 			public static ClerkActivator ActivateClerkMatchingExportType(string exportType, IPublisher publisher)
 			{
 				var isDictionary = exportType == DictionaryType;
-				const string area = "lexicon";
+				const string area = AreaServices.InitialAreaMachineName;
 				var tool = isDictionary ? "lexiconDictionary" : "reversalToolEditComplete";
 				var collector = new XmlNode[1];
 				var parameter = new Tuple<string, string, XmlNode[]>(area, tool, collector);

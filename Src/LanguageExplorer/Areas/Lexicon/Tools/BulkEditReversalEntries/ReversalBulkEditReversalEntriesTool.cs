@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Xml.Linq;
@@ -23,6 +24,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditReversalEntries
 	/// <summary>
 	/// ITool implementation for the "reversalBulkEditReversalEntries" tool in the "lexicon" area.
 	/// </summary>
+	[Export(AreaServices.LexiconAreaMachineName, typeof(ITool))]
+	[Export(typeof(ITool))]
 	internal sealed class ReversalBulkEditReversalEntriesTool : ITool
 	{
 		private LexiconAreaMenuHelper _lexiconAreaMenuHelper;
@@ -34,50 +37,14 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditReversalEntries
 		private SliceContextMenuFactory _sliceContextMenuFactory;
 		private LcmCache _cache;
 		private const string panelMenuId = "left";
-
-		#region Implementation of IPropertyTableProvider
-
-		/// <summary>
-		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
-		/// </summary>
-		public IPropertyTable PropertyTable { get; private set; }
-
-		#endregion
-
-		#region Implementation of IPublisherProvider
-
-		/// <summary>
-		/// Get the IPublisher.
-		/// </summary>
-		public IPublisher Publisher { get; private set; }
-
-		#endregion
-
-		#region Implementation of ISubscriberProvider
-
-		/// <summary>
-		/// Get the ISubscriber.
-		/// </summary>
-		public ISubscriber Subscriber { get; private set; }
-
-		#endregion
-
-		#region Implementation of IFlexComponent
-
-		/// <summary>
-		/// Initialize a FLEx component with the basic interfaces.
-		/// </summary>
-		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
-		public void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
-		{
-			FlexComponentCheckingService.CheckInitializationValues(flexComponentParameters, new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-
-			PropertyTable = flexComponentParameters.PropertyTable;
-			Publisher = flexComponentParameters.Publisher;
-			Subscriber = flexComponentParameters.Subscriber;
-		}
-
-		#endregion
+		[Import(AreaServices.LexiconAreaMachineName)]
+		private IArea _area;
+		[Import]
+		private IPropertyTable _propertyTable;
+		[Import]
+		private IPublisher _publisher;
+		[Import]
+		private ISubscriber _subscriber;
 
 		#region Implementation of IMajorFlexComponent
 
@@ -110,7 +77,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditReversalEntries
 		{
 			_sliceContextMenuFactory = new SliceContextMenuFactory(); // Make our own, since the tool has no data tree.
 			_cache = majorFlexComponentParameters.LcmCache;
-			var currentGuid = ReversalIndexEntryUi.GetObjectGuidIfValid(PropertyTable, "ReversalIndexGuid");
+			var currentGuid = ReversalIndexEntryUi.GetObjectGuidIfValid(_propertyTable, "ReversalIndexGuid");
 			if (currentGuid != Guid.Empty)
 			{
 				_currentReversalIndex = (IReversalIndex)majorFlexComponentParameters.LcmCache.ServiceLocator.GetObject(currentGuid);
@@ -176,7 +143,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditReversalEntries
 		/// Get the internal name of the component.
 		/// </summary>
 		/// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
-		public string MachineName => "reversalBulkEditReversalEntries";
+		public string MachineName => AreaServices.ReversalBulkEditReversalEntriesMachineName;
 
 		/// <summary>
 		/// User-visible localizable component name.
@@ -187,9 +154,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditReversalEntries
 		#region Implementation of ITool
 
 		/// <summary>
-		/// Get the area machine name the tool is for.
+		/// Get the area for the tool.
 		/// </summary>
-		public string AreaMachineName => "lexicon";
+		public IArea Area => _area;
 
 		/// <summary>
 		/// Get the image for the area.
@@ -234,11 +201,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditReversalEntries
 		private void ConfigureDictionary_Clicked(object sender, EventArgs e)
 		{
 			bool refreshNeeded;
-			var mainWindow = PropertyTable.GetValue<IFwMainWnd>("window");
-			using (var dlg = new DictionaryConfigurationDlg(PropertyTable))
+			var mainWindow = _propertyTable.GetValue<IFwMainWnd>("window");
+			using (var dlg = new DictionaryConfigurationDlg(_propertyTable))
 			{
 				var controller = new DictionaryConfigurationController(dlg, _recordClerk?.CurrentObject);
-				controller.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
+				controller.InitializeFlexComponent(new FlexComponentParameters(_propertyTable, _publisher, _subscriber));
 				dlg.Text = string.Format(xWorksStrings.ConfigureTitle, xWorksStrings.Dictionary);
 				dlg.HelpTopic = "khtpConfigureDictionary";
 				dlg.ShowDialog((IWin32Window)mainWindow);
@@ -254,7 +221,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditReversalEntries
 		{
 			var contextMenuItem = (ToolStripMenuItem)sender;
 			_currentReversalIndex = (IReversalIndex)contextMenuItem.Tag;
-			PropertyTable.SetProperty("ReversalIndexGuid", _currentReversalIndex.Guid.ToString(), SettingsGroup.LocalSettings, true, false);
+			_propertyTable.SetProperty("ReversalIndexGuid", _currentReversalIndex.Guid.ToString(), SettingsGroup.LocalSettings, true, false);
 			((ReversalClerk)_recordClerk).ChangeOwningObjectIfPossible();
 			SetCheckedState(contextMenuItem);
 		}
@@ -262,7 +229,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditReversalEntries
 		private void SetCheckedState(ToolStripMenuItem reversalToolStripMenuItem)
 		{
 			var currentTag = (IReversalIndex)reversalToolStripMenuItem.Tag;
-			reversalToolStripMenuItem.Checked = (currentTag.Guid.ToString() == PropertyTable.GetValue<string>("ReversalIndexGuid"));
+			reversalToolStripMenuItem.Checked = (currentTag.Guid.ToString() == _propertyTable.GetValue<string>("ReversalIndexGuid"));
 		}
 	}
 }
